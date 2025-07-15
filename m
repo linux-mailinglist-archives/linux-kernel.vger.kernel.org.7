@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-731657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D60B057CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A823FB057D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35DA13BE11D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:29:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B524A04B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBEC2D8380;
-	Tue, 15 Jul 2025 10:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B8F2D8790;
+	Tue, 15 Jul 2025 10:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRmZhORf"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7ur0yzL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8372253EA;
-	Tue, 15 Jul 2025 10:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8992D839E;
+	Tue, 15 Jul 2025 10:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752575387; cv=none; b=syuBjnpzwGKObzXKQDALMpX80AAfTXWIw3TKCQfW9CT3NbtNOYIEvpK9Nb4qH8Ky1wHT7afjbb19VulpSumNCEijQDHx+MwFLqgEkla/CTIMyd5/Q8Y8NiryzLTm61wk8jZbL9gdEDUX8ahTpWCYOP2HnGgWtnkoLWc6V3W8ot8=
+	t=1752575389; cv=none; b=HRoCvV2U13/EXmX/rpxOYX25fVsSGHlpMsSSl8EQCLjyZBZZ1MUQ11V61twF/dGf7gZuzN/ZbOUXD+UKIlpZzU68kLpfoQVpEM+u7A1RGdvo4a/BVLN1dcjpp1CzO0nqZqogq1GI0JPAD0nSxMJVwLjI4lH6oTOvRlV+w25rpWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752575387; c=relaxed/simple;
-	bh=dc3AIM+TGEoQTRr4Ycak1rvWyax6LdCDfyKxVSnQf98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AfpUseRJBK92p/hfNt/2wCvDvOgzraP+HzyEEwH2cxnmSg8WwT2V5B4oPOirwjMaM1kyA68SDQHrLocxM/0d/Z2e7zeJP259u1IqRNR9HGXVCyLaZMLV0fyGnH5IT+ON4z/AgyNhUdC2IZPVafre8ahSd7yYllKMFlaW/eQ8Jek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZRmZhORf; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23de2b47a48so5704445ad.2;
-        Tue, 15 Jul 2025 03:29:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752575384; x=1753180184; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G6nEZxV0x6qPDN4VqdfkMdiP1W/dqudVcE8b0cRvo+E=;
-        b=ZRmZhORfQspj2Jhe3rZbPPVDhzan+2FyG6jlZLfQB6h21sgsC6nk5PLgz7cd7SqEjG
-         tpaqMDse39GfJ2nJv5N4Zybic0o6i2RJcZgdgowNrJDeBrBD6dvh55zsqZE/twwe1ujK
-         4kTR1nNMxlkBkyKvMCLUhxXBrfEGuti59UBh0yvIMERi4+MQ3/qT7vGmtDbICvauB4ym
-         KV03B1klYy7pKyd3gm/fMuQaaAnV7xCjUTjbQXPJXH83M5gvpavV0/4sNGm8l4freivA
-         cMm9HNnUcD/fdlbp9vvbR69IUs5RS4HUkXVbkRBv0Wa1ZOGrTx3OFy1NDyULC1QcE2a6
-         aqfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752575384; x=1753180184;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G6nEZxV0x6qPDN4VqdfkMdiP1W/dqudVcE8b0cRvo+E=;
-        b=Cza/HDZWDfmtUYMbKYGV8X3v/lDMfwVFxEY7T0jMF7se5Jjvqgpo01/hZGxyY5017A
-         9AWi+bBt9joFbwbIERtdXQcSD5qoq07eoyw2hx6p8euC1DesyCyFa+irJc8/T357IVOd
-         2qi+t7igRy/iPZ7XQ9GsuH+AP7jjR2I9COH/Fvm9DA6hFG1JbNDa/5sqLRBYkVtNGocM
-         TZAUhOdD9RNSK3cuCpYw++Nof4IDmk1Zku5pL3GCh3zPukeqY9nNvinsGioc4RgVSEE3
-         ZIzOhRG+msMhZansbM81qca7+QAfuT8JWg08SJ+kh8AWYaC3X3rqkC/TqGU27OE3OXTZ
-         22/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW3qeJQcynTgYIlbDp1CnklpP5UPgwJJdRkylI6sYaJImfVBacxfFYaUWLUAqmbWmbJ8FpS6QRKM2tQOBc=@vger.kernel.org, AJvYcCXz31A0WhAroQCtEvz1cG8ekGZSlxpqLRCIJ2fJFu4N+PwWpQFG7K0q4HIlMv7xE9Ypzqri4M31OcMGPQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz95sqXGi3BbI9ERAzdW9Y6sFW+qMwsiJFnET/nQd+LpYowFium
-	9G8eL+eWnkd7dmK1yxL/LTEXhkh8fFmG6kYXUsbyI8UOVyjBR4DJNPszGpp5O6ktYgkJrMY06fe
-	/mjBuJHqWi1CwIBWpWfyR9H1pQzl6/a4=
-X-Gm-Gg: ASbGncvfHEsFM49zYCt0JO/AhS9LOF5MRt3BZJ+WTEP0HV0pvMkMbzIFb7l8z6yeTr8
-	v8nsWqf+w9ZKFSF9wCWcSGXLz0kI5B9j2dId3B728kk+GtgPtKgn1WLztZe/q2Kr7TvrZAp8OCT
-	k8PELsrPIfMW5DRtd0jnLAmK/lxZICHzzDbnr1Cv/NX8iX/Hh0SyVs9pU82dMgza9YUmWGXsMrd
-	PMJ+YLV
-X-Google-Smtp-Source: AGHT+IEQ06BMgrcq+Ksiy7kVKz5aoUs6O3QP/s7TgJm/mQdVJriOpMGnELO4vN/Ygxhr18cEZTunUQZfmJsVYJK8at4=
-X-Received: by 2002:a17:902:e88a:b0:23c:8f17:5e2f with SMTP id
- d9443c01a7336-23e1e8e5e19mr8287415ad.4.1752575384103; Tue, 15 Jul 2025
- 03:29:44 -0700 (PDT)
+	s=arc-20240116; t=1752575389; c=relaxed/simple;
+	bh=3aFKmLvJV73jrRTWvkPEDT+E5ohdcZ4PTEwPUee1yYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kfUX1YJX4Ybw5o97CZGXEanGkYmGxmSU6Dxp3ZFegRVdmPpNnRw91r0st0QkVfsXj683e5PBmhk5Bi/UNituCNO6EVNG8oYRMGznJfieIDm0HR/Juo0DPZus2zoJXb8HqXc5a788ynwsKvIibKLJaktL1RpLtHS3oI6XERafLXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7ur0yzL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE1DEC4CEE3;
+	Tue, 15 Jul 2025 10:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752575388;
+	bh=3aFKmLvJV73jrRTWvkPEDT+E5ohdcZ4PTEwPUee1yYU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M7ur0yzLo75Zh5bH8PrEOM5HipEOrZz8M14+bYILfExsKyNiUVwKvFEnjm3tVPYkK
+	 JasfYEyfwjpRCCnPyRmbsIt3bzsMAWoAlmGZG8hjdcTM8Xzpc/LBDhyd5yY/voBQf0
+	 D317EUTCMV8Dzka9bc/9diUWOV1wZr0YI+ooLZegPumJ6SZnMbsL/cKWjB030PfmHB
+	 4UN9rLS9F2RiTQFVP91TlI6FSSDhpDEdP2msPvHD6Mzcv/QLj9dDVQ6wqvJMM+bdSi
+	 gLFuH59LP8cNnyriIgoES5KnlGvcqpZmm3/y1P3x+bk/4caS07exdomLzwPuOLOWAE
+	 Hwhrm/iiKDpNw==
+Date: Tue, 15 Jul 2025 11:29:43 +0100
+From: Simon Horman <horms@kernel.org>
+To: "MITTAL, HIMANSHU" <h-mittal1@ti.com>
+Cc: pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com,
+	m-malladi@ti.com, pratheesh@ti.com, prajith@ti.com
+Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix buffer allocation for
+ ICSSG
+Message-ID: <20250715102943.GU721198@horms.kernel.org>
+References: <20250710131250.1294278-1-h-mittal1@ti.com>
+ <20250711144323.GV721198@horms.kernel.org>
+ <b626dc40-e05b-40e0-b300-45ced82d2f97@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715180913.735698ce@canb.auug.org.au>
-In-Reply-To: <20250715180913.735698ce@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 15 Jul 2025 12:29:31 +0200
-X-Gm-Features: Ac12FXwxRrQM3KgD9qGHyLKXPvw8FdG9Gx2pQ2K_GNk-N0XTAKusTr8JIhppfVc
-Message-ID: <CANiq72m9e4_sGXaXr3Pff=PrD4iLHk9O1zdfPX=83V==iL6rMQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the vfs-brauner,
- driver-core trees
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, Greg KH <greg@kroah.com>, 
-	Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Krishna Ketan Rai <prafulrai522@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Remo Senekowitsch <remo@buenzli.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b626dc40-e05b-40e0-b300-45ced82d2f97@ti.com>
 
-On Tue, Jul 15, 2025 at 10:09=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->
-> Today's linux-next merge of the rust tree got a conflict in:
->
->   rust/helpers/helpers.c
->
-> between commits:
->
->   6efbf978891b ("poll: rust: allow poll_table ptrs to be null")
->   a2801affa710 ("rust: device: Create FwNode abstraction for accessing de=
-vice properties")
->
-> from the vfs-brauner, driver-core trees and commit:
->
->   8ffb945647f8 ("rust: helpers: sort includes alphabetically")
->
-> from the rust tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
+On Tue, Jul 15, 2025 at 12:37:45PM +0530, MITTAL, HIMANSHU wrote:
 
-Looks good, thanks!
+...
 
-Cheers,
-Miguel
+> > > +-----+-----------------------------------------------+
+> > > |     |       SLICE 0       |        SLICE 1          |
+> > > |     +------------+----------+------------+----------+
+> > > |     | Start addr | End addr | Start addr | End addr |
+> > > +-----+------------+----------+------------+----------+
+> > > | EXP | 70024000   | 70028000 | 7002C000   | 70030000 | <-- Overlapping
+> > Thanks for the detailed explanation with these tables.
+> > It is very helpful. I follow both the existing and new mappings
+> > with their help. Except for one thing.
+> > 
+> > It's not clear how EXP was set to the values on the line above.
+> > Probably I'm missing something very obvious.
+> > Could you help me out here?
+> 
+> The root cause for this issue is that, buffer configuration for Express
+> Frames
+> in function: prueth_fw_offload_buffer_setup() is missing.
+> 
+> 
+> Details:
+> The driver implements two distinct buffer configuration functions that are
+> invoked
+> based on the driver state and ICSSG firmware:-
+> prueth_fw_offload_buffer_setup()
+> - prueth_emac_buffer_setup()
+> 
+> During initialization, the driver creates standard network interfaces
+> (netdevs) and
+> configures buffers via prueth_emac_buffer_setup(). This function properly
+> allocates
+> and configures all required memory regions including:
+> - LI buffers
+> - Express packet buffers
+> - Preemptible packet buffers
+> 
+> However, when the driver transitions to an offload mode (switch/HSR/PRP),
+> buffer reconfiguration is handled by prueth_fw_offload_buffer_setup().
+> This function does not reconfigure the buffer regions required for Express
+> packets,
+> leading to incorrect buffer allocation.
+
+Thanks for your patience, I see that now :)
+
+I'm sorry to drag this out, but I do think it would be useful to add
+information above the lines of the above to the patch description.
+
+> > > | PRE | 70030000   | 70033800 | 70034000   | 70037800 |
+> > > +-----+------------+----------+------------+----------+
+> > > 
+> > > +---------------------+----------+----------+
+> > > |                     | SLICE 0  |  SLICE 1 |
+> > > +---------------------+----------+----------+
+> > > | Default Drop Offset | 00000000 | 00000000 |     <-- Field not configured
+> > > +---------------------+----------+----------+
+> > ...
+
+-- 
+pw-bot: changes-requested
 
