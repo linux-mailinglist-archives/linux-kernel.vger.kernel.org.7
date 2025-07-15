@@ -1,95 +1,113 @@
-Return-Path: <linux-kernel+bounces-730961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA48B04CF9
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE1BB04CFA
 	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFEE57B0F3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 840D75600B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D477A1CAA7B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C426B1D5165;
 	Tue, 15 Jul 2025 00:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MI77X64Q"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BiyNIZbI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9CD1553A3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED6019343B;
+	Tue, 15 Jul 2025 00:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752539472; cv=none; b=a00zkNSM+G/1+9D3CTeQJs1kFBOzetBThWr7VpGF1DGdYkNMs0iu/PSfTYeC1A4ic4SAc0FGMU0+Kj8Xa1/BkSJOAlmS9JsR5kfVXu/zKN3KKPmLLDUwDQC4ShMRjtKKbALr/vV+N9TM5dZMyAX1i2ezbvLWW5fatCvlrOIrG1I=
+	t=1752539472; cv=none; b=gTxzr+2uHNgyPG+KPzggivulUZNKt9H8h7f9z9rDIdpYU1J1MZhT6kZZhh4pfgm6c+NhbiyXy7bR6hRPki4z6Em/QYsJi2288fP19MJS93YfU1+taOWbcMztr70hwsER4Cq0sPf1A1q0bTG7kajTGJKBmCd9WLqln5yJphMgACY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752539472; c=relaxed/simple;
-	bh=KHBShwx13Brlud17Z84sprTSDgu/vR45VEn53e6CKaQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mEXqQK4mJPfCVc97aUgXqHv7CR9Z1LvplD/5YuoQCFhWdUsTg1JVtzMLD3feL/OkwG414bErIBblIE2H2b2j4xTBcLuAlBN09d/u8lfrAApkSPAfkU33yFn7Orh/+fSP7+PlexRZz95L+CqrTBkrdDQgBYNSSM1eD9ODYQ1Xwow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MI77X64Q; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752539467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=STz3NT6y6RagnMrWHCWQVdhmEkfEks/Zf/QqC5h+S6I=;
-	b=MI77X64Qk12m0jlXaX1oaaVF57JMt0SPnnWdfBwKx21W3OGkYlad02xZbas7370vNOuoKm
-	wI2DgPZ/K3H+XspGMc96jx89bdm/iqLhCIrQ36SdL6/kSNLr/tMdrDd/EkZUlQPiTSQpJ3
-	h2WdTAQ+M2KTf2DHuJTR7/4NdB97+kg=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	linux-iio@vger.kernel.org
-Cc: Andy Shevchenko <andy@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	David Lechner <dlechner@baylibre.com>,
-	Manish Narani <manish.narani@xilinx.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH] iio: xilinx-ams: Fix AMS_ALARM_THR_DIRECT_MASK
-Date: Mon, 14 Jul 2025 20:30:58 -0400
-Message-Id: <20250715003058.2035656-1-sean.anderson@linux.dev>
+	bh=AmsDUkdWp+D2t1MNpQN905rUeQWgnBNIiuKOAQBsbnY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=QQEje4D5eBZMKujgo7MXZwaitfvBbEhcKpcdK8AXNeVEITdZhUA+fNvYIUh4C2xp2bRu3Nn905w4wpaD0pY83uHap6e/+8ife7BZENAYVIBpb1nAltNw+VMM9DSmcAL232Gt8+IHohN4X5M7u5XZz6Npbid+YydOkBvHH+X1UMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BiyNIZbI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC19C4CEF0;
+	Tue, 15 Jul 2025 00:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752539470;
+	bh=AmsDUkdWp+D2t1MNpQN905rUeQWgnBNIiuKOAQBsbnY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BiyNIZbIhI81BH5kvc3pxIN4vczjERj5q7uQi3I+U4ljGTnuTerwVbUVigGrpSFpC
+	 MoCTw9QY8OtZzzVMkMmhnQ2bJiG1tfOatf+XrDVBsdemRGr6j3KuR/xhvu9dbzUkm0
+	 QSq7uz3kVbgkEwgjl2V2NCquwQcLtqQa6kM4E7oM=
+Date: Mon, 14 Jul 2025 17:31:09 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+ "David S. Miller" <davem@davemloft.net>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+ sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
+ ARCH_SUPPORTS_HUGETLBFS
+Message-Id: <20250714173109.265d1fbfa9884cd22c3a6975@linux-foundation.org>
+In-Reply-To: <20250714094909.GBaHTSlW8nkuINON9p@fat_crate.local>
+References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
+	<20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
+	<f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
+	<20250714094909.GBaHTSlW8nkuINON9p@fat_crate.local>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-AMS_ALARM_THR_DIRECT_MASK should be bit 0, not bit 1. This would cause
-hysteresis to be enabled with a lower threshold of -28C. The temperature
-alarm would never deassert even if the temperature dropped below the
-upper threshold.
+On Mon, 14 Jul 2025 11:49:09 +0200 Borislav Petkov <bp@alien8.de> wrote:
 
-Fixes: d5c70627a794 ("iio: adc: Add Xilinx AMS driver")
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> On Mon, Jul 14, 2025 at 08:05:31AM +0530, Anshuman Khandual wrote:
+> > The original first commit had added 'BROKEN', although currently there
+> > are no explanations about it in the tree.
+> 
+> commit c0dde7404aff064bff46ae1d5f1584d38e30c3bf
+> Author: Linus Torvalds <torvalds@home.osdl.org>
+> Date:   Sun Aug 17 21:23:57 2003 -0700
+> 
+>     Add CONFIG_BROKEN (default 'n') to hide known-broken drivers.
+
+Thanks.  That was unkind of someone.  How's this?
+
+
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: init/Kconfig: restore CONFIG_BROKEN help text
+Date: Mon Jul 14 05:20:02 PM PDT 2025
+
+Linus added it in 2003, it later was removed.  Put it back.
+
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Borislav Betkov <bp@alien8.de>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleinxer <tglx@linutronix.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
 
- drivers/iio/adc/xilinx-ams.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ init/Kconfig |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
-index 76dd0343f5f7..552190dd0e6e 100644
---- a/drivers/iio/adc/xilinx-ams.c
-+++ b/drivers/iio/adc/xilinx-ams.c
-@@ -118,7 +118,7 @@
- #define AMS_ALARM_THRESHOLD_OFF_10	0x10
- #define AMS_ALARM_THRESHOLD_OFF_20	0x20
+--- a/init/Kconfig~a
++++ a/init/Kconfig
+@@ -169,6 +169,10 @@ menu "General setup"
  
--#define AMS_ALARM_THR_DIRECT_MASK	BIT(1)
-+#define AMS_ALARM_THR_DIRECT_MASK	BIT(0)
- #define AMS_ALARM_THR_MIN		0x0000
- #define AMS_ALARM_THR_MAX		(BIT(16) - 1)
+ config BROKEN
+ 	bool
++	help
++	  This option allows you to choose whether you want to try to
++	  compile (and fix) old drivers that haven't been updated to
++	  new infrastructure.
  
--- 
-2.35.1.1320.gc452695387.dirty
+ config BROKEN_ON_SMP
+ 	bool
+_
 
 
