@@ -1,149 +1,89 @@
-Return-Path: <linux-kernel+bounces-730932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D4FB04C96
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:58:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E94E9B04C9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DFCD3BD72A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Jul 2025 23:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 263651A65F02
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6A8279359;
-	Mon, 14 Jul 2025 23:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVL4FKo3"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E138279787;
+	Tue, 15 Jul 2025 00:00:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420D5248869;
-	Mon, 14 Jul 2025 23:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F5D279347
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752537514; cv=none; b=Goi5jBFZ7b4fFiY3f5VVhS5CiVSuAHk5TT2oFo9pZg0++AOF+aWyijHj+gDLRTSNDgsi8FkFc76evpCX5mzIpsrhxrazCsr3nrf1PgSkNzIgTMsa8QX4c68A09bB6OS+sLqDCJLKpDlzZypN0AV+yz6BkwavWysfBSMANZncMFU=
+	t=1752537606; cv=none; b=kFN+axX99z91wEfyionn8GusFEeDYjpt2KO9eq8hfza7kqMu8ijJanNRPjqGzWAn3tbnEBqBUh2Tc7Eb+FfzW3gJrCtt9RRCFHnBbLcFjlc3EQtMUQtTsLJwFAxErIvxxaclpVPolZA7ZzyrqvjCmg12FT+sAbf4SjMFtBJ+iAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752537514; c=relaxed/simple;
-	bh=5q5nESWdsqhiVufoOV0EPOiccfQFccbVLeQwgs4kfYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OLhAtNPld87tLY2lS9HiI+ADlUCuQ4j2kdQTij8eZYZTyIad5bSiVd1wi3ITVTsmKTF+b1jf8FRQzwmMlXnXNKFWEi5haQcgGXovpmW4XCRdVHI0OIVr75d8KMvqPqo1jIiwVYantjgrY8FGc34eSH0x00x+PIcbcSHiX/ypc5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RVL4FKo3; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2350b1b9129so33701965ad.0;
-        Mon, 14 Jul 2025 16:58:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752537511; x=1753142311; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hCrqEm/DxFBD1hPDI0NYCjLYHyzFrXQGNfTsWUPxUFM=;
-        b=RVL4FKo3p/ZqjWmDfivhXB45KxpO2lJIzXpLfThkBG6IzL3jsU/qEZq3YBBwoVS781
-         wVl6K1eCUmeyrHtkiq4/UQSJPnVHR0ODeXRhAoCCJjbHLDmb4v4UvKdD2/3dIPPXLSNc
-         iaO8lWUhBoOHuprJmAdPdoKOeiW6pfTNLkut9/gW+yq/4a/BrntM+T02MimnJDWLFw8k
-         NDyUL8uXZoG3TIZEddI0c5y5vEo/mDdoXsmXOGiiYFr53gG06LCp1DZjzNQ5usEFWDf5
-         LZ5Do2VkOuxdmD+F0KobQZ8UTBSd+Auag2D/wHsJz6vxMmw68cg3398Ja8EmZkn3m588
-         w3Hw==
+	s=arc-20240116; t=1752537606; c=relaxed/simple;
+	bh=ez6QPF7zZsOFfsJ8n+1HyNnpGGsP2rHkUY01pkIl63o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Lu66Hv8Lo3mtsL05qqxqRMBYatZ/2BxUPwiEb9WH1ILnBPG9c8rTQ5zrgRHbh4oZt5AgocTUl0xly5fah6Dbye0gBDiWXcGfI3lMSgznOO1q+6+xx66KWFsjmQdjxrjxVpxuIkAsZGm7bJHuPqjbmMsnPv1lWQdKUB5VN5ddGhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8730ca8143eso549582939f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:00:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752537511; x=1753142311;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1752537604; x=1753142404;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hCrqEm/DxFBD1hPDI0NYCjLYHyzFrXQGNfTsWUPxUFM=;
-        b=bKewg6NVT94b3j2ugWFtskfhzJyiWnc7bIImt/e0uwjjwRDl58Cj1ryIpuwT5K9zw3
-         cW+g6fnpn6lPXD1jpJTJr7HaaV1csOZt+/C9DqubQBv9N31VxcHk4Q0bf7dOHnNVSdQq
-         2t5JNz0msGUEV6tjWpuAUvfWI0s6DUftWmy4+0nSo61UZzbNhJlyiFqHRroVsY6+hzOb
-         okdEEIioCtV9ChIJy8CoqnxlhJLA5XcwqQIVrjlQbtq9dRdMp07midbD0edowahNUS2i
-         ukTCaIDDXhpk0PHCgfCpR3O7p3fi2friQ063MSf4yuDQ6L8XYSqDR6n33RgMl4UEJnO4
-         I+Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK4Xu79oqMHcMpJNylVX7w3Q8z/WbdVOOqK4W9WDRMktp2lwGux5BsBT+TynowjViOYRl5zN/w@vger.kernel.org, AJvYcCXQukh/RPxUjW84myi28SKIBWmddnbZXIsvV/WBcGLVdpO7urGCVbuyfSP95DA3qPadaHdACCOPeno7T20O@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBeYc1goqnZl5kh/Pg7zDbKRNzoJUA5JoaiLBvDC1zwaISqjMQ
-	IaRbMpn/Ay0mmLndrXqv7Bp3a0DNdbG4SaFv7jSKxIVhte30JyHGhSQ+
-X-Gm-Gg: ASbGncv2FJLs5A+wtC0Z3QbW0PJkHBPO0aCOqvRZOMfxGh3dyDPWGSOls8Sfkr+BWPE
-	KpbEM+1BiwaBCHPSwv/5gDgdCrqWNKB3tHVG4rYhlXXyyvC+jvIAElQiz4UPxTFv9kLPN/NaTwH
-	rCiTJAxPf8hJO6Xjp1R22c4tJjcw7iBwnsFkL9SuPVmTJPyDmqnlznxPrxDTH15lkqJpxFdHeo3
-	VWWKfQnwvESiblk7cY9iu4fFHIxoBnk21aovAk2TG5tpktIbnjAd8LrpBNbsuZH9pj31PRcC5uZ
-	slNYgK1OGX15kmQC7Qfy3olqSZDC+GJOqQ+ykKzt4gFFyv2y+AW3dH7HbYoZn93UwfSEdecsvw3
-	gZ+OME7CDLry0xoQHTmA9dClojKJkQZVl6Qbh5OPxNzDRsw7fKI+3vQv6DPRN25edLNUg
-X-Google-Smtp-Source: AGHT+IEaT5+ArvhktWHGmPNWYoMjwY3m/hW32IQPZWD6WPfa27Btx30+hgzX8aJJYN/bQGg4Qfh6jA==
-X-Received: by 2002:a17:903:17ce:b0:235:c9a7:d5fb with SMTP id d9443c01a7336-23dede468b9mr266829875ad.16.1752537511461;
-        Mon, 14 Jul 2025 16:58:31 -0700 (PDT)
-Received: from [192.168.1.117] (c-67-180-10-175.hsd1.ca.comcast.net. [67.180.10.175])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4323e2asm97829105ad.110.2025.07.14.16.58.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 16:58:30 -0700 (PDT)
-Message-ID: <65df1f7e-9512-4527-bbe4-0cf10877f4ba@gmail.com>
-Date: Mon, 14 Jul 2025 16:58:29 -0700
+        bh=ugecHUs6ZUqF8Vti1XuTWNyS/mAPzmrzTFopoL7/38A=;
+        b=cLZ8xPspAlrCgf7wGgNVoKiTaftt9un/jZ9+xOx4bwFp3QUlkOaw/rSMJ3yRVFkh+A
+         8G5/8zlMNW7rIjoh2TWP93SAUN/GPn/rEMgRYaZkMqFD+EUh+jZpZ8oCdOdxqREWOOlt
+         /Mlj/9sM1XeEvWwK1DLyq6ZTcdm0DXgKT61GGzA8Hp1NN82PnaQ+Rp0voCOCSRVMBDxn
+         tUN/z0ADE/jyseKz6N13jLYkxLVNzja9XwDqDtRGt4zg+ugvWgdR4nbkcIcepc5/QgdM
+         YgRzoKEtWWGr1BNxNO5b1DfD7OMy6QCMa7B55kNh39nltvnVGL8tokJUYepXQjN5uaWk
+         25Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrA+NTQhHfRiMm7LWUvTYd5yYlCeJ5FHeBcOWyAgf7q1eMQ2FzzzkhMYM+kdsDDtnGmjEl/RFzxWCeFvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmQQU9J9IUkxEwOnizb6mimIcu8z0bol6t/4dOOxtlsDyfVNNy
+	YfAMV81AumlS89MgEiXmlfcK6difvvvnRUzHusWC9wT70ibu78rlwhNECxKbDnDVtQzmejEu8de
+	eUw+7W8lkfG5s2V1csDbd3n/YF9bXWT+qajPMnfBUiRMWWR/KelyIqSL3a64=
+X-Google-Smtp-Source: AGHT+IHDw6UZRV+roLHMz9hyzZ+jp9boU/Gtd1+ISYFZjLUJDrwFmH6vMvUpUOitf5uZHLqD4I1D5n/woykmWqmJ+gitKgKY4U7T
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+X-Received: by 2002:a05:6e02:1065:b0:3de:e74:be13 with SMTP id
+ e9e14a558f8ab-3e277b37e58mr14777985ab.0.1752537603874; Mon, 14 Jul 2025
+ 17:00:03 -0700 (PDT)
+Date: Mon, 14 Jul 2025 17:00:03 -0700
+In-Reply-To: <65df1f7e-9512-4527-bbe4-0cf10877f4ba@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68759a03.a70a0220.18f9d4.0013.GAE@google.com>
 Subject: Re: [syzbot] [cgroups?] WARNING in css_rstat_exit
-To: syzbot <syzbot+8d052e8b99e40bc625ed@syzkaller.appspotmail.com>,
- cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- mkoutny@suse.com, syzkaller-bugs@googlegroups.com, tj@kernel.org,
- Shakeel Butt <shakeel.butt@linux.dev>
-References: <6874b1d8.a70a0220.3b380f.0051.GAE@google.com>
-Content-Language: en-US
-From: JP Kobryn <inwardvessel@gmail.com>
-In-Reply-To: <6874b1d8.a70a0220.3b380f.0051.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: syzbot <syzbot+8d052e8b99e40bc625ed@syzkaller.appspotmail.com>
+To: cgroups@vger.kernel.org, hannes@cmpxchg.org, inwardvessel@gmail.com, 
+	linux-kernel@vger.kernel.org, mkoutny@suse.com, shakeel.butt@linux.dev, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/14/25 12:29 AM, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    5d5d62298b8b Merge tag 'x86_urgent_for_v6.16_rc6' of git:/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11dabd82580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=84eae426cbd8669c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8d052e8b99e40bc625ed
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162c47d4580000
+Hello,
 
-#syz test
+syzbot tried to test the proposed patch but the build/boot failed:
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index a723b7dc6e4e..e6c5c998ead6 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -5669,6 +5669,12 @@ static struct cgroup_subsys_state 
-*css_create(struct cgroup *cgrp,
+failed to apply patch:
+checking file kernel/cgroup/cgroup.c
+patch: **** unexpected end of file in patch
 
-  	init_and_link_css(css, ss, cgrp);
 
-+	err = css_rstat_init(css);
-+	if (err) {
-+		ss->css_free(css);
-+		goto err_out;
-+	}
-+
-  	err = percpu_ref_init(&css->refcnt, css_release, 0, GFP_KERNEL);
-  	if (err)
-  		goto err_free_css;
-@@ -5678,10 +5684,6 @@ static struct cgroup_subsys_state 
-*css_create(struct cgroup *cgrp,
-  		goto err_free_css;
-  	css->id = err;
 
--	err = css_rstat_init(css);
--	if (err)
--		goto err_free_css;
--
-  	/* @css is ready to be brought online now, make it visible */
-  	list_add_tail_rcu(&css->sibling, &parent_css->children);
-  	cgroup_idr_replace(&ss->css_idr, css, css->id);
-@@ -5697,6 +5699,7 @@ static struct cgroup_subsys_state 
-*css_create(struct cgroup *cgrp,
-  err_free_css:
-  	INIT_RCU_WORK(&css->destroy_rwork, css_free_rwork_fn);
-  	queue_rcu_work(cgroup_destroy_wq, &css->destroy_rwork);
-+err_out:
-  	return ERR_PTR(err);
-  }
+Tested on:
 
---
+commit:         347e9f50 Linux 6.16-rc6
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84eae426cbd8669c
+dashboard link: https://syzkaller.appspot.com/bug?extid=8d052e8b99e40bc625ed
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1541718c580000
+
 
