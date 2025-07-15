@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-732060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8A1B06185
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:42:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD82B06162
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAB015C130B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73031C43D34
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A9C1EFF96;
-	Tue, 15 Jul 2025 14:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6651E98E6;
+	Tue, 15 Jul 2025 14:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="X2NjWf0T"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJwAzbcG"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDEE1E98E6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB9B20AF87
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752589795; cv=none; b=eSQVAfmY4g5AdfToU7C3p6xvJ36tquGe/LzvSdBEoxenr+kdlEknNhQUYKQvwSzk1W87Uxwf4g/mmgkHlrE5FT45FEieRUvSosZG7cO0IkGLccoYFF+j6sFzON4Yo1kOuHZffUkk/gxoQ+AgriPMzMc2RCUL9zvhWM36XlyshE8=
+	t=1752589809; cv=none; b=nkXEP2QnGLvNuyjJEDGrPdMj1d7TJDhyGjRpohCy/P4Ko0kOPtVkv1Rz7GHzHzuWR7zj9JoPw6HcUJje9ehqZHfQxuoMPwnI/NoT6oEkW0mDYM90iwbTSyDyI/Uwz9e/b7K9mYAnrjJNgzIfWGS7PLvaTcRiFe1VOfavs1nqk9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752589795; c=relaxed/simple;
-	bh=zWAaEL2JzeYsL13AYlJ8q46U97iP3YuD+h6PLZaJO2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r49uRVSRMhaTDUEvCLBeSv2iIODrFHG6EpokBuFpYbzqzGWsQv7CB/Q+iOrcuI/FDnbxcSixUuS6cksrk/kyThgWWQs/a/2vlobp/mc6u27ahd7cHbuvBfabODw5vUDUFRZap0kqDxGRwwZ69/mBLEj31UuXle8emqjKkiCV/2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=X2NjWf0T; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso5326410f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:29:51 -0700 (PDT)
+	s=arc-20240116; t=1752589809; c=relaxed/simple;
+	bh=mW9VAE2TJjvxLq6UzQzdZhUmSE1Tuy6bfCbsUPXOfhI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DYlZDs1mVRoVapPVIoFND3H3O63VX5spehoqfNHG7/RAOiWpXjVcJkMWAD5QNZDZv2RntxZG7jxasE3Z7upGY8Ozvr0EaXc8eS3RisE7lHhGJibtsxzg0naXKXKCIK7gZHZdPm8B9im8fG+vrvOWlG4+dKu3yOo+O/QOJnqYnCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJwAzbcG; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-235ea292956so51954145ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:30:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752589790; x=1753194590; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yaCO1i2HMoUVQ2obL9JJgr4t9a4dYHoNbtH4QyB3txg=;
-        b=X2NjWf0TuPkNFeLgKZpPbt8dBrqQPGhnoR6Q/hsgLBiQCBQhKu1R6Zy9hFtg2Gmhkd
-         9NLvKTqsFhCZSJVdCmzvsCIpjJ4/39JagA9X+nF/58pK5Goitv9NKMNECiysHA1QIfN5
-         4jG5J9hMwgJuxL9RVg0ZlAwC6vgcaqWkQn7wLIvPOvuzC7eZBIAyz0y9rqQFE+C1eN4B
-         3nvf3a9so/+jvPy7cZKUvrI6Hhaw2pFPDQdc+FiJwFXThNSGq87o/CF5HaA6bIsTyoY6
-         O+j4BPW4KXC4MaVCFsW/XEU/Xc/OFzUYLKUhmMQ7HL85byDnAnIlwXmc49RpcZSd3+Ks
-         yXvw==
+        d=gmail.com; s=20230601; t=1752589807; x=1753194607; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eqcUPxb6xdqWPY4cjaM3T6PJEbwEKQ6EYUQxE3AEwh4=;
+        b=aJwAzbcGFFzfhz3GlYWrpL5hq+2AB2iXdNHTE/mlozVYOh+6VA6etD39UOtQ9efnRk
+         iejF0jmcxOqpJi312V9eXsYyoNZzwqh+tqc5aOUfOezvH6c6x6FQry+ygwl4uQEP+fwE
+         NTJIb6DUbS1DpVeqygXAMcjR5YBgDKEwhqhFuXM9/ywJpaHyjmg1oG2hv5U6pFQ3ka7I
+         FsNNqkIdFZLvkJWUf48FBVMkiBG3/BUL0rrVWfYqch9dZvimuv2Dt13XxV2OiuKbMZ2s
+         +Yea19EQXNe/gZ/hgKeLA9s7tsY8V06GvEZnxTgv66+yoF8oR+2+gq8pKySlCoSYiFGi
+         B+3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752589790; x=1753194590;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yaCO1i2HMoUVQ2obL9JJgr4t9a4dYHoNbtH4QyB3txg=;
-        b=T7cYwmDDp5CLX+3QtRTgzkpDwGODue/S1eg0/8pBvfcr3QPnkgZnE3uz0FEwwAmDJW
-         DtxyRfN7Jic8aaHvAa11qXcf04hsxeNtVP+vrXbjMduJf/szvrJLp91FI1eeEObTccV8
-         k95mxe71y3SzQb6aNFzI+DBqOUzpuR+I7Ze/pOXrdsXUuthBLpAq+wujtwUwAnOlBJGK
-         FBIzlUwe1d2jA+CIV49SpMXsWYYMfosqiaQlBKqZqhVXrClNSe+eC3pkhRT8NCIxTJol
-         F1x+6WvhA6Xf/k/iYneYunFGWm321LOs8dzfZ9epowNPOPT6YYuCI4rA3JT50N/hat8S
-         qk+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXteZygCePhBm6K4aj0kiAkHeETlhIMxTkJeCIdLDhAcK51V3VckAOHKaraI6DaYMp81rRE4aXsYFJ6aZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJnezlofojFNMlzKFTWcgxo7vFqcHvFhEl4xnWcvWoaWzkXVNV
-	FwCOSXR3NuHHZq7jT/OaSwN+QORULwWzkDphXUxpGPZX8rgmG+CjzolKUQimGqbO6qM=
-X-Gm-Gg: ASbGncu3xqhKjWeY6kUFojjaTplpCmEMQjQGp4VhWnDGaeDVtCzoRkQQRPevU2kzhap
-	D0dJYmXsaAgDWLSTgr2nhGzfy7maW3JBIwSa1v4KDIa5NYeZFvr/oZGNGUDsVkoCbNC9ViKgRFG
-	zmmU/Kx6IBrQpnE71XqXJ+o8+p/Cbc0oIib4CiTKFWJYQAzu4wRJzi2Ru+UEF9ckcdJ3CgbxsHk
-	qX172jeKKfkBJO10G82MPbtXaBwkG1B/Izd5CbjwbWSW+v6DlATS0gbS+bziQHXnYxIg5sO/tNw
-	d4v2bndKgy90s8bZcCxMMvud3XwqmK1Wg9jnSzQQtg3Xg1nPUUdNhqk99R8ZQ3WQPth2+4WBZNa
-	BuAxCIj8DpxLSYlZknSpdd0w=
-X-Google-Smtp-Source: AGHT+IG+pbfHokdo3TaJ16zifD4swF4fUN4KhF43m51PEbV24kQ3tkZ0HUMR5PbjtEK1JA+TtM0XtA==
-X-Received: by 2002:a05:6000:18a2:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b60a155f0emr2276454f8f.17.1752589790182;
-        Tue, 15 Jul 2025 07:29:50 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:5631:db97:f06d:3c45])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26f45sm15447531f8f.92.2025.07.15.07.29.49
+        d=1e100.net; s=20230601; t=1752589807; x=1753194607;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eqcUPxb6xdqWPY4cjaM3T6PJEbwEKQ6EYUQxE3AEwh4=;
+        b=hTqMmNCBV5pIEHP0lpyLglAz+BykaJbSG620dxnSbys5GEi/9SoUymJ+kdSiW0x+d9
+         RU3Kn9/CUAy28p4wdsWlv20KKScMFroO5NaBdc31uHX6kKo6MG7DsMxUS5L4HqUzJn6g
+         g2WQcpHdz4XfYjiFartWabMnJJFcEbEU5WhXyR0P72Hk+K0GW+2v30PbnVCmWqk6+S2B
+         TI1bWEGq8w0p5qsKmWAWJu4O1l60VUgJssZEEpLiqjTy5H0fBIgJ4kQm4kDMBN2QgLYd
+         jBelvox6+UHYEdXquQAolx4uvtV1yauqi6/a7+6rlYDQPX3/F9+Bx8FbHlzWA+ktA+i3
+         j9ig==
+X-Gm-Message-State: AOJu0Yz0yNGBkRw3AKxPu5wOgGcss6ZhM7h/f9+9J2ulG5gIsuWi1NP7
+	55hIzDh8vGwyPvQJu0a/RCw4MyOz3l+l4JrO4ZdtpXMEti9YmbFl/mnnIVw+TQQv5A==
+X-Gm-Gg: ASbGnct+fIi3EkEjWFKy06LSWciuCMSOi39kcbBjxxZPi3fKtYtphtQPQZyxOS7cBy6
+	5p1wxbNU5WtZiQQ9CybD0i/VuB98MXLVW6dPWIhZAp82tKhCig7/RxZJkDM0lA5f1ncWtWYvMUE
+	jLqJTx0FPqeZ6nveMfWkXPu2+yY3CX+0elkD133ai6CByIn3wZTSB61QlvG3UpgsY61V9zuKz5L
+	3tN0jvIXAeMimlSBGOL3xMqdBC6lc1Ad4anB5TMyW2ZtFzJqIAUGAceBVjk5ZmZfD3SwmFbz3Vb
+	CVPUFmLW7pXX97mRzWHinnPSV9389VOYpcKFl7Cc/q6sNz37j8U+B0dPLRphJmu6iF+ijPscKeB
+	Tj1D2qHMBx+ajSUwjKwI+eBpW1h2n9uqNfgP4Vbxe5oTdhXIiyG+Rl352PPUigA==
+X-Google-Smtp-Source: AGHT+IFPzy7sGURmn9vPvdxhyT9WZDJz5+UOP5GT6PKA151WE249+Q17RQgcQ054fmCgChTU1P/c8Q==
+X-Received: by 2002:a17:902:d58c:b0:235:f298:cbb3 with SMTP id d9443c01a7336-23dee1e84c4mr244786125ad.18.1752589806766;
+        Tue, 15 Jul 2025 07:30:06 -0700 (PDT)
+Received: from max-MacBookPro.. (36-237-135-199.dynamic-ip.hinet.net. [36.237.135.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42ad268sm110515795ad.77.2025.07.15.07.30.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 07:29:49 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Hugo Villeneuve <hugo@hugovil.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] gpio: pca953x: use regmap_update_bits() to improve efficiency
-Date: Tue, 15 Jul 2025 16:29:48 +0200
-Message-ID: <175258978660.65843.2188692091974545508.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250714133730.6353-1-hugo@hugovil.com>
-References: <20250714133730.6353-1-hugo@hugovil.com>
+        Tue, 15 Jul 2025 07:30:06 -0700 (PDT)
+From: "Meng-Shao.Liu" <sau525@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	"Meng-Shao.Liu" <sau525@gmail.com>
+Subject: [PATCH 1/2] samples/kobject: fix path comment
+Date: Tue, 15 Jul 2025 22:30:01 +0800
+Message-ID: <20250715143001.27407-1-sau525@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The introductory comment still says the example creates
+/sys/kernel/kobject-example, but the code actually creates
+/sys/kernel/kobject_example.
 
+Update both comments to reflect the actual sysfs paths. Also,
+fix "tree"->"three" typo in kset-example.c.
 
-On Mon, 14 Jul 2025 09:37:30 -0400, Hugo Villeneuve wrote:
-> Using regmap_update_bits() allows to reduce the number of I2C transfers
-> when updating bits that haven't changed on non-volatile registers.
-> 
-> For example on a PCAL6416, when changing a GPIO direction from input to
-> output, the number of I2C transfers can be reduced from 4 to just 1 if
-> the pull resistors configuration hasn't changed and the output value
-> is the same as before.
-> 
-> [...]
+Signed-off-by: Meng-Shao.Liu <sau525@gmail.com>
+---
+ samples/kobject/kobject-example.c | 2 +-
+ samples/kobject/kset-example.c    | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Applied, thanks!
-
-[1/1] gpio: pca953x: use regmap_update_bits() to improve efficiency
-      https://git.kernel.org/brgl/linux/c/2aa8ccab5ae67281e4d3660f8d9ee68d8b76fcef
-
-Best regards,
+diff --git a/samples/kobject/kobject-example.c b/samples/kobject/kobject-example.c
+index c9c3db197..e6d7fc18e 100644
+--- a/samples/kobject/kobject-example.c
++++ b/samples/kobject/kobject-example.c
+@@ -13,7 +13,7 @@
+ 
+ /*
+  * This module shows how to create a simple subdirectory in sysfs called
+- * /sys/kernel/kobject-example  In that directory, 3 files are created:
++ * /sys/kernel/kobject_example  In that directory, 3 files are created:
+  * "foo", "baz", and "bar".  If an integer is written to these files, it can be
+  * later read out of it.
+  */
+diff --git a/samples/kobject/kset-example.c b/samples/kobject/kset-example.c
+index 552d7e363..579ce1502 100644
+--- a/samples/kobject/kset-example.c
++++ b/samples/kobject/kset-example.c
+@@ -14,8 +14,8 @@
+ 
+ /*
+  * This module shows how to create a kset in sysfs called
+- * /sys/kernel/kset-example
+- * Then tree kobjects are created and assigned to this kset, "foo", "baz",
++ * /sys/kernel/kset_example
++ * Then three kobjects are created and assigned to this kset, "foo", "baz",
+  * and "bar".  In those kobjects, attributes of the same name are also
+  * created and if an integer is written to these files, it can be later
+  * read out of it.
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.43.0
+
 
