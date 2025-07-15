@@ -1,39 +1,80 @@
-Return-Path: <linux-kernel+bounces-731286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4E0B0523C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:53:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CB4B05241
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F5017B36FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:52:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538521AA6563
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5D826E718;
-	Tue, 15 Jul 2025 06:53:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1276226A0EB
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9449926FA67;
+	Tue, 15 Jul 2025 06:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uuHIrnti"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041E726E70B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752562411; cv=none; b=c5qnaAxzfMHx4/ClWMaKgQxLA+IYa6WeLts6pIfm5SqcoHJCgf+n2AogoTaZiuB7oKds/MEp7ZiFYiZTu18VEQqHfBkjyMKplCFz0tleJGetR+A2XHToebhqmQu6pBJXbKBmjlMInJxZA5y31seJvTI0u+DiFgfTcjUx/g0fWkU=
+	t=1752562413; cv=none; b=UxYHg8btGVfYMEZm927u8uY9KKIIuBqwrlz2nB2bH7S1BlLEa/kzPixo3ajhkDxtA8MP3tLaUYGl5n/lf5/ADc6NjthaYir7VXSk4x+XoUMqUFLTvJCFUdGPXyJEHLXPAjPx80NXMpsdxMpFxWgbdTtxNX0TOpcfby61GoI8hbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752562411; c=relaxed/simple;
-	bh=bDQOdgNeBInUAX9BNvl8ibVHDUes0QgSrzPKjG3sHY4=;
+	s=arc-20240116; t=1752562413; c=relaxed/simple;
+	bh=7Pgt3265MUvv0KO/DG+JIDcgier23nzqYxB6scwqRbM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bAUtgq7NKLqXMwSFCwjf3hAVqAZVbQTmN23WAqA68mZDYgcQJwrXrvxBQJ4GtKjUNf86HNjn/E5Iy9KuAEAo39+AxXgwEH0kb/SoWm5psBMICSDqMkrIUGa4zOuz/vwGIbU4FP+fpBJt6Kl6OzC7lL+I9V5swLBWqNKcOYoOuKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4171E12FC;
-	Mon, 14 Jul 2025 23:53:20 -0700 (PDT)
-Received: from [10.163.92.132] (unknown [10.163.92.132])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DAC13F66E;
-	Mon, 14 Jul 2025 23:53:24 -0700 (PDT)
-Message-ID: <cd8cba00-b495-4aab-b63c-699bb2c12d48@arm.com>
-Date: Tue, 15 Jul 2025 12:23:22 +0530
+	 In-Reply-To:Content-Type; b=riqXkJkwcpUeMXGqMXcNnoqdSxDNi+c5oBIFg8kTqpM8zz1nPYxjGn6SitIG8lIchwXk0o3U8CFPTocU8lP+zULgIoGRDfuIvkKbZub32POwa+MCUJj2bOycMXjp8I4/RhNctG++PxKbIqxSNPfUYGgZjxu6Ve4EpuMkLD2Ddds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uuHIrnti; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32f00cb318fso5806161fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:53:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752562410; x=1753167210; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IvcOD4Cn8eI42dR9/vuoZROCEodBzgnn8pqK2R/ysOA=;
+        b=uuHIrntiXVwd0zUT0sDuSkjZTDDfill65Dx/43o8Euv00KMBwcesYrjIW+Bj6IvBCj
+         cS3/biyblTHaHzV+U7KF6UB9+XDUhLgvSVuYyajNSp08ATXYEQekD6gjiA0yLAUiH/s7
+         B9iVIDYM3+2IgEkrWxw4M52ulWQmHyLaxXsNbVorPffNIGEPTaKHx7t9/US+h6m+3nUc
+         a3IEuD7NJ4Wc9pF5Lks5n356u0yRHXqkW5SNo9kgxeNGDWGCEwWCdaUOr7yR7jsmpmrn
+         ogp6alvjQAhdMgKEp1qpWoWyReXbv+eylOhrPJPvN9B2tekORXKjITTKwdT4QuWlKHvt
+         1JWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752562410; x=1753167210;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvcOD4Cn8eI42dR9/vuoZROCEodBzgnn8pqK2R/ysOA=;
+        b=pgn+9sO0pJfTacaJVS8QzOtiHNF3JCIx+rZKOv6VCiJA4CbrLoM9NDkJe979KQNWSO
+         jsrnQIJlP+RP8Zus+EUeTfznJdRCGX0AFaQjcAIBRtSqlA2PKzvJr5pmFRLJPlQIuqSe
+         m+VogWKoKtfRSMbukEvaMFv9hX+0AiSQHXjEELjqgVDUbodMGSDJV2xxSHrMAKdqlRmF
+         KtipcR6XQEc904pVbulueFe9YZMtQHcrvNErGwNnBanBm8ND7QU4SAC2UZs685XphOqT
+         ht6dih2og4NU+9F6IKMgoE2ditr1KYftt5BuXeS6OlyhLh9F0osJq1zet4ct+ze0vels
+         tV+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWf0hl+2msI7RpgQ9NGzG2d2CxJmr8vXZF8kcUBcTEcOsMTGywNAL9pZuTr/l3NCJF7xZdmVUdZgQucfOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymK8Fv/+vfii1MTDJ7XN+sTUAAHvA0A1CHAJzcxixn3LY+4X2h
+	76oUj6QlbIuOFvbyWInRuf1CmuWyBPoXNxFlzMZ5g2VE8Rx6H0KF9FlRX41plJJJrDU=
+X-Gm-Gg: ASbGncums0T0wOQksFTAV3V3T6xOjRejWsIRo5YXNPefp1hGTfgSdNxy2RiBuqe18Gq
+	gJfPKBuf+Hi5SvF0ETzm+YRp8KqzZUYR8PnaSNUtggXH/M5+/Kh2a/lxXWHikNZjBA2wMdjxwCK
+	c5XEdt7Hq3ew6eccoMQZs3bXy9OOcP9iZ+Iv8ckI10RQzdH02+/N6eUo76d3waSxWRFMZw99pjl
+	Mh8Lp4SeBaQg6VrVSDDId9IU/J4GSRuqp+x7GkrR1mwdYUHLMZh95s3CYciisQB0GC1mM/6aPap
+	UpnrV1uqSHP2Io9Xjk6G5rogDufu1CA3TqfvV158r61b5HxqkEFZhUstcAE4zY++X5gQjEFTBc4
+	JUJOcTSLFgrZfIgHiiGWVYc/h254YZdDnsrk15eCdHRCwl2SOhgysBPCAXZWACIjqHy5tGUmQQF
+	Cb
+X-Google-Smtp-Source: AGHT+IFodu1HnNtyzy2FJlD/fynnVpnoIvnN8l+K4AJ3AsUd4f17BT9WXmpIiPUMoelKfh8FHowKUQ==
+X-Received: by 2002:a05:6512:32c1:b0:549:8fd0:ddaa with SMTP id 2adb3069b0e04-55a1fc78578mr60358e87.0.1752562409993;
+        Mon, 14 Jul 2025 23:53:29 -0700 (PDT)
+Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b8abfasm2204780e87.255.2025.07.14.23.53.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 23:53:29 -0700 (PDT)
+Message-ID: <9361e954-e2c9-41c6-be4c-12b0e4f367f5@linaro.org>
+Date: Tue, 15 Jul 2025 09:53:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,105 +82,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/28] coresight: Change device mode to atomic type
-To: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Levi Yun <yeoreum.yun@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Yabin Cui <yabinc@google.com>, Keita Morisaki <keyz@google.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
- <20250701-arm_cs_pm_fix_v3-v2-1-23ebb864fcc1@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250701-arm_cs_pm_fix_v3-v2-1-23ebb864fcc1@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v7 00/15] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
+Content-Language: ru-RU
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 01/07/25 8:23 PM, Leo Yan wrote:
-> The device mode is defined as local type. This type cannot promise
-> SMP-safe access.
+On 7/11/25 15:57, Bryan O'Donoghue wrote:
+> v7:
 > 
-> Change to atomic type and impose relax ordering, which ensures the
-> SMP-safe synchronisation and the ordering between the mode setting and
-> relevant operations.
-
-
-But have we really faced such problems on real systems due to local_t
-or this is just an improvement ?
-
+> - Reimagine the PHYs as individual nodes.
+>    A v1 of the schmea and driver for the CSI PHY has been published with
+>    some review feedback from Rob Herring and Konrad Dybcio
 > 
-> Fixes: 22fd532eaa0c ("coresight: etm3x: adding operation mode for etm_enable()")
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  include/linux/coresight.h | 25 +++++++++++--------------
->  1 file changed, 11 insertions(+), 14 deletions(-)
+>    https://lore.kernel.org/r/20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org
 > 
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 4ac65c68bbf44b98db22c3dad2d83a224ce5278e..5fd3d08824e5a91a197aa01daf0fc392392f3e55 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -251,15 +251,11 @@ struct coresight_trace_id_map {
->   *		by @coresight_ops.
->   * @access:	Device i/o access abstraction for this device.
->   * @dev:	The device entity associated to this component.
-> - * @mode:	This tracer's mode, i.e sysFS, Perf or disabled. This is
-> - *		actually an 'enum cs_mode', but is stored in an atomic type.
-> - *		This is always accessed through local_read() and local_set(),
-> - *		but wherever it's done from within the Coresight device's lock,
-> - *		a non-atomic read would also work. This is the main point of
-> - *		synchronisation between code happening inside the sysfs mode's
-> - *		coresight_mutex and outside when running in Perf mode. A compare
-> - *		and exchange swap is done to atomically claim one mode or the
-> - *		other.
-> + * @mode:	The device mode, i.e sysFS, Perf or disabled. This is actually
-> + *		an 'enum cs_mode' but stored in an atomic type. Access is always
-> + *		through atomic APIs, ensuring SMP-safe synchronisation between
-> + *		racing from sysFS and Perf mode. A compare-and-exchange
-> + *		operation is done to atomically claim one mode or the other.
->   * @refcnt:	keep track of what is in use. Only access this outside of the
->   *		device's spinlock when the coresight_mutex held and mode ==
->   *		CS_MODE_SYSFS. Otherwise it must be accessed from inside the
-> @@ -288,7 +284,7 @@ struct coresight_device {
->  	const struct coresight_ops *ops;
->  	struct csdev_access access;
->  	struct device dev;
-> -	local_t	mode;
-> +	atomic_t mode;
->  	int refcnt;
->  	bool orphan;
->  	/* sink specific fields */
-> @@ -650,13 +646,14 @@ static inline bool coresight_is_percpu_sink(struct coresight_device *csdev)
->  static inline bool coresight_take_mode(struct coresight_device *csdev,
->  				       enum cs_mode new_mode)
->  {
-> -	return local_cmpxchg(&csdev->mode, CS_MODE_DISABLED, new_mode) ==
-> -	       CS_MODE_DISABLED;
-> +	int curr = CS_MODE_DISABLED;
-> +
-> +	return atomic_try_cmpxchg_acquire(&csdev->mode, &curr, new_mode);
->  }
->  
->  static inline enum cs_mode coresight_get_mode(struct coresight_device *csdev)
->  {
-> -	return local_read(&csdev->mode);
-> +	return atomic_read_acquire(&csdev->mode);
->  }
->  
->  static inline void coresight_set_mode(struct coresight_device *csdev,
-> @@ -672,7 +669,7 @@ static inline void coresight_set_mode(struct coresight_device *csdev,
->  	WARN(new_mode != CS_MODE_DISABLED && current_mode != CS_MODE_DISABLED &&
->  	     current_mode != new_mode, "Device already in use\n");
->  
-> -	local_set(&csdev->mode, new_mode);
-> +	atomic_set_release(&csdev->mode, new_mode);
->  }
->  
->  struct coresight_device *coresight_register(struct coresight_desc *desc);
+>    Both the clock name changes from Rob and OPP changes suggested by Konrad
+>    are _not_ yet present in this submission however stipulating to those
+>    changes, I think publishing this v7 of the CAMSS/DT changes is warranted.
 > 
+>    Its important to publish a whole view of changes for reviewers without
+>    necessarily munging everything together in one sprawling series.
+> 
+>    TL;DR I moved the PHY driver to its own series review comments there
+>    are not reflected here yet but "shouldn't" have a big impact here.
+> 
+> - Having separate nodes in the DT for the PHYS allows for switching on PHYs
+>    as we do for just about every other PHYs.
+>    &csiphyX {
+>        status = "okay";
+>    };
+> 
+>    We just list phys = <> in the core dtsi and enable the PHYs we want in
+>    the platform dts.
+> 
+> - The level of code change in CAMSS itself turns out to be quite small.
+>    Adding the PHY structure to the CSIPHY device
+>    Differentiating the existing camss.c -> camss-csiphy.c init functions
+>    A few new function pointers to facilitate parallel support of legacy
+>    and new PHY interfaces.
+> 
+> - A key goal of this updated series is both to introduce a new PHY method
+>    to CAMSS but to do it _only_ for a new SoC while taking care to ensure
+>    that legacy CAMSS-PHY and legacy DT ABI continues to work.
+> 
+>    This is a key point coming from the DT people which I've slowly imbibed
+>    and hopefully succeeded in implementing.
+> 
+> - In addition to the CRD both T14s and Slim7x are supported.
+>    I have the Inspirion14 working and the XPS but since we haven't landed
+>    the Inspirion upstream yet, I've chosen to hold off on the XPS too.
+> 
+> - There is another proposal on the list to make PHY devices as sub-devices
+>    
+>    I believe having those separate like most of our other PHYs
+>    is the more appropriate way to go.
+> 
+>    Similarly there is less code change to the CAMSS driver with this change.
+> 
+>    Finally I believe we should contine to have endpoints go from the sensor
+>    to CAMSS not the PHY as CAMSS' CSI decoder is the consumer of the data
+>    not the PHY.
+> 
+
+1. This is an incorrect assumption, unfortunately it was not discussed
+previously for whatever reason, good news now it gets a discussion under
+drivers/phy changeset.
+
+2. The whole new changes for legacy/new CSIPHY support is not present
+in v1-v6 of this changeset, it just appears out of nowhere in the v7,
+and since it is broken it should be removed from v8 expectedly.
+
+It's a pity to realize that instead of providing any review comments
+for the CSIPHY support series sent to you one month ago a lot of time
+is wastefully burnt on a broken by design change development.
+
+-- 
+Best wishes,
+Vladimir
 
