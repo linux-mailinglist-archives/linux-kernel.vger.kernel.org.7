@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-731264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21198B051F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:40:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D1F8B051FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1045C1AA6524
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923D91AA653D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F5A26D4F9;
-	Tue, 15 Jul 2025 06:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB92C26D4DA;
+	Tue, 15 Jul 2025 06:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T1sm9XCl"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSw8HgnE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4684626CE1D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E634126C399;
+	Tue, 15 Jul 2025 06:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752561618; cv=none; b=dUqdRearZ0daf6usRWZwX0k+BbqJmwWNY7ovR8z5EUKKiARR5Yw3WjztoQqbwuGUTXTtKFekEXPlC8Xs8B7+FqSWozBCLaYLm9pDGdZ5sREbRGfemvq0W+3VEz0mba2XOFYxEJOwXtRx7CBwL3/HbtoeNdyePNoghaW0m5FaoKE=
+	t=1752561645; cv=none; b=j3ixK6kG7tnmnyhC8LHgP42Y1k03a/kl6+1P9Ba2Nwx4aNSY+paBlcE1UvuPkDMepRfq4mUeQPzXBvLqalYTOrJL4eKLnhC+mbwU4Wcg6pk0l4yfjICBJN3FHrD0cQSiFci/3XnNXbXOrm2eb5pv9Pd0QVit0OFltN2c5WiTf0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752561618; c=relaxed/simple;
-	bh=XvhUwch1kWk+h7hXn8TTsbFUD7dvqo/TCnjlMoY8wd4=;
+	s=arc-20240116; t=1752561645; c=relaxed/simple;
+	bh=NcRJjl4Mv1ocjaYB0zXDMrs01L22pqUDn/v1rJ9CA6A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R7Pv+8XSUlRVcW1GPJQIzSCocb3JSsjIGd1CUA9n1NyJc0HNg+y//s0W5/S2MH4Ub2zAkTL2XP3ISX5F7rQagDP9mb7pva7ZPO9nx1MYd/iBqivUqcs8pahusA/+7H6ROakcAHp7T3Ke2ZlzmfdUAk0pqKhExZdqyE3eB/Mcts8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T1sm9XCl; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5562a92734dso770294e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:40:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752561612; x=1753166412; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tIQ0MAA7ilgsnxpjHpbsqjmKUfNKURLm5JM6QSNd4g8=;
-        b=T1sm9XClcdjyQFwItMITvys5cQI8JEk6Umd1TG/Zj5ieX//afOIqm370efy1SEzhv5
-         wc0dmvJFqHf6AeJGJLER2KGNlRMV7uqWlVDk/PyDLyuUMXg+2MzaIzmaaUg2IGKIjtYG
-         q/3cGSnz41ghCUKsoIKJ0f7rbMRXd5EvbQoclrCtrA5GnXhaUuHh+434QtIjavZ9v6uU
-         hbHKD+tCWgp5bt6m+9NY88SH+dWSKEUcXyU1HS3XR4Y+2ik7LDOu/hsmxZ9U0utzQ1G7
-         5f9CCqWdScFflJjJmoZ8WWWiOafZrBTyPoa39tF8MygHaCBDKtNKve1vcgKreEi+vwcV
-         7tYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752561612; x=1753166412;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tIQ0MAA7ilgsnxpjHpbsqjmKUfNKURLm5JM6QSNd4g8=;
-        b=M6JDxGINmk1ScMUI5LaB9bJpoF1J2x1zA89ju2f2yREz2XHctR7RDJeEVVycQJ0voN
-         rvymPC2t+q2zweiltmLxm3RXSo8VxNNTAcJTKQPilba2+ZDNMkNMapyQk0TGlKThmq9T
-         a5AVPtZ2YML8HJY4cco/zURn9nGbjHs/nwLIoT25XaLNlNePD8VVeEnw3+jNXy7V4ye4
-         7KtmDla0cp26qs8RSWBYnMuz6/yJ8eqG/5jYYpNGoBAxxD6vCXZ15okYEZ3/Tg1z6a+H
-         LBXvaDPZjrL84/SXd4eagzpQOBOsCKz65Yri+ikWdNfwns4j0hogm/1zE8oxzflRegT1
-         OnQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWki/L3NoJoqkCaTwSLqa0rrf73zLC0iMfnsTIgkvY4VIChYn3+uIf39jw3lkEZVJNSlPO4K3IQeRXXEYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWo1lp+u8FBOSPfdQkrGy7morTWVaKkczCombxSutI4mWbQiiv
-	e99DdScJ4B2xwv0SQluG8RGxXo6wArj4IsiY6aEPEJETeud0GL+0g/UuMJpBIkdZ2/Q=
-X-Gm-Gg: ASbGncvttfw9zXLPFIx0nzWrvBZUMAxaosJ4KgnIGCVTgA8yZUKAhnes5pa7I9dad62
-	YCLOxf08RGa22W7kMkemwke6gvf6EGMzT2rolDB/I7fy3WjkIw7W+4bG97ynyH83xoar2LxDrcV
-	CHGpw51RSH6Oe4wuGMJWrnQJWqKObmw3Taf5zIZnsDuVOMCcwYprn4FuwsxhJ0QPA1TgG8o0gW/
-	MicUfuuWMRhq7SpeRUCtC50/iOSXefTml23OxHnhNt87u+AaQ0IrSH8rRvULS/NCeWH6lPK/s9P
-	t8fbc9Yjn0LTfo59tx1tTynvzf3Qy8zgmq+Bjw7pbi544GMRZ7mLODA7YfQNFSwdTL2rfvRXCVW
-	hRyCXJO3qluARqeJQPtxwacMaHnq6jquvc5GS+NodgLQo/LXOrnRFsbM/gb/wzas/6q2gjMd07q
-	uP
-X-Google-Smtp-Source: AGHT+IGaFJXLkox1nF/8pLLN1OAvLc85Z5RHAm50nAQslP1unGzqc1kserBe9j82STD5G66WKnTIuA==
-X-Received: by 2002:a05:651c:1a0b:b0:32a:7d76:2660 with SMTP id 38308e7fff4ca-330872d2995mr581861fa.2.1752561612382;
-        Mon, 14 Jul 2025 23:40:12 -0700 (PDT)
-Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fab8bf2e1sm16881731fa.55.2025.07.14.23.40.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 23:40:12 -0700 (PDT)
-Message-ID: <dd3c2fea-2c85-4a4e-b048-68f95f4a7d5d@linaro.org>
-Date: Tue, 15 Jul 2025 09:40:10 +0300
+	 In-Reply-To:Content-Type; b=ftPF3qhuMQZWoP59RFU6IWfKjwi8wIp3fEaXkjbwgMTLbJONCO71odZSwD9Le/kl+9Ax6U18xIxzyX5yhkMv+Eb68q03NRXTgjvYhK55vdZ+dXdgaSZ0q1Sw4sAA0OV/Jj2YROYoDDlBwQadPyjSe3HXnUyXwH2fJIFrXtQpdWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSw8HgnE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 931C7C4CEE3;
+	Tue, 15 Jul 2025 06:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752561643;
+	bh=NcRJjl4Mv1ocjaYB0zXDMrs01L22pqUDn/v1rJ9CA6A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QSw8HgnEErSvFQtGk46ds0CtPvkogtmtXJxRDDOELtalmkryjJcJDkjaBhD/eeyjv
+	 6h+PwnJcr90ians+zxuF+8mwLsKYCD+0K/bJq5PFpJcAd/blwS9/9PGTjQr/CIEGxH
+	 0DkmffUWtkt/Aw39JmkrgRJ0Um3x2OTlQsAye4s/DZ5L82UzIPcHmVeNr5aGHlGaYe
+	 0z6OUIaYkPKyCgGOBlAhtXPzwFLe29z7ZMkajVMOgghldik4ltlTqidQoDIiM62Adk
+	 dop0oKzcPOdf3CfIa3CuUKxmcxc571F7CvOKy91p+krOVUyLWO2IHzHB34JauSFuA6
+	 qoUtbISTh58IQ==
+Message-ID: <eddf1e77-10b5-424c-b082-846bd2646f42@kernel.org>
+Date: Tue, 15 Jul 2025 08:40:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,44 +49,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: phy: qcom: Add MIPI CSI2 C-PHY/DPHY
- Combo schema
-Content-Language: ru-RU
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Bryan O'Donoghue <bod@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-media@vger.kernel.org,
+Subject: Re: [PATCH v5 10/14] dt-bindings: PCI: Add CIX Sky1 PCIe Root Complex
+ bindings
+To: Hans Zhang <hans.zhang@cixtech.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, mpillai@cadence.com,
+ fugang.duan@cixtech.com, guoyin.chen@cixtech.com, peter.chen@cixtech.com,
+ cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
- <20250710-x1e-csi2-phy-v1-1-74acbb5b162b@linaro.org>
- <8ed5eeee-78a2-4b26-989f-03676a9e5da7@linaro.org>
- <01080f5f-f3e6-4989-ac84-766c030dda35@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <01080f5f-f3e6-4989-ac84-766c030dda35@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20250630041601.399921-1-hans.zhang@cixtech.com>
+ <20250630041601.399921-11-hans.zhang@cixtech.com>
+ <20250630-graceful-horse-of-science-eecc53@krzk-bin>
+ <bb4889ca-ec99-4677-9ddc-28905b6fcc14@cixtech.com>
+ <5b182268-d64c-424c-9ada-0c3f120d2817@kernel.org>
+ <2b608302-c4a6-404d-9cc5-d1ab9a6712bd@cixtech.com>
+ <a7aac65e-848b-4bb3-bd52-963766410698@kernel.org>
+ <50592fad-850c-4dab-92d8-a71cb89daf58@cixtech.com>
+ <e3f6da47-25bb-450c-8660-f1406ed590e6@kernel.org>
+ <d6083e62-318f-4879-bac3-97ad26615458@cixtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <d6083e62-318f-4879-bac3-97ad26615458@cixtech.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/14/25 17:42, Bryan O'Donoghue wrote:
-> On 14/07/2025 15:13, Vladimir Zapolskiy wrote:
+On 14/07/2025 10:03, Hans Zhang wrote:
+> 
+> 
+> On 2025/7/14 15:43, Krzysztof Kozlowski wrote:
+>> EXTERNAL EMAIL
 >>
->> There is no ports at all, which makes the device tree node unusable,
->> since you can not provide a way to connect any sensors to the phy.
+>> On 03/07/2025 03:47, Hans Zhang wrote:
+>>>>>
+>>>>> We initially used the logic of Cadence common driver as follows:
+>>>>> drivers/pci/controller/cadence/pcie-cadence-host.c
+>>>>> of_property_read_u32(np, "vendor-id", &rc->vendor_id);
+>>>>>
+>>>>> of_property_read_u32(np, "device-id", &rc->device_id);
+>>>>>
+>>>>> So, can the code in Cadence be deleted?
+>>>>
+>>>> Don't know. If this is ABI, then not.
+>>>>
+>>>
+>>> According to my understanding, this is not ABI.
+>>
+>> Huh? Then what is ABI, by your understanding?
+>>
 > 
-> data-ports should go from sensor to the consumer of the data camss/csid
-> not to the PHY.
-
-No, this is an invalid description of links between hardware IPs, and
-this mistake shall not be copied to CSIPHY/CAMSS.
-
-> Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
-> Documentation/devicetree/bindings/phy/mediatek,mt8365-csi-rx.yaml
+> Dear Krzysztof,
 > 
-> https://lore.kernel.org/linux-media/20240220-rk3568-vicap-v9-12-ace1e5cc4a82@collabora.com/
+> I understand kernel ABI primarily refers to the stable binary contract 
+> between the kernel and userspace (e.g., syscalls, /sys/proc interfaces). 
+> Device tree properties are part of the boot-time hardware description 
+> consumed by drivers during initialization. They are not directly exposed 
+> to userspace as ABI interfaces.
 > 
+> If I understand wrongly, please correct me.
 
--- 
-Best wishes,
-Vladimir
+
+Then that's wrong understanding.
+
+The DT interface, documented explicitly and one implied by kernel
+drivers in case it differs, is the ABI, as explained in docs in the
+kernel and what we said on the lists thousands of times.
+
+Best regards,
+Krzysztof
 
