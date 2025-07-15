@@ -1,121 +1,216 @@
-Return-Path: <linux-kernel+bounces-731908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38904B05C3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:29:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10DBB05BEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27853A16AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9593B169433
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A6A2E62CE;
-	Tue, 15 Jul 2025 13:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149F82E3AE7;
+	Tue, 15 Jul 2025 13:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3hrbTAd"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gAG81uwt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B282E5B06;
-	Tue, 15 Jul 2025 13:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820482E2F0B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585852; cv=none; b=ElyShK543CIBMcyJUhpNMUdMOyY6ebuG+HTk7v24pbVUoWjDpw5tTTvDsZfI+0qVlI4GXxPa60FkoOla56awtkcq9kZACuzihYhNx0r712HG81Q99b9LaeXJ70wq9dcmI7Xnt6IFSKZMLPFl7NdHndWso4im9GiFygOQ1KWeRPE=
+	t=1752585838; cv=none; b=Uwptt3zlUpW9oiabMMbAT1E+JCucHJMJ2QhL1JZci7fn3KiFpSBTL9A02xi88QK451/UXWq8WLQo93XyYsk65tMXNxd+VRciPNQJIrpcIbfqtHE04duHTHcIIvOdc0BKMuyTGS0oILraU5i60MHQ169HjYHMeWajDFQ3khWkcM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585852; c=relaxed/simple;
-	bh=hJs2Tx12AhStRuVCGZs1ahFFxS9sjYhF28qp/H8h42Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H6d2htuudNypqCS15vMoScomm7XB3ETxQgU4FdZEaGnQ0EJqK7K334QaTePh/phCcyJZ5HXyPj1FBY7HkGnlx3Xh5dpcTHE9WWlydWswmobs6i+O/y7SGXlH++aferkGr9j34w2qKOB9oSsferZ6J3DNM2KoMRfIN+CalfBE+4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3hrbTAd; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32b4876dfecso65278351fa.1;
-        Tue, 15 Jul 2025 06:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752585849; x=1753190649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=puBkZe6ZLP/QGTaKOMgF9k4UNRq2jZxxdkE9m753KvA=;
-        b=W3hrbTAdetq9OnVfXCUQegBshcKRgEtF4wRL9D0pheIV6r/2/DbXrF0gOMcZxTFKw8
-         1d51EcmahvWQcHhddnkYmCdFPF/GiVv2wQkFVYDgFdKPoQiF+0ELKAGbBXvkm30fkbJ+
-         tIImGdlAKJT6FIZvkheGk++590SXB/on8yI4UN8LhycJIl5fgKnK2bQAVn9SYhLE0P2f
-         aPTrwjoaVROPOogXs8B5/gbouEJW6TWczEcrers4O56yhabTwuKqiC+lXI6y9K6mmnCe
-         cMMjHw+lg2LUDu6tIkHbAOJ/ENPouCQrPxoWal5Mi07PF/apceWOwyhRU8YJyOCmfJgi
-         0FBQ==
+	s=arc-20240116; t=1752585838; c=relaxed/simple;
+	bh=kXdFNneQJlViZW8aFNu2Wo0nKhuTK82N9UJKOX0x5tc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F3zF7vao5ANU/j1hT177e7BGNETIb0O8m89Xot2xY/ASZE6M7iC9gxwV9c0JXdg46AD3XztNgV3AcYQfC0vFloUk8QR1oRfMChaHXEy3/aRz6utGXb9IqI483IgZE0a75UeKPMnWGrZNU2PDBIZvrX11MvMjblMlBISQftxbt7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gAG81uwt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752585835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=I+njjEeJUfoyHVChoDSaOpmOHc6CwMwYKPYbj7nDuS0=;
+	b=gAG81uwt6fdY6E9aBkudzVqbG5XOLNFoJq8cQasFebpFDmJ8UsYC/uKfAUjfYGkw3zfTsr
+	VwkbFWG3JiwB5B6lxmJjR/vjZLG4bbrP2KBm0APnJQ52OWmfUs2qDMlBf+hNJMYMAF6lcu
+	zExfdn5+S3RSUtxSDZO7bbM5N5k+b6w=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-692-wllGIB21Nyqa2BBvcTX3Jg-1; Tue, 15 Jul 2025 09:23:54 -0400
+X-MC-Unique: wllGIB21Nyqa2BBvcTX3Jg-1
+X-Mimecast-MFC-AGG-ID: wllGIB21Nyqa2BBvcTX3Jg_1752585833
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-453817323afso34360235e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:23:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752585849; x=1753190649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=puBkZe6ZLP/QGTaKOMgF9k4UNRq2jZxxdkE9m753KvA=;
-        b=g/N1NRtOj6zlK0V2EIcbOOPpczdgJUVl+oueb2498bDmGgw3LmsXenmJ1f/j3vJWy4
-         Xu6xp9ApeoBgUTfjPLzDujX2xfZRFxF5mgwol3PVN3DFsjvcwwaKreQv5MnarbKc5OMs
-         MM5bGA4fVSHnuLRc7g/zzHi2bWbduz/yt5s+2uVbrweShuK2qteN+Y8JA1HB0012CZFk
-         5ou/ZVOnj7RAuyqmisxfc3fLOSK+HY2Q1zcwy2Lwl/eE8hY0BquZgZcrColICwy/tUxB
-         szX+Y2T+Pp/Zvnh6O3W94BAnzomQymS1FUMF9q6iaRpmi9+j6mD8/QfHUIqZlC2G5QfX
-         cPbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUX1kw5HjTaszHdCCHA5tSNszNo2XTzlUjItDtC8OMwhj+U3keq0deaDBwD8Wb5yAxUFZCtlW2B01LCjOw=@vger.kernel.org, AJvYcCWQCfB0UzFk/TDBHk8uaJdlFRpXWdWoZBrYxOr2zOT/w3KRQmMR+ZGHvY+HwmsA7p0AEABkcf3Jcy8URK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPW+rlCSiHygZdFdR0pKRSYx0hCnAXx1BX2wbM6Jv5O8rCbHNW
-	/tW/0sYNGZoeytk/dlOTINoKE8Nzsd0hlr3vC6QlzSIBc64Y3Azj0n/Zx8FnF4NHFzL0WxPIL2U
-	Qmpsw4DVHo/KCCDebeyGDZGf28RYoPRo=
-X-Gm-Gg: ASbGncvvxNFWZ3yRqhjkBsXGYp5+xWkUQlm7d5/+93Q+v7FP356CGsrcWai5ZvDLBEi
-	11PNxQfkPszmTttf3n3VkWNrkshEmno/tHeelHvtvUmHyAK5wKbdq+5GdlWBAbUM4cHg73JEdqJ
-	S5fudZtRpuWy0hp7Z+Ir+b100+9diPbE+sWmzQbKglNm3dUca7xnyiaR2SKfCxLNxDq7bs53Lyn
-	7GHVIJsYQ==
-X-Google-Smtp-Source: AGHT+IHyhgM9GTkj6ufKA4ysSb28NiNtRNmpxfHePlNkbW+SDylrwHOU1wSPErQE40fSVHRPCwqv5mVSW0wvtXQD2qo=
-X-Received: by 2002:a2e:a984:0:b0:329:136e:300f with SMTP id
- 38308e7fff4ca-330811fd7ddmr10104531fa.13.1752585848880; Tue, 15 Jul 2025
- 06:24:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752585833; x=1753190633;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I+njjEeJUfoyHVChoDSaOpmOHc6CwMwYKPYbj7nDuS0=;
+        b=BH2qqEEXY1jn9si3SjUwrkpsnNWgsLjHOIKlL9lgV510jdI39sfb5d/mj/RbvP4m86
+         3D5ph31k4XiQNZR3iy0lEMwZdgf576fIyeiTvcObBTaZSIDq28ZHZRm+uw++KS6sTgD6
+         8mt7wkyMFzXcWrpEXHwzhzQ65oQDFYwv+lLKUy2qo2R1QiLYesNK/m9BO9jq7RrNBL/k
+         VAvJrzVLrLjttOWYwNv+Ro5bhpywXtQix85VRPr581HxegyQVLd7ITtegzDMxvn2/GfI
+         gU6W1OW+7BigjwZ1PVhzSWPZkxZtuthouCLDtJOnZH5xMldCJMc0Oz7i/j+QYnyLm/g5
+         0cKw==
+X-Gm-Message-State: AOJu0YyUi7uk2iZBXBvKpB0nkYpWZL6sMVENnon6/sNYXspzduAhqvK3
+	zbRGq9yFdsEjlI+IB/G5xXo7MlxTFYa/MgFDFTEsu80QVSqcajYWYpuoblwVbetBdysOo5E5+Ji
+	6vHkldVFydvReEBq8soeyHCHrfBnb8dq+IzS4yiBcCRfK2fdiIR+4OloNf4rNWFuKETD6eW8WfA
+	DgdL6ewpLQHin3SKHzB/AIue697PsBP/MRcSUWVI2tabWWMaDO
+X-Gm-Gg: ASbGncuH84gRdFdcQo3vIDKJxCswg2KXQSHKwPBuWLH1nUUM0Ks0HLZffsPoiIIfWfI
+	9+4vH/wCsatbPsQvuBUUlV7ck9cXpr+0U27YjIyQ/BdNwo+s1WBgyOoRgLD5/27vgjFQ4ZvPVuQ
+	NtHnYL8+LZregrj/dMo1GFTpBEWeyb7nBddwshAA9zeC2vl/Gykc6T3JbxRV90okSwxmG9XEoFL
+	APKqZIfGq3hfSkKRjP7In3qqUjGBa/tOoTH/fJHXK5Q4XDq9fz1KqUZpPkuVR/6q+DegpUHvwKd
+	SFfdLlsDc0X5GYE7Uq1xuCzFhfzXe+Y0MpszmmZYari/vTOEzqKNuHCbn4PHlzOtkJf/Pj5UKR6
+	K2/jiqpiSKDxSHnZmlu9tWfyC
+X-Received: by 2002:adf:9b97:0:b0:3a5:7944:c9b with SMTP id ffacd0b85a97d-3b5f18808c9mr9743527f8f.16.1752585832844;
+        Tue, 15 Jul 2025 06:23:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHEkZDRkA14IcXQD+lQPeKL7StailaRmICkp2BJ1WOb6DFxYeWLDyvLUcHDBHF9Bf7MHtKqWA==
+X-Received: by 2002:adf:9b97:0:b0:3a5:7944:c9b with SMTP id ffacd0b85a97d-3b5f18808c9mr9743472f8f.16.1752585832205;
+        Tue, 15 Jul 2025 06:23:52 -0700 (PDT)
+Received: from localhost (p200300d82f2849002c244e201f219fbd.dip0.t-ipconnect.de. [2003:d8:2f28:4900:2c24:4e20:1f21:9fbd])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8e14e82sm15213383f8f.71.2025.07.15.06.23.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 06:23:51 -0700 (PDT)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	xen-devel@lists.xenproject.org,
+	linux-fsdevel@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Hugh Dickins <hughd@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH v1 0/9] mm: vm_normal_page*() improvements
+Date: Tue, 15 Jul 2025 15:23:41 +0200
+Message-ID: <20250715132350.2448901-1-david@redhat.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715121839.12987-1-shjy180909@gmail.com> <PN3P287MB1829790FCBF0CFF1F06585728B57A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-In-Reply-To: <PN3P287MB1829790FCBF0CFF1F06585728B57A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 15 Jul 2025 16:23:31 +0300
-X-Gm-Features: Ac12FXw4aZaN7rnjjlU4zPnr7LEkkyd1A8yPGqxz66xL1FgOMiNDSbYD9CZrEbs
-Message-ID: <CAHp75VcxKhz_+Kb4Y1qdrYKLrSBEEC0n77ptddSe4TVVtk18-g@mail.gmail.com>
-Subject: Re: [PATCH] media: atomisp: fix trailing block comment style
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: Michelle Jin <shjy180909@gmail.com>, "andy@kernel.org" <andy@kernel.org>, 
-	"hansg@kernel.org" <hansg@kernel.org>, "mchehab@kernel.org" <mchehab@kernel.org>, 
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>, 
-	"lkcamp/patches@lists.sr.ht" <lkcamp/patches@lists.sr.ht>, "koike@igalia.com" <koike@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 15, 2025 at 4:11=E2=80=AFPM Tarang Raval
-<tarang.raval@siliconsignals.io> wrote:
+This is the follow-up of [1]:
+	[PATCH RFC 00/14] mm: vm_normal_page*() + CoW PFNMAP improvements
 
-...
+Based on mm/mm-new. I dropped the CoW PFNMAP changes for now, still
+working on a better way to sort all that out cleanly.
 
-> >         /* Sensor driver fills ch_id with the id
-> > -          of the virtual channel. */
-> > +        * of the virtual channel.
-> > +        */
->
-> Preferred line length is 80 columns, so I guess.
+Cleanup and unify vm_normal_page_*() handling, also marking the
+huge zerofolio as special in the PMD. Add+use vm_normal_page_pud() and
+cleanup that XEN vm_ops->find_special_page thingy.
 
-Yes.
+There are plans of using vm_normal_page_*() more widely soon.
 
-> you can write it in a single line.
+Briefly tested on UML (making sure vm_normal_page() still works as expected
+without pte_special() support) and on x86-64 with a bunch of tests.
 
-/*
- * Also note that the correct
- * multi-line comment style is
- * in this example (with wider lines, of course).
- */
+[1] https://lkml.kernel.org/r/20250617154345.2494405-1-david@redhat.com
 
---=20
-With Best Regards,
-Andy Shevchenko
+RFC -> v1:
+* Dropped the highest_memmap_pfn removal stuff and instead added
+  "mm/memory: convert print_bad_pte() to print_bad_page_map()"
+* Dropped "mm: compare pfns only if the entry is present when inserting
+  pfns/pages" for now, will probably clean that up separately.
+* Dropped "mm: remove "horrible special case to handle copy-on-write
+  behaviour"", and "mm: drop addr parameter from vm_normal_*_pmd()" will
+  require more thought
+* "mm/huge_memory: support huge zero folio in vmf_insert_folio_pmd()"
+ -> Extend patch description.
+* "fs/dax: use vmf_insert_folio_pmd() to insert the huge zero folio"
+ -> Extend patch description.
+* "mm/huge_memory: mark PMD mappings of the huge zero folio special"
+ -> Remove comment from vm_normal_page_pmd().
+* "mm/memory: factor out common code from vm_normal_page_*()"
+ -> Adjust to print_bad_page_map()/highest_memmap_pfn changes.
+ -> Add proper kernel doc to all involved functions
+* "mm: introduce and use vm_normal_page_pud()"
+ -> Adjust to print_bad_page_map() changes.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Cc: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Nico Pache <npache@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Dev Jain <dev.jain@arm.com>
+Cc: Barry Song <baohua@kernel.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Pedro Falcato <pfalcato@suse.de>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Lance Yang <lance.yang@linux.dev>
+
+David Hildenbrand (9):
+  mm/huge_memory: move more common code into insert_pmd()
+  mm/huge_memory: move more common code into insert_pud()
+  mm/huge_memory: support huge zero folio in vmf_insert_folio_pmd()
+  fs/dax: use vmf_insert_folio_pmd() to insert the huge zero folio
+  mm/huge_memory: mark PMD mappings of the huge zero folio special
+  mm/memory: convert print_bad_pte() to print_bad_page_map()
+  mm/memory: factor out common code from vm_normal_page_*()
+  mm: introduce and use vm_normal_page_pud()
+  mm: rename vm_ops->find_special_page() to vm_ops->find_normal_page()
+
+ drivers/xen/Kconfig              |   1 +
+ drivers/xen/gntdev.c             |   5 +-
+ fs/dax.c                         |  47 +----
+ include/linux/mm.h               |  20 +-
+ mm/Kconfig                       |   2 +
+ mm/huge_memory.c                 | 119 ++++-------
+ mm/memory.c                      | 346 ++++++++++++++++++++++---------
+ mm/pagewalk.c                    |  20 +-
+ tools/testing/vma/vma_internal.h |  18 +-
+ 9 files changed, 343 insertions(+), 235 deletions(-)
+
+
+base-commit: 64d19a2cdb7b62bcea83d9309d83e06d7aff4722
+-- 
+2.50.1
+
 
