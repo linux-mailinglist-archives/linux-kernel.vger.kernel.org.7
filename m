@@ -1,130 +1,162 @@
-Return-Path: <linux-kernel+bounces-732627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF08B069C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:13:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7345B069C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9B3D1AA8406
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E8A4E5F66
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872A02D543A;
-	Tue, 15 Jul 2025 23:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D527D2D541B;
+	Tue, 15 Jul 2025 23:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4KlHejU"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQ0U49Ad"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCA24A3C;
-	Tue, 15 Jul 2025 23:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405CF19F464
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 23:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752621173; cv=none; b=SEhLtiEshyi1IuSwwv+Ejh1IyhYWKPkAQ/f9aYp9Pc3kBupqF0YcYO4pBrjUivS3idvSw5JUbD8FJ/rNULNl9LI9K/h1CV5xPrM426GmOQEF5LGFtLvGZVKJEzwo738j/S3LNBZ1mw5x7OozCCFV8oa6rOWTWJvMkqzGJN+TArc=
+	t=1752621269; cv=none; b=KPYcG5nKrM80+hfafVesiblDfSRvB7aDYw29AmrNp0Roosy10FViIRhQhHjU5m8n3juU+NYWSknGba55M0X4dvQBs9fRKAyqBUeqV9ldTEkPBj05c84AnT+Md0Io2qlv0uu5yyDd5AzWET6i+yjLJ757511ViJ8w6RtovMZMsC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752621173; c=relaxed/simple;
-	bh=cnSaEW1G2x+Vi12ZOlKThqIkkcwIaeVH5M8TjdoEHkY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jl0CUM6bTC6zZUcSyiuFWr5zncqHXjqMBatYMxX5jOSdy1rpIP/BDAufGa+B5h8JX5v7NKst5pd6M8vDXeJdCI1MsKc8kCt35h6V7rgvonmMJQ+cf/Ow/MktMnJ+Q4607GGJ5RCkx+JGdZ71YtlC28EzZNmOiLNOBFghWoIGXlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4KlHejU; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-23c8a505177so56048375ad.2;
-        Tue, 15 Jul 2025 16:12:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752621171; x=1753225971; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hAPRSx32Yoh23SFp75OsDGsW9gXJ3MOIHEnOw0OZgZI=;
-        b=G4KlHejUFZL4smMIC2i6wHh4dbmZRpIxq42rpDCPR9LDEcj35/3WuIUToPW/V1wJy4
-         VSDa235vdqmjdT6ELQByih/3yB0BQUQ1Ez3OqYytaTxbxcL4nEjgnE1U7U/+QRALm49i
-         keAW/KQezbpq5Cp4n9hsOdjwXgdzS38iUNZLN2y+/S42NIECqPZAGTqI6UGFiobaKOEQ
-         XaTdhwkaji6UBd5I2ZCpbd+XIjyOK137+iVlnqNfX6bQls5XQqWIC29bW8xP31PYlF5Z
-         NPcojUXc3UlAB2qz9NmGQfl4pfisjoCM+cDBLCKDUcvpEwfkIa2MP3AWd2u3o/2Zhx4j
-         +PTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752621171; x=1753225971;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hAPRSx32Yoh23SFp75OsDGsW9gXJ3MOIHEnOw0OZgZI=;
-        b=HOdLfUBGnmksB22/ii5R9/Y0ZBfDaizVqux5aSXhOy6t9QKwwPVgO124kd68iSX7GH
-         Jw7JC2D5pnoIcVLMRO6W1HkaDk9tHTEfHEILZQgSlpdf8bbU4UkzsQW3/GLlkM+1roiv
-         NOJDj+Q5cwYhRTzZO6ksCrX86Z6DSErhglCO9jXkltNiUwax42N0a5mw394L8eu38Hx3
-         Cdvv/EtWZ+eLqmsg3nEGgjYJalwfl6JRHRDWavMd1CbJu5wgyCcrNQaulm2chYIVE4gZ
-         1rZ+owfSQRP17TS3GsPtCh/mTouIpiLr7hQdX5Du9ysu7A748atnGZoG7I48GwA5GCyE
-         fuvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPeOoj4/uTOvO/lZTzT5jUbX0v0LmSEMm4gaCpRy362IQo2929QqkuvGRTrfCcguvBczRnB6+V@vger.kernel.org, AJvYcCX7SG55GKPHvU0ya6RqEAYpnN9WbGUrlXVnEdK8HAvWd6poBhL0AdzV0n+PslRXyiGoszpa6Yg9XPnaIbT3CA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzotWltq6VneCjWWar0dnoA/m1kYtlNU3PJpTFi8qFgsrI2afgQ
-	likA3zmGK5u4MdpbrKI5/44o1Ot3851wldimGsbTl4M4wLGf8tJDgo1F
-X-Gm-Gg: ASbGncvpOKCZEqaKNmm8QVlGykZGcptWWjiqU2Kggo9HgUegkUCVueug0ihHapy5Yre
-	cSCU/8FumqrsjLRXiBzE8WCPpa2FM8/atNfknLfyWug2nCBG0tcI+un5nGHAtoWoeLuNi91ZHVj
-	3o3JpM/qLNyToevauW1ku+r+weRIiGMlFXdFHokQ4icRbrZM2xoNMySG3IM9sGRXCeFY6UKKimO
-	lEOwmlLNQsQZ0DhvGHKfXXmTW8BDao3kThO4WhdnhxFw1gl17de1Zq7Tqn2G8hz86gvUwYhJVYH
-	LoyGLnYKnTjdyHR6qrZ8D2wMwN9WQYlbfs0zz/FotoB1wTE2MY7kveJ/jtye/rvcreZxkHRsnrT
-	+5TSdv8J87A+jPu6NocjJhzs4
-X-Google-Smtp-Source: AGHT+IGshsBE0EpvzBXYF91wyMej1W2e+64pc4pC0n1OrITGe6q1Y4ZuOz24myUDG1ahFwsL3M85jQ==
-X-Received: by 2002:a17:903:198c:b0:235:e1d6:4e45 with SMTP id d9443c01a7336-23e24f44b0amr9612455ad.25.1752621170746;
-        Tue, 15 Jul 2025 16:12:50 -0700 (PDT)
-Received: from p920.. ([2001:569:799a:1600:5324:4bfb:25b5:ccf1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42847casm119769045ad.14.2025.07.15.16.12.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 16:12:50 -0700 (PDT)
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-To: johannes@sipsolutions.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	syzbot+f73f203f8c9b19037380@syzkaller.appspotmail.com,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Subject: [PATCH wireless-next] wifi: mac80211: reject TDLS operations when station is not associated
-Date: Tue, 15 Jul 2025 16:09:05 -0700
-Message-ID: <20250715230904.661092-2-moonhee.lee.ca@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752621269; c=relaxed/simple;
+	bh=rfBtyqXY8rhywUkEMeVOyTnMFXFkjdOjRkkh6U0nA9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pzdt8g2G+NoC3y7FWyb2/AzyPoQx6l8M0FuYcpd3oACsp4N394eBYkEh/6kXXys0NJs+3E/RzHB+2cFh2YGDDkschZraOhywHY4rPW6zAA9xYykWDJbI/SzwS6ETKKd61dqbKBXvaNR1ryn2zgHYUMboqrNphwerkoFXBOMvgxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQ0U49Ad; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D17C4CEE3;
+	Tue, 15 Jul 2025 23:14:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752621268;
+	bh=rfBtyqXY8rhywUkEMeVOyTnMFXFkjdOjRkkh6U0nA9Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YQ0U49AdhwuiL+X7IAQjAQibQKS2AGzVMrJwmq4TSZ4Zi0aKDgYzD4vHRhLmgPjNZ
+	 8dMz7DD+C+cJPkzA+m/ZO782kZ9s2IE9mCobDNndNC7tlyNgqzYHjJFFVNXcv/sviD
+	 gHuT4s1i1eCE/RK6eJBldvQ3VsJ86TxCuawBUDVfzyx5WQlKHY9nzbJeM2WJ+vNENN
+	 DOicIUMX/OjIGzDrKkoxSWDW3IhF1Hjd42eR+K9qMwpA00NoDzfhGYbkpvWnBhfHSk
+	 rUdXmErFAkTGKo46kY8GYXQFZrjNBKL92Ktn+5INf2M2DzaWEQBvzUTjKPja2DBYO9
+	 UXES9geIEUmag==
+Message-ID: <9a825e2c-7183-4c1e-afae-a8c55e27a70e@kernel.org>
+Date: Wed, 16 Jul 2025 08:14:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvmet: pci-epf: Do not complete commands twice if
+ nvmet_req_init() fails
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Cc: rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250715091826.3970789-1-rick.wertenbroek@gmail.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250715091826.3970789-1-rick.wertenbroek@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot triggered a WARN in ieee80211_tdls_oper() by sending
-NL80211_TDLS_ENABLE_LINK immediately after NL80211_CMD_CONNECT,
-before association completed and without prior TDLS setup.
+On 7/15/25 18:18, Rick Wertenbroek wrote:
+> Have nvmet_req_init() and req->execute() complete failed commands.
+> 
+> Description of the problem:
+> nvmet_req_init() calls __nvmet_req_complete() internally upon failure,
+> e.g., unsupported opcode, which calls the "queue_response" callback,
+> this results in nvmet_pci_epf_queue_response() being called, which will
+> call nvmet_pci_epf_complete_iod() if data_len is 0 or if dma_dir is
+> different than DMA_TO_DEVICE. This results in a double completion as
+> nvmet_pci_epf_exec_iod_work() also calls nvmet_pci_epf_complete_iod()
+> when nvmet_req_init() fails.
+> 
+> Steps to reproduce:
+> On the host send a command with an unsupported opcode with nvme-cli,
+> For example the admin command "security receive"
+> $ sudo nvme security-recv /dev/nvme0n1 -n1 -x4096
+> 
+> This triggers a double completion as nvmet_req_init() fails and
+> nvmet_pci_epf_queue_response() is called, here iod->dma_dir is still
+> in the default state of "DMA_NONE" as set by default in
+> nvmet_pci_epf_alloc_iod(), so nvmet_pci_epf_complete_iod() is called.
+> Because nvmet_req_init() failed nvmet_pci_epf_complete_iod() is also
+> called in nvmet_pci_epf_exec_iod_work() leading to a doubple completion.
+> 
+> This patch lets nvmet_req_init() and req->execute() complete all failed
+> commands, and removes the double completion case in
+> nvmet_pci_epf_exec_iod_work() therefore fixing the edge cases where
+> double completions occurred.
+> 
+> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+> ---
+>  drivers/nvme/target/pci-epf.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/nvme/target/pci-epf.c b/drivers/nvme/target/pci-epf.c
+> index a4295a5b8d28..aad828eb72d6 100644
+> --- a/drivers/nvme/target/pci-epf.c
+> +++ b/drivers/nvme/target/pci-epf.c
+> @@ -1243,7 +1243,7 @@ static void nvmet_pci_epf_queue_response(struct nvmet_req *req)
+>  	iod->status = le16_to_cpu(req->cqe->status) >> 1;
+>  
+>  	/* If we have no data to transfer, directly complete the command. */
 
-This left internal state like sdata->u.mgd.tdls_peer uninitialized,
-leading to a WARN_ON() in code paths that assumed it was valid.
+Maybe change this comment to:
 
-Reject the operation early if not in station mode or not associated.
+	/*
+	 * If the command failed or we have no data to transfer, complete
+	 * the command immediately.
+	 */
 
-Reported-by: syzbot+f73f203f8c9b19037380@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f73f203f8c9b19037380
-Fixes: 81dd2b882241 ("mac80211: move TDLS data to mgd private part")
-Tested-by: syzbot+f73f203f8c9b19037380@syzkaller.appspotmail.com
-Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
----
- net/mac80211/tdls.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Other than this, this looks good, so feel free to add:
 
-diff --git a/net/mac80211/tdls.c b/net/mac80211/tdls.c
-index 94714f8ffd22..ba5fbacbeeda 100644
---- a/net/mac80211/tdls.c
-+++ b/net/mac80211/tdls.c
-@@ -1422,7 +1422,7 @@ int ieee80211_tdls_oper(struct wiphy *wiphy, struct net_device *dev,
- 	if (!(wiphy->flags & WIPHY_FLAG_SUPPORTS_TDLS))
- 		return -EOPNOTSUPP;
- 
--	if (sdata->vif.type != NL80211_IFTYPE_STATION)
-+	if (sdata->vif.type != NL80211_IFTYPE_STATION || !sdata->vif.cfg.assoc)
- 		return -EINVAL;
- 
- 	switch (oper) {
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+
+> -	if (!iod->data_len || iod->dma_dir != DMA_TO_DEVICE) {
+> +	if (iod->status || !iod->data_len || iod->dma_dir != DMA_TO_DEVICE) {
+>  		nvmet_pci_epf_complete_iod(iod);
+>  		return;
+>  	}
+> @@ -1604,8 +1604,13 @@ static void nvmet_pci_epf_exec_iod_work(struct work_struct *work)
+>  		goto complete;
+>  	}
+>  
+> +	/*
+> +	 * If nvmet_req_init() fails (e.g., unsupported opcode) it will call
+> +	 * __nvmet_req_complete() internally which will call
+> +	 * nvmet_pci_epf_queue_response() and will complete the command directly.
+> +	 */
+>  	if (!nvmet_req_init(req, &iod->sq->nvme_sq, &nvmet_pci_epf_fabrics_ops))
+> -		goto complete;
+> +		return;
+>  
+>  	iod->data_len = nvmet_req_transfer_len(req);
+>  	if (iod->data_len) {
+> @@ -1643,10 +1648,11 @@ static void nvmet_pci_epf_exec_iod_work(struct work_struct *work)
+>  
+>  	wait_for_completion(&iod->done);
+>  
+> -	if (iod->status == NVME_SC_SUCCESS) {
+> -		WARN_ON_ONCE(!iod->data_len || iod->dma_dir != DMA_TO_DEVICE);
+> -		nvmet_pci_epf_transfer_iod_data(iod);
+> -	}
+> +	if (iod->status != NVME_SC_SUCCESS)
+> +		return;
+> +
+> +	WARN_ON_ONCE(!iod->data_len || iod->dma_dir != DMA_TO_DEVICE);
+> +	nvmet_pci_epf_transfer_iod_data(iod);
+>  
+>  complete:
+>  	nvmet_pci_epf_complete_iod(iod);
+
+
 -- 
-2.43.0
-
+Damien Le Moal
+Western Digital Research
 
