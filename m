@@ -1,111 +1,86 @@
-Return-Path: <linux-kernel+bounces-731464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9F5B054C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:23:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07045B054C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC4A3A24E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B233B7B640D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F08A275AF2;
-	Tue, 15 Jul 2025 08:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C34527602D;
+	Tue, 15 Jul 2025 08:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bspwxBR9"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCSTFOay"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5D525F973;
-	Tue, 15 Jul 2025 08:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2D225F973;
+	Tue, 15 Jul 2025 08:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752567764; cv=none; b=kRn3My/YxLs9/1UiaSAYDLIsUVrXVBvXJlUqOOM5RMQCfSrB7uxrWXJ7ak2SwmwM5ISzRtLrt7WTLM5B4LpAh4mtG+tM3ESpiWuBxZ/HVgnlINnbrhYPOuBnQVwd3joEDFU43b1niMDWSCEKxJb3GL2KG1tywHgpTFJWoxmF8cA=
+	t=1752567776; cv=none; b=BTXI8uJKUrqHWUpMnVa1IsdqoB+51zHD9KGVidbESEi++9jUiCY1Tuzi7fwUn7ud7A6K2BIdukow3D5IGq5bqTEzDvgRhKJCNHTqzKOkBwGulyh9O7KTnpfTuEhmcuaSAS2cDtZskG5SP5UlWy20zDrZAr2jwQIAM5Z3G5k+VDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752567764; c=relaxed/simple;
-	bh=VjluknFr6jvR1YI6PssGkDBtJIyFCraV9vOniDFlvL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mzf3/s+3j2FR2oXSl+/d32JoVm2WrHviP+rZC/yemH0iwLi5SdGBZrDm8yGT12c1w5eWjDEXjkH+cYA1A7sQzletveDe86/5jX398XhqS4NPZiXNNhABIOx4M4kjThnQ16B0rh1OC/8BJCs52t+ii/8G0QKzazu6/ClFPlGu6jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bspwxBR9; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b31d578e774so5190513a12.1;
-        Tue, 15 Jul 2025 01:22:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752567763; x=1753172563; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RWritYCN5g5pbGNVdS7uOitde6lUvDNW8r61mTT/h1I=;
-        b=bspwxBR9d4opTLmUEFFAEqAbi2B5ZGIaAep3CyNboz871SggHtoR5gR63uUaFKUtBj
-         7mv+xjmOxG6m49pz5O1I+/jQLc/PY60G9ww1f6Wzm86kftFuriN4z+4qtZVJb1qMt19j
-         kwUjtKuiPjFgxjoYxnlQZS9qCDo8h3qLWbVww385crYGz2gG7atRJnEercDOAqz/8PHQ
-         btqSanWnyT1hD/oWqftmjn+IiVpEKLLK/iuwMTs1mdgcfd1TmLGdeFsEyOTEGxwmpLkQ
-         cbB5XE2UjTWl/cJdCzQaMtvBSFvZg8wV7AKuvPM848Yfsn2Bk4kH6nT36XE3PpPR0aM/
-         WAJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752567763; x=1753172563;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RWritYCN5g5pbGNVdS7uOitde6lUvDNW8r61mTT/h1I=;
-        b=bblYw4lsHvfL/NnpsQbzxNQMJph6pIGFFqWFgFCudSOz5uWn+hbmTGHjk7o3QYXN6l
-         3d2FIKpBHGfnCAUO4BkyX+INtTG4euJfbStvdSKcSCzjJMCcJEn3rHUUW/rtN8rvStLf
-         YUwEWh9Vv9W8HxHMWbbD0MCk2BDhOCbtiCWdE68X4TAteRN7F0Ft/ulnbK4ai+LzoyVW
-         mcxU11dua5WsgErnl+TVhqYKtBv2llb84ih0eprbkjnEhlSM2nUteMrfZsr2fa9fBXMe
-         8/G6lRtdwPpB10ZTNN/cdek61ZuDimeHR3+OUdxiqSDOB2t/B00meCiSbFyVd/ocdo4/
-         Ovbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxkuatSRRaEK3C2MchDnTJjrQCm/A7bRU9z3FJ+Uy79OHMgGhvqJW1Y6gVJgBu4hbcgD2brCSerOyBAw==@vger.kernel.org, AJvYcCWpUjHAC7nMzAgjQbyip14BgkemgOoHYNsQvafgoFl4S1j8+y3cucVHtXfJgkGC/YETvyRhLGmKBH3b@vger.kernel.org, AJvYcCXYS5Dpf8cEZXvFAOp5svvdddh2gRa5FBJgZiV1/qyt6KttUZhPse//bkdugnKAEKG+9XBWak+QCPAODBXx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFUv2Fbf37MF8plwqThekkdo2X4GIYe9rFg7y5JeL4r1Z1jN0Z
-	WemtzV8p4z4/98J8XHrtiSHSwDc15EWKL052UhbPo1dFQWkCEqIoIDXUsk80N0lVcP9vUGM9v8v
-	LzmqXDAZClGZ7FQJG7CSlxbDJhp1B7rc=
-X-Gm-Gg: ASbGncsWZDH5Kcid6C9h54iRuggy9FyCImEXBgaIek7yJ6qVevIe1RoG2NIUMTM5Ngf
-	wvrStzESFRvsFSew0kRlOOfdDiDBz5wcH88fFJyOYilfXkCSpleizfEPSHC02FhSfWVOtA7RyXr
-	eAY85xska6OIp9ImHd5Kx0/NO6f7BlfYokRYhtwF+YwFGuNoxv2nGGNx8AqWMQFRSShGHZNHn1r
-	Oc/
-X-Google-Smtp-Source: AGHT+IFMxGCTEEHrdB/kCBZaEP2hviqLVU3pJ2QVRJLd/x1wtIgr5OBebZnjJManRyxnm1Ft0Bmiw8ilHs47bZtO0xI=
-X-Received: by 2002:a17:90b:17ca:b0:30a:3e8e:ea30 with SMTP id
- 98e67ed59e1d1-31c8f9ba0f7mr4109857a91.11.1752567762558; Tue, 15 Jul 2025
- 01:22:42 -0700 (PDT)
+	s=arc-20240116; t=1752567776; c=relaxed/simple;
+	bh=e+GveHWQsznhWVSVvbglpHmf7i2wCktpNbLp6nwd69E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=RQRdpBXI/MgQIYTgn5/gS0fbaaKTmQopUVa4SboyhpCySKaSIiwHq+XxiNx41CwB2oLx1rgPGhKUbpHdQweIs0aYDMn0t1aY05vtVxZ8QfSvSgVckvmW9pJHz/DrMizLc3EODiO2uPE8t0YNtD1rP4qaLP8DV1koFDjJSGyU9/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCSTFOay; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B272C4CEF6;
+	Tue, 15 Jul 2025 08:22:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752567776;
+	bh=e+GveHWQsznhWVSVvbglpHmf7i2wCktpNbLp6nwd69E=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=uCSTFOayI1PlYUOW/L/A7im4447V053jBVrUql8+jedyJUZ9yIWB31OCH6UR7MDyl
+	 mJcl+M+lD1aVOyxY2jTm+gqM3R0ie1h7Pz5MnEWVVTh4g0qehh4HxmDNIgKdzawyJ2
+	 gsMDtZ3Stl0zrm4utvXVJFoUt0nvXVkVmSni+Xs3f2XjXUCZsRHp2HN8t3unkfsFwy
+	 MQPaJUXyS/R4jg9aE6bz64uCaCthdNS8ObiDAwIU7JN0Y9gRTRtHSoIO6zDLJ6ltAc
+	 zfHn0uSDFkicPd+F08QcIMZe64uOWq8sy3wqTEOF+Yg+xgXHl0XkbQLwSkiIk/14Hs
+	 7NWylmfhk14hQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250712210448.429318-1-rosenp@gmail.com> <20250712210448.429318-7-rosenp@gmail.com>
-In-Reply-To: <20250712210448.429318-7-rosenp@gmail.com>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Tue, 15 Jul 2025 10:22:31 +0200
-X-Gm-Features: Ac12FXwMmQCfsqg5mbExKPqdb145bDccah5wrkdnBfsA3tKTWDoudoBn9JT36WU
-Message-ID: <CAMhs-H_w9f334A-T5OfbngCZ4bgM+uJ27WAff2Q+k9dJhHr96w@mail.gmail.com>
-Subject: Re: [PATCHv4 wireless-next 6/7] MIPS: dts: ralink: mt7620a: add wifi
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:MIPS" <linux-mips@vger.kernel.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 10:22:51 +0200
+Message-Id: <DBCHFBDWRHZ1.96R3AMCDUX9S@kernel.org>
+Subject: Re: [PATCH] rust: devres: initialize Devres::inner::data last
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <tmgross@umich.edu>, <daniel.almeida@collabora.com>,
+ <m.wilczynski@samsung.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250714113712.22158-1-dakr@kernel.org>
+ <aHYCOFZZYbgP39nR@google.com>
+In-Reply-To: <aHYCOFZZYbgP39nR@google.com>
 
-On Sat, Jul 12, 2025 at 11:06=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wro=
-te:
+On Tue Jul 15, 2025 at 9:24 AM CEST, Alice Ryhl wrote:
+> On Mon, Jul 14, 2025 at 01:32:35PM +0200, Danilo Krummrich wrote:
+>> Users may want to access the Devres object from callbacks registered
+>> through the initialization of Devres::inner::data.
+>>=20
+>> For those accesses to be valid, Devres::inner::data must be initialized
+>> last [1].
+>>=20
+>> Credit to Boqun for spotting this [2].
+>>=20
+>> Link: https://lore.kernel.org/lkml/DBBPHO26CPBS.2OVI1OERCB2J5@kernel.org=
+/ [1]
+>> Link: https://lore.kernel.org/lkml/aHSmxWeIy3L-AKIV@Mac.home/ [2]
+>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>> ---
+>> base-commit: 3964d07dd821efe9680e90c51c86661a98e60a0f
 >
-> MT7620A devices all contain a wifi device as part of the SOC. Add it
-> here to get it working.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  arch/mips/boot/dts/ralink/mt7620a.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> I couldn't find this commit. Where does this apply?
 
-Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-
-Thanks,
-    Sergio Paracuellos
+The commit is in driver-core-next.
 
