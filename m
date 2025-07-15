@@ -1,144 +1,198 @@
-Return-Path: <linux-kernel+bounces-732228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC13B063B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:01:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE211B063AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26E321AA72B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B164E78A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D28B26A0E2;
-	Tue, 15 Jul 2025 16:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2DC246BB8;
+	Tue, 15 Jul 2025 16:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iZyPA/cy"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F/qcXfdi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9941C84DF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC57984A3E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752595225; cv=none; b=LIgvNBruXrGCk5Nus8ezQF2HI+qwfmFqxX4LDxMnjLcy1cEEbmrY4GxSw3mOwqg+eADlCDEggGOqrUflEbcdYD3uc87lRBpOZA8XejhsZulAYwexnYjB3rpC+0s6TH0d7hBt68+QpTKuqwnPJ/6lksrMRKEJC/YBvfqBEDdFpJw=
+	t=1752595252; cv=none; b=diBnVfAvB8h4bE47yvijmR8Jju391vLMqm5g/pzRRI5L8r9weAuuAphhbLXA8estPDPk8YEZAYHvUXsCBMLDCiDpjYmUhur3go4SB2Nsfhf1jYtVBxYaCEgihR2hNMY/GQd6xCA34aK7STCYiX71nl9I8ma6x3ikLqoAo2Yy2nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752595225; c=relaxed/simple;
-	bh=FwKGIknOxh+BYltp8SEk1LfHTMUv5L9w2TSo790jjZk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=t2WZtwG3+HCGY9EbSlbxrexTCG42gT69xZBFGi58upgxPCRSznVwSCY4bnOuEsvht+T5FaXgKe9bmD64QmNc1kAhiEsQtUxWRAnLUKSTFYzblk9LoxM8xkCzlEyPP6zMF/o5PiflMELLn9NkXU2CqfSU9kU3o6aXZZptupKHzrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iZyPA/cy; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae0c571f137so1051423966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752595222; x=1753200022; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aId3DDFPGB+h3w+ON2qqdC58+WHMZoja6dA/P+9SekE=;
-        b=iZyPA/cydMewOA+GtDKICPh5g9lijnMCOw1JgUETou7Qhx7NscwzV0+3PeQsWIkq28
-         Ia7sNszKkTbQBhrPZ6FazqWBB/zr/Tc0nwSc+rcgYiW8ECBrpbF9GOBdqjCncukNbQa7
-         U8Jwlq6MxMj+aQewiyL5r2DFbH/K3JU456UqqoDWZQl9gR04YifiC2TRon5NJfvovJrT
-         Xrbt5WTw+8j+69pTl4rRrFfyqBODNz2pDhreo/6MRTXLPjCejsD5rFJCD8Exe9jBTLhl
-         NKeXA/iy+CX8vAgWzqS4/TUEUqlPZbwArXbe9KkbfhNamY38ZnrJ06BbaPycE++hHG51
-         xTLA==
+	s=arc-20240116; t=1752595252; c=relaxed/simple;
+	bh=QGDL0kvdCWFlRnKscgJjq+k+L0QvyBPNvfMVFZrVcWo=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lQQKIqPcpjJ+KNP+zBsiUtotdKtcclCpffO1tBWODppmSDgTolj/CN0qDjBnfRnIH1RnxEiHlrmWGdirtVzE12z57h41NAS1GsfPggUwcj6jT2mhig36lH4/FCZ5/XynRNXpF+ftxiu/WaK9Vjq4RaUXCqbfeH72d98caPRYV9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F/qcXfdi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752595250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TXwosRAk7cpmUzQUy+WVJ4W1gQSc+hb1c+UjkCUp6Uk=;
+	b=F/qcXfdicNdnBsuxAHQQ9p5V8Iro6HcW5KWxDMmRUrFTe6nnb3kbOls7eJar6l+DYysq1/
+	SqMF0jVJF3nsKSztYllZpkfSGRZUNWjntx/YKv0QGktILruWOm7M1U5sRBqF6GWxq8nR6d
+	egngJdadKF/18ijGZuSgAkog+915CSA=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-RsErZ6CvPiiGxqDkedHcJQ-1; Tue, 15 Jul 2025 12:00:48 -0400
+X-MC-Unique: RsErZ6CvPiiGxqDkedHcJQ-1
+X-Mimecast-MFC-AGG-ID: RsErZ6CvPiiGxqDkedHcJQ_1752595248
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e095227f5dso531958785a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:00:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752595222; x=1753200022;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aId3DDFPGB+h3w+ON2qqdC58+WHMZoja6dA/P+9SekE=;
-        b=lOqGqSpMUFiRtAu/Uvp4TCUH8i/9M/C3nnPhokE64k3bT7tNzBxCq8gANXuHbimZPL
-         qSLjo+HfKKpJTYmuoQM49ftlHr6AGq7mLjGUQ9aNz2twHqrVoXJTDVtuGgXh/f92/9F8
-         gNLKHKUAlrj5K7hsFCZRosofKAshaeO8zI/NORKksj26J7CBhhXFZIXUbZ/B714tF30G
-         pwA0yQfDxwaYrp/KI5wTI0ArJ7zcmSFeRXRJHlUL+aP4KDDXTFcxDqLCGRaUpovPKycV
-         9k3moS1bsglY2z4LuzIIzwtrVqGyYMAy6czWds4UgsvBaAw0NlN2Sc/il5txPGwJoK2m
-         T/7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXAPs2knU2d5N7Dc5WzjwmuELoChOp6IpVg2qsLwl4Gb2LaDlxrqxFVqfkjpHFRU1lMurAJd5MGUX72BpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPlgaXma94XRRYMKLgCdb77GhKkxwO0QZZtakF1itKesfGkd1N
-	SbTdZ+7vXxw+PFZXO4SZBb9dv1pehxBNP0/rIOony1osLMz9QArN4IZ+Bm10TtPUoqg=
-X-Gm-Gg: ASbGncsiw43aSiNRUzo0OaAX7sfPedaTPSHIS3OCoFAvWKXMExuK+KZ1IJK7GQ/VuF6
-	5q9kQ6nRpk303AepQkYJIH10b8FkxhskRVa4fmUbS1PLpteRrCvqoDI5rN0DDNpC9SEyFX8G/Su
-	mcG8BfhYr4ybOMBgpVOBmyGFwVX9SEUgADd0Dxy+INScOfyfKv+yxahSUFY1AjtSHbcn6HXWiQ3
-	noe0CSGvQ3nKNn3NzjaPPywW3YxI75goD3sZgHl5Mmgv4buYBw9zJh7ySKAIMA9eCzmwxNIzbdE
-	t7Lct9bjehXYmMZWFq5lBin8AmHLLtjxZOAEO5XMCmq7QsArizvnsv9chIQKvYMYY5IHlnyg/6q
-	CPfOwGzMqzx5MgI2EXLx0vxffjk3q6QrMKIejmVc3O3NmLsbxax0eoWUUJ4jxe12xuWJPRHlx2/
-	lSrPcXgg==
-X-Google-Smtp-Source: AGHT+IG51AKX9vFVkuBm1+00mt3i3tOzwFI86M/7QAJodoZVtCy6p4XzXzhIC5eR6zzOJKjCXuCpUw==
-X-Received: by 2002:a17:907:7241:b0:ad8:9257:573a with SMTP id a640c23a62f3a-ae9c99825b2mr1392666b.5.1752595222422;
-        Tue, 15 Jul 2025 09:00:22 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7f15803sm1024949166b.70.2025.07.15.09.00.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 09:00:21 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 15 Jul 2025 17:00:20 +0100
-Subject: [PATCH] gpiolib: devres: release GPIOs in devm_gpiod_put_array()
+        d=1e100.net; s=20230601; t=1752595248; x=1753200048;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TXwosRAk7cpmUzQUy+WVJ4W1gQSc+hb1c+UjkCUp6Uk=;
+        b=htVs0EtNXsnhgCwDN5M0f66f9mUUXMz6ZK4OI/OWTw/z52lpq3NlE33+uWiVzRFdk/
+         DesEW49arc7Eh7xDqxNEdUCX1qDTKiAb+Zth9rwTZRhQh7LwlgrTAVSIBuHRtv89DYSs
+         cnNm8iZTiIh4LB67rH5Cac2d4TbPKsJD5xA7uomCvwMUckzUhzabwlJXJb5gbELrrjLT
+         9iXnxWAKLQAFFVOQ3CDPXw+a/Kwn1Br0E2C0h7TVsZjHQhhU3p5jD8qwBckRL1d2et9M
+         1g75LESj4g2w+9FpSYA0+QBQbBYmfHeW56vQmWnaXr0JgJfxMGzx2hEgLypaV8EdRppM
+         Z5Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWSgzNXT60kKXmUStjOAtn1Lk29sUR0zPmxxfAZsgHDMZ+dGFXGYXr6W7YDB8pJhlfKwR9ISWE50gYbAUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydDidnvZJa86K14Vf05+Vwp3GKxYo046eeCfiRnyu397F/DxSp
+	USqk/3i8eIpzuUvElnmg9z0zzziTO1hwUMkbMwUGmI3jRp/n2mWnMmc7fqknb+w+WCG5PnUZo74
+	lVSrXFRd88P+w4AoRhFgt8K9rYQtmBg+5jOu2kHGYfg/uQSizpggYMGdz2qNA5Wczrw==
+X-Gm-Gg: ASbGnctKDVLpLV3P/4QjnSxGNHrnpE/GKLPsQOu7siOIksyTgLq7p+b4O4yHzn3aD1g
+	otNY4Xy/hmCsI3LObU0iR6dkbRZPF++WIlonvGbJUrDT86UdCFE1hoBjHiauc37K3dzJIEMGTkk
+	ipUuhGR3QwqDx9RdPYiakh7olvaVxunIm3+DDQViJlt430g6IpdFlpWrrG8sd5DrwE66nq7zjaw
+	uC4bpJtCnaIOCDpnHCYRGXaAk24pEuIm+rWk0aQ6OOW2qxpN0LRroGk3R2b3AeRN1NlKZkOgeUQ
+	ksbJhQBWU1ytDCTEdPbakkvM4jpR4LuEKuJywCavhPK7VkkSQTtyphTXVc4JzmHDm+mM45UsiPs
+	eU3t9JG8gOg==
+X-Received: by 2002:a05:620a:4592:b0:7e0:2c05:6b98 with SMTP id af79cd13be357-7e338be52fbmr423927885a.20.1752595247467;
+        Tue, 15 Jul 2025 09:00:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8OqdBxsggnkLBvim314ncx0zbBASpaeaktiw40LuYsgyHA1nGTYgcxijPhPza/ECjub3h5Q==
+X-Received: by 2002:a05:620a:4592:b0:7e0:2c05:6b98 with SMTP id af79cd13be357-7e338be52fbmr423920985a.20.1752595246781;
+        Tue, 15 Jul 2025 09:00:46 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e3081e036esm240838585a.107.2025.07.15.09.00.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 09:00:45 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <eec0c87e-b5bf-45b7-9eff-b84d53784678@redhat.com>
+Date: Tue, 15 Jul 2025 12:00:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250715-gpiolib-devres-put-array-fix-v1-1-970d82a8c887@linaro.org>
-X-B4-Tracking: v=1; b=H4sIABN7dmgC/x3MQQqEMAxA0atI1gZapTrMVcRFNVEDoiVVUcS7W
- 1y+v/g3RFbhCP/sBuVDoqxLgs0z6Ce/jIxCyVCYwpnaOhyDrLN0SHwoRwz7hl7VXzjIiVR1ZeX
- Ik7E/SIugnPK3b9rneQEFZRBUbgAAAA==
-X-Change-ID: 20250715-gpiolib-devres-put-array-fix-d6b365dad018
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next] cpuset: fix warning when attaching tasks with
+ offline CPUs
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com, peterz@infradead.org
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250715023340.3617147-1-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20250715023340.3617147-1-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-devm_gpiod_put_array() is meant to undo the effects of
-devm_gpiod_get_array() - in particular, it should release the GPIOs
-contained in the array acquired with the latter. It is meant to be the
-resource-managed version of gpiod_put_array(), and it should behave
-similar to the non-array version devm_gpiod_put().
+On 7/14/25 10:33 PM, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>
+> A kernel warning was observed in the cpuset migration path:
+>
+>       WARNING: CPU: 3 PID: 123 at kernel/cgroup/cpuset.c:3130
+>       cgroup_migrate_execute+0x8df/0xf30
+>       Call Trace:
+>        cgroup_transfer_tasks+0x2f3/0x3b0
+>        cpuset_migrate_tasks_workfn+0x146/0x3b0
+>        process_one_work+0x5ba/0xda0
+>        worker_thread+0x788/0x1220
+>
+> The issue can be reliably reproduced with:
+>
+>       # Setup test cpuset
+>       mkdir /sys/fs/cgroup/cpuset/test
+>       echo 2-3 > /sys/fs/cgroup/cpuset/test/cpuset.cpus
+>       echo 0 > /sys/fs/cgroup/cpuset/test/cpuset.mems
+>
+>       # Start test process
+>       sleep 100 &
+>       pid=$!
+>       echo $pid > /sys/fs/cgroup/cpuset/test/cgroup.procs
+>       taskset -p 0xC $pid  # Bind to CPUs 2-3
+>
+>       # Take CPUs offline
+>       echo 0 > /sys/devices/system/cpu/cpu3/online
+>       echo 0 > /sys/devices/system/cpu/cpu2/online
+>
+> Root cause analysis:
+> When tasks are migrated to top_cpuset due to CPUs going offline,
+> cpuset_attach_task() sets the CPU affinity using cpus_attach which
+> is initialized from cpu_possible_mask. This mask may include offline
+> CPUs. When __set_cpus_allowed_ptr() computes the intersection between:
+> 1. cpus_attach (possible CPUs, may include offline)
+> 2. p->user_cpus_ptr (original user-set mask)
+> The resulting new_mask may contain only offline CPUs, causing the
+> operation to fail.
+>
+> To resolve this issue, if the call to set_cpus_allowed_ptr fails, retry
+> using the intersection of cpus_attach and cpu_active_mask.
+>
+> Fixes: da019032819a ("sched: Enforce user requested affinity")
+> Suggested-by: Waiman Long <llong@redhat.com>
+> Reported-by: Yang Lijin <yanglijin@huawei.com>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/cpuset.c | 15 ++++++++++++++-
+>   1 file changed, 14 insertions(+), 1 deletion(-)
 
-Since commit d1d52c6622a6 ("gpiolib: devres: Finish the conversion to
-use devm_add_action()") it doesn't do that anymore, it just removes the
-devres action and frees associated memory, but it doesn't actually
-release the GPIOs.
+Thanking further about this problem, the cpuset patch that I proposed is 
+just a bandage. It is better to fix the problem at its origin in 
+kernel/sched/core.c. I have posted a new patch to do that.
 
-Fix by switching from devm_remove_action() to devm_release_action(),
-which will in addition invoke the action to release the GPIOs.
+Cheers,
+Longman
 
-Fixes: d1d52c6622a6 ("gpiolib: devres: Finish the conversion to use devm_add_action()")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/gpio/gpiolib-devres.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-index 4d5f83b17624eed04039b94ca6d095fea293e5cc..72422c5db3641e5609759e82ac2ab532fab81783 100644
---- a/drivers/gpio/gpiolib-devres.c
-+++ b/drivers/gpio/gpiolib-devres.c
-@@ -319,7 +319,7 @@ EXPORT_SYMBOL_GPL(devm_gpiod_unhinge);
-  */
- void devm_gpiod_put_array(struct device *dev, struct gpio_descs *descs)
- {
--	devm_remove_action(dev, devm_gpiod_release_array, descs);
-+	devm_release_action(dev, devm_gpiod_release_array, descs);
- }
- EXPORT_SYMBOL_GPL(devm_gpiod_put_array);
- 
-
----
-base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
-change-id: 20250715-gpiolib-devres-put-array-fix-d6b365dad018
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index f74d04429a29..2cf788a8982a 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -3114,6 +3114,10 @@ static void cpuset_cancel_attach(struct cgroup_taskset *tset)
+>   static cpumask_var_t cpus_attach;
+>   static nodemask_t cpuset_attach_nodemask_to;
+>   
+> +/*
+> + * Note that tasks in the top cpuset won't get update to their cpumasks when
+> + * a hotplug event happens. So we include offline CPUs as well.
+> + */
+>   static void cpuset_attach_task(struct cpuset *cs, struct task_struct *task)
+>   {
+>   	lockdep_assert_held(&cpuset_mutex);
+> @@ -3127,7 +3131,16 @@ static void cpuset_attach_task(struct cpuset *cs, struct task_struct *task)
+>   	 * can_attach beforehand should guarantee that this doesn't
+>   	 * fail.  TODO: have a better way to handle failure here
+>   	 */
+> -	WARN_ON_ONCE(set_cpus_allowed_ptr(task, cpus_attach));
+> +	if (unlikely(set_cpus_allowed_ptr(task, cpus_attach))) {
+> +		/*
+> +		 * Since offline CPUs are included for top_cpuset,
+> +		 * set_cpus_allowed_ptr() can fail if user_cpus_ptr contains
+> +		 * only offline CPUs. Take out the offline CPUs and retry.
+> +		 */
+> +		if (cs == &top_cpuset)
+> +			cpumask_and(cpus_attach, cpus_attach, cpu_active_mask);
+> +		WARN_ON_ONCE(set_cpus_allowed_ptr(task, cpus_attach));
+> +	}
+>   
+>   	cpuset_change_task_nodemask(task, &cpuset_attach_nodemask_to);
+>   	cpuset1_update_task_spread_flags(cs, task);
 
 
