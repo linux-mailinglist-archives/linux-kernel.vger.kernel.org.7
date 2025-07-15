@@ -1,268 +1,315 @@
-Return-Path: <linux-kernel+bounces-732339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31032B06551
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:43:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E613B06557
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51E273B6135
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:43:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 678191727BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E608E21858D;
-	Tue, 15 Jul 2025 17:43:38 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C006E2874F7;
+	Tue, 15 Jul 2025 17:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAoCSJhR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7516D281513
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E59285C9D;
+	Tue, 15 Jul 2025 17:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752601418; cv=none; b=JaWrEYM4doQRkiMaW3Vy9YqAfzslGoac6Kd9pTFRYP1f6cI2fkwlmcHTBBOtQTwDhnt9Tdg0wbjkmFrFBveoBIw711mB6fzidXdPVvL3GMC9aKvsgJi9TB8tVjaYc6lM26UfY8lcJkv0Iuq8gj2aoheOVTp2JdHMhaP6ijKlwXw=
+	t=1752601447; cv=none; b=etnQ3KF+HVxJoAe+n3AHsdlnCHoBoQczbvOLtSTiD4LRBIBJIuUaj2a+CKSok9fy83K+8hejkSXSxekSyA2R7PlC43UmS0NK265NXpEuoo0Kqu0LWoOaK1eiCP+xa5zrcxPqUPjWj2+lMr09Auk0LdOcrAG8T6SY4lhmIjiu+Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752601418; c=relaxed/simple;
-	bh=MLsrhBCv+lrewjtW0t59wVcC205WGCzpHVijue31PVA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=diEFjOxne0ND5bNXSQFamOZzKYEwW67H7KDbipApKRdvegv8jpeqkpWv+4Cijmr7yma8GLpaEaALrLnoOjgXcZjveZaGkHJPiTljJvZ6U70ztSDM23UaO3mF9LVLrjmt3yVotI+i8diYm8uhJHcVCrJ4RcInkFywqHzNfQ2RWto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-86d07ccc9ecso438869239f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:43:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752601415; x=1753206215;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dxSTspO63Qnw2Sym30jqs7WFpRsKguI0ZmO3vd0+C+k=;
-        b=Qbfcqmy+OefUuZfAeTM0MHKm12xXuVf4ap7zDh9ik10hnA0aFuSYdPHvCnVkZptCR+
-         5mxkzQPMfbSDzKY2c5OaIHamPDAuM7SnF8ZsEFoWD9gQQqfllZaFTeKroXOnMD6ni4zH
-         wnSPQxfwMihaD/lj2SID5RVv8/UsuWvmmZ4j6UK+TXpNQhoiS/pSKS7x3lYaUxqNIEM3
-         r7kvueT5egjF3U52jBO+xzP3tYQC7LR4x0Nh9NZiDTBx8opClFbV/SJ0yEqAhFHnQWeA
-         hzfcNJ95toEk/0+uMh7CBZkSY4Ype4zD62nqlZkVS1JsBRVp5WouMuG7n20Njjx/qlLx
-         XMrw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2VJg6DgWS2VvO7kyvb/cJwMtz84unh/9XBwoqJK0rEUQhB9011rb3d3+FHg+CeRbY2OZzvtbdDq2g/sM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfW+kgN7QZBIKtXb3qakiNvYze1xqYT1srBSAzMxMZuAcQCU6j
-	XS2dw29TgXjdM5XobhAofmUTI690InWXnq7mbXkHWnFCf9ewVJKNocyRer8VCQDNYOBeyR2B52/
-	pLrJOPRiiDSDubq56p3/Krx6+6XSTvdUYEtruTH25FYRO5mhnR96VzbI4T9w=
-X-Google-Smtp-Source: AGHT+IH3FyOGdiQt3VjMSwi5Mn+39dleinUt2VhdBjDQArwetRZIQlntM+3dKWAgsg/Qx4EpN3zpmxDnNBtF9G9EvRtI2pv6quZB
+	s=arc-20240116; t=1752601447; c=relaxed/simple;
+	bh=6sfqcOH8puA+a1sDQFn8QveHcgBcHzTz4Z3BgnTRXEE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=aAiXuiyHJy56frypraLiNnnKl3QtdyJye8uqKnjWqEwrjX3cQKR/duw+kRdwHDuOULcedsBz9K97JftlqJ8XsXPOx4PCnt1tAg/kHSqvx9tUYvG5utA3FZ5yB/SrkVJf61cVfP7CipaSA6AhoF2HFtBMxdk+qJt/OefTzRC4Phw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAoCSJhR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A1F0C4CEE3;
+	Tue, 15 Jul 2025 17:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752601446;
+	bh=6sfqcOH8puA+a1sDQFn8QveHcgBcHzTz4Z3BgnTRXEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JAoCSJhRYNhfcNTb74YcPzf+cYSmlo6gS/utgiFRBuTL0zNQXGhaF3/ReLuqe6lQo
+	 SE+SXaAP2LKFrAUXvYg6vJ8WNMmdY1lB5j95XvrCjXqQ3F2ca0eaCM1pbFrIAVR8RG
+	 8axgAML+kcWNuGUs871wQSiWxfCs+pC5uep/+e5dbnPydjDYvzT0EVjD6qkc+3j/Wr
+	 76JJA1aTKIy0UVYH9xkK40SrR+OSjErkUaHIu9rCMUCBqCpkfykHxE87DdSklzc1mg
+	 tn0pj2DusVlES8ADGV5eZgDtwmx9toMcX7TV1B3w/K0AVdw/rZwPujDQwv5ESqzIRr
+	 aWhWTpEdcQsng==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6b89:b0:867:40d9:bf7e with SMTP id
- ca18e2360f4ac-879c08c53bcmr33551839f.9.1752601415391; Tue, 15 Jul 2025
- 10:43:35 -0700 (PDT)
-Date: Tue, 15 Jul 2025 10:43:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68769347.a70a0220.693ce.0013.GAE@google.com>
-Subject: [syzbot] [block?] [trace?] INFO: task hung in blk_trace_setup (4)
-From: syzbot <syzbot+9c1ebb9957045e00ac63@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, rostedt@goodmis.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 19:44:01 +0200
+Message-Id: <DBCTCZ5HUZOF.2DJX63Q0VWWFN@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: "Mitchell Levy" <levymitchell0@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Dennis Zhou"
+ <dennis@kernel.org>, "Tejun Heo" <tj@kernel.org>, "Christoph Lameter"
+ <cl@linux.com>, "Danilo Krummrich" <dakr@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-mm@kvack.org>
+Subject: Re: [PATCH v2 3/5] rust: percpu: add a rust per-CPU variable test
+X-Mailer: aerc 0.20.1
+References: <20250712-rust-percpu-v2-0-826f2567521b@gmail.com>
+ <20250712-rust-percpu-v2-3-826f2567521b@gmail.com>
+ <DBATM1CUS704.28MKE6BIBQB7G@kernel.org>
+ <68762e19.170a0220.33e203.a0b7@mx.google.com>
+ <DBCLFG5F4MPW.2LF4T3KWOE12R@kernel.org> <aHZhcNCayTOQhvYh@Mac.home>
+ <DBCR1OCNYAUW.1VLAY1HWCHLGI@kernel.org> <aHaCUFNUd_mErL7S@Mac.home>
+In-Reply-To: <aHaCUFNUd_mErL7S@Mac.home>
 
-Hello,
+On Tue Jul 15, 2025 at 6:31 PM CEST, Boqun Feng wrote:
+> On Tue, Jul 15, 2025 at 05:55:13PM +0200, Benno Lossin wrote:
+>> On Tue Jul 15, 2025 at 4:10 PM CEST, Boqun Feng wrote:
+>> > On Tue, Jul 15, 2025 at 01:31:06PM +0200, Benno Lossin wrote:
+>> > [...]
+>> >> >> > +impl kernel::Module for PerCpuTestModule {
+>> >> >> > +    fn init(_module: &'static ThisModule) -> Result<Self, Error=
+> {
+>> >> >> > +        pr_info!("rust percpu test start\n");
+>> >> >> > +
+>> >> >> > +        let mut native: i64 =3D 0;
+>> >> >> > +        // SAFETY: PERCPU is properly defined
+>> >> >> > +        let mut pcpu: StaticPerCpu<i64> =3D unsafe { unsafe_get=
+_per_cpu!(PERCPU) };
+>> >> >>=20
+>> >> >> I don't understand why we need unsafe here, can't we just create
+>> >> >> something specially in the `define_per_cpu` macro that is then con=
+firmed
+>> >> >> by the `get_per_cpu!` macro and thus it can be safe?
+>> >> >
+>> >> > As is, something like
+>> >> >     define_per_cpu!(PERCPU: i32 =3D 0);
+>> >> >
+>> >> >     fn func() {
+>> >> >         let mut pcpu: StaticPerCpu<i64> =3D unsafe { unsafe_get_per=
+_cpu!(PERCPU) };
+>> >> >     }
+>> >> > will compile, but any usage of `pcpu` will be UB. This is because
+>> >> > `unsafe_get_per_cpu!` is just blindly casting pointers and, as far =
+as I
+>> >> > know, the compiler does not do any checking of pointer casts. If yo=
+u
+>> >> > have thoughts/ideas on how to get around this problem, I'd certainl=
+y
+>> >> > *like* to provide a safe API here :)
+>> >>=20
+>> >> I haven't taken a look at your implementation, but you do have the ty=
+pe
+>> >> declared in `define_per_cpu!`, so it's a bit of a mystery to me why y=
+ou
+>> >> can't get that out in `unsafe_get_per_cpu!`...
+>> >>=20
+>> >> Maybe in a few weeks I'll be able to take a closer look.
+>> >>=20
+>> >> >> > +        // SAFETY: We only have one PerCpu that points at PERCP=
+U
+>> >> >> > +        unsafe { pcpu.get(CpuGuard::new()) }.with(|val: &mut i6=
+4| {
+>> >> >>=20
+>> >> >> Hmm I also don't like the unsafe part here...
+>> >> >>=20
+>> >> >> Can't we use the same API that `thread_local!` in the standard lib=
+rary
+>> >
+>> > First of all, `thread_local!` has to be implemented by some sys-specif=
+ic
+>> > unsafe mechanism, right? For example on unix, I think it's using
+>> > pthread_key_t:
+>> >
+>> > 	https://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_key=
+_create.html
+>> >
+>> > what we are implementing (or wrapping) is the very basic unsafe
+>> > mechanism for percpu here. Surely we can explore the design for a safe
+>> > API, but the unsafe mechanism is probably necessary to look into at
+>> > first.
+>>=20
+>> But this is intended to be used by drivers, right? If so, then we should
+>
+> Not necessarily only for drivers, we can also use it for implementing
+> other safe abstraction (e.g. hazard pointers, percpu counters etc)
 
-syzbot found the following issue on:
+That's fair, but then it should be `pub(crate)`.
 
-HEAD commit:    347e9f5043c8 Linux 6.16-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13da518c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f62a2ef17395702a
-dashboard link: https://syzkaller.appspot.com/bug?extid=9c1ebb9957045e00ac63
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138dfd82580000
+>> do our usual due diligence and work out a safe abstraction. Only fall
+>> back to unsafe if it isn't possible.
+>>=20
+>
+> All I'm saying is instead of figuring out a safe abstraction at first,
+> we should probably focus on identifying how to implement it and which
+> part is really unsafe and the safety requirement for that.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f084467d9f0c/disk-347e9f50.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6a4f59125249/vmlinux-347e9f50.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/04618886a1ca/bzImage-347e9f50.xz
+Yeah. But then we should do that before merging :)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9c1ebb9957045e00ac63@syzkaller.appspotmail.com
+>> I'm not familiar with percpu, but from the name I assumed that it's
+>> "just a variable for each cpu" so similar to `thread_local!`, but it's
+>> bound to the specific cpu instead of the thread.
+>>=20
+>> That in my mind should be rather easy to support in Rust at least with
+>> the thread_local-style API. You just need to ensure that no reference
+>> can escape the cpu, so we can make it `!Send` & `!Sync` + rely on klint
+>
+> Not really, in kernel, we have plenty of use cases that we read the
+> other CPU's percpu variables. For example, each CPU keeps it's own
+> counter and we sum them other in another CPU.
 
-INFO: task syz.3.19:6139 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.19        state:D stack:28328 pid:6139  tgid:6138  ppid:5983   task_flags:0x400040 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x16f5/0x4d00 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6879
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6936
- __mutex_lock_common kernel/locking/mutex.c:679 [inline]
- __mutex_lock+0x724/0xe80 kernel/locking/mutex.c:747
- blk_trace_setup+0xfb/0x1f0 kernel/trace/blktrace.c:631
- blk_trace_ioctl+0x181/0x430 kernel/trace/blktrace.c:730
- blkdev_ioctl+0x416/0x6d0 block/ioctl.c:693
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5074b8e929
-RSP: 002b:00007f5075a4b038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f5074db5fa0 RCX: 00007f5074b8e929
-RDX: 0000200000000000 RSI: 00000000c0481273 RDI: 0000000000000003
-RBP: 00007f5074c10b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f5074db5fa0 R15: 00007ffd7bffb438
- </TASK>
+But then you need some sort of synchronization?
 
-Showing all locks held in the system:
-3 locks held by kworker/u8:0/12:
- #0: ffff88802fd1b148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
- #0: ffff88802fd1b148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3321
- #1: ffffc90000117bc0 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
- #1: ffffc90000117bc0 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3321
- #2: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
- #2: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: addrconf_verify_work+0x19/0x30 net/ipv6/addrconf.c:4733
-1 lock held by khungtaskd/31:
- #0: ffffffff8e13f0e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e13f0e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e13f0e0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
-6 locks held by kworker/u8:4/66:
- #0: ffff88801b2fe148 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
- #0: ffff88801b2fe148 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3321
- #1: ffffc9000213fbc0 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
- #1: ffffc9000213fbc0 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3321
- #2: ffffffff8f510e10
- (pernet_ops_rwsem){++++}-{4:4}, at: cleanup_net+0xf7/0x800 net/core/net_namespace.c:662
- #3: ffff88805d0c00e8 (&dev->mutex){....}-{4:4}, at: device_lock include/linux/device.h:884 [inline]
- #3: ffff88805d0c00e8 (&dev->mutex){....}-{4:4}, at: devl_dev_lock net/devlink/devl_internal.h:108 [inline]
- #3: ffff88805d0c00e8 (&dev->mutex){....}-{4:4}, at: devlink_pernet_pre_exit+0x10a/0x3d0 net/devlink/core.c:506
- #4: ffff8880206bc250 (&devlink->lock_key#8){+.+.}-{4:4}, at: devl_lock net/devlink/core.c:276 [inline]
- #4: ffff8880206bc250 (&devlink->lock_key#8){+.+.}-{4:4}, at: devl_dev_lock net/devlink/devl_internal.h:109 [inline]
- #4: ffff8880206bc250 (&devlink->lock_key#8){+.+.}-{4:4}, at: devlink_pernet_pre_exit+0x11c/0x3d0 net/devlink/core.c:506
- #5: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
- #5: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_dev_lock+0x257/0x2f0 net/core/dev.c:2143
-1 lock held by kswapd0/87:
-3 locks held by kworker/u8:9/3465:
- #0: ffff8880b8739f98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:606
- #1: 
-ffff8880b8723f08 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x39a/0x6d0 kernel/sched/psi.c:987
- #2: ffff8880b8725958 (&base->lock){-.-.}-{2:2}, at: lock_timer_base kernel/time/timer.c:1004 [inline]
- #2: ffff8880b8725958 (&base->lock){-.-.}-{2:2}, at: __mod_timer+0x1ae/0xf30 kernel/time/timer.c:1085
-3 locks held by kworker/u8:10/3557:
-2 locks held by getty/5611:
- #0: ffff88814df180a0 (&tty->ldisc_sem
-){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000333b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-3 locks held by syz.0.16/6130:
-1 lock held by syz.3.19/6139:
- #0: ffff8881427843d0 (&q->debugfs_mutex){+.+.}-{4:4}, at: blk_trace_setup+0xfb/0x1f0 kernel/trace/blktrace.c:631
-1 lock held by syz.2.18/6146:
- #0: ffff8881427843d0 (&q->debugfs_mutex){+.+.}-{4:4}, at: blk_trace_setup+0xfb/0x1f0 kernel/trace/blktrace.c:631
-1 lock held by syz.4.20/6153:
- #0: ffff8881427843d0 (&q->debugfs_mutex){+.+.}-{4:4}, at: blk_trace_setup+0xfb/0x1f0 kernel/trace/blktrace.c:631
-1 lock held by syz.1.17/6157:
- #0: ffff8881427843d0 (&q->debugfs_mutex){+.+.}-{4:4}, at: blk_trace_setup+0xfb/0x1f0 kernel/trace/blktrace.c:631
-2 locks held by syz-executor/6324:
- #0: ffffffff8f510e10 (pernet_ops_rwsem){++++}-{4:4}, at: copy_net_ns+0x304/0x4d0 net/core/net_namespace.c:570
- #1: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock_killable include/linux/rtnetlink.h:145 [inline]
- #1: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: register_netdev+0x18/0x60 net/core/dev.c:11218
-2 locks held by syz-executor/6328:
- #0: ffffffff8f510e10 (pernet_ops_rwsem){++++}-{4:4}, at: copy_net_ns+0x304/0x4d0 net/core/net_namespace.c:570
- #1: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: ip_tunnel_init_net+0x2ab/0x800 net/ipv4/ip_tunnel.c:1160
-2 locks held by syz-executor/6329:
- #0: ffffffff8f510e10 (pernet_ops_rwsem){++++}-{4:4}, at: copy_net_ns+0x304/0x4d0 net/core/net_namespace.c:570
- #1: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock_killable include/linux/rtnetlink.h:145 [inline]
- #1: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: register_netdev+0x18/0x60 net/core/dev.c:11218
-2 locks held by syz-executor/6335:
- #0: ffffffff8f510e10 (pernet_ops_rwsem){++++}-{4:4}, at: copy_net_ns+0x304/0x4d0 net/core/net_namespace.c:570
- #1: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: ip_tunnel_init_net+0x2ab/0x800 net/ipv4/ip_tunnel.c:1160
-2 locks held by syz-executor/6336:
- #0: ffffffff8f510e10 (pernet_ops_rwsem){++++}-{4:4}, at: copy_net_ns+0x304/0x4d0 net/core/net_namespace.c:570
- #1: ffffffff8f51da08 (rtnl_mutex){+.+.}-{4:4}, at: ip_tunnel_init_net+0x2ab/0x800 net/ipv4/ip_tunnel.c:1160
-2 locks held by dhcpcd-run-hook/6347:
+> If we would like to model it conceptually, it's more like an array
+> that's index by CpuId to me.
 
-=============================================
+Gotcha, but this model is missing the access control/synchronization. So
+I'm not so sure how useful it is.
 
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc6-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
- watchdog+0xfee/0x1030 kernel/hung_task.c:470
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 5982 Comm: kworker/u9:4 Not tainted 6.16.0-rc6-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: hci12 hci_cmd_timeout
-RIP: 0010:io_serial_in+0x77/0xc0 drivers/tty/serial/8250/8250_port.c:409
-Code: e8 ce 9c 78 fc 44 89 f9 d3 e3 49 83 c6 40 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 74 08 4c 89 f7 e8 cf 1c dc fc 41 03 1e 89 da ec <0f> b6 c0 5b 41 5c 41 5e 41 5f e9 ca 8c 2a 06 cc 44 89 f9 80 e1 07
-RSP: 0018:ffffc90003a8f2b0 EFLAGS: 00000002
-RAX: 1ffffffff33bfc00 RBX: 00000000000003fd RCX: 0000000000000000
-RDX: 00000000000003fd RSI: 0000000000000000 RDI: 0000000000000020
-RBP: ffffffff99dfe990 R08: ffff888024590237 R09: 1ffff110048b2046
-R10: dffffc0000000000 R11: ffffffff85479650 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffffffff99dfe700 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888125c1b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3868e19368 CR3: 0000000033be2000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- serial_in drivers/tty/serial/8250/8250.h:137 [inline]
- serial_lsr_in drivers/tty/serial/8250/8250.h:159 [inline]
- wait_for_lsr+0x1a1/0x2f0 drivers/tty/serial/8250/8250_port.c:2094
- fifo_wait_for_lsr drivers/tty/serial/8250/8250_port.c:3348 [inline]
- serial8250_console_fifo_write drivers/tty/serial/8250/8250_port.c:3371 [inline]
- serial8250_console_write+0x134c/0x1ba0 drivers/tty/serial/8250/8250_port.c:3456
- console_emit_next_record kernel/printk/printk.c:3138 [inline]
- console_flush_all+0x728/0xc40 kernel/printk/printk.c:3226
- __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
- console_unlock+0xc4/0x270 kernel/printk/printk.c:3325
- vprintk_emit+0x5b7/0x7a0 kernel/printk/printk.c:2450
- _printk+0xcf/0x120 kernel/printk/printk.c:2475
- bt_err+0x10b/0x160 net/bluetooth/lib.c:296
- hci_cmd_timeout+0xff/0x1e0 net/bluetooth/hci_core.c:1475
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+(I think I asked this somewhere else, but the number of CPUs doesn't
+change, right?)
 
+>> to detect context switches.
+>>=20
+>> >> >> has:
+>> >> >>=20
+>> >> >>     https://doc.rust-lang.org/std/macro.thread_local.html
+>> >> >>=20
+>> >> >> So in this example you would store a `Cell<i64>` instead.
+>> >> >>=20
+>> >> >> I'm not familiar with per CPU variables, but if you're usually sto=
+ring
+>> >> >> `Copy` types, then this is much better wrt not having unsafe code
+>> >> >> everywhere.
+>> >> >>=20
+>> >> >> If one also often stores `!Copy` types, then we might be able to g=
+et
+>> >> >> away with `RefCell`, but that's a small runtime overhead -- which =
+is
+>> >> >> probably bad given that per cpu variables are most likely used for
+>> >> >> performance reasons? In that case the user might just need to stor=
+e
+>> >> >> `UnsafeCell` and use unsafe regardless. (or we invent something
+>> >
+>> > This sounds reasonable to me.
+>> >
+>> >> >> specifically for that case, eg tokens that are statically known to=
+ be
+>> >> >> unique etc)
+>> >> >
+>> >> > I'm open to including a specialization for `T: Copy` in a similar v=
+ein
+>> >> > to what I have here for numeric types. Off the top of my head, that
+>> >> > shouldn't require any user-facing `unsafe`. But yes, I believe ther=
+e is
+>> >> > a significant amount of interest in having `!Copy` per-CPU variable=
+s.
+>> >> > (At least, I'm interested in having them around for experimenting w=
+ith
+>> >> > using Rust for HV drivers.)
+>> >>=20
+>> >> What kinds of types would you like to store? Allocations? Just intege=
+rs
+>> >> in bigger structs? Mutexes?
+>> >>=20
+>> >
+>> > In the VMBus driver, there is a percpu work_struct.
+>>=20
+>> Do you have a link? Or better yet a Rust struct description of what you
+>> think it will look like :)
+>>=20
+>
+> Not Rust code yet, but here is the corresponding C code:
+>
+> 	https://github.com/Rust-for-Linux/linux/blob/rust-next/drivers/hv/vmbus_=
+drv.c#L1396
+
+Thanks!
+
+> But please note that we are not solely developing the abstraction for
+> this usage, but more for generally understand how to wrap percpu
+> functionality similar to the usage in C.
+
+Well, I have to start somewhere for looking at the use-cases :)
+
+If you have more, just let me see. (probably won't have enough time to
+look at them now, but maybe in a couple weeks)
+
+>> >> > I would definitely like to avoid *requiring* the use of `RefCell` s=
+ince,
+>> >> > as you mention, it does have a runtime overhead. Per-CPU variables =
+can
+>> >> > be used for "logical" reasons rather than just as a performance
+>> >> > optimization, so there might be some cases where paying the runtime
+>> >> > overhead is ok. But that's certainly not true in all cases. That sa=
+id,
+>> >> > perhaps there could be a safely obtainable token type that only pas=
+ses a
+>> >> > `&T` (rather than a `&mut T`) to its closure, and then if a user do=
+esn't
+>> >> > mind the runtime overhead, they can choose `T` to be a `RefCell`.
+>> >> > Thoughts?
+>> >>=20
+>> >> So I think using an API similar to `thread_local!` will allow us to h=
+ave
+>> >> multiple other APIs that slot into that. `Cell<T>` for `T: Copy`,
+>> >> `RefCell<T>` for cases where you don't care about the runtime overhea=
+d,
+>> >> plain `T` for cases where you only need `&T`. For the case where you
+>> >> need `&mut T`, we could have something like a `TokenCell<T>` that giv=
+es
+>> >> out a token that you need to mutably borrow in order to get `&mut T`.
+>> >> Finally for anything else that is too restricted by this, users can a=
+lso
+>> >> use `UnsafeCell<T>` although that requires `unsafe`.
+>> >>=20
+>> >> I think the advantage of this is that the common cases are all safe a=
+nd
+>> >> very idiomatic. In the current design, you *always* have to use unsaf=
+e.
+>> >>=20
+>> >
+>> > I agree, but like I said, we need to figure out the unsafe interface
+>> > that C already uses and build API upon it. I think focusing on the
+>> > unsafe mechanism may be the way to start: you cannot implement somethi=
+ng
+>> > that cannot be implemented, and we don't have the magic pthread_key he=
+re
+>> > ;-)
+>>=20
+>> Sure we can do some experimentation, but I don't think we should put
+>> unsafe abstractions upstream that we intend to replace with a safe
+>> abstraction later. Otherwise people are going to depend on it and it's
+>
+> I doubt we can replace the unsafe abstraction with a safe one, if users
+> really care the performance then they would really need to use some
+> unsafe API to build their safe abstraction.
+
+That sounds pretty pessimistic, why do you think that?
+
+>> going to be a mess. Do the experimenting out of tree and learn there.
+>
+> I disagree, Rust as a language its own should be able to do what C does
+> including being able to implement the percpu functionality same as C,
+> there is nothing wrong with a set of Rust primitives in the kernel that
+> provides fundamental percpu functionality the other core facilities can
+> rely on. The better part is that it will have all the safety requirement
+> documented well.
+
+Sure, but we haven't even tried to make it safe, so I don't think we
+should add them now in this state.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Cheers,
+Benno
 
