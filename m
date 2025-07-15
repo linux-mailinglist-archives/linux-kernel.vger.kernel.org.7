@@ -1,192 +1,169 @@
-Return-Path: <linux-kernel+bounces-731569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B197B0565C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:32:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B60B05663
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 666C17AC174
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:30:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654BF1678AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1C92749C3;
-	Tue, 15 Jul 2025 09:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89FF2D375A;
+	Tue, 15 Jul 2025 09:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a0eq5Fh2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idt4IPX1"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8332C1917F0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F48F1917F0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752571916; cv=none; b=LljWLckWZ6Io+htNsp2ZoheNuJsOSy2iZIyfy17GlBWDRW99GUgNFTbSy/DZ/L2lJhLHtlw1NcATzzAnDMKnGqdZ3aM3+E8UsToUljDho4XPKQu5z18w8iHzR5vakFCVEVKUxpyLRkSo0BGIJ7ILrpOKjDLzrwgBr+opRwNVvhs=
+	t=1752571983; cv=none; b=ms8Wx5Z8swTRBzqu0kqGc/ejIdEiEJ3kClrOBWQSzXVAs9hBvaaCNQNzq1rVVDIfGiujesdhA69gW/qj8Oit+8XLdfveosuphmhEES12q97bGl1XdHVkwZDyBPFUyCqOZ5pRa8KGqOvxkPl6Qls/0MaFGiRrkoho/XA0Q7oLvHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752571916; c=relaxed/simple;
-	bh=vqxH3yKulHDuIXOdXFJhTNF6UBe2AkXbcrkMGEFMK1Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ikPiJrDDKWgr+6BHGuItW9ir4j8PvfRwaky8ssu8gAVuFbEbP0G0+mGPuq8qSlrusD6T58J2WLZI/dGGL4+VAE45c1BTjJ9C5YP96G5PjBgjCLjyATPR5eM7D922szGf4dfGonOlLT4DvSBwyMVTO9Tfddjzs7M+jQg665m5hHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a0eq5Fh2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752571913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MZ5V5WC/4Bx29YJhMDl17LYcJ252Y7Q79DzUAKHozIs=;
-	b=a0eq5Fh2BlcacGLU1lAqf47VbJvrBcfWX/YzCGX/GiY0BE0Pwj8uNeFXKOqnVUNimI/yKE
-	wgd4cD0ryVSu9Pus9Z593T960GlQu8rK9oWaUeMf/IttJ9qtKYsar2lnlgqsJokdy/Am4x
-	zRNsDdxEDBSUAGyy2N8G8bXu1XMTmPU=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-232-GqGtbInPN8mRlIOTssz4vQ-1; Tue, 15 Jul 2025 05:31:51 -0400
-X-MC-Unique: GqGtbInPN8mRlIOTssz4vQ-1
-X-Mimecast-MFC-AGG-ID: GqGtbInPN8mRlIOTssz4vQ_1752571911
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-313f8835f29so8309049a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:31:51 -0700 (PDT)
+	s=arc-20240116; t=1752571983; c=relaxed/simple;
+	bh=XlX30uvNi0+08PXyWI9YmJs8eShmHqEEMc9JhnTOSjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RBvs/XSjUzTLOynRp048gPDWq4wopKpV5pQE9T7TlecrXnLCkITPIGXFsdMYHh8bS/24MXshCG2LgH9sUuQ5QtEPAtUgGMueUp0DXlREtEqfnKDlueimHFdS/yf80OuAlDjyrW6zH+aeR0Cw3HdTwXZ1mg/DPHWZ8VXpqYJaAHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=idt4IPX1; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b39c46e1cfso647354f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:33:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752571980; x=1753176780; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=0jJME/khjaXQwKsx8AR3T7NhPGSZ++gvfi/UHBNBTFo=;
+        b=idt4IPX1MZJHhog3vsjpcY15TtUh20wqP4ZiTEmYUNBjWQ4XYopMDZXUJ3d+E9ZII/
+         q5Y0OpdmZb9yWrUOgNbxU6IW/eJlXC1gDH6INQeMJOvfMa1yUbA49pymbjxmFSj1dLag
+         CZ4cdYBfin/YT32NGG9AXT2o5S7V0Ji+aN5jlcphPvuFMxg9/pQChgaGuqDZNOHqlJuB
+         qGpyYFjp7aYMT0zvS/zaqeEf5x08RkPT+x0lOcn/MgcjfjdIigV8sH8T1IwUwSxfeAc7
+         gdORSka/YvQsC2pWFwdGGDvvLMnGJ7iWAGczcDPQjHU7EDAjWT18aHvvKYLFbNfPk+/l
+         BfTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752571910; x=1753176710;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MZ5V5WC/4Bx29YJhMDl17LYcJ252Y7Q79DzUAKHozIs=;
-        b=MgMGPJSPz0deUMOmR7Vh3n7k/9TiuFTdRlT3ZVQZpIXwE0aSws6Yr6UctM2Cn9sMst
-         +HRf0acb1MPeY8Ykkv61n0ibLxJQg2ay3F/kp+FvJXqz1+jyRuVam6rNDpAAiRYcAvdn
-         ebnfXFrNgBzUHwcGMppMLUby3u0sxo6usBvJ+7uwoPGE2OIm22orrKEcfGL9YHEhS3Bk
-         nXyRtpoenXj5wANRVPF9WDDY8vtzg8MkPpCn2z0DHiZZZKsAMeRTD/wxf/t/10IGiVrX
-         JYIC5B2we9z4H8syIGbpwJp10VYNEVj7WUms4AmHWW2JWNkqhh05yI9NzH+Y0PPhktpt
-         Z6fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWC92Myusf4Fes7JQbYzIY0KoMiFg7e48wI5poGQfXc0Vtuh8YCHYvE196O81iYHYJbl0soi6MheshF4d8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymAXCkjcu/P+0LnVwv1NEMIaoD/TquFbUarz2ydI0EDsWxJImm
-	bCyMAN9PJjP81bH/jqxzUxkI1/dgKLbu9HD1vgFkn/0NY4+eb8IdZzaj42o+fWydIPG/4YxYEDn
-	R2nDaSkS5ut4yr/3/NJPrms96qdicr1dNmTrXM3/I9MCM/j0h9Mf2D/Ec7ZYtGhP1DHf+tLcfNO
-	zEfA75Y9zAfKfcY4cLaPzdDv0yRfz0c2bFudysjkTs
-X-Gm-Gg: ASbGncsUhElJ+uSbHVo/S7tTyJGZYZk+r3dahlF2UaOof+C9hlsctVepD3UFqfGMJMv
-	RCbpKH7VTJ6uzBEtudTtX33Vc+QRQ8Del7O4QoQLypni5GIiIfLW4BKj8jnA69hLd4OrHFSZDpL
-	I9ZuCL7M0rrQ37uO4juis=
-X-Received: by 2002:a17:90b:54cb:b0:313:1e60:584e with SMTP id 98e67ed59e1d1-31c4ca84064mr27207113a91.9.1752571910361;
-        Tue, 15 Jul 2025 02:31:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsOC3svVToYzTuTnG2XpjSE05h8Xg9Xk8FAqUV2aDCpHsZDpPq7S42ao1sb0Xk4ytXWsaqgjDKokbucfr5tsI=
-X-Received: by 2002:a17:90b:54cb:b0:313:1e60:584e with SMTP id
- 98e67ed59e1d1-31c4ca84064mr27207074a91.9.1752571909800; Tue, 15 Jul 2025
- 02:31:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752571980; x=1753176780;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0jJME/khjaXQwKsx8AR3T7NhPGSZ++gvfi/UHBNBTFo=;
+        b=FbPub5xTFzL5pslF6NFDc9JMHsxC2ms3+/8tvwMhra35OX2BYu0h9MktKR3fxj9gbk
+         uPqI8VhNTTALhrbvGFUlBWoTrdlUPJu1PJY/i4tPQ1HTeI9sjZNUr8TNpRZvfzIimR64
+         vXnAleHFtFl5hs1ZCw4LgD7T9ZPnn46X2J95TGh4mKU0noHwNG1bPAmFVDlLrMZ8V5dL
+         CKgPp16cNjSaLQQ26Dk9BZGPMIWdwFTmPDuTDI5EeKe8dxHZEWmYvpqSuFjqrJAE3NgH
+         TUYZ3NLuvk556b3FSXtt7R9Bbt9r2Z4QMqzRLqhSTC/DfwJLcqGTqzc4sXrvsqTTRNtD
+         RRBA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5onIl9P1Lq8mig4GWST/PVHOTvhYZQ6fsZ8lbmplDcBXvff6tpLkfAbXV7Zk2ueZthdoJskwa0vuYI0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbaPTz8q2jpIX+6k46f99p2XrKyK/lrAONtnwrkF6Jql8ZI+4n
+	OmWBp3xkpmhs17xLtDUCt7AO2dE6DzPgtXLfYSOvym1RNEfNjJVLo1i4TdnW8g3b7cg=
+X-Gm-Gg: ASbGncu4Nqk+g3vz4843QY1VjsABKskBeoB3YsTEYDmVae/xEHKkCZrsN5/xPY89+j8
+	mJpihzDDXTEZSDSLZ2DN+VV8LY0T5m9HyGWPgxgK/J3v+hNeNCC63fbgvehn+LxdvEsBYJ6guC5
+	Ivs+vKplYD3MUqgPPI2D1xL0QoOwBlkb2JNgDodHGOPP8msG9Zo0K7HkmkDLLtOMTD9Bwdy2k+j
+	FvOJWolHo6GePJMVwMOCeJbQt/2cLwLKS6Pimm+v//fI0ML6HI1xMNnc8pn4zJjElGTkW/z80KL
+	2850QX9d1wgpiZunS5m1Lf+VO2cjnod/MEqzThNDYcTgSenbhTXrbLsXAFDdebLRxlwvYS+SNSX
+	pYCR6bgOTFsrLrqiobNh8u7pXQjwbH1LNcooTnFAuYw==
+X-Google-Smtp-Source: AGHT+IEQlBlRNnKUL+sVTdwMNTFRhe00dUVaelMbSdO6rnFWbfQZsfNCT+9BwuX/7wATZB7qeJ/7Mw==
+X-Received: by 2002:a05:6000:2483:b0:3a4:f8a9:a03e with SMTP id ffacd0b85a97d-3b60b2bd879mr307360f8f.3.1752571979682;
+        Tue, 15 Jul 2025 02:32:59 -0700 (PDT)
+Received: from [192.168.1.110] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d867sm14870582f8f.61.2025.07.15.02.32.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 02:32:59 -0700 (PDT)
+Message-ID: <5dd36649-821c-450e-bdcc-871735d10059@linaro.org>
+Date: Tue, 15 Jul 2025 11:32:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702103722.576219-1-zuozhijie@bytedance.com>
-In-Reply-To: <20250702103722.576219-1-zuozhijie@bytedance.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 15 Jul 2025 17:31:38 +0800
-X-Gm-Features: Ac12FXzqS2yugIsiVYHHsa2PvrFnPXaaMDU-eOr_I18y87iRV_Pt5Q-EGyJeHKI
-Message-ID: <CACGkMEvjXBZ-Q77-8YRyd_EV0t9xMT8R8-FT5TKJBnqAOed=pQ@mail.gmail.com>
-Subject: Re: [PATCH net v2] virtio-net: fix a rtnl_lock() deadlock during probing
-To: Zigit Zo <zuozhijie@bytedance.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] arm64: dts: qcom: sm8750: Add Iris VPU v3.5
+To: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250714-b4-sm8750-iris-dts-v1-0-93629b246d2e@linaro.org>
+ <20250714-b4-sm8750-iris-dts-v1-1-93629b246d2e@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20250714-b4-sm8750-iris-dts-v1-1-93629b246d2e@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 2, 2025 at 6:37=E2=80=AFPM Zigit Zo <zuozhijie@bytedance.com> w=
-rote:
->
-> This bug happens if the VMM sends a VIRTIO_NET_S_ANNOUNCE request while
-> the virtio-net driver is still probing with rtnl_lock() hold, this will
-> cause a recursive mutex in netdev_notify_peers().
->
-> Fix it by temporarily save the announce status while probing, and then in
-> virtnet_open(), if it sees a delayed announce work is there, it starts to
-> schedule the virtnet_config_changed_work().
->
-> Another possible solution is to directly check whether rtnl_is_locked()
-> and call __netdev_notify_peers(), but in that way means we need to relies
-> on netdev_queue to schedule the arp packets after ndo_open(), which we
-> thought is not very intuitive.
->
-> We've observed a softlockup with Ubuntu 24.04, and can be reproduced with
-> QEMU sending the announce_self rapidly while booting.
->
-> [  494.167473] INFO: task swapper/0:1 blocked for more than 368 seconds.
-> [  494.167667]       Not tainted 6.8.0-57-generic #59-Ubuntu
-> [  494.167810] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disable=
-s this message.
-> [  494.168015] task:swapper/0       state:D stack:0     pid:1     tgid:1 =
-    ppid:0      flags:0x00004000
-> [  494.168260] Call Trace:
-> [  494.168329]  <TASK>
-> [  494.168389]  __schedule+0x27c/0x6b0
-> [  494.168495]  schedule+0x33/0x110
-> [  494.168585]  schedule_preempt_disabled+0x15/0x30
-> [  494.168709]  __mutex_lock.constprop.0+0x42f/0x740
-> [  494.168835]  __mutex_lock_slowpath+0x13/0x20
-> [  494.168949]  mutex_lock+0x3c/0x50
-> [  494.169039]  rtnl_lock+0x15/0x20
-> [  494.169128]  netdev_notify_peers+0x12/0x30
-> [  494.169240]  virtnet_config_changed_work+0x152/0x1a0
-> [  494.169377]  virtnet_probe+0xa48/0xe00
-> [  494.169484]  ? vp_get+0x4d/0x100
-> [  494.169574]  virtio_dev_probe+0x1e9/0x310
-> [  494.169682]  really_probe+0x1c7/0x410
-> [  494.169783]  __driver_probe_device+0x8c/0x180
-> [  494.169901]  driver_probe_device+0x24/0xd0
-> [  494.170011]  __driver_attach+0x10b/0x210
-> [  494.170117]  ? __pfx___driver_attach+0x10/0x10
-> [  494.170237]  bus_for_each_dev+0x8d/0xf0
-> [  494.170341]  driver_attach+0x1e/0x30
-> [  494.170440]  bus_add_driver+0x14e/0x290
-> [  494.170548]  driver_register+0x5e/0x130
-> [  494.170651]  ? __pfx_virtio_net_driver_init+0x10/0x10
-> [  494.170788]  register_virtio_driver+0x20/0x40
-> [  494.170905]  virtio_net_driver_init+0x97/0xb0
-> [  494.171022]  do_one_initcall+0x5e/0x340
-> [  494.171128]  do_initcalls+0x107/0x230
-> [  494.171228]  ? __pfx_kernel_init+0x10/0x10
-> [  494.171340]  kernel_init_freeable+0x134/0x210
-> [  494.171462]  kernel_init+0x1b/0x200
-> [  494.171560]  ret_from_fork+0x47/0x70
-> [  494.171659]  ? __pfx_kernel_init+0x10/0x10
-> [  494.171769]  ret_from_fork_asm+0x1b/0x30
-> [  494.171875]  </TASK>
->
-> Fixes: df28de7b0050 ("virtio-net: synchronize operstate with admin state =
-on up/down")
-> Signed-off-by: Zigit Zo <zuozhijie@bytedance.com>
-> ---
-> v1 -> v2:
-> - Check vi->status in virtnet_open().
-> v1:
-> - https://lore.kernel.org/netdev/20250630095109.214013-1-zuozhijie@byteda=
-nce.com/
-> ---
->  drivers/net/virtio_net.c | 43 ++++++++++++++++++++++++----------------
->  1 file changed, 26 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index e53ba600605a..859add98909b 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -3151,6 +3151,10 @@ static int virtnet_open(struct net_device *dev)
->         if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
->                 if (vi->status & VIRTIO_NET_S_LINK_UP)
->                         netif_carrier_on(vi->dev);
-> +               if (vi->status & VIRTIO_NET_S_ANNOUNCE) {
-> +                       vi->status &=3D ~VIRTIO_NET_S_ANNOUNCE;
-> +                       schedule_work(&vi->config_work);
-> +               }
->                 virtio_config_driver_enable(vi->vdev);
+On 14/07/2025 15:55, Krzysztof Kozlowski wrote:
+> +
+> +		videocc: clock-controller@aaf0000 {
+> +			compatible = "qcom,sm8750-videocc";
+> +			reg = <0x0 0x0aaf0000 0x0 0x10000>;
+> +			clocks = <&bi_tcxo_div2>,
+> +				 <&gcc GCC_VIDEO_AHB_CLK>;
+> +			power-domains = <&rpmhpd RPMHPD_MMCX>;
 
-Instead of doing tricks like this.
+This is incomplete, need second power domain and I did not check against
+qcom,sm8750-videocc schema before sending. I will send a v2 a bit later
+(maybe some reviews pop up).
 
-I wonder if the fix is as simple as calling
-virtio_config_driver_disable() before init_vqs()?
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+>  		pdc: interrupt-controller@b220000 {
+>  			compatible = "qcom,sm8750-pdc", "qcom,pdc";
+>  			reg = <0x0 0x0b220000 0x0 0x10000>, <0x0 0x164400f0 0x0 0x64>;
+> 
 
-Thanks
 
+Best regards,
+Krzysztof
 
