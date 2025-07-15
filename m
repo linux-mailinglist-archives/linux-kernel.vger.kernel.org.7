@@ -1,335 +1,117 @@
-Return-Path: <linux-kernel+bounces-732375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0CEB065E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:21:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058F0B065F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A27C81AA666E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23ED65047AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7BB2BE047;
-	Tue, 15 Jul 2025 18:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O40RzE1j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF6A2BE643;
+	Tue, 15 Jul 2025 18:26:23 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709C38633F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 18:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DB928F948;
+	Tue, 15 Jul 2025 18:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752603668; cv=none; b=GMtiAFrvh2z+IvlbvchnZEDWtNf0kwfSLc0YBxbFWAZTIMXh7jSZ1dBJflyhy2AOvIPVdwTmFg+pp2JoK842KICXoB+4OInE/xhk6gvUnxRz2ctELhUpXp99p6KFmgNUpZYWnLtx+i2rW8gxXMT5pQCVQpYVqDuD1KkDk0nJmVA=
+	t=1752603982; cv=none; b=IN2aYwI4K2BanO7dAhXlz2kBZbe3H5u44D4ENINQrVgDTF3fK4kPAB1Mhl0uX5E8XG5UZ/6UFwawGxCfVd/FAFZbmeQIp0FrFFXFdA5dAj6qHJlKlSFZ5avrtNBJ8gryE3odlSRldq1fj5ZCDh5BBZ2luei6MvfKU/6bcMYYTAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752603668; c=relaxed/simple;
-	bh=iMeutk6WZ2r0algnTZt4qA/gpmAjHjms+LntI82YeQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGGw9t+tuSVLW4Gtlk6rzE7J0D55YDM2UblJQ76Q+Cmv1FR3JSuZB/CovKSjdM0fGJGL8sBz5ejkRl+2gCePkPTvRyP6SxB3rIaTnLIJ9Bf9SgO53U/i6d9bKuRjHlko/IwVbOeXTno1F3MDkYqOB5CVT4Acc/4vJD7vQcUhjWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O40RzE1j; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752603667; x=1784139667;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=iMeutk6WZ2r0algnTZt4qA/gpmAjHjms+LntI82YeQw=;
-  b=O40RzE1jqbLvT0Hk1MhMQSw+WCFBM9denqNDxX8pQNbM9kwfVLMaiJ+s
-   v/GD5IuKpmEwgNaBkrq9NoIwjKLUFnQ6xUruHvQ6UT/PWyrG50CNfS1xn
-   CMQzh37s/MVr2V3Mj/rM3LtLZqM7VP7DbkA3SaXmZUs5KYkEiAOYE3Z/X
-   g6B4tDkNu8ii+zRoNaURFkTXV2PtfD+sK9i9o4VH+hOjcqNk93maxu+Pc
-   YGoj+cmC7fAEcPllXKHSqZpl5q2hRdT29oJF493QVqdgqWXlMpyjygodN
-   p84s6CBd6ffuS0Imes6hdw6n5OIseWqMi9U5HsC2Ga2MYPwXW9vznqC1q
-   A==;
-X-CSE-ConnectionGUID: zP5pN766REWAo02+9TydKA==
-X-CSE-MsgGUID: 5eWuGnINQ/iMBrQ3J+IMAA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="80281004"
-X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
-   d="scan'208";a="80281004"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 11:21:04 -0700
-X-CSE-ConnectionGUID: zBjR1nOcT4W+3o7Abx+zrw==
-X-CSE-MsgGUID: KXHbkmZWQiunWTLSbB54Kg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
-   d="scan'208";a="162936146"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO stinkbox) ([10.245.245.63])
-  by orviesa005.jf.intel.com with SMTP; 15 Jul 2025 11:20:59 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 15 Jul 2025 21:20:58 +0300
-Date: Tue, 15 Jul 2025 21:20:58 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Dibin Moolakadan Subrahmanian <dibin.moolakadan.subrahmanian@intel.com>,
-	Imre Deak <imre.deak@intel.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Matt Wagantall <mattw@codeaurora.org>,
-	Dejin Zheng <zhengdejin5@gmail.com>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v2 1/4] iopoll: Generalize read_poll_timeout() into
- poll_timeout_us()
-Message-ID: <aHacCnkuMCwNYin8@intel.com>
-References: <20250702223439.19752-1-ville.syrjala@linux.intel.com>
- <20250708131634.1524-1-ville.syrjala@linux.intel.com>
+	s=arc-20240116; t=1752603982; c=relaxed/simple;
+	bh=d492akOQwE/nITNKQ6WXsp4Sz5y0/EdvpkqiIAEmBXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b2t0QUEPt+WotjMSi+2F3cjxrPsQxlRflmqRiw75uTr5FdK0cSqNbFxAeRoxBfA5h76iL4Y14lnA02xlUs3YOpCv97mOKVojvNoxKpi2vGCfMgCEWcECa2RVtV+uHnw/+noMMQVFpCPkxyWwZz1LCwRxUTN3GEGeanBIoMToK6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 89F7AB6575;
+	Tue, 15 Jul 2025 18:26:17 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id CC22A6000A;
+	Tue, 15 Jul 2025 18:26:11 +0000 (UTC)
+Date: Tue, 15 Jul 2025 14:26:10 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
+ James <sam@gentoo.org>
+Subject: Re: [PATCH v13 10/14] unwind: Clear unwind_mask on exit back to
+ user space
+Message-ID: <20250715142610.2e1bb341@batman.local.home>
+In-Reply-To: <20250715140650.19c0a8ed@batman.local.home>
+References: <20250708012239.268642741@kernel.org>
+	<20250708012359.345060579@kernel.org>
+	<20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
+	<20250715084932.0563f532@gandalf.local.home>
+	<20250715140650.19c0a8ed@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250708131634.1524-1-ville.syrjala@linux.intel.com>
-X-Patchwork-Hint: comment
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 99usg7ufpezufy9zhi7bi7f6cp394fk3
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: CC22A6000A
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/W3K8oETpXrrrMPECrBZjLRieU+nnwXec=
+X-HE-Tag: 1752603971-275217
+X-HE-Meta: U2FsdGVkX1/rB0YRB4mWgS30gnYn0qDx+/FYMc/dZ2PNChHSq0DQzLsUn5FFj5wEIvUJ97yX0X1+XVVviFXgkcej58MuQtGdI3x85RmdJbSjzHyr46cik9t0v1bb70NivZM1pIY/xTL4uqPUHDYRwmzCt8vr0w5JVkC/MXRoLPjEg65X8JM8aO/LXjFO6Pnfm7HMNKLscX3BkkLJ+aRzwjmJ+sBt9+fSDVCK5aowcq22usFQUqy6+pn4aFrCwsyy+2oXH2PkKCPpjfYDun2Xx6xCLPKBNg1L7H6+I3pWfOGLChcgxtXauLF4e2Qj9HgnlaNFsaQfwXrMD3MuGrwcMn4JIRY/gwmkeC7kBAP32Jyp56AEn3xFP6hxWYUzpTHh
 
-On Tue, Jul 08, 2025 at 04:16:34PM +0300, Ville Syrjala wrote:
-> From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> 
-> While read_poll_timeout() & co. were originally introduced just
-> for simple I/O usage scenarios they have since been generalized to
-> be useful in more cases.
-> 
-> However the interface is very cumbersome to use in the general case.
-> Attempt to make it more flexible by combining the 'op', 'var' and
-> 'args' parameter into just a single 'op' that the caller can fully
-> specify.
-> 
-> For example i915 has one case where one might currently
-> have to write something like:
-> 	ret = read_poll_timeout(drm_dp_dpcd_read_byte, err,
-> 				err || (status & mask),
-> 				0 * 1000, 200 * 1000, false,
-> 				aux, DP_FEC_STATUS, &status);
-> which is practically illegible, but with the adjusted macro
-> we do:
-> 	ret = poll_timeout_us(err = drm_dp_dpcd_read_byte(aux, DP_FEC_STATUS, &status),
-> 			      err || (status & mask),
-> 			      0 * 1000, 200 * 1000, false);
-> which much easier to understand.
-> 
-> One could even combine the 'op' and 'cond'  parameters into
-> one, but that might make the caller a bit too unwieldly with
-> assignments and checks being done on the same statement.
-> 
-> This makes poll_timeout_us() closer to the i915 __wait_for()
-> macro, with the main difference being that __wait_for() uses
-> expenential backoff as opposed to the fixed polling interval
-> used by poll_timeout_us(). Eventually we might be able to switch
-> (at least most of) i915 to use poll_timeout_us().
-> 
-> v2: Fix typos (Jani)
->     Fix delay_us docs for poll_timeout_us_atomic() (Jani)
-> 
-> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-> Cc: Dibin Moolakadan Subrahmanian <dibin.moolakadan.subrahmanian@intel.com>
-> Cc: Imre Deak <imre.deak@intel.com>
-> Cc: David Laight <david.laight.linux@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Matt Wagantall <mattw@codeaurora.org>
-> Cc: Dejin Zheng <zhengdejin5@gmail.com>
-> Cc: intel-gfx@lists.freedesktop.org
-> Cc: intel-xe@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-> Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> ---
->  include/linux/iopoll.h | 110 +++++++++++++++++++++++++++++------------
->  1 file changed, 78 insertions(+), 32 deletions(-)
+On Tue, 15 Jul 2025 14:06:50 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Any thoughs how we should get this stuff in? Jani will need it for
-some i915 stuff once he returns from vacation, so I could just push
-it into drm-intel-next...
-
-Are people OK with that, or is there a better tree that could pick 
-this up?
-
+> > > > + * Return: 0 if the callback successfully was queued.
+> > > > + *         UNWIND_ALREADY_PENDING if the the callback was already queued.
+> > > > + *         UNWIND_ALREADY_EXECUTED if the callback was already called
+> > > > + *                (and will not be called again)
+> > > >   *         Negative if there's an error.
+> > > >   *         @cookie holds the cookie of the first request by any user
+> > > >   */      
+> > > 
+> > > Lots of babbling in the Changelog, but no real elucidation as to why you
+> > > need this second return value.
+> > > 
+> > > AFAICT it serves no real purpose; the users of this function should not
+> > > care. The only difference is that the unwind reference (your cookie)
+> > > becomes a backward reference instead of a forward reference. But why
+> > > would anybody care?    
+> > 
+> > Older versions of the code required it. I think I can remove it now.  
 > 
-> diff --git a/include/linux/iopoll.h b/include/linux/iopoll.h
-> index 91324c331a4b..440aca5b4b59 100644
-> --- a/include/linux/iopoll.h
-> +++ b/include/linux/iopoll.h
-> @@ -14,41 +14,38 @@
->  #include <linux/io.h>
->  
->  /**
-> - * read_poll_timeout - Periodically poll an address until a condition is
-> - *			met or a timeout occurs
-> - * @op: accessor function (takes @args as its arguments)
-> - * @val: Variable to read the value into
-> - * @cond: Break condition (usually involving @val)
-> - * @sleep_us: Maximum time to sleep between reads in us (0 tight-loops). Please
-> - *            read usleep_range() function description for details and
-> + * poll_timeout_us - Periodically poll and perform an operation until
-> + *                   a condition is met or a timeout occurs
-> + *
-> + * @op: Operation
-> + * @cond: Break condition
-> + * @sleep_us: Maximum time to sleep between operations in us (0 tight-loops).
-> + *            Please read usleep_range() function description for details and
->   *            limitations.
->   * @timeout_us: Timeout in us, 0 means never timeout
-> - * @sleep_before_read: if it is true, sleep @sleep_us before read.
-> - * @args: arguments for @op poll
-> + * @sleep_before_op: if it is true, sleep @sleep_us before operation.
->   *
->   * When available, you'll probably want to use one of the specialized
->   * macros defined below rather than this macro directly.
->   *
-> - * Returns: 0 on success and -ETIMEDOUT upon a timeout. In either
-> - * case, the last read value at @args is stored in @val. Must not
-> + * Returns: 0 on success and -ETIMEDOUT upon a timeout. Must not
->   * be called from atomic context if sleep_us or timeout_us are used.
->   */
-> -#define read_poll_timeout(op, val, cond, sleep_us, timeout_us, \
-> -				sleep_before_read, args...) \
-> +#define poll_timeout_us(op, cond, sleep_us, timeout_us, sleep_before_op) \
->  ({ \
->  	u64 __timeout_us = (timeout_us); \
->  	unsigned long __sleep_us = (sleep_us); \
->  	ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
->  	might_sleep_if((__sleep_us) != 0); \
-> -	if (sleep_before_read && __sleep_us) \
-> +	if ((sleep_before_op) && __sleep_us) \
->  		usleep_range((__sleep_us >> 2) + 1, __sleep_us); \
->  	for (;;) { \
-> -		(val) = op(args); \
-> +		op; \
->  		if (cond) \
->  			break; \
->  		if (__timeout_us && \
->  		    ktime_compare(ktime_get(), __timeout) > 0) { \
-> -			(val) = op(args); \
-> +			op; \
->  			break; \
->  		} \
->  		if (__sleep_us) \
-> @@ -59,17 +56,16 @@
->  })
->  
->  /**
-> - * read_poll_timeout_atomic - Periodically poll an address until a condition is
-> - * 				met or a timeout occurs
-> - * @op: accessor function (takes @args as its arguments)
-> - * @val: Variable to read the value into
-> - * @cond: Break condition (usually involving @val)
-> - * @delay_us: Time to udelay between reads in us (0 tight-loops). Please
-> - *            read udelay() function description for details and
-> + * poll_timeout_us_atomic - Periodically poll and perform an operation until
-> + *                          a condition is met or a timeout occurs
-> + *
-> + * @op: Operation
-> + * @cond: Break condition
-> + * @delay_us: Time to udelay between operations in us (0 tight-loops).
-> + *            Please read udelay() function description for details and
->   *            limitations.
->   * @timeout_us: Timeout in us, 0 means never timeout
-> - * @delay_before_read: if it is true, delay @delay_us before read.
-> - * @args: arguments for @op poll
-> + * @delay_before_op: if it is true, delay @delay_us before operation.
->   *
->   * This macro does not rely on timekeeping.  Hence it is safe to call even when
->   * timekeeping is suspended, at the expense of an underestimation of wall clock
-> @@ -78,27 +74,26 @@
->   * When available, you'll probably want to use one of the specialized
->   * macros defined below rather than this macro directly.
->   *
-> - * Returns: 0 on success and -ETIMEDOUT upon a timeout. In either
-> - * case, the last read value at @args is stored in @val.
-> + * Returns: 0 on success and -ETIMEDOUT upon a timeout.
->   */
-> -#define read_poll_timeout_atomic(op, val, cond, delay_us, timeout_us, \
-> -					delay_before_read, args...) \
-> +#define poll_timeout_us_atomic(op, cond, delay_us, timeout_us, \
-> +			       delay_before_op) \
->  ({ \
->  	u64 __timeout_us = (timeout_us); \
->  	s64 __left_ns = __timeout_us * NSEC_PER_USEC; \
->  	unsigned long __delay_us = (delay_us); \
->  	u64 __delay_ns = __delay_us * NSEC_PER_USEC; \
-> -	if (delay_before_read && __delay_us) { \
-> +	if ((delay_before_op) && __delay_us) { \
->  		udelay(__delay_us); \
->  		if (__timeout_us) \
->  			__left_ns -= __delay_ns; \
->  	} \
->  	for (;;) { \
-> -		(val) = op(args); \
-> +		op; \
->  		if (cond) \
->  			break; \
->  		if (__timeout_us && __left_ns < 0) { \
-> -			(val) = op(args); \
-> +			op; \
->  			break; \
->  		} \
->  		if (__delay_us) { \
-> @@ -113,6 +108,57 @@
->  	(cond) ? 0 : -ETIMEDOUT; \
->  })
->  
-> +/**
-> + * read_poll_timeout - Periodically poll an address until a condition is
-> + *                     met or a timeout occurs
-> + * @op: accessor function (takes @args as its arguments)
-> + * @val: Variable to read the value into
-> + * @cond: Break condition (usually involving @val)
-> + * @sleep_us: Maximum time to sleep between reads in us (0 tight-loops). Please
-> + *            read usleep_range() function description for details and
-> + *            limitations.
-> + * @timeout_us: Timeout in us, 0 means never timeout
-> + * @sleep_before_read: if it is true, sleep @sleep_us before read.
-> + * @args: arguments for @op poll
-> + *
-> + * When available, you'll probably want to use one of the specialized
-> + * macros defined below rather than this macro directly.
-> + *
-> + * Returns: 0 on success and -ETIMEDOUT upon a timeout. In either
-> + * case, the last read value at @args is stored in @val. Must not
-> + * be called from atomic context if sleep_us or timeout_us are used.
-> + */
-> +#define read_poll_timeout(op, val, cond, sleep_us, timeout_us, \
-> +			  sleep_before_read, args...) \
-> +	poll_timeout_us((val) = op(args), cond, sleep_us, timeout_us, sleep_before_read)
-> +
-> +/**
-> + * read_poll_timeout_atomic - Periodically poll an address until a condition is
-> + *                            met or a timeout occurs
-> + * @op: accessor function (takes @args as its arguments)
-> + * @val: Variable to read the value into
-> + * @cond: Break condition (usually involving @val)
-> + * @delay_us: Time to udelay between reads in us (0 tight-loops). Please
-> + *            read udelay() function description for details and
-> + *            limitations.
-> + * @timeout_us: Timeout in us, 0 means never timeout
-> + * @delay_before_read: if it is true, delay @delay_us before read.
-> + * @args: arguments for @op poll
-> + *
-> + * This macro does not rely on timekeeping.  Hence it is safe to call even when
-> + * timekeeping is suspended, at the expense of an underestimation of wall clock
-> + * time, which is rather minimal with a non-zero delay_us.
-> + *
-> + * When available, you'll probably want to use one of the specialized
-> + * macros defined below rather than this macro directly.
-> + *
-> + * Returns: 0 on success and -ETIMEDOUT upon a timeout. In either
-> + * case, the last read value at @args is stored in @val.
-> + */
-> +#define read_poll_timeout_atomic(op, val, cond, sleep_us, timeout_us, \
-> +				 sleep_before_read, args...) \
-> +	poll_timeout_us_atomic((val) = op(args), cond, sleep_us, timeout_us, sleep_before_read)
-> +
->  /**
->   * readx_poll_timeout - Periodically poll an address until a condition is met or a timeout occurs
->   * @op: accessor function (takes @addr as its only argument)
-> -- 
-> 2.49.0
+> Ah it is still used in the perf code:
+> 
+> perf_callchain() has:
+> 
+>         if (defer_user) {
+>                 int ret = deferred_request(event);
+>                 if (!ret)
+>                         local_inc(&event->ctx->nr_no_switch_fast);
 
--- 
-Ville Syrjälä
-Intel
+Hmm, I guess this could work if it returned non zero for both already
+queued and already executed. So it doesn't need to be two different
+values.
+
+-- Steve
+
+
+>                 else if (ret < 0)
+>                         defer_user = false;
+>         }
 
