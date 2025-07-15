@@ -1,119 +1,196 @@
-Return-Path: <linux-kernel+bounces-731843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027A4B05A7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:45:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FED4B05A7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5037616A749
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:45:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9813A356E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D112E0924;
-	Tue, 15 Jul 2025 12:45:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20D2199935;
+	Tue, 15 Jul 2025 12:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oT9hige+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029F82E03F5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0211ADF59;
+	Tue, 15 Jul 2025 12:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752583505; cv=none; b=VsvrTGbHtqNFmxNw27KHW2M2YyLt/fkwbcwGiaE7mIzoZBGpce3bRQb2hEKJKWxfPGBRYYvRt6dbx+jnTTVUya7zwFWGKD2ikkemOjboP6pX1rqWAC6GPb+dN/isYr5C1IS0nagcXzHB0/muQF5TVFLqJFM6jKcT/nsQvqYbaGI=
+	t=1752583594; cv=none; b=XaUfypMb02C/4Q9cxroKikshbIuDiK/+6s6BiL0R+DzhHPxUKEVLFiGlQlwKAplrgKOG4/P2oP7Zunhz8MjE+LXdxxvuZAmbGtFsrXam/AFfPQJpiPQylH4n3ZBtTtqGoF6pxQ/5yxSWAi4hMjVQ1ykpTxJNfbjxHNJuDMAigeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752583505; c=relaxed/simple;
-	bh=qd9byiqdLs5dhX68Mvy0lY6EMTedt2FDJFFyGsFXEM4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MZHqCa58EuMiN3dXIg3CwIiLJE0IwXgr7bvrUOR4b/3+aeNiKXXvXNXFIYt+JDhKkLhkZEuYWGtSvo4Zj9LWiYgE5ViK5sDav7y5lFXlbUiPRRfhu075/p+9cyDUFQOJtEKf9wMDqaekaESb/3nCkwaY47TJY16PROkfL0vtYqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86a5def8869so1074877739f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 05:45:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752583503; x=1753188303;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f/0NmGbHnwvLah827HF2TRWoOhL/bFX+Kt45R03Zcdc=;
-        b=DQRYY8KTORs/jJboTsYgqw4FMOzqQunkwnnhABJ6EH34DG2CG+LVKRZSLyBpZViZZQ
-         uJD+KqfqnAKD5eDZ0vnAyBiCZhsLcJvQ10jYSmXq63/1ht+Vx457BFwp9HtveaSa9qfW
-         kC0tnUkyFaVhl5vR7PrMXcYFruCmMnefO5EINOh0MdVh9ibhO86rOUPCBcqOu+oW6NoO
-         sbnpPf6TMztk4w/E/tFbfiiJVmXK2cWk9A1V4YPI8hBcmZVqX06r7GeOfYE7ILftRDA2
-         ziZnATi0MtREv+cnu9iEIsmHfxn6TSgITXssQ5+XL5v9NaS28dLh9Uyv53/qZy8x9Gjr
-         woxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6LoKBYq50bhOS/5XiSqzg0hlEBtA2HlFF9TvzUfVVkO5CwjyiSnIt5P2rtpS6iA0dfFZWUmkNsLu3P0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2EYNnm9pdccTHrc7ZWzmv+vLB16v5ESlc+NDZW2gy2X5Zzgs2
-	CHfnUmLMSQ0FomqsKoa8PsN7mLE+5q5JG4U2jRMWeYdwnCzINxkYiHHWRJjfvuqU0Fd/P5JF3VV
-	FkykYZyMnkVh1MsrQdfQeIamouPftg6m8HlzL0pLaI5BnrTCwMDN5m0avDbk=
-X-Google-Smtp-Source: AGHT+IHG73OdBF8cmM6aXt94Cd4FWPR95gSFPx77XZ8alCdtiFen2vBUAmbwXvHXI9npZrrfSgJe+M5+0XZewM5kAnBnrI4TMyU2
+	s=arc-20240116; t=1752583594; c=relaxed/simple;
+	bh=7+EiGA5DqyRfAT8n2kRDa1y3dt2X7YvUBYZXT6JOCq0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rLG3z18t4mYJgAmj3ARGOOiwpGDitk3mbX6TLO5nm9BEpiOmS4IOdppc43HQzklLuCIXkyDr1Q7XG/d5anOSCfTPaiKKrYOhvfLqg10PmwXpKs0/tN5XuGIiz7DKbR512Qd9aqHru49D61efWoQE26VG0s7/+pJKsbb/gv/rynQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oT9hige+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75047C4CEF1;
+	Tue, 15 Jul 2025 12:46:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752583593;
+	bh=7+EiGA5DqyRfAT8n2kRDa1y3dt2X7YvUBYZXT6JOCq0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oT9hige+EO6kjraS6G6MxR2H7jUnt+7mUDfV9HhWX29lItbEJvSC7I3iwduRotnZ4
+	 9n8qsSFA/yjos2ZLHEkkzze0aGLdN3eU/qHtik46RQQn6efvv+Dn8/o/7XtZF/g4vv
+	 XvQykouEWV/GwXIiDXYHTDSF4cL4V3B4xzpYuAtX/0nxD2tmV0QHHvcPimNuYn0pzo
+	 pNtrqojEyRaqnV1lAQep802FJsr85zAJdbAThoHjtGc4vd7++2W5jrjYPGhRSvIv1p
+	 gaUM/7GwQR+W1jFY0pwK2iWUytudKUsXI8iI8N+TfRuPeJUa5b0nQ8s/uryIzAOYW/
+	 ukuPAYTvubPEw==
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-41b309ce7d5so449401b6e.0;
+        Tue, 15 Jul 2025 05:46:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUGTJyMINVmHye3dYaaH+1UveYkkY2p7V7LCXSmbM0mVjNtQgx5pCxhxetJHJg5YorM58kUFfGKlU=@vger.kernel.org, AJvYcCW9pquVUguf7JelkucqZKOF/Cebrf+Y5DjB7Fppe49xolV6aoSW/KG/vilPB77iebgz2dpG61oHh0SOBVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3P+JJVc3y1d+EIAA57/2SptdnlNiW2YW5mXyrKLIl6qx5YsYr
+	7yK6fdwqbL5nD0MW4xIyBsKslRqLwQH3Oppgyabi9laVJvF4NqcQMFKDU3fi8ympbglpyTw37YG
+	3UHQFmCm9BI6t/P/gynSF8Y4OtSibipw=
+X-Google-Smtp-Source: AGHT+IFu/Q9xSrZ9iC1xiCEb7hs4kQ2UwtV4aD99pKB7qP9MAFC1OGVN2pUi4hZ9VdLis2qJe60K5sTkT2iz4Dhtxdo=
+X-Received: by 2002:a05:6808:17a1:b0:40b:4208:8602 with SMTP id
+ 5614622812f47-4150d646f10mr12295394b6e.4.1752583592621; Tue, 15 Jul 2025
+ 05:46:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1555:b0:879:4aee:a88a with SMTP id
- ca18e2360f4ac-87977e9a6f7mr1821780439f.0.1752583503113; Tue, 15 Jul 2025
- 05:45:03 -0700 (PDT)
-Date: Tue, 15 Jul 2025 05:45:03 -0700
-In-Reply-To: <76704579-e2a1-4000-8d0c-b3ccd429870d@redhat.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68764d4f.a70a0220.693ce.000a.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] UBSAN: shift-out-of-bounds in gfs2_dir_read (2)
-From: syzbot <syzbot+4708579bb230a0582a57@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, anprice@redhat.com, gfs2@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <12700973.O9o76ZdvQC@rjwysocki.net> <aHYCRvz0ohgi2xUk@kekkonen.localdomain>
+In-Reply-To: <aHYCRvz0ohgi2xUk@kekkonen.localdomain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 15 Jul 2025 14:46:21 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jEELFB6vb1dtkPgu_3_eew7Y1Jebevfmhye+ZPLk0Jtg@mail.gmail.com>
+X-Gm-Features: Ac12FXyRglH3SKE9RdnWM8j7VCLS4iKVOw1yueYUi33KBroSMCWLlFW7h4oKd-o
+Message-ID: <CAJZ5v0jEELFB6vb1dtkPgu_3_eew7Y1Jebevfmhye+ZPLk0Jtg@mail.gmail.com>
+Subject: Re: [PATCH v1] PM: runtime: Take active children into account in pm_runtime_get_if_in_use()
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alex Elder <elder@linaro.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ulf Hansson <ulf.hansson@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Sakari,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in move_to_new_folio
+On Tue, Jul 15, 2025 at 9:28=E2=80=AFAM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Rafael,
+>
+> Thanks for the patch.
+>
+> On Wed, Jul 09, 2025 at 12:41:45PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > For all practical purposes, there is no difference between the situatio=
+n
+> > in which a given device is not ignoring children and its active child
+> > count is nonzero and the situation in which its runtime PM usage counte=
+r
+> > is nonzero.  However, pm_runtime_get_if_in_use() will only increment th=
+e
+> > device's usage counter and return 1 in the latter case.
+> >
+> > For consistency, make it do so in the former case either by adjusting
+> > pm_runtime_get_conditional() and update the related kerneldoc comments
+> > accordingly.
+> >
+> > Fixes: c0ef3df8dbae ("PM: runtime: Simplify pm_runtime_get_if_active() =
+usage")
+>
+> I guess this should be:
+>
+> Fixes: c111566bea7c ("PM: runtime: Add pm_runtime_get_if_active()")
 
-------------[ cut here ]------------
-gfs2_meta_aops does not implement migrate_folio
-WARNING: CPU: 0 PID: 30 at mm/migrate.c:944 fallback_migrate_folio mm/migrate.c:942 [inline]
-WARNING: CPU: 0 PID: 30 at mm/migrate.c:944 move_to_new_folio+0x696/0x7a0 mm/migrate.c:996
-Modules linked in:
-CPU: 0 UID: 0 PID: 30 Comm: kcompactd1 Not tainted 6.16.0-rc6-syzkaller-g155a3c003e55-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:fallback_migrate_folio mm/migrate.c:942 [inline]
-RIP: 0010:move_to_new_folio+0x696/0x7a0 mm/migrate.c:996
-Code: 0d 01 90 42 80 7c 3d 00 00 74 0a 48 8b 7c 24 20 e8 2f 53 fe ff 48 8b 44 24 20 48 8b 30 48 c7 c7 20 bb 97 8b e8 cb b5 5e ff 90 <0f> 0b 90 90 49 bf 00 00 00 00 00 fc ff df e9 7e fd ff ff e8 e2 d2
-RSP: 0018:ffffc90000516fd0 EFLAGS: 00010246
-RAX: 0ac1efce833f5700 RBX: ffffea0000d5d100 RCX: ffff888030f20000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
-RBP: 1ffff1100aaeabc5 R08: ffff88801fc24293 R09: 1ffff11003f84852
-R10: dffffc0000000000 R11: ffffed1003f84853 R12: ffffea00015c8e00
-R13: ffff888055755d08 R14: ffffea0000d5d108 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff88808d21b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffb6eacfe8 CR3: 0000000054de7000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- migrate_folio_move mm/migrate.c:1301 [inline]
- migrate_folios_move mm/migrate.c:1653 [inline]
- migrate_pages_batch+0x1c34/0x2830 mm/migrate.c:1900
- migrate_pages_sync mm/migrate.c:1930 [inline]
- migrate_pages+0x1bcc/0x2930 mm/migrate.c:2039
- compact_zone+0x23f4/0x4ad0 mm/compaction.c:2683
- compact_node+0x1d2/0x280 mm/compaction.c:2952
- kcompactd+0xbc8/0x1290 mm/compaction.c:3250
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+Technically yes, but that would require specific backport changes for
+older "stable" series.
 
+> Should this also be cc'd to stable?
 
-Tested on:
+Possibly.
 
-commit:         155a3c00 Merge tag 'for-6.16/dm-fixes-2' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11eb8382580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f62a2ef17395702a
-dashboard link: https://syzkaller.appspot.com/bug?extid=4708579bb230a0582a57
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=150808f0580000
+> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
+Thank you!
+
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/base/power/runtime.c |   27 ++++++++++++++++++---------
+> >  1 file changed, 18 insertions(+), 9 deletions(-)
+> >
+> > --- a/drivers/base/power/runtime.c
+> > +++ b/drivers/base/power/runtime.c
+> > @@ -1203,10 +1203,12 @@
+> >   *
+> >   * Return -EINVAL if runtime PM is disabled for @dev.
+> >   *
+> > - * Otherwise, if the runtime PM status of @dev is %RPM_ACTIVE and eith=
+er
+> > - * @ign_usage_count is %true or the runtime PM usage counter of @dev i=
+s not
+> > - * zero, increment the usage counter of @dev and return 1. Otherwise, =
+return 0
+> > - * without changing the usage counter.
+> > + * Otherwise, if its runtime PM status is %RPM_ACTIVE and (1) @ign_usa=
+ge_count
+> > + * is set, or (2) @dev is not ignoring children and its active child c=
+ount is
+> > + * nonero, or (3) the runtime PM usage counter of @dev is not zero, in=
+crement
+> > + * the usage counter of @dev and return 1.
+> > + *
+> > + * Otherwise, return 0 without changing the usage counter.
+> >   *
+> >   * If @ign_usage_count is %true, this function can be used to prevent =
+suspending
+> >   * the device when its runtime PM status is %RPM_ACTIVE.
+> > @@ -1228,7 +1230,8 @@
+> >               retval =3D -EINVAL;
+> >       } else if (dev->power.runtime_status !=3D RPM_ACTIVE) {
+> >               retval =3D 0;
+> > -     } else if (ign_usage_count) {
+> > +     } else if (ign_usage_count || (!dev->power.ignore_children &&
+> > +                atomic_read(&dev->power.child_count) > 0)) {
+> >               retval =3D 1;
+> >               atomic_inc(&dev->power.usage_count);
+> >       } else {
+> > @@ -1261,10 +1264,16 @@
+> >   * @dev: Target device.
+> >   *
+> >   * Increment the runtime PM usage counter of @dev if its runtime PM st=
+atus is
+> > - * %RPM_ACTIVE and its runtime PM usage counter is greater than 0, in =
+which case
+> > - * it returns 1. If the device is in a different state or its usage_co=
+unt is 0,
+> > - * 0 is returned. -EINVAL is returned if runtime PM is disabled for th=
+e device,
+> > - * in which case also the usage_count will remain unmodified.
+> > + * %RPM_ACTIVE and its runtime PM usage counter is greater than 0 or i=
+t is not
+> > + * ignoring children and its active child count is nonzero.  1 is retu=
+rned in
+> > + * this case.
+> > + *
+> > + * If @dev is in a different state or it is not in use (that is, its u=
+sage
+> > + * counter is 0, or it is ignoring children, or its active child count=
+ is 0),
+> > + * 0 is returned.
+> > + *
+> > + * -EINVAL is returned if runtime PM is disabled for the device, in wh=
+ich case
+> > + * also the usage counter of @dev is not updated.
+> >   */
+> >  int pm_runtime_get_if_in_use(struct device *dev)
+> >  {
+> >
+> >
+>
+> --
+> Kind regards,
+>
+> Sakari Ailus
+>
 
