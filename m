@@ -1,68 +1,81 @@
-Return-Path: <linux-kernel+bounces-731489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF60B0551A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9D9B0551D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DE0C1C23095
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:38:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A625616D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C93227511F;
-	Tue, 15 Jul 2025 08:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9561E273808;
+	Tue, 15 Jul 2025 08:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kYm/zufu"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kMmQmNQy"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD6A25D55D;
-	Tue, 15 Jul 2025 08:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A4825D55D
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568712; cv=none; b=Fl0IOH9FTrmmXCE2iEXbrqDpmyiAT9bxAs8xsf51T8hsDF/R5EfrNA7Gh26DIRttf0qGpLRHGNFfiwFsqApAL17xktPS0Qzrb2UXcRgM/hDxxVbsH7eJFCE+8g0aZFBKM0lQcoekrN00yj56gmmBQXkt0QVrSDp6hB8L7tb3Y08=
+	t=1752568725; cv=none; b=cDXopJ03AvW55/34iKigglC/JNUFDvc+vgsTDOmIXFJIPYxRO7lFL51edTRRmzbeKfiOQspkThCW9iv3RYO0lYL5eL1wCRZ4Gq+VO/2OTYnsRb+8/7mm/duBOgpzIPp8SxYxb0MinJFd6/cJiIE07+w0xYZTjR77eTace3o7AI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568712; c=relaxed/simple;
-	bh=+vwArnrY1WUKpHwVAhWW4AdnqAXxb7+tLN01yLid6D8=;
+	s=arc-20240116; t=1752568725; c=relaxed/simple;
+	bh=c6LJj3udj0J3UootvIgB6zfzZvQZ47urSurRtPXKJ8s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Slkfyg+ej85HvkNiD9XRqgOlMG9Xj8Y6f8JtSmsRy6YT7oGS5Dv1+ezdrTH0A7hfh+dZBl1dzLDfz28nDTGHtXrqee1LthMHsTfkuNkTCH/ZtzhmJMYhLcVBCN3UIY395/hyFHSa3yjSWjYYoG7zAlu/n5pnr05KnNjPll7lkgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kYm/zufu; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=0T1MAaef5TRDgYb2ggWbaAQ7P+Pjl4UPCbAZTCdx3jU=; b=kYm/zuful5YpIcQKeAogobkh5w
-	gtQgGyCJvrx88F9aqMMCBThiUhl8tokdLvPaee1EvNBGSJAYFMMp8yBW3mg4Q4+/sSRLHUuLbSs60
-	edg3jsXa+qD1hGBCyJlwoyzaPK4/QjexBONi1etGhmU1pUcG6P6pCna+AR5KtJZ9cw127OtcBF36s
-	3UQ/FxrqQ/wnDTcsiJXPhbrO8CP/w+DY3zMWaKbZ6DzPXgzTF5UVEZTxb+osOwHsOtKJ7xlfgjTyv
-	uBqEZKmTGLj5GFwPkC8Dzl4ZRzMDdJ0eMf6+3a1/p2Wl98qKQIYzhVpMwirc/DPG8dMQM/Inwf90o
-	CwVwtdzg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubbAx-00000009rLY-34gi;
-	Tue, 15 Jul 2025 08:38:12 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 68E1E3001AA; Tue, 15 Jul 2025 10:38:10 +0200 (CEST)
-Date: Tue, 15 Jul 2025 10:38:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
-	ardb@kernel.org, kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	gregkh@linuxfoundation.org, jpoimboe@kernel.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-efi@vger.kernel.org,
-	samitolvanen@google.com, ojeda@kernel.org
-Subject: Re: [PATCH v3 16/16] objtool: Validate kCFI calls
-Message-ID: <20250715083810.GN1613200@noisy.programming.kicks-ass.net>
-References: <20250714102011.758008629@infradead.org>
- <20250714103441.496787279@infradead.org>
- <CANiq72kP7_24ChdQ+vDg+HWJB-4mKWvB9P33C9O=0W_kLt0+eA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CB5MMLxk4J7bIF6O1vb3Jbyg5BVJTy2DDHmoSStP0/nAmUo7NocUPaQJR9gOwmooHwPQVHK4MC/yq2Jbw8+z7Ub9uZKYAWrwjiQsv6L4Gtb0vtd8EjVB8lCEB8tWqifeD/2/fEh5ZAtNLQEnVFgqI4IxsyAwtKuh/tUbUk/c6ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kMmQmNQy; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1973F40E0216;
+	Tue, 15 Jul 2025 08:38:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ripCVEZ_vT8z; Tue, 15 Jul 2025 08:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752568718; bh=4A5vVxA2en17yEgK87oBpQ+FmmPPz4Eo7oPnmKuCKAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kMmQmNQykSg69IRQRksRLWW1aZsVriIcboXip+rJIPXUuC/M5K8yzG/2XsHdOitl7
+	 nt7DK1ZM11okvx9GZWDjV63xWjuFRLkVJUfwKaDEZgxL5M2DjMmETaqkbjKrFFVIQU
+	 Z+t2TB8DCYh/2VZlSBDFY/UFnFJ979AstMRHilaW4bs3jqjXWmgJ1lL6igWdRftate
+	 RQ+fzl1Bi6aTSKVpqtntKf3d1ZTAbe9ZLecJyUzK5tL0lCJD7BEBR/j6B+jcfivSON
+	 biv2OUuGdsdCmOJu+DTQ1LLku2Z51NTVcnNgXc3kW4IJbpcliZZTRozd/QZNcue4gJ
+	 1qiLV4yd4RRuYYCr5zKYvGlEKXiu99WfJ+Rwyf049qjvojH8kwnWpFF5a04pb4/ENn
+	 To+9zKPJQNqWt/4DJjNdFWvfdXR68aHJU9N5TvnXwtoGzEt4GeVgx6gZ8kiuqyNK7o
+	 +iGxjtYrOaHOHXkAZOorchJOzszwmMn1ssZmvJI5KiXnf9DFE8SbdHaSTDYAf3mKxh
+	 1jPCsUHPkx8jgP8kyw/Y5jjUzkN6t8rvMyAJsMoUTcQ5zDweh+5GXrPWLaREzKoiP0
+	 t8GjC4rsGf8KDI3+Bv+j2uHDdJQUgEkUTAb2LQe6x0TWdSwSdeq0CtLYJ8HDR+0U6j
+	 rCiWevlgdeVwjKcjNjZZGlcw=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C2E0D40E015D;
+	Tue, 15 Jul 2025 08:38:28 +0000 (UTC)
+Date: Tue, 15 Jul 2025 10:38:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, santosh.shukla@amd.com
+Subject: Re: [PATCH] x86/sev: Improve handling of writes to intercepted
+ GUEST_TSC_FREQ
+Message-ID: <20250715083827.GBaHYTg9eU55LcHKR1@fat_crate.local>
+References: <20250711041200.87892-1-nikunj@amd.com>
+ <20250714104424.GGaHTfiFxI_pf-vhRn@fat_crate.local>
+ <aHUTMiEJ-nd76lxM@google.com>
+ <76e0988d-279f-be58-51d9-621806dbb453@amd.com>
+ <aHUfecs9UJPx0v_C@google.com>
+ <20250714161639.GLaHUtZwleS3COfxxX@fat_crate.local>
+ <aHUx9ILdUZJHefjZ@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,29 +84,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72kP7_24ChdQ+vDg+HWJB-4mKWvB9P33C9O=0W_kLt0+eA@mail.gmail.com>
+In-Reply-To: <aHUx9ILdUZJHefjZ@google.com>
 
-On Mon, Jul 14, 2025 at 06:30:09PM +0200, Miguel Ojeda wrote:
-> On Mon, Jul 14, 2025 at 12:45 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Apparently some Rust 'core' code violates this and explodes when ran
-> > with FineIBT.
+On Mon, Jul 14, 2025 at 09:36:04AM -0700, Sean Christopherson wrote:
+> Or as Tom suggested, return ES_EXCEPTION and let the kernel's normal machinery
+> WARN on the bad WRMSR.
+
+Ack.
+
+> Because as you note below, the MSR read should succeed.  __vc_handle_secure_tsc_msrs()
+> is invoked if and only if secure TSC is enabled for the guest.  If RDMSR #VCs,
+> then the hypervisor has decided to intercept GUEST_TSC_FREQ despite enabling and
+> advertising secure TSC to the guest.  The guest kernel can either continue on
+> with degraded security (potentially dangerously so) or panic/terminate.  
+
+Aha, I guess we do want to panic here...
+
+> > The APM says:
+> > 
+> > "Guests that run with Secure TSC enabled may read the GUEST_TSC_FREQ MSR
+> > (C001_0134h) which returns the effective frequency in MHz of the guest view of
+> > TSC. This MSR is read-only and attempting to write the MSR or read it when
+> > outside of a guest with Secure TSC enabled causes a #GP(0) exception."
+> > 
+> > So what is the established protocol for reading non-existent MSRs?
 > 
-> I think this was fixed in Rust 1.88 (latest version), right? Or is
-> there an issue still?
-> 
->     5595c31c3709 ("x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
-> or Rust >= 1.88")
+> Looks like Linux-as-a-guest will request emulation from the hypervisor.  What
+> the hypervisor does is completely unknown, at least as far as the guest is
+> concerned.  E.g. the hypervisor could return an error (i.e. "inject" a #GP), or
+> it could provide garbage (on RDMSR) and drop writres.
 
-Oh yeah, it got fixed. Clearly I failed to update the Changelog.
+I see.
 
-> >  - runtime EFI is especially henous because it also needs to disable
-> >    IBT. Basically calling unknown code without CFI protection at
-> >    runtime is a massice security issue.
-> 
-> heinous
-> massive
+Thx.
 
-Typing hard; Thanks!
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
