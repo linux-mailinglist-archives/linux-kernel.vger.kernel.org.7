@@ -1,95 +1,113 @@
-Return-Path: <linux-kernel+bounces-732296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1924BB064B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0852B064BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58F265670A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:55:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E20F0567164
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB1627A139;
-	Tue, 15 Jul 2025 16:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282D027A448;
+	Tue, 15 Jul 2025 16:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIPsdCF4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="wnw1Vnd+"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D86819F464;
-	Tue, 15 Jul 2025 16:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4DA2264D5;
+	Tue, 15 Jul 2025 16:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752598531; cv=none; b=sutfoxEyXOsMgGcH0qp0lFfE8RAGGpvOvIK/rE7R1zqCodX+F/kZh8fKTL8ZJDmFCNyGn9weNyqTMyA1s+C1K3FUMkd8pRXd2Ge013KeI1wfkh0WjaPEqCSG6UVcImfMoSqy+nSyWs78eWdbCDW4MtGR54dZYhb9wdNqxErOVXI=
+	t=1752598647; cv=none; b=IJ6cC2n01/ZwXA3AbfqqXFdgwO5wAI6CWxNA0/pTdeAu5SZYXEFepFzdu302mRasjNDyzqjMN6dnbf9dCaP5i01rKh1kG8qHR65gw1dA0Ca71VACLOFfAsV+Xgv8bnEYC6HoqIwQwhrWNUyQ4HYTAcMpERhMnV42Ji+RiAVpTqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752598531; c=relaxed/simple;
-	bh=Q4k7QSsXGvGRbwoe4qh+ClOw428CuLsphz2IMYzzboc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YS5om0VZ53gn5qLi4K1PrD/7iaVdKuhkjKvcB+Kop2uthxyjQDIjJglfXqVB3+cVlWNYymGNKQPAZ/J2QYABhpBDoHcqTjj/uqTD1aWZufsRyLAsY+c4LChwyVCMMfLtFPyXuSxx3q++lGSep/H0JaOqn1pnfkK16c3x7rhaw7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIPsdCF4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C43C4CEE3;
-	Tue, 15 Jul 2025 16:55:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752598531;
-	bh=Q4k7QSsXGvGRbwoe4qh+ClOw428CuLsphz2IMYzzboc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sIPsdCF4HOh0j833xWRmmBBUbbzeg8Mx6Cb/w7voRD/+/lci7P6sxEp3RbbNqtZQf
-	 0OQebrgbpJNyXRc2IfLJ0J0RBXchRml+bw83irzj92YWDLL7lMxq/B1eDKGx9gkqeb
-	 2JcSMs3m/nfddB4IUgj1vLDnFOXUqB9KqIu328k+a3suJB6Ua8t8+FWv8A0AelvxcZ
-	 iP6lsMNYDSWch1X9Ir/l1bqk5F1crtmm2gyyTncg2K+cwT2f8G+WFcJp+o/7tBfSEG
-	 N9sqifoUx2KUTAstkoSthMR2hvcD4vn4NlfofRR5ZKXwB8FORcaqbp5p5cow2DfVDn
-	 hFTX83rFPd8oA==
-Date: Tue, 15 Jul 2025 17:55:27 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wang Haoran <haoranwangsec@gmail.com>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: We found a bug in i40e_debugfs.c for the latest linux
-Message-ID: <20250715165527.GG721198@horms.kernel.org>
-References: <CANZ3JQRRiOdtfQJoP9QM=6LS1Jto8PGBGw6y7-TL=BcnzHQn1Q@mail.gmail.com>
- <20250714181032.GS721198@horms.kernel.org>
- <CANZ3JQQtC1ytmaqGR3xx6eDVyV-ZJp=hCZDcAJV-ktA2RHvTYA@mail.gmail.com>
+	s=arc-20240116; t=1752598647; c=relaxed/simple;
+	bh=oXDP5W6ruPXMloIGWP6N8fqg75lcZA+WIEvRQZYSJck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fe/pCI/WdGrHHCatb4OW8ac6wP9fipNeAC2maRLRBaFORCo3AV/DRBvqBi/GoLOi/yziruu8NwGQhTNDLizYdcEn3tYI8SDFY71EzdBByN4XMdKvEh2ElCwBWOwV5OJlviTSs5pamIIx1qP4m1FjrdwpvUKjqW/G3gCjhi2q7PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=wnw1Vnd+; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bhQN500RPzlgqxr;
+	Tue, 15 Jul 2025 16:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1752598643; x=1755190644; bh=5/3hasJlZZslHaoIJpIUIG0J
+	gPXZITf394ehkRTNpds=; b=wnw1Vnd+tM0eSbP2lP1qcrVk+l2pcTtQnF1MkRPc
+	kHALdve2CVOlu/i6iwN9cC5dmOH5HUscHCEe4Hufw01FFWtzK16dqINqdBA5gwfS
+	hgEa9YI8+ThqiJKl1IO9nxHecOocZ1ZfCx8+4SIPD9tDMkcRcJq/6YeL9+6AGjSN
+	YOVLvuT/7SkLri+lT0LLCc4KjQV0ChwFmMM7VLbpRwY/8OQV4R8SQXSbOxw6JXlD
+	VpUENmhczjJbinWbTikfn6Zg+o9vYKHqAgmbW0gzMH/dNMgYDWXj/BfA1ORgHbQ0
+	0ZGYprZHmdYBzFvpvuDsxGYEfsMezsf9uLqSRlnE2/IEFg==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id QyYDtz6TKa28; Tue, 15 Jul 2025 16:57:23 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bhQMz4Z6Szlgqxh;
+	Tue, 15 Jul 2025 16:57:18 +0000 (UTC)
+Message-ID: <9500a7cb-7b60-45c5-bd9c-1ee921ab4b58@acm.org>
+Date: Tue, 15 Jul 2025 09:57:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANZ3JQQtC1ytmaqGR3xx6eDVyV-ZJp=hCZDcAJV-ktA2RHvTYA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: fix out of bounds error in /drivers/scsi
+To: Krzysztof Kozlowski <krzk@kernel.org>, jackysliu <1972843537@qq.com>
+Cc: James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org, martin.petersen@oracle.com
+References: <07c4c84d-0c52-4843-b32d-6806e58892fe@acm.org>
+ <tencent_ADA5210D1317EEB6CD7F3DE9FE9DA4591D05@qq.com>
+ <bf166912-80ef-435e-885d-affce237afe7@acm.org>
+ <8aa33d58-c46f-46d3-b10c-f6b9998cb8a8@kernel.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <8aa33d58-c46f-46d3-b10c-f6b9998cb8a8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 15, 2025 at 09:38:11PM +0800, Wang Haoran wrote:
-> Hi Simon,
+On 7/15/25 8:36 AM, Krzysztof Kozlowski wrote:
+> On 15/07/2025 15:00, Bart Van Assche wrote:
+>> On 6/18/25 9:03 PM, jackysliu wrote:
+>>> 6.15-stable review patch, vulnerability exists since v6.9
+>>>
+>>> Out-of-bounds vulnerability found in ./drivers/scsi/sd.c
+>>> The vulnerability is found by  is found by Wukong-Agent
+>>>    (formerly Tencent Woodpecker), a code security AI agent,
+>>>    through static code analysis.
+>>>
+>>> sd_read_block_limits_ext Function Due to Unreasonable boundary checks.
+>>> Out-of-bounds read vulnerability exists in the
+>>> Linux kernel's SCSI disk driver (./drivers/scsi/sd.c).
+>>> The flaw occurs in the sd_read_block_limits_ext function
+>>>    when processing Vital Product Data (VPD) page B7 (Block Limits Extension)
+>>>    responses from storage devices
+>>>
+>>> A maliciously crafted 4-byte VPD page (0xB7) would cause Out-of-Bounds
+>>> Memory Read, leading to potential system Instability
+>>> and Driver State Corruption.
+>>
+>> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 > 
-> Thanks for the clarification.
-> 
-> We’ve observed that i40e_dbg_command_buf is
-> initialized with a fixed size of 256 bytes, but we
-> didn’t find any assignment statements updating
-> its contents elsewhere in the kernel source code.
-> 
-> We’re unsure whether this buffer could potentially
-> be used or modified in other contexts that we
-> might have missed.
-> 
-> If the buffer is indeed isolated and only used
-> as currently observed, then the current use of
-> snprintf() should be safe.
-> 
-> We’d appreciate your confirmation on whether
-> this buffer could potentially be used beyond its
-> current scope.
+> Just checking - are you sure? Please be careful with this work, that's
+> AI generated stuff which in some cases did not even compile or did not
+> actually follow C code.
 
-Thanks,
+As one can see here, an in-depth review was performed before I replied
+with "Reviewed-by":
+https://lore.kernel.org/linux-scsi/07c4c84d-0c52-4843-b32d-6806e58892fe@acm.org/
 
-My reading is that i40e_dbg_command_buf is declared
-as static in i40e_debugfs.c. And thus should only
-be updated within the scope of code in that file.
-
-I would be happy to stand corrected on this.
+Bart.
 
