@@ -1,153 +1,117 @@
-Return-Path: <linux-kernel+bounces-732100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEDCB06216
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F551B06220
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74698586CF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:50:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F9F5586915
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAB71FBE87;
-	Tue, 15 Jul 2025 14:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF571E5701;
+	Tue, 15 Jul 2025 14:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZ7tS0IN"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="MyHJkUKW"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D19A1F2BAD;
-	Tue, 15 Jul 2025 14:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFCB1FBE87;
+	Tue, 15 Jul 2025 14:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752590988; cv=none; b=l2BUa+ypP/HV5JmT+YNHCVIPj3QbauaOQ7Y7HCEmdBLT3wz9EKyVxIA80K5AZATsJlWEL3JKf5CSQ9pdGOjfjBfHn2CAJWAxpJPmWk6GzpeBgUEuIsx2fti7aCdHOhcCFx7K/JuAcKpR4bUP2vGhZdJaNJQ+rf2KLUBbWOMKSho=
+	t=1752591021; cv=none; b=JUaMRzIAfLCLmYQADwJJhtG8rlN9DF0k2duaeeIXurrvLhKoocDmU8fqi9BXOgCg0iq7r7oAgqMi/bhGA+lxhcmoYLKaEHL31DT5PP48+7PrEyZdYi4noS3lUumEJ6ep79UilCRy9IDZLY00pARVNZnQBYaYdtm/S8x+Ozvkz/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752590988; c=relaxed/simple;
-	bh=E89zHbYFIu3/6rQztCCdMZeq63swHg+cazrRhJA/6UM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AxDo8zLVyj33lngIdjtjnfL4OjQ1arvLP1LPBJxdnqkBYQPqDmlAWQ3/6ctQxPRnbTKtO4dpwFfM8vpRDlUnphuhhM0L8RKIKuI2BmvZkv5q49OpuECjjTNf3MOi0Pw+VY2k41igxF/bWCCYS3WMDgs1cEQJfHtCxxVx/Q3z+eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZ7tS0IN; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso5351316f8f.3;
-        Tue, 15 Jul 2025 07:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752590984; x=1753195784; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JNFBvz7x6VkkrfT1tcftcVPGyWEbY+Y5It0uYqlDnxE=;
-        b=VZ7tS0IN13EhRkyIQ8QPBSuiImUk3G/D5IQ9zI//WfQNsNH3YZhlIhnM6bjsKcp4+p
-         LS4fRF+U2qXfZjLkNc36mmPX1Jek2Q0U3SnatgcYlBDZdeK7XUMuIQM2ySY/MP4y/5RV
-         NMtJNiIWXEYnpcJtD/vQqU2qIhNpzmmA1yVX7CADDiqrfYcNoREAVFQZffmleov4Hkfp
-         RqXhCgjuK0B25TPWIRevGtsDlPv4Cpgq0SN5nlf2YzWBzPU+rbSd2C0/KafiMuiJ+l3Z
-         Ah/FZ+SVj1QrJ/5iSz45k4ENpiOQTXrYruNaQKUB/YFDfPjRZdNxxp0aXkq3s+peg1Of
-         djkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752590984; x=1753195784;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JNFBvz7x6VkkrfT1tcftcVPGyWEbY+Y5It0uYqlDnxE=;
-        b=vWU59zUPiR6Wy64TwaYdxEfTc6A56U3+j5GLbPvCIWqbJEYEE9PkKehW+XKdmwFxKA
-         QUIG2WGZhwwe+zPW4aEGNhkYDNdGTN6EF8Qz+ddGh5F30JHt2pF5O0ZI1PRN1YKBZWS3
-         e3MrR+r1eyEB4d6pIoA/owaAkJq4yW1pfcaAaqbdUO3GftKAgBj3QEawIjvrwEdODrXP
-         2HwB6Phlji1uHIhBpGTkGE8U3ynky6jJgwipp8+CAHs0jqx+dBi6L276J12uh9HcUV8z
-         CQ1BXNIZ8/4E35E20BaLeat56nIONfZFX3q60O4ULQm8qXYSKfoiFPBJKx1iTTzSgP6I
-         Ts0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWm1qhiyySjqtWnka6EcAPP7nqzfmSgGgMTnlXKLbiiRIOuCBNH7HDdhVwNCLA3iDK6BmEME4/oI/yY1KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWtVUXcCng/srmDFTYqYJRgnpUIoKBzIZoDhf/mH5b4IUKt2XW
-	u6V+T23awSjkjOA1QEeEMEyWrdqOGQPgy5eZP+ggOVaV8+erTqI88S+B1lFZIaRm2wNKsFouOSF
-	X8Ao0dcn27Jsr/ZPDaJxoWPdm3Eplwwg=
-X-Gm-Gg: ASbGnctMcL6zX5Ghy6zmSteyHBG6WUS8AtkvHGLtAyq/c3ZaicySwFav5QhPhWBTNSW
-	TBMfvcOUIUPoj7KaCs5wYqpOBjGIlEZVhUjkp/u1S69KKhLi5QzukfR7m1Y40kSJp7nnEBT7mJv
-	dPXuFy4xm0PjoSFDs6LmUAvXAjxSe5ZRiwMPOdDNOQRkzMXeP/LiIVaVKH/FUSjISkgR+QSckqC
-	Z/qpIYOEa2PiOIt/QS+X4okP2AhmHVYYg==
-X-Google-Smtp-Source: AGHT+IHCxFJGH2xnmY5kjFul8ROGxrVizXCe4HKLVhkhcxYqn8azsdd7XP74gla1q9k6Rg0FnsHrisC4BbFKlpZBS2o=
-X-Received: by 2002:a05:6000:ecf:b0:3b1:9259:3ead with SMTP id
- ffacd0b85a97d-3b60a1939cbmr2143309f8f.28.1752590984154; Tue, 15 Jul 2025
- 07:49:44 -0700 (PDT)
+	s=arc-20240116; t=1752591021; c=relaxed/simple;
+	bh=+wgGVto9dsSs8/v9aJtijZl/1/TPhlSs51dcW7v4a+Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VAxjAuj4FtcYVP+bD/cBTSWVjbdD/R2YuOa9sEeK42mIc11qs+VWNd48a/FdOwWCJVYiH01kJ3wUOMgY08K8w7gWcVbkZ5jn1pZQ7R73WDmXfoSL8DOqpDb4TO6GyxJG0ipglRRqF6niLgEnK3poQ3EsjpgxQ3ZEEpAKnWbTLEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=MyHJkUKW; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7985A40AD8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1752591017; bh=uH2D2NvjUKhPxtxAe4lDHQ8oj3q8V1MzrlSAX96qGyk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=MyHJkUKWM/x2PV+jcuJ3rtwD1JdD3uGDqp6KITRpv1lKIQ87ESqFpnieHR1vfDghY
+	 Q5pz/2T2dZPbT32+8emzfXCq4L06OY3whZBtzx7Lp+gRKQKFaMmCwKGX33BOa/f5dW
+	 aEXpzHswDDq+yWA3Tt9567sUOIAmQVX79COMOEMQv0fYRdKNnVwkUX0GPIbVdFS+/G
+	 I4HZMrD0KLy/PyKUT2wAvru5wRIV8LjYWB7CEwG2U+06gKTNsQlUEUCTPa/1y+PoSw
+	 DVysczP+OHUpNojxZoygS5W8yPC/RO564coW0IYgnHzjvmdXeOnP0TXjDXOj3/rtF5
+	 bw/jxIa1Nx/YQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 7985A40AD8;
+	Tue, 15 Jul 2025 14:50:17 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev
+Cc: Boqun Feng <boqun.feng@gmail.com>, Clark Williams
+ <clrkwllms@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, John Ogness <john.ogness@linutronix.de>, Peter
+ Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider
+ <vschneid@redhat.com>, Waiman Long <longman@redhat.com>, Will Deacon
+ <will@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 3/3] Documentation: Add real-time
+In-Reply-To: <20250715144127.697787-4-bigeasy@linutronix.de>
+References: <20250715144127.697787-1-bigeasy@linutronix.de>
+ <20250715144127.697787-4-bigeasy@linutronix.de>
+Date: Tue, 15 Jul 2025 08:50:16 -0600
+Message-ID: <87ecuhh5jr.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715075755.114339-1-shankari.ak0208@gmail.com>
-In-Reply-To: <20250715075755.114339-1-shankari.ak0208@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 15 Jul 2025 07:49:33 -0700
-X-Gm-Features: Ac12FXxNnEjYobwzioWQrHGM1rDtNPYKdcIy4LxebETOY9FWxuqqt2tylYrTZ1A
-Message-ID: <CAADnVQJ6_pB8ZU2Cw5S6nB4J-6s7bw5Fp-Hst9M_EE9=HxN8+g@mail.gmail.com>
-Subject: Re: [PATCH] bpf: restrict verifier access to bpf_lru_node.ref
-To: Shankari Anand <shankari.ak0208@gmail.com>, Martin KaFai Lau <martin.lau@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	syzbot+ad4661d6ca888ce7fe11@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Jul 15, 2025 at 12:58=E2=80=AFAM Shankari Anand
-<shankari.ak0208@gmail.com> wrote:
->
-> syzbot reported a data race on the `ref` field of `struct bpf_lru_node`:
-> https://syzkaller.appspot.com/bug?extid=3Dad4661d6ca888ce7fe11
->
-> This race arises when user programs read the `.ref` field from a BPF map
-> that uses LRU logic, potentially exposing unprotected state.
->
-> Accesses to `ref` are already wrapped with READ_ONCE() and WRITE_ONCE().
-> However, the BPF verifier currently allows unprivileged programs to
-> read this field via BTF-enabled pointer, bypassing internal assumptions.
->
-> To mitigate this, the verifier is updated to disallow access
-> to the `.ref` field in `struct bpf_lru_node`.
-> This is done by checking both the base type and field name
-> in `check_ptr_to_btf_access()` and returning -EACCES if matched.
->
-> Reported-by: syzbot+ad4661d6ca888ce7fe11@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/6847e661.a70a0220.27c366.005d.GAE@goo=
-gle.com/T/
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 > ---
->  kernel/bpf/verifier.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  Documentation/index.rst                 |   1 +
+>  Documentation/real-time/differences.rst | 244 ++++++++++++++++++++++++
+>  Documentation/real-time/index.rst       |  18 ++
+>  Documentation/real-time/theory.rst      | 119 ++++++++++++
+>  4 files changed, 382 insertions(+)
+>  create mode 100644 Documentation/real-time/differences.rst
+>  create mode 100644 Documentation/real-time/index.rst
+>  create mode 100644 Documentation/real-time/theory.rst
 >
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 169845710c7e..775ce454268c 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -7159,6 +7159,19 @@ static int check_ptr_to_btf_access(struct bpf_veri=
-fier_env *env,
->                 }
->
->                 ret =3D btf_struct_access(&env->log, reg, off, size, atyp=
-e, &btf_id, &flag, &field_name);
+> diff --git a/Documentation/index.rst b/Documentation/index.rst
+> index c0cf79a87c3a3..78c93d992b62b 100644
+> --- a/Documentation/index.rst
+> +++ b/Documentation/index.rst
+> @@ -42,6 +42,7 @@ kernel.
+>     Driver APIs <driver-api/index>
+>     Subsystems <subsystem-apis>
+>     Locking <locking/index>
+> +   Real-Time <real-time/index>
+>  
+>  Development tools and processes
+>  ===============================
+> diff --git a/Documentation/real-time/differences.rst b/Documentation/real-time/differences.rst
+> new file mode 100644
+> index 0000000000000..0b9a46a7badf4
+> --- /dev/null
+> +++ b/Documentation/real-time/differences.rst
+> @@ -0,0 +1,244 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +               /* Block access to sensitive kernel-internal fields */
+> +.. _real_time_differences:
 
-This makes no sense. Tracing bpf progs are allowed to read
-all kernel internal data fields.
+Here, too, you don't need this label, especially since you never
+reference it.
 
-Also you misread the kcsan report.
+I'll try to have a more substantive look shortly.
 
-It says that 'read' comes from:
+Thanks,
 
-read to 0xffff888118f3d568 of 4 bytes by task 4719 on cpu 1:
- lookup_nulls_elem_raw kernel/bpf/hashtab.c:643 [inline]
-
-which is reading hash and key of htab_elem while
-write side actually writes hash too:
-*(u32 *)((void *)node + lru->hash_offset) =3D hash;
-
-Martin,
-is it really possible for these read/write to race ?
-
---
-pw-bot: cr
+jon
 
