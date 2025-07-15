@@ -1,112 +1,122 @@
-Return-Path: <linux-kernel+bounces-731111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F72B04F32
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:39:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0430AB04F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00EB4A4A22
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7FC4A5CED
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957582D0C97;
-	Tue, 15 Jul 2025 03:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrK6YWYH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA5E2D130B;
+	Tue, 15 Jul 2025 03:43:26 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F117940856;
-	Tue, 15 Jul 2025 03:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A690265630;
+	Tue, 15 Jul 2025 03:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752550749; cv=none; b=dJhjbeQkS1p8qXMU5CHIH5EHYaTcc5yKQY361+4C9t90h0v5pRYRk3kDcZWEe09mwyPzh7qEKwKzCODONKS7ijstYzcF6Rt4F72qdPIfvqbPB1PwR8zddypLBpnUxAWAKapAMKPylB94rF5OrzPWIv5jlSznFI1bwRGSD1t1CUs=
+	t=1752551006; cv=none; b=W1d1Ze+VPf1m6ddJl1xSBYC5L0b3MlJOPK9cAEzJ1rtuiJo4Kfnc+Ln4dRYSvTgJruLHqhgkYuk5xRhRW6djI8rGGOT1IQSpVpGrsL4kg9se/keaKhmyUvfHpYzJ+ds4M0g8oVDVajM305IKHoJJ4J3j+HDay1PdF/2QntBf5io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752550749; c=relaxed/simple;
-	bh=pg10ZRkdYeFnXEcWEcbRD3J1Z6ySQm+62tlViyEQr5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gtqWiR16Y7XWxT8hZS/kAOfp6kioOi8b98sUMszh5Tk8UwGQ+ZbGThz2NjuHXXLlqNwXokaw+yIEmm2r3MIxBKhJczI2SWxugyFWm9qgZAP10mc4IAJzAdQwbt68UyJTndRlcXbBsYa8hE+GDtqTPClycKkKZj4NXeEGp4SXIkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rrK6YWYH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEECC4CEE3;
-	Tue, 15 Jul 2025 03:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752550748;
-	bh=pg10ZRkdYeFnXEcWEcbRD3J1Z6ySQm+62tlViyEQr5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rrK6YWYHM7y0MorMV5i/x+xFVHVEhtPLGf//HVYZn11oPkoFPafLs0jagWYUvenc8
-	 j9SjLcIGnZaB3NhQAw6CSCcrYRXLEMlImsy3mGvZBnXzjAGUXi0d6k3/TCLyoiCyvV
-	 7zIS63H8DGDQd6s1kbswsmeEWZ6OnKwxBfeEpVPE0ll2tWSYUQFi+WP+Zh20fKiLWi
-	 kFm1DAyweGqo1mhJWwLQNxO39IZL70ozUMMx9t2cPDYrZLa3PIQeYMIi4umYfHjl2m
-	 vBabltEniOHle/HiTiCH1zpIBeNM/O924bbQl5fq8fRQ9bj3YH252Lpd/FDFs/1fqf
-	 kl7q0lCdRuJ+A==
-Date: Mon, 14 Jul 2025 22:39:07 -0500
-From: Rob Herring <robh@kernel.org>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/5] dt-bindings: display: sitronix,st7571: add optional
- inverted property
-Message-ID: <20250715033907.GA4184449-robh@kernel.org>
-References: <20250714-st7571-format-v1-0-a27e5112baff@gmail.com>
- <20250714-st7571-format-v1-2-a27e5112baff@gmail.com>
+	s=arc-20240116; t=1752551006; c=relaxed/simple;
+	bh=SP8c/mgGuNWxheHkmYdyncNkkcQ/e4t6SbVXS3CmcT0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ex8aUghb6tKkeUc5TMisrMzIFCmEQoxHXOfABMmK0nyZQb8QGmEE7qE+d05wyTPmbuMp6We4B37kxEbJqL1bAzi9pdNcoOGWdovKtPNbLHnEhbLKEx+CcohQJrvb/H8FdBnQdffbvFmDxBdvoBqfU0iwbMkjAu83DoIqTfAXpQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 15 Jul
+ 2025 11:43:20 +0800
+Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 15 Jul 2025 11:43:20 +0800
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+	<mani@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-pci@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <openbmc@lists.ozlabs.org>, <linux-gpio@vger.kernel.org>,
+	<linus.walleij@linaro.org>, <p.zabel@pengutronix.de>, <BMC-SW@aspeedtech.com>
+Subject: [PATCH v2 00/10] Add ASPEED PCIe Root Complex support
+Date: Tue, 15 Jul 2025 11:43:10 +0800
+Message-ID: <20250715034320.2553837-1-jacky_chou@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714-st7571-format-v1-2-a27e5112baff@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, Jul 14, 2025 at 10:04:00AM +0200, Marcus Folkesson wrote:
-> Depending on which display that is connected to the controller, an "1"
-> means either a black or a white pixel.
-> 
-> The supported formats (R1/R2/XRGB8888) expects the pixels
-> to map against (4bit):
-> 00 => Black
-> 01 => Dark Gray
-> 10 => Light Gray
-> 11 => White
-> 
-> If this is not what the display map against, the controller has support
-> to invert these values.
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
->  Documentation/devicetree/bindings/display/sitronix,st7571.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/sitronix,st7571.yaml b/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
-> index 4fea782fccd701f5095a08290c13722a12a58b52..065d61b718dc92e04419056b1e2d73fd0b2cb345 100644
-> --- a/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
-> +++ b/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
-> @@ -28,6 +28,11 @@ properties:
->      description:
->        Display supports 4-level grayscale.
->  
-> +  sitronix,inverted:
-> +    type: boolean
-> +    description: |
+This patch series adds support for the ASPEED PCIe Root Complex,
+including device tree bindings, pinctrl support, and the PCIe host controller
+driver. The patches introduce the necessary device tree nodes, pinmux groups,
+and driver implementation to enable PCIe functionality on ASPEED platforms.
+Currently, the ASPEED PCIe Root Complex only supports a single port.
 
-Don't need '|'.
+Summary of changes:
+- Add device tree binding documents for ASPEED PCIe PHY, PCIe Config, and PCIe RC
+- Update MAINTAINERS for new bindings and driver
+- Add PCIe RC node and PERST control pin to aspeed-g6 device tree
+- Add PCIe RC PERST pin group to aspeed-g6 pinctrl
+- Implement ASPEED PCIe Root Complex host controller driver
 
-> +      Display pixels are inverted, i.e. 0 is white and 1 is black.
-> +
->    reset-gpios: true
->    width-mm: true
->    height-mm: true
-> 
-> -- 
-> 2.49.0
-> 
+This series has been tested on AST2600/AST2700 platforms and enables PCIe device
+enumeration and operation.
+
+Jacky Chou (10):
+  dt-bindings: soc: aspeed: Add ASPEED PCIe Config support
+  dt-bindings: soc: aspeed: Add ASPEED PCIe PHY support
+  dt-bindings: PCI: Add ASPEED PCIe RC support
+  dt-bindings: pinctrl: aspeed,ast2600-pinctrl: Add PCIe RC PERST# group
+  ARM: dts: aspeed-g6: Add AST2600 PCIe RC PERST#
+  ARM: dts: aspeed-g6: Add PCIe RC node
+  pinctrl: aspeed-g6: Add PCIe RC PERST pin group
+  PCI: Add FMT and TYPE definition for TLP header
+  PCI: aspeed: Add ASPEED PCIe RC driver
+  MAINTAINERS: Add ASPEED PCIe RC driver
+
+ .../bindings/pci/aspeed,ast2600-pcie.yaml     |  198 +++
+ .../pinctrl/aspeed,ast2600-pinctrl.yaml       |    2 +
+ .../bindings/soc/aspeed/aspeed,pcie-cfg.yaml  |   41 +
+ .../bindings/soc/aspeed/aspeed,pcie-phy.yaml  |   44 +
+ MAINTAINERS                                   |   10 +
+ .../boot/dts/aspeed/aspeed-g6-pinctrl.dtsi    |    5 +
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi       |   61 +
+ drivers/pci/controller/Kconfig                |   13 +
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-aspeed.c          | 1137 +++++++++++++++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c    |   12 +-
+ include/uapi/linux/pci_regs.h                 |   32 +
+ 12 files changed, 1555 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/aspeed/aspeed,pcie-cfg.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/aspeed/aspeed,pcie-phy.yaml
+ create mode 100644 drivers/pci/controller/pcie-aspeed.c
+
+---
+v2:
+ - Moved ASPEED PCIe PHY yaml binding to `soc/aspeed` directory and
+   changed it as syscon
+ - Added `MAINTAINERS` entry for the new PCIe RC driver
+ - Updated device tree bindings to reflect the new structure
+ - Refactored configuration read and write functions to main bus and
+   child bus ops
+ - Refactored initialization to implement multiple ports support
+ - Added PCIe FMT and TYPE definitions for TLP header in
+   `include/uapi/linux/pci_regs.h`
+ - Updated from reviewer comments
+---
+
+-- 
+2.43.0
+
 
