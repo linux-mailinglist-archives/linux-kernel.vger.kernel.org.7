@@ -1,84 +1,95 @@
-Return-Path: <linux-kernel+bounces-732535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F505B06839
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:00:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5F8B0683C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6394A856C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:00:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE3547A8751
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C5A27602B;
-	Tue, 15 Jul 2025 21:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040782C08AD;
+	Tue, 15 Jul 2025 21:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Ekin6gO+"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFxJJ7gS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AF626FD91;
-	Tue, 15 Jul 2025 21:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB252C032E;
+	Tue, 15 Jul 2025 21:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752613224; cv=none; b=uIHjTgKhiDu4RDpRUVrfLJ2aPMWidJAbzpCYzNT59AFWXVwBCBwHzCUcjpzVPeBDIK8TbJSZubwUVAfnZfwaqwWjAzQvNglk7pFH75CXYRD0BxPcgLlsOXHddS6N3QI3WJ8M3M9i5ieC5MgT4c6iPlD2VS1NI2J+7tS4SpIXLcQ=
+	t=1752613227; cv=none; b=F8m0QcvzrgvDQr0QnSEOtf8pHPxLOzajRCnt/UqXNvMSCZbyW/JEr3Aq3K2OyYC4pJjGWNexhFmQC7otBJLn3Ir4njvI1fWbXrIj7PLnHJlLUjxeRuMwhqPqTxEAftjabsyZrIJE9jJPJQEL/MUrehJ7/jfcieE7XvjDr907sqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752613224; c=relaxed/simple;
-	bh=NdQnNA3fF02ohjHshOAcpzNoezt4dBDZURm8yQYNoFE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=lPDJhtuPCol6aTJ2tf1Dzud5zz2dmqH+Toj+2AlPrFhG2YMQAPSRsNIpLTswCZKGmeIYphhGtWAWQBMjDsBfG0HUSMVW9z2IL0zZIktLfj1+b5e4z3W+5Y5W9Nn3HeL5dDxwt23e80w21trwrRo8cpCp1gW3mt1T9GHrM8MgOCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Ekin6gO+; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9482:6556:8629:7dba:d48c] ([IPv6:2601:646:8081:9482:6556:8629:7dba:d48c])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56FL0F0w1148310
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 15 Jul 2025 14:00:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56FL0F0w1148310
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752613215;
-	bh=nFH2JFEH395RyzNce7lxw11nURFzbDl8EM5cGZUF/V0=;
-	h=Date:To:Cc:From:Subject:From;
-	b=Ekin6gO+YziYS5cDuQvphQsNWdfBy3QrYYhZzKvZW6oHYxRbtVXGmm19Q5TqGl1mQ
-	 MhGgcWT8H7WlPSJJCVTnkCFEz91vIs7DxrlIrTA5vIH+vRDql4VPmj59LI29qmD9GR
-	 b/MJiRmmqRoy3iZfzzCXJkbovIru2HMJlp5wcUFBkjBds/KOUknARB70c+E4wcfVRs
-	 iwtV5W2qpaIx8/be/XzWNmtWcu2xeWpg0vFWWr+FMl3xs8E4bTlLX745s4gWgbtWm/
-	 rlmZLQMEPTrCygHUh9HcUYtz8J1cgX1kXAhr4+Lh2choq2VOEWUqH4oKRnjL/MnXMN
-	 qbeWaz4mm9vqg==
-Message-ID: <ce54ae11-72bb-4ac7-980b-c1cbc798a209@zytor.com>
-Date: Tue, 15 Jul 2025 14:00:10 -0700
+	s=arc-20240116; t=1752613227; c=relaxed/simple;
+	bh=87sp7F8srN+ARA5AKtiXb82VrTR+PmTvxzlwy3EOgVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AIavdLDwhm7+g3W1TRNCtm3OpzU79Dlkk2RibLB5KG/vLleQzOguIhkKLeQsf9ZZSLPXga70+GS0z8rIkCaI0O5qevE/cBtU5PjQtDCe6A35+Ml2qki/lTC5WFqvkkwQT9w8xeuKk/Lw7bhZ5wdM5dhT+qQ70e807nZtckcQyb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFxJJ7gS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 810CCC4CEE3;
+	Tue, 15 Jul 2025 21:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752613226;
+	bh=87sp7F8srN+ARA5AKtiXb82VrTR+PmTvxzlwy3EOgVA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XFxJJ7gSOQkR+ujOBFfaE14yasajtOzoU55s4Y61OYadqK5+AUSMNAuVIvyZfhyOG
+	 1LMr+B4jF5LVq6UAyK9Zx8cChbxcuXe3T7caXZ0PaaiueQwXU/AiRkiY1d+hi2yT26
+	 8NdUHq/y6XOl7l2ZFPX1XXjHA9xx424AkyzipBf3syR45PxZrtym5SoYeV/yWUyr1f
+	 uNlHnELHmrR4SlrGXAad0GBFH/eo4qIeABI8XP9K++GOBp1QkpEyFYUtt2RSo5ljrr
+	 pfh8oA1GifirifS14jAsf8+tjvKJZtoaknToYohHqqObNbSfIUvdipmSuSvJHCzEsR
+	 fgB+azv55hIyg==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.1 00/89] 6.1.146-rc2 review
+Date: Tue, 15 Jul 2025 23:00:12 +0200
+Message-ID: <20250715210012.2325841-1-ojeda@kernel.org>
+In-Reply-To: <20250715163541.635746149@linuxfoundation.org>
+References: <20250715163541.635746149@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Oliver Neukum <oneukum@suse.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, Jiri Slaby <jirislaby@kernel.org>,
-        linux-serial@vger.kernel.org
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: USB cdc-acm driver: break and command
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On Tue, 15 Jul 2025 18:37:01 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.146 release.
+> There are 89 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 17 Jul 2025 16:35:20 +0000.
+> Anything received after that time might be too late.
 
-I noticed looking at the CDC-ACM driver that it uses the assert/local 
-delay/deassert method of sending BREAK.  Given that the CDC model has a 
-delay specifier in the command packet, is there any reason not to set 
-TTY_DRIVER_HARDWARE_BREAK and sending only one packet?
+Boot-tested under QEMU for Rust x86_64:
 
-I'm also wondering if it would make sense to support the 
-SEND_ENCAPSULATED_COMMAND and GET_ENCAPSULATED_RESPONSE commands, 
-presumably via an ioctl().  I'm not 100% sure because I'm not sure there 
-aren't potential security issues.
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-I'm guessing both of these could be of some use to embedded devices that 
-emulate a ttyACM serial port.
+Thanks!
 
-	-hpa
-
+Cheers,
+Miguel
 
