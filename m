@@ -1,129 +1,232 @@
-Return-Path: <linux-kernel+bounces-731967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F5AB05F89
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:07:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A931B05FB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E26E1C426DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD531500F55
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11A62EA145;
-	Tue, 15 Jul 2025 13:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s6gpeonU"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29A62E92D6;
+	Tue, 15 Jul 2025 13:52:23 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BC22E9EA5;
-	Tue, 15 Jul 2025 13:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A467B2E92AB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587303; cv=none; b=PgoMLfYwF4oUzkYnNM+BorhJlbs6d4+oCnPq0In6SmSuOLEJ18j8/BIn5ShGNLS+/upGtXoh4ukEEB8I0kDwleiE06MLVSGFNCVC8qyJAlmXbXpglxhZdF09QVnvSsS4evMzN5C/faib/24/AlU2aizMQ2hz1Bw1bNu8PSV5f5U=
+	t=1752587543; cv=none; b=GPhFznp3b/LAyJleyWwxPE98GA2kw+ku1Y3OC6udYsqks9vWvoiqaeuXd5ffPoCTLxdigBm6LgboZZh8xVAcmp0O/ExoorD0jiwXjA2PpL/nrX7fqOZO+SkhK9jbYlVcha250lHn7D4jA3CC5wn6hdjM/rgEq4Piy7/wklJdtEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587303; c=relaxed/simple;
-	bh=66qWXLtTKrU8UluP8yQF4eFP3g7cZ6AfCLSukMx3+NU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thrOVqREHxsK4+reNalaASxC7i/dthHtAReQbbbZZDdnGWyUJWy0yNOGvvpUoyeSLSTGCRw0qa5ksHdMYzm1l7QjNDmZkPU0rtCgpEakjRP0iX070eBCBRSIbjI7dkBy0Sz0/QUFd7KRt9PSdVtTEGoPnbHqcE8JeJlkUJ0iofY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s6gpeonU; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56FDmFxb023050;
-	Tue, 15 Jul 2025 08:48:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752587295;
-	bh=AHQMxBaMGwP6e15hpXbm6AdXnEqDI+bUGqu+P24NYGE=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=s6gpeonUSgZBNgMMC5a/C4guMfHoEH5rfsOKRNu2MSSL2NPqRw7/Zu175knlcbdIU
-	 BRSKrdyfkCCKnSA560+1GJJOul4hf+oZGHny6cKiLMBusAB3gyCJYNA/9cgL9Rujn5
-	 iQJFjLO1M9UD9tsRI/ZBhcfS8jefJrP4nvKugPgw=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56FDmFT3110832
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 15 Jul 2025 08:48:15 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 15
- Jul 2025 08:48:14 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 15 Jul 2025 08:48:14 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56FDmEAD2988095;
-	Tue, 15 Jul 2025 08:48:14 -0500
-Date: Tue, 15 Jul 2025 08:48:14 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Guillaume La Roque <glaroque@baylibre.com>
-CC: <vigneshr@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <vishalm@ti.com>, <matthias.schiffer@ew.tq-group.com>
-Subject: Re: [PATCH v2] pmdomain: ti: Select PM_GENERIC_DOMAINS
-Message-ID: <20250715134814.zrensaf3o6yxjrgz@bogged>
-References: <20250715-depspmdomain-v2-1-6f0eda3ce824@baylibre.com>
+	s=arc-20240116; t=1752587543; c=relaxed/simple;
+	bh=uTToH5GSSMpPtkbRpL7mnFGKBMGILkAjWUjlYXMcZ4c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t9GBEl6OYis3G5vMDDGcYTozqrXO+viOUkZGecAE070rkl10hvYVF+B2ROaYwSXyYbt/G1ocRTwChr+eLSCjNzb/Y4w75T62JHftJJ4PL+0holZrQ0Dygx74WXln3j+LIxNiEgvYmg18wxZW3VkcLK0aPdj+6tKOe97HHn6aMtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ubg4V-0000Zx-U7; Tue, 15 Jul 2025 15:51:51 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ubg4S-008aWa-1W;
+	Tue, 15 Jul 2025 15:51:48 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ubg4S-000MYS-1C;
+	Tue, 15 Jul 2025 15:51:48 +0200
+Message-ID: <e52bd959eea8a4284404f701d0519c4631a31238.camel@pengutronix.de>
+Subject: Re: [PATCH v2 09/10] PCI: aspeed: Add ASPEED PCIe RC driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Jacky Chou <jacky_chou@aspeedtech.com>, bhelgaas@google.com, 
+ lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+ robh@kernel.org,  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, 
+ andrew@codeconstruct.com.au, linux-aspeed@lists.ozlabs.org, 
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
+	linus.walleij@linaro.org, BMC-SW@aspeedtech.com
+Date: Tue, 15 Jul 2025 15:51:48 +0200
+In-Reply-To: <20250715034320.2553837-10-jacky_chou@aspeedtech.com>
+References: <20250715034320.2553837-1-jacky_chou@aspeedtech.com>
+	 <20250715034320.2553837-10-jacky_chou@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250715-depspmdomain-v2-1-6f0eda3ce824@baylibre.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 10:50-20250715, Guillaume La Roque wrote:
-> Select PM_GENERIC_DOMAINS instead of depending on it to ensure
-> it is always enabled when TI_SCI_PM_DOMAINS is selected.
-> Since PM_GENERIC_DOMAINS is an implicit symbol, it can only be enabled
-> through 'select' and cannot be explicitly enabled in configuration.
-> This simplifies the dependency chain and prevents build issues
-> 
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+On Di, 2025-07-15 at 11:43 +0800, Jacky Chou wrote:
+> Introduce PCIe Root Complex driver for ASPEED SoCs. Support RC
+> initialization, reset, clock, IRQ domain, and MSI domain setup.
+> Implement platform-specific setup and register configuration for
+> ASPEED. And provide PCI config space read/write and INTx/MSI
+> interrupt handling.
+>=20
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
 > ---
-> Changes in v2:
-> - update commit message
-> - fix select rules
-> - Link to v1: https://lore.kernel.org/r/20250704-depspmdomain-v1-1-ef2710556e62@baylibre.com
-> ---
->  drivers/pmdomain/ti/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pmdomain/ti/Kconfig b/drivers/pmdomain/ti/Kconfig
-> index 67c608bf7ed0..5386b362a7ab 100644
-> --- a/drivers/pmdomain/ti/Kconfig
-> +++ b/drivers/pmdomain/ti/Kconfig
-> @@ -10,7 +10,7 @@ if SOC_TI
->  config TI_SCI_PM_DOMAINS
->  	tristate "TI SCI PM Domains Driver"
->  	depends on TI_SCI_PROTOCOL
-> -	depends on PM_GENERIC_DOMAINS
-> +	select PM_GENERIC_DOMAINS if PM
->  	help
->  	  Generic power domain implementation for TI device implementing
->  	  the TI SCI protocol.
-> 
-> ---
-> base-commit: 8d6c58332c7a8ba025fcfa76888b6c37dbce9633
-> change-id: 20250704-depspmdomain-2c584745dca8
-> 
-> Best regards,
-> -- 
-> Guillaume La Roque <glaroque@baylibre.com>
-> 
+>  drivers/pci/controller/Kconfig       |   13 +
+>  drivers/pci/controller/Makefile      |    1 +
+>  drivers/pci/controller/pcie-aspeed.c | 1137 ++++++++++++++++++++++++++
+>  3 files changed, 1151 insertions(+)
+>  create mode 100644 drivers/pci/controller/pcie-aspeed.c
+>=20
+[...]
+> diff --git a/drivers/pci/controller/pcie-aspeed.c b/drivers/pci/controlle=
+r/pcie-aspeed.c
+> new file mode 100644
+> index 000000000000..a7e679d5fb42
+> --- /dev/null
+> +++ b/drivers/pci/controller/pcie-aspeed.c
+> @@ -0,0 +1,1137 @@
+[...]
+> +static int aspeed_pcie_parse_port(struct aspeed_pcie *pcie,
+> +				  struct device_node *node,
+> +				  int slot)
+> +{
+> +	struct aspeed_pcie_port *port;
+> +	struct device *dev =3D pcie->dev;
+> +
+> +	port =3D devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
+> +	if (!port)
+> +		return -ENOMEM;
+> +
+> +	port->pciephy =3D syscon_regmap_lookup_by_phandle(node, "aspeed,pciephy=
+");
+> +	if (IS_ERR(port->pciephy))
+> +		return dev_err_probe(dev, PTR_ERR(port->pciephy),
+> +				     "Failed to map pcie%d pciephy base\n", slot);
+> +
+> +	port->clk =3D devm_get_clk_from_child(dev, node, NULL);
+> +	if (IS_ERR(port->clk))
+> +		return dev_err_probe(dev, PTR_ERR(port->clk),
+> +				     "Failed to get pcie%d clock\n", slot);
+> +
+> +	port->perst =3D of_reset_control_get_exclusive(node, "perst");
+> +	if (IS_ERR(port->perst))
+> +		return dev_err_probe(dev, PTR_ERR(port->perst),
+> +				     "Failed to get pcie%d reset control\n", slot);
 
+How about registering a reset_control_put() via
+devm_add_action_or_reset()?
+Otherwise these reset controls are not released on .remove.
 
-Reviewed-by: Nishanth Menon <nm@ti.com>
+[...]
+> +static int aspeed_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct pci_host_bridge *host;
+> +	struct aspeed_pcie *pcie;
+> +	struct aspeed_pcie_port *port;
+> +	struct device_node *node =3D dev->of_node;
+> +	const struct aspeed_pcie_rc_platform *md =3D of_device_get_match_data(d=
+ev);
+> +	int irq, ret;
+> +
+> +	if (!md)
+> +		return -ENODEV;
+> +
+> +	host =3D devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
+> +	if (!host)
+> +		return -ENOMEM;
+> +
+> +	pcie =3D pci_host_bridge_priv(host);
+> +	pcie->dev =3D dev;
+> +	pcie->tx_tag =3D 0;
+> +	platform_set_drvdata(pdev, pcie);
+> +
+> +	pcie->platform =3D md;
+> +	pcie->host =3D host;
+> +	INIT_LIST_HEAD(&pcie->ports);
+> +
+> +	pcie->reg =3D devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(pcie->reg))
+> +		return PTR_ERR(pcie->reg);
+> +
+> +	of_property_read_u32(node, "linux,pci-domain", &pcie->domain);
+> +
+> +	pcie->cfg =3D syscon_regmap_lookup_by_phandle(dev->of_node, "aspeed,pci=
+ecfg");
+> +	if (IS_ERR(pcie->cfg))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->cfg), "Failed to map pciecfg b=
+ase\n");
+> +
+> +	pcie->h2xrst =3D devm_reset_control_get_exclusive(dev, "h2x");
+> +	if (IS_ERR(pcie->h2xrst))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->h2xrst), "Failed to get h2x re=
+set\n");
+> +
+> +	ret =3D devm_mutex_init(dev, &pcie->lock);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to init mutex\n");
+> +
+> +	ret =3D pcie->platform->setup(pdev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to setup PCIe RC\n");
+> +
+> +	ret =3D aspeed_pcie_parse_dt(pcie);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D aspeed_pcie_init_ports(pcie);
+> +	if (ret)
+> +		goto err_remove_resets;
+> +
+> +	host->sysdata =3D pcie;
+> +
+> +	ret =3D aspeed_pcie_init_irq_domain(pcie);
+> +	if (ret)
+> +		goto err_irq_init;
+> +
+> +	irq =3D platform_get_irq(pdev, 0);
+> +	if (irq < 0) {
+> +		ret =3D irq;
+> +		goto err_irq;
+> +	}
+> +
+> +	ret =3D devm_request_irq(dev, irq, aspeed_pcie_intr_handler, IRQF_SHARE=
+D, dev_name(dev),
+> +			       pcie);
+> +	if (ret)
+> +		goto err_irq;
+> +
+> +	ret =3D pci_host_probe(host);
+> +	if (ret)
+> +		goto err_irq;
+> +
+> +	return 0;
+> +err_irq:
+> +	aspeed_pcie_irq_domain_free(pcie);
 
-Ulf, I am hoping we can queue this up for 6.17, I know it has been a bit
-late :(
+If pci_host_probe() fails, aspeed_pcie_irq_domain_free() will be called
+before the IRQ requested with devm_request_irq() above is released.
+Also, this is never called on .remove. You can fix both with
+devm_add_action_or_reset().
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+> +err_irq_init:
+> +err_remove_resets:
+> +	list_for_each_entry(port, &pcie->ports, list)
+> +		reset_control_put(port->perst);
+
+I suggest to let devres handle this (see above).
+
+regards
+Philipp
+
 
