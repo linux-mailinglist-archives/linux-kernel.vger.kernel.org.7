@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-731832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0BFFB05A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:40:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FFDB05A6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765F27B090F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:39:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C666D17BF10
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86092E0415;
-	Tue, 15 Jul 2025 12:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E377A2E1751;
+	Tue, 15 Jul 2025 12:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="uL4Fdflv"
-Received: from outbound.pv.icloud.com (p-west1-cluster6-host1-snip4-7.eps.apple.com [57.103.67.30])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="mqaAejcm"
+Received: from outbound.pv.icloud.com (p-west1-cluster1-host3-snip4-10.eps.apple.com [57.103.64.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEAC2E03FC
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.67.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80C42E172A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752583234; cv=none; b=Mb4PCH+5Q/gMwXO84A3u6+vB9bzSseyQco4AiHh4pZUukOGvR4R0JUg6cMYf4l8oag3qJ2I/YEwL8fuAZU9ZKfevjoo9AjEwEY4Zpb1KtjXRCzwIRkn5Da773TjmLaABjDI7m554LkHdTXPNqy34m28BKrRx/AUzHaQ0IXC2Pr0=
+	t=1752583238; cv=none; b=CCftqVfm/niXqJNocZFaoNF5QMPJek6MJbmfkoGIC2QoHFtTLufRlM6jglSEl6aAPA5wurWlhu5avQuCQg7uaR7UihagSrUYFSf1UoyQbjQhR6+vY+PNkMqX4J7hd1JdbW5sC5sEusxwoBSN9HOEm1P1GEUziBZmVwes30qW41M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752583234; c=relaxed/simple;
-	bh=7UX3x/MHm8ZjEhi614uxqFA/BFt2lbZMabMPCyvqYC8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RHfzF7vUvUBcyldk+enXYizOUL6wqqSr1G5rokuuwondr+O3VGcrVFVSsEYj/gLmpvbskHq+hEwVXVYYKCpsbJLPhmp/nnlnWT0OpTxVWafn0Sjkev2324VA2lzueuNtEWXyaMX/+D+4/0yWGOxouUI/gKYk5kIwuCcozS+tfnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=uL4Fdflv; arc=none smtp.client-ip=57.103.67.30
+	s=arc-20240116; t=1752583238; c=relaxed/simple;
+	bh=D1W//qNw2jcSwxeFY6cnAciQNTc3BMzCNuI0IekI7B8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Un8CP5VwT0c0Y5wJzYvOos9hWomE5EqqimdEStkh2VubWHEORisulUTNhenMVUUYXkxh7IcWK5mFjGKIxvrsq4u0MBa8jLdvqlTMZBeM8i+P6MLnUHWIucOsm+TpakaGCtBYzLBRJb3pnQun0wAVebNBIctFsrYlK2FbokKvdm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=mqaAejcm; arc=none smtp.client-ip=57.103.64.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
 Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by outbound.pv.icloud.com (Postfix) with ESMTPS id 2805D18002DA;
-	Tue, 15 Jul 2025 12:40:31 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=Dw3ZIYMTrBoGuRyeavT9Yda8JQaDT00t/bCnCZ4BBVA=; h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:x-icloud-hme; b=uL4FdflvoSA7DzAZbknWEh5PYleiTxNLrRQGA03K275gTNIoxlGrv0p4bpZ6t8tpumfAzwNFzmtyhnQ3HMvK4tXWfGc4f2F7U2etWlcHiSkqI8qFC5cJL99sdNl8MU11/dnW/Y+ISMPYrXumcyhFY6Z4IbVJrLj8t5wGQ8W6DWx9qH/Rp46H2hRTiCY5OQz1qcj3lQzGBuYOlPSEIbExstsRC03VDz3DoxpzJzB7w0oi6P9ET7yaNamZZuw0sHFmJV2htHpn8ocV25onp61Tyyr5LFreeqY5FGEE/dVkJYHppRB+veuOfGFHOdeiPGNYGUbT3FztbgNarUOsRmhjPw==
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 5E01118002CD;
+	Tue, 15 Jul 2025 12:40:33 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=vC8NO5NWY6I9G6YPYsJKZtUVLHXUh6Jv8sOvV4tOqV0=; h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme; b=mqaAejcmDZdKt1S74ppbnqY8oCs/fDM3Vjg7+CnVMxJj5Kjo8XeiaqNnV6kkAEtAC/A1P3AKjnLRAFtw4rchddlvg9ShtTHG8Psaca3+Pspp3ohsa0iEFyYheTmq93O5cuI15Hg5gYp/JCxwuFcHnq0XlVS+O8tUr1cXiwI3u+De5DvlXrw+cWAFIWT7lHJol7Qun8FL92ghSJp3s3a3RWjL9QaKPJ5WZmAEGHRdklJYxPzrw1G9I4JVmU1urHHXVmQwXHY475lV+Ydq8Tgh9Hql4m2HIJ9lhcr5W/+2kHR4bOn18outHqmDzSXP2mZPuhlepf2wRnM8SF9V6rkWXw==
 Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 0BFF018002E4;
-	Tue, 15 Jul 2025 12:40:28 +0000 (UTC)
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 4558918002DF;
+	Tue, 15 Jul 2025 12:40:31 +0000 (UTC)
 From: Zijun Hu <zijun_hu@icloud.com>
-Subject: [PATCH 0/2] Bluetooth: btusb: QCA: Fix bug and support downloading
- custom firmwares
-Date: Tue, 15 Jul 2025 20:40:12 +0800
-Message-Id: <20250715-bt_quec-v1-0-c519cf7a0e16@oss.qualcomm.com>
+Date: Tue, 15 Jul 2025 20:40:13 +0800
+Subject: [PATCH 1/2] Bluetooth: btusb: QCA: Fix downloading wrong NVM for
+ WCN6855 GF variant without board ID
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,49 +49,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACxMdmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDc0NT3aSS+MLS1GRd01TD5DQTg7REQ9NEJaDqgqLUtMwKsEnRsbW1AMo
- 5xn1ZAAAA
-X-Change-ID: 20250715-bt_quec-5e1cf40fa15a
+Message-Id: <20250715-bt_quec-v1-1-c519cf7a0e16@oss.qualcomm.com>
+References: <20250715-bt_quec-v1-0-c519cf7a0e16@oss.qualcomm.com>
+In-Reply-To: <20250715-bt_quec-v1-0-c519cf7a0e16@oss.qualcomm.com>
 To: Marcel Holtmann <marcel@holtmann.org>, 
  Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
  Matthias Kaehlcke <mka@chromium.org>
 Cc: Zijun Hu <zijun_hu@icloud.com>, linux-bluetooth@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Zijun Hu <zijun.hu@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: u8f0fj4FADDj7nPwDL99JEKDPLzhnxSR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDExNiBTYWx0ZWRfX6mbJcuxB4kRH
- Dla9Yw6lbxVcvhyXjlLz5nAAGkixiC9yX3tUcqYV/rFz6Yyu7C9JGBvtfoabJTVnO4gO77CxTXz
- HZ0LvWY6sKqfVzUsONv2GG5RMebaocS60ZKyL5tps5BVrdi/NRATcSnyP05L/hP3UkJuQmm6WvO
- CcQ8Lxk7Cy007SUQ5CkRPYQpj5/kBOO1PRsfKqSrX4MO2yXIe23j3S4mqOThMSXIkcVXFIiLj1A
- /uEKDoZXCMlD2rDi4GR+6ItetGZ4CBi3X6v2SbA8PfmLzwQ1fkjeOR3eCkg+i10V8aGWJ27II=
-X-Proofpoint-GUID: u8f0fj4FADDj7nPwDL99JEKDPLzhnxSR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDExNiBTYWx0ZWRfX9c9mS9unVhor
+ N47wAAdQUDLo+yHHPGlz/hjVKe9mzy/RXdVg8w/PRwXvNOrjEXxni+3RiMqRkT5F9BSacDywg1M
+ EVaYBAE6AgjQx72kZbHsBdYgW31Gz37hHooU09CgvvnL/xM4r7wFtespcbAAtsuA/Tb3y2A45AJ
+ mC+pc95VgX9Gw1wXcT6ZPA+F7HVGwcJxSmQZAL86Z//AB4QLcqoeOcOSoA9gnwBXbIBt2ZdV3QX
+ HZLBXueTRZaDd9ntLcGSNXzgQBQG4RiOmT83iSEe8oQLIxq5K/4TyzCRKAXRmmdMNoEcXExzs=
+X-Proofpoint-GUID: s0qsG9FlS4uue-0j7Tf8quiHaaHTntIQ
+X-Proofpoint-ORIG-GUID: s0qsG9FlS4uue-0j7Tf8quiHaaHTntIQ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-15_03,2025-07-15_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
- phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0 malwarescore=0 spamscore=0
- clxscore=1011 mlxlogscore=776 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.22.0-2506270000 definitions=main-2507150116
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ mlxscore=0 clxscore=1015 bulkscore=0 adultscore=0 phishscore=0
+ mlxlogscore=999 malwarescore=0 suspectscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2506270000 definitions=main-2507150116
 
-This patch series is to:
-1) Fix a bug
-2) Support downloading custom-made firmwares
+From: Zijun Hu <zijun.hu@oss.qualcomm.com>
 
+For GF variant of WCN6855 without board ID programmed
+btusb_generate_qca_nvm_name() will chose wrong NVM
+'qca/nvm_usb_00130201.bin' to download.
+
+Fix by choosing right NVM 'qca/nvm_usb_00130201_gf.bin'.
+Also simplify NVM choice logic of btusb_generate_qca_nvm_name().
+
+Fixes: d6cba4e6d0e2 ("Bluetooth: btusb: Add support using different nvm for variant WCN6855 controller")
 Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
 ---
-Zijun Hu (2):
-      Bluetooth: btusb: QCA: Fix downloading wrong NVM for WCN6855 GF variant without board ID
-      Bluetooth: btusb: QCA: Support downloading custom-made firmwares
+ drivers/bluetooth/btusb.c | 78 ++++++++++++++++++++++++++---------------------
+ 1 file changed, 44 insertions(+), 34 deletions(-)
 
- drivers/bluetooth/btusb.c | 128 ++++++++++++++++++++++++++++++++--------------
- 1 file changed, 91 insertions(+), 37 deletions(-)
----
-base-commit: be736f5f89d519e58057ee40c3e09fbfc711d4dc
-change-id: 20250715-bt_quec-5e1cf40fa15a
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index f302c3f1e4cfdf01610bbd3b9ae6be4724aeadad..2dd665bc5703bae3a14d8dd3ab6d1f86e01cc559 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -3203,6 +3203,32 @@ static const struct qca_device_info qca_devices_table[] = {
+ 	{ 0x00190200, 40, 4, 16 }, /* WCN785x 2.0 */
+ };
+ 
++static u16 qca_extract_board_id(const struct qca_version *ver)
++{
++	u16 flag = le16_to_cpu(ver->flag);
++	u16 board_id = 0;
++
++	if (((flag >> 8) & 0xff) == QCA_FLAG_MULTI_NVM) {
++		/* The board_id should be split into two bytes
++		 * The 1st byte is chip ID, and the 2nd byte is platform ID
++		 * For example, board ID 0x010A, 0x01 is platform ID. 0x0A is chip ID
++		 * we have several platforms, and platform IDs are continuously added
++		 * Platform ID:
++		 * 0x00 is for Mobile
++		 * 0x01 is for X86
++		 * 0x02 is for Automotive
++		 * 0x03 is for Consumer electronic
++		 */
++		board_id = (ver->chip_id << 8) + ver->platform_id;
++	}
++
++	/* Take 0xffff as invalid board ID */
++	if (board_id == 0xffff)
++		board_id = 0;
++
++	return board_id;
++}
++
+ static int btusb_qca_send_vendor_req(struct usb_device *udev, u8 request,
+ 				     void *data, u16 size)
+ {
+@@ -3359,44 +3385,28 @@ static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
+ 					const struct qca_version *ver)
+ {
+ 	u32 rom_version = le32_to_cpu(ver->rom_version);
+-	u16 flag = le16_to_cpu(ver->flag);
++	const char *variant;
++	int len;
++	u16 board_id;
+ 
+-	if (((flag >> 8) & 0xff) == QCA_FLAG_MULTI_NVM) {
+-		/* The board_id should be split into two bytes
+-		 * The 1st byte is chip ID, and the 2nd byte is platform ID
+-		 * For example, board ID 0x010A, 0x01 is platform ID. 0x0A is chip ID
+-		 * we have several platforms, and platform IDs are continuously added
+-		 * Platform ID:
+-		 * 0x00 is for Mobile
+-		 * 0x01 is for X86
+-		 * 0x02 is for Automotive
+-		 * 0x03 is for Consumer electronic
+-		 */
+-		u16 board_id = (ver->chip_id << 8) + ver->platform_id;
+-		const char *variant;
++	board_id = qca_extract_board_id(ver);
+ 
+-		switch (le32_to_cpu(ver->ram_version)) {
+-		case WCN6855_2_0_RAM_VERSION_GF:
+-		case WCN6855_2_1_RAM_VERSION_GF:
+-			variant = "_gf";
+-			break;
+-		default:
+-			variant = "";
+-			break;
+-		}
+-
+-		if (board_id == 0) {
+-			snprintf(fwname, max_size, "qca/nvm_usb_%08x%s.bin",
+-				rom_version, variant);
+-		} else {
+-			snprintf(fwname, max_size, "qca/nvm_usb_%08x%s_%04x.bin",
+-				rom_version, variant, board_id);
+-		}
+-	} else {
+-		snprintf(fwname, max_size, "qca/nvm_usb_%08x.bin",
+-			rom_version);
++	switch (le32_to_cpu(ver->ram_version)) {
++	case WCN6855_2_0_RAM_VERSION_GF:
++	case WCN6855_2_1_RAM_VERSION_GF:
++		variant = "_gf";
++		break;
++	default:
++		variant = NULL;
++		break;
+ 	}
+ 
++	len = snprintf(fwname, max_size, "qca/nvm_usb_%08x", rom_version);
++	if (variant)
++		len += snprintf(fwname + len, max_size - len, "%s", variant);
++	if (board_id)
++		len += snprintf(fwname + len, max_size - len, "_%04x", board_id);
++	len += snprintf(fwname + len, max_size - len, ".bin");
+ }
+ 
+ static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
 
-Best regards,
 -- 
-Zijun Hu <zijun.hu@oss.qualcomm.com>
+2.34.1
 
 
