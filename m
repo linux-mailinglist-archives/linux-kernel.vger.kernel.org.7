@@ -1,283 +1,185 @@
-Return-Path: <linux-kernel+bounces-732354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9619B06592
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:05:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29914B065BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8633D1AA6957
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D9D565D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10B629DB6C;
-	Tue, 15 Jul 2025 18:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DDD2BD593;
+	Tue, 15 Jul 2025 18:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lhw+Y7am"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2067.outbound.protection.outlook.com [40.107.237.67])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XVLa1KQm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BB529AAE3;
-	Tue, 15 Jul 2025 18:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752602674; cv=fail; b=AaIVFtqvXecTdeVCwAjxMJHQkGLG2vDgYtXYalIk/A+oZZTdcnstk+DA6NyaU5ScABe27Gz4JYZ3wLqADccOqdMQw5Qo3ECDPwpjXMluIeam54fyfmJsX/6c6A5XaO9UKSSi3hKtPA7uY0WokoxkF+56Ar9m1mWiTFHGl8+ccxE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752602674; c=relaxed/simple;
-	bh=f3S7I5CCykyORFk8vxLMw4JFfP+kVILpBa2SkE69blc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UZC0ySUUfqNMhtQBU/XTokJWm8Z8gdzgGKcmYA0vP4Yi/aY4NBW9np8BRbg13qp77k0QJ7dHh9uypzUyWzCKXiOzV8HPgu+Ef6Zsi9xZDOnVFLLOjFDvcqXqa00ep8Gxb59SNIv6E0PdsmH68PnjsLyhq/XxqR1RIUPbpViD1KE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lhw+Y7am; arc=fail smtp.client-ip=40.107.237.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LP1vFKG02kLOn5kl7uIGZ7DjrWXBH+U9o/tXSg2Wh7eyTkInrMCR0sSOKfUfvLFgdK2QVMSnMOPq9Wjc/I7SHH+PGBpS3Gzvg+M4phqUubZ7Wg4UaBIpDwKXkFgp3jkHFPjZpqlyt+8SORQkcSGwKxd0/cjd41TfIhUg196wij0EbDSNP1xNFJnUPR8B8NE+8HI4kRzH8Ds+sSYst+sCNplQcPFjsDKXH1NhjDZ82Ll53A+dSG5dcEqNb8B0y9WSZbBe0uOhqSHoxxnudXt2InTCLA7sh3lDjkiEeW0Kzj6S6BYSKp6IKV7pxEIlj4Ld2vd/7WOtEVnoIotlcqXtlA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7J2bo91wVPJQhPnuS1Q5588KdrQ2oBJZ953/6sUZqvY=;
- b=DZNhyl4I8KjRQ2riULWXnYKx1xNY2tOqhnKYgjb0XzIMtahwyaHyBSGP0uKfKt0/CRkoJC+XoUnTiRIrR3IsXsqpPtGwrJpjRlQx7xjocZvxipCwyaxXMpPG3k8+RIEY/u9LpxvTf2WsHUSVj84XHjOxkTSWqFxvUu4tWHe4btYZ7GuKwW5U7kJeO4RgGyDWwqjsSlNjJtdFTdAjPcfzRWami4V2l0YvraZX0HbqiJL7CQ+ue5CWHnWWxrcQV9358jg+vO0NP4I+Bh1j8Z3wfqsktcIhQqgMcEVwlof3iJhu0L2YqzZJ5uJC3Z0IyuF8p9T8VXaxBrgw0CY+Jp+kVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7J2bo91wVPJQhPnuS1Q5588KdrQ2oBJZ953/6sUZqvY=;
- b=lhw+Y7amvonCiG3U9DLwnFve1re+4+nEd3+XWt4cYJRTxmEqMR34aaCwC/KZEsfNnlZq9wScfNhLSvL0fkXAchG/cIX3xETs/dqVnRvp81y05atdy310oPKwPyIpL1CaX1BFbVjtE0xn5onTcrifVjGB6mTsCiDtUSxfK2savcI=
-Received: from BY3PR04CA0028.namprd04.prod.outlook.com (2603:10b6:a03:217::33)
- by DM6PR12MB4314.namprd12.prod.outlook.com (2603:10b6:5:211::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Tue, 15 Jul
- 2025 18:04:29 +0000
-Received: from SJ5PEPF000001D0.namprd05.prod.outlook.com
- (2603:10b6:a03:217:cafe::89) by BY3PR04CA0028.outlook.office365.com
- (2603:10b6:a03:217::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.19 via Frontend Transport; Tue,
- 15 Jul 2025 18:04:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001D0.mail.protection.outlook.com (10.167.242.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 18:04:29 +0000
-Received: from ethanolx50f7host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
- 2025 13:04:26 -0500
-From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-To: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>
-CC: Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, "Alison
- Schofield" <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara
-	<jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
-	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
-	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, "Ying
- Huang" <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
-	Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
-	Nathan Fontenot <nathan.fontenot@amd.com>, Smita Koralahalli
-	<Smita.KoralahalliChannabasappa@amd.com>, Terry Bowman
-	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
-	<benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
-	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
-Subject: [PATCH v5 2/7] cxl/core: Rename suspend.c to probe_state.c and remove CONFIG_CXL_SUSPEND
-Date: Tue, 15 Jul 2025 18:04:02 +0000
-Message-ID: <20250715180407.47426-3-Smita.KoralahalliChannabasappa@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
-References: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E4329C328;
+	Tue, 15 Jul 2025 18:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752602837; cv=none; b=OoNjJdGBAq0Dw9+pb4l0T2uhXY5co3bxfG2zqa8YXwwT3Z9XcsdTivNq+DdbVgTeA+Co0T2amMs84p6Z8A8IaMb2sORnUFKC+DWWd0Mp6xgouRWnj4ytgi4gtPT6Y/w81osQoY7f+/5j66OrkqpvWcZTQ9C6sZwjd7LP8O8vMfk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752602837; c=relaxed/simple;
+	bh=svm/OxZXwP36oWKDPtFr+f075NF3j1NnuKzrk1c3Dq4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eV2ZHgauq7Ab/U7V6Nmd7XS4Grux2eCTrqhuPOBgZkGH4N4bqYZkNhWIaO7TKI/mDcgUxayMVQbIX4oCOK4XV68v7pD8mXKAHTkF7WT0MKhgFeBoRNpVJ1pLF1/S4nZwsr9MHhrYyLyBZCX+xLjNZZufwx3eOSjqccc2aj1/t/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XVLa1KQm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FGDEHF025762;
+	Tue, 15 Jul 2025 18:07:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=InPx2IXNDtQs1szfk0B6C4wPq3p22ITmlEa
+	SBrDdAsE=; b=XVLa1KQmCgXjTHz1RAOyflKXr3/XI2PYtaSntWx9+z5KdKJquy9
+	KJh1lTmPiSewEhbyN3E/VdIzGxWfgxF2QAaZghySLy3VlRMbxkv8P0F2eO+cc30E
+	0SYsk0L0DJYpRaMXBEe0ntGxSmT7J6IwFVnXMXvvyZymYwUYIStdVKLkxpD8J0cy
+	vK/Yki61hA6JMTJUxkUt4vvqhjjAL43OezfARvPWRnz3+KWZQe4tiBhxa2DYt8LX
+	rLyURzFCn0pFtRndl3RFSYIImqDCmvfMFkSTeWMcp5qfC6NfQ4xQ35n/xRQ73MtI
+	+MhvOH7izHk4KvQinv6Aks4NSi73MGY4lCQ==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy0xk7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Jul 2025 18:07:10 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56FI75j3028697;
+	Tue, 15 Jul 2025 18:07:06 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 47ugskwyxe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Jul 2025 18:07:06 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56FI75wA028669;
+	Tue, 15 Jul 2025 18:07:06 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 56FI76KA028711
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Jul 2025 18:07:06 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
+	id A18255C5; Tue, 15 Jul 2025 23:30:52 +0530 (+0530)
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com,
+        Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Subject: [PATCH v6 0/9] Enable audio on qcs6490-RB3Gen2 and qcm6490-idp boards
+Date: Tue, 15 Jul 2025 23:30:41 +0530
+Message-Id: <20250715180050.3920019-1-quic_pkumpatl@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D0:EE_|DM6PR12MB4314:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c3cd4f6-8516-41b6-39c5-08ddc3ca0b55
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TDBwSQygH7SidFB3Z9PjcXK30A7iawHNPuLDZD/AXPd3l2peyS7kJxvXd6sw?=
- =?us-ascii?Q?FOheg+7vUf0H048nOAP3rlPpFlzwJRb95bC57Nak2K8r8Og3+o8OrG01soK0?=
- =?us-ascii?Q?QBieZNVurj9XzF7KMZ/e1hFU5W/DeyxEhccV4kca+bKlJb2co1v28NHLUEyo?=
- =?us-ascii?Q?Pcp7hDH8HdalYAjX3tJCAMyomMfLesIUPkXQ3eQq8AaGKROn9je/uMmFiX3A?=
- =?us-ascii?Q?ofUqSffA4AwPKPCVYum6X623EyX4xoHY4nC1YwA7jJcCXthV5pJ385Zel8Vu?=
- =?us-ascii?Q?ox/QBL3vX5Y1CsqrFf+6sDU2vEu5HvldnWOXEwqWMw4n1VK2LqcGsWYffV/G?=
- =?us-ascii?Q?UKOh6twP+ExP/C49iBVET/yU3ytfTXAJU0aHZVsbJ7wWeanBAcUPINFsOS6k?=
- =?us-ascii?Q?Pa4Ky3iQwkWljogVJ/grqYWE6UVXsUn5ON7Muedzc8XMXOEiLA9IWo+h8+5h?=
- =?us-ascii?Q?MFXE3oNaAcPfal8SNzvV7wwhM8seu9aPPf+kAuq6hytoURRllzurzJEqtIro?=
- =?us-ascii?Q?9g4aC1gpOBKkhL1M/RxCXT+m8pRjFCAFUTQ2dFedMj5nGj8+X4UFUMQNcYNJ?=
- =?us-ascii?Q?7EQ/+AqZ2a/IeEo6KpO+aGA92/XUlsIBoyE+UVmAkMLfVwbq6JTkmOftyJeB?=
- =?us-ascii?Q?0LjwMIMP/Bd7LvtPpiyHrn4XbGcRh34TexDaeCZ2X3P3LyMXTYwDEnhPgWRc?=
- =?us-ascii?Q?Ck3IwC5ReiT13fo9qC3CldgvgeQ+wRujIdSaV6ejibfK9ZJculiuPp4NWEpw?=
- =?us-ascii?Q?kaLijnP89oDxYLLzQ1J/Exw/KGIeva2XKkNg2SOO4vZU7U6eVxtQIHZJQEsY?=
- =?us-ascii?Q?MOwwNzbmULkaXH0hUI3mdjMBSKKerMQrkGnXP9d1a8oxgONaYckkkEviGRZc?=
- =?us-ascii?Q?5hNN9wx1i7p5Q+TuJpbyL1EdXtbHUswSybJHfzMiG2yKfDyH3gU8STlgrOib?=
- =?us-ascii?Q?asavsdfZotTHNh/t9fZ3A1hXyDs9a2srhk66hFFuWfcxA/9RyKfLkS5k6oNG?=
- =?us-ascii?Q?d2+1lvfY4CMd/NGhwfykLWjaCEt3DxiHackJ9Utt/2GHbLBSvvFSi/7IU6EP?=
- =?us-ascii?Q?4+OC9M06CSBFnarm9337sBL7DFoE7qLu0AW8jJPOHs5EbOR7XKf8yEkuHZcN?=
- =?us-ascii?Q?pJzIQSCKOiwxA0ZrwFlo7tcA5FX4bZWni2HBIFFNdwWmhslStS6GXKP50rKQ?=
- =?us-ascii?Q?JtF2BQZ6KKfjX3HzjSMl58HeaFoop8sgZ8oKOU3My+J/sVOINFkBkKercIft?=
- =?us-ascii?Q?/YXmKnUcITqpzwI/T6vvlZyo+Od5kd9ixo9ARXwKDX5wiRJZVPqMDT8ATx1A?=
- =?us-ascii?Q?Gcm4BWBFXFGIPAOXzCudIiF10+E4gDfLvVqPq4zClCJPglnowa1wBDClQtK/?=
- =?us-ascii?Q?DqthlrUROj2ax9U94kd9DNsMiIImo80BD5Qy813TZZob3aApP15AwELoZi/a?=
- =?us-ascii?Q?BO6KlTy0ZStaB2ckb0/JJtG+RJk972yNJf1U81FULCZaqzR/B5t9mHggM4WB?=
- =?us-ascii?Q?D7OpNLC4kLPdPtOdy/dOY++gdxBxCgBTaQK6?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 18:04:29.6073
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c3cd4f6-8516-41b6-39c5-08ddc3ca0b55
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D0.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4314
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDE2NiBTYWx0ZWRfX5xwq76lv5+Zn
+ b4zeWQqR3ydvLt2KIO3jiQwMLwJa0LsJvBeGK2+U/ivJeReY2DKdkVDggiuA28wE0jZbLMSKuE4
+ TYKSnSo3iXFS8dIXvMyQGt9RKrXdu7MhtHp3AJxcUwjTnzwwWnZo/R+BridzXpwkbygFfLCKTmE
+ K70laMkK5+6HReseXJldzKfzv6xlqgJ75I+8xqxFR1MvIieGbtr+P4UYUSI4vsCHk4mX+Cvc16k
+ sVvyhf+aug2sI6Jxtj605mmqcuW4Q7/FCxpHfh1z117oEdCsu67y3o0P68QbW6kgGb5AFg6qRuH
+ GCeZsP1An1p02TXlMxYo7SIIbDC8aFJ/KFQUP8Tpb87mxZViel5jnnX32QrhM/nj3SjLi+2Okuv
+ Or05W+ERhSUoIzULfeebUwSF3HRIJYhU9dALnz0InsKckiJcs10nm3RAxAEnojxbzBntvXc2
+X-Proofpoint-GUID: hyx9y7lf8QnP1OUAReNqfTbJ5jyb9Btv
+X-Proofpoint-ORIG-GUID: hyx9y7lf8QnP1OUAReNqfTbJ5jyb9Btv
+X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=687698ce cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=3ZyjhVE0i7BfmCAa4gMA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-15_04,2025-07-15_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxlogscore=959 impostorscore=0 mlxscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507150166
 
-The cxl_mem_active_inc()/dec() and cxl_mem_active() helpers were initially
-introduced to coordinate suspend/resume behavior. However, upcoming
-changes will reuse these helpers to track cxl_mem_probe() activity during
-SOFT RESERVED region handling.
+From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
 
-To reflect this broader purpose, rename suspend.c to probe_state.c and
-remove CONFIG_CXL_SUSPEND Kconfig option. These helpers are now always
-built into the CXL core subsystem.
+Audio support is now enabled on the qcs6490-RB3Gen2 and qcm6490-idp boards.
+The updates include adding the necessary audio device tree support and the required
+dependencies.
 
-This ensures drivers like cxl_acpi to coordinate with cxl_mem for
-region setup and hotplug handling.
+Both the qcs6490-RB3Gen2 and qcm6490-idp boards are derived from the same SoC 
+platform. Therefore, the audio support changes are included in a single patch 
+set for consistency and ease of maintenance.
 
-Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-Co-developed-by: Terry Bowman <terry.bowman@amd.com>
-Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 ---
-While these helpers are no longer specific to suspend, they couldn't be
-moved into files like memdev.c or mem.c, as those are built as modules.
-
-The problem is that cxl_mem_active() is invoked by core kernel components
-such as kernel/power/suspend.c and hibernate.c, which are built into
-vmlinux. If the helpers were moved into a module, it would result in
-unresolved symbol errors as symbols are not guaranteed to be available.
-
-One option would be to force memdev.o to be built-in, but that introduces
-unnecessary constraints, since it includes broader device management
-logic. Instead, I have renamed it to probe_state.c.
+This patch series depends on patch series:
+https://lore.kernel.org/linux-sound/20250620103012.360794-1-mohammad.rafi.shaik@oss.qualcomm.com/
 ---
- drivers/cxl/Kconfig                           | 4 ----
- drivers/cxl/core/Makefile                     | 2 +-
- drivers/cxl/core/{suspend.c => probe_state.c} | 5 ++++-
- drivers/cxl/cxlmem.h                          | 9 ---------
- include/linux/pm.h                            | 7 -------
- 5 files changed, 5 insertions(+), 22 deletions(-)
- rename drivers/cxl/core/{suspend.c => probe_state.c} (83%)
 
-diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-index 48b7314afdb8..d407d2c96a7a 100644
---- a/drivers/cxl/Kconfig
-+++ b/drivers/cxl/Kconfig
-@@ -189,10 +189,6 @@ config CXL_PORT
- 	default CXL_BUS
- 	tristate
- 
--config CXL_SUSPEND
--	def_bool y
--	depends on SUSPEND && CXL_MEM
--
- config CXL_REGION
- 	bool "CXL: Region Support"
- 	default CXL_BUS
-diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
-index 79e2ef81fde8..0fa7aa530de4 100644
---- a/drivers/cxl/core/Makefile
-+++ b/drivers/cxl/core/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_CXL_BUS) += cxl_core.o
--obj-$(CONFIG_CXL_SUSPEND) += suspend.o
-+obj-y += probe_state.o
- 
- ccflags-y += -I$(srctree)/drivers/cxl
- CFLAGS_trace.o = -DTRACE_INCLUDE_PATH=. -I$(src)
-diff --git a/drivers/cxl/core/suspend.c b/drivers/cxl/core/probe_state.c
-similarity index 83%
-rename from drivers/cxl/core/suspend.c
-rename to drivers/cxl/core/probe_state.c
-index 29aa5cc5e565..5ba4b4de0e33 100644
---- a/drivers/cxl/core/suspend.c
-+++ b/drivers/cxl/core/probe_state.c
-@@ -8,7 +8,10 @@ static atomic_t mem_active;
- 
- bool cxl_mem_active(void)
- {
--	return atomic_read(&mem_active) != 0;
-+	if (IS_ENABLED(CONFIG_CXL_MEM))
-+		return atomic_read(&mem_active) != 0;
-+
-+	return false;
- }
- 
- void cxl_mem_active_inc(void)
-diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-index 551b0ba2caa1..86e43475a1e1 100644
---- a/drivers/cxl/cxlmem.h
-+++ b/drivers/cxl/cxlmem.h
-@@ -883,17 +883,8 @@ static inline void devm_cxl_memdev_edac_release(struct cxl_memdev *cxlmd)
- { return; }
- #endif
- 
--#ifdef CONFIG_CXL_SUSPEND
- void cxl_mem_active_inc(void);
- void cxl_mem_active_dec(void);
--#else
--static inline void cxl_mem_active_inc(void)
--{
--}
--static inline void cxl_mem_active_dec(void)
--{
--}
--#endif
- 
- int cxl_mem_sanitize(struct cxl_memdev *cxlmd, u16 cmd);
- 
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index f0bd8fbae4f2..415928e0b6ca 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -35,14 +35,7 @@ static inline void pm_vt_switch_unregister(struct device *dev)
- }
- #endif /* CONFIG_VT_CONSOLE_SLEEP */
- 
--#ifdef CONFIG_CXL_SUSPEND
- bool cxl_mem_active(void);
--#else
--static inline bool cxl_mem_active(void)
--{
--	return false;
--}
--#endif
- 
- /*
-  * Device power management
+changes in [v6]:
+	- Addressed the review commnets in dt-binding patches from Krzysztof Kozlowski
+	- Link to V5: https://lore.kernel.org/linux-arm-msm/20250625082927.31038-1-quic_pkumpatl@quicinc.com/
+
+changes in [v5]:
+	- Added separate patch for QCS6490 pinctrl bindings.
+	- Updated commit message with more description.
+	- Addressed the review commnets.
+	- Link to V4: https://lore.kernel.org/linux-arm-msm/20250527111227.2318021-1-quic_pkumpatl@quicinc.com/
+
+Changes in [v4]:
+	- Fix DT binding errors by adding dt-binding clock changes for ADSP base platform.
+	- Link to V3 : https://lore.kernel.org/linux-arm-msm/20250520062618.2765109-1-quic_pkumpatl@quicinc.com/
+
+Changes in [v3]:
+	- Added protection-domain in gpr services.
+	- Addressed the review commnets from Konrad Dybcio.
+	- Fix DT binding errors reported by Rob Herring.
+	- Link to V2 : https://lore.kernel.org/linux-arm-msm/20250429092430.21477-1-quic_pkumpatl@quicinc.com/
+
+Changes in [v2]:
+	- Created dtsi file to handle common audio nodes to support Audioreach.
+	- Addressed the review comments.
+	- Link to V1 : https://lore.kernel.org/linux-arm-msm/20250317054151.6095-2-quic_pkumpatl@quicinc.com/
+
+Mohammad Rafi Shaik (9):
+  arm64: dts: qcom: qcs6490-audioreach: Add gpr node
+  dt-bindings: pinctrl: qcom,sc7280-lpass-lpi-pinctrl: Document the
+    clock property
+  ASoC: dt-bindings: qcom,lpass-va-macro: Update bindings for clocks to
+    support ADSP
+  arm64: dts: qcom: sc7280: Add WSA SoundWire and LPASS support
+  arm64: dts: qcom: qcs6490-audioreach: Modify LPASS macros clock
+    settings for audioreach
+  arm64: dts: qcom: qcs6490-rb3gen2: Add WSA8830 speakers amplifier
+  arm64: dts: qcom: qcs6490-rb3gen2: Add sound card
+  arm64: dts: qcom: qcm6490-idp: Add WSA8830 speakers and WCD9370
+    headset codec
+  arm64: dts: qcom: qcm6490-idp: Add sound card
+
+ .../qcom,sc7280-lpass-lpi-pinctrl.yaml        |  16 ++
+ .../bindings/sound/qcom,lpass-va-macro.yaml   |  29 ++-
+ arch/arm64/boot/dts/qcom/qcm6490-idp.dts      | 207 ++++++++++++++++++
+ .../boot/dts/qcom/qcs6490-audioreach.dtsi     | 121 ++++++++++
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  |  80 +++++++
+ arch/arm64/boot/dts/qcom/sc7280.dtsi          |  97 +++++++-
+ 6 files changed, 543 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+
+
+base-commit: a62b7a37e6fcf4a675b1548e7c168b96ec836442
 -- 
-2.17.1
+2.34.1
 
 
