@@ -1,116 +1,94 @@
-Return-Path: <linux-kernel+bounces-730992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22725B04D46
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:19:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB09B04D49
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4AB3A3D7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:19:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E9277A4B1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1F21C84BD;
-	Tue, 15 Jul 2025 01:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B53D1B042E;
+	Tue, 15 Jul 2025 01:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="HBzph/Wu"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r3sOTkBn"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510E717C21B;
-	Tue, 15 Jul 2025 01:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B2129A5;
+	Tue, 15 Jul 2025 01:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752542368; cv=none; b=l/qoL903pH0iSr9Kh8W6QlJycbeFs/wHnpLEgXspWZf81Z2EaYwO3f4FXie3pmUx7OI+xa/jxHM4/q8QfFTO3swxhE4MvkPMGYIa6uTDffHFzTnc41hXEZx5MAgbOCySDMo3JktRqxIBvnDcBqOjVYJzMp6KNwwoY/uI4Ew4DgU=
+	t=1752542434; cv=none; b=T/7NO1fNEtl3WK+kTlEoGAVzqm2lddCmyAZg543QiOzvXHzWNsutSNEOWZS4ZYH0Sah0OEEIIJaeXz6Wi2GyalfgQYAxBcsbcK5L05hASHtzjAuTBvbAGNJTwMpHfOxDmNDde3lkdVS8Zj3lKKHqZElqgJtrOn7UhoVTGd9mM7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752542368; c=relaxed/simple;
-	bh=5oeepojmBcNgggJVtg0k5VSLGo5qe1E2+hYtB3Eyj34=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ihPchWL8vCc5/L/xcqRq0o2Q+jD3C5CfcTUwFqS2KlQfkVxBJLvKenvlP5cXhoI04tow0j3AmefhHcDYhCxGpMkE+QdYglWaKbBmbQzkUpJkc37xI0pXU4v01J/K/bbnWYfU7Nx5bM7SgbHxcu29f3uiayeOK3sfli9lEJbHSAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=HBzph/Wu; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1752542356;
-	bh=nFc7sXSxrxXrn9CbhO94nNCIuL9JOjq3fHd1XbxNFLE=; l=1888;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=HBzph/WuA8cLgQDpZoE2w4LfTP2epfCOlVcGC94BMYegXUmrYEXYMZgWnrLSduaSL
-	 Rvn5Gh189VNU078dOpXd1rfMqS+zfzE1pnhtX+u7r5WIPchzGgNQJZkx3qDOHIaxhi
-	 U4nPegYOcDtJbF4WUrlHHJ/YRB0YYVtDt36sMZ5TDyE5V4s5SBwNPHsvINhMAhpCym
-	 fzp94lWsWdJvgIr5D8od4dURjjxbOrV3s5bjffEds4fri0OgoLHMe9lxMgyi7wiljK
-	 LkAzTCHEMQdsTwy6SXQc+s5EUU93dVK3JPKeNLnsgRSFGgPFxS4sOTIIW1eakfwz8m
-	 1MjtFGU2LqjfA==
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(244604:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 15 Jul 2025 09:19:05 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 15 Jul
- 2025 09:19:05 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Tue, 15 Jul 2025 09:19:05 +0800
-From: <cy_huang@richtek.com>
-To: Sebastian Reichel <sre@kernel.org>
-CC: ChiYuan Huang <cy_huang@richtek.com>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] power: supply: rt9467: Add properties for VBUS and IBUS reading
-Date: Tue, 15 Jul 2025 09:19:38 +0800
-Message-ID: <54fd32fc23fd959da8aa6508d572ee96de5f6eec.1752542001.git.cy_huang@richtek.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1752542434; c=relaxed/simple;
+	bh=rYpDziYirL3ZYFK/I9Ik59aptGdN12R8VseqntbfoI8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GRzPPmMaRq2UgTvoHvRrInaIYTRS4buOCJQxBPxKgwogPf/pgkOlW63py1CIIkWCz5AIbPhQgowHo0+9MkF2iRAD0Ywop4wdkhwtu0lGEH6axi5wLEoxPYty0sCS97swNgUkV3j7arriW+LA7QvPJ37MwWFU+E0IWeD/Zh//xos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r3sOTkBn; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752542430;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=v+85kuUpWbzYdAAt7bSvzqTfnHCqVfZ3tkov/6GvQy8=;
+	b=r3sOTkBnHxT1l/OuHEmvY8Whz9QB6r7MHJ2EVUVIovpMaK0eYjkGZ88wNU9C3TtqbjgcIK
+	5VioGdJdB/Jc4Z1fbb2o1z5AHNxR4y2VzGzDcKbhj0vsphxtKPbtQylFn9K3PDC5W2SfSC
+	Q6Ox1rHyJspLNcZWtnBB/vElUg8hIHU=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-iio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <dlechner@baylibre.com>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH 0/7] hwmon: iio: Add alarm support
+Date: Mon, 14 Jul 2025 21:20:16 -0400
+Message-Id: <20250715012023.2050178-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+Add alarm support for IIO HWMONs as well as the minimum/maximum
+thresholds. This involves the creation of two new in-kernel IIO APIs to
+set the thresholds and be notified of events.
 
-Since there's the existing ADC function, add properties 'VOLTAGE_NOW'
-and 'CURRENT_NOW' to report the current VBUS and IBUS value, respectively.
+I think this should probably go through the iio tree given the amount of
+IIO stuff it touches.
 
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
----
- drivers/power/supply/rt9467-charger.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
-index e9aba9ad393c..998b56e81cd7 100644
---- a/drivers/power/supply/rt9467-charger.c
-+++ b/drivers/power/supply/rt9467-charger.c
-@@ -633,7 +633,9 @@ static int rt9467_psy_set_ieoc(struct rt9467_chg_data *data, int microamp)
- static const enum power_supply_property rt9467_chg_properties[] = {
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_VOLTAGE_NOW,
- 	POWER_SUPPLY_PROP_CURRENT_MAX,
-+	POWER_SUPPLY_PROP_CURRENT_NOW,
- 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
- 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
- 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
-@@ -656,6 +658,8 @@ static int rt9467_psy_get_property(struct power_supply *psy,
- 		return rt9467_psy_get_status(data, &val->intval);
- 	case POWER_SUPPLY_PROP_ONLINE:
- 		return regmap_field_read(data->rm_field[F_PWR_RDY], &val->intval);
-+	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-+		return rt9467_get_adc(data, RT9467_ADC_VBUS_DIV5, &val->intval);
- 	case POWER_SUPPLY_PROP_CURRENT_MAX:
- 		mutex_lock(&data->attach_lock);
- 		if (data->psy_usb_type == POWER_SUPPLY_USB_TYPE_UNKNOWN ||
-@@ -665,6 +669,8 @@ static int rt9467_psy_get_property(struct power_supply *psy,
- 			val->intval = 1500000;
- 		mutex_unlock(&data->attach_lock);
- 		return 0;
-+	case POWER_SUPPLY_PROP_CURRENT_NOW:
-+		return rt9467_get_adc(data, RT9467_ADC_IBUS, &val->intval);
- 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
- 		mutex_lock(&data->ichg_ieoc_lock);
- 		val->intval = data->ichg_ua;
+Sean Anderson (7):
+  math64: Add div64_s64_rem
+  iio: inkern: Add API for reading/writing events
+  iio: Add in-kernel API for events
+  hwmon: iio: Refactor scale calculation into helper
+  hwmon: iio: Add helper function for creating attributes
+  hwmon: iio: Add min/max support
+  hwmon: iio: Add alarm support
+
+ drivers/hwmon/iio_hwmon.c        | 522 ++++++++++++++++++++++++++++---
+ drivers/iio/industrialio-event.c |  34 +-
+ drivers/iio/inkern.c             | 198 ++++++++++++
+ include/linux/iio/consumer.h     |  86 +++++
+ include/linux/math64.h           |  18 ++
+ lib/math/div64.c                 |  20 ++
+ 6 files changed, 830 insertions(+), 48 deletions(-)
+
 -- 
-2.34.1
+2.35.1.1320.gc452695387.dirty
 
 
