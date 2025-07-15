@@ -1,101 +1,88 @@
-Return-Path: <linux-kernel+bounces-731468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20843B054DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:29:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8181B054A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D257B7169
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:24:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DACC179D17
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957502750EA;
-	Tue, 15 Jul 2025 08:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2D9274B4B;
+	Tue, 15 Jul 2025 08:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DbLxiCOK"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKADQuv7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7599226CF3;
-	Tue, 15 Jul 2025 08:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45F6223DEC;
+	Tue, 15 Jul 2025 08:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752567941; cv=none; b=RUvlDs3+B0DjHhipmJtLqXWIjYxFuyJXqGWBZzuho42D1TkmMRPABAuLE6s5C7fViUGt/sa1cza17VcevHSbABtqcT4/T020cMkH/vI1JFG2gKm9fproajE74dvvOvNTIPRgaKnuQ4BROac14X7P3yB1hSl0GYWWbIoqVcyLRbs=
+	t=1752567638; cv=none; b=E8fP1xaDOErCew5At5tZHTeQs5OhxJy2yPwEbBqKr7Agwg05d4CR84duz7lwV4LxrwH2k7VYqRNzOrRLM1HBkfLyWjhH15rUBxgprzCe3neXF3LZYe9Awo2nvmrV/VLDrBFEyQF79IS+zXB8Wsv7z/MKQW/jESXH53QwO5IfjhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752567941; c=relaxed/simple;
-	bh=5xo2ccRAS5XbkDdyTzf+vJYusaDzq7W7Wkx2byXFpaU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ftDelqpr8RrX3t9LEWajFpXVMifVqJ5iuXzX9MDVtro9DjBx/8CXy7keum7ZWte/ZjnjESnjJeUonR9DEFda265E4qtrjuOuKMVmNGDJC1Ck53dCX8fQCpgbXB9qHT/feUVAiZkNagQdP+Nzjh+Is/hZ3vzp3V9xjfvzQpLpjTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DbLxiCOK; arc=none smtp.client-ip=43.163.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1752567616; bh=2iIZo/u/jQCMUWuQnvAc1ZZFLmAN7Ex9YCytpWU0UvU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=DbLxiCOK1s2dX93QNPF/DuWrFnBYrUNXSCbW59OGdMVnukW7oncmKUleaIssop82V
-	 trbe46IROW1gUzO+Gw3LeByQhFMnjhS8fPkyITc6dC4wTki0knj6TL8iTWvi6Zu30o
-	 mgVkFTGyTn+qVlpHvRjAqvjMezK4XNH7z2Mqciho=
-Received: from VM-222-126-tencentos.localdomain ([14.116.239.34])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 50F2AE42; Tue, 15 Jul 2025 16:20:15 +0800
-X-QQ-mid: xmsmtpt1752567615tiw4fqmjg
-Message-ID: <tencent_AC052534ED0C97ED96CDBF2269E71DAE5905@qq.com>
-X-QQ-XMAILINFO: N/WmRbclY25GfLv3wfAeKBbf/kuv6bg0Mi2JJUhdd/OzPmoj8mRUZAebbGDpms
-	 7zmFXvq0EoSmZtzOt0JMHP2b9aqVhmAvEQ4873uslbZHy3iIDUDSfzW8SkQFHYWN0UTrYHcB+7wL
-	 KSjwexLdlMZyQjtTA/TB78cgmRZVN/yyb6zzYjpnwtio28og+xi2kz4CDm7djLO4jDlRjE+xPHdk
-	 XXcXJ253NkQYNxW6gxbHI9J22SEjsxCmKsraEJ+SLR54Gku3G5+PHuUZnrrf00qPpHLFgfdeySOd
-	 W6gNICBPRbiIZcXzunRGyEMcmHWtpPMu6fTmWobV1F0O4/dO7d4tnT+x3LfigjAJsRfaX5mTrzRr
-	 lVDIQj6QzAEYdtDTZNwvwFJFwLN3D7Ljup3rpdliZeMy/LQ5lhfxvAwfsb+h9Z0q77ay9Jo9L4lw
-	 hMMbGAF9HAlh6uth3pKYBN1YIQktD47NOrSf+DajaqxEY1XuSIQ2iIFZwK0UIxwD4eiX82YP1Hoz
-	 pElCoWpSDxxZN9xKkp6jX02DyyUamnAKSRT4muIHGkDhDtM9Msv9aa7hOCGPy9YoKNEO10/r4vJq
-	 b/bkmx/NwzvCCg5tBTizj8Eqsp6C3X6plJod5OM/6NFxzessA5NB2u1KlE+xH4Y0lG/1FmhQrDPP
-	 Nb8/296I3m4SnKou4pJcmHnJcrPssvhdu9Xiw0huWLjzBfxFmQGr8CsHDRcUFWundx+URVIqIofc
-	 +s4vhtyhew8rFldY3+VmtNDJSmPdlmIpeW36Q9ejAg6azve2jXHoqEHPFQZf0yFu/YsobF2YyZMA
-	 YWwu553NXLQgXOGYFHqUNf7VKjveaUBMfec77+EwWOt8X5ytyGqtrIsAjwLHuWOV07KvkLzwwkdN
-	 Sy0EK0RBjibtj1L0C7blJ5SNyL8mUtOyi/aUnuvS8Bx826TKcRiMqrvnWGg1KxblMFgWplL239Hu
-	 HztQbWUim78AwPObg5/miXWF3Z2KJ5Ei5uusCa9Y6Zctfd7uhANZn+LrHjNodaUBGSLu/nC+XZy8
-	 tkSDF4GABHw39oPb5Ybz73bokHpsn8mRUZufjxlwkbCi0EmWKyus3YwPooYOM=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: jackysliu <1972843537@qq.com>
-To: gregkh@linuxfoundation.org
-Cc: 1972843537@qq.com,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] usb: gadget: functioni: Fix a oob problem in rndis
-Date: Tue, 15 Jul 2025 16:20:09 +0800
-X-OQ-MSGID: <20250715082009.3136874-1-1972843537@qq.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <2025071116-landline-antelope-5c9f@gregkh>
-References: <2025071116-landline-antelope-5c9f@gregkh>
+	s=arc-20240116; t=1752567638; c=relaxed/simple;
+	bh=4C99WCRl95vysW9X4cgEpN2c7Ll8EXlm5bMiuDtyk1o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=JHtYXWoAUE4LvDwfls6+P7BNrXLqliOf4kUKLpaqLH1phisCLq0t382u3Px7GYwArQ6HNwpzONzz0b2vze4d9b40P673I1d+qWp/VqFi6wluE55U7y/53tD+gGyUkZgqje+XaQ57VCPN2g2VAYERgmvGoquZCIOZRP8aZ0+QbDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKADQuv7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF238C4CEE3;
+	Tue, 15 Jul 2025 08:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752567638;
+	bh=4C99WCRl95vysW9X4cgEpN2c7Ll8EXlm5bMiuDtyk1o=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=CKADQuv7niD3JynUeVzcG9sVX6AzmJPJ8v8dU0krU3JcwoHv4otROIkZnwpiCV4VM
+	 hYZtBjjPE++9s6ywmUO7KG7R4qHWGLt0dRIYRSGww/uOJa+hWQ2B5YIwsDe3MMwSij
+	 3gzQPht6xetnX1fI+714K/VlhdzNl612jh2FPeWloehJedsl5bwiFKVu/3ONMwTrPY
+	 0SD4YZ5W0BQ7hvaWWyeYKJFgf0xzB1UrDd4LUvr/n/6ogAFbSmnwP4hBlyyKyOjq3d
+	 frePcYqTBkb6CkF5mQczYHt03Cl3v+66tLtnkUhCocxEcMeGo3tGNGCXL11JMIWz85
+	 Nalf2voi6R3TQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 10:20:34 +0200
+Message-Id: <DBCHDKA3SV70.1N60UYLTM58OB@kernel.org>
+Subject: Re: [PATCH v13 2/3] rust: io: mem: add a generic iomem abstraction
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor
+ Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250711-topics-tyr-platform_iomem-v13-0-06328b514db3@collabora.com> <20250711-topics-tyr-platform_iomem-v13-2-06328b514db3@collabora.com> <aHYNeEjQXz3CxfEM@google.com>
+In-Reply-To: <aHYNeEjQXz3CxfEM@google.com>
 
-On Fri, Jul 11 2025 08:51:30 +0200, greg k-h wrote:
+On Tue Jul 15, 2025 at 10:12 AM CEST, Alice Ryhl wrote:
+>> +        {
+>> +            // SAFETY:
+>> +            // - `res_start` and `size` are read from a presumably vali=
+d `struct resource`.
+>> +            // - `size` is known not to be zero at this point.
+>> +            unsafe { bindings::ioremap_np(res_start, size.try_into()?) =
+}
+>> +        } else {
+>> +            // SAFETY:
+>> +            // - `res_start` and `size` are read from a presumably vali=
+d `struct resource`.
+>> +            // - `size` is known not to be zero at this point.
+>> +            unsafe { bindings::ioremap(res_start, size.try_into()?) }
+>
+> I thought a bit more about this, and I think it's fine for these sizes to
+> be converted with try_into()?.
 
->Yes, and then look to see what buf_len (not buflen) in
->gen_ndis_set_resp() is used for.  I'll wait... :)
-Oh,my bad.It seem that buf_len will only be used for some debugging code..
-
->What tool generated this static analysis?  You always have to mention
->that as per our development rules.
-The vulnerability is found by  is found by Wukong-Agent, a code security AI agent,
- through static code analysis.But It seems that this is a false positive..
-
->And what qemu setup did you use to test this?  That would be helpful to
->know so that I can verify it on my end.
-
-I've add some web-usb device to test this model.But seems that I went into a wrong way.
-
-I'll double check my commit in the future
-Thanks for your time
-
-Siyang Liu
-
+Fine for me too, but we should add a comment with a TODO to get this straig=
+ht
+in the future.
 
