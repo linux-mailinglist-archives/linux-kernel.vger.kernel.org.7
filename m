@@ -1,81 +1,181 @@
-Return-Path: <linux-kernel+bounces-731239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46A5B05188
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:09:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBB1B05190
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B23BD165F04
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:09:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4802816B9F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCFE2D3A93;
-	Tue, 15 Jul 2025 06:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vlsoBRYW"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BF12D3ECA;
+	Tue, 15 Jul 2025 06:12:53 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0C325C81F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8FC1F4174;
+	Tue, 15 Jul 2025 06:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752559746; cv=none; b=hhwLcjVsbvG5a5+3si0X7WVojBqOedm7F2PcEn+scvA0AkGRg3AmxxyGEQlaWSEno95Wsh4S3XPQnxO5MEVA4bfAjtLYKMSa2KFpNPSYiX+cnTo+Jb/9rTwxxNBXHYttCSpL0fAVd1RNu1R2xnUGHqm3Tao48nUdGZrvT58jlR4=
+	t=1752559973; cv=none; b=RkYSm7h9QyO1jRKew7ScGV2149nQmirbrTxYW9Uaq7dqeVD0BHNLJ4/Q6RZ2s44L4Mh9VmOYUxy5a4690fjPbx/EyNFNinGkspjwoQAISwBUxtgmEzy1MKcg9Q5llU9cxVDH27/rgdEgrtmcEOL57omNDZCzzfQAOdUVBi7nTys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752559746; c=relaxed/simple;
-	bh=cUfZaH7K5rkON72wYTsEjzlkkxKAzps92VniQYTWdUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFw6Bm68UlZdRQwnDQhcqOtpqa/4EPIDC2icwCyUjd1XVxka3lXrRZXSRojfY3omkFtwUFdoGiIpYAcX4nauc1K7Zj5W37HPyPloHLCa6xGXUuFTlJiNpuSNf1npEhSQXUcTKOwIkr7H1mYSDU3C7aDhpOi2j/2HhSUDPOUXTLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vlsoBRYW; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oG+tyInimIZAVic5TXi1PtfzVcuPNgx1Yy0cLCu24Io=; b=vlsoBRYWJGQJjIzLLNCxAEfme4
-	n8jzJ/IfgWna6bThp/UxjBWeKwhTbapQQM53Fy2b4IPtoBwHzQbvOYyxOSJTXJ3a+6MPWO51E6qx3
-	KtI0FJ3mBdPHCekHahD1icIjHGivq2lbNv4+3f2lWI5w0XLmbm0AlR+J7pejv7YhNODujjR9ECwTT
-	Jg9W1V18EpPjpQXNk1pwe5lJhkck8i8LIFw6OTeqcPweO5Ak3bxFJVy3yXIHH73/0pQ0QPNUQbmiG
-	X6FAXqg2/1ZpC2JXGdOowxwIkvEa+LP4PlAA+jb9CIUw6lHkVWRvozNFRx6+7Vd9/Z9mkcIC5jI/G
-	ZdZ5aUDw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubYqd-00000004BGK-3dTn;
-	Tue, 15 Jul 2025 06:09:04 +0000
-Date: Mon, 14 Jul 2025 23:09:03 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: linux@treblig.org
-Cc: akpm@linux-foundation.org, terrelln@fb.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/xxhash: Comment out unused functions
-Message-ID: <aHXwfyKRvXi5AZZT@infradead.org>
-References: <20250714000927.294767-1-linux@treblig.org>
+	s=arc-20240116; t=1752559973; c=relaxed/simple;
+	bh=lcrAtDrkmQZMkOgqSbuOUUoZrgavyxpzniDoTjtYZqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bP5xIf3zi9Ubn++pwk7n+io/SJyf0jYHsMnsAXZfZ9xUxYwTGVTnILxmfEXY4so5xfySP6NNRfv4jtgMLD09gHpT2Xfy8GTK8y1ekL3GkGrDd9hsKqBrg6L7jaJWCdULzPzn7XhPzCtYie3ZSIu+hg30MZYpIovl9Ux4rR5m1j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: b7a0f0d0614211f0b29709d653e92f7d-20250715
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:8d0c3b77-18bf-40a7-8298-7c2a2afb2341,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:06ec4b2274f8160b376601a593da985b,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: b7a0f0d0614211f0b29709d653e92f7d-20250715
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1432813227; Tue, 15 Jul 2025 14:12:42 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 507FEE008FA3;
+	Tue, 15 Jul 2025 14:12:42 +0800 (CST)
+X-ns-mid: postfix-6875F15A-240232178
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 83726E008FA2;
+	Tue, 15 Jul 2025 14:12:41 +0800 (CST)
+Message-ID: <76a87abf-8fc9-445b-83d5-0daa33746014@kylinos.cn>
+Date: Tue, 15 Jul 2025 14:12:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714000927.294767-1-linux@treblig.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] PM: suspend: clean up redundant
+ filesystems_freeze/thaw handling
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250712030824.81474-1-zhangzihuan@kylinos.cn>
+ <9d35035d-c63e-4d11-a403-54c50e8b35c1@kylinos.cn>
+ <CAJZ5v0g22fMDc21yV2svePf_4BWZRrcy+b3-efpbfAGLpa2=Lw@mail.gmail.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <CAJZ5v0g22fMDc21yV2svePf_4BWZRrcy+b3-efpbfAGLpa2=Lw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 01:09:27AM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> xxh32_digest() and xxh32_update() were added in 2017 in the original
-> xxhash commit, but have remained unused.
-> 
-> While I've mostly been deleting unused functions, this is a general
-> library and I see erofs is using other bits of xxh32, so it didn't
-> seem right just to delete them.
-> 
-> Comment them out with #if 0.
-> (Which checkpatch rightly warns about)
+Hi Rafael,
 
-Please just remove it like all other dead code.  The same argument
-that folks can easily look at the git history to resurrect it applies
-here as everywhere else.
+=E5=9C=A8 2025/7/15 01:57, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> Hi,
+>
+> On Mon, Jul 14, 2025 at 10:44=E2=80=AFAM Zihuan Zhang <zhangzihuan@kyli=
+nos.cn> wrote:
+>> Hi Rafael,
+>>
+>> Just a gentle ping on this patch.
+> I've lost track of it for some reason, sorry.
+>
+>> I realized I forgot to mention an important motivation in the changelo=
+g:
+>> calling filesystems_freeze() twice (from both suspend_prepare() and
+>> enter_state()) lead to a black screen and make the system unable to re=
+sume..
+>>
+>> This patch avoids the duplicate call and resolves that issue.
+> Now applied as a fix for 6.16-rc7, thank you!
+
+
+Thanks for the reply!
+
+Just a quick follow-up question =E2=80=94 we noticed that even when the =E2=
+=80=9Cfreeze=20
+filesystems=E2=80=9D feature is not enabled, the current code still calls=
+=20
+filesystems_thaw().
+
+Do you think it would make sense to guard this with a static key (or=20
+another mechanism) to avoid unnecessary overhead?
+
+
+
+>> =E5=9C=A8 2025/7/12 11:08, Zihuan Zhang =E5=86=99=E9=81=93:
+>>> The recently introduced support for freezing filesystems during syste=
+m
+>>> suspend included calls to filesystems_freeze() in both suspend_prepar=
+e()
+>>> and enter_state(), as well as calls to filesystems_thaw() in both
+>>> suspend_finish() and the Unlock path in enter_state(). These are
+>>> redundant.
+>>>
+>>> - filesystems_freeze() is already called in suspend_prepare(), which =
+is
+>>>     the proper and consistent place to handle pre-suspend operations.=
+ The
+>>> second call in enter_state() is unnecessary and removed.
+>>>
+>>> - filesystems_thaw() is invoked in suspend_finish(), which covers
+>>>     successful suspend/resume paths. In the failure case , we add a c=
+all
+>>> to filesystems_thaw() only when needed, avoiding the duplicate call i=
+n
+>>> the general Unlock path.
+>>>
+>>> This change simplifies the suspend code and avoids repeated freeze/th=
+aw
+>>> calls, while preserving correct ordering and behavior.
+>>>
+>>> Fixes: eacfbf74196f91e4c26d9f8c78e1576c1225cd8c ("power: freeze files=
+ystems during suspend/resume")
+>>> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+>>> ---
+>>>    kernel/power/suspend.c | 4 +---
+>>>    1 file changed, 1 insertion(+), 3 deletions(-)
+>>>
+>>> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+>>> index bb608b68fb30..8f3e4c48d5cd 100644
+>>> --- a/kernel/power/suspend.c
+>>> +++ b/kernel/power/suspend.c
+>>> @@ -384,6 +384,7 @@ static int suspend_prepare(suspend_state_t state)
+>>>                return 0;
+>>>
+>>>        dpm_save_failed_step(SUSPEND_FREEZE);
+>>> +     filesystems_thaw();
+>>>        pm_notifier_call_chain(PM_POST_SUSPEND);
+>>>     Restore:
+>>>        pm_restore_console();
+>>> @@ -593,8 +594,6 @@ static int enter_state(suspend_state_t state)
+>>>                ksys_sync_helper();
+>>>                trace_suspend_resume(TPS("sync_filesystems"), 0, false=
+);
+>>>        }
+>>> -     if (filesystem_freeze_enabled)
+>>> -             filesystems_freeze();
+>>>
+>>>        pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_label=
+s[state]);
+>>>        pm_suspend_clear_flags();
+>>> @@ -614,7 +613,6 @@ static int enter_state(suspend_state_t state)
+>>>        pm_pr_dbg("Finishing wakeup.\n");
+>>>        suspend_finish();
+>>>     Unlock:
+>>> -     filesystems_thaw();
+>>>        mutex_unlock(&system_transition_mutex);
+>>>        return error;
+>>>    }
+>> Thanks,
+>> Zihuan Zhang
+Best regards,
+Zihuan Zhang
 
