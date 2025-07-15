@@ -1,97 +1,140 @@
-Return-Path: <linux-kernel+bounces-731578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A804AB056CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:40:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5A5B056C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DDB97B642C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:36:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8FC0160508
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D5C2D7807;
-	Tue, 15 Jul 2025 09:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE862D97B0;
+	Tue, 15 Jul 2025 09:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="okZlV1Ko"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="robPKuiH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72D42D6604
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFCB2D6402;
+	Tue, 15 Jul 2025 09:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752572200; cv=none; b=Dz8HuIuikojac8uHjPRnfoMhMnaxy547B+Sw7F4vZ6dE2XvMGufQ4N4zQr+k3NqhTdy5WcOpIJDqcRThiBDbgdCLTNu+WcXNJ3t272wML1unTxh085kODCcJxMOjUQHdLVHeKY1ynwA90+WAWbe4DwrwSS79D4AmPlrcwHxqo0I=
+	t=1752572216; cv=none; b=EzMRiFzsUT5/DzaxgCRJg5kadmuzJBQBWwJHANXRTfou/vWZHtShB6RhZ70N6f+frK8hvNhGNC1Zv1NV0oIAft6wxK8Vdk0gRq2m8WvNbYWnRFONAZnlq62TDMeMEFaX1RX6mkRvxy4XDhPbV9oMSe+Vmb7VD6fvttbp0PZjGVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752572200; c=relaxed/simple;
-	bh=6YjjE8yx41JhSq70YIv6cyZNts1+4fdz63Q2WWL3ucc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kU08RPyIWUnNy2Vn5kO+6pSw1bX8lbY6OfkirxA4ExfbcMiZn5wRpBm+n4+zMQ7G+rnz4cVNj7H2uhEuyK5LYm3N3VDO4VPn5reVdUugAD4s4e6qPgjY33YRpTlkv6iWabDWEL4MmufRcQGwUNHluBn3dYYgZO4GaxX7KAlMaEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=okZlV1Ko; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451d2037f1eso33685025e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:36:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752572197; x=1753176997; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6QNqFlrYFx7H7vRElEzA/t1Mf3ypg7FEvJ57Y0jYqXU=;
-        b=okZlV1Koon7gs3CDUDBV/joWRKHg9EbfZhyxBDSrHpqkUUXYvfIgg6fRZkmYfXPIOw
-         fZ3WWU4EbjFO2vmB/gZbIvZs+ORsZJCQ25Y8RI01p8vpxV8CvMDDezD4sIKTWbadf9Wj
-         bcqzePPyy4M4gmtAZSYVvz8/o2mAokg15h8pzVlmlno4N2miAF5livnsoP+tOsnywGsi
-         4Vfi/qia8eHHrV1Ue6U6VvuIIp14VJZJi+U0/BWBlHQ2Wu8NrBm7cPvPTQHQqjg9i3jm
-         IKo93AFMCyuS2Nlpt/S3TM2ulP+NmCG61P46jIL3evTvqhxTwiqgkeRqUftZZOm/3cyX
-         Kwmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752572197; x=1753176997;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6QNqFlrYFx7H7vRElEzA/t1Mf3ypg7FEvJ57Y0jYqXU=;
-        b=E1c0ca9pF4dGkwt+1zV1Qukt8aCQlJaulmTZGGbb9PcLvgoc51vsxzE1DfQkaQfRps
-         bZW0TXVYxGLe+oMOXtBULlTIHqaUD80DUk4vWF++lwx7NlOwYVdGet+DU5JdaT0wABg9
-         gfT4vQIgZHYlDnDRYJIuchypgO+ZzR4DDe7evNwKMpkhIDM4SFmzb9eDRZDp/gzsWd94
-         Cb4rLsr7CbgDsfuuO8qgmF/f7z55MK/oXcBcMgnPtLxMp3QiutHKzQqnL40zVFbzWmFS
-         ZbgLjIYNIeLYP9su8cduOs1lnlepfd+mTS4rxo9kFOdYq5P0KLyrLUIHFFmr68LXqqU3
-         M6nA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2kM+hW4zH/rJxELkD+QQVFADJNvhXoNDx2Hr1yqIMXbCVyxNSnvCwBOwUVET1V77HFE4z6b2oE4erBEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzemahTf0eYFeTbkTO2V/xEUJOG4flIZWMaOGI1hcqAHer4Weel
-	UHhuVhm3dlq7IQhiJRwaccRENaxmQ5D9ho5zdeSHYGmUVtov+ngQFps2HiUL/2RexQnPuJ8H61A
-	c7uZ24eO82kSEPiH/Rw==
-X-Google-Smtp-Source: AGHT+IGqJXffDogg6Dsm86tBp/jS/D5fTXsBjiiYFtlOS+ceWATnmyZQRVUfbJDoWd4/GCP6yGnIn++VGO2RGeY=
-X-Received: from wmsp16.prod.google.com ([2002:a05:600c:1d90:b0:456:2272:8b38])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:19c6:b0:456:19be:5e8 with SMTP id 5b1f17b1804b1-45619be0d77mr58477665e9.20.1752572197327;
- Tue, 15 Jul 2025 02:36:37 -0700 (PDT)
-Date: Tue, 15 Jul 2025 09:36:36 +0000
-In-Reply-To: <20250711-rnull-up-v6-16-v3-4-3a262b4e2921@kernel.org>
+	s=arc-20240116; t=1752572216; c=relaxed/simple;
+	bh=y62YdeKQb3Brz+vPDdJj6AAr/0IGdUwhUAr08AzvvCM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=cxjOSSa1ld1wOQRUvjK14jZq6BEbCmAfu8goKlkjV7teDsCtCUYigJT5oYFD8db6H4xR+76NkQj/inb+gHneznnUFRddfryZ7jnph55wTkvhBs9noRg06qF1fa/0nyHUV+NcRFC+qd2C8RsHFPLmzq3HCENWV+IDF9MsVAj0spk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=robPKuiH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049EDC4CEF5;
+	Tue, 15 Jul 2025 09:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752572216;
+	bh=y62YdeKQb3Brz+vPDdJj6AAr/0IGdUwhUAr08AzvvCM=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=robPKuiHQGjfNsHS936U4Wh0KdyxNe6rQBPxbPs4WcCmJaZECEXUVROdOCxgrXdF3
+	 SbpLQN2KpTfZakdjTgd4c3zNP0TUqlFA5eTGi8YO2u5BX1srqI7WvXZoi4Q2IW/Pk+
+	 Gr5Ngk9c882ZUKNLaIV75TM0BpQfZskSC02fB0g7p+iSJs2rGuUExptnRqYoBDZ32t
+	 tM8p4R54r6bZpIlhV6JPC70qhuUNqSbFZrEd5mcxqCd81LvJSyR8dNfyYm1/u3Xv9b
+	 qLtqee/ZfevZDHAYMxGYJFbWOpMFFqIYun1MPYlAdeDBC1lm7YDJM3IMo6DUekJCVJ
+	 znl9emV8otw1w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org> <20250711-rnull-up-v6-16-v3-4-3a262b4e2921@kernel.org>
-Message-ID: <aHYhJBHUoWq46kKW@google.com>
-Subject: Re: [PATCH v3 04/16] rust: str: make `RawFormatter::bytes_written` public.
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 11:36:49 +0200
+Message-Id: <DBCIZY29JWTD.1G6AKZ08ZWBQG@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
+ "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v7 4/9] rust: sync: atomic: Add generic atomics
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250714053656.66712-1-boqun.feng@gmail.com>
+ <20250714053656.66712-5-boqun.feng@gmail.com>
+ <DBBPI9ZJVO64.3A83G118BMVLI@kernel.org> <aHUSgXW9A6LzjBIS@Mac.home>
+ <DBBVD70MASPW.2LUTJ51Y6SGMI@kernel.org> <aHUjIQlqphtgVP2g@Mac.home>
+In-Reply-To: <aHUjIQlqphtgVP2g@Mac.home>
 
-On Fri, Jul 11, 2025 at 01:43:05PM +0200, Andreas Hindborg wrote:
-> rnull is going to make use of `kernel::str::RawFormatter::bytes_written`,
-> so make the visibility public.
-> 
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+On Mon Jul 14, 2025 at 5:32 PM CEST, Boqun Feng wrote:
+> On Mon, Jul 14, 2025 at 05:05:40PM +0200, Benno Lossin wrote:
+> [...]
+>> >> >  //!
+>> >> >  //! [`LKMM`]: srctree/tools/memory-model/
+>> >> > =20
+>> >> > +pub mod generic;
+>> >>=20
+>> >> Hmm, maybe just re-export the stuff? I don't think there's an advanta=
+ge
+>> >> to having the generic module be public.
+>> >>=20
+>> >
+>> > If `generic` is not public, then in the kernel::sync::atomic page, it
+>> > won't should up, and there is no mentioning of struct `Atomic` either.
+>> >
+>> > If I made it public and also re-export the `Atomic`, there would be a
+>> > "Re-export" section mentioning all the re-exports, so I will keep
+>> > `generic` unless you have some tricks that I don't know.
+>>=20
+>> Just use `#[doc(inline)]` :)
+>>=20
+>>     https://doc.rust-lang.org/rustdoc/write-documentation/the-doc-attrib=
+ute.html#inline-and-no_inline
+>>=20
+>> > Also I feel it's a bit naturally that `AllowAtomic` and `AllowAtomicAd=
+d`
+>> > stay under `generic` (instead of re-export them at `atomic` mod level)
+>> > because they are about the generic part of `Atomic`, right?
+>>=20
+>> Why is that more natural? It only adds an extra path layer in any import
+>> for atomics.
+>>=20
+>
+> Exactly, users need to go through extra steps if they want to use the
+> "generic" part of the atomic, and I think that makes user more aware of
+> what they are essentially doing:
+>
+> - If you want to use the predefined types for atomic, just
+>
+>   use kernel::sync::atomic::Atomic;
+>
+>   and just operate on an `Atomic<_>`.
+>
+> - If you want to bring your own type for atomic operations, you need to
+>
+>   use kernel::sync::atomic::generic::AllowAtomic;
+>
+>   (essentially you go into the "generic" part of the atomic)
+>
+>   and provide your own implementation for `AllowAtomic` and then you
+>   could use it for your own type.
+>
+> I feel it's natural because for extra features you fetch more modules
+> in.
 
-Making methods public can be part of making the type itself public. I
-don't think a separate patch is needed.
+The same would apply if you had to import `AllowAtomic` from atomic
+directly? I don't really see the value in this.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+---
+Cheers,
+Benno
 
