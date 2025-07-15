@@ -1,115 +1,92 @@
-Return-Path: <linux-kernel+bounces-731470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3C5B054D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8FE7B054DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98774177A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F25B17ADD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75524275AEF;
-	Tue, 15 Jul 2025 08:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B9F274FDB;
+	Tue, 15 Jul 2025 08:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Z6qDaQaC"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGWM78GN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31CC275873;
-	Tue, 15 Jul 2025 08:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D332253FE;
+	Tue, 15 Jul 2025 08:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568021; cv=none; b=RSMv1aaiQSZU2u1sRkuOgZb9C9AQGOkWJ+JlhMHIKqe7U4qOliOJos9g52HjEEZHjixszXXjhFNPnd8W0vfASqhNOcbxvj9rU2xYqNLnvGHk6wxpMC9NB/M22nOj4qK/OXlpbz3F0G2xin4ymefVydbVjBx6ZVOoafxt4d/L+aU=
+	t=1752568071; cv=none; b=fpBCR0pGmw1STEwNN+BpwemAZgUP/e9T6d40p4Z9wX4VsRiojXQwl1yYpoSaysIehVE9j3Y31tHlNFanUTumIqe2QZW9UkXTlEOV8OVDuwQ97EBPExPItt56JySzavUdVuwosZ//VeBDDSqFJdlLN7pLSpB5FBCm6hcNW7ImE4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568021; c=relaxed/simple;
-	bh=hWbXuNPL5klyZjrH9ulvEo2hCljUmAJVVcAFMNhH3hs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rXDNBSyUpPFomDyDC28d1lpvklKQDkHk5G6U1WNZl7dciblAVBfhdEAtuPGhpN8B+loINM01qS0aPNWIiopbmFBaIriDQVSBEPy/hcdLr+TcOb18lEHgBp38x1577nh+1UkpzgbY88xfRASA9r8s54Nv+3ayxSNjZNHWV5iypjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Z6qDaQaC; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752567908;
-	bh=tW5CP8FcTYEeshQ7YqE9lmDWW3wExC1rmFLG2H8oTsg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Z6qDaQaCCgq+6/h1gA5jnmL8qO6RNyFX4GA5cc012oEocS4UeQvDUsns0gIkRkm9l
-	 0SvIGtxk9Eik819rY16WDYyshW6EqTFVeOMXBaBOsOMlrjQtY0Vz0mvx7HKjUASgQn
-	 G6W5iYpC7UJ/ff/xy2kTQKp1GRYA6ehcjUr6sgX5gGczMijR3fPjCg3y+sROfTw1SH
-	 NXkiZEIqzHfO+0gMfgW4l+IQzjXtQDU8aVccgDg5UN7XX1D9bC3hTg1EeJvk/GBHNq
-	 yxPv3awZe3eFuiMSNMTl9ECCosB0QnmUCAJ18Kg1AyPoazn5U57OT0DXntF84T/uDA
-	 fhPU733bjzF6A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhC100Bxxz4wbr;
-	Tue, 15 Jul 2025 18:25:07 +1000 (AEST)
-Date: Tue, 15 Jul 2025 18:26:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Danilo
- Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>
-Subject: linux-next: manual merge of the rust tree with the driver-core tree
-Message-ID: <20250715182655.59556ba7@canb.auug.org.au>
+	s=arc-20240116; t=1752568071; c=relaxed/simple;
+	bh=y3xFDIGFBDQ7/2ZnpboVuHHoy99yqCXaJ44aZphq0Jw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=SGUUcg5qGfqetZLE4xnD4+Pr1wLP5A2hlOSBNsh7Xqoa+CI9A+DidZ40dwOmO3q0+MUUPrHWKuyTORPzGq1D5ONAHOs8daOUD4u672uDdhUYRLfaoPWSeff8pMappUMANBDLN28N+67qsNFljHHUzODDbVHtuh9RA2NWOXq7QGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGWM78GN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63BADC4CEE3;
+	Tue, 15 Jul 2025 08:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752568070;
+	bh=y3xFDIGFBDQ7/2ZnpboVuHHoy99yqCXaJ44aZphq0Jw=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=eGWM78GNXV7hk+5EcCroUVyNEdLqVqqYOj5L/Q0Wlw/lPp/gVYhpXOmbo1JakPY4G
+	 kCvv5s6BIEriJWxl+r8WuFvGfeI9/ZxWss3qzTNV3aA7ODM4jsq8u0sC9QNv39vwwY
+	 dDk7mTXRbNrM5egbBIK0JK+4WZg0xB+GTj9a1Q5mvvYrCJL5nCfQ81N2Wi2Sdd23Oz
+	 EbeGa/RdI8CMzmHQp6BbvUSRbm9inhtJ0g3gOAMJNXwlc92HcB0zYikZN/Qv6BjXs2
+	 cXXwH45Cm2Q/88kIVyq+KIcnAQST7Uj+2YgLtRonc/mXofzgphPemqkQTBxjRhxAeT
+	 Fe0WazcCb+5uw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BQ_najGKC3VhzTcs4.6lcEE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/BQ_najGKC3VhzTcs4.6lcEE
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 10:27:45 +0200
+Message-Id: <DBCHJ2HTJMQS.175D313DV5Q7Q@kernel.org>
+Subject: Re: [PATCH v2 0/2] Add Opaque::cast_from
+Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ <dri-devel@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250624-opaque-from-raw-v2-0-e4da40bdc59c@google.com>
+In-Reply-To: <20250624-opaque-from-raw-v2-0-e4da40bdc59c@google.com>
 
-Hi all,
+On Tue Jun 24, 2025 at 5:27 PM CEST, Alice Ryhl wrote:
+> Since commit b20fbbc08a36 ("rust: check type of `$ptr` in
+> `container_of!`") we have enforced that the field pointer passed to
+> container_of! must match the declared field. This caused mismatches when
+> using a pointer to bindings::x for fields of type Opaque<bindings::x>.
+>
+> This situation encourages the user to simply pass field.cast() to the
+> container_of! macro, but this is not great because you might
+> accidentally pass a *mut bindings::y when the field type is
+> Opaque<bindings::x>, which would be wrong.
+>
+> To help catch this kind of mistake, add a new Opaque::cast_from that
+> wraps a raw pointer in Opaque without changing the inner type. Also
+> rename raw_get() to cast_into() for naming consistency.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Today's linux-next merge of the rust tree got a conflict in:
+For the series,
 
-  rust/kernel/platform.rs
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
-between commit:
+For the DRM parts,
 
-  f0a68a912c67 ("rust: platform: use generic device drvdata accessors")
-
-from the driver-core tree and commits:
-
-  fcad9bbf9e1a ("rust: enable `clippy::ptr_as_ptr` lint")
-  12717ebeffcf ("rust: types: add FOREIGN_ALIGN to ForeignOwnable")
-
-from the rust tree.
-
-I fixed it up (I just used the former) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BQ_najGKC3VhzTcs4.6lcEE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh2ENAACgkQAVBC80lX
-0GxIZwf9EhL0eKRzODRlqUuxADrsOSM4VnPsMp3qJT43cBglczgxVEvBM7Qwabss
-hkENiFp6F5fUyflz9iYRPkHG60sG5X69IdHnfrDmrwzbVonKM5KI7gspYIDXFKPf
-E9N9ke6PBpLFPTvtibhEnEkODCpaxXCCFqXkQvK5qc7xZpomcWgcl8Bf9fuDnzl3
-ejtVGp2WyUEOI2FvxshrdeO+Z3QpjjrWYtNpj8eP38nZ4ROuQJmFLtxPfl7FqHre
-F2BSaW5cdkYI+Gppj66i2iOQZgQHa73dCazBb7CVojeSQvg4KqofjC7PUgQ/syZv
-ay/oPo4Eqz2Z4SVVvog5iAvVzsihHg==
-=3pDN
------END PGP SIGNATURE-----
-
---Sig_/BQ_najGKC3VhzTcs4.6lcEE--
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
