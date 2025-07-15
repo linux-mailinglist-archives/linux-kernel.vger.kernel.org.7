@@ -1,174 +1,101 @@
-Return-Path: <linux-kernel+bounces-731403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31D1B053CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:54:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5A3B053B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE8C3B04AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355C25609B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA8B274B43;
-	Tue, 15 Jul 2025 07:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1992737E1;
+	Tue, 15 Jul 2025 07:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R0rBqHPa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J8QlqNrx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R0rBqHPa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J8QlqNrx"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4PiMWDx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE302749D8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B4A272E44;
+	Tue, 15 Jul 2025 07:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752565973; cv=none; b=X/yYv5jcn2sYWBklan+shwKMFz/xrNX6ML9v1+A0JnyeSGLp9BHV+/GZ8zLOdRJUuxqMY0Htr2qcoJ8xxX9fo74GhFmDr7q0yYa7Mc3cBmcycXolWWAw+tNRmBJey5+qUz8dbFkgudCFG6KlCMYbxBKyUnEE/45Jm+2o18knZyg=
+	t=1752565906; cv=none; b=dhbqrIO7XxQU5UFdx0T6jbObHRBebA1rlP+nGhI2nHG+SFHiB0UoxZcRAPPzVapJwe8x1Vij/UdIwMis3cKVtO/EnTaJtxb/newH8qjjKBPQUxeHaxbVPpOM07hdHI1x/JZI5tzWcXXZjhsYUc+klzg9Y3qtGbOpC4RYLTDZP/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752565973; c=relaxed/simple;
-	bh=VW/rtkRI/DBbhjOzkqkNl6B60/7W0ThWrUUEKvgh1Ws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y1L9guudMQLja6fWr5ykjoetNHbLfprxSBYTrthewq1J+z1uBB3UKa34Dx35vUKOYDdxA5mPmZPr4IQ38Qyexub9/FuSPZrGmGgv+w6mxPFFM6hTSf/5ognw7wD0+n4HLVb4E7sp8P0rTDDmLPeYMDqe7c8AhU2L5z+9vyygSLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R0rBqHPa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J8QlqNrx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R0rBqHPa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J8QlqNrx; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CC5F21F445;
-	Tue, 15 Jul 2025 07:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752565962; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pf2cVC+OGBS7EBscBGuJH0P+TqU9FmA4WqwxuJ06ceY=;
-	b=R0rBqHPaJB+hptSlk7xt62zH5UemcUYhUqu4kyfnZw7o2kVunamRijEQHZe8oka8WRCfDz
-	Eu7kxuluo2OdiSupZCUO+uPsnbTjwupmAKuxTEnvm9/q1ppRnJHrkkde8z6B0tFwkxXb2r
-	/xVJ/v81fLLXhoO9usL9U1gzf3FtgVM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752565962;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pf2cVC+OGBS7EBscBGuJH0P+TqU9FmA4WqwxuJ06ceY=;
-	b=J8QlqNrxu073sJ/1JVF1IuxanHzHw/R9j7+K1a5zcdsuHLMrcxIyUNS81A06fah/jfzFI1
-	fFbgUUvz5NvC/pAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=R0rBqHPa;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=J8QlqNrx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752565962; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pf2cVC+OGBS7EBscBGuJH0P+TqU9FmA4WqwxuJ06ceY=;
-	b=R0rBqHPaJB+hptSlk7xt62zH5UemcUYhUqu4kyfnZw7o2kVunamRijEQHZe8oka8WRCfDz
-	Eu7kxuluo2OdiSupZCUO+uPsnbTjwupmAKuxTEnvm9/q1ppRnJHrkkde8z6B0tFwkxXb2r
-	/xVJ/v81fLLXhoO9usL9U1gzf3FtgVM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752565962;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pf2cVC+OGBS7EBscBGuJH0P+TqU9FmA4WqwxuJ06ceY=;
-	b=J8QlqNrxu073sJ/1JVF1IuxanHzHw/R9j7+K1a5zcdsuHLMrcxIyUNS81A06fah/jfzFI1
-	fFbgUUvz5NvC/pAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9593613A68;
-	Tue, 15 Jul 2025 07:52:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IJ5uI8oIdmjnSAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 15 Jul 2025 07:52:42 +0000
-From: Takashi Iwai <tiwai@suse.de>
-To: linux-sound@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mips: loongson3_defconfig: Update HD-audio configs
-Date: Tue, 15 Jul 2025 09:51:22 +0200
-Message-ID: <20250715075237.28476-3-tiwai@suse.de>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250715075237.28476-1-tiwai@suse.de>
-References: <20250715075237.28476-1-tiwai@suse.de>
+	s=arc-20240116; t=1752565906; c=relaxed/simple;
+	bh=6x1KRSzdomSDsRyshFJ77N8rRIUyIQmJlOGqX3b1hTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DEsCJNoOhOJ1GnJK0Pr9GxdQbjHH2O1hRBuaqQLzVSLYQYjx09oO4JRgzoQK83n6OG2JAf3YVoTNVP4WfpRZJHOcWmNR5DDl/zUFUECPa2mD8jWpleN4M/VHPeiIxV+/I8amMDmFbGXHqoLdwqgMobCDGBmKhY7MDYTJNSQeuUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4PiMWDx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA46C4CEE3;
+	Tue, 15 Jul 2025 07:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752565905;
+	bh=6x1KRSzdomSDsRyshFJ77N8rRIUyIQmJlOGqX3b1hTQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M4PiMWDxDPbEANW2afC+ina1KFhv5pLN87srpE1+AcX8LvVvz2DlIZ5Di0W/qanT0
+	 QpIk/qvksHcmNd8FKPk6cET5mXgNoai45vTAf16XQVSPsGS4I5zrL/SGOnbnSM84rV
+	 BlzQndx8nwG8izYMoZCeJBb6QcJ+bxzMTqWjKpoBVx9vh/9x1bDtNo1/Ui08TVxufr
+	 /5cSw4D/CAqS4nOFKNPr5WmKbOGjJ42VYpHxENoo+ek+3lL5+YoSnXj1IUn3M482vE
+	 iB5JBkWZfpH8TzbOy4t3+ogMt/kcWEkmbjXO/WFZRQyHtwAFwx+iel38V+l8QwoC+E
+	 NqgunYITYtKDw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1ubaRw-000000002do-3OyH;
+	Tue, 15 Jul 2025 09:51:40 +0200
+Date: Tue, 15 Jul 2025 09:51:40 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
+ notifier callback
+Message-ID: <aHYIjEbOhM4xvavJ@hovoldconsulting.com>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: CC5F21F445
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
 
-Since the reorganization of HD-audio drivers, Realtek driver has been
-split.  Update to the new Kconfigs to catch up.
+On Mon, Jul 14, 2025 at 11:31:05PM +0530, Manivannan Sadhasivam wrote:
+> It allows us to group all the settings that need to be done when a PCI
+> device is attached to the bus in a single place.
 
-Fixes: aeeb85f26c3b ("ALSA: hda: Split Realtek HD-audio codec driver")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
+This commit message should be amended so that it makes sense on its own
+(e.g. without Subject).
 
-I'm going to put to sound git tree if no one objects
+> @@ -1616,8 +1616,6 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+>  		pci_lock_rescan_remove();
+>  		pci_rescan_bus(pp->bridge->bus);
+>  		pci_unlock_rescan_remove();
+> -
+> -		qcom_pcie_icc_opp_update(pcie);
+>  	} else {
+>  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+>  			      status);
+> @@ -1765,6 +1763,7 @@ static int pcie_qcom_notify(struct notifier_block *nb, unsigned long action,
+>  	switch (action) {
+>  	case BUS_NOTIFY_BIND_DRIVER:
+>  		qcom_pcie_enable_aspm(pdev);
+> +		qcom_pcie_icc_opp_update(pcie);
 
- arch/mips/configs/loongson3_defconfig | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I guess you should also drop the now redundant
+qcom_pcie_icc_opp_update() call from probe()?
 
-diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
-index 98844b457b7f..5ff0c1554168 100644
---- a/arch/mips/configs/loongson3_defconfig
-+++ b/arch/mips/configs/loongson3_defconfig
-@@ -292,7 +292,9 @@ CONFIG_SND_SEQ_DUMMY=m
- # CONFIG_SND_ISA is not set
- CONFIG_SND_HDA_INTEL=m
- CONFIG_SND_HDA_PATCH_LOADER=y
--CONFIG_SND_HDA_CODEC_REALTEK=m
-+CONFIG_SND_HDA_CODEC_REALTEK=y
-+CONFIG_SND_HDA_CODEC_REALTEK_LIB=m
-+CONFIG_SND_HDA_CODEC_ALC269=m
- CONFIG_SND_HDA_CODEC_SIGMATEL=m
- CONFIG_SND_HDA_CODEC_HDMI=m
- CONFIG_SND_HDA_CODEC_CONEXANT=m
--- 
-2.50.1
+>  		break;
+>  	}
 
+Johan
 
