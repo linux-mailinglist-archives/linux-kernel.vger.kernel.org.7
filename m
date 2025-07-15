@@ -1,174 +1,203 @@
-Return-Path: <linux-kernel+bounces-731359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79CEDB05328
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:29:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BD0B0532C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79333A4DB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A16B16C509
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC92D2D4B51;
-	Tue, 15 Jul 2025 07:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jDnJdyaJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1962D5420;
+	Tue, 15 Jul 2025 07:25:23 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0907255F24;
-	Tue, 15 Jul 2025 07:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0BA18CC13;
+	Tue, 15 Jul 2025 07:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752564309; cv=none; b=uKFa07gL6yB7ODI6H9/c2K92UsETUTkcURHBjUFlTZfgysd6nqgD+rZJCO5EOlaxli/TQ7XDbeiEsIYznmlUJb2Jm1FwstArnPIuToyzIMhCmVQduz6vQ4WXedwUx4eo8YUUamh8IL5bRDqXHx8gMcODzcVf7ZGM/YYS/96vcv8=
+	t=1752564323; cv=none; b=FNEiOnuOZ5X08NrtfZlf4bUk40uPM0PzNwYA5uBSeyKls6huePn8M9PzvA+6IArO349vEGgW+b2jtrT2AQtfOyGOj1g8Z7giQ9spUdN/HuAbNRtaeuvkB15B5x5AP9H/Q/YB/tKeZF8vzkmLrrnJl03ZQq9mZJnUwDI+0LukkA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752564309; c=relaxed/simple;
-	bh=0jd9eLlEvl1cQ0K4ZeoMz0DXZf79bNYhoTlkg4/GlRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yyne1/oUGefnMCCATaCEHK94zi9WsmFBRMq62DXzvaSXGsgnQT1gWU+ZX6i6WomMiV8z6wnNMaUPvExKw2PX3bSMpuqbWMg8eEbxBZhL74AGYFCl79qWqC/lD8RCjUTe3qOcN/jz/Yr/tDRiG3XN3n8YoC+71NfrsfUcITJJW0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jDnJdyaJ; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752564308; x=1784100308;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0jd9eLlEvl1cQ0K4ZeoMz0DXZf79bNYhoTlkg4/GlRU=;
-  b=jDnJdyaJId9H5/np0MDX2XHm5DxOnCdUGETqTR22/l/LOhAs/fiIdLPg
-   Vw/4FMANDa/5NhTJBN8T3kD9LnGvedqEFUf5mm9nYstCpxxU3W7VsN4UW
-   M5I1A/gadve4YBzecTypzExgS8P0tXucJxZQI1EKAq2vD4vNRu5RHL3fA
-   tiKo7DZGyR6yUqlJOsd+v2uZo8E8m9ARzXETBEU0A8FIEB+KxRcnWYF3H
-   syKds758FIqo89JvrQL5UV3vWywdoSdAxq7FZ+K24jwSPK91PWdA6g8j6
-   b3aHZNKB4h45+4nLZtGjXY0kdyp32QTmgWKVBbJFzhFizFW4FYhFlyaMl
-   g==;
-X-CSE-ConnectionGUID: hhSWtoEzTG26sTq8lHb/wQ==
-X-CSE-MsgGUID: auwkCQLsROeD4iJbTLbyoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54897867"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54897867"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:24:59 -0700
-X-CSE-ConnectionGUID: XkoSoFCmSnOhxUJ5OesC5A==
-X-CSE-MsgGUID: nFLe8oZ9RDeDaIv3TTKEVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="161693672"
-Received: from ettammin-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.145])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:24:57 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id A10DC11F87A;
-	Tue, 15 Jul 2025 10:24:54 +0300 (EEST)
-Date: Tue, 15 Jul 2025 07:24:54 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, Alex Elder <elder@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v1] PM: runtime: Take active children into account in
- pm_runtime_get_if_in_use()
-Message-ID: <aHYCRvz0ohgi2xUk@kekkonen.localdomain>
-References: <12700973.O9o76ZdvQC@rjwysocki.net>
+	s=arc-20240116; t=1752564323; c=relaxed/simple;
+	bh=mIoe7Yg945ug2fEX/gESM6Jlx2VTUiE4LDyKjQfRssY=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ajMgxnySBibSKAjfJFfav8jfClWHv04GGGIY1QYbBBw3kL9D2Z7y1wwODVvbaIDLoQcVHQEDvBKAUSOlE2A3ut6tE9CPiIM4+kTwTPAt0KOl6vrCs5GZalZhzkKg+R+NQoJ+AJXiTEM1Fr/+rd09en/KYiEalUv/SivS3Hwu7OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bh9Zm2PdTzXfDH;
+	Tue, 15 Jul 2025 15:20:48 +0800 (CST)
+Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
+	by mail.maildlp.com (Postfix) with ESMTPS id C1696180B64;
+	Tue, 15 Jul 2025 15:25:16 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ dggpemf500015.china.huawei.com (7.185.36.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Jul 2025 15:25:16 +0800
+Subject: Re: [PATCH v5 1/3] migration: update BAR space size
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
+	<jgg@nvidia.com>, Jonathan Cameron <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+References: <20250630085402.7491-1-liulongfang@huawei.com>
+ <20250630085402.7491-2-liulongfang@huawei.com>
+ <b9579c5738f64e9c8e6488cc0492ee17@huawei.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <74673bae-191a-b17d-d0e8-01ad07cdf180@huawei.com>
+Date: Tue, 15 Jul 2025 15:25:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12700973.O9o76ZdvQC@rjwysocki.net>
+In-Reply-To: <b9579c5738f64e9c8e6488cc0492ee17@huawei.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500015.china.huawei.com (7.185.36.143)
 
-Hi Rafael,
-
-Thanks for the patch.
-
-On Wed, Jul 09, 2025 at 12:41:45PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> For all practical purposes, there is no difference between the situation
-> in which a given device is not ignoring children and its active child
-> count is nonzero and the situation in which its runtime PM usage counter
-> is nonzero.  However, pm_runtime_get_if_in_use() will only increment the
-> device's usage counter and return 1 in the latter case.
-> 
-> For consistency, make it do so in the former case either by adjusting
-> pm_runtime_get_conditional() and update the related kerneldoc comments
-> accordingly.
-> 
-> Fixes: c0ef3df8dbae ("PM: runtime: Simplify pm_runtime_get_if_active() usage")
-
-I guess this should be:
-
-Fixes: c111566bea7c ("PM: runtime: Add pm_runtime_get_if_active()")
-
-Should this also be cc'd to stable?
-
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/base/power/runtime.c |   27 ++++++++++++++++++---------
->  1 file changed, 18 insertions(+), 9 deletions(-)
-> 
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -1203,10 +1203,12 @@
->   *
->   * Return -EINVAL if runtime PM is disabled for @dev.
->   *
-> - * Otherwise, if the runtime PM status of @dev is %RPM_ACTIVE and either
-> - * @ign_usage_count is %true or the runtime PM usage counter of @dev is not
-> - * zero, increment the usage counter of @dev and return 1. Otherwise, return 0
-> - * without changing the usage counter.
-> + * Otherwise, if its runtime PM status is %RPM_ACTIVE and (1) @ign_usage_count
-> + * is set, or (2) @dev is not ignoring children and its active child count is
-> + * nonero, or (3) the runtime PM usage counter of @dev is not zero, increment
-> + * the usage counter of @dev and return 1.
-> + *
-> + * Otherwise, return 0 without changing the usage counter.
->   *
->   * If @ign_usage_count is %true, this function can be used to prevent suspending
->   * the device when its runtime PM status is %RPM_ACTIVE.
-> @@ -1228,7 +1230,8 @@
->  		retval = -EINVAL;
->  	} else if (dev->power.runtime_status != RPM_ACTIVE) {
->  		retval = 0;
-> -	} else if (ign_usage_count) {
-> +	} else if (ign_usage_count || (!dev->power.ignore_children &&
-> +		   atomic_read(&dev->power.child_count) > 0)) {
->  		retval = 1;
->  		atomic_inc(&dev->power.usage_count);
->  	} else {
-> @@ -1261,10 +1264,16 @@
->   * @dev: Target device.
->   *
->   * Increment the runtime PM usage counter of @dev if its runtime PM status is
-> - * %RPM_ACTIVE and its runtime PM usage counter is greater than 0, in which case
-> - * it returns 1. If the device is in a different state or its usage_count is 0,
-> - * 0 is returned. -EINVAL is returned if runtime PM is disabled for the device,
-> - * in which case also the usage_count will remain unmodified.
-> + * %RPM_ACTIVE and its runtime PM usage counter is greater than 0 or it is not
-> + * ignoring children and its active child count is nonzero.  1 is returned in
-> + * this case.
-> + *
-> + * If @dev is in a different state or it is not in use (that is, its usage
-> + * counter is 0, or it is ignoring children, or its active child count is 0),
-> + * 0 is returned.
-> + *
-> + * -EINVAL is returned if runtime PM is disabled for the device, in which case
-> + * also the usage counter of @dev is not updated.
->   */
->  int pm_runtime_get_if_in_use(struct device *dev)
->  {
+On 2025/7/8 16:02, Shameerali Kolothum Thodi wrote:
 > 
 > 
+>> -----Original Message-----
+>> From: liulongfang <liulongfang@huawei.com>
+>> Sent: Monday, June 30, 2025 9:54 AM
+>> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+>> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+>> <jonathan.cameron@huawei.com>
+>> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+>> Subject: [PATCH v5 1/3] migration: update BAR space size
+>>
+>> On new platforms greater than QM_HW_V3, the live migration
+>> configuration
+>> region is moved from VF to PF. The VF's own configuration space is
+>> restored to the complete 64KB, and there is no need to divide the
+>> size of the BAR configuration space equally.
+>>
+>> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+>> ---
+> 
+> See one minor comment below.
+> 
+> LGTM:
+> Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> 
+>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 36 ++++++++++++++-----
+>>  1 file changed, 27 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> index 2149f49aeec7..1ddc9dbadb70 100644
+>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> @@ -1250,6 +1250,28 @@ static struct hisi_qm *hisi_acc_get_pf_qm(struct
+>> pci_dev *pdev)
+>>  	return !IS_ERR(pf_qm) ? pf_qm : NULL;
+>>  }
+>>
+>> +static size_t hisi_acc_get_resource_len(struct vfio_pci_core_device *vdev,
+>> +					unsigned int index)
+>> +{
+>> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =
+>> +			hisi_acc_drvdata(vdev->pdev);
+>> +
+>> +	/*
+>> +	 * On the old QM_HW_V3 device, the ACC VF device BAR2
+>> +	 * region encompasses both functional register space
+>> +	 * and migration control register space.
+>> +	 * only the functional region should be report to Guest.
+>> +	 *
+>> +	 * On the new HW device, the migration control register
+>> +	 * has been moved to the PF device BAR2 region.
+>> +	 * The VF device BAR2 is entirely functional register space.
+>> +	 */
+> 
+> Nit: May be move the above comment about new HW to the below
+> check  is better.
+>
 
--- 
-Kind regards,
+OK.
 
-Sakari Ailus
+Thanks.
+Longfang.
+
+>> +	if (hisi_acc_vdev->pf_qm->ver == QM_HW_V3)
+>> +		return (pci_resource_len(vdev->pdev, index) >> 1);
+>> +
+>> +	return pci_resource_len(vdev->pdev, index);
+>> +}
+>> +
+>>  static int hisi_acc_pci_rw_access_check(struct vfio_device *core_vdev,
+>>  					size_t count, loff_t *ppos,
+>>  					size_t *new_count)
+>> @@ -1260,8 +1282,9 @@ static int hisi_acc_pci_rw_access_check(struct
+>> vfio_device *core_vdev,
+>>
+>>  	if (index == VFIO_PCI_BAR2_REGION_INDEX) {
+>>  		loff_t pos = *ppos & VFIO_PCI_OFFSET_MASK;
+>> -		resource_size_t end = pci_resource_len(vdev->pdev, index) /
+>> 2;
+>> +		resource_size_t end;
+>>
+>> +		end = hisi_acc_get_resource_len(vdev, index);
+>>  		/* Check if access is for migration control region */
+>>  		if (pos >= end)
+>>  			return -EINVAL;
+>> @@ -1282,8 +1305,9 @@ static int hisi_acc_vfio_pci_mmap(struct
+>> vfio_device *core_vdev,
+>>  	index = vma->vm_pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
+>>  	if (index == VFIO_PCI_BAR2_REGION_INDEX) {
+>>  		u64 req_len, pgoff, req_start;
+>> -		resource_size_t end = pci_resource_len(vdev->pdev, index) /
+>> 2;
+>> +		resource_size_t end;
+>>
+>> +		end = hisi_acc_get_resource_len(vdev, index);
+>>  		req_len = vma->vm_end - vma->vm_start;
+>>  		pgoff = vma->vm_pgoff &
+>>  			((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
+>> @@ -1330,7 +1354,6 @@ static long hisi_acc_vfio_pci_ioctl(struct
+>> vfio_device *core_vdev, unsigned int
+>>  	if (cmd == VFIO_DEVICE_GET_REGION_INFO) {
+>>  		struct vfio_pci_core_device *vdev =
+>>  			container_of(core_vdev, struct vfio_pci_core_device,
+>> vdev);
+>> -		struct pci_dev *pdev = vdev->pdev;
+>>  		struct vfio_region_info info;
+>>  		unsigned long minsz;
+>>
+>> @@ -1345,12 +1368,7 @@ static long hisi_acc_vfio_pci_ioctl(struct
+>> vfio_device *core_vdev, unsigned int
+>>  		if (info.index == VFIO_PCI_BAR2_REGION_INDEX) {
+>>  			info.offset =
+>> VFIO_PCI_INDEX_TO_OFFSET(info.index);
+>>
+>> -			/*
+>> -			 * ACC VF dev BAR2 region consists of both
+>> functional
+>> -			 * register space and migration control register
+>> space.
+>> -			 * Report only the functional region to Guest.
+>> -			 */
+>> -			info.size = pci_resource_len(pdev, info.index) / 2;
+>> +			info.size = hisi_acc_get_resource_len(vdev,
+>> info.index);
+>>
+>>  			info.flags = VFIO_REGION_INFO_FLAG_READ |
+>>  					VFIO_REGION_INFO_FLAG_WRITE |
+>> --
+>> 2.24.0
+> 
+> .
+> 
 
