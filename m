@@ -1,124 +1,96 @@
-Return-Path: <linux-kernel+bounces-732520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE81EB0680A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:50:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D234B0681A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4744E566410
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:50:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805345665BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052BF2BEC5F;
-	Tue, 15 Jul 2025 20:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bX/tETIh"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB612C15B5;
+	Tue, 15 Jul 2025 20:49:25 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7503E28727E
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5D12C08AB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752612521; cv=none; b=TAecLU6lwOdxbMbp2Tikfei99fj6Vn4wjNSLXi6a9b32JVuD5F2Qf41y7IRemuBMRqX/+EtpyPsYPMHWBo9tr5VTGDxbzIDG4Fi0itRe6RmDFoqJ9VTeWQkA3r0SYNPo7bXwopq/MGxlfHE1Scet+OxMBIBZENodz999Lywd9DQ=
+	t=1752612564; cv=none; b=mBz7fhkdC4hkvHi+5QRFgDmQp4VUi39i02S/nEcEXUSjsKOkSlxHazARhcq9mb3VYUpPT56ZZKff9GNSjz2fjK0XEhVP0jCnG/T3NHAMwBIhzSbcvEftTmMltNPmkmgBLFtrFV2aDX2fWWyRqb1MsTw/TOYoCStyII9Nam7d/nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752612521; c=relaxed/simple;
-	bh=47VhQcUDqziKE04rpmSy9jicRXf8EGqjBWvmCyCjpnY=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=Sf85AqF9So1RO+s3dEjNSMOjsGbB1FjCPyvvO/CvH0D+yXUeXI6oy3pYu0h1kRusxjoxGfWTiI37zYxX6WpknNHQ5PI2LEca7U5ksalrXIvMa0HY08XsR1jgZH+eoCAk6qbDMQt3OWzozIIJpuyArjCnxAjFNSdxVOMQlW8Ewuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bX/tETIh; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e87c86845d9so4403894276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752612518; x=1753217318; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FTTKwFRyrhD6+ykU2GdsaP5SBuru1chdmpkgyExGgG0=;
-        b=bX/tETIhHd0SNssZv9P8sMeXenpssu/LPdnL5C+0LQxtRjYsS3ErNK+Llr0ybRTevI
-         FmEQRdpK/E35k2lAjf6uCbWELjLUp+M73+za7yDpuedHE9JPDS+/EJEKO/VwGEukhKrJ
-         hdeR6JbbCClck5zNOUMuG9cEu77C1xiu9zr+UxmqFyKRrlu7z7np4iCt43XbPPFazYiT
-         nROHKVWUFRM+3sqOM8JQd5MYcTBrPvq6qV6JHGc2IV59SjZjQLt24Y51xn68VGd8Kfxr
-         6Nyr08dBpr72EhrUpay+r6RE4ck8/cx0tsS79MBIzLYg1ZSHHAl/ecpc12Ot4VaOfke4
-         MuNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752612518; x=1753217318;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FTTKwFRyrhD6+ykU2GdsaP5SBuru1chdmpkgyExGgG0=;
-        b=ug2QZ68dJnwRqJ757Ea5zQcdDNLZHf1hUhWv6lGS53GsAFMpA2+E99wSINFhjAfy+O
-         1Cd5ojbLOwXTTkEujyxLpzgL+QVr3exwfLHwPWDLDd5NfNE1/82ocwM1aN+dGwSpwryj
-         cN37HKj4RfD5DklHRdSuXv4AshJeCdSBHfFVhnGKWMaxbCsXLLmJZhzV44Cd9TmMSA50
-         ETeob83JcTkDw9uiI+ROhON7pRMKb7WAbOG6oeZLUIq1bQo4fYslEBaHl8W7EKhiNRCq
-         VwhEmKnsQ2ZuvYvoK2eLE+vDQ4oa4kxyyUnfRjpy4xN6e2RJPA6dnaEXvVz+FOVN3ICA
-         1ZSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUA3Kf8oxJnA6ivdrCeZjlq3gXGBsHS18gXEJHQ7YNS66iKrtgXQugodCv7NT3vulYKn4bS/wMV/Sn+Dho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCPAaz3pZ9dZN2YProWztsU8FMGMo4RE5OzFwSZMA6DvdxZjF4
-	k4gNfyP9ycOf+BOAgg34Vi8d5PezGg50Z6Cytn+WYsaFyuZGtfbaSAUsz0Z3reih6A==
-X-Gm-Gg: ASbGncuCZIVSa/23ncWz1qju5LTt7VD/c5q+rYPlFXsB5Y1jeojUPkgkvuOlSf00Va9
-	jpjEs7J/rOJmquIu2BqTPMTCublBNz8pkiMvoLT6Jt6AhqraNGYI2f4G3ggjEaH7rq9BX8wlUdP
-	fpsigCxUlQdswZgNT4M/SxSBpmtwT6lpEiRqiCaerT+LrLTVl68CAsUbkiINoOuqjVY/vPmsfdq
-	ZBbXnxhqP92TRR7WeTBVykyt7m6FpK+vLOhnbuoiHtHHVlMXDwxxYYS1rH1oBLHDSSps6zVcmWv
-	yYajRdMZOZHs+8qN9gYEhDUCfU3isQ0I6eDgJVOL1DW8xHOGfUjat5omwrW7X+r3lS0hUC/nLlu
-	w7QtDJyS3mP7yYxDUiC1McmapyNMQE1J6wi3W0ZWX+JgWPQnCBRjYALDC7jSdxygXip4QWsyCDU
-	L53UH/FCA=
-X-Google-Smtp-Source: AGHT+IHOSAtY659G5+exp7yCZF33W8srGQeyL3j/oH2/gamsU+onlzAGHnDWaxqTroAYTbNdtvu8Gw==
-X-Received: by 2002:a05:690c:600a:b0:70e:18c0:dac5 with SMTP id 00721157ae682-71834fd4cffmr12050927b3.10.1752612517888;
-        Tue, 15 Jul 2025 13:48:37 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71823fedc2dsm5402727b3.95.2025.07.15.13.48.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 13:48:36 -0700 (PDT)
-Date: Tue, 15 Jul 2025 13:48:25 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Hugh Dickins <hughd@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Johannes Weiner <hannes@cmpxchg.org>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    Michal Hocko <mhocko@kernel.org>, David Hildenbrand <david@redhat.com>, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH mm-new] mm: optimize lru_note_cost() by adding
- lru_note_cost_unlock_irq() fix
-Message-ID: <dbf9352a-1ed9-a021-c0c7-9309ac73e174@google.com>
+	s=arc-20240116; t=1752612564; c=relaxed/simple;
+	bh=lhJpN07PiYdEWqK0NiB89r9JuspR5OV+4EbzgNtHfe8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gO5vtYSE8yJ1AcIp/vfhIouhcxIAQ+N1bD6wfgKfcXlBjXSbU7MHBLnOxrnMKx9zyXh94vs32nxEkfbf0+YzmZm2SluzB7OTFUGKuCglVsDPV3L5ROcsY+NJ8CA+lcOdc7UMnt8orxnyQm0HTKJQiWTPANpT2Dzb0XfQMUdBc4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1ubmaI-0008KV-Bz; Tue, 15 Jul 2025 22:49:06 +0200
+From: Jonas Rebmann <jre@pengutronix.de>
+Subject: [PATCH 0/4] ina238: Improvements and INA228 support
+Date: Tue, 15 Jul 2025 22:48:59 +0200
+Message-Id: <20250715-ina228-v1-0-3302fae4434b@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALu+dmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0NT3cy8RCMjC92UlCRTU1ODlOQkI2MloOKCotS0zAqwQdGxtbUA6ly
+ zkFgAAAA=
+X-Change-ID: 20250715-ina228-ddb5550dcb23
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=824; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=lhJpN07PiYdEWqK0NiB89r9JuspR5OV+4EbzgNtHfe8=;
+ b=owGbwMvMwCF2ZcYT3onnbjcwnlZLYsgo27c/3vBTk7PiJI7ZXLMWSgjd0BaZwRF0NIMtPEC+Q
+ F/lU6pJRykLgxgHg6yYIkusmpyCkLH/dbNKu1iYOaxMIEMYuDgFYCKXCxj+8IoJLTVdtt1/g3Ls
+ 6RTVNz9n7nyzfJu4x1zmSSeWc+6W+cTIsKOxsbpD7cDP0oz45a/+TQucHrW45OrN80yiX57fcSo
+ 8yAYA
+X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
+ fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Delete the comment from above the deleted spin_lock_irq(): it was all to
-justify the first iteration's spin_lock_irq(), none suitable for moving
-down to where the parent's spin_lock_irq() is now done.
+This series includes:
+ - Whitespace fixes
+ - Add labels to voltage inputs
+ - Support INA228 ultra-precise power monitor
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
+Tested on the INA228 chips on a TI TMDS62LEVM.
+
+Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
 ---
-Thank you all for the warm reception! Sorry, I missed this deletion.
+Jonas Rebmann (4):
+      hwmon: ina238: Fix inconsistent whitespace
+      hwmon: ina238: Add label support for voltage inputs
+      dt-bindings: Add INA228 to ina2xx devicetree bindings
+      hwmon: ina238: Add support for INA228
 
- mm/swap.c | 7 -------
- 1 file changed, 7 deletions(-)
+ .../devicetree/bindings/hwmon/ti,ina2xx.yaml       |   2 +
+ drivers/hwmon/ina238.c                             | 155 ++++++++++++++++++---
+ 2 files changed, 135 insertions(+), 22 deletions(-)
+---
+base-commit: 27b297ca04813623d8df2f79d141d51e0856810c
+change-id: 20250715-ina228-ddb5550dcb23
 
-diff --git a/mm/swap.c b/mm/swap.c
-index 37053f222a6e..3632dd061beb 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -259,13 +259,6 @@ void lru_note_cost_unlock_irq(struct lruvec *lruvec, bool file,
- 	for (;;) {
- 		unsigned long lrusize;
- 
--		/*
--		 * Hold lruvec->lru_lock is safe here, since
--		 * 1) The pinned lruvec in reclaim, or
--		 * 2) From a pre-LRU page during refault (which also holds the
--		 *    rcu lock, so would be safe even if the page was on the LRU
--		 *    and could move simultaneously to a new lruvec).
--		 */
- 		/* Record cost event */
- 		if (file)
- 			lruvec->file_cost += cost;
+Best regards,
 -- 
-2.43.0
+Jonas Rebmann <jre@pengutronix.de>
+
 
