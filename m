@@ -1,267 +1,419 @@
-Return-Path: <linux-kernel+bounces-730934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B071B04CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:05:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE51EB04CAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 570AD1A638D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:06:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D536E1A60EA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBEA522F;
-	Tue, 15 Jul 2025 00:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5900A9443;
+	Tue, 15 Jul 2025 00:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nQ9g5cd1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="s/86gcw8"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11023106.outbound.protection.outlook.com [40.107.201.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273D6632;
-	Tue, 15 Jul 2025 00:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2540910E3;
+	Tue, 15 Jul 2025 00:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.106
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752537945; cv=fail; b=on3OG34YRWlW14UDH9R1rykxMpK5GIGd4Ky+DwNcxRGN5iv4nA7GPcP9ELn72QDW+fJ3HcCPhCjFlVujr0w3fQW3cYflTHMSHtdVTV3uxZ4nEGvffFza3sFNq+i67ld0++bx4QkETArxYZAIn1DDfFwVODBEA+RDtwPu4uNLuAY=
+	t=1752538223; cv=fail; b=ZXwNIOf8qA40dyG+3FF+RVseCOGQEHUHhKZyIS4FbnVbVzrJSip4klp3cXADL25DPtfOYYXKNPVvv/P5kL1GuprXPaHjaunOajfRdPf6UPVwDepl/LJ7THZYRbw1Sw9pO3VgDiWCx+45C8RLHKKp/ludyNbr2mNM78a8kW2IBSI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752537945; c=relaxed/simple;
-	bh=gyVtt+OPXn5YsiSsD0XOjsRhtndg+ZE6G3/zP3B+HOI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=F2otoBJeyAsAmsisfrKM/W3zE6//FzyBX6eaRoXrNJqByftXb4oG8CvafC5qHZ7l96yYgE1UsfvzCkVHRFrvVsFTEkjFEmJwHxmk6YZWqhPgTTbfBqPdR6BVHDPUoyYvgpMM2awsm3yOwL1BtL0OQ6k1DZHW4OJ0IByxDQFIoms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nQ9g5cd1; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752537944; x=1784073944;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=gyVtt+OPXn5YsiSsD0XOjsRhtndg+ZE6G3/zP3B+HOI=;
-  b=nQ9g5cd1h1XtGlYcTQUI1zmNsfUDfTRZY0WaRGrZoJqRPVtpcq2NnLeG
-   0wrXpnxlXqO7JxQ3QEd64gpoIZPFtdd5lqzGTvMCiTpEp6KaSkSnULadh
-   6WzH/E7jxE9ebknSrwu6IFAxAESeGTS2J2u3ydMG3Y2il7YY18A7SrE5M
-   S0iCCOO7Ksj03W+42Pvagyg4tHZZQLhMzOCvLEtGhiS3LEIdPLjih0HKc
-   T0LGFNO0sO5qlvf3BaOjCAqWsjvcWHX06o2BtvabCz1uU6KBryw39OAfE
-   TJHegrRyCpP008gi7EBwwvbK+/W6kBLVRXs4e82lnF+w5i4xtesrk+Dse
-   Q==;
-X-CSE-ConnectionGUID: MQwftKAmRzGCYj+hIJAvJA==
-X-CSE-MsgGUID: eBkJBxD3S86Rr2RxTcQ4PQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="57353433"
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="57353433"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 17:05:42 -0700
-X-CSE-ConnectionGUID: YVHVWXp+Q7yuetL+C82a2w==
-X-CSE-MsgGUID: +BDSwtdPS7CMT6W4l+ujYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
-   d="scan'208";a="162729594"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 17:05:43 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 14 Jul 2025 17:05:41 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 14 Jul 2025 17:05:41 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.49)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 14 Jul 2025 17:05:40 -0700
+	s=arc-20240116; t=1752538223; c=relaxed/simple;
+	bh=SdTauXyFl4rOwPzlhKkGgMSuF+V66Kg3jL15lSsVdyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=CbLWnDZS9XoqeAlBOLFv0kCKxwyOyshrBk2p5Oy4QaiYVD0tjiFKQCl8Bk8/SHgC+4DhnS+CA+l/unOBMHBUQsr0jif6AmOkwZm9bse6Y01pFFh26L64TW+8Y6u8payMnLiLolLl18AdondyVDv96Li3bAUPsFF5VQg9+pZYZuo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=s/86gcw8; arc=fail smtp.client-ip=40.107.201.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o0JMiK2l8dCCXTcqAc8eUEC/26hn/nZYiCjyeedCmskxTQWzkA62c+1hJnlHUia1bOfAMUqGNtlyHxdMRQFaimNhMdiRal8hACVHIBPsg6ESBBCAo0ttlD1Q+7VUwuK2oYtjBPN5GjQYWOGzJcxCS0lbckrX1DonOqJb/RU0R+L6Je1jDKzfdXo0A7zfpLKXsRLyoGSxRJeey5kml3GZ4+6Qp6nEwpQNwwDaq66fmTJtGyIZg8Xl5yVOhgxziUH41L3RkBXBV8Cyq4W3KoKaIBEBGeFJ8tUoabr2mZ2Q09naFEsqArk4SRcr2H9fitW6DvRF1/wwXy9u1Whxi4pwqA==
+ b=WGedorybhSeJzGB3M8m+ZztYNBsYkZ3uQQadU2/5I1c/WmDg7IKMDZX1PYkQJZE2dUvahG+AfpEiGx0YwV4S/OrR2ed2rkt8NQjC8oQG0YzQcIJp7XMqQlPT4ifIsgPlRHOkKh0lc0biq4pS+bVfSe3cSs2FCDWH0wo2gBe05UVpxYgu/xBhebtgsqlDRWnnxpw2PbwwPkzJbRvlmwcZ/dVKr9Nz6NZKAYgQ35/f/ClaBQIr/7vAap/XP4/XyypkGkhJZwZ6L0lg1+PS8zjUhC/vqQL2QS8FC14NvtNMK4Ao3h/5/YZZfUVE9WxFs0k2uu8+AI3c5F/+ZHtXhyUtNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=slomev6Tg6TBv3qiXVBvilj+mzumQAoECuPWINdag0s=;
- b=C1+YMB2xHFB0gQM8Wc+s89fv/itPoGxcUcq5+HCZOOgnHYS3XiqA3DgKgvWMqxVB2xhaDgQR6mlJjEwVjxz54pP2ry0nhaIT0DTD5BJQQRA7+LO1WQJtdG0L++KktKP0evxmyxy+YP+PULBEdSC71n7+icPZwjjNhx8zZ6h69/JIFc78mKYjKlzDIGCgUP8XAyv7VtOM0YxeULWALmSteNEWgIDGVM0ZN226+Ew+pmVBKMslt/u7MdJ9fjddPNYO+gglqj0PCft6E+iBK1m+WrD5Y9vagyWSQTQuLnHpsqCk/HmJ5Dpl3upkRG7l6sNxNONUODP1BhpRn6kOHKpuXA==
+ bh=3M7qT1Mi4yd1lg3qWsc1BFvgftx7GnGcGOENzWv0J7s=;
+ b=DVZbeI5L5aVX/2kCB2SPiHapW/LSHGj5Gk78n3zCCvMUzm4tRm6Y6DZpSdl4K3X+RQ7SLHx9e31RuH4VLXslI0MbmpywyF64/kGgURYxKIxhmSrHZwEwv7mtgORPGbB+uwklRFZW4+Ey7QNwVWPDKIkroegEjn1cspeBLjteUQ9DRHjYHjX7MhlwAj4x8zn44jYNzqrO/rdiJCbPtvikfQqyO/aLr+ldLlpVxlmZxkd60/gKb8Bf4AWbBRG1PPfzlM0ckgzNTllNdbnWfzWQa6w/dBFx2g7OBrqnpMHobzijVWF8gXGmE7WfeUBWFtaKDm5eGPXZsXH56FyN+uiCfQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by DM4PR11MB8203.namprd11.prod.outlook.com (2603:10b6:8:187::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Tue, 15 Jul
- 2025 00:05:37 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.8901.024; Tue, 15 Jul 2025
- 00:05:37 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Mike Rapoport <rppt@kernel.org>, Uladzislau Rezki <urezki@gmail.com>
-CC: David Laight <david.laight.linux@gmail.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "jacob.pan@linux.microsoft.com"
-	<jacob.pan@linux.microsoft.com>, Jason Gunthorpe <jgg@nvidia.com>, Lu Baolu
-	<baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
-	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jann Horn
-	<jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple
-	<apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>, "Jean-Philippe
- Brucker" <jean-philippe@linaro.org>, Andy Lutomirski <luto@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "security@kernel.org"
-	<security@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH 1/1] iommu/sva: Invalidate KVA range on kernel TLB flush
-Thread-Topic: [PATCH 1/1] iommu/sva: Invalidate KVA range on kernel TLB flush
-Thread-Index: AQHb7Og7tyiLlC5BakaJRVDSXOOkwbQp+P0AgAAJ5gCAAB4wgIAAAf0AgAd7wwCAAAspgIAAGWOAgACanLA=
-Date: Tue, 15 Jul 2025 00:05:37 +0000
-Message-ID: <BN9PR11MB52764F098F7123D95233200D8C57A@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20250704133056.4023816-1-baolu.lu@linux.intel.com>
- <20250709085158.0f050630@DESKTOP-0403QTC.>
- <20250709162724.GE1599700@nvidia.com>
- <20250709111527.5ba9bc31@DESKTOP-0403QTC.>
- <42c500b8-6ffb-4793-85c0-d3fbae0116f1@intel.com>
- <20250714133920.55fde0f5@pumpkin> <aHUD1cklhydR-gE5@pc636>
- <aHUZIVbLV9KAoZ3H@kernel.org>
-In-Reply-To: <aHUZIVbLV9KAoZ3H@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DM4PR11MB8203:EE_
-x-ms-office365-filtering-correlation-id: 11c01317-af10-4f30-36cb-08ddc33353f5
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?YBQ64iRXy/eXosC+A+yeusI/5TdEurVyBRto7V3dxekDJmTbBug8Di263fvw?=
- =?us-ascii?Q?Rr6GbDByfjzMka97piGy9pnrnyc0CWeQzDiV9k2PFFXtODiY3PCc3ph6MDKq?=
- =?us-ascii?Q?RO2RVx88SEnKdncXXxZVDY9mzhyBFTS9Lm5iG7x6pGACL1T6yRp7DnmtHj8k?=
- =?us-ascii?Q?Y+LNix9nfPObct+G5xVujhUnOw7VO5XFBeXSwwNs+c+vDu7iPb7j5IXY7QQP?=
- =?us-ascii?Q?Q4NNEFEaPXoBjOc6+5GUCq85KWX3pe6Zt5ef5Y6pwyRsp8IqcW68jwx3yg5j?=
- =?us-ascii?Q?to3ld+o9siUAYqx/AeeDf8Cs+z6Wanx9mPgE98W/OmZBc5IgTFf0jlYRyxnE?=
- =?us-ascii?Q?5eGq7uVeSTvwwU4rb54S5z2FQmJvNDGNHRnMEitlf1dLMSvQljjAGwUvI3DC?=
- =?us-ascii?Q?tzn1SmIWQyGZbw3bEYJaRk+IRwGLHuECKkebNEDiG/TMz98GZP+uSoPYgL7Y?=
- =?us-ascii?Q?voHWiyK0niH85Ob3iERSTspJZFlFN4cQv2qsTXX+eaVAngv8iXPPX1p8tCJQ?=
- =?us-ascii?Q?2kjpN0YXVITNXwL1t2SaP8ZS5CiqdeXuUd2JKe/ql3wZtuobz1WhLkpEp/on?=
- =?us-ascii?Q?9mUe9oGKrBMTlVNPDtgZWg6J1jNTkk05eNQe+oytmpBCn9YUy8YdGtQwrgSv?=
- =?us-ascii?Q?BqW7BI+1z4EdTVcMK76olMnrWaEsetUs5ley9dl6UEWwgSpQPJFno3Y4O7jV?=
- =?us-ascii?Q?AonP1MBHrfgo+5ovgzTqQPu6IJh6xpoRc/YfLpEHgEpbo/tX7kPAoYUv090K?=
- =?us-ascii?Q?xwbjj7nffzdEMtxzl6vuaaAOsb5NDM4+wxvt7Y8cd0RlPgf2Jocaj4Rb+Lb7?=
- =?us-ascii?Q?dZqyjtHd0LR2roNT/F/Sz/r/rvSErko+I7matYLTwX6ET8U5LcjMmlssYFEA?=
- =?us-ascii?Q?SZLixgOI2jf3fhe7PynMgn7HoLRzQStbjFDMjgVjsAuwx7SY7YEebZR8ny1/?=
- =?us-ascii?Q?aQ3CELhJ4EBBtCzZTs2CxDkkVlaCM7AITpyji3rCoj94HVMczNUm8/Dq4s+W?=
- =?us-ascii?Q?bkyYF9fQnK7CUtwumOK6fqo6F8fCY5dqGqztBIfNfa0udEGOVkiUEj1r4dew?=
- =?us-ascii?Q?QurMsWpQrgM7ATvnLe/KSCWlk6VjjK8ZNlmB5lQy2t5sdVvziyhdtWmO9wYH?=
- =?us-ascii?Q?PsieQ64SZGE1PViDLFUz5kx1jhQYnz465Sz4W6gVJ/UtmJxns0DgHPHEvCCA?=
- =?us-ascii?Q?MOeiWyimhcWL5VKdjX/ku0+ArDzLtuWet8wIEinZLdTq7L2zmJazZRS4n/6K?=
- =?us-ascii?Q?c5N+CDzqtyWM5ZFl9Z5kBy0IisWzqJYbp5e+m7xg3pOliowKro18mkbw7l+s?=
- =?us-ascii?Q?ZtujHiA3XOQ+1SsA0QtVzssKmONYWEhqW4tsvl0hGa7NS135/U3z2F8zhf30?=
- =?us-ascii?Q?mxrkBpi6kmnOn/Up9mq6KnRIdojje5ANLH6Ahub6irvF+CTMwmCI//I+kAE6?=
- =?us-ascii?Q?hCTx//huYLH+0FNSZCj6YfoFNYNHZ9LsD2vkdB2P/UfE9uaFvjFAkpLJf9dH?=
- =?us-ascii?Q?NYZpXkTm/dqD2RU=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?dMNDG5NjCBmvdZYzPM66T4HUcAG2yg7kL/y5kRwMAcrzADd/ynlYAJg6zsEz?=
- =?us-ascii?Q?n/ZMhTuN9rYvEPUsS+k7+hmxpq5T6C6TZ1YciDCdh4CABphCYffgoOxqH0s6?=
- =?us-ascii?Q?oYpqUOkF/59k8Febwqui9OfHHwnKYkT/DWRZArTgn1L3PUz/3QIJbB2L7+mz?=
- =?us-ascii?Q?hvOoRDjbq+DZ/JSaZQvu6TTAcEJHOLLmZALKJP5PIfo93O1PuCKw7mJ+aIG9?=
- =?us-ascii?Q?s4qcCeOxu22QLgz81uPGY04holA+S9DKz+Wmyh5e6l7eQ48SfzdZsgURqi5V?=
- =?us-ascii?Q?gv5MvfrF9gK3ytmwujNgk9V8SwYeEUQVcEBDJIxtuTc5yPwaghLkVDmLYsYz?=
- =?us-ascii?Q?gK4FtHQGBcrmQWc8jAaHKSGW7FTdd4zW1H0oeFD+PB5AKYLct49C2SX52YIm?=
- =?us-ascii?Q?S+b0pFC5mApYfnsn1l8gestyAlJ51CQvLcJ2nt911oHSrPAGHY9REclG+qFy?=
- =?us-ascii?Q?F7gp+SkQ4LwkLXzm4vmDAnELdcz/VoxKkY/HEgmzGo5KDYa0oMs01NFkU+Kw?=
- =?us-ascii?Q?gWLVyD7/KOv9JVOo8FlJuapbCh2nlMqaugSVZVnJjZDzdf7CNddwiTjwcVRg?=
- =?us-ascii?Q?jSU1PKnx6ohCCywWoLfv4nbfaH0oh8tpwJZjy7hSsIE3gGOLDjo3ry2MtbzC?=
- =?us-ascii?Q?J7dMfBYR3TGROiMD+EV8FIgl4WUeUysOGNpYkpX2N3B2oY/cqze7ZKM76GFu?=
- =?us-ascii?Q?li8QcWBxBPW0iYxDNyJosTxHFW0LuR7o8uof2+poXYi1ChVRNSLLMSVZyEjA?=
- =?us-ascii?Q?lRrpKeGi4TxU3TSaNXmyA6O0VPp3xXsVQpGrDu3Pbc+Q8fPPrBD9cEVVAL3D?=
- =?us-ascii?Q?QZW6HOudCSbKz22ihNJF0su6NrZu3CBw+MAlPEg2F4QR3SL/EPBjZkOQvbR9?=
- =?us-ascii?Q?/NrprB6xRTfuRmEot8hwxfDDhs6IOTB/zeOX9sDwLUpPwwn0kZkCa8PU6l8u?=
- =?us-ascii?Q?XP7WSrz+/qkde3Y5yhNUjCVWoPnmy0QvjE6M4JPzje/0vudbMa6ZpgelYRDI?=
- =?us-ascii?Q?WPV4+F2lR8Enffy9lyvDy0QktU6eHolXn0g7kBJ0wu5r6Ll510wIIBUkFKCU?=
- =?us-ascii?Q?aNMCzDHEw1eBmPelkszp9awTmYmcNhlRtWncDxYKGH/y2wkFgBT7ZaGO1LqU?=
- =?us-ascii?Q?bi+kwhcLbHugUmcW4yijw7CO4FWvBWXNYNtbEjI9X96gL4xN21qBi10jJJQW?=
- =?us-ascii?Q?Rbh9hmxDJ5vbKrlOGq+JbHhiPPHqrIB9aOuZ2x2rQVoBnLTL3gMPyZqipYJz?=
- =?us-ascii?Q?1UNabTYZtCa/J424TPyt20E2djtDPQZB9LBcZIRkRbliLzuKgbLmvbqHl0KB?=
- =?us-ascii?Q?A2L7uXLKfKUhuWxRk+P1t6pE7qC6oX5aTmb2N1anAwtQ28YVvt8agokD4eMT?=
- =?us-ascii?Q?LzeRkP3A5GC+hEmOtZzyksyqdXx2fa9aOti/Zxz5uerkeQ0xt/m8Ixb2/n0w?=
- =?us-ascii?Q?AdUMVFGXbfPcU05kfuO4mS+sQG5pxJBGyEy4upybmBrPqvnJAaTWPa5B/O/5?=
- =?us-ascii?Q?oDcIKIgkr0OONi4nRDAhV79FGbheNFEEkMgHzl9jMDwSBlP72IlCcfVs8pOS?=
- =?us-ascii?Q?6GiB1CgVb388DFAy9PjrTv9XBj55t27bIpikFul3?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3M7qT1Mi4yd1lg3qWsc1BFvgftx7GnGcGOENzWv0J7s=;
+ b=s/86gcw8+1Y+Q3+z/wPT19U61r15g8SWE8iWMP7bY8wrk/A8CTc+HBe8QlFfUlII1TCzofLzWdxyF5MDS3q5TRmjILDTOOwVJBFjdnMqAojICDicsZZPT6Xytn1wwHPdIozxO/B/a7F4/rwFOzGef5UEAvLefvXL2oVRYP11Lr0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
+ SJ0PR01MB6239.prod.exchangelabs.com (2603:10b6:a03:29d::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.32; Tue, 15 Jul 2025 00:10:17 +0000
+Received: from BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd%4]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
+ 00:10:17 +0000
+From: admiyo@os.amperecomputing.com
+To:
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: [PATCH v23 0/2] MCTP Over PCC Transport
+Date: Mon, 14 Jul 2025 20:10:06 -0400
+Message-ID: <20250715001011.90534-1-admiyo@os.amperecomputing.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SN7P220CA0008.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:806:123::13) To BN3PR01MB9212.prod.exchangelabs.com
+ (2603:10b6:408:2cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|SJ0PR01MB6239:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c9cf90b-357d-449d-bee5-08ddc333fa9b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5mX8hWltwznu0nnpt42dNav+yJTuX9JnzSS0LCAwuj3BFSlpbmg23hLs643W?=
+ =?us-ascii?Q?S/6MK/BbidXJ1b7E2pb/B2NL8aGZhaVOOxaxt8YJAKmkKchkDgsnTnQHpdq3?=
+ =?us-ascii?Q?0A8U4ZqpOinGCQ0n4cSQY24eKtzBz8YONk5/IT3OLYuLZ7KItX5d/TTu9go6?=
+ =?us-ascii?Q?jsKGy/RYFJeIof+BqKZCjxLP+C8PIj6ERoKosKn0GXe+etUWOAUwp1fRNN92?=
+ =?us-ascii?Q?hTND3kVFLUKPOEmm1auC2fdLtU5Z4Krt8Gian93nkZdXt/ZA+4BQ5/MDMSOJ?=
+ =?us-ascii?Q?anH5OAw7LvZGq/gBjFHoTZS71Que7IQVpHh6Ceqn0/ygEKJDOSOlKBgrxWGp?=
+ =?us-ascii?Q?Seqe18xzX9OKDJKRyttxruSskO7S2EdNLfpuhH0J3pdxL2iGn81FMt/Gp4ch?=
+ =?us-ascii?Q?IHRt4ovgP/Itqa+VZ80ooGhVa30h+QpG3dKFoZzkBw9m+SyAftFd7UocP8D+?=
+ =?us-ascii?Q?ZDRJ/LEGdTpH/N5Bt0Q8jpQiQ5helkdW+91n42O+m2TfJN6fhV3OGxACnn3J?=
+ =?us-ascii?Q?qHs21In7dPG+68SUl660sB4E5dg26zcR+3oK7cWkkZdJnyNumVcz/Ukllvs/?=
+ =?us-ascii?Q?lGI7jLNsGeHN6EKl9P6Shpc0R5uC0m82sBApI2pHCEguYchydxGxWY9Ndfsw?=
+ =?us-ascii?Q?fBs4bbDNLvc0f/4Hf8zwcn/mWSOsjrX9friDI80uFz3rUy37li47FyXGTRTZ?=
+ =?us-ascii?Q?vsweUk2GdNM8JipYYguGst6GMJ4ISSRpyh3B1y/bt9w+b4qiHR7jVwyLHoFI?=
+ =?us-ascii?Q?kfeUqyJCmi7y4xSxS3HamrEz63lJqfP55djHAnDj9AFEN/xNgkX9RRvRe+ct?=
+ =?us-ascii?Q?JBOMXdydwC7ziyRo1KP3AnSMulIrJmnyTxfYWU1MAZqNoWHVq089TCMMDXAd?=
+ =?us-ascii?Q?n9krejN45VAMh/hKGNr+leMQXmd2kKFfedN9y7heqVo+Gl94CuElqu8J1Jrc?=
+ =?us-ascii?Q?Ku1NDH7Ng+5G57TIUW/f5GnbYUE85ngwhcCI+3ZO9YG9/FaWcs0masfwdQuO?=
+ =?us-ascii?Q?BPziiqha2lLCGcwhZvEjkE9rbCbPfR8zflvt2h3SKcYhrNWgoUn5FsIwL+WD?=
+ =?us-ascii?Q?kW83czSti2HAgYvIMa08uqONY+dnek/PxLIEfp8n9GGSExMyH07CxfVa/48G?=
+ =?us-ascii?Q?UPaVZap65G1AeBemn7th99vdS/ufGI2nGsYWmvvAGlB2ZuW3tsBJIa2JfK9+?=
+ =?us-ascii?Q?WBZ8yQLo/0EBbKIDIEvAU6xMUcnlV14qk59hfGcdasNbVHztPKAaF8d2qNBw?=
+ =?us-ascii?Q?a9VlUqSjNziZry2KIaupCxBgQ6kMay7c/wyzdLbAf2SpKaUwlHn0B3E2gyRN?=
+ =?us-ascii?Q?SRFLLgPFlUNxE2Q39Y6isVIP3lQzPPg4te80epqbQnqSkWla4Gn/6DIsryLq?=
+ =?us-ascii?Q?7jhFxP4cui+JggpAAfvRKMIwGfc48GDOq/Cpw4vJ4rQr3c7+Upp9kUCfMoxA?=
+ =?us-ascii?Q?tsn5NUJRvI0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aBhJgfbrNY5hdCOBHaUZ1+EOFoSA7HY7hKzkhreb5VRaNvth6DAIcvtHQWdl?=
+ =?us-ascii?Q?B3lmjG5rjzVvh4yCsA6b+T7u8ctThRSEoma9FPGBmUEAYTtxtfJsCDs1kLlj?=
+ =?us-ascii?Q?H649F3XgRN+GkJTzcLARJVf/mN9nRtS7vw4D3BwhgUfdmTKybbtXXJfDHrqa?=
+ =?us-ascii?Q?9OdjHu4I8U+fNcwnk6e5UHrcTLqKeN0FaauK5iyzlPplUzbBJV25149EFVwM?=
+ =?us-ascii?Q?omCoRRcRuOkDhG6w1nX40eTxXp8GkVuKTqPvVVGWfXnQAN+RgiK9WN/Jl6KX?=
+ =?us-ascii?Q?yrtQElNKwzDXFZGikEUZyg6Os3GnyxRYlPda1MAjNO9duJAvZfR4uzeCF3T7?=
+ =?us-ascii?Q?Ugu7sRE+AZyyaXDdTnYg43a1OnGfqp6GOmQg2snz87SB0QIbppLnlwB2oqYM?=
+ =?us-ascii?Q?gN8VkOWSU1xXnlETwixqTZMICUZchxbPfwuwJOeIdG6asJmHEB0fWlU80IUY?=
+ =?us-ascii?Q?e2pgEIm/sQFS68K6FL1EvNx5WbuZvsdlyNcBL8RUGrSzmDdRK7btwyptRVXX?=
+ =?us-ascii?Q?5/2ADHKhgwRxwEtGQ4ni/p29iy/J7CDhGB3aUl6nAk9UH/I12PV5ysCof7KX?=
+ =?us-ascii?Q?yu1fzd3Ixscgb4Ir37MpQSxTkUXdNb1LxQegTlzNtgb2B5uYVbaRs4mGyRxO?=
+ =?us-ascii?Q?8bXHLvzKXlW/hqeuL/scWU7MkBvavCbP9viGeDNl+9Fug+jnzqM0jPxvfhai?=
+ =?us-ascii?Q?+tvowvjcOxCQXIMk/P7v7hsv51YQT2w/yJlAgL9toYooejM7xAZuu4hVJc+K?=
+ =?us-ascii?Q?ST/MI2kBz4Up/SF7Jff4u2ogh23iTRjCg7qlobb3dxgrYzlA/rrGCnA72xUN?=
+ =?us-ascii?Q?9DsKuTl52vk9Bs1NVfJYRi3odfjeco0v1AI+lsoAMim1I6WA/LNw9dRcnPa3?=
+ =?us-ascii?Q?nXfF6ueQi8EqMXcSVTa6siA8HzDiF2yPeNjChE/cHmFoXQgKZYuRPmyOqync?=
+ =?us-ascii?Q?V5Iv7WU5FkAh7uaInQtyQtyFsdJaICzXqpiRbP7pJ+FS5mKxFAeyWHPA4ppQ?=
+ =?us-ascii?Q?oSL1WFW4lG7U/Gzpk8Bom4HkA0V8KT0Q8R1iw9F5i1UZvTXm1XSbSeU5He48?=
+ =?us-ascii?Q?IJjhzPv/zR68YHaio1Yfckw6Nz3Y84pglGj7ZhVTZRYYCIp+Y4/fQtT15Vda?=
+ =?us-ascii?Q?z/pqF3gFQJGBdfrIBVlaAB0TrS6a7roSv8z2n9eDKO7lUjmLoOGpHwTPJgsL?=
+ =?us-ascii?Q?ZgyfxoRj7fAh5BgD+7DcY4Vh4jpWRkBo+DNlvS+KehRD5cJB6JzBlgmwh2/u?=
+ =?us-ascii?Q?w/NpzB8MkUKMMf5kJc3rWGVHYIhFUsjnBt4f4uH3G1vsnogUuvMS5B/AJ/6m?=
+ =?us-ascii?Q?WykurB9W3eUdqNQqAUvd9+AfQBd0Fk7DmtC+Gx53RIdaIlTvv63mNF7A74U7?=
+ =?us-ascii?Q?SpEaf1Go79rE2MfvoZh4VsDCotNW5jSZfP2kiQb8gzo9uArGL1c4H8HyZ0B2?=
+ =?us-ascii?Q?Z9iWaoxFhJor3asnd6lv9OcvdGCj7HUo7v2K9y7lDcbGijkUheRRw3whg4DY?=
+ =?us-ascii?Q?m8U4LUCqX3xcjbeuSrm3HAYKNrhgvn8VcMrpOgcNX6MhswyJey5bImQbqnGF?=
+ =?us-ascii?Q?F3at7V6CPayS4/U3Y3Y4ekEHRIJxnbtzvTAMTVhvFwk/3EqrCPbv+aua8Z0d?=
+ =?us-ascii?Q?kUQ+7W9vV/3+TAa/7YbAWfm3JQyzpqAjK3gMHuHPHGUHLOIuXEUanToVsBTd?=
+ =?us-ascii?Q?c5L8e57VeiCUF3CKTDsLwqPoAZQ=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c9cf90b-357d-449d-bee5-08ddc333fa9b
+X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11c01317-af10-4f30-36cb-08ddc33353f5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2025 00:05:37.5727
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 00:10:17.3304
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Dly9D+4BDDqNZn0sMkXPGq/4h74g0iKvJw2aahqM8Dtv28TFct+QPuIFDPIIzrSljj/igusoriP6i9XJI1g7RQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8203
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1ooBrGi/oAYeeSzKI+vUL4REal4m09LAqx140Aik+sP/n7vkLJNnE4LpUEr/VAltrU4/364d2I+xcBJyTi5hZwyULehfNR2P5WgHaDXGlpYes5CX1ghwPKoj4k2IjzS5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR01MB6239
 
-> From: Mike Rapoport <rppt@kernel.org>
-> Sent: Monday, July 14, 2025 10:50 PM
->=20
-> On Mon, Jul 14, 2025 at 03:19:17PM +0200, Uladzislau Rezki wrote:
-> > On Mon, Jul 14, 2025 at 01:39:20PM +0100, David Laight wrote:
-> > > On Wed, 9 Jul 2025 11:22:34 -0700
-> > > Dave Hansen <dave.hansen@intel.com> wrote:
-> > >
-> > > > On 7/9/25 11:15, Jacob Pan wrote:
-> > > > >>> Is there a use case where a SVA user can access kernel memory i=
-n
-> the
-> > > > >>> first place?
-> > > > >> No. It should be fully blocked.
-> > > > >>
-> > > > > Then I don't understand what is the "vulnerability condition" bei=
-ng
-> > > > > addressed here. We are talking about KVA range here.
-> > > >
-> > > > SVA users can't access kernel memory, but they can compel walks of
-> > > > kernel page tables, which the IOMMU caches. The trouble starts if t=
-he
-> > > > kernel happens to free that page table page and the IOMMU is using
-> the
-> > > > cache after the page is freed.
-> > > >
-> > > > That was covered in the changelog, but I guess it could be made a b=
-it
-> > > > more succinct.
->=20
-> But does this really mean that every flush_tlb_kernel_range() should flus=
-h
-> the IOMMU page tables as well? AFAIU, set_memory flushes TLB even when
-> bits
-> in pte change and it seems like an overkill...
->=20
-> > > Is it worth just never freeing the page tables used for vmalloc() mem=
-ory?
-> > > After all they are likely to be reallocated again.
-> > >
-> > >
-> > Do we free? Maybe on some arches? According to my tests(AMD x86-64) i
-> did
-> > once upon a time, the PTE entries were not freed after vfree(). It coul=
-d be
-> > expensive if we did it, due to a global "page_table_lock" lock.
-> >
-> > I see one place though, it is in the vmap_try_huge_pud()
-> >
-> > 	if (pud_present(*pud) && !pud_free_pmd_page(pud, addr))
-> > 		return 0;
-> >
-> > it is when replace a pud by a huge-page.
->=20
-> There's also a place that replaces a pmd by a smaller huge page, but othe=
-r
-> than that vmalloc does not free page tables.
->=20
+From: Linux Bot <linuxbot@amperecomputing.com>
 
-Dave spotted two other places where page tables might be freed:
+This series adds support for the Management Control Transport Protocol (MCTP)
+over the Platform Communication Channel (PCC) mechanism.
 
-https://lore.kernel.org/all/62580eab-3e68-4132-981a-84167d130d9f@intel.com/
+DMTF DSP:0292
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0292_1.0.0WIP50.pdf
+
+MCTP defines a communication model intended to
+facilitate communication between Management controllers
+and other management controllers, and between Management
+controllers and management devices
+
+PCC is a mechanism for communication between components within
+the  Platform.  It is a composed of shared memory regions,
+interrupt registers, and status registers.
+
+The MCTP over PCC driver makes use of two PCC channels. For
+sending messages, it uses a Type 3 channel, and for receiving
+messages it uses the paired Type 4 channel.  The device
+and corresponding channels are specified via ACPI.
+
+The first patch in the series implements a mechanism to allow the driver
+to indicate whether an ACK should be sent back to the caller
+after processing the interrupt.  This is an optional feature in
+the PCC code, but has been made explicitly required in another driver.
+The implementation here maintains the backwards compatibility of that
+driver.
+
+MCTP is a general purpose  protocol so  it would  be impossible to enumerate
+all the use cases, but some of the ones that are most topical are attestation
+and RAS support.  There are a handful of protocols built on top of MCTP, to
+include PLDM and SPDM, both specified by the DMTF.
+
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0240_1.0.0.pdf
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.0.pd
+
+SPDM entails various usages, including device identity collection, device
+authentication, measurement collection, and device secure session establishment.
+
+PLDM is more likely to be used  for hardware support: temperature, voltage, or
+fan sensor control.
+
+At least two companies have devices that can make use of the mechanism. One is
+Ampere Computing, my employer.
+
+The mechanism it uses is called Platform Communication Channels is part of the
+ACPI spec: https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/14_Platform_Communications_Channel/Platform_Comm_Channel.html
+
+Since it is a socket interface, the system administrator also has  the ability
+to ignore an MCTP link that they do not want to enable.  This link would be visible
+to the end user, but would not be usable.
+
+If MCTP support is disabled in the Kernel, this driver would also be disabled.
+
+PCC is based on a shared buffer and a set of I/O mapped memory locations that the
+Spec calls registers.  This mechanism exists regardless of the existence of the
+driver. Thus, if the user has the ability to map these  physical location to
+virtual locations, they have the ability to drive the hardware.  Thus, there
+is a security aspect to this mechanism that extends beyond the responsibilities
+of the operating system.
+
+If the hardware does not expose the PCC in the ACPI table, this device will never
+be enabled.  Thus it is only an issue on hard that does support PCC.  In that case,
+it is up to the remote controller to sanitize communication; MCTP will be exposed
+as a socket interface, and userland can send any crafted packet it wants.  It would
+thus also be incumbent on the hardware manufacturer to allow the end user to disable
+MCTP over PCC communication if they did not want to expose it.
+
+Previous implementations of the pcc version of the mailbox protocol assumed the
+driver was directly managing the shared memory region.  This lead to duplicated
+code and missed stpes of the PCC protocol. The first patch in this series makes
+it possible for mailbox/pcc to manage the writing of the buffer prior to sending
+messages.  It also fixes the notification of message transmission completion.
+
+Previous Version:
+https://lore.kernel.org/lkml/20250710191209.737167-1-admiyo@os.amperecomputing.com/
+
+Changes in V23:
+- Trigger for direct management of shared buffer based on flag in pcc channel
+- Only initialize rx_alloc for inbox, not outbox.
+- Read value for requested IRQ flag out of channel's current_req
+- unqueue an sk_buff that failed to send
+- Move error handling for skb resize error inline instead of goto
+
+Changes in V22:
+- Direct management of the shared buffer in the mailbox layer.
+- Proper checking of command complete flag prior to writing to the buffer.
+
+Changes in V21:
+- Use existing constants PCC_SIGNATURE and PCC_CMD_COMPLETION_NOTIFY
+- Check return code on call to send_data and drop packet if failed
+- use sizeof(*mctp_pcc_header) etc,  instead of structs for resizing buffers
+- simplify check for ares->type != PCC_DWORD_TYPE
+- simply return result devm_add_action_or_reset
+- reduce initializer for  mctp_pcc_lookup_context context = {};
+- move initialization of mbox dev into mctp_pcc_initialize_mailbox
+- minor spacing changes
+
+Changes in V20:
+- corrected typo in RFC version
+- removed spurious space
+- tx spin lock only controls access to shared memory buffer
+- tx spin lock not eheld on error condition
+- tx returns OK if skb can't be expanded
+
+Changes in V19:
+- Rebased on changes to PCC mailbox handling
+- checks for cloned SKB prior to transmission
+- converted doulbe slash comments to C comments
+
+Changes in V18:
+- Added Acked-By
+- Fix minor spacing issue
+
+Changes in V17:
+- No new changes. Rebased on net-next post 6.13 release.
+
+Changes in V16:
+- do not duplicate cleanup after devm_add_action_or_reset calls
+
+Changes in V15:
+- corrected indentation formatting error
+- Corrected TABS issue in MAINTAINER entry
+
+Changes in V14:
+- Do not attempt to unregister a netdev that is never registered
+- Added MAINTAINER entry
+
+Changes in V13:
+- Explicitly Convert PCC header from little endian to machine native
+
+Changes in V12:
+- Explicitly use little endian conversion for PCC header signature
+- Builds clean with make C=1
+
+Changes in V11:
+- Explicitly use little endian types for PCC header
+
+Changes in V11:
+- Switch Big Endian data types to machine local for PCC header
+- use mctp specific function for registering netdev
+
+Changes in V10:
+- sync with net-next branch
+- use dstats helper functions
+- remove duplicate drop stat
+- remove more double spaces
+
+Changes in V9:
+- Prerequisite patch for PCC mailbox has been merged
+- Stats collection now use helper functions
+- many double spaces reduced to single
+
+Changes in V8:
+- change 0 to NULL for pointer check of shmem
+- add semi for static version of pcc_mbox_ioremap
+- convert pcc_mbox_ioremap function to static inline when client code is not being built
+- remove shmem comment from struct pcc_chan_info descriptor
+- copy rx_dropped in mctp_pcc_net_stats
+- removed trailing newline on error message
+- removed double space in dev_dbg string
+- use big endian for header members
+- Fix use full spec ID in description
+- Fix typo in file description
+- Form the complete outbound message in the sk_buff
+
+Changes in V7:
+- Removed the Hardware address as specification is not published.
+- Map the shared buffer in the mailbox and share the mapped region with the driver
+- Use the sk_buff memory to prepare the message before copying to shared region
+
+Changes in V6:
+- Removed patch for ACPICA code that has merged
+- Includes the hardware address in the network device
+- Converted all device resources to devm resources
+- Removed mctp_pcc_driver_remove function
+- uses acpi_driver_module for initialization
+- created helper structure for in and out mailboxes
+- Consolidated code for initializing mailboxes in the add_device function
+- Added specification references
+- Removed duplicate constant PCC_ACK_FLAG_MASK
+- Use the MCTP_SIGNATURE_LENGTH define
+- made naming of header structs consistent
+- use sizeof local variables for offset calculations
+- prefix structure name to avoid potential clash
+- removed unnecessary null initialization from acpi_device_id
+
+Changes in V5
+- Removed Owner field from ACPI module declaration
+- removed unused next field from struct mctp_pcc_ndev
+- Corrected logic reading  RX ACK flag.
+- Added comment for struct pcc_chan_info field shmem_base_addr
+- check against current mtu instead of max mtu for packet length\
+- removed unnecessary lookups of pnd->mdev.dev
+
+Changes in V4
+- Read flags out of shared buffer to trigger ACK for Type 4 RX
+- Remove list of netdevs and cleanup from devices only
+- tag PCCT protocol headers as little endian
+- Remove unused constants
+
+Changes in V3
+- removed unused header
+- removed spurious space
+- removed spurious semis after functiomns
+- removed null assignment for init
+- remove redundant set of device on skb
+- tabify constant declarations
+- added  rtnl_link_stats64 function
+- set MTU to minimum to start
+- clean up logic on driver removal
+- remove cast on void * assignment
+- call cleanup function directly
+- check received length before allocating skb
+- introduce symbolic constatn for ACK FLAG MASK
+- symbolic constant for PCC header flag.
+- Add namespace ID to PCC magic
+- replaced readls with copy from io of PCC header
+- replaced custom modules init and cleanup with ACPI version
+
+Changes in V2
+
+- All Variable Declarations are in reverse Xmass Tree Format
+- All Checkpatch Warnings Are Fixed
+- Removed Dead code
+- Added packet tx/rx stats
+- Removed network physical address.  This is still in
+  disucssion in the spec, and will be added once there
+  is consensus. The protocol can be used with out it.
+  This also lead to the removal of the Big Endian
+  conversions.
+- Avoided using non volatile pointers in copy to and from io space
+- Reorderd the patches to put the ACK check for the PCC Mailbox
+  as a pre-requisite.  The corresponding change for the MCTP
+  driver has been inlined in the main patch.
+- Replaced magic numbers with constants, fixed typos, and other
+  minor changes from code review.
+
+Adam Young (2):
+  mailbox/pcc: support mailbox management of the shared buffer
+  mctp pcc: Implement MCTP over PCC Transport
+
+ MAINTAINERS                 |   5 +
+ drivers/mailbox/pcc.c       | 102 ++++++++++-
+ drivers/net/mctp/Kconfig    |  13 ++
+ drivers/net/mctp/Makefile   |   1 +
+ drivers/net/mctp/mctp-pcc.c | 347 ++++++++++++++++++++++++++++++++++++
+ include/acpi/pcc.h          |  29 +++
+ 6 files changed, 493 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/net/mctp/mctp-pcc.c
+
+-- 
+2.43.0
+
 
