@@ -1,166 +1,126 @@
-Return-Path: <linux-kernel+bounces-732225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A922B063AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:00:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3942AB063AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40C511AA756F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:00:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B781AA7D89
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E552561AE;
-	Tue, 15 Jul 2025 15:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A8D253B7A;
+	Tue, 15 Jul 2025 16:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lD9bdtUg"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGaf+6DZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993F6253B56;
-	Tue, 15 Jul 2025 15:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B292459E5;
+	Tue, 15 Jul 2025 16:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752595198; cv=none; b=CWSZx8QLjxra8zBxe9pvm3SUOV6PCjmdF5lUmouOtiO5um/YNWhq7TJ8RTn33QInUEKa8OZsKBEWdGIQdjNvqv3ce+UkxcE8b45CjofyN6fi377WRajPoutEQk/842bEwB4mXISbi//A+cTIte4Oitqi0pQO1Pb4RzSS6gtvesY=
+	t=1752595220; cv=none; b=qkBVmz3cCF57ZLKJYdj8LYjz2ut0T9WtCghtQ3Tmx7h4D/Ao21GX8FsBzLI3WEePCDcayEPg/ZuBZNxYZTs/JSNonrxnJYm8U0h42TkhLEsfQxphrKgvwRReZk0OqDxIhQgfG+G6E9xrHwc3crPidEZGQ9QEKR27VWo2FzMQemA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752595198; c=relaxed/simple;
-	bh=mRVDc7VBPUxcHyMhRkWzoKQfgdbXvRIk1kpQbOae6hI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JKk/z+sCcVq67x2ZSHo2PjvtvgqBPAdaczsyZtV1CSG3YvAfmZ1mEJQ1EoBu/u1dxzZRS+PD6bpx2gAVrvrDjlu9wSFgMSbnpajAYgmWfufqrKA+p7ZSIXpsI7fOthsJbOolNdLIH8iCzazthQpVBKADE94WlmsaisU5b/nEc3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lD9bdtUg; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4ab61ecc1e8so19726871cf.1;
-        Tue, 15 Jul 2025 08:59:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752595195; x=1753199995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zpp6BY4iQxdZ1LY1LeK+b3jQoEtb6vrztAEcp2I/0D0=;
-        b=lD9bdtUgdJT5lUwted+2zMSEnSHAXPd22Lsy2cWbBoi4D5RhQyBD+wNVPGQwQhVW2h
-         7SmF808/t70uowesGNQR/hee3I3Pexmh3LFdS3uUd1GR7zvowfq419Aa7AgWnNkI+95n
-         dJC1jZur6NRjG927uDI3n6ZTSjXotoBF3qPv4+e+es0/3jcEmRAkNvoww32NCRpZVrZv
-         89Ro6clCJu4eTuI1XYkvGeM+KnjPJkWKDiDlvBMjSXt5XOw6apmfB1zQfvFEHG0wmZbK
-         cd716GX6v2/wiuZO/Zlw+rOvd5OqS8nrntsLOnv5hwJHfU3jz7xpPZ/2Ef8n9cpeQiHB
-         ZCHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752595195; x=1753199995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zpp6BY4iQxdZ1LY1LeK+b3jQoEtb6vrztAEcp2I/0D0=;
-        b=oFZVdiBxDiWWcvE5X/2uzkzrXfH7N6l970WnP1CpgxMSm9INKm0TODkrqg7Qave82O
-         iIil9rwDvee8LRzIxdXKcWw/yI1PQvvhd+TabHNLOE45RzskGVJT40tk3pz8Jvfvd/+R
-         kN8US49unISqIh18/X/2a2kNjrZVdVeZ53F52TzCAkN6nGQOOd14u2D7utXdiZcKgUtn
-         7o704vQvqruOgajVwuPY6auQtjif00poDnlEch0/KMfgmd8E/h2ZPXxVcDSozr3RKiU1
-         wmcuJslBlgGRldty4f/EP3MIkfDBd/Bao4mWXbSJtRjoFDsZDUE/x3N0CZv6UAOAOHTr
-         hpxg==
-X-Forwarded-Encrypted: i=1; AJvYcCU22QTsk9OGwaBcrVdaHP1OthCZypuEaV1a3rlGXjRusnU5gpxN5KiHOyURxUQ8TSAq/K0RPAnYH8Hn@vger.kernel.org, AJvYcCU56eXKS1fqXx7CqMfbztc2cLj0NeewVUgbAZhY+SYkIY1Nr1yFUz7nwJ1kdeZN9Bc0A2OjbeDDPlu0mNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUvrcjtJqmCtRDpD1IRktNVU0C2eO5fbwSa50GrAWERrIomDlQ
-	7cnGUrmXRH6K0FENr9irW+SPHGSEjOv8Atgj8JQcKgyueoczKKBxnEOA+jEsqdC5Caxc+H1JPeV
-	vMQnW89BwYKoeA0YygdyIJ8dXNUKO2Bm/gvl+
-X-Gm-Gg: ASbGncsz2JZ7zjRGCvouIh3wm00FDQCY4sf2uOgg/XKue/0oTznNnzMIj4xCVKx3hyv
-	F/kwcrZyjeiVSm1gt7EH+sHKMQYVSH8AzWSgBjyOFQxhMhFoYRg9nO/WHKfyJjzVumSxOqyteyK
-	q/9O4ZOX1VzVONzuAzS8T/shb2zgUEtFCRlUtXdvXNBITA+VlpAD51Jz4TC4z8GU2UEnTXxtKr6
-	YZudr25w5gqHF5A+CNt+voxdO6blbG5a9d49ulDQw==
-X-Google-Smtp-Source: AGHT+IEBXIaZhGQhCSSsOSP3twlWowibMpLtZUVFTzn/frLTUFIcCvnsGLq+1xzdsllFKnC3WQHhVfF50giWloHhub0=
-X-Received: by 2002:a05:622a:5a9b:b0:4ab:8f1b:c032 with SMTP id
- d75a77b69052e-4ab8f1bc27dmr8635791cf.21.1752595195051; Tue, 15 Jul 2025
- 08:59:55 -0700 (PDT)
+	s=arc-20240116; t=1752595220; c=relaxed/simple;
+	bh=NFRRAPbroRcvQO7QrkrwIOxWqkuN0ik8gVTjoc3MuBU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=VCLFsSGh2kMy5CEa28F9IbWbxMr59Lp/N85z3gPGG2/AvaUa/StQ44TjW/Ssq+9wjLzfzHu9ponoaLFMi/WqdeNk3d62RLMX4t3F7mGzztiX/Dekjry+bJgLajXfKmzE2KkauI6DDco/tJ+B5ZooKOS+8YESDmk394Xgiusb/Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGaf+6DZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28EDFC4CEF1;
+	Tue, 15 Jul 2025 16:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752595219;
+	bh=NFRRAPbroRcvQO7QrkrwIOxWqkuN0ik8gVTjoc3MuBU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=jGaf+6DZBhfFDtMRlzIuwww6S27E7wxGMCcofLroSTG1Ehn//IjQfvrM7iYnaRAQt
+	 pzIXQhxzzIFeilFzRhmPpUDNRztCwE/0YnH5oY1xLvpRMrFr46+UiU5iUJvSSh+0v7
+	 9sMk0zr40AFePOi9hTnsUflJEWKXEASkox+ivR16tJ16FrGu8vbbMuwx1iDmzuznVn
+	 NWScGbnGI2DIY973GiIVaWPMaWXPx7wJJ6MOmEtXbS56c/IaoophlBlwjIhSUncALw
+	 b5MQkdC8qGpK/mnrKNLHEZT/5SUGIN1v/eUcHrLKFbbUumh5rjJm9j8RLZ1vwoaN6C
+	 pdqglOeP3JCNQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250713011714.384621-1-thepacketgeek@gmail.com> <20250715121929.00007ef2@huawei.com>
-In-Reply-To: <20250715121929.00007ef2@huawei.com>
-From: Matthew Wood <thepacketgeek@gmail.com>
-Date: Tue, 15 Jul 2025 08:59:42 -0700
-X-Gm-Features: Ac12FXxAzW0uVtb36JCTyOcyzNQDeaDgZB89Uyif1-eOryyQh_h-ZsumrnHXf0k
-Message-ID: <CADvopvZZKCdwT=XfaJzgFRgH=eXcTmjsdA8-86hJaki5PDjx=A@mail.gmail.com>
-Subject: Re: [PATCH pci-next v1 0/1] PCI/sysfs: Expose PCIe device serial number
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 18:00:14 +0200
+Message-Id: <DBCR5IFQFMUU.23UNP95G4NKWA@kernel.org>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Trevor Gross"
+ <tmgross@umich.edu>, <linux-mm@kvack.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] rust: alloc: take the allocator into account for
+ FOREIGN_ALIGN
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Danilo Krummrich"
+ <dakr@kernel.org>, "Matthew Wilcox" <willy@infradead.org>, "Tamir
+ Duberstein" <tamird@gmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250715-align-min-allocator-v1-0-3e1b2a5516c0@google.com>
+ <20250715-align-min-allocator-v1-2-3e1b2a5516c0@google.com>
+In-Reply-To: <20250715-align-min-allocator-v1-2-3e1b2a5516c0@google.com>
 
-On Tue, Jul 15, 2025 at 4:19=E2=80=AFAM Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
+On Tue Jul 15, 2025 at 3:46 PM CEST, Alice Ryhl wrote:
+> When converting a Box<T> into a void pointer, the allocator might
+> guarantee a higher alignment than the type itself does, and in that case
+> it is guaranteed that the void pointer has that higher alignment.
 >
-> On Sat, 12 Jul 2025 18:17:12 -0700
-> Matthew Wood <thepacketgeek@gmail.com> wrote:
+> This is quite useful when combined with the XArray, which you can only
+> create using a ForeignOwnable whose FOREIGN_ALIGN is at least 4. This
+> means that you can now always use a Box<T> with the XArray no matter the
+> alignment of T.
 >
-> > Add a single sysfs read-only interface for reading PCIe device serial
-> > numbers from userspace in a programmatic way. This device attribute
-> > uses the same 2-byte dashed formatting as lspci serial number capabilit=
-y
-> > output:
-> >
-> >     more /sys/devices/pci0000:c0/0000:c0:01.1/0000:c1:00.0/0000:c2:1f.0=
-/0000:cc:00.0/device_serial_number
-> >     00-80-ee-00-00-00-41-80
-> >
->
-> What is the use case for this? I can think of some possibilities but good=
- to
-> see why you care here.
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Two primary use cases we have are for inventory tooling and health
-check tooling; being able to
-reliably collect device serial numbers for tracking unique devices
-whose BDFs could change is
-critical. Sometimes in the process of hardware troubleshooting, cards
-are swapped and BDF idents
-change but we want to track devices by serial number without possibly
-fragile regexps.
+Hey this is cool!
 
->
->
-> > Accompanying lspci output:
-> >
-> >     sudo lspci -vvv -s cc:00.0
-> >         cc:00.0 Serial Attached SCSI controller: Broadcom / LSI PCIe Sw=
-itch management endpoint (rev b0)
-> >             Subsystem: Broadcom / LSI Device 0144
-> >             ...
-> >             Capabilities: [100 v1] Device Serial Number 00-80-ee-00-00-=
-00-41-80
-> >             ...
-> >
-> > If a device doesn't support the serial number capability, userspace wil=
-l receive
-> > an empty read:
->
-> Better if possible to not expose the sysfs attribute if no such capabilit=
-y.
-> We already have pcie_dev_attrs_are_visible() so easy to extend that.
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-That's a great point, it looks like I could match on the attribute
-name to specifically hide device_serial_number
-if the device does not support the cap, but I can't find any precedent
-for matching on a->name in pci-sysfs.c.
-Would something like this be alright after the check for pci_is_pcie(dev):
+One question below.
 
-    if (a->name =3D=3D "device_serial_number") {
-        // check if device has serial, if not return 0
-    }
+> ---
+>  rust/kernel/alloc/kbox.rs | 15 +++++++++++----
+>  rust/kernel/sync/arc.rs   |  6 +++---
+>  2 files changed, 14 insertions(+), 7 deletions(-)
 
->
->
-> >
-> >     more /sys/devices/pci0000:00/0000:00:07.1/device_serial_number
-> >     echo $?
-> >     0
-> >
-> >
-> > Matthew Wood (1):
-> >   PCI/sysfs: Expose PCIe device serial number
-> >
-> >  drivers/pci/pci-sysfs.c | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> >
->
+> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+> index 63a66761d0c7d752e09ce7372bc230661b2f7c6d..74121cf935f364c16799b5c31=
+cc88714dfd6b702 100644
+> --- a/rust/kernel/sync/arc.rs
+> +++ b/rust/kernel/sync/arc.rs
+> @@ -373,10 +373,10 @@ pub fn into_unique_or_drop(self) -> Option<Pin<Uniq=
+ueArc<T>>> {
+>      }
+>  }
+> =20
+> -// SAFETY: The pointer returned by `into_foreign` comes from a well alig=
+ned
+> -// pointer to `ArcInner<T>`.
+> +// SAFETY: The pointer returned by `into_foreign` was originally allocat=
+ed as an
+> +// `KBox<ArcInner<T>>`, so that type is what determines the alignment.
+>  unsafe impl<T: 'static> ForeignOwnable for Arc<T> {
+> -    const FOREIGN_ALIGN: usize =3D core::mem::align_of::<ArcInner<T>>();
+> +    const FOREIGN_ALIGN: usize =3D <KBox<ArcInner<T>> as ForeignOwnable>=
+::FOREIGN_ALIGN;
+
+Do we at some point also want to give people the option to use vmalloc
+for `Arc`?
+
+---
+Cheers,
+Benno
+
+> =20
+>      type Borrowed<'a> =3D ArcBorrow<'a, T>;
+>      type BorrowedMut<'a> =3D Self::Borrowed<'a>;
+
 
