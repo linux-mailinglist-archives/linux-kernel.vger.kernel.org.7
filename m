@@ -1,161 +1,141 @@
-Return-Path: <linux-kernel+bounces-732059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D57B061BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:47:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8CFB06190
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30FF2172C17
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED291C801C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7861D8DE1;
-	Tue, 15 Jul 2025 14:29:20 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0C122DFB5;
+	Tue, 15 Jul 2025 14:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="EDaNcNLd"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6E31487F4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DA41FF1B4;
+	Tue, 15 Jul 2025 14:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752589760; cv=none; b=rYyWbSCzM6QWaXy3y68HOUGMfmYwdUI4gYHJ22BwoQzUPCD3FoZ52c3O5RLwNN7+IqSRBQN5k2HYIykw98VnE/zGtyWKNMAd1yb/qUfFL06qsOlypiUjEW6AEj1veHe6LzHsgk3cSRxuc9Lwp4/vAhtTLjkAYqqw/JWIFozN94A=
+	t=1752590134; cv=none; b=OVsQ0NjinU65lmQbovJZb6nzsmpPTdbJLwYnY5CEY0ve/BLAV6h6UL+J33m8AjWw+lHerZhgd6zksPvc7Lkl3umcijiIasdQuqpc1QtFYOQMueBfdBkCRO9l1vlg9qvVdAqCim/SCMydXlEWuT5wYBMP5L1QHdExBfTbQ4cuEzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752589760; c=relaxed/simple;
-	bh=1VZzoaymuieyPmi3zmkGTg2NKfaJ1Upfu5llFVSXoAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQz7MZTl7zysZ5WKAvLaea12LFVrz7OOJvBi4v8xFmkte/Wn8+Kd6wgcCGNQ/81KXTU2MNJm7m9vBrGy8zmkGQQw2JyUgqcGfKdIqzVifcMlq2t//WG3neUeIKn6kZrwrZDxdpkffYEsdNPQzMCsdLruFBBlXWr6IuzLd8Ic2n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ubgeh-0005Oy-KP; Tue, 15 Jul 2025 16:29:15 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ubgeh-008at9-0R;
-	Tue, 15 Jul 2025 16:29:15 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id CB8C04425BD;
-	Tue, 15 Jul 2025 14:29:14 +0000 (UTC)
-Date: Tue, 15 Jul 2025 16:29:14 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Andrei Lalaev <andrey.lalaev@gmail.com>
-Cc: mailhol.vincent@wanadoo.fr, linux-kernel@vger.kernel.org, 
-	linux-can@vger.kernel.org
-Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
-Message-ID: <20250715-smart-ultra-avocet-d7937a-mkl@pengutronix.de>
-References: <20250714175520.307467-1-andrey.lalaev@gmail.com>
- <20250715-almond-zebra-of-perception-9d2e6c-mkl@pengutronix.de>
- <b8221fe9-a167-4bcc-81bf-fb793712b48e@gmail.com>
+	s=arc-20240116; t=1752590134; c=relaxed/simple;
+	bh=dgu36HNp6Ey5tbWJzea7xTs+Q7Z2LXx/xuvpNQ1pA7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XFLV8SeGAcEyEUxXjxLR8ywrUkflVF66YumYWtEgqDzvb7JkPH/4wdHX3f80TqY1FuvTrXJJycaO+S1pdtNhJrPWC3/KfnTjxHQOh08rYLX06lWPZkxYU/BTv0Yvs9Hj+eyhpGEQnG9ivLxOl9jJ0av54RwzQBqMRS87XFo2+2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=EDaNcNLd; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FE4gGV025660;
+	Tue, 15 Jul 2025 16:34:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	dgu36HNp6Ey5tbWJzea7xTs+Q7Z2LXx/xuvpNQ1pA7w=; b=EDaNcNLd5XIOq7Sr
+	WEFVM9cWVQkLDtI+tD5DoTxUM1/PjExjGSx895DC4+l386R7fL28nPGPptNoSqxq
+	eAdz2y9fmkQPer6/hLzzgavwPgIVa+JQIJbEd2TgJiw2sMrN3uCfIma3AeiVT9+y
+	GKX/c3E236Qy1buK2A4KGTLtvfS5A0A9SI+WYNctil/EZO1NOz59AVfITTfdHEHc
+	xZZL0kRPox+X+93cIKfd+woucWbm2t4V3Ecc6BfuuUZBQMZy7qhUG7ZnWmvUrscN
+	6rWp21CgMYxQ+5IhN3Lzaq1gzMSuLq6lcYk1SnIt2d1VE1Enh8n7zGKsmnWkq6tp
+	muaJoA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47ud4mp9pr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Jul 2025 16:34:36 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B01FE40045;
+	Tue, 15 Jul 2025 16:31:51 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E1DE1BAFFBB;
+	Tue, 15 Jul 2025 16:29:28 +0200 (CEST)
+Received: from [10.130.74.78] (10.130.74.78) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
+ 2025 16:29:27 +0200
+Message-ID: <1df0432a-b950-4baf-93f1-25ced11ab243@foss.st.com>
+Date: Tue, 15 Jul 2025 16:29:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uprcwe72mjwulkb5"
-Content-Disposition: inline
-In-Reply-To: <b8221fe9-a167-4bcc-81bf-fb793712b48e@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/9] drm/stm/dw_mipi_dsi-stm: convert from round_rate() to
+ determine_rate()
+To: Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Shawn Guo
+	<shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix
+ Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Clark
+	<robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav
+ Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang
+	<jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <freedreno@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>
+References: <20250710-drm-clk-round-rate-v1-0-601b9ea384c3@redhat.com>
+ <20250710-drm-clk-round-rate-v1-6-601b9ea384c3@redhat.com>
+Content-Language: en-US
+From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20250710-drm-clk-round-rate-v1-6-601b9ea384c3@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-15_03,2025-07-15_01,2025-03-28_01
 
 
---uprcwe72mjwulkb5
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
-MIME-Version: 1.0
 
-On 15.07.2025 16:24:22, Andrei Lalaev wrote:
-> I was also surprised because this callback isn't marked as mandatory
-> and that there are no additional checks.
->=20
-> >=20
-> > What about this fix?
-> >=20
-> > diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlin=
-k.c
-> > index 13826e8a707b..94603c9eb4aa 100644
-> > --- a/drivers/net/can/dev/netlink.c
-> > +++ b/drivers/net/can/dev/netlink.c
-> > @@ -285,6 +285,12 @@ static int can_changelink(struct net_device *dev, =
-struct nlattr *tb[],
-> >          }
-> > =20
-> >          if (data[IFLA_CAN_RESTART_MS]) {
-> > +                if (!priv->do_set_mode) {
-> > +                        NL_SET_ERR_MSG(extack,
-> > +                                       "device doesn't support restart=
- from Bus Off");
-> > +                        return -EOPNOTSUPP;
-> > +                }
-> > +
-> >                  /* Do not allow changing restart delay while running */
-> >                  if (dev->flags & IFF_UP)
-> >                          return -EBUSY;
-> > @@ -292,6 +298,12 @@ static int can_changelink(struct net_device *dev, =
-struct nlattr *tb[],
-> >          }
-> > =20
-> >          if (data[IFLA_CAN_RESTART]) {
-> > +                if (!priv->do_set_mode) {
-> > +                        NL_SET_ERR_MSG(extack,
-> > +                                       "device doesn't support restart=
- from Bus Off");
-> > +                        return -EOPNOTSUPP;
-> > +                }
-> > +
-> >                  /* Do not allow a restart while not running */
-> >                  if (!(dev->flags & IFF_UP))
-> >                          return -EINVAL;
->=20
-> Thanks for the patch. As expected, it fixes the kernel OOPS,
-> but the interface never leaves the BUS_OFF state.
+On 7/10/25 19:43, Brian Masney wrote:
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
 
-Which device and which firmware are you using?
+Hi Brian,
 
-The gs_usb/candlelight interface is un(der)defined when it comes to
-bus-off handling.
+Acked-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 
-I think the original candlelight with the stm32f072 does auto bus-off
-recovery. Not sure about the candlelight on stm32g0b1.
+Thanks !
 
-regards,
-Marc
+Best regards,
+Raphaël
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---uprcwe72mjwulkb5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmh2ZbYACgkQDHRl3/mQ
-kZwkUQgAjo4Axu9yo94qLhfXhgrAn3QjOBCbcH0jCFtXRnpFa+HnuFYNNpvbCIgg
-I03VI9lG9E+SU8tcdTQub9DNMDUY/P8/xhh+GJ0V9i54dfIa6/pgfkTDNdn8mVhZ
-g8uffCc3t0jET1s2y7YOD23UtBIJ/K1IVd2ZB9CvRxy3Cnptjo61NVk5dTVmaV6d
-YysXAiJuTxbRH8BFE6dBXHjdlnsCI35tMEiTGUSuU+6Nn72AyR74w1eJpQBpJJgK
-tUHiI3tS7U8b7Guf3bttdFHF7mRMhgmMmsZpc0XekQVgDhno10T4paLqH8iBto46
-kcmXpIp5uL9sosSLwp+bH0yv8p92qA==
-=OSOz
------END PGP SIGNATURE-----
-
---uprcwe72mjwulkb5--
 
