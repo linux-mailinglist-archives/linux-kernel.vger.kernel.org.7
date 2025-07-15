@@ -1,159 +1,98 @@
-Return-Path: <linux-kernel+bounces-732411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D2DB0666A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:01:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48308B0666C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628233B1256
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:00:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABBD7B4A96
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65257279907;
-	Tue, 15 Jul 2025 19:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4E4298984;
+	Tue, 15 Jul 2025 19:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YlqART+8"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eVY+z1bm"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747371F19A;
-	Tue, 15 Jul 2025 19:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF6284D08;
+	Tue, 15 Jul 2025 19:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606069; cv=none; b=SwoBYjo2Uwp9gybbGLreqWkyINXmb9fGmUz3KRPnj6IzSrKKkPxEjWC1d4u7CpSiGR7cSopEhlpfST8I3VvOLQVjJP0R2lmWmargkcFHqo/bV3M1FvOObE0YZywDJU104n0AJspNLTvmOFdyCScFRV6UNwJhE429NnAX8zuubs0=
+	t=1752606124; cv=none; b=AUv/Vx0Rbv+kfdBY0tUl32Ch2qKHSgJKYuJoli4gd61MR+Odx+eCrRCTmpDnZr9WgweKV6oivsyfz7lOIbRf9cHjtMGb4FjGcjVdsmywtx6QZQrv2pfW9X/0eMkZN3Gidot4G5DcTcGLmS6Ko9sQIm5quqjuZ/eJ1sIKMsQVaLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606069; c=relaxed/simple;
-	bh=DzC7FSQt83sXsaK/PxNQFpXQ0m8C+erLEI5dnUrtrxY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=djw4d25y0n1h5vvRTkSy3cgC7MWd+SSJDhicLvbbjdDJ28lTsmSPUQ18Xu+b1SkjUolQ0S7Dc1GMn487Mk5X1QWpqnaRDgRfjMqBbo7RT4gxiH2Qh6lRqd7TjQmnKRTpPkoGaRhoBF7GR8NdpGNQWFLbdOLC1LMqnjflrOgPydM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YlqART+8; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1752606046; x=1753210846; i=markus.elfring@web.de;
-	bh=07Pa+856qEFo2V8QLHWyjRVReH2nqIS67HTT5nxhfOk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YlqART+8hV4BjX8nIa1p1U1XIq6cMK4oq/sNYbg+BRCAgkbFyU3hy8SF6VJYB6Bd
-	 j1zljrTLkiJP4BeqcT4Fxu4J+tcjCd1VzV6GevRjADnnfYJkkusgl6h8hxuQZwD/9
-	 g8KGrSHju4LPMI40i/se8wkgTluvtmSKUm+Gio+6bXt5pu6WR7YdrFZAueSWehD13
-	 nji8FJe9Cn4QCp5mGTF6nfW9UmUSBK2ygpELGBG5hinTScx2L4JZvB0FkrZTcozuY
-	 etYcKaW3ykkUB5LAurgQL3gE4BeE7vNB9pPE2ibwgxSeTtftG6rNM0jk81EOjoj94
-	 RnDYwDzn/nPjeX0t3A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.1]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mmymz-1v0bWr1u3L-00dCx2; Tue, 15
- Jul 2025 21:00:46 +0200
-Message-ID: <01498bc3-4885-4b6e-a437-af3dca58f187@web.de>
-Date: Tue, 15 Jul 2025 21:00:43 +0200
+	s=arc-20240116; t=1752606124; c=relaxed/simple;
+	bh=+sAh1If8BjuK0pvB9U7uBcJ5tysPZ7oRAhi8SvIJA+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQT+A7kOp5373U8kPC3cfTtOfA4CfwLUp/Qm76NRxPPPtvUFcXFvza/VSh3pTEUQa8Y12pgu84ygAoAx2/jxFatH782fHFsuvifF2NFMj/4MS5Yrarw/s3qZ168ayJSt5WcYjjFfNPS3B44EAxWEkMFL61v08E+mQYSJofJIcD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eVY+z1bm; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vfvPe4HP02bQoj3HUfT9H152gPlNxmP69GglcQVHFyM=; b=eVY+z1bmlvCZqlVTJDwrLbv/8K
+	K8zWTx0JwsToQZm4D2uDxJrqKdRYAKr8AAAefEzi+EdCMQXZqW/W+EHXf3uRNJIMMIexEpeTSZ910
+	4qETpdv9vkBB3lyU51GWIkeeCQPZHgtXcHrTfSJuFTkSM443ytFn4p1EpVpy6PDrwSAOpsbaBXLSK
+	lPBly1xAefeYOFWz7Ldg965PZ0LxaxIJ5KlZrqMNzsmV5pzlIFU/Ae4NCfSfmrcR05S8eqHzQNuRx
+	x9md/BT9ZEj6PL6/GcfNYYBzFbi2zhilf1KFaT3Nl2w9D323ctnaDyO+yVLMv9Ovngdcrqro7qqjz
+	czuAshjw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubkuN-00000009vEi-0K7n;
+	Tue, 15 Jul 2025 19:01:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E3D623001AA; Tue, 15 Jul 2025 21:01:41 +0200 (CEST)
+Date: Tue, 15 Jul 2025 21:01:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v13 10/14] unwind: Clear unwind_mask on exit back to user
+ space
+Message-ID: <20250715190141.GF4105545@noisy.programming.kicks-ass.net>
+References: <20250708012239.268642741@kernel.org>
+ <20250708012359.345060579@kernel.org>
+ <20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
+ <20250715084932.0563f532@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Gabriel Goller <g.goller@proxmox.com>, netdev@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, David Ahern <dsahern@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Nicolas Dichtel <nicolas.dichtel@6wind.com>, Paolo Abeni
- <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>,
- Simon Horman <horms@kernel.org>
-References: <20250711124243.526735-1-g.goller@proxmox.com>
-Subject: Re: [PATCH net-next v6] ipv6: add `force_forwarding` sysctl to enable
- per-interface forwarding
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250711124243.526735-1-g.goller@proxmox.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7kGtyvJj1FDTVdwnxIFDmsgAERx5RXZBaqIFcRPYJYMOMJdR7JC
- 0gOhI0j81bFvBKKRANw8p/bqAJv+UhuNLhig9jvowCOr2T0tB3tYYTpQ3pnCakyim5XpjRy
- 9iEqMkoFME6TaZ6DH6GzhMuYVFKWsWgcxEZbfZuJHPz0KJvgo9oPNwIMIaBlFWqM5DhR6/x
- QRjrO4CZCd6QmvTEXiJww==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VEMtaAZMOok=;kH4kcySVQdCULVBcGPtpLlS1G41
- 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
- 5JzMNgP8gGUPlSzbQPlPeZJkIc20C0SiANI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715084932.0563f532@gandalf.local.home>
 
-=E2=80=A6
-> a netfilter rule. This is especially cumbersome if you have lots of
-> interface and only want to enable forwarding on a few. According to the
+On Tue, Jul 15, 2025 at 08:49:32AM -0400, Steven Rostedt wrote:
+> > The below is the last four patches rolled into one. Not been near a
+> > compiler.
+> 
+> Are you recommending that I fold those patches into one?
 
-  interfaces?
+Not particularly; but given the terrible back and forth, the only sane
+way to 'show' my changes it from patch 6 onwards folded. If I were to
+diff against patch 9 it'd be a shitshow.
 
-
-=E2=80=A6
-> To preserver backwards-compatibility reset the flag (on all interfaces)
-=E2=80=A6
-
-  preserve?
-
-
-=E2=80=A6
-> ---
-> v6:=20
->     * rebase
->     * remove brackts around single line
-=E2=80=A6
-
-               brackets?
-
-
-Regards,
-Markus
+At the very least the SRCU thing ought to be broken back out. Not sure
+how many pieces it can reasonably be broken into, see what works.
 
