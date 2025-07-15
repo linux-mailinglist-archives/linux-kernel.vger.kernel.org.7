@@ -1,146 +1,100 @@
-Return-Path: <linux-kernel+bounces-731102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C6A9B04F0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:32:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E584B04F13
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E7C17FAE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:32:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98B117E3D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569D32586C7;
-	Tue, 15 Jul 2025 03:31:57 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A27625B2E3;
+	Tue, 15 Jul 2025 03:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zd6KwdYN"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320EE219E8;
-	Tue, 15 Jul 2025 03:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3391DE2DC
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 03:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752550317; cv=none; b=oO6aFQ7ewFV+BRAtVKyhpr2w3DNvImhzFRZUhM1ggYgXUFFRF2c/+vjxo5jPSrNcS0dhtmi0dLp2zZgivUWdDQ3+aCm6HNayMcs536fn6mpOT/pfNzx8QvbTY5eysnkJWIWu+rIuo6i2aHCsTBQ6FZpcQnqcGrPMER1PdZrwQEE=
+	t=1752550350; cv=none; b=rl5CFoAB4dhD0+jz/b0wYJGRbkWnzO5YKvAxSn3BWkRr50WjY84irZEJOEq5Z58nVcMMabigz7WCec1fGsVUXQjs8+qVReSdeqqao2sn0mosTKlAGc19m4qMsqwpuQYdDxOQCQ+nz51vJ0S+zcvJREV9V6wBSryauVpkwI8Y4qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752550317; c=relaxed/simple;
-	bh=UfrPomyM4QHQzzHyDs5E1q2C5/LNjhXQJcketkYOe0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LqQjfKs9J3ki6TrYdF2wAPLVHqxieATiElKViAbkvLdFbngNFQEEY4ecvcPFAyw2eGp0Sb4ae30J3TVCs670d6qIBvnq+CX/lZ5FBlE9o3n8wnKsQiwkIp5kHSfr7/M8KpNnTWJ69C5mYL52UgHIn7bDBimDjVednuWVlRUObQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bh4RZ6Rhsz29dpT;
-	Tue, 15 Jul 2025 11:29:14 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id A4128180043;
-	Tue, 15 Jul 2025 11:31:51 +0800 (CST)
-Received: from [10.174.179.80] (10.174.179.80) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 15 Jul 2025 11:31:51 +0800
-Message-ID: <3738cc55-f3fd-4b6c-b1dd-3f469c00b9f1@huawei.com>
-Date: Tue, 15 Jul 2025 11:31:50 +0800
+	s=arc-20240116; t=1752550350; c=relaxed/simple;
+	bh=G/6Qw0QGoAHpeXel4/1om42k7CxgpeTGL+SaD4Vk6Os=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LvzrSpMgdGqaQjZ59mGPOOBTS7rp7zkXg0x/DOSVmL/H67yHxYxwJa2Rp63nDa8+LaExiuipqvOeltZ82QUIwYrvFMNE2HOvqdbq5nFwxbHaXWLjvRe0YcWGKEwdzfPsJrjZjuJIg+vGkWYIiP/022WMbSlrgvPSC58J0xySI10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Zd6KwdYN; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-311bd8ce7e4so4318223a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 20:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1752550348; x=1753155148; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9wmdNxnEk7VZie3FE0SOO36LP3Yv8yGAzJzpW0/szP0=;
+        b=Zd6KwdYNpsyYPCr1aHzzFiQo72thnB4ar23zKi/2/sC0mvN40QZj9JrUT65XP2tpMi
+         nrOvoqPYpZRW2/B+eR9h21SZLkIwS10dGQ3GgEJE/QkYW7oC9L6o3fa+BmHPbMzGnfyA
+         jzgG9rj54axqWN0i9qio2PYAiFwFkJfZXiNxE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752550348; x=1753155148;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9wmdNxnEk7VZie3FE0SOO36LP3Yv8yGAzJzpW0/szP0=;
+        b=M8Y/yTZXW/BD0GVH1rq2y/y/9rQPIte2nP8K20155h+ImGAW0ITfAm6jCdoPwl4TXp
+         2NsHr/v6O9q0ZYfN363OOyD9i3rQWcbSK1fbtI4MZZAEBgdln/HHvf7YaqJ60YZA+C8n
+         4Numh+GrvJaMPhM9CozMP7cdk6KZ/Y7hIbpjSF3lQIZaGMr8zRr1FWFsPkOpzyLu7XPk
+         XlwqqHC40JP/KgdvVj3zkOV9TRwiLiWtmyd1yyy3FZZ8+HEbLxVnSef87POHvLdpSJXD
+         U2L71gm/0FvbNG4T1/dhvzpLWwZ7Z9paj1JP/oSvXhzjpUTbRNjTni+G6Bjj8eskLc+f
+         M63Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXbhpfpRsn38xljGLUaZwOYm4CKrMfMS3aUoUgbY6iTObiUJzobReDoUXYTkixanKv8WSON85hLzRmfUqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzka7fBad4GrLphSJOD4uOaFtk2gDt11dii5pud+o5JKrnBBVIh
+	izMc80lMjnmj6c9JW3HAt4/lA+z/Ap+h0kTmA2x4155akB346bZMXOF8AU2hPHvBfA==
+X-Gm-Gg: ASbGnctCNrQ4F4wHwmwzvgyHhnxhdocbGci1/xnF1E3nWKPfADx2P4FlfNSmDjwksRI
+	4+fDdkQmQUZBTzA0vWBoCurLmFqDgy5uAqLq/WxpycsMQJjoO+1A69zMwtWBjAJEwA4Flfi/Z0p
+	A+VC2HBDeP/pUui48SS2f1qWvZ3aw5kN2LCD77Vrca00NW/2XbFRGzxFAKE+HFrU3imZZ/XZBBE
+	bXsPR8n0zejVCQgkUYJ/G5d8sO446D9oPK5lhjpuoo4WZEE0k8iBjxO2M3tzEI+y0nfGxZTSKTy
+	Ax8pKqXx9uJdZy5T+lRvXWounvHkSCMupB+C8AcZ+n84vGvImeuDE7+//22kXwG+NkpFg+CHJjf
+	WoOmme6QY8HdFEPZ3QnXz/yDfBA==
+X-Google-Smtp-Source: AGHT+IGLTlrXC7/42TJknf9kXw9iX3FUKSUyJl557MuswCc1Ra7jelj5beeAq9knMgSor25eYQkwiQ==
+X-Received: by 2002:a17:90b:578e:b0:311:e8cc:4256 with SMTP id 98e67ed59e1d1-31c4cd6303dmr21844455a91.22.1752550347853;
+        Mon, 14 Jul 2025 20:32:27 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:3e3b:c5a7:1b48:8c61])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9159ec07sm305695a91.0.2025.07.14.20.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 20:32:27 -0700 (PDT)
+Date: Tue, 15 Jul 2025 12:32:22 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Phillip Potter <phil@philpotter.co.uk>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Christoph Hellwig <hch@infradead.org>, 
+	Chris Rankin <rankincj@gmail.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: cdrom: cdrom_mrw_exit() NULL ptr deref
+Message-ID: <z64pki236n2mertom6jmgznj4t3dkxeosr56fhpmykjdrnzs2l@5xlhh7htcaw4>
+References: <uxgzea5ibqxygv3x7i4ojbpvcpv2wziorvb3ns5cdtyvobyn7h@y4g4l5ezv2ec>
+ <aHF4GRvXhM6TnROz@equinox>
+ <6686fe78-a050-4a1d-aa27-b7bf7ca6e912@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Theodore Ts'o <tytso@mit.edu>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-References: <20250715082230.7f5bcb1e@canb.auug.org.au>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huawei.com>
-In-Reply-To: <20250715082230.7f5bcb1e@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6686fe78-a050-4a1d-aa27-b7bf7ca6e912@kernel.dk>
 
-On 2025/7/15 6:22, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the ext4 tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+On (25/07/14 08:22), Jens Axboe wrote:
+> This just looks totally broken, the cdrom layer trying to issue block
+> layer commands at exit time. Perhaps something like the below (utterly
+> untested) patch would be an improvement. Also gets rid of the silly
+> ->exit() hook which exists just for mrw.
 
-Hi Stephen!
-
-I'm sorry for the regression, but I cannot reproduce this error
-on my machine, could you please try this patch?
-
-https://lore.kernel.org/linux-ext4/20250715031203.2966086-1-yi.zhang@huaw=
-eicloud.com/
-
-Thanks,
-Yi.
-
->=20
-> In file included from <command-line>:
-> fs/ext4/inode.c: In function 'ext4_set_inode_mapping_order':
-> include/linux/compiler_types.h:568:45: error: call to '__compiletime_as=
-sert_652' declared with attribute error: min(({ __auto_type __UNIQUE_ID_x=
-_647 =3D (((0 ? 4 : 6) * 2 - 1)); __auto_type __UNIQUE_ID_y_648 =3D (((16=
- + __pte_index_size)-16)); do { __attribute__((__noreturn__)) extern void=
- __compiletime_assert_649(void) __attribute__((__error__("min""(""((0 ? 4=
- : 6) * 2 - 1)"", ""((16 + __pte_index_size)-16)"") signedness error")));=
- if (!(!(!(((((typeof(__UNIQUE_ID_x_647))(-1)) < ( typeof(__UNIQUE_ID_x_6=
-47))1) ? (2 + (__builtin_constant_p((long long)(__UNIQUE_ID_x_647) >=3D 0=
-) && ((long long)(__UNIQUE_ID_x_647) >=3D 0))) : (1 + 2 * (sizeof(__UNIQU=
-E_ID_x_647) < 4))) & ((((typeof(__UNIQUE_ID_y_648))(-1)) < ( typeof(__UNI=
-QUE_ID_y_648))1) ? (2 + (__builtin_constant_p((long long)(__UNIQUE_ID_y_6=
-48) >=3D 0) && ((long long)(__UNIQUE_ID_y_648) >=3D 0))) : (1 + 2 * (size=
-of(__UNIQUE_ID_y_648) < 4))))))) __compiletime_assert_649(); } while (0);=
- ((__UNIQUE_ID_x_647) < (__UNIQUE_ID_y_648) ? (__UNIQUE_ID_x_647) : (__UN=
-IQUE_ID_y_648)); }), (11 + (inode)->i_blkbits - 16)) signedness error
->   568 |         _compiletime_assert(condition, msg, __compiletime_asser=
-t_, __COUNTER__)
->       |                                             ^
-> include/linux/compiler_types.h:549:25: note: in definition of macro '__=
-compiletime_assert'
->   549 |                         prefix ## suffix();                    =
-         \
->       |                         ^~~~~~
-> include/linux/compiler_types.h:568:9: note: in expansion of macro '_com=
-piletime_assert'
->   568 |         _compiletime_assert(condition, msg, __compiletime_asser=
-t_, __COUNTER__)
->       |         ^~~~~~~~~~~~~~~~~~~
-> include/linux/build_bug.h:39:37: note: in expansion of macro 'compileti=
-me_assert'
->    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond),=
- msg)
->       |                                     ^~~~~~~~~~~~~~~~~~
-> include/linux/minmax.h:93:9: note: in expansion of macro 'BUILD_BUG_ON_=
-MSG'
->    93 |         BUILD_BUG_ON_MSG(!__types_ok(ux, uy),           \
->       |         ^~~~~~~~~~~~~~~~
-> include/linux/minmax.h:98:9: note: in expansion of macro '__careful_cmp=
-_once'
->    98 |         __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_=
-ID(y_))
->       |         ^~~~~~~~~~~~~~~~~~
-> include/linux/minmax.h:105:25: note: in expansion of macro '__careful_c=
-mp'
->   105 | #define min(x, y)       __careful_cmp(min, x, y)
->       |                         ^~~~~~~~~~~~~
-> fs/ext4/inode.c:5204:17: note: in expansion of macro 'min'
->  5204 |                 min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits -=
- PAGE_SHIFT))
->       |                 ^~~
-> fs/ext4/inode.c:5211:39: note: in expansion of macro 'EXT4_MAX_PAGECACH=
-E_ORDER'
->  5211 |                                       EXT4_MAX_PAGECACHE_ORDER(=
-inode));
->       |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
->=20
-> Caused by commit
->=20
->   e14bef2a00b5 ("ext4: limit the maximum folio order")
->=20
-> I have used the ext4 tree from next-20250714 for today.
->=20
-
+I don't have a CD/DVD drive to test this, but from what I can tell
+the patch looks good to me.  Thanks for taking a look!
 
