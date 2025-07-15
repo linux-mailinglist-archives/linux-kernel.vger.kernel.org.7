@@ -1,196 +1,128 @@
-Return-Path: <linux-kernel+bounces-732007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7987AB060FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:27:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A28B060AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBDB5A2B2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:18:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68EF37B6F89
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7612288C09;
-	Tue, 15 Jul 2025 14:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B860A28935A;
+	Tue, 15 Jul 2025 14:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VBTdE9Mh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PKHqa6ms"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58934288520
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28CF288CB3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752588401; cv=none; b=DJfwP1lVn3O8fRnXlCRqEK55JuDDBNqImIlTn+m5ghsuXQnaiE7TKyke4HnMUepaqc81MRdCzVAeOoZ2Sn/NGWkRuOkg5gWid8gw9EOjvXV/46ribC4IOJ8q0JWijYrLwzlrOqvtH0WYuZVsXH4G6sSIRPtom1nUqnzQL+WeX7U=
+	t=1752588426; cv=none; b=irvIkS0cJRTxMgxLtuJJC87DRPukAqh1tp7y2fasJJ67ElDErKCL8hDaVrKRwfAex8QeZoEm9AG1aMLx+hJu4kCBhGjPX7z+6wJv+yiFDSr8wyG2kRh/huxaa9APHmtjggysY6wP9ZX7P85eDlXa3nrkjlUdk1Idmr1u1vbxCzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752588401; c=relaxed/simple;
-	bh=NGjl+k0iCeICYYeTIxSQzRMo78FaxzR0hHeAkayY7lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mAEnjSycEb/tCp1SgqVf460DHp5UXa5G19aq/uV8qVpF0IBgJeetAPKwEBjJ5X3g3AmFfDj5H4GaI+QPKRHzWVDAQA0mCgNLBl1F/pCeZWKEKFYoGO6hAxtGsK5hsrxtK+/JK1XnARgZK1Wir8TGj2QaFyFJniOmBK8zvN1z7Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VBTdE9Mh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752588397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lBxA7fPx+kaOUHpIDxI1a9myrZ8g1CRn9224twnAPJQ=;
-	b=VBTdE9Mht/erlxJzrCEEmJj+Gucd0WCK3OmpwU0TFC8TX7fsLPYvC0eXMfH4hut2dwBN48
-	RJmZgsB3XU+9v5vKm5ZBIN4Ddcflvu91H1z7pZLHIrBG9ZEJ8NQEzIWoN6r+QBIkQujWhH
-	q24b0uXkh1gw7cssdK8i7+UHaewGT8M=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-548-MlTp-Td3NzyOwKgblv0WNA-1; Tue, 15 Jul 2025 10:06:35 -0400
-X-MC-Unique: MlTp-Td3NzyOwKgblv0WNA-1
-X-Mimecast-MFC-AGG-ID: MlTp-Td3NzyOwKgblv0WNA_1752588394
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso4218117f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:06:34 -0700 (PDT)
+	s=arc-20240116; t=1752588426; c=relaxed/simple;
+	bh=L86prP4TTPqpMQIoLPMaLq7KqiWjNJGxwzMCThgDnDg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pLLJr2frcURnIyZ+HBfeypWpiAPXN5Ylp5TFuNnLwSayKQkC2jdGpRCZ6P3QKa/yVRkrLxMiasLtj0JezUuUUkm3snvWYIA7GZywg+cA1/LV5ZQIYx0RclIZ7KTaTW1mcZTcv/ZXY7+dPKPF/pv95UWu+jQ99lw7oYi5393xrYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PKHqa6ms; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b38ec062983so4071341a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752588424; x=1753193224; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cQnNGUtBGDZserhnvy1Sw3vFLWuIiTqycwu8w/nJ2jo=;
+        b=PKHqa6msQMhqZ9g5dX1dt54/3J4BbyRdQAOFnCmd/G5vmMveVkykremrnyPcNWNOih
+         RROsq0MlzZr82oyBzZdYGA7OLQFO/tt4fsZVW0yoxZvUFcmBvCNwI47Bnnvr010Vs9du
+         MN2x6RjwmYBz2QnRIPFmfyqF1exuZYgjtyaTCrb89+Bch7R+I7Xu0kVafjA02oKnYJl+
+         znZLKoZZkQQ7BHyvWNCTmsWsfqNxzfdwIe1KhXOFyLHMLF2tkoRDdf5NehZ56PmQbM84
+         DoOU2FYzQanosb9Sc0dVIm+c10HtQkv7zWcoaoZ7FNu4J6v4o7mskYurRQ+IEqzIMaEb
+         v6YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752588393; x=1753193193;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lBxA7fPx+kaOUHpIDxI1a9myrZ8g1CRn9224twnAPJQ=;
-        b=n+l0pBtWGJaORZZy+iwt79lRHMEAo5Ruv1KBBkjJNIio/G9IT018jlCOIYVxU3VtRN
-         3yS4nmG//pKztJ0HQS61FEfT9DlzmFMxf6X7WXWO5mxVeTpjgql4BptGtD+U1Y8pyQ0Z
-         sYYAqzlO1DrranjVXW87KuqH76jYM52CbEcSlOUe1bOtVgRKE8obZZeQQ1OnRZUNA2dM
-         ndAF81R7k3wHxhwk9lMFHZFtctRP5updoQjxYlZ9XNznEIhG5Ke/zU0AolOH3z1tXti6
-         n5iFSnXWMNNXu4PQTuVo4NQ5VrZK2MJI20SMZNYe8bawub0cg88r6u0d421HmCxOZJjm
-         nq8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXABDrOVvES1mJZL7ovBc9MiXXGC/y9Sxeod+uMqURTqq3oOb1ftOM/jkyT0zGN16vrJKm2b01T7HBBTw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztuyVpPvPaWVX6/YIwnou/01kTbDW0XVL4zZfhFSdrzTh42RK5
-	zfr98chhcFUDbRtGzILhUi7IO9NbzSCKmJJ7xGE1tOx8hibwZ3bMGk0O+WOrDsRbzgDdMpYNhqe
-	2P3QHTjSlSkA3w9nU4ReZIW35AMQ2+iy6cs/u0v/IlfhGE8Ru/NFsf/Nhf+x9gael+g==
-X-Gm-Gg: ASbGncvf1h+kcYfdyOaHdCIXEm88g67DOKUFFCETh0QXZ3MLXSeoWzMjqEuxzIL5JXn
-	8k1yET1Ys2KkAnLY7W8G89/mvK/IS02XNGP0zpCg5oVRJUgQiHB+PyKqYXxgSXo1ynuwCnKpzsZ
-	T6BTbAC67vS3SgBiQC8Nz5hMYpii/ykDt8Tab9/5Ph6ZAQUNaKawaUkSSJNkt0uecLoaFhktVZD
-	qsG+m26JEEnRhgkt1XeHEECVbiZfPRZxkt7CUneGGJy13RgWFW4Rp8VLrrO6IAdjjQFCleRH2dR
-	4TrZ9Qn7ZE9sbARg0GgGYOz7NCecWXdoVf8lH3iBUHrytFi+ysFFKPJ7mzu4v+ORpGO0a1UxIRi
-	8SExdACBF+6xue9ZJZPOXaMQCLromhXLNWv7iOPnBhAvpyRn7rJdr/AaDfCIcgbhTDSs=
-X-Received: by 2002:a05:6000:2085:b0:3a4:e667:922e with SMTP id ffacd0b85a97d-3b5f2dacddamr13012952f8f.4.1752588392966;
-        Tue, 15 Jul 2025 07:06:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGWK4HuTxAUxy5B//ipMMWWwodJ7JkwfIbQV6DrOEaPS5dsc6t+pb8z58e8T3W45U4i7z4JQw==
-X-Received: by 2002:a05:6000:2085:b0:3a4:e667:922e with SMTP id ffacd0b85a97d-3b5f2dacddamr13012870f8f.4.1752588392263;
-        Tue, 15 Jul 2025 07:06:32 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:4900:2c24:4e20:1f21:9fbd? (p200300d82f2849002c244e201f219fbd.dip0.t-ipconnect.de. [2003:d8:2f28:4900:2c24:4e20:1f21:9fbd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc217esm14797863f8f.28.2025.07.15.07.06.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 07:06:31 -0700 (PDT)
-Message-ID: <c3aa4e27-5b00-4511-8130-29c8b8a5b6d9@redhat.com>
-Date: Tue, 15 Jul 2025 16:06:29 +0200
+        d=1e100.net; s=20230601; t=1752588424; x=1753193224;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cQnNGUtBGDZserhnvy1Sw3vFLWuIiTqycwu8w/nJ2jo=;
+        b=mOeJxyPjpFMb8H14oEwBOfe2fwg6l9/D7JSLwfHfe/+StpnpjigGaC7aVJyFz84jof
+         td8xbPVk7Cs96Bh2Gs3KGFy3foxJe3Q0OA2+/QWMMtT+UhP9AcZTHIvrOeP7ZVcC1G5Z
+         fYOhBjIeqCfmWFkEB1xOanmU7Oidv1xm4ICQqbASTOnGeXLHvNqXtnKrTxrrh/zaHxZS
+         3UJ1ITOnw27y1CseOyh9lru1mmO6FabnL3NPlDCy1gbwLccZu/J/htvjd+0M8E14/iAQ
+         Qwrbd4LcRmTjUr8vdYVd1K1SvxzSk54OEwALfLz9uPYXt06xrQiYcmIB53M1m+S7HMi2
+         SFuA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7j0/uiSmRpjg25m3LobgBX2hmTw538nl62CUyZFuF1K9gLF1j0f3tzxoqARTSQD/NGoV4YSI09K2fet0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxfUZ7Q226V6dFwK8CEEWogy3N+AlrL3PxDnt6NAOIkamx2JKc
+	hFFwpQ8okmH2SFApruN3P3Adggr3YLPc1BtqOOKt89hWk/16ZIuEkQHj5Q9e7+ACl+PXAbbs17F
+	H81IQrA==
+X-Google-Smtp-Source: AGHT+IHBTffReyder+/OKTtAFTslpuPttL+P7LuXHQUtEw62s0DpqUK5B296RLS9f/DVP56Fnx92h7AVsjQ=
+X-Received: from pjh16.prod.google.com ([2002:a17:90b:3f90:b0:31c:2fe4:33b5])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:528c:b0:313:287e:f1e8
+ with SMTP id 98e67ed59e1d1-31c4ccbc93emr27660997a91.8.1752588424051; Tue, 15
+ Jul 2025 07:07:04 -0700 (PDT)
+Date: Tue, 15 Jul 2025 07:07:02 -0700
+In-Reply-To: <e1151fff87e0f0f26462fed509a41916dd6ba8e7.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] add static PMD zero page support
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Pankaj Raghav <kernel@pankajraghav.com>
-Cc: Zi Yan <ziy@nvidia.com>, Suren Baghdasaryan <surenb@google.com>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- willy@infradead.org, linux-mm@kvack.org, x86@kernel.org,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
- <F8FE3338-F0E9-4C1B-96A3-393624A6E904@nvidia.com>
- <ad876991-5736-4d4c-9f19-6076832d0c69@pankajraghav.com>
- <be182451-0fdf-4fc8-9465-319684cd38f4@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Organization: Red Hat
-In-Reply-To: <be182451-0fdf-4fc8-9465-319684cd38f4@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <cover.1752444335.git.kai.huang@intel.com> <175253196286.1789819.9618704444430239046.b4-ty@google.com>
+ <e1151fff87e0f0f26462fed509a41916dd6ba8e7.camel@intel.com>
+Message-ID: <aHZghtaRrcfX7p5d@google.com>
+Subject: Re: [PATCH v2 0/2] Improve KVM_SET_TSC_KHZ handling for CoCo VMs
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, Chao Gao <chao.gao@intel.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, "nikunj@amd.com" <nikunj@amd.com>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On 15.07.25 16:02, Lorenzo Stoakes wrote:
-> On Wed, Jul 09, 2025 at 10:03:51AM +0200, Pankaj Raghav wrote:
->> Hi Zi,
->>
->>>> Add a config option STATIC_PMD_ZERO_PAGE that will always allocate the huge_zero_folio via
->>>> memblock, and it will never be freed.
->>>
->>> Do the above users want a PMD sized zero page or a 2MB zero page? Because on systems with non
->>> 4KB base page size, e.g., ARM64 with 64KB base page, PMD size is different. ARM64 with 64KB base
->>> page has 512MB PMD sized pages. Having STATIC_PMD_ZERO_PAGE means losing half GB memory. I am
->>> not sure if it is acceptable.
->>>
->>
->> That is a good point. My intial RFC patches allocated 2M instead of a PMD sized
->> page.
->>
->> But later David wanted to reuse the memory we allocate here with huge_zero_folio. So
->> if this config is enabled, we simply just use the same pointer for huge_zero_folio.
->>
->> Since that happened, I decided to go with PMD sized page.
->>
->> This config is still opt in and I would expect the users with 64k page size systems to not enable
->> this.
->>
->> But to make sure we don't enable this for those architecture, I could do a per-arch opt in with
->> something like this[1] that I did in my previous patch:
->>
->> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->> index 340e5468980e..c3a9d136ec0a 100644
->> --- a/arch/x86/Kconfig
->> +++ b/arch/x86/Kconfig
->> @@ -153,6 +153,7 @@ config X86
->>   	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
->>   	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
->>   	select ARCH_WANTS_THP_SWAP		if X86_64
->> +	select ARCH_HAS_STATIC_PMD_ZERO_PAGE	if X86_64
->>   	select ARCH_HAS_PARANOID_L1D_FLUSH
->>   	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
->>   	select BUILDTIME_TABLE_SORT
->>
->>
->> diff --git a/mm/Kconfig b/mm/Kconfig
->> index 781be3240e21..fd1c51995029 100644
->> --- a/mm/Kconfig
->> +++ b/mm/Kconfig
->> @@ -826,6 +826,19 @@ config ARCH_WANTS_THP_SWAP
->>   config MM_ID
->>   	def_bool n
->>
->> +config ARCH_HAS_STATIC_PMD_ZERO_PAGE
->> +	def_bool n
+On Tue, Jul 15, 2025, Kai Huang wrote:
+> On Mon, 2025-07-14 at 17:23 -0700, Sean Christopherson wrote:
+> > On Mon, 14 Jul 2025 10:20:18 +1200, Kai Huang wrote:
+> > > This series follows Sean's suggestions [1][2] to:
+> > > 
+> > >  - Reject vCPU scope KVM_SET_TSC_KHZ ioctl for TSC protected vCPU
+> > >  - Reject VM scope KVM_SET_TSC_KHZ ioctl when vCPUs have been created
+> > > 
+> > > .. in the discussion of SEV-SNP Secure TSC support series.
+> > > 
+> > > [...]
+> > 
+> > Applied patch 2 to kvm-x86 fixes, with a tweaked changelog to call out that
+> > TDX support hasn't yet been released, i.e. that there is no established ABI
+> > to break.
+> > 
+> > Applied patch 1 to kvm-x86 misc, with tweaked documentation to not imply that
+> > userspace "must" invoke the ioctl.  I think this is the last patch I'll throw
+> > into misc for 6.17?  So in theory, if it breaks userspace, I can simply
+> > truncate it from the pull request.
 > 
-> Hm is this correct? arm64 supports mutliple page tables sizes, so while the
-> architecture might 'support' it, it will vary based on page size, so actually we
-> don't care about arch at all?
+> Thanks!
 > 
->> +
->> +config STATIC_PMD_ZERO_PAGE
->> +	bool "Allocate a PMD page for zeroing"
->> +	depends on ARCH_HAS_STATIC_PMD_ZERO_PAGE
+> > 
+> > [1/2] KVM: x86: Reject KVM_SET_TSC_KHZ VM ioctl when vCPUs have been created
+> >       https://github.com/kvm-x86/linux/commit/dcbe5a466c12
+> > [2/2] KVM: x86: Reject KVM_SET_TSC_KHZ vCPU ioctl for TSC protected guest
+> >       https://github.com/kvm-x86/linux/commit/e51cf184d90c
 > 
-> Maybe need to just make this depend on !CONFIG_PAGE_SIZE_xx?
+> Btw, in the second patch it seems you have:
+> 
+>   Fixes; adafea1 ("KVM: x86: Add infrastructure for secure TSC")
+> 
+> Shouldn't we follow the standard format, i.e.,
+> 
+>   Fixes: adafea110600 ("KVM: x86: Add infrastructure for secure TSC")
 
-I think at some point we discussed "when does the PMD-sized zeropage 
-make *any* sense on these weird arch configs" (512MiB on arm64 64bit)
+Ugh, yes, the semi-colon is just a typo.  New hash:
 
-No idea who wants to waste half a gig on that at runtime either.
-
-But yeah, we should let the arch code opt in whether it wants it or not 
-(in particular, maybe only on arm64 with CONFIG_PAGE_SIZE_4K)
-
--- 
-Cheers,
-
-David / dhildenb
-
+  https://github.com/kvm-x86/linux/commit/b24bbb534c2d
 
