@@ -1,290 +1,165 @@
-Return-Path: <linux-kernel+bounces-732164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3C2B062F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:31:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C221EB062FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8E516D152
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:31:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00287188EAC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66630246BBE;
-	Tue, 15 Jul 2025 15:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CAC24677B;
+	Tue, 15 Jul 2025 15:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="NXpZNI/o"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11023075.outbound.protection.outlook.com [40.107.201.75])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WkPjtxJS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88B685260;
-	Tue, 15 Jul 2025 15:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752593451; cv=fail; b=f6Pjn3JJWPgt5mZAf3w093vMzc0rugkf7pr6UPVLEIaXxw0Wv2N2nA7md7NtkFa+XKlqMOHoWCeN1nGsZnH63JKrPfDkbsn0nt8AlSngPAyjeZZLsFWPq9wFAHpdfMTqz3FPOh72U4D43z2oOFlUOT9raFXPw5WLGqC9Zel0Edc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752593451; c=relaxed/simple;
-	bh=2hLKj5f9rqAVWYAmU42kOXy+bFbFNAJwVO7/5PUyZf0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VA8ptYLaTgPEMzLB0y/hZqGbrXyfFr93nSkHa+mKee+gZhgnyNR0LgGZaRqq96n1PP3k9boMH2cF+pJihxEklDsPNqfxp5K/hzZuq+fPVZ0rr01ym4WQYFAm0HlHzlwFlji/mstmq4YqAUouxDIvvUXr4PEfpVnwdXdltEd9EZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=NXpZNI/o; arc=fail smtp.client-ip=40.107.201.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jJFZBU151MsbcY17qZZCQfdwRQ3KTa+koatAyyXuN4l7LW2DJaDBroh3d7Co0U8v7m7xZTukDpl2RNurpDDJYPc2NyziYPiGxyXEZLYE1gNop5LYqAZP3hSb2N9YGwes5hL7xAEIGR76CcSxnsolpounxWFizmjCBPwvTWuPtrnTJ6WA02xcVnxRgJAGM1/1LOjwev/I3lqFMs3dpdRhIblslfX8d8vm3r94t4Wi69h80FV2I3J3R5Qihqk2ZUuy5hRecbfN0tBkMe+fVf6ubvLleYeTiuqfJ/tG71NxLRmR3Mk3/j84P99NfK9m60Rf92fyj7E7c4ZZrTdoPCx7IQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=id+ypH+weyypGaxuH12kiJroedXXNLADsI80nq1+LMg=;
- b=Cgt9yf8tTS9ugd/glhOc0oRXp8tWeaVcjKjD1t8kK+BaEx+olnKrvA8YS3GkxKjp2FR3QJ4Ux3QhYtsk8fc66glPcUhctFlaSzv6hobkF8XVuvlpVVKV3LZLEoppIylGRSixfniPosfdz2CpUBm7PbdUFD481BRnR0ZcyUIkwto+BMqpn7zVzAoWESF9BCZo6IQAAU9fkZ9xlB1hWU+VFBYk3dcE2R71Gyc0qT0uJhJTV3YtPILPXF1tirErpxmolCVui2Z023OkC1tNVKfLI795+N9Q7JUU3oa9OGpjIsWbeUelJE6iEzjk3xHgCV9NOgL5+DW24GbeId6I48pf7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=id+ypH+weyypGaxuH12kiJroedXXNLADsI80nq1+LMg=;
- b=NXpZNI/oaaJae6vT1yxQSVNG9Qg+3C0mXPz//lrhQp/0xgDyO7UFtOZAum/JNO1y7ECRwH8jkAnrBp/ryZ8Bo2DGrTkdl2DHOJX0adfolsR6ipkEbDwLnxjJC0/dyMQiNY85KjqvOEEMlB7HvRPpkrMde06D7NR4fIjnJtE9gtM=
-Received: from SN6PR2101MB0943.namprd21.prod.outlook.com (2603:10b6:805:f::12)
- by DS4PR21MB4770.namprd21.prod.outlook.com (2603:10b6:8:2a4::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.12; Tue, 15 Jul
- 2025 15:30:43 +0000
-Received: from SN6PR2101MB0943.namprd21.prod.outlook.com
- ([fe80::c112:335:8240:6ecf]) by SN6PR2101MB0943.namprd21.prod.outlook.com
- ([fe80::c112:335:8240:6ecf%5]) with mapi id 15.20.8964.004; Tue, 15 Jul 2025
- 15:30:42 +0000
-From: Haiyang Zhang <haiyangz@microsoft.com>
-To: Simon Horman <horms@kernel.org>, Haiyang Zhang
-	<haiyangz@linux.microsoft.com>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, KY Srinivasan
-	<kys@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui
-	<decui@microsoft.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"davem@davemloft.net" <davem@davemloft.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>, "cavery@redhat.com" <cavery@redhat.com>
-Subject: RE: [EXTERNAL] Re: [PATCH net,v2] hv_netvsc: Switch VF namespace in
- netvsc_open instead
-Thread-Topic: [EXTERNAL] Re: [PATCH net,v2] hv_netvsc: Switch VF namespace in
- netvsc_open instead
-Thread-Index: AQHb9N43knD0TGxECUCpKCAyzRddwbQzKJ+AgAAho6A=
-Date: Tue, 15 Jul 2025 15:30:42 +0000
-Message-ID:
- <SN6PR2101MB0943A212F67D779BA97B7FC4CA57A@SN6PR2101MB0943.namprd21.prod.outlook.com>
-References: <1752511297-8817-1-git-send-email-haiyangz@linux.microsoft.com>
- <20250715130547.GV721198@horms.kernel.org>
-In-Reply-To: <20250715130547.GV721198@horms.kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=85da4776-cebc-462c-96e1-d6d235ca4478;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-07-15T15:06:10Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR2101MB0943:EE_|DS4PR21MB4770:EE_
-x-ms-office365-filtering-correlation-id: a6e05867-27ad-423b-ee35-08ddc3b48fa5
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?P8zSCIjDv20KB7p2sqZe+Of8fOgQsJ6Jzjg0SoNccmW0Ec+otMOF9F5iptAR?=
- =?us-ascii?Q?nl6WgDjYgFJz861ZhBjvPWAnrzjjSqOnYhDrsNIWnr3LA3Dh3H7zIRJFKnWg?=
- =?us-ascii?Q?rtf5qVZuK8NdgzFqKsqkjytssbN+ngLcZaAgHHweaY87R19lS+HzQNQTdxgK?=
- =?us-ascii?Q?JYUzsXf8VnAu3zPusgnsPg93P0FBeqfO5UCYYAE7yaxFzDMoyGP+8dwMJ6js?=
- =?us-ascii?Q?w045CJwBUFt6eHYj+sskGw9iZgdtuKiB6aVC1TxPsYIkA5cIqTL8d3wpOafc?=
- =?us-ascii?Q?C1//u/YjxrwV0dMj6+rFy/f0HsDIuWLg8y1u0y3u1YVHxgH6xYWEBnWf38oL?=
- =?us-ascii?Q?bxoobqbbZ73DpI7jdU+DR4iF14lqrnOw7XxEH5M+PF070dq3fWGd6815d/d2?=
- =?us-ascii?Q?tB6WzsMnMxwPHD0yXzZ2WrPZ04d8z2OOobH+id7IDYtYxkeFYcz7HSIrHjID?=
- =?us-ascii?Q?mvMEXAfoxhTRX7Mr88Cvoo5m6c4ss4CLauzyYv+DabcbZFIPJZtvy13Ni/6g?=
- =?us-ascii?Q?XkUNO2xheyZkU0iFPOkSF7vPowGVWM5suFjNEQXfI8f6xwygHY7H/kdZOlUt?=
- =?us-ascii?Q?7muJX1QOC5j+OSCoBKqJ/to9RL4/tyJOQEA3f4rq/Ywjkk9M25ZdMrrY8CUc?=
- =?us-ascii?Q?xmvolwWpYdpB9OJo1EEj332F3O+h2R/LQwddhwBv1uZS7xqL9mGklvnTcCaf?=
- =?us-ascii?Q?0T4ax6ziPgr+iFP0LFgWWlThRWBZR5owt8Cs4P4MuZmb6i/9u2UZ7TSwlVd+?=
- =?us-ascii?Q?aD+Y0RMfujq/7qd0wLeVwpeTIjEMeAKzL6ax6I7gHjORwJQFQW3aqxoMi94q?=
- =?us-ascii?Q?bM9hX0BP4UShplXWqOScEtzSVl7+whBHSfcDH78+YAq3ruHfPcN5c9I0eZrD?=
- =?us-ascii?Q?xyeY6SArpbbOgKQGdx3G8RoBmmTYIIWRStLjNIcG7TQdBEYauSP7Z8aXvt0K?=
- =?us-ascii?Q?FmKN+d0Z1sBGRZvjsS+LX74oaUE8yBscLR4qLAkjWiavSIKstA+KFyCXDtkg?=
- =?us-ascii?Q?gCTKDQIiiUT8346HUQxuXRALnt7c5pS/oNMbiYxEtf7+N26CEklZcPyiPU7Z?=
- =?us-ascii?Q?nkT0mKzEp0nSkrKhOTPENhYnNv6yibUGnQKr56ErFmLVwHFGNNWRl+e95Gg1?=
- =?us-ascii?Q?UHfEsNAtk0ZmpdZ3pd+Ux14vbs0FG9WQxRo0uNPvjbEdGqlxzpYxbHrHaYWJ?=
- =?us-ascii?Q?O+seGNuoHSY4dgKqyYnBdCa8ZneLmkTLy+0P703Nr8fLy3itN/f6vMmMNqv7?=
- =?us-ascii?Q?lfay1gzfWr34Oxr9Wne+uHYVB7H3HWMT9rEX5Jqf/KQbCvMYbo11ySvurgZo?=
- =?us-ascii?Q?+fQ6kffBs4VmnCUnbK/r6Ypw7erjcmJThGlT+Gvb3NuJ5Mf8qiSlvjRrMkpj?=
- =?us-ascii?Q?+4s2rqDlqnmg2kQkVR90DWVTSROiMdvSR/m8L9/DWHg25FXq+sjzraibEdVC?=
- =?us-ascii?Q?MCk32yCqjYgq6tsi7MggFaho72BS6WIeoQQMvDn9qXBCZhcRGiZfJA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR2101MB0943.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?lsizj1+Hquphj3l6MRSMg9/AbD6T+lJ4iYPGTCs4xoPWZuFwUNTnaWjkLP49?=
- =?us-ascii?Q?HfHVQNpIHlwAYkKRNtdCVAmXfNH5N5oy2XQSZyuZhE4EroNAmyttm2wVJoP7?=
- =?us-ascii?Q?qlhNJG7nuq5J+87O6tPMYt/9VmZIkKAkaLfETL0Xw/77U7K7Cpn48rf4gpqE?=
- =?us-ascii?Q?4T6PToVI8aAo2ywwTAs7fqT5qOvyHn4BTFyVDstfH9CkNVXlIjR/lmSLfItL?=
- =?us-ascii?Q?yigFRO9Co3Nk8Dy2O0dSnR98Ud6z0Ar5jl7ng9C6cxS+4wYvhu1or1yQAvhZ?=
- =?us-ascii?Q?4tyFRTQnuzphHbvPOnHfKdEZUC4yYxBHejQVYW+hNRieCuC3cz2RGyP9kUr/?=
- =?us-ascii?Q?y5E1u0N/HY2HJTlaLXHBw2NRPWHIhypcGn91hdpbJ6LY1GT0zL+HsajHYAll?=
- =?us-ascii?Q?clTlkGAn60zmlzT6Z/z2BivifvXGeCZaLfxJzcPKa2Bl+gy1MzLT3kt8ol0I?=
- =?us-ascii?Q?49xN3BCwVx9fIkDTuuz3nce0xk6rSL2rU4bGkWMmwAoOj8PXo9KUD+3EraXK?=
- =?us-ascii?Q?Qv5SpCW8sSyHd4xdsJB32nwP8g1Dp/UnVuWBHajr22gbahfVa+OFhKHvVyhV?=
- =?us-ascii?Q?p393WMDmhdPLeNUPctxyR2BmDhtzctGcN6pCPhjM4kQMroF3Au7oaZvNoWL9?=
- =?us-ascii?Q?ft3NWWtAaeXWszT7j7ifMJx5fY3cinT4j4mnGXLz7CcIB/66llfI1L+Aqo9G?=
- =?us-ascii?Q?kbp2N7i9xE0KrghmVo6g5mHMqBqxewcHkfsXtTyCil35KPOLJE15VXHCS9lo?=
- =?us-ascii?Q?UOt+5doKSoTamYe14bnqO0biW22YrL1ol3PO9Z1O8I0zU+Dv7NItjbpqf1tl?=
- =?us-ascii?Q?c9EmFu1oyifiGW2gnIh5mfMgoOLZSpbXJ5prP5SCt6XjYoQNZshy3OBH6TjP?=
- =?us-ascii?Q?aBPWH2ttpx2NhQsur3T+WkQbLqEC/aovsiw0gKrborBOr1vqcxkseJqd72uk?=
- =?us-ascii?Q?JH4KIsYc5Z1qFS3I5URSyOhAQDru2fz/RaL5Rf2jWJyVZdPvrAdw9DK8dChJ?=
- =?us-ascii?Q?cnRERkUZdsgkSJlcC5q8p0t99allwbURwwmRkroWNlA78WAsL+860XfmAd1l?=
- =?us-ascii?Q?xRhJ5KEAB/SsLbW1ghqdoJPjrsd1IwnhwC+nvfK+ffhH4w36KETUTP9I3G1v?=
- =?us-ascii?Q?UlnB03RM8MAtWRswPe71SjBLInk9GjfWrmCEqnj/hnyQkWYQaQ5rxZOD/ZyA?=
- =?us-ascii?Q?X8iB9f89brhQzj0HTve3M4MkTKcrsd6zY0n0ZuOe7lSnRDmxnriclhbhir/j?=
- =?us-ascii?Q?cQQH5FpV/awFZ4xf5tuan9IJDfWjB7xla+yMfmKnDp1yVIAMAiETjnfuG0VU?=
- =?us-ascii?Q?HL+c0hBLury0rJ5DMU8cZ3/pb1TFJAwQDVQfpuIdL9Kns/RX48UkbKmST4PN?=
- =?us-ascii?Q?D5oCpPn7/XdR2x3Lja7Zs9ioxZBdlBeuJi/BvbiRdZj8yrhQ43EvDtT1Xb4D?=
- =?us-ascii?Q?fMaxXQ+4WFIFVV5IkxCgJ/84XFaMHMK8KtX0FSYJtyykp1tDCCGfmWWIIAPe?=
- =?us-ascii?Q?pB9mpxOReiaqj1ItmYQ77pxi+c+sYseee5z1fMH03Z2wa+sAS0AANNkHTS/e?=
- =?us-ascii?Q?db7lmQBEBWEj2jgshlGKZK0afYnYN1O87Z0eOrpg?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE471DF258
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752593538; cv=none; b=PUIkVqsbCyBGbv0j1GKNmjn5IxEaX8C4KdvmzcGHyJ0m/bS36lJOK6UJx//sBGf4B64aE8ZBjlvmOy3KYMZ9oOIYhrvl6VJaHRTNUw1qd09KNWw2Ji1SG35VJ+utmXB/UuyqHHcuDUo7UXtXYbPiI6TbhZEIyGKoQRGtGGFzA9c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752593538; c=relaxed/simple;
+	bh=5rdRvK0/wv3rgyzsgXz0n1m+AdOdwgEE5BaXSVwhhTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O0+QRJS2CgQ/6dA8FnK8/Z3vGd0C4WRirUOfsqbJngsazze/h8QSyK1o7RzosFL5VApxKS/7C7LL0mOlNRNl1MML/P7WmCdDfNNOlniNWIqoDyKTSaww55wvnKREOTlTmpEEBhYAJNJgOBn+3qcCH8netxHuuihBo6BJbSjjVMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WkPjtxJS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752593536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wnh22gI/k+OIEWCf+4ySowORAdVnUSIEoD4hbUCmi1M=;
+	b=WkPjtxJSVWQMk2C5as1nCxaCE1ldStlV+zztTaJRs7GiSv4gaCccbRPDfShBs/+COQ/E3i
+	clxEm0/cYWCMzkJ5NxM31s5LY/Rxk9cmiMnjOdONXfsEOSFQjM18pjsO9GZkB7wQuKqHGF
+	qXGj8KZvoy/qV55Tc7Z+vDaXz39JwTE=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-140-Ooo4pPg2NF6a8cmd4Hz72A-1; Tue, 15 Jul 2025 11:32:14 -0400
+X-MC-Unique: Ooo4pPg2NF6a8cmd4Hz72A-1
+X-Mimecast-MFC-AGG-ID: Ooo4pPg2NF6a8cmd4Hz72A_1752593533
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ae6d660902cso415499766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:32:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752593533; x=1753198333;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wnh22gI/k+OIEWCf+4ySowORAdVnUSIEoD4hbUCmi1M=;
+        b=VNm0Dtm3fA9mB6J+OL+n9pTMaJxsdHXPC2Mf/4gIGUJyz4PmtgKmV2wcYZ3PeAEm7F
+         c2ET9rn69fArLFeKAH/fbpQ7Ef5ZkvcrM3lEBBGniC+H9k/8qWbj/PGpApHTrWJy4wt5
+         TEwO2Pz7aqFc6lFEp/5ro7eo6OdT4FEDwZKVjhmYZPJ3gKsQ+46H2JW35/UBzLXMw/9M
+         rRee2RAJIxEJEWw6dGFRZrR9ZsiW8xZv+BSod6pG0pFfPd91/4ptELMcy0zEIJNusEaT
+         fIUWiqMCwwaoImaTL5Oii6ZzS3fwBGPsx0SPkueAHMKiizQpWM+KHSMKEXBFjTE46mbg
+         wTEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaGdpdAX+dOZJExaF0dSIMgQ4M5QdIGBXiPG9Yp/rq6oeVzFUiwlDbpn+ZqIyF0GLYgYSNLrRC/HeSK34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaJXD1h13ElDb/hRmkE5HgLjTTDw6KzNxgIImoviWf+bBkncLh
+	xsqcHdk/qIrsEotyq9zOowEWjJvPFKaUNxbgO7HlhdzHamCXDNfHxij87cOe7T53kqCjSiS/w7H
+	geFwWEi6z4xmyYoAik37VEbumcRPobKpVRLGTT+TBIRSQDw76E2UeK/iscuJZdr9PVyEH4ykSMC
+	x/mteHvfoyE/0OU9qzXhCb7cPiqgDy6kTIt+7wshFQ
+X-Gm-Gg: ASbGncv26U70ECP2Jd9aaEHqSWNZMPzxDB6K1vchJlsfEE08qS9vocPLq0HTlTeyt8k
+	HCq8y5h+iQbK3Y2JgDvmjwk7Rne7RMqzSrO8TFAzOXysAFI9zUKwc+Qv99JLWQpY/+s+AXN9qmW
+	/yzFvjO54xG24z012IOCc5hg==
+X-Received: by 2002:a17:907:cf93:b0:ae3:cf41:b93b with SMTP id a640c23a62f3a-ae6fc0a7f90mr1582698866b.41.1752593533368;
+        Tue, 15 Jul 2025 08:32:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOIuENMcFdE7XVF/eBak/JoBXEh87UvUrI/EctpEOdONudRuCPXduAkkRmy07jHtjgT20K0pXxQIEZJ9U0ySo=
+X-Received: by 2002:a17:907:cf93:b0:ae3:cf41:b93b with SMTP id
+ a640c23a62f3a-ae6fc0a7f90mr1582696366b.41.1752593532954; Tue, 15 Jul 2025
+ 08:32:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR2101MB0943.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6e05867-27ad-423b-ee35-08ddc3b48fa5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2025 15:30:42.7394
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QZTuroyULLxORE8L0dd/O5OO2wVVmccn+mEcWOUNgfS3fN4Kdsm1pmwA72DtNfNZfrR1KEzRDVBYufnHW4o20A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR21MB4770
+References: <20250710023208.846-1-liming.wu@jaguarmicro.com>
+In-Reply-To: <20250710023208.846-1-liming.wu@jaguarmicro.com>
+From: Lei Yang <leiyang@redhat.com>
+Date: Tue, 15 Jul 2025 23:31:35 +0800
+X-Gm-Features: Ac12FXx0K4HuoaUKypyFETVzBZg3F6wzzVt1s3aBwTTAZbrGnPQbtaOUcuDFRP8
+Message-ID: <CAPpAL=wvL2LfRV5BFgLVG69hUoO5fYVx6WEK-PimjoQpy1S7ZA@mail.gmail.com>
+Subject: Re: [PATCH v2] virtio_net: simplify tx queue wake condition check
+To: liming.wu@jaguarmicro.com
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Jakub Kicinski <kuba@kernel.org>, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, angus.chen@jaguarmicro.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Tested this series of patches v2 with virtio-net regression tests,
+everything works fine.
 
+Tested-by: Lei Yang <leiyang@redhat.com>
 
-> -----Original Message-----
-> From: Simon Horman <horms@kernel.org>
-> Sent: Tuesday, July 15, 2025 9:06 AM
-> To: Haiyang Zhang <haiyangz@linux.microsoft.com>
-> Cc: linux-hyperv@vger.kernel.org; netdev@vger.kernel.org; Haiyang Zhang
-> <haiyangz@microsoft.com>; KY Srinivasan <kys@microsoft.com>;
-> wei.liu@kernel.org; Dexuan Cui <decui@microsoft.com>;
-> andrew+netdev@lunn.ch; edumazet@google.com; kuba@kernel.org;
-> pabeni@redhat.com; davem@davemloft.net; linux-kernel@vger.kernel.org;
-> stable@vger.kernel.org; cavery@redhat.com
-> Subject: [EXTERNAL] Re: [PATCH net,v2] hv_netvsc: Switch VF namespace in
-> netvsc_open instead
->=20
-> On Mon, Jul 14, 2025 at 09:41:37AM -0700, Haiyang Zhang wrote:
-> > From: Haiyang Zhang <haiyangz@microsoft.com>
-> >
-> > The existing code move the VF NIC to new namespace when NETDEV_REGISTER
-> is
-> > received on netvsc NIC. During deletion of the namespace,
-> > default_device_exit_batch() >> default_device_exit_net() is called. Whe=
-n
-> > netvsc NIC is moved back and registered to the default namespace, it
-> > automatically brings VF NIC back to the default namespace. This will
-> cause
-> > the default_device_exit_net() >> for_each_netdev_safe loop unable to
-> detect
-> > the list end, and hit NULL ptr:
-> >
-> > [  231.449420] mana 7870:00:00.0 enP30832s1: Moved VF to namespace with=
-:
-> eth0
-> > [  231.449656] BUG: kernel NULL pointer dereference, address:
-> 0000000000000010
-> > [  231.450246] #PF: supervisor read access in kernel mode
-> > [  231.450579] #PF: error_code(0x0000) - not-present page
-> > [  231.450916] PGD 17b8a8067 P4D 0
-> > [  231.451163] Oops: Oops: 0000 [#1] SMP NOPTI
-> > [  231.451450] CPU: 82 UID: 0 PID: 1394 Comm: kworker/u768:1 Not tainte=
-d
-> 6.16.0-rc4+ #3 VOLUNTARY
-> > [  231.452042] Hardware name: Microsoft Corporation Virtual
-> Machine/Virtual Machine, BIOS Hyper-V UEFI Release v4.1 11/21/2024
-> > [  231.452692] Workqueue: netns cleanup_net
-> > [  231.452947] RIP: 0010:default_device_exit_batch+0x16c/0x3f0
-> > [  231.453326] Code: c0 0c f5 b3 e8 d5 db fe ff 48 85 c0 74 15 48 c7 c2
-> f8 fd ca b2 be 10 00 00 00 48 8d 7d c0 e8 7b 77 25 00 49 8b 86 28 01 00 0=
-0
-> <48> 8b 50 10 4c 8b 2a 4c 8d 62 f0 49 83 ed 10 4c 39 e0 0f 84 d6 00
-> > [  231.454294] RSP: 0018:ff75fc7c9bf9fd00 EFLAGS: 00010246
-> > [  231.454610] RAX: 0000000000000000 RBX: 0000000000000002 RCX:
-> 61c8864680b583eb
-> > [  231.455094] RDX: ff1fa9f71462d800 RSI: ff75fc7c9bf9fd38 RDI:
-> 0000000030766564
-> > [  231.455686] RBP: ff75fc7c9bf9fd78 R08: 0000000000000000 R09:
-> 0000000000000000
-> > [  231.456126] R10: 0000000000000001 R11: 0000000000000004 R12:
-> ff1fa9f70088e340
-> > [  231.456621] R13: ff1fa9f70088e340 R14: ffffffffb3f50c20 R15:
-> ff1fa9f7103e6340
-> > [  231.457161] FS:  0000000000000000(0000) GS:ff1faa6783a08000(0000)
-> knlGS:0000000000000000
-> > [  231.457707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [  231.458031] CR2: 0000000000000010 CR3: 0000000179ab2006 CR4:
-> 0000000000b73ef0
-> > [  231.458434] Call Trace:
-> > [  231.458600]  <TASK>
-> > [  231.458777]  ops_undo_list+0x100/0x220
-> > [  231.459015]  cleanup_net+0x1b8/0x300
-> > [  231.459285]  process_one_work+0x184/0x340
-> >
-> > To fix it, move the VF namespace switching code from the NETDEV_REGISTE=
-R
-> > event handler to netvsc_open().
-> >
-> > Cc: stable@vger.kernel.org
-> > Cc: cavery@redhat.com
-> > Fixes: 4c262801ea60 ("hv_netvsc: Fix VF namespace also in synthetic NIC
-> NETDEV_REGISTER event")
-> > Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
->=20
-> With this change do we go back to the situation that existed prior
-> to the cited patch? Quoting the cited commit:
->=20
->     The existing code moves VF to the same namespace as the synthetic NIC
->     during netvsc_register_vf(). But, if the synthetic device is moved to
-> a
->     new namespace after the VF registration, the VF won't be moved
-> together.
->=20
-> Or perhaps not because if synthetic device is moved then, in practice, it
-> will subsequently be reopened? (Because it is closed as part of the move
-> to a different netns?)
-
-There are two cases:
-1) the synthetic device is moved to a new namespace before the VF device is=
-=20
-offered from PCI:
-During netvsc_register_vf() >> dev_change_net_namespace() will put VF to=20
-the same namespace.
-
-2) the synthetic device is moved to a new namespace after the VF device is=
-=20
-offered from PCI:
-The commit 4c262801ea60 does the move in netvsc_event_set_vf_ns >> dev_chan=
-ge_net_namespace().
-But it will cause Null ptr error during namespace deletion >> default_devic=
-e_exit_net().
-
-This patch keeps the code path (1) unchanged, and fix the code path (2).
-And yes, __dev_change_net_namespace() >> netif_close(dev), so in the new=20
-namespace the NIC always needs to be re-opened before using.
-
-Thanks,
-- Haiyang
+On Thu, Jul 10, 2025 at 10:32=E2=80=AFAM <liming.wu@jaguarmicro.com> wrote:
+>
+> From: Liming Wu <liming.wu@jaguarmicro.com>
+>
+> Consolidate the two nested if conditions for checking tx queue wake
+> conditions into a single combined condition. This improves code
+> readability without changing functionality. And move netif_tx_wake_queue
+> into if condition to reduce unnecessary checks for queue stops.
+>
+> Signed-off-by: Liming Wu <liming.wu@jaguarmicro.com>
+> Tested-by: Lei Yang <leiyang@redhat.com>
+> Acked-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/net/virtio_net.c | 22 ++++++++++------------
+>  1 file changed, 10 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 5d674eb9a0f2..07a378220643 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -3021,12 +3021,11 @@ static void virtnet_poll_cleantx(struct receive_q=
+ueue *rq, int budget)
+>                         free_old_xmit(sq, txq, !!budget);
+>                 } while (unlikely(!virtqueue_enable_cb_delayed(sq->vq)));
+>
+> -               if (sq->vq->num_free >=3D MAX_SKB_FRAGS + 2) {
+> -                       if (netif_tx_queue_stopped(txq)) {
+> -                               u64_stats_update_begin(&sq->stats.syncp);
+> -                               u64_stats_inc(&sq->stats.wake);
+> -                               u64_stats_update_end(&sq->stats.syncp);
+> -                       }
+> +               if (sq->vq->num_free >=3D MAX_SKB_FRAGS + 2 &&
+> +                   netif_tx_queue_stopped(txq)) {
+> +                       u64_stats_update_begin(&sq->stats.syncp);
+> +                       u64_stats_inc(&sq->stats.wake);
+> +                       u64_stats_update_end(&sq->stats.syncp);
+>                         netif_tx_wake_queue(txq);
+>                 }
+>
+> @@ -3218,12 +3217,11 @@ static int virtnet_poll_tx(struct napi_struct *na=
+pi, int budget)
+>         else
+>                 free_old_xmit(sq, txq, !!budget);
+>
+> -       if (sq->vq->num_free >=3D MAX_SKB_FRAGS + 2) {
+> -               if (netif_tx_queue_stopped(txq)) {
+> -                       u64_stats_update_begin(&sq->stats.syncp);
+> -                       u64_stats_inc(&sq->stats.wake);
+> -                       u64_stats_update_end(&sq->stats.syncp);
+> -               }
+> +       if (sq->vq->num_free >=3D MAX_SKB_FRAGS + 2 &&
+> +           netif_tx_queue_stopped(txq)) {
+> +               u64_stats_update_begin(&sq->stats.syncp);
+> +               u64_stats_inc(&sq->stats.wake);
+> +               u64_stats_update_end(&sq->stats.syncp);
+>                 netif_tx_wake_queue(txq);
+>         }
+>
+> --
+> 2.34.1
+>
 
 
