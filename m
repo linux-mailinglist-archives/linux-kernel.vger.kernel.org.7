@@ -1,171 +1,113 @@
-Return-Path: <linux-kernel+bounces-731562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15637B05643
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:24:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E3EB05645
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AF3189B484
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AD0F561A05
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0352D63E0;
-	Tue, 15 Jul 2025 09:24:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323542D63E2;
+	Tue, 15 Jul 2025 09:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KpxVkj51"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1A42D4B6C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4149D2D5C62;
+	Tue, 15 Jul 2025 09:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752571492; cv=none; b=W6p8TxeIF+BFazNG/UWK1WDLj8PDqJh0RcXxiXQAGcJUeEF0DSArTmssfdGumLUjo36dIS17jaq/GLlqhTD+16sDWb462qoeE06BQ9NdkaiQZL/jLlR2YgUPiWmsgvrZpY7vHHJViOqNUSU7IBJgGmGOi8lUjuW4a895qT0xSwQ=
+	t=1752571514; cv=none; b=IZu+/2vpi+UbFiYmuRB3tXrHcLuo3/9UelzDDPko8idzPCdr+csKICpyGekcSwjHhCSCw4LiINC5BAtW0BjlfyUv4KjShmxyn0e7wKwHY48gZiZT6PfQhBLoVoTJ162qQMtqb8VdH/epXMxf6pJYbfW7Q1wP4yh13bS3wX7c3pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752571492; c=relaxed/simple;
-	bh=64bt0iSESH6whWxj7HMeGo4fm1c+U7mOLXtACGkYC58=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BztKAmxIROtKzWOJZvGYtKwJwtor5Cfvt3nt5YKgvZf65ete1BluLXFLpv/3qgyayTHtez3VvjQiCJIOblMMpyDlhtdYuky4h/igYn219eXt2PysJn0njNn5kSqWw7qPw2wJIYzSIL69am5MS4+5j3NVagGF6xpnoeTxUxiYVOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 5EB9910EF50;
-	Tue, 15 Jul 2025 09:24:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 2619420030;
-	Tue, 15 Jul 2025 09:24:46 +0000 (UTC)
-Date: Tue, 15 Jul 2025 05:24:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Steven Rostedt
- <rostedt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Christoph Hellwig <hch@infradead.org>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] LTTng upstreaming next steps
-Message-ID: <20250715052459.0000e119@gandalf.local.home>
-In-Reply-To: <CAHk-=wgZ=Ssx4qoeuaHet1vx+8M36j0a3q2aw5ePapWm=KnSfQ@mail.gmail.com>
-References: <b554bfa3-d710-4671-945b-5d6ec49e52cd@efficios.com>
-	<CAHk-=wiT9Cz+EbbuKozqiu7DnZQ7ftAWSmGf-xy_CdhJPCsNSg@mail.gmail.com>
-	<20250714162750.45b12314@gandalf.local.home>
-	<20250714163755.1de132e9@gandalf.local.home>
-	<CAHk-=wgZ=Ssx4qoeuaHet1vx+8M36j0a3q2aw5ePapWm=KnSfQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752571514; c=relaxed/simple;
+	bh=SmUZ5V6oYOLVMDDyYNGnjrn4VrcjulLihcKBMLmUEKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bMas4Rb2rNNGShXr4d28O8pUHlmBmkXVz6k3gF/GH3gEG3CRaWkuLZeLBARolRaqkboqJvSOPTDvAqWZWbHtjKivjVhoAK6yPRFodI9ADFZ1d/gHGUkBPAlRSJax4V+Hw0EV2Ar4RxuKNwqJEBC3cRLWn2xjPp61TXi6z1oZlxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KpxVkj51; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752571513; x=1784107513;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=SmUZ5V6oYOLVMDDyYNGnjrn4VrcjulLihcKBMLmUEKA=;
+  b=KpxVkj51K5+iugxRBUr99C5hamKpJQLQLRT5J75tRq2H6BPVn5iNAmTD
+   XAscG3rD7F7rinA8ZyjB73EZlW2eKtNhTbGBKp67nJDJU+hT0+hO/+Ltc
+   kmTSW+1mWMGEZEt8wf/nsSq90fVFg8ofkzXmYM50EBwEn5+iJgNGVqWc9
+   5fPkRAKQ0P1yFQiVZM+Tr0G/2eXAVdzezRb1VvWF8riHR3nnrwEzqgRpM
+   lxi1vh2tR9d9wVHMEkmqE0Prv6WPLQfJ9yDV6MuG9xJo0IGi1Ap61sp9X
+   YeTaX0bQk4imJGdgsrbcqRX2TCZ7mPSi8BS6o+Zh7qbPkX025t5S6ZGuu
+   w==;
+X-CSE-ConnectionGUID: E4E/31TNTQG0auaAhg3Oqw==
+X-CSE-MsgGUID: szQ1oLtwRpel6NaFk8asLA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54636677"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="54636677"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 02:25:13 -0700
+X-CSE-ConnectionGUID: BjsOTRxlSkqxNts3arB9nQ==
+X-CSE-MsgGUID: AWcfIymmSWaq5YWX/toxgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="161487314"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 02:25:05 -0700
+Message-ID: <dfef9ca2-249f-42b4-8587-e851374e3ef3@intel.com>
+Date: Tue, 15 Jul 2025 17:25:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] TDX: Clean up the definitions of TDX ATTRIBUTES
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Cc: "Lindgren, Tony" <tony.lindgren@intel.com>,
+ "Hunter, Adrian" <adrian.hunter@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "Huang, Kai"
+ <kai.huang@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>
+References: <20250711132620.262334-1-xiaoyao.li@intel.com>
+ <5154b5ba73f7917c0d239880d0056a40ba7f1e08.camel@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <5154b5ba73f7917c0d239880d0056a40ba7f1e08.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 2619420030
-X-Stat-Signature: g4ijjbpajeh6paa5ig6e3f5f3ffmwi8c
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/ZwbkjnE51esi0NAQspdyE9ivdkuaezqo=
-X-HE-Tag: 1752571486-635244
-X-HE-Meta: U2FsdGVkX1+vl75AssqaKIqnIPvxSuUEU+D7PXmwwgx1zbGaatG/Qhuky06wNCtlSjoHfcXMujEYGAjS78h+XjIRqUbtRno4DCe7HhuuRZR1T/M/t1DQUPyVA6uYRhtwhtDNwLSp6rCbdcjwGUCugPb0TaQgFLlGqW+T5yECe/hImCt93POvcGGp+PYv+k3F1VgwnXCc9q+doTVrdjgIbyTqVwxnuVMmZjtV8i9GPs2QnNQw4OFNQ0fZjQBmH3eUniaDWuwjOjovxPPx0Ii2Yot8h5HNmHJ2wQsntD8HoTaQAISnQXi7CE2vQadmTnDV1s+ZeLASBfY5xQnIphpc5uLRjno7JTiQvQKhQ+zv+ntboiZgqnjegaCU6Jgf0fz9hpxgbJnRyABQw9QuY3UFJwEEgg+1HZztubCruDuFYON2Uj+1Pn8yVPyhSCPkkjva
 
-On Mon, 14 Jul 2025 14:04:38 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Mon, 14 Jul 2025 at 13:37, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > If LTTng were to be in tree, it would be much easier to work on a strategy
-> > to merge the infrastructure as the maintainers of both would have better
-> > access to each other's code.  
+On 7/12/2025 2:02 AM, Edgecombe, Rick P wrote:
+> On Fri, 2025-07-11 at 21:26 +0800, Xiaoyao Li wrote:
+>> Note, this series doesn't rename TDX_ATTR_* in asm/shared/tdx.h to
+>> TDX_TD_ATTR_*, so that KVM_SUPPORTED_TDX_TD_ATTRS in patch 3 looks
+>> a little inconsistent. Because I'm not sure what the preference of tip
+>> maintainers on the name is. So I only honor KVM maintainer's preference
+>> and leave the stuff outside KVM unchanged.
 > 
-> That's not a bet I'd take.
+> I prefer the names with "TD" based on the argument that it's clearer that it is
+> TD scoped. My read was that Sean has the same reasoning. This series changes KVM
+> code to use the non-"TD" defines. So I feel Sean's opinion counts here. We don't
+> have any x86 maintainer NAK on the other direction, so it doesn't seem like a
+> reason to give up trying.
 > 
-> If people haven't unified this in the last two decades, I'm noty going
-> to take the argument of "hey, merge it because *then* it will be
-> unified".
-> 
-> Because honestly, that sounds like a total fairy tale to me: "the
-> princess came along and kissed the toad, and he turned into a
-> beautiful price, and they lived happily ever after".
-> 
-> So no. I don't believe in fairy tales. Not when we have two decades of
-> "that didn't happen".
-> 
-> If people can unify this and merge it incrementally, that's one thing.
-> 
-> Until then, you're just making stuff up.
-> 
-> "Show me the code", in other words.
+> That said I think this series is an overall improvement. We could always add TD
+> to the names later. But the sooner we do it, the less we'll have to change.
 
-We'd love to, but how is one to merge code in incremental steps when they
-are not allowed to use the current infrastructure?
-
-LTTng being out of tree means it is only allowed to use EXPORT_SYMBOL_GPL()
-functions as it must be a module. Perf, ftrace and BPF are all 100% in-tree
-and has no modules so they do not require any EXPORT_SYMBOL_GPL() to use
-the current infrastructure.
-
-This is the main difference between an external tracer and an external
-driver. That's because other in-tree drivers and file systems all have a
-module component. If ftrace, perf and BPF were modules, it would require the
-infrastructure they use to all be defined as EXPORT_SYMBOL_GPL(). This
-makes LTTng have a huge disadvantage as those are not modules and the
-interface they use are not exported.
-
-Christoph and Greg keep saying "this is no different than any other out of
-tree code", but I'm saying due to this limitation it is. When they talk
-about out of tree drivers and file systems that need to do the same, that
-code has a huge advantage because it is competing with other code that are
-modules and they can use the same infrastructure. Even when they are out of
-tree.
-
-Case in point, Mathieu is helping with the sframe work so that it can share
-the same code that perf and ftrace will use. But as soon as we want to
-allow it to use that code, it is shot down because it requires a
-EXPORT_SYMBOL_GPL() to access it. Because perf an ftrace have no "module"
-selection, there will be no in-tree module that would use that interface,
-thus LTTng is out of luck.
-
-This forces LTTng to come up with a different solution for everything that
-perf and ftrace do.
-
-This is a huge catch-22 for LTTng. You want unification before LTTng can
-become part of the kernel. But because Christoph and Greg refuse to allow
-LTTng to have access to anything that perf and ftrace use, there's no path
-for LTTng to share the code.
-
-This discussion is going full circle:
-
-1. Mathieu helps with new infrastructure that it could share with perf and
-   ftrace.
-
-2. We ask to add EXPORT_SYMBOL_GPL() so that LTTng can share this code.
-
-3. It is denied because LTTng is out of tree, and we are told that if LTTng
-   wants to use this it must first be in tree.
-
-4. We send an RFC on how to get LTTng in tree.
-
-5. We are told that LTTng can only get in tree through incremental steps.
-
-6. The only way to do incremental steps is for LTTng to have access to the
-   same functions as perf and ftrace have, but is not allow to because it's
-   out of tree!
-
-When I said being out of tree makes it much more difficult to merge code,
-this is the reason why.
-
-Breaking up LTTng is a huge task to do it in incremental states. If it can't
-use in kernel infrastructure while it is out of tree, it will mean the out
-of tree LTTng cannot use the code being submitted. Thus, the code going
-upstream will be unused or will be a non-functional LTTng. If it takes several
-years to complete, it is forcing Mathieu to have a broken LTTng for several
-years before it is allowed to use code upstream.
-
-So which is it?
-
-Either LTTng can use the same infrastructure as perf and ftrace, meaning it
-requires EXPORT_SYMBOL_GPL() on those interfaces, or it gets pulled in as
-is, so that it can incrementally start to share the code.
-
--- Steve
-
+Just sent the v3 which adds one additional patch to rename it.
 
