@@ -1,84 +1,97 @@
-Return-Path: <linux-kernel+bounces-731005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C126B04D6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:29:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED8CB04D71
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA8F3B85A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFAEB1A68216
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBA71C84A2;
-	Tue, 15 Jul 2025 01:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B169E1CAA7B;
+	Tue, 15 Jul 2025 01:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKQgAWUe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8S3wtSr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD00D126BFF;
-	Tue, 15 Jul 2025 01:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154961A83F8;
+	Tue, 15 Jul 2025 01:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752542958; cv=none; b=aClm0EE1fS7zt9yErgMrB5aNC4hihsofKuKYSVDEskxqPL6eFVv9O66yGSkdds379TLM0H6cAkYfTPgHIcADH767fOkBT0hwWOWP8HD25eRB+3ivVwrUK/s0gNUW8CqYvv4i2mQ8r1AMB+o9DODGhYFaXZ0f5ewL/+c5ZiTvHww=
+	t=1752542988; cv=none; b=CETNJeClhIFf3IGydSScy3EL0UzBi18/3/rdBY3R2/7f3CHmVuOGwwlVJTeNwV+VhQGNxmbuqkxitKxOnFR4DP3+jEPIqNmZnVQ6qAed/Oo6fauaTQ7hSrH8btBdpFchz2gBn2hz0ofDzy2bZRSGRTpJCAMIClY4FfLF8CzcsUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752542958; c=relaxed/simple;
-	bh=LN3SDU0SJ2mAMDx6DoNHbADF0j7JFa7bL8zPf+ObbHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sF3HV5QK4lawBvAwm4w32YtOXR02AZtDkcmiT9F3b7e70lvnVgcBwAfRbd1oknpld/NQlNhb9Tv/RxYMViNhWoGn6UOvy06j3KwK0V6awr+EtrK4x2Caa6BAsTTPw9Z+iDpMCxOyw/ABXqpisL0lhPNvCrlFPi4QdFxiMxyXeqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKQgAWUe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB86BC4CEED;
-	Tue, 15 Jul 2025 01:29:14 +0000 (UTC)
+	s=arc-20240116; t=1752542988; c=relaxed/simple;
+	bh=NFtG1yp4KAvmoF987bsoECw6745I4XetR5kNMHK7MBw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=XcNInscpk7BD/cpNnUm+Y72ZssS+y+Z0dCZTrt+7RCQL2kgGoCSGsbdEXZXbfJhPh4w1/AOhlaoQAe7ELExYuhnIrbbdiPHwo2QQfbXSjwKfvECjH+0kkcK0LiSpYdgO0pPZRmzVkrajjCZbsE+gIQddlYU5edKBuxq6fg84AAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8S3wtSr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D18AC4CEED;
+	Tue, 15 Jul 2025 01:29:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752542955;
-	bh=LN3SDU0SJ2mAMDx6DoNHbADF0j7JFa7bL8zPf+ObbHk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IKQgAWUew8JrCt5xcLQ2oYee1YvYR8KC4tGKllVov7izR7wpPEUp99AIMLjGAJODZ
-	 rycnSRv/rHww451DmWzJawsPOcTxQCdRUNZZYgjBm7AlPWEw83krXzEsftExd55suy
-	 k4KihSquEoYOULx0wNBDreI8RsAuTVLVN544hxK4rY2u5Q1oVi3GJmx1l0evh2+2nX
-	 4h9zhinF9Sxdrz2cK+HSe6kPCzti00U92H65lDEQTV4znCPT+w5qIydht+i6dWHB6H
-	 P+RVyGXhmuqOWEb7qpLmW3/zvuJXqzFxywwScHdg1T32P0ekI5ZEggd1NsPdUBKtUe
-	 P0tesGRFPe69Q==
-Date: Mon, 14 Jul 2025 18:29:14 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Haiyang Zhang <haiyangz@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- haiyangz@microsoft.com, kys@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, edumazet@google.com, pabeni@redhat.com,
- stephen@networkplumber.org, davem@davemloft.net,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net] hv_netvsc: Switch VF namespace in netvsc_open
- instead
-Message-ID: <20250714182914.27c94a91@kernel.org>
-In-Reply-To: <1752267430-28487-1-git-send-email-haiyangz@linux.microsoft.com>
-References: <1752267430-28487-1-git-send-email-haiyangz@linux.microsoft.com>
+	s=k20201202; t=1752542987;
+	bh=NFtG1yp4KAvmoF987bsoECw6745I4XetR5kNMHK7MBw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=F8S3wtSrDUVFh8tACJDKHNX3kBS2utFTMDpMEXRsDyarsvTkOnWNYWcEMnJ+gVFU0
+	 685A1STZUrtD3a7pyzbID8yCECMyLp3F0pdi2zweX5Y4HgfqQEmoHctoyPKmHv/AXM
+	 1js52Ee2euA/AxguDmGzQChKE9eZWfN4H7cKtj29PmuKR1qqnJqJGEPByuePLV9X1n
+	 gJ5hVSyx3Ss/I4ZSZaOf7cuk+R1bYx11aDVclNycmTv2/WGmCLS5X+IGv14gD7Vrh3
+	 GjMU7a21UGyRBEjCEMAe1nJ6jhtwZjPzRpeGbsFIzfrNb2eCHPg3WYPvEYS8Jc9kOZ
+	 IRfZp1EFcyU3w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 99F94383B276;
+	Tue, 15 Jul 2025 01:30:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: wangxun: fix LIBWX dependencies again
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175254300824.4049503.6759866563316837064.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Jul 2025 01:30:08 +0000
+References: <20250711082339.1372821-1-arnd@kernel.org>
+In-Reply-To: <20250711082339.1372821-1-arnd@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: jiawenwu@trustnetic.com, mengyuanlou@net-swift.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ richardcochran@gmail.com, linux@armlinux.org.uk, arnd@arndb.de,
+ vadim.fedorenko@linux.dev, heikki.krogerus@linux.intel.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 11 Jul 2025 13:57:10 -0700 Haiyang Zhang wrote:
-> The existing code move the VF NIC to new namespace when NETDEV_REGISTER is
-> received on netvsc NIC. During deletion of the namespace,
-> default_device_exit_batch() >> default_device_exit_net() is called. When
-> netvsc NIC is moved back and registered to the default namespace, it
-> automatically brings VF NIC back to the default namespace. This will cause
-> the default_device_exit_net() >> for_each_netdev_safe loop unable to detect
-> the list end, and hit NULL ptr:
+Hello:
 
-Are you saying that when netns is dismantled both devices are listed
-for moving back to default, but the netvsc_event_set_vf_ns() logic
-tries to undo the move / move the VF before the netns dismantle loop
-got to it?
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-This needs a better fix, moving on open is way too hacky. 
-Perhaps we should start with reverting 4c262801ea60 and then trying
-to implement it in a more robust way?
+On Fri, 11 Jul 2025 10:23:34 +0200 you wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Two more drivers got added that use LIBWX and cause a build warning
+> 
+> WARNING: unmet direct dependencies detected for LIBWX
+>   Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
+>   Selected by [y]:
+>   - NGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI_MSI [=y]
+>   Selected by [m]:
+>   - NGBE [=m] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
+> 
+> [...]
+
+Here is the summary with links:
+  - net: wangxun: fix LIBWX dependencies again
+    https://git.kernel.org/netdev/net-next/c/a86eb2a60dcc
+
+You are awesome, thank you!
 -- 
-pw-bot: cr
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
