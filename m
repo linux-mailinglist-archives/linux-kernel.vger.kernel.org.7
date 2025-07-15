@@ -1,47 +1,95 @@
-Return-Path: <linux-kernel+bounces-732199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4569B06354
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:44:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452A8B0635B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3BAB58062F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:44:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09EEA1889254
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0905E248F7E;
-	Tue, 15 Jul 2025 15:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030B1187332;
+	Tue, 15 Jul 2025 15:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iB+9vfYE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TKc0KITs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0Ttg9INF";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TKc0KITs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0Ttg9INF"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565F5247298;
-	Tue, 15 Jul 2025 15:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873951DE8A3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594244; cv=none; b=IJv/hoFh45losGWd/TqfmN4kNf3YJDxVHSj796yT3csa2k7JGHRlf8+xn1MBlGG6DJ+oqFX93ekQPJmkyvppuBwWq8uNdw4/naSrvjvVIqFhlWoi0d8Fbvh4eILYRlAFeOP3FhwPzMLYKZmdL37mmLud0aN+ZG8b5e7a7spNHB4=
+	t=1752594337; cv=none; b=s7W6OYBUPEjUSuw7dRBkfjcQE2F4pO+1+UYpB2GLy3b1eWdN0JV5hQ+0mDeHQkVpjFPu7M8XcyLN3+nAv5qU95DTGITfuB4iZ8agSSaUvb6p0bBqmSzsRZ/oyHe8g2bUhK8zsmNIY/TtpbG1lNyCi7z/O4f50t2P9FUKNKbBBMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594244; c=relaxed/simple;
-	bh=LnwdKmSXTl1+vnrYTDbYCKRcIkIX9jnvgo5J/1Js/aE=;
+	s=arc-20240116; t=1752594337; c=relaxed/simple;
+	bh=LDpNTipuO5bRSqJl1m3c3YNQeDiHo/SOS4mTmQGmiwM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bqnZYI3gk+r019rHv2u+08H+bh/yz841ELdwA2ihaDxtX2m8M92L5pcHAQakH+ODmd42dYdC4d3DoItDFt/6GfLWrjk/4YAVhr2ST3LmvshxS4WwSnTFR3LhyB+3hrWmOuJyjESRc2t1HgEzYdYJ0uVBKddJdXVfO/lfcdNatfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iB+9vfYE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA6DC4CEE3;
-	Tue, 15 Jul 2025 15:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752594243;
-	bh=LnwdKmSXTl1+vnrYTDbYCKRcIkIX9jnvgo5J/1Js/aE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iB+9vfYE3Olvv3IlQzb5L+mEoVM9KcYmx3VnShdyca/l53s3TVssqCtlgUnnojES4
-	 1/AtKwibiYkJs4w3PD6TzHaYV+zCilfJFucLkzicOjWsghGS/RatZI+H+UgvfZ/ran
-	 NK9C7RtlasqA2rHQNQVw5xus664jjBncx93nH8dKIkr8yr5PWpmkWmvileTyrd+QP0
-	 i1bJvcEZkUVRxofshRhHMfxg7K9Cbll9YGtE4i0DvzygxGekdQf58ARsJSNJ3s5oRw
-	 eRnP5xYYO8U4FZg6294eMGNmMjEfwRGAWeZ/PSU55tuyivviUJbj3Y3CM8pqmNU2Ne
-	 n8p+Roc92W2kg==
-Message-ID: <b25f83e8-7e5d-44f8-9f16-909cb005aadd@kernel.org>
-Date: Tue, 15 Jul 2025 16:44:00 +0100
+	 In-Reply-To:Content-Type; b=Y7j03jPAaH36PGPMjh98l42tT/K25sNN1lRYz/9RRejVJYIipLuWXxcecigm3ZzgS9pGFC18bPrhckutCdl+tAIr+7cyFWlFyEF4gliB1heeBwXwia+CNVx+o9YkWMwnbBQ8JI8Fc4aDn+xzzvYRp8XGexBrm+PjuJztQg3+bHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TKc0KITs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0Ttg9INF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TKc0KITs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0Ttg9INF; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B25FF1F7D2;
+	Tue, 15 Jul 2025 15:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752594333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gZUtDa8Gu1XzlNh0JTUT8Vy6AJDYvm4awcDQs1w5mww=;
+	b=TKc0KITsE47uX6yHEkRMdU2n4mWxchQRES0Txba/MnT+KbZ+GIvVpwGcCYY0g63kK01jUK
+	QVR3cup0ErtqF8hyupN8NoHqwIIXwJqeroXjaCMd4Ydq/UcPomNTdj3OsyOMUetD4Qobd4
+	ceqlT5xhRfY7AmrZYrlw1dIHpdyoC14=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752594333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gZUtDa8Gu1XzlNh0JTUT8Vy6AJDYvm4awcDQs1w5mww=;
+	b=0Ttg9INF+n5mGmRfO8oRH6bJWwQt+XKyEt4b42fVvLtFFQU91T3bk88HAxs+JeWOsZkbbW
+	PQIK5RSFIGiPh/AA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TKc0KITs;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0Ttg9INF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752594333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gZUtDa8Gu1XzlNh0JTUT8Vy6AJDYvm4awcDQs1w5mww=;
+	b=TKc0KITsE47uX6yHEkRMdU2n4mWxchQRES0Txba/MnT+KbZ+GIvVpwGcCYY0g63kK01jUK
+	QVR3cup0ErtqF8hyupN8NoHqwIIXwJqeroXjaCMd4Ydq/UcPomNTdj3OsyOMUetD4Qobd4
+	ceqlT5xhRfY7AmrZYrlw1dIHpdyoC14=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752594333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gZUtDa8Gu1XzlNh0JTUT8Vy6AJDYvm4awcDQs1w5mww=;
+	b=0Ttg9INF+n5mGmRfO8oRH6bJWwQt+XKyEt4b42fVvLtFFQU91T3bk88HAxs+JeWOsZkbbW
+	PQIK5RSFIGiPh/AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F42213A68;
+	Tue, 15 Jul 2025 15:45:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cWt4Cp13dmgsZAAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 15 Jul 2025 15:45:33 +0000
+Message-ID: <0a33bc37-bb9e-4e70-afd8-59366d46b250@suse.de>
+Date: Tue, 15 Jul 2025 17:45:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,109 +97,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] nvmem: layouts: u-boot-env: remove crc32 endianness
- conversion
-To: Greg KH <gregkh@linuxfoundation.org>, srini@kernel.org
-Cc: linux-kernel@vger.kernel.org, "Michael C. Pratt" <mcpratt@pm.me>,
- INAGAKI Hiroshi <musashino.open@gmail.com>, stable@vger.kernel.org
-References: <20250712181729.6495-1-srini@kernel.org>
- <20250712181729.6495-2-srini@kernel.org>
- <2025071308-upfront-romp-fa1e@gregkh> <2025071313-zippy-boneless-da1c@gregkh>
+Subject: Re: [PATCH v6 0/6] block/md/dm: set chunk_sectors from stacked dev
+ stripe size
+To: Christoph Hellwig <hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, song@kernel.org, yukuai3@huawei.com,
+ nilay@linux.ibm.com, axboe@kernel.dk, cem@kernel.org,
+ dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
+ ojaswin@linux.ibm.com, martin.petersen@oracle.com,
+ akpm@linux-foundation.org, linux-xfs@vger.kernel.org, djwong@kernel.org
+References: <20250711080929.3091196-1-john.g.garry@oracle.com>
+ <f80713ec-fef1-4a33-b7bf-820ca69cb6ce@kernel.org>
+ <20250714055338.GA13470@lst.de>
+ <c71ce330-d7b5-45ea-ba46-97598516e9fc@kernel.org>
+ <20250714061300.GA13893@lst.de>
 Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <2025071313-zippy-boneless-da1c@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250714061300.GA13893@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: B25FF1F7D2
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-
-
-On 7/13/25 4:42 PM, Greg KH wrote:
-> On Sun, Jul 13, 2025 at 05:41:45PM +0200, Greg KH wrote:
->> On Sat, Jul 12, 2025 at 07:17:26PM +0100, srini@kernel.org wrote:
->>> From: "Michael C. Pratt" <mcpratt@pm.me>
->>>
->>> On 11 Oct 2022, it was reported that the crc32 verification
->>> of the u-boot environment failed only on big-endian systems
->>> for the u-boot-env nvmem layout driver with the following error.
->>>
->>>   Invalid calculated CRC32: 0x88cd6f09 (expected: 0x096fcd88)
->>>
->>> This problem has been present since the driver was introduced,
->>> and before it was made into a layout driver.
->>>
->>> The suggested fix at the time was to use further endianness
->>> conversion macros in order to have both the stored and calculated
->>> crc32 values to compare always represented in the system's endianness.
->>> This was not accepted due to sparse warnings
->>> and some disagreement on how to handle the situation.
->>> Later on in a newer revision of the patch, it was proposed to use
->>> cpu_to_le32() for both values to compare instead of le32_to_cpu()
->>> and store the values as __le32 type to remove compilation errors.
->>>
->>> The necessity of this is based on the assumption that the use of crc32()
->>> requires endianness conversion because the algorithm uses little-endian,
->>> however, this does not prove to be the case and the issue is unrelated.
->>>
->>> Upon inspecting the current kernel code,
->>> there already is an existing use of le32_to_cpu() in this driver,
->>> which suggests there already is special handling for big-endian systems,
->>> however, it is big-endian systems that have the problem.
->>>
->>> This, being the only functional difference between architectures
->>> in the driver combined with the fact that the suggested fix
->>> was to use the exact same endianness conversion for the values
->>> brings up the possibility that it was not necessary to begin with,
->>> as the same endianness conversion for two values expected to be the same
->>> is expected to be equivalent to no conversion at all.
->>>
->>> After inspecting the u-boot environment of devices of both endianness
->>> and trying to remove the existing endianness conversion,
->>> the problem is resolved in an equivalent way as the other suggested fixes.
->>>
->>> Ultimately, it seems that u-boot is agnostic to endianness
->>> at least for the purpose of environment variables.
->>> In other words, u-boot reads and writes the stored crc32 value
->>> with the same endianness that the crc32 value is calculated with
->>> in whichever endianness a certain architecture runs on.
->>>
->>> Therefore, the u-boot-env driver does not need to convert endianness.
->>> Remove the usage of endianness macros in the u-boot-env driver,
->>> and change the type of local variables to maintain the same return type.
->>>
->>> If there is a special situation in the case of endianness,
->>> it would be a corner case and should be handled by a unique "compatible".
->>>
->>> Even though it is not necessary to use endianness conversion macros here,
->>> it may be useful to use them in the future for consistent error printing.
->>>
->>> Fixes: d5542923f200 ("nvmem: add driver handling U-Boot environment variables")
->>
->> Note, this is a 6.1 commit id, but:
->>
->>> Reported-by: INAGAKI Hiroshi <musashino.open@gmail.com>
->>> Link: https://lore.kernel.org/all/20221011024928.1807-1-musashino.open@gmail.com
->>> Cc: stable@vger.kernel.org # 6.12.x
->>> Cc: stable@vger.kernel.org # 6.6.x: f4cf4e5: Revert "nvmem: add new config option"
->>> Cc: stable@vger.kernel.org # 6.6.x: 7f38b70: of: device: Export of_device_make_bus_id()
->>> Cc: stable@vger.kernel.org # 6.6.x: 4a1a402: nvmem: Move of_nvmem_layout_get_container() in another header
->>> Cc: stable@vger.kernel.org # 6.6.x: fc29fd8: nvmem: core: Rework layouts to become regular devices
->>> Cc: stable@vger.kernel.org # 6.6.x: 0331c61: nvmem: core: Expose cells through sysfs
->>> Cc: stable@vger.kernel.org # 6.6.x: 401df0d: nvmem: layouts: refactor .add_cells() callback arguments
->>> Cc: stable@vger.kernel.org # 6.6.x: 6d0ca4a: nvmem: layouts: store owner from modules with nvmem_layout_driver_register()
->>> Cc: stable@vger.kernel.org # 6.6.x: 5f15811: nvmem: layouts: add U-Boot env layout
->>> Cc: stable@vger.kernel.org # 6.6.x
->>
->> That's a load of (short) git ids for just 6.6.y?  What about 6.1.y?
+On 7/14/25 08:13, Christoph Hellwig wrote:
+> On Mon, Jul 14, 2025 at 03:00:57PM +0900, Damien Le Moal wrote:
+>> Agreed, it would be nice to clean that up. BUT, the chunk_sectors sysfs
+>> attribute file is reporting the zone size today. Changing that may break
+>> applications. So I am not sure if we can actually do that, unless the sysfs
+>> interface is considered as "unstable" ?
 > 
-> And really, ALL of those commits are needed for this very tiny patch?
-May be not, AFAIU  Fixes: d5542923f200 ("nvmem: add driver handling
-U-Boot environment variables") should be enough.
+> Good point.  I don't think it is considered unstable.
+>
+Hmm. It does, but really the meaning of 'chunk_sectors' (ie a boundary 
+which I/O requests may not cross) hasn't changed. And that's also
+the original use-case for the mapping of zone size to chunk_sectors,
+namely to ensure that the block layer generates valid I/O.
+So from that standpoint I guess we can change it; in the end, there may
+(and will) be setups where 'chunk_sectors' is smaller than the zone
+size.
+We would need to have another attribute for the zone size, though :-)
+But arguably we should have that even if we don't follow the above
+reasoning.
 
---srini
-> Reverting a config option?  sysfs apis being added?  Huh?
-> 
-> confused,
-> 
-> greg k-h
+Cheers,
 
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
