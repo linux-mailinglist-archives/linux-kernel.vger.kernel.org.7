@@ -1,132 +1,202 @@
-Return-Path: <linux-kernel+bounces-731891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FBCB05B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:17:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59AAB05B6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC775647F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:17:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C15884E4185
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757CC2E2F1A;
-	Tue, 15 Jul 2025 13:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3708E19F420;
+	Tue, 15 Jul 2025 13:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="m0pE6wcl"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gLAYK/pU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2962701B8
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4F62E11D3;
+	Tue, 15 Jul 2025 13:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585443; cv=none; b=Cc3IZx7Um/VEJ0bstqdAO4AJD+CRkhkUrW1ZpG2SS3DjAdhzanaX0S7U8ILlsAuFi8HQpGiy+5MXOJZ4vcYSZFJPnl7aP6SGhuOU5F/KWSr5gZbC44h3bK1HSLheJLdlR3ao4aOHSkSoqWR4yLa2skS+pFrjxxcsozmjOf59XRM=
+	t=1752585545; cv=none; b=EBBBtoLmB6D7950amf9WL3hPFJbhcJm9q7gdltZL5Xoa23hY5M/wSVXVHn0ib6gSdtfhZhpy78TVDKNbss4JAkCHRMFLbldHK1Iq2v/b/S0m6qAxs0zWnPB80Q+9mG5HhhnHOFZ5xtDGS//gHVMlOHp2C6e6UwvWva/QJtWYrUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585443; c=relaxed/simple;
-	bh=EbPOhYxKmhpuxZYPk4B6pkAFB6wXuZvAR/vSuYVQ5XA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l54onHKdngKr64vcQC4X9Kwyt47dMo0+/VkE71J7B1nr98QKvBwsB/kmurc3fOvef4GRwaKGFkxc0DTnU1Ho6YjjRkH6sGt8aUV5zrnLUICsJKASe6QJ7vZ5+LNEciG+UGJ2nxyeewkndOKmBLt0Aawk0UV5xN5mS3LIxImwVak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=m0pE6wcl; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553b16a0e38so5710185e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752585440; x=1753190240; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EbPOhYxKmhpuxZYPk4B6pkAFB6wXuZvAR/vSuYVQ5XA=;
-        b=m0pE6wcl9/rA+zZrcKJgGP+4k0hvB0TUxfzPkMuqyTqdcwrQqUD1Q4dz770UY1P5dq
-         ou8rGDrKbPjxs2F2dzgOoiMh8JQrGzU+f+S9S/hMY6HPtoUJ82xT9lg4wq3DGlapPqwk
-         FeVIAAPiwQkwl07oon3Ti7I+TB/ZAT26dmIYg1VUnf+CHOQbAVYOjYkVTg6P1gNiJsMg
-         yxb4rgHLpvm1+qX5AUppvm1mq3lgvZ71RMu/lZD2+MjRHkOEQQPvIJFvRXl/zpYJI6O/
-         byrIND1HhswYcDapYJ6UKAegvG6ecjHLrpXTJO4jXuGvxuKMNMxpnqz5ldn1qGIHfjTE
-         woNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752585440; x=1753190240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EbPOhYxKmhpuxZYPk4B6pkAFB6wXuZvAR/vSuYVQ5XA=;
-        b=MgCl5exfv/6Ilhg4TmOPjQJroY9jd6DeQZz/2+GngiI5dZoHaa+pgyiLsjS3YynaiO
-         ma84uMS1vIKojQZXn7hCKhR31Y9WBa3nqtvVN1NoGjrdGXtdd4gsbhFuPd7SJXTKXW+C
-         sgaQPajaxritzUeyRCSuVgQRsnEZUSnp/D7aLxCkwF1WpMLamfcWyj1XaTwuroVCwpr8
-         NHp1wN+q0kCeIXhaPdq8lFmk+D256V7xSIdeOEC/AxcxSZ97WzFX7ZnXu5oIBG5u50l/
-         D1xTscsRy2YrKCgdpbJSCP6tv/fF48jOQJawZSI/+HgVCUDfHGnr05II3sL4R0JXXn1G
-         PNLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJG7XuukqJ4PiqxOmt3vizBCzmtdzeojf11qAQpOU7tWnJfo3CPHuuwJTC9ROd9gChLdfD2cywy09MN+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdq/8m3ocYAIkwXmizjCElRUXuWw0fYkeEM4pCK2u39fFllR2d
-	RU9tjkodk1yFYhq+E8XeYWhs3YQLP6OJYWJ7JPNsoF9uP6VHeee/l2mKs+QHeGiQam5Bdk0p0Ua
-	EQfPT2258D4Myncx2rPepoIOIz1PaxDc4oNfozDVq/g==
-X-Gm-Gg: ASbGnctJfGNykLO3gY4iFqG5mowxXWx/22SA3Sv5DpLzJtQQGsNzkTwVLJ7wqX6LUT+
-	Ke/yfzLj0Yqzv/KMQf9WNpdHr/7IwmvZ7vuTIpx7n/Xm3cOjF6WDaYUAtMcjoAh1aXY49wefnd2
-	ET4MJn42kUjBLjSkVTOXYh0ROPzYx55aRtkK8jF0aro7td/qPL6kXD7zQ3UfouGIuzURWffcTfh
-	o1zr3/UKodkbq9qhLmvdj/Hgb20FbAvFXbcJuk=
-X-Google-Smtp-Source: AGHT+IG09J9PA2KclI10YV95njLPiWN/K6zvwX5knhUkHxQZ1/HA1h98MK7b6qFAh/thxaE0FtygrGZqtBXWqXa8aSM=
-X-Received: by 2002:a05:6512:3054:b0:553:3770:c91d with SMTP id
- 2adb3069b0e04-55a044d0e3amr5712015e87.4.1752585440185; Tue, 15 Jul 2025
- 06:17:20 -0700 (PDT)
+	s=arc-20240116; t=1752585545; c=relaxed/simple;
+	bh=Q7CJmLoluI6Xm9e7tAsyLnHK9TYVSx9FLwZ/M7LJR04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cVTiYnobj3kdg+vJTDZjIpJAm7GwbdYI+li1XHawAz4MwGhUmNBTYAoliCQ7ZMIfTuOG6fOeWGngw2J3eNUSWUZNb/ob3/gv3SiH0G0lcOfH9yse0fo8duNI0bmVJhW4WiMaOI4REhhuSGHx23mvCKzzlGfuRDmhvoPZv3l6SF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gLAYK/pU; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752585544; x=1784121544;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Q7CJmLoluI6Xm9e7tAsyLnHK9TYVSx9FLwZ/M7LJR04=;
+  b=gLAYK/pUMtAyfdwsj89GKw4VNzb1hrRj7GFFxebNc8yeXhwVA0ujFmFK
+   Qeq661iA0KPA47cwvu1bEXK4cPImyw3UCxYnLfR9B5lqhdcfZlBbe9BEN
+   B0o+WHsa8MdDk20ip0uDDuiV4I3Djf6UCeLZm8TPF51alB0lrKTvqVtfe
+   LUKx83j+8XEzMP/XyvlDi3GgBKhgwFZcseKRiadP2BdXaMjUBF6yI6UGM
+   fadeVTDLa2aTtT6apiT2we77kubPdfk+l1gNNRIFb1/qrLnUptBpsFI8f
+   8DGw0/bS4oLI6JEl6j71h6gq55Bd1xNeMcPGY6ghPPUI0ZCO43nRGUWSu
+   g==;
+X-CSE-ConnectionGUID: eLH1tClfQxme3ld0LM1GDA==
+X-CSE-MsgGUID: Lb+2gG8TQzqoVSmWSIir/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="65872056"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="65872056"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 06:19:02 -0700
+X-CSE-ConnectionGUID: IS/xJoJqR1u+4fCBsGY1DA==
+X-CSE-MsgGUID: eps8aJzXQnmEXJseNvDhjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="157316002"
+Received: from ettammin-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.145])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 06:19:00 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id D070911F8A6;
+	Tue, 15 Jul 2025 16:18:57 +0300 (EEST)
+Date: Tue, 15 Jul 2025 13:18:57 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, Alex Elder <elder@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v1] PM: runtime: Take active children into account in
+ pm_runtime_get_if_in_use()
+Message-ID: <aHZVQaY6E9R_YWKs@kekkonen.localdomain>
+References: <12700973.O9o76ZdvQC@rjwysocki.net>
+ <aHYCRvz0ohgi2xUk@kekkonen.localdomain>
+ <CAJZ5v0jEELFB6vb1dtkPgu_3_eew7Y1Jebevfmhye+ZPLk0Jtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611-aaeon-up-board-pinctrl-support-v8-0-3693115599fe@bootlin.com>
- <CAMRc=MfS5Em65n0fwbu8JtJsc3rTgQO5cv+PymSonJtf6_zRKQ@mail.gmail.com> <824ec6d1-4272-44c7-b3bb-93d716ed3d43@bootlin.com>
-In-Reply-To: <824ec6d1-4272-44c7-b3bb-93d716ed3d43@bootlin.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 15 Jul 2025 15:17:09 +0200
-X-Gm-Features: Ac12FXxvAYS_y1k5VysfY5vrsZKSD3qX4LU77mI9zq4NyAOxI1SkYaUSlMb4VSs
-Message-ID: <CAMRc=McnU6TO5p7Jwy-DOg_8-=AS7rFRfaPD0yH1SERWXM8L+A@mail.gmail.com>
-Subject: Re: [PATCH v8 00/10] Add pinctrl support for the AAEON UP board FPGA
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0jEELFB6vb1dtkPgu_3_eew7Y1Jebevfmhye+ZPLk0Jtg@mail.gmail.com>
 
-On Tue, Jul 15, 2025 at 3:13=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
->
-> On 6/25/25 10:26 AM, Bartosz Golaszewski wrote:
-> > On Wed, Jun 11, 2025 at 11:00=E2=80=AFAM Thomas Richard
-> > <thomas.richard@bootlin.com> wrote:
-> >>
-> >> This is the eighth version of this series. I just added a missing head=
-er
-> >> file in gpio-aggregator driver to fix a build warning reported by a ke=
-rnel
-> >> test robot [1].
-> >>
-> >> [1] https://lore.kernel.org/oe-kbuild-all/202506092324.XqSwWl1z-lkp@in=
-tel.com/
-> >>
-> >> Best Regards,
-> >>
-> >> Thomas
-> >>
-> >> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> >> ---
+Hi Rafael,
+
+On Tue, Jul 15, 2025 at 02:46:21PM +0200, Rafael J. Wysocki wrote:
+> Hi Sakari,
+> 
+> On Tue, Jul 15, 2025 at 9:28 AM Sakari Ailus
+> <sakari.ailus@linux.intel.com> wrote:
 > >
-> > This series looks pretty good now, any objections to picking it up? As
-> > usual - I can take the GPIO patches and provide an immutable branch
-> > for Linus to pull.
->
-> Hi Bartosz,
->
-> When do you plan to pick the patches? Will it be ok for next merge window=
-?
->
+> > Hi Rafael,
+> >
+> > Thanks for the patch.
+> >
+> > On Wed, Jul 09, 2025 at 12:41:45PM +0200, Rafael J. Wysocki wrote:
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > For all practical purposes, there is no difference between the situation
+> > > in which a given device is not ignoring children and its active child
+> > > count is nonzero and the situation in which its runtime PM usage counter
+> > > is nonzero.  However, pm_runtime_get_if_in_use() will only increment the
+> > > device's usage counter and return 1 in the latter case.
+> > >
+> > > For consistency, make it do so in the former case either by adjusting
+> > > pm_runtime_get_conditional() and update the related kerneldoc comments
+> > > accordingly.
+> > >
+> > > Fixes: c0ef3df8dbae ("PM: runtime: Simplify pm_runtime_get_if_active() usage")
+> >
+> > I guess this should be:
+> >
+> > Fixes: c111566bea7c ("PM: runtime: Add pm_runtime_get_if_active()")
+> 
+> Technically yes, but that would require specific backport changes for
+> older "stable" series.
 
-Well, nobody responded to my last email. This is a cross-tree series
-so at least Linus must confirm he's ok.
+The lines in pm_runtime_get_conditional() were added by c111566bea7cc, it
+looks like the actual fix would be backportable without changes whereas the
+documentation would require them. So splitting the patch should allow
+backporting the fix only while leaving the documentation as-is. I don't
+really have an opinion either way. It's perhaps unlikely the issue causes
+actual problems but you never know...
 
-Bart
+> 
+> > Should this also be cc'd to stable?
+> 
+> Possibly.
+> 
+> > Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> 
+> Thank you!
+> 
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > >  drivers/base/power/runtime.c |   27 ++++++++++++++++++---------
+> > >  1 file changed, 18 insertions(+), 9 deletions(-)
+> > >
+> > > --- a/drivers/base/power/runtime.c
+> > > +++ b/drivers/base/power/runtime.c
+> > > @@ -1203,10 +1203,12 @@
+> > >   *
+> > >   * Return -EINVAL if runtime PM is disabled for @dev.
+> > >   *
+> > > - * Otherwise, if the runtime PM status of @dev is %RPM_ACTIVE and either
+> > > - * @ign_usage_count is %true or the runtime PM usage counter of @dev is not
+> > > - * zero, increment the usage counter of @dev and return 1. Otherwise, return 0
+> > > - * without changing the usage counter.
+> > > + * Otherwise, if its runtime PM status is %RPM_ACTIVE and (1) @ign_usage_count
+> > > + * is set, or (2) @dev is not ignoring children and its active child count is
+> > > + * nonero, or (3) the runtime PM usage counter of @dev is not zero, increment
+> > > + * the usage counter of @dev and return 1.
+> > > + *
+> > > + * Otherwise, return 0 without changing the usage counter.
+> > >   *
+> > >   * If @ign_usage_count is %true, this function can be used to prevent suspending
+> > >   * the device when its runtime PM status is %RPM_ACTIVE.
+> > > @@ -1228,7 +1230,8 @@
+> > >               retval = -EINVAL;
+> > >       } else if (dev->power.runtime_status != RPM_ACTIVE) {
+> > >               retval = 0;
+> > > -     } else if (ign_usage_count) {
+> > > +     } else if (ign_usage_count || (!dev->power.ignore_children &&
+> > > +                atomic_read(&dev->power.child_count) > 0)) {
+> > >               retval = 1;
+> > >               atomic_inc(&dev->power.usage_count);
+> > >       } else {
+> > > @@ -1261,10 +1264,16 @@
+> > >   * @dev: Target device.
+> > >   *
+> > >   * Increment the runtime PM usage counter of @dev if its runtime PM status is
+> > > - * %RPM_ACTIVE and its runtime PM usage counter is greater than 0, in which case
+> > > - * it returns 1. If the device is in a different state or its usage_count is 0,
+> > > - * 0 is returned. -EINVAL is returned if runtime PM is disabled for the device,
+> > > - * in which case also the usage_count will remain unmodified.
+> > > + * %RPM_ACTIVE and its runtime PM usage counter is greater than 0 or it is not
+> > > + * ignoring children and its active child count is nonzero.  1 is returned in
+> > > + * this case.
+> > > + *
+> > > + * If @dev is in a different state or it is not in use (that is, its usage
+> > > + * counter is 0, or it is ignoring children, or its active child count is 0),
+> > > + * 0 is returned.
+> > > + *
+> > > + * -EINVAL is returned if runtime PM is disabled for the device, in which case
+> > > + * also the usage counter of @dev is not updated.
+> > >   */
+> > >  int pm_runtime_get_if_in_use(struct device *dev)
+> > >  {
+> > >
+> > >
+> >
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
