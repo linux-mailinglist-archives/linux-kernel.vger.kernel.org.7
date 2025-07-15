@@ -1,93 +1,94 @@
-Return-Path: <linux-kernel+bounces-732244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B85B063F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:11:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B48FB06408
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B59500833
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3153C3A84BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6EE2528F3;
-	Tue, 15 Jul 2025 16:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662E1245038;
+	Tue, 15 Jul 2025 16:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ODfRGHmV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TeclaqkL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E855A1E531;
-	Tue, 15 Jul 2025 16:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF28C2A1B2;
+	Tue, 15 Jul 2025 16:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752595878; cv=none; b=eu2ivj+WK5vXbYIaR/AwsAEE+p0IOs+njpKy3ah6Plhke7aQ3t1XAwVJAESo0CeRTUWVzhYgKqqG7uHLbFq0owkhEWT0F3Y7+/VvxpNN0Tndhsa9ZVkR/PuiAv8gv6eSbX0OPcm3P8N4S6stAfpsWYc59tVal2bW4ysi4tDKTfg=
+	t=1752595919; cv=none; b=meWqlSQS4IkYNeF+hHz2+Q/qrVG6fm5Y486T0R/R8G+0qR3k/t++FwrREa6t4LLZLiYGi72f+eJhM9kGTsiwrky7UDoS5gC3hgo1Zy0EH6EMyuygrCSVU55jceBeYRRZ89bEjxLCVGeoF9H/RxqZiDcOfhr62nSYjLJVSdIf+4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752595878; c=relaxed/simple;
-	bh=W1FxY2LQyxW9luHSm4uqpnhlsWmPi0NucBNEMNKiBF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LH8nzsHSJ+p3gormBnlbWKgvQYfYjBMMHQrvG2jEMeo3alrC4msq7hXu93L3pGpV1M0RGtKwQwIZ9K1muz2X9Mg2klh2fYFMsZztvlJU81POyFhppFN28Xqb/n7aMuffHvnEgH1nomHEMuL8H1NpUk+ijKCMw83m0mewhwQ7k2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ODfRGHmV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GvQGktnNuBb1IGeKgMGp3Rcb/7Zn8h0jHyNUODU0m00=; b=ODfRGHmV9MJX4YJYUCCVnudbA5
-	YERP7upcSGyk05MSctJqnDfrOTPzN3Ycnfcd8ZLjeuC/JtTz9QWa8JgSf1/TmwVC0eHJTfhNLMMwr
-	hBYllKmpG4Cw9IV2Bu+64iu/kIet/Qg5anpC/Lly/qdOnap2yZHBlga9YzyE6AyvMHBs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ubiFB-001bby-FC; Tue, 15 Jul 2025 18:11:01 +0200
-Date: Tue, 15 Jul 2025 18:11:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/3] net: phy: qcom: Add PHY counter support
-Message-ID: <e4b01f45-c282-4cc9-8b31-0869bdd1aae1@lunn.ch>
-References: <20250715-qcom_phy_counter-v3-0-8b0e460a527b@quicinc.com>
- <20250715-qcom_phy_counter-v3-1-8b0e460a527b@quicinc.com>
+	s=arc-20240116; t=1752595919; c=relaxed/simple;
+	bh=0ROB6urjsmdYa0Uf899KcuQPEIvoVOCps/l1H4OysEA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n+ByAegHiMMCe/gRhlNBJaGOGJqb08nU+kieA/MD8+qTPM+7+LWLrVlqWbqUmtfFAwyPXuS1w1de7y94nppMWT/c1Pj6WzJkZli1jrMkIWq5SHN939yvwDLHJPMpgQ5aYY3U9a11bBx+eXStGlMb8+n24ObECnEuWIELzC6IpAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TeclaqkL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61A61C4CEE3;
+	Tue, 15 Jul 2025 16:11:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752595919;
+	bh=0ROB6urjsmdYa0Uf899KcuQPEIvoVOCps/l1H4OysEA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TeclaqkL61HX02624wASYx6ooDlu43nU1LDXGnfKWoTPDrvuHrHWpfZV/DQSVtScV
+	 QgcjvwaE7rqeLr8WgKV+brOWF6oVjycOre9+zZ20rmviM/zh+FBOL6SABkdpHRIdTj
+	 S8PjjD6m+4rnDg5DuhNMXiSYCee+oomPjyTXfTsMAbuhFQ58yUdXkXkHpMsBZ6Hm/m
+	 YyNQlqS6pathZUC+cVteZCMbddisbGl2p+clBhWus68vRHC5MZ+NJ6oc7rXI1C7raL
+	 xVOuscJYn9rahH1xsI0t0JMQBzxXvv5adwm/JmZlmhnFgLcn9KTRTDyTRGlfTyCQCm
+	 AZgaVrLF/4SFQ==
+From: Chuck Lever <cel@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Sergey Bashirov <sergeybashirov@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konstantin Evtushenko <koevtushenko@yandex.com>
+Subject: Re: [PATCH v2 0/3] NFSD: Fix last write offset handling in layoutcommit
+Date: Tue, 15 Jul 2025 12:11:55 -0400
+Message-ID: <175259589759.1098243.8103535218198277847.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250715153319.37428-1-sergeybashirov@gmail.com>
+References: <20250715153319.37428-1-sergeybashirov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715-qcom_phy_counter-v3-1-8b0e460a527b@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-> +int qcom_phy_update_stats(struct phy_device *phydev,
-> +			  struct qcom_phy_hw_stats *hw_stats)
-> +{
-> +	int ret;
-> +	u32 cnt;
-> +
-> +	/* PHY 32-bit counter for RX packets. */
-> +	ret = phy_read_mmd(phydev, MDIO_MMD_AN, QCA808X_MMD7_CNT_RX_PKT_15_0);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	cnt = ret;
-> +
-> +	ret = phy_read_mmd(phydev, MDIO_MMD_AN, QCA808X_MMD7_CNT_RX_PKT_31_16);
-> +	if (ret < 0)
-> +		return ret;
+From: Chuck Lever <chuck.lever@oracle.com>
 
-Does reading QCA808X_MMD7_CNT_RX_PKT_15_0 cause
-QCA808X_MMD7_CNT_RX_PKT_31_16 to latch?
+On Tue, 15 Jul 2025 18:32:17 +0300, Sergey Bashirov wrote:
+> These patches correct the behavior of the pNFS server when the client
+> sends a layoutcommit without a new file size and with zero number of
+> block/scsi extents.
+> 
+> Tested manually for the pNFS block layout setup.
+> 
+> 
+> [...]
 
-Sometimes you need to read the high part, the low part, and then
-reread the high part to ensure it has not incremented. But this is
-only needed if the hardware does not latch.
+Applied to nfsd-testing, thanks!
 
-	Andrew
+[1/3] NFSD: Minor cleanup in layoutcommit processing
+      commit: 2c704299249eb847d0973e8f70e8e8002b805474
+[2/3] NFSD: Fix last write offset handling in layoutcommit
+      commit: c2c45de297adf669b306f41b0ea11ca7493b63af
+[3/3] NFSD: Minor cleanup in layoutcommit decoding
+      commit: d3f1ec60bc13851e19876205158a0107d998258d
+
+--
+Chuck Lever
+
 
