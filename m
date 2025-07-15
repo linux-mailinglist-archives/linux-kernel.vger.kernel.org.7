@@ -1,231 +1,282 @@
-Return-Path: <linux-kernel+bounces-732361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4888CB065AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:07:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA36BB06597
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87BE04A83A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:07:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31E6C7B29A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DE529AAF5;
-	Tue, 15 Jul 2025 18:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914A62BD029;
+	Tue, 15 Jul 2025 18:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UyOIGzGI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0QYAmwzH"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2057.outbound.protection.outlook.com [40.107.93.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CE729AAE7;
-	Tue, 15 Jul 2025 18:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752602835; cv=none; b=T56S07j6TJSy9+gxVJOOcFkbKqO45i2FLVKsHgOnX2lc4DUoj3HouH+Eg+5UDMuYgooeQZiIm+23+B14yrdVPFcfyu0v76O9Bl5VHWl73KG95G10dgtFS6425pUewLPUHkIegbRwzSj5bzXHnlAnp2J1xu9Kz8FDkyier2mdKSo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752602835; c=relaxed/simple;
-	bh=rnwA//xzf2zxCkabUJBduwVqt/c2yY/NU93eOgLk5xA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aiu//LvbvYE/8BBv4jKnxLukrWhBAvhkGxygwfVL81EArXwU//41qs0LGP3EYCT3SLWgto5CvCf6xKFbTAXOCZUyQKcfGgg+IkVpAVVJA+lchKEGSYB1FMtQvV0wW7sgWtV4QEZWrkd/zic/w1mKz6BBE4fd8KH6g78dtjGC/4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UyOIGzGI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FGDNZd017654;
-	Tue, 15 Jul 2025 18:07:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=ZhmcPkOZDjY
-	EsfWctxf+g+3ZwHjNsFr4IiFrtAta6iY=; b=UyOIGzGIaZpO1KlU9nmXGoi+Xw5
-	9AE1dYzvCnNgV/Pwwedwm05o/Zu2Bkhgx75Z6X41He+B6VZ2v1NCLZBs91LWIQeS
-	Vrg4v4fWtbySu8LxF8NInlBij60ia/76N6sFT3Bhkiax3U3Uw/3+BnUz8Q8k/TUD
-	E1dr6mCD2N1l+YqvGlaNEzzDSZpRfYZmOLQWZcBIwkK226wqUQIEc7OgdtqNJ5C4
-	hppPxjX8nNBDRJQYgHcItUiWLrom/UuK2JbosT2EUdjHD3MPYgIyWbeSRi6hxWPU
-	j2+1HGJa4jXoqj5tmAQf/vzWg9adIS4ALS+n5z5/XuIV+UJhL8K9XrNwyjA==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufu894q0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 18:07:09 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56FI75JG028694;
-	Tue, 15 Jul 2025 18:07:05 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 47ugskwywv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 18:07:05 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56FI75Zv028670;
-	Tue, 15 Jul 2025 18:07:05 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 56FI74Q1028664
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 18:07:05 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
-	id C9FDC5D2; Tue, 15 Jul 2025 23:30:52 +0530 (+0530)
-From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com,
-        Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v6 9/9] arm64: dts: qcom: qcm6490-idp: Add sound card
-Date: Tue, 15 Jul 2025 23:30:50 +0530
-Message-Id: <20250715180050.3920019-10-quic_pkumpatl@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250715180050.3920019-1-quic_pkumpatl@quicinc.com>
-References: <20250715180050.3920019-1-quic_pkumpatl@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F2029C328;
+	Tue, 15 Jul 2025 18:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752602676; cv=fail; b=bWdwdNhY0WcKbAuQp5c820b9gGN134XKLiElZXh3ZSM2KLzgramM2g47HikjClYA8pKtVnlBYZFAH2hqgeLnkxjrLzqbJY97/gSdL86393CKdXEGTPxIfCdn37v9fL8X6fk/KC+Wen+nGKRzOghamRI79kz+39QSHmp8fUUgxLg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752602676; c=relaxed/simple;
+	bh=oDoXq258QUMOumsvgMo4BYpsBp5f7Di5WWHSB1jNbng=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oWs+xAfTsTTqjDR8TqRk3mJseUyzQNKhF7V8GFxLiBRHA8rPROLF7fPj+QtsPFW1Z0Y7RfnCKAFC0IhIyTRW3g9mHzuRiiy0uvHiCw+92YqMpNsbTLbQs3aNhQ6NI3MSuULVNOWpfc1iw678J/apDiuIBTdRHzJjctOb9+hbO5M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0QYAmwzH; arc=fail smtp.client-ip=40.107.93.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Og3uBfPdn0ClV3IHEGdK3EYh3o1yb3zOKl35OTRsq1vNJIdYzbKqKs8svP+Y4Jd8Qo2YtPdiDYgjo+2l04kw/2naDavzKRk0BEGFHUpdfvbwop4NLuObsLhPsalfckqdRKDXHU524d59f9axp7XlyyHjdGiDzraEXFMNoD8BGiJocoxbdi1kfSQiEvCeemN2b7iP6iSIKBTNW6ZkrdP70KjwW46Oik9PsQA82Ti/yc1I3ulLDHjsOquPbSQM6jqmLN1zsq7Cv3D8IlQh2dXD/cEuow1yhNFQgq8N7CCG0+9b0SY11YgXfz6Ny8WeQ0yUumYLFrfI/skPK1+ZOaPibg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IGVzPLsW5IcmU3fwL+pJo3+R4qkmThPMGSYxwuQhB54=;
+ b=exle9nOWXJjjFLS7JXOiCwy+FXq0yAPQh6tmM+r1cO/fssI0epk8QRACNC389Qe/QX9G78iQ4EviBHyjYgok2SPKGlpJjgSPyRYzPpz1rGuTc6pKe8dykfOId8ei43Te/ZU//GOhMzlp+cGqwZ52M/QUdMRnf5krav5RhfAytQzP6FKZuExgaRiIU6cak0TTnRR0YRypv6qpt1I81nWBOjGsmt4jzYvPLvHUCz/YYvNZDePMQJl+dM8YRTJJHGUcDt8B4vEm1c4M/fb2GafmhoZTSjJDfHM2Foa3ReRwMs3B1Bl+xSrD4fkPMtNVvnV77aBCACxwHLak05CK4EX1dA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IGVzPLsW5IcmU3fwL+pJo3+R4qkmThPMGSYxwuQhB54=;
+ b=0QYAmwzHQVxSNSn8vCll5U1p4MbsaP4TnCYcjS+DbuFBX5/hnfapUgxmEwCG9yzzbEPcpsW9VyO0NxoVRyGblPPSVS50IzEb7ZI3yRKWxR1GQ7w4Bim5MwHwvKthKVNJg2F5TLjLJ8DZW4kV0ZAbbbTVewLMJG7nhuHeT2T266w=
+Received: from BY3PR04CA0020.namprd04.prod.outlook.com (2603:10b6:a03:217::25)
+ by DS0PR12MB8785.namprd12.prod.outlook.com (2603:10b6:8:14c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Tue, 15 Jul
+ 2025 18:04:30 +0000
+Received: from SJ5PEPF000001D0.namprd05.prod.outlook.com
+ (2603:10b6:a03:217:cafe::c3) by BY3PR04CA0020.outlook.office365.com
+ (2603:10b6:a03:217::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Tue,
+ 15 Jul 2025 18:04:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001D0.mail.protection.outlook.com (10.167.242.52) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 18:04:30 +0000
+Received: from ethanolx50f7host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
+ 2025 13:04:27 -0500
+From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+To: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara
+	<jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
+	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
+	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, "Ying
+ Huang" <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
+	Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
+	Nathan Fontenot <nathan.fontenot@amd.com>, Smita Koralahalli
+	<Smita.KoralahalliChannabasappa@amd.com>, Terry Bowman
+	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
+	<benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
+	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
+Subject: [PATCH v5 3/7] cxl/acpi: Add background worker to coordinate with cxl_mem probe completion
+Date: Tue, 15 Jul 2025 18:04:03 +0000
+Message-ID: <20250715180407.47426-4-Smita.KoralahalliChannabasappa@amd.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
+References: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDE2NiBTYWx0ZWRfX+5vFNp04G9gy
- fZWxQMA0yg1JZT2hjBXKyG3dcMUA6DZ+pnIZokkwMSLGnSEOqtsY7mUi9aC2CArSiyYrA3pvoYz
- 3qth+2FLKTM1VE58VCy9tAjci/YDfvHTdPmSgjARIBIgeJlp+QBwoBCLkJ/JeS14ikCJmBpsDpn
- ZVRkclzSSttSqvk6tTJ1lpwqYb25E0ypIDum9LXci9C9ykNwDhp2u0TrBCvOC3Dk95BdWfvc65T
- ARaScCPwkEitwjlmrlDXxrxcQ+VdDRHmfndHswDOulSgyRXvMx/JvPjbavXmrKLQ6htXIwv3PPx
- b0L7MWijmJiAb8/M7HyBrMIZDfno8nhQormBB2yvYRPbYbSoG+KKbT0sTA2guXRLdTnva3x1sRw
- V5KzM02fTZe6MbGHpHgtmzKpGUKC73DEgCnxn2yIJ2/LZP7OqsLZ34R2/o42JF6vvwtIiqZj
-X-Proofpoint-ORIG-GUID: HR7XFiNkIfjPjqORIQJUsOK0lYjqVSgA
-X-Proofpoint-GUID: HR7XFiNkIfjPjqORIQJUsOK0lYjqVSgA
-X-Authority-Analysis: v=2.4 cv=f59IBPyM c=1 sm=1 tr=0 ts=687698cd cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=yo8woGbAw4EISn_yZD4A:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-15_04,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=999 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507150166
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D0:EE_|DS0PR12MB8785:EE_
+X-MS-Office365-Filtering-Correlation-Id: e0573b98-a259-4ccd-552d-08ddc3ca0bb5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?syndIYNd/fXioqKJk648z59M+VY6yoJw1+baD9B8o9GIFp5qyeIfT1NKj2j+?=
+ =?us-ascii?Q?KondhjKnLV2wBeFbybgETSay7wqIDJSkZFciaH7AUrp1PU1x3WQe7OYWvRVO?=
+ =?us-ascii?Q?VbXJ3UY/yzqmwZ6kHHXUFJqFMGa5NtNEOzIgcnhUGfepq7jvqyKHiDVO8IDZ?=
+ =?us-ascii?Q?qF8+k/ejXnXabCljpaT2/ykwIJPoXekr7I4MC68Szw2R3iFFfbFJJNAUSxG2?=
+ =?us-ascii?Q?kuHNcaNSSUr6eXDuFyXLV4lQOVxAVSqsDaBPnCWZXNJ/hA2j/7q1C2KcsZRI?=
+ =?us-ascii?Q?jaaNbP42o03wwiFcWa3ROYimQ5bbTsxCciJUmGE11/lOpkS+/9ins5CJBXnL?=
+ =?us-ascii?Q?i4y3+aXSYLFYDB1jxikTXJTXmq6UMUP6g4KNEonJHq+x3AMSGjr7YO8KEDKd?=
+ =?us-ascii?Q?0Ri9/jQIOJtP8uvrI69w4UNnjj3TIS7IbVXfBPaouGJNC+sbNGKfrToWIZz7?=
+ =?us-ascii?Q?qDxgPgtK2t3zC3uEze7NNfAQR29OlmuMvmkHx9suSRXFPG2QlTLhpUazStmt?=
+ =?us-ascii?Q?ZHVLk7YvzgLbEnq+Saif1sjcO26L9D/zcXL5EyrQEf+0t+eCJdOzteLCHxaQ?=
+ =?us-ascii?Q?RG6MwaXUndfm+J5ia9Sdw7sbfba1eRRkuzZVoE7LTNkYivwn7pMICiHfhFm4?=
+ =?us-ascii?Q?9MsPjXTrMyVDxXiq1E/xMzgWE4nttQeQ8yQtovctkATIFRdiMOhPklxcAOE4?=
+ =?us-ascii?Q?6wZZS8Qjf2BpMkFAMlAtNyKk4bcR7tJ0sUBV4bAJzKyFuL+paWSMSLTar4qW?=
+ =?us-ascii?Q?3jqkF07JQbzNI2Yuv2SERvm1fAi6x5xGYREZ1qNEL5zujGk164tFHgCG1+Xo?=
+ =?us-ascii?Q?jBm6W+B5FgeU6ic6gTHl9h6pIVEkEzIaLUgYgioaLAIthUUkiYnuph+keOwK?=
+ =?us-ascii?Q?g4hgN1yWcGt46PGx+eZKCl4UkxBBG7FTgBKKsRrg6fcUpFPpH636liJJyNxD?=
+ =?us-ascii?Q?ugzeVKMeVM9I0aW5xxZFGkIm2KcShHdSFzBE3XffFZAsHQZRZZl09NW7+eIH?=
+ =?us-ascii?Q?jBMSsPYh8i8mRvrMm6P/2FpYELYyZgDwTaGmPuV4AGu2HQFWQle3kBhpEjUo?=
+ =?us-ascii?Q?Lb0pEFNwL+ZoHa/uTvoclVMksaOxd4qZxJAh5PIzl+Aj7g6wwjm9vLMSJ5JY?=
+ =?us-ascii?Q?q36mw6YUKfI3dz06OD2DGoDqBkCdK7LWid2k89TQ/ZDUNVlA3hiKbVgCSGKk?=
+ =?us-ascii?Q?/6dijOXW5ylQvo44yeo8vLyAhodZRT2sDRhE4CC5hX0qGKhACLdbH0YUYzz4?=
+ =?us-ascii?Q?1iNFBdcqGgrHV36d9hmrkpsJ+Ang8l7W9yHr2hUfinvgS0G6kIcQleIxo1Hj?=
+ =?us-ascii?Q?TCvxuFWcjYRt9DFBziKnYqXNcXOh/730E7NYK+QrXlCT58r5AmLIxfSUcMrk?=
+ =?us-ascii?Q?yOUtkssRfLHZLy6xWdjbg0Jwdk0U+HeYZj0dcg/DDG3PIyD4C7ST3VP+al3k?=
+ =?us-ascii?Q?YxpFWAEYwFO5TwtGsmyB+E2CAwq54m48xPe6taSfWFGLhVsxthmpON0tjrPF?=
+ =?us-ascii?Q?sXqzjXIJelpYsEqYZBo2Hq2KojrMNuKqR96z?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 18:04:30.2175
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0573b98-a259-4ccd-552d-08ddc3ca0bb5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001D0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8785
 
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Introduce a background worker in cxl_acpi to delay SOFT RESERVE handling
+until the cxl_mem driver has probed at least one device. This coordination
+ensures that DAX registration or fallback handling for soft-reserved
+regions is not triggered prematurely.
 
-Add the sound card node with tested playback over WSA8835 speakers,
-digital on-board mics along with wcd9370 headset playabck and record.
+The worker waits on cxl_wait_queue, which is signaled via
+cxl_mem_active_inc() during cxl_mem_probe(). Once at least one memory
+device probe is confirmed, the worker invokes wait_for_device_probe()
+to allow the rest of the CXL device hierarchy to complete initialization.
 
-Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Additionally, it also handles initialization order issues where
+cxl_acpi_probe() may complete before other drivers such as cxl_port or
+cxl_mem have loaded, especially when cxl_acpi and cxl_port are built-in
+and cxl_mem is a loadable module. In such cases, using only
+wait_for_device_probe() is insufficient, as it may return before all
+relevant probes are registered.
+
+While region creation happens in cxl_port_probe(), waiting on
+cxl_mem_active() would be sufficient as cxl_mem_probe() can only succeed
+after the port hierarchy is in place. Furthermore, since cxl_mem depends
+on cxl_pci, this also guarantees that cxl_pci has loaded by the time the
+wait completes.
+
+As cxl_mem_active() infrastructure already exists for tracking probe
+activity, cxl_acpi can use it without introducing new coordination
+mechanisms.
+
+Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+Co-developed-by: Terry Bowman <terry.bowman@amd.com>
+Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 ---
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 84 ++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+ drivers/cxl/acpi.c             | 18 ++++++++++++++++++
+ drivers/cxl/core/probe_state.c |  5 +++++
+ drivers/cxl/cxl.h              |  2 ++
+ 3 files changed, 25 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-index 468f5f9c0779..acc338e9b60a 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-@@ -757,6 +757,90 @@ &sdhc_2 {
- 	cd-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
- };
+diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+index ca06d5acdf8f..3a27289e669b 100644
+--- a/drivers/cxl/acpi.c
++++ b/drivers/cxl/acpi.c
+@@ -823,6 +823,20 @@ static int pair_cxl_resource(struct device *dev, void *data)
+ 	return 0;
+ }
  
-+&sound {
-+	compatible = "qcom,qcm6490-idp-sndcard";
-+	model = "qcm6490-idp-snd-card";
++static void cxl_softreserv_mem_work_fn(struct work_struct *work)
++{
++	if (!wait_event_timeout(cxl_wait_queue, cxl_mem_active(), 30 * HZ))
++		pr_debug("Timeout waiting for cxl_mem probing");
 +
-+	audio-routing = "SpkrLeft IN", "WSA_SPK1 OUT",
-+			"SpkrRight IN", "WSA_SPK2 OUT",
-+			"IN1_HPHL", "HPHL_OUT",
-+			"IN2_HPHR", "HPHR_OUT",
-+			"AMIC2", "MIC BIAS2",
-+			"TX DMIC0", "MIC BIAS1",
-+			"TX DMIC1", "MIC BIAS2",
-+			"TX DMIC2", "MIC BIAS3",
-+			"TX SWR_ADC1", "ADC2_OUTPUT",
-+			"VA DMIC0", "VA MIC BIAS3",
-+			"VA DMIC1", "VA MIC BIAS3",
-+			"VA DMIC2", "VA MIC BIAS1",
-+			"VA DMIC3", "VA MIC BIAS1";
++	wait_for_device_probe();
++}
++static DECLARE_WORK(cxl_sr_work, cxl_softreserv_mem_work_fn);
 +
-+	wsa-dai-link {
-+		link-name = "WSA Playback";
++static void cxl_softreserv_mem_update(void)
++{
++	schedule_work(&cxl_sr_work);
++}
 +
-+		codec {
-+			sound-dai = <&left_spkr>, <&right_spkr>,
-+				    <&swr2 0>, <&lpass_wsa_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+
-+	wcd-playback-dai-link {
-+		link-name = "WCD Playback";
-+
-+		codec {
-+			sound-dai = <&wcd9370 0>, <&swr0 0>, <&lpass_rx_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+
-+	wcd-capture-dai-link {
-+		link-name = "WCD Capture";
-+
-+		codec {
-+			sound-dai = <&wcd9370 1>, <&swr1 0>, <&lpass_tx_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+
-+	va-dai-link {
-+		link-name = "VA Capture";
-+
-+		codec {
-+			sound-dai = <&lpass_va_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+};
-+
- &swr0 {
- 	status = "okay";
+ static int cxl_acpi_probe(struct platform_device *pdev)
+ {
+ 	int rc = 0;
+@@ -903,6 +917,9 @@ static int cxl_acpi_probe(struct platform_device *pdev)
+ 	cxl_bus_rescan();
  
+ out:
++	/* Update SOFT RESERVE resources that intersect with CXL regions */
++	cxl_softreserv_mem_update();
++
+ 	return rc;
+ }
+ 
+@@ -934,6 +951,7 @@ static int __init cxl_acpi_init(void)
+ 
+ static void __exit cxl_acpi_exit(void)
+ {
++	cancel_work_sync(&cxl_sr_work);
+ 	platform_driver_unregister(&cxl_acpi_driver);
+ 	cxl_bus_drain();
+ }
+diff --git a/drivers/cxl/core/probe_state.c b/drivers/cxl/core/probe_state.c
+index 5ba4b4de0e33..3089b2698b32 100644
+--- a/drivers/cxl/core/probe_state.c
++++ b/drivers/cxl/core/probe_state.c
+@@ -2,9 +2,12 @@
+ /* Copyright(c) 2022 Intel Corporation. All rights reserved. */
+ #include <linux/atomic.h>
+ #include <linux/export.h>
++#include <linux/wait.h>
+ #include "cxlmem.h"
+ 
+ static atomic_t mem_active;
++DECLARE_WAIT_QUEUE_HEAD(cxl_wait_queue);
++EXPORT_SYMBOL_NS_GPL(cxl_wait_queue, "CXL");
+ 
+ bool cxl_mem_active(void)
+ {
+@@ -13,10 +16,12 @@ bool cxl_mem_active(void)
+ 
+ 	return false;
+ }
++EXPORT_SYMBOL_NS_GPL(cxl_mem_active, "CXL");
+ 
+ void cxl_mem_active_inc(void)
+ {
+ 	atomic_inc(&mem_active);
++	wake_up(&cxl_wait_queue);
+ }
+ EXPORT_SYMBOL_NS_GPL(cxl_mem_active_inc, "CXL");
+ 
+diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+index 3f1695c96abc..3117136f0208 100644
+--- a/drivers/cxl/cxl.h
++++ b/drivers/cxl/cxl.h
+@@ -903,6 +903,8 @@ void cxl_coordinates_combine(struct access_coordinate *out,
+ 
+ bool cxl_endpoint_decoder_reset_detected(struct cxl_port *port);
+ 
++extern wait_queue_head_t cxl_wait_queue;
++
+ /*
+  * Unit test builds overrides this to __weak, find the 'strong' version
+  * of these symbols in tools/testing/cxl/.
 -- 
-2.34.1
+2.17.1
 
 
