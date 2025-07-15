@@ -1,101 +1,149 @@
-Return-Path: <linux-kernel+bounces-731108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC0DB04F28
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4CBB04F2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD533BFC3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9343BDA6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83F92D0C9E;
-	Tue, 15 Jul 2025 03:36:20 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D71A2D0C67;
+	Tue, 15 Jul 2025 03:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=miraclelinux-com.20230601.gappssmtp.com header.i=@miraclelinux-com.20230601.gappssmtp.com header.b="pDyTujqt"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E44C25B2E3;
-	Tue, 15 Jul 2025 03:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B48C40856
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 03:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752550580; cv=none; b=Wf+7dlKZH5EOZsesZW2T2agKc5GZvNAatbh2AzTwNsZhTPwdcQN7W9EdSS0MZdYCh6Nvb9dO8fVVSKDKi1jCxCD/LCzlDYi+Cfw8ImVqqsY8e4pzl8t8ZHMvp70CtTGa7BB+FjGPmzL8EVoXsSJqXy+uj5OczcIfdGA5KkjUPkA=
+	t=1752550682; cv=none; b=sM4f5R7mk430GZrKjnBg2GvGicgTH5O7tiXhSpVId3y+49/c96v6327H5xdhk2Auj4zgw/w+5CoZ46FWfW+ZjGKuJkJvN6bzZ9WCCFu91FzRHt2/Jir+bJJSRU/nCm5fxZxb9Hvp1kM6efXrZTMYP9jMHibLTz1zPcvzxzepSbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752550580; c=relaxed/simple;
-	bh=sLIRu97tFWD/YcQkd+C2KZRU2bD3i08QgIyXnojHNvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ox3Bb04T5POxCHyYMOdKWLi+58ANla4Q1pDhto1z/wpHKlnf5xCVw0AdBWIhjpiSa1RUlm47JpwH42UDJDSof2xZlCMnhoVSzKbbIihsnC3cxya43S1MW09kBH0AqNt1F8QCKnwvEcOPF0z0mVoCfbMTrLBY7WvnM9TYDY3SN/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bh4ZN052tztSr8;
-	Tue, 15 Jul 2025 11:35:08 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 814901401F4;
-	Tue, 15 Jul 2025 11:36:13 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 15 Jul
- 2025 11:36:12 +0800
-Message-ID: <1f12e3ed-ad0e-4ca7-b26e-de7a7ac3a737@huawei.com>
-Date: Tue, 15 Jul 2025 11:36:11 +0800
+	s=arc-20240116; t=1752550682; c=relaxed/simple;
+	bh=ujj9L5ryXj4vi3ebJiwm+9FC0lN5ZlUdIqgmhKkl47A=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NXM/vH8xrqdIrLjIGLp2eqS9fJU+72pPclRiZd6JmXL8XVa6UNkqhsOXssFHU+ZxsKUo6Q8aTSgo8R4uHntiHC58glejT2gHpCDg6bs3CkB9PneH8K8eO9lSP70curutzYyyog6TxahVN5FbMQw469dJWDOpu8ygJpCf6JNFo4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=miraclelinux.com; spf=pass smtp.mailfrom=miraclelinux.com; dkim=pass (2048-bit key) header.d=miraclelinux-com.20230601.gappssmtp.com header.i=@miraclelinux-com.20230601.gappssmtp.com header.b=pDyTujqt; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=miraclelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraclelinux.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b31e0ead80eso3950725a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 20:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1752550679; x=1753155479; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TxoHBnr34PRmw/hllTkLWN7QMmhZogDiI4M0YwgLywg=;
+        b=pDyTujqteo/bFHQxAbsl4o7NjljJKBxRITdeTqsuzhXJ/PKxPKDXuMD8lR+SBwmRTb
+         7EYF5I0cVmEba2rbTOmvQLDJw3oCplVV+0OAfkWKQWiEE1JkuwmGginaZgOCBEsjA4yy
+         1ZWzKyNBQALnYb9vL4nJAAEMJDriadF2FQVcd8jUobMEBzgH6YCAYLV5MVKQOnnSTyQ0
+         zfJ+3mY7J5WhSZcO7faOpAd+jHVsLK4cnVHFhQGFCLFbyi8/ibWCVDW7iD6hNQSQMWUA
+         B3G7BsfUIXQ8dYWt2ei86mcuXctySU/1gxo489t2XOLMdIkMTcETCyvUcNRXac9iOlt+
+         zyHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752550679; x=1753155479;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TxoHBnr34PRmw/hllTkLWN7QMmhZogDiI4M0YwgLywg=;
+        b=qT5rydzk2ooadpB6ObWo5IiDbKFnXOYMMSPaY+vHQAGGuwPEQxiQirteimmapbCStU
+         dLH+BMx5OYkxFnPpO2CLzMNEv6+2bPHUBy7JZrKb7avYbeq2vjXn+48byXf42E+OPZE0
+         IOZbV9ZiIix/umA/DGfNLjpK7HerzkkOI+n831qfPRSpI19qTKruW8at47P10frWmA85
+         7aItCuWTQ145JPxVrSzwyN+RauDj6yMCmpn2if2Dp3Fwch0YRZqJXkbm2LTfwDY+lDbG
+         HDHbLI21hRU2K7oFGQ4ubmDw9eymP2ny/bcLIR8mOx6QnGxYkSd+EfI4r1G3bu7IapZM
+         PbJg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1QWOLAAZIeRc93EVjP5PmuTBzxItkXkf26Q20lCliHu/r9ygIfeR1uaHMXpidwJwYAPz4RXP2kyWDn8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO4EvfzLogbGkg9RvwXnTOlYZ24Uo3Dzv8HXYewsx/hM5JAbkx
+	sPnIKAm1ZMcNtRGtWnqwuw6N5CQy1DofvmriL0G4mmcEwrM64fwtIfv3CSErzdI90IjceWCc8ur
+	B6f+w13GF1Axxklgiy2R3IAyQPKTB7acxmojTDBWTz8G/FB3GYMUXwg==
+X-Gm-Gg: ASbGnct4jvC1sf3E2sT3gpx+hxy/ZXhCqw68PbE8pHVQNGR5bq437X5tOe4AmZz9T6n
+	ZZviN1+JrgddjiB9Fb/VUvMlRvfDji01Y5zDFDWUlypGVOcZxKmiWWu8P6DDgh7hQWo3nEA56Uv
+	pX7elIoptHlr0+7wIOC3sPQWkOgsnm1InNnH0RuIEvWOrD3pS8PCpz+JwF+3WaYttW4klgRCZLx
+	i5yOw8=
+X-Google-Smtp-Source: AGHT+IFmjsgHW7JR+TtoUcaad1n4c2FzNzo8ztYC0NNGMQ73k3brFPEzEgDrPnersuDLLSAPwymBvX7PMR27bWjmCqI=
+X-Received: by 2002:a17:90b:3d84:b0:311:ffe8:20ee with SMTP id
+ 98e67ed59e1d1-31c91e486bemr1780044a91.11.1752550679554; Mon, 14 Jul 2025
+ 20:37:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] ext4: fix the compile error of
- EXT4_MAX_PAGECACHE_ORDER macro
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-	<ojaswin@linux.ibm.com>, <sfr@canb.auug.org.au>, <yi.zhang@huawei.com>,
-	<yukuai3@huawei.com>, <yangerkun@huawei.com>, <linux-ext4@vger.kernel.org>
-References: <20250715031203.2966086-1-yi.zhang@huaweicloud.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20250715031203.2966086-1-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+From: Arisu Tachibana <arisu.tachibana@miraclelinux.com>
+Date: Tue, 15 Jul 2025 12:37:23 +0900
+X-Gm-Features: Ac12FXyn-Uk8iPxQXt73EdHDNFOrp22BI4mdxLcNEl5Gbccq7Kxq9R-M5YFame4
+Message-ID: <CANgtXuOhvp74zbU7hQ-unekkwAMj3=ObUb25ev6HnkhcAmxRzw@mail.gmail.com>
+Subject: [ANNOUNCE/CFP] Kernel Testing & Dependability Micro-conference at LPC
+ Japan 2025
+To: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: shuah@kernel.org, sashal@kernel.org, gtucker@gtucker.io
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025/7/15 11:12, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
->
-> Since both the input and output parameters of the
-> EXT4_MAX_PAGECACHE_ORDER should be unsigned int type, switch to using
-> umin() instead of min(). This will silence the compile error reported by
-> _compiletime_assert() on powerpc.
->
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/all/20250715082230.7f5bcb1e@canb.auug.org.au/
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Hello everyone,
 
-Looks good. Feel free to add:
+I am reaching out to announce that we are once again planning to
+gather to discuss testing and dependability related topics at the
+Kernel Testing & Dependability Micro-conference  (a.k.a. Testing MC)
+at Linux Plumbers Conference Japan 2025.
 
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
+- https://lpc.events/event/19/sessions/228/
 
-> ---
->   fs/ext4/inode.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 1bce9ebaedb7..6fd3692c4faf 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5204,7 +5204,7 @@ static bool ext4_should_enable_large_folio(struct inode *inode)
->    * where the PAGE_SIZE exceeds 4KB.
->    */
->   #define EXT4_MAX_PAGECACHE_ORDER(i)		\
-> -		min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
-> +		umin(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
->   void ext4_set_inode_mapping_order(struct inode *inode)
->   {
->   	if (!ext4_should_enable_large_folio(inode))
+The Linux Plumbers 2025 Kernel Testing & Dependability track focuses
+on advancing the current state of testing of the Linux Kernel and its
+related infrastructure.
+The main purpose is to improve software quality and dependability for
+applications that require predictability and trust.
 
+We aim to create connections between folks working on similar
+projects, and help individual projects make progress.
 
+This track is intended to promote collaboration between all the
+communities and people interested in the Kernel testing &
+dependability.
+This will help move the conversation forward from where we left off at
+the LPC 2024 Kernel Testing & Dependability MC.
+We ask that any topic discussions focus on issues/problems they are
+facing and possible alternatives to resolving them.
+The Micro-conference is open to all topics related to testing on
+Linux, not necessarily in the kernel space.
+
+Suggested topics:
+- KernelCI: Maestro, kci-dev, kci-deploy, kci-gitlab, new dashboard, KCIDB-ng
+- Improve sanitizers: KFENCE, KCSAN, KASAN, UBSAN
+- Using Clang for better testing coverage: Now that the kernel fully
+supports building with Clang, how can all that work be leveraged into
+using Clang's features?
+- Consolidating toolchains: reference collection for increased
+reproducibility and quality control.
+- How to spread KUnit throughout the kernel?
+- Building and testing in-kernel Rust code.
+- Identify missing features that will provide assurance in safety
+critical systems.
+- Which test coverage infrastructures are most effective to provide
+evidence for kernel quality assurance? How should it be measured?
+- Explore ways to improve testing framework and tests in the kernel
+with a specific goal to increase traceability and code coverage.
+- Regression Testing for safety: Prioritize configurations and tests
+critical and important for quality and dependability.
+- Transitioning to test-driven kernel release cycles for mainline and
+stable: How to start relying on passing tests before releasing a new
+tag?
+- Explore how do SBOMs figure into dependability?
+- Kernel benchmarking and kernel performance evaluation.
+
+We invite you to submit proposals for discussions.
+Proposals can be submitted here,
+by 11:59PM UTC on Wednesday, September 10, 2025:
+- https://lpc.events/event/19/abstracts/
+
+Please send any inquiries to the MC leads:
+Arisu Tachibana <arisu.tachibana@miraclelinux.com>
+Shuah Khan <shuah@kernel.org>
+Sasha Levin <sashal@kernel.org>
+Guillaume Tucker <gtucker@gtucker.io>
+
+thank you,
+-- Arisu
 
