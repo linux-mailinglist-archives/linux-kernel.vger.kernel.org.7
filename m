@@ -1,110 +1,270 @@
-Return-Path: <linux-kernel+bounces-732420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3CC5B06681
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:08:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E6EB06685
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EB64E30A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:08:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7726A4A5F82
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDA32BEC23;
-	Tue, 15 Jul 2025 19:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8899C2BE7CB;
+	Tue, 15 Jul 2025 19:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="Oo9qlTvS"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF1B1DE4E1
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bBLKI3gy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478211DE4E1;
+	Tue, 15 Jul 2025 19:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606503; cv=none; b=JBysWPr9xNM7yrrXZQZxA90R0Cl3NdFEdhoFNEQf/GXwnPFkAJyAjgO6LYya7fXLgK2PdEPSeMMS9hX48TpPvPypQmLb2Q13yAw4ca8bhZCDG6uCQiYo9Vtc/ItmI/2Qpg89dAf59ASO8quHL7RV76Tr1p98gUnr6lVlvzX5+sg=
+	t=1752606576; cv=none; b=hrAMiyqMFnPnCOdBDRhdWVkN/TFzEYFWhWsjz58A6SY/1Pi1Zn8XpQJqakdAoJdDSfN4ScwW5qd8gS8lHM3k8+VuHASVOy4eaEnF/eJT0+NY7AtftKtHs1nMk4B2MZRR2ACV7+IZVygOI3Nk9/lecKaBPmh1oUQYKxtz+puXxsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606503; c=relaxed/simple;
-	bh=S0YPzo3QhBZ1TwlQh7KNQVyoF6uKaPDvWGUq4ksWVeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2NiVhu+BzGLrAeOmKf31QNYxRzNydD/O6QFHxODlftP+5ND/z5RDnjmO/8vjrKvH+CZyIDhAIdK6OQLywTL+sHUXRX4DBOfc6nKfisCmOAOabyBIcgOjGxGOR0xMNHqloYIzItHcJ60//ByNyCuisOIWghLzDI6L4EhzIbxfzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=Oo9qlTvS; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id E9F021C008E; Tue, 15 Jul 2025 21:08:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1752606490;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCSCakTdlzpnyAHZh5QqQag+VbXP/5TtzgWhN5nrmpY=;
-	b=Oo9qlTvSj7cqd1HkFcZw0/dEeomFD3dhb3HwWdH+xmCOlZb96OmwCsN3MGk0kSbtiiW/pZ
-	GLwlDlHyBgvHgCimzE+C6NNI3OSQDxxM4ZkBpxGVbqpBPRQ1pn23xKB6mDSC27q6Ku6Ktv
-	/igRRWGsr33JpyawxigsbleIbm9INN0=
-Date: Tue, 15 Jul 2025 21:08:10 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Shuah Khan <skhan@linuxfoundation.org>,
-	kernel list <linux-kernel@vger.kernel.org>
-Cc: "conduct@kernel.org" <conduct@kernel.org>
-Subject: Re: Code of Conduct violation complaint
-Message-ID: <aHanGu9nOGOegUg2@duo.ucw.cz>
-References: <13a6b8e3-a35a-425d-bafc-006e0a52599f@linuxfoundation.org>
+	s=arc-20240116; t=1752606576; c=relaxed/simple;
+	bh=M6P0ZCZUomVAUXBv9ibACi6SjPDJDs3jNr7RMSZSYn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kC6sJc50WpHoHTjIlyTslXAzeQgCYtlw355vQCxbVSIL71/ge5A3TS6oKNAay8zRrHkwFRzpBU+QD/afZa4Xn29XPLwtMTp219h7kxY2ftXSNDuqY2eXxFU1MG9ffJFrUgPizhURmmxnk1QKDPowPAQJontEtJyszp2iF0m78Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bBLKI3gy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.161.177] (unknown [52.148.138.235])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 731D5211CE05;
+	Tue, 15 Jul 2025 12:09:34 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 731D5211CE05
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752606574;
+	bh=TuXXERNoR3AQLAY/nmVnkcRURtLITB5v5fIQvwqsRtY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bBLKI3gyca40TZbHdNsIO/zDAK4nRWXbvFjWsa7OWTmzSz1nrGGNgt2tFPdEKeKe4
+	 mP4TY9RzJDg1jYZZ8N3D193cemsnBkYWF644PpvmytFK0ohMIdAS+OZIXX7f0yn3Vl
+	 LQ6dYFVi7aFFGSSgSelji4l8xQJPALtALb8hV6Fo=
+Message-ID: <c145aebb-4deb-4f1e-95aa-2ba13bf0c453@linux.microsoft.com>
+Date: Tue, 15 Jul 2025 12:09:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nHWlf4yLaxonzX1c"
-Content-Disposition: inline
-In-Reply-To: <13a6b8e3-a35a-425d-bafc-006e0a52599f@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] x86/hyperv: Switch to
+ msi_create_parent_irq_domain()
+To: Wei Liu <wei.liu@kernel.org>, Nam Cao <namcao@linutronix.de>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>, Marc Zyngier <maz@kernel.org>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Dexuan Cui <decui@microsoft.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1751277765.git.namcao@linutronix.de>
+ <5c0ada725449176dfeeb1f7aa98c324066c39d2c.1751277765.git.namcao@linutronix.de>
+ <aG7932u1SvvAYh2l@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <aG7932u1SvvAYh2l@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 7/9/2025 4:40 PM, Wei Liu wrote:
+> CC Nuno who is also touching on this file.
+> 
+> Nam, thanks for this patch. 
+> 
+> Nuno's patches fix a few bugs with the current implementation. I expect
+> those patches to have contextual conflicts with this patch. I would like
+> to commit Nuno's patches first since those are bug fixes, and then
+> circle back to this one.
+> 
+> Nuno, can you please review this patch?
+> 
 
---nHWlf4yLaxonzX1c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I don't think I can give a Reviewed-by since I don't have the context
+for these changes.
 
-Hi!
+It doesn't look like this conflicts with the changes in my patches.
 
-I publicly apologize.
-								Pavel
+The TODO looks fine to me, it can be addressed in a followup.
 
-On Tue 2025-07-15 09:28:19, Shuah Khan wrote:
-> Hi Pavel,
->=20
-> The Code of Conduct Committee has received a complaint about your
-> interactions on the mailing list which are in violation of the
-> Linux kernel code of conduct.
->=20
-> We urge you to apologize publicly to make amends within the next
-> week.
->=20
-> Refer to these documents in the kernel repo for information on
-> the Code of Conduct and actions taken when violations such as
-> these happen.
->=20
-> https://docs.kernel.org/process/code-of-conduct.html
-> https://docs.kernel.org/process/code-of-conduct-interpretation.html#code-=
-of-conduct-interpretation
->=20
-> thanks,
-> -- Shuah (On behalf of the Code of Conduct Committee)
+Nuno
 
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
+> On Mon, Jun 30, 2025 at 12:26:15PM +0200, Nam Cao wrote:
+>> Move away from the legacy MSI domain setup, switch to use
+>> msi_create_parent_irq_domain().
+>>
+>> While doing the conversion, I noticed that hv_irq_compose_msi_msg() is
+>> doing more than it is supposed to (composing message content). The
+>> interrupt allocation bits should be moved into hv_msi_domain_alloc().
+>> However, I have no hardware to test this change, therefore I leave a TODO
+>> note.
+>>
+>> Signed-off-by: Nam Cao <namcao@linutronix.de>
+>> ---
+>>  arch/x86/hyperv/irqdomain.c | 111 ++++++++++++++++++++++++------------
+>>  drivers/hv/Kconfig          |   1 +
+>>  2 files changed, 77 insertions(+), 35 deletions(-)
+>>
+>> diff --git a/arch/x86/hyperv/irqdomain.c b/arch/x86/hyperv/irqdomain.c
+>> index 31f0d29cbc5e3..9b3b65ffbd2e2 100644
+>> --- a/arch/x86/hyperv/irqdomain.c
+>> +++ b/arch/x86/hyperv/irqdomain.c
+>> @@ -10,6 +10,7 @@
+>>  
+>>  #include <linux/pci.h>
+>>  #include <linux/irq.h>
+>> +#include <linux/irqchip/irq-msi-lib.h>
+>>  #include <asm/mshyperv.h>
+>>  
+>>  static int hv_map_interrupt(union hv_device_id device_id, bool level,
+>> @@ -276,59 +277,99 @@ static void hv_teardown_msi_irq(struct pci_dev *dev, struct irq_data *irqd)
+>>  		hv_status_err(status, "\n");
+>>  }
+>>  
+>> -static void hv_msi_free_irq(struct irq_domain *domain,
+>> -			    struct msi_domain_info *info, unsigned int virq)
+>> -{
+>> -	struct irq_data *irqd = irq_get_irq_data(virq);
+>> -	struct msi_desc *desc;
+>> -
+>> -	if (!irqd)
+>> -		return;
+>> -
+>> -	desc = irq_data_get_msi_desc(irqd);
+>> -	if (!desc || !desc->irq || WARN_ON_ONCE(!dev_is_pci(desc->dev)))
+>> -		return;
+>> -
+>> -	hv_teardown_msi_irq(to_pci_dev(desc->dev), irqd);
+>> -}
+>> -
+>>  /*
+>>   * IRQ Chip for MSI PCI/PCI-X/PCI-Express Devices,
+>>   * which implement the MSI or MSI-X Capability Structure.
+>>   */
+>>  static struct irq_chip hv_pci_msi_controller = {
+>>  	.name			= "HV-PCI-MSI",
+>> -	.irq_unmask		= pci_msi_unmask_irq,
+>> -	.irq_mask		= pci_msi_mask_irq,
+>>  	.irq_ack		= irq_chip_ack_parent,
+>> -	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+>>  	.irq_compose_msi_msg	= hv_irq_compose_msi_msg,
+>> -	.irq_set_affinity	= msi_domain_set_affinity,
+>> -	.flags			= IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MOVE_DEFERRED,
+>> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
+>>  };
+>>  
+>> -static struct msi_domain_ops pci_msi_domain_ops = {
+>> -	.msi_free		= hv_msi_free_irq,
+>> -	.msi_prepare		= pci_msi_prepare,
+>> +static bool hv_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+>> +				 struct irq_domain *real_parent, struct msi_domain_info *info)
+>> +{
+>> +	struct irq_chip *chip = info->chip;
+>> +
+>> +	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
+>> +		return false;
+>> +
+>> +	chip->flags |= IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MOVE_DEFERRED;
+>> +
+>> +	info->ops->msi_prepare = pci_msi_prepare;
+>> +
+>> +	return true;
+>> +}
+>> +
+>> +#define HV_MSI_FLAGS_SUPPORTED	(MSI_GENERIC_FLAGS_MASK | MSI_FLAG_PCI_MSIX)
+>> +#define HV_MSI_FLAGS_REQUIRED	(MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS)
+>> +
+>> +static struct msi_parent_ops hv_msi_parent_ops = {
+>> +	.supported_flags	= HV_MSI_FLAGS_SUPPORTED,
+>> +	.required_flags		= HV_MSI_FLAGS_REQUIRED,
+>> +	.bus_select_token	= DOMAIN_BUS_NEXUS,
+>> +	.bus_select_mask	= MATCH_PCI_MSI,
+>> +	.chip_flags		= MSI_CHIP_FLAG_SET_ACK,
+>> +	.prefix			= "HV-",
+>> +	.init_dev_msi_info	= hv_init_dev_msi_info,
+>>  };
+>>  
+>> -static struct msi_domain_info hv_pci_msi_domain_info = {
+>> -	.flags		= MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+>> -			  MSI_FLAG_PCI_MSIX,
+>> -	.ops		= &pci_msi_domain_ops,
+>> -	.chip		= &hv_pci_msi_controller,
+>> -	.handler	= handle_edge_irq,
+>> -	.handler_name	= "edge",
+>> +static int hv_msi_domain_alloc(struct irq_domain *d, unsigned int virq, unsigned int nr_irqs,
+>> +			       void *arg)
+>> +{
+>> +	/*
+>> +	 * TODO: The allocation bits of hv_irq_compose_msi_msg(), i.e. everything except
+>> +	 * entry_to_msi_msg() should be in here.
+>> +	 */
+>> +
+>> +	int ret;
+>> +
+>> +	ret = irq_domain_alloc_irqs_parent(d, virq, nr_irqs, arg);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	for (int i = 0; i < nr_irqs; ++i) {
+>> +		irq_domain_set_info(d, virq + i, 0, &hv_pci_msi_controller, NULL,
+>> +				    handle_edge_irq, NULL, "edge");
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static void hv_msi_domain_free(struct irq_domain *d, unsigned int virq, unsigned int nr_irqs)
+>> +{
+>> +	for (int i = 0; i < nr_irqs; ++i) {
+>> +		struct irq_data *irqd = irq_domain_get_irq_data(d, virq);
+>> +		struct msi_desc *desc;
+>> +
+>> +		desc = irq_data_get_msi_desc(irqd);
+>> +		if (!desc || !desc->irq || WARN_ON_ONCE(!dev_is_pci(desc->dev)))
+>> +			continue;
+>> +
+>> +		hv_teardown_msi_irq(to_pci_dev(desc->dev), irqd);
+>> +	}
+>> +	irq_domain_free_irqs_top(d, virq, nr_irqs);
+>> +}
+>> +
+>> +static const struct irq_domain_ops hv_msi_domain_ops = {
+>> +	.select	= msi_lib_irq_domain_select,
+>> +	.alloc	= hv_msi_domain_alloc,
+>> +	.free	= hv_msi_domain_free,
+>>  };
+>>  
+>>  struct irq_domain * __init hv_create_pci_msi_domain(void)
+>>  {
+>>  	struct irq_domain *d = NULL;
+>> -	struct fwnode_handle *fn;
+>>  
+>> -	fn = irq_domain_alloc_named_fwnode("HV-PCI-MSI");
+>> -	if (fn)
+>> -		d = pci_msi_create_irq_domain(fn, &hv_pci_msi_domain_info, x86_vector_domain);
+>> +	struct irq_domain_info info = {
+>> +		.fwnode		= irq_domain_alloc_named_fwnode("HV-PCI-MSI"),
+>> +		.ops		= &hv_msi_domain_ops,
+>> +		.parent		= x86_vector_domain,
+>> +	};
+>> +
+>> +	if (info.fwnode)
+>> +		d = msi_create_parent_irq_domain(&info, &hv_msi_parent_ops);
+>>  
+>>  	/* No point in going further if we can't get an irq domain */
+>>  	BUG_ON(!d);
+>> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
+>> index 1cd188b73b743..e62a0f8b34198 100644
+>> --- a/drivers/hv/Kconfig
+>> +++ b/drivers/hv/Kconfig
+>> @@ -10,6 +10,7 @@ config HYPERV
+>>  	select X86_HV_CALLBACK_VECTOR if X86
+>>  	select OF_EARLY_FLATTREE if OF
+>>  	select SYSFB if !HYPERV_VTL_MODE
+>> +	select IRQ_MSI_LIB if X86
+>>  	help
+>>  	  Select this option to run Linux as a Hyper-V client operating
+>>  	  system.
+>> -- 
+>> 2.39.5
+>>
 
---nHWlf4yLaxonzX1c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaHanGgAKCRAw5/Bqldv6
-8stIAJ4nRxDSp6k26ELEE0PzH87Uqj3mTACfeel/Ow2aRCt1P+wQG7L/YDTFXVE=
-=y64v
------END PGP SIGNATURE-----
-
---nHWlf4yLaxonzX1c--
 
