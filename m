@@ -1,149 +1,137 @@
-Return-Path: <linux-kernel+bounces-731881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB39B05AF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:12:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE86DB05ABE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CDB07B160E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:10:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04EE13B5521
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C585D2E175D;
-	Tue, 15 Jul 2025 13:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g8CKs7ZM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7292D63EB;
+	Tue, 15 Jul 2025 13:04:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578831A2387
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1600277CB5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585125; cv=none; b=eJSWkbqNCRZ2BFAzphfG6VP7hYYy5ssCmnKMm5xMLXvHJHyzCiLkCvufnwUZQSh2OIh5pAASbSYKVNbzlaN9ChppPSTZnsJj8uu1GRGtAaOAk8yLB5KpZdJqyA4ohYJ8JljvBT1TtdgORrjAchWazj/bUFkpM4RjcQnTcPWHzGA=
+	t=1752584679; cv=none; b=Y0IiHOqGnuAAlON24jI1tApCNwlRYo6W78C5MoK7Io5kSiZ4NV2AYkyDdpA11fXw2XfNwaC73sbJToSsQpaSZJoBH0952dzLa32rBVEtGRu7D8xMduR/WKpjWYuW0VYGFg0qASsceaaEVPbzkQgsdN3Er3C+YQ8ktR+zl04HRfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585125; c=relaxed/simple;
-	bh=6qfx1AFvVvUSMbmXqpWZAUM1XcuqC/9zxs9mjQcS4EU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eCNwDSTzqiga4MsutuL4z83X4tnOmdhSr/FSa4NSSKFgDD1Hpbhsp/n/yKNE+wJljnpxh9rrsk1AHbEw1h7379SchdGvpjgcUdX5KJbdL4XG3C00CCv3MUtDhq+LVJ3ZddLvi10xXt2DVAxVbvqVytSAul+IpVCKV0h2Xlzrf/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g8CKs7ZM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752585122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p7tWYD4tx+fg2lnHVa/1g7HWDf3N37jy+j/78STt+1w=;
-	b=g8CKs7ZMRAsYgzhd1haE/7LA42Hrmucx122L5UW+6nRXmeQaaRWvihZpd7OZLTTJJDEyAO
-	RHwLG/AzN6VVdiyPuPQ/Da0qAfABpHEbrDz++vFV2BEmbJkyT26jxYJJ5Ngi5F361zIRDo
-	mPmuIO+XBuzLkijQoN6RSXS/0RkjKgc=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-626-9xhwM7mGPK2P_bnqdkR9cQ-1; Tue, 15 Jul 2025 09:02:28 -0400
-X-MC-Unique: 9xhwM7mGPK2P_bnqdkR9cQ-1
-X-Mimecast-MFC-AGG-ID: 9xhwM7mGPK2P_bnqdkR9cQ_1752584546
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-455ea9cb0beso31867645e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:02:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752584546; x=1753189346;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p7tWYD4tx+fg2lnHVa/1g7HWDf3N37jy+j/78STt+1w=;
-        b=HlsJ8nMIjSxUjFyWaMJ4iGqPTmIApJ5C61d3aI8voNsvfvIWv6MLriKoqwEVk69xVb
-         sXzmGNict38gIiPs+QSeJ3WFGWibXyazmVP0+kQhMxJ8FhTO2sh0Ws+SPz87xcr80s10
-         AnQEWJyGSwTkz/Zn8gGWeSguYkPJXz7emvQPSOiRQEUJF8k1xZwzJBkZR2vPFjsTsSpp
-         r2SbN5L/Bvcbv07wsoX6jhSh3is8GLSzbqhyf/Z/ODLJUrarIrxWhotV0aDT1cMA+RdD
-         Hoa7wFYTga+69CCok1zQ4oR9jvTT4eSydSMSyymrEyB/vveR4gUDit10ZkeFbVmS3lDR
-         5AeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX9GAkYtj/A+Lm8CThHMl/9+1RGi3arrxHxC6dbQnPQPM0qq6dpur4k8FLIdge3niPyuy0uuAP0ZsVfLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6vmxJtwNB4XX7voZNwctHKN2SHB6VFiofNFePf+dkKD7KfTra
-	nNg6MG5zv1U4DbGsf0epkhNpwjz8RG+mja/x196bDHpg8gNKOo6lU3mZyoC8oGCdIqY275AVM0q
-	xsbwiIJCxIazLg6oa3Fg9wPSMci8R031KHbKsanJ2JeIpOAQO81CAK3PxYkwkF3koig==
-X-Gm-Gg: ASbGncvkLVH+G7rWxDReacK0K9TuR5/QdDi4DwQaHRCvrvKE3bNXUDZ78/srkYFja1+
-	imIOh3U78v8MN2vajtrySyK+0pyT+g3uqW6bHZyYdz00P+C1rfwYdh/2ilhUpt66BQuLHm6nvMW
-	oS1lLLWo0M1xclhVObt0hjzrWWS8EFGwI34vrYdXjAbpi5Wa5/r1jg1yBuQdlIYOwUSZnH6Rbx5
-	/4ZxyitftOJSqbEULYnKGqasfSZSwy3XbOUo7dS/a3FbQufEIW0wz24Qb0DD49pdpp2RT0JIoL5
-	ZtHgZHy9Ts5SaSVfNg+aahvUqrjK2I49Ek4yXLYp5aMTazNJ56/qZJYdogzwQr9eUqxlGYmOxxl
-	o62Pxlp6ZUdo=
-X-Received: by 2002:a05:600c:a08:b0:43c:f8fe:dd82 with SMTP id 5b1f17b1804b1-454f4255c7amr153327775e9.18.1752584546000;
-        Tue, 15 Jul 2025 06:02:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQmEKYWF5RFQOcNA8dAn6VORUEh2xGxKp+QojOuV5+23NJaOdrjj/10cvaoZSjormmd2ur7A==
-X-Received: by 2002:a05:600c:a08:b0:43c:f8fe:dd82 with SMTP id 5b1f17b1804b1-454f4255c7amr153325695e9.18.1752584543813;
-        Tue, 15 Jul 2025 06:02:23 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562b18f8absm5076125e9.36.2025.07.15.06.02.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 06:02:22 -0700 (PDT)
-Message-ID: <e6801550-fb58-4a94-9405-b14e13c0e936@redhat.com>
-Date: Tue, 15 Jul 2025 15:02:21 +0200
+	s=arc-20240116; t=1752584679; c=relaxed/simple;
+	bh=UooHWdbjwok23G1w7lyu5z/xDu2uKm62K3FAoZ+IEmw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RB73sDQHvuEd2OKEoeDbZKJtb4gv6jp749omE9U63r82X3w/Ou7fvsliWc/07O1NQ2rdvS7kyDyzsmIBvFUPa5Dxfk1tOZp2pEg/5jj3QkxiuOkHoKTBvNuy5OfmlJWCRFZqyWSu4RtCZjsSYyjAz9OC2WHXs8I6TwphoIcrGLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1ubfKZ-0001UL-5F; Tue, 15 Jul 2025 15:04:23 +0200
+From: Jonas Rebmann <jre@pengutronix.de>
+Date: Tue, 15 Jul 2025 15:02:41 +0200
+Subject: [PATCH] hwmon: ina238: Report energy in microjoules
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 3/5] dpll: zl3073x: Implement phase offset
- monitor feature
-To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
-Cc: Prathosh Satish <Prathosh.Satish@microchip.com>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250710153848.928531-1-ivecera@redhat.com>
- <20250710153848.928531-4-ivecera@redhat.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250710153848.928531-4-ivecera@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250715-hwmon-ina238-microjoules-v1-1-9df678568a41@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAHBRdmgC/x3MTQqAIBBA4avErBswQ4quEi3EmWqiNJR+ILp70
+ vJbvPdA4iicoCseiHxKkuAzqrIAN1s/MQplg1baqKYyOF9b8Cje6rrFTVwMSzhWTlhTy2StISY
+ FOd8jj3L/63543w9yFH9dagAAAA==
+X-Change-ID: 20250715-hwmon-ina238-microjoules-3d8edaa5ded0
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Wenliang Yan <wenliang202407@163.com>, 
+ kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2677; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=UooHWdbjwok23G1w7lyu5z/xDu2uKm62K3FAoZ+IEmw=;
+ b=owGbwMvMwCF2ZcYT3onnbjcwnlZLYsgoC7ysoPezeNVf/tP389T05H65y87efO/C6xuHmjI77
+ /H4btdJ7ShlYRDjYJAVU2SJVZNTEDL2v25WaRcLM4eVCWQIAxenAEzE6Dkjw74ZV1fcK4+7tkrs
+ TMi9Wisj9/ZLi0uXTVyUGOZyP9lpuxQjw2PmvDY2/vr5W4RTGrwZZylz8F1PZ9P8VBQesLarK/w
+ EMwA=
+X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
+ fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 7/10/25 5:38 PM, Ivan Vecera wrote:
-> @@ -536,8 +539,38 @@ zl3073x_dpll_input_pin_phase_offset_get(const struct dpll_pin *dpll_pin,
->  		return 0;
->  	}
->  
-> -	/* Report the latest measured phase offset for the connected ref */
-> -	*phase_offset = pin->phase_offset * DPLL_PHASE_OFFSET_DIVIDER;
-> +	ref_phase = pin->phase_offset;
-> +
-> +	/* The DPLL being locked to a higher freq than the current ref
-> +	 * the phase offset is modded to the period of the signal
-> +	 * the dpll is locked to.
-> +	 */
-> +	if (ZL3073X_DPLL_REF_IS_VALID(conn_ref) && conn_ref != ref) {
-> +		u32 conn_freq, ref_freq;
-> +
-> +		/* Get frequency of connected ref */
-> +		rc = zl3073x_dpll_input_ref_frequency_get(zldpll, conn_ref,
-> +							  &conn_freq);
-> +		if (rc)
-> +			return rc;
-> +
-> +		/* Get frequency of given ref */
-> +		rc = zl3073x_dpll_input_ref_frequency_get(zldpll, ref,
-> +							  &ref_freq);
-> +		if (rc)
-> +			return rc;
-> +
-> +		if (conn_freq > ref_freq) {
-> +			s64 conn_period;
-> +			int div_factor;
-> +
-> +			conn_period = div_s64(PSEC_PER_SEC, conn_freq);
-> +			div_factor = div64_s64(ref_phase, conn_period);
-> +			ref_phase -= conn_period * div_factor;
+The hwmon sysfs interface specifies that energy values should be
+reported in microjoules. This is also what tools such as lmsensors
+expect, reporting wrong values otherwise.
 
-It's not obvious to me that the above div64_s64() will yield a 32b value
-for every possible arguments/configuration. Possibly a comment would
-help (or just use s64 for div_factor).
+Adjust the driver to scale the output accordingly and adjust ina238
+driver documentation.
 
-/P
+Fixes: 6daaf15a1173 ("hwmon: (ina238) Add support for SQ52206")
+Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+---
+This is a fix for a bug introduced into ina238.c recently (6daaf15a1173
+("hwmon: (ina238) Add support for SQ52206")) and merged into
+v6.16-rc1.
+
+Jean, Guenter, can you include this for 6.16, please?
+---
+ Documentation/hwmon/ina238.rst | 2 +-
+ drivers/hwmon/ina238.c         | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/hwmon/ina238.rst b/Documentation/hwmon/ina238.rst
+index d1b93cf8627f352612f17953c62efc5ef5596fe5..9a24da4786a43f7493b364b005b2ae9992c3b10d 100644
+--- a/Documentation/hwmon/ina238.rst
++++ b/Documentation/hwmon/ina238.rst
+@@ -65,7 +65,7 @@ Additional sysfs entries for sq52206
+ ------------------------------------
+ 
+ ======================= =======================================================
+-energy1_input		Energy measurement (mJ)
++energy1_input		Energy measurement (uJ)
+ 
+ power1_input_highest	Peak Power (uW)
+ ======================= =======================================================
+diff --git a/drivers/hwmon/ina238.c b/drivers/hwmon/ina238.c
+index a4a41742786bd19e1c5dab34c7d71973527161a1..9a5fd16a4ec2a6d5a6cd5e8070d0442e1ef0135a 100644
+--- a/drivers/hwmon/ina238.c
++++ b/drivers/hwmon/ina238.c
+@@ -97,7 +97,7 @@
+  *  Power (mW) = 0.2 * register value * 20000 / rshunt / 4 * gain
+  *  (Specific for SQ52206)
+  *  Power (mW) = 0.24 * register value * 20000 / rshunt / 4 * gain
+- *  Energy (mJ) = 16 * 0.24 * register value * 20000 / rshunt / 4 * gain
++ *  Energy (uJ) = 16 * 0.24 * register value * 20000 / rshunt / 4 * gain * 1000
+  */
+ #define INA238_CALIBRATION_VALUE	16384
+ #define INA238_FIXED_SHUNT		20000
+@@ -500,9 +500,9 @@ static ssize_t energy1_input_show(struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	/* result in mJ */
+-	energy = div_u64(regval * INA238_FIXED_SHUNT *	data->gain * 16 *
+-				data->config->power_calculate_factor, 4 * 100 * data->rshunt);
++	/* result in uJ */
++	energy = div_u64(regval * INA238_FIXED_SHUNT *	data->gain * 16 * 10 *
++				data->config->power_calculate_factor, 4 * data->rshunt);
+ 
+ 	return sysfs_emit(buf, "%llu\n", energy);
+ }
+
+---
+base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
+change-id: 20250715-hwmon-ina238-microjoules-3d8edaa5ded0
+
+Best regards,
+-- 
+Jonas Rebmann <jre@pengutronix.de>
 
 
