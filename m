@@ -1,126 +1,123 @@
-Return-Path: <linux-kernel+bounces-731490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A9D9B0551D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:39:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F60B0551E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A625616D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:38:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E99584A4628
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9561E273808;
-	Tue, 15 Jul 2025 08:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06E427510C;
+	Tue, 15 Jul 2025 08:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kMmQmNQy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eG3iz4Jt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FButPfo2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A4825D55D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11BC157493;
+	Tue, 15 Jul 2025 08:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568725; cv=none; b=cDXopJ03AvW55/34iKigglC/JNUFDvc+vgsTDOmIXFJIPYxRO7lFL51edTRRmzbeKfiOQspkThCW9iv3RYO0lYL5eL1wCRZ4Gq+VO/2OTYnsRb+8/7mm/duBOgpzIPp8SxYxb0MinJFd6/cJiIE07+w0xYZTjR77eTace3o7AI8=
+	t=1752568802; cv=none; b=j13Tt4p9Gi3c/lBXDRul7VM7SYEyhmnXlaXeoLYXqQ0Dj3fCdc3AcTiGCOdczBEEnpF2bOsUUhm7Elhk9ayktgEbUKalRsMEByCmkPbhSgBZZe+7x5Q1f/NLnYqTwfmqELrOAyGI2fRCXHWmV0oma3nPW06tiEUHLn77xtifM+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568725; c=relaxed/simple;
-	bh=c6LJj3udj0J3UootvIgB6zfzZvQZ47urSurRtPXKJ8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CB5MMLxk4J7bIF6O1vb3Jbyg5BVJTy2DDHmoSStP0/nAmUo7NocUPaQJR9gOwmooHwPQVHK4MC/yq2Jbw8+z7Ub9uZKYAWrwjiQsv6L4Gtb0vtd8EjVB8lCEB8tWqifeD/2/fEh5ZAtNLQEnVFgqI4IxsyAwtKuh/tUbUk/c6ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kMmQmNQy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1973F40E0216;
-	Tue, 15 Jul 2025 08:38:42 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ripCVEZ_vT8z; Tue, 15 Jul 2025 08:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752568718; bh=4A5vVxA2en17yEgK87oBpQ+FmmPPz4Eo7oPnmKuCKAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kMmQmNQykSg69IRQRksRLWW1aZsVriIcboXip+rJIPXUuC/M5K8yzG/2XsHdOitl7
-	 nt7DK1ZM11okvx9GZWDjV63xWjuFRLkVJUfwKaDEZgxL5M2DjMmETaqkbjKrFFVIQU
-	 Z+t2TB8DCYh/2VZlSBDFY/UFnFJ979AstMRHilaW4bs3jqjXWmgJ1lL6igWdRftate
-	 RQ+fzl1Bi6aTSKVpqtntKf3d1ZTAbe9ZLecJyUzK5tL0lCJD7BEBR/j6B+jcfivSON
-	 biv2OUuGdsdCmOJu+DTQ1LLku2Z51NTVcnNgXc3kW4IJbpcliZZTRozd/QZNcue4gJ
-	 1qiLV4yd4RRuYYCr5zKYvGlEKXiu99WfJ+Rwyf049qjvojH8kwnWpFF5a04pb4/ENn
-	 To+9zKPJQNqWt/4DJjNdFWvfdXR68aHJU9N5TvnXwtoGzEt4GeVgx6gZ8kiuqyNK7o
-	 +iGxjtYrOaHOHXkAZOorchJOzszwmMn1ssZmvJI5KiXnf9DFE8SbdHaSTDYAf3mKxh
-	 1jPCsUHPkx8jgP8kyw/Y5jjUzkN6t8rvMyAJsMoUTcQ5zDweh+5GXrPWLaREzKoiP0
-	 t8GjC4rsGf8KDI3+Bv+j2uHDdJQUgEkUTAb2LQe6x0TWdSwSdeq0CtLYJ8HDR+0U6j
-	 rCiWevlgdeVwjKcjNjZZGlcw=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C2E0D40E015D;
-	Tue, 15 Jul 2025 08:38:28 +0000 (UTC)
-Date: Tue, 15 Jul 2025 10:38:27 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, santosh.shukla@amd.com
-Subject: Re: [PATCH] x86/sev: Improve handling of writes to intercepted
- GUEST_TSC_FREQ
-Message-ID: <20250715083827.GBaHYTg9eU55LcHKR1@fat_crate.local>
-References: <20250711041200.87892-1-nikunj@amd.com>
- <20250714104424.GGaHTfiFxI_pf-vhRn@fat_crate.local>
- <aHUTMiEJ-nd76lxM@google.com>
- <76e0988d-279f-be58-51d9-621806dbb453@amd.com>
- <aHUfecs9UJPx0v_C@google.com>
- <20250714161639.GLaHUtZwleS3COfxxX@fat_crate.local>
- <aHUx9ILdUZJHefjZ@google.com>
+	s=arc-20240116; t=1752568802; c=relaxed/simple;
+	bh=bph2CKLWWA6Zfy6b2rzNQeI7jr7Ng8Jx6WB5b7K4KOU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=aK/3fcDuOAgdRd1Yz+Eed8htcUR7DevdpkyU8jLp4o3qdL8njpfcyZ3T8PH/oAAHwjcbQcOQlpuGCOQ2gZ9xTNanUDUUWrsBMAZcYR9F7OkLrUnIRYE+eFyW/7/cEH1ajUJWLoX3pZyZaflUr7psWxnLM4vd520DPI4HVt4Syvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eG3iz4Jt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FButPfo2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Jul 2025 08:39:57 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752568798;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D0RQ+i/p2sJqVF9+ryHw3pXcUBawIFlK4rbiZFvoMyY=;
+	b=eG3iz4JtWKfRt3ouMXrLEWLY6Af71JEoUxdSwNzpKAgxoO2KngwyNE7jUOzaYsIMYfQI5G
+	pxTA7ZJd0DnmPG0WqSqEEvz0Ly0ECtZkmHkLKxk/YDI6qiKh0gTeFDHqjPS970Mqf/iKEz
+	zT97uvPZyH8HgwQDNAAivLCN+4uMi8LrkcMGVENMTCkgdNqm2LliqX7RTuPhvvWzh6wFPS
+	/BUDuYrZl8TszeLiEmirTDvONZ5W3br64AC3MjFCB7aM/U+SpTJ1iEa3IL2Izz3UvxAnUS
+	rFy9++Df9sHbaPJzTAV0fy9B3+VkVJoKpWaKIn9HuieYb5hsm5ant+x8rwrITg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752568798;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D0RQ+i/p2sJqVF9+ryHw3pXcUBawIFlK4rbiZFvoMyY=;
+	b=FButPfo2TUEcOuMs6joo1IhEAAf8FzBxzKP2YUZ6knQx9w3LE9z8MST8fEWLexTi1aUyBi
+	v1yXsRPe9BZWchAw==
+From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/sev: Work around broken noinstr on GCC
+Cc: Randy Dunlap <rdunlap@infradead.org>, Ard Biesheuvel <ardb@kernel.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250714073402.4107091-2-ardb+git@google.com>
+References: <20250714073402.4107091-2-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aHUx9ILdUZJHefjZ@google.com>
+Message-ID: <175256879751.406.17891984296859286442.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 14, 2025 at 09:36:04AM -0700, Sean Christopherson wrote:
-> Or as Tom suggested, return ES_EXCEPTION and let the kernel's normal machinery
-> WARN on the bad WRMSR.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Ack.
+Commit-ID:     6b995d01683feae619aa3263d18a6aa19bface16
+Gitweb:        https://git.kernel.org/tip/6b995d01683feae619aa3263d18a6aa19bface16
+Author:        Ard Biesheuvel <ardb@kernel.org>
+AuthorDate:    Mon, 14 Jul 2025 09:34:03 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 15 Jul 2025 10:12:25 +02:00
 
-> Because as you note below, the MSR read should succeed.  __vc_handle_secure_tsc_msrs()
-> is invoked if and only if secure TSC is enabled for the guest.  If RDMSR #VCs,
-> then the hypervisor has decided to intercept GUEST_TSC_FREQ despite enabling and
-> advertising secure TSC to the guest.  The guest kernel can either continue on
-> with degraded security (potentially dangerously so) or panic/terminate.  
+x86/sev: Work around broken noinstr on GCC
 
-Aha, I guess we do want to panic here...
+Forcibly disable KCSAN for the sev-nmi.c source file, which only
+contains functions annotated as 'noinstr' but is emitted with calls to
+KCSAN instrumentation nonetheless. E.g.,
 
-> > The APM says:
-> > 
-> > "Guests that run with Secure TSC enabled may read the GUEST_TSC_FREQ MSR
-> > (C001_0134h) which returns the effective frequency in MHz of the guest view of
-> > TSC. This MSR is read-only and attempting to write the MSR or read it when
-> > outside of a guest with Secure TSC enabled causes a #GP(0) exception."
-> > 
-> > So what is the established protocol for reading non-existent MSRs?
-> 
-> Looks like Linux-as-a-guest will request emulation from the hypervisor.  What
-> the hypervisor does is completely unknown, at least as far as the guest is
-> concerned.  E.g. the hypervisor could return an error (i.e. "inject" a #GP), or
-> it could provide garbage (on RDMSR) and drop writres.
+  vmlinux.o: error: objtool: __sev_es_nmi_complete+0x58: call to __kcsan_check_access() leaves .noinstr.text section
+  make[2]: *** [/usr/local/google/home/ardb/linux/scripts/Makefile.vmlinux_o:72: vmlinux.o] Error 1
 
-I see.
+Fixes: a3cbbb4717e1 ("x86/boot: Move SEV startup code into startup/")
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Link: https://lore.kernel.org/20250714073402.4107091-2-ardb+git@google.com
+---
+ arch/x86/coco/sev/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+diff --git a/arch/x86/coco/sev/Makefile b/arch/x86/coco/sev/Makefile
+index db3255b..342d79f 100644
+--- a/arch/x86/coco/sev/Makefile
++++ b/arch/x86/coco/sev/Makefile
+@@ -5,5 +5,6 @@ obj-y += core.o sev-nmi.o vc-handle.o
+ # Clang 14 and older may fail to respect __no_sanitize_undefined when inlining
+ UBSAN_SANITIZE_sev-nmi.o	:= n
+ 
+-# GCC may fail to respect __no_sanitize_address when inlining
++# GCC may fail to respect __no_sanitize_address or __no_kcsan when inlining
+ KASAN_SANITIZE_sev-nmi.o	:= n
++KCSAN_SANITIZE_sev-nmi.o	:= n
 
