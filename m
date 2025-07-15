@@ -1,114 +1,114 @@
-Return-Path: <linux-kernel+bounces-731595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72032B056F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:45:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DB8B056F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D08188B7B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:45:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6FA33A1F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DE42D63E4;
-	Tue, 15 Jul 2025 09:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Xk3C5fLn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2410123BF83;
+	Tue, 15 Jul 2025 09:45:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6C122DFB5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5862264D5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752572715; cv=none; b=G6EI5Sgq/FopTTFi7DaNh/IkF8qpd4gKtg4nn/6a07XFxAPtBEkFWDuvAqmUczY1MK88Qu1YUOFn7OrvKgdYBr3QiVL/vE5Jr7J0dd7PwiQhe+9KVcLAq/crmYfBOJdUVRivtexQ8qZdNhE8L9vj1lR9v6ULYAOqYldld/bKC2A=
+	t=1752572712; cv=none; b=htxakHVQ/+XqXuEpUDvtvKLQ66vdyCTjgcULPbx4x6bkTwQffitOwJTTfm2Ygab7/G0nGDnJWNZJdlTLFqoSq7KBFobwbhQn29SuEdPM8u3ek7oeNZllUPMK1npXHEcXv9RDtrD7m63oPN6aWAkbHZ4JJfl44UIeoN9ot2FYRHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752572715; c=relaxed/simple;
-	bh=pKMd/ZxcwwVU0Vlnn1gZ09aywe3UzeCDMUxxwekki1Y=;
+	s=arc-20240116; t=1752572712; c=relaxed/simple;
+	bh=KWOaxjP/bGNjDInQVlB7bR97fr6w9d/PYMDrgGxa8Fc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZiOVEbIrfZy+B74+pohVtX+voVn9pFOZ9PX2pvNLYas13rXyjUP4b3qeS76G5oj5c8rG0Sx9Q0cPk3Y/qDVCAzF24XBmtbG+wj9BkG8trA/kE64hdSs9cEaEvSh23MqQDTSwadq6ITplYDmmocABPqr07Wf7/hBXiuU4AUOsLME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Xk3C5fLn; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AF46140E00DE;
-	Tue, 15 Jul 2025 09:45:10 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id t_oX5a8liuEj; Tue, 15 Jul 2025 09:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752572707; bh=m/pf36P9FNkln7pqMd9qt41JY1LEj4XQn2g808gPdkw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xk3C5fLncb0oAvp8l2GOWrbVV8gy1N349+aGyRxBkC2gMWivqLU8BjD8EL9HM0Bvg
-	 yYjnk48tFkbrem9MSmcOhC3NOudyxNUBpeWvCJalHG7akvJaE19MfruZ7lqvQtkI/y
-	 o3VZCqqPgwQ3kGfT1bZw7Hpd0mGPqbZj674qK0xUPIb0aE4i7zwhWMXLuz6CjYr08F
-	 mNUbl0UbvzokEpfCzVaT5Erud4uaAJe9XVyGD4zlY0hbdBj68Z9muoSSn9I5ajnULb
-	 35Rg+ZrsYF2mODZ/Zd8aHhx4g5eSFKUvrkJGpd08/lhUqTVKMfPhRRlfhweu7ftwoO
-	 juuy6sdpoby3uVnpb3xZ6jfW5S9JVDmGQ9kMum8ibxVioCuNyttKSVgFqSeaTCvp1R
-	 2afLfZ35wb3sXkR0nvua6NYNYJfRAorCF7Kfor6ESBcMPPzZd0hkwSQXgAQ4CuI7jN
-	 yhs7wrMbDyr4XYSlWCPXyj107zchwQ6e4a79u9GlpQhqWOvoeeb+XdTVZocNvxdUzG
-	 lqCUDAh/lYViGvULcW54JNG8r1dJoXP6fm0OpVLbxxhwaaCf6PiEbUl5pTp+nlyVzw
-	 +iRVe96oz0EQQYKfMXs18uiruYMWbrIP64uAPIVcBHqKNERYit587fIMBVs7IXAcX3
-	 aTOJ24bhrzVswc7x+Ijt3qTc=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	 Content-Type:Content-Disposition:In-Reply-To; b=CR/9gi6sOndQpt/bTPYGrSLu3c4CWE2UKhvoiRF6wmw09TnLWbkLwdMd6xZyyTcA2LRzDq6QhdWgG/EJz1/vLVu+h5sztXqHa4gf5WzC77OwcLEGNup/xgEFDgGY9gH7LL0WUnHRAn9sC9Xkn9Ke1lqRtfuNANa2tcDySwbXLRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ubcDd-0004mV-06; Tue, 15 Jul 2025 11:45:01 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ubcDc-008YhW-28;
+	Tue, 15 Jul 2025 11:45:00 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 27F0540E0213;
-	Tue, 15 Jul 2025 09:44:58 +0000 (UTC)
-Date: Tue, 15 Jul 2025 11:44:51 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Nikunj A Dadhania <nikunj@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com,
-	santosh.shukla@amd.com
-Subject: Re: [PATCH] x86/sev: Improve handling of writes to intercepted
- GUEST_TSC_FREQ
-Message-ID: <20250715094451.GDaHYjE68KhYiz_r20@fat_crate.local>
-References: <20250711041200.87892-1-nikunj@amd.com>
- <20250714104424.GGaHTfiFxI_pf-vhRn@fat_crate.local>
- <aHUTMiEJ-nd76lxM@google.com>
- <76e0988d-279f-be58-51d9-621806dbb453@amd.com>
- <aHUfecs9UJPx0v_C@google.com>
- <20250714161639.GLaHUtZwleS3COfxxX@fat_crate.local>
- <aHUx9ILdUZJHefjZ@google.com>
- <20250715083827.GBaHYTg9eU55LcHKR1@fat_crate.local>
- <85ecuhx1eh.fsf@amd.com>
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 55BF6442293;
+	Tue, 15 Jul 2025 09:45:00 +0000 (UTC)
+Date: Tue, 15 Jul 2025 11:45:00 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+Cc: mailhol.vincent@wanadoo.fr, linux-kernel-mentees@lists.linux.dev, 
+	shuah@kernel.org, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] can: janz-ican3: use sysfs_emit() in fwinfo_show()
+Message-ID: <20250715-idealistic-majestic-goose-1f0486-mkl@pengutronix.de>
+References: <20250712133609.331904-1-khaledelnaggarlinux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nonvqcqqynx66ck2"
 Content-Disposition: inline
-In-Reply-To: <85ecuhx1eh.fsf@amd.com>
+In-Reply-To: <20250712133609.331904-1-khaledelnaggarlinux@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Jul 15, 2025 at 09:13:10AM +0000, Nikunj A Dadhania wrote:
-> That will panic the SNP guest instead of #GP:
-> 
-> root@ubuntu:~# wrmsr 0xc0010134 0
-> [   20.804335] ------------[ cut here ]------------
-> [   20.804336] WARNING: arch/x86/coco/sev/vc-handle.c:383 at vc_handle_exitcode.part.0+0xc1b/0x1090, CPU#0: wrmsr/607
-> ...
-> [   20.804507] SEV: Unsupported exception in #VC instruction emulation - can't continue
-> [   20.804508] ------------[ cut here ]------------
-> [   20.804508] kernel BUG at arch/x86/coco/sev/vc-handle.c:123!
-> [   20.804514] Oops: invalid opcode: 0000 [#1] SMP NOPTI
 
-You need to make trapnr become X86_TRAP_GP in vc_forward_exception() so that
-the GP handler is called.
+--nonvqcqqynx66ck2
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] can: janz-ican3: use sysfs_emit() in fwinfo_show()
+MIME-Version: 1.0
 
-Or wait for Tom to wake up to double-check his suggestion... :-)
+On 12.07.2025 16:36:07, Khaled Elnaggar wrote:
+> As recommended in Documentation/filesystems/sysfs.rst, show() callbacks
+> should use sysfs_emit() or sysfs_emit_at() to format values returned to
+> userspace. Replace scnprintf() with sysfs_emit() in fwinfo_show().
+>=20
+> Signed-off-by: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
 
--- 
-Regards/Gruss,
-    Boris.
+Applied to linux-can-next.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--nonvqcqqynx66ck2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmh2IxgACgkQDHRl3/mQ
+kZz3bAgAqieF81T8iq9I4vH0mpiqkhWao6EwnGxK5WkPhbbJTqP4NPAs9PMpBuB2
+V/2GYgNJWaitCLXE/mRLC7F9posbIGZYDLK4gpUYNJc2Ep51QMQsNkrriKx99qmP
+NSJ9+qyodWKEW999GLsfn0VOgso02WvL3HESRx+RccoZcaFL+7pK4Tqh7XaQAVwu
+8nHrMh9Ez7/PwbSNlqI9Mnv5+ehvEP3/fvPcRy/Sl8daVWqT3KDkCZKwbCIA/wV5
+lKEyPDCMnSQCx9RlWPbHmzRm7ycvKblhChQ+Ajjxee1hnP0TQWZSeiiVDoD1BiGj
+B/ku6CU1DDEGvAB3SoLX4qS6r7mhAA==
+=ht81
+-----END PGP SIGNATURE-----
+
+--nonvqcqqynx66ck2--
 
