@@ -1,142 +1,216 @@
-Return-Path: <linux-kernel+bounces-732101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E62B061F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:55:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF3FB061EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1451890905
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:50:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25C2504866
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FE31F0E56;
-	Tue, 15 Jul 2025 14:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF3A1E51EE;
+	Tue, 15 Jul 2025 14:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DV3FuCcu"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934B226281;
-	Tue, 15 Jul 2025 14:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jc1ulnuX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7iP4mBwN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706F71531E8;
+	Tue, 15 Jul 2025 14:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752591016; cv=none; b=aw/iAHP1H1BV0F09AQp9oo4Hsuqa/nhVEyJbj87EDNrMctfav92leBqTeQCvnOFxVH7TTRsMw+G3p9ajoBaN5SxYZ0beWAUBN1+GU+a05G8UNpBTYVskFvz6uBYQG0UkzdI+/qFQxMzdnf6yzjM/rjbyyXEPH90SH3b8NiqiDzA=
+	t=1752590946; cv=none; b=ZcKnSwes8brwyFSlfMD6aFZ8sYDTf2lBxgxchb7Aw0PmEJcx/Jzf7MyucjkB+0grSg7yU83BdkWK9ss6B38QGXF4gHNYA0w1OzK4yQ/2vOGPzm368x/l+IZiCRjA/40BbfRCzoJsScZt60XF9+rhRK2sNtLsAnS6SGn0M3XA7Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752591016; c=relaxed/simple;
-	bh=KwW3Ct+eYQAN7duoTjUPdigF52dVr0dEmIwj3cGLFWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ol+1ug0scDXCAtjDsV80zQTkOU/ZJgY/mvMYAD+ZKlOA1f6+fxe7LiZ3qPGNLxqNmpYreKJd9fBhPrVyNLgnTNoJwoVGygUhK1GWb0zjm/YO7s12Wb1inNgkXA07IPNcKlIdHrO5u1dCChOux3IL0YEv3NkV45euklQykSmSItI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DV3FuCcu; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=y8FmBktC9WSRYxvxolkGYL5S4AI0gxd1QPXCyRbb+Bw=;
-	b=DV3FuCcum96CB6OJl3oa/EcvfiVGdVsWmvSySDMjIyTZCnpMC4bboVdDK+mD72
-	GtTSSKWuSnsg+whFjBRn8GL29NJh9i/eTQ4cD8j1VMxO6p5BvyrgKhq8LkBu0ksv
-	MNbGlbHEC2XQO11n4cIfhSj3hQLoS3vZBSMdzm35evdjk=
-Received: from [IPV6:240e:b8f:919b:3100:7981:39b4:a847:709a] (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAH7fhVanZoxSGjFA--.45568S2;
-	Tue, 15 Jul 2025 22:48:54 +0800 (CST)
-Message-ID: <7da900a6-04cd-41f7-afc8-5570eb7639e1@163.com>
-Date: Tue, 15 Jul 2025 22:48:53 +0800
+	s=arc-20240116; t=1752590946; c=relaxed/simple;
+	bh=/i8hp2A63xErh+VqtEwyoNTl9Erl2EmboCvW+eFlchM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wkqo6g+QBXTj9qS8hhHiSn5JDhtoNT/Z9zXdr84RgJYgUWmbbqir0zQrJ/5X9IjQTWCnVVxaAaBeIF20tYSoeUtmb2eM8+YMGAn0mLHarz4Vd/4TaJAcmJlgRKB6JzimJlJGd2HDy9FlhxUrmrmpmE+eYvrTa4GzQvXdBJmdQeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jc1ulnuX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7iP4mBwN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Jul 2025 16:48:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752590939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hhs4oDExnFBWWlX2efUPYBaJUeuHGbsczHs2gZahTWI=;
+	b=jc1ulnuXEK8hy0xZsHSzFdlEOEitDkQIMyTjMoaGh4gMZPJGGCpE1NXrtF+LpkuDfMBKX3
+	t25X99oWc9MseXo7eDwem/HAkdeF2xmnpSehth1P5GR55fP9eGqdrAnE5DF6JYED478HJm
+	UCeW5q2ydHaz9NT1e8hHR4tlmP5SpyEPKqSNTMIh8P+UwZjRQ9PmDVQSNT8rP12lUYHhek
+	GYt8gYZVmofeJH28CkgcKAUuVbEBf1s4t4Y0+kR4yjOAT5T+kWSSoLxskna4Oce9/66WMp
+	X/GvuWCFY0E7ThyRB8BfagOv1RYgGGfYsh4WeyGxfJSLK4/pluTh3p010A5i4w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752590939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hhs4oDExnFBWWlX2efUPYBaJUeuHGbsczHs2gZahTWI=;
+	b=7iP4mBwNsSBmpNYNxkqe6QMfm4fPpKoTCrgT1eP346KNtXS2kUbEg3ugCwMYBCnhjOn41p
+	AynfNmlSmcf4EwCw==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v3 08/17] verification/rvgen: Organise Kconfig entries
+ for nested monitors
+Message-ID: <20250715144858.ZS4_m8Qm@linutronix.de>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+ <20250715071434.22508-9-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
- __pci_enable_link_state()
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
- linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
- qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
- quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-References: <20250714193214.GA2415073@bhelgaas>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250714193214.GA2415073@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wAH7fhVanZoxSGjFA--.45568S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJFW7tw18Gry7Cr1DXFW5ZFb_yoW5Xr1xpa
-	yrtasIkFZ5Jr97Gw12vw1jqF4SkwnYy345G3s5tryUJw45u39xGr4xtrZY9F93WrWxW3ya
-	vrZ8WwnrZFyq9a7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URa0QUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQwWLo2h2Y3mQSAAAsy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715071434.22508-9-gmonaco@redhat.com>
 
-
-
-On 2025/7/15 03:32, Bjorn Helgaas wrote:
-> On Sun, Jul 13, 2025 at 12:05:18AM +0800, Hans Zhang wrote:
->> On 2025/7/12 17:35, Manivannan Sadhasivam wrote:
->> ...
+On Tue, Jul 15, 2025 at 09:14:25AM +0200, Gabriele Monaco wrote:
+> The current behaviour of rvgen when running with the -a option is to
+> append the necessary lines at the end of the configuration for Kconfig,
+> Makefile and tracepoints.
+> This is not always the desired behaviour in case of nested monitors:
+> while tracepoints are not affected by nesting and the Makefile's only
+> requirement is that the parent monitor is built before its children, in
+> the Kconfig it is better to have children defined right after their
+> parent, otherwise the result has wrong indentation:
 > 
->>>> IMO the "someday" goal should be that we get rid of aspm_policy
->>>> and enable all the available power saving states by default.  We
->>>> have sysfs knobs that administrators can use if necessary, and
->>>> drivers or quirks can disable states if they need to work around
->>>> hardware defects.
->>>
->>> Yeah, I think the default should be powersave and let the users
->>> disable it for performance if they want.
->>
->> Perhaps I don't think so. At present, our company's testing team has
->> tested quite a few NVMe SSDS. As far as I can remember, the SSDS
->> from two companies have encountered problems and will hang directly
->> when turned on. We have set CONFIG_PCIEASPM_POWERSAVE=y by default.
->> When encountering SSDS from these two companies, we had to add
->> "pcie_aspm.policy=default" in the cmdline, and then the boot worked
->> normally. Currently, we do not have a PCIe protocol analyzer to
->> analyze such issues. The current approach is to modify the cmdline.
->> So I can't prove whether it's a problem with the Root Port of our
->> SOC or the SSD device.
+> [*]   foo_parent monitor
+> [*]     foo_child1 monitor
+> [*]     foo_child2 monitor
+> [*]   bar_parent monitor
+> [*]     bar_child1 monitor
+> [*]     bar_child2 monitor
+> [*]   foo_child3 monitor
+> [*]   foo_child4 monitor
 > 
-> Have you reported these?
-
-Dear Bjorn,
-
-I haven't reported it. Because we don't have a PCIe protocol analyzer to 
-analyze this situation, it's not certain whether it's a problem with our 
-SOC Root Port or the NVMe SSD. If I have time later, I will conduct a 
-comparison test on the RK3588.
-
+> Adapt rvgen to look for a different marker for nested monitors in the
+> Kconfig file and append the line right after the last sibling, instead
+> of the last monitor.
+> Also add the marker when creating a new parent monitor.
 > 
->> Here I agree with Bjorn's statement that sometimes the EP is not
->> necessarily very standard and there are no hardware issues.
->> Personally, I think the default is default or performance. When
->> users need to save power, they should then decide whether to
->> configure it as powersave or powersupersave.  Sometimes, if the EP
->> device connected by the customer is perfect, they can turn it on to
->> save power. But if the EP is not perfect, at least they will
->> immediately know what caused the problem.
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> ---
+>  kernel/trace/rv/Kconfig                     |  5 +++++
+>  tools/verification/rvgen/rvgen/container.py | 13 +++++++++++++
+>  tools/verification/rvgen/rvgen/generator.py | 13 ++++++++-----
+>  3 files changed, 26 insertions(+), 5 deletions(-)
 > 
-> We should discover device defects as early as possible so we can add
-> quirks for them.  Defaulting to ASPM being partly disabled means it
-> gets much less testing and users end up passing around "fixes" like
-> booting with "pcie_aspm.policy=default" or similar.  I do not want
-> users to trip over a device that doesn't work and have to look for
-> workarounds on the web.
-> 
-> I also think it's somewhat irresponsible of us to consume more power
-> than necessary.  But as Mani said, this would be a big change and
-> might have to be done with a BIOS date check or something to try to
-> avoid regressions.
-> 
+> diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
+> index c11bf7e61ebf0..26017378f79b8 100644
+> --- a/kernel/trace/rv/Kconfig
+> +++ b/kernel/trace/rv/Kconfig
+> @@ -43,6 +43,7 @@ config RV_PER_TASK_MONITORS
+>  
+>  source "kernel/trace/rv/monitors/wip/Kconfig"
+>  source "kernel/trace/rv/monitors/wwnr/Kconfig"
+> +
+>  source "kernel/trace/rv/monitors/sched/Kconfig"
+>  source "kernel/trace/rv/monitors/tss/Kconfig"
+>  source "kernel/trace/rv/monitors/sco/Kconfig"
+> @@ -50,9 +51,13 @@ source "kernel/trace/rv/monitors/snroc/Kconfig"
+>  source "kernel/trace/rv/monitors/scpd/Kconfig"
+>  source "kernel/trace/rv/monitors/snep/Kconfig"
+>  source "kernel/trace/rv/monitors/sncid/Kconfig"
+> +# Add new sched monitors here
+> +
+>  source "kernel/trace/rv/monitors/rtapp/Kconfig"
+>  source "kernel/trace/rv/monitors/pagefault/Kconfig"
+>  source "kernel/trace/rv/monitors/sleep/Kconfig"
+> +# Add new rtapp monitors here
+> +
+>  # Add new monitors here
+>  
+>  config RV_REACTORS
+> diff --git a/tools/verification/rvgen/rvgen/container.py b/tools/verification/rvgen/rvgen/container.py
+> index 47d8ab2ad3ec4..fee493f89fde6 100644
+> --- a/tools/verification/rvgen/rvgen/container.py
+> +++ b/tools/verification/rvgen/rvgen/container.py
+> @@ -20,3 +20,16 @@ class Container(generator.RVGenerator):
+>          main_h = self.main_h
+>          main_h = main_h.replace("%%MODEL_NAME%%", self.name)
+>          return main_h
+> +
+> +    def fill_kconfig_tooltip(self):
+> +        """Override to produce a marker for this container in the Kconfig"""
+> +        container_marker = f"# Add new {self.name} monitors here\n"
+> +        if self.auto_patch:
+> +            self._patch_file("Kconfig",
+> +                            "# Add new monitors here", "")
 
-Ok. I understand your purpose now.
+Isn't this one excessive? I gave it a try, but I had double blank line:
 
-Best regards,
-Hans
+python3 tools/verification/rvgen -a container -n hello
 
+   61 source "kernel/trace/rv/monitors/sleep/Kconfig"
+   62 # Add new rtapp monitors here
+   63 
++  64 
++  65 source "kernel/trace/rv/monitors/hello/Kconfig"
++  66 # Add new hello monitors here
++  67 
+   68 # Add new monitors here
+   69 
+   70 config RV_REACTORS
+
+> +        result = super().fill_kconfig_tooltip()
+> +        if self.auto_patch:
+> +            self._patch_file("Kconfig",
+> +                            "# Add new monitors here", container_marker)
+> +            return result
+> +        return result + container_marker
+> diff --git a/tools/verification/rvgen/rvgen/generator.py b/tools/verification/rvgen/rvgen/generator.py
+> index 19d0078a38032..ac97c4505ff00 100644
+> --- a/tools/verification/rvgen/rvgen/generator.py
+> +++ b/tools/verification/rvgen/rvgen/generator.py
+> @@ -137,7 +137,8 @@ class RVGenerator:
+>          kconfig = kconfig.replace("%%MONITOR_DEPS%%", monitor_deps)
+>          return kconfig
+>  
+> -    def __patch_file(self, file, marker, line):
+> +    def _patch_file(self, file, marker, line):
+> +        assert(self.auto_patch)
+>          file_to_patch = os.path.join(self.rv_dir, file)
+>          content = self._read_file(file_to_patch)
+>          content = content.replace(marker, line + "\n" + marker)
+> @@ -146,7 +147,7 @@ class RVGenerator:
+>      def fill_tracepoint_tooltip(self):
+>          monitor_class_type = self.fill_monitor_class_type()
+>          if self.auto_patch:
+> -            self.__patch_file("rv_trace.h",
+> +            self._patch_file("rv_trace.h",
+>                              "// Add new monitors based on CONFIG_%s here" % monitor_class_type,
+>                              "#include <monitors/%s/%s_trace.h>" % (self.name, self.name))
+>              return "  - Patching %s/rv_trace.h, double check the result" % self.rv_dir
+> @@ -158,8 +159,10 @@ Add this line where other tracepoints are included and %s is defined:
+>  
+>      def fill_kconfig_tooltip(self):
+>          if self.auto_patch:
+> -            self.__patch_file("Kconfig",
+> -                            "# Add new monitors here",
+> +            # monitors with a container should stay together in the Kconfig
+> +            self._patch_file("Kconfig",
+> +                            "# Add new %smonitors here" %
+> +                              (self.parent + " " if self.parent else ""),
+
+This one must be kept in sync with container_marker in
+Container.fill_kconfig_tooltip(). I think this is hard to maintain later
+on.
+
+How about we keep in centralized with a helper function, something like:
+
+def container_marker(container: str) -> str:
+    return f"# Add new {container} monitors here\n"
+
+Nam
 
