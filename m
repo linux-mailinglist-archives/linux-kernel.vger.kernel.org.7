@@ -1,69 +1,62 @@
-Return-Path: <linux-kernel+bounces-731109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C874B04F2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:37:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F72B04F32
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458C41AA3921
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:38:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00EB4A4A22
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8C82D0C8A;
-	Tue, 15 Jul 2025 03:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957582D0C97;
+	Tue, 15 Jul 2025 03:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tl75DOYA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrK6YWYH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D17240856;
-	Tue, 15 Jul 2025 03:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F117940856;
+	Tue, 15 Jul 2025 03:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752550667; cv=none; b=T1rLC1obyN1Ok+rotrhpdjoKJJ+dOTHVHN0K3vu5Hc/4U/Onrh0hMNSXnTV2XJqTPLrpFRLSr88EMKdwfXcCa+ZZ7BM1CpRPZrkVED+IMCXCkKlt9on/6Vpp9jJ2KJMmXDftRge7JvGHF3Wn2xu8DRzNMtRyhM1V4SZx4U4eLSY=
+	t=1752550749; cv=none; b=dJhjbeQkS1p8qXMU5CHIH5EHYaTcc5yKQY361+4C9t90h0v5pRYRk3kDcZWEe09mwyPzh7qEKwKzCODONKS7ijstYzcF6Rt4F72qdPIfvqbPB1PwR8zddypLBpnUxAWAKapAMKPylB94rF5OrzPWIv5jlSznFI1bwRGSD1t1CUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752550667; c=relaxed/simple;
-	bh=Rkk7eiU2CwcRmA8MjdsTBRMax51MEvSwX1y1cEEqIt4=;
+	s=arc-20240116; t=1752550749; c=relaxed/simple;
+	bh=pg10ZRkdYeFnXEcWEcbRD3J1Z6ySQm+62tlViyEQr5k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFRekqhImSezqUKrycxVpm4ZxFjAWlS/HKhgQvI3kCBLcpCktmunEhNhQP2Fb5yRQFnooM8V9y/RfepAwI7IEGuG32eciqxAdgl5zh9WhpofNAjAZCnmIawHIOl2VEoKOGMZK0/uMPTzVqTTbh6lpb1qQvqeW22xMnSD38fhWdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tl75DOYA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A461EC4CEE3;
-	Tue, 15 Jul 2025 03:37:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gtqWiR16Y7XWxT8hZS/kAOfp6kioOi8b98sUMszh5Tk8UwGQ+ZbGThz2NjuHXXLlqNwXokaw+yIEmm2r3MIxBKhJczI2SWxugyFWm9qgZAP10mc4IAJzAdQwbt68UyJTndRlcXbBsYa8hE+GDtqTPClycKkKZj4NXeEGp4SXIkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rrK6YWYH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEECC4CEE3;
+	Tue, 15 Jul 2025 03:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752550666;
-	bh=Rkk7eiU2CwcRmA8MjdsTBRMax51MEvSwX1y1cEEqIt4=;
+	s=k20201202; t=1752550748;
+	bh=pg10ZRkdYeFnXEcWEcbRD3J1Z6ySQm+62tlViyEQr5k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tl75DOYAqtd6wf5RCZoHDiA9dvZ9d9Qrd8WQG3LUmUJXgoMXTnWyMK5et+9a/uGJ0
-	 2q6VT1dUCaNjI9iRoLJfcTy1MOVILpvC4Vg26BnpR8FkQGmWDO7CKmrWLyAsyMGHty
-	 eYAzk4ClVbEPRifDPT3Ng39fYwLb9eV5QDqpcNJxh3r5COsTtTY9gvRZNSE30VD52d
-	 IW8G00zJ0uJButNW38meO7bZlgVO/M4P9qxCOuX+Yws9Z8GFV/EGlVGuwzCqLjQzKI
-	 FWep5j2rOUDrT4+fhwzXGqWN8WGH6iPuLgPlmctjrlODWQPPxvyp6pmH/tAhI8/pbQ
-	 SYr9ninaI+Ceg==
-Date: Mon, 14 Jul 2025 22:37:45 -0500
+	b=rrK6YWYHM7y0MorMV5i/x+xFVHVEhtPLGf//HVYZn11oPkoFPafLs0jagWYUvenc8
+	 j9SjLcIGnZaB3NhQAw6CSCcrYRXLEMlImsy3mGvZBnXzjAGUXi0d6k3/TCLyoiCyvV
+	 7zIS63H8DGDQd6s1kbswsmeEWZ6OnKwxBfeEpVPE0ll2tWSYUQFi+WP+Zh20fKiLWi
+	 kFm1DAyweGqo1mhJWwLQNxO39IZL70ozUMMx9t2cPDYrZLa3PIQeYMIi4umYfHjl2m
+	 vBabltEniOHle/HiTiCH1zpIBeNM/O924bbQl5fq8fRQ9bj3YH252Lpd/FDFs/1fqf
+	 kl7q0lCdRuJ+A==
+Date: Mon, 14 Jul 2025 22:39:07 -0500
 From: Rob Herring <robh@kernel.org>
-To: Pet Weng <pet.weng@ite.com.tw>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Hermes Wu <hermes.Wu@ite.com.tw>,
-	Kenneth Hung <kenneth.Hung@ite.com.tw>,
-	Pin-yen Lin <treapking@google.com>
-Subject: Re: [PATCH 1/3] dt-binding: display: Add a device tree binding for
- the ITE IT61620 MIPI DSI to HDMI bridge
-Message-ID: <20250715033745.GA4178590-robh@kernel.org>
-References: <20250714-it61620-0714-v1-0-3761164d0b98@ite.com.tw>
- <20250714-it61620-0714-v1-1-3761164d0b98@ite.com.tw>
+	Conor Dooley <conor+dt@kernel.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/5] dt-bindings: display: sitronix,st7571: add optional
+ inverted property
+Message-ID: <20250715033907.GA4184449-robh@kernel.org>
+References: <20250714-st7571-format-v1-0-a27e5112baff@gmail.com>
+ <20250714-st7571-format-v1-2-a27e5112baff@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,185 +65,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714-it61620-0714-v1-1-3761164d0b98@ite.com.tw>
+In-Reply-To: <20250714-st7571-format-v1-2-a27e5112baff@gmail.com>
 
-On Mon, Jul 14, 2025 at 11:14:32AM +0800, Pet Weng wrote:
-> This chip receives MIPI DSI input and outputs HDMI, and is commonly
-> connected to SoCs via I2C and DSI.
-
-Drop "a device tree binding for " in the subject. You already said this 
-is a binding at the start.
-
+On Mon, Jul 14, 2025 at 10:04:00AM +0200, Marcus Folkesson wrote:
+> Depending on which display that is connected to the controller, an "1"
+> means either a black or a white pixel.
 > 
-> Signed-off-by: Pet Weng <pet.weng@ite.com.tw>
+> The supported formats (R1/R2/XRGB8888) expects the pixels
+> to map against (4bit):
+> 00 => Black
+> 01 => Dark Gray
+> 10 => Light Gray
+> 11 => White
+> 
+> If this is not what the display map against, the controller has support
+> to invert these values.
+> 
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 > ---
->  .../bindings/display/bridge/ite,it61620.yaml       | 138 +++++++++++++++++++++
->  1 file changed, 138 insertions(+)
+>  Documentation/devicetree/bindings/display/sitronix,st7571.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it61620.yaml b/Documentation/devicetree/bindings/display/bridge/ite,it61620.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ff8ff390a1c0c31bb05ba0e237490cff2942cd05
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it61620.yaml
-> @@ -0,0 +1,138 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/ite,it61620.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ITE IT61620 MIPI DSI to HDMI Bridge
-> +
-> +maintainers:
-> +  - Pet Weng <pet.weng@ite.com.tw>
-> +
-> +description: |
-> +  The ITE IT61620 is a high-performance, low-power HDMI bridge that converts
-> +  MIPI DSI input to HDMI 1.4b TMDS output. It supports up to 4 lanes of MIPI
-> +  D-PHY 2.0 input at 2.5Gbps per lane (10Gbps total), compatible with DSI-2 v2.0.
-> +
-> +  The HDMI transmitter side supports up to 4Kx2K@30Hz resolutions, and is
-> +  compliant with HDMI 1.4b and HDCP 1.4.
-> +
-> +  For audio, the IT61620 supports up to 8-channel LPCM via I2S (multi-line or
-> +  TDM mode), with optional S/PDIF or DSD (for SACD). It supports audio
-> +  sampling rates up to 192kHz.
-> +
-> +allOf:
-> +  - $ref: /schemas/sound/dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: ite,it61620
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts-extended:
+> diff --git a/Documentation/devicetree/bindings/display/sitronix,st7571.yaml b/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
+> index 4fea782fccd701f5095a08290c13722a12a58b52..065d61b718dc92e04419056b1e2d73fd0b2cb345 100644
+> --- a/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
+> +++ b/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
+> @@ -28,6 +28,11 @@ properties:
+>      description:
+>        Display supports 4-level grayscale.
+>  
+> +  sitronix,inverted:
+> +    type: boolean
+> +    description: |
 
-Just 'interrupts' in bindings. Either works in .dts files.
+Don't need '|'.
 
-> +    maxItems: 1
-> +    description: interrupt specifier of INT pin
+> +      Display pixels are inverted, i.e. 0 is white and 1 is black.
 > +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description: gpio specifier of RESET pin
-> +
-> +  ivdd-supply:
-> +    description: core voltage
-> +
-> +  ovdd-supply:
-> +    description: I/O voltage
-> +
-> +  ovdd1833-supply:
-> +    description: flexible I/O votage
-> +
-> +  pinctrl-names:
-> +    items:
-> +      - const: default
-> +
-> +  pinctrl-0:
-> +    maxItems: 1
-> +
-> +  "#sound-dai-cells":
-> +    const: 0
-> +
-> +  dsi-lanes:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Number of DSI input lanes used (1, 2 or 4)
-> +    minimum: 1
-> +    maximum: 4
-> +    default: 4
-
-There's a standard property for this in the graph binding. Use it.
-
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-
-"#/properties/port" if you don't have extra properties.
-
-> +        description: A port node pointing to DSI host port node
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-
-Same here.
-
-> +        description: Video port for HDMI output
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts-extended
-> +  - reset-gpios
-> +  - ivdd-supply
-> +  - ovdd-supply
-> +  - ovdd1833-supply
-> +  - ports
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        hdmibrdg: ite61620@58 {
-
-Drop unused labels and "hdmi" for the node name.
-
-> +                compatible = "ite,it61620";
-> +                reg = <0x58>;
-> +                #sound-dai-cells = <0>;
-> +                interrupts-extended = <&pio 128 IRQ_TYPE_LEVEL_LOW>;
-> +                pinctrl-names = "default";
-> +                pinctrl-0 = <&it61620_pins>;
-> +                reset-gpios = <&pio 127 GPIO_ACTIVE_LOW>;
-> +                ivdd-supply = <&pp1000_hdmi_x>;
-> +                ovdd-supply = <&pp3300_vio28_x>;
-> +                ovdd1833-supply = <&pp1800_vcamio_x>;
-> +                dsi-lanes = <4>;
-> +                status = "okay";
-
-Drop status.
-
-> +
-> +                ports {
-> +                        #address-cells = <1>;
-> +                        #size-cells = <0>;
-> +
-> +                        port@0 {
-> +                                reg = <0>;
-> +                                it61620_dsi_in: endpoint {
-> +                                        remote-endpoint = <&dsi_out>;
-> +                                };
-> +                        };
-> +
-> +                        port@1 {
-> +                                reg = <1>;
-> +                                it61620_hdmi_out: endpoint {
-> +                                        remote-endpoint = <&hdmi_connector_in>;
-> +                                };
-> +                        };
-> +                };
-> +        };
-> +    };
+>    reset-gpios: true
+>    width-mm: true
+>    height-mm: true
 > 
 > -- 
-> 2.34.1
+> 2.49.0
 > 
 
