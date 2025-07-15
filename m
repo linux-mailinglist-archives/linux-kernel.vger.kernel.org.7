@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-731536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7BBB055DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:07:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D1B4B055EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DCD13AEB3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:07:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4BB1AA621B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5452D5424;
-	Tue, 15 Jul 2025 09:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141032D5426;
+	Tue, 15 Jul 2025 09:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mPWAEyub"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WCEmIKao"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A444F2D4B65
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C0A23C8C7;
+	Tue, 15 Jul 2025 09:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752570440; cv=none; b=CXivGRtZ531WzY+R32zitChb+NESkuXFgaxqT82XGMx3lPekaIbmdBqeA0i/CgIhA39qYrZjFIANL3LiTNHBUbeS9oS65iqVeJAWFQT78dZ0HNAsmmLtAsa++FzfyWxeqIeh1k52vGDZFYhPVh60IfIGhMB/qTcXwoKPzZQn6gE=
+	t=1752570612; cv=none; b=DwJFLksVbYSAKlm/BoHdoY8tAnHAyy7qIOpqi/mc70EXMJcxcP1eN29jDbrZg+lq7hDOsRbSuHdpdkB0pqMi1rJ75J10gZgyuNkVRJpnLBiKGZqnFywb41rxy+asHaRKPAdo8I+/FB6KvKL79eSq8c1URhde6SCHai9a+aNxt6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752570440; c=relaxed/simple;
-	bh=u4cIZFO83VljSE2CK6puYeLZeKZBQrk64PpIwLyG+3s=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Wtv3QCylI1FMwlmVPTI3yBRJ4v484Du1C0xi9ZEHdn/i6ijW8RTZU9pRXcb8G0NWcGGZJ2P+kmY7JlAWmY80jiqJiqmpJvRQ1ah+QkMhvcRR+9ZNTP36NhBErXikHW9jB3u3aFi7rkSl4IHaBGK3DVmiAqCHG6hUp3xOGuC6di0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mPWAEyub; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6089c0d376eso925100a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752570436; x=1753175236; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jdjGXEPbwx9d8dagmoP3TN3Sha6+88f/yNQTLVRWULs=;
-        b=mPWAEyubegUeZxpl7HoJXWyzgE11N9wJ3DcattfGEmW5fqIvNWOriBfWPQDIjqgK2x
-         NJGkcf+AXHM5w914sfELEoWd+R6Tft1aYmGdUaIn+hEPC8BbsiB70lTuytgoMKFK1GUd
-         te4+16y+D08vhjArRdbXPSv12TTVriST2wKCs1UYVJ47g6sCXtxnrnLrDIi+5PRPNmtA
-         IDKECc9cJr0g3yHN7+wylPjf9rm1rxJUoMOxKopaBbXEWCz6EunKVkMUvMUqdYI3IcvO
-         YuRAkECcVL35nAbd658V8D6c8tr2No72j2mJQd9MaWZLpYwNqb14pXnuJBrwD+BUvmJ4
-         Hd5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752570436; x=1753175236;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jdjGXEPbwx9d8dagmoP3TN3Sha6+88f/yNQTLVRWULs=;
-        b=EyRkPybt3kSPHp/EUrPz7Vrph8Zu1wAOwimfGO+5bJV1I3EZXZ0Oit1D2yWBnefLHg
-         0WAniHoo87nbtIlqDIPLnaya6g+X8ISO7ZceIRNwY9IStX+OzdpVORbctUbUT329vhuq
-         /18/ji2ZwnOGk2YYSVi67sjifMdyEle+MKF7LcnErDKoYdhLVO5I1jMHjEwcN8bl2FoC
-         LwrCxODsCpYJH+U4rsTYXOsXUbXgQumhDhhaU+47c8ZOjzU3/wTkEscGm1LIYRgGWwxP
-         aBs2fHo1EaMm9Lag3nqz9xyZK/jFla/KR62NPMF/7s3dz+BDscjDNPWFsH+swt76yZJB
-         5dWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4FWxMhO90bFEK7Ho6cl8XU90iMV+uoGLdGLgvKp0wtoVgicA0RuJbyMgUC/ZHsWdBzkPAGMoHfkwC+xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2gP53KFT/bMphD1MEuob9M85sUXGrVpshCOKcLpcZ3pNfV4UL
-	8cw0byJ0o6i+8RrzY/k4A6JFZTXrpmyGeomY9JYn6SULRExHylXRGggJqHDzumYUk0SSK0cdV0l
-	yncYB
-X-Gm-Gg: ASbGncs22ghLGFiBRJ/O6tB3b0VmgjCYW1DgK9pYtdqcw9PWVB8m7krQSm4sSvZrCi0
-	WgCZMUu3VX+VDT8Tk43/u18FwEg7+jwPEjtdLjQypBWHCMXDhaoyn+E6ZakNEBUQGvodZtrZ/Rg
-	AJXzAhXbA+8N6MYLOhVbiRRDODbJkeedghIpLC+2yaN3hXEepewpNPVt6mlnA8PdER5c+XWNWYS
-	zzby6QtBswKGdzhAgOlnYDJKE3GTLgSZEg3QbRQ7bT91Fj1pWGrr+opx9SJGA6k5jMwA6dEN0p4
-	rV19wc//9JDQlvk3j3jcnWjliwnGTNHCgDlGl2dAB8wqCV+jrYaesoX22Ui/QQ1wvT69PzIjU7Z
-	PFPsvT+yWoS0IbumafayaBxEgzYXtm29/BQok
-X-Google-Smtp-Source: AGHT+IG7sF7KS0pmEBtE7CyUxnRi/W3VS/BOjQxGcy53ccUO5o7hMkUXG853x5EsNRJefAyaqN5s2A==
-X-Received: by 2002:a17:907:84a:b0:adb:2d38:4479 with SMTP id a640c23a62f3a-ae9be9f6375mr34796166b.10.1752570436431;
-        Tue, 15 Jul 2025 02:07:16 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee459asm988001966b.52.2025.07.15.02.07.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 02:07:15 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250710073443.13788-3-krzysztof.kozlowski@linaro.org>
-References: <20250710073443.13788-3-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] arm64: tesla/google: MAINTAINERS: Reference "SoC
- clean" maintainer profile
-Message-Id: <175257043504.32608.13454383152371102716.b4-ty@linaro.org>
-Date: Tue, 15 Jul 2025 11:07:15 +0200
+	s=arc-20240116; t=1752570612; c=relaxed/simple;
+	bh=qLrKfX0ZBO8alZEOE65+uBiUUrqvs2pz0+3KbaN7E00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9Jm2T95rVfPu8Qa4LEobyIr9HNW1tpoVboFwus9WBvDfytAD5PeTNdgYjRBPMRW8NvKrFK8a2+DSRFYnYST0HldymKBExi/mHdLzRLm7zkqrPksw/kQ7waI52gUbprpkV1TU+oUolCzTugAeakZuMZcggSwTaUQUxQKldQ8v3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WCEmIKao; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=01rNQb63ptE9QSTfqmkP9iEp/OrX4ZghKbDPnKTvdzc=; b=WCEmIKaoclUOlMvqahdyT9LUks
+	8lhhpOM5gIeKV76LuQN135e0mX9T8h40f+Oyy3QGI8Ov8ZCWXnZH+PVEaiX9+zvuN5fRJLjfVghN5
+	TFFaiCiGkSWFFiO16lQEuw48JKFNesJYsll64UDY0mQmdp/5N0z5IL5BaKmVGJsV0uxFIDHj+n5X/
+	oMlrP9HiB3P34CmxG84vQETOda26wXKrxgNRLP6G8y5wp3kfcj6f21VNicxKy1odNNGe/G3PW/EdY
+	0nd1l5YFRWqGu7mOq4DhHhgc/6Wc1j5se2KDRCzuMilQpMdlgmTgTmdlkCllSbQdKFZHbY1mOvVnL
+	SCbbX8fw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubbfg-00000009rR1-3Hmu;
+	Tue, 15 Jul 2025 09:09:57 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 984B33001AA; Tue, 15 Jul 2025 11:09:55 +0200 (CEST)
+Date: Tue, 15 Jul 2025 11:09:55 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v13 07/14] unwind_user/deferred: Make unwind deferral
+ requests NMI-safe
+Message-ID: <20250715090955.GP1613200@noisy.programming.kicks-ass.net>
+References: <20250708012239.268642741@kernel.org>
+ <20250708012358.831631671@kernel.org>
+ <20250714132936.GB4105545@noisy.programming.kicks-ass.net>
+ <20250714101919.1ea7f323@batman.local.home>
+ <20250714150516.GE4105545@noisy.programming.kicks-ass.net>
+ <20250714111158.41219a86@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714111158.41219a86@batman.local.home>
 
-
-On Thu, 10 Jul 2025 09:34:44 +0200, Krzysztof Kozlowski wrote:
-> Effectively all Tesla FSD and Google GS101 DTS patches go via Samsung
-> SoC maintainer, who applies the same rules as for Samsung SoC: DTS must
-> be fully DT bindings compliant (`dtbs_check W=1`).  Existing sources
-> already are compliant, so just document that implicit rule by mentioning
-> respective maintainer profile in their entries.
+On Mon, Jul 14, 2025 at 11:11:58AM -0400, Steven Rostedt wrote:
+> On Mon, 14 Jul 2025 17:05:16 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
+> > Urgh; so I hate reviewing code you're ripping out in the next patch :-(
 > 
-> [...]
+> Sorry. It just happened to be developed that way. Patch 10 came about
+> to fix a bug that was triggered with the current method.
 
-Applied, thanks!
+Sure; but then you rework the series such that the bug never happened
+and reviewers don't go insane from the back and forth and possibly
+stumbling over the same bug you then fix later.
 
-[1/2] arm64: tesla/google: MAINTAINERS: Reference "SoC clean" maintainer profile
-      https://git.kernel.org/krzk/linux/c/7f311e5ac36b6cf9cc0734d89546e643f33b684a
-[2/2] arm64: samsung: MAINTAINERS: Add Tesla FSD DTS to Exynos entry
-      https://git.kernel.org/krzk/linux/c/8e5bf103b3ada972ea890ae6aa2118ff9b8c321c
+You should know this.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I'm going to not stare at email for some 3 weeks soon; I strongly
+suggest you take this time to fix up this series to not suffer nonsense
+like this.
+
 
 
