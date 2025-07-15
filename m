@@ -1,255 +1,158 @@
-Return-Path: <linux-kernel+bounces-732537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A72B0683E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 076AEB067E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC624A85AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:00:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC7216FD75
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254532874F9;
-	Tue, 15 Jul 2025 21:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC1E275AE8;
+	Tue, 15 Jul 2025 20:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="iw2I9B3i"
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YnGj1X7A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A1C1E501C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 21:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3341A76DA
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752613241; cv=none; b=Wi+LmstdpKyj8A3mPTwZh4kCFDm9ugVmpgTpW7qqZzxXq7chydduOoD+xmuL7o50zN7OpAuGOR8o6J5esLXi7it/MyQ5VvCRqm0r0PVqenc7ck5XLan8UhTuxsQ5xLq/GQh9BoTyE5eo10FT8d8gyWxi58+rrftg5RkL4RIgGTs=
+	t=1752612342; cv=none; b=UGph/5JOur73EkxlW/4UtWIOkxwR0fRfhR2UbVwsqN5/02kh9PAA5Yc99KQmpYgzy35iLJOvCCCztUsXCFXuxxcWiu92nXGB3Y4mZav2/MS0nssV6KFnCqL1FIuZ/XGObfdpcWgZ0xe7Ibtjrbisn6Rt1zkdOLYEHsGqjYOsc/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752613241; c=relaxed/simple;
-	bh=2luvZ3rqiBoEtpoW23pzMDM4/QRB3g6GQcH8HJUQnig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dDl0yqAGj9TWgTh14MoFog6J+wFoJSekjrkvxMHlUgcAX83bIw0maa4oKJM3i+TEObvVQFZSIfWTgT3RicQzXnyaZ8oG1sp3XmH7Awmpk+YCEPI5FpJRPSR/rKbs9JhH3gjG/YktPNyYli54hDlj65rWLh5+73KLh5Odg1nbXVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=iw2I9B3i; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752613238; bh=OApSiV87jIiW0m7oie12+pVRZVLDkiLDCQwZ9GxZu1k=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=iw2I9B3iadnaRPkHNBhII5Vfz2I2urNW/1HG1SCJZiP4wPgD0WUYH5JZ1rQJQNP/ZPYndvBl78LyLonZozl+RXdv4+ArOq3iEA9Uq3Y8QAt0nsWfreTpTEre1aep6y/3QzUIWBsLEkamZf1v06e1/cREgEcMDGDY3elj/XXBGl0ZQN9mKjt1Lyt/m+Fa+EjOj6bE+Uv+VQjOua/p6YxsoYLv+UOwl9sR4jru6liRMCpKPQnh3bVqHz+ssMVMv7Pa4lTDfnPls6RJSjDOuJ5f+xJPAMnYT8WaEzmnENuOAs0uzD5f+BKcwJe2+XxWuiTzRm2sGyv+js0e1GVOMl+N4w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752613238; bh=3Clkngin2Z9nOT137pfDWanyS6OVIMtwSyuxr2JujxI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=rXTyQP8NznK2W97v0qXCNyxjoiNuz8VofGiWO2dKBQyYuz5Hh34MMw3IuSITsq+6n5gv62rwGL4OytoluglD4eYW6FliXZdpl9E3xE8LBOxy/TWewmPj/larUUUCPrOBsJVuvl0bdR31UiyoufHUYyASjaZ1hZkr0Cp/+o/MjiSnEmkah5Q8AAFpOegWkwzz8ebjjyTq1JsesZbbujWjt7DOJYnoYiJ1kt/+rBAVfQZXbQNW8bOQbGw6ru2O6o2AfR17sJ8uiJJzp4dehwh3T6Ya9bWBeaAU5DU3Uqt2mYshVnyGyskCAbmY472dLEgbrzHxLChf9usVShD32ddisg==
-X-YMail-OSG: dl7b3rkVM1kbuOGa.JnDfJaW4C8TiEvPXcUHh9J5BadlHeidVmAdJaw5q.SlOJm
- Ct_lkEIK4zw6_EoKwoayeEmGZwDaZwuNaVG.m_rI52yPkHpcc8mKzaS4E3KR9q2bsdgMBkex3mur
- vzAfUISjSiuAYI8s7wJ631OHc9H01vaAjkVEuppkR8CiUYQCRZWG8Z6UoQi5hO_3bg2HA6ooEb2k
- XUrR62xL_p76nV6gYlocmG1LLxVB_LTMoeAsV.Q0qol7Y4UtR.YblSgQ3xuduMF0VYaYxqVIWXwz
- TwJgFoGSJQmmxxgYNJaDH4DA9aLgsm6cFxKx0SkXeciovIf7AFIzVNotb5zbGR9MGgoRTb_nxY60
- ynZxENoLSKnLbm.mDHRM3YbSkT5x4ZgTOmB4Xz.AF66WGH2C1hviUrRtEBVHvlDm7eDimbBaWPKo
- MhBQU9lrNauvgoEiSqQsyEBSPrZ8Z3W1.R0PEIir4nyjM0gB69W9jx__Tfnzm7mF8cNj8LsQyM_2
- heH9LxiNwt2vQdXzLXGmYiZOKwaoH7jHyEsmRJ_goX5Gt2MRG6qG_45PyqMkwhtSXoRG0qX9T4B8
- Q1vAto0nUfw8NnRwzj55jVNYF1RKCNp_gvZx8vcUZKTLb9YBL2wdaBUNwY906Zh9IjOwwWZGk2DM
- 7y.aFOr1T4Z3fhNcYdr.W5ySrBKaR8PBKXjco2D3rXL5sFb29lOQSscfm6wmwsen32MJFqW8GLje
- MJgz3mMwVOEEiGn1cqFp9N50rbdHKpXUcdcrGIBgdnjLf77LXRT.TikvWycI2rMR2escxpzvuiMf
- Zxa8ZkxNzYgCrKqPOHZ69QM.UBMhjIylyh0E3CesWP9s21iAaGCf3eFz1XELY8ErCsJsRnxYrRX5
- 3.7SPEFm7BY8QvkEq8yl_6wCuF0EethmBQgY5rPn_VbUALgmo.36trqKqLnNDUwHyjPmw.HmA9zF
- pyIjVGyLIWXiMV7yVyb12Q9AnajGaQHd0YMPTxlUHEjbcboBnIEeCauWMab2ZhKHN54UDmG4NcE6
- EmXhHFUfiz8L.yuMiWBG4OOTSXSGf1NUgt8aivQ8pH73tFNAP61AugpNyi61yio_IsymxxU.BUOo
- 3RZjo3p6gPXIeVXITWUCxXFmWlwJ4FNJJ7wuvTAfWxhkRMVxoewy15dLg5OX8MImMSjfSsx7bVpD
- ZgEsN943GiZfRWSjT1zgm1TarHbCTbeOt7WtKUSJnBJEgR_pmdqzlUYB6wAGjnu2QWOhQxMo3v0l
- 9WyQItiSBvN1GNs.WAa5gXTuGZhYww0mrZkv.lUPAv0Bfr5QSSF0xDCuLBq80ksj3nfvfudFpiLK
- mmyhMTZPhi_T1IofgFBRY8fMEoGdI64pV2G1DIoYcfiqFUotFX071lV5nK.LL8GfuZVox.7nh5Nk
- eWZ4TFQNRyrLeBBGXA6.cbreWNU_gA8.KgcT.x0jYbRNuo8p88_a4xNt2b2dFPPXJQENa7wDjjK1
- eANhwh2KvDu6xIEpXx5wZqjXhJoivHNVPpxEwEYMRAEz.gAAa3_rUFsRJFgqaEfDwmRnBFXAW2ZD
- _DgRXHLK3baHWxd_Q0MhnkY56fl4qkUrXLXo9sOIZEBUJ3zrhHMSXFRXGwIMtSf7t7SVYNusLPaP
- nNqBUpw.se0TKax6MX4BaqwnzXFf0DtKLFQQjb_GoiXnpGDPUtvz2WOjFvWHBMY3yqrorVmWMWh8
- oGvb41uJuxPLZctCpUnGK839YxlG7Go33JN92Ffihby_f_ThblfKcMTsdWpgQLvGAXHfwhkUuaVK
- _lw066cSB48g2vYsCd55K3rcc.NIxq5RlTSDoyipEV7GJ0EZE81CvRQWeyKQJTcpngbaPDxHlXf6
- JaL2dyVcBDR.EBpYCTZopHiNhiCceccHXU_yqs8CiaGuP3a_KPwXPyU_o7Vh4DMjqAozHa5Siq4D
- NyElc34S.PLGePweuiDvJp0irG6TsXKJbWtBI_UjNfRaDK8q83E03qut1vmEH8mn9MvWHejI5Av4
- wi1ZumypNrpw8pYL64rspQOmGJv.z047vXFHY2C6rMfRJ5raGMtMIuo_VZjJlgI_Rz2FvQFtmXRy
- adtlP5OUmuDMFfhysSnU1ZA9BVSljlCNHqZ.awcd_RyPD8uwvj9O52n___c1m0FpDgKwzI..n4pC
- y2GNyMmDWVSePjfzO5eqqeTvT.mRfDRL_S.Kk0IkHujhhdSKSjpq1f6HU1Td9r02TmwSQUqKLbSU
- 1SHahZr1cSfncA4qa9sgvBkB7GkXRRN0QqS_lhiIKbbLMLg5bfyXxBvgRNZXGIhA.1Hr22tgPBbF
- fbaD3ZtLamIpJaLcTKmu8HRs-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: c92e579f-d95b-415b-81b9-610dd7e70660
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Tue, 15 Jul 2025 21:00:38 +0000
-Received: by hermes--production-gq1-74d64bb7d7-4ndhm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e83d77ed7c13adb4e82ac288e4a5ab46;
-          Tue, 15 Jul 2025 20:40:20 +0000 (UTC)
-Message-ID: <88b13658-1a4c-4ebe-92b4-5be93c9356c9@schaufler-ca.com>
-Date: Tue, 15 Jul 2025 13:40:18 -0700
+	s=arc-20240116; t=1752612342; c=relaxed/simple;
+	bh=i0jIU5/DS4GdwKEU3LoAR0J+8jJlfbT9Pjilk9/G/wc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AEqB/f1UysQwTYsY1cKzJbU7q92EY4+y1ENXGAFQze/egOJwFy+1QhsVY7DpCNPdUKurZifEZOMIiMj0SQwKZ9cyF+MRrHItmyFLfR+MUkOqputibJTHHNBrQZ637saLuwhqpELwe6L4FcxPBsajTeAyCC9ol/rs+SYD8Uj3fbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YnGj1X7A; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752612340; x=1784148340;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=i0jIU5/DS4GdwKEU3LoAR0J+8jJlfbT9Pjilk9/G/wc=;
+  b=YnGj1X7Ado4IxrxIto53S/g4aApHd6d6jso25R9f0S9ihqxM79k71kFo
+   Gft1/M3v5uy4XWCV+VYzBU1ov/j++cw17wHiNq5CoJwGBU5S0OXEXSoSp
+   WcPXtGwTLKvRBY5a5Z5Szcn0rujh5Z1oDgD6U5ITCBBWXOvEWm2Q5P1TL
+   czDSF7DkWn7qET0sCYIb5eLTWzi2c30eWgh/ciuyRJ9m8f0LgjStKIVkY
+   KbcPykCrDJBuUcl4UjBhtr42oAT05HdZyp2A1fuSXisyKuwO+GvVVss7a
+   rnmvtzPoktEn+cMheA4FjM04PBXzLFRxK/LGt4DBgBuv8qf9ei9LLQwsx
+   Q==;
+X-CSE-ConnectionGUID: 9PLfz0fLSHKPzkfj6NaYXw==
+X-CSE-MsgGUID: WOv6rCILQZ63VQmpQZ83Lw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="42476846"
+X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
+   d="scan'208";a="42476846"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 13:45:40 -0700
+X-CSE-ConnectionGUID: LLieUtQbSHu2EBMh8oD7ow==
+X-CSE-MsgGUID: L6tg7xQQR9Ws3Tb2pIwI1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
+   d="scan'208";a="188322879"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 15 Jul 2025 13:45:36 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubmWs-000BWl-0g;
+	Tue, 15 Jul 2025 20:45:34 +0000
+Date: Wed, 16 Jul 2025 04:44:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>, jgg@nvidia.com, jgg@ziepe.ca,
+	kevin.tian@intel.com, will@kernel.org, aneesh.kumar@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	joro@8bytes.org, robin.murphy@arm.com, shuah@kernel.org,
+	nicolinc@nvidia.com, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v5 5/8] iommufd/vdevice: Remove struct device reference
+ from struct vdevice
+Message-ID: <202507160404.4hMp40iv-lkp@intel.com>
+References: <20250715063245.1799534-6-yilun.xu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] Audit: Add record for multiple object contexts
-To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
- linux-security-module@vger.kernel.org, audit@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250607005134.10488-5-casey@schaufler-ca.com>
- <88f740c7efa914435e2223e90666c8b2@paul-moore.com>
- <9fcc7e8f-7d5c-4499-9693-787bd7ecc8ed@schaufler-ca.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <9fcc7e8f-7d5c-4499-9693-787bd7ecc8ed@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24149 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715063245.1799534-6-yilun.xu@linux.intel.com>
 
-On 7/4/2025 1:18 PM, Casey Schaufler wrote:
-> On 6/16/2025 1:54 PM, Paul Moore wrote:
->> On Jun  6, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
->>> An example of the MAC_OBJ_CONTEXTS record is:
->>>
->>>     type=MAC_OBJ_CONTEXTS
->>>     msg=audit(1601152467.009:1050):
->>>     obj_selinux=unconfined_u:object_r:user_home_t:s0
->>>
->>> When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
->>> the "obj=" field in other records in the event will be "obj=?".
->>> An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
->>> multiple security modules that may make access decisions based
->>> on an object security context.
->>>
->>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>> ---
->>>  include/linux/audit.h      |  7 +++++
->>>  include/uapi/linux/audit.h |  1 +
->>>  kernel/audit.c             | 58 +++++++++++++++++++++++++++++++++++++-
->>>  kernel/auditsc.c           | 45 ++++++++---------------------
->>>  security/selinux/hooks.c   |  3 +-
->>>  security/smack/smack_lsm.c |  3 +-
->>>  6 files changed, 80 insertions(+), 37 deletions(-)
->> ..
->>
->>> diff --git a/kernel/audit.c b/kernel/audit.c
->>> index 0987b2f391cc..451c36965889 100644
->>> --- a/kernel/audit.c
->>> +++ b/kernel/audit.c
->>> @@ -2337,6 +2344,55 @@ int audit_log_task_context(struct audit_buffer *ab)
->>>  }
->>>  EXPORT_SYMBOL(audit_log_task_context);
->>>  
->>> +int audit_log_obj_ctx(struct audit_buffer *ab, struct lsm_prop *prop)
->>> +{
->>> +	int i;
->>> +	int rc;
->>> +	int error = 0;
->>> +	char *space = "";
->>> +	struct lsm_context ctx;
->>> +
->>> +	if (audit_obj_secctx_cnt < 2) {
->>> +		error = security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF);
->>> +		if (error < 0) {
->>> +			if (error != -EINVAL)
->>> +				goto error_path;
->>> +			return error;
->>> +		}
->>> +		audit_log_format(ab, " obj=%s", ctx.context);
->>> +		security_release_secctx(&ctx);
->>> +		return 0;
->>> +	}
->>> +	audit_log_format(ab, " obj=?");
->>> +	error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
->>> +	if (error)
->>> +		goto error_path;
->>> +
->>> +	for (i = 0; i < audit_obj_secctx_cnt; i++) {
->>> +		rc = security_lsmprop_to_secctx(prop, &ctx,
->>> +						audit_obj_lsms[i]->id);
->>> +		if (rc < 0) {
->>> +			audit_log_format(ab, "%sobj_%s=?", space,
->>> +					 audit_obj_lsms[i]->name);
->>> +			if (rc != -EINVAL)
->>> +				audit_panic("error in audit_log_obj_ctx");
->>> +			error = rc;
->> Do we need the same logic as in audit_log_subj_ctx()?
-> I seriously debated the issue. Subjects always have data to put in
-> the aux record. Objects may or may not, in the AppArmor case. Not having
-> a subject context is an error, not having an object context is interesting,
-> but not necessarily an error. Hence the different treatment. You can tell
-> me I'm wrong, and I'll make them consistent.
->
->>> +		} else {
->>> +			audit_log_format(ab, "%sobj_%s=%s", space,
->>> +					 audit_obj_lsms[i]->name, ctx.context);
->>> +			security_release_secctx(&ctx);
->>> +		}
->>> +		space = " ";
->>> +	}
->>> +
->>> +	audit_buffer_aux_end(ab);
->>> +	return error;
->>> +
->>> +error_path:
->>> +	audit_panic("error in audit_log_obj_ctx");
->>> +	return error;
->>> +}
->>> +
->>>  void audit_log_d_path_exe(struct audit_buffer *ab,
->>>  			  struct mm_struct *mm)
->>>  {
->>> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
->>> index 322d4e27f28e..0c28fa33d099 100644
->>> --- a/kernel/auditsc.c
->>> +++ b/kernel/auditsc.c
->>> @@ -1098,7 +1098,6 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
->>>  				 char *comm)
->>>  {
->>>  	struct audit_buffer *ab;
->>> -	struct lsm_context ctx;
->>>  	int rc = 0;
->>>  
->>>  	ab = audit_log_start(context, GFP_KERNEL, AUDIT_OBJ_PID);
->>> @@ -1108,15 +1107,9 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
->>>  	audit_log_format(ab, "opid=%d oauid=%d ouid=%d oses=%d", pid,
->>>  			 from_kuid(&init_user_ns, auid),
->>>  			 from_kuid(&init_user_ns, uid), sessionid);
->>> -	if (lsmprop_is_set(prop)) {
->>> -		if (security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF) < 0) {
->>> -			audit_log_format(ab, " obj=(none)");
->>> -			rc = 1;
->>> -		} else {
->>> -			audit_log_format(ab, " obj=%s", ctx.context);
->>> -			security_release_secctx(&ctx);
->>> -		}
->>> -	}
->>> +	if (lsmprop_is_set(prop) && audit_log_obj_ctx(ab, prop))
->>> +		rc = 1;
->> We should probably use the return value from audit_log_obj_ctx().
-> Sure.
+Hi Xu,
 
-On further inspection, the callers of audit_log_obj_ctx() don't
-do anything with the return code, and similar functions have their
-returns treated the same way. Unless there's a major rework of the
-audit code there isn't any value in "using" the return code.
+kernel test robot noticed the following build errors:
 
->>>  	audit_log_format(ab, " ocomm=");
->>>  	audit_log_untrustedstring(ab, comm);
->>>  	audit_log_end(ab);
->> ..
->>
->>> @@ -1780,15 +1756,16 @@ static void audit_log_exit(void)
->>>  						  axs->target_sessionid[i],
->>>  						  &axs->target_ref[i],
->>>  						  axs->target_comm[i]))
->>> -				call_panic = 1;
->>> +			call_panic = 1;
->>>  	}
->>>  
->>>  	if (context->target_pid &&
->>>  	    audit_log_pid_context(context, context->target_pid,
->>>  				  context->target_auid, context->target_uid,
->>>  				  context->target_sessionid,
->>> -				  &context->target_ref, context->target_comm))
->>> -			call_panic = 1;
->>> +				  &context->target_ref,
->>> +				  context->target_comm))
->>> +		call_panic = 1;
->> I appreciate the indent fixes, would you mind pulling this out and
->> submitting them separately?
-> Sure.
->
->> --
->> paul-moore.com
+[auto build test ERROR on 601b1d0d9395c711383452bd0d47037afbbb4bcf]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Xu-Yilun/iommufd-viommu-Roll-back-to-use-iommufd_object_alloc-for-vdevice/20250715-144326
+base:   601b1d0d9395c711383452bd0d47037afbbb4bcf
+patch link:    https://lore.kernel.org/r/20250715063245.1799534-6-yilun.xu%40linux.intel.com
+patch subject: [PATCH v5 5/8] iommufd/vdevice: Remove struct device reference from struct vdevice
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250716/202507160404.4hMp40iv-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507160404.4hMp40iv-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507160404.4hMp40iv-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:1221:64: error: incomplete definition of type 'struct iommufd_device'
+    1221 |         struct arm_smmu_master *master = dev_iommu_priv_get(vdev->idev->dev);
+         |                                                             ~~~~~~~~~~^
+   include/linux/iommufd.h:24:8: note: forward declaration of 'struct iommufd_device'
+      24 | struct iommufd_device;
+         |        ^
+   1 error generated.
+
+
+vim +1221 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+
+  1218	
+  1219	static int tegra241_vintf_init_vsid(struct iommufd_vdevice *vdev)
+  1220	{
+> 1221		struct arm_smmu_master *master = dev_iommu_priv_get(vdev->idev->dev);
+  1222		struct tegra241_vintf *vintf = viommu_to_vintf(vdev->viommu);
+  1223		struct tegra241_vintf_sid *vsid = vdev_to_vsid(vdev);
+  1224		struct arm_smmu_stream *stream = &master->streams[0];
+  1225		u64 virt_sid = vdev->virt_id;
+  1226		int sidx;
+  1227	
+  1228		if (virt_sid > UINT_MAX)
+  1229			return -EINVAL;
+  1230	
+  1231		WARN_ON_ONCE(master->num_streams != 1);
+  1232	
+  1233		/* Find an empty pair of SID_REPLACE and SID_MATCH */
+  1234		sidx = ida_alloc_max(&vintf->sids, vintf->cmdqv->num_sids_per_vintf - 1,
+  1235				     GFP_KERNEL);
+  1236		if (sidx < 0)
+  1237			return sidx;
+  1238	
+  1239		writel(stream->id, REG_VINTF(vintf, SID_REPLACE(sidx)));
+  1240		writel(virt_sid << 1 | 0x1, REG_VINTF(vintf, SID_MATCH(sidx)));
+  1241		dev_dbg(vintf->cmdqv->dev,
+  1242			"VINTF%u: allocated SID_REPLACE%d for pSID=%x, vSID=%x\n",
+  1243			vintf->idx, sidx, stream->id, (u32)virt_sid);
+  1244	
+  1245		vsid->idx = sidx;
+  1246		vsid->vintf = vintf;
+  1247		vsid->sid = stream->id;
+  1248	
+  1249		vdev->destroy = &tegra241_vintf_destroy_vsid;
+  1250		return 0;
+  1251	}
+  1252	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
