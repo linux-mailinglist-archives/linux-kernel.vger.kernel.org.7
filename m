@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-732626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80C6B069BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:07:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF08B069C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 341951AA7846
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:07:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9B3D1AA8406
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3582D1920;
-	Tue, 15 Jul 2025 23:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872A02D543A;
+	Tue, 15 Jul 2025 23:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J378feV4"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4KlHejU"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0FB7261D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 23:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCA24A3C;
+	Tue, 15 Jul 2025 23:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752620833; cv=none; b=rNPGkR/rgztJj1eDRNHy9vHlTv8hdLAEccNnW5Lj1ZI7Hvj9mZ9G6AdO1PVoN3nd+sK7LMowPZc3v4iLR1bhuhX9JlfPjBWtGrzt1uZZ2gn5qw4OyoFnzt3EGIeGpi5jbtMNx2+BrQm3r2B1OyOe0PSWqcqo0KIPLduYkM61ePU=
+	t=1752621173; cv=none; b=SEhLtiEshyi1IuSwwv+Ejh1IyhYWKPkAQ/f9aYp9Pc3kBupqF0YcYO4pBrjUivS3idvSw5JUbD8FJ/rNULNl9LI9K/h1CV5xPrM426GmOQEF5LGFtLvGZVKJEzwo738j/S3LNBZ1mw5x7OozCCFV8oa6rOWTWJvMkqzGJN+TArc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752620833; c=relaxed/simple;
-	bh=TdwRQ8hBs8RNJ0rWvmW48ICtfaJmKpknY8G8u7R1u/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIvm5pDHhP2zI0RkUw6NKivvifKLIkq9mzTP864Y1FzfHZRrhgjEUC3CIdCDPoHa+W2xN0BhN9a3Id20YHkQaVTI7BoOq+8AMy/82knxX9pEwAzhI8GA8CSRru0XrZBmmibROaAOxXEzvvmC+0sf/bPnY/W9/4wNfnBUFbTcoSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J378feV4; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2eb6c422828so261760fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:07:12 -0700 (PDT)
+	s=arc-20240116; t=1752621173; c=relaxed/simple;
+	bh=cnSaEW1G2x+Vi12ZOlKThqIkkcwIaeVH5M8TjdoEHkY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jl0CUM6bTC6zZUcSyiuFWr5zncqHXjqMBatYMxX5jOSdy1rpIP/BDAufGa+B5h8JX5v7NKst5pd6M8vDXeJdCI1MsKc8kCt35h6V7rgvonmMJQ+cf/Ow/MktMnJ+Q4607GGJ5RCkx+JGdZ71YtlC28EzZNmOiLNOBFghWoIGXlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4KlHejU; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-23c8a505177so56048375ad.2;
+        Tue, 15 Jul 2025 16:12:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752620831; x=1753225631; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T8/xCeqyZt2wmgn8IDHS3lAPNn8HdJhxhAcP0TpDRFQ=;
-        b=J378feV4cgAFNX5QsKthkgAGxJUjPWPa5Idk2mpVcHIZ9fW5hR7C/mbd2x5mllmcYa
-         ntBJ1fjXSY54CbhL+7or5SBzOy7tBY0KpXd9kFTtRaSaWTjI/lrsAW1ZueI15HRh9mhv
-         TsuQ/v+TzpPf6BT1se90xaQMeOGBxG9GJeNI9jBkvGACsfFi7jhTTjj/G2Ha+nyVmNms
-         Emwpw7UVtF3GGu9IzAhT3YVMk5E8xiBjkmzPZpof8g0/gTy9IhlpNlobcIoC4qh915yg
-         pBw7RnmZE865dQ7RAqAc0gDp+HJAg9+yFgTDFrb5mBd8gWrqEp1gLSTYF3qVD4wCM9Sm
-         AMBw==
+        d=gmail.com; s=20230601; t=1752621171; x=1753225971; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hAPRSx32Yoh23SFp75OsDGsW9gXJ3MOIHEnOw0OZgZI=;
+        b=G4KlHejUFZL4smMIC2i6wHh4dbmZRpIxq42rpDCPR9LDEcj35/3WuIUToPW/V1wJy4
+         VSDa235vdqmjdT6ELQByih/3yB0BQUQ1Ez3OqYytaTxbxcL4nEjgnE1U7U/+QRALm49i
+         keAW/KQezbpq5Cp4n9hsOdjwXgdzS38iUNZLN2y+/S42NIECqPZAGTqI6UGFiobaKOEQ
+         XaTdhwkaji6UBd5I2ZCpbd+XIjyOK137+iVlnqNfX6bQls5XQqWIC29bW8xP31PYlF5Z
+         NPcojUXc3UlAB2qz9NmGQfl4pfisjoCM+cDBLCKDUcvpEwfkIa2MP3AWd2u3o/2Zhx4j
+         +PTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752620831; x=1753225631;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T8/xCeqyZt2wmgn8IDHS3lAPNn8HdJhxhAcP0TpDRFQ=;
-        b=MVi2yJQJBh9LNCp2qycMHNPNKjAqhg+q+G8rk55n5bgBbGKayAyB9DPwg8747tFE2z
-         0FDUYkguKP4to3I1OyZVHqx+LVtHmB5gbPNPRFwN0iGeRc/s6XwFTKG9SP9W832htGWd
-         C+VrQqNPLrzm/WWg8CaCqqrzWSofX0spWFBW0sT5vFBc9mIN4k99HEtrIIrrcLmO0u6g
-         ld/wV7P8jk5GecR3s3dZE2JcodA3ozCuo9a1rNjVaSd6nzWidFaQn08BxYwPzfV9lIK7
-         hi9PcsY5q+8zkZxboc4taBt3qMi5cgO8BS9ADEBpai3UDysIF88/dzg/it8Jaq862SgN
-         eW7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdoXU/RBciIwtXMqHa5ALCfxRR74Ss4LIh5jKgtrS4jZAPrPPhHXu57b7QQJ1vDa1wfCnfwRR4BisRusM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPUIe3uqqsb8kcdpR1oIkqkRRMXkaKzleLn6/WF8qYJzMGsXsO
-	lkiJBPw3ycShblqJH0ndPePgsiP4wiANvtwSJ2TA49NMfUUN5C3z61HzrQfVSZkY0iw=
-X-Gm-Gg: ASbGncvJGIcM7OhOIfnf2j8unTjxzo+kY6E/x0DGV42a6+Z14LLEYiINeIro95dRWoy
-	XpMYSMpGwGK+sxERFAAuAv/qXvRXqtrLOBUWXZDEhnPVBhsAfaBXjYfaMBHsCpfdR+8Dm2sYhNt
-	FGpjU9xsNImlKf5NgYYVVqOi9aebYp6DkZ+y7f5/i+PI8267YVvKKhwC/lqF7gQCNuhTLHt2Csc
-	sdZr3jWO+IBjmDXjPMzwAepTx1QbTgr8S7jQZfJkTcCXoTatM/3uq3WHkImGmzKm3xedyTohp7g
-	keuwnfMuONfuJhMQJXG87OL/jZZPFv7jK95qYvTpW1rbI1lMrrdhPKIhJtL4Q0SAUh3PZhZScvK
-	/6Q9OBCsxHrgQBvErCp7bxz+izhya
-X-Google-Smtp-Source: AGHT+IH6Iw8x0Ssmy6W7B2jmVJ1SqRlf9P0FregO7tqkNLu6G0HHdGAJ2aG2ptJl+JKWDH/D9aKSFQ==
-X-Received: by 2002:a05:6870:3c1b:b0:2eb:9fe5:d06c with SMTP id 586e51a60fabf-2ffb09a5173mr834588fac.3.1752620831387;
-        Tue, 15 Jul 2025 16:07:11 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:a172:6205:b5e:43cb])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff116d3541sm3036132fac.35.2025.07.15.16.07.09
+        d=1e100.net; s=20230601; t=1752621171; x=1753225971;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hAPRSx32Yoh23SFp75OsDGsW9gXJ3MOIHEnOw0OZgZI=;
+        b=HOdLfUBGnmksB22/ii5R9/Y0ZBfDaizVqux5aSXhOy6t9QKwwPVgO124kd68iSX7GH
+         Jw7JC2D5pnoIcVLMRO6W1HkaDk9tHTEfHEILZQgSlpdf8bbU4UkzsQW3/GLlkM+1roiv
+         NOJDj+Q5cwYhRTzZO6ksCrX86Z6DSErhglCO9jXkltNiUwax42N0a5mw394L8eu38Hx3
+         Cdvv/EtWZ+eLqmsg3nEGgjYJalwfl6JRHRDWavMd1CbJu5wgyCcrNQaulm2chYIVE4gZ
+         1rZ+owfSQRP17TS3GsPtCh/mTouIpiLr7hQdX5Du9ysu7A748atnGZoG7I48GwA5GCyE
+         fuvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPeOoj4/uTOvO/lZTzT5jUbX0v0LmSEMm4gaCpRy362IQo2929QqkuvGRTrfCcguvBczRnB6+V@vger.kernel.org, AJvYcCX7SG55GKPHvU0ya6RqEAYpnN9WbGUrlXVnEdK8HAvWd6poBhL0AdzV0n+PslRXyiGoszpa6Yg9XPnaIbT3CA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzotWltq6VneCjWWar0dnoA/m1kYtlNU3PJpTFi8qFgsrI2afgQ
+	likA3zmGK5u4MdpbrKI5/44o1Ot3851wldimGsbTl4M4wLGf8tJDgo1F
+X-Gm-Gg: ASbGncvpOKCZEqaKNmm8QVlGykZGcptWWjiqU2Kggo9HgUegkUCVueug0ihHapy5Yre
+	cSCU/8FumqrsjLRXiBzE8WCPpa2FM8/atNfknLfyWug2nCBG0tcI+un5nGHAtoWoeLuNi91ZHVj
+	3o3JpM/qLNyToevauW1ku+r+weRIiGMlFXdFHokQ4icRbrZM2xoNMySG3IM9sGRXCeFY6UKKimO
+	lEOwmlLNQsQZ0DhvGHKfXXmTW8BDao3kThO4WhdnhxFw1gl17de1Zq7Tqn2G8hz86gvUwYhJVYH
+	LoyGLnYKnTjdyHR6qrZ8D2wMwN9WQYlbfs0zz/FotoB1wTE2MY7kveJ/jtye/rvcreZxkHRsnrT
+	+5TSdv8J87A+jPu6NocjJhzs4
+X-Google-Smtp-Source: AGHT+IGshsBE0EpvzBXYF91wyMej1W2e+64pc4pC0n1OrITGe6q1Y4ZuOz24myUDG1ahFwsL3M85jQ==
+X-Received: by 2002:a17:903:198c:b0:235:e1d6:4e45 with SMTP id d9443c01a7336-23e24f44b0amr9612455ad.25.1752621170746;
+        Tue, 15 Jul 2025 16:12:50 -0700 (PDT)
+Received: from p920.. ([2001:569:799a:1600:5324:4bfb:25b5:ccf1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42847casm119769045ad.14.2025.07.15.16.12.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 16:07:10 -0700 (PDT)
-Date: Wed, 16 Jul 2025 02:07:08 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ana Oliveira <anac.amplar@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com
-Subject: Re: [PATCH] staging: rtl8723bs: os_dep: remove blank line before
- close brace '}'
-Message-ID: <588099c8-98a6-4d89-b638-479c7ee1ca07@suswa.mountain>
-References: <20250715112513.4541-1-anac.amplar@gmail.com>
+        Tue, 15 Jul 2025 16:12:50 -0700 (PDT)
+From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+To: johannes@sipsolutions.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot+f73f203f8c9b19037380@syzkaller.appspotmail.com,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Subject: [PATCH wireless-next] wifi: mac80211: reject TDLS operations when station is not associated
+Date: Tue, 15 Jul 2025 16:09:05 -0700
+Message-ID: <20250715230904.661092-2-moonhee.lee.ca@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715112513.4541-1-anac.amplar@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 15, 2025 at 08:25:13AM -0300, Ana Oliveira wrote:
-> Fix checkpatch error "CHECK: Blank lines aren't necessary before
-> a close brace '}'" in sdio_ops_linux.c:309.
-> 
-> Signed-off-by: Ana Oliveira <anac.amplar@gmail.com>
-> 
-> ---
-> 
-> Hey, this is my first patch, I appreciate any feedback, thanks
-> ---
+syzbot triggered a WARN in ieee80211_tdls_oper() by sending
+NL80211_TDLS_ENABLE_LINK immediately after NL80211_CMD_CONNECT,
+before association completed and without prior TDLS setup.
 
-Looks good.
+This left internal state like sdata->u.mgd.tdls_peer uninitialized,
+leading to a WARN_ON() in code paths that assumed it was valid.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reject the operation early if not in station mode or not associated.
 
-regards,
-dan carpenter
+Reported-by: syzbot+f73f203f8c9b19037380@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=f73f203f8c9b19037380
+Fixes: 81dd2b882241 ("mac80211: move TDLS data to mgd private part")
+Tested-by: syzbot+f73f203f8c9b19037380@syzkaller.appspotmail.com
+Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+---
+ net/mac80211/tdls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/mac80211/tdls.c b/net/mac80211/tdls.c
+index 94714f8ffd22..ba5fbacbeeda 100644
+--- a/net/mac80211/tdls.c
++++ b/net/mac80211/tdls.c
+@@ -1422,7 +1422,7 @@ int ieee80211_tdls_oper(struct wiphy *wiphy, struct net_device *dev,
+ 	if (!(wiphy->flags & WIPHY_FLAG_SUPPORTS_TDLS))
+ 		return -EOPNOTSUPP;
+ 
+-	if (sdata->vif.type != NL80211_IFTYPE_STATION)
++	if (sdata->vif.type != NL80211_IFTYPE_STATION || !sdata->vif.cfg.assoc)
+ 		return -EINVAL;
+ 
+ 	switch (oper) {
+-- 
+2.43.0
 
 
