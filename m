@@ -1,113 +1,187 @@
-Return-Path: <linux-kernel+bounces-731088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DA3B04EB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:27:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1969B04E8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B033B45DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:26:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070211AA6E17
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804BE2D0C9A;
-	Tue, 15 Jul 2025 03:27:15 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B328A2D0C75;
+	Tue, 15 Jul 2025 03:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hT2+6WYZ"
+Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA4A6FBF;
-	Tue, 15 Jul 2025 03:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8883729A5;
+	Tue, 15 Jul 2025 03:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752550035; cv=none; b=XTtC827gxid35cE4ReN54YC3MA3iWowSLfPmwWMz+CYKmqLtG8SgzI8vxHgC1J02n/hBV5VU+q3ME3daP0BC6Ws+p4NPkvqCXnlle+ln6Fz1UPJvUencn+olGRG/PPK7xH+Cf1yZowGgIRblO2M6mAvQW6KsDbsS2yFv4YM+xpM=
+	t=1752549291; cv=none; b=kXrKAbij371qJkQgwXo0hEUfESoIrB7o64WIM4KqSmGrQZqmpX1n+Ct2NUPxoaZRsqAyIVzo4Ye8skpGsInkTcm5JM1WkL3Ri5WKW5xWgX19UcpBYpz7BR3vTwCDLl3/UNS3wmvwoCeu+wCSL3a067tAWsXbH2oA13EwNoCFUYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752550035; c=relaxed/simple;
-	bh=atfrjIauy1ItkJU6XhIyOdBfAhDGceSKKQb+tx5X7OU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BeF07ZVcHBhOvL+dY1IVKUNY8eKZQLeQjAeF1VIEJVLxEaceCxpvZBiYNpEE8N7FhntXK2R9KIiBlI5rwk+xnr6J2BS9j0/d325b98QSWRli02hheBwH29VzDXIpQ3yFEtT8CszvvTFFuu9ptepJ2DS0w3n0C2CbSm1HaEiHGRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bh4P95nYdzYQtyd;
-	Tue, 15 Jul 2025 11:27:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8D56D1A0FB3;
-	Tue, 15 Jul 2025 11:27:08 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgDnYhOFynVor4g7AQ--.28397S4;
-	Tue, 15 Jul 2025 11:27:07 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	sfr@canb.auug.org.au,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH -next] ext4: fix the compile error of EXT4_MAX_PAGECACHE_ORDER macro
-Date: Tue, 15 Jul 2025 11:12:03 +0800
-Message-ID: <20250715031203.2966086-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1752549291; c=relaxed/simple;
+	bh=lcTGxdcDdqinOTdLZi7Q6V0/3dBdRGARdsySrhzmHPo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V600CQkbuDAmK+l0EpiyXm/tDkEKP/629ZZnyocyVQTuZ2SH0zaiK8zeIGdc/qVY6zi8eApBRD6INDKEqqOQcMbBqcyQSbDQArrMm/K4Z3jkDK8Hl4SO25s1XAmwrzjfjiYbq9rBKd534xrZHlvuJlFkIJ7zO4FnGfFa33VFfbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hT2+6WYZ; arc=none smtp.client-ip=209.85.128.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-70f147b5a52so36024257b3.3;
+        Mon, 14 Jul 2025 20:14:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752549288; x=1753154088; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xukKaqe9PAfsuqh3akAQri8K5drTtDqGJNjKhDiM5uk=;
+        b=hT2+6WYZLoqVdU565EBCfyfAI3m9+qtva8dWadwiXXyjENGitti3LY30XiOUYQei8e
+         /e/dCA9FiCyxSP9AeXArT4kywbp6ceAak6OgXn4bnwlyRt8VYfbp8DAJfujXTqLETq1w
+         EJw9Ua47PqsPqUsaDLTGiZIKF4WDgKsVN31wZfYzWO7xh0hJHh6VwxSJY3v2YJh9qKzN
+         wH/c+cXQxfJ7DrCdvrDkWxorqOB322yTcR8XOZFFFEqGl0iUlqnavSS4HkxuKkxBbVlB
+         wZAnWV7KLT78GBIAE2vtSZekH260nEVinvBoteYWyCp7BqTkzl+QRxrGLpe8fGPAjHDL
+         poOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752549288; x=1753154088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xukKaqe9PAfsuqh3akAQri8K5drTtDqGJNjKhDiM5uk=;
+        b=ZOQyZmVQ1GflnK9wL9yLx0+FgtRjFno59OpWT4FlKOr7u2r3TXXumGAVLaoWtBA45s
+         oKajgvnKBEn1Zqin1DbT5RB85M11+NFs/FTMTtpFoWl4dsL7ZMOaGPrmadYhH2SNVVy7
+         efi8GlrycRQ8XqgTowqDV88OrrQI24IMEfNg1Vky8nrILuYFZ8XuOW5J6ii/kIEsybiF
+         dD4CkWO/vigsO8My/GeNmab2gtqVuIc8k3yoBko6IBQkYGttXxjiDI5BAV7bPZME38U8
+         jtOYaSo2+bYjOVgKfNSZLX6YVMG/npn99UGJLByIkMhBu80klPA245/iq6F+apsKK/JD
+         Mmww==
+X-Forwarded-Encrypted: i=1; AJvYcCXPxit+20ErF/PEd3deBUfBmcHj68QvSV/MjYaT0Vf3ZZWH4qhV7sxFO1Lh9Qu/xgOBPc0=@vger.kernel.org, AJvYcCXzMdKsAZ7yZedCiBYZwpRlmg+6WgkgFEgMyIX9qOMuNC8xK09vJXU5xHgB539MxtxYS5YS5iXhLqYFnefp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+CKr1aAP0v8Rul/at423gPu/+UCqXuA0ByyMnytBNN+/3PX6c
+	iNfip3FgfYLPzwlW7IX+RKwHGKuYRxVg6LotZf6lLYTyCxFfD1OcVk3y/pGsGl6u7HLm3TisTW/
+	uQsYwZhtJtal25tySL2o9LGf1dkrbaw0=
+X-Gm-Gg: ASbGncsuHqO+NKFO9ViOOvQ5KQg3WL0Ff2dykWKewgfOMKiJTT0fhFOMSvkkuM2CEaF
+	s2SaAYJ/bcMX9AaoIC21L6t8KefjGJqEboMcOxIy29fJ3EYC1bto0I7dTuOiKk49WOogfmeIe4c
+	FnzAzCzVqc9RG9FpL2JrnjBa3yVEM0Kzzi6Yn7ZlojdtOuB+K3LZSdXBovutYek4B+KWxq3ulIe
+	Hdp4no=
+X-Google-Smtp-Source: AGHT+IGS3939WK2S9svD4e95V+yATeA39o6A/Xq2vxEW4PyhsyVx77d89yqLW4TtPTWUFp0xFePeIq9MkT5Ujfu/JlQ=
+X-Received: by 2002:a05:690c:490b:b0:70d:ff2a:d69a with SMTP id
+ 00721157ae682-717d5ded79emr244280217b3.27.1752549288191; Mon, 14 Jul 2025
+ 20:14:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnYhOFynVor4g7AQ--.28397S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jr4xXryxuFWrtw4UGF4UArb_yoWkWrX_Z3
-	WxZr48Ww15Xw4vkrsYyF9Iqrn29a4Fkr1Y9FW7tF93WF1UXrZ8Can3Ga4xAF45WrWUXrZx
-	ZFykJFykKF1IqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <20250703121521.1874196-2-dongml2@chinatelecom.cn> <CAADnVQ+zkS9RMpB70HEtNK1pXuwRZcjgeQjryAY6zfxSQLVV3A@mail.gmail.com>
+ <CADxym3ZGco3_V7w8+ZrJwnPd6nx=YKwYASWcUFOFyLe7L5oa_w@mail.gmail.com> <CAADnVQJYLSp0X-LiPftaDvU+SnJL84sgGM0M-=uQgq4g8=T=zg@mail.gmail.com>
+In-Reply-To: <CAADnVQJYLSp0X-LiPftaDvU+SnJL84sgGM0M-=uQgq4g8=T=zg@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Tue, 15 Jul 2025 11:13:43 +0800
+X-Gm-Features: Ac12FXwB7USSE4a2NmjRZECEfjVt0X7Smn2Ra2jefBEJSC3SXJJxkmErvGDsCEg
+Message-ID: <CADxym3ZaiGYJWd-ME98G_=7q0EZA-sU7G=x=j5kcnNgRJ0893A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 01/18] bpf: add function hash table for tracing-multi
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Menglong Dong <dongml2@chinatelecom.cn>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Tue, Jul 15, 2025 at 10:49=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Mon, Jul 14, 2025 at 7:38=E2=80=AFPM Menglong Dong <menglong8.dong@gma=
+il.com> wrote:
+> >
+> > On Tue, Jul 15, 2025 at 9:55=E2=80=AFAM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Thu, Jul 3, 2025 at 5:17=E2=80=AFAM Menglong Dong <menglong8.dong@=
+gmail.com> wrote:
+> > > >
+> > > > We don't use rhashtable here, as the compiler is not clever enough =
+and it
+> > > > refused to inline the hash lookup for me, which bring in addition o=
+verhead
+> > > > in the following BPF global trampoline.
+> > >
+> > > That's not good enough justification.
+> > > rhashtable is used in many performance critical components.
+> > > You need to figure out what was causing compiler not to inline lookup
+> > > in your case.
+> > > Did you make sure that params are constant as I suggested earlier?
+> > > If 'static inline' wasn't enough, have you tried always_inline ?
+> >
+> > Yeah, I'm sure all the params are constant. always_inline works, but I =
+have
+> > to replace the "inline" with "__always_inline" for rhashtable_lookup_fa=
+st,
+> > rhashtable_lookup, __rhashtable_lookup, rht_key_get_hash, etc. After th=
+at,
+> > everything will be inlined.
+>
+> That doesn't sound right.
+> When everything is always_inline the compiler can inline the callback has=
+hfn.
+> Without always inline do use see ht->p.hashfn in the assembly?
+> If so, the compiler is taking this path:
+>         if (!__builtin_constant_p(params.key_len))
+>                 hash =3D ht->p.hashfn(key, ht->key_len, hash_rnd);
+>
+> which is back to const params.
 
-Since both the input and output parameters of the
-EXT4_MAX_PAGECACHE_ORDER should be unsigned int type, switch to using
-umin() instead of min(). This will silence the compile error reported by
-_compiletime_assert() on powerpc.
+I think the compiler thinks the bpf_global_caller is complex enough and
+refuses to inline it for me, and a call to __rhashtable_lookup() happens.
+When I add always_inline to __rhashtable_lookup(), the compiler makes
+a call to rht_key_get_hash(), which is annoying. And I'm sure the params.ke=
+y_len
+is const, and the function call is not for the ht->p.hashfn.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/all/20250715082230.7f5bcb1e@canb.auug.org.au/
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> > In fact, I think rhashtable is not good enough in our case, which
+> > has high performance requirements. With rhashtable, the insn count
+> > is 35 to finish the hash lookup. With the hash table here, it needs onl=
+y
+> > 17 insn, which means the rhashtable introduces ~5% overhead.
+>
+> I feel you're not using rhashtable correctly.
+> Try disasm of xdp_unreg_mem_model().
+> The inlined lookup is quite small.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 1bce9ebaedb7..6fd3692c4faf 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5204,7 +5204,7 @@ static bool ext4_should_enable_large_folio(struct inode *inode)
-  * where the PAGE_SIZE exceeds 4KB.
-  */
- #define EXT4_MAX_PAGECACHE_ORDER(i)		\
--		min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
-+		umin(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
- void ext4_set_inode_mapping_order(struct inode *inode)
- {
- 	if (!ext4_should_enable_large_folio(inode))
--- 
-2.46.1
+Okay, I'll disasm it and have a look. In my case, it does consume 35 insn
+after I disasm it.
 
+>
+> > We need to protect the md the same as how we protect the trampoline ima=
+ge,
+> > as it is used in the global trampoline from the beginning to the ending=
+.
+> > The rcu_tasks, rcu_task_trace, percpu_ref is used for that purpose. It'=
+s
+> > complex, but it is really the same as what we do in bpf_tramp_image_put=
+().
+> > You wrote that part, and I think you understand me :/
+>
+> Sounds like you copied it without understanding :(
+> bpf trampoline is dynamic. It can go away and all the complexity
+> because of that. global trampoline is global.
+> It never gets freed. It doesn't need any of bpf trampoline complexity.
+
+Hi, I think you misunderstand something. I'm not protecting the
+global trampoline, and it doesn't need to be protected. I'm protecting
+the kfunc_md.
+
+In the global trampoline, we will look up the kfunc_md of the current ip
+and use it. And it will be used from the beginning to the ending in the
+global trampoline, so we need to protect it.
+
+But we can see that the life of the kfunc_md is exactly the same as
+the bpf trampoline image. So we can use the same way to protect, which
+prevent it from being freed if it is still used in the global trampoline.
 
