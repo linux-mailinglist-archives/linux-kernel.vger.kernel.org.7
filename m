@@ -1,169 +1,93 @@
-Return-Path: <linux-kernel+bounces-731974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE15B0605C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:16:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D722B05FE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AD0E1C45A38
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:06:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6DE04A5F3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F872ED87F;
-	Tue, 15 Jul 2025 13:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096D02ED17A;
+	Tue, 15 Jul 2025 13:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="KchWQKSf"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXFQbtwh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2422ECD16;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592742EBDC3;
 	Tue, 15 Jul 2025 13:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587647; cv=none; b=KTeljGaDc90H+msqzq5xqWxgXBXXBwRmFrXjB551IdODbbVm+MXPq1Z2Dh/gy/6dqAAOLh3XDbVVs4pyvHQAO8BbThA6FxyEti3vOx3fG5xHkbjX91oitlMGHnIqcH3flZIleI/oLadZ1ZTCoTw6PTwMrmUS+D6zBaaC9moQGu4=
+	t=1752587645; cv=none; b=LgJevWxCsLS4Kt03vntLrsA+GRh4esI6YX1NPxtBhPn/k/LJn5meUI0zSyhaL0NnbNlhVjExoqAtwWHPadiE2zrlU8QhLREl249xtnmu4JqnW9IETgueRhQ1tDZOsv4JAGL3mQoXWlLFSKK4dHmI2YUwCUTOI00i++gdda1qzgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587647; c=relaxed/simple;
-	bh=TI+q4X7B5ajg00//PiUBxtm7Tx45E2OavIud3tLqh7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aU1Q5fZP7ij1dUMiYjYMcegowA6KjqOu3/5zfKSrjV5KrRxe9kSsQxi2c95QYCRRAtFuZI7t4FlM1q/zTjhSAUNBP6OasBwPPEOGkdZeVCVGSuThDgTWezHNTQwv6DTX+lt6XPnh2CN+BkZy6XxiI2+Sb3r3AYDSuRToJcxsjOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=KchWQKSf; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bhLJS6ZJhz9tJh;
-	Tue, 15 Jul 2025 15:54:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1752587641;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f+/pRfnziQy+vnrr7cy84X8As3YxPBFjo6viEF0K4AM=;
-	b=KchWQKSfMAVs5akCV9f1abNSHWlPgTEZYnAr/TBieZnSm6LGk5YhpCi2CPiagz9rloCJnU
-	5V+irsqtIe3z3O66EoJGSDBpAOAXpfUhVnKabLFn62PqumdoU/26UXEIbfk7lmDIAyGXTb
-	lzmuvm8oMug9rLOtQchKKowFg0DBd0OD5sf6wGQzggcTvGgHsiGQv0gSzvJdg1f6ITF29g
-	hz1SUTlSwUua2jfdjYzBzKnYYELaB8wSJCDjXwYLIPYnSsqJ4Ud0Rd97DEB9gBx7CBJfMo
-	BsKx3j29JVYo0YdByz7sOBeG7th/B73sF9pTKgTB5KEN4UDe7L+aim3Xw5uj9Q==
-Message-ID: <f51efc9a-20ae-4304-812b-824d64d17e4f@pankajraghav.com>
-Date: Tue, 15 Jul 2025 15:53:45 +0200
+	s=arc-20240116; t=1752587645; c=relaxed/simple;
+	bh=1xRksTaDRgRjBjZIJNwdzAtfvCb5wQYItHCj8+duVLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fAyuU3oArqg1xlqj/AJwzl8VnFyzKSfwitrIFZDNNugn5LHjFsOLRQgJlLVDdFdoNUtv+bisnnXRLry2rw2ZVmSNAP3JMgI1uJHho2xNS/3uNj/Ae356Ot/skSAJXY0hYK92VH/zJXDSfLekVbCN01j8rMexqq08kCq/TUq5d9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXFQbtwh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 658B4C4CEE3;
+	Tue, 15 Jul 2025 13:54:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752587644;
+	bh=1xRksTaDRgRjBjZIJNwdzAtfvCb5wQYItHCj8+duVLM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sXFQbtwhjlensPrNb2Ua3WXJt8ii6PGJWzKy6I5QxY2HwOYYAwr6TleWr5QCTHtVY
+	 2O1svq0fKeTw/YpRluEQ1C+Mbk1p/5PN/nDIJpxlEvPvA5N7/mM40Vj6wO+4tUAc4B
+	 UD1L/LDaw81sCJgmz9O/im8Jl2RPJE3idnsiF8U7NBfE9kqhAjro9UIdfqQIf4jAaW
+	 uneMK9bvk5j/Fvbyda7xa/Gov4uSi+Zxh1vd0cwNIcQb94i4zDB6UUjBN9qtC90OX0
+	 YXzoy5PbJvyaY7xE+fTLcNvtIKtwX6ql58xx2LTxjOlbv8tSsbiOLE5L/DCRrH71Cw
+	 iBGkKCeLarqYg==
+Date: Tue, 15 Jul 2025 06:54:03 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: John Ernberg <john.ernberg@actia.se>
+Cc: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Ming Lei
+ <ming.lei@canonical.com>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "linux-usb@vger.kernel.org"
+ <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
+ <stable@vger.kernel.org>
+Subject: Re: [PATCH] net: usbnet: Avoid potential RCU stall on LINK_CHANGE
+ event
+Message-ID: <20250715065403.641e4bd7@kernel.org>
+In-Reply-To: <74a87648-bc02-4edb-9e6a-102cb6621547@actia.se>
+References: <20250710085028.1070922-1-john.ernberg@actia.se>
+	<20250714163505.44876e62@kernel.org>
+	<74a87648-bc02-4edb-9e6a-102cb6621547@actia.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 0/5] add static PMD zero page support
-To: Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko
- <mhocko@suse.com>, Jens Axboe <axboe@kernel.dk>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- "H . Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>,
- linux-kernel@vger.kernel.org, Dev Jain <dev.jain@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, willy@infradead.org,
- linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
- mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
- Pankaj Raghav <p.raghav@samsung.com>, Ingo Molnar <mingo@redhat.com>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
-Content-Language: en-US
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <20250707142319.319642-1-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi David,
+On Tue, 15 Jul 2025 07:15:51 +0000 John Ernberg wrote:
+> > I'm worried that this is still racy.
+> > Since usbnet_bh checks if carrier is ok and __handle_link_change()
+> > checks the opposite something must be out of sync if both run.
+> > Most likely something restored the carrier while we're still handling
+> > the previous carrier loss.  
+> 
+> There could definitely be other factors, I'll try to dig some in 
+> cdc_ether and see if something there could be causing problems for the 
+> usbnet core.
+> I honestly kinda stopped digging when I found unlink_urbs() being 
+> wrapped with a pause/unpause at another place tied to a commit seeing a 
+> similar issue.
 
-For now I have some feedback from Zi. It would be great to hear your
-feedback before I send the next version :)
+Looking at cdc_ether:
 
---
-Pankaj
+static void usbnet_cdc_zte_status(struct usbnet *dev, struct urb *urb)
+[...]
+        if (event->wValue &&                                                    
+            netif_carrier_ok(dev->net))                                         
+                netif_carrier_off(dev->net);  
 
-On Mon, Jul 07, 2025 at 04:23:14PM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
->
-> There are many places in the kernel where we need to zeroout larger
-> chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
-> is limited by PAGE_SIZE.
->
-> This concern was raised during the review of adding Large Block Size support
-> to XFS[1][2].
->
-> This is especially annoying in block devices and filesystems where we
-> attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
-> bvec support in block layer, it is much more efficient to send out
-> larger zero pages as a part of a single bvec.
->
-> Some examples of places in the kernel where this could be useful:
-> - blkdev_issue_zero_pages()
-> - iomap_dio_zero()
-> - vmalloc.c:zero_iter()
-> - rxperf_process_call()
-> - fscrypt_zeroout_range_inline_crypt()
-> - bch2_checksum_update()
-> ...
->
-> We already have huge_zero_folio that is allocated on demand, and it will be
-> deallocated by the shrinker if there are no users of it left.
->
-> At moment, huge_zero_folio infrastructure refcount is tied to the process
-> lifetime that created it. This might not work for bio layer as the completions
-> can be async and the process that created the huge_zero_folio might no
-> longer be alive.
->
-> Add a config option STATIC_PMD_ZERO_PAGE that will always allocate
-> the huge_zero_folio via memblock, and it will never be freed.
->
-> I have converted blkdev_issue_zero_pages() as an example as a part of
-> this series.
->
-> I will send patches to individual subsystems using the huge_zero_folio
-> once this gets upstreamed.
->
-> Looking forward to some feedback.
->
-> [1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
-> [2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
->
-> Changes since v1:
-> - Move from .bss to allocating it through memblock(David)
->
-> Changes since RFC:
-> - Added the config option based on the feedback from David.
-> - Encode more info in the header to avoid dead code (Dave hansen
->   feedback)
-> - The static part of huge_zero_folio in memory.c and the dynamic part
->   stays in huge_memory.c
-> - Split the patches to make it easy for review.
->
-> Pankaj Raghav (5):
->   mm: move huge_zero_page declaration from huge_mm.h to mm.h
->   huge_memory: add huge_zero_page_shrinker_(init|exit) function
->   mm: add static PMD zero page
->   mm: add largest_zero_folio() routine
->   block: use largest_zero_folio in __blkdev_issue_zero_pages()
->
->  block/blk-lib.c         | 17 +++++----
->  include/linux/huge_mm.h | 31 ----------------
->  include/linux/mm.h      | 81 +++++++++++++++++++++++++++++++++++++++++
->  mm/Kconfig              |  9 +++++
->  mm/huge_memory.c        | 62 +++++++++++++++++++++++--------
->  mm/memory.c             | 25 +++++++++++++
->  mm/mm_init.c            |  1 +
->  7 files changed, 173 insertions(+), 53 deletions(-)
->
->
-> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> --
-> 2.49.0
-
+This looks sus. Is the Gemalto Cinterion PLS83-W ZTE based?
 
