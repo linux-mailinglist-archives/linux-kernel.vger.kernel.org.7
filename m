@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-731870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0DDB05AC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:06:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B4DB05ACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD1443BBD26
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:05:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D08AC7B3CB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20E82E1751;
-	Tue, 15 Jul 2025 13:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BABD2E2F10;
+	Tue, 15 Jul 2025 13:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vG8xap+x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9T7JbZy"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CABF2561AE;
-	Tue, 15 Jul 2025 13:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BC72E041E;
+	Tue, 15 Jul 2025 13:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752584753; cv=none; b=WcuTSRb/rbs0Ij3CgFnPPrg9Xy/F1JyeX59BSOzIdGcmT+JP3eCZMp/L7FD+K3bTvzvbKCp+zZgHq8C+vtSdId10S/5TyLiHU9XN6GZXjMHrb3eTetopYPDIWGDoGCLW+Uo9+9ugd1g2v6o9LvGEEFyMJYVbBU08GkNAozip74g=
+	t=1752584820; cv=none; b=Jz9CiFSRw9JAX5Qd3z269Vpu3q/9AxNKvyHw+gDkZNFyK/Y+TEpVFgZGoIhJic7Y3jr2oGOc+uwPEDIsdIolk2lkRPc43NQirNvkUR69UJyGpCMMxzd/13eaC/AfenISkOOLEj99qVJ6C0TGb8V8iolqYmMbDqbrAuaQszNfclo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752584753; c=relaxed/simple;
-	bh=0uPpU45llipC3TzVqDMQ5evN4sRa1g4MKHiGLtm5jEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZLmWZ5IW0YJ7dgbePttZsNzNrLUIQ4RGEEPo6aPvhH8oohQpjFeGrV0yeRvYzsejF6ZuqrKJdWVmnuqe+IcLYZr0Buv9CLuLg0F2iBA1drfGkISa4Ix6htH9soabKm/0AotZiueF6WetImN4zN6H1C/7iVc0bkDKPjOGSCJC7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vG8xap+x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9F2AC4CEE3;
-	Tue, 15 Jul 2025 13:05:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752584752;
-	bh=0uPpU45llipC3TzVqDMQ5evN4sRa1g4MKHiGLtm5jEU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vG8xap+xPani99WC7EezMokh7vHK7xaU73nUyI6x6jK3v2jEwl9hx+p0kvDxS6E+T
-	 VRAfURHh72NhMJEHFyQBie+ArNzs6KztNn011inS+zewEb/VCU8mbrogOFRVK9OT1F
-	 3PcWZskbZ9XmD+CP0YpY4rcFSIf8tuu3NUyNkB2vc4xpTPUayXDeniP5qsG3toEpql
-	 APGb/pzZqRMnBC1D/94iC9dFaHNrO93pVYfT3up8JiMiUKgoH59f4wVgETVJaKgxwf
-	 gIhj+5zf8e0VbRSpPm47rjMGQYATWXXwLvTbgiZ+fPGn0o+BW/2OpzybqFtaJ63DjF
-	 QrzFlzRXBsnNg==
-Date: Tue, 15 Jul 2025 14:05:47 +0100
-From: Simon Horman <horms@kernel.org>
-To: Haiyang Zhang <haiyangz@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	haiyangz@microsoft.com, kys@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, davem@davemloft.net,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	cavery@redhat.com
-Subject: Re: [PATCH net,v2] hv_netvsc: Switch VF namespace in netvsc_open
- instead
-Message-ID: <20250715130547.GV721198@horms.kernel.org>
-References: <1752511297-8817-1-git-send-email-haiyangz@linux.microsoft.com>
+	s=arc-20240116; t=1752584820; c=relaxed/simple;
+	bh=+4BPq8Ag7u6VS3ATK8+Mqx9MTCxg3lq+5av2VYhAJvo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I1knAFGOoEieTIgwFUKqZ+HoaAa1QWBZhNemt273R4UVLib5Ujh+jus/AsMAAy0hsz976UtSKU/hIV5C13qBfH4luIAdenR86ZT8vRfJC1Ge3CywViFhDVw2oKvTI9cQtrbGFXyZj9itL68co0bN9JhHX/ogPFfuu359Mf+ZVMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b9T7JbZy; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a522224582so2757020f8f.3;
+        Tue, 15 Jul 2025 06:06:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752584817; x=1753189617; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xYAnqRvooyPTpqznSq8Nwhoicrxrtb7Od8bN3VBbdQY=;
+        b=b9T7JbZyKW2uTi8NTvYDN5YZ+E2N6C/KdV0mOukwIaaFrL1tON+kIZNRvuHdXG5ESf
+         lTlqICA23WGzk6qzVNyYclrB+5Nf93hS100wLXx2fUtdcUtUWVmbwRYH9hUE14rg9n68
+         8UbnLm9LolzDgyRZhwKGesVH4tsk/DbllYFUGmMj2WqQQjn/9DAzLMT3sW+8rs0a6TfR
+         KMsFKcAfO25CKpmXiIdCqbUF3dU4U0ZzYF58OH1Jf4lXzjY9dYBxAkkCXcce/gD752ip
+         4svP+3G5i8CBvAYzvabuPbSEYBR6KMIcxpzCZQFFQUJRbMUNiBHqJ56MxmPX/7CMui0W
+         Wkng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752584817; x=1753189617;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xYAnqRvooyPTpqznSq8Nwhoicrxrtb7Od8bN3VBbdQY=;
+        b=U1p/89E2OcWEuyf+fCIoT1gb8pfmi86srxX8UyTTj8OLwKSweG9NnHb4sdJxt3pS8h
+         q/yr92KJW8Uwmq0FYtv1fjuEilLKo6R+pwC5wqQIX1h9KXztgh9jdwFIWej1yLSQSr+S
+         uV25mDC54AOdwmAiyxThtWDVXO66y+ygXUHEr6COGVsBsAdDUjAXXt5b/NwOHP6nBYCD
+         ZKPBujxT/4wCDJccTgxPH4iUm4yhYg/1O7awOsuFRF1L9mewpN/EvQbhZcr/Y0ClbBiW
+         rxTyXCS7nKroqL1Z3ux2Q3Muw+sBT0JOgealKyVi9+r3HDtSPXdWpKcjm0iNb2pG4or8
+         HQMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZA+gZSj4jELsGaKHQwiobuPi7BtAjzmoneT4zc1ThtCwhghPb1xnJ0oVOr8IKRRX4HbbV3JaA+gXWVOk=@vger.kernel.org, AJvYcCXoGNsqpnaVa3MkL2GLrITVF0yWqGlLN76SPDhc/irKYRD1qUnN5rcHVEsjsrfPoQkVi4gM8DcY5R3eOe1ZvHiV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH/icDS12FGH3thxt1e5jQXjqVG4wFrPWR8HvTHvnRXX5DN2+t
+	4Ur5M/5KMkS0jfeU7jBX6Df5k0oZ1rF/kUOVM39weJsQvcr6MjGv8XSj
+X-Gm-Gg: ASbGncu6+0LjLvJs7PV8ymOC2xXIkKG+da/Hbi3g//XxedxxfwITwiJvGwrc4iBFCEK
+	y3xaYP7A7Rr7mQIBN2igVcU95ltQDWRNYkSuqxH4XlXqugfo9eq3Ue6XgFd9PxLD2ZgFBYvrz7Z
+	OvokSsQHg69G6WgLaAWNkkXCSWW3SpiWBRk6TeWG2P87WtopwDjHnbmfRghWqhwtItWE/o1fUqa
+	nwLsWLTiJFztCkRdCYqGEpFqkSVXb4UgHlya6yyDBn2Xf3MrH9/h+BNAgI/+zsOccuau9E0Rpdn
+	nwKcpur52mc7TsCEZjNUVJD3Uqm5gjT+x04Nogx3HdF5DHJ2iQkTV5xXo2YYAhtuVNftjEogIgU
+	+SMWcNDYBA9NWoe57ABaR
+X-Google-Smtp-Source: AGHT+IFT4HKoMD6ksFU61owSdxSR7HkGowoofRdIoqF/Y7IIpvsS/v01MDu6B2/BRiHPFTciAUcNKw==
+X-Received: by 2002:a05:6000:3103:b0:3b5:e6c0:1241 with SMTP id ffacd0b85a97d-3b5f351dd51mr12523792f8f.9.1752584816206;
+        Tue, 15 Jul 2025 06:06:56 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8e14d12sm15233822f8f.70.2025.07.15.06.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 06:06:55 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/futex: Fix spelling mistake "Succeffuly" -> "Successfully"
+Date: Tue, 15 Jul 2025 14:06:26 +0100
+Message-ID: <20250715130627.1907017-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1752511297-8817-1-git-send-email-haiyangz@linux.microsoft.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 14, 2025 at 09:41:37AM -0700, Haiyang Zhang wrote:
-> From: Haiyang Zhang <haiyangz@microsoft.com>
-> 
-> The existing code move the VF NIC to new namespace when NETDEV_REGISTER is
-> received on netvsc NIC. During deletion of the namespace,
-> default_device_exit_batch() >> default_device_exit_net() is called. When
-> netvsc NIC is moved back and registered to the default namespace, it
-> automatically brings VF NIC back to the default namespace. This will cause
-> the default_device_exit_net() >> for_each_netdev_safe loop unable to detect
-> the list end, and hit NULL ptr:
-> 
-> [  231.449420] mana 7870:00:00.0 enP30832s1: Moved VF to namespace with: eth0
-> [  231.449656] BUG: kernel NULL pointer dereference, address: 0000000000000010
-> [  231.450246] #PF: supervisor read access in kernel mode
-> [  231.450579] #PF: error_code(0x0000) - not-present page
-> [  231.450916] PGD 17b8a8067 P4D 0 
-> [  231.451163] Oops: Oops: 0000 [#1] SMP NOPTI
-> [  231.451450] CPU: 82 UID: 0 PID: 1394 Comm: kworker/u768:1 Not tainted 6.16.0-rc4+ #3 VOLUNTARY 
-> [  231.452042] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS Hyper-V UEFI Release v4.1 11/21/2024
-> [  231.452692] Workqueue: netns cleanup_net
-> [  231.452947] RIP: 0010:default_device_exit_batch+0x16c/0x3f0
-> [  231.453326] Code: c0 0c f5 b3 e8 d5 db fe ff 48 85 c0 74 15 48 c7 c2 f8 fd ca b2 be 10 00 00 00 48 8d 7d c0 e8 7b 77 25 00 49 8b 86 28 01 00 00 <48> 8b 50 10 4c 8b 2a 4c 8d 62 f0 49 83 ed 10 4c 39 e0 0f 84 d6 00
-> [  231.454294] RSP: 0018:ff75fc7c9bf9fd00 EFLAGS: 00010246
-> [  231.454610] RAX: 0000000000000000 RBX: 0000000000000002 RCX: 61c8864680b583eb
-> [  231.455094] RDX: ff1fa9f71462d800 RSI: ff75fc7c9bf9fd38 RDI: 0000000030766564
-> [  231.455686] RBP: ff75fc7c9bf9fd78 R08: 0000000000000000 R09: 0000000000000000
-> [  231.456126] R10: 0000000000000001 R11: 0000000000000004 R12: ff1fa9f70088e340
-> [  231.456621] R13: ff1fa9f70088e340 R14: ffffffffb3f50c20 R15: ff1fa9f7103e6340
-> [  231.457161] FS:  0000000000000000(0000) GS:ff1faa6783a08000(0000) knlGS:0000000000000000
-> [  231.457707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  231.458031] CR2: 0000000000000010 CR3: 0000000179ab2006 CR4: 0000000000b73ef0
-> [  231.458434] Call Trace:
-> [  231.458600]  <TASK>
-> [  231.458777]  ops_undo_list+0x100/0x220
-> [  231.459015]  cleanup_net+0x1b8/0x300
-> [  231.459285]  process_one_work+0x184/0x340
-> 
-> To fix it, move the VF namespace switching code from the NETDEV_REGISTER
-> event handler to netvsc_open().
-> 
-> Cc: stable@vger.kernel.org
-> Cc: cavery@redhat.com
-> Fixes: 4c262801ea60 ("hv_netvsc: Fix VF namespace also in synthetic NIC NETDEV_REGISTER event")
-> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+There is a spelling mistake in a ksft_exit_fail_msg message. Fix it.
 
-With this change do we go back to the situation that existed prior
-to the cited patch? Quoting the cited commit:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/futex/functional/futex_priv_hash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    The existing code moves VF to the same namespace as the synthetic NIC
-    during netvsc_register_vf(). But, if the synthetic device is moved to a
-    new namespace after the VF registration, the VF won't be moved together.
+diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+index a9cedc365102..aea001ac4946 100644
+--- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
++++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+@@ -122,7 +122,7 @@ static void futex_dummy_op(void)
+ 	}
+ 	ret = pthread_mutex_timedlock(&lock, &timeout);
+ 	if (ret == 0)
+-		ksft_exit_fail_msg("Succeffuly locked an already locked mutex.\n");
++		ksft_exit_fail_msg("Successfully locked an already locked mutex.\n");
+ 
+ 	if (ret != ETIMEDOUT)
+ 		ksft_exit_fail_msg("pthread_mutex_timedlock() did not timeout: %d.\n", ret);
+-- 
+2.50.0
 
-Or perhaps not because if synthetic device is moved then, in practice, it
-will subsequently be reopened? (Because it is closed as part of the move
-to a different netns?)
-
-I am unsure.
 
