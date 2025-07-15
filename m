@@ -1,118 +1,73 @@
-Return-Path: <linux-kernel+bounces-731305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38FBB05278
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:14:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B515B0527B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA19C1AA58E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:14:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99ECB3A947E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3F226E718;
-	Tue, 15 Jul 2025 07:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EEC26E6E6;
+	Tue, 15 Jul 2025 07:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fGVxSsnO"
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KLEyAL8Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684DC1C8FBA;
-	Tue, 15 Jul 2025 07:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394B126560D
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752563627; cv=none; b=gl+eXotel5ceMpmloUYRtMFRnmalfB3wTAYNE1AGMIFBZeJeLEBpXXJh2kRQs+9YX9uAL3Cp27mPmeSJmh/MNwzjAXsNJaPJiRgd+rg28zHg7tL1KbDrXXBg9mkwxk+UOu8mM/V5hCanLTP5CVnPlb9RS5Sa26hNDeJGqWDO0P4=
+	t=1752563700; cv=none; b=bfD8FIwHnBsmkXK4L5AS0Ii6s5kx0ISbc2C8yWRWJzgJiEaSHAaGJZ6HLYHU3kNrnG7C6D/ZAgZhAxqxp7zNbeG+jIqhJ3VIxQLMWrH9W2tHlGHVXOiiaHbX7EnyyFICe6zgEcIctsM+3WaVi88OC7fsYZ0+scRtkJC+O4UJUf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752563627; c=relaxed/simple;
-	bh=3tRzF+eAG69iCFJsLHqK7qCIOSv/sCoudEUDZNrr2KA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DBH4P+mU3WzfTegDzwyMOqnX0o0cPvXuVe9NhgUa0kyt5chXjWcWMqkcIRc/azElhOYIrSl0G+Ec9FM93j1dJ4qPWXJv+hBqXJj/yEFazI5ill9B2NvJ3wpfdTIPD+MlxAKxTGOf3X3rjg/sg6YVCb3uSYSQwzABipxzsQd+9cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fGVxSsnO; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1752563604;
-	bh=RFKqX/8jGLZ0gCM1lRc1v1zeuP3fiXSjkW615zWkF/8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=fGVxSsnOyLb+URLacjA1Sd3bbCsbyuEhRq1fqx/9kf9hxKAfgwJglUml0EAcf66lr
-	 qP5bwH2xTPNO89oJgiIGSIe7rO7+BstjN+GEPqloQKhHWEeVxqnQCBXEKNUyVVL6S2
-	 Zn3uC07ASOaEv2fW+Hoe7yFbmdxKoXTBgjiZK0Vc=
-X-QQ-mid: zesmtpip3t1752563587t54e86ea1
-X-QQ-Originating-IP: LAPbbLpI8/WwODO7cz/sB4Ix6FIzw86cgmvoh1lVP0U=
-Received: from avenger-e500 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 15 Jul 2025 15:13:02 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14369993403465055196
-EX-QQ-RecipientCnt: 63
-From: WangYuli <wangyuli@uniontech.com>
-To: seanjc@google.com,
-	pbonzini@redhat.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	marcin.s.wojtas@gmail.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	arend.vanspriel@broadcom.com,
-	ilpo.jarvinen@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	jgross@suse.com,
-	sstabellini@kernel.org,
-	oleksandr_tyshchenko@epam.com,
-	akpm@linux-foundation.org
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wangyuli@uniontech.com,
-	ming.li@zohomail.com,
-	linux-cxl@vger.kernel.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	netdev@vger.kernel.org,
-	kvalo@kernel.org,
-	johannes.berg@intel.com,
-	quic_ramess@quicinc.com,
-	ragazenta@gmail.com,
-	jeff.johnson@oss.qualcomm.com,
-	mingo@kernel.org,
-	j@jannau.net,
-	linux@treblig.org,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	linux-serial@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	shenlichuan@vivo.com,
-	yujiaoliang@vivo.com,
-	colin.i.king@gmail.com,
-	cvam0000@gmail.com,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com
-Subject: [PATCH] treewide: Fix typo "notifer"
-Date: Tue, 15 Jul 2025 15:12:45 +0800
-Message-ID: <B3C019B63C93846F+20250715071245.398846-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1752563700; c=relaxed/simple;
+	bh=y2TJbtDD35MqDLnSgvFB1Qm518YIME38oBGwkN9GunQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FMWwsPouGvFJhJ7njaTpqTXDW672FHOc/HI9kVvfvlwFg/3JGfsl7FTVP7PolYrK1gou62+vy7yAYaNMpBOHD77l/t9+qcmganZ6ylQi+IoJM5gt46SDONpJdrnIXNUKNR4Rvb5Ut8M9BN+1Gj5Ag26TD9t2yS70oNpA04ZwKPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KLEyAL8Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752563697;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NRO+yUPGIVQSR4laeBohZ2Ii8Yl1IGq9tVGefxhngOY=;
+	b=KLEyAL8ZCGUaKR9qEG7QSac09mitJu+9cwoQ60cK1ii4pQsHwT9lvRbIukTnKIAdw0NZVI
+	BYZWye/DghXk9TgCMb3jrNejtQRNrPqAtSt92WYb2El/BUfz6c/JpQE2NNq4EHOZhl99l+
+	Haqa7byz/0umakxvnBoeSbMuIWiK75k=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-620-CJydgR4YO8CTydbz5cFvMg-1; Tue,
+ 15 Jul 2025 03:14:53 -0400
+X-MC-Unique: CJydgR4YO8CTydbz5cFvMg-1
+X-Mimecast-MFC-AGG-ID: CJydgR4YO8CTydbz5cFvMg_1752563692
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FCED18089B8;
+	Tue, 15 Jul 2025 07:14:52 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.224.115])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BB68418046C6;
+	Tue, 15 Jul 2025 07:14:46 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Nam Cao <namcao@linutronix.de>
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: [PATCH v3 00/17] rv: Add monitors to validate task switch
+Date: Tue, 15 Jul 2025 09:14:17 +0200
+Message-ID: <20250715071434.22508-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -120,157 +75,262 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NYOnBmlw6PSq7qfgCwz2XzMxcZWmpyFzt+hN2mg3FQguPczQComUKfYl
-	M7q60PKhl/wMTk5Pm+ZTCDiwSKGwzwMxD/w72ijm5S+exZ3ncEpCpzp2Jf//EAQ/xmUvVoj
-	VLbP0vvUBmRAGQbmOvmCDAeotInA+zVGcBsLXuPJVK7auy9s0tx9J9buR3544TvcV7/yS+N
-	2G4KWGv/ipIcm3pj75vvZzf9tbcMXJ9xc/jG5P3WaLqO62zwWvBCnCSVsBbTXw+rRNAbOIV
-	7O6yYK3hMj0IZwjWi5xNWFgb4yQX3YvFnWk9XCUHOg+uJt+viSpjX+3xc69yZ4lxjoPTxEM
-	E04uhaZwMh4X6dfJqcIiCuCgGfYf7hzUSzvvpfFjEgFsevtOYn8GlHIf5XQ7fVn5FEn3vGO
-	krc2zuOG/G7yJGLDyV9daWLGLjP6E1H2Ni5NP5x2Yu9c6jrMJs3f6kWWKZLp0QzKwqB5911
-	IVUskZCsApQ5n7c8ROTA22tL4kCGJohhx75NQdsB/FG06QSl5+Kc5XDWSdgDMqaVE3UPRp7
-	bN3EuXL50PHvt2Eyynqi7RRjin9ueCW5vaQc2E+IXnuXf8zNfes0ofjBbKk3YPzFLbjv/j/
-	AhhnpgvDuHiUyXkOWLBXc1Ov1RnNGw176r2M/Rqb2VsJgpBa+giL/mwrkXOvVQYgqWVHm+m
-	GMrVAAkc6zgFQlCBDoOQw6RK6bhd39P0DIojV3Z8LaNFCVllqb6A7FlWXyt7Fmor4FYflXR
-	LVcHcnV3Iunc3TmGGs3ySUoND+WnQ5DJReExzQK2auKTVvjnOHu34VrtkZWNqGrVSHWqJrG
-	iSKqa7mfBOloXR4ak/oiJId7tqLd/iFL0qDFPAXHMrCiFGkDjQYSHRBOGgbny4ffufHeyKq
-	+rByfMK4770/JGnjKbuJcopzKzSDmiGDCMq4q7EEALyZw9zXySgeUDiAL3L6EHxh1iG/0Na
-	C6dtgfKvngjxElogxtL5HYu9lD95iR1HVEyQ5k3+9zxOu5bPkJTZ6mmIcxEICbl5I53n0d8
-	8UxpAgPwKjUHN1AQU8A3jWB4I3mXxYLZBr83kg7uMYUmsysjYJ
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-There are some spelling mistakes of 'notifer' in comments which
-should be 'notifier'.
+This series adds three monitors to the sched collection, extends and
+replaces previously existing monitors:
 
-Fix them and add it to scripts/spelling.txt.
+tss => sts:
+Not only prove that switches occur in scheduling context but also that
+each call to the scheduler implies a switch (also a vain one) and
+disables interrupts doing so.
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/x86/kvm/i8254.c                                        | 4 ++--
- drivers/cxl/core/mce.h                                      | 2 +-
- drivers/gpu/drm/xe/xe_vm_types.h                            | 2 +-
- drivers/net/ethernet/marvell/mvneta.c                       | 2 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 2 +-
- drivers/tty/serial/8250/8250_dw.c                           | 2 +-
- include/xen/xenbus.h                                        | 2 +-
- scripts/spelling.txt                                        | 1 +
- 8 files changed, 9 insertions(+), 8 deletions(-)
+sco:
+The sched_set_state tracepoint can now be called from scheduling context
+in a particular condition, that is when there is a pending signal. Adapt
+the monitor to cover this scenario.
 
-diff --git a/arch/x86/kvm/i8254.c b/arch/x86/kvm/i8254.c
-index 739aa6c0d0c3..9ff55112900a 100644
---- a/arch/x86/kvm/i8254.c
-+++ b/arch/x86/kvm/i8254.c
-@@ -641,7 +641,7 @@ static void kvm_pit_reset(struct kvm_pit *pit)
- 	kvm_pit_reset_reinject(pit);
- }
- 
--static void pit_mask_notifer(struct kvm_irq_mask_notifier *kimn, bool mask)
-+static void pit_mask_notifier(struct kvm_irq_mask_notifier *kimn, bool mask)
- {
- 	struct kvm_pit *pit = container_of(kimn, struct kvm_pit, mask_notifier);
- 
-@@ -694,7 +694,7 @@ struct kvm_pit *kvm_create_pit(struct kvm *kvm, u32 flags)
- 
- 	pit_state->irq_ack_notifier.gsi = 0;
- 	pit_state->irq_ack_notifier.irq_acked = kvm_pit_ack_irq;
--	pit->mask_notifier.func = pit_mask_notifer;
-+	pit->mask_notifier.func = pit_mask_notifier;
- 
- 	kvm_pit_reset(pit);
- 
-diff --git a/drivers/cxl/core/mce.h b/drivers/cxl/core/mce.h
-index ace73424eeb6..ca272e8db6c7 100644
---- a/drivers/cxl/core/mce.h
-+++ b/drivers/cxl/core/mce.h
-@@ -7,7 +7,7 @@
- 
- #ifdef CONFIG_CXL_MCE
- int devm_cxl_register_mce_notifier(struct device *dev,
--				   struct notifier_block *mce_notifer);
-+				   struct notifier_block *mce_notifier);
- #else
- static inline int
- devm_cxl_register_mce_notifier(struct device *dev,
-diff --git a/drivers/gpu/drm/xe/xe_vm_types.h b/drivers/gpu/drm/xe/xe_vm_types.h
-index 1979e9bdbdf3..0ca27579fd1f 100644
---- a/drivers/gpu/drm/xe/xe_vm_types.h
-+++ b/drivers/gpu/drm/xe/xe_vm_types.h
-@@ -259,7 +259,7 @@ struct xe_vm {
- 		 * up for revalidation. Protected from access with the
- 		 * @invalidated_lock. Removing items from the list
- 		 * additionally requires @lock in write mode, and adding
--		 * items to the list requires either the @userptr.notifer_lock in
-+		 * items to the list requires either the @userptr.notifier_lock in
- 		 * write mode, OR @lock in write mode.
- 		 */
- 		struct list_head invalidated;
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 147571fdada3..ee4696600146 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -4610,7 +4610,7 @@ static int mvneta_stop(struct net_device *dev)
- 		/* Inform that we are stopping so we don't want to setup the
- 		 * driver for new CPUs in the notifiers. The code of the
- 		 * notifier for CPU online is protected by the same spinlock,
--		 * so when we get the lock, the notifer work is done.
-+		 * so when we get the lock, the notifier work is done.
- 		 */
- 		spin_lock(&pp->lock);
- 		pp->is_stopped = true;
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-index b94c3619526c..bcd56c7c4e42 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-@@ -8313,7 +8313,7 @@ struct brcmf_cfg80211_info *brcmf_cfg80211_attach(struct brcmf_pub *drvr,
- 	cfg->d11inf.io_type = (u8)io_type;
- 	brcmu_d11_attach(&cfg->d11inf);
- 
--	/* regulatory notifer below needs access to cfg so
-+	/* regulatory notifier below needs access to cfg so
- 	 * assign it now.
- 	 */
- 	drvr->config = cfg;
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 1902f29444a1..6d9af6417620 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -392,7 +392,7 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
- 	rate = clk_round_rate(d->clk, newrate);
- 	if (rate > 0) {
- 		/*
--		 * Note that any clock-notifer worker will block in
-+		 * Note that any clock-notifier worker will block in
- 		 * serial8250_update_uartclk() until we are done.
- 		 */
- 		ret = clk_set_rate(d->clk, newrate);
-diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
-index 3f90bdd387b6..00b84f2e402b 100644
---- a/include/xen/xenbus.h
-+++ b/include/xen/xenbus.h
-@@ -180,7 +180,7 @@ int xenbus_printf(struct xenbus_transaction t,
-  * sprintf-style type string, and pointer. Returns 0 or errno.*/
- int xenbus_gather(struct xenbus_transaction t, const char *dir, ...);
- 
--/* notifer routines for when the xenstore comes up */
-+/* notifier routines for when the xenstore comes up */
- extern int xenstored_ready;
- int register_xenstore_notifier(struct notifier_block *nb);
- void unregister_xenstore_notifier(struct notifier_block *nb);
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index c9a6df5be281..d824c4b17390 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -1099,6 +1099,7 @@ notication||notification
- notications||notifications
- notifcations||notifications
- notifed||notified
-+notifer||notifier
- notity||notify
- notfify||notify
- nubmer||number
+snroc:
+Include sched_switch_vain as transition only possible in own context,
+this model is also required to keep the following two models simple.
+
+nrp (NEW):
+* preemption requires need resched which is cleared by any switch
+  (includes a non optimal workaround for /nested/ preemptions)
+
+sssw (NEW):
+* suspension requires setting the task to sleepable and, after the
+  switch occurs, the task requires a wakeup to come back to runnable
+
+opid (NEW):
+* waking and need-resched operations occur with interrupts and
+  preemption disabled or in IRQ without explicitly disabling preemption
+
+Also include some minor cleanup patches (1-10) tracepoints (12) and
+preparatory fixes (11) covering some corner cases:
+
+The series is currently based on the trace/for-next tree [1] as it
+requires some other patches on RV.
+
+Patch 1 fixes the behaviour of the rv tool with -s and idle tasks.
+
+Patch 2 allows the rv tool to gracefully terminate with SIGTERM
+
+Patch 3 adds da_handle_start_run_event_ also to per-task monitors
+
+Patch 4 removes a trailing whitespace from the rv tracepoint string
+
+Patch 5 returns the registration error in all DA monitor instead of 0
+
+Patch 6 fixes an out-of-bound memory access in DA tracepoints
+
+Patch 7 adjusts monitors to have minimised Kconfig dependencies
+
+Patch 8 properly orders nested monitors in the RV Kconfig file
+
+Patch 9 adjusts dot2c not to create lines over 100 columns
+
+Patch 10 adapts monitors headers based on patch 9
+
+Patch 11 detects race conditions when rv monitors run concurrently and
+retries applying the events
+
+Patch 12 adds the need_resched and switch_vain tracepoints and adds a
+parameter to the sched_set_state tracepoint
+
+Patch 13 adapts the sco monitor to the new version of sched_set_state
+
+Patch 14 extends the snroc model and adapts it to the new sched_set_state
+
+Patch 15 adds the sts monitor to replace tss
+
+Patch 16 adds the nrp and sssw monitors
+
+Patch 17 adds the opid monitor
+
+NOTES
+
+The nrp and sssw monitors include workarounds for racy conditions:
+
+* A sleeping task requires to set the state to sleepable, but in case of
+  a task sleeping on an rtlock, the set sleepable and wakeup events race
+  and we don't always see the right order:
+
+ 5d..2. 107.488369: event: 639: sleepable x set_sleepable -> sleepable
+ 4d..5. 107.488369: event: 639: sleepable x wakeup -> running (final)
+ 5d..3. 107.488385: error: 639: switch_suspend not expected in the state running
+
+    wakeup()                    set_state()
+        state=RUNNING
+                                    trace_set_state()
+        trace_wakeup()
+                                    state=SLEEPING
+
+  I added a special event (switch_block) but there may be a better way.
+  Taking a pi_lock in rtlock_slowlock_locked when setting the state to
+  TASK_RTLOCK_WAIT avoids this race, although this is likely not
+  something we want to do.
+
+* I consider preemption any scheduling with preempt==true and assume
+  this can happen only if need resched is set.
+  In practice, however, we may see a preemption where the flag
+  is not set. This can happen in one specific condition:
+
+  need_resched
+                  preempt_schedule()
+                                        preempt_schedule_irq()
+                                            __schedule()
+  !need_resched
+                      __schedule()
+
+  We start a standard preemption (e.g. from preempt_enable when the flag
+  is set), an interrupts occurs before we schedule and, on its exit path,
+  it schedules, which clears the need_resched flag.
+  When the preempted task runs again, we continue the standard
+  preemption started earlier, although the flag is no longer set.
+
+  I added a workaround to allow the model not to fail in this condition,
+  but it makes the model weaker. In fact, we are not proving that:
+   1. we don't miss any event setting need_resched
+   2. we don't preempt when not required
+  Future versions of the monitor may weaken assumptions only when we
+  register an interrupt.
+
+Changes since RFC2:
+ * Arrange commits to prevent failed build while bisecting.
+ * Avoid dot2k generated files to reach the column limit. (Nam Cao)
+ * Rearrange and simplify da_monitor retry on racing events.
+ * Improve nrp monitor to handle /nested/ preemption on IRQ.
+ * Added minor patches (6-10).
+ * Cleanup and rearrange order.
+Changes since RFC [2]:
+ * Remove wakeup tracepoint in try_to_block_task and use a different
+   flavour of sched_set_state
+ * Split the large srs monitor in two separate monitors for preemption
+   and sleep. These no longer have a concept of running task, they just
+   enforce the requirements for the different types of sched out.
+ * Restore the snroc monitor to describe the relationship between
+   generic sched out and sched in.
+ * Add opid monitor.
+ * Fix some build errors and cleanup.
+
+[1] - git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+[2] - https://lore.kernel.org/lkml/20250404084512.98552-11-gmonaco@redhat.com
+
+To: Ingo Molnar <mingo@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Tomas Glozar <tglozar@redhat.com>
+Cc: Juri Lelli <jlelli@redhat.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: John Kacur <jkacur@redhat.com>
+
+Gabriele Monaco (16):
+  tools/rv: Do not skip idle in trace
+  tools/rv: Stop gracefully also on SIGTERM
+  rv: Add da_handle_start_run_event_ to per-task monitors
+  rv: Remove trailing whitespace from tracepoint string
+  rv: Return init error when registering monitors
+  rv: Use strings in da monitors tracepoints
+  rv: Adjust monitor dependencies
+  verification/rvgen: Organise Kconfig entries for nested monitors
+  rv: Fix generated files going over 100 column limit
+  rv: Retry when da monitor detects race conditions
+  sched: Adapt sched tracepoints for RV task model
+  rv: Adapt the sco monitor to the new set_state
+  rv: Extend snroc model
+  rv: Replace tss monitor with more complete sts
+  rv: Add nrp and sssw per-task monitors
+  rv: Add opid per-cpu monitor
+
+Nam Cao (1):
+  tools/dot2c: Fix generated files going over 100 column limit
+
+ Documentation/trace/rv/monitor_sched.rst      | 354 +++++++++++++++---
+ include/linux/rv.h                            |   3 +-
+ include/linux/sched.h                         |   7 +-
+ include/rv/da_monitor.h                       | 115 +++---
+ include/trace/events/sched.h                  |  17 +-
+ kernel/sched/core.c                           |  10 +-
+ kernel/trace/rv/Kconfig                       |  10 +-
+ kernel/trace/rv/Makefile                      |   5 +-
+ kernel/trace/rv/monitors/{tss => nrp}/Kconfig |  10 +-
+ kernel/trace/rv/monitors/nrp/nrp.c            | 146 ++++++++
+ kernel/trace/rv/monitors/nrp/nrp.h            |  87 +++++
+ kernel/trace/rv/monitors/nrp/nrp_trace.h      |  15 +
+ kernel/trace/rv/monitors/opid/Kconfig         |  17 +
+ kernel/trace/rv/monitors/opid/opid.c          | 169 +++++++++
+ kernel/trace/rv/monitors/opid/opid.h          | 104 +++++
+ kernel/trace/rv/monitors/opid/opid_trace.h    |  15 +
+ kernel/trace/rv/monitors/sched/Kconfig        |   1 +
+ kernel/trace/rv/monitors/sched/sched.c        |   3 +-
+ kernel/trace/rv/monitors/sco/sco.c            |  11 +-
+ kernel/trace/rv/monitors/sco/sco.h            |  16 +-
+ kernel/trace/rv/monitors/scpd/Kconfig         |   2 +-
+ kernel/trace/rv/monitors/scpd/scpd.c          |   3 +-
+ kernel/trace/rv/monitors/sleep/sleep.c        |   3 +-
+ kernel/trace/rv/monitors/sncid/Kconfig        |   2 +-
+ kernel/trace/rv/monitors/sncid/sncid.c        |   3 +-
+ kernel/trace/rv/monitors/snep/Kconfig         |   2 +-
+ kernel/trace/rv/monitors/snep/snep.c          |   3 +-
+ kernel/trace/rv/monitors/snep/snep.h          |  14 +-
+ kernel/trace/rv/monitors/snroc/snroc.c        |  15 +-
+ kernel/trace/rv/monitors/snroc/snroc.h        |  18 +-
+ kernel/trace/rv/monitors/sssw/Kconfig         |  15 +
+ kernel/trace/rv/monitors/sssw/sssw.c          | 115 ++++++
+ kernel/trace/rv/monitors/sssw/sssw.h          |  97 +++++
+ kernel/trace/rv/monitors/sssw/sssw_trace.h    |  15 +
+ kernel/trace/rv/monitors/sts/Kconfig          |  18 +
+ kernel/trace/rv/monitors/sts/sts.c            | 117 ++++++
+ kernel/trace/rv/monitors/sts/sts.h            |  97 +++++
+ .../{tss/tss_trace.h => sts/sts_trace.h}      |   8 +-
+ kernel/trace/rv/monitors/tss/tss.c            |  91 -----
+ kernel/trace/rv/monitors/tss/tss.h            |  47 ---
+ kernel/trace/rv/monitors/wip/Kconfig          |   2 +-
+ kernel/trace/rv/monitors/wip/wip.c            |   3 +-
+ kernel/trace/rv/monitors/wwnr/wwnr.c          |   3 +-
+ kernel/trace/rv/rv_trace.h                    |  89 ++---
+ tools/verification/models/sched/nrp.dot       |  29 ++
+ tools/verification/models/sched/opid.dot      |  35 ++
+ tools/verification/models/sched/sco.dot       |   1 +
+ tools/verification/models/sched/snroc.dot     |   2 +-
+ tools/verification/models/sched/sssw.dot      |  24 ++
+ tools/verification/models/sched/sts.dot       |  29 ++
+ tools/verification/models/sched/tss.dot       |  18 -
+ tools/verification/rv/src/in_kernel.c         |   2 +-
+ tools/verification/rv/src/rv.c                |   1 +
+ tools/verification/rvgen/rvgen/container.py   |  13 +
+ tools/verification/rvgen/rvgen/dot2c.py       |  19 +-
+ tools/verification/rvgen/rvgen/generator.py   |  13 +-
+ 56 files changed, 1730 insertions(+), 353 deletions(-)
+ rename kernel/trace/rv/monitors/{tss => nrp}/Kconfig (60%)
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.c
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.h
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp_trace.h
+ create mode 100644 kernel/trace/rv/monitors/opid/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.c
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.h
+ create mode 100644 kernel/trace/rv/monitors/opid/opid_trace.h
+ create mode 100644 kernel/trace/rv/monitors/sssw/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.c
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.h
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw_trace.h
+ create mode 100644 kernel/trace/rv/monitors/sts/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.c
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.h
+ rename kernel/trace/rv/monitors/{tss/tss_trace.h => sts/sts_trace.h} (67%)
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.c
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.h
+ create mode 100644 tools/verification/models/sched/nrp.dot
+ create mode 100644 tools/verification/models/sched/opid.dot
+ create mode 100644 tools/verification/models/sched/sssw.dot
+ create mode 100644 tools/verification/models/sched/sts.dot
+ delete mode 100644 tools/verification/models/sched/tss.dot
+
+
+base-commit: 76604f9ce795edc8c134a6c60b76eb2999ecb739
 -- 
-2.50.0
+2.50.1
 
 
