@@ -1,120 +1,245 @@
-Return-Path: <linux-kernel+bounces-731660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0784DB057D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C56DB057D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4B4F3B53FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:31:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51B774E130A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFF02D63EB;
-	Tue, 15 Jul 2025 10:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53EE2D8774;
+	Tue, 15 Jul 2025 10:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kfByKl+f"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/C1+r7q"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED8E28F4;
-	Tue, 15 Jul 2025 10:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A4C28F4;
+	Tue, 15 Jul 2025 10:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752575511; cv=none; b=HBpJmDerT9Ea1aEjygD9VEZaOgpFEjwsgsbRVjHf4W3eRFFLYwzPaqA0m+V+Uj6vZzg9b4h/1fsxBeFCLFLpHgTbDlFuyYefsQnkCWnKuzjrZ/r+uNIYr7xlzhgpbe8rsevuDyWcyiP/Q3IT9yCwoyapP+8KQIIxh7rTWPOtk1E=
+	t=1752575518; cv=none; b=FiFnudFptZhPL3Oqfq94z4HyfaV4IsNSa7Gy+rFbbRTOp+GkAvUQ+F99c88xuFUAu34DNd+fNfc4CEnuHfxtGwgMBidVndXU5nd6xgm/UGfdKe/+YLTxuGeQcB0Q978eYijrsnuSVQG3JZvZqMUuZBdKVsJE4Bydfuu4xTz8EY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752575511; c=relaxed/simple;
-	bh=XebkX95wcEKQnKte28NcMhjW/zd225Us26tVO6Iz2YY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uY/+coKr/1L0XenEGq6n/xyI0Br7vFNsis2vfeZckgnXGBJzGB/hOYlFmqmt13zJUx+3pbQcaSz33le0cWyCGHfxBWbH3zeL5K73jBq+WD1CnYuG5xqoQuLSzV1UbtcLG69vjI6aqVtmaJBN4d/a4OeEoOlbrCs9QB2gQITtuOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kfByKl+f reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1980C40E0215;
-	Tue, 15 Jul 2025 10:31:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id A0infUpuRe_C; Tue, 15 Jul 2025 10:31:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752575501; bh=ZeK8/hSot3trf3uPAOW7h8n9eMuR+wJSK+K8dpRpwsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kfByKl+fmWuix5Vv24mjwKVc86RjZOUmh9GhJJYI3yPOuMuWniu4tH28ISiX3+4xR
-	 MAnrZIHXA4EFe/jWk7QjeMrJWJBPi6idZtBsmzsrkPuO/1YcJ0UfWNMA8pOG9V0i6q
-	 U+WRh/oXcM/GMwyvNZsC4pUEiSwX7cfa3pUxdNIXPZD8mgNLbWZSQGFif7Y7fz6YB5
-	 2m5D/FtieT2nFvL6ATZtoPtrIUZiHZZ9ZwJCWT19k9EU561sLQXC9g7SIePc8nObpq
-	 BHCjAnACm14AoUiGSDoBGfiQta4sLRmWQXNb5ONL+3/oPDuerufjrBUnzAHF0szKQe
-	 Kefy79TfX/Oiri7gEkSrrKSJz+ehQf7zEJaWCvtzlZMkuXntYe7X5bK+sulXYXzCS6
-	 bK8od/W9eLd9l7E4pRYos8G43WRAqNKd988TJidlT4TCU4PNiOui/MUJUOXhWNdfvT
-	 yMQUkx8X6cHSC3VCXlbV2PO7iJHSr7Hz/l9O5TgpTTTuUvJQ56G8YoS5cZHh/FVKsl
-	 mAzOTGYmUtrSzsxfCuHiq6EqFo5sgQAlPVNNkFjNYAgqoDPfUEypZCaPY4RcL/8Fpg
-	 l8BLOJNZJl/VvP4DruiU+wb+a1Yhlr0KaYt9MW3dz7nt+fIHfkOSQEL+6wTBuLtvAc
-	 X4oY9veU7HsV5PsFgopNdph8=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0D28240E015D;
-	Tue, 15 Jul 2025 10:31:31 +0000 (UTC)
-Date: Tue, 15 Jul 2025 12:31:25 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Breno Leitao <leitao@debian.org>
-Cc: "Luck, Tony" <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
-	"Moore, Robert" <robert.moore@intel.com>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>,
-	"kernel-team@meta.com" <kernel-team@meta.com>
-Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
-Message-ID: <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
-References: <20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org>
- <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
- <SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
- <aHWC-J851eaHa_Au@agluck-desk3>
- <20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
- <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
+	s=arc-20240116; t=1752575518; c=relaxed/simple;
+	bh=YziQ9wNa5Gyx65BMDUPCAoU0lFno9ULjzg/y5bl8La8=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8oUza01olelNJ4CaTf9JsS9HSxsIbb1vXYFRAk5blQlwry2+hWw6NxG8bVUESMuNaJahWKlZuyLx7CoMBln8gr7SeeLm3/G/35NBB6qpng8YZmYBeeDdJksa8e6UhjNJpE+1aMx2+hHSoAlOglGSHm5v/OTjffKMHhgJdZr0KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U/C1+r7q; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae361e8ec32so993880866b.3;
+        Tue, 15 Jul 2025 03:31:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752575514; x=1753180314; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=19y82vR2J5R6risS4bwxDT4Xe9S8atzVOrzkj21A8LU=;
+        b=U/C1+r7qwmFDGlCpl1VtUDDbMVjIbU+weimDqut9gGorp+MhuIoRKphZ6oU6kF6Y8P
+         3kIrSl2q5bnnPjW+ct9nzQszgDnlCdeIU6cx5p7Dk3gn8tCLnEhWFYN9z7b5SmPPyNGJ
+         FaavXGFuszd7gePCJg/rStw6ZyUXUDEJhT0i8l6bqMUzY85ZRM5tucvvGA3KqgPx4iWo
+         xA5apUIC2BHxVbBqDMQm5lj8W42VCPnfsZ6Y0R+SKBaq8Abk3qMPQNiqeaIzVUqNlVaP
+         RZGTWiy5Tn8/60T0Z+RwqLSTNga8+Wcx70WBne+lxGDfosLzffnVsxc8F7ivGnwItgFU
+         81yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752575514; x=1753180314;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=19y82vR2J5R6risS4bwxDT4Xe9S8atzVOrzkj21A8LU=;
+        b=kwU+PVpeP2eXDXcvMpG4CyHbmBDax5w2GdsCYvouK/5OzuPLW/Nxvlo9bjfX6sdEnc
+         E5KrVjkQeAVXDLJ5Hk8IxtKGPPyoRLCsZJBl+VpvqMeis4PaQ2LYC4Yd4l8o3rycAi5b
+         dFm9knqDq8c3b2Us5D3Hicg+3cHqtjWXN1FJEiK8sNzRnPj9AVkegKCTP+hYkmWzn99i
+         ZW48nkv9BZATpNg2rFnkq5r4IlpbQM22AIP58ViRxfTnSHho05zMSIV0DfXocpOVUsQM
+         9l7SodNQxpxlwVndfzLZ9j7EfuYSzbE/CSC6GRhTpK6J+hF89b28nK6lUU3wR4dbAOAI
+         43aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNDXC1Ve8SZwUqrDXCt0y5Dxw5R6EDMQ3uPp95OhSvBB7MGhi699UaMlql9iL0fRJFQufH4lBQ4sH+O9j2w10=@vger.kernel.org, AJvYcCWpnrrBBav+BcmEUwtfq1QmcupDMeLl0OCNOLqlUSVPcHb7kIOWV39iVaWM0RljK5Y4CLVbCy1qnGWO7/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9xOfJbcwK8mmtmw00DNM2sAxzPNuNWDgOKqNluLDbVTcOkm5i
+	4ar0LVDTYP3nNcpL9fcKGEequslUvNOLQ07k7px8M68FQpsWAUNtywxV
+X-Gm-Gg: ASbGncsUe0aAcv2TcyfWA5M2KJgTS3Qbac3lvagHbsuffCWSoRLpstzUPbK6M2UEUCy
+	uNIrVh3ixB6iA0TP6vR7YO2BBcGaI929jSmd+hU5Ml36bbF6jp8toYU3F9rnejc8r7RkaJuMHjQ
+	znL0FoHYSEbt/UnWtyFH8gIL5PGD0Cx3uBYX13e/H9vq2Tir/bQXiLSKQefcO3FUS2wyRyw+2FE
+	xlO4jmyneRTyzHEQA2JTWoLbbe/e2MLYl/av4KFrADF2mizLic9Yz2livst1ucQDBJLI5OzINyA
+	OhjqFymW5qk98IMJN7aWyCnrTQkWOjgNEb7Pjl9XWwtzM8Q3U/q/JXriAPH+9UP5w6n5vJdPGCi
+	Hvd5dU6GhE6szvhr5407b6Xk9MqVtYuRlL9jOU+WKRtlJ5wg2bUDSG6/jJHP4mWUyjFG2eZI=
+X-Google-Smtp-Source: AGHT+IGm0Eo7WMlMpiYg7eCxidmrz8W5QxCppCa1TJ8Yab6+vZVWVdqJFgb9fOWtiHq2hk4a27F8Zw==
+X-Received: by 2002:a17:907:1ca1:b0:ae0:c690:1bed with SMTP id a640c23a62f3a-ae7012db12emr1692257366b.51.1752575513793;
+        Tue, 15 Jul 2025 03:31:53 -0700 (PDT)
+Received: from Cyndaquil. (static-35-65-100-159.thenetworkfactory.nl. [159.100.65.35])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8316b53sm964195366b.185.2025.07.15.03.31.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 03:31:53 -0700 (PDT)
+Message-ID: <68762e19.170a0220.33e203.a0b7@mx.google.com>
+X-Google-Original-Message-ID: <aHYuFluTAfYTDYN3@Cyndaquil.>
+Date: Tue, 15 Jul 2025 12:31:50 +0200
+From: Mitchell Levy <levymitchell0@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 3/5] rust: percpu: add a rust per-CPU variable test
+References: <20250712-rust-percpu-v2-0-826f2567521b@gmail.com>
+ <20250712-rust-percpu-v2-3-826f2567521b@gmail.com>
+ <DBATM1CUS704.28MKE6BIBQB7G@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <DBATM1CUS704.28MKE6BIBQB7G@kernel.org>
 
-On Tue, Jul 15, 2025 at 03:20:35AM -0700, Breno Leitao wrote:
-> For instance, If every investigation (as you suggested above) take just
-> a couple of minutes, there simply wouldn=E2=80=99t be enough hours in t=
-he day,
-> even working 24x7, to keep up with the volume.
+On Sun, Jul 13, 2025 at 11:30:31AM +0200, Benno Lossin wrote:
+> On Sat Jul 12, 2025 at 11:31 PM CEST, Mitchell Levy wrote:
+> > Add a short exercise for Rust's per-CPU variable API, modelled after
+> > lib/percpu_test.c
+> >
+> > Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+> > ---
+> >  lib/Kconfig.debug       |   9 ++++
+> >  lib/Makefile            |   1 +
+> >  lib/percpu_test_rust.rs | 120 ++++++++++++++++++++++++++++++++++++++++++++++++
+> 
+> I don't know if this is the correct place, the code looks much more like
+> a sample, so why not place it there instead?
 
-Well, first of all, it would help considerably if you put the use case in=
- the
-commit message.
+I don't feel particularly strongly either way --- I defaulted to `lib/`
+since that's where the `percpu_test.c` I was working off of is located.
+Happy to change for v3
 
-Then, are you saying that when examining kernel crashes, you don't look a=
-t
-dmesg in the core file?
+> >  rust/helpers/percpu.c   |  11 +++++
+> >  4 files changed, 141 insertions(+)
+> > diff --git a/lib/percpu_test_rust.rs b/lib/percpu_test_rust.rs
+> > new file mode 100644
+> > index 000000000000..a9652e6ece08
+> > --- /dev/null
+> > +++ b/lib/percpu_test_rust.rs
+> > @@ -0,0 +1,120 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +//! A simple self test for the rust per-CPU API.
+> > +
+> > +use core::ffi::c_void;
+> > +
+> > +use kernel::{
+> > +    bindings::{on_each_cpu, smp_processor_id},
+> > +    define_per_cpu,
+> > +    percpu::{cpu_guard::*, *},
+> > +    pr_info,
+> > +    prelude::*,
+> > +    unsafe_get_per_cpu,
+> > +};
+> > +
+> > +module! {
+> > +    type: PerCpuTestModule,
+> > +    name: "percpu_test_rust",
+> > +    author: "Mitchell Levy",
+> > +    description: "Test code to exercise the Rust Per CPU variable API",
+> > +    license: "GPL v2",
+> > +}
+> > +
+> > +struct PerCpuTestModule;
+> > +
+> > +define_per_cpu!(PERCPU: i64 = 0);
+> > +define_per_cpu!(UPERCPU: u64 = 0);
+> > +
+> > +impl kernel::Module for PerCpuTestModule {
+> > +    fn init(_module: &'static ThisModule) -> Result<Self, Error> {
+> > +        pr_info!("rust percpu test start\n");
+> > +
+> > +        let mut native: i64 = 0;
+> > +        // SAFETY: PERCPU is properly defined
+> > +        let mut pcpu: StaticPerCpu<i64> = unsafe { unsafe_get_per_cpu!(PERCPU) };
+> 
+> I don't understand why we need unsafe here, can't we just create
+> something specially in the `define_per_cpu` macro that is then confirmed
+> by the `get_per_cpu!` macro and thus it can be safe?
 
-I find that hard to believe.
+As is, something like
+    define_per_cpu!(PERCPU: i32 = 0);
 
-Because if you do look at dmesg and if you would grep it for hw errors - =
-we do
-log those if desired, AFAIR - you don't need anything new.
+    fn func() {
+        let mut pcpu: StaticPerCpu<i64> = unsafe { unsafe_get_per_cpu!(PERCPU) };
+    }
+will compile, but any usage of `pcpu` will be UB. This is because
+`unsafe_get_per_cpu!` is just blindly casting pointers and, as far as I
+know, the compiler does not do any checking of pointer casts. If you
+have thoughts/ideas on how to get around this problem, I'd certainly
+*like* to provide a safe API here :)
 
-I'd say...
+> > +        // SAFETY: We only have one PerCpu that points at PERCPU
+> > +        unsafe { pcpu.get(CpuGuard::new()) }.with(|val: &mut i64| {
+> 
+> Hmm I also don't like the unsafe part here...
+> 
+> Can't we use the same API that `thread_local!` in the standard library
+> has:
+> 
+>     https://doc.rust-lang.org/std/macro.thread_local.html
+> 
+> So in this example you would store a `Cell<i64>` instead.
+> 
+> I'm not familiar with per CPU variables, but if you're usually storing
+> `Copy` types, then this is much better wrt not having unsafe code
+> everywhere.
+> 
+> If one also often stores `!Copy` types, then we might be able to get
+> away with `RefCell`, but that's a small runtime overhead -- which is
+> probably bad given that per cpu variables are most likely used for
+> performance reasons? In that case the user might just need to store
+> `UnsafeCell` and use unsafe regardless. (or we invent something
+> specifically for that case, eg tokens that are statically known to be
+> unique etc)
 
---=20
-Regards/Gruss,
-    Boris.
+I'm open to including a specialization for `T: Copy` in a similar vein
+to what I have here for numeric types. Off the top of my head, that
+shouldn't require any user-facing `unsafe`. But yes, I believe there is
+a significant amount of interest in having `!Copy` per-CPU variables.
+(At least, I'm interested in having them around for experimenting with
+using Rust for HV drivers.)
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I would definitely like to avoid *requiring* the use of `RefCell` since,
+as you mention, it does have a runtime overhead. Per-CPU variables can
+be used for "logical" reasons rather than just as a performance
+optimization, so there might be some cases where paying the runtime
+overhead is ok. But that's certainly not true in all cases. That said,
+perhaps there could be a safely obtainable token type that only passes a
+`&T` (rather than a `&mut T`) to its closure, and then if a user doesn't
+mind the runtime overhead, they can choose `T` to be a `RefCell`.
+Thoughts?
+
+For `UnsafeCell`, if a user of the API were to have something like a
+`PerCpu<UnsafeCell<T>>` that safely spits out a `&UnsafeCell<T>`, my
+understanding is that mutating the underlying `T` would require the
+exact same safety guarantees as what's here, except now it'd need a much
+bigger unsafe block and would have to do all of its manipulations via
+pointers. That seems like a pretty big ergonomics burden without a clear
+(to me) benefit.
+
+> ---
+> Cheers,
+> Benno
+> 
+> > +            pr_info!("The contents of pcpu are {}\n", val);
+> > +
+> > +            native += -1;
+> > +            *val += -1;
+> > +            pr_info!("Native: {}, *pcpu: {}\n", native, val);
+> > +            assert!(native == *val && native == -1);
+> > +
+> > +            native += 1;
+> > +            *val += 1;
+> > +            pr_info!("Native: {}, *pcpu: {}\n", native, val);
+> > +            assert!(native == *val && native == 0);
+> > +        });
 
