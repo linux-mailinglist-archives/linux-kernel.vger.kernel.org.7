@@ -1,219 +1,313 @@
-Return-Path: <linux-kernel+bounces-732256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E96B06429
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE97B0642A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC537189CE21
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A9E8189CE37
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02E125DB0D;
-	Tue, 15 Jul 2025 16:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8162749C2;
+	Tue, 15 Jul 2025 16:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PNOgZfh/"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U2ik4K7I"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C951F55FA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8FD24E4C3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752596431; cv=none; b=NtYZxpHZXg5a9mLpyYltYPvj/HQfeY9o8NVRTXUHtaHYuVj22+5UBIT6U18GTH73lCFP8CX4uW6HvEaQK4VcJCT6Kag1PSb1EjogGQ4ZnsSWz0uFeuupcXoc5wgHLhYi0hqO0jMGDR5m8tg3OBbctzJwRezdhj8C0qC+BHcx/ec=
+	t=1752596432; cv=none; b=dCmy4YiQpeqwokii+qcVCSAGeriRBtvsYse39oma1PdbxWJxS09y0S8N4udhCtJgPKIH/9QwXOU05IA9N0y6BeUkyrbrClfPt1A+nRKysuLkzrx7oT5pgUr6LIUnc/c+1RT7LvacXbOuazGX5IsWgm/zSLvgh2MUBhmMWJAFA7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752596431; c=relaxed/simple;
-	bh=9wSSUd17eYyPmNDRinebEKNm6MjrslPLoHBitNTSmDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=arrRvd4n3ZTIfy9oLA4iNI2jjJ+iOqNJtR6nt4yOU0qenNMl8LlibyO/Mq+0T0Dqzboloz1qy3MFQn3yKbHYFknqnZRHfh5uHCKfZKTsynI39gIgR0hoqvmXPvdnwpmgfhW6EKmzYGbdP3aC1w3UD2naGzGZNhBmlPnZ0d41hgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PNOgZfh/; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b271f3ae786so4294269a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:20:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752596428; x=1753201228; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uJBpvy5JQXqvDU6BUB39eR+t4AzacJq68M/ewvrrxLQ=;
-        b=PNOgZfh/Mmrk/A1itSsJVdFImvB8jDn1SpsYle30D8r2GxAIVFPW2fr95C7lVCOoYp
-         +2ILz4kV1nL8k7joyi5Nm1A4CfDZa7DUSKr08+Xeke5TB5F7V9/AkzvSci0emahdSxBb
-         T2PympzdphMbgJUfEEEIENN9rZARrdlVxwJYriOp+ciBPOzW89V7bqqxtveVWI20PED+
-         cujRoo1u7RN5xvIu0P2jn+CNG2Sw55/IYLlpdFNYaMxAlAo3Xn+KFT3R4uRq03HTdTtF
-         1muQVBcTfTJ/1Rg04hQRKJZ6wPmZz5v/moE61olKKcbH+mOfJlZ/MWiKioBMWe6XY0GV
-         JLzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752596428; x=1753201228;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uJBpvy5JQXqvDU6BUB39eR+t4AzacJq68M/ewvrrxLQ=;
-        b=JHpKEhThyQ6Vf0S1Qk6OTGlVKBVsgD5qppa7O9YLD6XExOJyuhQ77mvbpsUVFHLBDK
-         vSE+sb34t3Y/uWDp/JA1ziQ7FEWEpA8mWHSRy4hyoAV6fEhGAYzW2/J1ju5wgJt9njst
-         vMjGC2ed40xwpJElw3ZG7Op6jP+70AakHNl6gP7IDqAaIL+XJFp1/M/qAcHlWnGQ8rQ4
-         HZpiJzHlhi8QcaVBJQQSnPn0uex1wrk4avWtIyCtqcuN7zB9bTji3dyx6+b166qJuw+P
-         CthEGXf4CoxttcKJhT64AR4U0Vt0EGMrfd5SiGLcc+i8aYQ6+vucAfH+4fzb51NcdiLS
-         0LJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQQ/GRVM5N6U4nu2XA8LZ11GSUnvrh6a9E3TzzSOZ+Rv6B56LrzuoyEGoHLjM42iQMmNv7y7G1LzE84FU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsfw+fCLIC9C+hTW0SuAbNai6SBBjuvhaNZFoVCPFbJa4YKSgS
-	bOnD+hWhNGDJi3D6rXcAg+EbUs7v7COivqh2piAactWqP1ziO+AKbOe5g6TQCjXI/4CIQP5XvDX
-	XGPMqtMFPYh2x1yEqgzwArBw93jouRHJLt0ozd30dOQ==
-X-Gm-Gg: ASbGnctxPIT1m3MDdpCj9e5Fma+u3SYbPhJEuFbhsw86KZBsCWEKUubtGqvXOhhNn+k
-	ZRBmoRp6DdocmzcPChqsgWDJiQzbYHGa9x/PIe3c8voQgrpyHD2BqWl1zONFtDunE2izeJ00oVl
-	tQkVk0VLoAAGk3RgY2IMqXIUcdzuB/RPHEWogngoOaJGXsLaBnDQqKI9AlT5ZgG6umYiWOMHp6J
-	UBcLcoHtpOw3REKPTF06ggDLwsOGPgQFmYr9yt+
-X-Google-Smtp-Source: AGHT+IEmT9JahDOkC74B3Pqp8ah2Yah70/5PySO3L+OPWgorWZGMS06WD2aO5z6rH42UWi9E3kpv8e8DX87h0P58J7Q=
-X-Received: by 2002:a17:90b:2c85:b0:312:f263:954a with SMTP id
- 98e67ed59e1d1-31c50d5c3e0mr24316850a91.5.1752596428308; Tue, 15 Jul 2025
- 09:20:28 -0700 (PDT)
+	s=arc-20240116; t=1752596432; c=relaxed/simple;
+	bh=06yesalwqHV8zE2DkczBQBpvVPyzo5fpUk8YlIdky6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SKEea8x96PM66fDhcMjd+8m24YEWVqK8kMPXpzc8f78Lo8KrxMZyVDXR8PQEhuAwlokW8hrUYcECHIJJonfjcRmrE4WZl/08WR5+PZaqoxZQwrj7wBa0FWf5q/5Owpwac+TlY9bF7E3NHsXPIQBHYVquBtbdok6P+1wUmeSf2YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U2ik4K7I; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3b35b3a7-3f1a-4401-9b60-ba4afda5636e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752596428;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9+/KXgJfq8R20Vlk8EbnswSlV5Trbxu/cuP2QEQUicg=;
+	b=U2ik4K7IDOLheqtcp5wpvNCeQTvhXUOOQK2DFBIy4w4JVCdPClyELN5mSxye7iJRDWcUP9
+	j3TbrWck9BurNumg/wNaKKY3ESMKRzrXecz0TUZuyv3YLYR2Esh/NJj+mCc5rv3jU3GA3M
+	FLwDhDkAjvpaQxbQUCpOZ66pwFDl6II=
+Date: Tue, 15 Jul 2025 12:20:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715130754.497128560@linuxfoundation.org>
-In-Reply-To: <20250715130754.497128560@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 15 Jul 2025 21:50:14 +0530
-X-Gm-Features: Ac12FXyQIhd8J5AV4_ejOchW88TIcZ9UEHIA5WNbxuNAxq5FLkivns_cnl92TYs
-Message-ID: <CA+G9fYtuwziF5cg0AwpMiB7Q4HC7fvOpJfNskKrUEQA89GZ9yQ@mail.gmail.com>
-Subject: Re: [PATCH 6.1 00/88] 6.1.146-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-kernel@vger.kernel.org,
+ David Lechner <dlechner@baylibre.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-8-sean.anderson@linux.dev>
+ <aHYWQOjJEWdLjy7H@smile.fi.intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <aHYWQOjJEWdLjy7H@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 15 Jul 2025 at 19:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On 7/15/25 04:50, Andy Shevchenko wrote:
+> On Mon, Jul 14, 2025 at 09:20:23PM -0400, Sean Anderson wrote:
+>> Add alarm support based on IIO threshold events. The alarm is cleared on
+>> read, but will be set again if the condition is still present. This is
+>> detected by disabling and re-enabling the event. The same trick is done
+>> when creating the attribute to detect already-triggered events.
+>> 
+>> The alarms are updated by an event listener. To keep the notifier call
+>> chain short, we create one listener per iio device, shared across all
+>> hwmon devices.
+>> 
+>> To avoid dynamic creation of alarms, alarms for all possible events are
+>> allocated at creation. Lookup is done by a linear scan, as I expect
+>> events to occur rarely. If performance becomes an issue, a binary search
+>> could be done instead (or some kind of hash lookup).
+> 
+> ...
+> 
+>>  #include <linux/hwmon-sysfs.h>
+> 
+> + blank line here..
+
+why?
+
+>>  #include <linux/iio/consumer.h>
+>> +#include <linux/iio/events.h>
+>> +#include <linux/iio/iio.h>
+>>  #include <linux/iio/types.h>
+> 
+> ...and here?
+
+OK
+
+>> +#include <uapi/linux/iio/events.h>
+> 
+> ...
+> 
+>> +static ssize_t iio_hwmon_lookup_alarm(struct iio_hwmon_listener *listener,
+>> +				      u64 id)
+>> +{
+>> +	ssize_t i;
+>> +
+>> +	for (i = 0; i < listener->num_alarms; i++)
+>> +		if (listener->ids[i] == id)
+>> +			return i;
+> 
+>> +	return -1;
+> 
+> -ENOENT ?
+> This will allow to propagate an error code to the upper layer(s).
+
+I suppose. But I think
+
+alarm = iio_hwmon_lookup_alarm(...);
+if (alarm < 0)
+	return -ENOENT;
+
+is clearer than
+
+alarm = iio_hwmon_lookup_alarm(...);
+if (alarm < 0)
+	return alarm;
+
+because you don't have to read the definition of iio_hwmon_lookup_alarm
+to determine what the return value is.
+
+>> +}
+> 
+> ...
+> 
+>> +static int iio_hwmon_listener_callback(struct notifier_block *block,
+>> +				       unsigned long action, void *data)
+>> +{
+>> +	struct iio_hwmon_listener *listener =
+>> +		container_of(block, struct iio_hwmon_listener, block);
+>> +	struct iio_event_data *ev = data;
+>> +	ssize_t i;
+>> +
+>> +	if (action != IIO_NOTIFY_EVENT)
+>> +		return NOTIFY_DONE;
+>> +
+>> +	i = iio_hwmon_lookup_alarm(listener, ev->id);
+>> +	if (i >= 0)
+>> +		set_bit(i, listener->alarms);
+> 
+> Do you need an atomic set?
+
+Yes. This protects against concurrent access by iio_hwmon_read_alarm.
+
+>> +	else
+>> +		dev_warn_once(&listener->indio_dev->dev,
+>> +			      "unknown event %016llx\n", ev->id);
+>> +
+>> +	return NOTIFY_DONE;
+>> +}
+> 
+> ...
+> 
+>> +static struct iio_hwmon_listener *iio_hwmon_listener_get(struct iio_dev *indio_dev)
+>> +{
+>> +	struct iio_hwmon_listener *listener;
+>> +	int err = -ENOMEM;
+>> +	size_t i, j;
+>> +
+>> +	guard(mutex)(&iio_hwmon_listener_lock);
+>> +	list_for_each_entry(listener, &iio_hwmon_listeners, list) {
+>> +		if (listener->indio_dev == indio_dev) {
+>> +			if (likely(listener->refcnt != UINT_MAX))
+>> +				listener->refcnt++;
+>> +			return listener;
+>> +		}
+>> +	}
+>> +
+>> +	listener = kzalloc(sizeof(*listener), GFP_KERNEL);
+>> +	if (!listener)
+>> +		goto err_unlock;
+>> +
+>> +	listener->refcnt = 1;
+>> +	listener->indio_dev = indio_dev;
+>> +	listener->block.notifier_call = iio_hwmon_listener_callback;
+>> +	for (i = 0; i < indio_dev->num_channels; i++)
+>> +		listener->num_alarms += indio_dev->channels[i].num_event_specs;
+>> +
+>> +	listener->ids = kcalloc(listener->num_alarms, sizeof(*listener->ids),
+>> +				GFP_KERNEL);
+>> +	listener->alarms = bitmap_zalloc(listener->num_alarms, GFP_KERNEL);
+>> +	if (!listener->ids || !listener->alarms)
+>> +		goto err_listener;
+>> +
+>> +	i = 0;
+>> +	for (j = 0; j < indio_dev->num_channels; j++) {
+>> +		struct iio_chan_spec const *chan = &indio_dev->channels[j];
+>> +		size_t k;
+>> +
+>> +		for (k = 0; k < chan->num_event_specs; k++)
+>> +			listener->ids[i++] =
+>> +				iio_event_id(chan, chan->event_spec[k].type,
+>> +					     chan->event_spec[k].dir);
+>> +	}
+>> +
+>> +	err = iio_event_register(indio_dev, &listener->block);
+>> +	if (err)
+>> +		goto err_alarms;
+>> +
+>> +	list_add(&listener->list, &iio_hwmon_listeners);
+> 
+>> +	mutex_unlock(&iio_hwmon_listener_lock);
+> 
+> With guard() ???
+
+Whoops. Missed that when refactoring.
+
+>> +	return listener;
+>> +
+>> +err_alarms:
+>> +	kfree(listener->alarms);
+>> +	kfree(listener->ids);
+>> +err_listener:
+>> +	kfree(listener);
+>> +err_unlock:
+>> +	mutex_unlock(&iio_hwmon_listener_lock);
+>> +	return ERR_PTR(err);
+> 
+> What about using __free()?
+
+That works for listener, but not for alarms or ids.
+
+>> +}
+> 
+> ...
+> 
+>> +static void iio_hwmon_listener_put(void *data)
+>> +{
+>> +	struct iio_hwmon_listener *listener = data;
+>> +
+>> +	scoped_guard(mutex, &iio_hwmon_listener_lock) {
+>> +		if (unlikely(listener->refcnt == UINT_MAX))
+>> +			return;
+>> +
+>> +		if (--listener->refcnt)
+>> +			return;
+> 
+> Can the refcount_t be used with the respective APIs? Or even kref?
+
+Why? We do all the manipulation under a mutex, so there is no point in
+atomic access. Instead of the games refcnt_t has to play to try and
+prevent overflow we can just check for it directly.
+
+>> +		list_del(&listener->list);
+>> +		iio_event_unregister(listener->indio_dev, &listener->block);
+>> +	}
+>> +
+>> +	kfree(listener->alarms);
+>> +	kfree(listener->ids);
+>> +	kfree(listener);
+>> +}
+> 
+> ...
+> 
+>> +static ssize_t iio_hwmon_read_alarm(struct device *dev,
+>> +				    struct device_attribute *attr,
+>> +				    char *buf)
+>> +{
+>> +	struct iio_hwmon_alarm_attribute *sattr = to_alarm_attr(attr);
+>> +	struct iio_hwmon_state *state = dev_get_drvdata(dev);
+>> +	struct iio_channel *chan = &state->channels[sattr->index];
+>> +
+>> +	if (test_and_clear_bit(sattr->alarm, sattr->listener->alarms)) {
+>> +		u64 id = sattr->listener->ids[sattr->alarm];
+>> +		enum iio_event_direction dir = IIO_EVENT_CODE_EXTRACT_DIR(id);
+>> +
+>> +		WARN_ON(iio_hwmon_alarm_toggle(chan, dir));
+> 
+>> +		strcpy(buf, "1\n");
+>> +		return 2;
+> 
+>> +	}
+>> +
+>> +	strcpy(buf, "0\n");
+>> +	return 2;
+> 
+> Better to assign the value and
 >
-> This is the start of the stable review cycle for the 6.1.146 release.
-> There are 88 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 17 Jul 2025 13:07:32 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.146-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> 	return sysfs_emit(...);
+> 
+> which will make even easier to recognize that this is supplied to user via
+> sysfs.
 
+:l
 
-The following boot regressions were noticed on the stable-rc 6.1.146-rc1
-with clang-20 toolchains for the qemu-i386.
+the things we do to avoid memcpy...
 
-First seen on the tag  6.1.146-rc1
-Good: 6.1.145
-Bad:  6.1.146-rc1
+--Sean
 
-Regression Analysis:
-- New regression? Yes
-- Reproducibility? Intermittent ( occurrence 2% )
-
-Boot regression: qemu-i386 Kernel panic not syncing stack-protector
-Kernel stack is corrupted in do_one_initcall
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Boot log
-<6>[    5.529679] fuse: init (API version 7.38)
-<0>[    5.535360] Kernel panic - not syncing: stack-protector: Kernel
-stack is corrupted in: do_one_initcall+0x243/0x310
-<4>[    5.536353] CPU: 1 PID: 201 Comm: modprobe Not tainted 6.1.146-rc1 #1
-<4>[    5.536728] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-<4>[    5.537072] Call Trace:
-<4>[    5.537284]  __dump_stack+0x18/0x1b
-<4>[    5.537437]  dump_stack_lvl+0x56/0x86
-<4>[    5.537537]  dump_stack+0xd/0x15
-<4>[    5.537631]  panic+0xd7/0x280
-<4>[    5.537714]  ? _raw_spin_unlock_irqrestore+0x23/0x40
-<4>[    5.537857]  __stack_chk_fail+0x10/0x10
-<4>[    5.538515]  ? do_one_initcall+0x243/0x310
-<4>[    5.539530]  do_one_initcall+0x243/0x310
-<4>[    5.540213]  ? fuse_dev_init+0x54/0x54 [fuse]
-<4>[    5.540696]  ? trace_hardirqs_on+0x30/0xc0
-<4>[    5.541093]  ? ___slab_alloc+0x7a0/0x850
-<4>[    5.541763]  ? mutex_lock+0x10/0x30
-<4>[    5.542300]  ? kernfs_xattr_get+0x28/0x50
-<4>[    5.542925]  ? mutex_lock+0x10/0x30
-<4>[    5.543494]  ? kernfs_xattr_get+0x28/0x50
-<4>[    5.544034]  ? selinux_kernfs_init_security+0x6f/0x1d0
-<4>[    5.544626]  ? idr_alloc_cyclic+0xb8/0x190
-<4>[    5.545144]  ? trace_preempt_on+0x1f/0xa0
-<4>[    5.545703]  ? security_kernfs_init_security+0x32/0x40
-<4>[    5.546323]  ? __kernfs_new_node+0x192/0x200
-<4>[    5.546826]  ? up_write+0x30/0x60
-<4>[    5.547169]  ? up_write+0x30/0x60
-<4>[    5.547666]  ? up_write+0x30/0x60
-<4>[    5.548180]  ? trace_preempt_on+0x1f/0xa0
-<4>[    5.548577]  ? up_write+0x30/0x60
-<4>[    5.548671]  ? up_write+0x30/0x60
-<4>[    5.548874]  ? preempt_count_sub+0x50/0x60
-<4>[    5.549591]  ? up_write+0x30/0x60
-<4>[    5.550036]  ? trace_hardirqs_on+0x30/0xc0
-<4>[    5.550508]  ? put_cpu_partial+0x8f/0xc0
-<4>[    5.550625]  ? __slab_free+0x140/0x250
-<4>[    5.550810]  ? __kmem_cache_alloc_node+0xc5/0x190
-<4>[    5.551453]  ? do_init_module+0x21/0x1c0
-<4>[    5.551792]  ? kmalloc_trace+0x27/0x90
-<4>[    5.551928]  ? do_init_module+0x21/0x1c0
-<4>[    5.552034]  do_init_module+0x43/0x1c0
-<4>[    5.552137]  load_module+0x13f7/0x16e0
-<4>[    5.552241]  __ia32_sys_finit_module+0x9c/0xf0
-<4>[    5.552560]  ia32_sys_call+0x22c7/0x27e0
-<4>[    5.553363]  __do_fast_syscall_32+0x86/0xd0
-<4>[    5.553868]  ? trace_hardirqs_on_prepare+0x2f/0x90
-<4>[    5.554443]  ? irqentry_exit_to_user_mode+0x14/0x20
-<4>[    5.555070]  do_fast_syscall_32+0x29/0x60
-<4>[    5.555515]  do_SYSENTER_32+0x12/0x20
-<4>[    5.555644]  entry_SYSENTER_32+0x98/0xfb
-<4>[    5.556403] EIP: 0xb7fb7509
-<4>[    5.556873] Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10
-08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5
-0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 90 90 90 58 b8 77 00 00 00 cd 80
-90 90 90
-<4>[    5.558029] EAX: ffffffda EBX: 00000003 ECX: 004a6332 EDX: 00000000
-<4>[    5.559007] ESI: 01277410 EDI: 012773c0 EBP: 00000000 ESP: bf83340c
-<4>[    5.559196] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00200296
-<0>[    5.560690] Kernel Offset: disabled
-<0>[    5.561095] ---[ end Kernel panic - not syncing:
-stack-protector: Kernel stack is corrupted in:
-do_one_initcall+0x243/0x310 ]---
-
-## Source
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* Project: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.144-91-gcb3da7d94d12/
-* Git describe: v6.1.144-91-gcb3da7d94d12
-* kernel version: 6.1.146-rc1
-* Architectures: i386
-* Toolchains: clang-20
-* Kconfigs: defconfig + lkftconfigs
-* qemu-version: 10.0.0
-
-## Build
-* Test details:
-https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.1.y/v6.1.144-91-gcb3da7d94d12/log-parser-boot/panic-multiline-kernel-panic-not-syncing-stack-protector-kernel-stack-is-corrupted-in-do_one_initcall/
-* Test run: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.1.y/v6.1.144-91-gcb3da7d94d12/boot/clang-20-lkftconfig/
-* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2zuky3NIcL74EompcUsLcll9dsr
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2zukvDombE6lLJ5nUkH55G7hMhh/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2zukvDombE6lLJ5nUkH55G7hMhh/config
-
---
-Linaro LKFT
-https://lkft.linaro.org
+>> +}
+> 
+> ...
+> 
+>> +static int add_alarm_attr(struct device *dev, struct iio_hwmon_state *st,
+>> +			  int i, enum iio_event_direction dir,
+>> +			  const char *fmt, ...)
+> 
+> Same comments as per previous patches.
+> 
 
