@@ -1,50 +1,47 @@
-Return-Path: <linux-kernel+bounces-731174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6937FB0506B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:40:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6297CB05067
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C25C21AA783C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:40:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3F737A8A2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CACA2D3ED9;
-	Tue, 15 Jul 2025 04:39:46 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF26122129E;
-	Tue, 15 Jul 2025 04:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981B12D1913;
+	Tue, 15 Jul 2025 04:39:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCA32D12E1
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752554385; cv=none; b=cl14GIXNaq4d/sspKjgqgv4K3RnVpourYfP6Hoaj7c1ZNZ1XWY1cqFtgpko7/SRiHSrRVAvdZlKRP9uofMWchTF/yN0nJ9newcUtjHqr008cbV36BbkPDpgJZHWvcqjgZ9Qip70RQpS8KL7SjYmVZyOk+zeHYYNi7MdKPtvmjaI=
+	t=1752554385; cv=none; b=JNFo3dy/dlyY9CX3ty9hdxX2MwRKT8TZs8H9PnjbXAMsEAId/7C08TsM4NwK3cF3l+MDB49kQsrGjtAXX1jqJxtwZud3t2DkOIacwRAHujg2Ur5l1TB/VA9crcV073jb6EWrnFszm/obxauvWdNBYMV2BNAIwnkIDAvHcm7uzxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752554385; c=relaxed/simple;
-	bh=Q24ePcJlRc/PZAOnP+KxhNlDgKV8yujJ4wRkYwNbbnM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hDQQinRenRTl3nz/ogOrtRJTCJ2qC8GzDJKID3F8+WJI2q7tdDLC/n+RJ1T0RmU5f8lNelNfxRRO7Sye/Co4xSexE1wQg7qwjF726elVH7ILbS1MQYtk5PaBgk74puwleiOaX690lccccyksdP4x9/3zOQ377w/EtEZtVvtbFbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201610.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202507151239246118;
-        Tue, 15 Jul 2025 12:39:24 +0800
-Received: from localhost.localdomain.com (10.94.4.253) by
- jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server id
- 15.1.2507.57; Tue, 15 Jul 2025 12:39:23 +0800
-From: chuguangqing <chuguangqing@inspur.com>
-To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>
-CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>, chuguangqing
-	<chuguangqing@inspur.com>
-Subject: [PATCH 1/1] ext4: add FALLOC_FL_ALLOCATE_RANGE to supported flags mask
-Date: Tue, 15 Jul 2025 12:37:26 +0800
-Message-ID: <20250715043808.5808-2-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250715043808.5808-1-chuguangqing@inspur.com>
-References: <20250715031531.1693-1-chuguangqing@inspur.com>
- <20250715043808.5808-1-chuguangqing@inspur.com>
+	bh=n10kQxDbIIcMFCsSBSOBIt0O5HebwKLVYb0lHAYy3m0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QlSqV63LOcEsPmRaqQKPY3wePShytizM25WAf0IJD4Yf/VImjs/tnKbYQAnpgA+UY3jFe4ewsMRahgGStBmlzMDeHPgBDqZskEqO/xwcborxEjdF+ucQGoaSlIn/Rg+JfV16fDJQG5AQBJq0E8i0iFj3MueyMWI2EGKGgcvU9ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD3551515;
+	Mon, 14 Jul 2025 21:39:26 -0700 (PDT)
+Received: from ergosum.cambridge.arm.com (ergosum.cambridge.arm.com [10.1.196.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 84E993F6A8;
+	Mon, 14 Jul 2025 21:39:34 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64/mm: Drop redundant addr increment in set_huge_pte_at()
+Date: Tue, 15 Jul 2025 05:39:22 +0100
+Message-Id: <20250715043922.57195-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,39 +49,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 2025715123924e3ca70ad28ab49c99074a6eec41f0c9b
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-Note that since FALLOC_FL_ALLOCATE_RANGE is defined as 0x00, this addition
-has no functional modifications.
+The 'addr' need not be incremented while operating on single entry basis as
+BBM is not required for such updates.
 
-Signed-off-by: chuguangqing <chuguangqing@inspur.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- fs/ext4/extents.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/mm/hugetlbpage.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index b43aa82c1b39..f0f9363fd9fd 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4784,9 +4784,9 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 		return -EOPNOTSUPP;
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index 0c8737f4f2ce..1d90a7e75333 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -225,7 +225,7 @@ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 	ncontig = num_contig_ptes(sz, &pgsize);
  
- 	/* Return error if mode is not supported */
--	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
--		     FALLOC_FL_ZERO_RANGE | FALLOC_FL_COLLAPSE_RANGE |
--		     FALLOC_FL_INSERT_RANGE | FALLOC_FL_WRITE_ZEROES))
-+	if (mode & ~(FALL_C_FL_ALLOCATE_RANGE | FALLOC_FL_KEEP_SIZE |
-+		     FALLOC_FL_PUNCH_HOLE | FALLOC_FL_COLLAPSE_RANGE |
-+		     FALLOC_FL_ZERO_RANGE | FALLOC_FL_INSERT_RANGE))
- 		return -EOPNOTSUPP;
- 
- 	inode_lock(inode);
+ 	if (!pte_present(pte)) {
+-		for (i = 0; i < ncontig; i++, ptep++, addr += pgsize)
++		for (i = 0; i < ncontig; i++, ptep++)
+ 			__set_ptes_anysz(mm, ptep, pte, 1, pgsize);
+ 		return;
+ 	}
 -- 
-2.43.5
+2.30.2
 
 
