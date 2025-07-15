@@ -1,220 +1,99 @@
-Return-Path: <linux-kernel+bounces-731037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE8AB04DD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:25:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB4BB04DD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4483217D80B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04AC3A5363
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4072D0267;
-	Tue, 15 Jul 2025 02:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586112C374E;
+	Tue, 15 Jul 2025 02:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhiPMDpR"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPir47qk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDB8155A4E;
-	Tue, 15 Jul 2025 02:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B742527281C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752546338; cv=none; b=lGjWQXMeiCYswPBdyXZOt6ESuCYz0hreQlDk3rp0jlBlp6rkM22NEUxOeegF88von6WcVciNVqOHYPYMm8gLgoWGxoBws8MTPOahuCnPl0vrbQD2MQsrer1LUdkdYBmOxXN+UkpsV/PKk8Qgtu+kqkD2AoazTkrz+ApBlE9B7Fg=
+	t=1752546395; cv=none; b=VUgloxn7X1jpN6cjjPKCEcGdGEsCL0zluVj0uhsaab/efphtsdSihHReGgJWgl6dWwAYpORLdXvFIwWoXS+lzMlLRAC98ASciZN1jB3XizC0NeogHrerGcD9U9SExz4x+fDzTPowKa6n+JGQ/2NjxEsnzBp+AXvJ8HhNM5/JlMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752546338; c=relaxed/simple;
-	bh=/1mQXHiO2/QpEbjJNqw1AAh6kwW4leTVsVh4GnX9Ges=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OObNrKtfnBLRZ8POLyj+Zyi2s/BkrzTxxNybuubciwkjvmF0KeWDtG5E8DakW4T6AQWuK/m7EdEh/JKBWuu46yHbEEVKsVZlNdvfbTGnUFilVNWnqFbNQmg9nun3GqAtw5WswE7lTe+gMyDv3OnCYeg1SSDPn3wv7qWeeMLsP18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhiPMDpR; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so3857495f8f.1;
-        Mon, 14 Jul 2025 19:25:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752546335; x=1753151135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ia/GRWEj/tyEXlu02YhC4uvz3h3Vs8vLzxqDT6FKBPE=;
-        b=jhiPMDpRI63buaWQGgigx7He9B4a2Q4RqiRDDNR+IeO+RHntDXuzD7sR2xOoD9Hb5L
-         bacPgAGiH/zJIpyvG88zsNy7EcqHJnGNOTpQSBxGfSGn84tThYXttdWI5k6uQxkFnay1
-         WRA3Byw0H1jusK/wuGlRF9sYFW2WwdjQwUm9Z2uKYTfRk1dBb1A5C+2v4xBOBRfaHR/a
-         vFFVPFyKomlXE7rKtKm2tD0YZaVE7/H+YOMRu002YBZEZkCyZNqUFIw5AKDYuiLkc9L5
-         OdSrrSuifGviudW4mnwoI+EQkfgC9R6a8sOJwhULDNgiJyjHrBBa5Iw58HGz4BFFJBYx
-         KYWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752546335; x=1753151135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ia/GRWEj/tyEXlu02YhC4uvz3h3Vs8vLzxqDT6FKBPE=;
-        b=YvMMaIhp9LFGmGqlefMWxT6Q/WJTMCEm9EKT/JS92KAAhuJFLF+S/wj2MltCbzaNPm
-         bA38/+yTHx3Y5j15xGHvbZr9fTxCfYFsBpaS2hERZjPmlGsJiRIP/He4S0mH3EsLcHNq
-         2qoD5mwj+khxP4QmdlWCZdOByKmDbVldqvFV4Uim0jrztteDTK5hnI4DC0DbOaeLXiSk
-         daRBC6qf9DtQ7xX65d+ZmhcNXbni35JyR+lh3yo/lsfXK2EVJs8CRTNjxH26g6/eIkPI
-         r5is4vpMkxDLp7xgaQb4HLfAyUu8W6r1KyNpEv9A8d6eB4IRSnjqn3pfjbalfLn3yDnF
-         yIEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDc5lcW5onjEq+Wm3+4nmdkFku5QZOqo3VBvshBEH3PVhBgf+MpEXeLc0QC6SRxib2IWs=@vger.kernel.org, AJvYcCUkVXlN1IZ6k5VZW+4p9PL5Yxo8LuMmNGt6XpPlxHwlH/uD+2zjIjZRNehreoay34DGCx46TXlM@vger.kernel.org, AJvYcCWlX9lmzr4S4RAwTqhor38npYgIzhyky7y5oS7BDeRB3TNOUywQTsw7LCfo7hd+LU4lrXQftoiogHScwl2j@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9VdKROC66g1LGMs2Hx6Vtv20wNz2xjxRh7iDXxwbjBXb8q8MJ
-	YRu634cgWIeOPWendIjlkTf7f0a19XdK9oPI8SjC7rGcu0CRlQrL4qtpxkZDk6qiKK7tFKiMVfG
-	7muEqu1ce/+ITgoNrm7963Suqz2mVOZg=
-X-Gm-Gg: ASbGncvoW0AKH9nxfWapX5piA5HYuWsoi1UT+iYBss1Cac4z5etfwyqBKoPdsz35OwB
-	/LhiyOrgQtr2Kc5rwRuWf0gMNjpQ5GPlA4IhcWhh/CgcSkUIxiXpfp+rI2djHmaFb0BOT1BWpgv
-	pVtMWd4r/E/8nIy/g76nK9YGSHYZtyKfygf+b094WoxFJkGAP1ffu56S2EXGedQs2GGJsryuuwg
-	6F9N8PWE7ceYEa+wutmxVsTYLpg7b2qpPbKXSrPY5Y7JzQ=
-X-Google-Smtp-Source: AGHT+IGuwQzYuIpJZi1NG4UT4eHh4+LyZK9k+RZgdv9IIoBRBvgX5VWGm4NjUczRGG+YiTorsStAsEIUCfl64xxMvqM=
-X-Received: by 2002:a05:6000:4a0e:b0:3a4:f7ae:77c9 with SMTP id
- ffacd0b85a97d-3b609522273mr1270675f8f.5.1752546334914; Mon, 14 Jul 2025
- 19:25:34 -0700 (PDT)
+	s=arc-20240116; t=1752546395; c=relaxed/simple;
+	bh=LDF8ELnAISm2MY+yWCwH0B1RSYhTFfoVGF4gO7BZFuQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=evtmGIdPa+wjiLemYQePU3/npBIGwpHvO/2Ttw8CmkGXtKSVgLf8k+foZ3RwrOvJViN5ZMHllRq2uMfatk9WtT60OhtosF28mWxxbgXBi0pO7dQg7APSvEtSWgVuPXIoRglM5IUUplvA0niV5G2Jgb5vmJ7+2QGwEsy7TSFlmtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPir47qk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C93FC4CEED;
+	Tue, 15 Jul 2025 02:26:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752546394;
+	bh=LDF8ELnAISm2MY+yWCwH0B1RSYhTFfoVGF4gO7BZFuQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WPir47qkdxmJERwcpkN40L8CweIOxH4yrHvniCI93JWbM288BdEhCoRNoLUtz/vZ0
+	 G/keyEKUZhwNdG1ElP40v0AF/siFjB1xlst1Mgq8bSbeM9KwSFhvdgcdB/7BWy0aw4
+	 o2dzo2ZcBDdjTqnfFMyH/URtAKR9eILSesr0DaCRTSk7OTGD2GF7dr4qjV+OB9uPq6
+	 SFWayFp/XYLOQSNLy0hfVS2G3WlYLFoXEdOzgwOWXxzndccn5UpXEr+akwX6hf98wO
+	 nYvqL8IvSfb5fFlrf8MSNGh+Of9qQQXUYPE+kYpWEnJx/eS3C6p5oZA+clekgcp1Du
+	 jEW+9ahY8oHIw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs_io: fix doc of test_lookup_perf
+Date: Tue, 15 Jul 2025 10:26:29 +0800
+Message-ID: <20250715022629.486521-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn> <20250703121521.1874196-3-dongml2@chinatelecom.cn>
-In-Reply-To: <20250703121521.1874196-3-dongml2@chinatelecom.cn>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 14 Jul 2025 19:25:22 -0700
-X-Gm-Features: Ac12FXwGpB_axbDiCsJ-zcVn8kfmssggV-vZEusEaGLoymarUYN3vBaVAIsWRXw
-Message-ID: <CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 02/18] x86,bpf: add bpf_global_caller for
- global trampoline
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Menglong Dong <dongml2@chinatelecom.cn>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 3, 2025 at 5:17=E2=80=AFAM Menglong Dong <menglong8.dong@gmail.=
-com> wrote:
->
-> +static __always_inline void
-> +do_origin_call(unsigned long *args, unsigned long *ip, int nr_args)
-> +{
-> +       /* Following code will be optimized by the compiler, as nr_args
-> +        * is a const, and there will be no condition here.
-> +        */
-> +       if (nr_args =3D=3D 0) {
-> +               asm volatile(
-> +                       RESTORE_ORIGIN_0 CALL_NOSPEC "\n"
-> +                       "movq %%rax, %0\n"
-> +                       : "=3Dm"(args[nr_args]), ASM_CALL_CONSTRAINT
-> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
-> +                       :
-> +               );
-> +       } else if (nr_args =3D=3D 1) {
-> +               asm volatile(
-> +                       RESTORE_ORIGIN_1 CALL_NOSPEC "\n"
-> +                       "movq %%rax, %0\n"
-> +                       : "=3Dm"(args[nr_args]), ASM_CALL_CONSTRAINT
-> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
-> +                       : "rdi"
-> +               );
-> +       } else if (nr_args =3D=3D 2) {
-> +               asm volatile(
-> +                       RESTORE_ORIGIN_2 CALL_NOSPEC "\n"
-> +                       "movq %%rax, %0\n"
-> +                       : "=3Dm"(args[nr_args]), ASM_CALL_CONSTRAINT
-> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
-> +                       : "rdi", "rsi"
-> +               );
-> +       } else if (nr_args =3D=3D 3) {
-> +               asm volatile(
-> +                       RESTORE_ORIGIN_3 CALL_NOSPEC "\n"
-> +                       "movq %%rax, %0\n"
-> +                       : "=3Dm"(args[nr_args]), ASM_CALL_CONSTRAINT
-> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
-> +                       : "rdi", "rsi", "rdx"
-> +               );
-> +       } else if (nr_args =3D=3D 4) {
-> +               asm volatile(
-> +                       RESTORE_ORIGIN_4 CALL_NOSPEC "\n"
-> +                       "movq %%rax, %0\n"
-> +                       : "=3Dm"(args[nr_args]), ASM_CALL_CONSTRAINT
-> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
-> +                       : "rdi", "rsi", "rdx", "rcx"
-> +               );
-> +       } else if (nr_args =3D=3D 5) {
-> +               asm volatile(
-> +                       RESTORE_ORIGIN_5 CALL_NOSPEC "\n"
-> +                       "movq %%rax, %0\n"
-> +                       : "=3Dm"(args[nr_args]), ASM_CALL_CONSTRAINT
-> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
-> +                       : "rdi", "rsi", "rdx", "rcx", "r8"
-> +               );
-> +       } else if (nr_args =3D=3D 6) {
-> +               asm volatile(
-> +                       RESTORE_ORIGIN_6 CALL_NOSPEC "\n"
-> +                       "movq %%rax, %0\n"
-> +                       : "=3Dm"(args[nr_args]), ASM_CALL_CONSTRAINT
-> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
-> +                       : "rdi", "rsi", "rdx", "rcx", "r8", "r9"
-> +               );
-> +       }
-> +}
+Change as below:
+- add an entry for test_lookup_perf in manual
+- fix wrong parameter in usage of test_lookup_perf
 
-What is the performance difference between 0-6 variants?
-I would think save/restore of regs shouldn't be that expensive.
-bpf trampoline saves only what's necessary because it can do
-this micro optimization, but for this one, I think, doing
-_one_ global trampoline that covers all cases will simplify the code
-a lot, but please benchmark the difference to understand
-the trade-off.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ man/f2fs_io.8           | 3 +++
+ tools/f2fs_io/f2fs_io.c | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-The major simplification will be due to skipping nr_args.
-There won't be a need to do btf model and count the args.
-Just do one trampoline for them all.
+diff --git a/man/f2fs_io.8 b/man/f2fs_io.8
+index e0f659e..0d69b5f 100644
+--- a/man/f2fs_io.8
++++ b/man/f2fs_io.8
+@@ -184,6 +184,9 @@ Get i_advise value and info in file
+ .TP
+ \fBioprio\fR \fI[hint] [file]\fR
+ Set ioprio to the file. The ioprio can be ioprio_write.
++.TP
++\fBtest_lookup_perf\fR \fI[-i] [-v] <dir> <num_files>\fR
++Measure readdir/stat speed
+ .SH AUTHOR
+ This version of
+ .B f2fs_io
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index 8e81ba9..f282190 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -2241,7 +2241,7 @@ static void do_test_create_perf(int argc, char **argv, const struct cmd_desc *cm
+ 
+ #define test_lookup_perf_desc "measure readdir/stat speed"
+ #define test_lookup_perf_help						\
+-"f2fs_io test_lookup_perf [-s] [-S] <dir> <num_files>\n\n"		\
++"f2fs_io test_lookup_perf [-i] [-v] <dir> <num_files>\n\n"		\
+ "Measures readdir/stat performance.\n"				\
+ "  <dir>          The target directory in where it will test on.\n"	\
+ "  <num_files>    The total number of files the test will initialize or test.\n"\
+-- 
+2.49.0
 
-Also funcs with 7+ arguments need to be thought through
-from the start.
-I think it's ok trade-off if we allow global trampoline
-to be safe to attach to a function with 7+ args (and
-it will not mess with the stack), but bpf prog can only
-access up to 6 args. The kfuncs to access arg 7 might be
-more complex and slower. It's ok trade off.
-
-> +
-> +static __always_inline notrace void
-> +run_tramp_prog(struct kfunc_md_tramp_prog *tramp_prog,
-> +              struct bpf_tramp_run_ctx *run_ctx, unsigned long *args)
-> +{
-> +       struct bpf_prog *prog;
-> +       u64 start_time;
-> +
-> +       while (tramp_prog) {
-> +               prog =3D tramp_prog->prog;
-> +               run_ctx->bpf_cookie =3D tramp_prog->cookie;
-> +               start_time =3D bpf_gtramp_enter(prog, run_ctx);
-> +
-> +               if (likely(start_time)) {
-> +                       asm volatile(
-> +                               CALL_NOSPEC "\n"
-> +                               : : [thunk_target]"r"(prog->bpf_func), [a=
-rgs]"D"(args)
-> +                       );
-
-Why this cannot be "call *(prog->bpf_func)" ?
-
-> +               }
-> +
-> +               bpf_gtramp_exit(prog, start_time, run_ctx);
-> +               tramp_prog =3D tramp_prog->next;
-> +       }
-> +}
-> +
-> +static __always_inline notrace int
-> +bpf_global_caller_run(unsigned long *args, unsigned long *ip, int nr_arg=
-s)
-
-Pls share top 10 from "perf report" while running the bench.
-I'm curious about what's hot.
-Last time I benchmarked fentry/fexit migrate_disable/enable were
-one the hottest functions. I suspect it's the case here as well.
 
