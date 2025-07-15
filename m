@@ -1,165 +1,301 @@
-Return-Path: <linux-kernel+bounces-732029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 780A7B0610F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:30:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA81B0611B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 935FB1C24931
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:24:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C767A181A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CF521421E;
-	Tue, 15 Jul 2025 14:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D50225413;
+	Tue, 15 Jul 2025 14:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZGdgTVl4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XxuhxClW"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2068.outbound.protection.outlook.com [40.107.244.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4FD1FF1AD
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752589015; cv=none; b=BBvxe6dzMbZLC2DsesgKmBX9w6QSHq4L1R2NexDAOLACvMjDg9oZxe3/4HeAnYu9kQPhGTZT8WFeCwryLkdp5ojkRVjLfan9TmQaL1MJss1qCGlDDXSAo1EgRFqxY8i57Qe65EseREKysLx9m5qwB7eE+U5WThN/TWapiwUTBsk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752589015; c=relaxed/simple;
-	bh=EeCCPvYaO/vZ02CLQpqwrR7TomDQ+vhuMVSKzhcc0jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KmJRbMbLUu2qdmSiiczdt2ytPyIrgg0O+sCr6t02qkqB43Qj9e0XKR9l0a3GbvHLg5eGHBDZTv1az4o74FDufWFsJ4fMTKeTN3vdA2mCHq4541wKYLAYLlvRx0UK3LrF+a+Q33jQ3A0xDYUldaDXXhQJPVGOgSQDaVe4Pa3W5l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZGdgTVl4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752589012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtUFd8jIZdacMgVpErwt3tqjgeqdKXPmgyL5wbxQy4k=;
-	b=ZGdgTVl4tjlFXlFmYyI5OkeyjSRk2nNB7cHJ3XVLwHcyFocjwYqk2uPIFOJxTMtqXWGqHK
-	xXofAjIB8V9uVCE6GaSnNrREhAwhQIjF9unq7/0g0J9Os3z1WZbzrMsGuQf7E9nlpEt1qB
-	41CdjSrl/h7aJrwv33Ln826f3iih1do=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-308-T-WhXqL9OpqSysd464mpNg-1; Tue, 15 Jul 2025 10:16:51 -0400
-X-MC-Unique: T-WhXqL9OpqSysd464mpNg-1
-X-Mimecast-MFC-AGG-ID: T-WhXqL9OpqSysd464mpNg_1752589010
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45359bfe631so33219085e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:16:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752589010; x=1753193810;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xtUFd8jIZdacMgVpErwt3tqjgeqdKXPmgyL5wbxQy4k=;
-        b=lakOyJFWDo4XJyTWlj8Dqy/ycdNVUZtu/RXIcl6CRmdu2zUCStASZkjemYILFbZ//b
-         wE/f3owgiNNMwCUt5KOOoRUiknZmZvqTgD5yPydr3rY9+C5H7ZH9oX7XieDPzFW+fjAV
-         yiBT/Gx5GaEdScrsRtVdnHTgFIT+XWJ+OVbYcAE66kZ8FZuBqd6BhhsbF2/xblHc+xjH
-         E8HKgKfdsARv3DodLv6c7o0bpU8VcrD5Adrh+Dt4cUDxM+CWgUDlYHrhcYTUI7q1nERl
-         TYyQIKGZX8T+j/3wWkoqWBZdsylu0tBitHI6UEdXEdB+V79Mf8KCHsH7nVKO/tR1hBW9
-         rczQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvqt9+Rd6jenOJZJxLkkBQq35PfPQvDFE5B4UQ9oWrrendr8+k+iDXCWwWCsI5tnKAikK5SuzCH1qqCdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfTQIgVdGSFDnTZGKu9Alm6f2A/Oa9EhU1iGoUY3G7+1ui6vUE
-	f3z3mQfUBgOqDZh8VPpBVzXVGKNL3KKn7WCuWJcQrxB5X8ev4gizyrT7oQj5iqzAVNLPz2u+tcM
-	VZqkGOyRv00rqL3Gw14apyrA40rJGPi46xDMEzEHFwk9GjlUgAmKmHqQX6OzZIo9ljw==
-X-Gm-Gg: ASbGncuT0cYyvGYje7QZpqQRHW489phcpECU7w2xKkT8fXkPjgJv+jpz0jFzK8hAOtR
-	+t7nMDjBMdWWTcX6/ZXr9OVAvv/C68FZyo3AvQpX9OBFIOkrpkKNfG2q52N9lAoZBrEwuhGOiFS
-	L8iHbW51sSFrCD+HgBJJ5ae8kSSRoNto9kXRHRJEzy6MLkaHO654jPowpzhimmema/fpqMKUlwd
-	MWBHiTeQMkPqeZyleChQS+OOml9+QEd/cPOAXndwRPjXyRdg+6EZV/p5cyS8PeJCmwj+6wl+h0t
-	CnFThc5iDSqdnCHg9KtueXnoPnJYBP+jEUnHR2nwpMsfIy9zNVFtfqInuiDUJ7NQHIISQIrdLZ+
-	Ivvu4ek8GWIjzLwmCukYLEJw/t4YMukU+AxsUGWZMa2CvY6vp/zN2zcjBpMXyHo/OBxA=
-X-Received: by 2002:a05:6000:2283:b0:3a5:8600:7cff with SMTP id ffacd0b85a97d-3b5f1875938mr14092624f8f.1.1752589008392;
-        Tue, 15 Jul 2025 07:16:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtF3aNyi3pbj6yCkk1zAFYxYfd7ezRbzUP3crF9cjiRso9uL/U1MBxt8As/NbiPD2fcAEmzQ==
-X-Received: by 2002:a05:6000:2283:b0:3a5:8600:7cff with SMTP id ffacd0b85a97d-3b5f1875938mr14092465f8f.1.1752589006625;
-        Tue, 15 Jul 2025 07:16:46 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:4900:2c24:4e20:1f21:9fbd? (p200300d82f2849002c244e201f219fbd.dip0.t-ipconnect.de. [2003:d8:2f28:4900:2c24:4e20:1f21:9fbd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1a2bsm15527533f8f.14.2025.07.15.07.16.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 07:16:46 -0700 (PDT)
-Message-ID: <d7fa2e67-1960-4b1f-a8b7-147371e37010@redhat.com>
-Date: Tue, 15 Jul 2025 16:16:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3291FF1AD;
+	Tue, 15 Jul 2025 14:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752589021; cv=fail; b=N2orAr+ZD/6Tiwyi1b/cfzHpm0VvQVimOIKDki6kbGAGAwJPTtpmXKg5w1E/2dwVymZCrCCXp7ZdQIOmExq15XanbIWIui1mYiDw/Z80TzxPZVk+4PGhSOjKMY8/LzjLvCybbDgtxEfC3WKPVjrjd1yGqfGiGZTRKA/o5t+s7v0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752589021; c=relaxed/simple;
+	bh=s2VadCplfgjYoChxV+zGHMCW5nwIiE/UUCoXHmC3rW8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ETHgaDkWTqD+KuyvUi4KGzSsfZ5jy749qPfm1FA2rpHFL2JicqtSgVpDlDOPOcSH+4NPDZ3rRp/TDG+/OBi7RvKmfyca3Q6W8Nye348Rjzl0OZwjKGIZybcfbg2I4HhGm4AT5c2WRYKCgAiA6fINKPRPRJLcMZ4a9ON461QB//8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XxuhxClW; arc=fail smtp.client-ip=40.107.244.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nrpYCZ2dH+EppFyqKp0ziraITISuUyv9pSWOTjjOZ3rwavHS2J88FAFjcpo0wy++mNilr9zZH51kDDcRhPtu6BWEs7T2oUB7da3nI1Psx5r+/2V1uFEBKYnNjLAMf3NIARW7wz0IjQUYxXlGmUZduxPYd5gLRsBX+f7klvroAahUFXucP2ICT46WbB0IyDGcNhNsWDuuqShUnu9mwGOBkvf9KWqttFi4/8MShHnNqlrHyNViwbThrVNPtWApZK7lr+FigNN0RgZga3TG3/D8TBPUacMFSk8PM5l9QTfcLr52oZjfjjg+b4PHMHO8RbQgwyht8T5AMY5Ly11BqyL+zQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qyZE3JoYMg5/quGbKcwvqRMZamBqCJ7r7ZP45Oh27bA=;
+ b=k6auQNDcMtokiOLwHcw8L1jYHp/848GXhDQ5UtaLRpd9czGzJJCy3jgL5U0t/ZzZSkHwlRBlJF+WtBlW4zXXXKfqHFAb5WaE9kTCnjAhqUZIxFO2TQEJ8yRuZMqMSfq8jP34ORaYhwVqIhf8r8y56eaHXhIxnJmjRxu8c2iiv86fQifb76vu2hYOrZHyJ7tqzgBeX3SLL+ccSmeItIIZcrIno+s4AIiIUfUaayWUoIubfQeAo89nINyKX7vBm9vOVdEJF7Ne37s6nb2BidglyqMrlVUTQlQ98ZU25WKY3+JaC1gZxcEzV0Aq7Z/eujO01/EaNBHu8iAglpybZxWXow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qyZE3JoYMg5/quGbKcwvqRMZamBqCJ7r7ZP45Oh27bA=;
+ b=XxuhxClW14RNF2yAjNrLJDnuNH/k+RShpm03VmqTYDGblMt25CkFC/j2kyNqbY4C6rMg58y3j+ZN/Pds34YS5Ha9baE4nnEdzkY9dSI1L4/vZLXqizoKikUaEqeZyTyvh1jcP4QSuMxxIcI+gU1H6P13PkbKe0O/9qXzZ037Jh4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by PH8PR12MB6793.namprd12.prod.outlook.com (2603:10b6:510:1c4::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.21; Tue, 15 Jul
+ 2025 14:16:57 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%3]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
+ 14:16:57 +0000
+Message-ID: <e45064ca-56f5-4d86-b088-cd24ffc0e96d@amd.com>
+Date: Tue, 15 Jul 2025 09:16:52 -0500
+User-Agent: Mozilla Thunderbird
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v15 05/34] x86/cpufeatures: Add support for Assignable
+ Bandwidth Monitoring Counters (ABMC)
+To: Peter Newman <peternewman@google.com>
+Cc: corbet@lwn.net, tony.luck@intel.com, reinette.chatre@intel.com,
+ james.morse@arm.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, Dave.Martin@arm.com, x86@kernel.org,
+ hpa@zytor.com, akpm@linux-foundation.org, paulmck@kernel.org,
+ rostedt@goodmis.org, Neeraj.Upadhyay@amd.com, david@redhat.com,
+ arnd@arndb.de, fvdl@google.com, seanjc@google.com, jpoimboe@kernel.org,
+ pawan.kumar.gupta@linux.intel.com, xin@zytor.com, manali.shukla@amd.com,
+ tao1.su@linux.intel.com, sohil.mehta@intel.com, kai.huang@intel.com,
+ xiaoyao.li@intel.com, peterz@infradead.org, xin3.li@intel.com,
+ kan.liang@linux.intel.com, mario.limonciello@amd.com,
+ thomas.lendacky@amd.com, perry.yuan@amd.com, gautham.shenoy@amd.com,
+ chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com
+References: <cover.1752013061.git.babu.moger@amd.com>
+ <d55fea7bdb5df1e39de59b23289197ace08020b8.1752013061.git.babu.moger@amd.com>
+ <CALPaoCgt=fk8-pOunx7EiR3ESLV2EWCBxpo3My2q7Nz8uXfz-g@mail.gmail.com>
+Content-Language: en-US
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <CALPaoCgt=fk8-pOunx7EiR3ESLV2EWCBxpo3My2q7Nz8uXfz-g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA9PR03CA0023.namprd03.prod.outlook.com
+ (2603:10b6:806:20::28) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] add static PMD zero page support
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Pankaj Raghav <kernel@pankajraghav.com>, Zi Yan <ziy@nvidia.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- willy@infradead.org, linux-mm@kvack.org, x86@kernel.org,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
- <F8FE3338-F0E9-4C1B-96A3-393624A6E904@nvidia.com>
- <ad876991-5736-4d4c-9f19-6076832d0c69@pankajraghav.com>
- <be182451-0fdf-4fc8-9465-319684cd38f4@lucifer.local>
- <c3aa4e27-5b00-4511-8130-29c8b8a5b6d9@redhat.com>
- <dca5912a-cdf4-4f7e-a79a-796da8475826@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Organization: Red Hat
-In-Reply-To: <dca5912a-cdf4-4f7e-a79a-796da8475826@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|PH8PR12MB6793:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6bf93a3-e71a-44fe-7f79-08ddc3aa4183
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2owUEd0SEkwODYzY0Q5QlQrQkNuYlV5eGRzRVNvSi9ZQldFY0FvbHpLVTZT?=
+ =?utf-8?B?WG1UNlkybFBVMk4wUmdIVnN5b1p0TkhlN0xha2FQdWZjZ0ZGcit6Vk12MU8r?=
+ =?utf-8?B?Wmw1MklWTTNJbFc5M2RKcWhKS2dXVHM5Vlo4YXNQR1pwVXNGM2R2cjNWKzVs?=
+ =?utf-8?B?b29zUDIydlhBc1I1RHVqMS8vbC82aERTRTNDRW1iN0VaR1NLRDY1eGRZYzFR?=
+ =?utf-8?B?RDhYaCtsTi9HdjN4SGZ2TnBWWmg1aUM1MnlDWlFTSGNKbFRGcVc2T01TTlh6?=
+ =?utf-8?B?cmdMQmlmUTBBU1F0TGluWVBiUkdTSGE2b3hFeU1yYkxMMnk0MG1JOThjU1JK?=
+ =?utf-8?B?Z2ZlMVg3UDd0cDA1NEQwaXRsV1hKWW5PR0pYbVZ3VGxsUE9JNTk2N2JWdnli?=
+ =?utf-8?B?Wm5ST1JkWjQyeXBpRWpma0RtU1RzbW15Z3Zma2QzTzhuNWorVnFOdVc2N2lv?=
+ =?utf-8?B?cUxPbXl5N2VDcW5raHZBdkRRZ1BGbk5FdVhsUXlkaGtYSnc5cDlMOXNhcEpy?=
+ =?utf-8?B?SkU3dWNDWXdnSUhTanlESzJoZGJjalhGVHk5UHFRWGtaTUl3R3d6S2xiK2Iz?=
+ =?utf-8?B?TXN1RGtGNkFqZkQ0cW04eTBscGRlVEMvbkxOdXl1dkw5MnF5M1paeUdCcHpl?=
+ =?utf-8?B?Zk04a0RRZzRmL0grRU1wWFN6cjBOS01hazl4UkdENWhuZldua3BvTXh4a252?=
+ =?utf-8?B?VEduN2EwVjdaM1NzL2ZOYTREY01nZXVObkdNWFVyK1I2NUFXSmZxRVJVWm5Q?=
+ =?utf-8?B?eWtPSFNCSTljVUdYMGJSMUxKSlQvdS81UEpJaWJmcnZRbmNBeEhmUmtNY25D?=
+ =?utf-8?B?Q1lVaWhlNTErdDNMaFpxRG54L05mRUtqR3h6UW9odWZHb1hseEpMeFZBU2FE?=
+ =?utf-8?B?cThrZ0hmWjFZc3hTZnZNamtobEUzMXhSZ2tVSHlDUEthcDRFUTh3d0FUZTJx?=
+ =?utf-8?B?SkFxSE4vYzh3M2tydzlGWEFKQTBQMzhVWlVTMVo3YTJFcVROdEYrVFVhSWhl?=
+ =?utf-8?B?UjdpdHpGa01JOVZDdy9VbDBYMHNTN2NuUTFIVUw5K1piVzR3TG1rYVRMRlp6?=
+ =?utf-8?B?WDE2dk9HNFgwQUhxWFFSYlczREl1SGJESzNCWmxOaTBPanZOc1poOWw3RXFl?=
+ =?utf-8?B?YXdoLzhWV29xVURBdVhqa0pLUDR2d0c2K1N4RUhtLytWT0lQTm9rQTUwWWEv?=
+ =?utf-8?B?Z3E4REJrNzZhR283alZORG1rYThIV3B4Tnp4cC95WUl2M1ZNU0FxK0N0NDJk?=
+ =?utf-8?B?R1RiT2tDNXRmbFBqTTVVZjdtQllFZ0RIM254c1BhejZ4K0ROc1dlZWFzMXJu?=
+ =?utf-8?B?dmZrcE5ObGdTalc4eDJ1Y2JjS3BSSHkyRkVucUozampYdk45SmJhNmc3N1hl?=
+ =?utf-8?B?bmtSYkIyaFlGcWE4T2FXSk4rQjE5YStsdnFQUTNaSGl3SThTUGM4ck9uTWtj?=
+ =?utf-8?B?a240S0owMHM2cCt2REhGWU53YVpZOVdiUTFUcWI2Rzh6dzFYVUxCOUpKSG5t?=
+ =?utf-8?B?UUxOeGE5dlY2Zm9FdGZrNlZQT1ZoTVJCeTU5RkdTNDM5VW9DV1dieDdFdWFL?=
+ =?utf-8?B?WEt6VlZjaUxUTE84UmYwSkpsZUlGSUJqT0J0Yk42cGlZYTJIN241cyt4bjNG?=
+ =?utf-8?B?K0NLdElxTDZ2RkgwOGZnSlJGSDR0TnQ3MFl2ZDNuMFFybnU1dTlzRDYvS0dY?=
+ =?utf-8?B?b2ZwelFxUzlIVDVLR0JzMjlWaVkrZmV3UnE0NjQwYk5CbzlSQmlMd0ljWVk4?=
+ =?utf-8?B?QksyT0VrNDRpS3h2OU9nb3VhUGNBY09RckRiTFh2L0hYZE5GV0tZY3FxMTNs?=
+ =?utf-8?B?b0I0ZStMWTNKNk5LTUhYd0JscitRemdjZjFNY0Y3bWdmSzgvcE1mVGtSMTUw?=
+ =?utf-8?B?bDU1dHFZYzJZT0NZcXVOelFlSUdVYXVBOHk4aDErQVNkTk1TUWdMWEJiL1M5?=
+ =?utf-8?Q?hQwQehQRoHI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eWVOeElMUGlvbVJ1cXJXVGRPYVZyVWtmYk1Wa1dqd1pVaWdnRU5iMFg3TTlk?=
+ =?utf-8?B?R2sreStlQkNpYlYvQk5PMTBMSnZ4T3ovWCtKOGhhcmYwZ0Fqa284V2ZlQ20x?=
+ =?utf-8?B?K0VhMzdIU2ZYdUNyRWxIYnpFNUdSdnYxTlhhSFFwUEtxRlQ4TkpzWG5BZWRo?=
+ =?utf-8?B?ays0WXd4a3NqaXZVQ3NQVlBVZzFyTjI4ZDhPWFFCZGVyUW1ZUmNPWlhIQlg3?=
+ =?utf-8?B?SnkzV1JkTkFDUi9oeVJzWUhWdURjUXdsbUQ1cDY5cWJpVTVEYVc2MVl2NHkw?=
+ =?utf-8?B?dEpwWUVDOUYrTlJyM3RkRndUWCtJS2gwdzkrTGJBSWxRczJnZTRzOE04My8y?=
+ =?utf-8?B?bDdGQi9FV1c4bXd5N0UzU1ZNOVc4amViTDdzenE3OE8rL2lOUmlzRE5OZUM5?=
+ =?utf-8?B?d1pxTFdlbzZibThXbS9BLzh1K3RWa2wvM2dyRW1Qa3dudDRrTXpiK1g3bTF5?=
+ =?utf-8?B?bFVSb29pYTI5Z1IwVzNsRHBXU3JWU296ODBsKy9GV21BWkg5L1Y4UmJsczU4?=
+ =?utf-8?B?aTZXY1hmZ2dteitSdzlzd2UzUCtIZ1ZSWHNyV3VZR0xqV3FrcWhrWmJMVGYx?=
+ =?utf-8?B?Tk9adVV3RWJKMVFmbGJOa0JDU0dvbmtQaHZYSi8ybFlCZDE2SGNSaS80cE9O?=
+ =?utf-8?B?M1Z1V2dVbTBKeHpNQTVKRWlCREF4YVMyRTdZQ0dDME12d0NrSFN2QWNEY1F5?=
+ =?utf-8?B?MlJwNE1SMlBPNHBrb3JJN0hzOGY4Qnh4c0JYWG5nbGljeEYxWU9rdGhSSzZU?=
+ =?utf-8?B?RHNOdHFCQjRBVTY5Umkvc05tRFozS1NTRXlCU1NvWGxuMEN5eEVKUmZWQkRY?=
+ =?utf-8?B?eEEyZEtxRjdHbURnRXZpVW5nVSsxb1g4ZTU3a1NJL2R1M0F1RzkxMFRnZjNL?=
+ =?utf-8?B?WHNZZ203VmlVbSsvMU8wTEdzRVoxQmYxeHZKNnhhblB0eXlkWGFvQmRvRitu?=
+ =?utf-8?B?N0M3SlBRWElRVXZpVFdLYmptTFo1NmhXUEVsbjNPL1VQOTBleUMyMDAvTEpj?=
+ =?utf-8?B?Mi9rS1pzVnBLZmNkQ3BKNGRjdnpyKzdmcUtXNGRORG9xODNtbkNGSHhmZ29O?=
+ =?utf-8?B?dzFkYVBJR0dWTk1Ea3c4UzBENnczTWR2SjQrWjNhU25BU2dnVzUweHkyaTJN?=
+ =?utf-8?B?WnFOOC83VEtRQWtidHJlUm5uOGF3V0pkbFd2V3J6NmZ5TUdGZ0VIMVdzL3dO?=
+ =?utf-8?B?N3lIVHcvL2hmM2E2VGtrVThCT2Ryb292UTBDaTAvYUd6cVYwdHRrZG5Mei9j?=
+ =?utf-8?B?VGI5NEpyL3lXYkdrSWZrMVdCanVDYzdWeXNpWmRBSUZkQW5VdjBQYWp5b01Z?=
+ =?utf-8?B?c3dPRUJiM25yMGphN3ZCbEhieTlGT1RqUUhiN0dXbU96SnMxZDAxZEUrTEhZ?=
+ =?utf-8?B?OThiZDJDa1RMS1NaamRpM0RvZ0pjaGpFeklzbDBRemhReml6WFk0ekpoMVdK?=
+ =?utf-8?B?Z1VBZHJFdVRFMTBNNlp0M0dYQ1NQV0dieTVBSlBITHlJQ0RTK1VESTFVdUpV?=
+ =?utf-8?B?c0RFNnBwS1ZaQ05LWEJtcDdiMjRXYjQvUlcrV1c5WURGUGRnSFlXMU1XMVVH?=
+ =?utf-8?B?N2QvRUlBbTNlMUlBOVI4WUQwRkowaStldy9ISnZLNmtXQkZYS0xXbnY5RWk1?=
+ =?utf-8?B?bXA4ZWE1aHdha0pzcHFOUEowdjFRZDlhNjY1L3RTZDlyaERQeTJCSUZGbzh1?=
+ =?utf-8?B?TmxnS3FYblFpOUxyRlVLR0dPQVAyOElLbVZyeHJscUk2a1dlTTNNRGdHUnI4?=
+ =?utf-8?B?dWFZWTBzTVNzakdxZFo4cVdINGhOajB3YkJPSHVoODJzalV2VFhyQ3J4a1F2?=
+ =?utf-8?B?TTFEbjUyL3lxOUY5eGZ3OFFOYjFLd0tjdG1Vcyt2U1cxUlBId3NRbFVOZVor?=
+ =?utf-8?B?YVBtSmExZytqNElsZTdBRUNDcU14c1JhZllHU3NiUVpibUNoQk5FN0dNemgy?=
+ =?utf-8?B?RitaZG5aNzcxOWtVYThxRXVtQnd3QkxqZTJmTWRFRzBhR2lnSWliNERCd0tT?=
+ =?utf-8?B?WmdKYXlseWkzaFB0dklJdFhiVWR6ODJhSnB2QzlSL0xFQ3FnMVhJT0RPckZ3?=
+ =?utf-8?B?V1MzMnY1RXBRUmozOHFaYVVxaUFqTVhhdDRGOGt0NlE4M0QyaXcraENSVWRF?=
+ =?utf-8?Q?yNBY=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6bf93a3-e71a-44fe-7f79-08ddc3aa4183
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 14:16:56.9680
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lW2DK/VKC13BLLE8z7UmQPxG3nfRDVoEsHwT/BOMJCowFAYXqonAjjosdqv1YYZ0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6793
 
-On 15.07.25 16:12, Lorenzo Stoakes wrote:
-> On Tue, Jul 15, 2025 at 04:06:29PM +0200, David Hildenbrand wrote:
->> I think at some point we discussed "when does the PMD-sized zeropage make
->> *any* sense on these weird arch configs" (512MiB on arm64 64bit)
->>
->> No idea who wants to waste half a gig on that at runtime either.
-> 
-> Yeah this is a problem we _really_ need to solve. But obviously somewhat out of
-> scope here.
-> 
->>
->> But yeah, we should let the arch code opt in whether it wants it or not (in
->> particular, maybe only on arm64 with CONFIG_PAGE_SIZE_4K)
-> 
-> I don't think this should be an ARCH_HAS_xxx.
-> 
-> Because that's saying 'this architecture has X', this isn't architecture
-> scope.
-> 
-> I suppose PMDs may vary in terms of how huge they are regardless of page
-> table size actually.
-> 
-> So maybe the best solution is a semantic one - just rename this to
-> ARCH_WANT_STATIC_PMD_ZERO_PAGE
-> 
-> And then put the page size selector in the arch code.
-> 
-> For example in arm64 we have:
-> 
-> 	select ARCH_WANT_HUGE_PMD_SHARE if ARM64_4K_PAGES || (ARM64_16K_PAGES && !ARM64_VA_BITS_36)
-> 
-> So doing something similar here like:
-> 
-> 	select ARCH_WANT_STATIC_PMD_ZERO_PAGE if ARM64_4K_PAGES
-> 
-> Would do thie job and sort everything out.
+Hi Peter,
 
-Yes.
+On 7/15/25 06:47, Peter Newman wrote:
+> Hi Babu,
+> 
+> On Wed, Jul 9, 2025 at 12:18 AM Babu Moger <babu.moger@amd.com> wrote:
+>>
+>> Users can create as many monitor groups as RMIDs supported by the hardware.
+>> However, bandwidth monitoring feature on AMD system only guarantees that
+>> RMIDs currently assigned to a processor will be tracked by hardware. The
+>> counters of any other RMIDs which are no longer being tracked will be reset
+>> to zero. The MBM event counters return "Unavailable" for the RMIDs that are
+>> not tracked by hardware. So, there can be only limited number of groups
+>> that can give guaranteed monitoring numbers. With ever changing
+>> configurations there is no way to definitely know which of these groups are
+>> being tracked during a particular time. Users do not have the option to
+>> monitor a group or set of groups for a certain period of time without
+>> worrying about RMID being reset in between.
+>>
+>> The ABMC feature allows users to assign a hardware counter to an RMID,
+>> event pair and monitor bandwidth usage as long as it is assigned. The
+>> hardware continues to track the assigned counter until it is explicitly
+>> unassigned by the user. There is no need to worry about counters being
+>> reset during this period. Additionally, the user can specify the type of
+>> memory transactions (e.g., reads, writes) for the counter to track.
+>>
+>> Without ABMC enabled, monitoring will work in current mode without
+>> assignment option.
+>>
+>> The Linux resctrl subsystem provides an interface that allows monitoring of
+>> up to two memory bandwidth events per group, selected from a combination of
+>> available total and local events. When ABMC is enabled, two events will be
+>> assigned to each group by default, in line with the current interface
+>> design. Users will also have the option to configure which types of memory
+>> transactions are counted by these events.
+>>
+>> Due to the limited number of available counters (32), users may quickly
+>> exhaust the available counters. If the system runs out of assignable ABMC
+>> counters, the kernel will report an error. In such cases, users will need
+>> to unassign one or more active counters to free up counters for new
+>> assignments. resctrl will provide options to assign or unassign events
+>> through the group-specific interface file.
+>>
+>> The feature is detected via CPUID_Fn80000020_EBX_x00 bit 5.
+>> Bits Description
+>> 5    ABMC (Assignable Bandwidth Monitoring Counters)
+>>
+>> The feature details are documented in APM listed below [1].
+>> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+>> Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
+>> Monitoring (ABMC).
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+>> Note: Checkpatch checks/warnings are ignored to maintain coding style.
+>>
+>> v15: Minor changelog update.
+>>
+>> v14: Removed the dependancy on X86_FEATURE_CQM_MBM_TOTAL and X86_FEATURE_CQM_MBM_LOCAL.
+>>      as discussed in https://lore.kernel.org/lkml/5f8b21c6-5166-46a6-be14-0c7c9bfb7cde@intel.com/
+>>      Need to re-work on ABMC enumeration during the init.
+>>      Updated changelog with few text update.
+>>
+>> v13: Updated the commit log with Linux interface details.
+>>
+>> v12: Removed the dependancy on X86_FEATURE_BMEC.
+>>      Removed the Reviewed-by tag as patch has changed.
+>>
+>> v11: No changes.
+>>
+>> v10: No changes.
+>>
+>> v9: Took care of couple of minor merge conflicts. No other changes.
+>>
+>> v8: No changes.
+>>
+>> v7: Removed "" from feature flags. Not required anymore.
+>>     https://lore.kernel.org/lkml/20240817145058.GCZsC40neU4wkPXeVR@fat_crate.local/
+>>
+>> v6: Added Reinette's Reviewed-by. Moved the Checkpatch note below ---.
+>>
+>> v5: Minor rebase change and subject line update.
+>>
+>> v4: Changes because of rebase. Feature word 21 has few more additions now.
+>>     Changed the text to "tracked by hardware" instead of active.
+>>
+>> v3: Change because of rebase. Actual patch did not change.
+>>
+>> v2: Added dependency on X86_FEATURE_BMEC.
+>> ---
+>>  arch/x86/include/asm/cpufeatures.h | 1 +
+>>  arch/x86/kernel/cpu/scattered.c    | 1 +
+>>  2 files changed, 2 insertions(+)
+>>
+>> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+>> index b78af55aa22e..d2950a0177cd 100644
+>> --- a/arch/x86/include/asm/cpufeatures.h
+>> +++ b/arch/x86/include/asm/cpufeatures.h
+>> @@ -490,6 +490,7 @@
+>>  #define X86_FEATURE_PREFER_YMM         (21*32+ 8) /* Avoid ZMM registers due to downclocking */
+>>  #define X86_FEATURE_APX                        (21*32+ 9) /* Advanced Performance Extensions */
+>>  #define X86_FEATURE_INDIRECT_THUNK_ITS (21*32+10) /* Use thunk for indirect branches in lower half of cacheline */
+>> +#define X86_FEATURE_ABMC               (21*32+11) /* Assignable Bandwidth Monitoring Counters */
+> 
+> It looks like this bit has been taken by X86_FEATURE_TSA_SQ_NO. I had
+> to move X86_FEATURE_ABMC down to (21*32+14) on tip/master.
+> 
+
+Yea. Thats right. Will take care in next revision.
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Thanks
+Babu Moger
 
