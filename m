@@ -1,122 +1,110 @@
-Return-Path: <linux-kernel+bounces-732419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1A0B0667E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:07:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CC5B06681
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664D15649D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:07:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EB64E30A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19763239086;
-	Tue, 15 Jul 2025 19:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDA32BEC23;
+	Tue, 15 Jul 2025 19:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vWC/ojFp"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="Oo9qlTvS"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B6822127C;
-	Tue, 15 Jul 2025 19:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF1B1DE4E1
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606452; cv=none; b=FgwWprGbzjhfOiH6eoH5pXDGxxrTTAi+Wzr972m9/HsS56SxPEXrYliqBQ6Z9nkNUnnCEb7EmGROkudwtesw5sO2ieyapNyMZZ7yuqOcO41gkXYtf4eGRRwhUYevAXg1XvasYeftNo6LDYk8Y7Nlsa2lHpZNRnjsAzAm6bGfh+Y=
+	t=1752606503; cv=none; b=JBysWPr9xNM7yrrXZQZxA90R0Cl3NdFEdhoFNEQf/GXwnPFkAJyAjgO6LYya7fXLgK2PdEPSeMMS9hX48TpPvPypQmLb2Q13yAw4ca8bhZCDG6uCQiYo9Vtc/ItmI/2Qpg89dAf59ASO8quHL7RV76Tr1p98gUnr6lVlvzX5+sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606452; c=relaxed/simple;
-	bh=pGSsRkZlxFE4/rDI5BTTMbWX+r1CfkdOa/U2M96EyA0=;
+	s=arc-20240116; t=1752606503; c=relaxed/simple;
+	bh=S0YPzo3QhBZ1TwlQh7KNQVyoF6uKaPDvWGUq4ksWVeI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3KO0lfOux3rDjhCfect6HzrgNoQHIYJofkiW3k4ppmV+bh7mNQOtgUi0gh945QQOdU24A2+3+oEGKw6sKmmrvoGXfLnU4mXqDZuzTDxJhBVfTwDDjh7dcRDBTGAuxZjpBCZZZyExe2osisVoAt9Gvvet8bJ771xiTqttDtTFNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vWC/ojFp; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BT3B1DtxJah2Y+P2ydapGunbjX2yfyQbDYuMIQAZfck=; b=vWC/ojFpmd+xp5mEgWTFMQ8TMr
-	jk+JjiXjRkFD3XHRA1ShZhl3aZ+7PhpQm4LP8XBSDHGyo7qeUetQw1sbg7eI4DgZne7aXR2e68C7L
-	bJV0BptTyHhLRjNVXGtFc7uPx9RM1VCBsZJNXnLialsiJWNVYcBAhrUJprWzH4e1JRjV+UuvSc5/W
-	N55Jzjf1RVn2BDVDuzyEuDakucvHkggNawl6kcMfQy+qUz7LQbPV5X9y7kdjLzi5LoFbY/UObXNJW
-	DTg1aLnM1vfw4o/G9ZghOBkBIpgFs10JjprJA4iClXLSvjE/aD0dA/uDyh+S3iPdsCnkz1iUdXdDy
-	q6JqM6mw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubkzr-0000000DVTi-0ZXY;
-	Tue, 15 Jul 2025 19:07:23 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B58A83001AA; Tue, 15 Jul 2025 21:07:22 +0200 (CEST)
-Date: Tue, 15 Jul 2025 21:07:22 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-	Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v13 10/14] unwind: Clear unwind_mask on exit back to user
- space
-Message-ID: <20250715190722.GH4105545@noisy.programming.kicks-ass.net>
-References: <20250708012239.268642741@kernel.org>
- <20250708012359.345060579@kernel.org>
- <20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
- <20250715132016.409b1082@batman.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2NiVhu+BzGLrAeOmKf31QNYxRzNydD/O6QFHxODlftP+5ND/z5RDnjmO/8vjrKvH+CZyIDhAIdK6OQLywTL+sHUXRX4DBOfc6nKfisCmOAOabyBIcgOjGxGOR0xMNHqloYIzItHcJ60//ByNyCuisOIWghLzDI6L4EhzIbxfzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=Oo9qlTvS; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id E9F021C008E; Tue, 15 Jul 2025 21:08:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1752606490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vCSCakTdlzpnyAHZh5QqQag+VbXP/5TtzgWhN5nrmpY=;
+	b=Oo9qlTvSj7cqd1HkFcZw0/dEeomFD3dhb3HwWdH+xmCOlZb96OmwCsN3MGk0kSbtiiW/pZ
+	GLwlDlHyBgvHgCimzE+C6NNI3OSQDxxM4ZkBpxGVbqpBPRQ1pn23xKB6mDSC27q6Ku6Ktv
+	/igRRWGsr33JpyawxigsbleIbm9INN0=
+Date: Tue, 15 Jul 2025 21:08:10 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Shuah Khan <skhan@linuxfoundation.org>,
+	kernel list <linux-kernel@vger.kernel.org>
+Cc: "conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: Code of Conduct violation complaint
+Message-ID: <aHanGu9nOGOegUg2@duo.ucw.cz>
+References: <13a6b8e3-a35a-425d-bafc-006e0a52599f@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nHWlf4yLaxonzX1c"
+Content-Disposition: inline
+In-Reply-To: <13a6b8e3-a35a-425d-bafc-006e0a52599f@linuxfoundation.org>
+
+
+--nHWlf4yLaxonzX1c
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250715132016.409b1082@batman.local.home>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 01:20:16PM -0400, Steven Rostedt wrote:
-> On Tue, 15 Jul 2025 12:29:12 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > @@ -170,41 +193,62 @@ static void unwind_deferred_task_work(st
-> >  int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
-> >  {
-> >  	struct unwind_task_info *info = &current->unwind_info;
-> > -	int ret;
-> > +	unsigned long bits, mask;
-> > +	int bit, ret;
-> >  
-> >  	*cookie = 0;
-> >  
-> > -	if (WARN_ON_ONCE(in_nmi()))
-> > -		return -EINVAL;
-> > -
-> >  	if ((current->flags & (PF_KTHREAD | PF_EXITING)) ||
-> >  	    !user_mode(task_pt_regs(current)))
-> >  		return -EINVAL;
-> >  
-> > +	/* NMI requires having safe cmpxchg operations */
-> > +	if (WARN_ON_ONCE(!UNWIND_NMI_SAFE && in_nmi()))
-> > +		return -EINVAL;
-> 
-> I don't think we want to have a WARN_ON() here as the perf series tries
-> to first do the deferred unwinding and if that fails, it will go back
-> to it's old method.
+Hi!
 
-The thing is, I don't think we have an architecture that supports NMIs
-and does not have NMI safe cmpxchg. And if we do have one such -- I
-don't think it has perf; perf very much assumes cmpxchg is NMI safe.
+I publicly apologize.
+								Pavel
 
-Calling this from NMI context and not having an NMI safe cmpxchg is very
-much a dodgy use case. Please leave the WARN, if it ever triggers, we'll
-look at who manages and deal with it then.
+On Tue 2025-07-15 09:28:19, Shuah Khan wrote:
+> Hi Pavel,
+>=20
+> The Code of Conduct Committee has received a complaint about your
+> interactions on the mailing list which are in violation of the
+> Linux kernel code of conduct.
+>=20
+> We urge you to apologize publicly to make amends within the next
+> week.
+>=20
+> Refer to these documents in the kernel repo for information on
+> the Code of Conduct and actions taken when violations such as
+> these happen.
+>=20
+> https://docs.kernel.org/process/code-of-conduct.html
+> https://docs.kernel.org/process/code-of-conduct-interpretation.html#code-=
+of-conduct-interpretation
+>=20
+> thanks,
+> -- Shuah (On behalf of the Code of Conduct Committee)
+
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
+
+--nHWlf4yLaxonzX1c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaHanGgAKCRAw5/Bqldv6
+8stIAJ4nRxDSp6k26ELEE0PzH87Uqj3mTACfeel/Ow2aRCt1P+wQG7L/YDTFXVE=
+=y64v
+-----END PGP SIGNATURE-----
+
+--nHWlf4yLaxonzX1c--
 
