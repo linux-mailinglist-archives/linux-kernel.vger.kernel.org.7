@@ -1,454 +1,120 @@
-Return-Path: <linux-kernel+bounces-732594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870F7B0693F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C43B06949
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9C517AE8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:27:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B331AA8140
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DC62C15AB;
-	Tue, 15 Jul 2025 22:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751C62C1788;
+	Tue, 15 Jul 2025 22:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ndktiuph"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19A52C15A2;
-	Tue, 15 Jul 2025 22:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MjntJWWi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A29D27991C;
+	Tue, 15 Jul 2025 22:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752618424; cv=none; b=ICHfxNA0DRGz00gzRvL4j5hjSF+B/2oVSBm6sfBb5FlbHOor3+HeksP3J+ZlyPOd4ECbsbt4Q+jW4DnvRufkLlMqbr1p95HyLiLjdn2qDVMfnOIo3SQIN9BWRz4+ZFFpXx7T4h9BC9ef8Ohy0eU1F92WUkW0JIR5ErMh9v/Z6R4=
+	t=1752618535; cv=none; b=XBe0ZaWuCBBh6OvqI8RTeDpjgLBm2DL0GgVTU9L++2THzqz+im3glcJkGBZs+JjgnzPbbHtwyHN1vIfErC8Nwl8XezmGBxV6DVddztsJ4Igk59nqxDgdT7LDLJMwcNlOwfVYSV8Y6EdS5ERyafkyKxungT5ijzgDvFh3Ep5MN8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752618424; c=relaxed/simple;
-	bh=JU/FvqQtox0m+7JiJ35JiynqoZsQL4UV2bqXgK6amg4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=T/VkF9wQEhsfZT/2i9zt0sqGZQTCWqgUE3y9By5elq3XVAqUuhGXqQ180KawaqBBaFN1BHJXJJAbnrADlW0X5A95VyNqb+6aE2PnQXwdl5vEJ/wBlFRXZ8p9eTwi+guzfnPGQxp4fnoxFEpA4P02/d2sFQkeTxjp4OhMMsSPXqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ndktiuph; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from narnia.corp.microsoft.com (unknown [40.78.12.133])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3CEA9201B1DA;
-	Tue, 15 Jul 2025 15:27:01 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3CEA9201B1DA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1752618422;
-	bh=Lk2AJ48Hkhszm8pgdJgbSf69mJKzIm0FMgmZJrtUogU=;
-	h=From:To:Subject:Date:From;
-	b=ndktiuphTFG93A2w3HeWCRb7gXdBhu60heHbiQlKngNrMA5fWHVc+tWUK76rvHwEw
-	 LhvZLDb6GlT5tZBVt6ic3udKV41BUKwP9R2o5P9AP7cLjVH82jho9HsBhLdSd2zie2
-	 dDmtcavRSjvQz360bbY+sKqmhE6G1TyrxSpNsGHs=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
-	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
-Date: Tue, 15 Jul 2025 15:25:58 -0700
-Message-ID: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1752618535; c=relaxed/simple;
+	bh=G7+Ffs9WIWMcBynLHK1Sql++GiExP0QoYD+fUsrCxEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aV61cocqtE0PFe/Ix6UYhpHoZMWCyKsFssi8Mn9GbrqjC5qWJM0Y+A4LXGBhiOnXkTh4J+c40mtND7odsYIqlHYamqNVA74VmDtZ+3ycdI6E1XWjxKGM+nlrZPXddvKueV+4AMkl8KPkV4VAL9cEp2oG7iX3UIaYEvZR2a+D3P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MjntJWWi; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752618534; x=1784154534;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=G7+Ffs9WIWMcBynLHK1Sql++GiExP0QoYD+fUsrCxEU=;
+  b=MjntJWWiFH68fbDelxxuKuqNH7ZrjP3Dn5jdJ5HUK3L5HvdzsGuVaGaH
+   6ghvybO0YMDh/yGFLtIrmuLYFMZVSXqZ3wUNByn8ngwwzg1RvdEzF8bo4
+   MmUqZAhdcrZrVe2Z7EZfQZ6uzos+qc1mRo2kEUjvFPc2SWCf02QSq1L2K
+   Hhm6L9CZNL1QCmLOzdsZKzOJbnwHTpZvwQOJxRAMxCHptblvL5Tddtidh
+   shDGQbUT8V8IPP6ZV96Bwt8H+Qamh4q/haJS/uwhCofIlIwVr/kVpgW1K
+   jDXQ8Q1dC5CQ+nVmfK07ovMV40ui6RQ8AOqQfdlxQ+xYMh5+hq64GfHuo
+   Q==;
+X-CSE-ConnectionGUID: a+AX4N2HTJW/QKd71Nl12w==
+X-CSE-MsgGUID: 3ZsPuTlSTNuJAnMYBmFxQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54562886"
+X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
+   d="scan'208";a="54562886"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 15:28:54 -0700
+X-CSE-ConnectionGUID: 43scBKa2Q+GlwkjRdyCeQg==
+X-CSE-MsgGUID: nj7Vi7qCQFKk7YaTE34tRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
+   d="scan'208";a="181023525"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 15 Jul 2025 15:28:49 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubo8k-000Bbf-0v;
+	Tue, 15 Jul 2025 22:28:46 +0000
+Date: Wed, 16 Jul 2025 06:28:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jacky Chou <jacky_chou@aspeedtech.com>, bhelgaas@google.com,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	joel@jms.id.au, andrew@codeconstruct.com.au,
+	linux-aspeed@lists.ozlabs.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, openbmc@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+	p.zabel@pengutronix.de, BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v2 09/10] PCI: aspeed: Add ASPEED PCIe RC driver
+Message-ID: <202507160642.yzIrPY1i-lkp@intel.com>
+References: <20250715034320.2553837-10-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715034320.2553837-10-jacky_chou@aspeedtech.com>
 
-This patch introduces LSM blob support for BPF maps, programs, and
-tokens to enable LSM stacking and multiplexing of LSM modules that
-govern BPF objects. Additionally, the existing BPF hooks used by
-SELinux have been updated to utilize the new blob infrastructure,
-removing the assumption of exclusive ownership of the security
-pointer.
+Hi Jacky,
 
-Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
----
- include/linux/lsm_hooks.h         |   3 +
- security/security.c               | 120 +++++++++++++++++++++++++++++-
- security/selinux/hooks.c          |  56 +++-----------
- security/selinux/include/objsec.h |  17 +++++
- 4 files changed, 147 insertions(+), 49 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 090d1d3e19fed..79ec5a2bdcca7 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -116,6 +116,9 @@ struct lsm_blob_sizes {
- 	int lbs_xattr_count; /* number of xattr slots in new_xattrs array */
- 	int lbs_tun_dev;
- 	int lbs_bdev;
-+	int lbs_bpf_map;
-+	int lbs_bpf_prog;
-+	int lbs_bpf_token;
- };
- 
- /*
-diff --git a/security/security.c b/security/security.c
-index 596d418185773..8c413b84f33db 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -283,6 +283,9 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
- 	lsm_set_blob_size(&needed->lbs_xattr_count,
- 			  &blob_sizes.lbs_xattr_count);
- 	lsm_set_blob_size(&needed->lbs_bdev, &blob_sizes.lbs_bdev);
-+	lsm_set_blob_size(&needed->lbs_bpf_map, &blob_sizes.lbs_bpf_map);
-+	lsm_set_blob_size(&needed->lbs_bpf_prog, &blob_sizes.lbs_bpf_prog);
-+	lsm_set_blob_size(&needed->lbs_bpf_token, &blob_sizes.lbs_bpf_token);
- }
- 
- /* Prepare LSM for initialization. */
-@@ -480,6 +483,9 @@ static void __init ordered_lsm_init(void)
- 	init_debug("tun device blob size = %d\n", blob_sizes.lbs_tun_dev);
- 	init_debug("xattr slots          = %d\n", blob_sizes.lbs_xattr_count);
- 	init_debug("bdev blob size       = %d\n", blob_sizes.lbs_bdev);
-+	init_debug("bpf map blob size    = %d\n", blob_sizes.lbs_bpf_map);
-+	init_debug("bpf prog blob size   = %d\n", blob_sizes.lbs_bpf_prog);
-+	init_debug("bpf token blob size  = %d\n", blob_sizes.lbs_bpf_token);
- 
- 	/*
- 	 * Create any kmem_caches needed for blobs
-@@ -835,6 +841,72 @@ static int lsm_bdev_alloc(struct block_device *bdev)
- 	return 0;
- }
- 
-+/**
-+ * lsm_bpf_map_alloc - allocate a composite bpf_map blob
-+ * @map: the bpf_map that needs a blob
-+ *
-+ * Allocate the bpf_map blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+static int lsm_bpf_map_alloc(struct bpf_map *map)
-+{
-+	if (blob_sizes.lbs_bpf_map == 0) {
-+		map->security = NULL;
-+		return 0;
-+	}
-+
-+	map->security = kzalloc(blob_sizes.lbs_bpf_map, GFP_KERNEL);
-+	if (!map->security)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+/**
-+ * lsm_bpf_prog_alloc - allocate a composite bpf_prog blob
-+ * @prog: the bpf_prog that needs a blob
-+ *
-+ * Allocate the bpf_prog blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+static int lsm_bpf_prog_alloc(struct bpf_prog *prog)
-+{
-+	if (blob_sizes.lbs_bpf_prog == 0) {
-+		prog->aux->security = NULL;
-+		return 0;
-+	}
-+
-+	prog->aux->security = kzalloc(blob_sizes.lbs_bpf_prog, GFP_KERNEL);
-+	if (!prog->aux->security)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+/**
-+ * lsm_bpf_token_alloc - allocate a composite bpf_token blob
-+ * @token: the bpf_token that needs a blob
-+ *
-+ * Allocate the bpf_token blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+static int lsm_bpf_token_alloc(struct bpf_token *token)
-+{
-+	if (blob_sizes.lbs_bpf_token == 0) {
-+		token->security = NULL;
-+		return 0;
-+	}
-+
-+	token->security = kzalloc(blob_sizes.lbs_bpf_token, GFP_KERNEL);
-+	if (!token->security)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
- /**
-  * lsm_early_task - during initialization allocate a composite task blob
-  * @task: the task that needs a blob
-@@ -5684,7 +5756,16 @@ int security_bpf_prog(struct bpf_prog *prog)
- int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
- 			    struct bpf_token *token, bool kernel)
- {
--	return call_int_hook(bpf_map_create, map, attr, token, kernel);
-+	int rc = 0;
-+
-+	rc = lsm_bpf_map_alloc(map);
-+	if (unlikely(rc))
-+		return rc;
-+
-+	rc = call_int_hook(bpf_map_create, map, attr, token, kernel);
-+	if (unlikely(rc))
-+		security_bpf_map_free(map);
-+	return rc;
- }
- 
- /**
-@@ -5703,7 +5784,16 @@ int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
- int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
- 			   struct bpf_token *token, bool kernel)
- {
--	return call_int_hook(bpf_prog_load, prog, attr, token, kernel);
-+	int rc = 0;
-+
-+	rc = lsm_bpf_prog_alloc(prog);
-+	if (unlikely(rc))
-+		return rc;
-+
-+	rc = call_int_hook(bpf_prog_load, prog, attr, token, kernel);
-+	if (unlikely(rc))
-+		security_bpf_prog_free(prog);
-+	return rc;
- }
- 
- /**
-@@ -5720,7 +5810,16 @@ int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
- int security_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
- 			      const struct path *path)
- {
--	return call_int_hook(bpf_token_create, token, attr, path);
-+	int rc = 0;
-+
-+	rc = lsm_bpf_token_alloc(token);
-+	if (unlikely(rc))
-+		return rc;
-+
-+	rc = call_int_hook(bpf_token_create, token, attr, path);
-+	if (unlikely(rc))
-+		security_bpf_token_free(token);
-+	return rc;
- }
- 
- /**
-@@ -5763,7 +5862,12 @@ int security_bpf_token_capable(const struct bpf_token *token, int cap)
-  */
- void security_bpf_map_free(struct bpf_map *map)
- {
-+	if (!map->security)
-+		return;
-+
- 	call_void_hook(bpf_map_free, map);
-+	kfree(map->security);
-+	map->security = NULL;
- }
- 
- /**
-@@ -5774,7 +5878,12 @@ void security_bpf_map_free(struct bpf_map *map)
-  */
- void security_bpf_prog_free(struct bpf_prog *prog)
- {
-+	if (!prog->aux->security)
-+		return;
-+
- 	call_void_hook(bpf_prog_free, prog);
-+	kfree(prog->aux->security);
-+	prog->aux->security = NULL;
- }
- 
- /**
-@@ -5785,7 +5894,12 @@ void security_bpf_prog_free(struct bpf_prog *prog)
-  */
- void security_bpf_token_free(struct bpf_token *token)
- {
-+	if (!token->security)
-+		return;
-+
- 	call_void_hook(bpf_token_free, token);
-+	kfree(token->security);
-+	token->security = NULL;
- }
- #endif /* CONFIG_BPF_SYSCALL */
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 595ceb314aeb3..8052fb5fafc4d 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7038,14 +7038,14 @@ static int bpf_fd_pass(const struct file *file, u32 sid)
- 
- 	if (file->f_op == &bpf_map_fops) {
- 		map = file->private_data;
--		bpfsec = map->security;
-+		bpfsec = selinux_bpf_map_security(map);
- 		ret = avc_has_perm(sid, bpfsec->sid, SECCLASS_BPF,
- 				   bpf_map_fmode_to_av(file->f_mode), NULL);
- 		if (ret)
- 			return ret;
- 	} else if (file->f_op == &bpf_prog_fops) {
- 		prog = file->private_data;
--		bpfsec = prog->aux->security;
-+		bpfsec = selinux_bpf_prog_security(prog);
- 		ret = avc_has_perm(sid, bpfsec->sid, SECCLASS_BPF,
- 				   BPF__PROG_RUN, NULL);
- 		if (ret)
-@@ -7059,7 +7059,7 @@ static int selinux_bpf_map(struct bpf_map *map, fmode_t fmode)
- 	u32 sid = current_sid();
- 	struct bpf_security_struct *bpfsec;
- 
--	bpfsec = map->security;
-+	bpfsec = selinux_bpf_map_security(map);
- 	return avc_has_perm(sid, bpfsec->sid, SECCLASS_BPF,
- 			    bpf_map_fmode_to_av(fmode), NULL);
- }
-@@ -7069,7 +7069,7 @@ static int selinux_bpf_prog(struct bpf_prog *prog)
- 	u32 sid = current_sid();
- 	struct bpf_security_struct *bpfsec;
- 
--	bpfsec = prog->aux->security;
-+	bpfsec = selinux_bpf_prog_security(prog);
- 	return avc_has_perm(sid, bpfsec->sid, SECCLASS_BPF,
- 			    BPF__PROG_RUN, NULL);
- }
-@@ -7079,69 +7079,33 @@ static int selinux_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
- {
- 	struct bpf_security_struct *bpfsec;
- 
--	bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
--	if (!bpfsec)
--		return -ENOMEM;
--
-+	bpfsec = selinux_bpf_map_security(map);
- 	bpfsec->sid = current_sid();
--	map->security = bpfsec;
- 
- 	return 0;
- }
- 
--static void selinux_bpf_map_free(struct bpf_map *map)
--{
--	struct bpf_security_struct *bpfsec = map->security;
--
--	map->security = NULL;
--	kfree(bpfsec);
--}
--
- static int selinux_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
- 				 struct bpf_token *token, bool kernel)
- {
- 	struct bpf_security_struct *bpfsec;
- 
--	bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
--	if (!bpfsec)
--		return -ENOMEM;
--
-+	bpfsec = selinux_bpf_prog_security(prog);
- 	bpfsec->sid = current_sid();
--	prog->aux->security = bpfsec;
- 
- 	return 0;
- }
- 
--static void selinux_bpf_prog_free(struct bpf_prog *prog)
--{
--	struct bpf_security_struct *bpfsec = prog->aux->security;
--
--	prog->aux->security = NULL;
--	kfree(bpfsec);
--}
--
- static int selinux_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
- 				    const struct path *path)
- {
- 	struct bpf_security_struct *bpfsec;
- 
--	bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
--	if (!bpfsec)
--		return -ENOMEM;
--
-+	bpfsec = selinux_bpf_token_security(token);
- 	bpfsec->sid = current_sid();
--	token->security = bpfsec;
- 
- 	return 0;
- }
--
--static void selinux_bpf_token_free(struct bpf_token *token)
--{
--	struct bpf_security_struct *bpfsec = token->security;
--
--	token->security = NULL;
--	kfree(bpfsec);
--}
- #endif
- 
- struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
-@@ -7159,6 +7123,9 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
- 	.lbs_xattr_count = SELINUX_INODE_INIT_XATTRS,
- 	.lbs_tun_dev = sizeof(struct tun_security_struct),
- 	.lbs_ib = sizeof(struct ib_security_struct),
-+	.lbs_bpf_map = sizeof(struct bpf_security_struct),
-+	.lbs_bpf_prog = sizeof(struct bpf_security_struct),
-+	.lbs_bpf_token = sizeof(struct bpf_security_struct),
- };
- 
- #ifdef CONFIG_PERF_EVENTS
-@@ -7510,9 +7477,6 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bpf, selinux_bpf),
- 	LSM_HOOK_INIT(bpf_map, selinux_bpf_map),
- 	LSM_HOOK_INIT(bpf_prog, selinux_bpf_prog),
--	LSM_HOOK_INIT(bpf_map_free, selinux_bpf_map_free),
--	LSM_HOOK_INIT(bpf_prog_free, selinux_bpf_prog_free),
--	LSM_HOOK_INIT(bpf_token_free, selinux_bpf_token_free),
- #endif
- 
- #ifdef CONFIG_PERF_EVENTS
-diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index 6ee7dc4dfd6e0..9f935ed9a761f 100644
---- a/security/selinux/include/objsec.h
-+++ b/security/selinux/include/objsec.h
-@@ -26,6 +26,7 @@
- #include <linux/lsm_hooks.h>
- #include <linux/msg.h>
- #include <net/net_namespace.h>
-+#include <linux/bpf.h>
- #include "flask.h"
- #include "avc.h"
- 
-@@ -237,4 +238,20 @@ selinux_perf_event(void *perf_event)
- 	return perf_event + selinux_blob_sizes.lbs_perf_event;
- }
- 
-+#ifdef CONFIG_BPF_SYSCALL
-+static inline struct bpf_security_struct *selinux_bpf_map_security(struct bpf_map *map)
-+{
-+	return map->security + selinux_blob_sizes.lbs_bpf_map;
-+}
-+
-+static inline struct bpf_security_struct *selinux_bpf_prog_security(struct bpf_prog *prog)
-+{
-+	return prog->aux->security + selinux_blob_sizes.lbs_bpf_prog;
-+}
-+
-+static inline struct bpf_security_struct *selinux_bpf_token_security(struct bpf_token *token)
-+{
-+	return token->security + selinux_blob_sizes.lbs_bpf_token;
-+}
-+#endif /* CONFIG_BPF_SYSCALL */
- #endif /* _SELINUX_OBJSEC_H_ */
+[auto build test WARNING on pci/next]
+[also build test WARNING on pci/for-linus robh/for-next linusw-pinctrl/devel linusw-pinctrl/for-next linus/master v6.16-rc6 next-20250715]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jacky-Chou/dt-bindings-soc-aspeed-Add-ASPEED-PCIe-Config-support/20250715-114814
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20250715034320.2553837-10-jacky_chou%40aspeedtech.com
+patch subject: [PATCH v2 09/10] PCI: aspeed: Add ASPEED PCIe RC driver
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250716/202507160642.yzIrPY1i-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 16534d19bf50bde879a83f0ae62875e2c5120e64)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507160642.yzIrPY1i-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507160642.yzIrPY1i-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> Warning: drivers/pci/controller/pcie-aspeed.c:179 struct member 'pciephy' not described in 'aspeed_pcie_port'
+   Warning: drivers/pci/controller/pcie-aspeed.c:179 Excess struct member 'phy' description in 'aspeed_pcie_port'
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
