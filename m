@@ -1,587 +1,238 @@
-Return-Path: <linux-kernel+bounces-731802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1258CB059BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:16:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03251B059B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D041A68506
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:16:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ECC91A6851E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A18E2DEA84;
-	Tue, 15 Jul 2025 12:16:03 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7402DA748;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846482D979F;
 	Tue, 15 Jul 2025 12:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="h9qVqk3l"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006571CD1F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752581762; cv=none; b=RnFHL+CW8bOKXYHOJbgO+SAyMzJ8a8sWMjWWJhWSh6cSOWqE1+c8WLzq9aPvMiOh2pe14udEgIQnTRenpEpdY64F6LziLu70WdTTVDVQcnIXblpbphjZPc2Du9gPamoOVxLma6GuuPLWN4OCTLuGYatHKQjRDSDjVPocI3OIeHQ=
+	t=1752581757; cv=none; b=m3MIjJi2Bq3HceFhM4e+RhB4O45rymo8pxjl7J4UeRxyHHGGUJjA0zlZAdQhz2NHlhhdb7qwKlBvQhirsVFco1ZPwyePgK1WRKLljt+dO5M5gbGwGX9Vb2iZDIAywEOhho/nrS7rtEPA+yfaS1zQj73KhDXuZKhpyvxUMKNzsnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752581762; c=relaxed/simple;
-	bh=1eDYAM/fmtIicjXN9K9JNEaYbas9ssiFu+14hefd7t8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UAM988O/Ub9rIT1Joyzl6PBRvxX++PN143O+yjPaNVaePsujYidncW0HfDgXP390+vWh/Us1zzIRunuHKbV9rbn7jelTCpSrJutw9+zAXAZ75FSGO5gQJXiMq4wpE+wCjfa7ATNdhLCxgdDRfmdLCJgcdf+RRUuMvKdEL/58yHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app2 (Coremail) with SMTP id TQJkCgAHp5V1RnZoyluwAA--.54860S2;
-	Tue, 15 Jul 2025 20:15:51 +0800 (CST)
-From: dongxuyang@eswincomputing.com
-To: p.zabel@pengutronix.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Xuyang Dong <dongxuyang@eswincomputing.com>
-Subject: [PATCH v4 2/2] reset: eswin: Add eic7700 reset driver
-Date: Tue, 15 Jul 2025 20:15:47 +0800
-Message-Id: <20250715121547.1579-1-dongxuyang@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20250715121427.1466-1-dongxuyang@eswincomputing.com>
-References: <20250715121427.1466-1-dongxuyang@eswincomputing.com>
+	s=arc-20240116; t=1752581757; c=relaxed/simple;
+	bh=RPMIJ06lYpZki9x4OGNT38hsLl9ZRqJRngOVBfL0TkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EJvEB7S08RqIipm0dTLwVrEDARuXsBMjTLdvAa0Aub2hiG33OGrAG+O+3LrYpzOK9BHM43c1Ap/d/wrru9cJTPQi5RcWsFU52pIXabIydcRk34f0Pxia0Jr4X7QTapQRFc+Rpn9ug0lQmX8JO7DSGqK8s8wB390Y6NkVWgMudb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=h9qVqk3l; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FCCa6k005751
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:15:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gkoL4vyOl+pm49lYyaV0Bkhtxl6H70tCk4Yr8IITAC0=; b=h9qVqk3lN/9/R4G/
+	xDSWD+gcL/0teQzBvkGmlmpNLb1kGet1GQ9gmDdVTyDUxVTIZwf5GcpX+nqBp71k
+	XdXNUHXjdUlNv/8NJ2D87SkibXiAs6D3NY5q8m4qAViswwF+AhxL9Z03eFQqUj9h
+	CU/pWDB6AyodpnOoOZBakz3QdEQ9kVlaGHEM5tyOz10cMtzczMkEiPiiT+5CJIy/
+	avwCwSvDPn2ScB51myfnMWqs25hmkRfjJlfwIXQnmP2drsyYCHqeF+u7at2RUI+P
+	6AN1ZAhRLcS3f2mThwQ9pEcOnk9WumLIuW5TZKdaJN1SKZ9jtsn0AucOGIZZyNUg
+	hiSw1w==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w58yk03k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:15:54 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e33e133f42so7691985a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 05:15:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752581754; x=1753186554;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gkoL4vyOl+pm49lYyaV0Bkhtxl6H70tCk4Yr8IITAC0=;
+        b=auIdVgYk+gwTH1GlScgTaF6QGblFz38Ql/ktDa0u4X2IZkCn4jVT2YZGia6wFqC/aP
+         C7gGy5WqqEj/z46aVnj4FQ+X2B/G5h+3odH6raoh1v/83ERwwUbfh0ZgQNZMTEJlYISc
+         p6752hh/vMf9cB+6KGx2H3RqXUCQJcPj+CeCZG7PybGqMx4wYZoSwdOC5neWN0OaVGhR
+         v12HUs0oTWoXi9Rhb2LbXEEPiDmWNYnwpSfPRtL88c2yUW0Q6vnXuGRkMjM9laXQ++dl
+         nUt6sNFrUuhW4QqgYUhzo7ekOrHYK7NvCV0U1oAIt1W8eQ31964CgsNNJ3HO8L3kxaII
+         wu8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Z88KQ4SpLtpyCOlp41IhVBgzc8VwJjz0Watgd2UlqVIa7hKL9XrUsUA7awTi213Xbp432bfVZT08w1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVlUmmDaJGxMy7D8aN2H7pthfV1BORiWmh0Ts6ew23ByLtHJhR
+	ycDYQYdF8wOgHxhqu2DJ29JqfTqqKH55/6c2pTUp9Qwuq/E6r9lawFnNDS7JmuM3Q2+hNrMxt08
+	eW1ysg4gPYIS/HCkS2D4sbaCyp6mQncfqp+v4l6XpfV0egJuJu88lLWVpvbyTqxAGJro=
+X-Gm-Gg: ASbGncvtO2i35eqwZwBr8jOR87m0nUJpNQ4A5Z+aNj6RUqDxxsQEQu6/MZBxUkVNUUo
+	FKdzVS83K7VUpB4vkg84jdE3A1TYen/2p4fhN9G7bj+eN7mQKVxzku1FUmePhYovB4kkoybu5UH
+	xaSd/gR/4yAe+PBe+qolPiN2Xi2H6OPFQUw+AYsygsqi5gINNAckRXc7kSA0zsHKVCwJqfctrH6
+	iztDZqNGQbWyDAhE99ZGdLJJjyrsPp7zY+4x2mmzb0MwqTBQOwjnb9j6hDf55596zA9YNzwuFMG
+	ev3HHUNZOCjg1NUHNozR54XZIsnY0UodMKxE5EBiRE7gvBwSGdp7CYJbecuF14/9bKjhJt7XrTg
+	Z1uV4ev4u9N3HVHodcPqa
+X-Received: by 2002:a05:620a:63c8:b0:7e3:3029:44c with SMTP id af79cd13be357-7e33c738190mr61809585a.7.1752581753385;
+        Tue, 15 Jul 2025 05:15:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNC0tHGCHaMZe1NNLu7kUu5qixnVltKqW5yasSjlLUM9Lwlg4TzACxjlKTv9RGFtYvhko0XQ==
+X-Received: by 2002:a05:620a:63c8:b0:7e3:3029:44c with SMTP id af79cd13be357-7e33c738190mr61807285a.7.1752581752766;
+        Tue, 15 Jul 2025 05:15:52 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e91cc0sm976035566b.26.2025.07.15.05.15.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 05:15:52 -0700 (PDT)
+Message-ID: <bffc8478-4de9-4a9b-9248-96a936f20096@oss.qualcomm.com>
+Date: Tue, 15 Jul 2025 14:15:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgAHp5V1RnZoyluwAA--.54860S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfArWkKrW3Jr4DKrW8AF1rXrb_yoW5Jr1xKo
-	WruF1xJr48KryUZrWakr1xG3Z8Ww4Syr1UurWFqwnrAwsrJF1qyrZ7Ar1jgrW3ArWUAryU
-	ZrykGr97uFW5GFWrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
-	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
-	x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
-	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42
-	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
-	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI4
-	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
-	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
-	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOEfODUUUU
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Prakash Gupta <quic_guptap@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+ <f5ebf0d6-2f0b-45cc-b99a-b786e5df9edc@linaro.org>
+ <5qsgbqml367yq6g5vb4lotrzulojqhi5zlwwribze373a63qrn@rxi4kwyt66m2>
+ <4f38058d-a2f1-4ac5-b234-228cfb2e85ff@kernel.org>
+ <1ad2ca1e-1d57-4ad8-a057-ab0d804f1d49@oss.qualcomm.com>
+ <7da769b4-88e9-401f-bb21-0ff123818b9c@kernel.org>
+ <6840d462-8269-4359-a6e5-d154842b62db@oss.qualcomm.com>
+ <af0da28c-3ca0-41dc-aaa4-572723ea74bf@linaro.org>
+ <klhvgzizub33f46buqsog54wqksqp24a5tijwyv355l2ao2imo@wdkojfebc6s2>
+ <e1a6e75a-2a5d-44a2-8bbc-140eb86d1806@linaro.org>
+ <2hh3zkdwgqbdurpr4tibr3gjat6arwl3dd3gxakdaagafwjdrm@aj5em4tbsjen>
+ <6c6f6bc9-7c34-4961-8b5e-e6d02c4b2f6d@linaro.org>
+ <25c64712-960a-50b4-e7fa-398e4bf809ef@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <25c64712-960a-50b4-e7fa-398e4bf809ef@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDExMSBTYWx0ZWRfX4NimhTCJ4SK8
+ RWUByhqysVjoL7E+TYHURQK96wevdwdUsi3oScBd2M4L5j2K9ps0ECm8RbCwkG/NZVJp1eAUEVB
+ KvraO4yFItcVuXHTdf3mlRXSo0xz9E0hgB6LbDXaB8uxvMds1HIGRbHOnYdczOAnZ25tJiNr6WV
+ Ul+wRoBgup91glwcmNN6YlK2LLfHxguz0Sb/2Gb2NbPw2kL2CAfYJdAt+AomxRAzK0iMmQpMwa/
+ RDLdDDOslJW3ihO2J8uhWnUrTqiM9OK3SRJwwROdwBkegFv5FmALMz8OhJncNSGwXNd07CS63sh
+ hzRaSbYExlrbc9Gl0tgOUyKzjCw8m5WKAKRd/o/BLxrVaKummJ0/JQ01LB393m1N9sCC1P8uNR8
+ 3CylID8IvTS1T9jJPtfxfJDZhncde10RHY7kXOCGIWgwFqIUVcrqwOqaAuPhy1BvqXfOv2Or
+X-Proofpoint-GUID: zxOi-4dFaS_jgNn5oCu5rGCsSicu7Wvu
+X-Proofpoint-ORIG-GUID: zxOi-4dFaS_jgNn5oCu5rGCsSicu7Wvu
+X-Authority-Analysis: v=2.4 cv=Or9Pyz/t c=1 sm=1 tr=0 ts=6876467a cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=j_YMfRGaDDqHtg2ur-kA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-15_03,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507150111
 
-From: Xuyang Dong <dongxuyang@eswincomputing.com>
+On 7/10/25 8:18 PM, Prakash Gupta wrote:
+> 
+> 
+> On 7/5/2025 4:14 AM, Bryan O'Donoghue wrote:
+>> On 04/07/2025 17:45, Dmitry Baryshkov wrote:
+>>> What about instead:
+>>>
+>>> - keep IOMMU entries as is
+>> ack
+>>
+>>> - Add iommu-maps, mapping the non-pixel SID
+>>> - In future expand iommu-maps, describing the secure contexts?
+>>
+>> Interesting, we are _adding_ so that's not an ABI break and if I'm
+>> reading the documentation right, there's no hard rule on what iommu-map
+>> defines i.e. nothing to preclude us from encoding the information we
+>> want here.
+>>
+>> This might work.
+>>
+>> drivers/pci/controller/dwc/pcie-qcom.c::qcom_pcie_config_sid_1_9_0()
+>>
+>> You can register your platform device to the SID map you parse.
+> 
+> I see few limitations with using iommu-map here, some of these are
+> listed in [1]
+> 
+> 1. We can't specify SMR mask with iommu-map.
+> 2. We can't specify different iommu-addresses range for specific contexts.
+> 3. The secure CB support [2] would require vmid information associated
+> with per context. I think this can't be provided with iommu-map.
 
-Add support for reset controller in eic7700 series chips.
-Provide functionality for asserting and deasserting resets
-on the chip.
+FWIW iommu-map should probably be evolved to support passing more
+than one cell of iommu_spec in general.. For us specifically, it's
+only a matter of time before some platform's PCIe controller
+requires* we pass a non-zero SMR mask (unless we should be doing
+that already somewhere..)
 
-Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
----
- drivers/reset/Kconfig         |  10 +
- drivers/reset/Makefile        |   1 +
- drivers/reset/reset-eic7700.c | 454 ++++++++++++++++++++++++++++++++++
- 3 files changed, 465 insertions(+)
- create mode 100644 drivers/reset/reset-eic7700.c
+(* we can obviously do the masking manually and put the effective
+values in dt, but "eeh")
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index d85be5899da6..82f829f4c9f0 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -66,6 +66,16 @@ config RESET_BRCMSTB_RESCAL
- 	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
- 	  BCM7216.
+Perhaps that can even be done without messing up backwards
+compatiblity (treat it as pseudocode, def incomplete):
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 7043acd971a0..bca54035f90e 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -2068,9 +2068,12 @@ int of_map_id(const struct device_node *np, u32 id,
+               const char *map_name, const char *map_mask_name,
+               struct device_node **target, u32 *id_out)
+ {
++       const char *cells_prop_name __free(kfree);
+        u32 map_mask, masked_id;
++       u32 cell_count;
+        int map_len;
+        const __be32 *map = NULL;
++       int ret;
  
-+config RESET_EIC7700
-+	bool "Reset controller driver for ESWIN SoCs"
-+	depends on ARCH_ESWIN || COMPILE_TEST
-+	default ARCH_ESWIN
-+	help
-+	  This enables the reset controller driver for ESWIN SoCs. This driver is
-+	  specific to ESWIN SoCs and should only be enabled if using such hardware.
-+	  The driver supports eic7700 series chips and provides functionality for
-+	  asserting and deasserting resets on the chip.
+        if (!np || !map_name || (!target && !id_out))
+                return -EINVAL;
+@@ -2084,7 +2087,15 @@ int of_map_id(const struct device_node *np, u32 id,
+                return 0;
+        }
+ 
+-       if (!map_len || map_len % (4 * sizeof(*map))) {
++       cells_prop_name = kasprintf(GFP_KERNEL, "#%s-cells", map_name);
++       if (!cells_prop_name)
++               return -EINVAL;
 +
- config RESET_EYEQ
- 	bool "Mobileye EyeQ reset controller"
- 	depends on MACH_EYEQ5 || MACH_EYEQ6H || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 91e6348e3351..ceafbad0555c 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -12,6 +12,7 @@ obj-$(CONFIG_RESET_BCM6345) += reset-bcm6345.o
- obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
- obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
- obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
-+obj-$(CONFIG_RESET_EIC7700) += reset-eic7700.o
- obj-$(CONFIG_RESET_EYEQ) += reset-eyeq.o
- obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
- obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
-diff --git a/drivers/reset/reset-eic7700.c b/drivers/reset/reset-eic7700.c
-new file mode 100644
-index 000000000000..1acc531343b0
---- /dev/null
-+++ b/drivers/reset/reset-eic7700.c
-@@ -0,0 +1,454 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * ESWIN Reset Driver
-+ *
-+ * Authors:
-+ *	Yifeng Huang <huangyifeng@eswincomputing.com>
-+ *	Xuyang Dong <dongxuyang@eswincomputing.com>
-+ */
++       ret = of_property_read_u32(np, cells_prop_name, &cell_count);
++       if (ret)
++               return ret;
 +
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+
-+#include <dt-bindings/reset/eswin,eic7700-reset.h>
-+
-+#define SYSCRG_CLEAR_BOOT_INFO_OFFSET 0x30C
-+#define CLEAR_BOOT_FLAG_BIT BIT(0)
-+#define SYSCRG_RESET_OFFSET 0x400
-+
-+/**
-+ * struct eswin_reset_data - reset controller information structure
-+ * @rcdev: reset controller entity
-+ * @regmap: regmap handle containing the memory-mapped reset registers
-+ */
-+struct eswin_reset_data {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *regmap;
-+};
-+
-+static const struct regmap_config eswin_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.max_register = 0x8000000,
-+};
-+
-+struct eic7700_reg {
-+	u32 reg;
-+	u32 bit;
-+};
-+
-+#define to_eswin_reset_data(p) container_of((p), struct eswin_reset_data, rcdev)
-+
-+#define EIC7700_RESET_OFFSET(id, reg, bit)[id] = \
-+		{ SYSCRG_RESET_OFFSET + (reg) * sizeof(u32), BIT(bit) }
-+
-+/* mapping table for reset ID to register offset */
-+static const struct eic7700_reg eic7700_register_offset[] = {
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_NOC_NSP, 0, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_NOC_CFG, 0, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_RNOC_NSP, 0, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_TCU, 0, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_U84, 0, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_PCIE_XSR, 0, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_PCIE_XMR, 0, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_PCIE_PR, 0, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_NPU, 0, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_JTAG, 0, 9),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_DSP, 0, 10),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_DDRC1_P2, 0, 11),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_DDRC1_P1, 0, 12),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_DDRC0_P2, 0, 13),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_DDRC0_P1, 0, 14),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_D2D, 0, 15),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SNOC_AON, 0, 16),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_GPU_AXI, 1, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_GPU_CFG, 1, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_GPU_GRAY, 1, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_GPU_JONES, 1, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_GPU_SPU, 1, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DSP_AXI, 2, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DSP_CFG, 2, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DSP_DIV4, 2, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DSP_DIV0, 2, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DSP_DIV1, 2, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DSP_DIV2, 2, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DSP_DIV3, 2, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_D2D_AXI, 3, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_D2D_CFG, 3, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_D2D_PRST, 3, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_D2D_RAW_PCS, 3, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_D2D_RX, 3, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_D2D_TX, 3, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_D2D_CORE, 3, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DDR1_ARST, 4, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DDR1_TRACE, 4, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DDR0_ARST, 4, 16),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DDR_CFG, 4, 21),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DDR0_TRACE, 4, 22),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DDR_CORE, 4, 23),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DDR_PRST, 4, 26),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_AXI, 5, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_CFG, 5, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU0, 5, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU1, 5, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU2, 5, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU3, 5, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU4, 5, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU5, 5, 9),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU6, 5, 10),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU7, 5, 11),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU8, 5, 12),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU9, 5, 13),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU10, 5, 14),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU11, 5, 15),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU12, 5, 16),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU13, 5, 17),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU14, 5, 18),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU15, 5, 19),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TCU_TBU16, 5, 20),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_NPU_AXI, 6, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_NPU_CFG, 6, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_NPU_CORE, 6, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_NPU_E31CORE, 6, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_NPU_E31BUS, 6, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_NPU_E31DBG, 6, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_NPU_LLC, 6, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_AXI, 7, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_CFG, 7, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_POR, 7, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MSHC0_PHY, 7, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MSHC1_PHY, 7, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MSHC2_PHY, 7, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MSHC0_TXRX, 7, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MSHC1_TXRX, 7, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MSHC2_TXRX, 7, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SATA_ASIC0, 7, 9),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SATA_OOB, 7, 10),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SATA_PMALIVE, 7, 11),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SATA_RBC, 7, 12),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DMA0, 7, 13),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_DMA, 7, 14),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_USB0_VAUX, 7, 15),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_USB1_VAUX, 7, 16),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_SD1_PRST, 7, 17),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_SD0_PRST, 7, 18),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_EMMC_PRST, 7, 19),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_DMA_PRST, 7, 20),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_SD1_ARST, 7, 21),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_SD0_ARST, 7, 22),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_EMMC_ARST, 7, 23),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_DMA_ARST, 7, 24),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_ETH1_ARST, 7, 25),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HSP_ETH0_ARST, 7, 26),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SATA_ARST, 7, 27),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_PCIE_CFG, 8, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_PCIE_POWEUP, 8, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_PCIE_PERST, 8, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C0, 9, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C1, 9, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C2, 9, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C3, 9, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C4, 9, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C5, 9, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C6, 9, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C7, 9, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C8, 9, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_I2C9, 9, 9),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_FAN, 10, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_PVT0, 11, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_PVT1, 11, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX0, 12, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX1, 12, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX2, 12, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX3, 12, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX4, 12, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX5, 12, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX6, 12, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX7, 12, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX8, 12, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX9, 12, 9),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX10, 12, 10),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX11, 12, 11),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX12, 12, 12),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX13, 12, 13),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX14, 12, 14),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MBOX15, 12, 15),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_UART0, 13, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_UART1, 13, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_UART2, 13, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_UART3, 13, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_UART4, 13, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_GPIO0, 14, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_GPIO1, 14, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER, 15, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SSI0, 16, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SSI1, 16, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_WDT0, 17, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_WDT1, 17, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_WDT2, 17, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_WDT3, 17, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_LSP_CFG, 18, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_CORE0, 19, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_CORE1, 19, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_CORE2, 19, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_CORE3, 19, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_BUS, 19, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_DBG, 19, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_TRACECOM, 19, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_TRACE0, 19, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_TRACE1, 19, 9),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_TRACE2, 19, 10),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_U84_TRACE3, 19, 11),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SCPU_CORE, 20, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SCPU_BUS, 20, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SCPU_DBG, 20, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_LPCPU_CORE, 21, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_LPCPU_BUS, 21, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_LPCPU_DBG, 21, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VC_CFG, 22, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VC_AXI, 22, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VC_MONCFG, 22, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_JD_CFG, 23, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_JD_AXI, 23, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_JE_CFG, 24, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_JE_AXI, 24, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VD_CFG, 25, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VD_AXI, 25, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VE_AXI, 26, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VE_CFG, 26, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_G2D_CORE, 27, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_G2D_CFG, 27, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_G2D_AXI, 27, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VI_AXI, 28, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VI_CFG, 28, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VI_DWE, 28, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DVP, 29, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_ISP0, 30, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_ISP1, 31, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SHUTTR0, 32, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SHUTTR1, 32, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SHUTTR2, 32, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SHUTTR3, 32, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SHUTTR4, 32, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SHUTTR5, 32, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_MIPI, 33, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_PRST, 33, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_HDMI_PRST, 33, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_HDMI_PHY, 33, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_HDMI, 33, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_I2S, 34, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_I2S_PRST, 34, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_AXI, 35, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_CFG, 35, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_DC, 35, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_VO_DC_PRST, 35, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_BOOTSPI_HRST, 36, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_BOOTSPI, 36, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_ANO1, 37, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_ANO0, 38, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DMA1_ARST, 39, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_DMA1_HRST, 39, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_FPRT, 40, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_HBLOCK, 41, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SECSR, 42, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_OTP, 43, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_PKA, 44, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_SPACC, 45, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TRNG, 46, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER0_0, 48, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER0_1, 48, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER0_2, 48, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER0_3, 48, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER0_4, 48, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER0_5, 48, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER0_6, 48, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER0_7, 48, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER0_N, 48, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER1_0, 49, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER1_1, 49, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER1_2, 49, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER1_3, 49, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER1_4, 49, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER1_5, 49, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER1_6, 49, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER1_7, 49, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER1_N, 49, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER2_0, 50, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER2_1, 50, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER2_2, 50, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER2_3, 50, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER2_4, 50, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER2_5, 50, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER2_6, 50, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER2_7, 50, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER2_N, 50, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER3_0, 51, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER3_1, 51, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER3_2, 51, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER3_3, 51, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER3_4, 51, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER3_5, 51, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER3_6, 51, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER3_7, 51, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_TIMER3_N, 51, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_RTC, 52, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MNOC_SNOC_NSP, 53, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MNOC_VC, 53, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MNOC_CFG, 53, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MNOC_HSP, 53, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MNOC_GPU, 53, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MNOC_DDRC1_P3, 53, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MNOC_DDRC0_P3, 53, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_RNOC_VO, 54, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_RNOC_VI, 54, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_RNOC_SNOC_NSP, 54, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_RNOC_CFG, 54, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MNOC_DDRC1_P4, 54, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_MNOC_DDRC0_P4, 54, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_VO_CFG, 55, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_VI_CFG, 55, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_VC_CFG, 55, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_TCU_CFG, 55, 3),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_PCIE_CFG, 55, 4),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_NPU_CFG, 55, 5),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_LSP_CFG, 55, 6),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_HSP_CFG, 55, 7),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_GPU_CFG, 55, 8),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_DSPT_CFG, 55, 9),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_DDRT1_CFG, 55, 10),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_DDRT0_CFG, 55, 11),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_D2D_CFG, 55, 12),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_CFG, 55, 13),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_CLMM_CFG, 55, 14),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_CNOC_AON_CFG, 55, 15),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_LNOC_CFG, 56, 0),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_LNOC_NPU_LLC, 56, 1),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_LNOC_DDRC1_P0, 56, 2),
-+	EIC7700_RESET_OFFSET(EIC7700_RESET_LNOC_DDRC0_P0, 56, 3),
-+};
-+
-+/**
-+ * eswin_reset_set() - program a device's reset
-+ * @rcdev: reset controller entity
-+ * @id: ID of the reset to toggle
-+ * @assert: boolean flag to indicate assert or deassert
-+ *
-+ * This is a common internal function used to assert or deassert a device's
-+ * reset by clear and set the reset bit. The device's reset is asserted if the
-+ * @assert argument is true, or deasserted if @assert argument is false.
-+ *
-+ * Return: 0 for successful request, else a corresponding error value
-+ */
-+static int eswin_reset_set(struct reset_controller_dev *rcdev, unsigned long id,
-+			   bool assert)
-+{
-+	struct eswin_reset_data *data = to_eswin_reset_data(rcdev);
-+	int ret;
-+
-+	if (assert)
-+		ret = regmap_clear_bits(data->regmap,
-+					eic7700_register_offset[id].reg,
-+					eic7700_register_offset[id].bit);
-+	else
-+		ret = regmap_set_bits(data->regmap,
-+				      eic7700_register_offset[id].reg,
-+				      eic7700_register_offset[id].bit);
-+
-+	return ret;
-+}
-+
-+static int eswin_reset_assert(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
-+{
-+	return eswin_reset_set(rcdev, id, true);
-+}
-+
-+static int eswin_reset_deassert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return eswin_reset_set(rcdev, id, false);
-+}
-+
-+static int eswin_reset_reset(struct reset_controller_dev *rcdev,
-+			     unsigned long id)
-+{
-+	int ret;
-+
-+	ret = eswin_reset_assert(rcdev, id);
-+	if (ret)
-+		return ret;
-+
-+	return eswin_reset_deassert(rcdev, id);
-+}
-+
-+static const struct reset_control_ops eswin_reset_ops = {
-+	.reset = eswin_reset_reset,
-+	.assert = eswin_reset_assert,
-+	.deassert = eswin_reset_deassert,
-+};
-+
-+static const struct of_device_id eswin_reset_dt_ids[] = {
-+	{
-+		.compatible = "eswin,eic7700-reset",
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static int eswin_reset_probe(struct platform_device *pdev)
-+{
-+	struct eswin_reset_data *data;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	data->regmap = devm_regmap_init_mmio(dev, base, &eswin_regmap_config);
-+	if (IS_ERR(data->regmap))
-+		return dev_err_probe(dev, PTR_ERR(data->regmap),
-+				     "failed to get regmap!\n");
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.ops = &eswin_reset_ops;
-+	data->rcdev.of_node = pdev->dev.of_node;
-+	data->rcdev.of_reset_n_cells = 1;
-+	data->rcdev.dev = &pdev->dev;
-+	data->rcdev.nr_resets = EIC7700_RESET_MAX;
-+
-+	/* clear boot flag so u84 and scpu could be reseted by software */
-+	regmap_set_bits(data->regmap, SYSCRG_CLEAR_BOOT_INFO_OFFSET,
-+			CLEAR_BOOT_FLAG_BIT);
-+	msleep(50);
-+
-+	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-+}
-+
-+static struct platform_driver eswin_reset_driver = {
-+	.probe	= eswin_reset_probe,
-+	.driver = {
-+		.name		= "eswin-reset",
-+		.of_match_table	= eswin_reset_dt_ids,
-+	},
-+};
-+
-+static int __init eswin_reset_init(void)
-+{
-+	return platform_driver_register(&eswin_reset_driver);
-+}
-+arch_initcall(eswin_reset_init);
--- 
-2.17.1
++       if (!map_len || map_len % ((2 + cell_count + 1) * sizeof(*map))) {
+                pr_err("%pOF: Error: Bad %s length: %d\n", np,
+                        map_name, map_len);
+                return -EINVAL;
+@@ -2106,7 +2117,7 @@ int of_map_id(const struct device_node *np, u32 id,
+                u32 id_base = be32_to_cpup(map + 0);
+                u32 phandle = be32_to_cpup(map + 1);
+                u32 out_base = be32_to_cpup(map + 2);
+-               u32 id_len = be32_to_cpup(map + 3);
++               u32 id_len = be32_to_cpup(map + cell_count - 1);
+ 
+                if (id_base & ~map_mask) {
+                        pr_err("%pOF: Invalid %s translation - %s-mask (0x%x) ignores id-base (0x%x)\n",
 
+Konrad
 
