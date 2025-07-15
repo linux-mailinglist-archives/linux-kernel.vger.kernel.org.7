@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-731049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BD7B04DEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:43:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FFFBB04DF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E70B1AA444C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FED84E1C99
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68BF2D0C74;
-	Tue, 15 Jul 2025 02:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97942D0C9C;
+	Tue, 15 Jul 2025 02:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoVXyNUT"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+C62sUp"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B582D0281;
-	Tue, 15 Jul 2025 02:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0132D0C71;
+	Tue, 15 Jul 2025 02:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752547387; cv=none; b=af2fXJdgKBm/Jy8JarCxp7HarI8CHEtPHbKcq0e8wtAoc91rZKgcez4x/MzVKSQK0og5y782SpZsdyXPmgZOCGwzieBfBk3BwhIfIjmAG1xQZ/fFcsPcEIR6P6QWwURUci+07zPai4uMT8JDocY3Ax1y9CdHmLUxgacWkoqNfHM=
+	t=1752547389; cv=none; b=SAAuY9Ai3YfmGO5EOT9CTzIwpjcN3HC9a8Imc/aoSYOTUJ6VlgevhdGuMKcdBeGXo/x5buGZUu4xeCjd2cB6pbxGHa7kZatNrd8AJ6m1KUlLGkcBYf3C7EIJNZHF+MQokGOZFiD+8NaCzRnbq/Kf97aeiav2r5/f85ebP65vkMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752547387; c=relaxed/simple;
-	bh=XmJuGyH1LI7BBoH5lerHk65fvOaWlXKJ8JbP014sKE0=;
+	s=arc-20240116; t=1752547389; c=relaxed/simple;
+	bh=Dlq14mSTojEp7sGWGKSgiOf4GsdBPAtviYKPpJeMxj0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NqbMp7DMvfhq4j5XiA64M5ldqB3zXQEKLzDVus9XHqab21ZuHaSE/fhJsAz/6aOZ9k91lvQ3ZTVurg3ZHsfW3PP38w9U3NVeMytJidalDn+vM0IVQxwxPg27EPyuBEMg+HtcVZVVe1OT6hPad23g2tnlf9q4Y6T1k92YTPzkV98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoVXyNUT; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=n3Aoj5Qec5qb122IbHXYZi9j4orVWrbuyFGY1mSMKMRpiKQdKYHYy3Mf86SYF0V528CH2ahA5/kQoFe2oFUaE8fcOGN5LSd1q5dnikz80dRWeubHgJI8ia5qU5nNt790tm6I5E/MIJzcEKkoel9EpIR6K+RQ9jZ5FGvFsruhav8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+C62sUp; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-74af4af04fdso4664575b3a.1;
-        Mon, 14 Jul 2025 19:43:05 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-748e81d37a7so2970557b3a.1;
+        Mon, 14 Jul 2025 19:43:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752547385; x=1753152185; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752547387; x=1753152187; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Pn1PQpln2K/kCXiZHlLDgu39MrNnlOn8L9ATG6U02Xk=;
-        b=NoVXyNUTHcynz+iHtcs7uMIvmHYm1XOL6i3I2METI/m5h0mD+5jwXCtZsbY8+bjkHi
-         LOnW4tZSgdwbxYuDwwcwGhDZJJnEy5H54OHtrprhabI1nOefqetePY5FWBojMOAghe2C
-         y8s5uaMLUW9pvF3GBKDEKkSmwFshJ+sMqdk40nVyegpIYUU/6BClcvTZdwKpUr8b1jdA
-         llrvMZNAEl37dlC6bXDmelIBDowxxXycsbqZ1wPqfX+L04fhOzBmAgfeNawfwLzavLT7
-         OUtONcwEg3rxDLmZYpFzkBio/gNUmTgcZizYR0jD3+nIIWHIUg3BmF8bfWpIkVA1VY7F
-         0b/g==
+        bh=9LmUsYZMwX73hG4aBla/dKzeFfJIEzjX0m8Zhz42YAI=;
+        b=b+C62sUpBu4j77iExFm/b2pypOeu2djB4vSg01VQzJgEz1TiHLdzhmkpU48YwQ33mN
+         mi7a49fX7pK9lgwnO70q77yR7OXLtHBvS59GwxtrEm2ra7B0Erb/yEtPxE+cRumMvjB1
+         DAdoP9GCBse9qSiN9dJXPw+MZbGbuddg03Ad3oa4POdODMg3cYKunbDlS9uRKIzmAEmk
+         9qxGhsT+vQLPy7U7u65FplVRKVPAabeFHlefGfVDWoaKWgFrHjySpWUOfgHwVIBAcSOq
+         fXFotFqMHH7MKt0sKnuP6t1tdTxh0Giuf/9hh+wa1ubJ6ymdqqJDzdeW6Vx3PIbi39Ha
+         NsNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752547385; x=1753152185;
+        d=1e100.net; s=20230601; t=1752547387; x=1753152187;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Pn1PQpln2K/kCXiZHlLDgu39MrNnlOn8L9ATG6U02Xk=;
-        b=n0f4x6aRWeCG8hMu8NdNirhr8+eHvvBwJ6NkAz0RhrDaIG/+YJM8rxJJRere6CGYVF
-         2EVwWBNRlkKjBf6nT60fNBGU2U9XBW5X3HmuJuY+MMAWaUjxtuO8op4pBX+qUIbCrDkP
-         Hz1mIkwy2oqH9aJdtXxYNGschu2KpBvwSd4N/6RvaMVGAZ55TCzgB51JdzwqrYq3+H7B
-         9LxIKnFTxvWaWHBfmVfQkhJ1FnAADYTGo/QW1cyRabw3LZUcPvhO8SC3t/ZE9mb5K0d6
-         5RZbNTTUEFL9ULdpVdCjoV253Z/HIw4b+Y6tpNadfXFha7iZfLZ2V2f1RUT8dyGeFYqi
-         FrxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUaJ5W56niGGQZaXK4fylNVOQYK61T9N4XX5RXS0QUd+WlvrMED2QVrs7dR3qrjiMbYyC1XqjyVHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLuIBg9juyTBTtlUGrqD9dkmso1Mnj/j9uXgnVp1P/m0rPHekz
-	tkbew36ie2bxpJAiBYABgeV/F2OPYlA4g6/bsqkyZDxfRMLEm4XTEfuC
-X-Gm-Gg: ASbGncuhHNmdFpiJVOrhXbROj0m3vWr57wYZ6IR0frkcw95OJtip2HW9FxT7a8Dch4A
-	mwjTxziGa1C+bGkVOSAFBj7EJZEV8chSOt5L2Uchu9wHG6SbSNuBL8ifOJpip7lU4Qdl0ipM1Gc
-	oKHdEMZW5oA7ZFc5YnMURqqlRMyXGUkY5qrrovHTJ59yf9y27zL+4fv03bir+oYxlJ7KB/FKqat
-	kkdMQZbMDt6ZviJNfm0VZSQDC1P2hejOyLakkiyduUdukI8ym6DeDDdOej8f4+cdIiYuTX+pZ+r
-	ZyCB8YjJ6PJJa+xUlXNJGuiKF0KHLkXd+98l+Mt4finct7Y22j1iQpiHoW0bxsoYsoSIhK0fIl3
-	M9fMKisJU0+CxEVMT/4nhfQ==
-X-Google-Smtp-Source: AGHT+IEcRZ/12CBzXP0nquG289LN4ZdcHl+3zTaU29EO+cWuo96N39XhiCFtD7mAmMMHFA6oerl4CQ==
-X-Received: by 2002:a05:6a21:4d05:b0:235:2395:9b79 with SMTP id adf61e73a8af0-23671d0cadfmr3878102637.20.1752547385060;
-        Mon, 14 Jul 2025 19:43:05 -0700 (PDT)
+        bh=9LmUsYZMwX73hG4aBla/dKzeFfJIEzjX0m8Zhz42YAI=;
+        b=GgiGGtX/OX94XXXdpCmWC3KqrJKJZ/C50/UaKm1K2PzivuHST6VcW8SOUy09lK/EUg
+         IEg7aFoLmsih78stZKwwFSOvyHWr//cRQWpujmqXTGPqdettwqRW4gsMndrOIClsv4Wm
+         Gbx9IgwewmivToQ3uv4wThUgC49DFpxmL3y19/4trpoHvl3CK1sN6PPxcfmNla/YMTvL
+         o3PWr8TqZm24kdSDUBOTwg5m1yqTFW1MZstsjGv1BG4mN86zTvjFHHctU7ntyDfMuAg4
+         qZcKqTPExlbcHaamneZeJJb4bjba7Z0q4A7jc0KOLST2MZsa6ATPabOVQzf+Pl8BMd/Y
+         nxlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWY4kqvm7Ip4WBo8JCGt3aI/yk4NPZlqmFwFESklz+w9mwGQlLlvcDsE8RTImg64gWoNhjknA8zO7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrQxkA7wlxabR3U2uyX3B1qpx95vDcBGESoLqyfmJPT8CrOuH3
+	7Kq/se6zaT86nRUgmAW3U5ooHyqYejfVqUQPeSqHvAFM7uGdiPmFBhf0
+X-Gm-Gg: ASbGncsi10Km/TNJRs+oBnr4oSuM91Gvltwn1X83NC2WO7oF1eG/QYORaDGQXEHWsHx
+	CEvUrOpOog0zdx39pBtT6eJ9NtbBOkrKxf8//EqDB7/3zLara9GKRdOpQIsBmzj6i7u0UY80peu
+	3Xq8FUgdD4CsgPHejweySQqhOlOXswyS7fzzk2Xur3Ipel9MaZBlwTGUBYuCqFtdNr4rZWvDo5D
+	Srkv2370G0hlyVD9oygtmYeT/Kw/rKjQQLx72hlLv4XVCbCY6aF9kzJ6jS+9yMiRGD3hBY4OdTS
+	quQpJ0tdeNDt912JC0WSUCbxbh5vA31kWGdMvcGuta6b63b3sGXcaW7qxutmgllJlNewBKrQkZf
+	2rvA2N9fFENlUIWxl+lBf7g==
+X-Google-Smtp-Source: AGHT+IEu396ibdfM882DRnu7LQtFSM2Dq9TgDy2BHLHlLpBuZH7Sx8xwpifxVAuNS5A7eXezw0imcw==
+X-Received: by 2002:a05:6a00:1911:b0:748:fb2c:6b95 with SMTP id d2e1a72fcca58-74ee32397afmr20781060b3a.18.1752547386735;
+        Mon, 14 Jul 2025 19:43:06 -0700 (PDT)
 Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe52c914sm11010094a12.7.2025.07.14.19.43.03
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe72f8a9sm10740873a12.74.2025.07.14.19.43.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 19:43:04 -0700 (PDT)
+        Mon, 14 Jul 2025 19:43:05 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id 9AABD420A815; Tue, 15 Jul 2025 09:43:01 +0700 (WIB)
+	id BDDEF420A816; Tue, 15 Jul 2025 09:43:01 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>
@@ -85,9 +85,9 @@ Cc: Jonathan Corbet <corbet@lwn.net>,
 	Andrew Donnellan <ajd@linux.ibm.com>,
 	Michael Ellerman <mpe@ellerman.id.au>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 1/2] Documentation: ioctl-number: Shorten macros table
-Date: Tue, 15 Jul 2025 09:42:57 +0700
-Message-ID: <20250715024258.16882-2-bagasdotme@gmail.com>
+Subject: [PATCH 2/2] Documentation: ioctl-number: Don't repeat macro names
+Date: Tue, 15 Jul 2025 09:42:58 +0700
+Message-ID: <20250715024258.16882-3-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250715024258.16882-1-bagasdotme@gmail.com>
 References: <20250715024258.16882-1-bagasdotme@gmail.com>
@@ -97,45 +97,65 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1652; i=bagasdotme@gmail.com; h=from:subject; bh=XmJuGyH1LI7BBoH5lerHk65fvOaWlXKJ8JbP014sKE0=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBml+xvZH1zkqVnLfKs4ce1i00c6joqXUuZk3ss0jtS1b Pl9U3d9RykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACZSuobhn5Gkdx3j3vPW6rxf 7+67NH+hndfbC3aMUgrrtNoLfpZaVjD8Dzy57dyWF9dSfR+kfDmR9+e/Maujncw/FR69n5pCd1q msgAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2845; i=bagasdotme@gmail.com; h=from:subject; bh=Dlq14mSTojEp7sGWGKSgiOf4GsdBPAtviYKPpJeMxj0=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBml+5telZv8/xo7sfLdmfRu3w1nrp7uWF7Lf/XgxM55U a96Jt7R7yhlYRDjYpAVU2SZlMjXdHqXkciF9rWOMHNYmUCGMHBxCsBElnkzMvyYzZtxctP7vNlt k7Y+rdr1nt3iVP2KU4GH/lw9Xp8x8+1Uhv8ucsvSxV0ar13JTZbb+djDtZU74PPWLPX8+8f/5LL d1OACAA==
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-The macros table has three columns: the second one is "an" and the
-third one writes "an ioctl with ... parameters". Simplify the table
-by adding heading row that indicates macro name and accepted
-parameters.
+Don't repeat mentioning macro names (_IO, _IOW, _IOR, and _IOWR) to
+keep the wording effective.
 
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/userspace-api/ioctl/ioctl-number.rst | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ .../userspace-api/ioctl/ioctl-number.rst      | 22 ++++++++++---------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
 diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index bc91756bde733b..ad5e7001f59137 100644
+index ad5e7001f59137..16994ce3a6c576 100644
 --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
 +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -10,12 +10,14 @@ Michael Elizabeth Chastain
- If you are adding new ioctl's to the kernel, you should use the _IO
- macros defined in <linux/ioctl.h>:
+@@ -25,9 +25,9 @@ be _IOW, although the kernel would actually read data from user space;
+ a GET_FOO ioctl would be _IOR, although the kernel would actually write
+ data to user space.
  
--    ====== == ============================================
--    _IO    an ioctl with no parameters
--    _IOW   an ioctl with write parameters (copy_from_user)
--    _IOR   an ioctl with read parameters  (copy_to_user)
--    _IOWR  an ioctl with both write and read parameters.
--    ====== == ============================================
-+    ====== ===========================
-+    macro  parameters
-+    ====== ===========================
-+    _IO    none
-+    _IOW   write (read from userspace)
-+    _IOR   read (write to userpace)
-+    _IOWR  write and read
-+    ====== ===========================
+-The first argument to _IO, _IOW, _IOR, or _IOWR is an identifying letter
+-or number from the table below.  Because of the large number of drivers,
+-many drivers share a partial letter with other drivers.
++The first argument to the macros is an identifying letter or number from
++the table below. Because of the large number of drivers, many drivers
++share a partial letter with other drivers.
  
- 'Write' and 'read' are from the user's point of view, just like the
- system calls 'write' and 'read'.  For example, a SET_FOO ioctl would
+ If you are writing a driver for a new device and need a letter, pick an
+ unused block with enough room for expansion: 32 to 256 ioctl commands
+@@ -35,12 +35,14 @@ should suffice. You can register the block by patching this file and
+ submitting the patch through :doc:`usual patch submission process
+ </process/submitting-patches>`.
+ 
+-The second argument to _IO, _IOW, _IOR, or _IOWR is a sequence number
+-to distinguish ioctls from each other.  The third argument to _IOW,
+-_IOR, or _IOWR is the type of the data going into the kernel or coming
+-out of the kernel (e.g.  'int' or 'struct foo').  NOTE!  Do NOT use
+-sizeof(arg) as the third argument as this results in your ioctl thinking
+-it passes an argument of type size_t.
++The second argument is a sequence number to distinguish ioctls from each
++other. The third argument (not applicable to _IO) is the type of the data
++going into the kernel or coming out of the kernel (e.g.  'int' or
++'struct foo').
++
++.. note::
++   Do NOT use sizeof(arg) as the third argument as this results in your
++   ioctl thinking it passes an argument of type size_t.
+ 
+ Some devices use their major number as the identifier; this is OK, as
+ long as it is unique.  Some devices are irregular and don't follow any
+@@ -53,7 +55,7 @@ Following this convention is good because:
+     error rather than some unexpected behaviour.
+ 
+ (2) The 'strace' build procedure automatically finds ioctl numbers
+-    defined with _IO, _IOW, _IOR, or _IOWR.
++    defined with the macros.
+ 
+ (3) 'strace' can decode numbers back into useful names when the
+     numbers are unique.
 -- 
 An old man doll... just what I always wanted! - Clara
 
