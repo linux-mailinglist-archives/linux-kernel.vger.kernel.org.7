@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-732332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10765B06535
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:35:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA5EB06539
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3DE1189C218
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:35:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F734189BD5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B160277008;
-	Tue, 15 Jul 2025 17:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFF9279910;
+	Tue, 15 Jul 2025 17:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HtSSWESm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O8zj+lyS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E424272803
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7443B1CAA79
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752600906; cv=none; b=LAGdIf7K15lbqpK2jLGxMBgVgMeSJcR0/Ms4YEIkQqO6ZebVsqn5psCw/YIkCK3MWdr2tHdJs+DacWajvLkMH9WKBjpRP3eOtwNTIUaBMC8O1psoYkbr2PXANT7AW7B700izot5/aoFsM/RNmeueQR2gnNDeu8/O5e0G+1gCM40=
+	t=1752600998; cv=none; b=BsmwCHSWn72IRdgrc/Gvj39yQ4zX0TX/15fAej6nneg2ASHRtRvcmQhauKfChXdFnm8J+l3ybxAVVcQ5SiTvqooSLIZx5+4pFI6xIHc3w2ersnvyuiKbM9bihBW3kljXfgDINAcxguCh5UhAOVSFTzmfhsxM7En32mLuUMYV11Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752600906; c=relaxed/simple;
-	bh=2J8c2z5EXWGctgukrb93oHp2+Zfj54zLjUjpoTWXKbQ=;
+	s=arc-20240116; t=1752600998; c=relaxed/simple;
+	bh=CqQ5em+WgBFxdg4h5IJYD913JlF36prRZebysi0Th/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r8ftF9VLnNn/p9XeMJTl7F75DO2gXRntX7jNfh9+GCO2MwmSTJYFAkUFVirxIZnwKkFxLJtWisxgeHAUbaEaLgJxnvcfgymUFqjHInGzdBcJyNo2jW5D3OmBgl5GhkEjo2iC+Qm8uN38iU2DLWWn8C+14pHj33YYzT5VyqJPeUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HtSSWESm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FGDP4e029618
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:35:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=YwHMduJFVZ0XMQsQOdCu9rTr
-	BXiDOqf57dZo0ADVf/k=; b=HtSSWESmR1v8aUvbmxFz2n7lv4gFQQKPmoVqHA/B
-	INn32DeLsRf5fkKXgD8Ae2eet3yealk6LUaWq0zXbhU68ttL3LRbOUs2zi9WrE9/
-	BE6OcAqfBGfnVef7n4cOSUHHj8x2RwS9kz5mM6ktfYrTIHh/QVm1Mz/N5DqHsmRS
-	sW5YkTnZxb8Yb1s5jWyY3BVwMJyOGf6hol4Iip/9FYjYcHI0ha8mdGWinyNdxX8T
-	Z9TgsfLgWSmJepkif1i/zHKYX4mJBXsmwO3vXAdTXdS/2RMAfgCUwIULweluiAQC
-	INvCL10uUOkWDMrPXwAe72ATx4/BA56yOJVCCORFzx3V7A==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxb16en-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:35:04 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e33af599bcso142458285a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:35:04 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cj97ywSeqilAGFa/bMDXrDg4KzhZsQtk8XxU4MlFgb1XtL+/sfS1tl2s4uBURy3OYTfRXTHcs/CRMdNZDababBFWVOi8NGkX+C6oe7GefepxtraxIry4KtxVUroufNjTT0IT14taYGjvDZ3dcvQCKwpGLY8w1fweDNVq8AWOYUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O8zj+lyS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752600994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=day658YKIQbW8r75aOdYjZTSiajvic/kfG8T2N/ZV/k=;
+	b=O8zj+lySUYbIiI0+j91U+K+s8YNgLkXUTeTG/PGp7Z2jHP30yH/76E73lJqa3Zeudh8qfZ
+	QZ011t1e/d1pDTJdH7mLnHdTaQWxzj60GkmChT0oZ/ZNwLc0OIj78l/IVMO50Pf30xfKYo
+	INBL9eV3v6U8oTpoXZ1CQkModV+h5to=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-253-OUQERhAdNwOeAszzYUOxJw-1; Tue, 15 Jul 2025 13:36:32 -0400
+X-MC-Unique: OUQERhAdNwOeAszzYUOxJw-1
+X-Mimecast-MFC-AGG-ID: OUQERhAdNwOeAszzYUOxJw_1752600991
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45626e0d3e1so9245185e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:36:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752600903; x=1753205703;
+        d=1e100.net; s=20230601; t=1752600991; x=1753205791;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YwHMduJFVZ0XMQsQOdCu9rTrBXiDOqf57dZo0ADVf/k=;
-        b=H8E8vzXtqmCiffCBm17Hy6rbBRgvi0lraYV9IIUsb79v7L2H1OkgG53GCGLHfMZVD7
-         nthY6vZfBzYZJy5qELqT9May5or+kHubPW/byAKhmagLUKLa0upfJl7Iipe+bTJiLqv9
-         TXpLZ/d2ssrLmkuXb3xFGvoaqnfL0v34sCCWz/srXb1Ljn4a9NAJu8cGcfvxXtVBK6Ln
-         wjsUYmXMSlaKl/t5Bovnkph6MGjTTNy2tOPcpOw+b5+wNc4qiwOHnpCEYzK77yUnTAaw
-         p4Sd/UbQ/s9SY7ohvUqWGLxhbg8fcw5oqryylF3gkWl1aZRkvy1lr0IHVy6ejSO39yeo
-         L1SA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTls8p05RSnoQPCogBfgyD6zQCDpMaum3tdV5K1O8LADgQRwFUn3o7ahXCAQw41WVUlQ8SUxrlXAE8mA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwQHJLtaYILY3+hc6o2ood4FGDFYC+ljE6Z1NH2L/LYGI0XbjR
-	t2WfID2z7IQjF4Y6RR96SWCcrKFrlq0iKANbKgaLwLs4JspVf6BpYxTyHl9qA633+3P2Y4KrMt3
-	UL7nd54fB6IGxfl77F6eicErZ9le9jBQLl6f/6JehYAuGIXCQ+YQYjZO11TaNHc/DaNP+Cn97s8
-	U=
-X-Gm-Gg: ASbGncsQFzUL05N6evzabOmWDN4TqYyAepYWqO+GdFzOlgX7Q/y2/Z7s+nrTt/wzpim
-	yI1TTh26apBaSOK9RJNDDR+MIVl8rLPIiB8zdT/adtToLr4BRw8WjDty76Y7ZQQRcExKLZCMiyn
-	WlGy1ZCoMz5cidKwl81wMcQBIXoAEu4DVCJr9wUQR0lUS6lHEzcGtEMGHGT66UHAjwd1AiCwtTl
-	N+sBugTXkrMgcTB9wPCmTgVyh3gnsVCX7wiIEdvHlWB8Nwjtjo/JeWIQMR9pan55oMdu//9CMJE
-	+5t+eAypMjsF+t0H38XLY+dnzT70YJuOcUwqG0SGJ4OdvtRftDTAT/UBaJ47D/y19yQyW99PKvZ
-	1KZeQCN7sAHRNX2AmuU18IaQkwni+9dr/GnPgOuFMFicTqE68k8vZ
-X-Received: by 2002:a05:620a:4513:b0:7e3:33af:c45a with SMTP id af79cd13be357-7e333afc5a9mr1078301485a.49.1752600902904;
-        Tue, 15 Jul 2025 10:35:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgkC/RAmmlrlOop2nd4cM+Qb/s+gLrKuUEGXd0Hyq1/Zw3CSYcbKVNpSB1ZGZ2gTFs/qFsWQ==
-X-Received: by 2002:a05:620a:4513:b0:7e3:33af:c45a with SMTP id af79cd13be357-7e333afc5a9mr1078294185a.49.1752600902369;
-        Tue, 15 Jul 2025 10:35:02 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fab8ed429sm19601101fa.85.2025.07.15.10.35.00
+        bh=day658YKIQbW8r75aOdYjZTSiajvic/kfG8T2N/ZV/k=;
+        b=RMo4frlFiBJ/rDJ12s4YotLGJzLT7nBb9Zi40knp3sBDCe6fLaRG0eFujSst8SJg1E
+         3kukZNk7WKejP1wnyvwz5CEp5xiGRlUkHHBPH0tZe9vRxYUmC7e3S2Hcc2xRQ7hLsEuU
+         U1ejb3/sXicHKOjTBytGOo3wtaArR6rEXALShLlBQnVbmuc4zAc9XlMTWs92qpvInBRq
+         5hbFzJnLic6Q+s84CaJ4ryPf48LmWVs0iMHFffrt75QfgtrAK1fvViluPzwB52KEhwc3
+         g4ks88948Y3K38e6erDKpA7doYDVlkQpff5IgsZgK/5wiYZsfSTRmDZOhuploAUI/PM0
+         9mnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/qLTowy2iJh8XNaFza+ZMNpP/6nVOB3PxnPxENug42wPcw12KXStp9eMOmgMRsgFb2PUA6StQRH8yp2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5/w7oeCTA0bSQBPsbFwem666vCmXdPTU5XANaVtl5AfpEYTZF
+	/thAWcqw6CIkh15G0Gt7paD3bMqRho9CbLySbR4qqazDQRlnhCdEUiA542LfOr2IE8a+VvtFME8
+	g1hLEL+GUWzztuQMEbxcRvQhPf8o1j0dO38W9Oa2sHsKOSTm7jUWnx7sPcUmf/4HVnw==
+X-Gm-Gg: ASbGncuE6bhpw1VqALnkl8e8ZM0XwNo8qQFjwV6CDxQDvNxaADeljmtdBmzsyWufdTR
+	0j7G+/wklzfHI5jYmTYLYPh4lqAzM4uwPTgyj5YBIXmGFzSkIWrd1+y+qr8ciMIriy1ktPsrTk+
+	7uac9FOKR2YpljHx+4U239p2xV66mBDMwtoh6XfoM4CRkz8IDt9s9+sYrnzIw80kI9qkqcDpBi9
+	RYLsxfYMGcFUKNly2rEGiJvtN2/PkQNSNe30wwRFhKFPVLEhj1t6NEJbFxIJUa1iqy6xU3kItWZ
+	rL5PYcb9LIvXi5Pel9cYO0MMzmE6+NRw
+X-Received: by 2002:a05:600c:1e8a:b0:456:18ca:68db with SMTP id 5b1f17b1804b1-45618ca6fbcmr88881335e9.8.1752600991229;
+        Tue, 15 Jul 2025 10:36:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF16b3YOx+Ogh7UeyDcMz2z8ZoA+/bnGN8dm1xA14v40A4+mY6qroqciY4O+dckrPLW3UsPBA==
+X-Received: by 2002:a05:600c:1e8a:b0:456:18ca:68db with SMTP id 5b1f17b1804b1-45618ca6fbcmr88881085e9.8.1752600990658;
+        Tue, 15 Jul 2025 10:36:30 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:150d:fc00:de3:4725:47c6:6809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45624651a09sm36942335e9.12.2025.07.15.10.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 10:35:00 -0700 (PDT)
-Date: Tue, 15 Jul 2025 20:34:58 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org
-Subject: Re: [PATCH v3 4/4] phy: qcom: phy-qcom-snps-eusb2: Update init
- sequence per HPG 1.0.2
-Message-ID: <n3khphjtqwcfhzxbdici255in2cbceujp3jlrtkrqsd77jtftm@ggpa6eek2xna>
-References: <20250715-sm7635-eusb-phy-v3-0-6c3224085eb6@fairphone.com>
- <20250715-sm7635-eusb-phy-v3-4-6c3224085eb6@fairphone.com>
+        Tue, 15 Jul 2025 10:36:30 -0700 (PDT)
+Date: Tue, 15 Jul 2025 13:36:26 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Igor Mammedov <imammedo@redhat.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>, qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org,
+	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	Yanan Wang <wangyanan55@huawei.com>, Zhao Liu <zhao1.liu@intel.com>,
+	kvm@vger.kernel.org, Cleber Rosa <crosa@redhat.com>,
+	Eduardo Habkost <eduardo@habkost.net>,
+	Eric Blake <eblake@redhat.com>, John Snow <jsnow@redhat.com>,
+	Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
+	Markus Armbruster <armbru@redhat.com>,
+	Michael Roth <michael.roth@amd.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 (RESEND) 00/20] Change ghes to use HEST-based offsets
+ and add support for error inject
+Message-ID: <20250715133423-mutt-send-email-mst@kernel.org>
+References: <cover.1749741085.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,47 +109,172 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250715-sm7635-eusb-phy-v3-4-6c3224085eb6@fairphone.com>
-X-Proofpoint-GUID: h26vqgDX_kF2DtgufHTRCwam1XvFWH0X
-X-Proofpoint-ORIG-GUID: h26vqgDX_kF2DtgufHTRCwam1XvFWH0X
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDE2MCBTYWx0ZWRfX0gpGQX8dBrVs
- jxaYOYKYJrHGcxzqZS6tGUghYFou2lqt2ORRnvLsYaVbhb710md2MXfvMQtqO9LKcDSq/sOlkfu
- EgmjezOVylny/kMHt458Z+Xw97Cf/s6Hnoed7DLOA0UCQNATHZcTVwfplQKyaBwLw8XIz31TMJE
- 8hmSAuJQm2UEG1JgjB4sYSqkEVr7Y65r3PTlEsWGTh5fhW04BNl5sk2rsmX9zHoyWp5U+2ActCH
- TmvtC5fpz37S68LwT3wqxtBVYAON53h4yeqOCrcjfw5s1vxZ7gLsFTIRargsyifaKd8o59dzRZQ
- jh4qTQoUB0K2OjQ7qvZCh0kHhOCE9a0OuER2yTdJ49+u0RGPqgQJ1YUVldhpO87Qj7z8UgmSuTG
- 1QwYzp91mQpR3jxqZe+lKCX+JgNnbFvId6ptgrvJCvVjrR/WJHCV/eZylrCB0tNTbVPHACHK
-X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=68769148 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=6H0WHjuAAAAA:8
- a=xixfk-lNQEsWtM5knIAA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
- a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-15_04,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=907
- phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507150160
+In-Reply-To: <cover.1749741085.git.mchehab+huawei@kernel.org>
 
-On Tue, Jul 15, 2025 at 09:29:37AM +0200, Luca Weiss wrote:
-> The eUSB2 HPG version 1.0.2 asks to clear bits [7:1] on all targets.
-> Implement that change in the driver to follow.
+On Thu, Jun 12, 2025 at 05:17:24PM +0200, Mauro Carvalho Chehab wrote:
+> Hi Michael,
 > 
-> See also https://lore.kernel.org/linux-arm-msm/7d073433-f254-4d75-a68b-d184f900294a@oss.qualcomm.com/
+> This is v10 of the patch series, rebased to apply after release
+> 10.0. The only difference against v9 is a minor confict resolution.
+
+Unfortunately, this needs a rebase on top of latest PCIHP
+changes in my tree.  The changes are non trivial, too.
+I should have let you know more early, sorry :(
+
+
+> I sent already the patch with conflicts, but, as you didn't pick,
+> I'm assuming you're opting to see the entire series again, as it
+> could make easier for you to use b4 or some other script you may
+> use to pick patches. So, let me resend the entire series.
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> It is nearly identical to v9 which addressed 3 issues:
+> 
+> - backward compatibility logic moved to version 10.0;
+> - fixed a compilation issue with target/arm/kvm.c (probably
+>   caused by some rebase - funny enough, incremental 
+>   compilation was fine here);
+> - added two missing SPDX comments.
+> 
+> As ghes_record_cper_errors() was written since the beginning
+> to be public and used by ghes-cper.c. It ended being meged
+> earlier because the error-injection series become too big,
+> so it was decided last year to split in two to make easier for
+> reviewers and maintainers to discuss.
+> 
+> This series change the way HEST table offsets are calculated,
+> making them identical to what an OSPM would do and allowing
+> multiple HEST entries without causing migration issues. It open
+> space to add HEST support for non-arm architectures, as now
+> the number and type of HEST notification entries are not
+> hardcoded at ghes.c. Instead, they're passed as a parameter
+> from the arch-dependent init code.
+> 
+> With such issue addressed, it adds a new notification type and
+> add support to inject errors via a Python script. The script
+> itself is at the final patch.
+> 
 > ---
->  drivers/phy/phy-snps-eusb2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> v10:
+> - rebased on the top of current upstream:
+>   d9ce74873a6a ("Merge tag 'pull-vfio-20250611' of https://github.com/legoater/qemu into staging")
+> - solved a minor conflict
+> 
+> v9:
+> - backward compatibility logic moved to version 10.0;
+> - fixed a compilation issue with target/arm/kvm.c (probably
+>   caused by some rebase - funny enough, incremental 
+>   compilation was fine here);
+> - added two missing SPDX comments.
+> 
+> v8:
+>   - added a patch to revert recently-added changeset causing a
+>     conflict with these. All remaining patches are identical.
+> 
+> v7:
+>   - minor editorial change at the patch updating HEST doc spec
+>    with the new workflow
+> 
+> v6:
+> - some minor nits addressed:
+>    - use GPA instead of offset;
+>    - merged two patches;
+>    - fixed a couple of long line coding style issues;
+>    - the HEST/DSDT diff inside a patch was changed to avoid troubles
+>      applying it.
+> 
+> v5:
+> - make checkpatch happier;
+> - HEST table is now tested;
+> - some changes at HEST spec documentation to align with code changes;
+> - extra care was taken with regards to git bisectability.
+> 
+> v4:
+> - added an extra comment for AcpiGhesState structure;
+> - patches reordered;
+> - no functional changes, just code shift between the patches in this series.
+> 
+> v3:
+> - addressed more nits;
+> - hest_add_le now points to the beginning of HEST table;
+> - removed HEST from tests/data/acpi;
+> - added an extra patch to not use fw_cfg with virt-10.0 for hw_error_le
+> 
+> v2:
+> - address some nits;
+> - improved ags cleanup patch and removed ags.present field;
+> - added some missing le*_to_cpu() calls;
+> - update date at copyright for new files to 2024-2025;
+> - qmp command changed to: inject-ghes-v2-error ans since updated to 10.0;
+> - added HEST and DSDT tables after the changes to make check target happy.
+>   (two patches: first one whitelisting such tables; second one removing from
+>    whitelist and updating/adding such tables to tests/data/acpi)
+> 
+> Mauro Carvalho Chehab (20):
+>   tests/acpi: virt: add an empty HEST file
+>   tests/qtest/bios-tables-test: extend to also check HEST table
+>   tests/acpi: virt: update HEST file with its current data
+>   Revert "hw/acpi/ghes: Make ghes_record_cper_errors() static"
+>   acpi/ghes: Cleanup the code which gets ghes ged state
+>   acpi/ghes: prepare to change the way HEST offsets are calculated
+>   acpi/ghes: add a firmware file with HEST address
+>   acpi/ghes: Use HEST table offsets when preparing GHES records
+>   acpi/ghes: don't hard-code the number of sources for HEST table
+>   acpi/ghes: add a notifier to notify when error data is ready
+>   acpi/generic_event_device: Update GHES migration to cover hest addr
+>   acpi/generic_event_device: add logic to detect if HEST addr is
+>     available
+>   acpi/generic_event_device: add an APEI error device
+>   tests/acpi: virt: allow acpi table changes at DSDT and HEST tables
+>   arm/virt: Wire up a GED error device for ACPI / GHES
+>   qapi/acpi-hest: add an interface to do generic CPER error injection
+>   acpi/generic_event_device.c: enable use_hest_addr for QEMU 10.x
+>   tests/acpi: virt: update HEST and DSDT tables
+>   docs: hest: add new "etc/acpi_table_hest_addr" and update workflow
+>   scripts/ghes_inject: add a script to generate GHES error inject
+> 
+>  MAINTAINERS                                   |  10 +
+>  docs/specs/acpi_hest_ghes.rst                 |  28 +-
+>  hw/acpi/Kconfig                               |   5 +
+>  hw/acpi/aml-build.c                           |  10 +
+>  hw/acpi/generic_event_device.c                |  44 ++
+>  hw/acpi/ghes-stub.c                           |   7 +-
+>  hw/acpi/ghes.c                                | 233 ++++--
+>  hw/acpi/ghes_cper.c                           |  39 +
+>  hw/acpi/ghes_cper_stub.c                      |  20 +
+>  hw/acpi/meson.build                           |   2 +
+>  hw/arm/virt-acpi-build.c                      |  35 +-
+>  hw/arm/virt.c                                 |  19 +-
+>  hw/core/machine.c                             |   2 +
+>  include/hw/acpi/acpi_dev_interface.h          |   1 +
+>  include/hw/acpi/aml-build.h                   |   2 +
+>  include/hw/acpi/generic_event_device.h        |   1 +
+>  include/hw/acpi/ghes.h                        |  51 +-
+>  include/hw/arm/virt.h                         |   2 +
+>  qapi/acpi-hest.json                           |  35 +
+>  qapi/meson.build                              |   1 +
+>  qapi/qapi-schema.json                         |   1 +
+>  scripts/arm_processor_error.py                | 476 ++++++++++++
+>  scripts/ghes_inject.py                        |  51 ++
+>  scripts/qmp_helper.py                         | 703 ++++++++++++++++++
+>  target/arm/kvm.c                              |   7 +-
+>  tests/data/acpi/aarch64/virt/DSDT             | Bin 5196 -> 5240 bytes
+>  .../data/acpi/aarch64/virt/DSDT.acpihmatvirt  | Bin 5282 -> 5326 bytes
+>  tests/data/acpi/aarch64/virt/DSDT.memhp       | Bin 6557 -> 6601 bytes
+>  tests/data/acpi/aarch64/virt/DSDT.pxb         | Bin 7679 -> 7723 bytes
+>  tests/data/acpi/aarch64/virt/DSDT.topology    | Bin 5398 -> 5442 bytes
+>  tests/data/acpi/aarch64/virt/HEST             | Bin 0 -> 224 bytes
+>  tests/qtest/bios-tables-test.c                |   2 +-
+>  32 files changed, 1697 insertions(+), 90 deletions(-)
+>  create mode 100644 hw/acpi/ghes_cper.c
+>  create mode 100644 hw/acpi/ghes_cper_stub.c
+>  create mode 100644 qapi/acpi-hest.json
+>  create mode 100644 scripts/arm_processor_error.py
+>  create mode 100755 scripts/ghes_inject.py
+>  create mode 100755 scripts/qmp_helper.py
+>  create mode 100644 tests/data/acpi/aarch64/virt/HEST
+> 
+> -- 
+> 2.49.0
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-
--- 
-With best wishes
-Dmitry
 
