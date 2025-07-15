@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-731035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1170B04DC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7186B04DCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A5F189BA69
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8F093AC3CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FC62C3272;
-	Tue, 15 Jul 2025 02:18:07 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BC12C3277;
+	Tue, 15 Jul 2025 02:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dMIilexW"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C312E2C3277
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C211C1A3BD7
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752545887; cv=none; b=u5EJH1jvKOw9ibGH6Aad+2j+OcyBP5JALhZGoB8e0C93KemhflWFqHe43xWWFJEnC3YvUJtcAIss34wa9+ymEf5HoEqDUvoem2Kh4rtqfYdolPuczA9GyqjF5ydZ9yTW84pIDMmKtssGZcBe0xkON+ieriAEfVnpmR+cVnFran4=
+	t=1752546114; cv=none; b=jYY+4PP092cIIKVq8ztbk7BmD0iOVqDNpP1crE/CBYQ2dRIp4OJnfi3R7LeUHZRrcg+hGlI/Nx6RqmlJzl96cX2nmNGDH8qUki75x8uhb2xav0/6bZxyJK6R7oS3H8r7VqHkVQQo/jrzPGcoOWkUsOD5r1rNiLlBge4fseEh+bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752545887; c=relaxed/simple;
-	bh=fEh3WP5QeImMY6/FL/A8fKVIWyqcBJhg0PlQB2hHKiY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ejIZAcG+JlRNx/MnISbGBitx/Xu8nqvGACxuSKG+PDRMeGWnz22MTG0Rx3p+ogF9S5iQmJC1ZfiGUIOI9hBDWeIxPdQinyvjfGRG4EyEYQ1Z1fgs+R72UjmVoU1uR4hvd12lRKlebmS7DcwAgMUueLVSUXOVvE9n3Lfs7owr0sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8649be94fa1so985167139f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:18:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752545885; x=1753150685;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5zGzJot9ZoJ9LCQ4bdTAjgJk0iCBYX6Y4Ln/LD+n6wQ=;
-        b=jG6lgCTuhYelTza42WpaIaSyUCZ5pUlsg5S+0jMeD2o2rwulke7nLXySCWKUVIo/Eq
-         63VXkeMRmGGUG+KjltZPNZbLkVAx1/AACiV/1BHuMSLLf9IyaUHKp/3F0prNU3xHlqxr
-         Tpv6ny/DIrM73KwX4eELh7kC/OI16GyqJ8sfCm7V8xhGT8pItE4CmC2R3pQZu3+Patnl
-         Iz5YbtcloYHZ3UW0YOjtvPyx5XaXAMLnln6Y/lttVWcHecaMKql7Dy3mKzQVGxValAb8
-         QQI3cB3hIODT3F7fvSKrHHvYa1XNqFvECWzMc9aOPHf0rHwTb/HJzwWoKZk6ibaJ1HEM
-         7NYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoqJ3ADDXRano1xhcM+LJJPiWwK5SmZXziSpJ1sW/19Le1POgZSGyY8quh2vFrIhpcs9ebZgeqhLSPFrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrZEEPyahXOg3S/iPt/AbVXkqkamJhBkh+APW7F3IK+xWKbqQu
-	YDmMCqfkzgiK0LXJycdlgsY42VX1BZ2Srr4aJK3zc0hTEkwCe6mPKSuFgxFXmNY/0J8gp+NweJl
-	HDIYQ8E5K9xXaBsJm9+OtcPOZuzr0dNlMGr9XNLNs82md+odPbK7HUEwm15s=
-X-Google-Smtp-Source: AGHT+IFgfxKqmVlqrU0JeROgt3j2KEXj5k//41UdEGSXOGIRAVFyVH0BDB2VGAD5p1G4sEm7vKQ4410Rnr7rN56iCfkgbMZPGxba
+	s=arc-20240116; t=1752546114; c=relaxed/simple;
+	bh=Bt4Lg6fkQ1I3lRJ6fSVH9O3myzqEgcL4Tzt9IlewX6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e0diq0kphF3FUotU3meLSnXX+Z1zF/Rek1F0FgWdmv33KpSFhEmnt4yyEm5J50DEFNOSB3bIYNc4huZjoL/trZ9sIuuhEPFYjxZV4YFcEEw7F8gT6MNyB0SlgfP+u0zmtlZIic4abGG6kSG6RKlCyvow6Rn6PQiZgEVJe2Ubiek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dMIilexW; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9b7ce379-3a03-4e6c-976f-8ea93abe7129@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752546109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hm3Q+NNgGjYFRJRzRUfBNBDTKxjdEwDdWv+PaxWBpa4=;
+	b=dMIilexWBrJj+fPZZ+mKeApg8DoIwlBSKs2NhvbWg12jbVKJPvG2PxEm7jBVC0lwBXdf3A
+	e/JBgrU8u7/QjQYhd120HgJOd8DWylD9CoyJHVR7pFNldAoSdWWg89h1Fw3WmRF7aMR2IO
+	2Z7CJs3MErvxSQzYrxjNpQ9f5bNJtyY=
+Date: Tue, 15 Jul 2025 10:21:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1506:b0:864:48d3:a5cf with SMTP id
- ca18e2360f4ac-879b0b59641mr125630739f.12.1752545884877; Mon, 14 Jul 2025
- 19:18:04 -0700 (PDT)
-Date: Mon, 14 Jul 2025 19:18:04 -0700
-In-Reply-To: <20250715012717.4112-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6875ba5c.a70a0220.18f9d4.0019.GAE@google.com>
-Subject: Re: [syzbot] [mm?] possible deadlock in lock_next_vma
-From: syzbot <syzbot+159a3ef1894076a6a6e9@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH bpf-next 1/2] bpf: Add struct bpf_token_info
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, willemb@google.com,
+ kerneljasonxing@gmail.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711094517.931999-1-chen.dylane@linux.dev>
+ <CAEf4BzZzsqu1=Q-3+6uJvgvKd52o+FR=DFp28w+vT5knP9NyCQ@mail.gmail.com>
+ <f580b139-a08b-4705-addd-31f104fd570c@linux.dev>
+ <CAEf4BzbwRj7XC0rvWDzJX+v3QweYBh=dT6H17piyD=v1QLbi7w@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <CAEf4BzbwRj7XC0rvWDzJX+v3QweYBh=dT6H17piyD=v1QLbi7w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+在 2025/7/15 05:06, Andrii Nakryiko 写道:
+> I think it makes sense overall, so I
+> don't really have objections to adding the API.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Yes, it is. Thank you for your patiently reply, and there was
+some compilation warning from kernel test，i will fix it in v2.
 
-Reported-by: syzbot+159a3ef1894076a6a6e9@syzkaller.appspotmail.com
-Tested-by: syzbot+159a3ef1894076a6a6e9@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         0be23810 Add linux-next specific files for 20250714
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1123718c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=be9e2082003f81ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=159a3ef1894076a6a6e9
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14e80382580000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Best Regards
+Tao Chen
 
