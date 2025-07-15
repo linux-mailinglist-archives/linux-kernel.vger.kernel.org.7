@@ -1,179 +1,223 @@
-Return-Path: <linux-kernel+bounces-732207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C30FB06370
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:49:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD659B06376
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 283FA7B3375
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:48:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD34C7B31E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1858C24729A;
-	Tue, 15 Jul 2025 15:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E2924E4C3;
+	Tue, 15 Jul 2025 15:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="nPW3NJiD"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="e0tO8rWq"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11023111.outbound.protection.outlook.com [40.93.201.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5072C20E710
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594584; cv=none; b=rM57rnFio8qpOOGAzFbvxH5RSmGzEdXllxvkY933odSX4aPnj7YUSENlXPh8ZCPdPC/TE7FdR69zoSD17Ki9SzJcvjVnM3LoW1SnLOy/s3OuiZqJeY9ns2WI5Gdl8kYzazcwbEVyU67ke+6s0rDLXtY5Jwd0v+Am6egITgpJmqc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594584; c=relaxed/simple;
-	bh=9gmrSWjkPf6ptmRUjb9+4+JTqajV+K87bEuRScfXVKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a0DVV5ov3uW3iJ3lmeKYDKdTiLBjhHxIjdFArILt3Sgnx+/kRGWLkrZ5g5eBdpZL6fUCo0JUo8AqfOnJlOk1AKpUQRjhNI1E42PYQrFUi9I5tdOaK1GZNMLwaGO7sYBKbkgMJGXO8ibG6z+9i236oO+gpuTADciSrpXNzo4D8HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=nPW3NJiD; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so15151f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:49:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1752594579; x=1753199379; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gmrSWjkPf6ptmRUjb9+4+JTqajV+K87bEuRScfXVKI=;
-        b=nPW3NJiDG1FGLj9/R1XeYQXzceM5WDxiWsE1kDVn3gfUNz7D8TkB2fzdDd61XZv8EO
-         lvUK6zx72n8/SgUDW+dciMu5XbcKfWtfve+nxEKVFJXRj3wAVSdXyuhRncw8d+hmc6WO
-         6gU8mQoDr79vs6jscCyzQjOMeQbREU4Whnp74=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752594579; x=1753199379;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9gmrSWjkPf6ptmRUjb9+4+JTqajV+K87bEuRScfXVKI=;
-        b=URTQrY1Jblw+9SCAz6D8CPlzeUJcH4aByZBt0r3teQyveKeySKvKYbm4znu7jWrLh7
-         T98ZsCCEGIt83IsI4n9LUkJ0bpdto9mVcIJY6i0xqVg8jZk+IqCxOhkYM2dCczdM50kn
-         sbhSRmsXzroi5fGAyWLC0g8KZGh2AgRQ562NuGmXp2PQWIY5fYwWkwPpOz/s6ywZyxnE
-         yxM18PeYfdhcrWgxfASX9djf7usRoIfX4eAisbMZoJF78196eqFyNGQatPvK7OZsGD4Z
-         jNUuI3PMPZgzLet4opfoYlOiaz2XJim0S5bNB1mhOUhweEzvroMG4qvySob6Xdb6X5GH
-         l5sA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtHDPj2QHamolY3FRIT+SOACAHZZZsGBoWN2tZD1hvn2Mls98TDAFnO4OtMm/qz8/8mVK+WhqPI72jQbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+G+HcX65SwF1ZUty3ca1UE9RteQXrqyXL1igABJ0OAPWdWolZ
-	tyNGNnCFAgS0DX8xbitQGUyRTGttCcRBV9lQuRdLCZlvfiOybMUM1LwkTrKEw+P5Jy0=
-X-Gm-Gg: ASbGncumE/WTe4yUbasyc/LFCT7sh3bEzrES6z+if2UPJ4mP+vD9yTVZwAshyoZUK2q
-	llYdSf2WqD/QYv7uZnezW8zTx66c0Fvxeb5IvVScianE8gSQa9SLzHCroMTEO5JXpoRaqhba3R6
-	xpWBBzxOrZY5Dff9RUEwIPf6R6Ag1hY6awLg3rhEDfxdPbf4jTG+OS2brbjFx6FesbQpz/n/2ct
-	IEbLxyDv+BBYIL/4ZmsZZkye912rliv1jS2cZ6oVpGH358QiuHv+/Y/I6ZFW8K399HBxOuU9v8G
-	by/pl8bo2/oqLEs7J56oFjPU3cVRdkTAq7F/OOi88DQCKOETraFEjNMGOERDuiBksZ6kVH/OyZZ
-	v9dZ/dvinnjUD/0ZmvRpjdm2GKSxiI+T+njCaPGqO+27Uw0vLeqU7ywrs5iMf0FQC/0Jju0NBNG
-	Xt3D0=
-X-Google-Smtp-Source: AGHT+IFRhw/ZviPKrKns64f3aAyeXKlIkol5iF/KXQ0hI/FgEBYlEP9Vjn93ob1Etjy88cWqsVQ3aA==
-X-Received: by 2002:a05:6000:2089:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b6095442f1mr3679871f8f.25.1752594579525;
-        Tue, 15 Jul 2025 08:49:39 -0700 (PDT)
-Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560394e061sm107648085e9.31.2025.07.15.08.49.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 08:49:38 -0700 (PDT)
-Message-ID: <2e198fe6-c08a-4489-bb0e-aff6d2d5670b@citrix.com>
-Date: Tue, 15 Jul 2025 16:49:37 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D428020E710;
+	Tue, 15 Jul 2025 15:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.111
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752594598; cv=fail; b=ZU7REgF+E6fLGCATPbFqfldt4pJrYQPWrFCRV6ugix+pa6qheYwhyDeALOq7h6295iVv0IKRq283aZn5qjC86wbwpMhfBEMKL7MKSSlnU2RhGlOMQlGxPDaBDSyH1OnwRFrYuczH+RRv3w2psFN5IUt/kEBBBQT4mvzt/MrZtW4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752594598; c=relaxed/simple;
+	bh=8/vXEyweDMyiuDF9TKDveqPtQ6QqOY4YcSy7GKZFGX4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IagIInvSbvz7TzwDKYxUZFVmiYLQgJl3XIMEFWPfOmBhjfh7TjvD9kKdudT2ilXT4gQF6EHm5f7eyewL3dxj8y24W9M5f+QOLM7ZQGpW+cEgGLJIgLJ2zZPLxGrlEHsYSfbarq/9FXic8HPvRfObshrXrvVGdtPpj7bR8VofoZE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=e0tO8rWq; arc=fail smtp.client-ip=40.93.201.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VJ+hJv/nMmvFS2zNegfDVk9eTvCTJHmqITtbpJ+26bSJ0XwEYSwZB78hqDUn0+EVrsuya7blgSyBmAJcDBdBcwiXTUK7R/XO048IUIlm5BBqUw7gFFyPLAJkTujI8SwxMwCMYsagvmp/3WcF7AXSGOEC9Fw/EylQUmDD/U84bwCQr9R9P+RXn3kMQpk7+MwfvyDRWBioeXDEjSA82K21e/OpFuGusWZDSBD9SECpGDp6qjQ33lR9XQVaokOdZfAnulQxnvwGKyAVabi+VyCuB1n5eS2F6AwgXGPN5DnSyCVGKvbhOQxqJRrNCQOjCTaykgRwYzoNxHICM23qjSPHuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8/vXEyweDMyiuDF9TKDveqPtQ6QqOY4YcSy7GKZFGX4=;
+ b=IqdFk6BVODX60KAX5yv7W9/4Z/eyd10nxgSHe4ZHqIJJLbaMPnn5D+ESUAppdU+Jn/IceHJlHj0Eavl1IC6LoMEPBNxfW8IQ4FVRQMtVMnnueE+lv9c1AvdWHVqvwGbStjnJ3aG0+/sMiY6JkagZrUcr+AP1spbhHcZIDp6TwA9KxdFF4IVbzAgCiz7lY0Wrp8pApJ+GtarQbBPw6YLo0EJQSBrXZkkLxSyzj+03dOio1B4st6HCJa6UbTxA8Gxw7Lj+YvUwdF8v0c7ZrfjbJWjnX1FWfF5B2vTz2AVTPP3sLrg7Ieb+ODv6L19RAOUBmVpxC99hsvo+acdyP9/jww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8/vXEyweDMyiuDF9TKDveqPtQ6QqOY4YcSy7GKZFGX4=;
+ b=e0tO8rWq3Z/l2qAdb88e0gEODW5Tofn2myCxWXDjI+Np04dFTd5kqabH4KYvchhPXef8oVwoLgwsaswSgjHYHA+d5lAy46vgr8PkWKavvYPhGhU3akcf4YvjXuclH6HWgm17TctG0TqBT/6XN7xstRuLUUNM5yCwxoeiUw28oUU=
+Received: from SN6PR2101MB0943.namprd21.prod.outlook.com (2603:10b6:805:f::12)
+ by SA0PR21MB3037.namprd21.prod.outlook.com (2603:10b6:806:153::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.11; Tue, 15 Jul
+ 2025 15:49:52 +0000
+Received: from SN6PR2101MB0943.namprd21.prod.outlook.com
+ ([fe80::c112:335:8240:6ecf]) by SN6PR2101MB0943.namprd21.prod.outlook.com
+ ([fe80::c112:335:8240:6ecf%5]) with mapi id 15.20.8964.004; Tue, 15 Jul 2025
+ 15:49:52 +0000
+From: Haiyang Zhang <haiyangz@microsoft.com>
+To: Jakub Kicinski <kuba@kernel.org>, Haiyang Zhang
+	<haiyangz@linux.microsoft.com>
+CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, KY Srinivasan
+	<kys@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui
+	<decui@microsoft.com>, "edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "stephen@networkplumber.org"
+	<stephen@networkplumber.org>, "davem@davemloft.net" <davem@davemloft.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [EXTERNAL] Re: [PATCH net] hv_netvsc: Switch VF namespace in
+ netvsc_open instead
+Thread-Topic: [EXTERNAL] Re: [PATCH net] hv_netvsc: Switch VF namespace in
+ netvsc_open instead
+Thread-Index: AQHb8qZwEo+zpg1Bpky71Oo7+qJ8VrQyanIAgADsrsA=
+Date: Tue, 15 Jul 2025 15:49:52 +0000
+Message-ID:
+ <SN6PR2101MB0943E6D0DB9E9D7906FDD54DCA57A@SN6PR2101MB0943.namprd21.prod.outlook.com>
+References: <1752267430-28487-1-git-send-email-haiyangz@linux.microsoft.com>
+ <20250714182914.27c94a91@kernel.org>
+In-Reply-To: <20250714182914.27c94a91@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=999cd5fd-7af6-48ac-9949-a551fcbcbfd4;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-07-15T15:36:20Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR2101MB0943:EE_|SA0PR21MB3037:EE_
+x-ms-office365-filtering-correlation-id: 34ce18d2-b1b2-4ea5-4fd8-08ddc3b73cc5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?YGaz01IaJx8nir9Dpky/K5RtE+qQKQE92JfiE9nz+RmrCUbbAV8Cs2QhJzgb?=
+ =?us-ascii?Q?ZJa75iU+a2CYOej25n9gPfTFTNRp1/M0qFmpHLQYg0x1WfVDavKT4jGYSqxD?=
+ =?us-ascii?Q?ZxxlgL7Zcn0keJqTE5CUkMBEYuP0V2yFiXP9VGuZtNyDRhqXoFfEkJdlRX4/?=
+ =?us-ascii?Q?38KmGtzzpPFsfEaCtQnvCOuNm8rChN+PeZhP7A3TYRef2wlI5BaRK0gzYAy1?=
+ =?us-ascii?Q?APDR9L1u9i3omBtkC4rW5VM25wm7PF4iV4jY9O6y2BRd/v7uwuB03bqFtTU1?=
+ =?us-ascii?Q?WHZ35qv5SsImdRLviE0HD2ZJL0NGYmVM/YyY4stvoF/7vShZkjK4lJFBh4MY?=
+ =?us-ascii?Q?tX1C+0l2I/Ybas25amMvEAA9Cih9sPZFox0XezcPCN0Hr6aau9zjlKKuYXSL?=
+ =?us-ascii?Q?2Qy8ahw5n6iGJ79WP6cgyx5m0KP+/q1r0YspbNrAndL8ywWYT3Me8AEvWgVb?=
+ =?us-ascii?Q?362Z11X+mWNBEBlKrPUJYr8weNw782FXP3HgvdM7g0HDedQLJxNXbla+Axk+?=
+ =?us-ascii?Q?jwUVg1aqXKTgD1SS8d9CAzaaamC0mMrrzgfoVVpYTAPAbCa5XWWt2Z3YKbJf?=
+ =?us-ascii?Q?RtJS6dq5LE5hU3Dnvl1nJsrdH9gNrNOOSCB3whWmhXqYhd1NxXGZSWwgb1sv?=
+ =?us-ascii?Q?J1l0eNwWZfVxl4TMxaBIPlat1y2Ww14l6+2wxQsZuxYsXIEd1k9Rqi4GNyRQ?=
+ =?us-ascii?Q?BA5NZX37CQ44mfijqvAlpK/ndOUQtmiqzBl1xG4HgUjUCfzQ1FXpLM9Dsh33?=
+ =?us-ascii?Q?VyEzBA/7Tz22IiGqHBpyb6NsTOZgxHoT9Tb+KdirubpZuYM8Z1oiEjGLuQF4?=
+ =?us-ascii?Q?2ZGkN/PIzQaf4fymsLP4gvxLXhbYyo3CuXQKyqc8ogFr+OkJrpCCP2TgI3Ko?=
+ =?us-ascii?Q?+f775fRHaZ2VnGuT+Rx5Qtl1gW9BpRmJ5MOyqFqEA7jcqiAXcHgQ5nlspExW?=
+ =?us-ascii?Q?YuD7Q+tHrxkVm82yP9T9E129OdNDjOtBLNwSFsJiRDT0Z9MKnvFpoqyYHw6M?=
+ =?us-ascii?Q?KblpYkbIT5rwZf88MohYWbxtmr/AWDDe8mlToZRbPU48Ebm8yHMQ3GRQ3D3n?=
+ =?us-ascii?Q?Yak8Xhz2ii+IpebOOGUl+pSh2tKbHBrGOzmCN/bDwTzx8K2VkjmAxXaVTH8H?=
+ =?us-ascii?Q?dtpHQJLGC54Hd6MxkqFfjZesrrWRdwdn2RkQvUnOTmtQ7rSEeQnt5kvg1bHu?=
+ =?us-ascii?Q?SrnCOkleEEJEM/KTwt0SRr6Yw4jfhlY0tx4G0Weqy1H7isiZX1+NzCNKLZCR?=
+ =?us-ascii?Q?W4V0IlDwWwINaPurqfsbc+D77+q8SkJ9HXojaQUbZwyBezVcm2Hw1YVJjhFV?=
+ =?us-ascii?Q?Rl4pH4mDeMgZLddLssa3nHlXVme6U8ooO5XuZOD4a8qVHmZzPypto22jrOda?=
+ =?us-ascii?Q?XOrqYJPFWKxe3ufHeL+4pja7NhTjMnEA49iUSqklwsA9xKcJfvuxsIpO9tkI?=
+ =?us-ascii?Q?k8qpbv92ulVylMa0lTyvYlEbNiSx9AxSvZ/v8qJRXpBhMY4TE4EpGg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR2101MB0943.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?U/66ybjZjwZOywXahYmEHtRCaf0bm9YBV2tQ78BaGAvH3j3dP4KIBBExG8Wa?=
+ =?us-ascii?Q?wAxfD0gGb+RS2SbhmwGh++NhutdQ76KlUQ8TvEL1Uo0RS1GSw2ZsxSlnuMlu?=
+ =?us-ascii?Q?cSJhKsWR/XxXWE4eaMCS44vaX/NSj3mexpROur0mCWdcrJZVxA6fIWRFIQT3?=
+ =?us-ascii?Q?ixQzB+4JgbzOogROtbjWf3CW8u/P6IxuSS6CuMTfMTAyYVlJvfntz62nWbQ1?=
+ =?us-ascii?Q?S/FMElbi7H5tZBA1CD3YyT+wIQzLGnoTZWqhAhkDWkQw6xyVxBLUnnl2BoC4?=
+ =?us-ascii?Q?Rbou6IZ5pHpywkPovrO/zWSxP/jCNiQi550t/BzUl1LS3yPh5zLjg+WsHb1m?=
+ =?us-ascii?Q?HlGGNlzYNmO2jg9/+wyjMvHOwi8KLmuruJLwELvQvHI1RnuN9X1MdCFPvHp2?=
+ =?us-ascii?Q?cQDl6tO+2phsnXPC6z0tay9pCG4lADjrHuDQgKh3ODOW4x69g1BmxcwJPfRT?=
+ =?us-ascii?Q?jf8IUpMNNctSpdKBRpJJGAzONxHZZ/GrtcgFihugOdyP7ypaBMkjkvdLdmy9?=
+ =?us-ascii?Q?PGv09uPamBLMllX3aV6F0LPSFgBNRnzvY2T3GeGIyVgFQqFhYTH/VW9mkH9i?=
+ =?us-ascii?Q?0ZTTgJkVKxElxGknM0T/NflTx4nFvRQmygAQ1GHxt/ChQRQggds7Q6SUbK9D?=
+ =?us-ascii?Q?0KG1RlfDciQgetyLc3GwYr0xCGq/98dhxFsPjL3zNbvr/tHO3krPovo5djgM?=
+ =?us-ascii?Q?RNiKaLvzdi24JW8BCiFtVqC7H427iqEJxardvdMLUbIZSnL83LuImsmIXlnQ?=
+ =?us-ascii?Q?huYg6dcljIuesjCxn/RdBvyxfOId2oPUnaR2Fjhd1ifAK6nQtrzfRa9UR+Y6?=
+ =?us-ascii?Q?uwndkHBypLAWLR5PP7zcJBxxqjQdAggH4bwDCVij9U24OukDoz5lz3PXyWEE?=
+ =?us-ascii?Q?NZRjJI2NI+i4PcTDZenjlHpUOR5CG/8cDSIHHUWIuKYToLeRHoTvkFdueK/s?=
+ =?us-ascii?Q?+M5jjjQzgQsqMRbe92+cSjUYtUabuIoOaol6/yswBrR3XVbnJR/+PNApdval?=
+ =?us-ascii?Q?Shh1j/3e8hwBa2fISo/Eb6fMBFIWXa4auYKlXn3fprBbFUXbyfrIEnEx1s06?=
+ =?us-ascii?Q?DC+TFR/6NL05H9XAhPcRgje+b61dvanokWjFz4fcMT1kCTyOD4r/9VVwIsrq?=
+ =?us-ascii?Q?K8kQtGFLI7WtsjEhW9n08rSNsGsQrBZHdn+TiSRV86sqEbgPkl1tQckx/ZiI?=
+ =?us-ascii?Q?FJFK784SEMPz2xh7o/Bsxze+L0aSJ661usS6ghSUbGUF/THsr+n5TAfzHkd5?=
+ =?us-ascii?Q?QV/RotP4WmqrX2gZW6ZN8/eFHAKyECumWhJNgtU5vodzAFv/PPaPQmc+J6Tm?=
+ =?us-ascii?Q?lYfuLbR77p8woS5C5kdLSsFRtshOunMHoYNH3xxKaKDUQcynDfgmjQLnabA2?=
+ =?us-ascii?Q?djoJIQVRSzzKIMn8A6/8qY9YbgjXYnSaRt5UML2fHoHZs3/GJf/J/nky6GGI?=
+ =?us-ascii?Q?yqTDzTl5NIBYAB8kcrt/c52lg2GJ6t8urMWPo3hF/UVdJSbI0MEzCx08f+vG?=
+ =?us-ascii?Q?lVUN60QKJ33sjAoFcREiwHuTvil5qoG1ak3Yzxa3+6QLMhDOxm1nJ70Qm+v3?=
+ =?us-ascii?Q?wHrl2LaChSb+8FZ7ci0T6RRHtxSatli02Rc+5oK/?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] x86/fred: Remove ENDBR64 from FRED entry points
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
-Cc: luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, jmill@asu.edu,
- peterz@infradead.org
-References: <20250715064437.807569-1-xin@zytor.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20250715064437.807569-1-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR2101MB0943.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34ce18d2-b1b2-4ea5-4fd8-08ddc3b73cc5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2025 15:49:52.2203
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kXPpS/66Rj/i1xsP/zIGR93JoCQTstAEsBk2+BGnN1WEfpGa0J7HaJuMqkEDjRxXNgdEJ2BAkrEiX64Lvjsn2g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR21MB3037
 
-On 15/07/2025 7:44 am, Xin Li (Intel) wrote:
-> The FRED specification v9.0 states that there is no need for FRED
-> event handlers to begin with ENDBR64, because in the presence of
-> supervisor indirect branch tracking, FRED event delivery does not
-> enter the WAIT_FOR_ENDBRANCH state.
 
-I would suggest phrasing this as "The FRED specification has been
-changed in v9 to..."
 
-Simply "v9 states" can be read as "we mistook what v8 said and did it
-wrong".
+> -----Original Message-----
+> From: Jakub Kicinski <kuba@kernel.org>
+> Sent: Monday, July 14, 2025 9:29 PM
+> To: Haiyang Zhang <haiyangz@linux.microsoft.com>
+> Cc: linux-hyperv@vger.kernel.org; netdev@vger.kernel.org; Haiyang Zhang
+> <haiyangz@microsoft.com>; KY Srinivasan <kys@microsoft.com>;
+> wei.liu@kernel.org; Dexuan Cui <decui@microsoft.com>; edumazet@google.com=
+;
+> pabeni@redhat.com; stephen@networkplumber.org; davem@davemloft.net; linux=
+-
+> kernel@vger.kernel.org; stable@vger.kernel.org
+> Subject: [EXTERNAL] Re: [PATCH net] hv_netvsc: Switch VF namespace in
+> netvsc_open instead
+>=20
+> On Fri, 11 Jul 2025 13:57:10 -0700 Haiyang Zhang wrote:
+> > The existing code move the VF NIC to new namespace when NETDEV_REGISTER
+> is
+> > received on netvsc NIC. During deletion of the namespace,
+> > default_device_exit_batch() >> default_device_exit_net() is called. Whe=
+n
+> > netvsc NIC is moved back and registered to the default namespace, it
+> > automatically brings VF NIC back to the default namespace. This will
+> cause
+> > the default_device_exit_net() >> for_each_netdev_safe loop unable to
+> detect
+> > the list end, and hit NULL ptr:
+>=20
+> Are you saying that when netns is dismantled both devices are listed
+> for moving back to default, but the netvsc_event_set_vf_ns() logic
+> tries to undo the move / move the VF before the netns dismantle loop
+> got to it?
 
-After all, the change here is specifically as a result of new research
-showing ENDBR on the entrypoints to be of negative value.
+netvsc_event_set_vf_ns() moves the VF to default ns before the netns=20
+dismantle loop got to it, and causes the Null prt error.
 
->
-> As a result, remove ENDBR64 from FRED entry points.
->
-> Then add ANNOTATE_NOENDBR to indicate that FRED entry points will
-> never be used for indirect calls to suppress an objtool warning.
->
-> This change implies that any indirect CALL/JMP to FRED entry points
-> causes #CP in the presence of supervisor indirect branch tracking.
->
-> Credit goes to Jennifer Miller <jmill@asu.edu> and other contributors
-> from Arizona State University whose work led to this change.
->
-> Link: https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/
-> Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> Cc: Jennifer Miller <jmill@asu.edu>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
+> This needs a better fix, moving on open is way too hacky.
+> Perhaps we should start with reverting 4c262801ea60 and then trying
+> to implement it in a more robust way?
 
-Preferably with an adjusted commit message, Reviewed-by Andrew Cooper
-<andrew.cooper3@citrix.com>
+This patch reverts the 4c262801ea60, and moves the logic to netvsc_open().
 
-Any idea when an updated SIMICS will be available?
+I was thinking some other ways too... But seems I couldn't find a way
+to know it's in the for_each_netdev_safe loop, and to skip moving the=20
+VF in netvsc_event_set_vf_ns() this case.
 
-~Andrew
+Thanks,
+- Haiyang
+
+
 
