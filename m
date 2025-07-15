@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-731458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4C4B054B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:22:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DE1B054B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6778F1C22F6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:21:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21C4562F5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055AD2750E3;
-	Tue, 15 Jul 2025 08:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9779F275850;
+	Tue, 15 Jul 2025 08:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aaWhaQX0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2MsH4Qv"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA0F274B35;
-	Tue, 15 Jul 2025 08:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93509274659;
+	Tue, 15 Jul 2025 08:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752567657; cv=none; b=Mk5IMmX2jAXirYcyvF+fzmgARsegE85kPrduwLUrw/ldRNY8x5cGzNGQjpnNKZea+M/amzfwiG9NdN+zRowPAzlN+Fn5uNYCqnJTxKZEsEhBPQx4AHo4IPDvL4ThbJp8pqukNXsOe1za6MMld6Lf+X1wNylTF5SUFM8MBeGtXa4=
+	t=1752567719; cv=none; b=SAJHGOnunBUCZxlvKFitddgCoONmKTMquNUMmfpCIElEz+T0lxot1YLkYox+JvLHZegSrQo3I8QHwTmbGxdvvhvf+0SUCz6PJvG+XWbXP5p/CW2zAF8u0pdoK/syQmbeH1n5gghzHtdnt+7PrveO5Pbu7NKseeIMzN/7BIm/ugo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752567657; c=relaxed/simple;
-	bh=iMd4tRB3gOxTcZdIQGJuMTUHchGSoX7MMCA/0kUDBGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0qlhf3O5e/uOBGbCyXO2754fQ0n2Zpf7ZPchGOYOW2TCvIRTi5Hw8Dged/hP7T9nxlnQcerpv2CnV5oN0KY8zlIi2vUINH3vv0G55PTI3iNR87/q3I0nlq9yYaR34wXv4K8XEAnhpWOK/wxeonhnwr3f3zW1w5DwyvLvWOlpqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aaWhaQX0; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752567656; x=1784103656;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iMd4tRB3gOxTcZdIQGJuMTUHchGSoX7MMCA/0kUDBGY=;
-  b=aaWhaQX0HKCojwNuh1o06cvueYVVkWZG6/jSUFyPO2tx/UAASuXAbuoZ
-   iypOM+4F2GFtrZG28CUmB6j+2pDe6imfewr6feuAKT9ElssmKNa1tu8wU
-   HOmElmbAeWMzDBMASkzZB9LGfUSi/zd8jGTmgs1cCMd3sMQeQbdvYikgk
-   vtgl4J7sjwA+qgZIrOe7lKoJQBhCA48yTQDNd/D/xIUl+0xS1LcX8o+JE
-   /6V9+b5A+qD89DBUhePy0BQeuw2zsT+yYtkx1iZntiVVHcBMlJO3pcjLb
-   6D6vmMo82J/D+kwoJYWp9cIoaeCXN6jqdaWMUGaB2IvqEh0/ROwMomI12
-   g==;
-X-CSE-ConnectionGUID: 5mn4nRBtTDexpQUMo3igXQ==
-X-CSE-MsgGUID: ktrn4zPgSu2AAJ1KhnvGfA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="57388273"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="57388273"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:20:55 -0700
-X-CSE-ConnectionGUID: UoaDR9HfRmG7eLXoID6L8A==
-X-CSE-MsgGUID: a92y67ciQYSLarhj834MBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="156812729"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:20:53 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ubauA-0000000Fav8-0Dgd;
-	Tue, 15 Jul 2025 11:20:50 +0300
-Date: Tue, 15 Jul 2025 11:20:49 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 3/7] iio: Add in-kernel API for events
-Message-ID: <aHYPYZgq17ogdEgC@smile.fi.intel.com>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
- <20250715012023.2050178-4-sean.anderson@linux.dev>
+	s=arc-20240116; t=1752567719; c=relaxed/simple;
+	bh=vW9p0alo/dC71JoIr875PRUYUG4vkxx/6o2dNKhrxvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AELzrSWsBk1o4CZUBCTSuIXOQ5MROBpRkHsN+KBfINDq7TrV9eClJ++wfa5QEMLSQE0tVf+ICJ6SFafncdW2nrXPPWwTHF6hV9faqnUuF1dXMGxnyrKnZ/Cz9Peeag9R4qZD0b448H1/ojqI5uCNyxFhkG9pDWWocmq3p/G/oAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2MsH4Qv; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b3507b63c6fso5564308a12.2;
+        Tue, 15 Jul 2025 01:21:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752567717; x=1753172517; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2hNgW4kby0iU/XtbfyNGjM7Ij3cEWeDVAVgxTdH2+aQ=;
+        b=O2MsH4QviyQWMDvzOCj1NlACMtpe5PUN9A6EuNg9IxTyLT0bxN/Wh8Oxn0GWVCVXCM
+         CZk60OPfJ08UsRJfNjBwvnugtPZoU4nZWRDAGXw6Bi82WEys4HlYwNI8dB7qb2bu42Qu
+         IywD8KM/9etjZJGZhFgAJjQmr0sXpaYuzBdnQw27ImPNLMUUVpCnX2ic2cEFV3ApoiOh
+         abPacW1ZDGJCrn4OxUy8EuRdGEEGvjlFiUd4ighY+rmSGqLAn92eCc1c5Pc/udXAecex
+         TYiFWqqk1L5vaXmKzNFoJpCnk1iN1zKRt2pjHliiOc74qnFRDK7BWGLgWXjnf0YpmWQy
+         vHew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752567717; x=1753172517;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2hNgW4kby0iU/XtbfyNGjM7Ij3cEWeDVAVgxTdH2+aQ=;
+        b=g240DaP0v2YDiNnIg/DcZjrhTE1LQP40db/pc45IW0hO3WLTbRpW0MEdkiYQgI7QL+
+         Q3DSeS5WthVLn9HQAO9PsEHISiIs03Q11fPkLM8fXCPb4PQUmdXkc/2964rI+3uXJ2u1
+         KWF/7vF/HK73jf/KYunCLCcK/8olw2AclPgKKQBefZARRLN85Ben/AK19XtxuS/o2Kio
+         sDoMK5pnRj5GbOTRi07vj5nHhbNVRcFbBzCiJZZNi3Or28W77B4mQXDqGg7U3okqS4/v
+         2CdqYR+U3aZQw4Ww8DfynLvoPHl/15N+hCCHuLOoUAezvCFMmJCR/WMyoksT49I3/zp1
+         s4eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURnSJt5eAe4VILdv3YoTK3nsIOstw1DIinrm6wm5/62fftsnMlxPyjmCgQ1cxSjwaVvco3ziK+bQZ0@vger.kernel.org, AJvYcCWUCXvJlITAt8AXyslEII48ba/mKJhq8tQUBCWZsmny3rZ8FDb6oa0zNj0t5gCDe08pJw5YDm1GbzLvxw==@vger.kernel.org, AJvYcCX4XrGQPM1aEyPgY0rmxylEpHP6+sCE6/YeoJK5fDOsviOn8udbp0MIodr1mdEnPDYFTUTGSUJqcxzQtfzE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfJaZ9ILnlh2o0QpP5biay8hUCQCrBvoVFXisAxmG50JXP332h
+	8WdAUUbvRy85e7eT8Gs6EK4DY99DG88oYI7E/ABJkfJvkZhgzA5BssDIKNJKquExMrjQDQSe9yL
+	7LXhtEYblHbD7FtObS88Y9zh0dGv9WiC1miNlRlZq5atH
+X-Gm-Gg: ASbGncuhsaYnO+OKU7JxPCd2CWTzFj6cPE36anBTP/1zDCOgyQt1H1BDAVD5m7BZbrK
+	rN/XMsZDJG9agln8plIbvmgS90xAI/jJqTC9M0N3iwX0awIDpaxQqueKGD3X0jbOSA2J9mDPQdQ
+	xZW5lhWqZz6ekdsGxOSmUAD2S1aVvaWjILA2VW657nz4nqAMxX8k7OCDFBI97s+1IkFNufJvk3y
+	0Aw
+X-Google-Smtp-Source: AGHT+IEggynKq4vD6SNTsY3SuiaP/yVTDeVqAA+gk8qh26/Eyl7WSxbYYZGy5UpZ/5sv+D7En1DMCxw9GKvAVwKvF8g=
+X-Received: by 2002:a17:90b:4a0a:b0:311:ea13:2e70 with SMTP id
+ 98e67ed59e1d1-31c4f4ccca2mr26575080a91.14.1752567716750; Tue, 15 Jul 2025
+ 01:21:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715012023.2050178-4-sean.anderson@linux.dev>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250712210448.429318-1-rosenp@gmail.com> <20250712210448.429318-5-rosenp@gmail.com>
+In-Reply-To: <20250712210448.429318-5-rosenp@gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 15 Jul 2025 10:21:45 +0200
+X-Gm-Features: Ac12FXzvb6Vo4hFlEEN171p2VK_2rD2O8rW8KBf-Sr8ny31IT3KEqoC_trh2J6Q
+Message-ID: <CAMhs-H_T+Nh==pxeW+uwk1gSr8YZMAva1DO9hF947tH7ot4=kg@mail.gmail.com>
+Subject: Re: [PATCHv4 wireless-next 4/7] wifi: rt2800: move 2x00soc to 2800soc
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MIPS" <linux-mips@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 09:20:19PM -0400, Sean Anderson wrote:
-> Add an API to notify consumers about events. Events still need to be
-> enabled using the iio_read_event/iio_write_event functions. Of course,
-> userspace can also manipulate the enabled events. I don't think this is
-> too much of an issue, since userspace can also manipulate the event
-> thresholds. But enabling events may cause existing programs to be
-> surprised when they get something unexpected. Maybe we should set the
-> interface as busy when there are any in-kernel listeners?
+On Sat, Jul 12, 2025 at 11:05=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wro=
+te:
+>
+> This driver was written with multiple SOC platforms in mind. However
+> since Ralink was aquired by Mediatek, it only effectively got used by
+> older platforms. As such, we can slim down the driver slightly by moving
+> all of rt2x00soc to rt2800soc in order to benefit from inlining.
+>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+> ---
+>  drivers/net/wireless/ralink/rt2x00/Kconfig    |   5 -
+>  drivers/net/wireless/ralink/rt2x00/Makefile   |   1 -
+>  .../net/wireless/ralink/rt2x00/rt2800soc.c    | 119 +++++++++++++-
+>  .../net/wireless/ralink/rt2x00/rt2x00soc.c    | 151 ------------------
+>  .../net/wireless/ralink/rt2x00/rt2x00soc.h    |  29 ----
+>  5 files changed, 118 insertions(+), 187 deletions(-)
+>  delete mode 100644 drivers/net/wireless/ralink/rt2x00/rt2x00soc.c
+>  delete mode 100644 drivers/net/wireless/ralink/rt2x00/rt2x00soc.h
 
-...
+Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
->  #include <linux/wait.h>
-
-While at it...
-
-+ blank line here...
-
-> +#include <linux/iio/consumer.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/iio-opaque.h>
-
-...and here?
-
->  #include "iio_core.h"
-
-...
-
-> +	struct iio_event_data ev = {
-> +		.id = ev_code,
-> +		.timestamp = timestamp,
-> +	};
-
-...
-
->  	/* Does anyone care? */
->  	if (iio_event_enabled(ev_int)) {
-> -
-> -		ev.id = ev_code;
-> -		ev.timestamp = timestamp;
-> -
->  		copied = kfifo_put(&ev_int->det_events, ev);
->  		if (copied != 0)
->  			wake_up_poll(&ev_int->wait, EPOLLIN);
-
-Looks like this refactoring can be done before main change.
-
-...
-
-> +	WARN_ON(atomic_notifier_chain_unregister(&ev_int->notifier, block));
-
-Is bug.h already included?
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+    Sergio Paracuellos
 
