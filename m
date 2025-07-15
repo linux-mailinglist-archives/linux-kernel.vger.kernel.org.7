@@ -1,167 +1,152 @@
-Return-Path: <linux-kernel+bounces-730969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DB3B04D16
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:41:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD44B04D19
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7714A1176
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE611887FDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF731922C0;
-	Tue, 15 Jul 2025 00:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE781990D9;
+	Tue, 15 Jul 2025 00:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FKWnFbnW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BuzDbETN"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD99D10E3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A46156C79
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752540072; cv=none; b=DowUi2/Dq6mc6kwQoTZr0TgJQ/80kVP/YKXqCzIENGEznFotFufhDShWTyQ37CwSCTOVTk0GsUCRxHPLfhtSKfKF++raQI8ruhdOf9YrjTWXTD+0xs8wkzs6Czn3omzSeBS43tOO/6FUtqNL1wcmrQHgot5yy60pCNSCKJbBvxQ=
+	t=1752540092; cv=none; b=b5YAcMWhVb2tHCVY+uDgU7fNoHP1Shgh8Pwb5oUmN+n+9HtBY0Qqh3wVf6jv5LoZrudRE0IhKlkSDGAgTNq8DTipT4/yVrfu3RHyWVTiGyS9DLTnpvJXxQ7T0mnUK+0rgvYgyS5Ffag9wZJkjeqj5z9EDG8zTKMam05XvqiqtHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752540072; c=relaxed/simple;
-	bh=/fpeOpzdtrvMaMBvHjLFsNU8U+wmDzW4BOVzVwKT8Ok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GJwbat8RcQ/rk0zuaiow6HemlRrQ39D0m9UGkiNyBdHDv95/2Q+vL1/F7E9n0EE/n5zRGoWpWmyLKzSb61E7rN1vh169IBLkQ/Vs+34DfoO+Sk/dibsAy2CkpvSgNcyEhE04NfrgnmMq3K4aUYP30hQ8lb0azzfdqlXoj6p8Ubg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FKWnFbnW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56EGRkfi020978
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:41:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wODJleHZ+bVcBgLQTtzGXHzrVqiJgA68FlyszfYFYek=; b=FKWnFbnWGotIx8hu
-	v6oXPGBfNGvBWCFQ0pFVoR8JL3g2qXR8CaoqHR8FF/guH4VNKz9xeLtxnmCjtn94
-	eBG5GCYHF6lCt2IWX1rZZH7XiHBsym1PO+TLGOQEZqmXqcGNUNiBnjo4hJKVBNo8
-	MQJANvaMixLhfBCf/+XEttcHmpb+dKvHUFloIi9aAAKRlDqrCGwsm5iOzaONXBWe
-	+V3NWd/o4UNMuFzRh1E+R/nCI8FyRamHq2rqgEjavuAq0X3HuIPKXuvHSIqe/q9k
-	TF2gyBByfsJsE+gBE/7Y7IUP3D8rAd4RkqIl4viv+7PwrH/4y/jiarkMwKkIAbk+
-	m6pkEQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dw1388-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:41:09 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23dc7d3e708so28624945ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:41:09 -0700 (PDT)
+	s=arc-20240116; t=1752540092; c=relaxed/simple;
+	bh=e6u4kzbTlpY6XgWvdx0C4bqIzQlBCHDgDKiaDMRpPo4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XgSRahKQnrBaES2gBtKRBHoELsWJ0NVLcLvq9mocBnTv6n5t183k4yzFxdyUQBxn2SK3AFBOi3sL6FKeMNYmU+jGSOxWWlr/+dPW6W/5LMeFHDA/RzzNAKPcJ2ChTskO9lfK3CmdSVKfVV1ddTJ+1pPnqzAxrBq2nDcBSRHGl64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BuzDbETN; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2357c61cda7so40595ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:41:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752540090; x=1753144890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UX1iqBfYXGafPsZgRW8n/DgE7iPmep19kIXNMUQ2HJk=;
+        b=BuzDbETNvmIL53e3+0KoqNUHsuY7KjKSfZ+D3km9sfIIyrMA1jjzestPzCPQ48QQAB
+         +HV2xiDtIMMSmTheQRdDx2Kwmj7sESw9yDHUOKpCWPJbG5mYQ13JqCbUGAIv0D2jGOAz
+         WjZPlSC4X0YoMK10OaCruS4rFgwOgtoAjVW3FCNEtRhJs62K025I1H23/7+Hd1cz6dMU
+         NgMc6sP+6mX4M6oqaLlhsNo2/f1KYgu3hx9oqdywFp4yY1qITuygiSnfIcifJCK4eZXA
+         BhGVwDbnbZfrhmxc7Gft7UjMrH3Y/vfcRFfU2kfGW5sFwOdgN92Akccc1waMqwTqlXHk
+         cdUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752540069; x=1753144869;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wODJleHZ+bVcBgLQTtzGXHzrVqiJgA68FlyszfYFYek=;
-        b=PQBUPBnovpU5nAVa6Clbir82+s/ujyvigA7C2pOHNwHrnIQR4jDPhljlES0KSpqOP8
-         jkQvFCSKhCN8MjfVkeJ8jV5q2i0NSyw3KZ/pHtmhBYmT6LbdftRVS8qSfbf15UmBrrGH
-         SDstBj/scIUW+nUeTB6aDN8UqcWr43WLLhirG6K/jZu9p5zITpUM92wl05xT7IzKCcCd
-         jaAFvJ6Xj/tfvu4JldYS4fGCtDN/FF1CM6MU650Ixcc3QP8vSqgKopwWlKwnRQzEM9Gd
-         nbJtLzfOJ2/uaC8DjHGGjzHpVzlna5bmtIwD8EETktXCAen/xecgg9EZ3adyABGuVCRI
-         SJlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCXSgcKxxtXzKVHGUbtC89voOWWYz6n0EL7jomxICDhb+jNq0obzxJMWnK76prnJBwYP9p+37LOwSZa7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywei6wku3eJr99LOswu25/FPj8EUViUt34U76xJ6lnLEx1a8GkW
-	1FI6+7YFzsfRlGlNE4ctFsiUY9meO6h6sFVeoiZ+wGTjhgHkORFV0dqCbNmMJUxV+NGya/XkR1u
-	7V/OyIN700goSyI25jUpp0HQHB1B3NOj0f2k77Y8e+GKQymrXNpnp54OQ2EMbD0ilsa0=
-X-Gm-Gg: ASbGncudoIAZxspans5aRX5qoAkdMHWF3ao+vIJ8gg+EqzHm6KWr52Kvdq1jgn1Jf+f
-	052GHRx6jdogLHccPAsGwpbBToMVypB8QtI94sN/cCsPYBK0FQoq+2v7wNWC2Bw/frXSY9wWClP
-	/d+xC4SZvb0myVHuNi8P7UzFgziQzwe8Rn2hLMFGITpM7ZlwPaQNZYpiOLS50fOO42wNDe30Nrx
-	vadNgf1BoWi68OR2Zv5Xh4CKXfTXuHI9cgv2t7wLNjBIjsXA7IEu52FMYjECaWdn9CxxtB20duP
-	+m/BPtiOniGaMLNPZxw3RTwpucdfZZL+YpWmen5XuQpUY9XHsQgNAWggKQDph2yYA8f8vutltF2
-	nCugXpgeHu9keld0JFc/eYzbz
-X-Received: by 2002:a17:902:ef48:b0:23d:dd04:28d4 with SMTP id d9443c01a7336-23dee2a0946mr248519805ad.43.1752540068862;
-        Mon, 14 Jul 2025 17:41:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdmamRBVee1XJcy8VnXWvKBcAqzZnAQTh81D4R2wPJZjMPo/wxYIsxmLIYNDX5XWYHIlCWPw==
-X-Received: by 2002:a17:902:ef48:b0:23d:dd04:28d4 with SMTP id d9443c01a7336-23dee2a0946mr248519485ad.43.1752540068456;
-        Mon, 14 Jul 2025 17:41:08 -0700 (PDT)
-Received: from [10.133.33.236] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4343e48sm98825605ad.190.2025.07.14.17.41.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 17:41:07 -0700 (PDT)
-Message-ID: <c7cca483-f1d3-45b4-abef-ec5019ad57dd@oss.qualcomm.com>
-Date: Tue, 15 Jul 2025 08:41:04 +0800
+        d=1e100.net; s=20230601; t=1752540090; x=1753144890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UX1iqBfYXGafPsZgRW8n/DgE7iPmep19kIXNMUQ2HJk=;
+        b=Qx6snDCk8MN58vg1+2KkDdwRpAWEsDlIWuE1//0ZTysFYCvW2hO8HzozM8+olRngFo
+         2e7PyFkmOb0+v2ROglyTvbHEnMRPmF3QXg0HRg6mrbQ910swKF3vc4sysCeq34N56NXp
+         0L3SS2JwO5mX4z4apN5C8cF+fxM/lGt2T3C8Fb/abyKDZoz7FlB4Gpbf2RLYgTDZuCRj
+         883BESo3PNM6jU7yN3AIIJKh4+sF6ddLOmuE8Dyjc0u9UiANoOhlqDE0iDBPr7LCNAvp
+         RJLDFngNfi/jvTFAIi029ujl86L2ZLpLWPA3S3QF5eIk+SortB5IbzCwD62iH77WcDeB
+         azSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9reRqSIbA7+bBQw+Ea5xdBu+pjruMhqKfeghKLUJaYci/drTMElTZKmvYmM1uU5+WJUvkdlf6H5jG30w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL5lDzqiI4IbhoAS9sCvQmwEEuaPRvekY1yBVLQz80VzGvSmky
+	PD+hEanBwPhhHvoswC3f/pqC6pztthDhjZI0w7xssIkQHn7DH51uhPkYbGQBcaoX/hKRPeMgQQn
+	Sp4o+FXrcoeygvHVxNNDeA4CqvtLDl/kU9n4PqBkN
+X-Gm-Gg: ASbGnct1ifvkDPqf7s1ImCdbErYBemFrBDAs5FksHxJGEnbDTsVEB0KhAgUuqOj/EtR
+	DY/SInIK4FhR1LyyHfZBF/30h6Mm8jpXIlajOVYK/8bIOo4MowHJTZJlNqjUFtuLsTdoV8IgDY/
+	zzlO4HgU3ChrhB9jWo9ANYthhsmGlwWdYdkGh4DJmJXhwgWfyew8YR8btKN7HT2NZmZiooujP36
+	tCcoN+9qpCRhEk+oY3b8mFfc7h6imp/KgyN0qloSJFS3pkI
+X-Google-Smtp-Source: AGHT+IFnnn5TfVGyd1D3iP7UwsZJHVlC2o421euyx05G3rKVs3eMXQL5ccITcJ6SIchFux3YCwHP/tZwUq7+K6O/qMY=
+X-Received: by 2002:a17:903:185:b0:234:9f02:e937 with SMTP id
+ d9443c01a7336-23e1b55fab4mr567335ad.25.1752540090046; Mon, 14 Jul 2025
+ 17:41:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Enable CTCU device for QCS8300
-To: Jie Gan <jie.gan@oss.qualcomm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
- <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250624095905.7609-1-jie.gan@oss.qualcomm.com>
-Content-Language: en-US
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-In-Reply-To: <20250624095905.7609-1-jie.gan@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: _pykAnOTSJauq-2mwBhUu2yBIHAk_C9A
-X-Proofpoint-ORIG-GUID: _pykAnOTSJauq-2mwBhUu2yBIHAk_C9A
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDAwNCBTYWx0ZWRfX1BtDy0CqLFe3
- 83jC4kMUQ+zZzUtxr2mX49RCHNT4x/93BSsbFNMAo8aEdS9flKOmmzPWfir1K7q4G07yahadrTV
- bQLvfcHOvyRVUmMpjBx9y2dcWr3JOTGK1k4Z99Kpsf1mcWgG83gkyS+aFrZlTJG7Z7hPz3ZZpBN
- ZRTCxakzKLU5WfkifgirY4bbt5Oi/V2kApUTFQdBxZDFtUTtapTk17eAwDiH+n9jLYLswYvQi1J
- eRf2as1phT4DSDtxwxljduwHXpUM3m2JJr95ofAoj9yQ3ipnIT86OC3oDiZxU3iMMcPC4ACQumG
- bd+9QJlOBhd+Mg0CHZWaL5KNurJYkQ8lefto4bEoDYMvl6y66xMyzLfAewlj0Tj+fqqOmpsarPb
- GkHg3yBlbDs6Of2GAV0GCfpGJWGqJse7WgQBYc0wG/CmXAlTAzZJNrEiqPqLokIq3WanULgj
-X-Authority-Analysis: v=2.4 cv=CJQqXQrD c=1 sm=1 tr=0 ts=6875a3a5 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=fSwdLtKwHKkDrnzOdDIA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_03,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=935 suspectscore=0 impostorscore=0 spamscore=0
- adultscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0 bulkscore=0
- clxscore=1015 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507150004
+References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
+ <aG_pLUlHdYIZ2luh@google.com> <aHCUyKJ4I4BQnfFP@yzhao56-desk>
+ <20250711151719.goee7eqti4xyhsqr@amd.com> <aHEwT4X0RcfZzHlt@google.com>
+ <20250711163440.kwjebnzd7zeb4bxt@amd.com> <68717342cfafc_37c14b294a6@iweiny-mobl.notmuch>
+ <aHGWtsqr8c403nIj@google.com> <CAGtprH8trSVcES50p6dFCMQ+2aY2YSDMOPW0C03iBN4tfvgaWQ@mail.gmail.com>
+ <68758e893367f_38ba712947a@iweiny-mobl.notmuch>
+In-Reply-To: <68758e893367f_38ba712947a@iweiny-mobl.notmuch>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Mon, 14 Jul 2025 17:41:17 -0700
+X-Gm-Features: Ac12FXw6OnnBeRg5tzGo9zODyPTk-FHWOunP2TNCEpzwOFdIR4F6wxZS-QA4P7E
+Message-ID: <CAGtprH8O535VFYSTp+zqXF0cptDwOn5gwmJa=BLy1zoCdLa=iQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Sean Christopherson <seanjc@google.com>, Michael Roth <michael.roth@amd.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
+	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
+	isaku.yamahata@intel.com, david@redhat.com, ackerleytng@google.com, 
+	tabba@google.com, chao.p.peng@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 14, 2025 at 4:10=E2=80=AFPM Ira Weiny <ira.weiny@intel.com> wro=
+te:
+>
+> Vishal Annapurve wrote:
+> > On Fri, Jul 11, 2025 at 3:56=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > >
+> > > On Fri, Jul 11, 2025, Ira Weiny wrote:
+> > > > Michael Roth wrote:
+> > > > > For in-place conversion: the idea is that userspace will convert
+> > > > > private->shared to update in-place, then immediately convert back
+> > > > > shared->private;
+> > > >
+> > > > Why convert from private to shared and back to private?  Userspace =
+which
+> > > > knows about mmap and supports it should create shared pages, mmap, =
+write
+> > > > data, then convert to private.
+> > >
+> > > Dunno if there's a strong usecase for converting to shared *and* popu=
+lating the
+> > > data, but I also don't know that it's worth going out of our way to p=
+revent such
+> > > behavior, at least not without a strong reason to do so.  E.g. if it =
+allowed for
+> > > a cleaner implementation or better semantics, then by all means.  But=
+ I don't
+> > > think that's true here?  Though I haven't thought hard about this, so=
+ don't
+> > > quote me on that. :-)
+> >
+> > If this is a huge page backing, starting as shared will split all the
+> > pages to 4K granularity upon allocation.
+>
+> Why?  What is the reason it needs to be split?
 
+I think you and Sean have similar questions.
 
-On 6/24/2025 5:59 PM, Jie Gan wrote:
-> Enable CTCU device for QCS8300 platform. Add a fallback mechnasim in binding to utilize
-> the compitable of the SA8775p platform becuase the CTCU for QCS8300 shares same
-> configurations as SA8775p platform.
+This init private-> shared-> fill -> private scheme is for userspace
+for the initial guest payload population. Another choice userspace has
+is to begin the whole file as shared -> fill -> only needed ranges to
+private.
 
-Gentle ping.
+Regarding shared memory ranges for CC VMs, guest_memfd huge page
+support [1] simply works by splitting hugepages in 4K chunks for
+shared regions to allow core-mm to manage the pages without affecting
+rest of the private ranges within a hugepage. The need for splitting
+has been discussed in MM alignment calls and LPC 2024[2].
 
-Hi Suzuki, Mike, James, Rob
-
-Can you plz help to review the patch from Coresight view?
-
-Thanks,
-Jie
-
-> 
-> Changes in V2:
-> 1. Add Krzysztof's R-B tag for dt-binding patch.
-> 2. Add Konrad's Acked-by tag for dt patch.
-> 3. Rebased on tag next-20250623.
-> 4. Missed email addresses for coresight's maintainers in V1, loop them.
-> Link to V1 - https://lore.kernel.org/all/20250327024943.3502313-1-jie.gan@oss.qualcomm.com/
-> 
-> Jie Gan (2):
->    dt-bindings: arm: add CTCU device for QCS8300
->    arm64: dts: qcom: qcs8300: Add CTCU and ETR nodes
-> 
->   .../bindings/arm/qcom,coresight-ctcu.yaml     |   9 +-
->   arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 153 ++++++++++++++++++
->   2 files changed, 160 insertions(+), 2 deletions(-)
-> 
-
+[1] https://lore.kernel.org/lkml/cover.1747264138.git.ackerleytng@google.co=
+m/
+[2] https://lpc.events/event/18/contributions/1764/
 
