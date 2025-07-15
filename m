@@ -1,165 +1,123 @@
-Return-Path: <linux-kernel+bounces-732165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C221EB062FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:32:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FBAB06308
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00287188EAC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36F674A7F68
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CAC24677B;
-	Tue, 15 Jul 2025 15:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1212264A9;
+	Tue, 15 Jul 2025 15:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WkPjtxJS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVbf29qW"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE471DF258
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9205E137923;
+	Tue, 15 Jul 2025 15:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752593538; cv=none; b=PUIkVqsbCyBGbv0j1GKNmjn5IxEaX8C4KdvmzcGHyJ0m/bS36lJOK6UJx//sBGf4B64aE8ZBjlvmOy3KYMZ9oOIYhrvl6VJaHRTNUw1qd09KNWw2Ji1SG35VJ+utmXB/UuyqHHcuDUo7UXtXYbPiI6TbhZEIyGKoQRGtGGFzA9c=
+	t=1752593624; cv=none; b=D6WauP2jHX58sdSC68mIg5KisjOsdJ+NJS1dS3hpsizMPjfpGiBmxIMr2HvokL8PBDV/Pg6egLIMShtOQo0R8E8DTL2SyTkt8+uuBG2zMM5uYip9w3oI/3r5BdELRrrfT1iNo6wIWiBikup35LL9SI+33eXL/gebbd7Hbf3YC1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752593538; c=relaxed/simple;
-	bh=5rdRvK0/wv3rgyzsgXz0n1m+AdOdwgEE5BaXSVwhhTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O0+QRJS2CgQ/6dA8FnK8/Z3vGd0C4WRirUOfsqbJngsazze/h8QSyK1o7RzosFL5VApxKS/7C7LL0mOlNRNl1MML/P7WmCdDfNNOlniNWIqoDyKTSaww55wvnKREOTlTmpEEBhYAJNJgOBn+3qcCH8netxHuuihBo6BJbSjjVMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WkPjtxJS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752593536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wnh22gI/k+OIEWCf+4ySowORAdVnUSIEoD4hbUCmi1M=;
-	b=WkPjtxJSVWQMk2C5as1nCxaCE1ldStlV+zztTaJRs7GiSv4gaCccbRPDfShBs/+COQ/E3i
-	clxEm0/cYWCMzkJ5NxM31s5LY/Rxk9cmiMnjOdONXfsEOSFQjM18pjsO9GZkB7wQuKqHGF
-	qXGj8KZvoy/qV55Tc7Z+vDaXz39JwTE=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-140-Ooo4pPg2NF6a8cmd4Hz72A-1; Tue, 15 Jul 2025 11:32:14 -0400
-X-MC-Unique: Ooo4pPg2NF6a8cmd4Hz72A-1
-X-Mimecast-MFC-AGG-ID: Ooo4pPg2NF6a8cmd4Hz72A_1752593533
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ae6d660902cso415499766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:32:14 -0700 (PDT)
+	s=arc-20240116; t=1752593624; c=relaxed/simple;
+	bh=8IziRa7QYaq7WSGWJLaDCatFVb/HNU86juxjQUvlp7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WmI5ovWu2oi4UhkbBPXapJSg0G3WQACppSWKtGH4hadHzaWtJpKyywflJAk9EYtPAXQQjx3hzPdrqn2oCO0a8EoIaiYq9OBPU0LQIbGEIaAQDeBQxkZzKeliNSsYN4xxOhg/FwTPFSlVLR4F7QN1plv9YQCeolAEKY4wYmMNFr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVbf29qW; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-558facbc19cso4430826e87.3;
+        Tue, 15 Jul 2025 08:33:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752593620; x=1753198420; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VKgKH5pfscs2ZBzdpzCDQh6TrBuIy96Wf3PnVmY4jNo=;
+        b=nVbf29qWnB8KEFG0xWFUUNsRnaxX5OGzoSPe79t7S/dON3RUImzklN1sGQusDGzEAI
+         O6aueNFgxfZL93rB5sgyqiN7SDm62XiKqwRjqKdFCHnQBdnKrEDBBRzI+1LEHaHBNStx
+         0bP3MeCjV9z2kh9oUMZERVQ/iCpZn4Sb7NiSX1RLKUI24NHAvhe0PmKVR8mhwjhPRJhP
+         lcfvbk7xmhd8qi8s82ReWrx619alvYt+hc8NC1p+CBjjK0YFSevJZHha6QgHVwjde9Js
+         CvwCCwcB+JRTNRavpQsebKM/MhOoY1oLUFjuVk626HAwdbj9HRMHY7mGoDJUBYZ7QDz9
+         B9Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752593533; x=1753198333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wnh22gI/k+OIEWCf+4ySowORAdVnUSIEoD4hbUCmi1M=;
-        b=VNm0Dtm3fA9mB6J+OL+n9pTMaJxsdHXPC2Mf/4gIGUJyz4PmtgKmV2wcYZ3PeAEm7F
-         c2ET9rn69fArLFeKAH/fbpQ7Ef5ZkvcrM3lEBBGniC+H9k/8qWbj/PGpApHTrWJy4wt5
-         TEwO2Pz7aqFc6lFEp/5ro7eo6OdT4FEDwZKVjhmYZPJ3gKsQ+46H2JW35/UBzLXMw/9M
-         rRee2RAJIxEJEWw6dGFRZrR9ZsiW8xZv+BSod6pG0pFfPd91/4ptELMcy0zEIJNusEaT
-         fIUWiqMCwwaoImaTL5Oii6ZzS3fwBGPsx0SPkueAHMKiizQpWM+KHSMKEXBFjTE46mbg
-         wTEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaGdpdAX+dOZJExaF0dSIMgQ4M5QdIGBXiPG9Yp/rq6oeVzFUiwlDbpn+ZqIyF0GLYgYSNLrRC/HeSK34=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaJXD1h13ElDb/hRmkE5HgLjTTDw6KzNxgIImoviWf+bBkncLh
-	xsqcHdk/qIrsEotyq9zOowEWjJvPFKaUNxbgO7HlhdzHamCXDNfHxij87cOe7T53kqCjSiS/w7H
-	geFwWEi6z4xmyYoAik37VEbumcRPobKpVRLGTT+TBIRSQDw76E2UeK/iscuJZdr9PVyEH4ykSMC
-	x/mteHvfoyE/0OU9qzXhCb7cPiqgDy6kTIt+7wshFQ
-X-Gm-Gg: ASbGncv26U70ECP2Jd9aaEHqSWNZMPzxDB6K1vchJlsfEE08qS9vocPLq0HTlTeyt8k
-	HCq8y5h+iQbK3Y2JgDvmjwk7Rne7RMqzSrO8TFAzOXysAFI9zUKwc+Qv99JLWQpY/+s+AXN9qmW
-	/yzFvjO54xG24z012IOCc5hg==
-X-Received: by 2002:a17:907:cf93:b0:ae3:cf41:b93b with SMTP id a640c23a62f3a-ae6fc0a7f90mr1582698866b.41.1752593533368;
-        Tue, 15 Jul 2025 08:32:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOIuENMcFdE7XVF/eBak/JoBXEh87UvUrI/EctpEOdONudRuCPXduAkkRmy07jHtjgT20K0pXxQIEZJ9U0ySo=
-X-Received: by 2002:a17:907:cf93:b0:ae3:cf41:b93b with SMTP id
- a640c23a62f3a-ae6fc0a7f90mr1582696366b.41.1752593532954; Tue, 15 Jul 2025
- 08:32:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752593620; x=1753198420;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VKgKH5pfscs2ZBzdpzCDQh6TrBuIy96Wf3PnVmY4jNo=;
+        b=WjWN0FeS4lDVBFkeL9M39wnaTu8WAc/K6pg3USTGZ7Ta0S8eENsD8gfar5Q6hA8ajR
+         FTn8RItfreMGKasyV2lN6tvF755VfCsOcrKLrx4HxvbMiwEqvlh9KN86cFbtml1lJeUu
+         7fScU0OFNomQ78ZF0O+2m8PsUEH5QxOtzKkvAQkuuXGBpCRoMwpm/fWkqHh3Ivz/Lik6
+         wqrLqaBdIu1M0yUDhZoPvH0o+7qOqeqT7RdxbGDJltWpQCVYHnLSNbiPz5ikAH49E9fs
+         JJBvrtkm8Bqn/81LeJPAtJMUzBqHmrS3H9oD7Fukh/HdHOCcSrHjHssAm9uzBftUPBfy
+         C6Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ7SfoCkf76zFLUVAbDp+FwJDFGSAT8rEUWBEMArSIB6N/x4WKGdcOaR3ehMGT/WAeWPszoA6yonan3KQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBefgSON9xIbn/alt01sJ9spV8m9lv9il6XMZ5nUalSgrJZdPI
+	xt5QHNY8VXv7DHBebsjC5p9QEgAekokv8tEs9E/hlGRQI+aS5qQNttc3
+X-Gm-Gg: ASbGncvzTczDQOMtjrxqyO7xOEzzo4tSlUVKNLcB/9TeKrJP3DvHidyRhEzcv/o3+75
+	MrW1hzo40sgyHSVL5T+FVaaKvK6y3yv+aY7dmuEXgSnGT9237MuQ471jGosGczJD/s4GY+ZOjkn
+	YYemRRqw1qUwl63wiZgL3ace5rUNNJ70ec50m5rubwPhDH0Hrg8+Mk+q/hZG276lfPqs97rABVw
+	yFMEVsO2JBhXPxBo+k2iRog00Y6EiUNCxFdCYDm1WVmJmNF3dVSNEt1sjaUb3coNB7GuEvsNdYc
+	6c63af43jp5Qm3ffwQCaxoDuV1T41+qskHdw7ZOKKD+VeLWTHTE3K+hi2l6ci0sbv0InhKeSbMT
+	Lnle0ZgOVmC8NDgcXqtD5bJwhkQnpB2SCZU/tSbBdTCyRhEng/pY=
+X-Google-Smtp-Source: AGHT+IGsQSYGbVGhel6OK6JGXp21aNd3R6Vzv4g5nl7oty3Vuy3eSu3WHWtX0383dsY/yjMQ7K1m7w==
+X-Received: by 2002:a05:6512:3508:b0:553:ceed:c85f with SMTP id 2adb3069b0e04-55a044d718bmr3779535e87.21.1752593620185;
+        Tue, 15 Jul 2025 08:33:40 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([85.174.192.104])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7e9c7dsm2316482e87.64.2025.07.15.08.33.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 08:33:39 -0700 (PDT)
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konstantin Evtushenko <koevtushenko@yandex.com>,
+	Sergey Bashirov <sergeybashirov@gmail.com>
+Subject: [PATCH v2 0/3] NFSD: Fix last write offset handling in layoutcommit
+Date: Tue, 15 Jul 2025 18:32:17 +0300
+Message-ID: <20250715153319.37428-1-sergeybashirov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710023208.846-1-liming.wu@jaguarmicro.com>
-In-Reply-To: <20250710023208.846-1-liming.wu@jaguarmicro.com>
-From: Lei Yang <leiyang@redhat.com>
-Date: Tue, 15 Jul 2025 23:31:35 +0800
-X-Gm-Features: Ac12FXx0K4HuoaUKypyFETVzBZg3F6wzzVt1s3aBwTTAZbrGnPQbtaOUcuDFRP8
-Message-ID: <CAPpAL=wvL2LfRV5BFgLVG69hUoO5fYVx6WEK-PimjoQpy1S7ZA@mail.gmail.com>
-Subject: Re: [PATCH v2] virtio_net: simplify tx queue wake condition check
-To: liming.wu@jaguarmicro.com
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Jakub Kicinski <kuba@kernel.org>, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, angus.chen@jaguarmicro.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Tested this series of patches v2 with virtio-net regression tests,
-everything works fine.
+These patches correct the behavior of the pNFS server when the client
+sends a layoutcommit without a new file size and with zero number of
+block/scsi extents.
 
-Tested-by: Lei Yang <leiyang@redhat.com>
+Tested manually for the pNFS block layout setup.
 
-On Thu, Jul 10, 2025 at 10:32=E2=80=AFAM <liming.wu@jaguarmicro.com> wrote:
->
-> From: Liming Wu <liming.wu@jaguarmicro.com>
->
-> Consolidate the two nested if conditions for checking tx queue wake
-> conditions into a single combined condition. This improves code
-> readability without changing functionality. And move netif_tx_wake_queue
-> into if condition to reduce unnecessary checks for queue stops.
->
-> Signed-off-by: Liming Wu <liming.wu@jaguarmicro.com>
-> Tested-by: Lei Yang <leiyang@redhat.com>
-> Acked-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/net/virtio_net.c | 22 ++++++++++------------
->  1 file changed, 10 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 5d674eb9a0f2..07a378220643 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -3021,12 +3021,11 @@ static void virtnet_poll_cleantx(struct receive_q=
-ueue *rq, int budget)
->                         free_old_xmit(sq, txq, !!budget);
->                 } while (unlikely(!virtqueue_enable_cb_delayed(sq->vq)));
->
-> -               if (sq->vq->num_free >=3D MAX_SKB_FRAGS + 2) {
-> -                       if (netif_tx_queue_stopped(txq)) {
-> -                               u64_stats_update_begin(&sq->stats.syncp);
-> -                               u64_stats_inc(&sq->stats.wake);
-> -                               u64_stats_update_end(&sq->stats.syncp);
-> -                       }
-> +               if (sq->vq->num_free >=3D MAX_SKB_FRAGS + 2 &&
-> +                   netif_tx_queue_stopped(txq)) {
-> +                       u64_stats_update_begin(&sq->stats.syncp);
-> +                       u64_stats_inc(&sq->stats.wake);
-> +                       u64_stats_update_end(&sq->stats.syncp);
->                         netif_tx_wake_queue(txq);
->                 }
->
-> @@ -3218,12 +3217,11 @@ static int virtnet_poll_tx(struct napi_struct *na=
-pi, int budget)
->         else
->                 free_old_xmit(sq, txq, !!budget);
->
-> -       if (sq->vq->num_free >=3D MAX_SKB_FRAGS + 2) {
-> -               if (netif_tx_queue_stopped(txq)) {
-> -                       u64_stats_update_begin(&sq->stats.syncp);
-> -                       u64_stats_inc(&sq->stats.wake);
-> -                       u64_stats_update_end(&sq->stats.syncp);
-> -               }
-> +       if (sq->vq->num_free >=3D MAX_SKB_FRAGS + 2 &&
-> +           netif_tx_queue_stopped(txq)) {
-> +               u64_stats_update_begin(&sq->stats.syncp);
-> +               u64_stats_inc(&sq->stats.wake);
-> +               u64_stats_update_end(&sq->stats.syncp);
->                 netif_tx_wake_queue(txq);
->         }
->
-> --
-> 2.34.1
->
+Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
+---
+Changes in v2:
+ - The first cleanup patch is unchanged
+ - Reworked main patch to guard entire new_size check, improved description
+ - Added cleanup patch to decode lc_newoffset as bool
+
+Sergey Bashirov (3):
+  NFSD: Minor cleanup in layoutcommit processing
+  NFSD: Fix last write offset handling in layoutcommit
+  NFSD: Minor cleanup in layoutcommit decoding
+
+ fs/nfsd/blocklayout.c |  5 ++---
+ fs/nfsd/nfs4proc.c    | 34 ++++++++++++++--------------------
+ fs/nfsd/nfs4xdr.c     |  2 +-
+ 3 files changed, 17 insertions(+), 24 deletions(-)
+
+-- 
+2.43.0
 
 
