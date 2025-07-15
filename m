@@ -1,177 +1,148 @@
-Return-Path: <linux-kernel+bounces-731381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77BE5B05377
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:40:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37863B05369
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18A34A7AE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2E23B1DE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B0F271A71;
-	Tue, 15 Jul 2025 07:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C929D26A0ED;
+	Tue, 15 Jul 2025 07:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="7kAjTzeN"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gIo/dORN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF2326CE18;
-	Tue, 15 Jul 2025 07:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4066DF76;
+	Tue, 15 Jul 2025 07:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752565242; cv=none; b=BwJnS90An9IztnVudB8O1J5JLO00EyEWLs0UhuBubtGwolFI/8/rFgvtnViJFxTlZjofb6DZGvKl1vU88URjabnX0ioYsNubnynXGs5PhbMgQZXYAjxj755sjOfd7c8PpMa/YBZe9coJR1tRwG6n2pffZ0GKdz9sqonNcfSFxvk=
+	t=1752565049; cv=none; b=GrQ+sXibDO0j12246J+DzX0j4TQt6IG+M2KG4CEUgST0BQONQAEC8YOe6waT5KXpzAlh94ZEc55fbtCFbC79yvkNqJD9uFjGqvP+NMFr0AeDkp6n9l18gX5BRDuzEmYZOTxBVk5+2hT+vBCZIQiaM2Lb4qi2p/W8ML22ldTDm34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752565242; c=relaxed/simple;
-	bh=AA56a9ujAyfzajP+75j2ohL8o31ybChOdHGsW5rnxLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=e4FrP8xpjWUwz94iwsLTwTsUFV+qUi6+b9pd3iAGZCfXyaKJEJl1VQ6wPNRMzJF0jt7/VjKvtLwcaN9EdT4FKsanSJqrr8Op/kiv+leJQ6FaIfrQ8L7BR2iAtvhasSQw9vezSvGAlxydP8xAB4gDr3koIncxqYIxZ2X7FblQBqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=7kAjTzeN; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56F6lxuk020561;
-	Tue, 15 Jul 2025 09:40:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	lJy4u2cOTJUFfRT/p8pwkIm5hoX5bxeCYsLaFA2bBsA=; b=7kAjTzeNW9FJV216
-	7OqeUNQPrLxCdIZ323fzJsJWpFke4072y6L1dk8QqL8V2Vpsfpf+JCVXMRI3MH4C
-	6lW9tUL2O+o+cMjwG2y4ygq793VuqJmdt37dIYs7qmpdWYRpMYE9nWvGWeAmRRrz
-	k7jZqRHdNfrNjKvZNqcPab9+hytQGubWNxDd7ZD9sxUxQKmwAPBy6EtbATRkVD1p
-	0EI7lnohov4idm03jKs7x0XVdjMQPwxzVE+PDjvGFOYYhvx9ECCObsYgZ60kRap5
-	oYEt9+iKARslZ1D2NdCMcaKTcpKdPsChEKJL4huaDlxZpwvRDzEVrPBtxfyX55oi
-	9KotqQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47uf22kuc1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 09:40:04 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1D20F40045;
-	Tue, 15 Jul 2025 09:38:42 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3AF65B5857F;
-	Tue, 15 Jul 2025 09:37:23 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
- 2025 09:37:22 +0200
-Message-ID: <765eccdc-7d51-42c6-bcba-07813077fc1d@foss.st.com>
-Date: Tue, 15 Jul 2025 09:37:00 +0200
+	s=arc-20240116; t=1752565049; c=relaxed/simple;
+	bh=fXsb3G8xiuntoQgw8qYOGeWugRH4KGw/AFlpKx1i7rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTKGmY1BnsXLcF8BUSyLgWpB6Igwpktm8nBTBRSezK0EA68zgD2QkdbxzFjqGMmG+wyVBwwm1SB7JZGAuAKQiQMS+beXc+X3wFDNBZfJR/mNDgUaiLDVMdaxWPP0qzVsVGkmBUm86TEb5maqJGvWzrcM1/bgj87g5tXBlqug3MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gIo/dORN; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752565048; x=1784101048;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fXsb3G8xiuntoQgw8qYOGeWugRH4KGw/AFlpKx1i7rs=;
+  b=gIo/dORNHfhLWT82YuKxWl3UPmTf/wfMz49j/n8DDzLrex6OEDIHP0KS
+   6gyNnnKOW141rTpBR/pzzsUZJmEdGUrNWEtzlfHgv7kNVhjnIlXdmw8gk
+   bH5/D9Zt0PhhdhB9AD8kjYS5SswCLEgZW3eft+xyvDb7cfQ5q/z4Lm1sN
+   y2oHtrh7m0+0s622THDwlAlaKcuBAQRLcYFJjBKQrS8juLwGIdLP+dIOC
+   5Hfrl33ZaPO2qcYeCAGgCOPuZw/q8BRBczz8jBxsYIQbxkH3wbxd85Ss6
+   i8X2WKhV+JgvlhFfU84rCKJzY3krbYJxI8czk9ykcNWur828yUcKiigB7
+   w==;
+X-CSE-ConnectionGUID: YmV76esQQ6KB/ronKfANCA==
+X-CSE-MsgGUID: 016af84HTxGEtJfKbPg53g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="57384028"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="57384028"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:37:27 -0700
+X-CSE-ConnectionGUID: FtXZki46QEy5ga5QZrvM6w==
+X-CSE-MsgGUID: Samaty+iR2enRSDUbbCLyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="180850732"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:37:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ubaE6-0000000FaIl-1PqZ;
+	Tue, 15 Jul 2025 10:37:22 +0300
+Date: Tue, 15 Jul 2025 10:37:21 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lothar Rubusch <l.rubusch@gmail.com>
+Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
+Message-ID: <aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
+References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
+ <20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/16] dt-bindings: stm32: stm32mp25: add
- `access-controller-cell` property
-To: Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Le
- Goffic <legoffic.clement@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
- <20250711-ddrperfm-upstream-v2-2-cdece720348f@foss.st.com>
- <20250715031717.GA4144523-robh@kernel.org>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <20250715031717.GA4144523-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_03,2025-07-14_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hello Rob,
-
-On 7/15/25 05:17, Rob Herring wrote:
-> On Fri, Jul 11, 2025 at 04:48:54PM +0200, Clément Le Goffic wrote:
->> RCC is able to check the availability of a clock.
->> Allow to query the RCC with a firewall ID.
+On Fri, Jul 11, 2025 at 08:36:03PM -0300, Gustavo Silva wrote:
+> Any-motion event can be enabled on a per-axis basis and triggers a
+> combined event when motion is detected on any axis.
 > 
-> If it is tied to a clock, do we need another provider? We have the
-> "protected clocks" thing, but that might be a bit different.
+> No-motion event is triggered if the rate of change on all axes falls
+> below a specified threshold for a configurable duration. A fake channel
+> is used to report this event.
 > 
+> Threshold and duration can be configured from userspace.
 
-I couldn't find any reference to "protected-clocks" outside of qcom
-related code, is there a documentation? (Couldn't find it in
-clocks.yaml).
+...
 
-The RCC is firewall-aware and has it's own firewall configuration at
-RCC level for some system resources. When checking access to a clock,
-or a reset, we're reading RCC registers, hence declaring it as an
-access-controller.
+> +/* 9.81 * 1000000 m/s^2 */
+> +#define BMI270_G_MEGA_M_S_2				9810000
 
-A RCC resource's firewall configuration usually covers more than a
-clock.
+I thought this is MICRO...
 
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->> index 88e52f10d1ec..4d471e3d89bc 100644
->> --- a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->> @@ -31,6 +31,11 @@ properties:
->>     '#reset-cells':
->>       const: 1
->>   
->> +  '#access-controller-cells':
->> +    const: 1
->> +    description:
->> +      Contains the firewall ID associated to the peripheral.
->> +
->>     clocks:
->>       items:
->>         - description: CK_SCMI_HSE High Speed External oscillator (8 to 48 MHz)
->> @@ -123,6 +128,7 @@ required:
->>     - reg
->>     - '#clock-cells'
->>     - '#reset-cells'
->> +  - '#access-controller-cells'
->>     - clocks
->>   
->>   additionalProperties: false
->> @@ -136,6 +142,7 @@ examples:
->>           reg = <0x44200000 0x10000>;
->>           #clock-cells = <1>;
->>           #reset-cells = <1>;
->> +        #access-controller-cells = <1>;
->>           clocks =  <&scmi_clk CK_SCMI_HSE>,
->>                     <&scmi_clk CK_SCMI_HSI>,
->>                     <&scmi_clk CK_SCMI_MSI>,
->>
->> -- 
->> 2.43.0
->>
+...
 
-Best regards,
-Gatien
+> +#define BMI270_INT_MICRO_TO_RAW(val, val2, scale) \
+> +	((val) * (scale) + ((val2) * (scale)) / MEGA)
+
+Side note: Perhaps good candidate to have it in math.h
+(AFAIR there are more users of the same.)
+
+> +#define BMI270_RAW_TO_MICRO(raw, scale) \
+> +	((((raw) % (scale)) * MEGA) / scale)
+
+...
+
+> +static ssize_t bmi270_show_accel_value_avail(struct device *dev,
+> +					     struct device_attribute *attr,
+> +					     char *buf)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct bmi270_data *data = iio_priv(indio_dev);
+> +	int ret, scale, uscale;
+> +	unsigned int step, max;
+> +
+> +	ret = bmi270_get_scale(data, IIO_ACCEL, &scale, &uscale);
+> +	if (ret)
+> +		return ret;
+> +
+> +	max = BMI270_G_MEGA_M_S_2 / uscale;
+
+...as here we divide 10^6/10^-6 semantically speaking.
+
+> +	step = max / BMI270_MOTION_THRES_FULL_SCALE;
+> +
+> +	return sysfs_emit(buf, "[0 %u %u]\n", step, max);
+> +}
+
+Is this already documented in ABI?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
