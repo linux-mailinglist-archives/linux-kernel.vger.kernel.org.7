@@ -1,113 +1,177 @@
-Return-Path: <linux-kernel+bounces-731668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4938FB057FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:37:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E806FB057F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 116867B25CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C4BC4A4FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3342D8763;
-	Tue, 15 Jul 2025 10:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5092D8793;
+	Tue, 15 Jul 2025 10:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmqDReYK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLRq7Wkd"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31C224167B;
-	Tue, 15 Jul 2025 10:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC8826FA5C;
+	Tue, 15 Jul 2025 10:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752575829; cv=none; b=GNbxlPPixuOmUVMXay146ggCeUEfHB0SZ9j7MwOmLwCWiez77K+WgFE7kmzQnenOuq5spZKCPhcAoX5mEoysMXo63smXhM9i9kDws97kQOadeHKlDpOO4J2toOfAJP42HhWNUJZO5Ok7PEneptUp6PGM3mBxncFhonjxBTZR+L8=
+	t=1752575782; cv=none; b=mbPM6+EgmJngvIxPjTV3ZzEA9K604hWOuKvQkQLLXS/3OsAOjP3ObqoagA8hg4mjzWP55hgtOypAdSUBiXvdABCT1pmWBoxeWZyqug1vmTUzd97ta44l9uYUnjWVtSNuPCQpyGHxPZ9d2Ficl/Qa616M1Z0xIeMlfIb0c2rF+jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752575829; c=relaxed/simple;
-	bh=CwV8NACOodZkn+P442AO0/+Cb1UGkGUDkZelMg7IKI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eQoWjYdjyx8H52Cd7XvdTGNuMt9Nk0BUXeCABDFDyCyaMFmGt2KzkN0/U++MukxDbUJFcy6WJ37TEWtQQ89hOLJF84i7HClYVVWM6jaajUcYR791p+BOvOkm4gIba5noCZa/g3w3bZotVpMyZIiwO5MluXgkSOn4ddRVUMOTLN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmqDReYK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AF39C4CEE3;
-	Tue, 15 Jul 2025 10:37:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752575829;
-	bh=CwV8NACOodZkn+P442AO0/+Cb1UGkGUDkZelMg7IKI4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OmqDReYKYUKIR1od3JUcHgQZL1aJrur1id/0IR5ViVMTo9FgxjPjElBXq55egu19x
-	 24Ip/tJJItag/U3DXnPnxbh7Ya79+sGSVwZLRwfRWxwPHidydRvGchGnI/mkyevqKu
-	 ri2rl1xNXdM6yU3VLZ+qnaU7YdYTk/ydbhV41U9zBSsFSrJGyDvN4zDqvydRVvivl1
-	 utJP6n7utnoFrnp9yNiXg46egZAIUFXzBzfHDlm8EPJCt5LxGzIpXqogqQHFHVoArw
-	 YD/Bqi/CGpkevIYKn6VVzjp/z0ux1rcMEf0nE6q3X+wbk2uJsLdo5NWeFNQVsFiUKJ
-	 hwIyUA4jY+/+Q==
-Date: Tue, 15 Jul 2025 16:06:59 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Johan Hovold <johan@kernel.org>, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
- notifier callback
-Message-ID: <jdnjyvw2kkos44unooy5ooix3yn2644r4yvtmekoyk2uozjvo5@atigu3wjikss>
-References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
- <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
- <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
+	s=arc-20240116; t=1752575782; c=relaxed/simple;
+	bh=F+tYOXJ8hjiy2s7ICd+QbNKS1sdyZsQBpGzRhNcc6jw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VvS0HmwWN4rpr06EATS+0a/HqWTKmvT4x5yFePkxdrl2HasSO2Z1jdkjF6KfTt2U4dA6KftBGeX3hlIo9UIZ1HXt+Hfa5Kx684lAadfTM8jdr8Il40Q6S4cYVB3j+P/g6uLfm2z1rSF99TxZWoY9m8g+2kGawystLagAClQJuVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jLRq7Wkd; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so8828084a12.3;
+        Tue, 15 Jul 2025 03:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752575779; x=1753180579; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RwJj2XW0Xtg7vWbGRjw0IzVQ1p4FfGBNG+AO9cOWVHY=;
+        b=jLRq7WkdZMcSiLTaLVo7wsMRPJhu8Vi22rCcac22t1+fk9PVHtmbbebj7bFJYtEsj3
+         YXawYvu3CGGetIn/4FPdpUFhTc0HE7aGDO92BvrzCbPM4YQJljtis07+KKJXHM1ipEq1
+         TEKJrMwGfiYZ6zXjdFmK74Uy1O5ajGflD7JLCKbGRnYY1abTUmreKlXHJuwCFycuDmvh
+         jXHpyQd1I/sWmfzpOiMpgFnXf2aGn+TKz7H2Ilrac9oEWnIK2/wENKSSkTYf1W7JkNHC
+         TjDfrYWlw672+tyk0aA5tEOQ7l0n/l0FxN0LSdeEw/DD9h4RW71cWPitgwSxOZkJuL9Y
+         5eaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752575779; x=1753180579;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RwJj2XW0Xtg7vWbGRjw0IzVQ1p4FfGBNG+AO9cOWVHY=;
+        b=fRX/gvWiP7kNG0x/Tou2BwWsyQGD7FmbeCN3nhjQrmzTsR/tLIiJwDixcYovTFAxqB
+         96aHcgAsLV+SxQvnOR1g4BqwCSzICyBWjkfFBjhhDhlaPa2aAIghIXRdSWyedAXhGUs0
+         nEkxr/JwfbTuKnxGj7iRIfJzf0giePzfE3/in7/hskj7exFTCfaEiL4rWbQq/gtIVIPy
+         Qra4NdMV67KaDuZr8Wi2ayuIgsBXWd9GuVC28lVbinge2GPbXzHlkKW0OwLaVUfXdb8A
+         xBILe0sRpkhzzdY1IsdgVapSOHFoZhVHeCUFo3B8Of2FOv8bpw1gRVI8ngX2REv1rWsP
+         9Kyw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9fiQqqiDjpOj+Kig2Q87XSpJuhWG0qBZIMPLe6U9ET8yH4uw9T+ClUaOznlrYvA2xMIOHKfaOi78ra3G1@vger.kernel.org, AJvYcCVZsnhDbiyE/JgAah3tzPW2f+IQZjpMi4Hhz3et+UtOugLx4t78bDjM5nRJs6bmqx28poY=@vger.kernel.org, AJvYcCWhavnj3O1PTKR8zI9QqXyoHXmtaZWLzPLTEtxtT0Qx5GtxzazpofwNq9Tg/aCB4TAIbGT1Iu0G@vger.kernel.org, AJvYcCXazEYsKl7jAoKhtxP35zuL0x2hOTmN7amcCte9N7aWsiZFmOHYxML6TcOQ/jYowugySxCu/X0dq0V3x7SkAgA=@vger.kernel.org, AJvYcCXpeKODxpGM2n1jjr6eqi6EvZ16iUVKvQUYP4I/hvWoK6YMxaXYwsNN/jwqAOeG4IvJzdqKXRavaoEHHQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyteToK/UTJ/hBhdG31uTCfny/IppUCtdnAPOwA84yr/M+/vQf
+	tp9UIW2JtVkdcF25ESyoSnZeiLbJi+Wyz94Wf3InBToNa1LMmVZzG+Ic
+X-Gm-Gg: ASbGncu2a/IUk7obcDeeAYwrV6+/LBvFNWTUt/AEE5tJpevr7bq39I4osD2lLd0Hq6W
+	Ei7E3Fnojp7r3pQF9PcNFJREBhxTy7XVPJnWfooWshbz2gKSONe6hRyb3poGZYb9d1mUzDCudI0
+	S0LQ7AeuWHESjUAvpJ74DMopQhYY8VOSYZQmnjTALXJftMVdSWQjQ9pP5VS7VvxrgjaDsqeq7Yk
+	+z5O41JWFwkPRRPEqpZxfNwivMNt3lRajAZXbANIg74+cvkVqeQHOv/8hPl8x2mvdWiJ+mlunK2
+	e0kuVsWmkzy+7spl34zvx20PALOMWNEzdz/LKb7s6GUTPVyc6Elg/TZDb9ngp8+5V8qOrPSnfaN
+	R2VjyLk3dFjWdjabm2VZCDQoLbHrFVxJaaB/qEJIjrAmauQ==
+X-Google-Smtp-Source: AGHT+IGaK5G3wNkKd0FQXTFLEb3wcMNGQ8G+9vcipY4gHF5O0bM0XfRnvGt5TQBO6UmtOz1kGEnKVw==
+X-Received: by 2002:a17:907:930c:b0:ae6:a8c1:c633 with SMTP id a640c23a62f3a-ae6fc1fae79mr1633481566b.34.1752575779007;
+        Tue, 15 Jul 2025 03:36:19 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:a4c1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82dedd3sm976790966b.150.2025.07.15.03.36.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 03:36:18 -0700 (PDT)
+Message-ID: <9bed2f6e-6251-4d0c-ad1e-f1b8625a0a10@gmail.com>
+Date: Tue, 15 Jul 2025 11:37:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v10 02/12] netmem: use netmem_desc instead of
+ page to access ->pp in __netmem_get_pp()
+To: Mina Almasry <almasrymina@google.com>, Byungchul Park <byungchul@sk.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
+ akpm@linux-foundation.org, andrew+netdev@lunn.ch, toke@redhat.com,
+ david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
+ bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
+ xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, anthony.l.nguyen@intel.com,
+ przemyslaw.kitszel@intel.com, sgoutham@marvell.com, gakula@marvell.com,
+ sbhatta@marvell.com, hkelam@marvell.com, bbhushan2@marvell.com,
+ tariqt@nvidia.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, mbloch@nvidia.com, danishanwar@ti.com, rogerq@kernel.org,
+ nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+ shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, aleksander.lobakin@intel.com,
+ horms@kernel.org, m-malladi@ti.com, krzysztof.kozlowski@linaro.org,
+ matthias.schiffer@ew.tq-group.com, robh@kernel.org, imx@lists.linux.dev,
+ intel-wired-lan@lists.osuosl.org, linux-arm-kernel@lists.infradead.org,
+ linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20250714120047.35901-1-byungchul@sk.com>
+ <20250714120047.35901-3-byungchul@sk.com>
+ <CAHS8izO393X_BDJxnX2d-auhTwrUZK5wYdoAh_tJc0GBf0AqcQ@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAHS8izO393X_BDJxnX2d-auhTwrUZK5wYdoAh_tJc0GBf0AqcQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
 
-On Tue, Jul 15, 2025 at 11:54:48AM GMT, Konrad Dybcio wrote:
-> On 7/14/25 8:01 PM, Manivannan Sadhasivam wrote:
-> > It allows us to group all the settings that need to be done when a PCI
-> > device is attached to the bus in a single place.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-qcom.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > index b4993642ed90915299e825e47d282b8175a78346..b364977d78a2c659f65f0f12ce4274601d20eaa6 100644
-> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > @@ -1616,8 +1616,6 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
-> >  		pci_lock_rescan_remove();
-> >  		pci_rescan_bus(pp->bridge->bus);
-> >  		pci_unlock_rescan_remove();
-> > -
-> > -		qcom_pcie_icc_opp_update(pcie);
-> >  	} else {
-> >  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
-> >  			      status);
-> > @@ -1765,6 +1763,7 @@ static int pcie_qcom_notify(struct notifier_block *nb, unsigned long action,
-> >  	switch (action) {
-> >  	case BUS_NOTIFY_BIND_DRIVER:
-> >  		qcom_pcie_enable_aspm(pdev);
-> > +		qcom_pcie_icc_opp_update(pcie);
+On 7/14/25 20:37, Mina Almasry wrote:
+> On Mon, Jul 14, 2025 at 5:01 AM Byungchul Park <byungchul@sk.com> wrote:
+...>> +static inline struct netmem_desc *pp_page_to_nmdesc(struct page *page)
+>> +{
+>> +       DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(page));
+>> +
+>> +       /* XXX: How to extract netmem_desc from page must be changed,
+>> +        * once netmem_desc no longer overlays on page and will be
+>> +        * allocated through slab.
+>> +        */
+>> +       return (struct netmem_desc *)page;
+>> +}
+>> +
 > 
-> So I assume that we're not exactly going to do much with the device if
-> there isn't a driver for it, but I have concerns that since the link
-> would already be established(?), the icc vote may be too low, especially
-> if the user uses something funky like UIO
+> Same thing. Do not create a generic looking pp_page_to_nmdesc helper
+> which does not check that the page is the correct type. The
+> DEBUG_NET... is not good enough.
 > 
+> You don't need to add a generic helper here. There is only one call
+> site. Open code this in the callsite. The one callsite is marked as
+> unsafe, only called by code that knows that the netmem is specifically
+> a pp page. Open code this in the unsafe callsite, instead of creating
+> a generic looking unsafe helper and not even documenting it's unsafe.
+> 
+>>   /**
+>>    * __netmem_get_pp - unsafely get pointer to the &page_pool backing @netmem
+>>    * @netmem: netmem reference to get the pointer from
+>> @@ -280,7 +291,7 @@ static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+>>    */
+>>   static inline struct page_pool *__netmem_get_pp(netmem_ref netmem)
+>>   {
+>> -       return __netmem_to_page(netmem)->pp;
+>> +       return pp_page_to_nmdesc(__netmem_to_page(netmem))->pp;
+>>   }
+> 
+> This makes me very sad. Casting from netmem -> page -> nmdesc...
 
-Hmm, that's a good point. Not enabling ASPM wouldn't have much consequence, but
-not updating OPP would be.
+The function is not used, and I don't think the series adds any
+new users? It can be killed then. It's a horrible function anyway,
+would be much better to have a variant taking struct page * if
+necessary.
 
-Let me think of other ways to call these two APIs during the device addition. If
-there are no sane ways, I'll drop *this* patch.
+> Instead, we should be able to go from netmem directly to nmdesc. I
+> would suggest rename __netmem_clear_lsb to netmem_to_nmdesc and have
+> it return netmem_desc instead of net_iov. Then use it here.
 
-- Mani
+Glad you liked the diff I suggested :) In either case, seems
+like it's not strictly necessary for this iteration as
+__netmem_get_pp() should be killed, and the rest of patches work
+directly with pages.
+
+  
+> We could have an unsafe version of netmem_to_nmdesc which converts the
+> netmem to netmem_desc without clearing the lsb and mark it unsafe.
+> 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Pavel Begunkov
+
 
