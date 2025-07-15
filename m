@@ -1,172 +1,156 @@
-Return-Path: <linux-kernel+bounces-731922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF95B05C84
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:32:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 347DBB05C6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF161567468
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:31:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA785567505
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFC62E9EC3;
-	Tue, 15 Jul 2025 13:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4808C2E6D2F;
+	Tue, 15 Jul 2025 13:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="K2BGU8cB"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Vs8wfvEc"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBD42E2F12;
-	Tue, 15 Jul 2025 13:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752586038; cv=pass; b=Dx8ubmTLNHSSLNPfzctarrQBI53ZSnStkHoOBDBx8VcPm463pkvaAhykwlHeThmZDciieiCnMClYCD+/u1DK333OrP5iefW0a+Co2vMZoaeXDJl6OCBcsY02RRjb4itWGp38TuVbNqi66MWFR2TKYZIwL2NaGhfLurF9Px6jsEY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752586038; c=relaxed/simple;
-	bh=nZ8L4CNPFWLdv3DnqHL3TaBlkT7ADo8ZfSs7NvwAMPY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OceNyGOl05LNVbQQvbVj5eFVnC2CiiJ+Za03jeXRKeGVzHfcablzcb4vjZYfWDhTVKF8wkQpQttQob+dkwl2D/lRwtd7JtCZVfW0U70GGVa0sbNTpikNuiZKq1MadyaWD3mpxR3mNrhvXyoWQ60GkIP3y9Ip3RvVRnMSD4BbFwk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=K2BGU8cB; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18D02E2F10;
+	Tue, 15 Jul 2025 13:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752585987; cv=none; b=KLyiLbW6zVi2Gk2bk4OFvUodoyDUyXnIATJV/7Xukio6A66GzNHmxir+m3ouxmz0xFm3Ylufa1x0b+ULDbg77uiY8jx0WGSK55a84QM1rhpPjJz51zw8FTaLLbCxtJjDG3DhGNWZUWWMU36j+ba01u1Q57jboUEe2CSJDSiDX38=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752585987; c=relaxed/simple;
+	bh=oBnBaCSoump3r4cmxRJ8JBgYq96nOv/9jO9G/aWKWd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZnQ1f4NpREasJGfsLG3wWSd/+gxI4guNDjP2KoDxSH6UzvBAiDAVnclFX1R1cKMNrOiEefbNM+HGejW7icyesm4lnYlF+LtkHyPhrq0y5z6NQ/PY6zVz3NbwvGI1mRt3xY4CBS01gnltYtXnzcYYcBWeuaVeXC+dhcurjN0C7Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Vs8wfvEc; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752585934; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iS8ydypJ5Ytea+qvuAIEasiV3zxEFaxKCuidthawyGncohprwE+IyNB7RvXvm2+00iqj2xIeQQT/mBiqdbi/UtwNxpNmKUxa/NcWp19/Qj7gM0d9BxTkO7y8NZixVv+Vre8lQ/bTPlF4i3W5wpNdvgLMqzKKELWtVYVnw52rIdw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752585934; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=khWqCIhyOZuc5K6Or8KOBVZRXHfT5Uql8gBWeLi0Yps=; 
-	b=j3SrtF1361SUCcdQZ9ZraZxDLOnB2hbduI/8yP+1ryWIIUvUhTvbt6JEHIo4y6HGghGBUlXK4arXBDMR+ZW5n/y6zyDk9xUobsGaOlJ19moCu0CuCA3qfekMqeypx106ksmn/Ru+HR4+45pZYuG0FEtEUSFO3w10OWSX3cVO2KU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752585934;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=khWqCIhyOZuc5K6Or8KOBVZRXHfT5Uql8gBWeLi0Yps=;
-	b=K2BGU8cBPn31wLpVvwj1Z4IFsUiSDA83EWM15n+b1C8kesw+QALaSdmpEDcWOQUU
-	aPuF0fkD4fspDBCB/zXzND588GJsf6hNeLsV0WOIB9LwRa33S+e1jpQo8+pPTGjdKNz
-	/ctWi6ynB9OQGpv9PYTSWDSPRZg+EYTB41F/vdic=
-Received: by mx.zohomail.com with SMTPS id 1752585931663919.1784462606722;
-	Tue, 15 Jul 2025 06:25:31 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Manivannan Sadhasivam <mani@kernel.org>,
-	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Youssef Samir <quic_yabdulra@quicinc.com>,
-	Matthew Leung <quic_mattleun@quicinc.com>,
-	Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-	Kunwu Chan <chentao@kylinos.cn>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-	Yan Zhen <yanzhen@vivo.com>,
-	Sujeev Dias <sdias@codeaurora.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Siddartha Mohanadoss <smohanad@codeaurora.org>,
-	mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2 3/3] bus: mhi: keep device context through suspend cycles
-Date: Tue, 15 Jul 2025 18:25:09 +0500
-Message-Id: <20250715132509.2643305-4-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250715132509.2643305-1-usama.anjum@collabora.com>
-References: <20250715132509.2643305-1-usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752585984;
+	bh=oBnBaCSoump3r4cmxRJ8JBgYq96nOv/9jO9G/aWKWd4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vs8wfvEcwsAZjh6BZBE0xPpCIvhDjpVsglg1U/95trO5CNT4MgQHkZyI27XzcIlFT
+	 AdgKbzFh4n6QM/4dGLvfM5G37VqH+MkLncGLfJ3dELlTsbZnpwti0rChV4xUM6Q7nR
+	 WJsKkYK/8RLXDWQCY93t3ZRUbLL3FoOJDzJLL24v+TJPXFYGMAMZOe1KccWBuhcYyt
+	 lQM2E/uTDBLXvjAQQn3x/ZxjXKqgLLkEKv1mDP6zj8Wh3rXDCLFga66H47UhxraKJ0
+	 qu4YBxw+VhbGoxyFCeNL1VJ456GdBRRvzru+n2GkpEPdkchFoUcQl2FgqWqG7u3bt9
+	 ovP9jugFCxq7A==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7000B17E097F;
+	Tue, 15 Jul 2025 15:26:23 +0200 (CEST)
+Message-ID: <ddcd26ad-1bf1-4d14-b341-3c0e1e56cbf3@collabora.com>
+Date: Tue, 15 Jul 2025 15:26:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: mediatek: encoder: memset encoder structure data
+To: Irui Wang <irui.wang@mediatek.com>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, nicolas.dufresne@collabora.com
+Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Yunfei Dong <yunfei.dong@mediatek.com>,
+ Longfei Wang <longfei.wang@mediatek.com>
+References: <20250715081547.18076-1-irui.wang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250715081547.18076-1-irui.wang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Don't deinitialize the device context while going into suspend or
-hibernation cycles. Otherwise the resume may fail if at resume time, the
-memory pressure is high and no dma memory is available. At resume, only
-reset the read/write ring pointers as rings may have stale data.
+Il 15/07/25 10:15, Irui Wang ha scritto:
+> Utilized memset to set all bytes of encoder structure to zero,
+> this prevents any undefined behavior due to uninitialized use.
+> 
+> Signed-off-by: Irui Wang <irui.wang@mediatek.com>
 
-Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+This commit needs a Fixes tag, as you're fixing something important here.
 
-Fixes: 3000f85b8f47 ("bus: mhi: core: Add support for basic PM operations")
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
-Changes since v1:
-- Cc stable and fix tested on tag
-- Add logic to reset rings at resume
----
- drivers/bus/mhi/host/init.c | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+Also, please clarify what is this undefined behavior that you've seen and
+what problem are you trying to resolve by zeroing all those mem locations.
 
-diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
-index 46ed0ae2ac285..6513012311ce3 100644
---- a/drivers/bus/mhi/host/init.c
-+++ b/drivers/bus/mhi/host/init.c
-@@ -474,6 +474,24 @@ static int mhi_init_dev_ctxt(struct mhi_controller *mhi_cntrl)
- 	return ret;
- }
- 
-+static void mhi_reset_dev_rings(struct mhi_controller *mhi_cntrl)
-+{
-+	struct mhi_event *mhi_event = mhi_cntrl->mhi_event;
-+	struct mhi_cmd *mhi_cmd = mhi_cntrl->mhi_cmd;
-+	struct mhi_ring *ring;
-+	int i;
-+
-+	for (i = 0; i < mhi_cntrl->total_ev_rings; i++, mhi_event++) {
-+		ring = &mhi_event->ring;
-+		ring->rp = ring->wp = ring->base;
-+	}
-+
-+	for (i = 0; i < NR_OF_CMD_RINGS; i++, mhi_cmd++) {
-+		ring = &mhi_cmd->ring;
-+		ring->rp = ring->wp = ring->base;
-+	}
-+}
-+
- int mhi_init_mmio(struct mhi_controller *mhi_cntrl)
- {
- 	u32 val;
-@@ -1133,9 +1151,13 @@ int mhi_prepare_for_power_up(struct mhi_controller *mhi_cntrl)
- 
- 	mutex_lock(&mhi_cntrl->pm_mutex);
- 
--	ret = mhi_init_dev_ctxt(mhi_cntrl);
--	if (ret)
--		goto error_dev_ctxt;
-+	if (!mhi_cntrl->mhi_ctxt) {
-+		ret = mhi_init_dev_ctxt(mhi_cntrl);
-+		if (ret)
-+			goto error_dev_ctxt;
-+	} else {
-+		mhi_reset_dev_rings(mhi_cntrl);
-+	}
- 
- 	ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs, BHIOFF, &bhi_off);
- 	if (ret) {
-@@ -1212,8 +1234,6 @@ void mhi_deinit_dev_ctxt(struct mhi_controller *mhi_cntrl)
- {
- 	mhi_cntrl->bhi = NULL;
- 	mhi_cntrl->bhie = NULL;
--
--	__mhi_deinit_dev_ctxt(mhi_cntrl);
- }
- 
- void mhi_unprepare_after_power_down(struct mhi_controller *mhi_cntrl)
-@@ -1239,6 +1259,7 @@ void mhi_unprepare_after_power_down(struct mhi_controller *mhi_cntrl)
- 	}
- 
- 	mhi_deinit_dev_ctxt(mhi_cntrl);
-+	__mhi_deinit_dev_ctxt(mhi_cntrl);
- }
- EXPORT_SYMBOL_GPL(mhi_unprepare_after_power_down);
- 
--- 
-2.39.5
+There's also more feedback, check below...
+
+> ---
+>   .../media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c  | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
+> index a01dc25a7699..ecac1aec7215 100644
+> --- a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
+> +++ b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
+> @@ -886,6 +886,7 @@ static int vb2ops_venc_start_streaming(struct vb2_queue *q, unsigned int count)
+>   			return 0;
+>   	}
+>   
+> +	memset(&param, 0, sizeof(param));
+
+Have you considered doing, instead...
+
+	struct venc_enc_param param = { 0 }; ?
+
+>   	mtk_venc_set_param(ctx, &param);
+>   	ret = venc_if_set_param(ctx, VENC_SET_PARAM_ENC, &param);
+>   	if (ret) {
+> @@ -1021,12 +1022,14 @@ static int mtk_venc_encode_header(void *priv)
+>   	struct mtk_vcodec_mem bs_buf;
+>   	struct venc_done_result enc_result;
+
+  	struct venc_done_result enc_result = { 0 };
+
+>   
+> +	memset(&enc_result, 0, sizeof(enc_result));
+>   	dst_buf = v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
+>   	if (!dst_buf) {
+>   		mtk_v4l2_venc_dbg(1, ctx, "No dst buffer");
+>   		return -EINVAL;
+>   	}
+>   
+> +	memset(&bs_buf, 0, sizeof(bs_buf));
+>   	bs_buf.va = vb2_plane_vaddr(&dst_buf->vb2_buf, 0);
+>   	bs_buf.dma_addr = vb2_dma_contig_plane_dma_addr(&dst_buf->vb2_buf, 0);
+>   	bs_buf.size = (size_t)dst_buf->vb2_buf.planes[0].length;
+> @@ -1143,6 +1146,7 @@ static void mtk_venc_worker(struct work_struct *work)
+>   	struct venc_done_result enc_result;
+>   	int ret, i;
+>   
+> +	memset(&enc_result, 0, sizeof(enc_result));
+
+You should probably move this to before the first usage, instead.
+
+>   	/* check dst_buf, dst_buf may be removed in device_run
+>   	 * to stored encdoe header so we need check dst_buf and
+>   	 * call job_finish here to prevent recursion
+> @@ -1175,6 +1179,7 @@ static void mtk_venc_worker(struct work_struct *work)
+>   		frm_buf.fb_addr[i].size =
+>   				(size_t)src_buf->vb2_buf.planes[i].length;
+>   	}
+> +	memset(&bs_buf, 0, sizeof(bs_buf));
+
+here it's fine to use memset, as there are multiple ways out before actually using
+bs_buf.
+
+Cheers,
+Angelo
+
+>   	bs_buf.va = vb2_plane_vaddr(&dst_buf->vb2_buf, 0);
+>   	bs_buf.dma_addr = vb2_dma_contig_plane_dma_addr(&dst_buf->vb2_buf, 0);
+>   	bs_buf.size = (size_t)dst_buf->vb2_buf.planes[0].length;
+
 
 
