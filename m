@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-731082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91B4B04E9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FE8B04EA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF234A43AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD251AA04B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF202D0C91;
-	Tue, 15 Jul 2025 03:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A680F25CC64;
+	Tue, 15 Jul 2025 03:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhnvEVxT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jtNyAYps"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4E280B;
-	Tue, 15 Jul 2025 03:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBAE80B;
+	Tue, 15 Jul 2025 03:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752549621; cv=none; b=C/XVzWqcBGuIZBWPy3s6Mf4ncBODzx51B0MafzoqE8yGvUhOAcU4EDEXX6X9KdeG9/VPagXKKUu8hMEx10L3DaaiP9FOtonpFrO2bskFtYBUDGc38ETMIk1vKH+a1y+rk7mXbItAGwHW9OuE/JrTe6P2ageFu9M+zGHE9AIaCcI=
+	t=1752549658; cv=none; b=L99j1chjnNOSBeuzab49vmRR3jA+yoQw6Ka7E4cQPYyuEWBEKGko95GGADlDiteC2r0SUVUKakOva50xnqMZL9j98fnzIYw4TGLM+88sw6z3kUrdaUHCFNQ74YLhW7ugy6ZPTkHWFhU7+r7em1FR+sltDdrC0iPvxPHOTQi16EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752549621; c=relaxed/simple;
-	bh=TDYuRWmFZrwnvk8qMS3AlGvkZ3xUWYu930vi3adDEoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lCqaYP5nxrM1X9ra+vZftmt3pgMMpm8pvWBSMsTXiD00pnK6fN6m3R/F6TgdGrqotxDCh/pC+7EO2eNvfS+/qsqw7CPeJV41syb1G5dMM9fle5tBe/dm7fx9pLZ0rXDY3zh0tJx7WtrEy45mTQRBfwvxkEOTzTKL8RJqSRPplQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhnvEVxT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5B9C4CEED;
-	Tue, 15 Jul 2025 03:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752549621;
-	bh=TDYuRWmFZrwnvk8qMS3AlGvkZ3xUWYu930vi3adDEoY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mhnvEVxTxd7nbP4JvA3c5oAI7v4Uh1XECXIYdE/N/qy0huEeZvo77oD3clb4yTeWg
-	 ymcvNK/OWxZiNy8QB28n853qDQu5Onfy2QbNM99FmG7C495d6/1pBwDdOtioibMSSr
-	 /rlMD2bWz/hqVqcD18knvPH4J8lLajX/kcQ2Ilm7eWdWbm7ZGc4Q/ZTnOWmINuwNNe
-	 BxX9zMQoXhN+gpCMRRtNwTSi0RuN0t+Gkpq8fEib5xKs3IOxjBmVBIpaSmzbYDP8qg
-	 xOWvSr5FiKi9K5beUealNgIeVFiD9nCqjoctx0r+oRvwk+1p8VUoHmrFlNxs9LXyT7
-	 106sWikoj8ffw==
-Date: Mon, 14 Jul 2025 22:20:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Le Goffic <legoffic.clement@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 06/16] arm64: dts: st: add LPDDR channel to
- stm32mp257f-dk board
-Message-ID: <20250715032020.GB4144523-robh@kernel.org>
-References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
- <20250711-ddrperfm-upstream-v2-6-cdece720348f@foss.st.com>
+	s=arc-20240116; t=1752549658; c=relaxed/simple;
+	bh=M6zzaEdA7Yoaj1wVjRWHjo1L/FJpqf9aLpUQOpDIhvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nzhX4Uf1ew9Q6P5MGCTrz+6JzOeJsWlfLQ99jQ8N2fwZpZe04H9J7L7D141Id4zroPJnkaXzMHd08rhWCTe7dWwDaB0yG2R9B819K+nPLUctTLWlEiXxNuLhSCP+ir2+kULueAKeZZJhwhV+nZjLtjIaDeblxgQ3gINcNPSHg04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jtNyAYps; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752549545;
+	bh=U/ahC+c5V1A9bMBBbUoGlEVMsa+F2/kjHGLLn9AOLWo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jtNyAYpsFHAV8aOaOVOhpmgitFunB8Mww541v87vvKhSrusWMt5a2m9RuOp10Tysz
+	 4ArdeoSr139Wzqsix27jKIJgOcA7mXGpOHTswf9I4ozkd7YL900bJCCV1bEtIn3WmE
+	 J6KYGxIKiogWQKQXnPlsY9bhymXq2o/2MiGiDgPoCq9NfM5hvKhWsnp7yPLW98ls6G
+	 EuuEoqr9v4StNRRQepyCoFdAQsEI62WBR1jHJXg9GsY/ImHZNS/IGGzArrdCYA3Zbq
+	 T+s1ZUSQCaYJPD6XA0p2h0xMLyVMBxtSO8eJk9VGhL2qlohT71N0MyBNF2dOY0elmA
+	 xgoe3I79XS0QQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bh4Cr4Y2lz4wb0;
+	Tue, 15 Jul 2025 13:19:04 +1000 (AEST)
+Date: Tue, 15 Jul 2025 13:20:51 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Eric Biggers <ebiggers@kernel.org>, "Jason A. Donenfeld"
+ <Jason@zx2c4.com>, Ard Biesheuvel <ardb@kernel.org>, Linux Crypto List
+ <linux-crypto@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the libcrypto tree with Linus' tree
+Message-ID: <20250715132051.4b4ce028@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250711-ddrperfm-upstream-v2-6-cdece720348f@foss.st.com>
+Content-Type: multipart/signed; boundary="Sig_/yeHmtDZi3DL4jT0QFGbocQw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Jul 11, 2025 at 04:48:58PM +0200, Clément Le Goffic wrote:
-> Add 32bits LPDDR4 channel to the stm32mp257f-dk board.
-> 
-> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  arch/arm64/boot/dts/st/stm32mp257f-dk.dts | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
-> index a278a1e3ce03..a97b41f14ecc 100644
-> --- a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
-> +++ b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
-> @@ -54,6 +54,13 @@ led-blue {
->  		};
->  	};
->  
-> +	lpddr_channel: lpddr4-channel {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		compatible = "jedec,lpddr4-channel";
+--Sig_/yeHmtDZi3DL4jT0QFGbocQw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Not tested because this doesn't match the binding.
+Hi all,
 
-> +		io-width = <32>;
-> +	};
+Today's linux-next merge of the libcrypto tree got a conflict in:
 
-What would multiple channels look like? I think this needs some work. 
-Like it should perhaps be within the memory node. It's a lot to just say 
-32-bit LPDDR4 x1.
+  arch/s390/crypto/sha1_s390.c
 
-> +
->  	memory@80000000 {
->  		device_type = "memory";
->  		reg = <0x0 0x80000000 0x1 0x0>;
-> 
-> -- 
-> 2.43.0
-> 
+between commit:
+
+  68279380266a ("crypto: s390/sha - Fix uninitialized variable in SHA-1 and=
+ SHA-2")
+
+from Linus' tree and commit:
+
+  377982d5618a ("lib/crypto: s390/sha1: Migrate optimized code into library=
+")
+
+from the libcrypto tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/yeHmtDZi3DL4jT0QFGbocQw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh1yRMACgkQAVBC80lX
+0Gz8YQf+Lc0kbHvsXNgmk9e/BdVXxff4M5cY1sdAq5uUtjpibKXlMY/rTHA5vyoC
+ewgs8jfiM6OqEQjUqVtyur7Dg2YyTIhvhObc1UQ/vYN9eQfA+IRuE6KCW1eP8lTj
+ILoLy/1nG/r8TfE1Jqkt8EYuwBBC+7A8ExnZ3DfTRPZFeKPYjMtgmT9+4mX9OuQ1
+gZQgfcYElPDQ0jt7so3fchm1eMqjqtlkdu/mNKN7vCc1g5ZPziA/XHRYCXyvvyPt
+tDDd7fHd0FPeMsXs+H4NdsaNhlP7ujWOTI5TM6vTmWVP9WQl9ull6lPPyS7kqamn
+OwF0h2mE39EtqfWbef43SHMP+veueA==
+=jtEL
+-----END PGP SIGNATURE-----
+
+--Sig_/yeHmtDZi3DL4jT0QFGbocQw--
 
