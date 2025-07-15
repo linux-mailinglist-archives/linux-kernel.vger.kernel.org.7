@@ -1,109 +1,101 @@
-Return-Path: <linux-kernel+bounces-731828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1C3B05A5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E30B05A63
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 172B27AF2C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:36:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EE3F7AFC5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1972D2E040F;
-	Tue, 15 Jul 2025 12:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C922E040D;
+	Tue, 15 Jul 2025 12:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoAptYmF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ta6Ybp+5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708641EDA09;
-	Tue, 15 Jul 2025 12:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FDC1EDA09;
+	Tue, 15 Jul 2025 12:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752583043; cv=none; b=UkuQ39j/fGA1//m7scASPuQDOaYsz8NPuXzsHRvoAYD32TXbgriQWnMGfJ0Rr5llDoyDHQOdO0h3HRrmc+M81j/4OZ0/X0x2DDL+zEexXPLY/t6LC1xafJsVi7CilBo9NfAtokVYUIr83eKSKDAS/Lh/k7Ur32sKdoJXpfU9E8w=
+	t=1752583105; cv=none; b=syYFKoORxZoQyZ+3XMx1iVtUCqh9om53zQOJnWX5OqkHiT6KZw5Cl+4fLEbzr71YfUTW4DObwhL+k7/tudvnLGPdlqMMCeClnrBD+frBAShiYQrjIwxiDoCHWwnGRr+S5bLt+BO9hjGfxWQYYBo1QqKl9r8OA768iMx3oQYsizE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752583043; c=relaxed/simple;
-	bh=4H+aBzxKOxX4fKGY9phd6BfYevXHiHL6VFDuZqqNKCs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=iy8dHi7+NvnOFjn0XfyxqC48f0iDMZ3VCG9dPyHRaMIP5tApSwwNKa74Hh7kdpShfIq+0RGdu1qhVNS1569BvHqsKwgdyiVI31eN3TX29V+f+EDFwwTI0zYlbjG+1c+Ec7EfSQh2tAu+UXidXLZcQFstKevX5WzVOo4ouCaGVaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoAptYmF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6479DC4CEE3;
-	Tue, 15 Jul 2025 12:37:19 +0000 (UTC)
+	s=arc-20240116; t=1752583105; c=relaxed/simple;
+	bh=gMdl43/0bMuiZDFZdXVaO2ZI3Rf0NtBZ9KAPxIt6tNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TK16BQZWWynGD4kTqS4wokKo3VMlgblgxCKOVWss+zCwQhraUQy8NUDhgvflhUFpkPXB0cu+N1NyJMB96yZIVuLArCiNQRfKDP/B1VF329R2UG1nlvtWfxDeyjIoX+4vmC4vsX4ZFq5drFhwSsHPjreBvv1RkkpOBs17PFotlKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ta6Ybp+5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D421C4CEE3;
+	Tue, 15 Jul 2025 12:38:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752583042;
-	bh=4H+aBzxKOxX4fKGY9phd6BfYevXHiHL6VFDuZqqNKCs=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=YoAptYmFnHkB8l8z5+wd8IuAvgyVyt66ThExmXk01SrG0IKbi7aVoi/Wv37kGXaLM
-	 tdNIaqmJscgbyaCVS+GQ/WQfVLWUTn2uv0USEFIPXmarBlXNqCx8vNicuXDj2fDo4T
-	 8oFxcsJciX64VINjE/wPExoSczVs2pCkENZwbV2K7qYr43Gxy/NQbVprltcTykbiMO
-	 8ys18LLUlEGM5mPDFTEWX/RZJ7++R1NV8phrLhM5p/9voJURlSwz5g7+kvfjl0vbMl
-	 4Kt0xTlVLKZAGTVS/k7omgaBGDyfanjn/rmBG7EiY7FUAHY3mRXHLwu2WIvSY502zl
-	 hXxoSDy7H+hcw==
+	s=k20201202; t=1752583105;
+	bh=gMdl43/0bMuiZDFZdXVaO2ZI3Rf0NtBZ9KAPxIt6tNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ta6Ybp+5ZGZoiwIBSSjQQyLrXmiGjzZJFt4ku+MWt3JHYPaR1L/VuwDJUhkoazfvI
+	 OtRkxFOAc5xQeUgBZY4VTsF7o4I95UfO/5HwfWQ9huaLnKyKgj6V7j/b+AIvZiSfAs
+	 XPUBUC3No8i9wZiW5lPqwKq3HyHR8+6I+D/0siuODGLllyMLcPX/e7jLdYS+eV572f
+	 o1fnowKHCk+9gp5FkmNbRGWAJyR4q8j7HYPn++3UwoUMxOXY3V443Ynq541bujK+Ne
+	 dhOxmfOwn8L795bpGYslwf8sM5xdxAqfZgoCtmbE99tDWV43VBkixuBiVXn40KhfNP
+	 IIMrBHsPyXWew==
+Date: Tue, 15 Jul 2025 18:08:21 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: George Verhaegen <verhaegen@google.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
+	sound-open-firmware@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 0/4] ALSA: compress_offload: Add 64-bit safe timestamp
+ API
+Message-ID: <aHZLvVnNiBcqXdXG@vaman>
+References: <20250711082441.4193295-1-verhaegen@google.com>
+ <aHEEu1eSSGRhITmW@vaman>
+ <CAAntYmKea1p=ao3OOWb=1Q+BXdyo1SCm9qGb_JMC5ry5DQVt-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 15 Jul 2025 14:37:17 +0200
-Message-Id: <DBCMU4L9I666.BQSFUQGO18TF@kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Benno Lossin"
- <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org> <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com> <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org> <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org> <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org> <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org> <C72C6915-3BB2-431F-89ED-7743D8A62B7E@collabora.com> <CAH5fLgibCtmgFpKNrC+jcSEqSUctyVMuYwEC0QSo+vzyDXK0zg@mail.gmail.com>
-In-Reply-To: <CAH5fLgibCtmgFpKNrC+jcSEqSUctyVMuYwEC0QSo+vzyDXK0zg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAntYmKea1p=ao3OOWb=1Q+BXdyo1SCm9qGb_JMC5ry5DQVt-Q@mail.gmail.com>
 
-On Tue Jul 15, 2025 at 2:33 PM CEST, Alice Ryhl wrote:
-> On Mon, Jul 14, 2025 at 5:13=E2=80=AFPM Daniel Almeida
-> <daniel.almeida@collabora.com> wrote:
->>
->> Hi,
->>
->> >
->> >>>
->> >>>  (2) It is guaranteed that the device pointer is valid because (1) g=
-uarantees
->> >>>      it's even bound and because Devres<RegistrationInner> itself ha=
-s a
->> >>>      reference count.
->> >>
->> >> Yeah but I would find it much more natural (and also useful in other
->> >> circumstances) if `Devres<T>` would give you access to `Device` (at
->> >> least the `Normal` type state).
->> >
->> > If we use container_of!() instead or just pass the address of Self (i.=
-e.
->> > Registration) to request_irq() instead,
->>
->>
->> Boqun, Benno, are you ok with passing the address of Registration<T> as =
-the cookie?
->>
->> Recall that this was a change requested in v4, so I am checking whether =
-we are
->> all on the same page before going back to that.
->>
->> See [0], i.e.:
->> [0] https://lore.kernel.org/all/aFq3P_4XgP0dUrAS@Mac.home/
->
-> After discussing this, Daniel and I agreed that I will implement the
-> change adding a Device<Bound> argument to the callback. I will be
-> sending a patch adding it separately as a follow-up to Daniel's work.
+On 11-07-25, 14:58, George Verhaegen wrote:
+> On Fri, 11 Jul 2025 at 13:34, Vinod Koul <vkoul@kernel.org> wrote:
 
-That works for me, thanks!
+> > Please share patches for tinycompress support too, we need those to test
+> > this
+> 
+> I didn't make changes to tinycompress. The overflow happens in the
+> kernel file compress_offload.c. As a test, I let it run for more than
+> 3.1 hours and observed that the overflow no longer occurs.
+> The overflow is in
+> stream->runtime->total_bytes_transferred = tstamp->copied_total
+
+You need to add support for new ioctl in tinycompress too
+
+-- 
+~Vinod
 
