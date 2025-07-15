@@ -1,191 +1,202 @@
-Return-Path: <linux-kernel+bounces-731803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79C8B059C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:17:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C82B059BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EF947B444C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:15:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F13615640A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F42D979F;
-	Tue, 15 Jul 2025 12:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A9E2DE6FA;
+	Tue, 15 Jul 2025 12:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goQlXB+C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/FBene5"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CA9254841;
-	Tue, 15 Jul 2025 12:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B21D253B71;
+	Tue, 15 Jul 2025 12:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752581775; cv=none; b=IglYRA5jsf8wIFzJeGqDqJDPMwcFN0gS1ar4fBk91kdhQC6qKa/ALeaOHN1CMIKEPwtmy+iyLZgcAhpU2KLZZQnWoBAVD48H+yG2rzibpfplpX+PejUygDMrcXy0qcB9TQjqRxqsa2qnANjEziePMf2U3gsM1s+gfQU6Hj9EFqk=
+	t=1752581801; cv=none; b=uBHRT4nJwqW4SgehX+t/eDQGR+Iry8EBnIXE25HgiwXEaJpDMVJEE9rT8atzzojJ3mobwIOLM1HceBUHc6B+NSr46Nwa9YWmHryUDSZzc+7wYgMMl3TaoENuQJ+1iHn2wOstPLSX1z0rzZ4MPdT4AEia9ZZdQckU1GVTEYG/ios=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752581775; c=relaxed/simple;
-	bh=3g7ZBcu+PlZwAIlslBdiIFYE8kLus7mztXkV6ke7/lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V+wvfJSFklrV/8Ly4PGp7LL0Q+cRg9YuzzpzOWCnHlgn7qpFiFWYZLRKSlpxco6qPZAXhPNg8NmyigBpCnNqU4ZepBjTyWaAOm2Fxw9qIaxzwGoiAG4u+N46UIgqmE3c1DcX8b+5nHMkpdoQfAFsJLhhmTiLzgU0tP0Gg/ZyTFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goQlXB+C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D608C4CEE3;
-	Tue, 15 Jul 2025 12:16:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752581774;
-	bh=3g7ZBcu+PlZwAIlslBdiIFYE8kLus7mztXkV6ke7/lg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=goQlXB+ChWnVaEJpG3q1G8bhevz3FY9CxU+8tb+2GtIIgrM7CY5BCaTTAK95Vop8o
-	 APSJ9Lp2mpkC6k06stYrLzXhqfNV2/bCpwVQyx2I8LGkl7lZAHWKt4Ipwn9xcrGEOC
-	 288ah0AAbTFCM/VUzMBoJtzQSoyM+2o5NLSekENxiOaPEZMtyHmrgaexYpiSUabQDW
-	 mfjkIai2R+h6Js2RUAEhk5MRkNB4NKwxsvoVvtj3CeC3UoeTek5p2PsZObfYj+svvg
-	 sAPL10rAuL/3A1D9zSp94GHElHoJndL72onjivHLiDCv/ixj2NcS7LuXKA5Jx6GDpS
-	 E6MiPVQaLKKkA==
-Message-ID: <986dfe45-9d1a-4128-9e1a-d2acef15ba54@kernel.org>
-Date: Tue, 15 Jul 2025 14:16:10 +0200
+	s=arc-20240116; t=1752581801; c=relaxed/simple;
+	bh=0oOq8pDPAqnbtAaHz1hfb30bLPq6HrFqDTmaJHiwkxg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZZ5dCOIkCKSU+tj/TDTaXklneeb1jea+8srysC0puM1H6RwL931YTHNsLHPi4Iw8vqDPS1wJrZjTKEXmQP9Xm8ApS2qHrJBU8RiRcxxOYYWcpvtq5Hv4DXuNfct5G+BI5NqwrC3iRXxF30JWuqnr1MOloiywH+49rdjlTQmH+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/FBene5; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0a0cd709bso1310543166b.0;
+        Tue, 15 Jul 2025 05:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752581797; x=1753186597; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QxwIW/ofNO76/yWrxJNDNniTVZbbwyY1BwNSpwd5GEM=;
+        b=A/FBene5Yu8Qm6/ZeDkHbPUp+8T/ZxZDZEXN+jLs8FUjrVVkShy0t92G2ud7X680K9
+         iedvB82nt9nFYaF3Gsl/DRCWNGgpvgA1f7bU7cVMlEbFpc8b+Xc36/j7KxXIj7ySW+CL
+         Xl+ue+T5p7ddyUgqAtQQbviJ7VmCs4+YQp7s5B/LcJDWINhWEYczgojU2y5mIA6P5mBR
+         SAH8cfbzZaAMoPIWzY+eq/OCHoGgnW72qXu809WqzIt8yj4kNvSadXbuCKvx5/E91+vp
+         wh308fiUI/TAAHh7qAsEHQDjXg4Js/tgDtDuH+HOTkYiyHUwUNvhZAejG7NdkcWfZwZh
+         i+6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752581797; x=1753186597;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QxwIW/ofNO76/yWrxJNDNniTVZbbwyY1BwNSpwd5GEM=;
+        b=febr/pgNtmVPttx9KYgSznmuD1EZYyaeLccnee+EH1iMnZR6vGPu5xYWxM1Lc2A4vN
+         VtkW9/LMgpDJtNDfXuPhInsyVc99ygCC1KrlAnHF4z4H2ZqFSnwACPEd/yWHGFpnOygP
+         mZn+OlWxekWvok4OYO2pyLUkbQowgFGDyEOo68s7A7CGXvLVvNfmKQ+B8SoXMRXSP16q
+         IgksXA+WXRIAbv06jqfE8HqiLb1aWv2QqkL1dOnRQ9XlVel565p77CBy6cCaaDejo/4/
+         9WfNVSNP84u5kE8hJlbYd4NO05qkbajQyv+HXrOne9DkVxjjQAA/VePDKz+8FSaR/4Nd
+         jJLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBzwnizYSyS+bZA3gffcmIGl1fBtwOnHwHp0ggADFteCBRBNvBEh/RSR+GOw1cf6nrkdxqimb5qlsDKQ/O@vger.kernel.org, AJvYcCVEw29nx8SXqtI1uxIsQ3McoVDvh62fcRFdlxkNHcS32k5lqe793GcAYETq8IJqcSd4eq0=@vger.kernel.org, AJvYcCXmb4PE40SvUS6r/Ew2tHvY9zd+593O7nZFJwGUds5NiclGu9SXSYBTFqeXcND/o5naUgsezIW2dEHILbIcvVKk1VmI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxSmO5UIf0D7mFwS+vUZFRlOMFc+7TJvT30+3e2D6yymGTH0f5
+	g9HBhYVMRKZjsM9i5ezwX6GcFse8QLv2ovC3+SjULMoqGLbXy+ACkRYg
+X-Gm-Gg: ASbGncvZwFqjQMD1SkdLp0+IzkcxH8CojdklsZzkeVTrw0sV5DeXkndbQPz9+cJns9c
+	bKTAIwA74RWB430L1rIuOGFzu4bowzEdFuAicNIY79MZlL+a5/tVcjeQHQubuucS36vZTgxaB2f
+	d082c4hDh5JRMfN0s7CJUYMnWiJd8XfSNAkZJ4+NdxVm18i5EMmNLJtqPyX9anMW8rHnQfC+3Ny
+	Sm82atjaER92zuXMBlDk1qP4M4TDmt47xxqBuyWaP/St4TM5K4JmQMQoRnQExApT3lJnBbW6xlp
+	dqHg18Ii5Wat3mkuoQl9tR38t1x/v37qKLvAQs+GFRnHeLzxRARm0kdLwaZ1KsoZF8MBj4czKwg
+	H9eVgs6d5
+X-Google-Smtp-Source: AGHT+IGBMdyFQuiP57H2mcE0Zylo2duSUbz/norkoFdyLof8gAifWmo3TXOU/ZepRN1FhaPNaAdssQ==
+X-Received: by 2002:a17:907:72d3:b0:ae6:f669:e196 with SMTP id a640c23a62f3a-ae9b5bc9c4amr313006766b.4.1752581796888;
+        Tue, 15 Jul 2025 05:16:36 -0700 (PDT)
+Received: from krava ([173.38.220.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e90c4dsm1005237166b.19.2025.07.15.05.16.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 05:16:36 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 15 Jul 2025 14:16:33 +0200
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv5 perf/core 09/22] uprobes/x86: Add uprobe syscall to
+ speed up uprobe
+Message-ID: <aHZGofDkcJDCx3wY@krava>
+References: <20250711082931.3398027-1-jolsa@kernel.org>
+ <20250711082931.3398027-10-jolsa@kernel.org>
+ <20250714173915.b9edd474742de46bcbe9c617@kernel.org>
+ <20250714093903.GP905792@noisy.programming.kicks-ass.net>
+ <20250714191935.577ec7df5ae8a73282cddce7@kernel.org>
+ <aHV2mrao8EMOTz8S@krava>
+ <20250715085451.6a871a3b40c5ff19d3568956@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] dt-bindings: iio: imu: Add inv_icm45600
-To: Remi Buisson <Remi.Buisson@tdk.com>, Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <20250710-add_newport_driver-v2-0-bf76d8142ef2@tdk.com>
- <20250710-add_newport_driver-v2-1-bf76d8142ef2@tdk.com>
- <65d7009e-dc4a-44b4-88fe-b5c7e1ecdfc1@kernel.org>
- <FR2PPF4571F02BCBA3AC546A6256C7F95B98C57A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <FR2PPF4571F02BCBA3AC546A6256C7F95B98C57A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715085451.6a871a3b40c5ff19d3568956@kernel.org>
 
-On 15/07/2025 10:35, Remi Buisson wrote:
->>> +  drive-open-drain:
->>> +    type: boolean
->>> +
->>> +  vdd-supply:
->>> +    description: Regulator that provides power to the sensor
->>> +
->>> +  vddio-supply:
->>> +    description: Regulator that provides power to the bus
->>> +
->>> +  mount-matrix:
->>> +    description: an optional 3x3 mounting rotation matrix
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - interrupts
->>> +  - interrupt-names
->>
->> Missing supplies
-> Are supplies always required ?
-> They are not present for invensense,icm426000 nor for st,lsm6dsx.
+On Tue, Jul 15, 2025 at 08:54:51AM +0900, Masami Hiramatsu wrote:
+> On Mon, 14 Jul 2025 23:28:58 +0200
+> Jiri Olsa <olsajiri@gmail.com> wrote:
+> 
+> > On Mon, Jul 14, 2025 at 07:19:35PM +0900, Masami Hiramatsu wrote:
+> > > On Mon, 14 Jul 2025 11:39:03 +0200
+> > > Peter Zijlstra <peterz@infradead.org> wrote:
+> > > 
+> > > > On Mon, Jul 14, 2025 at 05:39:15PM +0900, Masami Hiramatsu wrote:
+> > > > 
+> > > > > > +	/*
+> > > > > > +	 * Some of the uprobe consumers has changed sp, we can do nothing,
+> > > > > > +	 * just return via iret.
+> > > > > > +	 */
+> > > > > 
+> > > > > Do we allow consumers to change the `sp`? It seems dangerous
+> > > > > because consumer needs to know whether it is called from
+> > > > > breakpoint or syscall. Note that it has to set up ax, r11
+> > > > > and cx on the stack correctly only if it is called from syscall,
+> > > > > that is not compatible with breakpoint mode.
+> > > > > 
+> > > > > > +	if (regs->sp != sp)
+> > > > > > +		return regs->ax;
+> > > > > 
+> > > > > Shouldn't we recover regs->ip? Or in this case does consumer has
+> > > > > to change ip (== return address from trampline) too?
+> > > > > 
+> > > > > IMHO, it should not allow to change the `sp` and `ip` directly
+> > > > > in syscall mode. In case of kprobes, kprobe jump optimization
+> > > > > must be disabled explicitly (e.g. setting dummy post_handler)
+> > > > > if the handler changes `ip`.
+> > > > > 
+> > > > > Or, even if allowing to modify `sp` and `ip`, it should be helped
+> > > > > by this function, e.g. stack up the dummy regs->ax/r11/cx on the
+> > > > > new stack at the new `regs->sp`. This will allow modifying those
+> > > > > registries transparently as same as breakpoint mode.
+> > > > > In this case, I think we just need to remove above 2 lines.
+> > > > 
+> > > > There are two syscall return paths; the 'normal' is sysret and for that
+> > > > you need to undo all things just right.
+> > > > 
+> > > > The other is IRET. At which point we can have whatever state we want,
+> > > > including modified SP.
+> > > > 
+> > > > See arch/x86/entry/syscall_64.c:do_syscall_64() and
+> > > > arch/x86/entry/entry_64.S:entry_SYSCALL_64
+> > > > 
+> > > > The IRET path should return pt_regs as is from an interrupt/exception
+> > > > very much like INT3.
+> > > 
+> > > OK, so SYSRET case, we need to follow;
+> > > 
+> > > sys_uprobe -> do_syscall_64 -> entry_SYSCALL_64 -> trampoline -> retaddr
+> > > 
+> > > But using IRET to return, we can skip returning to trampoline,
+> > > 
+> > > sys_uprobe -> do_syscall_64 -> entry_SYSCALL_64 -> regs->ip
+> > 
+> > the handler gets the original breakpoint address, it's set in:
+> > 
+> >         regs->ip  = ax_r11_cx_ip[3] - 5;
+> > 
+> > and at the point we do:
+> > 
+> >         /*
+> >          * Some of the uprobe consumers has changed sp, we can do nothing,
+> >          * just return via iret.
+> >          */
+> >         if (regs->sp != sp)
+> >                 return regs->ax;
+> > 
+> > 
+> > .. regs->ip value wasn't restored for the trampoline's return address,
+> > so iret will skip the trampoline
+> 
+> Ah, OK. So unless we restore regs->cx = regs->ip and 
+> regs->r11 = regs->flags, it automatically use IRET. Got it.
+> 
+> > 
+> > but perhaps we could do the extra check below to land on the next instruction?
+> 
+> Hmm, can you clarify the required condition of changing regs
+> in the consumers? regs->sp change need to be handled by the
+> IRET, but other changes can be handled by trampoline. Is that
+> correct?
 
-Depends on the hardware... What does datasheet say? Which ones are optional?
+yes,
+if handler changes regs->sp we return through iret
+if handler changes regs->ip (the only other tricky one IIUC), we return through
+the trampoline and jump to regs->ip via trampoline's 'ret' instruction
 
-Other bindings are not good examples in this topic, because people tend
-to skip the supplies, reviewers and maintainers tend not to bother with
-nitpicking this.
-
-
->>
->>> +
->>> +allOf:
->>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
->>> +
->>> +unevaluatedProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/gpio/gpio.h>
->>> +    #include <dt-bindings/interrupt-controller/irq.h>
->>> +    i2c {
->>> +        #address-cells = <1>;
->>> +        #size-cells = <0>;
->>> +
->>> +        icm45605@68 {
->>
->> It does not look like you tested the DTS against bindings. Please run
->> `make dtbs_check W=1` (see
->> Documentation/devicetree/bindings/writing-schema.rst or
->> https://urldefense.com/v3/__https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/__;!!FtrhtPsWDhZ6tw!Dse6zIqgRmQ8nxzdmpC7Uu96WBVwNWbql_4WnfPwjuISbauv7GGsDO2zSDTq4TEzSeb0s6fcbmFR$[linaro[.]org]
->> for instructions).
->> Maybe you need to update your dtschema and yamllint. Don't rely on
->> distro packages for dtschema and be sure you are using the latest
->> released dtschema.
->>
->> (see how other bindings or DTS call this type of device)
->>
-> I successfully ran "make dt_binding_check" with up-to-date testing branch.
-> I'll try dtbs_check as suggested, thanks!
-
-I am sorry. I think I pasted wrong template for a common issue.
-
-I wanted to say: you need generic name, imu etc. That's the template
-response should be there:
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-(and I use templates to streamline my review. Even though they might
-feel a bit robotic, without personal touch or patronizing, that's not
-their intention, I just optimize my process)
-
-
-Best regards,
-Krzysztof
+jirka
 
