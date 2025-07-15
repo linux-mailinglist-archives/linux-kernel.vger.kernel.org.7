@@ -1,94 +1,88 @@
-Return-Path: <linux-kernel+bounces-731002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7DBB04D64
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:26:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC54B04D66
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D9604A6A91
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:26:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA24E1AA0D92
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F011B6D06;
-	Tue, 15 Jul 2025 01:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="aklCDSxG"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882D31B4231;
+	Tue, 15 Jul 2025 01:27:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9C52CCC5;
-	Tue, 15 Jul 2025 01:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26112CCC5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752542775; cv=none; b=mFDFKJOL4XE6R1G+1/7lfptD7xlKYUJjkOjPSjYZAaYNacOJpATreLKJByfm7RAmW3qicCXdto1DY+zqWJ7J1lzNLPOFCHmD85o0KgmPkfNVEgBMHDQ14+P6yGFGVueNKCnt6bcNnG5bKT6rBQ0rF+wcQHCBJpZDlaUt4/s1Z+M=
+	t=1752542827; cv=none; b=aFthQYoEqn/SdeqiRvovGJGI+ve9lq08xOcX5cQogh2nZrV3Frs9secUS6c+m2KH9/g1L8aSx+eCBOxADxDb+yvVnnX3dKTvWOs18QSerdZ3aCSiAhsEQbpObjIZFLHoxf5iZ8TJ/LcXPXQ6aSrTCygURzeW0Hz0sFPET/3VdcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752542775; c=relaxed/simple;
-	bh=54YgG5kcUjhb58Sk3gK5fsuHiGEcVtrw9WnbhTc9Sv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C9hNJC+WIUcYfZlaPhfqJpovCUfNN/pn5B4+ljC776O1NnhOsbiD1P5k+hODqVZn8crjvyHnZDF+VwKMIARQ7yvmBlGtxhrixC9Y/BKwf6wOIrDSod68nDvzMe71BhuSvnKsovzaj9G0c6OdqnyO63Y5t0wNfGzlMHlU/wTVcVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=aklCDSxG; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56F1PHjP694439
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Mon, 14 Jul 2025 18:25:20 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56F1PHjP694439
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752542721;
-	bh=zBGfmUbqcIV/Cbwsil+J/QFtTwS/e/VTc4Ctqqsxlv4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=aklCDSxGdWCfZ2nZGAVvctd7p6jmiA0pKXx762bg+ywsN+yW7yPe5aH2g83bd85gN
-	 i7q6mrXDqk9+c+vC4uY5uzHnthQMxnUNTNZQH4n07sFto69J9UJcPXejYIRf+ume7Q
-	 8lOmH6NSEd/E+v6w9td8xtDjS8YfY0K4wPqaejalrckjSzVrn0m5OdZ4d2cqbTcsPa
-	 NIp7taEwNYUR0Bv+2P7oaXQJ/jr4M4v+SglUV2XDknWTHT0IzgjQ+ta9HWSVFSZ/lC
-	 OVQuWaTJeKpvGb1Oa/d1+5ERA3uZOspFa/PHz+sVB5j970ieF9EyJauoLnZB6QC3Gk
-	 M0BnuLBFIvaLg==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com
-Subject: [PATCH v1 1/1] KVM: VMX: Fix an indentation
-Date: Mon, 14 Jul 2025 18:25:17 -0700
-Message-ID: <20250715012517.694429-1-xin@zytor.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752542827; c=relaxed/simple;
+	bh=o4ynSAGx3+TTcBXiUL2Rxh4BKd+kJlEP+kAE4q3Ea14=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Y6ymeF9Q40CjzsjRAFon732bRyWcwr2QL3+kPrG6AxSaGdKDqRvgykXGwH078fBAA+zlM02Va6T3KDvI2y1UWwRorYf/5SKc4SgSefqeB1i0329biT+GCnS3ZasrnFzyDOb4reuzfuXB6BDiy5vaQ14w3kuAF9UiA5nQvUzWTiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-873fd6e896bso519782639f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 18:27:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752542825; x=1753147625;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BoH4lg9vmmUdD5h4nj7VuM+JBKpdp1mdWhKXqK4cfQo=;
+        b=Pfe7Bqwykq7l6kfq2mvQVz8JweJCOCsep3KM44WBZe2kI/FskT+LiHNBF2JXlsoV88
+         Iq3UMfFOKvQzs0vNClY3yQwbbMVR0baY6SXTypRQHdBGj5jGZXSE0pjUa1OaN1KBGpGZ
+         cXx5c/PZkr/zuJVX3ykzpJ2h3UXmr0Xy1xcVsAuyypaVcx0x9KwyitUMcAoFBLw2AJQx
+         ZJIWa4BsKb4Y941JoPfQ2ujI86u4y6PcWlxOUySeIEZCiwFHNQfsVx8KGlfOY7ejcV35
+         X+hRACg6cgdTYDyaFQow/gxnJ4ZqvFFy8/HxngPcCCcj4EZ0r/k404eiazXW6f3PwrPf
+         TYaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOeJ660bdK2/vQpra/+m5S7NWIF5dBIN/qgVzoQHA2xmzBXcswjvYHohDINFZPwL5QePKjnQxhmNxwR1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoRZMje5SmgbQ8xLoIPXpxkaLfp24fIgrYOaFKRZqWS0QNWr7m
+	z0NhmEUwh4jt9uNeY5BQubVKRNUjZs6LJ+FG5Aw3cdXSvwuAFTJCIHsTP9jvImg044dED6ZE7EK
+	ZiQd3sNJuKkaQjJS1fw04TBcbrGHWDI2u3uU+LYOjKnebqH6pM2Zox7T5p+8=
+X-Google-Smtp-Source: AGHT+IGKTOLuJOVlRv5UaPjainSyWmIZZsr625vMyc3G9RqrxZrlKxujZjM2/vVurFaUVJdOgFLVKf/Kn94gU6kWDpZIl+0xBqVU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:2c85:b0:862:ba37:eb0e with SMTP id
+ ca18e2360f4ac-87977fedcdbmr1760914239f.12.1752542825042; Mon, 14 Jul 2025
+ 18:27:05 -0700 (PDT)
+Date: Mon, 14 Jul 2025 18:27:05 -0700
+In-Reply-To: <2b10ba94-7113-4b27-80bb-fd4ef7508fda@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6875ae69.a70a0220.18f9d4.0016.GAE@google.com>
+Subject: Re: [syzbot] [cgroups?] WARNING in css_rstat_exit
+From: syzbot <syzbot+8d052e8b99e40bc625ed@syzkaller.appspotmail.com>
+To: cgroups@vger.kernel.org, hannes@cmpxchg.org, inwardvessel@gmail.com, 
+	linux-kernel@vger.kernel.org, mkoutny@suse.com, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Fix an indentation by replacing 8 spaces with a tab.
+Hello,
 
-While at it, add empty lines before and after for better readability.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
- arch/x86/kvm/vmx/vmx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Reported-by: syzbot+8d052e8b99e40bc625ed@syzkaller.appspotmail.com
+Tested-by: syzbot+8d052e8b99e40bc625ed@syzkaller.appspotmail.com
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 4953846cb30d..7b87496a249a 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -8623,7 +8623,9 @@ __init int vmx_hardware_setup(void)
- 	 */
- 	if (!static_cpu_has(X86_FEATURE_SELFSNOOP))
- 		kvm_caps.supported_quirks &= ~KVM_X86_QUIRK_IGNORE_GUEST_PAT;
--       kvm_caps.inapplicable_quirks &= ~KVM_X86_QUIRK_IGNORE_GUEST_PAT;
-+
-+	kvm_caps.inapplicable_quirks &= ~KVM_X86_QUIRK_IGNORE_GUEST_PAT;
-+
- 	return r;
- }
- 
+Tested on:
 
-base-commit: e4775f57ad51a5a7f1646ac058a3d00c8eec1e98
--- 
-2.50.1
+commit:         347e9f50 Linux 6.16-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a80382580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=693e2f5eea496864
+dashboard link: https://syzkaller.appspot.com/bug?extid=8d052e8b99e40bc625ed
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1025718c580000
 
+Note: testing is done by a robot and is best-effort only.
 
