@@ -1,99 +1,146 @@
-Return-Path: <linux-kernel+bounces-731101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB5DB04F08
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:31:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6A9B04F0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB45D4E1AA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:30:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E7C17FAE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273672D540B;
-	Tue, 15 Jul 2025 03:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bIwWzF4S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569D32586C7;
+	Tue, 15 Jul 2025 03:31:57 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6923F2D0C99;
-	Tue, 15 Jul 2025 03:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320EE219E8;
+	Tue, 15 Jul 2025 03:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752550189; cv=none; b=qAs0v2yRrw0avDp7vD8a64OdTjfKAYDL+efmDy5Js3XPFHOpn8Dj5lBk2fE7IxxyPARmn0qeTR+rsByRv4ZwpQFJDNzCOid4uSAW3b2Rpj/SGxHGqJmoF1g+zn43kSVZQv0WUE1S9X/uCXt0CvrqCET3VTzwn6q2b8aGoAZOvzA=
+	t=1752550317; cv=none; b=oO6aFQ7ewFV+BRAtVKyhpr2w3DNvImhzFRZUhM1ggYgXUFFRF2c/+vjxo5jPSrNcS0dhtmi0dLp2zZgivUWdDQ3+aCm6HNayMcs536fn6mpOT/pfNzx8QvbTY5eysnkJWIWu+rIuo6i2aHCsTBQ6FZpcQnqcGrPMER1PdZrwQEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752550189; c=relaxed/simple;
-	bh=hVLRemzeoLHOYt5g+Ho/v65roQrQwOj2GNRUmI1pu8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qYZdYabNzOtuXFFqWooLo4WPKA/5o4NGkuoubf5xjIkZUa7DZM/qjp0A9SV0rF3+BAb8YTOFZTMMRLertAC3wAMsWJ9kTWMXgn5TDC2tPCGxb2KNjawcevDjp+IXt0dz25BpWKGP0g23WZv7pawAAh6hNe3u9Z+lHRjmc6rmwvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bIwWzF4S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255D4C4CEED;
-	Tue, 15 Jul 2025 03:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752550189;
-	bh=hVLRemzeoLHOYt5g+Ho/v65roQrQwOj2GNRUmI1pu8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bIwWzF4S6FvVRf5oC/R7kgXZfMLV2VO0earPGGJd3ajT9B9bCcN3xmZRSJMI7T/ek
-	 dFiKzJXvwgaFt7x5KN/EWF+KMTO8ZK7PsVknqmu/ASVA+lyX5xEW3HBy/XUAHRs6R8
-	 GWz5jCR0GlbzAfnHIaQn7ift+NRGM/6eqqR704un951ecnDuJYZGCFui9ObdZ/XrvV
-	 cp35WqRGkIMCFJZ6iESou7mVHmbBGSpTxvAGv11DCgldVBNJZYoQ978KShmxqyj6uE
-	 4Ywpw6bXQc/nw32CZij62kI3sqpoCJxAyrWCViPofUe2Agld0XrAYn+dqR5+Gnsc/B
-	 SKTXahk79y+bg==
-Date: Mon, 14 Jul 2025 22:29:48 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	Joerg Roedel <joro@8bytes.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Amit Kucheria <amitk@kernel.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	phone-devel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Das Srinagesh <quic_gurus@quicinc.com>, linux-pm@vger.kernel.org,
-	linux-mmc@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
-	Robert Marko <robimarko@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, iommu@lists.linux.dev,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH v2 12/15] dt-bindings: arm: qcom: Add Milos and The
- Fairphone (Gen. 6)
-Message-ID: <175255018786.4172663.76314608667353154.robh@kernel.org>
-References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
- <20250713-sm7635-fp6-initial-v2-12-e8f9a789505b@fairphone.com>
+	s=arc-20240116; t=1752550317; c=relaxed/simple;
+	bh=UfrPomyM4QHQzzHyDs5E1q2C5/LNjhXQJcketkYOe0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LqQjfKs9J3ki6TrYdF2wAPLVHqxieATiElKViAbkvLdFbngNFQEEY4ecvcPFAyw2eGp0Sb4ae30J3TVCs670d6qIBvnq+CX/lZ5FBlE9o3n8wnKsQiwkIp5kHSfr7/M8KpNnTWJ69C5mYL52UgHIn7bDBimDjVednuWVlRUObQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bh4RZ6Rhsz29dpT;
+	Tue, 15 Jul 2025 11:29:14 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id A4128180043;
+	Tue, 15 Jul 2025 11:31:51 +0800 (CST)
+Received: from [10.174.179.80] (10.174.179.80) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Jul 2025 11:31:51 +0800
+Message-ID: <3738cc55-f3fd-4b6c-b1dd-3f469c00b9f1@huawei.com>
+Date: Tue, 15 Jul 2025 11:31:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250713-sm7635-fp6-initial-v2-12-e8f9a789505b@fairphone.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the ext4 tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Theodore Ts'o <tytso@mit.edu>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+References: <20250715082230.7f5bcb1e@canb.auug.org.au>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huawei.com>
+In-Reply-To: <20250715082230.7f5bcb1e@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
+On 2025/7/15 6:22, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the ext4 tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 
-On Sun, 13 Jul 2025 10:05:34 +0200, Luca Weiss wrote:
-> Document the Milos-based The Fairphone (Gen. 6) smartphone.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+Hi Stephen!
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+I'm sorry for the regression, but I cannot reproduce this error
+on my machine, could you please try this patch?
+
+https://lore.kernel.org/linux-ext4/20250715031203.2966086-1-yi.zhang@huaw=
+eicloud.com/
+
+Thanks,
+Yi.
+
+>=20
+> In file included from <command-line>:
+> fs/ext4/inode.c: In function 'ext4_set_inode_mapping_order':
+> include/linux/compiler_types.h:568:45: error: call to '__compiletime_as=
+sert_652' declared with attribute error: min(({ __auto_type __UNIQUE_ID_x=
+_647 =3D (((0 ? 4 : 6) * 2 - 1)); __auto_type __UNIQUE_ID_y_648 =3D (((16=
+ + __pte_index_size)-16)); do { __attribute__((__noreturn__)) extern void=
+ __compiletime_assert_649(void) __attribute__((__error__("min""(""((0 ? 4=
+ : 6) * 2 - 1)"", ""((16 + __pte_index_size)-16)"") signedness error")));=
+ if (!(!(!(((((typeof(__UNIQUE_ID_x_647))(-1)) < ( typeof(__UNIQUE_ID_x_6=
+47))1) ? (2 + (__builtin_constant_p((long long)(__UNIQUE_ID_x_647) >=3D 0=
+) && ((long long)(__UNIQUE_ID_x_647) >=3D 0))) : (1 + 2 * (sizeof(__UNIQU=
+E_ID_x_647) < 4))) & ((((typeof(__UNIQUE_ID_y_648))(-1)) < ( typeof(__UNI=
+QUE_ID_y_648))1) ? (2 + (__builtin_constant_p((long long)(__UNIQUE_ID_y_6=
+48) >=3D 0) && ((long long)(__UNIQUE_ID_y_648) >=3D 0))) : (1 + 2 * (size=
+of(__UNIQUE_ID_y_648) < 4))))))) __compiletime_assert_649(); } while (0);=
+ ((__UNIQUE_ID_x_647) < (__UNIQUE_ID_y_648) ? (__UNIQUE_ID_x_647) : (__UN=
+IQUE_ID_y_648)); }), (11 + (inode)->i_blkbits - 16)) signedness error
+>   568 |         _compiletime_assert(condition, msg, __compiletime_asser=
+t_, __COUNTER__)
+>       |                                             ^
+> include/linux/compiler_types.h:549:25: note: in definition of macro '__=
+compiletime_assert'
+>   549 |                         prefix ## suffix();                    =
+         \
+>       |                         ^~~~~~
+> include/linux/compiler_types.h:568:9: note: in expansion of macro '_com=
+piletime_assert'
+>   568 |         _compiletime_assert(condition, msg, __compiletime_asser=
+t_, __COUNTER__)
+>       |         ^~~~~~~~~~~~~~~~~~~
+> include/linux/build_bug.h:39:37: note: in expansion of macro 'compileti=
+me_assert'
+>    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond),=
+ msg)
+>       |                                     ^~~~~~~~~~~~~~~~~~
+> include/linux/minmax.h:93:9: note: in expansion of macro 'BUILD_BUG_ON_=
+MSG'
+>    93 |         BUILD_BUG_ON_MSG(!__types_ok(ux, uy),           \
+>       |         ^~~~~~~~~~~~~~~~
+> include/linux/minmax.h:98:9: note: in expansion of macro '__careful_cmp=
+_once'
+>    98 |         __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_=
+ID(y_))
+>       |         ^~~~~~~~~~~~~~~~~~
+> include/linux/minmax.h:105:25: note: in expansion of macro '__careful_c=
+mp'
+>   105 | #define min(x, y)       __careful_cmp(min, x, y)
+>       |                         ^~~~~~~~~~~~~
+> fs/ext4/inode.c:5204:17: note: in expansion of macro 'min'
+>  5204 |                 min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits -=
+ PAGE_SHIFT))
+>       |                 ^~~
+> fs/ext4/inode.c:5211:39: note: in expansion of macro 'EXT4_MAX_PAGECACH=
+E_ORDER'
+>  5211 |                                       EXT4_MAX_PAGECACHE_ORDER(=
+inode));
+>       |                                       ^~~~~~~~~~~~~~~~~~~~~~~~
+>=20
+> Caused by commit
+>=20
+>   e14bef2a00b5 ("ext4: limit the maximum folio order")
+>=20
+> I have used the ext4 tree from next-20250714 for today.
+>=20
 
 
