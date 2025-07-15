@@ -1,252 +1,326 @@
-Return-Path: <linux-kernel+bounces-732271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C60B0645A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4E1B06461
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBC00189D32F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:29:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17B3189F35F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F541E531;
-	Tue, 15 Jul 2025 16:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B2525B2FD;
+	Tue, 15 Jul 2025 16:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="LVIjmDAn";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="mLgh44F4"
-Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFRpG7+F"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E4E1FE455
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752596954; cv=fail; b=WKEeIdeLwFxuFgQqx8ShHhdllcXsHX1/P5s6mDfYEh3UfZzRq1syMyBNiOeygWpgM/dytQA/4vKXUkLpXGiI/dgstPmlKJ8SWWJEUacoZ3FCyzbFMy0mg1hlAs7Dze8IrIsKLQjWokOGx1i8ofSEdoc4zu7AJzIClIV7rOF10so=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752596954; c=relaxed/simple;
-	bh=oRrPDs62WXl/VnRTdphvbwe9TzypxgwVIxUE2B06x2U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=s5OcQFq6HE2I3+FLmExgKHDbnTK+NTXIbNfIC0fd+6NYUGdTOlXvGm/JjCnCPCHgiB41TRisfiBQwbuQrycOmalGyVBOPQP8mfFCRvAleUJt852q+1VQpQM5+UAEOPhO3c13ma7w9PgTrKUL/CD0VkKKJUxp/UuMtNUDkyQMM0o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=LVIjmDAn; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=mLgh44F4; arc=fail smtp.client-ip=91.207.212.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
-	by mx08-00376f01.pphosted.com (8.18.1.8/8.18.1.8) with ESMTP id 56FAKYn54078064;
-	Tue, 15 Jul 2025 17:29:00 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	dk201812; bh=oRrPDs62WXl/VnRTdphvbwe9TzypxgwVIxUE2B06x2U=; b=LVI
-	jmDAnT9YImOzXeYD/PqnKECdCfqDEgD1EImrwShaItarSDKXPf1uij7GiqzwvHWN
-	MFxppiny+yRnbWquPdxu7Tjru2Nug72b86IiNTih16bapR9r2zLdlHTC8wFc6PrC
-	OKnBmJthB9kxUR/lnZpB0s25Tvv05LtH2/Yong/KMBrzMmG0XBRB6AKCsTSeQI2A
-	C+qzuxoVUDrHri0sRwkYzGpqXNyNkCvxSYKNR8lskqLeu29lcN7swKLSfuvHb0JK
-	xujKhUGzcHBkZPu5waytO9Hcm0csk4iT2FEbboFwY0DyKTg0SqNhRTlNy0A+86pv
-	xpMTu9gcKEInIPJKKAA==
-Received: from cwxp265cu008.outbound.protection.outlook.com (mail-ukwestazon11020129.outbound.protection.outlook.com [52.101.195.129])
-	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 47udynu1tc-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 17:28:59 +0100 (BST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Afp9MJ64xCPiie/OrRkFSDORGaf9xgk5E+GTUe3CPoGo/HgB2MSw0ayJ7UBb1C+xv8wqDDWDL8OsIQwLzE2KToAaRPKBY7FKgnj2e/kLkG8+8hQVANZgsA1wx92JQ/C3b8b1kUT5xFGQzD0K97labzoYULFmcaI20wx6hM7SQWn3GNsSrNdMhm0KAByLJsO42VzWPrIBlJ+DfZd0DFuO3W5Rmn6p14haP//g1CT/KDKY0R+pbked1tQz5kNiTJ3Ye3aDAXfEK9ZezYAHTUKp7rxf8lVCkaCPklPn8itjm/ONBxmvrVmtENVobIlmh2jxjfT+/lHPwZfPuMOvjUqZvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oRrPDs62WXl/VnRTdphvbwe9TzypxgwVIxUE2B06x2U=;
- b=YI7QZbODD7v2JGOybfmim4LnTjjPtGl4DBGS3aXFLXbrkcbJ/Ni4WU3LZLDj4rCXpvWORdD1N3AC2XVbOUmL9AN5MCy3MS1E7wS+NVrIRZTpI0DYxt9oaC1IL1lH+eCDsPbzILhZejXmlWydSEwllVQGcCctEWOGoQpQqlcoDqTeRjtBCWArQraZtpGD07xupGjfgUs2aAlCKSWGe8py0lUWBWxrYQuLFX1pZdJWL+a7yHcIku7YAiZ+0t1bCCN8mPbcjgoRhULb8cHcRMd6VvmbmCNihR9buqt/L2NzKUZWoLYv7jQEZCjg7+PN25KhKVwJjIFJaI49MgQyauUJgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B2619F464;
+	Tue, 15 Jul 2025 16:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752597078; cv=none; b=XVu/+q679aWWrDbaWHRvyewtcY8eMZap9Dqrqp64pVbLOAHyIB0CbM14H/0+TXT3pcR2/XsBC8kJT46dsxeRbAoNEfV4vnNQyepULlXcH9wMcQvxRPySv95JDcMhkgPl9Qs0NYYBkYE4q39wYL90wBHazgbQGkPSQJAMuUo2Yc0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752597078; c=relaxed/simple;
+	bh=jDLGSX0b2V2uvv2A9CQs5kVddLHGzu7Ta+fRAuNs3+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MsyRthJUHjIgypqA/HyyVykHTewPUFemvG/S4cewRsA/WJe16DWMKXkr9zgOjQnywHsTbVjltP3c9loiqmAjjueYWw5+nlwNv0l+qLuSv05AyPtIax/MBOm7yUuK60VViOKZnPbfcEH4wIPY9PD1rmKE4tQlhFCZLLVZ1ghHqnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lFRpG7+F; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ab7082b3f7so24748831cf.3;
+        Tue, 15 Jul 2025 09:31:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oRrPDs62WXl/VnRTdphvbwe9TzypxgwVIxUE2B06x2U=;
- b=mLgh44F4EabX1xhamtCouJB1RkLYKJK6B6BInrEcuZQK7RSIl04xZMBXikro5Kax2EdoS7k4P8rz6HOYfHBhzGwg+QfdE5xROE1EhsmHyfyV21yjo5oKBFnkGFoaA0LksMscyWxJzm8RgxfV35MeVumZ+hGahs9X4JSmqyq8ACw=
-Received: from CWXP265MB5009.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:19a::5)
- by CWLP265MB3186.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:8c::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Tue, 15 Jul
- 2025 16:28:57 +0000
-Received: from CWXP265MB5009.GBRP265.PROD.OUTLOOK.COM
- ([fe80::3e50:ef31:dd73:3bd2]) by CWXP265MB5009.GBRP265.PROD.OUTLOOK.COM
- ([fe80::3e50:ef31:dd73:3bd2%3]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
- 16:28:57 +0000
-From: Alessio Belle <Alessio.Belle@imgtec.com>
-To: Matt Coster <Matt.Coster@imgtec.com>
-CC: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "simona@ffwll.ch"
-	<simona@ffwll.ch>,
-        "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Frank Binns <Frank.Binns@imgtec.com>,
-        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "airlied@gmail.com"
-	<airlied@gmail.com>
-Subject: Re: [PATCH 2/2] drm/imagination: Use struct_size_t()
-Thread-Topic: [PATCH 2/2] drm/imagination: Use struct_size_t()
-Thread-Index: AQHb9ZXijS4Ql5NNw0iNCjNigw9GRbQzX/IA
-Date: Tue, 15 Jul 2025 16:28:57 +0000
-Message-ID: <7c2dcc953227e79bdabb4c7e4d071907c5ae643b.camel@imgtec.com>
-References: <20250709-flex-array-check-v1-0-8adeb0bf0cde@imgtec.com>
-	 <20250709-flex-array-check-v1-2-8adeb0bf0cde@imgtec.com>
-In-Reply-To: <20250709-flex-array-check-v1-2-8adeb0bf0cde@imgtec.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CWXP265MB5009:EE_|CWLP265MB3186:EE_
-x-ms-office365-filtering-correlation-id: 1c1df745-15bf-4d0f-1200-08ddc3bcb2a0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?SkVwS2Q5eGNrTDBBa0g3cnhmMDBRUUxjaHRQYllxS2hCN3NOZm9oWUlSVGpw?=
- =?utf-8?B?bm8rRk5hcWVWdE9BbTNEMitYRHRoN3lUdTd3ZG15S1A5M1MrUEpoSFdCMm80?=
- =?utf-8?B?RENjQjMybmprVjhBb29JVG4vSWxjL0NhRmprOFg0Qk5TTTdRTHdmeWMyYmRO?=
- =?utf-8?B?NTAveVIyL0RIakxGRjFQVFZWeFBtNWtxM0d2UjQyb2FUOWRXVTBldXQ5SDM3?=
- =?utf-8?B?dkJZRmtSVHU5OWJtTDZsV0lTdlNsZ1loemI3Z2tyYjVRV001bGRwUmpqT0xi?=
- =?utf-8?B?ZS9vQzljcGpzTnFPSnZnNU5oalBGT1JFZEpqQkkrditFS1l4WGwwcWc1c1J1?=
- =?utf-8?B?c242YjQvODlrQnhsTlBQR1ozTHN2OGZPaFJ2Qm9WRFhzRE9jMXRyT0h5UHpx?=
- =?utf-8?B?UHlrSEd1ZmMvUytZT0tRSm9XcnlkZ2dzWm56a1BsbmlGeGlqWkdWb1RZNEV0?=
- =?utf-8?B?aUY0dXVtVGdWSDkrMnlSOHg2VjBueERMS1JXQ1ZwNWFidnNvbkpkNGhDYURO?=
- =?utf-8?B?eWZ1MG9WQXAxTVduMXUxZGlZcmVGRmQ0OVJ2bEJ1WTR1OVFZS2g1bnRWVTFB?=
- =?utf-8?B?T2VaYy9GY2RlTTlUVWRrTmNwNnMvM3lwSkt6czhJK2xqNkIwbCtNOFhzMkZT?=
- =?utf-8?B?Q2tWSW91U3VNOGcyUlNCY0JITFRqR1E5SlFOZUl6NTg5QTFMVERHbUhoU244?=
- =?utf-8?B?V0kwZmdtMlhXVEhtM3VIdFhpQ0gyZHFyZ2pqVS82b2RUaWhnSUFrb0V2Vk93?=
- =?utf-8?B?cFQ0WFhYcm02YWRvTHBkRWJCVkxhZVRxdWV6MTE2eFlEeGErS0QwODRtS25l?=
- =?utf-8?B?MVY0MXV6NVVTTnFRUzRzZlVDZ1NNekRlWHlGa0xJMDc4Rkh4NlhlaUZndHIw?=
- =?utf-8?B?VUZ2eERUejR0czlDYUVMbjRESWs0c29LaHVLajd1V3h3SFh6ZUZaMnRoZnJV?=
- =?utf-8?B?eFJoV3NvQ1dyTmtKbUVxUytNelpnKzNKVmY2Ym1HcFV6Vi9CR3JzckVaZFhi?=
- =?utf-8?B?VHI4TnJUd2RYcXhKTlRkbE1TWCtnL2hMQXI0d0pidk8zWnRvaGVDNXdKQS8v?=
- =?utf-8?B?YlFCcklNMGljK2hjb25QUnZQbWJCbE8wcE1SM0Ewb0ZOTlZBQzBSdzhEYXJX?=
- =?utf-8?B?T0V6dlBnT3JXTnd3UE1lUVRHaDNqdXZOVHF5Z0JEcU51WFNrVzMvcEw1TVV0?=
- =?utf-8?B?WE5BRVh1UHhBaWVHWDQ1ekFUaWE4dmZ0d2Y0dkoxeVpCUzlwK08rcU5EQkZL?=
- =?utf-8?B?WWw2TmlCUERVZDlxYWxyTFlyT2FHQytzNkpDbEtiUHRLQkVUaWUxeWpvbUgw?=
- =?utf-8?B?ZDBEWUtGdUZBMzN6bm9qMTFJTUgxWkMzWkZ6YXdnSGFZcm9nekVydUN1RlNW?=
- =?utf-8?B?NWJibEwvaVZRTzducm00T2phMEd4ejdHeDA4UkFGYVRVNlJ3SWIzRUNmaWgx?=
- =?utf-8?B?RmZPOVYrenZGN3oweVpycThVaTVIZy9US2RtVmNZSzM0Zis4L3ZOQW9KU2tB?=
- =?utf-8?B?NjlXMGVtQnJPVlhnV1BsQ3NQZXR6K3Z6MGh6K0FxWVJDRjE5N3hpZTFpelF6?=
- =?utf-8?B?RGNJcG1TS1lQbzg0UHNvTzExcHRSL0dEVml5NS92aC8vMDkvUThiSWJjeUlD?=
- =?utf-8?B?L1NWMVVnbm5YRDhVemk5OFZuMjZoZ3l3RFN4LzVlUzdORWxESFJWdjFXWkQ4?=
- =?utf-8?B?Q21lUlFJdkltVjg5ZlhIbEM2VDNUS1Rtak13QzE5RnRpb1d2WjRYL3haWTFG?=
- =?utf-8?B?cWNGVGI5YlBSTGtsQWxBNnpBVjJzcTl1eVM4eHVIYTJqRDJ6RXJDY1ZDYzVu?=
- =?utf-8?B?R0tqanhyVnhYSGlGWkoyUFZrY2gydXZSNVpOSTErN0lsNDVjVE5jM1NNVk9D?=
- =?utf-8?B?TE9wa1hoVkluV2ptaUwxWmFLSWNwKzc5eUMxSzRmb3V6cFFROEFJclFMUTNJ?=
- =?utf-8?B?M0RXdTFabmFWVVE4Y1lKNkpsU0xUcEJMMnl2aXpmcmtXVzJTOXNlKzdDK2VG?=
- =?utf-8?B?dytXci9lczVRPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB5009.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WENjdEt2bUJSOUxTMHUwTktKS29SeFBveWk2RUk0aWt3L214eExPMDRlcjBu?=
- =?utf-8?B?RXF5T3lIdXora3JzdjVRbVh4Vm16ZHRwK0xMbXp2NHRRblRBakhSZlpiMTBv?=
- =?utf-8?B?K25nZUdheEhBZDVBUXFSS0dwL2h6cGlEam1ZMHpLWC9uZElPNlZLeFljQXFo?=
- =?utf-8?B?bW1ZUUloSHlhczFxLzJJNFJya3lhekgrMVV6d0t2dldwWmdBamVURlhQUjly?=
- =?utf-8?B?T0N2eWhaOU1lcXZjcHZ5K2dmL2RJdnV0THVZdWNiODNranpZclRRdVlkSXdi?=
- =?utf-8?B?bTR3bEZUQllHQVo2a084cDkvTmFhZnJVcmRCZ0pmekxLTTc5L0JCZGN4Wit6?=
- =?utf-8?B?cjAwVWtnR0hxb3dDU1MyWFdkNlRSY1JwYnhvcnJISCtrQ3pkVDJ6YmZhdi9B?=
- =?utf-8?B?MCtITDFWVFVFK3EwZGNuaVpMSzYzdkdaSWMvcXA3cWcyZ0puck5BajBpN2VK?=
- =?utf-8?B?WUZBTU9OdGpobU9CeG9jNWdDZk1PSW9QOUpHZ24zQ3RTVDZWaDhvVHR0NTZE?=
- =?utf-8?B?TE1takJnS1J2UzRQUEE0UXNUMWdZNC9wdjVrempvbHYyU2pqa2t3V3hMOXZo?=
- =?utf-8?B?aEZYZldoQ215cFc1K0RRL1QwWEZhK2NZcUZWbExEcHMveG8yNS9jMnI1OVJM?=
- =?utf-8?B?NHAyWUVVb0VBM1I2ZFZKQVVBeFp2Z3J3UXV5SmJzKzZiS0ZXR1dPUC8vejZv?=
- =?utf-8?B?Q2IrYTcvMjlrTkNxcHptY3N4ZlhuUEpqQkRUWVpuL1FsNW4vTnVaa0hkM1Fn?=
- =?utf-8?B?cmovS1JPcVN5NlhsZjRrcmFwL3hDQkg4R2FHbUU2dlhUSEp1TStFUU1CbXV6?=
- =?utf-8?B?MkxUM3ZMd2orWVdjZGdpOVoxdWVwcHpHaTdmZm5kUjJQR3BYQjFjcjdkRHdP?=
- =?utf-8?B?OXY0eWJNNHRhc0RjQXBqZEZ3b2RXR05KaE9IRWtGdFZkNnRkNEFCcE9LUGxN?=
- =?utf-8?B?dDloRG5BSlh5YmlaQS9adjBZK04vV1Nkejk3WXcwc0oxQ3hRK0dHdElKU2NQ?=
- =?utf-8?B?T05RajBVZU1YbUxIMHE5a01qM3o2bGYxdXNmeUZKYkZHSERHdlFzSGMwSk11?=
- =?utf-8?B?cG90cm9VRXZ2VDJXaXpyMHNuQ1BqK2Y0N2J6MG1ydWRMY3ozbmNQeFBvOWYx?=
- =?utf-8?B?NXk0ZjMvYi83NzNSOUszYWR5YUlPNWk1Rm9jbDdSZmdUZGNqMzJWSTlJMFU1?=
- =?utf-8?B?enBqWXRQaFZ4NXl4eURza0JiUEIvTUszYWxSVE1nd0FzYzVldk92V3Z1U2k4?=
- =?utf-8?B?M3I2TVBnUit0YUFhWlB3Z1V3QjdCVzFvZXVMQ2FCZEpXdmwzemxjK1JhMEJN?=
- =?utf-8?B?WDFySUdYSmR1cWpCaC9tU1djREs5S1Ixd2JibUNKVlR0WlRaK1dDQWE5NGlY?=
- =?utf-8?B?VmJDWU5tQy9BSDdCN205end0cWJMTWFER24yZGNDekJIbVUxd01ENkFicVU4?=
- =?utf-8?B?VGwyUU9oeVBJSldTRGN5djF4TDZwV3pMS040dzBWbjlQb0hQSWtkZHJ1Qmlr?=
- =?utf-8?B?ZkZIOGlyL2xBZGFqR2JVUEJ3WDNWaWxiOVRjMUtjaFU3L0NLQWg0SVN5QVZO?=
- =?utf-8?B?bEVCcEVvQ25Dci9RL0FWdWxZeGMwS3p6V2cvdVlsSzlGbEcvQStTNzZ0amsy?=
- =?utf-8?B?NHpsL215aFY3cENucjlJK3p5K0xOcWlyemMwSnU1NjFzR3FnZ0FYck5sOEl5?=
- =?utf-8?B?VmpVbkd1NHF5dTJ1a2FCMXBlbXRoZHhzQ3h0S1hHcWxSbVFiN1ZtZk5jSEFw?=
- =?utf-8?B?akZHa2t0TU0xMHVhazhIYnRsOVVEd1pON3pSSG5Nb0ZzaTVlbWN2N0lJbGNi?=
- =?utf-8?B?ZFprK0puYzdhU1R5NGZBK2tkci91NUxmOGc2MHF5ZitxbEdxN3JSZGNYTXZs?=
- =?utf-8?B?Qm8vcTU2L3VqNnMveUJyWWxUVEhySWRSVXlqd05VSW5IcFFUaXQzTUptSysx?=
- =?utf-8?B?dTg4c2R5ZlpmY1YzbXQ3SkVoc3h0U1JRQi9qaFRpQkVXWmo3R1hWUnBXU0lQ?=
- =?utf-8?B?OTlHbks1aldxRXBtYVMzaFhqd1h5ZG5rUVdvZjlxNlMvQ2dtSHBhR3V0aCsy?=
- =?utf-8?B?ci84NitQaGlWQ0xCQTZxekJrUjJqQzJRR0hKemFWWUNuVUd0T25DbGpwaUQ1?=
- =?utf-8?B?OTV1OHVRTmYxbTNIbmxIaDJGZnBWeGJKY0hLcmhTNXN2U1FNMmtTUEw4WXg0?=
- =?utf-8?B?dVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <928F655616A44C4AAB62464090E0E1A2@GBRP265.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20230601; t=1752597076; x=1753201876; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mjhxjbj7iS8ZyBEjzsqSgbZseWbedQ/eZ617a3fR4vs=;
+        b=lFRpG7+FldV1S1QmPn+c0EYbYJ4eCuw9QQPeuRfBB3M0itAWGWkx7R/wowHH8sXcxc
+         IlDROLTs/yN0zJaecrwttsCzQbASOfvQCj4T5bg1cqQmmOn9xbKJCuG7AEGHUQ2vhYg5
+         V6nAsIZH3ja2xuJOUDIz2a444rogqwTQKSXpEgtmhQkZ/UzqujUbbzkmH82zgy1Xkn9e
+         VP+gWpXRtNsDEkpwyHBEiNhdXglaGCqvTG3rxCTuv0adqciqDK3/isf4f1gOiwgZc6gm
+         pQI3YyIG/Aul9VwPiIpV65jFYdppb5mPcRHn5DxCedoRabb3OHoHJwsirtBZTI8sNNL6
+         AfYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752597076; x=1753201876;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mjhxjbj7iS8ZyBEjzsqSgbZseWbedQ/eZ617a3fR4vs=;
+        b=llE9BnNXtvdSopGnHD60vHxPYOCRt6CEZP0MdE9wH1pIIZCG4I9n9S6fmaXltoF2JE
+         azzjUfIDpRGjh9TZ2lJ/iFxpIH0I0Myud3ks4BmHsCuilffCySHeTSVt5qO2D3X0n8Dq
+         +of1wh7U4ZToWPLYlLtIMJEdj5bWaeFpjMOPPjZHtOHtscEn3CsDeP3v2ENF1tBFbaf6
+         GdpnOKlMwQVWAuHx0ODCAhc09aCVgqPrpiS2F7dv03VHDJkxVMP8iS70fgKOEch2mEUr
+         VaeJZ6WCVaI1PWIFoj85Juglq2ddMWFHKhP1IV/SQSaDwsYLJAQ0KsUY7qpaxueY1AkI
+         Mo+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW8UzWOrDu/HWO08pucfA+tNhbLkJg+wwIlzrGMdxUjs6wqGJ/H+Zjv925Af+MyfGhdq2ZmuFb8K1IB3W5stgo=@vger.kernel.org, AJvYcCWQ+qfhwYVKFsuigcnexatZMUXLGUD0Ve7oqPGXV5t0O1i/VhaOebovEK/dU9SEP6yblg9bSCwxSk9Py9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuFN1fKdThCNs089Gj5qNy0VgJxTffXiENGF05IIXCoDEVqJps
+	vd1M3joQ2Lhbt1eE+3d/cTRlToFpEiysDJ4BMCIDHyG854hiJWo3G+HX
+X-Gm-Gg: ASbGncsWrvuc3ByafvxmXbphmdvKmYIr0jl8ftqdCP9KW1vJlFs3C/ZgY9eE88ULsgy
+	5Tl/wpJitkzhQQuIUV0JX9KO2/mEX/LWZ8ykWnzZ6sqAyULOi0vHO1hPskcfuQvIOOgFDp89Uqx
+	R2QysdYRpVku9VtHLErlkBZI978lF9za/8DQvh8wAyZ4iwqElyU1pqMwRimDzGvpdsAf+txO9+/
+	RLYjv0WYYWtSEnQ3VsVoJfXORryTXx9KoKXh5oiXXmyfmvWyPYsfsqynQYFeBWvsH+WO8l/sA9S
+	3DUcJmEm+Gj0ZN5vTD5YpIcgRdGY2R56Tq+MVdFX6EIzhgZAEEzM3qKXleqHm0FxbyZCAxALBBM
+	/0SlaZtt89kWN3UZ16hDioyyWbOv5sCq4anJbnSJFnsLMwDaRf0vfY3bpAO1HUrmtHfMBey/sDd
+	8WFNITDbnqbCLD
+X-Google-Smtp-Source: AGHT+IGKcT812uvfhN6lx3CaHfEFlXJDMWfENRiBLEgYlLqzk0l/AjvFrC+4wp7erxyiJHyRaZV26g==
+X-Received: by 2002:a05:622a:1449:b0:4ab:7cf5:877b with SMTP id d75a77b69052e-4ab909b6fc6mr2180011cf.4.1752597075580;
+        Tue, 15 Jul 2025 09:31:15 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ab7f75fcb5sm11048021cf.27.2025.07.15.09.31.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 09:31:15 -0700 (PDT)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 906D5F40066;
+	Tue, 15 Jul 2025 12:31:14 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 15 Jul 2025 12:31:14 -0400
+X-ME-Sender: <xms:UoJ2aCaQcw2ax92T85cZ77gvTI5JEvXqkwCBNuTOcGqThMLtysS8sw>
+    <xme:UoJ2aG4goCf_JDlyv2SD6gxWD-UE80fUzrgqZSoHTaIDdkNZ48QexSOROM99IrrJ8
+    0HKMXJCakDeKqCN4g>
+X-ME-Received: <xmr:UoJ2aKl7XigJ7cUs8_2HtBZ3Zlv3wEDCcZpXj_K-GzyA_38M0y-pWiI2OA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehheefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhepvdegueegtdejkeehueekheeffeeiffeilefgteetlefhheegkeejtdeiveejheef
+    necuffhomhgrihhnpehophgvnhhgrhhouhhprdhorhhgpdhruhhsthdqlhgrnhhgrdhorh
+    hgpdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhith
+    ihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgr
+    ihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudekpdhmohguvg
+    epshhmthhpohhuthdprhgtphhtthhopehlohhsshhinheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhgvvhihmhhithgthhgvlhhltdesghhmrghilhdrtghomhdprhgtphhtth
+    hopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihn
+    ohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvg
+    htpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhr
+    tghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    grlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopehtmhhgrhhoshhs
+    sehumhhitghhrdgvughu
+X-ME-Proxy: <xmx:UoJ2aMEv4K0W62Dm7gil-eCIolQ9HtbE2lUgE6Glj0RN0xj9i7E60g>
+    <xmx:UoJ2aOFWcHTL8GznCBU-06EpHJehnirnSWkExMCfQ2miv3HgtCOdaA>
+    <xmx:UoJ2aE1D7gEjX29azT4PUshXsSS8IVir2fujR8xqMiqb-JqQTmAmKw>
+    <xmx:UoJ2aAdtABY---wOhLSQB32m0XuaAaU-G47QjBP4Yfqmf0dbETmaEg>
+    <xmx:UoJ2aGJ1TfB0wAVFVwZpqMqOmzxjuoD-51GigahrAlgLLXxSR8W_dpb0>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 15 Jul 2025 12:31:13 -0400 (EDT)
+Date: Tue, 15 Jul 2025 09:31:12 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Mitchell Levy <levymitchell0@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 3/5] rust: percpu: add a rust per-CPU variable test
+Message-ID: <aHaCUFNUd_mErL7S@Mac.home>
+References: <20250712-rust-percpu-v2-0-826f2567521b@gmail.com>
+ <20250712-rust-percpu-v2-3-826f2567521b@gmail.com>
+ <DBATM1CUS704.28MKE6BIBQB7G@kernel.org>
+ <68762e19.170a0220.33e203.a0b7@mx.google.com>
+ <DBCLFG5F4MPW.2LF4T3KWOE12R@kernel.org>
+ <aHZhcNCayTOQhvYh@Mac.home>
+ <DBCR1OCNYAUW.1VLAY1HWCHLGI@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: imgtec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB5009.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c1df745-15bf-4d0f-1200-08ddc3bcb2a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2025 16:28:57.3827
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kjenWmO8uAeHArbuYuevuTRAAresl6zPCp0DRQPdgpgd4GdyN9Uz2shnknYkfzWkKo/YcP3XogODpTlXM3YQqNDQbp0um63ACnRWzn/m5ec=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB3186
-X-Authority-Analysis: v=2.4 cv=IbOHWXqa c=1 sm=1 tr=0 ts=687681cb cx=c_pps
- a=6pT/+DikuWq1hv4MnjPuDw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=NgoYpvdbvlAA:10
- a=r_1tXGB3AAAA:8 a=kLnDKzXfk2bAhl7vrD4A:9 a=QEXdDO2ut3YA:10
- a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-GUID: XJQrYariwtVNI3C_4D97ih_WS4pvQB1D
-X-Proofpoint-ORIG-GUID: XJQrYariwtVNI3C_4D97ih_WS4pvQB1D
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEyMDAwOCBTYWx0ZWRfX8tK+LVYlvsmR
- bi6Xg5s7GJwGkNvcnK87QZ1JJntSzaa8xHkJ/h+U8QpIOG8umkLvP7lB4W5cY91SYy+FsKLG1ED
- ZCp3Rct7Qp39+B14sNdtPDTDWmxX8xDI0m1ZYTiwIyM8i0PeXmFXyoAkklGyzO/30Ogbnf5luwz
- cVEFjdH/OrUVLV8+eZB14dD4u+h3TQghHHPUOOxxcqGx+PML8AZMwWZXcAu8hwTXmccAUISu7AZ
- +g2dRv24v9RWK4G5e/Ud+TXhk/OGZmfYrGMedb+gpRPdIqLDBtGftGwkn1H7FKAETemq/d+lVEG
- OUht47nd3c8wRQ+43ikZkd7D92VeZvAdL3v9dzoqn/Yy8gTLcqASY/gJ+OSDn+jlnNyQY0HwjTs
- NaZpYKxt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DBCR1OCNYAUW.1VLAY1HWCHLGI@kernel.org>
 
-T24gV2VkLCAyMDI1LTA3LTA5IGF0IDExOjA0ICswMTAwLCBNYXR0IENvc3RlciB3cm90ZToNCj4g
-VGhlIGhlbHBlcnMgZm9yIGRlYWxpbmcgd2l0aCBmbGV4aWJsZSBzdHJ1Y3R1cmVzIGV4aXN0LCBz
-byBsZXQncyB1c2UgdGhlbS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1hdHQgQ29zdGVyIDxtYXR0
-LmNvc3RlckBpbWd0ZWMuY29tPg0KDQpSZXZpZXdlZC1ieTogQWxlc3NpbyBCZWxsZSA8YWxlc3Np
-by5iZWxsZUBpbWd0ZWMuY29tPg0KDQpUaGFua3MsDQpBbGVzc2lvDQoNCj4gLS0tDQo+ICBkcml2
-ZXJzL2dwdS9kcm0vaW1hZ2luYXRpb24vcHZyX3F1ZXVlLmMgfCAxMSArKysrKy0tLS0tLQ0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4gDQo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaW1hZ2luYXRpb24vcHZyX3F1ZXVlLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vaW1hZ2luYXRpb24vcHZyX3F1ZXVlLmMNCj4gaW5kZXggNWE0MWVlNzlmZWQ2
-NDZhODYzNDRjZDE2ZTc4ZWZkYjQ1ZmYwMmU0My4uMDk0YTg1NDU3NmE1YTYzZjU2ZTU2YWNkZWJm
-MDFiZGY1NDJhZTRkNSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2ltYWdpbmF0aW9u
-L3B2cl9xdWV1ZS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9pbWFnaW5hdGlvbi9wdnJfcXVl
-dWUuYw0KPiBAQCAtMyw2ICszLDcgQEANCj4gIA0KPiAgI2luY2x1ZGUgPGRybS9kcm1fbWFuYWdl
-ZC5oPg0KPiAgI2luY2x1ZGUgPGRybS9ncHVfc2NoZWR1bGVyLmg+DQo+ICsjaW5jbHVkZSA8bGlu
-dXgvb3ZlcmZsb3cuaD4NCj4gIA0KPiAgI2luY2x1ZGUgInB2cl9jY2NiLmgiDQo+ICAjaW5jbHVk
-ZSAicHZyX2NvbnRleHQuaCINCj4gQEAgLTM1LDkgKzM2LDggQEAgc3RhdGljIGludCBnZXRfeGZl
-cl9jdHhfc3RhdGVfc2l6ZShzdHJ1Y3QgcHZyX2RldmljZSAqcHZyX2RldikNCj4gIAkJCXJldHVy
-biBlcnI7DQo+ICAJfQ0KPiAgDQo+IC0JcmV0dXJuIHNpemVvZihzdHJ1Y3Qgcm9ndWVfZndpZl9m
-cmFnX2N0eF9zdGF0ZSkgKw0KPiAtCSAgICAgICAobnVtX2lzcF9zdG9yZV9yZWdpc3RlcnMgKg0K
-PiAtCQlzaXplb2YoKChzdHJ1Y3Qgcm9ndWVfZndpZl9mcmFnX2N0eF9zdGF0ZSAqKTApLT5mcmFn
-X3JlZ19pc3Bfc3RvcmVbMF0pKTsNCj4gKwlyZXR1cm4gc3RydWN0X3NpemVfdChzdHJ1Y3Qgcm9n
-dWVfZndpZl9mcmFnX2N0eF9zdGF0ZSwNCj4gKwkJCSAgICAgZnJhZ19yZWdfaXNwX3N0b3JlLCBu
-dW1faXNwX3N0b3JlX3JlZ2lzdGVycyk7DQo+ICB9DQo+ICANCj4gIHN0YXRpYyBpbnQgZ2V0X2Zy
-YWdfY3R4X3N0YXRlX3NpemUoc3RydWN0IHB2cl9kZXZpY2UgKnB2cl9kZXYpDQo+IEBAIC02NSw5
-ICs2NSw4IEBAIHN0YXRpYyBpbnQgZ2V0X2ZyYWdfY3R4X3N0YXRlX3NpemUoc3RydWN0IHB2cl9k
-ZXZpY2UgKnB2cl9kZXYpDQo+ICAJCQlyZXR1cm4gZXJyOw0KPiAgCX0NCj4gIA0KPiAtCXJldHVy
-biBzaXplb2Yoc3RydWN0IHJvZ3VlX2Z3aWZfZnJhZ19jdHhfc3RhdGUpICsNCj4gLQkgICAgICAg
-KG51bV9pc3Bfc3RvcmVfcmVnaXN0ZXJzICoNCj4gLQkJc2l6ZW9mKCgoc3RydWN0IHJvZ3VlX2Z3
-aWZfZnJhZ19jdHhfc3RhdGUgKikwKS0+ZnJhZ19yZWdfaXNwX3N0b3JlWzBdKSk7DQo+ICsJcmV0
-dXJuIHN0cnVjdF9zaXplX3Qoc3RydWN0IHJvZ3VlX2Z3aWZfZnJhZ19jdHhfc3RhdGUsDQo+ICsJ
-CQkgICAgIGZyYWdfcmVnX2lzcF9zdG9yZSwgbnVtX2lzcF9zdG9yZV9yZWdpc3RlcnMpOw0KPiAg
-fQ0KPiAgDQo+ICBzdGF0aWMgaW50IGdldF9jdHhfc3RhdGVfc2l6ZShzdHJ1Y3QgcHZyX2Rldmlj
-ZSAqcHZyX2RldiwgZW51bSBkcm1fcHZyX2pvYl90eXBlIHR5cGUpDQo+IA0KDQo=
+On Tue, Jul 15, 2025 at 05:55:13PM +0200, Benno Lossin wrote:
+> On Tue Jul 15, 2025 at 4:10 PM CEST, Boqun Feng wrote:
+> > On Tue, Jul 15, 2025 at 01:31:06PM +0200, Benno Lossin wrote:
+> > [...]
+> >> >> > +impl kernel::Module for PerCpuTestModule {
+> >> >> > +    fn init(_module: &'static ThisModule) -> Result<Self, Error> {
+> >> >> > +        pr_info!("rust percpu test start\n");
+> >> >> > +
+> >> >> > +        let mut native: i64 = 0;
+> >> >> > +        // SAFETY: PERCPU is properly defined
+> >> >> > +        let mut pcpu: StaticPerCpu<i64> = unsafe { unsafe_get_per_cpu!(PERCPU) };
+> >> >> 
+> >> >> I don't understand why we need unsafe here, can't we just create
+> >> >> something specially in the `define_per_cpu` macro that is then confirmed
+> >> >> by the `get_per_cpu!` macro and thus it can be safe?
+> >> >
+> >> > As is, something like
+> >> >     define_per_cpu!(PERCPU: i32 = 0);
+> >> >
+> >> >     fn func() {
+> >> >         let mut pcpu: StaticPerCpu<i64> = unsafe { unsafe_get_per_cpu!(PERCPU) };
+> >> >     }
+> >> > will compile, but any usage of `pcpu` will be UB. This is because
+> >> > `unsafe_get_per_cpu!` is just blindly casting pointers and, as far as I
+> >> > know, the compiler does not do any checking of pointer casts. If you
+> >> > have thoughts/ideas on how to get around this problem, I'd certainly
+> >> > *like* to provide a safe API here :)
+> >> 
+> >> I haven't taken a look at your implementation, but you do have the type
+> >> declared in `define_per_cpu!`, so it's a bit of a mystery to me why you
+> >> can't get that out in `unsafe_get_per_cpu!`...
+> >> 
+> >> Maybe in a few weeks I'll be able to take a closer look.
+> >> 
+> >> >> > +        // SAFETY: We only have one PerCpu that points at PERCPU
+> >> >> > +        unsafe { pcpu.get(CpuGuard::new()) }.with(|val: &mut i64| {
+> >> >> 
+> >> >> Hmm I also don't like the unsafe part here...
+> >> >> 
+> >> >> Can't we use the same API that `thread_local!` in the standard library
+> >
+> > First of all, `thread_local!` has to be implemented by some sys-specific
+> > unsafe mechanism, right? For example on unix, I think it's using
+> > pthread_key_t:
+> >
+> > 	https://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_key_create.html
+> >
+> > what we are implementing (or wrapping) is the very basic unsafe
+> > mechanism for percpu here. Surely we can explore the design for a safe
+> > API, but the unsafe mechanism is probably necessary to look into at
+> > first.
+> 
+> But this is intended to be used by drivers, right? If so, then we should
+
+Not necessarily only for drivers, we can also use it for implementing
+other safe abstraction (e.g. hazard pointers, percpu counters etc)
+
+> do our usual due diligence and work out a safe abstraction. Only fall
+> back to unsafe if it isn't possible.
+> 
+
+All I'm saying is instead of figuring out a safe abstraction at first,
+we should probably focus on identifying how to implement it and which
+part is really unsafe and the safety requirement for that.
+
+> I'm not familiar with percpu, but from the name I assumed that it's
+> "just a variable for each cpu" so similar to `thread_local!`, but it's
+> bound to the specific cpu instead of the thread.
+> 
+> That in my mind should be rather easy to support in Rust at least with
+> the thread_local-style API. You just need to ensure that no reference
+> can escape the cpu, so we can make it `!Send` & `!Sync` + rely on klint
+
+Not really, in kernel, we have plenty of use cases that we read the
+other CPU's percpu variables. For example, each CPU keeps it's own
+counter and we sum them other in another CPU.
+
+If we would like to model it conceptually, it's more like an array
+that's index by CpuId to me.
+
+> to detect context switches.
+> 
+> >> >> has:
+> >> >> 
+> >> >>     https://doc.rust-lang.org/std/macro.thread_local.html
+> >> >> 
+> >> >> So in this example you would store a `Cell<i64>` instead.
+> >> >> 
+> >> >> I'm not familiar with per CPU variables, but if you're usually storing
+> >> >> `Copy` types, then this is much better wrt not having unsafe code
+> >> >> everywhere.
+> >> >> 
+> >> >> If one also often stores `!Copy` types, then we might be able to get
+> >> >> away with `RefCell`, but that's a small runtime overhead -- which is
+> >> >> probably bad given that per cpu variables are most likely used for
+> >> >> performance reasons? In that case the user might just need to store
+> >> >> `UnsafeCell` and use unsafe regardless. (or we invent something
+> >
+> > This sounds reasonable to me.
+> >
+> >> >> specifically for that case, eg tokens that are statically known to be
+> >> >> unique etc)
+> >> >
+> >> > I'm open to including a specialization for `T: Copy` in a similar vein
+> >> > to what I have here for numeric types. Off the top of my head, that
+> >> > shouldn't require any user-facing `unsafe`. But yes, I believe there is
+> >> > a significant amount of interest in having `!Copy` per-CPU variables.
+> >> > (At least, I'm interested in having them around for experimenting with
+> >> > using Rust for HV drivers.)
+> >> 
+> >> What kinds of types would you like to store? Allocations? Just integers
+> >> in bigger structs? Mutexes?
+> >> 
+> >
+> > In the VMBus driver, there is a percpu work_struct.
+> 
+> Do you have a link? Or better yet a Rust struct description of what you
+> think it will look like :)
+> 
+
+Not Rust code yet, but here is the corresponding C code:
+
+	https://github.com/Rust-for-Linux/linux/blob/rust-next/drivers/hv/vmbus_drv.c#L1396
+
+But please note that we are not solely developing the abstraction for
+this usage, but more for generally understand how to wrap percpu
+functionality similar to the usage in C.
+
+> >> > I would definitely like to avoid *requiring* the use of `RefCell` since,
+> >> > as you mention, it does have a runtime overhead. Per-CPU variables can
+> >> > be used for "logical" reasons rather than just as a performance
+> >> > optimization, so there might be some cases where paying the runtime
+> >> > overhead is ok. But that's certainly not true in all cases. That said,
+> >> > perhaps there could be a safely obtainable token type that only passes a
+> >> > `&T` (rather than a `&mut T`) to its closure, and then if a user doesn't
+> >> > mind the runtime overhead, they can choose `T` to be a `RefCell`.
+> >> > Thoughts?
+> >> 
+> >> So I think using an API similar to `thread_local!` will allow us to have
+> >> multiple other APIs that slot into that. `Cell<T>` for `T: Copy`,
+> >> `RefCell<T>` for cases where you don't care about the runtime overhead,
+> >> plain `T` for cases where you only need `&T`. For the case where you
+> >> need `&mut T`, we could have something like a `TokenCell<T>` that gives
+> >> out a token that you need to mutably borrow in order to get `&mut T`.
+> >> Finally for anything else that is too restricted by this, users can also
+> >> use `UnsafeCell<T>` although that requires `unsafe`.
+> >> 
+> >> I think the advantage of this is that the common cases are all safe and
+> >> very idiomatic. In the current design, you *always* have to use unsafe.
+> >> 
+> >
+> > I agree, but like I said, we need to figure out the unsafe interface
+> > that C already uses and build API upon it. I think focusing on the
+> > unsafe mechanism may be the way to start: you cannot implement something
+> > that cannot be implemented, and we don't have the magic pthread_key here
+> > ;-)
+> 
+> Sure we can do some experimentation, but I don't think we should put
+> unsafe abstractions upstream that we intend to replace with a safe
+> abstraction later. Otherwise people are going to depend on it and it's
+
+I doubt we can replace the unsafe abstraction with a safe one, if users
+really care the performance then they would really need to use some
+unsafe API to build their safe abstraction.
+
+> going to be a mess. Do the experimenting out of tree and learn there.
+
+I disagree, Rust as a language its own should be able to do what C does
+including being able to implement the percpu functionality same as C,
+there is nothing wrong with a set of Rust primitives in the kernel that
+provides fundamental percpu functionality the other core facilities can
+rely on. The better part is that it will have all the safety requirement
+documented well.
+
+Regards,
+Boqun
+
+> 
+> ---
+> Cheers,
+> Benno
 
