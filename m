@@ -1,106 +1,108 @@
-Return-Path: <linux-kernel+bounces-732634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC30CB069D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:23:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF393B069D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F021C21162
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B11A4A7CDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A62B2D46C7;
-	Tue, 15 Jul 2025 23:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1342D5C8B;
+	Tue, 15 Jul 2025 23:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPWdbcvU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EGCpR5Dq"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2E82BEC23
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 23:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4E12D028A
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 23:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752621776; cv=none; b=ufhdzvpR58BRJdbWAt4GnCiXIO3J0pBjYkrT+74sxt9dzAxxhRHlLMT6xF/TFSB/bXZJCn1OB2NkCFmMthoHVGwshSBb7R391jVthJ1sMJ2/cU2JZE4PDTF+qA7YgfMa4D7nmBjr1o+eufYA89uf8Qb+f2xnK2YuzPtUvrJIpaQ=
+	t=1752621868; cv=none; b=Ded8H8MZIZ8YrHveWa0d+U+eqhXoaEemlibAiIAYVDQ90W7SIbN4qia0/gg5As1ueaRf4WuwV0FgkpeRgM1/yvE/D80lWxR4Ckq9NK5Xb5gQ7aTA7AEAVGUGIvORw1n400kRQJEru2NQ/ew4QFJ7OW0RJ9SUidjvRH9BGy3qcYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752621776; c=relaxed/simple;
-	bh=j1LB/sQmMIlG0zz2sXx8WmnMUfDTKW926uCb2WCG+s0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EzkKYjorbMguzZojZzW98DJEIZryzQP6iuvFj4q53ExSSp40zsrGUieMq72sRvN23FZ2FjvKra2UQYublVwZtvKKC5xERHUbxDNjnJTEtDikrZVkXFTV4imE3cxJ6dYcf/4R+3VpvDN7BjjvM9Ea5GXLwLMqRd6YolFSVj2kZNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPWdbcvU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4044EC4CEE3;
-	Tue, 15 Jul 2025 23:22:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752621776;
-	bh=j1LB/sQmMIlG0zz2sXx8WmnMUfDTKW926uCb2WCG+s0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lPWdbcvUlzY1C+zDUKuNlaBRYqRppGCR75JNewSjs70MzRVuBJA0YZhZeojgnnUzG
-	 217WE6TPyjuKgUVJcbYHC7L7jtROkocjwXrU/sGWVIxkwH5UNnlrNp3YmBKgVaCT50
-	 VmnFhNydiTHs0ja5RdmKFfQZ0VozH4z24+4o1eTKOxqktakkLA8L1sazea/hd+tYdS
-	 pxTNDUuv3XPT+vIcesvyYnOZNfU0bLIS6l1PmRE2Mx/lrKCubKHjwUKymFbYvGvA/E
-	 6yGhYwjQjXOb/S/cREcFOfLvPZq7Cb6uxWJsEulXSovvtH8t90pEao3hW1w85jmAB+
-	 ryaCAhJTjO4xA==
-Message-ID: <5c038378-dd65-4a4d-9a5b-d3604769b658@kernel.org>
-Date: Wed, 16 Jul 2025 08:22:54 +0900
+	s=arc-20240116; t=1752621868; c=relaxed/simple;
+	bh=nq6i7UWsrChHFspcpqg8vmXlrYiwDO/Qz7sfzZ29Fgs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rOF270ejp/a8oQtY3DnaiVkFbjCxEd42sRO5t2c9cGcPYj46PNb+wp8F4tYoJJD8vMLTfP0/hQPDz9PSSFrid7goUDq/z7zXVQJ5W1J+R5dsZaz9XaicBUkX1sz8bXl0YZjoza4gCov00VaA6t5fAy7KJAdhdcIm8FKM/uikQKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EGCpR5Dq; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3132c8437ffso9846895a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:24:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752621866; x=1753226666; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=975PH/shSeR0AqFV7Pd5lI4L1+eV8i/9w38Uuqw+Whw=;
+        b=EGCpR5Dq85Oqro/C2PkvWSsue+hQR6p1oaXxS9GigJ14LFIM0Iy8+sXwQvgDxL5aAC
+         kWZAmnizbKjuO8nWRxL3fmFFIIesSDD5gN2ubrQ/SEJJ+kRXirE+639QVjLTv7o/VChj
+         siLmLbpPoqbAb7q99Vg6rIoFJ0h+sElobIYRe4lzCqkYzp8pyp9aCh1wxDRf+OnZLLaX
+         xbfy1NS82JC3xNz6rT+2LglwBTk4/EBwWnFQ0caf3Vw2mhUebf2NRaX67A6Ujrwms/pG
+         kbhk5EBcg/0Zh/xspU76mUmVyZOKGIw9b6vNTPHq5KGUK5g9Wq4mYQ9kSnNoi9yB28WQ
+         67Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752621866; x=1753226666;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=975PH/shSeR0AqFV7Pd5lI4L1+eV8i/9w38Uuqw+Whw=;
+        b=u3whnjd7OjM4dN6GJmmjwRUO+BE/gxbubhLpEfm9ZsrcgdSRD8YmC6cggUp9NqQfBU
+         5yVU3CuNqQFI7Hqni2qI8KE9DbJD0zZ2gnU4gBi4uJACYMAwFM5SKsUYSkkw58l5QJK2
+         AX7xaOAh3l7nc8wANAajWiLwIvKgaMVyPTGC+Q0oL0vfqqQyXDp4vDEZqIz5L8vvF18f
+         QYb9lX9YYhrVduwH3gqv4K1yWuEBjLHWZST/xUuR8n/+MXIsxFfjRNsYRie5jC6HUg31
+         dFyWV6CxBkElbu9ZxH0YIjaREnh4fkBLIqEOufSjqxyepvuXtKfahovYfvNJmXROvN4/
+         898Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXIKv8Q6fvMKbl4RbAbB3U5rkh9EG/iaI19yII3ebDtC1cNPtDN/muijJc/vAtWHBhp7oqslk9hOMnjKiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOda/Tfw7P2ZBpmRhY2f6Wlvkt+358aDeRWFCC7cqQS0Hp/ykB
+	f+/zleC0z9+4c7TLXfIL3Zbz3ljq7dmU5CLeGLm1UwEITbIsPxlgN3Nq3edBIHOuG/+qHpF4E50
+	xzAf4+g==
+X-Google-Smtp-Source: AGHT+IG5Zjbdlf9KDwHnS2wt9su30n3/ohIFoDKHlCcpDxi/IzL0dMDtTweTGTBWrQ0Ul0Zzj5WG2JG4hxk=
+X-Received: from pjb13.prod.google.com ([2002:a17:90b:2f0d:b0:313:246f:8d54])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1fce:b0:311:9e59:7aba
+ with SMTP id 98e67ed59e1d1-31c9f3ee951mr736995a91.2.1752621866253; Tue, 15
+ Jul 2025 16:24:26 -0700 (PDT)
+Date: Tue, 15 Jul 2025 16:24:21 -0700
+In-Reply-To: <20250714221928.1788095-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmet: pci-epf: Do not complete commands twice if
- nvmet_req_init() fails
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250715091826.3970789-1-rick.wertenbroek@gmail.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250715091826.3970789-1-rick.wertenbroek@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250714221928.1788095-1-seanjc@google.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <175261351809.1924612.2322752513285300165.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: VMX: Ensure unused kvm_tdx_capabilities fields are
+ zeroed out
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 7/15/25 18:18, Rick Wertenbroek wrote:
-> Have nvmet_req_init() and req->execute() complete failed commands.
+On Mon, 14 Jul 2025 15:19:28 -0700, Sean Christopherson wrote:
+> Zero-allocate the kernel's kvm_tdx_capabilities structure and copy only
+> the number of CPUID entries from the userspace structure.  As is, KVM
+> doesn't ensure kernel_tdvmcallinfo_1_{r11,r12} and user_tdvmcallinfo_1_r12
+> are zeroed, i.e. KVM will reflect whatever happens to be in the userspace
+> structure back at usersepace, and thus may report garbage to userspace.
 > 
-> Description of the problem:
-> nvmet_req_init() calls __nvmet_req_complete() internally upon failure,
-> e.g., unsupported opcode, which calls the "queue_response" callback,
-> this results in nvmet_pci_epf_queue_response() being called, which will
-> call nvmet_pci_epf_complete_iod() if data_len is 0 or if dma_dir is
-> different than DMA_TO_DEVICE. This results in a double completion as
-> nvmet_pci_epf_exec_iod_work() also calls nvmet_pci_epf_complete_iod()
-> when nvmet_req_init() fails.
+> Zeroing the entire kernel structure also provides better semantics for the
+> reserved field.  E.g. if KVM extends kvm_tdx_capabilities to enumerate new
+> information by repurposing bytes from the reserved field, userspace would
+> be required to zero the new field in order to get useful information back
+> (because older KVMs without support for the repurposed field would report
+> garbage, a la the aforementioned tdvmcallinfo bugs).
 > 
-> Steps to reproduce:
-> On the host send a command with an unsupported opcode with nvme-cli,
-> For example the admin command "security receive"
-> $ sudo nvme security-recv /dev/nvme0n1 -n1 -x4096
-> 
-> This triggers a double completion as nvmet_req_init() fails and
-> nvmet_pci_epf_queue_response() is called, here iod->dma_dir is still
-> in the default state of "DMA_NONE" as set by default in
-> nvmet_pci_epf_alloc_iod(), so nvmet_pci_epf_complete_iod() is called.
-> Because nvmet_req_init() failed nvmet_pci_epf_complete_iod() is also
-> called in nvmet_pci_epf_exec_iod_work() leading to a doubple completion.
-> 
-> This patch lets nvmet_req_init() and req->execute() complete all failed
-> commands, and removes the double completion case in
-> nvmet_pci_epf_exec_iod_work() therefore fixing the edge cases where
-> double completions occurred.
-> 
-> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+> [...]
 
-Forgot: this needs a fixes tag and cc-stable:
+Applied to kvm-x86 fixes, (with the typo fixed), thanks!
 
-Fixes: 0faa0fe6f90e ("nvmet: New NVMe PCI endpoint function target driver")
-Cc: stable@vger.kernel.org
+[1/1] KVM: VMX: Ensure unused kvm_tdx_capabilities fields are zeroed out
+      https://github.com/kvm-x86/linux/commit/b8be70ec2b47
 
--- 
-Damien Le Moal
-Western Digital Research
+--
+https://github.com/kvm-x86/linux/tree/next
 
