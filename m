@@ -1,325 +1,252 @@
-Return-Path: <linux-kernel+bounces-732426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8265B06695
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:12:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87786B06692
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED9ED4A83E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A70091AA39DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0592BFC73;
-	Tue, 15 Jul 2025 19:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A352BEC52;
+	Tue, 15 Jul 2025 19:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QVZ66lj1"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfjjRWej"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B522BEFE0;
-	Tue, 15 Jul 2025 19:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606740; cv=fail; b=GAVM5L7oFd7nqRJtv3JEjSZ0lv6aS5/rHOhaomXIy2cjtbfM1xITgyz053b/UTJng12T0YCBTv99suxiZ54i5aNfTlBuZCMmO+HvY4cr6YhIAyh3UCwBz81+E+xYN3ZBKgg416NCLVQWvpbo5PmT1FxG9w0jj4Yvn+XdD+8Njx4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606740; c=relaxed/simple;
-	bh=X1VZXt2XLYYfCHT5FVPV3Rvtz+gp9AO6cwmLQ1b3JEc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nB84mLDRR9/nZ4vVQkaxEojD0pCL5MWAchdQZv3g1lIrcjzJ9+JfOywGAA2nPNf3nZVK+Y36xgj28P2OV15HoTZ9k/42cIBVKX1fLDASvj7/U9c2T3D55NIRRgQBiQ0Rcjhqk/EbbsZZ/4FugFxvi0LoSqVeOPJ1hOwr6yyOk8I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QVZ66lj1; arc=fail smtp.client-ip=40.107.93.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k+qKInttHswNO/0xPSZgrWKSPVfuF1gjnl4oC4eO7evL1E4kpu4Irlul/Ia9FM7fYztMuzzFRN5Xyg0nraRY9/UeW0WQjrGw8xBjxZ5Mmv1tG+gxjtTsNV+aU+QZ3kSehMc7xzjzGqw7rJ5pEjWtSrImZ2CFme+AIM8bI2MrHCWQjkr5tx9uKWaA01RNSacnfmCujTpbEnwQ3ZFz/+hR36cfgRidvonV9hWtj1ALeJiGhR6WVIZzC1dk1gpHVzogXvX7ZXTGKbwT9EvrQbQC6PyBhWJQuEuSrS/2Q0nEX5t41DO8WVW01+qnib9bNr3R0L2vFPfydiKQGxTVD0hR8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=obdbZ2nggGv32RMKCX0JcK8gukoePWqWBiHZk7BFGqk=;
- b=xC/xvtnYgEj4Pl+wgTBbXk444oUIQ/ZAxT2itZrNmaoM+v//l9WJfXx2G+VWbXyIS0w1tvKiWpTLfQOmA5jDG5AU5qfLMuw5XmM9hr0YinjgZ2/jSZMpZzG+Si/VtqzQZJNq+avAmP0NcULY2rnDxGqZ/29ml3kbPdesf8U7yfgJMi4UgnOdWJ2aDoBnhxkeG3ldrRCMeIE9gaaq6RTB4XYdoIjyQ2RkOfxU6t32FHOg84hulDsUSS3usNbQcrmABkPkhJzeaA9vEcK/NGDlfu+ABr/yJPAwGBjsNpan3ZXyPIhs39geOqoG+RCvrLiD0hYtbV/fTgvA4rrx6L7gLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=obdbZ2nggGv32RMKCX0JcK8gukoePWqWBiHZk7BFGqk=;
- b=QVZ66lj1AdivZx+9fIR2HU/koaSU1eRuWf0jE6c5jdBh3ON66Gd4dnb+Ds63nVE0SwhEHDqefWJGfC4V9ARUyXDThpkM+IQrMuQUJGAbfcBudovcSyycMIz3jl4eTRC5AgzcMNTKOxf8e31fBY3Qrho8y0Wvqu4si2+7G62JQMI=
-Received: from BL1PR13CA0204.namprd13.prod.outlook.com (2603:10b6:208:2be::29)
- by DS0PR12MB7728.namprd12.prod.outlook.com (2603:10b6:8:13a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Tue, 15 Jul
- 2025 19:12:16 +0000
-Received: from MN1PEPF0000F0E2.namprd04.prod.outlook.com
- (2603:10b6:208:2be:cafe::81) by BL1PR13CA0204.outlook.office365.com
- (2603:10b6:208:2be::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Tue,
- 15 Jul 2025 19:12:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000F0E2.mail.protection.outlook.com (10.167.242.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 19:12:16 +0000
-Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
- 2025 14:12:13 -0500
-From: Robert Richter <rrichter@amd.com>
-To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
-	<gourry@gourry.net>, "Fabio M. De Francesco"
-	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
-	Robert Richter <rrichter@amd.com>
-Subject: [PATCH v1 01/20] cxl/region: Move helper functions closer to their users
-Date: Tue, 15 Jul 2025 21:11:24 +0200
-Message-ID: <20250715191143.1023512-2-rrichter@amd.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250715191143.1023512-1-rrichter@amd.com>
-References: <20250715191143.1023512-1-rrichter@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B509423CEF8;
+	Tue, 15 Jul 2025 19:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752606700; cv=none; b=ksZndqtzh+VYfbonAKVi+RdNZKyQ/ZaGokzZEsM78QuV73+qeghIxlvg++gNYXUqnJGMFCSRQdPEExxvjcoAVMEQ9NqTiwEdzg/m6BgtscflzjXrF9Mv2uj9yOKtwUPigLvHqOFFQTCSwy4sjy8o2smIFzEcAsDp4A5304ww/TQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752606700; c=relaxed/simple;
+	bh=XI5xpPGglXhMr902qd36Jrl+GZMQWzyr9/fxOK1wbKk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EFu1Qb+AUY0vKOwu3SE29YNNmDROVt9Jny6YGO3d6WGAYW/cgIi8nSLmOQE+WJDOqTFgIxLchS3i6FszTFp63J1zVZcq8sZkbIeYRH1bUH9fc3f0WqoRqvFtOoG7Cfjs0zop+m0NtofAOgJUWU+IPyXpu+IBYeXGPGQyNAXeAhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DfjjRWej; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e82278e3889so4428841276.2;
+        Tue, 15 Jul 2025 12:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752606696; x=1753211496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p2UmhCN1wKq7qPiM82CdVGcCOdWxK/9Xfu8BiSPLWas=;
+        b=DfjjRWejn5Np48ilo9gsYCsNK42POJcwd1Kgr11MxKsQgNXyUrfa1KRsbQfSFmLgB4
+         nQ4gpvVW0wHmaaJrkLyVU0dKGxR95XP+GZti8ug3hgK2Xij7wm9d7OyOA/Di4UZZJSxA
+         G28xGs7PpjNwyTw3EOt0Gq0PgIqS2p7MHXJG4Wl11v1ufnr3uEsqQutbTlOZ1W4fDZQO
+         Hfq4G83BX6PPBMucpth675gkbNsZVB5vBn0llC1SJC2U2RKQsYBPUwQRp8K82kQWelke
+         fwg5nS+L2+Q+r5UHI4qt3N0R77gOXdEb1DrC8xY/0ujhNQx55X/5sBJv72LAkHsXczG4
+         1+oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752606696; x=1753211496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p2UmhCN1wKq7qPiM82CdVGcCOdWxK/9Xfu8BiSPLWas=;
+        b=xE+g5jgjhRNP6L4R5APuuPFtTSlc70OoQoroApYX3t/oP/P0MA7eC62RKtyuzubFfD
+         rZzcjI7c0wr9sO8a/NHCPsd/B79zKVAzZ2+3c+8UkS6ms4pvtGTtK9NXVDI2L7BgeYvG
+         e9INCAIoG5Q52sMmJ7WjHIKqBgBHzy5ZGXdVxVAzsJYobA7shBTwDSdIcR8xmCqTdvLT
+         OVISmtXHIh/a45oNQ4Tv5qXia8qQILSn/dUOrnQ+O7gCgjUtccMBok5hWR1IpF15K8LC
+         Y+Io3bblcTSxNlfUgq/UAwv0ItQz3+s07TpoUB/3o+w0/38/zK2bZm2018dCKHdagnH9
+         7s6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU//WZkLQLESTHoMiA11wSYoAfH2oaoPNo2dwe3sYiGW3sIw7mupj/CZA7bmgxfIKNRlSXLzCnzZo72jEpGRw==@vger.kernel.org, AJvYcCVArlSwpOnLVXDYihq2iV6CBDFTS+vcHQua5C+ZUfIuewvG2XofYSnUDbG0kaF+pFVVw7sJ25cDolv6@vger.kernel.org, AJvYcCXEvkZAeUa/MzpByzf2WPw0LmeINFLrF11+gAZ9HwsKM/qmCY/VgNGiu3A5G+6K2ZOMIk9gCKNZU9y4GWrb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzaY/PjlTrYw3RXRslAk187k0nUdSw4PGSPr2xitx55EWDdsOO
+	QevoWv1Ucbb8+ahrCnAFKOpp4FJrKnXsqtURpmcasC0exYt6womxjhDI14wmuFYJ/eDXCRujZdA
+	eMrAYESB9goB3iK8TyksqSwp6pXpodnk=
+X-Gm-Gg: ASbGncsMYvlaa3HsxrHGtevr+hCff5fuEju57EoOGkhauZpjTZ32O7azid5vhb83cxi
+	NeiH+N8CFKPp68gm9DGH0aZsBWcxpazqhDKpKyIITdwJqO8DvzqFFJ+HCW3vjkfHGCcvXJ+GxHy
+	OgC2vp2smO8w1uPYUPjN/ftll1dQznn7Ld1oEEuAkrPTeMY+yh0t7zmV9EyKww1CVNeOu108Fi+
+	jpEYjjO
+X-Google-Smtp-Source: AGHT+IEmRbP5plw2JDZuT8QhpPEHx+ilC143a5wCn95870ZBEW4VPQeDKcfi15deTxRuznWqb8pD1AxALKEWGplBKow=
+X-Received: by 2002:a05:6902:1b0e:b0:e85:bf11:4992 with SMTP id
+ 3f1490d57ef6-e8bc2484cc3mr68128276.31.1752606696400; Tue, 15 Jul 2025
+ 12:11:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E2:EE_|DS0PR12MB7728:EE_
-X-MS-Office365-Filtering-Correlation-Id: 189126a2-6169-4180-d699-08ddc3d38335
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8VmzMQ8WSAS8qeNLz+KC/O4C4pImMqBUfGRg3q5XAibHwp2mSupX5om1AAiG?=
- =?us-ascii?Q?er9WAG0CIwPQCx82iMfH0aw97C9H2sW/YwSVWtC0+cvC6w4VnZ1MbraOWJTZ?=
- =?us-ascii?Q?9ODKHKevns9d3FUSKkH5/y7cmGFnoevOWmfW4fWkaRf2tnRiI1taaYnCT9Aa?=
- =?us-ascii?Q?1QHcHlzBgWbzuRZ98btX90yXS+0QiLuuFf5KzKC5QeTLSnIo0UIWI141j6PL?=
- =?us-ascii?Q?2mG8k95OIwXkdkZx9AdF5ETQF5YncOcDojWQsoig7chnMGcoMbCnpNz/cRAs?=
- =?us-ascii?Q?4XElyfJj26GRQyNYeSsPmgxZVg1xLYjE6Y2O+UwuPNhVnePoMGG+XXzHjkIl?=
- =?us-ascii?Q?Q4y3rcFNbKEG76KrUqu7SbFx6EyN9jEhcsNkN1VQqYgfQdtDUeigBk4zM+Hz?=
- =?us-ascii?Q?t4vxf7zwnqJRHsq4vL092YBlfShf7KNhKEgPv0p59oyJfhXbunudhrFmnGea?=
- =?us-ascii?Q?lJNkTMVkh1ypPZ6zaNJTcER6IOWTKa0FHiooYJtxF/9wN6t0iQFP5tChrFDG?=
- =?us-ascii?Q?qB0ac+TbsEPJAmWLjpP4dj69+oOuD1tFbF/9EOdG5YdyYz06cF2JAUi+s8ib?=
- =?us-ascii?Q?x78CXavGflBqtcDHNjIo/ZA91GCoYWzX8grZ4cUpFXw+hMkeVcwo+TKAtDUY?=
- =?us-ascii?Q?uZ8OtE40iqmQxLMoLVq+MP/pVASKPXg02tJpkBglujgeYVNI0KF3Yeku3rAZ?=
- =?us-ascii?Q?2qU0bQWvtruhfvbTLwik60pM7tpyBtWMKFS04pfD0cqATKGGfrcEb1DQPsNo?=
- =?us-ascii?Q?CeGcdidGe259ehOBOnWzENr0vnuaI9JlQZ2SBM8RqwKL3b4i2kF5rerO431S?=
- =?us-ascii?Q?rGkdUQrAlZ5YmcRMXuxQ5CRJCgbOIxjmU8+Mf3mvKBOmWCczhP1YTRV60M00?=
- =?us-ascii?Q?nQuNtsH4Ist4prSuzspONpJWSRkudgmPS8keqWAy6sPCnsHgHhtbto+iwhI3?=
- =?us-ascii?Q?fVPuWdsLFhYlm3nAKq1j886uqA1XZFpjsTevUYS2i8uQXvYBMob3NUPrn/z8?=
- =?us-ascii?Q?bzrbLYMA058Q1go6jT7U4rzsfxx4C77t9evJYYrvpMrUnaGChwHW5ukovNqv?=
- =?us-ascii?Q?fWJsneiBw8aN39YUvh4cCOKuQB01mDf3sffQKlL09fxr8wG6PPh+Gnoxc3zJ?=
- =?us-ascii?Q?F9tjiZFjcsGz5fxqhEHsf741m0O+BFDiw+4QdnlQ/iBHG5Z8FTjzy/Ku+Giz?=
- =?us-ascii?Q?iOEd+4ukl3YeplTGddCKtlPTiqJ3XM0XmsEZSEEmlIV9QWE3h9SuF77k1tri?=
- =?us-ascii?Q?BR0idkB3jS13ae4LSCBZe8AZixOiMUGTR8msbT6Llu20xBZNGKdsSH0qOlV3?=
- =?us-ascii?Q?xYzmfXUR9duLgS5Q5WsYf9TQXt7rpKpHEDo6EJG7T5+U9ZSICkb5nkDYLQs7?=
- =?us-ascii?Q?mq6wYz5jrhr8Hxpz+h8vu0jiQxf/E/JjVcPZ03+rjGuPkgH6F65iyy3I5r30?=
- =?us-ascii?Q?3hcq7gUgTmpTeXjMwTuCrBRh46kzjjN89MzTCd0pfNmmWo+Oo1Cvq8Y7O3AL?=
- =?us-ascii?Q?UZJ3e1frGTouhETG+1NOIm4wOOC79yrHOvgE?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 19:12:16.2910
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 189126a2-6169-4180-d699-08ddc3d38335
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0E2.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7728
+References: <20250715185636.21758-1-me@adomerle.pw>
+In-Reply-To: <20250715185636.21758-1-me@adomerle.pw>
+From: Luka Panio <lukapanio@gmail.com>
+Date: Tue, 15 Jul 2025 21:11:25 +0200
+X-Gm-Features: Ac12FXzZwP0wg2XOsca0tmzCY-hknndg42Bhiqc9GRR2wQ9DnbCUMkYInG0f-zU
+Message-ID: <CACi=Ov7fe1WjzgWYeAZYGMfyOifVymdM6h+pHedLdbicsom9Xw@mail.gmail.com>
+Subject: Re: [PATCH v1] arm64: dts: qcom: sm8250-xiaomi-pipa: Drop nonexistent hardware
+To: Arseniy Velikanov <me@adomerle.pw>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Just moving code around without any changes. Move helper functions
-closer to their users. This simplifies code and a rework and reduces
-the diffstat of follow-on patches.
+Reviewed-by: Luka Panio lukapanio@gmail.com
 
-In particular, do the following:
-
-Place cxl_region_alloc() and unregister_region() before
-devm_cxl_add_region(). Have cxl_region_alloc() first as it is used in
-devm_cxl_add_region() first.
-
-Group match_region_by_range() and cxl_find_region_by_range() as both
-belong together.
-
-Signed-off-by: Robert Richter <rrichter@amd.com>
----
- drivers/cxl/core/region.c | 126 +++++++++++++++++++-------------------
- 1 file changed, 63 insertions(+), 63 deletions(-)
-
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 08ac7f483562..f22ad20b0db9 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -2365,56 +2365,6 @@ static struct cxl_region *to_cxl_region(struct device *dev)
- 	return container_of(dev, struct cxl_region, dev);
- }
- 
--static void unregister_region(void *_cxlr)
--{
--	struct cxl_region *cxlr = _cxlr;
--	struct cxl_region_params *p = &cxlr->params;
--	int i;
--
--	device_del(&cxlr->dev);
--
--	/*
--	 * Now that region sysfs is shutdown, the parameter block is now
--	 * read-only, so no need to hold the region rwsem to access the
--	 * region parameters.
--	 */
--	for (i = 0; i < p->interleave_ways; i++)
--		detach_target(cxlr, i);
--
--	cxl_region_iomem_release(cxlr);
--	put_device(&cxlr->dev);
--}
--
--static struct lock_class_key cxl_region_key;
--
--static struct cxl_region *cxl_region_alloc(struct cxl_root_decoder *cxlrd, int id)
--{
--	struct cxl_region *cxlr;
--	struct device *dev;
--
--	cxlr = kzalloc(sizeof(*cxlr), GFP_KERNEL);
--	if (!cxlr) {
--		memregion_free(id);
--		return ERR_PTR(-ENOMEM);
--	}
--
--	dev = &cxlr->dev;
--	device_initialize(dev);
--	lockdep_set_class(&dev->mutex, &cxl_region_key);
--	dev->parent = &cxlrd->cxlsd.cxld.dev;
--	/*
--	 * Keep root decoder pinned through cxl_region_release to fixup
--	 * region id allocations
--	 */
--	get_device(dev->parent);
--	device_set_pm_not_required(dev);
--	dev->bus = &cxl_bus_type;
--	dev->type = &cxl_region_type;
--	cxlr->id = id;
--
--	return cxlr;
--}
--
- static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
- {
- 	int cset = 0;
-@@ -2498,6 +2448,56 @@ static int cxl_region_calculate_adistance(struct notifier_block *nb,
- 	return NOTIFY_STOP;
- }
- 
-+static struct lock_class_key cxl_region_key;
-+
-+static struct cxl_region *cxl_region_alloc(struct cxl_root_decoder *cxlrd, int id)
-+{
-+	struct cxl_region *cxlr;
-+	struct device *dev;
-+
-+	cxlr = kzalloc(sizeof(*cxlr), GFP_KERNEL);
-+	if (!cxlr) {
-+		memregion_free(id);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	dev = &cxlr->dev;
-+	device_initialize(dev);
-+	lockdep_set_class(&dev->mutex, &cxl_region_key);
-+	dev->parent = &cxlrd->cxlsd.cxld.dev;
-+	/*
-+	 * Keep root decoder pinned through cxl_region_release to fixup
-+	 * region id allocations
-+	 */
-+	get_device(dev->parent);
-+	device_set_pm_not_required(dev);
-+	dev->bus = &cxl_bus_type;
-+	dev->type = &cxl_region_type;
-+	cxlr->id = id;
-+
-+	return cxlr;
-+}
-+
-+static void unregister_region(void *_cxlr)
-+{
-+	struct cxl_region *cxlr = _cxlr;
-+	struct cxl_region_params *p = &cxlr->params;
-+	int i;
-+
-+	device_del(&cxlr->dev);
-+
-+	/*
-+	 * Now that region sysfs is shutdown, the parameter block is now
-+	 * read-only, so no need to hold the region rwsem to access the
-+	 * region parameters.
-+	 */
-+	for (i = 0; i < p->interleave_ways; i++)
-+		detach_target(cxlr, i);
-+
-+	cxl_region_iomem_release(cxlr);
-+	put_device(&cxlr->dev);
-+}
-+
- /**
-  * devm_cxl_add_region - Adds a region to a decoder
-  * @cxlrd: root decoder
-@@ -3277,6 +3277,19 @@ static int match_region_by_range(struct device *dev, const void *data)
- 	return 0;
- }
- 
-+static struct cxl_region *
-+cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *hpa)
-+{
-+	struct device *region_dev;
-+
-+	region_dev = device_find_child(&cxlrd->cxlsd.cxld.dev, hpa,
-+				       match_region_by_range);
-+	if (!region_dev)
-+		return NULL;
-+
-+	return to_cxl_region(region_dev);
-+}
-+
- static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
- 					    struct resource *res)
- {
-@@ -3419,19 +3432,6 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
- 	return cxlr;
- }
- 
--static struct cxl_region *
--cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *hpa)
--{
--	struct device *region_dev;
--
--	region_dev = device_find_child(&cxlrd->cxlsd.cxld.dev, hpa,
--				       match_region_by_range);
--	if (!region_dev)
--		return NULL;
--
--	return to_cxl_region(region_dev);
--}
--
- int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
- {
- 	struct range *hpa = &cxled->cxld.hpa_range;
--- 
-2.39.5
-
+On Tue, Jul 15, 2025 at 9:02=E2=80=AFPM Arseniy Velikanov <me@adomerle.pw> =
+wrote:
+>
+> PM8009 was erroneously added since this device doesn't actually have it.
+> It triggers a big critical error at boot, so we're drop it.
+>
+> Also it looks like the fuel gauge is not connected to the battery,
+> it reports nonsense info. Downstream kernel uses pmic fg.
+>
+> PMIC fuel-gauge driver uses mixed stats about dual-cell battery,
+> so I combined it into one.
+>
+> Fixes: 264beb3cbd0d ("arm64: dts: qcom: sm8250-xiaomi-pipa: Add initial d=
+evice tree")
+>
+> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
+> ---
+>  .../boot/dts/qcom/sm8250-xiaomi-pipa.dts      | 95 +------------------
+>  1 file changed, 5 insertions(+), 90 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts b/arch/arm64=
+/boot/dts/qcom/sm8250-xiaomi-pipa.dts
+> index 668078ea4f04..b74c3c9b4076 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
+> @@ -50,18 +50,12 @@ framebuffer: framebuffer@9c000000 {
+>                 };
+>         };
+>
+> -       battery_l: battery-l {
+> +       battery: battery {
+>                 compatible =3D "simple-battery";
+> -               voltage-min-design-microvolt =3D <3870000>;
+> -               energy-full-design-microwatt-hours =3D <16700000>;
+> -               charge-full-design-microamp-hours =3D <4420000>;
+> -       };
+> -
+> -       battery_r: battery-r {
+> -               compatible =3D "simple-battery";
+> -               voltage-min-design-microvolt =3D <3870000>;
+> -               energy-full-design-microwatt-hours =3D <16700000>;
+> -               charge-full-design-microamp-hours =3D <4420000>;
+> +               charge-full-design-microamp-hours =3D <8840000>;
+> +               energy-full-design-microwatt-hours =3D <34300000>;
+> +               voltage-min-design-microvolt =3D <3400000>;
+> +               voltage-max-design-microvolt =3D <4370000>;
+>         };
+>
+>         bl_vddpos_5p5: bl-vddpos-regulator {
+> @@ -406,63 +400,6 @@ vreg_l11c_3p0: ldo11 {
+>                         regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+>                 };
+>         };
+> -
+> -       regulators-2 {
+> -               compatible =3D "qcom,pm8009-rpmh-regulators";
+> -               qcom,pmic-id =3D "f";
+> -
+> -               vdd-s1-supply =3D <&vph_pwr>;
+> -               vdd-s2-supply =3D <&vreg_bob>;
+> -               vdd-l2-supply =3D <&vreg_s8c_1p35>;
+> -               vdd-l5-l6-supply =3D <&vreg_bob>;
+> -               vdd-l7-supply =3D <&vreg_s4a_1p8>;
+> -
+> -               vreg_s1f_1p2: smps1 {
+> -                       regulator-name =3D "vreg_s1f_1p2";
+> -                       regulator-min-microvolt =3D <1200000>;
+> -                       regulator-max-microvolt =3D <1300000>;
+> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> -               };
+> -
+> -               vreg_s2f_0p5: smps2 {
+> -                       regulator-name =3D "vreg_s2f_0p5";
+> -                       regulator-min-microvolt =3D <512000>;
+> -                       regulator-max-microvolt =3D <1100000>;
+> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> -               };
+> -
+> -               /* L1 is unused. */
+> -
+> -               vreg_l2f_1p3: ldo2 {
+> -                       regulator-name =3D "vreg_l2f_1p3";
+> -                       regulator-min-microvolt =3D <1056000>;
+> -                       regulator-max-microvolt =3D <1200000>;
+> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> -               };
+> -
+> -               /* L3 & L4 are unused. */
+> -
+> -               vreg_l5f_2p8: ldo5 {
+> -                       regulator-name =3D "vreg_l5f_2p85";
+> -                       regulator-min-microvolt =3D <2800000>;
+> -                       regulator-max-microvolt =3D <3000000>;
+> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> -               };
+> -
+> -               vreg_l6f_2p8: ldo6 {
+> -                       regulator-name =3D "vreg_l6f_2p8";
+> -                       regulator-min-microvolt =3D <2800000>;
+> -                       regulator-max-microvolt =3D <3000000>;
+> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> -               };
+> -
+> -               vreg_l7f_1p8: ldo7 {
+> -                       regulator-name =3D "vreg_l7f_1p8";
+> -                       regulator-min-microvolt =3D <1800000>;
+> -                       regulator-max-microvolt =3D <1800000>;
+> -                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
+PM>;
+> -               };
+> -       };
+>  };
+>
+>  &cdsp {
+> @@ -495,17 +432,6 @@ zap-shader {
+>         };
+>  };
+>
+> -&i2c0 {
+> -       clock-frequency =3D <400000>;
+> -       status =3D "okay";
+> -
+> -       fuel-gauge@55 {
+> -               compatible =3D "ti,bq27z561";
+> -               reg =3D <0x55>;
+> -               monitored-battery =3D <&battery_r>;
+> -       };
+> -};
+> -
+>  &i2c11 {
+>         clock-frequency =3D <400000>;
+>         status =3D "okay";
+> @@ -523,17 +449,6 @@ backlight: backlight@11 {
+>         };
+>  };
+>
+> -&i2c13 {
+> -       clock-frequency =3D <400000>;
+> -       status =3D "okay";
+> -
+> -       fuel-gauge@55 {
+> -               compatible =3D "ti,bq27z561";
+> -               reg =3D <0x55>;
+> -               monitored-battery =3D <&battery_l>;
+> -       };
+> -};
+> -
+>  &pcie0 {
+>         status =3D "okay";
+>  };
+> --
+> 2.50.0
 
