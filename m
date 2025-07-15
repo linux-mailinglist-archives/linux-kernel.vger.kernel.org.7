@@ -1,64 +1,44 @@
-Return-Path: <linux-kernel+bounces-732108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BAEB0621B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:58:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CEBB0622E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560C61AA15EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:54:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F37D1893EDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80ED22045AD;
-	Tue, 15 Jul 2025 14:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA4B1FC7E7;
+	Tue, 15 Jul 2025 14:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gkSYEBaS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40FE1531E8;
-	Tue, 15 Jul 2025 14:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nehBQBhg"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575161DF26B;
+	Tue, 15 Jul 2025 14:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752591217; cv=none; b=ildHkqMLjpaHynuv1qboFHfMjopgCE6tQYV5cmT3YFbNSgoCPICKMITXSBvmSj5e3RpIcxNC3GsyDdBzq23qXTM2hOH0u2mvCedFnI23XRvhAe8EqShGCHfaXWkO7g+FPsNze8NEeeO3mUQ2s0J4HzdE7/FLCBlhW03smBISdFg=
+	t=1752591335; cv=none; b=KsGY/onODa4v7rNmK5Q/IcF3gEwvOV0ztEiN1/fcpvbijM5PRHhpi79O0sVXeAgHK8SZbvcbhLpcySPRA+2igByxtv22diEYtMtpLrP++Voccgo7Wnx+0t03+Lbsw2/hB9MdzE/kRds7+LvurfVs3hGsO3F5zyOPN3x3EHTn61A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752591217; c=relaxed/simple;
-	bh=mE3IoGz9LFfAs+5NM9TmbutbKbh+D7xl3TbT78ZqpTw=;
+	s=arc-20240116; t=1752591335; c=relaxed/simple;
+	bh=txUfSwjyOVKeDzlPKIBEVTgZb3j/w8eAWl4cWJAms9Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f5wi3fvcNeSPAQ/mSP5j6U1TQDo5rQ1C5RR0z5+cBQWFjiIAzNuI3TUQHXelaZQ27bnUaUtk4EQMXMTBD22esG8bm7syqJ1z/TNVRbeVfKQ3OIHRrMHfmdP0BAPTR+oH3lfub8rUH1LoxxHztTzbPmzMa+EY+nMU/oUAe5JCv+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gkSYEBaS; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752591216; x=1784127216;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mE3IoGz9LFfAs+5NM9TmbutbKbh+D7xl3TbT78ZqpTw=;
-  b=gkSYEBaSSbGaHh05me04AkmD3PLQoVpKDQwzoWl9ojtTHBiluHlfgEOK
-   IZ+jZUsFYvePos/aOJItwzkxIxIRw2QuyinW8fp+Nq4/KAQFe8qwm+12y
-   efC/rGptDkvn7+Xj9bedzV1eUI0UuVOz368mMSXP/KiOpj2jbsKkJHeJk
-   JgEoIYlvlS3A3odtq7k1hpfUduZiKYfCKLdm7dhrrCK8UhGWVOJr/Cysd
-   OqqDgvvQ5Wb2pnn+vreJ7GIYGNyciJSsR7d5wiKOsMJxdT4Hn0I6a231G
-   NJ3vyVyjM/D6RY2q88HQIJaWAvKYPqYNKCxBNwBGi8KNX8mMhZVHjNhN7
-   Q==;
-X-CSE-ConnectionGUID: jAXfPZSOQYK4tDgE9px5Aw==
-X-CSE-MsgGUID: da39kSbzSauCzBQNgG6eAQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="65384625"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="65384625"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 07:53:35 -0700
-X-CSE-ConnectionGUID: XJHboS+fRgeZEmB2fgQXtg==
-X-CSE-MsgGUID: 6eqLhlGSSAWHcZdNSfqBOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="161801187"
-Received: from tcingleb-desk1.amr.corp.intel.com (HELO [10.125.111.148]) ([10.125.111.148])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 07:53:35 -0700
-Message-ID: <19a4ee38-9777-4efc-bffe-13d5a2c2f003@intel.com>
-Date: Tue, 15 Jul 2025 07:53:33 -0700
+	 In-Reply-To:Content-Type; b=UI4p0iJixg0K5HIc9P/EeBuu5GdBGWmm6PAcvh66hx6zBBvjXTPxKXOq7BHwyM302YYX8inJi51+MHAOZ50RqEipwmoQ+NtU32q+RITWqYuABOcZ8CGESdsOC4n0mJ/5xtHI44HPZZVY5yCwM654A+dgdgTqxIufmWAWvJOn35g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nehBQBhg; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=SP7dE1bKFm+Zk1R9d8gy12/jTWzAHbDIeWSSV5I0Ffw=;
+	b=nehBQBhggmGzsVClzFYyo3YKVar9NmcrCXQKH8/hXqk5TfLczz5c1ul8b+/3Md
+	Gi6wgadAcqQOQ3nTTgkOj1J6DmC5lmBoBBWwQ4MzVcGoj70yWjogVitdw/yXdeiT
+	W/lcliVaXiL2IhxP/n8ycjonrgMtKRzJdTYd4i0BLSrKk=
+Received: from [IPV6:240e:b8f:919b:3100:7981:39b4:a847:709a] (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCHnzWFa3ZoCeijFA--.44532S2;
+	Tue, 15 Jul 2025 22:53:58 +0800 (CST)
+Message-ID: <64e0809b-b931-4820-8f61-377db0dbfc49@163.com>
+Date: Tue, 15 Jul 2025 22:53:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,37 +46,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the cxl tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: Robert Richter <rrichter@amd.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250715184935.7e7c75c0@canb.auug.org.au>
- <20250715185737.5d9c75e4@canb.auug.org.au>
+Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
+ __pci_enable_link_state()
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>,
+ Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
+ linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+ qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+ quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+References: <604ffae3-1bfc-0922-b001-f3338880eb21@linux.intel.com>
+ <20250711230013.GA2309106@bhelgaas>
+ <qay63njqf7z7mchizt5sm66i67rvxxxicikxmfuvllmmxfy7ek@mulnjvde5q7w>
+ <470742a6-861e-498e-9da4-1fa213969c7e@163.com>
+ <drj7qm65bfu7irnfyy2cfhzkqlrkvd2tuvlxrlpxyohhpjbs3x@ecgooujjynmx>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250715185737.5d9c75e4@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <drj7qm65bfu7irnfyy2cfhzkqlrkvd2tuvlxrlpxyohhpjbs3x@ecgooujjynmx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wCHnzWFa3ZoCeijFA--.44532S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxArWrZw1kuF45Gr4rZFykGrg_yoW5Gr43pF
+	WFyFySka1kArn7Cw12qw1UJFyYyw4Syry5W34Fqw1UAFs093s7Jr47trWruF9xWr4xZw1j
+	vrWYgF9rXFyq9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UizVbUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQwOLo2h2Y3mlqwAAsi
 
 
 
-On 7/15/25 1:57 AM, Stephen Rothwell wrote:
-> Hi all,
+On 2025/7/13 01:02, Manivannan Sadhasivam wrote:
+> On Sun, Jul 13, 2025 at 12:05:18AM GMT, Hans Zhang wrote:
+>>
+>>
+>> On 2025/7/12 17:35, Manivannan Sadhasivam wrote:
+>>>> We only have two callers of this (pcie-qcom.c and vmd.c, both in
+>>>> drivers/pci/), so it's not clear to me that it needs to be in
+>>>> include/linux/pci.h.
+>>>>
+>>>> I'm a little dubious about it in the first place since I don't think
+>>>> drivers should be enabling ASPM states on their own, but pcie-qcom.c
+>>>> and vmd.c are PCIe controller drivers, not PCI device drivers, so I
+>>>> guess we can live with them for now.
+>>>>
+>>>> IMO the "someday" goal should be that we get rid of aspm_policy and
+>>>> enable all the available power saving states by default.  We have
+>>>> sysfs knobs that administrators can use if necessary, and drivers or
+>>>> quirks can disable states if they need to work around hardware
+>>>> defects.
+>>>>
+>>>
+>>> Yeah, I think the default should be powersave and let the users disable it for
+>>> performance if they want.
+>>>
+>>
+>> Dear Bjorn and Mani,
+>>
+>> Perhaps I don't think so. At present, our company's testing team has tested
+>> quite a few NVMe SSDS. As far as I can remember, the SSDS from two companies
+>> have encountered problems and will hang directly when turned on. We have set
+>> CONFIG_PCIEASPM_POWERSAVE=y by default. When encountering SSDS from these
+>> two companies, we had to add "pcie_aspm.policy=default" in the cmdline, and
+>> then the boot worked normally. Currently, we do not have a PCIe protocol
+>> analyzer to analyze such issues. The current approach is to modify the
+>> cmdline. So I can't prove whether it's a problem with the Root Port of our
+>> SOC or the SSD device.
+>>
+>> Here I agree with Bjorn's statement that sometimes the EP is not necessarily
+>> very standard and there are no hardware issues. Personally, I think the
+>> default is default or performance. When users need to save power, they
+>> should then decide whether to configure it as powersave or powersupersave.
+>> Sometimes, if the EP device connected by the customer is perfect, they can
+>> turn it on to save power. But if the EP is not perfect, at least they will
+>> immediately know what caused the problem.
+>>
 > 
-> On Tue, 15 Jul 2025 18:49:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the cxl tree, today's linux-next build (htmldocs) failed
->> like this:
->>
->> drivers/cxl/cxl.h:443: warning: Function parameter or struct member 'cache_size' not described in 'cxl_root_decoder'
->>
->> Caused by commit
->>
->>   8d41af0d378d ("cxl: Remove core/acpi.c and cxl core dependency on ACPI")
+> We all agree that not all endpoints are standards compliant. So if they have any
+> issues with ASPM, then ASPM for those devices should be disabled in the quirks
+> or in the device driver.
 > 
-> This is only a warning (I ran the wrong helper script :-) ).
-> 
-No worries. Should be fixed in the next linux-next pull. 
+> That said, the change that Bjorn proposed is not going to happen in the
+> immediate future.
+
+Dear Mani,
+
+Ok, I will keep an eye on the changes of ASPM.
+
+Best regards,
+Hans
+
 
