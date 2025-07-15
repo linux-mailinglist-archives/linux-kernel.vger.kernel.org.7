@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-732415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF5FB06672
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:05:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7211FB06674
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F92502A37
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:04:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF31A7AA18B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CCA22127C;
-	Tue, 15 Jul 2025 19:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5832BE7B8;
+	Tue, 15 Jul 2025 19:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mWO1O5FI"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BLtGfPAX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I+9o1Pyn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B0C29E117;
-	Tue, 15 Jul 2025 19:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD541EDA3C;
+	Tue, 15 Jul 2025 19:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606302; cv=none; b=Jm91whS2ojz1VZWQeZhcrME4UlRPEdCT3VRVuDwxd+ms/Oh7TR2UEtKlEKJEx6loCwnuB/Glabq++bOTSD7t5CzbbnM30zTUnfz00j3p8PkwJ6ssQS43tRXtVmbG0vcWyGA4OGY31PAYXW7A0VeR9DfVWVIDEtAGf0uJttzjKTo=
+	t=1752606325; cv=none; b=cXRy5tnKT+nCnY0h4O2W/Fy1vU9uU+JXsQcAP4vRad2l+akco1onIcR0me8jyYZF1IdhEvNUGjzW5OWFQbRoQYA0iXcQndq6eR2y1j3D3IAgvKxW73J7GYxitYmfE79asKd6q+TdsMvcGArsSlrJjU2H2oTJyMX/o5+BFhpueyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606302; c=relaxed/simple;
-	bh=oh1WiQHU+OESyTvxNEBn2VoQ7xQAzNKKIYjLsgFQQDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZrG69xk61kzNMdy3AursDVtfnAD6pIFMv90XmoWVK2ZudvK4OKB1P2d/uT4fuw5eCM7yoSewljW/9sLKmpzajT2IfQV1knUyO+vLvLOesIWJfkjfaO67+83/xsjBub+G0obBzNWl5+J5FdH0w2oO47YTxjZMlBViFYgue7/DRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mWO1O5FI; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GyoqrrjfwZIc2bgIVXvyQBYuaCWu28O+RO4kH1BswgU=; b=mWO1O5FIauCk7o5Rn1QyTfx3+W
-	weV2av1fhnvImLWnM7FGCbqJIRkC+5zWnnTogRwQTkbvZu3DYplR6qzkZ/huZrvpFNhum5YVBOgg+
-	1qeOvzKmNKpBnms2WBQZ/heXIYVk89yvXtIJP80ZjgKyD+Nvb7Xgy7t2yq9yDqy+EfKm38T4qe9ch
-	tuzjSFfwliroH9vyikOvfADqsmMlNhkD5RC6Xmovk7+NpMBLIMg7+EAVvkRh8tqZWsmfHrBY9GNMK
-	wA2iE2uWHR2eoW7ZFgyiHzgXyr9ntF1ufb1f2ysyGlsb+92rAjBKrky74lVdF7yK+KrNZogQxEGL5
-	DC52nLQA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubkxK-0000000DV2q-1fxc;
-	Tue, 15 Jul 2025 19:04:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2EFEE300230; Tue, 15 Jul 2025 21:04:45 +0200 (CEST)
-Date: Tue, 15 Jul 2025 21:04:45 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-	Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v13 10/14] unwind: Clear unwind_mask on exit back to user
- space
-Message-ID: <20250715190445.GG4105545@noisy.programming.kicks-ass.net>
-References: <20250708012239.268642741@kernel.org>
- <20250708012359.345060579@kernel.org>
- <20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
- <20250715084932.0563f532@gandalf.local.home>
- <20250715140650.19c0a8ed@batman.local.home>
+	s=arc-20240116; t=1752606325; c=relaxed/simple;
+	bh=wjdRpswHmtuuSekrUHEnJopvDFSQpmQTMOlNkP242XY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=qENVXD2Z8lzjTEuDVP5KsMeaxp0af+5FBZ/7JjYoGs7JEtbMvKlUan/eXqINts24yR+Biq+EBTULOgVyhfoz1SA0WA+3ATZAf1GoGHire3KPwPLe0DSUEfTE3Egv5Ld8EgsE3bJpJQ1IYq3WF2eaosGomb3JjxoH6qPIsM0NtBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BLtGfPAX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I+9o1Pyn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 15 Jul 2025 19:05:20 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752606322;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SGctkq543BlHDxWhFOm3lGFLQ4WNDkyKQks0G7ymCy8=;
+	b=BLtGfPAXz6wtITxMMfEdjvcBRIL2sMgVfAgLUyVPOgJXEZjXLFsXPk8/s1xd71nCEjOafa
+	pxTWSwWY/TcwmDx0Ig1AakZAiVocABx+jVR73a3/8ZSDVaFUZzWqCcsMT//7IRGx4SU3rx
+	q5fW8JziPxQrDk+Bvm4eubVxhOAa4meiCkRnP3VY/srzp4Onwl/NXMJeY47P1UTCVZSYz0
+	JK6b/FTS3O8Wt0yRL6C4BJtmHY3Q+lr/B5FUAK+F7aKDPqvYr4Dw+9nt+8iwV0p9SflOGr
+	3On7iIpNOFgIYnES39KoZ8L9ZjDXfjAFyTFBHl68Nkhqqf4GwmK6RGFiurothA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752606322;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SGctkq543BlHDxWhFOm3lGFLQ4WNDkyKQks0G7ymCy8=;
+	b=I+9o1Pynlfzu+KBbN8W1BBu3Bc451ziAGy68VhlLlXXQwUF/tBfZeiakLbj2qouY/GRmDc
+	4y2Ry5sw4GhVNlBw==
+From: "tip-bot2 for Khalid Ali" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/cleanups] x86/boot: Avoid redundant %cr4 write in startup_64()
+Cc: Khalid Ali <khaliidcaliy@gmail.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Nikolay Borisov <nik.borisov@suse.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250715181709.1040-1-khaliidcaliy@gmail.com>
+References: <20250715181709.1040-1-khaliidcaliy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715140650.19c0a8ed@batman.local.home>
+Message-ID: <175260632075.406.7445047355425559021.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 15, 2025 at 02:06:50PM -0400, Steven Rostedt wrote:
-> On Tue, 15 Jul 2025 08:49:32 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > > >   *
-> > > > - * Return: 1 if the the callback was already queued.
-> > > > - *         0 if the callback successfully was queued.
-> > > > + * Return: 0 if the callback successfully was queued.
-> > > > + *         UNWIND_ALREADY_PENDING if the the callback was already queued.
-> > > > + *         UNWIND_ALREADY_EXECUTED if the callback was already called
-> > > > + *                (and will not be called again)
-> > > >   *         Negative if there's an error.
-> > > >   *         @cookie holds the cookie of the first request by any user
-> > > >   */    
-> > > 
-> > > Lots of babbling in the Changelog, but no real elucidation as to why you
-> > > need this second return value.
-> > > 
-> > > AFAICT it serves no real purpose; the users of this function should not
-> > > care. The only difference is that the unwind reference (your cookie)
-> > > becomes a backward reference instead of a forward reference. But why
-> > > would anybody care?  
-> > 
-> > Older versions of the code required it. I think I can remove it now.
-> 
-> Ah it is still used in the perf code:
-> 
-> perf_callchain() has:
-> 
->         if (defer_user) {
->                 int ret = deferred_request(event);
->                 if (!ret)
->                         local_inc(&event->ctx->nr_no_switch_fast);
->                 else if (ret < 0)
->                         defer_user = false;
->         }
-> 
-> Where deferred_requests() is as static function that returns the result
-> of the unwind request. If it is zero, it means the callback will be
-> called, if it is greater than zero it means it has already been called,
-> and negative is an error (and use the old method).
-> 
-> It looks like when the callback is called it expects nr_no_switch_fast
-> to be incremented and it will decrement it. This is directly from
-> Josh's patch and I don't know perf well enough to know if that update
-> to nr_no_switch_fast is needed.
-> 
-> If it's not needed, we can just return 0 on success and negative on
-> failure. What do you think?
+The following commit has been merged into the x86/cleanups branch of tip:
 
-I'm yet again confused. I don't see this code differentiate between 1
-and 2 return values (those PENDING and EXECUTED).
+Commit-ID:     0149fff886a62465b21d80fa53615ee7de3d72f1
+Gitweb:        https://git.kernel.org/tip/0149fff886a62465b21d80fa53615ee7de3d72f1
+Author:        Khalid Ali <khaliidcaliy@gmail.com>
+AuthorDate:    Tue, 15 Jul 2025 18:16:10 
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 15 Jul 2025 20:52:56 +02:00
 
-Anyway, fundamentally I don't think there is a problem with backward
-references as opposed to the normal forward references.
+x86/boot: Avoid redundant %cr4 write in startup_64()
 
-So leave it out for now.
+When initializing %cr4 bits PSE and PGE, %cr4 is written after each bit is
+set. Remove the redundant write.
+
+No functional changes.
+
+  [ bp: Massage. ]
+
+Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Link: https://lore.kernel.org/20250715181709.1040-1-khaliidcaliy@gmail.com
+---
+ arch/x86/kernel/head_64.S | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 3e9b3a3..5c4be47 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -224,11 +224,7 @@ SYM_INNER_LABEL(common_startup_64, SYM_L_LOCAL)
+ 
+ 	/* Even if ignored in long mode, set PSE uniformly on all logical CPUs. */
+ 	btsl	$X86_CR4_PSE_BIT, %ecx
+-	movq	%rcx, %cr4
+-
+-	/*
+-	 * Set CR4.PGE to re-enable global translations.
+-	 */
++	/* Set CR4.PGE to re-enable global translations. */
+ 	btsl	$X86_CR4_PGE_BIT, %ecx
+ 	movq	%rcx, %cr4
+ 
 
