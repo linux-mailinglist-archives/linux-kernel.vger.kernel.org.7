@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-731909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B23B05C3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:29:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C4FB05CA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4F6574014B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:25:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F6DE7BAC82
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDBC2E6D1C;
-	Tue, 15 Jul 2025 13:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2442E718C;
+	Tue, 15 Jul 2025 13:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fgS9UnXZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Msw2epcR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDAD2E54DD
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1A92E62C3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585853; cv=none; b=ufBuUg9RaVkarCPfMWUicgMWOK43BVIfI/sOPOBpB+Omfw+HKKng7MvmY3Nr0K1y0r1ObgRkERM/q8CPqfBFtYn2lc2PM65bsGDa1tx4sSVtiZ8DTFFP43f4Hr51HDrj4dxkbxUUKUjYsDuRCicq2K37yYE7gnW9i+6U0pZDe4M=
+	t=1752585855; cv=none; b=khAxXlEZFj+w6JDAV144EjbWXoUFNpzZ4qg+0g8feyS5fPFyKaQCEqgLOsoA0GOsUzKmZ+tAy+a3AIEGYo6x0nX3FaCgSmSnbp1ZrT54S3GJ0dyiZ/jJ19NVUn2KqGB4xasUSOO3NK8t11J/52w2+6kg/m5aNx/sdVDoFiQk93U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585853; c=relaxed/simple;
-	bh=XGnUNiwprec+iBXkYayt+nyCbfeBB1PcshX4V9usKIk=;
+	s=arc-20240116; t=1752585855; c=relaxed/simple;
+	bh=a9OBY9leQX0eGtrRKrr8AgQOeHXQGP3xXcTwIxxSZ/4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pHTIsTSZqoEdlS3OYDnu9yRc1Sc9L/Ylg5+zSeuhqk/4RvmaF8UtDff9nlf3QK97ILcqO3E5a0E3YxoNDcGGac69TW4WsRSPidzsvRe6L7Yuggk+1+UZV+UsGemwGx5lZhUa1ohgXGcNOLWZD3EHyNUoWX2lRvCEDfyJhDoMmcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fgS9UnXZ; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=mSluH8Hn2nMHYuFvAYqgmVxuPZKu6sdU32HfdbXQmH9zJMLv1n16ub7wfvI86ipU8j5nCQcVn7ZFNil3O36rONSE2cDd96z5BsYeyVgRylIThiv3HYZQhzUeE6oe5tr8c2gbuqLFFLRZTSWe2B4SXeQJpvJ3tE9VI2f/HHsede4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Msw2epcR; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752585850;
+	s=mimecast20190719; t=1752585852;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mtQyovPa5kcBmFcu8HFFL9PcOAuE/hqSO0jegAuRWN8=;
-	b=fgS9UnXZXp2t/TzzImJj7CbIh3lr5Kwo85vye3j8CIkwk7SzFO3zZrMsAF9MN6WUjPl8VG
-	F50fmCBlG3mHsxPcIh4S7VfcNmnv1BwF/qvQhgCDjIKtd6P/6xY20iHxnmh1CjOqS+5oPp
-	4UqzXpmqhJ9uA4/K1phbMmO4PKgn8T4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=cI2lHUCMuK2zQhlnl2y4PjQd6rkotpnK5tiH1r4owRs=;
+	b=Msw2epcRQaluUI+qDzFfEXDcphCGGoAvlLryIXMnyMnnDTN2+hdVpCdhCy8R+9n5lpuEFF
+	/cL8ag4Ehxq4+nELpLmPLkJhWGAEFsP4Ghjhn4Z+4cJutcy0XBpGh1DgbLsIlMR6A7AfYD
+	iP4xcLpFJehgcq49mY94aqojQuVp2Uw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-27-AiEbmS6hNruRt3ZsofOuoQ-1; Tue, 15 Jul 2025 09:24:08 -0400
-X-MC-Unique: AiEbmS6hNruRt3ZsofOuoQ-1
-X-Mimecast-MFC-AGG-ID: AiEbmS6hNruRt3ZsofOuoQ_1752585848
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-451d30992bcso43743855e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:24:08 -0700 (PDT)
+ us-mta-216-3MUr5TG8M9Kwv-8xLk1Sag-1; Tue, 15 Jul 2025 09:24:11 -0400
+X-MC-Unique: 3MUr5TG8M9Kwv-8xLk1Sag-1
+X-Mimecast-MFC-AGG-ID: 3MUr5TG8M9Kwv-8xLk1Sag_1752585850
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4561bc2f477so13652235e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:24:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752585848; x=1753190648;
+        d=1e100.net; s=20230601; t=1752585850; x=1753190650;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mtQyovPa5kcBmFcu8HFFL9PcOAuE/hqSO0jegAuRWN8=;
-        b=O8QE1SveQmr1MebADcLSw35hAFKy0ardqHBLX+Ah5yE0t4Tzx5oS6A3Kku9us7DzHd
-         PZebZKcFWgxq+cfFVeSPYj05EGra/+e03KE1slaFF6kugHUag3WFKIg8oldm/pBoZAX3
-         5OO2pqpVL4waqpVT2vZjq9OOhdFyYNw1qy9T892knNiYkzEooh2SbHcPSDaGDMFF4iCH
-         +r32pfE43hYHzy968DCBrKbr2aFZjShoPqSRjykcGUy+fEmFWpjWu8etJo4PjWOwjJS3
-         IFG8brTbMPk/QzVKy5mGGa3J7G8/qSJbM5jjUoaoqFIjxNxo9NG19v62gGIDqvu8FDWQ
-         JoUg==
-X-Gm-Message-State: AOJu0Yz5S9odE2d4XE3y/+0GfzPcpJgvl5zQZYScoVliklEay9Oj7Zia
-	0ksI8DPfqigdyBZ1SVt1USsiI+B2iWxbKseyY3Z4/9CEcANxmDv4CucxhIysohKqgJni3AVQ+R9
-	7FK7izTfLCesh8kwJCamvJSwq4EfCB/Qeh0x5xmNAaSluStjb0xJnhXlbJzNIq/EbWAmz5lqDLb
-	fn114cAaXv3zlVjhLXu0WSs3oHDpwsqGuspdynICK6hPbe73lQ
-X-Gm-Gg: ASbGnctECV/xbcjnsBUVNrhlqlRSer/3i7B83Kg9z/r+/JH6XXrzm2oG2cdi/0qb6+o
-	vjAZvBPAaJ5pTiJjrtTeR9rjwTyE8JgZNxzZJ/nbAnp0Cwct4DIS3piHKXzFpcoNbhsi0QJb976
-	I0tEjhsppRmMRUBQVCnmLecSeTgY3AAi5z5pXJrzWixLFELUSe3429qaLnbWbhEAKdks1xcmh3J
-	g1FriyGANISEhoNJwNof/mBvjN8m6oaSY0/nJ5Sh5ZEhJcCeZMNH8HB4Dbp316hp6pMncZz4dGk
-	UDfSaq4Q4Z+n8LYjzNIBeYDZUuKfuBG4b/kqTW5gko22bq9d1mAu8qUKmIPxIwzTEabs+tTUOaW
-	zMZIveZKc4xpG3NJpzHp7qDON
-X-Received: by 2002:a05:600c:a03:b0:43c:fdbe:4398 with SMTP id 5b1f17b1804b1-454ec14d7a9mr155615105e9.6.1752585847543;
-        Tue, 15 Jul 2025 06:24:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhLxz868pyKkYQ3l5UGek/RKFLaiQYjZa6zO7PGU/KyOxr3dY8d03i0aN/xQxZNdYxrPnkbQ==
-X-Received: by 2002:a05:600c:a03:b0:43c:fdbe:4398 with SMTP id 5b1f17b1804b1-454ec14d7a9mr155614375e9.6.1752585846779;
-        Tue, 15 Jul 2025 06:24:06 -0700 (PDT)
+        bh=cI2lHUCMuK2zQhlnl2y4PjQd6rkotpnK5tiH1r4owRs=;
+        b=fIFiUpG/kY3PJ7VOwTp+O/276HFx3ADWGQstPuhK3Ndvb0ilngHEgW/vZiAhcMAXyo
+         9CqWRAZ9qdDOQfOE+vZQZTyiHDYzV5Fn0WZ+SCVfBp1xAfTfsukN4A7VcV/i43LIUFrl
+         CIfNbzsVcwHBcAT9Z/fMv5Uic0CsxXzq8n6qnDrLC6fSk8ma6CunBae4iVCT3GsqOrWU
+         e6Y9pfTHfroeJJXDzTg30QOjnMMypyIr8ZwE0XgVjIW3Wjoiykza+3N+I8mNaSiZ/qHz
+         VitaOorPith6SMm9oWeJuE2b1iC4WkM2NwpcDV+zH/ZHsrjfnr1CjjhUH417tREeigFO
+         PqLA==
+X-Gm-Message-State: AOJu0Yx4O0KULGWCaycKRGAMllBC5UCKYeetIuchv38iMfiPaf+zyJ3b
+	XFIxyd3ObQjwLHREOW+0mIMZpgQtSjBl6QbqOeuaCqUyL9xG7n6/I8JR6qpBADgiedfH5GV8O1H
+	wBytAJPcooYSnx8PwgYI1H4nydyEdXIIc5eaO9XgfZjagI7mr/r8wFDPZ4jiMuddbC+jYqNv0ZD
+	9JMa+32NqCRxiSDX/sNlydMQ6nr6tfFeuwWQ5NCFUN5b5BaAlg
+X-Gm-Gg: ASbGncsuMA0MYwufGkMilF4KQLdEpV9alZjycwsbS9Qq0uwpDmc+uggehI/mq8i89ZY
+	hnZTiP6480/VuDhOAW+pSZRIZze0sK2kwxVeY9YHmTQzZ5Oc3/g8oQc4WNGdA1heO+QnpvUc+Kn
+	Hig3n9Foe1I/eW13LELPQBNllb/eRwusLqSWCMoNb65dxPv6Uj2FqPzB6DTZeT36JBNMTKLSR23
+	TnWSGgMAd8I/PXO6MO7aAJkz6HMK6UbSMBBXilXMUAP5ibmhSljWv6wuOHhcvyAqVcOz5hOG38g
+	p3m35yvaV8dnQN2KSSDRsc6o2Nax8/VdbL1UjqTxhXdrllKPU3BLSC7A243zIm3/bCgfdxZXLOP
+	cbwzjFo7XyoVCQ2i9BeAzbMll
+X-Received: by 2002:a05:600c:3592:b0:456:173c:8a53 with SMTP id 5b1f17b1804b1-456173c8b27mr94729165e9.2.1752585849831;
+        Tue, 15 Jul 2025 06:24:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGkPjEhwUD11Kc7R628CsdkyUBojyPzeegGbQKL/YV/Ocaib7+IW0nyg3EFT/AEMoIuz4CMUw==
+X-Received: by 2002:a05:600c:3592:b0:456:173c:8a53 with SMTP id 5b1f17b1804b1-456173c8b27mr94728115e9.2.1752585848983;
+        Tue, 15 Jul 2025 06:24:08 -0700 (PDT)
 Received: from localhost (p200300d82f2849002c244e201f219fbd.dip0.t-ipconnect.de. [2003:d8:2f28:4900:2c24:4e20:1f21:9fbd])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8bd1784sm15006827f8f.5.2025.07.15.06.24.05
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8e2710bsm15102268f8f.99.2025.07.15.06.24.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 06:24:06 -0700 (PDT)
+        Tue, 15 Jul 2025 06:24:08 -0700 (PDT)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -112,9 +112,9 @@ Cc: linux-mm@kvack.org,
 	Hugh Dickins <hughd@google.com>,
 	Oscar Salvador <osalvador@suse.de>,
 	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH v1 6/9] mm/memory: convert print_bad_pte() to print_bad_page_map()
-Date: Tue, 15 Jul 2025 15:23:47 +0200
-Message-ID: <20250715132350.2448901-7-david@redhat.com>
+Subject: [PATCH v1 7/9] mm/memory: factor out common code from vm_normal_page_*()
+Date: Tue, 15 Jul 2025 15:23:48 +0200
+Message-ID: <20250715132350.2448901-8-david@redhat.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250715132350.2448901-1-david@redhat.com>
 References: <20250715132350.2448901-1-david@redhat.com>
@@ -126,242 +126,268 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-print_bad_pte() looks like something that should actually be a WARN
-or similar, but historically it apparently has proven to be useful to
-detect corruption of page tables even on production systems -- report
-the issue and keep the system running to make it easier to actually detect
-what is going wrong (e.g., multiple such messages might shed a light).
+Let's reduce the code duplication and factor out the non-pte/pmd related
+magic into vm_normal_page_pfn().
 
-As we want to unify vm_normal_page_*() handling for PTE/PMD/PUD, we'll have
-to take care of print_bad_pte() as well.
+To keep it simpler, check the pfn against both zero folios. We could
+optimize this, but as it's only for the !CONFIG_ARCH_HAS_PTE_SPECIAL
+case, it's not a compelling micro-optimization.
 
-Let's prepare for using print_bad_pte() also for non-PTEs by adjusting the
-implementation and renaming the function -- we'll rename it to what
-we actually print: bad (page) mappings. Maybe it should be called
-"print_bad_table_entry()"? We'll just call it "print_bad_page_map()"
-because the assumption is that we are dealing with some (previously)
-present page table entry that got corrupted in weird ways.
+With CONFIG_ARCH_HAS_PTE_SPECIAL we don't have to check anything else,
+really.
 
-Whether it is a PTE or something else will usually become obvious from the
-page table dump or from the dumped stack. If ever required in the future,
-we could pass the entry level type similar to "enum rmap_level". For now,
-let's keep it simple.
+It's a good question if we can even hit the !CONFIG_ARCH_HAS_PTE_SPECIAL
+scenario in the PMD case in practice: but doesn't really matter, as
+it's now all unified in vm_normal_page_pfn().
 
-To make the function a bit more readable, factor out the ratelimit check
-into is_bad_page_map_ratelimited() and place the dumping of page
-table content into __dump_bad_page_map_pgtable(). We'll now dump
-information from each level in a single line, and just stop the table
-walk once we hit something that is not a present page table.
+Add kerneldoc for all involved functions.
 
-Use print_bad_page_map() in vm_normal_page_pmd() similar to how we do it
-for vm_normal_page(), now that we have a function that can handle it.
-
-The report will now look something like (dumping pgd to pmd values):
-
-[   77.943408] BUG: Bad page map in process XXX  entry:80000001233f5867
-[   77.944077] addr:00007fd84bb1c000 vm_flags:08100071 anon_vma: ...
-[   77.945186] pgd:10a89f067 p4d:10a89f067 pud:10e5a2067 pmd:105327067
+No functional change intended.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- mm/memory.c | 120 ++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 94 insertions(+), 26 deletions(-)
+ mm/memory.c | 183 +++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 109 insertions(+), 74 deletions(-)
 
 diff --git a/mm/memory.c b/mm/memory.c
-index a4f62923b961c..00ee0df020503 100644
+index 00ee0df020503..d5f80419989b9 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -479,22 +479,8 @@ static inline void add_mm_rss_vec(struct mm_struct *mm, int *rss)
- 			add_mm_counter(mm, i, rss[i]);
+@@ -596,8 +596,13 @@ static void print_bad_page_map(struct vm_area_struct *vma,
+ 	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
  }
  
 -/*
-- * This function is called to print an error when a bad pte
-- * is found. For example, we might have a PFN-mapped pte in
-- * a region that doesn't allow it.
-- *
-- * The calling function must still handle the error.
-- */
--static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
--			  pte_t pte, struct page *page)
-+static bool is_bad_page_map_ratelimited(void)
- {
--	pgd_t *pgd = pgd_offset(vma->vm_mm, addr);
--	p4d_t *p4d = p4d_offset(pgd, addr);
--	pud_t *pud = pud_offset(p4d, addr);
--	pmd_t *pmd = pmd_offset(pud, addr);
--	struct address_space *mapping;
--	pgoff_t index;
- 	static unsigned long resume;
- 	static unsigned long nr_shown;
- 	static unsigned long nr_unshown;
-@@ -506,7 +492,7 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
- 	if (nr_shown == 60) {
- 		if (time_before(jiffies, resume)) {
- 			nr_unshown++;
--			return;
-+			return true;
- 		}
- 		if (nr_unshown) {
- 			pr_alert("BUG: Bad page map: %lu messages suppressed\n",
-@@ -517,15 +503,87 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
- 	}
- 	if (nr_shown++ == 0)
- 		resume = jiffies + 60 * HZ;
-+	return false;
-+}
-+
-+static void __dump_bad_page_map_pgtable(struct mm_struct *mm, unsigned long addr)
-+{
-+	unsigned long long pgdv, p4dv, pudv, pmdv;
-+	pgd_t pgd, *pgdp;
-+	p4d_t p4d, *p4dp;
-+	pud_t pud, *pudp;
-+	pmd_t *pmdp;
-+
-+	/*
-+	 * This looks like a fully lockless walk, however, the caller is
-+	 * expected to hold the leaf page table lock in addition to other
-+	 * rmap/mm/vma locks. So this is just a re-walk to dump page table
-+	 * content while any concurrent modifications should be completely
-+	 * prevented.
-+	 */
-+	pgdp = pgd_offset(mm, addr);
-+	pgd = pgdp_get(pgdp);
-+	pgdv = pgd_val(pgd);
-+
-+	if (!pgd_present(pgd) || pgd_leaf(pgd)) {
-+		pr_alert("pgd:%08llx\n", pgdv);
-+		return;
-+	}
-+
-+	p4dp = p4d_offset(pgdp, addr);
-+	p4d = p4dp_get(p4dp);
-+	p4dv = p4d_val(p4d);
-+
-+	if (!p4d_present(p4d) || p4d_leaf(p4d)) {
-+		pr_alert("pgd:%08llx p4d:%08llx\n", pgdv, p4dv);
-+		return;
-+	}
-+
-+	pudp = pud_offset(p4dp, addr);
-+	pud = pudp_get(pudp);
-+	pudv = pud_val(pud);
-+
-+	if (!pud_present(pud) || pud_leaf(pud)) {
-+		pr_alert("pgd:%08llx p4d:%08llx pud:%08llx\n", pgdv, p4dv, pudv);
-+		return;
-+	}
-+
-+	pmdp = pmd_offset(pudp, addr);
-+	pmdv = pmd_val(pmdp_get(pmdp));
-+
-+	/*
-+	 * Dumping the PTE would be nice, but it's tricky with CONFIG_HIGHPTE,
-+	 * because the table should already be mapped by the caller and
-+	 * doing another map would be bad. print_bad_page_map() should
-+	 * already take care of printing the PTE.
-+	 */
-+	pr_alert("pgd:%08llx p4d:%08llx pud:%08llx pmd:%08llx\n", pgdv,
-+		 p4dv, pudv, pmdv);
-+}
-+
-+/*
-+ * This function is called to print an error when a bad page table entry (e.g.,
-+ * corrupted page table entry) is found. For example, we might have a
-+ * PFN-mapped pte in a region that doesn't allow it.
+- * vm_normal_page -- This function gets the "struct page" associated with a pte.
++/**
++ * vm_normal_page_pfn() - Get the "struct page" associated with a PFN in a
++ *			  non-special page table entry.
++ * @vma: The VMA mapping the @pfn.
++ * @addr: The address where the @pfn is mapped.
++ * @pfn: The PFN.
++ * @entry: The page table entry value for error reporting purposes.
+  *
+  * "Special" mappings do not wish to be associated with a "struct page" (either
+  * it doesn't exist, or it exists but they don't want to touch it). In this
+@@ -609,10 +614,10 @@ static void print_bad_page_map(struct vm_area_struct *vma,
+  * (such as GUP) can still identify these mappings and work with the
+  * underlying "struct page".
+  *
+- * There are 2 broad cases. Firstly, an architecture may define a pte_special()
+- * pte bit, in which case this function is trivial. Secondly, an architecture
+- * may not have a spare pte bit, which requires a more complicated scheme,
+- * described below.
++ * There are 2 broad cases. Firstly, an architecture may define a "special"
++ * page table entry bit (e.g., pte_special()), in which case this function is
++ * trivial. Secondly, an architecture may not have a spare page table
++ * entry bit, which requires a more complicated scheme, described below.
+  *
+  * A raw VM_PFNMAP mapping (ie. one that is not COWed) is always considered a
+  * special mapping (even if there are underlying and valid "struct pages").
+@@ -645,15 +650,72 @@ static void print_bad_page_map(struct vm_area_struct *vma,
+  * don't have to follow the strict linearity rule of PFNMAP mappings in
+  * order to support COWable mappings.
+  *
++ * This function is not expected to be called for obviously special mappings:
++ * when the page table entry has the "special" bit set.
 + *
-+ * The calling function must still handle the error.
++ * Return: Returns the "struct page" if this is a "normal" mapping. Returns
++ *	   NULL if this is a "special" mapping.
 + */
-+static void print_bad_page_map(struct vm_area_struct *vma,
-+		unsigned long addr, unsigned long long entry, struct page *page)
++static inline struct page *vm_normal_page_pfn(struct vm_area_struct *vma,
++		unsigned long addr, unsigned long pfn, unsigned long long entry)
 +{
-+	struct address_space *mapping;
-+	pgoff_t index;
++	/*
++	 * With CONFIG_ARCH_HAS_PTE_SPECIAL, any special page table mappings
++	 * (incl. shared zero folios) are marked accordingly and are handled
++	 * by the caller.
++	 */
++	if (!IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL)) {
++		if (unlikely(vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))) {
++			if (vma->vm_flags & VM_MIXEDMAP) {
++				/* If it has a "struct page", it's "normal". */
++				if (!pfn_valid(pfn))
++					return NULL;
++			} else {
++				unsigned long off = (addr - vma->vm_start) >> PAGE_SHIFT;
 +
-+	if (is_bad_page_map_ratelimited())
-+		return;
- 
- 	mapping = vma->vm_file ? vma->vm_file->f_mapping : NULL;
- 	index = linear_page_index(vma, addr);
- 
--	pr_alert("BUG: Bad page map in process %s  pte:%08llx pmd:%08llx\n",
--		 current->comm,
--		 (long long)pte_val(pte), (long long)pmd_val(*pmd));
-+	pr_alert("BUG: Bad page map in process %s  entry:%08llx", current->comm, entry);
-+	__dump_bad_page_map_pgtable(vma->vm_mm, addr);
- 	if (page)
--		dump_page(page, "bad pte");
-+		dump_page(page, "bad page map");
- 	pr_alert("addr:%px vm_flags:%08lx anon_vma:%px mapping:%px index:%lx\n",
- 		 (void *)addr, vma->vm_flags, vma->anon_vma, mapping, index);
- 	pr_alert("file:%pD fault:%ps mmap:%ps mmap_prepare: %ps read_folio:%ps\n",
-@@ -603,7 +661,7 @@ struct page *vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 		if (is_zero_pfn(pfn))
- 			return NULL;
- 
--		print_bad_pte(vma, addr, pte, NULL);
-+		print_bad_page_map(vma, addr, pte_val(pte), NULL);
- 		return NULL;
- 	}
- 
-@@ -631,7 +689,7 @@ struct page *vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 
- check_pfn:
- 	if (unlikely(pfn > highest_memmap_pfn)) {
--		print_bad_pte(vma, addr, pte, NULL);
-+		print_bad_page_map(vma, addr, pte_val(pte), NULL);
- 		return NULL;
- 	}
- 
-@@ -660,8 +718,15 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
++				/* Only CoW'ed anon folios are "normal". */
++				if (pfn == vma->vm_pgoff + off)
++					return NULL;
++				if (!is_cow_mapping(vma->vm_flags))
++					return NULL;
++			}
++		}
++
++		if (is_zero_pfn(pfn) || is_huge_zero_pfn(pfn))
++			return NULL;
++	}
++
++	/* Cheap check for corrupted page table entries. */
++	if (pfn > highest_memmap_pfn) {
++		print_bad_page_map(vma, addr, entry, NULL);
++		return NULL;
++	}
++	/*
++	 * NOTE! We still have PageReserved() pages in the page tables.
++	 * For example, VDSO mappings can cause them to exist.
++	 */
++	VM_WARN_ON_ONCE(is_zero_pfn(pfn) || is_huge_zero_pfn(pfn));
++	return pfn_to_page(pfn);
++}
++
++/**
++ * vm_normal_page() - Get the "struct page" associated with a PTE
++ * @vma: The VMA mapping the @pte.
++ * @addr: The address where the @pte is mapped.
++ * @pte: The PTE.
++ *
++ * Get the "struct page" associated with a PTE. See vm_normal_page_pfn()
++ * for details.
++ *
++ * Return: Returns the "struct page" if this is a "normal" mapping. Returns
++ *	   NULL if this is a "special" mapping.
+  */
+ struct page *vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 			    pte_t pte)
  {
- 	unsigned long pfn = pmd_pfn(pmd);
+ 	unsigned long pfn = pte_pfn(pte);
  
--	if (unlikely(pmd_special(pmd)))
-+	if (unlikely(pmd_special(pmd))) {
-+		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
-+			return NULL;
-+		if (is_huge_zero_pfn(pfn))
-+			return NULL;
-+
-+		print_bad_page_map(vma, addr, pmd_val(pmd), NULL);
+-	if (IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL)) {
+-		if (likely(!pte_special(pte)))
+-			goto check_pfn;
++	if (unlikely(pte_special(pte))) {
+ 		if (vma->vm_ops && vma->vm_ops->find_special_page)
+ 			return vma->vm_ops->find_special_page(vma, addr);
+ 		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
+@@ -664,44 +726,21 @@ struct page *vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 		print_bad_page_map(vma, addr, pte_val(pte), NULL);
  		return NULL;
-+	}
- 
- 	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
- 		if (vma->vm_flags & VM_MIXEDMAP) {
-@@ -680,8 +745,10 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
- 
- 	if (is_huge_zero_pfn(pfn))
- 		return NULL;
--	if (unlikely(pfn > highest_memmap_pfn))
-+	if (unlikely(pfn > highest_memmap_pfn)) {
-+		print_bad_page_map(vma, addr, pmd_val(pmd), NULL);
- 		return NULL;
-+	}
- 
- 	/*
- 	 * NOTE! We still have PageReserved() pages in the page tables.
-@@ -1515,7 +1582,7 @@ static __always_inline void zap_present_folio_ptes(struct mmu_gather *tlb,
- 		folio_remove_rmap_ptes(folio, page, nr, vma);
- 
- 		if (unlikely(folio_mapcount(folio) < 0))
--			print_bad_pte(vma, addr, ptent, page);
-+			print_bad_page_map(vma, addr, pte_val(ptent), page);
  	}
- 	if (unlikely(__tlb_remove_folio_pages(tlb, page, nr, delay_rmap))) {
- 		*force_flush = true;
-@@ -4513,7 +4580,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 		} else if (is_pte_marker_entry(entry)) {
- 			ret = handle_pte_marker(vmf);
- 		} else {
--			print_bad_pte(vma, vmf->address, vmf->orig_pte, NULL);
-+			print_bad_page_map(vma, vmf->address,
-+					   pte_val(vmf->orig_pte), NULL);
- 			ret = VM_FAULT_SIGBUS;
- 		}
- 		goto out;
+-
+-	/* !CONFIG_ARCH_HAS_PTE_SPECIAL case follows: */
+-
+-	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+-		if (vma->vm_flags & VM_MIXEDMAP) {
+-			if (!pfn_valid(pfn))
+-				return NULL;
+-			if (is_zero_pfn(pfn))
+-				return NULL;
+-			goto out;
+-		} else {
+-			unsigned long off;
+-			off = (addr - vma->vm_start) >> PAGE_SHIFT;
+-			if (pfn == vma->vm_pgoff + off)
+-				return NULL;
+-			if (!is_cow_mapping(vma->vm_flags))
+-				return NULL;
+-		}
+-	}
+-
+-	if (is_zero_pfn(pfn))
+-		return NULL;
+-
+-check_pfn:
+-	if (unlikely(pfn > highest_memmap_pfn)) {
+-		print_bad_page_map(vma, addr, pte_val(pte), NULL);
+-		return NULL;
+-	}
+-
+-	/*
+-	 * NOTE! We still have PageReserved() pages in the page tables.
+-	 * eg. VDSO mappings can cause them to exist.
+-	 */
+-out:
+-	VM_WARN_ON_ONCE(is_zero_pfn(pfn));
+-	return pfn_to_page(pfn);
++	return vm_normal_page_pfn(vma, addr, pfn, pte_val(pte));
+ }
+ 
++/**
++ * vm_normal_folio() - Get the "struct folio" associated with a PTE
++ * @vma: The VMA mapping the @pte.
++ * @addr: The address where the @pte is mapped.
++ * @pte: The PTE.
++ *
++ * Get the "struct folio" associated with a PTE. See vm_normal_page_pfn()
++ * for details.
++ *
++ * Return: Returns the "struct folio" if this is a "normal" mapping. Returns
++ *	   NULL if this is a "special" mapping.
++ */
+ struct folio *vm_normal_folio(struct vm_area_struct *vma, unsigned long addr,
+ 			    pte_t pte)
+ {
+@@ -713,6 +752,18 @@ struct folio *vm_normal_folio(struct vm_area_struct *vma, unsigned long addr,
+ }
+ 
+ #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
++/**
++ * vm_normal_page_pmd() - Get the "struct page" associated with a PMD
++ * @vma: The VMA mapping the @pmd.
++ * @addr: The address where the @pmd is mapped.
++ * @pmd: The PMD.
++ *
++ * Get the "struct page" associated with a PMD. See vm_normal_page_pfn()
++ * for details.
++ *
++ * Return: Returns the "struct page" if this is a "normal" mapping. Returns
++ *	   NULL if this is a "special" mapping.
++ */
+ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 				pmd_t pmd)
+ {
+@@ -727,37 +778,21 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 		print_bad_page_map(vma, addr, pmd_val(pmd), NULL);
+ 		return NULL;
+ 	}
+-
+-	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+-		if (vma->vm_flags & VM_MIXEDMAP) {
+-			if (!pfn_valid(pfn))
+-				return NULL;
+-			goto out;
+-		} else {
+-			unsigned long off;
+-			off = (addr - vma->vm_start) >> PAGE_SHIFT;
+-			if (pfn == vma->vm_pgoff + off)
+-				return NULL;
+-			if (!is_cow_mapping(vma->vm_flags))
+-				return NULL;
+-		}
+-	}
+-
+-	if (is_huge_zero_pfn(pfn))
+-		return NULL;
+-	if (unlikely(pfn > highest_memmap_pfn)) {
+-		print_bad_page_map(vma, addr, pmd_val(pmd), NULL);
+-		return NULL;
+-	}
+-
+-	/*
+-	 * NOTE! We still have PageReserved() pages in the page tables.
+-	 * eg. VDSO mappings can cause them to exist.
+-	 */
+-out:
+-	return pfn_to_page(pfn);
++	return vm_normal_page_pfn(vma, addr, pfn, pmd_val(pmd));
+ }
+ 
++/**
++ * vm_normal_folio_pmd() - Get the "struct folio" associated with a PMD
++ * @vma: The VMA mapping the @pmd.
++ * @addr: The address where the @pmd is mapped.
++ * @pmd: The PMD.
++ *
++ * Get the "struct folio" associated with a PMD. See vm_normal_page_pfn()
++ * for details.
++ *
++ * Return: Returns the "struct folio" if this is a "normal" mapping. Returns
++ *	   NULL if this is a "special" mapping.
++ */
+ struct folio *vm_normal_folio_pmd(struct vm_area_struct *vma,
+ 				  unsigned long addr, pmd_t pmd)
+ {
 -- 
 2.50.1
 
