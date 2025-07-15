@@ -1,118 +1,97 @@
-Return-Path: <linux-kernel+bounces-732121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336C7B06244
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:04:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF44B06261
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BAB53A37B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:02:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47E60172E84
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B16201032;
-	Tue, 15 Jul 2025 15:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1005F20371E;
+	Tue, 15 Jul 2025 15:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3nVs5JA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxYFAXm/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5ED41E9919;
-	Tue, 15 Jul 2025 15:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F381DB356;
+	Tue, 15 Jul 2025 15:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752591746; cv=none; b=RukhKOyPwEDS8k5weBMScdeyZXQ6vxvdP7ho7afFeRksXKw0qO/L+KFo9c8XNOovFVnNYM7hTKhMpjDsVjE1qXgybIpyD91HUaYIQ180RDxc2U7iLMKsNQ/vQIpDqd7rI5YZOFp5r0+gB8+dkkzhviZHf6VI8kUYq+CbQMZzokw=
+	t=1752591929; cv=none; b=S6X2xkvYBSyzdXVYPAH/3nHjo4QDjyk+kiym4CZfGwDc+M+5Dwi3+fTyam8HTqp6iRe1CZuZfJWKfIcUTx40fgHTj329xDIyXd8I+jL1fO2CBtEL6sZ9QS16KbpSK3Tw8mcJwuQeHGkGlzuNvXC/9IC69qyd8za1IGRLOmgqBhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752591746; c=relaxed/simple;
-	bh=exdnCy6Q0C3xztw8Y5wA0w4YeM3tO9kw+ROGW6J34Ko=;
+	s=arc-20240116; t=1752591929; c=relaxed/simple;
+	bh=lgROUkvjWbyE08UZT1hcvbF/FTSB+9YiCW1KfjgFGS4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j62E4IzItlB0YzpWZ8vYjpbLz4ppI3rsTwHlIscwJVprhMMLsfxTdIzFygGD2S9Qk9U8rx7K+61aybqfHFmL0d3gI4UTaTfxI0doZkFKu+hkeg4JYmbubCLR+rhSBAIOdjNumG4g4CQOSfQ1qawNQvjtOOY5cJNNlQa1CI6DgmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u3nVs5JA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A969C4CEE3;
-	Tue, 15 Jul 2025 15:02:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uw1hvsylSV4VcSxT0hUAz2rKCJ3Anaw8HkDYJht4LKHwjRvp2gsmcUYbEyy3GXpjCxf1vBaQWQuJ0vvlYqamm2AoSjSi9x7vfkRvrIC1+mN+5ctxbC71By+x+LiwQWwNlOdkjeZ4mKkPLLqANxyVlMUiUcb65VwXYl1y7PqULY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxYFAXm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4642EC4CEE3;
+	Tue, 15 Jul 2025 15:05:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752591745;
-	bh=exdnCy6Q0C3xztw8Y5wA0w4YeM3tO9kw+ROGW6J34Ko=;
+	s=k20201202; t=1752591929;
+	bh=lgROUkvjWbyE08UZT1hcvbF/FTSB+9YiCW1KfjgFGS4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u3nVs5JArxYZr5IH2Ok+/K4hHyHoWBVdGIoU6WY8tNh0eZVhrimCIIocOoTFKgPJd
-	 ZY8KvLnsN9tFCaasqmMFKfi17RPbEEOvbvE1XJIf72g/np8VLh7I+KENFzR+c6mJ1/
-	 lREjBaJpi3lTbwvoKrglymKwsd2cFD6hR2i+eNWA11UDOgOzp+dBD2/d1FHvGiZMOO
-	 7smub8SEg4+w2NOnrTOBV8tyvOb5iUl/7hAf/J63avI/ml4S8tKpDgM6GIPX8N/Qqe
-	 0PRTfmcpzkLp+wV/p2hKVJhMhgdC9QZH8kjTRduAUoGsgh6ImOHdA7WFvZKdPrx1Pm
-	 mBI+wFd67+pHw==
-Date: Tue, 15 Jul 2025 10:02:24 -0500
-From: Rob Herring <robh@kernel.org>
-To: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Le Goffic <legoffic.clement@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 06/16] arm64: dts: st: add LPDDR channel to
- stm32mp257f-dk board
-Message-ID: <20250715150224.GA1319886-robh@kernel.org>
-References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
- <20250711-ddrperfm-upstream-v2-6-cdece720348f@foss.st.com>
- <20250715032020.GB4144523-robh@kernel.org>
- <ae960a16-65ad-4b22-b9fb-89efbffacd3e@foss.st.com>
+	b=uxYFAXm/ODsz1WbtuznEgAO9wXLnriJtTYZukWI+eroLZazVtAQllUyXeHnY5yX/B
+	 lfsgoWOBhNUVIGND8VNlgq0KTst2syUIPJffySd0Gdj2adKQ34Ndc5yXNxUFWQmBQm
+	 f4SIf+CWequ9fK2slabXziXzBZO9pwNHmffFbtjxyh2+UoyCvoP8pdao8pJT2L87zc
+	 nSa4BINURd/ZspHipVV/z2aQbAt+VdPaEziTNscYJZbVBzeNREAJLiAyu1u8TLRDMz
+	 X3aiUF+QHnnOQJh8CM/0IOKLiwxljWBqeneKMf11VkRpg+js1BlV/nOFTX+KtfmldP
+	 6M5pd79Q0wUEg==
+Date: Tue, 15 Jul 2025 16:05:24 +0100
+From: Will Deacon <will@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>,
+	Steven Moreland <smoreland@google.com>,
+	Frederick Mayle <fmayle@google.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	netdev@vger.kernel.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH v3 0/9] vsock/virtio: SKB allocation improvements
+Message-ID: <aHZuNFIYR1g8h_-F@willie-the-truck>
+References: <20250714152103.6949-1-will@kernel.org>
+ <opdsodne4zsvgdkp4v3q2xggjzwjtk22j3knvpntlo63h6t767@jsuxmvgucatu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae960a16-65ad-4b22-b9fb-89efbffacd3e@foss.st.com>
+In-Reply-To: <opdsodne4zsvgdkp4v3q2xggjzwjtk22j3knvpntlo63h6t767@jsuxmvgucatu>
 
-On Tue, Jul 15, 2025 at 10:32:09AM +0200, Clement LE GOFFIC wrote:
-> Hi Rob,
-> 
-> Thanks for the review !
-> 
-> On 7/15/25 05:20, Rob Herring wrote:
-> > On Fri, Jul 11, 2025 at 04:48:58PM +0200, Clément Le Goffic wrote:
-> > > Add 32bits LPDDR4 channel to the stm32mp257f-dk board.
-> > > 
-> > > Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> > > ---
-> > >   arch/arm64/boot/dts/st/stm32mp257f-dk.dts | 7 +++++++
-> > >   1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
-> > > index a278a1e3ce03..a97b41f14ecc 100644
-> > > --- a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
-> > > +++ b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
-> > > @@ -54,6 +54,13 @@ led-blue {
-> > >   		};
-> > >   	};
-> > > +	lpddr_channel: lpddr4-channel {
-> > > +		#address-cells = <1>;
-> > > +		#size-cells = <0>;
-> > > +		compatible = "jedec,lpddr4-channel";
+On Tue, Jul 15, 2025 at 12:01:56PM +0200, Stefano Garzarella wrote:
+> On Mon, Jul 14, 2025 at 04:20:54PM +0100, Will Deacon wrote:
+> > Hi folks,
 > > 
-> > Not tested because this doesn't match the binding.
+> > Here is version three of the patches I previously posted here:
+> > 
+> >  v1: https://lore.kernel.org/r/20250625131543.5155-1-will@kernel.org
+> >  v2: https://lore.kernel.org/r/20250701164507.14883-1-will@kernel.org
+> > 
+> > Changes since v2 include:
+> > 
+> >  * Pass payload length as a parameter to virtio_vsock_skb_put()
+> > 
+> >  * Reinstate VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE based on a 4KiB total
+> >    allocation size
+> > 
+> >  * Split movement of bounds check into a separate patch
+> > 
+> > Thanks again to Stefano for all the review feedback so far.
 > 
-> Hmm, I've tested with make dtbs_check and dt_binding_check and it didn't
-> complain on my side.
-> What I have miss ?
+> Thanks for the series!
+> I left just a small comment on a patch, the rest LGTM!
+> 
+> I run my test suite without any issue!
 
-Oh wait, we already have a binding for that. I was confused with your 
-adding "jedec,ddr4-channel". Sorry for the noise.
+Thank, Stefano. I'll send a v4 later this week with your R-b tags and
+an unlikely() in the second patch.
 
-Rob
+Will
 
