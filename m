@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-731669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAFBB057FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:37:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4938FB057FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E362D7B25C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:36:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 116867B25CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F55F2D8DBA;
-	Tue, 15 Jul 2025 10:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3342D8763;
+	Tue, 15 Jul 2025 10:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="fMP/2/5a"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmqDReYK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E5A2D6406;
-	Tue, 15 Jul 2025 10:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31C224167B;
+	Tue, 15 Jul 2025 10:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752575839; cv=none; b=d6Ch5xdzIZsdS9qioSJcnDUm88DvEE2wW96Sgh59XgozHjHOvAJsIsxkZDNwLvjuSoO1s5Gl7ileBERwrOc4ImxqIRk0DyZC+l9J2cM7D8hgRwt5tJy2dN9TalVsGFeY0nLoQogcGPK5VaoF+fAJEZ1JgbJucSlcaeYWIbbaKdk=
+	t=1752575829; cv=none; b=GNbxlPPixuOmUVMXay146ggCeUEfHB0SZ9j7MwOmLwCWiez77K+WgFE7kmzQnenOuq5spZKCPhcAoX5mEoysMXo63smXhM9i9kDws97kQOadeHKlDpOO4J2toOfAJP42HhWNUJZO5Ok7PEneptUp6PGM3mBxncFhonjxBTZR+L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752575839; c=relaxed/simple;
-	bh=bRWQnGaBFkqATicoOZBNn07+yA+dB5OA8yMdsKFlD70=;
+	s=arc-20240116; t=1752575829; c=relaxed/simple;
+	bh=CwV8NACOodZkn+P442AO0/+Cb1UGkGUDkZelMg7IKI4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6/wLOPxBzKQrMt5PY1T+36JV7oXS7UWRPbTkONzJC67zGAtksRiL6e/jYV/xtsrRtNFcjrDk7SslI7yY93+JJU8lgTpUE0iCq+n0wAmyBZC9vxROWeg8J9bsejQDZHIiyJAod+vwVxBZkvzB/p6/UrGhmysBme53oDIMITqmno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=fMP/2/5a; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bhFxK0fpGz9tfC;
-	Tue, 15 Jul 2025 12:37:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1752575829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xkTXIjd3OsRf0eTlKAZhhSr2I1Js8WnKPTLus2lYh/0=;
-	b=fMP/2/5aRy89wVDDtWPiLpWM6+NT4rbhDFrN85k+PQgKFGsy4ZXffGVAec+4b5FgwGyCwM
-	oD46fz3Q2+c4FsgaI8YglSL/grUQh+xJkgXj15S22kPzJzDcb7BG93/TyRdSw5hzORxjXq
-	wgR65uD+K5QrgY35TxnvacbTa7rsWjKxQZM12m23t4J6iXFr6K6ZvnRoHV8uREBohXqHKX
-	Z3WCtVRBTkZx1ECuRCWFcrKAZeJJz+6uW6dyxXf+q9d0vTG85UxqyZhzp168fnVXkraT9o
-	Pownt3fQ8fLxYQAob3n4GAVHSVWmg07H4xsJ1mNlB7NW6tqxEbRJQukaMYqRpQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Tue, 15 Jul 2025 12:36:59 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Jan Kara <jack@suse.cz>
-Cc: syzbot <syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com>, 
-	adilger.kernel@dilger.ca, anna.luese@v-bien.de, brauner@kernel.org, 
-	jfs-discussion@lists.sourceforge.net, libaokun1@huawei.com, linkinjeon@kernel.org, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	p.raghav@samsung.com, shaggy@kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] WARNING in bdev_getblk
-Message-ID: <f634msrtbc75cspm3pysavmxc5gfzlut56bee7qtc72ypmd4ap@p7tmmjisdc72>
-References: <686a8143.a00a0220.c7b3.005b.GAE@google.com>
- <68710315.a00a0220.26a83e.004a.GAE@google.com>
- <gbzywhurs75yyg2uckcbi7qp7g4cx6tybridb4spts43jxj6gw@66ab5zymisgc>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQoWjYdjyx8H52Cd7XvdTGNuMt9Nk0BUXeCABDFDyCyaMFmGt2KzkN0/U++MukxDbUJFcy6WJ37TEWtQQ89hOLJF84i7HClYVVWM6jaajUcYR791p+BOvOkm4gIba5noCZa/g3w3bZotVpMyZIiwO5MluXgkSOn4ddRVUMOTLN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmqDReYK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AF39C4CEE3;
+	Tue, 15 Jul 2025 10:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752575829;
+	bh=CwV8NACOodZkn+P442AO0/+Cb1UGkGUDkZelMg7IKI4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OmqDReYKYUKIR1od3JUcHgQZL1aJrur1id/0IR5ViVMTo9FgxjPjElBXq55egu19x
+	 24Ip/tJJItag/U3DXnPnxbh7Ya79+sGSVwZLRwfRWxwPHidydRvGchGnI/mkyevqKu
+	 ri2rl1xNXdM6yU3VLZ+qnaU7YdYTk/ydbhV41U9zBSsFSrJGyDvN4zDqvydRVvivl1
+	 utJP6n7utnoFrnp9yNiXg46egZAIUFXzBzfHDlm8EPJCt5LxGzIpXqogqQHFHVoArw
+	 YD/Bqi/CGpkevIYKn6VVzjp/z0ux1rcMEf0nE6q3X+wbk2uJsLdo5NWeFNQVsFiUKJ
+	 hwIyUA4jY+/+Q==
+Date: Tue, 15 Jul 2025 16:06:59 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Johan Hovold <johan@kernel.org>, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
+ notifier callback
+Message-ID: <jdnjyvw2kkos44unooy5ooix3yn2644r4yvtmekoyk2uozjvo5@atigu3wjikss>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
+ <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <gbzywhurs75yyg2uckcbi7qp7g4cx6tybridb4spts43jxj6gw@66ab5zymisgc>
-X-Rspamd-Queue-Id: 4bhFxK0fpGz9tfC
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=127d8d82580000
-> > start commit:   835244aba90d Add linux-next specific files for 20250709
-> > git tree:       linux-next
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=117d8d82580000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=167d8d82580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=8396fd456733c122
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=01ef7a8da81a975e1ccd
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=115c40f0580000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11856a8c580000
+On Tue, Jul 15, 2025 at 11:54:48AM GMT, Konrad Dybcio wrote:
+> On 7/14/25 8:01 PM, Manivannan Sadhasivam wrote:
+> > It allows us to group all the settings that need to be done when a PCI
+> > device is attached to the bus in a single place.
 > > 
-> > Reported-by: syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
-> > Fixes: 77eb64439ad5 ("fs/buffer: remove the min and max limit checks in __getblk_slow()")
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-qcom.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
 > > 
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > index b4993642ed90915299e825e47d282b8175a78346..b364977d78a2c659f65f0f12ce4274601d20eaa6 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > @@ -1616,8 +1616,6 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> >  		pci_lock_rescan_remove();
+> >  		pci_rescan_bus(pp->bridge->bus);
+> >  		pci_unlock_rescan_remove();
+> > -
+> > -		qcom_pcie_icc_opp_update(pcie);
+> >  	} else {
+> >  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+> >  			      status);
+> > @@ -1765,6 +1763,7 @@ static int pcie_qcom_notify(struct notifier_block *nb, unsigned long action,
+> >  	switch (action) {
+> >  	case BUS_NOTIFY_BIND_DRIVER:
+> >  		qcom_pcie_enable_aspm(pdev);
+> > +		qcom_pcie_icc_opp_update(pcie);
 > 
-> Ah, I see what's going on here. The reproducer mounts ext4 filesystem and
-> sets block size on loop0 loop device to 32k using LOOP_SET_BLOCK_SIZE. Now
-> because there are multiple reproducer running using various loop devices it
-> can happen that we're setting blocksize during mount which obviously
-> confuses the filesystem (and makes sb mismatch the bdev block size). It is
-> really not a good idea to allow setting block size (or capacity for that
-> matter) underneath an exclusive opener. The ioctl should have required
-> exclusive open from the start but now it's too late to change that so we
-> need to perform a similar dance with bd_prepare_to_claim() as in
-> loop_configure() to grab temporary exclusive access... Sigh.
+> So I assume that we're not exactly going to do much with the device if
+> there isn't a driver for it, but I have concerns that since the link
+> would already be established(?), the icc vote may be too low, especially
+> if the user uses something funky like UIO
 > 
-> Anyway, the commit 77eb64439ad5 is just a victim that switched KERN_ERR
-> messages in the log to WARN_ON so syzbot started to notice this breakage.
 
-I was also thinking the change we did from KERN_ERR to WARN_ON was catching
-a different bug.
+Hmm, that's a good point. Not enabling ASPM wouldn't have much consequence, but
+not updating OPP would be.
 
-Thanks for taking a look and fixing the issue Jan.
+Let me think of other ways to call these two APIs during the device addition. If
+there are no sane ways, I'll drop *this* patch.
+
+- Mani
 
 -- 
-Pankaj Raghav
+மணிவண்ணன் சதாசிவம்
 
