@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-731498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7A4B0553F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:44:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4627AB05540
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3AFC4A020B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:43:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46F441C23497
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03827275851;
-	Tue, 15 Jul 2025 08:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836DB2D0C7A;
+	Tue, 15 Jul 2025 08:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HZqbTlJm"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WpnWAQhX"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF6A26D4F2
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE6E28A73E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752569055; cv=none; b=usFv1g6ln1SWe3SFqca9FEw26IL4r3e2HFXsDp2tGSB1jxVpol4W+Fe5RboEfnzDfdfZ0KJqAAuvJFmtW4FRTAepuRRD6o4Y2CYGrn1TyMooT3Qd5kXmpxt613Mw6WcwAtnmzVK6Qe0p/xW4feI+AuaN47PsrTncBQbtVe609Tg=
+	t=1752569064; cv=none; b=SldJ59G0dNpa2UjjUj18zGKGxCgrPyhDaEa4+PfbI/G7QpJCIub+QVyUbvuOCjI8zuB2tQAdtsEFD1agba1qDqZHhJmFIRVAgcop7dIk3wFBBm2W9ph0OemRiixsWRwvnHwdddHkayU3zoyRBjSQuJj5GMQJ3IFZMioF+VLxyBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752569055; c=relaxed/simple;
-	bh=mcToWc/fr0EQqM/JyKziVPnwRXDMtItq5cFsngYeYt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XixHkKaw0n1iQOHnHq+zdqYfvB+nrHNza6g8QpLGiIb8vhwXYzEINdjCgN2tF6A9I1t6veSNQgK8BmejB/xHi0heSnZoCEpoYGKhqj+4kvVR29ADcREpLspOUdPqbIS9wDFoGXjcyr8qa0zuItVvho3UZYyRScI2chrm8n1PVJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HZqbTlJm; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 430F340E0208;
-	Tue, 15 Jul 2025 08:44:11 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bOcSNm5eBAze; Tue, 15 Jul 2025 08:44:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752569047; bh=VcSPNt8XxO+CqQOBaxqM7aIo4wT0QVt30q8qKGhmaLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HZqbTlJm/HLiD0H0POWqE/3Ollw2X1szzn/rvba6feuoyDJFT8i4dwi9aVG8E28S4
-	 M4UMBPCE/DJHCG22cspZe8D81YVos0Cp7YdKeEB4v3fZa5DuzgkbBreXMsLzKS+2Pj
-	 0CF6k37Yrp4RnqRbhWiAz18RTGL6ObX+Q/pjtF7TG7COrHrwBsSTntEzHKzRqBtEcY
-	 S9kqeIxyalco18ro7uUGGihZ4qqx1ZyrlRqxCBuhXQcULA13h92lteiNe5Ov+DOA05
-	 pk9iEruqMwinWyqxhJWZZa2QeLBrFARdSP25fMI+7A2Xd+/j3X39GnxSCMUViiTqOg
-	 9pAFFbT6SX71oWHyXGGdmfTZT5fXTNHa4lR9KbSLxPn3DZtlc1TlBEwfRYNHJq9xoh
-	 sA8hB6992XNg3EGsAHiQahLiIPLoXBcSgxivrHYfl0GIPJe+QUMgkIc/JhMy9kQazX
-	 4bXReL3zN0zrqS3jgXDbBk2rBnaTe8vi99JAcBI4tTIkP7bVIAUVn9wkYugoVXH78F
-	 Yj5EawYHp4WAJTDk5xlxecaZIGsLonavvB6yibAH65VTOMAXubRCUDHS65LzaCO9KE
-	 2QqM0yPUJ4DePH0ZlUn1Y3WNrsNTIx8fcCueln5nEZ+CZqKtJsfvUpe0/L3aJtqLca
-	 /SekVSWt/r5Ul441nqM3ge2s=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B7C7B40E015D;
-	Tue, 15 Jul 2025 08:43:58 +0000 (UTC)
-Date: Tue, 15 Jul 2025 10:43:57 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Nikunj A Dadhania <nikunj@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com,
-	santosh.shukla@amd.com
-Subject: Re: [PATCH] x86/sev: Improve handling of writes to intercepted
- GUEST_TSC_FREQ
-Message-ID: <20250715084357.GCaHYUzeqvBxJyGVsg@fat_crate.local>
-References: <20250711041200.87892-1-nikunj@amd.com>
- <20250714104424.GGaHTfiFxI_pf-vhRn@fat_crate.local>
- <aHUTMiEJ-nd76lxM@google.com>
- <76e0988d-279f-be58-51d9-621806dbb453@amd.com>
- <aHUfecs9UJPx0v_C@google.com>
- <20250714161639.GLaHUtZwleS3COfxxX@fat_crate.local>
- <aHUx9ILdUZJHefjZ@google.com>
- <85jz49x31p.fsf@amd.com>
+	s=arc-20240116; t=1752569064; c=relaxed/simple;
+	bh=WksxcT0vew5gQIK21EEwb9zJ+2MlPcoIhesf2cYfLvI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qam7wsEQOk5+TKdRBzL6g4f8OtUQgkeqHg6S9HpWSDEJxBVfOty9JwPY/SGXqtA0IaDddMIcI1ym9HpLOr50Emt+V6uk5H9xQjyohUDFt22wPue7t5NCJtBrOBrvLA4Mw8HPmjDSQHUAFTFRgEyRqOrbkt/tvOBzbuX5MiJ+AsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WpnWAQhX; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-455e6fb8057so38808725e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:44:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752569060; x=1753173860; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WksxcT0vew5gQIK21EEwb9zJ+2MlPcoIhesf2cYfLvI=;
+        b=WpnWAQhX4WczwZ6JBHRq5/q7LDmSLPeckR+fI49nX3zUNwS/9W/r4YCITNj1uRoTlL
+         IW0iP/kmv3yo6azGojFJRSOMZZ4d9VCtDPzLpuERk9Rogg9mdLSpAZykm0YJ5IKf7EOi
+         WjERKP5BNHP6ijfgozXgqxJu15CTV6K8TbXjTFix8A/1C7rCbd1Cjvx53JPgs1j9dhKI
+         tP2MixiNiQl/AR1amWaP8HhULESz2tMKxB+sw/kgQwmafJP8CzUYfBqz0rfPm1w613P9
+         uxGfY15wE+C2JPQieG0QA8B2Yra3Mdhc0nkRWPyod5MFX5Fb49G2lYWAEvnf9n2qiTmR
+         SBkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752569060; x=1753173860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WksxcT0vew5gQIK21EEwb9zJ+2MlPcoIhesf2cYfLvI=;
+        b=IpnM8LcVIv9sQ3upXjSrWAK2AYPfZGkktuASHZwcS4fGFaxagwua2fFQbsf3OOHdwy
+         94ysvOYMeEMbJ4WNWR1e+E7+gtOoKG8pDLz2ald7H8wZOO29WwPkrjCmP86fbz61vIpm
+         iBILUYHQR9OUX72D/j8QfelBxdEj21leN7DjUX5so8Nxdy6lnN3xzzBlZUq1I5LLxoXl
+         4zgdeQ+dn69JTfDli8htmy/NGnKgCnowzapJH8QT2NFBb4tv173MwWOeJJVZW0enTHQO
+         1NYz0cJ0J3ZDisCAxpwJ7Rl6GSwL7E3eGQgYV2CJ0oKDYcBt2j4jpl3pCj1I5ppcLRNn
+         Ghaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWI6Ef1u9kUIkWZSU9Kvo6L+96OT3I5viT4Q6RVX2xdtaoD6B6/Y1CrJDhH2ocBmm5xW8MRgIC+EjOdZyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwABqOzBvu7aHfggcBYIfnX9UTzEOyv3HkCrToQWynbufmg9Io0
+	4bYRHLMgeYCCT6lKvS1PazNZstAu+6HhbQ4ohYSt1JcyxzTTYR7ECK6xU5mcLhmDjrDV0wUqrsv
+	L0VVk8hFdWwy4Ckc1WXst45H21JH2g54wxGhnC0RN
+X-Gm-Gg: ASbGncvuok212arRzK31baVPdWW16qk1c0QEon3fF8vwDsGHLRSxEj7VA4LGzJB9pj2
+	XOWYMVoknK/foZiYBC5/s9KiiaJ8aU8XZI1c+LSlUHSugsh2nq1a+TFqmXm9uKlqZmedt6ZzWJC
+	Ilo0VLyYQRCRHBYL4Zh3cZ9/ZfW5WmQnHPGwHn76uWaD+8j4CZL9wON+Dj6tmM+E0qkmgI+lbJO
+	XdER9l0B6s8U3CcMtQ=
+X-Google-Smtp-Source: AGHT+IHzMFyvUx98+ytThz9kGyW5N9noGp3DlfBh9jRa1JcqVzpneWTBVnQXWg7nciIv953hMjQK9Rnq07N/ncoJOsM=
+X-Received: by 2002:a5d:5f88:0:b0:3b5:e077:af24 with SMTP id
+ ffacd0b85a97d-3b5f2dc21famr13129817f8f.14.1752569059746; Tue, 15 Jul 2025
+ 01:44:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <85jz49x31p.fsf@amd.com>
+References: <20250714113712.22158-1-dakr@kernel.org> <aHYCOFZZYbgP39nR@google.com>
+ <DBCHFBDWRHZ1.96R3AMCDUX9S@kernel.org>
+In-Reply-To: <DBCHFBDWRHZ1.96R3AMCDUX9S@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 15 Jul 2025 10:44:07 +0200
+X-Gm-Features: Ac12FXwoj1Dq7KKw4Qu02ROnGWXG9HPYTeSOfU04fr5zzoADs9AgIW4IUuzD4Po
+Message-ID: <CAH5fLgjG9YpyNQMO9mJhCvS1r9MNKt9Upnr8B-LPSkwXr1A41g@mail.gmail.com>
+Subject: Re: [PATCH] rust: devres: initialize Devres::inner::data last
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, daniel.almeida@collabora.com, m.wilczynski@samsung.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 08:37:38AM +0000, Nikunj A Dadhania wrote:
->   Currently, when a Secure TSC enabled SNP guest attempts to write to
->   the intercepted GUEST_TSC_FREQ MSR (a read-only MSR), the guest kernel
->   #VC handler terminates the SNP guest by returning ES_VMM_ERROR. This
->   response incorrectly implies a VMM configuration error, when in fact
->   it's a valid VMM configuration to intercept writes to read-only MSRs,
+On Tue, Jul 15, 2025 at 10:22=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> On Tue Jul 15, 2025 at 9:24 AM CEST, Alice Ryhl wrote:
+> > On Mon, Jul 14, 2025 at 01:32:35PM +0200, Danilo Krummrich wrote:
+> >> Users may want to access the Devres object from callbacks registered
+> >> through the initialization of Devres::inner::data.
+> >>
+> >> For those accesses to be valid, Devres::inner::data must be initialize=
+d
+> >> last [1].
+> >>
+> >> Credit to Boqun for spotting this [2].
+> >>
+> >> Link: https://lore.kernel.org/lkml/DBBPHO26CPBS.2OVI1OERCB2J5@kernel.o=
+rg/ [1]
+> >> Link: https://lore.kernel.org/lkml/aHSmxWeIy3L-AKIV@Mac.home/ [2]
+> >> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> >> ---
+> >> base-commit: 3964d07dd821efe9680e90c51c86661a98e60a0f
+> >
+> > I couldn't find this commit. Where does this apply?
+>
+> The commit is in driver-core-next.
 
-Not only valid - it is the usual thing the HV does with MSRs IMHO.
-
->   unless explicitly documented.
-> 
->   Modify the intercepted GUEST_TSC_FREQ MSR #VC handler to ignore writes
->   instead of terminating the guest. Since GUEST_TSC_FREQ is a guest-only
->   MSR, ignoring writes directly (rather than forwarding to the VMM and
->   handling the resulting #GP) eliminates a round trip to the VMM.
-
-Probably.
-
-But I think the main point here is that this is the default action the HV
-does.
-
-> Add a
->   WARN_ONCE to log the incident, as well-behaved guest kernels should
->   never attempt to write to this read-only MSR.
-> 
->   However, continue to terminate the guest(via ES_VMM_ERROR) when
-
-ES_EXCEPTION
-
->   reading from intercepted GUEST_TSC_FREQ MSR with Secure TSC enabled,
->   as intercepted reads indicate an improper VMM configuration for Secure
->   TSC enabled SNP guests.
-
-It is getting close to the gist of what we talked yesterday tho.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
