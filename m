@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-732633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5DDB069D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:22:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC30CB069D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C43580977
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:22:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F021C21162
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF492D63E6;
-	Tue, 15 Jul 2025 23:22:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D6F7261D;
-	Tue, 15 Jul 2025 23:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A62B2D46C7;
+	Tue, 15 Jul 2025 23:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPWdbcvU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2E82BEC23
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 23:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752621744; cv=none; b=u5l8VzG8J+28OwBiL+2dSVDJ2zRMDqU4lmROETeoN7C8kGNwB/nq7gw6JQVJyLaLgCY/z3qiadwfzS5QTGHGmGWqxUpv4ryeqzF0rLMwIj/dTZnvo+gJbj0cP2y7+0fWg9k9pHrZrBgVeYGIE2UVbWv8BVH4HxnpGNpJy1R4z+M=
+	t=1752621776; cv=none; b=ufhdzvpR58BRJdbWAt4GnCiXIO3J0pBjYkrT+74sxt9dzAxxhRHlLMT6xF/TFSB/bXZJCn1OB2NkCFmMthoHVGwshSBb7R391jVthJ1sMJ2/cU2JZE4PDTF+qA7YgfMa4D7nmBjr1o+eufYA89uf8Qb+f2xnK2YuzPtUvrJIpaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752621744; c=relaxed/simple;
-	bh=x67+Hru3euykHmBuyLooA2lRlilf1qyeV+pefGwKg6Y=;
+	s=arc-20240116; t=1752621776; c=relaxed/simple;
+	bh=j1LB/sQmMIlG0zz2sXx8WmnMUfDTKW926uCb2WCG+s0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KwLNMyXU1yQU9DCvOy5/6PkYU017X1TQZp1onCjveRUTy37R6OiclWrzS/ZwqwUwYUAgiuftX0OcTb1918gPjLjO+Kmif4nBXLBXXa+YJZSE3zjhuuhgh+ttSz6oqyVYY2WxPMiZZ1ul37Oh1p5zM9iskEzJFvJx7cAJ4fZ8u88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0045C12FC;
-	Tue, 15 Jul 2025 16:22:12 -0700 (PDT)
-Received: from [10.57.0.241] (unknown [10.57.0.241])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9D9533F66E;
-	Tue, 15 Jul 2025 16:22:17 -0700 (PDT)
-Message-ID: <153b5191-c585-433e-9cf5-1ed19b9a7f5c@arm.com>
-Date: Wed, 16 Jul 2025 00:22:16 +0100
+	 In-Reply-To:Content-Type; b=EzkKYjorbMguzZojZzW98DJEIZryzQP6iuvFj4q53ExSSp40zsrGUieMq72sRvN23FZ2FjvKra2UQYublVwZtvKKC5xERHUbxDNjnJTEtDikrZVkXFTV4imE3cxJ6dYcf/4R+3VpvDN7BjjvM9Ea5GXLwLMqRd6YolFSVj2kZNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPWdbcvU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4044EC4CEE3;
+	Tue, 15 Jul 2025 23:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752621776;
+	bh=j1LB/sQmMIlG0zz2sXx8WmnMUfDTKW926uCb2WCG+s0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lPWdbcvUlzY1C+zDUKuNlaBRYqRppGCR75JNewSjs70MzRVuBJA0YZhZeojgnnUzG
+	 217WE6TPyjuKgUVJcbYHC7L7jtROkocjwXrU/sGWVIxkwH5UNnlrNp3YmBKgVaCT50
+	 VmnFhNydiTHs0ja5RdmKFfQZ0VozH4z24+4o1eTKOxqktakkLA8L1sazea/hd+tYdS
+	 pxTNDUuv3XPT+vIcesvyYnOZNfU0bLIS6l1PmRE2Mx/lrKCubKHjwUKymFbYvGvA/E
+	 6yGhYwjQjXOb/S/cREcFOfLvPZq7Cb6uxWJsEulXSovvtH8t90pEao3hW1w85jmAB+
+	 ryaCAhJTjO4xA==
+Message-ID: <5c038378-dd65-4a4d-9a5b-d3604769b658@kernel.org>
+Date: Wed, 16 Jul 2025 08:22:54 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,106 +49,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/23] arm64: cpufeature: Add cpucap for HPMN0
-Content-Language: en-GB
-To: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Mingwei Zhang <mizhang@google.com>, Joey Gouly <joey.gouly@arm.com>,
- Zenghui Yu <yuzenghui@huawei.com>, Mark Rutland <mark.rutland@arm.com>,
- Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20250714225917.1396543-1-coltonlewis@google.com>
- <20250714225917.1396543-2-coltonlewis@google.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250714225917.1396543-2-coltonlewis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] nvmet: pci-epf: Do not complete commands twice if
+ nvmet_req_init() fails
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Cc: rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250715091826.3970789-1-rick.wertenbroek@gmail.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250715091826.3970789-1-rick.wertenbroek@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/07/2025 23:58, Colton Lewis wrote:
-> Add a capability for FEAT_HPMN0, whether MDCR_EL2.HPMN can specify 0
-> counters reserved for the guest.
+On 7/15/25 18:18, Rick Wertenbroek wrote:
+> Have nvmet_req_init() and req->execute() complete failed commands.
 > 
-> This required changing HPMN0 to an UnsignedEnum in tools/sysreg
-> because otherwise not all the appropriate macros are generated to add
-> it to arm64_cpu_capabilities_arm64_features.
+> Description of the problem:
+> nvmet_req_init() calls __nvmet_req_complete() internally upon failure,
+> e.g., unsupported opcode, which calls the "queue_response" callback,
+> this results in nvmet_pci_epf_queue_response() being called, which will
+> call nvmet_pci_epf_complete_iod() if data_len is 0 or if dma_dir is
+> different than DMA_TO_DEVICE. This results in a double completion as
+> nvmet_pci_epf_exec_iod_work() also calls nvmet_pci_epf_complete_iod()
+> when nvmet_req_init() fails.
 > 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
-> ---
->   arch/arm64/kernel/cpufeature.c | 8 ++++++++
->   arch/arm64/tools/cpucaps       | 1 +
->   arch/arm64/tools/sysreg        | 6 +++---
->   3 files changed, 12 insertions(+), 3 deletions(-)
+> Steps to reproduce:
+> On the host send a command with an unsupported opcode with nvme-cli,
+> For example the admin command "security receive"
+> $ sudo nvme security-recv /dev/nvme0n1 -n1 -x4096
 > 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index b34044e20128..f38d7b5294ec 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -548,6 +548,7 @@ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
->   };
->   
->   static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_HPMN0_SHIFT, 4, 0),
+> This triggers a double completion as nvmet_req_init() fails and
+> nvmet_pci_epf_queue_response() is called, here iod->dma_dir is still
+> in the default state of "DMA_NONE" as set by default in
+> nvmet_pci_epf_alloc_iod(), so nvmet_pci_epf_complete_iod() is called.
+> Because nvmet_req_init() failed nvmet_pci_epf_complete_iod() is also
+> called in nvmet_pci_epf_exec_iod_work() leading to a doubple completion.
+> 
+> This patch lets nvmet_req_init() and req->execute() complete all failed
+> commands, and removes the double completion case in
+> nvmet_pci_epf_exec_iod_work() therefore fixing the edge cases where
+> double completions occurred.
+> 
+> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
 
-This doesn't have to be FTR_STRICT. The kernel can deal with 
-differences, by skipping to use HPMN0. We anyway rely on the
-system wide cap for using the feature.
+Forgot: this needs a fixes tag and cc-stable:
 
-Otherwise,
+Fixes: 0faa0fe6f90e ("nvmet: New NVMe PCI endpoint function target driver")
+Cc: stable@vger.kernel.org
 
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
-
->   	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_DoubleLock_SHIFT, 4, 0),
->   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_PMSVer_SHIFT, 4, 0),
->   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
-> @@ -2896,6 +2897,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->   		.matches = has_cpuid_feature,
->   		ARM64_CPUID_FIELDS(ID_AA64MMFR0_EL1, FGT, FGT2)
->   	},
-> +	{
-> +		.desc = "HPMN0",
-> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.capability = ARM64_HAS_HPMN0,
-> +		.matches = has_cpuid_feature,
-> +		ARM64_CPUID_FIELDS(ID_AA64DFR0_EL1, HPMN0, IMP)
-> +	},
->   #ifdef CONFIG_ARM64_SME
->   	{
->   		.desc = "Scalable Matrix Extension",
-> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-> index 10effd4cff6b..5b196ba21629 100644
-> --- a/arch/arm64/tools/cpucaps
-> +++ b/arch/arm64/tools/cpucaps
-> @@ -39,6 +39,7 @@ HAS_GIC_CPUIF_SYSREGS
->   HAS_GIC_PRIO_MASKING
->   HAS_GIC_PRIO_RELAXED_SYNC
->   HAS_HCR_NV1
-> +HAS_HPMN0
->   HAS_HCX
->   HAS_LDAPR
->   HAS_LPA2
-> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-> index 8a8cf6874298..d29742481754 100644
-> --- a/arch/arm64/tools/sysreg
-> +++ b/arch/arm64/tools/sysreg
-> @@ -1531,9 +1531,9 @@ EndEnum
->   EndSysreg
->   
->   Sysreg	ID_AA64DFR0_EL1	3	0	0	5	0
-> -Enum	63:60	HPMN0
-> -	0b0000	UNPREDICTABLE
-> -	0b0001	DEF
-> +UnsignedEnum	63:60	HPMN0
-> +	0b0000	NI
-> +	0b0001	IMP
->   EndEnum
->   UnsignedEnum	59:56	ExtTrcBuff
->   	0b0000	NI
-
+-- 
+Damien Le Moal
+Western Digital Research
 
