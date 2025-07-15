@@ -1,118 +1,202 @@
-Return-Path: <linux-kernel+bounces-731741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E446CB058DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6483BB058E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5852E563452
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947F41890AB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BF519D09C;
-	Tue, 15 Jul 2025 11:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFB92D979F;
+	Tue, 15 Jul 2025 11:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B+qaOCaF"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="orltr6uQ"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF532AD00
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195F82D94B9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752579105; cv=none; b=ha7agwAqp1V+jpWGxXLq6OpN9Wr8ruw7r8Zr5TrITUEvyh0AkiyngaoR9FEKDfSS/PnvFjtHCsy2g+caCmrcxLifp8o1GKvAgBGJSaqGE6wbaNpqF9EqE3GLI0uobDwREJexBsvk2rD684RnWdHZ3/sOa/B5ctjqg2Q6lI30vUE=
+	t=1752579206; cv=none; b=IJ9uhPJccNw/32z+k7ZpgwLz8S3gV5Q38rGJqY25+cVcX2WXXet7dWFGvGZk9bIFoivegNNluCVQqm8QRZ/hArWhiYjyWzuIIAXRzHidCizq01OC0tWl1NA4kiT7KX6jTBWyS4opnIUpqlWVDajFFJrtKN14+QdcXcoQBCYZVLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752579105; c=relaxed/simple;
-	bh=B1i0Jy+iCmpT+TMn/plz7n65ehc42gy7Y3dHtaF5bWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZsUV/hNkQWIyvbdTSPmZ7O2x0mD+hGxnDFe/yB1242AIXlTU8jT95WYSKbEozCpGNKaJSACio1TCKqRpzfHDMjYtnDdCxyvV3j1rf2FD5HxEzIXPvkewgD4X6PU2Hr6dv2ez0PyiJGSlFqXN2ZK9dzoUUQi/YnyhwYE/K8i41+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B+qaOCaF; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1752579206; c=relaxed/simple;
+	bh=88diviApfDQpJD2jMENzqWT4d8A2upFw4c91fIkkg4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VrQovNlsa7k+/PBf+Sgt6tAdNT0oM+UkLbFolPp0dLbI4DuY64OHh7EdrEU7jWR/yLNm+APX++4uJPzk2JWFfgWQIzfwGKpsx/Lbuc0HOwgdzRMzUOtkqrVOIajcMiFoc50d1FaO+hix4ynGI+cp27WA6meZFqI+MNL6wuZyvPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=orltr6uQ; arc=none smtp.client-ip=209.85.219.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so26201375e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:31:43 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e8275f110c6so3921385276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:33:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752579102; x=1753183902; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5ZsnxPQOlzjyNW6a1iVcFG50PC2MlOpTArybpzvfKj8=;
-        b=B+qaOCaFm3Sm0HWodh8FZLR3fJzakOEjjy8BcWhrMsAjxlXM/qJQFmHbdluSe762Is
-         xuOyuRi3flfn5XjdqAoHDJoyqGBke08wj0NxYI8ZUweuAtpVBHnmvgVfEtC19wtJ7XTr
-         mv+KwqcLi3RKqM9tFD6jNjYPTsSVWO3dwv/ojPc2zCmxEjrjNL2ETgrjZY8cpV/IRGTa
-         JB4F1KMjRKihuPFXgzY8ws1k3Dv3/MTrFFwUksV8pTgH9lkGzD5/KWawxJw6/gVlxgXX
-         UD8Tfg55+PZNInVw9NpwrwgmI4M4dls71AciUNnXOUvXW5GYxnHTYKqVJpVqw7vkpf1d
-         sY/w==
+        d=linaro.org; s=google; t=1752579204; x=1753184004; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=88diviApfDQpJD2jMENzqWT4d8A2upFw4c91fIkkg4c=;
+        b=orltr6uQ8RLZm6Ygb+heN8+PDaIqWuBrHZy0Dw22TWyXQnY32LmfNLfER0s2oExrmK
+         ROFiaA8EdhGQsOU/n2xVwsK4jRUOQpkqr5D9DwvghShbZCjHhidERJs36Kfw6YexAdZt
+         dTHyiDV8hDbZNZBf3rLBpA23gm10zIzTAPXPNmGa7ubZX5m6eINjfCNHEh0NiVehKiFq
+         aI4L6taF4sOJ+gGPnvIbaqn5SrdWsvz9LTmikPXno9/j18V8GBTbUnczk6KgxsVSE3T6
+         4iNl8jnYjFrZH3N2FdqQ908IkFqHMsyTls1dbgHzf6HqsKyfvCoI1Mn8G2tOEBOcX3NT
+         r0iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752579102; x=1753183902;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ZsnxPQOlzjyNW6a1iVcFG50PC2MlOpTArybpzvfKj8=;
-        b=YgC5MKFaI/SPSD8rQSDfjCFDpJewNTMQ+06UolKb1oQMDj7ZtExI4abbk8X+1G/++X
-         cMP6xgCAYDgSInb2kXYH9Q2ND+7zdK3qAMWPC2UUdGILHgsFDmH1iLidO0d8U/ekC8oF
-         7d40GRUVNVNBo8KwJEz1LVCIP1IAqSAjRJ/mfLqZHOxHlkny5qdqmtc34X8OgmSrhpN8
-         57J7t8dhLL2cL7GfB0rrxLyIwmPR/hNeYeqQ4u+K6EfSfHHqOH2UGrLSTETWIqf130Tz
-         CDRb+IuBajtuywjooJUy7we0Xst8Y38xwGWeXizrhJH5u9KRnQ2UIXi11RQSIL+effYR
-         Tz5g==
-X-Forwarded-Encrypted: i=1; AJvYcCX02cRM992QP0dr63InbwOj39CqFQCTN9/ve22cI/E/+hoJdL9IJmE/2Gs6KwRPc/+wOfLjdG+Nbc8RL1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdNUR+Arz5A7YIbp9p2Km9UladaCUteJC0Oe7vo55SSeFCyuje
-	wx8Zy/RLboZ4YVZML91us3iusYLNgiWBgBlB64tXSm5doqCkiXcaJ7moZwnYHWxO8xo=
-X-Gm-Gg: ASbGncvbwgqg8/Kn9cWGpHNkO/XSgiWFvZDwiW/GvXc46QamzHLAz3yGDgzuPDH5s0y
-	xWAhipHt6QDpxDCMp7jv7CVYvm09v1uIdOy0EC2YZQQf6OC2RokRasVboBJeTycc8grsG8dqzi0
-	4mEVrp/SIVrRVNt0TlczqXL8eTNkaojUrRjN/J6OD4sVQ0CStI6r9xO6QJojS0ve92L4M6pPxj1
-	9aoU/2guKFJjPfqVYbnBnTmRn4PNnIY8tzDiJdEz0gRJt16N33LV87Agq6ZS8KEllZ8ExsJTWtE
-	B4ri/YBjr4Vik5FUhCSkgPTkxkw4UgJwole1T/cpR0kD9DnmGEfECcHfTtO7mLi6XLpRelt6mr8
-	Bcudk/aLCQH0/dVP5XgfB+RiWu0Xx5Q4miDvn7DCHeTHONmDf01lJNXkMWXyt
-X-Google-Smtp-Source: AGHT+IEKhxXOiGy+rRPRZDHvcFkEUJsQ0d14+0tBKDdlW4a1Tc6Bru+r7zuXvqC8THzAs7ZRIPDvKg==
-X-Received: by 2002:a05:6000:1446:b0:3a5:2465:c0c8 with SMTP id ffacd0b85a97d-3b5f187a4b4mr14608177f8f.7.1752579101919;
-        Tue, 15 Jul 2025 04:31:41 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc2025sm15173960f8f.31.2025.07.15.04.31.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 04:31:41 -0700 (PDT)
-Date: Tue, 15 Jul 2025 13:31:39 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, qii.wang@mediatek.com,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com,
-	gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	tglx@linutronix.de, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-serial@vger.kernel.org,
-	kernel@collabora.com
-Subject: Re: [PATCH 1/3] dt-bindings: timer: mediatek,timer: Add MediaTek
- MT8196 compatible
-Message-ID: <aHY8Gyo5uy8P6VP1@mai.linaro.org>
-References: <20250611110800.458164-1-angelogioacchino.delregno@collabora.com>
- <20250611110800.458164-2-angelogioacchino.delregno@collabora.com>
+        d=1e100.net; s=20230601; t=1752579204; x=1753184004;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=88diviApfDQpJD2jMENzqWT4d8A2upFw4c91fIkkg4c=;
+        b=vwWXL0hnFe42yLqYfEftB7XdQT0Na0qWNJlXF5ywP7c6DFKLkw+2VOP+EJjG9eWcmZ
+         rs2SSRZYU3ZBD9tmJXP+BUQ7rT8rrqIPe2ld9kz76kNkJMftEDct9dZKPXWNkq7QLJh0
+         WoXTHG7ejusb3HrHVB45ylkahK3owmnu/J0HVGpWPrqq4AEJc9XKlzb8zRf4bMFAN+id
+         OrLesnJ+iJY7XtFGqv1s/3HfUWRfmlgsig0E9ZM6YKva10ti4a1R6xd1Lmru5lkVUryH
+         taVem4UKE8v6AxiI96iX2KHGAELr84hBBexyBkSdavfWtK8vKSzi4Qa8lCs3DZwUCrT6
+         5iPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeP2NlHixv1gC8CAm6lRe0+hWw8TWpuwqJ6srIDOscn2bfZHPPsGRCk8gl7DqsAWGeJTRHmWxkHmtpsSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpp/1uA7P17m66Njv1AXqBo1SuW6MAsFirn4nM+lEzgz5Z+IDp
+	yR+2OLTw7fQYykEe5DBhye8vBsnI3hJqPjj9A1dvEv3V2Mnw4hIHMIlpfoqd7DNduzdg7M+O6Xg
+	9wedQVOr97p28FunlrgC+TWsFG+ep+k+6FxkJ90pZ5g==
+X-Gm-Gg: ASbGnctkuonPDCZjo87RXeOA5Xm8pl4n3BFFzauYwhbFrphquLof015HQszi8bLB8Hk
+	afhtf+SZwvmkiNZv5Cp984pYcpq/2o/jzVEM+GDJoISAhBPpqQaicwxUQdAlyCcMUk2/VC72Oxo
+	hRvxx33BejSmjX7AAQx3A9xqdCGyMJpBKmB4ccxH2PWp7KvjIag/ukXw/gUkA8ugwxUpGV/95Xj
+	I+b4nCp
+X-Google-Smtp-Source: AGHT+IEyBIBuDwsQoabSLIFuYTSP2GVcw8ZsYp4a7XKGQP06kR98JNxbf6Hy9h/gvZAWrafrnCbcSntshDLjy87yAe0=
+X-Received: by 2002:a05:690c:3582:b0:6fb:1e5a:fcdd with SMTP id
+ 00721157ae682-717d5da243fmr238268387b3.17.1752579204058; Tue, 15 Jul 2025
+ 04:33:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250611110800.458164-2-angelogioacchino.delregno@collabora.com>
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <CGME20250710122654eucas1p20f1179a9ff22d562d89252f924d34dae@eucas1p2.samsung.com>
+ <20250701114733.636510-22-ulf.hansson@linaro.org> <212a1a56-08a5-48a5-9e98-23de632168d0@samsung.com>
+ <CAPDyKFrPOgWW_=ehCjtqAUR97HoLKmgFNO3bRT50-w6A1LgGFw@mail.gmail.com> <01646690-8964-49c8-bbed-556380844b14@nvidia.com>
+In-Reply-To: <01646690-8964-49c8-bbed-556380844b14@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 15 Jul 2025 13:32:46 +0200
+X-Gm-Features: Ac12FXz0jY1_GsZu3YlFaZh6cekpAdMj0ynTxC6UAWfcpDt3cSNH9q0N_tss-DI
+Message-ID: <CAPDyKFooYFVrzLEqOtwb02iyEf+c6qPB8+Us1--Y-oXbJVG+SQ@mail.gmail.com>
+Subject: Re: [PATCH v3 21/24] pmdomain: core: Leave powered-on genpds on until late_initcall_sync
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Saravana Kannan <saravanak@google.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Hiago De Franco <hiago.franco@toradex.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 11, 2025 at 01:07:58PM +0200, AngeloGioacchino Del Regno wrote:
-> Add a new compatible for the MediaTek MT8196 SoC, fully compatible
-> with MT6765.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
+On Tue, 15 Jul 2025 at 12:28, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> Hi Ulf,
+>
+> On 10/07/2025 15:54, Ulf Hansson wrote:
+> > On Thu, 10 Jul 2025 at 14:26, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >>
+> >> On 01.07.2025 13:47, Ulf Hansson wrote:
+> >>> Powering-off a genpd that was on during boot, before all of its consumer
+> >>> devices have been probed, is certainly prone to problems.
+> >>>
+> >>> As a step to improve this situation, let's prevent these genpds from being
+> >>> powered-off until genpd_power_off_unused() gets called, which is a
+> >>> late_initcall_sync().
+> >>>
+> >>> Note that, this still doesn't guarantee that all the consumer devices has
+> >>> been probed before we allow to power-off the genpds. Yet, this should be a
+> >>> step in the right direction.
+> >>>
+> >>> Suggested-by: Saravana Kannan <saravanak@google.com>
+> >>> Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
+> >>> Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62A,Xilinx ZynqMP ZCU106
+> >>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >>
+> >> This change has a side effect on some Exynos based boards, which have
+> >> display and bootloader is configured to setup a splash screen on it.
+> >> Since today's linux-next, those boards fails to boot, because of the
+> >> IOMMU page fault.
+> >
+> > Thanks for reporting, let's try to fix this as soon as possible then.
+> >
+> >>
+> >> This happens because the display controller is enabled and configured to
+> >> perform the scanout from the spash-screen buffer until the respective
+> >> driver will reset it in driver probe() function. This however doesn't
+> >> work with IOMMU, which is being probed earlier than the display
+> >> controller driver, what in turn causes IOMMU page fault once the IOMMU
+> >> driver gets attached. This worked before applying this patch, because
+> >> the power domain of display controller was simply turned off early
+> >> effectively reseting the display controller.
+> >
+> > I can certainly try to help to find a solution, but I believe I need
+> > some more details of what is happening.
+> >
+> > Perhaps you can point me to some relevant DTS file to start with?
+> >
+> >>
+> >> This has been discussed a bit recently:
+> >> https://lore.kernel.org/all/544ad69cba52a9b87447e3ac1c7fa8c3@disroot.org/
+> >> and I can add a workaround for this issue in the bootloaders of those
+> >> boards, but this is something that has to be somehow addressed in a
+> >> generic way.
+> >
+> > It kind of sounds like there is a missing power-domain not being
+> > described in DT for the IOMMU, but I might have understood the whole
+> > thing wrong.
+> >
+> > Let's see if we can work something out in the next few days, otherwise
+> > we need to find another way to let some genpds for these platforms to
+> > opt out from this new behaviour.
+>
+> Have you found any resolution for this? I have also noticed a boot
+> regression on one of our Tegra210 boards and bisect is pointing to this
+> commit. I don't see any particular crash, but a hang on boot.
 
-Applied patch 1/3, thanks
+Thanks for reporting!
 
--- 
+For Exynos we opt-out from the behaviour by enforcing a sync_state of
+all PM domains upfront [1], which means before any devices get
+attached.
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Even if that defeats the purpose of the $subject series, this was one
+way forward that solved the problem. When the boot-ordering problem
+(that's how I understood the issue) for Exynos gets resolved, we
+should be able to drop the hack, at least that's the idea.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>
+> If there is any debug we can enable to see which pmdomain is the problem
+> let me know.
+
+There aren't many debug prints in genpd that I think makes much sense
+to enable, but you can always give it a try. Since you are hanging,
+obviously you can't look at the genpd debugfs data...
+
+Note that, the interesting PM domains are those that are powered-on
+when calling pm_genpd_init(). As a start, I would add some debug
+prints in () to see which PM domains that are relevant to track.
+Potentially you could then try to power them off and register them
+accordingly with genpd. One by one, to see which of them is causing
+the problem.
+
+Another option could be to add a new genpd config flag
+(GENPD_FLAG_DONT_STAY_ON or something along those lines), that informs
+genpd to not set the genpd->stay_on in pm_genpd_init(). Then
+tegra_powergate_add() would have to set GENPD_FLAG_DONT_STAY_ON for
+those genpds that really need it.
+
+Kind regards
+Uffe
+
+[1]
+https://lore.kernel.org/all/20250711114719.189441-1-ulf.hansson@linaro.org/
 
