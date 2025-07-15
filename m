@@ -1,134 +1,116 @@
-Return-Path: <linux-kernel+bounces-731222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE49B05139
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EF2B05144
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050F23A572C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:49:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DDD94A6B8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1060D2D23BF;
-	Tue, 15 Jul 2025 05:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386EF2D46C6;
+	Tue, 15 Jul 2025 05:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ea1jjHx7"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="KTYrqkRE"
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E684501A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 05:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAD517C77;
+	Tue, 15 Jul 2025 05:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752558597; cv=none; b=CD6Qa2VNpRppSYrgli9qQWbV8mmYtlCF7U/LHQ7poDdIo44/r+gRluHz2YHAz1oesXpJsVWMIRnfm3drgp+XQ1yRahALTLc8pt+PfTSkjydMuH529p33jGflVX10Ru8vlUdV2RAUWondQ12Oga4y4XAlQ3nUR5L6OM/a3WCes9I=
+	t=1752558695; cv=none; b=u7CMMzmmsBxQxFXxdbyVKw0eDkdFkwqUe+ZFKhP9Zh+n0I7esbSCxTM/SwQg18zEHerz08++nwx5mxzJU9mHKMbLN1uUNWjgbU/KsvP3iONWypUHf5bd5RSL3xV3MMOPVNGeMpsJOrIKB5ieQEAeuybRM4fIZtQd8dydNgQHBmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752558597; c=relaxed/simple;
-	bh=LIeyK/2QM2YrkwMZzmOBymmg/tpyPgZFMjUEk6TblII=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fKt9CIPHrjPDFjDMaf+Ext9KIxtzq3wkRscdLZ+J8FZ/uGjbS29WFAIhXsZF8Af6Di00mAUM+SRlfybKxerhNnOwXcavo3MT7hD7g1cDwDOnkS/91xjZDPXYUmzTgCzeHIr9edcjSNt3dSwWw6uYTAQwQgSsIAZZY2Se4eooJr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ea1jjHx7; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <21970a1e-dcda-4c23-af84-553419007a38@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752558582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MCUpv2SK5CMGdJCQSvTooC7yLADWxi2e3sIA550QsOQ=;
-	b=ea1jjHx7uUXost6kJd6a+23CzlToM5nrApGHzh/FsKNBgxvARbj6Y5FQmInJBEm7cHFOmn
-	3za9HMfSTgRCln650pPwm65YM4XDH1aM4joAKHztTEJbkEtTHUJHwTo6hAHYwACp0iurfJ
-	rdGldEgAFXtBCr3u6a26Il63t0c7GeM=
-Date: Tue, 15 Jul 2025 13:48:37 +0800
+	s=arc-20240116; t=1752558695; c=relaxed/simple;
+	bh=s/Dqm28+6crG6/gzftfktkgxOCW1+sxig7bCEYcd7YQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B/8k5sUnD3bu9XbADOLycx1tIYSV4Q5Bk+jqjHwQCtfi0cC4LhNrsUOck6IRN7mFIzL4SrkatQ7uhOX932Y6TFjyJzVBjvzwpeX9Jr82rIpaLnjpbTc+GJ78EtRJaztbAbPA6l0jvWYD4etxmsZR/Ut5JeTYXlKrUz3mDfnT/7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=KTYrqkRE; arc=none smtp.client-ip=43.154.197.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1752558651;
+	bh=uv2frqJmoPkRuUwQWvQxvEoYNkWHtPq5m+Pzp+qcrpw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=KTYrqkREINUqs8IgY3U/3zE4sFhMpQmQNBenCF088PDAn7t22hMQby3+tUBlsOSsu
+	 R/tW+GOQGcYuLWl3oZzlDOaUOPTmXJdu7g05vNY/PNPWBG2oHSS50TyV8PJkrzJRYu
+	 YYeQEUMgSsBHoQPloqRpU04qUkFA4xNwQamvJ75c=
+X-QQ-mid: zesmtpip3t1752558639tf674e097
+X-QQ-Originating-IP: yYCG/tvQnBJ1/jRM0vHDh/yL71Kyn+I4eZmCz0NDYjU=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 15 Jul 2025 13:50:37 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 9200968222009094791
+EX-QQ-RecipientCnt: 15
+From: WangYuli <wangyuli@uniontech.com>
+To: miriam.rachel.korenblit@intel.com,
+	wangyuli@uniontech.com,
+	johannes.berg@intel.com,
+	akpm@linux-foundation.org
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	emmanuel.grumbach@intel.com,
+	yanzhen@vivo.com,
+	shenlichuan@vivo.com,
+	yujiaoliang@vivo.com,
+	colin.i.king@gmail.com,
+	cvam0000@gmail.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH v2 0/2] wifi: iwlwifi: Fix typo "ransport"
+Date: Tue, 15 Jul 2025 13:50:31 +0800
+Message-ID: <949F0ED6008D554F+20250715055031.928947-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2 15/18] libbpf: add skip_invalid and
- attach_tracing for tracing_multi
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Menglong Dong <menglong8.dong@gmail.com>
-Cc: alexei.starovoitov@gmail.com, rostedt@goodmis.org, jolsa@kernel.org,
- bpf@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- linux-kernel@vger.kernel.org
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <20250703121521.1874196-16-dongml2@chinatelecom.cn>
- <CAEf4BzZb793wAXROPNcE_EggfU1U3g80jdDsvP5sr86uDBhgmA@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Menglong Dong <menglong.dong@linux.dev>
-In-Reply-To: <CAEf4BzZb793wAXROPNcE_EggfU1U3g80jdDsvP5sr86uDBhgmA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NSdGlEeiHj67Oiu1A4/vs1WDu18PWxk6FvSIdbkU+lwOa8sNzyHPTLUx
+	6tGcbGRyBYZomY/bOxWg4d0n0btmPoYgWdDoJDKisRKzqygvmiG2wGp8T0wNvdXEXbo6PSN
+	nnkbjgCivg8AhED9+M3IWCSSueW7HIQrrp7M7QWHxK46NbIcT5TCL8tQNJaL18xlA2/Fh5y
+	S2I0WNJqe3iRmKgi43AjQLCbVGbEwAD03piAE4PpDRLayoRar4ZwvPQKzDi6BRzcn+vpw6g
+	pcob/aWHSz1sjfIIJAhKob+xK5ysSnkleEkoO/BFgr5zRj/QHN9oE/QHTkoX7VOv/NOJoak
+	AyaTFU8DQGnKDy67XFUwae2Y2aCuQEu8saO+4KI0PJThn4HYBnWA7u8iSD/fEZFOLWKdtTK
+	zXlLkyvWuBjAUGRg1UR6bGYNQaKbgJROnxoS7zLxYSVgaPu42G1IegSs8BA99+s4MaZhlkp
+	16rbq/m/kzoXJnN+HtWjbOW3SJCNYpHkVC+HUtM2gMgMQzMN9nVcZs9C6iwIcVzciSJW+lP
+	y3m3b3dJ3M5dM8IpgBSCrwU3Nh0t+VgjnwyslTRf2ylz71FpqLF9xnB9f0oZPfT0bzoARg/
+	n+qq/TE7CFLzvmvIXMy+0ApM6LqtQ1E3uu4XFOoiFCb7J98gCQAS8JogovPZoEOMQqQ7G8V
+	lm+YclKE9mcpBPC8zYRFSJ8AARJt/kdZQIEKMnK0HyAQ5uj+wNWtPfbgE8XLBbzLlZzuUGQ
+	LQdzkX3XipyxCJECKVPB+MR6fNX9ovBReUtM41y44pWf8R9eR4KcexhydsexKO6P/sA94i3
+	EoG97zNbN24Ny5M3on58wH9NhzzQkQ7Bcb/1n2/uE/ma3IPbhPHJZ78S9gsh9Ukf4s83DjC
+	hpOpgtlbbGt9ABnK4sSW/L1AWVnKiYEUcZnsCQTYUWUC8PkxectFjWE6pdp5vG51t3E4y+M
+	qToJhqc+pMva/iz/RX5qF37HvIN9a7G9Tv+8HkCA4l4MJ9AvWrG6dvLdDe9oOns2BIzcFBe
+	eumDtTFDqRNb6mhaH6/ZwnicAgxoROBLCj2x5H0uSW/edwQCqO5Fv6pBmnR8Zn3fqq5d0D+
+	Q==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
+There is a spelling mistake of 'ransport' in comments which
+should be 'transport'.
 
-On 7/15/25 06:07, Andrii Nakryiko wrote:
-> On Thu, Jul 3, 2025 at 5:23 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
->> We add skip_invalid and attach_tracing for tracing_multi for the
->> selftests.
->>
->> When we try to attach all the functions in available_filter_functions with
->> tracing_multi, we can't tell if the target symbol can be attached
->> successfully, and the attaching will fail. When skip_invalid is set to
->> true, we will check if it can be attached in libbpf, and skip the invalid
->> entries.
->>
->> We will skip the symbols in the following cases:
->>
->> 1. the btf type not exist
->> 2. the btf type is not a function proto
->> 3. the function args count more that 6
->> 4. the return type is struct or union
->> 5. any function args is struct or union
->>
->> The 5th rule can be a manslaughter, but it's ok for the testings.
->>
->> "attach_tracing" is used to convert a TRACING prog to TRACING_MULTI. For
->> example, we can set the attach type to FENTRY_MULTI before we load the
->> skel. And we can attach the prog with
->> bpf_program__attach_trace_multi_opts() with "attach_tracing=1". The libbpf
->> will attach the target btf type of the prog automatically. This is also
->> used to reuse the selftests of tracing.
->>
->> (Oh my goodness! What am I doing?)
-> exactly...
->
-> Let's think if we need any of that, as in: take a step back, and try
-> to explain why you think any of this should be part of libbpf's UAPI.
+This typo was not listed in scripts/spelling.txt, thus it was more
+difficult to detect. Add it for convenience.
 
-I know it's weird. The "attach_tracing" is used for selftests, which I can
-use something else instead. But the "skip_invalid" is something that we
-need.
+Link: https://lore.kernel.org/all/03DFEDFFB5729C96+20250714104736.559226-1-wangyuli@uniontech.com/
 
-For example, we have a function list, which contains 1000 kernel functions,
-and we want to attach fentry-multi to them. However, we don't know which
-of them can't be attached, so the attachment will fail. And we need a way to
-skip the functions that can't be attached to make the attachment success.
+WangYuli (2):
+  wifi: iwlwifi: Fix typo "ransport"
+  scripts/spelling.txt: Add ransport||transport to spelling.txt
 
-This should be a common use case. And let me do more research to see if
-we can do such filter out of the libbpf.
+ drivers/net/wireless/intel/iwlwifi/dvm/agn.h | 2 +-
+ scripts/spelling.txt                         | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Thanks!
-Menglong Dong
+-- 
+2.50.0
 
-
->
->> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
->> ---
->>   tools/lib/bpf/libbpf.c | 97 ++++++++++++++++++++++++++++++++++++------
->>   tools/lib/bpf/libbpf.h |  6 ++-
->>   2 files changed, 89 insertions(+), 14 deletions(-)
->>
-> [...]
->
 
