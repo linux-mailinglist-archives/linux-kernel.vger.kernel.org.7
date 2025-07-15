@@ -1,176 +1,147 @@
-Return-Path: <linux-kernel+bounces-731354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725E9B05330
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:30:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58BCAB05322
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FD6F7A1FD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8571C218DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4925A26E710;
-	Tue, 15 Jul 2025 07:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="N4y/hDES"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C9927466F;
+	Tue, 15 Jul 2025 07:23:17 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D75525E813
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E182356BC;
+	Tue, 15 Jul 2025 07:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752564161; cv=none; b=eYZpYFyvQv+2iaS6c7HFJ5YlioHfZhH1Haij0prNd2ezgYiScv15fSe3TlQC49ks9zObAQmCJ004DiZkkjbAjf8sLZDwutCTf7304TFRsT3lk/2o2bi/y2KmHHxZ0Jol7edBgYSTApq5w4VGofNdbYA7AOFHg/fd51pLvPbsy+k=
+	t=1752564197; cv=none; b=Ro6Zzg8CWlwEjRLM5W5Z2WpImTLlj1aw4JjQ5wwyuJb9B9lXIF+9AwsU3SWhgQbT0079w3QWaEnGZE5iZTLiqql6efBD7BIp68ce5s3niRqFw82nAxUiHyRvVUuI0iT+2wZA2SrooYKpu4rRUh1bTLvBYIs+zitNT6LhAW8TX6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752564161; c=relaxed/simple;
-	bh=9OHKks1tYHDu0M84E3pDg2s5fX4oG+ZAcZqnElV1ME0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6uyaH4LWH27fQRsc+6CM8MeGT0kHR6vHlXdH2EMHwgZ/LvAxoNi4zfQmlk2+riA24lpN85cT1rjdnBMOq71hV2IudSQwWd8WOzn4PWHCY19mTIx0HU2gbVCjSPmoFAyasBQxSsxQfM1xSzPFRQO1pcOP5re0R6fM1MLJ617vKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=N4y/hDES; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso4335140b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:22:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752564157; x=1753168957; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QoMlosN0pfoGTrSa0yltZrSMjbkFfVMdsv/yBkAd/nI=;
-        b=N4y/hDESVIJlzmI6tyNmeT7skgf1KhsR1W2C7mn/9U4VxEcTlKIyz99vz+ug+MjFbJ
-         9iXOP7xBpKE2fXdRI2li2wLYwgVeqfMGqM5CUZz3TKkskCdINkpNtNPXUvkoQ4XmjQ5e
-         v4YK2rXiW1nJCnZlNCOEnK0oEtnsgHi5jWhAbXnHLRtJkCw6l0Grtre3GyQL9FZo6TYd
-         w1bdbqypqiKc/5jpGwk7TUip9vs4POx2VczQlfoVb7iKmE6elinMi9hCVCUljG5JEDsl
-         g5GZicqDA9TPn4hs4tlLAROhHuVeE8gxzuDoF7g4YHZyJL6oLaErAumplk6gMBOTM5m3
-         BhZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752564157; x=1753168957;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QoMlosN0pfoGTrSa0yltZrSMjbkFfVMdsv/yBkAd/nI=;
-        b=p8CsMjCSQE+svry2aipKAvP6QbiHoqS9E5sdecvg4D+VzWzFtS20JOJ6ZKeODQSTF4
-         BAcP7Oe/nsNpqxBVihboLyRpBhqk6BUWhtd0Zvud9nIP9OohDdwoXDrbBptN/q3jlE66
-         j45M7tuZTXKaVauHt1uILX1h2YqSNrBGWweblXkII3a0qRWL81ni2bbVazPFjDi3IOxL
-         e9xBctxaS8vvS+YzyINFWyjtDnUclSZKl0H+dCUR2dPWCmWWlM+GYyOsxqe7QMABzXhn
-         WSfCWBjVbVBePi/oz+1rWN3qC/vpFH8KD8keq69bMqP/7OViasyNBLLfWPR2Bm6TQWRN
-         7ueg==
-X-Gm-Message-State: AOJu0Yw+V0F2hp1w/bqEDtp619dEmF9+lo56WelsEFcotRf0KMBVlDwP
-	R1aMLQoGDDVy0tdFkrsH8zEPMBFq0SLDuMBPxKbO6OuU9Q+tkun+PWyPQ58VoBxfNw==
-X-Gm-Gg: ASbGncvuTHGnqPyhYoRBlZboSJiXb8qUCjKigTIzZl6ZONcPrgXUf6Z1AKg1e9oLoJL
-	dCuJCF87YWV20aV5XIiU7FwXYwVCE1AQiGMsJgD5/IVYohEyNkW2wwnxVJ9IQLkxGtKyxuzyGh5
-	2FdFdAFlctqralVh9P6Jg2ntBIzA5k+G75dAvk0tdVeRtagt+YkE22w4PLjWeqCsd7sdJAg2XRm
-	59WYuZyYKPiZy08EyWJKxj+3S8VEot3UOlLGYPMyfNdKUbOaMJL0x5UAe7seierWxhTbzzjGO2v
-	4TVzxOGyon9N9BXLt86NY5zKMrsC4dVCKJrDa7SB2bv87taIofo69MG/XK/TmTYx6V45teCDiNK
-	+eF0X0M3jonUixH0yWHkBZIZyI5P1qcwa6IOj1RYBuzU=
-X-Google-Smtp-Source: AGHT+IFm5qVCNXQtsiJ9VhxpQrQNrBXDXzTZNybDWeX2bPBvYqpzUKl/rmxMWqHBD2o4M1HrtEE62Q==
-X-Received: by 2002:a05:6a21:c98:b0:220:2a63:732f with SMTP id adf61e73a8af0-231369572d4mr24618463637.19.1752564157158;
-        Tue, 15 Jul 2025 00:22:37 -0700 (PDT)
-Received: from bytedance ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9e064a9sm11473323b3a.47.2025.07.15.00.22.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 00:22:36 -0700 (PDT)
-Date: Tue, 15 Jul 2025 15:22:18 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>
-Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>
-Subject: Re: [PATCH v3 0/5] Defer throttle when task exits to user
-Message-ID: <20250715072218.GA304@bytedance>
-References: <20250715071658.267-1-ziqianlu@bytedance.com>
+	s=arc-20240116; t=1752564197; c=relaxed/simple;
+	bh=lml+OoGdyoRK+hmvByrWxM0CD5HdufSCxdLKr+WWkXY=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rzSUdA8GtYT2kgHW3JMsKry/NfscNcsCCvHwXrBlkwVDyTmYgP1PXSi/i+Q/UlW7DJbaH15ybBW0v8zzR6ge1Vwq6hWfyySOZ+BjPfeWwUzMiBNpqSXLPxG2xPkF8gVNMzG+gayG0/MMvEP05HtApxqSMB3l83tYR82re8ELLq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bh9Xm4DjszHrSx;
+	Tue, 15 Jul 2025 15:19:04 +0800 (CST)
+Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
+	by mail.maildlp.com (Postfix) with ESMTPS id 578281401F3;
+	Tue, 15 Jul 2025 15:23:11 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ dggpemf500015.china.huawei.com (7.185.36.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Jul 2025 15:23:10 +0800
+Subject: Re: [PATCH v5 2/3] migration: qm updates BAR configuration
+To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@openeuler.org>, <herbert@gondor.apana.org.au>, Linux Crypto Mailing
+ List <linux-crypto@vger.kernel.org>
+References: <20250630085402.7491-1-liulongfang@huawei.com>
+ <20250630085402.7491-3-liulongfang@huawei.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <7694ee87-2852-3759-1360-6349f46e7d70@huawei.com>
+Date: Tue, 15 Jul 2025 15:23:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="DfAmlKlPMWEzvqPH"
-Content-Disposition: inline
-In-Reply-To: <20250715071658.267-1-ziqianlu@bytedance.com>
+In-Reply-To: <20250630085402.7491-3-liulongfang@huawei.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500015.china.huawei.com (7.185.36.143)
 
+On 2025/6/30 16:54, Longfang Liu wrote:
+> On new platforms greater than QM_HW_V3, the configuration region for the
+> live migration function of the accelerator device is no longer
+> placed in the VF, but is instead placed in the PF.
+> 
+> Therefore, the configuration region of the live migration function
+> needs to be opened when the QM driver is loaded. When the QM driver
+> is uninstalled, the driver needs to clear this configuration.
+> 
+> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+> ---
+>  drivers/crypto/hisilicon/qm.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>
 
---DfAmlKlPMWEzvqPH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hello, Herbert. There is a patch in this patchset that modifies the crypto subsystem.
+Could you help review it?
 
-On Tue, Jul 15, 2025 at 03:16:53PM +0800, Aaron Lu wrote:
-> - A stress test that creates a lot of pressure on fork/exit path and
->   cgroup_threadgroup_rwsem. Without this series, the test will cause
->   task hung in about 5 minutes and with this series, no problem found
->   after several hours. Songtang wrote this test script and I've used it
->   to verify the patches, thanks Songtang.
+Thanks.
+Longfang.
 
-Test scripts attached.
-
---DfAmlKlPMWEzvqPH
-Content-Type: application/x-sh
-Content-Disposition: attachment; filename="cg.sh"
-Content-Transfer-Encoding: quoted-printable
-
-#!/bin/bash=0A#=0A# Author: Songtang Liu <liusongtang@bytedance.com>=0A#=0A=
-# This script moves tasks around different cgroups to create pressure on cg=
-roup_threadgroup_rwsem.=0A# Run this script as root with two params represe=
-nting two cgroup names, with each cgroup having=0A# a 16cpu quota so the VM=
- has to have more than 32 vCPUs. Run it like this:=0A# #./cg.sh s1 s2=0A=0A=
-=2E/test.sh $1 &=0At1=3D$!=0A=0A./test.sh $2 &=0At2=3D$!=0A=0Acleanup() {=
-=0A	echo "Cleaning up..."=0A	kill -s SIGINT $t1 $t2 $sleep_test $cat_test=
-=0A	killall test.sh=0A	pids=3D$(pgrep stress-ng)=0A	kill $pids=0A	killall c=
-g.sh=0A	exit=0A}=0Atrap cleanup SIGINT=0A=0ACG=3D/sys/fs/cgroup=0ACG1=3D${C=
-G}/$1=0ACG2=3D${CG}/$2=0A=0A# move tasks around cgroups=0Awhile true; do=0A=
-	list1=3D$(cat ${CG1}/cgroup.procs)=0A	list2=3D$(cat ${CG2}/cgroup.procs)=
-=0A	for pid in $list1; do=0A		# echo $pid  ${CGROUP_PATH}/cgroup.procs ${CG=
-ROUP_ROOT}/cgroup.procs=0A		echo "move $pid to CG2"=0A		echo $pid > ${CG2}/=
-cgroup.procs 2>&1=0A	done=0A=0A	for pid in $list2; do=0A		# echo $pid  ${CG=
-ROUP_PATH}/cgroup.procs ${CGROUP_ROOT}/cgroup.procs=0A		echo "move $pid to =
-CG1"=0A		echo $pid > ${CG1}/cgroup.procs 2>&1=0A	done=0Adone=0A
---DfAmlKlPMWEzvqPH
-Content-Type: application/x-sh
-Content-Disposition: attachment; filename="test.sh"
-Content-Transfer-Encoding: quoted-printable
-
-#!/bin/bash=0A=0A# Author: Songtang Liu <liusongtang@bytedance.com>=0A#=0A#=
- This script creates a lot of pressure in fork/exit path as well as some ot=
-her paths in kernel mode.=0A# Called by cg.sh, see cg.sh's comments.=0A=0AC=
-GROUP_ROOT=3D"/sys/fs/cgroup"=0ACGROUP_NAME=3D$1=0ACGROUP_PATH=3D"${CGROUP_=
-ROOT}/${CGROUP_NAME}"=0Acleanup() {=0A	echo "Cleaning up..."=0A	kill $sleep=
-_pid $WRITE_PID $CPU_PID $FORK_PID $NETLINK_PID $READ_PID $MOVE_PID $TEST_P=
-ID  2>/dev/null=0A	pids=3D$(cat "${CGROUP_PATH}/cgroup.procs")=0A	for pid i=
-n $pids; do=0A		kill $pid 2>/dev/null=0A	done=0A	pids=3D$(pgrep stress-ng)=
-=0A	kill $pids=0A	rmdir $CGROUP_PATH=0A	exit=0A}=0Atrap cleanup SIGINT=0A=
-=0Amkdir -p $CGROUP_PATH=0Aecho "+cpu +memory +pids" > $CGROUP_ROOT/cgroup.=
-subtree_control=0Aecho "1600000 100000" > ${CGROUP_PATH}/cpu.max=0Aecho "34=
-G" > ${CGROUP_PATH}/memory.max=0Aecho $$ > ${CGROUP_PATH}/cgroup.procs=0A=
-=0Awhile true; do=0A	echo $$ > ${CGROUP_PATH}/cgroup.procs=0A	stress-ng --v=
-m 16 -t 60h --vm-bytes 2G --aggressive >/dev/null 2>&1=0Adone &=0AMEM_PID=
-=3D$!=0A=0Asleep 1000000000 &=0Asleep_pid=3D$!=0Awhile true; do=0A	echo $sl=
-eep_pid > ${CGROUP_PATH}/cgroup.procs &=0A	echo $sleep_pid > ${CGROUP_ROOT}=
-/cgroup.procs &=0Adone &=0AWRITE_PID=3D$!=0A=0Aclass=3Dnetwork=0A# class=3D=
-os=0Awhile true; do=0A	echo $$ > ${CGROUP_PATH}/cgroup.procs=0A	stress-ng -=
--class $class --all 0 -t 1 --aggressive  &>/dev/null=0Adone &=0A=0Awhile tr=
-ue; do=0A	echo $$ > ${CGROUP_PATH}/cgroup.procs=0A	stress-ng --class $class=
- --all 0 -t 1 --aggressive  &>/dev/null=0Adone &=0A=0Awhile true; do=0A	ech=
-o $$ > ${CGROUP_PATH}/cgroup.procs=0A	stress-ng --class $class --all 0 -t 1=
- --aggressive  &>/dev/null=0Adone &=0A=0Awhile true; do=0A	echo $$ > ${CGRO=
-UP_PATH}/cgroup.procs=0A	stress-ng --class $class --all 0 -t 1 --aggressive=
-  &>/dev/null=0Adone &=0A=0Astress-ng --class $class --all 0 -t 1 --aggress=
-ive  &>/dev/null=0A=0A# stress-ng --class $class --all 0 -t 60m --aggressiv=
-e  &>/dev/null=0ANETLINK_PID=3D$!=0Awhile true; do=0A	echo $$ > ${CGROUP_PA=
-TH}/cgroup.procs=0A	stress-ng --fork 1000 -t 1 --aggressive &>/dev/null=0Ad=
-one &=0ATEST_PID=3D$!=0A=0Astress-ng --fork 1000 -t 60h --aggressive &>/dev=
-/null=0A=0A# while true; do=0A#   echo $$ > ${CGROUP_PATH}/cgroup.procs=0A#=
-   ssh -t root@10.37.89.113 "cat /proc/cgroups"  > /dev/null=0A# done &=0A=
-=0Await=0A
---DfAmlKlPMWEzvqPH--
+> diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
+> index d3f5d108b898..0a8888304e15 100644
+> --- a/drivers/crypto/hisilicon/qm.c
+> +++ b/drivers/crypto/hisilicon/qm.c
+> @@ -242,6 +242,9 @@
+>  #define QM_QOS_MAX_CIR_U		6
+>  #define QM_AUTOSUSPEND_DELAY		3000
+>  
+> +#define QM_MIG_REGION_SEL		0x100198
+> +#define QM_MIG_REGION_EN		0x1
+> +
+>   /* abnormal status value for stopping queue */
+>  #define QM_STOP_QUEUE_FAIL		1
+>  #define	QM_DUMP_SQC_FAIL		3
+> @@ -3004,11 +3007,36 @@ static void qm_put_pci_res(struct hisi_qm *qm)
+>  	pci_release_mem_regions(pdev);
+>  }
+>  
+> +static void hisi_mig_region_clear(struct hisi_qm *qm)
+> +{
+> +	u32 val;
+> +
+> +	/* Clear migration region set of PF */
+> +	if (qm->fun_type == QM_HW_PF && qm->ver > QM_HW_V3) {
+> +		val = readl(qm->io_base + QM_MIG_REGION_SEL);
+> +		val &= ~BIT(0);
+> +		writel(val, qm->io_base + QM_MIG_REGION_SEL);
+> +	}
+> +}
+> +
+> +static void hisi_mig_region_enable(struct hisi_qm *qm)
+> +{
+> +	u32 val;
+> +
+> +	/* Select migration region of PF */
+> +	if (qm->fun_type == QM_HW_PF && qm->ver > QM_HW_V3) {
+> +		val = readl(qm->io_base + QM_MIG_REGION_SEL);
+> +		val |= QM_MIG_REGION_EN;
+> +		writel(val, qm->io_base + QM_MIG_REGION_SEL);
+> +	}
+> +}
+> +
+>  static void hisi_qm_pci_uninit(struct hisi_qm *qm)
+>  {
+>  	struct pci_dev *pdev = qm->pdev;
+>  
+>  	pci_free_irq_vectors(pdev);
+> +	hisi_mig_region_clear(qm);
+>  	qm_put_pci_res(qm);
+>  	pci_disable_device(pdev);
+>  }
+> @@ -5630,6 +5658,7 @@ int hisi_qm_init(struct hisi_qm *qm)
+>  		goto err_free_qm_memory;
+>  
+>  	qm_cmd_init(qm);
+> +	hisi_mig_region_enable(qm);
+>  
+>  	return 0;
+>  
+> 
 
