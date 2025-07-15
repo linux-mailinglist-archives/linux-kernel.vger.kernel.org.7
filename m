@@ -1,64 +1,63 @@
-Return-Path: <linux-kernel+bounces-731124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCCDB04F69
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:46:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43199B04F78
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 571DF7AD102
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941A7188B397
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94902D3229;
-	Tue, 15 Jul 2025 03:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F8F13A86C;
+	Tue, 15 Jul 2025 03:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcY3U8Hx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgLhBWlZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E522D239D;
-	Tue, 15 Jul 2025 03:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4323E22083;
+	Tue, 15 Jul 2025 03:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752551136; cv=none; b=nKo+i3RiaDKFN2dTGfisTfRXnZyDtZivvYaRzmrbRSuf93ovHQipItUrC9xgoVb8TFoYqlznQ+oxQhxfxrmu2BrsSNgZK8QwT4YloeQv0NffpI9Wg36mzY3smJaJ4XzElWFHBztRsRgSzlwIPrmTgkNb2RW5GYEPvoSjZ2qPjDY=
+	t=1752551247; cv=none; b=Zlyy8v+gcORVabX1UQQFQE4twme0N9KLY314mDEpuSOryArn5uQc7KKYtWIAQ1F6XXpKs+ojt7F5SxQPMfhmvBhCbmY3VGZpSGGqFEMqhzPPjScZBVVd770qbdMx07G0YR3vWFjdHKTY+HoHokIjbT1BZhtlE+hHEgjnnsF2JAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752551136; c=relaxed/simple;
-	bh=elGNN/7GREr5t/sTwb+Cm6955F1QyvllRbGLbNSu6vA=;
+	s=arc-20240116; t=1752551247; c=relaxed/simple;
+	bh=12yOS5w3zvP7gRZYvJwK3Olm8xl1UxeySSyPh3qCq0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mh+DD+ssXRVnK3FQm524Xfsc8pZg0IHL6DHjg+wB70zDmoM1VZvJdCFwm3LSg2falzHqTs9Lvf4w09/wJORo/Dq3IjigCu1uyw34avyfbe+1G+HTTBUAeEx5KLQ0vRMI4MUTApiVpS9CTNfp1tsXrDluZzgH/jxn0RHLAOrEJQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcY3U8Hx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C9F2C4CEE3;
-	Tue, 15 Jul 2025 03:45:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rXmnMYQmLp3awChJzK/aAW6D3O9oQQOEqb8WRxCRxnJCd+a/F2+owwQhLjIFChzpR2SBGiHBqXO2mLg/lX7n1h5fo+4ct3IOQb1szzEtOwiPhS3pwpmqY6mGUh7KCb7j/jxyG3O8KXQOUOaNXvji7b9or0kL/PAYBA8364c0lAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgLhBWlZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A96D2C4CEE3;
+	Tue, 15 Jul 2025 03:47:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752551134;
-	bh=elGNN/7GREr5t/sTwb+Cm6955F1QyvllRbGLbNSu6vA=;
+	s=k20201202; t=1752551246;
+	bh=12yOS5w3zvP7gRZYvJwK3Olm8xl1UxeySSyPh3qCq0U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jcY3U8Hxj+NyN3DitDeH/2XPSk2vRa49Q01aMRN9C/L4A1tTY96j8+Vf1I78Yfghu
-	 D8y5521xRvUwssBl9afbadX+xI0UdBW0amxz7p3HpOPzn5d5Yomuwm0ed9UHFXnxCp
-	 JK/t/oec1rZhd2uDWJPogmwIk6oNe/mfOQ6fpfa8q53PHMQZ09K/Uj47DGZa+wrlU0
-	 XUqbyB0aBbK6sS2Xn+PvSWIFkxkfRZpSooexnkQAR5ZqLmYb1CHDfK88nu8u+7WA8q
-	 9qq9BZZkdQZdzJzno2R4SuOY2E+Wu0VDH3vBLYYq2DxcMbzgL0hbbgib2q7frsK0Co
-	 MT+60iMC4rb+w==
-Date: Mon, 14 Jul 2025 22:45:33 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Guodong Xu <guodong@riscstar.com>
-Cc: dmaengine@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vivian Wang <wangruikang@iscas.ac.cn>,
-	Alex Elder <elder@riscstar.com>,
+	b=sgLhBWlZ2Mauehpu8aGzF9KrmtJoSurEm8hH2749q20I71P40MH0aPd/WfsQhYz6N
+	 +G/YTFIuA3n8eLcLCCahDqqRuuVuNS57Op6cc63aLSR2h9e1poed9vzmfjpGfB5+0V
+	 YbGk7le0pFjUfR+Z98zX+QYEHL4IITqH5lr4JhxdZHujOLur/MDcu0PqmIVoMiE38p
+	 fn6c08VISRiUbo36RksMMtq01q44GRaSziX4ubdWgkpSBP2AERljiam43mw9o1nueD
+	 aPoCF2PSnSRQ8mVP2NikcGARYWGyR0w6tCZnhaArAxjfwp/MWg7unRzXu5GXkA3p56
+	 pHCTFhMnlr/Lw==
+Date: Mon, 14 Jul 2025 22:47:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Conor Dooley <conor+dt@kernel.org>, Alexandre Ghiti <alex@ghiti.fr>,
-	Vinod Koul <vkoul@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	linux-riscv@lists.infradead.org,
-	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Subject: Re: [PATCH v3 1/8] dt-bindings: dma: Add SpacemiT K1 PDMA controller
-Message-ID: <175255113305.1485.18050987625765048681.robh@kernel.org>
-References: <20250714-working_dma_0701_v2-v3-0-8b0f5cd71595@riscstar.com>
- <20250714-working_dma_0701_v2-v3-1-8b0f5cd71595@riscstar.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
+ video codec
+Message-ID: <20250715034725.GA1691-robh@kernel.org>
+References: <20250714-sm8750-iris-v1-0-3006293a5bc7@linaro.org>
+ <20250714-sm8750-iris-v1-1-3006293a5bc7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,20 +66,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714-working_dma_0701_v2-v3-1-8b0f5cd71595@riscstar.com>
+In-Reply-To: <20250714-sm8750-iris-v1-1-3006293a5bc7@linaro.org>
 
+On Mon, Jul 14, 2025 at 03:41:16PM +0200, Krzysztof Kozlowski wrote:
+> Add binding for Qualcom SM8750 Iris video codec, which comes with
+> significantly different powering up sequence than previous SM8650, thus
+> different clocks and resets.  For consistency keep existing clock and
+> clock-names naming, so the list shares common part.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/media/qcom,sm8750-iris.yaml           | 186 +++++++++++++++++++++
+>  1 file changed, 186 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8750-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8750-iris.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..e767ebae7c4022d406d61a7bf606b8d878d8632e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,sm8750-iris.yaml
+> @@ -0,0 +1,186 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,sm8750-iris.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm SM8750 SpC Iris video encoder and decoder
 
-On Mon, 14 Jul 2025 17:39:28 +0800, Guodong Xu wrote:
-> Add device tree binding documentation for the SpacemiT K1 PDMA
-> controller.
-> 
-> Signed-off-by: Guodong Xu <guodong@riscstar.com>
-> ---
-> v3: New patch.
-> ---
->  .../devicetree/bindings/dma/spacemit,k1-pdma.yaml  | 68 ++++++++++++++++++++++
->  1 file changed, 68 insertions(+)
-> 
+SpC? Or SoC...
+
+With that defined or fixed,
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
