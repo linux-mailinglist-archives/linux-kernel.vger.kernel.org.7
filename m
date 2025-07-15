@@ -1,209 +1,276 @@
-Return-Path: <linux-kernel+bounces-731304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59621B05274
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:13:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38FBB05278
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA0EB3BE03D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA19C1AA58E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DB926E706;
-	Tue, 15 Jul 2025 07:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3F226E718;
+	Tue, 15 Jul 2025 07:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CqksxLSW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fGVxSsnO"
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2461F0E47;
-	Tue, 15 Jul 2025 07:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684DC1C8FBA;
+	Tue, 15 Jul 2025 07:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752563571; cv=none; b=FxqAAx6ko9WPJfWTCHf/KdMoxXVl+RtpKW+/MqZGufi5ehV4hnmBr/EVqa7fNNTbsQCiyPWd82R/36L1/IfXYMMwZJL8ZpqTpzl7iz74wKj3Skk72efxpUGN7f9is4MnqxUJaV6aUqkZGUYdIM1AjhdUAS44rpUJoz+mqn7uYGE=
+	t=1752563627; cv=none; b=gl+eXotel5ceMpmloUYRtMFRnmalfB3wTAYNE1AGMIFBZeJeLEBpXXJh2kRQs+9YX9uAL3Cp27mPmeSJmh/MNwzjAXsNJaPJiRgd+rg28zHg7tL1KbDrXXBg9mkwxk+UOu8mM/V5hCanLTP5CVnPlb9RS5Sa26hNDeJGqWDO0P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752563571; c=relaxed/simple;
-	bh=rZPRty/lSCX5vm6yrv0Hu71JqpZY3WP2TgGV7xhvpYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hYh/7V9cVtz1jP9rf8MD1SDwCoyUd/NDGKXUEnQSQgvxt1bl2L317ohN99sX/RxEFoLKiFo+zoHfLEl9X6Lh2hMOg4DXv8gfBaxbo6RS+tETVpqrNLCmgPckSvITwc/3db2pVw59GeG9vI+bdIBd8JogyDYhcLGGQcBjf7iHBCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CqksxLSW; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752563569; x=1784099569;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rZPRty/lSCX5vm6yrv0Hu71JqpZY3WP2TgGV7xhvpYY=;
-  b=CqksxLSWCJE1i4581AZuXU0cPRC6Eh2JVFT1hoEeLAO/8Nfeitf/Nyfu
-   CYNGZcEroAVrnx6yLs4vzreBNRGp7EB31BTMFnoXERX1X3rk4NzTffK7x
-   0Wq2Zo/uQYnutozYZ+wFsqBi/ZhWfsfHxMqsi5Syp18tk5Q8pSNkvO+ds
-   uilTaXPN4PoXh0KBGHAlW2S9U+KLLlI0b828t4PUdGfNLjAPoTkPwx2tI
-   vNBWaXuxEKdR0BqVAVI1sHwe/0x8nYBKJ8Z6RzkIuVvCmW44rbJO4LPlf
-   HHsfRmM+zR/K6Q6NOFrXh5zaIGcH4BHE2MopM9w9FspxzxCk02ttxUAlj
-   g==;
-X-CSE-ConnectionGUID: n6hTX3vHS6eul1PT+nFWrw==
-X-CSE-MsgGUID: VcRguCZhQoKyI1qK5tmQXg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54744391"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54744391"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:12:48 -0700
-X-CSE-ConnectionGUID: 6Ae7C+vXQjqMjY7x8zb8Fw==
-X-CSE-MsgGUID: BtQsFqauS320gUsLpOn0xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="162693322"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:12:44 -0700
-Date: Tue, 15 Jul 2025 09:11:40 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Lama Kayal <lkayal@nvidia.com>
-Subject: Re: [PATCH net-next 4/6] net/mlx5e: SHAMPO, Cleanup reservation size
- formula
-Message-ID: <aHX/LMSuUBG3X5Ph@mev-dev.igk.intel.com>
-References: <1752471585-18053-1-git-send-email-tariqt@nvidia.com>
- <1752471585-18053-5-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1752563627; c=relaxed/simple;
+	bh=3tRzF+eAG69iCFJsLHqK7qCIOSv/sCoudEUDZNrr2KA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DBH4P+mU3WzfTegDzwyMOqnX0o0cPvXuVe9NhgUa0kyt5chXjWcWMqkcIRc/azElhOYIrSl0G+Ec9FM93j1dJ4qPWXJv+hBqXJj/yEFazI5ill9B2NvJ3wpfdTIPD+MlxAKxTGOf3X3rjg/sg6YVCb3uSYSQwzABipxzsQd+9cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fGVxSsnO; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1752563604;
+	bh=RFKqX/8jGLZ0gCM1lRc1v1zeuP3fiXSjkW615zWkF/8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=fGVxSsnOyLb+URLacjA1Sd3bbCsbyuEhRq1fqx/9kf9hxKAfgwJglUml0EAcf66lr
+	 qP5bwH2xTPNO89oJgiIGSIe7rO7+BstjN+GEPqloQKhHWEeVxqnQCBXEKNUyVVL6S2
+	 Zn3uC07ASOaEv2fW+Hoe7yFbmdxKoXTBgjiZK0Vc=
+X-QQ-mid: zesmtpip3t1752563587t54e86ea1
+X-QQ-Originating-IP: LAPbbLpI8/WwODO7cz/sB4Ix6FIzw86cgmvoh1lVP0U=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 15 Jul 2025 15:13:02 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 14369993403465055196
+EX-QQ-RecipientCnt: 63
+From: WangYuli <wangyuli@uniontech.com>
+To: seanjc@google.com,
+	pbonzini@redhat.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	marcin.s.wojtas@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	arend.vanspriel@broadcom.com,
+	ilpo.jarvinen@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	jgross@suse.com,
+	sstabellini@kernel.org,
+	oleksandr_tyshchenko@epam.com,
+	akpm@linux-foundation.org
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wangyuli@uniontech.com,
+	ming.li@zohomail.com,
+	linux-cxl@vger.kernel.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	netdev@vger.kernel.org,
+	kvalo@kernel.org,
+	johannes.berg@intel.com,
+	quic_ramess@quicinc.com,
+	ragazenta@gmail.com,
+	jeff.johnson@oss.qualcomm.com,
+	mingo@kernel.org,
+	j@jannau.net,
+	linux@treblig.org,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-serial@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	shenlichuan@vivo.com,
+	yujiaoliang@vivo.com,
+	colin.i.king@gmail.com,
+	cvam0000@gmail.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH] treewide: Fix typo "notifer"
+Date: Tue, 15 Jul 2025 15:12:45 +0800
+Message-ID: <B3C019B63C93846F+20250715071245.398846-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1752471585-18053-5-git-send-email-tariqt@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NYOnBmlw6PSq7qfgCwz2XzMxcZWmpyFzt+hN2mg3FQguPczQComUKfYl
+	M7q60PKhl/wMTk5Pm+ZTCDiwSKGwzwMxD/w72ijm5S+exZ3ncEpCpzp2Jf//EAQ/xmUvVoj
+	VLbP0vvUBmRAGQbmOvmCDAeotInA+zVGcBsLXuPJVK7auy9s0tx9J9buR3544TvcV7/yS+N
+	2G4KWGv/ipIcm3pj75vvZzf9tbcMXJ9xc/jG5P3WaLqO62zwWvBCnCSVsBbTXw+rRNAbOIV
+	7O6yYK3hMj0IZwjWi5xNWFgb4yQX3YvFnWk9XCUHOg+uJt+viSpjX+3xc69yZ4lxjoPTxEM
+	E04uhaZwMh4X6dfJqcIiCuCgGfYf7hzUSzvvpfFjEgFsevtOYn8GlHIf5XQ7fVn5FEn3vGO
+	krc2zuOG/G7yJGLDyV9daWLGLjP6E1H2Ni5NP5x2Yu9c6jrMJs3f6kWWKZLp0QzKwqB5911
+	IVUskZCsApQ5n7c8ROTA22tL4kCGJohhx75NQdsB/FG06QSl5+Kc5XDWSdgDMqaVE3UPRp7
+	bN3EuXL50PHvt2Eyynqi7RRjin9ueCW5vaQc2E+IXnuXf8zNfes0ofjBbKk3YPzFLbjv/j/
+	AhhnpgvDuHiUyXkOWLBXc1Ov1RnNGw176r2M/Rqb2VsJgpBa+giL/mwrkXOvVQYgqWVHm+m
+	GMrVAAkc6zgFQlCBDoOQw6RK6bhd39P0DIojV3Z8LaNFCVllqb6A7FlWXyt7Fmor4FYflXR
+	LVcHcnV3Iunc3TmGGs3ySUoND+WnQ5DJReExzQK2auKTVvjnOHu34VrtkZWNqGrVSHWqJrG
+	iSKqa7mfBOloXR4ak/oiJId7tqLd/iFL0qDFPAXHMrCiFGkDjQYSHRBOGgbny4ffufHeyKq
+	+rByfMK4770/JGnjKbuJcopzKzSDmiGDCMq4q7EEALyZw9zXySgeUDiAL3L6EHxh1iG/0Na
+	C6dtgfKvngjxElogxtL5HYu9lD95iR1HVEyQ5k3+9zxOu5bPkJTZ6mmIcxEICbl5I53n0d8
+	8UxpAgPwKjUHN1AQU8A3jWB4I3mXxYLZBr83kg7uMYUmsysjYJ
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Jul 14, 2025 at 08:39:43AM +0300, Tariq Toukan wrote:
-> From: Lama Kayal <lkayal@nvidia.com>
-> 
-> The reservation size formula can be reduced to a simple evaluation of
-> MLX5E_SHAMPO_WQ_RESRV_SIZE. This leaves mlx5e_shampo_get_log_rsrv_size()
-> with one single use, which can be replaced with a macro for simplicity.
-> 
-> Also, function mlx5e_shampo_get_log_rsrv_size() is used only throughout
-> params.c, make it static.
-> 
-> Signed-off-by: Lama Kayal <lkayal@nvidia.com>
-> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/en.h  |  5 +--
->  .../ethernet/mellanox/mlx5/core/en/params.c   | 34 +++++++------------
->  .../ethernet/mellanox/mlx5/core/en/params.h   |  4 ---
->  3 files changed, 15 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en.h b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> index 64e69e616b1f..019bc6ca4455 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> @@ -85,8 +85,9 @@ struct page_pool;
->  #define MLX5E_SHAMPO_WQ_HEADER_PER_PAGE (PAGE_SIZE >> MLX5E_SHAMPO_LOG_MAX_HEADER_ENTRY_SIZE)
->  #define MLX5E_SHAMPO_LOG_WQ_HEADER_PER_PAGE (PAGE_SHIFT - MLX5E_SHAMPO_LOG_MAX_HEADER_ENTRY_SIZE)
->  #define MLX5E_SHAMPO_WQ_BASE_HEAD_ENTRY_SIZE (64)
-> -#define MLX5E_SHAMPO_WQ_RESRV_SIZE (64 * 1024)
-> -#define MLX5E_SHAMPO_WQ_BASE_RESRV_SIZE (4096)
-> +#define MLX5E_SHAMPO_WQ_RESRV_SIZE_BASE_SHIFT (12)
-> +#define MLX5E_SHAMPO_WQ_LOG_RESRV_SIZE (16)
-> +#define MLX5E_SHAMPO_WQ_RESRV_SIZE BIT(MLX5E_SHAMPO_WQ_LOG_RESRV_SIZE)
->  
->  #define MLX5_MPWRQ_MIN_LOG_STRIDE_SZ(mdev) \
->  	(6 + MLX5_CAP_GEN(mdev, cache_line_128byte)) /* HW restriction */
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/params.c b/drivers/net/ethernet/mellanox/mlx5/core/en/params.c
-> index fc945bce933a..616251ec6d69 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/params.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/params.c
+There are some spelling mistakes of 'notifer' in comments which
+should be 'notifier'.
 
-[...]
+Fix them and add it to scripts/spelling.txt.
 
->  
->  u8 mlx5e_mpwqe_get_log_stride_size(struct mlx5_core_dev *mdev,
-> @@ -834,10 +825,9 @@ static u32 mlx5e_shampo_get_log_cq_size(struct mlx5_core_dev *mdev,
->  					struct mlx5e_params *params,
->  					struct mlx5e_xsk_param *xsk)
->  {
-> -	int rsrv_size = BIT(mlx5e_shampo_get_log_rsrv_size(mdev, params)) *
-> -		MLX5E_SHAMPO_WQ_BASE_RESRV_SIZE;
-> +	int rsrv_size = MLX5E_SHAMPO_WQ_RESRV_SIZE;
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/x86/kvm/i8254.c                                        | 4 ++--
+ drivers/cxl/core/mce.h                                      | 2 +-
+ drivers/gpu/drm/xe/xe_vm_types.h                            | 2 +-
+ drivers/net/ethernet/marvell/mvneta.c                       | 2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 2 +-
+ drivers/tty/serial/8250/8250_dw.c                           | 2 +-
+ include/xen/xenbus.h                                        | 2 +-
+ scripts/spelling.txt                                        | 1 +
+ 8 files changed, 9 insertions(+), 8 deletions(-)
 
-Broken RCT, you can use MLX5E_SHAMPO_WQ_RESRV_SIZE directly in
-order_base_2() call.
+diff --git a/arch/x86/kvm/i8254.c b/arch/x86/kvm/i8254.c
+index 739aa6c0d0c3..9ff55112900a 100644
+--- a/arch/x86/kvm/i8254.c
++++ b/arch/x86/kvm/i8254.c
+@@ -641,7 +641,7 @@ static void kvm_pit_reset(struct kvm_pit *pit)
+ 	kvm_pit_reset_reinject(pit);
+ }
+ 
+-static void pit_mask_notifer(struct kvm_irq_mask_notifier *kimn, bool mask)
++static void pit_mask_notifier(struct kvm_irq_mask_notifier *kimn, bool mask)
+ {
+ 	struct kvm_pit *pit = container_of(kimn, struct kvm_pit, mask_notifier);
+ 
+@@ -694,7 +694,7 @@ struct kvm_pit *kvm_create_pit(struct kvm *kvm, u32 flags)
+ 
+ 	pit_state->irq_ack_notifier.gsi = 0;
+ 	pit_state->irq_ack_notifier.irq_acked = kvm_pit_ack_irq;
+-	pit->mask_notifier.func = pit_mask_notifer;
++	pit->mask_notifier.func = pit_mask_notifier;
+ 
+ 	kvm_pit_reset(pit);
+ 
+diff --git a/drivers/cxl/core/mce.h b/drivers/cxl/core/mce.h
+index ace73424eeb6..ca272e8db6c7 100644
+--- a/drivers/cxl/core/mce.h
++++ b/drivers/cxl/core/mce.h
+@@ -7,7 +7,7 @@
+ 
+ #ifdef CONFIG_CXL_MCE
+ int devm_cxl_register_mce_notifier(struct device *dev,
+-				   struct notifier_block *mce_notifer);
++				   struct notifier_block *mce_notifier);
+ #else
+ static inline int
+ devm_cxl_register_mce_notifier(struct device *dev,
+diff --git a/drivers/gpu/drm/xe/xe_vm_types.h b/drivers/gpu/drm/xe/xe_vm_types.h
+index 1979e9bdbdf3..0ca27579fd1f 100644
+--- a/drivers/gpu/drm/xe/xe_vm_types.h
++++ b/drivers/gpu/drm/xe/xe_vm_types.h
+@@ -259,7 +259,7 @@ struct xe_vm {
+ 		 * up for revalidation. Protected from access with the
+ 		 * @invalidated_lock. Removing items from the list
+ 		 * additionally requires @lock in write mode, and adding
+-		 * items to the list requires either the @userptr.notifer_lock in
++		 * items to the list requires either the @userptr.notifier_lock in
+ 		 * write mode, OR @lock in write mode.
+ 		 */
+ 		struct list_head invalidated;
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 147571fdada3..ee4696600146 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -4610,7 +4610,7 @@ static int mvneta_stop(struct net_device *dev)
+ 		/* Inform that we are stopping so we don't want to setup the
+ 		 * driver for new CPUs in the notifiers. The code of the
+ 		 * notifier for CPU online is protected by the same spinlock,
+-		 * so when we get the lock, the notifer work is done.
++		 * so when we get the lock, the notifier work is done.
+ 		 */
+ 		spin_lock(&pp->lock);
+ 		pp->is_stopped = true;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index b94c3619526c..bcd56c7c4e42 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -8313,7 +8313,7 @@ struct brcmf_cfg80211_info *brcmf_cfg80211_attach(struct brcmf_pub *drvr,
+ 	cfg->d11inf.io_type = (u8)io_type;
+ 	brcmu_d11_attach(&cfg->d11inf);
+ 
+-	/* regulatory notifer below needs access to cfg so
++	/* regulatory notifier below needs access to cfg so
+ 	 * assign it now.
+ 	 */
+ 	drvr->config = cfg;
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index 1902f29444a1..6d9af6417620 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -392,7 +392,7 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
+ 	rate = clk_round_rate(d->clk, newrate);
+ 	if (rate > 0) {
+ 		/*
+-		 * Note that any clock-notifer worker will block in
++		 * Note that any clock-notifier worker will block in
+ 		 * serial8250_update_uartclk() until we are done.
+ 		 */
+ 		ret = clk_set_rate(d->clk, newrate);
+diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+index 3f90bdd387b6..00b84f2e402b 100644
+--- a/include/xen/xenbus.h
++++ b/include/xen/xenbus.h
+@@ -180,7 +180,7 @@ int xenbus_printf(struct xenbus_transaction t,
+  * sprintf-style type string, and pointer. Returns 0 or errno.*/
+ int xenbus_gather(struct xenbus_transaction t, const char *dir, ...);
+ 
+-/* notifer routines for when the xenstore comes up */
++/* notifier routines for when the xenstore comes up */
+ extern int xenstored_ready;
+ int register_xenstore_notifier(struct notifier_block *nb);
+ void unregister_xenstore_notifier(struct notifier_block *nb);
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index c9a6df5be281..d824c4b17390 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -1099,6 +1099,7 @@ notication||notification
+ notications||notifications
+ notifcations||notifications
+ notifed||notified
++notifer||notifier
+ notity||notify
+ notfify||notify
+ nubmer||number
+-- 
+2.50.0
 
->  	u16 num_strides = BIT(mlx5e_mpwqe_get_log_num_strides(mdev, params, xsk));
-> -	int pkt_per_rsrv = BIT(mlx5e_shampo_get_log_pkt_per_rsrv(mdev, params));
-> +	int pkt_per_rsrv = BIT(mlx5e_shampo_get_log_pkt_per_rsrv(params));
->  	u8 log_stride_sz = mlx5e_mpwqe_get_log_stride_size(mdev, params, xsk);
->  	int wq_size = BIT(mlx5e_mpwqe_get_log_rq_size(mdev, params, xsk));
->  	int wqe_size = BIT(log_stride_sz) * num_strides;
-> @@ -932,10 +922,11 @@ int mlx5e_build_rq_param(struct mlx5_core_dev *mdev,
->  
->  		MLX5_SET(wq, wq, shampo_enable, true);
->  		MLX5_SET(wq, wq, log_reservation_size,
-> -			 mlx5e_shampo_get_log_rsrv_size(mdev, params));
-> +			 MLX5E_SHAMPO_WQ_LOG_RESRV_SIZE -
-> +			 MLX5E_SHAMPO_WQ_RESRV_SIZE_BASE_SHIFT);
->  		MLX5_SET(wq, wq,
->  			 log_max_num_of_packets_per_reservation,
-> -			 mlx5e_shampo_get_log_pkt_per_rsrv(mdev, params));
-> +			 mlx5e_shampo_get_log_pkt_per_rsrv(params));
->  		MLX5_SET(wq, wq, log_headers_entry_size,
->  			 mlx5e_shampo_get_log_hd_entry_size(mdev, params));
->  		lro_timeout =
-> @@ -1048,18 +1039,17 @@ u32 mlx5e_shampo_hd_per_wqe(struct mlx5_core_dev *mdev,
->  			    struct mlx5e_params *params,
->  			    struct mlx5e_rq_param *rq_param)
->  {
-> -	int resv_size = BIT(mlx5e_shampo_get_log_rsrv_size(mdev, params)) *
-> -		MLX5E_SHAMPO_WQ_BASE_RESRV_SIZE;
-> +	int rsrv_size = MLX5E_SHAMPO_WQ_RESRV_SIZE;
-
-Can be moved down to have RCT.
-
->  	u16 num_strides = BIT(mlx5e_mpwqe_get_log_num_strides(mdev, params, NULL));
-> -	int pkt_per_resv = BIT(mlx5e_shampo_get_log_pkt_per_rsrv(mdev, params));
-> +	int pkt_per_resv = BIT(mlx5e_shampo_get_log_pkt_per_rsrv(params));
->  	u8 log_stride_sz = mlx5e_mpwqe_get_log_stride_size(mdev, params, NULL);
->  	int wqe_size = BIT(log_stride_sz) * num_strides;
->  	u32 hd_per_wqe;
->  
->  	/* Assumption: hd_per_wqe % 8 == 0. */
-> -	hd_per_wqe = (wqe_size / resv_size) * pkt_per_resv;
-> +	hd_per_wqe = (wqe_size / rsrv_size) * pkt_per_resv;
->  	mlx5_core_dbg(mdev, "%s hd_per_wqe = %d rsrv_size = %d wqe_size = %d pkt_per_resv = %d\n",
-> -		      __func__, hd_per_wqe, resv_size, wqe_size, pkt_per_resv);
-> +		      __func__, hd_per_wqe, rsrv_size, wqe_size, pkt_per_resv);
->  	return hd_per_wqe;
->  }
->  
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/params.h b/drivers/net/ethernet/mellanox/mlx5/core/en/params.h
-> index bd5877acc5b1..919895f64dcd 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/params.h
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/params.h
-> @@ -97,10 +97,6 @@ u8 mlx5e_mpwqe_get_log_rq_size(struct mlx5_core_dev *mdev,
->  			       struct mlx5e_xsk_param *xsk);
->  u8 mlx5e_shampo_get_log_hd_entry_size(struct mlx5_core_dev *mdev,
->  				      struct mlx5e_params *params);
-> -u8 mlx5e_shampo_get_log_rsrv_size(struct mlx5_core_dev *mdev,
-> -				  struct mlx5e_params *params);
-> -u8 mlx5e_shampo_get_log_pkt_per_rsrv(struct mlx5_core_dev *mdev,
-> -				     struct mlx5e_params *params);
->  u32 mlx5e_shampo_hd_per_wqe(struct mlx5_core_dev *mdev,
->  			    struct mlx5e_params *params,
->  			    struct mlx5e_rq_param *rq_param);
-
-Just small nits, otherwise:
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-
-> -- 
-> 2.40.1
 
