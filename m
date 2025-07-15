@@ -1,119 +1,81 @@
-Return-Path: <linux-kernel+bounces-731479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31BE9B054F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:33:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBEBB0541B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D37D3A59AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:32:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04F4D17CBBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7FD27584E;
-	Tue, 15 Jul 2025 08:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AA7273D9E;
+	Tue, 15 Jul 2025 08:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btkodKuJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="htZRJLiv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1462D4B47;
-	Tue, 15 Jul 2025 08:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06492260580;
+	Tue, 15 Jul 2025 08:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568320; cv=none; b=Pv2WpH8RathtqZoftQmrpDrQI6p1jTU2PM8feXyDv6VwlUwlxTyIUD7VU6nIW7+GQL1h66JiWLKhJQtjU4XlnQaWiyVEELdQzLhtif1H0Z2hDC+8kIXAoIuiSj7ho1YbT6L4c1vbmJeUEh9oB18Dl4P/Wer3nBjY2V9GLY4upRg=
+	t=1752566858; cv=none; b=SBd+1b1qJWL9Q2viRQYqA0tCy4KHFYxBRZ2f76hfXOKZ2ehBsNUIxzHcLcf5766WoUGaY6WXOnc1Rxk6Ybsn/AaOZTqEJoZJm2KYwMCPkpk+yicqrC+M+el1mua6nsiE8xRjWOP4Ila31UtBTOGeIBVBdSV978auphkMYVVIOF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568320; c=relaxed/simple;
-	bh=wB6hEFFzvmOcnpBZLYTMSOsSPCn29ml9ZB1Zmap4zqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p5Af1NdwtliVSyfrBlrk+eDd0VTcmGxa6CMzFrzh1BhAXFiZAgbWkUnZJ9rDJPJaga+9Qj3deurBvDGNwFYJvFsuPOGxKYjvrVc1AK/gHPV8WhCmPxCQrj3LbCFS73DGKQnUymutecI60rKH2A/sH6eMOCJLQXzaD9OwfSfmc9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btkodKuJ; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752568320; x=1784104320;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wB6hEFFzvmOcnpBZLYTMSOsSPCn29ml9ZB1Zmap4zqg=;
-  b=btkodKuJJsBumquyM8UTsmY93elcYYG/LJhFN/kh0Bi3K/q/k5R/DZJg
-   aEDOw5ETu7jte7P70rgmLC3ZMU1G26GWJOQzT/H9O2a3+TJDkPY0+wtBp
-   uaAZSAYNC028W2ZyzkwY8g21jBGTklf+KqxVFH5Znva2YmeXvX56hVwG0
-   IAoXkYUpZqx6C8x0qbAKlTdo9n0On1VEiwncupeOP2yVzsa/zL5oP+4XW
-   Jco2WYRsELYk2Z7QgU9YDDO7WR+drtJOEeeZnjogTfrZxGfQRcQTVOBtZ
-   sOcFrp15PjfPxt7ntL9+xLlagzIWMgtKjnRfVcpdIsLulJZix0KSkxCJU
-   w==;
-X-CSE-ConnectionGUID: 81rBu93kRRKJ36qGvrcZ/w==
-X-CSE-MsgGUID: Da+TjxOwSoyfHAfWbBkpxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54632125"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54632125"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:31:59 -0700
-X-CSE-ConnectionGUID: 85HYvWqASsWSDK7lGaxF2A==
-X-CSE-MsgGUID: SgsKgsojRpu7AnERVa8LMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="156572604"
-Received: from emr.sh.intel.com ([10.112.229.56])
-  by orviesa010.jf.intel.com with ESMTP; 15 Jul 2025 01:31:55 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jim Mattson <jmattson@google.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Zide Chen <zide.chen@intel.com>,
-	Das Sandipan <Sandipan.Das@amd.com>,
-	Shukla Manali <Manali.Shukla@amd.com>,
-	Yi Lai <yi1.lai@intel.com>,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	dongsheng <dongsheng.x.zhang@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [kvm-unit-tests patch 5/5] x86/pmu: Expand "llc references" upper limit for broader compatibility
-Date: Sat, 12 Jul 2025 17:49:15 +0000
-Message-ID: <20250712174915.196103-6-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250712174915.196103-1-dapeng1.mi@linux.intel.com>
-References: <20250712174915.196103-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1752566858; c=relaxed/simple;
+	bh=IJ4vJVHoZ+A6xVMcRw0Zf4dAFdsqiBrU3kVHgWvPuYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lpca8sfhdAF4gD2tNOb/IymkLbwk2PwlPsL9hkS2sbDUJJIoh56ZMLTpyX70s2toQ4xTHAasEWh4h84BPQ8rTMzhGKhWe0U71ytxk9yHyGI+1z83vfmRcSB7o41SlM382/U4IqzLlBNUX6S6vtDGJKRT8EUM4Jpk3MLv6OoYPA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=htZRJLiv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 023EEC4CEE3;
+	Tue, 15 Jul 2025 08:07:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752566857;
+	bh=IJ4vJVHoZ+A6xVMcRw0Zf4dAFdsqiBrU3kVHgWvPuYs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=htZRJLivaxtpPEH4d94f9u9mOUMp/HiK891ycTswqvGWFZoetaf+9+L1onVGxwbEC
+	 Y3u561Mb0XK3qHcPTIeEmS3s27DRIVFqxB+635zY5bRrm4eHP3L9lsy5G44eoxyO0i
+	 5PVi96HGTi1axxBpFgA4Y2vdz3Yjb0WVIekTM2WNWNfSJ7Z/LefxI8xK5gzl4NzPPJ
+	 lacs4rGYCs3dozWT8GOUvwvYzCX04y/xKDtEn2IYghC4CKMayct73zxQAVOObTYCZk
+	 GihvAZpaGuCuSyhF/7ebPBly70AdBc5taq4Vse/inCEyMbOAxwHXyx4o9aVRZmg/G+
+	 SlmqwoJfIpeFA==
+Date: Tue, 15 Jul 2025 10:07:34 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Richard Yao <richard@scandent.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Akshay Athalye <akshay@scandent.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH v3 3/3] drm/panel: ilitek-ili9881c: Add Tianxianwei
+ TWX700100S0 support
+Message-ID: <20250715-tasteful-thoughtful-aardwark-1c2550@krzk-bin>
+References: <20250714221804.25691-1-richard@scandent.com>
+ <20250714221804.25691-4-richard@scandent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250714221804.25691-4-richard@scandent.com>
 
-From: dongsheng <dongsheng.x.zhang@intel.com>
+On Mon, Jul 14, 2025 at 06:18:01PM -0400, Richard Yao wrote:
+> +static const struct ili9881c_desc txw700100s0_desc = {
+> +	.init = txw700100s0_init,
+> +	.init_length = ARRAY_SIZE(txw700100s0_init),
+> +	.mode = &txw700100s0_default_mode,
+> +	.mode_flags = MIPI_DSI_MODE_VIDEO_SYNC_PULSE | MIPI_DSI_MODE_VIDEO,
+> +	.lanes = 4,
 
-Increase the upper limit of the "llc references" test to accommodate
-results observed on additional Intel CPU models, including CWF and
-SRF.
-These CPUs exhibited higher reference counts that previously caused
-the test to fail.
+So you did not resolve build failure report? You need to address it,
+one way or another. Not just ignore.
 
-Signed-off-by: dongsheng <dongsheng.x.zhang@intel.com>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Tested-by: Yi Lai <yi1.lai@intel.com>
----
- x86/pmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/x86/pmu.c b/x86/pmu.c
-index c54c0988..445ea6b4 100644
---- a/x86/pmu.c
-+++ b/x86/pmu.c
-@@ -116,7 +116,7 @@ struct pmu_event {
- 	{"core cycles", 0x003c, 1*N, 50*N},
- 	{"instructions", 0x00c0, 10*N, 10.2*N},
- 	{"ref cycles", 0x013c, 1*N, 30*N},
--	{"llc references", 0x4f2e, 1, 2*N},
-+	{"llc references", 0x4f2e, 1, 2.5*N},
- 	{"llc misses", 0x412e, 1, 1*N},
- 	{"branches", 0x00c4, 1*N, 1.1*N},
- 	{"branch misses", 0x00c5, 1, 0.1*N},
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
