@@ -1,137 +1,421 @@
-Return-Path: <linux-kernel+bounces-732034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3316B06145
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:35:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47AAB0612F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5BEFB42F9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:24:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16EA7506AF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF482522B1;
-	Tue, 15 Jul 2025 14:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D48D27A139;
+	Tue, 15 Jul 2025 14:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VHM8FZlq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OFX4MTGa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FB624DCE5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B270E279359;
+	Tue, 15 Jul 2025 14:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752589148; cv=none; b=Wg3tdjcU/B/7naMMBy65wizpRlWkjZu3bs7i7q5pYWgjWramLF37wWAISY3Wpjtm5hCmDTtmC2Bcpp+RUiesJBJ3VovMuQVglnl1IOTJFGTq35WuEn5qQOXNbsdT5S93ya2U+ztq460+AsIRynf0KyI0NflZTgFxz0WgdES80gw=
+	t=1752589203; cv=none; b=Jw880iGSlPsMlY3254SYVIAdIYWJ/Scx17C958drKBMWstUBQ5ooec7DhTd6Mdv28pohL1lAo3UbgfWX6miBQIKExO7JUoNSmZJb2ToH+ITH0jU2PK3CgCulSi/EvvpwFzjmpY4jdjfD9VyV0BiwI0hFmLDYWMzLzyudKnwHeLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752589148; c=relaxed/simple;
-	bh=m2p5MpSBXPyRVU5LktqZkzEk73hU5qjWjmUZo4QJ9S4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QhgTD81JYq17RjxCayuIJ37ixPC2F52w4sYpXnmJYXKN+86tkc260ZeS0ezS+bDUtzV8hUgvCJr0i8k69iPi3kT8tzsVxgpoQLmqkTA4rxMeY5mT/u+RNJQipMnbp0VUa91F5tvn5Hg6X42Rby1dRigmU1e84tDHOEFgRHnt8rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VHM8FZlq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752589145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fM1ATrFTUMHItot+j19m0V6zj980p2XBZrzeRcBmDGs=;
-	b=VHM8FZlqsXOyaFxelzo+hHVgfkviHWN3O8O/GovP/a2TR0lcFAb0A3AWO/abp6aJystMEp
-	ZrTiEvcZs4WgyNbsY20+jECXUuMl8QiLb2s6KhYXVVf9OOp/fpSFx9EitNaMtIgi14ezPc
-	YliWJ87L06jTsegaEgXYIo8U97gcBvo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-424-QUcjVcW5MZqW9gx0MtIRDw-1; Tue,
- 15 Jul 2025 10:19:02 -0400
-X-MC-Unique: QUcjVcW5MZqW9gx0MtIRDw-1
-X-Mimecast-MFC-AGG-ID: QUcjVcW5MZqW9gx0MtIRDw_1752589140
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D1EC1800372;
-	Tue, 15 Jul 2025 14:19:00 +0000 (UTC)
-Received: from [10.45.225.30] (unknown [10.45.225.30])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E92EC1977029;
-	Tue, 15 Jul 2025 14:18:56 +0000 (UTC)
-Message-ID: <dba89108-0302-4773-af40-8026a5c12f5b@redhat.com>
-Date: Tue, 15 Jul 2025 16:18:55 +0200
+	s=arc-20240116; t=1752589203; c=relaxed/simple;
+	bh=Z9ux43Lyl/yWmrWpsboNjI+/vh+3ba/1ZR2kFK67/Z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TTZlCX43gwl0zuKcsoNNAV0zidtXE78/uxAH5b0G88xp9X8bt+NHaDMaRyzWpCJ/g5IDOnpQEnzrKTD/tvDSxj3tGzSmOhD72Ya1jdp/5et1qdiNwjlDx/Dd69A0OqpYzL1vgAklUjnFOfVEDKZ/udAVrfeusgk6T0OI4WbNq9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OFX4MTGa; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752589202; x=1784125202;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Z9ux43Lyl/yWmrWpsboNjI+/vh+3ba/1ZR2kFK67/Z4=;
+  b=OFX4MTGaTlthz7tVYN5ZdMhTTnHLcgo8c4/6HSDQ6h879krPKFFP/qMH
+   CFxO+To+1JOwOVlbesTP9nX0txDrCXwEBhQxBjck3j5fKpyTVyQB3K4e6
+   PInqFecxGs7TEC7rxW+Uovy3QfHezUn0FtkxoTKJOe0c4YaZaUZ/tfjUJ
+   mMA/y6wcIK95BBtyJOjwyuJpE0eo8ThwzzlFTDhWS/fTOBkWbtjkAHyGE
+   GQA+MsnawBiQUfWADw5FkkaqBeRKbHwpdUEE7D07KivvWPd/8CWGoX5bl
+   OSn/2Fd5Bh81YxZsuM8t1wKhlBzKbT/ynqjJYVAyd4va1v8iVltZxwVSZ
+   g==;
+X-CSE-ConnectionGUID: OXURIA3VRcC+PLLzZOoJQQ==
+X-CSE-MsgGUID: dO8gONUZRDOuDk0egCLviQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="57418858"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="57418858"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 07:20:01 -0700
+X-CSE-ConnectionGUID: GAc4utIFTuCGCagn8SQwLA==
+X-CSE-MsgGUID: d9oDtj7HQVKo5bGrs82L7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="157963369"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 15 Jul 2025 07:19:55 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubgVc-000BAd-30;
+	Tue, 15 Jul 2025 14:19:52 +0000
+Date: Tue, 15 Jul 2025 22:19:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
+	sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+	kieran.bingham@ideasonboard.com, bryan.odonoghue@linaro.org,
+	hao.yao@intel.com, mehdi.djait@linux.intel.com,
+	dongcheng.yan@linux.intel.com, hverkuil@xs4all.nl, krzk@kernel.org,
+	dave.stevenson@raspberrypi.com, hdegoede@redhat.com,
+	jai.luthra@ideasonboard.com, tomi.valkeinen@ideasonboard.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.chan@amd.com, bin.du@amd.com,
+	grosikop@amd.com, king.li@amd.com, dantony@amd.com,
+	vengutta@amd.com, Phil.Jawich@amd.com,
+	Pratap Nirujogi <pratap.nirujogi@amd.com>
+Subject: Re: [PATCH v4] media: i2c: Add OV05C10 camera sensor driver
+Message-ID: <202507152257.Px9xxVPL-lkp@intel.com>
+References: <20250714205805.1329403-1-pratap.nirujogi@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 3/5] dpll: zl3073x: Implement phase offset
- monitor feature
-To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc: Prathosh Satish <Prathosh.Satish@microchip.com>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250710153848.928531-1-ivecera@redhat.com>
- <20250710153848.928531-4-ivecera@redhat.com>
- <e6801550-fb58-4a94-9405-b14e13c0e936@redhat.com>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <e6801550-fb58-4a94-9405-b14e13c0e936@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714205805.1329403-1-pratap.nirujogi@amd.com>
+
+Hi Pratap,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on linuxtv-media-pending/master]
+[also build test ERROR on sailus-media-tree/master linus/master v6.16-rc6 next-20250715]
+[cannot apply to sailus-media-tree/streams media-tree/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Pratap-Nirujogi/media-i2c-Add-OV05C10-camera-sensor-driver/20250715-050130
+base:   https://git.linuxtv.org/media-ci/media-pending.git master
+patch link:    https://lore.kernel.org/r/20250714205805.1329403-1-pratap.nirujogi%40amd.com
+patch subject: [PATCH v4] media: i2c: Add OV05C10 camera sensor driver
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250715/202507152257.Px9xxVPL-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250715/202507152257.Px9xxVPL-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507152257.Px9xxVPL-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/media/i2c/ov05c10.c: In function 'ov05c10_init_controls':
+>> drivers/media/i2c/ov05c10.c:790:13: warning: variable 'max_items' set but not used [-Wunused-but-set-variable]
+     790 |         u32 max_items;
+         |             ^~~~~~~~~
+   drivers/media/i2c/ov05c10.c: In function 'ov05c10_probe':
+>> drivers/media/i2c/ov05c10.c:964:24: error: implicit declaration of function 'devm_v4l2_sensor_clk_get' [-Wimplicit-function-declaration]
+     964 |         ov05c10->clk = devm_v4l2_sensor_clk_get(&client->dev, NULL);
+         |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/media/i2c/ov05c10.c:964:22: error: assignment to 'struct clk *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     964 |         ov05c10->clk = devm_v4l2_sensor_clk_get(&client->dev, NULL);
+         |                      ^
 
 
+vim +/devm_v4l2_sensor_clk_get +964 drivers/media/i2c/ov05c10.c
 
-On 15. 07. 25 3:02 odp., Paolo Abeni wrote:
-> On 7/10/25 5:38 PM, Ivan Vecera wrote:
->> @@ -536,8 +539,38 @@ zl3073x_dpll_input_pin_phase_offset_get(const struct dpll_pin *dpll_pin,
->>   		return 0;
->>   	}
->>   
->> -	/* Report the latest measured phase offset for the connected ref */
->> -	*phase_offset = pin->phase_offset * DPLL_PHASE_OFFSET_DIVIDER;
->> +	ref_phase = pin->phase_offset;
->> +
->> +	/* The DPLL being locked to a higher freq than the current ref
->> +	 * the phase offset is modded to the period of the signal
->> +	 * the dpll is locked to.
->> +	 */
->> +	if (ZL3073X_DPLL_REF_IS_VALID(conn_ref) && conn_ref != ref) {
->> +		u32 conn_freq, ref_freq;
->> +
->> +		/* Get frequency of connected ref */
->> +		rc = zl3073x_dpll_input_ref_frequency_get(zldpll, conn_ref,
->> +							  &conn_freq);
->> +		if (rc)
->> +			return rc;
->> +
->> +		/* Get frequency of given ref */
->> +		rc = zl3073x_dpll_input_ref_frequency_get(zldpll, ref,
->> +							  &ref_freq);
->> +		if (rc)
->> +			return rc;
->> +
->> +		if (conn_freq > ref_freq) {
->> +			s64 conn_period;
->> +			int div_factor;
->> +
->> +			conn_period = div_s64(PSEC_PER_SEC, conn_freq);
->> +			div_factor = div64_s64(ref_phase, conn_period);
->> +			ref_phase -= conn_period * div_factor;
-> 
-> It's not obvious to me that the above div64_s64() will yield a 32b value
-> for every possible arguments/configuration. Possibly a comment would
-> help (or just use s64 for div_factor).
+   780	
+   781	static int ov05c10_init_controls(struct ov05c10 *ov05c10)
+   782	{
+   783		struct v4l2_ctrl_handler *ctrl_hdlr = &ov05c10->ctrl_handler;
+   784		const struct ov05c10_mode *mode = ov05c10->cur_mode;
+   785		struct v4l2_fwnode_device_properties props;
+   786		s64 pixel_rate_max;
+   787		s64 exposure_max;
+   788		s64 vblank_def;
+   789		s64 vblank_min;
+ > 790		u32 max_items;
+   791		s64 hblank;
+   792		int ret;
+   793	
+   794		ret = v4l2_fwnode_device_parse(ov05c10->dev, &props);
+   795		if (ret)
+   796			goto err_hdl_free;
+   797	
+   798		ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
+   799		if (ret)
+   800			return ret;
+   801	
+   802		max_items = ARRAY_SIZE(ov05c10_link_freq_menu_items) - 1;
+   803		ov05c10->link_freq =
+   804			v4l2_ctrl_new_int_menu(ctrl_hdlr,
+   805					       NULL,
+   806					       V4L2_CID_LINK_FREQ,
+   807					       __fls(ov05c10->link_freq_bitmap),
+   808					       __ffs(ov05c10->link_freq_bitmap),
+   809					       ov05c10_link_freq_menu_items);
+   810		if (ov05c10->link_freq)
+   811			ov05c10->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+   812	
+   813		pixel_rate_max =
+   814			link_freq_to_pixel_rate(ov05c10_link_freq_menu_items[0],
+   815						mode->lanes);
+   816		ov05c10->pixel_rate = v4l2_ctrl_new_std(ctrl_hdlr, NULL,
+   817							V4L2_CID_PIXEL_RATE,
+   818							0, pixel_rate_max,
+   819							1, pixel_rate_max);
+   820	
+   821		vblank_def = mode->vts_def - mode->height;
+   822		vblank_min = mode->vts_min - mode->height;
+   823		ov05c10->vblank = v4l2_ctrl_new_std(ctrl_hdlr, &ov05c10_ctrl_ops,
+   824						    V4L2_CID_VBLANK,
+   825						    vblank_min,
+   826						    OV05C10_VTS_MAX - mode->height,
+   827						    1, vblank_def);
+   828	
+   829		hblank = mode->hts - mode->width;
+   830		ov05c10->hblank = v4l2_ctrl_new_std(ctrl_hdlr, NULL,
+   831						    V4L2_CID_HBLANK,
+   832						    hblank, hblank, 1, hblank);
+   833		if (ov05c10->hblank)
+   834			ov05c10->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+   835	
+   836		exposure_max = mode->vts_def - OV05C10_EXPOSURE_MAX_MARGIN;
+   837		ov05c10->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &ov05c10_ctrl_ops,
+   838						      V4L2_CID_EXPOSURE,
+   839						      OV05C10_EXPOSURE_MIN,
+   840						      exposure_max,
+   841						      OV05C10_EXPOSURE_STEP,
+   842						      exposure_max);
+   843	
+   844		v4l2_ctrl_new_std(ctrl_hdlr, &ov05c10_ctrl_ops, V4L2_CID_ANALOGUE_GAIN,
+   845				  OV05C10_ANA_GAIN_MIN, OV05C10_ANA_GAIN_MAX,
+   846				  OV05C10_ANA_GAIN_STEP, OV05C10_ANA_GAIN_DEFAULT);
+   847	
+   848		v4l2_ctrl_new_std(ctrl_hdlr, &ov05c10_ctrl_ops, V4L2_CID_DIGITAL_GAIN,
+   849				  OV05C10_DGTL_GAIN_MIN, OV05C10_DGTL_GAIN_MAX,
+   850				  OV05C10_DGTL_GAIN_STEP, OV05C10_DGTL_GAIN_DEFAULT);
+   851	
+   852		v4l2_ctrl_new_std_menu_items(ctrl_hdlr, &ov05c10_ctrl_ops,
+   853					     V4L2_CID_TEST_PATTERN,
+   854					     ARRAY_SIZE(ov05c10_test_pattern_menu) - 1,
+   855					     0, 0, ov05c10_test_pattern_menu);
+   856	
+   857		ret = v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &ov05c10_ctrl_ops,
+   858						      &props);
+   859		if (ret)
+   860			goto err_hdl_free;
+   861	
+   862		if (ctrl_hdlr->error) {
+   863			ret = ctrl_hdlr->error;
+   864			dev_err(ov05c10->dev, "V4L2 control init failed (%d)\n", ret);
+   865			goto err_hdl_free;
+   866		}
+   867	
+   868		ov05c10->sd.ctrl_handler = ctrl_hdlr;
+   869	
+   870		return 0;
+   871	
+   872	err_hdl_free:
+   873		v4l2_ctrl_handler_free(ctrl_hdlr);
+   874	
+   875		return ret;
+   876	}
+   877	
+   878	static int ov05c10_parse_endpoint(struct ov05c10 *ov05c10,
+   879					  struct fwnode_handle *fwnode)
+   880	{
+   881		struct v4l2_fwnode_endpoint bus_cfg = {
+   882			.bus_type = V4L2_MBUS_CSI2_DPHY
+   883		};
+   884		struct device *dev = ov05c10->dev;
+   885		struct fwnode_handle *ep;
+   886		int ret;
+   887	
+   888		ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
+   889		if (!ep) {
+   890			dev_err(dev, "Failed to get next endpoint\n");
+   891			return -ENXIO;
+   892		}
+   893	
+   894		ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
+   895		fwnode_handle_put(ep);
+   896		if (ret)
+   897			return ret;
+   898	
+   899		if (bus_cfg.bus.mipi_csi2.num_data_lanes != OV05C10_DATA_LANES) {
+   900			dev_err(dev,
+   901				"number of CSI2 data lanes %d is not supported\n",
+   902				bus_cfg.bus.mipi_csi2.num_data_lanes);
+   903			ret = -EINVAL;
+   904			goto err_endpoint_free;
+   905		}
+   906	
+   907		ret = v4l2_link_freq_to_bitmap(dev, bus_cfg.link_frequencies,
+   908					       bus_cfg.nr_of_link_frequencies,
+   909					       ov05c10_link_freq_menu_items,
+   910					       ARRAY_SIZE(ov05c10_link_freq_menu_items),
+   911					       &ov05c10->link_freq_bitmap);
+   912		if (ret)
+   913			dev_err(dev, "v4l2_link_freq_to_bitmap fail with %d\n", ret);
+   914	err_endpoint_free:
+   915		v4l2_fwnode_endpoint_free(&bus_cfg);
+   916	
+   917		return ret;
+   918	}
+   919	
+   920	static int ov05c10_runtime_resume(struct device *dev)
+   921	{
+   922		struct v4l2_subdev *sd = dev_get_drvdata(dev);
+   923		struct ov05c10 *ov05c10 = to_ov05c10(sd);
+   924		int ret;
+   925	
+   926		ret = clk_prepare_enable(ov05c10->clk);
+   927		if (ret) {
+   928			dev_err(dev, "failed to enable clock %d\n", ret);
+   929			goto error;
+   930		}
+   931	
+   932		ov05c10_sensor_power_set(ov05c10, true);
+   933	
+   934	error:
+   935		return ret;
+   936	}
+   937	
+   938	static int ov05c10_runtime_suspend(struct device *dev)
+   939	{
+   940		struct v4l2_subdev *sd = dev_get_drvdata(dev);
+   941		struct ov05c10 *ov05c10 = to_ov05c10(sd);
+   942	
+   943		ov05c10_sensor_power_set(ov05c10, false);
+   944		clk_disable_unprepare(ov05c10->clk);
+   945	
+   946		return 0;
+   947	}
+   948	
+   949	static int ov05c10_probe(struct i2c_client *client)
+   950	{
+   951		struct ov05c10 *ov05c10;
+   952		u32 clkfreq;
+   953		int ret;
+   954	
+   955		ov05c10 = devm_kzalloc(&client->dev, sizeof(*ov05c10), GFP_KERNEL);
+   956		if (!ov05c10)
+   957			return -ENOMEM;
+   958	
+   959		ov05c10->dev = &client->dev;
+   960		ov05c10->cur_mode = &ov05c10_supported_modes[0];
+   961	
+   962		struct fwnode_handle *fwnode = dev_fwnode(ov05c10->dev);
+   963	
+ > 964		ov05c10->clk = devm_v4l2_sensor_clk_get(&client->dev, NULL);
+   965		if (IS_ERR(ov05c10->clk))
+   966			return dev_err_probe(&client->dev, PTR_ERR(ov05c10->clk),
+   967					     "failed to get clk\n");
+   968	
+   969		clkfreq = clk_get_rate(ov05c10->clk);
+   970		if (clkfreq != OV05C10_REF_CLK)
+   971			return dev_err_probe(ov05c10->dev, -EINVAL,
+   972					     "fail invalid clock freq %u, %lu expected\n",
+   973					     clkfreq, OV05C10_REF_CLK);
+   974	
+   975		ret = ov05c10_parse_endpoint(ov05c10, fwnode);
+   976		if (ret)
+   977			return dev_err_probe(ov05c10->dev, -EINVAL,
+   978					     "fail to parse endpoint\n");
+   979	
+   980		ov05c10->enable_gpio = devm_gpiod_get(ov05c10->dev, "enable",
+   981						      GPIOD_OUT_LOW);
+   982		if (IS_ERR(ov05c10->enable_gpio))
+   983			return dev_err_probe(ov05c10->dev,
+   984					     PTR_ERR(ov05c10->enable_gpio),
+   985					     "fail to get enable gpio\n");
+   986	
+   987		ov05c10->regmap = devm_cci_regmap_init_i2c(client, 8);
+   988		if (IS_ERR(ov05c10->regmap))
+   989			return dev_err_probe(ov05c10->dev, PTR_ERR(ov05c10->regmap),
+   990					     "fail to init cci\n");
+   991	
+   992		ov05c10->cur_page = -1;
+   993		ov05c10->page_ctrl_reg = OV05C10_REG_PAGE_CTL;
+   994	
+   995		/*
+   996		 * Enable power management. The driver supports runtime PM, but needs to
+   997		 * work when runtime PM is disabled in the kernel. To that end, power
+   998		 * the sensor on manually here.
+   999		 */
+  1000		ov05c10_sensor_power_set(ov05c10, true);
+  1001	
+  1002		/*
+  1003		 * Enable runtime PM with autosuspend. As the device has been powered
+  1004		 * manually, mark it as active, and increase the usage count without
+  1005		 * resuming the device.
+  1006		 */
+  1007		pm_runtime_set_active(ov05c10->dev);
+  1008		pm_runtime_get_noresume(ov05c10->dev);
+  1009		pm_runtime_enable(ov05c10->dev);
+  1010		pm_runtime_set_autosuspend_delay(ov05c10->dev, 1000);
+  1011		pm_runtime_use_autosuspend(ov05c10->dev);
+  1012	
+  1013		v4l2_i2c_subdev_init(&ov05c10->sd, client, &ov05c10_subdev_ops);
+  1014	
+  1015		ret = ov05c10_runtime_resume(&client->dev);
+  1016		if (ret)
+  1017			return dev_err_probe(&client->dev, ret,
+  1018					     "failed to power-on the sensor");
+  1019	
+  1020		ret = ov05c10_init_controls(ov05c10);
+  1021		if (ret) {
+  1022			dev_err(ov05c10->dev, "fail to init ov05c10 ctl %d\n", ret);
+  1023			goto err_pm;
+  1024		}
+  1025	
+  1026		ov05c10->sd.internal_ops = &ov05c10_internal_ops;
+  1027		ov05c10->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+  1028		ov05c10->sd.entity.ops = &ov05c10_subdev_entity_ops;
+  1029		ov05c10->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+  1030	
+  1031		ov05c10->pad.flags = MEDIA_PAD_FL_SOURCE;
+  1032	
+  1033		ret = media_entity_pads_init(&ov05c10->sd.entity, OV05C10_NUM_OF_PADS,
+  1034					     &ov05c10->pad);
+  1035		if (ret) {
+  1036			dev_err(ov05c10->dev, "fail to init ov05c10 pads %d\n", ret);
+  1037			goto err_hdl_free;
+  1038		}
+  1039	
+  1040		ret = v4l2_subdev_init_finalize(&ov05c10->sd);
+  1041		if (ret < 0) {
+  1042			dev_err(ov05c10->dev, "fail to finalize ov05c10 subdev init %d\n", ret);
+  1043			goto err_media_entity_cleanup;
+  1044		}
+  1045	
+  1046		ret = v4l2_async_register_subdev_sensor(&ov05c10->sd);
+  1047		if (ret) {
+  1048			dev_err(ov05c10->dev, "fail to register ov05c10 subdev %d\n", ret);
+  1049			goto err_media_entity_cleanup;
+  1050		}
+  1051	
+  1052		return 0;
+  1053	
+  1054	err_media_entity_cleanup:
+  1055		media_entity_cleanup(&ov05c10->sd.entity);
+  1056	err_hdl_free:
+  1057		v4l2_ctrl_handler_free(ov05c10->sd.ctrl_handler);
+  1058	err_pm:
+  1059		pm_runtime_disable(ov05c10->dev);
+  1060		pm_runtime_put_noidle(ov05c10->dev);
+  1061		ov05c10_sensor_power_set(ov05c10, false);
+  1062		return ret;
+  1063	}
+  1064	
 
-Practically it should not happen due to maximal reference frequency but
-it will be safer use s64 here also for div_factor..
-
-Will fix in v2.
-
-Thanks,
-Ivan
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
