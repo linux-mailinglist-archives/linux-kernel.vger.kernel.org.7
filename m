@@ -1,79 +1,85 @@
-Return-Path: <linux-kernel+bounces-732533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D6BB06834
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:59:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8669BB06835
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C760A18904D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:00:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A01523AC838
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1892BEC21;
-	Tue, 15 Jul 2025 20:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A30B274B23;
+	Tue, 15 Jul 2025 21:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b="pcSIr9jg"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AvVEK9Ku"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB5A246787
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7352A285043
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 21:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752613184; cv=none; b=Y+fELx1hnpAq9RUMwNqCP4qmEy8Ap3mLt/UZWXyXt3k6MGnc6gv0XqBco9DojehHV5HvByfV+EHk9tH+1HLupM51/M3qeMKNMx69i5XyzwBUjV5KVHgVEDyrHJEx4y4EvgheYYHpVP8oqHtrmXZR9D4wlK/tn9w1DROS9RPce84=
+	t=1752613204; cv=none; b=IuFjZbqRzHq+6/ewKCF6gGS8LGnSd1BGSxZvwb6UJLmvNnle8AavDFp69a0hSJi19e67tvSuU+uHZxWWEAY3Olyh3BgY0YzF+47AA/mRDi9R6acr4pautPfFCiVH4Iy7H2NoELvbpbc7DpY7XDHwT+22SEHmHUtsmX0m32FqNOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752613184; c=relaxed/simple;
-	bh=jK2PJ1pLXHoKPhr1KHcSC8ZcmaKbtsnsQeWzZk5oydU=;
+	s=arc-20240116; t=1752613204; c=relaxed/simple;
+	bh=iE7fn1sEy74oxnwIRnDmh25m0BNjo2Af0l6QUHQSxLM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cpuzCjqE3tz/ONfjbeByeZJDsQumjrw4CqtW8Wq96laqLAaaBebsPaA3u55vcdJZ84M+W4f9p7Im4r9WMrwUyxIgTfUPvdnce434p80pzNKio45+aq7Hm/d8YFiaQPimYk/JgyPFn/vUx9Jg+pIXPC4rEhcspQn0ql/M5fFU0jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu; spf=pass smtp.mailfrom=vt.edu; dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b=pcSIr9jg; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vt.edu
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-41bebd9dd8dso374869b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:59:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vt-edu.20230601.gappssmtp.com; s=20230601; t=1752613182; x=1753217982; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RpLIXS+YHqc5mxGfOSQbNuEZInQXTG4i5qkw5Ltm2ew=;
-        b=pcSIr9jgyi0qz6jMEw3Kj0N+o0JdXAhJvjL9aE8lRhKq3Bi6XwtKLTRt3VC0vPgM/Z
-         Ieg+9+61MFZbn72asU+Ghm0uWcjxHzZl26i/+RcneLG+V9N/BOztS1mV5LhcM3dkWtxt
-         tRKrLq7AVaQg5ROuFXqELVkPPXd2Lcvmab6R/+hGW7oUtWz557LKnI4atsG2W7D09PPX
-         LZY68y9GX9h0gveRoFOTt4JLmL5gfvBhAQdjakG8L15cvMoBtex1IVRL8TRDY2OQMaHm
-         WTYropf59CMzEywtkC9ArhZkB6kHZFSZn4SHxYAJz0UkS/hA9b3YsSnt26gyqKO/+TpD
-         t/PQ==
+	 In-Reply-To:Content-Type; b=IFDfEzx2S/iVvWfrqjaljvNen0oDtL4YR6ThQvktuTTMBPNPxtLRLM6Z+oZRANSdIVYAsz+wPSxV0g9+pR7oJw//NHXNnrqysXmtqeOj3MrmQCcIKFl+8Jiock5Pa2NpD3qpkVIvhBWucVQOlglXo5i205xXS6yo0tePKyBEa18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AvVEK9Ku; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752613200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=orfWWsl/2+Pf8r55VoCjlT3TESiqdbdfWb5bInIXtl0=;
+	b=AvVEK9KuDBAzGjAQjiHL3MUYSYslakJxLz9PulH+J8FARFL2nd3olFphqfDbykHTr+2fX/
+	jmXHcW24/4dblOZYmsiMhE4m6fMBKizksol8XgdN0qfSEaYlSNorsjsrIF49S9TJsJOO+b
+	YyoDPlQqmOgCBG3w3nHzxdOyKD8Ahfw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-493-8heMpAEiOqqAOfvKzFK_Kw-1; Tue, 15 Jul 2025 16:59:59 -0400
+X-MC-Unique: 8heMpAEiOqqAOfvKzFK_Kw-1
+X-Mimecast-MFC-AGG-ID: 8heMpAEiOqqAOfvKzFK_Kw_1752613198
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3af3c860ed7so2592799f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:59:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752613182; x=1753217982;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RpLIXS+YHqc5mxGfOSQbNuEZInQXTG4i5qkw5Ltm2ew=;
-        b=fkhScqYnNkgd0HiIHUAGd9VWvstDgK7bEiIaoufjj9843+QVBB/aNb0k9e5+gXKlF4
-         O7kXkjBbVXDJEt9TzvEf8vvyp3XVnNfgEBvr0Emd1AgONlwSCjYx0HqH2C2nYpVm+OCI
-         SDip9WWfsdp8higli+UGrdVEQDqQUDGsHbSstSultdl8WSjceoufvIoq36+vuP17zFDK
-         ZljkSHvvrXcLRm5/Io2maikE/i5Vu4gkeJ/Wyb7PQua+C5edmdwqkXKZZJK2vcfbROkp
-         Nn2qwsvJ+XlN/dDcYdZx+5SmsdOv0erN/R6P/PtDP6Ay5iAAgvkGDm1c/KaKBlZv5Cwr
-         Is+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUE0NbSZN7uR2AzCNKYo7Ppv8hxTk5Rj7byQJ4StH8oPVWFDQfaojyF8UkVXuNogxbe2PnD7aR6iGoSk9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuexHcuXzd/jCr1OjhkipD/rsDTgDawK2EUTnzRpLkI6VaElOm
-	9Y15wtUYAFH1eepi5v2zqDIYRYmm7uaHgTlKsPUlatSbG5WDGoExTyPTJrkM6p7MFSE=
-X-Gm-Gg: ASbGnctW6HcALy3uSnxUZgdpHMfsqH2+z8Ikzl5X95S0HoU9DFCMuWz12IbksgCKkPL
-	1YsIH+/+lDC940Mv/xBvdaNrj/LEbuDEolzLR/GKRuQgAhpwWv8srvuW+IncERsTgRkMOEcF8Dq
-	Z82qND0TneaSk1WX5DurofgE19vV4NP1dwGLXq5ZZ/FeBe0mRKk+KppSNxk1gWVgniawhz/5AXj
-	5mfK0h5YONdMJJNll0gKSSBA5GfSjqIVwUC3EN2blRuOmKro1KOPWj3o+ysK+dc9tXVogfs7VK8
-	uerTHggyQq50mHuc6XoC+6aFZeRBMLwnHJGjAFr+ERzpXy1SRYbVvAQfrDcL0alxHEBplFib6Kx
-	sg2KyT96LD/4Oklv8umnbYFPT+dPUafwvsbiRDfPxd97t6GUEONETCACHDXyYR0Uo
-X-Google-Smtp-Source: AGHT+IHMuvYgTjdEJouwL9rFNOehORJPx/jwpmcs0VZMmCrB+BtDdM4ygC9BoJ12UmywSThmX7MsOg==
-X-Received: by 2002:a05:6808:1814:b0:408:f80a:bab9 with SMTP id 5614622812f47-41d033f488dmr188402b6e.11.1752613181573;
-        Tue, 15 Jul 2025 13:59:41 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:68bc:2e93:4664:2a0f? ([2603:8080:7400:36da:68bc:2e93:4664:2a0f])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-41d05f24034sm42642b6e.33.2025.07.15.13.59.40
+        d=1e100.net; s=20230601; t=1752613198; x=1753217998;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=orfWWsl/2+Pf8r55VoCjlT3TESiqdbdfWb5bInIXtl0=;
+        b=UEGLkS+mcc9Kz4DL2cuguVeesyq8+B7VZDX1uOXC0lvsvyBSAqQa9Ax6dAmnHAIfJr
+         afrvRj+USYe17VW9hLilHf6hzuIQBnTUrPoN+eEIj6WkV1qq4+ACShSWKAfX4sPx3iBg
+         uG3gQKdXDuLOj//8f2R09dH04xDeH72TS8lkl8R2rH6X+zNV3VC/pDv0ITjyfyN7BC77
+         Jg++vcRe3FcgBCkt+Mvrx+oW5Nr/ezIiAMJP8LWGoQDDLx8OmgkTtErLyHI74GI1MThm
+         ke+fklLGNoJeTtf/qMoBGcroZVr0NfV+asdq0C4jngkFOAk3vFJlYfZYY3GZh348sGSz
+         SN0A==
+X-Gm-Message-State: AOJu0YxftdmR+9L0B6uIEHxF830TbrCmPiyqQmHxlTIWUsWYKjV7LhH8
+	YeVzsO2JaMvyfHl0S87PiVzqhMlcuNcD+blJUpjQ9ZA6zwTw6j2nZ5h+4KG+B/1HUM1/x0NLw9n
+	ghlpHanZaWGgye0vioeAOPZUyAEGYEB3XlMYITzTIbivp/Wd+J4SvDs8kEmKQ1QzFZg==
+X-Gm-Gg: ASbGncv1/v63goVu47JF2f6WzdQnUDzWfBcYK9Ws/4QhkMAYwJYhGE75crEFRi4SEdq
+	f7Pp6bExzwnZGeHzOCCtReNeuAbFXFlh3q1Y4Y8WVScJlfvRK8PqoIUcV0wqDyg7X4rBYShdHi3
+	D8U9eocp2sujlX5OwmSkyJfdSGc2iW46PRuPW4xdxXaioHSTw4cCA8Ch/+qzjY52eIpw62WJeWS
+	knqfFU8jo5j8WwUVDvt9ayfEXFCMHtkwSSAJ897EGetHSBRTsLbkc+RoWZVsu0B7+ekEZmgoZrE
+	fJ7IULuqR79UdWFtYnyzkERVyqTf1E3QXcsMnqk0hYZ4tF8p+1s/LdNAmILYyeB2xDqHbMA=
+X-Received: by 2002:a05:6000:2f88:b0:3a6:d26a:f0f5 with SMTP id ffacd0b85a97d-3b60e4ed4f2mr29337f8f.21.1752613197690;
+        Tue, 15 Jul 2025 13:59:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyYymmr26QFygmkbNiXyQJM9jzV+eIWenc1xK+3dviERnxtgr6GW8Q8vgbqdgO2rkMKSnHcQ==
+X-Received: by 2002:a05:6000:2f88:b0:3a6:d26a:f0f5 with SMTP id ffacd0b85a97d-3b60e4ed4f2mr29322f8f.21.1752613197179;
+        Tue, 15 Jul 2025 13:59:57 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1ac9c.dip0.t-ipconnect.de. [87.161.172.156])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b60e3ed902sm76138f8f.91.2025.07.15.13.59.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 13:59:40 -0700 (PDT)
-Message-ID: <c9eac8f6-8e7f-4ed0-b34d-5dc50be8078f@vt.edu>
-Date: Tue, 15 Jul 2025 15:59:39 -0500
+        Tue, 15 Jul 2025 13:59:56 -0700 (PDT)
+Message-ID: <00891d95-94c1-4cc7-a152-3d243a91afd1@redhat.com>
+Date: Tue, 15 Jul 2025 22:59:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,162 +87,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bonding: Switch periodic LACPDU state machine from
- counter to jiffies
-To: carlos.bilbao@kernel.org, jv@jvosburgh.net, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: sforshee@kernel.org
-References: <20250715205733.50911-1-carlos.bilbao@kernel.org>
+Subject: Re: [PATCH v5 12/14] mm: add config option for clearing page-extents
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+ akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
+ peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+ tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
+ boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, ziy@nvidia.com
+References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
+ <20250710005926.1159009-13-ankur.a.arora@oracle.com>
+ <fe138d11-e0fe-4e57-8e51-a5521bad1b88@redhat.com> <87qzymocok.fsf@oracle.com>
+ <9865895d-c9bf-42e2-b813-bdbd39ad3af1@redhat.com> <87ple2jysm.fsf@oracle.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Carlos Bilbao <bilbao@vt.edu>
-In-Reply-To: <20250715205733.50911-1-carlos.bilbao@kernel.org>
+Organization: Red Hat
+In-Reply-To: <87ple2jysm.fsf@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-FYI, I was able to test this locally but couldn’t find any kselftests to
-stress the bonding state machine. If anyone knows of additional ways to
-test it, I’d be happy to run them.
+On 14.07.25 22:35, Ankur Arora wrote:
+> 
+> [ Added Zi Yan. ]
+> 
+> David Hildenbrand <david@redhat.com> writes:
+> 
+>> On 11.07.25 19:32, Ankur Arora wrote:
+>>> David Hildenbrand <david@redhat.com> writes:
+>>>
+>>>> On 10.07.25 02:59, Ankur Arora wrote:
+>>>>> Add CONFIG_CLEAR_PAGE_EXTENT to allow clearing of page-extents
+>>>>> where architecturally supported.
+>>>>> This is only available with !CONFIG_HIGHMEM because the intent is to
+>>>>> use architecture support to clear contiguous extents in a single
+>>>>> operation (ex. via FEAT_MOPS on arm64, string instructions on x86)
+>>>>> which excludes any possibility of interspersing kmap()/kunmap().
+>>>>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+>>>>> ---
+>>>>
+>>>> Staring at the next patch, I think this can easily be squashed into the next
+>>>> patch where you add actual MM core support.
+>>> I wanted to do this in a separate patch to explicitly document what the
+>>> responsibility of the interface provided by the architecture is.
+>>> That said, the commit message didn't actually do a good job of doing
+>>> that :D.
+>>> Copying the more detailed commit message from my reply to Andrew,
+>>> one important part of the clear_pages() is that it be interruptible
+>>> because clear_pages_resched() implicitly depends on it.
+>>>
+>>>> This is only enabled with !CONFIG_HIGHMEM because the intent is
+>>>> to use architecture support to clear contiguous extents in a
+>>>> single interruptible operation (ex. via FEAT_MOPS on arm64,
+>>>> string instructions on x86).
+>>>
+>>>> Given that we might be zeroing the whole extent with a single
+>>>> instruction, this excludes any possibility of constructing
+>>>> intermediate HIGHMEM maps.
+>>> Do you think it is best documented in the next patch in a comment
+>>> instead?
+>>
+>> I would just add + document it as part of the next patch.
+>>
+>> Looking at the bigger picture now, you introduce
+>>
+>> 	ARCH_HAS_CLEAR_PAGES
+>>
+>> To say whether an architecture provides clear_pages().
+>>
+>> Now we want to conditionally use that to optimize folio_zero_user().
+>>
+>> Remind me, why do we want to glue this to THP / HUGETLBFS only? I would assume
+>> that the code footprint is rather small, and the systems out there that are
+>> compiled with ARCH_HAS_CLEAR_PAGES but without THP / HUGETLBFS are rather ...
+>> rare (mostly 32BIT x86 only).
 
-Thanks!
+Agreed.
 
-Carlos
+> 
+> I thought about this some more and there are a few other interfaces that
+> end up clearing pages:
+> 
+>> clear_highpage()
+>> clear_highpage_kasan_tagged()
+>> tag_clear_highpage()
+> 
+> In this set, there are many loops of the form:
+> 
+>     for (i = 0; i < n; i++)
+>         clear_highpage();
+> 
+> At least some of these (including kernel_init_pages()) could be migrated
+> to variations on a clear_highpages() which could be:
+> 
+>      static inline void clear_highpages(struct page *page, u32 num_pages)
+>      {
+>              if (!IS_ENABLED(CONFIG_HIGHMEM))
+>                      clear_pages_resched(page, num_pages);
+>              else
+>                      for (i = 0; i < num_pages; ++i)
+>                              clear_highpage(page + i);
+>      }
+> 
+> (clear_pages_resched() should be safe to be used from here because
+> everybody using this should be in a schedulable context.)
+> 
+> (The kernel_init_pages() was also suggested by Zi Yan in a review of v3 [1].)
+> 
+>> clear_user_highpage()
+> 
+> Only users folio_zero_user(), __collapse_huge_page_copy() and
+> userfaultd.
+> 
+>> clear_user_page()
+> Not many users apart from the highmem interface.
+> 
+>> clear_page()
+> 
+> Not many users apart from the highmem interface.
+> 
+> I'm happy to do this work, just not sure how to stage it. In particular I
+> would like to avoid a series which tries to address all of the cases.
+> 
+> Maybe it makes sense to handle just add the clear_highpages() variants,
+> folio_zero_user() handling and some of the obvious users of
+> clear_highpages() for v6?
 
-On 7/15/25 15:57, carlos.bilbao@kernel.org wrote:
-> From: Carlos Bilbao <carlos.bilbao@kernel.org>
->
-> Replace the bonding periodic state machine for LACPDU transmission of
-> function ad_periodic_machine() with a jiffies-based mechanism, which is
-> more accurate and can help reduce drift under contention.
->
-> Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
-> ---
->   drivers/net/bonding/bond_3ad.c | 79 +++++++++++++---------------------
->   include/net/bond_3ad.h         |  2 +-
->   2 files changed, 32 insertions(+), 49 deletions(-)
->
-> diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
-> index c6807e473ab7..8654a51266a3 100644
-> --- a/drivers/net/bonding/bond_3ad.c
-> +++ b/drivers/net/bonding/bond_3ad.c
-> @@ -1421,44 +1421,24 @@ static void ad_periodic_machine(struct port *port, struct bond_params *bond_para
->   	    (!(port->actor_oper_port_state & LACP_STATE_LACP_ACTIVITY) && !(port->partner_oper.port_state & LACP_STATE_LACP_ACTIVITY)) ||
->   	    !bond_params->lacp_active) {
->   		port->sm_periodic_state = AD_NO_PERIODIC;
-> -	}
-> -	/* check if state machine should change state */
-> -	else if (port->sm_periodic_timer_counter) {
-> -		/* check if periodic state machine expired */
-> -		if (!(--port->sm_periodic_timer_counter)) {
-> -			/* if expired then do tx */
-> -			port->sm_periodic_state = AD_PERIODIC_TX;
-> -		} else {
-> -			/* If not expired, check if there is some new timeout
-> -			 * parameter from the partner state
-> -			 */
-> -			switch (port->sm_periodic_state) {
-> -			case AD_FAST_PERIODIC:
-> -				if (!(port->partner_oper.port_state
-> -				      & LACP_STATE_LACP_TIMEOUT))
-> -					port->sm_periodic_state = AD_SLOW_PERIODIC;
-> -				break;
-> -			case AD_SLOW_PERIODIC:
-> -				if ((port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT)) {
-> -					port->sm_periodic_timer_counter = 0;
-> -					port->sm_periodic_state = AD_PERIODIC_TX;
-> -				}
-> -				break;
-> -			default:
-> -				break;
-> -			}
-> -		}
-> +	} else if (port->sm_periodic_state == AD_NO_PERIODIC)
-> +		port->sm_periodic_state = AD_FAST_PERIODIC;
-> +	/* check if periodic state machine expired */
-> +	else if (time_after_eq(jiffies, port->sm_periodic_next_jiffies)) {
-> +		/* if expired then do tx */
-> +		port->sm_periodic_state = AD_PERIODIC_TX;
->   	} else {
-> +		/* If not expired, check if there is some new timeout
-> +		 * parameter from the partner state
-> +		 */
->   		switch (port->sm_periodic_state) {
-> -		case AD_NO_PERIODIC:
-> -			port->sm_periodic_state = AD_FAST_PERIODIC;
-> -			break;
-> -		case AD_PERIODIC_TX:
-> -			if (!(port->partner_oper.port_state &
-> -			    LACP_STATE_LACP_TIMEOUT))
-> +		case AD_FAST_PERIODIC:
-> +			if (!(port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
->   				port->sm_periodic_state = AD_SLOW_PERIODIC;
-> -			else
-> -				port->sm_periodic_state = AD_FAST_PERIODIC;
-> +			break;
-> +		case AD_SLOW_PERIODIC:
-> +			if ((port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
-> +				port->sm_periodic_state = AD_PERIODIC_TX;
->   			break;
->   		default:
->   			break;
-> @@ -1471,21 +1451,24 @@ static void ad_periodic_machine(struct port *port, struct bond_params *bond_para
->   			  "Periodic Machine: Port=%d, Last State=%d, Curr State=%d\n",
->   			  port->actor_port_number, last_state,
->   			  port->sm_periodic_state);
-> +
->   		switch (port->sm_periodic_state) {
-> -		case AD_NO_PERIODIC:
-> -			port->sm_periodic_timer_counter = 0;
-> -			break;
-> -		case AD_FAST_PERIODIC:
-> -			/* decrement 1 tick we lost in the PERIODIC_TX cycle */
-> -			port->sm_periodic_timer_counter = __ad_timer_to_ticks(AD_PERIODIC_TIMER, (u16)(AD_FAST_PERIODIC_TIME))-1;
-> -			break;
-> -		case AD_SLOW_PERIODIC:
-> -			/* decrement 1 tick we lost in the PERIODIC_TX cycle */
-> -			port->sm_periodic_timer_counter = __ad_timer_to_ticks(AD_PERIODIC_TIMER, (u16)(AD_SLOW_PERIODIC_TIME))-1;
-> -			break;
->   		case AD_PERIODIC_TX:
->   			port->ntt = true;
-> -			break;
-> +			if (!(port->partner_oper.port_state &
-> +						LACP_STATE_LACP_TIMEOUT))
-> +				port->sm_periodic_state = AD_SLOW_PERIODIC;
-> +			else
-> +				port->sm_periodic_state = AD_FAST_PERIODIC;
-> +		fallthrough;
-> +		case AD_SLOW_PERIODIC:
-> +		case AD_FAST_PERIODIC:
-> +			if (port->sm_periodic_state == AD_SLOW_PERIODIC)
-> +				port->sm_periodic_next_jiffies = jiffies
-> +					+ HZ * AD_SLOW_PERIODIC_TIME;
-> +			else /* AD_FAST_PERIODIC */
-> +				port->sm_periodic_next_jiffies = jiffies
-> +					+ HZ * AD_FAST_PERIODIC_TIME;
->   		default:
->   			break;
->   		}
-> @@ -1987,7 +1970,7 @@ static void ad_initialize_port(struct port *port, int lacp_fast)
->   		port->sm_rx_state = 0;
->   		port->sm_rx_timer_counter = 0;
->   		port->sm_periodic_state = 0;
-> -		port->sm_periodic_timer_counter = 0;
-> +		port->sm_periodic_next_jiffies = 0;
->   		port->sm_mux_state = 0;
->   		port->sm_mux_timer_counter = 0;
->   		port->sm_tx_state = 0;
-> diff --git a/include/net/bond_3ad.h b/include/net/bond_3ad.h
-> index 2053cd8e788a..aabb8c97caf4 100644
-> --- a/include/net/bond_3ad.h
-> +++ b/include/net/bond_3ad.h
-> @@ -227,7 +227,7 @@ typedef struct port {
->   	rx_states_t sm_rx_state;	/* state machine rx state */
->   	u16 sm_rx_timer_counter;	/* state machine rx timer counter */
->   	periodic_states_t sm_periodic_state;	/* state machine periodic state */
-> -	u16 sm_periodic_timer_counter;	/* state machine periodic timer counter */
-> +	unsigned long sm_periodic_next_jiffies;	/* state machine periodic next expected sent */
->   	mux_states_t sm_mux_state;	/* state machine mux state */
->   	u16 sm_mux_timer_counter;	/* state machine mux timer counter */
->   	tx_states_t sm_tx_state;	/* state machine tx state */
+Yes, no need for excessive handling.
+
+What I was getting at was: could we get rid of the kconfig option and 
+simply glue it to the availability of clear_pages() in a reasonable way.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
