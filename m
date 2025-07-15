@@ -1,166 +1,212 @@
-Return-Path: <linux-kernel+bounces-731280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C73B05224
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:47:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CD9B05221
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AA363BB456
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:47:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 749287B0C93
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA4326C39D;
-	Tue, 15 Jul 2025 06:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MzRKpzk+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5777E26D4F9;
+	Tue, 15 Jul 2025 06:46:58 +0000 (UTC)
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022142.outbound.protection.outlook.com [40.107.75.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A216623BCF7;
-	Tue, 15 Jul 2025 06:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752562039; cv=none; b=uID7oms6JiZ6lQ5fq/64q5RReGDA5IEGHBo+RxjLAwfV210spRviMCqIzVgae83aPxim4OnH9Vp87F4D22m9xejlTyMV71Jf5MikssBSoTPrgncYVtLuwCS6nob94q3Y4CwIpmOgmy3dVnfNOBwe5ZzAh1aOySxU98TjsQjy73M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752562039; c=relaxed/simple;
-	bh=CcEr+yxzjUP7rrvl1n/6Ya71JSibRPTajrQn80BBuio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GD36MJkYNhgqn7xXYx29hdlbIQTNVgO6lIpUP/GBIAmaf468Lod2Ig5AvpMHVjRVXZJuE/MiV3Lzkz1Mcaq9eY5vK7jl5xesVaP1KeZK2KKMVBq2WwTD9U7M4qHVzGLGVvES+LeB8ScK8+flbBwMdCQiSDQTjs1MgrCppZI9TLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MzRKpzk+; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752562038; x=1784098038;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CcEr+yxzjUP7rrvl1n/6Ya71JSibRPTajrQn80BBuio=;
-  b=MzRKpzk+hGjJoMPymBYLKIPkf0NbHI2sKYYRczpFV7N9YEcuvAtZt6vd
-   sFHWbGlFPOoyjSOER7ZYQ+9FXPH2nZMIDk0b8KPIxD4LUr4E0BIwbIb5u
-   GvLHejg2ryWhiguonn4pAR9Xkq7Djyn+lARlDWjgCoLX83BtKtUqjQWjl
-   Tkp5CzcPEWyON9SqFnO3pzjnQBJhoxGFkoZIJD117vx1rsmj3ntbPyxmL
-   FKoAAVTz7yaXH91W7CrO/JNwvUujZKk8vEZURLUBthOSoU873W8eu40F8
-   ud+ruD4wTlkZx1oBbjmQzVvB4p0aWcK9CsmwfEt5p9KuigeTx5lqZyLQP
-   w==;
-X-CSE-ConnectionGUID: cO8vUQQVQ3eTXUfPNISf0A==
-X-CSE-MsgGUID: vtmbnHHCStqXYUT+9xhXsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54641610"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54641610"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 23:47:15 -0700
-X-CSE-ConnectionGUID: uKHbWTDLR3WAvdXNGLfsPQ==
-X-CSE-MsgGUID: oGB91pAPQhayXPnaXyzTnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="156551176"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 23:47:11 -0700
-Date: Tue, 15 Jul 2025 08:46:06 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Jianbo Liu <jianbol@nvidia.com>
-Cc: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Lama Kayal <lkayal@nvidia.com>
-Subject: Re: [PATCH net-next 1/6] net/mlx5: HWS, Enable IPSec hardware
- offload in legacy mode
-Message-ID: <aHX5Lu6Ef4/gLwDS@mev-dev.igk.intel.com>
-References: <1752471585-18053-1-git-send-email-tariqt@nvidia.com>
- <1752471585-18053-2-git-send-email-tariqt@nvidia.com>
- <aHSm7SHg1xTMNE0F@mev-dev.igk.intel.com>
- <d03d6fd7-b86e-4c1f-92ef-ffc26339bf97@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2162C147;
+	Tue, 15 Jul 2025 06:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.142
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752562017; cv=fail; b=M/tbFuZK1+CO0oFeSCm9Mwm59VeyoUIeMPyTNI47rwqJ2SLfzey7CuWnJXrJ2VaW9n49sGwwvCupR8x11/+9vezxO4yfz17fStooPKNhSsw1KuSPnPXUiyu6yQVkbxUInTzquMDmowYlial4YGDWvwvaBoYQ3HXTlpvzumt7+Ec=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752562017; c=relaxed/simple;
+	bh=pHmc+YRLfQPY6PhtvELDL4jE+wE0y6y+s7O7lIDfV9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KMH0vt7VXHqHkNgCoSTWv3t69G2lwydaTmHObZbjtjPFXf8UT7PI121KMsxRKnuqHPKdCzzShpwLz8OHMDiRy8l2psP2oP8dhc33CL8Gk98thBUxNPnblOrlPo5jjleTcynWGEKuu0duo/HLoeiIA36BS4+YCUhE2J+r8c2CXM8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kWgMsjSs+IQRJW/CvWJ5I0U0KLDsFp8CZt4rpLihKCdGqR51hh1E59zvk5Zg0OBCZxtYBEPBlR40OT0ovgRb9MHlnaHi/syR5Bo9/dCM0c1ZUy84S7m30XlS7J1T8f5Et6UVcj7oaCshhv1V7Q8FfsZh/r4kUV/s22vPbWRUbNvML+c5HEPD+cwZnB8qAPA9GhHREDmtWycVnKelbG2DO+sYTF5GkgMnzoKnkTAMczX/attbrB51qyF2Ez6jE8noPMMr73E6ifhGUcQyyX0XsNNw1+Oetrgob4UchctMfp3RcWDXRlSN8F2EK4LvotMjHy52EAnQSXHFl7gSWmNMQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v30TV5eWaGPMHlKrC2GyDPq6i/rqBhn2Roh2pAOcGYs=;
+ b=jUzBfS2NMS3qfP3QR3PEbY6/cJBaku/psqnwUCQgr/s1mZMhA55VddaLQsAvJzrnme5J34un/rpgfULxypPYcrTj9yDrAe5rPzdVb6OWD94Aa0HKsYURbtOgeGiJBJas3WSpT5zkCjtP4E7QvOkKGBNskoRefun/RFTw2X+URyB848nkXeUY6mQhfbQakYCJbTuLCfcE+YyEqPoIKjjT/qfNQaySuR+ILh631pys1PJgkEz9EmkPqjxnRJ5HG8O7NDaI/CnQWiDkm3iMgVoF3rOLoaPKRlobcsQQCR07Mx/H1+EZTJ7jqTQm7Cf/zJhanj9LFBt3qYsQGwljzJ5miA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from TYCP286CA0152.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:383::14)
+ by TY0PR06MB5610.apcprd06.prod.outlook.com (2603:1096:400:328::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
+ 2025 06:46:50 +0000
+Received: from OSA0EPF000000C6.apcprd02.prod.outlook.com
+ (2603:1096:400:383:cafe::9f) by TYCP286CA0152.outlook.office365.com
+ (2603:1096:400:383::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.33 via Frontend Transport; Tue,
+ 15 Jul 2025 06:46:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ OSA0EPF000000C6.mail.protection.outlook.com (10.167.240.52) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 06:46:48 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 9987441604F0;
+	Tue, 15 Jul 2025 14:46:46 +0800 (CST)
+Message-ID: <4b902e2e-9cbc-4c3c-8318-fb7d6e86545e@cixtech.com>
+Date: Tue, 15 Jul 2025 14:46:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d03d6fd7-b86e-4c1f-92ef-ffc26339bf97@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/14] dt-bindings: PCI: Add CIX Sky1 PCIe Root Complex
+ bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, mpillai@cadence.com,
+ fugang.duan@cixtech.com, guoyin.chen@cixtech.com, peter.chen@cixtech.com,
+ cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250630041601.399921-1-hans.zhang@cixtech.com>
+ <20250630041601.399921-11-hans.zhang@cixtech.com>
+ <20250630-graceful-horse-of-science-eecc53@krzk-bin>
+ <bb4889ca-ec99-4677-9ddc-28905b6fcc14@cixtech.com>
+ <5b182268-d64c-424c-9ada-0c3f120d2817@kernel.org>
+ <2b608302-c4a6-404d-9cc5-d1ab9a6712bd@cixtech.com>
+ <a7aac65e-848b-4bb3-bd52-963766410698@kernel.org>
+ <50592fad-850c-4dab-92d8-a71cb89daf58@cixtech.com>
+ <e3f6da47-25bb-450c-8660-f1406ed590e6@kernel.org>
+ <d6083e62-318f-4879-bac3-97ad26615458@cixtech.com>
+ <eddf1e77-10b5-424c-b082-846bd2646f42@kernel.org>
+Content-Language: en-US
+From: Hans Zhang <hans.zhang@cixtech.com>
+In-Reply-To: <eddf1e77-10b5-424c-b082-846bd2646f42@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OSA0EPF000000C6:EE_|TY0PR06MB5610:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2d07951f-41f9-4592-78ea-08ddc36b5fb6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZTF2elR1UjhBb3hNbXRaUllibzRiSTVIdEVxam9FOGhaTkJPMnRNYXRVYnEr?=
+ =?utf-8?B?SWZmVkRZZzJka2MyVWZ2QkNNRS9jZFdXRmpnNG5SNnp1S3ZoK0tUZjFwUmJG?=
+ =?utf-8?B?MXRmcTVNSytCUjA1RHhqMVFZcGxxWWpIYmhkUGpBS2pQOVFWV2JiRG9lcVMw?=
+ =?utf-8?B?RVFYdkpWemdaWDF6UzhxODlJdWd4dkVCWFE3WDkzdHJVS1pZRE13dzY1UGNw?=
+ =?utf-8?B?MUJacjlISFEwNjFsWUpkZ0JSY1dqblJsMFB3RkY4ZWlPd3I0RjJCeGpRREMz?=
+ =?utf-8?B?QWt2RVhIWW5qYlFxK0p1SEh5aGV1K3J0RXBBK21tUGNVOFB0M2xNNzdyeUZr?=
+ =?utf-8?B?bEVJaEllZXZqSVRWRmQva3dtN0h1U1hmVXlXNVIzWkNiUHN0OG45OWRBVkcx?=
+ =?utf-8?B?QXc2N3hzS3RVSWcyVDZzMkxWVXJySCtZMkxSQUhCSjhVYTZZZzFYN0J6a2Uz?=
+ =?utf-8?B?anNtcTJUaWMyMm5KZEZxK0lkUzY0bG42RHZReWpoMTlkMm9HVWRDc1JpOGlh?=
+ =?utf-8?B?ZHJaQkIvQXo2WXZ5WXo0TXRCTWNHYVd0eXF2VFhvbzA2dFJPRFJvUS94ZzEw?=
+ =?utf-8?B?dnVYaDlWd2pNdFFueFVhbXRiOWtYamFIVm9tb1k1dVFFTlBsZTcvSWpmZm5t?=
+ =?utf-8?B?YmIyVFJHcEVZRGdaOERjSUNwd3V1emRRZE9vWnU3YTdQRWEyK3RPMEFCTklH?=
+ =?utf-8?B?elNaY2pkQ0UxVS8wWnhYeXV1Tit0Mlo0bmZxTitFYnBzYlhZTWc1WEkwM0lr?=
+ =?utf-8?B?ZFp2OUVjTzIvVnRnM2RFeU9NdFBoSkdtb25jUGxUTHFoTUppV01DRnZZWExp?=
+ =?utf-8?B?ZXZRTG94dTFJU2NaRVN3NTMwaWJLQXlkWUJrV2wyNEpJYUdNSjZhdVlLNjNk?=
+ =?utf-8?B?RDRpVXZOTVV0TmJjbXo5SWFPS01rWCthWWhmc2NCalJqWmJ5c1p6ZXN1S3pm?=
+ =?utf-8?B?S2FiTGpxVUJ5R1JUQWh3aW1RYndIZ3dZRzhaNS92WU5VMEtsYm9yRldYaURx?=
+ =?utf-8?B?Yld4MHorK2hvaTBucE9xMEhlWFhNa2gycWNEcHdqNkRtOXFqREZ4WEhqQUtN?=
+ =?utf-8?B?Q1M4U000RS8xZkVRTTJIVVhYSW1oKzQxd2cvQnRWbFNFMjg2ZHI5VjZ4alEz?=
+ =?utf-8?B?QlQwd29HTi80N284SllJcDVyeVpHZk1nRHhlL3hnMFlQcVRCM2VsZlVNaDIr?=
+ =?utf-8?B?NzA0WFJBdFcxZXBWaDhDSWNjNGpIT0U0dG8xVEdzS0N4VDRYaFUxVXhXUDR1?=
+ =?utf-8?B?M2l3U0YyeC9rTjltMVpHS3phcjNjTFl5dnovL21ERi9xbWdzZU45WVllUDFO?=
+ =?utf-8?B?SC9aRXkwaFJ3M1ZCakRhZGRvTVdaZ1ZLVCtyN2NnRXhENjdHZG1jQmgzcEhL?=
+ =?utf-8?B?SHZKemZoMjdVbWprNzg0eGtudFhVaFFkb1pRWkpMd0paNnZUTUVaL1dwNEVL?=
+ =?utf-8?B?b0d3T0Z5NnhVM2ZXUDFnTllXQy9mYUlFeDU0b09Ob3BRcGlzSVFoaFN0NEpx?=
+ =?utf-8?B?WGZ0dGtkWFkrTHg5TWZiMG40UUhFV1JYcXNQb095YWp6TTRPUytENEJwZ0J4?=
+ =?utf-8?B?WnFwakZTVzA4SWlXYnE2YXg4cWRkUVhUVllRZUhQeEVtVmk0VzdoRjIrdmpV?=
+ =?utf-8?B?dzRDMUJZTkNZR3hqbnFJK1pNOFN0TGVIZnBRMW50U2hMc3AzUkRSVER3TXZl?=
+ =?utf-8?B?aThPc1dGZWhGODJRdlk0SjB6THhEcnlHMWR4OERkVFVuTWxCZWF3RFdUYWtx?=
+ =?utf-8?B?TWV1d1JSajYvWTNNeERsVWswQ25TZ3hIalhFZytJNkJFMzNwbkN2QnBwRHVs?=
+ =?utf-8?B?OXZDMUpmNE9WeDl5RU1XeWFraHVNUjF0SkViS29aZWxycTRyU0JtVW56NVZ5?=
+ =?utf-8?B?V0lYUGFBcmFEaWhNTHlEcCtGbFoyRENZSlErT1EvYTRsZmdDWlhlaHp4MGw0?=
+ =?utf-8?B?WkpQQzFlRlRxMys5cjV3T25ZK1lPKzNIaTNHV0NaQWpKUlhLZlU1S0hBcGRx?=
+ =?utf-8?B?Q1pFVFpQTjhDakU1L0VBMjlQcXNFSXFQL0RhYlRrb2duZzdpb0FNR0IyUWZR?=
+ =?utf-8?Q?6OgzIi?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 06:46:48.2711
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d07951f-41f9-4592-78ea-08ddc36b5fb6
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	OSA0EPF000000C6.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5610
 
-On Mon, Jul 14, 2025 at 11:04:54PM +0800, Jianbo Liu wrote:
+
+
+On 2025/7/15 14:40, Krzysztof Kozlowski wrote:
+> EXTERNAL EMAIL
+> 
+> On 14/07/2025 10:03, Hans Zhang wrote:
+>>
+>>
+>> On 2025/7/14 15:43, Krzysztof Kozlowski wrote:
+>>> EXTERNAL EMAIL
+>>>
+>>> On 03/07/2025 03:47, Hans Zhang wrote:
+>>>>>>
+>>>>>> We initially used the logic of Cadence common driver as follows:
+>>>>>> drivers/pci/controller/cadence/pcie-cadence-host.c
+>>>>>> of_property_read_u32(np, "vendor-id", &rc->vendor_id);
+>>>>>>
+>>>>>> of_property_read_u32(np, "device-id", &rc->device_id);
+>>>>>>
+>>>>>> So, can the code in Cadence be deleted?
+>>>>>
+>>>>> Don't know. If this is ABI, then not.
+>>>>>
+>>>>
+>>>> According to my understanding, this is not ABI.
+>>>
+>>> Huh? Then what is ABI, by your understanding?
+>>>
+>>
+>> Dear Krzysztof,
+>>
+>> I understand kernel ABI primarily refers to the stable binary contract
+>> between the kernel and userspace (e.g., syscalls, /sys/proc interfaces).
+>> Device tree properties are part of the boot-time hardware description
+>> consumed by drivers during initialization. They are not directly exposed
+>> to userspace as ABI interfaces.
+>>
+>> If I understand wrongly, please correct me.
 > 
 > 
-> On 7/14/2025 2:43 PM, Michal Swiatkowski wrote:
-> > On Mon, Jul 14, 2025 at 08:39:40AM +0300, Tariq Toukan wrote:
-> > > From: Lama Kayal <lkayal@nvidia.com>
-> > > 
-> > > IPSec hardware offload in legacy mode should not be affected by the
-> > > steering mode, hence it should also work properly with hmfs mode.
-> > 
-> > What about dmfs mode? I am not sure, if you didn't remove it because it
-> > is still needed or just forgot about removing it.
-> > 
+> Then that's wrong understanding.
 > 
-> It is still needed.
-> We support packet offload for all steering modes in legacy, and only dmfs in
-> switchdev. This is the logic we added before:
-> 
->             dmfs    smfs
-> legacy       Y       Y
-> switchdev    Y       N
-> 
-> Now we support hmfs. It is the same as smfs. So the table becomes:
->             dmfs    smfs   hmfs
-> legacy       Y       Y      Y
-> switchdev    Y       N      N
-> 
-> Instead of adding "mdev->priv.steering->mode ==
-> MLX5_FLOW_STEERING_MODE_HMFS", We removed "mdev->priv.steering->mode ==
-> MLX5_FLOW_STEERING_MODE_SMFS", and the code is simpler and clean.
+> The DT interface, documented explicitly and one implied by kernel
+> drivers in case it differs, is the ABI, as explained in docs in the
+> kernel and what we said on the lists thousands of times.
 > 
 
-Ok, got it, thanks.
+Dear Krzysztof,
 
-> 
-> > In case it is ok as it is:
-> > Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-> > 
-> 
-> Yes, it's ok. Thanks for the review.
-> 
-> Jianbo
-> 
-> > Thanks
-> > 
-> > > 
-> > > Remove steering mode validation when calculating the cap for packet
-> > > offload, this will also enable the missing cap MLX5_IPSEC_CAP_PRIO
-> > > needed for crypto offload.
-> > > 
-> > > Signed-off-by: Lama Kayal <lkayal@nvidia.com>
-> > > Reviewed-by: Jianbo Liu <jianbol@nvidia.com>
-> > > Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-> > > ---
-> > >   .../net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c   | 3 +--
-> > >   1 file changed, 1 insertion(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c
-> > > index 820debf3fbbf..ef7322d381af 100644
-> > > --- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c
-> > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_offload.c
-> > > @@ -42,8 +42,7 @@ u32 mlx5_ipsec_device_caps(struct mlx5_core_dev *mdev)
-> > >   	if (MLX5_CAP_IPSEC(mdev, ipsec_full_offload) &&
-> > >   	    (mdev->priv.steering->mode == MLX5_FLOW_STEERING_MODE_DMFS ||
-> > > -	     (mdev->priv.steering->mode == MLX5_FLOW_STEERING_MODE_SMFS &&
-> > > -	     is_mdev_legacy_mode(mdev)))) {
-> > > +	     is_mdev_legacy_mode(mdev))) {
-> > >   		if (MLX5_CAP_FLOWTABLE_NIC_TX(mdev,
-> > >   					      reformat_add_esp_trasport) &&
-> > >   		    MLX5_CAP_FLOWTABLE_NIC_RX(mdev,
-> > > -- 
-> > > 2.40.1
-> > > 
-> > 
-> 
+Thank you very much for your reply and explanation. Now I understand 
+that I have been discussing issues in the linux community for about half 
+a year. I didn't pay attention to it before. Thank you again.
+
+Best regards,
+Hans
 
