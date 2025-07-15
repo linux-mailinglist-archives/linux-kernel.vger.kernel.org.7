@@ -1,156 +1,119 @@
-Return-Path: <linux-kernel+bounces-730941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368B2B04CC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 902DEB04CC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EAB44A6EFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:21:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAFC94A7054
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055D01482E8;
-	Tue, 15 Jul 2025 00:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7916614B959;
+	Tue, 15 Jul 2025 00:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbwfmwSy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="E/meXjj8"
+Received: from r3-21.sinamail.sina.com.cn (r3-21.sinamail.sina.com.cn [202.108.3.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A753207;
-	Tue, 15 Jul 2025 00:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A4314AD20
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752538895; cv=none; b=Y4BGGh0QRUPx7AWv6gLTwXyu/FMbpImncuvhm7D5FkI2c7CMdemScohQox0r6AwlRQi/6Uojhp7BzrSrjQRHMUFaaFYQk1d25dzRjyJvZ8vo1UO1wEoGgkzELUv4RHsZYQj+xtIrW7+6TLQhgdNFiK3SFvR6HrB/Px5xBXZ3ZgA=
+	t=1752538928; cv=none; b=my8O8imja5MkmIDnPuqnFMWNn5fy6G+4kS5Zgj0aJOEhGo76zSYY3ulr+6SW1Zx0a9l2sw1OLktvGlKLp7G3f780hqGTvA7Qcze5+AZ28TvNa7Po2cfXDP+cmg49XjD7N8/xZ0vQhHlxrpTY6OAE1EFajoDdPcgPmsUVojGs6HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752538895; c=relaxed/simple;
-	bh=ggcEC9bbWrHlmXqb/IZkagM/1dITGxzsZ7d7NZy45XA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rkd6UtqH9qwiTm6HkHrqcZf2N2lqBfCceYjzqIjZpB3nep/fOPEC7pjkWPND3NCj9BnULGlXvCJnZB4E8T+RqTf+byDibUKdmPqkUhuJUrbt2vPSBA2pP4eKfkdqutZpHrgT1X7gGMsIKYAhxNK0NGtIvwuF7OCf/rjJxxYtgMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbwfmwSy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF290C4CEED;
-	Tue, 15 Jul 2025 00:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752538894;
-	bh=ggcEC9bbWrHlmXqb/IZkagM/1dITGxzsZ7d7NZy45XA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cbwfmwSy95HmlSWI4uiy/mtiUWFaeu/uH7ad9AQ4TACV7HMBT0oaevtd6abttH333
-	 Le8jxJFr/1McYBGAH3q9PI6W0fxrP4PIOl8fA49YokMeLF4ahnaXk0n8tnE5khdFXl
-	 FSPnuQDjOpQgn00x8nn0TLS5ydHbfc69JXWsYVeiZBp6r22sqyxTFHkBvksFKwc1yA
-	 4Q/1jX8bf32gzrSR6LZTEbe0cYIoonR8H2wvCdxrdzbZixmXOfOAAJWX7zCvyHiytS
-	 J5k8Q3FR46+0gtrqVv8VxFGTOEaYy6vKEX9gs/HYrkj0SFvg7uxl5ZBvYOUDBA/v0T
-	 dANMPu5y9fwzQ==
-Date: Tue, 15 Jul 2025 09:21:30 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, Borislav Petkov <bp@alien8.de>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Daniel Gomez <da.gomez@samsung.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen
- <samitolvanen@google.com>, Steven Rostedt <rostedt@goodmis.org>, Thomas
- Gleixner <tglx@linutronix.de>, Yann Ylavic <ylavic.dev@gmail.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- x86@kernel.org
-Subject: Re: [PATCH v3 7/8] x86/kprobes: enable EXECMEM_ROX_CACHE for
- kprobes allocations
-Message-Id: <20250715092130.0b4eda67c5db02e815e478b2@kernel.org>
-In-Reply-To: <20250713071730.4117334-8-rppt@kernel.org>
-References: <20250713071730.4117334-1-rppt@kernel.org>
-	<20250713071730.4117334-8-rppt@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752538928; c=relaxed/simple;
+	bh=Fon+973Kn2it/P/DjAvGLU8odvErfc+dnV1yIUJNsRU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=X91MYIDAV3KEsPNEAvmU1FB7MLj6Rn1me1wh3TkkuHLCOB656mLd65F+gPb6A8HsfJXlV5s/AsNyQFd+w2ZrgXqoszxWJ3A3MiPJAWnqoSMI2JdqJU7MkNGHPCZbW44vK9ha7pEKoODdYKet6hGZfXpcZcFbqt3c9Yo7O8NNiVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=E/meXjj8; arc=none smtp.client-ip=202.108.3.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752538923;
+	bh=CQ8dZBKC3wf9X4bBCQImnZZcVjwOZaF6fHfCDmOk17Y=;
+	h=From:Subject:Date:Message-ID;
+	b=E/meXjj817hrWWrsKQA7stFRe066wYreJv3+LklRTBB8Zw3shzAY6lkVwzflUeKZm
+	 Qbf4WuKuJYib/3ZAQqru6hWLqQkZv5/Qc51Y9WTSz5aiLxhNL9wKQI7PJg1WkRbddw
+	 2A0/5V+qG/X69PvXM7V6ahE4U3wt9T8XpnvOyzuc=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 68759F2000006277; Tue, 15 Jul 2025 08:21:54 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3565916685134
+X-SMAIL-UIID: 4D2B1738B10D4CFCA9486EC6A44F514F-20250715-082154-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+d4316c39e84f412115c9@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] WARNING: bad unlock balance in query_matching_vma
+Date: Tue, 15 Jul 2025 08:21:39 +0800
+Message-ID: <20250715002143.4033-1-hdanton@sina.com>
+In-Reply-To: <68757288.a70a0220.5f69f.0003.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun, 13 Jul 2025 10:17:29 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
-
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> Date: Mon, 14 Jul 2025 14:11:36 -0700
+> syzbot found the following issue on:
 > 
-> x86::alloc_insn_page() always allocates ROX memory.
-> 
-> Instead of overriding this method, add EXECMEM_KPROBES entry in
-> execmem_info with pgprot set to PAGE_KERNEL_ROX and  use ROX cache when
-> configuration and CPU features allow it.
-> 
+> HEAD commit:    a62b7a37e6fc Add linux-next specific files for 20250711
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1422dd82580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=7d42120e19faaef
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d4316c39e84f412115c9
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1222dd82580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1205d0f0580000
 
-Looks good to me.
+#syz test
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks!
-
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  arch/x86/kernel/kprobes/core.c | 18 ------------------
->  arch/x86/mm/init.c             |  9 ++++++++-
->  2 files changed, 8 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-> index 47cb8eb138ba..6079d15dab8c 100644
-> --- a/arch/x86/kernel/kprobes/core.c
-> +++ b/arch/x86/kernel/kprobes/core.c
-> @@ -481,24 +481,6 @@ static int prepare_singlestep(kprobe_opcode_t *buf, struct kprobe *p,
->  	return len;
->  }
->  
-> -/* Make page to RO mode when allocate it */
-> -void *alloc_insn_page(void)
-> -{
-> -	void *page;
-> -
-> -	page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
-> -	if (!page)
-> -		return NULL;
-> -
-> -	/*
-> -	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-> -	 * that the page was not maliciously altered and it is still zeroed.
-> -	 */
-> -	set_memory_rox((unsigned long)page, 1);
-> -
-> -	return page;
-> -}
-> -
->  /* Kprobe x86 instruction emulation - only regs->ip or IF flag modifiers */
->  
->  static void kprobe_emulate_ifmodifiers(struct kprobe *p, struct pt_regs *regs)
-> diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-> index dbc63f0d538f..442fafd8ff52 100644
-> --- a/arch/x86/mm/init.c
-> +++ b/arch/x86/mm/init.c
-> @@ -1098,7 +1098,14 @@ struct execmem_info __init *execmem_arch_setup(void)
->  				.pgprot	= pgprot,
->  				.alignment = MODULE_ALIGN,
->  			},
-> -			[EXECMEM_KPROBES ... EXECMEM_BPF] = {
-> +			[EXECMEM_KPROBES] = {
-> +				.flags	= flags,
-> +				.start	= start,
-> +				.end	= MODULES_END,
-> +				.pgprot	= PAGE_KERNEL_ROX,
-> +				.alignment = MODULE_ALIGN,
-> +			},
-> +			[EXECMEM_FTRACE ... EXECMEM_BPF] = {
->  				.flags	= EXECMEM_KASAN_SHADOW,
->  				.start	= start,
->  				.end	= MODULES_END,
-> -- 
-> 2.47.2
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--- x/fs/proc/task_mmu.c
++++ y/fs/proc/task_mmu.c
+@@ -585,6 +585,7 @@ no_vma:
+ 	return ERR_PTR(-ENOENT);
+ }
+ 
++static DEFINE_MUTEX(query_mutex);
+ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+ {
+ 	struct procmap_query karg;
+@@ -620,8 +621,10 @@ static int do_procmap_query(struct proc_
+ 	if (!mm || !mmget_not_zero(mm))
+ 		return -ESRCH;
+ 
++	mutex_lock(&query_mutex);
+ 	err = query_vma_setup(priv);
+ 	if (err) {
++		mutex_unlock(&query_mutex);
+ 		mmput(mm);
+ 		return err;
+ 	}
+@@ -712,6 +715,7 @@ static int do_procmap_query(struct proc_
+ 
+ 	/* unlock vma or mmap_lock, and put mm_struct before copying data to user */
+ 	query_vma_teardown(priv);
++	mutex_unlock(&query_mutex);
+ 	mmput(mm);
+ 
+ 	if (karg.vma_name_size && copy_to_user(u64_to_user_ptr(karg.vma_name_addr),
+@@ -732,6 +736,7 @@ static int do_procmap_query(struct proc_
+ 
+ out:
+ 	query_vma_teardown(priv);
++	mutex_unlock(&query_mutex);
+ 	mmput(mm);
+ 	kfree(name_buf);
+ 	return err;
+--
 
