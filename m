@@ -1,90 +1,88 @@
-Return-Path: <linux-kernel+bounces-732508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DA6B067C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:32:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA96B067C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4CB1C20739
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:32:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 068167B5345
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F623273D85;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D91A273D6D;
 	Tue, 15 Jul 2025 20:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="X/UAbdLt"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OHxHEM6u"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D27C156C79
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564A072615
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752611526; cv=none; b=uKQIsE5RBAmv3HxX+H4LZvzE8R1UrAI8ePyxxPP/KA57dc8OIA3g6GiCmpXlCFRtsOzxHmJqp+PserIGwxcKGHoRLUIH8/NfX4CbzkLx09QLaT/vSYE0XFwl3qNKMezF2yspXXxzAFQnLhWcBwxn5L6TmgdcnE2EJmvOW1GefSA=
+	t=1752611526; cv=none; b=AG/9tXyd81lMX/YzKJbmarrCzHuvdM5kmAxd0JDyQFw7RQVh9dTocbbiLbBqdZIPZQTXV5eC71YcRxqClF4NEDWv3CIUJOM/oQFDSy1Y880QehyZNqDmHitN/WvtLXsxr2DqpRdwS3EzL21lnHrwUAxgAZ3opVzmc5RpU/YKjIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752611526; c=relaxed/simple;
-	bh=vftnosTumCPf/K2js4YY/7wXbRPibhX/Wl/Hi/rVO+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=goVq/3ybdha5xgeO5sooUXLJnMdrj0vhP/TqbA+FRqYEmwFoHqeXvjxx/Au2AwEpeO2EgCgzYp4071Y4uOYKVmtxCJ0rEndpqsxCqkiVam62PR8asivpGpbfC7+RI/KVwah9Uw2pUaXTiWpwz+/udOrGOHB3q0h7GD3tnWtI6eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=X/UAbdLt; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9482:6556:8629:7dba:d48c] ([IPv6:2601:646:8081:9482:6556:8629:7dba:d48c])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56FKVeOR1139577
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 15 Jul 2025 13:31:40 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56FKVeOR1139577
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752611501;
-	bh=2MEi3B6VoFaozbAby4s2aQ5Qn6lhlWHo8Y8vXA0765U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X/UAbdLtiJKJrqVPowaAuWymgqOc5+z0tIpDp72fG1Vo5d3dYSE/lxIIMEpTnL6M2
-	 Qq+WGYzrsEaaCjd5AYCp/qfGg8Vjv7mpK1lX11KNQYnYZQEwl99/pTRckv4vZkM6eY
-	 +V/MpHhw8fKZgeru6TFau75fm6Rn2FLJg1cBJ4/ZiEBugHevrUxeR/RZdjMGvW0PqF
-	 NvJk/Cl+fHKRyeiBWvswoUmkTCvntSIMDjM4X1+espR1hfBoQK0MCyUKSoS75mCT4H
-	 c0qG1ebbFwppdFOs0YalfgDe+bV/jIuMYihntFr4K2ZBdILGThhb3fKx1QINThM6PT
-	 OSLPxFfPl0D3g==
-Message-ID: <1f809e9d-5383-469d-8c31-10f8230b79b8@zytor.com>
-Date: Tue, 15 Jul 2025 13:31:35 -0700
+	bh=yPL7sb0I3vyYl0WYaM4Pb1VIFoqbIiQUNo9Rz261Ue8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBlc6c+jaH3LHBaSHG3C6UN5f7fElmVvuhpirmvruzEvz8/En0cAAWMOZclmy+QbuGLC8V2nP1JvlJyxeHBHufAINB20MFa4ksMdF91qTdfM55/+C5otEOJpKYaIT2TFNXFQpwnrC3zRaDbacUFKqRTjCr71mpIXrPs4uB2pjUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OHxHEM6u; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=oV9T
+	I9+WIfNxHB52qrKd+4mDBoXh5YTq2uE9DShiIqo=; b=OHxHEM6uG0/V0nVW0wHP
+	+awGoIpUz7837FzcreVK0YwTT7JmDYzRNqAMEt0KdKdLzmSkqngW0wTmjize18Gv
+	xtKJRYNxu3f3I2MCCmbzvGLQ8/EWF2JEzBXRYvVhywRYoczwxTp8BhJ6xPfkpgGs
+	0qdlA8nAZrkgKNOuIh8MpAxnbKUekHXslaXNFH5FDFGXkUZAQR/NrsZtSy+XJfgT
+	kOrGFtHvSCXF6Yzi3RfR/qOW4tk0QXibjMHg20DKqeRJ30qYZnxZPmrVbrc/sFUQ
+	FWvOZHJ4JiDg/H5hPkU5HEVPTCvwRn0Sc+B+fSoaOmetn+p2g4zhDmzVa9WwxfTf
+	GQ==
+Received: (qmail 3035793 invoked from network); 15 Jul 2025 22:31:58 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Jul 2025 22:31:58 +0200
+X-UD-Smtp-Session: l3s3148p1@IsDyqv05cOAujnsR
+Date: Tue, 15 Jul 2025 22:31:57 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Jorge Marques <jorge.marques@analog.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	gastmaier@gmail.com
+Subject: Re: [PATCH v5 2/2] i3c: master: Add driver for Analog Devices I3C
+ Controller IP
+Message-ID: <aHa6vc9g8lpvPdWO@shikoro>
+References: <20250715-adi-i3c-master-v5-0-c89434cbaf5e@analog.com>
+ <20250715-adi-i3c-master-v5-2-c89434cbaf5e@analog.com>
+ <aHZzImGbgISePnNJ@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86/boot: Avoid writing to cr4 twice in startup_64()
-To: Khalid Ali <khaliidcaliy@gmail.com>, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com
-Cc: x86@kernel.org, ardb@kernel.org, ubizjak@gmail.com, brgerst@gmail.com,
-        linux-kernel@vger.kernel.org
-References: <20250715181709.1040-1-khaliidcaliy@gmail.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <20250715181709.1040-1-khaliidcaliy@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHZzImGbgISePnNJ@lizhi-Precision-Tower-5810>
 
-On 2025-07-15 11:16, Khalid Ali wrote:
-> From: Khalid Ali <khaliidcaliy@gmail.com>
+> >  M:	Jorge Marques <jorge.marques@analog.com>
+> >  S:	Maintained
+> >  F:	Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
+> > +F:	drivers/i3c/master/adi-i3c-master.c
 > 
-> When Initializing cr4 bit PSE and PGE, cr4 is written twice for	
-> each bit. This is redundancy.
-> 
-> Instead, set both bits first and write CR4 once, avoiding redundant
-> writes. This makes consistent with cr0 writes, which is set bits and
-> write once.
-> 
-> Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
+> Add i3c mail list?
 
-In case this wasn't obvious, this is:
+Not needed because it will be inherited from the I3C subsystem entry:
 
-Nacked-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-
-... with extreme prejudice.
-
-	-hpa
+$ scripts/get_maintainer.pl -f drivers/i3c/master/ast2600-i3c-master.c
+Jeremy Kerr
+Alexandre Belloni
+Frank Li
+linux-i3c@lists.infradead.org
+linux-kernel@vger.kernel.org
 
 
