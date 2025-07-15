@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-731750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E36B058FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:36:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5246B058FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE7A43A4D4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:36:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FCE83A57EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0332D9490;
-	Tue, 15 Jul 2025 11:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A062D8DC2;
+	Tue, 15 Jul 2025 11:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iz9lxkMA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHCY5xQj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C72C27465B;
-	Tue, 15 Jul 2025 11:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECCB27147E;
+	Tue, 15 Jul 2025 11:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752579402; cv=none; b=NXe75JK4eRdUvM5zUs1T2E40YPbu/h1nRERkWW2zI629jlyWPM5lnRcW+Wowx2gZpryiw9qlDGNSjnydTC2DE/UAZBeNOPhKGYPyJl4ehPJ7fp6Bm/uTK8pVoa13B4UuGj1GekSYKJLJlAq7g0zntGqb47aefcQKKVF8Z8ELfeA=
+	t=1752579486; cv=none; b=AP6+fPirwogq+IUm96SUAwMf4PHNUI0rQE/few1xQqxkObwcp57FJ3bndCrsFIsu01RYbKXT9gRypmoBqQXvZDF9ZPtlydOX86Z2ev/D7rnLV9YKkWdZDzYXvZROGRc7iJEFbbjseDIRO5D0+/YM2yGReUdDXb69YNgopRESKk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752579402; c=relaxed/simple;
-	bh=/ylle1xZMdj/zXOOKBEBI5yYp6ullFXneRP4z4g54+Q=;
+	s=arc-20240116; t=1752579486; c=relaxed/simple;
+	bh=k3Pt22s3urH1ffPht49H+gTfknzAhbGPucTExEY/I64=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EBOPUHZbmW7gszeZwMb5l2W2wto5lAW6Z1MgRa5yBPpT540cSeZirbSwGBqUGcO22JDV+pPr8wNPjy9AI1hDPh/ynhSC8ubCO+PGAKEqHYv6U1L3XgI73sFrF67jdh7B6yV5p+9MwQ6wXgWC7OC/iRMFbSsRMONt1arXMj06Jqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iz9lxkMA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9557C4CEE3;
-	Tue, 15 Jul 2025 11:36:35 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=RR4iauRsMHMx6EmUVJYaVHmhRNaTHLYhFUhj6SST08OupkyGn/7vl67WzhipFAT30rCTXfUT6ton/wJU8ziRE3IA7sWyX0XRxZ2/VkUld2gWCAyI3RbzLhoOiR2qiW49UZDwoPKTqVuoHiuEskZGfdAqRedNbRiSl9GuGlJWHGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHCY5xQj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BEDC4CEF1;
+	Tue, 15 Jul 2025 11:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752579402;
-	bh=/ylle1xZMdj/zXOOKBEBI5yYp6ullFXneRP4z4g54+Q=;
+	s=k20201202; t=1752579486;
+	bh=k3Pt22s3urH1ffPht49H+gTfknzAhbGPucTExEY/I64=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iz9lxkMACNlUUE4KMMsaCeA3ZSg3HOmLBkoo7d9W2yc6XAWTesJ5OBnvOp7KojpCt
-	 waDSLm4bshmPiD/tJWprf4N0YuNHZk9P/Rx4rEa73IfxaHA2v+uMUfjHVRdJIjVPcL
-	 SZkmAlcobwMATmnatev2oYu5vaGTkT8xrLs1856TZ+yu/ifF+jdOYJVRJk3cZEbB16
-	 onigiaEOhJv+Qmr1Vvs02Q2tK4uNXa1QBiHsSBXt0hHMkc/iTuks08nuX6Xcy0DCl/
-	 1oRWD11AZoCRCrT8L78/H9E2/8pjYdWHdHQUT0KxAN1u2bTxudrZF4VHVE9fNbXBaU
-	 k6pFIJgU6Zf8g==
-Message-ID: <dab567f3-cc62-4b52-a0dd-5929297b68a0@kernel.org>
-Date: Tue, 15 Jul 2025 13:36:34 +0200
+	b=DHCY5xQjmFJX69MUX4vYWPw8P17yNMGOpFFR35NcdrKuCa9bNGljgInX7Iyvks0BV
+	 g2BdCE6bEtcWQXKsPR3t76G6LNF3oBVrxIB7RGS4faIf0EOemPNRYmhferOp7sna+9
+	 7ZBskGv1Eb8CRRcPEuIxwaDgLA/44hkbaVxt9OyJg8CBZ0923dNyBJRGGzmF88JuKn
+	 11U7XL3MwiZ4w7diF5Om0zFOdkDkyE2KfJwdPr9JTMJqCGxumd2phg+jKqzu+Xx7Y7
+	 ZHeLSRMMa++3DCWGk1W7CpFAy0HWWlRK6y+PDRFv8VTl5OnAdqlmBURUpIhDYPEVMR
+	 ctzEdSx3SPj8A==
+Message-ID: <c62d168b-92b5-44a2-9a9a-402d7f4815a2@kernel.org>
+Date: Tue, 15 Jul 2025 13:37:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: connector: Add displayport connector for
- hotplug notify
+Subject: Re: [PATCH 5/5] arm64: dts: rockchip: rk3399-evb-ind: Add support for
+ DisplayPort
 To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
@@ -70,7 +70,7 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
  linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
 References: <20250715112456.101-1-kernel@airkyi.com>
- <20250715112456.101-2-kernel@airkyi.com>
+ <20250715112456.101-6-kernel@airkyi.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -116,42 +116,84 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250715112456.101-2-kernel@airkyi.com>
+In-Reply-To: <20250715112456.101-6-kernel@airkyi.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15/07/2025 13:24, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> 
-> The USB Type-C DisplayPort alternate mode driver will find
-> "displayport" property for DRM hotplug event notify[0].
-> 
-> [0]: https://lore.kernel.org/all/20210817215201.795062-9-hdegoede@redhat.com/
-> 
-> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> ---
->  .../devicetree/bindings/connector/usb-connector.yaml          | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> index 11e40d225b9f..ccb258972cd6 100644
-> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> @@ -300,6 +300,10 @@ properties:
->      $ref: /schemas/types.yaml#/definitions/uint8-array
->      maxItems: 4
+>  /dts-v1/;
+> +#include <dt-bindings/usb/pd.h>
+>  #include "rk3399.dtsi"
 >  
-> +  displayport:
-> +    description: A phandle to displayport connector for DRM hotplug event notify.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
+>  / {
+> @@ -19,6 +20,16 @@ chosen {
+>  		stdout-path = "serial2:1500000n8";
+>  	};
+>  
+> +	vbus_typec: vbus-typec-regulator {
 
-That's not how you express graphs. Plus I don't understand why you need
-ONE more port property, beside existing ones.
+use consistent naming. How other regulators are called? foo-regulator?
 
-Look at the binding first - what's there.
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpio = <&gpio1 RK_PC2 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vcc5v0_typec0_en>;
+> +		regulator-name = "vbus_typec";
+> +		vin-supply = <&vcc5v0_sys>;
+> +	};
+> +
+>  	vcc5v0_sys: regulator-vcc5v0-sys {
+>  		compatible = "regulator-fixed";
+>  		enable-active-high;
+> @@ -29,6 +40,16 @@ vcc5v0_sys: regulator-vcc5v0-sys {
+>  		regulator-max-microvolt = <5000000>;
+>  		regulator-min-microvolt = <5000000>;
+>  	};
+> +
+> +	sound: sound {
+> +		compatible = "rockchip,rk3399-gru-sound";
+> +		rockchip,cpu = <&i2s0 &spdif>;
+> +	};
+> +};
+> +
+> +&cdn_dp {
+> +	status = "okay";
+> +	phys = <&tcphy0_dp>;
+>  };
+>  
+>  &cpu_b0 {
+> @@ -341,6 +362,66 @@ regulator-state-mem {
+>  	};
+>  };
+>  
+> +&i2c4 {
+> +	i2c-scl-rising-time-ns = <475>;
+> +	i2c-scl-falling-time-ns = <26>;
+> +	status = "okay";
+> +
+> +	usbc0: fusb302@22 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
 
 
+> +		compatible = "fcs,fusb302";
+> +		reg = <0x22>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&usbc0_int>;
+> +		vbus-supply = <&vbus_typec>;
+> +		status = "okay";
 
+Why? What disabled it?
+
+> +
+> +		usb_con: connector {
+> +			compatible = "usb-c-connector";
+> +			label = "USB-C";
 Best regards,
 Krzysztof
 
