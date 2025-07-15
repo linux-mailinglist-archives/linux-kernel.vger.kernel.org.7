@@ -1,126 +1,215 @@
-Return-Path: <linux-kernel+bounces-731030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAEEB04DB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:12:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BA7B04DBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD4284A4725
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:12:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C98BD188E7C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41952C374E;
-	Tue, 15 Jul 2025 02:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963722C3278;
+	Tue, 15 Jul 2025 02:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qj2KM3qW"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1XnrtExR"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBDA2C031E;
-	Tue, 15 Jul 2025 02:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AE12BEFEF
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752545546; cv=none; b=pZSzS0uAtAvibLbefpvALXetxXfKTqpzTVBhAm/ogaBZ7ay50igWyCWUMxYYXjOhirqvXkPXxMvRg+LNujYfmy0z74X24Joxmx/Z2go3iviBR0Bigd7hwC1jL3Uq2X+QjBKRRoW2cP27WzLa4jsK+pmIgQWNosz4iGJSGHKvj0Q=
+	t=1752545663; cv=none; b=J12leHpsWXCi6RLSrBZvyTAXTIBKOvPRL9kNPHRpXGAuDsvg2mNuZTpIczM8trMaJi7qAj9u9oF11fdroBVOo1++0F3uhmsIDd/xE8fpC+WJt4+v9Lh0HHdhA4B8njI5ea6o9eABtSILehRFcxTM3zAP9hABzNhjuj2KoUT0Fdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752545546; c=relaxed/simple;
-	bh=OL8eh+ET7ODxT9eqmQeIc1DaHSMO83XtpakOahXi1HI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=YUcqouvKLpWxbaitDOl3uVkGCgjrCUXSKqVxCUSHrWZoeEmhNTxJszuI/Giawm3nPwZh/9C9sASybsBhCSXYkSAkhCHAH7petsFvrMSV2/gjmqO8kL9sjqBmt3k4j/ClHep34ZA23MB1W4h5lmKD8VFpSoBSQCYx/P6gWV8vYrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qj2KM3qW; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-70e77831d68so49483907b3.2;
-        Mon, 14 Jul 2025 19:12:24 -0700 (PDT)
+	s=arc-20240116; t=1752545663; c=relaxed/simple;
+	bh=GIlb7f6IHKsl4Z63lBRgS4obA+lil1x1Gneli9YsqUI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=npWPSwv6ZkEQUTXsEAPZop8vHd9GG3Iu+ChMrH/fedgvuYtwM0uLsdl8LRA9FvBs1+Lg/IaK9xErsfgw0fdCg3UtGBLkuSDRu2AgzPT5D0wS8HHN68+/BS6KE6HWBrgXIAARMcqySRuoFYYqtHRNcOrUpAp4hdUXobLWfxstfLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1XnrtExR; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748d96b974cso4133425b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:14:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752545544; x=1753150344; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+        d=google.com; s=20230601; t=1752545661; x=1753150461; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=P/kiJ0AGrl246k+hU6tFxQRZl1/F2KkE4EwQPyUtMzE=;
-        b=Qj2KM3qWj2A0U38RoMxsNatdKf3Ng09JND+snq19qy1MWGKoChQInuM3Efj8PnhzoU
-         x3Lk6/Q/WMVGMHiN2ImrtnNq+l3gL9XsZODSpg3PrkaKbca+Y6hn0UIio5d1Pplc7Xy3
-         50tCp2mSiaTXvL8yRrR8bCEQlbrW8qK2wkhoGoOIB5of4NjSG15nxl0yxg/YPTTMlWkC
-         w1eTa85JK6Tu4GIBy+wfTilrxMzdO1/2B4+oBziIUVn8MvRpZta64EMp4bJQcDtK+jFb
-         dGwMA4WAmdPwZP+wRY++6Xd1mD9tfzZtjxPn4UxUaG/29LSxlX6fYuZz51RKcSAoZ6E8
-         5ndg==
+        bh=a5oDuYW5HW4qAZ98tuqOetCtm3BGM+Zyd50lBfpfJ4Y=;
+        b=1XnrtExRj9PNlT85SswAYJ2V7QlKkGGfpXMwvfuEJGpa934GMw4m/81WwG3NfJ48ME
+         h0rcmOiT8cOrvpY63RGOLQoYi1ZIqoQMQhUOuBwTs7IwotUh39Jv4nxwax3mFNfTjbQg
+         9gvfGVVamCpHtZML1oYiiCKzAeQglVG2mbA5QqcY8Y0eQ3s7CJ27xHrbtg8+j3B7CTVJ
+         aurMwvBzX8LOkN4s0JbMVmepCpYzTZvK9+DXSAjxtanaFKCt9MdDiDA+ibteJz91F6ua
+         9/omvumOy4yJQIdeJ9MgvAC3hJeIuKgm9jHB6EYePceA1BbxNZsa2iahkVYn1CoogvaT
+         40RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752545544; x=1753150344;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1752545661; x=1753150461;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=P/kiJ0AGrl246k+hU6tFxQRZl1/F2KkE4EwQPyUtMzE=;
-        b=heJQ9KFXpJvTcHvKpp/Nt/hAOY6j15XlUiEhR2Vv9JV9iLhqY27Q+Zlq1MV/9qn+LH
-         Envfv9WSpen7tBMX/OEnat7uRxDFubTcecnaAQXSo7/04Ou7taOwpK5O7dk0+8KkouRg
-         fYeTj3PEjFO/7IfY8Qac/nNw9jChvJCNS8e4Q8MHyhcuWSOJyRrG94SBpDDEFPal2x2t
-         24yyglKR+jrYTpK5Bjzf6nsAWyCrhvRDggfkKweOdgNn4p8OD7qvzbU6cdJjsCXAdpL6
-         OS50GeU/3LT98wT7YW/SIuMlm6PgjJuAHBbvExXen2aTU+iOt8MPMySZqumvWlWMUJ0b
-         2UZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGnBG43aB9P9eIu1Qyebe+B2lUyNKa71iBxhU5xbY+oIvSOM1ZgNiemhGo8WzOv40CgoFG6sN0Xc61V41wGyg=@vger.kernel.org, AJvYcCWjSZa1T/fQfjHPr5VUk3ZEr3v7Px87B0a17qyWI8EQ9HPQdz/iN4IJf+jbf6Wb1wyFz84ylfsWp85bfow=@vger.kernel.org, AJvYcCXvhrAs51mA4ekXE5NjQA6r6uuVl/IL5NEGRPLxmpQDIyVIWW4iLvBI0YUvdf2V3brxU/GXQXdW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJkKk6t3D8N4GYs9iA84nFfI0bS0YB0qI8Jxt5go4phScbPvvO
-	9jUuSMFAwSdtKxqJTKpMxRflvmYDxIypNB5fojyr1kjJaaLH9Yvn9dzwKdgR1Dhnf8RSz+VO0Qy
-	SNlPh8R9SycqRFztZaT5CuPnbF3bOUPI=
-X-Gm-Gg: ASbGncud4rZs7Y0/a+xzU5AU2mWmyCgsWcWwC5b7/NKl5Dw9Gpay7iRk5GT88bzWDBQ
-	w/FG2+66+Bivqw1KK6pN+fT06uDSiN/hfbtTe3/OrFlGT7pQWWdd+kbSvJTS+7XsV2eAsJfGZZ/
-	qYyM5hu1ihXC07vbYy9Utl5uhZIbWgsmwFTg8p80gdr3Zjf1Wx7tZLBV7HmHBTL2pSjZi/yiYjN
-	q4SHcwUCyp/7TIeimrdJXPqq+oPVCCpPP4a/LTY
-X-Google-Smtp-Source: AGHT+IEtVr+JsxC2gJh379iPBuOZoVuruZ3Umbs9N3Juzg1W5BMxEFQML9bdmwsk2kq+ovB/XipjouSJmFQN3pe3GuQ=
-X-Received: by 2002:a05:690c:f14:b0:717:c40f:be9c with SMTP id
- 00721157ae682-717d5bc0652mr226143477b3.9.1752545543522; Mon, 14 Jul 2025
- 19:12:23 -0700 (PDT)
+        bh=a5oDuYW5HW4qAZ98tuqOetCtm3BGM+Zyd50lBfpfJ4Y=;
+        b=mfCoadteqclONjkHENQ0YT3k7Q7ZN+ineMwRt7BMs95suizKyo/RKdxaBmMgaduNHq
+         H+iAYe6zMwkVqrYAusUjeYMTdop/OfOlTTVlt2Jt8zv0ffy3wjZezZWIsNZqMsQ+m21H
+         eUaTTtbm7hns6ujoqisLMmmdfQccrCFv/h6QVzlmQNVok/WY0gb/MnUK5yHeOnw8jXf6
+         RDCU3lTkJRNZLap7FR6u6c4x0HXJ8eu0o78oNi1vIhtSfIzqP4X7kOyYPps1fpEe87Rj
+         1mUSm5htk5Z3Xxh7c+a2XWs0o9vGvqUvv9+TQjRnJCDfYSyG41pYfwkLXEk7N1ZQiHVV
+         mJaw==
+X-Gm-Message-State: AOJu0Yw4sBJe15hcIf2j/woSTH6XFsmaTycMIGkvVkyQW+qBQr68aMHI
+	jgT0RGtyXiaJ2oqkqSlQrU0IyK/bJ6YcrghhK513NgP+L0tzZ65Ss3ArgI0F0gejxznmiXqe3UP
+	PtbstEPBg8nIQEzMTRg1wcCl6c4rW6Qk6XDuaDB8GRujLyOyqh2lp3nIgAbdpkqSJtnRTFrB1aj
+	GRYFL4zOjBND9FJQ0PUlB9BK+3NK7WJX7iLTUyNco+s0jlQ8oi
+X-Google-Smtp-Source: AGHT+IHUV31HInPDPKz4V+4EqJqLI2voaIWRU/jTFQNp5wKQcmpoKkRUOKkKqXZXywZDO/o/PozmuIciSovk
+X-Received: from pfez19.prod.google.com ([2002:aa7:8893:0:b0:746:1fcb:a9cc])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:17a2:b0:736:33fd:f57d
+ with SMTP id d2e1a72fcca58-74f1ebccfcamr16278079b3a.17.1752545660737; Mon, 14
+ Jul 2025 19:14:20 -0700 (PDT)
+Date: Tue, 15 Jul 2025 02:14:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Date: Mon, 14 Jul 2025 19:12:12 -0700
-X-Gm-Features: Ac12FXwsgRjDPpzTojqRaKExjmsAG5iXutBqOoKqYivzz9QyVrL7TRtbrLx7q1o
-Message-ID: <CAF3JpA4QvNvdx-tq-5ogMmmaOuZuYq8Q=JZjQj0egWGE-=Nogg@mail.gmail.com>
-Subject: [syzbot] [wireless?] WARNING in ieee80211_tdls_oper
-To: syzbot+f73f203f8c9b19037380@syzkaller.appspotmail.com
-Cc: Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="00000000000093565a0639ee4e4b"
-
---00000000000093565a0639ee4e4b
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250715021417.4015799-1-jstultz@google.com>
+Subject: [RESEND][PATCH 1/2] test-ww_mutex: Allow test to be run (and re-run)
+ from userland
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git
-main
+In cases where the ww_mutex test was occasionally tripping on
+hard to find issues, leaving qemu in a reboot loop was my best
+way to reproduce problems. These reboots however wasted time
+when I just wanted to run the test-ww_mutex logic.
 
---00000000000093565a0639ee4e4b
-Content-Type: text/x-patch; charset="UTF-8"; 
-	name="0001-mac80211-reject-TDLS-operations-when-station-is-not-.patch"
-Content-Disposition: attachment; 
-	filename="0001-mac80211-reject-TDLS-operations-when-station-is-not-.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_md3w7m310>
-X-Attachment-Id: f_md3w7m310
+So tweak the test-ww_mutex test so that it can be re-triggered
+via a sysfs file, so the test can be run repeatedly without
+doing module loads or restarting.
 
-RnJvbSA2MGJjZWY2YzY3ZWRmNjZmZjk2MzY3ZTAzYWFhNzA0MjI1ODVlYTRhIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNb29uIEhlZSBMZWUgPG1vb25oZWUubGVlLmNhQGdtYWlsLmNv
-bT4KRGF0ZTogTW9uLCAxNCBKdWwgMjAyNSAxOTowMjoxMCAtMDcwMApTdWJqZWN0OiBbUEFUQ0hd
-IG1hYzgwMjExOiByZWplY3QgVERMUyBvcGVyYXRpb25zIHdoZW4gc3RhdGlvbiBpcyBub3QKIGFz
-c29jaWF0ZWQKTUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiB0ZXh0L3BsYWluOyBjaGFy
-c2V0PVVURi04CkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IDhiaXQKClRETFMgY2FuIGJlIGVz
-dGFibGlzaGVkIG9ubHkgYWZ0ZXIgdGhlIFNUQSBpcyBjb25uZWN0ZWQgdG8gYW4gQVAuCklmIHVz
-ZXJzcGFjZSAob3IgZnV6emVycykgaXNzdWVzIE5MODAyMTFfVERMU18qIGNvbW1hbmRzIGJlZm9y
-ZQphc3NvY2lhdGlvbiBpcyBjb21wbGV0ZSwgaW50ZXJuYWwgc3RhdGUgc3VjaCBhcyBzZGF0YS0+
-dS5tZ2QudGRsc19wZWVyCnJlbWFpbnMgdW5pbml0aWFsaXNlZCBhbmQgaWVlZTgwMjExX3RkbHNf
-b3BlcigpIHJhaXNlcyBXQVJOX09OKCkuCgpBZGQgYW4g4oCcYXNzb2NpYXRlZOKAnSBjaGVjayBp
-biBpZWVlODAyMTFfdGRsc19vcGVyKCkgc28gdGhlIGZ1bmN0aW9uCnJldHVybnMgLUVJTlZBTCB3
-aGVuZXZlciB0aGUgaW50ZXJmYWNlIGlzIG5vdCBib3RoIGluIHN0YXRpb24gbW9kZQphbmQgYWxy
-ZWFkeSBhc3NvY2lhdGVkLgoKU2lnbmVkLW9mZi1ieTogTW9vbiBIZWUgTGVlIDxtb29uaGVlLmxl
-ZS5jYUBnbWFpbC5jb20+Ci0tLQogbmV0L21hYzgwMjExL3RkbHMuYyB8IDIgKy0KIDEgZmlsZSBj
-aGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL25ldC9t
-YWM4MDIxMS90ZGxzLmMgYi9uZXQvbWFjODAyMTEvdGRscy5jCmluZGV4IDk0NzE0ZjhmZmQyMi4u
-YmE1ZmJhY2JlZWRhIDEwMDY0NAotLS0gYS9uZXQvbWFjODAyMTEvdGRscy5jCisrKyBiL25ldC9t
-YWM4MDIxMS90ZGxzLmMKQEAgLTE0MjIsNyArMTQyMiw3IEBAIGludCBpZWVlODAyMTFfdGRsc19v
-cGVyKHN0cnVjdCB3aXBoeSAqd2lwaHksIHN0cnVjdCBuZXRfZGV2aWNlICpkZXYsCiAJaWYgKCEo
-d2lwaHktPmZsYWdzICYgV0lQSFlfRkxBR19TVVBQT1JUU19URExTKSkKIAkJcmV0dXJuIC1FT1BO
-T1RTVVBQOwogCi0JaWYgKHNkYXRhLT52aWYudHlwZSAhPSBOTDgwMjExX0lGVFlQRV9TVEFUSU9O
-KQorCWlmIChzZGF0YS0+dmlmLnR5cGUgIT0gTkw4MDIxMV9JRlRZUEVfU1RBVElPTiB8fCAhc2Rh
-dGEtPnZpZi5jZmcuYXNzb2MpCiAJCXJldHVybiAtRUlOVkFMOwogCiAJc3dpdGNoIChvcGVyKSB7
-Ci0tIAoyLjQzLjAKCg==
---00000000000093565a0639ee4e4b--
+This has been particularly valuable to stressing and finding
+issues with the proxy-exec series.
+
+To use, run as root:
+  echo 1 > /sys/kernel/test_ww_mutex/run_tests
+
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Suleiman Souhlal <suleiman@google.com>
+Cc: kernel-team@android.com
+---
+ kernel/locking/test-ww_mutex.c | 70 ++++++++++++++++++++++++++++++----
+ 1 file changed, 63 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+index bcb1b9fea5880..dcfa5ab15ab49 100644
+--- a/kernel/locking/test-ww_mutex.c
++++ b/kernel/locking/test-ww_mutex.c
+@@ -635,19 +635,15 @@ static int stress(int nlocks, int nthreads, unsigned int flags)
+ 	return 0;
+ }
+ 
+-static int __init test_ww_mutex_init(void)
++static DEFINE_MUTEX(run_lock);
++
++static int run_tests(void)
+ {
+ 	int ncpus = num_online_cpus();
+ 	int ret, i;
+ 
+ 	printk(KERN_INFO "Beginning ww mutex selftests\n");
+ 
+-	prandom_seed_state(&rng, get_random_u64());
+-
+-	wq = alloc_workqueue("test-ww_mutex", WQ_UNBOUND, 0);
+-	if (!wq)
+-		return -ENOMEM;
+-
+ 	ret = test_mutex();
+ 	if (ret)
+ 		return ret;
+@@ -686,8 +682,68 @@ static int __init test_ww_mutex_init(void)
+ 	return 0;
+ }
+ 
++static ssize_t run_tests_store(struct kobject *kobj, struct kobj_attribute *attr,
++			       const char *buf, size_t count)
++{
++	if (!mutex_trylock(&run_lock)) {
++		pr_err("Test already running\n");
++		return count;
++	}
++
++	run_tests();
++	mutex_unlock(&run_lock);
++
++	return count;
++}
++
++static struct kobj_attribute run_tests_attribute =
++	__ATTR(run_tests, 0664, NULL, run_tests_store);
++
++static struct attribute *attrs[] = {
++	&run_tests_attribute.attr,
++	NULL,   /* need to NULL terminate the list of attributes */
++};
++
++static struct attribute_group attr_group = {
++	.attrs = attrs,
++};
++
++static struct kobject *test_ww_mutex_kobj;
++
++static int __init test_ww_mutex_init(void)
++{
++	int ret;
++
++	prandom_seed_state(&rng, get_random_u64());
++
++	wq = alloc_workqueue("test-ww_mutex", WQ_UNBOUND, 0);
++	if (!wq)
++		return -ENOMEM;
++
++	test_ww_mutex_kobj = kobject_create_and_add("test_ww_mutex", kernel_kobj);
++	if (!test_ww_mutex_kobj) {
++		destroy_workqueue(wq);
++		return -ENOMEM;
++	}
++
++	/* Create the files associated with this kobject */
++	ret = sysfs_create_group(test_ww_mutex_kobj, &attr_group);
++	if (ret) {
++		kobject_put(test_ww_mutex_kobj);
++		destroy_workqueue(wq);
++		return ret;
++	}
++
++	mutex_lock(&run_lock);
++	ret = run_tests();
++	mutex_unlock(&run_lock);
++
++	return ret;
++}
++
+ static void __exit test_ww_mutex_exit(void)
+ {
++	kobject_put(test_ww_mutex_kobj);
+ 	destroy_workqueue(wq);
+ }
+ 
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
