@@ -1,208 +1,173 @@
-Return-Path: <linux-kernel+bounces-731748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163B0B058F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:35:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC04B058ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED0437AF504
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB541188DC55
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D14B2DAFB0;
-	Tue, 15 Jul 2025 11:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E662D8395;
+	Tue, 15 Jul 2025 11:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iFe3xm34"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyKm831a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595A32D9EE1
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317E2D2FB;
+	Tue, 15 Jul 2025 11:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752579327; cv=none; b=eyop5/ddmQRg2uhoRgfkL9Ez9UwjAP12op4Ge/V+TqWduQ1v8CPe7Ba1u9/9s/YEiiARQjZhBlTkzT9LgtSKBFzyAHypK3qapu5bIiNnq9OCGBqJPKDtKmpt4Z2uYlpihHhaxO+iO2uljCVKHqyYVdfOiwWJ430R03eSfFpSgMQ=
+	t=1752579303; cv=none; b=eyS+hJ8MypOAyBHGFl7PQA9+O8QKLit4CVuny4vrmlN+41qeXxxVVI4iYi3VQfJvI3l3s9QrMvulwX6T+sFjQm6oILVRE14rX/1sZMVc2jN09Qg1MPLRFzb5TqysHhCkrmQOAmGjkBJvjiiOgill3Tx6M1CsKdKSz/Vr/r7i1MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752579327; c=relaxed/simple;
-	bh=cTflvjFePLQxgKie4eKSTOOZevSjP8T8WicglUvKhQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R/LBmeo0ppQyY79dFhoAhklJr6GpYkaUB6quK0du5LLBwCi6c/yJLo3cX2WJ2ZTQqClUsbiUMbiTRA2HvfEzTY8yvgGO6iVKwhXvuHdOGSUtOYhxzuA5O3fsbgp63OmuCRnO9MT1Ij7Zu2dRrQVc0PBbusPP3kkXwVnYmDbjoEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iFe3xm34; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e8bb69cdb90so679602276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752579324; x=1753184124; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cTflvjFePLQxgKie4eKSTOOZevSjP8T8WicglUvKhQU=;
-        b=iFe3xm34o1P7aisfwOISpuflN8teXe+tqF5/2ugnBELlt/uV/fSdig4v7FpO0mVVYh
-         tVKFJgoet+cPV1weniH0Xv+jMVEKnlahnrGwZVOvEPqY9mVc/kSbDM/fxd2CkAWhll5P
-         UagJX937yAyWqgANAeV4K4HBLzIYSUBlU1SxDFQop74ZNEpoOXn+TuvDUzwdpYY7dBCW
-         V4SKLuulcRmeXp+ty4WTtgmR7a6noGyooIMvui/5VDp5diYDQE/S3nQBC6/BrDkKxsbU
-         MSsa8cVukZvmFHzTt28x0acTnt74g80Pzsr5JTTRft6UaUAknBKKIjQnIM9CRzTySDl/
-         fwDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752579324; x=1753184124;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cTflvjFePLQxgKie4eKSTOOZevSjP8T8WicglUvKhQU=;
-        b=CEyKKcxyVkEwXTl+fIxrF+IByuMyPKv35hsOv7drSpQt/Ke0DmndFKN2D3IFw3rWXY
-         pXtxOP5HPdS41fJv8DsvmSi63umDYWlPX1GWWh8PNxmxmvVFpuJisHkh1RPMN+K2IjGD
-         1pfjVPV9NXLPy75rx6bVnL1t9QboanFVd2B6bnllkIJ9w/9qsE01yBrSfdV5V2ueY6eS
-         BMJQWPUHeMSTUX8O1hecaL5HWlnADbOjd0KPvhi+f6T5LLtBI0rYbpOZEQWj9yS9zE3i
-         boHyS6Yt2bE+Tb9N/gqgbdYhtPmcjvZ58J5g1OtgYaXLggejNPDU+fMO5pF0ZMxSMNG6
-         ffaA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7d6RaUs8EBmZrAnzPqRI5S7a43JebnU4kfJCpAZ5NZTbnMkzfgHSoBMcKVTmc2JyJZeq787b6V2nHUwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEXsFDqOM+/Fa1zSKc/LKYpaGkowP/xj/h9Sgz0i77bS2DtBRY
-	gIGPASgSVeJMkNEh0z/nGoDRkE+K9FEr4Uzer+4K2q+36MhkFr8iutdkmpTTShSg7EvCM1IcRYG
-	ruKrcLJj5WRPMMQlSu8Eh3JUiJRpSpvQCWA3gfbTiGQ==
-X-Gm-Gg: ASbGncsgKGBuNsrTQS6iy74qbFrgs1dt6TMBRiH1uEgjH/qO06K57MJQTfg+cW+OhDx
-	xQyuHMNc3jBimpai1m2msCJqKi+UGUW1bc4fyDecX2VuGf/YRmdwQJqAIGl+ePLHdpAnUq82MyO
-	fvbozn2TmMdMPc7cY+h3vOs9bjInsw+R7yeJ0odtf7vvMjzP3uOP1gBJG7Hw1WLJfsjyBr6CASy
-	mXLudGBdF99Kn/LN8I=
-X-Google-Smtp-Source: AGHT+IHfjHxIt9nZkak6zCnhG7sn8uSPBfYsxEtsb2a6mcbcWZf8ySh+73e1WwlnP3JuKOMwe35Yu94PqLxFVbjU1Uc=
-X-Received: by 2002:a05:690c:6a08:b0:716:6a18:1740 with SMTP id
- 00721157ae682-717d5e30ff5mr244148587b3.33.1752579324012; Tue, 15 Jul 2025
- 04:35:24 -0700 (PDT)
+	s=arc-20240116; t=1752579303; c=relaxed/simple;
+	bh=1uGKmWWiwvicpa4TMcg7RSuKjBjr5n7fBm5dAiA0GBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=COrvVuom+xrqib9OCqavlRZ3u61t50mJpV+8SGMYHIb/c1mv/B+5awaSaoxee8BLp7cW5fycU8/TnwmvPR3cJ1Q6yqDH2otjyoBCMRb7rOIvfiopEEQFf3G7FH/SqBSOAEGHAdS12qfMph45qyrQIFWL1O7+61oLRsuKi7fcSx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyKm831a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E44C4CEE3;
+	Tue, 15 Jul 2025 11:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752579302;
+	bh=1uGKmWWiwvicpa4TMcg7RSuKjBjr5n7fBm5dAiA0GBw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KyKm831aWmUAhJ8zOZ5/4azrxZzz5R/2NkhTuCZ4HeM/HPSFYjMK1XINCo4ZUJ4Lr
+	 tbX/0iUCbZet0ZGdKSnmDRhx8KIf9IhAcEJenOn8a1unue0nIdPpchvlZNgG7LvzoY
+	 2mqg+R9TIIPFkad/J2Z19gH+5qKmIPr4VZgP8fuggaPc/xp2nJoqOr/ZM048OOY51k
+	 NASCBk9QRy60+WKrv+0vpYBsHTce7Bs+6KTr89hXTvQ53UcViheA3ZzHXffxvW86W5
+	 smTqBNFibClpYwrsvdcoXhPBtGkvIZ49qiO4CCAAWVqE5d2SkC1R/7ViPchYo5W3Wz
+	 Qb2uSh2y+p0fg==
+Message-ID: <4dfed94c-665d-4e04-b527-ddd34fd3db8f@kernel.org>
+Date: Tue, 15 Jul 2025 13:34:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
- <CGME20250710122654eucas1p20f1179a9ff22d562d89252f924d34dae@eucas1p2.samsung.com>
- <20250701114733.636510-22-ulf.hansson@linaro.org> <212a1a56-08a5-48a5-9e98-23de632168d0@samsung.com>
- <CAPDyKFrPOgWW_=ehCjtqAUR97HoLKmgFNO3bRT50-w6A1LgGFw@mail.gmail.com>
- <01646690-8964-49c8-bbed-556380844b14@nvidia.com> <CAPDyKFooYFVrzLEqOtwb02iyEf+c6qPB8+Us1--Y-oXbJVG+SQ@mail.gmail.com>
-In-Reply-To: <CAPDyKFooYFVrzLEqOtwb02iyEf+c6qPB8+Us1--Y-oXbJVG+SQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 15 Jul 2025 13:34:47 +0200
-X-Gm-Features: Ac12FXw0mZPGQfTep1pMZhaIh1PE21HNet-YtWTUWTNvcL1vhGLnVaD4aB7xFiQ
-Message-ID: <CAPDyKFq=6vZ4xbuduE9TvGB-NtCMpBKProYNRv-=c3cBZdTuPw@mail.gmail.com>
-Subject: Re: [PATCH v3 21/24] pmdomain: core: Leave powered-on genpds on until late_initcall_sync
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Saravana Kannan <saravanak@google.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Hiago De Franco <hiago.franco@toradex.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: phy: rockchip: rk3399-typec-phy: Support
+ mode/orientation switch
+To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Chaoyi Chen <chaoyi.chen@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20250715112456.101-1-kernel@airkyi.com>
+ <20250715112456.101-3-kernel@airkyi.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250715112456.101-3-kernel@airkyi.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 15 Jul 2025 at 13:32, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On Tue, 15 Jul 2025 at 12:28, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >
-> > Hi Ulf,
-> >
-> > On 10/07/2025 15:54, Ulf Hansson wrote:
-> > > On Thu, 10 Jul 2025 at 14:26, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> > >>
-> > >> On 01.07.2025 13:47, Ulf Hansson wrote:
-> > >>> Powering-off a genpd that was on during boot, before all of its consumer
-> > >>> devices have been probed, is certainly prone to problems.
-> > >>>
-> > >>> As a step to improve this situation, let's prevent these genpds from being
-> > >>> powered-off until genpd_power_off_unused() gets called, which is a
-> > >>> late_initcall_sync().
-> > >>>
-> > >>> Note that, this still doesn't guarantee that all the consumer devices has
-> > >>> been probed before we allow to power-off the genpds. Yet, this should be a
-> > >>> step in the right direction.
-> > >>>
-> > >>> Suggested-by: Saravana Kannan <saravanak@google.com>
-> > >>> Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
-> > >>> Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62A,Xilinx ZynqMP ZCU106
-> > >>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > >>
-> > >> This change has a side effect on some Exynos based boards, which have
-> > >> display and bootloader is configured to setup a splash screen on it.
-> > >> Since today's linux-next, those boards fails to boot, because of the
-> > >> IOMMU page fault.
-> > >
-> > > Thanks for reporting, let's try to fix this as soon as possible then.
-> > >
-> > >>
-> > >> This happens because the display controller is enabled and configured to
-> > >> perform the scanout from the spash-screen buffer until the respective
-> > >> driver will reset it in driver probe() function. This however doesn't
-> > >> work with IOMMU, which is being probed earlier than the display
-> > >> controller driver, what in turn causes IOMMU page fault once the IOMMU
-> > >> driver gets attached. This worked before applying this patch, because
-> > >> the power domain of display controller was simply turned off early
-> > >> effectively reseting the display controller.
-> > >
-> > > I can certainly try to help to find a solution, but I believe I need
-> > > some more details of what is happening.
-> > >
-> > > Perhaps you can point me to some relevant DTS file to start with?
-> > >
-> > >>
-> > >> This has been discussed a bit recently:
-> > >> https://lore.kernel.org/all/544ad69cba52a9b87447e3ac1c7fa8c3@disroot.org/
-> > >> and I can add a workaround for this issue in the bootloaders of those
-> > >> boards, but this is something that has to be somehow addressed in a
-> > >> generic way.
-> > >
-> > > It kind of sounds like there is a missing power-domain not being
-> > > described in DT for the IOMMU, but I might have understood the whole
-> > > thing wrong.
-> > >
-> > > Let's see if we can work something out in the next few days, otherwise
-> > > we need to find another way to let some genpds for these platforms to
-> > > opt out from this new behaviour.
-> >
-> > Have you found any resolution for this? I have also noticed a boot
-> > regression on one of our Tegra210 boards and bisect is pointing to this
-> > commit. I don't see any particular crash, but a hang on boot.
->
-> Thanks for reporting!
->
-> For Exynos we opt-out from the behaviour by enforcing a sync_state of
-> all PM domains upfront [1], which means before any devices get
-> attached.
->
-> Even if that defeats the purpose of the $subject series, this was one
-> way forward that solved the problem. When the boot-ordering problem
-> (that's how I understood the issue) for Exynos gets resolved, we
-> should be able to drop the hack, at least that's the idea.
->
-> >
-> > If there is any debug we can enable to see which pmdomain is the problem
-> > let me know.
->
-> There aren't many debug prints in genpd that I think makes much sense
-> to enable, but you can always give it a try. Since you are hanging,
-> obviously you can't look at the genpd debugfs data...
->
-> Note that, the interesting PM domains are those that are powered-on
-> when calling pm_genpd_init(). As a start, I would add some debug
-> prints in () to see which PM domains that are relevant to track.
+On 15/07/2025 13:24, Chaoyi Chen wrote:
+> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> 
+> Add support for Type-C orientation and altmode switch.
+> The Type-C controller can be specified to handling switching.
 
-/s/()/tegra_powergate_add()
+Please describe the hardware in details. Above sentences don't help me
+to understand this.
 
-> Potentially you could then try to power them off and register them
-> accordingly with genpd. One by one, to see which of them is causing
-> the problem.
->
-> Another option could be to add a new genpd config flag
-> (GENPD_FLAG_DONT_STAY_ON or something along those lines), that informs
-> genpd to not set the genpd->stay_on in pm_genpd_init(). Then
-> tegra_powergate_add() would have to set GENPD_FLAG_DONT_STAY_ON for
-> those genpds that really need it.
->
-> Kind regards
-> Uffe
->
-> [1]
-> https://lore.kernel.org/all/20250711114719.189441-1-ulf.hansson@linaro.org/
+
+> 
+> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> ---
+>  .../bindings/phy/rockchip,rk3399-typec-phy.yaml    | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
+> index 91c011f68cd0..a885c6893a90 100644
+> --- a/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
+> @@ -43,6 +43,20 @@ properties:
+>      description:
+>        Phandle to the syscon managing the "general register files" (GRF).
+>  
+> +  orientation-switch:
+> +    description: Flag the port as possible handler of orientation switching
+> +    type: boolean
+> +
+> +  mode-switch:
+> +    description: Flag the port as possible handler of altmode switching
+> +    type: boolean
+> +
+> +  port:
+> +    $ref: /schemas/graph.yaml#/properties/port
+> +    description:
+> +      A port node to link the PHY to a TypeC controller for the purpose of
+> +      handling orientation switching.
+
+
+You are using usb-switch.yaml properties in phy node, which raises
+questions whether this is actually complete. It might be, but commit msg
+is so vague that I have doubts.
+
+Also, why only one port?
+
+Or wait... you already have ports! two of them. This needs to stop, why
+are you adding more?
+
+Best regards,
+Krzysztof
 
