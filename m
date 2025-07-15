@@ -1,105 +1,193 @@
-Return-Path: <linux-kernel+bounces-731237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C79B05182
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:08:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD50B05187
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 099334A15B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF524A5EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10AE2D3A86;
-	Tue, 15 Jul 2025 06:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2B12D3EC1;
+	Tue, 15 Jul 2025 06:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIOLx+tY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FL3YtFnb"
+Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D29C2D29CF;
-	Tue, 15 Jul 2025 06:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EA12D29CD;
+	Tue, 15 Jul 2025 06:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752559678; cv=none; b=kePCFjcH+UoUyQVbFcmN1TQKrOjWyMPvDZzJZKUSBZ4HuX+16lMa0AZN9M4kW4wkVejY6hgufzPiWzrGKTCXbxBA2q8EzzySSCrkeRzGFceeKsIwXA9rnwwmhrwuqwjajOS0sSFNzB72PbCIfCqLz7mIjr9y0Pi4Traabc3RHjU=
+	t=1752559725; cv=none; b=oPvrweweZvUeO7CZrpA5XOZaM2Dtx3LEz9N8fjLShVPmjeMVZNl9/8wXuLrTB6865idhE8GT+ySG5kKWUMHsGkcJGg66CngR2z+61UcJcQFgyBXohrUq3kde88G8x7/0MFEkyv9w8Dl3WphtMdbi/O0ZlgcHhzhaG9WfKeegWcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752559678; c=relaxed/simple;
-	bh=fHlR8wwEWimYVGcD2Z6AA7c8VByjB9K9B/y2PypuOsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYOi/1ROwOtZlKVF4nsyVj8MGb93njlrud11XlAr7Y9FdaPQRxiGnEAfKmk/+3LJpfHhEBQGMTlRpaPC5k6XC9zfLQalszRnkXhN1LXQmobtgQV4xwY3P1cobzg+poAr6QYs/f8Fr4BLQhVOPI/r6s/EyY2CD7imn1rLIAGtBrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIOLx+tY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8730C4CEE3;
-	Tue, 15 Jul 2025 06:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752559677;
-	bh=fHlR8wwEWimYVGcD2Z6AA7c8VByjB9K9B/y2PypuOsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vIOLx+tYrxMaIeAz+EOm+/U3nHCr9y2tRl54wQBWAWCoY0KKVP/y/3QPGkn8vih3I
-	 xEYqXSVLYOnCz5yOAkZI+h00MDbDv2wh1n8OmT7cW/FkO8K2aszEy3GVypU+xoY+hb
-	 kGEtUNDZOA1ytXkitx2eMVOJ/4+/KeHU2CsxzmorwbrSNb3dsqYPzP2UqfRLMxn0Nc
-	 L3CsgdPlDqF2wmP318DKuV7351j36oZB1fk80P9rAqEPYTVkHP7nK0URPF0degWjjy
-	 HF3aGhW4fRX47VAaa9XDwMjtWy2KqOtGIrS74fuoKgXt0mOoarJkFZyyK7lQiw249X
-	 Mqwf24HfY7TzA==
-Date: Tue, 15 Jul 2025 06:07:54 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Radu Vele <raduvele@google.com>
-Cc: Benson Leung <bleung@chromium.org>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Andrei Kuchynski <akuchynski@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] platform/chrome: cros_ec_typec: Add lock per-port
-Message-ID: <aHXwOtrFpn-yRFvs@google.com>
-References: <20250711003502.857536-1-raduvele@google.com>
- <20250711003502.857536-2-raduvele@google.com>
- <aHCPDXonAevxkMho@google.com>
- <CACKy9TJHtA5K2YqdNdnMuTvOsz4OCkRds4Hbj8aZdK5VXpMgWw@mail.gmail.com>
+	s=arc-20240116; t=1752559725; c=relaxed/simple;
+	bh=sHNNy41ZchjJYhjkgZlkZaOxhThztJMGb/eo2DxdCqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MLyUvfEhHlub53dQl9oQ/HJ7YLxPNQWLklkD9TFzci5jDyQ6RF0gU+kVMwSAWStJXJ9lqh2X/0Z9VNDokt5j+ldUWSIz4WYLUA8RKDKKUOJBd9pbdz50Xxg2xGN+IIeIsIHfjhqtuDR62gHdz/4c3QkbUUzuwPtzA/Fm2AKNhos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FL3YtFnb; arc=none smtp.client-ip=217.70.178.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A220C44A1C;
+	Tue, 15 Jul 2025 06:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752559720;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0tOZktrYT4fpzyCPv7EqQuQ/zV//e8X9GJdSl7TB5LE=;
+	b=FL3YtFnbN1gjy9855J0Qbii5j3/f3m9kN0wV4K/I9bvgSG4cJwsDcaKZrM8H4P2xWIVTuw
+	/PFKDz4wConScqL1Cv/3kUhiIbLHQYkrhQHxMjYeecubgGW4x2pBsl28cxmePEq9DC9kIo
+	MCh+Pknl1cJlb+G+MEFWcRMT9LRP/VEuwST716f6Vqo+USktaZ+M+20/H96wkmYNb5E+Kk
+	QTnScV97ODulv7dHlsVBfL5UF0cDn+01fEAxBGVwMm3pOinstlwkJsfJ9VD/t4RtwgMjbt
+	Sq75sPbfYdW2sYp4w3SgQ2mYulyfUsKFeW8hI/LtFA76gyu+Ih1J0KQoVrZ/OA==
+Date: Tue, 15 Jul 2025 08:08:37 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Florian Fainelli
+ <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/3] net: netdevsim: Add PHY support in
+ netdevsim
+Message-ID: <20250715080837.1aa0e9dd@fedora.home>
+In-Reply-To: <20250711165541.586f51e8@kernel.org>
+References: <20250710062248.378459-1-maxime.chevallier@bootlin.com>
+	<20250710062248.378459-2-maxime.chevallier@bootlin.com>
+	<20250711165541.586f51e8@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACKy9TJHtA5K2YqdNdnMuTvOsz4OCkRds4Hbj8aZdK5VXpMgWw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehgedtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtp
+ hhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
 
-On Mon, Jul 14, 2025 at 10:32:03AM +0200, Radu Vele wrote:
-> On Fri, Jul 11, 2025 at 6:12 AM Tzung-Bi Shih <tzungbi@kernel.org> wrote:
-> >
-> > On Fri, Jul 11, 2025 at 12:35:02AM +0000, Radu Vele wrote:
-> > > Add a lock associated to each port to protect port data against
-> > > concurrent access. Concurrency may result from sysfs commands
-> > > and ec events.
-> >
-> > I realized the critical sections are way too large.  What exactly data the
-> > lock tries to protect?  Is the race possibility introduced by any previous
-> > commits?  Please provide more context.
+On Fri, 11 Jul 2025 16:55:41 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
+
+> On Thu, 10 Jul 2025 08:22:45 +0200 Maxime Chevallier wrote:
+> > @@ -1098,6 +1101,10 @@ static int __init nsim_module_init(void)
+> >  {
+> >  	int err;
+> >  
+> > +	err = nsim_phy_drv_register();
+> > +	if (err)
+> > +		return err;
+> > +
+> >  	err = nsim_dev_init();
+> >  	if (err)
+> >  		return err;  
 > 
-> With the implementation of the role swap operations from the previous
-> commit (and also enter usb mode from another recent commit) we
-> introduce the possibility of concurrent access to the cros_ec_typec port
-> data from the userspace (e.g. trigger a power role swap from sysfs) vs
-> from EC events (e.g. partner triggered a role swap that we accept).
-> This is the main reason to propose a per-port lock. This way we ensure
-> we protect the state of each port in the cros_ec_typec driver.
+> I think you're missing error handling in this function if something
+> after drv_register fails.
 
-To make sure I understand, did you mean the lock tries to prevent from
-sending multiple commands to EC at a time?  If yes, does it still need
-if the underlying ec_dev is guranteed that [1]?
+Ah true... Thanks
 
-[1] https://elixir.bootlin.com/linux/v6.15/source/drivers/platform/chrome/cros_ec_proto.c#L661
+> > @@ -1124,6 +1131,7 @@ static void __exit nsim_module_exit(void)
+> >  	rtnl_link_unregister(&nsim_link_ops);
+> >  	nsim_bus_exit();
+> >  	nsim_dev_exit();
+> > +	nsim_phy_drv_unregister();
+> >  }  
+> 
+> > +free_mdiobus:
+> > +	atomic_dec(&bus_num);
+> > +	mdiobus_free(mb->mii);
+> > +free_pdev:
+> > +	platform_device_unregister(mb->pdev);
+> > +free_mb:  
+> 
+> Others have added netdevsim code so the entire code base doesn't follow
+> what I'm about to say, but if you dont mind indulging my personal coding
+> style - error handling labels on a path disjoint from the success path
+> should be prefixed with err_$first-undo-action. If the error handling
+> shares the path with success the label prefix should be exit_$..
+> You can look at drivers/net/netdevsim/bpf.c for examples
 
-By taking the following hunk the patch adds as an example:
+That's totally fine by me, it makes sense :)
 
-@@ -54,6 +56,7 @@  static int cros_typec_enter_usb_mode(struct typec_port *tc_port, enum usb_mode m
- 		.mode_to_enter = CROS_EC_ALTMODE_USB4
- 	};
- 
-+	guard(mutex)(&port->lock);
- 	return cros_ec_cmd(port->typec_data->ec, 0, EC_CMD_TYPEC_CONTROL,
- 			  &req, sizeof(req), NULL, 0);
+> > +	kfree(mb);
+> > +
+> > +	return NULL;
+> > +}
+> > +
+> > +static ssize_t
+> > +nsim_phy_add_write(struct file *file, const char __user *data,
+> > +		   size_t count, loff_t *ppos)
+> > +{
+> > +	struct net_device *dev = file->private_data;
+> > +	struct netdevsim *ns = netdev_priv(dev);
+> > +	struct nsim_phy_device *ns_phy;
+> > +	struct phy_device *pphy;
+> > +	u32 parent_id;
+> > +	char buf[10];
+> > +	ssize_t ret;
+> > +	int err;
+> > +
+> > +	if (*ppos != 0)
+> > +		return 0;
+> > +
+> > +	if (count >= sizeof(buf))
+> > +		return -ENOSPC;
+> > +
+> > +	ret = copy_from_user(buf, data, count);
+> > +	if (ret)
+> > +		return -EFAULT;
+> > +	buf[count] = '\0';
+> > +
+> > +	ret = kstrtouint(buf, 10, &parent_id);
+> > +	if (ret)
+> > +		return -EINVAL;
+> > +
+> > +	ns_phy = nsim_phy_register();
+> > +	if (IS_ERR(ns_phy))
+> > +		return PTR_ERR(ns_phy);
+> > +
+> > +	if (!parent_id) {
+> > +		if (!dev->phydev) {
+> > +			err = phy_connect_direct(dev, ns_phy->phy, nsim_adjust_link,
+> > +						 PHY_INTERFACE_MODE_NA);
+> > +			if (err)
+> > +				return err;
+> > +
+> > +			phy_attached_info(ns_phy->phy);
+> > +
+> > +			phy_start(ns_phy->phy);
+> > +		} else {
+> > +			phy_link_topo_add_phy(dev, ns_phy->phy, PHY_UPSTREAM_MAC, dev);
+> > +		}
+> > +	} else {
+> > +		pphy = phy_link_topo_get_phy(dev, parent_id);
+> > +		if (!pphy)
+> > +			return -EINVAL;
+> > +
+> > +		phy_link_topo_add_phy(dev, ns_phy->phy, PHY_UPSTREAM_PHY, pphy);
+> > +	}
+> > +
+> > +	nsim_phy_debugfs_create(ns->nsim_dev_port, ns_phy);
+> > +
+> > +	list_add(&ns_phy->node, &ns->nsim_dev->phy_list);  
+> 
+> No locks needed.. for any of this.. ?
 
-It seems the lock doesn't protect any data but the command transfer.
+Heh I guess some locking is needed indeed... Let me add that in the
+next round...
+
+Maxime
 
