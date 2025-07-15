@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-731591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F71B056E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:44:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C038B056F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2932B3AEA9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:43:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB48188E2B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E1C2D5406;
-	Tue, 15 Jul 2025 09:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7512D63EC;
+	Tue, 15 Jul 2025 09:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HcipY2/4"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JYXpT9M+"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9432270EA9;
-	Tue, 15 Jul 2025 09:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D70C2D46AB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752572648; cv=none; b=YK7lEhBI4B1040dAuQDgM5LBqu5l1Rjhp2/sOZu4bsK+nL2SKrJtORRDtXj4nTDjLc65+fF2RGfYQOYT+k2s8noh5uxoJOEBJFC9gi1/trGCFccFwZcAQVwcQOvl06zIHMm8xMH4AvsDUUqczIzCWWlu0NFEBiAHXln9Kra/dYM=
+	t=1752572668; cv=none; b=MsZ9UHHeQ2ubQttCK+IgGTdQ2e8HTq9wyFC1UyfW833b1RMr/wrVxEdhnJnu7agPfyTXqVBTakK6LovxCz2qsF2M6F6rFvZkogQ8PyBeNAbvc5gU17TC4BCx5nn8SdDvGG//N3dZC2fLz1ljvWt2XQMOUq2XRhUoxdrhwAobohc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752572648; c=relaxed/simple;
-	bh=wuPLzqHfh3gWzTFevxMJ7FlgQ/iYDTRmG40LDkZDS98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lj8NoNVVl3UYHqZiiCz4VhgNW3axl3DDUeA0M0ACXPldv1Q6wx9HwPPxixoY4BrGbyrdj5zqUvfONo0krLVyl569nHLVkQkaJwdUlYLQhRRbJaTywd8yLOq+QK3jW0cJ4vFa/ATtH0rZrk0R/B3k2Q8+aDnA947NoUBdxxU+aNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HcipY2/4; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56F9higY2864311;
-	Tue, 15 Jul 2025 04:43:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752572624;
-	bh=pPj+ZjyXI08K1aa9ZtqJ2JQ4vXsCzR+hY2K3B7jFZY0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=HcipY2/4YMrPz6oInXTxuQgxYPe/6zR029wPd0s9QnDqJHqHqukrflc9WIZ7vq6Tw
-	 KZOyF4027omc7xLuYYBvnoQJolvl/8mtI3T8hnODp0wOPjugVKivRKSoouIs1PxCgE
-	 KNggh50s3EvXp6tXtnsHP7NSoxI0rV+aeo4yaADM=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56F9hiLK1175149
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 15 Jul 2025 04:43:44 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 15
- Jul 2025 04:43:44 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 15 Jul 2025 04:43:44 -0500
-Received: from [172.24.227.166] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.166])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56F9heAe2655315;
-	Tue, 15 Jul 2025 04:43:41 -0500
-Message-ID: <eb5c71b5-62bb-4ec2-b3a1-a34ed3d70849@ti.com>
-Date: Tue, 15 Jul 2025 15:13:39 +0530
+	s=arc-20240116; t=1752572668; c=relaxed/simple;
+	bh=lSeA/LDnEt1glLu7Dasv3hTt4/7Fnfbj78CTXFDmYcQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sq07nimSBBznKpJubXMnEuUu9TlY4lar8U9/V84tVRYZOvevomJsLz3hI7iKj4bUAzwc01ju5qTPBw3ytcpHdD8sFTUV6ouekpe+7Sd85DGgy+0rXYMqciqzcunfT4lLjDVPeKXjGv1CcADbcW6Q8PQd8XWoKNSeNLaGFJNUikI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JYXpT9M+; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451ac1b43c4so29078105e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752572665; x=1753177465; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8aIV18upBwtnpGAz2ciR1j/dicG/X743xikh+l1DhFk=;
+        b=JYXpT9M+45w9erDPc0UK7CNqa47VQejpFjaguyhUMFqjmzedNlq/wgaaFEAdzklR4n
+         C+EQMsh0yMJQs4bsiJGZQWoXAmmYvT/bw6cIAXA+BbANth6PGk4XkuqZelnfDRorMXFv
+         a/S9RUikwr28PHQw6Wkf7mj23r3AzkOX1ThLYSht9IxuG/8Z/AEcMqWjgav7ItZxk229
+         ORXXN3KmSkEbW+WGhPfl8yjO06gFx/p/LiOhX1M/C2cfqcgjeZ46OJYElu5za6jh7H/4
+         h8gaRstEbrjjuoq6tPDiCDPBhaGACOFRIv14igKlDYHiL1snc/d3BWc8SATXTzPWk4N0
+         e1RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752572665; x=1753177465;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8aIV18upBwtnpGAz2ciR1j/dicG/X743xikh+l1DhFk=;
+        b=Xo0xaXDU0xxuUzWs4ssGQgsruz+ZRmBqhc4kP3Hfzp7mG+ypv2JKHU0qtEy8fx6hyy
+         eKwhjzt52s6wJsFISia1Xhgf3vaktIQRn33qkym6Oy/lA/XEhdUcDv3Zo1tzg/7vAygy
+         8qDmFHaAYt2vAwfO6mB37Vp2D8ISM1LPoKuq0Nepb1rygJoQi9TLsGOqcg26gJvKIdOv
+         ZOFJ1ZrIua2pwgtyRBJRABjWGi4iXN+FBiC2VwnGRzSUwkBRDVDYD1K+QmUcZbPBjM36
+         YbgAI88gHtAcxvynxI9h7D8L0VkzNgq3GlpuAvov67jAryphgnGFc0zWfrlAlyyvB8/w
+         M8Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCXy9cutvROxDaFplKxHxD7l3c8HkgXC/p3ipmeJFZaDt8EwVgPvbCqCfLy+ezOmYIjAYQkRnaQ85ILDLBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3nDkJ5cORyuu3PlKtM8wzZM8i++kT5+LYMgPjST23xEIpuGGf
+	DL4h8YodLyCQ8hdbe42cMYy05Sh59+bVYpQpgQQH0xh+OId9mv9hgcVIFDvxseJmlIBN0rziRhR
+	shdcfZ9+IISflXLeQuQ==
+X-Google-Smtp-Source: AGHT+IEfrFbb5XOTs0vByF+cJyENIraTLg0DkCXSI8ECPvP+KQorjjEcB8BKNA0WhVlVHFSqJ+tbrV5euNWKkl8=
+X-Received: from wmbgw8.prod.google.com ([2002:a05:600c:8508:b0:451:4d6b:5b7e])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:6304:b0:43d:46de:b0eb with SMTP id 5b1f17b1804b1-454ec16cb2emr169347295e9.12.1752572665040;
+ Tue, 15 Jul 2025 02:44:25 -0700 (PDT)
+Date: Tue, 15 Jul 2025 09:44:24 +0000
+In-Reply-To: <20250711-rnull-up-v6-16-v3-10-3a262b4e2921@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] Add DSI display support for TI's Jacinto platforms
-To: Vignesh Raghavendra <vigneshr@ti.com>, <nm@ti.com>,
-        <devicetree@vger.kernel.org>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>
-References: <20250624082619.324851-1-j-choudhary@ti.com>
- <0d81594f-ad1a-4c65-a00a-9c97c8b01a65@ti.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <0d81594f-ad1a-4c65-a00a-9c97c8b01a65@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org> <20250711-rnull-up-v6-16-v3-10-3a262b4e2921@kernel.org>
+Message-ID: <aHYi-PRsEQ-YpeYm@google.com>
+Subject: Re: [PATCH v3 10/16] rust: block: add block related constants
+From: Alice Ryhl <aliceryhl@google.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hello Vignesh,
-
-On 26/06/25 11:45, Vignesh Raghavendra wrote:
+On Fri, Jul 11, 2025 at 01:43:11PM +0200, Andreas Hindborg wrote:
+> Add a few block subsystem constants to the rust `kernel::block` name space.
+> This makes it easier to access the constants from rust code.
 > 
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>  rust/kernel/block.rs | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> On 24/06/25 13:56, Jayesh Choudhary wrote:
->> Hello All,
->>
->> This series adds the dts support to enable DSI on 3 platforms for TI SoCs:
->> - J784S4-EVM
->> - J721S2-EVM
->> - AM68-SK
->>
->> Relevant driver fixes, CDNS-DSI fixes[0] and SN65DSI86 detect fix[1]
->> are Reviewed and Tested.
->>
-> 
-> Are these merged?
+> diff --git a/rust/kernel/block.rs b/rust/kernel/block.rs
+> index 150f710efe5b..7461adf4d7e0 100644
+> --- a/rust/kernel/block.rs
+> +++ b/rust/kernel/block.rs
+> @@ -3,3 +3,15 @@
+>  //! Types for working with the block layer.
+>  
+>  pub mod mq;
+> +
+> +/// Bit mask for masking out [`SECTOR_SIZE`]
+> +pub const SECTOR_MASK: u32 = bindings::SECTOR_MASK;
+> +
+> +/// Sectors are size `1 << SECTOR_SHIFT`.
+> +pub const SECTOR_SHIFT: u32 = bindings::SECTOR_SHIFT;
+> +
+> +/// Size of a sector.
+> +pub const SECTOR_SIZE: u32 = bindings::SECTOR_SIZE;
+> +
+> +/// Power of two difference in size of a page and size of a sector.
+> +pub const PAGE_SECTORS_SHIFT: u32 = bindings::PAGE_SECTORS_SHIFT;
 
-SN65DSI86 fix which was an essential patch is merged.
-CDNS-DSI fixes will soon get merged (and that does not break these
-integration patches for DSI).
+I was looking for the user to double-check whether u32 was the right
+choice, but I can't find it. It looks like you don't use these yet?
 
-
-Warm Regards,
-Jayesh
-
-> 
-> [...]
-> 
+Alice
 
