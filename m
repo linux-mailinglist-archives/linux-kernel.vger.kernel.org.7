@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-731624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EACB05756
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:00:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8A5B05757
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 928E3563681
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:00:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 715651C20AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38282D77E4;
-	Tue, 15 Jul 2025 10:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCB12D8779;
+	Tue, 15 Jul 2025 10:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rR7p1Lyb"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sbo/b7yt"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B1626D4E6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A640F2D8361
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752573623; cv=none; b=rGDnJVelUywFCUs4BiRo7lhgNqRn54jGJd64qi1t+qsB0ObivIilMnRc077XPAPXm9YZBokw3K9kScKEXHHkIaz3e2oCh8LsFT4ZUCSw3hHklq7aS2qT8RktCbobutKB2rN2ZyyuljnhevAgSXGlzLJUhR/UiCRTHFjkDAiV/Dg=
+	t=1752573627; cv=none; b=U3rFNpK1cu2i8J/PoxiI6pX/H2UELZcMPUEp4oEXuSMSBlDITUT5VF2TUt+DaAc7J1B6cbZby6XWUbFvfDTAb8Ux3ZECzC3QGPo6yHXDh3199+w3nFE1y5UFbVC/iErlnfU7MXDssQYxIE/13ecvAYogcgHfGEouJtstX/Hminc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752573623; c=relaxed/simple;
-	bh=FRpIBzJAs+zkjM4eEZtZEnNOq4IpmiLKr2n5/suoW98=;
+	s=arc-20240116; t=1752573627; c=relaxed/simple;
+	bh=FSJsSS3WluCy8KvBbKjXlFYWWv4mZRNGrsBKukZ/cv8=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=D30xiGKcQ6GhtDLQPK/GzzOUrVJT0eZiCrMeNdCQpFwOsajZzG9LwdybnCgwfb2YjMjPubY6g79aasa5X0GUFXWVtBpQug4N9nLZAJtUnre9JjVucrWFSAK90g4PpSwfggcgPRAVQv0maEgofzFTfMIBsgBmVhKEu5hBHxzT2Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rR7p1Lyb; arc=none smtp.client-ip=95.215.58.180
+	 MIME-Version; b=REZQ0Pdmvswqk1l3HK5mKICX3LPWE36Y0qlfkA9aB+A48DT+YCZ3UEedK8UWiQnb1zErrNUY2ChRhnUBNqzWubdGKGoHlzfzm0acpIJaSXrWCKog5J0tZIq22YUtgaKP0eVXkUmV0ZobPtUQyaRHLdEqDabAV1/P7CZQF4WquZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sbo/b7yt; arc=none smtp.client-ip=95.215.58.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752573618;
+	t=1752573623;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7JRpjPQtsxOsEKyXUhk8AvHxOa1IbLg4OX688b1Boz8=;
-	b=rR7p1Lybcl+KmgiLw+IM9aWE6ezyxo9p7M0asXbZuZZUxJ/cf9RifiJWj8Ao+X5yMMO432
-	ybr76/SJIsfcafqjuG86q+3K8tFDt9FvYpy4tnimn3RUeQaY87c7qoXGa1WNngAXsv3cyL
-	nIJfLCRARG+D9H6HsmKJUbE+p5jsNh0=
+	bh=sPnzVrWVUWuZIVWV/G/AQlEdfek6Y/tQOREMS8qveAQ=;
+	b=sbo/b7yt/cBXHqBAnLzx1hfGwCbgVqPZpBFzq3KrZgKDKB6pjM4YwdAVIA0blBesWLMLRL
+	ZHgdL9OZLdmYJFzHTZrj7g34pn3Y4NeBXkb/4wGBcx7neU0ffqTkNTSNdHcMGTNUtB2uve
+	pGxfRNSOMreSemw3HuEW2+ql5wzXBdA=
 From: Hui Zhu <hui.zhu@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
@@ -59,9 +59,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH 1/3] vmalloc: Add vrealloc_align to support allocation of aligned vmap pages
-Date: Tue, 15 Jul 2025 17:59:46 +0800
-Message-Id: <81647cce3b8e7139af47f20dbeba184b7a89b0cc.1752573305.git.zhuhui@kylinos.cn>
+Subject: [PATCH 2/3] rust: allocator: Vmalloc: Support alignments larger than PAGE_SIZE
+Date: Tue, 15 Jul 2025 17:59:47 +0800
+Message-Id: <5e78317d87c42b548929ca386670837ad617fc9d.1752573305.git.zhuhui@kylinos.cn>
 In-Reply-To: <cover.1752573305.git.zhuhui@kylinos.cn>
 References: <cover.1752573305.git.zhuhui@kylinos.cn>
 Precedence: bulk
@@ -75,169 +75,106 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Hui Zhu <zhuhui@kylinos.cn>
 
-This commit add new function vrealloc_align.
-vrealloc_align support allocation of aligned vmap pages with
-__vmalloc_node_noprof.
-And vrealloc_align will check the old address. If this address does
-not meet the current alignment requirements, it will also release
-the old vmap pages and reallocate new vmap pages that satisfy the
-alignment requirements.
+This commit add code to make rust alloc Vmalloc support alignments
+larger than PAGE_SIZE.
+
+It adds a new option element to ReallocFunc. When an object supports
+aligned reallocation, it can register its alignment-specific realloc
+function here.
+During VREALLOC initialization, it sets bindings::vrealloc_align to
+this element.
+When ReallocFunc::call executes, if the object supports aligned
+reallocation and the alignment exceeds PAGE_SIZE, the aligned realloc
+function is used to support alignment capabilities.
 
 Co-developed-by: Geliang Tang <geliang@kernel.org>
 Signed-off-by: Geliang Tang <geliang@kernel.org>
 Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
 ---
- include/linux/vmalloc.h |  5 +++
- mm/vmalloc.c            | 80 ++++++++++++++++++++++++++---------------
- 2 files changed, 57 insertions(+), 28 deletions(-)
+ rust/helpers/vmalloc.c         |  7 +++++++
+ rust/kernel/alloc/allocator.rs | 32 ++++++++++++++++++++------------
+ 2 files changed, 27 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index fdc9aeb74a44..0ce0c1ea2427 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -201,6 +201,11 @@ void * __must_check vrealloc_noprof(const void *p, size_t size, gfp_t flags)
- 		__realloc_size(2);
- #define vrealloc(...)		alloc_hooks(vrealloc_noprof(__VA_ARGS__))
- 
-+void * __must_check vrealloc_align_noprof(const void *p, size_t size,
-+					  size_t align, gfp_t flags)
-+		__realloc_size(2);
-+#define vrealloc_align(...)	alloc_hooks(vrealloc_align_noprof(__VA_ARGS__))
-+
- extern void vfree(const void *addr);
- extern void vfree_atomic(const void *addr);
- 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index ab986dd09b6a..41cb3603b3cc 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -4081,9 +4081,11 @@ void *vzalloc_node_noprof(unsigned long size, int node)
- EXPORT_SYMBOL(vzalloc_node_noprof);
- 
- /**
-- * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
-+ * vrealloc_align - reallocate virtually contiguous memory;
-+ *                  contents remain unchanged
-  * @p: object to reallocate memory for
-  * @size: the size to reallocate
-+ * @align: requested alignment
-  * @flags: the flags for the page level allocator
-  *
-  * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
-@@ -4103,7 +4105,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
-  * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
-  *         failure
-  */
--void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-+void *vrealloc_align_noprof(const void *p, size_t size, size_t align,
-+			    gfp_t flags)
+diff --git a/rust/helpers/vmalloc.c b/rust/helpers/vmalloc.c
+index 80d34501bbc0..3290c4c4c42f 100644
+--- a/rust/helpers/vmalloc.c
++++ b/rust/helpers/vmalloc.c
+@@ -7,3 +7,10 @@ rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
  {
- 	struct vm_struct *vm = NULL;
- 	size_t alloced_size = 0;
-@@ -4116,49 +4119,65 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
- 	}
- 
- 	if (p) {
-+		if (!is_power_of_2(align)) {
-+			WARN(1, "Trying to vrealloc_align() align is not power of 2 (%ld)\n",
-+			     align);
-+			return NULL;
-+		}
-+
- 		vm = find_vm_area(p);
- 		if (unlikely(!vm)) {
--			WARN(1, "Trying to vrealloc() nonexistent vm area (%p)\n", p);
-+			WARN(1, "Trying to vrealloc_align() nonexistent vm area (%p)\n", p);
- 			return NULL;
- 		}
- 
- 		alloced_size = get_vm_area_size(vm);
- 		old_size = vm->requested_size;
- 		if (WARN(alloced_size < old_size,
--			 "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
-+			 "vrealloc_align() has mismatched area vs requested sizes (%p)\n", p))
- 			return NULL;
- 	}
- 
--	/*
--	 * TODO: Shrink the vm_area, i.e. unmap and free unused pages. What
--	 * would be a good heuristic for when to shrink the vm_area?
--	 */
--	if (size <= old_size) {
--		/* Zero out "freed" memory, potentially for future realloc. */
--		if (want_init_on_free() || want_init_on_alloc(flags))
--			memset((void *)p + size, 0, old_size - size);
--		vm->requested_size = size;
--		kasan_poison_vmalloc(p + size, old_size - size);
--		return (void *)p;
--	}
-+	if (IS_ALIGNED((unsigned long)p, align)) {
-+		/*
-+		 * TODO: Shrink the vm_area, i.e. unmap and free unused pages. What
-+		 * would be a good heuristic for when to shrink the vm_area?
-+		 */
-+		if (size <= old_size) {
-+			/* Zero out "freed" memory, potentially for future realloc. */
-+			if (want_init_on_free() || want_init_on_alloc(flags))
-+				memset((void *)p + size, 0, old_size - size);
-+			vm->requested_size = size;
-+			kasan_poison_vmalloc(p + size, old_size - size);
-+			return (void *)p;
-+		}
- 
--	/*
--	 * We already have the bytes available in the allocation; use them.
--	 */
--	if (size <= alloced_size) {
--		kasan_unpoison_vmalloc(p + old_size, size - old_size,
--				       KASAN_VMALLOC_PROT_NORMAL);
- 		/*
--		 * No need to zero memory here, as unused memory will have
--		 * already been zeroed at initial allocation time or during
--		 * realloc shrink time.
-+		 * We already have the bytes available in the allocation; use them.
-+		 */
-+		if (size <= alloced_size) {
-+			kasan_unpoison_vmalloc(p + old_size, size - old_size,
-+					KASAN_VMALLOC_PROT_NORMAL);
-+			/*
-+			 * No need to zero memory here, as unused memory will have
-+			 * already been zeroed at initial allocation time or during
-+			 * realloc shrink time.
-+			 */
-+			vm->requested_size = size;
-+			return (void *)p;
-+		}
-+	} else {
-+		/*
-+		 * p is not aligned with align.
-+		 * Allocate a new address to handle it.
- 		 */
--		vm->requested_size = size;
--		return (void *)p;
-+		if (size < old_size)
-+			old_size = size;
- 	}
- 
- 	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
--	n = __vmalloc_noprof(size, flags);
-+	n = __vmalloc_node_noprof(size, align, flags, NUMA_NO_NODE,
-+				  __builtin_return_address(0));
- 	if (!n)
- 		return NULL;
- 
-@@ -4170,6 +4189,11 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
- 	return n;
+ 	return vrealloc(p, size, flags);
  }
- 
-+void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-+{
-+	return vrealloc_align_noprof(p, size, 1, flags);
-+}
 +
- #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
- #define GFP_VMALLOC32 (GFP_DMA32 | GFP_KERNEL)
- #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
++void * __must_check __realloc_size(2)
++rust_helper_vrealloc_align(const void *p, size_t size, size_t align,
++			   gfp_t flags)
++{
++	return vrealloc_align(p, size, align, flags);
++}
+diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
+index aa2dfa9dca4c..197222e15c26 100644
+--- a/rust/kernel/alloc/allocator.rs
++++ b/rust/kernel/alloc/allocator.rs
+@@ -59,17 +59,25 @@ fn aligned_size(new_layout: Layout) -> usize {
+ /// One of the following: `krealloc`, `vrealloc`, `kvrealloc`.
+ struct ReallocFunc(
+     unsafe extern "C" fn(*const crate::ffi::c_void, usize, u32) -> *mut crate::ffi::c_void,
++    Option<
++        unsafe extern "C" fn(
++            *const crate::ffi::c_void,
++            usize,
++            usize,
++            u32,
++        ) -> *mut crate::ffi::c_void,
++    >,
+ );
+ 
+ impl ReallocFunc {
+     // INVARIANT: `krealloc` satisfies the type invariants.
+-    const KREALLOC: Self = Self(bindings::krealloc);
++    const KREALLOC: Self = Self(bindings::krealloc, None);
+ 
+     // INVARIANT: `vrealloc` satisfies the type invariants.
+-    const VREALLOC: Self = Self(bindings::vrealloc);
++    const VREALLOC: Self = Self(bindings::vrealloc, Some(bindings::vrealloc_align));
+ 
+     // INVARIANT: `kvrealloc` satisfies the type invariants.
+-    const KVREALLOC: Self = Self(bindings::kvrealloc);
++    const KVREALLOC: Self = Self(bindings::kvrealloc, None);
+ 
+     /// # Safety
+     ///
+@@ -108,9 +116,15 @@ unsafe fn call(
+         // GUARANTEE:
+         // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc`.
+         // - Those functions provide the guarantees of this function.
+-        let raw_ptr = unsafe {
+-            // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
+-            self.0(ptr.cast(), size, flags.0).cast()
++        // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
++        let raw_ptr = if let Some(f) = self.1 {
++            if layout.align() > bindings::PAGE_SIZE {
++                unsafe { f(ptr.cast(), size, layout.align(), flags.0).cast() }
++            } else {
++                unsafe { self.0(ptr.cast(), size, flags.0).cast() }
++            }
++        } else {
++            unsafe { self.0(ptr.cast(), size, flags.0).cast() }
+         };
+ 
+         let ptr = if size == 0 {
+@@ -152,12 +166,6 @@ unsafe fn realloc(
+         old_layout: Layout,
+         flags: Flags,
+     ) -> Result<NonNull<[u8]>, AllocError> {
+-        // TODO: Support alignments larger than PAGE_SIZE.
+-        if layout.align() > bindings::PAGE_SIZE {
+-            pr_warn!("Vmalloc does not support alignments larger than PAGE_SIZE yet.\n");
+-            return Err(AllocError);
+-        }
+-
+         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
+         // allocated with this `Allocator`.
+         unsafe { ReallocFunc::VREALLOC.call(ptr, layout, old_layout, flags) }
 -- 
 2.43.0
 
