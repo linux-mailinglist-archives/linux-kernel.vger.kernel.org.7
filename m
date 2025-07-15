@@ -1,88 +1,146 @@
-Return-Path: <linux-kernel+bounces-731481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D980DB054FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:34:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9423B05501
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C163B2FCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:33:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FC6188D974
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4BE2C15B4;
-	Tue, 15 Jul 2025 08:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5230E23AE9B;
+	Tue, 15 Jul 2025 08:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BrG9tgjD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="t9UsxVY6"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E0D2741D4;
-	Tue, 15 Jul 2025 08:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864A31A314E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568351; cv=none; b=qSSlDaSSFNGNnz6lPmmFj1HtzmUmAt4LP/DRvVBkoO8AV44Fb/nDgd9/3SSilcVgqaSbl/Hi30A9xvBe+kJ4keZae1ULQVt1JLkCKUuxw7wU/rWzkGh3+qpLuxpSghc/B/eSopg1fiBjMU+gG0dLxR5YUOCCzgdIYG45tlY/wvc=
+	t=1752568509; cv=none; b=K1t3FOXV2W0REej4qL+JsXzNMi8qIz6asYZ/KRpT8Iq6w2zmryma/oPG2b+HPz1v+pjlsCJWsIjsdgthh4HREfCyR5uBM+dH3CId0DbJX0W5nA5v5AJc706yv0DdwEYLcR7lTcNOEBWoMS3C+WHHBdeq+Dn89tZTFhf5ZE94vV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568351; c=relaxed/simple;
-	bh=hO/kvJB40HVuEpcvrVIJ3+ckdcVlzTneCpqjB8KXFZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzPhhSLcUNyWdiv90Uxtqx6BuktfiZGHJJvy06oRIYEoMB3pOWP4aDWVeJa5RuEdtOWUs6HcrStWCse9k50GEDLDULqRYb98Fhco64ShtjcQcqOWqXya4R7V226FRckufeWyL7HlDIWXFOZpLZkUec588FnIYDBrsoeyY5c7v3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BrG9tgjD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B299C4CEE3;
-	Tue, 15 Jul 2025 08:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752568350;
-	bh=hO/kvJB40HVuEpcvrVIJ3+ckdcVlzTneCpqjB8KXFZE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BrG9tgjDB9kme4m4fV/4V2wAUXaQolUMfekjKfUb1uQ2hPhvSj6BEbsCf/ANrDLFs
-	 bwtr6x8/UAOqonFBPSI/+fT5SOPcGxXDBINYXn//3pKmy4bC6hGEc8OiWO0OODB7n9
-	 D3lJ04wydX1jgR3SsdDOKpFoLLwhlMaVwpolDKFw=
-Date: Tue, 15 Jul 2025 10:32:28 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: jackysliu <1972843537@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] usb: gadget: functioni: Fix a oob problem in rndis
-Message-ID: <2025071539-tattoo-knickers-a775@gregkh>
-References: <2025071116-landline-antelope-5c9f@gregkh>
- <tencent_AC052534ED0C97ED96CDBF2269E71DAE5905@qq.com>
+	s=arc-20240116; t=1752568509; c=relaxed/simple;
+	bh=XkoIQdYynJerQZMgPKT0cl53oqkg5SYxoX6539H9RBE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=j+CqE/QA76Gd6kia6xMU9EnahKThczO5OP5on1PmZC1HIexBvXkCFA0vqhoO78lpT5vQbhixm9liTDQABn16PImibgGM0UJem8hk/+YMzTGN6TP0QPOBCQU+dHP5h8sM0CgoFsDprKTQ4ao5Y9LAfGl4S8TafdvSqYpHDfdQNHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=t9UsxVY6; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_AC052534ED0C97ED96CDBF2269E71DAE5905@qq.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1752568494;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dn9j9avwFidQxU2bCX0UIziQTEnB16DYh3Wd/7lUs1Q=;
+	b=t9UsxVY6mXLFPCJpyr5YZ/a+GWum9nHB2cHNy+irWcyW8uPXld7KsWybnukiHlRBofOCVf
+	w4AgPUuSUsTRsUrcZlP26RteB+xEZgFHE8yX12cnAb8g8mesnWWu7vKMXI8/T86OBOX+/E
+	l8M5SdeVR+5IsGx07C6IzsYhKS9Sc6dTXFPAXQGJ1gz9/M47KnhGNBzm8HdFIIOuMbvl8V
+	3dBDkvtZFiQDPpxh62HhrYFttoHOq/vhKSz63/okaXVh7vLtyByb8fNyhQjuJ0dba9Fb2k
+	XAolqQq/V429pazWA1JEX78DbAR9B89oaUwjNQf1cWnwjF6hkzrvzg9PaqwlVw==
+Content-Type: multipart/signed;
+ boundary=31e8725035cdaae867651e5f629dfe5e1cdfa919bc8e4b5fe9769c11329a;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Tue, 15 Jul 2025 10:34:43 +0200
+Message-Id: <DBCHOEMXSOZW.JRB0UTWSPG4J@cknow.org>
+Cc: "Heiko Stuebner" <heiko@sntech.de>, "Kever Yang"
+ <kever.yang@rock-chips.com>, "Hans Verkuil" <hverkuil@xs4all.nl>,
+ <kernel@collabora.com>, "Dragan Simic" <dsimic@manjaro.org>, "Rob Herring"
+ <robh@kernel.org>, "Yunke Cao" <yunkec@google.com>, "Sebastian Reichel"
+ <sebastian.reichel@collabora.com>, <linux-rockchip@lists.infradead.org>,
+ "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+ <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Frank Wang" <frank.wang@rock-chips.com>, "Mauro
+ Carvalho Chehab" <mchehab@kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, "Jianfeng Liu"
+ <liujianfeng1994@gmail.com>, "Alexey Charkov" <alchark@gmail.com>, "Ricardo
+ Ribalda" <ribalda@chromium.org>, "Andy Yan" <andy.yan@rock-chips.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Hans de Goede"
+ <hansg@kernel.org>
+Subject: Re: [PATCH 8/8] media: rkvdec: Unstage the driver
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Detlev Casanova" <detlev.casanova@collabora.com>,
+ <linux-kernel@vger.kernel.org>
+References: <20250623160722.55938-1-detlev.casanova@collabora.com>
+ <20250623160722.55938-9-detlev.casanova@collabora.com>
+In-Reply-To: <20250623160722.55938-9-detlev.casanova@collabora.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 15, 2025 at 04:20:09PM +0800, jackysliu wrote:
-> On Fri, Jul 11 2025 08:51:30 +0200, greg k-h wrote:
-> 
-> >Yes, and then look to see what buf_len (not buflen) in
-> >gen_ndis_set_resp() is used for.  I'll wait... :)
-> Oh,my bad.It seem that buf_len will only be used for some debugging code..
-> 
-> >What tool generated this static analysis?  You always have to mention
-> >that as per our development rules.
-> The vulnerability is found by  is found by Wukong-Agent, a code security AI agent,
->  through static code analysis.But It seems that this is a false positive..
+--31e8725035cdaae867651e5f629dfe5e1cdfa919bc8e4b5fe9769c11329a
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-As per our documentation, you have to always disclose what tools you use
-to find stuff.  Please always do that, otherwise your reports are going
-to be ignored.
+Hi,
 
-And then also properly TEST your change to verify that it works before
-submitting it, that didn't happen here.
+On Mon Jun 23, 2025 at 6:07 PM CEST, Detlev Casanova wrote:
+> The TODO list for unstaging being empty, the driver can now be moved to t=
+he
+> main media folder.
+>
+> Also add myself as maintainer.
 
-> >And what qemu setup did you use to test this?  That would be helpful to
-> >know so that I can verify it on my end.
-> 
-> I've add some web-usb device to test this model.But seems that I went into a wrong way.
+I've tested this patch on a Rock64 (rk3328) and RockPro64 (rk3399) and
+did not notice any regressions. And I no longer see this warning:
 
-What is a "web-usb" device?  How does rndis work with that?
+  rockchip_vdec: module is from the staging directory, the quality
+  is unknown, you have been warned.
 
-thanks,
+Tested-by: Diederik de Haas <didi.debian@cknow.org> # Rock64 + RockPro64
 
-greg k-h
+Cheers,
+  Diederik
+
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  MAINTAINERS                                               | 8 ++++++++
+>  drivers/media/platform/rockchip/Kconfig                   | 1 +
+>  drivers/media/platform/rockchip/Makefile                  | 1 +
+>  .../media =3D> media/platform/rockchip}/rkvdec/Kconfig      | 0
+>  .../media =3D> media/platform/rockchip}/rkvdec/Makefile     | 0
+>  .../platform/rockchip}/rkvdec/rkvdec-h264.c               | 0
+>  .../platform/rockchip}/rkvdec/rkvdec-regs.h               | 0
+>  .../media =3D> media/platform/rockchip}/rkvdec/rkvdec-vp9.c | 0
+>  .../media =3D> media/platform/rockchip}/rkvdec/rkvdec.c     | 0
+>  .../media =3D> media/platform/rockchip}/rkvdec/rkvdec.h     | 0
+>  drivers/staging/media/Kconfig                             | 2 --
+>  drivers/staging/media/Makefile                            | 1 -
+>  12 files changed, 10 insertions(+), 3 deletions(-)
+>  rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/Kconf=
+ig (100%)
+>  rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/Makef=
+ile (100%)
+>  rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/rkvde=
+c-h264.c (100%)
+>  rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/rkvde=
+c-regs.h (100%)
+>  rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/rkvde=
+c-vp9.c (100%)
+>  rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/rkvde=
+c.c (100%)
+>  rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/rkvde=
+c.h (100%)
+
+
+--31e8725035cdaae867651e5f629dfe5e1cdfa919bc8e4b5fe9769c11329a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaHYSqAAKCRDXblvOeH7b
+bqCZAPsEcQhHp1n/MQnvFCLsexjxPRpuv36uOmPgYq3iZ8tgYQEA8+gXctndsbuB
+3iimQ6yPbpe40td5BCY2Y6XWce3fWg4=
+=lFcf
+-----END PGP SIGNATURE-----
+
+--31e8725035cdaae867651e5f629dfe5e1cdfa919bc8e4b5fe9769c11329a--
 
