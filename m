@@ -1,260 +1,171 @@
-Return-Path: <linux-kernel+bounces-731768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB652B0593A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:51:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B8BB0593E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2CE1AA3115
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:51:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E315E4A5543
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EBB2E2EFF;
-	Tue, 15 Jul 2025 11:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C58E2DCF5D;
+	Tue, 15 Jul 2025 11:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXxMN+Xk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j1I8KR70"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06792DE6E7;
-	Tue, 15 Jul 2025 11:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E308E2DA777
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752580152; cv=none; b=eHW6Oag86nTraAdcDnyMh6l3qxy55rr6CfylkJ0qy1Jjy2bj/Pvt9ACPLh45G+WJHmCnkLEReXfqgGVeCBkCTfqaZWA58OTN/UvxVYjmzjYdtSIIjdSWAJ3xMUWUs1QB+p19rLNXmndSUaob9O/zeT+ckiHuci0W91cOGfHus5s=
+	t=1752580221; cv=none; b=HPK2gtqfHTbJh2s7jGTb6PX7Q/4c20/uPbSb79B/g3+XOypLNfom7g9jRTrMa0OAus6O7i2j07J057xxoBvnH+kLzavioj550YL+fzHH6tA40Ih6rs1dJs3S91UeAM9Ir6iKVPxHeg0G2ZiPUuIXRJ8Rrv6i93crISm2kg5AuMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752580152; c=relaxed/simple;
-	bh=M6+o8JpQ/TBL6a2gpDPsjQMBcB0dz89E5FugIoYP1mo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jMF2rvG1D+keLbBDDZNY9pFkAneIu1uyBzmP7AoWa/9oFwq7fj/nFqmviGLZCXbV45v7Z3grrZAUHo3YFU5cfTFWl2+weGk0VvFilJq9KSJPC2eALSVKW/R88B5LyI3/iShV6hNN+WlX0WRcLrKxtrfTxzLhmh3MJTg8ue6B5SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXxMN+Xk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 75A54C4CEF6;
-	Tue, 15 Jul 2025 11:49:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752580152;
-	bh=M6+o8JpQ/TBL6a2gpDPsjQMBcB0dz89E5FugIoYP1mo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lXxMN+XksVSJoCqF1rNTcv018ElcLpnM7P62UNDySUzJb5c2xXnhfhOuCUE0OinOq
-	 cYWmjhQrwyJNOSEYk3wBVpf0QGwGEempE3N2QXTpyw3XWt8/8uemnyjqzf0ZQ4ybFk
-	 jtWyBeT+byLb9XqBbevB8AZU5MOqaxbQ7lD5MFulPjKwZMYAnfRpjYGfzviMItXM8/
-	 QTqMBexj1Dfq9kh5k+CjleHksxiCRumqMLE7pqEhMjBGXMELlBxH56IT2g7j7mWmdX
-	 uyvZvSZkrNGLnmZKJQBmCi2foS4OLq7qS47qHJ7SWfjADFWh20flz7vtPg6W2yiJPO
-	 4g6oWwgQc5qcg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D114C83F22;
-	Tue, 15 Jul 2025 11:49:12 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Tue, 15 Jul 2025 13:49:06 +0200
-Subject: [PATCH RESEND v5 7/7] Input: synaptics-rmi4 - support fallback
- values for PDT descriptor bytes
+	s=arc-20240116; t=1752580221; c=relaxed/simple;
+	bh=QNcCDmqQ5Df7rSq9TtFAWYVAUpPVzmHMgnOLyE7lX6E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i0oFdGWos3KB42wr+dhbX/2M36ocdqFAr8CJ21w3TW39SJP5ZTolC5oW9OKqzbg0Z+x6lX+qI8O7SsrixisusuV9CGW4Grj/ar1j/Dujqx9J8tvSttWwo1NN7n4BqhSeETa9KN50NgWpR+mgJqxmf4q6ctjiuUnMH24Qga/Ipa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j1I8KR70; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-70e3c6b88dbso37920837b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:50:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752580219; x=1753185019; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4wNySUjatYeI6OvV2zA4z/a1VqMlHoZrAYnvby/JKWM=;
+        b=j1I8KR70P6F5yMATLVDnhuOHbDdqhP7kWYbqS3zCm1CEm2fFiCZ3FVVD6pvQtBEqZY
+         wZQM8srF+xabr+VKvvYgxXZQkGCtx9kALLprEqxkX6rFJ8ndA5YI6X75qQ7La5GPWw7k
+         N20odE9i4g2/63bhfOjLEqiq/hE8GPa/EkHVbU14ClMS1FXevJ7CBO/qG5WnktxyF38i
+         RUbpDDRnBZVjS/Ft3zWCxhdZaum0q3ykiLu39ySrr1ao0mJLFBsgF5b6M6WS3eL1waWn
+         XNo3Kk/IJcSx3kDKHFlWA772WJvTHcYEL9NUFC6fY5LmL1NVJgHKPYh5XXX09JtyjAQJ
+         cP7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752580219; x=1753185019;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4wNySUjatYeI6OvV2zA4z/a1VqMlHoZrAYnvby/JKWM=;
+        b=aWHEY+66dkYgiVBLBoLMnNZAN4JkEco+9c5ARze0EvMvB3psRMA4AGQaGDz2w9Itsa
+         AHQhmdaBuVDl4z/cxtdgI7r3El4lQwOFGZM7CCZmg4O8Ik4I6PmlFWPdcOigE3lHLLyr
+         1mchXfkZHeDH5D2Ock4pp/bY0UqzOPpfA/9t2b9Zn1Ay7loc7nIcGkWA7TCW3o+kgITG
+         20cHOgaB2IMvdXuMdpTz4zuqYPmkwdkFHThquMBt7h49JvUOVwrLxAAMjtb1U8DetWuE
+         TaNijzELLTI3yWEFxGzD77jBSjOJHhjPubKyImLiIEoo7oZEyAoAUmtaZJkWNipGJeUW
+         7aaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ3BAXcrq46IXFd6rAHfXiG78ZzDF4VPBFJgDgKYvLHpHkR7qcGD47y+zkAadKSpfTUPUbAzbt7MKm2uQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySROH388InaSlipmOgYuRGgzP64fsjSLYeodiSFX6FnKWSkEQn
+	QTJXKkW14NR9O7oXpUoOx2AXynLsAg5Gcf5JngyLzkCcBsP3sGvmFM7WmCj87OZE3pMwX5bnBsq
+	glt8+txrQRL4gXDXzzNumESdUDIeGjq1JqqZRClx17g==
+X-Gm-Gg: ASbGncu1xuTIAM/QEt65YHFW9Tlgeweza55AaOa0nSptZNZVwKY6i6dNB7EXj3/OfPd
+	eSqhd2UYoGiNW4YdbZsDRGz64EWAtw0pjuuhYwKQ/moqEqZDeYswc18CQOL2Cbd3r16cfNzqKYJ
+	3FopLPun8Fq2UB8qkM2NZR4HuHdawRNJGUIJOLv+0cC853h5iOS18DltBQIf3rJTiU3FGjDei4w
+	XAqQiTt
+X-Google-Smtp-Source: AGHT+IF/K38yeveYq70L/mHAPtfjeL+GIee4NoKApQPc4/AmworpqftrKbu0K7Q7h4oLInJZL2btkmXzEuBJtreqbG4=
+X-Received: by 2002:a05:690c:7483:b0:716:3dc5:a35f with SMTP id
+ 00721157ae682-717d5e94ad5mr256657057b3.19.1752580218628; Tue, 15 Jul 2025
+ 04:50:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-synaptics-rmi4-v5-7-ca255962c122@ixit.cz>
-References: <20250715-synaptics-rmi4-v5-0-ca255962c122@ixit.cz>
-In-Reply-To: <20250715-synaptics-rmi4-v5-0-ca255962c122@ixit.cz>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
- Vincent Huang <vincent.huang@tw.synaptics.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Caleb Connolly <caleb.connolly@linaro.org>, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5812; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=0+m46Sy94J+PlGPLtsegoEaaqVZ3KHZFG9gM8kTZvJ0=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBodkA0IIENa+SrSLJ5/Tk7T0Jj60C09EJPvIBv1
- 2/gFXC1tMeJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaHZANAAKCRBgAj/E00kg
- ciUPD/4+/vOvVXAaIP8TOcWs1fenDp8yhZZp2yxAet8IENccLD4DCLZeaN7zdpHLLdKEkiBdsiP
- D8NyxD66DHYnPggt+BH781op4huRR7sGvunlf/5An4mrmYL/X2fo5MOCXyIf/agDDW2CxRPxvhN
- Lfbejmvu81hc1hmd3vKmRvJA8pQlteqS02TVDPq1DupmLbqB2oifafPHxkTbU9PFw/M0iCPlF0Z
- xRc4AUhPC5U7szZcfzFHC+Ezq4PL0GyqaJo1vA5pxwwK9EtSckYbFxb+gK/2NsLoI+KDMsaRZau
- CND90bRndZepyuUbVLeA40T9cctWhdVsMeHJhzZ4Qmn5lqix+UgpeJjRsLcTE6oHr7NftFaq9Vf
- 1AIZ1p1OPcshImycPjsXCiQ3y4hmF7wkNOzft+PiP2fkQPFOV5Jd2eIeiMkRqBO1SKtk5IJzJnt
- LHxJQyPtQ7JCXReMJ8EvoODReICjlXhsuzITVr2Ky/7WhPCqmenJPBbXG9vaB1Od5vAQtoNraoG
- h000GXYLb96AtaHKKpf1eWEoELfHbTTZVVHUm2pP4rohAHnZCimV72NvTEaOC4U1R+Teir7wmDM
- GkLyJkDzYFWG6jDvl8d0wSFT3gqVTwbI3SCW3cNmYPaxTslCgqvBHi8Cehg9nBrAF8rJY5487zf
- EVwSCRFlmW0xR6g==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+References: <20250629172512.14857-1-hiagofranco@gmail.com> <aGazjaJQXl03HUJE@p14s>
+In-Reply-To: <aGazjaJQXl03HUJE@p14s>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 15 Jul 2025 13:49:42 +0200
+X-Gm-Features: Ac12FXwJ5N_wrB84X7RLvjAxpSUj8wCAKwcHpPhNOwV7kx7yjVIlAOOax7yXEA4
+Message-ID: <CAPDyKFpUF+S8EqVsHct7TFZGupq71Bu7eL3t2Sr=ibhZ518nsQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] remoteproc: imx_rproc: allow attaching to running
+ core kicked by the bootloader
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Hiago De Franco <hiagofranco@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Hi Mathieu,
 
-Some replacement displays include third-party touch ICs which do not
-expose the function number and the interrupt status in its PDT entries.
+On Thu, 3 Jul 2025 at 18:45, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>
+> Hi Hiago,
+>
+> Many thanks for re-working the changelog and comments in this patchset, things
+> are much clearer now.
+>
+> Thanks,
+> Mathieu
+>
+> On Sun, Jun 29, 2025 at 02:25:09PM -0300, Hiago De Franco wrote:
+> > From: Hiago De Franco <hiago.franco@toradex.com>
+> >
+> > This patch series depends on Ulf's patches that are currently under
+> > review, "pmdomain: Add generic ->sync_state() support to genpd" [1].
+> > Without them, this series is not going to work.
 
-OnePlus 6 (original touch IC)
-  rmi4_i2c 12-0020: read 6 bytes at 0x00e3: 0 (2b 22 0d 06 01 01)
+The series above have been queued for v6.17 in my pmdomain tree.
 
-OnePlus 6 (aftermarket touch IC)
-  rmi4_i2c 12-0020: read 6 bytes at 0x00e3: 0 (2c 23 0d 06 00 00)
+Do I have your ack to pick $subject series via my pmdomain tree for
+v6.17 too or do you think it's better to postpone to v6.18?
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-[codeflow adjustments, checkpatch fixes, wording]
-Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
-Co-developed-by: David Heidelberg <david@ixit.cz>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- drivers/input/rmi4/rmi_driver.c | 62 +++++++++++++++++++++++++++++++++++------
- drivers/input/rmi4/rmi_driver.h |  2 ++
- include/linux/rmi.h             |  3 ++
- 3 files changed, 59 insertions(+), 8 deletions(-)
+Kind regards
+Uffe
 
-diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
-index f977541d8913525d53a59e1d53c33897f1c93901..e736e90c071466cc61a441bcb3061564e039bfc8 100644
---- a/drivers/input/rmi4/rmi_driver.c
-+++ b/drivers/input/rmi4/rmi_driver.c
-@@ -461,9 +461,10 @@ static int rmi_driver_reset_handler(struct rmi_device *rmi_dev)
- 	return 0;
- }
- 
--static int rmi_read_pdt_entry(struct rmi_device *rmi_dev,
--			      struct pdt_entry *entry, u16 pdt_address)
-+static int rmi_read_pdt_entry(struct rmi_device *rmi_dev, struct pdt_entry *entry,
-+			      struct pdt_scan_state *state, u16 pdt_address)
- {
-+	const struct rmi_device_platform_data *pdata = rmi_get_platform_data(rmi_dev);
- 	u8 buf[RMI_PDT_ENTRY_SIZE];
- 	int error;
- 
-@@ -474,6 +475,21 @@ static int rmi_read_pdt_entry(struct rmi_device *rmi_dev,
- 		return error;
- 	}
- 
-+	if (pdata->pdt_fallback_size > state->pdt_count * RMI_OF_PDT_DESC_CELLS + 1) {
-+		/* Use the description bytes from the driver */
-+		buf[5] = pdata->pdt_fallback_desc[state->pdt_count * RMI_OF_PDT_DESC_CELLS];
-+		buf[4] = pdata->pdt_fallback_desc[state->pdt_count * RMI_OF_PDT_DESC_CELLS + 1];
-+
-+		error = rmi_read_block(rmi_dev, pdt_address, buf,
-+				RMI_PDT_ENTRY_SIZE - 2);
-+		if (error) {
-+			dev_err(&rmi_dev->dev,
-+					"Read PDT entry at %#06x failed, code: %d.\n",
-+					pdt_address, error);
-+			return error;
-+		}
-+	}
-+
- 	entry->page_start = pdt_address & RMI4_PAGE_MASK;
- 	entry->query_base_addr = buf[0];
- 	entry->command_base_addr = buf[1];
-@@ -546,7 +562,7 @@ static int rmi_scan_pdt_page(struct rmi_device *rmi_dev,
- 	int retval;
- 
- 	for (addr = pdt_start; addr >= pdt_end; addr -= RMI_PDT_ENTRY_SIZE) {
--		error = rmi_read_pdt_entry(rmi_dev, &pdt_entry, addr);
-+		error = rmi_read_pdt_entry(rmi_dev, &pdt_entry, state, addr);
- 		if (error)
- 			return error;
- 
-@@ -1023,9 +1039,13 @@ static int rmi_driver_remove(struct device *dev)
- }
- 
- #ifdef CONFIG_OF
--static int rmi_driver_of_probe(struct device *dev,
--				struct rmi_device_platform_data *pdata)
-+static const u8 rmi_s3706_fallback_pdt[] = {34, 41, 01, 01, 12, 01};
-+
-+static int rmi_driver_of_probe(struct rmi_device *rmi_dev,
-+			       struct rmi_device_platform_data *pdata)
- {
-+	struct device *dev = rmi_dev->xport->dev;
-+	u8 buf[RMI_PDT_ENTRY_SIZE];
- 	int retval;
- 
- 	retval = rmi_of_property_read_u32(dev, &pdata->reset_delay_ms,
-@@ -1033,11 +1053,37 @@ static int rmi_driver_of_probe(struct device *dev,
- 	if (retval)
- 		return retval;
- 
-+	/*
-+	 * In some aftermerket touch ICs, the first PDT entry is empty and
-+	 * the function number register is 0. If so, the driver
-+	 * may have provide backup PDT entries.
-+	 */
-+
-+	retval = rmi_read_block(rmi_dev, PDT_START_SCAN_LOCATION,
-+			buf, RMI_PDT_ENTRY_SIZE);
-+	if (retval) {
-+		dev_err(dev, "Read PDT entry at %#06x failed, code: %d.\n",
-+			PDT_START_SCAN_LOCATION, retval);
-+		return retval;
-+	}
-+
-+	if (!RMI4_END_OF_PDT(buf[5]))
-+		return 0;
-+
-+	/* List of known PDT entries per compatible. */
-+	if (of_device_is_compatible(dev->of_node, "syna,rmi4-s3706b")) {
-+		pdata->pdt_fallback_desc = rmi_s3706_fallback_pdt;
-+		pdata->pdt_fallback_size = ARRAY_SIZE(rmi_s3706_fallback_pdt);
-+	} else {
-+		dev_err(dev, "First PDT entry is empty and no backup values provided.\n");
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- #else
--static inline int rmi_driver_of_probe(struct device *dev,
--					struct rmi_device_platform_data *pdata)
-+static inline int rmi_driver_of_probe(struct rmi_device *rmi_dev,
-+				      struct rmi_device_platform_data *pdata)
- {
- 	return -ENODEV;
- }
-@@ -1158,7 +1204,7 @@ static int rmi_driver_probe(struct device *dev)
- 	pdata = rmi_get_platform_data(rmi_dev);
- 
- 	if (rmi_dev->xport->dev->of_node) {
--		retval = rmi_driver_of_probe(rmi_dev->xport->dev, pdata);
-+		retval = rmi_driver_of_probe(rmi_dev, pdata);
- 		if (retval)
- 			return retval;
- 	}
-diff --git a/drivers/input/rmi4/rmi_driver.h b/drivers/input/rmi4/rmi_driver.h
-index cb1cacd013a3f39db96935f705f18018bf15adff..3b87d177db59591691a56ce7ac03dd2e8671421d 100644
---- a/drivers/input/rmi4/rmi_driver.h
-+++ b/drivers/input/rmi4/rmi_driver.h
-@@ -31,6 +31,8 @@
- #define RMI_PDT_FUNCTION_VERSION_MASK   0x60
- #define RMI_PDT_INT_SOURCE_COUNT_MASK   0x07
- 
-+#define RMI_OF_PDT_DESC_CELLS 2
-+
- #define PDT_START_SCAN_LOCATION 0x00e9
- #define PDT_END_SCAN_LOCATION	0x0005
- #define RMI4_END_OF_PDT(id) ((id) == 0x00 || (id) == 0xff)
-diff --git a/include/linux/rmi.h b/include/linux/rmi.h
-index ab7eea01ab4274bfc9efcefcdb0cced6ec34966f..4ba2cefac85583a4ba65c70dca418a2c7c65362a 100644
---- a/include/linux/rmi.h
-+++ b/include/linux/rmi.h
-@@ -214,6 +214,9 @@ struct rmi_device_platform_data {
- 	int reset_delay_ms;
- 	int irq;
- 
-+	unsigned int pdt_fallback_size;
-+	const u8 *pdt_fallback_desc;
-+
- 	struct rmi_device_platform_data_spi spi_data;
- 
- 	/* function handler pdata */
-
--- 
-2.50.0
-
-
+> >
+> > For the i.MX8X and i.MX8 family SoCs, currently when the remotecore is
+> > started by the bootloader and the M core and A core are in the same
+> > partition, the driver is not capable to detect the remote core and
+> > report the correct state of it.
+> >
+> > This patch series implement a new function, dev_pm_genpd_is_on(), which
+> > returns the power status of a given power domain (M core power domains
+> > IMX_SC_R_M4_0_PID0 and IMX_SC_R_M4_0_MU_1A in this case). If it is
+> > already powered on, the driver will attach to it.
+> >
+> > Finally, the imx_rproc_clk_enable() function was also changed to make it
+> > return before dev_clk_get() is called, as it currently generates an SCU
+> > fault reset if the remote core is already running and the kernel tries
+> > to enable the clock again. These changes are a follow up from a v1 sent
+> > to imx_rproc [2] and from a reported regression [3].
+> >
+> > [1] https://lore.kernel.org/all/20250523134025.75130-1-ulf.hansson@linaro.org/
+> > [2] https://lore.kernel.org/lkml/20250423155131.101473-1-hiagofranco@gmail.com/
+> > [3] https://lore.kernel.org/lkml/20250404141713.ac2ntcsjsf7epdfa@hiago-nb/
+> >
+> > v7:
+> > - Added Peng reviewed-by.
+> > v6:
+> > - https://lore.kernel.org/all/20250626215911.5992-1-hiagofranco@gmail.com/
+> > v5:
+> > - https://lore.kernel.org/all/20250617193450.183889-1-hiagofranco@gmail.com/
+> > v4:
+> > - https://lore.kernel.org/lkml/20250602131906.25751-1-hiagofranco@gmail.com/
+> > v3:
+> > - https://lore.kernel.org/all/20250519171514.61974-1-hiagofranco@gmail.com/
+> > v2:
+> > - https://lore.kernel.org/lkml/20250507160056.11876-1-hiagofranco@gmail.com/
+> > v1:
+> > - https://lore.kernel.org/lkml/20250505154849.64889-1-hiagofranco@gmail.com/
+> >
+> > Hiago De Franco (3):
+> >   pmdomain: core: introduce dev_pm_genpd_is_on()
+> >   remoteproc: imx_rproc: skip clock enable when M-core is managed by the
+> >     SCU
+> >   remoteproc: imx_rproc: detect and attach to pre-booted remote cores
+> >
+> >  drivers/pmdomain/core.c        | 33 +++++++++++++++++++++++++++
+> >  drivers/remoteproc/imx_rproc.c | 41 ++++++++++++++++++++++++++++------
+> >  include/linux/pm_domain.h      |  6 +++++
+> >  3 files changed, 73 insertions(+), 7 deletions(-)
+> >
+> > --
+> > 2.39.5
+> >
 
