@@ -1,207 +1,107 @@
-Return-Path: <linux-kernel+bounces-731220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89D9B05134
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:47:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40475B05136
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B6587ACC05
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:46:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB883A60E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396051B043C;
-	Tue, 15 Jul 2025 05:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D3E2D0C6C;
+	Tue, 15 Jul 2025 05:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Uw1RQcKE"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2032C3773
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 05:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752558470; cv=fail; b=SRtvnBUKmfNg0K1n8bqmC36vz3mUFurMTJ3waladqsSSgYLqyUO52n8UVtmEwNw29zXZ7xpbaGwm+NAbxHHK0+zvchEUY/ok7d2kTHtWGKpueA5bQelX3YzJSrZPIj8drVRnWd1e3CkwPPd7TOEaCM+fdBrVKLPjepUVSAgvWV4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752558470; c=relaxed/simple;
-	bh=feowElyk9E6GJlbKVWUgysxaJ7gYNs3g6qzft6JeKgI=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hiXSH9vEUCHYUc2p3nFgtZU1jutPTonODWmUBmICZSGohZXMvI98XqvTTvAiCHpOPlJb4H3B40Bp84aIogGwIKMRzaVW29ZfRTXPxwqOKWDL+n/gdB1967Y9K0Wqew9dgnQaPiG/TXMXEel6DkjyJiibgNcFXw0FX4CYzsalaAQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Uw1RQcKE; arc=fail smtp.client-ip=40.107.94.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KH3ChaaAKXYBTOHvlg27Pvg0qcMJ/fu13HWuCFOOIRXeZMmiGgVy5+B6ApV5c1IXJTpktRZjkYSzZL5BvLd8A2D1QzmPd0iprcTPha669zmvjHmVFiQQwcdtAGh0vzc6vbfe703adjHiNHRDGnOJ6TpvYWMWoQqw139UlCYFAuCnTIzfnKdElvCK43Vkq1PzRAJckt8RSS7z+/Dha2LzUhFug+uRjm8CCRQHK9M9XQe7XPWd8oJbdh2oM4DQqaZgB04kWmy7y8nFhKFy78W84ieugwxKtQvQ74GsmgAmYthdCulBYTS2KNnHDj01CCTYzEiTlWFgSNsPKz3ES6bH/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p+zyDP3C12lhp60FPrR7cRwxMRtjEAWNur6OvZMjrXM=;
- b=Gh22t2GlsL+Mbc9G0PBCnF5QXcmXxDR6SA74a+kP4f4yP9PugXkLbg0Vjw9ltYCvxsqo5XyPJHuGOQG0NroFlSYQ/IRm4+7nRIXSr3+F9jDVayTbt+7MJVD4IB8qfx7VfdasPqfw8LIXGmd5htj2Rdh9ZUoaHbFZ3Up0ILk9cX3mkOchMx0hVTpfJTfdsW+TcNs8D6Gq7taTYkN3n4YvnusNYxlvQgXutqGxEZNgbZ7oMeFcRjFgVBE6JBbjbYbVwtD9Q//48uFsPZHjpH4d/cF74qdGeug5c0P15Z0aJ1Xi1LY0vXfvHAr7PWADctGF2bKG+2sgAOkEgY2Ym4CHQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p+zyDP3C12lhp60FPrR7cRwxMRtjEAWNur6OvZMjrXM=;
- b=Uw1RQcKEmDYg5GLFu3RLK+UCvibSdJttLZz5alOQowPrMJmJYS2XxfSNncsEOg0k8E/Ud9Zi5lysBkx7/oYtrEBmYFEkvliqDFsgmfvJF4K2t/OKkkVzIK6LyN1XG3CN/dXlkuNk2b5sl1YtQjr/z/Lmq7GVcSaVnnVWX67de3o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- SJ0PR12MB8140.namprd12.prod.outlook.com (2603:10b6:a03:4e3::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.32; Tue, 15 Jul 2025 05:47:45 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8901.018; Tue, 15 Jul 2025
- 05:47:45 +0000
-Message-ID: <242e5925-a0da-43c5-85d2-8796a8e09cca@amd.com>
-Date: Tue, 15 Jul 2025 11:17:40 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/8] Introduce debugfs support in IOMMU
-From: Vasant Hegde <vasant.hegde@amd.com>
-To: Will Deacon <will@kernel.org>,
- Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
- suravee.suthikulpanit@amd.com
-Cc: joro@8bytes.org, robin.murphy@arm.com, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev
-References: <20250702093804.849-1-dheerajkumar.srivastava@amd.com>
- <aHT1YeC30-ZiyS8p@willie-the-truck>
- <a75aaf31-43e2-4a48-b323-0322f24c3b0c@amd.com>
-Content-Language: en-US
-In-Reply-To: <a75aaf31-43e2-4a48-b323-0322f24c3b0c@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4P287CA0026.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:26f::10) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eptu6Ys4"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D4B1A275
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 05:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752558546; cv=none; b=eoYhh8MExBqos18AU7+OBnIo/xI99yO4zrO6lu1trttsskVukxJiZ6065GjjO/aJme6kZoNHg3/w12X3VRUcwUsVHg4m3bY+S+9bRKvBAz2SU55ktiRN70/gSAjq8DY+Fs0W2vSZuRBz9QatemuZ2WydJr1WRTxM5zGyY0eCPBE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752558546; c=relaxed/simple;
+	bh=4ibJsuuzzMOF1rGeMgi5qdlEtjctQAtKQJ6FUGmK8KM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TBAeESpJxnHivaMi3uAjiPmSEcsc20LlnWZeLqhVfaLqY3inb/scGm73f+jBpoCDc8EFwOSmz/9xiBlou69Nr+RCG+KV2TIZrWaVMkjyZ6hjuEDrb4V/fvUz2eM65Hnaz4P/SOPg4MlUZNfMXXoGeg+fmu7QhrNI8z7S6e3nLus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eptu6Ys4; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Rm
+	P52XZydMaJnEINWARLUUCcm7vMaBebaXr3L+WXnCY=; b=eptu6Ys4Xqt2RXkbf2
+	7+InG8AvpiAnWNK2858j5a/08IDZhY5JBWgJo/fHm+3OTttYzPTqpxBQlyDBuqwQ
+	Y5/PXP/xAPEzps0pVrle65cBcmHostlgW0/GuGnc3/3IlVm9v7VSqDrZgVCcVeRz
+	btZx35hJj5A9/19bM3o/yv1uI=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wBXiRyO63VoLNw5Ew--.13369S2;
+	Tue, 15 Jul 2025 13:48:02 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: dmitry.baryshkov@oss.qualcomm.com
+Cc: simona@ffwll.ch,
+	andrzej.hajda@intel.com,
+	airlied@gmail.com,
+	ian.ray@ge.com,
+	jernej.skrabec@gmail.com,
+	jonas@kwiboo.se,
+	Laurent.pinchart@ideasonboard.com,
+	maarten.lankhorst@linux.intel.com,
+	martyn.welch@collabora.co.uk,
+	mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	peter.senna@gmail.com,
+	rfoss@kernel.org,
+	tzimmermann@suse.de,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Andy Yan <andyshrk@163.com>,
+	Dixit Ashutosh <ashutosh.dixit@intel.com>
+Subject: [PATCH] drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: Fix a compile error due to bridge->detect parameter changes
+Date: Tue, 15 Jul 2025 13:47:52 +0800
+Message-ID: <20250715054754.800765-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|SJ0PR12MB8140:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4b0424e-45a4-44e8-4caf-08ddc3631f93
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NHV2aXQ0aDh1TXk4Wmp6REhkbW1zajk1T0U3YnRNcDFDRUtNK05VNFFpeEdr?=
- =?utf-8?B?NW9OQ0RsZDNLTFgrTVArNWpXcVk4Y1NJZSs5emg4VTBFOURsK1lGL014THVw?=
- =?utf-8?B?MXRleXAwSGpQRUZjOFNKbnVLa2pXTnkvVGo3MnEraGROSzFtQS9YVWRuNzNK?=
- =?utf-8?B?NWZIVVlySG0wbHBFMjJOWWNUaEhwWmNZaStHcnJONW90ejZqNmNOa1ZqK1p4?=
- =?utf-8?B?SFJYdHhuK0M3dVo3KzBqQkh1cENQVkxxdXZWT0VjT3VRMFlwMmwweEhacFpE?=
- =?utf-8?B?ejZZVmtGT01SRFRxS0o3Z2pBT2IxRHNldDArN1JNZ0dqOXVpWEh3Nk5YeEcw?=
- =?utf-8?B?V284bzNjQk45UUtNYlRhOTh0bS9iTlUxQkVIdWVZL3VaUmNiVUZ3UHFOZE9P?=
- =?utf-8?B?emRWa2QvQ3dlUktCaDIzbTk1enU4R3NwTld4MnNhWFZxTFY1VXBoVWplMDdB?=
- =?utf-8?B?blpNOE5oWmdqWjc4Wjk4VFczZy9zZHdnVktramIwZGt1bHR5WG55MFpvbFF3?=
- =?utf-8?B?YWFvMlV0MXU1c0tEWERIN25BNS92RWRFcXRYZHExRHAwZnVoL2Mza0kxa0Uw?=
- =?utf-8?B?YVlpUXZFZkx4TjB5akFzQ3RFSlphYjRwMEYzNEwrNFVmcWJIbmVzTkVhcHN1?=
- =?utf-8?B?TjNSb09wdnFRbjJqMjA3YjQwUUlRaEFzV2N3VllYUEt1WUViTjVoMk43Z2Zq?=
- =?utf-8?B?Nk9rSWxiNnNJd1NscVZCdHpldHNST1owYnpqU09zdVQvR2RaRWFuNEo1L2V1?=
- =?utf-8?B?WVJkU3BSQ1FMU3pZNFMrTHNoMnd1ZUtCSldmdklPQXlDT3RObElTb2NseUZI?=
- =?utf-8?B?ZmdHRVo5WDVjVDg5L2czMUFIVC9MSFJTc0xYT2pqNllWOThmbmhjNXQwdjVG?=
- =?utf-8?B?RFJWYlRCUWx6V3dXMkR5VzYyakJiVW5hTGRrTnBKN2NGdjB6c0MzRFk0eDdp?=
- =?utf-8?B?WXpqSU92SHFFTHdqU2R4RUNYaWg3K1RLYXYvS3pYQWtIbVdpemdmK09ZTVA4?=
- =?utf-8?B?VElHMXo1K0lvalFvbGc5b0VmRzNnTmRhQWhjVGtPTTRlclpVaHAzZGp5cUQ3?=
- =?utf-8?B?RmhEQ0QxdHlnV2t0TUpYZWZwbnh6c2VGTU12cTVXSnhsYU9DK3c1VWdHMkVK?=
- =?utf-8?B?YkJGZG5vUHV3UVRubFMreFUrU3VsUXJUUUFLSStoaVdzNFZuTVFyR1pnSGQ2?=
- =?utf-8?B?QnVnSVRYU1ZhdG81STQ0MW5LMG5rZzhEb1ByMXc2anU2YUR6NDFYcWg0S05C?=
- =?utf-8?B?Ymd2aW8rTmZITTVwY0FzRjZSOTNTUGp4ZzBLTmRtWVZTT0tNODNrY1VEUjFR?=
- =?utf-8?B?M2VCbmg2Z1RNRUJPMmNKM3Y2a1N3RUpvWkwzUFVRb3ZhYjUrWnJrOFVlazAx?=
- =?utf-8?B?aTZIOFNpOENpeFdyblMvZy92NlZnb2FIa1lURUZ6WTJqb0xOVC9Nc3VOK3pl?=
- =?utf-8?B?U1pKd0ZLSW0wTVFjQmNMOFRsdmJXeURHeEM1QmhKT1V4TVFMb21vY0oyZzZU?=
- =?utf-8?B?dDZueXRxSThuN2JzK1ZTcUxkTGN5dDNjYm41STYrbHpmcmJkZ1NsQ04vSERv?=
- =?utf-8?B?UktROEhnaUhiWG5ZRExFYisvNUp5cEw2VG9uUVk4UmhBS0dISzhnTDAvVXZS?=
- =?utf-8?B?V1FIdjcxbHllRHU4R2hEbFJpMkZjZk9ua0t1ZFJ4enBQQmRVOFVmMFFsaStS?=
- =?utf-8?B?NmwvVm14NWdXdFh4WXRsdjRjWFN2U0ROOERtOUxIL1ZJQm5rNXR6SUpuQVpt?=
- =?utf-8?B?K3g4QUQxS294Z01BcEE4MGRYV3d5SGdCdCtRRE4vVGJpQXduMFhpNDlOZzEv?=
- =?utf-8?B?YlR6djNmcXF6NnRZdkJXUjlUc3ZURzdoaFByUTJIaUxXVHNrS1VJSG16ZEZp?=
- =?utf-8?B?M3JFbS9EQ3pROWJYV0JrTko5b21xTDNWTEZTRGpoU3g1eXlJRlZZeU5wdldl?=
- =?utf-8?Q?Hb67h/djoQs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L1JPQ0hDOHFoMkovbmtMUW0vRytEMUI0WmhBTGpSZUF3OVZ4VEFSSGNoVkUv?=
- =?utf-8?B?N1o1V0hOT3FjUHlpZS9QQW95ZGlnbzBGRUw1ckJ6cHVwblBYZlhkYnNzQnhT?=
- =?utf-8?B?WVpab04xQ2ZTbmVOd3JoTTZoUm9QMGl0d2Y0dmNwRmlTOWNndTM5bVBrcWpr?=
- =?utf-8?B?Tmh0YTBRY2tHQ2htalQyaHNyWE9OVlJxWTU1RVhub2lNR2krVE9WVEZpbEZ6?=
- =?utf-8?B?RUZPWlRkVytlUDBMeHN5Vmw3bVF5cDgvTVNmZGNMWXpFV3RaZ3REUzRkVUtI?=
- =?utf-8?B?OC9JS1ZWSUppZWJyZXhZRFhwZDZNeDlrUlYwclNaVENqSTJvd1VVM2RvMHNW?=
- =?utf-8?B?aXNiTVNJSHUyVHZ1NmVtUTRoUUlCYlgzNW1TQXhJdFREWWdCL3R0cGhvQWdl?=
- =?utf-8?B?Y0c0U2ZHVFFwQkJWZFpvcmNuT0N2cFo3Z0xZd3pjOHlvSHYyUzZvNU9YTHAz?=
- =?utf-8?B?c1BEc2ZEYUFZRHAya3JNMmpVWEtMR2hKdjNSWEdUQWphT0dHbGxBajJiVzhL?=
- =?utf-8?B?Zjdmem5iM2RCMldSVERiNjhZRm9pNm1DWUF0SmVkWEhSR3dxLytodUpPWXd1?=
- =?utf-8?B?STBCVmlpRHdacWxKQytsZndqa2I5N3hXdEl4MXVXMjRYVUVIdFNYVFpIOXRP?=
- =?utf-8?B?MTVCY2Frc21CaGVSd3d5S2NNTWVKQ2F0UGxiL3RiczdIOTFWdFhuUzM1Sndz?=
- =?utf-8?B?Z09ZMWMyc1dkTWtzeWZvZkFhYkxxS1VNSENjOWZidlZBbFBTU1FmSXcrWG9Z?=
- =?utf-8?B?WjVBbWI5N2t5T1pTTnM4dEcxbldFRFUwanJ6allWbTl3RXBiZEptUHZ4NzJk?=
- =?utf-8?B?ajdZMUdsRFJjY2xQQWRKSjZJWVJHWmtXNTFYWTV5ZVNmRlJJVFhYMzQ5WjlZ?=
- =?utf-8?B?YkJnRXk0NWlXMUh5QTh1Y3pmbXFFa2ZZUS9EaXBBYzdtcGxkc0hPTkQ2UTJN?=
- =?utf-8?B?dFE5Y2xZQ2w3Mk9CQ1RxQy9QQVVTdm5jT3RBM3dDaCtUaHB0Y09wSVQzVzdH?=
- =?utf-8?B?OER1TTRnSHFiNm9VNHFEM281TTJzV0VYejFvaXUzV0dMWXFRcm5saTJtMHM1?=
- =?utf-8?B?bmdSbkVyOWRXemNKOGpabUdJNGNzbmlLZk01Mms5eCtLOVkyRVBRK2trbk80?=
- =?utf-8?B?RnFaVWhoamd1cHVaSFhOSmVoWk5sQkZEVWJwa2pOdGxyY3VZSmFxMEtrUEpl?=
- =?utf-8?B?RFF1M1dsRWo4K25idzUxdHhDcE8yUnErNVBOQjc0L0ZmNExxenVKa0JSbnhT?=
- =?utf-8?B?MWhwT2J2d3N0cFQ2UXozYlpvTzRucEJ0QUMyekZXSWovaDNLb1BoTzJNYWxt?=
- =?utf-8?B?ZmJNK1ltQmltQjIxeEdZcmRYNksrR1pUSnJUeDFlWTFVc1VYMnBiS0lwUHpa?=
- =?utf-8?B?UnhCVVdNVXRhakZERDViWTBLd1JORzV4eFNKd1puNGk4M2hldnN6MmJxU09a?=
- =?utf-8?B?cFpyY3cvYVFZdC9Jc3I0ZERCVzg2Njd0RWRPSFRoVjRFVDJaYk9tUFo1MnVs?=
- =?utf-8?B?Ylp1bTJrY2JmNi9IUnpJMThLUE96b0c4QWQ4bEVjWTJ0MlRmbkRtSThmT3ZF?=
- =?utf-8?B?SVFka2swQlhQMU0vYlZjUUk5UGw2TG5HWnYyQVlwZkVpeGVUcCsvZzFQY2pT?=
- =?utf-8?B?SGhvOG5tOEhTTDRPb0RoUzRjYUxYSEF5b1hGWXR1bmM2SDN1eXltRHFpbXI0?=
- =?utf-8?B?TUlVWC9WNEt6VjNtQTJxRjE3OUZBVU80akNSOThuZkF2b0FhZEQ1UkpYWHkr?=
- =?utf-8?B?M3kvcGZzekptaVVRSnNPRUJUS0xIMGRheE80RmxMbko4R2RmRU5XNzJ0M3NL?=
- =?utf-8?B?ZmtraTlEeEhxeDhQNldDaHM2eFplelNlZFpqMys5UitzMnYwMHpZa0QwYkpR?=
- =?utf-8?B?b0Y4bWQvRUgwNVR5bG9wcy9wU0NLRXd2eE5OUThCTWk3aVg1VFZ4a3Y0TkV5?=
- =?utf-8?B?djZ5MHYwYkNZR1VFdCtkY3VuOTFLZzU0Tlc4YTh2elg2THpjaFV6dHgvTHYr?=
- =?utf-8?B?YiszWG15WUEyRmRTK0pySzZKSGMvNC95eGZtVVl3TU9xdVlNQ3JVdDBuL21D?=
- =?utf-8?B?RHYvQ1JpbzU1c1VjVHJTOG0wVmRpUGl1NlMrZGg0M052Z2plWkhGM0JsbXBG?=
- =?utf-8?Q?H4QVIH3hi2SGgTH8XwDHlskHg?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4b0424e-45a4-44e8-4caf-08ddc3631f93
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 05:47:45.6864
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cSj7WiBfMjIRPXBl7PQX2CsF5l1zl/WfD0CoJbvnCFPWz1QXoBVeVN23I8/Y3+/85c5ivVIuwIunR3olp0CV8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8140
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBXiRyO63VoLNw5Ew--.13369S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KFykXFW5Xry5KF4rCF18Grg_yoW8XryrpF
+	W2gwsIkFy7Wa15Ka1UAFnrXrn0y3WvqFWfKrWIqw1Sva40gan8AFs8Jr9rXF1Uu3sxCFn8
+	ZrnrXrs3GF18ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRfb1nUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEgGLXmh15WKgRgABs7
 
-Hi Will,
+Fix the compile error due to bridge->detect parameter changes.
 
-On 7/14/2025 6:24 PM, Vasant Hegde wrote:
-> Hi Will,
-> 
-> On 7/14/2025 5:47 PM, Will Deacon wrote:
->> On Wed, Jul 02, 2025 at 03:07:56PM +0530, Dheeraj Kumar Srivastava wrote:
->>> Introducing debugfs support in AMD/IOMMU driver that will allow
->>> userspace to dump below IOMMU information
->>> 1) MMIO and Capability register per IOMMU
->>> 2) Command buffer
->>> 3) Device table entry
->>> 4) Interrupt remapping table entry
->>
->> Suravee, Vasant -- are you happy with this series now? I'll be closing
->> the IOMMU tree for 6.17 shortly and it would be a shame for this to
->> miss the cut given that it's got to v7 and Dheeraj has been receptive to
->> all the feedback so far.
-> 
-> Ack. This is mostly ready. Give me a day. I will review/test this series.
+Reported-by: Dixit Ashutosh <ashutosh.dixit@intel.com>
+Closes: https://lore.kernel.org/dri-devel/175250667117.3567548.8371527247937906463.b4-ty@oss.qualcomm.com/T/#m8ecd00a05a330bc9c76f11c981daafcb30a7c2e0
+Fixes: 5d156a9c3d5e ("drm/bridge: Pass down connector to drm bridge detect hook")
+Signed-off-by: Andy Yan <andyshrk@163.com>
+---
 
-I have reviewed/tested this series. It looks good to me. Can you please pick
-this series?
+ drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-For entire series :
+diff --git a/drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c b/drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c
+index de57f8a9e98c..c9e6505cbd88 100644
+--- a/drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c
++++ b/drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c
+@@ -142,7 +142,7 @@ ge_b850v3_lvds_bridge_detect(struct drm_bridge *bridge, struct drm_connector *co
+ static enum drm_connector_status ge_b850v3_lvds_detect(struct drm_connector *connector,
+ 						       bool force)
+ {
+-	return ge_b850v3_lvds_bridge_detect(&ge_b850v3_lvds_ptr->bridge);
++	return ge_b850v3_lvds_bridge_detect(&ge_b850v3_lvds_ptr->bridge, connector);
+ }
+ 
+ static const struct drm_connector_funcs ge_b850v3_lvds_connector_funcs = {
+-- 
+2.43.0
 
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
-
--Vasant
-
-
+base-commit: 9a2533ba5055b4c23f4bf1c4d87154f26a2c7a94
+branch: drm-misc-next
 
 
