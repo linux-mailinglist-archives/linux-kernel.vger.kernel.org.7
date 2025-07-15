@@ -1,125 +1,83 @@
-Return-Path: <linux-kernel+bounces-731871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27739B05ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:07:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D42BB05ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D8547A363C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:05:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA483AA413
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC87B2E173A;
-	Tue, 15 Jul 2025 13:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E49C2E2EE8;
+	Tue, 15 Jul 2025 13:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="CTLIsoKD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B9e4GcnF"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVyyJsxv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF91C860A;
-	Tue, 15 Jul 2025 13:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6945E1C860A;
+	Tue, 15 Jul 2025 13:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752584807; cv=none; b=tHvwmwzgG66xVAtawXiWz7Rmxrgds9gcPZ9JkcVAwrJYAK+TUpc2/DrBNKqwa38BeMNzklsjkWEskjyrHArOUXquMxRfyNescwBnhzro1QS2aaNR8KOy6r45/MmYeDARsdVyoY5Y/TTuYf5OwTMoWDkgota4oA0DSVADPe0ARC0=
+	t=1752584811; cv=none; b=WmW9wdSSqVZVofkhKssKftLQEPhC1kG9XUYgrgIiWjtYbf4trdGq+edBgP8U3lULHapRBn0qsIKBWA1lwd5gPHLpt1EX25ZtMMRIl8ZoSFD/Z14SlTr+ctlzNPFtTZyTUxQPHZ06re45RfMv6DtY2JAGhFp8avDEBn+8HrpCmbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752584807; c=relaxed/simple;
-	bh=YYU9Nk/kU2fq6MsmdudsVJc6RLty5J5tmPiB6zDg980=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ucorZG/rM+88d447CHL0CppjBnk/3INpYDB3ydlZp6syk1kih7KIb1bChOGVi12W6PCMGxilb9YySu3BpySSo+uDE4sZe0/Hw+TJz4RS7xpnaKESssAsTbjCYUJNOTPt26s9QFVpc1moHrVF4a9Km3GlQDSeXOt92oGbxI2gJHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=CTLIsoKD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B9e4GcnF; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 30061EC0DB1;
-	Tue, 15 Jul 2025 09:06:43 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Tue, 15 Jul 2025 09:06:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1752584803; x=1752671203; bh=CftjyjJduW
-	MdmlidiqFXIPvup6Qz4bYRSzSv1UpRW/4=; b=CTLIsoKDs+AAcNGwt+v6mr0SJY
-	xWvc+WKJK9r8mQuqjRxzO4M34aLWMJTbFOdWUMJY6L0Sd52kvYOeLD1C7FlyEZex
-	qlLMqTlIXlMjB4yncl3qfY6c8eU7xkjCh4k4tVobi2YCYvi/MSpv7adKGrikBt5i
-	Ju5xG8MtGXc/QE1LLZD+O1dXtwm7ubXZsFFKtnMy0EqS79c+qtT2SaQWVjVxki8k
-	9jo68/A0ep1+XdZbA4Et+LE66NkKvSLG8Yt8e2SkCx8cirsSRy1bTsLH8JyhXfn3
-	ZBN0dN692X7sxH2oQ/3tdUA4uAiIm2CPnYi1suLkqAKOVPkoUz+VYljMQQDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1752584803; x=1752671203; bh=CftjyjJduWMdmlidiqFXIPvup6Qz4bYRSzS
-	v1UpRW/4=; b=B9e4GcnFexx8b72tNto8IVC1CXGB/qm59j9Oq0uQdRp+6VafIfL
-	LgGL8Ij2sjcwfLRpx1VN5cYJaneVJ6ZwWYQPbDtTx3x0Y9/tpMdWpS7aNhDyc1kt
-	vXizlT0bGavVqHYBf1qOd0Extti9P2/1QNqp4+LVOC949uG4zm16nZh9JKh2uem6
-	HUauNkcHqgYZs4xfbVXkp4U0szdOqgY2u6Otus8rlV1zeVeaASfnMEYTKanmx5bx
-	PkdCKwspflNdCOvjHELa8VAFVzoyf/p+qR7AmCWw5nXfK3arQYDiUiePFhen2A2y
-	GlBIuxzedme2a8lFSauYGAVGWNzIL++ngMg==
-X-ME-Sender: <xms:YlJ2aN6BBlbE0iacXOHFHzreSa5b8pVwWfrlVbuSaeNoh8hO-VCpHg>
-    <xme:YlJ2aJ3ERUq7FQQWFGHyK6AcSY67S29KZFkrYJzA3cWD7F2quijlQzHbxi3Kb3vox
-    OHhC1BAO4s5NQ>
-X-ME-Received: <xmr:YlJ2aAg4wOiB49r8Xy1uQXeBYEhIxLnlNays0F9uspyGCyJiiGv4QN__nIrY4lvsMwLhFtkdiJmHkMASWgPM2-2tilV4qzY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehgeeludcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffj
-    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeegheeuhefgtd
-    eluddtleekfeegjeetgeeikeehfeduieffvddufeefleevtddtvdenucffohhmrghinhep
-    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedugedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdp
-    rhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggslh
-    gvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdq
-    khgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    hihurhihrdhkhhhruhhsthgrlhgvvhesrghrmhdrtghomh
-X-ME-Proxy: <xmx:YlJ2aJp7csQT0g_yv6xtcMJj2EDFX55R1OwjTHIdFt9Jtbj8JZ-EHQ>
-    <xmx:YlJ2aDPMVFRG3LgRL_In43BGgiW7ZzbCXbpibsh7TYx7L2Lh_dngFA>
-    <xmx:YlJ2aF3OP6upFexbcEBSnxyZ5MT-rDQ-1TW-oSaw_mYMvkepzPwyDw>
-    <xmx:YlJ2aBrLAdUS59nrSAOOvdCr1Rft4aCzln6YMvJmrY2v5WlYgAoDLg>
-    <xmx:Y1J2aNPymyR4oO4LxkEczI08VZKHDzO3o6knKqXXHlWOJkhuCKEIpslo>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 15 Jul 2025 09:06:42 -0400 (EDT)
-Date: Tue, 15 Jul 2025 15:06:40 +0200
-From: Greg KH <greg@kroah.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, stable@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Yury Khrustalev <yury.khrustalev@arm.com>
-Subject: Re: [PATCH 6.12.y] arm64: Filter out SME hwcaps when FEAT_SME isn't
- implemented
-Message-ID: <2025071526-overblown-portion-5f5d@gregkh>
-References: <20250715-stable-6-12-sme-feat-filt-v1-1-4c1d9c0336f6@kernel.org>
- <c586f05c-a077-4865-8529-08aaf16b8bd6@sirena.org.uk>
+	s=arc-20240116; t=1752584811; c=relaxed/simple;
+	bh=bafqguJWmXLYYlTq9y7yrUcgb2q8KMWK6ngMv9tRjeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uykW3Ts8KrQb9v17ps8pyJ3qohaZnmWg2Q7/W1vz5itnvdLykwDPD6aNyi9CRCqw7Rp3I/rEkgPpHxUd+4iTly81PIfcMIhFpilUJtOE91BSHoPPVJcUyyO918FfzUiGfJpHHdWEIoIdyw/zLn4wBYicOv2ZKPwK+WsfH1CWwVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVyyJsxv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D19C4CEE3;
+	Tue, 15 Jul 2025 13:06:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752584811;
+	bh=bafqguJWmXLYYlTq9y7yrUcgb2q8KMWK6ngMv9tRjeM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IVyyJsxvGSqsedu0Re6yN9Jid9yCV65jOVf83KiowRDGNaC42SKzb7IER0MvKl8SV
+	 LhYWQlcpkG3l+8tNydtpmfV5yC4UdT+K9hsi0kcEP0n6K3Rc0Evm8ZVhmiJoSh3Vwp
+	 SSDocwPHhKJIUu8H/c/NoapbDxShDyVsjM+NPZWJaLDR4pl+0wwVaoc7kHSrLfEeja
+	 0YbsWQzHQ6ZZS5riO+V0RfGFTbypRm5JCbnf+nnyRhwBHamWDUshw0z16CGj2BX087
+	 bBDIbeultNeoQHQioCUoqVFmywdfgoaWUb8wcRweKPD8aSLfNmcnPcQekrjQeSA/68
+	 lmih8z6hhzYuQ==
+Date: Tue, 15 Jul 2025 06:06:49 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Jens Axboe <axboe@kernel.dk>, parav@nvidia.com,
+ Cosmin Ratio <cratiu@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Pavel
+ Begunkov <asml.silence@gmail.com>, Mina Almasry <almasrymina@google.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 net-next] net: Allow SF devices to be used for ZC DMA
+Message-ID: <20250715060649.03b3798c@kernel.org>
+In-Reply-To: <aHXbgr67d1l5atW8@infradead.org>
+References: <20250711092634.2733340-2-dtatulea@nvidia.com>
+	<20250714181136.7fd53312@kernel.org>
+	<aHXbgr67d1l5atW8@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c586f05c-a077-4865-8529-08aaf16b8bd6@sirena.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 15, 2025 at 02:02:08PM +0100, Mark Brown wrote:
-> On Tue, Jul 15, 2025 at 01:49:23PM +0100, Mark Brown wrote:
+On Mon, 14 Jul 2025 21:39:30 -0700 Christoph Hellwig wrote:
+> > LGTM, but we need a better place for this function. netdevice.h is
+> > included directly by 1.5k files, and indirectly by probably another 5k.
+> > It's not a great place to put random helpers with 2 callers. 
+> > Maybe net/netdev_rx_queue.h and net/core/netdev_rx_queue.c?
+> > I don't think it needs to be a static inline either.  
 > 
-> > Fixes: 5e64b862c482 ("arm64/sme: Basic enumeration support")
-> > Reported-by: Yury Khrustalev <yury.khrustalev@arm.com>
-> > Signed-off-by: Mark Brown <broonie@kernel.org>
-> > Cc: stable@vger.kernel.org
-> > Link: https://lore.kernel.org/r/20250620-arm64-sme-filter-hwcaps-v1-1-02b9d3c2d8ef@kernel.org
-> > Signed-off-by: Will Deacon <will@kernel.org>
-> > ---
-> 
-> This needs an additional signoff from me, sorry - I didn't register due
-> there being a signoff from me further up the chain.
+> The whole concept is also buggy.  Trying to get a dma-able device by
+> walking down from an upper level construct like the netdevice can't work
+> reliably.  You'll need to explicitly provide the dma_device using either
+> a method or a pointer to it instead of this guesswork.
 
-That's ok, being the original author of the change makes this "ok" :)
+Yeah, I'm pretty sure we'll end up with a method in queue ops.
+But it's not that deep, an easy thing to change.
 
