@@ -1,94 +1,146 @@
-Return-Path: <linux-kernel+bounces-732632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5EC6B069D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5DDB069D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18DD756816A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:20:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C43580977
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C270A2D59F8;
-	Tue, 15 Jul 2025 23:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=adomerle.pw header.i=@adomerle.pw header.b="PKQLyvfo";
-	dkim=permerror (0-bit key) header.d=adomerle.pw header.i=@adomerle.pw header.b="+w1ImdG0"
-Received: from mail.adomerle.pw (mail.adomerle.pw [185.125.100.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A98D25D546;
-	Tue, 15 Jul 2025 23:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.100.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF492D63E6;
+	Tue, 15 Jul 2025 23:22:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D6F7261D;
+	Tue, 15 Jul 2025 23:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752621636; cv=none; b=HDGtjeSPxrbhSe17kTm+E2m9ud0jfsBf2WMvlcxfLRmCkOfeqtVyjXE0QL3/d/E4W3fvScftCLE2sPErJQ4Clola2gwN9yJ+rlGK7HKK70uAZZf4K4/Loqq05W2C8cCpAf34nEDbmyi7b1hpY+fi7UkfX1fpaxKdzxNvf6cR7gY=
+	t=1752621744; cv=none; b=u5l8VzG8J+28OwBiL+2dSVDJ2zRMDqU4lmROETeoN7C8kGNwB/nq7gw6JQVJyLaLgCY/z3qiadwfzS5QTGHGmGWqxUpv4ryeqzF0rLMwIj/dTZnvo+gJbj0cP2y7+0fWg9k9pHrZrBgVeYGIE2UVbWv8BVH4HxnpGNpJy1R4z+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752621636; c=relaxed/simple;
-	bh=CusmGv7uy2f/mkxH806Eyj7gw9q6O1Ngb1sYu8ZjHas=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EvBKHYL8CROSFHnPZYOCXmwBt35pHOeQS474QAfjjqSZs9+o6UspHfYTWrMdaAXbnYg5HMzJY5eGcXSxacPyt5RcphPbPJgmO62lfqnQGZjaI7kmy5ul7qBfEkFx8MDAfTby35RiccqoeEzvXKKQvsSyyxe+NFkNhDhtbkAY2uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=adomerle.pw; spf=pass smtp.mailfrom=adomerle.pw; dkim=pass (2048-bit key) header.d=adomerle.pw header.i=@adomerle.pw header.b=PKQLyvfo; dkim=permerror (0-bit key) header.d=adomerle.pw header.i=@adomerle.pw header.b=+w1ImdG0; arc=none smtp.client-ip=185.125.100.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=adomerle.pw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=adomerle.pw
-DKIM-Signature: v=1; a=rsa-sha256; s=202506r; d=adomerle.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1752621609; bh=lAgqzrLQFgULC/NyYg790w7
-	pnHGpDDP+rKXydLeBdro=; b=PKQLyvfoHzhI/2nBfmwhUQkKSq5uRNhnHw0uA3sAdxMHJCOqBE
-	MKeaDpccaY0X1fCL5mKTVmgBNicSX5aNXHTv2vLUhdQwoU9UAGgrX+0nWAMe3hT/Nl7Z/G54Zju
-	NvqwGAYSbGdwTV1rb7AYLGY2SOmva3Jub2aUv5F6Q6Eb7+kFfq36et+R15Bk6jkZt1Ws1YG4Ea3
-	SPaJcXKAj8IJL57YUhPtEEGUHH9yjEeXWnjKDa9ee791fXcm+LHGWiXS82nq9P7nVa7fLu1ntXS
-	sLK7DFEnIT1IU0cqFzEi6PGeu4DLThSxdt9SUPVkOGnG8w02K2OpvYFzvY3Wd9NBS2Q==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202506e; d=adomerle.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1752621609; bh=lAgqzrLQFgULC/NyYg790w7
-	pnHGpDDP+rKXydLeBdro=; b=+w1ImdG0wGwWNIhr3PfI/9CU7GW5NQT75nkl4OSm2eJcLap64D
-	9eG/29pnL0Y2pi1kZ8hloCXIh5K5JSJGofAg==;
-From: Arseniy Velikanov <me@adomerle.pw>
-To: Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Leilk Liu <leilk.liu@mediatek.com>
-Cc: linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Arseniy Velikanov <me@adomerle.pw>
-Subject: [PATCH v1] dt-bindings: spi: mt65xx: Add compatible for MT6789
-Date: Wed, 16 Jul 2025 03:19:21 +0400
-Message-ID: <20250715231921.4527-1-me@adomerle.pw>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1752621744; c=relaxed/simple;
+	bh=x67+Hru3euykHmBuyLooA2lRlilf1qyeV+pefGwKg6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KwLNMyXU1yQU9DCvOy5/6PkYU017X1TQZp1onCjveRUTy37R6OiclWrzS/ZwqwUwYUAgiuftX0OcTb1918gPjLjO+Kmif4nBXLBXXa+YJZSE3zjhuuhgh+ttSz6oqyVYY2WxPMiZZ1ul37Oh1p5zM9iskEzJFvJx7cAJ4fZ8u88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0045C12FC;
+	Tue, 15 Jul 2025 16:22:12 -0700 (PDT)
+Received: from [10.57.0.241] (unknown [10.57.0.241])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9D9533F66E;
+	Tue, 15 Jul 2025 16:22:17 -0700 (PDT)
+Message-ID: <153b5191-c585-433e-9cf5-1ed19b9a7f5c@arm.com>
+Date: Wed, 16 Jul 2025 00:22:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/23] arm64: cpufeature: Add cpucap for HPMN0
+Content-Language: en-GB
+To: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Mingwei Zhang <mizhang@google.com>, Joey Gouly <joey.gouly@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>, Mark Rutland <mark.rutland@arm.com>,
+ Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20250714225917.1396543-1-coltonlewis@google.com>
+ <20250714225917.1396543-2-coltonlewis@google.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250714225917.1396543-2-coltonlewis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add a SPI controller binding for the MT6789 SoC. As a note,
-MT6893 SPI is fully compatible with this SoC.
+On 14/07/2025 23:58, Colton Lewis wrote:
+> Add a capability for FEAT_HPMN0, whether MDCR_EL2.HPMN can specify 0
+> counters reserved for the guest.
+> 
+> This required changing HPMN0 to an UnsignedEnum in tools/sysreg
+> because otherwise not all the appropriate macros are generated to add
+> it to arm64_cpu_capabilities_arm64_features.
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> ---
+>   arch/arm64/kernel/cpufeature.c | 8 ++++++++
+>   arch/arm64/tools/cpucaps       | 1 +
+>   arch/arm64/tools/sysreg        | 6 +++---
+>   3 files changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index b34044e20128..f38d7b5294ec 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -548,6 +548,7 @@ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
+>   };
+>   
+>   static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_HPMN0_SHIFT, 4, 0),
 
-Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
----
- Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml | 1 +
- 1 file changed, 1 insertion(+)
+This doesn't have to be FTR_STRICT. The kernel can deal with 
+differences, by skipping to use HPMN0. We anyway rely on the
+system wide cap for using the feature.
 
-diff --git a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-index 3bf3eb1f8728..0635aec29aae 100644
---- a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-+++ b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-@@ -49,6 +49,7 @@ properties:
-               - mediatek,mt2712-spi
-               - mediatek,mt6589-spi
-               - mediatek,mt6765-spi
-+              - mediatek,mt6789-spi
-               - mediatek,mt6893-spi
-               - mediatek,mt6991-spi
-               - mediatek,mt7622-spi
--- 
-2.50.0
+Otherwise,
+
+Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+
+
+>   	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_DoubleLock_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_PMSVer_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
+> @@ -2896,6 +2897,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>   		.matches = has_cpuid_feature,
+>   		ARM64_CPUID_FIELDS(ID_AA64MMFR0_EL1, FGT, FGT2)
+>   	},
+> +	{
+> +		.desc = "HPMN0",
+> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.capability = ARM64_HAS_HPMN0,
+> +		.matches = has_cpuid_feature,
+> +		ARM64_CPUID_FIELDS(ID_AA64DFR0_EL1, HPMN0, IMP)
+> +	},
+>   #ifdef CONFIG_ARM64_SME
+>   	{
+>   		.desc = "Scalable Matrix Extension",
+> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+> index 10effd4cff6b..5b196ba21629 100644
+> --- a/arch/arm64/tools/cpucaps
+> +++ b/arch/arm64/tools/cpucaps
+> @@ -39,6 +39,7 @@ HAS_GIC_CPUIF_SYSREGS
+>   HAS_GIC_PRIO_MASKING
+>   HAS_GIC_PRIO_RELAXED_SYNC
+>   HAS_HCR_NV1
+> +HAS_HPMN0
+>   HAS_HCX
+>   HAS_LDAPR
+>   HAS_LPA2
+> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+> index 8a8cf6874298..d29742481754 100644
+> --- a/arch/arm64/tools/sysreg
+> +++ b/arch/arm64/tools/sysreg
+> @@ -1531,9 +1531,9 @@ EndEnum
+>   EndSysreg
+>   
+>   Sysreg	ID_AA64DFR0_EL1	3	0	0	5	0
+> -Enum	63:60	HPMN0
+> -	0b0000	UNPREDICTABLE
+> -	0b0001	DEF
+> +UnsignedEnum	63:60	HPMN0
+> +	0b0000	NI
+> +	0b0001	IMP
+>   EndEnum
+>   UnsignedEnum	59:56	ExtTrcBuff
+>   	0b0000	NI
 
 
