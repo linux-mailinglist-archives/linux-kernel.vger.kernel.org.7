@@ -1,94 +1,401 @@
-Return-Path: <linux-kernel+bounces-731069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53133B04E78
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:02:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B103CB04E7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA1421895AB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C773B61FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57074246787;
-	Tue, 15 Jul 2025 03:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqEiUlXV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A0F2C3268;
+	Tue, 15 Jul 2025 03:05:18 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16F62B9A4
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 03:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1562018DB1A;
+	Tue, 15 Jul 2025 03:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752548553; cv=none; b=hFedtXZNkVeGVNVyGTAH+sKxEY9fqUHAkKFS5EZbopQKRhGwQoWBYPOuADEMSBXOEa1uFNX32rbPK4u5eaCgpw6FQfOvIiM85sv9zKyLSVuv0HmlilbKR2649Y25/OjjLbWS93l5cXMtRAkOZdfPrcsJXlfmttGkMrC8C6SFOhA=
+	t=1752548717; cv=none; b=DMBb4qDh0AmqYqmK2b5sUBmAfV0+jIxKCArjpfX6dp3QCkZzcqkSQZqUrETnD1qpdRHjuGSwmi0U62frjWt3+b7ylUN/7BhcnFSVjDWVDpQP6A6S9OvWZOXUNretqEuZhoiUZ4C5G2bXb0NBqei1Pr9h87kK+zNXIq3P9eF82p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752548553; c=relaxed/simple;
-	bh=5iBcZMnLTgHM9MfCl/SxgkXgSxL749d/lCzwTN6LZak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UhmfCDR7t3DKne7Z1gdAa9u+w2o18boyfZ8I+ZblHmlP4MwxS0XVvnHZBbyw0nYS0w25DftvaTQ90cJ8zECx7AdHgg763jo+qpndBkfbx4+VhPDYpEn6TiSQehAPIuhDO3pP/m3y28kkNb7uH9rQWBvjnzIIbS19nOS4SIKy5Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqEiUlXV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A7CC4CEED;
-	Tue, 15 Jul 2025 03:02:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752548553;
-	bh=5iBcZMnLTgHM9MfCl/SxgkXgSxL749d/lCzwTN6LZak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pqEiUlXVD5AeZdBDRBxLaOQn+hgXov9fxSBQWT8uTYYp9vsKO8QSR/jXjgQvkuV+d
-	 fRWUiqqP0OP9IqNCtfEGF6CrMA+zwkF5xl4wKjhfrAB5Va02RH0uEEmu2EEaUdQalw
-	 y/808ihsaNg2b+792mzTtvNFN/cwUEK512qwUdWJNrwNW/rwGaKF0vZ+M3Im9bJt/T
-	 QJhp+KNq38KcN8Cod4FTuRFHV7Cp32j628ZfME0aTdzMFsUiCrx6UK2Sh+5+oZeIsL
-	 dYGGKkS3B92CI+tGPrnKxRwPeL2I7X0DGnq+Vu4pS93YxPR4aL4F6Cvw8cMRHGbFAK
-	 nSlIokg2F//yA==
-Date: Mon, 14 Jul 2025 20:02:31 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: guoren@kernel.org
-Cc: palmer@dabbelt.com, conor@kernel.org, alexghiti@rivosinc.com,
-	paul.walmsley@sifive.com, bjorn@rivosinc.com, eobras@redhat.com,
-	corbet@lwn.net, peterlin@andestech.com, rabenda.cn@gmail.com,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Leonardo Bras <leobras@redhat.com>
-Subject: Re: [PATCH V2 2/2] riscv: errata: Add ERRATA_THEAD_WRITE_ONCE fixup
-Message-ID: <aHXEx2a0qgiPXhBS@x1>
-References: <20250713155321.2064856-1-guoren@kernel.org>
- <20250713155321.2064856-3-guoren@kernel.org>
+	s=arc-20240116; t=1752548717; c=relaxed/simple;
+	bh=Pfe8WObDT1a61jiVOqq1FN+hlv1UJ6niselMJ1QVSYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nRJM9xVOKazotXYhsUANf6J8B2goSALDE3iLTaDi7uutCEqo7xdMhmzkySh1Irhro1pfHrtFC+Wwre1h/g+R3l8JbeZtjs8tsqet1AuO98WYyxmcCjGZO1l9gcKX+6DwvlVX/tCiu0bgQVaq6ZQhrIU7lkquRiErZsZQ9Oyc6TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bh3q20LpxzHrRx;
+	Tue, 15 Jul 2025 11:01:02 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA5C41401F3;
+	Tue, 15 Jul 2025 11:05:08 +0800 (CST)
+Received: from [10.174.179.155] (10.174.179.155) by
+ kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Jul 2025 11:05:07 +0800
+Message-ID: <88334658-072b-4b90-a949-9c74ef93cfd1@huawei.com>
+Date: Tue, 15 Jul 2025 11:05:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250713155321.2064856-3-guoren@kernel.org>
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+Subject: Re: [PATCH 1/6] scsi: iscsi: Fix HW conn removal use after free
+To: Hou Tao <houtao@huaweicloud.com>, Mike Christie
+	<michael.christie@oracle.com>
+CC: <lduncan@suse.com>, <cleech@redhat.com>, <njavali@marvell.com>,
+	<mrangankar@marvell.com>, <GR-QLogic-Storage-Upstream@marvell.com>,
+	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>,
+	<jejb@linux.ibm.com>, yangerkun <yangerkun@huawei.com>, "yukuai (C)"
+	<yukuai3@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>,
+	<James.Bottomley@HansenPartnership.com>, <open-iscsi@googlegroups.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Li Lingfeng
+	<lilingfeng@huaweicloud.com>
+References: <20220616222738.5722-1-michael.christie@oracle.com>
+ <20220616222738.5722-2-michael.christie@oracle.com>
+ <93484c2e-528e-46a1-83d6-c420e0d2a1ef@huawei.com>
+ <bb21e728-ae5d-4328-8076-78c2f984ee05@huawei.com>
+ <0b0a0bcf-b805-5041-9923-37ad391169c0@huaweicloud.com>
+From: Li Lingfeng <lilingfeng3@huawei.com>
+In-Reply-To: <0b0a0bcf-b805-5041-9923-37ad391169c0@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-On Sun, Jul 13, 2025 at 11:53:21AM -0400, guoren@kernel.org wrote:
-> From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
-> 
-> The early version of XuanTie C910 core has a store merge buffer
-> delay problem. The store merge buffer could improve the store queue
-> performance by merging multi-store requests, but when there are not
-> continued store requests, the prior single store request would be
-> waiting in the store queue for a long time. That would cause
-> significant problems for communication between multi-cores. This
-> problem was found on sg2042 & th1520 platforms with the qspinlock
-> lock torture test.
-> 
-> So appending a fence w.o could immediately flush the store merge
-> buffer and let other cores see the write result.
-> 
-> This will apply the WRITE_ONCE errata to handle the non-standard
-> behavior via appending a fence w.o instruction for WRITE_ONCE().
-> 
-> This problem is only observed on the sg2042 hardware platform by
-> running the lock_torture test program for half an hour. The problem
-> was not found in the user space application, because interrupt can
-> break the livelock.
+Hi all,
 
-The first paragraph states the problem was found on both the SG2042 and
-TH1520, but this paragraph states it is only observed on the SG2042. Is
-worth me trying to run lock_torture on the TH1520 for many hours?
+在 2025/7/3 17:40, Hou Tao 写道:
+> Hi Mike & Lingfeng:
+>
+> On 7/3/2025 9:35 AM, Li Lingfeng wrote:
+>> Friendly ping...
+>>
+>> Thanks
+>>
+>> 在 2025/6/19 20:57, Li Lingfeng 写道:
+>>> Hi Mike,
+>>>
+>>> Thanks for this patch addressing the UAF issue. I have some questions
+>>> when
+>>> analyzing this patch.
+>>>
+>>> You mention that iscsi_remove_conn() frees the connection, making the
+>>> extra
+>>> iscsi_put_conn() cause UAF. However, looking at iscsi_remove_conn():
+>>>
+>>> iscsi_remove_conn
+>>>   device_del(&conn->dev)
+>>>    put_device(parent) // Only parent gets put_device
+>>>
+>>> This doesn't appear to free conn directly - only device_del() + parent
+>>> reference drop. Typically, conn is freed via put_device() on
+>>> &conn->dev when
+>>> its refcount reaches zero.
+>>>
+>>> Could you briefly clarify how iscsi_remove_conn() ultimately triggers
+>>> the
+>>> freeing, and in what scenario the subsequent iscsi_put_conn() leads
+>>> to UAF?
+>>>
+>>> Thanks again for the fix.
+>>>
+>>> Lingfeng
+>>>
+>>> 在 2022/6/17 6:27, Mike Christie 写道:
+>>>> If qla4xxx doesn't remove the connection before the session, the iSCSI
+>>>> class tries to remove the connection for it. We were doing a
+>>>> iscsi_put_conn() in the iter function which is not needed and will
+>>>> result
+>>>> in a use after free because iscsi_remove_conn() will free the
+>>>> connection.
+>>>>
+>>>> Reviewed-by: Lee Duncan <lduncan@suse.com>
+>>>> Signed-off-by: Mike Christie <michael.christie@oracle.com>
+>>>> ---
+>>>>    drivers/scsi/scsi_transport_iscsi.c | 2 --
+>>>>    1 file changed, 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/scsi/scsi_transport_iscsi.c
+>>>> b/drivers/scsi/scsi_transport_iscsi.c
+>>>> index 2c0dd64159b0..e6084e158cc0 100644
+>>>> --- a/drivers/scsi/scsi_transport_iscsi.c
+>>>> +++ b/drivers/scsi/scsi_transport_iscsi.c
+>>>> @@ -2138,8 +2138,6 @@ static int iscsi_iter_destroy_conn_fn(struct
+>>>> device *dev, void *data)
+>>>>            return 0;
+>>>>          iscsi_remove_conn(iscsi_dev_to_conn(dev));
+>>>> -    iscsi_put_conn(iscsi_dev_to_conn(dev));
+>>>> -
+>>>>        return 0;
+>>>>    }
+>> .
+> I didn't follow the patch either. If I understand correctly, the
+> invocation of  iscsi_put_conn() in iscsi_iter_destory_conn_fn() is used
+> to free the initial reference counter of iscsi_cls_conn. For non-qla4xxx
+> cases, the ->destroy_conn() callback (e.g., iscsi_conn_teardown) will
+> call iscsi_remove_conn() and iscsi_put_conn() to remove the connection
+> from the children list of session and free the connection at last.
+> However for qla4xxx, it is not the case. The ->destroy_conn() callback
+> of qla4xxx will keep the connection in the session conn_list and doesn't
+> use iscsi_put_conn() to free the initial reference counter. Therefore,
+> it seems necessary to keep the iscsi_put_conn() in the
+> iscsi_iter_destroy_conn_fn(), otherwise, there will be memory leak problem.
+This patch indeed caused a memory leak. I reproduced the leak issue and
+confirmed that reintroducing the removed iscsi_put_conn() prevents the
+leak in the same scenario.
+
+
+*kernel base:*
+master 8c2e52ebbe885c7eeaabd3b7ddcdc1246fc400d2
+
+
+*kernel diff:*
+1) Since I don't have the device that supports qla4xxx, I forcibly
+bypassed the connection check during session destruction;
+2) I expanded the memory required by conn by 1024 times to more clearly
+observe the memory changes.
+
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index 7b4fe0e6afb2..bb354deeb668 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -940,8 +940,12 @@ static void iscsi_sw_tcp_session_destroy(struct 
+iscsi_cls_session *cls_session)
+         struct Scsi_Host *shost = iscsi_session_to_shost(cls_session);
+         struct iscsi_session *session = cls_session->dd_data;
+
+-       if (WARN_ON_ONCE(session->leadconn))
+-               return;
++       if (WARN_ON_ONCE(session->leadconn)) {
++               printk("%s skip checking leadconn", __func__);
++       //      return;
++       }
++
++       printk("%s %d\n", __func__, __LINE__);
+
+         iscsi_session_remove(cls_session);
+         /*
+diff --git a/drivers/scsi/scsi_transport_iscsi.c 
+b/drivers/scsi/scsi_transport_iscsi.c
+index c75a806496d6..eac353ad536f 100644
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -2408,7 +2408,7 @@ iscsi_alloc_conn(struct iscsi_cls_session 
+*session, int dd_size, uint32_t cid)
+         struct iscsi_transport *transport = session->transport;
+         struct iscsi_cls_conn *conn;
+
+-       conn = kzalloc(sizeof(*conn) + dd_size, GFP_KERNEL);
++       conn = kzalloc((sizeof(*conn) + dd_size) * 1024, GFP_KERNEL);
+         if (!conn)
+                 return NULL;
+         if (dd_size)
+@@ -2984,6 +2984,7 @@ iscsi_if_destroy_conn(struct iscsi_transport 
+*transport, struct iscsi_uevent *ev
+
+         if (transport->destroy_conn)
+                 transport->destroy_conn(conn);
++
+         return 0;
+  }
+
+@@ -3937,13 +3938,20 @@ iscsi_if_recv_msg(struct sk_buff *skb, struct 
+nlmsghdr *nlh, uint32_t *group)
+                 iscsi_put_endpoint(ep);
+                 break;
+         case ISCSI_UEVENT_DESTROY_SESSION:
++               printk("%s %d skip checking conns\n", __func__, __LINE__);
+                 session = iscsi_session_lookup(ev->u.d_session.sid);
+-               if (!session)
++               if (!session) {
++                       printk("%s %d\n", __func__, __LINE__);
+                         err = -EINVAL;
+-               else if (iscsi_session_has_conns(ev->u.d_session.sid))
++/*
++               } else if (iscsi_session_has_conns(ev->u.d_session.sid)) {
++                       printk("%s %d\n", __func__, __LINE__);
+                         err = -EBUSY;
+-               else
++*/
++               } else {
++                       printk("%s %d\n", __func__, __LINE__);
+                         transport->destroy_session(session);
++               }
+                 break;
+         case ISCSI_UEVENT_DESTROY_SESSION_ASYNC:
+                 session = iscsi_session_lookup(ev->u.d_session.sid);
+
+
+*open-iscsi base:*
+master 5b49cf2a86b1bfce13082f8ddc90b2282feb563d
+
+
+*open-iscsi diff:*
+I forcibly bypassed the standard connection destruction procedure, so
+that during the session destruction process, the connection would be
+destroyed to trigger iscsi_iter_destroy_conn_fn().
+
+diff --git a/usr/netlink.c b/usr/netlink.c
+index 4bcaf8b..970d782 100644
+--- a/usr/netlink.c
++++ b/usr/netlink.c
+@@ -516,12 +516,15 @@ kcreate_conn(uint64_t transport_handle, uint32_t sid,
+  static int
+  kdestroy_conn(uint64_t transport_handle, uint32_t sid, uint32_t cid)
+  {
+-       int rc;
+-       struct iscsi_uevent ev;
+-       struct iovec iov[2];
+-
++//     int rc;
++//     struct iscsi_uevent ev;
++//     struct iovec iov[2];
++       (void)transport_handle;
++       (void)sid;
++       (void)cid;
+         log_debug(7, "in %s", __FUNCTION__);
+-
++       printf("skip destroy conn\n");
++/*
+         memset(&ev, 0, sizeof(struct iscsi_uevent));
+
+         ev.type = ISCSI_UEVENT_DESTROY_CONN;
+@@ -534,7 +537,7 @@ kdestroy_conn(uint64_t transport_handle, uint32_t 
+sid, uint32_t cid)
+         rc = __kipc_call(iov, 2);
+         if (rc < 0)
+                 return rc;
+-
++*/
+         return 0;
+  }
+
+
+*test script:*
+#!/bin/bash
+LOOP_TIMES=10000
+LOG_FILE="iscsi_opt.log"
+DEVICE_TYPE="VIRTUAL-DISK"
+
+for ((count=1; count<=LOOP_TIMES; count++)); do
+     iscsiadm -m node -l &>/dev/null &
+     login_pid=$!
+     login_start=$(date +%s)
+     device_found=0
+
+     while kill -0 $login_pid 2>/dev/null; do
+         sleep 0.5
+         elapsed=$(( $(date +%s) - login_start ))
+
+         if [ $elapsed -ge 30 ]; then
+             if lsscsi | grep -q "$DEVICE_TYPE"; then
+                 kill $login_pid 2>/dev/null
+                 status="DEVICE_READY (KILLED_TIMEOUT)"
+                 device_found=1
+                 break
+             fi
+         fi
+     done
+
+     if [ $device_found -eq 0 ]; then
+         wait $login_pid
+         status="ATTACHED"
+     fi
+
+     mem_login=$(grep MemAvailable /proc/meminfo | awk '{print $2}')
+     printf "%-6d %-12d %-8s %s\n" $count $mem_login "LOGIN" "$status" | 
+tee -a $LOG_FILE
+
+     iscsiadm -m node -u &>/dev/null
+     while iscsiadm -m session &>/dev/null; do sleep 0.1; done
+     mem_logout=$(grep MemAvailable /proc/meminfo | awk '{print $2}')
+     printf "%-6d %-12d %-8s %s\n" $count $mem_logout "LOGOUT" "SUCCESS" 
+| tee -a $LOG_FILE
+done
+
+
+*result without iscsi_put_conn():*
+1) After a certain number of cycles, the available memory significantly
+decreases.
+1      53738028     LOGIN    ATTACHED
+1      53735616     LOGOUT   SUCCESS
+...
+100    52453148     LOGIN    ATTACHED
+100    52453376     LOGOUT   SUCCESS
+...
+200    51122008     LOGIN    ATTACHED
+200    51122644     LOGOUT   SUCCESS
+...
+2108   25984180     LOGIN    ATTACHED
+2108   25995580     LOGOUT   SUCCESS
+
+2) After removing iSCSI devices, stopping related services, and unloading
+kernel modules, the available memory has not returned to the expected
+level.
+[root@fedora test_ko]# lsscsi
+[0:0:0:0]    disk    QEMU     QEMU HARDDISK    2.5+  /dev/sda
+[0:0:1:0]    disk    QEMU     QEMU HARDDISK    2.5+  /dev/sdb
+[0:0:2:0]    disk    QEMU     QEMU HARDDISK    2.5+  /dev/sdc
+[0:0:3:0]    disk    QEMU     QEMU HARDDISK    2.5+  /dev/sdd
+[0:0:4:0]    disk    QEMU     QEMU HARDDISK    2.5+  /dev/sde
+[root@fedora test_ko]# service iscsid stop
+Redirecting to /bin/systemctl stop iscsid.service
+Warning: Stopping iscsid.service, but it can still be activated by:
+   iscsid.socket
+[root@fedora test_ko]# service tgtd stop
+Redirecting to /bin/systemctl stop tgtd.service
+[root@fedora test_ko]# rmmod iscsi_tcp
+[root@fedora test_ko]# rmmod iscsi_boot_sysfs
+[root@fedora test_ko]# rmmod libiscsi_tcp
+[root@fedora test_ko]# rmmod libiscsi
+[root@fedora test_ko]# rmmod scsi_transport_iscsi
+[root@fedora test_ko]# cat /proc/meminfo | grep MemAvailable
+MemAvailable:   26063488 kB
+[root@fedora test_ko]# cat /proc/meminfo | grep MemAvailable
+MemAvailable:   26065000 kB
+[root@fedora test_ko]#
+
+
+*result with iscsi_put_conn():*
+After a certain number of cycles, the available memory does not show
+significant changes.
+1      53823120     LOGIN    ATTACHED
+1      53828420     LOGOUT   SUCCESS
+...
+100    53738576     LOGIN    ATTACHED
+100    53747436     LOGOUT   SUCCESS
+...
+200    53723400     LOGIN    ATTACHED
+200    53728696     LOGOUT   SUCCESS
+...
+
+I haven't found more details about the UAF issue described in this patch,
+but I think the patch's description of the root cause 'iscsi_remove_conn()
+will free the connection' is incorrect. Moreover, this fix approach is
+inappropriate.
+Until the original issue is fully understood, I recommend reverting this
+patch.
 
 Thanks,
-Drew
+
+Lingfeng
+
+
+> For the use-after-free problem, I think it may be due to the concurrent
+> invocation of iscsi_add_conn() and iscsi_session_teardown().
+> iscsi_add_conn() has already invoked device_add(), but fails on
+> transport_register_device() and is trying to invoke device_del(). At the
+> same time iscsi_session_teardown() invokes iscsi_remove_session() and is
+> invoking iscsi_iter_destroy_conn_fn for the failed-to-add connection.
+> The connection will be put twice: one in iscsi_iter_destroy_conn_fn()
+> and another one in iscsi_conn_setup() and leads to use-after-free problem.
+>
 
