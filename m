@@ -1,176 +1,152 @@
-Return-Path: <linux-kernel+bounces-731597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7563B056FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:47:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF3EB05703
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48135188BCEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:47:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCCCA7A0762
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54AF272E6D;
-	Tue, 15 Jul 2025 09:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA1A2D46AB;
+	Tue, 15 Jul 2025 09:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TU+S+Vjx"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fAJGalPM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670A62264D5;
-	Tue, 15 Jul 2025 09:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3DA23BF83
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752572834; cv=none; b=Jrt2zYk0h+DbQozAtMbpNUq/+yZtZiqOhiv8FuKUQ2pDo+zJ2nSSIUBKCMzqhJ0WF2ECNzFDf0RUM0n7iqC7b7H89VjoLPIDwibdEVCEP4RGq4yOkT492F4ZEgN72QCdc7NxzyfDPYOeI6XL68eIWwybdkR6LYvUS7B58kEGl/Y=
+	t=1752572848; cv=none; b=nJDxqUTPn0+o/tkfoOvJ8nZmalMdBE93exth/ypzUpD5IReDqEfrzDqaDNa44tDca1ijVG6X7hlJt7sgmRfbSUOtpNYYSFwjXjM1sfkuRrpvLqCLWtRrRCifTXQOPycfEEtA6HWYqquKDeWdAS9FuUlohHhDhXCA4UISpIKDcrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752572834; c=relaxed/simple;
-	bh=KTw1n1aRAlqNRwWDKpZ3tk0QLNss+mT8kTZgk4V0Nmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kJe98Yj9GHtlhuwv9TSwuWVRF+wl+Rix3ZyhUGBmTWC8WotlObSwOeZsxnvVnb/zVfTv8SG7RmVDDe3dWG8s5XfImP336QMuVuTngnhEV6vNOmbCnVf+jEcho4bXtouAHHaVDh78Y8z3q3tqRUQmGvmrXqvnywZ8ysbGSgEAbYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TU+S+Vjx; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56F9ks402235260;
-	Tue, 15 Jul 2025 04:46:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752572814;
-	bh=jSjJtqdXOK2619OVhSk/cvk2yD64s3HepL+hT3bVVSo=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=TU+S+Vjxvo1w/t9UsKNrQ7K9dEjlS8PBqFfDcOZohoVDL/YBUsR2zQLSoonzh2XRQ
-	 B66XhiP0jHH3c5+Zy71bpyzUZc0p16vdIUNf9zkTKlKO/tMjfd6WyfcaLJ26kxklsw
-	 Y7tqfJ8rHVa4RCgsuR4xGjx3Y0ctRPUnsUdFH01I=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56F9kstD1177302
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 15 Jul 2025 04:46:54 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 15
- Jul 2025 04:46:54 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 15 Jul 2025 04:46:54 -0500
-Received: from [172.24.227.166] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.166])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56F9kotu2356744;
-	Tue, 15 Jul 2025 04:46:51 -0500
-Message-ID: <e8400355-d59e-44ad-8f69-af068a6ee85c@ti.com>
-Date: Tue, 15 Jul 2025 15:16:50 +0530
+	s=arc-20240116; t=1752572848; c=relaxed/simple;
+	bh=9lxLx87i+PuaUy4b5HDvysuGPPM11GdUfv0DuiWleUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MjPCNPpDyIzwlmYYBrDWmEGaVM2Fjl62xIo3hCPfdMAoJTwpSJp62KR1tRI45NySY5TXGgD/7oYKbRRpGyEQ5cXaMhVan7bWFFT805vwkFp3bYA446oVPq+SJgnegPmLyT7s8/k+pZwQuBJWIq1x4Fd8r8/1k37NJDsmNFWhU2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fAJGalPM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752572846;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zv21o4YQGbJUN8noeML7Ss7jbQevDPMoV/ulGUv/mjg=;
+	b=fAJGalPMp8/fxmh+/o/ffKqpA1S75GriNZkVLZd0iE9NUdCWCC/9BhQGWr2mTTWhDvBrQ8
+	IktmEJ1T0cSQ/AwfBRlKwI5jxNYQi4BKNmLOnRjPo9XQN3LC0tO+zOUBAzipKgVQ3S9LhN
+	IL2v5Ydj8MEVn73CIELw2vtWor8TIxU=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-28-qOcxxjXnOPe91Kja408BRQ-1; Tue, 15 Jul 2025 05:47:24 -0400
+X-MC-Unique: qOcxxjXnOPe91Kja408BRQ-1
+X-Mimecast-MFC-AGG-ID: qOcxxjXnOPe91Kja408BRQ_1752572843
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-235c897d378so52874515ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:47:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752572843; x=1753177643;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zv21o4YQGbJUN8noeML7Ss7jbQevDPMoV/ulGUv/mjg=;
+        b=pNSA/fgjqoVDSlMUNC1kLJ+dPokJ9BnOqwITkDz3/pnxrozZnlj30hcIr/FkPfpa2Q
+         fOcPa5AKJeE5JGLolGOc+JHttW1uXVHo5YpRthXX19e/ZGJRTEBOh7T5sHcgDibweOW6
+         G6gY7mdXrMYSlBm+kG99o6gnCvOuGqHCMvu78gtC5JITNajfCVsWQXZzSNQ0T2+cZgev
+         IF4lVww5yWe0n8v4HkmY18E00rUEQ3/rwyLoMgg/WgpjeGyCmRjBxjn9GLLEoR37BsVx
+         kfi3d1H18gV2EM23Xx8TaTwkjlpcpjaEW8x6fJiN0eyZkfWYqE1CoP8oMJeqosALvo+O
+         E1Fg==
+X-Gm-Message-State: AOJu0YxjP7eB+mhofYxTTtzwu26CFti3MwjHLmEwkBgSiDVLIUbbVzR4
+	SduQ/NvKqM0q6FIAAQM1UsAlSVkdcVIPEUNPclsIxi85gJ24fH3zff2mNY/YaWatrFF3/pL1j7W
+	ZU9FOwUu/niEKn7DyB2NWmy5oR4pmMrEWG/WDny0BjrNvuc+EZ8I3QE7gS6KmTAOo2g==
+X-Gm-Gg: ASbGncs5rG/ISmMHFZlXr/Cvu3qHkAzI7YxGK49RNx6ZdaTjRqoOe83YavW10qI3bhc
+	Gfhw+n80RD+KkbA3Y8n4vT7tmzyENGO3FmknPa9chyKSU18F6LztqTHAYHcQ1yfXv9932xo+0d+
+	h5STXIl1en6+Ni63PWR/m55urKx/cS5sBdg/X8A5eTCW3yURQrecL6Ycj0IrcwVF8FFTrToBdZS
+	QRl7Z5mS98LaOBH9NI8rgcaazoCfxVaywUwaFChXHN0NZT1k/7gUOSY58724+tVZtUImSY2DAfd
+	dB2aP8/XRFIGqw6uVOtwZJ7ZQ9elgAVOtR+p2EZ3Mw==
+X-Received: by 2002:a17:903:8c3:b0:235:f45f:ed49 with SMTP id d9443c01a7336-23e1b170830mr31658665ad.33.1752572842977;
+        Tue, 15 Jul 2025 02:47:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFw6Q76ji3E4T0X070GuEwtmCWmxMCF8YU2BHFI5N2HYUKvQ3kiM+lmllOTIzW1Yz+SYAp4Q==
+X-Received: by 2002:a17:903:8c3:b0:235:f45f:ed49 with SMTP id d9443c01a7336-23e1b170830mr31658265ad.33.1752572842509;
+        Tue, 15 Jul 2025 02:47:22 -0700 (PDT)
+Received: from sgarzare-redhat ([5.179.142.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42b3c3fsm113125655ad.88.2025.07.15.02.47.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 02:47:21 -0700 (PDT)
+Date: Tue, 15 Jul 2025 11:47:12 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>, 
+	Steven Moreland <smoreland@google.com>, Frederick Mayle <fmayle@google.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	netdev@vger.kernel.org, virtualization@lists.linux.dev, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] vhost/vsock: Avoid allocating arbitrarily-sized
+ SKBs
+Message-ID: <h3zu2fsjvuftgv5gmkluyqipcak47a2koh54idqqfmstos44o5@c4so6ajec72k>
+References: <20250714152103.6949-1-will@kernel.org>
+ <20250714152103.6949-2-will@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] arm64: dts: ti: k3-j784s4-j742s2-main-common: add
- DSI & DSI PHY
-To: Vignesh Raghavendra <vigneshr@ti.com>, <nm@ti.com>,
-        <devicetree@vger.kernel.org>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>
-References: <20250624082619.324851-1-j-choudhary@ti.com>
- <20250624082619.324851-2-j-choudhary@ti.com>
- <ed2ccf14-b470-4f3e-a793-61866cf7e26c@ti.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <ed2ccf14-b470-4f3e-a793-61866cf7e26c@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250714152103.6949-2-will@kernel.org>
 
-Hello Vignesh,
+On Mon, Jul 14, 2025 at 04:20:55PM +0100, Will Deacon wrote:
+>vhost_vsock_alloc_skb() returns NULL for packets advertising a length
+>larger than VIRTIO_VSOCK_MAX_PKT_BUF_SIZE in the packet header. However,
+>this is only checked once the SKB has been allocated and, if the length
+>in the packet header is zero, the SKB may not be freed immediately.
+>
+>Hoist the size check before the SKB allocation so that an iovec larger
+>than VIRTIO_VSOCK_MAX_PKT_BUF_SIZE + the header size is rejected
+>outright. The subsequent check on the length field in the header can
+>then simply check that the allocated SKB is indeed large enough to hold
+>the packet.
+>
+>Cc: <stable@vger.kernel.org>
+>Fixes: 71dc9ec9ac7d ("virtio/vsock: replace virtio_vsock_pkt with sk_buff")
+>Signed-off-by: Will Deacon <will@kernel.org>
+>---
+> drivers/vhost/vsock.c | 6 ++++--
+> 1 file changed, 4 insertions(+), 2 deletions(-)
 
-On 26/06/25 11:56, Vignesh Raghavendra wrote:
-> Hi
-> 
-> On 24/06/25 13:56, Jayesh Choudhary wrote:
->> Add DT nodes for DPI to DSI Bridge and DSI Phy.
->> The DSI bridge is Cadence DSI and the PHY is a
->> Cadence DPHY with TI wrapper.
->>
->> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
->> ---
->>   .../dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 37 +++++++++++++++++++
->>   1 file changed, 37 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
->> index 363d68fec387..2413c4913a8b 100644
->> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
->> @@ -2517,6 +2517,43 @@ watchdog18: watchdog@2550000 {
->>   		status = "reserved";
->>   	};
->>   
->> +	dphy_tx0: phy@4480000 {
->> +		compatible = "ti,j721e-dphy";
->> +		reg = <0x0 0x04480000 0x0 0x1000>;
-> 
-> Follow the convention of the file. Use:
-> 
-> 		reg = <0x00 0x04480000 0x00 0x1000>;
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Okay I will add padding.
-Will add it to 4th field as well as I am seeing it in some
-nodes:
+>
+>diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+>index 802153e23073..66a0f060770e 100644
+>--- a/drivers/vhost/vsock.c
+>+++ b/drivers/vhost/vsock.c
+>@@ -344,6 +344,9 @@ vhost_vsock_alloc_skb(struct vhost_virtqueue *vq,
+>
+> 	len = iov_length(vq->iov, out);
+>
+>+	if (len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE + VIRTIO_VSOCK_SKB_HEADROOM)
+>+		return NULL;
+>+
+> 	/* len contains both payload and hdr */
+> 	skb = virtio_vsock_alloc_skb(len, GFP_KERNEL);
+> 	if (!skb)
+>@@ -367,8 +370,7 @@ vhost_vsock_alloc_skb(struct vhost_virtqueue *vq,
+> 		return skb;
+>
+> 	/* The pkt is too big or the length in the header is invalid */
+>-	if (payload_len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE ||
+>-	    payload_len + sizeof(*hdr) > len) {
+>+	if (payload_len + sizeof(*hdr) > len) {
+> 		kfree_skb(skb);
+> 		return NULL;
+> 	}
+>-- 
+>2.50.0.727.gbf7dc18ff4-goog
+>
 
-reg = <0x00 0x04480000 0x00 0x00001000>;
-
-> 
-> Please fix throughout the series.
-
-
-Okay.
-
-> 
->> +		clocks = <&k3_clks 402 20>, <&k3_clks 402 3>;
->> +		clock-names = "psm", "pll_ref";
->> +		#phy-cells = <0>;
->> +		power-domains = <&k3_pds 402 TI_SCI_PD_EXCLUSIVE>;
->> +		assigned-clocks = <&k3_clks 402 3>;
->> +		assigned-clock-parents = <&k3_clks 402 4>;
->> +		assigned-clock-rates = <19200000>;
->> +		status = "disabled";
->> +	};
->> +
->> +	dsi0: dsi@4800000 {
->> +		compatible = "ti,j721e-dsi";
->> +		reg = <0x0 0x04800000 0x0 0x100000>, <0x0 0x04710000 0x0 0x100>;
->> +		clocks = <&k3_clks 215 2>, <&k3_clks 215 5>;
->> +		clock-names = "dsi_p_clk", "dsi_sys_clk";
->> +		power-domains = <&k3_pds 215 TI_SCI_PD_EXCLUSIVE>;
-> 
->> +		interrupt-parent = <&gic500>;
-> 
-> This is implied and can be dropped.
-
-Will drop.
-
-Warm Regards,
-Jayesh
-
-> 
->> +		interrupts = <GIC_SPI 600 IRQ_TYPE_LEVEL_HIGH>;
->> +		phys = <&dphy_tx0>;
->> +		phy-names = "dphy";
->> +		status = "disabled";
->> +
->> +		dsi0_ports: ports {
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +			port@0 {
->> +				reg = <0>;
->> +			};
->> +			port@1 {
->> +				reg = <1>;
->> +			};
->> +		};
->> +	};
->> +
->>   	mhdp: bridge@a000000 {
->>   		compatible = "ti,j721e-mhdp8546";
->>   		reg = <0x0 0xa000000 0x0 0x30a00>,
-> 
 
