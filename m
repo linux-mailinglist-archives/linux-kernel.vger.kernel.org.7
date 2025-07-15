@@ -1,293 +1,133 @@
-Return-Path: <linux-kernel+bounces-731497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8E5B0553E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:44:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7A4B0553F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3DEB3BCC9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:43:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3AFC4A020B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855CA2C3274;
-	Tue, 15 Jul 2025 08:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03827275851;
+	Tue, 15 Jul 2025 08:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a5jxx6m/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I5oxk0CU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uuErKiOE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Js32Augx"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HZqbTlJm"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317E127584D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF6A26D4F2
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752569042; cv=none; b=bBwoKqpzK48AmQB3kGt8JJFBeZKZvhM/yx3jVciA5fsQVdlpE6xipN90TZVYY1KSk7TKKSDa29Zw09IQgtGuzldynDmMDSOzLSugLx2BgZjcjYXXU9+ljbltfwy8XsIpHN1rkBOu54VEpGk6PWt57PQU+PSYR/ybNC2LvaEn3A4=
+	t=1752569055; cv=none; b=usFv1g6ln1SWe3SFqca9FEw26IL4r3e2HFXsDp2tGSB1jxVpol4W+Fe5RboEfnzDfdfZ0KJqAAuvJFmtW4FRTAepuRRD6o4Y2CYGrn1TyMooT3Qd5kXmpxt613Mw6WcwAtnmzVK6Qe0p/xW4feI+AuaN47PsrTncBQbtVe609Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752569042; c=relaxed/simple;
-	bh=0GHiXuFJ0sPNdExiAaur+rUxx6laEHGWmYoUiB3Ud4Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oek+eYOsZpnCHQu7Ie49WMEgq6DMw8iVfsGNcvZ6UN2OyeoTsqPpOPDkCoDOoaXZu5YOUh/QF7RHt/OGEqd8u3arnB/X3sia+wvdIGKzwfTKx4wIpHj5HjBVLVXyxlZGs48YCXx6lQnWhFlDDsbzagjyqfpJSeb00POfIJIOYxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a5jxx6m/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I5oxk0CU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uuErKiOE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Js32Augx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1752569055; c=relaxed/simple;
+	bh=mcToWc/fr0EQqM/JyKziVPnwRXDMtItq5cFsngYeYt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XixHkKaw0n1iQOHnHq+zdqYfvB+nrHNza6g8QpLGiIb8vhwXYzEINdjCgN2tF6A9I1t6veSNQgK8BmejB/xHi0heSnZoCEpoYGKhqj+4kvVR29ADcREpLspOUdPqbIS9wDFoGXjcyr8qa0zuItVvho3UZYyRScI2chrm8n1PVJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HZqbTlJm; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 430F340E0208;
+	Tue, 15 Jul 2025 08:44:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bOcSNm5eBAze; Tue, 15 Jul 2025 08:44:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752569047; bh=VcSPNt8XxO+CqQOBaxqM7aIo4wT0QVt30q8qKGhmaLY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HZqbTlJm/HLiD0H0POWqE/3Ollw2X1szzn/rvba6feuoyDJFT8i4dwi9aVG8E28S4
+	 M4UMBPCE/DJHCG22cspZe8D81YVos0Cp7YdKeEB4v3fZa5DuzgkbBreXMsLzKS+2Pj
+	 0CF6k37Yrp4RnqRbhWiAz18RTGL6ObX+Q/pjtF7TG7COrHrwBsSTntEzHKzRqBtEcY
+	 S9kqeIxyalco18ro7uUGGihZ4qqx1ZyrlRqxCBuhXQcULA13h92lteiNe5Ov+DOA05
+	 pk9iEruqMwinWyqxhJWZZa2QeLBrFARdSP25fMI+7A2Xd+/j3X39GnxSCMUViiTqOg
+	 9pAFFbT6SX71oWHyXGGdmfTZT5fXTNHa4lR9KbSLxPn3DZtlc1TlBEwfRYNHJq9xoh
+	 sA8hB6992XNg3EGsAHiQahLiIPLoXBcSgxivrHYfl0GIPJe+QUMgkIc/JhMy9kQazX
+	 4bXReL3zN0zrqS3jgXDbBk2rBnaTe8vi99JAcBI4tTIkP7bVIAUVn9wkYugoVXH78F
+	 Yj5EawYHp4WAJTDk5xlxecaZIGsLonavvB6yibAH65VTOMAXubRCUDHS65LzaCO9KE
+	 2QqM0yPUJ4DePH0ZlUn1Y3WNrsNTIx8fcCueln5nEZ+CZqKtJsfvUpe0/L3aJtqLca
+	 /SekVSWt/r5Ul441nqM3ge2s=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5FFAB2123B;
-	Tue, 15 Jul 2025 08:43:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752569038; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vzsbV3x/CTXCYelsSexk/bEtGHCl7KiDjnp2uvahdSc=;
-	b=a5jxx6m/CaOccokz/O0TY8251voZxZC/x/adt4c7wq1vg71be1YVvPFPS6oZ/5LlbJairD
-	iImp1yFdvBadhifv6mXlnAGXe71KHuPv9svha5iOzOQxUWE83DYAUox/jOHY+8msMpKty7
-	SKuVgdKnfM9taLqhgjfWGqAmbnMLzS4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752569038;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vzsbV3x/CTXCYelsSexk/bEtGHCl7KiDjnp2uvahdSc=;
-	b=I5oxk0CUHyLD2zS6/YruuonvMwbiLNST4LqQL2sR1MW2g3k0H4ltkTFAhylYWczcJtVBYt
-	otEECBvaOLEJBEAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=uuErKiOE;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Js32Augx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752569037; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vzsbV3x/CTXCYelsSexk/bEtGHCl7KiDjnp2uvahdSc=;
-	b=uuErKiOEIU91JQCE37oO0BoM/Noc+djNR7nwchwoMe44WFRO4K5sMZFyZKqRqZZlyDCRMa
-	uePtAw9SJe2XfTFvSGfR6AgwKyLk/OmOLfJwpXzhzom5+WALXRLbCHvItzQ7DR8efhfgMd
-	8L0dquaOreW0ag9JIPaO8JfsIIIpGx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752569037;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vzsbV3x/CTXCYelsSexk/bEtGHCl7KiDjnp2uvahdSc=;
-	b=Js32Augx0D2eHWZjVsmFinbwj4bHtj+F8xoIKqgGbc3qD5jUTdO2nRTl38SqeXVBwQAHVh
-	DGCNI/VPk+Ej/JCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3311013306;
-	Tue, 15 Jul 2025 08:43:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RHXbC80UdmhXWQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 15 Jul 2025 08:43:57 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Tue, 15 Jul 2025 10:43:42 +0200
-Subject: [PATCH v3] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B7C7B40E015D;
+	Tue, 15 Jul 2025 08:43:58 +0000 (UTC)
+Date: Tue, 15 Jul 2025 10:43:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com,
+	santosh.shukla@amd.com
+Subject: Re: [PATCH] x86/sev: Improve handling of writes to intercepted
+ GUEST_TSC_FREQ
+Message-ID: <20250715084357.GCaHYUzeqvBxJyGVsg@fat_crate.local>
+References: <20250711041200.87892-1-nikunj@amd.com>
+ <20250714104424.GGaHTfiFxI_pf-vhRn@fat_crate.local>
+ <aHUTMiEJ-nd76lxM@google.com>
+ <76e0988d-279f-be58-51d9-621806dbb453@amd.com>
+ <aHUfecs9UJPx0v_C@google.com>
+ <20250714161639.GLaHUtZwleS3COfxxX@fat_crate.local>
+ <aHUx9ILdUZJHefjZ@google.com>
+ <85jz49x31p.fsf@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-export_modules-v3-1-11fffc67dff7@suse.cz>
-X-B4-Tracking: v=1; b=H4sIAL0UdmgC/3WMSwrCMBQAryJZG8l7/bvyHiKSNi82oE1J2lAtv
- btpNwricgZmZubJGfLsuJuZo2C8sV2EZL9jTSu7G3GjIjMUmIlClJym3rrh+rBqvJPngJUotUx
- BiJzFqHekzbQNz5fIrfGDdc/tH2C1f1cBuOC61oXEEhUm+uRHT4fmxdZRwK8Y4CdGDrzOqjrXU
- qWQyE+8LMsbR41eeucAAAA=
-X-Change-ID: 20250708-export_modules-12908fa41006
-To: Daniel Gomez <da.gomez@samsung.com>, 
- Matthias Maennich <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>, 
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
- Sami Tolvanen <samitolvanen@google.com>, 
- Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>, 
- Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>, 
- Shivank Garg <shivankg@amd.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, 
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
- linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Vlastimil Babka <vbabka@suse.cz>, Nicolas Schier <nicolas.schier@linux.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5974; i=vbabka@suse.cz;
- h=from:subject:message-id; bh=0GHiXuFJ0sPNdExiAaur+rUxx6laEHGWmYoUiB3Ud4Q=;
- b=owEBbQGS/pANAwAIAbvgsHXSRYiaAcsmYgBodhTKL+/6akuC8CrysdCHQUIjqsTEUvKr34WYb
- vG0IR2VE1eJATMEAAEIAB0WIQR7u8hBFZkjSJZITfG74LB10kWImgUCaHYUygAKCRC74LB10kWI
- ml+OB/9JEN7quxar46H7voGtAZ9BnamAKmyjYc9fFSAab88gE+V7f9e9tBmF/v1H1ZPWI+c+KIf
- LfRxWCaarttPv2dox17LE5Y6fig0Pa9kxnJZ2y4KVCrRQocAjpfkIVHJEbs9D52j43AjdzXeOHu
- gPJr9F6pLLYgkZq6+HrxIm6Bo3cKoss1VyPbr0qUGxYrRPqPGzO3G3knkCaJQij7RdjxPSbWpW9
- pEqDl8q4O+5gh4c/jxtzcJvL0vIXLqLC0eTnUw34IjvH+CmO/h42xH9o60fkppU16HnkWgNnwDp
- BtLGwqs5MkKog39XNGvt2MKyZJ8ooIrZily+lVt3MQvUyfEQ
-X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
- fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email,infradead.org:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim,suse.cz:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 5FFAB2123B
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <85jz49x31p.fsf@amd.com>
 
-Christoph suggested that the explicit _GPL_ can be dropped from the
-module namespace export macro, as it's intended for in-tree modules
-only. It would be possible to restrict it technically, but it was
-pointed out [2] that some cases of using an out-of-tree build of an
-in-tree module with the same name are legitimate. But in that case those
-also have to be GPL anyway so it's unnecessary to spell it out in the
-macro name.
+On Tue, Jul 15, 2025 at 08:37:38AM +0000, Nikunj A Dadhania wrote:
+>   Currently, when a Secure TSC enabled SNP guest attempts to write to
+>   the intercepted GUEST_TSC_FREQ MSR (a read-only MSR), the guest kernel
+>   #VC handler terminates the SNP guest by returning ES_VMM_ERROR. This
+>   response incorrectly implies a VMM configuration error, when in fact
+>   it's a valid VMM configuration to intercept writes to read-only MSRs,
 
-Link: https://lore.kernel.org/all/aFleJN_fE-RbSoFD@infradead.org/ [1]
-Link: https://lore.kernel.org/all/CAK7LNATRkZHwJGpojCnvdiaoDnP%2BaeUXgdey5sb_8muzdWTMkA@mail.gmail.com/ [2]
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Reviewed-by: Shivank Garg <shivankg@amd.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Nicolas Schier <n.schier@avm.de>
-Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
-Daniel, please clarify if you'll take this via module tree or Christian
-can take it via vfs tree?
+Not only valid - it is the usual thing the HV does with MSRs IMHO.
 
-Christian asked [1] for EXPORT_SYMBOL_FOR_MODULES() without the _GPL_
-part to avoid controversy converting selected existing EXPORT_SYMBOL().
-Christoph argued [2] that the _FOR_MODULES() export is intended for
-in-tree modules and thus GPL is implied anyway and can be simply dropped
-from the export macro name. Peter agreed [3] about the intention for
-in-tree modules only, although nothing currently enforces it.
+>   unless explicitly documented.
+> 
+>   Modify the intercepted GUEST_TSC_FREQ MSR #VC handler to ignore writes
+>   instead of terminating the guest. Since GUEST_TSC_FREQ is a guest-only
+>   MSR, ignoring writes directly (rather than forwarding to the VMM and
+>   handling the resulting #GP) eliminates a round trip to the VMM.
 
-It seemed straightforward to add this enforcement, so v1 did that. But
-there were concerns of breaking the (apparently legitimate) usecases of
-loading an updated/development out of tree built version of an in-tree
-module.
+Probably.
 
-So leave out the enforcement part and just drop the _GPL_ from the
-export macro name and so we're left with EXPORT_SYMBOL_FOR_MODULES()
-only. Any in-tree module used in an out-of-tree way will have to be GPL
-anyway by definition.
+But I think the main point here is that this is the default action the HV
+does.
 
-Current -next has some new instances of EXPORT_SYMBOL_GPL_FOR_MODULES()
-in drivers/tty/serial/8250/8250_rsa.c by commit b20d6576cdb3 ("serial:
-8250: export RSA functions"). Hopefully it's resolvable by a merge
-commit fixup and we don't need to provide a temporary alias.
+> Add a
+>   WARN_ONCE to log the incident, as well-behaved guest kernels should
+>   never attempt to write to this read-only MSR.
+> 
+>   However, continue to terminate the guest(via ES_VMM_ERROR) when
 
-[1] https://lore.kernel.org/all/20250623-warmwasser-giftig-ff656fce89ad@brauner/
-[2] https://lore.kernel.org/all/aFleJN_fE-RbSoFD@infradead.org/
-[3] https://lore.kernel.org/all/20250623142836.GT1613200@noisy.programming.kicks-ass.net/
----
-Changes in v3:
-- Clarified the macro documentation about in-tree intention and GPL
-  implications, per Daniel.
-- Applied tags.
-- Link to v2: https://patch.msgid.link/20250711-export_modules-v2-1-b59b6fad413a@suse.cz
+ES_EXCEPTION
 
-Changes in v2:
-- drop the patch to restrict module namespace export for in-tree modules
-- fix a pre-existing documentation typo (Nicolas Schier)
-- Link to v1: https://patch.msgid.link/20250708-export_modules-v1-0-fbf7a282d23f@suse.cz
----
- Documentation/core-api/symbol-namespaces.rst | 11 ++++++-----
- fs/anon_inodes.c                             |  2 +-
- include/linux/export.h                       |  2 +-
- 3 files changed, 8 insertions(+), 7 deletions(-)
+>   reading from intercepted GUEST_TSC_FREQ MSR with Secure TSC enabled,
+>   as intercepted reads indicate an improper VMM configuration for Secure
+>   TSC enabled SNP guests.
 
-diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation/core-api/symbol-namespaces.rst
-index 32fc73dc5529e8844c2ce2580987155bcd13cd09..034898e81ba201097330ab9875429e7d3fa30c0f 100644
---- a/Documentation/core-api/symbol-namespaces.rst
-+++ b/Documentation/core-api/symbol-namespaces.rst
-@@ -76,20 +76,21 @@ A second option to define the default namespace is directly in the compilation
- within the corresponding compilation unit before the #include for
- <linux/export.h>. Typically it's placed before the first #include statement.
- 
--Using the EXPORT_SYMBOL_GPL_FOR_MODULES() macro
-------------------------------------------------
-+Using the EXPORT_SYMBOL_FOR_MODULES() macro
-+-------------------------------------------
- 
- Symbols exported using this macro are put into a module namespace. This
--namespace cannot be imported.
-+namespace cannot be imported. These exports are GPL-only as they are only
-+intended for in-tree modules.
- 
- The macro takes a comma separated list of module names, allowing only those
- modules to access this symbol. Simple tail-globs are supported.
- 
- For example::
- 
--  EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
-+  EXPORT_SYMBOL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
- 
--will limit usage of this symbol to modules whoes name matches the given
-+will limit usage of this symbol to modules whose name matches the given
- patterns.
- 
- How to use Symbols exported in Namespaces
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index 1d847a939f29a41356af3f12e5f61372ec2fb550..180a458fc4f74249d674ec3c6e01277df1d9e743 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -129,7 +129,7 @@ struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *n
- 	}
- 	return inode;
- }
--EXPORT_SYMBOL_GPL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
-+EXPORT_SYMBOL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
- 
- static struct file *__anon_inode_getfile(const char *name,
- 					 const struct file_operations *fops,
-diff --git a/include/linux/export.h b/include/linux/export.h
-index f35d03b4113b19798036d2993d67eb932ad8ce6f..a686fd0ba406509da5f397e3a415d05c5a051c0d 100644
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -91,6 +91,6 @@
- #define EXPORT_SYMBOL_NS(sym, ns)	__EXPORT_SYMBOL(sym, "", ns)
- #define EXPORT_SYMBOL_NS_GPL(sym, ns)	__EXPORT_SYMBOL(sym, "GPL", ns)
- 
--#define EXPORT_SYMBOL_GPL_FOR_MODULES(sym, mods) __EXPORT_SYMBOL(sym, "GPL", "module:" mods)
-+#define EXPORT_SYMBOL_FOR_MODULES(sym, mods) __EXPORT_SYMBOL(sym, "GPL", "module:" mods)
- 
- #endif /* _LINUX_EXPORT_H */
+It is getting close to the gist of what we talked yesterday tho.
 
----
-base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-change-id: 20250708-export_modules-12908fa41006
+Thx.
 
-Best regards,
 -- 
-Vlastimil Babka <vbabka@suse.cz>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
