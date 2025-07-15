@@ -1,274 +1,186 @@
-Return-Path: <linux-kernel+bounces-731487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63A1B05516
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:38:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5151BB05513
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A981C22EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:38:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7724B17FB5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC9D274B43;
-	Tue, 15 Jul 2025 08:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBFE273808;
+	Tue, 15 Jul 2025 08:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jCdduS/7"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="boE4U36h"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2053.outbound.protection.outlook.com [40.107.244.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309812356BC
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568695; cv=none; b=sYJe7StCWIajopt5LnYrd2dx3dAsAhUbN8F1SG59RrC1/4AdnP9L+sVFZTlCtWvdG+JnGmT2lUcEACrFK/yk0hsKhbDpVItRk3lO+a8Fa3A9RMVbMi6n2ihkpv/HteFrk1OoGBTdlUflmhdF9pcevc4poLWex8n2zJoJFRrY4pI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568695; c=relaxed/simple;
-	bh=mZyth0KAKTnj9bWStu7byGf00CvZnmNGrZOK9z+tomQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NeBBKUZrHXlG2AUmIGVb8odKi7g7BW56BRDhCSSgDItfiXk8BSLnD0mTFuLguOLhzaJiOXFeUrwCVNQO+kbs1WgC9gHGQODdk279t+XlZYyAUevSZ9G6nuybISg3i9xOSNNepyN1baYm43dmupMdNWDre3IX+vwpDNGyiQvezoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jCdduS/7; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <45f4d349-7b08-45d3-9bec-3ab75217f9b6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752568678;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T9Lgw5Epi5q68OgMPe5vaeUcIOYa33Zgw7pDEgowN70=;
-	b=jCdduS/7l5FQ3NkNe7K57fsRxYJUWB/+rdPgFX59M4ZRZv0kGyqgTy+5AM1W5usbFzHvNX
-	gMUPMErWKKR+XYJnNAZ/uUlNZpUC9TFXIYdVXgtjFByZDAFSCZVy0oWyyekc1I6oaMJdCu
-	JjgHNbaJmrNjE3R00htnO3a0yS7YlzM=
-Date: Tue, 15 Jul 2025 16:36:57 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994011D5ABA
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752568675; cv=fail; b=OVpDwXdXjRY0aOLA9Bmtk+s2qFa7a+Yx6QY98ye3zsTDefNr17mYcVc3fa0aEbV2Ui64sdM8AiekcrsELbl0OAvbjXGbC8NDFx2Xm5O4RBCpswdqiTlHvAjdXXQOObhZ72OsT2tiTCvIAmwu29h69rr4KPzPEGSFKh/K6i1AcGY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752568675; c=relaxed/simple;
+	bh=l/1pUwsq0id0aQlY+M5UMNn6AA9jbnztKd8CnXUeYeY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hB3Rnp5Djjtx6SPubc7H1uENibGMN8HzD02L0g9Vd+fmvs7Y8PhfIQbGiJDPZD2epVJx097JpPjPgJ5VnIceyD9UsrcfiImgZW3PcKBpyQxvAxzLZSGPIy8lKKlBeD2dm4GoNThUWLaDC3JKywlLJcidc2bRcxWqYqtw2X1ta+o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=boE4U36h; arc=fail smtp.client-ip=40.107.244.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dxQ9yZGqNZl5ccg2HyDsU/bb7FAuwCaqgaMUkCrYZmkOEYrPcZE5anAwb2HrdAd93b0XGeG7oFL9COpDi9zbeX8+8E3IDYz2FrcxMd0HM5q1vUVsR6opvXM8Jsjpvy6NqdNz1GlhbxqE89LvbFXap3oMW7QVsejzMgpZIEBehD0xRhl/UHdLW5aDyrPIENoJ98OBH+bZLLL8yo4MBycvo/VWdqBK0MvdWpL6DRJwjxU4TKJa5p9iE0CLm2X4+0IbWzNmTTPvPggf/AXVVv0E8zkewZzbXq3922C8Mqri15HdnFmRzFGLvSJM+dOOTr6n0jNIQ5N029OKF0B6f7wT+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7kzEVSnb2IQbk2xNfjqnccLS3I5ZdntZkU8Qz+21IKg=;
+ b=qUmt+h2WX7LrQUQf4qZtvW0UTVpnpNN4fzGK+Wji8FsLaA1khzcbAY47zgnsYf1E6LZX4sTo1gcaXW/BzUhn5nS5F0fmKRR94sdQVdPFYYFrAdLBkr3ohdVXgQOaItpcXFHRIWxYR+FA40aekWoKK6ShPtToRFsinCcFzodCIMSpVDiEyon7vmRrxFjHMxNEoM3IAMgnWytTIUzZK5DzV44fnIEDs4K1425jtyn3/CLsz1lcYUHCMGPts2jlIQlClZoVLBMVSHXop1twDnjnT2U+K2cgUftOTpgKFj0c/gGYjOkAc2oLAdqKgirMIGsXf8hrtcq0rlT5mpCB4z5kgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7kzEVSnb2IQbk2xNfjqnccLS3I5ZdntZkU8Qz+21IKg=;
+ b=boE4U36hHY15r0h7gRVye2iLWUvRf67FV4xdZDtJomsSSbTBAHMiKhMysA8al4J1Csv6Nx6FTgmna60LYxr+DJ0C7lG6gxBelXZOxmxdXCAgwQ2d72yEB5ByxOmpTtB+20iR+RkKVfYwkrMDeJEf02uwtcL5uaZh8vc7fQR4yLM=
+Received: from BL1PR13CA0228.namprd13.prod.outlook.com (2603:10b6:208:2bf::23)
+ by PH7PR12MB7869.namprd12.prod.outlook.com (2603:10b6:510:27e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Tue, 15 Jul
+ 2025 08:37:49 +0000
+Received: from MN1PEPF0000F0E1.namprd04.prod.outlook.com
+ (2603:10b6:208:2bf:cafe::7c) by BL1PR13CA0228.outlook.office365.com
+ (2603:10b6:208:2bf::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Tue,
+ 15 Jul 2025 08:37:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MN1PEPF0000F0E1.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 08:37:48 +0000
+Received: from BLR-L1-NDADHANI (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
+ 2025 03:37:45 -0500
+From: Nikunj A Dadhania <nikunj@amd.com>
+To: Sean Christopherson <seanjc@google.com>, Borislav Petkov <bp@alien8.de>
+CC: Tom Lendacky <thomas.lendacky@amd.com>, <linux-kernel@vger.kernel.org>,
+	<x86@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<dave.hansen@linux.intel.com>, <santosh.shukla@amd.com>
+Subject: Re: [PATCH] x86/sev: Improve handling of writes to intercepted
+ GUEST_TSC_FREQ
+In-Reply-To: <aHUx9ILdUZJHefjZ@google.com>
+References: <20250711041200.87892-1-nikunj@amd.com>
+ <20250714104424.GGaHTfiFxI_pf-vhRn@fat_crate.local>
+ <aHUTMiEJ-nd76lxM@google.com>
+ <76e0988d-279f-be58-51d9-621806dbb453@amd.com>
+ <aHUfecs9UJPx0v_C@google.com>
+ <20250714161639.GLaHUtZwleS3COfxxX@fat_crate.local>
+ <aHUx9ILdUZJHefjZ@google.com>
+Date: Tue, 15 Jul 2025 08:37:38 +0000
+Message-ID: <85jz49x31p.fsf@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2 02/18] x86,bpf: add bpf_global_caller for
- global trampoline
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Menglong Dong <menglong8.dong@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>,
- bpf <bpf@vger.kernel.org>, Menglong Dong <dongml2@chinatelecom.cn>,
- "H. Peter Anvin" <hpa@zytor.com>, Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- LKML <linux-kernel@vger.kernel.org>,
- Network Development <netdev@vger.kernel.org>
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <20250703121521.1874196-3-dongml2@chinatelecom.cn>
- <CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Menglong Dong <menglong.dong@linux.dev>
-In-Reply-To: <CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E1:EE_|PH7PR12MB7869:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ee701ee-216b-494c-582f-08ddc37ae14e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GYXVa66jn9u0+vA9M3qsPOBhSvGJ96L5+pVqWJrQxf/LGnNVi5RGwRFeAaIP?=
+ =?us-ascii?Q?6j16MeI61QLdT2zGUlUs7xceycbFj74DQ/PMKIDq/QmyS+YNWC93DUxLGFIn?=
+ =?us-ascii?Q?OKDo8Hm2BNw2xcS0GhoGfa0iVDjr5UFhYONnLtnklqvlqtX99xJR6mS3YxCr?=
+ =?us-ascii?Q?StHK72cIO6plezIBk6PHdKs3FKYaf127wdGFWrUxkQHoN+qx5KUUcTdVTSCH?=
+ =?us-ascii?Q?WDFU1PIc6pk3NU56eZpNxbCnd7qsEfOn3HeFvUp44CTiMvlLgnYqoyQgre6s?=
+ =?us-ascii?Q?yOqDPmbLV9ucYZf0kzu3m91E2356+THb81Iu3GnXMLVkiXwomu9e23lX0D/T?=
+ =?us-ascii?Q?+ue13JM93I4scaVeu0cdNMCYu9ErP16Jt15tGihgkmP/EEwGcQBRSS2nREBP?=
+ =?us-ascii?Q?R56ZZnXeNhKXjDQ+RwEneMIbRxOqUFRkgK/aJZekKSuydE0Tu69glOTZ6bzt?=
+ =?us-ascii?Q?N68BmED5RUgx5RL1iXNCukbWnCn/yf5LQGeY1BphQHVQ9F7RP4DeCqwB9qTr?=
+ =?us-ascii?Q?YSi9kEyXXVY/HJo/VJaDW0XTG0NZIb2YOKvzCL6JTFQE4T+knTs7amJyR1IB?=
+ =?us-ascii?Q?kbIFdg35e5cnOGopBVPLdIRMTa79HxRHamSqjbXL32s0goYpWKbVs6kQIe72?=
+ =?us-ascii?Q?skQE6E9DCo90f1Xy1cEu+NbiEXAzFz8ixBmjRnfGVxrhJXP0qRhWy/w7gfcD?=
+ =?us-ascii?Q?bPH3VVRMCl0X4L3dk+X7lJvauagxT+B2z1eAUWdsT/KddOY24pgOnWzdnwKh?=
+ =?us-ascii?Q?UKQmCWqE49C3C4z6r5Nw1ckmiWbO46V8QbXsDnfMkeo4gemqzVdn4MZ8s9R+?=
+ =?us-ascii?Q?K/ysVCLDahvtNqGf1zYiCnvTiVvnHby8lohH0nzJ8AMQMNt/k7EK4vJoAmKc?=
+ =?us-ascii?Q?uAAQwALiwaQae0jCIciZ1kXjBUXioz/c/LJ86O+e9r36t4Gjh8ELR8xIKw+b?=
+ =?us-ascii?Q?5IeXDQGaizsDHzJkNdepMBhvJhG6p81wS3lmrxnMwFYxcFG9tzQ3DL6bwqv2?=
+ =?us-ascii?Q?pMJ5XeR8cuWoRbu4zv+4u39NwVHitinpCIa16Q8UmTbOzmfYtkBcSjVfxVYo?=
+ =?us-ascii?Q?f7olVvl2yQ3JjTiiF5pKHo/8xc7hLYRuD1peX8OxamNvWCm1kPHZfZ/cGSlk?=
+ =?us-ascii?Q?JFJRTlCxczwI28yknNDLCHaYFIugRiz1zS9wds0Okc0EJtv+9yCLUu8D4P2H?=
+ =?us-ascii?Q?aTsO0a6868g8okLx9Wz/ba84hQJB8eiAS7ISbim10JXE+GUa1G9gqrlATqvE?=
+ =?us-ascii?Q?hGHCLK0FcZMSJr1TmRKsUzSN8Zh+nSKuS2zyFkQoRrLLLQAmAfBjOp3rIGEZ?=
+ =?us-ascii?Q?6m1RIXG8UDtJeiUJjVkGnluPtCLTy4D/oxJGwI8gl0g7bQCkJX87ebSBAOZV?=
+ =?us-ascii?Q?31KY4ziISkRixWYOOp6Lh6SsVp/jlwGf1RutjL6nCjcn1oPViDMe9W4q6DUR?=
+ =?us-ascii?Q?S/J5oNxqqCmK+yLeQdzFL4Kv3/yboJ68PmKVcleSbUlpM7hL2vC8Q6puB49u?=
+ =?us-ascii?Q?C9HaYVAMN83AOi79kdD7FxJDppZ06VYWqrNh?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 08:37:48.9461
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ee701ee-216b-494c-582f-08ddc37ae14e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0E1.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7869
 
+Sean Christopherson <seanjc@google.com> writes:
 
-On 7/15/25 10:25, Alexei Starovoitov wrote:
-> On Thu, Jul 3, 2025 at 5:17 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
->> +static __always_inline void
->> +do_origin_call(unsigned long *args, unsigned long *ip, int nr_args)
->> +{
->> +       /* Following code will be optimized by the compiler, as nr_args
->> +        * is a const, and there will be no condition here.
->> +        */
->> +       if (nr_args == 0) {
->> +               asm volatile(
->> +                       RESTORE_ORIGIN_0 CALL_NOSPEC "\n"
->> +                       "movq %%rax, %0\n"
->> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
->> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
->> +                       :
->> +               );
->> +       } else if (nr_args == 1) {
->> +               asm volatile(
->> +                       RESTORE_ORIGIN_1 CALL_NOSPEC "\n"
->> +                       "movq %%rax, %0\n"
->> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
->> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
->> +                       : "rdi"
->> +               );
->> +       } else if (nr_args == 2) {
->> +               asm volatile(
->> +                       RESTORE_ORIGIN_2 CALL_NOSPEC "\n"
->> +                       "movq %%rax, %0\n"
->> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
->> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
->> +                       : "rdi", "rsi"
->> +               );
->> +       } else if (nr_args == 3) {
->> +               asm volatile(
->> +                       RESTORE_ORIGIN_3 CALL_NOSPEC "\n"
->> +                       "movq %%rax, %0\n"
->> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
->> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
->> +                       : "rdi", "rsi", "rdx"
->> +               );
->> +       } else if (nr_args == 4) {
->> +               asm volatile(
->> +                       RESTORE_ORIGIN_4 CALL_NOSPEC "\n"
->> +                       "movq %%rax, %0\n"
->> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
->> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
->> +                       : "rdi", "rsi", "rdx", "rcx"
->> +               );
->> +       } else if (nr_args == 5) {
->> +               asm volatile(
->> +                       RESTORE_ORIGIN_5 CALL_NOSPEC "\n"
->> +                       "movq %%rax, %0\n"
->> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
->> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
->> +                       : "rdi", "rsi", "rdx", "rcx", "r8"
->> +               );
->> +       } else if (nr_args == 6) {
->> +               asm volatile(
->> +                       RESTORE_ORIGIN_6 CALL_NOSPEC "\n"
->> +                       "movq %%rax, %0\n"
->> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
->> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
->> +                       : "rdi", "rsi", "rdx", "rcx", "r8", "r9"
->> +               );
->> +       }
->> +}
-> What is the performance difference between 0-6 variants?
-> I would think save/restore of regs shouldn't be that expensive.
-> bpf trampoline saves only what's necessary because it can do
-> this micro optimization, but for this one, I think, doing
-> _one_ global trampoline that covers all cases will simplify the code
-> a lot, but please benchmark the difference to understand
-> the trade-off.
+> On Mon, Jul 14, 2025, Borislav Petkov wrote:
+>> On Mon, Jul 14, 2025 at 08:17:13AM -0700, Sean Christopherson wrote:
+>> 
+>> The original text in the patch:
+>> 
+>> "Only terminate the guest when reading from intercepted GUEST_TSC_FREQ MSR
+>> with Secure TSC enabled, as this indicates an unexpected hypervisor
+>> configuration."
+>> 
+>> doesn't make too much sense to me.
+>> 
+>> Maybe you need to explain things in detail as virt and I don't understand each
+>> other too much yet.
 
-According to my benchmark, it has ~5% overhead to save/restore
-*5* variants when compared with *0* variant. The save/restore of regs
-is fast, but it still need 12 insn, which can produce ~6% overhead.
+How about the below changelog:
 
-I think the performance is more import and we should keep this logic.
-Should we? If you think the do_origin_call() is not simple enough, we
-can recover all the 6 regs from the stack directly for the origin call, 
-which won't
-introduce too much overhead, and keep the save/restore logic.
+  Currently, when a Secure TSC enabled SNP guest attempts to write to
+  the intercepted GUEST_TSC_FREQ MSR (a read-only MSR), the guest kernel
+  #VC handler terminates the SNP guest by returning ES_VMM_ERROR. This
+  response incorrectly implies a VMM configuration error, when in fact
+  it's a valid VMM configuration to intercept writes to read-only MSRs,
+  unless explicitly documented.
 
-What do you think?
+  Modify the intercepted GUEST_TSC_FREQ MSR #VC handler to ignore writes
+  instead of terminating the guest. Since GUEST_TSC_FREQ is a guest-only
+  MSR, ignoring writes directly (rather than forwarding to the VMM and
+  handling the resulting #GP) eliminates a round trip to the VMM. Add a
+  WARN_ONCE to log the incident, as well-behaved guest kernels should
+  never attempt to write to this read-only MSR.
 
+  However, continue to terminate the guest(via ES_VMM_ERROR) when
+  reading from intercepted GUEST_TSC_FREQ MSR with Secure TSC enabled,
+  as intercepted reads indicate an improper VMM configuration for Secure
+  TSC enabled SNP guests.
 
->
-> The major simplification will be due to skipping nr_args.
-> There won't be a need to do btf model and count the args.
-> Just do one trampoline for them all.
->
-> Also funcs with 7+ arguments need to be thought through
-> from the start.
-
-
-In the current version, the attachment will be rejected if any functions 
-have
-7+ arguments.
-
-
-> I think it's ok trade-off if we allow global trampoline
-> to be safe to attach to a function with 7+ args (and
-> it will not mess with the stack), but bpf prog can only
-> access up to 6 args. The kfuncs to access arg 7 might be
-> more complex and slower. It's ok trade off.
-
-
-It's OK for fentry-multi, but we can't allow fexit-multi and 
-modify_return-multi
-to be attached to the function with 7+ args, as we need to do the origin
-call, and we can't recover the arguments in the stack for the origin 
-call for now.
-
-So we can allow the functions with 7+ args to be attached as long as the 
-accessed
-arguments are all in regs for fentry-multi. And I think we need one more 
-patch to
-do the "all accessed arguments are in regs" checking, so maybe we can 
-put it in
-the next series? As current series is a little complex :/
-
-Anyway, I'll have a try to see if we can add this part in this series :)
-
-
->
->> +
->> +static __always_inline notrace void
->> +run_tramp_prog(struct kfunc_md_tramp_prog *tramp_prog,
->> +              struct bpf_tramp_run_ctx *run_ctx, unsigned long *args)
->> +{
->> +       struct bpf_prog *prog;
->> +       u64 start_time;
->> +
->> +       while (tramp_prog) {
->> +               prog = tramp_prog->prog;
->> +               run_ctx->bpf_cookie = tramp_prog->cookie;
->> +               start_time = bpf_gtramp_enter(prog, run_ctx);
->> +
->> +               if (likely(start_time)) {
->> +                       asm volatile(
->> +                               CALL_NOSPEC "\n"
->> +                               : : [thunk_target]"r"(prog->bpf_func), [args]"D"(args)
->> +                       );
-> Why this cannot be "call *(prog->bpf_func)" ?
-
-Do you mean "prog->bpf_func(args, NULL);"? In my previous testing, this 
-cause
-bad performance, and I see others do the indirect call in this way. And 
-I just do
-the benchmark again, it seems the performance is not affected in this 
-way anymore.
-So I think I can replace it with "prog->bpf_func(args, NULL);" in the 
-next version.
-
->
->> +               }
->> +
->> +               bpf_gtramp_exit(prog, start_time, run_ctx);
->> +               tramp_prog = tramp_prog->next;
->> +       }
->> +}
->> +
->> +static __always_inline notrace int
->> +bpf_global_caller_run(unsigned long *args, unsigned long *ip, int nr_args)
-> Pls share top 10 from "perf report" while running the bench.
-> I'm curious about what's hot.
-> Last time I benchmarked fentry/fexit migrate_disable/enable were
-> one the hottest functions. I suspect it's the case here as well.
-
-
-You are right, the migrate_disable/enable are the hottest functions in
-both bpf trampoline and global trampoline. Following is the perf top
-for fentry-multi:
-36.36% bpf_prog_2dcccf652aac1793_bench_trigger_fentry_multi [k] 
-bpf_prog_2dcccf652aac1793_bench_trigger_fentry_multi 20.54% [kernel] [k] 
-migrate_enable 19.35% [kernel] [k] bpf_global_caller_5_run 6.52% 
-[kernel] [k] bpf_global_caller_5 3.58% libc.so.6 [.] syscall 2.88% 
-[kernel] [k] entry_SYSCALL_64 1.50% [kernel] [k] memchr_inv 1.39% 
-[kernel] [k] fput 1.04% [kernel] [k] migrate_disable 0.91% [kernel] [k] 
-_copy_to_user
-
-And I also did the testing for fentry:
-
-54.63% bpf_prog_2dcccf652aac1793_bench_trigger_fentry [k] 
-bpf_prog_2dcccf652aac1793_bench_trigger_fentry
-10.43% [kernel] [k] migrate_enable
-10.07% bpf_trampoline_6442517037 [k] bpf_trampoline_6442517037
-8.06% [kernel] [k] __bpf_prog_exit_recur 4.11% libc.so.6 [.] syscall 
-2.15% [kernel] [k] entry_SYSCALL_64 1.48% [kernel] [k] memchr_inv 1.32% 
-[kernel] [k] fput 1.16% [kernel] [k] _copy_to_user 0.73% [kernel] [k] 
-bpf_prog_test_run_raw_tp
-The migrate_enable/disable are used to do the recursive checking,
-and I even wanted to perform recursive checks in the same way as
-ftrace to eliminate this overhead :/
-
-
->
+Regards,
+Nikunj
 
