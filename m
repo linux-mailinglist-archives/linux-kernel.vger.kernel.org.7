@@ -1,119 +1,96 @@
-Return-Path: <linux-kernel+bounces-731188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DEBB05096
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:07:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBDEB0509C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE6227AC85E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C504A4A7AC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249382D3238;
-	Tue, 15 Jul 2025 05:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80F32D2385;
+	Tue, 15 Jul 2025 05:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="VwPXuDtp"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gak5QrGR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB5A258CF2;
-	Tue, 15 Jul 2025 05:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109938248C;
+	Tue, 15 Jul 2025 05:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752556005; cv=none; b=Q4Onn8a4KtkTQ7DJTClBz12pkCtQM4DDTRHOvU07AjeDj1RVF9i9RBvNUB2tWvq5OhhSo43kSpHNskm99aEi1H9c1ERQwoYXcQyXcEmF4kBUnB/aKvMwphMheASZStToO5Nt/sRWFmVC38anrwqOZ7NRKuGkQa2fJwZXDjJ/aNc=
+	t=1752556169; cv=none; b=cc/1FR4kX62rjzCvdBBG9aDiUIQz5nqolZV1gUWDhf8hiZxh/CAC7r9lGsXb9D9U8IbxbOQ9KZIq965oQRm1p6W6B0Vfo1PaaDbtqfhm9TsSze1Gdrb2uEfMXedxKODUUTRxl3TaZonjpioCGpGNoQ3jJA/d9QrKDZP+cLznnow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752556005; c=relaxed/simple;
-	bh=soufQIX6TYMmC/348jS3xW4pvirGNiNwAJl7GhmX8LY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n3SR/hvHN5Tq20cAXokwtLAY2HOrMIs8P8YrqAuv3LKK/hrw+dfMsuvNPSznCpWJ3LzgoIP/7McmVsgXTXPMMLxx9XFTlKD2/fPuYSoHLO0Ni2VbQjbkMF5T5gdHUZRcxNupgCEL3Vhdt2F7wsohixllJ5f6Pg5/LTXiHzr06qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=VwPXuDtp; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=default; t=1752555996;
-	bh=soufQIX6TYMmC/348jS3xW4pvirGNiNwAJl7GhmX8LY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Message-ID:Date:From:
-	 Reply-To:Subject:To:Cc:In-Reply-To:References:Resent-Date:
-	 Resent-From:Resent-To:Resent-Cc:User-Agent:Content-Type:
-	 Content-Transfer-Encoding;
-	b=VwPXuDtp0zGuGgujQQNYxkzW6Z55i4yLmNobzT1hpwnIJLeU99Vm+JJOzmXBV6clL
-	 gTDlykdvM0dahSdZol+9NMFLK4oznNOEk/YKWyBJ46v0xJQJM5y7785YYqajOPquIu
-	 FMX+WNod3MSJGwfTtZeLaqtWmN74vo+zpOKUdkUSjik5K8VyI3QbOJf2SU72N/2caE
-	 30Oj9MV13eECqJVATyXnk1K0fDnvesHFP4b3rhJQugVqAPLyxTvgzPBMmxfZ6PSBZG
-	 SP/79UhSKkcDYJwC+WSJIKVVD/VRg0HgPV+VSkAJ8FALlVyffQGQKMJ2W3V/JwBN60
-	 A3T73aUQZqA8w==
-Received: from server-vie001.gnuweeb.org (unknown [192.168.57.1])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 6D31D2109A3B;
-	Tue, 15 Jul 2025 05:06:36 +0000 (UTC)
-From: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	io-uring Mailing List <io-uring@vger.kernel.org>,
-	GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
-	Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: [PATCH liburing 3/3] examples: Add `memfd_create()` helper
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Tue, 15 Jul 2025 12:06:29 +0700
-Message-Id: <20250715050629.1513826-4-alviro.iskandar@gnuweeb.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250715050629.1513826-1-alviro.iskandar@gnuweeb.org>
-References: <20250715050629.1513826-1-alviro.iskandar@gnuweeb.org>
+	s=arc-20240116; t=1752556169; c=relaxed/simple;
+	bh=PhqLb+Lr7k9vePdjKOgjAtahAs1PSS1SUYnE2QCrBmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n0cWM0sHDlMBQuMi6zXnB8epOXSgIeArpLMFlqVvbfwWGA/8CcsblV27G80Io6b27czswrq746Gm+QQtP6+2EK4nI5bsAyRt9DqrSs43L3jFTPBRZ6QpKpAKWpx8B3CW2d2lTkcjzTU/AyJKoIBpD9+DggMLgwhtF3i+w5utwR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gak5QrGR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E89EC4CEF4;
+	Tue, 15 Jul 2025 05:09:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752556168;
+	bh=PhqLb+Lr7k9vePdjKOgjAtahAs1PSS1SUYnE2QCrBmI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Gak5QrGRKAbZdnEGxVnROtmYFoHIfjJnZH3vLxFFhrhLt0+LR7VCCyRxR4UDIhrD+
+	 qNmla1c7UPdSDcomGMdKr5TBpGVLmRF6Oy++wdu8492aLQI7tLSb8meVBJ+mnv529f
+	 QHcQefW7E57nhkhus0evzobvNG5I7sOUXe7Of3XvCuudm5W9kujc/J/+Yljufp/k2z
+	 YaXnOP/AOT41pwez/xn5MhB+Iudu9lMG2KcgLpDfWPmT6j4tK6N0WnpZtKv1b6zw34
+	 QmSD+ooB6LYDkH08iupE+krnrckdNacEaZvrmZ6XWCrhN8mid3nXY1HJ7vPhUs184L
+	 THuivP6Jta6Ww==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-556373661aaso4209892e87.2;
+        Mon, 14 Jul 2025 22:09:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWvRybGJ7yGkl3GGXUAsXNxMnmk+JbC8u73vrsjn2MyN9QTv6oH46ivEW491Z5TKtyaMzQVvk7kAAk=@vger.kernel.org, AJvYcCXrFPUIsH3kRm4P2hZqRlia3NVvhav5yV4hhIdx9UXtUKdRAsAnnKFoKS0AWW6XT9UXzkmRElbihqbqocRH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/3oWcGsZiqN1mj70pjJR/CchK2rQvK4Eks66hATtv6BXLqVuU
+	/XOfnXWqUn8olPyR2eIPNT30Yqd0QojWBoEyYiEiqzTI+Stu/WmpLyUh5/jRtQRqlrnl75EwVGe
+	mj0b73Y8jJlmUv09RTSkFK9drZLlUSxI=
+X-Google-Smtp-Source: AGHT+IHKAKIwXVVneFXdNMccii1Yp5WMopm97MAz+Ip2SVK0JpVcxWrXLh/w4g1H+L38OjRvw+Z6CQnKOdaQV49digU=
+X-Received: by 2002:a05:6512:686:b0:553:cf7d:7283 with SMTP id
+ 2adb3069b0e04-55a1ddd12dfmr341256e87.33.1752556166902; Mon, 14 Jul 2025
+ 22:09:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250709080840.2233208-26-ardb+git@google.com>
+ <20250709080840.2233208-34-ardb+git@google.com> <d872728a-e223-8bcd-7652-7dbe38d93802@amd.com>
+In-Reply-To: <d872728a-e223-8bcd-7652-7dbe38d93802@amd.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 15 Jul 2025 15:09:15 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXFPQyAwSfyXjhrpvThsVtMT31AYG5JdypsCEBJee=Dgsg@mail.gmail.com>
+X-Gm-Features: Ac12FXyF030hrouiF75XUCRlBlgXRjHJcUIL6sIfkWRHCByPdq1SBy-06d42Rg4
+Message-ID: <CAMj1kXFPQyAwSfyXjhrpvThsVtMT31AYG5JdypsCEBJee=Dgsg@mail.gmail.com>
+Subject: Re: [PATCH v4 08/24] x86/sev: Share implementation of MSR-based page
+ state change
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org, x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
+	Ingo Molnar <mingo@kernel.org>, Dionna Amalie Glaze <dionnaglaze@google.com>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Add `memfd_create()` helper to handle missing defintion on an environment
-where `CONFIG_HAVE_MEMFD_CREATE` is not defined.
+On Thu, 10 Jul 2025 at 04:24, Tom Lendacky <thomas.lendacky@amd.com> wrote:
+>
+> On 7/9/25 03:08, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > Both the decompressor and the SEV startup code implement the exact same
+> > sequence for invoking the MSR based communication protocol to effectuate
+> > a page state change.
+> >
+> > Before tweaking the internal APIs used in both versions, merge them and
+> > share them so those tweaks are only needed in a single place.
+>
+> I think you can keep the save and restore of the MSR in the the combined
+> code so that you don't need the previous patch and that will keep
+> everything safe. We should be doing a minimal amount of MSR protocol
+> page state changes, so it really shouldn't have much effect.
+>
 
-Co-authored-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
----
- examples/helpers.c | 8 ++++++++
- examples/helpers.h | 5 +++++
- 2 files changed, 13 insertions(+)
-
-diff --git a/examples/helpers.c b/examples/helpers.c
-index 483ddee..8c112f1 100644
---- a/examples/helpers.c
-+++ b/examples/helpers.c
-@@ -13,6 +13,14 @@
- 
- #include "helpers.h"
- 
-+#ifndef CONFIG_HAVE_MEMFD_CREATE
-+#include <sys/syscall.h>
-+int memfd_create(const char *name, unsigned int flags)
-+{
-+	return (int)syscall(SYS_memfd_create, name, flags);
-+}
-+#endif
-+
- int setup_listening_socket(int port, int ipv6)
- {
- 	struct sockaddr_in srv_addr = { };
-diff --git a/examples/helpers.h b/examples/helpers.h
-index 44543e1..0b6f15f 100644
---- a/examples/helpers.h
-+++ b/examples/helpers.h
-@@ -17,4 +17,9 @@ void *t_aligned_alloc(size_t alignment, size_t size);
- 
- void t_error(int status, int errnum, const char *format, ...);
- 
-+#ifndef CONFIG_HAVE_MEMFD_CREATE
-+#include <linux/memfd.h>
-+#endif
-+int memfd_create(const char *name, unsigned int flags);
-+
- #endif
--- 
-Alviro Iskandar Setiawan
-
+OK, so I'll drop the previous patch, and rework this one accordingly.
 
