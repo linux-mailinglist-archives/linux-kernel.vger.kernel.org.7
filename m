@@ -1,111 +1,170 @@
-Return-Path: <linux-kernel+bounces-730945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02F5B04CC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:23:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C17B04CCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED8D13AA9F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:23:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62A4317D5B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EA21552FA;
-	Tue, 15 Jul 2025 00:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LywTBn4k"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D725157493;
+	Tue, 15 Jul 2025 00:28:55 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9AF35972
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1737A4400;
+	Tue, 15 Jul 2025 00:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752539018; cv=none; b=Tk4BJ+RJlmrPuPHg/nKjHzscIZXUoTKjGdUbITBS7r46QmPEhSjd45NBDXxyq4el61opWZ8gLzLFuho1jez0X3xzw2akiWgPLUezt22L1JHOTC+kkFvlxPXMmViIOcNSPF7d3GpcECKyDTjXvz6ZMLAYSNuCAwIzkCy4O9NRc0E=
+	t=1752539335; cv=none; b=JMUzPw3PSgjL96bhXZFh5W5vu+IXjV4W7wWgB1x3cDBH7zFpzbXItqeeumkE7sfFrwjWALjfF9jQsTzLCiH3kqG7FporI65nFu6v4LR3gdVcRBAmH3aFi8QDz3JGkHrqK5jn5UD6ZgIFsiit7VZpsrtZBGQVrq3MfBI08YvaS3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752539018; c=relaxed/simple;
-	bh=FoFxgarM91o7PNWeWxxkOFiYYgc9SjBMk3YHyF1te9s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CsUmzTe0PbuJyyo6tUGstq7IYw3HFrYr6TvqSDdX44f/TYsr/IJsecPh/vP60ty/VX2s5hdIN9W4uxDD4Mf4CNSBlJbH1+PG6O9ndYl7sj/Ax3yivkq7ZNrEmK0OlgkT85PK/4tNGBbdPsklOjepjyrIzgZzjX1ubNg2DK8D+7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LywTBn4k; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b115fb801bcso5197054a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 17:23:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752539016; x=1753143816; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t1Sx8v8BkbI+tNWtOcPfF0dRwgRjnfx2k5f4KxPLm+o=;
-        b=LywTBn4ksAzDrvRsEVrxtmb4xxA9KZf9RqFkBcO6NMTVRz3ruunFeRFDJNybUWrw0R
-         ejFu5/lfoJkSqwoIxXtC+4zZD4dmUlqEKXwUDkGikDNiZCaLrERI2FbFrw9Y5bg+ytE2
-         Q6zZO7CdGhr/L6FLartuFDhEnCpW97B+5izppYivysrn16tjl9zAGK8367Ciw67TNBU3
-         KXgmbPlofs3KYMefCyFdIIHQDCBTtA28k8mng+zJYjtFz0qrvbxU29wcr4qTb3CiygHv
-         eS5GTgjQnmnQOBLuy0ThxHipNfQFb+Pl050jSSN3xtXr6z/F+AJgKRoW6CZq2mfk1WsN
-         hD0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752539016; x=1753143816;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t1Sx8v8BkbI+tNWtOcPfF0dRwgRjnfx2k5f4KxPLm+o=;
-        b=pIUG26dY888iKS27QUykqPMFAcDYCipoUWLrQIevWQxMNYLaO5VnCnkQ7Zh2zeA1He
-         j7vq77z8x9qVQVlpSzzGvQqzyY8WQNopDMKhr4GDwgGoXnfUpL59Zjunm/D0+ugrhXyr
-         XfHHbUJCzt9bAUoTvOG0Knmw0uojguHxhXWT9aRiJzHVg46ZeaTwN6mDoNQ6Txo/uwVO
-         FveJEyaBpDtGmzx5PMI2ckKZndb958yaNyDVpU3l64bjyGECSnZfh2Ycn9MfPDbn/OUW
-         LkeKgZ+J2LtECQzqHurPaTpSRIm1A/u7J/PkoE5tdnQaBVbyVX6oWBac+K0PxkYcnEx3
-         K7uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUF9C6BrmiHqVaV0jVoUCSk2y/ltte0GZ6+VadncQ4W6QCzd4a6ejbdQGDtcFg71YIpWKlrCR3nIDIYMyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9aJmA+sgqoW2xwVmXYUwYCZgeRQ+Aqi8ia0uM3rTkc7VIeJH4
-	C8EDdb6YkeVFwuKET9D0z8lbZVl/DEhdEo9tbQmoNwB5l3OdwZH5vzHxBgLVutPvJvZFYtgrD8z
-	JTw8bmw==
-X-Google-Smtp-Source: AGHT+IEUSBnPd7eOM7GhtRPOwcoXc0WmiyIR3AaHeXO4VnbeKOpBv43O19pa8I27YDeCE1pK+yt2uXecf74=
-X-Received: from pjbcz11.prod.google.com ([2002:a17:90a:d44b:b0:2fc:2c9c:880])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5645:b0:311:f05b:86a5
- with SMTP id 98e67ed59e1d1-31c4c973dddmr24995827a91.0.1752539016273; Mon, 14
- Jul 2025 17:23:36 -0700 (PDT)
-Date: Mon, 14 Jul 2025 17:23:28 -0700
-In-Reply-To: <cover.1752444335.git.kai.huang@intel.com>
+	s=arc-20240116; t=1752539335; c=relaxed/simple;
+	bh=6Pn+jrVzcTZPHBI5NWZuSnQwGaQzOX1qUC31sBcjPTg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bqL0Aqw5s/8uC7Wqc3sY+INYVDmCz8t1l+zuu20Hw2kmg2zMbPimMchjKLzcUBOPu32XFH58jVajwN5PkLX0GwnIco+q8gi89gXbiPZaQK3gj+FR1ICZ1/o5VjbZWThzLiHkYaqz1EWs23TL2FKAL5tvsLGeJ8OpemN3OV2EGBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bh0Lf3SMlz2CfdV;
+	Tue, 15 Jul 2025 08:24:42 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id CE9501A016C;
+	Tue, 15 Jul 2025 08:28:48 +0800 (CST)
+Received: from DESKTOP-F6Q6J7K.china.huawei.com (10.174.175.220) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Jul 2025 08:28:47 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
+	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
+	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+	<shijing34@huawei.com>, Fu Guiming <fuguiming@h-partners.com>, Meny Yossefi
+	<meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
+	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Vadim Fedorenko
+	<vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, Przemek
+ Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next v09 0/8] net: hinic3: Add a driver for Huawei 3rd gen  NIC - management interfaces
+Date: Tue, 15 Jul 2025 08:28:35 +0800
+Message-ID: <cover.1752489734.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.21.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1752444335.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <175253196286.1789819.9618704444430239046.b4-ty@google.com>
-Subject: Re: [PATCH v2 0/2] Improve KVM_SET_TSC_KHZ handling for CoCo VMs
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, Kai Huang <kai.huang@intel.com>
-Cc: kvm@vger.kernel.org, thomas.lendacky@amd.com, nikunj@amd.com, bp@alien8.de, 
-	isaku.yamahata@intel.com, xiaoyao.li@intel.com, rick.p.edgecombe@intel.com, 
-	chao.gao@intel.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
-On Mon, 14 Jul 2025 10:20:18 +1200, Kai Huang wrote:
-> This series follows Sean's suggestions [1][2] to:
-> 
->  - Reject vCPU scope KVM_SET_TSC_KHZ ioctl for TSC protected vCPU
->  - Reject VM scope KVM_SET_TSC_KHZ ioctl when vCPUs have been created
-> 
-> .. in the discussion of SEV-SNP Secure TSC support series.
-> 
-> [...]
+This is the 2/3 patch of the patch-set described below.
 
-Applied patch 2 to kvm-x86 fixes, with a tweaked changelog to call out that
-TDX support hasn't yet been released, i.e. that there is no established ABI
-to break.
+The patch-set contains driver for Huawei's 3rd generation HiNIC
+Ethernet device that will be available in the future.
 
-Applied patch 1 to kvm-x86 misc, with tweaked documentation to not imply that
-userspace "must" invoke the ioctl.  I think this is the last patch I'll throw
-into misc for 6.17?  So in theory, if it breaks userspace, I can simply
-truncate it from the pull request.
+This is an SRIOV device, designed for data centers.
+Initially, the driver only supports VFs.
 
-[1/2] KVM: x86: Reject KVM_SET_TSC_KHZ VM ioctl when vCPUs have been created
-      https://github.com/kvm-x86/linux/commit/dcbe5a466c12
-[2/2] KVM: x86: Reject KVM_SET_TSC_KHZ vCPU ioctl for TSC protected guest
-      https://github.com/kvm-x86/linux/commit/e51cf184d90c
+Following the discussion over RFC01, the code will be submitted in
+separate smaller patches where until the last patch the driver is
+non-functional. The RFC02 submission contains overall view of the entire
+driver but every patch will be posted as a standalone submission.
 
---
-https://github.com/kvm-x86/linux/tree/next
+Changes:
+
+PATCH 02 V01: https://lore.kernel.org/netdev/cover.1749561390.git.root@localhost.localdomain
+
+PATCH 02 V02: https://lore.kernel.org/netdev/cover.1749718348.git.zhuyikai1@h-partners.com
+* Fix build allmodconfig warning (patchwork)
+* Update cover-letter changes information.
+
+PATCH 02 V03: https://lore.kernel.org/netdev/cover.1750054732.git.zhuyikai1@h-partners.com
+* Use refcount_*() instead of atomic_*() (Jakub Kicinski)
+* Consistency fixes : HIG->HIGH, BAR45->BAR4/5 , etc (ALOK TIWARI)
+* Code format fixes : use \n before return, remove extra spaces (ALOK TIWARI)
+* Remove hinic3_request_irq redundant error print (ALOK TIWARI)
+* Modify hinic3_wq_create error print (ALOK TIWARI)
+
+PATCH 02 V04: https://lore.kernel.org/netdev/cover.1750665915.git.zhuyikai1@h-partners.com
+* Break it up into smaller patches (Jakub Kicinski)
+
+PATCH 02 V05: https://lore.kernel.org/netdev/cover.1750821322.git.zhuyikai1@h-partners.com
+* Fix build clang warning (Jakub Kicinski)
+
+PATCH 02 V06: https://lore.kernel.org/netdev/cover.1750937080.git.zhuyikai1@h-partners.com
+* Use kmalloc instead of kzalloc for cmd_buf allocation (Vadim Fedorenko)
+* Use usleep_range() for avoid CPU busy waiting (Vadim Fedorenko)
+* Use kcalloc for intr_coalesce initialization (Vadim Fedorenko)
+* Code format fixes: use reverse x-mas tree (Vadim Fedorenko)
+* Simplify hinic3_mbox_pre_init logic (Vadim Fedorenko)
+
+PATCH 02 V07: https://lore.kernel.org/netdev/cover.1751597094.git.zhuyikai1@h-partners.com
+* Use threaded IRQ instead of tasklet (Paolo Abeni)
+* Use wmb instead of rmb in cmdq_sync_cmd_handler (Paolo Abeni)
+
+PATCH 02 V08: https://lore.kernel.org/netdev/cover.1752126177.git.zhuyikai1@h-partners.com
+* Remove msg_send_lock to avoid a double-locking schema (Vadim Fedorenko)
+* Use send_msg_id when assigning the value to msg_id (Vadim Fedorenko)
+
+PATCH 02 V09:
+* Use iowrite32be & ioread32be instead of writel & readl (Jakub Kicinski)
+* Use queue_work instead of queue_work_on(WORK_CPU_UNBOUND...) (Jakub Kicinski)
+* Modify aeqe & ceqe wmb comment (Jakub Kicinski)
+* Remove synchronize_irq before free_irq (Jakub Kicinski)
+
+Fan Gong (8):
+  hinic3: Async Event Queue interfaces
+  hinic3: Complete Event Queue interfaces
+  hinic3: Command Queue framework
+  hinic3: Command Queue interfaces
+  hinic3: TX & RX Queue coalesce interfaces
+  hinic3: Mailbox framework
+  hinic3: Mailbox management interfaces
+  hinic3: Interrupt request configuration
+
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   4 +-
+ .../net/ethernet/huawei/hinic3/hinic3_cmdq.c  | 914 ++++++++++++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_cmdq.h  | 156 +++
+ .../ethernet/huawei/hinic3/hinic3_common.c    |  31 +
+ .../ethernet/huawei/hinic3/hinic3_common.h    |  27 +
+ .../net/ethernet/huawei/hinic3/hinic3_csr.h   |  79 ++
+ .../net/ethernet/huawei/hinic3/hinic3_eqs.c   | 792 +++++++++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_eqs.h   | 129 +++
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    |  43 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   |  31 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  13 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   |  36 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  | 149 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  16 +
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   | 136 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  |  61 +-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.c  | 838 +++++++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.h  | 125 +++
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |  14 +-
+ .../huawei/hinic3/hinic3_queue_common.h       |   1 +
+ .../net/ethernet/huawei/hinic3/hinic3_wq.c    | 109 +++
+ .../net/ethernet/huawei/hinic3/hinic3_wq.h    |  11 +
+ 22 files changed, 3700 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_csr.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_eqs.h
+
+
+base-commit: 5e95c0a3a55aea490420bd6994805edb050cc86b
+-- 
+2.43.0
+
 
