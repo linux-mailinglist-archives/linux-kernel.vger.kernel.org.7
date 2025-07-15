@@ -1,108 +1,188 @@
-Return-Path: <linux-kernel+bounces-731277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2EBB05216
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:45:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810FCB05213
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEB24E2C48
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4CA11AA67B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDAF1E1A17;
-	Tue, 15 Jul 2025 06:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F56F26E17D;
+	Tue, 15 Jul 2025 06:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="LmxAEIap"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lFQf0uOE"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F03319ABC6
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994DD24678C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752561919; cv=none; b=Gb5FQkyW94yTCa+7tKKbm1m3O7USkNth++2HdQko2m94BXMZDS0GbLeoIIRdNQYF6WjEW6N8GIbjcSFve8p7tKSzV+wrkHKDJzS24GaIx4aX0yrfUkYgF58GKQqTffB7f7B2tMCgMZ5Go75qPsOLSSBqMWt51mlw+qfOMZT5Y3g=
+	t=1752561888; cv=none; b=YqUikAZo02Pv0VlqM5kwS7LbuZHqjtA79+yXdOHQFBeW+gqbr97jZfTSBVazByjAo5FXCiOoyJktt6P1uHlgsbYLDlxnkquatSFTAYITtYc1et54mQOWFi5apUxHWTjWjS6BwxvApvb7Yj52GOlXuUPGgpA75bSI7NuAoPmIBmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752561919; c=relaxed/simple;
-	bh=IEbgbGA4sOfzZc5NT4bgmXsRlsWq4nI6BWijQyrP8vU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kFpOtXMeHjdjyrYErq2M0Se9R4LNiNq4yk8rLxvKUUScBvk+kXqY35nZG647yv/rJzVhYSucWtyY0bkafWTxLewTZ5kG3A+S8BeMgGJXaBFAKxPnBzKNPuZq63Hm1HqibMj4tgqPj0zoG7Yc4EJDfMul8qrRauSXJ+2K55+Lfmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=LmxAEIap; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56F6ibV8807579
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Mon, 14 Jul 2025 23:44:41 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56F6ibV8807579
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752561882;
-	bh=agsy2BRFVzJLcy+SHG6uUVC0KzT0EstGzfXNVH6PpaY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LmxAEIap30yukfT/bo3MVXKMN3BK2VUv0MglyLgauZCTJNBNkiqnld+R+g+xkjyDe
-	 kgZDWXosba9TSZuo0uQVwlH+L7mrWiPzFhW2ndE82GVugrftNk7UD4gALAeCPD0mrQ
-	 jXjZkovwaqFJwL3PK3mss1o6USUqc3zY3HuW4+5pwo6Vlnu0/IbPGNKissUXqRXaGN
-	 NoWwQD5bQSKYSwVij3ZvRCFk65VoisV4Z9IVhklbuUDPoJ3/Ind2lnO7q9Ro0NQLDX
-	 En5nIvJ6NMs0C316NGKfW7LdPIfieWDYuL3YIr831iE2ukzfi2mDPHDaLLGz0N0+PA
-	 ZQ3AkStbnD17A==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        jmill@asu.edu, peterz@infradead.org, andrew.cooper3@citrix.com
-Subject: [PATCH v1 1/1] x86/fred: Remove ENDBR64 from FRED entry points
-Date: Mon, 14 Jul 2025 23:44:37 -0700
-Message-ID: <20250715064437.807569-1-xin@zytor.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752561888; c=relaxed/simple;
+	bh=R/9lqfE5mzB7t5nTZk7gl/4huV9onD2mkEXutUdkvJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PtJofT4VdqB/BCj/t7XE5tWcP4nsCB32h0KI68frM6PLwvnotfwztMNEx8xXCgCQl6d9Jc6MKuc4sb9E5UrPIcrGRQD0sr5CL7BMDTK8rmR2Dun75snQzM4oKGt6nkBGrs+oVLblK6JyxT1+6J/BEOgfV1B+7k5UO8Y1WACh/2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lFQf0uOE; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-456065d60a8so1234485e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:44:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752561885; x=1753166685; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ig/rHW7suI4HX7zb1V3+gnBiDUNJyG608kAWJVhPdJc=;
+        b=lFQf0uOE29EkDzRg4v1TuOjNxjXQM7FaAiFwUjl4kqRc6KCj5GcNRY8ZixlJQvwBQj
+         2woXfgML7NsaF2LeojmtBEyDWAIPVnQ9NUx5ORPfOBodPInCnRrm+khOvNikPV2JsAMY
+         lxxso1GzX6C3Aas+y2v1potII0B/PmCGwFkqF0HEg66Tw3QFJjL9sm4TMD05//En4S5h
+         A6osPHKZWcYDseR0yc9JaIfGbYaxIkNlejEqwlHBkdax+ZNMmyEFR1lguJ80aIjx7Coj
+         Ly2b0uZv/qXZR56S3Ud8yzZLAPOBjaMmOLjbrcwNz35UHTqHgX2/jAEy6qPu4CHuGy6g
+         LrbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752561885; x=1753166685;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ig/rHW7suI4HX7zb1V3+gnBiDUNJyG608kAWJVhPdJc=;
+        b=dn330DdyAvdqLkFVOR2CXEwAEDmLaI98jsk8GGxBpf5w7Y2Vb2i8qh7YYzSZEOkOAc
+         Y+IuceVbyBGu527LV5B4Ma93yYuXAhTPEEI2ePzp+c1iaATy/TVWju1yqoONUF/1Wxy8
+         GXK22H8eMQLG43QXzjlrR2jOR6n0UF3OggiImNida35r2DP0o7uv/65YLAMElpU3li6A
+         P13fJLwj18J7NBb92YFT2A6FVshXd3kw0i5iyq/sLBUglU+IawBk9QkVFQbSGS4U0pyY
+         mRjQQBY4Rd1QM2hQyrnSn/SpR3ZRzHI9bcEjF1FXM8RqfMUhwCXGBBud/EwT9Dg/08Hg
+         MZFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPgXRbF9QAgbdm3D8KJIBAZiuBFJCb50i9LERmdSFSJr667P1VlC3yqCk9NjWfE7zrbV4QjL+w8m6HvoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe1/Br9lewreSF8E6xuVVbJTagy3SDGN/mf3+pQxgxXlLNQCYf
+	sdqOSjYRPwkJX6v5AAfP3YXiHJykQ36p7P1I8VxcGyywCksUa/DsE53pFhsC43iC5P4g+R1AaNI
+	c3ara
+X-Gm-Gg: ASbGncso4HztgkJHKWp0f6+KE03Ei2Y4Al7R8qL7e2x2Pwmn5OmTPs68LioCijyQpsj
+	TlP0a1xGJwIwUvUxR85QqcbTE6LuZOfEYF14NUfbxthfZ8rL/CCWoYgBBc9YC70inmxQdG+IKxf
+	nS3SwEPrChx13iixNW7S5vXKqQC0yJzTMrLWNHTQyDInOXZDaZeQx5bLvyy7YkblSY9K5UyjHoc
+	dhWTc+TKgP86zDC/250fe4eSj8WuuA+/L0CD0jE/d5xXMlhj6x3kp0yHa0hYxjkWWfp/gSjMD1b
+	2G23SFAHh3ouNVYpb1n+/3BxZI5OQVZrE0XGBpVMjkizwRCaazi8XFRb2+qJ3Ey/KvI3tr2OOhT
+	/aFIIx5X3vzm1ugvTeYTTbUivHn84VXDBdApwOHUQsA==
+X-Google-Smtp-Source: AGHT+IE4JpMnkWKgqq2q8I05VmCT/NPVZVUKz5H2a4yK1ZgVEja7568Iz0K3v1/RVrSCTQYtYxMCUw==
+X-Received: by 2002:a05:600c:3512:b0:453:c39:d0b1 with SMTP id 5b1f17b1804b1-45629123a98mr1762745e9.2.1752561884848;
+        Mon, 14 Jul 2025 23:44:44 -0700 (PDT)
+Received: from [192.168.1.110] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc2464sm14599412f8f.38.2025.07.14.23.44.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Jul 2025 23:44:44 -0700 (PDT)
+Message-ID: <b83cc20b-44d2-4635-a540-7a9c0d36cdb5@linaro.org>
+Date: Tue, 15 Jul 2025 08:44:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: iris: MAINTAINERS: Document actual maintainership
+ by Bryan O'Donoghue
+To: Vikash Garodia <quic_vgarodia@quicinc.com>, bryan.odonoghue@linaro.org,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Hans Verkuil <hverkuil@xs4all.nl>
+References: <20250714151609.354267-2-krzysztof.kozlowski@linaro.org>
+ <8772c48f-348b-8a68-2099-562a29b9dd8d@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <8772c48f-348b-8a68-2099-562a29b9dd8d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The FRED specification v9.0 states that there is no need for FRED
-event handlers to begin with ENDBR64, because in the presence of
-supervisor indirect branch tracking, FRED event delivery does not
-enter the WAIT_FOR_ENDBRANCH state.
+On 15/07/2025 07:51, Vikash Garodia wrote:
+> 
+> On 7/14/2025 8:46 PM, Krzysztof Kozlowski wrote:
+>> Bryan O'Donoghue reviews and applies patches for both Iris and Venus
+>> Qualcomm SoC video codecs (visible in git log as his Signed-off-by and
+>> in pull requests like [1]), so he is de facto the maintainer responsible
+>> for the code.  Reflect this actual state my changing his entry from
+>> reviewer to maintainer and moving the entry to alphabetical position by
+>> first name.
+> 
+> NAK.
+> 
+> The roles and responsibilities are well agreed by media maintainer(Hans), with
+> Bryan part of that discussion, w.r.t code contributions to iris and sending
+> patches to media tree. The only reason Bryan post the patches is that Hans wants
+> single PR for patches across Qualcomm media drivers (Camss/Videoss)
 
-As a result, remove ENDBR64 from FRED entry points.
+That's the maintainer role, so Bryan is the maintainer. I am documenting
+actual status and your NAK is naking what? That Bryan cannot handle patches?
 
-Then add ANNOTATE_NOENDBR to indicate that FRED entry points will
-never be used for indirect calls to suppress an objtool warning.
+Sorry, this is already happening.
 
-This change implies that any indirect CALL/JMP to FRED entry points
-causes #CP in the presence of supervisor indirect branch tracking.
+Your push back here is odd, impolite and really disappointing. You
+actually should be happy that person outside wants to care about this
+driver...
 
-Credit goes to Jennifer Miller <jmill@asu.edu> and other contributors
-from Arizona State University whose work led to this change.
+> Hi Hans,
+> 
+> Incase you would like to split sending PRs, as the contributions for Venus/Iris
+> would be significantly higher, let us know, we can pick that up separately.
 
-Link: https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Cc: Jennifer Miller <jmill@asu.edu>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
----
- arch/x86/entry/entry_64_fred.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Considering quality of the code you sent as Iris upstreaming, you are
+not there yet.
 
-diff --git a/arch/x86/entry/entry_64_fred.S b/arch/x86/entry/entry_64_fred.S
-index 29c5c32c16c3..907bd233c6c1 100644
---- a/arch/x86/entry/entry_64_fred.S
-+++ b/arch/x86/entry/entry_64_fred.S
-@@ -16,7 +16,7 @@
- 
- .macro FRED_ENTER
- 	UNWIND_HINT_END_OF_STACK
--	ENDBR
-+	ANNOTATE_NOENDBR
- 	PUSH_AND_CLEAR_REGS
- 	movq	%rsp, %rdi	/* %rdi -> pt_regs */
- .endm
--- 
-2.50.1
+https://lore.kernel.org/all/1690550624-14642-1-git-send-email-quic_vgarodia@quicinc.com/
 
+Please learn, read how the process works, what is the responsibility of
+maintainers first.
+
+
+Best regards,
+Krzysztof
 
