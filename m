@@ -1,84 +1,157 @@
-Return-Path: <linux-kernel+bounces-732045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095A5B0613F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:35:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220C6B06136
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88D2921926
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:28:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987611C46DBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331A018BBB9;
-	Tue, 15 Jul 2025 14:24:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FF11D7E31;
+	Tue, 15 Jul 2025 14:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W42KgHv8"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6066A74BE1
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B52174BE1;
+	Tue, 15 Jul 2025 14:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752589445; cv=none; b=iynMfu5+PISqjCvs06UWoJffdbaXRqbEJgFEVahKhn9i64eT3VxAumTQu+p7I220biGm40J87IPC3ro+YtOVlM0p9Aw5IRRyWujkDO9kKhz8Ws9MsLudt/mWjYUSjPnlLeJwDSI4pLwoRjugPZi0a6GCbp5/0raiVhUjD8l/fBg=
+	t=1752589468; cv=none; b=MKPI6a+lEgOpY9uTmeDjpeej+3KRn1G2eq38rUzgu/4jF5D7teBV0WCBKGfkpVuUiysbj37Onk0vIM63kK79cwtQWep8BhoXKiP3Zkm2izD7kXzv2lahVyOVySbwvGZFACLIT/+kYO0/da7of8nsRAQcZ1gEoF/WryuImQhcuJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752589445; c=relaxed/simple;
-	bh=D17TK6nEg/NA6BHyIg3bDNovR0tCl84lGpdVWztqr2E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mxK4Xfs5w8I6LPVZtmPlm8g+Rw/TjlfkprjdprupKETrO1fc5RdJjS/xNVsd3a8Hd/jLZzMovRLvwzAYcObpuxy3/2hNeP+uUC1xwMXUCCTmzZdAWYrMXOi7g3Ip0kpQ19/ud+YCtLF3GvgVtlT2kVs0KV7fjGP0XDSktN8Rm2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86cff1087deso1103478139f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:24:04 -0700 (PDT)
+	s=arc-20240116; t=1752589468; c=relaxed/simple;
+	bh=tvcG8BkIeDgNMPjNLaM4nJWMewFH5e7W4sw1HSgJiP0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lR7S4+Si4P0KMeH9KpgwqU3vesbZoQm0Ofj6lQtK81Ke0NjI4PN52C4dR8NiCrcGpOgtGlaxzDRt5APRjombyN4XkHKys0/8FLZfuU5Bt+D0wQuPzEvgOMrtzBGoGf4B1HkP0qiLAuprZfTv9zxdjXZYjFjLKRp1ZjuqidNcl9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W42KgHv8; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4537edf2c3cso57696605e9.3;
+        Tue, 15 Jul 2025 07:24:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752589464; x=1753194264; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iSxra2qSvkUH4C8FcWMO1mkXXQA40nE+NViMoOLJVjE=;
+        b=W42KgHv8XtYici7/aduJs0DI6grBtrfLRX1Wy83pwGmG2Q7vBHaNqfEs7PBNIWDP4M
+         dhP7rdUSuf70TvG6orNx6iEpLzVf1AfE/Oml9bL8YwUcd0v8zcMRwmwRYHZW15HqL9iF
+         /yjj9GZB9ReuNgj6tv9e8JJekytViDRYJhhVD+sLaPTY8Upzyt1e9O2UPKqXxezPK7qf
+         OwzO7vcy+UZl8HYOG6BIsh1gp55VTYc8Uc26bnZxXgbAStyssGDcnMB3ad/8R0fUVY9H
+         QbNT/YS1FlIef35D3Xa1ponj+iD5unC21YkzN5nr8bINblKchdVt7zAywwQ6X5jLhVru
+         d+Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752589443; x=1753194243;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1752589464; x=1753194264;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rGYS1KfbG9gsx+nxtfhiWRVKFXM+goAw2DXLNu9lnN0=;
-        b=RRaHjE9r3hzioVjHH4BcCZlV5DyA5ESZWb4bmJxRRt7o9OdG265vWf7S7BLUzYT0oX
-         6nTGPqU5hrP/dSgADi605p4N16qatuB9dKTYdTQDKBQ5jJ/ML5yLOGKM7ys7t2n5DblU
-         wOQsMpcexoFQq4rcBEixJx1zbRZeysItWycL5nBh298fh/oh8SGkygshYB/qCYNo4CDo
-         TOdChVTAUa6bL+hIfWfrNi3HkIr+REl9ssPO6tfuFyg43eSv6LojLBf4z4i9zYfOnXDQ
-         63m3PWey8ckZe75F+KXXbYbyG1lT534VmljTmDJAImNiKThbGURErgsNHbLmLaJ1Wqqr
-         RlcA==
-X-Gm-Message-State: AOJu0Yz5iWvuvfDOpfwuqhR2zT5q+LcQ7YD8mJyQiqHUL/dgcuK8l32t
-	EuRD9VQ2wkw6h3n7jrovbPBZX8NSCPkH9vkz7SBkwnqlDJ8BOPB4WJlVC9lK0nErEBkRj+B4mNt
-	dXErMUU0PQHeMJ1DIw0MwHgKX1q3Hnk1UkC+j49jmj6UghnL0z+GTjaeOKlg=
-X-Google-Smtp-Source: AGHT+IENTOwBrXOp7r+TU6vD23V3Yyu144zgS//rjRXrlP4bSsOgVPj64iM7GToHYHNMWxRp/fPU2d6gL0innKovunpxXMp46rqx
+        bh=iSxra2qSvkUH4C8FcWMO1mkXXQA40nE+NViMoOLJVjE=;
+        b=b7RxTqIoGGCrb3IRQHpfAaAs46YtdW18bK3QqGzt7vwooj7dhohpVbcsL0cAjS7sRf
+         1mYYNiZRuh5dx/iy+f3o011cFhATzsBm5xt5/nPEVE1EpcUhwnfaDf08yTZCsOyWKPKm
+         c60R9p6GMAPE/P1CfoGlBmRy1D1uNfknI/SM65zVH4wZ9BahNH6e14HsyQR1aGIEc2g7
+         Qn8RNstVYkT+Dh8NFz4wiw3WTia8GFPmmaaWc2h4OAGQ6LGb8Dpdx/lYr8tcu+GwYIcq
+         XjgaqDAwVV+FPBH45W56H8UZ0KeqdsexH+X6UwLwfRgcnf57fe1Ppzu82n9QKSgA82Ck
+         ArnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUconfW8OweJRXfpryjp4S24yAn8CfCHxh7+i3kLeaekoNmKsyCXafUpOQ4JSldA/miEBjA8ZZuiI8=@vger.kernel.org, AJvYcCWTj88oC7CX7qHEvoe6Jr2KLHNJkfUxT5nqmfWBJF6N43Vs5+2wcjgVB96KFF0avaVEsU6035BfMd0mBx6l@vger.kernel.org
+X-Gm-Message-State: AOJu0YycjDHV16lxKAGmgl1Zei3UjQEAMLobmssiD7yZ3+dsgJZxKGri
+	NlI+RsmwlsDv+5y29jyySsNKPKaRk+mXcajkcE6K8goUm6/OSwQrKx8DpXn+0SCA
+X-Gm-Gg: ASbGncuUajhcHyFvtfMDA7Xtxez/cDQ5zr2qK/gNgnw2KRWNDlV7lpocwgshfT5tuIW
+	mapLENKjRSgXvOQJHGrLAKwDRtTBDpWQ0weWq2kLSpDp18r+DniL1MUr+c5UM6Z788NBc+BZe3h
+	gryU4TKYWqzfERJi+6uajJTWBhNafNRMCa1+YYmvjXtnDSFQ9nGwV2b/y41G0b77yzRkoQkNC0x
+	+m90SoIdCBomFkk6jhHZyTf6WwZy15/sGCZrqfc8O8E3fH1SFok5KUZfKAWbUo8yG7g/+1p52At
+	gsds/cJ5eJ4v9DJUzdd6BM1cJYEQibG8xn/qujf/NoGJWMsirRh622wYvSqk3N00AMgkDQCO8uZ
+	yE5Hctx50PXqC5P3/2xawuyhHBdOuFJ4uQX4LS4JvtW7mS+j09ZpsZg13MqqQ1XMy2i5ELEpb0m
+	IBik2PLroYVUcL2ukMqG+NXa+gSVPAZYBYCZ/1TNsYsEiwUQdfSxGYG4+zKJq/vGrBmqlr2GPL3
+	s36P3KPkuoyxo+6hC70k0PteHidlDoxsoSfZQ==
+X-Google-Smtp-Source: AGHT+IHyNbNP+Oa/8R9trX36pUDEdxOvlB4n47aAPoN7MLAqKPF0AeX4+tNgnxK4GCbkpt+1TiK1EQ==
+X-Received: by 2002:a05:600c:8211:b0:455:f59e:fdaa with SMTP id 5b1f17b1804b1-45627417addmr26997435e9.21.1752589464282;
+        Tue, 15 Jul 2025 07:24:24 -0700 (PDT)
+Received: from ?IPV6:2a02:8388:e103:2700:a09a:f854:4544:3d0d? (2a02-8388-e103-2700-a09a-f854-4544-3d0d.cable.dynamic.v6.surfer.at. [2a02:8388:e103:2700:a09a:f854:4544:3d0d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45626cde7aasm13247185e9.1.2025.07.15.07.24.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 07:24:24 -0700 (PDT)
+Message-ID: <b8221fe9-a167-4bcc-81bf-fb793712b48e@gmail.com>
+Date: Tue, 15 Jul 2025 16:24:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:4c06:b0:876:7555:9cb4 with SMTP id
- ca18e2360f4ac-87977f57c3fmr1721786839f.1.1752589443193; Tue, 15 Jul 2025
- 07:24:03 -0700 (PDT)
-Date: Tue, 15 Jul 2025 07:24:03 -0700
-In-Reply-To: <CAMp3bLVK6iyX3ZrM7=VUp5RcHcDaTNMRxfYd-Jr2Qr+vzRw7bA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68766483.a00a0220.3af5df.0006.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] UBSAN: shift-out-of-bounds in gfs2_dir_read (2)
-From: syzbot <syzbot+4708579bb230a0582a57@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, purvayeshi550@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: mailhol.vincent@wanadoo.fr, linux-kernel@vger.kernel.org,
+ linux-can@vger.kernel.org
+References: <20250714175520.307467-1-andrey.lalaev@gmail.com>
+ <20250715-almond-zebra-of-perception-9d2e6c-mkl@pengutronix.de>
+Content-Language: en-GB
+From: Andrei Lalaev <andrey.lalaev@gmail.com>
+In-Reply-To: <20250715-almond-zebra-of-perception-9d2e6c-mkl@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 15.07.2025 11:37, Marc Kleine-Budde wrote:
+> On 14.07.2025 19:55:02, Andrei Lalaev wrote:
+>> When CAN adapter in BUS_OFF state and "can_restart" is called,
+>> it causes the following kernel oops:
+> 
+> Doh!
+> 
+> I wonder why no one stumbled over this before. That's a systematic
+> problem for all CAN drivers that don't implement this callback.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Hi Mark,
 
-fs/gfs2/ops_fstype.c:283:11: error: use of undeclared identifier 'EFSCORRUPTED'
+I was also surprised because this callback isn't marked as mandatory
+and that there are no additional checks.
 
+> 
+> What about this fix?
+> 
+> diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
+> index 13826e8a707b..94603c9eb4aa 100644
+> --- a/drivers/net/can/dev/netlink.c
+> +++ b/drivers/net/can/dev/netlink.c
+> @@ -285,6 +285,12 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
+>          }
+>  
+>          if (data[IFLA_CAN_RESTART_MS]) {
+> +                if (!priv->do_set_mode) {
+> +                        NL_SET_ERR_MSG(extack,
+> +                                       "device doesn't support restart from Bus Off");
+> +                        return -EOPNOTSUPP;
+> +                }
+> +
+>                  /* Do not allow changing restart delay while running */
+>                  if (dev->flags & IFF_UP)
+>                          return -EBUSY;
+> @@ -292,6 +298,12 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
+>          }
+>  
+>          if (data[IFLA_CAN_RESTART]) {
+> +                if (!priv->do_set_mode) {
+> +                        NL_SET_ERR_MSG(extack,
+> +                                       "device doesn't support restart from Bus Off");
+> +                        return -EOPNOTSUPP;
+> +                }
+> +
+>                  /* Do not allow a restart while not running */
+>                  if (!(dev->flags & IFF_UP))
+>                          return -EINVAL;
+> 
+> regards,
+> Marc
+> 
 
-Tested on:
+Thanks for the patch. As expected, it fixes the kernel OOPS,
+but the interface never leaves the BUS_OFF state.
 
-commit:         155a3c00 Merge tag 'for-6.16/dm-fixes-2' of git://git...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f62a2ef17395702a
-dashboard link: https://syzkaller.appspot.com/bug?extid=4708579bb230a0582a57
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=160208f0580000
-
+-- 
+Best regards,
+Andrei Lalaev
 
