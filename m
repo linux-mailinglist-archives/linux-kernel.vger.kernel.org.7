@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-731625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8A5B05757
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:01:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED9EB05759
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 715651C20AAF
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04DB3563436
 	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCB12D8779;
-	Tue, 15 Jul 2025 10:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28FE23BD0B;
+	Tue, 15 Jul 2025 10:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sbo/b7yt"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nSpT6uLY"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A640F2D8361
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0CB26FDA8
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752573627; cv=none; b=U3rFNpK1cu2i8J/PoxiI6pX/H2UELZcMPUEp4oEXuSMSBlDITUT5VF2TUt+DaAc7J1B6cbZby6XWUbFvfDTAb8Ux3ZECzC3QGPo6yHXDh3199+w3nFE1y5UFbVC/iErlnfU7MXDssQYxIE/13ecvAYogcgHfGEouJtstX/Hminc=
+	t=1752573630; cv=none; b=ayEAQ+qCWAfZbcMZiW6Ldm6f5egGWg5n8YXSvWJ6Miy/NS+GjO+NLqrRvBo7Y750bKkSfOVeFeb98AdGiOJtjIKwjDfNERMBPzYL8j8BwYhXDQbCRuUljz2Xids/DSffky4bw+Tqxj0WcX6ysU1UMo7+IJkU/Ad/Ls/wFXQpu5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752573627; c=relaxed/simple;
-	bh=FSJsSS3WluCy8KvBbKjXlFYWWv4mZRNGrsBKukZ/cv8=;
+	s=arc-20240116; t=1752573630; c=relaxed/simple;
+	bh=ZW3RqUJQuINLZ2qkCDUQ3IViyrhHhK2qpkUxP/3iNF4=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=REZQ0Pdmvswqk1l3HK5mKICX3LPWE36Y0qlfkA9aB+A48DT+YCZ3UEedK8UWiQnb1zErrNUY2ChRhnUBNqzWubdGKGoHlzfzm0acpIJaSXrWCKog5J0tZIq22YUtgaKP0eVXkUmV0ZobPtUQyaRHLdEqDabAV1/P7CZQF4WquZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sbo/b7yt; arc=none smtp.client-ip=95.215.58.170
+	 MIME-Version; b=D+PQeWXnWerfR9vzEPotGbgH8jXHbnfTUETk1xjAjzPze6/rx08r6QONJrTaV4T9Y54YRbhGmLeyYgeS7BKxsfvLywbyZvNG3UaFDHxUtCEjOoZs1SWWasgGL4JYngQ2+BVKnbiiKsdeAGR7bcWXoiMuHFrlhefiaOqXFJicMes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nSpT6uLY; arc=none smtp.client-ip=95.215.58.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752573623;
+	t=1752573626;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=sPnzVrWVUWuZIVWV/G/AQlEdfek6Y/tQOREMS8qveAQ=;
-	b=sbo/b7yt/cBXHqBAnLzx1hfGwCbgVqPZpBFzq3KrZgKDKB6pjM4YwdAVIA0blBesWLMLRL
-	ZHgdL9OZLdmYJFzHTZrj7g34pn3Y4NeBXkb/4wGBcx7neU0ffqTkNTSNdHcMGTNUtB2uve
-	pGxfRNSOMreSemw3HuEW2+ql5wzXBdA=
+	bh=0hMXD4Bvb1YUfWztWBUy/WVwu1WJGbTx3ryS1MpxlDU=;
+	b=nSpT6uLYE5l6za43VDR0XD6aFfHyA9chbD/+oRLXEvpAOhjkomitJTy5toxr/PXV1urzDF
+	sRuFnKpIof8teSp/n5zjeybvYwzdwtuRcs6T5OEWkRXO0fSEBTwSwLhuOrq0i7f9Ms8I+Q
+	kE7a/y0hwYE+jXc88x75fob7giS9KxQ=
 From: Hui Zhu <hui.zhu@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
@@ -59,9 +59,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH 2/3] rust: allocator: Vmalloc: Support alignments larger than PAGE_SIZE
-Date: Tue, 15 Jul 2025 17:59:47 +0800
-Message-Id: <5e78317d87c42b548929ca386670837ad617fc9d.1752573305.git.zhuhui@kylinos.cn>
+Subject: [PATCH 3/3] rust: add a sample allocator usage
+Date: Tue, 15 Jul 2025 17:59:48 +0800
+Message-Id: <ea067b4df1cef7f724a9e8ef0d345087f06ad6a7.1752573305.git.zhuhui@kylinos.cn>
 In-Reply-To: <cover.1752573305.git.zhuhui@kylinos.cn>
 References: <cover.1752573305.git.zhuhui@kylinos.cn>
 Precedence: bulk
@@ -75,106 +75,161 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Hui Zhu <zhuhui@kylinos.cn>
 
-This commit add code to make rust alloc Vmalloc support alignments
-larger than PAGE_SIZE.
-
-It adds a new option element to ReallocFunc. When an object supports
-aligned reallocation, it can register its alignment-specific realloc
-function here.
-During VREALLOC initialization, it sets bindings::vrealloc_align to
-this element.
-When ReallocFunc::call executes, if the object supports aligned
-reallocation and the alignment exceeds PAGE_SIZE, the aligned realloc
-function is used to support alignment capabilities.
+Add a sample to the samples memory allocator usage.
 
 Co-developed-by: Geliang Tang <geliang@kernel.org>
 Signed-off-by: Geliang Tang <geliang@kernel.org>
 Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
 ---
- rust/helpers/vmalloc.c         |  7 +++++++
- rust/kernel/alloc/allocator.rs | 32 ++++++++++++++++++++------------
- 2 files changed, 27 insertions(+), 12 deletions(-)
+ samples/rust/Kconfig           |  10 ++++
+ samples/rust/Makefile          |   1 +
+ samples/rust/rust_allocator.rs | 104 +++++++++++++++++++++++++++++++++
+ 3 files changed, 115 insertions(+)
+ create mode 100644 samples/rust/rust_allocator.rs
 
-diff --git a/rust/helpers/vmalloc.c b/rust/helpers/vmalloc.c
-index 80d34501bbc0..3290c4c4c42f 100644
---- a/rust/helpers/vmalloc.c
-+++ b/rust/helpers/vmalloc.c
-@@ -7,3 +7,10 @@ rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
- {
- 	return vrealloc(p, size, flags);
- }
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index 7f7371a004ee..79c73f6c5216 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -105,6 +105,16 @@ config SAMPLE_RUST_DRIVER_AUXILIARY
+ 
+ 	  If unsure, say N.
+ 
++config SAMPLE_RUST_ALLOCATOR
++	tristate "Allocator Test Driver"
++	help
++	  This option builds the Rust allocator Test driver sample.
 +
-+void * __must_check __realloc_size(2)
-+rust_helper_vrealloc_align(const void *p, size_t size, size_t align,
-+			   gfp_t flags)
-+{
-+	return vrealloc_align(p, size, align, flags);
++	  To compile this as a module, choose M here:
++	  the module will be called rust_dma.
++
++	  If unsure, say N.
++
+ config SAMPLE_RUST_HOSTPROGS
+ 	bool "Host programs"
+ 	help
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index bd2faad63b4f..b378959eab19 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -10,6 +10,7 @@ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_AUXILIARY)	+= rust_driver_auxiliary.o
+ obj-$(CONFIG_SAMPLE_RUST_CONFIGFS)		+= rust_configfs.o
++obj-$(CONFIG_SAMPLE_RUST_ALLOCATOR)		+= rust_allocator.o
+ 
+ rust_print-y := rust_print_main.o rust_print_events.o
+ 
+diff --git a/samples/rust/rust_allocator.rs b/samples/rust/rust_allocator.rs
+new file mode 100644
+index 000000000000..13d23cc9d682
+--- /dev/null
++++ b/samples/rust/rust_allocator.rs
+@@ -0,0 +1,104 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (c) 2025, Kylin Software
++
++//! Rust allocator sample.
++
++use core::{alloc::Layout, ptr::NonNull};
++use kernel::alloc::allocator;
++use kernel::alloc::Allocator;
++use kernel::bindings;
++use kernel::prelude::*;
++
++module! {
++    type: RustAllocator,
++    name: "rust_allocator",
++    authors: ["Rust for Linux Contributors"],
++    description: "Rust allocator sample",
++    license: "GPL",
 +}
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index aa2dfa9dca4c..197222e15c26 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -59,17 +59,25 @@ fn aligned_size(new_layout: Layout) -> usize {
- /// One of the following: `krealloc`, `vrealloc`, `kvrealloc`.
- struct ReallocFunc(
-     unsafe extern "C" fn(*const crate::ffi::c_void, usize, u32) -> *mut crate::ffi::c_void,
-+    Option<
-+        unsafe extern "C" fn(
-+            *const crate::ffi::c_void,
-+            usize,
-+            usize,
-+            u32,
-+        ) -> *mut crate::ffi::c_void,
-+    >,
- );
- 
- impl ReallocFunc {
-     // INVARIANT: `krealloc` satisfies the type invariants.
--    const KREALLOC: Self = Self(bindings::krealloc);
-+    const KREALLOC: Self = Self(bindings::krealloc, None);
- 
-     // INVARIANT: `vrealloc` satisfies the type invariants.
--    const VREALLOC: Self = Self(bindings::vrealloc);
-+    const VREALLOC: Self = Self(bindings::vrealloc, Some(bindings::vrealloc_align));
- 
-     // INVARIANT: `kvrealloc` satisfies the type invariants.
--    const KVREALLOC: Self = Self(bindings::kvrealloc);
-+    const KVREALLOC: Self = Self(bindings::kvrealloc, None);
- 
-     /// # Safety
-     ///
-@@ -108,9 +116,15 @@ unsafe fn call(
-         // GUARANTEE:
-         // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc`.
-         // - Those functions provide the guarantees of this function.
--        let raw_ptr = unsafe {
--            // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
--            self.0(ptr.cast(), size, flags.0).cast()
-+        // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
-+        let raw_ptr = if let Some(f) = self.1 {
-+            if layout.align() > bindings::PAGE_SIZE {
-+                unsafe { f(ptr.cast(), size, layout.align(), flags.0).cast() }
-+            } else {
-+                unsafe { self.0(ptr.cast(), size, flags.0).cast() }
++
++const VMALLOC_ARG: [(usize, usize); 2] = [
++    (bindings::PAGE_SIZE * 4, bindings::PAGE_SIZE * 2),
++    (1024, 128),
++];
++
++struct RustAllocator {
++    vmalloc_vec: KVec<(usize, Layout)>,
++}
++
++fn vmalloc_align(size: usize, align: usize) -> Result<(NonNull<[u8]>, Layout)> {
++    let layout = Layout::from_size_align(size, align).map_err(|_| EINVAL)?;
++
++    Ok((
++        <allocator::Vmalloc as Allocator>::alloc(layout, GFP_KERNEL).map_err(|_| EINVAL)?,
++        layout,
++    ))
++}
++
++fn vfree(addr: usize, layout: Layout) {
++    let vmalloc_ptr = NonNull::new(addr as *mut u8);
++    if let Some(ptr) = vmalloc_ptr {
++        unsafe {
++            <allocator::Vmalloc as Allocator>::free(ptr, layout);
++        }
++    } else {
++        pr_err!("Failed to vfree: pointer is null\n");
++    }
++}
++
++fn check_ptr(ptr: NonNull<[u8]>, size: usize, align: usize) -> (usize, bool) {
++    let current_size = unsafe { ptr.as_ref().len() };
++    if current_size != size {
++        pr_err!(
++            "The length to be allocated is {}, and the actually allocated memory length is {}.\n",
++            size,
++            current_size
++        );
++        return (0, false);
++    }
++
++    let addr = ptr.cast::<u8>().as_ptr() as usize;
++    debug_assert!(align.is_power_of_two());
++    if addr & (align - 1) != 0 {
++        pr_err!("Address {:#x} is not aligned with {:#x}.\n", addr, align);
++        return (0, false);
++    }
++
++    (addr, true)
++}
++
++fn clear_vmalloc_vec(v: &KVec<(usize, Layout)>) {
++    for (addr, layout) in v {
++        vfree(*addr, *layout);
++    }
++}
++
++impl kernel::Module for RustAllocator {
++    fn init(_module: &'static ThisModule) -> Result<Self> {
++        pr_info!("Rust allocator sample (init)\n");
++
++        let mut vmalloc_vec = KVec::new();
++        for (size, align) in VMALLOC_ARG {
++            let (ptr, layout) = vmalloc_align(size, align)?;
++
++            let (addr, is_ok) = check_ptr(ptr, size, align);
++            if !is_ok {
++                clear_vmalloc_vec(&vmalloc_vec);
++                return Err(EINVAL);
 +            }
-+        } else {
-+            unsafe { self.0(ptr.cast(), size, flags.0).cast() }
-         };
- 
-         let ptr = if size == 0 {
-@@ -152,12 +166,6 @@ unsafe fn realloc(
-         old_layout: Layout,
-         flags: Flags,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        // TODO: Support alignments larger than PAGE_SIZE.
--        if layout.align() > bindings::PAGE_SIZE {
--            pr_warn!("Vmalloc does not support alignments larger than PAGE_SIZE yet.\n");
--            return Err(AllocError);
--        }
--
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
-         unsafe { ReallocFunc::VREALLOC.call(ptr, layout, old_layout, flags) }
++
++            vmalloc_vec.push((addr, layout), GFP_KERNEL)?;
++        }
++
++        Ok(RustAllocator { vmalloc_vec })
++    }
++}
++
++impl Drop for RustAllocator {
++    fn drop(&mut self) {
++        pr_info!("Rust allocator sample (exit)\n");
++
++        clear_vmalloc_vec(&self.vmalloc_vec);
++    }
++}
 -- 
 2.43.0
 
