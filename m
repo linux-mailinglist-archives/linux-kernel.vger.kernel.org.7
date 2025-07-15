@@ -1,177 +1,240 @@
-Return-Path: <linux-kernel+bounces-732418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463F6B0667D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:07:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23FAB06677
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E52C1AA3475
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36F875649AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA05F2BFC9B;
-	Tue, 15 Jul 2025 19:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8632BEC2A;
+	Tue, 15 Jul 2025 19:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fk8z4fdz"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TwVZ9USH"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6314929C33D
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF3F22127C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606414; cv=none; b=LLMMDCo9UCxoZq/sThjT59QmbpRNGXu881t3Ww8PHCiQFqcKJU+oCx2z4bgUihSWWb3XCNL+RxDZtl9Im9utIVqgzCB9jymLyK7CG6b9+bl2goradT1jLF03+fi/bvf1GG+ce4VmEeVRVxMg1uc3kNXjpCD2VJGedscX1yIId8o=
+	t=1752606404; cv=none; b=RRezv34EH/4YNGvQp6hKvd6InRFbrFRE21Nx+7fuIGdLKEJViCzGTISXR6vBKNXhipS68pADKg6XYvkjZVhEXVKLvCb22NsuUkqDDpzkgM8QSc3iHOyymXBtMP9nuR9f8HbeZQts2LOeIaRKxCBcq4C/JDOAjFZZ29ofycGvUbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606414; c=relaxed/simple;
-	bh=sN4QN3SKsFD89oM64C8vf3kZbJolgxRcrqdfdWWS2SU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mi2jfsWxZuHutbNmKbI3iOFL1o2SyezsytsALvyTtGqXIE8kJg0iH4WFdSa+ZLIuBPJlqr8yfnMe7wl8aGc2UpncLp7U8NGrVVLtv+cX0pFGVYLHLIVogTjuK0XWLq1NPen3cpMO4SUjJgduGutS2SOhZV15yCve2K5CJwND390=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fk8z4fdz; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1752606404; c=relaxed/simple;
+	bh=GTxT5dw0PVj8wMRhtSSRP76xX5fd2Cpp5r+28okB0A4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TaeiRAvX83LMwah4UD+gEA0HlnwQvB326MoAm7sEBXgqBgEpLm/zYJq2h4FVBkEK9cVtvxTkugvqkcLFQ8q3IiiZ/FFBCXKmgAp5PRjShB+JqeQLxE6IwH/IbWAAczAyn6yjH+kClgk8AsnhPdD97T4aYVe4ELoSPOw4SZOIKms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TwVZ9USH; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23dd9ae5aacso36145ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:06:51 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2349fe994a9so51500185ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:06:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752606411; x=1753211211; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YzQixld7pSKyZ/Q/HfBpbSkDP1wbVsZogbStCOaFhmk=;
-        b=Fk8z4fdzie74innj7D79z4BbhEvHGRuB1AHDlsTBByDHH0KNTWCoC4qhYasoLNxbHF
-         XTWZo11HpXYIweZnSxbNiqUSjT7JcrAzglobEvdX/oeKEPoqIvq2UzcmOeAB/S2M/Ti+
-         e5FPyUwzsNW6UkGsxVGnjJvL9osjGKmwnNEUJFahgwffrzNnZdmu604N04mYO+3AImpx
-         mo8s5j65R94/oJNjlUcXNtGT97VuKi7tq+ndEhvZCIC8rFz4I9RDAzMEhXH6x3tpFCfX
-         cirpjfF0CveXPdB8ReKX3OUU0zAafDeef17Kb4N4jD561W4luksmdvpoLKp11JBeKtGv
-         R5Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752606411; x=1753211211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=google.com; s=20230601; t=1752606401; x=1753211201; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YzQixld7pSKyZ/Q/HfBpbSkDP1wbVsZogbStCOaFhmk=;
-        b=wJrPmebAPvleRKM+DkDsFMQXvYD3hVKv9R/sGa7yLgEGNKIVt+yONHxnBjJoEJJ7TT
-         9YoVUxUPxvoCB3Uc5o92VYoB30vdd5500UlB5GSfalwESCVDO4Ksr/5LfPywJTW8vEDu
-         lEpbAirrNmJi0SGvyLhYyu9Hp3ku+fqk6qTPmcPQyACItS76Le0sjg/oToLWymuenKxx
-         iEGFDACUK9NquLDlit29RQfzoYUCLmEi36NLXhaxPM98yUZwc6a/KdM0TGzdGCUMPrug
-         wACaBSZxeZRX01UZ23F02+9ig1KgiDJfGJ/3aBeo68inOqx3zJVZHh+wCQGwu0X4Yq/g
-         ZWKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXirObjJswEMngOiKmtd+1T70Zu7y/nV3vniuxJDAkR9ASwb0RfmyLqZzKBi+IvQyI9CATiyrJm2MUfh6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhLSgUO/KLHBOItefrYMX0fHFn90yRnBeYvonXrV7+s9B28m9P
-	fbvbDavM6fauVsdpMaAA0qwxVGv8XKe9HPZLZQABS3yjan+fzq395fTWETjHCdVLLWne0ncWcVD
-	bSsnnFSO6AKUNX1eollYwbmhcsw0+MijI9rLCqgru
-X-Gm-Gg: ASbGncsiinvU6QfAPBgHtEzTcinN9pCaeL1uS3bsPVi0vmwCM+XGKYgItJJI/9FBqMv
-	mzTfE79sXDkANDBYFZ21xJyE6vcXS/AYr4X8pAUrz7ItgKYYeuaO0uCyOZ5p+4eHaOpwJWh4Ylo
-	boQCRo9WM+vhZMctsb+2k44XDPDQQRwc1Eu+JN22sXt2S+kci7ZoYgVoFi6Uw6FWKHBvPjEM+rW
-	ssOHtlEu1EQOuftX7RjQ/331IRClE/3nIiQSQ==
-X-Google-Smtp-Source: AGHT+IERW8BNAcLICEi0xDHHwbh6I9mZCyIk3Mt306+jQnPwqHCieheEaqBVCmnvb9hqZyStUnuqxe9DuyWkdC9x3QM=
-X-Received: by 2002:a17:902:cec3:b0:235:f298:cbbb with SMTP id
- d9443c01a7336-23e24c6e119mr315625ad.26.1752606409905; Tue, 15 Jul 2025
- 12:06:49 -0700 (PDT)
+        bh=j9kM4hEAGClBPbwwJM/o6yebUkYu5yQUZuXR772mje4=;
+        b=TwVZ9USH407tctEVAuc5brOp8akW+dyi/NaU6eVkg9cP/6AX89XqUd8nfq6kVWvWOZ
+         aerIMVeQs+mcwXwzm2l96JhaSRkDMXqrH5Hjf8BFBbsDZMagyECurpPF/EMFoEgFZVBQ
+         PDzc2ZSSvH519BLXvzlXBYQVDwi04LBThe9cYZbcZHA98yCW/YP+TDvTUkEEou0zf1eO
+         Wys5VIYLjj4Cboy9mY8prDZXdw5uLE9LVGjk1T3IVAEbMXyOoZO8vdoBOfJXDUg4pLUg
+         Xpra7HCMxHTUHyR4s6J62kk/Wxk50ApaPjAl11yfPWxr8c1XJ0t4P3E1SHcQFHaQaBPJ
+         RIVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752606401; x=1753211201;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j9kM4hEAGClBPbwwJM/o6yebUkYu5yQUZuXR772mje4=;
+        b=bt/H412xMjoLR8xAdMrQXQf8MuHN2rfje3mgK95Upzks6HrvmgxQ5LQ+baF4YY6lg4
+         8ZS4yVbuqDAfPy5Gt8GPvuwwbqahYd2BjWhZTHk8GGfeCfd/MX6vZpLDUeXNN251KCCc
+         AemFhWtA5IPE/qXRQV4NX7YilxXb/HtA38Dn3zxnaTcy9RqUbUsIoK18sNXqRYFj2Wlb
+         xrzg7NMhkoraFJ2dz33Ic5vQ8OAS2260wHWkm8aI+fwwqUt3wZNKId8Qr4mye0sodj5k
+         +ZdpSpHoaNV3+nJbbTTpuayzQaQOgBQrJ1qaSLgzVH/RcM2sqcZhDpnPQmf67hxoOOge
+         bE3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXSexWnHO1ICmm6Ur1OsIQWu1QtZZAYMCqpzy08xk6qiafIV81pI0IbHFv/ulXQyJwLhJP1y7dGlkay+us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqZhyt3D2Nyi1MU4P/MarOcEjQJW8yxZeE28qtb3m0eGzMKkpx
+	P+DLzZxt35un8Vv5B+jemXYWWFwO/X4Y4+XMRXM1I96JNo6+SlhJ8W7YwmLTXM6TkE6uigB+KsL
+	F1asB3g==
+X-Google-Smtp-Source: AGHT+IEc17k2iTydYcoJ2I0zd3TiRSQ3d/97yuv9VPah2k9SyTYKAouwm4LkyHCYGU53am0RO8rvezKZvso=
+X-Received: from pgbct3.prod.google.com ([2002:a05:6a02:2103:b0:b2e:c392:14f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2381:b0:234:d10d:9f9f
+ with SMTP id d9443c01a7336-23e24fe30bfmr1577835ad.40.1752606401066; Tue, 15
+ Jul 2025 12:06:41 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 15 Jul 2025 12:06:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250714120047.35901-1-byungchul@sk.com> <20250714120047.35901-3-byungchul@sk.com>
- <CAHS8izO393X_BDJxnX2d-auhTwrUZK5wYdoAh_tJc0GBf0AqcQ@mail.gmail.com> <9bed2f6e-6251-4d0c-ad1e-f1b8625a0a10@gmail.com>
-In-Reply-To: <9bed2f6e-6251-4d0c-ad1e-f1b8625a0a10@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 15 Jul 2025 12:06:36 -0700
-X-Gm-Features: Ac12FXwyUUoU8xGdECWjpzai5Qr9bPwFw8HDcAUKWZbO5pnAVYeauYEt5y8_8Qs
-Message-ID: <CAHS8izMYLw3JfonoQ7n4ZaWivdBVKqZejgyRiAku5j1rx7gBPQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 02/12] netmem: use netmem_desc instead of
- page to access ->pp in __netmem_get_pp()
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Byungchul Park <byungchul@sk.com>, willy@infradead.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, akpm@linux-foundation.org, 
-	andrew+netdev@lunn.ch, toke@redhat.com, david@redhat.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	mhocko@suse.com, linux-rdma@vger.kernel.org, bpf@vger.kernel.org, 
-	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com, 
-	jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com, 
-	xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, anthony.l.nguyen@intel.com, 
-	przemyslaw.kitszel@intel.com, sgoutham@marvell.com, gakula@marvell.com, 
-	sbhatta@marvell.com, hkelam@marvell.com, bbhushan2@marvell.com, 
-	tariqt@nvidia.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
-	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org, 
-	mbloch@nvidia.com, danishanwar@ti.com, rogerq@kernel.org, nbd@nbd.name, 
-	lorenzo@kernel.org, ryder.lee@mediatek.com, shayne.chen@mediatek.com, 
-	sean.wang@mediatek.com, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, aleksander.lobakin@intel.com, 
-	horms@kernel.org, m-malladi@ti.com, krzysztof.kozlowski@linaro.org, 
-	matthias.schiffer@ew.tq-group.com, robh@kernel.org, imx@lists.linux.dev, 
-	intel-wired-lan@lists.osuosl.org, linux-arm-kernel@lists.infradead.org, 
-	linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250715190638.1899116-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86: Don't (re)check L1 intercepts when completing
+ userspace I/O
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 3:36=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> On 7/14/25 20:37, Mina Almasry wrote:
-> > On Mon, Jul 14, 2025 at 5:01=E2=80=AFAM Byungchul Park <byungchul@sk.co=
-m> wrote:
-> ...>> +static inline struct netmem_desc *pp_page_to_nmdesc(struct page *p=
-age)
-> >> +{
-> >> +       DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(page));
-> >> +
-> >> +       /* XXX: How to extract netmem_desc from page must be changed,
-> >> +        * once netmem_desc no longer overlays on page and will be
-> >> +        * allocated through slab.
-> >> +        */
-> >> +       return (struct netmem_desc *)page;
-> >> +}
-> >> +
-> >
-> > Same thing. Do not create a generic looking pp_page_to_nmdesc helper
-> > which does not check that the page is the correct type. The
-> > DEBUG_NET... is not good enough.
-> >
-> > You don't need to add a generic helper here. There is only one call
-> > site. Open code this in the callsite. The one callsite is marked as
-> > unsafe, only called by code that knows that the netmem is specifically
-> > a pp page. Open code this in the unsafe callsite, instead of creating
-> > a generic looking unsafe helper and not even documenting it's unsafe.
-> >
-> >>   /**
-> >>    * __netmem_get_pp - unsafely get pointer to the &page_pool backing =
-@netmem
-> >>    * @netmem: netmem reference to get the pointer from
-> >> @@ -280,7 +291,7 @@ static inline struct net_iov *__netmem_clear_lsb(n=
-etmem_ref netmem)
-> >>    */
-> >>   static inline struct page_pool *__netmem_get_pp(netmem_ref netmem)
-> >>   {
-> >> -       return __netmem_to_page(netmem)->pp;
-> >> +       return pp_page_to_nmdesc(__netmem_to_page(netmem))->pp;
-> >>   }
-> >
-> > This makes me very sad. Casting from netmem -> page -> nmdesc...
->
-> The function is not used, and I don't think the series adds any
-> new users? It can be killed then. It's a horrible function anyway,
-> would be much better to have a variant taking struct page * if
-> necessary.
->
-> > Instead, we should be able to go from netmem directly to nmdesc. I
-> > would suggest rename __netmem_clear_lsb to netmem_to_nmdesc and have
-> > it return netmem_desc instead of net_iov. Then use it here.
->
-> Glad you liked the diff I suggested :) In either case, seems
-> like it's not strictly necessary for this iteration as
-> __netmem_get_pp() should be killed, and the rest of patches work
-> directly with pages.
+When completing emulation of instruction that generated a userspace exit
+for I/O, don't recheck L1 intercepts as KVM has already finished that
+phase of instruction execution, i.e. has already committed to allowing L2
+to perform I/O.  If L1 (or host userspace) modifies the I/O permission
+bitmaps during the exit to userspace,  KVM will treat the access as being
+intercepted despite already having emulated the I/O access.
 
-Good catch, in that case lets just delete __netmem_get_pp and there is
-no need to add a netmem_nmdesc unless we find some other call site
-that needs it.
+Pivot on EMULTYPE_NO_DECODE to detect that KVM is completing emulation.
+Of the three users of EMULTYPE_NO_DECODE, only complete_emulated_io() (the
+intended "recipient") can reach the code in question.  gp_interception()'s
+use is mutually exclusive with is_guest_mode(), and
+complete_emulated_insn_gp() unconditionally pairs EMULTYPE_NO_DECODE with
+EMULTYPE_SKIP.
 
---=20
-Thanks,
-Mina
+The bad behavior was detected by a syzkaller program that toggles port I/O
+interception during the userspace I/O exit, ultimately resulting in a WARN
+on vcpu->arch.pio.count being non-zero due to KVM no completing emulation
+of the I/O instruction.
+
+  WARNING: CPU: 23 PID: 1083 at arch/x86/kvm/x86.c:8039 emulator_pio_in_out+0x154/0x170 [kvm]
+  Modules linked in: kvm_intel kvm irqbypass
+  CPU: 23 UID: 1000 PID: 1083 Comm: repro Not tainted 6.16.0-rc5-c1610d2d66b1-next-vm #74 NONE
+  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+  RIP: 0010:emulator_pio_in_out+0x154/0x170 [kvm]
+  PKRU: 55555554
+  Call Trace:
+   <TASK>
+   kvm_fast_pio+0xd6/0x1d0 [kvm]
+   vmx_handle_exit+0x149/0x610 [kvm_intel]
+   kvm_arch_vcpu_ioctl_run+0xda8/0x1ac0 [kvm]
+   kvm_vcpu_ioctl+0x244/0x8c0 [kvm]
+   __x64_sys_ioctl+0x8a/0xd0
+   do_syscall_64+0x5d/0xc60
+   entry_SYSCALL_64_after_hwframe+0x4b/0x53
+   </TASK>
+
+Fixes: 8a76d7f25f8f ("KVM: x86: Add x86 callback for intercept check")
+Cc: stable@vger.kernel.org
+Cc: Jim Mattson <jmattson@google.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/emulate.c     |  9 ++++-----
+ arch/x86/kvm/kvm_emulate.h |  3 +--
+ arch/x86/kvm/x86.c         | 15 ++++++++-------
+ 3 files changed, 13 insertions(+), 14 deletions(-)
+
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index 1349e278cd2a..542d3664afa3 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -5107,12 +5107,11 @@ void init_decode_cache(struct x86_emulate_ctxt *ctxt)
+ 	ctxt->mem_read.end = 0;
+ }
+ 
+-int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
++int x86_emulate_insn(struct x86_emulate_ctxt *ctxt, bool check_intercepts)
+ {
+ 	const struct x86_emulate_ops *ops = ctxt->ops;
+ 	int rc = X86EMUL_CONTINUE;
+ 	int saved_dst_type = ctxt->dst.type;
+-	bool is_guest_mode = ctxt->ops->is_guest_mode(ctxt);
+ 
+ 	ctxt->mem_read.pos = 0;
+ 
+@@ -5160,7 +5159,7 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
+ 				fetch_possible_mmx_operand(&ctxt->dst);
+ 		}
+ 
+-		if (unlikely(is_guest_mode) && ctxt->intercept) {
++		if (unlikely(check_intercepts) && ctxt->intercept) {
+ 			rc = emulator_check_intercept(ctxt, ctxt->intercept,
+ 						      X86_ICPT_PRE_EXCEPT);
+ 			if (rc != X86EMUL_CONTINUE)
+@@ -5189,7 +5188,7 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
+ 				goto done;
+ 		}
+ 
+-		if (unlikely(is_guest_mode) && (ctxt->d & Intercept)) {
++		if (unlikely(check_intercepts) && (ctxt->d & Intercept)) {
+ 			rc = emulator_check_intercept(ctxt, ctxt->intercept,
+ 						      X86_ICPT_POST_EXCEPT);
+ 			if (rc != X86EMUL_CONTINUE)
+@@ -5243,7 +5242,7 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
+ 
+ special_insn:
+ 
+-	if (unlikely(is_guest_mode) && (ctxt->d & Intercept)) {
++	if (unlikely(check_intercepts) && (ctxt->d & Intercept)) {
+ 		rc = emulator_check_intercept(ctxt, ctxt->intercept,
+ 					      X86_ICPT_POST_MEMACCESS);
+ 		if (rc != X86EMUL_CONTINUE)
+diff --git a/arch/x86/kvm/kvm_emulate.h b/arch/x86/kvm/kvm_emulate.h
+index c1df5acfacaf..7b5ddb787a25 100644
+--- a/arch/x86/kvm/kvm_emulate.h
++++ b/arch/x86/kvm/kvm_emulate.h
+@@ -235,7 +235,6 @@ struct x86_emulate_ops {
+ 	void (*set_nmi_mask)(struct x86_emulate_ctxt *ctxt, bool masked);
+ 
+ 	bool (*is_smm)(struct x86_emulate_ctxt *ctxt);
+-	bool (*is_guest_mode)(struct x86_emulate_ctxt *ctxt);
+ 	int (*leave_smm)(struct x86_emulate_ctxt *ctxt);
+ 	void (*triple_fault)(struct x86_emulate_ctxt *ctxt);
+ 	int (*set_xcr)(struct x86_emulate_ctxt *ctxt, u32 index, u64 xcr);
+@@ -521,7 +520,7 @@ bool x86_page_table_writing_insn(struct x86_emulate_ctxt *ctxt);
+ #define EMULATION_RESTART 1
+ #define EMULATION_INTERCEPTED 2
+ void init_decode_cache(struct x86_emulate_ctxt *ctxt);
+-int x86_emulate_insn(struct x86_emulate_ctxt *ctxt);
++int x86_emulate_insn(struct x86_emulate_ctxt *ctxt, bool check_intercepts);
+ int emulator_task_switch(struct x86_emulate_ctxt *ctxt,
+ 			 u16 tss_selector, int idt_index, int reason,
+ 			 bool has_error_code, u32 error_code);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index de51dbd85a58..44ef3492bfd2 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -8609,11 +8609,6 @@ static bool emulator_is_smm(struct x86_emulate_ctxt *ctxt)
+ 	return is_smm(emul_to_vcpu(ctxt));
+ }
+ 
+-static bool emulator_is_guest_mode(struct x86_emulate_ctxt *ctxt)
+-{
+-	return is_guest_mode(emul_to_vcpu(ctxt));
+-}
+-
+ #ifndef CONFIG_KVM_SMM
+ static int emulator_leave_smm(struct x86_emulate_ctxt *ctxt)
+ {
+@@ -8697,7 +8692,6 @@ static const struct x86_emulate_ops emulate_ops = {
+ 	.guest_cpuid_is_intel_compatible = emulator_guest_cpuid_is_intel_compatible,
+ 	.set_nmi_mask        = emulator_set_nmi_mask,
+ 	.is_smm              = emulator_is_smm,
+-	.is_guest_mode       = emulator_is_guest_mode,
+ 	.leave_smm           = emulator_leave_smm,
+ 	.triple_fault        = emulator_triple_fault,
+ 	.set_xcr             = emulator_set_xcr,
+@@ -9282,7 +9276,14 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+ 		ctxt->exception.address = 0;
+ 	}
+ 
+-	r = x86_emulate_insn(ctxt);
++	/*
++	 * Check L1's instruction intercepts when emulating instructions for
++	 * L2, unless KVM is re-emulating a previously decoded instruction,
++	 * e.g. to complete userspace I/O, in which case KVM has already
++	 * checked the intercepts.
++	 */
++	r = x86_emulate_insn(ctxt, is_guest_mode(vcpu) &&
++				   !(emulation_type & EMULTYPE_NO_DECODE));
+ 
+ 	if (r == EMULATION_INTERCEPTED)
+ 		return 1;
+
+base-commit: 4578a747f3c7950be3feb93c2db32eb597a3e55b
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
