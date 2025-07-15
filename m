@@ -1,982 +1,877 @@
-Return-Path: <linux-kernel+bounces-732180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C1DBB0631E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C9BB06324
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F13581155
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE79B581432
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F0325C70F;
-	Tue, 15 Jul 2025 15:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EFD26B765;
+	Tue, 15 Jul 2025 15:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HhT2+13R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7hca3F6"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C8D24DD0C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A406265637;
+	Tue, 15 Jul 2025 15:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752593760; cv=none; b=bUwLvZInA5FhS/k9uJx2SDEAOnBrZ8U4e8B+C6USKag8yzUeJz4DeUXZoP6hktyg1F0/CRE0j49CnCdLnqVR0okESGVHEbOSCCxp5+2szmt5KY2GpGuT37HWyyo/pgpucS/wKdOCWgR9UeM1/JOM07jzvMdh5xWlqiuzWlBBfU0=
+	t=1752593769; cv=none; b=IiBdBG/3QpTITBSDHy2rG2dGRnU0723VPeueFmfParvk6jp+2K+u73Ri1YlBPKw7lg2sA1/b4Kh4q61w/rdDBDFxBZN3wseupxYcVvzc/xfyx5rBWokue05CE4Eojj9aPjmGcAFXo8cpvCdxwsyGrCx/NJbw26fk5Gxl/qA5yQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752593760; c=relaxed/simple;
-	bh=1GT2U+/5FZite+OCS/A302+qGogLjRNB/HnqtD6pmhU=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=dToI6j+myZzrmDJWJPHGLdc5b3qcHFADYcsRUyMTFbtKkiuzUrAerrp4ronUxGLvDlohl925osNtAMJQr3Qu1y1AEdSnIWoAnJOdWJCB2/NOFUxbgjhnmMybJxnOdIU0B6H1f10aPckwnwAYmWgN9BtozR3kc6KJicMVpnBdc80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HhT2+13R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752593756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fDo3wLUkUmlI0RTZAyTNc7H8VfFORMJUG2OQgknRhEc=;
-	b=HhT2+13RVd1EYY+niKfg2/JUq/dyA4sVUgEn3iIRd1SRVyQFJtG2K1XFcRoyLut64aPsKR
-	fffKSL5QP2i7Rl87cR69Z9qXEzP+v0YQtzgqvHkqcP4DuZh799rZ0m8DxWL/35sNsa3F36
-	9D/bSU4BvZtgMH8vfGr44uXro00Jlss=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-FCHePXUfOHCdeyPPPLwREQ-1; Tue,
- 15 Jul 2025 11:35:53 -0400
-X-MC-Unique: FCHePXUfOHCdeyPPPLwREQ-1
-X-Mimecast-MFC-AGG-ID: FCHePXUfOHCdeyPPPLwREQ_1752593752
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C5ACE1800287;
-	Tue, 15 Jul 2025 15:35:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BA06119560A7;
-	Tue, 15 Jul 2025 15:35:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Add support for RENAME_NOREPLACE and RENAME_EXCHANGE
+	s=arc-20240116; t=1752593769; c=relaxed/simple;
+	bh=iXgG2U7yP2cpQZY6q5jgQ6TH3iOXMrkY1Ht0Nm+Lm58=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TLOc6IhmeXwNL6UbyKjrDqLVS7AxsxufmmpwBvHQWkF+bxDVfWDvq5C9L/N9/sH8Q7EvsNEoSW+o+JHeozXU/VYfSrYdpAa8uslmppeXnLV8zAnTbNP5gaVis7RZpsLA73n8ljqGOScWi+DOhqXDg/dZ+THb+uS9USFD397vbZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7hca3F6; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45555e3317aso25085785e9.3;
+        Tue, 15 Jul 2025 08:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752593765; x=1753198565; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1muAs6uZIQeqlPfNJnrlB3AEMhYTlA+qimVUOMJkFwI=;
+        b=X7hca3F6I/BIqLaCyakYmxhYSLPWHI+XgSaFxRWOw8BLnW67KzCPF4GxETVcf312gL
+         QVLIGgQ7VRDkGGd7XPSuTOjsNuxcGcRkYf07ktSYlC23Ip79HIbBvDwzWfwOb06bn7Gh
+         s7RBexFlM1lPI/G+kGfI6sipMUSAuxR7lhBNX9pFEoJgGBswoKUliSNFB2CPzFCCYGo8
+         l07x2ovy232aDgtsHpy5piQSMJwvtuTG9MvJfFef87r6gdt2f9bGiExK0S1ATcmrANR1
+         aHJntLdYuDaLvIornO3KL5n/UrQvovg4nhjYa7iCGkER8ZMvGW0aIud16H6hZbLXORgu
+         fQtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752593765; x=1753198565;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1muAs6uZIQeqlPfNJnrlB3AEMhYTlA+qimVUOMJkFwI=;
+        b=a3Y061YWcjxAv2XCe0FwgO+KjG92W1EBQcK+jTp6wQrTPCv6pBchI8NjkD5MnxLrlT
+         AiNJnAK0gZ6mqvEed5YTGWc1vbR1ODXJ3HFcjweyMk4GT4EyL2f88ClLN/6IjdenlCK4
+         5q9lp8rU8HdosdGIK0CMiWxyI1fTDAm5UBNgnH1q2fVXePgCbhv6QOxEuvn71m2EKun9
+         TqOxvS1KJgW2qn2DyDSb8ok2qERgPU721kytohdu73kMKtWq4cxxyN+dsW/E7lMly6ay
+         oTuHrQIFTa63QNd1YMya9SaCIsCS1ugV1yRCQyTTaPPMOPqGUvrt+cB2ogzo584thKlF
+         LEnw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2MxdTMRcTfR+zjypEW2x+z+I9pqlRrtzEappDWdrX+wGGKiChAahFub2Ww/IJMmcWatDIdGlruQQZix3Y@vger.kernel.org, AJvYcCXjp/xv0uBRtCrhCucKwJcNPy81vr8psIKmZn4K/89YGpxIgdSzoNdeIRXyzkqBB7xLeD7f8FLyeufE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM3gPNZgg8PNVVcphWMaYa3gQ7MGdXobYnD+X9M8RlnH6cOalF
+	vo0NwzIdK7aVFgCgLa6gC2x6qRApWpiKKjUWEssDVqzxUWrjly0Vb85C
+X-Gm-Gg: ASbGncu3qTt5hxETsloqVvuq3uVJ3gMk3t5M4/C4Nj79wWnBIIdCD+uz7eQPfpiwXEK
+	B6lCVA8luTTI0TdhSzNSZ84XxbjEq8gYYSqAI49RELcyPm3cYzWlDZ5h6tPvsSwQCk5278iU0pV
+	rB6IKdMeZaozpoGS2qZjCysA+fVgN0fHmjrOCVvIf/EijS7LUTAl/bkSDY0ZTpyauUXTPnQCno0
+	Yrh8LqKy9vDRF6aL1oEqF4V6eZDd83hWIjw9kxHzNhFy70LC6VQmwWpKmG1mpAjazyvIYcVN6Se
+	4jHgYxVn5MVuzPRX5vmurX88FSAg6Yf7s8NGgXfmtK6ae5Ukh/QFg7V68ZNgu9ZZSWeGGI1JFwn
+	Mc6JFYCBg+por9oKKevPj
+X-Google-Smtp-Source: AGHT+IEKThzNTB5vsFlWZwdtTDFUHMxfMcTMzybZXLq+o94NFDo+mDhKuRFN+8IXALjz3Cv9TL9bVg==
+X-Received: by 2002:a05:600c:1c14:b0:456:28f4:a576 with SMTP id 5b1f17b1804b1-45628f4a959mr23728935e9.27.1752593764796;
+        Tue, 15 Jul 2025 08:36:04 -0700 (PDT)
+Received: from masalkhi.. ([61.8.131.79])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0dbddsm15675398f8f.63.2025.07.15.08.36.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 08:36:04 -0700 (PDT)
+From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+To: abd.masalkhi@gmail.com
+Cc: arnd@arndb.de,
+	christophe.jaillet@wanadoo.fr,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	luoyifan@cmss.chinamobile.com,
+	robh@kernel.org
+Subject: Re: [PATCH v6 2/3] eeprom: add driver for ST M24LR series RFID/NFC EEPROM chips
+Date: Tue, 15 Jul 2025 15:36:02 +0000
+Message-ID: <20250715153602.1149-1-abd.masalkhi@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250706105311.395162-3-abd.masalkhi@gmail.com>
+References: <20250706105311.395162-3-abd.masalkhi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3457635.1752593748.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 15 Jul 2025 16:35:48 +0100
-Message-ID: <3457636.1752593748@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
 
-    =
+Hi all,
 
-Add support for RENAME_NOREPLACE and RENAME_EXCHANGE, if the server
-supports them.
+Gentle ping.
 
-The default is translated to YFS.Rename_Replace, falling back to
-YFS.Rename; RENAME_NOREPLACE is translated to YFS.Rename_NoReplace and
-RENAME_EXCHANGE to YFS.Rename_Exchange, both of which fall back to
-reporting EOPNOTSUPP.
+Best regards,
+Abd-Alrhman Masalkhi
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
----
- fs/afs/dir.c               |  223 +++++++++++++++++++++++++++++++--------=
--
- fs/afs/dir_edit.c          |   18 +--
- fs/afs/internal.h          |   15 +-
- fs/afs/misc.c              |    1 =
-
- fs/afs/protocol_yfs.h      |    3 =
-
- fs/afs/rotate.c            |   11 +
- fs/afs/yfsclient.c         |  249 +++++++++++++++++++++++++++++++++++++++=
-++++++
- fs/dcache.c                |    1 =
-
- include/trace/events/afs.h |    6 +
- 9 files changed, 466 insertions(+), 61 deletions(-)
-
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index bfb69e066672..5667b5d54de0 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -1823,7 +1823,8 @@ static int afs_symlink(struct mnt_idmap *idmap, stru=
-ct inode *dir,
- =
-
- static void afs_rename_success(struct afs_operation *op)
- {
--	struct afs_vnode *vnode =3D AFS_FS_I(d_inode(op->dentry));
-+	struct afs_vnode *vnode =3D op->more_files[0].vnode;
-+	struct afs_vnode *new_vnode =3D op->more_files[1].vnode;
- =
-
- 	_enter("op=3D%08x", op->debug_id);
- =
-
-@@ -1834,22 +1835,40 @@ static void afs_rename_success(struct afs_operatio=
-n *op)
- 		op->ctime =3D op->file[1].scb.status.mtime_client;
- 		afs_vnode_commit_status(op, &op->file[1]);
- 	}
-+	if (op->more_files[0].scb.have_status)
-+		afs_vnode_commit_status(op, &op->more_files[0]);
-+	if (op->more_files[1].scb.have_status)
-+		afs_vnode_commit_status(op, &op->more_files[1]);
- =
-
- 	/* If we're moving a subdir between dirs, we need to update
- 	 * its DV counter too as the ".." will be altered.
- 	 */
--	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
--	    op->file[0].vnode !=3D op->file[1].vnode) {
--		u64 new_dv;
-+	if (op->file[0].vnode !=3D op->file[1].vnode) {
-+		if (S_ISDIR(vnode->netfs.inode.i_mode)) {
-+			u64 new_dv;
- =
-
--		write_seqlock(&vnode->cb_lock);
-+			write_seqlock(&vnode->cb_lock);
- =
-
--		new_dv =3D vnode->status.data_version + 1;
--		trace_afs_set_dv(vnode, new_dv);
--		vnode->status.data_version =3D new_dv;
--		inode_set_iversion_raw(&vnode->netfs.inode, new_dv);
-+			new_dv =3D vnode->status.data_version + 1;
-+			trace_afs_set_dv(vnode, new_dv);
-+			vnode->status.data_version =3D new_dv;
-+			inode_set_iversion_raw(&vnode->netfs.inode, new_dv);
- =
-
--		write_sequnlock(&vnode->cb_lock);
-+			write_sequnlock(&vnode->cb_lock);
-+		}
-+
-+		if ((op->rename.rename_flags & RENAME_EXCHANGE) &&
-+		    S_ISDIR(new_vnode->netfs.inode.i_mode)) {
-+			u64 new_dv;
-+
-+			write_seqlock(&new_vnode->cb_lock);
-+
-+			new_dv =3D new_vnode->status.data_version + 1;
-+			new_vnode->status.data_version =3D new_dv;
-+			inode_set_iversion_raw(&new_vnode->netfs.inode, new_dv);
-+
-+			write_sequnlock(&new_vnode->cb_lock);
-+		}
- 	}
- }
- =
-
-@@ -1900,8 +1919,8 @@ static void afs_rename_edit_dir(struct afs_operation=
- *op)
- 	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
- 	    new_dvnode !=3D orig_dvnode &&
- 	    test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
--		afs_edit_dir_update_dotdot(vnode, new_dvnode,
--					   afs_edit_dir_for_rename_sub);
-+		afs_edit_dir_update(vnode, &dotdot_name, new_dvnode,
-+				    afs_edit_dir_for_rename_sub);
- =
-
- 	new_inode =3D d_inode(new_dentry);
- 	if (new_inode) {
-@@ -1915,9 +1934,6 @@ static void afs_rename_edit_dir(struct afs_operation=
- *op)
- =
-
- 	/* Now we can update d_fsdata on the dentries to reflect their
- 	 * new parent's data_version.
--	 *
--	 * Note that if we ever implement RENAME_EXCHANGE, we'll have
--	 * to update both dentries with opposing dir versions.
- 	 */
- 	afs_update_dentry_version(op, new_dvp, op->dentry);
- 	afs_update_dentry_version(op, new_dvp, op->dentry_2);
-@@ -1930,6 +1946,67 @@ static void afs_rename_edit_dir(struct afs_operatio=
-n *op)
- 		fscache_end_operation(&new_cres);
- }
- =
-
-+static void afs_rename_exchange_edit_dir(struct afs_operation *op)
-+{
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	struct afs_vnode *orig_dvnode =3D orig_dvp->vnode;
-+	struct afs_vnode *new_dvnode =3D new_dvp->vnode;
-+	struct afs_vnode *old_vnode =3D op->more_files[0].vnode;
-+	struct afs_vnode *new_vnode =3D op->more_files[1].vnode;
-+	struct dentry *old_dentry =3D op->dentry;
-+	struct dentry *new_dentry =3D op->dentry_2;
-+
-+	_enter("op=3D%08x", op->debug_id);
-+
-+	if (new_dvnode =3D=3D orig_dvnode) {
-+		down_write(&orig_dvnode->validate_lock);
-+		if (test_bit(AFS_VNODE_DIR_VALID, &orig_dvnode->flags) &&
-+		    orig_dvnode->status.data_version =3D=3D orig_dvp->dv_before + orig_=
-dvp->dv_delta) {
-+			afs_edit_dir_update(orig_dvnode, &old_dentry->d_name,
-+					    new_vnode, afs_edit_dir_for_rename_0);
-+			afs_edit_dir_update(orig_dvnode, &new_dentry->d_name,
-+					    old_vnode, afs_edit_dir_for_rename_1);
-+		}
-+
-+		d_exchange(old_dentry, new_dentry);
-+		up_write(&orig_dvnode->validate_lock);
-+	} else {
-+		down_write(&orig_dvnode->validate_lock);
-+		if (test_bit(AFS_VNODE_DIR_VALID, &orig_dvnode->flags) &&
-+		    orig_dvnode->status.data_version =3D=3D orig_dvp->dv_before + orig_=
-dvp->dv_delta)
-+			afs_edit_dir_update(orig_dvnode, &old_dentry->d_name,
-+					    new_vnode, afs_edit_dir_for_rename_0);
-+
-+		up_write(&orig_dvnode->validate_lock);
-+		down_write(&new_dvnode->validate_lock);
-+
-+		if (test_bit(AFS_VNODE_DIR_VALID, &new_dvnode->flags) &&
-+		    new_dvnode->status.data_version =3D=3D new_dvp->dv_before + new_dvp=
-->dv_delta)
-+			afs_edit_dir_update(new_dvnode, &new_dentry->d_name,
-+					    old_vnode, afs_edit_dir_for_rename_1);
-+
-+		if (S_ISDIR(old_vnode->netfs.inode.i_mode) &&
-+		    test_bit(AFS_VNODE_DIR_VALID, &old_vnode->flags))
-+			afs_edit_dir_update(old_vnode, &dotdot_name, new_dvnode,
-+					    afs_edit_dir_for_rename_sub);
-+
-+		if (S_ISDIR(new_vnode->netfs.inode.i_mode) &&
-+		    test_bit(AFS_VNODE_DIR_VALID, &new_vnode->flags))
-+			afs_edit_dir_update(new_vnode, &dotdot_name, orig_dvnode,
-+					    afs_edit_dir_for_rename_sub);
-+
-+		/* Now we can update d_fsdata on the dentries to reflect their
-+		 * new parents' data_version.
-+		 */
-+		afs_update_dentry_version(op, new_dvp, old_dentry);
-+		afs_update_dentry_version(op, orig_dvp, new_dentry);
-+
-+		d_exchange(old_dentry, new_dentry);
-+		up_write(&new_dvnode->validate_lock);
-+	}
-+}
-+
- static void afs_rename_put(struct afs_operation *op)
- {
- 	_enter("op=3D%08x", op->debug_id);
-@@ -1948,6 +2025,32 @@ static const struct afs_operation_ops afs_rename_op=
-eration =3D {
- 	.put		=3D afs_rename_put,
- };
- =
-
-+#if 0 /* Autoswitched in yfs_fs_rename_replace(). */
-+static const struct afs_operation_ops afs_rename_replace_operation =3D {
-+	.issue_afs_rpc	=3D NULL,
-+	.issue_yfs_rpc	=3D yfs_fs_rename_replace,
-+	.success	=3D afs_rename_success,
-+	.edit_dir	=3D afs_rename_edit_dir,
-+	.put		=3D afs_rename_put,
-+};
-+#endif
-+
-+static const struct afs_operation_ops afs_rename_noreplace_operation =3D =
-{
-+	.issue_afs_rpc	=3D NULL,
-+	.issue_yfs_rpc	=3D yfs_fs_rename_noreplace,
-+	.success	=3D afs_rename_success,
-+	.edit_dir	=3D afs_rename_edit_dir,
-+	.put		=3D afs_rename_put,
-+};
-+
-+static const struct afs_operation_ops afs_rename_exchange_operation =3D {
-+	.issue_afs_rpc	=3D NULL,
-+	.issue_yfs_rpc	=3D yfs_fs_rename_exchange,
-+	.success	=3D afs_rename_success,
-+	.edit_dir	=3D afs_rename_exchange_edit_dir,
-+	.put		=3D afs_rename_put,
-+};
-+
- /*
-  * rename a file in an AFS filesystem and/or move it between directories
-  */
-@@ -1956,10 +2059,10 @@ static int afs_rename(struct mnt_idmap *idmap, str=
-uct inode *old_dir,
- 		      struct dentry *new_dentry, unsigned int flags)
- {
- 	struct afs_operation *op;
--	struct afs_vnode *orig_dvnode, *new_dvnode, *vnode;
-+	struct afs_vnode *orig_dvnode, *new_dvnode, *vnode, *new_vnode =3D NULL;
- 	int ret;
- =
-
--	if (flags)
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
- 		return -EINVAL;
- =
-
- 	/* Don't allow silly-rename files be moved around. */
-@@ -1969,6 +2072,8 @@ static int afs_rename(struct mnt_idmap *idmap, struc=
-t inode *old_dir,
- 	vnode =3D AFS_FS_I(d_inode(old_dentry));
- 	orig_dvnode =3D AFS_FS_I(old_dir);
- 	new_dvnode =3D AFS_FS_I(new_dir);
-+	if (d_is_positive(new_dentry))
-+		new_vnode =3D AFS_FS_I(d_inode(new_dentry));
- =
-
- 	_enter("{%llx:%llu},{%llx:%llu},{%llx:%llu},{%pd}",
- 	       orig_dvnode->fid.vid, orig_dvnode->fid.vnode,
-@@ -1989,6 +2094,11 @@ static int afs_rename(struct mnt_idmap *idmap, stru=
-ct inode *old_dir,
- 	if (ret < 0)
- 		goto error;
- =
-
-+	ret =3D -ENOMEM;
-+	op->more_files =3D kvcalloc(2, sizeof(struct afs_vnode_param), GFP_KERNE=
-L);
-+	if (!op->more_files)
-+		goto error;
-+
- 	afs_op_set_vnode(op, 0, orig_dvnode);
- 	afs_op_set_vnode(op, 1, new_dvnode); /* May be same as orig_dvnode */
- 	op->file[0].dv_delta =3D 1;
-@@ -1997,46 +2107,63 @@ static int afs_rename(struct mnt_idmap *idmap, str=
-uct inode *old_dir,
- 	op->file[1].modification =3D true;
- 	op->file[0].update_ctime =3D true;
- 	op->file[1].update_ctime =3D true;
-+	op->more_files[0].vnode		=3D vnode;
-+	op->more_files[0].speculative	=3D true;
-+	op->more_files[1].vnode		=3D new_vnode;
-+	op->more_files[1].speculative	=3D true;
-+	op->nr_files =3D 4;
- =
-
- 	op->dentry		=3D old_dentry;
- 	op->dentry_2		=3D new_dentry;
-+	op->rename.rename_flags	=3D flags;
- 	op->rename.new_negative	=3D d_is_negative(new_dentry);
--	op->ops			=3D &afs_rename_operation;
- =
-
--	/* For non-directories, check whether the target is busy and if so,
--	 * make a copy of the dentry and then do a silly-rename.  If the
--	 * silly-rename succeeds, the copied dentry is hashed and becomes the
--	 * new target.
--	 */
--	if (d_is_positive(new_dentry) && !d_is_dir(new_dentry)) {
--		/* To prevent any new references to the target during the
--		 * rename, we unhash the dentry in advance.
-+	if (flags & RENAME_NOREPLACE) {
-+		op->ops		=3D &afs_rename_noreplace_operation;
-+	} else if (flags & RENAME_EXCHANGE) {
-+		op->ops		=3D &afs_rename_exchange_operation;
-+		d_drop(new_dentry);
-+	} else {
-+		/* If we might displace the target, we might need to do silly
-+		 * rename.
- 		 */
--		if (!d_unhashed(new_dentry)) {
--			d_drop(new_dentry);
--			op->rename.rehash =3D new_dentry;
--		}
-+		op->ops	=3D &afs_rename_operation;
- =
-
--		if (d_count(new_dentry) > 2) {
--			/* copy the target dentry's name */
--			op->rename.tmp =3D d_alloc(new_dentry->d_parent,
--						 &new_dentry->d_name);
--			if (!op->rename.tmp) {
--				afs_op_nomem(op);
--				goto error;
-+		/* For non-directories, check whether the target is busy and if
-+		 * so, make a copy of the dentry and then do a silly-rename.
-+		 * If the silly-rename succeeds, the copied dentry is hashed
-+		 * and becomes the new target.
-+		 */
-+		if (d_is_positive(new_dentry) && !d_is_dir(new_dentry)) {
-+			/* To prevent any new references to the target during
-+			 * the rename, we unhash the dentry in advance.
-+			 */
-+			if (!d_unhashed(new_dentry)) {
-+				d_drop(new_dentry);
-+				op->rename.rehash =3D new_dentry;
- 			}
- =
-
--			ret =3D afs_sillyrename(new_dvnode,
--					      AFS_FS_I(d_inode(new_dentry)),
--					      new_dentry, op->key);
--			if (ret) {
--				afs_op_set_error(op, ret);
--				goto error;
-+			if (d_count(new_dentry) > 2) {
-+				/* copy the target dentry's name */
-+				op->rename.tmp =3D d_alloc(new_dentry->d_parent,
-+							 &new_dentry->d_name);
-+				if (!op->rename.tmp) {
-+					afs_op_nomem(op);
-+					goto error;
-+				}
-+
-+				ret =3D afs_sillyrename(new_dvnode,
-+						      AFS_FS_I(d_inode(new_dentry)),
-+						      new_dentry, op->key);
-+				if (ret) {
-+					afs_op_set_error(op, ret);
-+					goto error;
-+				}
-+
-+				op->dentry_2 =3D op->rename.tmp;
-+				op->rename.rehash =3D NULL;
-+				op->rename.new_negative =3D true;
- 			}
--
--			op->dentry_2 =3D op->rename.tmp;
--			op->rename.rehash =3D NULL;
--			op->rename.new_negative =3D true;
- 		}
- 	}
- =
-
-@@ -2052,6 +2179,8 @@ static int afs_rename(struct mnt_idmap *idmap, struc=
-t inode *old_dir,
- 	d_drop(old_dentry);
- =
-
- 	ret =3D afs_do_sync_operation(op);
-+	if (ret =3D=3D -ENOTSUPP)
-+		ret =3D -EOPNOTSUPP;
- out:
- 	afs_dir_unuse_cookie(orig_dvnode, ret);
- 	if (new_dvnode !=3D orig_dvnode)
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-index 60a549f1d9c5..4b1342c72089 100644
---- a/fs/afs/dir_edit.c
-+++ b/fs/afs/dir_edit.c
-@@ -522,11 +522,11 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
- }
- =
-
- /*
-- * Edit a subdirectory that has been moved between directories to update =
-the
-- * ".." entry.
-+ * Edit an entry in a directory to update the vnode it refers to.  This i=
-s also
-+ * used to update the ".." entry in a directory.
-  */
--void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
- *new_dvnode,
--				enum afs_edit_dir_reason why)
-+void afs_edit_dir_update(struct afs_vnode *vnode, const struct qstr *name=
-,
-+			 struct afs_vnode *new_dvnode, enum afs_edit_dir_reason why)
- {
- 	union afs_xdr_dir_block *block;
- 	union afs_xdr_dirent *de;
-@@ -557,7 +557,7 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vnod=
-e, struct afs_vnode *new_d
- 		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
- 			goto already_invalidated;
- =
-
--		slot =3D afs_dir_scan_block(block, &dotdot_name, b);
-+		slot =3D afs_dir_scan_block(block, name, b);
- 		if (slot >=3D 0)
- 			goto found_dirent;
- =
-
-@@ -566,7 +566,7 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vnod=
-e, struct afs_vnode *new_d
- =
-
- 	/* Didn't find the dirent to clobber.  Download the directory again. */
- 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_nodd,
--			   0, 0, 0, 0, "..");
-+			   0, 0, 0, 0, name->name);
- 	afs_invalidate_dir(vnode, afs_dir_invalid_edit_upd_no_dd);
- 	goto out;
- =
-
-@@ -576,7 +576,7 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vnod=
-e, struct afs_vnode *new_d
- 	de->u.unique =3D htonl(new_dvnode->fid.unique);
- =
-
- 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_dd, b, slot,
--			   ntohl(de->u.vnode), ntohl(de->u.unique), "..");
-+			   ntohl(de->u.vnode), ntohl(de->u.unique), name->name);
- =
-
- 	kunmap_local(block);
- 	netfs_single_mark_inode_dirty(&vnode->netfs.inode);
-@@ -589,12 +589,12 @@ void afs_edit_dir_update_dotdot(struct afs_vnode *vn=
-ode, struct afs_vnode *new_d
- already_invalidated:
- 	kunmap_local(block);
- 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_inval,
--			   0, 0, 0, 0, "..");
-+			   0, 0, 0, 0, name->name);
- 	goto out;
- =
-
- error:
- 	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_error,
--			   0, 0, 0, 0, "..");
-+			   0, 0, 0, 0, name->name);
- 	goto out;
- }
- =
-
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 1124ea4000cb..444a3ea4fdf6 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -562,6 +562,7 @@ struct afs_server {
- #define AFS_SERVER_FL_NO_IBULK	17		/* Fileserver doesn't support FS.Inlin=
-eBulkStatus */
- #define AFS_SERVER_FL_NO_RM2	18		/* Fileserver doesn't support YFS.Remove=
-File2 */
- #define AFS_SERVER_FL_HAS_FS64	19		/* Fileserver supports FS.{Fetch,Store=
-}Data64 */
-+#define AFS_SERVER_FL_NO_RENAME2 20		/* YFS Fileserver doesn't support en=
-hanced rename */
- 	refcount_t		ref;		/* Object refcount */
- 	atomic_t		active;		/* Active user count */
- 	u32			addr_version;	/* Address list version */
-@@ -891,9 +892,10 @@ struct afs_operation {
- 			bool	need_rehash;
- 		} unlink;
- 		struct {
--			struct dentry *rehash;
--			struct dentry *tmp;
--			bool	new_negative;
-+			struct dentry	*rehash;
-+			struct dentry	*tmp;
-+			unsigned int	rename_flags;
-+			bool		new_negative;
- 		} rename;
- 		struct {
- 			struct netfs_io_subrequest *subreq;
-@@ -1100,8 +1102,8 @@ int afs_single_writepages(struct address_space *mapp=
-ing,
- extern void afs_edit_dir_add(struct afs_vnode *, struct qstr *, struct af=
-s_fid *,
- 			     enum afs_edit_dir_reason);
- extern void afs_edit_dir_remove(struct afs_vnode *, struct qstr *, enum a=
-fs_edit_dir_reason);
--void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
- *new_dvnode,
--				enum afs_edit_dir_reason why);
-+void afs_edit_dir_update(struct afs_vnode *vnode, const struct qstr *name=
-,
-+			 struct afs_vnode *new_dvnode, enum afs_edit_dir_reason why);
- void afs_mkdir_init_dir(struct afs_vnode *dvnode, struct afs_vnode *paren=
-t_vnode);
- =
-
- /*
-@@ -1693,6 +1695,9 @@ extern void yfs_fs_remove_dir(struct afs_operation *=
-);
- extern void yfs_fs_link(struct afs_operation *);
- extern void yfs_fs_symlink(struct afs_operation *);
- extern void yfs_fs_rename(struct afs_operation *);
-+void yfs_fs_rename_replace(struct afs_operation *op);
-+void yfs_fs_rename_noreplace(struct afs_operation *op);
-+void yfs_fs_rename_exchange(struct afs_operation *op);
- extern void yfs_fs_store_data(struct afs_operation *);
- extern void yfs_fs_setattr(struct afs_operation *);
- extern void yfs_fs_get_volume_status(struct afs_operation *);
-diff --git a/fs/afs/misc.c b/fs/afs/misc.c
-index 8f2b3a177690..c8a7f266080d 100644
---- a/fs/afs/misc.c
-+++ b/fs/afs/misc.c
-@@ -131,6 +131,7 @@ int afs_abort_to_error(u32 abort_code)
- 	case KRB5_PROG_KEYTYPE_NOSUPP:	return -ENOPKG;
- =
-
- 	case RXGEN_OPCODE:	return -ENOTSUPP;
-+	case RX_INVALID_OPERATION:	return -ENOTSUPP;
- =
-
- 	default:		return -EREMOTEIO;
- 	}
-diff --git a/fs/afs/protocol_yfs.h b/fs/afs/protocol_yfs.h
-index e4cd89c44c46..b2f06c1917c2 100644
---- a/fs/afs/protocol_yfs.h
-+++ b/fs/afs/protocol_yfs.h
-@@ -50,6 +50,9 @@ enum YFS_FS_Operations {
- 	YFSREMOVEACL		=3D 64171,
- 	YFSREMOVEFILE2		=3D 64173,
- 	YFSSTOREOPAQUEACL2	=3D 64174,
-+	YFSRENAME_REPLACE	=3D 64176,
-+	YFSRENAME_NOREPLACE	=3D 64177,
-+	YFSRENAME_EXCHANGE	=3D 64187,
- 	YFSINLINEBULKSTATUS	=3D 64536, /* YFS Fetch multiple file statuses with =
-errors */
- 	YFSFETCHDATA64		=3D 64537, /* YFS Fetch file data */
- 	YFSSTOREDATA64		=3D 64538, /* YFS Store file data */
-diff --git a/fs/afs/rotate.c b/fs/afs/rotate.c
-index a1c24f589d9e..f5dd3555226b 100644
---- a/fs/afs/rotate.c
-+++ b/fs/afs/rotate.c
-@@ -432,6 +432,16 @@ bool afs_select_fileserver(struct afs_operation *op)
- 			afs_op_set_error(op, -EDQUOT);
- 			goto failed_but_online;
- =
-
-+		case RX_INVALID_OPERATION:
-+		case RXGEN_OPCODE:
-+			/* Handle downgrading to an older operation. */
-+			afs_op_set_error(op, -ENOTSUPP);
-+			if (op->flags & AFS_OPERATION_DOWNGRADE) {
-+				op->flags &=3D ~AFS_OPERATION_DOWNGRADE;
-+				goto go_again;
-+			}
-+			goto failed_but_online;
-+
- 		default:
- 			afs_op_accumulate_error(op, error, abort_code);
- 		failed_but_online:
-@@ -620,6 +630,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 	op->addr_index =3D addr_index;
- 	set_bit(addr_index, &op->addr_tried);
- =
-
-+go_again:
- 	op->volsync.creation =3D TIME64_MIN;
- 	op->volsync.update =3D TIME64_MIN;
- 	op->call_responded =3D false;
-diff --git a/fs/afs/yfsclient.c b/fs/afs/yfsclient.c
-index 257af259c04a..f8b60e639045 100644
---- a/fs/afs/yfsclient.c
-+++ b/fs/afs/yfsclient.c
-@@ -1042,6 +1042,9 @@ void yfs_fs_rename(struct afs_operation *op)
- =
-
- 	_enter("");
- =
-
-+	if (!test_bit(AFS_SERVER_FL_NO_RENAME2, &op->server->flags))
-+		return yfs_fs_rename_replace(op);
-+
- 	call =3D afs_alloc_flat_call(op->net, &yfs_RXYFSRename,
- 				   sizeof(__be32) +
- 				   sizeof(struct yfs_xdr_RPCFlags) +
-@@ -1070,6 +1073,252 @@ void yfs_fs_rename(struct afs_operation *op)
- 	afs_make_op_call(op, call, GFP_NOFS);
- }
- =
-
-+/*
-+ * Deliver reply data to a YFS.Rename_NoReplace operation.  This does not
-+ * return the status of a displaced target inode as there cannot be one.
-+ */
-+static int yfs_deliver_fs_rename_1(struct afs_call *call)
-+{
-+	struct afs_operation *op =3D call->op;
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	struct afs_vnode_param *old_vp =3D &op->more_files[0];
-+	const __be32 *bp;
-+	int ret;
-+
-+	_enter("{%u}", call->unmarshall);
-+
-+	ret =3D afs_transfer_reply(call);
-+	if (ret < 0)
-+		return ret;
-+
-+	bp =3D call->buffer;
-+	/* If the two dirs are the same, we have two copies of the same status
-+	 * report, so we just decode it twice.
-+	 */
-+	xdr_decode_YFSFetchStatus(&bp, call, &orig_dvp->scb);
-+	xdr_decode_YFSFid(&bp, &old_vp->fid);
-+	xdr_decode_YFSFetchStatus(&bp, call, &old_vp->scb);
-+	xdr_decode_YFSFetchStatus(&bp, call, &new_dvp->scb);
-+	xdr_decode_YFSVolSync(&bp, &op->volsync);
-+	_leave(" =3D 0 [done]");
-+	return 0;
-+}
-+
-+/*
-+ * Deliver reply data to a YFS.Rename_Replace or a YFS.Rename_Exchange
-+ * operation.  These return the status of the displaced target inode if t=
-here
-+ * was one.
-+ */
-+static int yfs_deliver_fs_rename_2(struct afs_call *call)
-+{
-+	struct afs_operation *op =3D call->op;
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	struct afs_vnode_param *old_vp =3D &op->more_files[0];
-+	struct afs_vnode_param *new_vp =3D &op->more_files[1];
-+	const __be32 *bp;
-+	int ret;
-+
-+	_enter("{%u}", call->unmarshall);
-+
-+	ret =3D afs_transfer_reply(call);
-+	if (ret < 0)
-+		return ret;
-+
-+	bp =3D call->buffer;
-+	/* If the two dirs are the same, we have two copies of the same status
-+	 * report, so we just decode it twice.
-+	 */
-+	xdr_decode_YFSFetchStatus(&bp, call, &orig_dvp->scb);
-+	xdr_decode_YFSFid(&bp, &old_vp->fid);
-+	xdr_decode_YFSFetchStatus(&bp, call, &old_vp->scb);
-+	xdr_decode_YFSFetchStatus(&bp, call, &new_dvp->scb);
-+	xdr_decode_YFSFid(&bp, &new_vp->fid);
-+	xdr_decode_YFSFetchStatus(&bp, call, &new_vp->scb);
-+	xdr_decode_YFSVolSync(&bp, &op->volsync);
-+	_leave(" =3D 0 [done]");
-+	return 0;
-+}
-+
-+static void yfs_done_fs_rename_replace(struct afs_call *call)
-+{
-+	if (call->error =3D=3D -ECONNABORTED &&
-+	    (call->abort_code =3D=3D RX_INVALID_OPERATION ||
-+	     call->abort_code =3D=3D RXGEN_OPCODE)) {
-+		set_bit(AFS_SERVER_FL_NO_RENAME2, &call->op->server->flags);
-+		call->op->flags |=3D AFS_OPERATION_DOWNGRADE;
-+	}
-+}
-+
-+/*
-+ * YFS.Rename_Replace operation type
-+ */
-+static const struct afs_call_type yfs_RXYFSRename_Replace =3D {
-+	.name		=3D "FS.Rename_Replace",
-+	.op		=3D yfs_FS_Rename_Replace,
-+	.deliver	=3D yfs_deliver_fs_rename_2,
-+	.done		=3D yfs_done_fs_rename_replace,
-+	.destructor	=3D afs_flat_call_destructor,
-+};
-+
-+/*
-+ * YFS.Rename_NoReplace operation type
-+ */
-+static const struct afs_call_type yfs_RXYFSRename_NoReplace =3D {
-+	.name		=3D "FS.Rename_NoReplace",
-+	.op		=3D yfs_FS_Rename_NoReplace,
-+	.deliver	=3D yfs_deliver_fs_rename_1,
-+	.destructor	=3D afs_flat_call_destructor,
-+};
-+
-+/*
-+ * YFS.Rename_Exchange operation type
-+ */
-+static const struct afs_call_type yfs_RXYFSRename_Exchange =3D {
-+	.name		=3D "FS.Rename_Exchange",
-+	.op		=3D yfs_FS_Rename_Exchange,
-+	.deliver	=3D yfs_deliver_fs_rename_2,
-+	.destructor	=3D afs_flat_call_destructor,
-+};
-+
-+/*
-+ * Rename a file or directory, replacing the target if it exists.  The st=
-atus
-+ * of a displaced target is returned.
-+ */
-+void yfs_fs_rename_replace(struct afs_operation *op)
-+{
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	const struct qstr *orig_name =3D &op->dentry->d_name;
-+	const struct qstr *new_name =3D &op->dentry_2->d_name;
-+	struct afs_call *call;
-+	__be32 *bp;
-+
-+	kenter("%u", YFSRENAME_REPLACE);
-+
-+	call =3D afs_alloc_flat_call(op->net, &yfs_RXYFSRename_Replace,
-+				   sizeof(__be32) +
-+				   sizeof(struct yfs_xdr_RPCFlags) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(orig_name->len) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(new_name->len),
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSVolSync));
-+	if (!call)
-+		return afs_op_nomem(op);
-+
-+	/* Marshall the parameters. */
-+	bp =3D call->request;
-+	bp =3D xdr_encode_u32(bp, YFSRENAME_REPLACE);
-+	bp =3D xdr_encode_u32(bp, 0); /* RPC flags */
-+	bp =3D xdr_encode_YFSFid(bp, &orig_dvp->fid);
-+	bp =3D xdr_encode_name(bp, orig_name);
-+	bp =3D xdr_encode_YFSFid(bp, &new_dvp->fid);
-+	bp =3D xdr_encode_name(bp, new_name);
-+	yfs_check_req(call, bp);
-+
-+	call->fid =3D orig_dvp->fid;
-+	trace_afs_make_fs_call2(call, &orig_dvp->fid, orig_name, new_name);
-+	afs_make_op_call(op, call, GFP_NOFS);
-+}
-+
-+/*
-+ * Rename a file or directory, failing if the target dirent exists.
-+ */
-+void yfs_fs_rename_noreplace(struct afs_operation *op)
-+{
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	const struct qstr *orig_name =3D &op->dentry->d_name;
-+	const struct qstr *new_name =3D &op->dentry_2->d_name;
-+	struct afs_call *call;
-+	__be32 *bp;
-+
-+	_enter("");
-+
-+	call =3D afs_alloc_flat_call(op->net, &yfs_RXYFSRename_NoReplace,
-+				   sizeof(__be32) +
-+				   sizeof(struct yfs_xdr_RPCFlags) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(orig_name->len) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(new_name->len),
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSVolSync));
-+	if (!call)
-+		return afs_op_nomem(op);
-+
-+	/* Marshall the parameters. */
-+	bp =3D call->request;
-+	bp =3D xdr_encode_u32(bp, YFSRENAME_NOREPLACE);
-+	bp =3D xdr_encode_u32(bp, 0); /* RPC flags */
-+	bp =3D xdr_encode_YFSFid(bp, &orig_dvp->fid);
-+	bp =3D xdr_encode_name(bp, orig_name);
-+	bp =3D xdr_encode_YFSFid(bp, &new_dvp->fid);
-+	bp =3D xdr_encode_name(bp, new_name);
-+	yfs_check_req(call, bp);
-+
-+	call->fid =3D orig_dvp->fid;
-+	trace_afs_make_fs_call2(call, &orig_dvp->fid, orig_name, new_name);
-+	afs_make_op_call(op, call, GFP_NOFS);
-+}
-+
-+/*
-+ * Exchange a pair of files directories.
-+ */
-+void yfs_fs_rename_exchange(struct afs_operation *op)
-+{
-+	struct afs_vnode_param *orig_dvp =3D &op->file[0];
-+	struct afs_vnode_param *new_dvp =3D &op->file[1];
-+	const struct qstr *orig_name =3D &op->dentry->d_name;
-+	const struct qstr *new_name =3D &op->dentry_2->d_name;
-+	struct afs_call *call;
-+	__be32 *bp;
-+
-+	_enter("");
-+
-+	call =3D afs_alloc_flat_call(op->net, &yfs_RXYFSRename_Exchange,
-+				   sizeof(__be32) +
-+				   sizeof(struct yfs_xdr_RPCFlags) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(orig_name->len) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   xdr_strlen(new_name->len),
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSFid) +
-+				   sizeof(struct yfs_xdr_YFSFetchStatus) +
-+				   sizeof(struct yfs_xdr_YFSVolSync));
-+	if (!call)
-+		return afs_op_nomem(op);
-+
-+	/* Marshall the parameters. */
-+	bp =3D call->request;
-+	bp =3D xdr_encode_u32(bp, YFSRENAME_EXCHANGE);
-+	bp =3D xdr_encode_u32(bp, 0); /* RPC flags */
-+	bp =3D xdr_encode_YFSFid(bp, &orig_dvp->fid);
-+	bp =3D xdr_encode_name(bp, orig_name);
-+	bp =3D xdr_encode_YFSFid(bp, &new_dvp->fid);
-+	bp =3D xdr_encode_name(bp, new_name);
-+	yfs_check_req(call, bp);
-+
-+	call->fid =3D orig_dvp->fid;
-+	trace_afs_make_fs_call2(call, &orig_dvp->fid, orig_name, new_name);
-+	afs_make_op_call(op, call, GFP_NOFS);
-+}
-+
- /*
-  * YFS.StoreData64 operation type.
-  */
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 03d58b2d4fa3..0ccf5d17a26f 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2899,6 +2899,7 @@ void d_exchange(struct dentry *dentry1, struct dentr=
-y *dentry2)
- =
-
- 	write_sequnlock(&rename_lock);
- }
-+EXPORT_SYMBOL(d_exchange);
- =
-
- /**
-  * d_ancestor - search for an ancestor
-diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-index 7f83d242c8e9..1b3c48b5591d 100644
---- a/include/trace/events/afs.h
-+++ b/include/trace/events/afs.h
-@@ -69,6 +69,9 @@ enum afs_fs_operation {
- 	yfs_FS_RemoveACL		=3D 64171,
- 	yfs_FS_RemoveFile2		=3D 64173,
- 	yfs_FS_StoreOpaqueACL2		=3D 64174,
-+	yfs_FS_Rename_Replace		=3D 64176,
-+	yfs_FS_Rename_NoReplace		=3D 64177,
-+	yfs_FS_Rename_Exchange		=3D 64187,
- 	yfs_FS_InlineBulkStatus		=3D 64536, /* YFS Fetch multiple file statuses =
-with errors */
- 	yfs_FS_FetchData64		=3D 64537, /* YFS Fetch file data */
- 	yfs_FS_StoreData64		=3D 64538, /* YFS Store file data */
-@@ -300,6 +303,9 @@ enum yfs_cm_operation {
- 	EM(yfs_FS_RemoveACL,			"YFS.RemoveACL") \
- 	EM(yfs_FS_RemoveFile2,			"YFS.RemoveFile2") \
- 	EM(yfs_FS_StoreOpaqueACL2,		"YFS.StoreOpaqueACL2") \
-+	EM(yfs_FS_Rename_Replace,		"YFS.Rename_Replace") \
-+	EM(yfs_FS_Rename_NoReplace,		"YFS.Rename_NoReplace") \
-+	EM(yfs_FS_Rename_Exchange,		"YFS.Rename_Exchange") \
- 	EM(yfs_FS_InlineBulkStatus,		"YFS.InlineBulkStatus") \
- 	EM(yfs_FS_FetchData64,			"YFS.FetchData64") \
- 	EM(yfs_FS_StoreData64,			"YFS.StoreData64") \
-
+> adds support for STMicroelectronics M24LRxx devices, which expose
+> two separate I2C addresses: one for system control and one for EEPROM
+> access. The driver implements both a sysfs-based interface for control
+> registers (e.g. UID, password authentication) and an nvmem provider
+> for EEPROM access.
+> 
+> Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> ---
+> Changes in v6:
+>  - Added cleanup on UID read failure (removes bin file before returning)
+>  - Used size_add() to prevent overflow in sysfs read/write bounds check
+>  - Corrected type of return variables (using ssize_t consistently)
+>  - Replaced dev_err() with dev_err_probe()
+>  - Small style and formatting cleanups
+>  - Link to v5: https://lore.kernel.org/all/20250704123914.11216-3-abd.masalkhi@gmail.com/
+> 
+> Changes in v5:
+>  - Fixed function signatures in m24lr_ctl_sss_read and m24lr_ctl_sss_write
+>    to use const struct bin_attribute *attr
+>  - Link to v4: https://lore.kernel.org/lkml/20250608182714.3359441-3-abd.masalkhi@gmail.com/
+> 
+> Changes in v4:
+>  - Moved the source file to the eeprom/ directory
+>  - Removed use of unlikely() macro
+>  - Removed use of EIO as a fallback error
+>  - Stopped dynamically creating sysfs attributes
+>  - Replaced per-sector SSS attributes with a single bin_attribute
+>    for all SSS
+>  - Introduced total_sectors sysfs attribute to report the number
+>    of valid sectors
+>  - Avoided sharing a single show/store callback across multiple
+>    attribute types
+>  - Link to v3: https://lore.kernel.org/lkml/20250606120631.3140054-3-abd.masalkhi@gmail.com/
+> 
+> Changes in v3:
+>  - Fully support the M24LR chips, including EEPROM access, no need for
+>    the standard at24 driver to handle EEPROM separately.
+>  - Rename the driver file from m24lr_ctl.c to m24lr.c.
+>  - Rename all identifiers from the m24lr_ctl prefix to m24lr.
+>  - Retain the m24lr_ctl prefix for control-related routines to distinguish
+>    them from EEPROM-related logic.
+>  - Drop usage of the I2C mux API.
+>  - Use the NVMEM subsystem to handle EEPROM access.
+>  - Add REGMAP support for EEPROM register access.
+>  - Update Kconfig entry to reflect that the driver now supports both
+>    control and EEPROM functionality.
+>  - Link to v2: https://lore.kernel.org/lkml/20250601153022.2027919-3-abd.masalkhi@gmail.com/
+> 
+> Changes in v2:
+>  - Fix compiling Errors and Warnings
+>  - Replace scnprintf with sysfs_emit
+>  - Drop success log message from probe.
+>  - Link to v1: https://lore.kernel.org/lkml/20250531081159.2007319-3-abd.masalkhi@gmail.com/
+> 
+> Comment:
+>  - Running checkpatch emit a warning for non-const regmap_config.
+>    The variable must remain auto and mutable due to runtime manipulation.
+> ---
+>  drivers/misc/eeprom/Kconfig  |  18 +
+>  drivers/misc/eeprom/Makefile |   1 +
+>  drivers/misc/eeprom/m24lr.c  | 662 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 681 insertions(+)
+>  create mode 100644 drivers/misc/eeprom/m24lr.c
+> 
+> diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
+> index cb1c4b8e7fd3..cb0ce243babd 100644
+> --- a/drivers/misc/eeprom/Kconfig
+> +++ b/drivers/misc/eeprom/Kconfig
+> @@ -119,4 +119,22 @@ config EEPROM_EE1004
+>  	  This driver can also be built as a module.  If so, the module
+>  	  will be called ee1004.
+>  
+> +config EEPROM_M24LR
+> +	tristate "STMicroelectronics M24LR RFID/NFC EEPROM support"
+> +	depends on I2C && SYSFS
+> +	select REGMAP_I2C
+> +	select NVMEM
+> +	select NVMEM_SYSFS
+> +	help
+> +	  This enables support for STMicroelectronics M24LR RFID/NFC EEPROM
+> +	  chips. These dual-interface devices expose two I2C addresses:
+> +	  one for EEPROM memory access and another for control and system
+> +	  configuration (e.g. UID, password handling).
+> +
+> +	  This driver provides a sysfs interface for control functions and
+> +	  integrates with the nvmem subsystem for EEPROM access.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called m24lr.
+> +
+>  endmenu
+> diff --git a/drivers/misc/eeprom/Makefile b/drivers/misc/eeprom/Makefile
+> index 65794e526d5d..8f311fd6a4ce 100644
+> --- a/drivers/misc/eeprom/Makefile
+> +++ b/drivers/misc/eeprom/Makefile
+> @@ -7,3 +7,4 @@ obj-$(CONFIG_EEPROM_93XX46)	+= eeprom_93xx46.o
+>  obj-$(CONFIG_EEPROM_DIGSY_MTC_CFG) += digsy_mtc_eeprom.o
+>  obj-$(CONFIG_EEPROM_IDT_89HPESX) += idt_89hpesx.o
+>  obj-$(CONFIG_EEPROM_EE1004)	+= ee1004.o
+> +obj-$(CONFIG_EEPROM_M24LR) += m24lr.o
+> diff --git a/drivers/misc/eeprom/m24lr.c b/drivers/misc/eeprom/m24lr.c
+> new file mode 100644
+> index 000000000000..3f9c4e8ab41c
+> --- /dev/null
+> +++ b/drivers/misc/eeprom/m24lr.c
+> @@ -0,0 +1,662 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * m24lr.c - Sysfs control interface for ST M24LR series RFID/NFC chips
+> + *
+> + * Copyright (c) 2025 Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> + *
+> + * This driver implements both the sysfs-based control interface and EEPROM
+> + * access for STMicroelectronics M24LR series chips (e.g., M24LR04E-R).
+> + * It provides access to control registers for features such as password
+> + * authentication, memory protection, and device configuration. In addition,
+> + * it manages read and write operations to the EEPROM region of the chip.
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/nvmem-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#define M24LR_WRITE_TIMEOUT	  25u
+> +#define M24LR_READ_TIMEOUT	  (M24LR_WRITE_TIMEOUT)
+> +
+> +/**
+> + * struct m24lr_chip - describes chip-specific sysfs layout
+> + * @sss_len:       the length of the sss region
+> + * @page_size:	   chip-specific limit on the maximum number of bytes allowed
+> + *		   in a single write operation.
+> + * @eeprom_size:   size of the EEPROM in byte
+> + *
+> + * Supports multiple M24LR chip variants (e.g., M24LRxx) by allowing each
+> + * to define its own set of sysfs attributes, depending on its available
+> + * registers and features.
+> + */
+> +struct m24lr_chip {
+> +	unsigned int sss_len;
+> +	unsigned int page_size;
+> +	unsigned int eeprom_size;
+> +};
+> +
+> +/**
+> + * struct m24lr - core driver data for M24LR chip control
+> + * @uid:           64 bits unique identifier stored in the device
+> + * @sss_len:       the length of the sss region
+> + * @page_size:	   chip-specific limit on the maximum number of bytes allowed
+> + *		   in a single write operation.
+> + * @eeprom_size:   size of the EEPROM in byte
+> + * @ctl_regmap:	   regmap interface for accessing the system parameter sector
+> + * @eeprom_regmap: regmap interface for accessing the EEPROM
+> + * @lock:	   mutex to synchronize operations to the device
+> + *
+> + * Central data structure holding the state and resources used by the
+> + * M24LR device driver.
+> + */
+> +struct m24lr {
+> +	u64 uid;
+> +	unsigned int sss_len;
+> +	unsigned int page_size;
+> +	unsigned int eeprom_size;
+> +	struct regmap *ctl_regmap;
+> +	struct regmap *eeprom_regmap;
+> +	struct mutex lock;	 /* synchronize operations to the device */
+> +};
+> +
+> +static const struct regmap_range m24lr_ctl_vo_ranges[] = {
+> +	regmap_reg_range(0, 63),
+> +};
+> +
+> +static const struct regmap_access_table m24lr_ctl_vo_table = {
+> +	.yes_ranges = m24lr_ctl_vo_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(m24lr_ctl_vo_ranges),
+> +};
+> +
+> +static const struct regmap_config m24lr_ctl_regmap_conf = {
+> +	.name = "m24lr_ctl",
+> +	.reg_stride = 1,
+> +	.reg_bits = 16,
+> +	.val_bits = 8,
+> +	.disable_locking = false,
+> +	.cache_type = REGCACHE_RBTREE,/* Flat can't be used, there's huge gap */
+> +	.volatile_table = &m24lr_ctl_vo_table,
+> +};
+> +
+> +/* Chip descriptor for M24LR04E-R variant */
+> +static const struct m24lr_chip m24lr04e_r_chip = {
+> +	.page_size = 4,
+> +	.eeprom_size = 512,
+> +	.sss_len = 4,
+> +};
+> +
+> +/* Chip descriptor for M24LR16E-R variant */
+> +static const struct m24lr_chip m24lr16e_r_chip = {
+> +	.page_size = 4,
+> +	.eeprom_size = 2048,
+> +	.sss_len = 16,
+> +};
+> +
+> +/* Chip descriptor for M24LR64E-R variant */
+> +static const struct m24lr_chip m24lr64e_r_chip = {
+> +	.page_size = 4,
+> +	.eeprom_size = 8192,
+> +	.sss_len = 64,
+> +};
+> +
+> +static const struct i2c_device_id m24lr_ids[] = {
+> +	{ "m24lr04e-r", (kernel_ulong_t)&m24lr04e_r_chip},
+> +	{ "m24lr16e-r", (kernel_ulong_t)&m24lr16e_r_chip},
+> +	{ "m24lr64e-r", (kernel_ulong_t)&m24lr64e_r_chip},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, m24lr_ids);
+> +
+> +static const struct of_device_id m24lr_of_match[] = {
+> +	{ .compatible = "st,m24lr04e-r", .data = &m24lr04e_r_chip},
+> +	{ .compatible = "st,m24lr16e-r", .data = &m24lr16e_r_chip},
+> +	{ .compatible = "st,m24lr64e-r", .data = &m24lr64e_r_chip},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, m24lr_of_match);
+> +
+> +/**
+> + * m24lr_parse_le_value - Parse hex string and convert to little-endian binary
+> + * @buf:	Input string buffer (hex format)
+> + * @reg_size:	Size of the register in bytes (must be 1, 2, 4, or 8)
+> + * @output:	Output buffer to store the value in little-endian format
+> + *
+> + * Converts a hexadecimal string to a numeric value of the given register size
+> + * and writes it in little-endian byte order into the provided buffer.
+> + *
+> + * Return: 0 on success, or negative error code on failure
+> + */
+> +static __maybe_unused int m24lr_parse_le_value(const char *buf, u32 reg_size,
+> +					       u8 *output)
+> +{
+> +	int err;
+> +
+> +	switch (reg_size) {
+> +	case 1: {
+> +		u8 tmp;
+> +
+> +		err = kstrtou8(buf, 16, &tmp);
+> +		if (!err)
+> +			*output = tmp;
+> +		break;
+> +	}
+> +	case 2: {
+> +		u16 tmp;
+> +
+> +		err = kstrtou16(buf, 16, &tmp);
+> +		if (!err)
+> +			*(__le16 *)output = cpu_to_le16(tmp);
+> +		break;
+> +	}
+> +	case 4: {
+> +		u32 tmp;
+> +
+> +		err = kstrtou32(buf, 16, &tmp);
+> +		if (!err)
+> +			*(__le32 *)output = cpu_to_le32(tmp);
+> +		break;
+> +	}
+> +	case 8: {
+> +		u64 tmp;
+> +
+> +		err = kstrtou64(buf, 16, &tmp);
+> +		if (!err)
+> +			*(__le64 *)output = cpu_to_le64(tmp);
+> +		break;
+> +	}
+> +	default:
+> +		err = -EINVAL;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +/**
+> + * m24lr_regmap_read - read data using regmap with retry on failure
+> + * @regmap:  regmap instance for the device
+> + * @buf:     buffer to store the read data
+> + * @size:    number of bytes to read
+> + * @offset:  starting register address
+> + *
+> + * Attempts to read a block of data from the device with retries and timeout.
+> + * Some M24LR chips may transiently NACK reads (e.g., during internal write
+> + * cycles), so this function retries with a short sleep until the timeout
+> + * expires.
+> + *
+> + * Returns:
+> + *	 Number of bytes read on success,
+> + *	 -ETIMEDOUT if the read fails within the timeout window.
+> + */
+> +static ssize_t m24lr_regmap_read(struct regmap *regmap, u8 *buf,
+> +				 size_t size, unsigned int offset)
+> +{
+> +	int err;
+> +	unsigned long timeout, read_time;
+> +	ssize_t ret = -ETIMEDOUT;
+> +
+> +	timeout = jiffies + msecs_to_jiffies(M24LR_READ_TIMEOUT);
+> +	do {
+> +		read_time = jiffies;
+> +
+> +		err = regmap_bulk_read(regmap, offset, buf, size);
+> +		if (!err) {
+> +			ret = size;
+> +			break;
+> +		}
+> +
+> +		usleep_range(1000, 2000);
+> +	} while (time_before(read_time, timeout));
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * m24lr_regmap_write - write data using regmap with retry on failure
+> + * @regmap: regmap instance for the device
+> + * @buf:    buffer containing the data to write
+> + * @size:   number of bytes to write
+> + * @offset: starting register address
+> + *
+> + * Attempts to write a block of data to the device with retries and a timeout.
+> + * Some M24LR devices may NACK I2C writes while an internal write operation
+> + * is in progress. This function retries the write operation with a short delay
+> + * until it succeeds or the timeout is reached.
+> + *
+> + * Returns:
+> + *	 Number of bytes written on success,
+> + *	 -ETIMEDOUT if the write fails within the timeout window.
+> + */
+> +static ssize_t m24lr_regmap_write(struct regmap *regmap, const u8 *buf,
+> +				  size_t size, unsigned int offset)
+> +{
+> +	int err;
+> +	unsigned long timeout, write_time;
+> +	ssize_t ret = -ETIMEDOUT;
+> +
+> +	timeout = jiffies + msecs_to_jiffies(M24LR_WRITE_TIMEOUT);
+> +
+> +	do {
+> +		write_time = jiffies;
+> +
+> +		err = regmap_bulk_write(regmap, offset, buf, size);
+> +		if (!err) {
+> +			ret = size;
+> +			break;
+> +		}
+> +
+> +		usleep_range(1000, 2000);
+> +	} while (time_before(write_time, timeout));
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t m24lr_read(struct m24lr *m24lr, u8 *buf, size_t size,
+> +			  unsigned int offset, bool is_eeprom)
+> +{
+> +	struct regmap *regmap;
+> +	ssize_t ret;
+> +
+> +	if (is_eeprom)
+> +		regmap = m24lr->eeprom_regmap;
+> +	else
+> +		regmap = m24lr->ctl_regmap;
+> +
+> +	mutex_lock(&m24lr->lock);
+> +	ret = m24lr_regmap_read(regmap, buf, size, offset);
+> +	mutex_unlock(&m24lr->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * m24lr_write - write buffer to M24LR device with page alignment handling
+> + * @m24lr:     pointer to driver context
+> + * @buf:       data buffer to write
+> + * @size:      number of bytes to write
+> + * @offset:    target register address in the device
+> + * @is_eeprom: true if the write should target the EEPROM,
+> + *             false if it should target the system parameters sector.
+> + *
+> + * Writes data to the M24LR device using regmap, split into chunks no larger
+> + * than page_size to respect device-specific write limitations (e.g., page
+> + * size or I2C hold-time concerns). Each chunk is aligned to the page boundary
+> + * defined by page_size.
+> + *
+> + * Returns:
+> + *	 Total number of bytes written on success,
+> + *	 A negative error code if any write fails.
+> + */
+> +static ssize_t m24lr_write(struct m24lr *m24lr, const u8 *buf, size_t size,
+> +			   unsigned int offset, bool is_eeprom)
+> +{
+> +	unsigned int n, next_sector;
+> +	struct regmap *regmap;
+> +	ssize_t ret = 0;
+> +	ssize_t err;
+> +
+> +	if (is_eeprom)
+> +		regmap = m24lr->eeprom_regmap;
+> +	else
+> +		regmap = m24lr->ctl_regmap;
+> +
+> +	n = min_t(unsigned int, size, m24lr->page_size);
+> +	next_sector = roundup(offset + 1, m24lr->page_size);
+> +	if (offset + n > next_sector)
+> +		n = next_sector - offset;
+> +
+> +	mutex_lock(&m24lr->lock);
+> +	while (n) {
+> +		err = m24lr_regmap_write(regmap, buf + offset, n, offset);
+> +		if (IS_ERR_VALUE(err)) {
+> +			if (!ret)
+> +				ret = err;
+> +
+> +			break;
+> +		}
+> +
+> +		offset += n;
+> +		size -= n;
+> +		ret += n;
+> +		n = min_t(unsigned int, size, m24lr->page_size);
+> +	}
+> +	mutex_unlock(&m24lr->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * m24lr_write_pass - Write password to M24LR043-R using secure format
+> + * @m24lr: Pointer to device control structure
+> + * @buf:   Input buffer containing hex-encoded password
+> + * @count: Number of bytes in @buf
+> + * @code:  Operation code to embed between password copies
+> + *
+> + * This function parses a 4-byte password, encodes it in  big-endian format,
+> + * and constructs a 9-byte sequence of the form:
+> + *
+> + *	  [BE(password), code, BE(password)]
+> + *
+> + * The result is written to register 0x0900 (2304), which is the password
+> + * register in M24LR04E-R chip.
+> + *
+> + * Return: Number of bytes written on success, or negative error code on failure
+> + */
+> +static ssize_t m24lr_write_pass(struct m24lr *m24lr, const char *buf,
+> +				size_t count, u8 code)
+> +{
+> +	__be32 be_pass;
+> +	u8 output[9];
+> +	ssize_t ret;
+> +	u32 pass;
+> +	int err;
+> +
+> +	if (!count)
+> +		return -EINVAL;
+> +
+> +	if (count > 8)
+> +		return -EINVAL;
+> +
+> +	err = kstrtou32(buf, 16, &pass);
+> +	if (err)
+> +		return err;
+> +
+> +	be_pass = cpu_to_be32(pass);
+> +
+> +	memcpy(output, &be_pass, sizeof(be_pass));
+> +	output[4] = code;
+> +	memcpy(output + 5, &be_pass, sizeof(be_pass));
+> +
+> +	mutex_lock(&m24lr->lock);
+> +	ret = m24lr_regmap_write(m24lr->ctl_regmap, output, 9, 2304);
+> +	mutex_unlock(&m24lr->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t m24lr_read_reg_le(struct m24lr *m24lr, u64 *val,
+> +				 unsigned int reg_addr,
+> +				 unsigned int reg_size)
+> +{
+> +	ssize_t ret;
+> +	__le64 input = 0;
+> +
+> +	ret = m24lr_read(m24lr, (u8 *)&input, reg_size, reg_addr, false);
+> +	if (IS_ERR_VALUE(ret))
+> +		return ret;
+> +
+> +	if (ret != reg_size)
+> +		return -EINVAL;
+> +
+> +	switch (reg_size) {
+> +	case 1:
+> +		*val = *(u8 *)&input;
+> +		break;
+> +	case 2:
+> +		*val = le16_to_cpu((__le16)input);
+> +		break;
+> +	case 4:
+> +		*val = le32_to_cpu((__le32)input);
+> +		break;
+> +	case 8:
+> +		*val = le64_to_cpu((__le64)input);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	};
+> +
+> +	return 0;
+> +}
+> +
+> +static int m24lr_nvmem_read(void *priv, unsigned int offset, void *val,
+> +			    size_t bytes)
+> +{
+> +	ssize_t err;
+> +	struct m24lr *m24lr = priv;
+> +
+> +	if (!bytes)
+> +		return bytes;
+> +
+> +	if (offset + bytes > m24lr->eeprom_size)
+> +		return -EINVAL;
+> +
+> +	err = m24lr_read(m24lr, val, bytes, offset, true);
+> +	if (IS_ERR_VALUE(err))
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +static int m24lr_nvmem_write(void *priv, unsigned int offset, void *val,
+> +			     size_t bytes)
+> +{
+> +	ssize_t err;
+> +	struct m24lr *m24lr = priv;
+> +
+> +	if (!bytes)
+> +		return -EINVAL;
+> +
+> +	if (offset + bytes > m24lr->eeprom_size)
+> +		return -EINVAL;
+> +
+> +	err = m24lr_write(m24lr, val, bytes, offset, true);
+> +	if (IS_ERR_VALUE(err))
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t m24lr_ctl_sss_read(struct file *filep, struct kobject *kobj,
+> +				  const struct bin_attribute *attr, char *buf,
+> +				  loff_t offset, size_t count)
+> +{
+> +	struct m24lr *m24lr = attr->private;
+> +
+> +	if (!count)
+> +		return count;
+> +
+> +	if (size_add(offset, count) > m24lr->sss_len)
+> +		return -EINVAL;
+> +
+> +	return m24lr_read(m24lr, buf, count, offset, false);
+> +}
+> +
+> +static ssize_t m24lr_ctl_sss_write(struct file *filep, struct kobject *kobj,
+> +				   const struct bin_attribute *attr, char *buf,
+> +				   loff_t offset, size_t count)
+> +{
+> +	struct m24lr *m24lr = attr->private;
+> +
+> +	if (!count)
+> +		return -EINVAL;
+> +
+> +	if (size_add(offset, count) > m24lr->sss_len)
+> +		return -EINVAL;
+> +
+> +	return m24lr_write(m24lr, buf, count, offset, false);
+> +}
+> +static BIN_ATTR(sss, 0600, m24lr_ctl_sss_read, m24lr_ctl_sss_write, 0);
+> +
+> +static ssize_t new_pass_store(struct device *dev, struct device_attribute *attr,
+> +			      const char *buf, size_t count)
+> +{
+> +	struct m24lr *m24lr = i2c_get_clientdata(to_i2c_client(dev));
+> +
+> +	return m24lr_write_pass(m24lr, buf, count, 7);
+> +}
+> +static DEVICE_ATTR_WO(new_pass);
+> +
+> +static ssize_t unlock_store(struct device *dev, struct device_attribute *attr,
+> +			    const char *buf, size_t count)
+> +{
+> +	struct m24lr *m24lr = i2c_get_clientdata(to_i2c_client(dev));
+> +
+> +	return m24lr_write_pass(m24lr, buf, count, 9);
+> +}
+> +static DEVICE_ATTR_WO(unlock);
+> +
+> +static ssize_t uid_show(struct device *dev, struct device_attribute *attr,
+> +			char *buf)
+> +{
+> +	struct m24lr *m24lr = i2c_get_clientdata(to_i2c_client(dev));
+> +
+> +	return sysfs_emit(buf, "%llx\n", m24lr->uid);
+> +}
+> +static DEVICE_ATTR_RO(uid);
+> +
+> +static ssize_t total_sectors_show(struct device *dev,
+> +				  struct device_attribute *attr, char *buf)
+> +{
+> +	struct m24lr *m24lr = i2c_get_clientdata(to_i2c_client(dev));
+> +
+> +	return sysfs_emit(buf, "%x\n", m24lr->sss_len);
+> +}
+> +static DEVICE_ATTR_RO(total_sectors);
+> +
+> +static struct attribute *m24lr_ctl_dev_attrs[] = {
+> +	&dev_attr_unlock.attr,
+> +	&dev_attr_new_pass.attr,
+> +	&dev_attr_uid.attr,
+> +	&dev_attr_total_sectors.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct m24lr_chip *m24lr_get_chip(struct device *dev)
+> +{
+> +	const struct m24lr_chip *ret;
+> +	const struct i2c_device_id *id;
+> +
+> +	id = i2c_match_id(m24lr_ids, to_i2c_client(dev));
+> +
+> +	if (dev->of_node && of_match_device(m24lr_of_match, dev))
+> +		ret = of_device_get_match_data(dev);
+> +	else if (id)
+> +		ret = (void *)id->driver_data;
+> +	else
+> +		ret = acpi_device_get_match_data(dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int m24lr_probe(struct i2c_client *client)
+> +{
+> +	struct regmap_config eeprom_regmap_conf = {0};
+> +	struct nvmem_config nvmem_conf = {0};
+> +	struct device *dev = &client->dev;
+> +	struct i2c_client *eeprom_client;
+> +	const struct m24lr_chip *chip;
+> +	struct regmap *eeprom_regmap;
+> +	struct nvmem_device *nvmem;
+> +	struct regmap *ctl_regmap;
+> +	struct m24lr *m24lr;
+> +	u32 regs[2];
+> +	long err;
+> +
+> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
+> +		return -EOPNOTSUPP;
+> +
+> +	chip = m24lr_get_chip(dev);
+> +	if (!chip)
+> +		return -ENODEV;
+> +
+> +	m24lr = devm_kzalloc(dev, sizeof(struct m24lr), GFP_KERNEL);
+> +	if (!m24lr)
+> +		return -ENOMEM;
+> +
+> +	err = device_property_read_u32_array(dev, "reg", regs, ARRAY_SIZE(regs));
+> +	if (err)
+> +		return dev_err_probe(dev, err, "Failed to read 'reg' property\n");
+> +
+> +	/* Create a second I2C client for the eeprom interface */
+> +	eeprom_client = devm_i2c_new_dummy_device(dev, client->adapter, regs[1]);
+> +	if (IS_ERR(eeprom_client))
+> +		return dev_err_probe(dev, PTR_ERR(eeprom_client),
+> +				     "Failed to create dummy I2C client for the EEPROM\n");
+> +
+> +	ctl_regmap = devm_regmap_init_i2c(client, &m24lr_ctl_regmap_conf);
+> +	if (IS_ERR(ctl_regmap))
+> +		return dev_err_probe(dev, PTR_ERR(ctl_regmap),
+> +				      "Failed to init regmap\n");
+> +
+> +	eeprom_regmap_conf.name = "m24lr_eeprom";
+> +	eeprom_regmap_conf.reg_bits = 16;
+> +	eeprom_regmap_conf.val_bits = 8;
+> +	eeprom_regmap_conf.disable_locking = true;
+> +	eeprom_regmap_conf.max_register = chip->eeprom_size - 1;
+> +
+> +	eeprom_regmap = devm_regmap_init_i2c(eeprom_client,
+> +					     &eeprom_regmap_conf);
+> +	if (IS_ERR(eeprom_regmap))
+> +		return dev_err_probe(dev, PTR_ERR(eeprom_regmap),
+> +				     "Failed to init regmap\n");
+> +
+> +	mutex_init(&m24lr->lock);
+> +	m24lr->sss_len = chip->sss_len;
+> +	m24lr->page_size = chip->page_size;
+> +	m24lr->eeprom_size = chip->eeprom_size;
+> +	m24lr->eeprom_regmap = eeprom_regmap;
+> +	m24lr->ctl_regmap = ctl_regmap;
+> +
+> +	nvmem_conf.dev = &eeprom_client->dev;
+> +	nvmem_conf.owner = THIS_MODULE;
+> +	nvmem_conf.type = NVMEM_TYPE_EEPROM;
+> +	nvmem_conf.reg_read = m24lr_nvmem_read;
+> +	nvmem_conf.reg_write = m24lr_nvmem_write;
+> +	nvmem_conf.size = chip->eeprom_size;
+> +	nvmem_conf.word_size = 1;
+> +	nvmem_conf.stride = 1;
+> +	nvmem_conf.priv = m24lr;
+> +
+> +	nvmem = devm_nvmem_register(dev, &nvmem_conf);
+> +	if (IS_ERR(nvmem))
+> +		return dev_err_probe(dev, PTR_ERR(nvmem),
+> +				     "Failed to register nvmem\n");
+> +
+> +	i2c_set_clientdata(client, m24lr);
+> +	i2c_set_clientdata(eeprom_client, m24lr);
+> +
+> +	bin_attr_sss.size = chip->sss_len;
+> +	bin_attr_sss.private = m24lr;
+> +	err = sysfs_create_bin_file(&dev->kobj, &bin_attr_sss);
+> +	if (err)
+> +		return dev_err_probe(dev, err,
+> +				     "Failed to create sss bin file\n");
+> +
+> +	/* test by reading the uid, if success store it */
+> +	err = m24lr_read_reg_le(m24lr, &m24lr->uid, 2324, sizeof(m24lr->uid));
+> +	if (IS_ERR_VALUE(err))
+> +		goto remove_bin_file;
+> +
+> +	return 0;
+> +
+> +remove_bin_file:
+> +	sysfs_remove_bin_file(&dev->kobj, &bin_attr_sss);
+> +
+> +	return err;
+> +}
+> +
+> +static void m24lr_remove(struct i2c_client *client)
+> +{
+> +	sysfs_remove_bin_file(&client->dev.kobj, &bin_attr_sss);
+> +}
+> +
+> +ATTRIBUTE_GROUPS(m24lr_ctl_dev);
+> +
+> +static struct i2c_driver m24lr_driver = {
+> +	.driver = {
+> +		.name = "m24lr",
+> +		.of_match_table = m24lr_of_match,
+> +		.dev_groups = m24lr_ctl_dev_groups,
+> +	},
+> +	.probe	  = m24lr_probe,
+> +	.remove = m24lr_remove,
+> +	.id_table = m24lr_ids,
+> +};
+> +module_i2c_driver(m24lr_driver);
+> +
+> +MODULE_AUTHOR("Abd-Alrhman Masalkhi");
+> +MODULE_DESCRIPTION("st m24lr control driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.43.0
 
