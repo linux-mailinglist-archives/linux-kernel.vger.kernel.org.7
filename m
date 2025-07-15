@@ -1,107 +1,110 @@
-Return-Path: <linux-kernel+bounces-731171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B7DB05064
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:39:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6934DB05070
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842153A3061
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:39:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 988654A7D91
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63EF2D238B;
-	Tue, 15 Jul 2025 04:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F074C2D1925;
+	Tue, 15 Jul 2025 04:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xs6k6/Pk"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="L4Bi6sck"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B0322129E;
-	Tue, 15 Jul 2025 04:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755972D12E9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752554377; cv=none; b=b146jhdP89orn9V6VYZ7oolXRwb7WcqPXpb3EOd9fCRjnk4pfc++han7l8a4/m9hVDorEqN0Zq9FM5p5ycRrPiC07PY1gp2g6kzhjGOV5ftydkLKhyAnrjYaXrH6Ka0Lz4T9fvxVfnlAab/uLSc6a2V4pdySBre19w+JOCBM2Mo=
+	t=1752554533; cv=none; b=JOMREw4SIQQKDoPjgSo/FiJFC+vRsyaW4eh+GZ430EH586dtwVGGSdSwQQjvAMBsYM6gc7VW7ERVt2AVNC++VrYuo0v8G7ltIgBJzkx/JdKi1UDV8vXF35T9zLV/zt5RGKiQSP02DL6ECdJHHEUS4J4bGkckEdRuJ2j+OYYHxzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752554377; c=relaxed/simple;
-	bh=lJw8vz1SW2vDWE1YFZRy4dIq8k+EPE779FMC38M1vHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZiI0zZ4TfyWXcX14OpPbSA3YQIXb8lm7/VNs1v/pH/0Ttn3J6SeppjU8PVOzu/rlHtJsJJSs9zfbgNzkUWoSwodBCCR4/6NL60nd4jaiVJbnGSaLWfZqYDwFS/5IYq98uIsgQHDV/OagKjolA1ELOt0r1z/qTE1xztLYLZm1TmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xs6k6/Pk; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=J+GVUJovTGLheWJo9RsseTUzw5AT5FZdGzH9Pyx6H7A=; b=xs6k6/PkChQ1ZJIV/Y6jeq3dST
-	qJwzZ9uUHFnkjewyujcASeULgV/YCcryRGLbz2PlNu8uvbMT8rIfGRlLqfziq6/q4OB5+qXeqclOW
-	pFi95+NlN5SSZoat5aMIoeN+R+WZZZLpMgKxokw5Q7v26FXN/cdChyYK/uB9YdhcuGD9AggyZF8db
-	KIPBXizi0wowtmKD7gNintVz1kuR+X9emvt6UyNreBwZ7FGDxE0MahpoecPDg4alFEdcJFUlGhuZ/
-	jhGXnnUFqszTXaAfSA1oDM2wBd0SQxXHQhA8FIvOHCaq/jRDM9WQ0ZU3SkFun+X+to9roA3DMKC1Z
-	RsUfTeUw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubXRy-000000041rO-1Ac2;
-	Tue, 15 Jul 2025 04:39:30 +0000
-Date: Mon, 14 Jul 2025 21:39:30 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Dragos Tatulea <dtatulea@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Jens Axboe <axboe@kernel.dk>,
-	parav@nvidia.com, Cosmin Ratio <cratiu@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] net: Allow SF devices to be used for ZC DMA
-Message-ID: <aHXbgr67d1l5atW8@infradead.org>
-References: <20250711092634.2733340-2-dtatulea@nvidia.com>
- <20250714181136.7fd53312@kernel.org>
+	s=arc-20240116; t=1752554533; c=relaxed/simple;
+	bh=pHQ9P2dvkglzwB8lr2IDOoFpbdG3sa7i+KpcXFiW37w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D5V9MFNasQvw3CY2lWVohh/T/L7dYkrlkGiS79TpzL8np0Zx94adL3hJbQixkol4rwHp898JyzOSyyAIFoPkgwCU+AN9qS/xYYjT3qAWUTvqu9P1SjvfnFDQT2L3HzTXMLfLWsxGYxtq0yzMSPwznqX/cNPPOyNiu/f2h/UYAyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=L4Bi6sck; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <22e15dd2-8564-4e71-ab77-8b436870850d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752554518;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YUYSUO3giFQLHh8Swep5anuUUJIkaXAbxJDBLSg5p5c=;
+	b=L4Bi6sckgrAU/vXCr8x/Tg9CCy4LNwl7n/ec6rWQd/+sHtSoJv9jDHIowLZ7RT4C6VBD5g
+	TWdSrdVHFKi2m9Aa1m87w4AH9b+QAj8DcRamNXY/ES1pBabKq/1n+n834Kt3+GiMLpm8Fu
+	3Ju4IjuQ34E1fgA8ewO8HmRqNResbWM=
+Date: Tue, 15 Jul 2025 12:40:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714181136.7fd53312@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Subject: Re: [PATCH bpf-next v2 14/18] libbpf: add btf type hash lookup
+ support
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Menglong Dong <menglong8.dong@gmail.com>
+Cc: alexei.starovoitov@gmail.com, rostedt@goodmis.org, jolsa@kernel.org,
+ bpf@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ linux-kernel@vger.kernel.org
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <20250703121521.1874196-15-dongml2@chinatelecom.cn>
+ <CAEf4BzaoKNNf5pr4z8vEokj3AyLNZYyjYQUOoEMMZHN6ETUg4g@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Menglong Dong <menglong.dong@linux.dev>
+In-Reply-To: <CAEf4BzaoKNNf5pr4z8vEokj3AyLNZYyjYQUOoEMMZHN6ETUg4g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jul 14, 2025 at 06:11:36PM -0700, Jakub Kicinski wrote:
-> > +static inline struct device *netdev_get_dma_dev(const struct net_device *dev)
-> > +{
-> > +	struct device *dma_dev = dev->dev.parent;
-> > +
-> > +	if (!dma_dev)
-> > +		return NULL;
-> > +
-> > +	/* Common case: dma device is parent device of netdev. */
-> > +	if (dma_dev->dma_mask)
-> > +		return dma_dev;
-> > +
-> > +	/* SF netdevs have an auxdev device as parent, the dma device being the
-> > +	 * grandparent.
-> > +	 */
-> > +	dma_dev = dma_dev->parent;
-> > +	if (dma_dev && dma_dev->dma_mask)
-> > +		return dma_dev;
-> > +
-> > +	return NULL;
-> > +}
-> 
-> LGTM, but we need a better place for this function. netdevice.h is
-> included directly by 1.5k files, and indirectly by probably another 5k.
-> It's not a great place to put random helpers with 2 callers. 
-> Maybe net/netdev_rx_queue.h and net/core/netdev_rx_queue.c?
-> I don't think it needs to be a static inline either.
 
-The whole concept is also buggy.  Trying to get a dma-able device by
-walking down from an upper level construct like the netdevice can't work
-reliably.  You'll need to explicitly provide the dma_device using either
-a method or a pointer to it instead of this guesswork.
+On 7/15/25 06:07, Andrii Nakryiko wrote:
+> On Thu, Jul 3, 2025 at 5:22 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
+>> For now, the libbpf find the btf type id by loop all the btf types and
+>> compare its name, which is inefficient if we have many functions to
+>> lookup.
+>>
+>> We add the "use_hash" to the function args of find_kernel_btf_id() to
+>> indicate if we should lookup the btf type id by hash. The hash table will
+>> be initialized if it has not yet.
+> Or we could build hashtable-based index outside of struct btf for a
+> specific use case, because there is no one perfect hashtable-based
+> indexing that can be done generically (e.g., just by name, or
+> name+kind, or kind+name, or some more complicated lookup key) and
+> cover all potential use cases. I'd prefer not to get into a problem of
+> defining and building indexes and leave it to callers (even if the
+> caller is other part of libbpf itself).
 
+
+I think that works. We can define a global hash table in libbpf.c,
+and add all the btf type to it. I'll redesign this part, and make it
+separate with the btf.
+
+Thanks!
+Menglong Dong
+
+>> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+>> ---
+>>   tools/lib/bpf/btf.c      | 102 +++++++++++++++++++++++++++++++++++++++
+>>   tools/lib/bpf/btf.h      |   6 +++
+>>   tools/lib/bpf/libbpf.c   |  37 +++++++++++---
+>>   tools/lib/bpf/libbpf.map |   3 ++
+>>   4 files changed, 140 insertions(+), 8 deletions(-)
+>>
+> [...]
+>
 
