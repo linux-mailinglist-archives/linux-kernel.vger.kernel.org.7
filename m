@@ -1,278 +1,219 @@
-Return-Path: <linux-kernel+bounces-732259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB8AB06430
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:21:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E96B06429
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 18:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA33C3A6271
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:20:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC537189CE21
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF98277813;
-	Tue, 15 Jul 2025 16:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02E125DB0D;
+	Tue, 15 Jul 2025 16:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="f8yibs0z";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="iGKcmBjh"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PNOgZfh/"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB9C1E5018;
-	Tue, 15 Jul 2025 16:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752596457; cv=fail; b=ZCpsM0LiXUsnXlBQF6pk0f2q15hvLTirViTjb5U+VFwzhqejl7/T44uIRWZnwdjoby0H+lBVQ32Xv5MREllPmd5/bvZZD/c2ZhZTO154d4BLdcnyjFcd2WB0dbX567n2qyGXVE8c2A2DAvitBMk2bHkRZ8k2y7Ajj4SVT3wzPII=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752596457; c=relaxed/simple;
-	bh=DTs09psaI1TxkZfY/vvchXuZqSygXXjjHdb5IRxVEjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WlhRIze0dCkCMvKzCaXxPg91sfC6Kf70FHaIsSWdyhf79cUfg/2bwnE+vQfhfGiHI1Zq8e9xWm3LOKN16++TOI6UV2btMO1hwXhpxSb1+49AkqGMyW0self+RQqrvzpuRArqeaD2jNGRTcuHZdS0YYLkkbGdwq4cYhoHb/RuKuA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=f8yibs0z; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=iGKcmBjh; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FDZDHV017569;
-	Tue, 15 Jul 2025 16:20:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=vS2H4VI5ZYMOGL04lD
-	7fLUp87bb58Be2iRpfHHK2xts=; b=f8yibs0z0EvgBrE3cMyjYOEXtI7VfWNVMm
-	Vto00V7b0wyaa3byk8HDHu/R+VBswNZcg4WyxJoYZbe4M+jZ1gJt5wytOsKsRlwa
-	pUk5LPFliy4Bxg0QJcBg1LZjzb8PUJlC8TrRiTRWo8D94uJ6ltfONDEmUpC+CIqO
-	/VBHW86T1MT2BOm6CH4PhH947Sy9idX14HlRmIfVnWo2lrt3STjsrsKe8SdiWe1g
-	8E6EIBt7+Sfy4zl+IezbxYEMLsgliZLpx0ouGyVwCAOUV8HZFc3OwAje8SbResVb
-	XQ2xl7Y9TO47hlg7Xdi14sX/hk2hFEIgoddjEzD6PuKFnryocSgw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47uk66xtpq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Jul 2025 16:20:06 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56FEuBF5030434;
-	Tue, 15 Jul 2025 16:20:05 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2068.outbound.protection.outlook.com [40.107.236.68])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ue5a683k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 15 Jul 2025 16:20:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lFtKfEvcMkC2ZdSVt0DqpcBOtF54ifthDTYlQYF1Hxek+RLu28X6lSJpG1obSeDc1APDJbVF2W1W8/8hdlcVlNutdO78iVSMAHbGkq1XElWvG+GwBU5TDLAfIxWUOXJCl5X4BOI5h6UBRORvqN2e/UPlxAs2oBajeJ+Wf8JxLX6TwNlwXxqiRAqgrylqQiF6qBlUe0LjKjHN8P2jK+0ZKyu54mCm0FYj3NHj5lYU2xRQs1JkYQGIhLEoDBCsaoRIUm7saDh8UZeEqCAoR3WIDQhPq7wL/UMVyY1u1JIwjKsB6+SSAga1cN1mBAoclE38PRSM0ge16jt3g5VHO2VKAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vS2H4VI5ZYMOGL04lD7fLUp87bb58Be2iRpfHHK2xts=;
- b=mNzzPcsytrhFFww3LM7cDInlRP9PvxFdMJtuqRnktE8YDxIitZuCkfXQaGNF1HqXG5QKIASm2y3eOucGcT1xEHDF411zRVBj2f/7Vd+qBZgIg87zZ8VlF0dpUw1aP9inzcqSHYYQktoijryuhGeC6O8A4acUl74XYfp4htdQAomLmx1PK1WkoZCLuwTIyj6CwPd2il9Y9VhkYUXvv7EAbayEHh5Q1LxebIfUJLBN3G8bsdNQV50iWU17/wcaWaNgzdnBEk47MMkuD+gdwe8oWxND8pA83KWnW/2IWRJztz+93qAgKAIR7BuDSbPbmbwNMVOlp2KsB/4KfL5nTHPz0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C951F55FA
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 16:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752596431; cv=none; b=NtYZxpHZXg5a9mLpyYltYPvj/HQfeY9o8NVRTXUHtaHYuVj22+5UBIT6U18GTH73lCFP8CX4uW6HvEaQK4VcJCT6Kag1PSb1EjogGQ4ZnsSWz0uFeuupcXoc5wgHLhYi0hqO0jMGDR5m8tg3OBbctzJwRezdhj8C0qC+BHcx/ec=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752596431; c=relaxed/simple;
+	bh=9wSSUd17eYyPmNDRinebEKNm6MjrslPLoHBitNTSmDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=arrRvd4n3ZTIfy9oLA4iNI2jjJ+iOqNJtR6nt4yOU0qenNMl8LlibyO/Mq+0T0Dqzboloz1qy3MFQn3yKbHYFknqnZRHfh5uHCKfZKTsynI39gIgR0hoqvmXPvdnwpmgfhW6EKmzYGbdP3aC1w3UD2naGzGZNhBmlPnZ0d41hgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PNOgZfh/; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b271f3ae786so4294269a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:20:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vS2H4VI5ZYMOGL04lD7fLUp87bb58Be2iRpfHHK2xts=;
- b=iGKcmBjhDFXHwl1njqxyC9vr/cCZL0d9yw0cOfsXov7IqZ8++or94ALSAp9YU5ym64DJu+wxi3hsjqq9Z7BZENIvlKXyqhbD1hknXd5yfLvta8ONa8/HnMcVXScKZ6Ei5dd7jRrjo5l7x6gW3PObAZFqd8WFdes+GCptSE88a8c=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SJ0PR10MB5615.namprd10.prod.outlook.com (2603:10b6:a03:3d8::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Tue, 15 Jul
- 2025 16:19:59 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8922.023; Tue, 15 Jul 2025
- 16:19:58 +0000
-Date: Tue, 15 Jul 2025 17:19:54 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
-        Dev Jain <dev.jain@arm.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        willy@infradead.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
-        gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v2 5/5] block: use largest_zero_folio in
- __blkdev_issue_zero_pages()
-Message-ID: <f7ad4e56-7634-400d-9e7c-3c3b65f9b1d0@lucifer.local>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
- <20250707142319.319642-6-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707142319.319642-6-kernel@pankajraghav.com>
-X-ClientProxiedBy: LNXP265CA0023.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5e::35) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=linaro.org; s=google; t=1752596428; x=1753201228; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uJBpvy5JQXqvDU6BUB39eR+t4AzacJq68M/ewvrrxLQ=;
+        b=PNOgZfh/Mmrk/A1itSsJVdFImvB8jDn1SpsYle30D8r2GxAIVFPW2fr95C7lVCOoYp
+         +2ILz4kV1nL8k7joyi5Nm1A4CfDZa7DUSKr08+Xeke5TB5F7V9/AkzvSci0emahdSxBb
+         T2PympzdphMbgJUfEEEIENN9rZARrdlVxwJYriOp+ciBPOzW89V7bqqxtveVWI20PED+
+         cujRoo1u7RN5xvIu0P2jn+CNG2Sw55/IYLlpdFNYaMxAlAo3Xn+KFT3R4uRq03HTdTtF
+         1muQVBcTfTJ/1Rg04hQRKJZ6wPmZz5v/moE61olKKcbH+mOfJlZ/MWiKioBMWe6XY0GV
+         JLzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752596428; x=1753201228;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uJBpvy5JQXqvDU6BUB39eR+t4AzacJq68M/ewvrrxLQ=;
+        b=JHpKEhThyQ6Vf0S1Qk6OTGlVKBVsgD5qppa7O9YLD6XExOJyuhQ77mvbpsUVFHLBDK
+         vSE+sb34t3Y/uWDp/JA1ziQ7FEWEpA8mWHSRy4hyoAV6fEhGAYzW2/J1ju5wgJt9njst
+         vMjGC2ed40xwpJElw3ZG7Op6jP+70AakHNl6gP7IDqAaIL+XJFp1/M/qAcHlWnGQ8rQ4
+         HZpiJzHlhi8QcaVBJQQSnPn0uex1wrk4avWtIyCtqcuN7zB9bTji3dyx6+b166qJuw+P
+         CthEGXf4CoxttcKJhT64AR4U0Vt0EGMrfd5SiGLcc+i8aYQ6+vucAfH+4fzb51NcdiLS
+         0LJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQQ/GRVM5N6U4nu2XA8LZ11GSUnvrh6a9E3TzzSOZ+Rv6B56LrzuoyEGoHLjM42iQMmNv7y7G1LzE84FU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsfw+fCLIC9C+hTW0SuAbNai6SBBjuvhaNZFoVCPFbJa4YKSgS
+	bOnD+hWhNGDJi3D6rXcAg+EbUs7v7COivqh2piAactWqP1ziO+AKbOe5g6TQCjXI/4CIQP5XvDX
+	XGPMqtMFPYh2x1yEqgzwArBw93jouRHJLt0ozd30dOQ==
+X-Gm-Gg: ASbGnctxPIT1m3MDdpCj9e5Fma+u3SYbPhJEuFbhsw86KZBsCWEKUubtGqvXOhhNn+k
+	ZRBmoRp6DdocmzcPChqsgWDJiQzbYHGa9x/PIe3c8voQgrpyHD2BqWl1zONFtDunE2izeJ00oVl
+	tQkVk0VLoAAGk3RgY2IMqXIUcdzuB/RPHEWogngoOaJGXsLaBnDQqKI9AlT5ZgG6umYiWOMHp6J
+	UBcLcoHtpOw3REKPTF06ggDLwsOGPgQFmYr9yt+
+X-Google-Smtp-Source: AGHT+IEmT9JahDOkC74B3Pqp8ah2Yah70/5PySO3L+OPWgorWZGMS06WD2aO5z6rH42UWi9E3kpv8e8DX87h0P58J7Q=
+X-Received: by 2002:a17:90b:2c85:b0:312:f263:954a with SMTP id
+ 98e67ed59e1d1-31c50d5c3e0mr24316850a91.5.1752596428308; Tue, 15 Jul 2025
+ 09:20:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB5615:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7bee8ec-6a2a-48b7-9199-08ddc3bb70fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?P20UUgguMlNTjXSBKsCz1os6actsejyfkYErnd70ORoO/c6QyI0DgArI1fxA?=
- =?us-ascii?Q?Vw2X/6Q4rF1wyod1RrLFEpe6jlK5RIDGcqOPVHUfqjcc6ZPLMjtQ+7bDajWK?=
- =?us-ascii?Q?yggwkiI8/JlLX0PnCFcGvH/fg6HHN9DB3ZW+gaQM9Oqu6jAhIw0VQ4N0nLNm?=
- =?us-ascii?Q?lqwzNURDNLCPmtA+3VtUF4dni8jUWhmENbNnjmf0qHDxAv3gtxhEBK+0tLVf?=
- =?us-ascii?Q?L4e+LclX7qfxOxvWde9sAZxI4Myekwil1RdTbuaygYGLada66eXbBEeE67Kh?=
- =?us-ascii?Q?g86YUq0uK/IEo0W7ABX2xL90+kx7bm0eJzUcLmEnmldbHOzWBZSkN8+iabst?=
- =?us-ascii?Q?iHIE2GyywabQHtusCaNJ5XdZ/7cGm2NXZ6yuSJuCqKISl/QPt1Mi3DxQwyRh?=
- =?us-ascii?Q?O7gGj3uiXwxzoC9FjHtgW3XRNksUGeO79Tbgz+qd3gKQYDY65xstxaZI30Sc?=
- =?us-ascii?Q?jlKNYN8O05REiieuJTLB4tB9MTdxF95nX9tJgmizF5lNeNVtIVjaxDYnYcqx?=
- =?us-ascii?Q?sixhvlFxhihWGWRY3MsLAsJtmsqQ4hIUTmPQoR6Ur+w6GCYbJb3myAW0pk5M?=
- =?us-ascii?Q?/weKk1bRVrHNLN6znbMmavMixCcmJxl+sAtLzxoqYtuzJ6c8uZxVeqXfgMsm?=
- =?us-ascii?Q?og2ZRWV+pZI8RUZLuj81QDgvmSp+BdAbYf144AMzRCPZhwvM0ncxT1tSjupb?=
- =?us-ascii?Q?+gVCJatUcJZQenyxiM7uIfXVURqq0BQ6YkvT39th+fTltrtwNS8CfS8J/069?=
- =?us-ascii?Q?IOzx+smwiYUZ8IkhIiVlxXWGtBGbrZiLoEe+Ah+F9k37Jq4WZIWmYU5Sj1hK?=
- =?us-ascii?Q?TwaMPvRLasHVhlw0VLlbFkIQ072M3OYJdu3tzpX+G2aJakFa5dLAR0hBrn/g?=
- =?us-ascii?Q?vgceuV45PCA/dWGXQSMOtTz1MyLRxS1OrpMm7cpO27aFCmjqsSl1pGlLKS8i?=
- =?us-ascii?Q?ONpJLlc2sUgSha6oXjrKiEBk4uRUEW3R/D/iKlLhLDEp+zqELe1+efOanWgj?=
- =?us-ascii?Q?w8PXJNlKYYIEI2xWXHa9hPVmfa1I8O+YI35LGCQuCqW3bSSFXtKt0VjFL3Fy?=
- =?us-ascii?Q?twO6wFgExLTZzqnf9gBKOpdPXDZNl/q71gDV0GhvlU+PkfavoxjJdjOtJncj?=
- =?us-ascii?Q?6uqXrOtFWqU4zEqbtRI8FzENQGa7O9NhYNowAG2yN6B9SfrHba5jyMoSgNka?=
- =?us-ascii?Q?HGDybodpPi4eCK6GvBZvjuXEXROenk3xEOIkXSLsuP0cERZhNcdPwS9HWgVz?=
- =?us-ascii?Q?0nAYkVDpuQooVLAZYp4mGv4eGS5utIgl4DJLDu0mbIC0VziG5kRGZ/RIGaIO?=
- =?us-ascii?Q?XpwKucXnV1zVcPr1Y+A4Gd0uyovukqYv35L3n0iMA93J3NATkFwVUtnKjMsp?=
- =?us-ascii?Q?dT6MF8LjHgPjk1efeclgEYKGYO2ri/40NQF/5hsItvZjYgSdyQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eytuAIVYrtwBcdJMfneJEsBl62dU9saTy8hOXxybUUd7n1wprF+mT23L3gtk?=
- =?us-ascii?Q?ozYHl+u3tgCKerx+lzutF53prJavz1J4myuL/FLNpDFYWF5xDf+aMnCk1cke?=
- =?us-ascii?Q?xn7wxHNFGGLchUeKXtrXEBIQa+vNwyG5983/IKb87T1wpmZTCzAl8EW8nAVy?=
- =?us-ascii?Q?PlnAhG0UyiqUeo5+TzMfV24qycFrnMt6b13aPGzMo3skrEIfuglgBGeBLPza?=
- =?us-ascii?Q?jgOcLlKVqHpsku3iY0Ks/OpOr3AmKTPNenI5SdRAWIQX/AMo4c4sDmfm+XeY?=
- =?us-ascii?Q?rYKhOWLjJe8Rh/WOY3gPami49TCbl7tOHJcE369CyPG6+eC8V5N4hT1Mt6ua?=
- =?us-ascii?Q?+vywRqc2q3qpMQ1S7cJUlXvDcezibaj/W7B7v55r8TY85V0QTjaHQ/FSVoal?=
- =?us-ascii?Q?9nUyWQKXagCi55cdoFemjdKsoabD33u5SxRulo1UrVpUuHjlBXQthrlWY2d3?=
- =?us-ascii?Q?IInLVmy7CDAUJA24lxR2hWwTFR2oIcPf/bWQfjmRegpgfKkf5X6KUD1AOIXV?=
- =?us-ascii?Q?cVl5tEtVYzKbbA7SRAASJF6GvMOsXT0jX11It2mJVxbvyaRA7zooWC/MZscb?=
- =?us-ascii?Q?82aO9bRtedYwEZmzb9Ednfiy+ai4kZH+1en0NVQGxpVbLWtY/+w36f7CtdKx?=
- =?us-ascii?Q?m+aNaQ2YYyHQ++5zx742gvoKi6F6FhCyPc7PrgWp56UR/QG9qJo4y5+GnHGz?=
- =?us-ascii?Q?VP9Xh39I4vlyh43owlZcZXr1Y0JId3U/liyMFH33rQIdTPe3jIWnnZC66X5E?=
- =?us-ascii?Q?WRm5fN7kwN4x/k/CVv3SYM8mnntX2MoBIDHumaCKrSRqPmMc1Kddyb/lmNzO?=
- =?us-ascii?Q?vmRF+MGVvTaK9Xjgm6/wab0eNDvl/COu4gzAdnVsn6gAK5ycqLIT/xd1Botx?=
- =?us-ascii?Q?9Jqf7kSw+P/UYcxO97IEDH+2uomHt3FPrGEfL3dll5mknUoDUV14FSp5ViwL?=
- =?us-ascii?Q?OESoKGrYI/kuW+A1OnJ0m15hWJxJrZ981FpTjLuKl8f8JtvpH1cLLwwgqXJ5?=
- =?us-ascii?Q?kB0sS3MLPHwPbKN3EIURe91fm/zB8VIGOCGKLnCltl/93R6nxD2ndLwBWgaV?=
- =?us-ascii?Q?iYO3qIyQmEPMJFJElLpUU5U6p8sce1VXxY6Skz9B3RK8Z50CUWdq1B+dLRFC?=
- =?us-ascii?Q?i9cz45ofUNpM0z1q56CKUO5ckBno2pluotY09zvhZXjt4gF5Im1YYZK9U7CZ?=
- =?us-ascii?Q?ynAnbB4npXcqE4dHtSEYn/R0LBmt580ZTO9q2RXqcMPWJotPtMBSsRFbBjc0?=
- =?us-ascii?Q?YwUXWHeJumm1HRsJFSnrHzjOVXghXPZJfrevFsLZM/ILmIUtR3dWIvzrhcSi?=
- =?us-ascii?Q?nrDfn/5z9ZhKLrNh085Ed/BCXCtJk1Ep0SHC/INzIBNtuoU8XjdC4bFe/Mcv?=
- =?us-ascii?Q?LRfgHgE8vfOowlXSAVo+waLRZVH8b5vUPF2qMYJfU7Zev1mF+b3a5uQ+D/Bo?=
- =?us-ascii?Q?igd0w/8DN8h7tU9K64tNVJLovncexSZkGOEGo/k5vohYj04FcbiaKT/tUvj7?=
- =?us-ascii?Q?isBd+9H0OvSlKaopGn7gDndsnvAUU24JeqxLV1RO+Bfd5Vt/cxtuL2Ls8pKF?=
- =?us-ascii?Q?4GbeDAy3aKlZFyQBQQjJpanonCVDcGH0nGKOHEi2Ee5cqH7EGilAZLV6s6Pe?=
- =?us-ascii?Q?Fw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	rXBhQe70ZeLCeChVVIzVaXCusWXjYyOZV866Ge7KKjNURFWjXlAhEL4JjHaFTJXr842fILRprB0w9D/R3G8pM7rrtzTgjwtEIwwGfB4QTEOXWXAk8P5/o9NDydo8FNq/ShFvVJct5HEvvK/PZrFnWLU3PgOw9k+9NhYqqrFvPQXAOn1XWmiK7FUCMckc95KrJhJiKHNxzRU4XcMAor8cIFor8/YC1ZHju9ywdId7ffjhuiOy/Klgd7OuloP7VBc6ZrhBYoNJnaW5Rl6fXMo/W+UnNkTZ/vgeTm9F44MYy0wAYvRyTZ5fj7Zfa2rr6ZSJuwWTL7NtdEx8a4TJT0j94Sm+SPpUFc+szMp+Ib+m11SsCa9XukWiMuUiDcPCRXdfI7HRYL9BQ1uAEecIqwrtERFy5lp2k+XwFmmKM9Mede66qmZHzvTGj5mUErmxWK8hSig81Kvgt300JXNTc7tbpRvZokvi/nIpwj2szIbRw8Y14V4CI0XB7mXqbdoL7cNAsqy4IRjCQqnFvUedyBeqxeGJ8gp8CWDXhL9MmAaWLuSsmsaZav1dqo2OsRCqq3KtYv6hO3+7GsRpfqpOXOUYyM0MRXHRXg/lLRsr2SQrMLg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7bee8ec-6a2a-48b7-9199-08ddc3bb70fb
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 16:19:57.9259
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ggsUrudYkpY3heB8ZM1M16kJZ4KByWp+HljkPk2J+NQ9AkgQ/kmxgknwATxUSs8oyxvE50hKKX1WMYVnKEzM8ZkyM6nNAMByIUONpj+QUH4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5615
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-15_04,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 adultscore=0 spamscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507150150
-X-Proofpoint-ORIG-GUID: YX_aV8v15-9ZP1VBhph0gQkUco-Gx4CI
-X-Authority-Analysis: v=2.4 cv=AZGxH2XG c=1 sm=1 tr=0 ts=68767fb6 cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=hD80L64hAAAA:8 a=1UyMsDxo8M_lIWwXQ_kA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDE1MCBTYWx0ZWRfX5B2YmPYuG+0G tHwH6nB6yoAHom4LBTubx2bdMNG332Ca0gRZBVBA/wcoTt2YBAUsEBIyvu+hs+UyqMgmluWNd2Z NO7JYKtmhIXeSNBxHDHxdrx7rHN5ocHlVMAyFPFWmXx0RPvwS3APkLvJEAsiHAJRjZt6eN+Lw7B
- H7rTPPM/f1QdoHxVJRZG27AUKzbjVvIGviaQigCtQRTXc929KNeIxMfJRuf6BiMNq9pvL9yorTq C4o1Z8HT5GHveMeB0/wFgU1tU9EyGoQLO98DiegyAspZCEaQNUcqRJ+pLns7S5HFitAb47ogst1 7fQe3s8rqCqYCJBxui1BnyIzx3SPI8R08BFoDiY3kVzpxA9eJ0el1CTR8kzGwD1B71W/lAKYYEK
- gsbgzDnsUxHQ506Ha4ATZ3yyHKL7Mt8xqKtsakOLgLq3pplJ4WUO63zehgY1vEdRsqwr2+oF
-X-Proofpoint-GUID: YX_aV8v15-9ZP1VBhph0gQkUco-Gx4CI
+References: <20250715130754.497128560@linuxfoundation.org>
+In-Reply-To: <20250715130754.497128560@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 15 Jul 2025 21:50:14 +0530
+X-Gm-Features: Ac12FXyQIhd8J5AV4_ejOchW88TIcZ9UEHIA5WNbxuNAxq5FLkivns_cnl92TYs
+Message-ID: <CA+G9fYtuwziF5cg0AwpMiB7Q4HC7fvOpJfNskKrUEQA89GZ9yQ@mail.gmail.com>
+Subject: Re: [PATCH 6.1 00/88] 6.1.146-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 07, 2025 at 04:23:19PM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On Tue, 15 Jul 2025 at 19:16, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Use largest_zero_folio() in __blkdev_issue_zero_pages().
+> This is the start of the stable review cycle for the 6.1.146 release.
+> There are 88 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> On systems with CONFIG_STATIC_PMD_ZERO_PAGE enabled, we will end up
-> sending larger bvecs instead of multiple small ones.
+> Responses should be made by Thu, 17 Jul 2025 13:07:32 +0000.
+> Anything received after that time might be too late.
 >
-> Noticed a 4% increase in performance on a commercial NVMe SSD which does
-> not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
-> gains might be bigger if the device supports bigger MDTS.
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.146-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 >
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->  block/blk-lib.c | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
+> thanks,
 >
-> diff --git a/block/blk-lib.c b/block/blk-lib.c
-> index 4c9f20a689f7..70a5700b6717 100644
-> --- a/block/blk-lib.c
-> +++ b/block/blk-lib.c
-> @@ -196,6 +196,10 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
->  		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
->  		struct bio **biop, unsigned int flags)
->  {
-> +	struct folio *zero_folio;
-> +
-> +	zero_folio = largest_zero_folio();
+> greg k-h
 
-Just assign this in the decl :)
 
-> +
->  	while (nr_sects) {
->  		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
->  		struct bio *bio;
-> @@ -208,15 +212,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
->  			break;
->
->  		do {
-> -			unsigned int len, added;
-> +			unsigned int len;
->
-> -			len = min_t(sector_t,
-> -				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
-> -			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
-> -			if (added < len)
-> +			len = min_t(sector_t, folio_size(zero_folio),
-> +				    nr_sects << SECTOR_SHIFT);
-> +			if (!bio_add_folio(bio, zero_folio, len, 0))
+The following boot regressions were noticed on the stable-rc 6.1.146-rc1
+with clang-20 toolchains for the qemu-i386.
 
-Hmm, will this work if nr_sects << SECTOR_SHIFT size isn't PMD-aligned?
+First seen on the tag  6.1.146-rc1
+Good: 6.1.145
+Bad:  6.1.146-rc1
 
-I guess it actually just copies individual pages in the folio as needed?
+Regression Analysis:
+- New regression? Yes
+- Reproducibility? Intermittent ( occurrence 2% )
 
-Does this actually result in a significant performance improvement? Do we
-have numbers for this to justify the series?
+Boot regression: qemu-i386 Kernel panic not syncing stack-protector
+Kernel stack is corrupted in do_one_initcall
 
->  				break;
-> -			nr_sects -= added >> SECTOR_SHIFT;
-> -			sector += added >> SECTOR_SHIFT;
-> +			nr_sects -= len >> SECTOR_SHIFT;
-> +			sector += len >> SECTOR_SHIFT;
->  		} while (nr_sects);
->
->  		*biop = bio_chain_and_submit(*biop, bio);
-> --
-> 2.49.0
->
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Boot log
+<6>[    5.529679] fuse: init (API version 7.38)
+<0>[    5.535360] Kernel panic - not syncing: stack-protector: Kernel
+stack is corrupted in: do_one_initcall+0x243/0x310
+<4>[    5.536353] CPU: 1 PID: 201 Comm: modprobe Not tainted 6.1.146-rc1 #1
+<4>[    5.536728] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+<4>[    5.537072] Call Trace:
+<4>[    5.537284]  __dump_stack+0x18/0x1b
+<4>[    5.537437]  dump_stack_lvl+0x56/0x86
+<4>[    5.537537]  dump_stack+0xd/0x15
+<4>[    5.537631]  panic+0xd7/0x280
+<4>[    5.537714]  ? _raw_spin_unlock_irqrestore+0x23/0x40
+<4>[    5.537857]  __stack_chk_fail+0x10/0x10
+<4>[    5.538515]  ? do_one_initcall+0x243/0x310
+<4>[    5.539530]  do_one_initcall+0x243/0x310
+<4>[    5.540213]  ? fuse_dev_init+0x54/0x54 [fuse]
+<4>[    5.540696]  ? trace_hardirqs_on+0x30/0xc0
+<4>[    5.541093]  ? ___slab_alloc+0x7a0/0x850
+<4>[    5.541763]  ? mutex_lock+0x10/0x30
+<4>[    5.542300]  ? kernfs_xattr_get+0x28/0x50
+<4>[    5.542925]  ? mutex_lock+0x10/0x30
+<4>[    5.543494]  ? kernfs_xattr_get+0x28/0x50
+<4>[    5.544034]  ? selinux_kernfs_init_security+0x6f/0x1d0
+<4>[    5.544626]  ? idr_alloc_cyclic+0xb8/0x190
+<4>[    5.545144]  ? trace_preempt_on+0x1f/0xa0
+<4>[    5.545703]  ? security_kernfs_init_security+0x32/0x40
+<4>[    5.546323]  ? __kernfs_new_node+0x192/0x200
+<4>[    5.546826]  ? up_write+0x30/0x60
+<4>[    5.547169]  ? up_write+0x30/0x60
+<4>[    5.547666]  ? up_write+0x30/0x60
+<4>[    5.548180]  ? trace_preempt_on+0x1f/0xa0
+<4>[    5.548577]  ? up_write+0x30/0x60
+<4>[    5.548671]  ? up_write+0x30/0x60
+<4>[    5.548874]  ? preempt_count_sub+0x50/0x60
+<4>[    5.549591]  ? up_write+0x30/0x60
+<4>[    5.550036]  ? trace_hardirqs_on+0x30/0xc0
+<4>[    5.550508]  ? put_cpu_partial+0x8f/0xc0
+<4>[    5.550625]  ? __slab_free+0x140/0x250
+<4>[    5.550810]  ? __kmem_cache_alloc_node+0xc5/0x190
+<4>[    5.551453]  ? do_init_module+0x21/0x1c0
+<4>[    5.551792]  ? kmalloc_trace+0x27/0x90
+<4>[    5.551928]  ? do_init_module+0x21/0x1c0
+<4>[    5.552034]  do_init_module+0x43/0x1c0
+<4>[    5.552137]  load_module+0x13f7/0x16e0
+<4>[    5.552241]  __ia32_sys_finit_module+0x9c/0xf0
+<4>[    5.552560]  ia32_sys_call+0x22c7/0x27e0
+<4>[    5.553363]  __do_fast_syscall_32+0x86/0xd0
+<4>[    5.553868]  ? trace_hardirqs_on_prepare+0x2f/0x90
+<4>[    5.554443]  ? irqentry_exit_to_user_mode+0x14/0x20
+<4>[    5.555070]  do_fast_syscall_32+0x29/0x60
+<4>[    5.555515]  do_SYSENTER_32+0x12/0x20
+<4>[    5.555644]  entry_SYSENTER_32+0x98/0xfb
+<4>[    5.556403] EIP: 0xb7fb7509
+<4>[    5.556873] Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10
+08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5
+0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 90 90 90 58 b8 77 00 00 00 cd 80
+90 90 90
+<4>[    5.558029] EAX: ffffffda EBX: 00000003 ECX: 004a6332 EDX: 00000000
+<4>[    5.559007] ESI: 01277410 EDI: 012773c0 EBP: 00000000 ESP: bf83340c
+<4>[    5.559196] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00200296
+<0>[    5.560690] Kernel Offset: disabled
+<0>[    5.561095] ---[ end Kernel panic - not syncing:
+stack-protector: Kernel stack is corrupted in:
+do_one_initcall+0x243/0x310 ]---
+
+## Source
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* Project: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.144-91-gcb3da7d94d12/
+* Git describe: v6.1.144-91-gcb3da7d94d12
+* kernel version: 6.1.146-rc1
+* Architectures: i386
+* Toolchains: clang-20
+* Kconfigs: defconfig + lkftconfigs
+* qemu-version: 10.0.0
+
+## Build
+* Test details:
+https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.1.y/v6.1.144-91-gcb3da7d94d12/log-parser-boot/panic-multiline-kernel-panic-not-syncing-stack-protector-kernel-stack-is-corrupted-in-do_one_initcall/
+* Test run: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.1.y/v6.1.144-91-gcb3da7d94d12/boot/clang-20-lkftconfig/
+* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2zuky3NIcL74EompcUsLcll9dsr
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2zukvDombE6lLJ5nUkH55G7hMhh/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2zukvDombE6lLJ5nUkH55G7hMhh/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
