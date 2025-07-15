@@ -1,95 +1,97 @@
-Return-Path: <linux-kernel+bounces-732639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FB0B069E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:31:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15028B069F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB2716DB76
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F577A661F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31F92C375E;
-	Tue, 15 Jul 2025 23:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55DA2D6401;
+	Tue, 15 Jul 2025 23:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="njE2Om+U"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EotaRwYU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9249460;
-	Tue, 15 Jul 2025 23:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D47F2D3A93;
+	Tue, 15 Jul 2025 23:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752622288; cv=none; b=dWRKa2+bqahaDcOJ1zioG8EGf2FN6rJQSGKTR2AP+zJ9Ua8ZJYI64Bi7b+cfI9tUyqHWYNPiQibb/BGuz0nDT9Qs6ih7aX6gJ/SX1IEoYz1UkL6ngmafjmrfXXAR53g/S+j9AWVroBc9TZ3FWn3QkYmwm5nr1XgcMVsZplrJZWg=
+	t=1752622786; cv=none; b=CltHJUCHaTCibwlDe/muOTWn9uJ4i8+el1AWWtPv2wqhiHQzLN7J+q1q3rFCCjinY7aEPNAq5FftZfRPe99sKb3kLF3DzZvnVo4lABkanTv4w5hkwr3awIShSUo1cKqApNIavvVSOLHsZ9DvsCcdR2oINmRp3+Ms+0phDsPn93Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752622288; c=relaxed/simple;
-	bh=U39fUGdLgfuWmXMQrKansqzCV/he0S+4iRMuquTPLgE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ksEkgWBLgNya3Syzf4H8sJYE5TZsdDQQjHrY7fuT8xNoKdv43l63BPm98PaQEdTdizece61rkAD+1/345VNckeu+yP8HrJAPArMfJh1mgzOIxCmlkHDLPTz7gC4eWgAF+VdGhXkQdnkesJCwH5zqAz+K+Wra02PxDr5CqfS/ez0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=njE2Om+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA551C4CEE3;
-	Tue, 15 Jul 2025 23:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752622287;
-	bh=U39fUGdLgfuWmXMQrKansqzCV/he0S+4iRMuquTPLgE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=njE2Om+U5qOoZlUOcNHAaw5KV8Txr5jep5D4NRYQTxK+LCyfS1ZyTansCOlWs/QTh
-	 o483VQOOj5Pbf5Yuy10wFbVwdz9hwu0VyEpSj2VAi4NEcpviRCc64s0V8sqj06MGoR
-	 Das6Gqqfd4hmfgzrT+6WuicQTiTx9Ld+Y7D/BROI=
-Date: Tue, 15 Jul 2025 16:31:26 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
- nvdimm@lists.linux.dev, Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Dan Williams <dan.j.williams@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, Ryan
- Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Jann Horn <jannh@google.com>, Pedro Falcato
- <pfalcato@suse.de>, Hugh Dickins <hughd@google.com>, Oscar Salvador
- <osalvador@suse.de>, Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH v1 0/9] mm: vm_normal_page*() improvements
-Message-Id: <20250715163126.7bcaca25364dd68835bd9c8b@linux-foundation.org>
-In-Reply-To: <20250715132350.2448901-1-david@redhat.com>
-References: <20250715132350.2448901-1-david@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752622786; c=relaxed/simple;
+	bh=q3QIBc/TsdXBWirwIMIHxwp+8kRlnWdwqh1CRlQ82NU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=L3mRDxtTriBXW85Drtl7HYO00hH9NN9OII18wVRJ7TQ6hZyDLaAOxEVVXvds8/2sDd7q45R6eY9IPugTn7trSvNUeW1fI4CyLXTR85slXPoOswVyzjYJt72x41m2mCozU4RGZsbPD5FyP79hy+xdgP5u8GOE/Ttf0qyNjhdUDQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EotaRwYU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9497C4CEE3;
+	Tue, 15 Jul 2025 23:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752622785;
+	bh=q3QIBc/TsdXBWirwIMIHxwp+8kRlnWdwqh1CRlQ82NU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EotaRwYUI7AAtHpn69V6T63FUu/TQgcsEuWQOrGJo5F/IWGf/z8IHUenYw8Wive+q
+	 SW+2AYdXXZnmnd1P07d86pJso5KevSYAytDeXBV8yKUD8jzz8mYgCQGDyf91U4sHFq
+	 P6IMnFoISHnRqz3EQjKoshItmjaTR2ckZ6hVNdApnhi06fRk7/SC1Ug8Fzsqatr2IY
+	 Dx9rJYvDkp/2iyFt4NSFObtVDPvbC0Wy40Fs2/gScMSVKTw2qrM83nX406DfumOpWO
+	 fDyy21UbuPE1UQBOdAlXT8ewL0TuaC6fcxGrIBpcfh3CdnUH2vzUnPkpaADF5HJmS1
+	 w9ZyS9PBNsmhg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7167E383BA30;
+	Tue, 15 Jul 2025 23:40:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: stmmac: intel: populate entire
+ system_counterval_t in get_time_fn() callback
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175262280626.617203.5242260114409933910.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Jul 2025 23:40:06 +0000
+References: <20250713-stmmac_crossts-v1-1-31bfe051b5cb@blochl.de>
+In-Reply-To: <20250713-stmmac_crossts-v1-1-31bfe051b5cb@blochl.de>
+To: =?utf-8?b?TWFya3VzIEJsw7ZjaGwgPG1hcmt1c0BibG9jaGwuZGU+?=@codeaurora.org
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, tglx@linutronix.de,
+ lakshmi.sowjanya.d@intel.com, richardcochran@gmail.com, jstultz@google.com,
+ netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ markus.bloechl@ipetronik.com
 
-On Tue, 15 Jul 2025 15:23:41 +0200 David Hildenbrand <david@redhat.com> wrote:
+Hello:
 
-> Based on mm/mm-new. I dropped the CoW PFNMAP changes for now, still
-> working on a better way to sort all that out cleanly.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sun, 13 Jul 2025 22:21:41 +0200 you wrote:
+> get_time_fn() callback implementations are expected to fill out the
+> entire system_counterval_t struct as it may be initially uninitialized.
 > 
-> Cleanup and unify vm_normal_page_*() handling, also marking the
-> huge zerofolio as special in the PMD. Add+use vm_normal_page_pud() and
-> cleanup that XEN vm_ops->find_special_page thingy.
+> This broke with the removal of convert_art_to_tsc() helper functions
+> which left use_nsecs uninitialized.
 > 
-> There are plans of using vm_normal_page_*() more widely soon.
+> Initially assign the entire struct with default values.
 > 
-> Briefly tested on UML (making sure vm_normal_page() still works as expected
-> without pte_special() support) and on x86-64 with a bunch of tests.
+> [...]
 
-When I was but a wee little bairn, my mother would always tell me
-"never merge briefly tested patches when you're at -rc6".  But three
-weeks in -next should shake things out.
+Here is the summary with links:
+  - [net] net: stmmac: intel: populate entire system_counterval_t in get_time_fn() callback
+    https://git.kernel.org/netdev/net/c/e6176ab107ec
 
-However the series rejects due to the is_huge_zero_pmd ->
-is_huge_zero_pfn changes in Luiz's "mm: introduce snapshot_page() v3"
-series, so could we please have a redo against present mm-new?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
