@@ -1,127 +1,236 @@
-Return-Path: <linux-kernel+bounces-731739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83B7B058DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:31:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F15EB058E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B581A65DDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:31:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 593327B7447
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751D92D94A8;
-	Tue, 15 Jul 2025 11:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37A62DAFBB;
+	Tue, 15 Jul 2025 11:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JnW3X1/A"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PzOVpspQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6EA8462;
-	Tue, 15 Jul 2025 11:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF262DA753;
+	Tue, 15 Jul 2025 11:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752579068; cv=none; b=PpHUWYMOVSadl5yKz6g50ywEX4kssQ3AWErVAlsbzmSIH64YflBL2Atw8/b+Oo17BVJ5LshxisfhKCWF8hBSPG8PKFBAbTwGqsyzkamfKvdomOOThry480X8sjaef0wH0Fe0nL3lV/fbPjxD6wJZBh0pKOx7AzdVwLqv8Qyj3sg=
+	t=1752579072; cv=none; b=ETSYUFELpWlkFCaR7Y/ucL0CmVxjj3K7PeqBj1LtxRD8Q/kbQiHMzQTx0zZJsWY77+MQI6ntH8BIiCbwnLUYHFqdJD1BInCcmYJ8N5Fkz4C3IukvpDVTJdVnpHtUGJEZz4eKG8u21AuO8iDMexuVHaz0SRv9PCmXAK8n15Jopyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752579068; c=relaxed/simple;
-	bh=moyOARuy8RSKpwVuPpYdyJGAqnZcsYNekcY6gapip6I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pCnipNvqggXsjEDTipn6ytk6OBzgpPUu0F6BNrFaRhylntjUjWSRx6jo0HGvB8T86lhigIgitQixK+2X+XLdfFcAujPmTiBjV/UFt5NblmROW4zElhYRPu/bTntxXZt+6VXVxLZUDJwWwm793J48T11/YuDBpK8cfUlb0/TxBdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JnW3X1/A; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23dc5bcf49eso65126335ad.2;
-        Tue, 15 Jul 2025 04:31:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752579067; x=1753183867; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MB3mRNaYQABufvdOOekFqRmL/bjqRmQ6jJVEm64MslE=;
-        b=JnW3X1/AyBV/80qLD4BNiK1EELTy6fd12/3fw4rIt0lqFlzKojPT5kZIz6xCGHZ06a
-         FC3WTbiKbnCa6c2yg3qis+HFHbb6l0AVZDv40BiLuZ6bt0scTpgoBOKJ6MA8x+th28gI
-         x2rKasoN3C7oA9rQ0UJ/oPUJ6Z/Pfjjh0xMZHmF8fbcTXcpsi/91pQUg9IXFKYERN1rb
-         lPiOjVn++VN1kG67K18ozrNv4fb3G4MGFQW+raDAgBK0i4sLCOyMyRIX+/z/vRKydnJD
-         PRsQOMneUSP65WarGESn2YjyE+DA7qlyzP83puVpwWH1y5Inq4FnM8UAO8jus53uMrsM
-         iCHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752579067; x=1753183867;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MB3mRNaYQABufvdOOekFqRmL/bjqRmQ6jJVEm64MslE=;
-        b=a8SZzvosYWezfs5PObWPeqfFoaZhfTROp5pbT/YZKXVKeKX6RPSEzgOMmZkZ53lBQi
-         nwon+ZR8e+JgIWuvYDuttyKxu9oWcZD1Kc/RjpGc63fRB4vw5XGqifOMTo1FdAkXEXvc
-         KWI0E3cF1Tc45FfZkUpKvUXJKJAtod5gizoPbTOeL6pqTPGQp25Wz0RgP8bbi2LGeN+z
-         OK/VXMpz5MKDKSjWkS/5kll2rrMqBzSIV3bn2GBkPhSgiDdvjc6al0Kk/JXHSUojDpDL
-         rjy3FgUlk38CJSWILX4NZyHZwrqYzDisJHZwMRlRJFPSsXd/SL4dYldPlv//dGjrIz04
-         6bLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUooSMr5wZw/kGxbT02mcsc3JVyq2fIpzQkr1V1O2kW202DfwPVy8vdHp4ZxXRBPQN/mgYZqFjbgfo44KA=@vger.kernel.org, AJvYcCWQWWm8D/VcdYS3xuFkFpX1kajEhZGkbFPXC7Oh454xWsHlUjoMdqnY9LfOSwsLghNi7uEiCnII/vhxdvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz54tyO2oTkLwDMKJj006H1TXCq1XAzBYV5eHIraqJ33Q6e3BBV
-	ovB4PKqxsyNPA9c4rlP/W9tVXG5vzDUx4gMQIQoIF741BJ2+WL8hOlEe0mLP8QNz
-X-Gm-Gg: ASbGnctbcjl3MglrN33ObA5GjGFJCM3wam6seewnjRXJ4oo+vlBdfRRQN32PmyVxMG/
-	rVCh4rXtfBmQyhCL8lJYIuxEy5mX5FZ8zTP6c0Uf59q1m3YCSygbCYB1rBmtk26GC8rAf0b86od
-	s20xC/u3j64Z1MeOg+2xCWch4ZWZlumCpJW0YC3PbXNAy0UOpzutM48myNAE36zvLu2gh/rhOpb
-	LhqVqngZYFohi4fss8JU+N0XUOFHjmSGsTgu41Q+mx5+P1AvTGfpQzjYeigRNv7RBl4iA5BNXbF
-	xPkEdgLYTljbZF8Y/MzIGSWjtaAraIaf3YTVZWu2+BZ4Pa5RRyiVLTP4SI49P7d7IoT+kpiqTsN
-	cucioMvE2res4h8Cal1UjwB/JIotpc6MOoXovFFbcTcPl9TvPs59ZOnNj6DjtwyOiAjUfwHP0Ly
-	k=
-X-Google-Smtp-Source: AGHT+IGmHOZ9OMS1zAMyxgpr/bncWsGTANPbrsoKFtlV1jH0mzf7bvoTC8FLSJtindJQXpmb+iJTPQ==
-X-Received: by 2002:a17:902:cf52:b0:23e:90c:8213 with SMTP id d9443c01a7336-23e090c838amr88695615ad.8.1752579066402;
-        Tue, 15 Jul 2025 04:31:06 -0700 (PDT)
-Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([27.57.176.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42ae74esm107719875ad.74.2025.07.15.04.31.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 04:31:05 -0700 (PDT)
-From: Darshan Rathod <darshanrathod475@gmail.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Darshan Rathod <darshanrathod475@gmail.com>
-Subject: [PATCH] media: uvcvideo: Fix assignment in if condition
-Date: Tue, 15 Jul 2025 11:30:56 +0000
-Message-ID: <20250715113056.2519-1-darshanrathod475@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752579072; c=relaxed/simple;
+	bh=qTB8vzTixTpm3wEfYNlb54btZpsBf8r9fBjMKLDVrWc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=gb+yBlKvkw0pXldiByxy32XUUzoiQtf2ohNmjsp+N6w7NXW6nE1LU7HPSQwgUsc6jG3JyPV+hjL1Qsg7U1zAdWDCcweyCD2zo2cQSrqr2X/bD3WkflT1vfv/6LGLoWtNt2YuiTszTsrOhjoViT7RGbcfFWXRgo+yVVtvkPUeuVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PzOVpspQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CB7C4CEE3;
+	Tue, 15 Jul 2025 11:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752579071;
+	bh=qTB8vzTixTpm3wEfYNlb54btZpsBf8r9fBjMKLDVrWc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=PzOVpspQqciglPtD7dzDo2/PwrO0glyWo2YflyoOSrzXK3b+H0V8gu5N4uUE0GeK9
+	 bS00ebjJsg9bs+SlBBZBt/d5vgKYt3V4Rq6eLYl79c+ic1IHDiXWQZ2jq768Zn9QgD
+	 Ayt+vfbCpyYRb5n8b9e3mxUe/g/WrmrchCrQULgA2WHGzNo8Fb8U8zT0+vP9IwlNEN
+	 neYOZTsxHrsLiml56Tfbhj6PPLFRYET2v7tH7S7in0kH5Ur04eBCRTl6Qxc7tamPUS
+	 Bu/F2CM1NIoR23Zz9p3TEIPQhtxyFfsW8zMr03FK4qX0kZrefEE0kM6VqVSx27Mex9
+	 wlY2ERxyeOryQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 13:31:06 +0200
+Message-Id: <DBCLFG5F4MPW.2LF4T3KWOE12R@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Dennis Zhou"
+ <dennis@kernel.org>, "Tejun Heo" <tj@kernel.org>, "Christoph Lameter"
+ <cl@linux.com>, "Danilo Krummrich" <dakr@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-mm@kvack.org>
+Subject: Re: [PATCH v2 3/5] rust: percpu: add a rust per-CPU variable test
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Mitchell Levy" <levymitchell0@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250712-rust-percpu-v2-0-826f2567521b@gmail.com>
+ <20250712-rust-percpu-v2-3-826f2567521b@gmail.com>
+ <DBATM1CUS704.28MKE6BIBQB7G@kernel.org>
+ <68762e19.170a0220.33e203.a0b7@mx.google.com>
+In-Reply-To: <68762e19.170a0220.33e203.a0b7@mx.google.com>
 
-The function uvc_input_init() used an assignment of the return value
-of input_register_device() within the condition of an if statement.
+On Tue Jul 15, 2025 at 12:31 PM CEST, Mitchell Levy wrote:
+> On Sun, Jul 13, 2025 at 11:30:31AM +0200, Benno Lossin wrote:
+>> On Sat Jul 12, 2025 at 11:31 PM CEST, Mitchell Levy wrote:
+>> > Add a short exercise for Rust's per-CPU variable API, modelled after
+>> > lib/percpu_test.c
+>> >
+>> > Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+>> > ---
+>> >  lib/Kconfig.debug       |   9 ++++
+>> >  lib/Makefile            |   1 +
+>> >  lib/percpu_test_rust.rs | 120 +++++++++++++++++++++++++++++++++++++++=
++++++++++
+>>=20
+>> I don't know if this is the correct place, the code looks much more like
+>> a sample, so why not place it there instead?
+>
+> I don't feel particularly strongly either way --- I defaulted to `lib/`
+> since that's where the `percpu_test.c` I was working off of is located.
+> Happy to change for v3
 
-This coding style is discouraged by the Linux kernel coding style guide
-as it can be confused with a comparison and hide potential bugs.
-The checkpatch.pl script flags this as an error:
-"ERROR: do not use assignment in if condition"
+Since we don't have Rust stuff in lib/ yet (and that the code looks much
+more like the samples we already have) I think putting it in
+samples/rust is better.
 
-Separate the assignment into its own statement before the conditional
-check to improve code readability and adhere to the kernel's
-coding standards.
+>> >  rust/helpers/percpu.c   |  11 +++++
+>> >  4 files changed, 141 insertions(+)
+>> > diff --git a/lib/percpu_test_rust.rs b/lib/percpu_test_rust.rs
+>> > new file mode 100644
+>> > index 000000000000..a9652e6ece08
+>> > --- /dev/null
+>> > +++ b/lib/percpu_test_rust.rs
+>> > @@ -0,0 +1,120 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +//! A simple self test for the rust per-CPU API.
+>> > +
+>> > +use core::ffi::c_void;
+>> > +
+>> > +use kernel::{
+>> > +    bindings::{on_each_cpu, smp_processor_id},
+>> > +    define_per_cpu,
+>> > +    percpu::{cpu_guard::*, *},
+>> > +    pr_info,
+>> > +    prelude::*,
+>> > +    unsafe_get_per_cpu,
+>> > +};
+>> > +
+>> > +module! {
+>> > +    type: PerCpuTestModule,
+>> > +    name: "percpu_test_rust",
+>> > +    author: "Mitchell Levy",
+>> > +    description: "Test code to exercise the Rust Per CPU variable API=
+",
+>> > +    license: "GPL v2",
+>> > +}
+>> > +
+>> > +struct PerCpuTestModule;
+>> > +
+>> > +define_per_cpu!(PERCPU: i64 =3D 0);
+>> > +define_per_cpu!(UPERCPU: u64 =3D 0);
+>> > +
+>> > +impl kernel::Module for PerCpuTestModule {
+>> > +    fn init(_module: &'static ThisModule) -> Result<Self, Error> {
+>> > +        pr_info!("rust percpu test start\n");
+>> > +
+>> > +        let mut native: i64 =3D 0;
+>> > +        // SAFETY: PERCPU is properly defined
+>> > +        let mut pcpu: StaticPerCpu<i64> =3D unsafe { unsafe_get_per_c=
+pu!(PERCPU) };
+>>=20
+>> I don't understand why we need unsafe here, can't we just create
+>> something specially in the `define_per_cpu` macro that is then confirmed
+>> by the `get_per_cpu!` macro and thus it can be safe?
+>
+> As is, something like
+>     define_per_cpu!(PERCPU: i32 =3D 0);
+>
+>     fn func() {
+>         let mut pcpu: StaticPerCpu<i64> =3D unsafe { unsafe_get_per_cpu!(=
+PERCPU) };
+>     }
+> will compile, but any usage of `pcpu` will be UB. This is because
+> `unsafe_get_per_cpu!` is just blindly casting pointers and, as far as I
+> know, the compiler does not do any checking of pointer casts. If you
+> have thoughts/ideas on how to get around this problem, I'd certainly
+> *like* to provide a safe API here :)
 
-Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
+I haven't taken a look at your implementation, but you do have the type
+declared in `define_per_cpu!`, so it's a bit of a mystery to me why you
+can't get that out in `unsafe_get_per_cpu!`...
+
+Maybe in a few weeks I'll be able to take a closer look.
+
+>> > +        // SAFETY: We only have one PerCpu that points at PERCPU
+>> > +        unsafe { pcpu.get(CpuGuard::new()) }.with(|val: &mut i64| {
+>>=20
+>> Hmm I also don't like the unsafe part here...
+>>=20
+>> Can't we use the same API that `thread_local!` in the standard library
+>> has:
+>>=20
+>>     https://doc.rust-lang.org/std/macro.thread_local.html
+>>=20
+>> So in this example you would store a `Cell<i64>` instead.
+>>=20
+>> I'm not familiar with per CPU variables, but if you're usually storing
+>> `Copy` types, then this is much better wrt not having unsafe code
+>> everywhere.
+>>=20
+>> If one also often stores `!Copy` types, then we might be able to get
+>> away with `RefCell`, but that's a small runtime overhead -- which is
+>> probably bad given that per cpu variables are most likely used for
+>> performance reasons? In that case the user might just need to store
+>> `UnsafeCell` and use unsafe regardless. (or we invent something
+>> specifically for that case, eg tokens that are statically known to be
+>> unique etc)
+>
+> I'm open to including a specialization for `T: Copy` in a similar vein
+> to what I have here for numeric types. Off the top of my head, that
+> shouldn't require any user-facing `unsafe`. But yes, I believe there is
+> a significant amount of interest in having `!Copy` per-CPU variables.
+> (At least, I'm interested in having them around for experimenting with
+> using Rust for HV drivers.)
+
+What kinds of types would you like to store? Allocations? Just integers
+in bigger structs? Mutexes?
+
+> I would definitely like to avoid *requiring* the use of `RefCell` since,
+> as you mention, it does have a runtime overhead. Per-CPU variables can
+> be used for "logical" reasons rather than just as a performance
+> optimization, so there might be some cases where paying the runtime
+> overhead is ok. But that's certainly not true in all cases. That said,
+> perhaps there could be a safely obtainable token type that only passes a
+> `&T` (rather than a `&mut T`) to its closure, and then if a user doesn't
+> mind the runtime overhead, they can choose `T` to be a `RefCell`.
+> Thoughts?
+
+So I think using an API similar to `thread_local!` will allow us to have
+multiple other APIs that slot into that. `Cell<T>` for `T: Copy`,
+`RefCell<T>` for cases where you don't care about the runtime overhead,
+plain `T` for cases where you only need `&T`. For the case where you
+need `&mut T`, we could have something like a `TokenCell<T>` that gives
+out a token that you need to mutably borrow in order to get `&mut T`.
+Finally for anything else that is too restricted by this, users can also
+use `UnsafeCell<T>` although that requires `unsafe`.
+
+I think the advantage of this is that the common cases are all safe and
+very idiomatic. In the current design, you *always* have to use unsafe.
+
+> For `UnsafeCell`, if a user of the API were to have something like a
+> `PerCpu<UnsafeCell<T>>` that safely spits out a `&UnsafeCell<T>`, my
+> understanding is that mutating the underlying `T` would require the
+> exact same safety guarantees as what's here, except now it'd need a much
+> bigger unsafe block and would have to do all of its manipulations via
+> pointers. That seems like a pretty big ergonomics burden without a clear
+> (to me) benefit.
+
+It would require the same amount of unsafe & safety comments, but it
+wouldn't be bigger comments, since you can just as well create `&mut T`
+to the value.
+
 ---
- drivers/media/usb/uvc/uvc_status.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-index ee01dce4b783..3c29c0bb3f7c 100644
---- a/drivers/media/usb/uvc/uvc_status.c
-+++ b/drivers/media/usb/uvc/uvc_status.c
-@@ -62,7 +62,8 @@ static int uvc_input_init(struct uvc_device *dev)
- 	__set_bit(EV_KEY, input->evbit);
- 	__set_bit(KEY_CAMERA, input->keybit);
- 
--	if ((ret = input_register_device(input)) < 0)
-+	ret = input_register_device(input);
-+	if (ret < 0)
- 		goto error;
- 
- 	dev->input = input;
--- 
-2.43.0
-
+Cheers,
+Benno
 
