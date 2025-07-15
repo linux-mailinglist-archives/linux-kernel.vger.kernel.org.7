@@ -1,165 +1,156 @@
-Return-Path: <linux-kernel+bounces-732550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47EFB0687A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:22:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C72B06877
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 23:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E60281AA1F52
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:22:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39CD216EAB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F938265288;
-	Tue, 15 Jul 2025 21:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621772C15AC;
+	Tue, 15 Jul 2025 21:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JpfILPCq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="Ocr53KH2"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E342C08CA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 21:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28D82C15A0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 21:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752614493; cv=none; b=Sl2llD0iehD+iPdSn0kLC9QgQrQhvqn1L0V6a1RpnF3/zVf3Dl1XNe8ztXjqJh66xKqITj5JlwY5ETSDIIDI0z9D1YI+TwZtwTPyKqVXBPHhxsByOsXyEV8Vutif7i7cUtbYrWE4+NdkH96gtV79ucJZZhmNJnY3+R1ZcEF8qSA=
+	t=1752614486; cv=none; b=hVyAR7ODwEL7f8PZtom8BKrDzK38HaCJbXeO/MxhWxt7o2LcN6xWzFt1we1MFUm0dwNHa0VHX9lymqWatnV8T/vv43zwT1RBYQOKj5r5nKkD+khhfKLywmCRn+Z/ql9n/9gjIr3kNNufT02oxEEPjfyWagPiT0ZcFcxo/2/6Wj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752614493; c=relaxed/simple;
-	bh=M54e0/ZlEEa2sNV99+CGjmRYbJUwlKNDtK0njJtoxjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VajmryLRZmyeok/ebcUfgLt3tIeA9pCL36klyZpgBImxmYqLbtYNZbs8oWq4kKfR8mN9DBMETk1wymlhQPAE3GSdKpQVDfmQRDIk5IMM6YV1gemIOPXeaQnUPRiEEvZ/k+UqpnTGXbWIuAmgBHHQvJcXUGnO62U6HBS2zmZk1Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JpfILPCq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FGDLRJ024983
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 21:21:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Wt6pHEnPgOMDtsvi/12SpMFQ
-	uNhk9sWrVUUSDWC7ddc=; b=JpfILPCq6ysjgrUDKdpIOioRmg3rMyF0SEy+bnD5
-	iackY1+USjZDifvl2zdbwfFSE9EALG+KcOiiL8iNqFaSHLf/DcU/aVyWbEft8qYr
-	l5S2/kt2JgudNnUXWgAmvUQLGkXlvyNA5aTWF6vmJT9NAlnzKD/VsCMNReWG6Asl
-	NwL5wvtV7q6Ikpoe77z+aZbO7lmIJf10ELXud7QXnF16jOSkjig9TF/Mvv4p7XPw
-	LjYmmcLIJwExnC0fmYylCOjCGstJD3FjIkBdNE5xMeqG5hZ/+jo1CRqovvIgUSGg
-	JpXMh5+QMb7FaheXg9GSjLN7Q9iZweZBL5/5aOhYMzW6AQ==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w58ymg5s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 21:21:31 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-312df02acf5so199899a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:21:30 -0700 (PDT)
+	s=arc-20240116; t=1752614486; c=relaxed/simple;
+	bh=Xn5sfXJVyFCUmKpUctTY6XjcSY6L7rDfuoGzFEZ3rIg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=SzesqJ4YeMu0XgXuo7ZQMbpcs5IfyoT7R5HsWxowU+u6r/Tpgy20YCOsIAkNCQhOkegcYsTOt/kxIL9CxbdgpXLvQ3ylN4x4r0Prn86UQ2r95Ytz0kClvgd8U9OMWj9omNqYemFWZTeXKfb6kr9qzO6FPyk+wmT5we9YLZX74Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=Ocr53KH2; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-3a503d9ef59so4266538f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:21:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1752614483; x=1753219283; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ppm5sGysExi3sq4lorbjoMJOii7mZlPYAA9BWJ5r3TA=;
+        b=Ocr53KH2aov+NWi7tieRoerwDH2hoDi3Pgf4KaRWEIScp0sNqWF7bDVzydrp/rdfgh
+         RnqkMIVJI1fk1NXphbuv92KXU/10REXrgqVqe4N9oxqrFXJ8mXUSeLoM25gxom8MuPzy
+         ADruHBA4r88rDcw3VKLJ363FvM2ixI1vEBEAc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752614490; x=1753219290;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wt6pHEnPgOMDtsvi/12SpMFQuNhk9sWrVUUSDWC7ddc=;
-        b=ZWNjjBz4jvTy7lPOh02s5nrZzzGAXliQnBpCB21yEfKPlcuhZUKAaacjMJ+eg6WkRs
-         NUKCvikG0L6ZXUM3IlTb11ZbrtVl/CN3DXOua287tyoXGRdv8vru6bmx8ZWly9RdFris
-         myt96iMZuwS7lF1w21+sdaiEqRHgEaPFrpYys5ft2ARorCmwazVmcMI0qLejwclJRHky
-         7/h7yfhyHzeVVGIWFzHPBdzBprx4lL5MfNT2OJZtFHnOYDNj15VWOq1St3a/I1/ZaHRV
-         EJptTRcOJ/yDOGyrA1VFQOlTXB67SHVXXqYzYw9mtHrZQqN+xbldbWjzYF/Z1ssQo4Oe
-         bW9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUCnvrq2L/r/s5YB/A78kvOPdVZz4ENdCoKEECvcGyCduVRFTco6EHE+VR7foPpAS9rkXigMb23P4S07TE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza/1TANgLWHR8DQFWVEo2AjWtxSLEsNRgJrKcwyX6WGM6EPWhS
-	lNah21yeNmaDJ2hE9G2Sk933uTybXNl8w6uiNEZ6bLSf6YjqFVLRmvDJ2JwrSAq3tZlNuvE82U6
-	2Yqg/wD89gXJhR8zW5oBxCzqKOflkmwaWuK0q70yL/1z9CQvsMKyOoT3NBcDbUq5P9VHteuZE15
-	ejh/c4VAYWwuOalM43+VYI2rRiesktNqoiutpD6NMa1w==
-X-Gm-Gg: ASbGncur4XmvO0JXOQmnM5hb2432tEAQgjres459TkHCjJ2nX7Z/2Emc77gcdC6/foe
-	15NrBkmR2cxARauWnuoinGh/5L1ZeHOkmgtyrBL2GyFGogBDoM6ul4/QR4GD0h3Pkwo6lFzhqzY
-	ytgUeotu5dal/W9/4M5Q==
-X-Received: by 2002:a17:90b:582c:b0:302:fc48:4f0a with SMTP id 98e67ed59e1d1-31c9e5d6787mr1112818a91.0.1752614489637;
-        Tue, 15 Jul 2025 14:21:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE180B/nvub/VcLFKHUYlMuFfM+d+W1Yrk+Dl1vV6BZLqXAgmjk5x3JRwv1+EXCWv36y+/9gQXCwKTEXZuI6Tc=
-X-Received: by 2002:a17:90b:582c:b0:302:fc48:4f0a with SMTP id
- 98e67ed59e1d1-31c9e5d6787mr1112777a91.0.1752614489066; Tue, 15 Jul 2025
- 14:21:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752614483; x=1753219283;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ppm5sGysExi3sq4lorbjoMJOii7mZlPYAA9BWJ5r3TA=;
+        b=TLp9lC74GjYjM5Sq+B735wgQEy/RSCdeGrXUtJq90q3YSrS4wv230UkkxI1s2ZxeOj
+         L2pvVG+LmpAKwamCPF1uMxjmOztwi4aoCsPqSEvxe65fR3WOIhkg5MR/XM1Btg+WYusr
+         fp1DFJRO2oWZvIzoy2nCRITz/xeYoV4KgsudXMqf4Q+mk1Ys3CTu5clv2PO87zrU/axL
+         vHvggV2BgX9oCEtBISvMa4qefqvj4BbchmONKh1r4+2WJFsSswg3qOcJJZ0doPwTVjS0
+         c7KcscdNBgPsTSH3ZR6+vkp5LxM+S7o+rEnbe2oP9bHF8B5lZT9gjI5TWqJoygGHIKsu
+         nstw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBtiW1DkX29YfTrjBmgyNIIgFAm4kBGZAjhcSeYLMrCLZeHwk9K1U+QxggF8JW7PMViLCsfokP6OG8++E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY4D77o7snWIpSXGmR7XTPkv3RAsF3Vo2hvx85og2rfp0IMoIX
+	irvGcYkn9irfRKYKyLHIyQo6pGaK0KRoHV09Uds54HOPQONAvZm4pN4Me5kIrSvuD70=
+X-Gm-Gg: ASbGncuU+CvqKW4DKo1gGVZsvoX3iGP043fR8Lf17nd1XoicjxyBELT193Sh41hQrbZ
+	jZJb490MqJPc9sMNvFt6H9WwQXVX7+sUSGW5Sck1oVq/havh6lpfP0EoEtH0ChMi6ydsnwCooJT
+	PibDsJRVWFcx9Vt68K+9u+W06VoVotuUJaozpKwONROe1Qwv+P8MPPn6H+RtLDba9PH09ymRQND
+	Eei7Dfql9Qs2Gvq1LdfL0abBPVxJHqH/dQoj6o0zEzG2UWWposRmyS0crfGCzuupbbP/h7tceVL
+	5Lyrb0W5emUG52iGfvYQdJicR3KZV4PCeS01xc4DNk4Kj/PdbNQvsTWQMBdCQj/WUNm+ay0QFH7
+	DB7+mfbuRMkoBCqkW9AtStr0766JOhSjtt8S3cwnSZro/uFYrO4Mm4WRdo4v/CSIKcxQe
+X-Google-Smtp-Source: AGHT+IEj8+pSzZBBrVJbdtKW+lmHwLR/QBZ+AT6lYZRu74xiogpHpM3WO9d5D7LAgQdk5WE/KsmqUA==
+X-Received: by 2002:a05:6000:2484:b0:3b5:f8d5:5dba with SMTP id ffacd0b85a97d-3b60e51c90emr57193f8f.30.1752614483128;
+        Tue, 15 Jul 2025 14:21:23 -0700 (PDT)
+Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d76fsm16377962f8f.64.2025.07.15.14.21.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 14:21:22 -0700 (PDT)
+Message-ID: <927f2b0a-7e64-40f2-9773-cba9b1d328a5@citrix.com>
+Date: Tue, 15 Jul 2025 22:21:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715185636.21758-1-me@adomerle.pw> <uvw7usijkllom6cox4fkhrxpckqf7gk65b4hn244hpmj62utyt@zlbxwwmj5t6u>
- <493da354-2c86-452b-b343-c9ecd3ff84e3@adomerle.pw>
-In-Reply-To: <493da354-2c86-452b-b343-c9ecd3ff84e3@adomerle.pw>
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Wed, 16 Jul 2025 00:21:16 +0300
-X-Gm-Features: Ac12FXwf4NBb2pWO6jqWH2XiOZVWEfDSrstKZQZ91qjRKAV9iJ1Qy-M0e_EZPFs
-Message-ID: <CAO9ioeUtiYFLyTWHYdoy6P69jg77EbPv-f=i2dO=9dDB-UaHLQ@mail.gmail.com>
-Subject: Re: [PATCH v1] arm64: dts: qcom: sm8250-xiaomi-pipa: Drop nonexistent hardware
-To: Arseniy Velikanov <me@adomerle.pw>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Luka Panio <lukapanio@gmail.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDE5NyBTYWx0ZWRfX53hNuQdg4ART
- tfdU+nHu/NFMLa3FSFCYe5op34Zcu2+Udi1/9EYaOp+fK6xC42YxhSOMHlYUjs1XN/Zw7bs4y4U
- nb803Y6DXzCS20ePv30YR0tQPE4DscyugeYHmbkJUR18AU/1sHDvW5XM/Np5SC/Fn76q5HyhFgI
- dGrgEmguZzpFE6hnNzz6TBc7cNVQy6+1MvV9A9HwC6q3f+b7gcL73MeGi0TxBwWzuxztu2M5/r0
- O2taEt1e6YVzpBC/5SofgzhknhqFxH2TcL4Mzrmk6fr7+0Cg+jhb0Bans65z1EOMEghYLK1mUx/
- YimgHagqgxbHOTjDn4pwa2DNQ7pfOAXLZ5wlvS7/9aE09R3fPZcm4Sp53PTe/98Wc3FVoDWWpt/
- 8Q0Ue5BdDu+k4kwwMSaN0fFjBiBqWnGEZoLNAuPOXQ1ESizSM9IXYEA7W/1S6NVCTH5PaD8o
-X-Proofpoint-GUID: zzeTsWjqpJtHw-i0h6qXzO86s78YXUSC
-X-Proofpoint-ORIG-GUID: zzeTsWjqpJtHw-i0h6qXzO86s78YXUSC
-X-Authority-Analysis: v=2.4 cv=Or9Pyz/t c=1 sm=1 tr=0 ts=6876c65b cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=NEAV23lmAAAA:8 a=9pW74NbYAAAA:8 a=mk2d8uPtwDXq42qNKiMA:9 a=QEXdDO2ut3YA:10
- a=iS9zxrgQBfv6-_F4QbHw:22 a=67o8LzlnqLyy2xoPAWJp:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-15_05,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 malwarescore=0 clxscore=1015 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507150197
+User-Agent: Mozilla Thunderbird
+To: khaliidcaliy@gmail.com
+Cc: ardb@kernel.org, bp@alien8.de, brgerst@gmail.com,
+ dave.hansen@linux.intel.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+ mingo@redhat.com, tglx@linutronix.de, ubizjak@gmail.com, x86@kernel.org
+References: <20250715181709.1040-1-khaliidcaliy@gmail.com>
+Subject: Re: [PATCH v3] x86/boot: Avoid writing to cr4 twice in startup_64()
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20250715181709.1040-1-khaliidcaliy@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 15 Jul 2025 at 22:37, Arseniy Velikanov <me@adomerle.pw> wrote:
->
->
-> On 15.07.2025 23:22, Dmitry Baryshkov wrote:
-> > On Tue, Jul 15, 2025 at 10:56:36PM +0400, Arseniy Velikanov wrote:
-> >> PM8009 was erroneously added since this device doesn't actually have it.
-> >> It triggers a big critical error at boot, so we're drop it.
-> > Might it be that there are different SKUs?
-> Well, while it's in dts, but it was disabled in the kernel config:
-> https://github.com/MiCode/Xiaomi_Kernel_OpenSource/blob/pipa-t-oss/arch/arm64/configs/vendor/pipa_user_defconfig#L413
->
-> Maybe they just forgot to remove it from dts (I still don't understand
-> why it is displayed in i2cdetect though).
+> diff
+> <https://lore.kernel.org/lkml/20250715181709.1040-1-khaliidcaliy@gmail.com/#iZ31arch:x86:kernel:head_64.S>
+> --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S index
+> 4390a28f7dad..dfb5390e5c9a 100644 --- a/arch/x86/kernel/head_64.S +++
+> b/arch/x86/kernel/head_64.S @@ -222,12 +222,9 @@
+> SYM_INNER_LABEL(common_startup_64, SYM_L_LOCAL)  
+>  	/* Even if ignored in long mode, set PSE uniformly on all logical CPUs. */
+>  	btsl	$X86_CR4_PSE_BIT, %ecx
+> - movq %rcx, %cr4 - - /* - * Set CR4.PGE to re-enable global
+> translations. - */ + /* Set CR4.PGE to re-enable global translations. */  	btsl	$X86_CR4_PGE_BIT, %ecx
+> +  	movq	%rcx, %cr4
 
-For PMIC you can check in
-/sys/kernel/debug/soc/qcom_socinfo/pmic_model_array. For FG it's not
-possible.
+The comments are at best misleading, but you've broken the TLB flush
+being performed which depends on the double write.
 
-> >
-> >> Also it looks like the fuel gauge is not connected to the battery,
-> >> it reports nonsense info. Downstream kernel uses pmic fg.
-> > Separate commit, please.
-> >
-> >> PMIC fuel-gauge driver uses mixed stats about dual-cell battery,
-> >> so I combined it into one.
-> >>
-> >> Fixes: 264beb3cbd0d ("arm64: dts: qcom: sm8250-xiaomi-pipa: Add initial device tree")
-> >>
-> >> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
-> > Please remove empty line between tags (i.e. between Fixes and SoB).
-> >
-> >> ---
-> >>   .../boot/dts/qcom/sm8250-xiaomi-pipa.dts      | 95 +------------------
-> >>   1 file changed, 5 insertions(+), 90 deletions(-)
-> >>
-> >
-> ---
-> Kind regards,
-> Arseniy.
->
+This logic is intentionally performing a write with CR4.PGE=0 followed
+by one with CR4.PGE=1 to flush all global mappings.
 
-
--- 
-With best wishes
-Dmitry
+~Andrew
 
