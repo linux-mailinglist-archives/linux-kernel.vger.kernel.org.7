@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-731907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E85CAB05BF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:25:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D131BB05C23
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6DD71C21338
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:26:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F306256481D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFE92E6130;
-	Tue, 15 Jul 2025 13:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3CE2E3B10;
+	Tue, 15 Jul 2025 13:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uEBwMwuv"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPFgiCbm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE712E54BB
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1AD2E338F;
+	Tue, 15 Jul 2025 13:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585851; cv=none; b=U68X+LZ8ztOlpKUjzxyPXG+kCPneRxVCwG081/KKFlLIdSGRW/3/aEdtipOVnZ3OHqktgy6AsPkzsIId5AuFhZJMxQ+tpaRw9duh3GnNOiRqcCqAtSO2KIPOyIKFgq93ly8W8Wz/diAiOzQ+cQcC4BH5TwoAZzHYBfu2s60QX9A=
+	t=1752585886; cv=none; b=fhTMI/B9n1vPvry7um6ASC6u4BKvlgK/8PWl++/qCCGbCNo38fnn087UdwW7pvzZam56BKBn3uPpVshIDgOBvxGOLKdMEtzL4MV0nojlO+ik9jle/Bp3aCFH2WiIdx33zPYi6lTLQ8I35e+FnTbPLB2LtYF3MQuyEp6GAdsATDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585851; c=relaxed/simple;
-	bh=xu71qnr1VwTZ4+bd4q94HN3+XBjexaGP2P8tok7p9Ok=;
+	s=arc-20240116; t=1752585886; c=relaxed/simple;
+	bh=LACQRLoYbwjDJR7B8kKiL5kegf3U3j4BP+gzpY0KEsY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7MUodLex09bF4bWHqEQt86XX8vXiqxah9RgCK3YYrU5P5/Jt5UBDVHF0n/7QYtetk4oE/3RaZdBdI6Q6Ashe1DPsUUY93sQigC1hkhLhD8UMEONa+6/686+xpc9q4g/J5LjEqhECAeVCVI+Vzf3D8oAmSJ2oS5QkbWeAjzbCXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uEBwMwuv; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-455ecacfc32so17638055e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:24:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752585848; x=1753190648; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GOiczrZQ07TlImzuWhdRA1uRrJzdt3bEMH2PMY2Z0lI=;
-        b=uEBwMwuvJT0MN4aDF61fLsG432xgTAadfknqPLD4BE4jGhvs0NBx12pjYPMxxKLP4c
-         M4M+4TfhUxrGAqFen+tEGSJdbDlGvSkJeQH30Se+5kwaaR88kYZHgSLsQ1Y5Ah2jVnjt
-         IYvC7BbieB4b3prdWg4V5IIUrTJkCdBku8xkxYIC+YyrJCHFwASy9yXs3ZiTJRt1iXOy
-         DVaZZMFIUhe6gRuUURSq6DKcO0sBSyO8j/B3eueHeIB4zPZoldUOchAP42UDjYU77O4o
-         WhGMIUucBSzMEl+ymv/+wmRm1guXip1f2geDDm69R2wxdFk958ZOFoY+7YON74aBAuAs
-         KbKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752585848; x=1753190648;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GOiczrZQ07TlImzuWhdRA1uRrJzdt3bEMH2PMY2Z0lI=;
-        b=OYtU3IZz6C+VPccU6UgXJ2NVxCxvKBUqnFVGK4PDQfWgelyhIcYPQufpeqDdcQLQhQ
-         WQzcMaXPOPrg0VvcF/ssHKExEYeYvHd1ekHO157IJUrjLIgrVPv/E74TvAh39gt2l68Q
-         oUgVEu+R06Mn+lMhPThY3ezMLYVS1VY8KKgrqvfl19nGtkEcmT8X7xGpMFUPegpqkMOV
-         Zp3eHpJrFqqDaQiKB3lI0mTFLBz04PQdqleHHbTdkqzQExHrnuoJ3Bb/Irsb6dx9P8Ny
-         /pWCC+/uCKms2+mbvu9kmi+nTeP+fycZz8DpXccZyFzRMMbfhTCFoiLRVaAgWbGZZnkD
-         p99A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIO3pJDOi7DNNFmozCdXCVdgr/sMMQIHK4cgm4w6cFm2WntVGU8fP0uQrYlQ23M8KHoYUmtjroSubcWLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6kzEqveFI3XwHb2h2bsXWOnegTjg0m3lpQ8DpOBW83U1pHrmw
-	qleqFrxaIdbwqcUtP4Xucu5wQSE39hdYzYjWQvImT2cvFtR/Yp5wEnCN92DaxKHPM7E=
-X-Gm-Gg: ASbGnctQHBY6O9Fm8QhAMEWbLbk4g40zJBhzVNIo65/CHHALtw4i9MkhnnzMPPBBM+X
-	zlYkrIAN/OVPxlCU5HQDZKC/IKcW1q/HLO/aiKDfp93M0G6pcyFUUkTZ/6qIqEwWbMa1o47n4yV
-	uqNFdte3KftsXr+OOV/QmKMg/38fJLn6nnDc2lg7lsKNvCn6vjiQ9OdeILd42Bre7QngB8gmyvL
-	33y4F1ULlQVHRQ1xRibdZvikw/KqiDOaH1zQSrqr2LmVQKMY4y61VO1+7LZQAWQQToWwQCkVOo1
-	XBBWeUYxCNy1BoChklG88nBGyvhs8Ml8eUCK8HO3oF0H7Z32wKm2zXoBup7D3vx/kug1nj1Ej6v
-	Pt8a1sEqVDjiR7GEcrCOFAl7FChYnnoQnnewKQTMGeM4qI2N+FfCMa82ANSEu
-X-Google-Smtp-Source: AGHT+IEs+ScYaBoPod0KS92i4ye+McpE9jOei8lbZ41OgzZYALXJoP1+s9eQ2gbL76aM01wUZbMIAw==
-X-Received: by 2002:a05:600c:1ca2:b0:456:1a69:94fa with SMTP id 5b1f17b1804b1-4561a699783mr71744425e9.13.1752585847534;
-        Tue, 15 Jul 2025 06:24:07 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4561dd91072sm49780995e9.14.2025.07.15.06.24.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 06:24:06 -0700 (PDT)
-Date: Tue, 15 Jul 2025 15:24:04 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: zhanghongchen <zhanghongchen@loongson.cn>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH] thermal/drivers/loongson2: Constify struct
- thermal_zone_device_ops
-Message-ID: <aHZWdMSYDsjebRh-@mai.linaro.org>
-References: <5f5f815f85a9450bca7848c6d47a1fee840f47e5.1748176328.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jcV3Pzr5Nm5tZ2EGeIP4oBp3T8QxG71UWPwTd0bNg3Bv5svfd12ewW+gMAglNIrtUEYRtNd7fR3TAeL9v08piDkoGo1akfRThUPlxCIWcVuxyB7iJoIwFSUp/MZ8f7LJZ/3rZJPWEID4Mou+3GZTyaNPDcW85sIXf+DlLOYBJWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPFgiCbm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78FF9C4CEE3;
+	Tue, 15 Jul 2025 13:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752585886;
+	bh=LACQRLoYbwjDJR7B8kKiL5kegf3U3j4BP+gzpY0KEsY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SPFgiCbmTjPFJKl5cs0OZMbXGYUAhCKvFG7enaVLf+cqb6iwHU56DujED+FM/4W/z
+	 x1RFbZALiY/TbT/W30fFBxkD8Jx9QNZX2NnEp4ykPrhBMKuw2rRwvdmcmNGluj1hOg
+	 6tgI9ehvM68n26LyiCkDWSHUv6WuUZnpewUtqClNHOxa3hJ8NDtd/CdbNCsmqAn0uD
+	 uxUKdhsRJ0TyQKFVjUOEqMvirCzGFjGwTpkys/3DVBlMb7BMr8eOEPqJTWXx98VQWI
+	 N5zqWCYnndaF/OJVGgy7A0rFygzVh8S7ElMNVCp22I186H186bp8d1LBrKVm3ZjrfS
+	 x8/h4CKze7ZVw==
+Date: Tue, 15 Jul 2025 14:24:38 +0100
+From: Will Deacon <will@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>, Christoph Hellwig <hch@lst.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, iommu@lists.linux.dev,
+	virtualization@lists.linux.dev, kasan-dev@googlegroups.com,
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 8/8] mm/hmm: migrate to physical address-based DMA
+ mapping API
+Message-ID: <aHZWlu7Td9ijFhhh@willie-the-truck>
+References: <cover.1750854543.git.leon@kernel.org>
+ <8a85f4450905fcb6b17d146cc86c11410d522de4.1750854543.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5f5f815f85a9450bca7848c6d47a1fee840f47e5.1748176328.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <8a85f4450905fcb6b17d146cc86c11410d522de4.1750854543.git.leon@kernel.org>
 
-On Sun, May 25, 2025 at 02:32:30PM +0200, Christophe JAILLET wrote:
-> 'struct thermal_zone_device_ops' could be left unmodified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
-> 
-> This partly reverts commit 734b5def91b5 ("thermal/drivers/loongson2: Add
-> Loongson-2K2000 support") which removed the const qualifier. Instead,
-> define two different structures.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    5089	   1160	      0	   6249	   1869	drivers/thermal/loongson2_thermal.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->    5464	   1128	      0	   6592	   19c0	drivers/thermal/loongson2_thermal.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
+Hi Leon,
 
-Applied, thanks
+On Wed, Jun 25, 2025 at 04:19:05PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> Convert HMM DMA operations from the legacy page-based API to the new
+> physical address-based dma_map_phys() and dma_unmap_phys() functions.
+> This demonstrates the preferred approach for new code that should use
+> physical addresses directly rather than page+offset parameters.
+> 
+> The change replaces dma_map_page() and dma_unmap_page() calls with
+> dma_map_phys() and dma_unmap_phys() respectively, using the physical
+> address that was already available in the code. This eliminates the
+> redundant page-to-physical address conversion and aligns with the
+> DMA subsystem's move toward physical address-centric interfaces.
+> 
+> This serves as an example of how new code should be written to leverage
+> the more efficient physical address API, which provides cleaner interfaces
+> for drivers that already have access to physical addresses.
 
--- 
+I'm struggling a little to see how this is cleaner or more efficient
+than the old code.
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+From what I can tell, dma_map_page_attrs() takes a 'struct page *' and
+converts it to a physical address using page_to_phys() whilst your new
+dma_map_phys() interface takes a physical address and converts it to
+a 'struct page *' using phys_to_page(). In both cases, hmm_dma_map_pfn()
+still needs the page for other reasons. If anything, existing users of
+dma_map_page_attrs() now end up with a redundant page-to-phys-to-page
+conversion which hopefully the compiler folds away.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+I'm assuming there's future work which builds on top of the new API
+and removes the reliance on 'struct page' entirely, is that right? If
+so, it would've been nicer to be clearer about that as, on its own, I'm
+not really sure this patch series achieves an awful lot and the
+efficiency argument looks quite weak to me.
+
+Cheers,
+
+Will
 
