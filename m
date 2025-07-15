@@ -1,65 +1,85 @@
-Return-Path: <linux-kernel+bounces-730942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39252B04CC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:22:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702B5B04CC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99A93B1305
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8931A6814A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3C115278E;
-	Tue, 15 Jul 2025 00:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144F015B54A;
+	Tue, 15 Jul 2025 00:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFV8rqaA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AAzUUi8D"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBE63207;
-	Tue, 15 Jul 2025 00:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A5733F6;
+	Tue, 15 Jul 2025 00:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752538908; cv=none; b=ggZ2nsbWSvSo3BaJhQiO+jGoTSab1iJdMBw8S/3A4gp3SHJVMlTgIYTW7cavPbcq92a+09f+aYTl0SZZ3ie04reJIfIZB0wv0q1t8TljxxnHBiwav2DfJ2uB/mXbNqfo8uyyNUTzC6opl8fo5gW2ChTUUxePVT4EFc6axWvB8uU=
+	t=1752538971; cv=none; b=QpHmTT7NOfRQcNnzFtFM5g1dGROXSkfgnWOZyRCbfLRY0EiaM5BCS1a0z4OPnZYbNtmAFr1ZUbVp9j54hJ3pjaqJEfR3g2yJvNMiCENAa22euVfIUWmQ76Obl5k1u7jr9T20kKfe/yVRtpHo4e/Ln3pSskslMwz5vFwxnmu3twE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752538908; c=relaxed/simple;
-	bh=ZS6y3+YZOrPGOdLZpTQcp7s63vIuVeQB/7QkEQLYFOk=;
+	s=arc-20240116; t=1752538971; c=relaxed/simple;
+	bh=eCmJOToBbUNkzzH7UoSQNgS/ofqXZX1DoVA8ZBxoLhU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EsMs+i/yV9wJIIGdki15oOcXGALgrzBTeu07SSRJB10pEvpzU3sH4PJdsGgd54SsXIxH5TIJi45KOqRrmUTYDH1+WLWS7c+An+VPDiS1aOcSWpKIoqdCdyX4XB9D7CfSwYCWXw6NTn2q3g1RH21QaOeIDYRGKEsfdXmgGRFYsHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFV8rqaA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CDDC4CEED;
-	Tue, 15 Jul 2025 00:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752538908;
-	bh=ZS6y3+YZOrPGOdLZpTQcp7s63vIuVeQB/7QkEQLYFOk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=AFV8rqaAoLjVxEuVlCUFYMLsiU1h9Va8CTIxgUvsHGrpgjCxjznNo9asxXAPIyxNp
-	 EJ9lSSpP1a2yzn/SoGXXgsK4lzWhgMAaZ2lQz0OOrYenU59HkO0Ke61jHyJIdNATFh
-	 EE3YpdPSBaf71QV2aGF75WGL6Rny8A+hwXpbNVaYABc4djiMYwF8vpQVCQcHVrU452
-	 mxaq42IdqV008WfsmPYwpkhJX4YCwjz+Ef/76maqb0MobzUj+q6IuDklEHvR9WRHEz
-	 VA1jPsoh5fFWFPS0M8YoHP7MXu+AoGkEPTw/HrKLSkhcgWAW04fXYzR98SSt7w20eR
-	 wttPzui8HE3Uw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E7180CE0BAF; Mon, 14 Jul 2025 17:21:47 -0700 (PDT)
-Date: Mon, 14 Jul 2025 17:21:47 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Chao Gao <chao.gao@intel.com>
-Cc: linux-coco@lists.linux.dev, x86@kernel.org, kvm@vger.kernel.org,
-	seanjc@google.com, pbonzini@redhat.com, eddie.dong@intel.com,
-	kirill.shutemov@intel.com, dave.hansen@intel.com,
-	dan.j.williams@intel.com, kai.huang@intel.com,
-	isaku.yamahata@intel.com, elena.reshetova@intel.com,
-	rick.p.edgecombe@intel.com, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 00/20] TD-Preserving updates
-Message-ID: <a7affba9-0cea-4493-b868-392158b59d83@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250523095322.88774-1-chao.gao@intel.com>
- <aHDFoIvB5+33blGp@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ELRpQSLK11jUqTK1MWpLOOOazd6ZDvbpfwaWkfq+gnSYvdyX4JqxLSqM2/dwQ9eo63Tqb0ecvX8BcCVSmSA1EDzBJ2fxvIVlZz5/BUV65SJljvHShmyAxTo8/ZdlKb3TpY3jf6w1ENaScg7syGh26+sYorJIhHW5sxKREF193pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AAzUUi8D; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752538968; x=1784074968;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eCmJOToBbUNkzzH7UoSQNgS/ofqXZX1DoVA8ZBxoLhU=;
+  b=AAzUUi8D4fpmDzv/MKpBIQXrzx6XkVryM8Bf4wV2nYu7T/qIywqmvPkf
+   w4fV7//5fxU38gBk8SMaJlQsPCChNFtjF4f56QE97RxxzUJGqkGa6TA+j
+   S7VSk6JPhtsQptmrnu2IRQMCU7scAnqOXjCfZNJ2kHcTn6qOhftjySfkN
+   sbUofIX/DILVqjvXlMQRDX2Wbm+JAwle1p9Q1ZqvMYItXRHLKWmKUBcKQ
+   j2kdOCmKMKq7Y4+j4NJfyirLMwCLu1CPWS19qYe/ZUogAi4QEQqmXiwE8
+   VZVSF99afVcRXMpbmY+RmS4SqqFObMl0v4umsmlLvlV5oD+1PBPpsEl00
+   w==;
+X-CSE-ConnectionGUID: DF6RFoUHQFafTZfBz49qYQ==
+X-CSE-MsgGUID: 8+spjHI2QwCEZyykBT9REg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65004926"
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="65004926"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 17:22:47 -0700
+X-CSE-ConnectionGUID: kRCvcFopTcKF5xvCHT8KCw==
+X-CSE-MsgGUID: K/ijNkWDQXWMVDSUlv4+/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,312,1744095600"; 
+   d="scan'208";a="157174679"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 14 Jul 2025 17:22:41 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubTRO-0009Tb-18;
+	Tue, 15 Jul 2025 00:22:38 +0000
+Date: Tue, 15 Jul 2025 08:21:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+	netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com, almasrymina@google.com,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
+	akpm@linux-foundation.org, andrew+netdev@lunn.ch,
+	asml.silence@gmail.com, toke@redhat.com, david@redhat.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
+	bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com,
+	shenwei.wang@nxp.com, xiaoning.wang@nxp.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org
+Subject: Re: [PATCH net-next v10 12/12] libeth: xdp: access ->pp through
+ netmem_desc instead of page
+Message-ID: <202507150748.9sVeInO8-lkp@intel.com>
+References: <20250714120047.35901-13-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,86 +88,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aHDFoIvB5+33blGp@intel.com>
+In-Reply-To: <20250714120047.35901-13-byungchul@sk.com>
 
-On Fri, Jul 11, 2025 at 04:04:48PM +0800, Chao Gao wrote:
-> On Fri, May 23, 2025 at 02:52:23AM -0700, Chao Gao wrote:
-> >Hi Reviewers,
-> >
-> >This series adds support for runtime TDX module updates that preserve
-> >running TDX guests (a.k.a, TD-Preserving updates). The goal is to gather
-> >feedback on the feature design. Please pay attention to the following items:
-> >
-> >1. TD-Preserving updates are done in stop_machine() context. it copy-pastes
-> >   part of multi_cpu_stop() to guarantee step-locked progress on all CPUs.
-> >   But, there are a few differences between them. I am wondering whether
-> >   these differences have reached a point where abstracting a common
-> >   function might do more harm than good. See more details in patch 10.
+Hi Byungchul,
 
-Please note that multi_cpu_stop() is used by a number of functions,
-so it is a good example of common code.  But you are within your rights
-to create your own function to pass to stop_machine(), and quite a
-few call sites do just that.  Most of them expect this function to be
-executed on only one CPU, but these run on multiple CPUs:
+kernel test robot noticed the following build warnings:
 
-o	__apply_alternatives_multi_stop(), which has CPU 0 do the
-	work and the rest wati on it.
+[auto build test WARNING on c65d34296b2252897e37835d6007bbd01b255742]
 
-o	cpu_enable_non_boot_scope_capabilities(), which works on
-	a per-CPU basis.
+url:    https://github.com/intel-lab-lkp/linux/commits/Byungchul-Park/netmem-introduce-struct-netmem_desc-mirroring-struct-page/20250714-200214
+base:   c65d34296b2252897e37835d6007bbd01b255742
+patch link:    https://lore.kernel.org/r/20250714120047.35901-13-byungchul%40sk.com
+patch subject: [PATCH net-next v10 12/12] libeth: xdp: access ->pp through netmem_desc instead of page
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250715/202507150748.9sVeInO8-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250715/202507150748.9sVeInO8-lkp@intel.com/reproduce)
 
-o	do_join(), which is similar to your do_seamldr_install_module().
-	Somewhat similar, anyway.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507150748.9sVeInO8-lkp@intel.com/
 
-o	__ftrace_modify_code(), of which there are several, some of
-	which have some vague resemblance to your code.
+All warnings (new ones prefixed by >>):
 
-o	cache_rendezvous_handler(), which works on a per-CPU basis.
+   In file included from drivers/net/ethernet/intel/libeth/tx.c:6:
+   include/net/libeth/xdp.h: In function 'libeth_xdp_prepare_buff':
+>> include/net/libeth/xdp.h:1295:44: warning: passing argument 1 of 'pp_page_to_nmdesc' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+    1295 |                          pp_page_to_nmdesc(page)->pp->p.offset, len, true);
+         |                                            ^~~~
+   In file included from include/linux/skbuff.h:41,
+                    from include/net/net_namespace.h:43,
+                    from include/linux/netdevice.h:38,
+                    from include/trace/events/xdp.h:8,
+                    from include/linux/bpf_trace.h:5,
+                    from include/net/libeth/xdp.h:7:
+   include/net/netmem.h:270:66: note: expected 'struct page *' but argument is of type 'const struct page *'
+     270 | static inline struct netmem_desc *pp_page_to_nmdesc(struct page *page)
+         |                                                     ~~~~~~~~~~~~~^~~~
 
-o	panic_stop_irqoff_fn(), which is a simple barrier-wait, with
-	the last CPU to arrive doing the work.
 
-I strongly recommend looking at these functions.  They might
-suggest an improved way to do what you are trying to accomplish with
-do_seamldr_install_module().
+vim +1295 include/net/libeth/xdp.h
 
-> >2. P-SEAMLDR seamcalls (specificially SEAMRET from P-SEAMLDR) clear current
-> >   VMCS pointers, which may disrupt KVM. To prevent VMX instructions in IRQ
-> >   context from encountering NULL current-VMCS pointers, P-SEAMLDR
-> >   seamcalls are called with IRQ disabled. I'm uncertain if NMIs could
-> >   cause a problem, but I believe they won't. See more information in patch 3.
-> >
-> >3. Two helpers, cpu_vmcs_load() and cpu_vmcs_store(), are added in patch 3
-> >   to save and restore the current VMCS. KVM has a variant of cpu_vmcs_load(),
-> >   i.e., vmcs_load(). Extracting KVM's version would cause a lot of code
-> >   churn, and I don't think that can be justified for reducing ~16 LoC
-> >   duplication. Please let me know if you disagree.
-> 
-> Gentle ping!
+  1263	
+  1264	bool libeth_xdp_buff_add_frag(struct libeth_xdp_buff *xdp,
+  1265				      const struct libeth_fqe *fqe,
+  1266				      u32 len);
+  1267	
+  1268	/**
+  1269	 * libeth_xdp_prepare_buff - fill &libeth_xdp_buff with head FQE data
+  1270	 * @xdp: XDP buffer to attach the head to
+  1271	 * @fqe: FQE containing the head buffer
+  1272	 * @len: buffer len passed from HW
+  1273	 *
+  1274	 * Internal, use libeth_xdp_process_buff() instead. Initializes XDP buffer
+  1275	 * head with the Rx buffer data: data pointer, length, headroom, and
+  1276	 * truesize/tailroom. Zeroes the flags.
+  1277	 * Uses faster single u64 write instead of per-field access.
+  1278	 */
+  1279	static inline void libeth_xdp_prepare_buff(struct libeth_xdp_buff *xdp,
+  1280						   const struct libeth_fqe *fqe,
+  1281						   u32 len)
+  1282	{
+  1283		const struct page *page = __netmem_to_page(fqe->netmem);
+  1284	
+  1285	#ifdef __LIBETH_WORD_ACCESS
+  1286		static_assert(offsetofend(typeof(xdp->base), flags) -
+  1287			      offsetof(typeof(xdp->base), frame_sz) ==
+  1288			      sizeof(u64));
+  1289	
+  1290		*(u64 *)&xdp->base.frame_sz = fqe->truesize;
+  1291	#else
+  1292		xdp_init_buff(&xdp->base, fqe->truesize, xdp->base.rxq);
+  1293	#endif
+  1294		xdp_prepare_buff(&xdp->base, page_address(page) + fqe->offset,
+> 1295				 pp_page_to_nmdesc(page)->pp->p.offset, len, true);
+  1296	}
+  1297	
 
-I do not believe that I was CCed on the original.  Just in case you
-were wondering why I did not respond.  ;-)
-
-> There are three open issues: one regarding stop_machine() and two related to
-> interactions with KVM.
-> 
-> Sean and Paul, do you have any preferences or insights on these matters?
-
-Again, you are within your rights to create a new function and pass
-it to stop_machine().  But it seems quite likely that there is a much
-simpler way to get your job done.
-
-Either way, please add a header comment stating what your function
-is trying to do, which appears to be to wait for all CPUs to enter
-do_seamldr_install_module() and then just leave?  Sort of like
-multi_cpu_stop(), except leaving interrupts enabled and not executing a
-"msdata->fn(msdata->data);", correct?
-
-If so, something like panic_stop_irqoff_fn() might be a simpler model,
-perhaps with the touch_nmi_watchdog() and rcu_momentary_eqs() added.
-
-Oh, and one bug:  You must have interrupts disabled when you call
-rcu_momentary_eqs().  Please fix this.
-
-							Thanx, Paul
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
