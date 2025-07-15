@@ -1,230 +1,144 @@
-Return-Path: <linux-kernel+bounces-732217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A792CB0638D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEFEB06390
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95FA4A84A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCFBB4A814D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D162C24DCEC;
-	Tue, 15 Jul 2025 15:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BE025C80D;
+	Tue, 15 Jul 2025 15:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UmA8NgHU"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="n9xok8/7"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18131F30CC
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5031531E8
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594905; cv=none; b=NSfMPEXNibcGw9oKAHab0byeTdl8OH/utUkWbmIWhty1FN54MGsZ8+xkSeH4ObPpV8mzN2s0Q1c+2g9gCMU+W11ClHrEZyI+E2uk2RtMdSLsQkL6++zWBsCIfUmwOKb/TWMozcWH5DGOube1NKKgc+2wo+EcELh75mrsBPkm/bU=
+	t=1752594926; cv=none; b=VoKE7ol1GRWKvBvziSTNUpod013mqP4PnHtSVBmcaUORjnMxOmYhBUrBGyfRNxmfvhDbRDZp2xVkuU8faamvUAv3cJXwmJ4XnGQIy5MqFEzn2x0+Cki4TTzvSLFlWDC3REyortK4w8CD2i/QD6OZ6Teb6X0+U7gFGXMy+sa9kqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594905; c=relaxed/simple;
-	bh=8nDABm0QbpFqbV6qcagQDzdLTlD790+/qH/YPHReYvw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Im8rXYyly6uo0JjZpS7ecxuSIAF1G0nBfNuU4/+87b2YcDpPSoKJ2MB8d+BveM9Y0izvFnqdaRSFUvLQpKir7Np0ALmwkHJx2lSi+b6CiIhAG03KYWmhI5mmaAap/WDhgLPKeqQ4tj89JeFTiLuJPRu8SYskSFq3JHbU1Bdc+H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UmA8NgHU; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-70e5e6ab7b8so52421747b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:55:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752594901; x=1753199701; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WB3s2HCYz/rePzCmNFi6RGTxoEWHz7E/oKmgCMbGRhw=;
-        b=UmA8NgHUuHeRF2Y7PplUKo6i4UyA1oCg0kEXuhc7Fmjz1lKawmFR8IO4aODYLJcErw
-         0P21b92+TS7d85yg0GMrChM9eSYEDXDNWSoW2/+w6ruLL6jvt1F1osP4SLIO67q+AkY3
-         pnTk17MTWquIYVxV31U+Txnygyd1xbOCVPciTF1hhpHQDRx8Gy6yGZ9+4pst599uHcEn
-         3bnkkIhUX5NM4Fp7/QCGgT+MDyH8JpREOtw4PusiFjjOeXBbpD8ieIDb/OreW5Htoig8
-         5mRdj5eFoGuB+aneEgpFDbWOEf9HyezOfRwJRtZUWoTZZMdV6UKG5uuh8XeK5PV9f0qQ
-         zk+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752594901; x=1753199701;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WB3s2HCYz/rePzCmNFi6RGTxoEWHz7E/oKmgCMbGRhw=;
-        b=Bylde1ZQ77CXQqgftsZUSbTmoJvYpBJtJSUHFQKiLKLLwuCdrTP47Xv5nxcBfTcnj7
-         LE696kjKh3Bu7xtmOXK2phgzKtRnOvw2nVKvWs37HSUSabeTVVw0szb3TiRUox6pkl/m
-         0x8X0Oh5uUBXCYCDNP0nL2SxbeXHrIZAm1BojkmhBpFj0HazOt2a7LaFOXGC9ghYH0cD
-         JzYG+AeP3YHBghTM82b/Fn/QnprU2rpdWS6kaQtPcVpbE7Tzvu9gYDjBWaLehQ70u6F7
-         wMvs+4ncOBiRKHAxqwINs+pLnHRlXgVkzLIcUqTZxQtGwPTQlM+It7PeFHMZlxFiah1D
-         9LeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzk5RMxoyCpR7Ei3iZAySF8YjUVA6veymX13acB+/PHIbtI5EyxiaugKFWvxffIOBHaHH+Kr3WoQ14mhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn1cZWYm8XKhu5hXyNxLFPkijK0CmaukMNJ1vmgP9dLP29Ro7+
-	7FcWHp7aiyFO5/C1teCf+x4FNXx4OUdCewqerGRKmG0D2VwIjFpdxB2uaLPVUcUmqmjnePuda+t
-	+UARQqRBgprUxRGYL7sezYrYNJmheOe08FAvrHpXmmg==
-X-Gm-Gg: ASbGnctjVg+aJwFCw4xGeW68o8IP4Xi454ebO0zCtZQYRsDDdGo6wq/hzv5Aspric7z
-	yxDKvcuFc4tgmGVo/ZN7vRIPdH9bMmDa/YB35YTQgk1gZIhIZSmaratowwvoRqi7ISnG47h12Ws
-	SAh0tJoJ6xmAm8Ayx1+JTSfXtDmoJ6iRLlR5QN0Q2y6E/5q0PaIKeVwkB2vXA1UScLOt7sHdxx0
-	MT3AFJH
-X-Google-Smtp-Source: AGHT+IF1zRZ4skb16lO7Hz3y8JhqIcAOzt8qRIIDde8w36pNgo8eApgWcC7+yzMMUrZ+UWRcK6MKeJzPo48e26m579o=
-X-Received: by 2002:a05:690c:7107:b0:710:edee:74d1 with SMTP id
- 00721157ae682-717dac32e5dmr223745117b3.3.1752594900738; Tue, 15 Jul 2025
- 08:55:00 -0700 (PDT)
+	s=arc-20240116; t=1752594926; c=relaxed/simple;
+	bh=s18xb8DQGCbajb+5p3Kxf67e/xbfuvlEuY28MZpByFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WJBbgw+RHHYU4BvnVUnfNnrA+4Gw22TAtyGhmkP0LEh3SCbJAvms8dTX6PePaQc/f95F4Y3D2vaSExlTKRrdHD+mFKV0QsayEo3gWFVD+dYsBNAdglxs+etCuYiITcZhdpFCyzIaumXGYAqtWZOMfvBG99PABNBo05PSG/eJ/6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=n9xok8/7; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b72d009a-9d7d-42cd-af2e-80584bba788d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752594912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7GFZev2aQajHr2SbEEhI2ptvWhufMKyrQIwoam3qrpo=;
+	b=n9xok8/71t3B2Pwx6bL6+uLvBHixfQXmdSH4hJIo3cKD5GrVy+KzMD3xyLH32V6zErHX08
+	CxdmWjjXJ9cTC70TGBDPSQt5NnoNu6IIP0vLLqXklU1tJsXm/lVf8J6lZFLhVmpcmlsnb5
+	ihnwn0+qmf3L+rptnLN5b2N95nAbrAg=
+Date: Tue, 15 Jul 2025 11:55:08 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1751898225.git.benoit.monin@bootlin.com>
- <346c422139b658b2ba6272f7ba7b07374008760f.1751898225.git.benoit.monin@bootlin.com>
- <CAPDyKFp=fvyUhkeiw5TmYbELM+MiC8Do20afrainOyq_pLvSHw@mail.gmail.com> <9903989.eNJFYEL58v@benoit.monin>
-In-Reply-To: <9903989.eNJFYEL58v@benoit.monin>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 15 Jul 2025 17:54:24 +0200
-X-Gm-Features: Ac12FXwa445k2oQ0FhDy7MdRUFjaFWJ6sZOak3AH4hAUxkdrNU2ydphifvnNNxs
-Message-ID: <CAPDyKFpK11BZDT_NmWyMe6Tvj8P3gJNBpM_hX5d52urG+sn6-g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] mmc: core: add mmc_read_blocks to mmc_ops
-To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 5/7] hwmon: iio: Add helper function for creating
+ attributes
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-kernel@vger.kernel.org,
+ David Lechner <dlechner@baylibre.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-6-sean.anderson@linux.dev>
+ <aHYTcAO7sHsyevDH@smile.fi.intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <aHYTcAO7sHsyevDH@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-> > > +}
-> > > +
-> > >  #endif
-> > > diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-> > > index 66283825513cb..848d8aa3ff2b5 100644
-> > > --- a/drivers/mmc/core/mmc_ops.c
-> > > +++ b/drivers/mmc/core/mmc_ops.c
-> > > @@ -1077,3 +1077,72 @@ int mmc_sanitize(struct mmc_card *card, unsigned int timeout_ms)
-> > >         return err;
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(mmc_sanitize);
-> > > +
-> > > +/**
-> > > + * mmc_read_blocks() - read data blocks from the mmc
-> > > + * @card: mmc card to read from, can be NULL
-> > > + * @host: mmc host doing the read
-> > > + * @blksz: data block size
-> > > + * @blocks: number of blocks to read
-> > > + * @blk_addr: first block address
-> > > + * @buf: output buffer
-> > > + * @len: size of the buffer
-> > > + *
-> > > + * Read one or more blocks of data from the mmc. This is a low-level helper for
-> > > + * tuning operation. If card is NULL, it is assumed that CMD23 can be used for
-> > > + * multi-block read.
-> > > + *
-> > > + * Return: 0 in case of success, otherwise -EIO
-> > > + */
-> > > +int mmc_read_blocks(struct mmc_card *card, struct mmc_host *host,
-> > > +                   unsigned int blksz, unsigned int blocks,
-> > > +                   unsigned int blk_addr, void *buf, unsigned int len)
-> > > +{
-> > > +       struct mmc_request mrq = {};
-> > > +       struct mmc_command sbc = {};
-> > > +       struct mmc_command cmd = {};
-> > > +       struct mmc_command stop = {};
-> > > +       struct mmc_data data = {};
-> > > +       struct scatterlist sg;
-> > > +
-> > > +       if (blocks > 1) {
-> > > +               if (mmc_host_can_cmd23(host) &&
-> > > +                   (!card || mmc_card_can_cmd23(card))) {
-> > > +                       mrq.sbc = &sbc;
-> > > +                       sbc.opcode = MMC_SET_BLOCK_COUNT;
-> > > +                       sbc.arg = blocks;
-> > > +                       sbc.flags = MMC_RSP_R1 | MMC_CMD_AC;
-> > > +               }
-> > > +               cmd.opcode = MMC_READ_MULTIPLE_BLOCK;
-> > > +               mrq.stop = &stop;
-> > > +               stop.opcode = MMC_STOP_TRANSMISSION;
-> > > +               stop.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
-> > > +       } else {
-> > > +               cmd.opcode = MMC_READ_SINGLE_BLOCK;
-> > > +       }
-> > > +
-> > > +       mrq.cmd = &cmd;
-> > > +       cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC;
-> > > +
-> > > +       mrq.data = &data;
-> > > +       data.flags = MMC_DATA_READ;
-> > > +       data.blksz = blksz;
-> > > +       data.blocks = blocks;
-> > > +       data.blk_addr = blk_addr;
-> > > +       data.sg = &sg;
-> > > +       data.sg_len = 1;
-> > > +       if (card)
-> > > +               mmc_set_data_timeout(&data, card);
-> > > +       else
-> > > +               data.timeout_ns = 1000000000;
-> > > +
-> > > +       sg_init_one(&sg, buf, len);
-> > > +
-> > > +       mmc_wait_for_req(host, &mrq);
-> > > +
-> > > +       if (sbc.error || cmd.error || data.error)
-> > > +               return -EIO;
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(mmc_read_blocks);
-> > > diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> > > index 68f09a955a902..72196817a6f0f 100644
-> > > --- a/include/linux/mmc/host.h
-> > > +++ b/include/linux/mmc/host.h
-> > > @@ -743,5 +743,8 @@ int mmc_send_status(struct mmc_card *card, u32 *status);
-> > >  int mmc_send_tuning(struct mmc_host *host, u32 opcode, int *cmd_error);
-> > >  int mmc_send_abort_tuning(struct mmc_host *host, u32 opcode);
-> > >  int mmc_get_ext_csd(struct mmc_card *card, u8 **new_ext_csd);
-> > > +int mmc_read_blocks(struct mmc_card *card, struct mmc_host *host,
-> > > +                   unsigned int blksz, unsigned int blocks,
-> > > +                   unsigned int blk_addr, void *buf, unsigned int len);
-> >
-> > I really think we must avoid exporting such a generic function. This
-> > becomes visible outside the mmc subsystem and I am worried that it
-> > will be abused.
-> >
-> > Can we perhaps make it harder to integrate with the tuning support on
-> > the core, somehow? I haven't thought much about it, but maybe you can
-> > propose something along those lines - otherwise I will try to think of
-> > another way to do it.
-> >
-> I agree that the function might be too generic now. Here are some of
-> the ideas I have to make less appealing for abuse:
->
-> * Rename it to mention tuning (mmc_tuning_read?)
+On 7/15/25 04:38, Andy Shevchenko wrote:
+> On Mon, Jul 14, 2025 at 09:20:21PM -0400, Sean Anderson wrote:
+>> Add a helper function to create attributes and initialize their fields.
+>> This reduces repetition when creating several attributes per channel.
+> 
+> ...
+> 
+>> + * @num_attrs:          length of @attrs
+> 
+> Other lines use TABs.
+> 
+> ...
 
-Yes, something like that or possibly "mmc_read_tuning".
+OK
 
-> * Drop some parameters:
->   * blk_addr: Reading from 0 should be all that is needed for tuning
->   * other?
+>> +static int add_device_attr(struct device *dev, struct iio_hwmon_state *st,
+> 
+> This should hint that this is managed:
+> 
+> add_device_managed_attr()
 
-Yes, I like that. If we can make it useful only for the tuning case,
-that would be great.
+That just makes it more difficult to format the calling code within 80 columns...
 
-I think we should drop struct mmc_card* too. The ->execute_tuning()
-host ops takes a struct mmc_host* and during initialization when the
-callback is invoked from the core, host->card has not yet been set. In
-other words, there are no "card" available for the host to use.
+> 
+>> +			   ssize_t (*show)(struct device *dev,
+>> +					   struct device_attribute *attr,
+>> +					   char *buf),
+>> +			   int i, const char *fmt, ...)
+> 
+> __printf() attribute is missing.
 
-Moreover, do we really need to pass along the data that we have read?
-Can't we just alloc the buffer, read the data and free the buffer. The
-important part is to provide an error code to the caller, letting it
-know whether we succeeded in reading the data or whether it failed,
-right?
+It's static, so I thought the compiler could infer it but I guess not.
 
-> * Move its declaration to a header private to drivers/mmc (where?)
+>> +{
+>> +	struct sensor_device_attribute *a;
+>> +	va_list ap;
+>> +
+>> +	a = devm_kzalloc(dev, sizeof(*a), GFP_KERNEL);
+>> +	if (!a)
+>> +		return -ENOMEM;
+>> +
+>> +	sysfs_attr_init(&a->dev_attr.attr);
+>> +	va_start(ap, fmt);
+>> +	a->dev_attr.attr.name = devm_kvasprintf(dev, GFP_KERNEL, fmt, ap);
+>> +	va_end(ap);
+>> +	if (!a->dev_attr.attr.name)
+>> +		return -ENOMEM;
+>> +
+>> +	a->dev_attr.show = show;
+>> +	a->dev_attr.attr.mode = 0444;
+>> +	a->index = i;
+>> +
+>> +	st->attrs[st->num_attrs++] = &a->dev_attr.attr;
+>> +	return 0;
+>> +}
+> 
+> ...
+> 
+>>  	struct device *dev = &pdev->dev;
+>>  	struct iio_hwmon_state *st;
+>> -	struct sensor_device_attribute *a;
+>> -	int ret, i, attr = 0;
+>> +	int ret, i;
+> 
+> Also move it a bit to make it more of a reversed xmas tree ordering?
 
-Unfortunately not, we currently don't have any other suitable place,
-but next to mmc_get_ext_csd().
+It's not ordered as-is, and I don't think this subsystem requires it.
 
->
-> Let me know what you think.
->
+>>  	int in_i = 1, temp_i = 1, curr_i = 1, humidity_i = 1, power_i = 1;
+>>  	enum iio_chan_type type;
+>>  	struct iio_channel *channels;
+> 
 
-Kind regards
-Uffe
+--Sean
 
