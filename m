@@ -1,113 +1,68 @@
-Return-Path: <linux-kernel+bounces-730960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE1BB04CFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:33:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0BCB04D02
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 840D75600B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F30423A28D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 00:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C426B1D5165;
-	Tue, 15 Jul 2025 00:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D954B17A31C;
+	Tue, 15 Jul 2025 00:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BiyNIZbI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkLrsAfJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED6019343B;
-	Tue, 15 Jul 2025 00:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426158248C;
+	Tue, 15 Jul 2025 00:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752539472; cv=none; b=gTxzr+2uHNgyPG+KPzggivulUZNKt9H8h7f9z9rDIdpYU1J1MZhT6kZZhh4pfgm6c+NhbiyXy7bR6hRPki4z6Em/QYsJi2288fP19MJS93YfU1+taOWbcMztr70hwsER4Cq0sPf1A1q0bTG7kajTGJKBmCd9WLqln5yJphMgACY=
+	t=1752539787; cv=none; b=h3ceyx73txoCJR93x3cDmwhhzecN/OjqOxWha5rXllsMGrsISEpyiR+s8noRdRmQq7RDAD7pbjXzWqIArAT+eDgxjn0iLzXqMXYHiUM86h17c2cqrG9PkX8Y4jcxAfuAQu32ndmD6Ek9L+cQMK0RPy++YPsLkBHv8vr94FLSKLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752539472; c=relaxed/simple;
-	bh=AmsDUkdWp+D2t1MNpQN905rUeQWgnBNIiuKOAQBsbnY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=QQEje4D5eBZMKujgo7MXZwaitfvBbEhcKpcdK8AXNeVEITdZhUA+fNvYIUh4C2xp2bRu3Nn905w4wpaD0pY83uHap6e/+8ife7BZENAYVIBpb1nAltNw+VMM9DSmcAL232Gt8+IHohN4X5M7u5XZz6Npbid+YydOkBvHH+X1UMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BiyNIZbI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC19C4CEF0;
-	Tue, 15 Jul 2025 00:31:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752539470;
-	bh=AmsDUkdWp+D2t1MNpQN905rUeQWgnBNIiuKOAQBsbnY=;
+	s=arc-20240116; t=1752539787; c=relaxed/simple;
+	bh=wSWip8wm6Y5A3aqW+xb4IH4zd3fzEhY9pn6vUkhVM9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FFPQI5B5+FZrwoF3QhLUk0g14s0SGUI2NCAymKWqfB5EVLyiC96SsvQdC+EF2H6uWQEk4kXt9DQytIHnDkEFsQ7jFQWbZgiyRWcqhodEUsFUCvgNYGNqdyIHG2OluVLMjSyToilZHHElFI4DidznVjecx4QnfVfN2oG4hw0Q5K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AkLrsAfJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75D8EC4CEED;
+	Tue, 15 Jul 2025 00:36:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752539786;
+	bh=wSWip8wm6Y5A3aqW+xb4IH4zd3fzEhY9pn6vUkhVM9M=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BiyNIZbIhI81BH5kvc3pxIN4vczjERj5q7uQi3I+U4ljGTnuTerwVbUVigGrpSFpC
-	 MoCTw9QY8OtZzzVMkMmhnQ2bJiG1tfOatf+XrDVBsdemRGr6j3KuR/xhvu9dbzUkm0
-	 QSq7uz3kVbgkEwgjl2V2NCquwQcLtqQa6kM4E7oM=
-Date: Mon, 14 Jul 2025 17:31:09 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
- "David S. Miller" <davem@davemloft.net>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
- sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
- ARCH_SUPPORTS_HUGETLBFS
-Message-Id: <20250714173109.265d1fbfa9884cd22c3a6975@linux-foundation.org>
-In-Reply-To: <20250714094909.GBaHTSlW8nkuINON9p@fat_crate.local>
-References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
-	<20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
-	<f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
-	<20250714094909.GBaHTSlW8nkuINON9p@fat_crate.local>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=AkLrsAfJUz1pKruG817xJuVDIPd6aCBvnXDsLMeWX71L/gQp/3AcU8+LuRBqMdAvU
+	 O3+XWexK8iYubalYMDU1H2BX7dzjS24Jn3ORgM7RmwSwyiChyEumKbF5FO8ZKUbQh8
+	 Nm5/9HOGg/67FPF0vwDdeFWmLVU/Dd9gergrYxVobXciHBsVoduZdgh3KFD4aOAzzO
+	 +VFh/+2CCHH4sC4vVBrhKnxADCXp1XAeRE05Yw2xT+r9O0p6n1tML1RJvZgQF+WHVZ
+	 lbmed2U96dHSdevS6GdFsNrmet4eVvne9miFfUaf2KvSihuI0wqY6HBdLSQWJlBZMW
+	 z8N7/d+UvMstg==
+Date: Mon, 14 Jul 2025 17:36:25 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dw@davidwei.uk, kernel-team@meta.com
+Subject: Re: [PATCH net-next v3] netdevsim: implement peer queue flow
+ control
+Message-ID: <20250714173625.1dcdb6be@kernel.org>
+In-Reply-To: <20250711-netdev_flow_control-v3-1-aa1d5a155762@debian.org>
+References: <20250711-netdev_flow_control-v3-1-aa1d5a155762@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 14 Jul 2025 11:49:09 +0200 Borislav Petkov <bp@alien8.de> wrote:
+On Fri, 11 Jul 2025 10:06:59 -0700 Breno Leitao wrote:
+> +	if (!(netif_tx_queue_stopped(txq)))
 
-> On Mon, Jul 14, 2025 at 08:05:31AM +0530, Anshuman Khandual wrote:
-> > The original first commit had added 'BROKEN', although currently there
-> > are no explanations about it in the tree.
-> 
-> commit c0dde7404aff064bff46ae1d5f1584d38e30c3bf
-> Author: Linus Torvalds <torvalds@home.osdl.org>
-> Date:   Sun Aug 17 21:23:57 2003 -0700
-> 
->     Add CONFIG_BROKEN (default 'n') to hide known-broken drivers.
-
-Thanks.  That was unkind of someone.  How's this?
-
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: init/Kconfig: restore CONFIG_BROKEN help text
-Date: Mon Jul 14 05:20:02 PM PDT 2025
-
-Linus added it in 2003, it later was removed.  Put it back.
-
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Borislav Betkov <bp@alien8.de>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleinxer <tglx@linutronix.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- init/Kconfig |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/init/Kconfig~a
-+++ a/init/Kconfig
-@@ -169,6 +169,10 @@ menu "General setup"
- 
- config BROKEN
- 	bool
-+	help
-+	  This option allows you to choose whether you want to try to
-+	  compile (and fix) old drivers that haven't been updated to
-+	  new infrastructure.
- 
- config BROKEN_ON_SMP
- 	bool
-_
-
+Unnecessary parenthesis here, will drop when applying.
 
