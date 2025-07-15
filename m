@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-731673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DD4B05810
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:42:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A35BB05812
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D72D16776B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:42:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEECA3BF7C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A905F2D8762;
-	Tue, 15 Jul 2025 10:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B52E2D8773;
+	Tue, 15 Jul 2025 10:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C9icJ8Xc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b="FNbo36DP"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EB61D9A70;
-	Tue, 15 Jul 2025 10:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92D01D9A70
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752576161; cv=none; b=kGz0VWTQBOwzlyAhHwR52Z4hiYd+FQ6xUaCSfxJ09ccUlseVEZMYpmpAP85bVzzLECTWJrBsvaDdxQwuCx05vzLy+lOV/DVHotMXOqXo0qnhatny6etrdtezjtWiP5sfNXI9QYSqstupEV/g5QPsvP856GxAUM0bZ0BW/Fz9/M8=
+	t=1752576210; cv=none; b=dQwkzDRc8Z5eCeHcwMdxSYVj4QRDZm2IVHKHdk+uiIvLwficNinUzD90g9f4JQerjZBIwq8yplTeXiBu1VC6Tol966Kg1+9FCpXzQCn0rHFYSyi/JtJyu9bZ7MyBVzo1fydaBzyAFmfMkl7wAnggoJ5OnNFkVHjWYK4Dbm03W7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752576161; c=relaxed/simple;
-	bh=qPvGaKZPuwIuu9H/djUeWBfbuZULyNCjjRuj3wYvkwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aT/kXdk8HNhmWqJ/r3ly/T/cVlNvy73VgiRV2R6xitVotfDddSaDkSUSeVihuVzrJSrAw2ROJe5qBFEOzyMqlHopUB2TjM4UbF6LT8tzorVeJi7CLtctMDmcUlJbvtlCI93SCI3ZeJ/c+DLDv5NNfIuS7xhLjre9tmziEcXqnx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C9icJ8Xc; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752576159; x=1784112159;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qPvGaKZPuwIuu9H/djUeWBfbuZULyNCjjRuj3wYvkwM=;
-  b=C9icJ8XczebumfsqrngmAleLfW1ZPtclpPsu0HGYcLEgAQTJV2HS8w9H
-   3YyPql/esGM7U1p9PIb2MtBdh9gYcayfY0noNwuVCLW9RdoddNcgjEGkq
-   58aZovJ7wlyuophlKupXKGDGuzZob9dMA2e6g4Y6aAVdfsrH+EgJdW3l9
-   T5NtCcN0R9UPPu09/lmQe04Xf6fIflpJjCVbOPXh0036Zdk8r7JX0Rfga
-   tXkRD9aBOh4wMEo1fsf0qvBXc4mqcdCUrpKEZ62lrsbFHadQICd5Jz4R+
-   eQ2zg4dcsQgDSPCLhqR11E9FhggpUDHSzIB/UeIb+PfYIiO0nZKdEElmc
-   g==;
-X-CSE-ConnectionGUID: c3yobWWxQlysfDzBE7vytw==
-X-CSE-MsgGUID: QV1srw1nRvevSOhcO4z9cA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58445765"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="58445765"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 03:42:38 -0700
-X-CSE-ConnectionGUID: dmjPbJpiSbiGp3SPSf7lKw==
-X-CSE-MsgGUID: /JEWBtDaS7uWpRZYqR/N6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="157730369"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 03:42:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ubd7I-0000000Fckz-48BA;
-	Tue, 15 Jul 2025 13:42:32 +0300
-Date: Tue, 15 Jul 2025 13:42:32 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Remi Buisson <Remi.Buisson@tdk.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 2/8] iio: imu: inv_icm45600: add new inv_icm45600
- driver
-Message-ID: <aHYwmEv1sCI-qi0T@smile.fi.intel.com>
-References: <20250710-add_newport_driver-v2-0-bf76d8142ef2@tdk.com>
- <20250710-add_newport_driver-v2-2-bf76d8142ef2@tdk.com>
- <aG-ID7O3HgVc1EOX@smile.fi.intel.com>
- <FR2PPF4571F02BC5366477EC02E9C44041A8C4BA@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
- <aHD7zEzvVuwSB9Ke@smile.fi.intel.com>
- <FR2PPF4571F02BC69DF6807BAA188B2B3A08C57A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1752576210; c=relaxed/simple;
+	bh=56NSMvnKKJQ7lDFzQs7vNIBcLPhb5FHqygnjryoFTQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lGPLETVctZPqOgRDRkrxUCyLy4/dz98lSCyjsm2k9os279GVzKauvUG56B0+l3WfbEqBdFSBeZrNz32qZRHfWcbW0+D9YrBXlD2viMjn5H987v+BUrGMv1SImW7TqorVCo+9ZFvxm34nayyK7gZ2PGs+VaMCX/eP6hPa2VtfqGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com; spf=pass smtp.mailfrom=qtec.com; dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b=FNbo36DP; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qtec.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-531b4407cfbso2171583e0c.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 03:43:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=qtec.com; s=google; t=1752576207; x=1753181007; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jinrh9lrUEI9oP/K9YZbjkzFAwQHaDK22aiCMwvNLvE=;
+        b=FNbo36DPIPSTLYjtSyITZiPX2ux3q35r34wKKMgtMu3t0XP4HRb7M1RyXPW385iUM8
+         VqtRJpab8DNwDFHoEs/WUa6F2k9Wj6WwlUra9JzCR20RNnv2B2ACfLizfvpRqTgWJ/kW
+         PTyRLbDOGBsebBVryQBk8oTYlvIRhq1eM8fXi7cF115/b7eHhZNZ2mEfz81VgGK3XaJ3
+         qFDFVNj64SudvRfsQvSeKx563hdUV0THwSTEj9hgPvtGNKlH1SzvA8EJO9eK9tDUutlc
+         v0Jm7pw82ecU7t4LsOpIiX/nYIdMIAL1oYqIuRhxJGRwyLsUwqfaIPSQc2pgxeTmdmDO
+         gSLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752576207; x=1753181007;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jinrh9lrUEI9oP/K9YZbjkzFAwQHaDK22aiCMwvNLvE=;
+        b=RS2EVfeJM/K8uArcGJbOr3Q3MjQLXP/xh1upz5MhKcx6FHVHxSwVj95kJP3e8GRvp8
+         bFGULU3FT6Q68lpo/NsXugRbQo9v6XIkID6JjtxpyTgYI87WYeMO0DQavwns/4yeB8bC
+         HAJjnJcp2sWAyvdUsmjGrGDEwGZ+Ssc8w++1zXzBB77ANGl30swqBMBO1uHJM2HrI79+
+         fP4gjbZ39nZrop4zmmHdMDT3hAEqDll+DhhRpTCOXnfobEWNf5bUBxbrIwx5htpH2qqq
+         40JQJikFzYtDh8VIUXBa7UIpfLK4OKBtdysEbTtw3JdkekZQFNeua2WXH7cSsZeCDkM8
+         ghbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6n8Ktz64LA8wz8Yzi4gx2bF1NnnJdMIIfVH1I0KWwk2Aeqcj0GxGrq1/airejXzid65N85NE5iqbLHVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypns6UPIafF3++lDEYog6C3Tq4Ur6wXSJfh4hYll/bapFunDBU
+	oNxSnyaBPXMMTpaR+qgFOBgPR4cprX8E2hEgBZ2LVMGfyGWHJS9KsqStEgZx6Yg3DhbX7fWtz8j
+	dz/1gNN3aafJFJJ6ZkgHmaAEh5uXEfSP5gEBOc6bVxQ==
+X-Gm-Gg: ASbGncugt5czHP3XGdub7dfMC3T3KB8LdAubJyg2aeArrpp1Lx91UcCRx5CdI5nBiVb
+	+clESV4cKdJd238IG0XKof44arI0Lygsbl9uCS0IX2xTYQXbfruRDUbj9jC4y/RxmB0QD/5VFFZ
+	PItNY1CtX3lXu9v1zSIMtfGQh+fKoMMr2HyCFLIj5plJwKQnj+Fu/6J0CFoTmTuvKrmY9viGZPH
+	XnSqg==
+X-Google-Smtp-Source: AGHT+IE6wEwLG2iscN6gkx0xYTHNGr2J35y1IB016poByLQ/6Zb4m/3NuN1Xs87IAIZLj0V1lGTl6eKOu6hJK98nmUw=
+X-Received: by 2002:a05:6122:468c:b0:518:6286:87a4 with SMTP id
+ 71dfb90a1353d-535f470d42fmr10371788e0c.4.1752576207474; Tue, 15 Jul 2025
+ 03:43:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <FR2PPF4571F02BC69DF6807BAA188B2B3A08C57A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <CAJDH93s25fD+iaPJ1By=HFOs_M4Hc8LawPDy3n_-VFy04X4N5w@mail.gmail.com>
+ <20241219112125.GAZ2QBteug3I1Sb46q@fat_crate.local> <20241219164408.GA1454146@yaz-khff2.amd.com>
+ <CAJDH93vm0buJn5vZEz9k9GRC3Kr6H7=0MSJpFtdpy_dSsUMDCQ@mail.gmail.com>
+ <Z78uOaPESGXWN46M@gmail.com> <CAJDH93uE+foFfRAXVJ48-PYvEUsbpEu_-BVoG-5HsDG66yY7AQ@mail.gmail.com>
+ <20250621145015.v7vrlckn6jqtfnb3@pali>
+In-Reply-To: <20250621145015.v7vrlckn6jqtfnb3@pali>
+From: Rostyslav Khudolii <ros@qtec.com>
+Date: Tue, 15 Jul 2025 12:43:16 +0200
+X-Gm-Features: Ac12FXwrM0hudYT1gpsjlNr37WqavqVM6O9H4kuS5lrXXokjtyQkni4XfPlvseQ
+Message-ID: <CAJDH93vTBkk7a5D0nOgNfBEjGfMhKbFnUWaQ1r6NDLqm0j3kOA@mail.gmail.com>
+Subject: Re: PCI IO ECS access is no longer possible for AMD family 17h
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>, 
+	Borislav Petkov <bp@alien8.de>, =?UTF-8?B?RmlsaXAgxaB0xJtkcm9uc2vDvQ==?= <p@regnarg.cz>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 15, 2025 at 09:11:47AM +0000, Remi Buisson wrote:
-> >From: Andy Shevchenko <andriy.shevchenko@intel.com> 
-> >Sent: Friday, July 11, 2025 1:56 PM
-> >On Fri, Jul 11, 2025 at 11:32:48AM +0000, Remi Buisson wrote:
-> >> >From: Andy Shevchenko andriy.shevchenko@intel.com<mailto:andriy.shevchenko@intel.com>
-> >> >Sent: Thursday, July 10, 2025 11:30 AM
-> >> >On Thu, Jul 10, 2025 at 08:57:57AM +0000, Remi Buisson via B4 Relay wrote:
+>
+> Yes, I would like to get access to ECS via CF8/CFC direct IO for
+> debugging purposes, even though MMCFG is enabled and used.
+>
+> If you can send me a simple patch or any sample / idea how to do it,
+> I would be very happy. I was not able to figure out how to enable ECS
+> over CF8/CFC.
+>
 
-...
+Hi Pali,
+I'm sorry for the late reply.
 
-> >> >> +#define INV_ICM45600_SENSOR_CONF_INIT                        {-1, -1, -1, -1}
-> >> >
-> >> >Unused.
-> >> This is used in later patch of the serie.
-> >> I will move this definition to the patch using it.
-> >
-> >Yes, unused in this code. You should compile the series incrementally,
-> >so each patch will get a compilation test. This is called compile-time
-> >bisectability. Also run the system each time to confirm no regressions
-> >(this is called run-time bisectability).
+If I understand your request correctly, all you need to do  is patch
+the pci_enable_pci_io_ecs() function to use
+the different register to set EnableCF8ExtCfg: D18F4x044.
 
-> Yes I did that for each patch, everything build successfully.
-> In that case, nothing is broken due to this early definition of the macro.
-> But I'll definitely move it to later patch for clarity. 
-
-Yeah, the problem is that the (unused) definitions are not warned even when
-`make W=1`. And I guess I understand why. We have tons of unused definitions
-in the drivers that usually substitute (on whatever reasons) the actual
-documentation. It's hard to catch for the definitions like this without reading
-the code.
-
-...
-
-> >> It's probably safer to keep the delay even in case of failure to make sure
-> >> the device is ready before next operation.
-> >
-> >I am not sure about it. Why? This has to be well justified as it's quite
-> >unusual pattern.
-
-> Ok I understand, the hardware needs that delay if the access was actually
-> done on the bus (to not jeopardize next access).  If a regmap error means
-> that no real access occured then the delay is avoidable.
-
-Perhaps you need to have this delay embedded in the IO accessors? Also do
-read _and_ write need this or only one of them?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Ros
 
