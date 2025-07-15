@@ -1,207 +1,394 @@
-Return-Path: <linux-kernel+bounces-732316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356C4B06503
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F3EB06506
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 673241AA7E34
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:17:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56F21AA636B
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDDC280327;
-	Tue, 15 Jul 2025 17:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E65285048;
+	Tue, 15 Jul 2025 17:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nV97lJrB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioWIM/1m"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091CC6A8D2;
-	Tue, 15 Jul 2025 17:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752599827; cv=fail; b=V95AxlZActaXElowfUnBpenWDrMpwMd79BtMGpzWzAp8Uk1jIR0Qh6h4eoM1ClaVCDQWXsgQLcWv/zL9QfbfoLB1oTEu1QzxuTp7KG+6828fMTHY5Tp7cQLODZlWq/WukklZKgJpzerROxAyCeqhK5F0e1SDTdijrC8Z/S9Bz3o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752599827; c=relaxed/simple;
-	bh=GyxZ5vDNMWnPajZ8PtKek5OkU7xWuCreqHq0A9ouHYE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=l56NNPKFDrZdJ0pgRm4KO6Y21hR2D+xR8C1JMRT8lF1dIFTfixVVFzXGB0VMY2NeRGrc4BSllC+i/XkiasHMnCDOrapUbt2geVej1M9CiaUCAtJqxEFW1RHRnaKHP/Hs3Su8kwshuQXnAqC0e/pfI2C7C431gisQCna2o8a5iKI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nV97lJrB; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752599826; x=1784135826;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=GyxZ5vDNMWnPajZ8PtKek5OkU7xWuCreqHq0A9ouHYE=;
-  b=nV97lJrBkwWyAuO90O+e5JFS3eiK+t44T57lA85JgTlxguVvPr6SOZB4
-   WK9G/jIDvY64yGHA2cdGayVgWk2jd38OVfJOPpta6ZwQmW/z23nUvmSei
-   UJ9280vT5Ou9i3CkeRyIfw2PK2gy/8hZAQBWsXNcdN0AXGyDQCE5egyqd
-   9Q+zdMoSDdxple8f4R/hi4/lpofrqWkwNOwTgXHxslgyC7N/nnREbrVKV
-   8ldMClMPUSfWjvr0v7DYlApTPEAevcVOEOsTgWCQz8FgGK0PryN4OkLBA
-   nOZtti/mUFfsUWYl+r0chm1gPGqb9pdGgXPbgWZnFi/OISYy14w3BsYLq
-   g==;
-X-CSE-ConnectionGUID: KOozX8naTjK1NhxlUDD9BA==
-X-CSE-MsgGUID: qNz4uflNQvCOFQYf9h9Q+w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58643709"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="58643709"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 10:17:06 -0700
-X-CSE-ConnectionGUID: GmoqZ7IrTDiIo5CaOnOR4w==
-X-CSE-MsgGUID: EsabCAVtRiy7+FX71wF9Yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="156690918"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 10:17:05 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 15 Jul 2025 10:17:05 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Tue, 15 Jul 2025 10:17:05 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.76) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 15 Jul 2025 10:17:03 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y2r1peMGUtI2s/Yz87tdlhwNv3WluRuHFHpSEEeQsrAeYjKuMSv81d/ysOR9lrEfw4hY875wJ7IH+86lPV7/lajNVKyVwpSNKJyDUeodBl33wyGdEqfWGeAZytq/DfXusoiPT6kMGgKKA8QaSmKTeOxe/J+m0gRdBxO3Da1XuUZPQtR+S540V+ar8U28nWwJL6vhW6/pKYBAA11rlF57cmWC64A4TvnsdOVOW/i+VIMeqDDLkwWzVNhy8+4JfhpJ5+kb6BzstAunMLpc/2Fuok+WfnczBPPaiPBCu2LXvaSuO+Rpfhb5A0/4ayc18XFpAO+sf2jQqmKSn4iOJHMcpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GyxZ5vDNMWnPajZ8PtKek5OkU7xWuCreqHq0A9ouHYE=;
- b=UGCZMtKQ+7DNHPj8rgpCMZOG0QCQxfKX9LWJHRQfukiBXBAzQHLNM4jdFDjruChA8qihE2FK3B6qqDwmu/dZr6MoJOOl4XGScJ9AhZgEc9YuFHsEperYRB1OReLO/DxOmKsfYEuWaBI8pQ1ew6TNyG3GYz+3Bro+l04vp3ERPW5rlQ+QjpEgIuFX67jbtIMkQMxxJjOD4r01cPsO/LbipN5Trf6kHqMbtkxapM2YYQ/1Evvv8DS23ryHRfO44mISDYdBpMSzsDT4+a5XVpF9eZ1Q0wdNcyogD42cizb21hLPBTLNTC8aWCec+u3sYika9vqzvdo9aYm+NIdpezkTQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by SJ0PR11MB6576.namprd11.prod.outlook.com (2603:10b6:a03:478::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
- 2025 17:16:21 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.8901.021; Tue, 15 Jul 2025
- 17:16:21 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Wang Haoran <haoranwangsec@gmail.com>, "bp@alien8.de" <bp@alien8.de>
-CC: "james.morse@arm.com" <james.morse@arm.com>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "rric@kernel.org" <rric@kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] EDAC/{skx_common,i10nm}: Use scnprintf() for safer buffer
- handling
-Thread-Topic: [PATCH] EDAC/{skx_common,i10nm}: Use scnprintf() for safer
- buffer handling
-Thread-Index: AQHb9YrRLCv9//qHFkKJMevPixW0TrQzbJWg
-Date: Tue, 15 Jul 2025 17:16:21 +0000
-Message-ID: <SJ1PR11MB6083F48A0A17F85632D08643FC57A@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20250715131700.1092720-1-haoranwangsec@gmail.com>
-In-Reply-To: <20250715131700.1092720-1-haoranwangsec@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|SJ0PR11MB6576:EE_
-x-ms-office365-filtering-correlation-id: 59abd2c3-8f52-429b-aa62-08ddc3c351a1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?ofDpn0AJNjFtgTTMe8dysKfwEjX5GnqoUZhPqQECVO2levV0a3y2Gtxd1sit?=
- =?us-ascii?Q?qGLJPhsgMdFi8TvwLUmIjAH8XztwP4Z6XoJHffKi/Le8bxwuO5As45M1acbP?=
- =?us-ascii?Q?3wj9n0cu/q2mILWc+58uisI153/wps4HPZUKUM0ik5pPPTgwDv+yJ9vAqyIC?=
- =?us-ascii?Q?BIaCcQ0CmaVX08Qp0U6Oi6f3iJPELqC/fqwa773pRzi5szgBvVHRa2WckH8B?=
- =?us-ascii?Q?saYiTT+tNwvJkjLZ84d2NVHA6Xv7mJREz9HeynznuoRrR4nhj1YsfCNlzedJ?=
- =?us-ascii?Q?4cnj5hWbVgts7KrOTBDrjmdh5unDfPmzMJkSrq3ldom0r21BhrheVvJNWQi5?=
- =?us-ascii?Q?68BkgCty3ARpjAvU6tJRsAzvFyqFiXfQfBMU0PUlRxRrbsEAPcLEDjWNpuMb?=
- =?us-ascii?Q?PP7JO6T+27rH8Ay2fCxja//1A7FUQIzmn2CDnNSV2bU9bdUy44QAvYySHy3D?=
- =?us-ascii?Q?XgOKSoCN/UpohEuW3vgV7SlNQC0a4BTnSZxT/oAS++rRIPTVOQj5x8vsKlLp?=
- =?us-ascii?Q?LIVBCI60JmBNTgONCoYXpaCx/0DFNyX33GjkkjfW4V2nd/Gkb+TKLcU7bZGV?=
- =?us-ascii?Q?UembBOn1lvksfBoDlT533EhyLH3XA/MB8bOL7XAUht22GlVlKe7Z18UyfYrW?=
- =?us-ascii?Q?fJqiTBlaZ1jXRxrTEBP+rEGLtc4r6fB8RxAgQZUOCK3cTMixSiAjLDAPuiqz?=
- =?us-ascii?Q?KjP0YDS5ZcjjgL+gaK52y1OMc9CmDBJhUpC7t+JLJ/Wt+cw47iwyr9r1QMmi?=
- =?us-ascii?Q?UQHkMyW7HSdee3lWeWE6Q02xS4DaxypN1taszq6BUifSalSKRDUfva7opFGD?=
- =?us-ascii?Q?ISvfOlX2epe8JdbLtdjo4yXsYrwIvToC97Tz3FcqbqwnDvSr03ksI/Pi0NPy?=
- =?us-ascii?Q?5kcA//zssc5pculutSMNA4ULGKTIYol8zgiF7/2ha4jp8OuPogDfKcnxLdEU?=
- =?us-ascii?Q?iaf8qKpTMQTFS3u8LIuv1eXXgofrieiVXByWtdnh/6YViL6ZLaSCJaq9FGz4?=
- =?us-ascii?Q?jjIOE8Xn5PGiwnr9B64Xu826xflQs2kb6hAp0RoxLqqMVtL/2VGwJD5SU/oH?=
- =?us-ascii?Q?dAxZbsO8UL1xoS8QwDMnN3z6mfs+/G6+2212RZaUr/EDivfZtVE/+mYbZd6r?=
- =?us-ascii?Q?+bEAm0ekElVUbiQUZOy4xudQQbrfeB9vYBB8LmdP+WFsNSdj3hkpG5C2xUR1?=
- =?us-ascii?Q?do4EFQuVgC0nJ31it+xFAr8L0c5zmPjS/hPClvd89CuDlgWFCtCr6BLuQ3cx?=
- =?us-ascii?Q?cg22fUctmBe2DDLnm5OpWijUvXJM0Qv27dfFnaICkBfUHnk5wmfA0ydTEPkY?=
- =?us-ascii?Q?2v7ytP5lQlfLRJzBGsrBMAEs5KzxmJu2UMrNkiJa5wJMreRqp3wf+0TPSTMR?=
- =?us-ascii?Q?b/Vc3EG5gGCmG6KmDDIRLOA8qncrnxb76yu2he/jCPKTjGH2c9qvfrVE9X+e?=
- =?us-ascii?Q?76lNnH2Z0F1LPQ4OMVDkGZMqOke5XwKAKJ8cmpSR/b5qRnMoqmK/6fhXXj5Q?=
- =?us-ascii?Q?RsKa1lKljy23ed8=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?K6zxZ95vdEIEHbny8pwS0p6Ui5+sq30A8MKuKoShRr2UFTRT3k8xVHEiQqv8?=
- =?us-ascii?Q?++XbtZKWEVg+Lrc7MLhRUykozwsqa8j7hIWmqc182DAFwfH3M37KbAps3sk2?=
- =?us-ascii?Q?pFG2ddE10WHse+XFULbK4+SQz1X1tIRdWQOdMor6oqJdvhdG7bZ1EetmXkVt?=
- =?us-ascii?Q?COXeMN1mJLPPDJAm26HHpwEqIUaeyt8Xg0oEYjFzgvAQ99zWN8dMlHSyfUna?=
- =?us-ascii?Q?v9DMNWme+RDJxiD+GHmCOghlatW5msVqWNrrjSMPRXZkHJ28P+QlgyZjJasF?=
- =?us-ascii?Q?LMwR9bsbazVvMsrPsCDyvhklu8vpVNfFd2FyXpdV9qrlXid35gYOYd2+VVpb?=
- =?us-ascii?Q?m0MHybu4Jv4+O/W+Kbth62gx4dJqeFt7pf6Apzg66mNk1zZEmBCODVp5oaO/?=
- =?us-ascii?Q?MRnADpaqpzkaPiKxfsOiWgoZ41UK8Yo2WZNt/gdtDrrJ9rje1yH2wJKxCKhh?=
- =?us-ascii?Q?CA6FsX/k7uqHYA8uBeLgeg+dm1tt+eaiL5RfWBnUoHzodDp+YnoYdgK5TXs1?=
- =?us-ascii?Q?kFTuyK/W7USiYjFBx1e8Rz6rK8wLHS4zrYb4JySeKZO2DAukx6aDDgaMiS2Z?=
- =?us-ascii?Q?1fzMba6oSAe9cUgHC93yTnLs8KdWlma9HtoAG6/qErWyDrltYHWkuNgMmz0Z?=
- =?us-ascii?Q?BvvNDRlLWabLiWQ6igJfOm87jaNgHJW2L6L0DowJwwmUCdwz3rSk5gHUDjq5?=
- =?us-ascii?Q?3MGjmr34PkE1NIh4Y+NX/6wXHI2YbCne2WdKYIzBGxWhuAv83L3rBXeCRUFJ?=
- =?us-ascii?Q?lKysD9Q9RJbPZL+Q1TdhfMiDFsIHKSWOzjP/eZtNA9wrkEzQp0TJPM6M9MeK?=
- =?us-ascii?Q?5QfJW9D7saaOZ73hwt+YAwiJsxvK8KS/lL26BtwyJZ6vSyC/bfQ4UfZBynyf?=
- =?us-ascii?Q?v0Vce66S4qW/YV+Vsb3SUf5+Gpvv+MECFYyMDMoYG7zruiaEUm0PUahI7P5H?=
- =?us-ascii?Q?suitlR+1nLv2OyaGZG8T6HqAovjdR+LQlGscfdYWsSZB5Q734MLyTjTdEQSL?=
- =?us-ascii?Q?5Z7trvmywAG8phau4/i0j3/L/ENLfTTPTqkwyoWr3oqc+Sc8Xt9RzNLeGvqA?=
- =?us-ascii?Q?kq82JdrIakBFb6tnkSlnJoRZC4P9ODZR2lalz8Y5SH3x5/AoOeEvUH4kNkXs?=
- =?us-ascii?Q?P9AW3k1QttP8L4Suh9C1pcXS78/j2r9e2Px28G5bJDpvO/QanJQEQWHSzmRg?=
- =?us-ascii?Q?PZUGlIp9uV6us0hPzHHviTe4SBLdaRxDiwpxx/hFpdb94nsUgKKMjTqHX912?=
- =?us-ascii?Q?V01eQcYdsmlPbQCMPZFG69JcE2uVJOO2DH2VBuNiUxcDtrV7mfnkgInmvtTP?=
- =?us-ascii?Q?bVtsVMEiX7lAZtkGcufP8jt+moTedd6V2elusk6o1C9QhWFiWACwS5n+64Sj?=
- =?us-ascii?Q?/QvZ+3aXl91FBaHFcU1lenr5ijZlvCUc/p1WxHiNb+11gZTvB08xoEaVXqRZ?=
- =?us-ascii?Q?AtoIGBVcxaixmi+BQjP3qKeokG1VXIOB6Qcx2nj0NtOKxbmJB5Ntmx+ZjEW+?=
- =?us-ascii?Q?5bkgrg0+ewnz6JjewBuuiGYXZTPjH7Q/TQN8vlMGIHWnlsMfnwcgzlOpmSdb?=
- =?us-ascii?Q?Sms26jHCABESKsvqNfiYXeV2Bf1U8ZNUqX2wpPYC?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE352594B7;
+	Tue, 15 Jul 2025 17:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752600020; cv=none; b=CGA1/9k1efcRzNUIPFuAivMRdYp95pZI6IbhwDk9jNYssKi2pM88PHqdkp2Igl3d1D7pfUXy82Q+dHixbT45ep/S+OmN1eyp93fcqzyFxNT2J25Ck4WM44zZ9mRS2BVDXK07ZSA/0zbjFZRL9zxI7eJmLgGUHiHF54tZiGYI5ec=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752600020; c=relaxed/simple;
+	bh=e77kAmfpAlkMTKqYx2eaQAwcK6FZnVDDegaeTNwiVQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jSfmETBun7M7G1Fp/RXJdvNfd9zpa+jWR+4GPSWfa5OEnnqZwneWP/Mf58nzp/yhXSjA/wbQX5takT75N1gfz5aeYuMvEwgrgtsbYz+unehGcZuJLGeJIYpwojIXCoCt+Hry3UA1gqvNE/ypzmOuOoKDfHG0zBwb15hETg3VBK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ioWIM/1m; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235ef62066eso84340805ad.3;
+        Tue, 15 Jul 2025 10:20:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752600018; x=1753204818; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SqN98hHNSjb22DwO3xGUMLwww0a5Rpa6LC4wum+aj5o=;
+        b=ioWIM/1mty7MWlDpopfnS5k16RqvK4M0rv3U4NJSz1pFuhERXCQOIADuB0j9yaLobf
+         yCRY0zMSIvxyFaEPNzkSQxHi/9c2QzBPA/Fg39Cn+umbi2aBS/VMz3SUlkqQbvHUuUni
+         M9S2qj8e8wmuUGXHq7B3r7U4n4/+02oVg7Sq4egn8zj1MNCBrE5YWxDAVEHBQqzv0dLY
+         LuNCIn3lBE18xy+xoywHpqdPwu+hWmyClOgatX9NdEkLQ2xXmjSdF0nM854/iP0eIXHt
+         z5XLzutguxFcnvFTliDn1IU2UAMNPyuHiRxz46iGFO9BYVXcKfoRL2A1i79ewM1fmHxZ
+         Vprg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752600018; x=1753204818;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SqN98hHNSjb22DwO3xGUMLwww0a5Rpa6LC4wum+aj5o=;
+        b=Pplq3kdAa3Jt7qp5wllAZegX8yXVgIZz80cobsbIaiRbOpKF+oj3oizXct8G8qoTub
+         aHjBkeFtX0sTR6J0ByyjJaulKgaPywJ+L+hKWQ9BL9S/0H+GQt936A3XG3KoZbcoGXbP
+         RE5MogxDKz3kgZFjikx1S+Omwb+UN6hrJtJxm0Du0CEudvNKg7YfBuADXWB50hkwSgxV
+         mhc9X4/wcDVtlNpiNeLPhcZ2E+hVz13r+mjOJycVUki7OZbpJECOM6ProyVhAr9tqGfQ
+         z/vLh59CBqlr4FOQ5DOxgURq70X1e32HJFtz2czSZw7QRqdYBfK1w210IRjJQR9m731H
+         GWtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVesews1I5nMsNRIa+QbZzzkgrp9bpuIisBvCpyf9TotIgZYD2WeDoC4dGwfmllssfTFs=@vger.kernel.org, AJvYcCVJZhBX5Q2uaPLLvZhC7+HLAAxT8TlBIrtAX763S5o5gHQBDZQ+5/TWBUp6ggMHsSX0oqcEVWSsdgN/G7Xp@vger.kernel.org
+X-Gm-Message-State: AOJu0YztmhV9uvnAMyFYzSnpUrfqu90TENCAxJTtjWlCGWs09tKu4JK5
+	mo+IisPGa9C94Y6sXMhYGFk5RBJc7LDgcOE6+lXnh5Dl2SfgvNEJOHmbPbN6/FBiAc2SLRD21Jp
+	6vTFkNSe6fW9A4kxdMqZPg/YGUM2d6pQ=
+X-Gm-Gg: ASbGncswPF8sxqvwkVtckH9iIkuG742zqs7Gwg+SRFiNsmfB8yQYczKyqFsYq/zzpxN
+	KHTmcNoNlADYREIeVaXHj+G/17URVs7tNMZgGysbrqzgx38teBxYtvtXVwdMueRWm3E/zgfdSLD
+	jlt/KGIMjyaNZkOdtuEQ0JgtBTcAPyOmlVJtthwk0750Q4Tk0iwgvrLtMW8kkwPXbY2BbhRjxAi
+	sZYdNdNpzQs0KQX6oBo7YU=
+X-Google-Smtp-Source: AGHT+IFh8R4HHh///mpuww5FmN6oeVaE7GRMdnWD9U03OrNBUDCvi8XsINRZ3sPAHy0lQG5Iu5iDOqFsu/Ry7A+De1w=
+X-Received: by 2002:a17:903:1b26:b0:234:ba37:87b6 with SMTP id
+ d9443c01a7336-23dede3897amr293774395ad.17.1752600018056; Tue, 15 Jul 2025
+ 10:20:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59abd2c3-8f52-429b-aa62-08ddc3c351a1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2025 17:16:21.1571
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: l0GsXK46IzRU/Ul/ZaWvNS6GtdOJ8XG2Z6Bc6onWfxRu9QHC00twAbNCYqjaKCu0bZONK4hy0/M8Xy7DQSy1yQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6576
-X-OriginatorOrg: intel.com
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <20250703121521.1874196-14-dongml2@chinatelecom.cn> <CAEf4BzaxLm1qm-WxFKDWO0rHqUrvfg8sC0737MMKKQb77cRe7Q@mail.gmail.com>
+ <3c389877-eafe-497a-a73e-720a3fcbcadb@linux.dev>
+In-Reply-To: <3c389877-eafe-497a-a73e-720a3fcbcadb@linux.dev>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 15 Jul 2025 10:20:05 -0700
+X-Gm-Features: Ac12FXzdlrwspRsYaNuaM7cAhw4AclSBiSuGZ5DnO88_hXSfBoftPaQMPYI0fKE
+Message-ID: <CAEf4BzZ-3rs2U8x7K+Gd3dDTn5OusBh5SsZ_cE3ZeuVHnoRzKQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 13/18] libbpf: support tracing_multi
+To: Menglong Dong <menglong.dong@linux.dev>
+Cc: Menglong Dong <menglong8.dong@gmail.com>, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, jolsa@kernel.org, bpf@vger.kernel.org, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> snprintf() is fragile when its return value
-> will be used to append additional data to a
-> buffer. Use scnprintf() instead.
+On Mon, Jul 14, 2025 at 6:59=E2=80=AFPM Menglong Dong <menglong.dong@linux.=
+dev> wrote:
 >
-> Signed-off-by: Wang Haoran <haoranwangsec@gmail.com>
+>
+> On 7/15/25 06:07, Andrii Nakryiko wrote:
+> > On Thu, Jul 3, 2025 at 5:24=E2=80=AFAM Menglong Dong <menglong8.dong@gm=
+ail.com> wrote:
+> >> Add supporting for the attach types of:
+> >>
+> >> BPF_TRACE_FENTRY_MULTI
+> >> BPF_TRACE_FEXIT_MULTI
+> >> BPF_MODIFY_RETURN_MULTI
+> >>
+> >> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> >> ---
+> >>   tools/bpf/bpftool/common.c |   3 +
+> >>   tools/lib/bpf/bpf.c        |  10 +++
+> >>   tools/lib/bpf/bpf.h        |   6 ++
+> >>   tools/lib/bpf/libbpf.c     | 168 +++++++++++++++++++++++++++++++++++=
++-
+> >>   tools/lib/bpf/libbpf.h     |  19 +++++
+> >>   tools/lib/bpf/libbpf.map   |   1 +
+> >>   6 files changed, 204 insertions(+), 3 deletions(-)
+> >>
+> > [...]
+> >
+> >> diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+> >> index 1342564214c8..5c97acec643d 100644
+> >> --- a/tools/lib/bpf/bpf.h
+> >> +++ b/tools/lib/bpf/bpf.h
+> >> @@ -422,6 +422,12 @@ struct bpf_link_create_opts {
+> >>                  struct {
+> >>                          __u64 cookie;
+> >>                  } tracing;
+> >> +               struct {
+> >> +                       __u32 cnt;
+> >> +                       const __u32 *btf_ids;
+> >> +                       const __u32 *tgt_fds;
+> > tgt_fds are always BTF FDs, right? Do we intend to support
+> > freplace-style multi attachment at all? If not, I'd name them btf_fds,
+> > and btf_ids -> btf_type_ids (because BTF ID can also refer to kernel
+> > ID of BTF object, so ambiguous and somewhat confusing)
+>
+>
+> For now, freplace is not supported. And I'm not sure if we will support
+>
+> it in the feature.
+>
+>
+> I think that there should be no need to use freplace in large quantities,
+>
+> so we don't need to support the multi attachment for it in the feature.
+>
+>
+> Yeah, I'll follow your advice in the next version.
+>
 
-Thanks. Patch applied to the https://git.kernel.org/pub/scm/linux/kernel/gi=
-t/ras/ras.git
-repo. It should be picked up by intel-next soon.
+great
 
-It will merge to Linus mainline in the v6.17 merge window in a couple of we=
-eks.
+>
+> >
+> >> +                       const __u64 *cookies;
+> >> +               } tracing_multi;
+> >>                  struct {
+> >>                          __u32 pf;
+> >>                          __u32 hooknum;
+> >> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> >> index 530c29f2f5fc..ae38b3ab84c7 100644
+> >> --- a/tools/lib/bpf/libbpf.c
+> >> +++ b/tools/lib/bpf/libbpf.c
+> >> @@ -136,6 +136,9 @@ static const char * const attach_type_name[] =3D {
+> >>          [BPF_NETKIT_PEER]               =3D "netkit_peer",
+> >>          [BPF_TRACE_KPROBE_SESSION]      =3D "trace_kprobe_session",
+> >>          [BPF_TRACE_UPROBE_SESSION]      =3D "trace_uprobe_session",
+> >> +       [BPF_TRACE_FENTRY_MULTI]        =3D "trace_fentry_multi",
+> >> +       [BPF_TRACE_FEXIT_MULTI]         =3D "trace_fexit_multi",
+> >> +       [BPF_MODIFY_RETURN_MULTI]       =3D "modify_return_multi",
+> >>   };
+> >>
+> >>   static const char * const link_type_name[] =3D {
+> >> @@ -410,6 +413,8 @@ enum sec_def_flags {
+> >>          SEC_XDP_FRAGS =3D 16,
+> >>          /* Setup proper attach type for usdt probes. */
+> >>          SEC_USDT =3D 32,
+> >> +       /* attachment target is multi-link */
+> >> +       SEC_ATTACH_BTF_MULTI =3D 64,
+> >>   };
+> >>
+> >>   struct bpf_sec_def {
+> >> @@ -7419,9 +7424,9 @@ static int libbpf_prepare_prog_load(struct bpf_p=
+rogram *prog,
+> >>                  opts->expected_attach_type =3D BPF_TRACE_UPROBE_MULTI=
+;
+> >>          }
+> >>
+> >> -       if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
+> >> +       if ((def & (SEC_ATTACH_BTF | SEC_ATTACH_BTF_MULTI)) && !prog->=
+attach_btf_id) {
+> >>                  int btf_obj_fd =3D 0, btf_type_id =3D 0, err;
+> >> -               const char *attach_name;
+> >> +               const char *attach_name, *name_end;
+> >>
+> >>                  attach_name =3D strchr(prog->sec_name, '/');
+> >>                  if (!attach_name) {
+> >> @@ -7440,7 +7445,27 @@ static int libbpf_prepare_prog_load(struct bpf_=
+program *prog,
+> >>                  }
+> >>                  attach_name++; /* skip over / */
+> >>
+> >> -               err =3D libbpf_find_attach_btf_id(prog, attach_name, &=
+btf_obj_fd, &btf_type_id);
+> >> +               name_end =3D strchr(attach_name, ',');
+> >> +               /* for multi-link tracing, use the first target symbol=
+ during
+> >> +                * loading.
+> >> +                */
+> >> +               if ((def & SEC_ATTACH_BTF_MULTI) && name_end) {
+> >> +                       int len =3D name_end - attach_name + 1;
+> > for multi-kprobe we decided to only support a single glob  as a target
+> > in declarative SEC() definition. If a user needs more control, they
+> > can always fallback to the programmatic bpf_program__attach_..._opts()
+> > variant. Let's do the same here, glob is good enough for declarative
+> > use cases, and for complicated cases programmatic is the way to go
+> > anyways. You'll avoid unnecessary complications like this one then.
+>
+>
+> In fact, this is to make the BPF code in the selftests simple. With such
+>
+> control, I can test different combination of the target functions easily,
+>
+> just like this:
+>
+>
+> SEC("fentry.multi/bpf_testmod_test_struct_arg_1,bpf_testmod_test_struct_a=
+rg_13")
+> int BPF_PROG2(fentry_success_test1, struct bpf_testmod_struct_arg_2, a)
+> {
+>      test_result =3D a.a + a.b;
+>      return 0;
+> }
+>
+> SEC("fentry.multi/bpf_testmod_test_struct_arg_2,bpf_testmod_test_struct_a=
+rg_10")
+> int BPF_PROG2(fentry_success_test2, int, a, struct
+> bpf_testmod_struct_arg_2, b)
+> {
+>      test_result =3D a + b.a + b.b;
+>      return 0;
+> }
+>
+>
+> And you are right, we should design it for the users, and a single glob i=
+s
+>
+> much better. Instead, I'll implement the combination testings in the
+>
+> loader with bpf_program__attach_trace_multi_opts().
+>
 
--Tony
+sgtm. I'd also think if we can construct a glob that would describe
+functions you need (and if necessary to rename testmod functions
+slightly - so be it, it's all for testing anyways)
+
+>
+> >
+> > BTW, it's not trivial to figure this out from earlier patches, but
+> > does BPF verifier need to know all these BTF type IDs during program
+> > verification time? If yes, why and then why do we need to specify them
+> > during LINK_CREATE time. And if not, then great, and we don't need to
+> > parse all this during load time.
+>
+>
+> It doesn't need to know all the BTF type IDs, but it need to know one
+>
+> of them(the first one), which means that we still need to do the parse
+>
+> during load time.
+>
+>
+> Of course, we can split it:
+>
+> step 1: parse the glob and get the first BTF type ID during load time
+>
+> step 2: parse the glob and get all the BTF type IDs during attachment
+>
+>
+> But it will make the code a little more complex. Shoud I do it this way?
+>
+> I'd appreciate it to hear some advice here :/
+
+I think I have a bit of disconnect here, because in my mind
+multi-fentry/fexit cannot be type-aware, in general, at BPF
+verification time. I.e., verifier should not assume any specific
+prototype, and this gets back to my suggestion to just use
+bpf_get_func_arg/cnt. While in some special cases you might want to
+attach to a small number of functions that, say, have task_struct
+argument and we can take a bit of advantage of this in BPF code by
+verifier ensuring that all attached functions have that task_struct, I
+do think this is unnecessary complication and limitation, and I'd
+rather make multi-fentry/fexit not type-aware in the same way as
+fentry/fexit is. With that, verifier won't need to know BTF ID, and so
+multi-fentry will work very similarly to multi-kprobe, just will be
+slightly cheaper at runtime.
+
+And I'm saying all this, because even if all attached functions have
+task_struct as that argument, you can achieve exactly that by just
+doing `bpf_core_cast(bpf_get_func_arg(0), struct task_struct)`, and
+that's all. So I'd simplify and make working with multi-fentry easier
+for multi-function tracers (which is the challenging aspect with
+fentry today). If you have 2-3-4-5 functions you are attaching to and
+hoping to get that task_struct, you might as well just attach 2-3-4-5
+times, get performance benefit, without really compromising much on
+attachment time (because 5 attachments are plenty fast).
+
+>
+>
+> >
+> >> +                       char *first_tgt;
+> >> +
+> >> +                       first_tgt =3D malloc(len);
+> >> +                       if (!first_tgt)
+> >> +                               return -ENOMEM;
+> >> +                       libbpf_strlcpy(first_tgt, attach_name, len);
+> >> +                       first_tgt[len - 1] =3D '\0';
+> >> +                       err =3D libbpf_find_attach_btf_id(prog, first_=
+tgt, &btf_obj_fd,
+> >> +                                                       &btf_type_id);
+> >> +                       free(first_tgt);
+> >> +               } else {
+> >> +                       err =3D libbpf_find_attach_btf_id(prog, attach=
+_name, &btf_obj_fd,
+> >> +                                                       &btf_type_id);
+> >> +               }
+> >> +
+> >>                  if (err)
+> >>                          return err;
+> >>
+> >> @@ -9519,6 +9544,7 @@ static int attach_kprobe_session(const struct bp=
+f_program *prog, long cookie, st
+> >>   static int attach_uprobe_multi(const struct bpf_program *prog, long =
+cookie, struct bpf_link **link);
+> >>   static int attach_lsm(const struct bpf_program *prog, long cookie, s=
+truct bpf_link **link);
+> >>   static int attach_iter(const struct bpf_program *prog, long cookie, =
+struct bpf_link **link);
+> >> +static int attach_trace_multi(const struct bpf_program *prog, long co=
+okie, struct bpf_link **link);
+> >>
+> >>   static const struct bpf_sec_def section_defs[] =3D {
+> >>          SEC_DEF("socket",               SOCKET_FILTER, 0, SEC_NONE),
+> >> @@ -9565,6 +9591,13 @@ static const struct bpf_sec_def section_defs[] =
+=3D {
+> >>          SEC_DEF("fentry.s+",            TRACING, BPF_TRACE_FENTRY, SE=
+C_ATTACH_BTF | SEC_SLEEPABLE, attach_trace),
+> >>          SEC_DEF("fmod_ret.s+",          TRACING, BPF_MODIFY_RETURN, S=
+EC_ATTACH_BTF | SEC_SLEEPABLE, attach_trace),
+> >>          SEC_DEF("fexit.s+",             TRACING, BPF_TRACE_FEXIT, SEC=
+_ATTACH_BTF | SEC_SLEEPABLE, attach_trace),
+> >> +       SEC_DEF("tp_btf+",              TRACING, BPF_TRACE_RAW_TP, SEC=
+_ATTACH_BTF, attach_trace),
+> > duplicate
+>
+>
+> Get it :/
+>
+>
+> Thanks!
+>
+> Menglong Dong
+>
+>
+> >
+> >
+> >> +       SEC_DEF("fentry.multi+",        TRACING, BPF_TRACE_FENTRY_MULT=
+I, SEC_ATTACH_BTF_MULTI, attach_trace_multi),
+> >> +       SEC_DEF("fmod_ret.multi+",      TRACING, BPF_MODIFY_RETURN_MUL=
+TI, SEC_ATTACH_BTF_MULTI, attach_trace_multi),
+> >> +       SEC_DEF("fexit.multi+",         TRACING, BPF_TRACE_FEXIT_MULTI=
+, SEC_ATTACH_BTF_MULTI, attach_trace_multi),
+> >> +       SEC_DEF("fentry.multi.s+",      TRACING, BPF_TRACE_FENTRY_MULT=
+I, SEC_ATTACH_BTF_MULTI | SEC_SLEEPABLE, attach_trace_multi),
+> >> +       SEC_DEF("fmod_ret.multi.s+",    TRACING, BPF_MODIFY_RETURN_MUL=
+TI, SEC_ATTACH_BTF_MULTI | SEC_SLEEPABLE, attach_trace_multi),
+> >> +       SEC_DEF("fexit.multi.s+",       TRACING, BPF_TRACE_FEXIT_MULTI=
+, SEC_ATTACH_BTF_MULTI | SEC_SLEEPABLE, attach_trace_multi),
+> >>          SEC_DEF("freplace+",            EXT, 0, SEC_ATTACH_BTF, attac=
+h_trace),
+> >>          SEC_DEF("lsm+",                 LSM, BPF_LSM_MAC, SEC_ATTACH_=
+BTF, attach_lsm),
+> >>          SEC_DEF("lsm.s+",               LSM, BPF_LSM_MAC, SEC_ATTACH_=
+BTF | SEC_SLEEPABLE, attach_lsm),
+> >> @@ -12799,6 +12832,135 @@ static int attach_trace(const struct bpf_pro=
+gram *prog, long cookie, struct bpf_
+> >>          return libbpf_get_error(*link);
+> >>   }
+> >>
+> > [...]
+> >
 
