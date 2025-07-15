@@ -1,47 +1,78 @@
-Return-Path: <linux-kernel+bounces-732206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BEFB0636E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:49:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C30FB06370
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E571AA3E51
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:49:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 283FA7B3375
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64E424729A;
-	Tue, 15 Jul 2025 15:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1858C24729A;
+	Tue, 15 Jul 2025 15:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXNHtuL+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="nPW3NJiD"
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2A413AA2D;
-	Tue, 15 Jul 2025 15:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5072C20E710
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752594561; cv=none; b=XgOGkSsx7HZTUO7svbyBdSz/jqIAF6JYXWZYcWTwF5TSV1YDFMAvVYq2Mucwon6QGAbIO0/eecUg+MwgiuMkd0LhD+WfK76E566Uud5oET98R6LYOPOVN9GRcin70WsJbNkNRwzq9GpyeE+EpgStwMn0agTp6+vxXLktaVWpD98=
+	t=1752594584; cv=none; b=rM57rnFio8qpOOGAzFbvxH5RSmGzEdXllxvkY933odSX4aPnj7YUSENlXPh8ZCPdPC/TE7FdR69zoSD17Ki9SzJcvjVnM3LoW1SnLOy/s3OuiZqJeY9ns2WI5Gdl8kYzazcwbEVyU67ke+6s0rDLXtY5Jwd0v+Am6egITgpJmqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752594561; c=relaxed/simple;
-	bh=LgTOhwGPg8DUCqmURpXmMX64tndVNML1PiK+RcZOEuc=;
+	s=arc-20240116; t=1752594584; c=relaxed/simple;
+	bh=9gmrSWjkPf6ptmRUjb9+4+JTqajV+K87bEuRScfXVKI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bjb8NPNK2B7f4G0f0llVDW7hqchLjBr0HWmx6Ce77OGQdowWqGkXQdvXMA38BwA0GzR0FHDYbqIxaPOm4yS+a+1aKz5S8G+GQuWFcJnH/+g/6jdWgwf5WJ8zH5GUidT991Q/k/ylyr78FfGAycJgwP+J9d4CClc+H+wrP3iGAv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXNHtuL+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9805C4CEE3;
-	Tue, 15 Jul 2025 15:49:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752594559;
-	bh=LgTOhwGPg8DUCqmURpXmMX64tndVNML1PiK+RcZOEuc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uXNHtuL+WCOCwuDyNdQ66Gw2lJtVbp5BFid5AkDzT20m1+s6ICTlS7bF9PrxhU84y
-	 wNX9IGdt1B5P8UiCQ50EJgp4rwQ17b9WARUjyOKY3RSfIQBr5GOyHtc921R6DKZuXz
-	 FmCsHTqTIuAXt8AThKhAHxgeufRqM0msRcblmfV2ZQ9y4wty8789nFE7b5dUG82nMQ
-	 FtBsZuqgUijFkSruPebgmly94UGCp+ccFYbl1kqV1pt/iNJHapkvN5B1KXJIQxdyag
-	 S9f9jU/7gF5aK6NGTErHnPMf3hNi3KMloUhzDEdgH2QhmdriDztyvYbgUWlnaG6Xnv
-	 WiQwk6hkFkFuQ==
-Message-ID: <c8f90804-ead1-460b-8d7d-c1f583e9a6d8@kernel.org>
-Date: Tue, 15 Jul 2025 17:49:09 +0200
+	 In-Reply-To:Content-Type; b=a0DVV5ov3uW3iJ3lmeKYDKdTiLBjhHxIjdFArILt3Sgnx+/kRGWLkrZ5g5eBdpZL6fUCo0JUo8AqfOnJlOk1AKpUQRjhNI1E42PYQrFUi9I5tdOaK1GZNMLwaGO7sYBKbkgMJGXO8ibG6z+9i236oO+gpuTADciSrpXNzo4D8HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=nPW3NJiD; arc=none smtp.client-ip=209.85.221.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so15151f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:49:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1752594579; x=1753199379; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=9gmrSWjkPf6ptmRUjb9+4+JTqajV+K87bEuRScfXVKI=;
+        b=nPW3NJiDG1FGLj9/R1XeYQXzceM5WDxiWsE1kDVn3gfUNz7D8TkB2fzdDd61XZv8EO
+         lvUK6zx72n8/SgUDW+dciMu5XbcKfWtfve+nxEKVFJXRj3wAVSdXyuhRncw8d+hmc6WO
+         6gU8mQoDr79vs6jscCyzQjOMeQbREU4Whnp74=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752594579; x=1753199379;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9gmrSWjkPf6ptmRUjb9+4+JTqajV+K87bEuRScfXVKI=;
+        b=URTQrY1Jblw+9SCAz6D8CPlzeUJcH4aByZBt0r3teQyveKeySKvKYbm4znu7jWrLh7
+         T98ZsCCEGIt83IsI4n9LUkJ0bpdto9mVcIJY6i0xqVg8jZk+IqCxOhkYM2dCczdM50kn
+         sbhSRmsXzroi5fGAyWLC0g8KZGh2AgRQ562NuGmXp2PQWIY5fYwWkwPpOz/s6ywZyxnE
+         yxM18PeYfdhcrWgxfASX9djf7usRoIfX4eAisbMZoJF78196eqFyNGQatPvK7OZsGD4Z
+         jNUuI3PMPZgzLet4opfoYlOiaz2XJim0S5bNB1mhOUhweEzvroMG4qvySob6Xdb6X5GH
+         l5sA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtHDPj2QHamolY3FRIT+SOACAHZZZsGBoWN2tZD1hvn2Mls98TDAFnO4OtMm/qz8/8mVK+WhqPI72jQbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+G+HcX65SwF1ZUty3ca1UE9RteQXrqyXL1igABJ0OAPWdWolZ
+	tyNGNnCFAgS0DX8xbitQGUyRTGttCcRBV9lQuRdLCZlvfiOybMUM1LwkTrKEw+P5Jy0=
+X-Gm-Gg: ASbGncumE/WTe4yUbasyc/LFCT7sh3bEzrES6z+if2UPJ4mP+vD9yTVZwAshyoZUK2q
+	llYdSf2WqD/QYv7uZnezW8zTx66c0Fvxeb5IvVScianE8gSQa9SLzHCroMTEO5JXpoRaqhba3R6
+	xpWBBzxOrZY5Dff9RUEwIPf6R6Ag1hY6awLg3rhEDfxdPbf4jTG+OS2brbjFx6FesbQpz/n/2ct
+	IEbLxyDv+BBYIL/4ZmsZZkye912rliv1jS2cZ6oVpGH358QiuHv+/Y/I6ZFW8K399HBxOuU9v8G
+	by/pl8bo2/oqLEs7J56oFjPU3cVRdkTAq7F/OOi88DQCKOETraFEjNMGOERDuiBksZ6kVH/OyZZ
+	v9dZ/dvinnjUD/0ZmvRpjdm2GKSxiI+T+njCaPGqO+27Uw0vLeqU7ywrs5iMf0FQC/0Jju0NBNG
+	Xt3D0=
+X-Google-Smtp-Source: AGHT+IFRhw/ZviPKrKns64f3aAyeXKlIkol5iF/KXQ0hI/FgEBYlEP9Vjn93ob1Etjy88cWqsVQ3aA==
+X-Received: by 2002:a05:6000:2089:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b6095442f1mr3679871f8f.25.1752594579525;
+        Tue, 15 Jul 2025 08:49:39 -0700 (PDT)
+Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560394e061sm107648085e9.31.2025.07.15.08.49.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 08:49:38 -0700 (PDT)
+Message-ID: <2e198fe6-c08a-4489-bb0e-aff6d2d5670b@citrix.com>
+Date: Tue, 15 Jul 2025 16:49:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,100 +80,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: reset: eswin: Documentation for
- eic7700 SoC
-To: dongxuyang@eswincomputing.com, p.zabel@pengutronix.de, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-References: <20250715121427.1466-1-dongxuyang@eswincomputing.com>
- <20250715121524.1524-1-dongxuyang@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250715121524.1524-1-dongxuyang@eswincomputing.com>
+Subject: Re: [PATCH v1 1/1] x86/fred: Remove ENDBR64 from FRED entry points
+To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
+Cc: luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, jmill@asu.edu,
+ peterz@infradead.org
+References: <20250715064437.807569-1-xin@zytor.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20250715064437.807569-1-xin@zytor.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/07/2025 14:15, dongxuyang@eswincomputing.com wrote:
-> +#define EIC7700_RESET_LNOC_NPU_LLC		278
-> +#define EIC7700_RESET_LNOC_DDRC1_P0		279
-> +#define EIC7700_RESET_LNOC_DDRC0_P0		280
-> +#define EIC7700_RESET_MAX				281
+On 15/07/2025 7:44 am, Xin Li (Intel) wrote:
+> The FRED specification v9.0 states that there is no need for FRED
+> event handlers to begin with ENDBR64, because in the presence of
+> supervisor indirect branch tracking, FRED event delivery does not
+> enter the WAIT_FOR_ENDBRANCH state.
 
-Drop, not binding usually.
+I would suggest phrasing this as "The FRED specification has been
+changed in v9 to..."
 
-> +
-> +#endif /* __DT_ESWIN_EIC7700_RESET_H__ */
+Simply "v9 states" can be read as "we mistook what v8 said and did it
+wrong".
 
-With above change:
+After all, the change here is specifically as a result of new research
+showing ENDBR on the entrypoints to be of negative value.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> As a result, remove ENDBR64 from FRED entry points.
+>
+> Then add ANNOTATE_NOENDBR to indicate that FRED entry points will
+> never be used for indirect calls to suppress an objtool warning.
+>
+> This change implies that any indirect CALL/JMP to FRED entry points
+> causes #CP in the presence of supervisor indirect branch tracking.
+>
+> Credit goes to Jennifer Miller <jmill@asu.edu> and other contributors
+> from Arizona State University whose work led to this change.
+>
+> Link: https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/
+> Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> Cc: Jennifer Miller <jmill@asu.edu>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
 
----
+Preferably with an adjusted commit message, Reviewed-by Andrew Cooper
+<andrew.cooper3@citrix.com>
 
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
+Any idea when an updated SIMICS will be available?
 
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
-
-Full context and explanation:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
-
-
-Best regards,
-Krzysztof
+~Andrew
 
