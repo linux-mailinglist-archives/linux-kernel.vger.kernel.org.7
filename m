@@ -1,240 +1,122 @@
-Return-Path: <linux-kernel+bounces-732417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23FAB06677
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1A0B0667E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36F875649AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664D15649D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8632BEC2A;
-	Tue, 15 Jul 2025 19:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19763239086;
+	Tue, 15 Jul 2025 19:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TwVZ9USH"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vWC/ojFp"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF3F22127C
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B6822127C;
+	Tue, 15 Jul 2025 19:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606404; cv=none; b=RRezv34EH/4YNGvQp6hKvd6InRFbrFRE21Nx+7fuIGdLKEJViCzGTISXR6vBKNXhipS68pADKg6XYvkjZVhEXVKLvCb22NsuUkqDDpzkgM8QSc3iHOyymXBtMP9nuR9f8HbeZQts2LOeIaRKxCBcq4C/JDOAjFZZ29ofycGvUbw=
+	t=1752606452; cv=none; b=FgwWprGbzjhfOiH6eoH5pXDGxxrTTAi+Wzr972m9/HsS56SxPEXrYliqBQ6Z9nkNUnnCEb7EmGROkudwtesw5sO2ieyapNyMZZ7yuqOcO41gkXYtf4eGRRwhUYevAXg1XvasYeftNo6LDYk8Y7Nlsa2lHpZNRnjsAzAm6bGfh+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606404; c=relaxed/simple;
-	bh=GTxT5dw0PVj8wMRhtSSRP76xX5fd2Cpp5r+28okB0A4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TaeiRAvX83LMwah4UD+gEA0HlnwQvB326MoAm7sEBXgqBgEpLm/zYJq2h4FVBkEK9cVtvxTkugvqkcLFQ8q3IiiZ/FFBCXKmgAp5PRjShB+JqeQLxE6IwH/IbWAAczAyn6yjH+kClgk8AsnhPdD97T4aYVe4ELoSPOw4SZOIKms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TwVZ9USH; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2349fe994a9so51500185ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:06:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752606401; x=1753211201; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j9kM4hEAGClBPbwwJM/o6yebUkYu5yQUZuXR772mje4=;
-        b=TwVZ9USH407tctEVAuc5brOp8akW+dyi/NaU6eVkg9cP/6AX89XqUd8nfq6kVWvWOZ
-         aerIMVeQs+mcwXwzm2l96JhaSRkDMXqrH5Hjf8BFBbsDZMagyECurpPF/EMFoEgFZVBQ
-         PDzc2ZSSvH519BLXvzlXBYQVDwi04LBThe9cYZbcZHA98yCW/YP+TDvTUkEEou0zf1eO
-         Wys5VIYLjj4Cboy9mY8prDZXdw5uLE9LVGjk1T3IVAEbMXyOoZO8vdoBOfJXDUg4pLUg
-         Xpra7HCMxHTUHyR4s6J62kk/Wxk50ApaPjAl11yfPWxr8c1XJ0t4P3E1SHcQFHaQaBPJ
-         RIVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752606401; x=1753211201;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j9kM4hEAGClBPbwwJM/o6yebUkYu5yQUZuXR772mje4=;
-        b=bt/H412xMjoLR8xAdMrQXQf8MuHN2rfje3mgK95Upzks6HrvmgxQ5LQ+baF4YY6lg4
-         8ZS4yVbuqDAfPy5Gt8GPvuwwbqahYd2BjWhZTHk8GGfeCfd/MX6vZpLDUeXNN251KCCc
-         AemFhWtA5IPE/qXRQV4NX7YilxXb/HtA38Dn3zxnaTcy9RqUbUsIoK18sNXqRYFj2Wlb
-         xrzg7NMhkoraFJ2dz33Ic5vQ8OAS2260wHWkm8aI+fwwqUt3wZNKId8Qr4mye0sodj5k
-         +ZdpSpHoaNV3+nJbbTTpuayzQaQOgBQrJ1qaSLgzVH/RcM2sqcZhDpnPQmf67hxoOOge
-         bE3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXSexWnHO1ICmm6Ur1OsIQWu1QtZZAYMCqpzy08xk6qiafIV81pI0IbHFv/ulXQyJwLhJP1y7dGlkay+us=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqZhyt3D2Nyi1MU4P/MarOcEjQJW8yxZeE28qtb3m0eGzMKkpx
-	P+DLzZxt35un8Vv5B+jemXYWWFwO/X4Y4+XMRXM1I96JNo6+SlhJ8W7YwmLTXM6TkE6uigB+KsL
-	F1asB3g==
-X-Google-Smtp-Source: AGHT+IEc17k2iTydYcoJ2I0zd3TiRSQ3d/97yuv9VPah2k9SyTYKAouwm4LkyHCYGU53am0RO8rvezKZvso=
-X-Received: from pgbct3.prod.google.com ([2002:a05:6a02:2103:b0:b2e:c392:14f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2381:b0:234:d10d:9f9f
- with SMTP id d9443c01a7336-23e24fe30bfmr1577835ad.40.1752606401066; Tue, 15
- Jul 2025 12:06:41 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 15 Jul 2025 12:06:38 -0700
+	s=arc-20240116; t=1752606452; c=relaxed/simple;
+	bh=pGSsRkZlxFE4/rDI5BTTMbWX+r1CfkdOa/U2M96EyA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q3KO0lfOux3rDjhCfect6HzrgNoQHIYJofkiW3k4ppmV+bh7mNQOtgUi0gh945QQOdU24A2+3+oEGKw6sKmmrvoGXfLnU4mXqDZuzTDxJhBVfTwDDjh7dcRDBTGAuxZjpBCZZZyExe2osisVoAt9Gvvet8bJ771xiTqttDtTFNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vWC/ojFp; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BT3B1DtxJah2Y+P2ydapGunbjX2yfyQbDYuMIQAZfck=; b=vWC/ojFpmd+xp5mEgWTFMQ8TMr
+	jk+JjiXjRkFD3XHRA1ShZhl3aZ+7PhpQm4LP8XBSDHGyo7qeUetQw1sbg7eI4DgZne7aXR2e68C7L
+	bJV0BptTyHhLRjNVXGtFc7uPx9RM1VCBsZJNXnLialsiJWNVYcBAhrUJprWzH4e1JRjV+UuvSc5/W
+	N55Jzjf1RVn2BDVDuzyEuDakucvHkggNawl6kcMfQy+qUz7LQbPV5X9y7kdjLzi5LoFbY/UObXNJW
+	DTg1aLnM1vfw4o/G9ZghOBkBIpgFs10JjprJA4iClXLSvjE/aD0dA/uDyh+S3iPdsCnkz1iUdXdDy
+	q6JqM6mw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubkzr-0000000DVTi-0ZXY;
+	Tue, 15 Jul 2025 19:07:23 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B58A83001AA; Tue, 15 Jul 2025 21:07:22 +0200 (CEST)
+Date: Tue, 15 Jul 2025 21:07:22 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v13 10/14] unwind: Clear unwind_mask on exit back to user
+ space
+Message-ID: <20250715190722.GH4105545@noisy.programming.kicks-ass.net>
+References: <20250708012239.268642741@kernel.org>
+ <20250708012359.345060579@kernel.org>
+ <20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
+ <20250715132016.409b1082@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250715190638.1899116-1-seanjc@google.com>
-Subject: [PATCH] KVM: x86: Don't (re)check L1 intercepts when completing
- userspace I/O
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715132016.409b1082@batman.local.home>
 
-When completing emulation of instruction that generated a userspace exit
-for I/O, don't recheck L1 intercepts as KVM has already finished that
-phase of instruction execution, i.e. has already committed to allowing L2
-to perform I/O.  If L1 (or host userspace) modifies the I/O permission
-bitmaps during the exit to userspace,  KVM will treat the access as being
-intercepted despite already having emulated the I/O access.
+On Tue, Jul 15, 2025 at 01:20:16PM -0400, Steven Rostedt wrote:
+> On Tue, 15 Jul 2025 12:29:12 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > @@ -170,41 +193,62 @@ static void unwind_deferred_task_work(st
+> >  int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+> >  {
+> >  	struct unwind_task_info *info = &current->unwind_info;
+> > -	int ret;
+> > +	unsigned long bits, mask;
+> > +	int bit, ret;
+> >  
+> >  	*cookie = 0;
+> >  
+> > -	if (WARN_ON_ONCE(in_nmi()))
+> > -		return -EINVAL;
+> > -
+> >  	if ((current->flags & (PF_KTHREAD | PF_EXITING)) ||
+> >  	    !user_mode(task_pt_regs(current)))
+> >  		return -EINVAL;
+> >  
+> > +	/* NMI requires having safe cmpxchg operations */
+> > +	if (WARN_ON_ONCE(!UNWIND_NMI_SAFE && in_nmi()))
+> > +		return -EINVAL;
+> 
+> I don't think we want to have a WARN_ON() here as the perf series tries
+> to first do the deferred unwinding and if that fails, it will go back
+> to it's old method.
 
-Pivot on EMULTYPE_NO_DECODE to detect that KVM is completing emulation.
-Of the three users of EMULTYPE_NO_DECODE, only complete_emulated_io() (the
-intended "recipient") can reach the code in question.  gp_interception()'s
-use is mutually exclusive with is_guest_mode(), and
-complete_emulated_insn_gp() unconditionally pairs EMULTYPE_NO_DECODE with
-EMULTYPE_SKIP.
+The thing is, I don't think we have an architecture that supports NMIs
+and does not have NMI safe cmpxchg. And if we do have one such -- I
+don't think it has perf; perf very much assumes cmpxchg is NMI safe.
 
-The bad behavior was detected by a syzkaller program that toggles port I/O
-interception during the userspace I/O exit, ultimately resulting in a WARN
-on vcpu->arch.pio.count being non-zero due to KVM no completing emulation
-of the I/O instruction.
-
-  WARNING: CPU: 23 PID: 1083 at arch/x86/kvm/x86.c:8039 emulator_pio_in_out+0x154/0x170 [kvm]
-  Modules linked in: kvm_intel kvm irqbypass
-  CPU: 23 UID: 1000 PID: 1083 Comm: repro Not tainted 6.16.0-rc5-c1610d2d66b1-next-vm #74 NONE
-  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-  RIP: 0010:emulator_pio_in_out+0x154/0x170 [kvm]
-  PKRU: 55555554
-  Call Trace:
-   <TASK>
-   kvm_fast_pio+0xd6/0x1d0 [kvm]
-   vmx_handle_exit+0x149/0x610 [kvm_intel]
-   kvm_arch_vcpu_ioctl_run+0xda8/0x1ac0 [kvm]
-   kvm_vcpu_ioctl+0x244/0x8c0 [kvm]
-   __x64_sys_ioctl+0x8a/0xd0
-   do_syscall_64+0x5d/0xc60
-   entry_SYSCALL_64_after_hwframe+0x4b/0x53
-   </TASK>
-
-Fixes: 8a76d7f25f8f ("KVM: x86: Add x86 callback for intercept check")
-Cc: stable@vger.kernel.org
-Cc: Jim Mattson <jmattson@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/emulate.c     |  9 ++++-----
- arch/x86/kvm/kvm_emulate.h |  3 +--
- arch/x86/kvm/x86.c         | 15 ++++++++-------
- 3 files changed, 13 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 1349e278cd2a..542d3664afa3 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -5107,12 +5107,11 @@ void init_decode_cache(struct x86_emulate_ctxt *ctxt)
- 	ctxt->mem_read.end = 0;
- }
- 
--int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
-+int x86_emulate_insn(struct x86_emulate_ctxt *ctxt, bool check_intercepts)
- {
- 	const struct x86_emulate_ops *ops = ctxt->ops;
- 	int rc = X86EMUL_CONTINUE;
- 	int saved_dst_type = ctxt->dst.type;
--	bool is_guest_mode = ctxt->ops->is_guest_mode(ctxt);
- 
- 	ctxt->mem_read.pos = 0;
- 
-@@ -5160,7 +5159,7 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
- 				fetch_possible_mmx_operand(&ctxt->dst);
- 		}
- 
--		if (unlikely(is_guest_mode) && ctxt->intercept) {
-+		if (unlikely(check_intercepts) && ctxt->intercept) {
- 			rc = emulator_check_intercept(ctxt, ctxt->intercept,
- 						      X86_ICPT_PRE_EXCEPT);
- 			if (rc != X86EMUL_CONTINUE)
-@@ -5189,7 +5188,7 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
- 				goto done;
- 		}
- 
--		if (unlikely(is_guest_mode) && (ctxt->d & Intercept)) {
-+		if (unlikely(check_intercepts) && (ctxt->d & Intercept)) {
- 			rc = emulator_check_intercept(ctxt, ctxt->intercept,
- 						      X86_ICPT_POST_EXCEPT);
- 			if (rc != X86EMUL_CONTINUE)
-@@ -5243,7 +5242,7 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
- 
- special_insn:
- 
--	if (unlikely(is_guest_mode) && (ctxt->d & Intercept)) {
-+	if (unlikely(check_intercepts) && (ctxt->d & Intercept)) {
- 		rc = emulator_check_intercept(ctxt, ctxt->intercept,
- 					      X86_ICPT_POST_MEMACCESS);
- 		if (rc != X86EMUL_CONTINUE)
-diff --git a/arch/x86/kvm/kvm_emulate.h b/arch/x86/kvm/kvm_emulate.h
-index c1df5acfacaf..7b5ddb787a25 100644
---- a/arch/x86/kvm/kvm_emulate.h
-+++ b/arch/x86/kvm/kvm_emulate.h
-@@ -235,7 +235,6 @@ struct x86_emulate_ops {
- 	void (*set_nmi_mask)(struct x86_emulate_ctxt *ctxt, bool masked);
- 
- 	bool (*is_smm)(struct x86_emulate_ctxt *ctxt);
--	bool (*is_guest_mode)(struct x86_emulate_ctxt *ctxt);
- 	int (*leave_smm)(struct x86_emulate_ctxt *ctxt);
- 	void (*triple_fault)(struct x86_emulate_ctxt *ctxt);
- 	int (*set_xcr)(struct x86_emulate_ctxt *ctxt, u32 index, u64 xcr);
-@@ -521,7 +520,7 @@ bool x86_page_table_writing_insn(struct x86_emulate_ctxt *ctxt);
- #define EMULATION_RESTART 1
- #define EMULATION_INTERCEPTED 2
- void init_decode_cache(struct x86_emulate_ctxt *ctxt);
--int x86_emulate_insn(struct x86_emulate_ctxt *ctxt);
-+int x86_emulate_insn(struct x86_emulate_ctxt *ctxt, bool check_intercepts);
- int emulator_task_switch(struct x86_emulate_ctxt *ctxt,
- 			 u16 tss_selector, int idt_index, int reason,
- 			 bool has_error_code, u32 error_code);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index de51dbd85a58..44ef3492bfd2 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8609,11 +8609,6 @@ static bool emulator_is_smm(struct x86_emulate_ctxt *ctxt)
- 	return is_smm(emul_to_vcpu(ctxt));
- }
- 
--static bool emulator_is_guest_mode(struct x86_emulate_ctxt *ctxt)
--{
--	return is_guest_mode(emul_to_vcpu(ctxt));
--}
--
- #ifndef CONFIG_KVM_SMM
- static int emulator_leave_smm(struct x86_emulate_ctxt *ctxt)
- {
-@@ -8697,7 +8692,6 @@ static const struct x86_emulate_ops emulate_ops = {
- 	.guest_cpuid_is_intel_compatible = emulator_guest_cpuid_is_intel_compatible,
- 	.set_nmi_mask        = emulator_set_nmi_mask,
- 	.is_smm              = emulator_is_smm,
--	.is_guest_mode       = emulator_is_guest_mode,
- 	.leave_smm           = emulator_leave_smm,
- 	.triple_fault        = emulator_triple_fault,
- 	.set_xcr             = emulator_set_xcr,
-@@ -9282,7 +9276,14 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 		ctxt->exception.address = 0;
- 	}
- 
--	r = x86_emulate_insn(ctxt);
-+	/*
-+	 * Check L1's instruction intercepts when emulating instructions for
-+	 * L2, unless KVM is re-emulating a previously decoded instruction,
-+	 * e.g. to complete userspace I/O, in which case KVM has already
-+	 * checked the intercepts.
-+	 */
-+	r = x86_emulate_insn(ctxt, is_guest_mode(vcpu) &&
-+				   !(emulation_type & EMULTYPE_NO_DECODE));
- 
- 	if (r == EMULATION_INTERCEPTED)
- 		return 1;
-
-base-commit: 4578a747f3c7950be3feb93c2db32eb597a3e55b
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+Calling this from NMI context and not having an NMI safe cmpxchg is very
+much a dodgy use case. Please leave the WARN, if it ever triggers, we'll
+look at who manages and deal with it then.
 
