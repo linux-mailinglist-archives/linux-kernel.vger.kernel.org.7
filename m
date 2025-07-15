@@ -1,236 +1,207 @@
-Return-Path: <linux-kernel+bounces-731218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DECEB05131
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:47:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89D9B05134
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D748F3A44E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:46:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B6587ACC05
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B2E2D238B;
-	Tue, 15 Jul 2025 05:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396051B043C;
+	Tue, 15 Jul 2025 05:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="aIH7JRcB"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Uw1RQcKE"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854B069D2B;
-	Tue, 15 Jul 2025 05:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752558410; cv=none; b=s1rR22f24Qzlufc4Zg/eb4aWq2r/kQmmA9Ps+skDF5fBqU+b1rMy4PnjgXe5+PxjfNmHWsFxb+uihiqJx7ZS4Zh3PB2wy6u+7xeFPc4dloLmp4iU/ldtTeaXVRFm76wlts+Bq2YTgiAM/bU0mY7NAWU6AGfyqB0i7wNLNKbjNkQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752558410; c=relaxed/simple;
-	bh=g8ObzbtsLMh6hIRHoS8hWGgVk9t7E1qWN/EE5RDZ0Ec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dLcqVk5eqM3BizJHbZmQO8qxYiXwXX9RHKrHhtRNc26C57CjmbeJXca5DhtRbUCX5J+Gg6VVtBgP7Jn9SFrrjOu0jj5cFxczVyPdjy7Ev0bpp2y3DWlfUz/mChOC2kaammvvq//oxh8xQHoi78BPOAiVXsXM/N29yAFPx5y7cdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=aIH7JRcB; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kB2cLJNy4hPYhqXCKFroTjovGqdHkjo6jWxolFG5Rks=; b=aIH7JRcBnFaTDYDYU0B/+YjYO1
-	Z1AivAp6BGemuHi/coTdiNbfy5cJLpV80/vxnQiEqnMSTvkkJqIAMxBpM1ubIIIBCNWRyWJm/j3Kr
-	FYsMoE4rw7HBQah/RnPQkcXpw+W1lhUwBfLQkCBDkd8ysFhki0gnEhPhvHKxcOz0Wb8eidC9oACAn
-	47bAUJsrC5VhNd5s+jyYorwO5ORVD/q+r4muR10gIJDNLaf0xWK44U3yMN4QMJNr6qq7c0rDnNpU+
-	JiC+D+ly8vSZTQSs4iUnTb8EOu16nB9YCO5fwHkkTPiotPsWIyFkpQlsmUTSb4S4LjKorw/+YafA2
-	LChQLk2A==;
-Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:33050 helo=[192.168.69.116])
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1ubYV3-003pbU-2v;
-	Tue, 15 Jul 2025 07:46:45 +0200
-Message-ID: <c9d17343-e4a5-49ab-9a3e-b6da9d591195@norik.com>
-Date: Tue, 15 Jul 2025 07:46:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2032C3773
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 05:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752558470; cv=fail; b=SRtvnBUKmfNg0K1n8bqmC36vz3mUFurMTJ3waladqsSSgYLqyUO52n8UVtmEwNw29zXZ7xpbaGwm+NAbxHHK0+zvchEUY/ok7d2kTHtWGKpueA5bQelX3YzJSrZPIj8drVRnWd1e3CkwPPd7TOEaCM+fdBrVKLPjepUVSAgvWV4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752558470; c=relaxed/simple;
+	bh=feowElyk9E6GJlbKVWUgysxaJ7gYNs3g6qzft6JeKgI=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hiXSH9vEUCHYUc2p3nFgtZU1jutPTonODWmUBmICZSGohZXMvI98XqvTTvAiCHpOPlJb4H3B40Bp84aIogGwIKMRzaVW29ZfRTXPxwqOKWDL+n/gdB1967Y9K0Wqew9dgnQaPiG/TXMXEel6DkjyJiibgNcFXw0FX4CYzsalaAQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Uw1RQcKE; arc=fail smtp.client-ip=40.107.94.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KH3ChaaAKXYBTOHvlg27Pvg0qcMJ/fu13HWuCFOOIRXeZMmiGgVy5+B6ApV5c1IXJTpktRZjkYSzZL5BvLd8A2D1QzmPd0iprcTPha669zmvjHmVFiQQwcdtAGh0vzc6vbfe703adjHiNHRDGnOJ6TpvYWMWoQqw139UlCYFAuCnTIzfnKdElvCK43Vkq1PzRAJckt8RSS7z+/Dha2LzUhFug+uRjm8CCRQHK9M9XQe7XPWd8oJbdh2oM4DQqaZgB04kWmy7y8nFhKFy78W84ieugwxKtQvQ74GsmgAmYthdCulBYTS2KNnHDj01CCTYzEiTlWFgSNsPKz3ES6bH/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p+zyDP3C12lhp60FPrR7cRwxMRtjEAWNur6OvZMjrXM=;
+ b=Gh22t2GlsL+Mbc9G0PBCnF5QXcmXxDR6SA74a+kP4f4yP9PugXkLbg0Vjw9ltYCvxsqo5XyPJHuGOQG0NroFlSYQ/IRm4+7nRIXSr3+F9jDVayTbt+7MJVD4IB8qfx7VfdasPqfw8LIXGmd5htj2Rdh9ZUoaHbFZ3Up0ILk9cX3mkOchMx0hVTpfJTfdsW+TcNs8D6Gq7taTYkN3n4YvnusNYxlvQgXutqGxEZNgbZ7oMeFcRjFgVBE6JBbjbYbVwtD9Q//48uFsPZHjpH4d/cF74qdGeug5c0P15Z0aJ1Xi1LY0vXfvHAr7PWADctGF2bKG+2sgAOkEgY2Ym4CHQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p+zyDP3C12lhp60FPrR7cRwxMRtjEAWNur6OvZMjrXM=;
+ b=Uw1RQcKEmDYg5GLFu3RLK+UCvibSdJttLZz5alOQowPrMJmJYS2XxfSNncsEOg0k8E/Ud9Zi5lysBkx7/oYtrEBmYFEkvliqDFsgmfvJF4K2t/OKkkVzIK6LyN1XG3CN/dXlkuNk2b5sl1YtQjr/z/Lmq7GVcSaVnnVWX67de3o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ SJ0PR12MB8140.namprd12.prod.outlook.com (2603:10b6:a03:4e3::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.32; Tue, 15 Jul 2025 05:47:45 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8901.018; Tue, 15 Jul 2025
+ 05:47:45 +0000
+Message-ID: <242e5925-a0da-43c5-85d2-8796a8e09cca@amd.com>
+Date: Tue, 15 Jul 2025 11:17:40 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/8] Introduce debugfs support in IOMMU
+From: Vasant Hegde <vasant.hegde@amd.com>
+To: Will Deacon <will@kernel.org>,
+ Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
+ suravee.suthikulpanit@amd.com
+Cc: joro@8bytes.org, robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev
+References: <20250702093804.849-1-dheerajkumar.srivastava@amd.com>
+ <aHT1YeC30-ZiyS8p@willie-the-truck>
+ <a75aaf31-43e2-4a48-b323-0322f24c3b0c@amd.com>
+Content-Language: en-US
+In-Reply-To: <a75aaf31-43e2-4a48-b323-0322f24c3b0c@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN4P287CA0026.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:26f::10) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: imx93: Add calibration
- properties
-To: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Haibo Chen <haibo.chen@nxp.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org,
- imx@lists.linux.dev, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- upstream@lists.phytec.de, andrej.picej@norik.com
-References: <20250710073905.1105417-1-primoz.fiser@norik.com>
- <20250710073905.1105417-2-primoz.fiser@norik.com>
- <2bcd758b-c2d0-488a-8ead-ec7fb39f93e2@baylibre.com>
- <20250713160247.0f22bbfe@jic23-huawei>
- <de2c8e15-14e9-4c61-9a13-97ef1ec567a4@norik.com>
- <6b32118a13e9e28b7cf12152af33642c76367c34.camel@gmail.com>
-Content-Language: en-US
-From: Primoz Fiser <primoz.fiser@norik.com>
-Autocrypt: addr=primoz.fiser@norik.com; keydata=
- xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
- JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
- ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
- gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
- jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
- 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
- TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
- AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
-Organization: Norik systems d.o.o.
-In-Reply-To: <6b32118a13e9e28b7cf12152af33642c76367c34.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|SJ0PR12MB8140:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4b0424e-45a4-44e8-4caf-08ddc3631f93
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NHV2aXQ0aDh1TXk4Wmp6REhkbW1zajk1T0U3YnRNcDFDRUtNK05VNFFpeEdr?=
+ =?utf-8?B?NW9OQ0RsZDNLTFgrTVArNWpXcVk4Y1NJZSs5emg4VTBFOURsK1lGL014THVw?=
+ =?utf-8?B?MXRleXAwSGpQRUZjOFNKbnVLa2pXTnkvVGo3MnEraGROSzFtQS9YVWRuNzNK?=
+ =?utf-8?B?NWZIVVlySG0wbHBFMjJOWWNUaEhwWmNZaStHcnJONW90ejZqNmNOa1ZqK1p4?=
+ =?utf-8?B?SFJYdHhuK0M3dVo3KzBqQkh1cENQVkxxdXZWT0VjT3VRMFlwMmwweEhacFpE?=
+ =?utf-8?B?ejZZVmtGT01SRFRxS0o3Z2pBT2IxRHNldDArN1JNZ0dqOXVpWEh3Nk5YeEcw?=
+ =?utf-8?B?V284bzNjQk45UUtNYlRhOTh0bS9iTlUxQkVIdWVZL3VaUmNiVUZ3UHFOZE9P?=
+ =?utf-8?B?emRWa2QvQ3dlUktCaDIzbTk1enU4R3NwTld4MnNhWFZxTFY1VXBoVWplMDdB?=
+ =?utf-8?B?blpNOE5oWmdqWjc4Wjk4VFczZy9zZHdnVktramIwZGt1bHR5WG55MFpvbFF3?=
+ =?utf-8?B?YWFvMlV0MXU1c0tEWERIN25BNS92RWRFcXRYZHExRHAwZnVoL2Mza0kxa0Uw?=
+ =?utf-8?B?YVlpUXZFZkx4TjB5akFzQ3RFSlphYjRwMEYzNEwrNFVmcWJIbmVzTkVhcHN1?=
+ =?utf-8?B?TjNSb09wdnFRbjJqMjA3YjQwUUlRaEFzV2N3VllYUEt1WUViTjVoMk43Z2Zq?=
+ =?utf-8?B?Nk9rSWxiNnNJd1NscVZCdHpldHNST1owYnpqU09zdVQvR2RaRWFuNEo1L2V1?=
+ =?utf-8?B?WVJkU3BSQ1FMU3pZNFMrTHNoMnd1ZUtCSldmdklPQXlDT3RObElTb2NseUZI?=
+ =?utf-8?B?ZmdHRVo5WDVjVDg5L2czMUFIVC9MSFJTc0xYT2pqNllWOThmbmhjNXQwdjVG?=
+ =?utf-8?B?RFJWYlRCUWx6V3dXMkR5VzYyakJiVW5hTGRrTnBKN2NGdjB6c0MzRFk0eDdp?=
+ =?utf-8?B?WXpqSU92SHFFTHdqU2R4RUNYaWg3K1RLYXYvS3pYQWtIbVdpemdmK09ZTVA4?=
+ =?utf-8?B?VElHMXo1K0lvalFvbGc5b0VmRzNnTmRhQWhjVGtPTTRlclpVaHAzZGp5cUQ3?=
+ =?utf-8?B?RmhEQ0QxdHlnV2t0TUpYZWZwbnh6c2VGTU12cTVXSnhsYU9DK3c1VWdHMkVK?=
+ =?utf-8?B?YkJGZG5vUHV3UVRubFMreFUrU3VsUXJUUUFLSStoaVdzNFZuTVFyR1pnSGQ2?=
+ =?utf-8?B?QnVnSVRYU1ZhdG81STQ0MW5LMG5rZzhEb1ByMXc2anU2YUR6NDFYcWg0S05C?=
+ =?utf-8?B?Ymd2aW8rTmZITTVwY0FzRjZSOTNTUGp4ZzBLTmRtWVZTT0tNODNrY1VEUjFR?=
+ =?utf-8?B?M2VCbmg2Z1RNRUJPMmNKM3Y2a1N3RUpvWkwzUFVRb3ZhYjUrWnJrOFVlazAx?=
+ =?utf-8?B?aTZIOFNpOENpeFdyblMvZy92NlZnb2FIa1lURUZ6WTJqb0xOVC9Nc3VOK3pl?=
+ =?utf-8?B?U1pKd0ZLSW0wTVFjQmNMOFRsdmJXeURHeEM1QmhKT1V4TVFMb21vY0oyZzZU?=
+ =?utf-8?B?dDZueXRxSThuN2JzK1ZTcUxkTGN5dDNjYm41STYrbHpmcmJkZ1NsQ04vSERv?=
+ =?utf-8?B?UktROEhnaUhiWG5ZRExFYisvNUp5cEw2VG9uUVk4UmhBS0dISzhnTDAvVXZS?=
+ =?utf-8?B?V1FIdjcxbHllRHU4R2hEbFJpMkZjZk9ua0t1ZFJ4enBQQmRVOFVmMFFsaStS?=
+ =?utf-8?B?NmwvVm14NWdXdFh4WXRsdjRjWFN2U0ROOERtOUxIL1ZJQm5rNXR6SUpuQVpt?=
+ =?utf-8?B?K3g4QUQxS294Z01BcEE4MGRYV3d5SGdCdCtRRE4vVGJpQXduMFhpNDlOZzEv?=
+ =?utf-8?B?YlR6djNmcXF6NnRZdkJXUjlUc3ZURzdoaFByUTJIaUxXVHNrS1VJSG16ZEZp?=
+ =?utf-8?B?M3JFbS9EQ3pROWJYV0JrTko5b21xTDNWTEZTRGpoU3g1eXlJRlZZeU5wdldl?=
+ =?utf-8?Q?Hb67h/djoQs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L1JPQ0hDOHFoMkovbmtMUW0vRytEMUI0WmhBTGpSZUF3OVZ4VEFSSGNoVkUv?=
+ =?utf-8?B?N1o1V0hOT3FjUHlpZS9QQW95ZGlnbzBGRUw1ckJ6cHVwblBYZlhkYnNzQnhT?=
+ =?utf-8?B?WVpab04xQ2ZTbmVOd3JoTTZoUm9QMGl0d2Y0dmNwRmlTOWNndTM5bVBrcWpr?=
+ =?utf-8?B?Tmh0YTBRY2tHQ2htalQyaHNyWE9OVlJxWTU1RVhub2lNR2krVE9WVEZpbEZ6?=
+ =?utf-8?B?RUZPWlRkVytlUDBMeHN5Vmw3bVF5cDgvTVNmZGNMWXpFV3RaZ3REUzRkVUtI?=
+ =?utf-8?B?OC9JS1ZWSUppZWJyZXhZRFhwZDZNeDlrUlYwclNaVENqSTJvd1VVM2RvMHNW?=
+ =?utf-8?B?aXNiTVNJSHUyVHZ1NmVtUTRoUUlCYlgzNW1TQXhJdFREWWdCL3R0cGhvQWdl?=
+ =?utf-8?B?Y0c0U2ZHVFFwQkJWZFpvcmNuT0N2cFo3Z0xZd3pjOHlvSHYyUzZvNU9YTHAz?=
+ =?utf-8?B?c1BEc2ZEYUFZRHAya3JNMmpVWEtMR2hKdjNSWEdUQWphT0dHbGxBajJiVzhL?=
+ =?utf-8?B?Zjdmem5iM2RCMldSVERiNjhZRm9pNm1DWUF0SmVkWEhSR3dxLytodUpPWXd1?=
+ =?utf-8?B?STBCVmlpRHdacWxKQytsZndqa2I5N3hXdEl4MXVXMjRYVUVIdFNYVFpIOXRP?=
+ =?utf-8?B?MTVCY2Frc21CaGVSd3d5S2NNTWVKQ2F0UGxiL3RiczdIOTFWdFhuUzM1Sndz?=
+ =?utf-8?B?Z09ZMWMyc1dkTWtzeWZvZkFhYkxxS1VNSENjOWZidlZBbFBTU1FmSXcrWG9Z?=
+ =?utf-8?B?WjVBbWI5N2t5T1pTTnM4dEcxbldFRFUwanJ6allWbTl3RXBiZEptUHZ4NzJk?=
+ =?utf-8?B?ajdZMUdsRFJjY2xQQWRKSjZJWVJHWmtXNTFYWTV5ZVNmRlJJVFhYMzQ5WjlZ?=
+ =?utf-8?B?YkJnRXk0NWlXMUh5QTh1Y3pmbXFFa2ZZUS9EaXBBYzdtcGxkc0hPTkQ2UTJN?=
+ =?utf-8?B?dFE5Y2xZQ2w3Mk9CQ1RxQy9QQVVTdm5jT3RBM3dDaCtUaHB0Y09wSVQzVzdH?=
+ =?utf-8?B?OER1TTRnSHFiNm9VNHFEM281TTJzV0VYejFvaXUzV0dMWXFRcm5saTJtMHM1?=
+ =?utf-8?B?bmdSbkVyOWRXemNKOGpabUdJNGNzbmlLZk01Mms5eCtLOVkyRVBRK2trbk80?=
+ =?utf-8?B?RnFaVWhoamd1cHVaSFhOSmVoWk5sQkZEVWJwa2pOdGxyY3VZSmFxMEtrUEpl?=
+ =?utf-8?B?RFF1M1dsRWo4K25idzUxdHhDcE8yUnErNVBOQjc0L0ZmNExxenVKa0JSbnhT?=
+ =?utf-8?B?MWhwT2J2d3N0cFQ2UXozYlpvTzRucEJ0QUMyekZXSWovaDNLb1BoTzJNYWxt?=
+ =?utf-8?B?ZmJNK1ltQmltQjIxeEdZcmRYNksrR1pUSnJUeDFlWTFVc1VYMnBiS0lwUHpa?=
+ =?utf-8?B?UnhCVVdNVXRhakZERDViWTBLd1JORzV4eFNKd1puNGk4M2hldnN6MmJxU09a?=
+ =?utf-8?B?cFpyY3cvYVFZdC9Jc3I0ZERCVzg2Njd0RWRPSFRoVjRFVDJaYk9tUFo1MnVs?=
+ =?utf-8?B?Ylp1bTJrY2JmNi9IUnpJMThLUE96b0c4QWQ4bEVjWTJ0MlRmbkRtSThmT3ZF?=
+ =?utf-8?B?SVFka2swQlhQMU0vYlZjUUk5UGw2TG5HWnYyQVlwZkVpeGVUcCsvZzFQY2pT?=
+ =?utf-8?B?SGhvOG5tOEhTTDRPb0RoUzRjYUxYSEF5b1hGWXR1bmM2SDN1eXltRHFpbXI0?=
+ =?utf-8?B?TUlVWC9WNEt6VjNtQTJxRjE3OUZBVU80akNSOThuZkF2b0FhZEQ1UkpYWHkr?=
+ =?utf-8?B?M3kvcGZzekptaVVRSnNPRUJUS0xIMGRheE80RmxMbko4R2RmRU5XNzJ0M3NL?=
+ =?utf-8?B?ZmtraTlEeEhxeDhQNldDaHM2eFplelNlZFpqMys5UitzMnYwMHpZa0QwYkpR?=
+ =?utf-8?B?b0Y4bWQvRUgwNVR5bG9wcy9wU0NLRXd2eE5OUThCTWk3aVg1VFZ4a3Y0TkV5?=
+ =?utf-8?B?djZ5MHYwYkNZR1VFdCtkY3VuOTFLZzU0Tlc4YTh2elg2THpjaFV6dHgvTHYr?=
+ =?utf-8?B?YiszWG15WUEyRmRTK0pySzZKSGMvNC95eGZtVVl3TU9xdVlNQ3JVdDBuL21D?=
+ =?utf-8?B?RHYvQ1JpbzU1c1VjVHJTOG0wVmRpUGl1NlMrZGg0M052Z2plWkhGM0JsbXBG?=
+ =?utf-8?Q?H4QVIH3hi2SGgTH8XwDHlskHg?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4b0424e-45a4-44e8-4caf-08ddc3631f93
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 05:47:45.6864
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cSj7WiBfMjIRPXBl7PQX2CsF5l1zl/WfD0CoJbvnCFPWz1QXoBVeVN23I8/Y3+/85c5ivVIuwIunR3olp0CV8A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8140
 
-Hi Nuno,
+Hi Will,
 
-On 14. 07. 25 18:11, Nuno Sá wrote:
-> On Mon, 2025-07-14 at 07:56 +0200, Primoz Fiser wrote:
->> Hi all,
->>
->> On 13. 07. 25 17:02, Jonathan Cameron wrote:
->>> On Thu, 10 Jul 2025 10:46:44 -0500
->>> David Lechner <dlechner@baylibre.com> wrote:
->>>
->>>> On 7/10/25 2:39 AM, Primoz Fiser wrote:
->>>>> From: Andrej Picej <andrej.picej@norik.com>
->>>>>
->>>>> Document i.MX93 ADC calibration properties and how to set them.
->>>>>
->>>>> Signed-off-by: Andrej Picej <andrej.picej@norik.com>
->>>>> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
->>>>> ---
->>>>>  .../bindings/iio/adc/nxp,imx93-adc.yaml       | 21 +++++++++++++++++++
->>>>>  1 file changed, 21 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-
->>>>> adc.yaml b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
->>>>> index c2e5ff418920..d1c04cf85fe6 100644
->>>>> --- a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
->>>>> +++ b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
->>>>> @@ -52,6 +52,27 @@ properties:
->>>>>    "#io-channel-cells":
->>>>>      const: 1
->>>>>  
->>>>> +  nxp,calib-avg-en:
->>>>> +    default: 1
->>>>> +    description:
->>>>> +      Enable or disable calibration averaging function (AVGEN).
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    enum: [ 0, 1 ]
->>>>> +
->>>>> +  nxp,calib-nr-samples:
->>>>> +    default: 512
->>>>> +    description:
->>>>> +      Selects number of samples (NRSMPL) to be used during calibration.
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    enum: [ 16, 32, 128, 512 ]
->>>
->>> Allow 1 as a value and drop the enabled above.   Averaging over 1 sample
->>> is same as no averaging and gives simpler binding.
->>>
->>>>> +
->>>>> +  nxp,calib-t-sample:
->>>>> +    default: 22
->>>>> +    description:
->>>>> +      Selects sample time (TSAMP) of calibration conversions in ADC
->>>>> clock cycles
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    enum: [ 8, 16, 22, 32 ]
->>>>> +
->>>>>  required:
->>>>>    - compatible
->>>>>    - reg  
->>>>
->>>> This seem like things that should be set at runtime rather than
->>>> in the devicetree. Unless there is some justification on why
->>>> these values depend on how the chip is wired up?
->>
->> It depends how ADC 1.8V Vref is wired up, especially how noisy it is.
->>
->>>
->>> Further to that, I'd like to see some explanation of why we care
->>> to change it at all. Is it ever a bad idea to enable averaging and
->>> pick a large number of samples for calibration?
->>
->> This is a snippet from the i.MX93 TRM, chapter Analog-to-Digital
->> Converter (SAR_ADC) describing calibration steps:
->>
->> 1. Wait for deassertion of functional reset.
->> 2. Configure SAR controller operating clock (MCR[ADCLKSE] = 0).
->> 3. Bring ADC out of Power-down state (MCR[PWDN] = 0).
->> 4. Configure desired calibration settings (default values kept for
->> highest accuracy maximum time).
->> • MCR[TSAMP]: Sample time for calibration conversion
->> • MCR[NRSMPL]: Number of samples in averaging
->> • MCR[AVGEN]: Averaging function enable in calibration
->> 5. Run calibration by writing a one to MCR[CALSTART].
->> 6. Check calibration run status in MSR[CALBUSY]—wait until MSR[CALBUSY]
->> = 0; alternatively, MSR[ADCSTAT] can be
->> used to check status.
->> 7. Check calibration pass/fail status in MSR[CALFAIL] field. If
->> MSR[CALFAIL] = 1 then calibration failed. Detailed status
->> can be checked in CALSTAT.
->>
->>
->> See point 4).
->>
->> Not sure why would there be an option to configure i.MX93 ADC
->> calibration parameters if one use-case (max accuracy max time) to rule
->> them all?
->>
+On 7/14/2025 6:24 PM, Vasant Hegde wrote:
+> Hi Will,
 > 
-> Sometimes HW guys just want to give you some options. Does not mean we have to
-> use them all :).
+> On 7/14/2025 5:47 PM, Will Deacon wrote:
+>> On Wed, Jul 02, 2025 at 03:07:56PM +0530, Dheeraj Kumar Srivastava wrote:
+>>> Introducing debugfs support in AMD/IOMMU driver that will allow
+>>> userspace to dump below IOMMU information
+>>> 1) MMIO and Capability register per IOMMU
+>>> 2) Command buffer
+>>> 3) Device table entry
+>>> 4) Interrupt remapping table entry
+>>
+>> Suravee, Vasant -- are you happy with this series now? I'll be closing
+>> the IOMMU tree for 6.17 shortly and it would be a shame for this to
+>> miss the cut given that it's got to v7 and Dheeraj has been receptive to
+>> all the feedback so far.
 > 
-> I guess what Jonathan is interested in, is to understand in what conditions the
-> defaults are no good for the calibration? If we can have a set of values that
-> should pretty much always work, no need to further complicate the bindings or
-> the driver.
+> Ack. This is mostly ready. Give me a day. I will review/test this series.
 
-In case you have a noisy Vref you can adjust the parameters to pass the
-calibration and have a working ADC.
+I have reviewed/tested this series. It looks good to me. Can you please pick
+this series?
 
-The trade-off is a less precise ADC but at least a working one.
+For entire series :
 
-In ideal case you would have Vref supplied by the dedicated LDO and tons
-of decoupling caps, but in real-world you have it connected to a noisy
-SMPS and you need to adjust the parameters accordingly.
+Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
 
-That's it :)
+-Vasant
 
-BR,
-Primoz
 
--- 
-Primoz Fiser
-phone: +386-41-390-545
-email: primoz.fiser@norik.com
---
-Norik systems d.o.o.
-Your embedded software partner
-Slovenia, EU
-phone: +386-41-540-545
-email: info@norik.com
+
 
