@@ -1,210 +1,401 @@
-Return-Path: <linux-kernel+bounces-731315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A370B05289
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:16:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF54B0528D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5476A7B2C5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6B71AA81CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65AA27380C;
-	Tue, 15 Jul 2025 07:15:44 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC6E26FA4B;
+	Tue, 15 Jul 2025 07:15:51 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A53426FA6A;
-	Tue, 15 Jul 2025 07:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1692701C4;
+	Tue, 15 Jul 2025 07:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752563744; cv=none; b=iHZq4motWqf20IWpWrnAJZtHMlHgx4SeWT02aCFkVRMkC4iHl8h0WIsp0KuGdti1/pySo00ZXb4Fv1JFjw19Fkj7XoPQ0X4I4IgvkUfnv5LuagcYDx3wQ3+hNfl43T7Q7PQM+jbs89P1vvG/IfDWf23rZYg28A7ntzIjdblyB0A=
+	t=1752563751; cv=none; b=gR+mC+0UElsdlbaGe30zw7V6UlRS7O8taKaF5HEeBnq8ykT8/MvifM3o5DS0tPQUCo2nDCIBWRTfgKb/4hfMp9ja+N8dt+D27dFVRiT2UHpiaCfr+aMIDm0BJJs2oESBVFD/XH/yK0oI854HpvXQE3f335fvKi/1SpnF7IFOb4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752563744; c=relaxed/simple;
-	bh=659K2a+RVej/0E/JVasPDdOXxmtJmIlt1/h05SIk5TE=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=gXdlK1eDZ0Rs2jpS+ygUf2Zev0/tG8Da49mFtiaxWuhzdehNYEQYQygVg5Uyjn/Gxy1eldK6hH2W1RPTHCNn2nVTln287RjTaxO2hDrctwQ/G9EmDAb9Dl0afU+dp7mcKypq8dol5nLwCUjvkXGrbfCK/M150A7pjro60pmdaDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bh9Sm2p1Wz5F2lq;
-	Tue, 15 Jul 2025 15:15:36 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 56F7FHiZ002069;
-	Tue, 15 Jul 2025 15:15:17 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 15 Jul 2025 15:15:19 +0800 (CST)
-Date: Tue, 15 Jul 2025 15:15:19 +0800 (CST)
-X-Zmail-TransId: 2afa68760007ffffffffd15-679fc
-X-Mailer: Zmail v1.0
-Message-ID: <202507151515190926U70E2Wb3ud2PtF5l19ku@zte.com.cn>
+	s=arc-20240116; t=1752563751; c=relaxed/simple;
+	bh=1IovWaOhiidYGU/HqcJw2Lzr3Uv4x8gXnuT/WGIJ3r8=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Zeiv947tzEMxwTLnQUQSAU57MFkaGeXz0hLsYQ23g5MoG6iS4RL97Z6whj6cY6t7nRh+S3VtOuOkTl2zqO3sVxTdp7dZDUYUdgwa38dM1wUkPLgRhBRjUGTQeRU1z+kRQgRSW6tzO2beYnhrVcPeLRXEWUaJxy6WEz3p8DrxCEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bh9N51y9hzHrKN;
+	Tue, 15 Jul 2025 15:11:33 +0800 (CST)
+Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
+	by mail.maildlp.com (Postfix) with ESMTPS id 08101180450;
+	Tue, 15 Jul 2025 15:15:40 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ dggpemf500015.china.huawei.com (7.185.36.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Jul 2025 15:15:39 +0800
+Subject: Re: [PATCH v5 3/3] migration: adapt to new migration configuration
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
+	<jgg@nvidia.com>, Jonathan Cameron <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+References: <20250630085402.7491-1-liulongfang@huawei.com>
+ <20250630085402.7491-4-liulongfang@huawei.com>
+ <7bdf1024bdcd4ba6b0bce352caefdefc@huawei.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <38061357-1b9b-1e35-5273-0ebb1d7bcadd@huawei.com>
+Date: Tue, 15 Jul 2025 15:15:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <alexs@kernel.org>
-Cc: <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <yang.tao172@zte.com.cn>, <ye.xingchen@zte.com.cn>,
-        <wang.yaxin@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgdWJpZnMucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 56F7FHiZ002069
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68760018.000/4bh9Sm2p1Wz5F2lq
+MIME-Version: 1.0
+In-Reply-To: <7bdf1024bdcd4ba6b0bce352caefdefc@huawei.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500015.china.huawei.com (7.185.36.143)
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+On 2025/7/8 16:28, Shameerali Kolothum Thodi wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: liulongfang <liulongfang@huawei.com>
+>> Sent: Monday, June 30, 2025 9:54 AM
+>> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+>> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+>> <jonathan.cameron@huawei.com>
+>> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+>> Subject: [PATCH v5 3/3] migration: adapt to new migration configuration
+>>
+>> On new platforms greater than QM_HW_V3, the migration region has been
+>> relocated from the VF to the PF. The driver must also be modified
+>> accordingly to adapt to the new hardware device.
+>>
+>> Utilize the PF's I/O base directly on the new hardware platform,
+>> and no mmap operation is required. If it is on an old platform,
+>> the driver needs to be compatible with the old solution.
+>>
+>> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+>> ---
+>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 166 ++++++++++++------
+>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |   7 +
+>>  2 files changed, 120 insertions(+), 53 deletions(-)
+>>
+>> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> index 1ddc9dbadb70..3aec3b92787f 100644
+>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> @@ -125,6 +125,72 @@ static int qm_get_cqc(struct hisi_qm *qm, u64
+>> *addr)
+>>  	return 0;
+>>  }
+>>
+>> +static int qm_get_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+>> +			   struct acc_vf_data *vf_data)
+>> +{
+>> +	struct hisi_qm *qm = &hisi_acc_vdev->vf_qm;
+>> +	struct device *dev = &qm->pdev->dev;
+>> +	u32 eqc_addr, aeqc_addr;
+>> +	int ret;
+>> +
+>> +	if (qm->ver == QM_HW_V3) {
+>> +		eqc_addr = QM_EQC_DW0;
+>> +		aeqc_addr = QM_AEQC_DW0;
+>> +	} else {
+>> +		eqc_addr = QM_EQC_PF_DW0;
+>> +		aeqc_addr = QM_AEQC_PF_DW0;
+>> +	}
+>> +
+>> +	/* QM_EQC_DW has 7 regs */
+>> +	ret = qm_read_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to read QM_EQC_DW\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* QM_AEQC_DW has 7 regs */
+>> +	ret = qm_read_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to read QM_AEQC_DW\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int qm_set_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+>> +			   struct acc_vf_data *vf_data)
+>> +{
+>> +	struct hisi_qm *qm = &hisi_acc_vdev->vf_qm;
+>> +	struct device *dev = &qm->pdev->dev;
+>> +	u32 eqc_addr, aeqc_addr;
+>> +	int ret;
+>> +
+>> +	if (qm->ver == QM_HW_V3) {
+>> +		eqc_addr = QM_EQC_DW0;
+>> +		aeqc_addr = QM_AEQC_DW0;
+>> +	} else {
+>> +		eqc_addr = QM_EQC_PF_DW0;
+>> +		aeqc_addr = QM_AEQC_PF_DW0;
+>> +	}
+>> +
+>> +	/* QM_EQC_DW has 7 regs */
+>> +	ret = qm_write_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to write QM_EQC_DW\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* QM_AEQC_DW has 7 regs */
+>> +	ret = qm_write_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to write QM_AEQC_DW\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int qm_get_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
+>>  {
+>>  	struct device *dev = &qm->pdev->dev;
+>> @@ -167,20 +233,6 @@ static int qm_get_regs(struct hisi_qm *qm, struct
+>> acc_vf_data *vf_data)
+>>  		return ret;
+>>  	}
+>>
+>> -	/* QM_EQC_DW has 7 regs */
+>> -	ret = qm_read_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
+>> -	if (ret) {
+>> -		dev_err(dev, "failed to read QM_EQC_DW\n");
+>> -		return ret;
+>> -	}
+>> -
+>> -	/* QM_AEQC_DW has 7 regs */
+>> -	ret = qm_read_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw,
+>> 7);
+>> -	if (ret) {
+>> -		dev_err(dev, "failed to read QM_AEQC_DW\n");
+>> -		return ret;
+>> -	}
+>> -
+>>  	return 0;
+>>  }
+>>
+>> @@ -239,20 +291,6 @@ static int qm_set_regs(struct hisi_qm *qm, struct
+>> acc_vf_data *vf_data)
+>>  		return ret;
+>>  	}
+>>
+>> -	/* QM_EQC_DW has 7 regs */
+>> -	ret = qm_write_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
+>> -	if (ret) {
+>> -		dev_err(dev, "failed to write QM_EQC_DW\n");
+>> -		return ret;
+>> -	}
+>> -
+>> -	/* QM_AEQC_DW has 7 regs */
+>> -	ret = qm_write_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw,
+>> 7);
+>> -	if (ret) {
+>> -		dev_err(dev, "failed to write QM_AEQC_DW\n");
+>> -		return ret;
+>> -	}
+>> -
+>>  	return 0;
+>>  }
+>>
+>> @@ -522,6 +560,10 @@ static int vf_qm_load_data(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev,
+>>  		return ret;
+>>  	}
+>>
+>> +	ret = qm_set_xqc_regs(hisi_acc_vdev, vf_data);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>  	ret = hisi_qm_mb(qm, QM_MB_CMD_SQC_BT, qm->sqc_dma, 0, 0);
+>>  	if (ret) {
+>>  		dev_err(dev, "set sqc failed\n");
+>> @@ -589,6 +631,10 @@ static int vf_qm_state_save(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev,
+>>  	vf_data->vf_qm_state = QM_READY;
+>>  	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
+>>
+>> +	ret = qm_get_xqc_regs(hisi_acc_vdev, vf_data);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>  	ret = vf_qm_read_data(vf_qm, vf_data);
+>>  	if (ret)
+>>  		return ret;
+>> @@ -1186,34 +1232,47 @@ static int hisi_acc_vf_qm_init(struct
+>> hisi_acc_vf_core_device *hisi_acc_vdev)
+>>  {
+>>  	struct vfio_pci_core_device *vdev = &hisi_acc_vdev->core_device;
+>>  	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
+>> +	struct hisi_qm *pf_qm = hisi_acc_vdev->pf_qm;
+>>  	struct pci_dev *vf_dev = vdev->pdev;
+>>
+>> -	/*
+>> -	 * ACC VF dev BAR2 region consists of both functional register space
+>> -	 * and migration control register space. For migration to work, we
+>> -	 * need access to both. Hence, we map the entire BAR2 region here.
+>> -	 * But unnecessarily exposing the migration BAR region to the Guest
+>> -	 * has the potential to prevent/corrupt the Guest migration. Hence,
+>> -	 * we restrict access to the migration control space from
+>> -	 * Guest(Please see mmap/ioctl/read/write override functions).
+>> -	 *
+>> -	 * Please note that it is OK to expose the entire VF BAR if migration
+>> -	 * is not supported or required as this cannot affect the ACC PF
+>> -	 * configurations.
+>> -	 *
+>> -	 * Also the HiSilicon ACC VF devices supported by this driver on
+>> -	 * HiSilicon hardware platforms are integrated end point devices
+>> -	 * and the platform lacks the capability to perform any PCIe P2P
+>> -	 * between these devices.
+>> -	 */
+>> +	if (pf_qm->ver == QM_HW_V3) {
+>> +		/*
+>> +		 * ACC VF dev BAR2 region consists of both functional
+>> register space
+>> +		 * and migration control register space. For migration to
+>> work, we
+>> +		 * need access to both. Hence, we map the entire BAR2
+>> region here.
+>> +		 * But unnecessarily exposing the migration BAR region to
+>> the Guest
+>> +		 * has the potential to prevent/corrupt the Guest migration.
+>> Hence,
+>> +		 * we restrict access to the migration control space from
+>> +		 * Guest(Please see mmap/ioctl/read/write override
+>> functions).
+>> +		 *
+>> +		 * Please note that it is OK to expose the entire VF BAR if
+>> migration
+>> +		 * is not supported or required as this cannot affect the ACC
+>> PF
+>> +		 * configurations.
+>> +		 *
+>> +		 * Also the HiSilicon ACC VF devices supported by this driver
+>> on
+>> +		 * HiSilicon hardware platforms are integrated end point
+>> devices
+>> +		 * and the platform lacks the capability to perform any PCIe
+>> P2P
+>> +		 * between these devices.
+>> +		 */
+>>
+>> -	vf_qm->io_base =
+>> -		ioremap(pci_resource_start(vf_dev,
+>> VFIO_PCI_BAR2_REGION_INDEX),
+>> -			pci_resource_len(vf_dev,
+>> VFIO_PCI_BAR2_REGION_INDEX));
+>> -	if (!vf_qm->io_base)
+>> -		return -EIO;
+>> +		vf_qm->io_base =
+>> +			ioremap(pci_resource_start(vf_dev,
+>> VFIO_PCI_BAR2_REGION_INDEX),
+>> +				pci_resource_len(vf_dev,
+>> VFIO_PCI_BAR2_REGION_INDEX));
+>> +		if (!vf_qm->io_base)
+>> +			return -EIO;
+>>
+>> -	vf_qm->fun_type = QM_HW_VF;
+>> +		vf_qm->fun_type = QM_HW_VF;
+>> +		vf_qm->ver = pf_qm->ver;
+>> +	} else {
+>> +		/*
+>> +		 * On hardware platforms greater than QM_HW_V3, the
+>> migration function
+>> +		 * register is placed in the BAR2 configuration region of the
+>> PF,
+>> +		 * and each VF device occupies 8KB of configuration space.
+>> +		 */
+>> +		vf_qm->io_base = pf_qm->io_base +
+>> QM_MIG_REGION_OFFSET +
+>> +				 hisi_acc_vdev->vf_id *
+>> QM_MIG_REGION_SIZE;
+>> +		vf_qm->fun_type = QM_HW_PF;
+> 
+> I don't think you can use the QM fun_type to distinguish this, because it is still a
+> VF dev. Better to have another field to detect this.
+>
 
-translate the "ubifs.rst" into Simplified Chinese.
+The devices that explicitly support live migration have already been identified during probe,
+and only versions >= QM_HW_V3 are supported.
+Among these, only QM_HW_V3 uses the VF's BAR2 configuration space. The others use the PF's
+configuration space. This difference is already distinguishable through the QM fun_type,
+and both functional verification and testing are OK.
 
-Update to commit 5f5cae9b0e81("Documentation: ubifs: Fix
-compression idiom")
+> Also I have another question. In the hisi_acc_vfio_pci_probe()  we currently
+> look for pf_qm-> >= QM_HW_V3. This means current driver can get loaded
+> on this new hardware, right? If so, I think we need to prevent that. And also
+> we need to block any migration  attempt from existing host kernels to new
+> ones.
+> 
 
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Signed-off-by: yang tao <yang.tao172@zte.com.cn>
----
- .../translations/zh_CN/filesystems/index.rst  |   1 +
- .../translations/zh_CN/filesystems/ubifs.rst  | 111 ++++++++++++++++++
- 2 files changed, 112 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs.rst
+The current driver can be loaded on both old QM_HW_V3 hardware and new hardware platforms.
+This is because they only differ in the io_base, while other functionalities are the same.
+Additionally, the compatibility issue for live migration between old and new devices is handled.
+Compatibility checks are performed during vf_qm_check_match --> vf_qm_version_check to
+ensure normal functionality after migration.
 
-diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index 9f2a8b003778..faaa0f097223 100644
---- a/Documentation/translations/zh_CN/filesystems/index.rst
-+++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -26,4 +26,5 @@ Linux Kernel中的文件系统
-    virtiofs
-    debugfs
-    tmpfs
-+   ubifs
+Thanks,
+Longfang.
 
-diff --git a/Documentation/translations/zh_CN/filesystems/ubifs.rst b/Documentation/translations/zh_CN/filesystems/ubifs.rst
-new file mode 100644
-index 000000000000..27997777f4ea
---- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/ubifs.rst
-@@ -0,0 +1,111 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/filesystems/ubifs.rst
-+
-+:翻译:
-+
-+   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
-+
-+:校译:
-+
-+   - 杨涛 yang tao <yang.tao172@zte.com.cn>
-+
-+===============
-+UBI 文件系统
-+===============
-+
-+简介
-+============
-+
-+UBIFS 文件系统全称为 UBI 文件系统（UBI File System）。UBI 代表无序块镜像（Unsorted
-+Block Images）。UBIFS 是一种闪存文件系统，这意味着它专为闪存设备设计。需要理解的是，UBIFS
-+与 Linux 中任何传统文件系统（如 Ext2、XFS、JFS 等）完全不同。UBIFS 代表一类特殊的文件系统，
-+它们工作在 MTD 设备而非块设备上。该类别的另一个 Linux 文件系统是 JFFS2。
-+
-+为更清晰说明，以下是 MTD 设备与块设备的简要比较：
-+
-+1. MTD 设备代表闪存设备，由较大尺寸的擦除块组成，通常约 128KiB。块设备由小块组成，通常 512
-+   字节。
-+2. MTD 设备支持 3 种主要操作：在擦除块内偏移位置读取、在擦除块内偏移位置写入、以及擦除整个擦除
-+   块。块设备支持 2 种主要操作：读取整个块和写入整个块。
-+3. 整个擦除块必须先擦除才能重写内容。块可直接重写。
-+4. 擦除块在经历一定次数的擦写周期后会磨损，通常 SLC NAND 和 NOR 闪存为 100K-1G 次，MLC
-+   NAND 闪存为 1K-10K 次。块设备不具备磨损特性。
-+5. 擦除块可能损坏（仅限 NAND 闪存），软件需处理此问题。硬盘上的块通常不会损坏，因为硬件有坏块
-+   替换机制（至少现代 LBA 硬盘如此）。
-+
-+这充分说明了 UBIFS 与传统文件系统的本质差异。
-+
-+UBIFS 工作在 UBI 层之上。UBI 是一个独立的软件层（位于 drivers/mtd/ubi），本质上是卷管理和
-+磨损均衡层。它提供称为 UBI 卷的高级抽象，比 MTD 设备更上层。UBI 设备的编程模型与 MTD 设备非
-+常相似，仍由大容量擦除块组成，支持读/写/擦除操作，但 UBI 设备消除了磨损和坏块限制（上述列表的第
-+4 和第 5 项）。
-+
-+某种意义上，UBIFS 是 JFFS2 文件系统的下一代产品，但它与 JFFS2 差异巨大且不兼容。主要区别如下：
-+
-+* JFFS2 工作在 MTD 设备之上，UBIFS 依赖于 UBI 并工作在 UBI 卷之上。
-+* JFFS2 没有介质索引，需在挂载时构建索引，这要求全介质扫描。UBIFS 在闪存介质上维护文件系统索引
-+  信息，无需全介质扫描，因此挂载速度远快于 JFFS2。
-+* JFFS2 是直写（write-through）文件系统，而 UBIFS 支持回写（write-back），这使得 UBIFS
-+  写入速度快得多。
-+
-+与 JFFS2 类似，UBIFS 支持实时压缩，可将大量数据存入闪存。
-+
-+与 JFFS2 类似，UBIFS 能容忍异常重启和断电。它不需要类似 fsck.ext2 的工具。UBIFS 会自动重放日
-+志并从崩溃中恢复，确保闪存数据结构的一致性。
-+
-+UBIFS 具有对数级扩展性（其使用的数据结构多为树形），因此挂载时间和内存消耗不像 JFFS2 那样线性依
-+赖于闪存容量。这是因为 UBIFS 在闪存介质上维护文件系统索引。但 UBIFS 依赖于线性扩展的 UBI 层，
-+因此整体 UBI/UBIFS 栈仍是线性扩展。尽管如此，UBIFS/UBI 的扩展性仍显著优于 JFFS2。
-+
-+UBIFS 开发者认为，未来可开发同样具备对数级扩展性的 UBI2。UBI2 将支持与 UBI 相同的 API，但二进
-+制不兼容。因此 UBIFS 无需修改即可使用 UBI2。
-+
-+挂载选项
-+=============
-+
-+(*) 表示默认选项。
-+
-+====================    =======================================================
-+bulk_read               批量读取以利用闪存介质的顺序读取加速特性
-+no_bulk_read (*)        禁用批量读取
-+no_chk_data_crc (*)     跳过数据节点的 CRC 校验以提高读取性能。 仅在闪存
-+                        介质高度可靠时使用此选项。 此选项可能导致文件内容损坏无法被
-+                        察觉。
-+chk_data_crc            强制校验数据节点的 CRC
-+compr=none              覆盖默认压缩器，设置为"none"
-+compr=lzo               覆盖默认压缩器，设置为"LZO"
-+compr=zlib              覆盖默认压缩器，设置为"zlib"
-+auth_key=               指定用于文件系统身份验证的密钥。
-+                        使用此选项将强制启用身份验证。
-+                        传入的密钥必须存在于内核密钥环中， 且类型必须是'logon'
-+auth_hash_name=         用于身份验证的哈希算法。同时用于哈希计算和 HMAC
-+                        生成。典型值包括"sha256"或"sha512"
-+====================    =======================================================
-+
-+快速使用指南
-+========================
-+
-+挂载的 UBI 卷通过 "ubiX_Y" 或 "ubiX:NAME" 语法指定，其中 "X" 是 UBI 设备编号，"Y" 是 UBI
-+卷编号，"NAME" 是 UBI 卷名称。
-+
-+将 UBI 设备 0 的卷 0 挂载到 /mnt/ubifs::
-+
-+    $ mount -t ubifs ubi0_0 /mnt/ubifs
-+
-+将 UBI 设备 0 的 "rootfs" 卷挂载到 /mnt/ubifs（"rootfs" 是卷名）::
-+
-+    $ mount -t ubifs ubi0:rootfs /mnt/ubifs
-+
-+以下是内核启动参数的示例，用于将 mtd0 附加到 UBI 并挂载 "rootfs" 卷：
-+ubi.mtd=0 root=ubi0:rootfs rootfstype=ubifs
-+
-+参考资料
-+==========
-+
-+UBIFS 文档及常见问题解答/操作指南请访问 MTD 官网：
-+
-+- http://www.linux-mtd.infradead.org/doc/ubifs.html
-+- http://www.linux-mtd.infradead.org/faq/ubifs.html
--- 
-2.25.1
+> Thanks,
+> Shameer
+> 
+>> +	}
+>>  	vf_qm->pdev = vf_dev;
+>>  	mutex_init(&vf_qm->mailbox_lock);
+>>
+>> @@ -1539,7 +1598,8 @@ static void hisi_acc_vfio_pci_close_device(struct
+>> vfio_device *core_vdev)
+>>  	hisi_acc_vf_disable_fds(hisi_acc_vdev);
+>>  	mutex_lock(&hisi_acc_vdev->open_mutex);
+>>  	hisi_acc_vdev->dev_opened = false;
+>> -	iounmap(vf_qm->io_base);
+>> +	if (vf_qm->ver == QM_HW_V3)
+>> +		iounmap(vf_qm->io_base);
+>>  	mutex_unlock(&hisi_acc_vdev->open_mutex);
+>>  	vfio_pci_core_close_device(core_vdev);
+>>  }
+>> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+>> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+>> index 91002ceeebc1..348f8bb5b42c 100644
+>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+>> @@ -59,6 +59,13 @@
+>>  #define ACC_DEV_MAGIC_V1	0XCDCDCDCDFEEDAACC
+>>  #define ACC_DEV_MAGIC_V2	0xAACCFEEDDECADEDE
+>>
+>> +#define QM_MIG_REGION_OFFSET		0x180000
+>> +#define QM_MIG_REGION_SIZE		0x2000
+>> +
+>> +#define QM_SUB_VERSION_ID		0x100210
+>> +#define QM_EQC_PF_DW0			0x1c00
+>> +#define QM_AEQC_PF_DW0			0x1c20
+>> +
+>>  struct acc_vf_data {
+>>  #define QM_MATCH_SIZE offsetofend(struct acc_vf_data, qm_rsv_state)
+>>  	/* QM match information */
+>> --
+>> 2.24.0
+> 
+> .
+> 
 
