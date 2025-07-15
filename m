@@ -1,234 +1,174 @@
-Return-Path: <linux-kernel+bounces-732445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4687DB066A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA26CB066AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3672D56518F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:16:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD7E565260
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5F02BFC9D;
-	Tue, 15 Jul 2025 19:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F912C3252;
+	Tue, 15 Jul 2025 19:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PEeQJNx6"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Sl4Qi5Q5"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2057.outbound.protection.outlook.com [40.107.93.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ED92BE053;
-	Tue, 15 Jul 2025 19:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFF92E54C5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606812; cv=fail; b=BYHSrGvd2vVbtno293xei0cjsK6Hx/urL3jhOySXUv4Zs4uvz4NDVMCPTFTRg+DDAdZ9EcjVjsakRwptwtZPFVONl6ApHNeCbtMrn0/8bZdFyALR5MwvQxOufVqY7xrWn4A2s4xTO4HL4dpCkTKUssYmEOxeqww7x/bpOfiXVi4=
+	t=1752606817; cv=fail; b=L2rg4FMyR8stpWPen0fvr9YEjkUPqFQQKpnZ6p5/g622oO1l5b6Z95Pkq45WGIVRWkdI/pKz+3zpZXbADZsC5S4iEmjhDHPaBhrxIz+NALHBUwcVMr7FrRWawAnkPTsi5wAGTI2p8TjiEFtdEDpa9z3dwTqK9v+wQSuEpsXEw98=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606812; c=relaxed/simple;
-	bh=Xu0GA1YJAwCvRDFLYnxWCkdKgP9XzJ3RnijdHULK26s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bEMKt3Iy74aV47qyVHZdUv5AtAkAgSc0e71K8olDGoAeGW4KohsljGxhe0uywnYi8zITrrXv+1S+ipD5u1e9Zq6IHyXtJcikzjRwzRxkrUrDzdaJslNfyI88XC1A3uxcBaR846ViAbpt+1rEKZxugZsfI0zH5SORpqAT8CipL4c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PEeQJNx6; arc=fail smtp.client-ip=40.107.223.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1752606817; c=relaxed/simple;
+	bh=GvFS21BDfQrYb1a2/SHRWyVu8H4amDniqZFUbmQNe54=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KBQvl6Rx3yKxHjOn+x2MRWNBl3kHTpvPFo2ywAroPRqNlIWziW6IVQqGoBADfdIGrN3Wxc3vxip7G8rldQ9tdM6BDvbnWqlK8SULLOx9hkOSSdSYf8dRpcg2md2dY3hWELBJLjCk/bKiEQCZwC3eTu08Ihaoex13tDgOrEag/Ko=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Sl4Qi5Q5; arc=fail smtp.client-ip=40.107.93.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QWxxbOycbRyzCPw7cGPZZsW8s3yThWCFhQgNear3c/jn9GsNrZBsaBWednh7tvhlA+Tu19AcUdIcwtjUozPdbz7JfvGBY0Wq/TYyn893FB4NXzTbalXrH3Z9UCEtokPWO4kIY6nzbnRNiuU+7CZU68gJ10Il0ER+Mej/mUUEw+fFW0CrpL7FHDvp8WmPO7pfRhmgrl7iuvntknAV5u1eFWpjfgLLlQgny70CFsuxMqSbfISAqbZPYh3XPrxR0mvZPdZB8u2JpmbV00U5c4QBuTcPOIWAtO0SlRy49wuk1SZ2dpWsxnss1SXvwxoetD0dyijxqYV8Js4I+iuQOt6Qkg==
+ b=OW/0EAp01sD+ZqS9VzN9j7J4w3dbvdZ+SmomlpN5Htk4be5Xnc8pZMo4EOgjuTAANelwyvJhY5QAb4z9RwkVz97eBjJ+bNd0zOKCn79N6GxaqTyRLh76Djb7VERqktJO1PgjqwQug2VCi+AnIs4twXkTwxYNFGPuw8PMgMxTFQ+L9d4x0eQtw3LUe07zQVOxjYng/Y030mN+wm9zXHHu8Px2Ge/hNmwKzCG2VOqKSywA5vj1mBp1d0SJf368mQPVfvocd1StyJye5Wmw+Bv7AVodulVBJX2rEGEuUcqAQfUv+gx44VMSdEWNicxmH1FQ5+Tu78mQ2AMHmgm8428oXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HVOhtcGltJs4OysNnljLDQxy3rYgb6c3UF6qSZethfE=;
- b=wGqz1Yxw08Yd3PasQ5Ws6T7dgBEir0DSCYAgg5Xp50Y2ExLk1eNocpqxA3SupMNKFtjAbKrLWMJXc5IOPjzMFzX03jCeoiJIimGozzk0T3/sWwyfLKkeG2phDvy7RPK2uZUV3T6+4AvxhOhUHwWLrlaI7UYQcOQu2vRgCNP9axzMbyCBG6iy9bvDbUEndj7UMIqRMpii92c2JvUCz6QHTIRdVkruXGBCG45CrP+0pc3daU9tUXOgRVTXOuDQhgs/Ib+Cwzuo5vGIVFJCsxk+W+XY0gP0JvAAdFuEDJGK6/9A6U3tXt/c9XuUrOsNEzTFqLVR3KpCGuizYMM5HgNXng==
+ bh=wGDEmtbpK8dsIccJ71ZPW7g61J6A2hUv1El7HZjjU7c=;
+ b=YKrlUBYjYgYpl+UCQC3Pbcehv9JHFpXPncYIKFkPUXhTGHGWJjQlLP+KhstuUUGbjYbFGEXeoZJRHoUJp40NA08GIuc893WH6Gv6z0nsuG2ksaX9DU8SGpxbt7tqsBHEwj8Tedo0EbD6wjW0OLmUXEd1GqMdCKDxKBbp+uby3pL0uX0e92DuowJH6OaK/z+6C/HnLvgBhCidY2Ld/p3lO50dDobXEJoaeFhS5AvqctsGi7mvLVZPPB3OMg11wmX0O3kDlicOcqYPmYm8W5QthJOXqhaK6Sicmwhj04dXPWRmCkgH0sjkIaHklLfQzy9d5gj2l/zToVLp6VxCBp5kng==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ 216.228.118.232) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HVOhtcGltJs4OysNnljLDQxy3rYgb6c3UF6qSZethfE=;
- b=PEeQJNx6jJETKj5Gkr4LJAo0hCl4jG0BSYNWML7dRDyBzwDlOfXqACYOMHqYGjA+k953eh1Lx55YQEjdMMXB1opmzvxJyHtJUrbZ9hfELD54n3904fm9DYITSzxGyAe/bJn4IxWIhpGbt928KqGUX0y8Pjx5AMLwjyoMrEcJ7Ro=
-Received: from BN9PR03CA0070.namprd03.prod.outlook.com (2603:10b6:408:fc::15)
- by CY8PR12MB7658.namprd12.prod.outlook.com (2603:10b6:930:9e::20) with
+ bh=wGDEmtbpK8dsIccJ71ZPW7g61J6A2hUv1El7HZjjU7c=;
+ b=Sl4Qi5Q55x9B4dP5laZlHFeGFGoqAJa/fJbopDJdzbnyEk4X1TucEuAOE8KwTj5cz63ENf4DYIGc9xR2DLW3lXuUI8+zASV8G6JpmLkM29Zv9/CxfIgw0v4TRfIejRyD6YzVkQe24f5oWY3o+wf1upExErZLkzFYIpDphqJ20Czm1jfE4QCliW9LAwcbR1q8QVu/RZQck63r5iocIHkjdNBhEWQmTxLmJ02TrVd8pLtXDAXk7TKtkm/+9IFOH/my6ILLCmIv7HLGr/pC2ZRz/e9t/0SvSrdnKsK7OWMgJfS94a3G95jWp8d4ZMiWoO9gRVHRwzDZDW54Xn6qEaNNvg==
+Received: from MW4PR03CA0098.namprd03.prod.outlook.com (2603:10b6:303:b7::13)
+ by MN0PR12MB6200.namprd12.prod.outlook.com (2603:10b6:208:3c3::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Tue, 15 Jul
- 2025 19:13:25 +0000
-Received: from MN1PEPF0000F0E4.namprd04.prod.outlook.com
- (2603:10b6:408:fc:cafe::7c) by BN9PR03CA0070.outlook.office365.com
- (2603:10b6:408:fc::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.32 via Frontend Transport; Tue,
- 15 Jul 2025 19:13:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000F0E4.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 19:13:25 +0000
-Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
- 2025 14:13:22 -0500
-From: Robert Richter <rrichter@amd.com>
-To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
-	<gourry@gourry.net>, "Fabio M. De Francesco"
-	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
-	Robert Richter <rrichter@amd.com>
-Subject: [PATCH v1 20/20] cxl/region: Early check region's interleaving configuration
-Date: Tue, 15 Jul 2025 21:11:43 +0200
-Message-ID: <20250715191143.1023512-21-rrichter@amd.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250715191143.1023512-1-rrichter@amd.com>
-References: <20250715191143.1023512-1-rrichter@amd.com>
+ 2025 19:13:31 +0000
+Received: from SN1PEPF000397B2.namprd05.prod.outlook.com
+ (2603:10b6:303:b7:cafe::bc) by MW4PR03CA0098.outlook.office365.com
+ (2603:10b6:303:b7::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Tue,
+ 15 Jul 2025 19:13:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF000397B2.mail.protection.outlook.com (10.167.248.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 19:13:29 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Jul
+ 2025 12:13:11 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 15 Jul 2025 12:13:10 -0700
+Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 15 Jul 2025 12:13:10 -0700
+Date: Tue, 15 Jul 2025 12:13:08 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+CC: <jgg@nvidia.com>, <jgg@ziepe.ca>, <kevin.tian@intel.com>,
+	<will@kernel.org>, <aneesh.kumar@kernel.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <joro@8bytes.org>, <robin.murphy@arm.com>,
+	<shuah@kernel.org>, <aik@amd.com>, <dan.j.williams@intel.com>,
+	<baolu.lu@linux.intel.com>, <yilun.xu@intel.com>
+Subject: Re: [PATCH v5 6/8] iommufd/selftest: Explicitly skip tests for
+ inapplicable variant
+Message-ID: <aHaoRAfClCoCtm21@Asurada-Nvidia>
+References: <20250715063245.1799534-1-yilun.xu@linux.intel.com>
+ <20250715063245.1799534-7-yilun.xu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250715063245.1799534-7-yilun.xu@linux.intel.com>
+X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E4:EE_|CY8PR12MB7658:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e3b6ff4-e935-4e75-3e5f-08ddc3d3ac62
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B2:EE_|MN0PR12MB6200:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5ccf4485-034b-4462-579c-08ddc3d3af0f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2QRRWu/9UyCh5AKvd/nWKurHX/fCLoIzSeLwtXUkApIBIc/ePer0D5M+4t9E?=
- =?us-ascii?Q?qAp95qDi3427aXD1wFrAeAm3UEoDWri7wUG7NBmRJ77da+FZ5PetzVi5+qSs?=
- =?us-ascii?Q?aDQOkZQeC70BsIKyKl1gPyh8vOOmOfn/kLvmhREPfz7MyEX292GQh+YtJhOX?=
- =?us-ascii?Q?wbgDf+JESps3cpPRYN6rEFbXN2BehbxVkzAw2R//2nK+8i4VsrDMMWBVInAx?=
- =?us-ascii?Q?8FXDiVesJDPJeof24MFlzeB8Tl+k/PEpB/Z4pLD1TRTxHFIa4ZQT+Fjp83zY?=
- =?us-ascii?Q?ABe4NQquX/Qohq/oOoREYRZzn8Hpgy+R+L/BPDLaR8i0csnJob14uha0qM81?=
- =?us-ascii?Q?JQWpowtXYs5FsnOVyrmVs7CDqbgzcHwKKt0P/TBDmOH+MKDtdIxL+4TbC4tl?=
- =?us-ascii?Q?OUlqz660HGWaWqhWanTRmPm8n+CvaPuP8auaovpq3Pi4j4cpFCCxxM1TWkfG?=
- =?us-ascii?Q?Ck9+0NuvxwzslleapMFZ3DBhJTQMTx8Y6o0C9FG+kan1bqxT2LYuYCf23MgX?=
- =?us-ascii?Q?lfhnblF3b5aCADwxyjSYYLk6IWGy/RD2ifwVLpAp2lwp8I/E3LtCc0SK3zqI?=
- =?us-ascii?Q?sMp9L3KO2F8XasXXLjLrXhh3gT+z9P6qPx6Da3JmF7B+4weDQv1OmudlM8JC?=
- =?us-ascii?Q?VY2WfTBAGLv/QpuahjEAtV0vZJ07jsq6iinMz+h3eLuqEXeGQHbGwsxKF71r?=
- =?us-ascii?Q?6g1Hq9Itbv4Ll1mkmNMt2guQgsT6H+bRt+bv3J3N1oGgo57CeC6yPuon1ZSA?=
- =?us-ascii?Q?wVV9nyuk+y9VWYBZ84oBf6uW+7/iu/vVPqmSHiDy0fknfsqqScPsECllICHl?=
- =?us-ascii?Q?m76d8EoW/+wsNVWy7g/KvceOH1bkpVp0VV3nJXGqiOPHazRGtRF43syjAORi?=
- =?us-ascii?Q?iNxc6tV3z6cthDuZG7xTxt8nUtQSfIGVl0DUMToVCDA08FPrjMJx8q5zCSQd?=
- =?us-ascii?Q?886VFhgh+CbP1SHiQYThnEyGn4BGORVl2i7oZus0udY7oth396rqdJjabNdt?=
- =?us-ascii?Q?Tdv4Q+Y9Riy9x4M+beKG0h0ULzrtWGpzRc9EuAOcGB4XDLYAccQeie9RelDK?=
- =?us-ascii?Q?FYnUSni1LslNkrTskh5dqaVYrK1FLfZyyR9aiMw/gRnaMX7C9BXdLXh+KFaO?=
- =?us-ascii?Q?USBPYoySAXEawSiXXDBShbYqfWXW4Dlg7yvmEvSoyhPUhY87NpHUtoR20NIH?=
- =?us-ascii?Q?YIkRX0SvlQi5U6EgNK1TQ9yjxL1k8Ly0f5jYlDO0hRTOaUToORRK1G9syeQh?=
- =?us-ascii?Q?QiAR7ccunrCBPGihS4Mxqv6nvno+y5Qt2vOe3MBSR1ae22HgWpuU6Wh/8eHp?=
- =?us-ascii?Q?q+2ETGVsra5zYw6BBXMQ6P7qhp1x4CHVyEUoOpwP5VwdVIfcwXX2Yl0RjhkB?=
- =?us-ascii?Q?KEx4aCcQi0yo8a4i+CwgJr5Z1Wa6jh486JITWBqgoMYyX6WRKxqvc/FhKBhy?=
- =?us-ascii?Q?zrsAOy8pl+xX7Qas43CYx0+5oYVviDeLTu0lGo9L/su3LqIGrjQYWRChFg9X?=
- =?us-ascii?Q?BA8tDgAnj4h1sQ4lpWYHuCQ3BK/yd3sr/thx?=
+	=?us-ascii?Q?VDLNnqhnSo8bug+1dH4xbzNJJsQWmLg7QqsUAtLA8v+D4dLkz2Lvvb8hMRlJ?=
+ =?us-ascii?Q?FpvWv6Sg5Hnsxum9SbU9bww+v+G1tc/74kvdV5FYADCW+E/blu2j5vEG2rov?=
+ =?us-ascii?Q?Y1o8iJLUjIVCfi9XsVHYKVC7sVdMaItqCgWDdBGfkDclXK1ReOavaeONDAqC?=
+ =?us-ascii?Q?R4eFXb/uB+9k9b2pe35PY2Ilu+Ffk5MxQvOYmNzsnbKKuN/D24QIRZaFl7hC?=
+ =?us-ascii?Q?FWau+jjJzkdeS10jsj8v/xvNA/bTQCzbBYCGeLG3lj5n6OymAaCKStVu3Sn4?=
+ =?us-ascii?Q?2xBfdc09KTyr8pptcWITEWGjeTw9rBZ/KBD1pNHpHr9nl3sCf2KlsRjU9QW5?=
+ =?us-ascii?Q?/75vnw/bkDAEKE2Gg9+CaHyOkZbTi7R0omR5KwlydZ++kiDY3Z8tXEC1H2pI?=
+ =?us-ascii?Q?iD5SdzgncKitIGi/sChXAiXwHC8wxyho/6k9WWPADBqCYM9CeY2IgfIPzOHW?=
+ =?us-ascii?Q?G3oSZ7EPRaV4SafaLgwPUdbeY293s9B82PDM+Im4TajY75pa/vJb0FauJRvU?=
+ =?us-ascii?Q?3mVKvsB5vG/dhNuitDzdlWmdZ7FLCWo7Qm1MYvXnzstX7+uzES2v8Vur0bwk?=
+ =?us-ascii?Q?5YP8/TaTzxZzvfv1lRPtf5nlV7B5piuhoDfk2IOrupvzfZCswGYnirkF16MA?=
+ =?us-ascii?Q?ovzdZar04ekRjHh2M4XWh6CkCrsWrUtID7x0KMb6QB4Fq1uBbaxUTIkYacge?=
+ =?us-ascii?Q?NVsfAS+H2RnmnQhbBKvseG/+lRhHiz84kHLuzw0zvo9klj6iboRHZdGjm+sD?=
+ =?us-ascii?Q?2yTq+mtqOzOOMsfI/0TntUcRcv9m5bVfw5RBAX5hhwigvSqqERvgEvQfDrU0?=
+ =?us-ascii?Q?o5SH0DZURbsCIermvtGiUDx79s10GOD25Z8k4Dm7hToqk8qBraI/6fxXFowY?=
+ =?us-ascii?Q?dr3AeqXA+lUQdqKW2PEWsRMTVzWbmlv/EidMi9dO+yoWUelcpYSwN9ZWil6o?=
+ =?us-ascii?Q?2nZQaDc/cGS3N+ounEiKCh6Fm0lLrC62rhtORTa01CkMfW+Xfz7Z7xNIz3vU?=
+ =?us-ascii?Q?uJqnt1gBQBsKxy+LLrj+AfDELUIKTitNs4wY02/AkAIVNd99sTNb/xAc6GmX?=
+ =?us-ascii?Q?hDJ7zZ7tCIW5q87xhOIpEQ/FAOPySl6a/UynJhHnFCkBXx0p/NLljmZ4CECU?=
+ =?us-ascii?Q?ETqa/1pc2VVdcL+Kz3jLX+27tEbHbTexTDhKFCaDjqIjAFe+3oZYS2FgviEl?=
+ =?us-ascii?Q?LSzIMymcxqagWRoEHO3pm0CrGMTswkD2xYWNjb/3SvOggBIMH6zvbBgG+Ben?=
+ =?us-ascii?Q?WRBcBCP0YR9uABhHZurKhl7vdAdIhW+y8lG2eHMj0OJHB+CqUJLxf6QGiCKW?=
+ =?us-ascii?Q?wJfwRge61BSjYmVWJh3TBRsMkfwDJPopJzGnUSAX/u8zNTSXQ16A9HNrQ1vp?=
+ =?us-ascii?Q?ys1TSnKuy9T/kMRw90Zgwn1FbMoNC0w96AALdsSwH17WY1xlXofq/Z356EDT?=
+ =?us-ascii?Q?2YjAo2RnRxYHEk8H17HqKnSw0CwOhsc4Xcr+E3VQJGf2vdShSfjsB9okO2vd?=
+ =?us-ascii?Q?e7FynVNx1nDoaxh4t/MhISveRRb8gNWDbkki?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 19:13:25.3682
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 19:13:29.7706
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e3b6ff4-e935-4e75-3e5f-08ddc3d3ac62
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ccf4485-034b-4462-579c-08ddc3d3af0f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0E4.namprd04.prod.outlook.com
+	SN1PEPF000397B2.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7658
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6200
 
-In interleaving configurations multiple endpoint decoders share the
-same region. All endpoint decoders must be configured with the same
-region parameters. Right now a check is done late during
-initialization in cxl_region_attach(), and an already existing region
-for the same hpa range could be bound to the endpoint decoder. That
-region may have a different interleaving configuration.
+On Tue, Jul 15, 2025 at 02:32:43PM +0800, Xu Yilun wrote:
 
-To reuse the region's interleaving configuration parameters for
-endpoint bringup with address translation, make sure the interleaving
-parameters are always correct and add an early check for this. Add a
-function cxl_region_check() to check memory mode, memory type and the
-interleaving parameters. This ensures an endpoint decoder will only be
-attached to a region with matching parameters. The region's parameters
-can be used during endpoint decoder enumeration. Also, a config
-mismatch is detected early before trying to attach the region. This
-helps to identify and handle errors at an early stage.
+Two nits:
 
-Signed-off-by: Robert Richter <rrichter@amd.com>
----
- drivers/cxl/core/region.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+> +	test_ioctl_fault_alloc(&fault_id, &fault_fd);
+> +	test_err_hwpt_alloc_iopf(ENOENT, dev_id, viommu_id, UINT32_MAX,
+> +				 IOMMU_HWPT_FAULT_ID_VALID, &iopf_hwpt_id,
+> +				 IOMMU_HWPT_DATA_SELFTEST, &data,
+> +				 sizeof(data));
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 5c30c417de1a..aca02d011c57 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -3493,10 +3493,42 @@ static struct cxl_region *construct_region(struct cxl_region *__cxlr)
- 	return no_free_ptr(cxlr);
- }
- 
-+static int cxl_region_check(struct device *dev,
-+			    struct cxl_region *cxlr,
-+			    struct cxl_region *new)
-+{
-+	struct cxl_region_params *p = &cxlr->params;
-+	struct cxl_region_params *np = &new->params;
-+
-+	if (cxlr->mode != new->mode) {
-+		dev_dbg(dev, "%s: region mode mismatch: %d vs %d\n",
-+			dev_name(&cxlr->dev), cxlr->mode, new->mode);
-+		return -EINVAL;
-+	}
-+
-+	if (cxlr->type != new->type) {
-+		dev_dbg(dev, "%s: region type mismatch: %d vs %d\n",
-+			dev_name(&cxlr->dev), cxlr->type, new->type);
-+		return -ENXIO;
-+	}
-+
-+	if (p->interleave_ways != np->interleave_ways ||
-+	    p->interleave_granularity != np->interleave_granularity) {
-+		dev_dbg(dev, "%s: interleaving config mismatch: %dx%d vs %dx%d\n",
-+			dev_name(&cxlr->dev),
-+			p->interleave_ways, p->interleave_granularity,
-+			np->interleave_ways, np->interleave_granularity);
-+		return -ENXIO;
-+	}
-+
-+	return 0;
-+}
-+
- static struct cxl_region *
- cxl_endpoint_get_region(struct cxl_endpoint_decoder *cxled)
- {
- 	struct cxl_region *cxlr, *new;
-+	int rc;
- 
- 	new = create_region(cxled);
- 	if (IS_ERR(new))
-@@ -3513,8 +3545,15 @@ cxl_endpoint_get_region(struct cxl_endpoint_decoder *cxled)
- 	if (!cxlr)
- 		return construct_region(new);
- 
-+	rc = cxl_region_check(&cxled->cxld.dev, cxlr, new);
-+
- 	put_device(&new->dev);
- 
-+	if (rc) {
-+		put_device(&cxlr->dev);
-+		return ERR_PTR(rc);
-+	}
-+
- 	return cxlr;
- }
- 
--- 
-2.39.5
+sizeof(data) could fit into previous line.
 
+> +	test_cmd_hwpt_alloc_iopf(dev_id, viommu_id, fault_id,
+> +				 IOMMU_HWPT_FAULT_ID_VALID, &iopf_hwpt_id,
+> +				 IOMMU_HWPT_DATA_SELFTEST, &data,
+> +				 sizeof(data));
+
+Ditto
+
+Thanks
+Nicolin
 
