@@ -1,309 +1,223 @@
-Return-Path: <linux-kernel+bounces-732424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011B5B06693
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFF0B06694
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CABB43B157F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7854E4FB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98E72BEFF9;
-	Tue, 15 Jul 2025 19:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89832BEC42;
+	Tue, 15 Jul 2025 19:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Mi0BuCs1"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="19uNd/Fj"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2051.outbound.protection.outlook.com [40.107.223.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148A226D4CF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D0428F948;
+	Tue, 15 Jul 2025 19:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752606701; cv=fail; b=pDAR6hAJFxNRm+pPgXzoXboGH36X5Hqt6SZGPF/aL+U+B3rymzzuLM3eo1cTrI/Kn6mOdkBBM6C6Qd4hcUbyNue2p7Hme0s5wxVXlTAwwiL9OPvKiMKUkWTeBAs2SV8E5x8satC15YT+mzyPPTiymXx8c8q0RS8oHr3qkBs1Pro=
+	t=1752606737; cv=fail; b=GwAa8TNLUep+DC9eovZiEWigkIVvwCK+OB7Zir8OaMBm6iIBehHT/qjffL/xhgvvKInlcRnP2NLhvRt5SeuOmbpLbxqqXOCvSonYSU978P5dnfUo/mMFnfeeQIMwLn3ptNAgOIHU3iqkNHbsb8ZjYarwbor7btWhZe3Y+YSBrp4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752606701; c=relaxed/simple;
-	bh=WL3upnpdfPQsVaoPDl7/JywdDV+B+kRsoHb+D1UR6OI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IG016/JquWGhNtgX0NozerazWs8lxxjTsmqNGFo0TebipGAzEy/1F8XdLtc3Nabq+ef/4Fp3BsbR3JvCsOv9RDmQIrhKnLltk9niQLL17gtH+G5khDzBs9AS9rQuBwtUbgC7Hh2waNQngzQW6FhP/zgAssGNIIwELZIXWHvj90E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Mi0BuCs1; arc=fail smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FIbYt3012597;
-	Tue, 15 Jul 2025 12:11:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=UuifibMsSlAHuGH5Q9KTr8Jpdxb1I2Sfn76axpGmpjc=; b=Mi0BuCs1dieo
-	qJQ25BWUKPR9/3nECR+XzStV9xDu5Rcab21k2KHX0xup+/wJe5OJsjz55xXKkBzJ
-	BrlpFEpUbIXdDRaa0Tz/uTNAYfbCByK09fNU29ga9an5D7pDJunlQgitsR/g1uhN
-	YsSXMRldvOenY+4DecHZRVKSQM4dVADuo1NSNhTTyR4X1+o+7B5n/OtpmmqQxSKF
-	gfnwsQ0QZhzs9GPNDJ4sGTMta9t9cZeip3bXVY1hwsMfQ2JH7M/bDp5pnbmR82+n
-	e31+N0uXjE4f24hY4GxBhyykpC0KCpz56AeGW5A7KXrQOUTprKkjuhyK90ikP0Mj
-	bEl0opxNUg==
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2052.outbound.protection.outlook.com [40.107.236.52])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47wk86n5xa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 12:11:28 -0700 (PDT)
+	s=arc-20240116; t=1752606737; c=relaxed/simple;
+	bh=RNpewsMt/vlV1CSFJX77daPiEEgsfe4TJ/GrwG2wHkI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cx1Cgysf2Cskt2Q1R4+brKTbN4b0xyu4Nui64t68/euOUmvQNGVbtCiE2MqVKIuQ8JD/VOWNtzPbqF9gNyG8wIX+mgsoAlw7vIieBIBIWGB52OnZQG4xFgr3TyjaHuhgmGZvGPw0Mr3nR4a0iyZC6/+Os6aAiAJCjnFE/o+Ydtc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=19uNd/Fj; arc=fail smtp.client-ip=40.107.223.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dEmoPaYK9GUbQHxENPsSBtndH6UWGsUYm9E7LosYMEPTuCM4n5qJIyJ5C/AIORpGwp4zNi33Kr34YEPAV4bOeE2A1v8X1kXsueUp+p5y4tMm2dhpOrfqQXkCCRetVymhDMzCgMgomityu/SyeqkISVnRL9UeE4Y6M0T7sKbd74glW3nAN9rOhwk2cPBZeliCOwTg46NKRRoFVV6lZrBdhp0fOGlBIxWUWaFyRv+t+lCaijC62VW5aN/bG4BCUx8NpI9MnG9s4rT/vzl90vIqvBgzamImrJcnCDQM1fGXaZA9gwrLyW1GSnfIRgkJC3EPRwK69LIqNfUTa6u7JWPqJQ==
+ b=QhpB64Y1jHNE8v6Hs3cAM49hu13rpwuQBUJiwUIEHJffqTH+hx8mJ8qExT6uJmidQTb0B/3mFX6etjsKKuWMKjIlSMxXEDSJOpRWOPKBG8XlxG/e7wEfakWe6deveKzKVy8TK02AKFg/QKD2ixlOalQ63PVodKhsMukl1IBt6QfF9TYKqMKDLg9a6hNzgZPRphG6tLOLPtJGe6HYlrCJllXqAAeGtPKSw6dOC9S365glLba2mN9tjS7gIKmVYRm/x66mSNNQji8jRFHx0xyctLAV4jplLMdQYy4iTE+0InpzujgJwd2Z7WbQzeNtXg/ZY1/hd37ka6EuvMl8H9yo1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UuifibMsSlAHuGH5Q9KTr8Jpdxb1I2Sfn76axpGmpjc=;
- b=IzY5llLlPuif3grW341o0BBcLBLGCgkRjHb9Kvn0hGFjKDBqYQaQnFarTE7f50Ktbnwz/EfNzLXxqBMPeaWfyvJQca7gXD1vpAtwxj/BikHJ8/Hu1rh2gAC262jeQxiqkcnAyZbMYG6LjvPwD109eifnuZGTH/eTJrnzoo5D8vY4Z2AkgtXOL7Ct4L6e/DJ+M6mF1QfNffXHkh+R5SUZZi7gzgdKSNRLw/BYBtIDnLHMGiPFozWeIOs1iC33+hOOduAtkmjwR5zZnhp1CzVbWweKNkzGnqWJfMEGvm6Z3Rnx4NiS/qUFKo+y6g27RQFZz0/Wdfw/zvKOqcrxQVN5mQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from LV3PR15MB6455.namprd15.prod.outlook.com (2603:10b6:408:1ad::10)
- by MW5PR15MB5241.namprd15.prod.outlook.com (2603:10b6:303:19e::19) with
+ bh=79ySXySHjpmZzI7f1MPt6iTE2yi/7riP8lDMWQZ39rA=;
+ b=r2d7p0jq8iS7hRtvnSqkAD1h0mxMgT0UPEiUiJeEidFsbJcgAYwXzfn7vrCEm58lh/I0ieXazfAbDqb4XtSlrUWgtsw0F93q5M9jX1p5rqgDgUMKJZu49LQz2yyPdopTNsuPr3LIhT6HALFEx3ia1jbn9MQd1gXxxbgqeGWUWkMsgOII7OYbGt7re1lLHInEs2VqkptPXKQRZgwqCx7XivoB5zUTCPFBMPaXNcsRzwADP/89wjiqIX7DNYGwDL9afLA0bPPtDEkhoBa7Mxt0nc5QlxK581Gq9tsfqNw3jHUEepHJH/CJubyC9dsPby2swnMU0l/2itJaO3sVSGg5Xg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=79ySXySHjpmZzI7f1MPt6iTE2yi/7riP8lDMWQZ39rA=;
+ b=19uNd/Fj57rUSK3y67edxeqPI5kLuA/S0rHv/+bMYL7vfOJO6p7b3M4t/7X/KcPHg9Tkg5osXdIVrAhVNHx1TaObE67YeGHmTq8RF7AdQ8eBIvMhTc5FvkBYKz+7BE6YiZZck888V01AcqCn//OxE2hXepINWc742TyEEma3VNw=
+Received: from BN8PR15CA0062.namprd15.prod.outlook.com (2603:10b6:408:80::39)
+ by CY8PR12MB8411.namprd12.prod.outlook.com (2603:10b6:930:6e::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
- 2025 19:11:25 +0000
-Received: from LV3PR15MB6455.namprd15.prod.outlook.com
- ([fe80::2f8a:961:d95c:3b35]) by LV3PR15MB6455.namprd15.prod.outlook.com
- ([fe80::2f8a:961:d95c:3b35%7]) with mapi id 15.20.8922.025; Tue, 15 Jul 2025
- 19:11:25 +0000
-Message-ID: <0d86c527-27a7-44d5-9ddc-f9a153f67b4d@meta.com>
-Date: Tue, 15 Jul 2025 15:11:14 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/12] sched/psi: Optimize psi_group_change()
- cpu_clock() usage
-To: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>
-References: <20250702114924.091581796@infradead.org>
- <20250702121158.350561696@infradead.org>
-From: Chris Mason <clm@meta.com>
-Content-Language: en-US
-In-Reply-To: <20250702121158.350561696@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN2PR01CA0040.prod.exchangelabs.com (2603:10b6:208:23f::9)
- To LV3PR15MB6455.namprd15.prod.outlook.com (2603:10b6:408:1ad::10)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Tue, 15 Jul
+ 2025 19:12:12 +0000
+Received: from MN1PEPF0000F0E5.namprd04.prod.outlook.com
+ (2603:10b6:408:80:cafe::d) by BN8PR15CA0062.outlook.office365.com
+ (2603:10b6:408:80::39) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Tue,
+ 15 Jul 2025 19:12:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MN1PEPF0000F0E5.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 19:12:12 +0000
+Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
+ 2025 14:12:09 -0500
+From: Robert Richter <rrichter@amd.com>
+To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
+	<gourry@gourry.net>, "Fabio M. De Francesco"
+	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
+	Robert Richter <rrichter@amd.com>
+Subject: [PATCH v1 00/20] cxl: Address translation support, part 2: Region code rework
+Date: Tue, 15 Jul 2025 21:11:23 +0200
+Message-ID: <20250715191143.1023512-1-rrichter@amd.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR15MB6455:EE_|MW5PR15MB5241:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9d7962a-036c-4ae4-0617-08ddc3d36484
-X-FB-Source: Internal
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E5:EE_|CY8PR12MB8411:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2da62d70-b4b9-40a0-9dca-08ddc3d380f9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SnFuR1pBNkJ0RmlrSmp0MkpPenFBVzFXUHhQblZGRFM1cjRjNVpSeEtScUZB?=
- =?utf-8?B?NzhnNHpvSEdlRjRoT0Q3MERvWG1FTGdHYWs5WTZPdFVuYkhQV2Y1Q01lREdI?=
- =?utf-8?B?TGF6d1ZMUTJDKzVCOWpmUnhDN3pjdXdEM3ZrOXJTdlBJd3hLbXU2V0Mrd1o1?=
- =?utf-8?B?MDhTUU9TWkRKaVdhS0hMaWZkS0Q4cDA4UnZRMVA5clIrSFBLTGFvZkpTVFBB?=
- =?utf-8?B?WWdpckNJQkxHVFU4bVVtd1Q5TDcrazNleXlwTklZYUQ3ZFpiYnJ1cHJVcGdK?=
- =?utf-8?B?MCt6RklVTE1hM2dPbHA3TlQ3WDNiMVBJUC82R09NM2JvNHNKYUFkRGtVV1gw?=
- =?utf-8?B?S1BJUDNYYXVhR3BJb0d5TkVGM0Q0dm5EaENkSE5RR2tZZERqaU5PRm5NZGgx?=
- =?utf-8?B?c1I2d2xDY2JnbWo1dXlEQnpuVC9IYWt1TGduRWNCTUQ2SEM0VkFsNDRBYVJU?=
- =?utf-8?B?NzVxSHJ3ZG9tdFhWRXVhd3BXeFpwb0F0LzJEb3JpVEhQakI4dmdNWnVjdnhs?=
- =?utf-8?B?NDJxNnRPR0xvUE80V2ZybTZJVWNWc3Rzbms5cU9SRzVSYTAyNUdtNE04eFlM?=
- =?utf-8?B?TWxnd2tpRGJtc28wZzVuYnhYUFpFK0pqOTVTQjlHdFhUYzZjYkVCcW9Cajgy?=
- =?utf-8?B?NTE1V2xYblh5akdqWWtpWlhYaTZ2VlVydFQ3cHoyekljNXlzRHlvMGhXNCtS?=
- =?utf-8?B?TElFUEdqVHNhVko3STNYaVM0ekdOOXk0aWJzSUcvMWdIK28wZE1WajR1WGNY?=
- =?utf-8?B?VTh6YlZLazhKMWM1NUtvOUszd3ZHVGtKdkpmUGZGejNnL0lTbHFIV0hRaTdW?=
- =?utf-8?B?Q3pUVlo4ZWk3MG4yaUZrQkhvMm1GREhVQURudisrdUlQRFluTDZGaGxoRmMz?=
- =?utf-8?B?aW9ZNTVnS0hIc0I1M3Z5Tnc3WkR3dGIxLzRhM0JTcmtWRnFZRjJ3NHpUeXRZ?=
- =?utf-8?B?QkU2ejhnaVpib1I4VExOQ0psYWRHbklkc05IOHpvVU11US9nTmJFQmRFK3dh?=
- =?utf-8?B?Q2d2dGlvUndaNEx6Mk8wVXZTOGpONGVOcmxrbWx3d1dIQjk0UjA5bXZEakl4?=
- =?utf-8?B?RmVmNmpIUHFyYmxMUFcyTFd3NWRaV2tSd00zQ1IxYlNHRUVnc3ZmeXNxVE5k?=
- =?utf-8?B?TTkrMTZ6YjVaQ1lXR204Yld4WjdtZlhkYS9aNDRocWJQd2YwTTA5dCtLNms4?=
- =?utf-8?B?WHlVOXFHVVFQNGg4M00rUXNQdVFUQVBMdVdoc0xvbEtOOFRVVWNDd0JueFVh?=
- =?utf-8?B?L041Sm10T1ZlczBpU1lnUmxhdXlDVS85WXo4Vkh0dm8xRjJiMGFZbWk0UXZh?=
- =?utf-8?B?Zmt6QzRNMkc0TWo4cTlnOE54Q2VyYkErMW9UYm5MUFl6Uy9QR3hPSzc4bjVs?=
- =?utf-8?B?UVYwRGloM1FTQUZoS2Q5dzI5RUt0RWJWdDJhMEY3eHlEUXR5bWxyM255RXJl?=
- =?utf-8?B?RlhoMXUxUG4vajJuY1RPNTlobUNqZ3hua2pYVUEvRWFRSlUrOHFyZER3MEVk?=
- =?utf-8?B?MXpkSDVCc1VOZVhJN0JyelBDRmp4VG1NcW9oK1RUc28xdlFaWDJxVVFqWm9W?=
- =?utf-8?B?QWJBbmluU3BDVmpySGRVVFNMQVdiSDFFRWFaUmp0TlZncEIwOG1lZG43UTJR?=
- =?utf-8?B?QkhnQ01FbE51NStQdi9hTExqMU1OOVlRNXB2YmhoMi9yUjZDZ2kwVW9Gd0RG?=
- =?utf-8?B?MWVybFRRRmIxaWlFbXRaOVVvRjNWbkUrUjErWjlYSFVsR0FuaDh2dWZVUG80?=
- =?utf-8?B?dWdqVFRZZzA4MVVha2grWXJyZExpQ2VsU2V3NDE0R3hBOE5SazR0M2hjUHc3?=
- =?utf-8?B?TWtyQTdEdkFzWFlGQitLRHFyM0FrK283ZklZNEtYWjBvQmxYQytmOHVsWThT?=
- =?utf-8?B?b1A3MUc5bmpLWDRsNGN0c0tDOWQ1VEQycy9HT09jT2dvbWJ0bzZoTkY3S3Rk?=
- =?utf-8?Q?+mzN6Ef9sKw=3D?=
+	=?us-ascii?Q?u9sWnwEQmCVBNJLYCuU0N/VUipksew5eY+atv9AKZJ40twn9bSP6AaVCIVgc?=
+ =?us-ascii?Q?YZ9Rm9qQyf5p8yDo97uCaC9WISQatkwPmrD6Pr3FPWQAIvHjuVsg6rj8jXMl?=
+ =?us-ascii?Q?lo4TWes33pPJmsgasBSLDOa5m3v1cjQCtR8XVP+DeTW+lY5ux56PqLUwWNYo?=
+ =?us-ascii?Q?zmjzCi4lJ8JV3o1ml8xgUAbQ3Qcz07pKocmTaFHfJbiuIByO/Oc0Z/KeFW0p?=
+ =?us-ascii?Q?KAUyQ3Gjfm5DE85IKr8gci3DnVTDUvT7rvgGYVrL44I3dztnQ/ealG3maxF7?=
+ =?us-ascii?Q?t8a8emZnS+71EQvUAVTg3SX1T0uJ4x/7upDDuzO+qt3hRDdG743pyqwnv60g?=
+ =?us-ascii?Q?b8G9aKbfj2kRYqByTZIpxQZI2FSPs01400NX5D8XCM1lUaIShv8ojCnUiZq+?=
+ =?us-ascii?Q?UTTbOCtvqGHJWd+Jb3dDroEKWS858OsDQI8YuaWXzzcshJIdxBGUe/8yYCu1?=
+ =?us-ascii?Q?aE97wRI2vO9f/rwqupk7S25Djc+v2WZHSLdCcqinHIcZSpvrppkJ9veDVL+q?=
+ =?us-ascii?Q?i3idMjC0p+4FUncxzHcLsnTyVMXaCn96zvILU2XYQ70D0UTvs8XvcRIs5Yhr?=
+ =?us-ascii?Q?OirPP037UjLkuU2JOdiFSJHZrY4QBPCxuneO4UMP26Xsek3mCaHLBgRfQVO2?=
+ =?us-ascii?Q?fvyEJGgDhB+4qZ4LX7gC1qzYtNAThNeVAACQcAKxMr8k6gnGES9aQakk9FoP?=
+ =?us-ascii?Q?nMt0exxiBkdIyyPxUb2G95MrbYMJp4jt/GgxT5X812NyZJpFsTPB5BhTYF+n?=
+ =?us-ascii?Q?AqP2LYgGfjayPVrTigz9CSYZPl2b+Ei/VP2qUEM40ujDNDWDC1cIvzMyb3tF?=
+ =?us-ascii?Q?/06Z0XSjLP5933Isfa7n7QBEoGhrHERZqYk8+GLSDjkU2fdaUWHtfSx+C0NI?=
+ =?us-ascii?Q?ky/DvRpCxoydzNo6IEEWVJSeIbHRgkS3MFOifTCONUnMl18MYmpOPPlLXjiV?=
+ =?us-ascii?Q?qEzbp4gBLJJE+k+4nliPG3aIFN9S3mB81UCCu8RUMZIqQrKj37pdlbirgq06?=
+ =?us-ascii?Q?Ifp9oyODAOu3sawXvjqk37s/zAqSayhSvtx1e1tO0u5DXhoxfcyGehUGbADK?=
+ =?us-ascii?Q?R/CSyMBbowSXdr1b3h0PezU5aZ8j9WnXRT8Q3vnXkm0cYfFa/Cghhw9XOXdB?=
+ =?us-ascii?Q?gvbrisiHYwBdzy2FqEnOe0wxrlVkkrvGJ8kchnqe5oAHp9I9jSgsufIDSqR3?=
+ =?us-ascii?Q?zTNF6ulgOjkqfyrbjMlLLkUwl2HX+jsmdBxpm0xJtiVlY2MKaiRMYHs85ojr?=
+ =?us-ascii?Q?lz4dQgmXc7AMM8RmGcfDfZ+4Qw2QbOOOcW9Vt3YtzoaT3dh8pOUDA1bNMViU?=
+ =?us-ascii?Q?M4hkV2MuTX1hrmaN3ioWCNvRPxiqzFP6ZjUbyoNk2XCGBsWURN0r/ER/S8iw?=
+ =?us-ascii?Q?uH1nKk/sFV2XJ/A/Hk28QiLuNuM0SOhUIX4ljhzUtQkNMEm0S3PFaBNkapbH?=
+ =?us-ascii?Q?NOBcl3SWdSCa3H8zyyxnyVmxB9vTKHEanjrJUskwKLFVEtDqmnN49xRL4s3J?=
+ =?us-ascii?Q?L95BrHuBobo6IGw8rk9lB8b4vefIYdTF5ODG?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR15MB6455.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?REJrQk03L0RSOFkxVXR6SkhuTngyNjhpaVVZeVcvdmZYZE5ZTWxvdWs3cEY4?=
- =?utf-8?B?bjJ1TDBxQ3dnKzhhT3NFUHVPMDE4eTltdUtpUEFnSnVnYU83KzZqZ2YwNUgv?=
- =?utf-8?B?UjI1RWpTU0JZeEI5OGJLajVOdkdKd0drd1BsSlNKRi9BYVYyMndaSk9pU3Z2?=
- =?utf-8?B?SkJYM3p4TDJFRWdjQUN3MnpPeTJGaHBnVE5MNGZKTnVyTDF4TnZzTjUxc2hi?=
- =?utf-8?B?Y0RRSTlzbVg3eWtZanU2a1poalZZMkFBMTEwSHJDblJCMUl0Z2dKdU9pUHZ5?=
- =?utf-8?B?VEU5VDJtcEFIWE9kdmRyczhtUS9PUnhVRU1xNXNyTUJFRWtJSzdkVHFLNmcv?=
- =?utf-8?B?WE5GMjdYQ1V1WG9YZnBNYlRERVlFMW9jajBlOEFaU1VkczhxRCs2eENlY2J1?=
- =?utf-8?B?VFNZa2VGL0ZvYTBaMGFoVHcrOWphak9Hc3JRS3RMQ2lyTDNXaXAvTVdDb3Q5?=
- =?utf-8?B?RGwzM3pKNWN1dGtFUnhJU0RZa1UwSDZrbjVmQWhEZ3d0bWlSNTdFS05vR3py?=
- =?utf-8?B?Qk5pdGFEMTk2ODZXWTJTYzFERFIyN0wrRWU2MGZ6dWgrbG93NVl2aXRRc2Zr?=
- =?utf-8?B?Wkkya1VkWHpOaEJCQnRpRzNYUHVlQXY4TjI3Z1dyMy9iKytERERtRWtBOHE5?=
- =?utf-8?B?SGZNRUM2VkxPZFRsOHo5NEs3WjBVaWZhSXpXNXZjVEVjenNLVU10VzhabUo1?=
- =?utf-8?B?ZGxxYkl4WlN1bVMxVi8wZ1V1Mk1jMlkwbmo2SUZ3dkFaZE9NV0h5dTY3UlN2?=
- =?utf-8?B?VGM2WGpTUldKOWpuU2U5RWVIK0VyamVrU2tNRjlPR0tPZHMzMEUyWmdPZ1ZN?=
- =?utf-8?B?RU54aGhMc1QzQkkweDZTZUlLa0x6L0NHdXFwbVY0bld6SEtSQ3IvWU92T0Jl?=
- =?utf-8?B?Yk1rUmZUQXByeldMN1QyNzl0T0l2YVRoUjRBdzh2VlNscUNTeVV4TEhhd3pm?=
- =?utf-8?B?ZzdVR3FlS2NJaW9mRUJ1aWZSWlUvUFptZEVtMDkzOEdjdUZWZDhiZHhEK3M5?=
- =?utf-8?B?OGk1NjYxb1lhbkhQZHhKbVVabnZlVmwraDR5OC9sV2s0VkdqU25jSmJxcXB2?=
- =?utf-8?B?VDJjVnZaaVA2THFlWkxMQUpEWjViQkdsQlI0TXBVV0VGQjVrZDVSc2xNR3ds?=
- =?utf-8?B?TVIvWEprRk53MHp2YW1RYkNralgzeW9aTDV0MDVpcGdrOEg3OVZQSWdsMkc0?=
- =?utf-8?B?alV6NnZCMVYrT0NUTDIwUENQdmpNWUQxVVdSQ3NaZHdnT3RsY1JDYkdZUlBh?=
- =?utf-8?B?ZjlzbTJnczQzRC9SK1I4VmlKLzRlUTVKMEh6cTJMU2t5MXFkTlhrUDN1NDFP?=
- =?utf-8?B?Y2s2MXFLSzNHMVRvOW93ajdnQUFrMFJoZkFqYWJManFMOVdHR0NGMEJPK1hn?=
- =?utf-8?B?NzNhR1B4aGVHdXZVVGVnKzN0OFRtME8xSG5YR1YrZ3hqWVVWMEJvSHBsUDVW?=
- =?utf-8?B?cWZ5d09uSk96eTdNMEYvUStkSTlEZ1B4TjRwQklKMGN5WnkxaEp3QXVkYXhU?=
- =?utf-8?B?d0orVzNjbUNCYjVsQU1KcmdlU01ob0hoemcxOUhJaTI5c1VLMzRTeHM4T2Ew?=
- =?utf-8?B?S3BMc0ZFVllpNE1DVCttcklEbHhST0d1alZwK1dQQ1V3R2h1SFpwMjNPbjhj?=
- =?utf-8?B?Qko5OTBTTmlUaVNrbEFrcHVRVVVuTlBad0Y0Vnp1RVdIcTgwTHppcnliTVFI?=
- =?utf-8?B?ZjlkVUR4NG50U2ZvcFliRnE4bExCN1hyUGcrdHJ2YkdHcERDNnZTdTVxbWN6?=
- =?utf-8?B?Zmw3Ykg1alUwRDZSOEYxWXhVRlJrQ0hxdGovdGpaV3hvcDBQc0sxUEt6SWNI?=
- =?utf-8?B?c3hNVjRLaUJURDhGbXY0RVNva2U1Z1hZazY5WmhSVHVDNDV2T21Gb1h5QWEz?=
- =?utf-8?B?MkhWSnB6MEZlMFpIS2MrNTZveU9qOXRRTVJkVHVOVGlIWHlHd29rZ1VISjh3?=
- =?utf-8?B?dDlaSjUwbFZYd0J0Ni9TZWIrU0hzT3B5Nlo0Z0REaU1VYXpxU1B5LzQxSWsy?=
- =?utf-8?B?c1ZYcklBVlhSMG5VbE5IWFhFb1o3UmtjYUFQQ3VXajhSR1F3RUZyR0xYMlFX?=
- =?utf-8?B?N1pTUWw2SHJrOWpSdnpoWDNTNEpXUTQyR1NtN3g2NVpxSmthcWZDQUhzSDVU?=
- =?utf-8?Q?rNMo=3D?=
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9d7962a-036c-4ae4-0617-08ddc3d36484
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR15MB6455.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 19:11:24.9767
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 19:12:12.5411
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ts7Jzxkx+HdDhn5PED2/cODMHcAhqUZvr4NGzqPjCVFgGc9nJndu5UwBoGIzTO2B
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR15MB5241
-X-Proofpoint-GUID: HuThtHuH30vgoZJbtVPiDJoF7YMzHE6e
-X-Proofpoint-ORIG-GUID: HuThtHuH30vgoZJbtVPiDJoF7YMzHE6e
-X-Authority-Analysis: v=2.4 cv=T5SMT+KQ c=1 sm=1 tr=0 ts=6876a7e0 cx=c_pps a=jQuO6sawZVmGirNBLKPjUQ==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=WsHKUha7AAAA:8 a=7CQSdrXTAAAA:8 a=JfrnYn6hAAAA:8 a=ufHFDILaAAAA:8 a=90SR26LeqPeVHm87JbsA:9 a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19 a=QEXdDO2ut3YA:10 a=H4LAKuo8djmI0KOkngUh:22
- a=a-qgeE7W1pNrGK8U0ZQC:22 a=1CNFftbPRP8L7MoqJWF3:22 a=ZmIg1sZ3JBWsdXgziEIF:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDE3NyBTYWx0ZWRfX/IdxGhz68Ryj IsWREi/FycD1CtdepODQ7RjFS8Uo2j7zHt0Slm5gBIsFTFnLPOzO33XGR2bCfofi6OHZQ4k7os4 09mHhI1btFcLkC3Qj4g9Auc62fXHTCGYy/vvOjc+R+toJZoMullnVob6d5PuR1gyBxowAou2/Hk
- 1GCG1wZkm/V+zRUDBlC8uASiH3Ncx3FSdaytNXijNDvYa6k/g8GxsVs7CsYSLlCx2c6Utj5mNkK NkvPe6Kp2PvcEvKeAScyW0ZAMzCifJ/fAkv5MTWsPBT30UFK9Y8vqidjh2DdYTJxmHSQllCKA6x TzlP1UOuA3Hv4UP8SyC3zbF2cA8/GWAjZVp/2U3+nGSQsJTPk3ZO1ItlNmSxBo7fh0CwaHpmJkE
- uFsihzJIGYKNslXIpyuAvJyxlvpKegDcO+6b8FRtMdZ1225fz9nYKNRTN44V0DXNAWJrjkOC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-15_04,2025-07-15_02,2025-03-28_01
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2da62d70-b4b9-40a0-9dca-08ddc3d380f9
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0E5.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8411
 
-On 7/2/25 7:49 AM, Peter Zijlstra wrote:
-> Dietmar reported that commit 3840cbe24cf0 ("sched: psi: fix bogus
-> pressure spikes from aggregation race") caused a regression for him on
-> a high context switch rate benchmark (schbench) due to the now
-> repeating cpu_clock() calls.
-> 
-> In particular the problem is that get_recent_times() will extrapolate
-> the current state to 'now'. But if an update uses a timestamp from
-> before the start of the update, it is possible to get two reads
-> with inconsistent results. It is effectively back-dating an update.
-> 
-> (note that this all hard-relies on the clock being synchronized across
-> CPUs -- if this is not the case, all bets are off).
-> 
-> Combine this problem with the fact that there are per-group-per-cpu
-> seqcounts, the commit in question pushed the clock read into the group
-> iteration, causing tree-depth cpu_clock() calls. On architectures
-> where cpu_clock() has appreciable overhead, this hurts.
-> 
-> Instead move to a per-cpu seqcount, which allows us to have a single
-> clock read for all group updates, increasing internal consistency and
-> lowering update overhead. This comes at the cost of a longer update
-> side (proportional to the tree depth) which can cause the read side to
-> retry more often.
-> 
-> Fixes: 3840cbe24cf0 ("sched: psi: fix bogus pressure spikes from aggregation race")
-> Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-> Link: https://lkml.kernel.org/20250522084844.GC31726@noisy.programming.kicks-ass.net 
-> ---
->  include/linux/psi_types.h |    6 --
->  kernel/sched/psi.c        |  121 +++++++++++++++++++++++++---------------------
->  2 files changed, 68 insertions(+), 59 deletions(-)
-> 
-> --- a/include/linux/psi_types.h
-> +++ b/include/linux/psi_types.h
-> @@ -84,11 +84,9 @@ enum psi_aggregators {
->  struct psi_group_cpu {
->  	/* 1st cacheline updated by the scheduler */
->  
-> -	/* Aggregator needs to know of concurrent changes */
-> -	seqcount_t seq ____cacheline_aligned_in_smp;
-> -
->  	/* States of the tasks belonging to this group */
-> -	unsigned int tasks[NR_PSI_TASK_COUNTS];
-> +	unsigned int tasks[NR_PSI_TASK_COUNTS]
-> +			____cacheline_aligned_in_smp;
->  
->  	/* Aggregate pressure state derived from the tasks */
->  	u32 state_mask;
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -176,6 +176,28 @@ struct psi_group psi_system = {
->  	.pcpu = &system_group_pcpu,
->  };
->  
-> +static DEFINE_PER_CPU(seqcount_t, psi_seq);
+This series is the second part of adding support for CXL address
+translation. It adds another rework of region code to address
+implementation changes or conflicts of current address translation
+code with cxl/next, esp. the introduction of support of extended
+linear caching.
 
-[ ... ]
+Following parts are currently planned, worked on or finished:
 
-> @@ -186,7 +208,7 @@ static void group_init(struct psi_group
->  
->  	group->enabled = true;
->  	for_each_possible_cpu(cpu)
-> -		seqcount_init(&per_cpu_ptr(group->pcpu, cpu)->seq);
-> +		seqcount_init(per_cpu_ptr(&psi_seq, cpu));
->  	group->avg_last_update = sched_clock();
->  	group->avg_next_update = group->avg_last_update + psi_period;
->  	mutex_init(&group->avgs_lock);
+Part 1: Cleanups and refactoring
+Upstream: 68d8b4f399e7 ("Merge branch 'for-6.16/cxl-cleanups' into cxl-for-next")
 
-I'm not sure if someone mentioned this already, but testing the
-series I got a bunch of softlockups in get_recent_times()
-that randomly jumped from CPU to CPU.
+Part 2: Region code rework
+This initial patch series.
 
-This fixed it for me, but reading it now I'm wondering
-if we want to seqcount_init() unconditionally even when PSI
-is off.  
+Part 3: Extended linear cache rework
+Not yet posted.
 
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 2024c1d36402d..979a447bc281f 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -207,8 +207,6 @@ static void group_init(struct psi_group *group)
-        int cpu;
+Part 4: Generic support and AMD Zen5 platform enablement.
+Not yet posted. (Earlier version posted as part 2, v2: Generic support
+and AMD Zen5 platform enablement. [1])
 
-        group->enabled = true;
--       for_each_possible_cpu(cpu)
--               seqcount_init(per_cpu_ptr(&psi_seq, cpu));
-        group->avg_last_update = sched_clock();
-        group->avg_next_update = group->avg_last_update + psi_period;
-        mutex_init(&group->avgs_lock);
-@@ -231,6 +229,7 @@ static void group_init(struct psi_group *group)
+The general changes in the implementation compared to [1] are in
+particular to use the attached region of an endpoint decoder to host
+the HPA range and interleaving configuration parameters. That is, the
+region's root decoder and HPA range are added as members @cxlrd and
+@hpa_range to struct cxl_region. Both are introduced to keep track of
+the region's SPA address range and the interleaving configuration.
+Those parameters are the same for all endpoint decoders that share the
+same interleaving setup.
 
- void __init psi_init(void)
- {
-+       int cpu;
-        if (!psi_enable) {
-                static_branch_enable(&psi_disabled);
-                static_branch_disable(&psi_cgroups_enabled);
-@@ -241,6 +240,8 @@ void __init psi_init(void)
-                static_branch_disable(&psi_cgroups_enabled);
+The implementation must ensure that the endpoint decoder's region
+parameters are always valid. All parameters must be determined first
+and then a check must be performed if a region with identical
+parameters already exists. A split of region creation and registration
+is required as the region may not become active and may need to be
+replaced by an already existing region. Several high-level functions
+are introduced (create_region(), setup_region(), register_region(),
+cxl_endpoint_get_region(), cxl_region_find_duplicate()). Most of it is
+implemented in cxl_add_to_region().
 
-        psi_period = jiffies_to_nsecs(PSI_FREQ);
-+       for_each_possible_cpu(cpu)
-+               seqcount_init(per_cpu_ptr(&psi_seq, cpu));
-        group_init(&psi_system);
- }
+Finally, this series adds a lot of simplification and improves error
+handling and code readability.
+
+[1] https://lore.kernel.org/all/20250218132356.1809075-1-rrichter@amd.com/
+
+Robert Richter (20):
+  cxl/region: Move helper functions closer to their users
+  cxl/region: Store root decoder in struct cxl_region
+  cxl/region: Remove region id handling from cxl_region_alloc()
+  cxl/region: Add region registration code to new function
+    register_region()
+  cxl/region: Separate cxl_region_alloc() from devm_cxl_add_region()
+  cxl/region: Remove dev_err() from cxl_find_root_decoder()
+  cxl/region: Add new function cxl_endpoint_get_region() to simplify
+    cxl_add_to_region()
+  cxl/region: Rework memregion id allocation and move it to
+    register_region()
+  cxl/region: Change __construct_region() to use it as a tail function
+    call
+  cxl/region: Remove __construct_region()
+  cxl/region: Separate auto-generated region cration code path
+  cxl/region: Remove region creation code from construct_region()
+  cxl/region: Move devm_cxl_add_region() out of create_region()
+  cxl/region: Prepare removal of @cxlrd argument from create_region()
+  cxl/region: Prepare removal of @cxled argument from construct_region()
+  cxl/region: Introduce @hpa_range to struct cxl_region
+  cxl/region: Remove create_region() call from construct_region()
+  cxl/region: Determine root decoder in create_region()
+  cxl/region: Add function to find a region's duplicate
+  cxl/region: Early check region's interleaving configuration
+
+ drivers/cxl/core/region.c | 514 +++++++++++++++++++++++---------------
+ drivers/cxl/cxl.h         |   4 +
+ 2 files changed, 315 insertions(+), 203 deletions(-)
+
+
+base-commit: 12b3d697c812aaf356e82d9e1f351fbb2ea97500
+-- 
+2.39.5
 
 
