@@ -1,61 +1,53 @@
-Return-Path: <linux-kernel+bounces-731658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A823FB057D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:30:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0489EB057D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B524A04B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC4731C234B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B8F2D8790;
-	Tue, 15 Jul 2025 10:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7ur0yzL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669B82417D1;
+	Tue, 15 Jul 2025 10:30:15 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8992D839E;
-	Tue, 15 Jul 2025 10:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A965D23ABAF;
+	Tue, 15 Jul 2025 10:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752575389; cv=none; b=HRoCvV2U13/EXmX/rpxOYX25fVsSGHlpMsSSl8EQCLjyZBZZ1MUQ11V61twF/dGf7gZuzN/ZbOUXD+UKIlpZzU68kLpfoQVpEM+u7A1RGdvo4a/BVLN1dcjpp1CzO0nqZqogq1GI0JPAD0nSxMJVwLjI4lH6oTOvRlV+w25rpWo=
+	t=1752575415; cv=none; b=meEnSMb5ivXCNdkPp/RcgFUWSjjdJoLekLFfmogZaGPu0CUfXOqJarSWZgtpqpS8zeRd5gk9zvo33YB++SQ6uQkghc1kSWF98mBHElcEnLfo2sSyns+Zvw+D2wQ9/zltEUmRK7B5cXFCLto4qizccv9JcXt28sMDFP6KQ6uabU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752575389; c=relaxed/simple;
-	bh=3aFKmLvJV73jrRTWvkPEDT+E5ohdcZ4PTEwPUee1yYU=;
+	s=arc-20240116; t=1752575415; c=relaxed/simple;
+	bh=8Vd8POKs3Sp/OX61qit7SX6WXDD/xYLrFG1hcSUXUmI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kfUX1YJX4Ybw5o97CZGXEanGkYmGxmSU6Dxp3ZFegRVdmPpNnRw91r0st0QkVfsXj683e5PBmhk5Bi/UNituCNO6EVNG8oYRMGznJfieIDm0HR/Juo0DPZus2zoJXb8HqXc5a788ynwsKvIibKLJaktL1RpLtHS3oI6XERafLXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7ur0yzL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE1DEC4CEE3;
-	Tue, 15 Jul 2025 10:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752575388;
-	bh=3aFKmLvJV73jrRTWvkPEDT+E5ohdcZ4PTEwPUee1yYU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M7ur0yzLo75Zh5bH8PrEOM5HipEOrZz8M14+bYILfExsKyNiUVwKvFEnjm3tVPYkK
-	 JasfYEyfwjpRCCnPyRmbsIt3bzsMAWoAlmGZG8hjdcTM8Xzpc/LBDhyd5yY/voBQf0
-	 D317EUTCMV8Dzka9bc/9diUWOV1wZr0YI+ooLZegPumJ6SZnMbsL/cKWjB030PfmHB
-	 4UN9rLS9F2RiTQFVP91TlI6FSSDhpDEdP2msPvHD6Mzcv/QLj9dDVQ6wqvJMM+bdSi
-	 gLFuH59LP8cNnyriIgoES5KnlGvcqpZmm3/y1P3x+bk/4caS07exdomLzwPuOLOWAE
-	 Hwhrm/iiKDpNw==
-Date: Tue, 15 Jul 2025 11:29:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: "MITTAL, HIMANSHU" <h-mittal1@ti.com>
-Cc: pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
-	davem@davemloft.net, andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com,
-	m-malladi@ti.com, pratheesh@ti.com, prajith@ti.com
-Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix buffer allocation for
- ICSSG
-Message-ID: <20250715102943.GU721198@horms.kernel.org>
-References: <20250710131250.1294278-1-h-mittal1@ti.com>
- <20250711144323.GV721198@horms.kernel.org>
- <b626dc40-e05b-40e0-b300-45ced82d2f97@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=paaPzVaCAzcV1hviEImGIgrvhN0xkg3y7IJ9vaBUUwpGJr2/qMD5PkcObkEFcBIEU/3UnpzCgCPr19iXJNsTGUzznuIvmdZGLvczIpK04LT05xAl1Mkd+Tal4ead18baq0zMxBnwKywDpxEhlYyTTyap0zRBHwmQW7IC/NjsEvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 8CB11340CE7;
+	Tue, 15 Jul 2025 10:30:12 +0000 (UTC)
+Date: Tue, 15 Jul 2025 18:30:06 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	paul.walmsley@sifive.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	palmer@dabbelt.com, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] riscv: dts: spacemit: Add initial support for
+ OrangePi RV2
+Message-ID: <20250715103006-GYA540303@gentoo>
+References: <20250711183245.256683-1-hendrik.hamerlinck@hammernet.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,68 +56,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b626dc40-e05b-40e0-b300-45ced82d2f97@ti.com>
+In-Reply-To: <20250711183245.256683-1-hendrik.hamerlinck@hammernet.be>
 
-On Tue, Jul 15, 2025 at 12:37:45PM +0530, MITTAL, HIMANSHU wrote:
+Hi Hendrik,
 
-...
-
-> > > +-----+-----------------------------------------------+
-> > > |     |       SLICE 0       |        SLICE 1          |
-> > > |     +------------+----------+------------+----------+
-> > > |     | Start addr | End addr | Start addr | End addr |
-> > > +-----+------------+----------+------------+----------+
-> > > | EXP | 70024000   | 70028000 | 7002C000   | 70030000 | <-- Overlapping
-> > Thanks for the detailed explanation with these tables.
-> > It is very helpful. I follow both the existing and new mappings
-> > with their help. Except for one thing.
-> > 
-> > It's not clear how EXP was set to the values on the line above.
-> > Probably I'm missing something very obvious.
-> > Could you help me out here?
+On 20:32 Fri 11 Jul     , Hendrik Hamerlinck wrote:
+> This patchset adds initial device tree support for the OrangePi RV2 board.
 > 
-> The root cause for this issue is that, buffer configuration for Express
-> Frames
-> in function: prueth_fw_offload_buffer_setup() is missing.
+> The OrangePi RV2 [1] is marketed as using the Ky X1 SoC.
+> However, after research and testing, it is in fact identical to the 
+> SpacemiT K1 [2]. My proof:
 > 
+> - Similar integration in the Banana Pi kernel tree [3], which uses the 
+>   OrangePi RV2 and identifies it as the SpacemiT K1.
+> - Comparison of the device tree code showing a match to the OrangePi RV2 
+>   Linux tree [4].
+> - Locally tested the OrangePi RV2 with the SpacemiT K1 device tree, 
+>   confirming it boots and operates correctly.
 > 
-> Details:
-> The driver implements two distinct buffer configuration functions that are
-> invoked
-> based on the driver state and ICSSG firmware:-
-> prueth_fw_offload_buffer_setup()
-> - prueth_emac_buffer_setup()
+> Patch #1 documents the compatible string for the OrangePi RV2, and 
+> patch #2 adds its minimal device tree. This enables booting to a serial
+> console with UART output and blinking a LED, similar to other K1-based 
+> boards such as the Banana Pi BPI-F3 or the Milk-V Jupiter.
 > 
-> During initialization, the driver creates standard network interfaces
-> (netdevs) and
-> configures buffers via prueth_emac_buffer_setup(). This function properly
-> allocates
-> and configures all required memory regions including:
-> - LI buffers
-> - Express packet buffers
-> - Preemptible packet buffers
-> 
-> However, when the driver transitions to an offload mode (switch/HSR/PRP),
-> buffer reconfiguration is handled by prueth_fw_offload_buffer_setup().
-> This function does not reconfigure the buffer regions required for Express
-> packets,
-> leading to incorrect buffer allocation.
 
-Thanks for your patience, I see that now :)
+The patch overall looks good, but I wouldn't pick it for this cycle,
+as I've already sent out the PR [5], so let's target at v6.18 merge window
+(Please remind me or respin a new version once v6.17-rc1 tagged)
 
-I'm sorry to drag this out, but I do think it would be useful to add
-information above the lines of the above to the patch description.
-
-> > > | PRE | 70030000   | 70033800 | 70034000   | 70037800 |
-> > > +-----+------------+----------+------------+----------+
-> > > 
-> > > +---------------------+----------+----------+
-> > > |                     | SLICE 0  |  SLICE 1 |
-> > > +---------------------+----------+----------+
-> > > | Default Drop Offset | 00000000 | 00000000 |     <-- Field not configured
-> > > +---------------------+----------+----------+
-> > ...
+Link: https://lore.kernel.org/spacemit/20250715014214-GYA540030@gentoo/ [5]
 
 -- 
-pw-bot: changes-requested
+Yixun Lan (dlan)
 
