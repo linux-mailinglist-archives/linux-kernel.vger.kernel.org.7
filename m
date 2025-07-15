@@ -1,200 +1,137 @@
-Return-Path: <linux-kernel+bounces-731961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5268DB05F25
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:01:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE15B05F40
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E47E0560CDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:55:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6C91C273C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9182ECE97;
-	Tue, 15 Jul 2025 13:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DC02E92CA;
+	Tue, 15 Jul 2025 13:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="K9bAKDmQ"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CXpv4I8h"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344E72ECE87;
-	Tue, 15 Jul 2025 13:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CBF2EF9D3
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587172; cv=none; b=ge8wkEagtRSn3wLV2V/NfkorWytpGOwx2qkZ7X4yblpnxYQHs6xI96f+lRd92TlsktcCsVaJi4Cg17eUSQdwBuf6eibobpbeyb3jcV72epYGbzIrdmhK5mn9de37q5uScOWEVg6KDIK0dbdK3XHgrVi6dEhpUBhr7LvDTDM3QtI=
+	t=1752587204; cv=none; b=rElzYazo33n4ikXeGCXT3N9KMkFgAPWDU90ylen8bQASP7rO20Pw1WPEj2Ti+cbO4rXtCYwOkOewJOCXmYse5wEMdaO3Jwx11uZapd/seTYQ3xCUZd0lwYLRk18HRR/SfBb2DjftkDwZomfvgP2l+xf7NVirSS8MiYIe0E5cS5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587172; c=relaxed/simple;
-	bh=ictygKc7JXDJwFnlUkhwxhLUlFLLZwMiK2g5NCq5k2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T7MQZDTU2qPzuOr9/C3fma5NvWGjuByvHAmqT5aYpsZ9Qq9YwlKAYdtiD2/p6weXr8nk4FVulhgduuCLJUMCylBcUsO2a5NL7VD4WSJS0krYzx5QPD1H2N0FFqyAUQPPPcQ3kcNgmAie0X7lNNugh0ByZ+0texMo0DI/0kU4K5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=K9bAKDmQ; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752587166; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=oGFXX7NuuNLNV+eZBHSE7PUrb+VhWWLJAcVsJrsbXgk=;
-	b=K9bAKDmQCvVB5CTjXW9JsaJUtJlpKiyGJIBTeBKR7aX5FtXljDB70ZR5Qs/f/JT7fNgKDvA5e8d/nQI+24lAQTyZ7EOCwtP+s3HtOku7HFjdySgGrpZxTNYx/jTle1GLeJC4HNwG2obMnZaTT18ZgKdLVUAMIux2nXPo5BJtNfU=
-Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wj0gJ8-_1752587163 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 15 Jul 2025 21:46:04 +0800
-Message-ID: <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
-Date: Tue, 15 Jul 2025 21:46:03 +0800
+	s=arc-20240116; t=1752587204; c=relaxed/simple;
+	bh=s5VZOQklE5Yi2oixqgin8j2KWQ7Dx7YJloRvpywwTVg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Ws39KVKm0aZKS4k0tGlQaZq9xXqc+psHyWrrheM+zerguJ8SmzNYieT20LHbMsgH6qf4+10/YNxZZKg1C6OAyXk/dt/9C4Ghm2Injf2+1iBQGI5iHcmmREP5B4N448cFdHtgJT84UTxFnYhch7Fm7uzUXwBFT9Fsy7FbtZZyfiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CXpv4I8h; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3a4f65a705dso3628491f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752587201; x=1753192001; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mp7ljrj/i/+VhGEY4C8q0OrC5+WTVbDqIPth4pd0v88=;
+        b=CXpv4I8hHJ70E84S41Fffv0y7MYxLL4E4PVvbB3dkeoGCcKaingnauSjqJMJk7f+GC
+         A9t8Fx7HpchQBk0zBGhERcpWlwlpUB4EfEN5K0JZN7hahLXZ3wxXRSp8CIn7ZtqxkBqj
+         R9g/KGiAFnCUoYYOyqOx0t7qjLioaDMoJqic6Pqi6o1kSGd2nkuCrOAX/OB1oyQwy4Co
+         YLs9C67IxLTQ8opAF/PSs4D2XSfK/0UpELYYj0wTU4TVwy+WTbn836pE/exuGXa3cEYC
+         7TZmdV32D7v29wrRhJNcDaQ5VkOp97zkyNwX0kY7b25jLC/rFkZ0URkgDzimrRiNIIif
+         Bdww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752587201; x=1753192001;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mp7ljrj/i/+VhGEY4C8q0OrC5+WTVbDqIPth4pd0v88=;
+        b=VqJ1BqTcfSr+LROWZFhtImK8+wGAPEX4Cs0CH+stN6T4/g25FE23TogG94Iw3IQMwN
+         sQ+N3u/SaokVxj4mDgGXxz/DqaP9SHWIUNyzuFXgGBX31i16JpvXK5Bd3D+kKLTzY6BN
+         1pnRpLfwlsI3AyKPE9gBPXcpZhf5JPeQfDfKyt6dg2jwvyi4Tnyees5Ntl76K5kikF3T
+         YQ7MfmyEDoxRtMw3Fd6kRW4F3j06dFlRv6ip0+Ho1Zswo0ZhmNYDHRIlP+fQK9tistXU
+         mKRl9/0CXLJ5Xg53CdsnyW0YBCJAmyGExg4YDZ43yDqxzB2n5JfhNnHRlqo8c01JUi9m
+         9Hfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfcreBQT/kFb5Ax9l1RFy+FoCWdlpNFSPrfEh26BzVVUidIPmPkSH0/o4F877TE5wRuClbGvrMWZbIj3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcfxWeUWdK8QU+p7Nttk9l1pWMufBU/Mj2cdlUhDsaCvDJW3z9
+	jUC/Vg/ok4O79IPbeiuS9PvwDxxw4yreSrqz5jjbYzs2FRyMOLvlr/LF2Qlyhrz5jGIH08iooXs
+	xeSkIiH7WH0ybnH9wQA==
+X-Google-Smtp-Source: AGHT+IH1oIRfbBdledKovGgVvW49tJmVg4gisne0JjGDWfhGlpXxto3LpYtUQaHtSDX8iB3Y+8zZMfaXssb1yh4=
+X-Received: from wmbek10.prod.google.com ([2002:a05:600c:3eca:b0:451:4d6b:5b7e])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2089:b0:3a6:e1bb:a083 with SMTP id ffacd0b85a97d-3b5f2dd2e52mr14834538f8f.25.1752587201528;
+ Tue, 15 Jul 2025 06:46:41 -0700 (PDT)
+Date: Tue, 15 Jul 2025 13:46:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
-To: Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
- Alexander Graf <graf@amazon.com>,
- Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
- Peter Gonda <pgonda@google.com>, "Luck, Tony" <tony.luck@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- James Morse <james.morse@arm.com>, "Moore, Robert" <robert.moore@intel.com>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>,
- "kernel-team@meta.com" <kernel-team@meta.com>
-References: <20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org>
- <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
- <SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
- <aHWC-J851eaHa_Au@agluck-desk3>
- <20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
- <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
- <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
- <vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
- <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIALlbdmgC/yWMywqDMBBFfyXMuqFGCQV/pbiYxNEO5NFOYhHEf
+ 2+ou3sunHNAIWEqMKoDhL5cOKcG5qbAvzCtpHluDH3X2+5hrMbAa9KRU1she6xZtBsMEtnBuxm hmW+hhfd/9TldLPTZWrxeJzgspH2OkeuoZAl32UrVifYK03n+AGu7mHSWAAAA
+X-Change-Id: 20250715-align-min-allocator-b31aee53cbda
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1282; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=s5VZOQklE5Yi2oixqgin8j2KWQ7Dx7YJloRvpywwTVg=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBodlvAW1uGuI8VV3ZaJchh2qeFswg3h6xxEFN0n
+ suh4FlodWKJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaHZbwAAKCRAEWL7uWMY5
+ RrhVD/9DIS3lODYHGPRiJdnhlQFerkUldW6WwGQGSQVZyaqFAx+mEPq7UBTzvVukZqQzzSNkV0A
+ MY4NiNOXuwIeZ5Kk16GUQvHIIwM/8ZZ4tBnDNbiR358aVa2lS0HphIGuarJzAZvna/pGe/m+xTj
+ ED5z3d6N3n1oxYYKW5mRISfd1jF8ewf4LbCybuwlqdLRqE6OozzWsYP6SVpZuuFkBFmu3MCqLQe
+ jfWa8W2yhYjesdbo7dbW6ZF984uVRUG8LQwQcWVWiN91mDXpS8lhlKyzAAObHsfQqD2okMcKYR/
+ ggr2MpmwfPCzS8AUVCkW+YYw5xg4PljuvobVyPj4BD9BeOCQ8pn3N17mhKzqKk1+P8zpSls83Qv
+ HWhKZ20SYCs5tnFzu7tdt02bXoPH7wnPJKoVrYTVDeYR5/wVxvRFMgKtBSoqxNexAeFFj+dh+EA
+ ED6D4fU4QsgjoeUrnk1dWz7cI774/JaPygvPfWBQFs8NM9Co0Wg7erQFxS7Ffadte0Yevg694+L
+ EPT1IXDUU2ebPDH1RVfrGknLZV7IM7kg9Kql3zwd5I2LQzNQqiwL4FUCuPzvIybwlAKejVbEXs7
+ kfrXxQ03tcjjar+PJmF9nAzAkpFi8JfDw8O6pOZe9kHJ1sHubj9/svP/x5891LyHrH+1RvEVtns bUrSKkt5laGpPfg==
+X-Mailer: b4 0.14.2
+Message-ID: <20250715-align-min-allocator-v1-0-3e1b2a5516c0@google.com>
+Subject: [PATCH 0/2] Take ARCH_KMALLOC_MINALIGN into account for build-time
+ XArray check
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
+The Rust bindings for XArray include a build-time check to ensure that
+you can only use the XArray with pointers that are 4-byte aligned.
+Because of that, there is currently a build failure if you attempt to
+create an XArray<KBox<T>> where T is a 1-byte or 2-byte aligned type.
+However, this error is incorrect as KBox<_> is guaranteed to be a
+pointer that comes from kmalloc, and kmalloc always produces pointers
+that are at least 4-byte aligned.
 
+To fix this, we augment the compile-time logic that computes the
+alignment of KBox<_> to take the minimum alignment of its allocator into
+account.
 
-在 2025/7/15 20:53, Borislav Petkov 写道:
-> On Tue, Jul 15, 2025 at 05:02:39AM -0700, Breno Leitao wrote:
->> Hello Borislav,
->>
->> On Tue, Jul 15, 2025 at 12:31:25PM +0200, Borislav Petkov wrote:
->>> On Tue, Jul 15, 2025 at 03:20:35AM -0700, Breno Leitao wrote:
->>>> For instance, If every investigation (as you suggested above) take just
->>>> a couple of minutes, there simply wouldn’t be enough hours in the day,
->>>> even working 24x7, to keep up with the volume.
->>>
->>> Well, first of all, it would help considerably if you put the use case in the
->>> commit message.
->>
->> Sorry, my bad. I can do better if we decide that this is worth pursuing.
->>
->>> Then, are you saying that when examining kernel crashes, you don't look at
->>> I find that hard to believe.
->>
->> We absolutely do examine kernel messages when investigating crashes, and
->> over time we've developed an extensive set of regular expressions to
->> identify relevant errors.
->>
->> In practice, what you're describing is very similar to the workflow we
->> already use. For example, here are just a few of the regex patterns we
->> match in dmesg, grouped by category:
->>
->>      (r"Machine check: Processor context corrupt", "cpu"),
->>      (r"Kernel panic - not syncing: Panicing machine check CPU died", "cpu"),
->>      (r"Machine check: Data load in unrecoverable area of kernel", "memory"),
->>      (r"Instruction fetch error in kernel", "memory"),
->>      (r"\[Hardware Error\]: +section_type: memory error", "memory"),
->>      (r"EDAC skx MC\d: HANDLING MCE MEMORY ERROR", "memory"),
->>      (r"\[Hardware Error\]:   section_type: general processor error", "cpu"),
->>      (r"UE memory read error on", "memory"),
->>
->> And that’s just a partial list. We have 26 regexps for various issues,
->> and I wouldn’t be surprised if other large operators use a similar
->> approach.
->>
->> While this system mostly works, there are real advantages to
->> consolidating this logic in the kernel itself, as I’m proposing:
->>
->>      * Reduces the risk of mistakes
->>      	- Less chance of missing changes or edge cases.
->>
->>      * Centralizes effort
->> 	- Users don’t have to maintain their own lists; the logic lives
->> 	  closer to the source of truth.
->>
->>      * Simplifies maintenance
->> 	- Avoids the constant need to update regexps if message strings
->> 	  change.
->>
->>      * Easier validation
->> 	- It becomes straightforward to cross-check that all relevant
->> 	  messages are being captured.
->>
->>      * Automatic accounting
->> 	- Any new or updated messages are immediately reflected.
->>
->>      * Lower postmortem overhead
->> 	- Requires less supporting infrastructure for crash analysis.
->>
->>      * Netconsole support
->> 	- Makes this status data available via netconsole, which is
->> 	  helpful for those users.
-> 
-> Yap, this is more like it. Those sound to me like good reasons to have this
-> additional logging.
-> 
-> It would be really good to sync with other cloud providers here so that we can
-> do this one solution which fits all. Lemme CC some other folks I know who do
-> cloud gunk and leave the whole mail for their pleasure.
-> 
-> Newly CCed folks, you know how to find the whole discussion. :-)
-> 
-> Thx.
+This series is based on top of rust-next.
 
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Alice Ryhl (2):
+      rust: alloc: specify the minimum alignment of each allocator
+      rust: alloc: take the allocator into account for FOREIGN_ALIGN
 
-For the purpose of counting, how about using the cmdline of rasdaemon?
+ rust/kernel/alloc.rs           |  8 ++++++++
+ rust/kernel/alloc/allocator.rs |  8 ++++++++
+ rust/kernel/alloc/kbox.rs      | 15 +++++++++++----
+ rust/kernel/sync/arc.rs        |  6 +++---
+ 4 files changed, 30 insertions(+), 7 deletions(-)
+---
+base-commit: a68a6bef0e75fb9e5aea1399d8538f4e3584dab1
+change-id: 20250715-align-min-allocator-b31aee53cbda
 
-$ ras-mc-ctl --summary
-Memory controller events summary:
-         Uncorrected on DIMM Label(s): 'SOCKET 1 CHANNEL 1 DIMM 0 DIMM1' 
-location: 0:18:-1:-1 errors: 1
-
-PCIe AER events summary:
-         2 Uncorrected (Non-Fatal) errors: Completion Timeout
-
-ARM processor events summary:
-         CPU(mpidr=0x81090100) has 1 errors
-         CPU(mpidr=0x810e0000) has 1 errors
-         CPU(mpidr=0x81180000) has 1 errors
-         CPU(mpidr=0x811a0000) has 1 errors
-         CPU(mpidr=0x811c0000) has 1 errors
-         CPU(mpidr=0x811d0300) has 1 errors
-         CPU(mpidr=0x811f0100) has 1 errors
-         CPU(mpidr=0x81390300) has 1 errors
-         CPU(mpidr=0x813a0200) has 1 errors
-
-No devlink errors.
-Disk errors summary:
-         0:0 has 60 errors
-         0:2048 has 7 errors
-         0:66304 has 2162 errors
-Memory failure events summary:
-         Recovered errors: 24
-
-@Breno, Is rasdaemon not enough for your needs?
-
-
-AFAICS, it is easier to extend more statistical metrics, like PR 205 
-[1]. Also, it is easier to carry out releases and changes than with the 
-kernel in the production environment.
-
-
-Thanks.
-Shuai
-
-[1] 
-https://github.com/mchehab/rasdaemon/pull/205/commits/391d67bc7d17443d00db96850e56770451126a0e
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
