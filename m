@@ -1,114 +1,98 @@
-Return-Path: <linux-kernel+bounces-731201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3BE9B050C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 442F3B050D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C8A560978
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E21D166BAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0151D2D375A;
-	Tue, 15 Jul 2025 05:18:29 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35E22D3750;
+	Tue, 15 Jul 2025 05:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sj/n5ugK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE39260580;
-	Tue, 15 Jul 2025 05:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C98323C8A1;
+	Tue, 15 Jul 2025 05:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752556708; cv=none; b=PmNHT5iMPMKFC+TjysFNxxJdcGnvL7Udkz3muF3Pd6rn+mosILx8RN59+hMX/WJpCu7HOH10Et2Dz24PJOxbV2BZS3Fgpsr1CJW8rtAR5JI9Jrx8DKUI8De15v2X+v5T2wdFk993qPf06BUE8+DQsiLLKfECXyTzyRJPp0JQPt8=
+	t=1752556780; cv=none; b=F7MU881yt/Lot43HCthNfHapeTet7Ud8H/F0ZhT6QRJarL/544vO1u8y/o4i6FhV1huFsm/9rg6D+bktTRoRJRj4EeBXQ0iLymkCfFcQ3QVXHcOww29P3jwnnc9VztBsefrhfiAgxJyBzvKAm6oTP4jbw8Qump6k/qIZmX3T0DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752556708; c=relaxed/simple;
-	bh=V7YR6XFnZpQsMgISoY1pYpl1rtvTcBvxb02xYS0bsz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZLpMIODKBhKZr2ULkL7BeVhxp6S2gjuM4ypYe9ZbJjMJq8rnBGHVYFRQrAoODQSvETxshq5pJ+RI/X6Z5vDGLvRRexSSFQT5efLVUWvXczIMlZsSMkREPZScXOFBrMZLvV56j/fSUi1I5TfUW6bQuRYlVJl/BDgYSgnCEiWMxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56F5Hvnw089690;
-	Tue, 15 Jul 2025 14:17:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56F5HvkX089687
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 15 Jul 2025 14:17:57 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <7b587d24-c8a1-4413-9b9a-00a33fbd849f@I-love.SAKURA.ne.jp>
-Date: Tue, 15 Jul 2025 14:17:56 +0900
+	s=arc-20240116; t=1752556780; c=relaxed/simple;
+	bh=5kJrTLqEK1l9YRk4TYXY3UDlW4+Q7ZyR4bvWSBUgUaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oQ0kf1rvsbGcTCKdeQLZw9wuUmZVfV645FYWR7LTPkCcrEUo7TWEifNpl3pefF1nw2hKMvJ5S++pEy36D24JhWDGU4zHFMwtBtfyHHESBpSnoWyTWlnSRhI9zZ66vzmYQbAaBDa+GwZze4sxuNi0V9HkDXfEUnxfIZGKmAaEsSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sj/n5ugK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF659C4CEE3;
+	Tue, 15 Jul 2025 05:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752556779;
+	bh=5kJrTLqEK1l9YRk4TYXY3UDlW4+Q7ZyR4bvWSBUgUaY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sj/n5ugKL9ykdWrIT+XGG95CfEapwo9WgrNNxjl4GIflUC6TQ84uZ3wMWiGhj0Vxb
+	 8mXV8V7E+SD5AP/aAM/heraB3ndsWzpudozFW6V6psdo5VeToVtj0OJ3mCGcqUB1MS
+	 CGPJU12tcQyWoDmHguGdOeCgMFfp7QaA7iKaq/fdKHxTYTjJdnkv0160osGqVFoMBG
+	 +iPkaCd4l7IEy3gVJAQydTP4PPc5yLLr0VP/KSO1b84QS3X7sBszabOWvkuzLZjVo2
+	 LO0CkPGw5NpCDASRVOpbHSlkQNeKJTf9VQvEeOhYWW2FUTDwatpxGK5AvZKh5yqIEp
+	 rTG31ApuNCbVw==
+Date: Mon, 14 Jul 2025 22:19:39 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Laight <david.laight.linux@gmail.com>,
+	Martin Uecker <ma.uecker@gmail.com>,
+	Alejandro Colomar <alx@kernel.org>, linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org,
+	Christopher Bazley <chris.bazley.wg14@gmail.com>,
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Andrew Clayton <andrew@digital-domain.net>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Sam James <sam@gentoo.org>, Andrew Pinski <pinskia@gmail.com>
+Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
+Message-ID: <202507142211.F1E0730A@keescook>
+References: <cover.1751823326.git.alx@kernel.org>
+ <cover.1752182685.git.alx@kernel.org>
+ <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
+ <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
+ <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com>
+ <20250711184541.68d770b9@pumpkin>
+ <CAHk-=wjC0pAFfMBHKtCLOAcUvLs30PpjKoMfN9aP1-YwD0MZ5Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] hfsplus: don't use BUG_ON() in
- hfsplus_create_attributes_file()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
- <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
- <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
- <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
- <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
- <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
- <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
- <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
- <244c8da9-4c5e-42ed-99c7-ceee3e039a9c@I-love.SAKURA.ne.jp>
- <ead8611697a8a95a80fb533db86c108ff5f66f6f.camel@ibm.com>
- <b6da38b0-dc7e-4fdc-b99c-f4fbd2a20168@I-love.SAKURA.ne.jp>
- <22cddf1f1db9a6c9efdf21f8b3197f858d37ec70.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <22cddf1f1db9a6c9efdf21f8b3197f858d37ec70.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjC0pAFfMBHKtCLOAcUvLs30PpjKoMfN9aP1-YwD0MZ5Q@mail.gmail.com>
 
-When the volume header contains erroneous values that do not reflect
-the actual state of the filesystem, hfsplus_fill_super() assumes that
-the attributes file is not yet created, which later results in hitting
-BUG_ON() when hfsplus_create_attributes_file() is called. Replace this
-BUG_ON() with -EIO error with a message to suggest running fsck tool.
+On Fri, Jul 11, 2025 at 10:58:56AM -0700, Linus Torvalds wrote:
+>         struct seq_buf s;
+>         seq_buf_init(&s, buf, szie);
 
-Reported-by: syzbot <syzbot+1107451c16b9eb9d29e6@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/hfsplus/xattr.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+And because some folks didn't like this "declaration that requires a
+function call", we even added:
 
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 9a1a93e3888b..18dc3d254d21 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -172,7 +172,11 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
- 		return PTR_ERR(attr_file);
- 	}
- 
--	BUG_ON(i_size_read(attr_file) != 0);
-+	if (i_size_read(attr_file) != 0) {
-+		err = -EIO;
-+		pr_err("detected inconsistent attributes file, running fsck.hfsplus is recommended.\n");
-+		goto end_attr_file_creation;
-+	}
- 
- 	hip = HFSPLUS_I(attr_file);
- 
+	DECLARE_SEQ_BUF(s, 32);
+
+to do it in 1 line. :P
+
+I would love to see more string handling replaced with seq_buf.
+
 -- 
-2.50.1
-
-
+Kees Cook
 
