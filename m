@@ -1,155 +1,146 @@
-Return-Path: <linux-kernel+bounces-731874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD08B05AD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:08:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E66B05ADB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CF057AA144
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A882A4E6BC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2B72E1751;
-	Tue, 15 Jul 2025 13:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA8A2E175D;
+	Tue, 15 Jul 2025 13:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Myx2Goh5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yB0QQ4uf"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBC62566;
-	Tue, 15 Jul 2025 13:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7151F2E175F
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752584902; cv=none; b=szCtKIqs1omWOciZf4YE15qY9abEskvnr7/duq83JjLgZZi0k5rMtgTFz3TI3vzFqLTbIUI2YIbLwjU8j6wHFpVgN9xR4MQJD0qgxbGm63rUFqu7Aq1GDpELwG5VmABUopIc94aYFr7Qrxy9KxW0j5Hcbia0nGrdqe7ccMHSyd8=
+	t=1752584905; cv=none; b=HqWaV/7eWSBTtE50o4GpJ03MaOLye8PpxKOlQyEeXyq+i2r9tBIPqwZ8z1p6VDBC1u8tCFiYeqG9maeIrBlkXfinSYwfRzC3yDlAPS5/RxNs6s4cTGo0mKaNvkWk77vVTpGUUJ5OXuwjcCJ94f0GY6xYO0meacnjdwnb8v3LRmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752584902; c=relaxed/simple;
-	bh=ERgqFp3dWEUt6TrdSa/YUzlMBzQe1R/D7z1fcvnBStk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DNK44uo64rqHyF4itq1bvz457/Gv9GSOBkOcRvweMXditZUkCFk6fT45aIZHQHDMsnMxySMa+aPsEL7IrnJP93foxs+smajx6C06Jzxs7gN9zkmtQxMfblMGxKxPgJQF93mBwUuKvArkhCmiNOMZ8FN2JFEVqXCijrZG+QLt9iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Myx2Goh5; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752584899; x=1784120899;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ERgqFp3dWEUt6TrdSa/YUzlMBzQe1R/D7z1fcvnBStk=;
-  b=Myx2Goh5z5ruC3fY8eAkSaSuz/TKc6fdV4VNlO9eikFEw6ndC2LbsaoO
-   UWHIOA3wQGriXCYKezCAr2QWQooFu6mRKDrkdNR5nbXRv6HY+rLbgOHgs
-   gAm+jkRKE2OtqHnjhZk2iKBihridvvStyWxsBhZzteva5Z+E+WjIPkRxM
-   dNrwrSrxsd5GIGeHoiZQszjAkIsDsnL2Y0xCQewnjyK/LWZb7BO63sHiu
-   DCPQYDpu/lNcClsqbKxoUS138kn7zxh87OFjnUNqzVYRQaKMwKrniy1OW
-   O5UXnozFHEYylNjG8bCaKgRZjZgTYWiYmLJgO69iOtaG/+gY6d8Q2Rsdz
-   Q==;
-X-CSE-ConnectionGUID: Br1mH+ceS5qXP6cE+NDHRA==
-X-CSE-MsgGUID: HF/HgTUjQKyIPhGBE9IIsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54740059"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54740059"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 06:08:19 -0700
-X-CSE-ConnectionGUID: 1wcdqG34SWqIsJon1ARLKQ==
-X-CSE-MsgGUID: TP7UHK2CRpyZLxyiQtiKnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="157765105"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 15 Jul 2025 06:08:12 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ubfOD-000A51-2g;
-	Tue, 15 Jul 2025 13:08:09 +0000
-Date: Tue, 15 Jul 2025 21:07:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Joris Verhaegen <verhaegen@google.com>, Vinod Koul <vkoul@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Joris Verhaegen <verhaegen@google.com>,
-	kernel-team@android.com, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-	linux-arm-msm@vger.kernel.org, sound-open-firmware@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org, David Li <dvdli@google.com>
-Subject: Re: [PATCH v2 4/4] ASoC: codecs: Implement 64-bit pointer operation
-Message-ID: <202507152054.EKID8Uop-lkp@intel.com>
-References: <20250711093636.28204-5-verhaegen@google.com>
+	s=arc-20240116; t=1752584905; c=relaxed/simple;
+	bh=WnK15eyFGnOOiCqP/4GEMlvDMj+juzHnpjX7yiY+mlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cfpXegGD9NoFdYRkoPNP2ZBDDZhe7ESKHjltgfjT8WIiHG1/Wrko2wfbEnZE1PUe1V1Kh9a5weYN20cHchdmINUrPiM52eH3sjZiua7rUof/cchAtx5wocso4PJ9JIjmVmDfhmEAV1UWst6w6bsptxMSYRg5avS9x/9pHj+395g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yB0QQ4uf; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32c9ebe7190so7541141fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752584901; x=1753189701; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gq36CP0MCDZZzeTcntw2nMahOQrUrL9LQjFqfs8ZNN8=;
+        b=yB0QQ4ufMICg9Tf92uXHeDJK04V4HnNAd700fo/W6dWenTiVqN8T5/1qy84FP3obzV
+         20W1i3Wmxl37UmJX2z8+j6Ogk7NOIPFlzAYHPrACh0fbXga+B3GkdP3KG7L8ECoqQajs
+         KJpc8TQtkD7wEdcRFpaxi5pxjFVzn8f0r3CwG3LL/C9lzR7mvzBJjsVeNl5xx0dosUKD
+         nSRv1RRxFYSBAGFXfNKBNU0CskHhxyC3PHQpPVv0R4Xcf7nFJPqyLyCDmEz37ATAaApP
+         Bgg2kx/Zp9Titou62DEjEN1SyJOK1Kmi6TZuQ1M+Xo0YLTOvSfgWXGP4RTDzgm6ILhuY
+         ETUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752584901; x=1753189701;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gq36CP0MCDZZzeTcntw2nMahOQrUrL9LQjFqfs8ZNN8=;
+        b=JEyFWEoQr4xkx8OQTkY5miB0pvFhZNG/EQ9Uy8wJcoACgcmDWz34/Z6j2Lu8hN0dXB
+         64CvnJu7NRkzk/tHN9XW1aCKMkvRzMCBjebHvRVL9iIQs6vI9I13sIBCd4qTBecR6NHS
+         XfTqMJS++Nkj34YVe0Y2i3w21/Juk5qMM2KDsVEjRIihbRxliteBPR1Gvld1185D1pxf
+         cTb1YXRslAE9E5uZEGMZha3FeVNKdorofIwePdBJPSqPFFtq96HmG1cZzvbauOf4BXGs
+         LQ6+mm4tnkM3N8V2+foOmDmjQeIGQef50Gi0GonFRazGmdo8nynDrWC9yJG5Vi4GCBr5
+         91gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWG8iLKLJJvihLixQEuECxP37WStwg7wLspeuNeJ/m7i+mLVxEwPP7G4sUkMYL8lNmOm8IKhTkebvOwnt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfvllw+JukSabJOJBfIHHz2fd6GtzrhjqKDM8azp084TI5k7tH
+	1nz/aq2ET+0+dG3t3RVozVQk3Kr1Vgeix1debifTkyGYOw7On/cMW2dLwGzvxmudZQ8=
+X-Gm-Gg: ASbGncv+ft7X+vwsP/VFNzeT7GCuRxjWsV9NyJbdqh/nc1KQX8RaLi/16sfgKeFbKtm
+	GzP426vdH3SZ/fHN9AxL8430rqnduWx432UBe/obkKklJKDFPb8UUvZ8TzGc+U9PgHVuIadVKVV
+	mbWfjZq1iHWhJik2k0KCoRKdMQ9fN/7SApnAV80Gdw1hr7tI1sOLwi2xFmnZ6mBfFYeXuOlAl2L
+	0dpPQW0SjlVod4LWe12eT4aF5Kgc/JGdY/MhpmYOwOiQACvyBzPVCJT4g0QNIvy3xP4oJQ5pfT1
+	iH4OMuSaIWC4QjzyH9778Kml8G5bZQUd5FxgrYIyuQfTthPinGUit8feFvB0iAgcjDh5SeGCY0l
+	TMA8E1ljXc8/ZHnm8d0UBZO5w2PoqOf9p5hTGwXjFfelS5W6fvKA+w1kBwNaM3KIn/AJOuxePJ6
+	Ug
+X-Google-Smtp-Source: AGHT+IHMVeoHz8y2i5KJdatSFzaiHdlhoX4K7Fmxq+ulokvZuQc+6Z5CQPHMAkcSdnhIcDc9V2Ge5Q==
+X-Received: by 2002:a05:6512:3a8e:b0:556:2e02:6957 with SMTP id 2adb3069b0e04-55a1fdd8762mr204686e87.9.1752584899957;
+        Tue, 15 Jul 2025 06:08:19 -0700 (PDT)
+Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b5fa81sm2301334e87.142.2025.07.15.06.08.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 06:08:19 -0700 (PDT)
+Message-ID: <f753f088-474b-41bb-82d3-6684bea2f87e@linaro.org>
+Date: Tue, 15 Jul 2025 16:08:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711093636.28204-5-verhaegen@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/15] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
+Content-Language: ru-RU
+To: Bryan O'Donoghue <bod.linux@nxsw.ie>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+ <9361e954-e2c9-41c6-be4c-12b0e4f367f5@linaro.org>
+ <ae0a309f-7e52-4d3c-8f26-989f22da5b07@linaro.org>
+ <GbVC82h7wSXQsAJh8XybKorKYy9wupjQLndjf_uYNXOZnk1UqS_tT4Yg9gzf8X3Kn55Mt5bXfcFrHtyMoFZ4-A==@protonmail.internalid>
+ <a4ebdf5c-8d4f-4994-afd9-22c8d889fe97@linaro.org>
+ <4281887a-e7c0-43bc-9e72-96f0e432c58f@nxsw.ie>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <4281887a-e7c0-43bc-9e72-96f0e432c58f@nxsw.ie>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Joris,
+On 7/15/25 14:16, Bryan O'Donoghue wrote:
+> On 15/07/2025 11:27, Vladimir Zapolskiy wrote:
+>>>> 1. This is an incorrect assumption, unfortunately it was not discussed
+>>>> previously for whatever reason, good news now it gets a discussion under
+>>>> drivers/phy changeset.
+>>> Perhaps you can explain why ?
+>> It's quite easy, sensors are not connected to CSIDs. Moreover data flows
+>> from any sensor can be processed on any CSID, there is no static hardware
+>> links, which are attempted to be introduced.
+> 
+> This statement is not correct.
 
-kernel test robot noticed the following build errors:
+Please elaborate, what statement above is not correct?
 
-[auto build test ERROR on broonie-sound/for-next]
-[also build test ERROR on vkoul-dmaengine/next linus/master v6.16-rc6]
-[cannot apply to tiwai-sound/for-next tiwai-sound/for-linus next-20250714]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> The port@ in CAMSS pertains to the camss-csiphy device not to the
+> camss-csid device, so there is no hard link to any specific CSID in the
+> dts scheme here.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joris-Verhaegen/ALSA-compress_offload-Add-64-bit-safe-timestamp-infrastructure/20250711-174008
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-patch link:    https://lore.kernel.org/r/20250711093636.28204-5-verhaegen%40google.com
-patch subject: [PATCH v2 4/4] ASoC: codecs: Implement 64-bit pointer operation
-config: i386-randconfig-141-20250714 (https://download.01.org/0day-ci/archive/20250715/202507152054.EKID8Uop-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250715/202507152054.EKID8Uop-lkp@intel.com/reproduce)
+And here it's just a confirmation that my statement above is correct,
+so please be consistent, and especially in any kind of accusations like
+you've just given above.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507152054.EKID8Uop-lkp@intel.com/
+Any of ports in CAMSS device tree are properties of CSIPHY IPs, and ports
+are not the properties of CSID or whatever is left in CAMSS after the
+extraction.
 
-All errors (new ones prefixed by >>):
-
-   ld: sound/soc/intel/atom/sst-mfld-platform-compress.o: in function `sst_platform_compr_pointer64':
->> sound/soc/intel/atom/sst-mfld-platform-compress.c:226: undefined reference to `__umoddi3'
-
-
-vim +226 sound/soc/intel/atom/sst-mfld-platform-compress.c
-
-   216	
-   217	static int sst_platform_compr_pointer64(struct snd_soc_component *component,
-   218						struct snd_compr_stream *cstream,
-   219						struct snd_compr_tstamp64 *tstamp)
-   220	{
-   221		struct sst_runtime_stream *stream;
-   222	
-   223		stream = cstream->runtime->private_data;
-   224		stream->compr_ops->tstamp64(sst->dev, stream->id, tstamp);
-   225		tstamp->byte_offset =
- > 226			tstamp->copied_total % cstream->runtime->buffer_size;
-   227		pr_debug("calc bytes offset/copied bytes as %u\n", tstamp->byte_offset);
-   228		return 0;
-   229	}
-   230	
+If CSIPHYs are extracted from CAMSS into its own device tree node, so all
+CSIPHY only properties shall be removed from CAMSS, like CSIPHY reg,
+interrupts, clocks and ports as well.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best wishes,
+Vladimir
 
