@@ -1,118 +1,75 @@
-Return-Path: <linux-kernel+bounces-732502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F03BB067B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:29:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC28B067BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BAC7564776
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16105648C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BE427F183;
-	Tue, 15 Jul 2025 20:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0802BE63B;
+	Tue, 15 Jul 2025 20:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="HyVPPdJl"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+VCbrIm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D493F2727E5;
-	Tue, 15 Jul 2025 20:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE3A2727EC;
+	Tue, 15 Jul 2025 20:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752611385; cv=none; b=bKKcFXNIzkD/GpI/SfjPhnebUzX0Gf2Z/b609o1kOQTIBEo9PkOLxulPiPjM8zNnTTiWlGTDORXTrvytFlaX+s8xYVidxqXdzSUTzxTbursTzNqo39oGKPBcp/H39bGBR8oAl9cEj1lVzlckm/PgCTqVUgh6tJ5UZF2LwWpHCuE=
+	t=1752611400; cv=none; b=qAPN8/h9e7rejnAZjwPDavGdEbkRLmws1bUeK+FFn9sTvevLWwzrFmzJScLxqQ9rbNXuN2NROZ5xtlWdD/yC0Jff3klNwzrL1zf5KdTSCx708Jw5BJZG9uDs1kyDh/fa4p2OHjASJlArCa6FFeS3o4bdNf7300qXlvjV6WNA4Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752611385; c=relaxed/simple;
-	bh=fTn/QgTpFX9o7jIW4pD8Y66/xz/PwefuPE5XYeqm4Ck=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ij+bJ35i88RoPR4o5TEr5WgVYhNKEuKvqfYXsZ7unUwRPk9CMy0+eKCykGCGA3lPd6o/9geloUFjDrTrN0Mn7t5P0kwUpH8gj3VqtUCAg8irlzoao6DeostYMcOjXZlGM+dlgt/6gGMAR3TSLesvbiKTw9uurDPruK4UFoaNks8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=HyVPPdJl; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net EAB934040B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1752611383; bh=/LIRBim8AEZq8DekcVe5QLS0RIb8QmJGhFMCCEvV3kI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=HyVPPdJlRWFWCWAm+2YA4Fv1z77UCgdzze3ADMSzBweuYV1/JigB1HXKvIL64s/n6
-	 ErbXFvh/qp3x0Q7aBz2MYy78BZDw2f0CaYzJo9nxCqkWcOH0YyI1NGSPKOkA5b+Rts
-	 Zn/UMo4DlZtK3ygOY1FsZ2hlO7yJQUO6Uv2vbLVfmyTyjrnSgNZmjvKO00z7x9NQIa
-	 0hlEqktbGUq0/wINHH5v2uTk6+eOFcWvWrYPALMXbJtegRNGQGCfON4tGR3z5PB1Vq
-	 b1WhrUM9Qj5WCuWGy4VwA1erXskd++0Joyae2ZWJSf0TXkg7wiIClfV5Yql6HD3iYr
-	 HxQHXFvY9rxrw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id EAB934040B;
-	Tue, 15 Jul 2025 20:29:42 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev
-Cc: Boqun Feng <boqun.feng@gmail.com>, Clark Williams
- <clrkwllms@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, John Ogness <john.ogness@linutronix.de>, Peter
- Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
- Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider
- <vschneid@redhat.com>, Waiman Long <longman@redhat.com>, Will Deacon
- <will@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 3/3] Documentation: Add real-time
-In-Reply-To: <20250715144127.697787-4-bigeasy@linutronix.de>
-References: <20250715144127.697787-1-bigeasy@linutronix.de>
- <20250715144127.697787-4-bigeasy@linutronix.de>
-Date: Tue, 15 Jul 2025 14:29:42 -0600
-Message-ID: <87v7ntdwp5.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1752611400; c=relaxed/simple;
+	bh=s1AZC3mbmHb2undumjXjWb3GFUaGZlxyaMwiYR1evAo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=O3MxynR1sQRLAt57XtSGOvyQW8lO/IqR1DO0G33HpBQlKLc2yOhv8N56gX3ntPpE0ZLWDOXXamqGLozwZOROn6I7QweQEVxFlY3+uAAqWFighbaVWPoxL5LaxelG0pB83qDBANrBOiMUzDCSqbfPmWSV4Q55WVjcT/FYfdn1yKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+VCbrIm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C9E4C4CEE3;
+	Tue, 15 Jul 2025 20:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752611400;
+	bh=s1AZC3mbmHb2undumjXjWb3GFUaGZlxyaMwiYR1evAo=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=e+VCbrIm8yAUY2nPpU0XmHKeewyFoIxrPMpkoi39p2KmvqZbyOmYKgD3ul4LKoqKF
+	 nBBH27Sjc8um1CWrjVbwGYfmWRuxeRmuY0mmyapVCD2yjVDPSK9V1xSMosc5jjNPUB
+	 88n3tzuRafkUqc0eiX2j/9ZF1fNv5iaLe7E6mO98TVp0POc+sDz7aqrcgvyFr6LviF
+	 3m8CXPtJsWrOHdIA0TVM3USnXL2jYIfzqg3Z3hW6mY7qaeaQhjcurXxhnpSNrKgiSX
+	 7XQgDx8ElW2VhS5MLqc9t12hTuzNbCHaFBlLNg6S6kDs2Ljimm5id7E33IXo8yohDx
+	 YZyHaqdNBrWKg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 22:29:48 +0200
+Message-Id: <DBCWVWUNRR05.37YH3UZW1R0PW@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 1/2] rust: devres: provide an accessor for the device
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <daniel.almeida@collabora.com>, <m.wilczynski@samsung.com>
+References: <20250713182737.64448-1-dakr@kernel.org>
+In-Reply-To: <20250713182737.64448-1-dakr@kernel.org>
 
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+On Sun Jul 13, 2025 at 8:26 PM CEST, Danilo Krummrich wrote:
+> Provide an accessor for the Device a Devres instance has been created
+> with.
+>
+> For instance, this is useful when registrations want to provide a
+> &Device<Bound> for a scope that is protected by Devres.
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  Documentation/index.rst                 |   1 +
->  Documentation/real-time/differences.rst | 244 ++++++++++++++++++++++++
->  Documentation/real-time/index.rst       |  18 ++
->  Documentation/real-time/theory.rst      | 119 ++++++++++++
->  4 files changed, 382 insertions(+)
->  create mode 100644 Documentation/real-time/differences.rst
->  create mode 100644 Documentation/real-time/index.rst
->  create mode 100644 Documentation/real-time/theory.rst
-
-So overall it looks good, but I do have one overriding question:
-
-- Who is the audience for this documentation?
-
-I think it's an important question to ask, because something this easily
-becomes an unorganized pile of stuff that somebody thought should be
-written down somewhere - better than nothing, but hard for readers to
-use effectively.
-
-A good first step would be to supply a paragraph or two in the new
-Documentation/real-time/index.rst describing the nature of the
-documentation and who it is intended for.
-
-Then ... think about whether a new top-level directory under
-Documentation makes sense.  I've been working for years to reduce those,
-so I tend to push back a little when new ones show up.
-
-- Is this documentation for kernel developers in general, with the idea
-  of maybe helping them to not break PREEMPT_RT so often?  Then perhaps
-  documentation with that focus under core-api/ makes sense.
-
-- Is it, instead, intended as overall design documentation?  We don't
-  really have a good place for that now, maybe we need a new design/
-  book to gather such material.
-
-See what I'm getting at?  I'm not saying that these docs *have* to go
-somewhere else, but I do think it's worth thinking about.
-
-Thanks,
-
-jon
+Applied to driver-core-testing, thanks!
 
