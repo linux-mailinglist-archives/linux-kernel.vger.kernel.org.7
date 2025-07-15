@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-731727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD82B058B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:25:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BACB058B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA061A65801
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:25:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 457427B4DE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C116A2D837D;
-	Tue, 15 Jul 2025 11:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0B32D9493;
+	Tue, 15 Jul 2025 11:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="tjkZBLTq"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="KVkb7jMO"
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB39F2D94BB;
-	Tue, 15 Jul 2025 11:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17F42D878C;
+	Tue, 15 Jul 2025 11:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752578724; cv=none; b=GAnuoLshZsHGHkB6AzSxTu82V0JWJ98AgjXjbDMHDmkMHN8kBay5KB6xJ/rxN5/Z6DqzOHvcqe+qgFUtyROrrC2GO2K8/kRyUiuCsFnxCdHC8Ie0/n8bu9Lt3MJs9A8JuYp7zTgSGhE5oUxGxZEjoZ4oApKrb4b3i3++AHTzgoc=
+	t=1752578726; cv=none; b=IJPng4Ehj4OCU4Div7ar54ppc+fQL455Nbb83aekX7A7Kp0xaV+zPyvfecNLxc0mFleKuZUNqu/pr17C0F/5VbAbpUYX2qCxhyVdi4OgrU4JAYqDuBrexR4hEPObsAVUlL4/zhU6YCSkxV5N0BXAkdkw642L8BEXrpGcbWEg8nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752578724; c=relaxed/simple;
-	bh=6Vvux8Vkg6PuVx115aocWutY2yl43wJ2D3fmJL+rdDI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=btWzkeEVGljU6SpIpNukcuPFd7nyGUmgqJumWcLb4Z10mRI4mWG7oJOh5LhmVqPfVIJR1tTCfWrTIKn/NO3jgHgu4LA/H4bmpkGx0MwkJudluZbfHq04gnxL82FOZx/xahlO8yh/PfS+pCxd0EkdUtLAasgOTxrGlV8Lb0TWJmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=tjkZBLTq; arc=none smtp.client-ip=54.243.244.52
+	s=arc-20240116; t=1752578726; c=relaxed/simple;
+	bh=Yxu6FQwHhhkRhorIrxlY9BdpbQWdym9cjQ4dEhAHzTk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Z9gA0A9v/eO+p3akzczSJCFKixenxmMHILBkwRQZjw/mfBcN+At6EXpW+yWUP9pImJrggCth9OkyMuL3UgfRO/Pzgj9t7NiZpvn+2sN2ZzNd3XklMnJ8xn3eYhJZ7VIiliARnOZw/uodmjWvzKus7wLgFWATWX3BAavcGZ4kLxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=KVkb7jMO; arc=none smtp.client-ip=54.204.34.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1752578710;
-	bh=6Q8tj7y2fVh1DqqXLpoIzvx75MH7E6vfXU9jWGAciCk=;
+	s=altu2504; t=1752578713;
+	bh=PdxuukrMJyMvzJ16KhGFmRwb53DnIsrK3r7HucbSbmc=;
 	h=From:To:Subject:Date:Message-Id;
-	b=tjkZBLTqMYIHD96FGr/Vv43hg++2HyCw7I8wfwkhCsog2CrTb11uJHLpqiIJS5ps7
-	 AoXeu+tIVTOkl2bHvx+9flHU0L2wzImOXxRd+N+fp4Uqkz8Q7QgLobhJKR3LH7M+Sx
-	 rpw638otNRTM2zAmwKnw5t9F3DhiVwqxukLE5HBM=
-X-QQ-mid: zesmtpsz3t1752578709t1424522d
-X-QQ-Originating-IP: Y2jgY0DzpsnsowblI/Y8vYsFKW2TRFdQuFkynBZV9Zs=
+	b=KVkb7jMOibljmFjUAAczD7NExhTMZofA6A1vS8onw/VukAkdJa0BpdUQaLerjflWF
+	 ml+gyeEV9KIrAFPK/aDHo2K64WAZJO7n6SyziNImAWGjniozeplElK9gZGEAId60u1
+	 mflPw/r97vwxlAMocYFnERWybgXdfvheXEIwpvQg=
+X-QQ-mid: zesmtpsz3t1752578712tf0188769
+X-QQ-Originating-IP: XVdB7d8ltncWpCfKxfEuv57ere8QMwHyZ9NM2AK9eVk=
 Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 15 Jul 2025 19:25:07 +0800 (CST)
+	id ; Tue, 15 Jul 2025 19:25:10 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6650864007286814184
+X-BIZMAIL-ID: 11091658648405409275
 From: Chaoyi Chen <kernel@airkyi.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -72,31 +72,31 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH 1/5] dt-bindings: connector: Add displayport connector for hotplug notify
-Date: Tue, 15 Jul 2025 19:24:52 +0800
-Message-Id: <20250715112456.101-2-kernel@airkyi.com>
+Subject: [PATCH 2/5] dt-bindings: phy: rockchip: rk3399-typec-phy: Support mode/orientation switch
+Date: Tue, 15 Jul 2025 19:24:53 +0800
+Message-Id: <20250715112456.101-3-kernel@airkyi.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250715112456.101-1-kernel@airkyi.com>
 References: <20250715112456.101-1-kernel@airkyi.com>
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: MIXpHopat2IaCfng877wRqNTO5c3xi2P54dqj20cjkahUzF0YO1gIovH
-	u0DuCL67cE+L9dcr7GNkd1ApfeTpt48RkCO1kROkVss6vJSqjwH2tFvc4GAA6RmYLY5l77n
-	4RgJ2rTmZeHUviqWNtXkBxCLT6TeolFUSU1GgCLMFbhnqmgOOJ+ccBidL+ODZ4tOPFydb8A
-	Cif19thA4/JsZi5OBDtioja1O6gPWQXI6jQX7MiUI02IClP7qbR2HslVgzJYEEvsonlP6nB
-	Xxv8B/t1m2/DQbH8ByLBgdqJJZX5w2ntjQ7laMJG7ptECad4zInfGTXuifBJfalEMxha233
-	6PAXyARSqvZZRNqvqMoidk3UjKiuOgSfXkbxZ5D1LPkueCNnHJZKNoIpo7d75DGaeK1RLsu
-	+iBcXxtwanBMVwCxAjk9bW4m0mvlxaflqn4dIkhDLSmT6pwtpaU7GPDoPvx4zlvkB8S3G5v
-	DER52OgnP6u7isgC+tOZYoDrPpZuLylPIp0t8+EixsYkECDqmcYsvhZZXl7kK0RDbrRkWtC
-	AOV9PqzS/QJEfbLp/X0lfM3vGlM1NrZZDOFLrQi3l/i7v/Av185fpgbatjNVzYJJSpbtr8J
-	6ChShJVxhgM2MfC2XLTBmaR4S9Nlf6NXExQdy1FOhLwenMQS1NTKGmSYJOmr1QYy8ke305F
-	kWoOjlRaoTFNYBdwDVfQbBefPZue72d9VgAwFlUQafi4qBswnZLvV8ItEjY6Q+tQYfa44au
-	v7gbo/nwJOujuJWfp9EZXF4J0lgxBp83Q/rzEagweiIA+p0xPpZfa41owSLBRgr31ZhmYQQ
-	E8BoISwSVwAlHMXgMp326pDvV1/ctFwgNoL+9K3z3MwugIUWCwTlkFimNgUgvBnMM4L1pjm
-	ebfsIOS0aeH77EhCqSHSmaWJNtqmpC64drmw8Q+gniZGyiJdP/Z2XPVupl9+fH1AulolMpH
-	V01DPkgc70TEsJ993p3ZWcmDIMWDO8sOGbbwTlxEf3eMiUOh4lab4o9luCANQ2xqZa4KUf5
-	q47g0G5Q==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-XMAILINFO: MmPNY57tR1Xn6g0A9TeECUkHxPvbvQBl3nIZYkP+CjYLJiW3Nb96Uhw2
+	GTh93ePrTik//Ow6GZ42lTAlvuMv2OkQYwzmpZnuV5Yvb87wJFPSeB60r+0iqUQ6oG0I1gm
+	igVFDKJlxHUCOn2zd37/vKNfR36EzUNBZZGB5wRdIJ/Jw0uTp1sL2S06UN9mA+25neLdplm
+	um6ekG1A3c/xhe1JzWzRJZbRER+N1xyic43u0siTAU4OBUqXGc9LBUkurSfT6C5cZ7F4Z9W
+	unW9HMsYCzoh7g32aQD0+8mtaNLQVmpKAZaXrBXQxjktycKdBbYuB4q1Unp4BO8aDqG17kc
+	GbglWKpfrUBjoTXjz4z8IHVFS+sDCULaYfdBTuWMmJoJl2da1PVESmEaGARBoKO8PEDfxVo
+	RS1IxLa45xTHyP7Gu40wOwxDes6X83epd//U3lGJdbxYZZ2b83y4Aqdg7Jwgv1NiWhz7kae
+	TXaFC9mWvFAr/ca+wxnEOuv3TTcIkA8Ymx/zfBKDGSdDJ5s3EukKnmvdBeG3pgS5vnpF7V1
+	9ltxHFd+1Yf5MzmWmAqC88pwSgGD+X5/H373QGTAmUAHHYdhpRn5T1kw4v65HXVmtT1tZ5w
+	Q/9wTpH1oKSwo5DyZYOjFjbOfWRLBGNeZC2H/NinsT9uCTKGoQ+3ZY6hwRW02opKL70YAQv
+	A0rEDfT+MVjocM6b8V2ZLVXjKg1heJAPz/uLCVcFDyg9QT/bxiDWd5SvC/rNh+lkwISpKeE
+	eN9mK3Il+oWn9ZyE6LEuAmwYKp9K2qu889SHVHEQuRbQquomI+5tblAmTQ+a74ExxiI+wMF
+	uUY/hcMg/mtta3KVagROJo4ogBO2xRCEnrxwyafabr7ZGfLjb5VkpYWn/B9pycCJMubj0Uf
+	2HshmxBJXs3T0Z4joW1b9FC4B8AYWigSNZBEzWRHgUfqDWXw2fD+HY2579mva56wuOWW2SM
+	ywGGR0a+ipE9iVYcj0em8DfXmbGnYvDlGOWEk/VkArad162nw7ij7PkPXzGqNxRKmq8WaPN
+	SLfPsffw==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
 X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -106,31 +106,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-The USB Type-C DisplayPort alternate mode driver will find
-"displayport" property for DRM hotplug event notify[0].
-
-[0]: https://lore.kernel.org/all/20210817215201.795062-9-hdegoede@redhat.com/
+Add support for Type-C orientation and altmode switch.
+The Type-C controller can be specified to handling switching.
 
 Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 ---
- .../devicetree/bindings/connector/usb-connector.yaml          | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../bindings/phy/rockchip,rk3399-typec-phy.yaml    | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-index 11e40d225b9f..ccb258972cd6 100644
---- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
-+++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-@@ -300,6 +300,10 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/uint8-array
-     maxItems: 4
+diff --git a/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
+index 91c011f68cd0..a885c6893a90 100644
+--- a/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
+@@ -43,6 +43,20 @@ properties:
+     description:
+       Phandle to the syscon managing the "general register files" (GRF).
  
-+  displayport:
-+    description: A phandle to displayport connector for DRM hotplug event notify.
-+    $ref: /schemas/types.yaml#/definitions/phandle
++  orientation-switch:
++    description: Flag the port as possible handler of orientation switching
++    type: boolean
 +
- dependencies:
-   sink-vdos-v1: [ sink-vdos ]
-   sink-vdos: [ sink-vdos-v1 ]
++  mode-switch:
++    description: Flag the port as possible handler of altmode switching
++    type: boolean
++
++  port:
++    $ref: /schemas/graph.yaml#/properties/port
++    description:
++      A port node to link the PHY to a TypeC controller for the purpose of
++      handling orientation switching.
++
+   dp-port:
+     type: object
+     additionalProperties: false
 -- 
 2.49.0
 
