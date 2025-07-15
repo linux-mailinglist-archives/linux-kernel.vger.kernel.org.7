@@ -1,141 +1,169 @@
-Return-Path: <linux-kernel+bounces-732025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1647CB06109
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:29:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EB4B06155
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D26A3AF48F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:22:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D66583EA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0301925BC;
-	Tue, 15 Jul 2025 14:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FC21DF258;
+	Tue, 15 Jul 2025 14:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JJxczNTX"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z/ySLpw6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A981922C0
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1A63597E
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752588809; cv=none; b=bdrkjHJ3skoerOoblmvYNUN2uTraAo4IzwGs2iWG5VW2I8mgM59yWSrs5zzuu8RxZSssx8ZanqXq1AH7joxZ7h+K+BXTG2NMgZChkBvIdvGItEgGcujrpUePb3pOYEJneDWOSvUIHL6NPAY5c8an8bCi969wubZ9gewz9O7i+TE=
+	t=1752588917; cv=none; b=dPof69BQRau0VQi1gN88ulHhV44qayuTYP1j0ilsDL2jx2R49Hd/NVKnPYdk9hgNtJAR50duyZGsRp1L2dB2pERK+3t8zmrIHiiqEi3Jfv4rJzLNI+46lDXpcaknjHaH5vwUScoBwW0Fx8Tzk3WkINVXt/RTCq9//GBauA4w/G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752588809; c=relaxed/simple;
-	bh=eL0AhDlee/MEyBRhhKvb8McO2I7FRVBhy3aB9A/Fb9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bzwUOtHcGMKe8Xoe2RvLtCRviv5YiPIcY1KunuK6JHVIMag6gyjG81fjbXspWb4iA1h0oY0IgsPUacjVK3ln4e4vaxCdVbH4XbpPppA5I10k3ezizvcUQS/egS1N8MLYMiFxn3CISv/x7NAWdRgiaft8bUBdj3cU6Wff9QdHvlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=JJxczNTX; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b5e6bfb427so2872962f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1752588806; x=1753193606; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EyhYMDLqwXgcBfbbxVXjHy0ZVk3xruqBs+IQYUNqyDE=;
-        b=JJxczNTX2JTDVOMDjvji80FzEwoTp4jg7MOgb2oJAznp1BKjvKLm1/4QY8q0mhCTM6
-         GEppo6DqOMDtvb3WUjBXeiE0Xwss2OQikHg4awvAV2D72q6v1TsK3hHrf5xLSCKyZb0H
-         cwzDDF1o8CwzAeMGj5cgHx4tjKrIu39iBKqeg=
+	s=arc-20240116; t=1752588917; c=relaxed/simple;
+	bh=cYRvBfFBk+zWv7ODYqVflfYipFPbgCULQ+V/P58YDwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p91AGTRawnNKHHJ2HI4Si+tPWblD+pSmbcsvf8Odcz85eTHHc5dEqFQwUXny47WnfE8hThfvEw+/HLeGQcIl+SyJ/InrrAIAhneNhKnO5mjEpP6eywkLnabsNvLXrybWCpC8IIyHiS/5ww/iIxgJTiVz98SXzHS9lbQuSScy+xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z/ySLpw6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752588915;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uHaC3NM9+QwIy3pXqxbGtfDGOu55CkwVkRhyKfVul1g=;
+	b=Z/ySLpw6omxvKL6PhmrNOYe8ObXkk+1FdF7a0NfroDtg1eVcWwm6V18FlAw5sROKFUToeI
+	V5oYxbBFxO9eiz/6OI82LzBe5fKMK6e+pXIbKIEdu6+1dQ04Cx8Vx9gZ7X6VXw8ejVjXi6
+	ewg1gwibzO8hr6ln19Xm5kupDs1Xixg=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-678-Scccbi0GO_ysHHtvIty8yQ-1; Tue, 15 Jul 2025 10:15:13 -0400
+X-MC-Unique: Scccbi0GO_ysHHtvIty8yQ-1
+X-Mimecast-MFC-AGG-ID: Scccbi0GO_ysHHtvIty8yQ_1752588912
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a50816ccc6so3409663f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:15:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752588806; x=1753193606;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1752588912; x=1753193712;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EyhYMDLqwXgcBfbbxVXjHy0ZVk3xruqBs+IQYUNqyDE=;
-        b=KYbpsh7cCcHHm1CFSmsGtE0TPrJu0YuiejFXdXiEMl/rsl9E3A+Ex52vNjxCn4bOJb
-         jvuzL6H3cy0ldP1lnayIgXsJC24Ol7Hmlt/3DJpt3yDO735udDHwJLgGXtkHtJJbaMvD
-         h8kXvtBMLbdzAckLD5sFWghRHNOG4rRRtiAXnBeB5kS/Ms/1vC0xRmxwJ2Izu6SiN4HE
-         NETI02tPLHqUuUfcOrA6r92MpsvyfRK9hTv3d1nHRLlCdTTbThXSdLa5y7RC3qb6Nuqr
-         EUS4/TNzit85jptonc5RSUdZVNeHwz6jfNn47bkKpBT2YNx7MDPwzCKGkkf2EyD52PYH
-         mFEA==
-X-Gm-Message-State: AOJu0YyMlYRjq3N9N8dozCZj79a0geylKY7NQkqCo8+QK341TEgf6g3k
-	d6tSO727Pn4GRPhS+aMNDSuBFb1hIaf7kKtuWbIcaXW092cWakEwvfgrH68AASQFgUG7KP1EMOy
-	O7icV
-X-Gm-Gg: ASbGncvFEfZXYdcjJ2cqVLmY/g8RCtQ6wogDPUQ+MTeTb2G5LhYnLrlImyhrLAdp6BW
-	XQa58bw7gym1HidWwrROjjxiykfGGX4OH2IsyP1isd5pbIie/Ff60fRhKpKsJGVYX2baAjhBQ3y
-	ly6Ka2x8DPgikCR7aj1JFbvsSJLy8EkvTstlPIX9GctsLXiDc9/fx4TsqSvU5dmudgp5nZjHHhv
-	UszH+/gmOgHr9ULFPi9xHqdks/mXEErKQAmhaOa0FLb0B+IyR+2KbLuHxlKKm/ZcAFVyAwhyG9n
-	4n7yf2GcnokuiFKCerfxElgYncT5dYyUfJZdamg5KjM3/Y/bQUY0FysALzPMK90dl+OZ+u5E1Pr
-	bxHpJil2VfmzoV+sux2qLdMnBkby3xOzFp2dJ+XuI2C+gHcPnzRkW8phjO++n3MDFnZgYxNYhLZ
-	XRxKjrYh6bLsO6
-X-Google-Smtp-Source: AGHT+IFxM20bqobvrOmTpeuI6kCK6N804fuZxfrBaPXGOvFhMW/WLgasuyeSoviyvYEo3idTS5/aaw==
-X-Received: by 2002:a05:6000:24c6:b0:3a3:6991:dcbb with SMTP id ffacd0b85a97d-3b5f187a48cmr12925840f8f.12.1752588805687;
-        Tue, 15 Jul 2025 07:13:25 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com ([2.196.40.133])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26daasm15579557f8f.91.2025.07.15.07.13.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 07:13:25 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: Peng Fan <peng.fan@nxp.com>,
-	linux-amarula@amarulasolutions.com,
-	Wolfgang Birkner <wolfgang.birkner@bshg.com>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] ARM: dts: imx6ulz-bsh-smm-m2: fix resume via console
-Date: Tue, 15 Jul 2025 16:13:10 +0200
-Message-ID: <20250715141322.1305512-1-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
+        bh=uHaC3NM9+QwIy3pXqxbGtfDGOu55CkwVkRhyKfVul1g=;
+        b=aDwHmHDGLuM3Ta5Ur+xKHO+/FcbY1gxz5j76wOmup2C36Tctm66Wk5xp9vyObWoeZs
+         ++F4Qh4pjPhd6xGeS3uHzZ9YULGzxvkghr47GM4eJeRsL/z2A9+qwf2nn6K6SPmoniK+
+         XmEXerL1oeeyLgVHPCIDCDKGZmFlG8u4rkO3DjQ0uL983GSeXa/ByfwItErzThL4X/iv
+         PSlbxrkGX8VgHoiMH5lug+qDhS9I6quFbhnQ/STZLeTckQKkzVS4zr/hf4gK0elkR8Jt
+         IGqDGFnF6VtTBNFrY5U3Em6wMyW4/U2DgxZqZG0rGazuDD03AgbODTEul1xpX694LS+k
+         DJ1w==
+X-Forwarded-Encrypted: i=1; AJvYcCX0R9HeZoJGXC+ZRFNZRWKiQOkI3TCGTNKL9GSiRgy1Yl8S0U4BMKVKJ526nstpjE1vZZM30g0CqvpYXec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTjktq2IVp0JQwCVfHBaija0DN47egDcnI/aVXxBlb/kfa3+ex
+	6CkF/wbh3FbI+NjApcVCaIK5B5LPoh8WywTaNoTJN9jfgyhlNvDDbgdThi+UMQMOBsNuvCHcw0U
+	tgDCNwDdxlClmH55V65CTxd8tLVMeW1g9ISF7lavSOR/B+p3FX7uY53h0syVEi/HqOQ==
+X-Gm-Gg: ASbGnctUe/DlR9oIhls9U7tSxYj6T+gYJqZ8B7db14Wh96NqcLsCzd607TsoNc4LkqO
+	EZxzCN4MFLI88PBfS1R503ke2vX209IHKT3+f9111uZGbEV+U8D/JoTpfjRo1jlMtmojsoEPTCO
+	hWkOQ2uEhLTNm2f3gfnp2iPKcKPYAUKF8jvAM7LpPMdijpPqLv+vZt2/9F8boyloAelJOU07jYJ
+	YeJkZy54bM9aDJCbZ+m/bdjRnz80z/hAs3lmB/hdSF1a4rSagh+JS4DKBRB/G8kc8ZXzVa8hX2h
+	9/2eYtub/jDwKzg6FZKEmy93EimZGyPVG1QN0A2/XbRspxUT1D+KjrwnNXqwkCubeBbuxCmfjn9
+	7O/qUNZXsPMPVPvUVshw/dnatUw8HX+imRFsbY6Ohe1H3wibYohvbowFl0yqaaH8a+oE=
+X-Received: by 2002:a5d:5d0c:0:b0:3a4:e629:6504 with SMTP id ffacd0b85a97d-3b5f2e448d9mr10913832f8f.49.1752588912207;
+        Tue, 15 Jul 2025 07:15:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpyohQnpn/KxIdJ2KMc18WnTagGh3ivybzKaAC/ozw+/YD8D8CtWgwEjyEVReYxDXso7vSlw==
+X-Received: by 2002:a5d:5d0c:0:b0:3a4:e629:6504 with SMTP id ffacd0b85a97d-3b5f2e448d9mr10913779f8f.49.1752588911647;
+        Tue, 15 Jul 2025 07:15:11 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:4900:2c24:4e20:1f21:9fbd? (p200300d82f2849002c244e201f219fbd.dip0.t-ipconnect.de. [2003:d8:2f28:4900:2c24:4e20:1f21:9fbd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1833sm14841701f8f.8.2025.07.15.07.15.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 07:15:11 -0700 (PDT)
+Message-ID: <9c9b78fd-4698-4982-919c-34e679bbac84@redhat.com>
+Date: Tue, 15 Jul 2025 16:15:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] add static PMD zero page support
+To: Andrew Morton <akpm@linux-foundation.org>,
+ "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>,
+ linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
+ x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+References: <20250707142319.319642-1-kernel@pankajraghav.com>
+ <20250707153844.d868f7cfe16830cce66f3929@linux-foundation.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Organization: Red Hat
+In-Reply-To: <20250707153844.d868f7cfe16830cce66f3929@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Wolfgang Birkner <wolfgang.birkner@bshg.com>
+On 08.07.25 00:38, Andrew Morton wrote:
+> On Mon,  7 Jul 2025 16:23:14 +0200 "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> wrote:
+> 
+>> There are many places in the kernel where we need to zeroout larger
+>> chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
+>> is limited by PAGE_SIZE.
+>>
+>> This concern was raised during the review of adding Large Block Size support
+>> to XFS[1][2].
+>>
+>> This is especially annoying in block devices and filesystems where we
+>> attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
+>> bvec support in block layer, it is much more efficient to send out
+>> larger zero pages as a part of a single bvec.
+>>
+>> Some examples of places in the kernel where this could be useful:
+>> - blkdev_issue_zero_pages()
+>> - iomap_dio_zero()
+>> - vmalloc.c:zero_iter()
+>> - rxperf_process_call()
+>> - fscrypt_zeroout_range_inline_crypt()
+>> - bch2_checksum_update()
+>> ...
+>>
+>> We already have huge_zero_folio that is allocated on demand, and it will be
+>> deallocated by the shrinker if there are no users of it left.
+>>
+>> At moment, huge_zero_folio infrastructure refcount is tied to the process
+>> lifetime that created it. This might not work for bio layer as the completions
+>> can be async and the process that created the huge_zero_folio might no
+>> longer be alive.
+> 
+> Can we change that?  Alter the refcounting model so that dropping the
+> final reference at interrupt time works as expected?
 
-Despite the current configuration being compliant with the technical
-reference manual (TRM), testing on the system showed that resuming from
-suspend via UART4 (used as the console) fails unless any other UART
-is also enabled.
+I would hope that we can drop that whole shrinking+freeing mechanism at 
+some point, and simply always keep it around once allocated.
 
-In our use case, UART2 is enabled to ensure reliable resume when UART4
-is used as the console.
+Any unprivileged process can keep the huge zero folio mapped and, 
+therefore, around, until that process is killed ...
 
-Signed-off-by: Wolfgang Birkner <wolfgang.birkner@bshg.com>
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+But I assume some people might still have an opinion on the shrinker, so 
+for the time being having a second static model might be less controversial.
 
----
+(I don't think we should be refcounting the huge zerofolio in the long term)
 
-Changes in v2:
-- Improve commit message
-- Drop patches:
-  - 1/3 ARM: dts: imx6ulz-bsh-smm-m2: Enable hardware rng
-  - 3/3 ARM: dts: imx6ulz-bsh-smm-m2: Update wifi/bluetooth pinctrl
-
- arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts b/arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts
-index 6159ed70d966..2d9f495660c9 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts
-@@ -33,6 +33,10 @@ &snvs_poweroff {
- 	status = "okay";
- };
- 
-+&uart2 {
-+	status = "okay";
-+};
-+
- &uart3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart3>;
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
