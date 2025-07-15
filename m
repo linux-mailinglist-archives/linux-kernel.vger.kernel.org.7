@@ -1,274 +1,349 @@
-Return-Path: <linux-kernel+bounces-731362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92847B0532F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:30:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBA1B0535C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA3163AC3CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:29:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C9AE7B8F27
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC4926FDBF;
-	Tue, 15 Jul 2025 07:27:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B119626E707
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89989270EA9;
+	Tue, 15 Jul 2025 07:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SACTP6Vx"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E3F26FDA5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752564425; cv=none; b=VS5yOTj0+JZOwiselK6WQRo0Z/NEbS2N7xXXtM6FF6Iv/i1wWeP3nowTxKcSpAL9GFeiJ3xrnEI3b6Z2DG0p55jnwErmvy9zdYcBBI+w2LPUpsiFTJFzhaqU799XG9Z+pHzhqkOY0QYNHGbxY4rDmD3HvAc23tFQKAXYOPmaEW0=
+	t=1752564496; cv=none; b=mtDN2PyD7ZvCtfqCOlxd/r9JcBRlCfXXv2gW40ai3IwExvU/fEcKv7ue2IVw97FLBirjy8/XIkkmbGD140uCD9OiA6PrUZpgvsbmzB5HrfSDf96kWGfDruWbSBapCtpaCKBUu/C6ipbdEN1bsV0h8ozful7x6dscJ9eedd/PgV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752564425; c=relaxed/simple;
-	bh=onk1e5r1O6PPbFvMmE4bHIccZnEMOarirjqrIdphFf0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VmpXlnddoXH6jMT+8WFw037JR3jC2eZftI23+Hw2VZCWjRTencyx7wqtxbfDZmYcbJ2IZqusUOlgutG4nu2OVQBczCzpvfr3Ig4t9FwgkJqTOAMxItPNBCVUBDLMJrAxtjoQNio2EpIRZ1mZZeVHnNcnJIHFeUHgwN3ulREot2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0AC912FC;
-	Tue, 15 Jul 2025 00:26:52 -0700 (PDT)
-Received: from [10.163.92.132] (unknown [10.163.92.132])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CA1A3F66E;
-	Tue, 15 Jul 2025 00:26:57 -0700 (PDT)
-Message-ID: <09f9d195-7f3c-4cf1-95da-7e29c398ebcc@arm.com>
-Date: Tue, 15 Jul 2025 12:56:54 +0530
+	s=arc-20240116; t=1752564496; c=relaxed/simple;
+	bh=BK4PRwXIV83i4q+617lou8DQ231b26kX7zcVhKVZMmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WwrcwOzzDAQNZ5/CENymKSsz238uPG7mnKCp6nkZZcS57w0WBRaRPnyzUy10cygK1ZEuED1H1utuKa8gnS2bQYloc1uWKgb1+FKLKRpIPZfwuHVzhBwWBk3lrOuVfjzKGyvX6+XAqy9WKc9UTj3A7o1BXVaecURlD/xhNBFHnXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SACTP6Vx; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553d771435fso4532368e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1752564493; x=1753169293; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dZzpiYZwNaf+7GMBi0VLlcvQKHbRH+NQQeTOtdaqsaY=;
+        b=SACTP6Vxysm66Ktsx+EWd1HmyJguBTFQ01wPveYd0GcEmc8vGi916XUyRaIqMbctRm
+         JBgPm2sNdX7kHdoYfbj1EsOS9SLgtKvU70OpBKwdUYg53b8S3TRWqrok+dRgfTVGgOCo
+         kPtWvXtBZsK/ZteLzm6adGWExHPLt4xIcXXEw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752564493; x=1753169293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dZzpiYZwNaf+7GMBi0VLlcvQKHbRH+NQQeTOtdaqsaY=;
+        b=f9nsxTFMOP32/PZoVLMNSkbmmpjiHLXk7g4TYnXOv/bLtKtPBcDdukou943VIUEaZs
+         Jq4BBvbM3AfQWP7zepFn6REShQWLRuxErgYpXyMpKMGkKLgYn3nDXl1qktzWkhwYCT3w
+         a0x5gf8rDA0Rr0Ha8F+70xni1Elu+Vu4bQny5jPkkhz8lPM7aszsHmuyX2MtIS1Np3QT
+         FvQNGs2USOTfPrVkLdRx0HdNeptr3/Sg97lrY/hG3jiNN01ECfEeYXxLEbLHgDAb9bj/
+         VQRH9c4JDEa/lOoCGOVLpHNuJS5qy74Q3+UsXoXwZgiPOQazrZwkitgj/wfMPQZcX0zI
+         TqfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7d3/RbOesPtOwred9JItuNq0Z9cqDmdd7Fqzi/Fluo1PVkXSTjaCbi5R5XSv+Drm53jYxRQWw+j+f+Ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6b8i4AN1xQUu270GLAAMFHEOLq1MIohcLvF+5z9kdDh12TRqD
+	AbbkqIxVYZ1zwuJjXyShsHo2s3eST9hX+y9yN5/+WzSY5xrmtkDMAg9ER/95IHbJCC0Q9w3MXDV
+	z1P0NWiI3idNnQH3C2LtDAsSXVw3U6VZvCfw7m/KV
+X-Gm-Gg: ASbGncuXyv7rffPSbdFDhEbNO+OKEFWdRHOHsfNrMYq5VjrrDDaJD7Q/UAJzAX96CUn
+	4C3IIfVMsZM14pKQn0ny63DHF6E8ik3COa/ldcEoEgnOuJ3GatmUvVooBuuOt2QYKnBr0ArPRWp
+	S/GJPKg+PJ447qVsCCDg4gtQazfiSyRWuYKbRsy4OhciSvUbftY6WDUgiieccmVDrUROr7YVlFC
+	J/n+FYt64Crpavnc88IFNWPRUsV+O+AO7kq8M2FqLu/Rg==
+X-Google-Smtp-Source: AGHT+IE+I2EKW/Vlk3fRtykPHngODTfgQlgraXU23nzszgS13v7r+PoSUsWI29YIuHFK4Z4/TZxfjJyjsgNva6Nvih0=
+X-Received: by 2002:a05:6512:23a0:b0:553:a32a:6c6 with SMTP id
+ 2adb3069b0e04-55a058cca78mr3983896e87.51.1752564492768; Tue, 15 Jul 2025
+ 00:28:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/28] coresight: etm4x: Always set tracer's device
- mode on target CPU
-To: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Levi Yun <yeoreum.yun@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Yabin Cui <yabinc@google.com>, Keita Morisaki <keyz@google.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
- <20250701-arm_cs_pm_fix_v3-v2-2-23ebb864fcc1@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250701-arm_cs_pm_fix_v3-v2-2-23ebb864fcc1@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250624143220.244549-1-laura.nao@collabora.com> <20250624143220.244549-15-laura.nao@collabora.com>
+In-Reply-To: <20250624143220.244549-15-laura.nao@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 15 Jul 2025 15:28:01 +0800
+X-Gm-Features: Ac12FXyU8Sq6NaxHfbh3KFMLAH5aLMP41sVO2AcuKk50klccx7LXTjHhhdUwccY
+Message-ID: <CAGXv+5EsVOPC+i2=9d-Be1U-DuB8tPDAyokzhTOeVZQtZJ9+CQ@mail.gmail.com>
+Subject: Re: [PATCH v2 14/29] clk: mediatek: Add MT8196 vlpckgen clock support
+To: Laura Nao <laura.nao@collabora.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, guangjie.song@mediatek.com, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
 
 
-
-On 01/07/25 8:23 PM, Leo Yan wrote:
-> When enabling a tracer via SysFS interface, the device mode may be set
-> by any CPU - not necessarily the target CPU. This can lead to race
-> condition in SMP, and may result in incorrect mode values being read.
-> 
-> Consider the following example, where CPU0 attempts to enable the tracer
-> on CPU1 (the target CPU):
-> 
->  CPU0                                    CPU1
->  etm4_enable()
->   ` coresight_take_mode(SYSFS)
->   ` etm4_enable_sysfs()
->      ` smp_call_function_single() ---->  etm4_enable_hw_smp_call()
->      			                /
->                                        /  CPU idle:
->                                       /   etm4_cpu_save()
->                                      /     ` coresight_get_mode()
-> 	       Failed to enable h/w /         ^^^
->   ` coresight_set_mode(DISABLED) <-'          Read the intermediate SYSFS mode
-
-The problem is - CPU1's HW state and CPU1's sysfs mode state might not
-remain in sync if CPU1 goes into idle state just after an unsuccessful
-etm4_enable_sysfs() attempt from CPU0. In which case a subsequent read
-coresight_get_mode() on CPU1 might erroneously give us DISABLED state,
-which actually does not seem to be too bad as the earlier enablement
-attempt had failed anyway. Just trying to understand what is the real
-problem here.
-
-> 
-> In this case, CPU0 initiates the operation by taking the SYSFS mode to
-> avoid conflicts with the Perf mode. It then sends an IPI to CPU1 to
-> configure the tracer registers. If any error occurs during this process,
-
-What kind of error can happen during this process ?
-
-> CPU0 rolls back by setting the mode to DISABLED.
-
-Which seems OK.
-
-> 
-> However, if CPU1 enters an idle state during this time, it might read
-> the intermediate SYSFS mode. As a result, the CPU PM flow could wrongly
-> save and restore tracer context that is actually disabled.
-
-Right but CPU0 had marked the CPU1' state as DISABLED after the enable
-attempt had failed. So what is the problem ?
-
-> 
-> To resolve the issue, this commit moves the device mode setting logic on
-> the target CPU. This ensures that the device mode is only modified by
-> the target CPU, eliminating race condition between mode writes and reads
-> across CPUs.
-> 
-> An additional change introduces the etm4_disable_hw_smp_call() function
-> for SMP calls, which disables the tracer and explicitly set the mode to
-> DISABLED during SysFS operations.
-> 
-> The flow is updated with this change:
-> 
->  CPU0                                    CPU1
->  etm4_enable()
->   ` etm4_enable_sysfs()
->      ` smp_call_function_single() ---->  etm4_enable_hw_smp_call()
->                                           ` coresight_take_mode(SYSFS)
-> 	                                    Failed, set back to DISABLED
->                                           ` coresight_set_mode(DISABLED)
-> 
->                                           CPU idle:
->                                           etm4_cpu_save()
->                                            ` coresight_get_mode()
->                                               ^^^
->                                               Read out the DISABLED mode
-> 
-> Fixes: c38a9ec2b2c1 ("coresight: etm4x: moving etm_drvdata::enable to atomic field")
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
+On Tue, Jun 24, 2025 at 10:33=E2=80=AFPM Laura Nao <laura.nao@collabora.com=
+> wrote:
+>
+> Add support for the MT8196 vlpckgen clock controller, which provides
+> muxes and dividers for clock selection in other IP blocks.
+>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
 > ---
->  drivers/hwtracing/coresight/coresight-etm4x-core.c | 48 +++++++++++++++-------
->  1 file changed, 33 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 42e5d37403addc6ec81f2e3184522d67d1677c04..ee405c88ea5faa130819f96b00b8307f8764d58a 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -590,10 +590,23 @@ static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
->  static void etm4_enable_hw_smp_call(void *info)
->  {
->  	struct etm4_enable_arg *arg = info;
-> +	struct coresight_device *csdev;
->  
->  	if (WARN_ON(!arg))
->  		return;
+>  drivers/clk/mediatek/Makefile              |   2 +-
+>  drivers/clk/mediatek/clk-mt8196-vlpckgen.c | 769 +++++++++++++++++++++
+>  2 files changed, 770 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+>
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefil=
+e
+> index 0688d7bf4979..24683dd51783 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -161,7 +161,7 @@ obj-$(CONFIG_COMMON_CLK_MT8195_VENCSYS) +=3D clk-mt81=
+95-venc.o
+>  obj-$(CONFIG_COMMON_CLK_MT8195_VPPSYS) +=3D clk-mt8195-vpp0.o clk-mt8195=
+-vpp1.o
+>  obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) +=3D clk-mt8195-wpe.o
+>  obj-$(CONFIG_COMMON_CLK_MT8196) +=3D clk-mt8196-apmixedsys.o clk-mt8196-=
+topckgen.o \
+> -                                  clk-mt8196-topckgen2.o
+> +                                  clk-mt8196-topckgen2.o clk-mt8196-vlpc=
+kgen.o
+>  obj-$(CONFIG_COMMON_CLK_MT8365) +=3D clk-mt8365-apmixedsys.o clk-mt8365.=
+o
+>  obj-$(CONFIG_COMMON_CLK_MT8365_APU) +=3D clk-mt8365-apu.o
+>  obj-$(CONFIG_COMMON_CLK_MT8365_CAM) +=3D clk-mt8365-cam.o
+> diff --git a/drivers/clk/mediatek/clk-mt8196-vlpckgen.c b/drivers/clk/med=
+iatek/clk-mt8196-vlpckgen.c
+> new file mode 100644
+> index 000000000000..23a673dd4c5c
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+> @@ -0,0 +1,769 @@
+
+[...]
+
+> +static const char * const vlp_camtg0_parents[] =3D {
+> +       "clk26m",
+> +       "univpll_192m_d32",
+> +       "univpll_192m_d16",
+> +       "clk13m",
+> +       "osc_d40",
+> +       "osc_d32",
+> +       "univpll_192m_d10",
+> +       "univpll_192m_d8",
+> +       "univpll_d6_d16",
+> +       "ulposc3",
+> +       "osc_d20",
+> +       "ck2_tvdpll1_d16",
+> +       "univpll_d6_d8"
+> +};
+
+It seems all the vlp_camtg* parents are the same. Please merge them
+and just have one list.
+
+> +static const char * const vlp_sspm_26m_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d20"
+> +};
 > +
-> +	csdev = arg->drvdata->csdev;
-> +	if (!coresight_take_mode(csdev, CS_MODE_SYSFS)) {
-> +		/* Someone is already using the tracer */
-> +		arg->rc = -EBUSY;
-> +		return;
-> +	}
+> +static const char * const vlp_ulposc_sspm_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d2",
+> +       "mainpll_d4_d2"
+> +};
 > +
->  	arg->rc = etm4_enable_hw(arg->drvdata);
+> +static const char * const vlp_vlp_pbus_26m_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d20"
+> +};
 > +
-> +	/* The tracer didn't start */
-> +	if (arg->rc)
-> +		coresight_set_mode(csdev, CS_MODE_DISABLED);
->  }
->  
->  /*
-> @@ -809,6 +822,9 @@ static int etm4_enable_perf(struct coresight_device *csdev,
->  	int ret = 0;
->  	struct etmv4_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->  
-> +	if (!coresight_take_mode(csdev, CS_MODE_PERF))
-> +		return -EBUSY;
+> +static const char * const vlp_debug_err_flag_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d20"
+> +};
 > +
->  	if (WARN_ON_ONCE(drvdata->cpu != smp_processor_id())) {
->  		ret = -EINVAL;
->  		goto out;
-> @@ -828,6 +844,9 @@ static int etm4_enable_perf(struct coresight_device *csdev,
->  	ret = etm4_enable_hw(drvdata);
->  
->  out:
-> +	/* The tracer didn't start */
-> +	if (ret)
-> +		coresight_set_mode(csdev, CS_MODE_DISABLED);
->  	return ret;
->  }
->  
-> @@ -880,11 +899,6 @@ static int etm4_enable(struct coresight_device *csdev, struct perf_event *event,
->  {
->  	int ret;
->  
-> -	if (!coresight_take_mode(csdev, mode)) {
-> -		/* Someone is already using the tracer */
-> -		return -EBUSY;
-> -	}
-> -
->  	switch (mode) {
->  	case CS_MODE_SYSFS:
->  		ret = etm4_enable_sysfs(csdev, path);
-> @@ -896,10 +910,6 @@ static int etm4_enable(struct coresight_device *csdev, struct perf_event *event,
->  		ret = -EINVAL;
->  	}
->  
-> -	/* The tracer didn't start */
-> -	if (ret)
-> -		coresight_set_mode(csdev, CS_MODE_DISABLED);
-> -
->  	return ret;
->  }
->  
-> @@ -951,10 +961,9 @@ static void etm4_disable_trace_unit(struct etmv4_drvdata *drvdata)
->  	isb();
->  }
->  
-> -static void etm4_disable_hw(void *info)
-> +static void etm4_disable_hw(struct etmv4_drvdata *drvdata)
->  {
->  	u32 control;
-> -	struct etmv4_drvdata *drvdata = info;
->  	struct etmv4_config *config = &drvdata->config;
->  	struct coresight_device *csdev = drvdata->csdev;
->  	struct csdev_access *csa = &csdev->access;
-> @@ -991,6 +1000,15 @@ static void etm4_disable_hw(void *info)
->  		"cpu: %d disable smp call done\n", drvdata->cpu);
->  }
->  
-> +static void etm4_disable_hw_smp_call(void *info)
+> +static const char * const vlp_dpmsrdma_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d7_d2"
+> +};
+> +
+> +static const char * const vlp_vlp_pbus_156m_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d2",
+> +       "mainpll_d7_d2",
+> +       "mainpll_d7"
+> +};
+> +
+> +static const char * const vlp_spm_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d7_d4"
+> +};
+> +
+> +static const char * const vlp_mminfra_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d4",
+> +       "mainpll_d3"
+> +};
+> +
+> +static const char * const vlp_usb_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d9"
+> +};
+
+The previous and the next one are the same.
+
+> +static const char * const vlp_usb_xhci_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d9"
+> +};
+> +
+> +static const char * const vlp_noc_vlp_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d20",
+> +       "mainpll_d9"
+> +};
+> +
+> +static const char * const vlp_audio_h_parents[] =3D {
+> +       "clk26m",
+> +       "vlp_apll1",
+> +       "vlp_apll2"
+> +};
+> +
+> +static const char * const vlp_aud_engen1_parents[] =3D {
+> +       "clk26m",
+> +       "apll1_d8",
+> +       "apll1_d4"
+> +};
+
+The previous and the next one are the same.
+
+> +static const char * const vlp_aud_engen2_parents[] =3D {
+> +       "clk26m",
+> +       "apll2_d8",
+> +       "apll2_d4"
+> +};
+> +
+> +static const char * const vlp_aud_intbus_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d7_d4",
+> +       "mainpll_d4_d4"
+> +};
+> +
+> +static const char * const vlp_spvlp_26m
+
+[...]
+
+> +static int clk_mt8196_vlp_probe(struct platform_device *pdev)
 > +{
-> +	struct etmv4_drvdata *drvdata = info;
+> +       struct clk_hw_onecell_data *clk_data;
+> +       int r;
+> +       struct device_node *node =3D pdev->dev.of_node;
 > +
-> +	etm4_disable_hw(drvdata);
+> +       clk_data =3D mtk_alloc_clk_data(ARRAY_SIZE(vlp_muxes) +
+> +                                     ARRAY_SIZE(vlp_plls));
+> +       if (!clk_data)
+> +               return -ENOMEM;
 > +
-> +	coresight_set_mode(drvdata->csdev, CS_MODE_DISABLED);
+> +       r =3D mtk_clk_register_muxes(&pdev->dev, vlp_muxes, ARRAY_SIZE(vl=
+p_muxes),
+> +                                  node, &mt8196_clk_vlp_lock, clk_data);
+> +       if (r)
+> +               goto free_clk_data;
+> +
+> +       r =3D mtk_clk_register_plls(node, vlp_plls, ARRAY_SIZE(vlp_plls),
+> +                                 clk_data);
+> +       if (r)
+> +               goto unregister_muxes;
+> +
+> +       r =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_dat=
+a);
+> +       if (r)
+> +               goto unregister_plls;
+> +
+> +       platform_set_drvdata(pdev, clk_data);
+> +
+> +       return r;
+> +
+> +unregister_plls:
+> +       mtk_clk_unregister_plls(vlp_plls, ARRAY_SIZE(vlp_plls), clk_data)=
+;
+> +unregister_muxes:
+> +       mtk_clk_unregister_muxes(vlp_muxes, ARRAY_SIZE(vlp_muxes), clk_da=
+ta);
+> +free_clk_data:
+> +       mtk_free_clk_data(clk_data);
+
+The AFE driver sets some tuner parameters in the VLPCKGEN block at probe
+time. Maybe we could do that here instead?
+
+/* vlp_cksys_clk: 0x1c016000 */
+#define VLP_APLL1_TUNER_CON0 0x02a4
+#define VLP_APLL2_TUNER_CON0 0x02a8
+
+/* vlp apll1 tuner default value*/
+#define VLP_APLL1_TUNER_CON0_VALUE 0x6f28bd4d
+/* vlp apll2 tuner default value + 1*/
+#define VLP_APLL2_TUNER_CON0_VALUE 0x78fd5265
+
+       regmap_write(afe_priv->vlp_ck, VLP_APLL1_TUNER_CON0,
+VLP_APLL1_TUNER_CON0_VALUE);
+       regmap_write(afe_priv->vlp_ck, VLP_APLL2_TUNER_CON0,
+VLP_APLL2_TUNER_CON0_VALUE);
+
+ChenYu
+
+> +
+> +       return r;
 > +}
 > +
->  static int etm4_disable_perf(struct coresight_device *csdev,
->  			     struct perf_event *event)
->  {
-> @@ -1020,6 +1038,8 @@ static int etm4_disable_perf(struct coresight_device *csdev,
->  	/* TRCVICTLR::SSSTATUS, bit[9] */
->  	filters->ssstatus = (control & BIT(9));
->  
-> +	coresight_set_mode(drvdata->csdev, CS_MODE_DISABLED);
+> +static void clk_mt8196_vlp_remove(struct platform_device *pdev)
+> +{
+> +       struct clk_hw_onecell_data *clk_data =3D platform_get_drvdata(pde=
+v);
+> +       struct device_node *node =3D pdev->dev.of_node;
 > +
->  	/*
->  	 * perf will release trace ids when _free_aux() is
->  	 * called at the end of the session.
-> @@ -1045,7 +1065,8 @@ static void etm4_disable_sysfs(struct coresight_device *csdev)
->  	 * Executing etm4_disable_hw on the cpu whose ETM is being disabled
->  	 * ensures that register writes occur when cpu is powered.
->  	 */
-> -	smp_call_function_single(drvdata->cpu, etm4_disable_hw, drvdata, 1);
-> +	smp_call_function_single(drvdata->cpu, etm4_disable_hw_smp_call,
-> +				 drvdata, 1);
->  
->  	raw_spin_unlock(&drvdata->spinlock);
->  
-> @@ -1085,9 +1106,6 @@ static void etm4_disable(struct coresight_device *csdev,
->  		etm4_disable_perf(csdev, event);
->  		break;
->  	}
-> -
-> -	if (mode)
-> -		coresight_set_mode(csdev, CS_MODE_DISABLED);
->  }
->  
->  static int etm4_resume_perf(struct coresight_device *csdev)
-> 
-
+> +       of_clk_del_provider(node);
+> +       mtk_clk_unregister_plls(vlp_plls, ARRAY_SIZE(vlp_plls), clk_data)=
+;
+> +       mtk_clk_unregister_muxes(vlp_muxes, ARRAY_SIZE(vlp_muxes), clk_da=
+ta);
+> +       mtk_free_clk_data(clk_data);
+> +}
+> +
+> +static const struct of_device_id of_match_clk_mt8196_vlp_ck[] =3D {
+> +       { .compatible =3D "mediatek,mt8196-vlpckgen" },
+> +       { /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_vlp_ck);
+> +
+> +static struct platform_driver clk_mt8196_vlp_drv =3D {
+> +       .probe =3D clk_mt8196_vlp_probe,
+> +       .remove =3D clk_mt8196_vlp_remove,
+> +       .driver =3D {
+> +               .name =3D "clk-mt8196-vlpck",
+> +               .of_match_table =3D of_match_clk_mt8196_vlp_ck,
+> +       },
+> +};
+> +
+> +MODULE_DESCRIPTION("MediaTek MT8196 VLP clock generator driver");
+> +module_platform_driver(clk_mt8196_vlp_drv);
+> +MODULE_LICENSE("GPL");
+> --
+> 2.39.5
+>
 
