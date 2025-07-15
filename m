@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-731731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0C2B058BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:26:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B951FB058BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0971A65945
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:26:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0EF3A7669
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F5D2DE6FA;
-	Tue, 15 Jul 2025 11:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F862DEA6D;
+	Tue, 15 Jul 2025 11:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="KDRZt9MH"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="E8cHG9do"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF662D9EF1;
-	Tue, 15 Jul 2025 11:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F17C2DE6ED;
+	Tue, 15 Jul 2025 11:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752578729; cv=none; b=JmEx4ll3eJ/2rCKq57Xol7OyBR1knj/OJLfrFxLUUDGWjbiKlB8PvGA8z1AyEy4Hxr4Ifh+1RrLxo/AfD1cr85+g5ZaNiQTCdxXykt62obV4pM8LX+fM4SAzcsogrel9/r2MeiBIp0QDwREIq7iBoQknpJeBCsgbidrXWbkTQyg=
+	t=1752578733; cv=none; b=hhpPSkd0uyKTR5mdzsqd9otB0tF9KEk39uDUdb6JiV7vSQjhtkgULPOid4vS2LGC4Uo+pU5li8sXHhgbFeanKFzMpc/V6OmZF6dnOJhOEJEpzmrekcSwKboBh1yhYeQNp7+6Ivv5GuuSyy/BiK8+Nlo/eFIMNG0XGS+qE1TSVLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752578729; c=relaxed/simple;
-	bh=CUlh83HTLDMITDA/dm1ilFXe+eYqBImg8woT42getj4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=nh8f/nMCXGuooJaL+NPgJT/xTn+NaIdNly7bC3nz3MXlAOb+ooo4cKaEF7GWbgnoC3jxpszYGOi9jvF0TBq0j3xft9ycyx6W+gTEJbeCjyHD6OdSgOp534t+sW6lO4N8MCFAel43qtg+NyqnaByFY2D6f52d80oEm+4gQHNtMzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=KDRZt9MH; arc=none smtp.client-ip=54.204.34.129
+	s=arc-20240116; t=1752578733; c=relaxed/simple;
+	bh=4FsiX6RUU3fRxbqUZRBFaMPrgVBPWcb0ZWgsUliivsc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=osKQmTF/PAm/jeOQ2Ojh/m5eQiVmjYMw+A+ar7dmPW34RdjTAR2CERAyiG6/+oBLSuNyuSWi2yxQhw/spUhAav2pM1ji9ozKy9iLLlLe+mhawl9Ez57TJrEoK1t/Er0VFn5FY3HDSnHVNep+TJWOTOBpO4h9k6ZpSWq6LNtstDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=E8cHG9do; arc=none smtp.client-ip=18.194.254.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1752578716;
-	bh=48leRxD0TU7V/c6N2/mupnLAwgByK82JSI8+Zfl28GM=;
+	s=altu2504; t=1752578719;
+	bh=/b/lAhCvsonGE8Z852+2G/07p0p8yhZ5USq40tfyzbw=;
 	h=From:To:Subject:Date:Message-Id;
-	b=KDRZt9MHJCUd8kTr8dQqRhablj49fuvItWNybsiimDWk0dw4Cu0jqziahRS1SCsKO
-	 52YuoaMSwGyZt1D8LUfI1YIf1y1GKIUk+R68E5G+Gu4w0IApZzH7PLH+01ogzhR0wU
-	 YzUO7A1QrwTJezCtizYeAw+PSN4V24sy9FkGYQGo=
-X-QQ-mid: zesmtpsz3t1752578715tf1fca394
-X-QQ-Originating-IP: nQFR1FU7A+T0nhqIXZpgEEqxJ7PICM/rP4YGE14hgwI=
+	b=E8cHG9doUmvgIe91ixrxp7NGGFU91Z+nfPnlc1kJZvHLL7x3LwPgV0bngLpoPqpJ5
+	 2/zNuTXR+oarxdq2vZKHzqVoO1lPW1JRRcRJPY7v/mETlffiAt62Bgkbb4yrsDkXFa
+	 60x4S0lTEM5+XIuJdAbRfuo3bqguwwLlIeCe6aJc=
+X-QQ-mid: zesmtpsz3t1752578718t9af83c66
+X-QQ-Originating-IP: 9mUY+DgpKeGKBIqUqnlFegV3kCI4AR72owXY37bfQwc=
 Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 15 Jul 2025 19:25:13 +0800 (CST)
+	id ; Tue, 15 Jul 2025 19:25:16 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13236651797799962325
+X-BIZMAIL-ID: 15861609550683848417
 From: Chaoyi Chen <kernel@airkyi.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -72,31 +72,30 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH 3/5] phy: rockchip: phy-rockchip-typec: Add support for Type-C TCPM
-Date: Tue, 15 Jul 2025 19:24:54 +0800
-Message-Id: <20250715112456.101-4-kernel@airkyi.com>
+Subject: [PATCH 4/5] drm/rockchip: cdn-dp: Add support for Type-C TCPM
+Date: Tue, 15 Jul 2025 19:24:55 +0800
+Message-Id: <20250715112456.101-5-kernel@airkyi.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250715112456.101-1-kernel@airkyi.com>
 References: <20250715112456.101-1-kernel@airkyi.com>
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: OKKHiI6c9SH36/h/9qneLh/CrDriZcAtIzf7jMfhunZQEi/qh0jlip5C
-	H+25hXjrK0lbz0ahKTX6KLP4Syd92zo3/HPl37EeMOK3lHlaelO2MVtpk92wtNYCYI/Evfz
-	YGMCwqqEncWqK2FaVLkvsUH0ID41hLtX5jQ5KjCiioHgIMxJK8zDvjKVoSKJNQe2GaRRm6J
-	CuMMU8k7bDp1DFeywBPLM2dmSnhntpnKRZNijqMh/d1TTjoAAl6QN7zDrmMmNXa6tvfEq+W
-	JEzm0/qYawtMy2Rz9gnDH3XuUxHOVxyIErKMIr/2FHyZU9QyIJwlcv/m5Ohyp/tL3/hw/vz
-	EqtEl4eanrmNbA2bgiQVOyj0y5q6ClgfhfjcQUQEycio6vr3KiqDdmG31Q2QBa4UmEzg2eR
-	ywf6tpgloBH4FO4vPQbpeY4JCtLT3sLoinjLqc1+KxirBVlArh8ztxd6fxgYjOqlv/IoyoI
-	5zjY4fDpr25aAw0E2NHL2zXk0kCrfiLfYAYJidKtKMv1EF4T+z/MCndWUW9zmiZn7hj7E6S
-	xGDX/6b4xx1qnDK1RDK8RG1mqeySVSo7v3wb0XiuWVtPmUpt9Fkp9KV73OGO6OAHh2nWu3D
-	7ep74Rg6/6aeJFsOrxqdI1z0WYCyR81SjD0ni8W1JcGNiNJg4pY5XA86AadPluPChHR36i/
-	AByGBB9ULwm1ycx+UtS/YZsfgkE4HXgNJQeEimoZp2sl7O9FVu/Jsj6S44cHwpsOJpVC5sS
-	f9CUZ1TR6aCuVAM1/by8WGSz1JoMxiOhx7JSTqYqsyYMBGPKPfkR9++4wGbcP+PSeOEdw7H
-	322SPQJoKT8bxP+XHx6TYtIQI6IsUmlGD4s5NSELhMBdbAkyy9RTsyC1LzgXKNq24iCWhWg
-	GCvNpE6R0jI5V52dx6d6gnaaCgAZEFOmbuJkqTGc6xLBwm5uJCRYdBse+dpnI33eI/aFi2y
-	HZ8aH+gUmCdv7nUJsjafnLZBuqrZKP/fPR8+oPMS1YECimxs3PbRJ/hlTWzAiSLuHuEI9Dn
-	9gaUO5WA==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-XMAILINFO: NYz8c2bcbB9MQnNn3zMpWCyy1wOJpwH1FI3r+N0Of+zkM4IeDaarohS6
+	2TB+9N1Q5HxUwcddBd1NwAaMW+owNwEHngX+SJM8ipoVSgPy5GLFccR6d65+flcYIrrKXnD
+	iekzUip/Phux2bJ5vgX22crFnC5moFuaclTB2sOO1RNGAHUX/nFB0mof2uhl5LYHsbdKg3G
+	66o3ehFXcxXLi+xWgEsJH1aiQxvH8JhCDayo8gj+NowF+V3BzLyJd46qoxFxHfgKr4MoL9J
+	/R4/LhJcNWO+Nm3TtlZqmtSOzp/EQl8MfsEWVMCrUeSn9iqq3BOmwCiiT6H8EVFszGobsho
+	l6WCukfoYv7aLx/egZlBkaZ8gEjLqO4xeTRERq8tc8RSulhbxT9QXnuWa0rhMbgLQH5G3Iu
+	7W8ZE6YiMlhy7vQbNfp3u5Jfc9TloFaAR3F1RuTPzc4CyNH0qLRSTVcAR9ksrJBu+FXqvTP
+	OBb4IsVwP5jJGPfEpTn3eW71tSByYaMaVJvdUB3zTOSdCIKnIf+Mb8f3qjmNOWAf/l+Enon
+	7SCv193aALXdKgPToJWOCle2FLzGQko7BSDUVKLqNZZIYHH+R9gw63KmtcUC7z/Nr3+BBjz
+	HW0/xAWVCo3l16Rmwo1PkkLXyWenrLO9jO01pQdC5foHq3y5cwgGIszUE2Bo2cZliGYeoOq
+	FDE/ukclS3z5tl9FqvT3aboEVifNc5RkNCYNJ56BUz9EI2TCRBclPqNxQ/1m82e6YH1z7YO
+	dV2aYYuGUbLF3Z4SvZdCUQC0UCx7LJLYB/SNjpbOy3Ef60c+jOpD5fM1RhGrr8QUErT0ZWG
+	34SpWsU0Cc6l1VaHPaUC4kgmjpRgvrbch/S/D5EiqaJr6sTDKBouNLXPhPCPvnRr+uFDTHG
+	GZWoN+6l+6o4nPRiqnTDTcM4lJgsKNt9j9ORUCLfUfIi024p/99WRL1qD5R94GDLDK3xTsL
+	OxS7ezP71+E6B96iLeNW/GcBz4SvkasqHG/Q7AQtu/v1yKw==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
 X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -106,511 +105,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-This patch add support for Type-C Port Controller Manager.
+This patch add support for Type-C Port Manager. If the Type-C
+controller is present, the DP hot plug events can be notified with
+the help of TCPM and without the need for extcon.
+
 The extcon device should still be supported.
 
 Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 ---
- drivers/phy/rockchip/phy-rockchip-typec.c | 335 ++++++++++++++++++++--
- 1 file changed, 319 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/rockchip/cdn-dp-core.c | 37 ++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-typec.c b/drivers/phy/rockchip/phy-rockchip-typec.c
-index d9701b6106d5..ce2e710c1738 100644
---- a/drivers/phy/rockchip/phy-rockchip-typec.c
-+++ b/drivers/phy/rockchip/phy-rockchip-typec.c
-@@ -54,6 +54,8 @@
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+index 24f6b3879f4b..3354d0e4ae4f 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+@@ -156,6 +156,9 @@ static int cdn_dp_get_port_lanes(struct cdn_dp_port *port)
+ 	int dptx;
+ 	u8 lanes;
  
- #include <linux/mfd/syscon.h>
- #include <linux/phy/phy.h>
-+#include <linux/usb/typec_dp.h>
-+#include <linux/usb/typec_mux.h>
++	if (!edev)
++		return phy_get_bus_width(port->phy);
++
+ 	dptx = extcon_get_state(edev, EXTCON_DISP_DP);
+ 	if (dptx > 0) {
+ 		extcon_get_property(edev, EXTCON_DISP_DP,
+@@ -219,7 +222,7 @@ static bool cdn_dp_check_sink_connection(struct cdn_dp_device *dp)
+ 	 * some docks need more time to power up.
+ 	 */
+ 	while (time_before(jiffies, timeout)) {
+-		if (!extcon_get_state(port->extcon, EXTCON_DISP_DP))
++		if (port->extcon && !extcon_get_state(port->extcon, EXTCON_DISP_DP))
+ 			return false;
  
- #define CMN_SSM_BANDGAP			(0x21 << 2)
- #define CMN_SSM_BIAS			(0x22 << 2)
-@@ -286,12 +288,23 @@
- #define RX_DIAG_SC2C_DELAY		(0x81e1 << 2)
- 
- #define PMA_LANE_CFG			(0xc000 << 2)
-+#define PMA_LANE3_DP_LANE_SEL(x)	(((x) & 0x3) << 14)
-+#define PMA_LANE3_INTERFACE_SEL(x)	(((x) & 0x1) << 12)
-+#define PMA_LANE2_DP_LANE_SEL(x)	(((x) & 0x3) << 10)
-+#define PMA_LANE2_INTERFACE_SEL(x)	(((x) & 0x1) << 8)
-+#define PMA_LANE1_DP_LANE_SEL(x)	(((x) & 0x3) << 6)
-+#define PMA_LANE1_INTERFACE_SEL(x)	(((x) & 0x1) << 4)
-+#define PMA_LANE0_DP_LANE_SEL(x)	(((x) & 0x3) << 2)
-+#define PMA_LANE0_INTERFACE_SEL(x)	(((x) & 0x1) << 0)
- #define PIPE_CMN_CTRL1			(0xc001 << 2)
- #define PIPE_CMN_CTRL2			(0xc002 << 2)
- #define PIPE_COM_LOCK_CFG1		(0xc003 << 2)
- #define PIPE_COM_LOCK_CFG2		(0xc004 << 2)
- #define PIPE_RCV_DET_INH		(0xc005 << 2)
- #define DP_MODE_CTL			(0xc008 << 2)
-+#define PHY_DP_POWER_STATE_ACK_MASK	GENMASK(7, 4)
-+#define PHY_DP_POWER_STATE_ACK_SHIFT	4
-+#define PHY_DP_POWER_STATE_MASK		GENMASK(3, 0)
- #define DP_CLK_CTL			(0xc009 << 2)
- #define STS				(0xc00F << 2)
- #define PHY_ISO_CMN_CTRL		(0xc010 << 2)
-@@ -327,8 +340,15 @@
- 
- #define DP_MODE_A0			BIT(4)
- #define DP_MODE_A2			BIT(6)
--#define DP_MODE_ENTER_A0		0xc101
--#define DP_MODE_ENTER_A2		0xc104
-+
-+#define DP_MODE_MASK			0xf
-+#define DP_MODE_ENTER_A0		BIT(0)
-+#define DP_MODE_ENTER_A2		BIT(2)
-+#define DP_MODE_ENTER_A3		BIT(3)
-+#define DP_MODE_A0_ACK			BIT(4)
-+#define DP_MODE_A2_ACK			BIT(6)
-+#define DP_MODE_A3_ACK			BIT(7)
-+#define DP_LINK_RESET_DEASSERTED	BIT(8)
- 
- #define PHY_MODE_SET_TIMEOUT		100000
- 
-@@ -340,6 +360,31 @@
- #define MODE_DFP_USB			BIT(1)
- #define MODE_DFP_DP			BIT(2)
- 
-+enum phy_dp_lane_num {
-+	PHY_DP_LANE_0 = 0,
-+	PHY_DP_LANE_1,
-+	PHY_DP_LANE_2,
-+	PHY_DP_LANE_3,
-+};
-+
-+enum phy_pma_if {
-+	PMA_IF_PIPE_PCS = 0,
-+	PMA_IF_PHY_DP,
-+};
-+
-+enum phy_typec_role {
-+	TYPEC_PHY_USB = 0,
-+	TYPEC_PHY_DP,
-+	TYPEC_PHY_MAX,
-+};
-+
-+enum phy_dp_power_state {
-+	PHY_DP_POWER_STATE_A0 = 0,
-+	PHY_DP_POWER_STATE_A1,
-+	PHY_DP_POWER_STATE_A2,
-+	PHY_DP_POWER_STATE_A3,
-+};
-+
- struct usb3phy_reg {
- 	u32 offset;
- 	u32 enable_bit;
-@@ -372,18 +417,22 @@ struct rockchip_typec_phy {
- 	struct device *dev;
- 	void __iomem *base;
- 	struct extcon_dev *extcon;
-+	struct typec_mux_dev *mux;
-+	struct typec_switch_dev *sw;
- 	struct regmap *grf_regs;
- 	struct clk *clk_core;
- 	struct clk *clk_ref;
- 	struct reset_control *uphy_rst;
- 	struct reset_control *pipe_rst;
- 	struct reset_control *tcphy_rst;
-+	struct phy *phys[TYPEC_PHY_MAX];
- 	const struct rockchip_usb3phy_port_cfg *port_cfgs;
- 	/* mutex to protect access to individual PHYs */
- 	struct mutex lock;
- 
- 	bool flip;
- 	u8 mode;
-+	u8 new_mode;
- };
- 
- struct phy_reg {
-@@ -454,6 +503,99 @@ static const struct rockchip_usb3phy_port_cfg rk3399_usb3phy_port_cfgs[] = {
- 	{ /* sentinel */ }
- };
- 
-+static int tcphy_cfg_usb3_to_usb2_only(struct rockchip_typec_phy *tcphy,
-+				       bool value);
-+
-+static int tcphy_dp_set_power_state(struct rockchip_typec_phy *tcphy,
-+				    enum phy_dp_power_state state)
-+{
-+	u32 ack, reg, sts = BIT(state);
-+	int ret;
-+
-+	/*
-+	 * Power state changes must not be requested until after the cmn_ready
-+	 * signal has gone active.
-+	 */
-+	reg = readl(tcphy->base + PMA_CMN_CTRL1);
-+	if (!(reg & CMN_READY)) {
-+		dev_err(tcphy->dev, "cmn_ready in the inactive state\n");
-+		return -EINVAL;
-+	}
-+
-+	reg = readl(tcphy->base + DP_MODE_CTL);
-+	reg &= ~PHY_DP_POWER_STATE_MASK;
-+	reg |= sts;
-+	writel(reg, tcphy->base + DP_MODE_CTL);
-+
-+	ret = readl_poll_timeout(tcphy->base + DP_MODE_CTL,
-+				 ack, (((ack & PHY_DP_POWER_STATE_ACK_MASK) >>
-+				 PHY_DP_POWER_STATE_ACK_SHIFT) == sts), 10,
-+				 PHY_MODE_SET_TIMEOUT);
-+	if (ret < 0) {
-+		dev_err(tcphy->dev, "failed to enter power state %d\n", state);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * For the TypeC PHY, the 4 lanes are mapping to the USB TypeC receptacle pins
-+ * as follows:
-+ *   -------------------------------------------------------------------
-+ *	PHY Lanes/Module Pins			TypeC Receptacle Pins
-+ *   -------------------------------------------------------------------
-+ *	Lane0 (tx_p/m_ln_0)			TX1+/TX1- (pins A2/A3)
-+ *	Lane1 (tx_rx_p/m_ln_1)			RX1+/RX1- (pins B11/B10)
-+ *	Lane2 (tx_rx_p/m_ln_2)			RX2+/RX2- (pins A11/A10)
-+ *	Lane3 (tx_p/m_ln_3)			TX2+/TX2- (pins B2/B3)
-+ *   -------------------------------------------------------------------
-+ *
-+ * USB and DP lanes mapping to TypeC PHY lanes for each of pin assignment
-+ * options (normal connector orientation) described in the VESA DisplayPort
-+ * Alt Mode on USB TypeC Standard as follows:
-+ *
-+ * ----------------------------------------------------------------------
-+ *	PHY Lanes	A	B	C	D	E	F
-+ * ----------------------------------------------------------------------
-+ *	  0	       ML1     SSTX    ML2     SSTX    ML2     SSTX
-+ *	  1	       ML3     SSRX    ML3     SSRX    ML3     SSRX
-+ *	  2	       ML2     ML1     ML0     ML0     ML0     ML0
-+ *	  3	       ML0     ML0     ML1     ML1     ML1     ML1
-+ * ----------------------------------------------------------------------
-+ */
-+static void tcphy_set_lane_mapping(struct rockchip_typec_phy *tcphy, u8 mode)
-+{
-+	/*
-+	 * The PMA_LANE_CFG register is used to select whether a PMA lane
-+	 * is mapped for USB or PHY DP. The PMA_LANE_CFG register is
-+	 * configured based on a normal connector orientation. Logic in the
-+	 * PHY automatically handles the flipped connector case based on the
-+	 * setting of orientation of TypeC PHY.
-+	 */
-+	if (mode == MODE_DFP_DP) {
-+		/* This maps to VESA DP Alt Mode pin assignments C and E. */
-+		writel(PMA_LANE3_DP_LANE_SEL(PHY_DP_LANE_1) |
-+		       PMA_LANE3_INTERFACE_SEL(PMA_IF_PHY_DP) |
-+		       PMA_LANE2_DP_LANE_SEL(PHY_DP_LANE_0) |
-+		       PMA_LANE2_INTERFACE_SEL(PMA_IF_PHY_DP) |
-+		       PMA_LANE1_DP_LANE_SEL(PHY_DP_LANE_3) |
-+		       PMA_LANE1_INTERFACE_SEL(PMA_IF_PHY_DP) |
-+		       PMA_LANE0_DP_LANE_SEL(PHY_DP_LANE_2) |
-+		       PMA_LANE0_INTERFACE_SEL(PMA_IF_PHY_DP),
-+		       tcphy->base + PMA_LANE_CFG);
-+	} else {
-+		/* This maps to VESA DP Alt Mode pin assignments D and F. */
-+		writel(PMA_LANE3_DP_LANE_SEL(PHY_DP_LANE_1) |
-+		       PMA_LANE3_INTERFACE_SEL(PMA_IF_PHY_DP) |
-+		       PMA_LANE2_DP_LANE_SEL(PHY_DP_LANE_0) |
-+		       PMA_LANE2_INTERFACE_SEL(PMA_IF_PHY_DP) |
-+		       PMA_LANE1_INTERFACE_SEL(PMA_IF_PIPE_PCS) |
-+		       PMA_LANE0_INTERFACE_SEL(PMA_IF_PIPE_PCS),
-+		       tcphy->base + PMA_LANE_CFG);
-+	}
-+}
-+
- static void tcphy_cfg_24m(struct rockchip_typec_phy *tcphy)
- {
- 	u32 i, rdata;
-@@ -743,8 +885,10 @@ static int tcphy_phy_init(struct rockchip_typec_phy *tcphy, u8 mode)
- 	tcphy_dp_aux_set_flip(tcphy);
- 
- 	tcphy_cfg_24m(tcphy);
-+	tcphy_set_lane_mapping(tcphy, mode);
- 
- 	if (mode == MODE_DFP_DP) {
-+		tcphy_cfg_usb3_to_usb2_only(tcphy, true);
- 		tcphy_cfg_dp_pll(tcphy);
- 		for (i = 0; i < 4; i++)
- 			tcphy_dp_cfg_lane(tcphy, i);
-@@ -768,7 +912,10 @@ static int tcphy_phy_init(struct rockchip_typec_phy *tcphy, u8 mode)
- 		writel(PIN_ASSIGN_D_F, tcphy->base + PMA_LANE_CFG);
+ 		if (!cdn_dp_get_sink_count(dp, &sink_count))
+@@ -385,11 +388,14 @@ static int cdn_dp_enable_phy(struct cdn_dp_device *dp, struct cdn_dp_port *port)
+ 		goto err_power_on;
  	}
  
--	writel(DP_MODE_ENTER_A2, tcphy->base + DP_MODE_CTL);
-+	val = readl(tcphy->base + DP_MODE_CTL);
-+	val &= ~DP_MODE_MASK;
-+	val |= DP_MODE_ENTER_A2 | DP_LINK_RESET_DEASSERTED;
-+	writel(val, tcphy->base + DP_MODE_CTL);
- 
- 	reset_control_deassert(tcphy->uphy_rst);
- 
-@@ -811,8 +958,9 @@ static int tcphy_get_mode(struct rockchip_typec_phy *tcphy)
- 	u8 mode;
- 	int ret, ufp, dp;
- 
-+	/* If extcon not exist, try to use tcpm mode */
- 	if (!edev)
--		return MODE_DFP_USB;
-+		return tcphy->new_mode;
- 
- 	ufp = extcon_get_state(edev, EXTCON_USB);
- 	dp = extcon_get_state(edev, EXTCON_DISP_DP);
-@@ -850,6 +998,51 @@ static int tcphy_get_mode(struct rockchip_typec_phy *tcphy)
- 	return mode;
- }
- 
-+static int tcphy_orien_sw_set(struct typec_switch_dev *sw,
-+			      enum typec_orientation orien)
-+{
-+	struct rockchip_typec_phy *tcphy = typec_switch_get_drvdata(sw);
-+
-+	mutex_lock(&tcphy->lock);
-+
-+	if (orien == TYPEC_ORIENTATION_NONE) {
-+		tcphy->new_mode = MODE_DISCONNECT;
-+		goto unlock_ret;
-+	}
-+
-+	tcphy->flip = (orien == TYPEC_ORIENTATION_REVERSE) ? true : false;
-+	tcphy->new_mode = MODE_DFP_USB;
-+
-+unlock_ret:
-+	mutex_unlock(&tcphy->lock);
-+	return 0;
-+}
-+
-+static int tcphy_setup_orien_switch(struct rockchip_typec_phy *tcphy)
-+{
-+	struct typec_switch_desc sw_desc = { };
-+
-+	sw_desc.drvdata = tcphy;
-+	sw_desc.fwnode = dev_fwnode(tcphy->dev);
-+	sw_desc.set = tcphy_orien_sw_set;
-+
-+	tcphy->sw = typec_switch_register(tcphy->dev, &sw_desc);
-+	if (IS_ERR(tcphy->sw)) {
-+		dev_err(tcphy->dev, "Error register typec orientation switch: %ld\n",
-+			PTR_ERR(tcphy->sw));
-+		return PTR_ERR(tcphy->sw);
-+	}
-+
-+	return 0;
-+}
-+
-+static void udphy_orien_switch_unregister(void *data)
-+{
-+	struct rockchip_typec_phy *tcphy = data;
-+
-+	typec_switch_unregister(tcphy->sw);
-+}
-+
- static int tcphy_cfg_usb3_to_usb2_only(struct rockchip_typec_phy *tcphy,
- 				       bool value)
- {
-@@ -989,14 +1182,9 @@ static int rockchip_dp_phy_power_on(struct phy *phy)
- 
- 	tcphy_dp_aux_calibration(tcphy);
- 
--	writel(DP_MODE_ENTER_A0, tcphy->base + DP_MODE_CTL);
--
--	ret = readx_poll_timeout(readl, tcphy->base + DP_MODE_CTL,
--				 val, val & DP_MODE_A0, 1000,
--				 PHY_MODE_SET_TIMEOUT);
--	if (ret < 0) {
--		writel(DP_MODE_ENTER_A2, tcphy->base + DP_MODE_CTL);
--		dev_err(tcphy->dev, "failed to wait TCPHY enter A0\n");
-+	ret = tcphy_dp_set_power_state(tcphy, PHY_DP_POWER_STATE_A0);
-+	if (ret) {
-+		dev_err(tcphy->dev, "failed to enter A0 power state\n");
- 		goto power_on_finish;
- 	}
- 
-@@ -1013,6 +1201,7 @@ static int rockchip_dp_phy_power_on(struct phy *phy)
- static int rockchip_dp_phy_power_off(struct phy *phy)
- {
- 	struct rockchip_typec_phy *tcphy = phy_get_drvdata(phy);
-+	int ret;
- 
- 	mutex_lock(&tcphy->lock);
- 
-@@ -1021,7 +1210,11 @@ static int rockchip_dp_phy_power_off(struct phy *phy)
- 
- 	tcphy->mode &= ~MODE_DFP_DP;
- 
--	writel(DP_MODE_ENTER_A2, tcphy->base + DP_MODE_CTL);
-+	ret = tcphy_dp_set_power_state(tcphy, PHY_DP_POWER_STATE_A2);
-+	if (ret) {
-+		dev_err(tcphy->dev, "failed to enter A2 power state\n");
-+		goto unlock;
-+	}
- 
- 	if (tcphy->mode == MODE_DISCONNECT)
- 		tcphy_phy_deinit(tcphy);
-@@ -1037,6 +1230,68 @@ static const struct phy_ops rockchip_dp_phy_ops = {
- 	.owner		= THIS_MODULE,
- };
- 
-+static int tcphy_typec_mux_set(struct typec_mux_dev *mux, struct typec_mux_state *state)
-+{
-+	struct rockchip_typec_phy *tcphy = typec_mux_get_drvdata(mux);
-+	struct typec_displayport_data *data;
-+	int hpd = 0;
-+
-+	mutex_lock(&tcphy->lock);
-+
-+	switch (state->mode) {
-+	case TYPEC_STATE_SAFE:
-+		fallthrough;
-+	case TYPEC_STATE_USB:
-+		tcphy->new_mode = MODE_DFP_USB;
-+		phy_set_bus_width(tcphy->phys[TYPEC_PHY_DP], 0);
-+		break;
-+	case TYPEC_DP_STATE_C:
-+	case TYPEC_DP_STATE_E:
-+		tcphy->new_mode = MODE_DFP_DP;
-+		data = state->data;
-+		hpd = !!(data->status & DP_STATUS_HPD_STATE);
-+		phy_set_bus_width(tcphy->phys[TYPEC_PHY_DP], hpd ? 4 : 0);
-+		break;
-+	case TYPEC_DP_STATE_D:
-+		tcphy->new_mode = MODE_DFP_DP | MODE_DFP_USB;
-+		data = state->data;
-+		hpd = !!(data->status & DP_STATUS_HPD_STATE);
-+		phy_set_bus_width(tcphy->phys[TYPEC_PHY_DP], hpd ? 2 : 0);
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	mutex_unlock(&tcphy->lock);
-+
-+	return 0;
-+}
-+
-+static int tcphy_setup_typec_mux(struct rockchip_typec_phy *tcphy)
-+{
-+	struct typec_mux_desc mux_desc = {};
-+
-+	mux_desc.drvdata = tcphy;
-+	mux_desc.fwnode = dev_fwnode(tcphy->dev);
-+	mux_desc.set = tcphy_typec_mux_set;
-+
-+	tcphy->mux = typec_mux_register(tcphy->dev, &mux_desc);
-+	if (IS_ERR(tcphy->mux)) {
-+		dev_err(tcphy->dev, "Error register typec mux: %ld\n",
-+			PTR_ERR(tcphy->mux));
-+		return PTR_ERR(tcphy->mux);
-+	}
-+
-+	return 0;
-+}
-+
-+static void tcphy_typec_mux_unregister(void *data)
-+{
-+	struct rockchip_typec_phy *tcphy = data;
-+
-+	typec_mux_unregister(tcphy->mux);
-+}
-+
- static int tcphy_parse_dt(struct rockchip_typec_phy *tcphy,
- 			  struct device *dev)
- {
-@@ -1095,6 +1350,25 @@ static void typec_phy_pre_init(struct rockchip_typec_phy *tcphy)
- 	tcphy->mode = MODE_DISCONNECT;
- }
- 
-+static int typec_dp_lane_get(struct rockchip_typec_phy *tcphy)
-+{
-+	int dp_lanes;
-+
-+	switch (tcphy->new_mode) {
-+	case MODE_DFP_DP:
-+		dp_lanes = 4;
-+		break;
-+	case MODE_DFP_DP | MODE_DFP_USB:
-+		dp_lanes = 2;
-+		break;
-+	default:
-+		dp_lanes = 0;
-+		break;
-+	}
-+
-+	return dp_lanes;
-+}
-+
- static int rockchip_typec_phy_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1142,6 +1416,7 @@ static int rockchip_typec_phy_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	tcphy->dev = dev;
-+	tcphy->new_mode = MODE_DFP_USB;
- 	platform_set_drvdata(pdev, tcphy);
- 	mutex_init(&tcphy->lock);
- 
-@@ -1151,6 +1426,7 @@ static int rockchip_typec_phy_probe(struct platform_device *pdev)
- 	if (IS_ERR(tcphy->extcon)) {
- 		if (PTR_ERR(tcphy->extcon) == -ENODEV) {
- 			tcphy->extcon = NULL;
-+			dev_info(dev, "extcon not exist, try to use typec mux\n");
- 		} else {
- 			if (PTR_ERR(tcphy->extcon) != -EPROBE_DEFER)
- 				dev_err(dev, "Invalid or missing extcon\n");
-@@ -1158,19 +1434,46 @@ static int rockchip_typec_phy_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (device_property_present(dev, "orientation-switch")) {
-+		ret = tcphy_setup_orien_switch(tcphy);
-+		if (ret)
-+			return ret;
-+		ret = devm_add_action_or_reset(dev, udphy_orien_switch_unregister,
-+					       tcphy);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (device_property_present(dev, "mode-switch")) {
-+		ret = tcphy_setup_typec_mux(tcphy);
-+		if (ret)
-+			return ret;
-+
-+		ret = devm_add_action_or_reset(dev, tcphy_typec_mux_unregister, tcphy);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	pm_runtime_enable(dev);
- 
- 	for_each_available_child_of_node(np, child_np) {
- 		struct phy *phy;
- 
--		if (of_node_name_eq(child_np, "dp-port"))
-+		if (of_node_name_eq(child_np, "dp-port")) {
- 			phy = devm_phy_create(dev, child_np,
- 					      &rockchip_dp_phy_ops);
--		else if (of_node_name_eq(child_np, "usb3-port"))
-+			if (!IS_ERR(phy)) {
-+				tcphy->phys[TYPEC_PHY_DP] = phy;
-+				phy_set_bus_width(phy, typec_dp_lane_get(tcphy));
-+			}
-+		} else if (of_node_name_eq(child_np, "usb3-port")) {
- 			phy = devm_phy_create(dev, child_np,
- 					      &rockchip_usb3_phy_ops);
--		else
-+			if (!IS_ERR(phy))
-+				tcphy->phys[TYPEC_PHY_USB] = phy;
-+		} else {
- 			continue;
+-	ret = extcon_get_property(port->extcon, EXTCON_DISP_DP,
+-				  EXTCON_PROP_USB_TYPEC_POLARITY, &property);
+-	if (ret) {
+-		DRM_DEV_ERROR(dp->dev, "get property failed\n");
+-		goto err_power_on;
++	property.intval = 0;
++	if (port->extcon) {
++		ret = extcon_get_property(port->extcon, EXTCON_DISP_DP,
++					  EXTCON_PROP_USB_TYPEC_POLARITY, &property);
++		if (ret) {
++			DRM_DEV_ERROR(dp->dev, "get property failed\n");
++			goto err_power_on;
 +		}
+ 	}
  
- 		if (IS_ERR(phy)) {
- 			dev_err(dev, "failed to create phy: %pOFn\n",
+ 	port->lanes = cdn_dp_get_port_lanes(port);
+@@ -821,6 +827,14 @@ static int cdn_dp_audio_mute_stream(struct drm_connector *connector,
+ 	return ret;
+ }
+ 
++static void cdn_dp_hpd_notify(struct drm_bridge *bridge,
++			   enum drm_connector_status status)
++{
++	struct cdn_dp_device *dp = bridge_to_dp(bridge);
++
++	schedule_work(&dp->event_work);
++}
++
+ static const struct drm_bridge_funcs cdn_dp_bridge_funcs = {
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+@@ -831,6 +845,7 @@ static const struct drm_bridge_funcs cdn_dp_bridge_funcs = {
+ 	.atomic_disable = cdn_dp_bridge_atomic_disable,
+ 	.mode_valid = cdn_dp_bridge_mode_valid,
+ 	.mode_set = cdn_dp_bridge_mode_set,
++	.hpd_notify = cdn_dp_hpd_notify,
+ 
+ 	.dp_audio_prepare = cdn_dp_audio_prepare,
+ 	.dp_audio_mute_stream = cdn_dp_audio_mute_stream,
+@@ -938,9 +953,6 @@ static void cdn_dp_pd_event_work(struct work_struct *work)
+ 
+ out:
+ 	mutex_unlock(&dp->lock);
+-	drm_bridge_hpd_notify(&dp->bridge,
+-			      dp->connected ? connector_status_connected
+-					    : connector_status_disconnected);
+ }
+ 
+ static int cdn_dp_pd_event(struct notifier_block *nb,
+@@ -1028,6 +1040,9 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+ 	for (i = 0; i < dp->ports; i++) {
+ 		port = dp->port[i];
+ 
++		if (!port->extcon)
++			continue;
++
+ 		port->event_nb.notifier_call = cdn_dp_pd_event;
+ 		ret = devm_extcon_register_notifier(dp->dev, port->extcon,
+ 						    EXTCON_DISP_DP,
+@@ -1120,14 +1135,14 @@ static int cdn_dp_probe(struct platform_device *pdev)
+ 		    PTR_ERR(phy) == -EPROBE_DEFER)
+ 			return -EPROBE_DEFER;
+ 
+-		if (IS_ERR(extcon) || IS_ERR(phy))
++		if (IS_ERR(phy) || PTR_ERR(extcon) != -ENODEV)
+ 			continue;
+ 
+ 		port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
+ 		if (!port)
+ 			return -ENOMEM;
+ 
+-		port->extcon = extcon;
++		port->extcon = IS_ERR(extcon) ? NULL : extcon;
+ 		port->phy = phy;
+ 		port->dp = dp;
+ 		port->id = i;
 -- 
 2.49.0
+
 
 
