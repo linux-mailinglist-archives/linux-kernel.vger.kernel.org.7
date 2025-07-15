@@ -1,144 +1,157 @@
-Return-Path: <linux-kernel+bounces-732320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88AA3B0650C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:21:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432B5B06511
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07601AA6931
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3701AA7F6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDE72853E0;
-	Tue, 15 Jul 2025 17:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BD92857E4;
+	Tue, 15 Jul 2025 17:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPg5KNHq"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b4XY0FZV"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30883283FF2;
-	Tue, 15 Jul 2025 17:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FDF1F3BAB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752600067; cv=none; b=ibQrs9xwwjM/QrGBcT9VfBsOljiLfZC96DqEdts0qZjV0/SjHiFaTmPlvcmvhAgD/CJkzCl3Hzvn7uwMKsYL5cMS12uGzKskvL5IGnF3DCvZeRFmNYZ/6Xo/O9Y4Nue52L4u0zJsC1zTkI807q2ZT26lHRDqUJSDUeM67+VItBs=
+	t=1752600196; cv=none; b=Ijv8tKN8RbR64CCBsA3tik6we1OXn6lt6L2mfGKqTbCKeCLiGb8QEg5r/OhMWzfqayKxyidU5N9aqtZqxPrTMD+FdCE3fxjWfZtS18ezsKcFPfmXi14llZiQkKwCjT5qbVgGToz0gOf/KClBhqZw+nAvvrgK/77+V6ekBzMgGFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752600067; c=relaxed/simple;
-	bh=PC1C1GWJWmASfyzEgwSyIitCe3PS0JdsA8GKO/XwKiY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=av61XZf6Ar1LtfYIXC39AkEjKq+5PqX5VT0ECGUaNz3IZ3eG/MmQoTWgPbUoYWG2KTims/d4bjXhbe7pDcMKJDlQciDNEp5JxYXbZhHqiUZoThX96e3PnjTnjGJiIhbibV4S+RwLZpjHFggBO0NJSVuvcDi32DmAvbL6pnn7lTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPg5KNHq; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b31c84b8052so6624198a12.1;
-        Tue, 15 Jul 2025 10:21:05 -0700 (PDT)
+	s=arc-20240116; t=1752600196; c=relaxed/simple;
+	bh=mCCWuV6Odut3uFczrkLcBwk95v4G96gg/5yw1QP4OoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZG2iNOoV5CobpMoUgmOyoebPMMs3LhUcnGc9fIIe7uG4G/FrDUdvfvVSUDdm+Bpg9YkpPA4ovMmYN2urN8qgTUQ9cBerhufx80ArYkaCYSyv7u8SujT4+ZzlI3ikHQal9zdWBdbiWGnCimViV0DjBzTKUvyoYSN2KvU9TyEIzAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b4XY0FZV; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23e210ebd5dso748835ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:23:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752600064; x=1753204864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vqm8/q8UocxlxtANI1zNTfyh+AvK1KlyxG9VxsCT0bs=;
-        b=KPg5KNHqW73CeikW5Q2/RuC1hqwJOBqISEhyBlgaq2eQ0V9AWZ+/9G3zyWOJQsxXU0
-         A4ZqPGD2zZkleCVGrMY7QjmfJXIr0hIukeSldtYybnbahJGfw61s7VfW/jpTAY0xMcXm
-         bCIlBYxsXZVx4qzqIkr8SaHdD4TP9kFTyqCBIMzRn7Uj6/ujQ9tuMoflqZg0QiIRsLht
-         616K029XmzsT5oVV92vzwDkitBodpKXfQqiwiHc66AkAvqFhgYiK0KzHb7qcO4/ns6up
-         1ppaxBXboyymKmKXMeLAEe67IBIvQuZ1W34M5osysclcSUtKeQ/gLLjziTmohcj1dFNB
-         hqpw==
+        d=google.com; s=20230601; t=1752600194; x=1753204994; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JeSwPftceeI4bS5ZJ/5dVmNBTZSjRvLVPg9Q3yUXq/U=;
+        b=b4XY0FZVD30gT3SeXKcFFVHwEM3WlBIuldn2vbqlG7fJ24L349gcrUH7xf8Np1MEEg
+         tTlkQsxjxTNE1b42lNmqV+Vd3XuYPoYpd2Frix2PgwMiMQBRqdIRWnq2tDIbY2xQwWxn
+         gU/PzjMzG8T50M0p+2EWQLKCwcPLrOJLrATXBWCIQpxIK7jbNpbE8QC0bgtHYsua+T8x
+         Qh/wwvt/5YP+0Z1oVDmvAMZwMcHQiIugZMvtRMEGSLkBZCOC0DzVOARUsbXKVh5fy2qK
+         ZfClTDJYX5+vdyCGr9rzs6VoUz4YEDU9uDP7ABjmAuVfrticYGblpg766F+caQkUtP27
+         QR/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752600064; x=1753204864;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vqm8/q8UocxlxtANI1zNTfyh+AvK1KlyxG9VxsCT0bs=;
-        b=OZC696+I3NrURrt7RHX2VDTQvFBTf5CJUoUMYebwTBApEZwM1RF+1awxP7EWXkl2re
-         QZXZnHmGQR8ZtJvUHHLzBUG1zbxsBdBzF56slsZ0kx/hyLDvLK8s5geCEjBDmUGQtIwt
-         HXM/fnW3KlQ8f4ZbJqWuI5pak7rM7JF3E5g6GdWXcTG+IUhZVCqkeEWsAWKjI8DEJcRf
-         GwSwu+lRPyFZLxyk099g4SFztVKn8si5BFBI8MbYPbrCYVqkiQ58Yup5rW1il+pSJ1q9
-         lDNwDvpZVFkTLcWMNc3iIXi9pK0RXuhSKrtwdsIDptiYn+tDilrBLrZg6vb1FQ9ENlKb
-         Fq9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWoDeaM/MecB7gfJMWoBHoHwLBBKsVo/AW/roPBTFcRhjjCCSCkdG9AjF5q7Ym/ruKu5f8=@vger.kernel.org, AJvYcCWpbd5evQrL+fySxpICLG+jqD8FK/d5V9h1D/aK4qetaChyJ9o7FIPnhF+LIm2ID2hBoZOZcCV+Rd5WK/Mi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCnPysBmNCcmSE2c1o1PxSZOjeMOVQV3LEst1XdjELoBoVxvBZ
-	SXbG6bvr8Yf7hObCutp0NiV/efxeiZTbDatWAO4xSDn7WiMjM9h9c6l3FGH0YoJ3Tc6UL6IhswS
-	APSZ/yKUkrbegZ3XTHwOz56dtYx9E4BM=
-X-Gm-Gg: ASbGncsF2GCgt0URESHVeEQZntOGawfb4UsfyDJyAEitLU/Sz12PvIDttmp5oU5ice0
-	tqWDgzPREcJ/GzT+d3i1CVMAa0wFe5n/j/hF30HDUo/xlxAHihjkRChDBSSxDhAD6jsww6KVOwM
-	lP40n7G0kuZesFrxPP/FVEiywPaGeZ+4tbi7LVuyNpVQl8YXTj6AWWDYkEeJn6ufYsUM+5Lisnc
-	fleWNa4QP5gsCTtqb5FEHw=
-X-Google-Smtp-Source: AGHT+IGwjUqVmdtiIjw6Nu5S75iJkbIMSYxh8t6Cmh5xK8Z+09Ys1siXbokXDsIzEcC7MMmkO1oUlhUHxljztOXh0gs=
-X-Received: by 2002:a17:90a:d610:b0:313:fb08:4261 with SMTP id
- 98e67ed59e1d1-31c4cd55c4cmr25773490a91.32.1752600064291; Tue, 15 Jul 2025
- 10:21:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752600194; x=1753204994;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JeSwPftceeI4bS5ZJ/5dVmNBTZSjRvLVPg9Q3yUXq/U=;
+        b=iv+9MHPYbBTWpxYxHPqpGa0tkKUZHpFR/mW2gYvFYHGx6gvNNAgJo/R9sVS8KbymEf
+         Srru54mRt5Ygpbf1WJBJo1cCkWnHNiUC5CA4qPr+MxBymk/ZSI9kQ1+EzwmqgGq0SQLF
+         AteqGWVBqmkK7JY6V6vudn+NYm5FnmsC+hO2udkkvwQsIwY0JQKB0t4Kl1A0JLmcoQX/
+         KlCTsQsTtT9l9T/AUkQD19nhG8Fmd5vjcGSQK/vylZQLvgRoy6kp1WKBjB3SaHoQrmOq
+         OV3YZpUDBSi/4JhPkkuK4TbHy2XpoIUhNOb/TkWaGZcyzGQ8DYHRr5qlOetCgbEgR2qz
+         RiYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUU396Ovel3yMGMz8serx1hw7QzucZT74MZLCyQuCCqmenhLqsoyk2N9usp23rEk5vo1PK0ZzcDNZC4qtg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwugdUc8ps/idbfYdxUZvsniX5bh1TrTK5ZoVo+MvkzQp54N0aI
+	A/QoPM+8v83SKr3kZAJWS9usL+fAoko1q23gUrbW1R2hRWad7xk5f+utBzxeFa+Htw==
+X-Gm-Gg: ASbGncvSkQzHMcjlT2B808TzPhMYSvUFVIvZjTqHaCwN8PgfZ7P1xdpEYEZoj6disQP
+	d31/MvDtSChckUG9V/5iufIwbAiWnEx4Kj8yihL8AtBU+uPITRcD8HjJ8a6+LdqZb3s5YPiSDtU
+	ZxvrN2P9BFNxueCtmbCSNRIPFa2BcMmVnWLpnQADOnNcS3+prqVnPcLbWoXUPlI6wO+rcVznJxU
+	TpZBLF9+ocBnN3MTrzLBDzh+UHboZrEVB0sNH1YIpi3eSWkeMLfMn0cVS/tzayWYOsRF9NsqP00
+	Xp/c6k9zzCv58HRBSg+KrWnb2Pwr6UiOHY2YiQhAwJCQNvLrHmDvHrqmSOQBZrDbkZwkBiihpon
+	I/b5RasUwDOv9ccTA5yNJR2Sw3rlnqZoyh/r+Czm/W/77+vQrPihXCOQ7PWpfgds=
+X-Google-Smtp-Source: AGHT+IE8tlVGhJEdemSXyXUpK0hF30ss3dhi3KqymqtfDaNyMz+jAYsoKXuNfguzst4OMQTFv0uS9A==
+X-Received: by 2002:a17:903:1248:b0:231:c89f:4e94 with SMTP id d9443c01a7336-23e1a4c71e3mr67028215ad.21.1752600193877;
+        Tue, 15 Jul 2025 10:23:13 -0700 (PDT)
+Received: from google.com (152.33.83.34.bc.googleusercontent.com. [34.83.33.152])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4332eadsm116684575ad.153.2025.07.15.10.23.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 10:23:13 -0700 (PDT)
+Date: Tue, 15 Jul 2025 10:23:09 -0700
+From: William McVicker <willmcvicker@google.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH] clocksource/drivers/exynos_mct: Fix section mismatch
+ from the module conversion
+Message-ID: <aHaOfZk77xDf81cP@google.com>
+References: <20250620181719.1399856-6-willmcvicker@google.com>
+ <20250715121834.2059191-1-daniel.lezcano@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <20250703121521.1874196-15-dongml2@chinatelecom.cn> <CAEf4BzaoKNNf5pr4z8vEokj3AyLNZYyjYQUOoEMMZHN6ETUg4g@mail.gmail.com>
- <22e15dd2-8564-4e71-ab77-8b436870850d@linux.dev>
-In-Reply-To: <22e15dd2-8564-4e71-ab77-8b436870850d@linux.dev>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 15 Jul 2025 10:20:52 -0700
-X-Gm-Features: Ac12FXwVpBVFHaybltYf_upP5_ZJM3qFhvAiy1VHP8HIn1lXWK9s3dTCf3Q_IVU
-Message-ID: <CAEf4BzZCPcq0eo=1SN-r=k5QF1XE5hihEYHYYdi37aiV7VXwVQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 14/18] libbpf: add btf type hash lookup support
-To: Menglong Dong <menglong.dong@linux.dev>
-Cc: Menglong Dong <menglong8.dong@gmail.com>, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, jolsa@kernel.org, bpf@vger.kernel.org, 
-	Menglong Dong <dongml2@chinatelecom.cn>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715121834.2059191-1-daniel.lezcano@linaro.org>
 
-On Mon, Jul 14, 2025 at 9:41=E2=80=AFPM Menglong Dong <menglong.dong@linux.=
-dev> wrote:
->
->
-> On 7/15/25 06:07, Andrii Nakryiko wrote:
-> > On Thu, Jul 3, 2025 at 5:22=E2=80=AFAM Menglong Dong <menglong8.dong@gm=
-ail.com> wrote:
-> >> For now, the libbpf find the btf type id by loop all the btf types and
-> >> compare its name, which is inefficient if we have many functions to
-> >> lookup.
-> >>
-> >> We add the "use_hash" to the function args of find_kernel_btf_id() to
-> >> indicate if we should lookup the btf type id by hash. The hash table w=
-ill
-> >> be initialized if it has not yet.
-> > Or we could build hashtable-based index outside of struct btf for a
-> > specific use case, because there is no one perfect hashtable-based
-> > indexing that can be done generically (e.g., just by name, or
-> > name+kind, or kind+name, or some more complicated lookup key) and
-> > cover all potential use cases. I'd prefer not to get into a problem of
-> > defining and building indexes and leave it to callers (even if the
-> > caller is other part of libbpf itself).
->
->
-> I think that works. We can define a global hash table in libbpf.c,
-> and add all the btf type to it. I'll redesign this part, and make it
-> separate with the btf.
+On 07/15/2025, Daniel Lezcano wrote:
+> The function register_current_timer_delay() when compiling on ARM32
+> fails with a section mismatch. That is resulting from the module
+> conversion where the function exynos4_clocksource_init() is called
+> from mct_init_dt(). This one had its __init annotation removed to for
+> the module loading.
+> 
+> Fix this by adding the __init_or_module annotation for the functions:
+>  - mct_init_dt()
+>  - mct_init_spi()
+>  - mct_init_dt()
+> 
+> Compiled on ARM32 + MODULES=no, ARM64 + MODULES=yes, ARM64 +
+> MODULES=no
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-No global things, please. It can be held per-bpf_object, or even
-constructed on demand during attachment and then freed. No need for
-anything global.
+Reviewed-by: Will McVicker <willmcvicker@google.com>
 
->
-> Thanks!
-> Menglong Dong
->
-> >> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> >> ---
-> >>   tools/lib/bpf/btf.c      | 102 +++++++++++++++++++++++++++++++++++++=
-++
-> >>   tools/lib/bpf/btf.h      |   6 +++
-> >>   tools/lib/bpf/libbpf.c   |  37 +++++++++++---
-> >>   tools/lib/bpf/libbpf.map |   3 ++
-> >>   4 files changed, 140 insertions(+), 8 deletions(-)
-> >>
-> > [...]
-> >
+> ---
+>  drivers/clocksource/exynos_mct.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 5075ebe052a7..80d263ee046d 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -657,7 +657,7 @@ static int exynos4_timer_interrupts(struct device_node *np,
+>  	return err;
+>  }
+>  
+> -static int mct_init_dt(struct device_node *np, unsigned int int_type)
+> +static __init_or_module int mct_init_dt(struct device_node *np, unsigned int int_type)
+>  {
+>  	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
+>  	u32 local_idx[MCT_NR_LOCAL] = {0};
+> @@ -705,12 +705,12 @@ static int mct_init_dt(struct device_node *np, unsigned int int_type)
+>  	return exynos4_clockevent_init();
+>  }
+>  
+> -static int mct_init_spi(struct device_node *np)
+> +static __init_or_module int mct_init_spi(struct device_node *np)
+>  {
+>  	return mct_init_dt(np, MCT_INT_SPI);
+>  }
+>  
+> -static int mct_init_ppi(struct device_node *np)
+> +static __init_or_module int mct_init_ppi(struct device_node *np)
+>  {
+>  	return mct_init_dt(np, MCT_INT_PPI);
+>  }
+> -- 
+> 2.43.0
+> 
+
+Thanks Daniel for catching this! Sorry I missed it.
+
+Regards,
+Will
+
 
