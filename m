@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-731991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD562B06100
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:28:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC74B060C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9645A08D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:13:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729D21C42B54
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCD01EF38F;
-	Tue, 15 Jul 2025 14:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54339202C49;
+	Tue, 15 Jul 2025 14:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QvY0BD7k"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FVEgVSM5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894CB1EA7CF
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88F0202C26
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752588096; cv=none; b=g2juJFZgDlb25lIvavpjhCcn23RhyekNPyPsOISC3o+7aWv4/vsPHfE8DhgrJHDq/BcLUFGGpTp3/Y+zHzyldvU0Vad8mCuy8T/sJRrkgYvc9CSQdzUW0U9+2J6xUacuQs1MthKaGwZ1OhneqTwL+jTQUG2L2N5b5aX3tHSs+NQ=
+	t=1752588138; cv=none; b=G+yGk0iaoNO9LcK5x51km08X6XK0mMIJqhKIRqPiQgZbS+JfVhdTTCyrNTeo2POKwYRCQZ5FV4jdAWKD55CpP++gkp0+SsOqTxnmmJ1GrlRQ3pfFBqWJn2TkEL7KiHT6wp2nvB1OtYI4eCXxS6hbv4f/7RiSQzKx84Exw8cpdYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752588096; c=relaxed/simple;
-	bh=ZehdloQEUsP88pigCl64ebfictbezAWEu62Zt8m49sM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=in3738IZz3cje74Nys62a6MqZiYu7X8MYRBuipL0OiukdJrgSbaPeXedgfB6holnexpHWDrs3Ki1IovCDComo4sr4gaazD9eIHIhvAUYDg5451nbpOxuhqqytFepoxdWk0vxvLIJOAlXyXETj8nGZKGkJF+fqGCKTDxQz2kBzQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QvY0BD7k; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-558fa0b2cc8so4332674e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752588092; x=1753192892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bMq+z0lTQ5uqzjIe7ORBXN+DvvALIfquyp6XwhodWKg=;
-        b=QvY0BD7kEfcCud+y9Vn9la4Fhw8+G1Pj7wEoK8gDPvkl4zKp9bl7iqOzj782EBceI8
-         ccReZhCWcgz0U+kk/Fz3fe1AHdpnmsgU7vg9D6uqH4g/knnOoFg/QohesoucuXWobWZE
-         Jfwfkv9ACztJIR0ezHVsQKmI2K+lR5LrDCdZjl7NSSpRbbn9vfYxIHCqhMBSgUSUfE+S
-         5Bu0psetYdQjfc43FYJ6ctq3aboaPPhqRn+LVVOAumjl7iXH89p73036RDWBPpKFqjX0
-         A5JwvrfnOwiJYCkBU8dOenOH4BFru8Ww70tQzbkf6cNWTXcY78PSVDyOTVH6hrbviHrn
-         FPYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752588092; x=1753192892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bMq+z0lTQ5uqzjIe7ORBXN+DvvALIfquyp6XwhodWKg=;
-        b=eIuqOFKZFvuog010+YntZi76DOfF90PiV5uON73XClSJyg5gzG1pMoxc8IK7TNgyG9
-         YHFTS4XynzuqUBJY6NE8Aufoo0LOGTrGsbA/wefRcpSFrA/cXcivWjtxQOyTD6qBz/W7
-         2liCOepX5RykYC11UP+6H8w2qA5lz58bZbOy+CIz+uP23qRL6IlXKoxTcS63qL1Isdvd
-         6Z1ZyE1wdClIFHaOFKtp78VhVeeC1jtYoCYETJorXm2E211+1LSoDk9/oKIG2DpdWWUX
-         pffLC2asYJnBp1WuD9Z5mfdXh5898zM3egaDc5bI/ryLJfDiGMoFb3YU8f5RGnY/KB7D
-         6ziw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0AsDuE/TpiJM7eg7su7SS0RqXcIH0jSGRMZOcJP8xL4VyKAw1nkQLsg0DSLYcYqWL1Q4mYPpcbf/pakg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTlfNjaWPIuKbbwDDyPjTDnfPCuykh7OBJT3wBNiihxaxt0vdj
-	G6/OmxdVSnT6rvQPXDfdb51b0r8JQvrlcbcfJEYA/mZ+nLhAsqApraSkORAzZzt3pR/pSXR43cg
-	987nG9PjyQHM6zMrWAHmN1CSQNEh8tbnb3AvxPTFcvQ==
-X-Gm-Gg: ASbGncvQgxJr5RQNrg5+DxRSFHSJxc84qqumJgfGxFKFhpwZZc1DKe1sft0E1OAZOnZ
-	LNTrvcltZzRb/qryUQa2bkuqID4l2H+k4X13xilnfLVYItNQMt9Atuf0Y6KO3ja9zJGJyo2zEAe
-	5F4KRzxRbRI7esSbQSsJcAEhdfihSUGKtsKjHv0b646lOF4y7JJ7PnWKwiv0AMzBkKU+v8UgTTd
-	/GNiKneba58/9R4CA==
-X-Google-Smtp-Source: AGHT+IF13ylGotB5yILT4bHb/RqmaS522PnGXIijvb1MELLLon8vaTv/g4ADQmp0eDqrLOLp5d2POnBSPsqQfLVeuyg=
-X-Received: by 2002:a05:6512:3d0f:b0:553:2f47:ed21 with SMTP id
- 2adb3069b0e04-55a0460950fmr5418782e87.41.1752588090141; Tue, 15 Jul 2025
- 07:01:30 -0700 (PDT)
+	s=arc-20240116; t=1752588138; c=relaxed/simple;
+	bh=d5BQBqrR42o5J743Ypk7CrVCgGVYQ58Kfjd6IBpO1Yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZtQjB4r9UzoB+e57hfFGEOIsHAPpPwcb53qg5ZgwP1uF1tc7rtxbBqPUW3R7N9B7oyroOtfnKPlzJoA3KJLTfND6qnnYxGW/e0Ago0CNPYjMlTtjKFlxqrUZQeDbSZLPf4qum8zBPHS09Jypc4K+lTr7UyWw/APoSMOP4Lt/iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FVEgVSM5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC23C4CEE3;
+	Tue, 15 Jul 2025 14:02:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752588138;
+	bh=d5BQBqrR42o5J743Ypk7CrVCgGVYQ58Kfjd6IBpO1Yk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FVEgVSM5N26819X4lipZMDyMe34jGjFfmoBrXpftgAESk6apUITUs7awcXwXdVesY
+	 MxvVDf0+0JH/bLMNI7vd1EBVTbImSlolEmzozleH423ApiR8OKHuLMz2TMF+hoPyc/
+	 MDDAH6zKqXMImFGCdmA7p7e3C4rg/du2I5Dp6vb06npSYQ+YJq1PbrMe8CVJvxATsV
+	 ODBo8ScygHfIFquS69M/XxBuF04M7RMkeGI2A2xzRvmXoOR2RLyFOg/sy5XGvxFeoW
+	 9uQq6JqRz1h1E54NAbQUYzX8+iBoYQk1LU1cx2NKAbgH/h9rBjAOx/8TeN8ekAq20p
+	 sn8FjH3qFsuFA==
+Date: Tue, 15 Jul 2025 15:02:13 +0100
+From: Will Deacon <will@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, osandov@fb.com, leo.yan@arm.com,
+	rmikey@meta.com
+Subject: Re: [PATCH] arm64: traps: Mark kernel as tainted on SError panic
+Message-ID: <aHZfZbxLGyFjJpNo@willie-the-truck>
+References: <20250710-arm_serror-v1-1-2a3def3740d7@debian.org>
+ <aHQ3Lu27_mLfR8Ke@willie-the-truck>
+ <t3v2xvjal67bl5dwyatwgf46tnr2ikxnq62iqmda544llcd7oh@ws3nnrfp7r5p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715100415.60487-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250715100415.60487-2-krzysztof.kozlowski@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 15 Jul 2025 16:01:18 +0200
-X-Gm-Features: Ac12FXxwgG17tM0pR7Wbn7eqRk8ggfOlZMUUBSReGExBS5bLfNdm4fWxeml3fXM
-Message-ID: <CACRpkdZn9ePtwBnxNoy+nijc-oqu5zWoKc2O9QDe=MsgZpRdKg@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v6.17
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <t3v2xvjal67bl5dwyatwgf46tnr2ikxnq62iqmda544llcd7oh@ws3nnrfp7r5p>
 
-On Tue, Jul 15, 2025 at 12:04=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Mon, Jul 14, 2025 at 05:26:43AM -0700, Breno Leitao wrote:
+> On Sun, Jul 13, 2025 at 11:46:06PM +0100, Will Deacon wrote:
+> > On Thu, Jul 10, 2025 at 03:46:35AM -0700, Breno Leitao wrote:
+> 
+> > > --- a/arch/arm64/kernel/traps.c
+> > > +++ b/arch/arm64/kernel/traps.c
+> > > @@ -931,6 +931,7 @@ void __noreturn panic_bad_stack(struct pt_regs *regs, unsigned long esr, unsigne
+> > >  
+> > >  void __noreturn arm64_serror_panic(struct pt_regs *regs, unsigned long esr)
+> > >  {
+> > > +	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
+> > >  	console_verbose();
+> > >  
+> > >  	pr_crit("SError Interrupt on CPU%d, code 0x%016lx -- %s\n",
+> > 
+> > If we're going to taint for SError, shouldn't we also taint for an
+> > unclaimed SEA?
+> 
+> Yes. I was not very familiar with SEA errors, given I haven't seen on in
+> production yet, but, reading about it, that is another seems to crash
+> the system due to hardware errors, thus, we want to taint MACHINE_CHECK.
+> 
+> What about this?
+> 
+> 	Author: Breno Leitao <leitao@debian.org>
+> 	Date:   Mon Jul 14 05:16:55 2025 -0700
+> 
+> 	arm64: Taint kernel on fatal hardware error in do_sea()
+> 
+> 	This patch updates the do_sea() handler to taint the kernel with
+> 	TAINT_MACHINE_CHECK when a fatal hardware error is detected and
+> 	reported through Synchronous External Abort (SEA). By marking
+> 	the kernel as tainted at the point of error, we improve
+> 	post-mortem diagnostics and make it clear that a machine check
+> 	or unrecoverable hardware fault has occurred.
+> 
+> 	Suggested-by: Will Deacon <will@kernel.org>
+> 	Signed-off-by: Breno Leitao <leitao@debian.org>
+> 
+> 	diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> 	index 11eb8d1adc84..f590dc71ce99 100644
+> 	--- a/arch/arm64/mm/fault.c
+> 	+++ b/arch/arm64/mm/fault.c
+> 	@@ -838,6 +838,7 @@ static int do_sea(unsigned long far, unsigned long esr, struct pt_regs *regs)
+> 			*/
+> 			siaddr  = untagged_addr(far);
+> 		}
+> 	+	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
+> 		arm64_notify_die(inf->name, regs, inf->sig, inf->code, siaddr, esr);
+> 
+> 		return 0;
 
-> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
-94:
->
->   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tag=
-s/samsung-pinctrl-6.17
->
-> for you to fetch changes up to 683d532dfc9657ab8aae25204f378352ed144646:
->
->   pinctrl: samsung: Fix gs101 irq chip (2025-07-05 09:35:22 +0200)
+Yeah, I reckon so. Probably just fold these into a single patch, though.
 
-Pulled in!
+Cheers,
 
-Thanks Krzysztof, excellent work as always.
-
-Yours,
-Linus Walleij
+Will
 
