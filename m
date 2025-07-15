@@ -1,119 +1,161 @@
-Return-Path: <linux-kernel+bounces-731729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D42B058B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:25:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED5EFB058C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA951A6583E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:26:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42D4F5618EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD272DC33D;
-	Tue, 15 Jul 2025 11:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E0D2D94BF;
+	Tue, 15 Jul 2025 11:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6Lne2/Q"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+WlqW+u"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CFF2D9EEA
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C182D8DB0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752578727; cv=none; b=lUESGxC0VIxr2z3bwUSudupPGWVul+PT6/QpWQi1IPhbzTQXb9e7WVWFSF1dwoi2t0xfpIk30uhPGXslaFDc8OWfzjP6fGSlVoe41bbsKKt57VHj5CrFOJqaxCVyA94snbD4iv3ufhc9wo6atuFfJgbLRyVi08uu6E0cXmMEneo=
+	t=1752578831; cv=none; b=JPS0vXcqSkh5eeb+zobOpBkNIfv1DaATKdB79pxSqXZyYd8BOSXnQv7ZIRltQBaU3XkMmfZ294prnSjJMMN14nfJszjbbtlk7LWYyN0rL0g97e69EbWxbciKSvgG8iP4sbhv2lifd3KJJgkZdEW3MlTV7j5qe6gleb7oaDIC0IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752578727; c=relaxed/simple;
-	bh=jHbaE+DWOPVlLwbyTIAvmC8OzDURw4LfeUDIJ89w3Jg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HrNcPnqVvbLMMpAvjAKLDmnjspEPnhJREBKCBlTIRuCAGqYqOGV6V4uHcdNQlnX2Qe4cmjkwR89FaRGVcScjzjzIZiUfQpMI08Mw2WCeRTpLc3hhT01iriygjl9hlYX3oFn8NepCi/GXMeRKDSNwytN7NQ6gmtds1L1H9GVqAH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C6Lne2/Q; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-717a2ef8943so52998657b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:25:25 -0700 (PDT)
+	s=arc-20240116; t=1752578831; c=relaxed/simple;
+	bh=8GyYQty1c4kD0SAqerD56wWPksO2YDSVbq8ZQGGgau8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOicFukPyfjlD5Xqt4L2/uCAu/rb/5KOA66hWa5GfnH1qh1chvPD8wx38RXyQI4AhZVueFFtet741Jt2RTZ5uv9e+UP/mJ4028r852RkQNMoJIhMUl0jbo8wN4Eyvc8sgX2HWc6TGGuqal8U78BGBfwfPe0B4Dx1OQuB3vpBDbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J+WlqW+u; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so3507005f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:27:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752578725; x=1753183525; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vo34cMBbfu5ZCEstKlXmULPS9HKFY7p6hoApDHlHdqo=;
-        b=C6Lne2/Qu2TEj+12XLHNLvaJYbBGHcA5xVBIwdbJZFIC3QFbEugeFG7GjFd+0GaFRh
-         7JQ9rncy4IjQny4iCs1v7MLy7sXxmVxamJLJcV8fxXxuc5ra+M5SqtELa8x7Ce2jNjGp
-         UPQ23ch7hNxSiKoQzIGLPeDId9iY+JP3tSNwdIE5Pjt++ea0OUIcpefJPn4R5ScvVB4E
-         q6KIo3AEQiBvgxwJQzThkBJOea9+1/qTU7XQ3SlLMg5zLDRAPIbEPAQb68ctFNSK4Xp7
-         ba4AIXv6sN6L2Q8RuuU4KByb9Gbv4+Y4cECHHlwDAuYQID3MuCumB7sjy8AWfYKe/BHw
-         F/Xw==
+        d=linaro.org; s=google; t=1752578828; x=1753183628; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jRBkEKn77W7oaouJdcpr1rdaj69fH31GtcALoRiVZ0o=;
+        b=J+WlqW+usqYA9XgF+xS6yg8XSIG4KtCyF5zAyEsrdvcD1hb4E2IAr/sUdxNrWoQPXg
+         4f/IKeeM255PNYx5RHya/Keh0zWlC8qoGyvJ7FPAt7uHTbGqngvn8rGdTDowm/atcES0
+         j8Q+FPVP32clfvPD2niF8JmVZ5eO27ydjLm6kDX1DPnZ2ueE3J1E7XiSEejbCc/8gGsz
+         nJ/DhuF3k5QUT3bIu8e4VGPgYrlwnrG0k9q94eHr1tOYzCWnxreo5XMGTmY71WTaHu9s
+         bCwIWFRllXhp5GiMeN2k8IU/+/NkLm+JYWdjKW8HKvtHD8DjfZBc+lRwQ+j7RB6dmvUs
+         BGiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752578725; x=1753183525;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vo34cMBbfu5ZCEstKlXmULPS9HKFY7p6hoApDHlHdqo=;
-        b=GJcy9YOcJOjlCni7hl/D6fljRxLgCuzHCbIAPn9sDcdPU2abGNby0A8p/r7Kxe4Na0
-         A93pgVt7OwhCav310/lzTNt0713q+qAg+XxPg0d4HE+3U2tApHVR+QMg+Jd+8/lTIBzb
-         XRvkIsE3dbgW1Ksj8CY3Sy7cXspleLHP7Z/3FguwZR8TRz2zLxwlD4QVfUuQWLjH1zke
-         MBBWQGdiYQX1aDrMFWN5mXYbkB+MgK7XVzos6CXiStLbGUsY26dBQ+4TR8IWX/Wm8DIQ
-         7atUdk/xlugRCMjHeD/GC/MIqOT2l2T8dK9ZYXiDoIOcF8Ju1dWIwaESCdxDRNlAHXT1
-         ZGSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAgam7V8a8WtZWQmsFdjwlYjHMmbCyWDhKGDm4jwYqBfcxzhIxeEkGIcON3DBz3b+hRC898sYTMPZ+6ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3vgxGWjx87bUPdkCbahaDl3tTV9GtlKPWa6/0PCrHDMN4QslK
-	iL7r1gGoPqFKthgr3k1y3njtH5XPJnSuHILubM8qXgILk73ZAvN4RVOP
-X-Gm-Gg: ASbGncuaFq+J3H/JFYcYCfrDUqedzco+R7ldseN82bM51A6u0BrrMZvNPHQ2OHzG5H2
-	Xd0NOIBrDZ39Z+G08BAZR9spQV+/uLqWz7fpQzzbenLZM2pOdcY5Mu29Mbthe4iCBUcZq0cW8RU
-	3uefx4u8gBosPiQXfd/Jp8Dpb31GD8vTTg5MDM31MVBmV9GKMiSx8MTygm/uZyJWf92TQtht8K7
-	1lqu82ggO7/Porrn6Fu8zFVpKypEIRvBUWfHYv0i5D9ZbrW33yCuBd7fTc+ftX4IgYdRruxq7Ys
-	cE+f0idKuZ5IOwgkMyn1oI41YPlJKHEAXGoP9HBGvkYtv/DHDhk3oFv1fvjN1G2GYN9YFFiHdvG
-	YM3VW9EP8M/NFBpnSeRbxYXZdaGnUY1xHQCvPug==
-X-Google-Smtp-Source: AGHT+IH0IhETsj8P/JA08XcPMH7nWCokuLPtF1IOgO6LXzPBkyRklzIaRUiZn1jEXAuM/Zxi5H9xEw==
-X-Received: by 2002:a05:690c:46ca:b0:710:d950:e70c with SMTP id 00721157ae682-71824c44966mr32166897b3.28.1752578724786;
-        Tue, 15 Jul 2025 04:25:24 -0700 (PDT)
-Received: from DebAmplar.DebAmplar ([2a00:5881:3041:2700:501a:6a32:a864:a47])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-717c5d891fesm23810387b3.52.2025.07.15.04.25.23
+        d=1e100.net; s=20230601; t=1752578828; x=1753183628;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jRBkEKn77W7oaouJdcpr1rdaj69fH31GtcALoRiVZ0o=;
+        b=HFykgZ6otsD6pGMCBs9jFKCS1D/J++qe25dzbCQeOCHU6rXumZFuJLKbY5NNslwZIh
+         4j28QZNuP+cPvKQ8lLK5qohCyBC0LVOafULQ9aaQdZQuedbGmuJyfNLhKCKPAZcegJsG
+         0UyGlOBqRoeCMRctWe55Byf9KBs0BsKAkIubHuyj3XJarpRyifraI3xhVvgdEHUWekYw
+         eD57g2C9iUlGbYuB9Q4YSnXnTgOX8RjB6PMfpHjFd2s1gBBykY4aPYDnhZgTkQEDm1zT
+         yMy17eTdG5PaQ3XZ2UWaPZx0NZnAe5bTzdDaUYGGt+/F3rJYIhYhqansT+WrQ1KaTE/e
+         2HCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtdNmX4lyRK6xmPv3iA+UAXlNW3lOxPdDMhn33/eOPUvJO+gHM+5ITHA3aoVlLYBDiv0y3eH27PDbGaJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8lQadvT4ZLIwLg95SGDu/X6fPO90E+ezkg1goX0k5d5i1nk14
+	Hl5Ve8RU0dJfMZ8ok2iQSsrDk+ptx63WAxrgXemZSnqEveSQjxTRX0aVIOuEaNVTxEA=
+X-Gm-Gg: ASbGncuQrLQ4BXryisBeCago+0eccOX1+n32QJrBglonZUWl8vpdqH4TlOad7geciMg
+	9GHLWZsvG2yE2VTVGbDM3CCpycKv1QZKhYTw/t397LzKVx5wr31hlj3TLysX4Bdk9d95FNgMLi7
+	pGoSdOiMdPagy2HW1PTGspqwzkKlc9FacEvpB2SC0d+FcOd/x2oMPhATNmAgn+P1lohsYWCRYxV
+	2pUfBJnhkuQRrZLaMqN7I7B3Ge1C0R7rj58mKdyq9ApDUgJxyyhuQfyw1rbBdyCdpa1Xb9fqEOd
+	LrprgaG4YsA+SmC0XpBcesCW2Ftnz7229TZPYGToghZ9dMxhVrgpK+g3WxwfWV12zJJ4B3aI62G
+	PrEI/FGpBo6moGa5g9VtAAqua56FT8Cslu7ZoNqlylRqJhZN3ITKGOcVEYHoH
+X-Google-Smtp-Source: AGHT+IHN+NlXgbEjZOyHhgFjTHMZ1I2MGPeH7berVKrfkCXW7+OC0PeJHvmOwpe6Pg5LCPNt2eEmZg==
+X-Received: by 2002:a05:6000:2307:b0:3a5:8934:4959 with SMTP id ffacd0b85a97d-3b609544322mr2365139f8f.27.1752578827815;
+        Tue, 15 Jul 2025 04:27:07 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d4b5sm15115966f8f.53.2025.07.15.04.27.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 04:25:24 -0700 (PDT)
-From: Ana Oliveira <anac.amplar@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	koike@igalia.com,
-	Ana Oliveira <anac.amplar@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: os_dep: remove blank line before close brace '}'
-Date: Tue, 15 Jul 2025 08:25:13 -0300
-Message-Id: <20250715112513.4541-1-anac.amplar@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Tue, 15 Jul 2025 04:27:07 -0700 (PDT)
+Date: Tue, 15 Jul 2025 13:27:04 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Leon Romanovsky <leon@kernel.org>, Long Li <longli@microsoft.com>,
+	Shiraz Saleem <shirazsaleem@microsoft.com>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH 4/6] clocksource: hyper-v: Fix warnings for missing
+ export.h header inclusion
+Message-ID: <aHY7CKL--DDnWXT7@mai.linaro.org>
+References: <20250611100459.92900-1-namjain@linux.microsoft.com>
+ <20250611100459.92900-5-namjain@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250611100459.92900-5-namjain@linux.microsoft.com>
 
-Fix checkpatch error "CHECK: Blank lines aren't necessary before
-a close brace '}'" in sdio_ops_linux.c:309.
+On Wed, Jun 11, 2025 at 03:34:57PM +0530, Naman Jain wrote:
+> Fix below warning in Hyper-V clocksource driver that comes when kernel
+> is compiled with W=1 option. Include export.h in driver files to fix it.
+> * warning: EXPORT_SYMBOL() is used, but #include <linux/export.h>
+> is missing
+> 
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> ---
+>  drivers/clocksource/hyperv_timer.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
+> index 09549451dd51..2edc13ca184e 100644
+> --- a/drivers/clocksource/hyperv_timer.c
+> +++ b/drivers/clocksource/hyperv_timer.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/irq.h>
+>  #include <linux/acpi.h>
+>  #include <linux/hyperv.h>
+> +#include <linux/export.h>
+>  #include <clocksource/hyperv_timer.h>
+>  #include <hyperv/hvhdk.h>
+>  #include <asm/mshyperv.h>
 
-Signed-off-by: Ana Oliveira <anac.amplar@gmail.com>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
----
 
-Hey, this is my first patch, I appreciate any feedback, thanks
----
- drivers/staging/rtl8723bs/os_dep/sdio_ops_linux.c | 1 -
- 1 file changed, 1 deletion(-)
+> -- 
+> 2.34.1
+> 
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_ops_linux.c b/drivers/staging/rtl8723bs/os_dep/sdio_ops_linux.c
-index 4a7c0c9cc7ef..5dc00e9117ae 100644
---- a/drivers/staging/rtl8723bs/os_dep/sdio_ops_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/sdio_ops_linux.c
-@@ -305,7 +305,6 @@ void sd_write32(struct intf_hdl *pintfhdl, u32 addr, u32 v, s32 *err)
- 				}
- 			}
- 		}
--
- 	}
- }
- 
 -- 
-2.39.5
 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
