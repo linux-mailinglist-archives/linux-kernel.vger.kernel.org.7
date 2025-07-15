@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-731298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1562DB05266
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:06:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8907DB05268
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57F517A64B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:04:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5B4168590
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D8826D4F9;
-	Tue, 15 Jul 2025 07:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7870826D4F6;
+	Tue, 15 Jul 2025 07:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ijblgx19"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MKIN6RW9"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0372880B
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5025341AA;
+	Tue, 15 Jul 2025 07:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752563173; cv=none; b=DeZCIcTM1Rg9q46E3bPGQgYEU2QvjasSlBann5LAEno7x2pjmRKBXy/0W116EoK0BS9S+0fbFky2iU64cnNJoHTBEqqi9RkGQDE3BhVMsABnNt2aVVHLtf9nvwmxctO0tD5dFnJvEVuUfP4deE8RXcffHhP0U4qV+b/dam1QSvQ=
+	t=1752563289; cv=none; b=uyE/oEs+E+sC81BNN99BGTrUDaPO7XENELFIYIN/VOXNjWn9jbT9pMHL2+Rcdxdsz2JbKEufE0bNWZFA+UjjFgkjvXCreQ1928J1dPeYyX4s9wXmk5fpOi9sjzFCs5c9HzRXjcS91wkk/5++p84SlDSFWILmTx8fUGQWhMMcfrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752563173; c=relaxed/simple;
-	bh=zyJfM4m7iuHQnvGctowIKLGbpXe3ilOcyRc3lTCCWws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vzycz/PQS9LLeTZrOPX/3ExTqX9ZfKELd7/s9SSK5GuAbKkGTdOm6Xh8L+oiJo7Wts6X3NXLuspa7w+3PqTP7PvxcJROHn9ODxoHaiDs90x07bPlYDNFeX9ERKs0yhowdSdtoDXCbhlZyyjgQJ1Za9ZDBhB9aDPPRG9ajxf07pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ijblgx19; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b60565d5f4so155976f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 00:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752563170; x=1753167970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ajGTcGAxR3mBk5Sj7qmdIl5DeQZYWu+Iyg/14Szz+Jg=;
-        b=Ijblgx19A1NCo3mygiSs4KfnHosZwGAeYahVTWwNpKlRUWVD047oOnbsrt377dCzIO
-         +BdFddaTA/43HjBT4PnE9ItTntrtn5EJJ42rdVdOsDRdQzV+H21bhZTGHQ0c+yh7QY7m
-         1egLTNZNQSGBO2JlS6vk8a7CYVYIs3bk5CUE5zx2RaY9TkdG4PHWW1p0ymhuPVdnwhh0
-         KuKZc6nByS75IfpC3vzydSTqX8un8+UHC4FqmZmDa0KeUyTaDLCRS+uxws4ttBCBFkn0
-         qA5DYnDBmrEfTOuwXMbUGmQ38x5/WHbOiW+2U7TZkFRpUKCHL+MpXGMpn/gmD65jIfpa
-         972A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752563170; x=1753167970;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ajGTcGAxR3mBk5Sj7qmdIl5DeQZYWu+Iyg/14Szz+Jg=;
-        b=FjT+UWiL49kNX/7tpMNKrQVTdLBjF4HAYEIeaJM0pUF4o5yIOkFxYxvHnUidNd1vRs
-         ZwXsoPX1JfovYyRZ6xXV7w3cpRm1L72CA/Oskn+7l1exr614r2FA/Nf2iMJzoBQm78qa
-         6V7jGivWEZHlfwWogN0dMQKJH6IbsA+ewP6Auuw+0F7PTCBhvbhuWcaOm1oyL/vNwDs9
-         x+u0Feq/OPY0RqzREKYdpTgV6S9NnFfC461akp1NoWyWPcaDK84K2Z/MsFC4hU9Vhckw
-         k7DGOgdEM5wamlXC15BgxQIWt2PtT/AD3VRQIxvouJNKlRJ1vqPU3XWKwX8pKTXcwoz2
-         in8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVU/Pt8dB212SZO9HXgoiLOBf8pCvTw6YQeqL8xxHHq3F7Czd05ojUmuzg2tIzl3X21jvTYPFnxGInD8ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG5kJFG2QS88IaxWl1n/DKG7flA7eYyZnSLW5w4JVAWZbMaFaY
-	+Bh7ERUnsa0Pmu7+66lTZW5esUYfw+68ySkcExITS09AcBIPLNF+c1h98wblOY6nAjs=
-X-Gm-Gg: ASbGnct7cJKFrGmiClGbv6HShGnZ7yFzbmx+/tbbWROcc3w3o2TJGmztBiQVmNOvQEI
-	42/yWMoFGFSaeqGeKqTbUReINYnH9K++w9fn8EDt6m8NbIoxkXtmL/fWWddjKhkbpsPXZ9uOmuW
-	rETWRvysmhm/ZQfAdXmBhujiOOD7bkQdfVAnvcws/gjD7D8JyPiw+t9eeddUa2Phd+SVgowziFc
-	Jdv7iIDdN1G31t/JUY2JRFHH50ejDTCos/xCSieREDvhuPylvK1i5WiB7YQthKoNer+7X3EdtTN
-	anQRv0uDmYkocmuw7VJVdLBp12CZNfEWWzoWAu/0Q1IKMTpQmXjqLQfVqwrH1FQg8JegAU1JuDA
-	KvTanxgANMWJ3Dwi/odBizUCT03nYgX8qaAmFtIkSmA==
-X-Google-Smtp-Source: AGHT+IGM2wXJAUFxtvCXjrk3+MCSefDOx/ZdlSq18YErK1icLcSQ2roGieecsriz1//IYmmyHvk3og==
-X-Received: by 2002:a05:6000:1a8a:b0:3a4:eeeb:7e70 with SMTP id ffacd0b85a97d-3b60b331badmr176750f8f.4.1752563170328;
-        Tue, 15 Jul 2025 00:06:10 -0700 (PDT)
-Received: from [192.168.1.110] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26ff9sm14330311f8f.93.2025.07.15.00.06.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 00:06:09 -0700 (PDT)
-Message-ID: <4f79424f-0005-4978-8c6d-6b726ee7e4ab@linaro.org>
-Date: Tue, 15 Jul 2025 09:06:08 +0200
+	s=arc-20240116; t=1752563289; c=relaxed/simple;
+	bh=0oYUaB26Ux5s7e7mZbkOfOPdcsVu/1/Dfeg80QwEZrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VVxgSq8gEea02+KmPZ4a6vShsZp5b0eRtI8vAw+bOZfFmVkgBZBlgrZ2JikWA75HkK1SG+71EEYV90GtSRVM++baLT7gunVH9aAofZDqc1EgYwvOhvTDcDiEOTmsE5Anr6kTWLd6CRx3EfEu8PQiSyyjBbLykN7OPLtbory0844=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MKIN6RW9; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56F77pLI2835369;
+	Tue, 15 Jul 2025 02:07:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752563271;
+	bh=KQzkqrfUSvnBljERKPGdhvxyCebpfiP092MYdAIusq8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=MKIN6RW9TRdeFPmiHw71lnX1kTy876Op/9t/NQFwPYM6UFFA9lnauRtaE9WngwFgr
+	 7Hyi3/38a/CvPQiy9vcnhKl0HJh//xM37CuYPpH3CMVPcq6y58Wr476q+263x9AQgD
+	 S2Aw7bC5lRugyLHJdS26wpyhp/4l7ZvrZKzJD7gU=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56F77pE04088945
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 15 Jul 2025 02:07:51 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 15
+ Jul 2025 02:07:50 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 15 Jul 2025 02:07:51 -0500
+Received: from [172.24.29.51] (ltpw0g6zld.dhcp.ti.com [172.24.29.51])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56F77kSv2459968;
+	Tue, 15 Jul 2025 02:07:46 -0500
+Message-ID: <b626dc40-e05b-40e0-b300-45ced82d2f97@ti.com>
+Date: Tue, 15 Jul 2025 12:37:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,130 +64,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: iris: MAINTAINERS: Document actual maintainership
- by Bryan O'Donoghue
-To: Vikash Garodia <quic_vgarodia@quicinc.com>, bryan.odonoghue@linaro.org,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Hans Verkuil <hverkuil@xs4all.nl>
-References: <20250714151609.354267-2-krzysztof.kozlowski@linaro.org>
- <8772c48f-348b-8a68-2099-562a29b9dd8d@quicinc.com>
- <b83cc20b-44d2-4635-a540-7a9c0d36cdb5@linaro.org>
- <a4dfc82b-79df-3e3c-0964-a99db222c6e6@quicinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix buffer allocation for
+ ICSSG
+To: Simon Horman <horms@kernel.org>
+CC: <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
+        <m-malladi@ti.com>, <pratheesh@ti.com>, <prajith@ti.com>
+References: <20250710131250.1294278-1-h-mittal1@ti.com>
+ <20250711144323.GV721198@horms.kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCaBdQXwUJFpZbKgAKCRAbk0N9O0Fim07TD/92Vcmzn/jaEBcq
- yT48ODfDIQVvg2nIDW+qbHtJ8DOT0d/qVbBTU7oBuo0xuHo+MTBp0pSTWbThLsSN1AuyP8wF
- KChC0JPcwOZZRS0dl3lFgg+c+rdZUHjsa247r+7fvm2zGG1/u+33lBJgnAIH5lSCjhP4VXiG
- q5ngCxGRuBq+0jNCKyAOC/vq2cS/dgdXwmf2aL8G7QVREX7mSl0x+CjWyrpFc1D/9NV/zIWB
- G1NR1fFb+oeOVhRGubYfiS62htUQjGLK7qbTmrd715kH9Noww1U5HH7WQzePt/SvC0RhQXNj
- XKBB+lwwM+XulFigmMF1KybRm7MNoLBrGDa3yGpAkHMkJ7NM4iSMdSxYAr60RtThnhKc2kLI
- zd8GqyBh0nGPIL+1ZVMBDXw1Eu0/Du0rWt1zAKXQYVAfBLCTmkOnPU0fjR7qVT41xdJ6KqQM
- NGQeV+0o9X91X6VBeK6Na3zt5y4eWkve65DRlk1aoeBmhAteioLZlXkqu0pZv+PKIVf+zFKu
- h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
- vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <a4dfc82b-79df-3e3c-0964-a99db222c6e6@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+From: "MITTAL, HIMANSHU" <h-mittal1@ti.com>
+In-Reply-To: <20250711144323.GV721198@horms.kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 15/07/2025 09:00, Vikash Garodia wrote:
-> 
-> On 7/15/2025 12:14 PM, Krzysztof Kozlowski wrote:
->> On 15/07/2025 07:51, Vikash Garodia wrote:
->>>
->>> On 7/14/2025 8:46 PM, Krzysztof Kozlowski wrote:
->>>> Bryan O'Donoghue reviews and applies patches for both Iris and Venus
->>>> Qualcomm SoC video codecs (visible in git log as his Signed-off-by and
->>>> in pull requests like [1]), so he is de facto the maintainer responsible
->>>> for the code.  Reflect this actual state my changing his entry from
->>>> reviewer to maintainer and moving the entry to alphabetical position by
->>>> first name.
->>>
->>> NAK.
->>>
->>> The roles and responsibilities are well agreed by media maintainer(Hans), with
->>> Bryan part of that discussion, w.r.t code contributions to iris and sending
->>> patches to media tree. The only reason Bryan post the patches is that Hans wants
->>> single PR for patches across Qualcomm media drivers (Camss/Videoss)
+
+On 7/11/2025 8:13 PM, Simon Horman wrote:
+> On Thu, Jul 10, 2025 at 06:42:50PM +0530, Himanshu Mittal wrote:
+>> Fixes overlapping buffer allocation for ICSSG peripheral
+>> used for storing packets to be received/transmitted.
+>> There are 3 buffers:
+>> 1. Buffer for Locally Injected Packets
+>> 2. Buffer for Forwarding Packets
+>> 3. Buffer for Host Egress Packets
 >>
->> That's the maintainer role, so Bryan is the maintainer. I am documenting
->> actual status and your NAK is naking what? That Bryan cannot handle patches?
-> I would say, you are reading too much into it, i updated what we have discussed
-> and agreed upon the different roles for managing venus and iris drivers.
-
-Reading too much? Bryan HANDLES THE PATCHES.
-
-That's it.
-
-There is nothing "too much here".
-
-Person handling the patches IS the maintainer. Full stop.
-
+>> In existing allocation buffers for 2. and 3. are overlapping causing packet
+>> corruption.
 >>
->> Sorry, this is already happening.
+>> Packet corruption observations:
+>> During tcp iperf testing, due to overlapping buffers the received ack
+>> packet overwrites the packet to be transmitted. So, we see packets on wire
+>> with the ack packet content inside the content of next TCP packet from
+>> sender device.
 >>
->> Your push back here is odd, impolite and really disappointing. You
->> actually should be happy that person outside wants to care about this
->> driver...
+>> Details for AM64x switch mode:
+>> -> Allocation by existing driver:
+>> +---------+-------------------------------------------------------------+
+>> |         |          SLICE 0             |          SLICE 1             |
+>> |         +------+--------------+--------+------+--------------+--------+
+>> |         | Slot | Base Address | Size   | Slot | Base Address | Size   |
+>> |---------+------+--------------+--------+------+--------------+--------+
+>> |         | 0    | 70000000     | 0x2000 | 0    | 70010000     | 0x2000 |
+>> |         | 1    | 70002000     | 0x2000 | 1    | 70012000     | 0x2000 |
+>> |         | 2    | 70004000     | 0x2000 | 2    | 70014000     | 0x2000 |
+>> | FWD     | 3    | 70006000     | 0x2000 | 3    | 70016000     | 0x2000 |
+>> | Buffers | 4    | 70008000     | 0x2000 | 4    | 70018000     | 0x2000 |
+>> |         | 5    | 7000A000     | 0x2000 | 5    | 7001A000     | 0x2000 |
+>> |         | 6    | 7000C000     | 0x2000 | 6    | 7001C000     | 0x2000 |
+>> |         | 7    | 7000E000     | 0x2000 | 7    | 7001E000     | 0x2000 |
+>> +---------+------+--------------+--------+------+--------------+--------+
+>> |         | 8    | 70020000     | 0x1000 | 8    | 70028000     | 0x1000 |
+>> |         | 9    | 70021000     | 0x1000 | 9    | 70029000     | 0x1000 |
+>> |         | 10   | 70022000     | 0x1000 | 10   | 7002A000     | 0x1000 |
+>> | Our     | 11   | 70023000     | 0x1000 | 11   | 7002B000     | 0x1000 |
+>> | LI      | 12   | 00000000     | 0x0    | 12   | 00000000     | 0x0    |
+>> | Buffers | 13   | 00000000     | 0x0    | 13   | 00000000     | 0x0    |
+>> |         | 14   | 00000000     | 0x0    | 14   | 00000000     | 0x0    |
+>> |         | 15   | 00000000     | 0x0    | 15   | 00000000     | 0x0    |
+>> +---------+------+--------------+--------+------+--------------+--------+
+>> |         | 16   | 70024000     | 0x1000 | 16   | 7002C000     | 0x1000 |
+>> |         | 17   | 70025000     | 0x1000 | 17   | 7002D000     | 0x1000 |
+>> |         | 18   | 70026000     | 0x1000 | 18   | 7002E000     | 0x1000 |
+>> | Their   | 19   | 70027000     | 0x1000 | 19   | 7002F000     | 0x1000 |
+>> | LI      | 20   | 00000000     | 0x0    | 20   | 00000000     | 0x0    |
+>> | Buffers | 21   | 00000000     | 0x0    | 21   | 00000000     | 0x0    |
+>> |         | 22   | 00000000     | 0x0    | 22   | 00000000     | 0x0    |
+>> |         | 23   | 00000000     | 0x0    | 23   | 00000000     | 0x0    |
+>> +---------+------+--------------+--------+------+--------------+--------+
+>> --> here 16, 17, 18, 19 overlapping with below express buffer
 >>
->>> Hi Hans,
->>>
->>> Incase you would like to split sending PRs, as the contributions for Venus/Iris
->>> would be significantly higher, let us know, we can pick that up separately.
+>> +-----+-----------------------------------------------+
+>> |     |       SLICE 0       |        SLICE 1          |
+>> |     +------------+----------+------------+----------+
+>> |     | Start addr | End addr | Start addr | End addr |
+>> +-----+------------+----------+------------+----------+
+>> | EXP | 70024000   | 70028000 | 7002C000   | 70030000 | <-- Overlapping
+> Thanks for the detailed explanation with these tables.
+> It is very helpful. I follow both the existing and new mappings
+> with their help. Except for one thing.
+>
+> It's not clear how EXP was set to the values on the line above.
+> Probably I'm missing something very obvious.
+> Could you help me out here?
+
+The root cause for this issue is that, buffer configuration for Express 
+Frames
+in function: prueth_fw_offload_buffer_setup() is missing.
+
+
+Details:
+The driver implements two distinct buffer configuration functions that 
+are invoked
+based on the driver state and ICSSG firmware:- 
+prueth_fw_offload_buffer_setup()
+- prueth_emac_buffer_setup()
+
+During initialization, the driver creates standard network interfaces 
+(netdevs) and
+configures buffers via prueth_emac_buffer_setup(). This function 
+properly allocates
+and configures all required memory regions including:
+- LI buffers
+- Express packet buffers
+- Preemptible packet buffers
+
+However, when the driver transitions to an offload mode (switch/HSR/PRP),
+buffer reconfiguration is handled by prueth_fw_offload_buffer_setup().
+This function does not reconfigure the buffer regions required for 
+Express packets,
+leading to incorrect buffer allocation.
+>> | PRE | 70030000   | 70033800 | 70034000   | 70037800 |
+>> +-----+------------+----------+------------+----------+
 >>
->> Considering quality of the code you sent as Iris upstreaming, you are
->> not there yet.
-> If you see the scope to improve the quality, you are always welcome to add
-> patches to improve it.
+>> +---------------------+----------+----------+
+>> |                     | SLICE 0  |  SLICE 1 |
+>> +---------------------+----------+----------+
+>> | Default Drop Offset | 00000000 | 00000000 |     <-- Field not configured
+>> +---------------------+----------+----------+
+> ...
 
-I spoke about your work. You cannot use argument that you want to handle
-patches regardless of quality of your code.
+Thanks,
+Himanshu
 
-> 
-> Regards,
-> Vikash
->>
->> https://lore.kernel.org/all/1690550624-14642-1-git-send-email-quic_vgarodia@quicinc.com/
-
-The one here.
-
-
-Best regards,
-Krzysztof
 
