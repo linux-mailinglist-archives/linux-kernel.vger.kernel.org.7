@@ -1,148 +1,200 @@
-Return-Path: <linux-kernel+bounces-731253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D7CB051C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:29:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD51B051C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A35B4560428
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:29:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2B31AA7640
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDAB2D63EF;
-	Tue, 15 Jul 2025 06:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BE62D5439;
+	Tue, 15 Jul 2025 06:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KIFPa5v1"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QlelfTFr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52392D3EDC
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D032D3A93;
+	Tue, 15 Jul 2025 06:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752560918; cv=none; b=sCJGeIoyzpcOcep6k4bonb9QYR6WSlnS4YWU5iPTfOjfgI9jZHrHOw0RNFpJiEQx3QdhG8MU1D6UjrJ1dsNx3VR+TddCN+8cncDgyRZ6dNhDPWPzFkzchdOVrcFKYxghJh/RpiiOea5L73j/8RocIgUtC+N+DZLke4wIHlPHpJk=
+	t=1752560916; cv=none; b=ZAdwpedw2Z50GW2hlNeI0PoOTgJXMXX4+8x++f57zq2XISP2vYndu0HyR0DyuQTWfffUIM8IFKLLc9lz15jJWFwg8AEVM64twNE9hJKTEGYWHlzEn/FUGLAUvdvHUsGYCceVo/Yetn+oiUoypxPtL/Gc930e86I96KGxO0cR4Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752560918; c=relaxed/simple;
-	bh=hzBhaj0bPfBfH8WKXsSODcE4YTYKjXAXkYFweZnaSTw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ks4IModBMfk1FXLGiasBqskOFm4BFnfg6buUX+wob0N9/+K6LHKf8PVFlzy7djV613UNXHcFEbIwCkQggNbwIrwkbkSDnCTa3I+W6MlO3kpIfSeyNMsdesahJPvKnd21hOa8I/8quy8BjZlrhIrl74nqwi1DMN8OM1Lmui1Fflk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KIFPa5v1; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso259951cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 23:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752560913; x=1753165713; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IIFY6igA7ItbPWoIp1wqanVGqlzkgUCSQp6wKLEinNo=;
-        b=KIFPa5v1yzEOMUWc2oN3k4lDin08bHuedvs0R+MBycdm+X3PxNHHkj/3pfKcan15ie
-         ozuO1URQu7Qez3uJxidG4ZbSlrOaYacxdHk1XaBHVtQFxr3NGsI6KwsY/KJKoqmIKKgZ
-         lTWCxWd5nrPTRBp69m5XUbsByJ3KSSqno9weyJo0voZKCEXte4qwyXFhyF4cGml5q2V5
-         z431YKXtSnZoe5Gwt47JM6HCu7gqDfvFi3FMj8ZNy02wjkkGXaG1MlA0zzYWNDILRuzD
-         AmMH8H0PL3DBJHzDRUiemWdUxNXJZo3vnvQL8ggBUqD0CHSMRVdxswHK9DiVcUNF5fli
-         CFcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752560913; x=1753165713;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IIFY6igA7ItbPWoIp1wqanVGqlzkgUCSQp6wKLEinNo=;
-        b=Pj4IjViDgXxxa7qAbCIdtmnRik1VQnFx4j/6CXHTIz9NzNUXaDdVsicem9KEPUnyl1
-         8U8D6aVXqKiuZp4EiboVYL0k26NIOtifLRIlFu0yQQBkABjoyX6JU5MTSrgDUD+WCmoZ
-         EyHlvdOK5LQg0H+BZwUS51GowOVD2HhzuyIv0Oth+DIs+qy2FmVBKIt9VUYStj7B2g5g
-         uhJP71F/xfTTu/f5dTGIa/A7pbCKLJvW0uZdvJriL3Uv2rXk+0IhBrmNFBwX9YIZpMl1
-         9nyMjYENFITo5GnoTzWAZreZvEv/aYwhGb+t+XJ21zpJ392yZjk5EUlklIStxcDJCfs2
-         hO5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWMNuY77IBRmwz+SnVdhWEWqhoNMCPrJz7L6Fbwb57JNxcCbGd4gyFwmQC9lUYg2xHRLrE/uQH0BwsftKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuq+pAl/+FwJJsqNTE0Tu+XtgpRe7daUSVJogVvu8NoVwvTFqf
-	EuUdQqkIjR1U6Wxn1d/68uXdXmu1ZZn6liDa8N5jL5tJx4/KeEbrE6CUq2+3jXf2S5EfqCjbQUa
-	nb6BuRtFn7xu1tMHbKWdf3UQS2tMPPWGfUcaGODxS
-X-Gm-Gg: ASbGncszptm4itRLYEazVUxyXVyxbQrVw3aS/63wl7gGzdoaNBSFCjILC4CpBz2POom
-	ug9PAbLUlAz8wgoCzi5NA+g6D3tGKHJIe5YP3uMJAv4vsjIUTm+WO/ELRQLihNGr0WVJ8doM6NV
-	VKb4bm8+TfJQZ7w5ljtQf8SWZc5UVjbxV/fliYYfpQ68asTWve0HKz7Drm/eDzZXWMHCSIYVJX1
-	jujJlkfsUwymZ/+
-X-Google-Smtp-Source: AGHT+IGbMIrszzxiU6KwxjeVl8dXHdRHJ+aTFTtAE8A5hcOifW7wZve3PV5GRWnbvGMzyczeFNNWqNJ4uzW79JPmRIs=
-X-Received: by 2002:ac8:6909:0:b0:4a9:d263:d983 with SMTP id
- d75a77b69052e-4ab80cc6f95mr2983331cf.22.1752560913237; Mon, 14 Jul 2025
- 23:28:33 -0700 (PDT)
+	s=arc-20240116; t=1752560916; c=relaxed/simple;
+	bh=BJsnU8xVlShjcg5+ZFwrkWOQBaBFls93PGR1Hwz0nLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iPEsyHgM7wcmTi8TkAVlwwbPUwxw3D5tQSUtS6FC6roEF0ZV54g3tyTemACvlH0/AphJXHGnF6xEteMW++kw1wTklG46H2rCOzBatv0Qo4miDfc4c4RqiT+/5Oy9FmUDksUV31uGKynqztN8anhU7d9PqXqBiOD60gTMKUiSz4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QlelfTFr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD34FC4CEE3;
+	Tue, 15 Jul 2025 06:28:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752560915;
+	bh=BJsnU8xVlShjcg5+ZFwrkWOQBaBFls93PGR1Hwz0nLI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QlelfTFr8Rhi4m0sFq/NarCbyHtIvfy52UDegp08jMNiITRMTdz2sPUaEEHhLXulm
+	 nWHqC0buwbfLtL/02X+vgjAJu6QvaRl0sVoRJltoknIrQ0vfkoDCtKyD9VN8fjZykn
+	 vE3s0XbjPiPRe1MY8hnDIn5dsPEEyBz6XnHtb7X4j12RXlTXj5LIbM/rQ/tJjgjOdS
+	 6NZASM3CKmYzoInRBWf8DmWC0YkPYRUVmib7iIBPNLm8Z6X3lTaqBJHv83ZKKbk1Gp
+	 T5tv2E6M3Xta9eEZ/kB2sv+0s29W5k5VmdwZN8053KWt98CtebNti2xgfG5M/A9g8p
+	 BCDKQ/Sjll3kQ==
+Message-ID: <8b2ee5da-4696-432a-bb0e-bed723192353@kernel.org>
+Date: Tue, 15 Jul 2025 08:28:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619000925.415528-1-pmalani@google.com> <20250619000925.415528-3-pmalani@google.com>
- <ff65b997-eb14-798f-1d2f-c375bf763e71@hisilicon.com> <CAFivqm+hjfDwPJCiHavnZSg2D+OaP5xbQnidmwxQ3HD32ic6EA@mail.gmail.com>
- <ef3f933a-742c-9e8e-9da4-762b33f2de94@hisilicon.com> <CAFivqmLCW2waDnJ0nGbjBd5gs+w+DeszPKe0be3VRLVu06-Ytg@mail.gmail.com>
- <CAFivqm+D9mbGku-nZKSUEMcQV5XK_ayarxL9gpV5JyfmhirsPw@mail.gmail.com>
- <aGuGLu2u7iKxR3ul@arm.com> <CAFivqmJL90xsELhz4tPtkYA9vMzS9C=V__nwo=kWJKjKS=mE_Q@mail.gmail.com>
- <CAFivqmKBgYVa6JUh82TS2pO915PUDYZMH+k-5=-0u1-K9-gMMw@mail.gmail.com> <aHTOSyhwIAaW_1m1@arm.com>
-In-Reply-To: <aHTOSyhwIAaW_1m1@arm.com>
-From: Prashant Malani <pmalani@google.com>
-Date: Mon, 14 Jul 2025 23:28:22 -0700
-X-Gm-Features: Ac12FXz0toYZ_F0QSp7PcKhcRht-0rDhzIAHVwCuSAtnjh8CuP5L2iqWPl5spU8
-Message-ID: <CAFivqmJ912sEdSih_DFkiWRm478XUJhNDe=s2M_UO2gVTu4e3w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: Jie Zhan <zhanjie9@hisilicon.com>, Ionela Voinescu <ionela.voinescu@arm.com>, 
-	Ben Segall <bsegall@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, 
-	Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Valentin Schneider <vschneid@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv4 wireless-next 7/7] dt-bindings: net: wireless: rt2800:
+ add
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Johannes Berg
+ <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Stanislaw Gruszka <stf_xl@wp.pl>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:MIPS" <linux-mips@vger.kernel.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-mediatek@lists.infradead.org>
+References: <20250712210448.429318-1-rosenp@gmail.com>
+ <20250712210448.429318-8-rosenp@gmail.com>
+ <20250714-subtle-origami-gopher-c9099f@krzk-bin>
+ <CAKxU2N8au-uncWoP+vGH4cHhHMOtq+VRFGNDs6rRLuHn-i1G-Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAKxU2N8au-uncWoP+vGH4cHhHMOtq+VRFGNDs6rRLuHn-i1G-Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-+Sudeep.
+On 14/07/2025 21:44, Rosen Penev wrote:
+> On Mon, Jul 14, 2025 at 12:27 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On Sat, Jul 12, 2025 at 02:04:48PM -0700, Rosen Penev wrote:
+>>> Add device-tree bindings for the RT2800 SOC wifi device found in older
+>>> Ralink/Mediatek devices.
+>>
+>> Your subject was cut. Probably you wanted something like add "Realtek foo adapter" etc.
+> Not sure I follow.
 
-On Mon, 14 Jul 2025 at 02:31, Beata Michalska <beata.michalska@arm.com> wrote:
-> So I believe this should be handled in CPUFreq core, if at all.
-> Would be good to get an input/opinion from the maintainers: Viresh and Rafael.
+Your subject is oddly incomplete.
 
-Viresh, Rafael, Sudeep, could you kindly chime in? The unreliability
-of this frequency
-measurement method in CPPC is affecting the cached frequency saved by CPUFreq,
-which in turn affects future frequency set calls.
+>>
+>>
+>>>
+>>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+>>> ---
+>>>  .../bindings/net/wireless/ralink,rt2880.yaml  | 47 +++++++++++++++++++
+>>>  1 file changed, 47 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
+>>> new file mode 100644
+>>> index 000000000000..a92aedf6ba01
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2880.yaml
+>>> @@ -0,0 +1,47 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/net/wireless/ralink,rt2880.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Ralink RT2880 wireless device
+>>> +
+>>> +maintainers:
+>>> +  - Stanislaw Gruszka <stf_xl@wp.pl>
+>>> +
+>>> +description: |
+>>> +  This node provides properties for configuring RT2880 SOC wifi devices.
+>>> +  The node is expected to be specified as a root node of the device.
+>>> +
+>>> +allOf:
+>>> +  - $ref: ieee80211.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - ralink,rt2880-wifi
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 1
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>
+>> Why clocks are optional? SoC devices rarely work without a clock.
+> Before this patchset the code was doing
+> 
+>  25         rt2x00dev->clk = clk_get(&pdev->dev, NULL);
+>  24         if (IS_ERR(rt2x00dev->clk))
+>  23                 rt2x00dev->clk = NULL;
 
-It would be great if we could solve this in CPUFreq core (maybe not
-rely on the cached
-frequency while setting the new one [3]?)
 
->
-> In the meantime ....
-> It seems that the issue of getting counters on a CPU that is idle is not
-> in the counters themselves, but in the way how they are being read - at least
-> from what I can observe.
-> The first read experience longer delay between reading core and const counters,
-> and as const one is read as a second one, it misses some increments (within
-> calculated delta). So, what we could do within the driver is either:
-> - Add a way to request reading both counters in a single cpc_read (preferable
->   I guess, though I would have to have a closer look at that)
-
-I already tried something like this; I used [1] which basically puts the
-2 (constcnt, corecnt) register reads in a single CPC call;
-This did not help. The values are still highly variable. I never got
-merged FWIW.
-
-> - Add some logic that would make sure the reads are not far apart
-
-As Jie pointed out earlier, a lot of this has been discussed (see the references
-within the patch link [2]), so I'm not really sure what else can done
-to reduce this on
-Linux; there are two registers (SYS_AMEVCNTR0_CORE_EL0 &
-SYS_AMEVCNTR0_CORE_EL0), so there will always be some scheduler induced
-variability between the two reads.
+That's driver. I am asking about hardware. Hardware rarely works without
+clock. Just because some driver works is not a really a good proof,
+because clock could be enabled by bootloader which would still prove my
+point: hardware cannot work without clock.
 
 Best regards,
-
-[1] https://patchew.org/linux/20240229162520.970986-1-vanshikonda@os.amperecomputing.com/20240229162520.970986-4-vanshikonda@os.amperecomputing.com/
-[2] https://lore.kernel.org/linux-pm/20250131162439.3843071-1-beata.michalska@arm.com/
-[3] https://elixir.bootlin.com/linux/v6.15.6/source/drivers/cpufreq/cpufreq.c#L2415
-
--- 
--Prashant
+Krzysztof
 
