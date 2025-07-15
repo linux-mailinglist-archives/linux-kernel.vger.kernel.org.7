@@ -1,131 +1,135 @@
-Return-Path: <linux-kernel+bounces-731214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B9AB050FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:30:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8191DB050FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 726613BD4AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:29:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70011AA82A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27DB2D5410;
-	Tue, 15 Jul 2025 05:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54ECE2D4B5A;
+	Tue, 15 Jul 2025 05:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Kyma2SYp"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vuoaoi1I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B863F2D3EDF;
-	Tue, 15 Jul 2025 05:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74032D3A9F;
+	Tue, 15 Jul 2025 05:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752557383; cv=none; b=XKo8dxj1bk+M+dzw9gT6XR12mCC4b5ruKwRrp6QAihKjnbsEW0HebE3Q8LQBI6ZvFMFD3V/vFWK9d5SCvVuKOGdWKrLqk1crDcZSmO531wE7EmTccKxM73HHAUXWQuBNIEwebt762hxwMfFdFy9TvMQUJWZmRQJ/QItVgfNg96Y=
+	t=1752557378; cv=none; b=XXJuZ9s8+98pUAE6ps6TkWqxmRi+4hI/ZavJWOH99T98U3Ahucwq0WIKW5CgEwav1mefCrKJ8+soEQ+AgSBI1l9s0vo4ZmBkWxeN3tmgL66E4mrj0wYCM9KRehUr2GVpOMwHiXx7rL05drtS2JUXh1dm/n3CcT3qAHTZZ35LlDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752557383; c=relaxed/simple;
-	bh=KaqUIsDeZAwrYbDxKxMit35I8BEJxBnNA0LJJgJj+eA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cR0OdRMvw6WmK5rOPDlgjWeXItquJGo3vVKILthzy5YeParVeSkvVV3SUhdmq0xkQqZXGLezMsRvqtWRPMQxqI9BoqdyrH/ZJps5iWF4KjeSk87RziE/1jD+3z89yMEcEq4JuI0d7lGpdDhSaKuy0AtFeL2ZmY3XycIn15oIhL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Kyma2SYp; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56F5TVxC2538631;
-	Tue, 15 Jul 2025 00:29:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752557371;
-	bh=9RSokxMgEP4SOqdc2oKnXwxbmD35sLZH2NssOeX5TYA=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Kyma2SYpcsdwOfmX47sjUk/4Ey5nnBccs37/vQatgGiH7u8eViLNdSL9lViAjf8+m
-	 JUJREQGA7Rj7yrcL9FsPMgU89WvmaozrAt9TRcjdp6dHmCPTtM6Fr1h+i9wRR+zOTb
-	 P+S5sjn2Gbu0RaT0SCk6hZ51UZZm62G4va8mk+KA=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56F5TVhM361777
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 15 Jul 2025 00:29:31 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 15
- Jul 2025 00:29:30 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 15 Jul 2025 00:29:30 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.245])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56F5TIFe2337840;
-	Tue, 15 Jul 2025 00:29:27 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Tero Kristo
-	<kristo@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Chintan Vankar
-	<c-vankar@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, <s-vadapalli@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6 0/4] Add bootph-all property to enable Ethernet boot
-Date: Tue, 15 Jul 2025 10:59:01 +0530
-Message-ID: <175240652598.4073742.14558391406301903223.b4-ty@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250709105326.232608-1-c-vankar@ti.com>
-References: <20250709105326.232608-1-c-vankar@ti.com>
+	s=arc-20240116; t=1752557378; c=relaxed/simple;
+	bh=relhaGmwuN3BM9WXC//DxFV+zOmPYgOkglV3qif+r1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jhQ2+kCgvMN4FAfPvvnrW+5gLhZ0GRUbwfE1/nZmZGVhwxCarVKbakg8f2MavQxecmD3Oz9safwNigiwP8tHQcMHvMkBd3Rp4oiyQK5yxEjdoUvRI//yB65yOlFJj5kNlDFbyHl6G8eXH1YxQqiaXfbMmWwG9rE6mMWl5+CydvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vuoaoi1I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E9E9C4CEE3;
+	Tue, 15 Jul 2025 05:29:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752557376;
+	bh=relhaGmwuN3BM9WXC//DxFV+zOmPYgOkglV3qif+r1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vuoaoi1IKqbr/CiXvNO7D35hDal9LUsv9lK/AFh8D09r6ycphXg7KX3UjHlxzxSaL
+	 8g7/D/S0bPHYUizhGwEIdGHDxoY7Gthchev/QUgpNeOI1QB8iSnlAY/n4NJdM8N0Yh
+	 xIdGOXckWFb/2R6ttiZ4QIzxCNnU4V4eSXGIZLVYNKonuCYi6+d/1bz3uTUL9fInKo
+	 x++NgLwVhP3aAhYhOWgbESDWR/SWnpWnZe0VXj+XCFMX7ej9L0OdpF9PPDLr8VdRSh
+	 eeShBwgjFF08y7KBLqyNW6KDRqIkZIA2MsdvOcowCs6W0gsWC7Y/CEL/2MAiXoXz5Z
+	 Vr94bOPzPnyuA==
+Date: Tue, 15 Jul 2025 05:29:31 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Suleiman Souhlal <suleiman@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	John Stultz <jstultz@google.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ssouhlal@freebsd.org
+Subject: Re: [PATCH v7 1/3] KVM: x86: Advance guest TSC after deep suspend.
+Message-ID: <aHXnO6KapsNLjocd@google.com>
+References: <20250714033649.4024311-1-suleiman@google.com>
+ <20250714033649.4024311-2-suleiman@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714033649.4024311-2-suleiman@google.com>
 
-Hi Chintan Vankar,
-
-On Wed, 09 Jul 2025 16:23:22 +0530, Chintan Vankar wrote:
-> This series adds bootph-all property to necessary nodes to enable
-> ethernet boot support for SK-AM68, AM62P5-SK, J722S, and SK-AM69.
+On Mon, Jul 14, 2025 at 12:36:47PM +0900, Suleiman Souhlal wrote:
+> Try to advance guest TSC to current time after suspend when the host
+> TSCs went backwards.
 > 
-> This series is based on commit '58ba80c47402' of linux-next tagged
-> next-20250708.
+> This makes the behavior consistent between suspends where host TSC
+> resets and suspends where it doesn't, such as suspend-to-idle, where
+> in the former case if the host TSC resets, the guests' would
+> previously be "frozen" due to KVM's backwards TSC prevention, while
+> in the latter case they would advance.
 > 
-> Link to v5:
-> https://lore.kernel.org/r/20250708084252.1028191-1-c-vankar@ti.com/
-> 
-> [...]
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
+Tested again with comparing `date` before and after suspend-to-RAM:
+  echo deep >/sys/power/mem_sleep
+  echo $(date '+%s' -d '+3 minutes') >/sys/class/rtc/rtc0/wakealarm
+  echo mem >/sys/power/state
 
-[1/4] arm64: dts: ti: k3-am68-sk-base-board: Add bootph-all property to enable Ethernet boot
-      commit: 7cc984fb30d5c2a780fee0f4b2d4ad2001961c6b
-[2/4] arm64: dts: ti: k3-am62p5-sk: Add bootph-all property to enable Ethernet boot
-      commit: d6ad164e05844be63210900536108812aa00d2fe
-[3/4] arm64: dts: ti: k3-j722s-evm: Add bootph-all property to enable Ethernet boot
-      commit: ab9ec669cf74b6499c0de4f42a6dd756a4e4e2a1
-[4/4] arm64: dts: ti: k3-am69-sk: Add bootph-all property to enable Ethernet boot
-      commit: 89a0284bf92e498c8d24a4ce37949eaf4a5101a9
+Without the patch, the guest's `date` is slower (~3 mins) than the host's
+after resuming.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Tested-by: Tzung-Bi Shih <tzungbi@kernel.org>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> @@ -5035,7 +5035,36 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+>  
+>  	/* Apply any externally detected TSC adjustments (due to suspend) */
+>  	if (unlikely(vcpu->arch.tsc_offset_adjustment)) {
+> +#ifdef CONFIG_X86_64
+> +		unsigned long flags;
+> +		struct kvm *kvm;
+> +		bool advance;
+> +		u64 kernel_ns, l1_tsc, offset, tsc_now;
+> +
+> +		kvm = vcpu->kvm;
+> +		advance = kvm_get_time_and_clockread(&kernel_ns, &tsc_now);
+> +		raw_spin_lock_irqsave(&kvm->arch.tsc_write_lock, flags);
+> +		/*
+> +		 * Advance the guest's TSC to current time instead of only
+> +		 * preventing it from going backwards, while making sure
+> +		 * all the vCPUs use the same offset.
+> +		 */
+> +		if (kvm->arch.host_was_suspended && advance) {
+> +			l1_tsc = nsec_to_cycles(vcpu,
+> +						kvm->arch.kvmclock_offset + kernel_ns);
+> +			offset = kvm_compute_l1_tsc_offset(vcpu, l1_tsc);
+> +			kvm->arch.cur_tsc_offset = offset;
+> +			kvm_vcpu_write_tsc_offset(vcpu, offset);
+> +		} else if (advance) {
+> +			kvm_vcpu_write_tsc_offset(vcpu, kvm->arch.cur_tsc_offset);
+> +		} else {
+> +			adjust_tsc_offset_host(vcpu, vcpu->arch.tsc_offset_adjustment);
+> +		}
+> +		kvm->arch.host_was_suspended = false;
+> +		raw_spin_unlock_irqrestore(&kvm->arch.tsc_write_lock, flags);
+> +#else
+>  		adjust_tsc_offset_host(vcpu, vcpu->arch.tsc_offset_adjustment);
+> +#endif /* CONFIG_X86_64 */
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Wondering if it needs to acquire the `tsc_write_lock`, given that:
+- The original code adjust_tsc_offset_host() doesn't acquire.  Note:
+  adjust_tsc_offset_host() eventually calls kvm_vcpu_write_tsc_offset() too.
+- Documentation/virt/kvm/locking.rst [1].
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
-
+[1] https://elixir.bootlin.com/linux/v6.15/source/Documentation/virt/kvm/locking.rst#L264
 
