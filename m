@@ -1,122 +1,143 @@
-Return-Path: <linux-kernel+bounces-732589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD58B0692C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:18:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6251B0692E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153133ABA38
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:18:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D576170EA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B832C15B1;
-	Tue, 15 Jul 2025 22:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I7yD0NXv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA0272615
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1823C2C15AB;
+	Tue, 15 Jul 2025 22:21:06 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE5F238C0D;
+	Tue, 15 Jul 2025 22:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752617931; cv=none; b=enrof4/IU/6AyFxdE8LvO8acwZp76vnIZ3cKcl7v9B2uU6So1NWXzWrTiwa+3UQ3XAFqZRrfXG06vmUszQzjWXRKKy6cvC4wejtHG8jrlwcO0SnW/GDk+FzcWu+wUY1Cofrc4QOG2fqc0MviBYddTTP0bWKEXYeuvu5ho1jjuts=
+	t=1752618065; cv=none; b=OZfIxtRCURHIMwZ48iFRMLupK9MFBV8Fx2AxqsM2c2rYfp2h17AOREWmp05soSsWs171dfkSKFe6VT+0vAXNRTZ44ixKYwKLEDMw0ny6CCiQqSkzf6YCb0uTdR/nUg9DOqb5z8kmKtoKmfmsnDiRRl8Xg38a47m71a1toAe1QbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752617931; c=relaxed/simple;
-	bh=RrUG38UPoPx83mBx18hUOO16lRtjlEtzmrBZc9cW3Lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ln5XzYIoYapaI7Qj2Vgo/jCB5GGmA2bhmwzFY9peTTFqomVapll8DxHUCd+Lrzu4Sy3hksjuVUVNiqGXt+eT3XwUZIJanwN0PCm2vtur93ZlHZENmPPU1Adk5gtf1odwpJZT1g5awyKrJSeURxjRZVHClPNzL376TFynFdJLl8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I7yD0NXv; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752617930; x=1784153930;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=RrUG38UPoPx83mBx18hUOO16lRtjlEtzmrBZc9cW3Lo=;
-  b=I7yD0NXv/eTVzJpO1Ng/umWjYHRGJRIK8EsbjUaBQ/7cYMNMQQCyEW6F
-   6oZggbdZGnzkyziBdrUyQri2FuVIT0c5VjoojA2yux6fk3iMyGUaiyV4F
-   FGLQD9gzMdXmPw0jWyu1Ngtq+qenYXzKbKmTlm6kDLrvoIfBFT/x62GRf
-   G17yzmDu+iwq3o+VRnxz/ZXE0YEVRZhZ6R2S1BWLtBrMPJV9df8yWJgTW
-   bwn4n3rz+d++q6boBNFSbyVkTlKTEuaDm1J9lC3PtxyvHbJsIay9UlyNJ
-   7fi90bHJH8tObkrI9dZEmXcW9E65F3G+UEoGMc8DgfZyEvgUK7vAK+7+m
-   Q==;
-X-CSE-ConnectionGUID: FErFqziYRfKt35/1//+vHg==
-X-CSE-MsgGUID: pWjSv8NHQCO1Mqunh+2uAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54976886"
-X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
-   d="scan'208";a="54976886"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 15:18:50 -0700
-X-CSE-ConnectionGUID: 9ZYQA1cvTqSbqbxZkPgg5A==
-X-CSE-MsgGUID: pf8kCVk5S3SqszxmLZWffg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,314,1744095600"; 
-   d="scan'208";a="194472790"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 15 Jul 2025 15:18:48 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ubnz3-000Bb7-1L;
-	Tue, 15 Jul 2025 22:18:45 +0000
-Date: Wed, 16 Jul 2025 06:18:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>
-Subject: <instantiation>:7:11: error: expected an immediate
-Message-ID: <202507160634.HuBB6qKT-lkp@intel.com>
+	s=arc-20240116; t=1752618065; c=relaxed/simple;
+	bh=LuhtKMKEXKLjbj//2iu1jZAyZthZg3GLEu4j73vVHKw=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mBKJJ+fdtrf753WwUl/uzhXokYuMKbSoX06HW+3bpvvnnmkxCPOArp0FEBFqa8PYgHItcgujbV4/KBEv4KkZmjS5svmoBHYgxOspK/v9q8PDYG490yfSCZeizGX0SsKpY4AwOGkGHBdl9T0RWz5CGjZsifBeyOdNeUBgSZ/0s34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-a3-6876d44aca76
+Message-ID: <923d9fe1-b959-4fba-9da7-10d2b3126858@sk.com>
+Date: Wed, 16 Jul 2025 07:20:57 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Cc: kernel_team@skhynix.com, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, damon@lists.linux.dev,
+ kernel-team@meta.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH 0/4] mm/damon/sysfs: support periodic and automated
+ stats update
+To: SeongJae Park <sj@kernel.org>
+References: <20250712204650.155988-1-sj@kernel.org>
+Content-Language: ko
+From: Honggyu Kim <honggyu.kim@sk.com>
+In-Reply-To: <20250712204650.155988-1-sj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsXC9ZZnoa7XlbIMg5WHeSzmrF/DZvHkQDuj
+	xZP/v1kt9l0Eche2LWGxuLxrDpvFvTX/WS0Of33D5MDhsWlVJ5vHpk+T2D1OzPjN4vFi80xG
+	j8V9k1k9zl2s8Pi8SS6APYrLJiU1J7MstUjfLoErY9OqXcwFf8QrWpuvsTcw9gp3MXJySAiY
+	SDT1nGGBsRfd3s0KYvMKWEo8mNXMCGKzCKhK/NlxjRkiLihxcuYTsHpRAXmJ+7dmsHcxcnEw
+	C7xglDi/9zcbSEJYIEpi5+9+dhBbREBR4tzji2BDhQSMJRo2HAGrYRYQkZjd2QY2lE1ATeLK
+	y0lMIDYn0BH/Xs1jhKgxk+ja2gVly0tsfzuHGWSZhMAZNokJi66xQVwtKXFwxQ2WCYyCs5Ac
+	OAvJjllIZs1CMmsBI8sqRqHMvLLcxMwcE72MyrzMCr3k/NxNjMBoWVb7J3oH46cLwYcYBTgY
+	lXh4d1iXZQixJpYVV+YeYpTgYFYS4Z18CSjEm5JYWZValB9fVJqTWnyIUZqDRUmc1+hbeYqQ
+	QHpiSWp2ampBahFMlomDU6qBccZ39xOHlm7uUZjAqRyfsERj9YQGNYECx8MsdiEXZy0+15vz
+	5OJ90YPZ799Od84SVXvCefSppOQKqwvaeyMkq9MrNz9a+UDLYj9PwCyzf3cve1839lba4Sdn
+	u+R3VtZBlr8bP00+tGED30O5h2cDf786dTXslrHb1mIRvf+JLcvXZfSu3Let6p8SS3FGoqEW
+	c1FxIgA20qCBkgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXCNUNLT9frSlmGwY+DrBZz1q9hs3hyoJ3R
+	4sn/36wW+y4CuYfnnmS1WNi2hMXi8q45bBb31vxntTj89Q2TA6fHplWdbB6bPk1i9zgx4zeL
+	x4vNMxk9FvdNZvU4d7HCY/GLD0wenzfJBXBEcdmkpOZklqUW6dslcGVsWrWLueCPeEVr8zX2
+	BsZe4S5GTg4JAROJRbd3s4LYvAKWEg9mNTOC2CwCqhJ/dlxjhogLSpyc+YQFxBYVkJe4f2sG
+	excjFwezwAtGifN7f7OBJIQFoiR2/u5nB7FFBBQlzj2+CDZUSMBYomHDEbAaZgERidmdbWBD
+	2QTUJK68nMQEYnMCHfHv1TxGiBozia6tXVC2vMT2t3OYJzDyzUJyxywko2YhaZmFpGUBI8sq
+	RpHMvLLcxMwcU73i7IzKvMwKveT83E2MwNBfVvtn4g7GL5fdDzEKcDAq8fDusC7LEGJNLCuu
+	zD3EKMHBrCTCO/kSUIg3JbGyKrUoP76oNCe1+BCjNAeLkjivV3hqgpBAemJJanZqakFqEUyW
+	iYNTqoHRWUQ8smSj4hmjMPHvf/y8IiWvzokJMDqrd+4Ri67DoZbl0keWq2ameEvL/sx+HWDr
+	pipZocm9bMvM7EPd1a8e5ojddHF96fbeYacrA//ak5OuHE75pb6+1e5VeZOh5gNfWbb9UskF
+	C/8+PpZ0/MDGu/uTtxnMUrG9c5VhqXRiVdOuxhebd7xXYinOSDTUYi4qTgQAqqXJRXkCAAA=
+X-CFilter-Loop: Reflected
 
-Hi Marco,
+Hi SeongJae,
 
-FYI, the error/warning still remains.
+On 7/13/2025 5:46 AM, SeongJae Park wrote:
+> DAMON sysfs interface provides files for reading DAMON internal status
+> including DAMOS stats.  The content of the files are not automatically
+> updated, though.  Users should manually request updates of the contents
+> by writing a special command to 'state' file of each kdamond directory.
+> This interface is good for minimizing overhead, but causes the below
+> problems.
+> 
+> First, the usage is cumbersome.  This is arguably not a big problem,
+> since the user-space tool (damo) can do this instead of the user.
+> 
+> Second, it can be too slow.  The update request is not directly handled
+> by the sysfs interface but kdamond thread.  And kdamond threads wake up
+> only once per the sampling interval.  Hence if sampling interval is not
+> short, each update request could take too long time.  The recommended
+> sampling interval setup is asking DAMON to automatically tune it, within
+> a range between 5 milliseconds and 10 seconds.  On production systems it
+> is not very rare to have a few seconds sampling interval as a result of
+> the auto-tuning, so this can disturb observing DAMON internal status.
+> 
+> Finally, parallel update requests can conflict with each other.  When
+> parallel update requests are received, DAMON sysfs interface simply
+> returns -EBUSY to one of the requests.  DAMON user-space tool is hence
+> implementing its own backoff mechanism, but this can make the operation
+> even slower.
+> 
+> Introduce a new sysfs file, namely refresh_ms, for asking DAMON sysfs
+> interface to repeat the essential contents update with a user-specified
+> time delay.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   155a3c003e555a7300d156a5252c004c392ec6b0
-commit: 56651128e2fbad80f632f388d6bf1f39c928267a MIPS: Fix idle VS timer enqueue
-date:   3 months ago
-config: mips-rb532_defconfig (https://download.01.org/0day-ci/archive/20250716/202507160634.HuBB6qKT-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507160634.HuBB6qKT-lkp@intel.com/reproduce)
+Thanks for working on this, but I have a few questions.
+1. Could you please list up what are the "essential contents"?
+2. Does it mean that it is different from writing "commit" to "state"?
+3. If not, then is there equivalent action to writing something to "state"?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507160634.HuBB6qKT-lkp@intel.com/
+If possible, then this kind of information is better to be documented because
+users might get confused if something isn't udpated when "refresh_ms" is set.
 
-All errors (new ones prefixed by >>):
+Thanks,
+Honggyu
 
->> <instantiation>:7:11: error: expected an immediate
-    ori $26, r4k_wait_idle_size - 2
-             ^
-   <instantiation>:10:13: error: expected an immediate
-    addiu $26, r4k_wait_exit - r4k_wait_insn + 2
-               ^
-   <instantiation>:10:29: error: expected an immediate
-    addiu $26, r4k_wait_exit - r4k_wait_insn + 2
-                               ^
->> <instantiation>:7:11: error: expected an immediate
-    ori $26, r4k_wait_idle_size - 2
-             ^
-   <instantiation>:10:13: error: expected an immediate
-    addiu $26, r4k_wait_exit - r4k_wait_insn + 2
-               ^
-   <instantiation>:10:29: error: expected an immediate
-    addiu $26, r4k_wait_exit - r4k_wait_insn + 2
-                               ^
+> If non-zero value is written to the file, DAMON sysfs
+> interface does the updates for essential DAMON internal status including
+> auto-tuned monitoring intervals, DAMOS stats, and auto-tuned DAMOS
+> quotas using the user-written value as the time delay.  If zero is
+> written to the file, the automatic refresh is disabled.
+> 
+> SeongJae Park (4):
+>    mm/damon/sysfs: implement refresh_ms file under kdamond directory
+>    mm/damon/sysfs: implement refresh_ms file internal work
+>    Docs/admin-guide/mm/damon/usage: document refresh_ms file
+>    Docs/ABI/damon: update for refresh_ms
+> 
+>   .../ABI/testing/sysfs-kernel-mm-damon         |  7 +++
+>   Documentation/admin-guide/mm/damon/usage.rst  | 13 ++++-
+>   mm/damon/sysfs.c                              | 58 +++++++++++++++++++
+>   3 files changed, 75 insertions(+), 3 deletions(-)
+> 
+> 
+> base-commit: 982b86e9191292ffcd0f30018981cb16f9fac5c1
+> --
+> 2.39.5
+> 
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
