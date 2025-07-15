@@ -1,119 +1,108 @@
-Return-Path: <linux-kernel+bounces-731283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D4BB0522C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:52:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C16BB05238
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 503941AA60F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:52:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99BB41AA78F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A387A26D4CE;
-	Tue, 15 Jul 2025 06:51:52 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230F626D4D9;
+	Tue, 15 Jul 2025 06:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f33w9uTn"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7421226D4C1;
-	Tue, 15 Jul 2025 06:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E482926A0EB;
+	Tue, 15 Jul 2025 06:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752562312; cv=none; b=OUb2EpV8G9xBl4Ybmc9YoUFfcJ+9xIWaenlCSb3S/9p9ME0aunHqBiyjeCPXte7spebodC4AZ/hFdYCVqTJ9c9E0xWc37olpzIFSCdwIxOOrXpS8JX5jgTWLf/WsiA8hCxV72SiCxJqCo1TixCl+pi1z2CRDI5uvQzICTnzpVXw=
+	t=1752562406; cv=none; b=XUfr866dwym3C4sRytOE57q6M0He6QQ7x+YXQ4xiw2nJCtYWmXwKHdaZvWOHepzyQKMJ4PASaC/M3BOOojG8s/QVMF+Mi82p+WoPuUh5Z0j/IINrY+oCERYOkvP8qA9MKIFrAWYQx0+ARhuwiv0SPfoKFJiHIstOyItp8r1oRKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752562312; c=relaxed/simple;
-	bh=HFzfum9lzdjuasUiRz6vBtdDoK+FzJtXZR93jq4ae3Y=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:References:Subject:
-	 In-Reply-To:Content-Type; b=DqYFdnuAffIWroJ0z+w5n+ntSLbmr6wUp8bvx7xabsxDQGYqJUlysnVoH2ZoWVffahqOyr2hl1r5TtuyW4mhR594l1sXNmj7M8OGXPG3ZYQRG7rcmHg6KECUX3dZD0vZVeZgo7kYa09XSTDG6qhhJg9njk86N2jDRalVg23yhRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56F6pMKJ015674;
-	Tue, 15 Jul 2025 15:51:22 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56F6pMmQ015671
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 15 Jul 2025 15:51:22 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <db6a106e-e048-49a8-8945-b10b3bf46c47@I-love.SAKURA.ne.jp>
-Date: Tue, 15 Jul 2025 15:51:21 +0900
+	s=arc-20240116; t=1752562406; c=relaxed/simple;
+	bh=djB9UmfoDFlQLUFuFBjJAStWc6XiQFvWlampBW+hWcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ciu0u+OgdYMkqkTfJaXrECssy9rZMkYyKvSQ7KN1YcriJWu38rTOUFWF9madsG3JR1QfOATZDZ6k2idfpdVerknGw0caRFswQQvu3PyQr7ZIQMvLB9OzQRjI/tul1Go3PvmWhbuPHfGkMzY4IbP73XqZLGrIql9WcySqQy/qyxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f33w9uTn; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae9be1697easo25488066b.1;
+        Mon, 14 Jul 2025 23:53:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752562403; x=1753167203; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=djB9UmfoDFlQLUFuFBjJAStWc6XiQFvWlampBW+hWcc=;
+        b=f33w9uTnvU0asW4nTCY7n3zFdVlRv0X1gWBjQN9orPSWVNB1niCSZD8NFN2DjtxCQs
+         D5frumiZbpat/hWgJwJ6sXKfvbpx6Nbuz6kvyFaoP8BRDhOlGQpl1s/U1p3i7EhHoR6f
+         zPLnpmf3dekbjy/ea48u/oQ3/KQt6fM4pMphETkl5/UbA+x5XImCnbSRFpVjC3QVSfsY
+         3l9keu+eYqFc4RLkxlHF82nzwZy6EdlIASHZ827m72tAJxLu/oGjRueIE2F7c8S/CEYj
+         O8nW/zyr7CjQ2QujH733qlTosUAxAE181t7J2vKPska9MnGvL+fwCfCPhyK0nWB6gBzq
+         trAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752562403; x=1753167203;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=djB9UmfoDFlQLUFuFBjJAStWc6XiQFvWlampBW+hWcc=;
+        b=kwIpgaYuOVcd5iCaTNw6ln+RzLKxTEDUtq8xqPSVClBdqLNcvUY64wFfNaX1gQr/kO
+         FOYgbBBGSMD3UZIgw2Mz6CgeuvcF8MeeQvltdsMA9sOXgfG5cTrsI0VZV/HKMwBtfw8/
+         3y7kJi9Vyg0kXRFQDE5n58y7Wme4xvdLt+uP/oBXe+2Yld/m6ef7NmVUqcnEgmYGuQpN
+         jFPxT1I9rX2o9yrSbgJjmqycPqQCSOJ7N5gQCXKMABwV23WTPqailVZ/Oc0SdJczNLnP
+         1xnkWo1E7Rza0hFpvhHfZHeCQXI1x79FH+wDgx/IP3CKYskToiDe9qARfeWA34Ij3ncp
+         QlcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFvDS3rEZr4nkPb6pNCge/9rIITTFVBtAw3/xOojCI793cPpxhqP6kXiC5XSj2ABCQxezNUlDN2pPJKypW@vger.kernel.org, AJvYcCW16FKXE/sldSFFDu/2ZTQZT7+wC3y7tpTg+pxA3MOR8oeARbdAIkiHdpOJtJ7641V40O8m/j2HSwBc2OyAQEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwczU7EehIQwnbuRI3iif4XVpeScT5xifK+59LjWO2KjJG8icRq
+	1MBi5BpxFLcrOJL48YHiWfgrbuqCgafG+yDSGsRk2BrLDv4SqdmqlSQvZbBkm7xsRhni/qoDIpm
+	mrJqDFdH+o2t10UGKVSpNyoeTh9fmLnikTuZG
+X-Gm-Gg: ASbGncsC6Uxr0ZNXlc3mqqX1s2CHrcNEUMABxz/VijgGltiMb1XDenb4rQ3vYXVFXFa
+	0jbkPHrNEF3+9+Z9U/NRtNHM+q3ci20q6iGt59pbSrm3KuKcCSFLrFubPRf9LO0nCxyuV0RdtHP
+	8D2VLKgXYIsGPqPLiEU7lpzt17Ql9Z6Lr10mADDkSV/NHI85PtJcqfE+5357eGb+BBXjAhzGb5V
+	4RUVBiSUA==
+X-Google-Smtp-Source: AGHT+IGh9TCwtR1WKxzRY0rshSB2+iGJEdIGlFZwz+wb9MMLsAGk8u9hKkYJYbKgcwZR+6WwZaNU6x/vO0LU1KzJG58=
+X-Received: by 2002:a17:907:f810:b0:ae0:a465:1c20 with SMTP id
+ a640c23a62f3a-ae9b5c2bf92mr233596566b.14.1752562402868; Mon, 14 Jul 2025
+ 23:53:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Viacheslav Dubeyko <slava@dubeyko.com>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Yangtao Li <frank.li@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <ddee2787-dcd9-489d-928b-55a4a95eed6c@I-love.SAKURA.ne.jp>
- <b6e39a3e-f7ce-4f7e-aa77-f6b146bd7c92@I-love.SAKURA.ne.jp>
- <Z1GxzKmR-oA3Fmmv@casper.infradead.org>
- <b992789a-84f5-4f57-88f6-76efedd7d00e@I-love.SAKURA.ne.jp>
- <24e72990-2c48-4084-b229-21161cc27851@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-Subject: [PATCH v2] hfs: remove BUG() from
- hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
-In-Reply-To: <24e72990-2c48-4084-b229-21161cc27851@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav205.rs.sakura.ne.jp
+References: <20250711085514.1294428-1-andriy.shevchenko@linux.intel.com> <202507142224.28276C2D8@keescook>
+In-Reply-To: <202507142224.28276C2D8@keescook>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 15 Jul 2025 09:52:46 +0300
+X-Gm-Features: Ac12FXxSNjk8tnydrSTR0JdcGDYlQAyFDPLoXHta3uSgsvf7uehbX5ELNIJal6Q
+Message-ID: <CAHp75VeWvezuhKx-Q4hHV6=TqbHx=jEmR1wuqEzdJY+xUv7OAw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] string: Group str_has_prefix() and strstarts()
+To: Kees Cook <kees@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since syzkaller can mount crafted filesystem images with inode->ino == 0
-(which is not listed as "Some special File ID numbers" in fs/hfs/hfs.h ),
-replace BUG() with pr_warn().
+On Tue, Jul 15, 2025 at 8:24=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> On Fri, Jul 11, 2025 at 11:55:14AM +0300, Andy Shevchenko wrote:
+> > The two str_has_prefix() and strstarts() are about the same
+> > with a slight difference on what they return. Group them in
+> > the header.
+>
+> It seems more like strstarts should just be a macro around
+> str_has_prefix() !=3D 0?
 
-Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-Tested-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/hfs/inode.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index a81ce7a740b9..794d710c3ae0 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -81,7 +81,7 @@ static bool hfs_release_folio(struct folio *folio, gfp_t mask)
- 		tree = HFS_SB(sb)->cat_tree;
- 		break;
- 	default:
--		BUG();
-+		pr_warn("unexpected inode %lu at %s()\n", inode->i_ino, __func__);
- 		return false;
- 	}
- 
-@@ -305,7 +305,7 @@ static int hfs_test_inode(struct inode *inode, void *data)
- 	case HFS_CDR_FIL:
- 		return inode->i_ino == be32_to_cpu(rec->file.FlNum);
- 	default:
--		BUG();
-+		pr_warn("unexpected type %u at %s()\n", rec->type, __func__);
- 		return 1;
- 	}
- }
-@@ -441,7 +441,7 @@ int hfs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 			hfs_btree_write(HFS_SB(inode->i_sb)->cat_tree);
- 			return 0;
- 		default:
--			BUG();
-+			pr_warn("unexpected inode %lu at %s()\n", inode->i_ino, __func__);
- 			return -EIO;
- 		}
- 	}
--- 
-2.50.1
+This change is only about grouping, but if you think it worth
+modifying, I am not going to object. Just that I am about to have my
+vacation and I leave this as is for now. Up to you how to proceed.
 
 
+--=20
+With Best Regards,
+Andy Shevchenko
 
