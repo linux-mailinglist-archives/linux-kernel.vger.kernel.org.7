@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-731180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AFDB0507D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:52:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41028B0507F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9E2A7B3243
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:51:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 147333BED21
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679882D3235;
-	Tue, 15 Jul 2025 04:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5937E2D29BF;
+	Tue, 15 Jul 2025 04:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2qCM8U2T"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wk9LcCgW"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490BE2D29B7
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289192D1F6B
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752555143; cv=none; b=I9btG5h/Q22pIdHffi05b3lUb+86u4hakOPxTCUsVV3Na8pTuCNU3Xq1U5Ha8iRhRY5EhfnIdrMEXwd+57G6Cikn6dJTQw69LCw8UFQVBgye4R/IrhhvHARGSfnHqS+9n8Zk+JSVlwDqP0Dv8SK2F48cIyuM/qslQ4vCdAeDB9Y=
+	t=1752555150; cv=none; b=B4BaEgqJT8MGk6xLMM/BHCTFnQevowy5be6Gz0Ci1jSa0orBEWQNxpb8vzd7e2NmY8QYUrOh8KKwBh3Fi8UL69zWylVt83ZgoAt2rbhkvWENIQKoxyVk9tTIFV6zdDc9WfwBWNd1z681NqjAGTEgMKf3Tf89FrTW2dpqL8V09YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752555143; c=relaxed/simple;
-	bh=W82zO+9Zk9kb+sclogRLx9y901Tn5UyPZIadU0/7naQ=;
+	s=arc-20240116; t=1752555150; c=relaxed/simple;
+	bh=omYmjQOUzJICAZpGfZ9/w7TyaR3/nEZhUW7k2/dJFBw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A0vdOP9UnYHCreb6O6QF08b3ySP+jXLBksPiw2db7B7t+WOCJX8d40sacnLezXlo0aKnZfLFwTdAMn4V4bklZXDsU74TEVKk4U4hGIG626X+D4fep/IDHJ4FoJdYFUHP+LP+Qv1372RM07WvvPPgtKOVTj78oEHlhqR/2HKEIGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2qCM8U2T; arc=none smtp.client-ip=209.85.160.178
+	 To:Cc:Content-Type; b=Oqv7ld8aeucIqWaXQaWQCTuks1M9gtoIK5cd8ucMShafH51a9A8vELfY2q4NFBaRT1N/q56AnB/A+RYTRMNhdGsvsjh7kf7o67UKydUmAdSPh/VyIyaHSudl/am3lRXmVzrSAcyuc8x9McOn2DoMebjfvWE1FLJ2sHJ3zqfZzCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wk9LcCgW; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso237811cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 21:52:22 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso237881cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 21:52:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752555141; x=1753159941; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752555148; x=1753159948; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W82zO+9Zk9kb+sclogRLx9y901Tn5UyPZIadU0/7naQ=;
-        b=2qCM8U2T2GmqqjHeycy0hR7orZnxQvfRKN1cTEqqTDU6BXSorfYCxwX8sM+luBubuK
-         T4DF2JXAAasFlVHyGVmMSUc3f0XE//XClxJaqUPY//Z4xHDRE8LlzWpMgR3WWK6RmlPH
-         lkrIjmw/4SXxFCWRCIElkQpDpnQ96hGPrspf+Mmn733JXQ8R5sx0TYqqBYlHMurGVt85
-         FD2SSaqvSvd+6xGeZgaZ4V7OzJrYHQ17TOxkvvLEchhmd93vuwtOSTM2ZlVpwPEY2CmB
-         akYRVcaEFSFwb5FpsoIOmdA7y8hGtIJzoLNAXqzW4slDgNN48Nf8n5MnVPqF/h5Aqo4x
-         /Tdw==
+        bh=qcUn965IxSAZ6+8MQmxjsmOZ5erY2FCSRdlFq2QDuoM=;
+        b=Wk9LcCgWznCmGfKLlAGQTgR9aNKTkqNXQWo9wYCeqwghavSPZQBH5z33w/ziqyIgjj
+         BsLsqmnf+kvNBAxh9T5pp6Vd2WSfT+mJaxziAawbALhowPANrzT7KGrzaRW6oHOVyRM1
+         lvqSOoZ98xr0sLH1XGu1aogK3FIU5q/TPzryIKhEgpEd8ueJkoMwqTy5kwKfV0xyNWRa
+         83YYA5SG7PeEy/zvGkMylbbFUOtgH988fGiv0JMybZzBrIgrdmt9dpB/dPfkWoVYY5Sr
+         DDAL/RrTvFQye8ejTnaKZdDO3kVhHOFByLSkT1B+fl2UTcp7Ba0P9jpUsNmX3AjYreoK
+         A8OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752555141; x=1753159941;
+        d=1e100.net; s=20230601; t=1752555148; x=1753159948;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=W82zO+9Zk9kb+sclogRLx9y901Tn5UyPZIadU0/7naQ=;
-        b=JLIRP1OcN344W3HOLgYzAgQMvs0XF7i9A4uY7znK4SAwDzXMOMLG6N2pN87avdVY5J
-         Qy57huyeh18aQhvbKgVUgwsNJDlXwhNfn7mTtrM/2U+ntzH5k1r7YRWPDydQxU/9Bhnt
-         72Qzc3dAn/C0QfF9UIArDWB9pZk2/kbCiwFFSpt83xIHl9vKUCUi2b1GqMzQrOIO2nav
-         prw/1DFFtb2ZO+eXLXXbLqHIyn7rtT8JxC47F4J1dEfuYXYPZOYTwzJIUsgQntf965ES
-         0KwR+O9zoeRBaBAiVeo3ULj9CuQ+9PCnierZtr2wEytsi8ib/UBKl2tyltP2T9CHp3bp
-         +3zA==
-X-Gm-Message-State: AOJu0YxyEHVhb85GrkjmONSDhXszOoEm5y314cbsw0sddx+f9TsP3Ro+
-	el0C+wD/Ig2ENfgrmprkTa+rP4PB037VUdGTt0yxbtWhim1aXbSSLHdAyJxMO5+rOVim8NKv9Mg
-	FCno1KOnkPYJ5R6jI3kJ/m1LL0Ea+nKwluXK5wGzt
-X-Gm-Gg: ASbGnct65nKqal5aRGpt5Sr8TJSxyWoItvnetiuttNdeCfXNx5dUUFJlglpo/QYfZxY
-	gqRaRc89KrUKuQTGRtIF7YwQSr7P2oY2gFIiYO90b6L48K8f+d/9829zNUUs0o1+x1Ya/RDMF8h
-	5MKlqQEgY1Hq0OJIS3d4b54m5eZ+rHC2qg5eYyAMIQXdfrDyTG9kKyKTGgF8JANYO5kU7xf5twl
-	d4ixg==
-X-Google-Smtp-Source: AGHT+IED7N/lFrOYBOYjF0Dvn3zylukKfxNlLoQX8mf7MZZJLc58OLah+XC3MNlIKZT5qh5n2NtYRCvvSWgJnwsQexw=
-X-Received: by 2002:ac8:6909:0:b0:4a9:d263:d983 with SMTP id
- d75a77b69052e-4ab80cc6f95mr2687821cf.22.1752555140881; Mon, 14 Jul 2025
- 21:52:20 -0700 (PDT)
+        bh=qcUn965IxSAZ6+8MQmxjsmOZ5erY2FCSRdlFq2QDuoM=;
+        b=XlhAy+HcCcgCXVyuy4ZMpPzBponiZXLfGnOcN/YhTfXKN+QkmkpBsRA9D9/oOxYkyJ
+         K9OICfesN46c9lpl6O0c0oe3YCusXWpOK/ZLhetdlF3HcuSx9JSDODpRSfxvRBufZ0El
+         ttP4SSZxp2LPo3Yj26hPee3cv/csfw6y7jwu2M8Is/LyXCe08mufXiuFOPGZvmLdZqB2
+         oHvfjW6iJtZbFe+vFQjh+LtJp4W1lgbyyoD6ukiH92UF1DIqNBYZjZYT5MAhAtFFrLyp
+         Fer8v5TY7d98NGA5tQ13lIabHPb+j3ats6J8iqTb8m4tQaCdD1XLBR9FDgnj26UkL+Fs
+         c15g==
+X-Gm-Message-State: AOJu0YyP9if+rs4dIAsXcdDeUiKI5+e6EGTswDAOB/kGpxkyYdCG5Xwe
+	mb+jlG9gxIqx9opkm5xI9XPy1jXWxrixbgaC9qf/QjcUXZYLVjy2E2/o0OfNva7Ii6MWoSGAKx1
+	pCdvS0zgPCJHDum9j80FguZ44hL6EyKioty6YE8GV
+X-Gm-Gg: ASbGncvyw7PIVtmFoMvJgaQla0imWQEJ3E0vF/mvpJ4FxdnmajSz7TKnmyrPiq67PG/
+	dnLeHNmRCusXNfC0lOpXbTgQrAqChqoO3Lk/Zew6QppEzoSlRVviRXF2bkCM0KnXVCSFELiWzZr
+	itJn5qTRDxrQPvro/suv1GCv00a80RC3ydoq1TiF1DNssXkZ/STlFkqsGWUlQBqZM4gpL0+n9Sk
+	jttVw==
+X-Google-Smtp-Source: AGHT+IE3aaDQkYnRJRKtv3Hz3orJ+WbNLaINBpchntaOodMXUlB1CmA4DZygnlN/9AP9r/XPeJ6L9Au7Nj8aZ+dNkn8=
+X-Received: by 2002:ac8:7d88:0:b0:4a4:d827:7f93 with SMTP id
+ d75a77b69052e-4ab809be6eemr2361331cf.0.1752555147810; Mon, 14 Jul 2025
+ 21:52:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714185321.2417234-1-ynaffit@google.com> <20250714185321.2417234-3-ynaffit@google.com>
-In-Reply-To: <20250714185321.2417234-3-ynaffit@google.com>
+References: <20250714185321.2417234-1-ynaffit@google.com> <20250714185321.2417234-4-ynaffit@google.com>
+In-Reply-To: <20250714185321.2417234-4-ynaffit@google.com>
 From: Carlos Llamas <cmllamas@google.com>
-Date: Mon, 14 Jul 2025 21:52:08 -0700
-X-Gm-Features: Ac12FXy73gl4GP6af37XKxpu8Kr2I-Iyp6kE6QBvVYc6xfOcNLtXE2zrbgmOfwU
-Message-ID: <CAFuZdDL50S0Nos_U07Zt18LwiKEz=ChyEt0d6qNWeMqKRS133w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] binder: Store lru freelist in binder_alloc
+Date: Mon, 14 Jul 2025 21:52:15 -0700
+X-Gm-Features: Ac12FXy7vW4BfrAVVqTEg2VtRIbfvj-qfAvoJeUEQwsgUsNmkgRzwnM4WFapuRo
+Message-ID: <CAFuZdDJ8tL4NDpFt+hVjyt0KcO15baeU-yf2RN4bHQRu9+XA6Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] kunit: test: Export kunit_attach_mm()
 To: Tiffany Yang <ynaffit@google.com>
 Cc: linux-kernel@vger.kernel.org, keescook@google.com, kernel-team@android.com, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
@@ -89,29 +89,71 @@ Cc: linux-kernel@vger.kernel.org, keescook@google.com, kernel-team@android.com,
 	kunit-dev@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 14, 2025 at 11:53:15AM -0700, Tiffany Yang wrote:
-> Store a pointer to the free pages list that the binder allocator should
-> use for a process inside of struct binder_alloc. This change allows
-> binder allocator code to be tested and debugged deterministically while
-> a system is using binder; i.e., without interfering with other binder
-> processes and independently of the shrinker. This is necessary to
-> convert the current binder_alloc_selftest into a kunit test that does
-> not rely on hijacking an existing binder_proc to run.
+On Mon, Jul 14, 2025 at 11:53:16AM -0700, Tiffany Yang wrote:
+> Tests can allocate from virtual memory using kunit_vm_mmap(), which
+> transparently creates and attaches an mm_struct to the test runner if
+> one is not already attached. This is suitable for most cases, except for
+> when the code under test must access a task's mm before performing an
+> mmap. Expose kunit_attach_mm() as part of the interface for those
+> cases. This does not change the existing behavior.
 >
-> A binder process's binder_alloc->freelist should not be changed after
-> it is initialized. A sole exception is the process that runs the
-> existing binder_alloc selftest. Its freelist can be temporarily replaced
-> for the duration of the test because it runs as a single thread before
-> any pages can be added to the global binder freelist, and the test frees
-> every page it allocates before dropping the binder_selftest_lock. This
-> exception allows the existing selftest to be used to check for
-> regressions, but it will be dropped when the binder_alloc tests are
-> converted to kunit in a subsequent patch in this series.
->
+> Cc: David Gow <davidgow@google.com>
 > Signed-off-by: Tiffany Yang <ynaffit@google.com>
 > ---
+>  include/kunit/test.h   | 12 ++++++++++++
+>  lib/kunit/user_alloc.c |  4 ++--
+>  2 files changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> index 39c768f87dc9..d958ee53050e 100644
+> --- a/include/kunit/test.h
+> +++ b/include/kunit/test.h
+> @@ -531,6 +531,18 @@ static inline char *kunit_kstrdup(struct kunit *test, const char *str, gfp_t gfp
+>   */
+>  const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp_t gfp);
+>
+> +/**
+> + * kunit_attach_mm() - Create and attach a new mm if it doesn't already exist.
+> + *
+> + * Allocates a &struct mm_struct and attaches it to @current. In most cases, call
+> + * kunit_vm_mmap() without calling kunit_attach_mm() directly. Only necessary when
+> + * code under test accesses the mm before executing the mmap (e.g., to perform
+> + * additional initialization beforehand).
+> + *
+> + * Return: 0 on success, -errno on failure.
+> + */
+> +int kunit_attach_mm(void);
+> +
+>  /**
+>   * kunit_vm_mmap() - Allocate KUnit-tracked vm_mmap() area
+>   * @test: The test context object.
+> diff --git a/lib/kunit/user_alloc.c b/lib/kunit/user_alloc.c
+> index 46951be018be..b8cac765e620 100644
+> --- a/lib/kunit/user_alloc.c
+> +++ b/lib/kunit/user_alloc.c
+> @@ -22,8 +22,7 @@ struct kunit_vm_mmap_params {
+>       unsigned long offset;
+>  };
+>
+> -/* Create and attach a new mm if it doesn't already exist. */
+> -static int kunit_attach_mm(void)
+> +int kunit_attach_mm(void)
+>  {
+>       struct mm_struct *mm;
+>
+> @@ -49,6 +48,7 @@ static int kunit_attach_mm(void)
+>
+>       return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(kunit_attach_mm);
+>
+>  static int kunit_vm_mmap_init(struct kunit_resource *res, void *context)
+>  {
+> --
+> 2.50.0.727.gbf7dc18ff4-goog
+>
 
 LGTM!
 
-Acked-by: Carlos Llamas <cmllamas@google.com>
+Reviewed-by: Carlos Llamas <cmllamas@google.com>
 
