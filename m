@@ -1,273 +1,134 @@
-Return-Path: <linux-kernel+bounces-732484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F49B06781
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:06:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60200B06785
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1792518876F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:06:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83F3C174A32
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8040F286D75;
-	Tue, 15 Jul 2025 20:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A1829E117;
+	Tue, 15 Jul 2025 20:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNpu++l9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WNcbD5IY"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7F0BE65
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31DB286D75;
+	Tue, 15 Jul 2025 20:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752609978; cv=none; b=JEW1GqKk+/QAdbH/8xHuzyeEgYcFxgKjTyXg3R8YWhU+4HNZUkdBN71YQ+ySPephskqbtgStCvPYOQfbarhiaP9nIOGjx9CTZ7oghQ0iFxVr7Eady0nRsuwaRE5Uyn3LGDKFpveaoP0cKPOeWeh4DHRLj6bNlBvxa1KOY6AEiNM=
+	t=1752610112; cv=none; b=QNbVSb1JkQfN44CC/FBxDB4rQYze6yOBcpJ41kogOFgKcl6DKMDNFR9KVGjx7y2DPMimDntxsiOLx7hhGeZRidMEEoLT6WRlPlP38OdqxrRZZ/keMW8lRqxDFfg+d5KLdF05FKTd/gWRr9jISWCZqeDKIAfeAAIL4J+Pte0pz/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752609978; c=relaxed/simple;
-	bh=xozF1Gv6XMBXHrdxPUdk15zH0lRQ4LG8HUiGBxCudEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxnxdPOZhi2I4BEX78B4qzJGhg2AoLsbKucKHtuvxeu0DczFxABSgGNqHBj5C+knWEznnSHBf5w7rvILhSqUUJz/lOCm3hSI9Hnuwqxtczx0qs+fI0WjVMYpXOVEGqXUnRsMszPEQt2783/gvv4oNA2LFHYuMyn7Pao7mfyM4ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNpu++l9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D98C4CEE3;
-	Tue, 15 Jul 2025 20:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752609974;
-	bh=xozF1Gv6XMBXHrdxPUdk15zH0lRQ4LG8HUiGBxCudEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UNpu++l9xEkiFcJUudJvlR6mpvFI4vrQwy4mQM/t9Ai+SDkko1kzXluA9kLKMvHyZ
-	 8LuHGl1pQmMFYI4Ae5hQaYG7acmbntsBoCZuxq0Xg9Mb9dM47FRgZjZSzKv/InJHFX
-	 3aEmxlgee+mM4ZFLYNDuAxk25pl6qtJiAQAmMqjqyggOYRobCsAGeoD5cBgF04MAab
-	 dV8M77wVumcmmD9nX4NlmB9yMs4erZoVWMY7/1xaTzGNuMKzG8zAq72mT4bqNPHusg
-	 pzKR4uKnRDqwJaYCFfbMx8PGZU9CV5ecXt0R0E1rcPeoaIhbxQqYcL+XDWFdcpuP7R
-	 Hsab5jji3Rurg==
-Date: Tue, 15 Jul 2025 13:06:12 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	akpm@linux-foundation.org, david@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
-	mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
-	acme@kernel.org, tglx@linutronix.de, willy@infradead.org,
-	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v5 03/14] perf bench mem: Move mem op parameters into a
- structure
-Message-ID: <aHa0tPPBcfKSK-E5@google.com>
-References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
- <20250710005926.1159009-4-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1752610112; c=relaxed/simple;
+	bh=TFPHAYC2KV+LZgs6UfGifLqRkJfkyNBs/xIs9+BnA4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BCUvIEIm5iJJ2Fr5jumR4Ebe+F0CCk2Zr9kArxt6bM0/O2paQWoSe8KtfAVKGEHd1Q3lTMQSbEhFIBYIZD5W6nA/5PgOTQwt4dKU7iyajYziRpIYjC3/HjszAve8oLtdfeZ2410uPWwpaHk04bACyhZgO+QismRj3644vk1DHQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WNcbD5IY; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <52340e28-0ad4-4e67-adee-3c08b1c98b10@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752610097;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tJEb6T0GNLELePzDF5Y/eNum6e1uiWl2oXlgfzcvKLw=;
+	b=WNcbD5IYRyL4NEn6TGgmNVxwWUmOVOzcNtV/2F3GcH2vzOyCNn1dhXQE8crOwhySKn4Cil
+	j6ebEc2ISiDSJI1cxvpjtGiNQjBRxgCvs4TnvC3VZgX5R10Ec3aapxHkzvaCjS+dnhIIhh
+	2h0YpApYnqogIdTlzpKbPTD9EhfAIlA=
+Date: Tue, 15 Jul 2025 16:08:13 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250710005926.1159009-4-ankur.a.arora@oracle.com>
+Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
+To: Guenter Roeck <linux@roeck-us.net>, Jonathan Cameron <jic23@kernel.org>,
+ Jean Delvare <jdelvare@suse.com>, linux-iio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, linux-kernel@vger.kernel.org,
+ David Lechner <dlechner@baylibre.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-8-sean.anderson@linux.dev>
+ <759e8070-de3e-41fd-8e81-05e22c32209e@roeck-us.net>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <759e8070-de3e-41fd-8e81-05e22c32209e@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 09, 2025 at 05:59:15PM -0700, Ankur Arora wrote:
-> Move benchmark function parameters in struct bench_params.
+On 7/15/25 15:34, Guenter Roeck wrote:
+> On 7/14/25 18:20, Sean Anderson wrote:
+>> Add alarm support based on IIO threshold events. The alarm is cleared on
+>> read, but will be set again if the condition is still present. This is
+>> detected by disabling and re-enabling the event. The same trick is done
+>> when creating the attribute to detect already-triggered events.
+>>
+>> The alarms are updated by an event listener. To keep the notifier call
+>> chain short, we create one listener per iio device, shared across all
+>> hwmon devices.
+>>
+>> To avoid dynamic creation of alarms, alarms for all possible events are
+>> allocated at creation. Lookup is done by a linear scan, as I expect
+>> events to occur rarely. If performance becomes an issue, a binary search
+>> could be done instead (or some kind of hash lookup).
+>>
 > 
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+> I am very concerned about this. The context suggests that the iio events
+> are just that - events without specific association to hardware or system
+> limits. Hardware monitoring limits are system specific limits, which are not
+> supposed to change at runtime. A high voltage or temperature warning is
+> just that - it is not supposed to trigger a change in the event limit.
+> If anything, it is supposed to trigger some action to bring the observed
+> value back to normal.
 
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+If the system integrator has instantiated this driver, then the associated
+IIO channels correspond to physical values related to the health of the
+system. Other IIO channels should not be attached to the iio-hwmon driver.
 
-Thanks,
-Namhyung
+For example, in my use case the Xilinx AMS was implemented as an IIO
+device because it's a generic ADC, and several of the channels can
+monitor arbitrary analog voltages. However, many channels are
+permanently connected to the SoC's power rails and to internal
+temperature probes. These channels are best exposed as an hwmon device
+to take advantage of existing userspace tooling (e.g. lm-sensors).
 
-> ---
->  tools/perf/bench/mem-functions.c | 63 +++++++++++++++++---------------
->  1 file changed, 34 insertions(+), 29 deletions(-)
-> 
-> diff --git a/tools/perf/bench/mem-functions.c b/tools/perf/bench/mem-functions.c
-> index b8f020379197..fb17d36a6f6c 100644
-> --- a/tools/perf/bench/mem-functions.c
-> +++ b/tools/perf/bench/mem-functions.c
-> @@ -30,7 +30,7 @@
->  
->  static const char	*size_str	= "1MB";
->  static const char	*function_str	= "all";
-> -static int		nr_loops	= 1;
-> +static unsigned int	nr_loops	= 1;
->  static bool		use_cycles;
->  static int		cycles_fd;
->  
-> @@ -42,7 +42,7 @@ static const struct option options[] = {
->  	OPT_STRING('f', "function", &function_str, "all",
->  		    "Specify the function to run, \"all\" runs all available functions, \"help\" lists them"),
->  
-> -	OPT_INTEGER('l', "nr_loops", &nr_loops,
-> +	OPT_UINTEGER('l', "nr_loops", &nr_loops,
->  		    "Specify the number of loops to run. (default: 1)"),
->  
->  	OPT_BOOLEAN('c', "cycles", &use_cycles,
-> @@ -56,6 +56,12 @@ union bench_clock {
->  	struct timeval	tv;
->  };
->  
-> +struct bench_params {
-> +	size_t		size;
-> +	size_t		size_total;
-> +	unsigned int	nr_loops;
-> +};
-> +
->  typedef void *(*memcpy_t)(void *, const void *, size_t);
->  typedef void *(*memset_t)(void *, int, size_t);
->  
-> @@ -134,17 +140,19 @@ static double timeval2double(struct timeval *ts)
->  
->  struct bench_mem_info {
->  	const struct function *functions;
-> -	union bench_clock (*do_op)(const struct function *r, size_t size, void *src, void *dst);
-> +	union bench_clock (*do_op)(const struct function *r, struct bench_params *p,
-> +				   void *src, void *dst);
->  	const char *const *usage;
->  	bool alloc_src;
->  };
->  
-> -static void __bench_mem_function(struct bench_mem_info *info, int r_idx, size_t size, size_t size_total)
-> +static void __bench_mem_function(struct bench_mem_info *info, struct bench_params *p,
-> +				 int r_idx)
->  {
->  	const struct function *r = &info->functions[r_idx];
->  	double result_bps = 0.0;
->  	union bench_clock rt = { 0 };
-> -	void *src = NULL, *dst = zalloc(size);
-> +	void *src = NULL, *dst = zalloc(p->size);
->  
->  	printf("# function '%s' (%s)\n", r->name, r->desc);
->  
-> @@ -152,7 +160,7 @@ static void __bench_mem_function(struct bench_mem_info *info, int r_idx, size_t
->  		goto out_alloc_failed;
->  
->  	if (info->alloc_src) {
-> -		src = zalloc(size);
-> +		src = zalloc(p->size);
->  		if (src == NULL)
->  			goto out_alloc_failed;
->  	}
-> @@ -160,23 +168,23 @@ static void __bench_mem_function(struct bench_mem_info *info, int r_idx, size_t
->  	if (bench_format == BENCH_FORMAT_DEFAULT)
->  		printf("# Copying %s bytes ...\n\n", size_str);
->  
-> -	rt = info->do_op(r, size, src, dst);
-> +	rt = info->do_op(r, p, src, dst);
->  
->  	switch (bench_format) {
->  	case BENCH_FORMAT_DEFAULT:
->  		if (use_cycles) {
-> -			printf(" %14lf cycles/byte\n", (double)rt.cycles/(double)size_total);
-> +			printf(" %14lf cycles/byte\n", (double)rt.cycles/(double)p->size_total);
->  		} else {
-> -			result_bps = (double)size_total/timeval2double(&rt.tv);
-> +			result_bps = (double)p->size_total/timeval2double(&rt.tv);
->  			print_bps(result_bps);
->  		}
->  		break;
->  
->  	case BENCH_FORMAT_SIMPLE:
->  		if (use_cycles) {
-> -			printf("%lf\n", (double)rt.cycles/(double)size_total);
-> +			printf("%lf\n", (double)rt.cycles/(double)p->size_total);
->  		} else {
-> -			result_bps = (double)size_total/timeval2double(&rt.tv);
-> +			result_bps = (double)p->size_total/timeval2double(&rt.tv);
->  			printf("%lf\n", result_bps);
->  		}
->  		break;
-> @@ -198,8 +206,7 @@ static void __bench_mem_function(struct bench_mem_info *info, int r_idx, size_t
->  static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *info)
->  {
->  	int i;
-> -	size_t size;
-> -	size_t size_total;
-> +	struct bench_params p = { 0 };
->  
->  	argc = parse_options(argc, argv, options, info->usage, 0);
->  
-> @@ -211,17 +218,17 @@ static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *
->  		}
->  	}
->  
-> -	size = (size_t)perf_atoll((char *)size_str);
-> -	size_total = (size_t)size * nr_loops;
-> -
-> -	if ((s64)size <= 0) {
-> +	p.nr_loops = nr_loops;
-> +	p.size = (size_t)perf_atoll((char *)size_str);
-> +	if ((s64)p.size <= 0) {
->  		fprintf(stderr, "Invalid size:%s\n", size_str);
->  		return 1;
->  	}
-> +	p.size_total = (size_t)p.size * p.nr_loops;
->  
->  	if (!strncmp(function_str, "all", 3)) {
->  		for (i = 0; info->functions[i].name; i++)
-> -			__bench_mem_function(info, i, size, size_total);
-> +			__bench_mem_function(info, &p, i);
->  		return 0;
->  	}
->  
-> @@ -240,7 +247,7 @@ static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *
->  		return 1;
->  	}
->  
-> -	__bench_mem_function(info, i, size, size_total);
-> +	__bench_mem_function(info, &p, i);
->  
->  	return 0;
->  }
-> @@ -257,18 +264,17 @@ static void memcpy_prefault(memcpy_t fn, size_t size, void *src, void *dst)
->  	fn(dst, src, size);
->  }
->  
-> -static union bench_clock do_memcpy(const struct function *r, size_t size,
-> +static union bench_clock do_memcpy(const struct function *r, struct bench_params *p,
->  				   void *src, void *dst)
->  {
->  	union bench_clock start, end;
->  	memcpy_t fn = r->fn.memcpy;
-> -	int i;
->  
-> -	memcpy_prefault(fn, size, src, dst);
-> +	memcpy_prefault(fn, p->size, src, dst);
->  
->  	clock_get(&start);
-> -	for (i = 0; i < nr_loops; ++i)
-> -		fn(dst, src, size);
-> +	for (unsigned int i = 0; i < p->nr_loops; ++i)
-> +		fn(dst, src, p->size);
->  	clock_get(&end);
->  
->  	return clock_diff(&start, &end);
-> @@ -305,22 +311,21 @@ int bench_mem_memcpy(int argc, const char **argv)
->  	return bench_mem_common(argc, argv, &info);
->  }
->  
-> -static union bench_clock do_memset(const struct function *r, size_t size,
-> +static union bench_clock do_memset(const struct function *r, struct bench_params *p,
->  				   void *src __maybe_unused, void *dst)
->  {
->  	union bench_clock start, end;
->  	memset_t fn = r->fn.memset;
-> -	int i;
->  
->  	/*
->  	 * We prefault the freshly allocated memory range here,
->  	 * to not measure page fault overhead:
->  	 */
-> -	fn(dst, -1, size);
-> +	fn(dst, -1, p->size);
->  
->  	clock_get(&start);
-> -	for (i = 0; i < nr_loops; ++i)
-> -		fn(dst, i, size);
-> +	for (unsigned int i = 0; i < p->nr_loops; ++i)
-> +		fn(dst, i, p->size);
->  	clock_get(&end);
->  
->  	return clock_diff(&start, &end);
-> -- 
-> 2.43.5
-> 
+The above paragraph in the commit message specifically refers to the
+approach taken to handle IIO events for a given device. As we process
+the hwmon's IIO channels, we create alarm attributes for the
+corresponding events. Because we don't know which IIO events we are
+interested in when we create the IIO listener, there are two general
+approaches:
+
+- We could allocate some memory for the alarm and then add it to a list
+  or hash table in the listener. When the listener gets an event it
+  would then search the list or hash table for the appropriate alarm.
+- We can allocate memory for all possible events up front. When we want
+  to create an alarm we look up the appropriate event.
+
+I chose the latter approach because I believe that there are typically
+not too many events on a given IIO device (i.e. dozens) and it makes the
+lookup simpler, since we can just iterate through an array (or do a
+binary search).
+
+> For this series to move forward, there needs to be some guarantee that
+> the limits are used and usable only as intended, and can not be used for
+> random thresholds. The idea of "if a temperature alarm is triggered, do
+> something and change the threshold temperature" is not an acceptable use
+> for hardware monitoring alarms.
+
+What userspace sets the limits to or does in response to an alarm is not
+the kernel's concern. That said, I suspect the most-likely userspace response
+is to log the alarm, possibly to some remote system.
+
+--Sean
 
