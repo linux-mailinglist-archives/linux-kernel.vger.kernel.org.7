@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-731723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51564B058A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:24:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4A3B058A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85EFA7B3A1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:22:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82E127A7BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE042D948C;
-	Tue, 15 Jul 2025 11:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA202D948E;
+	Tue, 15 Jul 2025 11:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LT1+Hunb"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QO6L1xt1"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09921547C9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4630D22DFB5
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 11:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752578599; cv=none; b=EuCegQGwkdoT4GgYJpm6AlLD0mLdnJkkMoan2YmcdlPI4QPdqj6Q/qVkIWQcHCnwjwv+1UgAK0kb1fIs9jXT6BZCvSAJU7ttg7YIbmT9O4dgoGCOAtcCXpQe9aBh2HlD3R2VrcDL+1ftXnLMmzAHK9hfRg7VWMi3qZEc8VpnMMA=
+	t=1752578593; cv=none; b=d7dKG7c22QVLuekAOVP+dYHLSHDA/sSmKqbfe0W1o/ZVxmUv98zPx3MhC2UKIf4rtunjgza9tYoBJPOP2rUO8Pb+as52kYA+q2GgfNAMn65ZoJpPW/HGBLr4Thucgzo35rC4u7K0rKICKvqcYEq0BG4HCvYFH0v2d/vGg0h7nSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752578599; c=relaxed/simple;
-	bh=IY0RYliD52Wg81NkyznsIfbLs+A8l+WlswZeYFbvDtU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=uCfsms7HAuqgc6sUTkSeNKUKJFupVlHBYQwxOPMPZ8bK28AWNuEGF917egNybKgLcsRNdIcsgCACqK+2OH3SSTIWlMu7J0+SfsSA8BTli3POouRFKAE6t7/JwcGzDJe0CF2Z/fhdkIG1nnQtioF4ohCxoME169JwrvMRxG/l6/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LT1+Hunb; arc=none smtp.client-ip=209.85.216.41
+	s=arc-20240116; t=1752578593; c=relaxed/simple;
+	bh=bZ90k2ZHoazxrj+WXjgsKXIynmPY+DOAnPKqwHoqjFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FMzpESYCdPqgyTz0VLRMpenqhb0oRNL9bHrpGqmofO0xqwBN2I/TiZ3kRcgXYDqQJRxaSwSVBVRPJPpq5qtZejOqjutKQE57J7JTfAUBK463kQ1Bv6RnPydoy74bHTLKQA9FMZw1yBuHt5b3ivsFPL7QrqnC/akV85ORFcBvtyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QO6L1xt1; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3138b2f0249so4337826a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:23:17 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4561607166aso17183595e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 04:23:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752578597; x=1753183397; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4NcnVHT6qn7BJ6Ec3gjN6DJVTr3Q8w/Kv+WVRHHdtL8=;
-        b=LT1+HunbmHPmfaBZkk0c6U0u0nY2XMys8P+ish4ovpjEtMU5+qpsSfZ8Z8Fmg0+85o
-         f/alJDM81uA1EfywJYJpG+YMCKyYOwy6iJU8aoPritUulmFir6JKKXYlSA5uJC2fT+1z
-         gMgxWLn4i0BSN98p0wb65+YXGCh6eWPXIDl4a6E0Zu5oHQr6y3fwMBIbyjmI8lvdaIeS
-         K2DKF565O2iV7Y0Jr/vmYQwmB7kHczDMIEZPJcFqMwIMe0sLJ6sctM21mmtSWb/h1EZP
-         4LvIw87V6jAjHZ9q4WpAoZDneOoSi86NC3RyRdylx0l7ZP2fKMEayui2VupGSsQvfQ0/
-         QPqw==
+        d=linaro.org; s=google; t=1752578588; x=1753183388; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IROohcnT2HQCfIKhsx/yQHN0OEa0Xb+k3P4V46L5bTY=;
+        b=QO6L1xt1MVmJYZVTim2Hj+Raz//T4a4YlBOHIbuk9konXnjDvDLOozYy9LV6cOeEIe
+         utZW5lkSWG/z8LTnVW3yDWyQtAq0XUt5zAQ9/pVcX3ECqS3GfIjiI5vWGmJmQ7JPAR6j
+         R4xfNm0Ix6puXQR3oesgE9cLDAbb5UUnWspTjOv+LIMETI0nDWdZ8IQvYrGxtJJa+rAM
+         kXGVFMnUyaN8reSuEFOQe+SOb1Y9lRGuCqlrGpXIAn9nX+9gW+TboiAbB9Hvu/VvAj1Z
+         cxJSsoDngBc4uI8PK1BPlkStVhtC7Fp3erAG882HQ29fVle3Z/Hj9JtbErObLzTk1FeV
+         Ib+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752578597; x=1753183397;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4NcnVHT6qn7BJ6Ec3gjN6DJVTr3Q8w/Kv+WVRHHdtL8=;
-        b=sBdqyxjIKX1k+M1Lh/wEAzjGwuGfjdgyJTm3FjiyYvYihr4Dc7bc80JORv1nvAAT+A
-         Evdwdmi7LDlfoYdHRifOASHMATBWQTOuaGtyLMyqxYQbYH3KaEYkWgplvxvwevKOKn06
-         ZEY6Y8+kNbpRZBH5sJU/DQFJmS5/pdZPsu/0aeqoreLjL5tjIevHfjw1dcwfaZb77Fis
-         V9uUpTwdelyFAcyZIO1BPufoHFCic6+gIGVp/bOQXrGYMWgomKa2f3WaixPetZg/vCpO
-         QLRjnzIuQG6pghiTlQpTGQ30+4hLSPk+oom5feKVUymYbpBsE1oKhHAdbsSXNgpFJwdt
-         bNwA==
-X-Gm-Message-State: AOJu0YxfNaKy0BYi9QKkHAJ4y7i7JkpbwnHHB/kwdNfO95mJHg+LVpSx
-	UEUwuUkX7wUr81r3pPXcJ0fbv5N/waZOIXylJqhMO0zxUdeSzwgezrRJg9VLqTMOZZ4CG08lFzW
-	V+D/KG6dP25bEHvKj7GW4OTGaYk3PeWDL5vzwba/ZJHB8Wq8LeWDUmqw=
-X-Gm-Gg: ASbGncu42jX+LRJuMYe5NAOXCbpetYqJNfyvJteJ4dvxev9gcDkzYiV1xe0T6ZcCNPe
-	WJ36aYuRHNeyruRAg6uz0X68YQ73HnbZwiqA9cUx9dMPGwHWt4LsDiVeDsb8TY9EnkwkuFbw+s1
-	m/l9Gv94AVFZ49hgDWdRlu4EBQzq7AxdTHIlrAzt7vC6hNihhWDNk4uaK+rPmA0YLkz4XXDeu2+
-	XLy0SDc1Y9iVV/SlyOi58Zebc5Jfr8+7E+2+4HhLdVE7L+hyx4=
-X-Google-Smtp-Source: AGHT+IELZ4SimOBJO6yrghuVWIOvvAedlzL4IeD6zPpIQjSz8JGeh7uFbZ7kG0dhBVgjaSWgYEdK7o4EE+MZnbE6CoQ=
-X-Received: by 2002:a17:90b:4c0d:b0:315:af43:12ee with SMTP id
- 98e67ed59e1d1-31c50e1763cmr20865064a91.16.1752578596648; Tue, 15 Jul 2025
- 04:23:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752578588; x=1753183388;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IROohcnT2HQCfIKhsx/yQHN0OEa0Xb+k3P4V46L5bTY=;
+        b=U1Fx//QUabvb2baY5JzPVUExrRz2obiV8roPBOD4d7UAAucVOlfm0fSczPGehJe5uh
+         qvQNdnP/wGWn6NYz3cJWUnBuZKMFgJuxjph/i66aXjaBnUKMyhTVR5GDrVVM8zqj3tV1
+         PE6pSVHZys3mXCNfdBOT5LzAbDz2Tf+KuOXiMA/rNpQJ2Mn+kpg3yRZ/ll3MqJWKMded
+         zsQLz27/viy8etwVElJBIa6PoymO6/u9POmyz2EB1Z1AE+JxfuA4bpLEIn2/qN/AensO
+         0WIttf/QCkHSRhQ62wmLcLg8RQgAtYWyGYPHfG1abeBhQ4olJCDuNekKy7kLcX+9Kb4n
+         XXFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXb8pklYfd3YRJ4eGBHUDQqnmQ65Fs5/B9Y4c5ZT5aeXrMtNXSfFVMzNZTK14XLmNFdmKjKl6tktCab47c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxixdN07/XfUn2KmsYf51KJUFHIqOZRm44Q9AIHE/Xcg0jA7A+C
+	rwTgVOa4l9V6Zz/6fkqqr4PohXumCYp0XFiQnrYsF+xxek8Mtb5y/Dpdf17pzgedJAX5JQUH7j9
+	Ab+Da
+X-Gm-Gg: ASbGncuJYxMGmWDt+/CLi0tUVWwih3C8b3DRcY5lsuKTipA3ZvOKfy+na6GEKyxOu+V
+	qxXlEMJPXxyw3Rtd2Ho/Ex08DprnXfxf2x0p0WKJgeh2qtpC3OuUxg8NfeGuEXMvqeRovoDSbHq
+	1BHSNsdnY+xk7R4H/2CuVdtbWthUzGjpsgIcyZct+A2lIOStcvAqrpuKyUSFBCapibw/9Pg+44Z
+	/3Li4e+ez9/HHfPB1vLlGTlisHxhNjc5GPFFeEYTB79LW33ELu2ZjPese028RT69n8vB5YhzP3d
+	kfFpoyiuchM8W4t+ukCz1swjbkJ1mL3JVGtr6AjZil9reRqjPtktPYzuT0yNgRve6DDHtplujHI
+	0AgkhhLe3KcxIK4OwKqAvQ8XwGD42VPxNWPtenAbl35WRc7me4CsyYia3KOI9L/twcY75Oms=
+X-Google-Smtp-Source: AGHT+IHQ3prgUe5cBnNidral8utHdbyigrerAyg9IXxceMi1779788HUGWodqsh1bemWlLH3jivHPg==
+X-Received: by 2002:a05:600c:37cc:b0:456:117b:94bc with SMTP id 5b1f17b1804b1-456117b95bdmr100596885e9.17.1752578588578;
+        Tue, 15 Jul 2025 04:23:08 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1997sm15158740f8f.10.2025.07.15.04.23.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 04:23:08 -0700 (PDT)
+Date: Tue, 15 Jul 2025 13:23:06 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:CLOCKSOURCE, CLOCKEVENT DRIVERS" <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: timer: Add fsl,timrot.yaml
+Message-ID: <aHY6GnjMW0SSJQgU@mai.linaro.org>
+References: <20250528165351.691848-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 15 Jul 2025 16:53:04 +0530
-X-Gm-Features: Ac12FXw5_VIt4EBOG5y1_FGQ9hbqKjaE3fl3SBQ4AiBXr0z1r7gqAHncSjssGvY
-Message-ID: <CA+G9fYusqGejrepNPCR-7ZZDPeQQfZgf2z=_aUz_03QHm7Ccaw@mail.gmail.com>
-Subject: selftests: arm64: mte: check_prctl.c:72:17: error: use of undeclared
- identifier 'AT_HWCAP3'
-To: open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Shuah Khan <shuah@kernel.org>, Benjamin Copeland <ben.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250528165351.691848-1-Frank.Li@nxp.com>
 
-The selftests arm64 mte build failed on the Linux next-20250703 onwards
-with clang-20 toolchain. still seen on today's tag next-20250714.
+On Wed, May 28, 2025 at 12:53:50PM -0400, Frank Li wrote:
+> Add fsl,timrot.yaml for i.MX23/i.MX28 timer.
+> 
+> Also add a generic fallback compatible string "fsl,timrot" for legacy
+> devices, which have existed for over 15 years.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> change in v2
+> - Use items for interrupts
+> - update commit message to said for legancy devices.
+> ---
 
-First seen on the tag next-20250703
-Good: next-20250702
-Bad:  next-20250703 (next-20250714)
+Applied, thanks
 
-Regression Analysis:
-- New regression? Yes
-- Reproducibility? Yes
+-- 
 
-Boot regression: next-20250703 check_prctl.c error use of undeclared
-identifier 'AT_HWCAP3'
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build log
-make[5]: Entering directory '/builds/linux/tools/testing/selftests/arm64/mte'
-  CC       check_buffer_fill
-  CC       check_child_memory
-  CC       check_gcr_el1_cswitch
-  CC       check_hugetlb_options
-  CC       check_ksm_options
-  CC       check_mmap_options
-  CC       check_prctl
-check_prctl.c:72:17: error: use of undeclared identifier 'AT_HWCAP3'
-   72 |         if ((getauxval(AT_HWCAP3) & hwcap3) != hwcap3) {
-      |                        ^
-1 error generated.
-make[5]: *** [../../lib.mk:222: selftest/arm64/mte/check_prctl] Error 1
-make[5]: Leaving directory 'tools/testing/selftests/arm64/mte'
-
-## Git Changes
-git log --oneline   next-20250702..next-20250703
-tools/testing/selftests/arm64/mte/
-1f488fb91378e kselftest/arm64/mte: Add MTE_STORE_ONLY testcases
-391ca7c81b85c kselftest/arm64/mte: Preparation for mte store only test
-d09674f98cdbf kselftest/arm64/mte: Add mtefar tests on check_mmap_options
-64a64e5d12f07 kselftest/arm64/mte: Refactor check_mmap_option test
-49cee364c8665 kselftest/arm64/mte: Add verification for address tag in
-signal handler
-ed434c6e08132 kselftest/arm64/mte: Add address tag related macro and function
-2e3e356560ef5 kselftest/arm64/mte: Check MTE_FAR feature is supported
-cfafa517c9e65 kselftest/arm64/mte: Register mte signal handler with
-SA_EXPOSE_TAGBITS
-
-## Source
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Project: https://regressions.linaro.org/lkft/linux-next-master/next-20250714/
-* Architectures: arm64
-* Toolchains: clang-20
-* Kconfigs: defconfig
-
-## Build
-* Test details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250714/kselftest-arm64/arm64_check_ksm_options/
-* Test run: https://regressions.linaro.org/lkft/linux-next-master/next-20250714/testruns/1615508/
-* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2zrW3Ut4mYWOxPVnJTOY5qrft0P
-* Build link: https://storage.tuxsuite.com/public/ampere/ci/builds/2zrZgjFum1wBbTRrsvDGnHC9JMt/
-* Kernel config:
-https://storage.tuxsuite.com/public/ampere/ci/builds/2zrZgjFum1wBbTRrsvDGnHC9JMt/config
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
