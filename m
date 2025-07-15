@@ -1,111 +1,157 @@
-Return-Path: <linux-kernel+bounces-731288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B876B05243
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:54:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF63DB05246
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4F93A736E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:54:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D6A8175BB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E262426CE17;
-	Tue, 15 Jul 2025 06:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8E126D4D8;
+	Tue, 15 Jul 2025 06:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksJUQpat"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTIeNHJR"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF27E2641CA;
-	Tue, 15 Jul 2025 06:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E855E25B1FC;
+	Tue, 15 Jul 2025 06:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752562462; cv=none; b=odIryro9wXRgDhn6Z/TeshLY+oq5X80naN2VxBFa9aIrrjfPhO/A5m6QCftkeqcN/nZx2aS9oZUntLsq/GOMgLVEsU7n1csM/9okl435e8J3tRoA0VN7iVsNCRQP+9QaiOeNqkDezCagOQlSLsRCz2v48Ii5qdOkYd9+UKJ5RZU=
+	t=1752562679; cv=none; b=Sty28zCLBeh8jzIJaACF0KBIqmrKCCfYH/PcZiqjzwdTRPm+sohVLl1miceEDvvaqAgncyV8pjxjk7cn4zrGWIbqeFnIlD4Y5Rz8cQN3VCXv2B/48YG04dmUwLZW6nlG2cZFDtHTSXR5RdVapX/0OdwPyvLCX7I5oS0UsizW8C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752562462; c=relaxed/simple;
-	bh=iYEmdgVDVilx6r+/rcv1fMSKywLiSD07WpOBMo7klTI=;
+	s=arc-20240116; t=1752562679; c=relaxed/simple;
+	bh=hi3b18kCJ2PN/uE94e7W0oedaOkuFFQ0dFZ0p41G3yg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CqTzQKmkeer/2xRaBXv7WrPTlVfSydYrRasB+k6AM0EeY+sriXXwwC5jAE6ExukH2ZtVnEHROBgjjljtlAvLvc4FdwbZZ5+UZKao9sf28j49gGcjJeQfRk7xMFwmso3gRXjPZSQWdPDPrdix3MYPmmPd0LEL0XO3MNwsXV2YHSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksJUQpat; arc=none smtp.client-ip=209.85.218.42
+	 To:Cc:Content-Type; b=HfmfSaYCMjg+CrU69oXi5gWcIVbcFHpvxhw0ZGUl9QD3p5js121aIThT/d4FORU68visqBLwfenrVneQRU5Qf4+U1yn+9YSbrBO9rbZsrZb+TUYYdYlmBqZiX7lS6tb1ewLc4PaqbEYTnF6LNbMHl+dlIWYObqQIpMMtc0h4ILk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTIeNHJR; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0df6f5758so885632066b.0;
-        Mon, 14 Jul 2025 23:54:20 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so12666648a12.1;
+        Mon, 14 Jul 2025 23:57:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752562459; x=1753167259; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752562676; x=1753167476; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iYEmdgVDVilx6r+/rcv1fMSKywLiSD07WpOBMo7klTI=;
-        b=ksJUQpatLiZLddCM/IWqiV+LL9DayUgBzmLEpYSQc9sKLijmc8qbqPOW+0Vi7fNGAA
-         0FWPr8XHzK6aILDNwrengOuybDJTcQz62ukgj/pEbRr9L57ESLM+zVe/gZ41wsbKFqkF
-         ohKOzMVoimiCrvrWyM2NBYg/gFILmZA6p3v/3Wa1pbTEKqMOQSdKpw5aTLJYjcobfW5K
-         JexQcLzpmGE1213/RokXx4FTn7+3FhOk7DWNIMNpA/zK9yQjfnHQBTFn33uzZiQkTkIu
-         mVlxr43/EOsyQ/EC6eVTg9O7HY1gZD9pUi4KCDV6UeTaayZLU012vblTcoYyKVhNdFNp
-         CUBw==
+        bh=hi3b18kCJ2PN/uE94e7W0oedaOkuFFQ0dFZ0p41G3yg=;
+        b=cTIeNHJRaUUw8VnwxaCdZuHYynlEr1dzXZjrdJ4ljqwh+FVvF0PsXVAIUzWtkBVVw/
+         Ugxg3lyjWF4jkHgSwJod4/ZE2ostJrqPHdV8mJRhIFxAEUTr7BGlIl52vZDrEkTIDtBE
+         OeDFs1WXMRRCatKDfMEIFnmLAUhQ8VTKtQ1DVOEwqA1I6EfrPkF88IlcPMBqZ7OFLZZx
+         lT5qERJrKHFLsucjryRQI0kUcKqh/xsjUYNjB23NysP6d9msjXqThFqOuPr/iiH10YPx
+         EeqTTN4DUPlRjQL+MTz324WRDuoG4YDgQCg+1tuHtudU7szTGFZ/h30S7RlD7QWijRFw
+         MMbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752562459; x=1753167259;
+        d=1e100.net; s=20230601; t=1752562676; x=1753167476;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iYEmdgVDVilx6r+/rcv1fMSKywLiSD07WpOBMo7klTI=;
-        b=hBqWGc96LkJ2GDnTHvJa74GvTnj2krbC5nO5tyLMSZJb8e1dzRzZFzBkhawQlp0OrO
-         weFINKe1+ESlStun/36yrIyi5+VExkeLbbhJneeufOtCifcNy5XsuFRurK0Y5JHheaig
-         O7TtrlrC/hEUwHCxbHbsncrY4e2FC8P53RkU3P4keHp/iMmxF7FV6a22Cqr7nIPKc5xG
-         slRTn7d6KKlasxTN+XhPJAfwCWvOElOk2vq/mFdDqOTT70mOwi3LPnrLqQS0y4pxLGdD
-         mFF7gdAY1GGvhG1decsrPH+OsjUDAh0mb3t4hIM7scDQLhHWDrDVcKh1lpG4QKiHkdGs
-         xoCw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5EhsOnlQ+mJw33OMqbgmPkLUh8DMzNd2K4rwvIoPi3nU6MmDymqOX1Rt8eAQB9K2A8HO5MT9LJjMiAUN2RJE=@vger.kernel.org, AJvYcCXxh+JG0XnU/nc5tnPmZJO42w4C4h2u5D5iwPrRuXkE/O8LYcnP51fuE9+UBsDZDqebT5UVi18TsAEQnwGw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyASYfxigBlfdEwwjQUlYDeZ89M2qyNR/NaoznuplGV6ldglb7B
-	1oeDgsx5HqDJs/aCTgWG4mMd4+MO5rLhB8ksO0n123bY+jvE1QvBsTo0iHlZ858sFcq43rKhdfn
-	nUaHCBVVjiy/S8dY5iO/YaXFtjg0FfpDs1slS
-X-Gm-Gg: ASbGncvrp/oVWFZN4OavF7M7Bx2etB/4NLJY3sIFs2TvFcpkmPX11CzKgrraOxUMT0d
-	4lYpwzS/xSGKRv1gW5KMUUHFcM3tnLRYMC6F5A+42zf4iJXk1fca4OrGEavrQmnPkanVo9t0oiz
-	I3L4GpHDeMWzCpBK7erinSjBovp0JFlgSiqNYDcEDeK+ImAlsB9/FmSeMwHRT41jC8WLBaYerO0
-	Cj0/IweFQ==
-X-Google-Smtp-Source: AGHT+IFJNsrAp6WEHoK7N7c5PJHNjZVBWw0ui3X/s6/QnO3LNd3x+XuuZkeOxuEzGFZSpdsLG4upyjIk7ANJtjI+ZyY=
-X-Received: by 2002:a17:906:3993:b0:ae0:cadc:e745 with SMTP id
- a640c23a62f3a-ae6fc366544mr1511285766b.40.1752562458735; Mon, 14 Jul 2025
- 23:54:18 -0700 (PDT)
+        bh=hi3b18kCJ2PN/uE94e7W0oedaOkuFFQ0dFZ0p41G3yg=;
+        b=sEggjcS7xlDCzKIGpGN3DfSVTxmP1wRgJjrdfp07PuwSKZhXXzwTzJ0w3TDgwqZs1T
+         spbgYXeee6yN4ZIEavzAx0htg0+afrEe6ViVSqoAcc2YTPMEf2VmDPVq33Hc1QM85sGi
+         VHXyfT+wO2cCsMzFtoy+FozJEyuQKCTSPCkV/JdiYPqVtLcvsM/yuwoZ0k6EFxAyn+1B
+         ngyoQxuJM8FxFoihtsPUHj14/T9dJLni6SRetU4hpzAF+qF00vm9kf92IyTT2HUnOQbv
+         h6K/r5Tzpac//y2+2OoCFUk6Bu4ocoa5/3KO+b71ly7A+la/5xromTtTQT5+38nhiw0/
+         svyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIPK3lUJlZ2K2Sq2J8n7hEKJb3lkN992Z8QCS8Ak8jXYNq7fPD1rcUG3nmfEdIcGChcNWNqqM3jCHCXJ4=@vger.kernel.org, AJvYcCXPn0zxWBXgsce6Tflc9afwvQ3ilIB/kUC+gywBIdV7IpKx4nWYmDxo24JbeJju974DWle6ziAzCZAGMHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzshv+AsRATZOQW2l26msPHjV6Bw1jSgB3J1HRDlhgFJdClEFNc
+	aO5uuAIHSROdxOTi6eE5iWR+MvULIUuGFd50ButJgDCvzjlOk693O+XaA9aD2P5MTZ3G2awVXn9
+	Yu4NBuK/+tsIjt6cDxZiKhN69sfstkqs=
+X-Gm-Gg: ASbGnctjscZTQ299ySJhfEu7WFKIWefjLsonhun32suI+epG2x3E2WK5pIG7QIUTRVX
+	8Vp2hbwpPpLAdXc6XYETBRFIbIsqTvlxqHc5KTyr6d5/6FrBSY3e6TxZm24q6YXRixlX5EVy4n+
+	Cdl5H0q+/VsmDWU9lk5xyOhHA/AYDwdIZPFnQrZkHF4dGlNixtnv6SyouzbvZEwOo/XHaeXD1i8
+	wytYqx3U+vX8YmUaST8
+X-Google-Smtp-Source: AGHT+IG0UYcy/IX+HCgW4D/Eb7WFEQbTW2Fprb7+3GKJ779x4KY8mPx/djHYIJol9OlevhyUSkGo9wlgh5i3URkxtE4=
+X-Received: by 2002:a17:907:f810:b0:ae0:a465:1c20 with SMTP id
+ a640c23a62f3a-ae9b5c2bf92mr234673866b.14.1752562675871; Mon, 14 Jul 2025
+ 23:57:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711085514.1294428-1-andriy.shevchenko@linux.intel.com>
- <202507142224.28276C2D8@keescook> <CAHp75VeWvezuhKx-Q4hHV6=TqbHx=jEmR1wuqEzdJY+xUv7OAw@mail.gmail.com>
-In-Reply-To: <CAHp75VeWvezuhKx-Q4hHV6=TqbHx=jEmR1wuqEzdJY+xUv7OAw@mail.gmail.com>
+References: <20250714153409.46085-1-martin@weidenauer.cc> <CAHp75VdUNe=bn-Emv6oyHtejTMyhKaiqQfGic0Ha94Z_FAPs2A@mail.gmail.com>
+ <4289C286-62A1-4C22-9A03-E6CD3731F3D7@weidenauer.cc> <CAHp75VcvOaSPbrpurRAjrvwW992qiP-ffZcroQ-feg=_PAoquQ@mail.gmail.com>
+ <1D5485BE-E03F-4364-A48D-051AAECFBA9A@weidenauer.cc>
+In-Reply-To: <1D5485BE-E03F-4364-A48D-051AAECFBA9A@weidenauer.cc>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 15 Jul 2025 09:53:42 +0300
-X-Gm-Features: Ac12FXzowBIGuN-txmDbWlJbhW-lrd4GPryfiuTawVxufSB4YHMugojOopnhvwY
-Message-ID: <CAHp75VezE_xG58zYkWJ3ohAX8HOMCDpz=8uJx+da2hKXLHgh+g@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] string: Group str_has_prefix() and strstarts()
-To: Kees Cook <kees@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>
+Date: Tue, 15 Jul 2025 09:57:19 +0300
+X-Gm-Features: Ac12FXz-ngLNhXyig1mNzAZmiCXxYtUqkaoJxPmRSqbAxbX9Ie3FUAhsw-uMXeY
+Message-ID: <CAHp75Veovvxbr_6EuubDa7x8P5j12WjER=ar7E69A4r=sGONsw@mail.gmail.com>
+Subject: Re: [PATCH] staging: atomisp: isp: fix open brace on new line
+To: Martin Weidenauer <martin@weidenauer.cc>
+Cc: Woohee Yang <woohee9527@gmail.com>, Jongmin Kim <jmkim@debian.org>, hansg@kernel.org, 
+	mchehab@kernel.org, sakari.ailus@linux.intel.com, andy@kernel.org, 
+	gregkh@linuxfoundation.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
+	~lkcamp/patches@lists.sr.ht, koike@igalia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 9:52=E2=80=AFAM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Tue, Jul 15, 2025 at 8:24=E2=80=AFAM Kees Cook <kees@kernel.org> wrote=
-:
+On Tue, Jul 15, 2025 at 12:54=E2=80=AFAM Martin Weidenauer <martin@weidenau=
+er.cc> wrote:
+> On 14 July 2025 23:38:47 CEST, Andy Shevchenko <andy.shevchenko@gmail.com=
+> wrote:
+> >On Mon, Jul 14, 2025 at 10:39=E2=80=AFPM Martin Weidenauer <martin@weide=
+nauer.cc> wrote:
+> >> On 14 July 2025 19:47:41 CEST, Andy Shevchenko <andy.shevchenko@gmail.=
+com> wrote:
 > >
-> > On Fri, Jul 11, 2025 at 11:55:14AM +0300, Andy Shevchenko wrote:
-> > > The two str_has_prefix() and strstarts() are about the same
-> > > with a slight difference on what they return. Group them in
-> > > the header.
+> >> >Guys, please, coordinate and issue only one (or a few) patch(es) per
+> >> >an issue. No need to send zillions patches for the same problem
+> >> >file-by-file.
 > >
-> > It seems more like strstarts should just be a macro around
-> > str_has_prefix() !=3D 0?
+> >> >On Mon, Jul 14, 2025 at 6:34=E2=80=AFPM Martin Weidenauer <martin@wei=
+denauer.cc> wrote:
+> >> >>
+> >> >> Fix checkpatch error "ERROR: that open brace { should be on the pre=
+vious line"
+> >> >> in ia_css_dvs.host.c:277.
+> >
+> >> I deeply apologize, however this was the instruction of our workshop i=
+n DebConf by Helen Koike <koike@igalia.com>
+> >
+> >This may be okay for the driver that consists of let's say less than
+> >10 files, AtomISP consists of dozens of files in several (nested)
+> >folders. It's not a good example for such an approach.
+> >
+> >> Here is the link to the exact workshop:
+> >> <https://debconf25.debconf.org/talks/55-submit-your-first-contribution=
+-to-the-linux-kernel/>
+> >
+> >Hmm... this really needs an update to explain how to work with the
+> >drivers that contain many files and literally tens of thousands lines
+> >of code.
+> >
+> >In any case the problem with your contribution is not the code, the
+> >absence of coordination and possibility to clash with somebody else.
+> >Also it looks like a DDoS attack against maintainers capacity. The
+> >smaller patches are and the more of them --- the less the usefulness
+> >of all this activity as at some point that floods the maintainer's
+> >mailbox.
+> >
+> >TL:DR; (always) Use common sense!
+>
+> To be honest, such a contribution also seemed to me a bit useless but I t=
+hought all of this had been discussed with you maintainers beforehand.
+>
+> As it seems this was not the case, although the workshop has shown us how=
+ easy it is to make contributions and for my part I will use the knowledge =
+to make meaningful changes.
+> So you can scrap this commit and I'll make a few commits in the next days=
+ which make more sense.
 
-Actually this won't work for len =3D=3D 0, would it?
-
-> This change is only about grouping, but if you think it worth
-> modifying, I am not going to object. Just that I am about to have my
-> vacation and I leave this as is for now. Up to you how to proceed.
+The problem is not the code, the contribution is okay and appreciated.
+The problem is that for _the same_ issue there are tons of patches
+from _different_ people. Just discuss who does what and send "one
+contributer =3D=3D one issue" (under one issue, I mean class of the issues
+checkpatch or other tools report, for instance, the "if (foo)
+return;"-like which are on one line and needs to be two or more lines,
+do _all_ of them by _a single_ contributor.
 
 
 --=20
