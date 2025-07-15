@@ -1,92 +1,153 @@
-Return-Path: <linux-kernel+bounces-732344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11216B06561
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:49:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CC2B06556
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1DE8500B43
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88ADB1704F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152B2287504;
-	Tue, 15 Jul 2025 17:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EF22882BE;
+	Tue, 15 Jul 2025 17:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="kT4Ewi0g"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJ/tFzTR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010AD186E2E;
-	Tue, 15 Jul 2025 17:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F365328507B;
+	Tue, 15 Jul 2025 17:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752601747; cv=none; b=KmLFZeHLKlE1VS+uq0MYBSbaBLypFtaN1/KOiHCUv3Rr/Ob5RMZ+Dv0Ta7pwHYb9eyLswhtqgSyv24rDahZWOTSnEt+UMlakb3MrmrK59dO5ceIe311RPxUIsNnle18HncvkQ9Dgx/NY2ClKF8fa4/nblyOsLKEEqmmFWobPMdM=
+	t=1752601429; cv=none; b=PX+zKvscgzip+zWpHJhjh0UlAMMC/czbxkc0K3lrmlQoSjpwCUCkHNO94GHDcZgkyEBTr9MR37oYYebBY2w5S6N6ujiB3cgwNb3atx5ARD3+BmQj/NpczcNMVFVy6SnrH3fvLZsUUmi2ManeLwR5qQllcH9Tl0xoDFLwThFA8dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752601747; c=relaxed/simple;
-	bh=szoPdU8t5HxV3+qu49EKJRl2lJmf68LJg4pDte/fGFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NSXHrKKO4nrWGStkya2K32JqeT+nSPE2+YRsazpvfobHtUF11VNv6IZR8TZgbX8ToXl6jy2gdL7y0gC8hB7mcbo1S4PSgQIxz4aiTGE7xpkcvW976uqMTdD+PskM/cQVXwAnY4DZVw+ZlfePc6+VmZq3PXrBGt3bAaBuPK6y0lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=kT4Ewi0g; arc=none smtp.client-ip=192.19.144.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id C1414C0005E0;
-	Tue, 15 Jul 2025 10:42:20 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com C1414C0005E0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1752601340;
-	bh=szoPdU8t5HxV3+qu49EKJRl2lJmf68LJg4pDte/fGFI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kT4Ewi0gvW8Ipq8NdA8VUvem2aII/sgJ6l8dGH1wH92aJnwlEqh+22j3tNHNJfUNz
-	 LdM4clMG0Vd1AlGgKOEnFdeNdgH2hPN8XyzcB6pmIxHGZU6/GgzBGRK60uVnKy5vVh
-	 NvivarNrIm9TTzeF1vSMwnkZ8YlD6NISJv2AAUbs=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 56FB218000847;
-	Tue, 15 Jul 2025 10:42:20 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	kernel test robot <lkp@intel.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: broadcom: Fix bcm7445 memory controller compatible
-Date: Tue, 15 Jul 2025 10:42:19 -0700
-Message-ID: <20250715174219.2421220-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250701175538.1633435-1-florian.fainelli@broadcom.com>
-References: <20250701175538.1633435-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1752601429; c=relaxed/simple;
+	bh=54VsIhKZIv/mNC4NrTI9DMJ7xO/jEt3cjbBcWJjARgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=boDqHqZsC8uwcLuUviwiLBae8dng3kcS19ZOAfcy+BR6Ey6cCtvXOo5nfByJdWnbdWJ2kgbyXVxr2HTS/uQROijQDAZoc92yLS/P7y1cmDD42Lj0xlgxwCe+853Z11lgQmZHk4FexQEf2wUhsbMqnAEmhWDCnjFyQ9ynP3qp0RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJ/tFzTR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99843C4CEE3;
+	Tue, 15 Jul 2025 17:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752601428;
+	bh=54VsIhKZIv/mNC4NrTI9DMJ7xO/jEt3cjbBcWJjARgg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cJ/tFzTRQvVmZe4bXDNiYPtuqt/7L/tJESoX0k/L6gt+FYeldUsQj+/4OgvhhudJ2
+	 a3Gz8r8S//vHl2Rawg9VD8KL8fop2h6lLT4IkLRJaTWynA3bf14gmE46MSUNREkv/Z
+	 kySwX/bMmaD2nntB3vVVp7T7NXIFxYzX8QDI7+UkV3zHSCMx4vsffdRWwhH10dwQkQ
+	 RC2u5GYUUG593bC6qBFvUpVlKnjLoxKVDZkjau1bWsDeFDybD96JFHHFCD/G9MJibh
+	 HxSkK7BltDpfwwtZOmXvhpxm/Ay6oywwTMZw+61Pe3Yxr4rV9y+kQlMcwr2JYiD32R
+	 XOPAPeaXMLe3w==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-608acb0a27fso8037863a12.0;
+        Tue, 15 Jul 2025 10:43:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWFJ2aBN+IdXQfaoM9Rr1F6xJuqlgIN83XVrX0Ch2o5JD2YBb5YoAGJ5jPbsiNdm9/N9TkxyB3TubkOCgTu@vger.kernel.org, AJvYcCWWx8zKCA5zRhzsMAO+fKU9uIj9zbWSumGXgbn102GrINWvgfVTJP13vN9jW+M1Q5g565tao0ed@vger.kernel.org, AJvYcCXb3SJPEn56JzJUJgEcHDyXfmKzaE8n13/7ehaFOWXAgP69YS4UZhPJpUFmO5OLkLF2K7M7hoVFVpTf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4wfaXT7lT6agYaZESqNkDGgZ2RW5lZgM9jBSMK/Wmaum8I2dH
+	8uNMqJhysgLPLvOQC+mkoRBROBe4fWWJtiDHjSPGE1F57DAPkVPmE6cC/5Fn5CLBsVHJJBheRfL
+	NRidCMmQ654vxITMSjvgXHrN8XFs0zA==
+X-Google-Smtp-Source: AGHT+IFSfJ329hc32n6pv+14gS0mt5gTgoFqsqGbemfhsisnZDnXEaldUJ2gRxLUkvPg+1tT8vixRzdxTK8k0xV9biU=
+X-Received: by 2002:a17:906:730f:b0:ad8:9466:3348 with SMTP id
+ a640c23a62f3a-ae9c9b0ce31mr42139766b.36.1752601427144; Tue, 15 Jul 2025
+ 10:43:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250703021600.125550-1-inochiama@gmail.com> <20250703021600.125550-3-inochiama@gmail.com>
+In-Reply-To: <20250703021600.125550-3-inochiama@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 15 Jul 2025 12:43:35 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLKLKHj+vQJmZnaXRj3TmqR3ELjpBc27HRbTOOP9FD0hg@mail.gmail.com>
+X-Gm-Features: Ac12FXz_neDQRbYET5mV11I82g2lSNlhGKsWNEzC8k-2DtgP7jZ-KwLmxIiQkME
+Message-ID: <CAL_JsqLKLKHj+vQJmZnaXRj3TmqR3ELjpBc27HRbTOOP9FD0hg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] riscv: dts: sophgo: Add mdio multiplexer device for cv18xx
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Chen Wang <unicorn_wang@outlook.com>, Richard Cochran <richardcochran@gmail.com>, 
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>, Yixun Lan <dlan@gentoo.org>, 
+	Ze Huang <huangze@whut.edu.cn>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Longbin Li <looong.bin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+On Wed, Jul 2, 2025 at 9:16=E2=80=AFPM Inochi Amaoto <inochiama@gmail.com> =
+wrote:
+>
+> Add DT device node of mdio multiplexer device for cv18xx SoC.
 
-On Tue,  1 Jul 2025 10:55:38 -0700, Florian Fainelli <florian.fainelli@broadcom.com> wrote:
-> The memory controller node compatible string was incompletely specified
-> and used the fallback compatible. After commit 501be7cecec9
-> ("dt-bindings: memory-controller: Define fallback compatible") however,
-> we need to fully specify the compatible string.
-> 
-> Fixes: 501be7cecec9 ("dt-bindings: memory-controller: Define fallback compatible")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202507011302.ZqNlBKWX-lkp@intel.com/
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+This adds a dtbs_check warning:
+
+mdio@3009800 (mdio-mux-mmioreg): mdio@80:reg:0:0: 128 is greater than
+the maximum of 31
+
+>
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
 > ---
+>  arch/riscv/boot/dts/sophgo/cv180x.dtsi | 29 ++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>
+> diff --git a/arch/riscv/boot/dts/sophgo/cv180x.dtsi b/arch/riscv/boot/dts=
+/sophgo/cv180x.dtsi
+> index 7eecc67f896e..3a82cc40ea1a 100644
+> --- a/arch/riscv/boot/dts/sophgo/cv180x.dtsi
+> +++ b/arch/riscv/boot/dts/sophgo/cv180x.dtsi
+> @@ -31,6 +31,33 @@ rst: reset-controller@3003000 {
+>                         #reset-cells =3D <1>;
+>                 };
+>
+> +               mdio: mdio@3009800 {
 
-Applied to https://github.com/Broadcom/stblinux/commits/devicetree/fixes, thanks!
---
-Florian
+The nodename is wrong here because this is not an MDIO bus. It is a
+mux. So "mdio-mux@..." for the node name.
+
+> +                       compatible =3D "mdio-mux-mmioreg", "mdio-mux";
+> +                       reg =3D <0x3009800 0x4>;
+> +                       #address-cells =3D <1>;
+> +                       #size-cells =3D <0>;
+> +                       mdio-parent-bus =3D <&gmac0_mdio>;
+> +                       mux-mask =3D <0x80>;
+> +                       status =3D "disabled";
+> +
+> +                       internal_mdio: mdio@0 {
+> +                               #address-cells =3D <1>;
+> +                               #size-cells =3D <0>;
+> +                               reg =3D <0>;
+> +
+> +                               internal_ephy: phy@0 {
+> +                                       compatible =3D "ethernet-phy-ieee=
+802.3-c22";
+> +                                       reg =3D <1>;
+> +                               };
+> +                       };
+> +
+> +                       external_mdio: mdio@80 {
+> +                               #address-cells =3D <1>;
+> +                               #size-cells =3D <0>;
+> +                               reg =3D <0x80>;
+> +                       };
+> +               };
+> +
+>                 gpio0: gpio@3020000 {
+>                         compatible =3D "snps,dw-apb-gpio";
+>                         reg =3D <0x3020000 0x1000>;
+> @@ -196,6 +223,8 @@ gmac0: ethernet@4070000 {
+>                         clock-names =3D "stmmaceth", "ptp_ref";
+>                         interrupts =3D <SOC_PERIPHERAL_IRQ(15) IRQ_TYPE_L=
+EVEL_HIGH>;
+>                         interrupt-names =3D "macirq";
+> +                       phy-handle =3D <&internal_ephy>;
+> +                       phy-mode =3D "internal";
+>                         resets =3D <&rst RST_ETH0>;
+>                         reset-names =3D "stmmaceth";
+>                         rx-fifo-depth =3D <8192>;
+> --
+> 2.50.0
+>
 
