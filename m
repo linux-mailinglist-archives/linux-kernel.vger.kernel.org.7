@@ -1,181 +1,199 @@
-Return-Path: <linux-kernel+bounces-732493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7602BB067A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:17:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C979B067A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D522D7B191C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:16:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44B014E45E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8269F263C8E;
-	Tue, 15 Jul 2025 20:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001762BE7D9;
+	Tue, 15 Jul 2025 20:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvSMAu9v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LJ43VV1Z"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DDE20485B
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1749246769
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752610649; cv=none; b=u/vVX1v08+vPe9qyukwyMAfXEyP+ABG9rg373juhLt8hvnmAW+zuq1jR09RVeyqWlGuZVDfAan6oVyCwZj7CurDcigxvbFM59TKH+CyeTymVLMPNW972dpmpS8UeLNEtL9NqyTJJmoUFfQVsJQz3vy9MymjxPtRG8rIouE64JFY=
+	t=1752610698; cv=none; b=fqpSOSCLc4R0/Q+X1gmYPGXd5JdrjsSCqSDg5lYlNX6logCnDpzW39jJOgDLrhLyoRbcCQcebsivylD8hAhlL8nmHQ0YtYSuF3qU4iSe/u80qdTwNbFEbj/UgINlzj//6Hoiu6NFQvY0e4+9wKxb9OoIGxAFWSXIk+0/uDYjB48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752610649; c=relaxed/simple;
-	bh=ZVUoEHrFKDa2T3shxXnxjvESjxznAX/XpvM1/FjZYA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sKUvYwMpzTyqhxWsK6d0UuGmQfdTwRqRtSqN1PLz7yecpjZJfOZraa6rzlhkP/x+z8167yVfvk5lPO4Ak/RBdyT4UHR+JgGowEUpGFTKwU2Xwaey1XEZbNPEJeGGPbNVz9b6xHpdHbKaK7KFIU0Ht18npnsbjqZavCrHWE+Frto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvSMAu9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10BFC4CEE3;
-	Tue, 15 Jul 2025 20:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752610648;
-	bh=ZVUoEHrFKDa2T3shxXnxjvESjxznAX/XpvM1/FjZYA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mvSMAu9vM0iQjcTZ9SHZVG63bWX1lFYImGLv//AYGYoW82ayxFKbXMiv0HROtHpq3
-	 b9RS03k6aIp9kyVjyZu3Z2PuUaSqFxY2Z6EVv/gZhO7oIbuT6+OnD3E25IqJ9fQ1mj
-	 KK2+Y06NzWi9ndMYwlXjGcOnztH1JOrIM1udOxRBURsFPp7BP0RJqOKCVUKqpU30cC
-	 UyQ6f/ndVvwJ6LGJP87k/EOuDOcCczT91gUDcUP6fD4Vey6KyLlKybZw1SmeOCQScS
-	 XYE732hQWpiu41qPPEMD6wPrJcJovDgzuotnjPSHtAFI798wQ3uCLbc2gIgXyXPCgc
-	 GSJsMSUVOambQ==
-Date: Tue, 15 Jul 2025 13:17:26 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	akpm@linux-foundation.org, david@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
-	mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
-	acme@kernel.org, tglx@linutronix.de, willy@infradead.org,
-	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v5 07/14] perf bench mem: Allow chunking on a memory
- region
-Message-ID: <aHa3VgRA8qm8U9my@google.com>
-References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
- <20250710005926.1159009-8-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1752610698; c=relaxed/simple;
+	bh=s2ktJkEJEUaWsaEALaqTUWvGoIB35UIRafKufaYtazA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZqobChL7l0oxHoTxrOiAffNPuZgCGofqDHNTNP1N31YfkrSrh7F3bE8ngIXl2Kkf0pCbxDyLu7EZLagdlM2iIXksg5kzO6P2NKHTYIlfByP3KBxDoCaucSmwvkz/UwcfxAm4Ilpn3fZGYCUr7lqxHATk7kdqwCNUOjadI1mQR64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LJ43VV1Z; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso120361cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:18:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752610695; x=1753215495; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4h3Ep2VWmJ725V4zeell0WprNHA0l7LEqrQxhnNjHu8=;
+        b=LJ43VV1ZbLSsj9qfS+Z55jlpJVka01rmFc5XV6UDJf3dSt2ssVeJAEHfQdbL9P8mea
+         dGEvfDQpnIXBcXYGjPWFHxp6a2RHn+wMMKz3VnYhYNlT/pZPEj17ANmbfbSowCKlqR6w
+         ihxD5EhiW3xnQj3gLtjiqsSu+Ca++hiMjyGZCKPF6XvKJiklpGEvUaObAuaJVrrCl1zS
+         gBMaGmZtbdXxH6MI5BoGEKBvzM4gCOMf8JL55P0jYMt/RXpI8JPLdhnGXO7JZ693B3oG
+         2reQinwZ4FTqZiY9aaImo6nW+/cN2lDnuCAUysxSmRRVnNBezIJsyiWL1r7se2sMcXWA
+         CNNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752610695; x=1753215495;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4h3Ep2VWmJ725V4zeell0WprNHA0l7LEqrQxhnNjHu8=;
+        b=U2NImoKEnwmfNtVSn7AfuI8mESdTV0qaG4CV9m+s6XBFBkc3Wv8i2FNnSSlWWv7ZdS
+         3qSIstnXgDKtk6Rl993gcsaTUL6JqkD1cBbCvv3vf3hDIPDJMiGxTVtMc4G2ps9nU58V
+         iDqDq5VMU+FydOUl6y8kug8p+lTWaWKczYBM+DaJRELfGzSinZ/9jyiGuOesPI/63MLD
+         oIJJtOw0U1SjiShxctHIWUpYIIM+0jek5MNmUgeZiblkhDvIVI/lxxs9qpW5HQdZmGDY
+         BrTFOIZGqPJHn08GufT8RhQvJvIhJ56XNZezL4z5ZIIZIDalVeHnEeyi7x5tIE0cbD5c
+         znVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPp6cigvxizRO8gbyQkdRJoLxuxxE1fV5jFUZN4niXSUl1cm6thZFBeZwNPm8b/pocSPlKgxotRp+SYvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ipkweZRu+lQvnTSeJeBc5kt4ljtmbBg72neyE0H/tyKWQckR
+	gDeHOvTdj9oLsJG3+70Yqdc3r8B4GwkaNBbGt6UrKN6NndBtKPHVtOdWUBryDMrQ0tCE5jjCVGV
+	C1kqR0yWESbTr9b+2lviD5aMXt4KYdyn21YLEt+QQ
+X-Gm-Gg: ASbGncssSHfiOeQ8vW+ArhJwULmzYwld6IF0p18IHicLkz8EdHkthUi0SK6Bgrril7S
+	ZvrApaVk5NbP/OUuqTENrlj7CDuh69xcqR4jgu7U7qRBrsITbvfyJvLdXCBln04Yc4JNE9BBl5B
+	HvyZXlREyMtBDah8+gO0F7qKR1k/Sm4mhu+JxNFYC6FDt6fIli6jWJt4DAgZL37XidpbsOZinfh
+	q9TXrd35bvpT27JFptdrVbx3mGN+ry4+xkVYe778aQwMSs=
+X-Google-Smtp-Source: AGHT+IGH4M4H5yhWaOUW04EMOoMVNaNdnS8aTx/in7/xD6LRAKlI7amTM7yUE22F+ar6ZwOBueaAeL5WAceT+XowSog=
+X-Received: by 2002:a05:622a:a492:b0:4a7:26d2:5a38 with SMTP id
+ d75a77b69052e-4ab92bdf67fmr419201cf.19.1752610695062; Tue, 15 Jul 2025
+ 13:18:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250710005926.1159009-8-ankur.a.arora@oracle.com>
+References: <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com>
+ <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com>
+ <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
+ <5ec10376-6a5f-4a94-9880-e59f1b6d425f@suse.cz> <19d46c33-bd5e-41d1-88ad-3db071fa1bed@lucifer.local>
+ <0b8617c1-a150-426f-8fa6-9ab3b5bcfa1e@redhat.com> <8026c455-6237-47e3-98af-e3acb90dba25@suse.cz>
+ <5f8d3100-a0dd-4da3-8797-f097e063ca97@lucifer.local> <CAEf4BzaEouFx8EuZF_PUKdc5wsq-5FYNyAE19VRxV7_YJkrfww@mail.gmail.com>
+ <7568edfa-6992-452d-9eb2-2497221cb22a@lucifer.local> <7d878566-f445-4fc2-9d04-eb8b38024c9b@lucifer.local>
+ <CAEf4BzYDktFt9R78tQifMrJ7okzA+1LhhiqCi+SpSdq3h4zKyw@mail.gmail.com>
+In-Reply-To: <CAEf4BzYDktFt9R78tQifMrJ7okzA+1LhhiqCi+SpSdq3h4zKyw@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 15 Jul 2025 13:18:03 -0700
+X-Gm-Features: Ac12FXxyNmeLY-h4XS0JaeMQU9el1n8wMSHADzsB6KmgQZuTOsVzCS4Lh8cGUys
+Message-ID: <CAJuCfpFx1vcv-a5Eez3AhoCUM2+jM6Sh0s9ms8FCWqZ8tFkTQg@mail.gmail.com>
+Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	David Hildenbrand <david@redhat.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, 
+	peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, 
+	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
+	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
+	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
+	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
+	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 09, 2025 at 05:59:19PM -0700, Ankur Arora wrote:
-> There can be a significant gap in memset/memcpy performance depending
-> on the size of the region being operated on.
-> 
-> With chunk-size=4kb:
-> 
->   $ echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
-> 
->   $ perf bench mem memset -p 4kb -k 4kb -s 4gb -l 10 -f x86-64-stosq
->   # Running 'mem/memset' benchmark:
->   # function 'x86-64-stosq' (movsq-based memset() in arch/x86/lib/memset_64.S)
->   # Copying 4gb bytes ...
-> 
->       13.011655 GB/sec
-> 
-> With chunk-size=1gb:
-> 
->   $ echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
-> 
->   $ perf bench mem memset -p 4kb -k 1gb -s 4gb -l 10 -f x86-64-stosq
->   # Running 'mem/memset' benchmark:
->   # function 'x86-64-stosq' (movsq-based memset() in arch/x86/lib/memset_64.S)
->   # Copying 4gb bytes ...
-> 
->       21.936355 GB/sec
-> 
-> So, allow the user to specify the chunk-size.
-> 
-> The default value is identical to the total size of the region, which
-> preserves current behaviour.
-> 
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+On Tue, Jul 15, 2025 at 10:29=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Tue, Jul 15, 2025 at 10:21=E2=80=AFAM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > On Tue, Jul 15, 2025 at 06:10:16PM +0100, Lorenzo Stoakes wrote:
+> > > > For PROCMAP_QUERY, we need priv->mm, but the newly added locked_vma
+> > > > and locked_vma don't need to be persisted between ioctl calls. So w=
+e
+> > > > can just add those two fields into a small struct, and for seq_file
+> > > > case have it in priv, but for PROCMAP_QUERY just have it on the sta=
+ck.
+> > > > The code can be written to accept this struct to maintain the state=
+,
+> > > > which for PROCMAP_QUERY ioctl will be very short-lived on the stack
+> > > > one.
+> > > >
+> > > > Would that work?
+> > >
+> > > Yeah that's a great idea actually, the stack would obviously give us =
+the
+> > > per-query invocation thing. Nice!
+> > >
+> > > I am kicking myself because I jokingly suggested (off-list) that a he=
+lper
+> > > struct would be the answer to everything (I do love them) and of
+> > > course... here we are :P
+> >
+> > Hm but actually we'd have to invert things I think, what I mean is - si=
+nce
+> > these fields can be updated at any time by racing threads, we can't hav=
+e
+> > _anything_ in the priv struct that is mutable.
+> >
+>
+> Exactly, and I guess I was just being incomplete with just listing two
+> of the fields that Suren make use of in PROCMAP_QUERY. See below.
+>
+> > So instead we should do something like:
+> >
+> > struct proc_maps_state {
+> >         const struct proc_maps_private *priv;
+> >         bool mmap_locked;
+> >         struct vm_area_struct *locked_vma;
+> >         struct vma_iterator iter;
+> >         loff_t last_pos;
+> > };
+> >
+> > static long procfs_procmap_ioctl(struct file *file, unsigned int cmd, u=
+nsigned long arg)
+> > {
+> >         struct seq_file *seq =3D file->private_data;
+> >         struct proc_maps_private *priv =3D seq->private;
+> >         struct proc_maps_state state =3D {
+> >                 .priv =3D priv,
+> >         };
+> >
+> >         switch (cmd) {
+> >         case PROCMAP_QUERY:
+> >                 return do_procmap_query(state, (void __user *)arg);
+>
+> I guess it's a matter of preference, but I'd actually just pass
+> seq->priv->mm and arg into do_procmap_query(), which will make it
+> super obvious that priv is not used or mutated, and all the new stuff
+> that Suren needs for lockless VMA iteration, including iter (not sure
+> PROCMAP_QUERY needs last_pos, tbh), I'd just put into this new struct,
+> which do_procmap_query() can keep private to itself.
+>
+> Ultimately, I think we are on the same page, it's just a matter of
+> structuring code and types.
 
-Again, please update the documentation.  With that,
+That sounds cleaner to me too.
+I'll post a new version of my patchset today without the last patch to
+keep PROCMAP_QUERY changes separate, and then a follow-up patch that
+does this refactoring and changes PROCMAP_QUERY to use per-vma locks.
 
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+Thanks folks! It's good to be back from vacation with the problem
+already figured out for you :)
 
-Thanks,
-Namhyung
-
-> ---
->  tools/perf/bench/mem-functions.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/bench/mem-functions.c b/tools/perf/bench/mem-functions.c
-> index e4d713587d45..412d18f2cb2e 100644
-> --- a/tools/perf/bench/mem-functions.c
-> +++ b/tools/perf/bench/mem-functions.c
-> @@ -36,6 +36,7 @@
->  static const char	*size_str	= "1MB";
->  static const char	*function_str	= "all";
->  static const char	*page_size_str	= "4KB";
-> +static const char	*chunk_size_str	= "0";
->  static unsigned int	nr_loops	= 1;
->  static bool		use_cycles;
->  static int		cycles_fd;
-> @@ -49,6 +50,10 @@ static const struct option options[] = {
->  		    "Specify page-size for mapping memory buffers. "
->  		    "Available sizes: 4KB, 2MB, 1GB (case insensitive)"),
->  
-> +	OPT_STRING('k', "chunk", &chunk_size_str, "0",
-> +		    "Specify the chunk-size for each invocation. "
-> +		    "Available units: B, KB, MB, GB and TB (case insensitive)"),
-> +
->  	OPT_STRING('f', "function", &function_str, "all",
->  		    "Specify the function to run, \"all\" runs all available functions, \"help\" lists them"),
->  
-> @@ -69,6 +74,7 @@ union bench_clock {
->  struct bench_params {
->  	size_t		size;
->  	size_t		size_total;
-> +	size_t		chunk_size;
->  	unsigned int	nr_loops;
->  	unsigned int	page_shift;
->  };
-> @@ -242,6 +248,14 @@ static int bench_mem_common(int argc, const char **argv, struct bench_mem_info *
->  	}
->  	p.size_total = (size_t)p.size * p.nr_loops;
->  
-> +	p.chunk_size = (size_t)perf_atoll((char *)chunk_size_str);
-> +	if ((s64)p.chunk_size < 0 || (s64)p.chunk_size > (s64)p.size) {
-> +		fprintf(stderr, "Invalid chunk_size:%s\n", chunk_size_str);
-> +		return 1;
-> +	}
-> +	if (!p.chunk_size)
-> +		p.chunk_size = p.size;
-> +
->  	page_size = (unsigned int)perf_atoll((char *)page_size_str);
->  	if (page_size != (1 << PAGE_SHIFT_4KB) &&
->  	    page_size != (1 << PAGE_SHIFT_2MB) &&
-> @@ -299,7 +313,8 @@ static int do_memcpy(const struct function *r, struct bench_params *p,
->  
->  	clock_get(&start);
->  	for (unsigned int i = 0; i < p->nr_loops; ++i)
-> -		fn(dst, src, p->size);
-> +		for (size_t off = 0; off < p->size; off += p->chunk_size)
-> +			fn(dst + off, src + off, min(p->chunk_size, p->size - off));
->  	clock_get(&end);
->  
->  	*rt = clock_diff(&start, &end);
-> @@ -401,7 +416,8 @@ static int do_memset(const struct function *r, struct bench_params *p,
->  
->  	clock_get(&start);
->  	for (unsigned int i = 0; i < p->nr_loops; ++i)
-> -		fn(dst, i, p->size);
-> +		for (size_t off = 0; off < p->size; off += p->chunk_size)
-> +			fn(dst + off, i, min(p->chunk_size, p->size - off));
->  	clock_get(&end);
->  
->  	*rt = clock_diff(&start, &end);
-> -- 
-> 2.43.5
-> 
+>
+> >         default:
+> >                 return -ENOIOCTLCMD;
+> >         }
+> > }
+> >
+> > And then we have a stack-based thing with the bits that change and a
+> > read-only pointer to the bits that must remain static. And we can enfor=
+ce
+> > that with const...
+> >
+> > We'd have to move the VMI and last_pos out too to make it const.
+> >
+> > Anyway the general idea should work!
 
