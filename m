@@ -1,196 +1,166 @@
-Return-Path: <linux-kernel+bounces-731025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D6CB04DA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:03:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A29B04DAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 04:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097BB3B1FD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:03:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E383BCD9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 02:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334E72C326C;
-	Tue, 15 Jul 2025 02:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613A42C3277;
+	Tue, 15 Jul 2025 02:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BRrAqqQQ"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O3ukXhLZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D682E2BAF7;
-	Tue, 15 Jul 2025 02:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE90248F76
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752545022; cv=none; b=pSLLHdd6NvsQyxI9NLdxf+N2+LhCJrUUrj6SqksmNgOHFb8/h26xQ2g9r69/TathULHzqRJsFe92Edr0kQ5azhvbU2rIEjQRybq3i/FQ5boHGps/RIpS5nToZIptIjinhQZslh/kof58KGYktBFxxAj6+PhdRK1eKbTP92iDIG4=
+	t=1752545266; cv=none; b=D43DGdaYvcHB64dYGj2z6a0i1gfvWc0gDlYkR/n6Zwon1Xclxl19cYjdzXBEP8rn1e07GuYTrVg32w4NnbjvkYCO5+CnUGMB1ZSKD9K0cocuP4QMZ8nzoStukZMahFRN5rJpudVTbPHFjS+yIsnAqKjV7e5820S01WKKttmH5HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752545022; c=relaxed/simple;
-	bh=wIhcqbIU3A2uS19iVB5mFF+JdhGyFUreWhkEW6nyKpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uem/L8ODSx9XTGSrqFEZl0rfuuQZUypxxYCxPMx7+KhF1ZskPkAIL2An7mrdpWvCf9ZstKA3tHi4Ig09P/uashHKtVh+R4Ijb7FLgxBCc9cC8+abbZ77sGa7MUJL/ONUAtq9vDpz8u3mzZfuuLhZqH44YaoqeB2QNBssbzlExJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BRrAqqQQ; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752545013; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=zYnSNf9BzJd5gcJLKc4Aki1X1bARqpvuAcht6oEbdus=;
-	b=BRrAqqQQFtfUfbBcNXfOB0qLfxlHUOoz79hUrHzGHs5U0OKdukq27YvtuGf1j82E/sTt9IxQ0DCw+bAVJYUiff6jz3NG0CUI95lBKmavb3LU396mIJZjnS8ysbnYycHSsoqICJdSe2G7YcQgZ0/4WJIJ2IDL5D6l2urN7r26XX0=
-Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wj-H5cN_1752545009 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 15 Jul 2025 10:03:31 +0800
-Message-ID: <548ba9fd-60d6-4976-b04b-94fc79e858ff@linux.alibaba.com>
-Date: Tue, 15 Jul 2025 10:03:28 +0800
+	s=arc-20240116; t=1752545266; c=relaxed/simple;
+	bh=HThEJMzKwJYDztky44ZA/c1WrXlLoJhAkNszWLwz0Os=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F7kO2Jm5uYCsofShavu1U2OboaSO7QP4gUh3dLs5ZhfLwt1Aq1Hq08tX/iB4IX1bCXuofrdN83/TXMYWMGjKDiBDkP/J5buf+Vet7x3CnXeZ4Zyg54zyHxVsF2VuuBczi1OuXpNFmOmobjFY4s+QeoLnbsf6RNWIgxGeLGyFz+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O3ukXhLZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56EJ85hC013407
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:07:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PSVwncDU6Dys5JEA52xmdL
+	uexYAaayc7t0DglVd9hSU=; b=O3ukXhLZxqN3YiATmr03C6jdAR5sbb8uS33RiV
+	rCNRTDFsRf/Qkp6J1FTpCntkw6oKwRQR3SsOyBC++4eIqVAWPGYjjJd5iD39s4LX
+	K6fzyNx9JbdpUsUpRFUNjzay2zjgex1g6ykqCz5sC7jn1FIWfhrQ14ANCiQ6+e+p
+	eMsp6GpBqkhxY0QyyL/3aa0EDw7hr7Txb7VNuzOXu2y3rOkn2di8908qhvcdqC7h
+	8Bsuqs18+0RAv49g4DasyP3TN9LsHct3mhbdcYcEcCa2z6s3Im03L93lAC9BHLBW
+	UFk+HudJ01u2OrIP4BAZurSKcy7Qe13a3VsfrkPfKPYm+m/A==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufvbeeyy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:07:42 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2369261224bso55284895ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jul 2025 19:07:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752545261; x=1753150061;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PSVwncDU6Dys5JEA52xmdLuexYAaayc7t0DglVd9hSU=;
+        b=cV5KZCg97y0gjhcD/okqt6XLpVBDXc5RfqP55rF3OJtScW6VvSAiL5OU6gAnkFkCdL
+         +5Df76I70wfzXZHeG+oCs8X2uPKeeFAeKeKjrjT4ZbbAwsdZekJmDVn6r+iV0EvsgSj9
+         kgH82OkXEOso5v7V/72ZJ8lBO6JCi2PWti2mwt/cGg/It2YOIrWCM5RHNmcmeTVk3YkG
+         +0lWkese/RHP0PgHPMPLQdsdDFT52QFaN+HH/a2hRMRuL9uh56J5slVDLj+ioJWulWVK
+         G93hu62poHxLUzWumme2n2e9Pc8p1Wjmpi57Ydsi4mRFubW+eNvZHyJG6p+lc/4ur132
+         lOVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVawzapRq0jxOzhYVl3CngsqNPSMetCj+4/Bpzoi1HA52PXNmq1e8wGvpQ5wI5sx2ACoNNQAtgJmfR7ZRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD00yPopAdHOdKLiML/HRk5P3zhvCklT2mLoMbR3DoODAPsx5J
+	X44K+w/uxH76/8WP32K+NH+qOAF5twATEwQ57CEaBctvoeM6fZVmRzRI57hV9v28Shjl05Qtjjj
+	ZJS9N4lQg7sVrqs3yYdf0loFRkjHuGIUs8WHIEm155T3f9hj8X2k3qODiBM/bideccqjFnOBHyN
+	w=
+X-Gm-Gg: ASbGncuSOazJTyFvZDb2fbQbI5PRne9ueQV8+iY41ErmbkNYdRwf1H6jiBPNlxcjU0z
+	GYSheqOlaqOZDkJzZoTRmPD0s28sr7gGtIKR8UQfm/dDtLm2yaKp53OUhFP8Jy7oYa5RtuFCnAB
+	fn2h4jYdXroGRiihN65p84fNLp2y9CkyY95sRT6GifYn7AV7Aa7JORnwWFyF1z54ebSLaVnjyuC
+	QjqSyG2QRSd05Ze54Lh40iVL6W6z4wadWvzFaUKvHr8uAfgi4we1VRQOYK4v9/FTmp06GK05JKW
+	G3DBASPi6hD19lYyiGcD+AL6eZ+oM2mdpBBnuww9x9wEXSPqZE4ByahJz87hBjL5RxnsphE+Zu4
+	LvPYDE4jk3+ErzjmHCg==
+X-Received: by 2002:a17:903:1ac5:b0:234:db06:ac0 with SMTP id d9443c01a7336-23dee264f3emr234356495ad.45.1752545261213;
+        Mon, 14 Jul 2025 19:07:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJcKH2/xSIW5sa5dra/KGf3NPul0JNAK8Fy/Ps1y4FVsqv9aC49irxSUQ7qZWB9zBprTyTsA==
+X-Received: by 2002:a17:903:1ac5:b0:234:db06:ac0 with SMTP id d9443c01a7336-23dee264f3emr234356015ad.45.1752545260784;
+        Mon, 14 Jul 2025 19:07:40 -0700 (PDT)
+Received: from [127.0.1.1] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42abd8esm99760635ad.54.2025.07.14.19.07.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 19:07:40 -0700 (PDT)
+From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Date: Tue, 15 Jul 2025 10:07:35 +0800
+Subject: [PATCH ath-next] wifi: ath12k: remove unneeded semicolon in
+ ath12k_mac_parse_tx_pwr_env()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v18 1/2] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-To: "Rafael J. Wysocki" <rafael@kernel.org>, "Luck, Tony"
- <tony.luck@intel.com>, lenb@kernel.org, bp@alien8.de, james.morse@arm.com,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Hanjun Guo <guohanjun@huawei.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@linux.alibaba.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, robert.moore@intel.com,
- lvying6@huawei.com, xiexiuqi@huawei.com, zhuo.song@linux.alibaba.com,
- sudeep.holla@arm.com, lpieralisi@kernel.org, linux-acpi@vger.kernel.org,
- yazen.ghannam@amd.com, mark.rutland@arm.com, mingo@redhat.com,
- robin.murphy@arm.com, Jonathan.Cameron@huawei.com,
- linux-arm-kernel@lists.infradead.org, wangkefeng.wang@huawei.com,
- tanxiaofei@huawei.com, mawupeng1@huawei.com, linmiaohe@huawei.com,
- naoya.horiguchi@nec.com, james.morse@arm.com, tongtiangen@huawei.com,
- gregkh@linuxfoundation.org, jarkko@kernel.org
-References: <20250404112050.42040-1-xueshuai@linux.alibaba.com>
- <20250404112050.42040-2-xueshuai@linux.alibaba.com>
- <0c0bc332-0323-4e43-a96b-dd5f5957ecc9@huawei.com>
- <709ee8d2-8969-424c-b32b-101c6a8220fb@linux.alibaba.com>
- <353809e7-5373-0d54-6ddb-767bc5af9e5f@huawei.com>
- <653abdd4-46d2-4956-b49c-8f9c309af34d@linux.alibaba.com>
- <de5d2417-dc92-b276-1125-4feb5151de7f@huawei.com>
- <f60f1128-0d42-48e5-9a06-6ed7ca10767f@linux.alibaba.com>
- <20250428152350.GA23615@willie-the-truck>
- <6671c3cc-5119-4544-bcb5-17e8cc2d7057@linux.alibaba.com>
- <CAJZ5v0j3NC2ki1XPXfznxZRBLaReDBJ+nzHFgvqMx5+MgERL-A@mail.gmail.com>
- <3a465782-a8ff-4be8-9c15-e46f39196757@linux.alibaba.com>
- <CAJZ5v0gfFHCvE2Uu8=GRb9=ueK51s1-0BDBkJbbDG0tQvD5pLA@mail.gmail.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <CAJZ5v0gfFHCvE2Uu8=GRb9=ueK51s1-0BDBkJbbDG0tQvD5pLA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250715-ath12k-unneed-semicolon-v1-1-9972fd4cef07@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAOe3dWgC/43OwQ6CMAwG4FchOzvCJgh48j2MhzI6WYRNN1gwh
+ He32dlEL03+NP/XbiygNxjYOduYx2iCcZaCOGRMDWDvyE1PmclCVkUtSg7zIOSDL9Yi9jzgZJQ
+ bneVNe9JdV1agQTFqPz1qsyb5yqjELa4zu9FmMGF2/p1ORpH2P/UouOCNxg4lAHZFe3Eh5K8FR
+ uWmKaeR6Cj/5CRxIPojPYtlDeoLt+/7B1EfIXIeAQAA
+X-Change-ID: 20250714-ath12k-unneed-semicolon-896fbb45afac
+To: Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDAxOCBTYWx0ZWRfX2Gri/5xp0Jui
+ aRh1d4Jeebuz2TdsikdDsDBQCp/kweq1Dh3WyUOSwjoOYI8/TrYkryLaLSPln798yAKaspabwL0
+ 4Dblu2BoiI7959hL2N8RZRJaB1KO+IC93dkcBaWKdJKV+prwxrN8XNXMHZledk2AKxSkbVD8NAZ
+ iBgsz2i3j1IfYP6XZS4pNE2QjVMogAMliPSEIMhLbbn31rgQ9j5nZlwwx/QWyFHks3aole9T67F
+ 2ax41yCQ6cjAaWYyjx99wuYNY8Cobxc2I+JdlK0Vy9OJs2d27sE8lf+LpXK14vVreVz/qDIVxiz
+ XLNBPbVIs3WTNsjMmboGQgHInFIZW2OGQ19h2HaV55JmkjlZjN8Z3s9Ux4jwcgty2k2WPTTfEz8
+ KX+NF49+vctS6c7KNtpIo9JY9qtBeb2f1XS8vS/No2Ck3aeokbAun9eQ0o9P8vUn/VGKAvoM
+X-Proofpoint-GUID: U69Of6Lb3DTPzbEh5AqpQqtZVe_JJOco
+X-Authority-Analysis: v=2.4 cv=RPSzH5i+ c=1 sm=1 tr=0 ts=6875b7ee cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
+ a=EUspDBNiAAAA:8 a=kzacFtwYidqRY08iEG8A:9 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-ORIG-GUID: U69Of6Lb3DTPzbEh5AqpQqtZVe_JJOco
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_03,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=875 spamscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507150018
 
+Kernel bot warns about this unneeded semicolon:
 
+	drivers/net/wireless/ath/ath12k/mac.c:9785:2-3: Unneeded semicolon
 
-在 2025/7/15 01:30, Rafael J. Wysocki 写道:
-> Hi,
-> 
-> On Mon, Jul 14, 2025 at 1:54 PM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
->>
->> 在 2025/7/1 21:56, Rafael J. Wysocki 写道:
->>> On Tue, Jul 1, 2025 at 1:00 PM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
->>>>
->>>>    >在 2025/4/28 23:23, Will Deacon 写道:
->>>>    >> On Fri, Apr 25, 2025 at 09:10:09AM +0800, Shuai Xue wrote:
->>>>    >>> 在 2025/4/25 09:00, Hanjun Guo 写道:
->>>>    >>>> Call force_sig(SIGBUS) directly in ghes_do_proc() is not my favourite,
->>>>    >>>> but I can bear that, please add
->>>>    >>>>
->>>>    >>>> Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
->>>>    >>>>
->>>>    >>>> Thanks
->>>>    >>>> Hanjun
->>>>    >>>
->>>>    >>> Thanks. Hanjun.
->>>>    >>>
->>>>    >>> @Rafael, @Catalin,
->>>>    >>>
->>>>    >>> Both patch 1 and 2 have reviewed-by tag from the arm64 ACPI
->>>> maintainers, Hanjun,
->>>>    >>> now. Are you happpy to pick and queue this patch set to acpi tree
->>>> or arm tree?
->>>>    >>
->>>>    >> Since this primarily touches drivers/acpi/apei/ghes.c, I think it should
->>>>    >> go via the ACPI tree and not the arm64 one.
->>>>    >>
->>>>    >> Will
->>>>    >
->>>>    >Hi, Will,
->>>>    >
->>>>    >Thank you for your confirmation :)
->>>>    >
->>>>    >@Rafael, do you have more comments on this patch set?
->>>>    >
->>>>    >Thanks you.
->>>>    >
->>>>    >Best Regards,
->>>>    >Shuai
->>>>
->>>> Hi, all,
->>>>
->>>> Gentle ping.
->>>>
->>>> Does ACPI or APEI tree still active? Looking forward to any response.
->>>
->>> For APEI changes, you need an ACK from one of the reviewers listed in
->>> the MAINTAINERS entry for APEI.
->>>
->>> Thanks!
->>
->> Hi, Rafael
->>
->> Sorry, I missed your email which goes in span (:
->>
->> ARM maintain @Catalin points that:
->>
->>   > James Morse is listed as reviewer of the ACPI APEI code but he's busy
->>   > with resctrl/MPAM. Adding Lorenzo, Sudeep and Hanjun as arm64 ACPI
->>   > maintainers, hopefully they can help.
->>
->> And Hanjun explictly gived his Reviewed-by tag in this thread, is that
->> happy for you for merge?
-> 
-> Not really.
-> 
-> I need an ACK or R-by from a reviewer listed in the APEI entry in MAINTAINERS.
+Remove it.
 
-Hi Rafael,
+Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.1.c5-00284.1-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
 
-I understand your requirement for an ACK/R-by from the APEI reviewers 
-listed in MAINTAINERS.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202507132355.ljWuxxjd-lkp@intel.com/
+Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+---
+ drivers/net/wireless/ath/ath12k/mac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So, @Tony, @James, @Borislav, @Len,
+diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
+index 5333da9cac1b2cae4a71c975bf927de8182c357b..a5fb917812c1ed2e60a3ceba32d092d7198e6054 100644
+--- a/drivers/net/wireless/ath/ath12k/mac.c
++++ b/drivers/net/wireless/ath/ath12k/mac.c
+@@ -11424,7 +11424,7 @@ static void ath12k_mac_parse_tx_pwr_env(struct ath12k *ar,
+ 			    "no transmit power envelope match client power type %d\n",
+ 			    client_type);
+ 		return;
+-	};
++	}
+ 
+ 	if (psd_valid) {
+ 		tpc_info->is_psd_power = true;
 
-Gentle ping, we need your help to review and ack this patch set.
+---
+base-commit: 3a6df1678acc3687d49ce94e23df7b6a289f27f9
+change-id: 20250714-ath12k-unneed-semicolon-896fbb45afac
 
-If I recall correctly, Rafael has mentioned this issue at least three 
-times in previous emails, but we still haven't received explict response 
-from the APEI maintainer.
+Best regards,
+-- 
+Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 
-
-> 
-> If James Morse is not able to fill that role (and AFAICS he's not been
-> for quite some time now), I'd expect someone else to step up.
-> 
-> Thanks!
-
-Thank you for the clarification.
-
-I'd like to volunteer to help with APEI code reviews. I have been 
-working with APEI-related code and am familiar with the ACPI error 
-handling mechanisms.
-
-I'm willing to start by contributing reviews and help move pending APEI 
-patches forward. If the community finds my contributions valuable and 
-believes I have the necessary expertise, I would welcome the opportunity 
-to be formally set up as an APEI reviewer in the future.
-
-Thanks for considering this, and I look forward to your guidance.
-
-Thanks.
-Shuai
 
