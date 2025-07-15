@@ -1,55 +1,86 @@
-Return-Path: <linux-kernel+bounces-732043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F7AB06143
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:35:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9CFB06133
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E214A0DB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:28:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D5D7BC900
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4678D289E0E;
-	Tue, 15 Jul 2025 14:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0B928A737;
+	Tue, 15 Jul 2025 14:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="wtTl89pM"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I+2wgWrl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB68126B767
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0328289E27
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 14:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752589319; cv=none; b=hb3z6Crt77kHBFuali+39R0oJLWWEphqTtcuMNB2inGewyViR0Eu/IoAa2moeLPVjuKnfBS3XMQ6NEW6cdhjc4g6mFmeYaTmbPsLmdvRxRmYBp7CENNdXeg5U6fpRh/74yAhSF71eLbDEZ4ioJU0feZmF4Ll/GoBeupE1/tYpR4=
+	t=1752589325; cv=none; b=CM6tWVqeVkkD13TbVFYlEaIHby5rqqVwtYNSTmwGxw8SIgSL1h0ZDvDr5WBai8dd7aiISIUwiJiDmAJrMpXL5P2gsamn6qZcM/I1EGYjUjpTn2H8HptrpmI5oRmKoAHFdCTd7M5RzjF5JawGX9XDwHxpKuQ/GT2zfX/HtNh1Ntg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752589319; c=relaxed/simple;
-	bh=Hz35ChSUg8Djhrpvw527r9EgmUMM7Vk577nVPsZv2U0=;
+	s=arc-20240116; t=1752589325; c=relaxed/simple;
+	bh=6vTFftX9JgKJtLyS9WEX0i/rEg1WH40G07TigvFEHyc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JMePuQHofQkMoo3DOLxljvz5zRoQdtceSXINLEwnGApRYZG1WsJELJL9pd1FKF8mQ9fJoAHwPHNilOUCXlPMSq/0/lv2rS3vtZK+QYeU5BfBUp5hdEXb4fc+q0UXAJwAdfgXBGImnZLSa9MG5/KrwoUbI8Xwt/iB4iwoYoBths8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=wtTl89pM; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1752589310;
- bh=hc3vsBfzOMAStJdYYEY+W0t5J5sQBFx3Mo+fJY+/Kfc=;
- b=wtTl89pM4xXXl5LDMuZusiNkFo49zf/iPh9ocHrUKsu5wbYEgwpOq0TbBDlucOaD0AaeeIgRi
- mlVvQMcdw0ujL2TG/KmvnVSJ9cbcFaA1QLMPooXzzp/eLg7qRadwNGPNTAqJ4yiWObPjDlZj9vO
- bObNXKi0BFmeky0HoWWTFUqNT7w4IUFq14l9ZEem833Wje0MkoRr1h4S2JmF10sLQufDlUCJ02k
- T//kMnEiY9zYAVM6bA7K2qC21fTmNpp9ajAQ2HsBxP7tJ6rDCA5Krv2hrY+eoPBBBnZUZwQjSH+
- rPqyi6GywC/O9rU0pdyI1SFjugkeb7ocWxAriOV3AL1w==
-X-Forward-Email-ID: 687663ea4f06c51bcf022fb0
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.1.6
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <9050b4fe-ce69-4f93-9093-5461a6aa052f@kwiboo.se>
-Date: Tue, 15 Jul 2025 16:21:26 +0200
+	 In-Reply-To:Content-Type; b=ZM4Ah89FJSgd3UgpqJGY6ux9UYZwFWOgKBYP942IPSs09OO3k3pzwpfnoAluOT7yDLD/mmkgNIlyR36GXylgSswNDlUAbRyR3oafL2wACnbO1Z4WdSLPINpUtLgC0i/UK7b1Erkf393iThSAak2UBqHc5EZqdDI03t5XAhdCfls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I+2wgWrl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752589322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oDrEGUfdEY5bNUZj0OPBlZFo/nFLzvL2Qn0I2Pn5t0w=;
+	b=I+2wgWrluEe7HTGbGvCg1KJ0YLtRiE1/D11mGVwM4jF5WIg4PgmRTbaKyuqEtl1BOuoQTu
+	UEaz+vTG9y0KpoaojIYCwVZNxqn6SW7nkvi0DJwr/cFmOIaNbuCa83XM0aCWFWrDZOiHOw
+	yBbQEWg3xltltyDJurgCUFPj0vDAmWA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-76-EX8N6By6MNGzp6NQeVy3ww-1; Tue, 15 Jul 2025 10:22:01 -0400
+X-MC-Unique: EX8N6By6MNGzp6NQeVy3ww-1
+X-Mimecast-MFC-AGG-ID: EX8N6By6MNGzp6NQeVy3ww_1752589320
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45626e0d3e1so7667415e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 07:22:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752589320; x=1753194120;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oDrEGUfdEY5bNUZj0OPBlZFo/nFLzvL2Qn0I2Pn5t0w=;
+        b=JsN+W7lDQR6Iae21Qwu/xhsNq6JoOsGbq1kV9gPXwyLw423aXtJAMYQ3sRJVrf6iL/
+         kcDtri2kopayVu74zknt9n9OiQOjflnr1M0EeRE8XeSvCZMZE5hZzEH4rjAQLqpZfotM
+         vCh0AJFuwcl1EueEo2ZEW8vOACCosB2h1I3vqRJhs3hb5PydnaPvoRNRWaPX4RilmeOG
+         QCwMhgOiahxYxZgv+yvzuqz/hk13vKy3leGfzFe0mBcC9dSDI4LYwFIyCnnwDYAKo1vC
+         MpWl+uH1c7TnbPyhfYUMtx8Rae5upaN+w/CF6hUqWJgkxz5O6/LmmtvzXkojknuA7Qn2
+         vDiA==
+X-Gm-Message-State: AOJu0Yw8E+2hRZE7R3khzpJr4x+X2p+8SHVqKWSUWmWJ6is0YtzDmaSZ
+	EneOKx1ONovlN1w1VypIblaB+Y/6iBm12FXPZlsXBgXCHJa7Hgs9saPHu2tb1yyG4PukZO66vcJ
+	dtMuDpq+Qqiv7pQe/cbJzFOkhPQLokFFFoJPh8qu2bb/ApdN7+fOV6Wuu9QfoZBKQ4g==
+X-Gm-Gg: ASbGncudKKIr1L7SP8+P3ue/JZgMtJXxrbJ5DYA9asPO+CjkV/MPXn5BixAkBwAS3KF
+	1KrQAdO3a5WkP3JzXN32p5+yE/F6DUBp28QKe3Ncty31b2CFYVGHkk7b6RyvY+W85aOculk8wCh
+	60hfcnsGetUSO23rsdVFwriI9GILdjTyjORjiUVHl69LRQr3HxGcXZ3oCHe0wCT1lc/8ft7GH/6
+	81Mq/XT633C4K6POdx5bRcl7zuWN+XBk892dFWfaDTRzS9Pcko6piHER+xIcbBdeN+WYH6g2FU3
+	4iVdFfKQdBQ+ZZ1olvZz7WfZKiaDh+iXP1xzAb6IL2npSNO0W0u3N5HcB1Rrvy1WZ0U0t35fWo9
+	MwmMVepFlncr/IRrLMeQK6wlWWrsrGxLpsIowtcesK7PqaPLmlZm63//ot6IGPnmAFek=
+X-Received: by 2002:a05:600c:a208:b0:456:27a4:50ac with SMTP id 5b1f17b1804b1-45627a4535fmr16117425e9.23.1752589319854;
+        Tue, 15 Jul 2025 07:21:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFmFicQGLhaeIqIZaRygdy0pZOKRG2JvGq7gYgR7tSdKq9ZAb0t0UWibnFtXm6Rsiqbr86/Tg==
+X-Received: by 2002:a05:600c:a208:b0:456:27a4:50ac with SMTP id 5b1f17b1804b1-45627a4535fmr16117065e9.23.1752589319405;
+        Tue, 15 Jul 2025 07:21:59 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:4900:2c24:4e20:1f21:9fbd? (p200300d82f2849002c244e201f219fbd.dip0.t-ipconnect.de. [2003:d8:2f28:4900:2c24:4e20:1f21:9fbd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1e135sm15388978f8f.72.2025.07.15.07.21.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 07:21:58 -0700 (PDT)
+Message-ID: <26fded53-b79d-4538-bc56-3d2055eb5d62@redhat.com>
+Date: Tue, 15 Jul 2025 16:21:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,62 +88,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] arm64: dts: rockchip: Add ArmSoM Sige1
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: devicetree@vger.kernel.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, ziyao@disroot.org
-References: <20250712173805.584586-5-jonas@kwiboo.se>
- <20250715140115.1925358-1-amadeus@jmu.edu.cn>
+Subject: Re: [PATCH v2 3/5] mm: add static PMD zero page
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
+ x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+References: <20250707142319.319642-1-kernel@pankajraghav.com>
+ <20250707142319.319642-4-kernel@pankajraghav.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250715140115.1925358-1-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
+Organization: Red Hat
+In-Reply-To: <20250707142319.319642-4-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Chukun,
-
-On 7/15/2025 4:01 PM, Chukun Pan wrote:
-> Hi,
+On 07.07.25 16:23, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
->> ...
->> +&sdio0 {
->> +	bus-width = <4>;
->> +	cap-sd-highspeed;
->> +	cap-sdio-irq;
->> +	disable-wp;
+> There are many places in the kernel where we need to zeroout larger
+> chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
+> is limited by PAGE_SIZE.
 > 
-> I don't think sdio needs disable-wp?
-
-I thinks your are correct:
-
-  disable-wp:
-    $ref: /schemas/types.yaml#/definitions/flag
-    description:
-      When set, no physical write-protect line is present. This
-      property should only be specified when the controller has a
-      dedicated write-protect detection logic. If a GPIO is always used
-      for the write-protect detection logic, it is sufficient to not
-      specify the wp-gpios property in the absence of a write-protect
-      line. Not used in combination with eMMC or SDIO.
-
-It mention 'not used in combination with eMMC or SDIO', yet I see
-multiple boards where disable-wp is currently used with eMMC and SDIO.
-
-Do you have anything else to remark before I send a v4 with this prop
-removed?
-
-Regards,
-Jonas
-
+> This is especially annoying in block devices and filesystems where we
+> attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
+> bvec support in block layer, it is much more efficient to send out
+> larger zero pages as a part of single bvec.
 > 
-> Thanks,
-> Chukun
+> This concern was raised during the review of adding LBS support to
+> XFS[1][2].
 > 
-> --
-> 2.25.1
-> 
+> Usually huge_zero_folio is allocated on demand, and it will be
+> deallocated by the shrinker if there are no users of it left. At moment,
+> huge_zero_folio infrastructure refcount is tied to the process lifetime
+> that created it. This might not work for bio layer as the completitions
+> can be async and the process that created the huge_zero_folio might no
+> longer be alive.
+
+Of course, what we could do is indicating that there is any untracked 
+reference to the huge zero folio, and then simply refuse to free it for 
+all eternity.
+
+Essentially, every any non-mm reference -> un-shrinkable.
+
+We'd still be allocating the huge zero folio dynamically. We could try 
+allocating it on first usage either from memblock, or from the buddy if
+already around.
+
+Then, we'd only need a config option to allow for that to happen.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
