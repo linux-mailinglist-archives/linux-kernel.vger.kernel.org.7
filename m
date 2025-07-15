@@ -1,83 +1,155 @@
-Return-Path: <linux-kernel+bounces-731872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D42BB05ACC
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:07:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD08B05AD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA483AA413
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:06:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CF057AA144
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E49C2E2EE8;
-	Tue, 15 Jul 2025 13:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2B72E1751;
+	Tue, 15 Jul 2025 13:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVyyJsxv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Myx2Goh5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6945E1C860A;
-	Tue, 15 Jul 2025 13:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBC62566;
+	Tue, 15 Jul 2025 13:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752584811; cv=none; b=WmW9wdSSqVZVofkhKssKftLQEPhC1kG9XUYgrgIiWjtYbf4trdGq+edBgP8U3lULHapRBn0qsIKBWA1lwd5gPHLpt1EX25ZtMMRIl8ZoSFD/Z14SlTr+ctlzNPFtTZyTUxQPHZ06re45RfMv6DtY2JAGhFp8avDEBn+8HrpCmbI=
+	t=1752584902; cv=none; b=szCtKIqs1omWOciZf4YE15qY9abEskvnr7/duq83JjLgZZi0k5rMtgTFz3TI3vzFqLTbIUI2YIbLwjU8j6wHFpVgN9xR4MQJD0qgxbGm63rUFqu7Aq1GDpELwG5VmABUopIc94aYFr7Qrxy9KxW0j5Hcbia0nGrdqe7ccMHSyd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752584811; c=relaxed/simple;
-	bh=bafqguJWmXLYYlTq9y7yrUcgb2q8KMWK6ngMv9tRjeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uykW3Ts8KrQb9v17ps8pyJ3qohaZnmWg2Q7/W1vz5itnvdLykwDPD6aNyi9CRCqw7Rp3I/rEkgPpHxUd+4iTly81PIfcMIhFpilUJtOE91BSHoPPVJcUyyO918FfzUiGfJpHHdWEIoIdyw/zLn4wBYicOv2ZKPwK+WsfH1CWwVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVyyJsxv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D19C4CEE3;
-	Tue, 15 Jul 2025 13:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752584811;
-	bh=bafqguJWmXLYYlTq9y7yrUcgb2q8KMWK6ngMv9tRjeM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IVyyJsxvGSqsedu0Re6yN9Jid9yCV65jOVf83KiowRDGNaC42SKzb7IER0MvKl8SV
-	 LhYWQlcpkG3l+8tNydtpmfV5yC4UdT+K9hsi0kcEP0n6K3Rc0Evm8ZVhmiJoSh3Vwp
-	 SSDocwPHhKJIUu8H/c/NoapbDxShDyVsjM+NPZWJaLDR4pl+0wwVaoc7kHSrLfEeja
-	 0YbsWQzHQ6ZZS5riO+V0RfGFTbypRm5JCbnf+nnyRhwBHamWDUshw0z16CGj2BX087
-	 bBDIbeultNeoQHQioCUoqVFmywdfgoaWUb8wcRweKPD8aSLfNmcnPcQekrjQeSA/68
-	 lmih8z6hhzYuQ==
-Date: Tue, 15 Jul 2025 06:06:49 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Dragos Tatulea <dtatulea@nvidia.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Jens Axboe <axboe@kernel.dk>, parav@nvidia.com,
- Cosmin Ratio <cratiu@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Pavel
- Begunkov <asml.silence@gmail.com>, Mina Almasry <almasrymina@google.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] net: Allow SF devices to be used for ZC DMA
-Message-ID: <20250715060649.03b3798c@kernel.org>
-In-Reply-To: <aHXbgr67d1l5atW8@infradead.org>
-References: <20250711092634.2733340-2-dtatulea@nvidia.com>
-	<20250714181136.7fd53312@kernel.org>
-	<aHXbgr67d1l5atW8@infradead.org>
+	s=arc-20240116; t=1752584902; c=relaxed/simple;
+	bh=ERgqFp3dWEUt6TrdSa/YUzlMBzQe1R/D7z1fcvnBStk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DNK44uo64rqHyF4itq1bvz457/Gv9GSOBkOcRvweMXditZUkCFk6fT45aIZHQHDMsnMxySMa+aPsEL7IrnJP93foxs+smajx6C06Jzxs7gN9zkmtQxMfblMGxKxPgJQF93mBwUuKvArkhCmiNOMZ8FN2JFEVqXCijrZG+QLt9iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Myx2Goh5; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752584899; x=1784120899;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ERgqFp3dWEUt6TrdSa/YUzlMBzQe1R/D7z1fcvnBStk=;
+  b=Myx2Goh5z5ruC3fY8eAkSaSuz/TKc6fdV4VNlO9eikFEw6ndC2LbsaoO
+   UWHIOA3wQGriXCYKezCAr2QWQooFu6mRKDrkdNR5nbXRv6HY+rLbgOHgs
+   gAm+jkRKE2OtqHnjhZk2iKBihridvvStyWxsBhZzteva5Z+E+WjIPkRxM
+   dNrwrSrxsd5GIGeHoiZQszjAkIsDsnL2Y0xCQewnjyK/LWZb7BO63sHiu
+   DCPQYDpu/lNcClsqbKxoUS138kn7zxh87OFjnUNqzVYRQaKMwKrniy1OW
+   O5UXnozFHEYylNjG8bCaKgRZjZgTYWiYmLJgO69iOtaG/+gY6d8Q2Rsdz
+   Q==;
+X-CSE-ConnectionGUID: Br1mH+ceS5qXP6cE+NDHRA==
+X-CSE-MsgGUID: HF/HgTUjQKyIPhGBE9IIsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54740059"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="54740059"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 06:08:19 -0700
+X-CSE-ConnectionGUID: 1wcdqG34SWqIsJon1ARLKQ==
+X-CSE-MsgGUID: TP7UHK2CRpyZLxyiQtiKnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="157765105"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 15 Jul 2025 06:08:12 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubfOD-000A51-2g;
+	Tue, 15 Jul 2025 13:08:09 +0000
+Date: Tue, 15 Jul 2025 21:07:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Joris Verhaegen <verhaegen@google.com>, Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Joris Verhaegen <verhaegen@google.com>,
+	kernel-team@android.com, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-arm-msm@vger.kernel.org, sound-open-firmware@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org, David Li <dvdli@google.com>
+Subject: Re: [PATCH v2 4/4] ASoC: codecs: Implement 64-bit pointer operation
+Message-ID: <202507152054.EKID8Uop-lkp@intel.com>
+References: <20250711093636.28204-5-verhaegen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711093636.28204-5-verhaegen@google.com>
 
-On Mon, 14 Jul 2025 21:39:30 -0700 Christoph Hellwig wrote:
-> > LGTM, but we need a better place for this function. netdevice.h is
-> > included directly by 1.5k files, and indirectly by probably another 5k.
-> > It's not a great place to put random helpers with 2 callers. 
-> > Maybe net/netdev_rx_queue.h and net/core/netdev_rx_queue.c?
-> > I don't think it needs to be a static inline either.  
-> 
-> The whole concept is also buggy.  Trying to get a dma-able device by
-> walking down from an upper level construct like the netdevice can't work
-> reliably.  You'll need to explicitly provide the dma_device using either
-> a method or a pointer to it instead of this guesswork.
+Hi Joris,
 
-Yeah, I'm pretty sure we'll end up with a method in queue ops.
-But it's not that deep, an easy thing to change.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on broonie-sound/for-next]
+[also build test ERROR on vkoul-dmaengine/next linus/master v6.16-rc6]
+[cannot apply to tiwai-sound/for-next tiwai-sound/for-linus next-20250714]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Joris-Verhaegen/ALSA-compress_offload-Add-64-bit-safe-timestamp-infrastructure/20250711-174008
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+patch link:    https://lore.kernel.org/r/20250711093636.28204-5-verhaegen%40google.com
+patch subject: [PATCH v2 4/4] ASoC: codecs: Implement 64-bit pointer operation
+config: i386-randconfig-141-20250714 (https://download.01.org/0day-ci/archive/20250715/202507152054.EKID8Uop-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250715/202507152054.EKID8Uop-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507152054.EKID8Uop-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: sound/soc/intel/atom/sst-mfld-platform-compress.o: in function `sst_platform_compr_pointer64':
+>> sound/soc/intel/atom/sst-mfld-platform-compress.c:226: undefined reference to `__umoddi3'
+
+
+vim +226 sound/soc/intel/atom/sst-mfld-platform-compress.c
+
+   216	
+   217	static int sst_platform_compr_pointer64(struct snd_soc_component *component,
+   218						struct snd_compr_stream *cstream,
+   219						struct snd_compr_tstamp64 *tstamp)
+   220	{
+   221		struct sst_runtime_stream *stream;
+   222	
+   223		stream = cstream->runtime->private_data;
+   224		stream->compr_ops->tstamp64(sst->dev, stream->id, tstamp);
+   225		tstamp->byte_offset =
+ > 226			tstamp->copied_total % cstream->runtime->buffer_size;
+   227		pr_debug("calc bytes offset/copied bytes as %u\n", tstamp->byte_offset);
+   228		return 0;
+   229	}
+   230	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
