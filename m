@@ -1,139 +1,165 @@
-Return-Path: <linux-kernel+bounces-731255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EA4B051D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:32:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CAFB05200
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AFA57B3E01
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:31:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02E453A0713
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E00926A1A3;
-	Tue, 15 Jul 2025 06:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E2426CE30;
+	Tue, 15 Jul 2025 06:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bIqtaYw+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MdS/EBEm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B6923717C;
-	Tue, 15 Jul 2025 06:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85722594BD
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752561139; cv=none; b=Tn1PjFZ3pdEj+JGa7nS0L4u0zgy7M88y1V/Hh7ZG1Nk2Ngq690AroHXbYNI77a52leYdrv82I4kD8ep1avI1rzXqntn3J/sesf93bZF3EWCNDPD9wemAkcZ5+QLKflR933IEJL6rF5a8HKAUmvIQjEJb+HSGaiTfMLfRbea8R0U=
+	t=1752561686; cv=none; b=P85XZE5BYHBeV1/Cw1q2myQ1pZUL6p+BDB0ItM47krgcwCP0UVPu47I3CVeQCbIg6gQThwi23Sndf3BMt3HvFYfGYFTFkIsxeiB4IHgOmqAfxSDkQq3Az4UkiRphuP5IM86GLTBWRM+tJv7steZB55NTnldwv6DvvkHmV+Rt7ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752561139; c=relaxed/simple;
-	bh=WklIpAtJHYfMiMe/6RUqbZbJU6W8TijSjtq/DkC9NJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YpqoSa40cX8Z0AdT3gIHm1Uqoii0Gb1jcmleApHZvILoex4eyvxJq986ghnAnGQ9vumlhLSR5wpF1LOyXLMTxOb5NyREIJB8Clr3ajAKmIJUHx26WGHjqnxSrIA/jYbQg3PKT7/QuMt6rN94S4+AGkeiqYHSu2ab7riClg82SXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bIqtaYw+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8225C4CEE3;
-	Tue, 15 Jul 2025 06:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752561135;
-	bh=WklIpAtJHYfMiMe/6RUqbZbJU6W8TijSjtq/DkC9NJI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bIqtaYw+YTTScXws62NyPzaxn1XexwR0P2/YUPO4QSpYNd/LYInNh13B/lbxBXcng
-	 bGxZvLZoTpr2Sz4uQNB8dIOTpu2NkhYwsbI2LpBvm6DHuN5Mj0IKPhqmvGib3u+y70
-	 uzlWm35fxUu7sljGm1oEZ+U1NEHqPARYDT1UkpH9lBilc851jbuHBOz3S8ukFKRcR5
-	 /4yXuswtXyrJPCLG/R0hu/atqT4bjiNRjTjzEXiPHUdOo/gPAKlIj92Q20dy1rGm4L
-	 AVgszw2kKvWLRLDk6HQ996u9qaI7QTAPcI4GZUSgpwwCj6cbQ/2MTew7DEa+BhIxNm
-	 A7h6+oQ9ctMBA==
-Message-ID: <95ef2f67-146d-4f31-a07a-4d1f82bc60c3@kernel.org>
-Date: Tue, 15 Jul 2025 08:32:08 +0200
+	s=arc-20240116; t=1752561686; c=relaxed/simple;
+	bh=fTV1vB6c0+m9+jAUJWGdzYVlGQUjPWrCEoX2PhR980E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=huFIa45TkgeraM4XcsTmZ7WpDSzcBYDFriwIJswZCKW9u6nb9VxlAYC6P9Ct4Jxgunyab6NvinWgpYzLAMTiyXT3obpyYDzM9nGJ0TGLUMYngvXBMkjU7PPcTZDSUXvJNBREkPkFdS6l69+0pTYj0j8EUh1P0xTfEpmk78k3epE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MdS/EBEm; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752561685; x=1784097685;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fTV1vB6c0+m9+jAUJWGdzYVlGQUjPWrCEoX2PhR980E=;
+  b=MdS/EBEm7X/c15JeSVvHJVdVPKUxuZwfSiFK+c1B333wJH2X0aWTgWV2
+   f06LjGamsPXMr5QOz3Mb7jcsrGJUaoMCCDUQ0ZuiZtIQioR39Qb70laKK
+   snOsWTkXgLb4OGg43cvUjSznfFNyDaQipBvOMaq7CjWuwLEjF6MVUSHHr
+   eTI8scKn+5H2ioSkVa9+bv1KosROo7edLJgt5Qy5KgwPOSmcQxzOYZ+5x
+   5JtmDYhNSs4FjsyiF3AKg5oL8On3lT+ZgASxJoI/VhcXtmbfGxWT8RvO2
+   obKNDFZSw4QmymHghU7xinzOIM5g3ibVCJ97DAjQ4tscIY8hMG5TTZic3
+   g==;
+X-CSE-ConnectionGUID: Mag8UQh3SrOVYBjNbgUUvg==
+X-CSE-MsgGUID: JIpIANrtQI+nAKGs+IgTsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="53880816"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="53880816"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 23:41:24 -0700
+X-CSE-ConnectionGUID: eZZn1MyVSCGiQB4AkwOfQQ==
+X-CSE-MsgGUID: 8X2t+FlMQzqFKvyAp8qxgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
+   d="scan'208";a="157648911"
+Received: from yilunxu-optiplex-7050.sh.intel.com ([10.239.159.165])
+  by orviesa008.jf.intel.com with ESMTP; 14 Jul 2025 23:41:19 -0700
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: jgg@nvidia.com,
+	jgg@ziepe.ca,
+	kevin.tian@intel.com,
+	will@kernel.org,
+	aneesh.kumar@kernel.org
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	joro@8bytes.org,
+	robin.murphy@arm.com,
+	shuah@kernel.org,
+	nicolinc@nvidia.com,
+	aik@amd.com,
+	dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com,
+	yilun.xu@intel.com
+Subject: [PATCH v5 0/8] iommufd: Destroy vdevice on device unbind
+Date: Tue, 15 Jul 2025 14:32:37 +0800
+Message-Id: <20250715063245.1799534-1-yilun.xu@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 1/5] dt-bindings: mmc: sdhci-pxa: restrict pinctrl to
- pxav1
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, David Wronek <david@mainlining.org>,
- Karel Balej <balejk@matfyz.cz>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-hardening@vger.kernel.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, soc@lists.linux.dev,
- linux-mmc@vger.kernel.org
-References: <20250708-pxa1908-lkml-v16-0-b4392c484180@dujemihanovic.xyz>
- <3379810.44csPzL39Z@radijator>
- <20250711-hypnotic-aloof-nuthatch-f3761c@krzk-bin>
- <3028096.e9J7NaK4W3@radijator>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <3028096.e9J7NaK4W3@radijator>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 15/07/2025 00:23, Duje Mihanović wrote:
-> On Friday, 11 July 2025 09:31:55 Central European Summer Time Krzysztof 
-> Kozlowski wrote:
->> On Wed, Jul 09, 2025 at 07:33:01PM +0200, Duje Mihanović wrote:
->>> Would it then be acceptable to declare the pinctrl properties in the top
->>> level and define each controller's respective description: and items: in
->>> the allOf: block?
->>
->> just min/maxItems should be enough in each allOf:if:then: sections.
-> 
-> I guess for now. Later however I might need to add a state_uhs setting to the 
-> pxav3 driver; is the method I described right for this or is there something 
-> better?
-Then please define it now which would make entire discussion obsolete, I
-think.
+It is to solve the lifecycle issue that vdevice may outlive idevice. It
+is a prerequisite for TIO, to ensure extra secure configurations (e.g.
+TSM Bind/Unbind) against vdevice could be rolled back on idevice unbind,
+so that VFIO could still work on the physical device without surprise.
 
-Best regards,
-Krzysztof
+Changelog:
+v5:
+ - Further rebase to iommufd for-next 601b1d0d9395
+ - Keep the xa_empty() check in iommufd_fops_release(), update comments
+ - Move the *idev next to *viommu for struct iommufd_vdevice
+ - Update the description about IOMMUFD_CMD_VDEVICE_ALLOC for lifecycle
+ - Remove Baolu's tag for patch 4 because of big changes since v3
+ - Add changelog about idev->destroying
+ - Adjust line wrappings for tools/testing/selftests/iommu/iommufd.c
+ - Clarify that no testing for tombstoned ID repurposing.
+ - Add review tags.
+
+v4: https://lore.kernel.org/linux-iommu/20250709040234.1773573-1-yilun.xu@linux.intel.com/
+ - Rebase to iommufd for-next.
+ - A new patch to roll back iommufd_object_alloc_ucmd() for vdevice.
+ - Fix the mistake trying to xa_destroy ictx->groups on
+   iommufd_fops_release().
+ - Move 'empty' flag inside destroy loop for iommufd_fops_release().
+ - Refactor vdev/idev destroy syncing.
+   - Drop the iommufd_vdevice_abort() reentrant idea.
+   - A new patch that adds pre_destroy() op.
+   - Hold short term reference during the whole vdevice's lifecycle.
+   - Wait on short term reference on idev's pre_destroy().
+   - Add a 'destroying' flag for idev to prevent new reference after
+     pre_destroy().
+ - Rephrase/fix some comments.
+ - Add review tags.
+
+v3: https://lore.kernel.org/linux-iommu/20250627033809.1730752-1-yilun.xu@linux.intel.com/
+ - No bother clean each tombstone in iommufd_fops_release().
+ - Drop vdev->ictx initialization fix patch.
+ - Optimize control flow in iommufd_device_remove_vdev().
+ - Make iommufd_vdevice_abort() reentrant.
+ - Call iommufd_vdevice_abort() directly instead of waiting for it.
+ - Rephrase/fix some comments.
+ - A new patch to remove vdev->dev.
+ - A new patch to explicitly skip existing viommu tests for no_iommu.
+ - Also skip vdevice tombstone test for no_iommu.
+ - Allow me to add SoB from Aneesh.
+
+v2: https://lore.kernel.org/linux-iommu/20250623094946.1714996-1-yilun.xu@linux.intel.com/
+
+v1/rfc: https://lore.kernel.org/linux-iommu/20250610065146.1321816-1-aneesh.kumar@kernel.org/
+
+The series is based on iommufd for-next
+
+
+Xu Yilun (8):
+  iommufd/viommu: Roll back to use iommufd_object_alloc() for vdevice
+  iommufd: Add iommufd_object_tombstone_user() helper
+  iommufd: Add a pre_destroy() op for objects
+  iommufd: Destroy vdevice on idevice destroy
+  iommufd/vdevice: Remove struct device reference from struct vdevice
+  iommufd/selftest: Explicitly skip tests for inapplicable variant
+  iommufd/selftest: Add coverage for vdevice tombstone
+  iommufd: Rename some shortterm-related identifiers
+
+ .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    |   2 +-
+ drivers/iommu/iommufd/device.c                |  51 +++
+ drivers/iommu/iommufd/driver.c                |   4 +-
+ drivers/iommu/iommufd/iommufd_private.h       |  49 ++-
+ drivers/iommu/iommufd/main.c                  |  69 +++-
+ drivers/iommu/iommufd/viommu.c                |  69 +++-
+ include/linux/iommufd.h                       |  10 +-
+ include/uapi/linux/iommufd.h                  |   5 +
+ tools/testing/selftests/iommu/iommufd.c       | 379 +++++++++---------
+ 9 files changed, 407 insertions(+), 231 deletions(-)
+
+
+base-commit: 601b1d0d9395c711383452bd0d47037afbbb4bcf
+-- 
+2.25.1
+
 
