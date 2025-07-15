@@ -1,111 +1,230 @@
-Return-Path: <linux-kernel+bounces-731674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A35BB05812
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:43:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEBBB05818
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEECA3BF7C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:43:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BDA97B478A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B52E2D8773;
-	Tue, 15 Jul 2025 10:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5F62D8387;
+	Tue, 15 Jul 2025 10:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b="FNbo36DP"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="pGcYvD2F"
+Received: from nbd.name (nbd.name [46.4.11.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92D01D9A70
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B912D837E;
+	Tue, 15 Jul 2025 10:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752576210; cv=none; b=dQwkzDRc8Z5eCeHcwMdxSYVj4QRDZm2IVHKHdk+uiIvLwficNinUzD90g9f4JQerjZBIwq8yplTeXiBu1VC6Tol966Kg1+9FCpXzQCn0rHFYSyi/JtJyu9bZ7MyBVzo1fydaBzyAFmfMkl7wAnggoJ5OnNFkVHjWYK4Dbm03W7E=
+	t=1752576290; cv=none; b=qfT8Z5tL+M7bUAYN3naMqBj+Pz28am5LL/ei4FoR0EucFkosPb6DX3843PPmomVNcJLlUlDI11vAswx3lNJT9GWYQO03szlQr7fdMGVK7xlFU120nBK0wuN8qpyXzVKByci1EoLwt/OTtDAcvjnS9tMsDryPwXILKgPrE4HrZ/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752576210; c=relaxed/simple;
-	bh=56NSMvnKKJQ7lDFzQs7vNIBcLPhb5FHqygnjryoFTQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lGPLETVctZPqOgRDRkrxUCyLy4/dz98lSCyjsm2k9os279GVzKauvUG56B0+l3WfbEqBdFSBeZrNz32qZRHfWcbW0+D9YrBXlD2viMjn5H987v+BUrGMv1SImW7TqorVCo+9ZFvxm34nayyK7gZ2PGs+VaMCX/eP6hPa2VtfqGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com; spf=pass smtp.mailfrom=qtec.com; dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b=FNbo36DP; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qtec.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-531b4407cfbso2171583e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 03:43:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=qtec.com; s=google; t=1752576207; x=1753181007; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jinrh9lrUEI9oP/K9YZbjkzFAwQHaDK22aiCMwvNLvE=;
-        b=FNbo36DPIPSTLYjtSyITZiPX2ux3q35r34wKKMgtMu3t0XP4HRb7M1RyXPW385iUM8
-         VqtRJpab8DNwDFHoEs/WUa6F2k9Wj6WwlUra9JzCR20RNnv2B2ACfLizfvpRqTgWJ/kW
-         PTyRLbDOGBsebBVryQBk8oTYlvIRhq1eM8fXi7cF115/b7eHhZNZ2mEfz81VgGK3XaJ3
-         qFDFVNj64SudvRfsQvSeKx563hdUV0THwSTEj9hgPvtGNKlH1SzvA8EJO9eK9tDUutlc
-         v0Jm7pw82ecU7t4LsOpIiX/nYIdMIAL1oYqIuRhxJGRwyLsUwqfaIPSQc2pgxeTmdmDO
-         gSLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752576207; x=1753181007;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jinrh9lrUEI9oP/K9YZbjkzFAwQHaDK22aiCMwvNLvE=;
-        b=RS2EVfeJM/K8uArcGJbOr3Q3MjQLXP/xh1upz5MhKcx6FHVHxSwVj95kJP3e8GRvp8
-         bFGULU3FT6Q68lpo/NsXugRbQo9v6XIkID6JjtxpyTgYI87WYeMO0DQavwns/4yeB8bC
-         HAJjnJcp2sWAyvdUsmjGrGDEwGZ+Ssc8w++1zXzBB77ANGl30swqBMBO1uHJM2HrI79+
-         fP4gjbZ39nZrop4zmmHdMDT3hAEqDll+DhhRpTCOXnfobEWNf5bUBxbrIwx5htpH2qqq
-         40JQJikFzYtDh8VIUXBa7UIpfLK4OKBtdysEbTtw3JdkekZQFNeua2WXH7cSsZeCDkM8
-         ghbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6n8Ktz64LA8wz8Yzi4gx2bF1NnnJdMIIfVH1I0KWwk2Aeqcj0GxGrq1/airejXzid65N85NE5iqbLHVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypns6UPIafF3++lDEYog6C3Tq4Ur6wXSJfh4hYll/bapFunDBU
-	oNxSnyaBPXMMTpaR+qgFOBgPR4cprX8E2hEgBZ2LVMGfyGWHJS9KsqStEgZx6Yg3DhbX7fWtz8j
-	dz/1gNN3aafJFJJ6ZkgHmaAEh5uXEfSP5gEBOc6bVxQ==
-X-Gm-Gg: ASbGncugt5czHP3XGdub7dfMC3T3KB8LdAubJyg2aeArrpp1Lx91UcCRx5CdI5nBiVb
-	+clESV4cKdJd238IG0XKof44arI0Lygsbl9uCS0IX2xTYQXbfruRDUbj9jC4y/RxmB0QD/5VFFZ
-	PItNY1CtX3lXu9v1zSIMtfGQh+fKoMMr2HyCFLIj5plJwKQnj+Fu/6J0CFoTmTuvKrmY9viGZPH
-	XnSqg==
-X-Google-Smtp-Source: AGHT+IE6wEwLG2iscN6gkx0xYTHNGr2J35y1IB016poByLQ/6Zb4m/3NuN1Xs87IAIZLj0V1lGTl6eKOu6hJK98nmUw=
-X-Received: by 2002:a05:6122:468c:b0:518:6286:87a4 with SMTP id
- 71dfb90a1353d-535f470d42fmr10371788e0c.4.1752576207474; Tue, 15 Jul 2025
- 03:43:27 -0700 (PDT)
+	s=arc-20240116; t=1752576290; c=relaxed/simple;
+	bh=tAAyI6btdERrX7kxlEMiQsdnF9Ia2Q+2uiKMlGybJto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MKbwiFgGm2vj5ude2xMVSVle6LHcxwPfY1LIZnEYJF3YCxVGUfzWhyhzUi7pz/fG0OWk3Q+1w3jGnMBdu/Nc9Ww8uZXww3D9xPjOJywg2vi/uSHwRDKhBcgzSJOe1kKUGIbU6vvm0eJyXXARNR/1BS/iCjpD1E0+cyzoa4+jWPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=pGcYvD2F; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=i7fP8BcumApPjNSeUMxVqB2p8QkYDUChQH+pYPCBu/Y=; b=pGcYvD2FVp5ZZCcjNbSDGj0dyn
+	PBc8FaOmgTXGhfEg3yEFABbrdF2zBftBEkIemTa5gymhaOGp9Qez/Q8jowo4ypPFZYIxl911FOCMm
+	8g/grdjGZ/t4lo1Davy0nZagwXff8nRI5gmQuXHaRbTtif1jnbPkwPefie2NLrlhQmiw=;
+Received: from p5b2062ed.dip0.t-ipconnect.de ([91.32.98.237] helo=Maecks.lan)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1ubd9D-00C9uA-1j;
+	Tue, 15 Jul 2025 12:44:31 +0200
+From: Felix Fietkau <nbd@nbd.name>
+To: netdev@vger.kernel.org,
+	Michal Ostrowski <mostrows@earthlink.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] net: pppoe: implement GRO support
+Date: Tue, 15 Jul 2025 12:44:24 +0200
+Message-ID: <20250715104425.8688-1-nbd@nbd.name>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJDH93s25fD+iaPJ1By=HFOs_M4Hc8LawPDy3n_-VFy04X4N5w@mail.gmail.com>
- <20241219112125.GAZ2QBteug3I1Sb46q@fat_crate.local> <20241219164408.GA1454146@yaz-khff2.amd.com>
- <CAJDH93vm0buJn5vZEz9k9GRC3Kr6H7=0MSJpFtdpy_dSsUMDCQ@mail.gmail.com>
- <Z78uOaPESGXWN46M@gmail.com> <CAJDH93uE+foFfRAXVJ48-PYvEUsbpEu_-BVoG-5HsDG66yY7AQ@mail.gmail.com>
- <20250621145015.v7vrlckn6jqtfnb3@pali>
-In-Reply-To: <20250621145015.v7vrlckn6jqtfnb3@pali>
-From: Rostyslav Khudolii <ros@qtec.com>
-Date: Tue, 15 Jul 2025 12:43:16 +0200
-X-Gm-Features: Ac12FXwrM0hudYT1gpsjlNr37WqavqVM6O9H4kuS5lrXXokjtyQkni4XfPlvseQ
-Message-ID: <CAJDH93vTBkk7a5D0nOgNfBEjGfMhKbFnUWaQ1r6NDLqm0j3kOA@mail.gmail.com>
-Subject: Re: PCI IO ECS access is no longer possible for AMD family 17h
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>, 
-	Borislav Petkov <bp@alien8.de>, =?UTF-8?B?RmlsaXAgxaB0xJtkcm9uc2vDvQ==?= <p@regnarg.cz>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
->
-> Yes, I would like to get access to ECS via CF8/CFC direct IO for
-> debugging purposes, even though MMCFG is enabled and used.
->
-> If you can send me a simple patch or any sample / idea how to do it,
-> I would be very happy. I was not able to figure out how to enable ECS
-> over CF8/CFC.
->
+Only handles packets where the pppoe header length field matches the exact
+packet length. Significantly improves rx throughput.
 
-Hi Pali,
-I'm sorry for the late reply.
+When running NAT traffic through a MediaTek MT7621 devices from a host
+behind PPPoE to a host directly connected via ethernet, the TCP throughput
+that the device is able to handle improves from ~130 Mbit/s to ~630 Mbit/s,
+using fraglist GRO.
 
-If I understand your request correctly, all you need to do  is patch
-the pci_enable_pci_io_ecs() function to use
-the different register to set EnableCF8ExtCfg: D18F4x044.
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ drivers/net/ppp/pppoe.c | 107 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 106 insertions(+), 1 deletion(-)
 
-Regards,
-Ros
+diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
+index 410effa42ade..3595f2d35de6 100644
+--- a/drivers/net/ppp/pppoe.c
++++ b/drivers/net/ppp/pppoe.c
+@@ -77,6 +77,7 @@
+ #include <net/net_namespace.h>
+ #include <net/netns/generic.h>
+ #include <net/sock.h>
++#include <net/gro.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -435,7 +436,7 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
+ 	if (skb->len < len)
+ 		goto drop;
+ 
+-	if (pskb_trim_rcsum(skb, len))
++	if (!skb_is_gso(skb) && pskb_trim_rcsum(skb, len))
+ 		goto drop;
+ 
+ 	ph = pppoe_hdr(skb);
+@@ -1173,6 +1174,108 @@ static struct pernet_operations pppoe_net_ops = {
+ 	.size = sizeof(struct pppoe_net),
+ };
+ 
++static u16
++compare_pppoe_header(struct pppoe_hdr *phdr, struct pppoe_hdr *phdr2)
++{
++	return (__force __u16)((phdr->sid ^ phdr2->sid) |
++			       (phdr->tag[0].tag_type ^ phdr2->tag[0].tag_type));
++}
++
++static __be16 pppoe_hdr_proto(struct pppoe_hdr *phdr)
++{
++	switch (phdr->tag[0].tag_type) {
++	case cpu_to_be16(PPP_IP):
++		return cpu_to_be16(ETH_P_IP);
++	case cpu_to_be16(PPP_IPV6):
++		return cpu_to_be16(ETH_P_IPV6);
++	default:
++		return 0;
++	}
++
++}
++
++static struct sk_buff *pppoe_gro_receive(struct list_head *head,
++					 struct sk_buff *skb)
++{
++	const struct packet_offload *ptype;
++	unsigned int hlen, off_pppoe;
++	struct sk_buff *pp = NULL;
++	struct pppoe_hdr *phdr;
++	struct sk_buff *p;
++	__be16 type;
++	int flush = 1;
++
++	off_pppoe = skb_gro_offset(skb);
++	hlen = off_pppoe + sizeof(*phdr) + 2;
++	phdr = skb_gro_header(skb, hlen, off_pppoe);
++	if (unlikely(!phdr))
++		goto out;
++
++	/* ignore packets with padding or invalid length */
++	if (skb_gro_len(skb) != be16_to_cpu(phdr->length) + hlen - 2)
++		goto out;
++
++	NAPI_GRO_CB(skb)->network_offsets[NAPI_GRO_CB(skb)->encap_mark] = hlen;
++
++	type = pppoe_hdr_proto(phdr);
++	if (!type)
++		goto out;
++
++	ptype = gro_find_receive_by_type(type);
++	if (!ptype)
++		goto out;
++
++	flush = 0;
++
++	list_for_each_entry(p, head, list) {
++		struct pppoe_hdr *phdr2;
++
++		if (!NAPI_GRO_CB(p)->same_flow)
++			continue;
++
++		phdr2 = (struct pppoe_hdr *)(p->data + off_pppoe);
++		if (compare_pppoe_header(phdr, phdr2))
++			NAPI_GRO_CB(p)->same_flow = 0;
++	}
++
++	skb_gro_pull(skb, sizeof(*phdr) + 2);
++	skb_gro_postpull_rcsum(skb, phdr, sizeof(*phdr) + 2);
++
++	pp = indirect_call_gro_receive_inet(ptype->callbacks.gro_receive,
++					    ipv6_gro_receive, inet_gro_receive,
++					    head, skb);
++
++out:
++	skb_gro_flush_final(skb, pp, flush);
++
++	return pp;
++}
++
++static int pppoe_gro_complete(struct sk_buff *skb, int nhoff)
++{
++	struct pppoe_hdr *phdr = (struct pppoe_hdr *)(skb->data + nhoff);
++	__be16 type = pppoe_hdr_proto(phdr);
++	struct packet_offload *ptype;
++	int err = -ENOENT;
++
++	ptype = gro_find_complete_by_type(type);
++	if (ptype)
++		err = INDIRECT_CALL_INET(ptype->callbacks.gro_complete,
++					 ipv6_gro_complete, inet_gro_complete,
++					 skb, nhoff + sizeof(*phdr) + 2);
++
++	return err;
++}
++
++static struct packet_offload pppoe_packet_offload __read_mostly = {
++	.type = cpu_to_be16(ETH_P_PPP_SES),
++	.priority = 10,
++	.callbacks = {
++		.gro_receive = pppoe_gro_receive,
++		.gro_complete = pppoe_gro_complete,
++	},
++};
++
+ static int __init pppoe_init(void)
+ {
+ 	int err;
+@@ -1189,6 +1292,7 @@ static int __init pppoe_init(void)
+ 	if (err)
+ 		goto out_unregister_pppoe_proto;
+ 
++	dev_add_offload(&pppoe_packet_offload);
+ 	dev_add_pack(&pppoes_ptype);
+ 	dev_add_pack(&pppoed_ptype);
+ 	register_netdevice_notifier(&pppoe_notifier);
+@@ -1208,6 +1312,7 @@ static void __exit pppoe_exit(void)
+ 	unregister_netdevice_notifier(&pppoe_notifier);
+ 	dev_remove_pack(&pppoed_ptype);
+ 	dev_remove_pack(&pppoes_ptype);
++	dev_remove_offload(&pppoe_packet_offload);
+ 	unregister_pppox_proto(PX_PROTO_OE);
+ 	proto_unregister(&pppoe_sk_proto);
+ 	unregister_pernet_device(&pppoe_net_ops);
+-- 
+2.50.1
+
 
