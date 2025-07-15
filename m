@@ -1,182 +1,221 @@
-Return-Path: <linux-kernel+bounces-732328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE59B06526
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 566A3B06529
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D39917B26F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:29:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D0417B849
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C162857EC;
-	Tue, 15 Jul 2025 17:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DEC2853F8;
+	Tue, 15 Jul 2025 17:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GtkSRLh0"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MaReNlTW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFCB27BF89;
-	Tue, 15 Jul 2025 17:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A552CCC0
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752600584; cv=none; b=gZ7ejKsz/TZiC5v1s+LkQsGx4rDI6IgqhPenJ9YPwnn7qqSq/A4v9hBIPNVXjHY9UZJP+DOYTNHJgpxCrXNc6ZRyLMdvYPA71vGQ8LN7YCuozIwYAZAleSAoYwRHWszA8xlQhXaqiGTIA3mHc/vcj9nJZlMDMTSnX35O/vpCEHg=
+	t=1752600649; cv=none; b=CINVQCT7o3/cyzggiSewiTUFiwd0MR3lFtZs3AflcAkYs9UsMvczVT604YGdgf6cdvHVt8qbipFUJHs8QpXgYeOvkftr5JhmTxKKgx4BYYmaPdh7pILwEKdrhCUf52LS9L6AhTTIphi3wChPYoiqF27c5FgXxL9H40hpUjRa26w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752600584; c=relaxed/simple;
-	bh=RVuuMlQbOGlMH0Af9eVwx0kRq1T72m7vcRSvh8pU0gw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bYib0BAqsNEsjkthohv/hLp4Wt0srhfyFlj2NdAwgvVC8ADgIFEid05ksowR6LMcp0dPVJl8vH5T1WxzfZv02tIaxbtVygdxRknB8rWHqgPSuTZAq6dbfFQ+svxJPEQP9TSC2pmcyyFQIyW1d0cdu8npSojmOep+PXNzQNsTJu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GtkSRLh0; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-311bd8ce7e4so4942682a91.3;
-        Tue, 15 Jul 2025 10:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752600581; x=1753205381; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wc903ng5sV3+K5886ssk/NI8G/f9wB2jD4krWuXRVgg=;
-        b=GtkSRLh0/e1nDEL84I+Aa7HYQgcFJHYqkjbGOixsqOHRvaYC3/OVWzA4BALSZ+Hg7P
-         sFXVPGV3tOlR2guXK4aXwpHF9KC5FScmSzjBRrgcCAxkVosz81nta47+rLA362HILsAz
-         K/FZltNi6YZhP/v0y/08I91sr+E/Twy4kEN4za24jjhbtaiRe5seRe5OcF5IbKPfMNRL
-         mjl7veH4TP1ZQ9AXbU9ehSMZ5jdnyincko8Xe1chbODiS7eXXQx5LIfYU21Min0742w/
-         CzE/FAPnwBV0PHM9kdHvoBRkNUfz6YHf0GTDGOJ2heySXNaFW+Wq6m6Fw1BCCWunJuoC
-         GFAQ==
+	s=arc-20240116; t=1752600649; c=relaxed/simple;
+	bh=OicMDYwkIxFtbCHm2GkQKVqKCEIne5yDeXU4/6B5SLc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SPe9WEKJQbyLEl9s6d9EddmtIKOsBXxTs9n6WYcpCTuEAiYKULfTo7WLhxiIeEG/5MjFDTEqBrGtSyfUsGKAMd1LVsvsV3YRaLOUwMJV63VdRgZRD7BblZwou51kZ8cFdyDUD8N1rSnepmM2IKmZCvqMdYKwXMI/RMsICjDHSBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MaReNlTW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752600646;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qeaioDV5y+/M11cE3dFJNrEA7V3W8i3+YqsMbWa6FZM=;
+	b=MaReNlTW6pQCBpfgw47ZhhSQBT1knp5+4jVybPjMpqhqeMHhOZq8R7ZgsK1//NSSg5f5kC
+	gVAnyudro10ruQLS7f3EdxFCUQZfZtv0ZGM2ZwKAcNoM/OPtGVnbfmT/nXbtKI2h5M+U1+
+	7DKyCdbKCP7mv2PFCWGbJXuf046iZc4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-584-4REdj7viMRSOkmSJCGL1bA-1; Tue, 15 Jul 2025 13:30:45 -0400
+X-MC-Unique: 4REdj7viMRSOkmSJCGL1bA-1
+X-Mimecast-MFC-AGG-ID: 4REdj7viMRSOkmSJCGL1bA_1752600644
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso4366214f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:30:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752600581; x=1753205381;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wc903ng5sV3+K5886ssk/NI8G/f9wB2jD4krWuXRVgg=;
-        b=N01YhIDAWybXtuz4ATvLY3GySHzhEiQjW3PiTUdxA4DKM9XycUuCjQ82usqOZ3f2i8
-         Fe4k9BQJwqYsG362RGR4npl3pE8XmVnS5GhcBNRthF7J32sYHJ/cQdeyAl+bfX3pbK/p
-         ydC+l7ezZumrwPZEkLfHTsoCnGe8QdX8E7NqLWDK5EmKW7zrLZeAFmXIQptdYA9uoSlV
-         aZn4lVhosSakq6mRmN7Hdj0ibcPWOfQq++4U0H1DqgcRwk9byzq0yJJQJnFvxZGD6R5O
-         593n7bdtI0vLxS3wLnJlBhpajNOCf/icuVTilqhU6Lvm2qt8l0U9Z/rkpnPQP68o6KTs
-         /nlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6km+lrzLDeILCD1zRUrqv5ETEZaUrlaRQ/5iS9Ayd2pCdUkPdij/HFxHl5vrrEv1LBbc8TdUcm+rk48lO8fNd@vger.kernel.org, AJvYcCWODMzYf9AFDiGSXm5pnQgupkABkASXfqEEwZh5FjyW3BKX6WuEwUH1w8GLd7BzpJEzdetzT4Mrjb48K2F3@vger.kernel.org, AJvYcCX/SaAY1IoSGjg9COxWkxRcdVbR7jbunPdcm09+6kfUZDXMZa7wcd3Avsyf74qIIv9WVQDVP+XNn0LzYmF6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEDX4FaQSGjZ6xxUUSijDu4+Ul9Sj/ZTY9f4H7/pWL3y5kbKuf
-	U76W07WnT2kAmM1Eh53KXNJ45Zb2vZxtjuD+94RV7zuaYUlVcxBb7EHPt9LztXUUubLUf/iibCU
-	O5gudc35lKTaw7aVKNyBLxjafe+Bxgtg=
-X-Gm-Gg: ASbGnctudXouK7trBGPp0U17w2W2m2rZfN2qdN2AX2Q6wv5hE4XTFqC1llrwEnIwnh9
-	Ft0ZgusofnfuSa8gaVvn2RMbgnzZFDFwj0Z4qRG4RoH7Z84edcFZjZi+mimYDTkVxuTQyuMDqKX
-	LcZxp+0J4UvGwC3474N/0yHJx30pkUiWlqCUBRHZvbNWguvC+vqj9ZqOAvxv/5eaZvZgYDuWANZ
-	+4jCDhALP/EnW1wnAvmRE8=
-X-Google-Smtp-Source: AGHT+IFV88ZsnMSrkKMCH3CvZnEcbNhiDbfsajxpa2V0A5Yj6GokzkBemYmOXveEA3RZ+tMFxpnloTbZg9BkrWKCBIc=
-X-Received: by 2002:a17:90b:134e:b0:311:df4b:4b93 with SMTP id
- 98e67ed59e1d1-31c9e6e4061mr52933a91.7.1752600581083; Tue, 15 Jul 2025
- 10:29:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752600643; x=1753205443;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qeaioDV5y+/M11cE3dFJNrEA7V3W8i3+YqsMbWa6FZM=;
+        b=J9CKJUdUak8Y56qn5YWhd9cMLarXb4L4jpa9MCbHdE08F3MoczK8Q3RG2C+hy0ZfiB
+         Xvo6Zf5ekUML/8AK9aDs8draRB7I6vLuWCuXv1DU6LZ8FKPifr8LS+QiOXWSiypKimzI
+         2jjPaObjz8PeLaKKtoZJEFakF+Xz9exq0GHJziKKRai/KBq/dqmYdyDWGaTrnQ1/7gyM
+         6TYxWloPOYb0WsXqjCFhrC3yGqnkIsmN6LzNcv9WaZgEowbnfU3yPqJVc90gyh5r3Wvd
+         nNFmtQTQy5J4LOFn+7GUmeXtW6Bp4uHg7/nvrzVkkJfGYgKkaALdRpGSxntD3ejm57lw
+         Q3Vg==
+X-Gm-Message-State: AOJu0Ywd1CmLdp84dxJH8QIU0uMjSFFDhwaN3NFJCb/6EApbF7uLnp8t
+	NiHxsz/27nOmdqXC1Nyp2nGlCsC5BMcBflN5i/Zd2xKQY9GIH4DmBSROQTUcI0PI7RjVoGdOb+f
+	mgyFTLCxR+kPXLJnG6rMGqQQLLt2ZH/i0lLVqJdGpJqDTSc5Wz/ZO7r+giRM+06VbcSTK0ZdK7r
+	R8HDbPm80XBDD2QTmD/Hd1A3lGjkie8MnqOasohs3ilTXXhkb0Pw==
+X-Gm-Gg: ASbGncvF9/Wrf7a+sHSv+ZVU8H+R4KpjyseefFMg9GFollPnxoN5VwKruL60iEpmVQw
+	AAxio/0roCYk3gZCBJOpiVEqslfBNlJcgQc9MqbFWHLzm6LgQ22b3xtLi8QIiOSTSmPHr3frv/R
+	SrDDCuk21Py6KLp5MnAcbPUGSgJ/J3hIKARcbhLT58FZgbB3zmH10UQCulYitVf1WT4oRCzved8
+	4LCAfTv0Sgx4dFChLTrKBOdoJfVfbI38KLWINHz3cm+D3lxC5dF3HOatuSCd03Mt92vb65Aozid
+	lPrOGFwpPRBr8uzm1b1y+E+irav+t3SresxEvLJ0A5A=
+X-Received: by 2002:a05:600c:5024:b0:456:1611:cea5 with SMTP id 5b1f17b1804b1-4561611d3d6mr93534225e9.18.1752600642560;
+        Tue, 15 Jul 2025 10:30:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGgdfzHMYKo96xJPVD8XmG2KZ3Hiiv3pnWqQBgJmnGsb7o44GvKpXjabolY14F3WHgvp7NY0g==
+X-Received: by 2002:a05:600c:5024:b0:456:1611:cea5 with SMTP id 5b1f17b1804b1-4561611d3d6mr93533785e9.18.1752600642060;
+        Tue, 15 Jul 2025 10:30:42 -0700 (PDT)
+Received: from [192.168.122.1] ([151.49.73.155])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1e8cfsm15224072f8f.80.2025.07.15.10.30.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 10:30:41 -0700 (PDT)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: seanjc@redhat.com,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v2] KVM: Documentation: document how KVM is tested
+Date: Tue, 15 Jul 2025 19:30:40 +0200
+Message-ID: <20250715173040.209885-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com>
- <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com>
- <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
- <5ec10376-6a5f-4a94-9880-e59f1b6d425f@suse.cz> <19d46c33-bd5e-41d1-88ad-3db071fa1bed@lucifer.local>
- <0b8617c1-a150-426f-8fa6-9ab3b5bcfa1e@redhat.com> <8026c455-6237-47e3-98af-e3acb90dba25@suse.cz>
- <5f8d3100-a0dd-4da3-8797-f097e063ca97@lucifer.local> <CAEf4BzaEouFx8EuZF_PUKdc5wsq-5FYNyAE19VRxV7_YJkrfww@mail.gmail.com>
- <7568edfa-6992-452d-9eb2-2497221cb22a@lucifer.local> <7d878566-f445-4fc2-9d04-eb8b38024c9b@lucifer.local>
-In-Reply-To: <7d878566-f445-4fc2-9d04-eb8b38024c9b@lucifer.local>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 15 Jul 2025 10:29:26 -0700
-X-Gm-Features: Ac12FXyKCi8yfm9zpEz0p2N_Fds77kWBfr-mDczWqrvQScCzLL70RGcrvxh5Qp8
-Message-ID: <CAEf4BzYDktFt9R78tQifMrJ7okzA+1LhhiqCi+SpSdq3h4zKyw@mail.gmail.com>
-Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand <david@redhat.com>, 
-	Suren Baghdasaryan <surenb@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, 
-	peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, 
-	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
-	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
-	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
-	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 15, 2025 at 10:21=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Tue, Jul 15, 2025 at 06:10:16PM +0100, Lorenzo Stoakes wrote:
-> > > For PROCMAP_QUERY, we need priv->mm, but the newly added locked_vma
-> > > and locked_vma don't need to be persisted between ioctl calls. So we
-> > > can just add those two fields into a small struct, and for seq_file
-> > > case have it in priv, but for PROCMAP_QUERY just have it on the stack=
-.
-> > > The code can be written to accept this struct to maintain the state,
-> > > which for PROCMAP_QUERY ioctl will be very short-lived on the stack
-> > > one.
-> > >
-> > > Would that work?
-> >
-> > Yeah that's a great idea actually, the stack would obviously give us th=
-e
-> > per-query invocation thing. Nice!
-> >
-> > I am kicking myself because I jokingly suggested (off-list) that a help=
-er
-> > struct would be the answer to everything (I do love them) and of
-> > course... here we are :P
->
-> Hm but actually we'd have to invert things I think, what I mean is - sinc=
-e
-> these fields can be updated at any time by racing threads, we can't have
-> _anything_ in the priv struct that is mutable.
->
+Proper testing greatly simplifies both patch development and review,
+but it can be unclear what kind of userspace or guest support
+should accompany new features. Clarify maintainer expectations
+in terms of testing expectations; additionally, list the cases in
+which open-source userspace support is pretty much a necessity and
+its absence can only be mitigated by selftests.
 
-Exactly, and I guess I was just being incomplete with just listing two
-of the fields that Suren make use of in PROCMAP_QUERY. See below.
+While these ideas have long been followed implicitly by KVM contributors
+and maintainers, formalize them in writing to provide consistent (though
+not universal) guidelines.
 
-> So instead we should do something like:
->
-> struct proc_maps_state {
->         const struct proc_maps_private *priv;
->         bool mmap_locked;
->         struct vm_area_struct *locked_vma;
->         struct vma_iterator iter;
->         loff_t last_pos;
-> };
->
-> static long procfs_procmap_ioctl(struct file *file, unsigned int cmd, uns=
-igned long arg)
-> {
->         struct seq_file *seq =3D file->private_data;
->         struct proc_maps_private *priv =3D seq->private;
->         struct proc_maps_state state =3D {
->                 .priv =3D priv,
->         };
->
->         switch (cmd) {
->         case PROCMAP_QUERY:
->                 return do_procmap_query(state, (void __user *)arg);
+Suggested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ Documentation/virt/kvm/review-checklist.rst | 90 +++++++++++++++++++--
+ 1 file changed, 85 insertions(+), 5 deletions(-)
 
-I guess it's a matter of preference, but I'd actually just pass
-seq->priv->mm and arg into do_procmap_query(), which will make it
-super obvious that priv is not used or mutated, and all the new stuff
-that Suren needs for lockless VMA iteration, including iter (not sure
-PROCMAP_QUERY needs last_pos, tbh), I'd just put into this new struct,
-which do_procmap_query() can keep private to itself.
+diff --git a/Documentation/virt/kvm/review-checklist.rst b/Documentation/virt/kvm/review-checklist.rst
+index 7eb9974c676d..debac54e14e7 100644
+--- a/Documentation/virt/kvm/review-checklist.rst
++++ b/Documentation/virt/kvm/review-checklist.rst
+@@ -21,8 +21,7 @@ Review checklist for kvm patches
+ 6.  New cpu features should be exposed via KVM_GET_SUPPORTED_CPUID2,
+     or its equivalent for non-x86 architectures
+ 
+-7.  Emulator changes should be accompanied by unit tests for qemu-kvm.git
+-    kvm/test directory.
++7.  The feature should be testable (see below).
+ 
+ 8.  Changes should be vendor neutral when possible.  Changes to common code
+     are better than duplicating changes to vendor code.
+@@ -37,6 +36,87 @@ Review checklist for kvm patches
+ 11. New guest visible features must either be documented in a hardware manual
+     or be accompanied by documentation.
+ 
+-12. Features must be robust against reset and kexec - for example, shared
+-    host/guest memory must be unshared to prevent the host from writing to
+-    guest memory that the guest has not reserved for this purpose.
++Testing of KVM code
++-------------------
++
++All features contributed to KVM, and in many cases bugfixes too, should be
++accompanied by some kind of tests and/or enablement in open source guests
++and VMMs.  KVM is covered by multiple test suites:
++
++*Selftests*
++  These are low level tests that allow granular testing of kernel APIs.
++  This includes API failure scenarios, invoking APIs after specific
++  guest instructions, and testing multiple calls to ``KVM_CREATE_VM``
++  within a single test.  They are included in the kernel tree at
++  ``tools/testing/selftests/kvm``.
++
++``kvm-unit-tests``
++  A collection of small guests that test CPU and emulated device features
++  from a guest's perspective.  They run under QEMU or ``kvmtool``, and
++  are generally not KVM-specific: they can be run with any accelerator
++  that QEMU support or even on bare metal, making it possible to compare
++  behavior across hypervisors and processor families.
++
++Functional test suites
++  Various sets of functional tests exist, such as QEMU's ``tests/functional``
++  suite and `avocado-vt <https://avocado-vt.readthedocs.io/en/latest/>`__.
++  These typically involve running a full operating system in a virtual
++  machine.
++
++The best testing approach depends on the feature's complexity and
++operation. Here are some examples and guidelines:
++
++New instructions (no new registers or APIs)
++  The corresponding CPU features (if applicable) should be made available
++  in QEMU.  If the instructions require emulation support or other code in
++  KVM, it is worth adding coverage to ``kvm-unit-tests`` or selftests;
++  the latter can be a better choice if the instructions relate to an API
++  that already has good selftest coverage.
++
++New hardware features (new registers, no new APIs)
++  These should be tested via ``kvm-unit-tests``; this more or less implies
++  supporting them in QEMU and/or ``kvmtool``.  In some cases selftests
++  can be used instead, similar to the previous case, or specifically to
++  test corner cases in guest state save/restore.
++
++Bug fixes and performance improvements
++  These usually do not introduce new APIs, but it's worth sharing
++  any benchmarks and tests that will validate your contribution,
++  ideally in the form of regression tests.  Tests and benchmarks
++  can be included in either ``kvm-unit-tests`` or selftests, depending
++  on the specifics of your change.  Selftests are especially useful for
++  regression tests because they are included directly in Linux's tree.
++
++Large scale internal changes
++  While it's difficult to provide a single policy, you should ensure that
++  the changed code is covered by either ``kvm-unit-tests`` or selftests.
++  In some cases the affected code is run for any guests and functional
++  tests suffice.  Explain your testing process in the cover letter,
++  as that can help identify gaps in existing test suites.
++
++New APIs
++  It is important to demonstrate your use case.  This can be as simple as
++  explaining that the feature is already in use on bare metal, or it can be
++  a proof-of-concept implementation in userspace.  The latter need not be
++  open source, though that is of course preferrable for easier testing.
++  Selftests should test corner cases of the APIs, and should also cover
++  basic host and guest operation if no open source VMM uses the feature.
++
++Bigger features, usually spanning host and guest
++  These should be supported by Linux guests, with limited exceptions for
++  Hyper-V features that are testable on Windows guests.  It is strongly
++  suggested that the feature be usable with an open source host VMM, such
++  as at least one of QEMU or crosvm, and guest firmware.  Selftests should
++  test at least API error cases.  Guest operation can be covered by
++  either selftests of ``kvm-unit-tests`` (this is especially important for
++  paravirtualized and Windows-only features).  Strong selftest coverage
++  can also be a replacement for implementation in an open source VMM,
++  but this is generally not recommended.
++
++Following the above suggestions for testing in selftests and
++``kvm-unit-tests`` will make it easier for the maintainers to review
++and accept your code.  In fact, even before you contribute your changes
++upstream it will make it easier for you to develop for KVM.
++
++Of course, the KVM maintainers reserve the right to require more tests,
++though they may also waive the requirement from time to time.
+-- 
+2.50.1
 
-Ultimately, I think we are on the same page, it's just a matter of
-structuring code and types.
-
->         default:
->                 return -ENOIOCTLCMD;
->         }
-> }
->
-> And then we have a stack-based thing with the bits that change and a
-> read-only pointer to the bits that must remain static. And we can enforce
-> that with const...
->
-> We'd have to move the VMI and last_pos out too to make it const.
->
-> Anyway the general idea should work!
 
