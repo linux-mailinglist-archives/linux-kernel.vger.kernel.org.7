@@ -1,302 +1,135 @@
-Return-Path: <linux-kernel+bounces-731912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CB3B05C62
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:30:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E85CAB05BF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47CB93B4983
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:26:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6DD71C21338
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755722E7635;
-	Tue, 15 Jul 2025 13:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFE92E6130;
+	Tue, 15 Jul 2025 13:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I04OFjeD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uEBwMwuv"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0849B2E6D33
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE712E54BB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752585859; cv=none; b=HNyZT0b3vOwZzfGI3/Ny7LXvci2aNGKMdZ5yPzYmMu0PfRVKtac6aEJHjpJ1oyt4UpK8KjALIra1+B4yWB8tw2uMOcSUyA5VO2J+oLOVUzi0s0n7AdwW1VSg9dLrYGYc+eN+uogFA91pSR1eI7ypt3Zo4CoLtoEmj9nBdly5jEo=
+	t=1752585851; cv=none; b=U68X+LZ8ztOlpKUjzxyPXG+kCPneRxVCwG081/KKFlLIdSGRW/3/aEdtipOVnZ3OHqktgy6AsPkzsIId5AuFhZJMxQ+tpaRw9duh3GnNOiRqcCqAtSO2KIPOyIKFgq93ly8W8Wz/diAiOzQ+cQcC4BH5TwoAZzHYBfu2s60QX9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752585859; c=relaxed/simple;
-	bh=KfY/V2hEUA6C7GlUCahAYYBS9gZ/TXfYbBOyKxGKtEs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ux+YATbcUYcj95IyZC7QiPgwjVYagDKacRjbvePQBCdl1a/FhSS6KY8iIWX4DyjA3b3nybY3+JBIcphWvTFlvH+bMVjI1h5cVWNOC5psvfVIByBwf2eGLodO+VFvFy6rbkCe3aKOSvZUX3DhBkwxJTJBDynAsant8+biPaXJyJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I04OFjeD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752585857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VQduvI7D6V1Y1gj1ZwNsH+sSV4mM47HI53S/a03rEFE=;
-	b=I04OFjeDNXzqcUufLXRzAunoXMJ5HA0w52NluigrSolhdB/jgFP6etAXbznHjSKlNziAkG
-	+/Q6Y+MlMMI3cb+B84qzhzS/pAFOuKPLrlgx9ttY6vujSLViW6pP+Dph8OVJnKqlFx5hu5
-	hvlu/CyXn96fiYtnggSpzC4c3pQkFTk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-326-PJlsf_m0M5OAmBx9P0FZtg-1; Tue, 15 Jul 2025 09:24:15 -0400
-X-MC-Unique: PJlsf_m0M5OAmBx9P0FZtg-1
-X-Mimecast-MFC-AGG-ID: PJlsf_m0M5OAmBx9P0FZtg_1752585854
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4538a2f4212so31549075e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:24:15 -0700 (PDT)
+	s=arc-20240116; t=1752585851; c=relaxed/simple;
+	bh=xu71qnr1VwTZ4+bd4q94HN3+XBjexaGP2P8tok7p9Ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l7MUodLex09bF4bWHqEQt86XX8vXiqxah9RgCK3YYrU5P5/Jt5UBDVHF0n/7QYtetk4oE/3RaZdBdI6Q6Ashe1DPsUUY93sQigC1hkhLhD8UMEONa+6/686+xpc9q4g/J5LjEqhECAeVCVI+Vzf3D8oAmSJ2oS5QkbWeAjzbCXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uEBwMwuv; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-455ecacfc32so17638055e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752585848; x=1753190648; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GOiczrZQ07TlImzuWhdRA1uRrJzdt3bEMH2PMY2Z0lI=;
+        b=uEBwMwuvJT0MN4aDF61fLsG432xgTAadfknqPLD4BE4jGhvs0NBx12pjYPMxxKLP4c
+         M4M+4TfhUxrGAqFen+tEGSJdbDlGvSkJeQH30Se+5kwaaR88kYZHgSLsQ1Y5Ah2jVnjt
+         IYvC7BbieB4b3prdWg4V5IIUrTJkCdBku8xkxYIC+YyrJCHFwASy9yXs3ZiTJRt1iXOy
+         DVaZZMFIUhe6gRuUURSq6DKcO0sBSyO8j/B3eueHeIB4zPZoldUOchAP42UDjYU77O4o
+         WhGMIUucBSzMEl+ymv/+wmRm1guXip1f2geDDm69R2wxdFk958ZOFoY+7YON74aBAuAs
+         KbKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752585854; x=1753190654;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VQduvI7D6V1Y1gj1ZwNsH+sSV4mM47HI53S/a03rEFE=;
-        b=Nj1euBHcWPeOSGqJw0ul/cgZBuJgv6SRN/q5VwBnPWVMHJWv0xry0LD9q/wfjOvene
-         gp6tqLjFXfHEKL0EBHxkJ1gWWc73LzsuBULLU4LiRic81Ea4kHdjFsAPtQZGHDBgUOu2
-         potUo8OdNIOCS5NQqgne4vL/68rA0CSk0s0nknS8DviOJEpAymEbGrLGZtq0J4+ojke9
-         EPCLKRd8g7y1DIGCLiGQ4GhlXcrgbztxo15y93eynReW1hxUxY20ZafdApjCKIpfzXIU
-         X0GPkK+h48dMaDaqS8za5Y98zNZ7h92COUmg6CfH/STApoiHRLDtKv16M4o8FutwGg+H
-         ajDw==
-X-Gm-Message-State: AOJu0YyfpooQPLU3Z730+rnxd7R7BEwGaMDzBRuXQR22Z4N9/xGbQq1d
-	/qXpcdXHW1R6s3aX6W0G0Am85A2SsqqaKe/rK15u9Omx9ZOgoGjqHYpBQpawvxzKjIT0Wz2pS4D
-	SU0HnV+Leh55/3+Bt1f0o6iFou5UDkdgGMeIlpH0kwjG2w5g7l5U7TDlIY592zHx5MZLMy6Uthm
-	cNPLbT9YehlkFD3vx5Or4TSsnoCgvZM/G1lD1Tw3un1X2DXd3c
-X-Gm-Gg: ASbGnctDC3tvznoTh3RmD/XiRa3HgCNAhzUdYAGL95dNbc1z63LZJUDDHU0PZevxo4/
-	4epT3NrAU9/Fa9PtDMKO4QDHFftU+Fkbe4akjKqMvwXYHi9cSPwvbSdkoL1o6JIo4EGDWhJGHc+
-	xzYl/YYc/HlwhzQsKFzTR7WPwtxbc96SDVZ6sax/0QFyInIeE6ZMBhMb0F6Ew3OR5w+IATjAKEx
-	dckWRITMBBistSle3Wl2gxl38tCf88cTiUu/nO126Tew/0pG32ROgHh2BrYK++7mt7BWNMmNm3b
-	Z3Jof5SXU8O/g1878Q2TyX6sfJJYy4HUwr97wBIchDzAEm6UxeexWFJxNSOKiaYDy6p2/DkjgKo
-	UzM+qdj2kEH57Eso6EuF3tIPJ
-X-Received: by 2002:a05:600c:4ed0:b0:456:1a41:f932 with SMTP id 5b1f17b1804b1-4561a41fd79mr64379535e9.22.1752585854354;
-        Tue, 15 Jul 2025 06:24:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3r8lG85ntU3nBUSpLXqHodEZFoetPf2QpvNAGJr6E2EBer+0dRaC665FuVYarZxx4ibL6Dg==
-X-Received: by 2002:a05:600c:4ed0:b0:456:1a41:f932 with SMTP id 5b1f17b1804b1-4561a41fd79mr64378845e9.22.1752585853644;
-        Tue, 15 Jul 2025 06:24:13 -0700 (PDT)
-Received: from localhost (p200300d82f2849002c244e201f219fbd.dip0.t-ipconnect.de. [2003:d8:2f28:4900:2c24:4e20:1f21:9fbd])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4560c50b7b4sm100033485e9.25.2025.07.15.06.24.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 06:24:13 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	xen-devel@lists.xenproject.org,
-	linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Hugh Dickins <hughd@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Lance Yang <lance.yang@linux.dev>,
-	David Vrabel <david.vrabel@citrix.com>
-Subject: [PATCH v1 9/9] mm: rename vm_ops->find_special_page() to vm_ops->find_normal_page()
-Date: Tue, 15 Jul 2025 15:23:50 +0200
-Message-ID: <20250715132350.2448901-10-david@redhat.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250715132350.2448901-1-david@redhat.com>
-References: <20250715132350.2448901-1-david@redhat.com>
+        d=1e100.net; s=20230601; t=1752585848; x=1753190648;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GOiczrZQ07TlImzuWhdRA1uRrJzdt3bEMH2PMY2Z0lI=;
+        b=OYtU3IZz6C+VPccU6UgXJ2NVxCxvKBUqnFVGK4PDQfWgelyhIcYPQufpeqDdcQLQhQ
+         WQzcMaXPOPrg0VvcF/ssHKExEYeYvHd1ekHO157IJUrjLIgrVPv/E74TvAh39gt2l68Q
+         oUgVEu+R06Mn+lMhPThY3ezMLYVS1VY8KKgrqvfl19nGtkEcmT8X7xGpMFUPegpqkMOV
+         Zp3eHpJrFqqDaQiKB3lI0mTFLBz04PQdqleHHbTdkqzQExHrnuoJ3Bb/Irsb6dx9P8Ny
+         /pWCC+/uCKms2+mbvu9kmi+nTeP+fycZz8DpXccZyFzRMMbfhTCFoiLRVaAgWbGZZnkD
+         p99A==
+X-Forwarded-Encrypted: i=1; AJvYcCWIO3pJDOi7DNNFmozCdXCVdgr/sMMQIHK4cgm4w6cFm2WntVGU8fP0uQrYlQ23M8KHoYUmtjroSubcWLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6kzEqveFI3XwHb2h2bsXWOnegTjg0m3lpQ8DpOBW83U1pHrmw
+	qleqFrxaIdbwqcUtP4Xucu5wQSE39hdYzYjWQvImT2cvFtR/Yp5wEnCN92DaxKHPM7E=
+X-Gm-Gg: ASbGnctQHBY6O9Fm8QhAMEWbLbk4g40zJBhzVNIo65/CHHALtw4i9MkhnnzMPPBBM+X
+	zlYkrIAN/OVPxlCU5HQDZKC/IKcW1q/HLO/aiKDfp93M0G6pcyFUUkTZ/6qIqEwWbMa1o47n4yV
+	uqNFdte3KftsXr+OOV/QmKMg/38fJLn6nnDc2lg7lsKNvCn6vjiQ9OdeILd42Bre7QngB8gmyvL
+	33y4F1ULlQVHRQ1xRibdZvikw/KqiDOaH1zQSrqr2LmVQKMY4y61VO1+7LZQAWQQToWwQCkVOo1
+	XBBWeUYxCNy1BoChklG88nBGyvhs8Ml8eUCK8HO3oF0H7Z32wKm2zXoBup7D3vx/kug1nj1Ej6v
+	Pt8a1sEqVDjiR7GEcrCOFAl7FChYnnoQnnewKQTMGeM4qI2N+FfCMa82ANSEu
+X-Google-Smtp-Source: AGHT+IEs+ScYaBoPod0KS92i4ye+McpE9jOei8lbZ41OgzZYALXJoP1+s9eQ2gbL76aM01wUZbMIAw==
+X-Received: by 2002:a05:600c:1ca2:b0:456:1a69:94fa with SMTP id 5b1f17b1804b1-4561a699783mr71744425e9.13.1752585847534;
+        Tue, 15 Jul 2025 06:24:07 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4561dd91072sm49780995e9.14.2025.07.15.06.24.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 06:24:06 -0700 (PDT)
+Date: Tue, 15 Jul 2025 15:24:04 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: zhanghongchen <zhanghongchen@loongson.cn>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH] thermal/drivers/loongson2: Constify struct
+ thermal_zone_device_ops
+Message-ID: <aHZWdMSYDsjebRh-@mai.linaro.org>
+References: <5f5f815f85a9450bca7848c6d47a1fee840f47e5.1748176328.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5f5f815f85a9450bca7848c6d47a1fee840f47e5.1748176328.git.christophe.jaillet@wanadoo.fr>
 
-... and hide it behind a kconfig option. There is really no need for
-any !xen code to perform this check.
+On Sun, May 25, 2025 at 02:32:30PM +0200, Christophe JAILLET wrote:
+> 'struct thermal_zone_device_ops' could be left unmodified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
+> 
+> This partly reverts commit 734b5def91b5 ("thermal/drivers/loongson2: Add
+> Loongson-2K2000 support") which removed the const qualifier. Instead,
+> define two different structures.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    5089	   1160	      0	   6249	   1869	drivers/thermal/loongson2_thermal.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    5464	   1128	      0	   6592	   19c0	drivers/thermal/loongson2_thermal.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only
+> ---
 
-The naming is a bit off: we want to find the "normal" page when a PTE
-was marked "special". So it's really not "finding a special" page.
+Applied, thanks
 
-Improve the documentation, and add a comment in the code where XEN ends
-up performing the pte_mkspecial() through a hypercall. More details can
-be found in commit 923b2919e2c3 ("xen/gntdev: mark userspace PTEs as
-special on x86 PV guests").
-
-Cc: David Vrabel <david.vrabel@citrix.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- drivers/xen/Kconfig              |  1 +
- drivers/xen/gntdev.c             |  5 +++--
- include/linux/mm.h               | 18 +++++++++++++-----
- mm/Kconfig                       |  2 ++
- mm/memory.c                      | 12 ++++++++++--
- tools/testing/vma/vma_internal.h | 18 +++++++++++++-----
- 6 files changed, 42 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
-index 24f485827e039..f9a35ed266ecf 100644
---- a/drivers/xen/Kconfig
-+++ b/drivers/xen/Kconfig
-@@ -138,6 +138,7 @@ config XEN_GNTDEV
- 	depends on XEN
- 	default m
- 	select MMU_NOTIFIER
-+	select FIND_NORMAL_PAGE
- 	help
- 	  Allows userspace processes to use grants.
- 
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index 61faea1f06630..d1bc0dae2cdf9 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -309,6 +309,7 @@ static int find_grant_ptes(pte_t *pte, unsigned long addr, void *data)
- 	BUG_ON(pgnr >= map->count);
- 	pte_maddr = arbitrary_virt_to_machine(pte).maddr;
- 
-+	/* Note: this will perform a pte_mkspecial() through the hypercall. */
- 	gnttab_set_map_op(&map->map_ops[pgnr], pte_maddr, flags,
- 			  map->grants[pgnr].ref,
- 			  map->grants[pgnr].domid);
-@@ -516,7 +517,7 @@ static void gntdev_vma_close(struct vm_area_struct *vma)
- 	gntdev_put_map(priv, map);
- }
- 
--static struct page *gntdev_vma_find_special_page(struct vm_area_struct *vma,
-+static struct page *gntdev_vma_find_normal_page(struct vm_area_struct *vma,
- 						 unsigned long addr)
- {
- 	struct gntdev_grant_map *map = vma->vm_private_data;
-@@ -527,7 +528,7 @@ static struct page *gntdev_vma_find_special_page(struct vm_area_struct *vma,
- static const struct vm_operations_struct gntdev_vmops = {
- 	.open = gntdev_vma_open,
- 	.close = gntdev_vma_close,
--	.find_special_page = gntdev_vma_find_special_page,
-+	.find_normal_page = gntdev_vma_find_normal_page,
- };
- 
- /* ------------------------------------------------------------------ */
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 6877c894fe526..cc3322fce62f4 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -646,13 +646,21 @@ struct vm_operations_struct {
- 	struct mempolicy *(*get_policy)(struct vm_area_struct *vma,
- 					unsigned long addr, pgoff_t *ilx);
- #endif
-+#ifdef CONFIG_FIND_NORMAL_PAGE
- 	/*
--	 * Called by vm_normal_page() for special PTEs to find the
--	 * page for @addr.  This is useful if the default behavior
--	 * (using pte_page()) would not find the correct page.
-+	 * Called by vm_normal_page() for special PTEs in @vma at @addr. This
-+	 * allows for returning a "normal" page from vm_normal_page() even
-+	 * though the PTE indicates that the "struct page" either does not exist
-+	 * or should not be touched: "special".
-+	 *
-+	 * Do not add new users: this really only works when a "normal" page
-+	 * was mapped, but then the PTE got changed to something weird (+
-+	 * marked special) that would not make pte_pfn() identify the originally
-+	 * inserted page.
- 	 */
--	struct page *(*find_special_page)(struct vm_area_struct *vma,
--					  unsigned long addr);
-+	struct page *(*find_normal_page)(struct vm_area_struct *vma,
-+					 unsigned long addr);
-+#endif /* CONFIG_FIND_NORMAL_PAGE */
- };
- 
- #ifdef CONFIG_NUMA_BALANCING
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 0287e8d94aea7..82c281b4f6937 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1397,6 +1397,8 @@ config PT_RECLAIM
- 
- 	  Note: now only empty user PTE page table pages will be reclaimed.
- 
-+config FIND_NORMAL_PAGE
-+	def_bool n
- 
- source "mm/damon/Kconfig"
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index f1834a19a2f1e..d09f2ff4a866e 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -619,6 +619,12 @@ static void print_bad_page_map(struct vm_area_struct *vma,
-  * trivial. Secondly, an architecture may not have a spare page table
-  * entry bit, which requires a more complicated scheme, described below.
-  *
-+ * With CONFIG_FIND_NORMAL_PAGE, we might have the "special" bit set on
-+ * page table entries that actually map "normal" pages: however, that page
-+ * cannot be looked up through the PFN stored in the page table entry, but
-+ * instead will be looked up through vm_ops->find_normal_page(). So far, this
-+ * only applies to PTEs.
-+ *
-  * A raw VM_PFNMAP mapping (ie. one that is not COWed) is always considered a
-  * special mapping (even if there are underlying and valid "struct pages").
-  * COWed pages of a VM_PFNMAP are always normal.
-@@ -716,8 +722,10 @@ struct page *vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 	unsigned long pfn = pte_pfn(pte);
- 
- 	if (unlikely(pte_special(pte))) {
--		if (vma->vm_ops && vma->vm_ops->find_special_page)
--			return vma->vm_ops->find_special_page(vma, addr);
-+#ifdef CONFIG_FIND_NORMAL_PAGE
-+		if (vma->vm_ops && vma->vm_ops->find_normal_page)
-+			return vma->vm_ops->find_normal_page(vma, addr);
-+#endif /* CONFIG_FIND_NORMAL_PAGE */
- 		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
- 			return NULL;
- 		if (is_zero_pfn(pfn))
-diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index 991022e9e0d3b..9eecfb1dcc13f 100644
---- a/tools/testing/vma/vma_internal.h
-+++ b/tools/testing/vma/vma_internal.h
-@@ -465,13 +465,21 @@ struct vm_operations_struct {
- 	struct mempolicy *(*get_policy)(struct vm_area_struct *vma,
- 					unsigned long addr, pgoff_t *ilx);
- #endif
-+#ifdef CONFIG_FIND_NORMAL_PAGE
- 	/*
--	 * Called by vm_normal_page() for special PTEs to find the
--	 * page for @addr.  This is useful if the default behavior
--	 * (using pte_page()) would not find the correct page.
-+	 * Called by vm_normal_page() for special PTEs in @vma at @addr. This
-+	 * allows for returning a "normal" page from vm_normal_page() even
-+	 * though the PTE indicates that the "struct page" either does not exist
-+	 * or should not be touched: "special".
-+	 *
-+	 * Do not add new users: this really only works when a "normal" page
-+	 * was mapped, but then the PTE got changed to something weird (+
-+	 * marked special) that would not make pte_pfn() identify the originally
-+	 * inserted page.
- 	 */
--	struct page *(*find_special_page)(struct vm_area_struct *vma,
--					  unsigned long addr);
-+	struct page *(*find_normal_page)(struct vm_area_struct *vma,
-+					 unsigned long addr);
-+#endif /* CONFIG_FIND_NORMAL_PAGE */
- };
- 
- struct vm_unmapped_area_info {
 -- 
-2.50.1
 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
