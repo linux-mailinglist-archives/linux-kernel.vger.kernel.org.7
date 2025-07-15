@@ -1,101 +1,99 @@
-Return-Path: <linux-kernel+bounces-731092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA82B04ECE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:28:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5C3B04ECF
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 05:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC201AA712F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:28:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D2614A3864
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0016D2D0C9E;
-	Tue, 15 Jul 2025 03:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C0D2D239A;
+	Tue, 15 Jul 2025 03:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TnoAxYeE"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRzE4do4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB1C2D0C80
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 03:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361E22D1303;
+	Tue, 15 Jul 2025 03:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752550089; cv=none; b=DZ1V1DUYazA588Lg0uwAM6IWIjaFwasEiUYx3vI5feddeQY6hKnNa2AN/NanFxM1FtknETIzJSDRKhwKXlSH+4F4138Mk2atH/LlwErvAeafoX1u9JIJYbu/2H91uOFbDZI9NzPDawOh5+b8apE4ftIGXuzaKmqHFiPMnujcBYg=
+	t=1752550075; cv=none; b=Naf60acWinKmNX6I9ScN1rb77IH6tRx5tVnbSuvDV3DqkgGc5HPGIjN7q30T/gT/r+JgzHXQRRsVVNSvgKlavG9vYq90Q5Lk1yWybpSZl4BI86J56bFXodY1i59G+8sGCx9TJHfvHL0wXJU7uDrhXr9XfAZlAxyT6RHOTdabFHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752550089; c=relaxed/simple;
-	bh=7mgRibT/ZbIOVW2Gbk6Dm4nEtSF/6zwBcPbevZ+QDes=;
+	s=arc-20240116; t=1752550075; c=relaxed/simple;
+	bh=RgjkmaG1JI4kCb3OMB2bqGTvB0ZifKXuh5j6zP9f9VA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AI0W/FDshSyfcSoyaHH9FTqC93C4osfup9n7BRHy8rM2s3giaIkFApwisiu1mfhHbyZ7s6npqSwIZn7GCi7cWjjeU6mq0mcEQG8adM3xgl3GYieZMUEBCh+Wy+QhFbzlq3/VH6pWSb6KLwycO/KXdiigvO3PABSi0BqMk77viSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TnoAxYeE; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752550076; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=onbajrNl7Mu5K2loRN3gLibZSvvla6ZkA3tMQGBrn70=;
-	b=TnoAxYeE91EDDySGuqECiVlQZP7AE+DxUyjCS9ZpJtRuX9IcrEvol56PhQ9mpH16cf1+aU+8z7yThcHMhHmTv88NXOx6VLQ/wstnwu99PfmhbAZUyTp+pe023XwuYFA9yB9HOEMuEcT4o5BnKSMiUXIG5PtnpaVZoeurYnv0x+g=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0Wj-pYY0_1752550075 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 15 Jul 2025 11:27:55 +0800
-Date: Tue, 15 Jul 2025 11:27:54 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Askar Safin <safinaskar@zohomail.com>, akpm <akpm@linux-foundation.org>
-Cc: corbet <corbet@lwn.net>, "john.ogness" <john.ogness@linutronix.de>,
-	"lance.yang" <lance.yang@linux.dev>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	paulmck <paulmck@kernel.org>, pmladek <pmladek@suse.com>,
-	rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 1/5] panic: clean up code for console replay
-Message-ID: <aHXKuiqELS1tmchE@U-2FWC9VHC-2323.local>
-References: <20250703021004.42328-2-feng.tang@linux.alibaba.com>
- <20250714210940.12-1-safinaskar@zohomail.com>
- <aHWliJhyIZnq97Mm@U-2FWC9VHC-2323.local>
- <1980ba9224c.11f5e5a9635585.8635674808464045994@zohomail.com>
- <aHWwL7TdabnGna3D@U-2FWC9VHC-2323.local>
- <1980bfc17f1.122b80ffe36544.5266293070616137570@zohomail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFOAqFTHXgWER3ZG2HggmQC4axJR7WSD6F0qIsl4AIdgxonjfak9yAglNMI1UVrvFXyuXgM0PqTPA/zuXc9r2BrLeAx2jbppBAnesDM/PHHMj66S6mVWaxK3b0jG1JxM3VvIuAl3EjcQtHJ5/Xa7I2/v2qN5/SI3N36M+au97Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FRzE4do4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DDAFC4CEED;
+	Tue, 15 Jul 2025 03:27:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752550074;
+	bh=RgjkmaG1JI4kCb3OMB2bqGTvB0ZifKXuh5j6zP9f9VA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FRzE4do4tUaPJFDv2Q1Q59tExpdoEaWMnQW6hDmy2JvbghbmZ7Jx26D/BJ0MZhVu1
+	 7N7j4FcphOWWqZD1Paw7gcL18myt5DVmbG3vQ+oaocUdr30sC8eoA3ftXaC2LjfkPs
+	 y9V5WpYXazsCrMLNfyiXI2ls4qXmutHton/d8WQu41ZEErAoiz7C1fSeRXKRsqnMZS
+	 XEcxyC+0ahON1ftbYcy4/ufKBX1PL6d3g0V+ELp79UA0aUWDzBHoe9lctaulkGqjPH
+	 ybv86Ohue2adM0pYecHnqXZ9C5E/IrjVaRYDfwa7SMIkYgTm6RdtD4pCSDMOjnCp9g
+	 Eo8B6nL9XfVwg==
+Date: Mon, 14 Jul 2025 22:27:54 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Robert Marko <robimarko@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Joerg Roedel <joro@8bytes.org>, linux-mmc@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht, linux-crypto@vger.kernel.org,
+	phone-devel@vger.kernel.org, linux-pm@vger.kernel.org,
+	Amit Kucheria <amitk@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jassi Brar <jassisinghbrar@gmail.com>, devicetree@vger.kernel.org,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, iommu@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>, dmaengine@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Thara Gopinath <thara.gopinath@gmail.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v2 04/15] dt-bindings: firmware: qcom,scm: document Milos
+ SCM Firmware Interface
+Message-ID: <175255007347.4169055.14756962065490424576.robh@kernel.org>
+References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
+ <20250713-sm7635-fp6-initial-v2-4-e8f9a789505b@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1980bfc17f1.122b80ffe36544.5266293070616137570@zohomail.com>
+In-Reply-To: <20250713-sm7635-fp6-initial-v2-4-e8f9a789505b@fairphone.com>
 
-On Tue, Jul 15, 2025 at 06:48:47AM +0400, Askar Safin wrote:
+
+On Sun, 13 Jul 2025 10:05:26 +0200, Luca Weiss wrote:
+> Document the SCM Firmware Interface on the Milos SoC.
 > 
->  ---- On Tue, 15 Jul 2025 05:34:39 +0400  Feng Tang <feng.tang@linux.alibaba.com> wrote --- 
->  > I see. How about changing the patch to: 
->  > 
->  > -            bit 5: print all printk messages in buffer
->  > +            bit 5: replay all kernel messages on consoles at the end of panic
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  Documentation/devicetree/bindings/firmware/qcom,scm.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Yes, I agree!
 
-Hi Andrew,
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Could you help to squash below patch to 1/5 patch "panic: clean up code
-for console replay" in the nonmmu-unstable branch? Thanks!
-
-- Feng
-
----
- Documentation/admin-guide/kernel-parameters.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f34de9978a91..a84d3f7f5bbf 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4533,7 +4533,7 @@
- 			bit 2: print timer info
- 			bit 3: print locks info if CONFIG_LOCKDEP is on
- 			bit 4: print ftrace buffer
--			bit 5: replay all messages on consoles at the end of panic
-+			bit 5: replay all kernel messages on consoles at the end of panic
- 			bit 6: print all CPUs backtrace (if available in the arch)
- 			bit 7: print only tasks in uninterruptible (blocked) state
- 			*Be aware* that this option may print a _lot_ of lines,
 
