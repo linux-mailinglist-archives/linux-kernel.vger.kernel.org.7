@@ -1,248 +1,175 @@
-Return-Path: <linux-kernel+bounces-732469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD91B06733
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:46:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95003B066EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 21:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04445565286
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:46:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B13714E7975
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81398246BB8;
-	Tue, 15 Jul 2025 19:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CE525392B;
+	Tue, 15 Jul 2025 19:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="K8ULZDaW";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="U4vzUKCw"
-Received: from send193.i.mail.ru (send193.i.mail.ru [95.163.59.32])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qfr4mDK6"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2070.outbound.protection.outlook.com [40.107.220.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876F74A11;
-	Tue, 15 Jul 2025 19:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.163.59.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752608797; cv=none; b=OjQywv6ng2/mUPGWegU+ie7+S284TcfNiP0mmosQhXsfcynMq/NlHn3SQDddc9gkU8eovD/ld0g/jFYSGd0VfZv4qtC1o1H9Y9j8CW9jM9kA6lVJzVfwmJJ02PTS9EERsRir2Ve5bEr1g7fz7VcfJwoxPC3rtBjLBiRPAXxcjKc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752608797; c=relaxed/simple;
-	bh=uriLPZFWrENc8yflTjy8ePWfdB6HMb7cR57uabqn5Mk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BvU7VoqPnA+kA3pWA6H4qdnTWDJ3vQciSMurAJ/hQN49uxDhqT9GAbnWDGyT/7Q31h4qp3Zk0aQbPlCGRK4LTAlF+hfeKzVNSYUKxe1u5muC3ME8sI3OkCixrSeTBc8TtlTlfIKD3bsPPSfbfBZ1zpg+ULM6SjVPDd8GGUtGvSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=K8ULZDaW; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=U4vzUKCw; arc=none smtp.client-ip=95.163.59.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
-	; s=mailru; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive:X-Cloud-Ids;
-	bh=9cpHckK9vTd6XKFUTxpc3kFd/+B5gWZI5gFwoeANx9s=; t=1752608793; x=1752698793; 
-	b=K8ULZDaWCbgTJt9SDsQ/IueUiqLjOHtcCX6yu0s4vQHc4NfTS3Da5Rp4MzFQdGCnrCfO90iE35s
-	jAyaYJSSrTvUzIyC2llT1lpFOwfDaJteOHB0r/lVeDqo/dbke66Uz2TbFkmc1JhBVyuP/9eEQ5ebQ
-	9uuesQqxaSVypL30yfA=;
-Received: from [10.113.207.122] (port=49544 helo=send175.i.mail.ru)
-	by exim-fallback-579c974f56-lgvqs with esmtp (envelope-from <danila@jiaxyga.com>)
-	id 1ublN1-00000000E66-49gK; Tue, 15 Jul 2025 22:31:20 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
-	; s=mailru; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:Sender:Reply-To:To
-	:Cc:Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-	List-Archive:X-Cloud-Ids:Disposition-Notification-To;
-	bh=9cpHckK9vTd6XKFUTxpc3kFd/+B5gWZI5gFwoeANx9s=; t=1752607879; x=1752697879; 
-	b=U4vzUKCwQj08UjuSp6nDZYPsOnQDLmcizt9PO/tlii3H6HENdHyqt8+ptNAurU4tdeQkPaTiE+N
-	Cib+YwkiWl41OVlduLAyaHYMdJ6mXGYGAIxNW5vhKjqPXMfYL4SCgxE5andUA2Nu5e073LhPfsFdJ
-	RrB9sEBnbX+msorhibc=;
-Received: by exim-smtp-7bc47bf769-pszsj with esmtpa (envelope-from <danila@jiaxyga.com>)
-	id 1ublMl-00000000Tsj-2qQN; Tue, 15 Jul 2025 22:31:04 +0300
-Message-ID: <d56c65ef-c1f7-4429-a830-838c3256b9e2@jiaxyga.com>
-Date: Tue, 15 Jul 2025 22:31:02 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2FD1FCFFC
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 19:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752608036; cv=fail; b=OS42FWAw2LYq57oEwlQMSn2LyQSA+IPADLgjwazA7ZzHQ7eVxw7Vs+XUEAOtsL/Lzx++gMuyzx3CC/JyUD7ezmhqjaKAYnlo8XEbEp025TZ9w4VqHIcjbdbWF5rOwx6/nSAhB8hKjQmsUES1jem33Qg8VZM9aDbK9k6Bb3Ca0WI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752608036; c=relaxed/simple;
+	bh=azSo5I9Zgf+QDri2ncnpPBEttMmAvzfahVzOS4oN1kU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FlkkRAE5VEOjfU76qeyh1Wn+qqBStGn58H8zHsyAzdQzf1FKxp03m4rZVerlrEQorFG7h7wlgV2Pc0wIl0WIIrbRDQ2/8WM75/K8szn0W5Y50EqaNr3qSLJ2MOIKKJ3goq7ATeR9F5mbf1EJ4QkqzceLzxiIh2bjvflpT+Auy0Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qfr4mDK6; arc=fail smtp.client-ip=40.107.220.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zUUei3yobjc/xpAAqlkO9a39gqk4fqVvVrfyzizeiwaA/BvMpevgbrVr0iD93qH77AO4qvBFo7ID3G6+VLpwABZVmneZZwRaZ9AwldNAX1dmBZMDXrQ6F+/LujH4/cIQEGogPGEx36Gg37Ru2NlTwL0VTrX/4rfRe6BIL5O5Uv25xdahD3lbwAHSYPkQg77+NhaitYFyBoeI9sb1jw3pQQc+haMmlq0uQM+nczanJn6x2BGe+bgjAfQEXwGjs45hw+FxpGAIbxE16bNavuHc+JRFFgv+/aruHmNeCMkkX3z9bLNnYJ9yZjyDVSBsvfEyrDW1rM/Hz37Kos6XI5D2MQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=htdzSunTZHsz+6cUaZeibcQ0KfTB2m9rPr2kfxyMn9M=;
+ b=S43gEt6Z1piHfOrpUJBFvfDJ5dbybymkO/qsyqg4n+RW8/RVPbvTF4wJgm8fkxhUvLgiWdQO8JZesPaXpzNgin8QfvhfkAjI88wQzekNpRBscNsF0n7sNGp8n13caFX5E5N6R/6ilZ+VM9gyeJUrEuWB7CYcU/57vIAsyF4VT+9c4yrSzb/4YdapMa1FzhQNo7MZwNRMDxvIaOi0M2ki49JzpeEvfX6y0UY9v6SoMAVQNcsmboxVSBUJ/rcIUPU/3ogcqGsK6R6DNvh5DBtcVUTLjdzYisUvmb93aT2HvWgq0bS7XAkAxA7QwOdMot1gP13lvwb+TRaaXxAxVbeDvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=htdzSunTZHsz+6cUaZeibcQ0KfTB2m9rPr2kfxyMn9M=;
+ b=qfr4mDK6xdOZoQvMIZxJ9CBIoNvJKcXEO2yh61e5FjaA/2xvLVi9bpG0OHVAZRUYnv21Td6AkTfAqCVXcw2QAhJ4nzsicPYPaNQkc70dGNYmd6Y9EI/wpn4wzA8luljmmH7/04/B4hdbXatqEuRKOUGLFA0em4WXU3XDwVvpzVD6o6aC8Ur83E0tpS6fCjpu9j4OtaH8VeXGiuLWM9IyTGO/2yIArx9CdxSMCDbl3+iifr6B1TiFmeJJtHWN8r5DfQ57BBnGX7dCFnxAy8+t13Rk4eI+AW/Nc3c3My0frVJIf59IrWcpaLrMJROecg/HtFJC05fJVJ4YXUjyj/E0Qw==
+Received: from BN9PR03CA0104.namprd03.prod.outlook.com (2603:10b6:408:fd::19)
+ by DS0PR12MB8480.namprd12.prod.outlook.com (2603:10b6:8:159::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Tue, 15 Jul
+ 2025 19:33:50 +0000
+Received: from BN3PEPF0000B075.namprd04.prod.outlook.com
+ (2603:10b6:408:fd:cafe::6) by BN9PR03CA0104.outlook.office365.com
+ (2603:10b6:408:fd::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.32 via Frontend Transport; Tue,
+ 15 Jul 2025 19:33:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN3PEPF0000B075.mail.protection.outlook.com (10.167.243.120) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Tue, 15 Jul 2025 19:33:49 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Jul
+ 2025 12:33:28 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 15 Jul 2025 12:33:28 -0700
+Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 15 Jul 2025 12:33:27 -0700
+Date: Tue, 15 Jul 2025 12:33:26 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+CC: <jgg@nvidia.com>, <jgg@ziepe.ca>, <kevin.tian@intel.com>,
+	<will@kernel.org>, <aneesh.kumar@kernel.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <joro@8bytes.org>, <robin.murphy@arm.com>,
+	<shuah@kernel.org>, <aik@amd.com>, <dan.j.williams@intel.com>,
+	<baolu.lu@linux.intel.com>, <yilun.xu@intel.com>
+Subject: Re: [PATCH v5 0/8] iommufd: Destroy vdevice on device unbind
+Message-ID: <aHatBn28RmpGzGOB@Asurada-Nvidia>
+References: <20250715063245.1799534-1-yilun.xu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: qcom: sm8250-xiaomi-pipa: Drop nonexistent
- hardware
-To: Arseniy Velikanov <me@adomerle.pw>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Luka Panio <lukapanio@gmail.com>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20250715185636.21758-1-me@adomerle.pw>
-Content-Language: en-US
-From: Danila Tikhonov <danila@jiaxyga.com>
-In-Reply-To: <20250715185636.21758-1-me@adomerle.pw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailru-Src: smtp
-X-7564579A: EEAE043A70213CC8
-X-77F55803: 4F1203BC0FB41BD9CB0CA91FF61D77F029BAD425E6BCD2A540815A0B9AA3DF4D182A05F5380850404C228DA9ACA6FE2765C8FFB148CDD3883DE06ABAFEAF670599191CA46A8EBDC6D34000D822F1A4AB906DE0852CB23DE4
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE77F05ED334962579DEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637AC83A81C8FD4AD23D82A6BABE6F325AC2E85FA5F3EDFCBAA7353EFBB553375666688F6781D70329C37EFBC3ABF54F2F87805CFBA3BF48F02ECCD69CB5BE86039389733CBF5DBD5E913377AFFFEAFD269176DF2183F8FC7C0A29E2F051442AF778941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B6E232F00D8D26902CA471835C12D1D977C4224003CC836476EB9C4185024447017B076A6E789B0E975F5C1EE8F4F765FCFE70A72D01850D713AA81AA40904B5D9CF19DD082D7633A0C84D3B47A649675F3AA81AA40904B5D98AA50765F7900637E14436AD9925526DD81D268191BDAD3D3666184CF4C3C14F3FC91FA280E0CE3D1A620F70A64A45A98AA50765F79006372E808ACE2090B5E1725E5C173C3A84C3C5EA940A35A165FF2DBA43225CD8A89FAE2BFB9A60527F4F42539A7722CA490CB5C8C57E37DE458BEDA766A37F9254B7
-X-C1DE0DAB: 0D63561A33F958A5D14A109BADD487C85002B1117B3ED6966CABFDCE681DECB069995D676B7B4CBE823CB91A9FED034534781492E4B8EEADAE4FDBF11360AC9BBDAD6C7F3747799A
-X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF30D118A57972FB2DDEA728F66C5349276786ED4F925A359549E804390FA4F31A35D9E4C97941E9B15A468F5258EE6FDEE9589821669FE9947EAF46166138AE30E36A8015DD46D7FC034D55ECCE8C67C6913E6812662D5F2A78A556DA1408BD603BAB4BE5B351B77B77D7EADF59166DF0
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+ObcCpyrx6l7KImUglyhkEat/+ysWwi0gdhEs0JGjl6ggRWTy1haxBpVdbIX1nthFXMZebaIdHP2ghjoIc/363UZI6Kf1ptIMVbGoXdS5lirDFAWuffZ9whY=
-X-Mailru-Sender: 9EB879F2C80682A0D0AE6A344B45275F36C2815222D52032CFE9FA76EDA5B4B73FA7EE83642BAAA7BF9478A0D2748FCD2C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
-X-Mras: Ok
-X-Mailru-Src: fallback
-X-7564579A: B8F34718100C35BD
-X-77F55803: 6242723A09DB00B4E00FA01937F043F5CE4FA680B5D534C81A8730F1F8A626DA049FFFDB7839CE9ED4DEBB74AAD3736075E8CDC620400307DFA3B5B87CB89FA02E81BB5A388ADF1297E1A382B336C68D
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+OYcBso8Zm+oliTz8oZwnDrFsY77LZRcHyw5ht0smWrfSeTW5FiI8avd9v29gUBslpEZ9wIMwqVP4jLQVQ+dVm7x9BpDHadBV9RMjI809PraZqzUGXFpmrHL15Eu8fpKsgQ==
-X-Mailru-MI: 20000000000000800
-X-Mras: Ok
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250715063245.1799534-1-yilun.xu@linux.intel.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B075:EE_|DS0PR12MB8480:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91271209-6906-4719-6c27-08ddc3d68612
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kJb5hMSJ1yFKwvyYg/lbEuw2WUWRMwOUAMZKIeHJxuS1nrHq8Lvwg8q5lyTj?=
+ =?us-ascii?Q?FQK8WERwr1GhGW6MsPSA8uBQG6GTlIdcvVgPHoI/SWEnVs0AVZUqoECpcFFG?=
+ =?us-ascii?Q?c2LAUItrdYq6kBTH+lRQls3g37m40yg0ThgvyV3gdo7DYoqrED8kWVY36iQH?=
+ =?us-ascii?Q?GarK6Z1L+ono/iWQsy8SG508C9w9QkS4he1FyBxeqWmOHdcdmiOuV/L6hF3R?=
+ =?us-ascii?Q?NV8MrzqVhbpkBLKH9fZlZCKNxs49ClKqLyKrWppXV+Ay8JR8FKV4gt8/QYr2?=
+ =?us-ascii?Q?J0Mh9uQkB2S5jN6fe2gQbmbl8eBtGgKi1sd4TxggpCoJvkKESiUIaeMYKQce?=
+ =?us-ascii?Q?5t52kCdth5oQHLtkPC6Xqh5Qa8xWuI5SlUaRHbLlV8mf2o9zVmYh800tQGa3?=
+ =?us-ascii?Q?uaJAa8y0gWhFpYRQgANC+M/Gq7w+K85iO+SNW5kU99/qBeTl5ZnxhnZAqHE1?=
+ =?us-ascii?Q?SsAoxKuNYoIAVlwBNg4WgO+srQv2gf5yXlAHA6cYYqtkirpbXIPixYjXIIYe?=
+ =?us-ascii?Q?rWEC51ZRvN3C0w/Bml9sGzL+cjsQFPzsjlnU125FXs9QCynNz0i5/5aZplp3?=
+ =?us-ascii?Q?BexwMLmZbLTCsvMAxKc0o7cesgke1CvpnZnq233m2mOI9QQQh0P/vLaLzgtN?=
+ =?us-ascii?Q?WDxAN6iL2QkmNn8I1s3sqcl2eYiZwbaeHzskO5WSXFG4FCf7575DFVtApDyB?=
+ =?us-ascii?Q?RVcJuD72CXxgBZ/tqoP7MIQPjB289EP4n0xjS7whc/Mc+iaa1myrAjmfi49R?=
+ =?us-ascii?Q?ecThK7hzDwzi8V/iKEyBxNxtuCngdfRZkETLQDsTMnt2YqC0415rl5KjOksY?=
+ =?us-ascii?Q?MaKQUuGpqTBLB0wElwhnHv3HQMzwS4e8Ix3Kiz1XMgD1qK9kw9O76I1bvSgM?=
+ =?us-ascii?Q?UsB/P5BbsZZuZ/XuZjJ61bAjlaMRG/hu6FUBtSUvDny9wvBZIyhx0TgL7bw/?=
+ =?us-ascii?Q?jywzSmP6RJrZm4bIGF7Yn21uMEoD1TtwXDzUvs5u0Gt/b8kDKBpGbrLhjYqd?=
+ =?us-ascii?Q?oBKrChDzjZw0Y1xvly3H4lyUgjuuQav2h91gXuHsBG5HVy1uvepyety5J5mS?=
+ =?us-ascii?Q?KJRRyaW8NBRDdNg0r/OLIIwcXxmSd9MmMIBYAwpfDnyuld8oCM1bUOAHmVLR?=
+ =?us-ascii?Q?6PqSvlIAQwS2NOG3UT86tovCV5kJH2RoZVdLX50OLDomTeKlc1We1GEHOSnc?=
+ =?us-ascii?Q?8veXpxPAIgZ7RTiOqfRAhOuaqlPSlma1W+rxV2aZ0k+dSbevn2Mfl7oBDaxX?=
+ =?us-ascii?Q?zA7UqC17xwp9Y05jJuOM+OlSA5lG7egTlvy28DHXw79qk+9zeWOVySssdxmC?=
+ =?us-ascii?Q?MZJcLUgRiHvzc1fZysN6nJae930niHABSn66os76AKWMKu9ZFjXimGBKG4Sq?=
+ =?us-ascii?Q?/kCYgIRV9UKH3y6IT/Q3WnCQhEpTFaRqdPKOabhh1m1Or/WNshw5DlWqID80?=
+ =?us-ascii?Q?rQtlpaielRU/S85WfuRzTdNOfTaIWMJXaVHLIHKhpYcP0dbLJn0Uk18cWVHo?=
+ =?us-ascii?Q?3HKMIHyXXVClniPp7zVDXarEF5+nFrNzkn5B?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 19:33:49.4405
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91271209-6906-4719-6c27-08ddc3d68612
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B075.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8480
 
-On 7/15/25 21:56, Arseniy Velikanov wrote:
-> PM8009 was erroneously added since this device doesn't actually have it.
-> It triggers a big critical error at boot, so we're drop it.
->
-> Also it looks like the fuel gauge is not connected to the battery,
-> it reports nonsense info. Downstream kernel uses pmic fg.
->
-> PMIC fuel-gauge driver uses mixed stats about dual-cell battery,
-> so I combined it into one.
->
-> Fixes: 264beb3cbd0d ("arm64: dts: qcom: sm8250-xiaomi-pipa: Add initial device tree")
->
-> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
-> ---
->   .../boot/dts/qcom/sm8250-xiaomi-pipa.dts      | 95 +------------------
->   1 file changed, 5 insertions(+), 90 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
-> index 668078ea4f04..b74c3c9b4076 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
-> +++ b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
-> @@ -50,18 +50,12 @@ framebuffer: framebuffer@9c000000 {
->   		};
->   	};
->   
-> -	battery_l: battery-l {
-> +	battery: battery {
->   		compatible = "simple-battery";
-> -		voltage-min-design-microvolt = <3870000>;
-> -		energy-full-design-microwatt-hours = <16700000>;
-> -		charge-full-design-microamp-hours = <4420000>;
-> -	};
-> -
-> -	battery_r: battery-r {
-> -		compatible = "simple-battery";
-> -		voltage-min-design-microvolt = <3870000>;
-> -		energy-full-design-microwatt-hours = <16700000>;
-> -		charge-full-design-microamp-hours = <4420000>;
-> +		charge-full-design-microamp-hours = <8840000>;
-> +		energy-full-design-microwatt-hours = <34300000>;
-> +		voltage-min-design-microvolt = <3400000>;
-> +		voltage-max-design-microvolt = <4370000>;
->   	};
->   
->   	bl_vddpos_5p5: bl-vddpos-regulator {
-> @@ -406,63 +400,6 @@ vreg_l11c_3p0: ldo11 {
->   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->   		};
->   	};
-> -
-> -	regulators-2 {
-> -		compatible = "qcom,pm8009-rpmh-regulators";
-Thanks for the patch.
-Please remove the extra pm8009.dtsi include too.
-> -		qcom,pmic-id = "f";
-> -
-> -		vdd-s1-supply = <&vph_pwr>;
-> -		vdd-s2-supply = <&vreg_bob>;
-> -		vdd-l2-supply = <&vreg_s8c_1p35>;
-> -		vdd-l5-l6-supply = <&vreg_bob>;
-> -		vdd-l7-supply = <&vreg_s4a_1p8>;
-> -
-> -		vreg_s1f_1p2: smps1 {
-> -			regulator-name = "vreg_s1f_1p2";
-> -			regulator-min-microvolt = <1200000>;
-> -			regulator-max-microvolt = <1300000>;
-> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> -		};
-> -
-> -		vreg_s2f_0p5: smps2 {
-> -			regulator-name = "vreg_s2f_0p5";
-> -			regulator-min-microvolt = <512000>;
-> -			regulator-max-microvolt = <1100000>;
-> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> -		};
-> -
-> -		/* L1 is unused. */
-> -
-> -		vreg_l2f_1p3: ldo2 {
-> -			regulator-name = "vreg_l2f_1p3";
-> -			regulator-min-microvolt = <1056000>;
-> -			regulator-max-microvolt = <1200000>;
-> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> -		};
-> -
-> -		/* L3 & L4 are unused. */
-> -
-> -		vreg_l5f_2p8: ldo5 {
-> -			regulator-name = "vreg_l5f_2p85";
-> -			regulator-min-microvolt = <2800000>;
-> -			regulator-max-microvolt = <3000000>;
-> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> -		};
-> -
-> -		vreg_l6f_2p8: ldo6 {
-> -			regulator-name = "vreg_l6f_2p8";
-> -			regulator-min-microvolt = <2800000>;
-> -			regulator-max-microvolt = <3000000>;
-> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> -		};
-> -
-> -		vreg_l7f_1p8: ldo7 {
-> -			regulator-name = "vreg_l7f_1p8";
-> -			regulator-min-microvolt = <1800000>;
-> -			regulator-max-microvolt = <1800000>;
-> -			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> -		};
-> -	};
->   };
->   
->   &cdsp {
-> @@ -495,17 +432,6 @@ zap-shader {
->   	};
->   };
->   
-> -&i2c0 {
-> -	clock-frequency = <400000>;
-> -	status = "okay";
-> -
-> -	fuel-gauge@55 {
-> -		compatible = "ti,bq27z561";
-> -		reg = <0x55>;
-> -		monitored-battery = <&battery_r>;
-> -	};
-> -};
-> -
->   &i2c11 {
->   	clock-frequency = <400000>;
->   	status = "okay";
-> @@ -523,17 +449,6 @@ backlight: backlight@11 {
->   	};
->   };
->   
-> -&i2c13 {
-> -	clock-frequency = <400000>;
-> -	status = "okay";
-> -
-> -	fuel-gauge@55 {
-> -		compatible = "ti,bq27z561";
-> -		reg = <0x55>;
-> -		monitored-battery = <&battery_l>;
-> -	};
-> -};
-> -
->   &pcie0 {
->   	status = "okay";
->   };
----
-Best wishes
-Danila
+On Tue, Jul 15, 2025 at 02:32:37PM +0800, Xu Yilun wrote:
+> It is to solve the lifecycle issue that vdevice may outlive idevice. It
+> is a prerequisite for TIO, to ensure extra secure configurations (e.g.
+> TSM Bind/Unbind) against vdevice could be rolled back on idevice unbind,
+> so that VFIO could still work on the physical device without surprise.
+> 
+> Changelog:
+> v5:
+>  - Further rebase to iommufd for-next 601b1d0d9395
+>  - Keep the xa_empty() check in iommufd_fops_release(), update comments
+>  - Move the *idev next to *viommu for struct iommufd_vdevice
+>  - Update the description about IOMMUFD_CMD_VDEVICE_ALLOC for lifecycle
+>  - Remove Baolu's tag for patch 4 because of big changes since v3
+>  - Add changelog about idev->destroying
+>  - Adjust line wrappings for tools/testing/selftests/iommu/iommufd.c
+>  - Clarify that no testing for tombstoned ID repurposing.
+>  - Add review tags.
+
+With the patch that I attached in my reply to PATCH-5, sanity works
+fine per iommufd's selftest and by testing tegra241-cmdqv in a VM.
+
+So, upon fixing the build break in PATCH-5 (maybe for a v6),
+
+Tested-by: Nicolin Chen <nicolinc@nvidia.com>
 
