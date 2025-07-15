@@ -1,293 +1,167 @@
-Return-Path: <linux-kernel+bounces-731615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C199B05732
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:54:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77CF4B05736
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02BF3AF1EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6C451C23ACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC69C2D63ED;
-	Tue, 15 Jul 2025 09:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D8D2561AE;
+	Tue, 15 Jul 2025 09:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nYIDa0s9"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m5YS2BWE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B08E2D542A
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A0A23BF83
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752573252; cv=none; b=PbImaCdcCm7+XigAX5Vejy+sVxQ/6Ihq7crBb8KKI8oIzxLbVjd+JPPBc5grjtKBQhoCKeuhwKzA3Jjt4868sJUZkDMqmh7gO4pzq5hGa5WaoaqzBdU9UqFn7RTI04NGiZFPdn4PuctR6iOdY1b5/KczIpJgPbsC/819jy4LnNg=
+	t=1752573295; cv=none; b=XXHsGpn8JC451r3y/BCitgEpBR2A0NMmw/N7Dkop0e+pwz59sX69wMbK9ZcC3izE8N0E2Ej1dUIsz+CH4Y6ieSnAye0QMq9+dgUTAUHB9MUvXWcsNnccXF+RTsdNqolhq5/DogflarZntvbPBCHlEbnNRYTrsLHdZd6sj2CGiaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752573252; c=relaxed/simple;
-	bh=FItGyW8nimCshTyrVdStcZ8wr8/YBuniLgbjSo3h7WQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uIEGwWj4LCZLTCqCWrGgoo5ttg/rbjvHhrEHQ7is1abOSi2Ri7fKDAog9Wmb+m0IMLjtMfFPGAoRQkpVlxY0h2IXxAejMk5R/yxtKvgDEfxB5p5sO9YIGK7AJsSHJFyMqWOC1NBvtarn8+mp49mF8K9/sExhsuE2GyW20aiW5ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nYIDa0s9; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45624f0be48so4947715e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:54:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752573248; x=1753178048; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cp5GBgsM/GT6S6VKbK948jD04WLTfcMDMRyGqwJi5HU=;
-        b=nYIDa0s9EPbv0SG1k5u2P0TbXAv6RPl0uXt9Fdwu9THSi8axcq5BwtzzjO502tmBQG
-         94ZrOHG+fmKr96JMF2DMrZqjhSaw6Kbg4Kbui/ZVE2WXAy+OhEMT1dG5I8/K406T9Rwa
-         qqE37onECrJ3xuZ3qFkw6cwTcAczRJ+Jvb3kU09kZ0jF+6h8F3XSxNxEXE5gX1gAs06Q
-         MrOFiv3H6cyGHXNKkiBnd04SC0jfUkbPu02mgfFSf/ueGlSU+oR1ZsJp+azlk6pulHMc
-         j1rxdnbEPPn5zR9y85F5R86kYxtS+ba1rhTxLdJd/8bMMJig5iLgF1Xs4/wLAXyeRO4B
-         BlpA==
+	s=arc-20240116; t=1752573295; c=relaxed/simple;
+	bh=6OVUx+9AwmAwTG1I+KdQVdAktmQDgN5EP4C7NezIitY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DyuRaSGmUPPll0t/EkEF3lmxxTT88uPJUmHoBCTHuce8PjLZhrdwkijTrfb0VSVjN6bxtCUSDQsqtNd5NHQvsJ7ujUrLgOCvAtRzGNDH1MEX3sRE46CoVYhCFrLLAkebGIkklGb/qwKDn9HYFmHiSo5Rde9B0mLLWNUB+TZEUwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m5YS2BWE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56F8k9Wg026516
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:54:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ix9VuDZeEsjg3KAly3eDP764kZgW3cJT4+AkWYQ4FOg=; b=m5YS2BWEXwTUWNzM
+	Ny0qjTcqmh7VMk3IvJ/ykNqT/s22qqoWpXtCfhf5miRg4FVlyl0mUDLeZ9TwhV1s
+	xlZzwwbxrY7uIayCVQFvkiVbr2k6q4eUARnUz1iej7Qkt8CXRgwywGRUTf7Gdzsj
+	m/Vn2gC0R+I6W54GG7HW2gACmSqqEQnKRzsAudngJqBDDl/muh7QtvQ+WVo/qV+r
+	9zlGi4ijehAqP0jAv8h0qy49CZFmVd0y16Hmu+3S62TZx5sLnBmFxR3ewPaWtXGx
+	ogXcRleHvisQLl/tlzaQKqi2n8dxZlL2p7qhJtCjcXPhgt3/1R/MS+SLe+gFz7No
+	yi8Aqg==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wkrug91f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:54:53 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7deca3ef277so128383685a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:54:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752573248; x=1753178048;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cp5GBgsM/GT6S6VKbK948jD04WLTfcMDMRyGqwJi5HU=;
-        b=Lr6TCpMpthM/PbZaWXlAmbnSVuY/x9CZQwVG+/pgRlPFp7LWSFPISfib1Aat4C+lwM
-         1Z9xbERIkPOK821e7PqgbHxXzQ7KdnTVC41k/aHgJ4Ndl18Z/bSjAdafdFNg7QTfEiDT
-         Vv3KtKKha4ZOO7tMQolUS5njGVR9Jqvfq/Bu8IZnfafolEuVy8ZWYoT2xuVBh8PJHNmS
-         6cgbt+mrQgeqitm7M+VhHN9YgFiPOTcvk4QS5tBxAofY04qALQ3Ezd/RxGpk2oYNpDTV
-         PAgLsuxcypOkV9L/9oDQXKX2Zn0HV/JmfB5xdLLKEo9jY43Jb8B2Kve7pLMefX/6qMac
-         sSbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9qHgYWmLyKjKS8HuqFYuZofNFegIwG6ka2SPVngrx1aG9fh96wyRS0YZDGQUeqQxUj6glEQUOA8sKWx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCaLNPi3Hjs3DuUu+p2nsVQy09idSHoK3iF7zBq5eSF5IY5sCD
-	D9/ETxdi0xQGEBjIf0PEJUs+RqEwN/9vZbmHFdjJdBskTcC4kDaYeROOUbrkO0CZXJSuZNYINeH
-	nOd75WUFBK45osVIwSg==
-X-Google-Smtp-Source: AGHT+IGGxjE3JPjoWX6iYc3kdOka7g4M+LKkBFbtVuyY2sgGCBGSXjsN0V1abh1tiQmQYxqqwxXDiLdFIZRicAk=
-X-Received: from wmqb20.prod.google.com ([2002:a05:600c:4e14:b0:456:25e7:be1])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:34c5:b0:43c:fe5e:f040 with SMTP id 5b1f17b1804b1-45565edc8f4mr130514075e9.23.1752573247648;
- Tue, 15 Jul 2025 02:54:07 -0700 (PDT)
-Date: Tue, 15 Jul 2025 09:54:06 +0000
-In-Reply-To: <20250711-rnull-up-v6-16-v3-16-3a262b4e2921@kernel.org>
+        d=1e100.net; s=20230601; t=1752573292; x=1753178092;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ix9VuDZeEsjg3KAly3eDP764kZgW3cJT4+AkWYQ4FOg=;
+        b=DxVjPdVzNjxINmYoftCdnqaQP62lIftQwlmPh/v8SpuJ6cpqjzOekwQRVeb2/PGgWS
+         aY6qn+TOyXutltR45GiIufxJJ+76k1aP3wvgduwoPcKXs0LemW/cTnPk86aD9O7e9q+C
+         /5YGXnPx5NgMBXqtgPlkne9XXRV+rvqN2YkjJmqxBiRGLY5Bgjmq4RySbOYn5LXPuH0v
+         vCvjn9tuxOObbnIbTvwMxZPUYkfNTWh55sXx9XwY901ZjEQtSea1Ns2y2fSQVwfnCIWE
+         1UhTDD898bPkN5N0eOckVpgSh52aOwdpyshcHpy1Onw2nCRNYadjPQUvUvXgo/fsBuEX
+         ZNSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRWICLOQVIiAuryCSROgkJjqDVWFxI/3mloaWhYxM1C0YUxRhpqkzV98opnebKNzIH9SgNbOpjE0rEonM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIUPRkb11iPRq+HTJ/fjHpwc+oTxguaKmgMgMJZcMwt7KwPLOf
+	Tj00i2pMZhh7sjhU132tDTI8g+14VHViwZmdjuMo+zoBii/Jbg/GN1VQC7khTMGzqcC11FyFV/A
+	Gjs+o2TwB7LUGLkh5R8Rq9iu0Rm8QmOkPP8xvWsEeVXCOcAxv8Iisl7onGWmZGU+ooMhnU236+f
+	M=
+X-Gm-Gg: ASbGncscrCqa942bQ7gdm8yYMIoMieaII9WwSAzt3Geb0CdjGShB9FQw23azEnUhN30
+	s5R2oJw9oFZZmvqs3pPcHLDO4EiVcskBHM0BqXY5gUsCcMhd9zc1QELBuE7g/xqkO5pLRc98oFn
+	Ctiul78SJtB3a9ehBm/6/LVcXeboIEO+ZFraG1/e0QllJu8ubtulMP3ZluFkSkgZls/N0lYxGbu
+	th72tOl5VsAVdeGHsvcaWuaevIF2jtdeLyaUxpN2m1RuAh4mL8+msCs24pJxH45bSE7O8vYe/Aq
+	Lk6+l1TpTSzkHhlDwEDfAdAe88mq29kbceRgbIWQXTS8sv0jfS5HpbcLrbT0yOpisyQWTNMgVZu
+	AseVxTcqmbYK0UJDdK0qL
+X-Received: by 2002:a05:620a:2903:b0:7e3:2c0d:dbf8 with SMTP id af79cd13be357-7e33c6fd95dmr51798185a.2.1752573291743;
+        Tue, 15 Jul 2025 02:54:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHDVkaPY/EUoM13O4zdHRmjA+XKRxdgOCmfN0kxQpZ1M/8LP2Xug82sWyuGii3UGqvnwGDvuA==
+X-Received: by 2002:a05:620a:2903:b0:7e3:2c0d:dbf8 with SMTP id af79cd13be357-7e33c6fd95dmr51797185a.2.1752573291128;
+        Tue, 15 Jul 2025 02:54:51 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82df4dasm977493966b.157.2025.07.15.02.54.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 02:54:50 -0700 (PDT)
+Message-ID: <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
+Date: Tue, 15 Jul 2025 11:54:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org> <20250711-rnull-up-v6-16-v3-16-3a262b4e2921@kernel.org>
-Message-ID: <aHYlPkFKTafRypNu@google.com>
-Subject: Re: [PATCH v3 16/16] rnull: add soft-irq completion support
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
+ notifier callback
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: gQIVKbMHrEVZX4rCWpbpjN7l6bR7WjS4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDA4OCBTYWx0ZWRfXzjQdZk2DAT5S
+ 3Fo7ImuqUtk07icDy2o0FcZUBkg/2qZyTOLAA0C7e8UOiC8E5Ts7hm2V/0tfydGK6bS9k2W/T9e
+ 8ihTRP41BwxG/56PcvlU6OuLlszRukVkz2OyBeLXp9F0qF3npKXvBYdrzm2QHTGhHfyvxYQ/oBy
+ bVn5uBfCWxD3jEqm1iWZkmQj+NQromPzPqQeu8YIsL83UiBmMoqNsikGBZuVy9liBpGYre3HTt4
+ LmJfL44KFhnVnwSjXF5RPRbVZE6dASJR0nnrrNtAcUIZKeP5RR5jtG/jJb/wYDYTH8ng6bmHvND
+ qL+D1s4WqaOVd166gQjRGMscZfyXtvoPYZ6rHx0dzA123PILfT01UIS8CQu1zsP924IEwnxNtzA
+ hGb08I50kWOr+LlkKKibwRmxBzs/0YZDLbkgh2s/g7rqPrXD8cwSGV58QE402DvlM/ApjcTP
+X-Authority-Analysis: v=2.4 cv=WqUrMcfv c=1 sm=1 tr=0 ts=6876256d cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=u1rEIhXAyoO4lQmzz6IA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-ORIG-GUID: gQIVKbMHrEVZX4rCWpbpjN7l6bR7WjS4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-15_01,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 mlxscore=0 mlxlogscore=996 bulkscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507150088
 
-On Fri, Jul 11, 2025 at 01:43:17PM +0200, Andreas Hindborg wrote:
-> rnull currently only supports direct completion. Add option for completing
-> requests across CPU nodes via soft IRQ or IPI.
+On 7/14/25 8:01 PM, Manivannan Sadhasivam wrote:
+> It allows us to group all the settings that need to be done when a PCI
+> device is attached to the bus in a single place.
 > 
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-
->  drivers/block/rnull/configfs.rs | 61 +++++++++++++++++++++++++++++++++++++++--
->  drivers/block/rnull/rnull.rs    | 32 +++++++++++++--------
->  2 files changed, 80 insertions(+), 13 deletions(-)
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/configfs.rs
-> index 6c0e3bbb36ec..3ae84dfc8d62 100644
-> --- a/drivers/block/rnull/configfs.rs
-> +++ b/drivers/block/rnull/configfs.rs
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  
->  use super::{NullBlkDevice, THIS_MODULE};
-> -use core::fmt::Write;
-> +use core::fmt::{Display, Write};
->  use kernel::{
->      block::mq::gen_disk::{GenDisk, GenDiskBuilder},
->      c_str,
-> @@ -36,7 +36,7 @@ impl AttributeOperations<0> for Config {
->  
->      fn show(_this: &Config, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
->          let mut writer = kernel::str::Formatter::new(page);
-> -        writer.write_str("blocksize,size,rotational\n")?;
-> +        writer.write_str("blocksize,size,rotational,irqmode\n")?;
->          Ok(writer.bytes_written())
->      }
->  }
-> @@ -58,6 +58,7 @@ fn make_group(
->                  blocksize: 1,
->                  rotational: 2,
->                  size: 3,
-> +                irqmode: 4,
->              ],
->          };
->  
-> @@ -72,6 +73,7 @@ fn make_group(
->                      rotational: false,
->                      disk: None,
->                      capacity_mib: 4096,
-> +                    irq_mode: IRQMode::None,
->                      name: name.try_into()?,
->                  }),
->              }),
-> @@ -79,6 +81,34 @@ fn make_group(
->      }
->  }
->  
-> +#[derive(Debug, Clone, Copy)]
-> +pub(crate) enum IRQMode {
-> +    None,
-> +    Soft,
-> +}
-> +
-> +impl TryFrom<u8> for IRQMode {
-> +    type Error = kernel::error::Error;
-> +
-> +    fn try_from(value: u8) -> Result<Self> {
-> +        match value {
-> +            0 => Ok(Self::None),
-> +            1 => Ok(Self::Soft),
-> +            _ => Err(kernel::error::code::EINVAL),
-> +        }
-> +    }
-> +}
-> +
-> +impl Display for IRQMode {
-> +    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-> +        match self {
-> +            Self::None => f.write_str("0")?,
-> +            Self::Soft => f.write_str("1")?,
-> +        }
-> +        Ok(())
-> +    }
-> +}
-> +
->  #[pin_data]
->  pub(crate) struct DeviceConfig {
->      #[pin]
-> @@ -92,6 +122,7 @@ struct DeviceConfigInner {
->      block_size: u32,
->      rotational: bool,
->      capacity_mib: u64,
-> +    irq_mode: IRQMode,
->      disk: Option<GenDisk<NullBlkDevice>>,
->  }
->  
-> @@ -126,6 +157,7 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
->                  guard.block_size,
->                  guard.rotational,
->                  guard.capacity_mib,
-> +                guard.irq_mode,
->              )?);
->              guard.powered = true;
->          } else if guard.powered && !power_op {
-> @@ -218,3 +250,28 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
->          Ok(())
->      }
->  }
-> +
-> +#[vtable]
-> +impl configfs::AttributeOperations<4> for DeviceConfig {
-> +    type Data = DeviceConfig;
-> +
-> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
-> +        let mut writer = kernel::str::Formatter::new(page);
-> +        writer.write_fmt(fmt!("{}\n", this.data.lock().irq_mode))?;
-> +        Ok(writer.bytes_written())
-> +    }
-> +
-> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-> +        if this.data.lock().powered {
-> +            return Err(EBUSY);
-> +        }
-> +
-> +        let text = core::str::from_utf8(page)?.trim();
-> +        let value = text
-> +            .parse::<u8>()
-> +            .map_err(|_| kernel::error::code::EINVAL)?;
-
-EINVAL is in the prelude.
-
-> +
-> +        this.data.lock().irq_mode = IRQMode::try_from(value)?;
-> +        Ok(())
-> +    }
-> +}
-> diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
-> index 371786be7f47..85b1509a3106 100644
-> --- a/drivers/block/rnull/rnull.rs
-> +++ b/drivers/block/rnull/rnull.rs
-> @@ -4,6 +4,7 @@
->  
->  mod configfs;
->  
-> +use configfs::IRQMode;
->  use kernel::{
->      alloc::flags,
->      block::{
-> @@ -54,35 +55,44 @@ fn new(
->          block_size: u32,
->          rotational: bool,
->          capacity_mib: u64,
-> +        irq_mode: IRQMode,
->      ) -> Result<GenDisk<Self>> {
->          let tagset = Arc::pin_init(TagSet::new(1, 256, 1), flags::GFP_KERNEL)?;
->  
-> +        let queue_data = Box::new(QueueData { irq_mode }, flags::GFP_KERNEL)?;
-> +
->          gen_disk::GenDiskBuilder::new()
->              .capacity_sectors(capacity_mib << (20 - block::SECTOR_SHIFT))
->              .logical_block_size(block_size)?
->              .physical_block_size(block_size)?
->              .rotational(rotational)
-> -            .build(fmt!("{}", name.to_str()?), tagset, ())
-> +            .build(fmt!("{}", name.to_str()?), tagset, queue_data)
->      }
->  }
->  
-> +struct QueueData {
-> +    irq_mode: IRQMode,
-> +}
-> +
->  #[vtable]
->  impl Operations for NullBlkDevice {
-> -    type QueueData = ();
-> +    type QueueData = KBox<QueueData>;
->  
->      #[inline(always)]
-> -    fn queue_rq(_queue_data: (), rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
-> -        mq::Request::end_ok(rq)
-> -            .map_err(|_e| kernel::error::code::EIO)
-> -            // We take no refcounts on the request, so we expect to be able to
-> -            // end the request. The request reference must be unique at this
-> -            // point, and so `end_ok` cannot fail.
-> -            .expect("Fatal error - expected to be able to end request");
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index b4993642ed90915299e825e47d282b8175a78346..b364977d78a2c659f65f0f12ce4274601d20eaa6 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1616,8 +1616,6 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+>  		pci_lock_rescan_remove();
+>  		pci_rescan_bus(pp->bridge->bus);
+>  		pci_unlock_rescan_remove();
 > -
-> +    fn queue_rq(queue_data: &QueueData, rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
-> +        match queue_data.irq_mode {
-> +            IRQMode::None => mq::Request::end_ok(rq)
-> +                .map_err(|_e| kernel::error::code::EIO)
-> +                // We take no refcounts on the request, so we expect to be able to
-> +                // end the request. The request reference must be unique at this
-> +                // point, and so `end_ok` cannot fail.
-> +                .expect("Fatal error - expected to be able to end request"),
-> +            IRQMode::Soft => mq::Request::complete(rq),
-> +        }
->          Ok(())
->      }
->  
-> -    fn commit_rqs(_queue_data: ()) {}
-> +    fn commit_rqs(_queue_data: &QueueData) {}
->  
->      fn complete(rq: ARef<mq::Request<Self>>) {
->          mq::Request::end_ok(rq)
-> 
-> -- 
-> 2.47.2
-> 
-> 
+> -		qcom_pcie_icc_opp_update(pcie);
+>  	} else {
+>  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+>  			      status);
+> @@ -1765,6 +1763,7 @@ static int pcie_qcom_notify(struct notifier_block *nb, unsigned long action,
+>  	switch (action) {
+>  	case BUS_NOTIFY_BIND_DRIVER:
+>  		qcom_pcie_enable_aspm(pdev);
+> +		qcom_pcie_icc_opp_update(pcie);
+
+So I assume that we're not exactly going to do much with the device if
+there isn't a driver for it, but I have concerns that since the link
+would already be established(?), the icc vote may be too low, especially
+if the user uses something funky like UIO
+
+Konrad
 
