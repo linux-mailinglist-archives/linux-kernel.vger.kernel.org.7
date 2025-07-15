@@ -1,90 +1,145 @@
-Return-Path: <linux-kernel+bounces-732137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C59B06293
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:15:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8A0B062AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964B83BC0BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:13:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9D1188EBE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359BF20B800;
-	Tue, 15 Jul 2025 15:13:54 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC80218AB0;
+	Tue, 15 Jul 2025 15:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H3LybZlK"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B0B1FECC3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39A02144C9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752592433; cv=none; b=k11qF2goQflMOugpsX09C39PqzPX9mFOBVBFGYn8T0YcaMR7Du4PhaBHdR0rPltWHysRv96CtBVeLhKp1c8hyohbMsYJpJuqLE5bZTrzsDzGpH23aqlE6FHQ6V4LFhgTP0URs+s+9e3dcckEKCB95ilXAQuHTdpCwy3mGR4Q/pY=
+	t=1752592492; cv=none; b=j2gy0/RKJsfAn4AHjXjmdcWYhQC3iqJaa0DOV8Ybui0MR7HyNL+JYWFqZ4eFzGgEcYI46JOMh5+zs7r1q49YgtmCughXeJCOCAJStoCYYlCZFqz7KnuooSg04iPcSIbTuNW4i/M86f/4RLoeFHx1H/a+3WW3oS5pof24gcU7xx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752592433; c=relaxed/simple;
-	bh=UoogA5pc68RWoudF0TehdH2dYethdf5rTzg9+XQViNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZpKvfSsTn65wi8acT1UBUaY6nJuqWk+/l740BMs3FQjtZiDSXM9gD71788eHSK5KTWi1upG9DxSDnz5ggwRLYNptAMR+aqh0hMEZ1rZ1UzQyr5n+bURSIu5HSZNXRrYaXjtLAOc9UovscYKBSIi4Ry+scztdTYUTUWjmQ90u6VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 9334759339;
-	Tue, 15 Jul 2025 15:13:49 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 5130520016;
-	Tue, 15 Jul 2025 15:13:47 +0000 (UTC)
-Date: Tue, 15 Jul 2025 11:13:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Steven Rostedt
- <rostedt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Christoph Hellwig <hch@infradead.org>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] LTTng upstreaming next steps
-Message-ID: <20250715111346.57587ec9@batman.local.home>
-In-Reply-To: <20250715052459.0000e119@gandalf.local.home>
-References: <b554bfa3-d710-4671-945b-5d6ec49e52cd@efficios.com>
-	<CAHk-=wiT9Cz+EbbuKozqiu7DnZQ7ftAWSmGf-xy_CdhJPCsNSg@mail.gmail.com>
-	<20250714162750.45b12314@gandalf.local.home>
-	<20250714163755.1de132e9@gandalf.local.home>
-	<CAHk-=wgZ=Ssx4qoeuaHet1vx+8M36j0a3q2aw5ePapWm=KnSfQ@mail.gmail.com>
-	<20250715052459.0000e119@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752592492; c=relaxed/simple;
+	bh=yFmzQwSMIFjNvglQa9XdXCijLr5Vn3oPqGM0Zlzio4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rg3V0ob8QkU4KjlmDe2i1otqGrhrr032knR/QJnXbgCNQEtcYJSitayoayDsWebBO5HyLoYHdUhIGgM91rUtNAWzu4gooGeppUk+Cg9d7y0uaj3bW3bQCHsb2RCFJS9wlyasjcA2uBkgcUBM+gbn9B80o1BmZPzSjfMYo4VuKbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H3LybZlK; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56FFEVbQ038708;
+	Tue, 15 Jul 2025 10:14:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752592471;
+	bh=hVVjOb/TN1icCsh7cMGXZC40mnSkVzEFWomvt74Gc8A=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=H3LybZlKZ3cOB4VO+FPRUUjeyHgSiQRyIREkzKEM3yz3ln8pmdM3kNpkWTAadF1Ky
+	 QtNTiBtEFxx5Hfo7oFf1yJVdkpGg05xr6dJe5pWDKfji3zxEc9MoQhTAXkgb+AYiMr
+	 A3FaFv70/UgiZncT5Fq3eJwMvkqiJqRUweNtIo8w=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56FFEVdR1340564
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 15 Jul 2025 10:14:31 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 15
+ Jul 2025 10:14:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 15 Jul 2025 10:14:31 -0500
+Received: from [172.24.227.245] (uda0132425.dhcp.ti.com [172.24.227.245])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56FFESLV3108169;
+	Tue, 15 Jul 2025 10:14:28 -0500
+Message-ID: <5488ccd5-c999-4b72-bfc0-ba94bb9a360d@ti.com>
+Date: Tue, 15 Jul 2025 20:44:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 5130520016
-X-Stat-Signature: qinqq3hf9topmoddditdu7hifzpz4ufx
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18RvDKBrsI4gig4h/SXNsc0YYCVbUP/Q+c=
-X-HE-Tag: 1752592427-877062
-X-HE-Meta: U2FsdGVkX19O6bUIylDSKHS33u/6mErUakzyx+T7VUD5i/CX2qedp87fLb00VrIEtLpnsIyTgbgjkJ7ua/9StAVS1QA/0bpNJO4gVXxB+24eX752XeIdBDYAyRuvi8YdeTPnrB6GiZhFdFfvSp9eDf9vrXU8RQgR1yHy7EFZatK9HD+pDme9f/BQTaXHVX6OT5zDZOoZ9KdVQx/1I+N0+yXsKPFghUW1rHfWTmywJNciXxFkAx9/VNgikA924ByXIXO0uxTzavIV+6BdSqtyNjTOMmUOtaOl4moBlj9kiUg7bhLAnaf5zfLW87zYH907gkHx4WVK/JQRaL4jqXc0RNFERNWc1ftBQ79A74KIfMEiQawWKn9ZQiyLMSUvTWR6o6Y95+RGFd8eJsGaeCMVPw==
+User-Agent: Mozilla Thunderbird
+Subject: [GIT PULL 2/2] arm64: Kconfig: Updates for v6.17 for TI K3 platforms
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm-soc
+	<arm@kernel.org>, SoC <soc@kernel.org>
+CC: Tero Kristo <kristo@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>
+References: <a0401460-8c67-4c29-a6cf-fa4bdf33bc7d@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <a0401460-8c67-4c29-a6cf-fa4bdf33bc7d@ti.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------wZWK4Gx41HaZe09BmvGF5917"
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, 15 Jul 2025 05:24:59 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+--------------wZWK4Gx41HaZe09BmvGF5917
+Content-Type: multipart/mixed; boundary="------------HJWeAli08ckFheguafpDshbP";
+ protected-headers="v1"
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+ arm-soc <arm@kernel.org>, SoC <soc@kernel.org>
+Cc: Tero Kristo <kristo@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Nishanth Menon <nm@ti.com>
+Message-ID: <5488ccd5-c999-4b72-bfc0-ba94bb9a360d@ti.com>
+Subject: [GIT PULL 2/2] arm64: Kconfig: Updates for v6.17 for TI K3 platforms
+References: <a0401460-8c67-4c29-a6cf-fa4bdf33bc7d@ti.com>
+In-Reply-To: <a0401460-8c67-4c29-a6cf-fa4bdf33bc7d@ti.com>
 
-> Either LTTng can use the same infrastructure as perf and ftrace, meaning it
-> requires EXPORT_SYMBOL_GPL() on those interfaces, or it gets pulled in as
-> is, so that it can incrementally start to share the code.
+--------------HJWeAli08ckFheguafpDshbP
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-I believe that if we allowed LTTng to have access to the perf and
-ftrace infrastructure, it would encourage more collaboration. It would
-force Mathieu into working to get perf and ftrace and LTTng working
-under one infrastructure so that it could finally get rid of its out of
-tree module. Whereas, if we pulled it in as-is, there wouldn't be
-really any incentive for it to change.
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
+94:
 
-Now the question is, how do we allow LTTng's out of tree module to have
-access to the internal infrastructure without breaking the
-"EXPORT_SYMBOL_GPL() is only for in-tree modules" rule?
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
--- Steve
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git tags/ti-k3=
+-config-for-v6.17
+
+for you to fetch changes up to 631ce8f743a5c85bd7f0a5e7dcca70566d88f43f:
+
+  arm64: Kconfig.platforms: remove useless select for ARCH_K3 (2025-06-21=
+ 21:03:31 +0530)
+
+----------------------------------------------------------------
+TI K3 defconfig updates for v6.17
+
+Cleanup select clauses for ARCH_K3 allow more modular builds
+
+----------------------------------------------------------------
+Guillaume La Roque (1):
+      arm64: Kconfig.platforms: remove useless select for ARCH_K3
+
+ arch/arm64/Kconfig.platforms | 4 ----
+ 1 file changed, 4 deletions(-)
+
+--------------HJWeAli08ckFheguafpDshbP--
+
+--------------wZWK4Gx41HaZe09BmvGF5917
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEyRC2zAhGcGjrhiNExEYeRXyRFuMFAmh2cEgFAwAAAAAACgkQxEYeRXyRFuOg
+3gf+KIgCkK+2i4hihExnymIUdaOln0LryX8pbIursQprGnwWlF3wqlipuB/pKt69MudPvf/ODjbn
+AD+lI1eYB611FoH13pGOXBzI8wOd39ZJWtNou/dfxthpCoPjbEwtvdsN3MuxfjJIY5faqgIXFhlQ
+QEn2kxh3DLaLE4K8OEnAf/8KLUIE+x/iFFQTUDO/3O+Jbv0kzsNuJNx5686xxGfc+YSm65J7dv4n
+kJldosEEmtyL4HgCPxT1vFxENyMJFVBUt6EoEbKvUtYZW86Bzs8GE1xJE0+gv6Y9NurloFORJsDd
+5x2x5MnuvCa8gZaybMer1taa1g6YV2xeyQjoTZEFLQ==
+=Bbps
+-----END PGP SIGNATURE-----
+
+--------------wZWK4Gx41HaZe09BmvGF5917--
 
