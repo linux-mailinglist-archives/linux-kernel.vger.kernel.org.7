@@ -1,301 +1,132 @@
-Return-Path: <linux-kernel+bounces-731505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068E4B05560
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:50:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293D9B05563
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD4F168183
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:50:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7107A169C54
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020212D3A9F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804932D46C7;
 	Tue, 15 Jul 2025 08:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TG+qkn+G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WybPOzXk"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634CD275851;
-	Tue, 15 Jul 2025 08:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3DB2D29CF
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752569417; cv=none; b=ngyCGvNzMkYtx5L7gslpgNnr+NicbaTWvlJODYYCuxTR8V3S1uKtAiM/Wa8h03DKdZHQHoWy3dGxkk8Sq7SMwhEAkirJRXQX+i7lNIQGT8r0CCNzC+azz9NneCx92cm67tKVjfYkD1cTUYZWDFLYkph9q2z9FHnOW9yytWGKXy8=
+	t=1752569417; cv=none; b=mH0+feJ7UQC1P9rExwEcm6YrXg0PHmHsKZItfU3krYO9i493ABSunZ52Dhby9AgqlfCyPbZQ+hMg/FJr6HcFSicRmHPX8LDivn+eFUOAsBzY3pF9dgBL9dnCd4r2yZj9l2JJYQjcqLXyGL5k30NorCiG8P9kDWjSrPuIUTJuibI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752569417; c=relaxed/simple;
-	bh=K0DvSk4svt0sUfo87/h4UlF6aaEVaGHYSOZP6a/6be4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lcOROSPrqZaYhm7FK0ZNm88O2q9DN5vXPUpJCOY7k06FGlLdscoUm5flmdiMCW/StzyckPRiChfFqspuL+XJ6qC9smSWrZ/7WtJZp95L5xNMVUJ1n950Cvhf+9yVRhhebBwgFQJKFxcU8HPIDbcETrMWsrw2NHaZbwNHnCrptiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TG+qkn+G; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752569416; x=1784105416;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=K0DvSk4svt0sUfo87/h4UlF6aaEVaGHYSOZP6a/6be4=;
-  b=TG+qkn+G0qySdgl4INz//NDOM/6A+IQbaPuIy1EUnJbuFdOj2jOgkjYE
-   V36QhhA/7bqQBJxT7ez0jp0ucGJlcrofAVLxZc7NlINHPus7Eipuq108L
-   YF4aetXGj1ISRpvhV7PEL98JAMhjD4ycLXSLCtsAGtOrlQ+BkYgPhpbfT
-   4MJVld3/OYnYv6nB3DuY3KHjk7yIL5R8cKuH7UQVfgaZLNAWhtxu4ca/E
-   JgRYBOo6U+5TX0TUVTQSmmlvHa55sf03zBG1PJliKbCkNnLfxV04ixj0i
-   Ved7bPtHEw844AQXEOh5PVFRzcAXLpPs4s/kUYtafi9SOxRh0aoNZiwhy
-   Q==;
-X-CSE-ConnectionGUID: HNcibtzpTWCKYujhDzuXDg==
-X-CSE-MsgGUID: ziEj+AYMQ8i40SyNjISXHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65476180"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="65476180"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:50:15 -0700
-X-CSE-ConnectionGUID: UigDI2sfQDqoyUgBZqUZXA==
-X-CSE-MsgGUID: lzDOLTpsQUuX9UMunoCZaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="188155520"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:50:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ubbMW-0000000FbP9-3zae;
-	Tue, 15 Jul 2025 11:50:08 +0300
-Date: Tue, 15 Jul 2025 11:50:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
-Message-ID: <aHYWQOjJEWdLjy7H@smile.fi.intel.com>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
- <20250715012023.2050178-8-sean.anderson@linux.dev>
+	bh=d0lPW1A5fBB4fVKDhlkux6p6Ga7DYrMc9g8pnwepm44=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=W6n4amYrUhZaQwsCG+UoLVRYc5rZTtCqL9nuJZIQhHyn13jQJULDWBEERXNmy1vsq5PCTUE4z+gydwNCOV+OshZAxWKbK+nwiH58zIVNQlJ9MkPQW2DQb0Qmg+2DeoNbziTYKEp1GwmT8ZNH1g/Phc5LiqOF+s3LLzr9FPHmqeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WybPOzXk; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-455b00339c8so26179735e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:50:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752569412; x=1753174212; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+nh6JxemvhPIP24kZ/vb+SGxVcCnNFMlQjgWa9fn3A=;
+        b=WybPOzXkd2lXNZCmVvfeQPhPO+EcMmgh8ij+cE2OAA/KZlMvZAAxswihN9UrOv88GW
+         Suyxy0ncyVNFlJU7gLE/4VQsWsPpKmYLNvAp/vkkWvcJm0yedAjC1EaWxKC48+Rot2Ky
+         pSWFWTVe8w3ldkbrVFrazmOYhRRn4ihdJW1rrKHLQfOiplX1MbMgC4hZTZt/LOZnnlQT
+         dJRWkeXlaXMaa7oqwcfvOUGlBAW9G566zerjSH7pJQuhNo7RdFRF9vWweimaWo0JUpGI
+         eEFCdr6d9lcUOwVJQQWxfvnTvgpFyZa3wsJP3+CcubYS9N+ekT5YGVvmGKqkUOOsOCk9
+         wQNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752569412; x=1753174212;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C+nh6JxemvhPIP24kZ/vb+SGxVcCnNFMlQjgWa9fn3A=;
+        b=TFZxiTbqsPKDucKoH6PgsQPnLg3ZkFpKluk7sV8quadncVBCa9+e3bj5n3mol0ucAq
+         PyDEOEB3A1k5JFo42iacfzmapNUoHq8oAlyy2os3zuEzEuzcGOht2zyhfdNVuTgen+2p
+         I2UMXQB9Whs2hREQJyo06g/GQwzbNCP7FBEpzPA7e8QddG5B5Pv+CGNwnsjKqLHWRBr3
+         fW9jUFoIFL6DQJMibU3YwTl43VOLa647tPeCHfv19FrfN5MQit7YnugLgX6BsOsLyUp6
+         6VlvBeG3b8iipLv0FY1G0qys4aFMs13n7g+lILW5oKxp77yUvb+pdX5Xhs94Dc6MpIml
+         G6LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5Y2Sg7RMAUraU1LC2Zjrwkmz9JbcG8O2e7Dp4SoNloyKATIRijlLsZRxwxPWH6Ys0YCY9u78qtgQJsXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT7qC5Kn7FOoRceQbFVV2cIveCLxLkt1lrdSum4dxJhki+qNJk
+	B2yvKdSQ6NZgefq/TJjn5ciRWWzzfFJhRE9rQE4r9OG2AJCj/kzRwTt1Yn/c0Xd4VAw=
+X-Gm-Gg: ASbGncvjB+QutXmGa974hpKezheTQLyMqZqELBp0c/waefwgNN8U78h/+wHYJsWFzuj
+	ZGwE7owOoxr/h+ore8eL2pUhtWskmTz8uC2a46wd6skI/Cmkdtv1jCIFdzmCS/Rehnn/CH1bTc4
+	c2axrwOlWsj4DydYzPu85tHH8PGd++GueZSmcewJEVwcZaL3QilH+HhYiFiCNA55SoiMYYteoaY
+	IL3PNT1BZaEjwpmM51ZFZ0qNSmGGjlDhsdtlTAnqcoyXqWxTXdfPbLtFKcj9/GSdNxc3zbHYqg/
+	/ShHzE2nOQlYVZyN42SAO76LED5YaQsMuE97WSiI8j6E75t9PlTOJ5KSiLnyUTgOnzwp6+b6yqG
+	6GKhYMS/u7RbLGYW8Vn/Kc3znaw==
+X-Google-Smtp-Source: AGHT+IFMmk/5rfMV1ctfylvB0nED4z6hP+M5t84uEkTcCAMiiEw2CTJ7Qjv4i3vnDPZtivHARzAKVA==
+X-Received: by 2002:a05:600c:a301:b0:455:f187:6203 with SMTP id 5b1f17b1804b1-455f187666bmr101086915e9.27.1752569412556;
+        Tue, 15 Jul 2025 01:50:12 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:e0a:e50:3860:9f6b:776d:f95a:bf2f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560ceb1337sm92280065e9.13.2025.07.15.01.50.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 01:50:12 -0700 (PDT)
+From: Guillaume La Roque <glaroque@baylibre.com>
+Date: Tue, 15 Jul 2025 10:50:08 +0200
+Subject: [PATCH v2] pmdomain: ti: Select PM_GENERIC_DOMAINS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715012023.2050178-8-sean.anderson@linux.dev>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250715-depspmdomain-v2-1-6f0eda3ce824@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAD8WdmgC/3XMQQ6DIBCF4auYWZcGJqKmq96jcYEw1kkqEGhIj
+ fHupe67/F/yvh0yJaYMt2aHRIUzB18DLw3YxfgnCXa1ASVq2ctWOIo5ri6shr1Aq4e2b7WzZoB
+ 6iYlm/pzcY6y9cH6HtJ16Ub/1D1SUUIJm7JXUuqMO75PZXjwlutqwwngcxxfkdejKqwAAAA==
+To: vigneshr@ti.com, nm@ti.com, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, vishalm@ti.com, 
+ matthias.schiffer@ew.tq-group.com, 
+ Guillaume La Roque <glaroque@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On Mon, Jul 14, 2025 at 09:20:23PM -0400, Sean Anderson wrote:
-> Add alarm support based on IIO threshold events. The alarm is cleared on
-> read, but will be set again if the condition is still present. This is
-> detected by disabling and re-enabling the event. The same trick is done
-> when creating the attribute to detect already-triggered events.
-> 
-> The alarms are updated by an event listener. To keep the notifier call
-> chain short, we create one listener per iio device, shared across all
-> hwmon devices.
-> 
-> To avoid dynamic creation of alarms, alarms for all possible events are
-> allocated at creation. Lookup is done by a linear scan, as I expect
-> events to occur rarely. If performance becomes an issue, a binary search
-> could be done instead (or some kind of hash lookup).
+Select PM_GENERIC_DOMAINS instead of depending on it to ensure
+it is always enabled when TI_SCI_PM_DOMAINS is selected.
+Since PM_GENERIC_DOMAINS is an implicit symbol, it can only be enabled
+through 'select' and cannot be explicitly enabled in configuration.
+This simplifies the dependency chain and prevents build issues
 
-...
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+---
+Changes in v2:
+- update commit message
+- fix select rules
+- Link to v1: https://lore.kernel.org/r/20250704-depspmdomain-v1-1-ef2710556e62@baylibre.com
+---
+ drivers/pmdomain/ti/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  #include <linux/hwmon-sysfs.h>
+diff --git a/drivers/pmdomain/ti/Kconfig b/drivers/pmdomain/ti/Kconfig
+index 67c608bf7ed0..5386b362a7ab 100644
+--- a/drivers/pmdomain/ti/Kconfig
++++ b/drivers/pmdomain/ti/Kconfig
+@@ -10,7 +10,7 @@ if SOC_TI
+ config TI_SCI_PM_DOMAINS
+ 	tristate "TI SCI PM Domains Driver"
+ 	depends on TI_SCI_PROTOCOL
+-	depends on PM_GENERIC_DOMAINS
++	select PM_GENERIC_DOMAINS if PM
+ 	help
+ 	  Generic power domain implementation for TI device implementing
+ 	  the TI SCI protocol.
 
-+ blank line here..
+---
+base-commit: 8d6c58332c7a8ba025fcfa76888b6c37dbce9633
+change-id: 20250704-depspmdomain-2c584745dca8
 
->  #include <linux/iio/consumer.h>
-> +#include <linux/iio/events.h>
-> +#include <linux/iio/iio.h>
->  #include <linux/iio/types.h>
-
-...and here?
-
-> +#include <uapi/linux/iio/events.h>
-
-...
-
-> +static ssize_t iio_hwmon_lookup_alarm(struct iio_hwmon_listener *listener,
-> +				      u64 id)
-> +{
-> +	ssize_t i;
-> +
-> +	for (i = 0; i < listener->num_alarms; i++)
-> +		if (listener->ids[i] == id)
-> +			return i;
-
-> +	return -1;
-
--ENOENT ?
-This will allow to propagate an error code to the upper layer(s).
-
-> +}
-
-...
-
-> +static int iio_hwmon_listener_callback(struct notifier_block *block,
-> +				       unsigned long action, void *data)
-> +{
-> +	struct iio_hwmon_listener *listener =
-> +		container_of(block, struct iio_hwmon_listener, block);
-> +	struct iio_event_data *ev = data;
-> +	ssize_t i;
-> +
-> +	if (action != IIO_NOTIFY_EVENT)
-> +		return NOTIFY_DONE;
-> +
-> +	i = iio_hwmon_lookup_alarm(listener, ev->id);
-> +	if (i >= 0)
-> +		set_bit(i, listener->alarms);
-
-Do you need an atomic set?
-
-> +	else
-> +		dev_warn_once(&listener->indio_dev->dev,
-> +			      "unknown event %016llx\n", ev->id);
-> +
-> +	return NOTIFY_DONE;
-> +}
-
-...
-
-> +static struct iio_hwmon_listener *iio_hwmon_listener_get(struct iio_dev *indio_dev)
-> +{
-> +	struct iio_hwmon_listener *listener;
-> +	int err = -ENOMEM;
-> +	size_t i, j;
-> +
-> +	guard(mutex)(&iio_hwmon_listener_lock);
-> +	list_for_each_entry(listener, &iio_hwmon_listeners, list) {
-> +		if (listener->indio_dev == indio_dev) {
-> +			if (likely(listener->refcnt != UINT_MAX))
-> +				listener->refcnt++;
-> +			return listener;
-> +		}
-> +	}
-> +
-> +	listener = kzalloc(sizeof(*listener), GFP_KERNEL);
-> +	if (!listener)
-> +		goto err_unlock;
-> +
-> +	listener->refcnt = 1;
-> +	listener->indio_dev = indio_dev;
-> +	listener->block.notifier_call = iio_hwmon_listener_callback;
-> +	for (i = 0; i < indio_dev->num_channels; i++)
-> +		listener->num_alarms += indio_dev->channels[i].num_event_specs;
-> +
-> +	listener->ids = kcalloc(listener->num_alarms, sizeof(*listener->ids),
-> +				GFP_KERNEL);
-> +	listener->alarms = bitmap_zalloc(listener->num_alarms, GFP_KERNEL);
-> +	if (!listener->ids || !listener->alarms)
-> +		goto err_listener;
-> +
-> +	i = 0;
-> +	for (j = 0; j < indio_dev->num_channels; j++) {
-> +		struct iio_chan_spec const *chan = &indio_dev->channels[j];
-> +		size_t k;
-> +
-> +		for (k = 0; k < chan->num_event_specs; k++)
-> +			listener->ids[i++] =
-> +				iio_event_id(chan, chan->event_spec[k].type,
-> +					     chan->event_spec[k].dir);
-> +	}
-> +
-> +	err = iio_event_register(indio_dev, &listener->block);
-> +	if (err)
-> +		goto err_alarms;
-> +
-> +	list_add(&listener->list, &iio_hwmon_listeners);
-
-> +	mutex_unlock(&iio_hwmon_listener_lock);
-
-With guard() ???
-
-> +	return listener;
-> +
-> +err_alarms:
-> +	kfree(listener->alarms);
-> +	kfree(listener->ids);
-> +err_listener:
-> +	kfree(listener);
-> +err_unlock:
-> +	mutex_unlock(&iio_hwmon_listener_lock);
-> +	return ERR_PTR(err);
-
-What about using __free()?
-
-> +}
-
-...
-
-> +static void iio_hwmon_listener_put(void *data)
-> +{
-> +	struct iio_hwmon_listener *listener = data;
-> +
-> +	scoped_guard(mutex, &iio_hwmon_listener_lock) {
-> +		if (unlikely(listener->refcnt == UINT_MAX))
-> +			return;
-> +
-> +		if (--listener->refcnt)
-> +			return;
-
-Can the refcount_t be used with the respective APIs? Or even kref?
-
-> +		list_del(&listener->list);
-> +		iio_event_unregister(listener->indio_dev, &listener->block);
-> +	}
-> +
-> +	kfree(listener->alarms);
-> +	kfree(listener->ids);
-> +	kfree(listener);
-> +}
-
-...
-
-> +static ssize_t iio_hwmon_read_alarm(struct device *dev,
-> +				    struct device_attribute *attr,
-> +				    char *buf)
-> +{
-> +	struct iio_hwmon_alarm_attribute *sattr = to_alarm_attr(attr);
-> +	struct iio_hwmon_state *state = dev_get_drvdata(dev);
-> +	struct iio_channel *chan = &state->channels[sattr->index];
-> +
-> +	if (test_and_clear_bit(sattr->alarm, sattr->listener->alarms)) {
-> +		u64 id = sattr->listener->ids[sattr->alarm];
-> +		enum iio_event_direction dir = IIO_EVENT_CODE_EXTRACT_DIR(id);
-> +
-> +		WARN_ON(iio_hwmon_alarm_toggle(chan, dir));
-
-> +		strcpy(buf, "1\n");
-> +		return 2;
-
-> +	}
-> +
-> +	strcpy(buf, "0\n");
-> +	return 2;
-
-Better to assign the value and
-
-	return sysfs_emit(...);
-
-which will make even easier to recognize that this is supplied to user via
-sysfs.
-
-> +}
-
-...
-
-> +static int add_alarm_attr(struct device *dev, struct iio_hwmon_state *st,
-> +			  int i, enum iio_event_direction dir,
-> +			  const char *fmt, ...)
-
-Same comments as per previous patches.
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Guillaume La Roque <glaroque@baylibre.com>
 
 
