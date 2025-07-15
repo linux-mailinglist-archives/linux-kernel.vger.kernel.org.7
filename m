@@ -1,137 +1,139 @@
-Return-Path: <linux-kernel+bounces-731434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859EEB0542F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324E6B0542D
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2205D1890AD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E2B4E6C7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA3A274670;
-	Tue, 15 Jul 2025 08:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3DF274B43;
+	Tue, 15 Jul 2025 08:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iub0AfNx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nl0nrpet"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4623227381A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416B825F973;
 	Tue, 15 Jul 2025 08:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752566959; cv=none; b=o47XLDUEypZJTBjMztqOWEpMNEMbye4I0SEBMlnpwIzv8vHSNkIh6EwWYyGZyBzraQpdlSfX5FRx18kixT4C2hiJQgxAd89F2jG5WwetqGWMCuo1icO8YU7YLrDat1u5HWPKgvhDBDTadv2h1ccWQcoiLsO8N5dTuwwQNYedVhQ=
+	t=1752566963; cv=none; b=n84EXXjx9YvhEg7aEOuPx0Uo2k83n/xXEF6K1d7Ppwb4Hj0fQ7fYKH7Em1DeXHHVzjXTC/DpvMGtvUJlWmybF2TnPZToqVKpdPmWzUQqCRzesNyiKGrPggB/EUwifH4xVnfQEKST/GXoWKXqNftHJaBHNQhNzrVLUhX1mY8V6Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752566959; c=relaxed/simple;
-	bh=uM50ySx9Kjkj0T8Mi2M3p5ShRWkdmqxZHE6SDBMnJoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AiRoH2o8sX1fsaOQhlPJlxi8Os4+E9Wnedkg4ROb7leVH6kOXhjLXfdM3kucXpDevEpi4Zp3An5WiB77yIRFlyy2Cru/AySTcP6MAlU7hz0ECmJiQy9IE9abEo5m/E27JhGj9BabqR9yyWM7va72wrBUJ9JtoTeqmWLe8g8cpUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iub0AfNx; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752566958; x=1784102958;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uM50ySx9Kjkj0T8Mi2M3p5ShRWkdmqxZHE6SDBMnJoo=;
-  b=iub0AfNxZm6SmF4VBloL2un6RCqObyTuzejf5KWahWaRF/9J8etyZ5wM
-   iF7jD5nkgQBMspUf1c0Rh+nDza7rnh3qabEpRc90iKkjz8WlEO4PA0l3Z
-   hGaAYwAVkziIUSB9NqWTkf5mPBc3osxVUOHvO6aUxDRkcWelksuFxGn5p
-   fP92kCZCr7fi3HPv4ZsctprgIPbhqj6FoqRL+cJ7XdkNVjIkwCeDj9/KV
-   t0q53fWStIqHI9HNspJGC2RTnJ2+XhoAOJSyEvD4Phk9+aR0mYV71+va1
-   gaVMP6477x23Rdl0shNNoI3QdHj+R3YHuxDiyQ6ayv8HVbAi/F21lBw5F
-   A==;
-X-CSE-ConnectionGUID: YHlWLjctS0K9CDVjvHJ8Sg==
-X-CSE-MsgGUID: FFmbneozQ9y4y5772m50sg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="66135169"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="66135169"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:09:17 -0700
-X-CSE-ConnectionGUID: QBGt5UhhTJOQEZE4rxikvw==
-X-CSE-MsgGUID: Us1vguXYRJC85Ok8RzRAhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="161702936"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:09:13 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ubair-0000000Fam8-4B3M;
-	Tue, 15 Jul 2025 11:09:09 +0300
-Date: Tue, 15 Jul 2025 11:09:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev,
-	Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	Remi Buisson <remi.buisson@tdk.com>
-Subject: Re: [PATCH v2 5/8] iio: imu: inv_icm45600: add I2C driver for
- inv_icm45600 driver
-Message-ID: <aHYMpVIXJNuOfE55@smile.fi.intel.com>
-References: <20250710-add_newport_driver-v2-5-bf76d8142ef2@tdk.com>
- <9d091fe4-3068-4e8b-8a9c-49c25036a216@suswa.mountain>
+	s=arc-20240116; t=1752566963; c=relaxed/simple;
+	bh=3Zyn9HVYtyw7yXCCIVpPE9tPz00/LwmlnuBvmjHTsa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=fm3pQw8QnsRWdzsCvoXbifWzFK3TNL5vzOXtfrBSAJcPLoc588CwD6Jh6qM4ekNgX9uvppnlmJzrFBrHvKvKND2N/bGHUbTkbLpTuHWW617J0zHlTqdqB+pOO7/H3/WHE//pEohurMt680rZqkxJmiW5FZuTWEC8pkoyT3cd66Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nl0nrpet; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752566847;
+	bh=QQ0tD5imMyAL0toAFcHFfi09tCDrUEj69vcNf/Rfziw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nl0nrpetxkSjEc4gx2aFm75B16YmiUZzFkdoAAH1Zj+jvZ8+bfOOVlUSwjiDr4u2s
+	 AHHpR49NRdR0pbLQs2/Tv4YNL8u6Jb8EtnDw8eiqJmUdCErENP0FYPlHbDaAUjaTzF
+	 UNQuPz9E4s+I7iGUbAOEXBlAb5jwOJUVSibR75dZ9P+Ly8wTW8sHzc5YkNINLK7hqJ
+	 jhKO8AsdoZFOkwLedWlKo3IMHOgP/X9HjvaynUBLzDafeE36ovXFUO7QmYg29Tf5un
+	 RInBSXs3blzEGECiQDN5ikFbya6zxNZi57er65mBpvl3cY82Z4f+wzPycXhCE6WyZl
+	 CCn90wHUOmtIQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhBcZ3G0Qz4wbr;
+	Tue, 15 Jul 2025 18:07:26 +1000 (AEST)
+Date: Tue, 15 Jul 2025 18:09:13 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Krishna Ketan Rai
+ <prafulrai522@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Remo Senekowitsch <remo@buenzli.dev>
+Subject: linux-next: manual merge of the rust tree with the vfs-brauner,
+ driver-core trees
+Message-ID: <20250715180913.735698ce@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d091fe4-3068-4e8b-8a9c-49c25036a216@suswa.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: multipart/signed; boundary="Sig_/wauebLlk=scjzd4dJbcdS/D";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Jul 14, 2025 at 11:21:17PM +0300, Dan Carpenter wrote:
-> Hi Remi,
-> 
-> kernel test robot noticed the following build warnings:
+--Sig_/wauebLlk=scjzd4dJbcdS/D
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It looks like a false positive, but the code is fragile.
+Hi all,
 
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10   99  	unsigned int fifo_en = 0;
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  100  	unsigned int sleep;
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  101  	int ret;
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  102  
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  103  	scoped_guard(mutex, &st->lock) {
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  104  		if (*scan_mask & BIT(INV_ICM45600_GYRO_SCAN_TEMP))
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  105  			fifo_en |= INV_ICM45600_SENSOR_TEMP;
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  106  
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  107  		if (*scan_mask & (BIT(INV_ICM45600_GYRO_SCAN_X) |
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  108  				 BIT(INV_ICM45600_GYRO_SCAN_Y) |
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  109  				 BIT(INV_ICM45600_GYRO_SCAN_Z))) {
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  110  			/* enable gyro sensor */
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  111  			conf.mode = gyro_st->power_mode;
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  112  			ret = inv_icm45600_set_gyro_conf(st, &conf, &sleep);
-> 
-> sleep isn't necessarily set if nothing changed.
-> 
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  113  			if (ret)
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  114  				return ret;
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  115  			fifo_en |= INV_ICM45600_SENSOR_GYRO;
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  116  		}
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  117  		/* update data FIFO write */
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  118  		ret = inv_icm45600_buffer_set_fifo_en(st, fifo_en | st->fifo.en);
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  119  	}
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  120  	/* sleep required time */
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10 @121  	if (sleep)
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  122  		msleep(sleep);
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  123  
-> 1fb5c2bf7348d0 Remi Buisson 2025-07-10  124  	return ret;
+Today's linux-next merge of the rust tree got a conflict in:
 
--- 
-With Best Regards,
-Andy Shevchenko
+  rust/helpers/helpers.c
 
+between commits:
 
+  6efbf978891b ("poll: rust: allow poll_table ptrs to be null")
+  a2801affa710 ("rust: device: Create FwNode abstraction for accessing devi=
+ce properties")
+
+from the vfs-brauner, driver-core trees and commit:
+
+  8ffb945647f8 ("rust: helpers: sort includes alphabetically")
+
+from the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc rust/helpers/helpers.c
+index 2d2ea06000e9,d3867d09e356..000000000000
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@@ -28,13 -28,10 +28,13 @@@
+  #include "kunit.c"
+  #include "mm.c"
+  #include "mutex.c"
+ +#include "of.c"
+  #include "page.c"
+- #include "platform.c"
+  #include "pci.c"
+  #include "pid_namespace.c"
++ #include "platform.c"
+ +#include "poll.c"
+ +#include "property.c"
+  #include "rbtree.c"
+  #include "rcu.c"
+  #include "refcount.c"
+
+--Sig_/wauebLlk=scjzd4dJbcdS/D
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh2DKkACgkQAVBC80lX
+0GwQYgf/StBADAFkrfSZIaeafvtFPdVXYXd+HvdFE4aRWttu/+MrsjNJOyOZCCVe
+e0MhwgFMplT2mybPGaBpOL/BfBwL+C8LupsGnbImbgYxawKtwtqv5vt9AW8tUm1R
++bLpAvcUJ4x/6dFQ21i5XRzcSYbssFpxXgcK6pC+YBTl1NSM933Z2MAHAWnN8NS6
+B4NHUbFK7FbwBQfkK4Jmh3f3NmGpcglLm8lfonI7+Yp/PqvytvWD/tfQBsy/Vjmu
+DYztIjZze3Z3kEI7Ewiy8UyMOwxk/eG/JGPpSreE8V7xsKodRjxJWAxXD+iI5yyE
+K7LtNmt+1iXyS/lFjjyxV6i8Sh8Z4A==
+=ZA8W
+-----END PGP SIGNATURE-----
+
+--Sig_/wauebLlk=scjzd4dJbcdS/D--
 
