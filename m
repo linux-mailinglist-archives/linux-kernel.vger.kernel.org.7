@@ -1,145 +1,224 @@
-Return-Path: <linux-kernel+bounces-731985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B92B06080
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:18:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D58B0602E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0511C80A62
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:11:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE0097B85D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119C72E975D;
-	Tue, 15 Jul 2025 13:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159772566;
+	Tue, 15 Jul 2025 13:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4Vizggn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="ovFk8pli";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="a6O6XJEF"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFD52E7F37;
-	Tue, 15 Jul 2025 13:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37EB2E2F0C
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587913; cv=none; b=pOLD2djuhhaoTUeyw791v6IIrpXh3GKN+VWjhlaBkHMAAQVAzC+zC67UyNGAnGyC0LatAoqxAA+hYC06eXcxifilXU/n6wM41LqiB5DpTqIBtQmac0YJ5k3lQwsMO7gakrhJ+fp9M+Qt20KpzuTykCjtt23NqWt4cDaVFgCnMSg=
+	t=1752587932; cv=none; b=cyWSp3tG+LUnclhHY/jc8W4xJp+xLqirRkQkDoAI4lemE9uWUW1KaMb+kiH/mYqLMT0Xy6Pte4Fe+/BqMtKVtgFcmVQ3HzSxLc06G4AdrMYTBOpdI/xNgRSFKhxVkgt0up4Mspe56b+t5j0zUpqMoRuDLCfOIhxUSNgTk9Z4+tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587913; c=relaxed/simple;
-	bh=fxS+g8tNbMk1/UdhRU/HlLfSUskJDrVIrYOCQQhuqIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tY26acRLx8ZqXiV5n/UUwWKZ0uPgbkz5CVQemrVZ8OJ0cOFphuxpThPhREqlsV82JBceouheUCn2I/OGwisYAIu1yQmRj7tf0mTToVLCNPuZ0Hx7EYvAsmKuWCLGGpr45PgKZuqhi+Biy96fezLFWdca0s4KHHamxWEiXpbDsd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4Vizggn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E39CC4CEE3;
-	Tue, 15 Jul 2025 13:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752587913;
-	bh=fxS+g8tNbMk1/UdhRU/HlLfSUskJDrVIrYOCQQhuqIY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l4VizggnWo1DpwbZuWP/wgm3VApTeTCEOnymfwBXT+GilXimDEQE0iPIBqdfv6kCi
-	 kvrSMjoaH00P8jMdB4VBav7nnidtnHwAto4lOKuhIXdRUv9zLac0k9qGP1dt9vU+Kx
-	 besMzcLyEY6CL3CXJ/iulu2Ux2wmI6rIlbokZUIfssTq+7xCt4aR4/gUg5F8zwheNy
-	 38Z2YuBFkCPHKo42aC2RxBV7YCSsmJFp5Nn2VHoOI+x4EAhgotJS6lFClihLkokNmk
-	 clpPZozDwuZYTrNm/DjfETz/I7kal1xj7ibFiF39RZ8jyeg3fbnaBQWAnL0Q+x4geu
-	 jTleqek0Z+P7g==
-Date: Tue, 15 Jul 2025 16:58:28 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Christoph Hellwig <hch@lst.de>, Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, iommu@lists.linux.dev,
-	virtualization@lists.linux.dev, kasan-dev@googlegroups.com,
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 8/8] mm/hmm: migrate to physical address-based DMA
- mapping API
-Message-ID: <20250715135828.GE5882@unreal>
-References: <cover.1750854543.git.leon@kernel.org>
- <8a85f4450905fcb6b17d146cc86c11410d522de4.1750854543.git.leon@kernel.org>
- <aHZWlu7Td9ijFhhh@willie-the-truck>
+	s=arc-20240116; t=1752587932; c=relaxed/simple;
+	bh=jfk2V22ERQUvp6fNK5tGHU3+ExFDd+662b5a1Os5EE0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=C0JftM+UZbJm+QbnF2S16KegWFGlc1LfrJ35cFUq2AgigOSx+f7n5ebovWk9lJ9btlvnTG+BEWeN8Uq5SmSMXlMXCqQTx2N45A4UQiA9Zzf/t/DqiUOnMGefpWVQR4Bf9D6AXG4VwesArsWDKrc0mGWNzkyu43PnytP4l0Aklb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=ovFk8pli; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=a6O6XJEF; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752587929; x=1753192729;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=W9+2URA1qXrl1fhBq8o38MQgoc5ORxkxAU8T1e724LI=;
+	b=ovFk8plinhgq1Pm98F2EKee7NHCl2Ao8cMk6fGyDGd1YoQlEsrBMV6zs55mm+tHUMh35SLSCXMVLF
+	 8gEOdmR33UWgFx1U33SOcQWDl5/J5WaEpjuFi6K2xZ433tQymQ425NCPakQtux0+rRt6BPd6AkBTp7
+	 SdTH9OxYdStN1pJNvrlGMWFSSs5Gnu/jfT7fNIgT2UVjfU5uP8EnqlBrMgZX+fbD+qnahA7+YiAI8b
+	 T+9wBc8psR4e0ArRwGbvKVUhAcGcmAN/GzRYDYKyrevQFUP3KmL1gNk0qnHNDSK3wvqC5Ow4/2XAYF
+	 QlNnGTwIDwVuxLsEsTtF3WXVii8lNJg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752587929; x=1753192729;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=W9+2URA1qXrl1fhBq8o38MQgoc5ORxkxAU8T1e724LI=;
+	b=a6O6XJEFJ2Z8BV5TamKbPrPPKpdpDUaatdq2FnN8VN6hmU58hHo+ExcR8mJ7Tp9mcnZct0gQNoiFJ
+	 6XI7xZMCg==
+X-HalOne-ID: d344b59a-6183-11f0-a951-85eb291bc831
+Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
+	by mailrelay5.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id d344b59a-6183-11f0-a951-85eb291bc831;
+	Tue, 15 Jul 2025 13:58:48 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	rust-for-linux@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v13 4/4] rust: support large alignments in allocations
+Date: Tue, 15 Jul 2025 15:58:45 +0200
+Message-Id: <20250715135845.2230333-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
+References: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHZWlu7Td9ijFhhh@willie-the-truck>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 15, 2025 at 02:24:38PM +0100, Will Deacon wrote:
-> Hi Leon,
-> 
-> On Wed, Jun 25, 2025 at 04:19:05PM +0300, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > Convert HMM DMA operations from the legacy page-based API to the new
-> > physical address-based dma_map_phys() and dma_unmap_phys() functions.
-> > This demonstrates the preferred approach for new code that should use
-> > physical addresses directly rather than page+offset parameters.
-> > 
-> > The change replaces dma_map_page() and dma_unmap_page() calls with
-> > dma_map_phys() and dma_unmap_phys() respectively, using the physical
-> > address that was already available in the code. This eliminates the
-> > redundant page-to-physical address conversion and aligns with the
-> > DMA subsystem's move toward physical address-centric interfaces.
-> > 
-> > This serves as an example of how new code should be written to leverage
-> > the more efficient physical address API, which provides cleaner interfaces
-> > for drivers that already have access to physical addresses.
-> 
-> I'm struggling a little to see how this is cleaner or more efficient
-> than the old code.
+Add support for large (> PAGE_SIZE) alignments in Rust allocators.
+All the preparations on the C side are already done, we just need
+to add bindings for <alloc>_node_align() functions and start
+using those.
 
-It is not, the main reason for hmm conversion is to show how the API is
-used. HMM is built around struct page.
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+Acked-by: Danilo Krummrich <dakr@kernel.org>
+---
+ rust/helpers/slab.c            | 10 ++++++----
+ rust/helpers/vmalloc.c         |  5 +++--
+ rust/kernel/alloc/allocator.rs | 30 +++++++++---------------------
+ 3 files changed, 18 insertions(+), 27 deletions(-)
 
-> 
-> From what I can tell, dma_map_page_attrs() takes a 'struct page *' and
-> converts it to a physical address using page_to_phys() whilst your new
-> dma_map_phys() interface takes a physical address and converts it to
-> a 'struct page *' using phys_to_page(). In both cases, hmm_dma_map_pfn()
-> still needs the page for other reasons. If anything, existing users of
-> dma_map_page_attrs() now end up with a redundant page-to-phys-to-page
-> conversion which hopefully the compiler folds away.
-> 
-> I'm assuming there's future work which builds on top of the new API
-> and removes the reliance on 'struct page' entirely, is that right? If
-> so, it would've been nicer to be clearer about that as, on its own, I'm
-> not really sure this patch series achieves an awful lot and the
-> efficiency argument looks quite weak to me.
+diff --git a/rust/helpers/slab.c b/rust/helpers/slab.c
+index 8472370a4338..7fac958907b0 100644
+--- a/rust/helpers/slab.c
++++ b/rust/helpers/slab.c
+@@ -3,13 +3,15 @@
+ #include <linux/slab.h>
+ 
+ void * __must_check __realloc_size(2)
+-rust_helper_krealloc_node(const void *objp, size_t new_size, gfp_t flags, int node)
++rust_helper_krealloc_node_align(const void *objp, size_t new_size, unsigned long align,
++				gfp_t flags, int node)
+ {
+-	return krealloc_node(objp, new_size, flags, node);
++	return krealloc_node_align(objp, new_size, align, flags, node);
+ }
+ 
+ void * __must_check __realloc_size(2)
+-rust_helper_kvrealloc_node(const void *p, size_t size, gfp_t flags, int node)
++rust_helper_kvrealloc_node_align(const void *p, size_t size, unsigned long align,
++				 gfp_t flags, int node)
+ {
+-	return kvrealloc_node(p, size, flags, node);
++	return kvrealloc_node_align(p, size, align, flags, node);
+ }
+diff --git a/rust/helpers/vmalloc.c b/rust/helpers/vmalloc.c
+index 62d30db9a1a6..7d7f7336b3d2 100644
+--- a/rust/helpers/vmalloc.c
++++ b/rust/helpers/vmalloc.c
+@@ -3,7 +3,8 @@
+ #include <linux/vmalloc.h>
+ 
+ void * __must_check __realloc_size(2)
+-rust_helper_vrealloc_node(const void *p, size_t size, gfp_t flags, int node)
++rust_helper_vrealloc_node_align(const void *p, size_t size, unsigned long align,
++				gfp_t flags, int node)
+ {
+-	return vrealloc_node(p, size, flags, node);
++	return vrealloc_node_align(p, size, align, flags, node);
+ }
+diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
+index 8af7e04e3cc6..63f271624428 100644
+--- a/rust/kernel/alloc/allocator.rs
++++ b/rust/kernel/alloc/allocator.rs
+@@ -15,7 +15,6 @@
+ 
+ use crate::alloc::{AllocError, Allocator, NumaNode};
+ use crate::bindings;
+-use crate::pr_warn;
+ 
+ /// The contiguous kernel allocator.
+ ///
+@@ -56,25 +55,26 @@ fn aligned_size(new_layout: Layout) -> usize {
+ 
+ /// # Invariants
+ ///
+-/// One of the following: `krealloc_node`, `vrealloc_node`, `kvrealloc_node`.
++/// One of the following: `krealloc_node_align`, `vrealloc_node_align`, `kvrealloc_node_align`.
+ struct ReallocFunc(
+     unsafe extern "C" fn(
+         *const crate::ffi::c_void,
+         usize,
++        crate::ffi::c_ulong,
+         u32,
+         crate::ffi::c_int,
+     ) -> *mut crate::ffi::c_void,
+ );
+ 
+ impl ReallocFunc {
+-    // INVARIANT: `krealloc_node` satisfies the type invariants.
+-    const KREALLOC: Self = Self(bindings::krealloc_node);
++    // INVARIANT: `krealloc_node_align` satisfies the type invariants.
++    const KREALLOC: Self = Self(bindings::krealloc_node_align);
+ 
+-    // INVARIANT: `vrealloc_node` satisfies the type invariants.
+-    const VREALLOC: Self = Self(bindings::vrealloc_node);
++    // INVARIANT: `vrealloc_node_align` satisfies the type invariants.
++    const VREALLOC: Self = Self(bindings::vrealloc_node_align);
+ 
+-    // INVARIANT: `kvrealloc_node` satisfies the type invariants.
+-    const KVREALLOC: Self = Self(bindings::kvrealloc_node);
++    // INVARIANT: `kvrealloc_node_align` satisfies the type invariants.
++    const KVREALLOC: Self = Self(bindings::kvrealloc_node_align);
+ 
+     /// # Safety
+     ///
+@@ -116,7 +116,7 @@ unsafe fn call(
+         // - Those functions provide the guarantees of this function.
+         let raw_ptr = unsafe {
+             // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
+-            self.0(ptr.cast(), size, flags.0, nid.0).cast()
++            self.0(ptr.cast(), size, layout.align(), flags.0, nid.0).cast()
+         };
+ 
+         let ptr = if size == 0 {
+@@ -160,12 +160,6 @@ unsafe fn realloc(
+         flags: Flags,
+         nid: NumaNode,
+     ) -> Result<NonNull<[u8]>, AllocError> {
+-        // TODO: Support alignments larger than PAGE_SIZE.
+-        if layout.align() > bindings::PAGE_SIZE {
+-            pr_warn!("Vmalloc does not support alignments larger than PAGE_SIZE yet.\n");
+-            return Err(AllocError);
+-        }
+-
+         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
+         // allocated with this `Allocator`.
+         unsafe { ReallocFunc::VREALLOC.call(ptr, layout, old_layout, flags, nid) }
+@@ -185,12 +179,6 @@ unsafe fn realloc(
+         flags: Flags,
+         nid: NumaNode,
+     ) -> Result<NonNull<[u8]>, AllocError> {
+-        // TODO: Support alignments larger than PAGE_SIZE.
+-        if layout.align() > bindings::PAGE_SIZE {
+-            pr_warn!("KVmalloc does not support alignments larger than PAGE_SIZE yet.\n");
+-            return Err(AllocError);
+-        }
+-
+         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
+         // allocated with this `Allocator`.
+         unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flags, nid) }
+-- 
+2.39.2
 
-Yes, there is ongoing work, which is built on top of dma_map_phys() API
-and can't be built without DMA phys.
-
-My WIP branch, where I'm using it can be found here:
-https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/log/?h=dmabuf-vfio
-
-In that branch, we save one phys_to_page conversion in block datapath:
-block-dma: migrate to dma_map_phys instead of map_page
-
-and implement DMABUF exporter for MMIO pages:
-vfio/pci: Allow MMIO regions to be exported through dma-buf
-see vfio_pci_dma_buf_map() function.
-
-Thanks
-
-> 
-> Cheers,
-> 
-> Will
-> 
 
