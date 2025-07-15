@@ -1,154 +1,146 @@
-Return-Path: <linux-kernel+bounces-732326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE13B0651C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:27:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BB9B06519
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 19:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69DC1568040
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409EB3A7FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C07B281513;
-	Tue, 15 Jul 2025 17:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E961285079;
+	Tue, 15 Jul 2025 17:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ASIAXXDf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WsobGYc/"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC58F284689;
-	Tue, 15 Jul 2025 17:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31672C2EF
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752600443; cv=none; b=JROvAwj/GZgW8H74E9CqbMy0REx7U01A9nX9SVEJO9jf8xh/EklU2uKIM0HnyHZN194Q6BldFocPH2f8F2351x5MucXOD4GQ6sOKR6gliAwCCOsNJAC+vLgzk5/C+poW7sh7pfRS5P9xsZUW+5QVveKqiwb0UVhpUX+gaATccms=
+	t=1752600422; cv=none; b=Ri1BSLie5/fiA+5g8z174hIQKv5kVsiGrHdkEKMIUSJCKyKkrz9zTD0wlIUt5srRzZzy16maV6ESyZWZpXPzHhuektaceLeBN60UM4KEsuM5WzkOIaTbbQVbtX4kQECwa+xWYNMFWL0f+j+4WF8V2n5yWIa9Qgj8z1IBh55kezk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752600443; c=relaxed/simple;
-	bh=ovPKG96PX8GRLMCJnscYphDbflIJz5ol2cbrtMEYKMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fBF9xyu4KnzrVCKIQJmq4gLyX5BJY9se5kwu0ORlE3/Jg+9DZhE0IDk5aKPMCnVF8kW2sri1h8ll5Q/hXPra5JBDT+URJ/qEgvgTdVXQkcd2h54Vkr7FQuilII3SQsI5uk3BdqlCc8bEJt9e08sWkUMFJ0XzJ3VQsjygO0/15mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ASIAXXDf; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752600442; x=1784136442;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ovPKG96PX8GRLMCJnscYphDbflIJz5ol2cbrtMEYKMU=;
-  b=ASIAXXDfR4dIAnnBg1lb50ru05ofyavLYWbf6KaHN66add6mxTtUP/JS
-   mKlIp9qTSfCeFoPFSbkc3JhHGsdhDwjDJ/MrYF9MKhHwbqrCiW9OgFgFb
-   QWjMYaqaxbhrZj/3BXU3ks0eJEK34QthKDb5yJ5YMr+27jNm+WMg2ZbZf
-   dRTdtjF5eifaDsv1GH993YRmZleTwrwAf3+4/UnOQ1FTCOnSX6EOS/Q1B
-   TD95Ce1lT1Ggdhg5m5bACj1Nc5NpTuSAfFn2YkWQ6/xK5XGJCfTt8N6zY
-   fa6x70wBE2l/OTk1YF8ogn/pTHtV7BK4exJRG1LfOb0V4ksmD28pdoe9k
-   w==;
-X-CSE-ConnectionGUID: 1r2pG4xBQnOcaVNyE0RhcQ==
-X-CSE-MsgGUID: VEMgzlk4RGShVg/1DTgXKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54048313"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54048313"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 10:27:21 -0700
-X-CSE-ConnectionGUID: dJg+dbpVQYq+HakiiLMIUQ==
-X-CSE-MsgGUID: kn5/sUpZQIa1Yvs1bCgxAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="161605026"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 15 Jul 2025 10:27:15 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ubjQu-000BNn-1v;
-	Tue, 15 Jul 2025 17:27:12 +0000
-Date: Wed, 16 Jul 2025 01:26:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mingwei Zhang <mizhang@google.com>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Colton Lewis <coltonlewis@google.com>
-Subject: Re: [PATCH v4 22/23] KVM: arm64: Add ioctl to partition the PMU when
- supported
-Message-ID: <202507160129.vrvWpdVu-lkp@intel.com>
-References: <20250714225917.1396543-23-coltonlewis@google.com>
+	s=arc-20240116; t=1752600422; c=relaxed/simple;
+	bh=isF8Gtau3GCw3cMblNO5v7kplTfbtpgalIiR8BIoNZ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y3OhhWJKGuDvODwVjrs8kbkW9u6hRYCp+rCfICQ/MM+wkEtC3wEkyv22iH1/Z16ixvWH5ume1gpS/WfvpIwQJol+v7K3I/88tEc0re5aDLrEK5yip6wF/7bZO8kyDRcuYDpFbeWPtWykEb3OYJ1HvhdT//XltRVX/fkSyyiOJa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WsobGYc/; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-747c2cc3419so4677312b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1752600415; x=1753205215; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j6MhRN6ppxrCnCAXp4O8kzdMF4x4FAEbIn2zSZ0Cd/A=;
+        b=WsobGYc/MFTKtq8p8D83P0tH4hQ1XxJ+jeJgqa5A+j98CkHlMzwEwfD5v5dMs/XNhs
+         D/cuSZcLgcj8r9sOv/LaYWN+p0Yl7C0HaBh4o7KzhsHzuKDWpdPioHl78VBusK+kzQ9a
+         CcJKA3egHshkyheADfeq4PVyaZzCe3OXZ351E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752600415; x=1753205215;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j6MhRN6ppxrCnCAXp4O8kzdMF4x4FAEbIn2zSZ0Cd/A=;
+        b=lX2ZQpzG71tPU5ndPLUFN7/hNCHOFDRuyFYq33kJw/bwKlXLr4JGbL/NqjcYgjL0Sc
+         XjnOlYYeOKAe7ROz2Gi0sB4oEHA0IWR+ZmX1t/BFWBUpsaUpq6Iu7qN5l7fJbcAhBwU5
+         m5PX/NJ19FGJ9C9T3N6nkkBaQ0z/Uvad/RSliW+hQk5BVPJILLj4WK4sjPs7v4yo6Pk5
+         bBIlaqyswrZ7LHfboiSH11ErHKAPdmExndlJ/VJJB0PhMyctKxmXX/UnMoDrHa1Ct0pf
+         /szA+S0p/I6ruVIbySeUvAakuXlYOXtqgqe1CI7yLJGoPJqR5obkBheJIjnZP7UXhrxz
+         rvDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNKhUhQxKR0ZYRFGMtaoO/2yFePYQrIPOLYM5JhwmT74vZZFMPeZdz+vrkVGXxskg8ZmBQePQJgO3EvzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV7/6RuWoobw4w6Nog+PC11GmM/CDwuQa8FikNrC649LXKHTKo
+	sTZAfE8XP+gMHm/eTJC/42vaDeBfIUxGhMl+73Kol28dQqisdLtig5Ehl1YJkJZcLXgoTTwyKGi
+	Q338=
+X-Gm-Gg: ASbGncs123HMFZ+4ZF8CBDPJ+efJf0rmzhLeE6Ton5ZHmN6an+QbubklOsTtEpZmo4S
+	UmLADwbQjY3ab01R24eiw0w5T+Dj/RynoXlMdzT/w8jdcTmlIB/JeQOMLr2AOKkSFmBHgRxBYF8
+	BoN1aq6IpieSo2eIO+DSsCiHNw6/QVaz2OOua/ltZEE9Jr+PMqJPmbg1qG8Bc4ISKfMYLkQLcYK
+	7x6ZycWBgONZwN+3br7LvDxN3F5aLECUI3cpzQ30abdj4lX8NoiNvDxAUZq5WP26NLqWbyY0858
+	PsctExm6OpBQ6lWN0X1pEQwFGAKgftZvKI2Pc4X/cn1Kd6x/9Hc46vRDAR3vaypxFriu2bjykJm
+	tr9vVq+0q7nfl7/E9/2v4BDlrdCOKvnhZ5FwkxAK6OXAl7wxuvTiijrCj5WVtvxf3XA==
+X-Google-Smtp-Source: AGHT+IHefih7wtIKc6Qe9LtPKVs9vUdwofHe/f/sx01ldMEXsUikpXTkkLFhoVgRkVl9WXuJfo8mLw==
+X-Received: by 2002:a05:6a21:3294:b0:237:90ae:82e2 with SMTP id adf61e73a8af0-237d701e86dmr345458637.24.1752600415348;
+        Tue, 15 Jul 2025 10:26:55 -0700 (PDT)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com. [209.85.215.173])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe52d38asm12284573a12.9.2025.07.15.10.26.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 10:26:53 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b34ab678931so4253700a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 10:26:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUjLty4Sxgb5rg8q57kCtgo83y9y76+EaYLGtLLTYV1HXRTrqjLetzuCcsOY2Jjqm+0zFH5o5ojxfHBIY=@vger.kernel.org
+X-Received: by 2002:a17:90b:5587:b0:313:28e7:af14 with SMTP id
+ 98e67ed59e1d1-31c9e75a6demr6694a91.19.1752600412930; Tue, 15 Jul 2025
+ 10:26:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714225917.1396543-23-coltonlewis@google.com>
+References: <20250714173554.14223-1-daleyo@gmail.com> <20250714173554.14223-3-daleyo@gmail.com>
+ <175255192501.20738.16784196888105498389.robh@kernel.org>
+In-Reply-To: <175255192501.20738.16784196888105498389.robh@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 15 Jul 2025 10:26:41 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XvHu_NnahFOcfLV4XQm_mQkO5cG3YP+acRgC9AE2m6Jw@mail.gmail.com>
+X-Gm-Features: Ac12FXym5rkm10vzDYnC_hB8fozQpKkEtx52Jg_soFGip83valaWRitivphZL1M
+Message-ID: <CAD=FV=XvHu_NnahFOcfLV4XQm_mQkO5cG3YP+acRgC9AE2m6Jw@mail.gmail.com>
+Subject: Re: [PATCH 2/9] dt-bindings: display: panel: samsung,atna30dw01:
+ document ATNA30DW01
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Dale Whinham <daleyo@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Simona Vetter <simona@ffwll.ch>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?B?SsOpcsO0bWUgZGUgQnJldGFnbmU=?= <jerome.debretagne@gmail.com>, 
+	dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+	linux-kernel@vger.kernel.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, devicetree@vger.kernel.org, 
+	David Airlie <airlied@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Colton,
+Hi,
 
-kernel test robot noticed the following build errors:
+On Mon, Jul 14, 2025 at 8:58=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
+>
+>
+> On Mon, 14 Jul 2025 18:35:38 +0100, Dale Whinham wrote:
+> > The Samsung ATNA30DW01 panel is a 13" AMOLED eDP panel. It is similar t=
+o
+> > the ATNA33XC20 except that it is smaller and has a higher resolution.
+> >
+> > Tested-by: J=C3=A9r=C3=B4me de Bretagne <jerome.debretagne@gmail.com>
+> > Signed-off-by: Dale Whinham <daleyo@gmail.com>
+> > ---
+> >  .../devicetree/bindings/display/panel/samsung,atna33xc20.yaml   | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-[auto build test ERROR on 79150772457f4d45e38b842d786240c36bb1f97f]
+Pushed to drm-misc-next:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Colton-Lewis/arm64-cpufeature-Add-cpucap-for-HPMN0/20250715-070741
-base:   79150772457f4d45e38b842d786240c36bb1f97f
-patch link:    https://lore.kernel.org/r/20250714225917.1396543-23-coltonlewis%40google.com
-patch subject: [PATCH v4 22/23] KVM: arm64: Add ioctl to partition the PMU when supported
-config: arm64-randconfig-003-20250715 (https://download.01.org/0day-ci/archive/20250716/202507160129.vrvWpdVu-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507160129.vrvWpdVu-lkp@intel.com/reproduce)
+[2/9] dt-bindings: display: panel: samsung,atna30dw01: document ATNA30DW01
+      commit: 0bcc0f5e98bebd05e44261df3c33d274084eab60
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507160129.vrvWpdVu-lkp@intel.com/
+Given how many of these we're up to now, I'm starting to wonder if we
+should come up with a generic compatible like we did with "edp-panel"
+and then we can stop having to merge CLs like this. All of these
+Samsung OLED eDP panels have the same power up sequence and once we do
+that then we can read them via EDID or via DP AUX bus to identify
+which specific panel we have and if they need additional tweaking,
+just like we do with "edp-panel". Do DT folks have any opinion about
+that? Coming up with a name would be a pain since I wouldn't want to
+assert that all future Samsung OLED eDP panels will have the same
+powerup sequence. Maybe "samsung,amoled-edp-panel-v1" even though that
+sounds terrible and there's no known need for a "-v2"?
 
-All errors (new ones prefixed by >>):
-
-   In file included from arch/arm64/include/asm/kvm_host.h:31,
-                    from include/linux/kvm_host.h:45,
-                    from arch/arm64/kernel/asm-offsets.c:15:
-   arch/arm64/include/asm/kvm_pmu.h: In function 'kvm_pmu_is_partitioned':
->> arch/arm64/include/asm/kvm_pmu.h:301:43: error: parameter name omitted
-    static inline bool kvm_pmu_is_partitioned(void *)
-                                              ^~~~~~
-   arch/arm64/include/asm/kvm_pmu.h: In function 'kvm_pmu_host_counter_mask':
-   arch/arm64/include/asm/kvm_pmu.h:306:45: error: parameter name omitted
-    static inline u64 kvm_pmu_host_counter_mask(void *)
-                                                ^~~~~~
-   arch/arm64/include/asm/kvm_pmu.h: In function 'kvm_pmu_guest_counter_mask':
-   arch/arm64/include/asm/kvm_pmu.h:311:46: error: parameter name omitted
-    static inline u64 kvm_pmu_guest_counter_mask(void *)
-                                                 ^~~~~~
-   make[3]: *** [scripts/Makefile.build:182: arch/arm64/kernel/asm-offsets.s] Error 1 shuffle=21662191
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1274: prepare0] Error 2 shuffle=21662191
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=21662191
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2 shuffle=21662191
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +301 arch/arm64/include/asm/kvm_pmu.h
-
-   300	
- > 301	static inline bool kvm_pmu_is_partitioned(void *)
-   302	{
-   303		return false;
-   304	}
-   305	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-Doug
 
