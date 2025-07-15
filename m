@@ -1,192 +1,164 @@
-Return-Path: <linux-kernel+bounces-731534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C39B055D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF31B055DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 11:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85B7356213C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:05:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC16561ECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC1E2D5410;
-	Tue, 15 Jul 2025 09:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414382D5427;
+	Tue, 15 Jul 2025 09:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oHFOz9AI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+lec57b"
+Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06812D5402
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9B22D4B65;
+	Tue, 15 Jul 2025 09:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752570329; cv=none; b=fNKXSS2ned3stakBLWrQKxogbdnyRWRZ7H+L9+j4d4ToPxOpuVm28fkxPW3KBFyp9sM8WPfzTOw7ExrqzOm9cEcOlKI5KRIwTpbSWAUXGwSMm5iNFG5MekWLM7Nb6M/R6ws9xkWj+qfjIh5WZG/PlG6RlMOECpgQefqFbMva1Lg=
+	t=1752570431; cv=none; b=VX86XnxjNmpR+nBFBYY3gRBN+zVBffIjNTdjY2aUtw8EmUXwHNcdIOI5SloChQZrY4c2M0qYyS1PPXMe1j4Se6cnkOA5aPiMxOcrirT8XCtMeUdzAN9F31WO6eASTLxtS1wdJ7QMwSgLyYzAmsKqMNndqxBhzT3m4RI9ilISd9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752570329; c=relaxed/simple;
-	bh=5LBGdyccFs9/kSMj7gqptZEBRHBs0pXT46lCaRpnEU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ono5WQIUt5GuMIYVMekHwVFOBhYNr2UgC9yf1FL732rDy6oXqyVnDbKbpqF5b0t9TuFSzI2khycBPadNCpm66OnDLjXkSZUQBSMUJYh+ku09cMf1PVSNGbMgQXIAMP7hc19MG62DAXIg2fhxDhLusj4AwY8On2syal95hRNFXJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oHFOz9AI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56F3kQKS004463
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:05:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	X81G8SbDQbSTnHA7Tq+qXCtSDHk+zyIFbzLI6vGMtbM=; b=oHFOz9AIM1QxzQ33
-	ewK8BgVpjT41RVa6X5zFWaAwDO/Rjs/49yTkz4ZQNeGfIiYy19HRhgepfbXMGSjb
-	NdRwV614x4I6+6FFV9v/8IfioYfJpWknS9PCpZwpgEylpHvCjBhigXd1ztrFdD4T
-	KCEjKseMYNzvFjQl+aTv814m+5gmfTy2Ew0ZlsuQlk9QeaX7k+Phu/pUxub24vTk
-	RYhGWXdtjt/IOirpLCjmU9JX6O/QLwJsQWkbODs6MgaK2m/D+xBimXvcfdjYlvuQ
-	VAwbmaqHMafDZ9GS2jCSCrbH9okOP7lu8A4vRDRt6tLI5s4ARglxlLXw0HhV/wLk
-	wRwtKQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wfca0tsd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 09:05:24 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ab3ab7f74bso11861781cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 02:05:24 -0700 (PDT)
+	s=arc-20240116; t=1752570431; c=relaxed/simple;
+	bh=vPOxKOj09MCFpIfuHdW2KVUL8ws2hMfRVcON4GqhVCY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=owTfcfxqdCfaGIxVCRPcK9m87vgD6UnUTk1qPf2YFxPC/6Cr5/BH06oOCVmDlJVDXh0v7XaX+sMNas6hn+TuNn4cRiF8qiBIedOjwn2m2O+weJIVpz1eEdQcqMErBIMuO1y+YirgnCSMgkJWGqHp/QZX5RAe6l5FqG/poxlVFn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G+lec57b; arc=none smtp.client-ip=209.85.219.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e8b67d2acfbso4711011276.2;
+        Tue, 15 Jul 2025 02:07:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752570429; x=1753175229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hjkdd70zZ6BVlwMKCTh+G2kyaZDVk6OEp60Hyz0mtZ0=;
+        b=G+lec57bteSIj/vDakJaMmzjM7PbYGilu0w5JdEnhphB0R3tCsa9XbNNqwGWHyLqLL
+         ao46rm5LfBTYOlhE5yCJ43VC4Pp1vqJb+YW04f4EhpHHo/6v9m3cUh1sT1Ohad06y2rC
+         Dl7GKrenumI3pwoGt/IKYNlrRXaomC69Q+RuCDrFryi2j0XwgN7m5yxXpo78MCPJaG+N
+         16UH1uGxO+cnCbX3Ckw8SVpOmvWyoeOQZ0RyevTRl9hJ88RpuNlIWzDfnDrgW8Km+tSZ
+         4Ccv9Hk9s4HtzESChbnmEG3n8nmIbq5UCCCuzG7k/BTgaZTai/GyFNfs9Ij34eQZPOIV
+         WJBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752570316; x=1753175116;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X81G8SbDQbSTnHA7Tq+qXCtSDHk+zyIFbzLI6vGMtbM=;
-        b=ZK4HueSHs6cMX9IOiIoSCWGk7LyxzMjIOuQg4KrgZGZT8ucfiZIFv1wohbDNHbil/Y
-         ZyymTwn3rUbnzJQoF0IqL8NAZ+yAG2y3lnJpZgb4RdFcPmWvcKiMMwHx3r4bPaorNKfM
-         DZxPfThj3tCQB93H+n20JFsLYb9T0ch8n6pFAGRj5dDHgQZ+IwBsphA+zqsyl4YDfdEw
-         t7BfTpfIaFKo2zr8F04av2YExseZ1Rj36tNvt0mvlJJ2WSFTj/0i7Eo8XJ1gpeov+fsY
-         53r+LQMadYb05gPduX8tDMqytSRXjNngF/T9g77+g0iYIC/LMSBkMHBo+KI4M1feRhgH
-         6HUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuNi7nPLKmUD4gUeDOZpud2nwgctLXIXeFoRrJ2Ww8QYYVQwyiDTEeQPJpou+S/8mWXtkdO08wZ8UtQMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfoT07tzvWfwsfsHvlQVmidYvu/1ecUUgnezUOpmfh6/KrzhF7
-	VDOgfb6ugv6MvpqGOElmr57eC6UfBk3vV45h4zDMRYAHhK3JuCjPTq5ewnbVc5iJIfAe1rN45C5
-	eveowFOWkkEK9qAeLC/DhthzNwHriHKT/WsOigy4WganQ5QhALykTIYPq+ShH7oDXS3c=
-X-Gm-Gg: ASbGncv3+VRqUqTnCeUehLOn6HaXLP1sMOspeMxvAYCATp5JEy9HQ4tccAelltlDIMK
-	6jr0Zy3Q1bLGGJUut5McgieXP8nebOIKucDfXfhHMvjldksdIJyQtn505B7GqIQGVxRiknTCFPL
-	IMGyexWcceaUTmaCJGgNBQJL9S4os93EGgemTWYtzdurDIPzt7rwgv9+HUri1a580Lvlb9GBpGe
-	smbpCz6RnkjtqrKSr5NDCdvbDMCR+MUry4d6r8/bJ+enwg+naGrvlfJVgnyT1PwHSr8rRgvkVDP
-	lBeetng1EgSLPvI0YYo2FD5oZzUacqnqvv+aOzA2QeuCeybeJak7DZgmxSjk3lkqF7U80260zUJ
-	T6FOG1DSnGLHW8fiLCGX1
-X-Received: by 2002:a05:622a:1104:b0:4ab:5c58:bb25 with SMTP id d75a77b69052e-4ab86ddc86cmr4932761cf.1.1752570315573;
-        Tue, 15 Jul 2025 02:05:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRYFCf9iDFpvwNaUhwvFmnJFfLgW9Y1m4vlzwNzKWO0OxKFu/BJa6T2F1S9r+efZbKvvtpAg==
-X-Received: by 2002:a05:622a:1104:b0:4ab:5c58:bb25 with SMTP id d75a77b69052e-4ab86ddc86cmr4932471cf.1.1752570315140;
-        Tue, 15 Jul 2025 02:05:15 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612067f7ca6sm4743760a12.55.2025.07.15.02.05.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 02:05:14 -0700 (PDT)
-Message-ID: <03242c48-beb9-4ec1-8659-0cb8db9ef37d@oss.qualcomm.com>
-Date: Tue, 15 Jul 2025 11:05:12 +0200
+        d=1e100.net; s=20230601; t=1752570429; x=1753175229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hjkdd70zZ6BVlwMKCTh+G2kyaZDVk6OEp60Hyz0mtZ0=;
+        b=hW3y5JtN61pZGuSIwKbuGv9RGzyiEzdMvK/VmZ7EVf7OJwSK3801Fy0eqrrUgtNLXm
+         1meJtoMui8Vc0//tmKUymlyO8om7HXuH0pdkJO/oVRaokrHIQaO+gnLjRxfw60HTTzLr
+         GKkxop2OTjQxaqhFjSlVj+71FgIUoyt9MFN+yovHiGdrIfrlxauFGE45J72EvAy1VRrB
+         uT3zUGbQiDsB84+It65HeH7X1GCZMV3Aer/NqPLSbT7+m8nIfqFFmWJQl0nhBMQojYnf
+         u4zSbmVGloI3LI3Tu0Hc3w3dAlWcWGAIw0DbF1rorqfePLuhRpiRUsrqFlwIXJcQbIJl
+         lgxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVA/gKstEq5TuYe2km55kb6IKBG0kMGMk+Lm5yGX01u5edq2ZV2ScOLdy0cNG3cwXhgaxiiUWHg5B81cPtk@vger.kernel.org, AJvYcCWwZng3R7OFQ9qtJYZMYlBUGzNVeiiAMxsCFYR8QZR6q2LnIrcBMGhUQObPprvSeK216b8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpTIEanhB33Z/mIfuu3DKISAc1pl+uETqTzonCXLnmX3wsz1vP
+	npwTychKvRjSvghBQ7xCHpGWZ0H1+RtQ2P5Yg2PCx23MySh0DhuhnKwA6DQWq+P3cir3m/llF6x
+	AwvJKM46rFvUyY4D3999zv3TIn13a+RE=
+X-Gm-Gg: ASbGncsvaDxzTCEEUbBVIq8VRl4G6CLwLkTlF4dnwHlp6KRz6oM37Vfs6MwC8TC6kni
+	8Z+vn6zLC/Cshg9lU2FJofhiR1Ohx8TbLPqRMm+Wvmd8Ct1te3c6c/rm3Mpc/f2rOdDj4n0iK/W
+	K4pJ/LhZAun42Pc7FG5lNO2hg61twNI98GY06a1zyaPhtyNPpWvPWAouvmc0R7sKNdIjpiFNj9p
+	ZYakrY=
+X-Google-Smtp-Source: AGHT+IH8aiNxxuLd7EK1RsMum43mTDoVrkpE4cNGSFvpbR6HNOCtt24QMPyPWyndD8y1fp8u4F10fxh6U3tA+BID2Ls=
+X-Received: by 2002:a05:690c:4809:b0:70e:719e:743 with SMTP id
+ 00721157ae682-717d5e0ea36mr228089067b3.26.1752570429186; Tue, 15 Jul 2025
+ 02:07:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/11] clk: qcom: common: Add support to register rcg
- dfs in qcom_cc_really_probe
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250715-sm7635-clocks-v3-0-18f9faac4984@fairphone.com>
- <20250715-sm7635-clocks-v3-1-18f9faac4984@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250715-sm7635-clocks-v3-1-18f9faac4984@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDA4MiBTYWx0ZWRfXwi9CiUodR8hL
- YRhEiOQeQI6ADNxOUZkM6Jz0pQ3WUeKePMxC3HpNJyK2bTQQfbx5aNyukAYrcOy2pON3SQCX+Ql
- YkZiINlZzfieNti+gY+eQ1+y1qXjeLr0nJ2S22+LjWNvUBu0Ux9pvKuzmbb6ymiDbvFwXpvPHRs
- /G4hSKKwZtfauOObeaAeJ5JCS2z4rnxTbdpY/zEAsVuM92oUWcwxF0N28CZulmT4ui1IrN4UCuQ
- 95Hv+GcUa7T8Q8Xx/NaoBevOOtikAfpgPzvw/XRzv+RDpEHsV1pLdGMWC12WH3jPnRYPgYiXhaf
- RaToGYjHE3zolqLMpNHF7JYipdP168iR9Jkn1QIONpHf6h+bcTUiK/HuXSceqCXE4Sgb80cp+of
- rbr8jmIDIjOO/7a2NjYcD7xcnAvTTySp1UrTWx3pLih/kYpjvnoMurbUpcaeXsWHY/Z7PGE8
-X-Proofpoint-GUID: NbC3iMI7zfPENZlRudoZbIhUHz1B8LYu
-X-Authority-Analysis: v=2.4 cv=SeX3duRu c=1 sm=1 tr=0 ts=687619d4 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
- a=fWT5Z53OPIsgueDaOEIA:9 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
- a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-ORIG-GUID: NbC3iMI7zfPENZlRudoZbIhUHz1B8LYu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_03,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 impostorscore=0 clxscore=1015 adultscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507150082
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <20250703121521.1874196-2-dongml2@chinatelecom.cn> <CAADnVQ+zkS9RMpB70HEtNK1pXuwRZcjgeQjryAY6zfxSQLVV3A@mail.gmail.com>
+ <CADxym3ZGco3_V7w8+ZrJwnPd6nx=YKwYASWcUFOFyLe7L5oa_w@mail.gmail.com>
+ <CAADnVQJYLSp0X-LiPftaDvU+SnJL84sgGM0M-=uQgq4g8=T=zg@mail.gmail.com> <CADxym3ZaiGYJWd-ME98G_=7q0EZA-sU7G=x=j5kcnNgRJ0893A@mail.gmail.com>
+In-Reply-To: <CADxym3ZaiGYJWd-ME98G_=7q0EZA-sU7G=x=j5kcnNgRJ0893A@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Tue, 15 Jul 2025 17:06:04 +0800
+X-Gm-Features: Ac12FXzZ6NOWp0p46NDBt8M5C-xEWFxQ-O4ywVKjZVPBSfghPghlncvDzCo5T9w
+Message-ID: <CADxym3ZYCYgFokxoq0d5jEJ8V73KsJmYQnHtxWc3RO_8X5zC8Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 01/18] bpf: add function hash table for tracing-multi
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Menglong Dong <dongml2@chinatelecom.cn>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/15/25 9:19 AM, Luca Weiss wrote:
-> Add support to register the rcg dfs in qcom_cc_really_probe(). This
-> allows users to move the call from the probe function to static
-> properties.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  drivers/clk/qcom/common.c | 10 ++++++++++
->  drivers/clk/qcom/common.h |  2 ++
->  2 files changed, 12 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index b3838d885db25f183979576e5c685c07dc6a7049..37c3008e6c1be1f083d0093d2659e31dd7978497 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -390,6 +390,16 @@ int qcom_cc_really_probe(struct device *dev,
->  			goto put_rpm;
->  	}
->  
-> +	if (desc->driver_data &&
-> +	    desc->driver_data->dfs_rcgs &&
-> +	    desc->driver_data->num_dfs_rcgs) {
+On Tue, Jul 15, 2025 at 11:13=E2=80=AFAM Menglong Dong <menglong8.dong@gmai=
+l.com> wrote:
+>
+> On Tue, Jul 15, 2025 at 10:49=E2=80=AFAM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> > On Mon, Jul 14, 2025 at 7:38=E2=80=AFPM Menglong Dong <menglong8.dong@g=
+mail.com> wrote:
+[......]
+> >
+> > That doesn't sound right.
+> > When everything is always_inline the compiler can inline the callback h=
+ashfn.
+> > Without always inline do use see ht->p.hashfn in the assembly?
+> > If so, the compiler is taking this path:
+> >         if (!__builtin_constant_p(params.key_len))
+> >                 hash =3D ht->p.hashfn(key, ht->key_len, hash_rnd);
+> >
+> > which is back to const params.
+>
+> I think the compiler thinks the bpf_global_caller is complex enough and
+> refuses to inline it for me, and a call to __rhashtable_lookup() happens.
+> When I add always_inline to __rhashtable_lookup(), the compiler makes
+> a call to rht_key_get_hash(), which is annoying. And I'm sure the params.=
+key_len
+> is const, and the function call is not for the ht->p.hashfn.
+>
+> >
+> > > In fact, I think rhashtable is not good enough in our case, which
+> > > has high performance requirements. With rhashtable, the insn count
+> > > is 35 to finish the hash lookup. With the hash table here, it needs o=
+nly
+> > > 17 insn, which means the rhashtable introduces ~5% overhead.
+> >
+> > I feel you're not using rhashtable correctly.
+> > Try disasm of xdp_unreg_mem_model().
+> > The inlined lookup is quite small.
+>
+> Okay, I'll disasm it and have a look. In my case, it does consume 35 insn
+> after I disasm it.
 
-I suppose the last check isn't strictly necessary but it makes
-sense to the reader so I'm not asking for a resend because of
-that
+You might not believe it when I say this, the rhashtable lookup in my
+kernel is not inlined in xdp_unreg_mem_model(), and following is the
+disasm:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+disassemble xdp_unreg_mem_model
+Dump of assembler code for function xdp_unreg_mem_model:
+   0xffffffff81e68760 <+0>:     call   0xffffffff8127f9d0 <__fentry__>
+   0xffffffff81e68765 <+5>:     push   %rbx
+   0xffffffff81e68766 <+6>:     sub    $0x10,%rsp
+   [......]
 
-Konrad
+   /* we can see that the function call to __rhashtable_lookup happens
+in this line.  */
+   0xffffffff81e687ba <+90>:    call   0xffffffff81e686c0 <__rhashtable_loo=
+kup>
+   0xffffffff81e687bf <+95>:    test   %rax,%rax
+   0xffffffff81e687c2 <+98>:    je     0xffffffff81e687cb
+<xdp_unreg_mem_model+107>
+   [......]
 
-> +		ret = qcom_cc_register_rcg_dfs(regmap,
-> +					       desc->driver_data->dfs_rcgs,
-> +					       desc->driver_data->num_dfs_rcgs);
-> +		if (ret)
-> +			goto put_rpm;
-> +	}
-> +
->  	cc->rclks = rclks;
->  	cc->num_rclks = num_clks;
->  
-> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> index 0f4b2d40c65cf94de694226f63ca30f4181d0ce5..953c91f7b14502546d8ade0dccc4790fcbb53ddb 100644
-> --- a/drivers/clk/qcom/common.h
-> +++ b/drivers/clk/qcom/common.h
-> @@ -30,6 +30,8 @@ struct qcom_cc_driver_data {
->  	size_t num_alpha_plls;
->  	u32 *clk_cbcrs;
->  	size_t num_clk_cbcrs;
-> +	const struct clk_rcg_dfs_data *dfs_rcgs;
-> +	size_t num_dfs_rcgs;
->  	void (*clk_regs_configure)(struct device *dev, struct regmap *regmap);
->  };
->  
-> 
+The gcc that I'm using is:
+gcc --version
+gcc (Debian 12.2.0-14+deb12u1) 12.2.0
+
+I think there may be something wrong with the rhashtable, which needs some
+fixing?
 
