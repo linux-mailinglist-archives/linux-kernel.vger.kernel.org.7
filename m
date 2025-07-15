@@ -1,138 +1,134 @@
-Return-Path: <linux-kernel+bounces-732576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC555B06902
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:01:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDD8B06903
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5B945659FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:01:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AB787B25AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F462C08A8;
-	Tue, 15 Jul 2025 22:01:24 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0CD2BE7B4;
+	Tue, 15 Jul 2025 22:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dev-mail.net header.i=@dev-mail.net header.b="r7GeW2zj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WHXmuHXa"
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D0245945;
-	Tue, 15 Jul 2025 22:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE34FBE65
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752616884; cv=none; b=SCnYl93i6GPyfq7iKOKiXSK/WFd6Z8xxlEnZ+qi3mu9mLjGyErrctEQ9ckHbfsENUyhZL6WDC8Yi+IykmCaUrKbCjMGG0lWxnK/BKS7Ea/ogLDWXYfdBfDasZEzdJ39m1pY1F17VzVQaWbG1RKPALdIJ4yzic2H6GrkCtsve9eI=
+	t=1752617001; cv=none; b=NFxEd7kOEuA1EtnkXx3Ecq0uBOMys5Kg+DsvM4RF9banp46ZtWgpe8mdVBEj3xAJYdqeTzX39wdCUNUowbDAfFfGDbnqCC8mINsX9U3TKQhol/i+sFZ3o092HFO+7g8t0oVI7cScAn0Rg1InobZ3ZXl4m3SSUdxz0Qz3Xk7TMDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752616884; c=relaxed/simple;
-	bh=VIKRw06pGE2/3puvs1e2lNmGY2lvMx6DwWfE6MV66WI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=psKbtVu7YaxF/s7MMry0GP7looAtmHCaxXUqwmFfDR5v+GpD5NYEZdB0NezSuHQRNXAh4gdxYIUOItCi/HnFJ4fGl2O3EYNKKs0QqvHX9g6dQxNJLyGAu2F+NJTrDM2fNVMoTDDXGtzxvOrE6R67FeZYyBbnZGhtYij8sFACKQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 0133E12B3C0;
-	Tue, 15 Jul 2025 22:01:10 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 2B7EB18;
-	Tue, 15 Jul 2025 22:01:06 +0000 (UTC)
-Date: Tue, 15 Jul 2025 18:01:05 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
- James <sam@gentoo.org>
-Subject: Re: [PATCH v13 10/14] unwind: Clear unwind_mask on exit back to
- user space
-Message-ID: <20250715180105.2a36560a@batman.local.home>
-In-Reply-To: <20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
-References: <20250708012239.268642741@kernel.org>
-	<20250708012359.345060579@kernel.org>
-	<20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752617001; c=relaxed/simple;
+	bh=GEBjZyDK82w+i3NQ0B9iJOjRPoixX3o6gD7NS6l5sS4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:References:To:Cc:
+	 In-Reply-To:Content-Type; b=mjz1e5Dh8I9bmk5KAp8SkReoxWvArE86zgPpcM6+cuabb/Ps8T43k/ZMEB3Tb5EGptM9Mur24X+o4W9Wgb/MpH5+LnbLFnoj2148FzTheVc5nRRKCypLJn+BxY/NB7mI0lxxqGsQ1T5kjGfu7TzLyqnwQ3x6iizIwy+Bo/XoGZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev-mail.net; spf=pass smtp.mailfrom=dev-mail.net; dkim=pass (2048-bit key) header.d=dev-mail.net header.i=@dev-mail.net header.b=r7GeW2zj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WHXmuHXa; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev-mail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev-mail.net
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 7FAE27A021E;
+	Tue, 15 Jul 2025 18:03:14 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Tue, 15 Jul 2025 18:03:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev-mail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
+	1752616994; x=1752703394; bh=jg8X7VDOB/Ufi1wHZnT5zMtrg5ie9mPOez9
+	f1zmiJIs=; b=r7GeW2zjPTyjVe4IxNNGJTmChw4szhmiMmT0ZcoY0j7fdkPKN6Q
+	Xyc1sRgWtGKZCN2pIAA8lTQtFnlvZ+io2LzfjxZi1cYAK3gac1awo7Ku9Jg6aA1i
+	M6z5uBhmX+vvF7/f5Nwz0v3LsdIfXKxSZ1YgCPdKZCJ9TdLn1yK1LfZkXEClh3EQ
+	TY5BKUKi+XzoD/viSdLcMrjCdgp2cQBytncOLappC+i4HoWPtgisK92w4sDoaKbH
+	qYZiOtUt5I7N+rCWeuARM/WM1MKi2Ho9BGBKPCKKGXSDEYOmJavhgoFjp2X5Ij6i
+	anbXlbNNbXezWCODGOjbtWkhEdAFja1RfZA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752616994; x=
+	1752703394; bh=jg8X7VDOB/Ufi1wHZnT5zMtrg5ie9mPOez9f1zmiJIs=; b=W
+	HXmuHXaYuTkEIGdDYBrWLpWlfjH1HK5MNA7duzL0nSGAPP82kMt7QOnspF6g+J9t
+	RcQhwsaJqi9Y84pmk7C1z/pq9QPeqFPmyXQ4XTdgkk+oq+JPClAXxnHANkrvNg/r
+	duqGYxOIVKKxv1GSMMn3rtMq7ybA7tRRL51yzms7IAvLUzXXU/JzVSBCV3xX6RBi
+	QN8S9WW8WU/rT2ZzZhNKim0f9D76cYU33aybyjmAY51YjT+wEKp6rOQLzaOWEtuc
+	2YBJbbtyC8A2U29AYOcjz1/aiWoyUVR1ROY+/IaY7bgBtlTt9pJX3DUS+n7Lqijz
+	WQp4T2srWLRt5mjMc4y9A==
+X-ME-Sender: <xms:ItB2aFrhwDZLfKDIIJiLXKLrG8xCsgLxVKHi8D-47YKfU1n1Qn41zg>
+    <xme:ItB2aH3F15mAoEVMs2mOwt7wESU9-PrihqzTOFaOyC7h_D-VulkV7DBWd0iec2RQ_
+    ty1X-coUCZp9tF->
+X-ME-Received: <xmr:ItB2aECtY_mH8XBt2gzMfn6JZumUO2jqPh_rN_bamjAzrxCrgQoz6W1iLq-dzV9Na84K7FXZiLc9NQ00LQkXrHoXk595eknzzfX9Fg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehheeljecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhepkfffgggfhffurhhfvfevjggtgfesthejre
+    dttddvjeenucfhrhhomhepphhgnhguuceophhgnhguseguvghvqdhmrghilhdrnhgvtheq
+    necuggftrfgrthhtvghrnhepteeukeejhffftefhtdetgfdvueegkeelkefhveejleejgf
+    elgedtgfevhfdufeeunecuffhomhgrihhnpehrvgguhhgrthdrtghomhenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpghhnugesuggvvhdqmh
+    grihhlrdhnvghtpdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehjphhoihhmsghovgeskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ItB2aPfB3t1_2irOyS1e94FF9QpoOHxbTrPGoB-3y8qe4Z7Fpu14yg>
+    <xmx:ItB2aJhraDl7S_R9KR3RwWyP9zZnotgkK40ojDX7NdmqHgt_mjXxYA>
+    <xmx:ItB2aHoS1R0dYCaXhNzWETJd5-IAin-HQm-YvOV6v5eOsRDXzI3Egg>
+    <xmx:ItB2aJFxnKiIHyp66KYr3LMwXYgh9RPBSxoxnJhxqTQ54Ozodyryqw>
+    <xmx:ItB2aD7g_KNPvCcZCd3NHSsVVugdoa7PbwvkAYRqy14I-Zo0X9nK_zXt>
+Feedback-ID: if6e94526:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 15 Jul 2025 18:03:13 -0400 (EDT)
+Message-ID: <48ef184c-0160-4a50-aeb5-013e60fc7b40@dev-mail.net>
+Date: Tue, 15 Jul 2025 18:03:13 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: pgnd <pgnd@dev-mail.net>
+Subject: [REGRESSION]: fwd: regression in 6.15.5: KVM guest launch FAILSs with
+ missing CPU feature error (sbpb, ibpb-brtype)
+Reply-To: pgnd@dev-mail.net
+References: <a34aef44-75e1-49d7-8210-5269542c1857@dev-mail.net>
+Content-Language: en-US, es-ES
+To: linux-kernel@vger.kernel.org
+Cc: jpoimboe@kernel.org
+In-Reply-To: <a34aef44-75e1-49d7-8210-5269542c1857@dev-mail.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 318wnxsifrjw9hrdnoxb3rqssc8wnpj4
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 2B7EB18
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/NNwN0TIKShUMbuKenhraq5IABVHHjb7U=
-X-HE-Tag: 1752616866-522475
-X-HE-Meta: U2FsdGVkX19Zl+x3EINDkb0eDwqz4ng8mKFqqTtyydAMOYsUrKwf4Tms8KzAjALEnRlfvUTEsJPBSf1I7/cmDXddtL5vBWM9mlwpsj7Sbgy2rrHD1ByMOG/Sjx4UYT2zsaNarhAfMI9+o/jBNmzYFnA9Is0nezV4rN0Zapo7vK0QbEXZe9gOPyMebyn46Nj8CwtVcSjDSPBco9gFlo0oN20MVLpRyIuZxLtYSrT7/lCk7fD6UjYsaxwX4hsGVD3NrO9wnCC52YpXyb3c+GHs6DQtkCSHBSA8rRrdDoKQ7V4Zw2REelzQ0VQmhPHKBVSiPN6Klv/xKWs+PjA1OfUF9UUDzo8i/RFrhBBjXnhj8Ak6U5ZIj4j+P/XL/l22fYIU
 
-On Tue, 15 Jul 2025 12:29:12 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+(already submitted @ Fedora; cc'd to regressions@.
+  advised to post to 'upstream' as well.
+  not stable@, but here, i'm just told ...  my bad)
 
-> The below is the last four patches rolled into one. Not been near a
-> compiler.
+-------- Forwarded Message --------
+Subject: regression in 6.15.5: KVM guest launch FAILSs with missing CPU feature error (sbpb, ibpb-brtype)
+Date: Sun, 13 Jul 2025 17:37:57 -0400
+From: pgnd <pgnd@dev-mail.net>
+Reply-To: pgnd@dev-mail.net
+To: kernel@lists.fedoraproject.org
 
-And it shows ;-)
+i'm seeing a regression on Fedora 42 kernel 6.15.4 -> 6.15.5 on AMD Ryzen 5 5600G host (x86_64)
 
-> @@ -117,13 +138,13 @@ static void unwind_deferred_task_work(st
->  	struct unwind_task_info *info = container_of(head, struct unwind_task_info, work);
->  	struct unwind_stacktrace trace;
->  	struct unwind_work *work;
-> +	unsigned long bits;
->  	u64 cookie;
->  
-> -	if (WARN_ON_ONCE(!info->pending))
-> +	if (WARN_ON_ONCE(!unwind_pending(info)))
->  		return;
->  
-> -	/* Allow work to come in again */
-> -	WRITE_ONCE(info->pending, 0);
-> +	bits = atomic_long_fetch_andnot(UNWIND_PENDING, &info->unwind_mask);
+kvm guests that launch ok under kernels 6.15.[3,4] fail with the following error when attempting to autostart under 6.15.5:
 
-I may need to do what other parts of the kernel has done and turn the
-above into:
+	internal error: Failed to autostart VM: operation failed: guest CPU doesn't match specification: missing features: sbpb,ibpb-brtype
 
-	bits = atomic_long_fetch_andnot(UNWIND_PENDING, (atomic_long_t *)&info->unwind_mask);
+no changes made to libvirt, qemu, or VM defs between kernel versions.
+re-booting to old kernel versions restores expected behavior.
 
-As there's other bit manipulations that atomic_long does not take care
-of and it's making the code more confusing. When I looked to see how
-other users of atomic_long_andnot() did things, most just typecasted
-the value to use that function :-/
+maybe related (?) to recent changes in AMD CPU feature exposure / mitigation handling in kernel 6.15.5?
 
--- Steve
+i've opened a bug:
+
+	https://bugzilla.redhat.com/show_bug.cgi?id=2379784
 
 
->  
->  	/*
->  	 * From here on out, the callback must always be called, even if it's
-> @@ -136,9 +157,11 @@ static void unwind_deferred_task_work(st
->  
->  	cookie = info->id.id;
->  
-> -	guard(mutex)(&callback_mutex);
-> -	list_for_each_entry(work, &callbacks, list) {
-> -		work->func(work, &trace, cookie);
-> +	guard(srcu_lite)(&unwind_srcu);
-> +	list_for_each_entry_srcu(work, &callbacks, list,
-> +				 srcu_read_lock_held(&unwind_srcu)) {
-> +		if (test_bit(work->bit, &bits))
-> +			work->func(work, &trace, cookie);
->  	}
->  }
->  
-> @@ -162,7 +185,7 @@ static void unwind_deferred_task_work(st
->   * because it has already been previously called for the same entry context,
->   * it will be called again with the same stack trace and cookie.
->   *
-> - * Return: 1 if the the callback was already queued.
-> + * Return: 1 if the callback was already queued.
->   *         0 if the callback successfully was queued.
->   *         Negative if there's an error.
->   *         @cookie holds the cookie of the first request by any user
+
 
