@@ -1,179 +1,104 @@
-Return-Path: <linux-kernel+bounces-730989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-730990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8064CB04D3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:16:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D29B04D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 03:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D765217F920
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:16:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD5E4A5D62
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 01:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF2817C21B;
-	Tue, 15 Jul 2025 01:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6091A0BD6;
+	Tue, 15 Jul 2025 01:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QeCyX4pO"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="RDmqhB6z"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1154211F
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752542189; cv=none; b=CnUNHtRe6+8PTr33n9rG7GlTZ4Om4EZigm7PRtwkckaqIv+81Js8jdDa6O8E/kqJCy8ffnKZt1zo0XWAvf8uGKfKNAUL7IG3QjeOjWGvtJr1dY127FLbWp4f/hjiCZn9h0gxtlbxagg73c2YoZXOrtQYYTkN0tBH7L1evxCMXOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752542189; c=relaxed/simple;
-	bh=9k92YKaptooa+VBpByWXJfvSKO0YKIDW9HKV5jRCgw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WF5J3WCF4S24HuBuZwYyX5GZKkHk3Rvlu/yIFH8N72/KCBuAD0wS/eDdm5/H1SaG6hL7rHwnkoQaVEvY8Y0eLIsrEwsbZUGWro0oZqOPt96rDLPnYz33wXdRxgojKoUvd1ybx8pmrk10smbc1ux0CdVZXlnW9xp49+rmZJSnQP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QeCyX4pO; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d49172ce-c0d8-43df-bba9-d88a681228c7@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752542184;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eI4+Uj5ZHVWz4/NaIet5nhFdtjuYqT3loM5WDkPMnQ8=;
-	b=QeCyX4pOW+TVla4xi3+UbJxvIQFXlYpvof+nKNpjIWzeMka0G+4rLE9S6XDYHxdrpYy7nL
-	e8qd3xN6BsmO8fZkRCeOhD9PMN6iAIBDTDaNWOv067a7kTl/zzAUgiQ9VwcBg295nPd9u0
-	PaCbe+n9FtLkyZFF2/mBGxEROZnJyWA=
-Date: Tue, 15 Jul 2025 09:15:23 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A8B1990D9
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 01:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752542313; cv=pass; b=ax6cfD5aw2B+wF3z0Y3TkZ5lk8t0uvswKV/W3x3kOswMRVy/CoBVzocTxkDarUknG4MBVvDC0+6fzlE1n1Rcfh1X1S7tIBqK/OD9krncZGpBdlIcuf2N47bF5hPaAW5t5iQYz5YRxs5pexC43dYUkZLVm8GO+ptjsbjox6CkZ88=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752542313; c=relaxed/simple;
+	bh=src164VYlfYZebs3/5T8qVuVAZeKR2byVQxqAmQ4cDQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ZUOG5BkWpNmOti8M/pQeOotCtdBYsC/TVV7mxypsG+fO5/lO3uPsckMkwlYO2Ut1nxAb8bQC0SlKQNa8bUvvZGbRadXzeSo2oRzyhp+ozfMRt/WGTrMg3yd0+muDArwShKB+RZoM+YaysK5rxI/bgkU5V6DDmxSEeC9/7cw18qw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=RDmqhB6z; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752542291; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jR0roymRwHJBFgLX8HfW1V9tZyq6RLgTZ++pCPesVHW1woJyMjncw8i5DwD1Cux3AMb+xNnVJ98N1H7+fj5JBIocFK1LWj0lW5K/jfQWk1gu0lsGJAzGTfaUOUrhfluNftbtn1hnXjz952vgQUxfcboUR4jXL5aU+920NhRlt5E=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752542291; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=V9cx3wTyHRwcaLJQ/ZzBpjs8YiVrMyghv3hRxD0e5ME=; 
+	b=SSslRQXL/Iw6a2Y6XJhxSsq2OQux6I8+k7cXv1C8iss+3QwafubCG8QjKXTQVvpPaElfVozzJsPizUnCCrrDJd6jZWfu5gqYBZbq2XgpIjZyD0TIToqsMSFwS43ERxCsGpuukzGHA9Vcwo0qQi0KmaywA77yJkoLosA72zoMmfs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752542291;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=V9cx3wTyHRwcaLJQ/ZzBpjs8YiVrMyghv3hRxD0e5ME=;
+	b=RDmqhB6zzGTsixfxhA5+UXdkRGmeMbwdvPp/15aPJS0lHGCSPhFJRgqANjbmEzD+
+	v9jbl/AjA22a3QE3Yu+F3QbISbNgSFFQXuORJ5rBxcUkGNwumTjI/m+18KxaiJTjaNw
+	Ombs6/+QBOPd5lbWDuWzPFmK1s738y3/Uszy/3lY=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 17525422905231014.6625550727482; Mon, 14 Jul 2025 18:18:10 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Mon, 14 Jul 2025 18:18:10 -0700 (PDT)
+Date: Tue, 15 Jul 2025 05:18:10 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Feng Tang" <feng.tang@linux.alibaba.com>
+Cc: "akpm" <akpm@linux-foundation.org>, "corbet" <corbet@lwn.net>,
+	"john.ogness" <john.ogness@linutronix.de>,
+	"lance.yang" <lance.yang@linux.dev>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"paulmck" <paulmck@kernel.org>, "pmladek" <pmladek@suse.com>,
+	"rostedt" <rostedt@goodmis.org>
+Message-ID: <1980ba9224c.11f5e5a9635585.8635674808464045994@zohomail.com>
+In-Reply-To: <aHWliJhyIZnq97Mm@U-2FWC9VHC-2323.local>
+References: <20250703021004.42328-2-feng.tang@linux.alibaba.com>
+ <20250714210940.12-1-safinaskar@zohomail.com> <aHWliJhyIZnq97Mm@U-2FWC9VHC-2323.local>
+Subject: Re: [PATCH v3 1/5] panic: clean up code for console replay
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2 12/18] libbpf: don't free btf if tracing_multi
- progs existing
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Menglong Dong <menglong8.dong@gmail.com>
-Cc: alexei.starovoitov@gmail.com, rostedt@goodmis.org, jolsa@kernel.org,
- bpf@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- linux-kernel@vger.kernel.org
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <20250703121521.1874196-13-dongml2@chinatelecom.cn>
- <CAEf4Bza9mRvjwXU5gbOmOg_Ns=5OAX7-ybE=_wh79i7dwL=ZEw@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Menglong Dong <menglong.dong@linux.dev>
-In-Reply-To: <CAEf4Bza9mRvjwXU5gbOmOg_Ns=5OAX7-ybE=_wh79i7dwL=ZEw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227f6076652216946c6b417b32c000065c0bd2fe0297555db1cadbf7ed9b85abc1eeeb24a0174f26c:zu080112278cfe327cb342503e0081607100000a08fcb48951c24d329e22df21e05c4676660b7e4500ba87df:rf0801122b70b6a8d2504f8739f1651d740000932c182295745679464a1a763de074c6f1bc18c3fe116291e93da43ff7:ZohoMail
 
+ ---- On Tue, 15 Jul 2025 04:49:12 +0400  Feng Tang <feng.tang@linux.alibaba.com> wrote --- 
+ > Thanks for trying the patch! 
+I didn't try it. :) I merely run normal mainline or distro kernel in qemu.
 
-On 7/15/25 06:07, Andrii Nakryiko wrote:
-> On Thu, Jul 3, 2025 at 5:21 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
->> By default, the kernel btf that we load during loading program will be
->> freed after the programs are loaded in bpf_object_load(). However, we
->> still need to use these btf for tracing of multi-link during attaching.
->> Therefore, we don't free the btfs until the bpf object is closed if any
->> bpf programs of the type multi-link tracing exist.
->>
->> Meanwhile, introduce the new api bpf_object__free_btf() to manually free
->> the btfs after attaching.
->>
->> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
->> ---
->>   tools/lib/bpf/libbpf.c   | 24 +++++++++++++++++++++++-
->>   tools/lib/bpf/libbpf.h   |  2 ++
->>   tools/lib/bpf/libbpf.map |  1 +
->>   3 files changed, 26 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
->> index aee36402f0a3..530c29f2f5fc 100644
->> --- a/tools/lib/bpf/libbpf.c
->> +++ b/tools/lib/bpf/libbpf.c
->> @@ -8583,6 +8583,28 @@ static void bpf_object_post_load_cleanup(struct bpf_object *obj)
->>          obj->btf_vmlinux = NULL;
->>   }
->>
->> +void bpf_object__free_btfs(struct bpf_object *obj)
-> let's not add this as a new API. We'll keep BTF fds open, if
-> necessary, but not (yet) give user full control of when those FDs will
-> be closed, I'm not convinced yet we need that much user control over
-> this
+ > My understanding is, 'console' have kind of different meaning in kernel
+ > space than just /dev/console. In printk.c, you can see 'console' is
+ > used everywhere,  which are mostly bound to kernel message.like
+ > console_try_replay_all(), console_flush_all(), console_flush_on_panic(),
+ > which are consistent with the new name suggested by Petr.
+Okay, I agree.
 
+But I still kindly ask you to revert changes to Documentation/admin-guide/kernel-parameters.txt .
+Previous documentation is better.
+admin-guide is written for admins, not for kernel developers. And they understand "console" as /dev/console .
 
-Okay! I previously thought that this would take up a certain amount of
-memory, but it seems I was overthinking :/
+I run kernel with panic_print=32 in hope that this will flush console (i. e. /dev/console), because this is how I interpreted
+your patched documentation. And I got different effect.
 
-I'll remove this API in the next version.
+--
+Askar Safin
+https://types.pl/@safinaskar
 
-Thanks!
-Menglong Dong
-
-
->
->
->> +{
->> +       if (!obj->btf_vmlinux || obj->state != OBJ_LOADED)
->> +               return;
->> +
->> +       bpf_object_post_load_cleanup(obj);
->> +}
->> +
->> +static void bpf_object_early_free_btf(struct bpf_object *obj)
->> +{
->> +       struct bpf_program *prog;
->> +
->> +       bpf_object__for_each_program(prog, obj) {
->> +               if (prog->expected_attach_type == BPF_TRACE_FENTRY_MULTI ||
->> +                   prog->expected_attach_type == BPF_TRACE_FEXIT_MULTI ||
->> +                   prog->expected_attach_type == BPF_MODIFY_RETURN_MULTI)
->> +                       return;
->> +       }
->> +
->> +       bpf_object_post_load_cleanup(obj);
->> +}
->> +
->>   static int bpf_object_prepare(struct bpf_object *obj, const char *target_btf_path)
->>   {
->>          int err;
->> @@ -8654,7 +8676,7 @@ static int bpf_object_load(struct bpf_object *obj, int extra_log_level, const ch
->>                          err = bpf_gen__finish(obj->gen_loader, obj->nr_programs, obj->nr_maps);
->>          }
->>
->> -       bpf_object_post_load_cleanup(obj);
->> +       bpf_object_early_free_btf(obj);
->>          obj->state = OBJ_LOADED; /* doesn't matter if successfully or not */
->>
->>          if (err) {
->> diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
->> index d1cf813a057b..7cc810aa7967 100644
->> --- a/tools/lib/bpf/libbpf.h
->> +++ b/tools/lib/bpf/libbpf.h
->> @@ -323,6 +323,8 @@ LIBBPF_API struct bpf_program *
->>   bpf_object__find_program_by_name(const struct bpf_object *obj,
->>                                   const char *name);
->>
->> +LIBBPF_API void bpf_object__free_btfs(struct bpf_object *obj);
->> +
->>   LIBBPF_API int
->>   libbpf_prog_type_by_name(const char *name, enum bpf_prog_type *prog_type,
->>                           enum bpf_attach_type *expected_attach_type);
->> diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
->> index c7fc0bde5648..4a0c993221a5 100644
->> --- a/tools/lib/bpf/libbpf.map
->> +++ b/tools/lib/bpf/libbpf.map
->> @@ -444,4 +444,5 @@ LIBBPF_1.6.0 {
->>                  bpf_program__line_info_cnt;
->>                  btf__add_decl_attr;
->>                  btf__add_type_attr;
->> +               bpf_object__free_btfs;
->>   } LIBBPF_1.5.0;
->> --
->> 2.39.5
->>
->>
 
