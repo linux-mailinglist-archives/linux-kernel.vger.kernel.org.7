@@ -1,357 +1,110 @@
-Return-Path: <linux-kernel+bounces-732527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122CCB0681F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:52:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF524B06823
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD3856791E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:52:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E0E567B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 20:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6892BE628;
-	Tue, 15 Jul 2025 20:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331F62BFC8F;
+	Tue, 15 Jul 2025 20:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="EpTHwobX"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Lj0CoV6y"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674DD274FE3
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE54D26D4CF;
+	Tue, 15 Jul 2025 20:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752612660; cv=none; b=XDmNpfMuQrBZ8wn0/in+udk4Pi5XQUDlhWMma7lv30I2AdT6y/H2A+sCGiAX9Tz5DqADho7k0BGpK0tmFHW6f53jkbqmzS+xc3i/K67nWzAo6h3nhuYm9ATxRZrPmqDTztJGlmqZosMIvV3k7DnyYbtBuXQ0ZaKpTEXe7MExUsU=
+	t=1752612715; cv=none; b=F7bOpXrB8uX/HmZQp/+xGNF8r3iDAhNjA4MymJU+sExm6RIob7MnDzF8wW2yiy70mjq3aFZLcJ/BLeVcA/HB/DpbFBK4IZ2agp0IQXaAveBTsSgCoiJ0QMZ2GSjIJKzeJ2A3WB7wDRjjynDHagmzpBDZORTmMBp+37ZbE1HDa04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752612660; c=relaxed/simple;
-	bh=ta9D9l0sNfw9yK5xNXD1io+mIIUgisZQWGkniL0sFwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ajboAmpc9rbnEFNelaX9+gjPgoW/vbnUDqhRgdMWbP0HGHpGsPvheum+T41yQ7b9f5qN6O/4gvgATE9eXo80/85M454gB3g4HR/jTNP3ES/a1G4rh7jdCMiUU+SHHpJdS+nqP7YBee29t5t1bdf42dZk3oquBH5cNZeXzLc+B3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=EpTHwobX; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-86d029e2bdeso10417439f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 13:50:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1752612656; x=1753217456; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2PrzlKp6Ndz0XZN+tOgdPWMwN70RpwNAjzRw7fPkSwc=;
-        b=EpTHwobX6CJB7IMftTcPLunda58ygbVHVgUcHMTsQKX5DZDnCanfEw20NbcSZVPpWf
-         6hkHL6FV2mcqquio/mPytd/wf9UBCA64DvsCZvYI+pS1e6diMt7Yc/CLDjFFmUTiALYW
-         VUmqG/IKSy+8HDk52mKjEWRgT98UwCfE4jyoE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752612656; x=1753217456;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2PrzlKp6Ndz0XZN+tOgdPWMwN70RpwNAjzRw7fPkSwc=;
-        b=bt8U5DYZDsdV7i9Barg0AhjXDcpfXNTVY6zGCVdz8pvw6vVS+90P3BnklcTdCE3gu+
-         Od3iBECMNR7UeM0XbK+N5IS64IbP+wYV/W9FU/iNgM4+8b945wmB61RgBmbKk//iO6io
-         LTkzNE0SzY/EzKzcTSJC1azWEz2o1NLv0AjpakosrbLSZYV2RhyvTHRu3UTS6bIjRAph
-         MShhO14A93KHqROLNgAXJxHzASJh+RHDDO50tVMSVca0eMc6OkLklFyuD3Gm3HwDBe+N
-         bATSHcd3dofFc1LRNEOn39R4i0IrsM96Zdfm8oTtPJVaVriUl3UIvAPPaVxFA2buG9an
-         +oNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWh84E99+0/W2crUjEkVKbrUP3d7ClWMXYRkQKQWIO1IENEL4FL7EBwmXmBA6ZG9UqBaW7uMlzZ4cPJ6EM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykNX7DGUNeJn8Y3teSbbDqiflvqnjhgwVRQRRGZ/fMgl7FnPGk
-	rIJlk0uluzMjmYb5iHx7c0CG0dBvBDewXtiLIq203yhPvkc3/1RTPdPn5Tg9CXx+nQ==
-X-Gm-Gg: ASbGncty3Rx9GO0egWMt2JVYoP30NEL1y+Ak0MNrypm8J0L/P5sDIZeE+fxjXOoumZp
-	WyHJv7XSKBkJvjBTx4sHa4AvrRkcIOsMpja5Gnk3Wev6rKUgG4Pw5AyZI8aXSEdB080LjH4I5J6
-	X8mFUk0WB0HwQoLH+Arhc3HEP5APa9CFqVQqVNfv4hc7Ach7PAWmtdXxs09GdKUiXXq1uV2uDPO
-	qivBOkWpnUTqZMMr/F/sY0YYg1Mo8hWCl3qRsFUmZow6V0dBxUnqfEcK96o3NAd+/lM/cVO+Pb9
-	iYsDuhkR20BavfzynVErSM2K6Q8CY3LlZ2auuP3bO8EWqybBqtepUlB9+Ll0GF3U3e3MnPSuDwo
-	gcLUcCDl2bw6CTeoxndSDrJpgflxAIRmlsh5FikE4iPhKvWQHGKVmAcq2
-X-Google-Smtp-Source: AGHT+IHLQJumT9t67r83VjJePjrJb0CNowI2o2x0J9A/UE5FEvsuyjASYQa/RK/HhKJB8B4Tedv2UA==
-X-Received: by 2002:a05:6602:7418:b0:873:1e91:210e with SMTP id ca18e2360f4ac-879af07dc11mr540280439f.4.1752612656290;
-        Tue, 15 Jul 2025 13:50:56 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-50556b0f567sm2718073173.123.2025.07.15.13.50.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 13:50:55 -0700 (PDT)
-Message-ID: <d2e9a521-568e-433d-a59b-9b98138ace2b@ieee.org>
-Date: Tue, 15 Jul 2025 15:50:54 -0500
+	s=arc-20240116; t=1752612715; c=relaxed/simple;
+	bh=+8T79mRTcLm0uls0tp5w2D0kWiRogPf43Y/QCla4UBI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SMbtLgCZzBv+csoQaL7z7ghVHsdaJmpbbvgkVsH7r7DSdxkNSDiVVgHwSTEmVagP76yRqLyf9SqZxmYDnwxZ2kG7GP/p5eR35QUX5GY/yITDEUP0/J3am1RF/0gZJJBw3klhUlnyY/5XwdedoNHsyjbVvmb/aYzMF8QfNy4ywb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Lj0CoV6y; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1752612711;
+	bh=+8T79mRTcLm0uls0tp5w2D0kWiRogPf43Y/QCla4UBI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Lj0CoV6yXYWd9WsWRmbowkRsIpu1LLtPvZ2OSUUsgOvRDOqrlWw6slLVQrSSSa7zh
+	 xlerdAHpHO9vr6kTQeXyQi0VaFx3v0qwbF1vScAX5oaSmmhDE0qZCGYI362Gi5VfMG
+	 zevaCwtNBViJ6d/V3cj83THUs5pWAcal+vziiw/M=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 4F1161C017D;
+	Tue, 15 Jul 2025 16:51:51 -0400 (EDT)
+Message-ID: <e3be6b181ce1eb47b89fdeb945ff4831793af15b.camel@HansenPartnership.com>
+Subject: Re: [PATCH V6] efi/tpm: Fix the issue where the CC platforms event
+ log header can't be correctly identified
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: yangge1116@126.com, ardb@kernel.org
+Cc: jarkko@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com, 
+	ilias.apalodimas@linaro.org, jgg@ziepe.ca, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, liuzixing@hygon.cn
+Date: Tue, 15 Jul 2025 16:51:50 -0400
+In-Reply-To: <1752290685-22164-1-git-send-email-yangge1116@126.com>
+References: <1752290685-22164-1-git-send-email-yangge1116@126.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] usb: dwc3: add generic driver to support flattened
-To: Ze Huang <huang.ze@linux.dev>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250712-dwc3_generic-v6-0-cc87737cc936@linux.dev>
- <20250712-dwc3_generic-v6-2-cc87737cc936@linux.dev>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20250712-dwc3_generic-v6-2-cc87737cc936@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 7/12/25 2:49 AM, Ze Huang wrote:
-> To support flattened dwc3 dt model and drop the glue layer, introduce the
-> `dwc3-generic` driver. This enables direct binding of the DWC3 core driver
-> and offers an alternative to the existing glue driver `dwc3-of-simple`.
+On Sat, 2025-07-12 at 11:24 +0800, yangge1116@126.com wrote:
+> From: Ge Yang <yangge1116@126.com>
+>=20
+> Since commit d228814b1913 ("efi/libstub: Add get_event_log() support
+> for CC platforms") reuses TPM2 support code for the CC platforms,
+> when launching a TDX virtual machine with coco measurement enabled,
+> the following error log is generated:
+>=20
+> [Firmware Bug]: Failed to parse event in TPM Final Events Log
+>=20
+> Call Trace:
+> efi_config_parse_tables()
+> =C2=A0 efi_tpm_eventlog_init()
+> =C2=A0=C2=A0=C2=A0 tpm2_calc_event_log_size()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __calc_tpm2_event_size()
+>=20
+> The pcr_idx value in the Intel TDX log header is 1, causing the
+> function __calc_tpm2_event_size() to fail to recognize the log
+> header, ultimately leading to the "Failed to parse event in TPM Final
+> Events Log" error.
+>=20
+> Intel misread the spec and wrongly sets pcrIndex to 1 in the header
+> and since they did this, we fear others might, so we're relaxing the
+> header check. There's no danger of this causing problems because we
+> check for the TCG_SPECID_SIG signature as the next thing.
+>=20
+> Fixes: d228814b1913 ("efi/libstub: Add get_event_log() support for CC
+> platforms")
+> Signed-off-by: Ge Yang <yangge1116@126.com>
+> Cc: stable@vger.kernel.org
 
-I'm not familiar with dwc-of-simple.c, and won't comment on
-how this differs from that (or does not).
-
-Given you're implementing an alternative though, can you explain
-in a little more detail what's different between the two?  Why
-would someone choose to use this driver rather than the other one?
-
-> 
-> Signed-off-by: Ze Huang <huang.ze@linux.dev>
-> ---
->   drivers/usb/dwc3/Kconfig             |  11 +++
->   drivers/usb/dwc3/Makefile            |   1 +
->   drivers/usb/dwc3/dwc3-generic-plat.c | 182 +++++++++++++++++++++++++++++++++++
->   3 files changed, 194 insertions(+)
-> 
-> diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-> index 310d182e10b50b253d7e5a51674806e6ec442a2a..4925d15084f816d3ff92059b476ebcc799b56b51 100644
-> --- a/drivers/usb/dwc3/Kconfig
-> +++ b/drivers/usb/dwc3/Kconfig
-> @@ -189,4 +189,15 @@ config USB_DWC3_RTK
->   	  or dual-role mode.
->   	  Say 'Y' or 'M' if you have such device.
->   
-> +config USB_DWC3_GENERIC_PLAT
-> +	tristate "DWC3 Generic Platform Driver"
-> +	depends on OF && COMMON_CLK
-> +	default USB_DWC3
-> +	help
-> +	  Support USB3 functionality in simple SoC integrations.
-> +	  Currently supports SpacemiT DWC USB3. Platforms using
-> +	  dwc3-of-simple can easily switch to dwc3-generic by flattening
-> +	  the dwc3 child node in the device tree.
-> +	  Say 'Y' or 'M' here if your platform integrates DWC3 in a similar way.
-> +
->   endif
-> diff --git a/drivers/usb/dwc3/Makefile b/drivers/usb/dwc3/Makefile
-> index 830e6c9e5fe073c1f662ce34b6a4a2da34c407a2..96469e48ff9d189cc8d0b65e65424eae2158bcfe 100644
-> --- a/drivers/usb/dwc3/Makefile
-> +++ b/drivers/usb/dwc3/Makefile
-> @@ -57,3 +57,4 @@ obj-$(CONFIG_USB_DWC3_IMX8MP)		+= dwc3-imx8mp.o
->   obj-$(CONFIG_USB_DWC3_XILINX)		+= dwc3-xilinx.o
->   obj-$(CONFIG_USB_DWC3_OCTEON)		+= dwc3-octeon.o
->   obj-$(CONFIG_USB_DWC3_RTK)		+= dwc3-rtk.o
-> +obj-$(CONFIG_USB_DWC3_GENERIC_PLAT)	+= dwc3-generic-plat.o
-> diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..766f4cf17b6909793956f44660d3b3febad50a23
-> --- /dev/null
-> +++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-> @@ -0,0 +1,182 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * dwc3-generic-plat.c - DesignWare USB3 generic platform driver
-> + *
-> + * Copyright (C) 2025 Ze Huang <huang.ze@linux.dev>
-> + *
-> + * Inspired by dwc3-qcom.c and dwc3-of-simple.c
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset.h>
-> +#include "glue.h"
-> +
-> +struct dwc3_generic {
-> +	struct device		*dev;
-> +	struct dwc3		dwc;
-> +	struct clk_bulk_data	*clks;
-> +	int			num_clocks;
-> +	struct reset_control	*resets;
-> +};
-> +
-> +static void dwc3_generic_reset_control_assert(void *data)
-> +{
-> +	reset_control_assert(data);
-> +}
-> +
-
-The next function can go away.  (See below.)
-
-> +static void dwc3_generic_clk_bulk_disable_unprepare(void *data)
-> +{
-> +	struct dwc3_generic *dwc3 = data;
-> +
-> +	clk_bulk_disable_unprepare(dwc3->num_clocks, dwc3->clks);
-> +}
-> +
-> +static int dwc3_generic_probe(struct platform_device *pdev)
-> +{
-> +	struct dwc3_probe_data probe_data = {};
-> +	struct device *dev = &pdev->dev;
-> +	struct dwc3_generic *dwc3;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	dwc3 = devm_kzalloc(dev, sizeof(*dwc3), GFP_KERNEL);
-> +	if (!dwc3)
-> +		return -ENOMEM;
-> +
-> +	dwc3->dev = dev;
-> +
-> +	platform_set_drvdata(pdev, dwc3);
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "missing memory resource\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	dwc3->resets = devm_reset_control_array_get_optional_exclusive(dev);
-> +	if (IS_ERR(dwc3->resets))
-> +		return dev_err_probe(dev, PTR_ERR(dwc3->resets), "failed to get resets\n");
-> +
-
-It isn't enforced on exclusive resets, but I'm pretty sure
-resets are assumed to be asserted initially.
-
-> +	ret = reset_control_assert(dwc3->resets);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to assert resets\n");
-> +
-> +	ret = devm_add_action_or_reset(dev, dwc3_generic_reset_control_assert, dwc3->resets);
-> +	if (ret)
-> +		return ret;
-
-The re-assert shouldn't be set up unless the deassert below
-succeeds.
-
-> +	usleep_range(10, 1000);
-
-This seems like a large range.  You could just do msleep(1);
-Also, can you add a comment explaining why a delay is needed,
-and why 1 millisecond is the right amount of time to sleep?
-
-> +	ret = reset_control_deassert(dwc3->resets);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to deassert resets\n");
-> +
-> +	ret = devm_clk_bulk_get_all(dwc3->dev, &dwc3->clks);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "failed to get clocks\n");
-
-Call devm_clk_bulk_get_all_enabled() instead of doing the two
-steps separately here.
-
-					-Alex
-
-> +	dwc3->num_clocks = ret;
-> +
-> +	ret = clk_bulk_prepare_enable(dwc3->num_clocks, dwc3->clks);
-> +	if (ret)
-j> +		return dev_err_probe(dev, ret, "failed to enable clocks\n");
-> +
-> +	ret = devm_add_action_or_reset(dev, dwc3_generic_clk_bulk_disable_unprepare, dwc3);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dwc3->dwc.dev = dev;
-> +	probe_data.dwc = &dwc3->dwc;
-> +	probe_data.res = res;
-> +	probe_data.ignore_clocks_and_resets = true;
-> +	ret = dwc3_core_probe(&probe_data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register DWC3 Core\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static void dwc3_generic_remove(struct platform_device *pdev)
-> +{
-> +	struct dwc3_generic *dwc3 = platform_get_drvdata(pdev);
-> +
-> +	dwc3_core_remove(&dwc3->dwc);
-> +}
-> +
-> +static int dwc3_generic_suspend(struct device *dev)
-> +{
-> +	struct dwc3_generic *dwc3 = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = dwc3_pm_suspend(&dwc3->dwc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	clk_bulk_disable_unprepare(dwc3->num_clocks, dwc3->clks);
-> +
-> +	return 0;
-> +}
-> +
-> +static int dwc3_generic_resume(struct device *dev)
-> +{
-> +	struct dwc3_generic *dwc3 = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = clk_bulk_prepare_enable(dwc3->num_clocks, dwc3->clks);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = dwc3_pm_resume(&dwc3->dwc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int dwc3_generic_runtime_suspend(struct device *dev)
-> +{
-> +	struct dwc3_generic *dwc3 = dev_get_drvdata(dev);
-> +
-> +	return dwc3_runtime_suspend(&dwc3->dwc);
-> +}
-> +
-> +static int dwc3_generic_runtime_resume(struct device *dev)
-> +{
-> +	struct dwc3_generic *dwc3 = dev_get_drvdata(dev);
-> +
-> +	return dwc3_runtime_resume(&dwc3->dwc);
-> +}
-> +
-> +static int dwc3_generic_runtime_idle(struct device *dev)
-> +{
-> +	struct dwc3_generic *dwc3 = dev_get_drvdata(dev);
-> +
-> +	return dwc3_runtime_idle(&dwc3->dwc);
-> +}
-> +
-> +static const struct dev_pm_ops dwc3_generic_dev_pm_ops = {
-> +	SYSTEM_SLEEP_PM_OPS(dwc3_generic_suspend, dwc3_generic_resume)
-> +	RUNTIME_PM_OPS(dwc3_generic_runtime_suspend, dwc3_generic_runtime_resume,
-> +		       dwc3_generic_runtime_idle)
-> +};
-> +
-> +static const struct of_device_id dwc3_generic_of_match[] = {
-> +	{ .compatible = "spacemit,k1-dwc3", },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, dwc3_generic_of_match);
-> +
-> +static struct platform_driver dwc3_generic_driver = {
-> +	.probe		= dwc3_generic_probe,
-> +	.remove		= dwc3_generic_remove,
-> +	.driver		= {
-> +		.name	= "dwc3-generic-plat",
-> +		.of_match_table = dwc3_generic_of_match,
-> +		.pm	= pm_ptr(&dwc3_generic_dev_pm_ops),
-> +	},
-> +};
-> +module_platform_driver(dwc3_generic_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("DesignWare USB3 generic platform driver");
-> 
+Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 
 
