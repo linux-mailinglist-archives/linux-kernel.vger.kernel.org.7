@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-732131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9CC1B0628E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:14:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50BE5B06288
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14222188EC2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:11:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E4E3B6C46
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1550821638D;
-	Tue, 15 Jul 2025 15:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC12E231845;
+	Tue, 15 Jul 2025 15:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Z9PvVpBz"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMFR2ESa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76F1205513;
-	Tue, 15 Jul 2025 15:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433CA212B0A;
+	Tue, 15 Jul 2025 15:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752592267; cv=none; b=tkyZ1SUH6dMi+TBZleBhgLda2dZgoRfctSJ3K49Mbb1+ojXyxV6eLAII+4IAQtmQ65StCeUpwcZMFth9GbATkWj3UlcxyQOyv1VkSFF8W6/upjCpiHN1xo7kA0Cy6zHvYplhMtmOQSFbVEAiZn0aSDae4vEMkpSaXAJd8lDbZ9g=
+	t=1752592275; cv=none; b=Bq5O/jNDgeXIIaSI+oIUmsRXUljsOdJCLvSUg4aQGrz2Y/0/2k0oVj57MkKwufWS66T5o+Yjjga8DvtbtlwC+JgQXq3RCA87jO6bcO8vKKG8SB/XzPZxWHeqE6iUnUoMvsoy2qo2e1YP1CkqEqFT32FXx0Bq67SWDS2H96AFVbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752592267; c=relaxed/simple;
-	bh=S1PExuHToNEG7eKSpI1uWFzIYPtAq2H2QDvmIy2nGkY=;
+	s=arc-20240116; t=1752592275; c=relaxed/simple;
+	bh=xZ7HUEdlujqe8L2cH/lceRSD0/mLPz28HfkvjHjeJNs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HjWok4jSPln3hB60QRvpfwpVyjDOrp3yvyz2ILsYKATz0VFfROcI2APkjY2uXo9MVkuFxzIOa2f6sQ7/gKAAOtedemliwGH9sZmFCmUd5mCcLiCVEUxO1JxfbEGWXIgHxMKUl2T9WQ0an5gd3mG/r8yS3dHyO8irtZUuJbJgeHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Z9PvVpBz; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=lxm0BMHsTQDJY5VVN8bBo0QKdZrScIjjqvDsm2mUM54=; b=Z9
-	PvVpBz0hEgqOXkhF+yiuI1ocj439iMwU8DxWZ9XrTewgSy5HO2xkaijOlzjAby3u1qCkJ8mFWjjtw
-	RtRLfC35IZRqkUmdqv2HIrJJ4JNVKSJ63XEG2ftONaG6Oo9UWQA8P+mpUeir5lFjLuxN8hXZfCNVe
-	xN9DOodvCcwAbsY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ubhIx-001bDi-8L; Tue, 15 Jul 2025 17:10:51 +0200
-Date: Tue, 15 Jul 2025 17:10:51 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Matthew Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next 2/3] net: stmmac: xgmac: Correct supported speed
- modes
-Message-ID: <2154c04a-b9ad-4382-95c9-1e3d7d342c9b@lunn.ch>
-References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
- <20250714-xgmac-minor-fixes-v1-2-c34092a88a72@altera.com>
- <b192c96a-2989-4bdf-ba4f-8b7bcfd09cfa@lunn.ch>
- <e903cb0f-3970-4ad2-a0a2-ee58551779dc@altera.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=joqDMG20qrYh8C09FNYoDWSfaOBpCv4IW4m8hl3fXDAkGYnPUsOgdxXMgDejvheuEx63pj2Qjj13yI46pv8cC09abYFucrQKqVcFZkcNQdGa+56MN3RXkamhG4BiROa/S5moWg0NyapNT1H9QxsgxshmOIcXGglmT063n345/qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMFR2ESa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5055C4CEE3;
+	Tue, 15 Jul 2025 15:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752592275;
+	bh=xZ7HUEdlujqe8L2cH/lceRSD0/mLPz28HfkvjHjeJNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cMFR2ESaT0s7UI+tXZbGBwXjdsJZOiTEo1nXXz0sBlDOh4MDzw+JdZMFGHu8i4NHo
+	 /SnT4cCVR5gagJjmfo4DurWGx6Yrq4Dywif5x5qI+DSFlO4GJBtCL6u4NBORs5U4Pl
+	 SV0oZv3Dm1SHDHWg/RQz8R7RW72ByyXb4WDRt8qzw/152cPgG04S7rKu2I5misbkfc
+	 es4PaDfL3IfPcvZmBz7B1gguPbhg0twpvhWcKTo9maN2NAdrW4XOG7MzOagoXjj5K3
+	 gfJwSlCAcBoLcU5+y3AuAgBx4QHEDPT9JEwGZFITgRhYFo6KropW6I0mgVCWdKz2oL
+	 cYtsqLLc7yh6g==
+Date: Tue, 15 Jul 2025 20:41:11 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: nbpfaxi: Fix possible array access out of
+ bounds of nbpf->chan
+Message-ID: <aHZvjxx6Mn7_roLt@vaman>
+References: <20250707082353.40402-2-fourier.thomas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e903cb0f-3970-4ad2-a0a2-ee58551779dc@altera.com>
+In-Reply-To: <20250707082353.40402-2-fourier.thomas@gmail.com>
 
-> As per the XGMAC databook ver 3.10a, GMIISEL bit of MAC_HW_Feature_0
-> register indicates whether the XGMAC IP on the SOC is synthesized with
-> DWCXG_GMII_SUPPORT. Specifically, it states:
-> "1000/100/10 Mbps Support. This bit is set to 1 when the GMII Interface
-> option is selected."
+On 07-07-25, 10:23, Thomas Fourier wrote:
+> The nbpf is alloc'd at line 1324 with a size of num_channels so it seems
+> like the maximum index of nbpf->chan should be num_channels - 1.
+
+I have already applied a patch from Dan sent earlier for this
+
 > 
-> So yes, it’s likely that Serge was working with a SERDES interface which
-> doesn't support 10/100Mbps speeds. Do you think it would be appropriate
-> to add a check for this bit before enabling 10/100Mbps speeds?
+> Fixes: b45b262cefd5 ("dmaengine: add a driver for AMBA AXI NBPF DMAC IP cores")
+> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> ---
+>  drivers/dma/nbpfaxi.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/dma/nbpfaxi.c b/drivers/dma/nbpfaxi.c
+> index 0b75bb122898..dd1b5e2a603c 100644
+> --- a/drivers/dma/nbpfaxi.c
+> +++ b/drivers/dma/nbpfaxi.c
+> @@ -1364,7 +1364,7 @@ static int nbpf_probe(struct platform_device *pdev)
+>  	if (irqs == 1) {
+>  		eirq = irqbuf[0];
+>  
+> -		for (i = 0; i <= num_channels; i++)
+> +		for (i = 0; i < num_channels; i++)
+>  			nbpf->chan[i].irq = irqbuf[0];
+>  	} else {
+>  		eirq = platform_get_irq_byname(pdev, "error");
+> @@ -1374,7 +1374,7 @@ static int nbpf_probe(struct platform_device *pdev)
+>  		if (irqs == num_channels + 1) {
+>  			struct nbpf_channel *chan;
+>  
+> -			for (i = 0, chan = nbpf->chan; i <= num_channels;
+> +			for (i = 0, chan = nbpf->chan; i < num_channels;
+>  			     i++, chan++) {
+>  				/* Skip the error IRQ */
+>  				if (irqbuf[i] == eirq)
+> @@ -1391,7 +1391,7 @@ static int nbpf_probe(struct platform_device *pdev)
+>  			else
+>  				irq = irqbuf[0];
+>  
+> -			for (i = 0; i <= num_channels; i++)
+> +			for (i = 0; i < num_channels; i++)
+>  				nbpf->chan[i].irq = irq;
+>  		}
+>  	}
+> -- 
+> 2.43.0
 
-Yes.
-
-That is the problem with stuff you can synthesizer. You have no idea
-what it actually is unless you read all the self enumerating
-registers. Flexibility at the cost of complexity.
-
-	Andrew
+-- 
+~Vinod
 
