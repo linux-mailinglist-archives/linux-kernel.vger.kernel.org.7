@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-731816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0B9B059E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:23:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF1CB059DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58EF54E06D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:22:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20EAF741A80
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F0A2DE6E7;
-	Tue, 15 Jul 2025 12:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B2D2DEA96;
+	Tue, 15 Jul 2025 12:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YR/YZDrC"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjjeBRXm"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9312CCC5
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 12:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ECC2DE70E;
+	Tue, 15 Jul 2025 12:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752582174; cv=none; b=O55JgtUZB/TLDLO02rNvL/+WRNgNH14OWOxaRap1ZKm3gmAsqMKQ0e28esxOAtvmIqpiKSgUbgvJQoYTkD9BJ+QSXmI1E2vOy04RYx6ypJ3eq/EWNedZDl5/y0PwNhBMj+IhWn/9G0xk/gRf6alGt5zbDvMXy1b+dwNcBukw6Tk=
+	t=1752581950; cv=none; b=JzpDSt7QmcmeZTlgOJ3IC9PKdY6OjchaaUly4fpjRV5gwrtoYuGxFdt9ryc12aiEeXqftrMgBw/os9zHOPyx9HfCT/tXzFTaRIAqvS7tn8RpqkNPo9DnIXcNw34j43MENLJBKwpVJBZJhHM6cJKzMPHXYA0ITGLSzvMyvVRjXAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752582174; c=relaxed/simple;
-	bh=00RUuzCKLbIW7xtJn4iVj55UNl8kTPANyqdSPOKAAY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eogtTYYNAogL0U9YXgFHcYVHEndfybVD0gBaTn/tD6RfxJ/t+61PJSDcWPtq9R6jRsdc+RFFl/l9WZbFCtZfHb4xV7AgkfCBSV7+J4Aqe09qy9vdK8uTAdorbaluViQo1rDbnFadv34C6USkiSK5JcWSBLse3TfQWYrqX0G6bpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YR/YZDrC; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-456108bf94bso17321935e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 05:22:51 -0700 (PDT)
+	s=arc-20240116; t=1752581950; c=relaxed/simple;
+	bh=qvgiBgPI/1MvYYwFH/XMV/9+QdkZpnesuL1H6Zud1mI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u7KgC8dJ8OqfxUZghKIaVLtFOGv0YOnCPr8FJynRWffxvsWSz3w1yiMIlQIU02FtcT2a5014ILB9h38p42ba+DbmsakWmz4w0CztikP+6IK8zQ7lU5mHVkX/bkzlX8f3l2F8ge6u3nrcJWMyg3qgjDj2SojRhmNGQBYK7j7Ki0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IjjeBRXm; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e8bbaedb460so343044276.3;
+        Tue, 15 Jul 2025 05:19:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752582170; x=1753186970; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xmd/8SBDrA1Gb0C+zRAmJUhYPy6kVSRJonEW9B5eq80=;
-        b=YR/YZDrCfcd7Quykeb0WJ/8zbaNm6Lp9CLxANb9ywOP/QHzw9Pq/yY+7wWWCMr7oVj
-         OCPFnIJoAYb+aMQoCFoYWQKa2rcEJhwaDU2KVk5WIXkAu58cwtr1p/x+Hu1xTqrZoA7D
-         7EZ1yyEJ+8SHbIn63wDgyMYZVWUcRQHm0LnX4MDFjgDirwhqvV2FwQa0JChbbGyKmO3h
-         5n83JTCrJ653kAHV5S30jAzaimxizFYtFm1kSsiiAS4TnuyE8QdfT+/8Jy9GRAFSq6cO
-         zQWjR/N3qP7XCpETYaEfVWH5tMVJPfy3kjn3rtHELPB1KRJoxH/uXpUDoHO8N7LJW4eH
-         DwVg==
+        d=gmail.com; s=20230601; t=1752581947; x=1753186747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KIfmy0/3xkga8hiuCxq1ZZdtAivDaHAR4qHd1TqxdHU=;
+        b=IjjeBRXmHQTEJADJbgPt4qb0NowUCsEWLDEiiQyazIsKYdEBQar5xmtzCivVOawYWO
+         1JSNVu1HYethsZcsvCK+u+ejg343pWrrDjuWc4lxsEji2GdKpo9aVfL3ndjouJ221P89
+         iq45iRAV/Xetwe+xiYbrxJ8cfsiS0mru8tYIYDJqwIi20jag5wOlX5e9l5tLWMUs5CN9
+         jYOxZeHx8L2xE/voZsQDdlLHVnyo87c00UTYExJD01NjC8CrKDDqJmfclOLynsMw/yCD
+         LTXpkpjlIfW/xM8997OPnyd/3eXcSdNgmt2uqaLMevBfSeKYKQYoRf++E35YhZ/wzZh7
+         Sxzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752582170; x=1753186970;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xmd/8SBDrA1Gb0C+zRAmJUhYPy6kVSRJonEW9B5eq80=;
-        b=rWLQ0gc+kq7ZVfD8AyYqKLdXmAvc3pHuWSB381hZVpSqF01eGxeCAoBaSvKU+1KwUw
-         CvMEOB/ft04rlVtKU9I0WV6bCe2EwSKtq/zSNAOqzvZj/kqRmovPXWg+eOd+Psgq7bM6
-         67A5jlNyFmE7if3hmQ73i97l6+n5yCz5GfST8LNZsUQzMI3wJLvtnuvOfijFtuYh/lJN
-         wiNtlyRy8gmhi6LYF/hLzOlANVirXyAkYiho8XsKk4kU9j9tj4UON6yY9egdN8/hmI68
-         tw6rOZXQjgdZg3TmNxiJEov3Oo6wxw6Z1V7jzxOS/o5bCf3e6gno+dLVrOh/PCUdPss7
-         85Ww==
-X-Gm-Message-State: AOJu0YyNkXjJgdrcYdctPMcRvfGx8FbbYZ7lcIG0ZH8lChBJOKAv6sCc
-	pCBzL9je0w5nNowx9czIwAPewmpDhmvhNCE4XVxTkLGe8+xNg1aAUfLJD7AJSlgFpSkpDfBdxM+
-	1KnUW
-X-Gm-Gg: ASbGnct/Y8tkWWWXFu4Dw62epWyoEe6VeLX+Jp6bPMMlVeFUj9P9eqal9xzOhCD67cl
-	JnJdxjHb+FZwixI4Ic303qc6fjanXdCRXwebQmNyGDVPmrq5LN72lsipiyMmmqCRu87vWZ7PU/h
-	gM/aBCKQtcgy3TibYbWVmRsKdBa+/i1yTKK1ypAKguhNEMenrxHQjMUZSpCv568BurGR17hIk9D
-	hXdIXQ8H+wFrsrNjtb8NcXzAuQ5ZWAf67LbLX3IlUNOwwJOMyxZB4bP71iHnbftyRaeP/B44WBU
-	P4RKW6U7zqwcMXPuJC6zSNHE+DYu3kS1RjadEXGAI3hIJLUkKvebB+MRk6LHT5COwzqL2p3qik+
-	BNLdkZf96wupu6xhT1ZjyHOaoPad9Lb3YdalWrKsSybKZXiIaT9y+/eKjCuw=
-X-Google-Smtp-Source: AGHT+IGMRtiWeYVCYMElfz61z1ti+Ou58MocKqgLTppI7XTuQyjsyQV8LFvTq6sg4P0VQ4QxNtmmjw==
-X-Received: by 2002:a05:600c:4f52:b0:43c:f8fc:f697 with SMTP id 5b1f17b1804b1-454ec14677bmr165238895e9.9.1752582170249;
-        Tue, 15 Jul 2025 05:22:50 -0700 (PDT)
-Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd537785sm162850685e9.23.2025.07.15.05.22.49
+        d=1e100.net; s=20230601; t=1752581947; x=1753186747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KIfmy0/3xkga8hiuCxq1ZZdtAivDaHAR4qHd1TqxdHU=;
+        b=J4lix52z71NIeQ+rbrmGbQw6E7pSLpz+ff255qx4z04E6g71MhL/ubwOeJCaJG9OoL
+         ZcwdOuCCd5npX39WJe96Nn8CCjMEd+xvJmYkzhE071UgC8B/yxJcM0pEvMltKohiBemP
+         tP1KRU/FvGoENcIik7oW0OtY1kenUxW7ZutqlL5hcln6mFU7ZlwxbkU1FIezSFvfvkzO
+         Hj4cVD8xKXvkr9qKV5qYIHgZ5FsUrVlKCCBkRYryNrygoTczdbE6qmNQ5ESrCtU0j3ov
+         nZQHWPYts4cRgfroxYRPzW1FygJPYGCaufs1sPrk5UuMVkLiKJMMi2yaTFMeWD6TLcsk
+         xLnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhH7MpnI9kagn2bAO8TWn72sw/XXOYXuHuAqt7DGUHN5ryh+eeDMSyx49NeampqU7byJMrUyrjzZoL8sc=@vger.kernel.org, AJvYcCXZaYKdz2VChGyn5g4Rf9+kt4hOreG/nsXON6Eld56BW6OYzYJDK2e7yc1HQ5uzwDQ5/6CRjtgzphdA8is=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbbJfdvw1yJ9jnEI1R96OJmC3bPxHjWcsWE6KgloM7MeXzAVT+
+	P9EDupit7bKbqddPiEVIT5F1uDJnMHOZaxOB07kQwKqgYdcrKRsT32jx
+X-Gm-Gg: ASbGncuR+QqrRToV1vizyFWv0oOw5YQHAf0DGiebsxHrT42FeTPi1yWaON2nn8kSZib
+	PwGh0SZhACkQofIdoqy5xVnYxIA/KiX3DlegtV7MDENCZfoJqZ2EGb0k5G0jYmFqJev71hx7gBM
+	g0YlJnNe+EFbIvQwUtthfoqqOkVKAKCRKHNiuVsC6MN5fXeru//cX6JmqICYOnFnHrToeyLet59
+	8C1iNheAa6LqEfDX4f50u234IUQIJLlYE6NmmYKhqew8gipV+px23cfzspacfiZzfq3io3oiXCA
+	2CZ9fxxeyV1QFzG+hMi8RE6WHBA08rQ9/S5LMlxCsMZgj99HjUdc8QaSv6Bzz+oh4bFt786MptS
+	lEt4dNULQ9skhxKzRC6UGRh5D8umELjaR5g==
+X-Google-Smtp-Source: AGHT+IGfSxm300vEgPQlNRYqtUBzpiflKmyfITdm3khjnCbUjiMfC5i1vY9+2xSVU+3qZKC6YuCnvw==
+X-Received: by 2002:a05:6902:260f:b0:e8b:444c:a1b0 with SMTP id 3f1490d57ef6-e8b85aa6ba2mr18358309276.16.1752581947558;
+        Tue, 15 Jul 2025 05:19:07 -0700 (PDT)
+Received: from debian.test ([89.234.162.240])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8bbaec0d01sm230378276.6.2025.07.15.05.19.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 05:22:49 -0700 (PDT)
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: daniel.lezcano@linaro.org,
-	tglx@linutronix.de,
-	willmcvicker@google.com
-Cc: linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
-Subject: [PATCH] clocksource/drivers/exynos_mct: Fix section mismatch from the module conversion
-Date: Tue, 15 Jul 2025 14:18:33 +0200
-Message-ID: <20250715121834.2059191-1-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250620181719.1399856-6-willmcvicker@google.com>
-References: <20250620181719.1399856-6-willmcvicker@google.com>
+        Tue, 15 Jul 2025 05:19:07 -0700 (PDT)
+From: Michelle Jin <shjy180909@gmail.com>
+To: andy@kernel.org,
+	hansg@kernel.org,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Cc: lkcamp/patches@lists.sr.ht,
+	koike@igalia.com,
+	Michelle Jin <shjy180909@gmail.com>
+Subject: [PATCH] media: atomisp: fix trailing block comment style
+Date: Tue, 15 Jul 2025 08:18:39 -0400
+Message-Id: <20250715121839.12987-1-shjy180909@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,54 +94,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The function register_current_timer_delay() when compiling on ARM32
-fails with a section mismatch. That is resulting from the module
-conversion where the function exynos4_clocksource_init() is called
-from mct_init_dt(). This one had its __init annotation removed to for
-the module loading.
+Fixes a checkpatch.pl warning regarding block comment formatting.
 
-Fix this by adding the __init_or_module annotation for the functions:
- - mct_init_dt()
- - mct_init_spi()
- - mct_init_dt()
+The trailing '*/' on line 78 was moved to a separate line to conform to
+Linux kernel coding style guidelines.
 
-Compiled on ARM32 + MODULES=no, ARM64 + MODULES=yes, ARM64 +
-MODULES=no
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Michelle Jin <shjy180909@gmail.com>
 ---
- drivers/clocksource/exynos_mct.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../media/atomisp/include/linux/atomisp_platform.h   | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 5075ebe052a7..80d263ee046d 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -657,7 +657,7 @@ static int exynos4_timer_interrupts(struct device_node *np,
- 	return err;
- }
+diff --git a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
+index 6146555fe9cf..95e18c7ddc13 100644
+--- a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
++++ b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
+@@ -73,9 +73,11 @@ enum atomisp_input_format {
+ 	/* CSI2-MIPI specific format: YUV data.
+ 	 */
+ 	ATOMISP_INPUT_FORMAT_YUV420_8_SHIFT,  /* YUV420 8-bit (Chroma Shifted
+-						 Pixel Sampling) */
++					       * Pixel Sampling)
++					       */
+ 	ATOMISP_INPUT_FORMAT_YUV420_10_SHIFT, /* YUV420 8-bit (Chroma Shifted
+-						 Pixel Sampling) */
++					       * Pixel Sampling)
++					       */
  
--static int mct_init_dt(struct device_node *np, unsigned int int_type)
-+static __init_or_module int mct_init_dt(struct device_node *np, unsigned int int_type)
- {
- 	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
- 	u32 local_idx[MCT_NR_LOCAL] = {0};
-@@ -705,12 +705,12 @@ static int mct_init_dt(struct device_node *np, unsigned int int_type)
- 	return exynos4_clockevent_init();
- }
- 
--static int mct_init_spi(struct device_node *np)
-+static __init_or_module int mct_init_spi(struct device_node *np)
- {
- 	return mct_init_dt(np, MCT_INT_SPI);
- }
- 
--static int mct_init_ppi(struct device_node *np)
-+static __init_or_module int mct_init_ppi(struct device_node *np)
- {
- 	return mct_init_dt(np, MCT_INT_PPI);
- }
+ 	/* CSI2-MIPI specific format: Generic long packet data
+ 	 */
+@@ -119,10 +121,12 @@ struct atomisp_input_stream_info {
+ 	enum atomisp_input_stream_id stream;
+ 	u8 enable;
+ 	/* Sensor driver fills ch_id with the id
+-	   of the virtual channel. */
++	 * of the virtual channel.
++	 */
+ 	u8 ch_id;
+ 	/* Tells how many streams in this virtual channel. If 0 ignore rest
+-	 * and the input format will be from mipi_info */
++	 * and the input format will be from mipi_info
++	 */
+ 	u8 isys_configs;
+ 	/*
+ 	 * if more isys_configs is more than 0, sensor needs to configure the
 -- 
-2.43.0
+2.39.5
 
 
