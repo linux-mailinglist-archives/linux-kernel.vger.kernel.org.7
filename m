@@ -1,138 +1,181 @@
-Return-Path: <linux-kernel+bounces-732585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5FBB06923
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:14:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75357B06924
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8E011896494
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC99F16EA97
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 22:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5FA2C178D;
-	Tue, 15 Jul 2025 22:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8791B2459FA;
+	Tue, 15 Jul 2025 22:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCxGOQ5m"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuax+szX"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACF52BEC21;
-	Tue, 15 Jul 2025 22:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FA61953BB
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752617651; cv=none; b=Y/LT0XA2Yg/boOIcKGZyyMsV6nKQMB8Q7VyiD+UyAKJMYjOUg10DxhwPyz5ta5fAyaIQzx2gGWRlJTbTd9aIBczdRGE6Ky9/b7fuz9hsAaxoCviF8s37iQrGCudXcs0AWeOXFOjZxktWQ1B7kImWdnegcebw4dZnhAKhKSwWhjs=
+	t=1752617749; cv=none; b=Bm4VLj3BZUcwsE12KTlVSUys2eaRnrZ8kBPv/prriqp5EjHTK5CxkBe84/8SS7n0Wph7/MjXN3qPm/WaTlVHbAzWLFz20c+xISxF6HpfQYHzgZuG3ql8qbTxa+fzduPSD36TGujlOkwFv9koZhvcJ64F/LJXtsqaxlsxnE9XZbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752617651; c=relaxed/simple;
-	bh=yrluzH45Dsn6XaGZW7/NQKFSfg+yKKSg8nN2iCt5/jE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HnJeafM9vMgt8vCpUgLJHD4LHzNiSHw6W4S1x9nVAt3zBVZeBz35YpmphmoHgPTfqM5v5QYs3PhkyXV8X20oW7p0xbQloMrtRmxj1LNvOsMQHs7rv9eDNyDbWGilLVdTJWqL+4uARAY0gVghd+rCgkhlq95x79hCWriWUP6TdCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCxGOQ5m; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1752617749; c=relaxed/simple;
+	bh=RO6DymqDttAzfSCmCcd7S0ukcT3GLumPAtUq1OLOWt4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ncOI1iHz7dTJJwPIP0NytlF3S+iTV1wim9Q7RsHkP7A4lwdTlUeHz2D1QAPh0UWUZT9s16RhK6ychc4bLMv3D9Zb6MZY47DHNuKwxq6OAmVWWQovpVkExT4sf18Z28uvVFP2JY22JTNCEd3jP2PbktZBXDqAZt7dqSCDHRQ3gKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuax+szX; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-74b50c71b0aso3448505b3a.0;
-        Tue, 15 Jul 2025 15:14:10 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so3392894f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 15:15:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752617650; x=1753222450; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XrA4TJh+BvN7wjadeOIOqG++LC6BTg9ob7hjy1TX3gY=;
-        b=XCxGOQ5mtCF4YcUNFHKy9Z+imU7BnYC4Oc0HV7hvpKCSoAuUtUbBBHC52CYrR5tGzd
-         w1DoI48iOrACNFQNTEDUKaSPycahYztnfqczE0LTu4OIrgwdD9Wm1vWhmoxjwoclPSPY
-         wBjr7oW/Gus7ylwrjWLhJf7xsxoebRr8zCMj6Eap6Vzuh964rdRZ/lai6AsDLqXiXMqK
-         Ebz3giJeD8WUUYZmoabOID9UD/UzV1ZRw0vDgMMRNKQAcyUSbAMIsj/UCwO91fhPC4wb
-         dpudKxg+dpaHkqheoYG8WQr2rE0dWBupqlB7SfmcrjbbWmLnJ4dTb7atdEWGLSWpMEjK
-         NmGw==
+        d=gmail.com; s=20230601; t=1752617740; x=1753222540; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hM+65DlZuMtswqqV8Qae3QMSQW7h28+G8WpIhXyY6to=;
+        b=kuax+szXrztMfRmKJgRbHFI5SqhP9i+c15FI+MbFJXVmBo2SoM5uc2SL7bIep39D2a
+         wKKAKn5+QVCgjUzift8ZcNL1PqQf9+ouRRZFopIWsvwcijkMr3X1h5XisoZ2hQcErISu
+         D3PScbx+Q6xosNTM3PANPxHNlQytWW8MPlzBTBiZm0Qe61PgWmNlxtASTkz+RyO3BYSV
+         AXbDgskzj+vFk8XfGWzq4eRZWJGo6Nj3vWUBzeWl4ekyUOPjjdNhXKiAF8dVXNT3NtaI
+         PuME6z6TkKkO0p/6wPecPI5h3mKXUj9oSc8gTxivzO6YrKzI79Wm8dqEGtJXFyXamCs9
+         Ua1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752617650; x=1753222450;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XrA4TJh+BvN7wjadeOIOqG++LC6BTg9ob7hjy1TX3gY=;
-        b=bXbBleY9mUvJpk8CzFnLd5yaG7INAhrYiJspuEqnctKowuRyPiZWSC8djQlFvEympO
-         +skVWfjOWUEukQ2ZcQ97Yotbrr4rb7Lli5Byjtr2SI4XLv/ChmlgkpYTIplk0DYx0F8y
-         cmcBMQz3AQ/+2Pqkr2B4sz96/HaqMAeZuroy37eYloY3XD8gMpmKe9w49IIN4JAIreRg
-         YllgFuKl7F5BbHkzR6QNO1JoBabOr+hg0fadQZ2Zg4BSL0zGPJt7lWsP+BZHCHY7Vvs8
-         nL9CCJOtRI45umZjUDBIFd6kBccmyHFT5Eo0b/vh5J/QuT/ywNNyNxkFUavN1zXfrFWF
-         fYNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjZ5RSMB4A1aordzxLfU0dALekI+vZcn/wqdtYpyWEuVO8FakmUAjwulEJW2QimuYzASaEM4h5nXKBQ5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgyE8YzKcE45hh5cVD1TSNf5AdXchzh9ZrtBLBwCXWIBmL1EhI
-	m5/cQ3RCh5r1bUy61dVi4ljdwDZQo2LTg4ah0tKJb1KOE0E23FlpE6VZ
-X-Gm-Gg: ASbGnctzAcgC9wEGuWOGYYumylCOgft8kJrYWPq8EmJrApIav/2eZyntxLNRZFDTuq6
-	4EL44fsj9h1Oi5dBIG5RJ3aGSe66wXcKpJAh9qGyCIiOwkDekfCQgc5XHU1IrJpY3N1sKlB59i/
-	wHjZCpbzDmsrEjKc6mjK4tTIWNWnJ3ozIrxGvVP9H3lxTalG2DFLjvOFoAxoqf+vAx/1SoTxG4G
-	zEQOlMzdgnZHAKaoAbssgxWmYPfQdqgDaPoBSpgAFdJuwn3+h3w1LaZvMv+fVhv0/nOOvx81AZ+
-	QpaSWKY3r0/oN3xnEKHaVO90nvQ971+5KlcGPTrIFoBMw2d/aTcqWbfD8rwjh37ppZzIehAezUU
-	OCHBBvwhcKXM75r5IYpm3zA==
-X-Google-Smtp-Source: AGHT+IEsInpCl2boS1cuUEjJoih0t5+paTL5H13Al6lEbtovW6VOt0TKWUcx6UhFT5+4ihi1IP+qdA==
-X-Received: by 2002:a05:6a00:23d6:b0:736:d297:164 with SMTP id d2e1a72fcca58-7572267949emr327515b3a.1.1752617649472;
-        Tue, 15 Jul 2025 15:14:09 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-74eb9dd5d30sm13132920b3a.5.2025.07.15.15.14.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 15:14:08 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Ze Huang <huangze@whut.edu.cn>,
-	Yu Yuan <yu.yuan@sjtu.edu.cn>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] riscv: dts: sophgo: fix mdio node name for CV180X
-Date: Wed, 16 Jul 2025 06:13:48 +0800
-Message-ID: <20250715221349.11034-1-inochiama@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20230601; t=1752617740; x=1753222540;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hM+65DlZuMtswqqV8Qae3QMSQW7h28+G8WpIhXyY6to=;
+        b=J+uZppTG2vbeRkIpZPJRyDRXdc3F9SV+EY0crc4n/pvpgfBkM1KpdY6YmucMGy+/Wp
+         V/O+AQlhPvX/2m/lUqrl+cWHlCcSpYgRFEY2++rH4sbeMv7slmtEbTf9+1P6DhTKAKn2
+         zUIIRHMwXc3Kq4cu9gtkXB87JHIhuQg8t10jbrHSGSAolBpP22FEhwGFWBRE+P1VUxKG
+         zXHuE3KhW6ivG7vvFw6TSekCnzmfRTKXjT9JNWkR02fU1+sx/O8mbFzutt5dbnptRcN1
+         OYnrpOgb1m30T2fohef/dX40YAs11kZIs/A1+RIkxojqlE9aIKzkci5aMsoujfweW7U2
+         wUwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVHGdRcxGA6Xr27+UbiwhfY6jpIP0rRWPb9Ml91a1qO56UN+Z891LGlKDTdHQvR8edyMz2a6smhOhDFPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw3vE/jKNiZ2ihwRKndwZltRV0J+fvhVEVonYKHsvXn3YhmeoD
+	bKgPOYGOB+SB1kiZsciX+xB/xSruTVtO86oeudlu/2r/fznBk6fasrklTdt4PYOX0/590u3Klh1
+	w3jF5NJHSXHmFrHqpsdMdiscx5uiUt58=
+X-Gm-Gg: ASbGncvCBKtsOvkGfkpaqKRJexDQZDEsiC4jF0pFjkDQKeJeVaigljVqxKip8R0mMjG
+	x/T3K9wz63DIDiuVfVkGnRddL04mJu8U2YuUCgyQG038XoWZNlO0Qs7U+xV8KY5OaNKvKQAEly2
+	9r1NZ3/uB4kpurkau3RbjnEbC1oWJX6w7LEoH7McuWb9lS1SYQ+H7llaF5RssyZ1qsK0cBtwrdL
+	owtfGaB
+X-Google-Smtp-Source: AGHT+IHIg/11IOI1UvwDXrQrF9FvmKDQpmWNgXnUiQo6BHAbAVnO7D1M71U5c0urqNVSgXdTQuX71SwkiXwvr2Drbm8=
+X-Received: by 2002:a5d:64ee:0:b0:3aa:c9a8:a387 with SMTP id
+ ffacd0b85a97d-3b60e446e70mr158604f8f.0.1752617739844; Tue, 15 Jul 2025
+ 15:15:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250623231536.1120282-1-Mr.Bossman075@gmail.com> <aHY0mWEx8_z_nJoU@mai.linaro.org>
+In-Reply-To: <aHY0mWEx8_z_nJoU@mai.linaro.org>
+From: Jesse T <mr.bossman075@gmail.com>
+Date: Tue, 15 Jul 2025 18:15:03 -0400
+X-Gm-Features: Ac12FXzBzUkaCQ2uspQJV8eldICbB0xAjArutA46vBdfRIUXxrzha0-2-ATwUG8
+Message-ID: <CAJFTR8S=EKRG93sGYDr4tKTdmiEMdC+tyaDGh1e_n28fKr6+kg@mail.gmail.com>
+Subject: Re: [PATCH v6] clocksource/drivers/timer-clint: Add T-Head C9xx clint
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-riscv@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Thomas Gleixner <tglx@linutronix.de>, 
+	Samuel Holland <samuel.holland@sifive.com>, Conor Dooley <conor@kernel.org>, 
+	Icenowy Zheng <uwu@icenowy.me>, Jisheng Zhang <jszhang@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As the mdio multipledxer is marked as mdio device, the check complains
-the mdio bus number exceed the maximum.
+On Tue, Jul 15, 2025 at 6:59=E2=80=AFAM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On Mon, Jun 23, 2025 at 07:15:36PM -0400, Jesse Taube wrote:
+> > From: Jisheng Zhang <jszhang@kernel.org>
+> >
+> > To use the T-HEAD C9xx clint in RISCV-M NOMMU env, we need to take
+> > care two points:
+> >
+> > 1.The mtimecmp in T-Head C9xx clint only supports 32bit read/write,
+> > implement such support.
+> >
+> > 2. As pointed out by commit ca7810aecdba ("lib: utils/timer: mtimer:
+> > add a quirk for lacking mtime register") of opensbi:
+> >
+> > "T-Head developers surely have a different understanding of time CSR an=
+d
+> > CLINT's mtime register with SiFive ones, that they did not implement
+> > the mtime register at all -- as shown in openC906 source code, their
+> > time CSR value is just exposed at the top of their processor IP block
+> > and expects an external continous counter, which makes it not
+> > overrideable, and thus mtime register is not implemented, even not for
+> > reading. However, if CLINTEE is not enabled in T-Head's MXSTATUS
+> > extended CSR, these systems still rely on the mtimecmp registers to
+> > generate timer interrupts. This makes it necessary to implement T-Head
+> > C9xx CLINT support in OpenSBI MTIMER driver, which skips implementing
+> > reading mtime register and falls back to default code that reads time
+> > CSR."
+> >
+> > So, we need to fall back to read time CSR instead of mtime register.
+> > Add riscv_csr_time_available static key for this purpose.
+> >
+> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> > Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> > ---
+> > Treat this as a completely new patch, as it is mostly rewritten.
+>
+> [ ... ]
+Yes, Jisheng Zhang was the original author, but the patch serves the same g=
+oal.
+I used their code as a starting point, so I kept the sign-off and
+commit description.
 
-Change the node name to mdio-mux to remove the following warnings:
-mdio@3009800 (mdio-mux-mmioreg): mdio@80:reg:0:0: 128 is greater than
-the maximum of 31
+>
+> > V5 -> V6:
+> >  - Add csr_clock_next_event
+> >  - Add csr_get_cycles64 to sched_clock_register
+> >  - Break get_cycles64 into csr_get_cycles64 and clint_get_cycles64
+> >  - Change default behavior to use CSR time register
+>
+> [ ... ]
+>
+> Any comments for these changes from the arch maintainer ?
 
-Fixes: b7945143bc33 ("riscv: dts: sophgo: Add mdio multiplexer device for cv18xx")
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202507140738.XRjv3G8i-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202507121830.POx2KDVi-lkp@intel.com/
----
- arch/riscv/boot/dts/sophgo/cv180x.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I don't understand? Are you asking Jisheng Zhang?
 
-diff --git a/arch/riscv/boot/dts/sophgo/cv180x.dtsi b/arch/riscv/boot/dts/sophgo/cv180x.dtsi
-index 5f094c6085cb..27056ef70ce4 100644
---- a/arch/riscv/boot/dts/sophgo/cv180x.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/cv180x.dtsi
-@@ -57,7 +57,7 @@ rst: reset-controller@3003000 {
- 			#reset-cells = <1>;
- 		};
+>
+> Thanks
+>
+> --
+>
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
 
--		mdio: mdio@3009800 {
-+		mdio: mdio-mux@3009800 {
- 			compatible = "mdio-mux-mmioreg", "mdio-mux";
- 			reg = <0x3009800 0x4>;
- 			#address-cells = <1>;
---
-2.50.1
+> > +static int c900_clint_clock_next_event(unsigned long delta,
+> > + struct clock_event_device *ce)
+> > +{
+> > + void __iomem *r =3D clint_timer_cmp +
+> > + cpuid_to_hartid_map(smp_processor_id());
+> > + u64 val =3D clint_get_cycles64() + delta;
 
+This line should be:
+u64 val =3D csr_get_cycles64() + delta;
+I messed up when splitting csr_get_cycles64 and clint_get_cycles64
+
+Thanks,
+Jesse Taube
+> > +
+> > + csr_set(CSR_IE, IE_TIE);
+> > + writel_relaxed(val, r);
+> > + writel_relaxed(val >> 32, r + 4);
+> > + return 0;
+> > +}
+> > +
 
