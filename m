@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-732134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E676B0629A
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:16:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4982CB0628C
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 17:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C3C1891346
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:12:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79F1917185E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 15:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13554218EBA;
-	Tue, 15 Jul 2025 15:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BF820B800;
+	Tue, 15 Jul 2025 15:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q0ndQ6mS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PXc33a/Z"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0DC4C83;
-	Tue, 15 Jul 2025 15:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA48B1FE474;
+	Tue, 15 Jul 2025 15:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752592316; cv=none; b=Tn80zKzIgoUxgSppROpoWp8SIHnO1bCx2gpjmU6+DrmzoJvOcFZGn7k4sUGRsjckeQdQsDM2Df9BgSO4QJAgXL71Z8D1CPv0gmRG49Vj53NmS8DDh8dRs6wqmRlDFDlbThb+h8g4ARtwF8cuRSz1SAHQM32XgpGkhs52gZS62LU=
+	t=1752592217; cv=none; b=MH0aPU+GYY/w+mFhz09K8zDxqF0EJKH0kBOmDnKfN6+b4CxdHPKqCSoyK9FSlrgNmw/kPdpPxKKgE3HdLKM8Sw/asZs7yNFlAcVGS3UBz5Hrpu9bNOxr0A3QDTtjiV2e1GpDz+gSV2DwYY6DV/T6hKVxCdWJpbxf9442ueeWBrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752592316; c=relaxed/simple;
-	bh=GT9YCMpmO/oGbAXwtofhY5F7e46WJk2TBT21YGNxioQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dlmFh192/alda5xZXKqeBHgfRxdwWIzLeMza3dupvtlqs8FFMyB3hrPSVi0/hv3X7G3R1ga6Gr77CXxLeZd44glUGDFaxZGWAh2DVzWuwYtj/JyP8M5W/e2/2x2aM0iDqLKtuI0wwkadALXhW4hOhUk9wYuR7tOefsISSmCyeWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q0ndQ6mS; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752592315; x=1784128315;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GT9YCMpmO/oGbAXwtofhY5F7e46WJk2TBT21YGNxioQ=;
-  b=Q0ndQ6mSMIuQOLDINHH5prIeJmLF8CE1RMrncLNEZorDHJMwsB5k2UGx
-   ppy5y8Te1J+hDDTGm8OhLFziwgLr1iNJFK+4t08kEsswbgKeCnEcRvTmk
-   DmksVl3dM1rgQhFw3QaO9pnJpQ0IOagiK4OwOcI055ZxtCEU584dPq6E7
-   wd49OylARGVDaBVphLwWGdUq47vqHJaXlQS67P679iR8OLKVIk+9eNu8H
-   tKdx2ymhVp59Iby8RtNlHBX4zMPd+ozL4GHwhLzVUeT3AY+N6raphXxnr
-   vmqJpAFZ8GOyMenp5cTFEeQPdptb2Ih9ThG/1KmkqIx9z6QwctcuJEnPa
-   g==;
-X-CSE-ConnectionGUID: sk9lAPRSSH+je3lRNl9JQQ==
-X-CSE-MsgGUID: E79l3cX5Sx2XYzLQSlAIdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54907821"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54907821"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 08:09:24 -0700
-X-CSE-ConnectionGUID: kRlxMx3/SPu8BGSVLj+Ezg==
-X-CSE-MsgGUID: VgyJUB25RxeWdk6pmX7cWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="157354678"
-Received: from tcingleb-desk1.amr.corp.intel.com (HELO [10.125.111.148]) ([10.125.111.148])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 08:09:19 -0700
-Message-ID: <841e6d14-e3cc-4c23-9256-96f0c4e2d761@intel.com>
-Date: Tue, 15 Jul 2025 08:09:18 -0700
+	s=arc-20240116; t=1752592217; c=relaxed/simple;
+	bh=HmoZ4lN3wvwAzl5tWZFRqjK3/FTT5rlib3oST7BeXog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pqCIGwsSikQczSXD18vWmd28+W9f9NdU9G4rPgv5Qz6K1TEkhO9xQcvI+5FAsnGF+ti839TrBXsDqRvpGLq3oIaHLnJYTVWhf+g2IojOFoskiysnXgHe9zWfHjdHB3rrULYJCWpnHDTyPxjklaC6ph6oJIaNndfR2wfKRC2O5Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PXc33a/Z; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5A68940E0213;
+	Tue, 15 Jul 2025 15:10:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zNuZLnjRNb5u; Tue, 15 Jul 2025 15:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752592208; bh=XNB3FVi86rDQ41zikMknzeSTzlfLx8JzZduWBcGkNJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PXc33a/ZNuN0cee7L5ZMqLapPXrOzkljN5rzIYMxoPjjD7ABUPnUV+rmjXdbjoV9u
+	 DUEWkFCt3nasNTvibw1vnSHbW1klANe45HBj0qmqrQroBw/c/zaOdN/0np1A1u+XoI
+	 mMDoNClJfxe75m+hnUh5oBpMmMYUCs10JI3T5Bp4Q+Ty+uWtsVm252laBccNvEISoq
+	 TN2tbA/JLMi3G6X2g4gpmsUkEh8hci5Sfes91CjrTmgZNEi0yJgK4yx6ESeBiPb+Su
+	 1FApx5FFhNsi+eb4HyIMZbCCGmtHeC8vzZ41VswdVDeK/h/rAIotC7W0yKVA5XEz/T
+	 HZLVU5DNWeuTKX7b4eBqWNNGNfiMce4z5t1qiyUPHKXNhI6/7lv2b2Rr0Ff6gUqOa4
+	 ZzMOdrD0nO2kN49MMdfgUTZagQn8IC2uay+Ye2G9YWLC+EM/Z7cXqZsL9gK4S9Yygz
+	 y9t4Cpl1ecC7TZGyoaWQBQIsGNA8K5fj6ikil0yHIoRAVwWg2r179lfId0M5B9pYcP
+	 kBc9hF0z34amzU0mKp8rW6qU+TrxPzqXcRT3wZAE2tmtqsD4KSF7HdCP+/Zg/mMqBj
+	 D3jMh6hNLCHCJd0UBsHaH8wS6xdKBX+sp67EfBor9B5bDIfQrZ1vUij1K8eWEe9kqf
+	 8V5BufIjpV52p23RvadHL41g=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E34BD40E0208;
+	Tue, 15 Jul 2025 15:09:53 +0000 (UTC)
+Date: Tue, 15 Jul 2025 17:09:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: Breno Leitao <leitao@debian.org>, Alexander Graf <graf@amazon.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Peter Gonda <pgonda@google.com>, "Luck, Tony" <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
+	"Moore, Robert" <robert.moore@intel.com>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>,
+	"kernel-team@meta.com" <kernel-team@meta.com>
+Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
+Message-ID: <20250715150947.GAaHZvOxsvEvALZNDd@fat_crate.local>
+References: <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
+ <SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
+ <aHWC-J851eaHa_Au@agluck-desk3>
+ <20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
+ <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
+ <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
+ <vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
+ <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
+ <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] cxl: mce: Fix typo "notifer"
-To: WangYuli <wangyuli@uniontech.com>
-Cc: airlied@gmail.com, akpm@linux-foundation.org, alison.schofield@intel.com,
- andrew+netdev@lunn.ch, andriy.shevchenko@linux.intel.com,
- arend.vanspriel@broadcom.com, bp@alien8.de,
- brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
- colin.i.king@gmail.com, cvam0000@gmail.com, dan.j.williams@intel.com,
- dave.hansen@linux.intel.com, dave@stgolabs.net, davem@davemloft.net,
- dri-devel@lists.freedesktop.org, edumazet@google.com,
- gregkh@linuxfoundation.org, guanwentao@uniontech.com, hpa@zytor.com,
- ilpo.jarvinen@linux.intel.com, intel-xe@lists.freedesktop.org,
- ira.weiny@intel.com, j@jannau.net, jeff.johnson@oss.qualcomm.com,
- jgross@suse.com, jirislaby@kernel.org, johannes.berg@intel.com,
- jonathan.cameron@huawei.com, kuba@kernel.org, kvalo@kernel.org,
- kvm@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux@treblig.org, lucas.demarchi@intel.com,
- marcin.s.wojtas@gmail.com, ming.li@zohomail.com, mingo@kernel.org,
- mingo@redhat.com, netdev@vger.kernel.org, niecheng1@uniontech.com,
- oleksandr_tyshchenko@epam.com, pabeni@redhat.com, pbonzini@redhat.com,
- quic_ramess@quicinc.com, ragazenta@gmail.com, rodrigo.vivi@intel.com,
- seanjc@google.com, shenlichuan@vivo.com, simona@ffwll.ch,
- sstabellini@kernel.org, tglx@linutronix.de,
- thomas.hellstrom@linux.intel.com, vishal.l.verma@intel.com, x86@kernel.org,
- xen-devel@lists.xenproject.org, yujiaoliang@vivo.com, zhanjun@uniontech.com
-References: <BD5C52D2838AEA48+20250715134050.539234-1-wangyuli@uniontech.com>
- <65FC7B96ECBDB052+20250715134407.540483-2-wangyuli@uniontech.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <65FC7B96ECBDB052+20250715134407.540483-2-wangyuli@uniontech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
 
+On Tue, Jul 15, 2025 at 09:46:03PM +0800, Shuai Xue wrote:
+> For the purpose of counting, how about using the cmdline of rasdaemon?
 
+That would mean you have to run rasdaemon on those machines before they
+explode and then carve out the rasdaemon db from the coredump (this is
+post-mortem analysis).
 
-On 7/15/25 6:44 AM, WangYuli wrote:
-> According to the context, "mce_notifer" should be "mce_notifier".
-> 
-> Link: https://lore.kernel.org/all/B3C019B63C93846F+20250715071245.398846-1-wangyuli@uniontech.com/
-> Fixes: 516e5bd0b6bf ("cxl: Add mce notifier to emit aliased address for extended linear cache")
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+I would love for rasdaemon to log over the network and then other tools can
+query those centralized logs but that has its own challenges...
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/cxl/core/mce.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/mce.h b/drivers/cxl/core/mce.h
-> index ace73424eeb6..ca272e8db6c7 100644
-> --- a/drivers/cxl/core/mce.h
-> +++ b/drivers/cxl/core/mce.h
-> @@ -7,7 +7,7 @@
->  
->  #ifdef CONFIG_CXL_MCE
->  int devm_cxl_register_mce_notifier(struct device *dev,
-> -				   struct notifier_block *mce_notifer);
-> +				   struct notifier_block *mce_notifier);
->  #else
->  static inline int
->  devm_cxl_register_mce_notifier(struct device *dev,
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
