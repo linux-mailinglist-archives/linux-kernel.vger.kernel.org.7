@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-731960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D803AB05F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:03:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5268DB05F25
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 16:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871151C44FE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:54:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E47E0560CDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 13:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DB92EE61F;
-	Tue, 15 Jul 2025 13:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9182ECE97;
+	Tue, 15 Jul 2025 13:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPjXCguF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="K9bAKDmQ"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723C22EBDD5;
-	Tue, 15 Jul 2025 13:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344E72ECE87;
+	Tue, 15 Jul 2025 13:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752587147; cv=none; b=k3nMKhvMgMu5l2r1qMBcj7KrqRNlnilUBHo/cPK28ypO9xajPgeBu7S0YTUp1/ZmFVDKPoWtSoaKQOnG7BqhAnWUexj121zJIGZY8NBQ7yPrLHg0iSiRVku5Gw3nnuIGW6skIQH2+Kf1dm3hBO0LsVVySXsMCIyqwjJcZmtQz8k=
+	t=1752587172; cv=none; b=ge8wkEagtRSn3wLV2V/NfkorWytpGOwx2qkZ7X4yblpnxYQHs6xI96f+lRd92TlsktcCsVaJi4Cg17eUSQdwBuf6eibobpbeyb3jcV72epYGbzIrdmhK5mn9de37q5uScOWEVg6KDIK0dbdK3XHgrVi6dEhpUBhr7LvDTDM3QtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752587147; c=relaxed/simple;
-	bh=c61cukCCE+iFMnCrU5/1E0WmJOuboDJr6x7dl7s5RLg=;
+	s=arc-20240116; t=1752587172; c=relaxed/simple;
+	bh=ictygKc7JXDJwFnlUkhwxhLUlFLLZwMiK2g5NCq5k2o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GHc/pVddWnM4EDhqfqlBeytka4RXJ/6ajxNZlwDrsvXsn6E4jl8CA0VJY4Bigz5BQUS5qDWV55US0rCLoPICmuyDyzYCv8obGRJ13tU9rvFbwdyZMSyleFuCwZZnxXsOVNnt73CXKl6LYXkFU1a0YVADfQZsqPA7kxmrL4ke1yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPjXCguF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9002FC4CEF1;
-	Tue, 15 Jul 2025 13:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752587147;
-	bh=c61cukCCE+iFMnCrU5/1E0WmJOuboDJr6x7dl7s5RLg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SPjXCguFe+6vInM/Ezipc3e5jd3egpbbnqxhrimoV2+62CZ+uqugkshS+JYxrTzNA
-	 9JJn3/BLgQFyjBmD92wE8V5X54gAkbELvLjI3f69rWVEOup1k5iNvsgckAbMfNqxfo
-	 h3C+ZtoPyk5c1ZschoCBycXa4GQOrOwNHIdrUC0TNaIHyWIGtMc6kuFE3qkjE1kWk7
-	 8yYOxiaLK0pBIo/EhSGfK5DVwc89e3jEdXeFssC2p6itJnjILcAPJR6vRfu7O8pNaE
-	 Km5GaQ4LemnOg9KHG4UewOAt8oc+ZhuV0x0k0RRVkrLkhYgfPfuq8V51Qsy7/D8mAl
-	 m6v2t9c8NHwWw==
-Message-ID: <f6fb3492-7e92-4893-8088-8e1353905ad3@kernel.org>
-Date: Tue, 15 Jul 2025 15:45:42 +0200
+	 In-Reply-To:Content-Type; b=T7MQZDTU2qPzuOr9/C3fma5NvWGjuByvHAmqT5aYpsZ9Qq9YwlKAYdtiD2/p6weXr8nk4FVulhgduuCLJUMCylBcUsO2a5NL7VD4WSJS0krYzx5QPD1H2N0FFqyAUQPPPcQ3kcNgmAie0X7lNNugh0ByZ+0texMo0DI/0kU4K5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=K9bAKDmQ; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752587166; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=oGFXX7NuuNLNV+eZBHSE7PUrb+VhWWLJAcVsJrsbXgk=;
+	b=K9bAKDmQCvVB5CTjXW9JsaJUtJlpKiyGJIBTeBKR7aX5FtXljDB70ZR5Qs/f/JT7fNgKDvA5e8d/nQI+24lAQTyZ7EOCwtP+s3HtOku7HFjdySgGrpZxTNYx/jTle1GLeJC4HNwG2obMnZaTT18ZgKdLVUAMIux2nXPo5BJtNfU=
+Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wj0gJ8-_1752587163 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Jul 2025 21:46:04 +0800
+Message-ID: <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
+Date: Tue, 15 Jul 2025 21:46:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,89 +47,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Remove sdm845-cheza boards
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rob Clark <robin.clark@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250715-topic-goodnight_cheza-v1-1-68b67d60c272@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250715-topic-goodnight_cheza-v1-1-68b67d60c272@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
+To: Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
+ Alexander Graf <graf@amazon.com>,
+ Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ Peter Gonda <pgonda@google.com>, "Luck, Tony" <tony.luck@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ James Morse <james.morse@arm.com>, "Moore, Robert" <robert.moore@intel.com>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>,
+ "kernel-team@meta.com" <kernel-team@meta.com>
+References: <20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org>
+ <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
+ <SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
+ <aHWC-J851eaHa_Au@agluck-desk3>
+ <20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
+ <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
+ <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
+ <vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
+ <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 15/07/2025 15:26, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Cheza was a prototype board, used mainly by the ChromeOS folks, whose
-> former efforts on making linux-arm-msm better we greatly appreciate.
-> 
-> There are close to zero known-working devices at this point in time
-> (see the link below) and it was never productized.
-> 
-> Remove it to ease maintenance burden.
-> 
-> Link: https://lore.kernel.org/linux-arm-msm/5567e441-055d-443a-b117-ec16b53dc059@oss.qualcomm.com/
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile            |    3 -
->  arch/arm64/boot/dts/qcom/sdm845-cheza-r1.dts |  238 -----
->  arch/arm64/boot/dts/qcom/sdm845-cheza-r2.dts |  238 -----
->  arch/arm64/boot/dts/qcom/sdm845-cheza-r3.dts |  174 ----
->  arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi   | 1330 --------------------------
->  5 files changed, 1983 deletions(-)
 
-What about compatible bindings? If this is the last user, it should be
-dropped as well (second patch).
 
-Best regards,
-Krzysztof
+在 2025/7/15 20:53, Borislav Petkov 写道:
+> On Tue, Jul 15, 2025 at 05:02:39AM -0700, Breno Leitao wrote:
+>> Hello Borislav,
+>>
+>> On Tue, Jul 15, 2025 at 12:31:25PM +0200, Borislav Petkov wrote:
+>>> On Tue, Jul 15, 2025 at 03:20:35AM -0700, Breno Leitao wrote:
+>>>> For instance, If every investigation (as you suggested above) take just
+>>>> a couple of minutes, there simply wouldn’t be enough hours in the day,
+>>>> even working 24x7, to keep up with the volume.
+>>>
+>>> Well, first of all, it would help considerably if you put the use case in the
+>>> commit message.
+>>
+>> Sorry, my bad. I can do better if we decide that this is worth pursuing.
+>>
+>>> Then, are you saying that when examining kernel crashes, you don't look at
+>>> I find that hard to believe.
+>>
+>> We absolutely do examine kernel messages when investigating crashes, and
+>> over time we've developed an extensive set of regular expressions to
+>> identify relevant errors.
+>>
+>> In practice, what you're describing is very similar to the workflow we
+>> already use. For example, here are just a few of the regex patterns we
+>> match in dmesg, grouped by category:
+>>
+>>      (r"Machine check: Processor context corrupt", "cpu"),
+>>      (r"Kernel panic - not syncing: Panicing machine check CPU died", "cpu"),
+>>      (r"Machine check: Data load in unrecoverable area of kernel", "memory"),
+>>      (r"Instruction fetch error in kernel", "memory"),
+>>      (r"\[Hardware Error\]: +section_type: memory error", "memory"),
+>>      (r"EDAC skx MC\d: HANDLING MCE MEMORY ERROR", "memory"),
+>>      (r"\[Hardware Error\]:   section_type: general processor error", "cpu"),
+>>      (r"UE memory read error on", "memory"),
+>>
+>> And that’s just a partial list. We have 26 regexps for various issues,
+>> and I wouldn’t be surprised if other large operators use a similar
+>> approach.
+>>
+>> While this system mostly works, there are real advantages to
+>> consolidating this logic in the kernel itself, as I’m proposing:
+>>
+>>      * Reduces the risk of mistakes
+>>      	- Less chance of missing changes or edge cases.
+>>
+>>      * Centralizes effort
+>> 	- Users don’t have to maintain their own lists; the logic lives
+>> 	  closer to the source of truth.
+>>
+>>      * Simplifies maintenance
+>> 	- Avoids the constant need to update regexps if message strings
+>> 	  change.
+>>
+>>      * Easier validation
+>> 	- It becomes straightforward to cross-check that all relevant
+>> 	  messages are being captured.
+>>
+>>      * Automatic accounting
+>> 	- Any new or updated messages are immediately reflected.
+>>
+>>      * Lower postmortem overhead
+>> 	- Requires less supporting infrastructure for crash analysis.
+>>
+>>      * Netconsole support
+>> 	- Makes this status data available via netconsole, which is
+>> 	  helpful for those users.
+> 
+> Yap, this is more like it. Those sound to me like good reasons to have this
+> additional logging.
+> 
+> It would be really good to sync with other cloud providers here so that we can
+> do this one solution which fits all. Lemme CC some other folks I know who do
+> cloud gunk and leave the whole mail for their pleasure.
+> 
+> Newly CCed folks, you know how to find the whole discussion. :-)
+> 
+> Thx.
+
+
+For the purpose of counting, how about using the cmdline of rasdaemon?
+
+$ ras-mc-ctl --summary
+Memory controller events summary:
+         Uncorrected on DIMM Label(s): 'SOCKET 1 CHANNEL 1 DIMM 0 DIMM1' 
+location: 0:18:-1:-1 errors: 1
+
+PCIe AER events summary:
+         2 Uncorrected (Non-Fatal) errors: Completion Timeout
+
+ARM processor events summary:
+         CPU(mpidr=0x81090100) has 1 errors
+         CPU(mpidr=0x810e0000) has 1 errors
+         CPU(mpidr=0x81180000) has 1 errors
+         CPU(mpidr=0x811a0000) has 1 errors
+         CPU(mpidr=0x811c0000) has 1 errors
+         CPU(mpidr=0x811d0300) has 1 errors
+         CPU(mpidr=0x811f0100) has 1 errors
+         CPU(mpidr=0x81390300) has 1 errors
+         CPU(mpidr=0x813a0200) has 1 errors
+
+No devlink errors.
+Disk errors summary:
+         0:0 has 60 errors
+         0:2048 has 7 errors
+         0:66304 has 2162 errors
+Memory failure events summary:
+         Recovered errors: 24
+
+@Breno, Is rasdaemon not enough for your needs?
+
+
+AFAICS, it is easier to extend more statistical metrics, like PR 205 
+[1]. Also, it is easier to carry out releases and changes than with the 
+kernel in the production environment.
+
+
+Thanks.
+Shuai
+
+[1] 
+https://github.com/mchehab/rasdaemon/pull/205/commits/391d67bc7d17443d00db96850e56770451126a0e
+
 
