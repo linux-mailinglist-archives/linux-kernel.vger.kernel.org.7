@@ -1,188 +1,166 @@
-Return-Path: <linux-kernel+bounces-731785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B297CB0597B
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:01:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42D3B05984
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 14:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF8044A7EFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B8D3B080E
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 12:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A232DCBF3;
-	Tue, 15 Jul 2025 12:01:34 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D3A2DC35B;
+	Tue, 15 Jul 2025 12:02:49 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA662DC359;
-	Tue, 15 Jul 2025 12:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B686418E1F;
+	Tue, 15 Jul 2025 12:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752580893; cv=none; b=eC2QTcdZ8dNnSZAK6eGRbkkWLZ3Nl3Hrb6SVYy0VYDfDEvWjtg7faa5JZvzTTqav1moxiDsZOrzv1lsyqcR63ed0CdSrACdCsYOfIM1txo8YIxr42/VxKu2aj2upgbw2OhkMeBI/u9ku+n5sDzwUGVz4xK0jwiJcEAU9d/pUbyA=
+	t=1752580969; cv=none; b=UZjJ1Kyts2rb2rYbfwAxtH4YyZiIGtg5CrsGQnBz1zimjeeA3VZsEl0Pfnv+7QOJ60oYdlaOlLeF44YP7F6XIC0OBv404hdfy9ootyjgW67uX6lGKYGgpU/HiwGwruNRmkvzI3g4Vl0BOGh0VF4FzwtLhc5sILldwwKML+FlCls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752580893; c=relaxed/simple;
-	bh=Uit/bRubTiyDNAb7Oh76MrdVa16vELT94DebeHjoOio=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SaMqqdFJv1BCjX+SaJTBkt1OtVj8zwIQD8hjjNxt53zrNFDMr0Viu1PqCx8S4uWCOterehdo/DICMSD9aJWJ4Q0BctYW5QhHEZnEo4PqYza3r0JpBQ/3b7Cx3zEimPYvNuW3eHiFSt4/456HLddeb2fNvgbtm51B6XCN8LT+5a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
-	by APP-03 (Coremail) with SMTP id rQCowAC3SHr5QnZoKgtBBA--.14063S2;
-	Tue, 15 Jul 2025 20:01:07 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: ioana.ciornei@nxp.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] net: dpaa2: Fix device reference count leak in MAC endpoint handling
-Date: Tue, 15 Jul 2025 20:00:56 +0800
-Message-Id: <20250715120056.3274056-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752580969; c=relaxed/simple;
+	bh=Jbdvt3BF3hAniD3y/5avEGNEsscSdz4sfbtK6Ng3HFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UhdHuev7+VcnRWCkUwla5j50XyDhV6HJufFknVnKoB6Dd8qVI7IFo+DEfNAARenqJnjqls+WeIi2AsMX2vrcd+UPaGvUhikkKdUf8e35vL+ekHjoawdyEIWv0Va5iYd8K1vfrrjXB2KZMEEddXBgNZwlsntg6f8AqQUvARvjf3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so8942998a12.3;
+        Tue, 15 Jul 2025 05:02:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752580965; x=1753185765;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XIvf/Fr3LIxkhupGT2xSFgDQIhAUf4dr39mOfS5w4F0=;
+        b=FLNyNAuF2fkuU8dKLYHIU2oGvu3eaAQzp9FpHNaOMV8GcVe9UKWgKqsrEtwCE3jr77
+         OtkZTTs91cTsTa+56BaFGHoPr2knPZqM/QIV+FBHDiBzyhS2KNiNeH6QXMVE8jHSVQJX
+         dzpZ5JjSB6qICbiEXHQq9pwCDqO+I7tLs7a1HOnpKOx4WTPuIjCTG7Y6vB0KNQuPUs15
+         WYhLPNygyDs9F+gWROP32IdZmI52ZQbYVn3p6esuBGk6ooTGgBGc6ubS/Wmx+MvHd2BH
+         cNVPgP7crHolQw+xVEJA8W779FZ/dLQT+9U07r5+qbAiS5nAlM6aKdkeyrSflRdUAUE6
+         f47w==
+X-Forwarded-Encrypted: i=1; AJvYcCWl/HhlqblXlEIWKzjlanEYUdZNGypWss6MqBwOcZY9Wv5qOgJNz2FTRYz3rX1nHhNMsxj2MDQEKjybLRfd@vger.kernel.org, AJvYcCXLgMCIjV8cSoIT2G3DaTBiCFu1Oo5/8oSILh8yK2xftgS4M+n9GHWRECPVmQ4gVVaPmkkCxn9gw0TN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbslHOel4b/zKHPlXgK9R/AuWkI2fjDMEgWp5OrYpdSph7/4nc
+	Njthvccq8V0d9VxJGIit0xqV8npFiTl+oWOZY6aFY7aeV1pJpQqGhMrp
+X-Gm-Gg: ASbGncssd7d6E30iIH3mqyTNlKIf8FM5+BAiZl0kVP/mAjNISPIYOZ5C1VUjoG5hsdR
+	dj9LDHzBhgko3lTz1zNIwYfP7F2uwwMT5yFb8XEIwPdWrMvHdA6Ul7GvkaeaKFWQ4XD8/XTRq3d
+	5xuBFnWLD5waLi2e3vh8OoICWZaqKmKOA6vzMhX83Rs2qXNm3LuCziI9Su6qIeRWpI5FwyI5jpX
+	QiuUFlPBDirYl9HHDV1Q0JAhP8Kd1OYGUzAlABIbLtXKZCbxvBASbjTNQhbIz+y1dXFS+uh+OsT
+	SFqW8RE2Vjvw+yWvz26+9gbpjeCH9Nelh2eciQM9cAxWH/CFB64H2VF7npPxIcM9zLc+frVDQo1
+	cyjCHuHEeiLmadVlXgkFWvQc=
+X-Google-Smtp-Source: AGHT+IGUq0hZMtYifjv/NwhfoQLLm0esSBGSGW2VDcjkCBhU/Fx4Um4vVqrpGWYQ74pVvuWAqovoTQ==
+X-Received: by 2002:a05:6402:292:b0:60c:3cca:651a with SMTP id 4fb4d7f45d1cf-611e84f72b5mr12587375a12.33.1752580963098;
+        Tue, 15 Jul 2025 05:02:43 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612067f7ca6sm4969050a12.55.2025.07.15.05.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 05:02:41 -0700 (PDT)
+Date: Tue, 15 Jul 2025 05:02:39 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Luck, Tony" <tony.luck@intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, 
+	"Moore, Robert" <robert.moore@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>, 
+	"kernel-team@meta.com" <kernel-team@meta.com>
+Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
+Message-ID: <vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
+References: <20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org>
+ <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
+ <SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
+ <aHWC-J851eaHa_Au@agluck-desk3>
+ <20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
+ <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
+ <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAC3SHr5QnZoKgtBBA--.14063S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFW3Gw15XF1rAr4DXr18Zrb_yoWrGr4Dpa
-	yUAas8Xrykta13WFs7ua1kZFy5Ca10ka48WF1xu34fZFs0qw15urWUtFyjyry09FWkAr15
-	Jr4qyanruFyDGa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwV
-	W5JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
-	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUhL0nUUUUU
-	=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+In-Reply-To: <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
 
-The fsl_mc_get_endpoint() function uses device_find_child() for
-localization, which implicitly calls get_device() to increment the
-device's reference count before returning the pointer. However, the
-caller dpaa2_switch_port_connect_mac() and dpaa2_eth_connect_mac()
-fails to properly release this reference in multiple scenarios. We
-should call put_device() to decrement reference count properly.
+Hello Borislav,
 
-As comment of device_find_child() says, 'NOTE: you will need to drop
-the reference with put_device() after use'.
+On Tue, Jul 15, 2025 at 12:31:25PM +0200, Borislav Petkov wrote:
+> On Tue, Jul 15, 2025 at 03:20:35AM -0700, Breno Leitao wrote:
+> > For instance, If every investigation (as you suggested above) take just
+> > a couple of minutes, there simply wouldn’t be enough hours in the day,
+> > even working 24x7, to keep up with the volume.
+> 
+> Well, first of all, it would help considerably if you put the use case in the
+> commit message.
 
-Found by code review.
+Sorry, my bad. I can do better if we decide that this is worth pursuing.
 
-Cc: stable@vger.kernel.org
-Fixes: 719479230893 ("dpaa2-eth: add MAC/PHY support through phylink")
-Fixes: 84cba72956fd ("dpaa2-switch: integrate the MAC endpoint support")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c | 15 ++++++++++++---
- .../net/ethernet/freescale/dpaa2/dpaa2-switch.c  | 15 ++++++++++++---
- 2 files changed, 25 insertions(+), 6 deletions(-)
+> Then, are you saying that when examining kernel crashes, you don't look at
+> I find that hard to believe.
 
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-index b82f121cadad..f1543039a5b6 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-@@ -4666,12 +4666,19 @@ static int dpaa2_eth_connect_mac(struct dpaa2_eth_priv *priv)
- 		return PTR_ERR(dpmac_dev);
- 	}
- 
--	if (IS_ERR(dpmac_dev) || dpmac_dev->dev.type != &fsl_mc_bus_dpmac_type)
-+	if (IS_ERR(dpmac_dev))
- 		return 0;
- 
-+	if (dpmac_dev->dev.type != &fsl_mc_bus_dpmac_type) {
-+		put_device(&dpmac_dev->dev);
-+		return 0;
-+	}
-+
- 	mac = kzalloc(sizeof(struct dpaa2_mac), GFP_KERNEL);
--	if (!mac)
-+	if (!mac) {
-+		put_device(&dpmac_dev->dev);
- 		return -ENOMEM;
-+	}
- 
- 	mac->mc_dev = dpmac_dev;
- 	mac->mc_io = priv->mc_io;
-@@ -4679,7 +4686,7 @@ static int dpaa2_eth_connect_mac(struct dpaa2_eth_priv *priv)
- 
- 	err = dpaa2_mac_open(mac);
- 	if (err)
--		goto err_free_mac;
-+		goto err_put_device;
- 
- 	if (dpaa2_mac_is_type_phy(mac)) {
- 		err = dpaa2_mac_connect(mac);
-@@ -4703,6 +4710,8 @@ static int dpaa2_eth_connect_mac(struct dpaa2_eth_priv *priv)
- 
- err_close_mac:
- 	dpaa2_mac_close(mac);
-+err_put_device:
-+	put_device(&dpmac_dev->dev);
- err_free_mac:
- 	kfree(mac);
- 	return err;
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
-index 147a93bf9fa9..6bf1c164129a 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
-@@ -1448,12 +1448,20 @@ static int dpaa2_switch_port_connect_mac(struct ethsw_port_priv *port_priv)
- 	if (PTR_ERR(dpmac_dev) == -EPROBE_DEFER)
- 		return PTR_ERR(dpmac_dev);
- 
--	if (IS_ERR(dpmac_dev) || dpmac_dev->dev.type != &fsl_mc_bus_dpmac_type)
-+	if (IS_ERR(dpmac_dev))
- 		return 0;
-+
-+	if (dpmac_dev->dev.type != &fsl_mc_bus_dpmac_type) {
-+		put_device(&dpmac_dev->dev);
-+		return 0;
-+	}
- 
- 	mac = kzalloc(sizeof(*mac), GFP_KERNEL);
--	if (!mac)
-+	if (!mac) {
-+		put_device(&dpmac_dev->dev);
- 		return -ENOMEM;
-+	}
- 
- 	mac->mc_dev = dpmac_dev;
- 	mac->mc_io = port_priv->ethsw_data->mc_io;
-@@ -1461,7 +1469,7 @@ static int dpaa2_switch_port_connect_mac(struct ethsw_port_priv *port_priv)
- 
- 	err = dpaa2_mac_open(mac);
- 	if (err)
--		goto err_free_mac;
-+		goto err_put_device;
- 
- 	if (dpaa2_mac_is_type_phy(mac)) {
- 		err = dpaa2_mac_connect(mac);
-@@ -1481,6 +1489,8 @@ static int dpaa2_switch_port_connect_mac(struct ethsw_port_priv *port_priv)
- 
- err_close_mac:
- 	dpaa2_mac_close(mac);
-+err_put_device:
-+	put_device(&dpmac_dev->dev);
- err_free_mac:
- 	kfree(mac);
- 	return err;
--- 
-2.25.1
+We absolutely do examine kernel messages when investigating crashes, and
+over time we've developed an extensive set of regular expressions to
+identify relevant errors.
 
+In practice, what you're describing is very similar to the workflow we
+already use. For example, here are just a few of the regex patterns we
+match in dmesg, grouped by category:
+
+    (r"Machine check: Processor context corrupt", "cpu"),
+    (r"Kernel panic - not syncing: Panicing machine check CPU died", "cpu"),
+    (r"Machine check: Data load in unrecoverable area of kernel", "memory"),
+    (r"Instruction fetch error in kernel", "memory"),
+    (r"\[Hardware Error\]: +section_type: memory error", "memory"),
+    (r"EDAC skx MC\d: HANDLING MCE MEMORY ERROR", "memory"),
+    (r"\[Hardware Error\]:   section_type: general processor error", "cpu"),
+    (r"UE memory read error on", "memory"),
+
+And that’s just a partial list. We have 26 regexps for various issues,
+and I wouldn’t be surprised if other large operators use a similar
+approach.
+
+While this system mostly works, there are real advantages to
+consolidating this logic in the kernel itself, as I’m proposing:
+
+    * Reduces the risk of mistakes
+    	- Less chance of missing changes or edge cases.
+
+    * Centralizes effort
+	- Users don’t have to maintain their own lists; the logic lives
+	  closer to the source of truth.
+
+    * Simplifies maintenance
+	- Avoids the constant need to update regexps if message strings
+	  change.
+
+    * Easier validation
+	- It becomes straightforward to cross-check that all relevant
+	  messages are being captured.
+
+    * Automatic accounting
+	- Any new or updated messages are immediately reflected.
+
+    * Lower postmortem overhead
+	- Requires less supporting infrastructure for crash analysis.
+
+    * Netconsole support
+	- Makes this status data available via netconsole, which is
+	  helpful for those users.
+
+
+> Because if you do look at dmesg and if you would grep it for hw errors - we do
+> log those if desired, AFAIR - you don't need anything new.
+
+Understood. If you don’t see additional value in kernel-side
+counting, I can certainly keep relying on our current method. For
+us, though, having this functionality built in feels more robust and
+sustainable.
+
+Thanks for the discussion,
+--breno
 
