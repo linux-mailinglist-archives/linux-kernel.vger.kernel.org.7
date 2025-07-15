@@ -1,94 +1,166 @@
-Return-Path: <linux-kernel+bounces-731290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C9C1B05248
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:59:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D83B05250
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F7131895418
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 06:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C55384A28DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E1526CE17;
-	Tue, 15 Jul 2025 06:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE5826CE3A;
+	Tue, 15 Jul 2025 07:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8PNAUDl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cld+089k"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CB52264A9
-	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 06:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959044A21;
+	Tue, 15 Jul 2025 07:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752562739; cv=none; b=sAVSVqz1EQYsOl/svAbbobxgBTxpxlLumy+4j8YAIFxTr70hr2Xh/5nyHIPBwbr6TI1CyC90R03H1AJaBfMLpCN2MqKxUkHSW0Pc0oDtvHHQK5NSiMgFdgc/xwAMFAnDwsdRb7EiH4zwQNWutRnd72mRvkk+l6Jz4jcQLBvifFo=
+	t=1752562882; cv=none; b=REZod/J5LfmrfcRAAWPxFYbI8LZv9WEsJuWAx6bFpLTx4P+fSqzU3ckGBOM+t2tG7MA9DH9XhUmybACbyTyT3FsIDe1K6VAyag2bJjCGpnPPQyi6RopWkGW/r9SDVYu/+i4m/glSGl9mM1IS2brThCYPWkbPSH5E+IzWeJpOO/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752562739; c=relaxed/simple;
-	bh=mbfAD0hFlSTMolZq2J7TOzEpdHQycJi5YCq0IBF2A/8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PmXh5y7wzA35OlqiOsQDHpYUekp1e0yG6Ax1PnWc87msB6SkUgZpysQTbF33XYHnXmCAaghtkgl3JMzcHzkzrG9sW8wr3KXVZ++n1DZq0Tkeelh94q9iMSCtS/+OMHSPQI48ftLj0CYWCNv6n2hI/avujXqwQxIHAwyKkoDek+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8PNAUDl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBE46C4CEE3;
-	Tue, 15 Jul 2025 06:58:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752562739;
-	bh=mbfAD0hFlSTMolZq2J7TOzEpdHQycJi5YCq0IBF2A/8=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=O8PNAUDlkgOCGO6+fGwuv8CuHB7rLOROlx30Eb8pl4AIwW17YkCXE3mmGsl0Gemsv
-	 vL8D8zy0qoE/LtPbsLHZ2KutU4BiuKTL2pigTiWwtr4Uq1qsFSTDbgdv2lzqvZzn0M
-	 IS7RHwsc6dP3bAdpf/BJchRSOqOIP2HgbUUpShmDYIkZgFKXq8/bddkttu2MwG0eoQ
-	 +9WGvdcY53XfE91dqwBm1LijPgSzs3MOY8LLQd3llu3KLFUC/xP/Tb9Ts8oC3ifovn
-	 urLTJ+DI58tHbPPaOntX+FJ8Ui7ux+QyYMJcOtFzyelbrpj2vCzDSwkdBcgKHUt9mu
-	 jo+N7FzT2LryA==
-Message-ID: <d822f21f-bfdb-443a-b639-66860a30ccbd@kernel.org>
-Date: Tue, 15 Jul 2025 14:58:55 +0800
+	s=arc-20240116; t=1752562882; c=relaxed/simple;
+	bh=qLh+fIjVyQgDPe3qchMRLMJnXHYyjtEjYq0Vo+X6Am4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lvMs3c7K/MJdjrsxXKHIn433IDgUMqHAFuEmbqBCX5lgEEPmWyCsZNLjizhcFS9+iaWPbE5lz9Fsf5JHMAMXjHkCWTyPXqUNIPPoZXdEZL1GocyZB1FrIxV+zvBBd+qL5dp11Xn5cPIFnBDr9jjRshIwa3COOxyALXlV6q2a1MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cld+089k; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56F5iBT5028585;
+	Tue, 15 Jul 2025 07:01:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	d96BkCV37oB7zOPVJxZtr+I85trwgiGcWUIkXFdajsA=; b=Cld+089kAZC+19SW
+	sV66y6RnEot267KglEGnfXSATjvapjJ+vE2qGPzgqhEX5muy/LeonHtnLT/4KZN1
+	zRZnZrxS4MizSycSoi77ZaFstz9tssFNVWDOQm+NlINaYfjtrWdgcQuGdFpEQFXK
+	TCg6oqHP135IYT+ary81RkGuREscDQn4XFYpQBL0HbUKXaSFgaCpBjQzekXCE/mW
+	MjVQcQH6qvnYkWsYyDKfgFx4dPltWIQdKKjaiFa5zsK5Oiw1lZJoZw/ymVi9GWr/
+	ByPLSvCm9+S06dNQl3TZXmDd2g+JFNrgeqMbDPkPItgwJiuwkbg09JlWrqDuUSwA
+	Q7VQ2A==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dq1x53-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Jul 2025 07:01:08 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56F717ND014887
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Jul 2025 07:01:08 GMT
+Received: from [10.50.25.16] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 15 Jul
+ 2025 00:00:34 -0700
+Message-ID: <a4dfc82b-79df-3e3c-0964-a99db222c6e6@quicinc.com>
+Date: Tue, 15 Jul 2025 12:30:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, axboe@kernel.dk, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: f2fs supports uncached buffered I/O
-To: Qi Han <hanqi@vivo.com>, jaegeuk@kernel.org
-References: <20250715031054.14404-1-hanqi@vivo.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] media: iris: MAINTAINERS: Document actual maintainership
+ by Bryan O'Donoghue
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250715031054.14404-1-hanqi@vivo.com>
-Content-Type: text/plain; charset=UTF-8
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <bryan.odonoghue@linaro.org>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Hans Verkuil <hverkuil@xs4all.nl>
+References: <20250714151609.354267-2-krzysztof.kozlowski@linaro.org>
+ <8772c48f-348b-8a68-2099-562a29b9dd8d@quicinc.com>
+ <b83cc20b-44d2-4635-a540-7a9c0d36cdb5@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <b83cc20b-44d2-4635-a540-7a9c0d36cdb5@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDA2MiBTYWx0ZWRfX83bedKQzrJqG
+ nHFsHVY8ttS1G4luGPAdEUEK92iSkHLk3qUg7lh30vpxQk6aPhsY0vJADm4K7vA6CeKm6QRT8tL
+ Kcr5cQlWiy/X6RULNboQ5N0Z+0x9T70Um76Y8ajeTFb/RgiRdlKvsct5GeaR9Wq3ZNiHgbLeaP8
+ yHkpoNSr6ZLx4fyQf1ZWSlZ8UAGOmFjo+kWNeHjTmPV5/OqwPfcIuElLJkGEcZOSEzmxjwzrpIl
+ qMLdRUjvflf5+PtFbES0Vi2koqPdjn9cmvMqNUEIaklhKnHmTt/wZOxWJQZww9jYk+BBAyIdYOe
+ XQL+tX/uRa/P3DQ9GTRxhv8sN9QOan4jxmr8pdjKkAFDGRq1p3AdCNQCXu//KhI7yTz5nu8Oy+t
+ D2jhq/R/RDbKwqr2yv8ulrKfgpRC8bsPuunkUot1AHLiJw7jwD5sUwXQBHKmKvmZFtIcScg0
+X-Proofpoint-ORIG-GUID: Plr7BXmD-qzREmb5UT4fk4VdxqKr3XlF
+X-Proofpoint-GUID: Plr7BXmD-qzREmb5UT4fk4VdxqKr3XlF
+X-Authority-Analysis: v=2.4 cv=MpZS63ae c=1 sm=1 tr=0 ts=6875fcb4 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=BU9ZYT7LreSM890-jg0A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_03,2025-07-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ impostorscore=0 mlxscore=0 clxscore=1011 adultscore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507150062
 
-On 7/15/25 11:10, Qi Han wrote:
-> Jens has already completed the development of uncached buffered I/O
-> in git [1], and in f2fs, the feature can be enabled simply by setting
-> the FOP_DONTCACHE flag in f2fs_file_operations.
 
-Hi Qi, do you have any numbers of f2fs before/after this change? though
-I'm not against supporting this feature in f2fs.
-
-Thanks,
-
+On 7/15/2025 12:14 PM, Krzysztof Kozlowski wrote:
+> On 15/07/2025 07:51, Vikash Garodia wrote:
+>>
+>> On 7/14/2025 8:46 PM, Krzysztof Kozlowski wrote:
+>>> Bryan O'Donoghue reviews and applies patches for both Iris and Venus
+>>> Qualcomm SoC video codecs (visible in git log as his Signed-off-by and
+>>> in pull requests like [1]), so he is de facto the maintainer responsible
+>>> for the code.  Reflect this actual state my changing his entry from
+>>> reviewer to maintainer and moving the entry to alphabetical position by
+>>> first name.
+>>
+>> NAK.
+>>
+>> The roles and responsibilities are well agreed by media maintainer(Hans), with
+>> Bryan part of that discussion, w.r.t code contributions to iris and sending
+>> patches to media tree. The only reason Bryan post the patches is that Hans wants
+>> single PR for patches across Qualcomm media drivers (Camss/Videoss)
 > 
-> [1]
-> https://lore.kernel.org/all/20241220154831.1086649-10-axboe@kernel.dk/T/#m58520a94b46f543d82db3711453dfc7bb594b2b0
+> That's the maintainer role, so Bryan is the maintainer. I am documenting
+> actual status and your NAK is naking what? That Bryan cannot handle patches?
+I would say, you are reading too much into it, i updated what we have discussed
+and agreed upon the different roles for managing venus and iris drivers.
 > 
-> Signed-off-by: Qi Han <hanqi@vivo.com>
-> ---
->  fs/f2fs/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Sorry, this is already happening.
 > 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 696131e655ed..d8da1fc2febf 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -5425,5 +5425,5 @@ const struct file_operations f2fs_file_operations = {
->  	.splice_read	= f2fs_file_splice_read,
->  	.splice_write	= iter_file_splice_write,
->  	.fadvise	= f2fs_file_fadvise,
-> -	.fop_flags	= FOP_BUFFER_RASYNC,
-> +	.fop_flags	= FOP_BUFFER_RASYNC | FOP_DONTCACHE,
->  };
+> Your push back here is odd, impolite and really disappointing. You
+> actually should be happy that person outside wants to care about this
+> driver...
+> 
+>> Hi Hans,
+>>
+>> Incase you would like to split sending PRs, as the contributions for Venus/Iris
+>> would be significantly higher, let us know, we can pick that up separately.
+> 
+> Considering quality of the code you sent as Iris upstreaming, you are
+> not there yet.
+If you see the scope to improve the quality, you are always welcome to add
+patches to improve it.
 
+Regards,
+Vikash
+> 
+> https://lore.kernel.org/all/1690550624-14642-1-git-send-email-quic_vgarodia@quicinc.com/
+> 
+> Please learn, read how the process works, what is the responsibility of
+> maintainers first.
+> 
+> 
+> Best regards,
+> Krzysztof
 
