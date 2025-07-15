@@ -1,112 +1,274 @@
-Return-Path: <linux-kernel+bounces-731484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2C2B05508
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:35:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63A1B05516
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 10:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD73E178763
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A981C22EEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 08:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD45274B43;
-	Tue, 15 Jul 2025 08:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC9D274B43;
+	Tue, 15 Jul 2025 08:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h2JJ/2KP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jCdduS/7"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5EC274FFB;
-	Tue, 15 Jul 2025 08:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309812356BC
+	for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 08:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752568522; cv=none; b=UuatEInEz+07s4zjr9UMnCZPzHC/KoJUTFgcApH25Xf3faS66Q8jiZvdmsA3auN5SH69JzE6D0qdZWnUxvG07LmREf/EpE1nPeJWTU7SrVBSdlyb6TYZbPDS2jhtLEAU9cJr74WW4TebExCSHoepTiawEpRAPGtqyZfu6mZc7/o=
+	t=1752568695; cv=none; b=sYJe7StCWIajopt5LnYrd2dx3dAsAhUbN8F1SG59RrC1/4AdnP9L+sVFZTlCtWvdG+JnGmT2lUcEACrFK/yk0hsKhbDpVItRk3lO+a8Fa3A9RMVbMi6n2ihkpv/HteFrk1OoGBTdlUflmhdF9pcevc4poLWex8n2zJoJFRrY4pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752568522; c=relaxed/simple;
-	bh=FC833BzUIk5qRL90xtZ2unLYkvMRE9s4KPrfvPMPxIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1E7hzwxn6cqiPxfixeZkQfS2phMfe7a/qurJxmtsjRKg27nB5jMu4YQDzCIORcXFnrpjeUfrsNdb9nAv45GuZS05t7WZt068B0y19Avcul8VjYrhp/saB0jDfGr7DAOT1YclnOL86YGV4ljPITahJp4RqhXG8yt7VoPNkU4u24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h2JJ/2KP; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752568521; x=1784104521;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FC833BzUIk5qRL90xtZ2unLYkvMRE9s4KPrfvPMPxIw=;
-  b=h2JJ/2KPMhN8Nnf9lf+9OvvGghdHNiX5NfljGHS3QTMD2JrTi/5MDeq9
-   8bGZt84eVM3NPMZ8yh+gOYHl9FAIOd0GzJQJrkM0rK8L90c4iBMxHIBXD
-   9jNff58/iDcMfn9eZSRv2iBkeGnKEMCJN8l8YDQnPthJR6kV+SfuLKMmo
-   3kBkS1CC+IfJvUA8f3YxtKelM9pvKTv15qbik2ljU+PLyK3E5gAXFJS1N
-   AlyPyTrRUW6QlUQ1bW41/O4VdhPFB/IgNMQWC1AnNWfGHm1plcRTrhlIH
-   WtvJFlPFrHK9yvCAUCJ1XbyHfXj7zd/LA4sB8URao9UAvokKi92fVIHS5
-   Q==;
-X-CSE-ConnectionGUID: bTuLo2UkQ6KE529vRCYpsA==
-X-CSE-MsgGUID: v8Yilnu+R9yOv18IQHmzJg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54933042"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54933042"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:35:21 -0700
-X-CSE-ConnectionGUID: Nqrc97v8QjCZGBg+WB0WUQ==
-X-CSE-MsgGUID: MpPdwxiwRe+mPUoM393Y5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="161474806"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 01:35:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ubb86-0000000FbCc-0mbc;
-	Tue, 15 Jul 2025 11:35:14 +0300
-Date: Tue, 15 Jul 2025 11:35:13 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 4/7] hwmon: iio: Refactor scale calculation into helper
-Message-ID: <aHYSwVeC33qvb_-o@smile.fi.intel.com>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
- <20250715012023.2050178-5-sean.anderson@linux.dev>
+	s=arc-20240116; t=1752568695; c=relaxed/simple;
+	bh=mZyth0KAKTnj9bWStu7byGf00CvZnmNGrZOK9z+tomQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NeBBKUZrHXlG2AUmIGVb8odKi7g7BW56BRDhCSSgDItfiXk8BSLnD0mTFuLguOLhzaJiOXFeUrwCVNQO+kbs1WgC9gHGQODdk279t+XlZYyAUevSZ9G6nuybISg3i9xOSNNepyN1baYm43dmupMdNWDre3IX+vwpDNGyiQvezoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jCdduS/7; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <45f4d349-7b08-45d3-9bec-3ab75217f9b6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752568678;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T9Lgw5Epi5q68OgMPe5vaeUcIOYa33Zgw7pDEgowN70=;
+	b=jCdduS/7l5FQ3NkNe7K57fsRxYJUWB/+rdPgFX59M4ZRZv0kGyqgTy+5AM1W5usbFzHvNX
+	gMUPMErWKKR+XYJnNAZ/uUlNZpUC9TFXIYdVXgtjFByZDAFSCZVy0oWyyekc1I6oaMJdCu
+	JjgHNbaJmrNjE3R00htnO3a0yS7YlzM=
+Date: Tue, 15 Jul 2025 16:36:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715012023.2050178-5-sean.anderson@linux.dev>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Mon, Jul 14, 2025 at 09:20:20PM -0400, Sean Anderson wrote:
-> Add a function to determine the scale parameter, since it will soon be
-> used in several places.
-
-...
-
-> + * Return: scale of @chan
-
-Needs a bit of elaboration. Can it be negative? What is the unit of scale
-(just plain integer multiplier)? Should it be (always) signed?
-
-...
-
-> +	/* mili-Watts to micro-Watts conversion */
-> +	if (type == IIO_POWER)
-> +		return 1000;
-
-MICROWATT_PER_MILLIWATT ?
-
--- 
-With Best Regards,
-Andy Shevchenko
+Subject: Re: [PATCH bpf-next v2 02/18] x86,bpf: add bpf_global_caller for
+ global trampoline
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Menglong Dong <menglong8.dong@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>,
+ bpf <bpf@vger.kernel.org>, Menglong Dong <dongml2@chinatelecom.cn>,
+ "H. Peter Anvin" <hpa@zytor.com>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Network Development <netdev@vger.kernel.org>
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <20250703121521.1874196-3-dongml2@chinatelecom.cn>
+ <CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Menglong Dong <menglong.dong@linux.dev>
+In-Reply-To: <CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
+On 7/15/25 10:25, Alexei Starovoitov wrote:
+> On Thu, Jul 3, 2025 at 5:17 AM Menglong Dong <menglong8.dong@gmail.com> wrote:
+>> +static __always_inline void
+>> +do_origin_call(unsigned long *args, unsigned long *ip, int nr_args)
+>> +{
+>> +       /* Following code will be optimized by the compiler, as nr_args
+>> +        * is a const, and there will be no condition here.
+>> +        */
+>> +       if (nr_args == 0) {
+>> +               asm volatile(
+>> +                       RESTORE_ORIGIN_0 CALL_NOSPEC "\n"
+>> +                       "movq %%rax, %0\n"
+>> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
+>> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
+>> +                       :
+>> +               );
+>> +       } else if (nr_args == 1) {
+>> +               asm volatile(
+>> +                       RESTORE_ORIGIN_1 CALL_NOSPEC "\n"
+>> +                       "movq %%rax, %0\n"
+>> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
+>> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
+>> +                       : "rdi"
+>> +               );
+>> +       } else if (nr_args == 2) {
+>> +               asm volatile(
+>> +                       RESTORE_ORIGIN_2 CALL_NOSPEC "\n"
+>> +                       "movq %%rax, %0\n"
+>> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
+>> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
+>> +                       : "rdi", "rsi"
+>> +               );
+>> +       } else if (nr_args == 3) {
+>> +               asm volatile(
+>> +                       RESTORE_ORIGIN_3 CALL_NOSPEC "\n"
+>> +                       "movq %%rax, %0\n"
+>> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
+>> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
+>> +                       : "rdi", "rsi", "rdx"
+>> +               );
+>> +       } else if (nr_args == 4) {
+>> +               asm volatile(
+>> +                       RESTORE_ORIGIN_4 CALL_NOSPEC "\n"
+>> +                       "movq %%rax, %0\n"
+>> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
+>> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
+>> +                       : "rdi", "rsi", "rdx", "rcx"
+>> +               );
+>> +       } else if (nr_args == 5) {
+>> +               asm volatile(
+>> +                       RESTORE_ORIGIN_5 CALL_NOSPEC "\n"
+>> +                       "movq %%rax, %0\n"
+>> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
+>> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
+>> +                       : "rdi", "rsi", "rdx", "rcx", "r8"
+>> +               );
+>> +       } else if (nr_args == 6) {
+>> +               asm volatile(
+>> +                       RESTORE_ORIGIN_6 CALL_NOSPEC "\n"
+>> +                       "movq %%rax, %0\n"
+>> +                       : "=m"(args[nr_args]), ASM_CALL_CONSTRAINT
+>> +                       : [args]"r"(args), [thunk_target]"r"(*ip)
+>> +                       : "rdi", "rsi", "rdx", "rcx", "r8", "r9"
+>> +               );
+>> +       }
+>> +}
+> What is the performance difference between 0-6 variants?
+> I would think save/restore of regs shouldn't be that expensive.
+> bpf trampoline saves only what's necessary because it can do
+> this micro optimization, but for this one, I think, doing
+> _one_ global trampoline that covers all cases will simplify the code
+> a lot, but please benchmark the difference to understand
+> the trade-off.
+
+According to my benchmark, it has ~5% overhead to save/restore
+*5* variants when compared with *0* variant. The save/restore of regs
+is fast, but it still need 12 insn, which can produce ~6% overhead.
+
+I think the performance is more import and we should keep this logic.
+Should we? If you think the do_origin_call() is not simple enough, we
+can recover all the 6 regs from the stack directly for the origin call, 
+which won't
+introduce too much overhead, and keep the save/restore logic.
+
+What do you think?
+
+
+>
+> The major simplification will be due to skipping nr_args.
+> There won't be a need to do btf model and count the args.
+> Just do one trampoline for them all.
+>
+> Also funcs with 7+ arguments need to be thought through
+> from the start.
+
+
+In the current version, the attachment will be rejected if any functions 
+have
+7+ arguments.
+
+
+> I think it's ok trade-off if we allow global trampoline
+> to be safe to attach to a function with 7+ args (and
+> it will not mess with the stack), but bpf prog can only
+> access up to 6 args. The kfuncs to access arg 7 might be
+> more complex and slower. It's ok trade off.
+
+
+It's OK for fentry-multi, but we can't allow fexit-multi and 
+modify_return-multi
+to be attached to the function with 7+ args, as we need to do the origin
+call, and we can't recover the arguments in the stack for the origin 
+call for now.
+
+So we can allow the functions with 7+ args to be attached as long as the 
+accessed
+arguments are all in regs for fentry-multi. And I think we need one more 
+patch to
+do the "all accessed arguments are in regs" checking, so maybe we can 
+put it in
+the next series? As current series is a little complex :/
+
+Anyway, I'll have a try to see if we can add this part in this series :)
+
+
+>
+>> +
+>> +static __always_inline notrace void
+>> +run_tramp_prog(struct kfunc_md_tramp_prog *tramp_prog,
+>> +              struct bpf_tramp_run_ctx *run_ctx, unsigned long *args)
+>> +{
+>> +       struct bpf_prog *prog;
+>> +       u64 start_time;
+>> +
+>> +       while (tramp_prog) {
+>> +               prog = tramp_prog->prog;
+>> +               run_ctx->bpf_cookie = tramp_prog->cookie;
+>> +               start_time = bpf_gtramp_enter(prog, run_ctx);
+>> +
+>> +               if (likely(start_time)) {
+>> +                       asm volatile(
+>> +                               CALL_NOSPEC "\n"
+>> +                               : : [thunk_target]"r"(prog->bpf_func), [args]"D"(args)
+>> +                       );
+> Why this cannot be "call *(prog->bpf_func)" ?
+
+Do you mean "prog->bpf_func(args, NULL);"? In my previous testing, this 
+cause
+bad performance, and I see others do the indirect call in this way. And 
+I just do
+the benchmark again, it seems the performance is not affected in this 
+way anymore.
+So I think I can replace it with "prog->bpf_func(args, NULL);" in the 
+next version.
+
+>
+>> +               }
+>> +
+>> +               bpf_gtramp_exit(prog, start_time, run_ctx);
+>> +               tramp_prog = tramp_prog->next;
+>> +       }
+>> +}
+>> +
+>> +static __always_inline notrace int
+>> +bpf_global_caller_run(unsigned long *args, unsigned long *ip, int nr_args)
+> Pls share top 10 from "perf report" while running the bench.
+> I'm curious about what's hot.
+> Last time I benchmarked fentry/fexit migrate_disable/enable were
+> one the hottest functions. I suspect it's the case here as well.
+
+
+You are right, the migrate_disable/enable are the hottest functions in
+both bpf trampoline and global trampoline. Following is the perf top
+for fentry-multi:
+36.36% bpf_prog_2dcccf652aac1793_bench_trigger_fentry_multi [k] 
+bpf_prog_2dcccf652aac1793_bench_trigger_fentry_multi 20.54% [kernel] [k] 
+migrate_enable 19.35% [kernel] [k] bpf_global_caller_5_run 6.52% 
+[kernel] [k] bpf_global_caller_5 3.58% libc.so.6 [.] syscall 2.88% 
+[kernel] [k] entry_SYSCALL_64 1.50% [kernel] [k] memchr_inv 1.39% 
+[kernel] [k] fput 1.04% [kernel] [k] migrate_disable 0.91% [kernel] [k] 
+_copy_to_user
+
+And I also did the testing for fentry:
+
+54.63% bpf_prog_2dcccf652aac1793_bench_trigger_fentry [k] 
+bpf_prog_2dcccf652aac1793_bench_trigger_fentry
+10.43% [kernel] [k] migrate_enable
+10.07% bpf_trampoline_6442517037 [k] bpf_trampoline_6442517037
+8.06% [kernel] [k] __bpf_prog_exit_recur 4.11% libc.so.6 [.] syscall 
+2.15% [kernel] [k] entry_SYSCALL_64 1.48% [kernel] [k] memchr_inv 1.32% 
+[kernel] [k] fput 1.16% [kernel] [k] _copy_to_user 0.73% [kernel] [k] 
+bpf_prog_test_run_raw_tp
+The migrate_enable/disable are used to do the recursive checking,
+and I even wanted to perform recursive checks in the same way as
+ftrace to eliminate this overhead :/
+
+
+>
 
