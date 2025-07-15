@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-731389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-731388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068EDB053A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:49:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF01BB053A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 09:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8E46560741
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C4891C215E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Jul 2025 07:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C414D272E6F;
-	Tue, 15 Jul 2025 07:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13A92727EB;
+	Tue, 15 Jul 2025 07:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZqILQ5Pc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TiDzA92f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5AC272E6D;
-	Tue, 15 Jul 2025 07:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D942747B;
+	Tue, 15 Jul 2025 07:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752565777; cv=none; b=HsoXR2N55RZGO+hch6vz2J3OTWGixAqr+knezEyNyU7TNR6k2YX3VjiHNTzT0ueMJC7e6oXhIo8MwRvMv5hcLKyw+A90sZX94+148bYHmVig7m2y/tHE8VCFgWDbY+t2GBVwY/wqViHarxe9uyXQOXoJuHCt5qtVO8L2yBaulkc=
+	t=1752565773; cv=none; b=OImrh4pqDWmTroUhsWDbX7hWCA7Bdcj8rxAnogdeqY3LaPQEfG2/45cn56hoeagMH2qC6qBMaFyh1M1IxeC/8xGK+qbxomX7dIRow3TvRiG8+MLaYRGy2aAIJFQmG9WiI24Kyfpf8Sij4wbsbAVJEtqQxsUD+uYH33+kmmItRxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752565777; c=relaxed/simple;
-	bh=ncOaGHOLrKcO0FG9v/L44yQpuzOwu/hbJMUNcx7R1w0=;
+	s=arc-20240116; t=1752565773; c=relaxed/simple;
+	bh=oBZ07qfMVSMe01x171T8SZ0u9bBNjip7CkgUBqbpGF4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+fDA88PEnDtVAPFQULMs/LnAIXDE4+wU8kDEVWnX+6UB1quC2NBjmc+AnopEOrsp1X2Ou+4Sjs2EB74b/jXVeAsFva8GC5ZdyRg3uwwWhAiTEitVk13ZxB8irzMEl6bdYSFDrVehTygg76M0u8d3d7BIKGr11joZO3o8Lgnz5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZqILQ5Pc; arc=none smtp.client-ip=192.198.163.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=q83aD2VxjUmx2eVOcvEwGPDINlO+EeaIv+Mdn5ccwmBgb1GdtBsiS4k2JllPQ6RQ6LK0iDHw0+94OoAEb8cKDHSZ9cE+aOWw5gc7b+m13D4ENrwJnAoKL6xEqv0C0mFWSjYM+9JuZWw4JIJONMMaM9YWzTrIobP5Q6Et5nSYi2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TiDzA92f; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752565775; x=1784101775;
+  t=1752565772; x=1784101772;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ncOaGHOLrKcO0FG9v/L44yQpuzOwu/hbJMUNcx7R1w0=;
-  b=ZqILQ5PcJcAfAoNNBpkvXe+6xsD1Jgh3phtrk65KjWzHlx1/SesfKd09
-   Hvy9s5NZ1vmWA8oridr4IogZa2HHDKC8r1VQvEBXvqa5vzQahAhVmskcM
-   nefbvt+hwYRPKiuhUtZ3b6TDF2Euiv1Nlo0McKeBhKeohlujRuHRDlZ2f
-   qB9aFnJdFI/vsJRuoI+0H1ZFFElePSjA+QPHKmcQbbL6cNQA5VRh/XbZl
-   e+Dz9K33a6u4MfpediqOIGrBNzfpd0kFAijdNVXUrfWAnQp7nP+wQPimT
-   gNQefLk2QYkkyjc6ej55QPZvYvXqbThMZnry2hyR6PILEE4pWRs0CXVv6
+  bh=oBZ07qfMVSMe01x171T8SZ0u9bBNjip7CkgUBqbpGF4=;
+  b=TiDzA92f3zWmYgRr/MRmwCc0XQ2HaQq1IFwuWtKed27Rs8k1wFJJvF1M
+   O7Cl6cG1VEMoJLVXiBNIM78fnrXUzlsAixxyxabev7TTFFCAmu1zlwdSx
+   GRfhYi/KOJbERghhAonleG1ZE0pPslzCGxKMKZXskVLZeqyZ01MlrSG0I
+   5Jt+XjwqyF4CDYmKH9tj02lF6TUU7QxOoGI8fXzfArWd0dbZ6sTKJ/hja
+   GpufnO9dvYWE1Xe6v7//T1mRjNtRnlFSGo09FO3PXtlj5xo+e7TkIeSei
+   oqCoHgtltq36UNxmlL790TqM2ySYXBvGi3dLMT+kx2rrDLmG/1xDj23aO
    g==;
-X-CSE-ConnectionGUID: 2N4UUyAUSiygIyOkdFK8hQ==
-X-CSE-MsgGUID: WST8LeihQrOYVfV2bUa53g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54928515"
+X-CSE-ConnectionGUID: uQzLtWv8SKK1XzXqfXGQdw==
+X-CSE-MsgGUID: F0l+2PTySleGtpEn/IwUag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="72225384"
 X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="54928515"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:49:34 -0700
-X-CSE-ConnectionGUID: uUcZuDCkR4iAoRcjWYQrsw==
-X-CSE-MsgGUID: bIP7DoUJTEKngzU6a57msg==
+   d="scan'208";a="72225384"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:49:32 -0700
+X-CSE-ConnectionGUID: saQUtYl/SMybI6jlBTPMrw==
+X-CSE-MsgGUID: 7i37yP5WSzSCTHalMQ0TgQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="156802504"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 15 Jul 2025 00:49:31 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ubaPo-0009nv-2d;
-	Tue, 15 Jul 2025 07:49:28 +0000
-Date: Tue, 15 Jul 2025 15:49:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luo Jie <quic_luoj@quicinc.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luo Jie <quic_luoj@quicinc.com>
-Subject: Re: [PATCH net-next v2 2/3] net: phy: qcom: qca808x: Support PHY
- counter
-Message-ID: <202507151542.rdmfnV5H-lkp@intel.com>
-References: <20250714-qcom_phy_counter-v2-2-94dde9d9769f@quicinc.com>
+   d="scan'208";a="157689413"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 00:49:28 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ubaPm-0000000FaVa-0NDs;
+	Tue, 15 Jul 2025 10:49:26 +0300
+Date: Tue, 15 Jul 2025 10:49:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lothar Rubusch <l.rubusch@gmail.com>
+Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
+Message-ID: <aHYIBReTFqJMtiXW@smile.fi.intel.com>
+References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
+ <20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
+ <aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,32 +83,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714-qcom_phy_counter-v2-2-94dde9d9769f@quicinc.com>
+In-Reply-To: <aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Luo,
+On Tue, Jul 15, 2025 at 10:37:22AM +0300, Andy Shevchenko wrote:
+> On Fri, Jul 11, 2025 at 08:36:03PM -0300, Gustavo Silva wrote:
 
-kernel test robot noticed the following build errors:
+...
 
-[auto build test ERROR on b06c4311711c57c5e558bd29824b08f0a6e2a155]
+> > +/* 9.81 * 1000000 m/s^2 */
+> > +#define BMI270_G_MEGA_M_S_2				9810000
+> 
+> I thought this is MICRO...
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Luo-Jie/net-phy-qcom-Add-PHY-counter-support/20250714-230346
-base:   b06c4311711c57c5e558bd29824b08f0a6e2a155
-patch link:    https://lore.kernel.org/r/20250714-qcom_phy_counter-v2-2-94dde9d9769f%40quicinc.com
-patch subject: [PATCH net-next v2 2/3] net: phy: qcom: qca808x: Support PHY counter
-config: i386-buildonly-randconfig-003-20250715 (https://download.01.org/0day-ci/archive/20250715/202507151542.rdmfnV5H-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250715/202507151542.rdmfnV5H-lkp@intel.com/reproduce)
+Btw, what if we use the device on poles and on equator (or even on orbital
+station)? I'm wondering if this constant should be defined in units.h or
+even in uAPI that user space may add a correction if needed.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507151542.rdmfnV5H-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "qcom_phy_get_stats" [drivers/net/phy/qcom/qca808x.ko] undefined!
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With Best Regards,
+Andy Shevchenko
+
+
 
