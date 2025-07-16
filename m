@@ -1,149 +1,391 @@
-Return-Path: <linux-kernel+bounces-733461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00DA9B074FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D95B074FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DEB9506547
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:45:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72FC83B2181
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E843242D9F;
-	Wed, 16 Jul 2025 11:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9v9Ybns"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030461B4F1F;
+	Wed, 16 Jul 2025 11:48:00 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB2920110B;
-	Wed, 16 Jul 2025 11:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FE52698A2
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752666372; cv=none; b=DfrfEZBps0DEqT3WcknVMQRUHEJcwUZ7rYHzI8nYkTv0g5HERBcKYH0jMZNTSlb4kT7KLVQEz2xNbMJ8IZmeMeUBULLYhZtItaOtr36tMdq8oKw00ooG2BOeQfcbuSnRPolSTJ1nfkTbDkKawm6qaN8mcE8pKjskP3IgNBFNn4E=
+	t=1752666479; cv=none; b=fnvIJQSA+3ErRmws4AF1uAUpMkcxixeyhwVfMd3/YeT4c4WyckxyhIMOQwKMorLfmLAsmQFlFseo9yV4PYTpvfoNeFrfUCr4PnvvFN39LhTLWGZv0TtG7H+74U3ZQR79a8RFhChyLjcR/jnNbTlOK2cf9vABD/FJGs9nsyWRzvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752666372; c=relaxed/simple;
-	bh=NXanfPZpH2ceGudSk2SUYSm9HbVf2NruYNTN6drDoyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uJ13waeDax78FqcYr84IIkvVYmMMrwDTuahLH3SOLZg+4u36TyB+PdgNQrPH2AaajZKj3Z9kIGAEzmlUmWGyGDukq3uf49fjvg4fc9GZ6i9Hf2VLnoHguHjXDtf+q8tAGv2eeHHBWihoIxy84JR8OWqnSYkiNLT1tOjwjbEqNIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9v9Ybns; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-454ac069223so5752005e9.1;
-        Wed, 16 Jul 2025 04:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752666369; x=1753271169; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qRK0uTRJWMXudiGrHPLDeir9C8aaiiInPobNXttZUgA=;
-        b=Q9v9Ybnsh5pwDLyXr6+8URc/Cpn7f/FwoByU+hjXXm3CGlLJ4W15XHUSJ3Tt4paYP4
-         sY3kajQFRDnOYJ3kGFVwoy6q8Kylb+hd+zSb+58MaGIm/M3iper+9dE49tKaI7skh9xe
-         8N5ivx0PT87HUYOHthlRXgDzQ/A/kASeT3uPZ4/V8VTwab1vk1zfCxwt/PZdCgEfY56T
-         kxCZtTWnOyTOs4WrbjimmKpLM84nCQ7YES5dEbaT6ufnvvTjUPi0Hl6CydEpzQsBLTue
-         vU3ZilugujblXXclZHlme2aiHOfT/v8UmV3hvwy4iqRAAoN0IDu8C/Rqkl1bDDTcysRW
-         odqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752666369; x=1753271169;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qRK0uTRJWMXudiGrHPLDeir9C8aaiiInPobNXttZUgA=;
-        b=h0TuDSkrui9RmfciqlwlboBK901By9VHtiVCbWNwXSGTKU77ZaFpAHZ4z87akrJhFb
-         KqzlbdEe6fI7mVWoQCy/cunhI0ZJapHMC45w4WzYHTiOq2JHELoXIAEmzVgAC2FYwbCL
-         htWV8KybyqfRQ8BCeWTgJktAqbMHh5y1q/MaaMBipQ59tVG770UtqUFjQgAR/S7vnUuz
-         lWCJm8joYxyA6TEeoQ8BiFWEoVPvvgYCqywn0Eb/9lxBePCQex0vbwDt+6IZ/shdFggh
-         n5CFmrv0geV/YfolRWFBuDj/MZPldLstnrDbrE9cJRLeFnk4lALdOn++IIFQaxc5WKoJ
-         YiSA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7Viy3eaK74nDDv4y8DCUWyvA9+f8wPdg6hjb4hAiLyXVoEACncn3Hnzj600FXEUMoIG0oq7xu@vger.kernel.org, AJvYcCX8vsYKzMJ8HCLibaZgwpC23H3sW99ExlL9NZE3RckJX0puTpannckQyBRZ6/78AxFI5t+DHOVEz31zU/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4hLnObNL4s5kTYGH5V2W7V/Dqy6pqnWp045txuEg6ato9CGJp
-	fwAHRk9zsFNUGFp8SMLS+N7WbhFuw8hzh59QGHhRIXblu59a/TQvCNN9
-X-Gm-Gg: ASbGncu0qI7zkvQpbgQC+4jyY2PjZUE2hvhzl7TzdRzBxCEMi/opcwafZyTT9v21RX7
-	Sl2Vu7ycPqHJbUdjDAY9+ft89MnTcFQrAtdQs3qqrTsM41r6hkmX4MLhU/s/CkTwhvG0DbSoUT1
-	AmLYVVmMauPfH6f7nc0FBTl1tINsEQh9GcOqiB68zmZf8UrdO0dj7djh865+MWvE22JeE0z+Mu+
-	ZTsMrSm21Mj7wA9odnlpsw4tLva4hbAnsob0MRy58hyl6aRjetALShkTf/jgJLv5WTNk3Ga0XAP
-	4A8Yl3nFBgGc1FUXQN0b76aUUjgKF1iHtvFX5XxKUliyImU+yZyDdidKr/hl0D/6ReI+YuwJ7xn
-	nQOdP8mvWdCLLsDvd07qEIQZVZIMBJYt36enaCVIm9Bj/No9xXvvm1TV70rzl
-X-Google-Smtp-Source: AGHT+IGe9mrawVK8DME5xTxzobrY4snOPO/udcok/amD5IGmZSO+Gh8mRnJF9n9m5I8NmSps33RJrQ==
-X-Received: by 2002:a05:6000:144a:b0:3b5:e077:af52 with SMTP id ffacd0b85a97d-3b60dd7a1efmr2532215f8f.25.1752666368419;
-        Wed, 16 Jul 2025 04:46:08 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26938sm17491288f8f.89.2025.07.16.04.46.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 04:46:08 -0700 (PDT)
-Date: Wed, 16 Jul 2025 12:46:07 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: sashal@kernel.org, linux-kernel@vger.kernel.org, frederic@kernel.org,
- david@redhat.com, viro@zeniv.linux.org.uk, paulmck@kernel.org, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] kernel/fork: Increase minimum number of allowed threads
-Message-ID: <20250716124607.50fc5e34@pumpkin>
-In-Reply-To: <0e855c4f-2ff9-4007-854a-20955dec052b@hauke-m.de>
-References: <20250711230348.213841-1-hauke@hauke-m.de>
-	<0e855c4f-2ff9-4007-854a-20955dec052b@hauke-m.de>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1752666479; c=relaxed/simple;
+	bh=KvbHv7U9LgLxDY+ARDXA5g9fWI12rvWLK+DbM883tCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rlKJhrKkISephwBCQAM8Yj3Wv8Xc9qKiQns5yoVoAVQqpLkePpvvIgRBn7t4qDr28P7f1YVfFWGibMgMhVhOtBjTD1mjTBuhMRvSsWv5D1sOpj5C4haXIL/fw4oFULMN1qhn7+wWBWO7YnQoUUurpXjL0u7z5yDELzcz/H7bqCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BE6AA1FD3D;
+	Wed, 16 Jul 2025 11:47:51 +0000 (UTC)
+Message-ID: <75604cd4-65bc-4ff1-9537-92b9cbf06e77@ghiti.fr>
+Date: Wed, 16 Jul 2025 13:47:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] Fix for riscv vmcore issue
+To: Pnina Feder <PNINA.FEDER@mobileye.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, Simon Horman <horms@kernel.org>
+Cc: Gregory Greenman <Gregory.Greenman@mobileye.com>,
+ "bjorn@rivosinc.com" <bjorn@rivosinc.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+ "mick@ics.forth.gr" <mick@ics.forth.gr>,
+ "palmer@dabbelt.com" <palmer@dabbelt.com>,
+ "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+ Vladimir Kondratiev <Vladimir.Kondratiev@mobileye.com>
+References: <20250409182129.634415-1-bjorn@kernel.org>
+ <20250630112309.97162-2-pnina.feder@mobileye.com>
+ <87jz4txsjx.fsf@all.your.base.are.belong.to.us>
+ <MRWPR09MB80229B89C8D4B4865783B3D78F43A@MRWPR09MB8022.eurprd09.prod.outlook.com>
+ <bd2bca3b-2b23-40be-b81b-f842b7afb10e@ghiti.fr>
+ <MRWPR09MB80220E49BECD4D18E4AEC5C38F4CA@MRWPR09MB8022.eurprd09.prod.outlook.com>
+ <MRWPR09MB8022F4714CF3B62DCCA683D68F54A@MRWPR09MB8022.eurprd09.prod.outlook.com>
+ <7207e208-a70f-4445-9acc-d910c4da745c@ghiti.fr>
+ <MRWPR09MB8022AE6B2BED3373D55E31DB8F56A@MRWPR09MB8022.eurprd09.prod.outlook.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <MRWPR09MB8022AE6B2BED3373D55E31DB8F56A@MRWPR09MB8022.eurprd09.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjeeifecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepuefffedvleetleetjefhjeehudejteetvedtvddvtdfhieetffelvdffgefgieeinecuffhomhgrihhnpehinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheprffpkffptedrhffgfffgtfesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepsghjohhrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheph
+ hhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepifhrvghgohhrhidrifhrvggvnhhmrghnsehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopegsjhhorhhnsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhitghksehitghsrdhfohhrthhhrdhgrh
+X-GND-Sasl: alex@ghiti.fr
 
-On Sat, 12 Jul 2025 01:06:07 +0200
-Hauke Mehrtens <hauke@hauke-m.de> wrote:
++cc Simon
 
-> On 7/12/25 01:03, Hauke Mehrtens wrote:
-> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>  
-> 
-> Sorry this has the wrong from tag, will send a new patch.
-> 
-> Hauke>
-> > A modern Linux system creates much more than 20 threads at bootup.
-> > When I booted up OpenWrt in qemu the system sometimes failed to boot up
-> > when it wanted to create the 419th thread. The VM had 128MB RAM and the
-> > calculation in set_max_threads() calculated that max_threads should be
-> > set to 419. When the system booted up it tried to notify the user space
-> > about every device it created because CONFIG_UEVENT_HELPER was set and
-> > used. I counted 1299 calles to call_usermodehelper_setup(), all of
-> > them try to create a new thread and call the userspace hotplug script in
-> > it.
-> > 
-> > This fixes bootup of Linux on systems with low memory.
+On 7/16/25 13:05, Pnina Feder wrote:
+> Hi Alex,
+> Thank you for your response!
+>
+>> Hi Pnina,
+>>
+>> On 7/14/25 14:00, Pnina Feder wrote:
+>>>>>> Hi Pnina,
+>>>>>>> Pnina!
+>>>>>>>
+>>>>>>> Pnina Feder <pnina.feder@mobileye.com> writes:
+>>>>>>>
+>>>>>>>> We are creating a vmcore using kexec on a Linux 6.15 RISC-V
+>>>>>>>> system and analyzing it with the crash tool on the host. This
+>>>>>>>> workflow used to work on Linux 6.14 but is now broken in 6.15.
+>>>>>>> Thanks for reporting this!
+>>>>>>>
+>>>>>>>> The issue is caused by a change in the kernel:
+>>>>>>>> In Linux 6.15, certain memblock sections are now marked as
+>>>>>>>> Reserved in /proc/iomem. The kexec tool excludes all Reserved
+>>>>>>>> regions when generating the vmcore, so these sections are missing from the dump.
+>>>>>>>> How are you collecting the /proc/vmcore file? A full set of commands would be helpful.
+>>>>>> We’ve defined in our system that when a process crashes, we call panic().
+>>>>>> To handle crash recovery, we're using kexec with the following command:
+>>>>>> kexec -p /Image --initrd=/rootfs.cpio --append "console=${con} earlycon=${earlycon} no4lvl"
+>>>>>>
+>>>>>> To simulate crash, we trigger it using:
+>>>>>> sleep 100 & kill -6 $!
+>>>>>>
+>>>>>> This boots into the crash kernel (kdump), where we then copy the /proc/vmcore file back to the host for analysis.
+>>>>>>
+>>>>>>>> However, the kernel still uses addresses in these regions—for
+>>>>>>>> example, for IRQ pointers. Since the crash tool needs access to
+>>>>>>>> these memory areas to function correctly, their exclusion breaks the analysis.
+>>>>>>> Wdym with "IRQ pointers"? Also, what version (sha1) of crash are you using?
+>>>>>>>
+>>>>>>> We are currently using crash-utility version 9.0.0 (master).
+>>>>>>>    From the crash analysis logs, we observed errors like:
+>>>>>>>
+>>>>>> "......
+>>>>>> IRQ stack pointer[0] is  ffffffd6fbdcc068
+>>>>>>> crash: read error: kernel virtual address: ffffffd6fbdcc068  type: "IRQ stack pointer"
+>>>>>> .....
+>>>>>>
+>>>>>>> <read_kdump: addr: ffffffff80edf1cc paddr: 8010df1cc cnt: 4>
+>>>>>> <readmem: ffffffd6fbdd6880, KVADDR, "runqueues entry (per_cpu)",
+>>>>>> 3456, (FOE), 55acf03963e0>
+>>>>>>> read_kdump: addr: ffffffd6fbdd6880 paddr: 8fbdd6880 cnt: 1920<
+>>>>>> crash: read error: kernel virtual address: ffffffd6fbdd6880  type: "runqueues entry (per_cpu)"
+>>>>> I can't reproduce this issue on qemu, booting with sv39. I'm using the latest kexec-tools (which recently merged riscv .support), crash 9.0.0 and kernel 6.16.0-rc4. Note that I'm using crash in qemu.
+>>>>>
+>>>>> Are you able to reproduce this on qemu too?
+>>>> Yes, I am using qemu too on main and crash kernel, with latest
+>>>> kexec-tools, crash 9.0.0 and kernel 6.15
+>>>>
+>>>>
+>>>>> Maybe that's related to the config, can you share your config?
+>>>> this is my dev_config
+>>>>
+>>>> CONFIG_SYSVIPC=y
+>>>> CONFIG_POSIX_MQUEUE=y
+>>>> CONFIG_AUDIT=y
+>>>> CONFIG_NO_HZ_IDLE=y
+>>>> CONFIG_HIGH_RES_TIMERS=y
+>>>> CONFIG_BPF_SYSCALL=y
+>>>> CONFIG_PREEMPT_RT=y
+>>>> CONFIG_TASKSTATS=y
+>>>> CONFIG_TASK_DELAY_ACCT=y
+>>>> CONFIG_PSI=y
+>>>> CONFIG_IKCONFIG=y
+>>>> CONFIG_IKCONFIG_PROC=y
+>>>> CONFIG_CGROUPS=y
+>>>> CONFIG_MEMCG=y
+>>>> CONFIG_CGROUP_SCHED=y
+>>>> CONFIG_CFS_BANDWIDTH=y
+>>>> CONFIG_RT_GROUP_SCHED=y
+>>>> CONFIG_CGROUP_PIDS=y
+>>>> CONFIG_CGROUP_FREEZER=y
+>>>> CONFIG_CGROUP_HUGETLB=y
+>>>> CONFIG_CPUSETS=y
+>>>> CONFIG_CGROUP_DEVICE=y
+>>>> CONFIG_CGROUP_CPUACCT=y
+>>>> CONFIG_CGROUP_PERF=y
+>>>> CONFIG_CGROUP_BPF=y
+>>>> CONFIG_NAMESPACES=y
+>>>> CONFIG_USER_NS=y
+>>>> CONFIG_CHECKPOINT_RESTORE=y
+>>>> CONFIG_BLK_DEV_INITRD=y
+>>>> CONFIG_EXPERT=y
+>>>> CONFIG_PROFILING=y
+>>>> CONFIG_KEXEC=y
+>>>> CONFIG_ARCH_VIRT=y
+>>>> CONFIG_NONPORTABLE=y
+>>>> CONFIG_SMP=y
+>>>> CONFIG_NR_CPUS=32
+>>>> CONFIG_HZ_1000=y
+>>>> CONFIG_CPU_IDLE=y
+>>>> CONFIG_MODULES=y
+>>>> CONFIG_MODULE_UNLOAD=y
+>>>> CONFIG_IOSCHED_BFQ=y
+>>>> CONFIG_PAGE_REPORTING=y
+>>>> CONFIG_PERCPU_STATS=y
+>>>> CONFIG_NET=y
+>>>> CONFIG_PACKET=y
+>>>> CONFIG_UNIX=y
+>>>> CONFIG_XFRM_USER=m
+>>>> CONFIG_INET=y
+>>>> CONFIG_IP_MULTICAST=y
+>>>> CONFIG_IP_ADVANCED_ROUTER=y
+>>>> CONFIG_INET_ESP=m
+>>>> CONFIG_NETWORK_SECMARK=y
+>>>> CONFIG_NETFILTER=y
+>>>> CONFIG_IP_NF_IPTABLES=y
+>>>> CONFIG_IP_NF_FILTER=y
+>>>> CONFIG_BRIDGE=m
+>>>> CONFIG_BRIDGE_VLAN_FILTERING=y
+>>>> CONFIG_VLAN_8021Q=m
+>>>> CONFIG_NET_SCHED=y
+>>>> CONFIG_NET_CLS_CGROUP=m
+>>>> CONFIG_NETLINK_DIAG=y
+>>>> CONFIG_NET_L3_MASTER_DEV=y
+>>>> CONFIG_CGROUP_NET_PRIO=y
+>>>> CONFIG_FAILOVER=y
+>>>> CONFIG_DEVTMPFS=y
+>>>> CONFIG_DEVTMPFS_MOUNT=y
+>>>> CONFIG_MTD=y
+>>>> CONFIG_MTD_BLOCK=y
+>>>> CONFIG_MTD_CFI=y
+>>>> CONFIG_MTD_CFI_INTELEXT=y
+>>>> CONFIG_MTD_PHYSMAP=y
+>>>> CONFIG_MTD_PHYSMAP_OF=y
+>>>> CONFIG_BLK_DEV_LOOP=y
+>>>> CONFIG_BLK_DEV_LOOP_MIN_COUNT=0
+>>>> CONFIG_VIRTIO_BLK=y
+>>>> CONFIG_SCSI=y
+>>>> CONFIG_BLK_DEV_SD=y
+>>>> CONFIG_SCSI_VIRTIO=y
+>>>> CONFIG_MD=y
+>>>> CONFIG_BLK_DEV_DM=y
+>>>> CONFIG_NETDEVICES=y
+>>>> CONFIG_MACB=y
+>>>> CONFIG_PCS_XPCS=m
+>>>> CONFIG_SERIO_LIBPS2=y
+>>>> CONFIG_VT_HW_CONSOLE_BINDING=y
+>>>> CONFIG_LEGACY_PTY_COUNT=16
+>>>> CONFIG_SERIAL_8250=y
+>>>> CONFIG_SERIAL_8250_CONSOLE=y
+>>>> CONFIG_SERIAL_OF_PLATFORM=y
+>>>> CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
+>>>> CONFIG_VIRTIO_CONSOLE=y
+>>>> CONFIG_HW_RANDOM=y
+>>>> CONFIG_HW_RANDOM_VIRTIO=y
+>>>> CONFIG_I2C=y
+>>>> CONFIG_I2C_DESIGNWARE_CORE=y
+>>>> CONFIG_SPI=y
+>>>> CONFIG_PINCTRL=y
+>>>> CONFIG_PINCTRL_SINGLE=y
+>>>> CONFIG_GPIOLIB=y
+>>>> CONFIG_GPIO_SYSFS=y
+>>>> CONFIG_GPIO_DWAPB=y
+>>>> CONFIG_GPIO_SIFIVE=y
+>>>> CONFIG_POWER_SUPPLY=y
+>>>> CONFIG_WATCHDOG=y
+>>>> CONFIG_WATCHDOG_CORE=y
+>>>> CONFIG_REGULATOR=y
+>>>> CONFIG_REGULATOR_FIXED_VOLTAGE=y
+>>>> CONFIG_BACKLIGHT_CLASS_DEVICE=m
+>>>> CONFIG_SCSI_UFSHCD=y
+>>>> CONFIG_SCSI_UFSHCD_PLATFORM=y
+>>>> CONFIG_SCSI_UFS_DWC_TC_PLATFORM=y
+>>>> CONFIG_RTC_CLASS=y
+>>>> CONFIG_RTC_DRV_M41T80=y
+>>>> CONFIG_DMADEVICES=y
+>>>> CONFIG_SYNC_FILE=y
+>>>> CONFIG_COMMON_CLK_EYEQ=y
+>>>> CONFIG_RPMSG_CHAR=y
+>>>> CONFIG_RPMSG_CTRL=y
+>>>> CONFIG_RPMSG_VIRTIO=y
+>>>> CONFIG_RESET_CONTROLLER=y
+>>>> CONFIG_RESET_SIMPLE=y
+>>>> CONFIG_GENERIC_PHY=y
+>>>> CONFIG_EXT4_FS=y
+>>>> CONFIG_EXT4_FS_POSIX_ACL=y
+>>>> CONFIG_EXT4_FS_SECURITY=y
+>>>> CONFIG_MSDOS_FS=y
+>>>> CONFIG_VFAT_FS=y
+>>>> CONFIG_TMPFS=y
+>>>> CONFIG_TMPFS_POSIX_ACL=y
+>>>> CONFIG_HUGETLBFS=y
+>>>> CONFIG_KEYS=y
+>>>> CONFIG_SECURITY=y
+>>>> CONFIG_SECURITYFS=y
+>>>> CONFIG_SECURITY_NETWORK=y
+>>>> CONFIG_SECURITY_PATH=y
+>>>> CONFIG_CRYPTO_RSA=y
+>>>> CONFIG_CRYPTO_ECB=y
+>>>> CONFIG_CRYPTO_BLAKE2B=m
+>>>> CONFIG_CRYPTO_XXHASH=m
+>>>> CONFIG_CRYPTO_USER_API_HASH=y
+>>>> CONFIG_CRC_CCITT=m
+>>>> CONFIG_CRC_ITU_T=y
+>>>> CONFIG_CRC7=y
+>>>> CONFIG_LIBCRC32C=m
+>>>> CONFIG_PRINTK_TIME=y
+>>>> CONFIG_DYNAMIC_DEBUG=y
+>>>> CONFIG_DEBUG_INFO_DWARF5=y
+>>>> CONFIG_DEBUG_FS=y
+>>>> CONFIG_DEBUG_PAGEALLOC=y
+>>>> CONFIG_PTDUMP_DEBUGFS=y
+>>>> CONFIG_SCHED_STACK_END_CHECK=y
+>>>> CONFIG_DEBUG_VM=y
+>>>> CONFIG_DEBUG_VM_PGFLAGS=y
+>>>> CONFIG_DEBUG_MEMORY_INIT=y
+>>>> CONFIG_DEBUG_PER_CPU_MAPS=y
+>>>> CONFIG_SOFTLOCKUP_DETECTOR=y
+>>>> CONFIG_WQ_WATCHDOG=y
+>>>> CONFIG_DEBUG_RT_MUTEXES=y
+>>>> CONFIG_DEBUG_SPINLOCK=y
+>>>> CONFIG_DEBUG_ATOMIC_SLEEP=y
+>>>> CONFIG_DEBUG_LIST=y
+>>>> CONFIG_DEBUG_PLIST=y
+>>>> CONFIG_DEBUG_SG=y
+>>>> CONFIG_RCU_EQS_DEBUG=y
+>>>> CONFIG_MEMTEST=y
+>>>>
+>>>>>> These failures occur consistently for addresses in the 0xffffffd000000000 region.
+>>>>> FYI, this region is the direct mapping (see Documentation/arch/riscv/vm-layout.rst).
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>> Alex
+>>>>>
+>>> Hi Alex!
+>>>
+>>> Do I have something to try or help to process this issue?
+>>> maybe, can you give your Config and I will try it on my system?
+>>> Any more information I can share?
+>>
+>> So I'm able to reproduce your issue with your config, it only happens with kexec_load(), not kexec_file_load().
+>>
+>> Your patch does not fix the problem for me, makedumpfile still fails. I spent quite some time looking for the code that parses the memory regions and exposes them as PT_LOAD segments in vmcore, but I did not find it, do you know where that happens for kexec_load()?
+>>
+>> Thanks,
+>>
+>> Alex
+>>
+>>
+> The code that parses memory regions is located in kexec-tools.
 
-I bet it doesn't - it is likely to fail somewhere else instead.
-While 20 is probably too low, the real issue seems to be that
-the hotplug notifications need rate limiting.
 
-	David
+Damn, I was not looking there!
 
-> > 
-> > I saw the problem with qemu 10.0.2 using these commands:
-> > qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic
-> > 
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-> > ---
-> >   kernel/fork.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index 7966c9a1c163..388299525f3c 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -115,7 +115,7 @@
-> >   /*
-> >    * Minimum number of threads to boot the kernel
-> >    */
-> > -#define MIN_THREADS 20
-> > +#define MIN_THREADS 600
-> >   
-> >   /*
-> >    * Maximum number of threads  
-> 
-> 
 
+>
+> To fix the issue with missing memory regions in the vmcore, we need to ensure that kexec-tools does not exclude the Reserved-memblock sections when generating ELF headers for kexec_load().
+
+
+I'm still not in favor with this solution, that does not sound right.
+
+I think we should not exclude the "Reserved" regions which lie inside 
+"System RAM" region. The problem is that we mark "nomap" regions as 
+"Reserved" too, I would say this is where we are wrong: "nomap" regions 
+don't even have direct mapping, so they should be presented as a hole 
+rather than "Reserved". And that would allow us to not exclude the 
+"Reserved" regions.
+
+@Simon, @Pnina WDYT?
+
+Thanks,
+
+Alex
+
+
+>
+> I’ve added a patch to handle this, and plan to submit it upstream to kexec-tools once this approach is confirmed and approved.
+>
+> Kexec-tools patch:
+> ---
+> diff --git a/kexec/arch/riscv/kexec-riscv.c b/kexec/arch/riscv/kexec-riscv.c
+> index f34b468..1a93b51 100644
+> --- a/kexec/arch/riscv/kexec-riscv.c
+> +++ b/kexec/arch/riscv/kexec-riscv.c
+> @@ -421,8 +421,11 @@ static bool to_be_excluded(char *str, unsigned long long start, unsigned long lo
+>   	    !strncmp(str, KERNEL_CODE, strlen(KERNEL_CODE)) ||
+>   	    !strncmp(str, KERNEL_DATA, strlen(KERNEL_DATA)))
+>   		return false;
+> -	else
+> -		return true;
+> +
+> +	if (!strncmp(str, "Reserved-memblock", strlen("Reserved-memblock")))
+> +		return false;
+> +
+> +	return true;
+>   }
+>   
+>   int get_memory_ranges(struct memory_range **range, int *num_ranges,
+> ---
+>
+> With this patch, the kexec-tools will no longer exclude the Reserved-memblock regions, allowing the crash tool to access the necessary memory areas for analysis.
+>
+> Thanks,
+> Pnina
+>
+>>> Thanks a lot,
+>>> Pnina
+>>>
+>>>>>> Upon inspection, we confirmed that the physical addresses corresponding to those virtual addresses are not present in the vmcore, as they fall under Reserved memory sections.
+>>>>>> We tested a patch to kexec-tools that prevents exclusion of the Reserved-memblock section from the vmcore. With this patch, the issue no longer occurs, and crash analysis succeeds.
+>>>>>> Note: I suspect the same issue exists on ARM64, as both the signal.c and kexec-tools implementations are similar.
+>>>>>>
+>>>>>>> Thanks!
+>>>>>>> Björn
+>>> _______________________________________________
+>>> linux-riscv mailing list
+>>> linux-riscv@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
