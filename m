@@ -1,123 +1,128 @@
-Return-Path: <linux-kernel+bounces-732961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D884FB06E32
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19607B06E2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228654A4CAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:47:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD054A45F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BBE288C89;
-	Wed, 16 Jul 2025 06:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D40128850E;
+	Wed, 16 Jul 2025 06:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAl3t/XO"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D69Z7lYm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F01828507C
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B92A946C;
+	Wed, 16 Jul 2025 06:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752648441; cv=none; b=i5QrrA/FzeCvTNMbUOjnJ4CaYRbnR/DnI8WX+/Csa8PENJzwnsYP118QGHzDomlo74BQHxt7W/sfysaC6Diq3qTvaRp6JewyC6vrdHZt5wf919bVJD0MJOf1cmDf9XhFGhEuaNt61RjUzS2ISA92LYg4boCajUrcQ1wuZrQwUVY=
+	t=1752648414; cv=none; b=OA2bTyOPyS2JOJMzyJNIhANwFumpKlsjoZLl8bUoUM5C9aYRxPAEPWoy9HZx7JuzRv1ZCMiLAeluvZLsbkyixVEj0HQuu9iK3X5+FsJvciGLVGXbNHI+m4LmoQf6kaTN7OO2RmdCB0K2ot4tE8uwuP+fWno/avZtrSYVsFKbt4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752648441; c=relaxed/simple;
-	bh=kvPpp9MFKdrAeRON6ELJLTeQ9H2PXdIO/ZWgGBU8IUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FiyLr8s9IamulD6fhr9RZKSB8YqZDDUN13JV6D3zjSYirg0NsoVL1ee75MF+d2txPoqP3NtEkD3lvGdyiu8VHS+sp3k4xKJ/bgM+d2aQxlixpsnA19XHR6AAIeLt/8Qf/AsVa5IswiCvudonhnjcapS+5M6R5ThPS6/I90vy3fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CAl3t/XO; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-748feca4a61so3574525b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 23:47:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752648440; x=1753253240; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6BXPUv4hT5+sf8WKiS8i6UVurS1TbDz8izWFqwtyzG4=;
-        b=CAl3t/XOtsYvzJqMrqoxnpcNCHDq62t4hhTc0uCKtCZF+YbvyQFIjokxO+w2RcuGCA
-         LgWV2ZIIohiKFvbhnDqrf4HKL2nPoh0wgqhQ/PY1amfqIraZgZAf6bJSNJgl5RpF4Zr3
-         72Ys00ZVaBEgo3AUyXk1O2eF90SXcJfN3/Nd8g41ygDC0bZACncDjD9kjZCRBpShU9YD
-         /XmphsKDbt7TeG9N9dWwJSM/RUPN+bqLyrQBBQXeLYF12ziuCRKZYUzS0ZdSayO8HmpW
-         cK0R3URMEQfx+6oThYDWViOspbkxOSaN3LBiH2gBg68jAiOxw9g3L3BhisP0ZHMcbHl0
-         at1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752648440; x=1753253240;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6BXPUv4hT5+sf8WKiS8i6UVurS1TbDz8izWFqwtyzG4=;
-        b=Z63QmZyGl1sQAv89nZKvgA1TjV/Pl8OYiW9vxY2OnsIAmWBX0zjIJ71Nq+1DbQvEBm
-         EUalzSqqg5u5a5d6cv47hzuZDu+7GahwX3fo2abb2VFmAajTWLIAaWcX45rVjTo3fGfB
-         Zvh3z6EwfsVmOPh+pqegzNe3QUSIm+yduBDcJzRuRGyH7JAbB59j2+PXfwHvCOB3WUwg
-         8troAo1Ube9niPNTWkRY3ko53hUSnHnF2Dl+au3BfISzwmh6CYU2pNB+K7O6noH+g+m+
-         mFG1vvuyPh+CKJtmg1hiaMdTBwlK5u7w7ldf1nUPDCnII3CyxclqTL2MKOtiJkzZ6dXH
-         mL7g==
-X-Gm-Message-State: AOJu0Yxd/WXiCz6IHMPEgmJ3ZijpKA5vJmeXsG3io0hWsOPCKLR3y238
-	3GZS2hZSaqcT1EUSQAw5OBAiG+6l1qAvtCaPSAhAov9C1eVh5wkJvUgXlw3BmKfLrw==
-X-Gm-Gg: ASbGncvLCvXANhQpfhx1dCH2DM67hGv9gJ7qIn2K3kczuxO8BY8r4s7W/okISOa0Wdj
-	drOL8zFVhXPwxyQQKLFhwQMPHM+ya4HTdF1zby0+kflUaHWKT8RJ+6heM4k5YaBLYpR9WRAAP2I
-	vyhu+ZPyuFfuZ1BY2O0kt3nH2pCjsaYAKRLwsFV+OqN9pW3OCjw+UYrIDvooVWDu1Br6JHp8Fqa
-	Y0n/HD6tZxhpMwTakyJNfUg0AZ+MMDNyok3NgBxgYcPJAtWzGuJVOv5eaXpPD1wsy5Z7rsDtzou
-	TjTE4o0rxdOu5waD1HGpXN4W1+r+1flBF+aBlMGKShAedTqsRxEH8L9m7QdyevuBj+PhRNgZYcs
-	/vuO8pofnTNs+BTzF35HEk1ZFQLkoExNqT1c+HJBSMopb9wdG6ZngHTnBBmDClA==
-X-Google-Smtp-Source: AGHT+IE9mwOZZnfGhVvSf1vEFskUprRoKDGdNARAL9a9dV/1r16DYiMjYxwueqPpHCH148deT/QN3A==
-X-Received: by 2002:a05:6a00:a15:b0:742:3cc1:9485 with SMTP id d2e1a72fcca58-75723e744b5mr2006297b3a.12.1752648439639;
-        Tue, 15 Jul 2025 23:47:19 -0700 (PDT)
-Received: from max-MacBookPro.. (36-237-135-199.dynamic-ip.hinet.net. [36.237.135.199])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f4cb57sm13825041b3a.136.2025.07.15.23.47.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 23:47:19 -0700 (PDT)
-From: Meng Shao Liu <sau525@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	visitorckw@gmail.com,
-	Meng Shao Liu <sau525@gmail.com>
-Subject: [PATCH v3 2/2] samples/kobject: make attribute_group const
-Date: Wed, 16 Jul 2025 14:46:29 +0800
-Message-ID: <dc94227eaf337a2b92ab77dffa0da9f7f1f84c4e.1752646650.git.sau525@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <5be61d284a1850f573658f1c105f0b6062e41332.1752646650.git.sau525@gmail.com>
-References: <5be61d284a1850f573658f1c105f0b6062e41332.1752646650.git.sau525@gmail.com>
+	s=arc-20240116; t=1752648414; c=relaxed/simple;
+	bh=dekmnBHsI8H/8ZSJKbqN4yDUeZEh6K6aQQaHLWxGQuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEREbOp4zgVLlGR4eWyTV+vSSj4miC6pe9VoGkkgqP33U6E+kGwWPEjSZ2qnWUr9m3KsZ3AIfavz7fCIPDP/hUmxhtHb2/qJvvarTpHOChtZpUHalMZ3DLB8vU8c1C4l3l4E4MscVvhj3Xg911ebeCKPH6/O2LsT0hnIGLCznKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D69Z7lYm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E49C4CEF0;
+	Wed, 16 Jul 2025 06:46:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752648413;
+	bh=dekmnBHsI8H/8ZSJKbqN4yDUeZEh6K6aQQaHLWxGQuM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D69Z7lYmx1h67mNQ6tg1crx83Z53yGBMhXxn3Vov2/RFq+LhIKx118NzYTC918nIx
+	 x3qFK0OsG0Ho+EGToNZoCjpvuiNy96e4Cnb6CRDV4qtpRwXP8Hj/ofOonU70DITvF7
+	 XD4tctlR3kQY67eGmAymmCIxgWy9cdTYHdw7wfdAapGcWvAE8BXdAO+fBYHsmbvmzI
+	 OEDZYWFZbtyfWpZcFXcOGNe0N8gmEU2llyIM+67dBTmpo2tedO4A+N3JHrl8u1+/Nx
+	 2mdpVT0CAhvns8rCGjUuQojot1D3tEOWAzeA30UI6+ITY6AUs9hYyYipxZ408B3BH9
+	 ycKrx6Op/WlQA==
+Date: Wed, 16 Jul 2025 12:16:42 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
+ notifier callback
+Message-ID: <qg4dof65dyggzgvkroeo2suhhnvosqs3dnkrmsqpbf4z67dcht@ltzirahk2mxd>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
+ <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
+ <jdnjyvw2kkos44unooy5ooix3yn2644r4yvtmekoyk2uozjvo5@atigu3wjikss>
+ <eccae2e8-f158-4501-be21-e4188e6cbd84@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <eccae2e8-f158-4501-be21-e4188e6cbd84@oss.qualcomm.com>
 
-The attr_group structures are allocated once and never modified at
-runtime.  Also to match the const‑qualified parameter of
-sysfs_create_group().
+On Wed, Jul 16, 2025 at 10:24:23AM GMT, Krishna Chaitanya Chundru wrote:
+> 
+> 
+> On 7/15/2025 4:06 PM, Manivannan Sadhasivam wrote:
+> > On Tue, Jul 15, 2025 at 11:54:48AM GMT, Konrad Dybcio wrote:
+> > > On 7/14/25 8:01 PM, Manivannan Sadhasivam wrote:
+> > > > It allows us to group all the settings that need to be done when a PCI
+> > > > device is attached to the bus in a single place.
+> > > > 
+> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > > ---
+> > > >   drivers/pci/controller/dwc/pcie-qcom.c | 3 +--
+> > > >   1 file changed, 1 insertion(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > index b4993642ed90915299e825e47d282b8175a78346..b364977d78a2c659f65f0f12ce4274601d20eaa6 100644
+> > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > @@ -1616,8 +1616,6 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> > > >   		pci_lock_rescan_remove();
+> > > >   		pci_rescan_bus(pp->bridge->bus);
+> > > >   		pci_unlock_rescan_remove();
+> > > > -
+> > > > -		qcom_pcie_icc_opp_update(pcie);
+> > > >   	} else {
+> > > >   		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+> > > >   			      status);
+> > > > @@ -1765,6 +1763,7 @@ static int pcie_qcom_notify(struct notifier_block *nb, unsigned long action,
+> > > >   	switch (action) {
+> > > >   	case BUS_NOTIFY_BIND_DRIVER:
+> > > >   		qcom_pcie_enable_aspm(pdev);
+> > > > +		qcom_pcie_icc_opp_update(pcie);
+> > > 
+> > > So I assume that we're not exactly going to do much with the device if
+> > > there isn't a driver for it, but I have concerns that since the link
+> > > would already be established(?), the icc vote may be too low, especially
+> > > if the user uses something funky like UIO
+> > > 
+> > 
+> > Hmm, that's a good point. Not enabling ASPM wouldn't have much consequence, but
+> > not updating OPP would be.
+> > 
+> > Let me think of other ways to call these two APIs during the device addition. If
+> > there are no sane ways, I'll drop *this* patch.
+> > 
+> How about using enable_device in host bridge, without pci_enable_device
+> call the endpoints can't start the transfers. May be we can use that.
+> 
 
-Signed-off-by: Meng Shao Liu <sau525@gmail.com>
----
-V2 -> V3: Add missing version tag to subject line.
-V1 -> V2: corrected my name, thread the patch series, and remove
-incorrect commit message "No functional change".
+Q: Who is going to call pci_enable_device()?
+A: The PCI client driver
 
- samples/kobject/kobject-example.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is same as relying on BUS_NOTIFY_BIND_DRIVER notifier.
 
-diff --git a/samples/kobject/kobject-example.c b/samples/kobject/kobject-example.c
-index e6d7fc18e..36d87ca0b 100644
---- a/samples/kobject/kobject-example.c
-+++ b/samples/kobject/kobject-example.c
-@@ -102,7 +102,7 @@ static struct attribute *attrs[] = {
-  * created for the attributes with the directory being the name of the
-  * attribute group.
-  */
--static struct attribute_group attr_group = {
-+static const struct attribute_group attr_group = {
- 	.attrs = attrs,
- };
- 
+- Mani
+
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
