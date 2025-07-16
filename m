@@ -1,300 +1,203 @@
-Return-Path: <linux-kernel+bounces-733499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D664EB0757C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:22:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08173B07582
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2120168AD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:22:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E102E7A7CC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C062F4A1D;
-	Wed, 16 Jul 2025 12:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgVlbgOB"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76AA2F509E;
+	Wed, 16 Jul 2025 12:23:59 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B2123ABB0;
-	Wed, 16 Jul 2025 12:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AD42F3C30;
+	Wed, 16 Jul 2025 12:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752668533; cv=none; b=j6jEYH/sfgXinErN5PYqW8i5d6eEDVwklA5qrVojQnHQZTT034ZEHELOmin6Ut4np8XvYyUGimBOFyleQpTBSp007lcND7ljGMjzhWFXVIkHzc5OjD/Uuw8/IknG6s/reSaQ0rguhW0OGo3dRJmmIbJ8XQkydbF6GcycvntUnjc=
+	t=1752668639; cv=none; b=Y/HHM8XaU6ApVP7hZJp5EGa6iFDTDZiQoDXqOnPk21dbT77HzmR+byHl5F5QyT0qdNN3Eof60DtpVS6gmKd4qQqo5A4/Ecmf/ZuxwJEteFZFGbFKvt2dn5Aj0cu1Eweb4XJAxpX9St5i68G5AmHm9YjaYINeUH1tuaeGr1vnwX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752668533; c=relaxed/simple;
-	bh=EJGOiFH+EU5CNzkZ/PqBKWLV7F65x+cAx3JuBIlqwMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hC7lNnj5ubunVbaEUnaN9VY4I+GkChnSDP/W2G1DaiaeZ44oLR9KX7DcAq7WwEKhWXhMf7yUzlSdXAd6iXkRlH1cpx24XSAUePkuTtfkzPDlRpJ47PPybfOxxDk01yR3ep9BQrzXX9BmTplR9XEE2uSS277d8FopMsaDcq9iUKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EgVlbgOB; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-73e650f3c31so250702a34.3;
-        Wed, 16 Jul 2025 05:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752668530; x=1753273330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G+tnr3e4/mymYLtJajATmZkmmv8sB/rgRTqanOQGPLM=;
-        b=EgVlbgOBQgh/E+4O+gjUs5b9p6mZ2kBplWx/7gaJ4/Oa6kYyTtPo/H1yyKuIcTbTYH
-         +BWnLtBQbTgMCge49tSL4g/K+Kctu8n1kJ4EfSyzipMPyHVKVIWp0q7uRY9RT3/h8hWa
-         OLwTi6aY45LM+HM4dvzHcBNgyS7AlGRg9VrbKqw3pkNFhKde8behbgKFnCokZV1LVh1/
-         qk7et4Nc+bO8ihwtPzFlGM2oiO8M0R+lqo18l6zNkz509lKOxH3VBTRyLHxfxUv5IljD
-         mfswZ+JUQHuaNKdB2pdZoMbIvX2n9OidfJN2WEm2CDxBvVADaRUrJpaLUD4sSvrT4U8A
-         TF4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752668530; x=1753273330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G+tnr3e4/mymYLtJajATmZkmmv8sB/rgRTqanOQGPLM=;
-        b=eHHYWVMz82PKS1bOTMlc3PGyIz/PlOo4tsHOPR1URws3aSvesLKiHEIJ7uLzvTTefY
-         Pqabh57Ff0lCNZFwY80MT9SH8sXM3H0/vZn9B31cn+u3y72yaRzJniuDseWK2tT/JIv7
-         ydzidxTN/A23s2LDTh35DSMwXxP5AKZ68kzIdtr4ajjcsChpL4/JH/RZeQsas+GqMSLa
-         RMvPhQSDRrrvknXt8Cek9LtfDcGQphACJ8ZQfOHWUYwDPeD1pBP0TUHkV3I8nB97wDgn
-         /1zGTTl+LkpiKJsRVMcf5vQyB0rikJ0WCNvLlYnwsSZmC9s9Qia3Sf9i03We011/1r/2
-         TtMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUG5MOT7Ads1MOBFhhqcO58mHzC0v9NQLqbuEx96uVjaPHAudy4KMoxEp/IQ46jbY459Lk=@vger.kernel.org, AJvYcCVtNFhHUHECmOr7N6IYykfOo6sjFTy3o8rTXG/ZHRzdjQ/eFzZbcSfnyRjpNv+K6Cn942GmsNM7SxuXpuh4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPVICbuw1Q9xNr99g0ByIo7wWTK/qlg/E2ioLwVmMQJReff4lN
-	AReCL7hTs2/0feGkxeJKTPDgL08urSv3caJ0W3GfGGd4tseBRdVI1qkedAkxy1pUhgXgpWFL4OD
-	p57kCEqcQWuyHsjH4ve087pdxtdYG3+c=
-X-Gm-Gg: ASbGncv0FD9dIZxnGh7PEwSvYQkbsZ0Kb89YFFf6RXKLAnz/tPl6hWVYeUyfQRfH5l+
-	FOAvmoibxAnyuPqXbimLqass3HL/UyTl29OFLmIV/f+qwGqurx4AxnzI/njL+yiOFwwtqZ5gQag
-	mTov4pD0lCswqkXFCWF7JQU+1bgQgs9tVNiSedZhLoZwZt3ms8thXk9utXwEFXUnxzFFQXgH3jb
-	Y8hmns=
-X-Google-Smtp-Source: AGHT+IGL7XLsKwtMZM/7v+p6warUqLB5ZMqihYIBn4laUW39QjxxtyX3/q++rHGgY6HE0TYuHA1qbA7pXZ2XHUIrfDk=
-X-Received: by 2002:a05:6808:d4a:b0:409:52f:b361 with SMTP id
- 5614622812f47-41ceb405866mr2082913b6e.0.1752668530359; Wed, 16 Jul 2025
- 05:22:10 -0700 (PDT)
+	s=arc-20240116; t=1752668639; c=relaxed/simple;
+	bh=KVsft50jqR5g6kgeSU/ed0dTQRFgHT8sNc6O7D0eFLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lab5tVJJHHsJEhZu/UfOOd9q0pUtQEzknKDZ2J5Q+2RLyhJ6nqvGEyMwAXNw+nHxusPdUXi1mgj7sNm6nz1j9az8MeLraU/5i47v0TVbEwhd0A7hurv003RU9c2ZeGopjxg883uYNupH3sOci6iiOD9SBpACVMwlzJ2GpsSmp/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B5FF461E6479F;
+	Wed, 16 Jul 2025 14:23:04 +0200 (CEST)
+Message-ID: <9193c59f-3982-42f4-9b05-c6cdefe3b05c@molgen.mpg.de>
+Date: Wed, 16 Jul 2025 14:23:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709055029.723243-1-duanchenghao@kylinos.cn> <20250709055029.723243-5-duanchenghao@kylinos.cn>
-In-Reply-To: <20250709055029.723243-5-duanchenghao@kylinos.cn>
-From: Hengqi Chen <hengqi.chen@gmail.com>
-Date: Wed, 16 Jul 2025 20:21:59 +0800
-X-Gm-Features: Ac12FXyuUgPud7MHnYU5OY6d35OPLh1aCxgn6SeR3TFritbJv3zps56X5lpe79c
-Message-ID: <CAEyhmHS__fqHS8Bpg7+4apO7OuXG1sP3miCcAMT+Y3uU0+_xjg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] LoongArch: BPF: Add bpf_arch_xxxxx support for Loongarch
-To: Chenghao Duan <duanchenghao@kylinos.cn>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
-	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] tpm, tpm_vtpm_proxy: boot-time TPM
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-integrity@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>,
+ Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+ Jonathan Corbet <corbet@lwn.net>, Peter Huewe <peterhuewe@gmx.de>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Andrew Morton <akpm@linux-foundation.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
+ Frank van der Linden <fvdl@google.com>, linux-doc@vger.kernel.org
+References: <20250716121823.173949-1-jarkko@kernel.org>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250716121823.173949-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 9, 2025 at 1:50=E2=80=AFPM Chenghao Duan <duanchenghao@kylinos.=
-cn> wrote:
->
-> Implement the functions of bpf_arch_text_poke, bpf_arch_text_copy, and
-> bpf_arch_text_invalidate on the LoongArch architecture.
->
-> On LoongArch, since symbol addresses in the direct mapping
-> region cannot be reached via relative jump instructions from the paged
-> mapping region, we use the move_imm+jirl instruction pair as absolute
-> jump instructions. These require 2-5 instructions, so we reserve 5 NOP
-> instructions in the program as placeholders for function jumps.
->
-> Co-developed-by: George Guo <guodongtai@kylinos.cn>
-> Signed-off-by: George Guo <guodongtai@kylinos.cn>
-> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+Dear Jarkko,
+
+
+Am 16.07.25 um 14:18 schrieb Jarkko Sakkinen:
+> From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+
+Congratulations on the new(?) job! Big thanks to that company to do 
+upstream Linux kernel work.
+
+> Provide a kernel command-line parameter named as `supplicant`, which
+> contains a path to an TPM emulator binary. When defind, the kernel will
+
+defin*e*d
+
+> launch the program during boot-time.
+> 
+> This feature is most useful in feature testing e.g., in environments
+> where other means are not possible, such as CI runners. Its original use
+> case highlights also quite well of its applicability for pre-production
+> hardware: it was used to provide a TPM implemnentation for a RISC-V SoC
+
+implementation
+
+> running on FPGA with no TPM HW implementation at the time.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 > ---
->  arch/loongarch/include/asm/inst.h |  1 +
->  arch/loongarch/kernel/inst.c      | 32 +++++++++++
->  arch/loongarch/net/bpf_jit.c      | 90 +++++++++++++++++++++++++++++++
->  3 files changed, 123 insertions(+)
->
-> diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/a=
-sm/inst.h
-> index 2ae96a35d..88bb73e46 100644
-> --- a/arch/loongarch/include/asm/inst.h
-> +++ b/arch/loongarch/include/asm/inst.h
-> @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instruction i=
-nsn, struct pt_regs *regs);
->  int larch_insn_read(void *addr, u32 *insnp);
->  int larch_insn_write(void *addr, u32 insn);
->  int larch_insn_patch_text(void *addr, u32 insn);
-> +int larch_insn_text_copy(void *dst, void *src, size_t len);
->
->  u32 larch_insn_gen_nop(void);
->  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
-> diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
-> index 674e3b322..8d6594968 100644
-> --- a/arch/loongarch/kernel/inst.c
-> +++ b/arch/loongarch/kernel/inst.c
-> @@ -4,6 +4,7 @@
->   */
->  #include <linux/sizes.h>
->  #include <linux/uaccess.h>
-> +#include <linux/set_memory.h>
->
->  #include <asm/cacheflush.h>
->  #include <asm/inst.h>
-> @@ -218,6 +219,37 @@ int larch_insn_patch_text(void *addr, u32 insn)
->         return ret;
->  }
->
-> +int larch_insn_text_copy(void *dst, void *src, size_t len)
-> +{
-> +       unsigned long flags;
-> +       size_t wlen =3D 0;
-> +       size_t size;
-> +       void *ptr;
-> +       int ret =3D 0;
-> +
-> +       set_memory_rw((unsigned long)dst, round_up(len, PAGE_SIZE) / PAGE=
-_SIZE);
-> +       raw_spin_lock_irqsave(&patch_lock, flags);
-> +       while (wlen < len) {
-> +               ptr =3D dst + wlen;
-> +               size =3D min_t(size_t, PAGE_SIZE - offset_in_page(ptr),
-> +                            len - wlen);
-> +
-> +               ret =3D copy_to_kernel_nofault(ptr, src + wlen, size);
-> +               if (ret) {
-> +                       pr_err("%s: operation failed\n", __func__);
-> +                       break;
-> +               }
-> +               wlen +=3D size;
-> +       }
+> Bumped into this in my archives so thought to make it available just in
+> case anyone is interested.
 
-Again, why do you do copy_to_kernel_nofault() in a loop ?
-This larch_insn_text_copy() can be part of the first patch like
-larch_insn_gen_{beq,bne}. WDYT ?
+Do you have such a TPM emulator binary?
 
-> +       raw_spin_unlock_irqrestore(&patch_lock, flags);
-> +       set_memory_rox((unsigned long)dst, round_up(len, PAGE_SIZE) / PAG=
-E_SIZE);
+Thank you for upstreaming this.
+
+> ---
+>   .../admin-guide/kernel-parameters.txt         | 14 +++++
+>   drivers/char/tpm/tpm_vtpm_proxy.c             | 51 +++++++++++++++++++
+>   2 files changed, 65 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index f1f2c0874da9..e062de99480e 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -7230,6 +7230,20 @@
+>   			defined by Trusted Computing Group (TCG) see
+>   			https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
+>   
+> +	tpm_vtpm_proxy.supplicant= [TPM]
+> +			When defined, this field must contain a legit path to a
+> +			program emulating a TPM chip, which will be started
+> +			during the driver initialization, thus providing a
+> +			mechanism for the user space have an emulated TPM from
+> +			the get go. Kernel prepares the process with a file
+> +			pre-opened file descriptor in the index 3 for
+> +			/dev/vtpmx.
 > +
-> +       if (!ret)
-> +               flush_icache_range((unsigned long)dst, (unsigned long)dst=
- + len);
+> +			An emulator can optionally provide support for
+> +			localities by reacting to the vendor command defined
+> +			by the driver: 0x20001000. Its payload is a single
+> +			byte containing the new locality.
 > +
-> +       return ret;
-> +}
-> +
->  u32 larch_insn_gen_nop(void)
->  {
->         return INSN_NOP;
-> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-> index 7032f11d3..9cb01f0b0 100644
-> --- a/arch/loongarch/net/bpf_jit.c
-> +++ b/arch/loongarch/net/bpf_jit.c
-> @@ -4,6 +4,7 @@
->   *
->   * Copyright (C) 2022 Loongson Technology Corporation Limited
->   */
-> +#include <linux/memory.h>
->  #include "bpf_jit.h"
->
->  #define REG_TCC                LOONGARCH_GPR_A6
-> @@ -1367,3 +1368,92 @@ bool bpf_jit_supports_subprog_tailcalls(void)
->  {
->         return true;
->  }
-> +
-> +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 ip, u64 ta=
-rget)
+>   	tp_printk	[FTRACE]
+>   			Have the tracepoints sent to printk as well as the
+>   			tracing ring buffer. This is useful for early boot up
+> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+> index 0818bb517805..612f5251fdc0 100644
+> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
+> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+> @@ -51,6 +51,8 @@ struct proxy_dev {
+>   #define VTPM_PROXY_FLAGS_ALL  (VTPM_PROXY_FLAG_TPM2)
+>   
+>   static struct workqueue_struct *workqueue;
+> +static char *supplicant;
+> +module_param(supplicant, charp, 0);
+>   
+>   static void vtpm_proxy_delete_device(struct proxy_dev *proxy_dev);
+>   
+> @@ -678,6 +680,55 @@ static const struct file_operations vtpmx_fops = {
+>   	.llseek = noop_llseek,
+>   };
+>   
+> +static int vtpmx_supplicant_setup(struct subprocess_info *info, struct cred *new)
 > +{
-> +       s64 offset =3D (s64)(target - ip);
+> +	struct vtpm_proxy_new_dev dev = { .flags = VTPM_PROXY_FLAG_TPM2 };
+> +	struct file *file = vtpm_proxy_create_device(&dev);
 > +
-> +       if (offset && (offset >=3D -SZ_128M && offset < SZ_128M)) {
-> +               emit_insn(ctx, bl, offset >> 2);
-> +       } else {
-> +               move_imm(ctx, LOONGARCH_GPR_T1, target, false);
-> +               emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
-> +       }
+> +	if (IS_ERR(file))
+> +		return PTR_ERR(file);
 > +
-> +       return 0;
+> +	fd_install(dev.fd, file);
+> +	return 0;
 > +}
 > +
-> +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool is_=
-call)
+> +static void vtpmx_supplicant_cleanup(struct subprocess_info *info)
 > +{
-> +       struct jit_ctx ctx;
-> +
-> +       ctx.idx =3D 0;
-> +       ctx.image =3D (union loongarch_instruction *)insns;
-> +
-> +       if (!target) {
-> +               emit_insn((&ctx), nop);
-> +               emit_insn((&ctx), nop);
-> +               return 0;
-> +       }
-> +
-> +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T0 : LOON=
-GARCH_GPR_ZERO,
-> +                                 (unsigned long)ip, (unsigned long)targe=
-t);
 > +}
 > +
-> +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
-> +                      void *old_addr, void *new_addr)
+> +static int vtpmx_supplicant_init(void)
 > +{
-> +       u32 old_insns[5] =3D {[0 ... 4] =3D INSN_NOP};
-> +       u32 new_insns[5] =3D {[0 ... 4] =3D INSN_NOP};
-> +       bool is_call =3D poke_type =3D=3D BPF_MOD_CALL;
-> +       int ret;
+> +	static const char * const argv[] = { supplicant, NULL };
+> +	struct subprocess_info *info;
+> +	int ret;
 > +
-> +       if (!is_kernel_text((unsigned long)ip) &&
-> +               !is_bpf_text_address((unsigned long)ip))
-> +               return -ENOTSUPP;
+> +	if (!supplicant)
+> +		return 0;
 > +
-> +       ret =3D gen_jump_or_nops(old_addr, ip, old_insns, is_call);
-> +       if (ret)
-> +               return ret;
+> +	info = call_usermodehelper_setup(argv[0], (char **)argv, NULL,
+> +					 GFP_KERNEL, vtpmx_supplicant_setup,
+> +					 vtpmx_supplicant_cleanup, NULL);
+> +	if (!info)
+> +		return -ENOMEM;
 > +
-> +       if (memcmp(ip, old_insns, 5 * 4))
-> +               return -EFAULT;
+> +	ret = call_usermodehelper_exec(info, UMH_KILLABLE | UMH_NO_WAIT);
+> +	if (ret)
+> +		return ret;
 > +
-> +       ret =3D gen_jump_or_nops(new_addr, ip, new_insns, is_call);
-> +       if (ret)
-> +               return ret;
-> +
-> +       mutex_lock(&text_mutex);
-> +       if (memcmp(ip, new_insns, 5 * 4))
-> +               ret =3D larch_insn_text_copy(ip, new_insns, 5 * 4);
-> +       mutex_unlock(&text_mutex);
-> +       return ret;
+> +	return 0;
 > +}
 > +
-> +int bpf_arch_text_invalidate(void *dst, size_t len)
+> +static int vtpmx_init(void)
 > +{
-> +       int i;
-> +       int ret =3D 0;
-> +       u32 *inst;
+> +	int ret;
 > +
-> +       inst =3D kvmalloc(len, GFP_KERNEL);
-> +       if (!inst)
-> +               return -ENOMEM;
+> +	ret = vtpmx_supplicant_init();
+> +	if (ret)
+> +		return ret;
 > +
-> +       for (i =3D 0; i < (len/sizeof(u32)); i++)
-> +               inst[i] =3D INSN_BREAK;
-> +
-> +       if (larch_insn_text_copy(dst, inst, len))
-> +               ret =3D -EINVAL;
-> +
-> +       kvfree(inst);
-> +       return ret;
+> +	return misc_register(&vtpmx_miscdev);
 > +}
 > +
-> +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
-> +{
-> +       if (larch_insn_text_copy(dst, src, len))
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       return dst;
-> +}
-> --
-> 2.43.0
->
+>   static struct miscdevice vtpmx_miscdev = {
+>   	.minor = MISC_DYNAMIC_MINOR,
+>   	.name = "vtpmx",
+
+
+Kind regards,
+
+Paul
 
