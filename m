@@ -1,125 +1,171 @@
-Return-Path: <linux-kernel+bounces-733709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A128B07817
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A10B0781C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38DF07B4795
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:28:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DB8E7A7E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A642620E4;
-	Wed, 16 Jul 2025 14:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB7E21FF5C;
+	Wed, 16 Jul 2025 14:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qbqR++jt"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfowqy7L"
+Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691BD218589
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4E0262FF8;
+	Wed, 16 Jul 2025 14:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676196; cv=none; b=muRPXkD9FbJtRSpScL6bOtyMfOxWrZQUsKRiyyfRsmQ6ZHH8i8zMuWKFtXgUUXTXNYM9keEkuubmZJZRh6R9eaDzyf14rHs8nnGWNntY/IYOcO+FfulRrUy+XEZbWcPKk1yTqiC8uQcO5NOAK4KxULDw/8EX5Bqx6MhwDM4ybco=
+	t=1752676200; cv=none; b=Vd+r2AiNtOqZXL/vzImhhHyfViPPokP05osFD36dv2YDrNYRnYp961C1KmAvQaXROFkC+KDXt81j/IADz2Jw+4kXef7jklw3hMuFd7ZmnEfVomLGJb9yhkd1qBOXfCeJXuBXh7ynJ1o2TEX61RWKxLisKWBlA338Dg501WSBo1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676196; c=relaxed/simple;
-	bh=lHUAlulKvLPGKAlWK7JOVViPUVgEHzL6adbDYX1mZzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SfBnWDvNtDrgjnPYA8Rcgi5z3EjP6j7a5pEULYdeMJKIgTkQrY+EPZWFryeudXkJe/qyOiodMOvDIAgu4DbpV/pwnXODwLTUSplYiD5+mjwijQ67irlR3D5bnw5akFJMa+D71NgGEWN0eGT1OdmXa6P2mjx1UpmA6WYlD03zP7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qbqR++jt; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=i8mQE0DKmWWS88DdOJJYoFKAUkm3QS3JFwZtaaN7eno=; b=qbqR++jtGe2DLlI6pMXgV6na9C
-	KIPkGJoWcx/6Xy5GDIwJ3g/JzTyuwEPDQLITKXGCQYuswzZe4JeQRM4OIcZr5SPaTCmGpB9TQGoda
-	sENghAtCJANGeGBkl+T9g5wlORqlZDxpYH+qUQQY4kPHytNCTsjBXltZ1SZZuO3CW7Pn7wkN2gtku
-	DS7/AvY/fwSo6ZVdH2T0uZdkCJbUouUscoOLQGLO9XfkZ4QA2wLZkxIW2uZFbhdqrKfTZXNl/HhN4
-	cpmmjtcmn7bPFnHmIfUmT3BIZSrFz3nPgVuFvEXLPbK/lJm1O2IPRtqCi/l0kinBSPBZoh99+mBvp
-	0oZMcglA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc38m-0000000GpKm-1Az2;
-	Wed, 16 Jul 2025 14:29:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D74FF300186; Wed, 16 Jul 2025 16:29:46 +0200 (CEST)
-Date: Wed, 16 Jul 2025 16:29:46 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v2 0/6] futex: Use RCU-based per-CPU reference counting
-Message-ID: <20250716142946.GD905792@noisy.programming.kicks-ass.net>
-References: <20250710110011.384614-1-bigeasy@linutronix.de>
- <e0f58203-22ef-44c0-9f7b-b15c6007249b@linux.ibm.com>
- <20250715163134.pM1J2XO9@linutronix.de>
- <88edcfdf-2253-4563-a895-6e8bb1625800@linux.ibm.com>
+	s=arc-20240116; t=1752676200; c=relaxed/simple;
+	bh=R3X47Anq6N11xoa48VLLuGRxi8pi4MkwN/qO2tgC6wE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MeRmhfIIsn5buRp5NLWrTjmYnyoGJ2IFmjdOHGhBbpROQa6/33L7JfLz/SYONaBT3NFwqDomC93dG7P76hoHZPw92NSORmrAT7kNmjQymYu7/4klfwThhx5sof574GkHOKZmQZ3dWaD9H5ST8RabpI9gfbbQW8HjechStILGXWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfowqy7L; arc=none smtp.client-ip=209.85.219.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e75668006b9so6767261276.3;
+        Wed, 16 Jul 2025 07:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752676196; x=1753280996; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GncqGP7goJeoYVJ46y/gd3Gd5COzdFRWNNvDrQIFaFQ=;
+        b=cfowqy7Lu7qOIrlsx1qSyVGf9S9xOcvV4qkoXLc/g3tgDe5MOIFdF09Qrr43nSV4IW
+         ybaQx/7rJGEmOv4jW5It2StRTxxjnsJsosBt239p0gl/XOfN+nkzwdSQq6wZR+3khSf/
+         d4B6R0bLG8vPJesS5OHFuvRiSzGqotGaRpkSdCSByhNJVrcDoMNKBpfdmBL+ZDjmMW5v
+         vvvBGhSSKpYBar5gBqrMrfss++FjyUXjfqGVn7NPPa5we0aKWG5jkBh42Wl7VL3aHvFg
+         0j8mqsNjPHYo4czncKD8xoWon/RNXVr4SRHgoJXn/5X0EcV3naUcIWFLAsGEa8RY+IYD
+         e4hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752676196; x=1753280996;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GncqGP7goJeoYVJ46y/gd3Gd5COzdFRWNNvDrQIFaFQ=;
+        b=NkQ3Rdiqgsue3C88xz+UceRN3HvxzogxYeeLMniKpooh6lCTJnNexdr+NRT2Wt/viR
+         j3+TdfS+3rosoqGNOBAlkUZ1f8OYkZa/GmTCF++4riTvKQ7H+lK8OAPlBIKY7+u+Bzbp
+         c8nn2QNC4lpYVretnOz5+qSNFQJp3/AxYHR8HAmqf4IwloLhP8bKxHjxJlpuUkcjaI9h
+         0LzFWfHJlI6g6uXeHR4/B3/Sd/c3Acfbfadu9bUe845zK7tSnqxMX21SIl7k2If6tQWF
+         GXuaVo2mLsatfBKblJugPhhIXbLvpMBUw3eeXfgVVPACKi9zBghole6GCNWDS0DjIVKb
+         EDhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVLctc7TPlNyyxQLwDvc30ai0Qb8k+dq/cqXuDxGqBGI5C/v2mENAtfP3ZALXmQMs6jy+iJ9DgnD6gMo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy72245e26T7OhAyeFjG4QN1zv4f8oLzNatZNOExWERfdy0/i6
+	RHxy/eKqWKCZwibZBZFc9KiBtv3c7eXZu7j8Ag7SkUEafFS8okCLxIQZ
+X-Gm-Gg: ASbGncvEDXlXcFdqv8yY8gPfC8EvSbyRZYEuEQ3dUSydF176JqaYnwMV4Hf4nPH1Qlc
+	pcVIic0QnONyLmfKuR4/d/j9YxmRnbOiax4cMX0qwrgcDCQgYfLtG0XTz/v57UNzP2bcM395Prl
+	40JU7joCMhAytwT5A8VAHKB2dFF6KYOrY9htoZ3i/Pth0O+4J3aF/leCWyiJJNkSONtkwo1MpZ6
+	Wei97WtXRQBhvNkLXhrBooYRCF70nIa4Vq89I2PRDihdSXeC/lg8eeJQ7Jr7g8tUAiIN0UjhJLq
+	8gKknNhAynclpQeVM+NOsw7j7SKHexLm//1135vfFfmnUP48kobFu6WHugld3I5FCgD15wk+vP3
+	OqAOzxSjrGqSo7ULNiiACAH7VApfHmHKr2Imk0BfQwZCH
+X-Google-Smtp-Source: AGHT+IECZdXPUbZpvN2ZpX2PO+J3L3S4jMhg72Pi4l759WXRROZYGicT98mbxgDJQAus/1z4edwLdw==
+X-Received: by 2002:a05:690c:6f82:b0:718:4511:e173 with SMTP id 00721157ae682-7184512026dmr7358367b3.12.1752676196435;
+        Wed, 16 Jul 2025 07:29:56 -0700 (PDT)
+Received: from [10.102.6.66] ([208.97.243.82])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-717c5d734casm29278127b3.31.2025.07.16.07.29.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 07:29:56 -0700 (PDT)
+Message-ID: <67753866-5237-4758-9bf3-d6a8611ac179@gmail.com>
+Date: Wed, 16 Jul 2025 10:29:55 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88edcfdf-2253-4563-a895-6e8bb1625800@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 net] net: bridge: Do not offload IGMP/MLD messages
+To: Ido Schimmel <idosch@nvidia.com>, Joseph Huang <Joseph.Huang@garmin.com>
+Cc: netdev@vger.kernel.org, Nikolay Aleksandrov <razor@blackwall.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Tobias Waldekranz <tobias@waldekranz.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, bridge@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250714150101.1168368-1-Joseph.Huang@garmin.com>
+ <aHdF-1uIp75pqfSG@shredder>
+Content-Language: en-US
+From: Joseph Huang <joseph.huang.2024@gmail.com>
+In-Reply-To: <aHdF-1uIp75pqfSG@shredder>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 15, 2025 at 10:34:24PM +0530, Shrikanth Hegde wrote:
-
-> I did try again by going to baseline, removed BROKEN and ran below. Which gives us immutable numbers.
-> ./perf bench futex hash -Ib512
-> Averaged 1536035 operations/sec (+- 0.11%), total secs = 10
-> Futex hashing: 512 hash buckets (immutable)
+On 7/16/2025 2:26 AM, Ido Schimmel wrote:
+> On Mon, Jul 14, 2025 at 11:01:00AM -0400, Joseph Huang wrote:
+>> Do not offload IGMP/MLD messages as it could lead to IGMP/MLD Reports
+>> being unintentionally flooded to Hosts. Instead, let the bridge decide
+>> where to send these IGMP/MLD messages.
+>>
+>> Consider the case where the local host is sending out reports in response
+>> to a remote querier like the following:
+>>
+>>         mcast-listener-process (IP_ADD_MEMBERSHIP)
+>>            \
+>>            br0
+>>           /   \
+>>        swp1   swp2
+>>          |     |
+>>    QUERIER     SOME-OTHER-HOST
+>>
+>> In the above setup, br0 will want to br_forward() reports for
+>> mcast-listener-process's group(s) via swp1 to QUERIER; but since the
+>> source hwdom is 0, the report is eligible for tx offloading, and is
+>> flooded by hardware to both swp1 and swp2, reaching SOME-OTHER-HOST as
+>> well. (Example and illustration provided by Tobias.)
+>>
+>> Fixes: 472111920f1c ("net: bridge: switchdev: allow the TX data plane forwarding to be offloaded")
+>> Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
 > 
-> So, with -b 512 option, it is around 8-10% less compared to immutable.
+> I don't have personal experience with this offload, but it makes sense
+> to not offload the replication of control packets to the underlying
+> device and instead let the CPU handle it. These shouldn't be sent at an
+> high rate anyway.
+> 
+> 
+> I think you can just early return if the packet is IGMP/MLD. Something
+> like:
+> 
+> diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
+> index 95d7355a0407..9a910cf0256e 100644
+> --- a/net/bridge/br_switchdev.c
+> +++ b/net/bridge/br_switchdev.c
+> @@ -17,6 +17,9 @@ static bool nbp_switchdev_can_offload_tx_fwd(const struct net_bridge_port *p,
+>   	if (!static_branch_unlikely(&br_switchdev_tx_fwd_offload))
+>   		return false;
+>   
+> +	if (br_multicast_igmp_type(skb))
+> +		return false;
+> +
+>   	return (p->flags & BR_TX_FWD_OFFLOAD) &&
+>   	       (p->hwdom != BR_INPUT_SKB_CB(skb)->src_hwdom);
+>   }
 
-Urgh, can you run perf on that and tell me if this is due to
-this_cpu_{inc,dec}() doing local_irq_disable() or the smp_load_acquire()
-doing LWSYNC ?
+Talking about these packets being low rate, should I add unlikely() like so:
 
-Anyway, I think we can improve both. Does the below help?
+diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
+index 95d7355a0407..9a910cf0256e 100644
+--- a/net/bridge/br_switchdev.c
++++ b/net/bridge/br_switchdev.c
+@@ -17,6 +17,9 @@ static bool nbp_switchdev_can_offload_tx_fwd(const 
+struct net_bridge_port *p,
+   	if (!static_branch_unlikely(&br_switchdev_tx_fwd_offload))
+   		return false;
 
++	if (unlikely(br_multicast_igmp_type(skb)))
++		return false;
++
+   	return (p->flags & BR_TX_FWD_OFFLOAD) &&
+   	       (p->hwdom != BR_INPUT_SKB_CB(skb)->src_hwdom);
+   }
 
----
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index d9bb5567af0c..8c41d050bd1f 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -1680,10 +1680,10 @@ static bool futex_ref_get(struct futex_private_hash *fph)
- {
- 	struct mm_struct *mm = fph->mm;
- 
--	guard(rcu)();
-+	guard(preempt)();
- 
--	if (smp_load_acquire(&fph->state) == FR_PERCPU) {
--		this_cpu_inc(*mm->futex_ref);
-+	if (READ_ONCE(fph->state) == FR_PERCPU) {
-+		__this_cpu_inc(*mm->futex_ref);
- 		return true;
- 	}
- 
-@@ -1694,10 +1694,10 @@ static bool futex_ref_put(struct futex_private_hash *fph)
- {
- 	struct mm_struct *mm = fph->mm;
- 
--	guard(rcu)();
-+	guard(preempt)();
- 
--	if (smp_load_acquire(&fph->state) == FR_PERCPU) {
--		this_cpu_dec(*mm->futex_ref);
-+	if (READ_ONCE(fph->state) == FR_PERCPU) {
-+		__this_cpu_dec(*mm->futex_ref);
- 		return false;
- 	}
- 
+Thanks,
+Joseph
 
