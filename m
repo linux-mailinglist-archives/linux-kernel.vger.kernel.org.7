@@ -1,190 +1,122 @@
-Return-Path: <linux-kernel+bounces-733489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F481B07553
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:10:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E06BDB07557
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8FA4A10D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:10:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15DFF4A31E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2912F1FF4;
-	Wed, 16 Jul 2025 12:10:39 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489F92F50AA;
+	Wed, 16 Jul 2025 12:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NXbw7B8D"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83E6221F38
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167D92F49F2
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752667839; cv=none; b=h6orgCt7muXXDACrsFLVLELnjzE6JbWtOawNjD6jaf4NblOqHJYzVZK/KZ3bT5pAHQXZtrwwG/JfZob8Uc64W4+WbeniXCmu9JyrsMSL1bf+UXy3svH1htJO7diepvGzuFSCO31dd8Vy9WpbqgL7zmhD9VKxA+YgWEC6p6sDH84=
+	t=1752667844; cv=none; b=YujRBWkyMN7BhIB9VdTdMM2/rdtWoHmaxV0s3Q+NjlQR7uJcsynKDI+R1RLWZ6QLilM57gtGYOtA42W2pnOjF2syNke03GF+GvCVJwKok+N35JjLlTFudBmki9IGTOtl63lgnMZlvOmgPeglC5t+mo4sfB26LtxHH7rgQPdi94g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752667839; c=relaxed/simple;
-	bh=7xJ2p5t/r+mzVwMzdepmL+KUNKS4hy7Cg141YqK30H4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HJS7bSERH/dU098WO7+qdTaa1JkYFiKZiJ3V9UE7KCB9SzQP17xmJgYi/PY+mdM0DX1Rp0m1jaXISm8wCwcOxf3jvWTq8PqFNYfYyCLdennNtVL/TAgZtkLNHgTjglm+NbFTXZElh9y/oK8XQI2eFITSykofmcQAPK9AnPF17so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-8760733a107so726294939f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:10:36 -0700 (PDT)
+	s=arc-20240116; t=1752667844; c=relaxed/simple;
+	bh=DqrxxRzNrVElQiSFybdiqSTB8zLMpM9xyST4z/mLO2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUBsPwxnxL0O52U16q8xME9rHZZlzTppBbi/1FeS3wuTaHdwktxifI2lrzPHYB373o5FK5e0ZBUTEd/G6vO5yfYxYynIrEEXw/0ETK0TxaKceDr4oqih4s4TP9zIH5KRmp852wu9UgoZe2agu9slMrcE+gyeo3296yzCy1v92Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NXbw7B8D; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-702cbfe860cso61151326d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:10:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1752667842; x=1753272642; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WIP3ya1BLuzxXr6bkJRT0LOoJh7qbBYpTnmvsHp5Va0=;
+        b=NXbw7B8DwUBhfMUH17Cyz2zgE6kHg4vP1f/G+kjMWkL1imyVEzI18mrUVwVZTzvifU
+         H0f3U+cgmGzXyGD8v9qIPNKSbF/WskJCsEdOEpYC1JUgOF67gcSEzeHRI2qhJsVjkR4N
+         5POR77yghfIbjNVwCJJ/x8lcCndosm+fno1YHPt1RZAYJUZjsbKY9MFSvoJPcxMV8koq
+         hYAh5WWlnL9NSr7D/+3k6RkZDd7pOB5iMnTGLSsngFrMykj45mq1DxALw3E4JkPLwrHc
+         NcIX+flLMipvi/uz1LaCFIWGanTPRzn+VxwUg/Lpgd4TYX/Mfg49E0s4A60SK665mCZJ
+         0z1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752667836; x=1753272636;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FLIPCTSSWAp5+AxmumWh/mlnfhbWUMbgiH67vTJ+dHE=;
-        b=sanB0wpAle37Q/E84RQ1ylBxV2N4UXXFdCkw3DhhXtCgnFq/z8EYoNyyQ1QAzip4wT
-         K2lYpVDtZjg3rGmXJBDD7+WsRE4OWCs/RP1bbfAxBtNulhfuNtDZk3SUW4NlrmHIvpAo
-         w6700hNxxMrmDeaZ48EYjMAHkKildJcPOs79TdlRXcacYQfxKEDM9h64ojaH6kg1d1IP
-         mxcXFRaQ6lFVCQjNzNKdkHcJ+qUdbXZueB1Rtbt83CJMEqhA3P6bQhEggGkY73YZDdMs
-         FyIaSfv5wIKgvJ+cagJFzVPP5ZaGPxnbdTdsSXKG0iGeYkEgDJWBdpHqVx99A9O2ywY5
-         DBnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFOu8bPtY0ouE3nYLZUh7fJur0IEw8LkCgvYoAO8cgpkPazQHkofxs+faT1Pb6VuJ+wJd0KQM/EY9OZns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjB9vBSqFRtqO11wYZXyUAUZRDRNIDW/xKhc0FeYOSyLs84Azr
-	L553gbLf4SUtl4qvdXqm2UC24Z0bE0yUUXXQoLI7zdOItPnEhipHsM5Eu9g0Z/qkQ+ymLk0Xt/t
-	4g1IZS8Hshc4QL7X4OVybLCAD2dAFYtnhYzTZtlbEU6co+IdvFgjRgFiFGE0=
-X-Google-Smtp-Source: AGHT+IGMXsjD0s5BOlHu9/8xCZQzVfHRZcrcvEqxPhxgSlfQkFJc1TKqXaDLLfE4PG18hlpIkBoGyCHL9Iq2Jk3SclvxiXB5SsOO
+        d=1e100.net; s=20230601; t=1752667842; x=1753272642;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WIP3ya1BLuzxXr6bkJRT0LOoJh7qbBYpTnmvsHp5Va0=;
+        b=WrINfOq/PFSDUpCJSKIiyky2/vCsgw/o1ysHXVz8ef3Wfg1rt07GEmmldTn9wG3gZi
+         53Bzq++PXz5BLSaVQ9n+rWv1Motnbe/CrfGGVt8fwsW5Agzx/h1QhdGDxP9NY8g0xf+c
+         TJP5sr0LGmpdCnxohobp2x0tr7s9Y4N6ALl4z69+EHOG2/twd//zRrh2ShTFpXKH82lW
+         5e3k+10hmcPSu6M3fdjYwnzxran8iTIwOSict2tJz5GMApcZDpccqbqc0AegZZf1hDbY
+         xk8IeLO3IIfKGh2RYNOMhUPf2GvvJWF6uEP0VHaDA/Q5JLiQRZ8q4PcRSoiqG0T+n6JU
+         c7GA==
+X-Forwarded-Encrypted: i=1; AJvYcCXamNfb/XIN1zizTSw/RAxWcyOJgjcP8wJBl/q8lljwOoKJcLFws3oky0kWHNb1lntFjQUG+h6zSNc4EVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdG5/iuph54KUAN8/qzwIW4LBMZCPORv76q+b/iWDX3DNiKk8V
+	NfMIPanOCEXWMcE14dxyuDraoMlwwKP6ogx3Ti0XcrAZcoJ+Tzr1QjOPd0tc+aawEOE=
+X-Gm-Gg: ASbGncserpuDC7q08ulwFbPYohGS5J+g5N6pUtJpNfvXRB5plujA6c3eqIqQKRFYiS8
+	vxFZwnWpQVrVUJ+TFyqTtJFvSYdMVHODTwc3mC181P5u88NPDrMAslooEKCi787w8IkQd/zrKae
+	/eObot46kFjJF14olWSjLOIK6VlOo/QCoVvTr02pM1LO/BZcJeW6kGJLPUHSkxkzwOi1H8nRWF8
+	a6F5jS4DDyv5jn/fyEFMrKNj84bkzTCLUCkJx/5IDTY6HdIRhtbxVHLhYi81iCgk/toaVBKwGLL
+	PdAUph1Z2bKpnwFXFQRv3s+XqhISE/KP2z4qezFubd3udSeTk8c3w7a6uDVuma2JSPg8i4ssxNA
+	CYkksZ22RwbGLOsK2jUnb3Han46QY5nJu3uAPC5AFggobXL4UWCV7qx4XSSBKFX+IcR4npWsj9A
+	==
+X-Google-Smtp-Source: AGHT+IEaMMoAabKIvy/6hUm3Pz2Mj624nFTDoPAXqr71BGISR01CFU/2f0dv9kGGDC6bv7sfs6TmXA==
+X-Received: by 2002:a05:6214:4283:b0:704:7df7:c1a0 with SMTP id 6a1803df08f44-704f47fa4bemr46732856d6.7.1752667838252;
+        Wed, 16 Jul 2025 05:10:38 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ab3d44b3d6sm51417661cf.56.2025.07.16.05.10.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 05:10:37 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uc0y4-00000008xUh-2T4l;
+	Wed, 16 Jul 2025 09:10:36 -0300
+Date: Wed, 16 Jul 2025 09:10:36 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Temerkhanov, Sergey" <sergey.temerkhanov@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v1 0/4] Implement IOMMU SVA page fault processing error
+ notifiers
+Message-ID: <20250716121036.GA2120051@ziepe.ca>
+References: <20250710134215.97840-1-sergey.temerkhanov@intel.com>
+ <20250714145658.GH1870174@ziepe.ca>
+ <MW3PR11MB46813837E82395797CEE39AF8056A@MW3PR11MB4681.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1611:b0:876:b001:2cb0 with SMTP id
- ca18e2360f4ac-879c092815bmr366741739f.11.1752667835880; Wed, 16 Jul 2025
- 05:10:35 -0700 (PDT)
-Date: Wed, 16 Jul 2025 05:10:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687796bb.a70a0220.693ce.0024.GAE@google.com>
-Subject: [syzbot] [kernel?] BUG: unable to handle kernel NULL pointer
- dereference in parse_insn
-From: syzbot <syzbot+ab8008c24e84adee93ff@syzkaller.appspotmail.com>
-To: abbotti@mev.co.uk, hsweeten@visionengravers.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MW3PR11MB46813837E82395797CEE39AF8056A@MW3PR11MB4681.namprd11.prod.outlook.com>
 
-Hello,
+On Wed, Jul 16, 2025 at 11:07:50AM +0000, Temerkhanov, Sergey wrote:
+> > -----Original Message-----
+> > From: Jason Gunthorpe <jgg@ziepe.ca>
+> > 
+> > You need to come with a driver using this as well.
+> > 
+> 
+> There is an OOT driver which would use this facility do report and
+> handle possible invalid accesses (e.g. mismatched VMA permissions)
+> during the SVA operation
 
-syzbot found the following issue on:
+Upstream a basic driver first then ask for iommu changes to enhance
+it.
 
-HEAD commit:    379f604cc3dc Merge tag 'pci-v6.16-fixes-3' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16fe6d82580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=84eae426cbd8669c
-dashboard link: https://syzkaller.appspot.com/bug?extid=ab8008c24e84adee93ff
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+This is normal stuff, we don't change the kernel to accomodate OOT
+drivers.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-379f604c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fece714f0364/vmlinux-379f604c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5b20ac59a633/bzImage-379f604c.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ab8008c24e84adee93ff@syzkaller.appspotmail.com
-
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD 69c04067 P4D 69c04067 PUD 75b59067 PMD 0 
-Oops: Oops: 0010 [#1] SMP KASAN NOPTI
-CPU: 3 UID: 0 PID: 16775 Comm: syz.1.2616 Not tainted 6.16.0-rc5-syzkaller-00224-g379f604cc3dc #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc90003e0fb68 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 00000000000065d4 RCX: ffffc9003358f000
-RDX: ffff888065e40008 RSI: 00000000000065d4 RDI: ffff888049f6c800
-RBP: ffff888065e40004 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff888049f6c800
-R13: ffff888065e40000 R14: 0000000000000001 R15: 0000000000000003
-FS:  0000000000000000(0000) GS:ffff888097820000(0063) knlGS:00000000f50aeb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 0000000075b5b000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- get_valid_routes drivers/comedi/comedi_fops.c:1305 [inline]
- parse_insn+0x789/0x1970 drivers/comedi/comedi_fops.c:1384
- do_insnlist_ioctl+0x2c6/0x6b0 drivers/comedi/comedi_fops.c:1568
- compat_insnlist drivers/comedi/comedi_fops.c:3160 [inline]
- comedi_compat_ioctl+0x7f1/0x910 drivers/comedi/comedi_fops.c:3225
- __do_compat_sys_ioctl fs/ioctl.c:1005 [inline]
- __se_compat_sys_ioctl fs/ioctl.c:948 [inline]
- __ia32_compat_sys_ioctl+0x242/0x370 fs/ioctl.c:948
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0x7c/0x3a0 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/syscall_32.c:331
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf70be579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f50ae55c EFLAGS: 00000296 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 000000008008640b
-RDX: 00000000801afec0 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
-CR2: 0000000000000000
----[ end trace 0000000000000000 ]---
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc90003e0fb68 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 00000000000065d4 RCX: ffffc9003358f000
-RDX: ffff888065e40008 RSI: 00000000000065d4 RDI: ffff888049f6c800
-RBP: ffff888065e40004 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff888049f6c800
-R13: ffff888065e40000 R14: 0000000000000001 R15: 0000000000000003
-FS:  0000000000000000(0000) GS:ffff888097820000(0063) knlGS:00000000f50aeb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 0000000075b5b000 CR4: 0000000000352ef0
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Jason
 
