@@ -1,188 +1,105 @@
-Return-Path: <linux-kernel+bounces-733133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DB4B0709F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:32:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 048EFB070B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F67850430D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:31:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62873188749D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADB82EE980;
-	Wed, 16 Jul 2025 08:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA31A2EE97A;
+	Wed, 16 Jul 2025 08:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjGFTVb7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="kw8DYr/s"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110A12EA749;
-	Wed, 16 Jul 2025 08:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14D34A11
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752654724; cv=none; b=LTYaCrc7jaZNRT3jOS+miyLLaounv2F9IzWDOJFMeNaZ6Z6ZtkEy5x0scIRgDQ0iWqfOLNPjQgJRfY6p4g5nX3zkbMTAYpEdXVoy9aad5r8ux9Yv++bZeDOo8eCcxQlzogy8qwjhj6YgRsmdIvSPMZ+Qs0ogbdyd0CRGpDc9/JU=
+	t=1752654858; cv=none; b=fO6hi6OujpCIAfOHxqHLsBt554hrwYi4gH2557n0ixgSyHYtFeqIVXLnOCoIKuQhWqbSyCGTAvWUjnqvhgmTKEY8UahT9x/TNiOc1BRpc4ziz2MBdVed+5knqHlLu0aVCFEgMmtpOBm0RHODTUI09tvzkqaG3dhhjKUMUBM2fY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752654724; c=relaxed/simple;
-	bh=pixhDAk3NXF+ez/UC4sCfxH4mfu5c2ZCe/3FOrSKxmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1JbmuQZwm0092RdX2YZ7GlHmrhDEIqFhdeWHDlSm+awzmxhyD68HsrB2c7vYn225sVKi8QFggtfDiGmfjasHezQ8Gj3OmuuvlFpEMH4AZSBThLlweJE8h+a3LAx3cn0aZ236m9eugpMK/vr2L4oBIZQo19KVEHtNN7kjqgCQfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjGFTVb7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC1AC4CEF0;
-	Wed, 16 Jul 2025 08:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752654723;
-	bh=pixhDAk3NXF+ez/UC4sCfxH4mfu5c2ZCe/3FOrSKxmA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TjGFTVb7WA8CXJ6fa9ZunnX0H7E3pACvrqlm6U6kufhsPuFT7/qKNj+2PuK4rf422
-	 +/Vz5U7FyZF1IKEu6uwNqPHz+FJaWsNVM3NJmGFvApIa55S4kznSr5h0dOm9jqrvcS
-	 ZPWl1dYW0SDaotH84/KEdVcBl9HWmemC76mRyRv1mFee8RuPfM+aSSgy4AsWsR0Jtt
-	 2428KtOR29kVeXOrvqufoE3TflupQjHHf5sr6r2T2XqQCjsHhG0vGUZPWgvobe7gw3
-	 YiaNk0muRgqqvpTWNR8BqdV5pCZV+sLz8AY6vym0qlT1Prz0py2hxARudlILw5soG7
-	 GJGCOYu1gVsYQ==
-Date: Wed, 16 Jul 2025 10:31:53 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
-	"tomoyo-users_en@lists.sourceforge.net" <tomoyo-users_en@lists.sourceforge.net>, 
-	"tomoyo-users_ja@lists.sourceforge.net" <tomoyo-users_ja@lists.sourceforge.net>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "jack@suse.cz" <jack@suse.cz>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
-	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
-	"jlayton@kernel.org" <jlayton@kernel.org>, "josef@toxicpanda.com" <josef@toxicpanda.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, 
-	"m@maowtm.org" <m@maowtm.org>, "john.johansen@canonical.com" <john.johansen@canonical.com>, 
-	"john@apparmor.net" <john@apparmor.net>, 
-	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, "omosnace@redhat.com" <omosnace@redhat.com>, 
-	"takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
-	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>, "enlightened@chromium.org" <enlightened@chromium.org>
-Subject: Re: [RFC] vfs: security: Parse dev_name before calling
- security_sb_mount
-Message-ID: <20250716-unsolidarisch-sagst-e70630ddf6b7@brauner>
-References: <CAHC9VhSS1O+Cp7UJoJnWNbv-Towia72DitOPH0zmKCa4PBttkw@mail.gmail.com>
- <1959367A-15AB-4332-B1BC-7BBCCA646636@meta.com>
- <20250710-roden-hosen-ba7f215706bb@brauner>
- <5EB3EFBC-69BA-49CC-B416-D4A7398A2B47@meta.com>
- <20250711-pfirsich-worum-c408f9a14b13@brauner>
- <4EE690E2-4276-41E6-9D8C-FBF7E90B9EB3@meta.com>
- <20250714-ansonsten-shrimps-b4df1566f016@brauner>
- <3ACFCAB1-9FEC-4D4E-BFB0-9F37A21AA204@meta.com>
- <20250715-knattern-hochklassig-ddc27ddd4557@brauner>
- <B2872298-BC9C-4BFD-8C88-CED88E0B7E3A@meta.com>
+	s=arc-20240116; t=1752654858; c=relaxed/simple;
+	bh=ydOKoqOKw48ncDCsXKz/D/L7szBR62IeOqgtQXpK0a4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CTYAycTHFl4iGQhZj45BKy7YuLVF2Nblufm4aFuzBu+kOsr90okT3Lk4beZv6GQ8mbovV1ZYaNY2+9L66V5B+Ccry6Yok3wr+3zbyeVdBvhjeT+9d9asM4rNupmXueo3cUtoFCGybK9mAaaaFcrIg+PEJRO7ztjCy5M1kiR+aco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=kw8DYr/s; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1752654842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=S8/W6hICoFcDRQTv0VXVXPyibPJUZoDyo7YncpLNyV8=;
+	b=kw8DYr/sutCa5fwfr6RBJuRaN41yB1dumvTFOuKWQbwfa+vZLP1kHi/Yw98H0V/KPPKjWI
+	VGk4tZGFrnwvKC+9z/or9CX1k7C9KLok60tEV1p2jaXj442qKUwgwShGgTBmyWsOe0Q6Ur
+	OmdB889BCa9O7qG07r9Jhg0RB3hSdhOOnS5HvmYKYI2d/baPI6iqoev4tCgMj/d24HsKXD
+	piGKGzmy3L7avBwIf6jeLjMuiMAnt4jRI5N9D46DrBL4Motlt28K4xMuJ1Ws38MDyvx9Sf
+	a+Wcm/rIPrAQSfVWxz4klgccZUdFjGhOE+3UKe8idfrkr5q7y21MO+YiW5lEFg==
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Dragan Simic <dsimic@manjaro.org>,
+	Johan Jonker <jbx6244@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>
+Subject: [PATCH] arm64: dts: rockchip: Add maskrom button to R5S + R5C
+Date: Wed, 16 Jul 2025 10:33:35 +0200
+Message-ID: <20250716083355.327451-1-didi.debian@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <B2872298-BC9C-4BFD-8C88-CED88E0B7E3A@meta.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 15, 2025 at 10:31:39PM +0000, Song Liu wrote:
-> 
-> > On Jul 15, 2025, at 3:18 AM, Christian Brauner <brauner@kernel.org> wrote:
-> > On Mon, Jul 14, 2025 at 03:10:57PM +0000, Song Liu wrote:
-> 
-> 
-> [...]
-> 
-> >>> If you place a new security hook into __do_loopback() the only thing
-> >>> that I'm not excited about is that we're holding the global namespace
-> >>> semaphore at that point. And I want to have as little LSM hook calls
-> >>> under the namespace semaphore as possible.
-> >> 
-> >> do_loopback() changed a bit since [1]. But if we put the new hook 
-> >> in do_loopback() before lock_mount(), we don’t have the problem with
-> >> the namespace semaphore, right? Also, this RFC doesn’t seem to have 
-> >> this issue either.
-> > 
-> > While the mount isn't locked another mount can still be mounted on top
-> > of it. lock_mount() will detect this and lookup the topmost mount and
-> > use that. IOW, the value of old_path->mnt may have changed after
-> > lock_mount().
-> 
-> I am probably confused. Do you mean path->mnt (instead of old_path->mnt) 
-> may have changed after lock_mount()? 
+Both the R5S and R5C have a MASKROM button connected via saradc.
+For both the R5S as the R5C it's described on page 9 of their
+respective schematic, identified as 'Recovery'.
 
-I mean the target path. I forgot that the code uses @old_path to mean
-the source path not the target path. And you're interested in the source
-path, not the target path.
+Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+---
+ .../arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-> 
-> > If you have 1000 containers each calling into
-> >>> security_something_something_bind_mount() and then you do your "walk
-> >>> upwards towards the root stuff" and that root is 100000 directories away
-> >>> you've introduced a proper DOS or at least a severe new bottleneck into
-> >>> the system. And because of mount namespace propagation that needs to be
-> >>> serialized across all mount namespaces the namespace semaphore isn't
-> >>> something we can just massage away.
-> >> 
-> >> AFAICT, a poorly designed LSM can easily DoS a system. Therefore, I 
-> >> don’t think we need to overthink about a LSM helper causing DoS in 
-> >> some special scenarios. The owner of the LSM, either built-in LSM or 
-> >> BPF LSM, need to be aware of such risks and design the LSM rules 
-> >> properly to avoid DoS risks. For example, if the path tree is really 
-> >> deep, the LSM may decide to block the mount after walking a preset 
-> >> number of steps.
-> > 
-> > The scope of the lock matters _a lot_. If a poorly designed LSM happens
-> > to take exorbitant amount of time under the inode_lock() it's annoying:
-> > to anyone else wanting to grab the inode_lock() _for that single inode_.
-> > 
-> > If a poorly designed LSM does broken stuff under the namespace semaphore
-> > any mount event on the whole system will block, effectively deadlocking
-> > the system in an instant. For example, if anything even glances at
-> > /proc/<pid>/mountinfo it's game over. It's already iffy that we allow
-> > security_sb_statfs() under there but that's at least guaranteed to be
-> > fast.
-> > 
-> > If you can make it work so that we don't have to place security_*()
-> > under the namespace semaphore and you can figure out how to deal with a
-> > potential overmount racing you then this would be ideal for everyone.
-> 
-> I am trying to understand all the challenges here. 
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi b/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi
+index f4d042bdd328..e3f44ea4eabe 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi
+@@ -25,6 +25,20 @@ chosen: chosen {
+ 		stdout-path = "serial2:1500000n8";
+ 	};
+ 
++	adc-keys {
++		compatible = "adc-keys";
++		io-channels = <&saradc 0>;
++		io-channel-names = "buttons";
++		keyup-threshold-microvolt = <1800000>;
++		poll-interval = <100>;
++
++		button-maskrom {
++			label = "MASKROM";
++			linux,code = <KEY_SETUP>;
++			press-threshold-microvolt = <0>;
++		};
++	};
++
+ 	hdmi-con {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+-- 
+2.50.0
 
-As long as you're only interested in the source path's mount, you're
-fine.
-
-> 
-> It appears to me that do_loopback() has the tricky issue:
-> 
-> static int do_loopback(struct path *path, ...)
-> {
-> 	...
-> 	/* 
-> 	 * path may still change, so not a good point to add
-> 	 * security hook 
-> 	 */
-> 	mp = lock_mount(path);
-> 	if (IS_ERR(mp)) {
-> 		/* ... */
-> 	}
-> 	/* 
-> 	 * namespace_sem is locked, so not a good point to add
-> 	 * security hook
-> 	 */
-> 	...
-> }
-> 
-> Basically, without major work with locking, there is no good 
-> spot to insert a security hook into do_loopback(). Or, maybe 
-> we can add a hook somewhere in lock_mount()? 
-
-You can't really because the lookup_mnt() call in lock_mount() happens
-under the namespace semaphore already and if it's the topmost mount it
-won't be dropped again and you can't drop it again without risking
-overmounts again.
-
-But again, as long as you are interested in the source mount you should
-be fine.
 
