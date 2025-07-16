@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-732867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3777EB06D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:12:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF34CB06D09
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99552188D8B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:12:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FA917AD9BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775DE23CEF8;
-	Wed, 16 Jul 2025 05:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDE42797BD;
+	Wed, 16 Jul 2025 05:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b="nc1ODcdU"
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b="NUTKMvHo"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC14279DCC
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B872F2737FF
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752642693; cv=none; b=M5zc8F/mGzQRrL9lOGdS/v4RctCe6n8aSS7x1BqIWpGIZawE5oKVY/4GGz3odjyAIe3wSQndFCg8o4PaaubFUR1cCAzv+SegA/H4WWa3udFuI/Ruw2cqUid583FtiMm3V2GNecMvzgmCMubm/TBVMTBQFxA4uueppVbKB1wZ6EU=
+	t=1752642706; cv=none; b=gCbhjoZnxklGH1HLa3f2FdzuudsIssMxrrmst4EIjINo9+5iZf68fk219wEW21l1RydGTtb3F0LQ04EaXrcEIoAmwYAhFsY7cMPTAI/+o1xqOTGdJLJfQ9zzomebO5Q7JWCH9lrMcfr1kCcoFKrs7x+z8rETRUJXQC733qxaZCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752642693; c=relaxed/simple;
-	bh=6lqg47ZzHvYuqgvo+kg+TR1pSFW+bHqDcSaP517sWY8=;
+	s=arc-20240116; t=1752642706; c=relaxed/simple;
+	bh=kxfAZ5oczkD+4j0eiUZUm5xzqJgl81dDPb70fllc69g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MsHC07EtY1rKv7dzlACOWL4JkjDiZOkkKFTKCLMiQ3uDiKmbuJdDCcqdmRsBHb84uMjwMJ4z1sRQimR4jFlkbDsqTWn9fug3WROG9f/GD/7lMAeZuJJMkFVxYSOdxungWGPthYabesixezUpwBIMhmKdgFMf7d0iqILF/fFH0hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b=nc1ODcdU; arc=none smtp.client-ip=185.136.65.227
+	 MIME-Version; b=Ys8Pc887ryINg8UOmbPFF4Q8N4C54o6cKv4BnLBx/TcPDqiu3L+i3efYXnIg5J0432ai/kDH6AsyWiUzJqeAcsmr9O5NL9EbYLiXOo2p7MQMXEGtjxbGvEhVdmL18YiiXs6ajs8YwulORZlzcRt57AJVE9M8ihpHxxNBMNdWU9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b=NUTKMvHo; arc=none smtp.client-ip=185.136.64.225
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202507160511309803f548d2a4bf2ecf
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202507160511367daa72d7b9ed6db9d0
         for <linux-kernel@vger.kernel.org>;
-        Wed, 16 Jul 2025 07:11:30 +0200
+        Wed, 16 Jul 2025 07:11:36 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=huaqian.li@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=q/BKbhuL0vKp+y2KpfAqEHa8O7EtSQwyOm6GZvSm+1w=;
- b=nc1ODcdUKf6nFUVbNJmc2ZfghpF+13G4DOQja0sNWR/Y2fEmGdMFcr36WX1fCeRaNSRdnv
- ASDgf5/L/06qb0BZhi0ihCAWn3nGlGDvAhVtHlI6PylEgvZkYovV0uL4ULnCKh6zbrxlSbMH
- Hz+T4Wl6xetirc+YFWTVAeLKDymmLzZUQ/M4taiu2oHL23L+yKftiynsGN1Y6QOHXKxLHzl2
- kJWxTAUGjF9+tEMKOSjPJjqOBMw/zPQ3wi+KISJwM1wCj4M8yGlsKpOibN4lB1O8GSr/+nIX
- 0a0zwOTAntPxVSKBOIhTFG5YauXWHrIRKyBe7pc6GuK9+roOv4IyTI5Q==;
+ bh=QtN0VLE566TlGeRyALZ6z/tV9w0Xq9AqMnDzZ2gCzX0=;
+ b=NUTKMvHolQa9ezzImbVz72LN4ZQJvv0woy9sFHnnSrANvLhQ40wkEgK0sP+00C3Xo5RlYY
+ mGGocjv8398oOCtzE1crnaxhAha5OaNMy5D5kM0PLWLUOHouLAx6vg39g0AEU7vO4A9g822J
+ l6JJcKT1e7Y4yLhZUcxcd457rCWTDNu2HEua6/R1c4GZtTBRQYidvcPrc7g/51tah/qcYjYv
+ vjCFvQNy6oJic4RZx+H376Jc4shq/CGaDpi/U4+SUnU9VDWL+PoIY51kZ6k6PO6UYB7yMiUT
+ rEanKYyjR718fGYxCOnNUDz17NBkY6aAM1KHJ3HnlsklbS2G782XRS9w==;
 From: huaqian.li@siemens.com
 To: s-vadapalli@ti.com
 Cc: baocheng.su@siemens.com,
@@ -63,9 +63,9 @@ Cc: baocheng.su@siemens.com,
 	robh@kernel.org,
 	ssantosh@kernel.org,
 	vigneshr@ti.com
-Subject: [PATCH v9 5/7] arm64: dts: ti: k3-am65-main: Add PVU nodes
-Date: Wed, 16 Jul 2025 13:10:33 +0800
-Message-Id: <20250716051035.170988-6-huaqian.li@siemens.com>
+Subject: [PATCH v9 6/7] arm64: dts: ti: k3-am65-main: Add VMAP registers to PCI root complexes
+Date: Wed, 16 Jul 2025 13:10:34 +0800
+Message-Id: <20250716051035.170988-7-huaqian.li@siemens.com>
 In-Reply-To: <20250716051035.170988-1-huaqian.li@siemens.com>
 References: <e21c6ead-2bcb-422b-a1b9-eb9dd63b7dc7@ti.com>
  <20250716051035.170988-1-huaqian.li@siemens.com>
@@ -81,47 +81,50 @@ Feedback-ID: 519:519-959203:519-21489:flowmailer
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Add nodes for the two PVUs of the AM65. Keep them disabled, though,
-because the board has to additionally define DMA pools and the devices
-to be isolated.
+Rewrap the long lines at this chance.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 Signed-off-by: Li Hua Qian <huaqian.li@siemens.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index b085e7361116..be65e6aa7b80 100644
+index be65e6aa7b80..d0036b0aa818 100644
 --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
 +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -843,6 +843,26 @@ main_cpts_mux: refclk-mux {
- 				assigned-clock-parents = <&k3_clks 118 5>;
- 			};
- 		};
-+
-+		ti_pvu0: iommu@30f80000 {
-+			compatible = "ti,am654-pvu";
-+			reg = <0 0x30f80000 0 0x1000>,
-+			<0 0x36000000 0 0x100000>;
-+			reg-names = "cfg", "tlbif";
-+			interrupts-extended = <&intr_main_navss 390>;
-+			interrupt-names = "pvu";
-+			status = "disabled";
-+		};
-+
-+		ti_pvu1: iommu@30f81000 {
-+			compatible = "ti,am654-pvu";
-+			reg = <0 0x30f81000 0 0x1000>,
-+			<0 0x36100000 0 0x100000>;
-+			reg-names = "cfg", "tlbif";
-+			interrupts-extended = <&intr_main_navss 389>;
-+			interrupt-names = "pvu";
-+			status = "disabled";
-+		};
- 	};
+@@ -897,8 +897,13 @@ main_gpio1: gpio@601000 {
  
- 	main_gpio0: gpio@600000 {
+ 	pcie0_rc: pcie@5500000 {
+ 		compatible = "ti,am654-pcie-rc";
+-		reg = <0x0 0x5500000 0x0 0x1000>, <0x0 0x5501000 0x0 0x1000>, <0x0 0x10000000 0x0 0x2000>, <0x0 0x5506000 0x0 0x1000>;
+-		reg-names = "app", "dbics", "config", "atu";
++		reg = <0x0 0x5500000 0x0 0x1000>,
++		      <0x0 0x5501000 0x0 0x1000>,
++		      <0x0 0x10000000 0x0 0x2000>,
++		      <0x0 0x5506000 0x0 0x1000>,
++		      <0x0 0x2900000 0x0 0x1000>,
++		      <0x0 0x2908000 0x0 0x1000>;
++		reg-names = "app", "dbics", "config", "atu", "vmap_lp", "vmap_hp";
+ 		power-domains = <&k3_pds 120 TI_SCI_PD_EXCLUSIVE>;
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+@@ -918,8 +923,13 @@ pcie0_rc: pcie@5500000 {
+ 
+ 	pcie1_rc: pcie@5600000 {
+ 		compatible = "ti,am654-pcie-rc";
+-		reg = <0x0 0x5600000 0x0 0x1000>, <0x0 0x5601000 0x0 0x1000>, <0x0 0x18000000 0x0 0x2000>, <0x0 0x5606000 0x0 0x1000>;
+-		reg-names = "app", "dbics", "config", "atu";
++		reg = <0x0 0x5600000 0x0 0x1000>,
++		      <0x0 0x5601000 0x0 0x1000>,
++		      <0x0 0x18000000 0x0 0x2000>,
++		      <0x0 0x5606000 0x0 0x1000>,
++		      <0x0 0x2910000 0x0 0x1000>,
++		      <0x0 0x2918000 0x0 0x1000>;
++		reg-names = "app", "dbics", "config", "atu", "vmap_lp", "vmap_hp";
+ 		power-domains = <&k3_pds 121 TI_SCI_PD_EXCLUSIVE>;
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
 -- 
 2.34.1
 
