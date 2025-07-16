@@ -1,228 +1,263 @@
-Return-Path: <linux-kernel+bounces-732939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F00B06DE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:26:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13E2B06DE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EACC3A0534
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:26:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A9145651C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBC22882A0;
-	Wed, 16 Jul 2025 06:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WDa3yy+i"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2043.outbound.protection.outlook.com [40.107.96.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8282877D6;
+	Wed, 16 Jul 2025 06:26:58 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE611D5CED;
-	Wed, 16 Jul 2025 06:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752647183; cv=fail; b=IhScw1xjBA0jowLBwlNfZeAqLe88m95Qu9iSCy3CCxUvIfV+O89d9uiBsesNTElyMH9Ills0YNo/buMJ0C0XozQYRFy3SFrt9oP253DQHRhD1cmQ7351d1bP5n9neVbs5aBU98ZBEEQNWzMF5yWuRreC7JanjIedfior12ajPUU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752647183; c=relaxed/simple;
-	bh=MimLqvLEbspia1xgq1sSnHvbSmIJATOcuMk5xGlpAvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pBRTkrkACDIJ3LhEdw8d4z4TmfB/1hv2GQsYDVIDC1s68pD+oHg5Rp/iZF7mD2cxtVHH9PERSdzP8BklskzHssCuzQ9n2rcngoCG94P6yxh7AR6DsNyGpjbaDIj9mHYxxWXMb92/NOitzc4hAzwaKAb/nxAs6kWcBTE3xh1ynMU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WDa3yy+i; arc=fail smtp.client-ip=40.107.96.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h4tuii3DbRL11Q6iU1RmN+ZpJBlk9VA8mPhys1G5mO3dWSAmfICAT0nDNGd4KEm7DhhwcnA6xYuRqx/w5IRHfeP9yuFAZNWBh85lCtFOugL9eJSZpk7W98TENeM+535jxN7U+UMFMvHXJjqTXT7Y/Ta1lXFkqFJZflxSEJYc6E4iv5LWs0IIMoSOc1/Bf842LH7ZG0Gf6HJMLjFKJDBOwWsDlUj1KlNIatZa0V+oR3wxzdsKW3jisnbOU+nQo2OtaBkReanhH/bLaXnntWLoKb6NJBdVX52sDhX2JkK2mGU9++DPLyJHQ9TWk5N+F9WZJvtpC//d03QvY87Uc8eZ1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zgCKjrEQHoMWDZpiYXJGr+SRHXnj9FZgOx4+OtiFXRI=;
- b=sEue+T5NSJzdpgrmteslzLoDhTR++Y0KDPgANTrs9CyRv1W1Di830TBLhwN396QLA/PX7HvaQbU9uUCggzYRfGqpHrx7OXoOKxK+m21txCAk/aA1ow69xHKWGD/1tKy/PoNV/M3GRrDMErgQjzEW7cSOQxF61NS+xErc0HRucBo0RhfOMJ89hqId0OJ3RNoDwJWsmVGvFu7sNqEmLnwAndwzj+9EP9uA2IdSoQ0miKLDL1+QSU2+ZJrCPsyXEoAwkAnoyA7ZhK6kINxN7Seh9W6BBG8dJf/i2uhzytrPIJru7EhE9hDyNz/pewJ3CgLvhBUJcaZFsk2dTdq3ECeTcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zgCKjrEQHoMWDZpiYXJGr+SRHXnj9FZgOx4+OtiFXRI=;
- b=WDa3yy+intIf1XSmwliUR0QocsocTXh/W6SwciN9IsL8dyI2KNIu6u2CnyWASrmvEbZ3UyLGTWIoXZcN51H23uK6SKyaPGRavDwO5IcHxZXArJQ4VMdwvsHXIWwQAK06zy5CtvzXtMQeWj/7jZUxkD+czG4eUgD7kA58uVcTzFGGr6qMA0N/zyO7shmbAEJVKh5S5fQ0VQrTeT6qdH90FvE1YFrEs/NvU7+bQk5mKXsMQhtzYW39QI2IZsgfOYfQnm0wQBA0JVqxhputCEg6/qVmEY+oyCkUUh3EVBdsnzAl5FN/jeZrLJmDv1BAbd5keVkf5klJMX8Sneurkk5EHw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
- by PH8PR12MB6819.namprd12.prod.outlook.com (2603:10b6:510:1ca::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Wed, 16 Jul
- 2025 06:26:18 +0000
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8%6]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
- 06:26:17 +0000
-Date: Wed, 16 Jul 2025 09:26:03 +0300
-From: Ido Schimmel <idosch@nvidia.com>
-To: Joseph Huang <Joseph.Huang@garmin.com>
-Cc: netdev@vger.kernel.org, Joseph Huang <joseph.huang.2024@gmail.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Tobias Waldekranz <tobias@waldekranz.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, bridge@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net] net: bridge: Do not offload IGMP/MLD messages
-Message-ID: <aHdF-1uIp75pqfSG@shredder>
-References: <20250714150101.1168368-1-Joseph.Huang@garmin.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714150101.1168368-1-Joseph.Huang@garmin.com>
-X-ClientProxiedBy: TLZP290CA0007.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:9::7)
- To SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDB5269817;
+	Wed, 16 Jul 2025 06:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752647218; cv=none; b=RI+y5pENx8gR9NTsqiffNn1iXQ8FtGAdB12qXD6QMVlsFJud0Kt7sywQKWnPsnuFuZq+r7cOIAbz2c60aRzSCPQAvRN3iMMr25C0eYm1eJ860ngXE253fplNBHTmasgei8u+wtJYystX1P5xcqEqENgvD7NEGJksf2ErwIczA3g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752647218; c=relaxed/simple;
+	bh=G2Qj8+5Ot4GgvzeFLvEvi08E18R5HeOiUHk4IHpB1DQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nGibDIifcRIGEqcB7NV/GTield3Q5H5RaLN8QlhDtSrAWpReVSWRYROtkuKCbsFeeUy4AYvBLCrH+C9VJ6H1sd9+b0DKw6a59bqc8LXGCa6QoOvEiae88d/GKuCXpGk8YuDrB+ewzBpjssvx4pecOgrw02vsTHdhjxarmG8YwUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: d8fb0f10620d11f0b29709d653e92f7d-20250716
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:d33a5053-fb8d-43ad-881f-8d7830f07dd2,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:cc247a93668082533e88b9fedfca021a,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: d8fb0f10620d11f0b29709d653e92f7d-20250716
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1548868100; Wed, 16 Jul 2025 14:26:46 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 059EFE008FA3;
+	Wed, 16 Jul 2025 14:26:46 +0800 (CST)
+X-ns-mid: postfix-68774625-875499186
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 96497E008FA2;
+	Wed, 16 Jul 2025 14:26:44 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: "rafael J . wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	len brown <len.brown@intel.com>,
+	pavel machek <pavel@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v4 0/1] PM / Freezer: Skip zombie/dead processes to reduce
+Date: Wed, 16 Jul 2025 14:26:38 +0800
+Message-Id: <20250716062639.1528066-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|PH8PR12MB6819:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c9681c0-11b0-40aa-e969-08ddc431ac29
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KsHIpVrV1N8SX2FkEXHKFIJ5VZzQG4Nwx0VvlVPnqdlaH++RIdoz8mg/T4nm?=
- =?us-ascii?Q?UWpWR8b77K8txIp9BMFR+PDkJrmLZNvUq7lkThmN0bOA+VlxeVGT92hdS69s?=
- =?us-ascii?Q?3Z9Pj58Y62RgshVExpygMi/Fq7cTf6hT/XbQSkkze36Dn0QlPmgV8/Nu1ISb?=
- =?us-ascii?Q?v0aAez8mdCj/w4Jp3jsf9qtGozgcsQ/8iSB9jtrXzyrw+k6tR7O0rBRjNnu5?=
- =?us-ascii?Q?pkYA+idjywKXNqlLmhXsvyjiElvOk8kvjmpU8pLVL6NeG3U4v5QBliS3aw84?=
- =?us-ascii?Q?PqsEVguR2a282BuSkx1h9CCQcmGIKp4i0lyk2xAymZlTxeylQcVFWSIOjMyY?=
- =?us-ascii?Q?cmVl8481WobeGgkPg5pQRCu0HdQrVrQeJDfNy8SEScpCcIw6qdduvvBXeDhz?=
- =?us-ascii?Q?0PKqfD3xSLBdAlPAWythWHojjz6FkJ3tp7PrizHC50ihc549tFaUbuFterad?=
- =?us-ascii?Q?fPuFdtTqyhwW3rnk1VSPeAJVPkqnylCpvoNnLvP5jLayI93pyHTySVxc4qqN?=
- =?us-ascii?Q?ogM/HI03B8JlvbxeFal4JMngDo1H14lVZiiGDVq2gtpLn3kGTHSUkXSfs7FC?=
- =?us-ascii?Q?7Xybklq5CwaUhERQ3DpvnVC1tkZ36khZ135/+ha2vI5u0mVQ/u3uqX2syFEX?=
- =?us-ascii?Q?KEmyTVk+oijYewgGGRQpkhDJEOtJ0AgveVoWr3o0ocamGP4fOnZqhlTHcdX2?=
- =?us-ascii?Q?D709iaz2xjBe43njcrPmDo+UMI9OEQoswdQWE8tGOi46HmYi2xdGpvSqq3T4?=
- =?us-ascii?Q?Mm0yWawtQvDmEVL10iAZjPG/lvsqKQpBF7IneKr4vaXddpR1EDjZmHyYuEVP?=
- =?us-ascii?Q?CgMkaJEgkD6vc65MhwYGH+ua+LTDSxZW6u4M1mvEJdlcWeyZGxZMBc2vM9uF?=
- =?us-ascii?Q?BbtcRpRcA+2Y6sP5dQMqroBvAoLhHcjOiu3vXafYs5WES+6X3JP07/VpvEkE?=
- =?us-ascii?Q?cShS4xRMBIySRYgapZf1Gn7+JzuVOob2gTDJVuoRmKn4REnJ8Dzftan7sew1?=
- =?us-ascii?Q?DtdUxBYttR/RiE15i5cv4r3aerCX8DMEOpj2bcRxS9Dl12lsJtoOwXohshCZ?=
- =?us-ascii?Q?d54IPkG0l8NkG16Ycu1bSy+CgOR7HqO8kVhRp9NpJRn2ouKGBdSwwddSvywV?=
- =?us-ascii?Q?ga0SjAMhaxFOG5itLkyCiLTwgrj+fmskhb+gFFbg5JutjKDZ05HP76umRfc/?=
- =?us-ascii?Q?SuqaNtC8ElomXA7zgW3Guh8QdPmYEZ1iJtx82FOvtfnvvuDqvkbWAXQX0fNw?=
- =?us-ascii?Q?lM0HamdMoiuuY3HJEiPowTCVT/vozJVDIO09E165NdeFYUTeYmSlHnY6yyLf?=
- =?us-ascii?Q?JCBgIaYG4LTfWRDP9KQo/FNuZk/tDgixZYRdZ4ZCUpeYLgiVTUKTn5SFaLzH?=
- =?us-ascii?Q?NSEAJUEhEM/cXOujYRc/Dq03VY5on2ePpyjhzo+9fiYO9Xyzs8tBVe5nvzkJ?=
- =?us-ascii?Q?h6pBj4UE3V4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nUHcKqkQ48/K8tYboPco0epUn7MhlA92nzs/nlwlbw37AtjNHS46AsEVzHpe?=
- =?us-ascii?Q?BOKmUZI+7S1/ve+cY8ji7D9mQAI7VP0pIrRX9NUImi6e6Kg40dsuEoPv/UOl?=
- =?us-ascii?Q?ZfFY1DzWUjAhmtBQsA5ZGiBv3QI/MDSc4wCfrM1eg1mXNJY24ofWK9g1acZc?=
- =?us-ascii?Q?y8c6pzrpV0pSMaAN46U8ckocXBSvZUfZMXlb5W220Ex1gN0La7X/0Oiv0SC3?=
- =?us-ascii?Q?89iW/q4F403Gdhn/9W/fDpA3Jl3N013mIflzWV8/P2UCPBp9k0rSOWQR9Fxh?=
- =?us-ascii?Q?iWPtnIXQk6xtJ5QKk380ReWBZmY2V8Mo+nj1MOBM1Rhl9xz3PsJKXlv0RLJI?=
- =?us-ascii?Q?Co07oKEtZonMYWF+QlJC4fvzbUbPSX+nwYDujvyvOPD2+2XlIsIdHfv2EWnQ?=
- =?us-ascii?Q?Y/0vwPRpxVNnbV8fbpkmyRoq+oA6KSxBMNJj+9D6hYzz77rh1CcVIEqvpQVW?=
- =?us-ascii?Q?FongPPfoW8+B+Pxcl5v3LTPKcq3ldrdwbz7zkKJEBfl0c2OpOL8EgiL2almH?=
- =?us-ascii?Q?QUncPA3Vh+LEjs3PZ4AjhRew8KKRo4RUYx/cw0j6qYqQx2e8vy+QrLE4SKFd?=
- =?us-ascii?Q?wXhooL5ONCV81ekzE11yx7gydAplXuqVcB8a6X5CcwkU2k+/qSKTzyP+vTB9?=
- =?us-ascii?Q?U8s6CWCJX2CIMhjjCNNrvho/aNWsbgd9aUIhYI6iMAxqPAU3+MUazAyB22DU?=
- =?us-ascii?Q?WpgJ21T0phpeCSnWZsWpbwFhFpwdfziqJJp0IMZz1fnGnBlN3ySMgpuspQ+S?=
- =?us-ascii?Q?C/gUNSG5XokqwOtysCbq8DCsuLRp9rhru20G7+i0/DrZONf7Bns0TdKVTLVO?=
- =?us-ascii?Q?56XP097WtanKrDJTQMb51hyraJ/0eyIf5mAjOwr3nQG5oHK1Daw88IRCwUMP?=
- =?us-ascii?Q?iAxboDsbqOKNqEwShbryt8oDCV7L1yP+uFzefeIU0TegrLXyGqwQqoLsg74k?=
- =?us-ascii?Q?rSFueo3mYGW5W9G7Ixk3P52POdpNHcZPhc+Mz6uuIUy2BfWVVFfF2brUXZFQ?=
- =?us-ascii?Q?6WUsuYwtpzt883cvXtl7Hna6Z6moC6Pdpre5+Mzvoe+/qcq9gpXV/rMZbSMl?=
- =?us-ascii?Q?4B5t/PNeEZZ9JbJcYIJOKSgDOcG0MJNfH2e8YPwuAKzq6Co/UlAPqhloBu8o?=
- =?us-ascii?Q?4b8KEJAoH8/24TDfvXZYqvpkGL2PcunH5SyH14FP5ifjnxnnPUv4Y39qUrEq?=
- =?us-ascii?Q?oRKmEObboP/VW2w9stvYu0tc/dmf5A8djDU5e1LpnjCDJL5ZPyRaIbkoAZ2L?=
- =?us-ascii?Q?srf2XTqRFgPnSTd5d478xy5iB6x5ZIyPyGBKhUxM5TjhQZtmRGqaLNTFRxnb?=
- =?us-ascii?Q?TmA7c1c4U3DyuGUldkGwqEU8RL+Sh5Q5WoZKu1dJclsO76Hozd/j1sVISNJK?=
- =?us-ascii?Q?BCJND1x/983g9iDlA0Yn89jxR0gicLXYhgOIKR5Ur4/vgytkJIZuwq6VtCaP?=
- =?us-ascii?Q?leehaXXL7EO48uF2AGHdq0aK9tPbLUh0oyCGLZbe5pQjFj2w57UAFvIboVtI?=
- =?us-ascii?Q?YfKO4DEhJOt+n8SmWLP+8zDyMiR8WiGdh5DhiVT72Pz6T7ZOXYqXO6hnIYUP?=
- =?us-ascii?Q?iJxvUduM1MZ0MmN+HkaA8OOoMkq2DqAbmPidtKkc?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c9681c0-11b0-40aa-e969-08ddc431ac29
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 06:26:17.8982
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +NDoYQOY1jytDb8uSasmgFtJDvm5UkRnFkuCa184pLKN/g1C+mklNKEI8tF4TUQc1UfEv35deu0igCnRzfmgrA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6819
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 11:01:00AM -0400, Joseph Huang wrote:
-> Do not offload IGMP/MLD messages as it could lead to IGMP/MLD Reports
-> being unintentionally flooded to Hosts. Instead, let the bridge decide
-> where to send these IGMP/MLD messages.
-> 
-> Consider the case where the local host is sending out reports in response
-> to a remote querier like the following:
-> 
->        mcast-listener-process (IP_ADD_MEMBERSHIP)
->           \
->           br0
->          /   \
->       swp1   swp2
->         |     |
->   QUERIER     SOME-OTHER-HOST
-> 
-> In the above setup, br0 will want to br_forward() reports for
-> mcast-listener-process's group(s) via swp1 to QUERIER; but since the
-> source hwdom is 0, the report is eligible for tx offloading, and is
-> flooded by hardware to both swp1 and swp2, reaching SOME-OTHER-HOST as
-> well. (Example and illustration provided by Tobias.)
-> 
-> Fixes: 472111920f1c ("net: bridge: switchdev: allow the TX data plane forwarding to be offloaded")
-> Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
+Hi all,
 
-I don't have personal experience with this offload, but it makes sense
-to not offload the replication of control packets to the underlying
-device and instead let the CPU handle it. These shouldn't be sent at an
-high rate anyway.
+This patch series improves the performance of the process freezer by
+skipping zombie tasks during freezing.
 
-> ---
-> v1: https://lore.kernel.org/netdev/20250701193639.836027-1-Joseph.Huang@garmin.com/
-> v2: Updated commit message.
-> ---
->  net/bridge/br_switchdev.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
-> index 95d7355a0407..757c34bf5931 100644
-> --- a/net/bridge/br_switchdev.c
-> +++ b/net/bridge/br_switchdev.c
-> @@ -18,7 +18,8 @@ static bool nbp_switchdev_can_offload_tx_fwd(const struct net_bridge_port *p,
->  		return false;
->  
->  	return (p->flags & BR_TX_FWD_OFFLOAD) &&
-> -	       (p->hwdom != BR_INPUT_SKB_CB(skb)->src_hwdom);
-> +	       (p->hwdom != BR_INPUT_SKB_CB(skb)->src_hwdom) &&
-> +	       !br_multicast_igmp_type(skb);
+In the suspend and hibernation paths, the freezer traverses all tasks
+and attempts to freeze them. However, zombie tasks (EXIT_ZOMBIE with
+PF_EXITING) are already dead =E2=80=94 they are not schedulable and canno=
+t enter
+the refrigerator. Attempting to freeze such tasks is redundant and
+unnecessarily increases freezing time.
 
-I think you can just early return if the packet is IGMP/MLD. Something
-like:
+In particular, on systems under fork storm conditions (e.g., many
+short-lived processes quickly becoming zombies), the number of zombie tas=
+ks
+can spike into the thousands or more. We observed that this causes the
+freezer loop to waste significant time processing tasks that are guarante=
+ed
+to not need freezing.
 
-diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
-index 95d7355a0407..9a910cf0256e 100644
---- a/net/bridge/br_switchdev.c
-+++ b/net/bridge/br_switchdev.c
-@@ -17,6 +17,9 @@ static bool nbp_switchdev_can_offload_tx_fwd(const struct net_bridge_port *p,
- 	if (!static_branch_unlikely(&br_switchdev_tx_fwd_offload))
- 		return false;
- 
-+	if (br_multicast_igmp_type(skb))
-+		return false;
-+
- 	return (p->flags & BR_TX_FWD_OFFLOAD) &&
- 	       (p->hwdom != BR_INPUT_SKB_CB(skb)->src_hwdom);
- }
+Testing and Results
+
+Platform:
+- Architecture: x86_64
+- CPU: ZHAOXIN KaiXian KX-7000
+- RAM: 16 GB
+- Kernel: v6.6.93
+
+result without the patch:
+dmesg | grep elap
+[  219.608992] Freezing user space processes completed (elapsed 0.010 sec=
+onds)
+[  219.617355] Freezing remaining freezable tasks completed (elapsed 0.00=
+8 seconds)
+[  228.029119] Freezing user space processes completed (elapsed 0.013 sec=
+onds)
+[  228.040672] Freezing remaining freezable tasks completed (elapsed 0.01=
+1 seconds)
+[  236.879065] Freezing user space processes completed (elapsed 0.020 sec=
+onds)
+[  236.897976] Freezing remaining freezable tasks completed (elapsed 0.01=
+8 seconds)
+[  246.276679] Freezing user space processes completed (elapsed 0.026 sec=
+onds)
+[  246.298636] Freezing remaining freezable tasks completed (elapsed 0.02=
+1 seconds)
+[  256.221504] Freezing user space processes completed (elapsed 0.030 sec=
+onds)
+[  256.248955] Freezing remaining freezable tasks completed (elapsed 0.02=
+7 seconds)
+[  266.674987] Freezing user space processes completed (elapsed 0.040 sec=
+onds)
+[  266.709811] Freezing remaining freezable tasks completed (elapsed 0.03=
+4 seconds)
+[  277.701679] Freezing user space processes completed (elapsed 0.046 sec=
+onds)
+[  277.742048] Freezing remaining freezable tasks completed (elapsed 0.04=
+0 seconds)
+[  289.246611] Freezing user space processes completed (elapsed 0.046 sec=
+onds)
+[  289.290753] Freezing remaining freezable tasks completed (elapsed 0.04=
+4 seconds)
+[  301.516854] Freezing user space processes completed (elapsed 0.041 sec=
+onds)
+[  301.576287] Freezing remaining freezable tasks completed (elapsed 0.05=
+9 seconds)
+[  314.422499] Freezing user space processes completed (elapsed 0.043 sec=
+onds)
+[  314.465804] Freezing remaining freezable tasks completed (elapsed 0.04=
+3 seconds)
+
+result with the patch:
+dmesg | grep elap
+[   54.161674] Freezing user space processes completed (elapsed 0.007 sec=
+onds)
+[   54.171536] Freezing remaining freezable tasks completed (elapsed 0.00=
+9 seconds)
+[   62.556462] Freezing user space processes completed (elapsed 0.006 sec=
+onds)
+[   62.566496] Freezing remaining freezable tasks completed (elapsed 0.01=
+0 seconds)
+[   71.395421] Freezing user space processes completed (elapsed 0.009 sec=
+onds)
+[   71.402820] Freezing remaining freezable tasks completed (elapsed 0.00=
+7 seconds)
+[   80.785463] Freezing user space processes completed (elapsed 0.010 sec=
+onds)
+[   80.793914] Freezing remaining freezable tasks completed (elapsed 0.00=
+8 seconds)
+[   90.962659] Freezing user space processes completed (elapsed 0.012 sec=
+onds)
+[   90.973519] Freezing remaining freezable tasks completed (elapsed 0.01=
+0 seconds)
+[  101.435638] Freezing user space processes completed (elapsed 0.013 sec=
+onds)
+[  101.449023] Freezing remaining freezable tasks completed (elapsed 0.01=
+3 seconds)
+[  112.669786] Freezing user space processes completed (elapsed 0.015 sec=
+onds)
+[  112.683540] Freezing remaining freezable tasks completed (elapsed 0.01=
+3 seconds)
+[  124.585681] Freezing user space processes completed (elapsed 0.017 sec=
+onds)
+[  124.599553] Freezing remaining freezable tasks completed (elapsed 0.01=
+3 seconds)
+[  136.826635] Freezing user space processes completed (elapsed 0.016 sec=
+onds)
+[  136.841840] Freezing remaining freezable tasks completed (elapsed 0.01=
+5 seconds)
+[  149.686575] Freezing user space processes completed (elapsed 0.016 sec=
+onds)
+[  149.701549] Freezing remaining freezable tasks completed (elapsed 0.01=
+4 seconds)
+
+Here is the user-space fork storm simulator used for testing:
+
+```c
+// create_zombie.c
+
+void usage(const char *prog) {
+    fprintf(stderr, "Usage: %s <number_of_zombies>\n", prog);
+    exit(EXIT_FAILURE);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc !=3D 2) {
+        usage(argv[0]);
+    }
+
+    long num_zombies =3D strtol(argv[1], NULL, 10);
+    if (num_zombies <=3D 0 || num_zombies > 1000000) {
+        fprintf(stderr, "Invalid number of zombies: %ld\n", num_zombies);
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Creating %ld zombie processes...\n", num_zombies);
+
+    for (long i =3D 0; i < num_zombies; i++) {
+        pid_t pid =3D fork();
+        if (pid < 0) {
+            perror("fork failed");
+            exit(EXIT_FAILURE);
+        } else if (pid =3D=3D 0) {
+            // Child exits immediately
+            exit(0);
+        }
+        // Parent does NOT wait, leaving zombie
+    }
+
+    printf("All child processes created. Sleeping for 60 seconds...\n");
+    sleep(60);
+
+    printf("Parent exiting, zombies will be reaped by init.\n");
+    return 0;
+}
+```
+
+And we used a shell loop to suspend repeatedly:
+
+```bash
+LOOPS=3D10
+
+echo none > /sys/power/pm_test
+echo 5 > /sys/module/suspend/parameters/pm_test_delay
+for ((i=3D1; i<=3DLOOPS; i++)); do
+echo "=3D=3D=3D=3D=3D Test round $i/$LOOPS =3D=3D=3D=3D=3D"
+./create_zombie $((i * 3000)) &
+sleep 5
+echo mem > /sys/power/state
+
+pkill create_zombie
+echo "Round $i complete. Waiting 5s..."
+sleep 5
+
+done
+echo "=3D=3D=3D=3D All $LOOPS rounds complete =3D=3D=3D=3D"
+```
+
+Zihuan Zhang (1):
+  PM / Freezer: Skip zombie/dead processes to reduce freeze latency
+
+ kernel/power/process.c | 2 +-
+ 1 file changed, 9 insertion(+), 1 deletion(-)
+
+--=20
+2.25.1
+
 
