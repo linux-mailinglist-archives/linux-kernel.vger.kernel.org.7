@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-733223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98376B071C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:34:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC94B071C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD76D581FF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:34:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96A44E02E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B829A2F0E2D;
-	Wed, 16 Jul 2025 09:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4727E2EF66D;
+	Wed, 16 Jul 2025 09:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LF0sUrre"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qDuQ4KPR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zSMs0STh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AFC2EAB8D;
-	Wed, 16 Jul 2025 09:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8B5231845;
+	Wed, 16 Jul 2025 09:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752658480; cv=none; b=gcb0ZGq7JTlolFJMzbIn3if8FkSNLkWX/PHZ42IwfjyMhjA6ZU110A9Zdg7c/8buNy8fcuN8F2fYZ6gEtyR2g6CqWnObpg0mpu2bllG+q4P9f2B5KvuQhTvgeQBDKl7rqJ7FLoiCgB83wfJ9xCFSlbXYl9wnIvYhbds1oeD1+90=
+	t=1752658487; cv=none; b=ks6CzeEzIazBuVvhWJztkw/ee4PJO6mvwVZHhgim/TNaqXsq1vaFExzzUyzT44mHfeVXemvhqkwawJsrIvzBHu72jekMDs+75TbGls8n2YJNZcIvIMUuo6rjFBoAihFnJ+kva8ygDleI14v6NVn54uHc2YoFIvz8G2llfQPMcpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752658480; c=relaxed/simple;
-	bh=ONBSn5o1H6j3ORHZtSRjG3KCsfOjTLO1GjLY4HdgpRA=;
+	s=arc-20240116; t=1752658487; c=relaxed/simple;
+	bh=ZGLRAdvUUiJ4v6m7gl7SXPULv4lXVJyQD3tgYWb0Wis=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdLjqcgpGPFd5HkOp9xjnleRAcXFuMkQLylYN08gZCyFAhiZgzlhyJYYVAH4QEgTN1gHGcSiEtcCBmYeNKzTh8OKN3WhkelChwVrNgz+q19K3bfFJw4QfqVQ9kCbvT1FpA9Cgyegy0uxZQ6enc1EnRJXivnAgZ4TzCHK2J6FzLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LF0sUrre; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F66C4CEF0;
-	Wed, 16 Jul 2025 09:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752658479;
-	bh=ONBSn5o1H6j3ORHZtSRjG3KCsfOjTLO1GjLY4HdgpRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LF0sUrrez2n0UX4P7X+6kWbZMKh3ESq/U1Am75RKjxzxra1B5w+qXkZ5js7JfJ+mK
-	 AOBBDMjMp9K59MfH/AFlSFr8wlS98u/e+Cvd0u8JUZX13UcJLp6hS2M98nVEbwsLey
-	 E0oHUDnGMr7R9Xn7nWZvDAdOrUhm+zTlZ9sAmFbk=
-Date: Wed, 16 Jul 2025 11:34:37 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-	Youssef Samir <quic_yabdulra@quicinc.com>,
-	Matthew Leung <quic_mattleun@quicinc.com>,
-	Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-	Kunwu Chan <chentao@kylinos.cn>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-	Yan Zhen <yanzhen@vivo.com>, Sujeev Dias <sdias@codeaurora.org>,
-	Siddartha Mohanadoss <smohanad@codeaurora.org>, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@collabora.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] bus: mhi: host: keep bhi buffer through suspend
- cycle
-Message-ID: <2025071604-scandal-outpost-eb22@gregkh>
-References: <20250715132509.2643305-1-usama.anjum@collabora.com>
- <20250715132509.2643305-2-usama.anjum@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VewPJeE+lGs7UOHTyz/HI+c1cQ4h9RSg8ZdqoOehmFCB9RCEkJ0kbdh19WZgUH5t/TIij7RFFgc96wp87AXNeDiyigNn9bjweji8wjYqaaR7WS2o/fzK3Rs9zfoThtIGdsHwmd7vGvXC7N9kiTDCK/sd2+0UXXP4aFKiiip9YpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qDuQ4KPR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zSMs0STh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Jul 2025 11:34:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752658484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IIgCeHULcNXPs8dxxiI8uwbiFr6Dtfuw9TEJv6DqlPw=;
+	b=qDuQ4KPRVm9eCAZlNs1JpxpYKvabcA6lxpecNozQybU5CPVV/1l9YKruJbmLCBxG89Frwm
+	MlqGiS0JUH2oFNq/x4dFXIw5WpPDVbOoVFLvwh19Gt8+eO8fT5gzyeTxuZnzTFI5pcdjWW
+	27G8x+DbzJZrE5mRqlPzfO8NCRwRvA6z79USioWK03uWWIPTab2Pk7lLuHnGpwdESGT3to
+	CC/nJYxDfqS3pLuxJgUXgljqjZXX2srjaVILbEb4Jrin1499zh0MXvG1+3OPSEeGpiiZEg
+	H2TJ42JKzVVRldl32eIhcVK5b+LmnI7dtSheVPmunyAw8NaE+AMmv+oHUNWsHQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752658484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IIgCeHULcNXPs8dxxiI8uwbiFr6Dtfuw9TEJv6DqlPw=;
+	b=zSMs0SThcJ/yX4V36u4nvqza0IpyxVEA/MUh1IbfVs6yNqBhgYuRCNyoCjh0/2F7jifwUn
+	O5HW4vlmujZHbUCA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v3 09/17] tools/dot2c: Fix generated files going over 100
+ column limit
+Message-ID: <20250716093442.SSIxaNpr@linutronix.de>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+ <20250715071434.22508-10-gmonaco@redhat.com>
+ <20250715150156.QXAD4dZl@linutronix.de>
+ <d69862275becf1d296c80a08b29b2081857a85a1.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250715132509.2643305-2-usama.anjum@collabora.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d69862275becf1d296c80a08b29b2081857a85a1.camel@redhat.com>
 
-On Tue, Jul 15, 2025 at 06:25:07PM +0500, Muhammad Usama Anjum wrote:
-> When there is memory pressure, at resume time dma_alloc_coherent()
-> returns error which in turn fails the loading of firmware and hence
-> the driver crashes:
+On Wed, Jul 16, 2025 at 11:27:54AM +0200, Gabriele Monaco wrote:
+> On Tue, 2025-07-15 at 17:01 +0200, Nam Cao wrote:
+> > On Tue, Jul 15, 2025 at 09:14:26AM +0200, Gabriele Monaco wrote:
+> > > From: Nam Cao <namcao@linutronix.de>
+> > > -        strformat = self.__get_state_string_length()
+> > > -
+> > > +        maxlen = self.__get_max_strlen_of_states() +
+> > > len(self.enum_suffix)
+> > > +        # account for tabs and spaces/punctuation for each event
+> > > +        linetoolong = 16 + (maxlen + 3) * nr_events >=
+> > > self.line_length
+> > 
+> > I managed to figure out 16 is the indentation. But I failed to
+> > understand
+> > where is this '3' from.
+> > 
+> > Can you please add some comments for these magic numbers? Or better,
+> > assign
+> > them to variables with self-explanatory names.
 > 
-> kernel: kworker/u33:5: page allocation failure: order:7,
-> mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
-> kernel: CPU: 1 UID: 0 PID: 7693 Comm: kworker/u33:5 Not tainted 6.11.11-valve17-1-neptune-611-g027868a0ac03 #1 3843143b92e9da0fa2d3d5f21f51beaed15c7d59
-> kernel: Hardware name: Valve Galileo/Galileo, BIOS F7G0112 08/01/2024
-> kernel: Workqueue: mhi_hiprio_wq mhi_pm_st_worker [mhi]
-> kernel: Call Trace:
-> kernel:  <TASK>
-> kernel:  dump_stack_lvl+0x4e/0x70
-> kernel:  warn_alloc+0x164/0x190
-> kernel:  ? srso_return_thunk+0x5/0x5f
-> kernel:  ? __alloc_pages_direct_compact+0xaf/0x360
-> kernel:  __alloc_pages_slowpath.constprop.0+0xc75/0xd70
-> kernel:  __alloc_pages_noprof+0x321/0x350
-> kernel:  __dma_direct_alloc_pages.isra.0+0x14a/0x290
-> kernel:  dma_direct_alloc+0x70/0x270
-> kernel:  mhi_fw_load_handler+0x126/0x340 [mhi a96cb91daba500cc77f86bad60c1f332dc3babdf]
-> kernel:  mhi_pm_st_worker+0x5e8/0xac0 [mhi a96cb91daba500cc77f86bad60c1f332dc3babdf]
-> kernel:  ? srso_return_thunk+0x5/0x5f
-> kernel:  process_one_work+0x17e/0x330
-> kernel:  worker_thread+0x2ce/0x3f0
-> kernel:  ? __pfx_worker_thread+0x10/0x10
-> kernel:  kthread+0xd2/0x100
-> kernel:  ? __pfx_kthread+0x10/0x10
-> kernel:  ret_from_fork+0x34/0x50
-> kernel:  ? __pfx_kthread+0x10/0x10
-> kernel:  ret_from_fork_asm+0x1a/0x30
-> kernel:  </TASK>
-> kernel: Mem-Info:
-> kernel: active_anon:513809 inactive_anon:152 isolated_anon:0
->     active_file:359315 inactive_file:2487001 isolated_file:0
->     unevictable:637 dirty:19 writeback:0
->     slab_reclaimable:160391 slab_unreclaimable:39729
->     mapped:175836 shmem:51039 pagetables:4415
->     sec_pagetables:0 bounce:0
->     kernel_misc_reclaimable:0
->     free:125666 free_pcp:0 free_cma:0
+> Turns out it was wrong ;)
+> I'll fix it and make it clear.
 
-This is not a "crash", it is a warning that your huge memory allocation
-did not succeed.  Properly handle this issue (and if you know it's going
-to happen, turn the warning off in your allocation), and you should be
-fine.
+Hah! Got you.
 
-> In above example, if we sum all the consumed memory, it comes out
-> to be 15.5GB and free memory is ~ 500MB from a total of 16GB RAM.
-> Even though memory is present. But all of the dma memory has been
-> exhausted or fragmented.
+I'm guessing that it was supposed to be 2. I wait for the reveal in v4.
 
-What caused that to happen?
-
-> Fix it by allocating it only once and then reuse the same allocated
-> memory. As we'll allocate this memory only once, this memory will stay
-> allocated.
-
-As others said, no, don't consume memory for no good reason, that just
-means that other devices will fail more frequently.  If all
-devices/drivers did this, you wouldn't have memory to work either.
-
-thanks,
-
-greg k-h
+Nam
 
