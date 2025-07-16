@@ -1,143 +1,321 @@
-Return-Path: <linux-kernel+bounces-733783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD37B078E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A122B078E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6DD16E28D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0514F3BF607
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BC02701DC;
-	Wed, 16 Jul 2025 15:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C0727510F;
+	Wed, 16 Jul 2025 15:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="at6/24Ga"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pOyiYnlG"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62424262FC5
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7F426E6E3
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752678042; cv=none; b=GRc89hukraM9XULOHe9nxn7FqPjxg1QGtBZMf9/QGfdNYd+P7icxB8OLUIduLcxuB+b71+MKlajbwnnW/X8XKWHA+zBbdgoXAJZpGdYNO3hMgLkASzN7mO5MKw9Z+eRfC903b6qUQAzEvJFZDIpSg5RckbyzC65/r+nxGMsH9gk=
+	t=1752678051; cv=none; b=KOCjDdsTgtG2ShVBnE1avvZ062iljlojSzkzqQENC5OgqiRqmdJSycYR5P48NG2BQWiCWUq4OEb+lGgUH0h+Oel6/MRUkBK34gMpnHUX8/rsIdJoBt6HCaSwIjHmp2Yyvzdq/SS3IO4KSIeuMvTCMRHOM/qoRErrsKEjSEfLJKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752678042; c=relaxed/simple;
-	bh=MHIyHlqoA/Uqj9LXN2PMXeXEUCUsJxys4641D1GX0Lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YHkDaaXC+HzWJVI1MwnTHP/Q7z8C1mCUJrdsskVo+rQsJ8a3GeXSlvPcdY7rFSDlBgo6dKQwbwKVwIM5WBHJSEPaKWx5gVHe5hpEuKuFjqfpZC6RVX03ADB1O2IdH90hOdWpqCJZ5YAgOSpsBYYGaDazT811PX1dXT5UwGO8hiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=at6/24Ga; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GD1WXZ031464
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:00:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=jF52cvUSvshXb9p4qQS6TK4m
-	/ZISonXy0nEmQgM1hBo=; b=at6/24Ga+F+8Vvdxi5MQ8Z/aKzQ+QzS5eKU482hu
-	9yw7KL38x0cl/MFRl1/agbWUDihD2bPPA9Z3VLwiNLilwY71acLUupABwXtBJDEX
-	Q/99juCdVfXgVkrAUnnQ0xK9s/rY46PtJ5H3pRN4ACywXoxJsB5yL8Qlubg+xtJ9
-	qkY6T2OCkn6b7Ded9apRS8xBXeXIzJjtB1VVMnjzpUpXhL3K5QwQMRexB9FKn2Kc
-	YlTxEGxEWUaA3DeYyR42WIQwgaQ4M0DR4VTYG/b8+NpNyHSJP2MPn4bLVkqDb8bV
-	pHwiLJAUN6BzzUv3YRl5q2uuLFCspjpjsdcWswkPVvayZw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47x8x7h4u4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:00:40 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e3452c060eso56729885a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:00:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752678039; x=1753282839;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1752678051; c=relaxed/simple;
+	bh=11Ig6mxkemwXJvajZpoajVsAjklxO9Nn5kMOT9dHzRA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=leO9JcceOiFFMuA2JYXiV5t1Yg8ffmCr60qpLCc//j2p75KWfA2BNs6dSA9ZBFICQ7pu8OM6qLPZfuP9mmYQVv1cliKU68X0g1XXrkdyRpe5L/Ra9rq8CDSo2HYoQpMCL1KudyrHr1ZZMHxqLqgAUJSs1HAEqFN0rfF89NQTako=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pOyiYnlG; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so255285ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:00:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752678049; x=1753282849; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jF52cvUSvshXb9p4qQS6TK4m/ZISonXy0nEmQgM1hBo=;
-        b=W4uKDMmwgMwo/uMpctFM0NEvnUaHZydr7vmYdqdyBH3BW/U5fUfiR66Tsn6Jt9QWGM
-         xW6qqjYo1xyNL9+vB4E2UtrTa4+PdQKh2X6O3G+z4Z0jaApyet6G+dze4h0orXv0NVP6
-         fFjNrzBodYJJJi9a38bxg7kAjlKOs03fXSF7XJ8ZieD0/tWtpGR8SqojIX40o7AMImRM
-         J+bh4hsHkFRcKbnMePWY24if9451sA1i0Y1aSneuc/R8VShS9x5V5DbVn+lr1sS1FYJC
-         3rX9h4hMIj8u6bmbIkZ6hqAfMQ5WysZhc52gwolwdF1ECHPe4ad/0SQ2upuLMnIBzSus
-         EYkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6vkSZU0qT0y9ctkdQvgFEWEVlcusKAJQI1D3XSpNcl5bVTo115GDCghJ/0tUi69mFz1ggR++IrvWGLG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyARtBbWhAR2BMGy2OtBidIBv4EBAvGmySo497LAIFb5kz7utMr
-	B1W5N35+70q71PKrl3Jf8jafEvvgR4lAZnlA4GCQWfpoESq8M62u7gtNOpmXcofsKfh9qlnsnwM
-	t+NWyrp2zOmZhM1+6phNqZ+tHCcAtQtIB45UQT6YO2STukSuqpmDInSOgiCYEf5+u7Sw=
-X-Gm-Gg: ASbGncv52tUNGh+IbhLsrXROvyTtL5/g79zPbHgLxvVD7CVBgZ4uIoUpCuM2+NXYDVk
-	YpbYCL2wGDAxILWT8oetIrHykc0ZwfCrnv858wuwxeaV6Ch6ZtODfMoxs21I3eRufsrwnNBNg12
-	6GpCdwuGPEEShE3rJez5xTpmpJQEDppW9EnO29Is4inMMR/ZbBrPULNdTu08VSmDfFqnSm86HuL
-	z0BfnxDWiypSGerh3zAUEPGIVaqL/EG5GWRMAzbb7TuaejgsTcn9AKxVn80/07BJJU9PYV6kYoQ
-	pg/Jn2jC/Po7GepbF0GkVyQwX+zjPFxCd3rVFzGc3o0ssW+3xnaAeho9WZXFXaIsITpXj+QWn+D
-	S9PHBkdWOikRvxA1fwepJfDgT+kuBh8xzLnSzKpoSczc7eY55Ynx3
-X-Received: by 2002:a05:620a:688d:b0:7e3:3019:e16a with SMTP id af79cd13be357-7e34356f603mr435572285a.17.1752678039046;
-        Wed, 16 Jul 2025 08:00:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxt4H5FXg39a4tOdmD3AP63qnFyd2IRuTr09Fx8yHgRyZMJ6icisMhrFI2Cre9KzAr64FPuQ==
-X-Received: by 2002:a05:620a:688d:b0:7e3:3019:e16a with SMTP id af79cd13be357-7e34356f603mr435563585a.17.1752678038354;
-        Wed, 16 Jul 2025 08:00:38 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fab9134b5sm21435371fa.102.2025.07.16.08.00.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 08:00:37 -0700 (PDT)
-Date: Wed, 16 Jul 2025 18:00:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ling Xu <quic_lxu5@quicinc.com>
-Cc: srini@kernel.org, amahesh@qti.qualcomm.com, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-        konradybcio@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        quic_kuiw@quicinc.com, ekansh.gupta@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 3/5] misc: fastrpc: Remove kernel-side domain checks
- from capability ioctl
-Message-ID: <aepmtv6mxlzhpncwcwlmgfrb3m2c4xe2edl4y5qsnjpxmvivla@gwufrh37y473>
-References: <20250716132836.1008119-1-quic_lxu5@quicinc.com>
- <20250716132836.1008119-4-quic_lxu5@quicinc.com>
+        bh=N2w8n4snflAfdRSl3UlImmyhdZsh30DeZ7gVcfxLn4k=;
+        b=pOyiYnlGyfjXiA4FmZhVOci30uxo8tFP/oRhIcqNTwM+uzAVs15ieUfVwhv71fPJdl
+         JfOdVQ57QHZF0lUCMFGyggZb0rSHE15ZVjb1gosIoZd0XqavYel3r+o7/zKXdmNkVon/
+         fJ+bYII7nJkjKcchi02F8nbJuSFZ3ITZg/CmsJRyprxyHfUbQxrnTG8+yklGA7lXfUM1
+         OQ1Pv3c11YFq/mEyU+shWM6VqdP+5Zzm93Jf3UFzp4jbfSeXua3BAA+h6Gb/8yH9+LI5
+         SBOskbiEa7kmrBi5ILd8F8vaKcfoDBy1a2Z98v36u1OIofoekbXRFC2C0uK3CaFRjAc3
+         AS7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752678049; x=1753282849;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N2w8n4snflAfdRSl3UlImmyhdZsh30DeZ7gVcfxLn4k=;
+        b=TKekd8K8kkJ8FiUg5lt/VQVgNdoJXhASGM1AriAmofJiz6XGmPOJr5WBtjk7E58rpP
+         F43qjK1Wnr1Qy+vL1bBK0DG27/DszBSR/vid67bn92bwUEGMoXdPfwJa4VBPDNXs/y1M
+         +KtT/9/kNADydX5fJitb7vT8xotwbLWQSkXO6jtSRc3IktoAIsqy0OB0OYueuC6pbWCQ
+         rs+FKvVxn3zmoyuC02OzOJQu8n3h1JUIiqs3ucbb4ueeMZzca9of2DcHLZOrWTuNgtga
+         72v8GlFKHoLKwo6AOdW8N/SxR2S3ZsT7/N3FSPFBd+3+nnutW1uVxcBTS+kbTslsXYno
+         syEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3SIIM6iUkSm8Qt8oST7mB3Zk+Pur1zhH119ZB4FHyfpW8aO6mwDbmga/dUa6PbYpWmXTPyD5xRKX+xSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbsvOp78WiBAlvfnF4xfOdyon3PFjXMKehXy1MVqQ9ILowdh3u
+	Aq4PMg6k4jxOHC2neKuOU0ha3YqGdAbiSN7nnynU8KpWAzAfzJHAikGiIbu6Kmql4lyDdeH7lyg
+	fbppBI0GzPRCXuB3Pz3PTHpxGpHV+w8y9X0oiLzsi
+X-Gm-Gg: ASbGncv70wwjMRVSx34AekV7wwxjwyVQT2bdIH0T4nyfGA947T2sLUgeCcV5M1L9S0a
+	Mfpp/WU0sPrh01MqrAoU6gyHXzEHVTi31jdTWvIpR0cFQ6z2jogOkV8rPC4f6qNVX9Y7RbTXYfc
+	d69vYtowyJGAYsbSDalZztfArt1HcbYK77boZUkXZfnl2l+51NRxT5ro/OIdoWpbuWmgaSuSr29
+	EnB1tfPKcaiji9sPbb1+Ftb5lNOeVIC+A==
+X-Google-Smtp-Source: AGHT+IEtQbaRAFocztugfBzfRKGbl08trVCdekhMQzmOSHCwgabOwedkIMhaAT9m198O4ryAz4A1Rtb9HN+aD8Cqnro=
+X-Received: by 2002:a05:6e02:19c8:b0:3dd:a4b7:c737 with SMTP id
+ e9e14a558f8ab-3e284e834f3mr3288195ab.19.1752678048456; Wed, 16 Jul 2025
+ 08:00:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716132836.1008119-4-quic_lxu5@quicinc.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzNSBTYWx0ZWRfXy80o2QiO9Aro
- DN/X4Z7zl5QljKPNw6PQ5VYv9xI5eRcT0G2ggSyn2/mlBk+v/o9FI0/F9iHBFY170D7nJL5i4+/
- nfSyGoJ/NkXtp+bou1q3qQkbMfaklt1/GzQXRQfb/uYxqYTSnJQ048BTp4e6iTB24pKFKttL1yJ
- 60M7LNDQsI+Kc7K9LKGnPx6sRIpTM2uaOopX6fheN8XyphBj3ttGQzZAoUDJJ6KpdTzbKHgl/tC
- AAk9zPQySD7xSb0gtfmsBhuF9XFlupBso+Kv/GWPheQtDxBwWQ6D4QnrzjLAvXxk09K6r0ie3Aa
- I6kGLTGoABrIfDEpGtVsbnPfz2cut22PZFYhGzmOH/HBk9BtFsagDUza5yA/7ivk7OPglBSwzOp
- VxnARuP8dqE4xdiC/zfFP30FFZlHuG5SnPZkFzdbMNRK9nwQYc0rTTH5gw4V00MKICA44lsd
-X-Proofpoint-GUID: 8V74txuJoxSdy_OZkIsSGjhkm19rMVw7
-X-Proofpoint-ORIG-GUID: 8V74txuJoxSdy_OZkIsSGjhkm19rMVw7
-X-Authority-Analysis: v=2.4 cv=N9YpF39B c=1 sm=1 tr=0 ts=6877be98 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=lc4KdpPQecCvDiYUKO0A:9 a=CjuIK1q_8ugA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 lowpriorityscore=0 mlxlogscore=738 bulkscore=0 adultscore=0
- priorityscore=1501 clxscore=1015 mlxscore=0 suspectscore=0 impostorscore=0
- phishscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507160135
+References: <20250716050054.14130-1-namhyung@kernel.org> <20250716050054.14130-6-namhyung@kernel.org>
+In-Reply-To: <20250716050054.14130-6-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 16 Jul 2025 08:00:37 -0700
+X-Gm-Features: Ac12FXyOxQMK8duAS431cvISCXCiSNJr30kThD5TyXwc2XcWWupvMnzlZBck8i0
+Message-ID: <CAP-5=fVAYNy9pk9zyQRySrJ-1j12dC9ogiW94133Li_WQHd6RA@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] perf annotate: Add --code-with-type support for TUI
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 06:58:34PM +0530, Ling Xu wrote:
-> Domain ID in the uAPI is misleading. Remove checks and log messages
-> related to 'domain' field in capability structure. Update UAPI to
-> mark the field as unused.
-> 
-> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+On Tue, Jul 15, 2025 at 10:01=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Until now, the --code-with-type option is available only on stdio.
+> But it was an artifical limitation because of an implemention issue.
+>
+> Implement the same logic in annotation_line__write() for stdio2/TUI.
+> Make disasm_line__write() return the number of printed characters so
+> that it can skip unnecessary operations when the screen is full.
+>
+> Remove the limitation and update the man page.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 > ---
->  drivers/misc/fastrpc.c      | 14 +-------------
->  include/uapi/misc/fastrpc.h |  2 +-
->  2 files changed, 2 insertions(+), 14 deletions(-)
-> 
+>  tools/perf/Documentation/perf-annotate.txt |  1 -
+>  tools/perf/builtin-annotate.c              |  5 --
+>  tools/perf/ui/browsers/annotate.c          |  6 +++
+>  tools/perf/util/annotate.c                 | 61 +++++++++++++++++++---
+>  4 files changed, 61 insertions(+), 12 deletions(-)
+>
+> diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Docu=
+mentation/perf-annotate.txt
+> index 46090c5b42b4762f..547f1a2680185e3c 100644
+> --- a/tools/perf/Documentation/perf-annotate.txt
+> +++ b/tools/perf/Documentation/perf-annotate.txt
+> @@ -170,7 +170,6 @@ include::itrace.txt[]
+>
+>  --code-with-type::
+>         Show data type info in code annotation (for memory instructions o=
+nly).
+> -       Currently it only works with --stdio option.
+>
+>
+>  SEE ALSO
+> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.=
+c
+> index 9833c2c82a2fee46..6debd725392db4a4 100644
+> --- a/tools/perf/builtin-annotate.c
+> +++ b/tools/perf/builtin-annotate.c
+> @@ -917,11 +917,6 @@ int cmd_annotate(int argc, const char **argv)
+>                 symbol_conf.annotate_data_sample =3D true;
+>         } else if (annotate_opts.code_with_type) {
+>                 symbol_conf.annotate_data_member =3D true;
+> -
+> -               if (!annotate.use_stdio) {
+> -                       pr_err("--code-with-type only works with --stdio.=
+\n");
+> -                       goto out_delete;
+> -               }
+>         }
+>
+>         setup_browser(true);
+> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/a=
+nnotate.c
+> index 23bea5b165774ae7..cdee1969f3131a7c 100644
+> --- a/tools/perf/ui/browsers/annotate.c
+> +++ b/tools/perf/ui/browsers/annotate.c
+> @@ -4,6 +4,7 @@
+>  #include "../ui.h"
+>  #include "../../util/annotate.h"
+>  #include "../../util/debug.h"
+> +#include "../../util/debuginfo.h"
+>  #include "../../util/dso.h"
+>  #include "../../util/hist.h"
+>  #include "../../util/sort.h"
+> @@ -1101,6 +1102,9 @@ int __hist_entry__tui_annotate(struct hist_entry *h=
+e, struct map_symbol *ms,
+>
+>         ui_helpline__push("Press ESC to exit");
+>
+> +       if (annotate_opts.code_with_type)
+> +               browser.dbg =3D debuginfo__new(dso__long_name(dso));
+> +
+>         browser.b.width =3D notes->src->widths.max_line_len;
+>         browser.b.nr_entries =3D notes->src->nr_entries;
+>         browser.b.entries =3D &notes->src->source;
+> @@ -1111,6 +1115,8 @@ int __hist_entry__tui_annotate(struct hist_entry *h=
+e, struct map_symbol *ms,
+>
+>         ret =3D annotate_browser__run(&browser, evsel, hbt);
+>
+> +       if (annotate_opts.code_with_type)
+> +               debuginfo__delete(browser.dbg);
+>         if (not_annotated && !notes->src->tried_source)
+>                 annotated_source__purge(notes->src);
+>
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index d69e406c1bc289cd..06ddc7a9f58722a4 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -1362,6 +1362,11 @@ static int symbol__annotate_fprintf2(struct symbol=
+ *sym, FILE *fp,
+>         };
+>         struct annotation_line *al;
+>
+> +       if (annotate_opts.code_with_type) {
+> +               evsel__get_arch(apd->evsel, &apd->arch);
+> +               apd->dbg =3D debuginfo__new(dso__long_name(map__dso(apd->=
+he->ms.map)));
 
--- 
-With best wishes
-Dmitry
+This API looks unfortunate. A dso may have a long name (it'd be easier
+to understand if this were called path rather than long name) or a
+build ID. The API isn't the fault of this change, but I thought I'd
+mention as we move toward greater use of build IDs.
+
+Thanks,
+Ian
+
+> +       }
+> +
+>         list_for_each_entry(al, &notes->src->source, node) {
+>                 if (annotation_line__filter(al))
+>                         continue;
+> @@ -1370,6 +1375,9 @@ static int symbol__annotate_fprintf2(struct symbol =
+*sym, FILE *fp,
+>                 wops.first_line =3D false;
+>         }
+>
+> +       if (annotate_opts.code_with_type)
+> +               debuginfo__delete(apd->dbg);
+> +
+>         return 0;
+>  }
+>
+> @@ -1743,7 +1751,7 @@ static double annotation_line__max_percent(struct a=
+nnotation_line *al,
+>         return percent_max;
+>  }
+>
+> -static void disasm_line__write(struct disasm_line *dl, struct annotation=
+ *notes,
+> +static int disasm_line__write(struct disasm_line *dl, struct annotation =
+*notes,
+>                                void *obj, char *bf, size_t size,
+>                                void (*obj__printf)(void *obj, const char =
+*fmt, ...),
+>                                void (*obj__write_graph)(void *obj, int gr=
+aph))
+> @@ -1771,8 +1779,8 @@ static void disasm_line__write(struct disasm_line *=
+dl, struct annotation *notes,
+>                 obj__printf(obj, "  ");
+>         }
+>
+> -       disasm_line__scnprintf(dl, bf, size, !annotate_opts.use_offset,
+> -                              notes->src->widths.max_ins_name);
+> +       return disasm_line__scnprintf(dl, bf, size, !annotate_opts.use_of=
+fset,
+> +                                     notes->src->widths.max_ins_name);
+>  }
+>
+>  static void ipc_coverage_string(char *bf, int size, struct annotation *n=
+otes)
+> @@ -2116,11 +2124,52 @@ void annotation_line__write(struct annotation_lin=
+e *al, struct annotation *notes
+>
+>                 width -=3D printed + 3;
+>
+> -               disasm_line__write(disasm_line(al), notes, obj, bf, sizeo=
+f(bf), obj__printf, obj__write_graph);
+> +               printed =3D disasm_line__write(disasm_line(al), notes, ob=
+j, bf, sizeof(bf),
+> +                                            obj__printf, obj__write_grap=
+h);
+> +
+> +               obj__printf(obj, "%s", bf);
+> +               width -=3D printed;
+> +
+> +               if (annotate_opts.code_with_type && apd->dbg) {
+> +                       struct annotated_data_type *data_type;
+> +                       int offset =3D 0;
+> +
+> +                       data_type =3D __hist_entry__get_data_type(apd->he=
+, apd->arch,
+> +                                                               apd->dbg,
+> +                                                               disasm_li=
+ne(al),
+> +                                                               &offset);
+> +                       if (data_type && data_type !=3D NO_TYPE) {
+> +                               char member[256];
+> +
+> +                               printed =3D scnprintf(bf, sizeof(bf),
+> +                                                   "\t\t# data-type: %s"=
+,
+> +                                                   data_type->self.type_=
+name);
+>
+> -               obj__printf(obj, "%-*s", width, bf);
+> +                               if (data_type !=3D &stackop_type &&
+> +                                   data_type !=3D &canary_type &&
+> +                                   sizeof(bf) > (size_t)printed) {
+> +                                       printed +=3D scnprintf(bf + print=
+ed,
+> +                                                            sizeof(bf) -=
+ printed,
+> +                                                            " +%#x", off=
+set);
+> +                               }
+> +
+> +                               if (annotated_data_type__get_member_name(=
+data_type,
+> +                                                                        =
+member,
+> +                                                                        =
+sizeof(member),
+> +                                                                        =
+offset) &&
+> +                                   sizeof(bf) > (size_t)printed) {
+> +                                       printed +=3D scnprintf(bf + print=
+ed,
+> +                                                            sizeof(bf) -=
+ printed,
+> +                                                            " (%s)", mem=
+ber);
+> +                               }
+>
+> -               (void)apd;
+> +                               obj__printf(obj, "%-*s", width, bf);
+> +                       } else {
+> +                               obj__printf(obj, "%-*s", width, " ");
+> +                       }
+> +               } else {
+> +                       obj__printf(obj, "%-*s", width, " ");
+> +               }
+>         }
+>
+>  }
+> --
+> 2.50.0
+>
 
