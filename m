@@ -1,184 +1,337 @@
-Return-Path: <linux-kernel+bounces-734191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CE4B07E29
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:41:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E00B07E46
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D0484A356B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:41:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B76437BA59F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F2E2C08A8;
-	Wed, 16 Jul 2025 19:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978FE28F528;
+	Wed, 16 Jul 2025 19:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XamKL9rm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CfjliOAO"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C8A2BDC2F;
-	Wed, 16 Jul 2025 19:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA01226AD9
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752694863; cv=none; b=HwbrNPj2RwPg7CNZ37HwMUSW2iSMq5pM9g/52kC+Ad7HhudE6yyciZHctU2mcOLHVkYBva0sYP0uonnD468wwl7kqfzBYbLlXyXwQFKFurgEXhry+Pi0tGKGCacpj41R20WvU+8PjcD1QSOecKcn8YI3aanel6v2x5qxPNj7wVE=
+	t=1752694881; cv=none; b=HqqWtQPkyCB78G2lCwIRRq+8/kxkcQ9RW99PS1BmxzHZhNbFnUlcVjiFHW9rxr7pmqX3OfuEqkM5eMdaHQL6ma32h4YqG7E3c6jTggjgjw+IFvaR5jqqmYn9pdIbRd/zpioePCRy7V5TwHkUIgA0NfhZFqT9uAG1dmAh4iWOuUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752694863; c=relaxed/simple;
-	bh=M2KuzF6vIbgB5dXebMK4tiV/bNRjr4BLnLT0FT7VmS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gckmI0DbEEk0s552sRHTMpbmbcR5wCk4PxycWXhOOve29Vn0X+A/Ol9RbFTxHU2WtaeToY7SB5Vy0Mcc2/KwpycnEsxy+iHLq79iYSXV85A8c8+3IXFdirRXtpPAfTlWFEZou/tvp1Ts2JBMBWS4FOaE9HiKhSDRi/10A8clIQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XamKL9rm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74FABC4CEF1;
-	Wed, 16 Jul 2025 19:40:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752694862;
-	bh=M2KuzF6vIbgB5dXebMK4tiV/bNRjr4BLnLT0FT7VmS0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XamKL9rmdcIW/EAJ4YAqEzfiVfEqMTRi0giaWE09F0iyy+2s6PclCdyDAgO12tPFe
-	 MUUkdy7Cj/M4iEbItuOBdvDhj/+iRvb3iKRa7bBmQyo+WhC8f+qup6WQemR7F8arRj
-	 NkMGc3xTmAKjf8OaBIGNU9Q32BJWJRqWilqN4grXJXFHmzDgZp6LqaizJnDMl8M3Yy
-	 jkLHTicWQhEWuBzMhQc/XD9dxCLKRx9WcvNuS4hUZzU0xGFxyd3Y3p+zNJZu0ywP//
-	 Ko1gvP/W4PkAsQfdBgeYrLUZ1HbWae6USIMtOL3P+cQUWpXIFO/wMMhqxfSxCPp9RA
-	 OfyO4Y+NI7ZJA==
-Message-ID: <35207b9f-fe61-4e6f-8eb8-26a6d1477596@kernel.org>
-Date: Wed, 16 Jul 2025 21:40:56 +0200
+	s=arc-20240116; t=1752694881; c=relaxed/simple;
+	bh=F+pokThyroEh4wA6nO/q9lUgWfwAgwA4isbxDAyY7OM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lnf42axwSykOskGiwbHzcFMhUr+7jpP/a5m7wjCCcTWtH6hnjV5XZSUXgpedZaHjafniJO3eQjOmdCRg/CJPvX4J2sIuLJv45rJOhlXM1xwcYFewDFrBEhXdkfCov4a8706z/2fCYUAJ0NMWK6Kr9b6OPD+nAu7uOP++VBE7tdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CfjliOAO; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-235e389599fso2415ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:41:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752694878; x=1753299678; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6cBcxFpY+leZiSm2ZlkvHJhd+tn3lpuAd2BWjNqwWsU=;
+        b=CfjliOAOHdTU7CryXIhN/TluDC6bJjwIAs2m3nOftmpZgJ4zAeX39tCn3Y8Fa/Ul80
+         HW5cW3XBBqZ6xecW72zvwtd3H5WEAnRsFuyw1DJ5gzWjrLqbuFMKB4azuSmTCUPNBYBy
+         PzlQALBIP5X3C/GWqkJQ/GwbOr8Adlx3Y8q+CxAIxoE4limX/ox0ztvbtRZ2InICvBUd
+         cthpOay0xJGm5Cq+lIfbLHfryW+n1ErwQvy4FfR3IWxBGCBm2iGTVTz0AWIRtGvNN8oM
+         qc3JJTc2x3YKsEL3VeJpi5B2x3ZyHi9mOBwpYSrw2mLsUd6S0zrshacm1ggEt8189Qml
+         XPbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752694878; x=1753299678;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6cBcxFpY+leZiSm2ZlkvHJhd+tn3lpuAd2BWjNqwWsU=;
+        b=seLJS5kANf5N3z5B7hbEKMTWWFmg/6K9CR7PpgxGO40KIaWeyWkJs2HvxuimdNMmNU
+         JR1qK7JtZXTUD3dhM2/qCAUkAKPnb2Yh+De5wO0sAB7CpoqfJICEhI9Gd0Sj9mSBmM+1
+         KunH2g5xb/QAMcbCqv/zdqlp4emi7yTT1XlkFv5ZqVvCo+smaGckGGp+5y9wituQpzn4
+         mDoMdOt+t2vpOcM3p/7ArqPX8EdxDbMzmi09HfFw72I0cVc2gCYYM/dRCPCwd06KWWTL
+         d6spB9Vc82lcFY8O0OoGzM+lQlfIwPwquGfLbtllIIgESgysl21+/Iw5Hwv9DZml8dtS
+         epjg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/2xiB0v6Fjc3POel82QEa1CcsGZXpdceJ3ImuENlF5aZqT0dk8omXnpMxqDDN1aGOEHZuKHLMNrupQgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEo5z4ScYUVUu5p4GR7AxM0NvRCp8YA2diKiRmaxp/xb8geQjb
+	J54d61iaS1sSivR1BaVbJ7S7UIuu4gCRqel7chIfmWDYuTbU7+asCyv8xwwAx9KTgsj+hkYm+cd
+	bM02f2gVWys/Pn7fXfNB5UZPWiXT5mafCmQzji7z+
+X-Gm-Gg: ASbGncssgkG8vb/NuTrc0aD3hy2nqj6s9lS9djb2q7oP0EaN5F6zTsnASlNZVz5R5oI
+	9axo1mG0YRRJVvFgzQuner9BwOO/EU703VzxEAXzsYV7VGce7Szn5sjgvpOuSK1Idp2ZTVz/9uP
+	Pm+8QnJgHsQ2hfOLhgTsgeir/tD4xEH9Ip6v1q2tncAnvPXBy08Dw7LEK4P4ktzp8jUKBzFneHf
+	IhZwEvH
+X-Google-Smtp-Source: AGHT+IFyX+XCNjY83DoIYD6wz3oMr28OgEv5cSQ9ojCgkzsna4P0DmbzE8rFt2raxHhdvl1dI8tDi1DCHzWnQLePCe8=
+X-Received: by 2002:a17:903:174e:b0:234:a734:4ab9 with SMTP id
+ d9443c01a7336-23e2fe3a9f6mr605605ad.20.1752694877565; Wed, 16 Jul 2025
+ 12:41:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/10] dt-bindings: display: imx: Add bindings for
- i.MX94 DCIF
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, imx@lists.linux.dev,
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, Frank Li <frank.li@nxp.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250716081519.3400158-1-laurentiu.palcu@oss.nxp.com>
- <20250716081519.3400158-7-laurentiu.palcu@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250716081519.3400158-7-laurentiu.palcu@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250714120047.35901-1-byungchul@sk.com> <20250714120047.35901-3-byungchul@sk.com>
+ <CAHS8izO393X_BDJxnX2d-auhTwrUZK5wYdoAh_tJc0GBf0AqcQ@mail.gmail.com>
+ <CAHS8izNh7aCJOb1WKTx7CXNDPv_UBqFyq2XEHHhqHH=5JPmJCQ@mail.gmail.com>
+ <20250715013626.GA49874@system.software.com> <CAHS8izNgfrN-MimH1uv349AqNudvQJoeOsyHpoBT_QokF3Zv=w@mail.gmail.com>
+ <20250716045124.GB12760@system.software.com>
+In-Reply-To: <20250716045124.GB12760@system.software.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 16 Jul 2025 12:41:04 -0700
+X-Gm-Features: Ac12FXwMabx4wvazw8X8IufyySuAWIkeeHz9sZZKQ1flAeUQa_1pSj5SZBgkO6M
+Message-ID: <CAHS8izMK2JA4rGNMRMqQbZtJVEP8b_QPLXzoKNeVgQFzAmdv3g@mail.gmail.com>
+Subject: Re: [PATCH net-next v10 02/12] netmem: use netmem_desc instead of
+ page to access ->pp in __netmem_get_pp()
+To: Byungchul Park <byungchul@sk.com>, "Lobakin, Aleksander" <aleksander.lobakin@intel.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, kernel_team@skhynix.com, ilias.apalodimas@linaro.org, 
+	harry.yoo@oracle.com, akpm@linux-foundation.org, andrew+netdev@lunn.ch, 
+	asml.silence@gmail.com, toke@redhat.com, david@redhat.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
+	mhocko@suse.com, linux-rdma@vger.kernel.org, bpf@vger.kernel.org, 
+	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com, 
+	jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com, 
+	xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, anthony.l.nguyen@intel.com, 
+	przemyslaw.kitszel@intel.com, sgoutham@marvell.com, gakula@marvell.com, 
+	sbhatta@marvell.com, hkelam@marvell.com, bbhushan2@marvell.com, 
+	tariqt@nvidia.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
+	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org, 
+	mbloch@nvidia.com, danishanwar@ti.com, rogerq@kernel.org, nbd@nbd.name, 
+	lorenzo@kernel.org, ryder.lee@mediatek.com, shayne.chen@mediatek.com, 
+	sean.wang@mediatek.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, horms@kernel.org, m-malladi@ti.com, 
+	krzysztof.kozlowski@linaro.org, matthias.schiffer@ew.tq-group.com, 
+	robh@kernel.org, imx@lists.linux.dev, intel-wired-lan@lists.osuosl.org, 
+	linux-arm-kernel@lists.infradead.org, linux-wireless@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16/07/2025 10:15, Laurentiu Palcu wrote:
-> DCIF is the i.MX94 Display Controller Interface which is used to
-> drive a TFT LCD panel or connects to a display interface depending
-> on the chip configuration.
-> 
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+On Tue, Jul 15, 2025 at 9:51=E2=80=AFPM Byungchul Park <byungchul@sk.com> w=
+rote:
+>
+> On Tue, Jul 15, 2025 at 12:09:34PM -0700, Mina Almasry wrote:
+> > On Mon, Jul 14, 2025 at 6:36=E2=80=AFPM Byungchul Park <byungchul@sk.co=
+m> wrote:
+> > >
+> > > On Mon, Jul 14, 2025 at 12:58:15PM -0700, Mina Almasry wrote:
+> > > > On Mon, Jul 14, 2025 at 12:37=E2=80=AFPM Mina Almasry <almasrymina@=
+google.com> wrote:
+> > > > >
+> > > > > On Mon, Jul 14, 2025 at 5:01=E2=80=AFAM Byungchul Park <byungchul=
+@sk.com> wrote:
+> > > > > >
+> > > > > > To eliminate the use of the page pool fields in struct page, th=
+e page
+> > > > > > pool code should use netmem descriptor and APIs instead.
+> > > > > >
+> > > > > > However, __netmem_get_pp() still accesses ->pp via struct page.=
+  So
+> > > > > > change it to use struct netmem_desc instead, since ->pp no long=
+er will
+> > > > > > be available in struct page.
+> > > > > >
+> > > > > > While at it, add a helper, pp_page_to_nmdesc(), that can be use=
+d to
+> > > > > > extract netmem_desc from page only if it's pp page.  For now th=
+at
+> > > > > > netmem_desc overlays on page, it can be achieved by just castin=
+g.
+> > > > > >
+> > > > > > Signed-off-by: Byungchul Park <byungchul@sk.com>
+> > > > > > ---
+> > > > > >  include/net/netmem.h | 13 ++++++++++++-
+> > > > > >  1 file changed, 12 insertions(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/include/net/netmem.h b/include/net/netmem.h
+> > > > > > index 535cf17b9134..2b8a7b51ac99 100644
+> > > > > > --- a/include/net/netmem.h
+> > > > > > +++ b/include/net/netmem.h
+> > > > > > @@ -267,6 +267,17 @@ static inline struct net_iov *__netmem_cle=
+ar_lsb(netmem_ref netmem)
+> > > > > >         return (struct net_iov *)((__force unsigned long)netmem=
+ & ~NET_IOV);
+> > > > > >  }
+> > > > > >
+> > > > > > +static inline struct netmem_desc *pp_page_to_nmdesc(struct pag=
+e *page)
+> > > > > > +{
+> > > > > > +       DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(page));
+> > > > > > +
+> > > > > > +       /* XXX: How to extract netmem_desc from page must be ch=
+anged,
+> > > > > > +        * once netmem_desc no longer overlays on page and will=
+ be
+> > > > > > +        * allocated through slab.
+> > > > > > +        */
+> > > > > > +       return (struct netmem_desc *)page;
+> > > > > > +}
+> > > > > > +
+> > > > >
+> > > > > Same thing. Do not create a generic looking pp_page_to_nmdesc hel=
+per
+> > > > > which does not check that the page is the correct type. The
+> > > > > DEBUG_NET... is not good enough.
+> > > > >
+> > > > > You don't need to add a generic helper here. There is only one ca=
+ll
+> > > > > site. Open code this in the callsite. The one callsite is marked =
+as
+> > > > > unsafe, only called by code that knows that the netmem is specifi=
+cally
+> > > > > a pp page. Open code this in the unsafe callsite, instead of crea=
+ting
+> > > > > a generic looking unsafe helper and not even documenting it's uns=
+afe.
+> > > > >
+> > > >
+> > > > On second read through the series, I actually now think this is a
+> > > > great idea :-) Adding this helper has simplified the series greatly=
+. I
+> > > > did not realize you were converting entire drivers to netmem just t=
+o
+> > > > get rid of page->pp accesses. Adding a pp_page_to_nmdesc helper mak=
+es
+> > > > the entire series simpler.
+> > > >
+> > > > You're also calling it only from code paths like drivers that alrea=
+dy
+> > > > assumed that the page is a pp page and did page->pp deference witho=
+ut
+> > > > a check, so this should be safe.
+> > > >
+> > > > Only thing I would change is add a comment explaining that the call=
+ing
+> > > > code needs to check the page is pp page or know it's a pp page (lik=
+e a
+> > > > driver that supports pp).
+> > > >
+> > > >
+> > > > > >  /**
+> > > > > >   * __netmem_get_pp - unsafely get pointer to the &page_pool ba=
+cking @netmem
+> > > > > >   * @netmem: netmem reference to get the pointer from
+> > > > > > @@ -280,7 +291,7 @@ static inline struct net_iov *__netmem_clea=
+r_lsb(netmem_ref netmem)
+> > > > > >   */
+> > > > > >  static inline struct page_pool *__netmem_get_pp(netmem_ref net=
+mem)
+> > > > > >  {
+> > > > > > -       return __netmem_to_page(netmem)->pp;
+> > > > > > +       return pp_page_to_nmdesc(__netmem_to_page(netmem))->pp;
+> > > > > >  }
+> > > > >
+> > > > > This makes me very sad. Casting from netmem -> page -> nmdesc...
+> > > > >
+> > > > > Instead, we should be able to go from netmem directly to nmdesc. =
+I
+> > > > > would suggest rename __netmem_clear_lsb to netmem_to_nmdesc and h=
+ave
+> > > > > it return netmem_desc instead of net_iov. Then use it here.
+> > > > >
+> > > > > We could have an unsafe version of netmem_to_nmdesc which convert=
+s the
+> > > > > netmem to netmem_desc without clearing the lsb and mark it unsafe=
+.
+> > > > >
+> > > >
+> > > > This, I think, we should address to keep some sanity in the code an=
+d
+> > > > reduce the casts and make it a bit more maintainable.
+> > >
+> > > I will reflect your suggestions.  To summarize:
+> > >
+> > >    1) The current implementation of pp_page_to_nmdesc() is good enoug=
+h
+> > >       to keep, but add a comment on it like "Check if the page is a p=
+p
+> > >       page before calling this function or know it's a pp page.".
+> > >
+> >
+> > Yes please.
+> >
+> > >    2) Introduce the unsafe version, __netmem_to_nmdesc(), and use it =
+in
+> > >       __netmem_get_pp().
+> > >
+> >
+> > No need following Pavel's feedback. We can just delete
+> > __netmem_get_pp. If we do find a need in the future to extract the
+> > netmem_desc from a netmem_ref, I would rather we do a straight cast
+> > from netmem_ref to netmem_desc rather than netmem_ref -> pages/net_iov
+> > -> netmem_desc.
+> >
+> > But that seems unnecessary for this series.
+>
+> No.  The series should remove accessing ->pp through page.
+>
+> I will kill __netmem_get_pp() as you and I prefer.  However,
+> __netmem_get_pp() users e.i. libeth_xdp_return_va() and
+> libeth_xdp_tx_fill_buf() should be altered.  I will modify the code like:
+>
+> as is: __netmem_get_pp(netmem)
+> to be: __netmem_nmdesc(netmem)->pp
+>
+> Is it okay with you?
+>
+
+When Pavel and I were saying 'remove __netmem_get_pp', I think we
+meant to remove the entire concept of unsafe netmem -> page
+conversions. I think we both don't like them. From this perspective,
+__netmem_nmdesc(netmem)->pp is just as bad as __netmem_get_pp(netmem).
+
+I think since the unsafe netmem-to-page casts are already in mainline,
+lets assume they should stay there until someone feels strongly enough
+to remove them. The logic in Olek's patch is sound:
+
+https://lore.kernel.org/all/20241203173733.3181246-8-aleksander.lobakin@int=
+el.com/
+
+Header buffer page pools do always use pages and will likely remain so
+for a long time, so I guess lets continue to support them rather than
+try to remove them in this series. A followup series could try to
+remove them.
+
+> > >    3) Rename __netmem_clear_lsb() to netmem_to_nmdesc(), and return
+> > >       netmem_desc, and use it in all users of __netmem_clear_lsb().
+> > >
+> >
+> > Following Pavel's comment, this I think also is not necessary for this
+> > series. Cleaning up the return value of __netmem_clear_lsb is good
+> > work I think, but we're already on v10 of this and I think it would
+> > unnecessary to ask for added cleanups. We can do the cleanup on top.
+>
+> However, I still need to include 'introduce __netmem_nmdesc() helper'
+
+Yes.
+
+> in this series since it should be used to remove __netmem_get_pp() as I
+
+lets keep __netmem_get_pp, which does a `return
+__netmem_nmdesc(netmem)->pp;` In general we avoid allowing the driver
+to do any netmem casts in the driver code, and we do any casting in
+core.
+
+> described above.  I think I'd better add netmem_nmdesc() too while at it.
+>
+
+Yes. netmem_nmdesc should replace __netmem_clear_lsb.
+
+> I assume __netmem_nmdesc() is an unsafe version not clearing lsb.  The
+
+Yes.
+
+> safe version, netmem_nmdesc() needs an additional operation clearing lsb.
+
+Yes.
 
 
-...
-
-> +
-> +  interrupts:
-> +    items:
-> +      - description:
-> +          Interrupt output for CPU domain 0 (controlled by common registers group).
-> +      - description:
-> +          Interrupt output for CPU domain 1 (controlled by background layer registers group).
-> +      - description:
-> +          Interrupt output for CPU domain 2 (controlled by foreground layer registers group).
-
-
-Keep these in one line with description, by dropping redundant part
-"Interrupt output for".
-
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: common
-> +      - const: bg_layer
-> +      - const: fg_layer
-> +
-> +  clocks:
-> +    items:
-> +      - description: APB bus clock
-> +      - description: AXI bus clock
-> +      - description: Pixel clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb
-> +      - const: axi
-> +      - const: pix
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  nxp,blk-ctrl:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: A phandle which points to NXP displaymix blk-ctrl.
-
-
-Describe for what purpose (from hardware point of view)
-
-With these improvements:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-> +
-> +  port:
-> +    $ref: /schemas/graph.yaml#/properties/port
-> +    description: Display Pixel Interface(DPI) output port
-> +
-
-
-Best regards,
-Krzysztof
+--
+Thanks,
+Mina
 
