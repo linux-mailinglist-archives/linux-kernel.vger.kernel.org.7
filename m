@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-733527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB21B075D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:37:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EDCB075CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE1537B5455
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17863B5CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB00F2F5088;
-	Wed, 16 Jul 2025 12:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997172F509B;
+	Wed, 16 Jul 2025 12:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIhaCUc0"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IhkCVSLq"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F0C2F4A0F;
-	Wed, 16 Jul 2025 12:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6C92F4A0F;
+	Wed, 16 Jul 2025 12:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669381; cv=none; b=K3P/JdtpK+JR4A+ScGwfzZ5Z+BGf/VIplhS2GC9NQCavlL3tujLvaDo8lPvcN9UI6VqpgIpD0cQTS7aFJaFNUt/vD/OeOJlQ7AUPnEmZvGkkS1MJ1SGk4ovvMAztcEOqNUX3yAqwcO0M1SbOjvgkgaKnuIQHgS3wJYDfj22APSw=
+	t=1752669403; cv=none; b=nQChGlH25PnSodEdy9sFiCza5F0LbewI8qIrNNztjqMDn17RZr9kvZBx73/qrYFmmNkSgAhmkSwKiWDjCfRT0qAly3hMuSbkVwBLem45tKwmGSzu+2cJenkoK6EbRPg+ZxNVQeLNYB+GQsQUqPBmLbMtNpGY9t7oLF/M6EBYYlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669381; c=relaxed/simple;
-	bh=MhPnxBCaHsMGyPMqBT8rooSn67JckirHUam+E7Tp1vQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mJh2PDBtNuju+2d6wmAa1VhEYicFrqP01/8G7bl1UmW2X0fT3JPQFm7CywWisRnyvVLRZGfte+V9wnyaPGuNa2nhq2whylIgyNvgSPDo1aEhz9ZsT59KdxhDTXwxp9Y0ZRyXpZJw1ngh7MZBu2HyNKnNL5gs+JMCg634iQm9SoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIhaCUc0; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1752669403; c=relaxed/simple;
+	bh=wzq636UmBmkRt5jx0MGIBDFLizgfD0NqkzU8lhycQFI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JuCZ7j/RbD25hbPTN38GC8eLR84y4e7L77duvKZPGNBki8htWC9M7s0ojcXcCu4BtSQ/cYjSfJHd+4y4+uRznKx4MiYaFQPLEEF4TF8/G0jspudJKO12eYDHHmRc7rc0pB3xYPS8wSQTRGhBr0zBSR2uA+PNGOuQi4tmuRdjjKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IhkCVSLq; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60cc11b34f6so1595905a12.0;
-        Wed, 16 Jul 2025 05:36:19 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-313bcf6e565so898529a91.0;
+        Wed, 16 Jul 2025 05:36:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752669378; x=1753274178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCpLTOnlJ+qMUDZelMGJUeO9FUm3yBfJ/9TU3z+9NFc=;
-        b=CIhaCUc0xt4CvmrSps/gWJjzgWWnX2wizASTcBGk07gZ4NUZei1Tsw5s9uujYvPII6
-         psI7NWebse/ZNGItv3giqwaAotNdPn1fg+YA82c33Z307zCyUPgVCpJWNUJ4O97eHmzO
-         aDG9LC4v9lH+2QD9+IzGVUeoPMuPrBkZJT/nBYJj6Q2RRKzUYHWoipOHHjrjdFAfqVwb
-         42VWSZmDmOZ9NK3uVEcUWj7/CDa7ryDcqh++L4vqWC2IBc4RqVups9pkSJvUlBspPYkW
-         /ES4ge3ndscZl3St0idw39eVccr0V29CDBuHlz7uEkA9YqEe68jsLUz3ITDbbiQlUYZx
-         zW0w==
+        d=gmail.com; s=20230601; t=1752669401; x=1753274201; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pbtdeD8Wnwaq/vjh/JXA9wDabfJkPgVSH5AlF8yNHxE=;
+        b=IhkCVSLqIkUZ8ExhGeSas/7WHtV7RR4GsW2trfvstcVvnSMWbtSC3mdwgljk9eGmxM
+         9xFFcVm7V1TYLzgi2HLOkH4aAzS6EwJW4g05JlWtfFciomTHN/VXM1BwJHMjLqYk01vA
+         8sWf62uVzZRXvsxX4irCdii8nI6RsfEi9lUmjEMK4uk7cEiWpIH2Tm9RtbUO8oWGIvSb
+         2uUmfxUoOE+DTavxehEqmBSwKalucuBnQiIgisp7gb1SRfbmvnOnT7UjISaRvYAseCuB
+         wEMoqO3pJPpMFYOT7+XVU/r+FUdsTjyISN50UACq6+bTjyNE80Pc0HGlgAxvz3vGeQ19
+         IqPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752669378; x=1753274178;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FCpLTOnlJ+qMUDZelMGJUeO9FUm3yBfJ/9TU3z+9NFc=;
-        b=eVHEUdD6oVZpVuBu8tQuOMmDM8utBpzCSOmdbZd3nKAPZ8R3cqFuCLxemMNGHMcZ7R
-         a1XTsSvWJmY7MiN68uKhvXzF++JRty4cVodXK6YQUJGGSl49krAG6y7xTuIuAHkuJhD0
-         wYpnPcMCKJDU397wax+LBOG2Q6ixR47c6Jm4RFdjqb5DGSn0rSIjVVxFSFnhSxTLxUVP
-         RgeYVrn1bcgqgmXLJ/L4WwJukAwEqWsG36rb8e1eWbq7noNG+zRbjstRCOZhxgLcTyFP
-         Jxd1ZFZq5AZEeJhxyKEpazpoPnO8HylODq4fY2/5SW7cFhbA4VdM1dhAPqEvaPy3muJ2
-         iBMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoFUkIQww5w3Ed29RwCPn7hFfX+nn/sVmqqpEkITQh+fZXw+4PmHEObi8rmSAO3ElTxjWhf7pltCrs@vger.kernel.org, AJvYcCX4pWwsKQi8MabsGIz2wT80MGRm33XAFl+ZpmvJPGebMUpetv6DiCDJvoiO8TpC1dIz1EqPr3kuAt07uBgy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAQ/+nJ5vX1xfgiunRb0Zw5/YZBI2iowmN5iz4/cDXjPIYjqw3
-	X5ql/nGWNpXh3jNLhjhITtRb5VOyGzjfPq7AJtoLDtywoLUcjZ+h+U4V1SWhZuC9yz8=
-X-Gm-Gg: ASbGnctuS2fcWKQZZ1nVnjaA9r5EvchNJh9WxbeLBHPucPdTGcshMmIPUGf6UqHCdMf
-	6gp9apk6QoLb2b9p5l1JO/Pu1rZxCMTAoNrXZQeiVkQs30M13y7Hoti890dUiv/6055+TOIiBL6
-	3UhOtqd3M77edsrJ/cUvZ0wyFlMMO2WBiNNSYYReMpGmWqo1FNO8APqdqHOZDoukftu3FQ1Zg8f
-	5k1Foc+IbLDzJ1uuR+N94D9xROK2zsarGwsSgV7pWnzHw5Djqmyfm6mm6DUgiuONWhXqhrAqDXZ
-	GCA8n+n6ZiX7FLUWL4yN7hJHXoqBSoLWo+s9btKUlWl6Iir9UA/qN2LPaM78HRt8qAYxdcv+O6y
-	AiDE3woJyJI4XOtODgt6Jg+830tFv/HPUiYemt8+lcp/OwNZJR7+lJu8tLueJ3tqK0vrxrpiui6
-	ZBc8clLgGuAkljoZLBC8A3iZzwhHLknpqtceERJLNUTA==
-X-Google-Smtp-Source: AGHT+IG4AJ2vXsHWCqNgvb55Yup3qbwKkBsJJGe/HXtjGWR/IQElp1XokC6HEs28IFOzm4nDF5gZxg==
-X-Received: by 2002:a17:906:c092:b0:aca:95eb:12e with SMTP id a640c23a62f3a-ae9cadb895amr223967066b.24.1752669377383;
-        Wed, 16 Jul 2025 05:36:17 -0700 (PDT)
-Received: from hsukr3.localdomain (dynamic-2a02-3100-40be-9000-93cf-b11c-7d47-1c9e.310.pool.telefonica.de. [2a02:3100:40be:9000:93cf:b11c:7d47:1c9e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82e3a8csm1192891466b.154.2025.07.16.05.36.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:36:16 -0700 (PDT)
-From: Sukrut Heroorkar <hsukrut3@gmail.com>
-To: rafel@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	Sukrut Heroorkar <hsukrut3@gmail.com>
-Subject: [PATCH] ACPI: TAD: Replace sprintf with sysfs_emit
-Date: Wed, 16 Jul 2025 14:35:43 +0200
-Message-ID: <20250716123543.495628-1-hsukrut3@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1752669401; x=1753274201;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pbtdeD8Wnwaq/vjh/JXA9wDabfJkPgVSH5AlF8yNHxE=;
+        b=nLuCaWr3xUa8a5DHv3BIFCPO9ewksl4H8W0c4El2B7oOrkHuKmkZhahsIB6JoKWDQh
+         ZhszEzbfRIO85PUJ+JILuTP1Wjr8QcazyR6Mk9bturSvVd+qtHX4A+mD60JsgtiziiKU
+         rDH58LK8dUuKWpZKqGOjhob+urtQUby4yHsIVy6lqAE1oa4jlWLYP9VLvUoZufo8OL1G
+         pF4fX2eJghYlSgaO6TpG4s6xWYriIVOfWXYQF0kCl9bDCBUuTEU3yP7lq3C3Pt3kK7dz
+         wB8BttrPB/NGfmlVadr/7RMYIvzVvD25phAnZQkwSuX2L/GRlRz64XB4F30rwSIqEqOe
+         KoJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaiUwjc0GsHe6r7b29XYQEKlEs67BmAUQc0mDCjAQ9bcv271m2aV3NF1xjpvBb0P7Swdritt7BDM748Z4m@vger.kernel.org, AJvYcCWh7WSMEXLgF2CFpQGupeA8WZQAG6Ma96F3EiwI28imFau++LnlMM05x+i/anvGGbl6DW5BsqLLFbgS@vger.kernel.org, AJvYcCXxVfU47xAw9sY08A+e6QSl9W6Njb7O3ShiE/tsjHms6vb8Vhh6uOah0jLGbYlN4uUJgLKe9oxZK0WgNMTdSFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9lkjl1r4WlIEiq9D5Z/zry+po92TcAyiAYHcz1sBhKziZY1uW
+	NeJ0enijG6KOjQItmXLc6Cj3nkJrnfQV+3y/IKLQoZal82/TMRrwhpqesz9QOPDJ3on5MywRdVz
+	AgNljPuWHthJCrbsAoOTaLIXhAXk+hOE=
+X-Gm-Gg: ASbGnctAKWKsAabKNPPbaXSXXp7Zvf4SW6AUQBI+XYvFLdjLCfVfc1d55BdrtpHSkN8
+	agf+kmIfDqkjs71B59VZa8iQJ5Q3M3eock+QEp5rn8vcefZEabFhP5ReKaPB5zuJmeKjZg/zMdj
+	fqHrGlXQR7QGHFmY2aT/pdKOUTJzdkkOni4rtuADakLdB9AzqJ5WrpUfHUmQ4ywdapbgRziNpmt
+	hLSyA==
+X-Google-Smtp-Source: AGHT+IH1AfpX3+Ds/zOoz9tipktkM9wtu5kQ1XtmEodOHlUJdQwaip1Keu+KmvTAMMyBv0JDYAk8CTYSo9R9mjAWmxY=
+X-Received: by 2002:a17:90b:2d4c:b0:310:cf92:7899 with SMTP id
+ 98e67ed59e1d1-31c9e760e02mr1521980a91.3.1752669400814; Wed, 16 Jul 2025
+ 05:36:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250714053656.66712-1-boqun.feng@gmail.com> <20250714053656.66712-2-boqun.feng@gmail.com>
+ <2025071611-factsheet-sitter-93b6@gregkh>
+In-Reply-To: <2025071611-factsheet-sitter-93b6@gregkh>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 16 Jul 2025 14:36:27 +0200
+X-Gm-Features: Ac12FXxU7t4f3TmDU6568W4lxU0yBWR1CBpL3V_9M0bVOSQeTwuke3j6Ee5kfVQ
+Message-ID: <CANiq72nCm1-xELn=Z1x1LidKHtjhMtz4FNnakunQ9BqzcS89ew@mail.gmail.com>
+Subject: Re: [PATCH v7 1/9] rust: Introduce atomic API helpers
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev, 
+	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Lyude Paul <lyude@redhat.com>, 
+	Ingo Molnar <mingo@kernel.org>, Mitchell Levy <levymitchell0@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alan Stern <stern@rowland.harvard.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace use of sprintf in *_show attributes with sysfs_emit for writing
-to sysfs. While the current implementation works, sysfs_emit helps prevent
-potential buffer overflows and aligns with kernel documentation
-Documentation/filesystems/sysfs.rst.
+On Wed, Jul 16, 2025 at 11:23=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> As this is auto-generated, how do we know when to auto-generate it
+> again?  What files does it depend on?  And why can't we just
+> auto-generate it at build time instead of having a static file in the
+> tree that no one knows when to regenerate it?  :)
 
-Tested on an x86_64 system with acpi_tad built as a module:
-- Inserted patched acpi_tad.ko successfully
-- Verified /sys/devices/platform/ACPI000E:00/time and /caps are accessible
-- Confirmed correct output from 'cat' with no dmesg errors
+If Boqun confirms that there is no reason not to do that, then I can
+take a look at that.
 
-Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
----
- drivers/acpi/acpi_tad.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/acpi_tad.c b/drivers/acpi/acpi_tad.c
-index 825c2a8acea4..91d7d90c47da 100644
---- a/drivers/acpi/acpi_tad.c
-+++ b/drivers/acpi/acpi_tad.c
-@@ -233,7 +233,7 @@ static ssize_t time_show(struct device *dev, struct device_attribute *attr,
- 	if (ret)
- 		return ret;
- 
--	return sprintf(buf, "%u:%u:%u:%u:%u:%u:%d:%u\n",
-+	return sysfs_emit(buf, "%u:%u:%u:%u:%u:%u:%d:%u\n",
- 		       rt.year, rt.month, rt.day, rt.hour, rt.minute, rt.second,
- 		       rt.tz, rt.daylight);
- }
-@@ -428,7 +428,7 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct acpi_tad_driver_data *dd = dev_get_drvdata(dev);
- 
--	return sprintf(buf, "0x%02X\n", dd->capabilities);
-+	return sysfs_emit(buf, "0x%02X\n", dd->capabilities);
- }
- 
- static DEVICE_ATTR_RO(caps);
--- 
-2.43.0
-
+Cheers,
+Miguel
 
