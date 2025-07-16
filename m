@@ -1,127 +1,118 @@
-Return-Path: <linux-kernel+bounces-734164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F184DB07DD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:34:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C79B07E0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCBF3BEBAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62CE7A449CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6A72E3391;
-	Wed, 16 Jul 2025 19:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7180E2D3757;
+	Wed, 16 Jul 2025 19:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZznVnO1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8MkCdBg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85042BD598;
-	Wed, 16 Jul 2025 19:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4F1288C2C;
+	Wed, 16 Jul 2025 19:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752694312; cv=none; b=NyHRzqUvu3pYudhgXfvVKgptrEDIRin6/D6sZiN3cXLgc8a+sL+qICXzSF9gr9pMigpLmQV5ze99MldUQxapR8GDyhJIPuUhpVs2yi1IluHGWdQmXzNsSYVZ1UM5lpM4bFKvVhmGEXXad3q1b+a1W3T24VI+AwEBoHIEBe8zs+Q=
+	t=1752694371; cv=none; b=m2O2GIeM7m4F1TGme7+7oUepBxqlDV6mzZUl5lAJHV4Ztba4WgwD/gPqcyAYvjKZwPzy+O3QCOgayroYCzO7743bsrxEV8G/RL09ucMqjRliElyPnwhdyn8iBkbQw6dFNrn4WaO571Wai//kVw9uk2yP/V04uKMBZ2mOWVcV4Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752694312; c=relaxed/simple;
-	bh=eBe8s1XgfnGkHifuAa5Fbx70CJfHUg3nJuCjIt3mEik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AfDWagCqFM6+xPqwd3SzQGPaelUmH5BkbHyimCyah2ebBOIiZJ5kya5vDAvafK0R7xPSEhpIXsnW5l+jN2lnBuMCINYl4jSyaaoAFrWwOQqIDIjWdsAR29rxpnBZP7UNBl5+jaU+PmbEH8aDOUgxaLzwCGsRvMebMxW686nHN0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZznVnO1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D602C4CEE7;
-	Wed, 16 Jul 2025 19:31:50 +0000 (UTC)
+	s=arc-20240116; t=1752694371; c=relaxed/simple;
+	bh=2DyOKJP7aKBHWg3wvE3e/BAL/NCFCynaRLW4W2mN880=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=bbWizhRzCoT9rdNL3kzOFBjLPRZVOxsHedJLR1UMqQo/5RzamuCwt7f9LHXOWpU1PMwirfHZ1AT+y46lbktuv1z98w8zKp3Ib2U5uh4wZFR1BuNi5twrrGnsOWXa/7+uy2kZIKXFztaKi76Va0LzpTTSXStiQvfzFZVe1bIXPXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8MkCdBg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA276C4CEF1;
+	Wed, 16 Jul 2025 19:32:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752694311;
-	bh=eBe8s1XgfnGkHifuAa5Fbx70CJfHUg3nJuCjIt3mEik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VZznVnO1NqAzTOARXAeGzxBt8qYlSfVcjMxU4BCDgN/H8bk74cjMjfsu43DVCzozh
-	 UQapc7Vw0Nr16SZf23tE2ntBY4npTEmAci30pMTX9Vto584FzSjNsD1fg6Kq442fiU
-	 DqAU52F/jaNHnpP+Uxw1zAehZjT2+RwSMec9lRduWjPVfzCGU0wds1ruzVHCakSnNx
-	 1HjZw4Dz0dqyM7I+Do3QhC5XTz7G7NVPdRdjY1D3VdR8rmqLTQ+fAp/2/U0ai1i4Yh
-	 WTpAtsWUGVHzZaiPwz/y1BqINqBr1e0D91dmkdySRTjtdktHkLEO1cxM8aUty2Vf6t
-	 pHQ0iSk4IVYhw==
-Date: Wed, 16 Jul 2025 14:31:48 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Ling Xu <quic_lxu5@quicinc.com>
-Cc: srini@kernel.org, amahesh@qti.qualcomm.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, arnd@arndb.de, 
-	gregkh@linuxfoundation.org, quic_kuiw@quicinc.com, ekansh.gupta@oss.qualcomm.com, 
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/4] misc: fastrpc: add support for gdsp remoteproc
-Message-ID: <qg7uvhr2pazrjqrqyraj7pr3hxbzadhenbkps7q4uqhilao2o2@653xyxcx2iak>
-References: <20250714054133.3769967-1-quic_lxu5@quicinc.com>
- <20250714054133.3769967-5-quic_lxu5@quicinc.com>
+	s=k20201202; t=1752694371;
+	bh=2DyOKJP7aKBHWg3wvE3e/BAL/NCFCynaRLW4W2mN880=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=O8MkCdBgupOAeoBvlyzfaK/fVFPCcIcpMw0jxBuD3//hlUDEg9ok/V9bFdLpFsbDY
+	 AS+bVWxK9jH0pUYApv1W6QcaE9nagPmFPYIS3jZr6U56SrJ4sVcxm8bXBArLmlp+67
+	 pVCV5jZp8UAP9qyat+qg0udAjcH22Lzn1QmHuJo2POe7RjKiFbUrBXN36qK+bSgZ0q
+	 A6s7ichqOg7T1pc6/12eQK5FePmj6JIP1UgG0yIancC5WttzTZ3g9V/xRMkNcBI4AR
+	 eq1MvDxVuhZycChAW8wrs+um0T2U8k3tHIaP9RqMMWAyhogJDPbjM4m9JWyTjLDHEy
+	 bAePdCDBRRetA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714054133.3769967-5-quic_lxu5@quicinc.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 16 Jul 2025 21:32:47 +0200
+Message-Id: <DBDQASMSS32U.FJBYKS3LWEQ6@kernel.org>
+Subject: Re: [PATCH v9] rust: kernel: add support for bits/genmask macros
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250714-topics-tyr-genmask2-v9-1-9e6422cbadb6@collabora.com>
+ <DBDP54SLN4EZ.2EQ004NXWCX2L@kernel.org>
+ <705CD461-60D9-492E-B82F-C88A848A4348@collabora.com>
+In-Reply-To: <705CD461-60D9-492E-B82F-C88A848A4348@collabora.com>
 
-On Mon, Jul 14, 2025 at 11:11:33AM +0530, Ling Xu wrote:
-> Some platforms (like sa8775p) feature one or more GPDSPs (General
-> Purpose DSPs). Similar to other kinds of Hexagon DSPs, they provide
-> a FastRPC implementation, allowing code execution in both signed and
-> unsigned protection domains. Extend the checks to allow domain names
-> starting with "gdsp" (possibly followed by an index).
-> 
+On Wed Jul 16, 2025 at 9:11 PM CEST, Daniel Almeida wrote:
+> Let=E2=80=99s transfer this discussion to this patch.
+>
+>> I also quickly tried genmask and I have a few questions:
+>>=20
+>>  (1) Why does genmask not use a const generic? I think this makes it mor=
+e
+>>      obvious that it's only intended to be used from const context.
+>
+> I guess none of us thought about it, since the current version also works=
+.
 
-This was called cdsp1 before patch 3 where you removed it and now the
-same id is introduced but this time with the name GDSP.
+I think using a const generic would be a bit better for the mentioned reaso=
+n.
 
-Iirc there was a cdsp1 in SA8295P/SA8540P, are you silently dropping
-support for that here? Or perhaps just renaming it?
+>>=20
+>>  (2) Why is there no build_assert() when the range exceeds the number of=
+ bits
+>>      of the target type? I would expect genmask_u64(0..100) to fail.
+>
+> Doesn=E2=80=99t it?
+>
+> There is a build_assert in the underlying bit implementation. It was redu=
+ndant
+> to have it both in bit_* and in genmask, because genmask calls bit().
+>
+> In your example, bit_u64(100) hits that assert, and so it shouldn't compi=
+le.
 
-Regards,
-Bjorn
+Indeed, and it also works, except from doc-tests for some reason, which is =
+what
+I tried real quick. :)
 
-> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> ---
->  drivers/misc/fastrpc.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 85b6eb16b616..d05969de406e 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -27,6 +27,7 @@
->  #define MDSP_DOMAIN_ID (1)
->  #define SDSP_DOMAIN_ID (2)
->  #define CDSP_DOMAIN_ID (3)
-> +#define GDSP_DOMAIN_ID (4)
->  #define FASTRPC_MAX_SESSIONS	14
->  #define FASTRPC_MAX_VMIDS	16
->  #define FASTRPC_ALIGN		128
-> @@ -2249,6 +2250,8 @@ static int fastrpc_get_domain_id(const char *domain)
->  		return MDSP_DOMAIN_ID;
->  	else if (!strncmp(domain, "sdsp", 4))
->  		return SDSP_DOMAIN_ID;
-> +	else if (!strncmp(domain, "gdsp", 4))
-> +		return GDSP_DOMAIN_ID;
->  
->  	return -EINVAL;
->  }
-> @@ -2323,13 +2326,14 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
->  	case ADSP_DOMAIN_ID:
->  	case MDSP_DOMAIN_ID:
->  	case SDSP_DOMAIN_ID:
-> -		/* Unsigned PD offloading is only supported on CDSP */
-> +		/* Unsigned PD offloading is only supported on CDSP and GDSP */
->  		data->unsigned_support = false;
->  		err = fastrpc_device_register(rdev, data, secure_dsp, domain);
->  		if (err)
->  			goto err_free_data;
->  		break;
->  	case CDSP_DOMAIN_ID:
-> +	case GDSP_DOMAIN_ID:
->  		data->unsigned_support = true;
->  		/* Create both device nodes so that we can allow both Signed and Unsigned PD */
->  		err = fastrpc_device_register(rdev, data, true, domain);
-> -- 
-> 2.34.1
-> 
+>>  (3) OOC, why did you choose u32 as argument type?
+>
+> No reason. i32 is the default integer type and signed integers don=E2=80=
+=99t make
+> sense here, so I chose u32.
+>
+> Also, we can trivially promote integers to wider types,  but the other wa=
+y
+> around is not true. So my reasoning was that if you had u8, or u16s you c=
+ould
+> trivially get u32s using into(), but if you had u32s and e.g. genmask_u16
+> required u16s, you'd have to resort to try_into() or `as`, which is annoy=
+ing.
+>
+> In any case, feel free to suggest anything else, I think.
+
+I feel like usize would be a better fit, but not a strong opinion.
 
