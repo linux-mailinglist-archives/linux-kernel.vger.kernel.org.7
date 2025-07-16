@@ -1,263 +1,102 @@
-Return-Path: <linux-kernel+bounces-732989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF9FB06E80
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:06:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBDCB06E9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7222E3A71FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:06:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7341AA0330
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD76289E16;
-	Wed, 16 Jul 2025 07:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEcEHM2I"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D35D28B3EF;
+	Wed, 16 Jul 2025 07:14:10 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388F42868B7;
-	Wed, 16 Jul 2025 07:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFFC2AE8E;
+	Wed, 16 Jul 2025 07:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752649583; cv=none; b=gb1eT2lhzH+J8TyI5mlu0HjRJXeS33izCTP8IOSn/y8PSIKArJCkhsUGriQTIrrzgMh7DuNZ+2kUYfjrRBOeedKUUMlhHXD6E1OONKguKPaMri2yFqw+MwOHwcj6vXGQZEzsR9oa7RAbrbiMyFgTyaNY1FGo7885Iyyqi2USFSc=
+	t=1752650049; cv=none; b=d9z4/G8fYRrez5B3tfPAFuQIv4B9Qf3mjIqpq2n2FSolgrFUcVwCLhh1fcathDtUKF/B6FlniJ5qdaDDOAfGne2SlwSE1XzEDivrSfpi/r62OVLxHy0YZBJILIcdEL09DhOzM9W5lOcZDJAIUzSBcAje3tsY/xkaVxj0KElaRNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752649583; c=relaxed/simple;
-	bh=2v8aTWJzavPgsJvmRGcpLNKIpQM1xydyPQ5QDNfpnCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sjnBhCRkiGvK0cuO9ymEwzHzRwRj3/KvI4Em06Yyfai2OcUKJHSHh7Fs7I9KLyubX9re/tFFKHn1qaRhl8Dwjig4f87YHaFU9xXzwHLqxEIsBeuVm8BKmNkyUKHvG0k7cunRA9UioIpZ8ZOUBNdZVWbuyVPA4/yZtzJsxwK/Dys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEcEHM2I; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60c4f796446so9254009a12.1;
-        Wed, 16 Jul 2025 00:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752649579; x=1753254379; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sy1qfF6J0yZ4M9hDUBcxMOCwE6+RueoLeBAi6Q3h16A=;
-        b=CEcEHM2IBlWOi3T/ZlZa7NLd7mRy0xY487TC5uZo5zfCZ46iu/6wE+o6XZB421Nymd
-         /30CbN0ipHpBkuTyu1vCreDMwibVQziLFAxOI8LDh9bjDeUwFBOUCy3fq/hgjVeHtr5M
-         4ozE4GgKq1fcDX41MVAtU1k4bK6SkLb399nwxxe0hlTrZN36kIGvq8UXG76+ClhunpoG
-         Om3UBc6AE1d9vt8opgafixKr1yXvedNn9C15EGt4Cq8liPZSw2embfKSD0E+9HSDjYob
-         X7862NYT6YLVAErEfAj5vyL5aR3/B8BeEnMm5TSNp95fHM5PLtZlwjdE5n+JbRA5Sol5
-         Q5/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752649579; x=1753254379;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sy1qfF6J0yZ4M9hDUBcxMOCwE6+RueoLeBAi6Q3h16A=;
-        b=amjlByP2D24kKJBPH+ilL6trKxv2cOHbBdMiNizO2ThGCyhEvTtlYIYreVKm61XCCA
-         Vq9o9KWxisU8iX3UMRBMZsm/C8zvzg/fnrRmo7IQ7teL45yLyIKQJXocWCVahEXBHgQw
-         fAg3zdg5lg8p24VOdlDhP8EfAgW0lmmiEhH7sDGJ/SkeNh6ocS8VL6v2WUsRglT4PVmk
-         pIcCSEmzol/7gL5shk6a06tStLUWKQEIpJSKgcniHuhNNqna4cZeYen+MR8S4SOCh0eQ
-         gbVMmX3mHR5UrAewMIMiB3cUtS0t45i+8FhtUGxKhL5FL+lr/hExE3EHMvparkd0/69m
-         RtrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDdFVs05doTEN1mIGn2F8AiTPzh1U5pXVgjH0m4rI7pzf0/XX6vtSK8JcuRiTTwwMC2EU/E4w1XyDd@vger.kernel.org, AJvYcCX6VOnFDjTpsBUzdkLEYOZ1nTDISzFORhdcA8zI6UTCXsSPZjNr7aH+eOHD+2P/oponlGUpGAcwi77GYg==@vger.kernel.org, AJvYcCXUfNIDyHUrrHbddBRtA8KhM7Wzzz1eqo91h6e33u1MsOcJMFaRBf+HL16Nfw5VQx92b4kVqfc14v0SsP6b@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhJUE8gAfGYvc+lT4bwpFhwwNIbsYXsiEFqMgm21KacltHfYnB
-	ZJEFS5EhaelLU1IsmJnhRJj/Ng9+Y2B3bdcysDIj1TEy63tifiz5oHic
-X-Gm-Gg: ASbGncvSY0X0WvEqj1U/gnzSyiOUEwFyG+NiXJuvQtn6Jd2CCGJ0rVtxXRt2EqwZO0M
-	BKpWiIAJgqlQdTTce8vR/bIHGYnlzW9AnutdXH+y+HOKSOMO/xxjONWRRG+V/nQIJcs846pdJkD
-	PjfeKDlLQHyUwBK3QArugokZDwlf87LfclwkPdjk9mQhn+7QlxKH0aRtOaI9xVVayFegjsLe8AV
-	mWQqIarFk87SFQdGxuHllLlYVWSv0vMHkS6UwFSuX4Hzqcmh7+vusine4At6KX0YvT1P2l6mRW0
-	QI6TUTfkZH5qVQnuccH2M9f0jgtbOslN0W6dh1c+ObOg447z3GKSmBKy2uHsQ3R+UbxPpuPWlkl
-	IAYt+UlJ23UF6UeYiDaqXQ4o0sVsuNybRr6RqXDlE
-X-Google-Smtp-Source: AGHT+IGq7oFEenjuXbxDNQjcsj9gWmgJnvZG8GpNaxkXhGYLzXzBwzP/VpQHzk2fr7XLaslvSUvxKA==
-X-Received: by 2002:a05:6402:40c3:b0:608:2e97:4399 with SMTP id 4fb4d7f45d1cf-61281e9bc83mr1868801a12.4.1752649579148;
-        Wed, 16 Jul 2025 00:06:19 -0700 (PDT)
-Received: from legfed1 (lis01.vpn.liebherr.com. [193.27.220.234])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c97335e2sm8473152a12.41.2025.07.16.00.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 00:06:18 -0700 (PDT)
-Date: Wed, 16 Jul 2025 09:06:16 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: dimitri.fedrau@liebherr.com, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] pwm: mc33xs2410: add hwmon support
-Message-ID: <20250716070616.GA5639@legfed1>
-References: <20250708-mc33xs2410-hwmon-v4-0-95b9e3ea5f5c@liebherr.com>
- <20250708-mc33xs2410-hwmon-v4-1-95b9e3ea5f5c@liebherr.com>
- <fxzkuflnasxp73fyf262wk5yx7yfnb5druegdujhzll3wjn6r5@n4xg6gs6segi>
+	s=arc-20240116; t=1752650049; c=relaxed/simple;
+	bh=OdjFV4Da49UyANDx5Zs6+ny76E7tQ6udO5ABaWWRO1c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t3t/ZGgXGEv5ITKOGOlmGItVFoqyFQsy+pMo8DzZbVn54wbza/VBKA8IPC8Dl81Rnt4pHjL+njp+j+yo4vok9JjQ7zd8ZPfnrLKHH0HGsqF8XP+djtfUd3gxigJnYIB1z26trdTM335O9W6nItc3bY4knqfoHTixAqJagamm9Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DB39F2001E1;
+	Wed, 16 Jul 2025 09:08:36 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9D5C9200B37;
+	Wed, 16 Jul 2025 09:08:36 +0200 (CEST)
+Received: from lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com (lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com [10.52.9.99])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E71561800079;
+	Wed, 16 Jul 2025 15:08:33 +0800 (+08)
+From: Joseph Guo <qijian.guo@nxp.com>
+Subject: [PATCH 0/3] Add support for Waveshare DSI2DPI unit
+Date: Wed, 16 Jul 2025 16:08:28 +0900
+Message-Id: <20250716-waveshare-v1-0-81cb03fb25a3@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fxzkuflnasxp73fyf262wk5yx7yfnb5druegdujhzll3wjn6r5@n4xg6gs6segi>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOxPd2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0NT3fLEstTijMSiVN2UxBRL49RES0sLgzQloPqCotS0zAqwWdGxtbU
+ Aq7B8l1sAAAA=
+X-Change-ID: 20250715-waveshare-dad93ea9980f
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, victor.liu@nxp.com, 
+ Joseph Guo <qijian.guo@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752649713; l=854;
+ i=qijian.guo@nxp.com; s=20250519; h=from:subject:message-id;
+ bh=OdjFV4Da49UyANDx5Zs6+ny76E7tQ6udO5ABaWWRO1c=;
+ b=dFmTX6CnIiz0H4eUaP42VVOKSrAUs4SnC2eUjskbX6n4/VzZbowRDx2cRRF8thT9VCRS3Bs1Y
+ lpyt2+uIa4QAcWt2Bo3Uv6kp4ErEz6+B14xgSFvjBF1ISGUf8RevTe/
+X-Developer-Key: i=qijian.guo@nxp.com; a=ed25519;
+ pk=VRjOOFhVecTRwBzK4mt/k3JBnHoYfuXKCm9FM+hHQhs=
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Hi Uwe,
+This patchset add support for waveshare DSI2DPI unit.
 
-Am Wed, Jul 16, 2025 at 08:39:14AM +0200 schrieb Uwe Kleine-König:
-> Hello Dimitri,
-> 
-> On Tue, Jul 08, 2025 at 06:13:03PM +0200, Dimitri Fedrau via B4 Relay wrote:
-> > diff --git a/drivers/pwm/pwm-mc33xs2410.c b/drivers/pwm/pwm-mc33xs2410.c
-> > index a1ac3445ccdb4709d92e0075d424a8abc1416eee..e70ed90bfdac77f5c777f0ba66d670331a515d12 100644
-> > --- a/drivers/pwm/pwm-mc33xs2410.c
-> > +++ b/drivers/pwm/pwm-mc33xs2410.c
-> > @@ -18,10 +18,12 @@
-> >   *   rather something in between.
-> >   */
-> >  
-> > +#include <linux/auxiliary_bus.h>
-> >  #include <linux/bitfield.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/err.h>
-> >  #include <linux/math64.h>
-> > +#include <linux/mc33xs2410.h>
-> >  #include <linux/minmax.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> > @@ -120,12 +122,19 @@ static int mc33xs2410_read_reg(struct spi_device *spi, u8 reg, u16 *val, u8 flag
-> >  	return mc33xs2410_read_regs(spi, &reg, flag, val, 1);
-> >  }
-> >  
-> > -static int mc33xs2410_read_reg_ctrl(struct spi_device *spi, u8 reg, u16 *val)
-> > +int mc33xs2410_read_reg_ctrl(struct spi_device *spi, u8 reg, u16 *val)
-> >  {
-> >  	return mc33xs2410_read_reg(spi, reg, val, MC33XS2410_FRAME_IN_DATA_RD);
-> >  }
-> > +EXPORT_SYMBOL_NS_GPL(mc33xs2410_read_reg_ctrl, "PWM_MC33XS2410");
-> 
-> To reduce repetition (a bit) you can consider to define
-> DEFAULT_SYMBOL_NAMESPACE.
-> 
-Will add it in V5.
+Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
+---
+Joseph Guo (3):
+      dt-bindings: display: bridge: Add waveshare DSI2DPI unit support
+      dt-bindings: display: panel: Add waveshare DPI panel support
+      drm: bridge: Add waveshare DSI2DPI unit driver
 
-> > -static int mc33xs2410_modify_reg(struct spi_device *spi, u8 reg, u8 mask, u8 val)
-> > +int mc33xs2410_read_reg_diag(struct spi_device *spi, u8 reg, u16 *val)
-> > +{
-> > +	return mc33xs2410_read_reg(spi, reg, val, 0);
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(mc33xs2410_read_reg_diag, "PWM_MC33XS2410");
-> > +
-> > +int mc33xs2410_modify_reg(struct spi_device *spi, u8 reg, u8 mask, u8 val)
-> >  {
-> >  	u16 tmp;
-> >  	int ret;
-> > @@ -139,6 +148,7 @@ static int mc33xs2410_modify_reg(struct spi_device *spi, u8 reg, u8 mask, u8 val
-> >  
-> >  	return mc33xs2410_write_reg(spi, reg, tmp);
-> >  }
-> > +EXPORT_SYMBOL_NS_GPL(mc33xs2410_modify_reg, "PWM_MC33XS2410");
-> >  
-> >  static u8 mc33xs2410_pwm_get_freq(u64 period)
-> >  {
-> > @@ -297,6 +307,52 @@ static const struct pwm_ops mc33xs2410_pwm_ops = {
-> >  	.get_state = mc33xs2410_pwm_get_state,
-> >  };
-> >  
-> > +static void mc33xs2410_adev_release(struct device *dev)
-> > +{
-> > +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> > +
-> > +	kfree(adev);
-> > +}
-> > +
-> > +static void mc33xs2410_unregister_adev(void *_adev)
-> > +{
-> > +	struct auxiliary_device *adev = _adev;
-> > +
-> > +	auxiliary_device_delete(adev);
-> > +	auxiliary_device_uninit(adev);
-> > +}
-> 
-> This is a copy of auxiliary_device_destroy(). But see below.
->
-Yes, you are right.
-
-> > +static int mc33xs2410_hwmon_register(struct device *dev)
-> > +{
-> > +	struct auxiliary_device *adev;
-> > +	int ret;
-> > +
-> > +	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-> > +	if (!adev)
-> > +		return -ENOMEM;
-> > +
-> > +	adev->name = "hwmon";
-> > +	adev->dev.parent = dev;
-> > +	adev->dev.release = mc33xs2410_adev_release;
-> > +	adev->id = 0;
-> > +
-> > +	ret = auxiliary_device_init(adev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = auxiliary_device_add(adev);
-> > +	if (ret) {
-> > +		auxiliary_device_uninit(adev);
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret = devm_add_action_or_reset(dev, mc33xs2410_unregister_adev, adev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return 0;
-> > +}
-> 
-> This function is equivalent to devm_auxiliary_device_create(dev, "hwmon", NULL);
->
-Thanks for finding this, will implement it in V5.
-
-> > +
-> >  static int mc33xs2410_reset(struct device *dev)
-> >  {
-> >  	struct gpio_desc *reset_gpio;
-> > @@ -361,6 +417,10 @@ static int mc33xs2410_probe(struct spi_device *spi)
-> >  	if (ret < 0)
-> >  		return dev_err_probe(dev, ret, "Failed to add pwm chip\n");
-> >  
-> > +	ret = mc33xs2410_hwmon_register(dev);
-> > +	if (ret < 0)
-> > +		return dev_err_probe(dev, ret, "Failed to register hwmon device\n");
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > diff --git a/include/linux/mc33xs2410.h b/include/linux/mc33xs2410.h
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..15a0b0b595fe00a369cee45f2d30b2d912b612bb
-> > --- /dev/null
-> > +++ b/include/linux/mc33xs2410.h
-> > @@ -0,0 +1,14 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (C) 2024 Liebherr-Electronics and Drives GmbH
-> > + */
-> > +#ifndef _MC33XS2410_H
-> > +#define _MC33XS2410_H
-> > +
-> > +#include <linux/spi/spi.h>
-> > +
-> > +int mc33xs2410_read_reg_ctrl(struct spi_device *spi, u8 reg, u16 *val);
-> > +int mc33xs2410_read_reg_diag(struct spi_device *spi, u8 reg, u16 *val);
-> > +int mc33xs2410_modify_reg(struct spi_device *spi, u8 reg, u8 mask, u8 val);
-> > +
-> > +#endif /* _MC33XS2410_H */
-> 
-> I consider it elegant to have the
-> 
-> 	MODULE_IMPORT_NS("PWM_MC33XS2410")
-> 
-> in the header. This is nice because the namespacing is completely
-> transparant to consumers and all they need it the right #include as if
-> there was no namespacing at all.
-> 
-Yes, will implement it as you suggested.
-
-Thanks for your input.
+ .../bindings/display/bridge/waveshare,dsi2dpi.yaml | 103 ++++++++++
+ .../bindings/display/panel/panel-simple.yaml       |   4 +
+ drivers/gpu/drm/bridge/Kconfig                     |  11 ++
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/waveshare-dsi.c             | 210 +++++++++++++++++++++
+ 5 files changed, 329 insertions(+)
+---
+base-commit: 0952d89c3acf6590b89bcfb8505595d7c0e6f367
+change-id: 20250715-waveshare-dad93ea9980f
 
 Best regards,
-Dimitri Fedrau
+-- 
+Joseph Guo <qijian.guo@nxp.com>
+
 
