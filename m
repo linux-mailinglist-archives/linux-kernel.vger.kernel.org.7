@@ -1,108 +1,167 @@
-Return-Path: <linux-kernel+bounces-732955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67439B06E21
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:40:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4932B06E22
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740423BAA13
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:40:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D3A03AE88D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B1A288513;
-	Wed, 16 Jul 2025 06:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CD62882D3;
+	Wed, 16 Jul 2025 06:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQz0hnwI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TFVD3IS8"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B79A10A1E;
-	Wed, 16 Jul 2025 06:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5195B10A1E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752648047; cv=none; b=d6CX8w1iszkSWzCXltc2zcBgXD+j8QIfKPG0Ko9OH6aK4bB1TJIMdzG4rBluNQLEa6u/jWxDv2sZud7oVqmPsFTRMkRDlcvUkhUfabuNNYUpo7HDBdD8ziH5dfYcQ8xprTUf+2wN3Av9kSDCp7CfJ1ExMVGvrGfSfeNB9x1SDf8=
+	t=1752648123; cv=none; b=WmTkfbPRLVbSDbeE6OM7DOOaQhvQuSortUciFLxx0q14DRZN15i1iSKZRyH1XtLbMaE5PBziXx18Zwk/fTrwBIXq4kPR4DCUEHoRtHDSxcR7WLszjSa+SXywJXNhc55Ajnmdo36f1mbUqd+kGDM06KUXXE50DrT2rnnWXTaBnRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752648047; c=relaxed/simple;
-	bh=M7wVgFYY5nzyttesPs5Sd9C3Qd0g3gqiZsDsfsHXoaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thhFaFR4Uj8zaGeKJFqLkpEDV9gkIbA97tt5wuKokJIbsTgdeme9YPh8UmhWo9jWaj2kVAxFCuzmIA3046cfOWivp1MMq052TLwHOZ5Uh2CdPEp2QzXzMeHr3mAzl8dbIu/SLOdqv6znJjXHXDEQLzINXVUGf6ZFsxc+tDlEul8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQz0hnwI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B6B8C4CEF0;
-	Wed, 16 Jul 2025 06:40:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752648046;
-	bh=M7wVgFYY5nzyttesPs5Sd9C3Qd0g3gqiZsDsfsHXoaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iQz0hnwIkHSX8XGv2D3O4V/rf8xxwo1nmR5bXF61WJ+aLO7oH1++ArPMfdSTLueX5
-	 SGicY/Pa3Ft+XNxfNOuzmFW30kUXLNVx7d9O4hWVBkN9uSExF37d1zAsNCy6rjku0T
-	 HHKPFEl383w+6RIgW7uWrntk8g5oCUXqn9RjbrrTI7DJZZRqeIBPQYtTnl/hfCJLTw
-	 VuDIPB329cPi2xr4ga6UjQLTNmNsBHnlHKuCsDIR18T953jfwEBKaijbrT2sy4915S
-	 p8I3Sj3NWMS22GY/muVAEtNRD6sR2UtuyWYlVUu5DNrJqsjeg9G8ouz/Q3ciOgpIsv
-	 eOi+sBmCOYHzQ==
-Date: Wed, 16 Jul 2025 12:10:33 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Sumit Kumar <quic_sumk@quicinc.com>
-Cc: Alex Elder <elder@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com, quic_akhvin@quicinc.com, 
-	quic_skananth@quicinc.com, quic_vbadigan@quicinc.com, Sumit Kumar <sumk@qti.qualcomm.com>, 
-	stable@vger.kernel.org, Akhil Vinod <akhvin@qti.qualcomm.com>
-Subject: Re: [PATCH] bus: mhi: ep: Fix chained transfer handling in read path
-Message-ID: <5aqtqicbtlkrqbiw2ba7kkgwrmsuqx2kjukh2tavfihm5hq5ry@gdeqegayfh77>
-References: <20250709-chained_transfer-v1-1-2326a4605c9c@quicinc.com>
+	s=arc-20240116; t=1752648123; c=relaxed/simple;
+	bh=Z7iNevFVY+VbBQlJbu5BrGs7A7QTEjsU3i6fiE5DfPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z2ODICY1pEvar3U0TMqK0N36+HSuAP3W+b2IautkjG1cIGCrQhpaBaOiQDmeFZyaOa7D096i6u8Me8JWg0aNV0F7ukMZpCs0XMQo3u5HmNIz9MZnSKkas8cAfxcscSwakxp9wJCgNPAWzzQHEoz2JEE2aFNaCe7/jZtPDlxQx7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TFVD3IS8; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752648117; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=RYcHHDGKG22FuVlkAHRB4rfI+ekqEKqG/7U15GMIscY=;
+	b=TFVD3IS8ar/F+3BO3x+noCX27Rf2eLkG1plZxq+Sc188FjySyPP/GU/wJ3+lIkoPY9tuNMiacVXxM4qfxp/hn3OdOVTav8v0g1UBbjL0JF3dvsWKQlzhUr9x9eBgCwCGp33X0HrWdCn9a7PUmGemWtVop+80LMciDbLJJo7Ue/g=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wj33g3N_1752648113 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Jul 2025 14:41:57 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LMKL <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH v2 2/2] erofs: unify meta buffers in z_erofs_fill_inode()
+Date: Wed, 16 Jul 2025 14:41:52 +0800
+Message-ID: <20250716064152.3537457-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250714090907.4095645-2-hsiangkao@linux.alibaba.com>
+References: <20250714090907.4095645-2-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250709-chained_transfer-v1-1-2326a4605c9c@quicinc.com>
 
-On Wed, Jul 09, 2025 at 04:03:17PM GMT, Sumit Kumar wrote:
-> From: Sumit Kumar <sumk@qti.qualcomm.com>
-> 
-> The current implementation of mhi_ep_read_channel, in case of chained
-> transactions, assumes the End of Transfer(EOT) bit is received with the
-> doorbell. As a result, it may incorrectly advance mhi_chan->rd_offset
-> beyond wr_offset during host-to-device transfers when EOT has not yet
-> arrived. This can lead to access of unmapped host memory, causing
-> IOMMU faults and processing of stale TREs.
-> 
-> This change modifies the loop condition to ensure rd_offset remains behind
-> wr_offset, allowing the function to process only valid TREs up to the
-> current write pointer. This prevents premature reads and ensures safe
-> traversal of chained TREs.
-> 
-> Fixes: 5301258899773 ("bus: mhi: ep: Add support for reading from the host")
-> Cc: stable@vger.kernel.org
-> Co-developed-by: Akhil Vinod <akhvin@qti.qualcomm.com>
-> Signed-off-by: Akhil Vinod <akhvin@qti.qualcomm.com>
-> Signed-off-by: Sumit Kumar <sumk@qti.qualcomm.com>
-> ---
->  drivers/bus/mhi/ep/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
-> index b3eafcf2a2c50d95e3efd3afb27038ecf55552a5..2e134f44952d1070c62c24aeca9effc7fd325860 100644
-> --- a/drivers/bus/mhi/ep/main.c
-> +++ b/drivers/bus/mhi/ep/main.c
-> @@ -468,7 +468,7 @@ static int mhi_ep_read_channel(struct mhi_ep_cntrl *mhi_cntrl,
->  
->  			mhi_chan->rd_offset = (mhi_chan->rd_offset + 1) % ring->ring_size;
->  		}
-> -	} while (buf_left && !tr_done);
-> +	} while (buf_left && !tr_done && mhi_chan->rd_offset != ring->wr_offset);
+There is no need to keep additional local metabufs since we already
+have one in `struct erofs_map_blocks`.
 
-You should use mhi_ep_queue_is_empty() for checking the available elements to
-process. And with this check in place, the existing check in
-mhi_ep_process_ch_ring() becomes redundant.
+This was actually a leftover when applying meta buffers to zmap
+operations, see commit 09c543798c3c ("erofs: use meta buffers for
+zmap operations").
 
-- Mani
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+v1: https://lore.kernel.org/r/20250714090907.4095645-2-hsiangkao@linux.alibaba.com
+change since v1:
+ - Fix a regresssion since EROFS_GET_BLOCKS_FINDTAIL will update the
+   original map to the tail extent so just keep using a new `map`.
 
+ fs/erofs/zmap.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
+
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index ff1d0751fc61..b72a0e3f9362 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -620,13 +620,12 @@ static int z_erofs_map_blocks_ext(struct inode *inode,
+ 	return 0;
+ }
+ 
+-static int z_erofs_fill_inode_lazy(struct inode *inode)
++static int z_erofs_fill_inode(struct inode *inode, struct erofs_map_blocks *map)
+ {
+ 	struct erofs_inode *const vi = EROFS_I(inode);
+ 	struct super_block *const sb = inode->i_sb;
+ 	int err, headnr;
+ 	erofs_off_t pos;
+-	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+ 	struct z_erofs_map_header *h;
+ 
+ 	if (test_bit(EROFS_I_Z_INITED_BIT, &vi->flags)) {
+@@ -646,7 +645,7 @@ static int z_erofs_fill_inode_lazy(struct inode *inode)
+ 		goto out_unlock;
+ 
+ 	pos = ALIGN(erofs_iloc(inode) + vi->inode_isize + vi->xattr_isize, 8);
+-	h = erofs_read_metabuf(&buf, sb, pos);
++	h = erofs_read_metabuf(&map->buf, sb, pos);
+ 	if (IS_ERR(h)) {
+ 		err = PTR_ERR(h);
+ 		goto out_unlock;
+@@ -684,7 +683,7 @@ static int z_erofs_fill_inode_lazy(struct inode *inode)
+ 		erofs_err(sb, "unknown HEAD%u format %u for nid %llu, please upgrade kernel",
+ 			  headnr + 1, vi->z_algorithmtype[headnr], vi->nid);
+ 		err = -EOPNOTSUPP;
+-		goto out_put_metabuf;
++		goto out_unlock;
+ 	}
+ 
+ 	if (!erofs_sb_has_big_pcluster(EROFS_SB(sb)) &&
+@@ -693,7 +692,7 @@ static int z_erofs_fill_inode_lazy(struct inode *inode)
+ 		erofs_err(sb, "per-inode big pcluster without sb feature for nid %llu",
+ 			  vi->nid);
+ 		err = -EFSCORRUPTED;
+-		goto out_put_metabuf;
++		goto out_unlock;
+ 	}
+ 	if (vi->datalayout == EROFS_INODE_COMPRESSED_COMPACT &&
+ 	    !(vi->z_advise & Z_EROFS_ADVISE_BIG_PCLUSTER_1) ^
+@@ -701,27 +700,25 @@ static int z_erofs_fill_inode_lazy(struct inode *inode)
+ 		erofs_err(sb, "big pcluster head1/2 of compact indexes should be consistent for nid %llu",
+ 			  vi->nid);
+ 		err = -EFSCORRUPTED;
+-		goto out_put_metabuf;
++		goto out_unlock;
+ 	}
+ 
+ 	if (vi->z_idata_size ||
+ 	    (vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER)) {
+-		struct erofs_map_blocks map = {
++		struct erofs_map_blocks tm = {
+ 			.buf = __EROFS_BUF_INITIALIZER
+ 		};
+ 
+-		err = z_erofs_map_blocks_fo(inode, &map,
++		err = z_erofs_map_blocks_fo(inode, &tm,
+ 					    EROFS_GET_BLOCKS_FINDTAIL);
+-		erofs_put_metabuf(&map.buf);
++		erofs_put_metabuf(&tm.buf);
+ 		if (err < 0)
+-			goto out_put_metabuf;
++			goto out_unlock;
+ 	}
+ done:
+ 	/* paired with smp_mb() at the beginning of the function */
+ 	smp_mb();
+ 	set_bit(EROFS_I_Z_INITED_BIT, &vi->flags);
+-out_put_metabuf:
+-	erofs_put_metabuf(&buf);
+ out_unlock:
+ 	clear_and_wake_up_bit(EROFS_I_BL_Z_BIT, &vi->flags);
+ 	return err;
+@@ -739,7 +736,7 @@ int z_erofs_map_blocks_iter(struct inode *inode, struct erofs_map_blocks *map,
+ 		map->m_la = inode->i_size;
+ 		map->m_flags = 0;
+ 	} else {
+-		err = z_erofs_fill_inode_lazy(inode);
++		err = z_erofs_fill_inode(inode, map);
+ 		if (!err) {
+ 			if (vi->datalayout == EROFS_INODE_COMPRESSED_FULL &&
+ 			    (vi->z_advise & Z_EROFS_ADVISE_EXTENTS))
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.5
+
 
