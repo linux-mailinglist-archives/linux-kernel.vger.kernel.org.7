@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-733393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3AAB07423
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:00:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A781B0743D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB3B14A6301
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:00:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99A0F3AA504
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7194C2F3C11;
-	Wed, 16 Jul 2025 10:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvLMByKW"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AC42F2C7B
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D97C2F3C13;
+	Wed, 16 Jul 2025 11:05:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D6F2F0028;
+	Wed, 16 Jul 2025 11:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752663591; cv=none; b=WtqgZIeHiFPAFMcKf1+NITHX1zsVrNMnAKcnApWOUn9F3+cx2YT1gN76dmcwPNEvpcvx/mq2U0QrcJqm22LHuX9ZXP6eFtL2EcMgKZG2Q0dIU0EgTR7qvcJCfkqiDcZNJLikZlHCCUO/7cSX5vvoaKBJDUOCppuo5ABAcioIZbk=
+	t=1752663956; cv=none; b=dTkXoMwH4Fw0h8CDeBxkJiRf2QttAG1rN72muXsvnsKUAgj+6Irx7wkZb4Ra9ktyMoWB/gpe3AaMueB2QZjY4rtWOnAQBQFt4M6Q7FYks7riV8yXUydqBkTqUTpHEDEcduAWgo9amG0KaOe0RDfP77DEyiLdcRmyStbTJWfdnDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752663591; c=relaxed/simple;
-	bh=RdqRsNDKKQgfrmCzzuSlgn+ij1i4HNnTBhYJQ0dea1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m1lWQLnyIod2KLonnSe+EIL7tTTXZJvJE6Hjo/mkrkZMCc6er4MSe4h8Dul678gqZW0IUBRbD8Uva9du0n3PB6RspfVskT8sX/vPhNsAfkm49PQoPOySvCPJlE1lESIlB8rkSSCWXiaPknIlXaAtPYAjV5rPn3dKNOabBFSbgiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gvLMByKW; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-455b00339c8so36680595e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752663589; x=1753268389; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/ePoCatCn8uwrUkfz5cDfhTqogA3pDEPeb9x1/QWcKE=;
-        b=gvLMByKWWrz/Je21u/3w94ywjHh/tG5rkSpEu7VlmghZTilm9RXPY+RVoMAMJXksla
-         b9+fiylhJAmnML3q9lrgDt8Soa2jVA6kO9EW+8HMNBSfZTwsPbwKMIoGlsy2/egVH2vT
-         NqCQ2qJ8JsWbNNntz/57I7zToJIPGQD2lnSY0FuXFT8ihW2nDdKoWQ+6MlCeji7EQLhc
-         Ab2p4nY7SHOewCtYwJbwg6o2thxcQjzuAv7XfMea5YV1njfFKtBW/M5HVpiGcgCPlmGi
-         waa/J0deZaea7W7wefY2Mf62WowpKH+70ZU3bFIVcoyEdSavBsyBMV5QF4rM54unV6GB
-         G6IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752663589; x=1753268389;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ePoCatCn8uwrUkfz5cDfhTqogA3pDEPeb9x1/QWcKE=;
-        b=ZXC/f7BEMDHrOgOr2cfAHE3NGapyY3KvaYmDC2L5LyyHw+DOzvGCARwHDOGNTR/dMp
-         kZT70PxsaRgF0NTf+eEDG4QTuu1x3roeaQziO5t8YJ/puGQzM0DSznMTr3xMZylH7RK7
-         NhwaAHrtfga+4stdZpNE17yVx8QppO7jQuGCqQjJy/DSn7JkZnnjgF0qdxofpvBjSGrT
-         KWzWQx0YY7+ZyiAqENIhkE0DURyjWg+1jyg3L2MsOcn4t82OXTfPH+lsDDTm1NSaIclY
-         /bt41LAJwyzpXcMgDOgP9mJIZJ5PqFGs9TNoMsBZlVvzwT6iaCgza7dddY57x4qIQXj+
-         NHhA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Tvk5Jmg0norX36LxZ4vjS5nC8jerfFbN+LkkKNEgH5nt0uXN6x/86xtZXbwP5iDZFuKNHzbLsfi8dv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0Db8kk0c41D89/EplrW9WWTvQKs9sybkQYNFiZHXW4NzmP43m
-	C9/IKTb3Z8Pnd8II9mGr3kOprGY1TJEdDhikxEyoVWa9TcTyKaK0wmTdTJq9hSX1u88=
-X-Gm-Gg: ASbGncuAF53rDEttIaFhDkQK7ZiD+hTXxAkW7GNg6b1EqkzNA8ba0G0gj4qMZ44GLde
-	SATphzk4uhOpoxRVHfUg6WdHg7V5xThH9DV1u3LkyuZ6yWsrH0cC+6jTavMYKKgX7PII770iLOt
-	ekubx/o86y077eq+ulNjBmkamCv0SvJlPn7e/YR5XxjGGh9OoxMAwZuWGKHmd0qGEhCYkFfZ9Py
-	5uCOa5wbiSymuoZdUkPvPx0QQYFImhFLKJF/HaYvCGBUzGqOFeJKYvyWCaNEQc4A/hZupCZCRig
-	RTrqQSdiCAHBkkUaSr5HRFRPEwuA8q6h+szBbA44tjJqChHOzpp/feIboPG0Np0iAdDu6zbVDDl
-	4IpJ1hwzCMnNk2BbgmvvbyGF7W6w23mCrZ2hzomvWlggPqtN1TPFMwoEcVDTlWog=
-X-Google-Smtp-Source: AGHT+IFW0OX33KBpiLU6YOL+IJgDcuTQ1zq15zYqdjMf2JYYuPC7KCK+xgulExDW9Uc9Bd9opQZwkQ==
-X-Received: by 2002:a05:600c:3f09:b0:456:d25:e416 with SMTP id 5b1f17b1804b1-4562e331640mr20250845e9.6.1752663588670;
-        Wed, 16 Jul 2025 03:59:48 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b600722780sm9817655f8f.23.2025.07.16.03.59.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 03:59:48 -0700 (PDT)
-Message-ID: <40784fe0-3c70-4e1e-8b42-fa7230c2485d@linaro.org>
-Date: Wed, 16 Jul 2025 11:59:46 +0100
+	s=arc-20240116; t=1752663956; c=relaxed/simple;
+	bh=dyQYr4lv0y7IcIYqRyjYGKZ/D0kemm9xuT47filb00c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ek02jNWo8TMzDTt56DaFQQ8J1bzQGHljEuCB2N2ccNaq5XaNU4iBkniN4zdr/9Vll/0FH4Pzzy7ec65FU3NnQB472/pCO7hqEuZvt5KeF52LqUp+QGv7krKl5hqPrcV1sB5bKT2SrP/Qb81XTq6JSlT0f0Qxk0kCeGZ2A6eyldQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6766112FC;
+	Wed, 16 Jul 2025 04:05:45 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 363A93F66E;
+	Wed, 16 Jul 2025 04:05:51 -0700 (PDT)
+Date: Wed, 16 Jul 2025 12:05:46 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Andrew Donnellan <ajd@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 0/2] KVM: s390: Fix latent guest entry/exit bugs
+Message-ID: <aHeHilsi8-Tr9_1D@J2N7QTR9R3>
+References: <20250708092742.104309-1-ajd@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 04/15] media: qcom: camss: Add support for PHY API
- devices
-To: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-4-0bc5da82f526@linaro.org>
- <CAFEp6-0hDqgYsjOy2mCC6ssK2LkMM0z7L_szS+M_wSMeMe3pMg@mail.gmail.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <CAFEp6-0hDqgYsjOy2mCC6ssK2LkMM0z7L_szS+M_wSMeMe3pMg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708092742.104309-1-ajd@linux.ibm.com>
 
-On 16/07/2025 10:36, Loic Poulain wrote:
->> +       if (!phy_np) {
->> +               if (!res->legacy_phy)
->> +                       return -ENODEV;
->> +
->> +               for (i = 0; i < camss->res->csiphy_num; i++) {
->> +                       ret = msm_csiphy_subdev_init_legacy(camss, &camss->csiphy[i],
->> +                                                           &res->csiphy_res[i],
->> +                                                           res->csiphy_res[i].csiphy.id);
->> +                       if (ret < 0) {
->> +                               dev_err(camss->dev,
->> +                                       "Failed to init csiphy%d sub-device: %d\n",
->> +                                       i, ret);
->> +                               return ret;
->> +                       }
->> +                       camss->csiphy[i].phy = ERR_PTR(-ENODEV);
->>                  }
-> So what happens if we have `phy_np` and `!of_device_is_available`, we
-> just continue without any phy initialized?
+On Tue, Jul 08, 2025 at 07:27:40PM +1000, Andrew Donnellan wrote:
+> In [0], the guest_{enter,exit}_irqoff() helpers were deprecated, in favour
+> of guest_timing_{enter,exit}_irqoff() and
+> guest_context_{enter,exit}_irqoff(). This was to fix a number of latent
+> guest entry/exit bugs, relating to the enabling of interrupts during an
+> RCU extended quiescent state, instrumentation code, and correct handling
+> of lockdep and tracing.
+> 
+> However, while arm64, mips, riscv and x86 have been migrated to the new
+> helpers, s390 hasn't been. There was an initial attempt at [1] to do this,
+> but that didn't work for reasons discussed at [2].
+> 
+> Since then, Claudio Imbrenda has reworked much of the interrupt handling.
+> Moving interrupt handling into vcpu_post_run() avoids the issues in [2],
+> so we can now move to the new helpers.
 
-Hmm. Good question.
+Nice!
 
-Yes but, that's probably not what we want.
+> I've rebased Mark's patches from [1]. kvm-unit-tests, the kvm selftests,
+> and IBM's internal test suites pass under debug_defconfig.
 
-Thanks, I will look into this.
+I took a quick look at this and Claudio's preparatory work, and this all
+looks like what I was hoping for back in one of the replies to [2]:
 
----
-bod
+  https://lore.kernel.org/all/YerRbhqvJ5nEcQYT@FVFF77S0Q05N/
+
+I am not aware of any additional problems, and this all looks good to
+me. Thanks for picking this up!
+
+Mark.
+
+> These patches do introduce some overhead - in my testing, a few of the
+> tests in the kvm-unit-tests exittime test suite appear 6-11% slower, but
+> some noticeable overhead may be unavoidable (we introduce a new function
+> call and the irq entry/exit paths change a bit).
+> 
+> [0] https://lore.kernel.org/lkml/20220201132926.3301912-1-mark.rutland@arm.com/
+> [1] https://lore.kernel.org/all/20220119105854.3160683-7-mark.rutland@arm.com/
+> [2] https://lore.kernel.org/all/a4a26805-3a56-d264-0a7e-60bed1ada9f3@linux.ibm.com/
+> [3] https://lore.kernel.org/all/20241022120601.167009-1-imbrenda@linux.ibm.com/
+> 
+> Mark Rutland (2):
+>   entry: Add arch_in_rcu_eqs()
+>   KVM: s390: Rework guest entry logic
+> 
+>  arch/s390/include/asm/entry-common.h | 10 ++++++
+>  arch/s390/include/asm/kvm_host.h     |  3 ++
+>  arch/s390/kvm/kvm-s390.c             | 51 +++++++++++++++++++++-------
+>  arch/s390/kvm/vsie.c                 | 17 ++++------
+>  include/linux/entry-common.h         | 16 +++++++++
+>  kernel/entry/common.c                |  3 +-
+>  6 files changed, 77 insertions(+), 23 deletions(-)
+> 
+> -- 
+> 2.50.0
 
