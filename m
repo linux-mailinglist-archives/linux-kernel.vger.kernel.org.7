@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-733358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29AD5B07397
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:38:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E13B0739B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9136A189CBBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 647BB7AF9CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E722E6D11;
-	Wed, 16 Jul 2025 10:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987382F1FF1;
+	Wed, 16 Jul 2025 10:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UWA9t05O"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIqMt1cv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23ABE1953BB;
-	Wed, 16 Jul 2025 10:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D569B1953BB;
+	Wed, 16 Jul 2025 10:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752662275; cv=none; b=JD/AlQO/rc+svyRXW16akDrBqCKnaxPa5bsdFaUvRnWBRmZLHLmsKGs5OULA7VfjB5zX5lvg1LHV6oGw6Oe4PqDhDMMjNK46Hp3IhW4J3ENgnZKcVUEVfKLQg2pEuJCIMxKTVC3LcpH9Xoe/Mbdw86KbzuXLzMPv/OSBlbYVdes=
+	t=1752662293; cv=none; b=nPYfX5HeWDeu8hpvAvgFNBBU1m894AKfBXZMh/ONTV8sXqqbxSWlU1o1zoDgjCdbhgB9qirQ0H5NQHPEyNPTaXzD8KkXybuNtEyQebNe3GaydQa/u4qArJGPNBnW/2yasFaSErfNdfLfPIRa3Kc/81dwqsozelY2vKxvhqOx9kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752662275; c=relaxed/simple;
-	bh=kVqBarDBzux7mrOq83OjSXA5lkRDcsJ4deVVFlFxAZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=f27ZFeIclqLzS/z7nyOHuqENcaOotqxvm+8nRqry9Yf2ypNsCH7idDO+S4YJND4AUB3HwkXjIGBZR2ddFbgg3po/oiah7KDPaybi+kZap/zgtxr8UnfTiDphhsZKQZMjYY/Ft/Liy2teObJRjFBp8v85S335Ee6rB6f/DgNEbcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UWA9t05O; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752662153;
-	bh=vOeca4e7maPNKquBg58Cxv87XhtRefH5lxy1aUyTnpw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UWA9t05O0QdEDdKFwiNs1IaCyqDp8CTcCvl1q/HBkiSZ6M7BcVfTnPfveJ9hG1RII
-	 kuxymcgFaYojr3Ie6Hv4vyWiRqv5SoM8NPTGA0SKPQuly69aMlrtPNdyJzjlZ6JbpA
-	 iUx+kOYJRBEHpRziBSU4B3ZZlnpKbTmCrsYSOxqwTt2Ae1mQ+QtFoHYusDIPmm+Bdc
-	 gfPpgBMlz0tyP3B2EEPxO+AWiSP7aR2r+njrcGltpHftZ3lC30ue+Tk+YaTikrFlii
-	 2dYGpgxzXrL49AKaGyr8mC2yuITU5g9IvIrPYFWntigtq8Fp7svFMHB1mX5dDJDNrW
-	 HaiyiRCK6CIJQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhssP2tltz4wvb;
-	Wed, 16 Jul 2025 20:35:52 +1000 (AEST)
-Date: Wed, 16 Jul 2025 20:37:48 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the block tree
-Message-ID: <20250716203748.5a4ad396@canb.auug.org.au>
+	s=arc-20240116; t=1752662293; c=relaxed/simple;
+	bh=Giy9twegHvVp9tB/XktoHGZWJLtHODjLeTrzpsW4lsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cW9qXa0r1Y8eTHoMM52qanqG5LJSYLv1xBgR48JLOcSSrFX+MopjkTxSOAu+tI73WQJ3Tja3zA0xrFll1xfW3YZ3TzDVF/M6pteGtSfle32kWdSWTTQ2N21z7A48YyQwik8rB0y8UI7IcVwbV+jPtAWt2ORkrSdTBgiCaOYg3Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIqMt1cv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C0DC4CEF0;
+	Wed, 16 Jul 2025 10:38:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752662293;
+	bh=Giy9twegHvVp9tB/XktoHGZWJLtHODjLeTrzpsW4lsE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SIqMt1cvbSnTPCaq811I2Bhdg3zTtLg3fJy6xKjfGjnimLSNbp7MD7PGsTA786IdR
+	 72QF0eIMpHK1xH4Y5Tu3kWYXzSgosw2nscRrtI+vTIoe9hjarHecIrQkKowzbEEcjb
+	 g6u2LVhd4cK5Q4Uy/X6KcYTZhyNoSLD61DXy6WIwJ//QcwDsLeEWenGpcY+sQDsWSc
+	 O492TMWkynGSwWs6extRf34FnCAWp9YWLHHW8gbV8HkxM0D1ssob6DBOh1odThKf1w
+	 lGfO26cKEZU/LpijqPiSPkju/ejp9cJAJPq137akKnaN+s5fT4zZBBYDg4wrdojYyD
+	 umzigB6GjYXeg==
+Date: Wed, 16 Jul 2025 11:38:07 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.15 000/192] 6.15.7-rc1 review
+Message-ID: <c003b980-5a66-40ab-9ccd-6be52f8ec4d4@sirena.org.uk>
+References: <20250715130814.854109770@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/vJE9SvNmPxKEX8wO2fpKA=.";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="U6jH5E3IO3KQASVI"
+Content-Disposition: inline
+In-Reply-To: <20250715130814.854109770@linuxfoundation.org>
+X-Cookie: osteopornosis:
 
---Sig_/vJE9SvNmPxKEX8wO2fpKA=.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+--U6jH5E3IO3KQASVI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-After merging the block tree, today's linux-next build (htmldocs)
-produced this warning:
+On Tue, Jul 15, 2025 at 03:11:35PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.7 release.
+> There are 192 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-include/trace/events/block.h:416: warning: Function parameter or struct mem=
-ber 'rq' not described in 'trace_blk_zone_append_update_request_bio'
-include/trace/events/block.h:416: warning: expecting prototype for trace_bl=
-ock_zone_update_request_bio(). Prototype was for trace_blk_zone_append_upda=
-te_request_bio() instead
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Introduced by commit
-
-  4cc21a00762b ("block: add tracepoint for blk_zone_update_request_bio")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vJE9SvNmPxKEX8wO2fpKA=.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--U6jH5E3IO3KQASVI
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh3gPwACgkQAVBC80lX
-0Gz1eQf/fzZ5Vi7G67ELj8k538tVl63xeC3hH9ZUJ464gErab7FVinmMfQzc6K0T
-PpbV0qTkdMIuJXeFkjm+ctc3yQb9Gwr4czvFJ/zwe1GB23Gjz3t3TUwHgbERB8IR
-Dgj7LJ5Q/QW9RWaYENPrVtMS9dqOPoi8TMirpXWhq9wgVpa39ZMHSEa+daOqLPKy
-t1UPfzP48b25TmJqpNFoLDQlWDc9FKywOXjml3B9+lEMtkfzk3RXCSKaC1tJhw45
-DynuYkV7eqQiLRunDWEoa3TQNj0rgSQYt7qyPKTTaaCssyeCn9uIk+d7NSyWd2f5
-NB6ikVN/PDQrJnVbBCMfxtVNMbpTDQ==
-=V+eK
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh3gQ8ACgkQJNaLcl1U
+h9B1Bwf/WgbN0B2A4YMv/1GADiHFkOrS9gwB4Nyhx3wmL3fK7bMIxiFZQbTmO0vv
+xC6riR5XmfZ8ntlnnhFUS6YK9nAkdz3WcQUygf6wz+5yhusGF3vQQhtQShHlSY6u
+pg/Sb5fcL/M7GQcnO6WLuOxKX7AHH8U86PQn8futB2QJejIaHdN7mLKAmYvQSVzI
+AsavzFYY/VVAST/Awd853IyV/Ag9GUgmdpY631mPC2jKw642v5qA5fmr2RyewfZd
+n5mW1jxJ1uCG9BJD/G5fLq9OCNcCcHj757P24wsUEUwcJ18z63P81LnVwk7rPw5q
+6D9rNQuq6o2PBLpRaAjIZoYHDPwtvQ==
+=BPp3
 -----END PGP SIGNATURE-----
 
---Sig_/vJE9SvNmPxKEX8wO2fpKA=.--
+--U6jH5E3IO3KQASVI--
 
