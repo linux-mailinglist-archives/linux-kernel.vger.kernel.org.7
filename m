@@ -1,146 +1,94 @@
-Return-Path: <linux-kernel+bounces-733411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7727B0745E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:11:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B7CB07460
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40BE4505579
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:10:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 635423B13D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189D32F508C;
-	Wed, 16 Jul 2025 11:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0272F363F;
+	Wed, 16 Jul 2025 11:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtKmqmAd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WpUi2ixj"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE552F3C1B;
-	Wed, 16 Jul 2025 11:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955A02F2C56;
+	Wed, 16 Jul 2025 11:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752664193; cv=none; b=qfj/2HkFIEURpf2DoCLVfz6febv5iPX3b6I5x0xwi2aiMPwTVf1GNqRMUHTGoTWwP1bKhWj7VMGE1P1P6CPquY4kgC+HQp209X0/V29R3nJoensW4Wdg1PYnd9v3vu2kLBSSFGzWUn6P14jiIvG1hflRWwrDD/jkxtWiwVJSAAY=
+	t=1752664269; cv=none; b=ZyQg9wNAMZn1ZFKRfyyegZq5lwaVyTKD4ahHVPJGyc9gcj/cZYG6p0Gpzu2ovZ6if68h1jAmbL8+xk5a2kQtOILQ4wYS7rHm2kBy89XeCqsfRyBJUKA64n5R+7t3/NC8RT0qRUOaeCdf2oNPOQE/mVx8HwloSeZLrZv/fLP2iPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752664193; c=relaxed/simple;
-	bh=SXvV+xvahJ4GlG8CRCNdvVkYEyzFzMwxAQUNJL7bRZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MxNR8aL0XY93oiruzwvo4FEIw6+k0xErrUZhBxityUKssBjayrDonzWG1vIoT3UeMRqVhKKe/llMSCs4IqMcmV/E+/p/8JfUcygBxZnXFZYQ33P/0GyxM/IPyGQrCV93WXPiU0Ov5PJ2Y1V3zCD3nLlLnxT+2Fsr7820aqRXStQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtKmqmAd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49C9AC4CEF0;
-	Wed, 16 Jul 2025 11:09:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752664193;
-	bh=SXvV+xvahJ4GlG8CRCNdvVkYEyzFzMwxAQUNJL7bRZI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qtKmqmAdez4vwr0Rsi6fZPLXRyv5t1M15zq2EMIs2vbwbWis4/fiEH7A3HVblZT5j
-	 VWfyvV6NXvQJr7dU6SDgm2sjM3eZu5uWa7hGYVh3HOncl0/vuJpG+7uKmyrG1kI15f
-	 ae7CQGmXPCTOO6eTm1tmaxmlZp9J9dMCeDL+61vshwnk7MiEUTestjGuuHEBM2Z+DI
-	 F4uU4noufcLJQ8gNZZ4P3fNBKrW2Trr2QbmvHqL2WHbtocPMhgile7M49YNQit4Ew+
-	 zwohLyMtPOR4H060qp8kGXd9HBcLOequ+albWIw1SReQExXH7ASlEUvrw41cGA2FjI
-	 m2yS6FGYo6BXA==
-Message-ID: <571d4df6-620f-4bac-95c6-5ad9a4088e5e@kernel.org>
-Date: Wed, 16 Jul 2025 13:09:47 +0200
+	s=arc-20240116; t=1752664269; c=relaxed/simple;
+	bh=qCvWScO7YT9tPuS9HlSbk2B84ChQADd2yavwcy3BNDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xen8u/PRPaNI9whNbhNdi4TxU1b17MpxPkdKp5mBq3Mxz5WA3koFUq98c6CLwXDAyoR9NhwU/rjaHGA6nxDL85IS/3mn50CW+I9bSPhd8RYoH/JBOVNwyqE68NSiLa6KCNKUUv48Gu5GPGCbshH/6lp+l9HmkAbXFi95H7AuYAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WpUi2ixj; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=YNM4YXiRTugYP4St2XF/wvdNCP1F0YhY9Wc6I1yX/lQ=; b=WpUi2ixjQpHpCwpmWHNzQ3ZPH4
+	TAIyUU3rZLF9AvlXQDLcnV0SDyrNC2F+DSLxKxKjiB/Wj6rSrPey8QjQjKU4s9dHi4X/2kQWF2dle
+	1yjmJAa04ES4ukuR0WJ/SQH/SihjW6nW1i4EIlOex3G6REXNZlWSh9uMgt2/jUwIb/iJVnVRBEWOO
+	oUCn4VY5w3hXMZ1Fx9QXOcvyg8runbraUzuG0/AB+RW+qhBbmj84GwExKiaonqxdvi4lSindp7K+/
+	C4q6ZoOEfe4YnE8W4uMrsjcz5ck3CNyqcAsjV6kdIqRNMCOiuP2Qc3bbnh8jngcdblZvgbMgG4M8p
+	3Zn9UFRQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uc02S-00000007WPi-3mfS;
+	Wed, 16 Jul 2025 11:11:04 +0000
+Date: Wed, 16 Jul 2025 04:11:04 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/15] fs,fork,exit: export symbols necessary for
+ KUnit UAPI support
+Message-ID: <aHeIyNmIYsKkBktV@infradead.org>
+References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
+ <20250626-kunit-kselftests-v4-6-48760534fef5@linutronix.de>
+ <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
+ <20250711154423.GW1880847@ZenIV>
+ <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
+ <20250716072228-2dc39361-80b4-4603-8c20-4670a41e06ec@linutronix.de>
+ <aHdE9zgr_vjQlpwH@infradead.org>
+ <20250716101207-c4201cef-abbe-481d-bca5-c2b27f324506@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] MAINTAINERS: Remove sdm845-cheza device trees
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rob Clark <robin.clark@oss.qualcomm.com>,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250716-topic-goodnight_cheza-v2-0-6fa8d3261813@oss.qualcomm.com>
- <20250716-topic-goodnight_cheza-v2-4-6fa8d3261813@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250716-topic-goodnight_cheza-v2-4-6fa8d3261813@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250716101207-c4201cef-abbe-481d-bca5-c2b27f324506@linutronix.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 16/07/2025 12:16, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Cheza was a prototype board, used for developing Snapdragon platform
-> support on ChromeOS.
-> 
-> Since almost none are left in existence, and none are left in use, the
-> device trees for that family of devices are being removed.
-> 
-> Clean up the maintainers entry with it.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5efcdb5537f52b84a57505857399af70f0fa7e45..1458ff091a864e539c554ef9e915331c44c87370 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3071,7 +3071,6 @@ ARM/QUALCOMM CHROMEBOOK SUPPORT
->  R:	cros-qcom-dts-watchers@chromium.org
->  F:	arch/arm64/boot/dts/qcom/sc7180*
->  F:	arch/arm64/boot/dts/qcom/sc7280*
-> -F:	arch/arm64/boot/dts/qcom/sdm845-cheza*
+On Wed, Jul 16, 2025 at 10:39:57AM +0200, Thomas Weißschuh wrote:
+> Let's take kernel_execve() as example, there is no way around using this
+> function in one way or another. It only has two existing callers.
+> init/main.c: It is completely unsuitable for this usecase.
+> kernel/umh.c: It is also what Al suggested and I am all for it.
+> Unfortunately it is missing features. Citation from my response to Al:
 
-This should be squashed with first patch, otherwise you have warnings
-for unmatched patterns (and this is not bisectable patchset).
+But why does the code that calls it need to be modular?  I get why
+the actual test cases should be modular, but the core test runner is
+small and needs a lot of kernel internals.  Just require it to be
+built-in and all this mess goes away.
 
-Best regards,
-Krzysztof
+That being said some of this stuff, like get_fs_type / put_filesystem
+or replace_fd seem like the wrong level of abstractions for something
+running tests anyway.
+
 
