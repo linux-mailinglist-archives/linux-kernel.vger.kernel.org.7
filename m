@@ -1,69 +1,67 @@
-Return-Path: <linux-kernel+bounces-733643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3317BB0774B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:47:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0045EB0774F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002B1505BAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:47:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998A4565D15
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E731E7C2D;
-	Wed, 16 Jul 2025 13:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977AA1EF091;
+	Wed, 16 Jul 2025 13:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K9HZao44"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNBtuim0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082791D7E26;
-	Wed, 16 Jul 2025 13:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40011E3DE8;
+	Wed, 16 Jul 2025 13:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752673650; cv=none; b=F5XW/esc+jsl415CIgvQon2zzmU0c6gMj9RxYYccfjYOudiarcu29nzxvdp+gPb0f/I61sWfX7tcdEgt1M7Q40wElLtEx9AuyR+XEVYsbCm/CoR7A4pMDhy7v6G21M6S4SjIAwi90zh9Q1nQ2F8Av1vaVl7jeq3IYcB0NMuDFyY=
+	t=1752673652; cv=none; b=l5nzagf0DJaXonJdntH0J2ULg5mgOBKDHPeEk4PQMobFsAWg5Nu6qu/Er4Gjw0dCfprxOJXr1BBeAQN5OYdXzOJmSjoA9gUmfn/DHkyoz2uS5sisDvYHZUW5EyTQm2TYmyTZtSwX6b4AEZuT9AYBDT71Y+qzvvel49d7TpHNC7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752673650; c=relaxed/simple;
-	bh=wV6AB4b15vzlnHpyXKLaORlUnvgaI8PNAU6JPGUkVks=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c6y1kzL2/9fGkB6cHpk24xzJ+SG2J3c/U2cv4ftjUTxxqeH9qJY2baJ5kPu/AykXAHiroQ0CMxETwV5K3aNxvOdiv5MB+xN4uZHsnDUCvAi0JjyeW9A6FjMtWNy0NbbzbL319PjyUipNX5T+91i5dYcQEHn2Vo4OE9qGk6jaN88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K9HZao44; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752673646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yTbtrHDHNEb8o4OaDgUEPfHagRJTln/rm7XQuawnK0c=;
-	b=K9HZao44phT8iUlvn1iaW5RRiahSS0TG/0mmstBTvQI+Dxj0ubVuQ2HqTWn/RptnbeeAIW
-	bLXAoOg7QF1Vjij3uaZyqCfPGs0GB6pWb9e7uhbzEHaeNzOZ7c+cOQtspiC/XrR8NZ2tdq
-	r3EMuYleYFJ73OmcfjZWchA1lkmtSvo=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	willemb@google.com,
-	kerneljasonxing@gmail.com
-Cc: bpf@vger.kernel.org,
+	s=arc-20240116; t=1752673652; c=relaxed/simple;
+	bh=gmdutkgfIQniQfWFrKfQBe9pqVMRsWjopT4us94/R4s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R9hqoKWAZlRZWlK/z1WXVe16JwykSvd5AfGp3GG6cxAGJ3pVmcgWIe8F3R3YpUgZ5yeotFGF1C0JSQoZJxnBdcH5HhSmGc1pILp5dkMvjc3ZI7qoWWbXJxNAKR+mfFE89l7dWQ5f1YCuzeiHwaSY/x/f2H+apiYHc7s12ZPpfCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNBtuim0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E2AC4CEF0;
+	Wed, 16 Jul 2025 13:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752673651;
+	bh=gmdutkgfIQniQfWFrKfQBe9pqVMRsWjopT4us94/R4s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RNBtuim0eJlux30Hn+niJkRGONO1Ri9QpPMfiy8l4+53Xv32m5H2mySpMOT8XuiT/
+	 vOnly7BJRGqqOGtAhXq1bVQjjlqC1HjtZ5C/C9t2/tD9H+Bk+/Yc8DzTAliBLe8MwV
+	 SGmJf9t88fBEm9SXPgcZvN47SgOkcCzAkfZmpTbGEdkg7syA4s241wX8a175aGSl5o
+	 iuZrQCYnN2+mSFoo2ewX+pPwAxijUc6lPjQ2D5QgTW128GICYiy6rIvCbrALfFy7Sj
+	 XWNtDRn4kgN+xCZ7obi6R6awFR/nQGTlhd01QEC2ngrUAIO+/AmRJA/UmSx4zJNH9y
+	 cw6PFBkvj68XQ==
+From: Michael Walle <mwalle@kernel.org>
+To: Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v3 2/2] bpf/selftests: Add selftests for token info
-Date: Wed, 16 Jul 2025 21:46:54 +0800
-Message-ID: <20250716134654.1162635-2-chen.dylane@linux.dev>
-In-Reply-To: <20250716134654.1162635-1-chen.dylane@linux.dev>
-References: <20250716134654.1162635-1-chen.dylane@linux.dev>
+	linux-arm-kernel@lists.infradead.org,
+	Michael Walle <mwalle@kernel.org>
+Subject: [RFC PATCH 0/3] drm/imagination: add AM62P/AM67A/J722S support
+Date: Wed, 16 Jul 2025 15:47:14 +0200
+Message-Id: <20250716134717.4085567-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,80 +69,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-A previous change added bpf_token_info to get token info with
-bpf_get_obj_info_by_fd, this patch adds a new test for token info.
+The AM62P and AM67A/J722S feature the same BXS-4 GPU as the J721S2.
+In theory, one have to just add the DT node. But it turns out, that
+the clock handling is not working. If I understood Nishan Menon
+correct, it is working on the J721S2 because there, the clock is
+shared, while on the AM62P the GPU has its own PLL.
+In the latter case, the '#assigned-clocks' property of the GPU node
+doesn't work properly. Linux will try to set the clock frequency
+before probing the GPU. The clock handling firmware on the SoC won't
+allow that if there is no user for it. To work around that
+limitation, set the clock again in the .probe() of the GPU driver
+after turning the device on.
 
- #461/12  token/bpf_token_info:OK
+This was tested on an AM67A.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- .../testing/selftests/bpf/prog_tests/token.c  | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Michael Walle (3):
+  dt-bindings: gpu: img: Add AM62P SoC specific compatible
+  drm/imagination: fix clock control on the J722S
+  arm64: dts: ti: add GPU node
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testing/selftests/bpf/prog_tests/token.c
-index cfc032b910c..b81dde28305 100644
---- a/tools/testing/selftests/bpf/prog_tests/token.c
-+++ b/tools/testing/selftests/bpf/prog_tests/token.c
-@@ -1047,6 +1047,41 @@ static int userns_obj_priv_implicit_token_envvar(int mnt_fd, struct token_lsm *l
- 
- #define bit(n) (1ULL << (n))
- 
-+static int userns_bpf_token_info(int mnt_fd, struct token_lsm *lsm_skel)
-+{
-+	int err, token_fd = -1;
-+	struct bpf_token_info info;
-+	u32 len = sizeof(struct bpf_token_info);
-+
-+	/* create BPF token from BPF FS mount */
-+	token_fd = bpf_token_create(mnt_fd, NULL);
-+	if (!ASSERT_GT(token_fd, 0, "token_create")) {
-+		err = -EINVAL;
-+		goto cleanup;
-+	}
-+
-+	memset(&info, 0, len);
-+	err = bpf_obj_get_info_by_fd(token_fd, &info, &len);
-+	if (!ASSERT_ERR(err, "bpf_obj_get_token_info"))
-+		goto cleanup;
-+	if (!ASSERT_EQ(info.allowed_cmds, bit(BPF_MAP_CREATE), "token_info_cmds_map_create")) {
-+		err = -EINVAL;
-+		goto cleanup;
-+	}
-+	if (!ASSERT_EQ(info.allowed_progs, bit(BPF_PROG_TYPE_XDP), "token_info_progs_xdp")) {
-+		err = -EINVAL;
-+		goto cleanup;
-+	}
-+
-+	/* The BPF_PROG_TYPE_EXT is not set in token */
-+	if (ASSERT_EQ(info.allowed_progs, bit(BPF_PROG_TYPE_EXT), "token_info_progs_ext"))
-+		err = -EINVAL;
-+
-+cleanup:
-+	zclose(token_fd);
-+	return err;
-+}
-+
- void test_token(void)
- {
- 	if (test__start_subtest("map_token")) {
-@@ -1150,4 +1185,13 @@ void test_token(void)
- 
- 		subtest_userns(&opts, userns_obj_priv_implicit_token_envvar);
- 	}
-+	if (test__start_subtest("bpf_token_info")) {
-+		struct bpffs_opts opts = {
-+			.cmds = bit(BPF_MAP_CREATE),
-+			.progs = bit(BPF_PROG_TYPE_XDP),
-+			.attachs = ~0ULL,
-+		};
-+
-+		subtest_userns(&opts, userns_bpf_token_info);
-+	}
- }
+ .../devicetree/bindings/gpu/img,powervr-rogue.yaml  |  1 +
+ .../boot/dts/ti/k3-am62p-j722s-common-main.dtsi     | 13 +++++++++++++
+ drivers/gpu/drm/imagination/pvr_device.c            |  9 +++++++++
+ 3 files changed, 23 insertions(+)
+
 -- 
-2.48.1
+2.39.5
 
 
