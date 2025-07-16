@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-733209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C0FB0718E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:24:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38999B0718F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABAB4177A6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:23:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09EA6501801
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCBE2F002A;
-	Wed, 16 Jul 2025 09:23:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE842F19B5;
+	Wed, 16 Jul 2025 09:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A96Y+yss"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81132BFC85;
-	Wed, 16 Jul 2025 09:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA3D22127C;
+	Wed, 16 Jul 2025 09:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752657815; cv=none; b=FnSBJKHAk+8t4IZfZmcfloOinkpMa2qWyZmhzZNvqSJEB8JRP81tT22bLWMm27uRETvRBkeKR4+6+iHjYGfEyErxMlEtb3Q5i2W+aYP+4OEJ4UROUQk68tBOIOXUH1eesnTD1njurF0ccd2z7yniiz2ebwdrDvA3YwQcxN6PQc4=
+	t=1752657825; cv=none; b=HXJU/oEzu/m49cIqfy+vWZFBNYiB+myUZ8NUCq6v1kluzR35s07RyxR+Odk50Mnl/UpL9jU1RPpE0Olk7jWBFWZCXyeypwGeN5JkixERNNR5t6hy6afHtqSBKY0UpoibqMkJGU5HwHYhQGcvGVOzpFGyKnzeJhzMihYAtKzbxAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752657815; c=relaxed/simple;
-	bh=nIw50wvMBSzzyxFwSsDu5oFDKjklXIKlkflt+XNJNAc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nBnRbxnuPxxRT+YdD6GJiGrRG++UT5l6MlkQ/vecvIBXyXIsuqF1Jc7xACRcG7bwecSGBf4W8PwWqRnE1j5oNiWwLca8+GYbaJ4HsEwW9s0ogUvqTNJK+GW7nJkYBvV/LpfeqVlHwZv165AjisesB0rsIQjsrkJUaXAai4dADkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bhr9n1MDkz6L50s;
-	Wed, 16 Jul 2025 17:19:57 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6BF4F1400D7;
-	Wed, 16 Jul 2025 17:23:29 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Jul
- 2025 11:23:29 +0200
-Date: Wed, 16 Jul 2025 10:23:27 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Matthew Wood <thepacketgeek@gmail.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH pci-next v1 0/1] PCI/sysfs: Expose PCIe device serial
- number
-Message-ID: <20250716102327.00004dd7@huawei.com>
-In-Reply-To: <CADvopvZZKCdwT=XfaJzgFRgH=eXcTmjsdA8-86hJaki5PDjx=A@mail.gmail.com>
-References: <20250713011714.384621-1-thepacketgeek@gmail.com>
-	<20250715121929.00007ef2@huawei.com>
-	<CADvopvZZKCdwT=XfaJzgFRgH=eXcTmjsdA8-86hJaki5PDjx=A@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1752657825; c=relaxed/simple;
+	bh=8bb59Y7qB/JB1/x9ope6S0w9QIQuBIWcCUed5RbRWdI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=F+AbB0KTxx52ej3W9tQ1DhfkWLUcyWgeqn0T8V3egeWRpUC4cm6xdY/wj3VLtypEkwNJ7LI/49eox7xa0u7b+upjJ8ZfS6QjOb/TrEQGKOhjsVDTogQYZJrHCM4IZkkUaRLCSqyNQp60NMudAdxp/NEVYrAAwInwsaIYOBIC4MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A96Y+yss; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-88173565536so670427241.0;
+        Wed, 16 Jul 2025 02:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752657823; x=1753262623; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8bb59Y7qB/JB1/x9ope6S0w9QIQuBIWcCUed5RbRWdI=;
+        b=A96Y+yssh8lylf7PdrmBqHZjYOVs4Dzi4mP2PoULJhHSrR/idSvoWQzUbhfGyHUVyM
+         sclrtRX6vLXO2JkJKXQFrUnFS1pe27l81XdIlJNzw1eqdSPA3kr60HY2fQNqyMLuGLt5
+         t29S1ubBNHdHkxskjnQB+ugq+iaXWADBZA7AZyHrgJSKv6YEFzQeUak8f8T0FFka0RBw
+         +Tq/du7/paCXLSKPOrg2yualGaFPZzkXUFfcj2QNkjsS2sh1p+atL7AY+KeTDi/0WyTT
+         JuEU5pJIlpwFIt8Jo4fo8eHUGXnjLZzMbNxNkZlVZ6gNOcHmDwrhzlvDcGH3EuPeFLZA
+         kmyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752657823; x=1753262623;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8bb59Y7qB/JB1/x9ope6S0w9QIQuBIWcCUed5RbRWdI=;
+        b=vT8kAMRpbFV8ANN/abv6d0MirtwDUzOt3wAVmpK3eSYdADopD42dFrzAXyI1k5OO1O
+         S7af9otiVK86ZmU3oaISwB4807pv27wVqbuvBbTHrCJjq1B039w1zVJosJFnYMxtGn2m
+         NuWQ/7AxIOwEyfW9NNmEUbubB6Zbog7h9VxKZGGKYVqPBV3p/jeVWCyu0d8eY8LJAD14
+         QzrIXeVf1jVyKyTQuLvt7vuIJFztORCmrbyIS/D3rkxfo/9HoEzb0yJggbb8PIa3dtkJ
+         zdhzhKPfJlKScLSw5qPuuRp4ZI/OM0GaAUpAF0NRNcQdMoGksM34p2e5PykgPpz7IgUS
+         qcmA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3D060rOp26/EgkyOateZcRXz2OK6liJm+zo93PvFnNcXUzBa4Ikpxmk7Yy9bOoJY3z+5xb5cI@vger.kernel.org, AJvYcCUbNYjWMIlw7ywSG0p7kpJV5waU13+WcIkPwLJ2mVjpbuP2BuNcJmWyGeIw5o8Suu5KnGc3Vgueeu5vVoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHmLbyLz87yvlMUwOOtyS7WE6HrG5Yw75avHHXxXGURcDFF3CS
+	upppr8rcQe4NPf0aQ3Nvamn6FubjEvS/+VfrcwPM8xLz5SGDwFUf/4fwWB0DlUeo8efitN0dLO0
+	GU2c9/KagTxVx/ybtpY8cRAUH7EuVR9z3qXExSbyiEA==
+X-Gm-Gg: ASbGncv4+rDtgvmdeojtFWu5CQV/ouzJ/7RIwBUwviqlYbBb3dVEEx61gaW6DN/4HQD
+	yDBXOW5quBVhaSlJqYoj92BMmCGmucfnkEYZAzzhp5Qdg+YJejd3YqSvhNQ+QBkPpbdJEHHElrm
+	ls1CAKOeQeYSS0R8+OeuiapH4jSzu9PH+ayIALurqsJyeKSZZo66dtwiJ9ecFoncxx0f6ZhrLXr
+	hb3w7U=
+X-Google-Smtp-Source: AGHT+IHbhfnfusQK9pbbtL026/fcLsRE78Jlhv++1FuiMatxhLTQJ+73q9kklmr2eP6jxQDehdPv2C7LAS1LRoealqE=
+X-Received: by 2002:a05:6102:3e11:b0:4e7:866c:5cd9 with SMTP id
+ ada2fe7eead31-4f890152c29mr1304099137.11.1752657823234; Wed, 16 Jul 2025
+ 02:23:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+From: Xianying Wang <wangxianying546@gmail.com>
+Date: Wed, 16 Jul 2025 17:23:29 +0800
+X-Gm-Features: Ac12FXyNFIaCK2pDYZ0jchMpDYF8x-Rd4WuhffoKeJLrRhYKDwWu0ZHWBZNeFqg
+Message-ID: <CAOU40uCe07E+jSONsnFXWfdPHPQjcvEoFX-QdJ2eAw2DqXZ=sg@mail.gmail.com>
+Subject: [BUG] INFO: rcu detected stall in unix_stream_connect
+To: kuniyu@google.com
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 15 Jul 2025 08:59:42 -0700
-Matthew Wood <thepacketgeek@gmail.com> wrote:
+Hi,
 
-> On Tue, Jul 15, 2025 at 4:19=E2=80=AFAM Jonathan Cameron
-> <Jonathan.Cameron@huawei.com> wrote:
-> >
-> > On Sat, 12 Jul 2025 18:17:12 -0700
-> > Matthew Wood <thepacketgeek@gmail.com> wrote:
-> > =20
-> > > Add a single sysfs read-only interface for reading PCIe device serial
-> > > numbers from userspace in a programmatic way. This device attribute
-> > > uses the same 2-byte dashed formatting as lspci serial number capabil=
-ity
-> > > output:
-> > >
-> > >     more /sys/devices/pci0000:c0/0000:c0:01.1/0000:c1:00.0/0000:c2:1f=
-.0/0000:cc:00.0/device_serial_number
-> > >     00-80-ee-00-00-00-41-80
-> > > =20
-> >
-> > What is the use case for this? I can think of some possibilities but go=
-od to
-> > see why you care here. =20
->=20
-> Two primary use cases we have are for inventory tooling and health
-> check tooling; being able to
-> reliably collect device serial numbers for tracking unique devices
-> whose BDFs could change is
-> critical. Sometimes in the process of hardware troubleshooting, cards
-> are swapped and BDF idents
-> change but we want to track devices by serial number without possibly
-> fragile regexps.
+I discovered a kernel panic using the Syzkaller framework, described
+as INFO: rcu detected stall. This issue was reproduced on kernel
+version 6.16.0-rc5.
 
-Ok.  So you want to avoid having pull this from lspci output which
-makes sense to me. Not sure what Bjorn and others think about this
-though.
+From the dmesg log, RCU detects a stall on CPU 0. The NMI backtrace,
+which shows what the CPU was actually doing, reveals it was stuck in a
+tight loop within the timer interrupt handler. The CPU appears to be
+spinning in functions like lapic_next_deadline
+(arch/x86/kernel/apic/apic.c:429) while processing a timer softirq in
+run_timer_softirq (kernel/time/timer.c:2403).
 
+Meanwhile, the task that was running on CPU 0 before it got stuck in
+the interrupt is blocked in the unix_stream_connect function
+(net/unix/af_unix.c:1683). The syzkaller reproducer appears to create
+a deadlock scenario by having a listening UNIX socket attempt to
+connect to its own endpoint.
 
->=20
-> >
-> > =20
-> > > Accompanying lspci output:
-> > >
-> > >     sudo lspci -vvv -s cc:00.0
-> > >         cc:00.0 Serial Attached SCSI controller: Broadcom / LSI PCIe =
-Switch management endpoint (rev b0)
-> > >             Subsystem: Broadcom / LSI Device 0144
-> > >             ...
-> > >             Capabilities: [100 v1] Device Serial Number 00-80-ee-00-0=
-0-00-41-80
-> > >             ...
-> > >
-> > > If a device doesn't support the serial number capability, userspace w=
-ill receive
-> > > an empty read: =20
-> >
-> > Better if possible to not expose the sysfs attribute if no such capabil=
-ity.
-> > We already have pcie_dev_attrs_are_visible() so easy to extend that. =20
->=20
-> That's a great point, it looks like I could match on the attribute
-> name to specifically hide device_serial_number
-> if the device does not support the cap, but I can't find any precedent
-> for matching on a->name in pci-sysfs.c.
-> Would something like this be alright after the check for pci_is_pcie(dev):
->=20
->     if (a->name =3D=3D "device_serial_number") {
->         // check if device has serial, if not return 0
->     }
+I suspect this is a complex race condition or deadlock within the
+kernel's core timer subsystem. The stress and unusual blocking state
+induced by the UNIX socket operations, combined with concurrent POSIX
+timer usage, likely exposes a latent bug in the hrtimer or tick
+management. This causes the CPU to spin with interrupts disabled,
+which in turn triggers the RCU stall.
 
-if (a =3D=3D &dev_attr_device_serial_number.attr)
-or something like that.
+This can be reproduced on:
 
-No need for string matching.
+HEAD commit:
 
-Jonathan
+d7b8f8e20813f0179d8ef519541a3527e7661d3a
 
+report: https://pastebin.com/raw/N3GD5hL7
 
->=20
-> >
-> > =20
-> > >
-> > >     more /sys/devices/pci0000:00/0000:00:07.1/device_serial_number
-> > >     echo $?
-> > >     0
-> > >
-> > >
-> > > Matthew Wood (1):
-> > >   PCI/sysfs: Expose PCIe device serial number
-> > >
-> > >  drivers/pci/pci-sysfs.c | 17 +++++++++++++++++
-> > >  1 file changed, 17 insertions(+)
-> > > =20
-> > =20
+console output : https://pastebin.com/raw/RCZfTKCb
 
+kernel config : https://pastebin.com/raw/xAVw5DnH
+
+C reproducer :https://pastebin.com/raw/Z1B1ray5
+
+Let me know if you need more details or testing.
+
+Best regards,
+
+Xianying
 
