@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-733837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6D6B079A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CAC7B079B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C208DA442B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A93A43F6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB51E2F50B1;
-	Wed, 16 Jul 2025 15:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9938E28643D;
+	Wed, 16 Jul 2025 15:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OS9vTLlE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="M8BB3X+F"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BC92F5C5C;
-	Wed, 16 Jul 2025 15:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0E11E0E14
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679288; cv=none; b=I9LEqFcBokXCC92vOoVgFmv14qG7RgcfYm5+3QnB8RRaGRVbuXXTnzzg2/jECKl+NFJPlygqcwNNFj0idBKkYb9/x4Kxg2cXSneKFgO8Jb+p7xflGWECeUUxVPEjtQI988xLtPfpRa9WMEIGdZtdOWMOtpt7X0pmT7B9RKiwnFQ=
+	t=1752679369; cv=none; b=QmSk0G2M4tXAvpQDLC+sK+Kj5upcegDsIfacVGgJjHlq/DjxAjfBKkxG5FVyhUSFYbP9Ph2iPX2msg5CtORrVE21ng7n9QobAOoDAvfZwelDQizNZAUDtRfaoJC6kj+lYzcFdzkpCXgEHhHxFjsb0SoXl6S5AMbHSOFmQfgab4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679288; c=relaxed/simple;
-	bh=+5nBuTaHK2eqj8Sbjf7jOgP+gLLgEVm3azLVcfpx7Wk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ZhvONk02sE4kniATsLTn5MvS4EPI1XIYShROdJIzEweBwxnVwMlke9HEk7iK7crlcUGr6S+17eefaiVYJi88Tu2Wmj9yyajEANtKzXhTt7aEFMVq3IHkxF5Ja42o7uQby8oog1bxkvVDHxSu+bO+zlFNhODl5ZwUyHTXkSDtSKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OS9vTLlE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D37C4CEFC;
-	Wed, 16 Jul 2025 15:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752679287;
-	bh=+5nBuTaHK2eqj8Sbjf7jOgP+gLLgEVm3azLVcfpx7Wk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OS9vTLlExI0ev1o7vTPmfJqaiGDqDFdXLIYU/2oNar9+GE0p2sFREnmEPM9tchhJs
-	 L1Y2aUgJ4GkDvZyEazbL1L4zjmorIK5QnLjOF5jQ53IdaQ865dzJqVFtTLE1IAo27A
-	 RvDAwYt17LRGns6LsX/cnluz58W0pJAFqXqJ7Vr/bV7i/gQg+DN7Sp0ck+1Yd2EW66
-	 KAiEFjBbdQKlsYfAto11NOc+gChFKfdj9FN85e4nGDbF2oMyRkkXd2lKBnS4GyIP7N
-	 yAaR39a7tCBwUcM5duceF2G1CYskt7SaW0TbDtgxAdJVQX0D5dotcL1wbeoKPl8FH9
-	 KBOFS1Hs7+Khg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id C64EB383BA33;
-	Wed, 16 Jul 2025 15:21:48 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752679369; c=relaxed/simple;
+	bh=06qVea3kBdVTlMvKU0MAOweuO+1RupDtDA0/7gEsO44=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=UOTHW8OVx1nv178SVIq84wm+JJOFR+LCeSXcT7XijjR74HpgyA01nB9W8OVySN8BDiuW4ajushuJ81UGeqQb5H7RVBZvftL38aEVW2H1ezifG8vFi4/VwchGxztcNI1tDf1bM7PNxLxepo7UR6uqn0ihn8oDovKNJo2C1PW6xsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=M8BB3X+F; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2349f096605so85669045ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:22:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1752679365; x=1753284165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t4vl3Ek2bHdxNr4E5QFSQW0xOn72vkMZt86TovXCUIE=;
+        b=M8BB3X+FXAkJU7kpHWxgIUPGcFTLY7/eUEFOvOmUmxrouC67tJ2RdGG95+5ikxei1r
+         3rNvuTjjDqliYmGvWV3sXoEhjghaCCDtRuuROfz5hJvEN6o/c4gbmHwNEPPxYvtFZW20
+         1LmsbZRupMg09KcGJK9sENc0wxB2lvOdXw3OWughukX8CSUli/E1IADyZBTHTZygh4gR
+         SX/I0UBXYb1qILP4nDK2xFvbDiqoIIPVScyYsxSy6vhAtyPF4mdx7Y6s//bUaD4xOQb/
+         iilGUPo1v8wUBdAtY2zY5wQpGFVIH0+8BmkJKXBeK1b3Tleq3dZ8W4j/n5H5gY7U4zNT
+         FCTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752679365; x=1753284165;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t4vl3Ek2bHdxNr4E5QFSQW0xOn72vkMZt86TovXCUIE=;
+        b=SuB1MUxTtkuPPciSncTKvVISPxmXMyVPmpcEi6Plmj19oB0e2+WV1aEqG+u4wIlX22
+         sp/0XD9klWk6U4gsetHNSwHsmEImfptnQlDeAO8afdH2XROkGomQ6iwLxCJwdsTNnzJT
+         Qzj+5FIbqM/pfmCUdGZzoJDtcaejhzDAKqw200qx8WpZwPCGI6sybLWf6QA2XZlWTtmX
+         PfXFC9g0QjYYNqOa5eJNBcqz0naoXHb3f0fRPVlid9dG3OlzlZN15h4yR0dJpf+wHQtY
+         b1SPhNZkm9eF+HE7k+GyfFjTjZRE4zuuABISWM23B9Nuc5sekC1W2SCen/JXXZNu81Vk
+         Fu9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXmZ02qJJIo5rY0/XtrNs6oYJNQi4XxbEsJn62GcwDz4s3jyQZvVw69ubdkyYmqPJ9u8bMPlWSV7hQ8tAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcE9Gfki7S0Y4KMP4Z3d9/cHOQVNo+wDBJ0kNH7RmIePjNzVfz
+	zJqUzbXozYDWSIsCTZsYsC9JSofEHHgZi+dwfsZDewZtQn73KWrCEwx5APs02dOGWW8=
+X-Gm-Gg: ASbGncsub7jr9fi2d9H6/ibWH3V3l+/1ezGTnpjv+vSPXCKoNVKq5HnywXnNdkYW4TU
+	cChO/9x6sTBRE6eGCgJE8Hg4tM2qzhXu1wDXks9Te1t+rQdA/cxf1SKsah4wmwj9rCBizF1KyH0
+	H8ir8CxAW1HOKyNwZQL3xobUhC7g+SwpqyRCBlBOQoBGJsdH/Blxz3ZXnlFz2hItq6DnZkdc/cb
+	LKmmAbEf/n1iZvhYeaMyJqPdHhEmbLHBNIHCaEHuONn+DMixS56n/aDC+XWvmaWINqUiLbRWY4L
+	1Aofqk4Sj9cD83UoqSEOHp4GftwpD4QtG7LgdqwwBXXamjoR41D9sj7iqNF0cZW96nKE/x1LkiO
+	S1InNxf9TUn5gkos9rL9s
+X-Google-Smtp-Source: AGHT+IEUK5YxYWi+V5YGljb21gJhlrrSTSaF6hPULhP4e3D+hleSH74OxqsThIvkIQTiAsvoJfkRVQ==
+X-Received: by 2002:a17:903:290b:b0:235:f45f:ed55 with SMTP id d9443c01a7336-23e2b44525emr13611865ad.1.1752679365284;
+        Wed, 16 Jul 2025 08:22:45 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:500::4:b02a])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23de43227acsm129073585ad.124.2025.07.16.08.22.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 08:22:44 -0700 (PDT)
+Date: Wed, 16 Jul 2025 08:22:44 -0700 (PDT)
+X-Google-Original-Date: Wed, 16 Jul 2025 08:22:15 PDT (-0700)
+Subject:     Re: [PATCH] riscv: ftrace: Properly acquire text_mutex to fix a race condition
+In-Reply-To: <20250709124536.4ce3a90b@batman.local.home>
+CC: alexghiti@rivosinc.com, mhiramat@kernel.org, Mark Rutland <mark.rutland@arm.com>,
+  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, Alexandre Ghiti <alex@ghiti.fr>,
+  linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+  rabenda.cn@gmail.com, wangruikang@iscas.ac.cn, ziyao@disroot.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: rostedt@goodmis.org
+Message-ID: <mhng-E799444F-E3F5-4100-B236-45026970E1A5@palmerdabbelt-mac>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/3] PCI: host-generic: Fix driver_data overwriting bugs
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <175267930756.1224517.4628176951767870692.git-patchwork-notify@kernel.org>
-Date: Wed, 16 Jul 2025 15:21:47 +0000
-References: <20250625111806.4153773-1-maz@kernel.org>
-In-Reply-To: <20250625111806.4153773-1-maz@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-riscv@lists.infradead.org, bhelgaas@google.com,
- alyssa@rosenzweig.io, robh@kernel.org, mani@kernel.org,
- lpieralisi@kernel.org, kwilczynski@kernel.org, j@jannau.net,
- geert+renesas@glider.be, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello:
+On Wed, 09 Jul 2025 09:45:36 PDT (-0700), rostedt@goodmis.org wrote:
+> On Wed, 09 Jul 2025 07:12:47 -0700 (PDT)
+> Palmer Dabbelt <palmer@dabbelt.com> wrote:
+>
+>> >  #ifdef CONFIG_DYNAMIC_FTRACE
+>> > +void ftrace_arch_code_modify_prepare(void)
+>> > +{
+>> > +	mutex_lock(&text_mutex);
+>> > +}
+>> > +
+>> > +void ftrace_arch_code_modify_post_process(void)
+>> > +{
+>> > +	mutex_unlock(&text_mutex);
+>> > +}
+>>
+>> IIRC there's a reason we don't do it this way, we had (or had tried to)
+>> have it before.  It's been a while, though, and I'm just having some a
+>> coffee so may I'm just wrong...
+>
+> Yes, because it caused issues with stop machine[1], but if you are no
+> longer using stop machine, this should be what you should do now.
+>
+> [1] https://lore.kernel.org/all/20220310045454.672097-1-changbin.du@gmail.com/
 
-This series was applied to riscv/linux.git (fixes)
-by Bjorn Helgaas <bhelgaas@google.com>:
+Thanks.  The v2 staged for the tester, should show up on fixes soon.
 
-On Wed, 25 Jun 2025 12:18:03 +0100 you wrote:
-> Geert reports that some drivers do rely on the device driver_data
-> field containing a pointer to the bridge structure at the point of
-> initialising the root port, while this has been recently changed to
-> contain some other data for the benefit of the Apple PCIe driver.
-> 
-> This small series builds on top of Geert previously posted (and
-> included as a prefix for reference) fix for the Microchip driver,
-> which breaks the Apple driver. This is basically swapping a regression
-> for another, which isn't a massive deal at this stage, as the
-> follow-up patch fixes things for the Apple driver by adding extra
-> tracking.
-> 
-> [...]
-
-Here is the summary with links:
-  - [1/3] PCI: host-generic: Set driver_data before calling gen_pci_init()
-    https://git.kernel.org/riscv/c/bdb32a0f6780
-  - [2/3] PCI: apple: Add tracking of probed root ports
-    https://git.kernel.org/riscv/c/643c0c9d0496
-  - [3/3] Revert "PCI: ecam: Allow cfg->priv to be pre-populated from the root port device"
-    https://git.kernel.org/riscv/c/ba74278c638d
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>
+> -- Steve
 
