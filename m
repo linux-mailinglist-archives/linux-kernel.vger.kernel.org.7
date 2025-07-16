@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-733551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF9B0761B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A99EEB0761E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148001C26EF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5281C2700E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F062F5327;
-	Wed, 16 Jul 2025 12:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BBC2F5486;
+	Wed, 16 Jul 2025 12:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kblftK53"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/53GU+Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD3B2BB17;
-	Wed, 16 Jul 2025 12:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A602F5471;
+	Wed, 16 Jul 2025 12:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752670041; cv=none; b=InhZTM11Gq4kswBSYEmlp9fMlhRRgNkYopHztYiZcnvi2xZIDFOy4gM3evEl3Xqk+D5I7uA75cCPW5i41Zfk5WnDZ2tiCNobJ7NT9mNIdNNcBGWOBS0JLaUYqYKYvZ9AZx2JOrHwXTaEO8GhBKGM7JRLRjrVFkz9UUAni68+ckc=
+	t=1752670044; cv=none; b=Rm2TasYfLy6HeqYN8bKzcK5lvRhliHat+YQDWY+d5E9FxSy+UvydTqSKIeq/fvPdXg6ygHAkc1fCv45+ZmGLXh1kHT4EdtmmEYRf/TfC1Yun+Buz7z52kpcZn0n7HhrSNdxNRVwvHJiVnXHRkG/tfTvjNLXkztxs3zLdyBO4UYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752670041; c=relaxed/simple;
-	bh=x/Mw/JSlYMZ6Lt3QpSm6w9oNOPkux1bSqs9TbqXd9h8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SheWwb8aiS92PiSGZ75kFNlcAnBSlCCzIm3JMGh4FqqD9xsB0x493w4RPONJ6bgbncBPXMOwxsv4N86C3na2yH4fMwUhXvL8d90Ba68etkPwaflw78EVPUcNs7ah8nQfy5IhQ1pvRofBzOXSjJfS3ouC6gvR7rZDEDCRPRlp9X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kblftK53; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JnkhFjzbZDjJK3u4ETDcTw7sJ97GVgfPFmw1WSp/CBI=; b=kblftK53mxwfrHj+ku4R6OpdeL
-	grQQfbfs955vCi2VqUdBWBygEeFM4Kw/KlMRfgInbXbiGoePXSfVI9OpJFe/OmT0CzBBgm05Gnaxi
-	D9aSg7ZF90u5iC5jA+dnl809lKZOik7znWjMxN9EXGEZhrvwXnjHk2tfnsoEDTUYxmROLYURKcTYB
-	CGi09bL8eSm8r8N8FrePssEO5M6tZbjlWeOMhza4KtPCT/rtT5JNGje+bfcnZcucL7iTrjTZS8dge
-	5ifASPQ3hThNKel7aL6AUlzhWEmYbbaVrxz7dxjaVmPX6BKexrSU5IDZzuPz3hn27GwNT/XtQfI+V
-	uQ/8Frvw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc1XW-0000000A6Gb-0KyK;
-	Wed, 16 Jul 2025 12:47:14 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 293B7300186; Wed, 16 Jul 2025 14:47:13 +0200 (CEST)
-Date: Wed, 16 Jul 2025 14:47:13 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
-	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 1/9] rust: Introduce atomic API helpers
-Message-ID: <20250716124713.GW905792@noisy.programming.kicks-ass.net>
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-2-boqun.feng@gmail.com>
- <2025071611-factsheet-sitter-93b6@gregkh>
+	s=arc-20240116; t=1752670044; c=relaxed/simple;
+	bh=0pzCJliJ0HW2L3subDrWq+mOU/BVWiu8FjkzdTE7CYQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=BErq1sBhyHD6gKGM6nCL2sMERAZF0RV1rskNscwh2sTLq7BjjxBCTymkQpb3uYSzGhvM9HFZK7o4eNSPzwaUZqAx0qIQuUNS6aJjkpHyy7VW7/viIuxWPiXnHj4PD7BSyzRGycxAE1ApX/CxRRkFh/mpTHbAwtNk1K6xn3hlQGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/53GU+Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3DDC4CEF8;
+	Wed, 16 Jul 2025 12:47:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752670044;
+	bh=0pzCJliJ0HW2L3subDrWq+mOU/BVWiu8FjkzdTE7CYQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Z/53GU+YHmWDPHxVUHuXogBFzIsiDKRhdgkakLprnSi9sq0p2BiWrLjLX0mLgWKVY
+	 kMueCPBXRzMBfSvt5xgYQg9TZnFUbLtSDRttQf08/WqtJHN2lixY4jHXKitaOnu/hi
+	 uSQSzuwfXygFA0Hv70b2nBTl6iApAdtz8jt0IqIYdp/0Ll/7LaiS9UlTLmgSo14pD6
+	 cXNiKemXlw8MGCI4DNrAgbHnr9mAXZQl7JrVIjcSE7RXj78DRVS2a5LWmLmOtTV99E
+	 rg6PePaVt/QNxI0zrlefDqsj722M7LRe1c9eO1QSorQR15IMDv5EdR3dsZ+2edYXbc
+	 wMNIeZoqhYnqQ==
+Date: Wed, 16 Jul 2025 07:47:23 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025071611-factsheet-sitter-93b6@gregkh>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: kuninori.morimoto.gx@renesas.com, lumag@kernel.org, conor+dt@kernel.org, 
+ linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com, 
+ devicetree@vger.kernel.org, ebiggers@kernel.org, kory.maincent@bootlin.com, 
+ bparrot@ti.com, dale@farnsworth.org, krzk+dt@kernel.org, 
+ geert+renesas@glider.be, linux@armlinux.org.uk, linux-media@vger.kernel.org, 
+ heikki.krogerus@linux.intel.com, mchehab@kernel.org, 
+ claudiu.beznea@tuxon.dev, linux-kernel@vger.kernel.org, 
+ prabhakar.mahadev-lad.rj@bp.renesas.com, sbellary@baylibre.com, 
+ andre.draszik@linaro.org, ardb@kernel.org, dagriego@biglakesoftware.com, 
+ florian.fainelli@broadcom.com
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <20250716111912.235157-4-y-abhilashchandra@ti.com>
+References: <20250716111912.235157-1-y-abhilashchandra@ti.com>
+ <20250716111912.235157-4-y-abhilashchandra@ti.com>
+Message-Id: <175267004341.4181720.11859014527517980567.robh@kernel.org>
+Subject: Re: [PATCH V2 3/4] dt-bindings: media: ti: vpe: Add bindings for
+ Video Input Port
 
-On Wed, Jul 16, 2025 at 11:23:09AM +0200, Greg Kroah-Hartman wrote:
-> On Sun, Jul 13, 2025 at 10:36:48PM -0700, Boqun Feng wrote:
-> > In order to support LKMM atomics in Rust, add rust_helper_* for atomic
-> > APIs. These helpers ensure the implementation of LKMM atomics in Rust is
-> > the same as in C. This could save the maintenance burden of having two
-> > similar atomic implementations in asm.
-> > 
-> > Originally-by: Mark Rutland <mark.rutland@arm.com>
-> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > ---
-> >  rust/helpers/atomic.c                     | 1040 +++++++++++++++++++++
-> >  rust/helpers/helpers.c                    |    1 +
-> >  scripts/atomic/gen-atomics.sh             |    1 +
-> >  scripts/atomic/gen-rust-atomic-helpers.sh |   67 ++
-> >  4 files changed, 1109 insertions(+)
-> >  create mode 100644 rust/helpers/atomic.c
-> >  create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
-> > 
-> > diff --git a/rust/helpers/atomic.c b/rust/helpers/atomic.c
-> > new file mode 100644
-> > index 000000000000..cf06b7ef9a1c
-> > --- /dev/null
-> > +++ b/rust/helpers/atomic.c
-> > @@ -0,0 +1,1040 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +// Generated by scripts/atomic/gen-rust-atomic-helpers.sh
-> > +// DO NOT MODIFY THIS FILE DIRECTLY
+
+On Wed, 16 Jul 2025 16:49:11 +0530, Yemike Abhilash Chandra wrote:
+> From: Dale Farnsworth <dale@farnsworth.org>
 > 
-> As this is auto-generated, how do we know when to auto-generate it
-> again?  What files does it depend on?  And why can't we just
-> auto-generate it at build time instead of having a static file in the
-> tree that no one knows when to regenerate it?  :)
+> Add device tree bindings for the Video Input Port. Video Input Port (VIP)
+> can be found on devices such as DRA7xx and provides a parallel interface
+> to a video source such as a sensor or TV decoder.
+> 
+> Signed-off-by: Dale Farnsworth <dale@farnsworth.org>
+> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> ---
+> Changelog:
+> Changes in v2:
+> - Remove array and just use hsync: true in bindings
+> - Remove array and use enum for bus width in bindings
+> - Use pattern properties since properties across ports are same
+> - Update copyright year
+> 
+>  .../devicetree/bindings/media/ti,vip.yaml     | 211 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 212 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/ti,vip.yaml
+> 
 
-It depends on the scripts/atomic/* bits. They hardly if ever change. We
-do it this way because:
+My bot found errors running 'make dt_binding_check' on your patch:
 
- - generating these files every build is 'slow'-ish;
- - code navigation suffers;
- - Linus asked for this.
+yamllint warnings/errors:
 
-Specifically, pretty much the entire atomic_*() namespace would
-disappear from ctags / code-browsing-tool-of-choice if we would not
-check in these files.
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/media/ti,vip.example.dtb: /example-0/vip@48970000: failed to match any schema with compatible: ['ti,dra7-vip1']
+Documentation/devicetree/bindings/media/ti,vip.example.dtb: /example-0/i2c/camera@37: failed to match any schema with compatible: ['ovti,ov10633']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250716111912.235157-4-y-abhilashchandra@ti.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
