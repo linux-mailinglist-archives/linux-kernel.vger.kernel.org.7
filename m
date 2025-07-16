@@ -1,244 +1,154 @@
-Return-Path: <linux-kernel+bounces-733652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DD3B07769
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:53:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 663B5B076CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A7F1C26F20
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:54:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB7B17BEDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E7E1E379B;
-	Wed, 16 Jul 2025 13:53:48 +0000 (UTC)
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7F81A841F;
+	Wed, 16 Jul 2025 13:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uDYmdz3x";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JbbGSXV0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA55414A09C;
-	Wed, 16 Jul 2025 13:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA0135972;
+	Wed, 16 Jul 2025 13:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752674027; cv=none; b=OVPf8VbM1c9zPUU1sSzwPxvMrdLNJLmZsDYQL84pzMIf43mFJS6NSgLLXb1hbVVkgzP7zd7p39pBljtf0dl5+uJlsBv/8WXUHMQB9yrTEc9fU+wyKXB2RlepM3w48+WCpSi7LN7cq9o/NOF1iHCPLC1l7PF9MM9ZSsGZrXNeItQ=
+	t=1752672208; cv=none; b=dHwbUqOE8QOtQS9ZalwaGL2CS/0zngp1YcjKEESZ/mBrbFclaVPJlr3EGazdrULe8DJ2bdm3MusntjiIiktOcpmICjQXNiWjAfLpo/zmtPv8d80eyqXa2MkCD8AZI8q0Vd8kYBYBOG8YnBP2wj2PJ2oZ+pWU32MWvFchbyvX47g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752674027; c=relaxed/simple;
-	bh=sApfRX53GAVbCCpziYIkee5X3th2BDu676Hkvn24NB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iYQGhlo5ShrPaavZV90COvj25jGxbE4Y27zdKKaypWhg4wdkEE3LvfNoUpWdm56MsML8KhQYY8TI6G+Sdon0W2f4Dkii+Np+Hv0n710GtOXvp8yUAbp8zl9/cA8b0QAIEfGtXHsL8TGsee+HgE7DtDmiuWsIm8BwqUZntyh/CII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id CD381585102;
-	Wed, 16 Jul 2025 13:22:52 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 164B743D47;
-	Wed, 16 Jul 2025 13:22:37 +0000 (UTC)
-Message-ID: <74f147f3-c671-41f0-bfe7-a59aadc73f1b@ghiti.fr>
-Date: Wed, 16 Jul 2025 15:22:37 +0200
+	s=arc-20240116; t=1752672208; c=relaxed/simple;
+	bh=agoDhpTHHL7HDDO0SSBqzE+Bq/vsN2KR3cVVfaEDCP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nARnZCh9LIVEmakgoFgG1asWkRQw9qf4ZKCuybFRbtBZxel8N/qKMrBetxH+NXsiKODyfcE8S4P5O0IrZt+Lbx4IBcFTnxAjc/IGmKaDeEr6fJpO0MM+bzdaHMExhYHPOdR3D+QC6dNN3CYKbgVp7WsqyG+3K5kJukvlto4LpyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uDYmdz3x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JbbGSXV0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Jul 2025 15:23:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752672204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3X1gOZP+goNDIuh3AgJjOXNlqikB6fvLUSRY30PSEnM=;
+	b=uDYmdz3xJBu77jfXv2NJHZokL7soAtCFcstMwIVdJwh/xQGph1nuhSs9J1nU2fiOMN8zMf
+	esXWDddlzCNlG7bkDdzVNT+IGO7xEDiQcgnwJqBIvUKr0izZslxzFhxv3Sv/JCjVLB9gG9
+	vzcPEfXqWmh9Ra6fGMdAKjpxjZ6AZ1S4yeJUnAJCWGzvZu8qrHCp4CIWI+hyGHsinFmqms
+	CUBFukY0V6dKPaP3oRN/G1cZDzlfJUhHw7mVkd0FWXrCKQXFHCxBcegpaCpDi67DsQdeMK
+	lxq1G5AOKdpa6HUtMhdpWSxIndSLR2RGTYM2fqWRWf2y8TjPFw9yzWSzMqT0OA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752672204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3X1gOZP+goNDIuh3AgJjOXNlqikB6fvLUSRY30PSEnM=;
+	b=JbbGSXV0n1YRvysHljC1CPzDU5AjFc60+H3pSSxq0PzWMJughRLCOcj+nWQAFJyAHP/ymb
+	ByWtOGBZkMUCEMDA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan <shuah@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org, 
+	Richard Cochran <richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>, 
+	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, 
+	David Woodhouse <dwmw2@infradead.org>, Kurt Kanzenbach <kurt@linutronix.de>, 
+	Nam Cao <namcao@linutronix.de>, Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH 06/14] vdso/gettimeofday: Return bool from
+ clock_gettime() helpers
+Message-ID: <20250716152041-189100b1-7f5e-4388-8ada-b79ec09d18f5@linutronix.de>
+References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
+ <20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
+ <02bcd954-5323-4663-a766-f53c67c5a18f@samsung.com>
+ <CGME20250708154921eucas1p1fd8fa4374610a991ca5c67bd612ca0c2@eucas1p1.samsung.com>
+ <e8c6b9a7-eaa6-4947-98e1-9d6fecc958d4@samsung.com>
+ <20250709092958-37148883-ed89-40fe-8cd5-ded5dd60957e@linutronix.de>
+ <eb5feef3-0a7d-438c-9dbb-00d1d72fad66@samsung.com>
+ <6bee5ae0-2a9e-4793-a5bd-9e6c72b03f27@sirena.org.uk>
+ <20250716142933-41089f40-0628-4821-83a3-fddbd4c4f9bf@linutronix.de>
+ <3a9504d1-2c6a-459a-a98e-3010d34b546c@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/24] Linux SBI MPXY and RPMI drivers
-To: Anup Patel <apatel@ventanamicro.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, "Rafael J . Wysocki"
- <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Len Brown <lenb@kernel.org>,
- Sunil V L <sunilvl@ventanamicro.com>, Rahul Pathak
- <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>,
- Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>,
- Samuel Holland <samuel.holland@sifive.com>, Anup Patel
- <anup@brainfault.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250704070356.1683992-1-apatel@ventanamicro.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250704070356.1683992-1-apatel@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjeekvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepueekjeefieeikeevvefhtddtteevgefgtdffheegieegkeffueeujefhjefftdeinecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepvdelpdhrtghpthhtoheprghprghtvghlsehvvghnthgrnhgrmhhitghrohdrtghomhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsr
- hgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrshhsihhsihhnghhhsghrrghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggv
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3a9504d1-2c6a-459a-a98e-3010d34b546c@sirena.org.uk>
 
-Hi Anup,
+On Wed, Jul 16, 2025 at 01:50:22PM +0100, Mark Brown wrote:
+> On Wed, Jul 16, 2025 at 02:34:52PM +0200, Thomas Weißschuh wrote:
+> > On Wed, Jul 16, 2025 at 01:25:06PM +0100, Mark Brown wrote:
+> 
+> > > This issue has been present in -next for a week and is causing a bunch
+> > > of disruption to tests that end up relying on the vDSO - do we have any
+> > > news on getting a fix merged?  Perhaps it makes sense for Marek to just
+> > > send his patch so that it's there if needed?
+> 
+> > That fix has been in -next since next-20250710.
+> > If you still have issues, I'll take a look.
+> 
+> Ah, sorry - I'd not seen followup mails in the thread and was still
+> seeing issues that appeared at the same time that had previously
+> bisected here.  One is:
+> 
+> | INFO: Generating a skipfile based on /lava-4170058/1/tests/6_kselftest-dev-errlogs/automated/linux/kselftest/skipfile-lkft.yaml
+> | fatal error: nanotime returning zero
+> | goroutine 1 [running, locked to thread]:
+> | runtime.throw(0x132d83, 0x17)
+> | 	/usr/lib/golang/src/runtime/panic.go:774 +0x5c fp=0x42c7a4 sp=0x42c790 pc=0x3b740
+> | runtime.main()
+> | 	/usr/lib/golang/src/runtime/proc.go:152 +0x350 fp=0x42c7e4 sp=0x42c7a4 pc=0x3d308
+> |A runtime.goexit()
+> | 	/usr/lib/golang/src/runtime/asm_arm.s:868 +0x4 fp=0x42c7e4 sp=0x42c7e4 pc=0x645dc
+> | ERROR: skipgen failed to generate a skipfile: 2
+> 
+> I'll just kick of a clean bisect for that and see what it comes up with.
 
-On 7/4/25 09:03, Anup Patel wrote:
-> The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
-> are frozen and finished public review at the RISC-V International.
->
-> Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
-> Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
-> and RPMI system MSI driver This series also includes ACPI support
-> for SBI MPXY mailbox controller and RPMI system MSI drivers.
->
-> These patches can be found in the riscv_sbi_mpxy_mailbox_v8 branch
-> at: https://github.com/avpatel/linux.git
->
-> To test these patches, boot Linux on "virt,rpmi=on,aia=aplic-imsic"
-> machine with OpenSBI and QEMU from the dev-upstream branch at:
-> https://github.com/ventanamicro/opensbi.git
-> https://github.com/ventanamicro/qemu.git
->
-> [1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases
-> [2] https://github.com/riscv-non-isa/riscv-rpmi/releases
->
-> Changes since v7:
->   - Addressed comments on PATCH3, PATCH7, PATCH10, PATCH14, and PATCH21
->
-> Changes since v6:
->   - Rebased the series on Linux-6.16-rc4
->   - Added Stephen's Reviewed-by in appropriate patches
->   - Addressed Andy's comments on PATCH5, PATCH6, PATCH9, and PATCH14
->   - New PATCH6 in this series which is factored-out from PATCH7
->
-> Changes since v5:
->   - Rebased the series on Linux-6.16-rc2
->   - Added Conor's Reviewed-by in all DT binding patches
->   - Addressed Andy's comments on PATCH5
->   - Addressed Tglx's comments on PATCH12 and PATCH21
->
-> Changes since v4:
->   - Rebased the series on Linux-6.16-rc1
->   - Dropped PATCH1 since a similar change is already merged
->     https://lore.kernel.org/linux-riscv/20250523101932.1594077-4-cleger@rivosinc.com/
->   - Addressed Andy's comments on PATCH4, PATCH5, PATCH6, PATCH7,
->     PATCH13, and PATCH17
->   - Addressed Atish's comments on PATCH11 and PATCH12
->   - Addressed Conor's comments on PATCH9
->
-> Changes since v3:
->   - Rebased the series on Linux-6.15-rc7
->   - Updated PATCH2 DT bindings as-per Rob's suggestion
->   - Improved request_threaded_irq() usage in PATCH7
->   - Updated PATCH10 clk-rpmi driver as-per commments from Andy
->   - Updated PATCH13 irq-riscv-rpmi-sysmsi driver as-per comments
->     from Andy and Tglx
->   - Addressed ACPI related comments in PATCH14, PATCH15, PATCH18,
->     PATCH20 and PATCH21
->
-> Changes since v2:
->   - Dropped the "RFC" tag from series since the SBI v3.0 and
->     RPMI v1.0 specifications are now frozen
->   - Rebased the series on Linux-6.15-rc5
->   - Split PATCH8 of v2 into two patches adding separate DT
->     bindings for "riscv,rpmi-mpxy-clock" and "riscv,rpmi-clock"
->   - Split PATCH10 of v2 into two patches adding separate DT
->     bindings for "riscv,rpmi-mpxy-system-msi" and
->     "riscv,rpmi-system-msi"
->   - Addressed comments from TGLX on PATCH11 of v2 adding irqchip
->     driver for RPMI system MSI
->   - Addressed ACPI related comments in PATCH15 and PATCH16 of v2
->   - New PATCH17 and PATCH18 in this series
->
-> Changes since v1:
->   - Addressed DT bindings related comments in PATCH2, PATCH3, and
->     PATCH7 of v1 series
->   - Addressed comments in PATCH6 and PATCH8 of v1 series
->   - New PATCH6 in v2 series to allow fwnode based mailbox channel
->     request
->   - New PATCH10 and PATCH11 to add RPMI system MSI based interrupt
->     controller driver
->   - New PATCH12 to PATCH16 which adds ACPI support in SBI MPXY
->     mailbox driver and RPMI system MSI driver
->   - New PATCH17 to enable required kconfig option to allow graceful
->     shutdown on QEMU virt machine
->
-> Anup Patel (14):
->    dt-bindings: mailbox: Add bindings for RPMI shared memory transport
->    dt-bindings: mailbox: Add bindings for RISC-V SBI MPXY extension
->    RISC-V: Add defines for the SBI message proxy extension
->    mailbox: Add common header for RPMI messages sent via mailbox
->    mailbox: Allow controller specific mapping using fwnode
->    byteorder: Add memcpy_to_le32() and memcpy_from_le32()
->    mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox driver
->    dt-bindings: clock: Add RPMI clock service message proxy bindings
->    dt-bindings: clock: Add RPMI clock service controller bindings
->    dt-bindings: Add RPMI system MSI message proxy bindings
->    dt-bindings: Add RPMI system MSI interrupt controller bindings
->    irqchip: Add driver for the RPMI system MSI service group
->    RISC-V: Enable GPIO keyboard and event device in RV64 defconfig
->    MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
->
-> Rahul Pathak (1):
->    clk: Add clock driver for the RISC-V RPMI clock service group
->
-> Sunil V L (9):
->    ACPI: property: Refactor acpi_fwnode_get_reference_args() to support
->      nargs_prop
->    ACPI: Add support for nargs_prop in acpi_fwnode_get_reference_args()
->    ACPI: scan: Update honor list for RPMI System MSI
->    ACPI: RISC-V: Create interrupt controller list in sorted order
->    ACPI: RISC-V: Add support to update gsi range
->    ACPI: RISC-V: Add RPMI System MSI to GSI mapping
->    irqchip/irq-riscv-imsic-early: Export imsic_acpi_get_fwnode()
->    mailbox/riscv-sbi-mpxy: Add ACPI support
->    irqchip/riscv-rpmi-sysmsi: Add ACPI support
->
->   .../bindings/clock/riscv,rpmi-clock.yaml      |   64 ++
->   .../bindings/clock/riscv,rpmi-mpxy-clock.yaml |   64 ++
->   .../riscv,rpmi-mpxy-system-msi.yaml           |   67 ++
->   .../riscv,rpmi-system-msi.yaml                |   74 ++
->   .../mailbox/riscv,rpmi-shmem-mbox.yaml        |  124 ++
->   .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml |   51 +
->   MAINTAINERS                                   |   15 +
->   arch/riscv/configs/defconfig                  |    2 +
->   arch/riscv/include/asm/irq.h                  |    6 +
->   arch/riscv/include/asm/sbi.h                  |   63 +
->   drivers/acpi/property.c                       |  128 ++-
->   drivers/acpi/riscv/irq.c                      |   75 +-
->   drivers/acpi/scan.c                           |    2 +
->   drivers/base/property.c                       |    2 +-
->   drivers/clk/Kconfig                           |    8 +
->   drivers/clk/Makefile                          |    1 +
->   drivers/clk/clk-rpmi.c                        |  616 ++++++++++
->   drivers/irqchip/Kconfig                       |    7 +
->   drivers/irqchip/Makefile                      |    1 +
->   drivers/irqchip/irq-riscv-imsic-early.c       |    2 +
->   drivers/irqchip/irq-riscv-rpmi-sysmsi.c       |  328 ++++++
->   drivers/mailbox/Kconfig                       |   11 +
->   drivers/mailbox/Makefile                      |    2 +
->   drivers/mailbox/mailbox.c                     |   65 +-
->   drivers/mailbox/riscv-sbi-mpxy-mbox.c         | 1017 +++++++++++++++++
->   include/linux/byteorder/generic.h             |   16 +
->   include/linux/mailbox/riscv-rpmi-message.h    |  243 ++++
->   include/linux/mailbox_controller.h            |    3 +
->   include/linux/wordpart.h                      |   16 +
->   29 files changed, 2990 insertions(+), 83 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
->   create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
->   create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
->   create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
->   create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
->   create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
->   create mode 100644 drivers/clk/clk-rpmi.c
->   create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
->   create mode 100644 drivers/mailbox/riscv-sbi-mpxy-mbox.c
->   create mode 100644 include/linux/mailbox/riscv-rpmi-message.h
->
+Can you try the following?
+I missed this despite the double-checking after the last reported issue.
 
-Most of the patches have been AB/RB by their respective maintainers, so 
-how do you expect the patchset to be merged? Should it go through the 
-riscv tree?
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index 97aa9059a5c9..5e0106130e07 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -365,14 +365,14 @@ __cvdso_clock_gettime32_data(const struct vdso_time_data *vd, clockid_t clock,
+                             struct old_timespec32 *res)
+ {
+        struct __kernel_timespec ts;
+-       int ret;
++       bool ok;
+ 
+-       ret = __cvdso_clock_gettime_common(vd, clock, &ts);
++       ok = __cvdso_clock_gettime_common(vd, clock, &ts);
+ 
+-       if (unlikely(ret))
++       if (unlikely(!ok))
+                return clock_gettime32_fallback(clock, res);
+ 
+-       /* For ret == 0 */
++       /* For ok == true */
+        res->tv_sec = ts.tv_sec;
+        res->tv_nsec = ts.tv_nsec;
 
-Let me know how you want to proceed, I'd be happy to merge it if that's 
-easier for everyone.
 
-Thanks,
+Sorry for all the breakage.
 
-Alex
 
+Thomas
 
