@@ -1,120 +1,188 @@
-Return-Path: <linux-kernel+bounces-733132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07059B07098
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:31:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DB4B0709F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1D33A1BCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:31:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F67850430D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730102EE970;
-	Wed, 16 Jul 2025 08:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADB82EE980;
+	Wed, 16 Jul 2025 08:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IStlULGD"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjGFTVb7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A944A3E;
-	Wed, 16 Jul 2025 08:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110A12EA749;
+	Wed, 16 Jul 2025 08:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752654686; cv=none; b=gXPObRzKzSlBvpbH9sX8xbwasa0xdkpbThATEZ2el2BCzazGZh2UWbzRyskMAmY3iIkhKEh2M+Lljlpp7NXFc76Tqr00nWL3UxXJSRO36nIwQlmWaTLzx+ZVUTSxfXoG3VN8FugWTH2z5pZ97dbolz8S8JYpuVnT5zirsx4p5JM=
+	t=1752654724; cv=none; b=LTYaCrc7jaZNRT3jOS+miyLLaounv2F9IzWDOJFMeNaZ6Z6ZtkEy5x0scIRgDQ0iWqfOLNPjQgJRfY6p4g5nX3zkbMTAYpEdXVoy9aad5r8ux9Yv++bZeDOo8eCcxQlzogy8qwjhj6YgRsmdIvSPMZ+Qs0ogbdyd0CRGpDc9/JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752654686; c=relaxed/simple;
-	bh=DjLgu1Bu/PPHHPq+eEstZNCnbm8aC5/OtfCcX6LuJXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i6kFSH5670ta29LudrQXWghGgX2UXVn3ocWL9T1ySvCAeCznk40pWdFy1qjPQfVbQXPepalZNygmtVNehGat6DmsejKy/duWraO5188y0P9Ly4NJx3wY67Ahvdl3HrmP+py5eZs2PrX6bJqcrRV4zCMPd6Cpi4lHCRJUlWxN2gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IStlULGD; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id ED0171FD3A;
-	Wed, 16 Jul 2025 08:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752654677;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vhc5XXVzPBMiAxEHTDwHceDpsK/iOnBDxRP9eROs3iM=;
-	b=IStlULGD5+t389s2SOVgjgYNtuo5hkMYmw2w6F+aITGlTrBXakDtkSn2iiexi3dPVgZlPn
-	PHj8qhpHL92J5v88aH4+ot8Wq2rw9awRQLffDagp8xBekRSKRO2JYYAJbc7+9XG6uFa9ud
-	n/UGdrbLlMcgTMGtJ9TdrGhSyGc2iToIZH0HQQ7XL/9bDEcNQ4/dpe9O3Wt9VYdqyI2xCw
-	gWMvu9q6a7yN8nT+7BPUe3e86vLskVy5CZ4ukgR565KMPTsw7YLZfdcjr16Tl3KUA7vbhf
-	pYPhIVRBYG9of/jEjRLZty63Ip9Xszbu9EaTrb6tON1Gr/Eftv9iJtLlKr1xHQ==
-Date: Wed, 16 Jul 2025 10:31:13 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Dmitry Baryshkov
- <dmitry.baryshkov@oss.qualcomm.com>, Douglas Anderson
- <dianders@chromium.org>, Damon Ding <damon.ding@rock-chips.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/bridge: analogix_dp: Fix a NULL vs IS_ERR()
- bug
-Message-ID: <20250716103113.5b321b7e@booty>
-In-Reply-To: <d679e2f0-f449-41c4-83ed-c3e26e440a4a@sabinyo.mountain>
-References: <d679e2f0-f449-41c4-83ed-c3e26e440a4a@sabinyo.mountain>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752654724; c=relaxed/simple;
+	bh=pixhDAk3NXF+ez/UC4sCfxH4mfu5c2ZCe/3FOrSKxmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1JbmuQZwm0092RdX2YZ7GlHmrhDEIqFhdeWHDlSm+awzmxhyD68HsrB2c7vYn225sVKi8QFggtfDiGmfjasHezQ8Gj3OmuuvlFpEMH4AZSBThLlweJE8h+a3LAx3cn0aZ236m9eugpMK/vr2L4oBIZQo19KVEHtNN7kjqgCQfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjGFTVb7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC1AC4CEF0;
+	Wed, 16 Jul 2025 08:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752654723;
+	bh=pixhDAk3NXF+ez/UC4sCfxH4mfu5c2ZCe/3FOrSKxmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TjGFTVb7WA8CXJ6fa9ZunnX0H7E3pACvrqlm6U6kufhsPuFT7/qKNj+2PuK4rf422
+	 +/Vz5U7FyZF1IKEu6uwNqPHz+FJaWsNVM3NJmGFvApIa55S4kznSr5h0dOm9jqrvcS
+	 ZPWl1dYW0SDaotH84/KEdVcBl9HWmemC76mRyRv1mFee8RuPfM+aSSgy4AsWsR0Jtt
+	 2428KtOR29kVeXOrvqufoE3TflupQjHHf5sr6r2T2XqQCjsHhG0vGUZPWgvobe7gw3
+	 YiaNk0muRgqqvpTWNR8BqdV5pCZV+sLz8AY6vym0qlT1Prz0py2hxARudlILw5soG7
+	 GJGCOYu1gVsYQ==
+Date: Wed, 16 Jul 2025 10:31:53 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
+	"tomoyo-users_en@lists.sourceforge.net" <tomoyo-users_en@lists.sourceforge.net>, 
+	"tomoyo-users_ja@lists.sourceforge.net" <tomoyo-users_ja@lists.sourceforge.net>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
+	"jlayton@kernel.org" <jlayton@kernel.org>, "josef@toxicpanda.com" <josef@toxicpanda.com>, 
+	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, 
+	"m@maowtm.org" <m@maowtm.org>, "john.johansen@canonical.com" <john.johansen@canonical.com>, 
+	"john@apparmor.net" <john@apparmor.net>, 
+	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, "omosnace@redhat.com" <omosnace@redhat.com>, 
+	"takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
+	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>, "enlightened@chromium.org" <enlightened@chromium.org>
+Subject: Re: [RFC] vfs: security: Parse dev_name before calling
+ security_sb_mount
+Message-ID: <20250716-unsolidarisch-sagst-e70630ddf6b7@brauner>
+References: <CAHC9VhSS1O+Cp7UJoJnWNbv-Towia72DitOPH0zmKCa4PBttkw@mail.gmail.com>
+ <1959367A-15AB-4332-B1BC-7BBCCA646636@meta.com>
+ <20250710-roden-hosen-ba7f215706bb@brauner>
+ <5EB3EFBC-69BA-49CC-B416-D4A7398A2B47@meta.com>
+ <20250711-pfirsich-worum-c408f9a14b13@brauner>
+ <4EE690E2-4276-41E6-9D8C-FBF7E90B9EB3@meta.com>
+ <20250714-ansonsten-shrimps-b4df1566f016@brauner>
+ <3ACFCAB1-9FEC-4D4E-BFB0-9F37A21AA204@meta.com>
+ <20250715-knattern-hochklassig-ddc27ddd4557@brauner>
+ <B2872298-BC9C-4BFD-8C88-CED88E0B7E3A@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjedvfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduledprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehmrdhsiiihphhrohifshhkihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrs
- ehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <B2872298-BC9C-4BFD-8C88-CED88E0B7E3A@meta.com>
 
-Hello Dan,
-
-On Tue, 15 Jul 2025 17:59:06 -0500
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-
-> The devm_drm_bridge_alloc() function returns error pointers on error.  It
-> never returns NULL.
+On Tue, Jul 15, 2025 at 10:31:39PM +0000, Song Liu wrote:
 > 
-> Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> > On Jul 15, 2025, at 3:18 AM, Christian Brauner <brauner@kernel.org> wrote:
+> > On Mon, Jul 14, 2025 at 03:10:57PM +0000, Song Liu wrote:
 > 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index ed35e567d117..4b9b444bd249 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1474,8 +1474,8 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
->  
->  	dp = devm_drm_bridge_alloc(dev, struct analogix_dp_device, bridge,
->  				   &analogix_dp_bridge_funcs);
-> -	if (!dp)
-> -		return ERR_PTR(-ENOMEM);
-> +	if (IS_ERR(dp))
-> +		return dp;
+> 
+> [...]
+> 
+> >>> If you place a new security hook into __do_loopback() the only thing
+> >>> that I'm not excited about is that we're holding the global namespace
+> >>> semaphore at that point. And I want to have as little LSM hook calls
+> >>> under the namespace semaphore as possible.
+> >> 
+> >> do_loopback() changed a bit since [1]. But if we put the new hook 
+> >> in do_loopback() before lock_mount(), we don’t have the problem with
+> >> the namespace semaphore, right? Also, this RFC doesn’t seem to have 
+> >> this issue either.
+> > 
+> > While the mount isn't locked another mount can still be mounted on top
+> > of it. lock_mount() will detect this and lookup the topmost mount and
+> > use that. IOW, the value of old_path->mnt may have changed after
+> > lock_mount().
+> 
+> I am probably confused. Do you mean path->mnt (instead of old_path->mnt) 
+> may have changed after lock_mount()? 
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+I mean the target path. I forgot that the code uses @old_path to mean
+the source path not the target path. And you're interested in the source
+path, not the target path.
 
-Thanks!
+> 
+> > If you have 1000 containers each calling into
+> >>> security_something_something_bind_mount() and then you do your "walk
+> >>> upwards towards the root stuff" and that root is 100000 directories away
+> >>> you've introduced a proper DOS or at least a severe new bottleneck into
+> >>> the system. And because of mount namespace propagation that needs to be
+> >>> serialized across all mount namespaces the namespace semaphore isn't
+> >>> something we can just massage away.
+> >> 
+> >> AFAICT, a poorly designed LSM can easily DoS a system. Therefore, I 
+> >> don’t think we need to overthink about a LSM helper causing DoS in 
+> >> some special scenarios. The owner of the LSM, either built-in LSM or 
+> >> BPF LSM, need to be aware of such risks and design the LSM rules 
+> >> properly to avoid DoS risks. For example, if the path tree is really 
+> >> deep, the LSM may decide to block the mount after walking a preset 
+> >> number of steps.
+> > 
+> > The scope of the lock matters _a lot_. If a poorly designed LSM happens
+> > to take exorbitant amount of time under the inode_lock() it's annoying:
+> > to anyone else wanting to grab the inode_lock() _for that single inode_.
+> > 
+> > If a poorly designed LSM does broken stuff under the namespace semaphore
+> > any mount event on the whole system will block, effectively deadlocking
+> > the system in an instant. For example, if anything even glances at
+> > /proc/<pid>/mountinfo it's game over. It's already iffy that we allow
+> > security_sb_statfs() under there but that's at least guaranteed to be
+> > fast.
+> > 
+> > If you can make it work so that we don't have to place security_*()
+> > under the namespace semaphore and you can figure out how to deal with a
+> > potential overmount racing you then this would be ideal for everyone.
+> 
+> I am trying to understand all the challenges here. 
 
-Luca
+As long as you're only interested in the source path's mount, you're
+fine.
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> 
+> It appears to me that do_loopback() has the tricky issue:
+> 
+> static int do_loopback(struct path *path, ...)
+> {
+> 	...
+> 	/* 
+> 	 * path may still change, so not a good point to add
+> 	 * security hook 
+> 	 */
+> 	mp = lock_mount(path);
+> 	if (IS_ERR(mp)) {
+> 		/* ... */
+> 	}
+> 	/* 
+> 	 * namespace_sem is locked, so not a good point to add
+> 	 * security hook
+> 	 */
+> 	...
+> }
+> 
+> Basically, without major work with locking, there is no good 
+> spot to insert a security hook into do_loopback(). Or, maybe 
+> we can add a hook somewhere in lock_mount()? 
+
+You can't really because the lookup_mnt() call in lock_mount() happens
+under the namespace semaphore already and if it's the topmost mount it
+won't be dropped again and you can't drop it again without risking
+overmounts again.
+
+But again, as long as you are interested in the source mount you should
+be fine.
 
