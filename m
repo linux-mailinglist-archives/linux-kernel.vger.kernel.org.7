@@ -1,77 +1,50 @@
-Return-Path: <linux-kernel+bounces-732774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AB0B06BFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:08:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93B6B06BE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63893162B66
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52FBC1763F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFA327A931;
-	Wed, 16 Jul 2025 03:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="SuLSzZJd"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6752727816B;
+	Wed, 16 Jul 2025 03:04:40 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B54727991E;
-	Wed, 16 Jul 2025 03:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120E3522F;
+	Wed, 16 Jul 2025 03:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752635195; cv=none; b=ZA6nk64LodUqTAbhcrbKqk1IJlCn8paAY1do+031YdiXNG/eZ5UIG+wiaq5kbFyMT+9ery1O9pScXG3hnw3yDjGRqYqa9uFRXFRU/YP3dEmryvuaGZymMxpga64LvMTX6c2ZhHNFK5B7jc46KypPdxibQl2/qYDPz1+DUSqvyJI=
+	t=1752635080; cv=none; b=Y81fAveAmNCUTdUEK4h1Jv39S0H0mVNVqgxWnzj9MqbKb5ZZqFBPKtaoGahv3jJE4nnw33WsotVdvbSn1W9jD0Guv27LhgwkQ1lF6Z5DHGsjzqPRxnYMKgMLanBZ0xEty38Sf2JL9jCAIXGCLbMvD9JNoLRPrCyaTSrLsxhdnTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752635195; c=relaxed/simple;
-	bh=6VN9FKcTdtAorxviZrZKH9YBRb4tZy7sSEHppzE3GAQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=KuSsb5N9R8nYSfVk12IWDbKbniAQ//uQe+6E5zeWYaxegczpppyPrHme5kNFpDpqiMIHZyjx0cwgpO/EaM3/CVbYnuK7GOVtAgJUaS0LzOXFEWYi/CFSwUtGF9JJZR0/DKKsBN7z7Aj5/ZVYAqNEEDrXudlvsWvf+LMT9d63sP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=SuLSzZJd; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1752634883; bh=YUlCVgMJNmDjwrdJ6bJdu2yxm+8ftSfwyAUkzwsQpUY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=SuLSzZJdHxU6KeYuhj+PNRVCx/cBprtyPO/vex5XQCyhY7qcBltt/Dmg7LTe5lMcF
-	 fnyrs1jvxMARltzqoqg1X/UHSgPi9Pvs8Iszot8L1QEgoiXpl14Z2+3F543hfzlvOy
-	 jlFrqlxzXM8Mtw/x6SXJtMI2Y4SscDEsyfo7k3nM=
-Received: from VM-222-126-tencentos.localdomain ([14.116.239.34])
-	by newxmesmtplogicsvrsza28-0.qq.com (NewEsmtp) with SMTP
-	id 55B267D; Wed, 16 Jul 2025 11:01:21 +0800
-X-QQ-mid: xmsmtpt1752634881tvzihwlbp
-Message-ID: <tencent_69EF08CD5A280B69E9B808B7F1FE0849B608@qq.com>
-X-QQ-XMAILINFO: Mkw1Oys1xyjCqHS8GC7e0ScOgMtTBIxcDhaN+oEf1F4AmDdo7uzWLeM7YQuU7V
-	 mXyrXvPpnC+aZPkWYPhe0ImL/FdCYiDKoOeXgb3CJesW2XxyF8W6E/0U6F1VQ7F6thpayQxzzxCH
-	 0v8+vaWWkI1kzeQTj73BS2lK/LBHUrUzBO3fqyxf51+08uKwESE3qJIgD/OI7VGgNrEMFqIdFLar
-	 MyvUWCNhV/jMrgy6ldtbgBoAht4MGC0ou5JUdz6oH1AWFKSAnIZwQPUQfo35RmsMn9S0NO9/wUUO
-	 ctJ5hVyeDpKjUS3EbXBxmRvNPHCph6hVPm6LVlVLRCWBXs/LZzAbcuFqiP+dudpgNEp69DdqbURc
-	 2zqz/HLXML24iVvTeITbPoPC2/gompl0xtYgoYbjsy83vaM/sNgJvFsWJTTiIFWEsOVpCF+QbjZs
-	 0H9WE7LrilOcmrTLuPwWhFqFlMFpa/KNQ1Zv0D9JjtGtuk0J1EBZgS1DEjeZpW8kNKsMGr4MZY7b
-	 rpVdWQmEN6IEDraB8bfgyABbpOoka9snttftEWO6w3icTG5Z2EiItMGUpRO3wdmaINDG4yCRJMMB
-	 Blx5P9SXXaQ4G8USLpGe1sb1a7THPHY2ZTcXPgKFaenq9R8ak7lI+D3YgEXnDHvWmouLaDxFKI7U
-	 Tp4P1v2sm/S1PghQq6rV0xlM3SVOetMywpfpxlCeMGtwgQPxiB2MEwldLEaZcN8Rk391jRUShNuY
-	 ryF/KRtCL6xa8wyJyMeVBZSKlESlRtl6Nh3pLRqYViE9t6WmUDblvQ08brWkE8KN+Nm3wRGvGhGj
-	 ISL7AO2hwXPY+RVpC91fBu68WjlTcShNV9lzLWxj9AEI6kIYf9EMrWom0MzoFtY9F3WqQsX1xA0A
-	 A814iLcFuZ3v719jfQueWKBTc1riGyh1zwUyrm9Mmgj423KDre/XcfS0xfrXzFR6/ZYIhJ+hqHSf
-	 1ha7ap9RCvXtA0I120REjnGG1eTLX26RHBTKDxY52BaqN08BImwBGwqHwYbkT9ZgrwTUGoqXIkmF
-	 0UApSKbivyINxM8b0r
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: jackysliu <1972843537@qq.com>
-To: krzk@kernel.org
-Cc: 1972843537@qq.com,
-	James.Bottomley@HansenPartnership.com,
-	anil.gurumurthy@qlogic.com,
-	linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	martin.petersen@oracle.com,
-	sudarsana.kalluru@qlogic.com
-Subject: Re: [PATCH] scsi:bfa: Double-free vulnerability fix 
-Date: Wed, 16 Jul 2025 11:01:16 +0800
-X-OQ-MSGID: <20250716030116.3958471-1-1972843537@qq.com>
+	s=arc-20240116; t=1752635080; c=relaxed/simple;
+	bh=LicT5uMNHYj1ctswD2li1Oithk1FARPRNqpkCCe9New=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hvcsETC9R06S8cuQwKxWfpNmjMmh5Vq+GP12SblhOQznFSQyw72odpA6Zu5NoTNq63Key8f79eWNe8cnv+BebWd5B9NXO2pYvTQThTChhwYOAC0IQuyi4zE4koqp4Jb817+b4AOz0JhCSkP644C2vm581XgL504t4xoMl19BauA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201612.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202507161104318591;
+        Wed, 16 Jul 2025 11:04:31 +0800
+Received: from localhost.localdomain.com (10.94.16.122) by
+ jtjnmail201612.home.langchao.com (10.100.2.12) with Microsoft SMTP Server id
+ 15.1.2507.57; Wed, 16 Jul 2025 11:04:30 +0800
+From: chuguangqing <chuguangqing@inspur.com>
+To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+	Zhang Yi <yi.zhang@huawei.com>
+CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>, chuguangqing
+	<chuguangqing@inspur.com>
+Subject: [PATCH v3 0/1] Re: Re: [PATCH 1/1] ext4: add FALLOC_FL_ALLOCATE_RANGE to supported flags mask
+Date: Wed, 16 Jul 2025 11:04:19 +0800
+Message-ID: <20250716030420.4528-1-chuguangqing@inspur.com>
 X-Mailer: git-send-email 2.43.5
-In-Reply-To: <f75182a8-90f9-466e-a96b-d454c770f0a5@kernel.org>
-References: <f75182a8-90f9-466e-a96b-d454c770f0a5@kernel.org>
+In-Reply-To: <f42f9a79-75cf-491e-bf46-5ea036cf6656@huawei.com>
+References: <f42f9a79-75cf-491e-bf46-5ea036cf6656@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,18 +52,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 2025716110431a453d0ef0ad267a7348acff09a1b4606
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Tue, Jul 15 2025 12:45:00 +0200 Krzysztof Kozlowski wrote:
->You should disclose that you used some AI tool for that... and that
->other report(s) was really fake finding.  People should know you
->generated it with AI, so they could make informed decision whether to
->even allocate time here.
+> Why did you remove the FALLOC_FL_WRITE_ZEROES support?
 
-Although this problem was detected with the help of ai and static methods,
-I checked the trigger path by myself and verified this problem. 
-I'll describe the ways of detection if I find other issues in the future.
-Anyway, thanks for your review.
+It's missing FALLOC_FL_WRITE_ZEROES. tks for a lot.
 
-Siyang Liu
+chuguangqing (1):
+  ext4: add FALLOC_FL_ALLOCATE_RANGE to supported flags mask
+
+ fs/ext4/extents.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+2.43.5
 
 
