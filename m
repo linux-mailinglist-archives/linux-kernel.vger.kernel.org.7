@@ -1,85 +1,100 @@
-Return-Path: <linux-kernel+bounces-734211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2252B07E72
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:59:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DEE0B07E74
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783831C41A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240934E7D7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62072BEC20;
-	Wed, 16 Jul 2025 19:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042B32BD598;
+	Wed, 16 Jul 2025 19:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DmnLuyDJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OHSSW3Uh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TaTedlCN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86CF2BCF4B;
-	Wed, 16 Jul 2025 19:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE311531E8;
+	Wed, 16 Jul 2025 19:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752695924; cv=none; b=a/0V4IJnvRV/z/SR2gow7EMLLS7dGiOSnkCFfHNqO3abzzmMTUEPHRnwGUlnIMhKbI1vbvufTABn1koHhH96/pr2QhnRJV21jJmMz8NHBoXwveCcE90A1KHx5E/sUhU4XKex9nn0wb0u0VAVa11JOOz5wH3buIHFs5ztAxLFmhA=
+	t=1752695988; cv=none; b=JpeOt8de9mVR7mS67HW2Atc8qrhcISEp36uDllA46diEm0L1OeZtp9R7uA4K4+UaoS//e4w2dhMm4UOnEulwxhyJfxDRT6IuawtZZN/VmwV1PlTjRBUr/53zwp7bLVqkLia88nhrG1HsIcnA92vn8oabOTlyw7bZHyGkmR58ztA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752695924; c=relaxed/simple;
-	bh=7QuCx8a4UBg/PNj1N31M+C5I775KhJpXkjO9k+tR3GE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SN0ZuSE+KCvRZnEVwoZe9Fa1K1RAi/Ox79ItB4+Zf+MTbM7ePagnMyJ+t4iEPWj/wYEGG4nyRQU2MArYFsLpRGGH/kMFnAXFDzTbUvamni4ZXKwd47jXQqRdPI64m8VOfpggTRCFDTKMNK6k71j7mb3rB5Hl8fHGSwAVGwrIxw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DmnLuyDJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OHSSW3Uh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 21:58:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752695918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPR48JgV4EPJQeAgOleKmQDcPYOkMtCBi4gLfMf18kI=;
-	b=DmnLuyDJUCQ0eQb2uoUbQIL+OeUNogHLAo+Ipjaumd8gdfBtdY0HUqvl5CRvyth0OOe4rP
-	C9aBeXk2RRMQuX4aSKQPkFS6F3sTxNFD9vjNVAVyDvs16Z2tLCCxkxMDpmjjEnYWuz8F3s
-	LrPHHk0Ll3CljFrgJ96DwAq+ATZYixt+j2+V528RlyvIprV6q0Q4KEBQjbiUw0HC/MgfX3
-	feEC/gtc9BZ2Pp0LBm0H/7zMpNFWsBEs6NoKpskt29i8axsZ6qLeDju1x8vZnWPuRw7fae
-	YaMaSALpvyB4Xq2Ao3cAcBjuDryZG6R4EFf95LzsoqK2MCjwjb3VHtqRJf5Ihg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752695918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPR48JgV4EPJQeAgOleKmQDcPYOkMtCBi4gLfMf18kI=;
-	b=OHSSW3Uh9KQIyREZ7aMdjpoWbsJgsIzrWja+ApNLJhg0qRXQIhNtuc2h41EJ5n4FSwmOsI
-	hk1mwwt1eu0WGdCA==
-From: Nam Cao <namcao@linutronix.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] irqchip/ls-scfg-msi: Fix NULL dereference in error
- handling
-Message-ID: <20250716195835.W1ewP6iP@linutronix.de>
-References: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
+	s=arc-20240116; t=1752695988; c=relaxed/simple;
+	bh=Qon3/JcrgcY707eTNDRNZp6SK/UyyLEnsHTNMdoXAgo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=dfiJ8nhjx/DE9IKRuT7xBFYRqFl2i7IOQQ8Jt0skjZcOEfjYnZzhLO/WNekv17KJvSQ5nLb6s0nadAO8ucEaa3AQXRS+yTK/S+ltm+nT1Nvll5hgYlwGUF1cuuXgT7lN8LeU90yiW/UB0NuhBgOM0Br6FazYWL4e5nHeb9kSMr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TaTedlCN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA57BC4CEE7;
+	Wed, 16 Jul 2025 19:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752695987;
+	bh=Qon3/JcrgcY707eTNDRNZp6SK/UyyLEnsHTNMdoXAgo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=TaTedlCNJd5gRZa4PoSkQqTIF/m80DrjDrbhcFv2BA1Wj4inrgv+nb0EWEIEwyZwx
+	 ljnJFFWGQ2M8zCHsYhvPwE/9DXi3sIvqdyi28YPnKWBHFr319FRqYHd4ChKQ7LwQOP
+	 RJdVbUnvIZ6Trl6XvGpi4JvZZN4j0Beu/AVyPzJw+mvPgH2ZY7LsAtuHB4puRKMA25
+	 CYxVcpw1HOQvuFQW4dSC7MsY/Hsm08gcHJ3syrjT2cQ5cYOStbEoYHhxxia7dhjtCv
+	 4nK+ev/BIP7ql2+PIoSLTKD+PgfEs/qOJA2+GeW3AmNBes3nrsMUOkDyQs+7MqLcV2
+	 sxd+ATEH/BRBA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 4BFAA383BA3A;
+	Wed, 16 Jul 2025 20:00:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] riscv: ftrace: Properly acquire text_mutex to fix a
+ race condition
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <175269600801.1308944.13355512366921305547.git-patchwork-notify@kernel.org>
+Date: Wed, 16 Jul 2025 20:00:08 +0000
+References: <20250711-alex-fixes-v2-1-d85a5438da6c@rivosinc.com>
+In-Reply-To: <20250711-alex-fixes-v2-1-d85a5438da6c@rivosinc.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
+ mark.rutland@arm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, rabenda.cn@gmail.com,
+ wangruikang@iscas.ac.cn, ziyao@disroot.org
 
-On Wed, Jul 16, 2025 at 02:43:45PM -0500, Dan Carpenter wrote:
-> The call to irq_domain_remove(msi_data->parent); was accidentally left
-> behind during a code refactor.  It's not necessary to free
-> "msi_data->parent" because it is NULL and, in fact, trying to free it
-> will lead to a NULL pointer dereference.  Delete the unnecessary code.
+Hello:
+
+This patch was applied to riscv/linux.git (fixes)
+by Palmer Dabbelt <palmer@dabbelt.com>:
+
+On Fri, 11 Jul 2025 07:38:38 +0000 you wrote:
+> As reported by lockdep, some patching was done without acquiring
+> text_mutex, so there could be a race when mapping the page to patch
+> since we use the same fixmap entry.
 > 
-> Fixes: 94b59d5f567a ("irqchip/ls-scfg-msi: Switch to use msi_create_parent_irq_domain()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reported-by: Han Gao <rabenda.cn@gmail.com>
+> Reported-by: Vivian Wang <wangruikang@iscas.ac.cn>
+> Reported-by: Yao Zi <ziyao@disroot.org>
+> Closes: https://lore.kernel.org/linux-riscv/aGODMpq7TGINddzM@pie.lan/
+> Tested-by: Yao Zi <ziyao@disroot.org>
+> Tested-by: Han Gao <rabenda.cn@gmail.com>
+> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> 
+> [...]
 
-Reviewed-by: Nam Cao <namcao@linutronix.de>
+Here is the summary with links:
+  - [v2] riscv: ftrace: Properly acquire text_mutex to fix a race condition
+    https://git.kernel.org/riscv/c/e3f16d63d54e
 
-Thanks for the fix!
-Nam
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
