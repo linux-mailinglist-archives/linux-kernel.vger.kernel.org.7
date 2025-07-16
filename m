@@ -1,135 +1,126 @@
-Return-Path: <linux-kernel+bounces-734282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D4EB07F6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:19:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90DDB07F6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925F718913B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD36A474DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD4C26E6F9;
-	Wed, 16 Jul 2025 21:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D01D28AAFB;
+	Wed, 16 Jul 2025 21:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vcyz9C/6"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0jdCzKjm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D3B2AE8E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 21:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BA22AE8E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 21:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752700747; cv=none; b=usvscRNk90DywJWaAcGhmT1i/3gDeWqs+u1TTvFCj5zEUke4QGCG6Q+7tRoqHKNUNXoiCxplpdLMXbrrpUoHsgzQflj/mwy50lT6jWTpjMwin9pvGbDo11aK7VIaszDPdP3RRfmGh4pLNPPqZMiVP8e2slmqEzeb8VAgw/6By+M=
+	t=1752700773; cv=none; b=ZHCx1i+i//obHZQBhWH0w1psyPwQ9E0n0kTCNyZLMJalqMPtZMhKfV+b7vLA+3eVBPJr3yylRg+GzoCFSeE8rXhjd84GGJkm2+Hw3kYa+OaHBaGpn9A9EkmjIFTn5rK6VC0h6SUJ4AhBviQeTUSI+VWm9A57Syt5mSo02rZ9inU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752700747; c=relaxed/simple;
-	bh=ZnwNzz+9PWC+5EpZJVzc8FVsoS5xjjXuK6o5yM/GmnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s6Dr3AiWw85lpvGkbTRRqp6Jb+3K3q7fEa5GpCU4jnE1gGHavqcyhv4TesXr3+xJ1lXJ8bSalRQac1aDyld0WyoIEl5c2fNy81gmvX3LrvqC04Sd1vu06AlFKd8GiX20FJiJ5JE4Hg2ggSGXQyAYnMvayOJl33++r2pMBWpqpk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vcyz9C/6; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4561ca74829so3267185e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752700744; x=1753305544; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gRKMCti2Ai/CuBdEyVpIY2yewXiU7F1sYeoCE/NOUlg=;
-        b=vcyz9C/6W67eXML8/PbBQ1lbAZnoTHg2D8W7ja3ve2Gq2iptyKkCNce2CyQCIwILkm
-         n/0UvayEUlSVkeR2p4Qc3o9EdtDBSTI2EPtBGfuR3jAzfB1s8/uCaWmkV//1WftrO/Xi
-         wc8QfXrq3YOMf+iOgAie7O9yx8ERf8OLf7sEvYl/XuG6WupRn4vvXwDNjdvUwcmZIiAf
-         y+CVgbJ+a/ZJFRbjxJzJzEZQROLhZp5HJ2I+197x/Y+kAkS9lM6LSxm2QIZMgYPDOaUM
-         ++9/XwfCmEONTBrNltDXe/H5AbramJX+7CDVQII6SViW1vRJLl6xJ8owTjZsqM7y67F0
-         ICug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752700744; x=1753305544;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gRKMCti2Ai/CuBdEyVpIY2yewXiU7F1sYeoCE/NOUlg=;
-        b=GSwXf+BVMSkEtCK4Px4SwkkcpKNZD/nRSNAIpzJ2qT4fjzYilT53LtW89EKUXLj1uz
-         HQPKPVyrUnyF42CTofL7N/zFZYciD13dImoXf0wsqN30QMvX/M2mMK9ix0EkZhPnW6mc
-         8AqujFtxAKBt8Zljg0LSabR474dcsOmmVAATYCQ2kZbTTb/biJwwHhv4tt0IRrbmlzDa
-         EqnD9gg+uJdc8VUMiUld5EhnJnvXKpDp5CnXWkn62pRkz4l2KeATSDTeKYdotiIGo2I0
-         1ZQse+9G+V8sGnFFSfZwZvbQwpHJPxElPRd8+X7Da8Ex6dMNdk0ANajYradPXIZXll5B
-         svBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVz64hrbXqF34SvbY1EnZCOMf9hFM28+Son4WH1vj+1K+OcbxG6ItT2dVGVMySlxVMsZgFLhMbhvtWCw2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycgpG6kdHvudHqD0YCPbrnzq0fSw1SEgK8991+oLWPVdtzzcXG
-	yC5KsHsXZ7oU9uRSrn6+k6j4VPxfpTaNF/GKWhEc3ujVF8+g4M71LG88xl6Ypr0hRwI=
-X-Gm-Gg: ASbGnculLJ3PS6e1VdbidpObpAsRMNu4/13wpGP1F4niHhs5wPjB4yc/5ypymZj4X1J
-	/RD/ej0uY9eyu0p97l+OKDbpI3jIaY1xIBh4W2dMz/RaTrPynzHlKsozmqeqGuQCjteqCvQxdVy
-	BeRPOkjqDRAnaAgW2geTg4z3IfSpcqAD89ABclX1pCUVDjqc8DL1Ou2j1kPhvUzYMs+8z49NqA/
-	yBFUKIGvHNOfoEEt+WT7WQAd4cGLHnJHiYs0ygYiH5VYuGjGDzoSsUJBY4kcfzy0+wi4B6ORPPO
-	SslAr8Oo99THeMhYULVFLslyMbrwOQgjskAnaM48YnCtewHZIbRIqQMR2BrO7ZxY+/shshNDUeE
-	lNxACrpTAvn/6sDFXAtHLAMUm4ITcvdsbdybWDemBls8xLemxyfTWjbrKvDfW
-X-Google-Smtp-Source: AGHT+IGU+ypDAJJxAGg8IJL70QMGqBYPckZVXPJfzPAtYPsw777vZbMiHPPbbkBp+5WtNr4iOtNXRw==
-X-Received: by 2002:a05:600c:6097:b0:456:302:6dc3 with SMTP id 5b1f17b1804b1-4562e3c4b98mr33569505e9.26.1752700743650;
-        Wed, 16 Jul 2025 14:19:03 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f4294sm31833045e9.3.2025.07.16.14.19.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 14:19:03 -0700 (PDT)
-Date: Wed, 16 Jul 2025 23:19:01 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Mason Chang <mason-cw.chang@mediatek.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Julien Panis <jpanis@baylibre.com>,
-	Nicolas Pitre <npitre@baylibre.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Steven Liu <steven.liu@mediatek.com>,
-	Sam Shih <sam.shih@mediatek.com>
-Subject: Re: [PATCH 0/3] thermal/drivers/mediatek/lvts_thermal: add mt7988
- lvts commands
-Message-ID: <aHgXRcyEWreMC_P-@mai.linaro.org>
-References: <20250526102659.30225-1-mason-cw.chang@mediatek.com>
+	s=arc-20240116; t=1752700773; c=relaxed/simple;
+	bh=/JmxPB4cTLr0IibWQJNx/g20Oe33VTfhF06Cl9tw14U=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=MaaPbOHGwmemXihgPMvgatJiTpAEekoWsZKNNmZAR35QMyhTuX2ifqcgqI5GwuoZzY73YXEy4nBzhjymnPPt+16DK5/fMJvbuvG0jlBInTKNlMbN0omBpnzImHfrtqzcdQyJoOomzLOy1iV0lHLPTlMfZcaL4pdW/72vBOTaIP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0jdCzKjm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5270C4CEE7;
+	Wed, 16 Jul 2025 21:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752700772;
+	bh=/JmxPB4cTLr0IibWQJNx/g20Oe33VTfhF06Cl9tw14U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=0jdCzKjm31JDscUqED0ieanQUmYCbiBLIMgTX1jBuH1wasMjJlTGbXdCjwlN3Btin
+	 eTGlJ7LtRctbQ7C0An4ZUvnomPzEpfPga1+jxPQnOdCVeGqF8Z4Xjh0cdAhY5vjqPp
+	 uvDfwA9qlAQknoBBvjA3Hv32DPiZeavY9t/5DnBw=
+Date: Wed, 16 Jul 2025 14:19:31 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yadan Fan <ydfan@suse.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: mempool: fix wake-up edge case bug for zero-minimum
+ pools
+Message-Id: <20250716141931.273ca3effdbc0f442523eac8@linux-foundation.org>
+In-Reply-To: <8c0cdb71-8d21-497e-b793-c43ce3a16345@suse.com>
+References: <8c0cdb71-8d21-497e-b793-c43ce3a16345@suse.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250526102659.30225-1-mason-cw.chang@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 26, 2025 at 06:26:56PM +0800, Mason Chang wrote:
-> Add the LVTS commands for Mediatek Filogic 880/MT7988.
-> 
-> This series fixes severely abnormal and inaccurate LVTS temperature
-> readings when using the default commands.
-> 
-> Signed-off-by: Mason Chang <mason-cw.chang@mediatek.com>
-> 
-> Mason Chang (3):
->   thermal/drivers/mediatek/lvts_thermal: change lvts commands array to
->     static const
->   thermal/drivers/mediatek/lvts_thermal: add lvts commands and their
->     sizes to driver data
->   thermal/drivers/mediatek/lvts_thermal: add mt7988 lvts commands
-> 
->  drivers/thermal/mediatek/lvts_thermal.c | 74 ++++++++++++++++++++-----
->  1 file changed, 61 insertions(+), 13 deletions(-)
+On Wed, 16 Jul 2025 23:37:30 +0800 Yadan Fan <ydfan@suse.com> wrote:
 
-Changes applied, thanks
+> The mempool wake-up mechanism has a edge case bug that affects pools
+> created with min_nr=3D0. When a thread blocks waiting for memory from an
+> empty pool (curr_nr =3D=3D 0), subsequent mempool_free() calls fail to wa=
+ke
+> the waiting thread because the condition "curr_nr < min_nr" evaluates
+> to "0 < 0" which is false, this causes threads to sleep indefinitely.
+>=20
+> There is at least 2 places where the mempool created with min_nr=3D0:
+>=20
+> 1. lib/btree.c:191: mempool_create(0, btree_alloc, btree_free, NULL)
+> 2. drivers/md/dm-verity-fec.c:791:
+>  =A0=A0 mempool_init_slab_pool(&f->extra_pool, 0, f->cache)
 
--- 
+This is very old code.  Can you suggest why this has taken so long to
+surface?
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Which is a roundabout way of asking "should this be backported into
+-stable kernels".  For that we'd need to know how this issue is
+affecting our users.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> Add an explicit check in mempool_free() to handle the min_nr=3D0 case:
+> when the pool has zero minimum reserves, is currently empty, and has
+> active waiters, wake them up. The wq_has_sleeper() avoids unnecessary
+> wake-ups when no threads are waiting.
+
+Do we need the separate test?  What's wrong with the obvious approach
+of replacing the "<" with "<=3D" in the preceding test?
+
+And would the previous (ie, existing) test benefit from the
+wq_has_sleeper() check?
+
+> --- a/mm/mempool.c
+> +++ b/mm/mempool.c
+> @@ -545,6 +545,22 @@ void mempool_free(void *element, mempool_t *pool)
+>  =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 }
+>  =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 spin_unlock_irqrestore(&po=
+ol->lock, flags);
+>  =A0=A0=A0=A0=A0=A0=A0 }
+> +=A0=A0=A0=A0=A0=A0 /*
+> +=A0=A0=A0=A0=A0=A0=A0 * Handle the min_nr =3D 0 edge case:
+> +=A0=A0=A0=A0=A0=A0=A0 * For zero-minimum pools, curr_nr < min_nr (0 < 0)=
+ never succeeds,
+> +=A0=A0=A0=A0=A0=A0=A0 * so waiters sleeping on pool->wait would never be=
+ woken by the
+> +=A0=A0=A0=A0=A0=A0=A0 * normal wake-up path. This explicit check ensures=
+ that when
+> +=A0=A0=A0=A0=A0=A0=A0 * pool->min_nr =3D=3D 0 and pool->curr_nr =3D=3D 0=
+, any active waiters
+> +=A0=A0=A0=A0=A0=A0=A0 * are properly awakened.
+> +=A0=A0=A0=A0=A0=A0=A0 * The wq_has_sleeper() avoids unnecessary wake-ups=
+ when no
+> +=A0=A0=A0=A0=A0=A0=A0 * threads are waiting.
+> +=A0=A0=A0=A0=A0=A0=A0 */
+> +=A0=A0=A0=A0=A0=A0 if (unlikely(pool->min_nr =3D=3D 0 &&
+> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 READ_ONCE(pool=
+->curr_nr) =3D=3D 0 &&
+> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 wq_has_sleeper=
+(&pool->wait))) {
+> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 wake_up(&pool->wait);
+> +=A0=A0=A0=A0=A0=A0 }
+> +
+
+Something strange is happening with the whitespace here.  I pretty much
+retyped the patch.  Please have a chat with your email client ;)
+
 
