@@ -1,179 +1,175 @@
-Return-Path: <linux-kernel+bounces-733013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8772B06ED8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:20:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5714AB06ED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4796C3AEF3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9452617748A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE4D289355;
-	Wed, 16 Jul 2025 07:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36A528A1EE;
+	Wed, 16 Jul 2025 07:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="eiLuMd7S";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i9nxkfR2"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="0V5sUMnq"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FA027146F;
-	Wed, 16 Jul 2025 07:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6029E27146F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752650420; cv=none; b=j9jmMc94Cv5pq9wt53pLAhLpgE4MBeZstPOrHkTBRFIfEyeuZAGD+3S+786bp92Kq9td1+488lfOjkqTXEe3V3aAfQrBNhI5mztQEbcivqrD8AvhfdbUANr85RxY3moByKSKHXrLooABOL69/gIjf9G9QGjEJYuqK6+L4hqZgRM=
+	t=1752650402; cv=none; b=HpdhqIHl00Yf5p1aLijegGtGclsRxbpFY95/YbiX62t1XQQx5FlNXjZ2A8CwKjV5iBhHMyEB0EBXu2Yq5+iDkJ8SnW4Wl1DPDaqVdneiieUl96s7TL08qEMBUPblYmcNdOe3DpOUmt9EjAO1s4b9/B6KdB95vC/jRZLhwCIEh+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752650420; c=relaxed/simple;
-	bh=bCqm1JQ8BzHWO/19xnRKH+MHKhEeGYtPhPvPJ6ysZXk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=V1Vm5tlNlk03NMz8ENWuhj8qXJPijylHJ2wDcFQqplTq7G+7j48rDt3mKyfK0Vq005qyzjlEx99EJ8muFGGZm9I/+UJCwZZQwUHPU/addh0x8GPOzxtabTJc7Shztvf7xRcLp3eWn7+UwLakIvRkZe+ICiaJC0/FhwcoFWMf4YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=eiLuMd7S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i9nxkfR2; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 67E6B7A0104;
-	Wed, 16 Jul 2025 03:20:16 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 16 Jul 2025 03:20:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752650416;
-	 x=1752736816; bh=xDPOTNSSMo7Pg2u9+65PzrX1Xg4eEK8/iy5Y0t9SCjE=; b=
-	eiLuMd7S7yw/TMDahWZt3fOI9Unhj4OJ8lAm6OOOxkPkpnuZ+LR/t4S6BGmU3bk5
-	FkVxDVjxLsLRAtSGHH5P6TcuBEn8ZHhbv5bmVuG0LafprulBVCJCCf1lbluKo/VN
-	VuapCe0KPfCMHVfjkO83e9x5W7LtHzmCdIrlUMtVRXGuPvz2ZGhASXiexzOw0bV2
-	0lne09ZpMsZXTyN3PhbqQv0qULz37svLLCL1N8FI7kQysBldshIAXfnleRlqyE0D
-	417qF3IdfflHvC1fRTx6b5bLc4Or6PUf3ONNkjDy55cdcguLCzf0AXdkEZes2mjO
-	SF0j6OBOIza42hKaaYAtHg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752650416; x=
-	1752736816; bh=xDPOTNSSMo7Pg2u9+65PzrX1Xg4eEK8/iy5Y0t9SCjE=; b=i
-	9nxkfR2mTlKZA4I92n7lU9nzoibkybWS2vekJ9T2s8tjIVoTskjLsi6kjwlGSOmb
-	933Z1NFqZK391vm+jtbSAmXXYdXe6eACrPzyTXeTaJNlxEZaJtiykgGwf5Jp+Q7N
-	c48iZbdvnrpJtA9m3OUOCeW+pXkUNvIqZDm7+3YexoFlym3shqrf1VAW7Ck12oJb
-	ea6Si3CadVMf5tF7Og2fx4nxhawE7q2I+BJzov3R2IOaGiEQv+VGtu9gDEFGIgtm
-	42ppn5PFfn7W/RgAkGgWUr5k/sQm7PSfQWLQta5zfxxFnnGQrLqzhkM7UCYTSBAi
-	ZNNiu8aKbFIaznDFgdzEQ==
-X-ME-Sender: <xms:r1J3aG4eE6rKCu5zLBvI81Z42dTpixfTGHg08UERtRcZb3BTf9sX3g>
-    <xme:r1J3aP7k2FC1nQfgm0wNee6h34hiR90m03-dIqwY_kSCI9p7LQnQfAgtnsAISJJT-
-    8k4P-yKZ6SAvAhVplQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjedutdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
-    htthhopehkrghjvghtrghnrdhpuhgthhgrlhhskhhisegrrhhmrdgtohhmpdhrtghpthht
-    ohepshhuuggvvghprdhhohhllhgrsegrrhhmrdgtohhmpdhrtghpthhtoheplhhihhhurg
-    drlhhiuhestghigihtvggthhdrtghomhdprhgtphhtthhopegtihigqdhkvghrnhgvlhdq
-    uhhpshhtrhgvrghmsegtihigthgvtghhrdgtohhmpdhrtghpthhtohepghgrrhihrdihrg
-    hnghestghigihtvggthhdrtghomhdprhgtphhtthhopehguhhomhhinhdrtghhvghnsegt
-    ihigthgvtghhrdgtohhmpdhrtghpthhtohepphgvthgvrhdrtghhvghnsegtihigthgvtg
-    hhrdgtohhmpdhrtghpthhtohepjhgrshhsihhsihhnghhhsghrrghrsehgmhgrihhlrdgt
-    ohhm
-X-ME-Proxy: <xmx:r1J3aJKay1d4U4uptBXNC1n3DgEVZnhN1VUQ35AKLV3DabJE_dFbVA>
-    <xmx:r1J3aKobx7OhfTVleQNYjtTWoh1h6_oJHmHNdWQfLyX2rh-eXYOCcg>
-    <xmx:r1J3aKAadL3cGudVfWBPJDCXPkDGQIEhhLGaZsq8FI7IORkhPiVcsw>
-    <xmx:r1J3aIfVkeFfwa-yKoZE2B5zcQOhMNpi9ZZkAhcV2sOuMyRYn2d0lQ>
-    <xmx:sFJ3aOYhWM6pIzV2MhB9FJ5oGBpTbzRz7csmuaBDjexYbgYytsscoRaF>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9CC53700065; Wed, 16 Jul 2025 03:20:15 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752650402; c=relaxed/simple;
+	bh=sLBjAxUF8f0bVLkAa+0Ov5QiRQzZ9hdeQ4tEfeTn6QY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=j5FOqtLrX4BvvRrTod1Bur/dPTOtgn2lP4mCFsUg0GZ/PF3VndkqdkqKGlIZWI0A1SP+1MXTCfGvJliBv4qf1Pw/HhdsoU3IibcHPgI/8ZbHhDYdOgAqH20QIaWpA9NvgSjWhK4BGAeRHuf02JTcQns2z/W2EFdPahbasr9sSPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=0V5sUMnq; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-60dffae17f3so9737989a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:20:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1752650399; x=1753255199; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vpS7uKmXirtt0SzgMZ5d4QPt02O2nNF9SJVnwbn9UkU=;
+        b=0V5sUMnq6XUZ59pl5vKImk9+DasmiDKM+skGK+YgqapvslnmUAp5U3auvJnNo0nNqZ
+         SKDEMEIrZJwv3nufAaO/eSi8+UEpN1RGqa29qtRpdYL4rEi9GOxxMN/SGZxSsfnllwQR
+         d9PXqQ+Ex65ejoCoH5WKIzRehKdOqqA/mAhfsEY5ey93h1e2EAnYPfEFU7q9uduKLUrp
+         BQ1Ai6vFMqD69WumxHe8c6MwikXyKW+2HF1XuApOG7XZ4faB4gK/fz4AseCAFayKIP4M
+         lxHGzwHYP+xLJJiZho2i9gu24NQlo7C2S6MQeD8rS0lcAQ5UImXhgSEsqoQAErP1+JVP
+         1WTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752650399; x=1753255199;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vpS7uKmXirtt0SzgMZ5d4QPt02O2nNF9SJVnwbn9UkU=;
+        b=vic0JZbHqbhSXtkpE44W5vICP91EzEqBaPMuGkAawWTtaNAMWUOgvfdmRpLaMWbf/c
+         Dxidy8xOkQiu1ZddAHUP8yIw7E3Ivjli4Ghy8NTald+ax2CtfQY4AKSXDk7H54pP45lK
+         0Bksyn2IurPoBKAeYRtVO2V5PILkfOpMhHGlG9JJnMIMB04SOGBvAnOHUateetm/IeL6
+         HYIm0iesdduMrAEZ9TxWMCi2oHtxZ0cHX4ssUwQwlsMA+ZemWmPzsyG7H2rCA6wxICQT
+         8Ufzmq7qZ1IaPXM9aOsZQqrGAA4TJVorOuJ4UohRReUQkWwigbmkoSGDj4wqpA+K70Nj
+         cE9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXvPe00Gk5B1c0bAoXEncOlgoVoamlQsFQGHTF+NSorc8qrBR8dhndcrbE0ZkkG5iHNQK4qnGISydR9YyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk5IPnNlJ1AUFBmkoOzR3dq5swqzjF/ksyQ3DVEG7cgpuxEpLm
+	EFAJ1GSJ2EV6KQ1f9Jhr3Qkfik/e+GOjbizpNWhIl9k/+USmYMiTE6eRS34tImWh9Co=
+X-Gm-Gg: ASbGnct8mitOa2x72WCf9Q739rpmPjDEJPpKHuHeqAstMYbczlhoVHZojNdvP5di3dD
+	xgDwMy+vhl7y4ypvo1OPqbUYuc58th2C9NWeaBgG1zla2zckfU4yJs/9SQEtjUCrpLVxgpk8H+7
+	ihBHyGl0y5ZF4LjR8SQP/dJkMKnLvPeRRgZ+mf95IqVfjfX2tqy4VA521W2iCG45CaEisr9ZpOd
+	nQikLsK6C4EbLbUJbIVeMZ908Reos1RKzYT5tSnfh+82IkWQGIitYiBnyhaq4ad5wCxoPhFdjbW
+	fFasMSBnQ09SGU7hXqcwz6pJ2BM8FbauwfsyPi/qsx2FsLzs4htdslsGA+VJtWt+ppORlAHAEr/
+	wl7YpjLCpTJOOLqwTP25Zgv+CoiIz/YnET5AGPdk2j2EibfnUG7h82tg=
+X-Google-Smtp-Source: AGHT+IFx3m1lBU1VkWxih9GukzBwademENkA6wKJQrA2d11n7XWBx80BohXOxpWjVJdh9pJ5agT4FA==
+X-Received: by 2002:a17:906:6a25:b0:ae6:b006:1be with SMTP id a640c23a62f3a-ae9cdda3d41mr149340266b.5.1752650398619;
+        Wed, 16 Jul 2025 00:19:58 -0700 (PDT)
+Received: from localhost (212095005088.public.telering.at. [212.95.5.88])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee459asm1162633266b.52.2025.07.16.00.19.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 00:19:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: T7a47ae1d7bea40f2
-Date: Wed, 16 Jul 2025 09:19:52 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Guomin Chen" <guomin.chen@cixtech.com>,
- "Jassi Brar" <jassisinghbrar@gmail.com>
-Cc: "Rob Herring" <robh@kernel.org>, krzk+dt@kernel.org,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- "Peter Chen" <peter.chen@cixtech.com>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- cix-kernel-upstream@cixtech.com, "Marc Zyngier" <maz@kernel.org>,
- "Sudeep Holla" <sudeep.holla@arm.com>,
- "Kajetan Puchalski" <kajetan.puchalski@arm.com>,
- "Enric Balletbo" <eballetb@redhat.com>, "Gary Yang" <gary.yang@cixtech.com>,
- "Lihua Liu" <Lihua.Liu@cixtech.com>
-Message-Id: <8365b672-49d4-4ed3-a3e0-53a11c20fe7c@app.fastmail.com>
-In-Reply-To: <aHcOaas459jctIB2@gchen>
-References: <20250609031627.1605851-1-peter.chen@cixtech.com>
- <20250609031627.1605851-6-peter.chen@cixtech.com>
- <CABb+yY17OOBx73655OhBp8At1b81w9M61zzGu4uhXcMTw4Q=Dw@mail.gmail.com>
- <aG0i75h32dWg/L2G@gchen>
- <CABb+yY2BmqiQ18hU+7C234UnY8n-8PH5VEoS7nH5Xq5O1krGhQ@mail.gmail.com>
- <6b5f38f7-0557-483b-9252-cfade7a24cf5@app.fastmail.com>
- <CABb+yY26R_DHQUhpg-xUR_Z7EnjdR_4LPai0M-vfFTAOZy=vvQ@mail.gmail.com>
- <aHcOaas459jctIB2@gchen>
-Subject: Re: [PATCH v9 5/9] mailbox: add CIX mailbox driver
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 16 Jul 2025 09:19:56 +0200
+Message-Id: <DBDAPORDD5IM.1BHXPK225E2PP@fairphone.com>
+Subject: Re: [PATCH v2 0/5] Enable USB audio offloading on Fairphone 4
+ smartphone
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Luca Weiss" <luca.weiss@fairphone.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Felipe Balbi" <balbi@kernel.org>, "Srinivas Kandagatla"
+ <srini@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown"
+ <broonie@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai"
+ <tiwai@suse.com>, "Bjorn Andersson" <andersson@kernel.org>, "Konrad Dybcio"
+ <konradybcio@kernel.org>, "Wesley Cheng" <quic_wcheng@quicinc.com>,
+ "Stephan Gerhold" <stephan.gerhold@linaro.org>
+Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-sound@vger.kernel.org>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250501-fp4-usb-audio-offload-v2-0-30f4596281cd@fairphone.com>
+In-Reply-To: <20250501-fp4-usb-audio-offload-v2-0-30f4596281cd@fairphone.com>
 
-On Wed, Jul 16, 2025, at 04:28, Guomin chen wrote:
-> On Tue, Jul 15, 2025 at 05:11:01PM -0500, Jassi Brar wrote:
->> On Mon, Jul 14, 2025 at 10:40=E2=80=AFAM Arnd Bergmann <arnd@arndb.de=
-> wrote:
->> > My main worry here is that the types are all quite different: while
->> > the doorbell and fast mailboxes are what a lot of other drivers hav=
-e,
->> > the FIFO mode does not seem to be a good fit for the mailbox subsys=
-tem
->> > but instead looks like a more generic firmware interface with varia=
-ble
->> > length messages.
->> >
->> > For those, I think a higher-level driver with fixed data structures
->> > passed through the hardware interface seems more appropriate.
->> >
->> Yes. But sometimes when the data structures of a protocol are not
->> bigger than FIFO depth, the platform may choose to use the FIFO mode.
->> I see it as platform dependent.
->>=20
->> > Are there any other mailbox drivers that just use the mailbox to
->> > tunnel variable-length messages?
->> >
->> From a quick look, Armada 37xx and Hi6220 have fifo though they fill
->> them up fully for each transfer.
->>
-> Yes, both Armada 37xx and Hi6220 support FIFO functionality, and they
-> fill the FIFO with each transfer.=20
+Hi all,
+
+On Thu May 1, 2025 at 8:48 AM CEST, Luca Weiss wrote:
+> Since the series for the USB sound offloading driver was finally merged,
+> we can add the sm6350 dts and enable it on Fairphone 4.
 >
-> Since the cix mailbox hardware supports messages with a maximum length
-> of 128 bytes, different clients transmit messages of varying lengths,
-> such as the cix DSP using 8 bytes, the cix sensorhub using 12 bytes, e=
-tc.=20
+> A few devicetree binding bits have also been missing in that series, so
+> there's some extra patches for the basics in this series.
 >
-> Therefore, the cix mailbox driver has been modified to support variabl=
-e-
-> length messages of up to 128 bytes. This allows for more compact and=20
-> flexible support of various clients.
+> Depends on:
+> - For qcom,sm8250.yaml & sm8250.c:
+>   https://lore.kernel.org/linux-arm-msm/20250425-fp5-dp-sound-v3-0-7cb451=
+80091b@fairphone.com/T/
+> - For dts:
+>   https://lore.kernel.org/linux-arm-msm/20250321-sm6350-apr-v1-1-7805ce7b=
+4dcf@fairphone.com/
+>
+> Devicetree patches go through qcom
+>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+> Changes in v2:
+> - Move num-hc-interrupters prop to sm6350.dtsi (Konrad)
+> - Sort cpu & codec nodes correctly (Konrad)
+> - Remove usb-soc-be prop as it's no longer needed (Wesley)
+> - Pick up tags
+> - Link to v1: https://lore.kernel.org/r/20250425-fp4-usb-audio-offload-v1=
+-0-f90f571636e4@fairphone.com
+>
+> ---
+> Luca Weiss (5):
+>       ASoC: dt-bindings: qcom,q6afe: Document q6usb subnode
+>       ASoC: dt-bindings: qcom,sm8250: Add Fairphone 4 sound card
+>       ASoC: qcom: sm8250: Add Fairphone 4 soundcard compatible
+>       arm64: dts: qcom: sm6350: Add q6usbdai node
+>       arm64: dts: qcom: sm7225-fairphone-fp4: Enable USB audio offload su=
+pport
 
-Thanks, this makes sense to me, and I have no other objections if
-this is an established way to use the subsystem. I wonder if there
-is a way to abstract it further though, since it would appear that
-the same thing should be possible on any device that has a FIFO
-to buffer more than a single fixed-length message.
+All dependencies for the patches have been applied already, so this
+series can land as well!
 
-Jassi, are there any remaining issues on your side that need to
-be fixed before merging the initial driver? It would be nice if I
-could merge all nine patches through the soc tree for 6.17 if the
-current version, or a feature-reduced variant of the mailbox
-driver is ok.
+Devicetree patches go through qcom, the rest through their trees.
 
-     Arnd
+Regards
+Luca
+
+>
+>  .../devicetree/bindings/sound/qcom,q6afe.yaml      | 13 ++++++++
+>  .../devicetree/bindings/sound/qcom,sm8250.yaml     |  1 +
+>  arch/arm64/boot/dts/qcom/sm6350.dtsi               | 11 +++++++
+>  arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts  | 36 ++++++++++++++++=
+++++++
+>  sound/soc/qcom/sm8250.c                            |  1 +
+>  5 files changed, 62 insertions(+)
+> ---
+> base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
+> change-id: 20250425-fp4-usb-audio-offload-e5d7fb55d283
+> prerequisite-change-id: 20250321-sm6350-apr-15f3e7e4e5ca:v1
+> prerequisite-patch-id: 69859554c94de52068406dab0d2869ca26072c78
+> prerequisite-change-id: 20240809-fp5-dp-sound-b3768f3019bd:v3
+> prerequisite-patch-id: 2d8997a2be02cfddf3a054c79e7eb308a6d06710
+> prerequisite-patch-id: 1b7c8f00ab50ae71c0221868578b9c1dfe939e4d
+> prerequisite-patch-id: 4fd0673c4d35c1fefce63ec5785ff5ea67cc3d3a
+> prerequisite-patch-id: f5ec3a893de19900f62dc691d83986f1104914b0
+> prerequisite-patch-id: fce7573c39e768f7a09c002064b6159b8e91161a
+>
+> Best regards,
+
 
