@@ -1,84 +1,86 @@
-Return-Path: <linux-kernel+bounces-734182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C06B07E18
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:40:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720D6B07E16
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41323A9A9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B564216AB0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBD32D836C;
-	Wed, 16 Jul 2025 19:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA912D876A;
+	Wed, 16 Jul 2025 19:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BC00FyiW"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lS71hOlU"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59092BEC53
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745172BE645
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752694661; cv=none; b=dx2wJSuex4gwIYK55DC/7z4+gCDkOjAxvGJu8zpNNEKEKUO2PRi8HQQAYOTFmVzkEvlD2K1Ugqu8zPlT/8HgkRYRrIPAlrYJ4d2pe6qfU0Fd25kHSYieE0Zh4Q/P1SDc0Nrm73eG1UHbxcjcZBfjc0ZBkITxkLykQi+gUTKDdN4=
+	t=1752694674; cv=none; b=ina41XK7elgNmgqt3PCbyCOtskjBLT2fwU5AfdWlBEzxQwwpt4ucH0J7sfAE6DFhkN9r/grp+FPXfZG1Nna4gVA87BXWgKINHs+yk5czTzSee+nFto9eQmNvSqw50//+TuIStNr8/afatSYU4eUryxPJsMPpRV08FWziWM5b3l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752694661; c=relaxed/simple;
-	bh=sFydI4KSi4GkXE4N81KdPIaVNgMAnvkjtb1o6O8DESw=;
+	s=arc-20240116; t=1752694674; c=relaxed/simple;
+	bh=xR4yIUY0Q0WGyfNya63zg6sTYeFwNv31XU71XhscGGg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SSjWUQyYfXo1yAAOdb40IrMHIZbobpWaoWuvOK7Od/tQJSP0TxIUdtmyomV5pXQCMraaoY38xaEMON8idA8XOpNdXPtmxM5Ms7HrXcHupoR3tfBieKvAjJQ7t4/m//2041Oe7SwLjK8JAiAazLPywoH6ulu0D6FBeiEC2T7MM2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BC00FyiW; arc=none smtp.client-ip=209.85.167.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ehz4g4UxXNGUbfUwpoj0TUeRHSgJtLaFdp7Sk9eIXLYPWttlYbhZ3g9WWz7iRnCT/oArGlqR7TntTANq/SQQFpG+pPGzZkL4YvIyR9TkdR3IMvqOBD5a1IUMy5rSI61vKXwlwe8PgEtOJuU6irKiUDlod3BPXlXGsU94JCXsFlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lS71hOlU; arc=none smtp.client-ip=209.85.167.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-41b4bf6ead9so201431b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:37:38 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-41b4ebb157eso189060b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:37:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752694658; x=1753299458; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752694671; x=1753299471; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2oMCTnT+32IM9esGcJfKCDgJ9Xsu2sOgKYa59IiET8A=;
-        b=BC00FyiWUICfbEvAhVfyc8/qj1GIQ6aBGQNFCzqy32t2OaLOXs3tIqwWtg1TfeAvbo
-         et5SueUpZkl6UfWOwNGpjoQd02XjIpAUR9qC10e117noyeLpjx4zZpdH7FVcBcnYiPzB
-         oyzvaiwpEdZ8LUottzXEE6PsgGKGhiKf3u7K+uMQgUgCEh3RrhxsVVdG+6IKxaMUP72o
-         2k/C5oYu+Hlq5fpBOI2lmM0FgYsx9cVqPqi0u9D7QgzudUfLzTRLgzquGrmiFNPyegbb
-         VPAoGjRxagUKGDVwgZmEXlAaeschZtJlTo84ZwjIflGBP+VhshtVsreM+SeygStdsicp
-         aDQQ==
+        bh=tlhGcA1+SMRJvkNTiF59+kJkm2bBxNCy1RLn8jrW2jg=;
+        b=lS71hOlUtItWhkbSj6xsxZnHYoUdvAzACGBIl0M+G0nWU/Qxct9tcToPK8vFqzT3bn
+         kLnwmgyIqD+OJfkar/mqb5a/QhzXvWclmrW20T2mfQveroyzGV1uiIyOjr/5GluXMoYA
+         nzIXuDRva3sI8yoGhG2lyn2wdFWdURS/n2ocWuGaQ0Gy17fEJTxayW9W73Wk3bB+f+ec
+         9zTS7awJMY4rZAmVKxVd3srD72HR3zcWABbMzfH5GjIs7xjJfm2IRVM7M1h5U9PpJNmg
+         PZlgWNymgTxCas/ymA/0ZZLUKVfpYkt7rXipW339ccKOFQDAEbZIEagjyxU2srOZ14GI
+         u4Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752694658; x=1753299458;
+        d=1e100.net; s=20230601; t=1752694671; x=1753299471;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2oMCTnT+32IM9esGcJfKCDgJ9Xsu2sOgKYa59IiET8A=;
-        b=VPXpAsycH3QNXhVPCa0lPCjCBbQS1c+xJ9xJ2gGzzEPKTpiNdYxf2L7QJT3s8lg+/4
-         n533Lq10j8Drz/XCQeb/IFPEIQCrkP6pw+HWYSkn/dP06x8JqCZr3lCw/Mn42N+sdI5f
-         QIhJ3GAdro66QWl7Dec9kQ7kF0pwU9qvtk3EIUJDqXXzg236u6pnKHho0NwcqHbu+9Bl
-         B6InhSIHoJk2jm7xLUChDLMqgSLzV91iOXKOftKo24QTGtfBs/16sF8x62L/2noPA3aJ
-         qfDh3d1rtgUsgDAa1gu31oUcCXrEL5f8bUHxB1r8lUqc9n+DvXDyXt34g510UQN5QM+o
-         P9nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPu0nJtrDKiAbnJBwGwl62JoWZq+pdKpPQxJpmUqfckoJjnRljhFxfLh6bLH29QUjleuoSpRr+go8IvDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLzdiZKwi3/EqiJUo1b/a2FlW/lIOGuChPPHqZbMsMKfzy6tMw
-	1ouwBmbeceKCTF58Y4RIn8dTw78CjpngEcgzRW/cbdzTDIaMHpkbKZsOUoKTf0LiNWoRk1zremI
-	oERXI
-X-Gm-Gg: ASbGncsFXaLHizvCPFYJBKfqtsSAHgeTlFQBoxhbFZm5IqRF2IVKET1SW9u9oPMLQLk
-	lh0nkEPZivvvzdtAWqbCRipm1+6Bk/sl6ooA2xYBl2zhJ4kd+d7Qtvxx0Dbr4eMdmJ10gjr8gbl
-	zJlxi5j5oq28yZ59iAfJDXIAXJqii2vkP/x0jYlAR/LCpWSXionrXJiBSUB/ujWhZ/Tdlwc0trg
-	GEgYQ8TiR8GCAdp47yElPCxX5KyD7BmJ6dbODj8lYx0Jr66xsFAKDh+r+J+JRRT5EHvJ9Pw7upQ
-	zfE7TBVib8C++Ff/W4bEyV4i3G/NzH6T+hFtVbaQUFnSsB3vdV6c6KCpwl/Wy7wZ0Zfs+tx3gIR
-	vEsor5cCmVPQKiYPhfNf2Hk6fUvXbug==
-X-Google-Smtp-Source: AGHT+IFLqHzqE9RAjaUQtmkmTyBsanwDkOziNViHSci5VEacsSRMTXfSAsTY+/VKxminqoHkU8HVdQ==
-X-Received: by 2002:a05:6808:4494:b0:40b:441e:3a5f with SMTP id 5614622812f47-41d04d8a574mr2528349b6e.25.1752694657838;
-        Wed, 16 Jul 2025 12:37:37 -0700 (PDT)
+        bh=tlhGcA1+SMRJvkNTiF59+kJkm2bBxNCy1RLn8jrW2jg=;
+        b=e1X+DVBO7ie+qxMXOaJKIhVKzKJKeK3eXbrNaFHyKBycbxVyK71AExiqf5yLl1PIM9
+         wcvDurQVtj84OZOpkWeKjnbvtP3vnEn1NvHxqUfXSXGimEcP8r1DWfKMJ9wbOAeKgX4l
+         gm4geKoKPUqKF+y5RH9fPOZDvhSaOmjqW5krFQW5xm3B11NG/228mb4g6PPlu3GBC/16
+         biYCH2aVjYrWW3jZICZlCTgrEJSB7JmfotqJpw4vn1Zf2rPsIaPihsVaFk/YddFH+hgW
+         6psYpCybyLccYbw8CGmHJ7MUwAJh0shbA+VRPe1tj7t9tJJ/SLvEURVcqRStTweKAeiU
+         NjXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtldrzCJE/y6MMrXnzhxX3cRZNvRHb22s9vLhaYnj46ygpI6rqs/hXm8nhJEUhR0NybOqXO46V7eJ9VdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBbOEmPyBT4EprAZfzJS8ODcQfkHQ7QKmHTPsueUW8too7LgPK
+	gaNiRe1xO6xqQ4hTJJFuXgLKr0u7gVnvh9Iq9vxcVzvEZwiN1KtweS75MteFrZeA9jE=
+X-Gm-Gg: ASbGnctp1hVzGiwR8u6OrPcexLOzPn9Nmr65egVWx6to+NHc8ky5dMG+RmJCbcPCBdE
+	3Gm/wXXYclDP9//q7AZ57vl+mR1689owotYjecrwbPtsQ3qfkc+MP7yX2NneuTuRzoQN0+vgzX8
+	pVNdE5PtxXqFaJTsn5OLDx2KwibTA+IWTZL+iNk5o6J6p9mr0qd+VjSFNNruNW7h4acSERrkTzy
+	IG50vz0CsvPPj9EQTYfgXVc83HQtfXdjSkUfvME90Ua9FHAdjvz04zfWE0dOxqJZN4Sboa6fyP9
+	WZxtJvi+NazTHreqscik/mX4yei/FCGQJODgDr/LTISSPEkis2AM3A0+DGQlEBffFBh2ecuFyl2
+	6AiOnUlEklfUewlNe+MOLVopWv7iOPQ==
+X-Google-Smtp-Source: AGHT+IGGKvJLp/fhPwmU1Q/9ypsIGaSvfz/Mhue64rW8YBuOSpnqPTVe7w4asOutp9MiDek7/enEMg==
+X-Received: by 2002:a05:6808:1a28:b0:3f8:d2f8:d735 with SMTP id 5614622812f47-41d0545fc7emr2878205b6e.33.1752694671547;
+        Wed, 16 Jul 2025 12:37:51 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:3f28:4161:2162:7ea2])
-        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-4141c1ac4f9sm2992626b6e.37.2025.07.16.12.37.37
+        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2ff111c3776sm3762394fac.8.2025.07.16.12.37.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 12:37:37 -0700 (PDT)
-Date: Wed, 16 Jul 2025 14:37:36 -0500
+        Wed, 16 Jul 2025 12:37:50 -0700 (PDT)
+Date: Wed, 16 Jul 2025 14:37:49 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Lorenzo Pieralisi <lpieralisi@kernel.org>
 Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] irqchip/gic-v5: Delete a stray tab
-Message-ID: <3f4e6446-6a5c-46dc-ba87-90e1d6968008@sabinyo.mountain>
+Subject: [PATCH 2/3] irqchip/gic-v5: Fix forever loop in
+ gicv5_its_create_itt_two_level() error handling
+Message-ID: <863a729f-c57d-4ebb-a23c-b22bc720642d@sabinyo.mountain>
 References: <cover.1752693640.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,26 +92,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1752693640.git.dan.carpenter@linaro.org>
 
-This line is indented one tab too far.  Delete the tab.
+The "i" variable needs to be signed otherwise there is a forever loop
+in the cleanup code.
 
+Fixes: 57d72196dfc8 ("irqchip/gic-v5: Add GICv5 ITS support")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/irqchip/irq-gic-v5-irs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/irqchip/irq-gic-v5-its.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
-index f845415f9143..ad1435a858a4 100644
---- a/drivers/irqchip/irq-gic-v5-irs.c
-+++ b/drivers/irqchip/irq-gic-v5-irs.c
-@@ -568,7 +568,7 @@ static void __init gicv5_irs_init_bases(struct gicv5_irs_chip_data *irs_data,
- 			FIELD_PREP(GICV5_IRS_CR1_IST_RA, GICV5_NO_READ_ALLOC)	|
- 			FIELD_PREP(GICV5_IRS_CR1_IC, GICV5_NON_CACHE)		|
- 			FIELD_PREP(GICV5_IRS_CR1_OC, GICV5_NON_CACHE);
--			irs_data->flags |= IRS_FLAGS_NON_COHERENT;
-+		irs_data->flags |= IRS_FLAGS_NON_COHERENT;
- 	} else {
- 		cr1 = FIELD_PREP(GICV5_IRS_CR1_VPED_WA, GICV5_WRITE_ALLOC)	|
- 			FIELD_PREP(GICV5_IRS_CR1_VPED_RA, GICV5_READ_ALLOC)	|
+diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
+index 340640fdbdf6..55360ae9f1f6 100644
+--- a/drivers/irqchip/irq-gic-v5-its.c
++++ b/drivers/irqchip/irq-gic-v5-its.c
+@@ -191,9 +191,9 @@ static int gicv5_its_create_itt_two_level(struct gicv5_its_chip_data *its,
+ 					  unsigned int num_events)
+ {
+ 	unsigned int l1_bits, l2_bits, span, events_per_l2_table;
+-	unsigned int i, complete_tables, final_span, num_ents;
++	unsigned int complete_tables, final_span, num_ents;
+ 	__le64 *itt_l1, *itt_l2, **l2ptrs;
+-	int ret;
++	int i, ret;
+ 	u64 val;
+ 
+ 	ret = gicv5_its_l2sz_to_l2_bits(itt_l2sz);
 -- 
 2.47.2
 
