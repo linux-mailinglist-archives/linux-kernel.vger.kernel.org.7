@@ -1,122 +1,248 @@
-Return-Path: <linux-kernel+bounces-733552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99EEB0761E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:48:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA3CB07622
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5281C2700E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:48:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 057DC58447F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BBC2F5486;
-	Wed, 16 Jul 2025 12:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05679170826;
+	Wed, 16 Jul 2025 12:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/53GU+Y"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RMvmh7k0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A602F5471;
-	Wed, 16 Jul 2025 12:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AEC15E90;
+	Wed, 16 Jul 2025 12:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752670044; cv=none; b=Rm2TasYfLy6HeqYN8bKzcK5lvRhliHat+YQDWY+d5E9FxSy+UvydTqSKIeq/fvPdXg6ygHAkc1fCv45+ZmGLXh1kHT4EdtmmEYRf/TfC1Yun+Buz7z52kpcZn0n7HhrSNdxNRVwvHJiVnXHRkG/tfTvjNLXkztxs3zLdyBO4UYY=
+	t=1752670100; cv=none; b=YwRPJVwMzpJVK7XO95wT/AJN7nnpy1phE0o33DB5SnZUamKtlvXALpUPIiBjnW4AGSV30uAnVQcGUnFJiy8auWSMFAW6U4hyOb+kw1fVoo0CQSvs8e7k555y9+m5niGDwR4iXnNSOy7l5FclcmerSJUUXbWbuf0B3I15skTEvtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752670044; c=relaxed/simple;
-	bh=0pzCJliJ0HW2L3subDrWq+mOU/BVWiu8FjkzdTE7CYQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=BErq1sBhyHD6gKGM6nCL2sMERAZF0RV1rskNscwh2sTLq7BjjxBCTymkQpb3uYSzGhvM9HFZK7o4eNSPzwaUZqAx0qIQuUNS6aJjkpHyy7VW7/viIuxWPiXnHj4PD7BSyzRGycxAE1ApX/CxRRkFh/mpTHbAwtNk1K6xn3hlQGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/53GU+Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3DDC4CEF8;
-	Wed, 16 Jul 2025 12:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752670044;
-	bh=0pzCJliJ0HW2L3subDrWq+mOU/BVWiu8FjkzdTE7CYQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Z/53GU+YHmWDPHxVUHuXogBFzIsiDKRhdgkakLprnSi9sq0p2BiWrLjLX0mLgWKVY
-	 kMueCPBXRzMBfSvt5xgYQg9TZnFUbLtSDRttQf08/WqtJHN2lixY4jHXKitaOnu/hi
-	 uSQSzuwfXygFA0Hv70b2nBTl6iApAdtz8jt0IqIYdp/0Ll/7LaiS9UlTLmgSo14pD6
-	 cXNiKemXlw8MGCI4DNrAgbHnr9mAXZQl7JrVIjcSE7RXj78DRVS2a5LWmLmOtTV99E
-	 rg6PePaVt/QNxI0zrlefDqsj722M7LRe1c9eO1QSorQR15IMDv5EdR3dsZ+2edYXbc
-	 wMNIeZoqhYnqQ==
-Date: Wed, 16 Jul 2025 07:47:23 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1752670100; c=relaxed/simple;
+	bh=63w7oNRAk83e3Ep9LQ2Kj3gqiIuG7YZNBO5D5MDOFAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JgX0mZiwnaOXwaiKSvXuNc5J/FfXASy2u+Gy/Ht4Ayy+JQtxwbKexYFjJNiWhYfadZOsfSuypm8AulqCEfpGzVYvm+igEUhKb+H7Pi4AkBVH6byjBDFn5fraM9hG52b9EZKeaGlsODHUh93VegQ0DaYVtq+qBr3IznafN00wMS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RMvmh7k0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5749BC4CEF0;
+	Wed, 16 Jul 2025 12:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752670099;
+	bh=63w7oNRAk83e3Ep9LQ2Kj3gqiIuG7YZNBO5D5MDOFAU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RMvmh7k0tJYcfIJa7vlel1wovSXvVSxnoLfI5j1DtrDTLqAVqI9Gi5tpDkQc1F7Z9
+	 4U6vQH+3mwwiIP9CH0iq68Z1ApBUKaj5wf0q/31lb3um9t7UVw0gD6d+beknD3QQ5U
+	 e5SgHlgM25ElKQSYEhcmCMy0PHHTSW2C0IdrWiA8=
+Date: Wed, 16 Jul 2025 14:48:16 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v11 5/7] nvmem: add support for device and sysfs-based
+ cell lookups
+Message-ID: <2025071609-cardigan-polish-aba6@gregkh>
+References: <20250618120255.3141862-6-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: kuninori.morimoto.gx@renesas.com, lumag@kernel.org, conor+dt@kernel.org, 
- linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com, 
- devicetree@vger.kernel.org, ebiggers@kernel.org, kory.maincent@bootlin.com, 
- bparrot@ti.com, dale@farnsworth.org, krzk+dt@kernel.org, 
- geert+renesas@glider.be, linux@armlinux.org.uk, linux-media@vger.kernel.org, 
- heikki.krogerus@linux.intel.com, mchehab@kernel.org, 
- claudiu.beznea@tuxon.dev, linux-kernel@vger.kernel.org, 
- prabhakar.mahadev-lad.rj@bp.renesas.com, sbellary@baylibre.com, 
- andre.draszik@linaro.org, ardb@kernel.org, dagriego@biglakesoftware.com, 
- florian.fainelli@broadcom.com
-To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-In-Reply-To: <20250716111912.235157-4-y-abhilashchandra@ti.com>
-References: <20250716111912.235157-1-y-abhilashchandra@ti.com>
- <20250716111912.235157-4-y-abhilashchandra@ti.com>
-Message-Id: <175267004341.4181720.11859014527517980567.robh@kernel.org>
-Subject: Re: [PATCH V2 3/4] dt-bindings: media: ti: vpe: Add bindings for
- Video Input Port
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618120255.3141862-6-o.rempel@pengutronix.de>
 
-
-On Wed, 16 Jul 2025 16:49:11 +0530, Yemike Abhilash Chandra wrote:
-> From: Dale Farnsworth <dale@farnsworth.org>
+On Wed, Jun 18, 2025 at 02:02:53PM +0200, Oleksij Rempel wrote:
+> Introduce new API functions to allow looking up NVMEM devices and cells
+> by name, enhancing flexibility in cases where devicetree-based  lookup
+> is not available.
 > 
-> Add device tree bindings for the Video Input Port. Video Input Port (VIP)
-> can be found on devices such as DRA7xx and provides a parallel interface
-> to a video source such as a sensor or TV decoder.
+> Key changes:
+> - Added `nvmem_device_get_by_name()`: Enables retrieving an NVMEM device by
+>   its name for systems where direct device reference is needed.
+> - Added `nvmem_cell_get_by_sysfs_name()`: Allows retrieving an NVMEM cell
+>   based on its sysfs-style name (e.g., "cell@offset,bits"), making it
+>   possible to identify cells dynamically.
+> - Introduced `nvmem_find_cell_entry_by_sysfs_name()`: A helper function
+>   that constructs sysfs-like names and searches for matching cell entries.
 > 
-> Signed-off-by: Dale Farnsworth <dale@farnsworth.org>
-> Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
-> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
-> Changelog:
-> Changes in v2:
-> - Remove array and just use hsync: true in bindings
-> - Remove array and use enum for bus width in bindings
-> - Use pattern properties since properties across ports are same
-> - Update copyright year
+> changes v5:
+> - fix build we NVMEM=n
+> ---
+>  drivers/nvmem/core.c           | 105 +++++++++++++++++++++++++++++++++
+>  include/linux/nvmem-consumer.h |  18 ++++++
+>  2 files changed, 123 insertions(+)
 > 
->  .../devicetree/bindings/media/ti,vip.yaml     | 211 ++++++++++++++++++
->  MAINTAINERS                                   |   1 +
->  2 files changed, 212 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/ti,vip.yaml
-> 
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index 59c295a11d86..d310fd8ca9c0 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -1177,6 +1177,23 @@ struct nvmem_device *of_nvmem_device_get(struct device_node *np, const char *id)
+>  EXPORT_SYMBOL_GPL(of_nvmem_device_get);
+>  #endif
+>  
+> +/**
+> + * nvmem_device_get_by_name - Look up an NVMEM device by its device name
+> + * @name: String matching device name in the provider
+> + *
+> + * Return: A valid pointer to struct nvmem_device on success,
+> + * or ERR_PTR(...) on failure. The caller must later call nvmem_device_put() to
+> + * release the reference.
+> + */
+> +struct nvmem_device *nvmem_device_get_by_name(const char *name)
+> +{
+> +	if (!name)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	return __nvmem_device_get((void *)name, device_match_name);
+> +}
+> +EXPORT_SYMBOL_GPL(nvmem_device_get_by_name);
+> +
+>  /**
+>   * nvmem_device_get() - Get nvmem device from a given id
+>   *
+> @@ -1490,6 +1507,94 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np, const char *id)
+>  EXPORT_SYMBOL_GPL(of_nvmem_cell_get);
+>  #endif
+>  
+> +/**
+> + * nvmem_find_cell_entry_by_sysfs_name - Find an NVMEM cell entry by its sysfs
+> + *					 name.
+> + * @nvmem:      The nvmem_device pointer where the cell is located.
+> + * @sysfs_name: The full sysfs cell name, e.g. "mycell@0x100,8".
+> + *
+> + * This function constructs the sysfs-like name for each cell and compares it
+> + * to @sysfs_name. If a match is found, the matching nvmem_cell_entry pointer
+> + * is returned. This is analogous to nvmem_find_cell_entry_by_name(), except
+> + * it matches on the sysfs naming convention used in the device's attributes.
+> + *
+> + * Return: Pointer to the matching nvmem_cell_entry on success, or NULL if no
+> + * match is found.
+> + */
+> +static struct nvmem_cell_entry *
+> +nvmem_find_cell_entry_by_sysfs_name(struct nvmem_device *nvmem,
+> +				    const char *sysfs_name)
+> +{
+> +	struct nvmem_cell_entry *entry;
+> +	char tmp[NVMEM_CELL_NAME_MAX];
 
-My bot found errors running 'make dt_binding_check' on your patch:
+That's a lot of bytes on the stack, are you sure?
 
-yamllint warnings/errors:
+> +
+> +	mutex_lock(&nvmem_mutex);
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/media/ti,vip.example.dtb: /example-0/vip@48970000: failed to match any schema with compatible: ['ti,dra7-vip1']
-Documentation/devicetree/bindings/media/ti,vip.example.dtb: /example-0/i2c/camera@37: failed to match any schema with compatible: ['ovti,ov10633']
+Use a guard?
 
-doc reference errors (make refcheckdocs):
+> +	list_for_each_entry(entry, &nvmem->cells, node) {
+> +		int len = snprintf(tmp, NVMEM_CELL_NAME_MAX, "%s@%x,%u",
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250716111912.235157-4-y-abhilashchandra@ti.com
+You have a naming scheme here that you now need to keep in sync with a
+naming scheme else where.  Why?  How is that going to happen?
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+sysfs names are NOT static, or deterministic, and will be totally random
+depending on the boot order and the phase of the moon.  Attempting to
+look, within the kernel, at a sysfs path name is almost always the sign
+of something gone wrong.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Please don't do this, it will only cause headaches and issues over time,
+trust me.
 
-pip3 install dtschema --upgrade
+> +				   entry->name, entry->offset,
+> +				   entry->bit_offset);
+> +
+> +		if (len >= NVMEM_CELL_NAME_MAX) {
+> +			pr_warn("nvmem: cell name too long (max %zu bytes): %s\n",
+> +				NVMEM_CELL_NAME_MAX, sysfs_name);
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+What can a user do about this?  
 
+> +			continue;
+
+Shouldn't you have errored out?
+
+> +		}
+> +
+> +		if (len < 0) {
+> +			pr_warn("nvmem: error formatting cell name\n");
+> +			continue;
+
+No error?
+
+> +		}
+> +
+> +		if (!strcmp(tmp, sysfs_name)) {
+> +			mutex_unlock(&nvmem_mutex);
+> +			return entry;
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&nvmem_mutex);
+> +	return NULL;
+> +}
+> +
+> +/**
+> + * nvmem_cell_get_by_sysfs_name - Retrieve an NVMEM cell using a sysfs-style
+> + *				  name.
+> + * @nvmem: Pointer to the `struct nvmem_device` containing the cell.
+> + * @sysfs_name: The sysfs-style cell name, formatted as
+> + *		"<cell_name>@<offset>,<bits>".
+
+Again, who is keeping this naming scheme in sync?  And what happens when
+the firmware changes it?
+
+Please don't.
+
+> + *
+> + * This function enables dynamic lookup of NVMEM cells via sysfs-style
+> + * identifiers. It is useful when devicetree-based lookup is unavailable or when
+> + * cells are managed dynamically.
+> + *
+> + * Example Usage:
+> + *   nvmem_cell_get_by_sysfs_name(nvmem, "mycell@0x100,8");
+> + *
+> + * Return: Pointer to `struct nvmem_cell` on success. On error, an ERR_PTR() is
+> + * returned with the appropriate error code.
+> + */
+> +struct nvmem_cell *nvmem_cell_get_by_sysfs_name(struct nvmem_device *nvmem,
+> +						const char *sysfs_name)
+> +{
+> +	struct nvmem_cell_entry *entry;
+> +	struct nvmem_cell *cell;
+> +
+> +	entry = nvmem_find_cell_entry_by_sysfs_name(nvmem, sysfs_name);
+> +	if (!entry)
+> +		return ERR_PTR(-ENOENT);
+> +
+> +	if (!try_module_get(nvmem->owner))
+> +		return ERR_PTR(-EINVAL);
+
+Why are you messing with a module owner field, when no other nvmem call
+uses that?  Who will decrement it?  Are you sure you didn't just race
+with it being unloaded?  module owner fields are almost always wrong
+these days.
+
+thanks,
+
+greg k-h
 
