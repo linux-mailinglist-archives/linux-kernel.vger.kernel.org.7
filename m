@@ -1,148 +1,135 @@
-Return-Path: <linux-kernel+bounces-733332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B57B0733C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:22:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87098B07342
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87FB2582827
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FCD33AC6E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7CA2F50AD;
-	Wed, 16 Jul 2025 10:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDFA2F430D;
+	Wed, 16 Jul 2025 10:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfuLaJ/+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nC3XUGyR"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A4E2F4316;
-	Wed, 16 Jul 2025 10:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAFD2F3C36
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661195; cv=none; b=h2MOdVljB/5115FYhfOHNSlLWbx8P+i7V3t1FRjUMbppUOixA78PTRGM16Zb4BreMnyv1JuXKpzYO89jcbWZHGTMmChl0U01w0mPskABCX7SFDSmlJR9zwFXr0R8fUBgthEgOf2LVcNgTBxLcN7LVciZ39Rf6kjEvHo6g+qYO0U=
+	t=1752661228; cv=none; b=ovCNbYA9OyihfWe/fbd+Rt68kwgvl1C5La5mK1ZnXf/BO02cw3gdYaAvrz3MDhYZ+u3E+GoVQWAuMIdH0MXSIzMtUhwqn9YyGodjzpvmX+YdxxTc7SVAb6z5hvugDfBDOGwrBHHpbKeOO6R6SyY3OfGG1ddqnE5bt0gwqQrSnZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661195; c=relaxed/simple;
-	bh=8kJXGogC+xtdCvbe6QsC3MjM2fHwl2vl79nSR9/Gos8=;
+	s=arc-20240116; t=1752661228; c=relaxed/simple;
+	bh=FsDCbxIrdEDNgtscymGbU/ukUJM03TBJNmEUas+yB2Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Swi1xD5/shmSS37ArjfIqGGUvNUGjBhfOaT2GLX8yGPM+wPdxoyfksxmBAMWFmKrePdS07o8moAda+O2+X64iFB8r6dOBmCGc46/z0hUGoSXS/TPTknTav6kqOkfGEUkFU8fSlbhYnBoju6PvQnmRkOCVcGtZh+t94AExsl5lGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfuLaJ/+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC24C4CEF8;
-	Wed, 16 Jul 2025 10:19:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752661194;
-	bh=8kJXGogC+xtdCvbe6QsC3MjM2fHwl2vl79nSR9/Gos8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GfuLaJ/+AOvSNpOsqhDdfXD+K8c2pJd6/CpflJsmMGXmwFT0+C5SW9vvcKSfkqf2Z
-	 gG4cXCHWpmn2UwZhQ+JzgH7N9Xu8tAciCrSYhCtxLGF4LDmCnJY4aXoJPWyGgxWsud
-	 EJ+O5XiYpl2/TDvGKVKtz4HsGEa0HiagZjmH0LBfC1yNyES3X+w743LPLL2J2q8h/q
-	 A+eS2c7nC17dFMisVww5y6YrhuP9cDJKLr9PDxaQdI5XFFWlH4Q9gxQZoVbhMfZ1iJ
-	 pqbVuwRtkaiIaPEpFq3m1cxa5lFID22T6Of4dLH0/3cuBpRs+1waStPQcCURHjjaNL
-	 29Ckx8rACeA2g==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6099d89a19cso11665496a12.2;
-        Wed, 16 Jul 2025 03:19:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWher+HcwQ55NGogmFZrVQgWir2EluqUTi3kaMTMucYMLZJe1ckyQMbwDAHzzsxP8RHKGwTzX/u+iY+P4m2@vger.kernel.org, AJvYcCWt65UL6ywBsuWoP8rUGlDCGmm1a0b37ZgXJIqvjcCTNDmtz0kDmlQ+CYp6i4q0OTnsRJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQLPT444nAhk0bOFmZ6sOgA7Sne08vJrUWdAu0DPhD0K1eosmY
-	YmhWuw7nJHNQF2uZigVtjAaG+Fe6/rJT1BOyLxhqH+y/qAYSa4g1rcUZWrkg5bGz4f6YULZhbwu
-	z3OKIb6Wjc2M+W2V+xPa+pxKnnoys6WU=
-X-Google-Smtp-Source: AGHT+IGLf5F9ZG/NbE6Kve8ltdtbhY1XiBDXCOYdVJpmYYdvFJQIqMrlvYIypc/8SJSdFnawU6v27XpLcqd5fjLTl9c=
-X-Received: by 2002:a05:6402:348a:b0:606:df70:7aa2 with SMTP id
- 4fb4d7f45d1cf-61285bf41c5mr1880418a12.31.1752661193141; Wed, 16 Jul 2025
- 03:19:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=ASJzDX/s8KM+xVLuXEzaei+HCNc80bB/6RezJ6TgYmxbXWlrYYukEyR0wdG70j8H/jibXvJEHXPPVMNEQI7AwxYxHkXYrIFF/OLdRhAvbid4vj9Uvyo6Jnide8MsANvuxRBqMaMk5HG11CTadceVz8XZ/H4OH3NyJpTj4RTJ+/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nC3XUGyR; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a5257748e1so4175235f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:20:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752661225; x=1753266025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CLdRD/rYSDxrRiPrKjxupUrJDsVMgCy8eDe210xWmpA=;
+        b=nC3XUGyRY+CqEWKOfDuKuxrUbO1hwKDXhe/WI7Vg6h9nBIZpk3w5WsrPp3vJBlsGt+
+         VKU5BX3PxKfAuvS9TdB3+ql04XlshQeOtvOFOKknKuB1PyOGOweeNcjKy458Mbg/Bs1u
+         WVVKh9REmOcajuWaK+CHqZLzTwWO6AQn9zZdTfEbAgsKxD25pGNLJFJmxhgvo9uZz2L3
+         VUfED9xN/PXtzfph99A2QPLTUTieMyUYhGLNUrm7+ER4Q+PcLuQwEZ4PKy+jVx33VG9S
+         P33pv6GfceMbOf6ahlnh2qCi7c89HpU+gniK0u8uNvQZ/2sil6jrNd8cKN5jA34VkQ8C
+         qiFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752661225; x=1753266025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CLdRD/rYSDxrRiPrKjxupUrJDsVMgCy8eDe210xWmpA=;
+        b=tP8yubya0xuZ50333AcMDE/zfKgGCihZ1q1QmiHcxnBKkHiL4j8nwzs+r6lIpibphI
+         /wtXIZVTw2XPDJhTYQ9EtUCYISG6M1oo6zzApIQYwNp5+QrWRvV9rEu4M9NuFwqWEJXv
+         eb74Bg2AqJsG1V8wU0kmTILcyTvaWT5Z307cDlZJD04BOJpoMleT0k9uEVOpVHxYRPzG
+         zZSgAQUO5/mFkC3N+yYbPBwqTWm5+Ak8PBLrddSjOrjVkM6QdOvq/RkGEebuhNIJz5d1
+         gZCUXYStB9M4mh/3MhdjWByFTmHOFmdFm6thn6KtZgZwSDXdsR8mOyuSAQmKWEZQNwZJ
+         syrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXX7ytreabaxFzNc6DzXeiJWvBQTvu+nobEO+qgScrUDUfWwC059XdobXnYiUA2ZjyxebelxcItiDCXDEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsd1dR3BX0rC5FkXw2GhQPJFYKDlYh96KB0jRTL6en4rULnvqE
+	+uxbX7DLRp2ul3dcak/fsQ38maZS/YfU3z3pN9XugF6IrTlzzUppvKl2oc2k3oKab0rtDT+lWl7
+	NtsjZ9ChI01hZCuMQJ28hRdfqX2q4USuXHvxRmQVi
+X-Gm-Gg: ASbGncuDlqeSVVLVw4JoPIHHEB2Pg+HPw7p5HHWS7eXJsULGPeDxEJDC0xaw6AvxfYo
+	ciQGGK668XuKpv5WPS9eaOeUT9hji412inIhN3NAEqaJmflU7uhYwioyqxXCgfKm61e9PLZ8ReY
+	OFChw6tL6NjMdIZcZ+4+Xi03bv12cpp2vVx7Upr/mymW71Tk4norM92z3QuBPpf9ZW+/neriA77
+	l9KoH2NXHXwpiZvVXo=
+X-Google-Smtp-Source: AGHT+IHGPbykOa+VhtPgmNDR6icoAO1dEHICPiC0AS1kw6SseHwGR/MgNs0h2SQvbtYUMP2lN453W0DnQsoZp3a/5qI=
+X-Received: by 2002:a05:6000:2f82:b0:3a5:39e9:928d with SMTP id
+ ffacd0b85a97d-3b60e449c01mr1750933f8f.0.1752661225152; Wed, 16 Jul 2025
+ 03:20:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709080233.3948503-1-maobibo@loongson.cn>
-In-Reply-To: <20250709080233.3948503-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 16 Jul 2025 18:19:41 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5x_V8CjX=Keb0k5+5zFtqh01MBWEo_hTFwwge-01jT9Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwd2qxljM80M1yo635HrTRXipUsmKiKsDP_pvPFX0beAQYXth9PLs0uqjU
-Message-ID: <CAAhV-H5x_V8CjX=Keb0k5+5zFtqh01MBWEo_hTFwwge-01jT9Q@mail.gmail.com>
-Subject: Re: [PATCH v6 0/8] LoongArch: KVM: Enhancement with eiointc emulation
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Xianglai Li <lixianglai@loongson.cn>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250710194556.62605-1-dakr@kernel.org> <20250710194556.62605-3-dakr@kernel.org>
+ <2025071627-outlet-slacker-9382@gregkh>
+In-Reply-To: <2025071627-outlet-slacker-9382@gregkh>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 16 Jul 2025 12:20:13 +0200
+X-Gm-Features: Ac12FXw8B9PQG3j671n5PyK_e0eyxwbCYEp8MPVMN0HF32b-P_4Gvwpr6rfeeRI
+Message-ID: <CAH5fLggL+F-B=9YX7jGJux10i+W2t-4_QRx=ze9WHYasx-vRww@mail.gmail.com>
+Subject: Re: [PATCH 2/5] rust: dma: add DMA addressing capabilities
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, abdiel.janulgue@gmail.com, 
+	daniel.almeida@collabora.com, robin.murphy@arm.com, a.hindborg@kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
+	tmgross@umich.edu, bhelgaas@google.com, kwilczynski@kernel.org, 
+	rafael@kernel.org, rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Applied with some modifications. E.g., Patch6 removes offset, and
-Patch8 adds it back, so I combine these two.
+On Wed, Jul 16, 2025 at 11:15=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+>
+> On Thu, Jul 10, 2025 at 09:45:44PM +0200, Danilo Krummrich wrote:
+> > +/// Returns a bitmask with the lowest `n` bits set to `1`.
+> > +///
+> > +/// For `n` in `0..=3D64`, returns a mask with the lowest `n` bits set=
+.
+> > +/// For `n > 64`, returns `u64::MAX` (all bits set).
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// ```
+> > +/// use kernel::dma::dma_bit_mask;
+> > +///
+> > +/// assert_eq!(dma_bit_mask(0), 0);
+> > +/// assert_eq!(dma_bit_mask(1), 0b1);
+> > +/// assert_eq!(dma_bit_mask(64), u64::MAX);
+> > +/// assert_eq!(dma_bit_mask(100), u64::MAX); // Saturates at all bits =
+set.
+> > +/// ```
+> > +pub const fn dma_bit_mask(n: usize) -> u64 {
+> > +    match n {
+> > +        0 =3D> 0,
+> > +        1..=3D64 =3D> u64::MAX >> (64 - n),
+> > +        _ =3D> u64::MAX,
+> > +    }
+> > +}
+>
+> This is just the C macro DMA_BIT_MASK(), right?  If so, can that be said
+> here somewhere?  Or, how about turning DMA_BIT_MASK() into an inline
+> function which could then be just called by the rust code directly
+> instead?
 
-Since the code is a little different, it is better to test it again [1].
+Converting to an inline method would not make a difference for calling
+it from Rust. We would need a helper in rust/helpers/ either way, and
+it's also possible to define a helper for a macro.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongs=
-on.git/log/?h=3Dloongarch-kvm
-
-
-
-Huacai
-
-On Wed, Jul 9, 2025 at 4:02=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrote=
-:
->
-> This series add generic eiointc 8 bytes access interface, so that 1/2/4/8
-> bytes access can use the generic 8 bytes access interface. It reduce
-> about 500 lines redundant code and make eiointc emulation driver
-> simpler than ever.
->
-> ---
-> v5 ... v6:
->   1. Merge previous patch 5 & 6 into one, patch 7 & 10 into into one and
->      patch 12 and patch 13 into one.
->   2. Use sign extension with destination register for IOCSRRD.{B/H/W}
->      kernel emulation.
->
-> v4 ... v5
->   1. Rebase patch on latest kernel where bugfix of eiointc has been
->      merged.
->   2. Add generic eiointc 8 bytes access interface, 1/2/4/8 bytes access
->      uses generic 8 bytes access interface.
->
-> v3 ... v4:
->   1. Remove patch about enhancement and only keep bugfix relative
->      patches.
->   2. Remove INTC indication in the patch title.
->   3. With access size, keep default case unchanged besides 1/2/4/8 since
->      here all patches are bugfix
->   4. Firstly check return value of copy_from_user() with error path,
->      keep the same order with old patch in patch 4.
->
-> v2 ... v3:
->   1. Add prefix INTC: in title of every patch.
->   2. Fix array index overflow when emulate register EIOINTC_ENABLE
->      writing operation.
->   3. Add address alignment check with eiointc register access operation.
->
-> v1 ... v2:
->   1. Add extra fix in patch 3 and patch 4, add num_cpu validation check
->   2. Name of stat information keeps unchanged, only move it from VM stat
->      to vCPU stat.
-> ---
-> Bibo Mao (8):
->   LoongArch: KVM: Use standard bitops API with eiointc
->   LoongArch: KVM: Remove unused parameter len
->   LoongArch: KVM: Add stat information with kernel irqchip
->   LoongArch: KVM: Remove never called default case statement
->   LoongArch: KVM: Use generic function loongarch_eiointc_read()
->   LoongArch: KVM: Remove some unnecessary local variables
->   LoongArch: KVM: Replace eiointc_enable_irq() with eiointc_update_irq()
->   LoongArch: KVM: Add generic function loongarch_eiointc_write()
->
->  arch/loongarch/include/asm/kvm_host.h |  12 +-
->  arch/loongarch/kvm/intc/eiointc.c     | 558 ++++----------------------
->  arch/loongarch/kvm/intc/ipi.c         |  28 +-
->  arch/loongarch/kvm/intc/pch_pic.c     |   4 +-
->  arch/loongarch/kvm/vcpu.c             |   8 +-
->  5 files changed, 102 insertions(+), 508 deletions(-)
->
->
-> base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-> --
-> 2.39.3
->
+Alice
 
