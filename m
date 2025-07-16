@@ -1,202 +1,181 @@
-Return-Path: <linux-kernel+bounces-733938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62F7B07AD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:15:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE118B07ADD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 311F27B7DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00B011C41C6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4374274B30;
-	Wed, 16 Jul 2025 16:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E562F5333;
+	Wed, 16 Jul 2025 16:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ADLqZ0ia"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2053.outbound.protection.outlook.com [40.107.220.53])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WY0+v93P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AF52F532B
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752682413; cv=fail; b=FlU70cSWb0XAzXCJ7XmbqBJmoWcE1/TAPSwUK0WkBrGH/AACukgPR1s2ceKR5/1NzLq99uh/CnEhihx5+n13Ql4ndBqFspDd6/XCOG987D7aaRBO2BBUuOle8iZ/xCND/Jwf5CormcQEW0eFljdwVRQIgddwe7W83+olCG7uV1k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752682413; c=relaxed/simple;
-	bh=7t+PDNv+j/G21avZJcfpkolmL1QDbILHZiWOZhMF6WM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=EfRGSClPcWnwynQa4uVrnXH/zKct7G4KFAUzuHwIdBMZGOqpXxBz5REkcCL1qeSEbs28ZBsJgttDqKWA5VDl6/Q2Z0kot1XotojQqYPf/DFNAsIuiI8iIwkqKdvogIydAOlZlgF8Ds0pue5xgbRZQqhppK3/5GZhbIZKGlG5IkQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ADLqZ0ia; arc=fail smtp.client-ip=40.107.220.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=thAfS3KkahZhlcmU9I2bqgP30MpriYVFuNmQrPBNlt2GfUSyiwuPoCQtbEi1IQKqTeM3NCyr9ZVVFcSIFJrllod5sGQL906LgxpZkCz70WczQg+DFO67G9TCyLUq+8T4HiYJ7SFofiqx3UE075DfqDl8H6MR8WBv1m1SW4PJJX9DskkM903buWUs6vn/QeFOLLow0Mz1UmUB3zPWu3Na6NBNwNd2cEcGNZqn2zyEtqM7lPddSOESn9V1zT9iH5nsI1jN2mLFCZa/GfHj8LsaBf6qcALZG32cPcqFRzryU1hxK6pyQi1/NbV0UTsXf9cnRxLPBui3+ArRDYj1/vabOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vyi166oYG/GqFOnJz2XCCnPBPPobeSX3yrlMqZ5GFOo=;
- b=a5uYlkh9SSqRq2TkdQNv3VEtc0e/x4pxWb3hZHmH9PjU7aSjZx9xv2GurEwwg9WIleHXw4rNJgKHkVlCWPNR43VV0+qHvscOuIajEJpzLKEwKJdJSM+Tll6cDuq/fFAjW1bb5ID3XDyFs9bV+hPrdywPCR4v6Tovqba0Kf7zB8t2DnV7isAYYMkYoicLVFxQaJdjhspkBLwM2DfBy1sujGoIHu9DIfwtoxkuIq7eitRnwF1YGmQu5NZ1mM7LZikd9WxPKJ1fzQmP7SjOcCE1Pw1AQoR5tCP61lLsQ//WnCC1ihf0spKa7MS0oAKNGidv+IDLRnMKIGV+EjuuFyQM6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vyi166oYG/GqFOnJz2XCCnPBPPobeSX3yrlMqZ5GFOo=;
- b=ADLqZ0ia+VGU2o2xYXW+qw418Sx62Z3g6+/6nlSdUJ4k/8jXGow+y6KRce8uFjrHJhwZHimATgv0cZy/HQrcjd7kbjpd0xc1bSTcRt6NkEbhNrHTzmUztumRTFvyjphmApNcpQ/dknfm/D3gENEqGGuo4RIrpEMDYkWKVJrxxGwqOdFKlXw0OgTQNG3RcRbn9Zq6Sc4xutrGtDdEUMYSt1bfdiKu1Z96F3s/hVBJoJd6knNz7ExCKgFGOniGDsV7TBTjo5ItgO7TOaOuRI6nV8Wod0RdHS+B8J0LEslNl13/iPF1JRU2EhulJflJRr3VYdB+aHH0CM+/Uwu3uXX4vA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by CY8PR12MB7586.namprd12.prod.outlook.com (2603:10b6:930:99::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Wed, 16 Jul
- 2025 16:13:24 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
- 16:13:24 +0000
-Date: Wed, 16 Jul 2025 18:13:10 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	jake@hillion.co.uk
-Subject: Re: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
- disabling preemption
-Message-ID: <aHfPlm2wXPJQQiQn@gpd4>
-References: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
- <20250716125128.GX905792@noisy.programming.kicks-ass.net>
- <aHel4LvT_Y5gpYfy@gpd4>
- <20250716133631.GZ905792@noisy.programming.kicks-ass.net>
- <aHe2j6pIyQiBf1S_@gpd4>
- <imrfubmkw3a6qdznnpounrnen5ituzchwtbjmouocuk77upn67@ljrz32ppyqyr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <imrfubmkw3a6qdznnpounrnen5ituzchwtbjmouocuk77upn67@ljrz32ppyqyr>
-X-ClientProxiedBy: MI1P293CA0017.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:3::13) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA020274B30
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752682489; cv=none; b=Rle4cIp/zPg6BJs9jD4niVGAd8RY5j3xf8YVBMANiEkfQAnuA6u3eYIDUdWeHSF58va4ROUVZD2qc0uegjX03RnrkvdoxgOPONY9JWIS5DOPdxshvoBIbPAgumoi/zAQRiCNDFpw2/ln7+30TBJM+TMjfH8uDy/chS9x0CtwP9c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752682489; c=relaxed/simple;
+	bh=caPQsxMaBKfuAJUhMxcZI02W5/m/8IxsrRwhRieczQY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W8Q0MSNn5vhv+MI15keBhUDp9ICGtDTmTYRMtWZDG4/mu1eJRz6elWP/59hL6SRohRi6+tvVvPaEE5CNZAkNuytWxJWeptkDGwuIksFCqhwuKFdsw9aIUpV8/eQ3z/uqW83miQQgkJIDauy+PR/vDr+aWP3+nHPUBrGtRGJ3AUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WY0+v93P; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752682486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=caPQsxMaBKfuAJUhMxcZI02W5/m/8IxsrRwhRieczQY=;
+	b=WY0+v93P+kmRBfxUAWvs2/8XAzl4eMPURulPZ5MqUDFVvs6DY4kNLqRssPgPdVrqUnYk04
+	n8++fGu/meD6PEjf3fHEz57msD0MP90O4a4PDJpW/L9Q0l0S3jb9IB69s+acYX7XyPbz0L
+	6t6iTA+BjBLJFkz/7u4ZjKZaWO9Qxfs=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-454-2pb09oE-PZ64TPlltumASQ-1; Wed, 16 Jul 2025 12:14:45 -0400
+X-MC-Unique: 2pb09oE-PZ64TPlltumASQ-1
+X-Mimecast-MFC-AGG-ID: 2pb09oE-PZ64TPlltumASQ_1752682484
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a5780e8137so526506f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:14:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752682484; x=1753287284;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=caPQsxMaBKfuAJUhMxcZI02W5/m/8IxsrRwhRieczQY=;
+        b=nelKWGltElVLj56hEtR0nhMMBRie7zFffkW8yeCEsmN6yaLHldpYzNmfBVfht4b01T
+         C2d/2I56UGHITB/y8oXYkuWg5OsakzpBTBY0Vo2zql5VaYEhZTIzJSZq5b4II7XiaS1G
+         MtWz05vJNS9XDRt15FhdWUkonbmjVCG010DLsBphh01AQAZibifB4mHqR1RfDXl1zO4H
+         whpoF/ft1vkl6oHduuceGVQj4mpo2IMDj8oaQ88sMdFBMKMtYvo4mmrgF20W1fkql7pu
+         uaqd40rfC/DWpYZGn/K01dnaoy8b1tVQD5HRfb5PVy6j4vv6NDezvc72sd5WpZP09yQN
+         OnFQ==
+X-Gm-Message-State: AOJu0YwRm+Df3QlE9IrUljR1y6xlAOBNE3dllnAgRDhR7GTeub3VZzo7
+	q6eHEJB+6lq5BgLO2pSkMGSCGYQODIPcfMmqdFvIg0/9HXg+xL3UKgvsAp5Zmlqme89Exs2urX1
+	ltkBAKi7HBB5FaJ+ToQPimTzLSxcUCd8AIYRtB/4PWSAiioRWSvbC8e99BvVHS2nxYw==
+X-Gm-Gg: ASbGncvkmUJ/k9njXiPbQ+FvBe23D8NjjWWNhAnp7KZ162jNsJgWGhrR1zenR/uLT+c
+	7ssKzjkqWPTRgDd0kxlFUfTBu+QjrCP5Reqac2SRBypD75o+gux6f1M8IxziyYhca3swGhZBVfz
+	nxfYmQRP6OkjkUJum8dB8UglVnEgIZaMDjabGZYPG5JSYSVSPuuyJO/vVfIZD7rv+irgHVKvxTq
+	3q3T8ZR5ttgYgHne3x27REUQRlcOI1uz4p2zgQoiVyUEa4powuHNrM1OWSwnt9ZKdPv1NKeWube
+	C2xtHRJ0Tmbjo8Ys32HZYIk49mb0BlHnQprRkNxwQnxQONuEdiwBhXimmWP9SldI8A==
+X-Received: by 2002:a5d:61c9:0:b0:3b5:e077:af52 with SMTP id ffacd0b85a97d-3b613a23674mr20537f8f.25.1752682483834;
+        Wed, 16 Jul 2025 09:14:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBt7nrUXuBFgPX3anXe0tcehLEJl16049ahtmmdy0QKOqK7pYfXdmuoS7eEKIXQnFLYIFwag==
+X-Received: by 2002:a5d:61c9:0:b0:3b5:e077:af52 with SMTP id ffacd0b85a97d-3b613a23674mr20511f8f.25.1752682483409;
+        Wed, 16 Jul 2025 09:14:43 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc2464sm18650429f8f.38.2025.07.16.09.14.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 09:14:43 -0700 (PDT)
+Message-ID: <1da3336a234fddcea9dc91f5ef9943e7ccecc07e.camel@redhat.com>
+Subject: Re: [PATCH v3 12/17] sched: Adapt sched tracepoints for RV task
+ model
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>, Tomas
+ Glozar	 <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
+ Williams	 <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Date: Wed, 16 Jul 2025 18:14:40 +0200
+In-Reply-To: <20250716153144.GY1613200@noisy.programming.kicks-ass.net>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+	 <20250715071434.22508-13-gmonaco@redhat.com>
+	 <20250716123832.GW1613200@noisy.programming.kicks-ass.net>
+	 <122cfd4ba6b0805e91ff09526d5d159ff3871964.camel@redhat.com>
+	 <20250716134513.GB905792@noisy.programming.kicks-ass.net>
+	 <fe38ba0b9da0209bcc97c2f348f5a6b266991073.camel@redhat.com>
+	 <20250716141958.GC905792@noisy.programming.kicks-ass.net>
+	 <be966ed3d4a7ace6aa430bbc5c16ecbff3118426.camel@redhat.com>
+	 <20250716153144.GY1613200@noisy.programming.kicks-ass.net>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CY8PR12MB7586:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3deb2f2e-59d8-4079-dc9d-08ddc483b0b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vLmVXycQPoWuSOt5XfQkz1gvn70/RydJ40sOpomXTLa0pMdxnnxXuR/0HQZg?=
- =?us-ascii?Q?/OYwrobXIHtV93WSGlQLHGOA7z2qdV5GF0T+CBocTWTgKYDNE9L4Vp+SfGjK?=
- =?us-ascii?Q?uXIyo3z1lj+/1TobWO4q0X1S9Tbxj+Xo14CPxHQM2iM99hVMiXgVnltUkVpH?=
- =?us-ascii?Q?wID0+I8LV9LumXInvzTus1ZEhgWZOtuKegfV1nvT7F6M1UCDBsCMkVueSLcz?=
- =?us-ascii?Q?KGi9DHJYaToCPqvDfEYbsjOqPEMQux14U27rLOyAyrXnJrUJTK+sOWngPW4u?=
- =?us-ascii?Q?FmDoUY6ohC4H7kYr7OUjb/Cdv17yfBvDpgJhc14biufc+TdT78sTQRKkswqG?=
- =?us-ascii?Q?Lde8/1eet5Up9q0D9N+4NWLIuovhqduLTz92ZBhf4k4e2e4ybXj1MxPnkOq7?=
- =?us-ascii?Q?FVOKyFGnkP9/4r7NZJATmG3/7w9JK08A0GKWj5FuhwBVw5Ff6jls/KJaoeM3?=
- =?us-ascii?Q?sUk2fKo+vixoqgZTwLvcHVqQCbexGU1Fl3L/gz2Sh8MUR+ZzTIL2IGmq8jtg?=
- =?us-ascii?Q?fQWRFSLfqWNCrCPIsTZCvJPnSri31wKYm2mboULGZBch7dzLszPCHzQ83zfd?=
- =?us-ascii?Q?BheAgGebEdM8LoOEP7hz8pR5lfQ1YcYZ1L2LKsAAyNVY1HXqgFMcsuXgOBxg?=
- =?us-ascii?Q?jbhGsdFmrtMFxMZ9mxwnRKtCG9U//fbLlD2vncJ4FVvaThze72OAm6HV79qW?=
- =?us-ascii?Q?69SQmR/+e3Kbo0zSBe8au/q41yjcze13oeeI+1Aa5UIwGpOzvhR49LTpaJ5Z?=
- =?us-ascii?Q?Aj8vTES42BhTlUGCmTMQDPUbfDEXDJqLXDC5QorZFD0ycfLj8Apq9bDqgAAe?=
- =?us-ascii?Q?ysT2+7C33WUDQYqyL+tpZ/ZBExXTQSceWF7MInvguxZdgxaqz4AugNC1NHdM?=
- =?us-ascii?Q?CU7VYpzmHe2v+c6KoMzvKqpAxepIyzWLRhuytPp5UBPqhAP/ctCfDpDOKGtJ?=
- =?us-ascii?Q?iuAvIItETU5U6rdn6mHkK7XhZnJrvgLrdaO2PjM76K9QFcW95wMRDb7l2z4X?=
- =?us-ascii?Q?TT5sEM2uiA0uVTT8cs/tLfSsdMzaQyj1o+GJvcro+6kUOKWBd7jcfNvfnuEL?=
- =?us-ascii?Q?+kvTnDLsVj75mhE0VdahwkAAJBz6l3e130kKGo/vLySR9pp+hIATuvHhXgfb?=
- =?us-ascii?Q?0HOQnX8nWY18jzLq26vxGVfAMsBJVg59BcjyDibZTstMfwqrirj1JO3/eP7y?=
- =?us-ascii?Q?6nTX39sSb01PV8tpClidujJrVv2ZkRSYb1DMPGJ38ui2jrwHAwOZZgASjDFX?=
- =?us-ascii?Q?/MTq8sKKby9kqqb0eYdDb+UPG4gBoUg/gBDyNcB9ytr8Pzc0PeLLvllj4X+4?=
- =?us-ascii?Q?b8uDXqc12G6nFilId5ySd3d2zy9S8jkCCzJ3/6RdvIXch0TeivGGt7UN53Ex?=
- =?us-ascii?Q?bWOimcaKAXpQSmCTzH1cc6H6MTUL3FlRSmfbOvR5/RtuqTcsanVGzmDMO2EE?=
- =?us-ascii?Q?VH9sGL3y5IE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XlBU/LiMTsqFjmMdADLPk0HlI1VAEIrBPKbgnh2B2PgcIT+Iz/ZMjs54ZTC/?=
- =?us-ascii?Q?yycYiUFXPIUaUzmjxhYpyF5jGca8sXb/PkrjjvCPS9ybeJMc4OFqCRI6qqb8?=
- =?us-ascii?Q?rBCcURFfEglfC5xMzm3HD//UCsNA19dImIvNcJJrds9TE/H1kbFxKrQM++0a?=
- =?us-ascii?Q?DASSM1U/RRSdY6tO+wVqMpChgc1+ObTCWXIahQNV7YEkqim6ZROWScJky1UM?=
- =?us-ascii?Q?LJ+5oGKk6R7aoxKwvxuEjo5eS9QS7034J5SYc5wdVndF95dTJw69EEdLSkMz?=
- =?us-ascii?Q?I+fbaKXWvj5Uj1hQEQrOKKyXROctOqb0T/TmBu2tK62E9rbnldiSK8vfjHTN?=
- =?us-ascii?Q?4wmLXKutI6lHkdGhBAj49/3y66yfzOpNruI4SnBUoY5mgtjDYAp9uEtgamSg?=
- =?us-ascii?Q?ajAPOZyPFD4ujZi/uEkSh7wMZpg3sjH/GJt9rhJAubagyLPDhWR2HjL+b/ze?=
- =?us-ascii?Q?C5dHlVtVbUmNSCYTy3XT94nFKLDbii2mq3sfN84LTh0fEYWsu2I8YOCjT9r9?=
- =?us-ascii?Q?wNU4vqGei5tbuVQF1ksundfd98M0gFlLzD1lL6GLHJDQ6LRh3gb34hGpXfSi?=
- =?us-ascii?Q?L4SlT/rS4DDAC1lDYtf46r8kIqSj/DcWVjQs6ZWQzkkdFBE0rsiPY+ie4mja?=
- =?us-ascii?Q?au8xuGRJGIK+PULLehdAVogs0x0h8ObI3OXCf2eipDNNqdO/yDmulegKIMDd?=
- =?us-ascii?Q?JbWlgptCR1vzmzL/VLyrKM+6COL/pjW81XMp69F8LeA64AWTVL8h6eKhaBvp?=
- =?us-ascii?Q?UF0a5+H7J5NlBhjHszfs3921XRGChQroUV6E3wRfKV/03xYrCkaFFz+SA1IS?=
- =?us-ascii?Q?VZVGfIqC4R0LbYzJFq5MumdmG1saSJ+QCME5lUQXAzQ1Zk6PpY+BGSLUS5HE?=
- =?us-ascii?Q?DV7hrk8fQe8KpbYC5nH1GcATC9K8ngFapdQmTa4naIrdhlLfxUfu595ZoS0c?=
- =?us-ascii?Q?zMqOq8KMy6h9l+uM9gC6fl/VPec2PlHHQUJdIs3ICNuIVBP/85CnKztrlHAK?=
- =?us-ascii?Q?CMpP3zGTbOPKVnkrDqUu5jUckv6YAgO9LRlJlvXVAS7vEb6DFgaUUd1hnU0q?=
- =?us-ascii?Q?qN+BSjXvFD1Zwon8doZ5uiBGV1MLfkFC2zct9PFhwYcM2CuudTN8scmUuXow?=
- =?us-ascii?Q?Tvx5vGUYL+odfxVEIrOfTCQy50Ub20gEvuYd2HKkAVr8KQMApJa8vQBdT3cR?=
- =?us-ascii?Q?YXxreupEeMDcrJP+MLQh8wuonnZr7lg5X7VAOrbPm6cZCOtb7jO18a0/wgUZ?=
- =?us-ascii?Q?YdAnCsD5f9MVgiS4IEszZ1w/KdHp+4ILfhvQyX2XFqNAP+G42ZIJsWvOsUy0?=
- =?us-ascii?Q?Z5sDZEQkVZkzMwLjTYKQo5UWJCozGhxrjuwmm5Wc2DVFD9/n9j3fK1AC/hT8?=
- =?us-ascii?Q?VysiXWw9qq6G8daykz9viLKKffisusR6iMg2KUUgf5mUWYJP5/PyK3akPgjn?=
- =?us-ascii?Q?JvCjJ9XajxePSXVrGdd9EPzY3N3MQRwMVC7pvKd4tGBKQT1ouJ6TnVmWamgJ?=
- =?us-ascii?Q?A9ECeUw3zfATTb62B7sDRuzYiQRoiFVBdc32n521AaSktHI894Uk3KrthF5J?=
- =?us-ascii?Q?Xsly+zt1NcqXWSGm2yifj1NaTD4D5CHGnuZAJsTC?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3deb2f2e-59d8-4079-dc9d-08ddc483b0b6
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 16:13:24.5297
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2fE55eTWvfgEA28BxWskLNRyjAzNTMme45tptraQnTXygxQmy/St45pworZzfbKCMKpuoO79zhHig6BvMCEEow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7586
 
-On Wed, Jul 16, 2025 at 09:08:36AM -0700, Breno Leitao wrote:
-> On Wed, Jul 16, 2025 at 04:26:23PM +0200, Andrea Righi wrote:
-> > On Wed, Jul 16, 2025 at 03:36:31PM +0200, Peter Zijlstra wrote:
-> > > On Wed, Jul 16, 2025 at 03:15:12PM +0200, Andrea Righi wrote:
-> > > 
-> > > > The idea is to track the scx callbacks that are invoked with a rq lock held
-> > > > and, in those cases, store the locked rq. However, some callbacks may also
-> > > > be invoked from an unlocked context, where no rq is locked and in this case
-> > > > rq should be NULL.
-> > > > 
-> > > > In the latter case, it's acceptable for preemption to remain enabled, but
-> > > > we still want to explicitly set locked_rq = NULL. If during the execution
-> > > > of the callback we jump on another CPU, it'd still be in an unlocked state,
-> > > > so it's locked_rq is still NULL.
-> > > 
-> > > Right; but doing superfluous NULL stores seems pointless. So better to
-> > > avoid the store entirely, rather than making it more expensive and no
-> > > less pointless, right?
-> > 
-> > Right, we can definitely avoid rewriting NULL.
-> > The following should do the trick.
-> > 
-> > Breno, can you give it a try?
-> 
-> Sure thing. I've tested it and I don't see the warning on my side.
-> 
-> Would you like to me post the patch, probably removing the WARN_ONCE()
-> as raised by peterz?
+On Wed, 2025-07-16 at 17:31 +0200, Peter Zijlstra wrote:
+> On Wed, Jul 16, 2025 at 04:38:36PM +0200, Gabriele Monaco wrote:
+>=20
+> > So as you said, we can still reconstruct what happened from the
+> > trace, but the model suddenly needs more states and more events.
+>=20
+> So given a sequence like:
+>=20
+> =C2=A0 trace_sched_enter_tp();
+> =C2=A0 { trace_irq_disable();
+> =C2=A0=C2=A0=C2=A0 **irq_entry();**
+> =C2=A0=C2=A0=C2=A0 **irq_exit();**
+> =C2=A0=C2=A0=C2=A0 trace_irq_enable(); } * Ni
+> =C2=A0 trace_irq_disable();
+> =C2=A0 { trace_sched_switch(); } * Nj
+> =C2=A0 trace_irq_enable();
+> =C2=A0 { trace_irq_disable();
+> =C2=A0=C2=A0=C2=A0 **irq_entry();**
+> =C2=A0=C2=A0=C2=A0 **irq_exit();**
+> =C2=A0=C2=A0=C2=A0 trace_irq_enable(); } * Nk
+> =C2=A0 trace_sched_exit_tp();
+>=20
+> It becomes somewhat hard to figure out which exact IRQ disabled
+> section
+> the switch did not happen in (Nj =3D=3D 0).
+>=20
+> > If we could directly tell whether interrupts were disabled manually
+> > or from an actual interrupt, that wouldn't be necessary, for
+> > instance (as in the original model by Daniel).
+>=20
+> Hmm.. we do indeed appear to trace the IRQ state before adding
+> HARDIRQ_OFFSET to preempt_count(). Yes, that complicates things a
+> little.
+>=20
+> So... it *might* be possible to lift lockdep_hardirq_enter() to
+> before we start tracing. But then you're stuck to running with
+> lockdep enabled -- I'm thinking that's not ideal, given those other
+> patches you sent.
+>=20
+> I'm going to go on holidays soon, but I've made a note to see if we
+> can lift setting HARDIRQ_OFFSET before we start tracing. IIRC the
+> current order is because setting HARDIRQ_OFFSET is using
+> preempt_count_add() which can be instrumented itself.
+>=20
 
-Sure, go ahead. Yes, let's remove the WARN_ON_ONCE().
-And thanks Peter for all the suggestions!
+Yeah I wondered if that was something perhaps required by RCU or
+something else (some calls are in the way). NMIs have it set during the
+tracepoints, for instance.
 
--Andrea
+Thanks again and enjoy your holiday!
+
+Gabriele
+
+> But we could use __preempt_count_add() instead, then we loose the
+> tracing from setting HARDIRQ_OFFSET, but I don't think that is a
+> problem. We already get the latency from the IRQ tracepoints after
+> all.
+>=20
+> > I get your point why we don't really need the additional
+> > tracepoint, but some
+> > arguments giving more context come almost for free.
+>=20
+> Right. So please always try and justify adding tracepoints.
+
 
