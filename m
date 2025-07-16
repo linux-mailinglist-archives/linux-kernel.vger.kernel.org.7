@@ -1,133 +1,209 @@
-Return-Path: <linux-kernel+bounces-732686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601D6B06AAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:41:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EDEB06ABB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC3113A9048
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:41:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB97D3B0678
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA64137C52;
-	Wed, 16 Jul 2025 00:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5425D194A73;
+	Wed, 16 Jul 2025 00:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laBd/cV3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VMK0/BJG"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1760D481B1;
-	Wed, 16 Jul 2025 00:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE3C191F91;
+	Wed, 16 Jul 2025 00:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752626500; cv=none; b=YNxHL7tvFtgi56Hd9MgExnXfUMKUNiZWdFnUDyh8WgEAA7IywIQE/owoLdPAGSiTgf3CEbvmcaACojmZbLOWDZljpjeDM+AxNz04ddgJUcSpf+DbDNDjqmGm+VsrwG7aCfsaSRVwjTH7+ckB+itaTpbEicBw/X2P+7fWEHdJAxE=
+	t=1752626807; cv=none; b=ZjviBqSvs9QI6Lc2+RDC7SvbtT9nRPFlSS4fHjIkjRuOriLL1xi8z3UvTkXsrdL06ebgtI/Cuej09zvlFIk8lYlibZBjKxbiN7L8a6ovNdziT196CCvuqccgwbKZsXGfc/WKDbSuIon7izH7tZQsPRXePdDYSr1o2Ex+UUSrm44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752626500; c=relaxed/simple;
-	bh=Z7l3jkmEP6QkwUklUJF2NCEsiSVVVNx8+PAgOHY1PbY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qUTMifaABTLNFcnu9Zy/Mv6e9yjW3mu6dEcYsE2QspdlTsSstddLZUB2fa82LQ+dwMQFPoI4vRYeRiLo4ou58wR3cIUiL6oXhgc/egUD/68VsnVkVEr34EcC7/BAMM4KPWnENhTXTffWvpTy7cYE8iHIBCMo8uDdjPe8RF4oNdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laBd/cV3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90533C4AF0B;
-	Wed, 16 Jul 2025 00:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752626497;
-	bh=Z7l3jkmEP6QkwUklUJF2NCEsiSVVVNx8+PAgOHY1PbY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=laBd/cV3Y/Oyw2b5FDbeN12tuVadd9vNPzWtPpzT8KohZEMQD2eIlXqtn52++cp7z
-	 SVo4oz/bkiRPl8ULjMzi0RJoV/CQFB5ZFSvePWGLyl6AzgRGKbaqX2/kze9o5QCwHn
-	 kbd2rHv8tCx0VhGhYefxS1DOx+/3ID6MfhWT3rz9evaBnr04PiyTZGfi7NmwsdN3OW
-	 p3GsUKkvR8ftjozanv5UzXBcjTJ/b6B6F30M7ur7oU3xtrKr1OAKm8L99zwVZ3S906
-	 8I4yHLDR4m12HIPpcyKKy7KqN5MAtgwOT1L25KoeBlL5HQYg5rkSQoH6DUwp7ah2my
-	 XV5U38X/Ml22Q==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-553c31542b1so5700789e87.2;
-        Tue, 15 Jul 2025 17:41:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVhGWZhEbhHEjZBuY/jnfF1JkRenCXVeWdhiZCFRRdN+UHP03aDcZ4npCH13HRFmGNhEn/PUFJZOX0=@vger.kernel.org, AJvYcCW0pzraAu1Y2LRUGqVQci6TSV0ozHtX/4OC0YSyfL/QEhCVa/GYL/dkAKObovc1nx0xX1LhW+Xsq4VAh2t3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrwHW2XsGoUjA8DfcCpdw29iJbury/M8OkH7CWyLLFoRPu4lxF
-	Pa++D2SewGZwTSJ7X4v7mQXOjwLp+09Q9lltWy7Ul6SNSiV7+KgzNDeQ3s+GQxYuysWslu0fWTY
-	eFTsf3iCuUhjATUy1Qp7qGnDUz7k1HY4=
-X-Google-Smtp-Source: AGHT+IEBfD67PV7t1chxN96XoCwe1pI7x2lRLBhmLUXFsJJ1yjCwL+3+zVikKM9M30SJeq+2EdHBr2llWzJRcIDA8nE=
-X-Received: by 2002:a05:6512:118f:b0:553:37e7:867b with SMTP id
- 2adb3069b0e04-55a23f5660bmr283569e87.31.1752626495925; Tue, 15 Jul 2025
- 17:41:35 -0700 (PDT)
+	s=arc-20240116; t=1752626807; c=relaxed/simple;
+	bh=woAgzFOPYnjFecFnNTShmZq0j+l1H6Ja/Vv6z99qT90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NFUMk0gs5Gws+9PYRLCcx9zRaPzSrLiV84zOUij95BjL6ZjETJZxJjj1IDG34g8nj57EQiz/JepUNA8zyFg2zc5Wfwon9OAms/pyDNxhsVtucldpCVFh1NWKYDUQ5WrfBmG/axE6qtPD4wtiBmtXbxlpdM7QI0TDtDyw8DBLCVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VMK0/BJG; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-234b9dfb842so54384245ad.1;
+        Tue, 15 Jul 2025 17:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752626804; x=1753231604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LRTEJWMwRNmGn9tXl/iEoGQRPnhU0bu+ekhvd2LYaEQ=;
+        b=VMK0/BJG3MIQul8SlHWnHdKOWNNg7XlhlJpyeJgQNmLoosUXujzE7041cBVxBRGZJG
+         vlV1RkNC2W/QsOlwcqiT6xfNdYlcJOpjsQmLWw8AyCAiPPzTmWVTStUTNan+jZrpb+sO
+         DYPoxXHPUp2ZOddOb9g53BqYrAoLOXDN2bqbvV2rjoM5opmvEmYVpF1Y5qeIAQIFWELD
+         mQ7Etbcc3lBbsdomXYr4VNZHU6azbi9mq/QpdqUNbrRZ5wHCHrL6R3QnkJtraC5Es0/w
+         80XuO7mNgg6Ra1pbgv5yQGxMUiuIwhF01iqWXJJ+0sHi/vmpyCH/qmtPTXQ8g1Wj9JsS
+         JGnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752626804; x=1753231604;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LRTEJWMwRNmGn9tXl/iEoGQRPnhU0bu+ekhvd2LYaEQ=;
+        b=HEunR3HCNFQSFjRXjk83JG/7XtpQwL3rI9CePFSlHt0qHi6+farm7sDThfbcGFxCNJ
+         CnTjuV5DKYdqB24L+QIvnAONIaB4zgxsM2S57R/GsV89v63izBL4MJp/3hcyKuFgtPgo
+         iuVb7x6g5sxZ4Kci687n7IVlM3I9D7tJtEOv61AV7ga2d+dHdF2xHaaELjukaJ9jnE2o
+         mVzuo8fH5Cdao2rLlosdgONuRmIlnfl1NAmRTw/5cg50gD10z7TV+p0J3wA1OfOCajXH
+         nU1INq1akWD7bCpIbRfi1/X0kVkkAOGnlYvsEguoOAEDolvljyuZvQPOctxB0gOMItDf
+         7amg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5nWAw/g2bDP37ArttsgIULHbpdogrRlWFzjimZftZd1ZHZUTGbPQd219NSy0G+r98PWFIGlGexGPmKpyvygQ=@vger.kernel.org, AJvYcCVXTPaVMlq0+v/qgnieMUlsh8LNnqT7TBWjqPRAlKQKbbr87JZXddO10eGR/QO6TDwmufLm+MSxER7BihIH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3J+g4BPeI5putv59oX7OHQPPUgrmGYO4Ev6Gck5SvcgvxbGmq
+	7YTep3t5OmPKhkuz5hIq0lCLATomliw/HQxp1BbKILgwbM5Tc+EtZKHf
+X-Gm-Gg: ASbGncs4xPhmeEb9B9HK4cQmDOQb9mXE6IqD47IO7c+hS6SIqk3xnJzqbpfIl0QjkcQ
+	G3+2ztlPEkZeStdXe6zVDRU1q0Mv4DsArsDMKkpOfiYy7UDi+Wpy90B4xeyRgVsL5QopwrcDIeS
+	eeugA9pfwqlKc8TjIvzYs/t/vuWeG8O348a1ZaaU4+fnZdqUTxWYcpGPmVWnSOFQbH/RNIKgM2K
+	GA6thI1t1eT8qCg/OAerRfjxFg4fBGPKpYGbYNmbtrCvdtaVIHYdDchQFaRg9fTz5xbSRfC5TuP
+	l5jqIIqGPIoNu4/AdcczB7bglVGZE/2MBHx9nZKugtvPnzsSKfW3papkWdakye4McaQpTiS1aX9
+	hLbpp3j7AjvFmEOtWhN4iclScIbFMWoNVcdPJmYy2pnsx3IicYl9iigwv/Qgv+N1GZuixRiSzPg
+	==
+X-Google-Smtp-Source: AGHT+IG6rCKsKtVMjbxz0oZEbHmPuLfjFMKAZoeQQA0RwebSQXkifPxBSoNLvFq1rG3NqpwRhNqq3A==
+X-Received: by 2002:a17:902:e751:b0:235:225d:3098 with SMTP id d9443c01a7336-23e257706f7mr12490345ad.46.1752626804267;
+        Tue, 15 Jul 2025 17:46:44 -0700 (PDT)
+Received: from ipravd-Nitro-AN515-55.hsd1.ca.comcast.net ([2601:646:a000:5fc0:cbd:b87b:a7dd:f79d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42849d7sm115995915ad.21.2025.07.15.17.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 17:46:43 -0700 (PDT)
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ivan Pravdin <ipravdin.official@gmail.com>
+Subject: [PATCH RESEND] Bluetooth: vhci: Prevent use-after-free by removing debugfs files early
+Date: Tue, 15 Jul 2025 20:42:53 -0400
+Message-ID: <20250716004252.125466-2-ipravdin.official@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715-kmemleak_efi-v1-1-c07e68c76ae8@debian.org>
-In-Reply-To: <20250715-kmemleak_efi-v1-1-c07e68c76ae8@debian.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 16 Jul 2025 10:41:24 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXHJpRioZD7aUJnkMLWkiTmQ_Nr6MNcSYR0adeLdjf5BrA@mail.gmail.com>
-X-Gm-Features: Ac12FXzXXfY5Gpu7WIHyasUCl-eF3Y6YMD9socEIt8LfSddUXnMWxEI2pb3mxno
-Message-ID: <CAMj1kXHJpRioZD7aUJnkMLWkiTmQ_Nr6MNcSYR0adeLdjf5BrA@mail.gmail.com>
-Subject: Re: [PATCH] efivarfs: Suppress false-positive kmemleak warning for sfi
-To: Breno Leitao <leitao@debian.org>
-Cc: Jeremy Kerr <jk@ozlabs.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 15 Jul 2025 at 19:31, Breno Leitao <leitao@debian.org> wrote:
->
-> When kmemleak is enabled, it incorrectly reports the sfi structure
-> allocated during efivarfs_init_fs_context() as leaked:
->
->     unreferenced object 0xffff888146250b80 (size 64):
->     __kmalloc_cache_noprof
->     efivarfs_init_fs_context
->     ...
->
-> On module unload, this object is freed in efivarfs_kill_sb(), confirming
-> no actual leak. Also, kfree(sfi) is called at efivarfs_kill_sb(). I am
-> not able to explain why kmemleak detected it as a leak. To silence this
-> false-positive, mark the sfi allocation as ignored by kmemleak right
-> after allocation.
->
-> This ensures clearer leak diagnostics for this allocation path.
->
+Move the creation of debugfs files into a dedicated function, and ensure
+they are explicitly removed during vhci_release(), before associated
+data structures are freed.
 
-Can you provide a reproducer? x86 defconfig with kmemleak enabled does
-not show this behavior.
+Previously, debugfs files such as "force_suspend", "force_wakeup", and
+others were created under hdev->debugfs but not removed in
+vhci_release(). Since vhci_release() frees the backing vhci_data
+structure, any access to these files after release would result in
+use-after-free errors.
 
-In any case, just silencing the diagnostic is not a great way to deal
-with this imho.
+Although hdev->debugfs is later freed in hci_release_dev(), user can
+access files after vhci_data is freed but before hdev->debugfs is
+released.
 
+Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
+Fixes: ab4e4380d4e1 ("Bluetooth: Add vhci devcoredump support")
+---
+Resending because previous patch got archived [1].
 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  fs/efivarfs/super.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index c900d98bf4945..5f867ad2005ae 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -19,6 +19,7 @@
->  #include <linux/notifier.h>
->  #include <linux/printk.h>
->  #include <linux/namei.h>
-> +#include <linux/kmemleak.h>
->
->  #include "internal.h"
->  #include "../internal.h"
-> @@ -498,6 +499,7 @@ static int efivarfs_init_fs_context(struct fs_context *fc)
->         if (!sfi)
->                 return -ENOMEM;
->
-> +       kmemleak_ignore(sfi);
->         sfi->mount_opts.uid = GLOBAL_ROOT_UID;
->         sfi->mount_opts.gid = GLOBAL_ROOT_GID;
->
->
-> ---
-> base-commit: 8c2e52ebbe885c7eeaabd3b7ddcdc1246fc400d2
-> change-id: 20250714-kmemleak_efi-bedfe48a304d
->
-> Best regards,
-> --
-> Breno Leitao <leitao@debian.org>
->
->
+[1] https://patchwork.kernel.org/project/bluetooth/patch/20250614235317.304705-1-ipravdin.official@gmail.com/
+
+ drivers/bluetooth/hci_vhci.c | 57 ++++++++++++++++++++++++++----------
+ 1 file changed, 41 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/bluetooth/hci_vhci.c b/drivers/bluetooth/hci_vhci.c
+index f7d8c3c00655..2fef08254d78 100644
+--- a/drivers/bluetooth/hci_vhci.c
++++ b/drivers/bluetooth/hci_vhci.c
+@@ -380,6 +380,28 @@ static const struct file_operations force_devcoredump_fops = {
+ 	.write		= force_devcd_write,
+ };
+ 
++static void vhci_debugfs_init(struct vhci_data *data)
++{
++	struct hci_dev *hdev = data->hdev;
++
++	debugfs_create_file("force_suspend", 0644, hdev->debugfs, data,
++			    &force_suspend_fops);
++
++	debugfs_create_file("force_wakeup", 0644, hdev->debugfs, data,
++			    &force_wakeup_fops);
++
++	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
++		debugfs_create_file("msft_opcode", 0644, hdev->debugfs, data,
++				    &msft_opcode_fops);
++
++	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
++		debugfs_create_file("aosp_capable", 0644, hdev->debugfs, data,
++				    &aosp_capable_fops);
++
++	debugfs_create_file("force_devcoredump", 0644, hdev->debugfs, data,
++			    &force_devcoredump_fops);
++}
++
+ static int __vhci_create_device(struct vhci_data *data, __u8 opcode)
+ {
+ 	struct hci_dev *hdev;
+@@ -434,22 +456,8 @@ static int __vhci_create_device(struct vhci_data *data, __u8 opcode)
+ 		return -EBUSY;
+ 	}
+ 
+-	debugfs_create_file("force_suspend", 0644, hdev->debugfs, data,
+-			    &force_suspend_fops);
+-
+-	debugfs_create_file("force_wakeup", 0644, hdev->debugfs, data,
+-			    &force_wakeup_fops);
+-
+-	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
+-		debugfs_create_file("msft_opcode", 0644, hdev->debugfs, data,
+-				    &msft_opcode_fops);
+-
+-	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
+-		debugfs_create_file("aosp_capable", 0644, hdev->debugfs, data,
+-				    &aosp_capable_fops);
+-
+-	debugfs_create_file("force_devcoredump", 0644, hdev->debugfs, data,
+-			    &force_devcoredump_fops);
++	if (!IS_ERR_OR_NULL(hdev->debugfs))
++		vhci_debugfs_init(data);
+ 
+ 	hci_skb_pkt_type(skb) = HCI_VENDOR_PKT;
+ 
+@@ -651,6 +659,21 @@ static int vhci_open(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
++static void vhci_debugfs_remove(struct hci_dev *hdev)
++{
++	debugfs_lookup_and_remove("force_suspend", hdev->debugfs);
++
++	debugfs_lookup_and_remove("force_wakeup", hdev->debugfs);
++
++	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
++		debugfs_lookup_and_remove("msft_opcode", hdev->debugfs);
++
++	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
++		debugfs_lookup_and_remove("aosp_capable", hdev->debugfs);
++
++	debugfs_lookup_and_remove("force_devcoredump", hdev->debugfs);
++}
++
+ static int vhci_release(struct inode *inode, struct file *file)
+ {
+ 	struct vhci_data *data = file->private_data;
+@@ -662,6 +685,8 @@ static int vhci_release(struct inode *inode, struct file *file)
+ 	hdev = data->hdev;
+ 
+ 	if (hdev) {
++		if (!IS_ERR_OR_NULL(hdev->debugfs))
++			vhci_debugfs_remove(hdev);
+ 		hci_unregister_dev(hdev);
+ 		hci_free_dev(hdev);
+ 	}
+-- 
+2.45.2
+
 
