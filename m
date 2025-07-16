@@ -1,263 +1,409 @@
-Return-Path: <linux-kernel+bounces-733542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8B2B075F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:43:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E8CB07608
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B486A16D163
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:43:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91CD83A856B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944472F50B5;
-	Wed, 16 Jul 2025 12:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235102F50AD;
+	Wed, 16 Jul 2025 12:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TCsPaXPw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tVA94b8d"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE73121B9C8;
-	Wed, 16 Jul 2025 12:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463892877D9
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669831; cv=none; b=HyM+qu59cbpmuugt1iU7b/GUhteNPBFV2SnE4CBy2RznKGKg0Y0ck4Pxs4iwI6DKiwu7uulqWX4bAgf3m7adZQUUAt05CgO06xfcryEJQfX+9r07+0urJmvKdI4QYbaMXEEYClAUnCVa/OvIMRi+2Ieu+pLlSjMqQzV00eKoKAU=
+	t=1752669910; cv=none; b=T7roAogvpiyR1ibsY7En5dG8OmDq0pphuMAI8IGpdaRTTM0PQAypF/HUvKCRsQ1/OPwDRQq5o1Skb+bM2/J8PkeM39EEiuMCdlMbgZsdKgYWplNEYWuRPQDC6ZOYJKQUJO9AbvNopRUhnUx5RU48RJX/m1sPo+q5FFYI3jFIKx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669831; c=relaxed/simple;
-	bh=Ie/vudHyUAw0gcZE2VY84j6FL1GN4ErvwXH8B3crDUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h9yndH2g2Gb6EzjZBg+nWWwRvANqp0h+BiCt3jcxt0qhzLBG9r6rHWSd0yvQR13R0DR4npem1+qePde9g/lWSL21ZcoMPOqqTpKZFKLFk6t8/WbmdI8tMfbWhIdGA9ESZWt4hugXUOC8gKbdVMlwfJddbkpA4vGolHnm4ETrBHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TCsPaXPw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E4CC4CEF0;
-	Wed, 16 Jul 2025 12:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752669830;
-	bh=Ie/vudHyUAw0gcZE2VY84j6FL1GN4ErvwXH8B3crDUM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TCsPaXPwDySpyV0F+5fg5akK205LWTDPjc+nQxMjMnMTS25ziEdReHyN1ZI0ckoJy
-	 995/flkzHfWCECdiEQv0YVaHDwynRE/JiEoBn8KaOAFJhKOl/POE4HzzGKyI4GjGI+
-	 c0QZ9tsNkK4yZPEnTx2lF/KlTkz7Uq5MaTz0019k=
-Date: Wed, 16 Jul 2025 14:43:47 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>,
-	Guenter Roeck <groeck@chromium.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v11 3/7] power: reset: Introduce PSCR Recording Framework
- for Non-Volatile Storage
-Message-ID: <2025071645-panoramic-pyromania-2f8c@gregkh>
-References: <20250618120255.3141862-4-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1752669910; c=relaxed/simple;
+	bh=ZUvAaiwQUwWuzZbUuPGLMhzTlnmlB0SfHQhbi2yhhE0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XI5mS10j20KxUgwNrS/reNTe0s0G54FhvNUZqSrLv3OhjRw91rYmlNmkOwYz8Q1BI69OmEazhpJPcqU1YoH2M3auvLBtSyHD8+yEhIaOGz7GYd8InRuvUlLsU4BRhEw7XkzTtZ/56tpGENFkVmfeObSnW/2YC7G2tE1X2xnIZyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tVA94b8d; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752669894;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0ls8sORC0cw7MdN0wJu+juqBfDrsZD/thcgd7vtypmU=;
+	b=tVA94b8dkd5pyLjT2eJddN68Ovo5vMMWrfEpl0vZ8hFBmJg+gsAXKLjgDTdPyDnKB4qvL8
+	1h7WNX2MyEIzqYV1vAYulDICYZUuxWU0W5oS0VlGRZcH3VA/F88IgUEhUtJEQQCpfHbzzu
+	5D1LKdZN1MmMEwVHSDEiDMViZpeo2+w=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Menglong Dong <menglong8.dong@gmail.com>, alexei.starovoitov@gmail.com,
+ rostedt@goodmis.org, jolsa@kernel.org, bpf@vger.kernel.org,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 13/18] libbpf: support tracing_multi
+Date: Wed, 16 Jul 2025 20:43:49 +0800
+Message-ID: <2561816.jE0xQCEvom@7940hx>
+In-Reply-To:
+ <CAEf4BzZ-3rs2U8x7K+Gd3dDTn5OusBh5SsZ_cE3ZeuVHnoRzKQ@mail.gmail.com>
+References:
+ <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <3c389877-eafe-497a-a73e-720a3fcbcadb@linux.dev>
+ <CAEf4BzZ-3rs2U8x7K+Gd3dDTn5OusBh5SsZ_cE3ZeuVHnoRzKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618120255.3141862-4-o.rempel@pengutronix.de>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+X-Migadu-Flow: FLOW_OUT
 
-Overall, no real issues, just some very minor ones:
+On Wednesday, July 16, 2025 1:20 AM Andrii Nakryiko <andrii.nakryiko@gmail.=
+com> write:
+> On Mon, Jul 14, 2025 at 6:59=E2=80=AFPM Menglong Dong <menglong.dong@linu=
+x.dev> wrote:
+> >
+> >
+> > On 7/15/25 06:07, Andrii Nakryiko wrote:
+> > > On Thu, Jul 3, 2025 at 5:24=E2=80=AFAM Menglong Dong <menglong8.dong@=
+gmail.com> wrote:
+> > >> Add supporting for the attach types of:
+> > >>
+> > >> BPF_TRACE_FENTRY_MULTI
+> > >> BPF_TRACE_FEXIT_MULTI
+> > >> BPF_MODIFY_RETURN_MULTI
+> > >>
+> > >> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > >> ---
+> > >>   tools/bpf/bpftool/common.c |   3 +
+> > >>   tools/lib/bpf/bpf.c        |  10 +++
+> > >>   tools/lib/bpf/bpf.h        |   6 ++
+> > >>   tools/lib/bpf/libbpf.c     | 168 +++++++++++++++++++++++++++++++++=
++++-
+> > >>   tools/lib/bpf/libbpf.h     |  19 +++++
+> > >>   tools/lib/bpf/libbpf.map   |   1 +
+> > >>   6 files changed, 204 insertions(+), 3 deletions(-)
+> > >>
+> > > [...]
+> > >
+> > >> diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+> > >> index 1342564214c8..5c97acec643d 100644
+> > >> --- a/tools/lib/bpf/bpf.h
+> > >> +++ b/tools/lib/bpf/bpf.h
+> > >> @@ -422,6 +422,12 @@ struct bpf_link_create_opts {
+> > >>                  struct {
+> > >>                          __u64 cookie;
+> > >>                  } tracing;
+> > >> +               struct {
+> > >> +                       __u32 cnt;
+> > >> +                       const __u32 *btf_ids;
+> > >> +                       const __u32 *tgt_fds;
+> > > tgt_fds are always BTF FDs, right? Do we intend to support
+> > > freplace-style multi attachment at all? If not, I'd name them btf_fds,
+> > > and btf_ids -> btf_type_ids (because BTF ID can also refer to kernel
+> > > ID of BTF object, so ambiguous and somewhat confusing)
+> >
+> >
+> > For now, freplace is not supported. And I'm not sure if we will support
+> >
+> > it in the feature.
+> >
+> >
+> > I think that there should be no need to use freplace in large quantitie=
+s,
+> >
+> > so we don't need to support the multi attachment for it in the feature.
+> >
+> >
+> > Yeah, I'll follow your advice in the next version.
+> >
+>=20
+> great
+>=20
+> >
+> > >
+> > >> +                       const __u64 *cookies;
+> > >> +               } tracing_multi;
+> > >>                  struct {
+> > >>                          __u32 pf;
+> > >>                          __u32 hooknum;
+> > >> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > >> index 530c29f2f5fc..ae38b3ab84c7 100644
+> > >> --- a/tools/lib/bpf/libbpf.c
+> > >> +++ b/tools/lib/bpf/libbpf.c
+> > >> @@ -136,6 +136,9 @@ static const char * const attach_type_name[] =3D=
+ {
+> > >>          [BPF_NETKIT_PEER]               =3D "netkit_peer",
+> > >>          [BPF_TRACE_KPROBE_SESSION]      =3D "trace_kprobe_session",
+> > >>          [BPF_TRACE_UPROBE_SESSION]      =3D "trace_uprobe_session",
+> > >> +       [BPF_TRACE_FENTRY_MULTI]        =3D "trace_fentry_multi",
+> > >> +       [BPF_TRACE_FEXIT_MULTI]         =3D "trace_fexit_multi",
+> > >> +       [BPF_MODIFY_RETURN_MULTI]       =3D "modify_return_multi",
+> > >>   };
+> > >>
+> > >>   static const char * const link_type_name[] =3D {
+> > >> @@ -410,6 +413,8 @@ enum sec_def_flags {
+> > >>          SEC_XDP_FRAGS =3D 16,
+> > >>          /* Setup proper attach type for usdt probes. */
+> > >>          SEC_USDT =3D 32,
+> > >> +       /* attachment target is multi-link */
+> > >> +       SEC_ATTACH_BTF_MULTI =3D 64,
+> > >>   };
+> > >>
+> > >>   struct bpf_sec_def {
+> > >> @@ -7419,9 +7424,9 @@ static int libbpf_prepare_prog_load(struct bpf=
+_program *prog,
+> > >>                  opts->expected_attach_type =3D BPF_TRACE_UPROBE_MUL=
+TI;
+> > >>          }
+> > >>
+> > >> -       if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
+> > >> +       if ((def & (SEC_ATTACH_BTF | SEC_ATTACH_BTF_MULTI)) && !prog=
+=2D>attach_btf_id) {
+> > >>                  int btf_obj_fd =3D 0, btf_type_id =3D 0, err;
+> > >> -               const char *attach_name;
+> > >> +               const char *attach_name, *name_end;
+> > >>
+> > >>                  attach_name =3D strchr(prog->sec_name, '/');
+> > >>                  if (!attach_name) {
+> > >> @@ -7440,7 +7445,27 @@ static int libbpf_prepare_prog_load(struct bp=
+f_program *prog,
+> > >>                  }
+> > >>                  attach_name++; /* skip over / */
+> > >>
+> > >> -               err =3D libbpf_find_attach_btf_id(prog, attach_name,=
+ &btf_obj_fd, &btf_type_id);
+> > >> +               name_end =3D strchr(attach_name, ',');
+> > >> +               /* for multi-link tracing, use the first target symb=
+ol during
+> > >> +                * loading.
+> > >> +                */
+> > >> +               if ((def & SEC_ATTACH_BTF_MULTI) && name_end) {
+> > >> +                       int len =3D name_end - attach_name + 1;
+> > > for multi-kprobe we decided to only support a single glob  as a target
+> > > in declarative SEC() definition. If a user needs more control, they
+> > > can always fallback to the programmatic bpf_program__attach_..._opts()
+> > > variant. Let's do the same here, glob is good enough for declarative
+> > > use cases, and for complicated cases programmatic is the way to go
+> > > anyways. You'll avoid unnecessary complications like this one then.
+> >
+> >
+> > In fact, this is to make the BPF code in the selftests simple. With such
+> >
+> > control, I can test different combination of the target functions easil=
+y,
+> >
+> > just like this:
+> >
+> >
+> > SEC("fentry.multi/bpf_testmod_test_struct_arg_1,bpf_testmod_test_struct=
+_arg_13")
+> > int BPF_PROG2(fentry_success_test1, struct bpf_testmod_struct_arg_2, a)
+> > {
+> >      test_result =3D a.a + a.b;
+> >      return 0;
+> > }
+> >
+> > SEC("fentry.multi/bpf_testmod_test_struct_arg_2,bpf_testmod_test_struct=
+_arg_10")
+> > int BPF_PROG2(fentry_success_test2, int, a, struct
+> > bpf_testmod_struct_arg_2, b)
+> > {
+> >      test_result =3D a + b.a + b.b;
+> >      return 0;
+> > }
+> >
+> >
+> > And you are right, we should design it for the users, and a single glob=
+ is
+> >
+> > much better. Instead, I'll implement the combination testings in the
+> >
+> > loader with bpf_program__attach_trace_multi_opts().
+> >
+>=20
+> sgtm. I'd also think if we can construct a glob that would describe
+> functions you need (and if necessary to rename testmod functions
+> slightly - so be it, it's all for testing anyways)
 
-On Wed, Jun 18, 2025 at 02:02:51PM +0200, Oleksij Rempel wrote:
-> + * Sysfs Interface:
-> + * ----------------
-> + *   /sys/kernel/pscrr/reason       - Read/write current power state change
-> + *				      reason
-> + *   /sys/kernel/pscrr/reason_boot  - Read-only last recorded reason from
-> + *				      previous boot
+It works if I define all the functions that I need in the testmod.
+However, most of the functions in the testing is reusing the
+existing function, so it's a little complex to change them :/
 
-The sysfs documentation is in the ABI file, so it's not needed here.
+>=20
+> >
+> > >
+> > > BTW, it's not trivial to figure this out from earlier patches, but
+> > > does BPF verifier need to know all these BTF type IDs during program
+> > > verification time? If yes, why and then why do we need to specify them
+> > > during LINK_CREATE time. And if not, then great, and we don't need to
+> > > parse all this during load time.
+> >
+> >
+> > It doesn't need to know all the BTF type IDs, but it need to know one
+> >
+> > of them(the first one), which means that we still need to do the parse
+> >
+> > during load time.
+> >
+> >
+> > Of course, we can split it:
+> >
+> > step 1: parse the glob and get the first BTF type ID during load time
+> >
+> > step 2: parse the glob and get all the BTF type IDs during attachment
+> >
+> >
+> > But it will make the code a little more complex. Shoud I do it this way?
+> >
+> > I'd appreciate it to hear some advice here :/
+>=20
+> I think I have a bit of disconnect here, because in my mind
+> multi-fentry/fexit cannot be type-aware, in general, at BPF
+> verification time. I.e., verifier should not assume any specific
+> prototype, and this gets back to my suggestion to just use
+> bpf_get_func_arg/cnt. While in some special cases you might want to
+> attach to a small number of functions that, say, have task_struct
+> argument and we can take a bit of advantage of this in BPF code by
+> verifier ensuring that all attached functions have that task_struct, I
+> do think this is unnecessary complication and limitation, and I'd
+> rather make multi-fentry/fexit not type-aware in the same way as
+> fentry/fexit is. With that, verifier won't need to know BTF ID, and so
+> multi-fentry will work very similarly to multi-kprobe, just will be
+> slightly cheaper at runtime.
 
-> +static int pscrr_reboot_notifier(struct notifier_block *nb,
-> +				 unsigned long action, void *unused)
-> +{
-> +	struct pscrr_backend *backend;
-> +	int ret;
-> +
-> +	guard(g_pscrr)(&g_pscrr);
-> +
-> +	backend = g_pscrr.backend;
-> +
-> +	if (!backend || !backend->ops || !backend->ops->write_reason)
-> +		return NOTIFY_DONE;
-> +
-> +	ret = backend->ops->write_reason(get_psc_reason());
-> +	if (ret) {
-> +		pr_err("PSCRR: Failed to store reason %d (%s) at reboot, err=%pe\n",
-> +		       get_psc_reason(), psc_reason_to_str(get_psc_reason()),
-> +		       ERR_PTR(ret));
-> +	} else {
-> +		pr_info("PSCRR: Stored reason %d (%s) at reboot.\n",
-> +			get_psc_reason(), psc_reason_to_str(get_psc_reason()));
+I see your idea now, which will free us from the function prototype
+checking, and we don't need to do any consistency checking during
+the attaching.
 
-Why print anything?  If this works properly, it should be quiet, right?
+In my origin design, I tried to make the fentry-multi easy to use, and
+keep the same usage with fentry.
 
-> +static ssize_t reason_show(struct kobject *kobj, struct kobj_attribute *attr,
-> +			   char *buf)
-> +{
-> +	struct pscrr_backend *backend;
-> +	enum psc_reason r;
-> +
-> +	guard(g_pscrr)(&g_pscrr);
-> +
-> +	backend = g_pscrr.backend;
-> +
-> +	if (!backend || !backend->ops)
-> +		return scnprintf(buf, PAGE_SIZE, "No backend registered\n");
+So the only shortcoming of the method you said is that the user
+can't access the function argument with ctx[x] directly, and the
+bpf_core_cast() need to be used. Considering the use case, I think it's
+OK in this way. After all, the common use case is we attach the bpf
+prog to all the functions that has "task_struct" and store the argument
+index in the cookie. And get the task_struct with
+`bpf_core_cast(bpf_get_func_arg(cookie), struct task_struct)`.
 
-So a string, or an int will be returned?  That's crazy, just return an
-error here, -ENODEV?
+I'll implement this part in this way, which can reduce 100+ line code :/
 
-> +
-> +	/* If the backend can read from hardware, do so. Otherwise, use our cached value. */
-> +	if (backend->ops->read_reason) {
-> +		if (backend->ops->read_reason(&r) == 0) {
-> +			/* Also update our cached value for consistency */
-> +			set_psc_reason(r);
-> +		} else {
-> +			/* If read fails, fallback to cached. */
-> +			r = get_psc_reason();
-> +		}
-> +	} else {
-> +		r = get_psc_reason();
-> +	}
-> +
-> +	return scnprintf(buf, PAGE_SIZE, "%d\n", r);
+Thanks!
+Menglong Dong
 
-sysfs files should use sysfs_emit() so you don't get people sending you
-patches later on to convert it :)
+>=20
+> And I'm saying all this, because even if all attached functions have
+> task_struct as that argument, you can achieve exactly that by just
+> doing `bpf_core_cast(bpf_get_func_arg(0), struct task_struct)`, and
+> that's all. So I'd simplify and make working with multi-fentry easier
+> for multi-function tracers (which is the challenging aspect with
+> fentry today). If you have 2-3-4-5 functions you are attaching to and
+> hoping to get that task_struct, you might as well just attach 2-3-4-5
+> times, get performance benefit, without really compromising much on
+> attachment time (because 5 attachments are plenty fast).
+>=20
+> >
+> >
+> > >
+> > >> +                       char *first_tgt;
+> > >> +
+> > >> +                       first_tgt =3D malloc(len);
+> > >> +                       if (!first_tgt)
+> > >> +                               return -ENOMEM;
+> > >> +                       libbpf_strlcpy(first_tgt, attach_name, len);
+> > >> +                       first_tgt[len - 1] =3D '\0';
+> > >> +                       err =3D libbpf_find_attach_btf_id(prog, firs=
+t_tgt, &btf_obj_fd,
+> > >> +                                                       &btf_type_id=
+);
+> > >> +                       free(first_tgt);
+> > >> +               } else {
+> > >> +                       err =3D libbpf_find_attach_btf_id(prog, atta=
+ch_name, &btf_obj_fd,
+> > >> +                                                       &btf_type_id=
+);
+> > >> +               }
+> > >> +
+> > >>                  if (err)
+> > >>                          return err;
+> > >>
+> > >> @@ -9519,6 +9544,7 @@ static int attach_kprobe_session(const struct =
+bpf_program *prog, long cookie, st
+> > >>   static int attach_uprobe_multi(const struct bpf_program *prog, lon=
+g cookie, struct bpf_link **link);
+> > >>   static int attach_lsm(const struct bpf_program *prog, long cookie,=
+ struct bpf_link **link);
+> > >>   static int attach_iter(const struct bpf_program *prog, long cookie=
+, struct bpf_link **link);
+> > >> +static int attach_trace_multi(const struct bpf_program *prog, long =
+cookie, struct bpf_link **link);
+> > >>
+> > >>   static const struct bpf_sec_def section_defs[] =3D {
+> > >>          SEC_DEF("socket",               SOCKET_FILTER, 0, SEC_NONE),
+> > >> @@ -9565,6 +9591,13 @@ static const struct bpf_sec_def section_defs[=
+] =3D {
+> > >>          SEC_DEF("fentry.s+",            TRACING, BPF_TRACE_FENTRY, =
+SEC_ATTACH_BTF | SEC_SLEEPABLE, attach_trace),
+> > >>          SEC_DEF("fmod_ret.s+",          TRACING, BPF_MODIFY_RETURN,=
+ SEC_ATTACH_BTF | SEC_SLEEPABLE, attach_trace),
+> > >>          SEC_DEF("fexit.s+",             TRACING, BPF_TRACE_FEXIT, S=
+EC_ATTACH_BTF | SEC_SLEEPABLE, attach_trace),
+> > >> +       SEC_DEF("tp_btf+",              TRACING, BPF_TRACE_RAW_TP, S=
+EC_ATTACH_BTF, attach_trace),
+> > > duplicate
+> >
+> >
+> > Get it :/
+> >
+> >
+> > Thanks!
+> >
+> > Menglong Dong
+> >
+> >
+> > >
+> > >
+> > >> +       SEC_DEF("fentry.multi+",        TRACING, BPF_TRACE_FENTRY_MU=
+LTI, SEC_ATTACH_BTF_MULTI, attach_trace_multi),
+> > >> +       SEC_DEF("fmod_ret.multi+",      TRACING, BPF_MODIFY_RETURN_M=
+ULTI, SEC_ATTACH_BTF_MULTI, attach_trace_multi),
+> > >> +       SEC_DEF("fexit.multi+",         TRACING, BPF_TRACE_FEXIT_MUL=
+TI, SEC_ATTACH_BTF_MULTI, attach_trace_multi),
+> > >> +       SEC_DEF("fentry.multi.s+",      TRACING, BPF_TRACE_FENTRY_MU=
+LTI, SEC_ATTACH_BTF_MULTI | SEC_SLEEPABLE, attach_trace_multi),
+> > >> +       SEC_DEF("fmod_ret.multi.s+",    TRACING, BPF_MODIFY_RETURN_M=
+ULTI, SEC_ATTACH_BTF_MULTI | SEC_SLEEPABLE, attach_trace_multi),
+> > >> +       SEC_DEF("fexit.multi.s+",       TRACING, BPF_TRACE_FEXIT_MUL=
+TI, SEC_ATTACH_BTF_MULTI | SEC_SLEEPABLE, attach_trace_multi),
+> > >>          SEC_DEF("freplace+",            EXT, 0, SEC_ATTACH_BTF, att=
+ach_trace),
+> > >>          SEC_DEF("lsm+",                 LSM, BPF_LSM_MAC, SEC_ATTAC=
+H_BTF, attach_lsm),
+> > >>          SEC_DEF("lsm.s+",               LSM, BPF_LSM_MAC, SEC_ATTAC=
+H_BTF | SEC_SLEEPABLE, attach_lsm),
+> > >> @@ -12799,6 +12832,135 @@ static int attach_trace(const struct bpf_p=
+rogram *prog, long cookie, struct bpf_
+> > >>          return libbpf_get_error(*link);
+> > >>   }
+> > >>
+> > > [...]
+> > >
+>=20
 
-> +static ssize_t reason_store(struct kobject *kobj, struct kobj_attribute *attr,
-> +			    const char *buf, size_t count)
-> +{
-> +	struct pscrr_backend *backend;
-> +	long val;
-> +	int ret;
-> +
-> +	guard(g_pscrr)(&g_pscrr);
-> +
-> +	backend = g_pscrr.backend;
-> +
-> +	if (!backend || !backend->ops || !backend->ops->write_reason)
-> +		return -ENODEV;
-> +
-> +	ret = kstrtol(buf, 10, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val > U32_MAX)
-> +		return -ERANGE;
-> +
-> +	if (val < PSCR_UNKNOWN || val > PSCR_MAX_REASON)
-> +		/*
-> +		 * Log a warning, but still attempt to write the value. In
-> +		 * case the backend can handle it, we don't want to block it.
-> +		 */
-> +		pr_warn("PSCRR: writing unknown reason %ld (out of range)\n",
-> +			val);
 
-Do not let userspace cause a DoS of kernel log messages just because it
-sent you an invalid data range.
 
-> +static struct kobj_attribute reason_attr = __ATTR(reason, 0644, reason_show,
-> +						  reason_store);
 
-__ATTR_RW(), right?  If not, why not?
-
-> +static struct kobj_attribute reason_boot_attr =
-> +	__ATTR(reason_boot, 0444, reason_boot_show, NULL); /* Read-only */
-
-__ATTR_RO(), right?  Then no comment is needed :)
-
-> +int pscrr_core_init(const struct pscrr_backend_ops *ops)
-> +{
-> +	enum psc_reason stored_val = PSCR_UNKNOWN;
-> +	struct pscrr_backend *backend;
-> +	int ret;
-> +
-> +	guard(g_pscrr)(&g_pscrr);
-> +
-> +	backend = g_pscrr.backend;
-> +
-> +	if (backend) {
-> +		pr_err("PSCRR: Core is already initialized!\n");
-
-All of the "PSCRR:" stuff should just be set with pr_fmt being defined
-at the top of this file, don't put it everywhere manually.
-
-> +		return -EBUSY;
-> +	}
-> +
-> +	if (!ops->read_reason) {
-> +		pr_err("PSCRR: Backend must provide read callbacks\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	backend = kzalloc(sizeof(*backend), GFP_KERNEL);
-> +	if (!backend)
-> +		return -ENOMEM;
-> +
-> +	backend->ops = ops;
-> +	backend->last_boot_reason = PSCR_UNKNOWN;
-> +	g_pscrr.backend = backend;
-> +
-> +	ret = ops->read_reason(&stored_val);
-> +	if (!ret) {
-> +		backend->last_boot_reason = stored_val;
-> +		pr_info("PSCRR: Initial read_reason: %d (%s)\n",
-> +			stored_val, psc_reason_to_str(stored_val));
-
-When code works properly, it should be quiet.  Don't spam the boot log
-please.
-
-> +	ret = sysfs_create_group(g_pscrr.kobj, &pscrr_attr_group);
-> +	if (ret) {
-> +		pr_err("PSCRR: Failed to create sysfs group, err=%pe\n",
-> +		       ERR_PTR(ret));
-> +		goto err_kobj_put;
-> +	}
-> +
-> +	pr_info("PSCRR: initialized successfully.\n");
-
-Same here, be quiet.
-
-> +void pscrr_core_exit(void)
-> +{
-> +	guard(g_pscrr)(&g_pscrr);
-> +
-> +	if (!g_pscrr.backend)
-> +		return;
-> +
-> +	if (g_pscrr.kobj) {
-> +		sysfs_remove_group(g_pscrr.kobj, &pscrr_attr_group);
-> +		kobject_put(g_pscrr.kobj);
-> +	}
-> +
-> +	unregister_reboot_notifier(&g_pscrr.reboot_nb);
-> +
-> +	kfree(g_pscrr.backend);
-> +	g_pscrr.backend = NULL;
-> +
-> +	pr_info("PSCRR: exited.\n");
-
-Same here, please be quiet.
-
-thanks,
-
-greg k-h
 
