@@ -1,84 +1,119 @@
-Return-Path: <linux-kernel+bounces-733471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CBCB07515
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:54:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3E3B07529
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1F19506D3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:53:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA4987B0969
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8482F50AF;
-	Wed, 16 Jul 2025 11:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16762F50AA;
+	Wed, 16 Jul 2025 11:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GGFPT/Gk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kCV0QIWi"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964312F5098;
-	Wed, 16 Jul 2025 11:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A802F49F2
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752666817; cv=none; b=reVe7J3YE2H/BBTO6CS6ZjPIe9Kc9uq9lYUwUMK4lGZ9qKAxQ1wojRz5mgS+lo1YvvGnR0t3QuSptIVBzYMT+Lxp4j0txH82w0pIak/eHtaHfqTFdlZkbiwxPrF2J+Vyp6uGfLCLoA55H+oVlaP3Z9dkbMNPJWYmIJwB+NCxZEs=
+	t=1752666908; cv=none; b=g0YzkLY3fgmOtV6Uk7ppuLdHQx20WSKB6ivHCblTQRRQTLHE9r3yuUAIZkBB6MbA2iQw8Si+uyAcyiWI9TSJ85oKc5MjadCv942jTmNLKHqTRUgjwbBs+DAQN1p2QTokrKYIZhT1m0NhZ8qSi66D3bbvwkvNmc1bjnpN7JvGERU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752666817; c=relaxed/simple;
-	bh=Z/UmLfAfvDDN2pNeQi4tqkc4cBQJdv0CRL+ljKH1eHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lnXJMvY3sLuZ+So52c/GNRt018NnCYfarv1VfNIoV+bZ72uQclV/TRl6Sl5jSXg4WKTgtO8bdauPtZvTSM3+ITV2dN018lKjOwpZ6b5dkb35i2DTxwxMjtryOodNTEO0wFbfK3Ia3SZNvm6BnlQTJa7S7rcjLgyj14K/+wy6G48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GGFPT/Gk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A17C9C4CEF6;
-	Wed, 16 Jul 2025 11:53:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752666817;
-	bh=Z/UmLfAfvDDN2pNeQi4tqkc4cBQJdv0CRL+ljKH1eHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GGFPT/Gk9K4053/vzVZJiRD+loa8EtbUbNa4vXm0hUMZbTa613cTCmfa0mBUuN4a4
-	 wp4GIdslqVaqfzs2thJ5UIuhhRG2D20vrF2+MHtCRmP4ZpEH03O+Y7A2XN2w8pmR82
-	 kiPjkWpL2HIuK0aC2YNTlKtP6Bhk5C9RqzpWajGc=
-Date: Wed, 16 Jul 2025 13:53:34 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-Cc: arnd@arndb.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	luoyifan@cmss.chinamobile.com, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v6 2/3] eeprom: add driver for ST M24LR series RFID/NFC
- EEPROM chips
-Message-ID: <2025071651-pushcart-scapegoat-6155@gregkh>
-References: <20250706105311.395162-1-abd.masalkhi@gmail.com>
- <20250706105311.395162-3-abd.masalkhi@gmail.com>
+	s=arc-20240116; t=1752666908; c=relaxed/simple;
+	bh=5MLzakPnK7x1wR/xUJvUAIyxiAo8Nz3QyiHKXJQC+ng=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QcoNBrUina7As1S3Eu7YsTzf5TZWJG2k8YWctdazBFc1Rge/m6+z/Al/0iD+r7omLG/DYzlpwFOB4ikPFaVaT4GXR5EH7B5yStfrafJzY9KiPimgw4BLRLjtL5vWk/RBl0ZvXqouFUGgRO2lGs3HJDEajni8CfHnh9TXVVcCXjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kCV0QIWi; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752666892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5MLzakPnK7x1wR/xUJvUAIyxiAo8Nz3QyiHKXJQC+ng=;
+	b=kCV0QIWi6mbXGDOyzDE1puMWGwAAhdSowsRx8oxSr0ZTZl/gfPGyM/3JBWm2lXrEc6kD6v
+	EZidyBjcG5t3unZmTzNDO3ZwnKCaym38JNJuKTBooM/wgCiVO/QddpFF87PVKmmmsGunp1
+	PaV20lPSwAhAmHDWYWJx7DyDw0dr7bE=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Menglong Dong <menglong8.dong@gmail.com>, alexei.starovoitov@gmail.com,
+ rostedt@goodmis.org, jolsa@kernel.org, bpf@vger.kernel.org,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH bpf-next v2 14/18] libbpf: add btf type hash lookup support
+Date: Wed, 16 Jul 2025 19:53:50 +0800
+Message-ID: <3339133.5fSG56mABF@7940hx>
+In-Reply-To:
+ <CAEf4BzZCPcq0eo=1SN-r=k5QF1XE5hihEYHYYdi37aiV7VXwVQ@mail.gmail.com>
+References:
+ <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <22e15dd2-8564-4e71-ab77-8b436870850d@linux.dev>
+ <CAEf4BzZCPcq0eo=1SN-r=k5QF1XE5hihEYHYYdi37aiV7VXwVQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250706105311.395162-3-abd.masalkhi@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Jul 06, 2025 at 10:53:10AM +0000, Abd-Alrhman Masalkhi wrote:
-> +/**
-> + * m24lr_parse_le_value - Parse hex string and convert to little-endian binary
-> + * @buf:	Input string buffer (hex format)
-> + * @reg_size:	Size of the register in bytes (must be 1, 2, 4, or 8)
-> + * @output:	Output buffer to store the value in little-endian format
-> + *
-> + * Converts a hexadecimal string to a numeric value of the given register size
-> + * and writes it in little-endian byte order into the provided buffer.
-> + *
-> + * Return: 0 on success, or negative error code on failure
-> + */
-> +static __maybe_unused int m24lr_parse_le_value(const char *buf, u32 reg_size,
-> +					       u8 *output)
+On Wednesday, July 16, 2025 1:20 AM Andrii Nakryiko <andrii.nakryiko@gmail.=
+com> write:
+> On Mon, Jul 14, 2025 at 9:41=E2=80=AFPM Menglong Dong <menglong.dong@linu=
+x.dev> wrote:
+> >
+> >
+> > On 7/15/25 06:07, Andrii Nakryiko wrote:
+> > > On Thu, Jul 3, 2025 at 5:22=E2=80=AFAM Menglong Dong <menglong8.dong@=
+gmail.com> wrote:
+> > >> For now, the libbpf find the btf type id by loop all the btf types a=
+nd
+> > >> compare its name, which is inefficient if we have many functions to
+> > >> lookup.
+> > >>
+> > >> We add the "use_hash" to the function args of find_kernel_btf_id() to
+> > >> indicate if we should lookup the btf type id by hash. The hash table=
+ will
+> > >> be initialized if it has not yet.
+> > > Or we could build hashtable-based index outside of struct btf for a
+> > > specific use case, because there is no one perfect hashtable-based
+> > > indexing that can be done generically (e.g., just by name, or
+> > > name+kind, or kind+name, or some more complicated lookup key) and
+> > > cover all potential use cases. I'd prefer not to get into a problem of
+> > > defining and building indexes and leave it to callers (even if the
+> > > caller is other part of libbpf itself).
+> >
+> >
+> > I think that works. We can define a global hash table in libbpf.c,
+> > and add all the btf type to it. I'll redesign this part, and make it
+> > separate with the btf.
+>=20
+> No global things, please. It can be held per-bpf_object, or even
+> constructed on demand during attachment and then freed. No need for
+> anything global.
 
-Your __maybe_unused marker here hid the fact that it is NOT used
-anywhere in this driver :(
+Okay, the per-bpf_object is a good idea, and I'll try to implement
+it this way.
 
-Please remove this function as it's not needed.
+Thanks!
+Menglong Dong
 
-thanks,
 
-greg k-h
+
+
+
 
