@@ -1,115 +1,94 @@
-Return-Path: <linux-kernel+bounces-733574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4337AB07678
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:59:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800C2B0767F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D7A3A4070
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:59:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED9697BEB45
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7102F5493;
-	Wed, 16 Jul 2025 12:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECAC2F5469;
+	Wed, 16 Jul 2025 12:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlwGJ25z"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qy+Mf1G3"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8B72F5470;
-	Wed, 16 Jul 2025 12:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A550B28C2CA;
+	Wed, 16 Jul 2025 12:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752670648; cv=none; b=PHn80fS4g9cRRZYzDF7c+QBL8FqbUx1ZTydP+Yoi42v9RkmrMox8X3YX1LhQntyFaglQLJH2wXSyrSLxfgEVpOx3l6cNSEKS+7UZER1LEsirAHKTgGyaNBOooPMGeqemWMi2oyMFKakeYuQO/MmtW6NKrkew6XwMWBoYKztpNe0=
+	t=1752670642; cv=none; b=kcDdZFsvY683nmx8gis5MqxfysbRGZzF++Wi8TJw3KiWx/dBEVISQRNe1ypZWrzike7BRhtJdgq/qZTEOgC2XOX4q/yyGbpvteyDu1lPiP0sJ5KiiE4mbCV0U5tXNTaSvuxgCb6Uzabsy9rESTLqYjZsvEDYqz6dhj23PRfmeV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752670648; c=relaxed/simple;
-	bh=m2LnwIGYhLWQq9/vNrmq/h8g1o9AkmJ0CbCqU4PYnxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e/aJhiU699Hp+TLVlXIk0M+bwISEljgxPFqJ321SVEZMm2CKp+nlFTJcMpor4w3zHwfPV59g7gb+vdzlXf180vmpKiX6YFEYhnGFx2UVGI6G3BpEC+m01CoMMFGEgwp0qMXxvnDfkVLg6m5IRzJ6Zl6IwBQ411fQCRyKQt1EExE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JlwGJ25z; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-558f7fc9d7fso235633e87.1;
-        Wed, 16 Jul 2025 05:57:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752670645; x=1753275445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GnUmwmHd04RAbDihiDJsc+TMOL+rIoUaNraa5eqvF7w=;
-        b=JlwGJ25zhCRoKi+uiDEy1An4MiM98mEZwqQ4l9JMJ/LXfI06ryqCFLf94FPh0HwgHr
-         9ws/OlMURnBWwgndU5tKiMZo5/8coaf1LLeoSjMW1fsslJOJArq0LfWaBNeDOOnj5INh
-         QBRPfNIO3EtZ7a04OqqlHkJt7rlYOywxVVIrwqR5dfRDwSllSzYKqGBtSkvtFYQEGyUd
-         3OFsQP5SGVtUuiRjj/j0pnS8rvKffibmmScq7BH573pqnZlbWWo3xpnYBOjSfBiQcMmD
-         PjZKSoFydFwkUaivFJOusE+RpxOcXVw5hPdX+XwIH+NEPdr7asnkU1AYFaWQEPhyrgJo
-         Vs1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752670645; x=1753275445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GnUmwmHd04RAbDihiDJsc+TMOL+rIoUaNraa5eqvF7w=;
-        b=atltmgPapKNuecaJeVBgYwx6E5SCGVfpnU9OHynxZlI7lyXR4Zb+zV3xwmiOZSAfKz
-         usSeeDziwNtNjzGHCTt07kuFqgbrpoap/LTCFD94gnViUk2gPNKqhKdcY2WAyjknZnSr
-         McnVovP9Lf+ElEUef23PGtBfUd6fIoGD8Tc0thfobqIdgi3oQNT2/S8TJiyAwKzrmoxu
-         KqtMIruu8ma+a6Tygnrs/wiIV10SOOD5QVX4REC/gpRno0os+5zz0/35WtYthQWfjOlq
-         fcShTzjzuis57wTgAmUOdEFZlLZkG2nN2Iruy5GF6f4yOcCmhr8EUI8GgbTtDn0o/teI
-         X0/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUC4EMoIjFeido3KthFLlyubcyVaCxzhXC9B/p4P8G9i5V07GMyQA06RbHAQfD3UNORwy2yU2EMnsF1aV4H9LM=@vger.kernel.org, AJvYcCXp0wUS5X1KFlykACYoJYi4LGESH/2Qv/nuAqWW56WZfrD5GaWc6243/WjDYNfbBg8bxNdZuIWjAg8/@vger.kernel.org, AJvYcCXt+ny8nYXEZa4AUB16ds27pKeLqCBcPVT2civtU2csFwtOvX6f/LYZwPg7v4s3A940O5TJWguwP64pNrsr@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiOs91nDxV/GzR5HFfsOckiJsf/CvZDFSPwL6NCwLNy4xpaglx
-	JXIqMWt4SbfGzE8YikEECLAhYE6599V5Knld9FhFFY+Ua+0khO8MyFSHlVXe8QD5NdgYEiKVr26
-	+JVG5jkTjZRMWv43B+wU9Z4tP3wV6i18=
-X-Gm-Gg: ASbGncvrTxqObRCYAeLBfiZ44M74FqKTEb6UGMKNJgvj6Bl0/xlzOHyaZiJmCx+TCcd
-	yiqJrqcT30yReR04E1YyPPvZwVaS3F3bZAYkjyqMOcHPRz/wPmNF7ntwjVHTZBjwegzLGCKaWgL
-	xO34R5jEbrlWT18NIBzZImchttvK1EJ5GRTrxGbCWMOyztdKSMUAcHa6cVGPdolmfu4WxtoZmTI
-	WJ4/Q==
-X-Google-Smtp-Source: AGHT+IHg75d3gVVHrcM/53JCe0JWtEDOc+JkT8umOlD84lSgO0oBWv54W8RcNo6KapvHj4vSpgUVoGscVjFYDN0Vl4M=
-X-Received: by 2002:a05:6512:1313:b0:554:f76a:bab8 with SMTP id
- 2adb3069b0e04-55a233d6c0dmr354370e87.15.1752670644558; Wed, 16 Jul 2025
- 05:57:24 -0700 (PDT)
+	s=arc-20240116; t=1752670642; c=relaxed/simple;
+	bh=VcUS0dGH2wrw6iExfsqdUu1BbgXr9w0BXMZvmB8YS3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOcXDeBjTnq5ldoBzth8cADOS7zh1IDRnZpdMMj+deLd+FZqlro16O/TgrnJl4pJ6/2MlrsCn0siFITVLK6q2y9QTWg7lGKiiPt1Iwj6KFnY6H+qgEeoG9cuoOiXuQVcZFu1Pwn2H+7dqY/AdpAGdgTZimfptcrW0hZw9Aw/w2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Qy+Mf1G3; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=8WjBaq62WfxPGFa8coyuo3PlCV3qYPJ3ILLM2MOzQAk=; b=Qy+Mf1G32449AxAmOsvxvnB9+4
+	pWWUP7R+NI7k/0eoub5QtAw2BOHzFJStA/2JFN7I5SRAGGdwCSjI0ZArJtQsbqyHe8qKFqrziIHfx
+	rJHe+bTeKKYgxvIg8mkN5ZIDvEWJUh/koeR6HjNy64UlnNilWjj/g4LnVr8uASRr1NHAyizfGDLh+
+	GSLwiH0siUmJKJg1FlCGmWj2bSu8YVSeZ5RaZ3LhB4wlNssuA5hE0z7CfFUgYJ0e5koYYU9gMy28p
+	mJMCjFyaaCb6isTfpvxKmSVxAFZxj2wz3nUZJVkrX4qi3152gSC1GVTL6QmfSFg7bYCfQnKLKWrjI
+	cYfaisWg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uc1hG-00000007iqs-316b;
+	Wed, 16 Jul 2025 12:57:18 +0000
+Date: Wed, 16 Jul 2025 05:57:18 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/15] fs,fork,exit: export symbols necessary for
+ KUnit UAPI support
+Message-ID: <aHehrhXgQohy1JnQ@infradead.org>
+References: <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
+ <20250711154423.GW1880847@ZenIV>
+ <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
+ <20250716072228-2dc39361-80b4-4603-8c20-4670a41e06ec@linutronix.de>
+ <aHdE9zgr_vjQlpwH@infradead.org>
+ <20250716101207-c4201cef-abbe-481d-bca5-c2b27f324506@linutronix.de>
+ <aHeIyNmIYsKkBktV@infradead.org>
+ <20250716132337-ee01c8f1-0942-4d45-a906-67d4884a765e@linutronix.de>
+ <aHeOxh_yaQGFVVwM@infradead.org>
+ <20250716143500-d42ea724-1bac-476e-80b8-1e033625392a@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714053656.66712-1-boqun.feng@gmail.com> <20250714053656.66712-2-boqun.feng@gmail.com>
- <2025071611-factsheet-sitter-93b6@gregkh> <20250716124713.GW905792@noisy.programming.kicks-ass.net>
- <2025071651-daylong-brunette-ed9e@gregkh>
-In-Reply-To: <2025071651-daylong-brunette-ed9e@gregkh>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 16 Jul 2025 14:57:09 +0200
-X-Gm-Features: Ac12FXw_Z0jSZPqLajQHzSS9go_boufb3ia_2RqCm041xzqV0b0NUKvb3yFhI9g
-Message-ID: <CANiq72kn1MQqY8MXaR9bnSYD=Wo7yC4Wxcq0p0Z4w2K=_dDpiw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/9] rust: Introduce atomic API helpers
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>, 
-	Mitchell Levy <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Alan Stern <stern@rowland.harvard.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250716143500-d42ea724-1bac-476e-80b8-1e033625392a@linutronix.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Jul 16, 2025 at 2:54=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> Ah, ok, that makes sense in a sad way.  As long as someone knows to
-> regenerate these files when needed, hopefully when the C files change
-> someone knows to update these rust ones...
+On Wed, Jul 16, 2025 at 02:47:08PM +0200, Thomas Weißschuh wrote:
+> This is exactly what I did in the beginning. Then I got told about the distros
+> using KUNIT=m [0] and decided that it does make sense to support.
 
-IIUC, the line added in `scripts/atomic/gen-atomics.sh` will make sure
-it happens at the same time, right?
+Well, not if you need to export tons of stuff for it.
 
-Cheers,
-Miguel
+> The actual code using these exports [1] was Cc'ed to both linux-fsdevel and
+> linux-mm. In addition to the cover-letter and the exports patch.
+> The rest of the series does not interact with the exports at all.
+
+
+Incomplete series are not reviewable.  Don't even start arguing about
+that, if you don't send series to all list they deserve to be ignored
+in general.
 
