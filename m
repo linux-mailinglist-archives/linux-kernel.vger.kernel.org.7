@@ -1,390 +1,341 @@
-Return-Path: <linux-kernel+bounces-734399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E1AB0810D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:33:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A90B08110
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E7D581405
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:33:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AE4E1C4129B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4512EF660;
-	Wed, 16 Jul 2025 23:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28712EF673;
+	Wed, 16 Jul 2025 23:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="b2QRGDCi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gbYwxrXf"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XVGlcSC8"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E041581EE;
-	Wed, 16 Jul 2025 23:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79CB2ECD28
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752708828; cv=none; b=oqAhlSYhzFdTlO9FcSLs8V1uRFbIlIEnirTZxWCl47CB2KOiXpPlqraOOOvF2SeBvlmqAtq6YOwCe2WfzFUJMoK9Ck//7yNfIdOVUEAIi968EqJko8+Jn3YJjVrklzNInpgBT9XxrU8xjh4/S5muj1tuGRrER0J9XkEqTAWOIws=
+	t=1752709060; cv=none; b=WBv9o4G3uVVYP8Y9yUf8GR7hK8xTrqeTp2C7qw1Bm3fqaKAOMLXED1ponuwj28AaDUIrzg3BTg65GkwEsjZmComSaXCTUU2NNPpw8GPWxQURzr7GLnRkD+IsOZi1zSGyO01TN1Fn3pW/HN2lag/XfTTgxq00+pttU1ZywGgZYiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752708828; c=relaxed/simple;
-	bh=LzqftZdc4+mnHHm+k8nhqy8oG4SZDOFg/v3x5bWpL3c=;
-	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=dUM3K6AVSG5868uusrNxef1GmKHzjDatvsY8KCKYNrdjHf7jLcnT3MUBK75ClH2zoN5KL9Be1amvoMVI/EE2p/hIuG2w4zFQmc3etGTPOrYskJurU7AS/lKG5nw6OnsEoWE7yI42WrLdUjq8O/b6Hp+64lj258kH/IHuTQgYOMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=b2QRGDCi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gbYwxrXf; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id B6E10EC01D1;
-	Wed, 16 Jul 2025 19:33:42 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 16 Jul 2025 19:33:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1752708822; x=1752795222; bh=9neY7JnORRQ6tCfHWMu9ZGbiJTIktxJS
-	p0grs8cTTAQ=; b=b2QRGDCiBZITVzwX+kvrTX+dmEz2upIVPeCNmusIVP2b1OX0
-	bGb8uNAV46iDL5DhYWKcj7LlPPqQ0QsE9s419EjiqacllYQx5q2bfhvLmQgUa/9n
-	uEDvUAmX0k//81EznBoncAPTMhZ0yK4agVHg3DNHQD9nyF3TjDWs2913QY43IDbk
-	d/TJeqS2fan/pB7BLjpZVkp7dtPkzXdBRzBeV30Cb9LZ6bwXUYREmTB0N1azamjz
-	poNOnpzY3tyg1vD/dNTXvmD1g12O5vkn8jgyALrVC8DZnmUKNW+dkKUWaiu/GWsy
-	EMl/27KRpg3j6bGl5H21Lz0lfNcygbk2b15dKA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752708822; x=
-	1752795222; bh=9neY7JnORRQ6tCfHWMu9ZGbiJTIktxJSp0grs8cTTAQ=; b=g
-	bYwxrXfTssPriEQ9f6q8qkKxy4LL4eSCmToonK3zKNLSD6CsDSwGHxFGLRhpWS9D
-	Sz3lMtIoo/ys89YZdVYvVrao8TSSMmBo4CwotdS+c9Evy2yPRqoH35Dg3PlxWldi
-	bB8KRp+vV0kKPpeusfu4ZGW4Q1ra+09hqo3ANmJCuRAN55aHOTDk43pedf7g+cxI
-	NuLEET5rdi0RoNqESXjhWHXPzF10UPzwuRIHPaVc5UnHZC122GYMJ89kkPOUeJtG
-	59G5phf9xoL0uJKALpIW4J+zv+02ezQ3n2MW0vbUbLN0oybA/JuWYgswhJHN+6bO
-	+OYyJanLdDuyUPC/ka9yQ==
-X-ME-Sender: <xms:1jZ4aGopxSiZPYaDidy8MKYfaBjBAMdilVe07g72hc8Fvk76AvmoWg>
-    <xme:1jZ4aKJ0at_3IqEnqv3AQ-lu3z-UL4CP8J9-jNHRoG_xsDLirEKrsBUY0dzNlJzKc
-    Leyxsa_Ey7I_nJytf4>
-X-ME-Received: <xmr:1jZ4aKQGdPExpmyOZUt8RCyD3B5ooB4cALRRCqEvMUSnLVEdqVKD9adwuatea-Euw1yFxA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehledtfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufgjfhfogggtgfffkfesthhqredtredtjeenucfhrhhomheplfgrhicuggho
-    shgsuhhrghhhuceojhhvsehjvhhoshgsuhhrghhhrdhnvghtqeenucggtffrrghtthgvrh
-    hnpeegfefghffghffhjefgveekhfeukeevffethffgtddutdefffeuheelgeelieeuhfen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjvhesjh
-    hvohhssghurhhghhdrnhgvthdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpth
-    htoheptggrrhhlohhsrdgsihhlsggrohdrohhsuggvvhesghhmrghilhdrtghomhdprhgt
-    phhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtoheptggrrh
-    hlohhsrdgsihhlsggroheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhorhhmshes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehsfhhorhhshhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghn
-    ughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehprggsvghnihesrh
-    gvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:1jZ4aKM5Jy0yckMlWhFZP4wIRh2utaH26bFW5Y2qJ3Wu7b-ElZR1aw>
-    <xmx:1jZ4aPV6Kkbe9_sqcW0dn5xxhSuGZYfEnH5cPdMBUf09sVEQUfK1mA>
-    <xmx:1jZ4aNiZWlduVzWRb2u0g5trn4-D_D6zOGlF-NT1v_RQ48q4Oc51cw>
-    <xmx:1jZ4aIgwWSCuDSXIsWz2Z5qDvOmKZ1r1ASQquzk2Ypz9HDgcz5kWMA>
-    <xmx:1jZ4aDzpK1fP3qvZCB8zdXB_Umc-6rhIFcxfrY2KQCC9QYfReQ2QkCE->
-Feedback-ID: i53714940:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Jul 2025 19:33:41 -0400 (EDT)
-Received: by famine.localdomain (Postfix, from userid 1000)
-	id 491AB9FC97; Wed, 16 Jul 2025 16:33:40 -0700 (PDT)
-Received: from famine (localhost [127.0.0.1])
-	by famine.localdomain (Postfix) with ESMTP id 4821F9FB65;
-	Wed, 16 Jul 2025 16:33:40 -0700 (PDT)
-From: Jay Vosburgh <jv@jvosburgh.net>
-To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-cc: Carlos Bilbao <bilbao@vt.edu>, carlos.bilbao@kernel.org,
-    andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-    kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-    sforshee@kernel.org
-Subject: Re: [PATCH] bonding: Switch periodic LACPDU state machine from counter to jiffies
-In-reply-to: <c1cf6883-a323-40e8-881d-ae7023bbc61a@gmail.com>
-References: <20250715205733.50911-1-carlos.bilbao@kernel.org> <c9eac8f6-8e7f-4ed0-b34d-5dc50be8078f@vt.edu> <798952.1752679803@famine> <c1cf6883-a323-40e8-881d-ae7023bbc61a@gmail.com>
-Comments: In-reply-to Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-   message dated "Wed, 16 Jul 2025 14:44:04 -0500."
-X-Mailer: MH-E 8.6+git; nmh 1.8+dev; Emacs 29.3
+	s=arc-20240116; t=1752709060; c=relaxed/simple;
+	bh=WpABSt15VYBmSIsuff7Umh4J/QmdPh72gi4xsxrB4yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UPAQR2chqUCqNna6hBHG4/VcwpkU67dkmVNhI6p0CXkgBfXthWDS4QHLahy6cDpQf5kbeaTq66cHG3smlrZa774ptyu5hyeuYYMwKTbrcuBFJmo8u5bfGNIMnOMjLWKMan+s3RFqSv+4+dp3469Amqj5n2iwuewiLzD3qbGvOPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XVGlcSC8; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b45edf2303so315349f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752709057; x=1753313857; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MkVrpjQsu6SQZKU6P0JPlpED8WJm012CWi2gnkgVfxw=;
+        b=XVGlcSC8+YcDGmZwNS/lNI7sX+7xwDHI9G8M85U9argr80Ym89IgcrQjUv6RTDjT9a
+         mUXJ0wyv42guU1ftiuxfH6NrmBMSJUXLhCbiY40F+Zl3bxJLHH0OKxJPfGoitS4rm88v
+         qb2Guo6r3WXFndvMFDhWeBtlDHxuoK5t/+jXiO3fCu+19f+oA2SzYn0XHLEb3Z+0iw03
+         aj1DAF3uGbaAL7jZdjWYval/CR4Xwg+rrARiek+hKNN7XZCqO4hAQNU74GShXi8u24km
+         +x8gTYji0gsuBTJJjC4lKusF5iLrB88kFoVHWXMk1UEWE3MvJStzPy8D1zRdwRGHDvMw
+         2rtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752709057; x=1753313857;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MkVrpjQsu6SQZKU6P0JPlpED8WJm012CWi2gnkgVfxw=;
+        b=pq91VmeJdbprf8sb4ilnwOAl6E4kw9iT0e2D+8uTH9ED2RKR+g0Ivwsa7CfqEmbaJY
+         glB1BIBP50RrA2qfHVC+dFeHO5/5zc4gXU2iKInKiCov02F9aliO96z637ArCGA7raTE
+         0lzPBQKXBfl1JYeVQVCSgyD+gACQDSlyKoeGQBb5tpnkUidlJCz5DJfdyy+wMoYhVHcD
+         e1H3cAC2P+qtV5i2YWEAn3i18AJR8I3J9E5WzaQ1aXrciellRSCCFUjii+9MGGLJgEOW
+         kt+w14+QxrqN8K+uw2X2xWhRdidEInDnzGG7c+e/Wn7CPQ6cr+oiiN4KBSwfBV+yW1+T
+         jEvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqguo22N4ddzHztJuVH75EyuXq+GpWoZkNRcFWAQFUal5+72NtlwoVD7kJritTKmLigxEBOnlrO72VR4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWqrKEzfzG++RNaN5ahaBv+GeMNA4i3GlunkZQzdYkOLzZMoH0
+	byke4NN4V//QwpHLKlTbrcHyGoEEVli3NEbC4h7bmZKg0DmTxDmOWIvIoSOCv3YjsFI=
+X-Gm-Gg: ASbGncvlKr+E0H2Nz+ZWiPjTK2lTFJvTTIJsQDbDTf4rq52XUhrau+CepiU2MKvs7F+
+	aLhX7wOhI83YmEF8uH9ocsHAogISbx1c5/0BzcOFjgmSkAa+k/Dux1y1efMW7Tq6UyJbg4VfxE2
+	fo3/CZVTNC2Iy18586h9eUQzrp+9gR3KR4yzGW3wNAdU7fQ8vaSmVweFCICjVwaBAP8hoB17cvw
+	DwARCQM4Ox9j/nIKlOxr2dcoqrbXXNEDowTs1D3oLBIk5md06wBstiB3z2UYmM9lEjOfRd+c01k
+	HjUQpnh74Q1NHW/UacPBk2MtBirfQg14un9TTkICpETHN19fj0AnCXLJp2Y4R3sWtwGzHFHB1WC
+	LIybZBb1CTE56gm/Fhmn/OChztZ7G/p5m5bTFv7/R/BizDGeH02wuSPGzRNF76uJt
+X-Google-Smtp-Source: AGHT+IHusujmtjUiY52a7CfTC1mRpslqjEC78tkpMqFmDjbDwZw5k3q75QNQDldzDZxCc6pigrDfPg==
+X-Received: by 2002:a5d:5d85:0:b0:3a5:39a8:199c with SMTP id ffacd0b85a97d-3b60dd88792mr3935926f8f.53.1752709057010;
+        Wed, 16 Jul 2025 16:37:37 -0700 (PDT)
+Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc3a62sm18956620f8f.40.2025.07.16.16.37.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 16:37:35 -0700 (PDT)
+Message-ID: <2fd0d1a7-70ee-43ac-af84-d2321c40e8f8@linaro.org>
+Date: Thu, 17 Jul 2025 00:37:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 16 Jul 2025 16:33:40 -0700
-Message-ID: <826702.1752708820@famine>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/7] media: venus: Conditionally register codec nodes
+ based on firmware version
+To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+ quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, krzk+dt@kernel.org,
+ konradybcio@kernel.org, mchehab@kernel.org, andersson@kernel.org,
+ conor+dt@kernel.org, amit.kucheria@oss.qualcomm.com
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250715204749.2189875-1-jorge.ramirez@oss.qualcomm.com>
+ <20250715204749.2189875-3-jorge.ramirez@oss.qualcomm.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250715204749.2189875-3-jorge.ramirez@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Carlos Bilbao <carlos.bilbao.osdev@gmail.com> wrote:
+On 15/07/2025 21:47, Jorge Ramirez-Ortiz wrote:
+> The encoding and decoding capabilities of a VPU can vary depending on the
+> firmware version in use.
+> 
+> This commit adds support for platforms with OF_DYNAMIC enabled to
+> conditionally skip the creation of codec device nodes at runtime if the
+> loaded firmware does not support the corresponding functionality.
+> 
+> Note that the driver becomes aware of the firmware version only after the
+> HFI layer has been initialized.
+> 
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+> ---
+>   drivers/media/platform/qcom/venus/core.c | 76 +++++++++++++++---------
+>   drivers/media/platform/qcom/venus/core.h |  8 +++
+>   2 files changed, 57 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+> index 4c049c694d9c..b7d6745b6124 100644
+> --- a/drivers/media/platform/qcom/venus/core.c
+> +++ b/drivers/media/platform/qcom/venus/core.c
+> @@ -28,6 +28,15 @@
+>   #include "pm_helpers.h"
+>   #include "hfi_venus_io.h"
+>   
+> +static inline bool venus_fw_supports_codec(struct venus_core *core,
+> +					   const struct venus_min_fw *ver)
+> +{
+> +	if (!ver)
+> +		return true;
+> +
+> +	return is_fw_rev_or_newer(core, ver->major, ver->minor, ver->rev);
+> +}
+> +
+>   static void venus_coredump(struct venus_core *core)
+>   {
+>   	struct device *dev;
+> @@ -103,7 +112,9 @@ static void venus_sys_error_handler(struct work_struct *work)
+>   	core->state = CORE_UNINIT;
+>   
+>   	for (i = 0; i < max_attempts; i++) {
+> -		if (!pm_runtime_active(core->dev_dec) && !pm_runtime_active(core->dev_enc))
+> +		/* Not both nodes might be available */
 
->Hello Jay,
->
->On 7/16/25 10:30, Jay Vosburgh wrote:
->> Carlos Bilbao <bilbao@vt.edu> wrote:
->>
->>> FYI, I was able to test this locally but couldn=E2=80=99t find any ksel=
-ftests to
->>> stress the bonding state machine. If anyone knows of additional ways to
->>> test it, I=E2=80=99d be happy to run them.
->> 	Your commit message says this change will "help reduce drift
->> under contention," but above you say you're unable to stress the state
->> machine.
->>
->> 	How do you induce "drift under contention" to test that your
->> patch actually improves something?  What testing has been done to insure
->> that the new code doesn't change the behavior in other ways (regressions=
-)?
->
->
->I tested the bonding driver with and without CPU contention*. With this
->patch, the LACPDU state machine is much more consistent under load, with
->standard deviation of 0.0065 secs between packets. In comparison, the
->current version had a standard deviation of 0.15 secs (~x23 more
->variability). I imagine this gets worsens with greater contention.
+"Neither node available" the latter for preference.
 
-	You're measuring the time between successive LACPDU
-transmissions?  So, "perfect" is exactly 1 second between successive
-LACPDUs?
+> +		if ((!core->dev_dec || !pm_runtime_active(core->dev_dec)) &&
+> +		    (!core->dev_enc || !pm_runtime_active(core->dev_enc)))
 
-	Assuming that's the case, then the results seem odd to me,
-perhaps I'm not understanding something, or maybe the standard deviation
-isn't the right representation here.=20=20
+Is this change about registration or is it a fix trying to sneak in 
+under the radar ?
 
-	If the drift under stress is due to scheduling delays of the
-workqueue event that runs bond_3ad_state_machine_handler (which in turn
-will call the periodic state machine function, ad_periodic_machine),
-then I'd expect to see the inter-LACPDU time vary according to that
-scheduling delay.
+>   			break;
+>   		msleep(10);
+>   	}
+> @@ -202,7 +213,8 @@ static u32 to_v4l2_codec_type(u32 codec)
+>   	}
+>   }
+>   
+> -static int venus_enumerate_codecs(struct venus_core *core, u32 type)
+> +static int venus_enumerate_codecs(struct venus_core *core, u32 type,
+> +				  const struct venus_min_fw *ver)
+>   {
+>   	const struct hfi_inst_ops dummy_ops = {};
+>   	struct venus_inst *inst;
+> @@ -213,6 +225,9 @@ static int venus_enumerate_codecs(struct venus_core *core, u32 type)
+>   	if (core->res->hfi_version != HFI_VERSION_1XX)
+>   		return 0;
+>   
+> +	if (!venus_fw_supports_codec(core, ver))
+> +		return 0;
+Its not really a codec you're checking there, its a version.
 
-	For the existing implementation, because it's counter based, the
-delays would simply add up, and the expiration of the periodic_timer
-(per Figure 6-19 in 802.1AX-2014, the transition from FAST_PERIODIC to
-PERIODIC_TX) would be delayed by whatever the sum of the delays is.
+The name should reflect that.
 
-	As a hypothetical, the workqueue event normally runs every
-100ms.  Suppose the next expiration is set to 10 workqueue events from
-now, so one second.  Further suppose that the workqueue event runs 5 ms
-late, so 105 ms.  After 10 executions, it will be at 1050 ms from the
-start time, and the periodic_timer would expire 50 ms late.
+> +
+>   	inst = kzalloc(sizeof(*inst), GFP_KERNEL);
+>   	if (!inst)
+>   		return -ENOMEM;
+> @@ -288,14 +303,14 @@ static irqreturn_t venus_isr_thread(int irq, void *dev_id)
+>   
+>   #if defined(CONFIG_OF_DYNAMIC)
+>   static int venus_add_video_core(struct venus_core *core, const char *node_name,
+> -				const char *compat)
+> +				const char *compat, const struct venus_min_fw *ver)
+>   {
+>   	struct of_changeset *ocs = core->ocs;
+>   	struct device *dev = core->dev;
+>   	struct device_node *np, *enp;
+>   	int ret;
+>   
+> -	if (!node_name)
+> +	if (!node_name || !venus_fw_supports_codec(core, ver))
+>   		return 0;
+>   
+>   	enp = of_find_node_by_name(dev->of_node, node_name);
+> @@ -330,11 +345,13 @@ static int venus_add_dynamic_nodes(struct venus_core *core)
+>   
+>   	of_changeset_init(core->ocs);
+>   
+> -	ret = venus_add_video_core(core, core->res->dec_nodename, "venus-decoder");
+> +	ret = venus_add_video_core(core, core->res->dec_nodename, "venus-decoder",
+> +				   core->res->dec_minfw);
+>   	if (ret)
+>   		goto err;
+>   
+> -	ret = venus_add_video_core(core, core->res->enc_nodename, "venus-encoder");
+> +	ret = venus_add_video_core(core, core->res->enc_nodename, "venus-encoder",
+> +				   core->res->enc_minfw);
+>   	if (ret)
+>   		goto err;
+>   
+> @@ -363,6 +380,9 @@ static void venus_remove_dynamic_nodes(struct venus_core *core)
+>   #else
+>   static int venus_add_dynamic_nodes(struct venus_core *core)
+>   {
+> +	WARN_ONCE(core->res->enc_minfw || core->res->dec_minfw,
+> +		  "Feature not supported");
+> +
+>   	return 0;
+>   }
+>   
+> @@ -432,7 +452,7 @@ static int venus_probe(struct platform_device *pdev)
+>   					IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
+>   					"venus", core);
+>   	if (ret)
+> -		goto err_core_put;
+> +		goto err_hfi_destroy;
+>   
+>   	venus_assign_register_offsets(core);
+>   
+> @@ -448,19 +468,9 @@ static int venus_probe(struct platform_device *pdev)
+>   	if (ret < 0)
+>   		goto err_runtime_disable;
+>   
+> -	if (core->res->dec_nodename || core->res->enc_nodename) {
+> -		ret = venus_add_dynamic_nodes(core);
+> -		if (ret)
+> -			goto err_runtime_disable;
+> -	}
+> -
+> -	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+> -	if (ret)
+> -		goto err_remove_dynamic_nodes;
+> -
+>   	ret = venus_firmware_init(core);
+>   	if (ret)
+> -		goto err_of_depopulate;
+> +		goto err_runtime_disable;
+>   
+>   	ret = venus_boot(core);
+>   	if (ret)
+> @@ -474,34 +484,46 @@ static int venus_probe(struct platform_device *pdev)
+>   	if (ret)
+>   		goto err_venus_shutdown;
+>   
+> -	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_DEC);
+> +	if (core->res->dec_nodename || core->res->enc_nodename) {
+> +		ret = venus_add_dynamic_nodes(core);
+> +		if (ret)
+> +			goto err_core_deinit;
+> +	}
+> +
+> +	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+>   	if (ret)
+> -		goto err_core_deinit;
+> +		goto err_remove_dynamic_nodes;
+> +
+> +	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_DEC,
+> +				     core->res->dec_minfw);
+> +	if (ret)
+> +		goto err_of_depopulate;
+>   
+> -	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_ENC);
+> +	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_ENC,
+> +				     core->res->enc_minfw);
+>   	if (ret)
+> -		goto err_core_deinit;
+> +		goto err_of_depopulate;
+>   
+>   	ret = pm_runtime_put_sync(dev);
+>   	if (ret) {
+>   		pm_runtime_get_noresume(dev);
+> -		goto err_core_deinit;
+> +		goto err_of_depopulate;
+>   	}
+>   
+>   	venus_dbgfs_init(core);
+>   
+>   	return 0;
+>   
+> +err_of_depopulate:
+> +	of_platform_depopulate(dev);
+> +err_remove_dynamic_nodes:
+> +	venus_remove_dynamic_nodes(core);
+>   err_core_deinit:
+>   	hfi_core_deinit(core, false);
+>   err_venus_shutdown:
+>   	venus_shutdown(core);
+>   err_firmware_deinit:
+>   	venus_firmware_deinit(core);
+> -err_of_depopulate:
+> -	of_platform_depopulate(dev);
+> -err_remove_dynamic_nodes:
+> -	venus_remove_dynamic_nodes(core);
+>   err_runtime_disable:
+>   	pm_runtime_put_noidle(dev);
+>   	pm_runtime_disable(dev);
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index 5b1ba1c69adb..3af8386b78be 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -50,6 +50,12 @@ struct bw_tbl {
+>   	u32 peak_10bit;
+>   };
+>   
+> +struct venus_min_fw {
+> +	u32 major;
+> +	u32 minor;
+> +	u32 rev;
+> +};
 
-	For the jiffies based implementation proposed here, I'd expect
-the same behavior up to a point, due to the granularity of the workqueue
-event at 100ms.
+I'd call this venus_firmware_version
 
-	Doing the same hypothetical, the workqueue event normally runs
-every 100ms, and the next periodic_timer expiration is set to now + 1
-second, in jiffies.  If the workqueue event runs 5 ms late again, after
-9 executions, it will be at 945 ms from the start time, so it won't
-expire the timer.  The next execution would be at 1050 ms, and the timer
-would then expire, but it's still 50 ms late.
+> +
+>   enum vpu_version {
+>   	VPU_VERSION_AR50,
+>   	VPU_VERSION_AR50_LITE,
+> @@ -92,6 +98,8 @@ struct venus_resources {
+>   	u32 cp_nonpixel_start;
+>   	u32 cp_nonpixel_size;
+>   	const char *fwname;
+> +	const struct venus_min_fw *enc_minfw;
+> +	const struct venus_min_fw *dec_minfw;
 
-	So, in your tests, do we know what the actual scheduling delays
-are, as well as the distribution of the times you've measured?
+and then I'd do as you have done here, indicate that the struct 
+venus_firmware_version is a *enc_min_fw_ver;
 
-	I'm willing to believe that your proposal may be better, but I'm
-not understanding why from the data you've shared (0.0065 vs 0.15).
-
-	-J
-
->When I mentioned a possible kselftest (or similar) to "stress" the state
->machine, I meant whether there's already any testing that checks the
->state machine through different transitions -- e.g., scenarios where the
->switch instruct the bond to change configs (for example, between fast and
->slow LACP modes), resetting the bond under certain conditions, etc. I just
->want to be exhaustive because as you mentioned the state machine has been
->around for long time.
->
->*System was stressed using:
->
->stress-ng --cpu $(nproc) --timeout 60
->
->Metrics were collected with:
->
->sudo tcpdump -e -ni <my interface> ether proto 0x8809 and ether src <mac>
->
->
->>
->> 	Without a specific reproducable bug scenario that this change
->> fixes, I'm leery of applying such a refactor to code that has seemingly
->> been working fine for 20+ years.
->>
->> 	I gather that what this is intending to do is reduce the current
->> dependency on the scheduling accuracy of the workqueue event that runs
->> the state machines.  The current implementation works on a "number of
->> invocations" basis, assuming that the event is invoked every 100 msec,
->> and computes various timeouts based on the number of times the state
->
->
->Yep.
->
->
->> machine runs.
->>
->> 	-J
->>
->>> Thanks!
->>>
->>> Carlos
->>>
->>> On 7/15/25 15:57, carlos.bilbao@kernel.org wrote:
->>>> From: Carlos Bilbao <carlos.bilbao@kernel.org>
->>>>
->>>> Replace the bonding periodic state machine for LACPDU transmission of
->>>> function ad_periodic_machine() with a jiffies-based mechanism, which is
->>>> more accurate and can help reduce drift under contention.
->>>>
->>>> Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
->>>> ---
->>>>    drivers/net/bonding/bond_3ad.c | 79 +++++++++++++------------------=
----
->>>>    include/net/bond_3ad.h         |  2 +-
->>>>    2 files changed, 32 insertions(+), 49 deletions(-)
->>>>
->>>> diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond=
-_3ad.c
->>>> index c6807e473ab7..8654a51266a3 100644
->>>> --- a/drivers/net/bonding/bond_3ad.c
->>>> +++ b/drivers/net/bonding/bond_3ad.c
->>>> @@ -1421,44 +1421,24 @@ static void ad_periodic_machine(struct port *p=
-ort, struct bond_params *bond_para
->>>>    	    (!(port->actor_oper_port_state & LACP_STATE_LACP_ACTIVITY) && =
-!(port->partner_oper.port_state & LACP_STATE_LACP_ACTIVITY)) ||
->>>>    	    !bond_params->lacp_active) {
->>>>    		port->sm_periodic_state =3D AD_NO_PERIODIC;
->>>> -	}
->>>> -	/* check if state machine should change state */
->>>> -	else if (port->sm_periodic_timer_counter) {
->>>> -		/* check if periodic state machine expired */
->>>> -		if (!(--port->sm_periodic_timer_counter)) {
->>>> -			/* if expired then do tx */
->>>> -			port->sm_periodic_state =3D AD_PERIODIC_TX;
->>>> -		} else {
->>>> -			/* If not expired, check if there is some new timeout
->>>> -			 * parameter from the partner state
->>>> -			 */
->>>> -			switch (port->sm_periodic_state) {
->>>> -			case AD_FAST_PERIODIC:
->>>> -				if (!(port->partner_oper.port_state
->>>> -				      & LACP_STATE_LACP_TIMEOUT))
->>>> -					port->sm_periodic_state =3D AD_SLOW_PERIODIC;
->>>> -				break;
->>>> -			case AD_SLOW_PERIODIC:
->>>> -				if ((port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT)) {
->>>> -					port->sm_periodic_timer_counter =3D 0;
->>>> -					port->sm_periodic_state =3D AD_PERIODIC_TX;
->>>> -				}
->>>> -				break;
->>>> -			default:
->>>> -				break;
->>>> -			}
->>>> -		}
->>>> +	} else if (port->sm_periodic_state =3D=3D AD_NO_PERIODIC)
->>>> +		port->sm_periodic_state =3D AD_FAST_PERIODIC;
->>>> +	/* check if periodic state machine expired */
->>>> +	else if (time_after_eq(jiffies, port->sm_periodic_next_jiffies)) {
->>>> +		/* if expired then do tx */
->>>> +		port->sm_periodic_state =3D AD_PERIODIC_TX;
->>>>    	} else {
->>>> +		/* If not expired, check if there is some new timeout
->>>> +		 * parameter from the partner state
->>>> +		 */
->>>>    		switch (port->sm_periodic_state) {
->>>> -		case AD_NO_PERIODIC:
->>>> -			port->sm_periodic_state =3D AD_FAST_PERIODIC;
->>>> -			break;
->>>> -		case AD_PERIODIC_TX:
->>>> -			if (!(port->partner_oper.port_state &
->>>> -			    LACP_STATE_LACP_TIMEOUT))
->>>> +		case AD_FAST_PERIODIC:
->>>> +			if (!(port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
->>>>    				port->sm_periodic_state =3D AD_SLOW_PERIODIC;
->>>> -			else
->>>> -				port->sm_periodic_state =3D AD_FAST_PERIODIC;
->>>> +			break;
->>>> +		case AD_SLOW_PERIODIC:
->>>> +			if ((port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
->>>> +				port->sm_periodic_state =3D AD_PERIODIC_TX;
->>>>    			break;
->>>>    		default:
->>>>    			break;
->>>> @@ -1471,21 +1451,24 @@ static void ad_periodic_machine(struct port *p=
-ort, struct bond_params *bond_para
->>>>    			  "Periodic Machine: Port=3D%d, Last State=3D%d, Curr State=3D%d=
-\n",
->>>>    			  port->actor_port_number, last_state,
->>>>    			  port->sm_periodic_state);
->>>> +
->>>>    		switch (port->sm_periodic_state) {
->>>> -		case AD_NO_PERIODIC:
->>>> -			port->sm_periodic_timer_counter =3D 0;
->>>> -			break;
->>>> -		case AD_FAST_PERIODIC:
->>>> -			/* decrement 1 tick we lost in the PERIODIC_TX cycle */
->>>> -			port->sm_periodic_timer_counter =3D __ad_timer_to_ticks(AD_PERIODI=
-C_TIMER, (u16)(AD_FAST_PERIODIC_TIME))-1;
->>>> -			break;
->>>> -		case AD_SLOW_PERIODIC:
->>>> -			/* decrement 1 tick we lost in the PERIODIC_TX cycle */
->>>> -			port->sm_periodic_timer_counter =3D __ad_timer_to_ticks(AD_PERIODI=
-C_TIMER, (u16)(AD_SLOW_PERIODIC_TIME))-1;
->>>> -			break;
->>>>    		case AD_PERIODIC_TX:
->>>>    			port->ntt =3D true;
->>>> -			break;
->>>> +			if (!(port->partner_oper.port_state &
->>>> +						LACP_STATE_LACP_TIMEOUT))
->>>> +				port->sm_periodic_state =3D AD_SLOW_PERIODIC;
->>>> +			else
->>>> +				port->sm_periodic_state =3D AD_FAST_PERIODIC;
->>>> +		fallthrough;
->>>> +		case AD_SLOW_PERIODIC:
->>>> +		case AD_FAST_PERIODIC:
->>>> +			if (port->sm_periodic_state =3D=3D AD_SLOW_PERIODIC)
->>>> +				port->sm_periodic_next_jiffies =3D jiffies
->>>> +					+ HZ * AD_SLOW_PERIODIC_TIME;
->>>> +			else /* AD_FAST_PERIODIC */
->>>> +				port->sm_periodic_next_jiffies =3D jiffies
->>>> +					+ HZ * AD_FAST_PERIODIC_TIME;
->>>>    		default:
->>>>    			break;
->>>>    		}
->>>> @@ -1987,7 +1970,7 @@ static void ad_initialize_port(struct port *port=
-, int lacp_fast)
->>>>    		port->sm_rx_state =3D 0;
->>>>    		port->sm_rx_timer_counter =3D 0;
->>>>    		port->sm_periodic_state =3D 0;
->>>> -		port->sm_periodic_timer_counter =3D 0;
->>>> +		port->sm_periodic_next_jiffies =3D 0;
->>>>    		port->sm_mux_state =3D 0;
->>>>    		port->sm_mux_timer_counter =3D 0;
->>>>    		port->sm_tx_state =3D 0;
->>>> diff --git a/include/net/bond_3ad.h b/include/net/bond_3ad.h
->>>> index 2053cd8e788a..aabb8c97caf4 100644
->>>> --- a/include/net/bond_3ad.h
->>>> +++ b/include/net/bond_3ad.h
->>>> @@ -227,7 +227,7 @@ typedef struct port {
->>>>    	rx_states_t sm_rx_state;	/* state machine rx state */
->>>>    	u16 sm_rx_timer_counter;	/* state machine rx timer counter */
->>>>    	periodic_states_t sm_periodic_state;	/* state machine periodic sta=
-te */
->>>> -	u16 sm_periodic_timer_counter;	/* state machine periodic timer count=
-er */
->>>> +	unsigned long sm_periodic_next_jiffies;	/* state machine periodic ne=
-xt expected sent */
->>>>    	mux_states_t sm_mux_state;	/* state machine mux state */
->>>>    	u16 sm_mux_timer_counter;	/* state machine mux timer counter */
->>>>    	tx_states_t sm_tx_state;	/* state machine tx state */
->> ---
->> 	-Jay Vosburgh, jv@jvosburgh.net
->>
->
->Thanks,
->
->Carlos
->
-
----
-	-Jay Vosburgh, jv@jvosburgh.net
+>   	const char *enc_nodename;
+>   	const char *dec_nodename;
+>   };
 
