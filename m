@@ -1,107 +1,115 @@
-Return-Path: <linux-kernel+bounces-733467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5383EB07508
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:50:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0DEB0750B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBA13B45C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:50:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7991176962
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D882F3C0B;
-	Wed, 16 Jul 2025 11:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5DC2F3C26;
+	Wed, 16 Jul 2025 11:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RoXKe4Yh"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZeiFbi9b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2E61953BB;
-	Wed, 16 Jul 2025 11:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08991288C02
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752666634; cv=none; b=VgAhm7oxzYgOdj2w15aAH0aK0CZBT5KFc3v4TUpLnqIxPyOz22vY0IOgTMbBKSoJ9uSdfNlQJN7yCzVOmj5sMFIsIpMWljF+F2KWzpAkfUqO3HeC9ecvAfpaCFZVj/LAvwuXd86nsMuiZIaoOc/gERd7scFoj+ivKEm44DKScKM=
+	t=1752666802; cv=none; b=pWBrapCpgIqtGPOUe6I1bTvMfDD8YU/KyCaqXexGSvWaADZZVVkwzAAIcTCuJBKfGsirN+zoT9YqpOQz+EXRASvURhgqAol8NmEu+g7a+Wp5dBTISK7aemjk02xfBrrlBGrhpaaO3ZDjjMVixPuJrQG3g26gAv2lGLd78N/91/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752666634; c=relaxed/simple;
-	bh=b+QdQ5SK2xW2CtWZsAAc1a1FORR2+a3qO5TLAGltyp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzKhFRnRnHeQ7zPK4nJcQFDn4iVLaOrrkGx3flzTN55F9qnF+em90nax6j/wzG6KBbJRnZ/xes1lQ4aDaL8g/46a1SS60EHY5/vu8IZCfF6nSnuJhr1YvkNIAcrCRgsmEO+mxTlqc63bqG8ZiOWiH83Y++FwboR3f9NH7+W5Pgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RoXKe4Yh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=l48/StNB/4Lsn/VT95PigzRA39+WnL2ci89FjY7vSZ0=; b=RoXKe4YhwxF9cuYtHiZXMFrVDc
-	me/Jcoo18NjDSvxtCD5wlUaDdOfFW7Cgx6u8XXPwPEArN8DLo7dNOLsL8okHkWNk2QawETxR5Hufp
-	H+VW/phZlDwc4IPHynECmesGb0DQFmJ/DTGyQABgj6/Ls5QFWKZEzMm4S6tf1vc5wZSD8neSArqMw
-	8dJ8hONCAUgOq+x+NGf818ukAAgkIH4Ndm8TA0TvjNJBs9lzxQMnrO8C18/twd9n+0EUT+euvrwyD
-	UpUtxp2SUMM5LvRA6799mzpTEJ+DXN4ppjv/ND82sKh9hz5EWcmjQqRZnGmmdzXxR3P+8yc++YUQ0
-	PEH+FDYQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc0ea-0000000GRIG-1gsv;
-	Wed, 16 Jul 2025 11:50:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D9DC6300186; Wed, 16 Jul 2025 13:50:27 +0200 (CEST)
-Date: Wed, 16 Jul 2025 13:50:27 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Nam Cao <namcao@linutronix.de>, Tomas Glozar <tglozar@redhat.com>,
-	Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v3 01/17] tools/rv: Do not skip idle in trace
-Message-ID: <20250716115027.GV1613200@noisy.programming.kicks-ass.net>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
- <20250715071434.22508-2-gmonaco@redhat.com>
+	s=arc-20240116; t=1752666802; c=relaxed/simple;
+	bh=BruD9tYhNwaS4DlutQi0vPMuIfgCOS9cBm0jE9Ja2SY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OkwoM6mzkmru6wR4zvXJKLfRXnTyq3L/AskEzHi89j2ZfuJR8NM8AfcEcOd4vnPV7/v6yNsuRtdDey+zYqCnTlnUudvBnVuzYccYnWNh0d8jaymJGv2zgHoUFdM7HR6kGUqaRdOpZERL9iGz/EArV9dKu4W2Tk44NZNzdIHafts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZeiFbi9b; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752666799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=x3dqR61avblo1D6TtvCNGWnhVtqUAM9K+rgyOPMwpQc=;
+	b=ZeiFbi9bNZTOmqZdCUgaxb7NmFWE7LJM/an8kIKSXECpkmz3qdUToG9ZJJcYt+iHZE1EBo
+	w0TJBDNyKXcrCa2+BK0cXbfxWGge24C8NiQ63LHF8YDAmdOaklcdheEkl9AGjA5W8NyBhk
+	0eNwNG12WjhwyvJ3IHX25RTGUdM1F6s=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-Ty0HzaaxMNuuY2zy9-Eitw-1; Wed,
+ 16 Jul 2025 07:53:15 -0400
+X-MC-Unique: Ty0HzaaxMNuuY2zy9-Eitw-1
+X-Mimecast-MFC-AGG-ID: Ty0HzaaxMNuuY2zy9-Eitw_1752666794
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B5947195608D;
+	Wed, 16 Jul 2025 11:53:13 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.2])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DF18C195E772;
+	Wed, 16 Jul 2025 11:53:10 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net 0/5] rxrpc: Miscellaneous fixes
+Date: Wed, 16 Jul 2025 12:52:59 +0100
+Message-ID: <20250716115307.3572606-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715071434.22508-2-gmonaco@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Jul 15, 2025 at 09:14:18AM +0200, Gabriele Monaco wrote:
-> Currently, the userspace RV tool skips trace events triggered by the RV
-> tool itself, this can be changed by passing the parameter -s, which sets
-> the variable config_my_pid to 0 (instead of the tool's PID).
-> The current condition for per-task monitors (config_has_id) does not
-> check that config_my_pid isn't 0 to skip. In case we pass -s, we show
-> events triggered by RV but don't show those triggered by idle (PID 0).
-> 
-> Fix the condition to account this scenario.
+Here are some fixes for rxrpc:
 
-The distinction between !my_pid and has_id is that you can in fact trace
-pid-0 if you want?
+ (1) Fix the calling of IP routing code with IRQs disabled.
 
-> Fixes: 6d60f89691fc ("tools/rv: Add in-kernel monitor interface")
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->  tools/verification/rv/src/in_kernel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/verification/rv/src/in_kernel.c b/tools/verification/rv/src/in_kernel.c
-> index c0dcee795c0de..72b03bae021cd 100644
-> --- a/tools/verification/rv/src/in_kernel.c
-> +++ b/tools/verification/rv/src/in_kernel.c
-> @@ -429,7 +429,7 @@ ikm_event_handler(struct trace_seq *s, struct tep_record *record,
->  
->  	tep_get_common_field_val(s, trace_event, "common_pid", record, &pid, 1);
->  
-> -	if (config_has_id && (config_my_pid == id))
-> +	if (config_my_pid && config_has_id && (config_my_pid == id))
->  		return 0;
->  	else if (config_my_pid && (config_my_pid == pid))
->  		return 0;
-> -- 
-> 2.50.1
-> 
+ (2) Fix a recvmsg/recvmsg race when the first completes a call.
+
+ (3) Fix a race between notification, recvmsg and sendmsg releasing a call.
+
+ (4) Fix abort of abort.
+
+ (5) Fix call-level aborts that should be connection-level aborts.
+
+David
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=rxrpc-fixes
+
+David Howells (5):
+  rxrpc: Fix irq-disabled in local_bh_enable()
+  rxrpc: Fix recv-recv race of completed call
+  rxrpc: Fix notification vs call-release vs recvmsg
+  rxrpc: Fix transmission of an abort in response to an abort
+  rxrpc: Fix to use conn aborts for conn-wide failures
+
+ include/trace/events/rxrpc.h |  6 +++++-
+ net/rxrpc/ar-internal.h      |  4 ++++
+ net/rxrpc/call_accept.c      | 14 ++++++++------
+ net/rxrpc/call_object.c      | 28 ++++++++++++----------------
+ net/rxrpc/io_thread.c        | 14 ++++++++++++++
+ net/rxrpc/output.c           | 22 +++++++++++++---------
+ net/rxrpc/peer_object.c      |  6 ++----
+ net/rxrpc/recvmsg.c          | 23 +++++++++++++++++++++--
+ net/rxrpc/security.c         |  8 ++++----
+ 9 files changed, 83 insertions(+), 42 deletions(-)
+
 
