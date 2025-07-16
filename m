@@ -1,106 +1,178 @@
-Return-Path: <linux-kernel+bounces-734224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DF2B07E92
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:09:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D11B07E93
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D1B5020D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF551C209CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4882BD598;
-	Wed, 16 Jul 2025 20:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9567D2BCF65;
+	Wed, 16 Jul 2025 20:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aubYVSG3"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8pOqSl0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D30B288CA3;
-	Wed, 16 Jul 2025 20:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACFA29CB49;
+	Wed, 16 Jul 2025 20:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752696560; cv=none; b=Nhi19PLxemmP8UMiL0GXTJHhhZx3JEn5v4U3YJ3gp1ylOv+7jjngJSDsgHz8JGMv9pWK0L91CpjtZ0+++QG+B9DsOPMjUbj83LgHv0gDNptJrRPum+6REilu3ZvBDtPXJyZnqY32Jmf17ZDWqGxaaKKqtUcQ5FN0v+75sWG/LpY=
+	t=1752696574; cv=none; b=EBwfDzKKdzCCmEOxC6L5IdiJ5tHk+6BviN5EBJPaUzRQPGSjKVqzBV8RZiWdchDXlvHT/5nK10gqLORG9zzBf9tbRhQgvAOyVNS7BpDeCn+Dh/Y2Up5xByzseyy5c9oORg5sgtqflFe5pZfY5y8aF3Z5mh0zTa5OzWLSUYvsb3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752696560; c=relaxed/simple;
-	bh=95JvQ3xHfEvUSpi5Ye+EtJ1py0S0m7W4L7K2mPOH2WQ=;
+	s=arc-20240116; t=1752696574; c=relaxed/simple;
+	bh=NclOaaf4/iWs/+cgbq979FL7Scz/PAQBDhPtjL7H6oI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbUGQWYEmSMC5o0ZU9+oPOzpFP9IRPveov+RfUty70gTTWzLjDD56v76rztbP+mXw6xTduQ7MJXGyUXoLXNyTcAhMkvKlNW3VMagPapM/GadhR3+BxyBeMj/A5jGbF30zgnH+JJ211kdFECHCW19y+/vHAuuC0iam6Xp/lncsTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aubYVSG3; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23694cec0feso1981895ad.2;
-        Wed, 16 Jul 2025 13:09:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752696559; x=1753301359; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rF0odul5VI67P8AAAXp7dHv+38eCPUvJmNFiIdA961s=;
-        b=aubYVSG3D1UVUnM25qCO5E9L3IEaIfY8gOggExnwOX3U9DpE8BirtGmwL0KdZaWT67
-         y/E7j8tBI2p9f/ZgC+KWNjo1vysdjzE7Rluac588bMNfmy+wIgwhNAPkDysB6qWBpGXl
-         oMiIcnrwxDaBhqhDS0FnS5ZWJVjBB3ImRxK/4YiQm2gjWZ9TcPKUn4kDhTY5cq5a2yX4
-         CnztThg44aOOP5U0TMhKBZlIkBI28twQ2DdIBEbUvggLhFVxdqvmNCpL6Ukfgpt6FQd2
-         UdkOJC1Iql1J4mnDE2/PrWCQdNDOnHqLEmjtEiir7bj9zZ1W83bO6TiZY5uKp7rAPjgP
-         9QeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752696559; x=1753301359;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rF0odul5VI67P8AAAXp7dHv+38eCPUvJmNFiIdA961s=;
-        b=AdXKOmvQRGU7hihkzoxHQakkiRsy3P27Z6tFhuDbP3nERpEj2CHbYXaVlvIeVB0L6k
-         BX7ZQfS17D1puGD99Ci9FuizMnIEOUYb11SOaBnvprf+YBmc8g3/OGBbQ2GIBlyWSU9y
-         Jv7fAipcKFOTV2UjRdZzB46p90uvV/ENoZZBxSqYBjCRr0KCjaKB30Q7GZhRDLIBF8LG
-         UzjxHiLv4R+IfJxNltZhuDBD3wFcCBubhJJ9XqZL0pYD2agwPY4PnvS4vatwO4D1/Kg1
-         Kz5MF703Sw6tczXnSMYALaD50dNg4vg5pwu2yhAReXuvQSASabO09k4ZCYCO0AQVwbDa
-         YZLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPWtNi+M544ur98N9x8pR3v3ktQ/T31k2dLJ8SqVCQ0ejxQch2R8xrElICP1rLyNdK3hEq7WtaQlDR@vger.kernel.org, AJvYcCX+A2ki8gxgCxfiQtD+/evY+COz8s8KBaJeAzTlyqNrCpm2hBpnxgT0akqxkjlpgpTAR1oZmfL4eOet/ek=@vger.kernel.org, AJvYcCXl2ZsLV3rcMMYTOohi6AfsfQ7n7k+S/TOOIP1gxrpoVHTcBPwvgD1otUguAiWvLNclxB9Na/3oTSirZh8d@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFBPqcl5qYBFH0holkNddzBIpXEBNpeQBOusBinH1uCBoeHPqc
-	GIMh8vEZD/I4OBDCRXZn+J2MZ/+bjDatMRqA3+puPYna22LpFV2MfQIVcxx6eg==
-X-Gm-Gg: ASbGnctQZhNhL/4/DBmUNWb2hAX7pUJBqx+svUbiQoUhq8JweLcXIkrYdfO3YO513im
-	PS/zX6VfCVfz7RXt7F94sKwzYQPhj4dlbdGVm4KJN7EsFRl4haPBvKbuxboCgQ7GUDckIYGrx9y
-	1N7Bdm7FErhqhO+c10CFYSF2MGpdo554vqnQTJYLvYEC2NMD3iahe5bL8rrpBFtpstKhF+zssB4
-	U5XJq2NQIFeUnE9+V4ZsVdBblfgxSTcYz9mpfogeRJtUUGulYSrvORRhQFQb6sbKSR9TqMduzlR
-	jvfnweezwpctXD+77bhXRGQji+rkva6GjvwgWuXaTzTTCDgUY2+F9+aazyJ1sN1jxainIDhffVi
-	ciiTkYWvwBxj06q7ZAcA0HUcoen3OtJuKHFE=
-X-Google-Smtp-Source: AGHT+IEUWE84w29OZqLXxcm71PaCF/KDwsqNNr0ogmhn6IiipDgBkaXnVfedgHwTCXOLGm92t+FB1w==
-X-Received: by 2002:a17:903:183:b0:23d:fda6:1aa6 with SMTP id d9443c01a7336-23e24f59be1mr58110615ad.41.1752696558560;
-        Wed, 16 Jul 2025 13:09:18 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42864a8sm130834635ad.42.2025.07.16.13.09.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 13:09:17 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 16 Jul 2025 13:09:17 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Chiang Brian <chiang.brian@inventec.com>
-Cc: jdelvare@suse.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 1/2] dt-bindings: trivial: Add tps53685 support
-Message-ID: <581f899e-a56b-4e6a-a1a1-d8b76636e81f@roeck-us.net>
-References: <20250619064223.3165523-1-chiang.brian@inventec.com>
- <20250619064223.3165523-2-chiang.brian@inventec.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DuNgNVKWZbf0I0Q34NliSLazWvN2WfxSVG9pQ1ORwdoJlYDsYTmGszDZab08EtPLMTwSyfbqbwva5MYX1hNt+4uhzKvGv7WXYtF+7I/mHVwGcoCz9MSQuq+fNhbUf1h8siwMZHJfnRPczoUkeoFr7NgU7NHBPW8O0kvbtdptvs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8pOqSl0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC1FC4CEE7;
+	Wed, 16 Jul 2025 20:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752696573;
+	bh=NclOaaf4/iWs/+cgbq979FL7Scz/PAQBDhPtjL7H6oI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o8pOqSl0pqi4bHIS2y/KArgSbLVPz7wzCnStK0wZUt8kLwDtMSjcua7ahNrkCgosX
+	 TPptxR/sVDx05G0UMFQomREEZAmmGKfGuPzJF3JkqSYmy9RBeby814SfJj7V6cBlg1
+	 /n0UCKLjI2WKFRQpYF5K719JW1Su4/pZz9aVwOOry9knAGkyi8jpx8RLZCNdEqgjFL
+	 coURusJHgA4ZgBHfNu9Cruge4SZrdW2KYuPxQsrVAv/d+l9/m3Kj5VpnWQnQ/3Uylk
+	 Ptq48rLLcyRPLWeNnOnGaxzilI+xQ1ZMu4+ERLkaGtPIQ4iK3EB3ylm69VRAY/wuMb
+	 mqPVoFLYrwZvw==
+Date: Wed, 16 Jul 2025 13:09:31 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Thomas Falcon <thomas.falcon@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>, Levi Yun <yeoreum.yun@arm.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Zhongqiu Han <quic_zhonhan@quicinc.com>,
+	Blake Jones <blakejones@google.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Anubhav Shelat <ashelat@redhat.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 04/12] perf parse-events: Allow the cpu term to be a
+ PMU
+Message-ID: <aHgG-9iuoj4B72SU@google.com>
+References: <20250627192417.1157736-1-irogers@google.com>
+ <20250627192417.1157736-5-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250619064223.3165523-2-chiang.brian@inventec.com>
+In-Reply-To: <20250627192417.1157736-5-irogers@google.com>
 
-On Thu, Jun 19, 2025 at 02:42:22PM +0800, Chiang Brian wrote:
-> Add device type support for tps53685
+On Fri, Jun 27, 2025 at 12:24:09PM -0700, Ian Rogers wrote:
+> On hybrid systems, events like msr/tsc/ will aggregate counts across
+> all CPUs. Often metrics only want a value like msr/tsc/ for the cores
+> on which the metric is being computed. Listing each CPU with terms
+> cpu=0,cpu=1.. is laborious and would need to be encoded for all
+> variations of a CPU model.
 > 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
+> Allow the cpumask from a PMU to be an argument to the cpu term. For
+> example in the following the cpumask of the cstate_pkg PMU selects the
+> CPUs to count msr/tsc/ counter upon:
+> ```
+> $ cat /sys/bus/event_source/devices/cstate_pkg/cpumask
+> 0
+> $ perf stat -A -e 'msr/tsc,cpu=cstate_pkg/' -a sleep 0.1
 
-Applied.
+It can be confusing if 'cpu' takes a number or a PMU name.  What about
+adding a new term (maybe 'cpu_from') to handle this case?
+
+Also please update the documentation.
 
 Thanks,
-Guenter
+Namhyung
+
+> 
+>  Performance counter stats for 'system wide':
+> 
+> CPU0          252,621,253      msr/tsc,cpu=cstate_pkg/
+> 
+>        0.101184092 seconds time elapsed
+> ```
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/parse-events.c | 37 +++++++++++++++++++++++++---------
+>  1 file changed, 28 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index 7a32d5234a64..ef38eb082342 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -192,10 +192,20 @@ static struct perf_cpu_map *get_config_cpu(const struct parse_events_terms *head
+>  
+>  	list_for_each_entry(term, &head_terms->terms, list) {
+>  		if (term->type_term == PARSE_EVENTS__TERM_TYPE_CPU) {
+> -			struct perf_cpu_map *cpu = perf_cpu_map__new_int(term->val.num);
+> +			struct perf_cpu_map *term_cpus;
+>  
+> -			perf_cpu_map__merge(&cpus, cpu);
+> -			perf_cpu_map__put(cpu);
+> +			if (term->type_val == PARSE_EVENTS__TERM_TYPE_NUM) {
+> +				term_cpus = perf_cpu_map__new_int(term->val.num);
+> +			} else {
+> +				struct perf_pmu *pmu = perf_pmus__find(term->val.str);
+> +
+> +				if (perf_cpu_map__is_empty(pmu->cpus))
+> +					term_cpus = pmu->is_core ? cpu_map__online() : NULL;
+> +				else
+> +					term_cpus = perf_cpu_map__get(pmu->cpus);
+> +			}
+> +			perf_cpu_map__merge(&cpus, term_cpus);
+> +			perf_cpu_map__put(term_cpus);
+>  		}
+>  	}
+>  
+> @@ -1054,12 +1064,21 @@ do {									   \
+>  		}
+>  		break;
+>  	case PARSE_EVENTS__TERM_TYPE_CPU:
+> -		CHECK_TYPE_VAL(NUM);
+> -		if (term->val.num >= (u64)cpu__max_present_cpu().cpu) {
+> -			parse_events_error__handle(err, term->err_val,
+> -						strdup("too big"),
+> -						NULL);
+> -			return -EINVAL;
+> +		if (term->type_val == PARSE_EVENTS__TERM_TYPE_NUM) {
+> +			if (term->val.num >= (u64)cpu__max_present_cpu().cpu) {
+> +				parse_events_error__handle(err, term->err_val,
+> +							strdup("too big"),
+> +							/*help=*/NULL);
+> +				return -EINVAL;
+> +			}
+> +		} else {
+> +			assert(term->type_val == PARSE_EVENTS__TERM_TYPE_STR);
+> +			if (perf_pmus__find(term->val.str) == NULL) {
+> +				parse_events_error__handle(err, term->err_val,
+> +							strdup("not a valid PMU"),
+> +							/*help=*/NULL);
+> +				return -EINVAL;
+> +			}
+>  		}
+>  		break;
+>  	case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+> 
 
