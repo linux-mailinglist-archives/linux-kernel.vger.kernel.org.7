@@ -1,174 +1,384 @@
-Return-Path: <linux-kernel+bounces-732811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71315B06C55
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:37:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61791B06C57
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B09D856117C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:37:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4AE1AA73D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4C81D47B4;
-	Wed, 16 Jul 2025 03:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC503594E;
+	Wed, 16 Jul 2025 03:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="njHT6tqO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=tw.synaptics.com header.i=@tw.synaptics.com header.b="TY88kznt"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11021083.outbound.protection.outlook.com [52.101.62.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB491D63C2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752637014; cv=none; b=s3xhxIdB7+545YAbHAjqLtgXoUZPKMsh2aA9LsfGS/gDW+vW8DwTOcOMAzfVOQqXqohe/Ag+d6BPYMjhUjd+IqbtMHv/Jm90LuJbQHOQIJ44HeXwWJ1Ff2YdEG/wvWSO78kbM4R6qqs7O6LLjtKXX6g3+OaMFKZZIRL6QGErSuY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752637014; c=relaxed/simple;
-	bh=5uBxKQcRMq7FuUbLA04O+2zy9ZBIDYXotnLF7dcFbFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cqaLoHmrSlpsVORji5FcrmP4XCaWoGSoMlkmjO9ULZ0eV4l17gWyhDO4tnpvyHbwgWymNbyodpjG8gFM50vSZc3wEB05L/SooHr1c1bR0hldqu9M00zrpcfb3J6vJlZqT01Btrcu3eVwAeYI24L4dPIIkfmZVkyjIcX1pOxwpKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=njHT6tqO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FGDN5w003467
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:36:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	G77P3BAiQ9+JrIzTbcmKzyn82sbdg2M/vOIxw3VV4ec=; b=njHT6tqO0EHmcmux
-	KDBWMbGIrbwUvGnj5uFNYPrNvqLM/rB6/s3cxutv7adJaINKRR4scDwInhAMBMZL
-	YspqgDZiD4GGFFQ5FwyddnvNLSwOyv/2bnAfwl1dUwf13YCW7ifG7NH2A+tormxp
-	LQC+NUGyoSjpgx1NqBPr+yFxiig9UwchmT41eXmZymJYkVxjjAFr4Dp9GV1In6In
-	+z2/Zgz013RLwpyINmQtCDSKa3hBMp3POFgf9WrHgulJDfU0e6rOw4AZjgz3+STz
-	DHfUT7CQX9ukZ56AVEMMoZlPqadcQYYpjC+ckFRReLp1U04irItrTqyCfmfWr3oH
-	9pDdYQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5drn9js-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:36:52 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-23494a515e3so53886835ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:36:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752637011; x=1753241811;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G77P3BAiQ9+JrIzTbcmKzyn82sbdg2M/vOIxw3VV4ec=;
-        b=gK3/DHsaaaY4Mcu3V9Qgvsg5wu73a043hxe0DW1MbemmST6DBJqnUamanGD+M5nc9Z
-         VkzAVU32FWm2kTmF5Wr67Z5Ed4hsSmVJ7YNXb4T/B0UH8cGGgnwdP5I409iS7BzbY6iH
-         U8gOv+FNdYFhxbImarjPrcrcmFWneJliZU8V/XNErQxqNTVx3I4nw+wcsj9DwSUPlw7q
-         5wV9qt4m4DouRQbgiOcgQCulNvDZ8XuwbsQd89CNuyiaU+fbOxuZ6qc6OKnSJ6CsBMcO
-         hQ+XOR2kcKPvrarPuZzrDRTmb2kh9kNGpCSRbFAeoBK2YqcIv3FCSiL/8zt1/p80ihsc
-         xKfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLcSr8zdseFtnVSsUpR9uxHQPgbjqW8Rcj8DmrPb+7WT56XtSiMxvxdUvRzBaifak2M6whfBWtG7Xx23M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqKAYfWJJeQHzn3YZ9h3ePHbNG31TgqxaKlRNRT9chRhUaSMJV
-	cpZhxsivh8hhnggaPG2eocNtKxZyyD4mXDEGJj3DSP6vFXM7ygDUu6N4ivw3/cZdhbmSsFlVqjD
-	Tly8WLnvwiUh+SZkRJszx38XplhjQZGCL1RIIw+YopugSMCa13Do5E9LYqF9yQTYg9Y4=
-X-Gm-Gg: ASbGncsEYL4sM2NLlhp6iVpU2+EOX5EEXo2UxORTwWxRlrYVLSlJJBvOvEWLAiagxWW
-	YgXhQJRVK81h5/MFy0dZkIKVtJ42fbynD+DNdv41XqRgEJaDyaRLoWdt2jD1OwY647+BVUuqoia
-	JQGGk8TevPli4aSRlrvHoGvXWDX7PN8pGSYh8PbKE7ZarnNLb+cfCG5Nb6zU+S/xHHcLex/t5TN
-	JN3QJ+W9sJ5ABt2Z74rRZL2mEPSMDjz/ZC5+OdNGQixoyhdsFcFEkSUqaiOJYos91DLqxd9toBs
-	MdGpgOudIecsEliO4cmFu257aETPjYBKMLeyUVYu8Vc3YKgrnlJPG2AHCalfHcA/Kdd6jFVeg3d
-	pDwu26OOh9DoDcc7Y/r3UkvccszrmZCXM
-X-Received: by 2002:a17:902:e74a:b0:223:653e:eb09 with SMTP id d9443c01a7336-23e24f363demr19174535ad.7.1752637011353;
-        Tue, 15 Jul 2025 20:36:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+ZtNZV8XXqxRue5LR/rmeqC3k8eKrkmqjtuyqxnAf1b6vc2jc5Wwz/7sBQDCUzZ7rGc91qg==
-X-Received: by 2002:a17:902:e74a:b0:223:653e:eb09 with SMTP id d9443c01a7336-23e24f363demr19174085ad.7.1752637010830;
-        Tue, 15 Jul 2025 20:36:50 -0700 (PDT)
-Received: from [10.133.33.219] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4289274sm116045285ad.43.2025.07.15.20.36.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 20:36:50 -0700 (PDT)
-Message-ID: <bb1a5f3a-5ac0-434b-8da4-e43c996cfa30@oss.qualcomm.com>
-Date: Wed, 16 Jul 2025 11:36:45 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4318F1F2BAD;
+	Wed, 16 Jul 2025 03:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752637017; cv=fail; b=OzfrBQWKCbAXUMOL2RP/mCq4weHPc9aQDmgwRZMNr/Cjp7y8eE6rvGvyXgkSHIfsbPaSBmCugEhB+0utNrqi5nC679MWJaBjsaDs6s6j7w4gOg+y/g/bKouZVeS3T5Hb0UoA0CF/U3wwK3RqnW9d2E6wvngQt6ZyosrCSIyr+A8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752637017; c=relaxed/simple;
+	bh=o/0db0iSgxIUOdwrXMO5+fxvOjOzdVSVy82EXGs2Lkk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MZP1y+unCXWxXu4QhOhFqAswhc89bF3/SUjqdvrQyAzG6DLM7Co/XgjQrDhkQixp47zNn6p6GchUEEjNDDjW/WKiloPDcR8mXvE0ci56wCSTnfXN6nwsBPKj3B/+CZFp4R/lNRsYNKK7Y0BhKyTLvviWMDIXLOLIIO4nFaJTeUE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tw.synaptics.com; spf=pass smtp.mailfrom=tw.synaptics.com; dkim=pass (1024-bit key) header.d=tw.synaptics.com header.i=@tw.synaptics.com header.b=TY88kznt; arc=fail smtp.client-ip=52.101.62.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tw.synaptics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tw.synaptics.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VSMCS8H7RwrElhdK3kDOR+mHukvxp2AdsVUB2rakS/W+O3OqN24LVyZ884zQHJ7PSRnM5pLzMJr25G6hbOrME95YXsqO11syRtHs51YmlzMNZdmXid0PJdnkb8hhXlK6cfynVjQs8U5hsMiXWEE1UbP/t47e7jxFYKfIcC8x79RXOLs6QiiiRuSKHObIIs7ZH+sRysfJJP78H8m1OCwnU6cmDmMBCywn3neBDeOj/U/YX24mAWyTJxIe+cR/VwqGDBeFdbfEw9zsv5S0bwDQAxOkbhqn4pseihBOKuOqwTSn9bIWku8bgCvbIU3yUH0FQrvdV9QEAlg+FMTfkwXi4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CDxz89glYLXRioi1Ev5IoWg5Fd5aDElqTlEw7GPXJG0=;
+ b=vKLyObvbDQklZObvFWeCE/Ki2JBFvvjTOk3vIivM/t+TizSe8zT159LeQ5vDNzjTua0/nKVblNTM9HjFIrRlSsdEjdeZXFIHSRM0JqfaerJ7EEd20CyWDe7jrFFcClYnYKyqvQ6ctisYKGPKfRPixMnHM1CXGdkIDq6CcriB8mpo8BMCKxk5kPIawvtZLjiKqN6UQg/FY639AMykIF5iwQaP3HjRWJKx6KX49DuMGD+GtQv1O+Ttuwg+o0HTtYH3EIZYqtnmqX8RfXuLL3cxQBTyrnhjYu8uofdux7kBl6Sd9AqCoKSWad63gJgtbzTmfH5E2MGg5zE/H841Hy7pYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 192.147.44.87) smtp.rcpttodomain=gmail.com smtp.mailfrom=tw.synaptics.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=tw.synaptics.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tw.synaptics.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CDxz89glYLXRioi1Ev5IoWg5Fd5aDElqTlEw7GPXJG0=;
+ b=TY88kzntCCPd3QEfLBR1TJ7ugs49IPLwlxiqnWeDlL/0nyYvl8ScxnDJAglCq7g54cXuGQMavQjVJt5gyiCqr5ZMcLCfiZdml8B4Vh3uXj9bBpKY9co7jIvn8+LBAJW+daiNOQ8TWFv5Qfyca0nCfWpqCiBwIS2IyS/BK+7zbyU=
+Received: from DS7PR05CA0108.namprd05.prod.outlook.com (2603:10b6:8:56::27) by
+ LV8PR03MB7518.namprd03.prod.outlook.com (2603:10b6:408:190::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.36; Wed, 16 Jul
+ 2025 03:36:52 +0000
+Received: from DS3PEPF0000C380.namprd04.prod.outlook.com
+ (2603:10b6:8:56:cafe::77) by DS7PR05CA0108.outlook.office365.com
+ (2603:10b6:8:56::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.12 via Frontend Transport; Wed,
+ 16 Jul 2025 03:36:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.147.44.87)
+ smtp.mailfrom=tw.synaptics.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=tw.synaptics.com;
+Received-SPF: Pass (protection.outlook.com: domain of tw.synaptics.com
+ designates 192.147.44.87 as permitted sender)
+ receiver=protection.outlook.com; client-ip=192.147.44.87;
+ helo=sjc1uvd-bld04.synaptics.com; pr=C
+Received: from sjc1uvd-bld04.synaptics.com (192.147.44.87) by
+ DS3PEPF0000C380.mail.protection.outlook.com (10.167.23.10) with Microsoft
+ SMTP Server id 15.20.8922.22 via Frontend Transport; Wed, 16 Jul 2025
+ 03:36:51 +0000
+From: Marge Yang <marge.yang@tw.synaptics.com>
+To: dmitry.torokhov@gmail.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	marge.yang@tw.synaptics.com
+Cc: david.chiu@tw.synaptics.com,
+	derek.cheng@tw.synaptics.com,
+	sam.tsai@synaptics.com,
+	vincent.huang@tw.synaptics.com,
+	Marge Yang <Marge.Yang@tw.synaptics.com>
+Subject: [PATCH V2] Input: synaptics-rmi4- Add a new feature for Forcepad.
+Date: Wed, 16 Jul 2025 03:36:48 +0000
+Message-Id: <20250716033648.1785509-1-marge.yang@tw.synaptics.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] bus: mhi: keep dma buffers through
- suspend/hibernation cycles
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-        Youssef Samir <quic_yabdulra@quicinc.com>,
-        Matthew Leung <quic_mattleun@quicinc.com>,
-        Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-        Kunwu Chan <chentao@kylinos.cn>,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        Yan Zhen <yanzhen@vivo.com>, Sujeev Dias <sdias@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com
-References: <20250715132509.2643305-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-In-Reply-To: <20250715132509.2643305-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: KtbRV5BiivIlaDHayUU1QU7tPZOVE6oG
-X-Authority-Analysis: v=2.4 cv=D4xHKuRj c=1 sm=1 tr=0 ts=68771e54 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=QX4gbG5DAAAA:8
- a=hUY_jMkgKMZyhPis8EMA:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
- a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-GUID: KtbRV5BiivIlaDHayUU1QU7tPZOVE6oG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDAzMCBTYWx0ZWRfX3aORe5QlIKaA
- Ykf+dXVRB9e+NgUU1poBGLz+o+X0sTrOMek3oEex41yi/Rn1sBw8Q4fzfdE8Xn3oiypt10Eu+yH
- hlWpOWRNdrGXRv1ns3IdXsKhE5hTpq3bspXfmmQ+UWETccGB3I2pbPd8m9sqiBm60dJaMl8Wjps
- vW1TkhmMpOO/ojncqydbnHYdteWtl5noYz+Se/+bAGQWSEhadSrmX1asCW2Ta9TitxF0dqCEhjy
- YRezdE2Y4Luc1+13IyvcwOhInLFpjpcMQHtd5ktBLlp4NGMZUFdi2NjkOxvWnewplh/0Tarft96
- himGd29eSVcFpcrecqRrqjEpwMXrFD7YQB5iV33D0jNXtbYZlMHgOHuZvIW/rvMQt2TK2+CRxS7
- eQ/Hoa7897gQ+k9TSmABcbbK3w+61q+4sa6Bxywgt86H0r5l8SGR2OEk7Hr55gTBuEFtdjrF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxlogscore=763 impostorscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 suspectscore=0 bulkscore=0 mlxscore=0
- priorityscore=1501 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507160030
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C380:EE_|LV8PR03MB7518:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: c22c33b5-794b-428d-25e2-08ddc41a0127
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?b7UDhqh8DCiGxtHVw+vbxFKSp+n8W7HbgjN1lh6mIPeFjjq8rUI1mchfPrgu?=
+ =?us-ascii?Q?WcE2kuMikGnLiA6stPj7LY5g5t+hmoNknoQv/MHFKpOrj6h4fUIJ/c1rOxb6?=
+ =?us-ascii?Q?gmTwxLnygEPerJjDRoy0fv+U2X4GaVzk6GocOLkSQn2+6AW4M/IIM0gi+aFd?=
+ =?us-ascii?Q?7yeK0fI7aC7D493llhIX+Fdmh5x/BzgwAbWesh12QcftXiki3d0sLpTMX4MI?=
+ =?us-ascii?Q?ZL0wNju01lArUEcKQgdbsg4RsBDP8Z1LLUxti6R2mYGj6OfdI0Qp0r6QwHY8?=
+ =?us-ascii?Q?a0crVJr9wiC3dyGBgQD+ys7qmdeJXn7cUihUR+icH0/FkXjJNEw/jNL+IjBO?=
+ =?us-ascii?Q?4JlU5IWpApGy2tPx1xGXg5ZWiAomzGcVvLi7vcV19CVyMTEkT6Bi7hdcjLF5?=
+ =?us-ascii?Q?C7oY5Xygl8VhMKonDhJMKb5m7g9E194S2BRCXax7I5QZlhq9tDsGTBBVQlS4?=
+ =?us-ascii?Q?UQju78thIXBjW7fPn+0ZMzF6qi2vGIhCIP9z8FxyUMy0e63evXRQklDxy+6j?=
+ =?us-ascii?Q?GlvQVoloev6ekxVmSS57OtMwby7vu7IghrvnNMGhUaGLAtwfw9kV+E5mZ/DR?=
+ =?us-ascii?Q?b5SzIKgI82+uVcE11v2lj8ZBb7D4WcFXEksY/LEvxsuWpIw+vb39Td4HswM1?=
+ =?us-ascii?Q?zcuAt3q0N2ErPg6IsIEnNHGAtRmyN2vROHU3Ln+7T2Kohh3xwjacS4DmtdC9?=
+ =?us-ascii?Q?+jHnJ1KexTyf+36PbrLnZxB2+b70zzKfEBT7EdZjCLX0MOMXBKy5wCA2rjjn?=
+ =?us-ascii?Q?vMDHeZHJ99oWNcoDjhcY+aEqJhauKVfottxDqpI50aH25/EvsQkuOaTzl3ZY?=
+ =?us-ascii?Q?TPQcjIPH/5J8oLHIwqzXynrfp+zuopwSsZL5hbBTlD7kdApJrZhPfzFpnU7M?=
+ =?us-ascii?Q?EuKAicQm7gbWq/qQFZIYYQDsCjc3mReusL0F5MajBcdqhWQNL0iDsLCWjCNu?=
+ =?us-ascii?Q?IKWOuMPSoI38F9fz/GR7afqkfEKoB1qeb9AJaTtUF9gLAiyq4/HP5WbTGM4w?=
+ =?us-ascii?Q?5OTpt3lanZm2/7ntrUnpzYn+XO7+rmTFq9bLREIiYX4X1B/xbytI9CPCAZck?=
+ =?us-ascii?Q?Qn7TdvStbpQ+14FgI6fSQBpD/lfHf74GUBMk/Wq7eePx/4fT7X0czm/pjLjT?=
+ =?us-ascii?Q?BvOBI9CiF0mpJEAAYTdKXdCEE7xbItjsJpZ83J260oLk7w0ZMYGZl1ox/xxn?=
+ =?us-ascii?Q?yb/6qGrDEyPWu/nANk8WNqvBwC29e0LdLtbAylS09nCwY7gii2a2BWKfnrb4?=
+ =?us-ascii?Q?KS8G3avUZK2SFpeGN7XJJHnC4/mQSOUJSdx6y6GGZuMWkzRtOBGJFomuSVjF?=
+ =?us-ascii?Q?KTLpQiiKpSzBmzPbrC+fk6+XnODUHBkqZMMhrhw8GG4gp+6MJszHdy8g8ytD?=
+ =?us-ascii?Q?cDsTh5fBZZfcnkjZogWUtVJ3erVvUylmnFAitQg8jSkoI0U3dMz2+svwgJ4n?=
+ =?us-ascii?Q?5542Fx3qSAKP/KKOpqJnt8bfqZW2Z5DN/5Y8d9En+2h+e+4NmdPiveNdLLr5?=
+ =?us-ascii?Q?RCqEtciiQ2QLa3GO/DMcdkyBjp5kzspbC9m1?=
+X-Forefront-Antispam-Report:
+	CIP:192.147.44.87;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:sjc1uvd-bld04.synaptics.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: tw.synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 03:36:51.8101
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c22c33b5-794b-428d-25e2-08ddc41a0127
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=335d1fbc-2124-4173-9863-17e7051a2a0e;Ip=[192.147.44.87];Helo=[sjc1uvd-bld04.synaptics.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C380.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR03MB7518
 
+From: Marge Yang <Marge.Yang@tw.synaptics.com>
 
+Forcepad devices will use F21, for click simulation
+due to lack of a metal button, so we add F21 support
+to make forcepad support click function.
 
-On 7/15/2025 9:25 PM, Muhammad Usama Anjum wrote:
-> When there is memory pressure during resume and no DMA memory is
-> available, the ath11k driver fails to resume. The driver currently
-> frees its DMA memory during suspend or hibernate, and attempts to
-> re-allocate it during resume. However, if the DMA memory has been
-> consumed by other software in the meantime, these allocations can
-> fail, leading to critical failures in the WiFi driver. It has been
-> reported [1].
-> 
-> Although I have recently fixed several instances [2] [3] to ensure
-> DMA memory is not freed once allocated, we continue to receive
-> reports of new failures.
-> 
-> In this series, 3 more such cases are being fixed. There are still
-> some cases which I'm trying to fix. They can be discussed separately.
-> 
-> [1] https://lore.kernel.org/all/ead32f5b-730a-4b81-b38f-93d822f990c6@collabora.com
-> [2] https://lore.kernel.org/all/20250428080242.466901-1-usama.anjum@collabora.com
-> [3] https://lore.kernel.org/all/20250516184952.878726-1-usama.anjum@collabora.com
-> 
-> Muhammad Usama Anjum (3):
->   bus: mhi: host: keep bhi buffer through suspend cycle
->   bus: mhi: host: keep bhie buffer through suspend cycle
->   bus: mhi: keep device context through suspend cycles
-> 
->  drivers/bus/mhi/host/boot.c     | 44 ++++++++++++++++++++-------------
->  drivers/bus/mhi/host/init.c     | 41 ++++++++++++++++++++++++++----
->  drivers/bus/mhi/host/internal.h |  2 ++
->  include/linux/mhi.h             |  2 ++
->  4 files changed, 67 insertions(+), 22 deletions(-)
-> 
+Signed-off-by: Marge Yang <Marge.Yang@tw.synaptics.com>
+---
+ drivers/input/rmi4/Kconfig      |   8 ++
+ drivers/input/rmi4/Makefile     |   1 +
+ drivers/input/rmi4/rmi_bus.c    |   3 +
+ drivers/input/rmi4/rmi_driver.h |   1 +
+ drivers/input/rmi4/rmi_f21.c    | 162 ++++++++++++++++++++++++++++++++
+ 5 files changed, 175 insertions(+)
+ create mode 100644 drivers/input/rmi4/rmi_f21.c
 
-changelog missing
+diff --git a/drivers/input/rmi4/Kconfig b/drivers/input/rmi4/Kconfig
+index c0163b983ce6..086013be6a64 100644
+--- a/drivers/input/rmi4/Kconfig
++++ b/drivers/input/rmi4/Kconfig
+@@ -82,6 +82,14 @@ config RMI4_F12
+ 	  touchpads. For sensors that support relative pointing, F12 also
+ 	  provides mouse input.
+ 
++config RMI4_F21
++	bool "RMI4 Function 21 (PRESSURE)"
++	help
++	  Say Y here if you want to add support for RMI4 function 21.
++
++	  Function 21 provides buttons/pressure for RMI4 devices. This includes
++	  support for buttons/pressure on PressurePad.
++
+ config RMI4_F30
+ 	bool "RMI4 Function 30 (GPIO LED)"
+ 	help
+diff --git a/drivers/input/rmi4/Makefile b/drivers/input/rmi4/Makefile
+index 02f14c846861..484b97eca025 100644
+--- a/drivers/input/rmi4/Makefile
++++ b/drivers/input/rmi4/Makefile
+@@ -8,6 +8,7 @@ rmi_core-$(CONFIG_RMI4_2D_SENSOR) += rmi_2d_sensor.o
+ rmi_core-$(CONFIG_RMI4_F03) += rmi_f03.o
+ rmi_core-$(CONFIG_RMI4_F11) += rmi_f11.o
+ rmi_core-$(CONFIG_RMI4_F12) += rmi_f12.o
++rmi_core-$(CONFIG_RMI4_F21) += rmi_f21.o
+ rmi_core-$(CONFIG_RMI4_F30) += rmi_f30.o
+ rmi_core-$(CONFIG_RMI4_F34) += rmi_f34.o rmi_f34v7.o
+ rmi_core-$(CONFIG_RMI4_F3A) += rmi_f3a.o
+diff --git a/drivers/input/rmi4/rmi_bus.c b/drivers/input/rmi4/rmi_bus.c
+index 3aee04837205..47fe7a88c92b 100644
+--- a/drivers/input/rmi4/rmi_bus.c
++++ b/drivers/input/rmi4/rmi_bus.c
+@@ -360,6 +360,9 @@ static struct rmi_function_handler *fn_handlers[] = {
+ #ifdef CONFIG_RMI4_F12
+ 	&rmi_f12_handler,
+ #endif
++#ifdef CONFIG_RMI4_F21
++	&rmi_f21_handler,
++#endif
+ #ifdef CONFIG_RMI4_F30
+ 	&rmi_f30_handler,
+ #endif
+diff --git a/drivers/input/rmi4/rmi_driver.h b/drivers/input/rmi4/rmi_driver.h
+index 3bfe9013043e..21e1c7663561 100644
+--- a/drivers/input/rmi4/rmi_driver.h
++++ b/drivers/input/rmi4/rmi_driver.h
+@@ -133,6 +133,7 @@ extern struct rmi_function_handler rmi_f01_handler;
+ extern struct rmi_function_handler rmi_f03_handler;
+ extern struct rmi_function_handler rmi_f11_handler;
+ extern struct rmi_function_handler rmi_f12_handler;
++extern struct rmi_function_handler rmi_f21_handler;
+ extern struct rmi_function_handler rmi_f30_handler;
+ extern struct rmi_function_handler rmi_f34_handler;
+ extern struct rmi_function_handler rmi_f3a_handler;
+diff --git a/drivers/input/rmi4/rmi_f21.c b/drivers/input/rmi4/rmi_f21.c
+new file mode 100644
+index 000000000000..510278ee7704
+--- /dev/null
++++ b/drivers/input/rmi4/rmi_f21.c
+@@ -0,0 +1,162 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2012-2025 Synaptics Incorporated
++ */
++
++#include <linux/kernel.h>
++#include <linux/rmi.h>
++#include <linux/input.h>
++#include <linux/slab.h>
++#include "rmi_driver.h"
++
++#define RMI_f21_FORCE_CLICK			BIT(0)
++#define RMI_f21_DATA_REGS_MAX_SIZE	255
++#define RMI_f21_FORCEPAD_BUTTON_COUNT	1
++
++struct f21_data {
++	/* Query Data */
++	u8 data_regs[RMI_f21_DATA_REGS_MAX_SIZE];
++	struct input_dev *input;
++	u16 key_code;
++
++	unsigned int attn_data_size;
++	unsigned int attn_data_index_for_button;
++	unsigned int sensor_count;
++	unsigned int max_number_Of_finger;
++	unsigned int data_reg_size;
++	unsigned int data_reg_index_for_button;
++	unsigned int query15_offset;
++};
++
++static irqreturn_t rmi_f21_attention(int irq, void *ctx)
++{
++	struct rmi_function *fn = ctx;
++	struct f21_data *f21 = dev_get_drvdata(&fn->dev);
++	struct rmi_driver_data *drvdata = dev_get_drvdata(&fn->rmi_dev->dev);
++	int error;
++	bool pressed = false;
++
++	if (drvdata->attn_data.data) {
++		if (drvdata->attn_data.size < f21->attn_data_size) {
++			dev_warn(&fn->dev, "f21 interrupted, but data is missing\n");
++			return IRQ_HANDLED;
++		}
++		pressed = (((u8 *)drvdata->attn_data.data)[f21->attn_data_index_for_button] &
++					RMI_f21_FORCE_CLICK);
++		drvdata->attn_data.data += f21->attn_data_size;
++		drvdata->attn_data.size -= f21->attn_data_size;
++	} else {
++		error = rmi_read_block(fn->rmi_dev, fn->fd.data_base_addr,
++					f21->data_regs, f21->data_reg_size);
++		if (error) {
++			dev_err(&fn->dev, "%s: Failed to read f21 data registers: %d\n",
++				__func__, error);
++			return IRQ_RETVAL(error);
++		}
++		pressed = (f21->data_regs[f21->data_reg_index_for_button] &
++					RMI_f21_FORCE_CLICK);
++	}
++
++	input_report_key(f21->input, f21->key_code, pressed);
++
++	return IRQ_HANDLED;
++}
++
++static int rmi_f21_config(struct rmi_function *fn)
++{
++	struct rmi_driver *drv = fn->rmi_dev->driver;
++
++	drv->set_irq_bits(fn->rmi_dev, fn->irq_mask);
++
++	return 0;
++}
++
++static int rmi_f21_initialize(struct rmi_function *fn, struct f21_data *f21)
++{
++	struct input_dev *input = f21->input;
++
++	f21->key_code = BTN_LEFT;
++	input_set_capability(input, EV_KEY, f21->key_code);
++	input->keycode = &f21->key_code;
++	input->keycodesize = sizeof(f21->key_code);
++	input->keycodemax = RMI_f21_FORCEPAD_BUTTON_COUNT;
++
++	__set_bit(INPUT_PROP_BUTTONPAD, input->propbit);
++
++	return 0;
++}
++
++static int rmi_f21_probe(struct rmi_function *fn)
++{
++	struct rmi_device *rmi_dev = fn->rmi_dev;
++	struct rmi_driver_data *drv_data = dev_get_drvdata(&rmi_dev->dev);
++	struct f21_data *f21;
++	int error;
++
++	if (!drv_data->input) {
++		dev_info(&fn->dev, "f21: no input device found, ignoring\n");
++		return -ENXIO;
++	}
++
++	f21 = devm_kzalloc(&fn->dev, sizeof(*f21), GFP_KERNEL);
++	if (!f21)
++		return -ENOMEM;
++
++	f21->input = drv_data->input;
++
++	error = rmi_f21_initialize(fn, f21);
++	if (error)
++		return error;
++
++	dev_set_drvdata(&fn->dev, f21);
++
++	f21->sensor_count = fn->fd.query_base_addr & (BIT(0) | BIT(1) | BIT(2) | BIT(3));
++
++	if (fn->fd.query_base_addr & BIT(5)) {
++		if (fn->fd.query_base_addr & BIT(6))
++			f21->query15_offset = 2;
++		else
++			f21->query15_offset = 1;
++
++		rmi_read_block(fn->rmi_dev, fn->fd.query_base_addr + f21->query15_offset,
++					f21->data_regs, 1);
++		f21->max_number_Of_finger = f21->data_regs[0] & 0x0F;
++	} else {
++		dev_info(&fn->dev, "f21_query15 doesn't support.\n");
++		f21->query15_offset = 0;
++		f21->max_number_Of_finger = 5;
++	}
++
++	if (fn->fd.query_base_addr & BIT(6)) {
++		dev_info(&fn->dev, "Support new F21 feature.\n");
++		/*Each finger uses one byte, and the button state uses one byte.*/
++		f21->attn_data_size = f21->max_number_Of_finger + 1;
++		f21->attn_data_index_for_button = f21->attn_data_size - 1;
++		/*
++		 * Each sensor uses two bytes, the button state uses one byte,
++		 * and each finger uses two bytes.
++		 */
++		f21->data_reg_size = f21->sensor_count * 2 + 1 +
++								f21->max_number_Of_finger * 2;
++		f21->data_reg_index_for_button = f21->sensor_count * 2;
++	} else {
++		dev_info(&fn->dev, "Support old F21 feature.\n");
++		/*Each finger uses two bytes, and the button state uses one byte.*/
++		f21->attn_data_size = f21->sensor_count * 2 + 1;
++		f21->attn_data_index_for_button = f21->attn_data_size - 1;
++		/*Each finger uses two bytes, and the button state uses one byte.*/
++		f21->data_reg_size = f21->sensor_count * 2 + 1;
++		f21->data_reg_index_for_button = f21->data_reg_size - 1;
++	}
++	return 0;
++}
++
++struct rmi_function_handler rmi_f21_handler = {
++	.driver = {
++		.name = "rmi4_f21",
++	},
++	.func = 0x21,
++	.probe = rmi_f21_probe,
++	.config = rmi_f21_config,
++	.attention = rmi_f21_attention,
++};
+-- 
+2.43.0
 
 
