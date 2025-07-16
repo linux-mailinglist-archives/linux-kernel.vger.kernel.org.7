@@ -1,123 +1,242 @@
-Return-Path: <linux-kernel+bounces-733290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C94FB072BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:10:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21055B072B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09BA3BD94C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:09:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B3B1889FEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0972F2C5E;
-	Wed, 16 Jul 2025 10:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0835B2F2737;
+	Wed, 16 Jul 2025 10:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sb7cT2DB"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IXmlqVJX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA132F362F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1012EA158;
+	Wed, 16 Jul 2025 10:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660552; cv=none; b=gtHC71s/ZcpxZYZUUmMyZAvhyKyetLcH1CyySymL82UbuG1smAweBs7W958Yf2TAvQRvn32IfIXWlwOz/KvKRZDLx+tL7DPYPgFhmdSh3HCeJSZclHazqXXGs3XBzfr92SLTH4NA0KZWNDP9Y5LYe+33Fgzdji7y8IU+j0s8HPA=
+	t=1752660544; cv=none; b=W22mIa5w+/U+8Nq5YrvU1eVpxr0ishTCRBaKWigzg46R/kcIka86+jWwvQqDFRkYnAhR//94BHzXe+ywJzuTocCQM+HgJvfHblkbzfT7KbTFum+SP9wURRbu9rx7trcK8kHH/diDoyy1dbAnwLPbYk5KixrCFCBGFS/NR6geSY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752660552; c=relaxed/simple;
-	bh=bYR1c9LIUL6l7D6Wuh18sl8qUWFTwYdOeejSsA0iDBU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cbDEB85QG3iWjzR66F3K6WsCs1XO4oZuvvbRX1N0TUXru3F1KMn74RH2sVqVNFQaI0YyUrtfFnTw0KzQ2btbfZwdASZ7UuOUW4+qeE7ffc8e1kFOiUebNOukq2yhuOG4AzA32g6ZNjVkkdDN5SJPC7UFeGHh6RUVVXIBdAbXziI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sb7cT2DB; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e733e25bfc7so5549890276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752660549; x=1753265349; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aaSlIX5JSMkPDXYG9OHGWw9rTnf4dMbBtDMCUX1oXGk=;
-        b=Sb7cT2DBKzu0dLJA4pKIFaNSayrw3zi+x/xQ1PZ07iSCbQWylfToz1gQ5LJTB+4eMk
-         mBPS1BqqFR7JQDvuySXht3HTE1SOXSmNG9+dw8v0ny+BMr1M82EF4s/0gUIpuj/jXM5Q
-         3uotcC4RsxC+YZ+DpnpxkHRX/NUYBOTxzaXh5npZtBtvwWPTipOUMqXkbCp026HlODlb
-         Nzh4HmVpUcq+e9Jhf3miiQQ1Z6Xh/2Yq3iQNZ+FVgiM4X7AfkX+dMyvL0NNPbNOMKxec
-         t6WUe9qhAxRCNbunJn/TdNP8v8OrA1ncgobXzOmB42NPXfT2aYp3cfWWSnPhAbDKCc6Z
-         joOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752660549; x=1753265349;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aaSlIX5JSMkPDXYG9OHGWw9rTnf4dMbBtDMCUX1oXGk=;
-        b=A8r+dxtFiknHIfVvlusV6u25H6JrVIl83rWc2jE8zPmRf9bl293h98t8JdgSDMh4Ta
-         XZ59MGZCy7IiVKTgCHsNdU9jenUdCkJgknRmg36Mb3zf4hsl6eRhdiIKWZfjVJ63EVjR
-         Qn9W3fbyOYuqrAOW/NvJP+rI2QJ34z2x8Z1Rah73EGImlrICEmZ4NxeckSTxCRuKirpW
-         zx/cqFbkxIBNI10jOtqdiEmDQS2Urtqz5kfVSYWl0hMcQRmB2NxQYVY2yDyuXFLUVVdU
-         diHvrrQRObw7sdCqr8sngmpo3wo6zGLzAts6Dmb4Gd2ttdjV0M3GWPwIqbNenyAaorKQ
-         cQzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvRo7mtHgn0ZEn2PeoUz9SSd8ukSqYxL1XlKTb1+SWYTRzJODpuu5w9D7h/hum3EMw1SalJxe7M0kGKy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZGpiNqPqk8a4QFYbPGPL2QltAsVkLEioLO0ZfTXvuG8XeuqsB
-	wgTYPC9j8BHNaDazG3nrt0G4PzkAE7QOIMULNbDzB0a5QIFMTtiKcpISzeAJfV6kDLOdNeVswy7
-	QHgf339Llp1R/m6RQXsOkVomjS5MMhu0uQYtUgYJhhQ==
-X-Gm-Gg: ASbGnctkHu6zft6g5X9FSma7ZbC1zptt1gOyu+xmZbBU9qy09BNtnt0YX7KS8n7zOlI
-	W867AVfxf7kcjb/MH/Q7YqtlOB+HQcmFND/hRz+Hns2v8Av5cC60wSH7Z/btXiUYthDK9f0LHe1
-	OEgxGY/iKRndgAepUCXhXrWUYFgha1Wv4N/IsX2V+ljNzIIhjfWK+QwusuD4J9X7O21JnVUbkgd
-	cyAV863
-X-Google-Smtp-Source: AGHT+IEVrqdnzjgna0nPf8/QlqPaakZ0z/Y4vr73ndJXG6lcTCHSif5oJvQaIYU9G6d6AxqzY4LsoRudWzSfDn6eIO8=
-X-Received: by 2002:a05:690c:22c5:b0:70e:2ba2:659d with SMTP id
- 00721157ae682-7183747da57mr24628487b3.23.1752660548791; Wed, 16 Jul 2025
- 03:09:08 -0700 (PDT)
+	s=arc-20240116; t=1752660544; c=relaxed/simple;
+	bh=jjfiSEBD6Be1rNTg7zIFXMEUwaoclF9nvMC4ZmIPho4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBpfrKYja2tz5sk3B1eVBnBsiFCdld6SK83d+rNVUWNR3bl/8cYHcyJI24JcOHevzo72ERCrUdnpEQ9/HcQzkgW+xCPCArZBFoTWHnA2uNHmYHUEHY55tbglzdbt25CUdYoW7lUWHjNH2vslrWuEvVqF9SEt8UxBjpCDlJ+ngtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IXmlqVJX; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752660540; x=1784196540;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jjfiSEBD6Be1rNTg7zIFXMEUwaoclF9nvMC4ZmIPho4=;
+  b=IXmlqVJXWlBPtJ9LurHa5PdfB+2fg9HGa0XiQoHUz5IoCNxEy9TBcTG9
+   AWyBMNqN9LJO6Qmm+MXHZlZ4SHVgXm4RfV0XVGtZXV2T8OTfEG8pPLc6G
+   Qv7B6s63YUR6UZxDbrKVjADQ7OGyiSqwThcL5HcXWANU3A6NkPEszBr+h
+   lz6FuIN9jhITKWnhDRSuHzd6yMP/4BPJ7UFtrc9dcIVg3nC+holPY1LLA
+   QjG3XJWxfjbLoScHXXfxPj0m6yOk/V7oDVPIs0dyggslbJItlB/nEf0ew
+   wRuyV7OMrffIP5/eqkJcnI6kHTmEdGfEnrTXM+O13X4jacKtv6P2sgFKW
+   A==;
+X-CSE-ConnectionGUID: n7ICpMLGQHiN8RfypzTiog==
+X-CSE-MsgGUID: GFmKW0f0TIKZKIWe47A99g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="42530301"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="42530301"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 03:08:59 -0700
+X-CSE-ConnectionGUID: Yi46FFWKTeevyCcjoU7exw==
+X-CSE-MsgGUID: ERKRPph5SLqKuRw+jeU1vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="188426279"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 03:08:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ubz4H-0000000FuMD-0YSb;
+	Wed, 16 Jul 2025 13:08:53 +0300
+Date: Wed, 16 Jul 2025 13:08:52 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
+Message-ID: <aHd6NEHcCa6aqJB5@smile.fi.intel.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-8-sean.anderson@linux.dev>
+ <aHYWQOjJEWdLjy7H@smile.fi.intel.com>
+ <3b35b3a7-3f1a-4401-9b60-ba4afda5636e@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
-In-Reply-To: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 16 Jul 2025 12:08:33 +0200
-X-Gm-Features: Ac12FXzW2XIbQtUDaHN3eu8QGSaXiZ3-1JrKO6jE043zd7_dvv1edcxvTnJN-Gw
-Message-ID: <CAPDyKFqsP7bHrN6oBi0Wvy-MRZNko3uOq6wiH8vf9QxOeJuEug@mail.gmail.com>
-Subject: Re: [PATCH next] mmc: loongson2: Fix error code in loongson2_mmc_resource_request()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b35b3a7-3f1a-4401-9b60-ba4afda5636e@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, 16 Jul 2025 at 01:01, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> There is a cut and paste bug so we accidentally return the wrong
-> variable.  It should be "ret" instead of PTR_ERR(host->clk).
->
-> Fixes: 2115772014bd ("mmc: loongson2: Add Loongson-2K SD/SDIO controller driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Tue, Jul 15, 2025 at 12:20:24PM -0400, Sean Anderson wrote:
+> On 7/15/25 04:50, Andy Shevchenko wrote:
+> > On Mon, Jul 14, 2025 at 09:20:23PM -0400, Sean Anderson wrote:
 
-Applied for next, thanks!
+...
 
-Kind regards
-Uffe
+> >>  #include <linux/hwmon-sysfs.h>
+> > 
+> > + blank line here..
+> 
+> why?
+
+To group the subsystem related headers (which are more custom and less generic).
+This allows to follow what the subsystems are in use and what APIs / types are
+taken.
+
+> >>  #include <linux/iio/consumer.h>
+> >> +#include <linux/iio/events.h>
+> >> +#include <linux/iio/iio.h>
+> >>  #include <linux/iio/types.h>
+> > 
+> > ...and here?
+> 
+> OK
+> 
+> >> +#include <uapi/linux/iio/events.h>
+
+As similar here, to visually split uAPI and the rest. This increases
+readability and maintenance.
+
+...
+
+> >> +static ssize_t iio_hwmon_lookup_alarm(struct iio_hwmon_listener *listener,
+> >> +				      u64 id)
+> >> +{
+> >> +	ssize_t i;
+> >> +
+> >> +	for (i = 0; i < listener->num_alarms; i++)
+> >> +		if (listener->ids[i] == id)
+> >> +			return i;
+> > 
+> >> +	return -1;
+> > 
+> > -ENOENT ?
+> > This will allow to propagate an error code to the upper layer(s).
+> 
+> I suppose. But I think
+> 
+> alarm = iio_hwmon_lookup_alarm(...);
+> if (alarm < 0)
+> 	return -ENOENT;
+> 
+> is clearer than
+
+I disagree. This makes it worth as it shadows other possible code(s), if any,
+and makes harder to follow as reader has to check the callee implementation.
+
+The shadow error codes need a justification.
+
+> alarm = iio_hwmon_lookup_alarm(...);
+> if (alarm < 0)
+> 	return alarm;
+> 
+> because you don't have to read the definition of iio_hwmon_lookup_alarm
+> to determine what the return value is.
+
+Exactly my point!
+
+> >> +}
+
+...
+
+> >> +err_alarms:
+> >> +	kfree(listener->alarms);
+> >> +	kfree(listener->ids);
+> >> +err_listener:
+> >> +	kfree(listener);
+> >> +err_unlock:
+> >> +	mutex_unlock(&iio_hwmon_listener_lock);
+> >> +	return ERR_PTR(err);
+> > 
+> > What about using __free()?
+> 
+> That works for listener, but not for alarms or ids.
+
+Why not?
+
+...
+
+> >> +static void iio_hwmon_listener_put(void *data)
+> >> +{
+> >> +	struct iio_hwmon_listener *listener = data;
+> >> +
+> >> +	scoped_guard(mutex, &iio_hwmon_listener_lock) {
+> >> +		if (unlikely(listener->refcnt == UINT_MAX))
+> >> +			return;
+> >> +
+> >> +		if (--listener->refcnt)
+> >> +			return;
+> > 
+> > Can the refcount_t be used with the respective APIs? Or even kref?
+> 
+> Why? We do all the manipulation under a mutex, so there is no point in
+> atomic access. Instead of the games refcnt_t has to play to try and
+> prevent overflow we can just check for it directly.
+
+refcount_t provides a facility of overflow/underflow. Also it gives better
+understanding from the data type to see which value and how does that.
+
+> >> +		list_del(&listener->list);
+> >> +		iio_event_unregister(listener->indio_dev, &listener->block);
+> >> +	}
+> >> +
+> >> +	kfree(listener->alarms);
+> >> +	kfree(listener->ids);
+> >> +	kfree(listener);
+> >> +}
+
+...
+
+> >> +	if (test_and_clear_bit(sattr->alarm, sattr->listener->alarms)) {
+> >> +		u64 id = sattr->listener->ids[sattr->alarm];
+> >> +		enum iio_event_direction dir = IIO_EVENT_CODE_EXTRACT_DIR(id);
+> >> +
+> >> +		WARN_ON(iio_hwmon_alarm_toggle(chan, dir));
+> > 
+> >> +		strcpy(buf, "1\n");
+> >> +		return 2;
+> > 
+> >> +	}
+> >> +
+> >> +	strcpy(buf, "0\n");
+> >> +	return 2;
+> > 
+> > Better to assign the value and
+> >
+> > 	return sysfs_emit(...);
+> > 
+> > which will make even easier to recognize that this is supplied to user via
+> > sysfs.
+> 
+> :l
+> 
+> the things we do to avoid memcpy...
+
+...for the cost of readability. Also this is a slow path.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> ---
->  drivers/mmc/host/loongson2-mmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
-> index ba6bb8fd5535..63d01d2cd978 100644
-> --- a/drivers/mmc/host/loongson2-mmc.c
-> +++ b/drivers/mmc/host/loongson2-mmc.c
-> @@ -887,7 +887,7 @@ static int loongson2_mmc_resource_request(struct platform_device *pdev,
->         if (host->clk) {
->                 ret = devm_clk_rate_exclusive_get(dev, host->clk);
->                 if (ret)
-> -                       return PTR_ERR(host->clk);
-> +                       return ret;
->
->                 host->current_clk = clk_get_rate(host->clk);
->         } else {
-> --
-> 2.47.2
->
 
