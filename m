@@ -1,96 +1,264 @@
-Return-Path: <linux-kernel+bounces-734024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED040B07C21
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:34:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76FCBB07C24
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C1B8566553
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:34:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2F3583444
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5BD2F549E;
-	Wed, 16 Jul 2025 17:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB3D2F547B;
+	Wed, 16 Jul 2025 17:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="S7U/Frle"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="e9GdmvUZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Nzqt6DUZ"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C49123BD0B;
-	Wed, 16 Jul 2025 17:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752687281; cv=pass; b=Qg4ufshAujvum/dFZL1bBCg8NB49AFE99Pm6JLE3G0LeKvKOMV/7n6eB/thIOGBEuoMuGN5g2adyMxryO/vozUf70kNeypVr/v+fiEX6IKRBV0h2vJntjXqUeXDaMf++TYgrC3fZrMv8Ld9UHQcpD3cx4lZzjqjjOeNBOcfbxkw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752687281; c=relaxed/simple;
-	bh=Xn9Nc6heiGH9BGacyqbpTO0b3BaYNTCxvx8fokLjeNs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=RtFpOZ/9iDcOX6w7e0DMNgvOLWM2DAiMtv3n0dEQDDMScg6T5cF/Y7p4JabMlX8dMAF5m0rfl/ru5ClR3Q8bHjQBbxfTpUZFyf91jyVp9mYxTicPsKdu93qKqiaAq4/ZcETRRh2XMocFzbvljsDNBAzBIomRvffDaJYnUN4s80g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=S7U/Frle; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752687263; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=IhSYhH2eU4ZBwengYthG7xf82PRUZZ9OQFNWu8hxyejof+Bk3saAvyVcdohuWSJ0xKDV8iBCVczd4eWJ9bI0GRrmZmYJ1tML+js3eK2xtZxl3Y2sWzssrea6/55QfLAiLc6dl9BW8AmGi1G+vNWoryOONd+4KGox80QBQeKpxzI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752687263; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Xn9Nc6heiGH9BGacyqbpTO0b3BaYNTCxvx8fokLjeNs=; 
-	b=Bxezh6CXgTUqN/71XN29PLPrhgegEvu2v/Uo1UIadZBk5ZV2LrkpnOxy6X24UAQiBJaXTZQq3FlUe6ORm0hN9rNWh/7g3Y/l/W7lHU7VnlMENXTdFz2u19LOenj8XxPMbdhq20wKM+lxzonHbvZHnytXG6qaX86/TOwPvs7M8C0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752687263;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=Xn9Nc6heiGH9BGacyqbpTO0b3BaYNTCxvx8fokLjeNs=;
-	b=S7U/Frle4r0y2ct2t4d5Ob0Ml0SOc6bDX3idiHDEd2/gsMJ7569zeApgMVPGTUY+
-	+yOdUktIL1+EXne7oYmf+F90tVaTH3+1fEvbyJgGQiKoVz3VggSdJBbXUZ+XIziAgb2
-	Nf89vOdWNjbCh+ZAbbkmfHn7moNaH48qjU5aBRo0=
-Received: by mx.zohomail.com with SMTPS id 1752687261314667.0180914754726;
-	Wed, 16 Jul 2025 10:34:21 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0EB1E0E14;
+	Wed, 16 Jul 2025 17:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752687339; cv=none; b=GCaTWoQnGiHPXipWkfjvhkHHD2yggrufMEaeWfowk6bOv6ZVtfz2qaqdH5rR6DM2TFeFXGnc7RKR+eALDZ1l7btm6Ip6pXC6zcHSFeodSP5dQPNYAlvQa3XgHHXAdKsF7DAREfl18d8hsJs9NxSL/GlONlH3p90bIVvszZ9JXI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752687339; c=relaxed/simple;
+	bh=H4tA6tL4LcE8mwAvrvhVgrsW7SeJrgIEWaM1hmXloM8=;
+	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
+	 Content-Type:Date:Message-ID; b=nn0ZSlVZHZ+mOtzw55oAViyeD4WAcXbGEt13EWFiA8YrN5XVIyACodAiNrXW4TI0ueYjbxZU7bWKBnGInURgBhVYpOPQrprxhsoxF/LR1stDKPQrrO/OqttSOEfUkL8Vtbkd+MVDVjuf+6HlxTwBv+SM8cVCEb283Ij/NQxTmH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=e9GdmvUZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Nzqt6DUZ; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7945A14000B1;
+	Wed, 16 Jul 2025 13:35:36 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Wed, 16 Jul 2025 13:35:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1752687336; x=1752773736; bh=hWHT0GcvfH2wLJvLNk5Y1/WWazVacGml
+	q8wDdUqXph4=; b=e9GdmvUZ5xYH933973IHi7dlIjUDQgi/aEKqvO/VYh2nwBr7
+	5MkyHQJq44zSFN8Chc5mc9lNt/glUe1naLTo+uW+E+6vojfBNz37LqodNIEVpu7x
+	+YbJwXL8dqget6nFLwSoEzFn5A8eEoyGLto37jXzqVkQ1SkigUWbN4YKTgPWp9DO
+	iLulbNygSZjy489nwVNyLj+pkdWzR2Cte99U1KozTq4SeQ+ahMNdG1G19Gx441sp
+	MaUaccdf0dGHmyHJCmVY/APswVhFuflrIdmeIpVRzF+W/B1Voh42kthfIdc/BzB8
+	UUiVXok+207tVG7kOwI9xwKT3dEHZJWpaERQ1w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752687336; x=
+	1752773736; bh=hWHT0GcvfH2wLJvLNk5Y1/WWazVacGmlq8wDdUqXph4=; b=N
+	zqt6DUZGmu+wMyGp8pOQZOERFFCrqrm34jgtZVNOo9nGDBasXRdtSc3zr0/xPZ3u
+	XcNIWSjiKCOkF297eTcHOdqnnIGK/s7f7JP3mO7Ioo72CSvKUOOOxBVb9AwZDSFa
+	ZhW1Oe81nT+2GpovTHAzhQ2ocB5TkHXbs3TTE20XCJ+aJ7z4NaKH0mGqMAIExvXW
+	SG6umm+geDyqMfuCwwylUH0rN3K4hNSOhmW8MTGLeZFPxf/6KaMfVmAEbu9Hmx52
+	MaAMPLmMuvCoCJFbUW09+bn99SsmBReMpLvgN9YknRZY8QMLTs4MwknNJ2Gmgq4k
+	Wk5jMqYZ+0Pie2gUYe04g==
+X-ME-Sender: <xms:5-J3aC8cIY7OMYxib3pwBGQG-B_gZElujadRBuO_F3-hWlmyGJ0VwQ>
+    <xme:5-J3aNJHWMo5_TqfWtXDYdhi8xLReOuK7Tq-hfG5UNpbHqzw52iviufk7mLCiBp2p
+    4pi34U15jNE29-V9C8>
+X-ME-Received: <xmr:5-J3aPi-HxyGPNDng1YJEW3bUHk02iEmROeSqA2RjGRmfRUAdnEhYmnxokIwu6W6iiTnog>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehkeefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufgjfhfogggtgfffkfesthhqredtredtjeenucfhrhhomheplfgrhicuggho
+    shgsuhhrghhhuceojhhvsehjvhhoshgsuhhrghhhrdhnvghtqeenucggtffrrghtthgvrh
+    hnpeegfefghffghffhjefgveekhfeukeevffethffgtddutdefffeuheelgeelieeuhfen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjvhesjh
+    hvohhssghurhhghhdrnhgvthdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehrrgiiohhrsegslhgrtghkfigrlhhlrdhorhhgpdhrtghpth
+    htohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehlihhuhhgr
+    nhhgsghinhesghhmrghilhdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhooh
+    hglhgvrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhhurghhsehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdr
+    tghhpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:5-J3aB9BpxjoUDlbwEtXtoT9wwIvSuNPTG2W7lRzc-lgf8eBrqn7AA>
+    <xmx:5-J3aMMzuhNFWQJGNz9Bso9t5xwu_wj_2sb4hunQLJ9Q9pAxy0xRQw>
+    <xmx:5-J3aNBGdxtxmEl74q8fQFs9HSSyWmlYte-olD_IMsyazHXOyd0OKw>
+    <xmx:5-J3aINS0pCOrZr-HkJhaipv-r1qu8YX6WJCCWrYm2W44LOIaIQkUg>
+    <xmx:6OJ3aBygjsroqXGM--me2ep7lp6_y6DzecUgUROjFCneu7hns0Pb2KVT>
+Feedback-ID: i53714940:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Jul 2025 13:35:35 -0400 (EDT)
+Received: by famine.localdomain (Postfix, from userid 1000)
+	id 5F47D9FC97; Wed, 16 Jul 2025 10:35:34 -0700 (PDT)
+Received: from famine (localhost [127.0.0.1])
+	by famine.localdomain (Postfix) with ESMTP id 5E37D9FB65;
+	Wed, 16 Jul 2025 10:35:34 -0700 (PDT)
+From: Jay Vosburgh <jv@jvosburgh.net>
+To: Hangbin Liu <liuhangbin@gmail.com>
+cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+    Paolo Abeni <pabeni@redhat.com>,
+    Nikolay Aleksandrov <razor@blackwall.org>,
+    Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+    linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 1/2] bonding: update ntt to true in passive mode
+In-reply-to: <aHd4ddc1YzeT1lN3@fedora>
+References: <20250709090344.88242-1-liuhangbin@gmail.com> <20250709090344.88242-2-liuhangbin@gmail.com> <765825.1752639589@famine> <aHd4ddc1YzeT1lN3@fedora>
+Comments: In-reply-to Hangbin Liu <liuhangbin@gmail.com>
+   message dated "Wed, 16 Jul 2025 10:01:25 -0000."
+X-Mailer: MH-E 8.6+git; nmh 1.8+dev; Emacs 29.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v2 0/5] dma::Device trait and DMA mask
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250716150354.51081-1-dakr@kernel.org>
-Date: Wed, 16 Jul 2025 14:34:03 -0300
-Cc: abdiel.janulgue@gmail.com,
- robin.murphy@arm.com,
- a.hindborg@kernel.org,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- lossin@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- bhelgaas@google.com,
- kwilczynski@kernel.org,
- gregkh@linuxfoundation.org,
- rafael@kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <E9D30126-0EE2-48EB-9A5F-938C4DBE10B6@collabora.com>
-References: <20250716150354.51081-1-dakr@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 16 Jul 2025 10:35:34 -0700
+Message-ID: <807057.1752687334@famine>
 
-Hi Danilo,
+Hangbin Liu <liuhangbin@gmail.com> wrote:
 
-I think this looks good.
+>On Tue, Jul 15, 2025 at 09:19:49PM -0700, Jay Vosburgh wrote:
+>> Hangbin Liu <liuhangbin@gmail.com> wrote:
+>>=20
+>> >When lacp_active is set to off, the bond operates in passive mode, mean=
+ing it
+>> >will only "speak when spoken to." However, the current kernel implement=
+ation
+>> >only sends an LACPDU in response when the partner's state changes.
+>> >
+>> >In this situation, once LACP negotiation succeeds, the actor stops send=
+ing
+>> >LACPDUs until the partner times out and sends an "expired" LACPDU.
+>> >This leads to endless LACP state flapping.
+>>=20
+>> 	From the above, I suspect our implementation isn't compliant to
+>> the standard.  Per IEEE 802.1AX-2014 6.4.1 LACP design elements:
+>>=20
+>> c)	Active or passive participation in LACP is controlled by
+>> 	LACP_Activity, an administrative control associated with each
+>> 	Aggregation Port, that can take the value Active LACP or Passive
+>> 	LACP. Passive LACP indicates the Aggregation Port=E2=80=99s preference
+>> 	for not transmitting LACPDUs unless its Partner=E2=80=99s control value
+>> 	is Active LACP (i.e., a preference not to speak unless spoken
+>> 	to). Active LACP indicates the Aggregation Port=E2=80=99s preference to
+>
+>OK, so this means the passive side should start sending LACPDUs when recei=
+ve
+>passive actor's LACPDUs, with the slow/fast rate based on partner's rate?
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+	Did you mean "receive active actor's LACPDUs"?
+
+	Regardless, the standard requires both sides to initiate
+periodic LACPDU transmission if either or both enable LACP_Activity in
+their LACPDUs.
+
+	So, if a received LACPDU from the partner has LACP_Activity set,
+then, yes, we would enable periodic LACPDU transmission, regardless of
+our local setting of "lacp_active" / LACP_Activity.
+
+>Hmm, then when we should stop sending LACPDUs? After
+>port->sm_mux_state =3D=3D AD_MUX_DETACHED ?
+
+	We stop sending when the criteria for NO_PERIODIC in the
+periodic state machine is met (IEEE 802.1AX-2014 6.4.13, Figure 6-19).
+
+	Practically speaking, this happens when a BEGIN event occurs,
+due to a port being reinitialized.  The ad_mux_machine() will set the
+mux state to AD_MUX_DETACHED when BEGIN occurs, so I don't think we need
+to test for DETACHED explicitly.
+
+	The NO_PERIODIC check is the first "if" block in
+ad_periodic_machine() that I referenced below.  The code currently tests
+all of the criteria from Figure 6-19, but adds a test of "!lacp_active",
+which is why I suspect that removing that bit and managing the
+lacp_active option via the LACP_Activity in the actor port state would
+do the right thing.
+
+	-J
+
+>> 	participate in the protocol regardless of the Partner=E2=80=99s control
+>> 	value (i.e., a preference to speak regardless).
+>>=20
+>> d)	Periodic transmission of LACPDUs occurs if the LACP_Activity
+>> 	control of either the Actor or the Partner is Active LACP. These
+>> 	periodic transmissions will occur at either a slow or fast
+>> 	transmission rate depending upon the expressed LACP_Timeout
+>> 	preference (Long Timeout or Short Timeout) of the Partner
+>> 	System.
+>>=20
+>> 	Which, in summary, means that if either end (actor or partner)
+>> has LACP_Activity set, both ends must send periodic LACPDUs at the rate
+>> specified by their respective partner's LACP_Timeout rate.
+>>=20
+>> >To avoid this, we need update ntt to true once received an LACPDU from =
+the
+>> >partner, ensuring an immediate reply. With this fix, the link becomes s=
+table
+>> >in most cases, except for one specific scenario:
+>> >
+>> >Actor: lacp_active=3Doff, lacp_rate=3Dslow
+>> >Partner: lacp_active=3Don, lacp_rate=3Dfast
+>> >
+>> >In this case, the partner expects frequent LACPDUs (every 1 second), bu=
+t the
+>> >actor only responds after receiving an LACPDU, which, in this setup, the
+>> >partner sends every 30 seconds due to the actor's lacp_rate=3Dslow. By =
+the time
+>> >the actor replies, the partner has already timed out and sent an "expir=
+ed"
+>> >LACPDU.
+>>=20
+>> 	Presuming that I'm correct that we're not implementing 6.4.1 d),
+>> above, correctly, then I don't think this is a proper fix, as it kind of
+>> band-aids over the problem a bit.
+>>=20
+>> 	Looking at the code, I suspect the problem revolves around the
+>> "lacp_active" check in ad_periodic_machine():
+>>=20
+>> static void ad_periodic_machine(struct port *port, struct bond_params *b=
+ond_params)
+>> {
+>> 	periodic_states_t last_state;
+>>=20
+>> 	/* keep current state machine state to compare later if it was changed =
+*/
+>> 	last_state =3D port->sm_periodic_state;
+>>=20
+>> 	/* check if port was reinitialized */
+>> 	if (((port->sm_vars & AD_PORT_BEGIN) || !(port->sm_vars & AD_PORT_LACP_=
+ENABLED) || !port->is_enabled) ||
+>> 	    (!(port->actor_oper_port_state & LACP_STATE_LACP_ACTIVITY) && !(por=
+t->partner_oper.port_state & LACP_STATE_LACP_ACTIVITY)) ||
+>> 	    !bond_params->lacp_active) {
+>> 		port->sm_periodic_state =3D AD_NO_PERIODIC;
+>> 	}
+>>=20
+>> 	In the above, because all the tests are chained with ||, the
+>> lacp_active test overrides the two correct-looking
+>> LACP_STATE_LACP_ACTIVITY tests.
+>>=20
+>> 	It looks like ad_initialize_port() always sets
+>> LACP_STATE_LACP_ACTIVITY in the port->actor_oper_port_state, and nothing
+>> ever clears it.
+>>=20
+>> 	Thinking out loud, perhaps this could be fixed by
+>>=20
+>> 	a) remove the test of bond_params->lacp_active here, and,
+>>=20
+>> 	b) The lacp_active option setting controls whether LACP_ACTIVITY
+>> is set in port->actor_oper_port_state.
+>>=20
+>> 	Thoughts?
+>
+>As the upper question. When should we stop sending the LACPDUs?
+>
+>Thanks
+>Hangbin
+
+---
+	-Jay Vosburgh, jv@jvosburgh.net
 
 
