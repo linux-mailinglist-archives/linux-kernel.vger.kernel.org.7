@@ -1,221 +1,239 @@
-Return-Path: <linux-kernel+bounces-734256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B235B07F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:42:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDD2B07F12
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 214A77AA62C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501B04E2A33
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC63D2C17AD;
-	Wed, 16 Jul 2025 20:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50122D322A;
+	Wed, 16 Jul 2025 20:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HLqtcBbz"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2082.outbound.protection.outlook.com [40.107.96.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q74slgOD"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD0E274FF1
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 20:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752698512; cv=fail; b=eyG1DfEof5A4zbKAN+hk6ixYeMKSqdRxaiY8nnqGTJHF6NXSdQBpWVUva25VNDhXxnO9Pu8+IlaaUrmhlkeSPhgjWAZiJ3SJDE13OkvENzbPr+s6FfRw8z4sTexkNOMle3zMqCK6oNKlru6HvRy9XxjOSxcqBoAPFhls2CDhRwY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752698512; c=relaxed/simple;
-	bh=0bj8h0FoKOcM1rDmxrzhWKRT9D6wQPF6veqdh0fSvpI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b+tZb1FUZfxh851bkGnsoIcwj7PpbkX/vWNLtKB1mm48JvNSL49NKv9NfQESNDN9LmeF6nSxlDmowOPowlNnnih37xQTj25zLXl+gPx86OBaW7PY9x492ppkTjZcJtHdNKjSgropXYtQV2HRmMcRkwyWjbIgrjspcE41EL2nn8c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HLqtcBbz; arc=fail smtp.client-ip=40.107.96.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VXJCyD5IdhwOftChneiXibUYd8QBfgcNXUDC+5QTmRIrz5YXk560+H3R/WeygF+CMFo8FQl+dT7hg8z9DvSJiTlvuTQXJL7LvMvc/avg1IEEDpquN9iimWq8WSX0r9rBOz/XDoM06jcw1Ea0ocszRrKY5hFix5wVScqyuCmHN++azXbu89VblXMblkWtVZFAxCgksM7jmmelaecHxaEXTxEJ2FgRd+MkeJLliyQqJkAwTxeKS32PU4No2Vo78kBtY1SxlrBf3mYuaPWTn0kEKZdoH534zH2HygQSzClKxJrI+1ZRBpmdCoso1hATh+FRRZ0LhKXNHZk1W8EiL0SKPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C9BHkNQyRQYw46VcW8568RECySbVNNanOGtvPOEjv+Q=;
- b=XIiRxzG8X4jT3z7z5PK1esTy5GiNt21P3RDyUJpxAdlEoUrxdfHrV/jPiV2UEyZPzyl5CZkGonrxSarltEdx2jP/XghzeZq/Ih2PmrTmugPo4nB8j/bfZhlDnP9xBKLzlB/3VkWgCak36VKxZvBVYmJVdpyCEpoho5qy8DTaTUcV7f8GXaKNh8IzXUN1Fw/CLhRMuSlWcD+GSkpBGGyhahcOXbdPy57GWLVQL3Y6HO/2MyT96wOuRXAfwn81YUdZ8gVY0IetlJlDucWFQ9iEpSkJpx+onVhzgYpd0sJV10Ql7lpOPngJ3GCH+Kz7YLyx8pZHUUtA4XEu14N1f1vZ+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C9BHkNQyRQYw46VcW8568RECySbVNNanOGtvPOEjv+Q=;
- b=HLqtcBbztTw0ESe7gGKZStSFcFV+REPRMDtN07LslztayabtSb9iE3F9PoRyDkjW/yzb9kJSvApxlGfaHljuRBJjZ8Q9UKYkB/vzh89l7SrpzI0ttrjfZ9t+nyuIDC5mKIY036qltam1aVWLJfKyQdNkMpagCff/xWuB6Y1Bs0M=
-Received: from MW4PR03CA0249.namprd03.prod.outlook.com (2603:10b6:303:b4::14)
- by SJ5PPFDF5E260D0.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::9a6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Wed, 16 Jul
- 2025 20:41:48 +0000
-Received: from SJ5PEPF000001F0.namprd05.prod.outlook.com
- (2603:10b6:303:b4:cafe::1b) by MW4PR03CA0249.outlook.office365.com
- (2603:10b6:303:b4::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Wed,
- 16 Jul 2025 20:41:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001F0.mail.protection.outlook.com (10.167.242.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8943.21 via Frontend Transport; Wed, 16 Jul 2025 20:41:47 +0000
-Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 16 Jul
- 2025 15:41:47 -0500
-From: Tom Lendacky <thomas.lendacky@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Borislav Petkov <bp@alien8.de>, Nikunj A Dadhania <nikunj@amd.com>,
-	"Alexey Kardashevskiy" <aik@amd.com>
-Subject: [PATCH] virt: sev-guest: Satisfy linear mapping requirement in get_derived_key()
-Date: Wed, 16 Jul 2025 15:41:35 -0500
-Message-ID: <9b764ca9fc79199a091aac684c4926e2080ca7a8.1752698495.git.thomas.lendacky@amd.com>
-X-Mailer: git-send-email 2.46.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C187274FF1
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 20:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752698547; cv=none; b=jNNHFNXqnAPKDddTubLGHGuqCfQBVtXjHhpjmfhVpqS+Yf53ciW5ugM9uWrA4qvpfYad/WxfPSNMz+E+u/Oc0l36ZT+BLe7Ff+hLAUAyM3DbGyBxWLhgZtqCHypjr3FA4UbYcnioBeNNLJ/fMrlnSVFoUsvdG/jetrYO50ayZbk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752698547; c=relaxed/simple;
+	bh=untgnyDWEArh1UoVstqivWFtfJ7NZfaSTAzmxoDN32w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZGiVZP8VnceNJl1byfZ+8JLbc53+Oq4NxmHgfyid5qmIi8mb++EGO3WaAKeC5PTt18IBpvEC1P7zE8wK5ha+zxpr67i6mI/KebTSWNt0/81Yl6Wkvua++2leExoWOS64LxmKOzMsdGeGUSPzGchWgIkeuep8UTNXFICBfV2ZaRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q74slgOD; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3e283b2d065so11735ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:42:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752698544; x=1753303344; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IlQP6cWB5c6EOc1XK+3iu3r9ZzZfzPwNGPOPdZh2/9g=;
+        b=q74slgOD7p4vcw8ePeAw4S8/9rvQBx4qEjpGZk3jIWRA0UYYiMqp+E9vSST2b83dxb
+         QA1H9AnbZYe/8pI7/pHtYlIQOeu8Jfa2nyAewaW50nWm7fgCjzDDDPUsP7KOth6xe0cG
+         ndXJHUVWeMPRXZX96ZlFIKDqKfEjdRfG0XYIwXACbGcvhG7+cLXpDLfc1rHdMS/pgz6g
+         mbxHncNjyT7IXY4SkA9D0zNXY114V43YBHHdHHvmfnzjKMhPWuHCkwXVkQQG6yrBOPpF
+         qAfuMbj+UK6qUu28cK5yRoC+B2YKhmeW72bQgn5J83HPUcU7ZxP0fLpJ3auBGoeWbz4x
+         ap3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752698544; x=1753303344;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IlQP6cWB5c6EOc1XK+3iu3r9ZzZfzPwNGPOPdZh2/9g=;
+        b=gxvBhyHVHf/U2ByevROVf/MBLqa1CQVV0fyCrId139TAeIpiRXBKN0+Ij77WvOb8sw
+         oT0QLfD+E7Zom3p1IbvPoMc16AzkDUJdF+kxXWKf2spk7Z0flfgI9eCox/3TaLI4L0ne
+         510aj3rqVShZiEhj/wGyuKqjm4gSa9yeep4ZRQuQUhbTnl1UnMTwtO5OHY0k0qa9UXDo
+         T4clKd9oLMoTyBtLv71AgpCExC1LkpN7BCaOJVaEyCLZW0BNVlEn2qwD7JwhEYSU4Rfy
+         uI5V6H2RMV9Nz13+ei5fuDrM5/xKm5ftTW4VJ03WEJT5vs3l60co/yuRiid2h32dZpVa
+         boLA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1Wuok4qZaY2zDfOXyr+S9Zl/CuI4RPNV+IaEV3zQG7ZDgRslOkGi8x1d4SADGyo5l1wPiHs0kfScE71U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOfKCis7wEwqQGYkFqdU894hUM7SAN4wMHDjnIim4CdJlaFQ1x
+	8wYo02brTKvolG/daS/6Q2UGphxTVGeYzSEE1TqO0I1yIxPNR/LQ8bi9Chdr8mWJRwiI8cn201G
+	n/SNG8AgwEDkd411+c18F6Ef6H6y2fzbk8mdIZrH7
+X-Gm-Gg: ASbGncvzlaGfei2sS1uAkI8OcYJLvt7Jn9FbmOF9Qz+4damJKe96oIyM2bDZoG9SnvP
+	nPgCeYkkQwcBt22pOwL98UvsB1u1NtFrSbAB22eSymOOe9oKxYlJTAhxxn50Ed7jFK7PJF/ucG+
+	jzTJRTDbfgFRf91H7yoUfyiE2PQ8VWHrwIoXVmlkQ7oRZgS/rk0kfA21cYwv9/cpQS+c9q7GgX0
+	vnEHC19aIy6jIk3dlymnozrx+5ZgonVbA==
+X-Google-Smtp-Source: AGHT+IEHRs8DyBpwx31BC4At3emdTm2IEDp0Bj1peZov4YekTcB0/n7pRdCy5Ga1IIYvu5jwdDe21uPeu+W8euKtE5o=
+X-Received: by 2002:a05:6e02:2185:b0:3dc:7e19:fcc4 with SMTP id
+ e9e14a558f8ab-3e28c9d6b5bmr1158075ab.8.1752698544209; Wed, 16 Jul 2025
+ 13:42:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F0:EE_|SJ5PPFDF5E260D0:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54e93ca0-0bde-42f1-af6c-08ddc4a92f49
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6K5SXtSe66cxC05oTmPRxyGYf5DM8L+ueyti9vfAQ43qbt96qEWzmoLCqAPH?=
- =?us-ascii?Q?VE43QKu6Mso6wtFzjwMBCsKW5CHibM94Um+B1CPDqtF+mjPBM8coU8JE1NMf?=
- =?us-ascii?Q?5LiAUZMgW9AUUxmwfKrEHM/k6XvAybEWbx/x6/LODvT6GJOBrz9wVNxutv7h?=
- =?us-ascii?Q?RKwddffrUvcpp8IiVeLk82fO4WfqRfLcHQLpJX0c+wN5SjO9gip4JCIbF8A5?=
- =?us-ascii?Q?aZ7i7Dectsuc2QWFy2g3e6bBFA4NiVx8+MUDuy31eioCDbYAufIzhRYMd8vZ?=
- =?us-ascii?Q?EE7tdFnL9PVoYorwT/Gv9KwroUyKCVQSDR7QZSAQ3yTWMd7HrJwcXW1c92Lf?=
- =?us-ascii?Q?2yXRIhdfy6Ym3CU9Mh3zXhXg9qtBgSmBB/kQmTcoScjNpeQ5/R+UIzyEiu7q?=
- =?us-ascii?Q?rnf69WK/7xIj8EwtLfN7Ai/vTdgLW8p05yrYPPM21118UsDTlJpdAdZdeymH?=
- =?us-ascii?Q?s98Jk1nH1j1iwIxWCNJYDwUQqSNXawFDMYdkl/7WgW3TjrsdTwxLHGwWxDr3?=
- =?us-ascii?Q?BrnyB2RgNHO8tf//Fm721sFBVYmQmX/6STCd5zS2IJI2W4P5sfO+ezAwarJH?=
- =?us-ascii?Q?aKOy0h/8OAMnYcpHJ/aWidPSIBslhsGZCNn0EWQdorlTEn/x4AEASZPis7ZW?=
- =?us-ascii?Q?XVAYafVNTK1w1K57gGHAKMs54BuxHVK/Wqwwy67keTMa6zkyBN250YnkQYz+?=
- =?us-ascii?Q?KF5y/uQkwBoZ2cphuj4Ck+oGyC4A6gItK7mYlw8RLqSuafI5ZUWOjIQlKs48?=
- =?us-ascii?Q?2QIL5wc1DJzei1KFbDjO00EmUbqBPNK2FGLd2WNgGCmM5uhlDyntSfZtRwHG?=
- =?us-ascii?Q?PV3F4pT6erDj9mxHKJdRFaRGRgfCgW/UHpbhOzmeENYODP8gsWw12TqThd5O?=
- =?us-ascii?Q?J/MiILZ7JO16bnuCsPS5YsDwM569aQMr5YWosj9Yz8jfb2ykI262fLm5kip4?=
- =?us-ascii?Q?llJQY49nKRM/e/WdqLHPEdwXf9GJyCm0ZndCXVFViYvOEky0YSqDPDwYZ/3q?=
- =?us-ascii?Q?BFnpzDCCZfkL6a0GvmN3PG9B9uyaRMBgb8EwtIHspq7cTkTRRhmk/pN6XGdN?=
- =?us-ascii?Q?DFOcgW1ijamYOoG99oMHtrmq2r3g8j7VjAKzrTTOzWvyAecxH264URvKKTAp?=
- =?us-ascii?Q?wf32MOa3vaQG/7GMe75AhCQl3fcI7strwFiCeI0+jrhXrtbhsZ0UnTebihAE?=
- =?us-ascii?Q?k8e4eD3MbEfVDtRx4fHXkqG+1WPyfe4hhGP2pjp2Uq6KacMr+Jr+qqNDym1u?=
- =?us-ascii?Q?2Hj4liDbcrXmgEdQdlBwMq9f2jFOgd1f1TvXQCe8A8g8KrV/Rek+hLIL27jI?=
- =?us-ascii?Q?ZckR6zXIniOlsuyKcI59/bGJBv3Z/oWVh4aSLcsytt+3p7ZKQhjfiEyIyLqR?=
- =?us-ascii?Q?Nt26mexz/cKq/Eoiz4UMKI8ZjdhtMqtLVyFtwwsIu9dB4yvM6kwEr7VXraIF?=
- =?us-ascii?Q?OVOmlMnM7qpxBICf3y6+VXDwp9TsTSU1LvdZR+8kr4hVCw3sUkJEJVyb+4Pd?=
- =?us-ascii?Q?203sknfdVwYSkPrvg3h+A5vc5fzq33qNIDyY?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 20:41:47.7004
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54e93ca0-0bde-42f1-af6c-08ddc4a92f49
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F0.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFDF5E260D0
+References: <20250716050054.14130-1-namhyung@kernel.org> <20250716050054.14130-6-namhyung@kernel.org>
+ <CAP-5=fVAYNy9pk9zyQRySrJ-1j12dC9ogiW94133Li_WQHd6RA@mail.gmail.com> <aHfg5YPlVD_6iMg6@google.com>
+In-Reply-To: <aHfg5YPlVD_6iMg6@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 16 Jul 2025 13:42:13 -0700
+X-Gm-Features: Ac12FXxkrnUg-BTp1aAqZYDN1yF2G4GBlam11bOWOTNTxDVzgvehODrb9gA8fV4
+Message-ID: <CAP-5=fV=E4_9RVvf1CW0GM0VY+ubr8sOvnXc+xhGW66PhMFCnA@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] perf annotate: Add --code-with-type support for TUI
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 7ffeb2fc2670 ("x86/sev: Document requirement for linear mapping of
-guest request buffers") added a check that requires the guest request
-buffers to be in the linear mapping. The get_derived_key() function was
-passing a buffer that was allocated on the stack, resulting in the call
-to snp_send_guest_request() returning an error.
+On Wed, Jul 16, 2025 at 10:27=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Wed, Jul 16, 2025 at 08:00:37AM -0700, Ian Rogers wrote:
+> > On Tue, Jul 15, 2025 at 10:01=E2=80=AFPM Namhyung Kim <namhyung@kernel.=
+org> wrote:
+> > >
+> > > Until now, the --code-with-type option is available only on stdio.
+> > > But it was an artifical limitation because of an implemention issue.
+> > >
+> > > Implement the same logic in annotation_line__write() for stdio2/TUI.
+> > > Make disasm_line__write() return the number of printed characters so
+> > > that it can skip unnecessary operations when the screen is full.
+> > >
+> > > Remove the limitation and update the man page.
+> > >
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > ---
+> > >  tools/perf/Documentation/perf-annotate.txt |  1 -
+> > >  tools/perf/builtin-annotate.c              |  5 --
+> > >  tools/perf/ui/browsers/annotate.c          |  6 +++
+> > >  tools/perf/util/annotate.c                 | 61 +++++++++++++++++++-=
+--
+> > >  4 files changed, 61 insertions(+), 12 deletions(-)
+> > >
+> > > diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/=
+Documentation/perf-annotate.txt
+> > > index 46090c5b42b4762f..547f1a2680185e3c 100644
+> > > --- a/tools/perf/Documentation/perf-annotate.txt
+> > > +++ b/tools/perf/Documentation/perf-annotate.txt
+> > > @@ -170,7 +170,6 @@ include::itrace.txt[]
+> > >
+> > >  --code-with-type::
+> > >         Show data type info in code annotation (for memory instructio=
+ns only).
+> > > -       Currently it only works with --stdio option.
+> > >
+> > >
+> > >  SEE ALSO
+> > > diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annot=
+ate.c
+> > > index 9833c2c82a2fee46..6debd725392db4a4 100644
+> > > --- a/tools/perf/builtin-annotate.c
+> > > +++ b/tools/perf/builtin-annotate.c
+> > > @@ -917,11 +917,6 @@ int cmd_annotate(int argc, const char **argv)
+> > >                 symbol_conf.annotate_data_sample =3D true;
+> > >         } else if (annotate_opts.code_with_type) {
+> > >                 symbol_conf.annotate_data_member =3D true;
+> > > -
+> > > -               if (!annotate.use_stdio) {
+> > > -                       pr_err("--code-with-type only works with --st=
+dio.\n");
+> > > -                       goto out_delete;
+> > > -               }
+> > >         }
+> > >
+> > >         setup_browser(true);
+> > > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browse=
+rs/annotate.c
+> > > index 23bea5b165774ae7..cdee1969f3131a7c 100644
+> > > --- a/tools/perf/ui/browsers/annotate.c
+> > > +++ b/tools/perf/ui/browsers/annotate.c
+> > > @@ -4,6 +4,7 @@
+> > >  #include "../ui.h"
+> > >  #include "../../util/annotate.h"
+> > >  #include "../../util/debug.h"
+> > > +#include "../../util/debuginfo.h"
+> > >  #include "../../util/dso.h"
+> > >  #include "../../util/hist.h"
+> > >  #include "../../util/sort.h"
+> > > @@ -1101,6 +1102,9 @@ int __hist_entry__tui_annotate(struct hist_entr=
+y *he, struct map_symbol *ms,
+> > >
+> > >         ui_helpline__push("Press ESC to exit");
+> > >
+> > > +       if (annotate_opts.code_with_type)
+> > > +               browser.dbg =3D debuginfo__new(dso__long_name(dso));
+> > > +
+> > >         browser.b.width =3D notes->src->widths.max_line_len;
+> > >         browser.b.nr_entries =3D notes->src->nr_entries;
+> > >         browser.b.entries =3D &notes->src->source;
+> > > @@ -1111,6 +1115,8 @@ int __hist_entry__tui_annotate(struct hist_entr=
+y *he, struct map_symbol *ms,
+> > >
+> > >         ret =3D annotate_browser__run(&browser, evsel, hbt);
+> > >
+> > > +       if (annotate_opts.code_with_type)
+> > > +               debuginfo__delete(browser.dbg);
+> > >         if (not_annotated && !notes->src->tried_source)
+> > >                 annotated_source__purge(notes->src);
+> > >
+> > > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> > > index d69e406c1bc289cd..06ddc7a9f58722a4 100644
+> > > --- a/tools/perf/util/annotate.c
+> > > +++ b/tools/perf/util/annotate.c
+> > > @@ -1362,6 +1362,11 @@ static int symbol__annotate_fprintf2(struct sy=
+mbol *sym, FILE *fp,
+> > >         };
+> > >         struct annotation_line *al;
+> > >
+> > > +       if (annotate_opts.code_with_type) {
+> > > +               evsel__get_arch(apd->evsel, &apd->arch);
+> > > +               apd->dbg =3D debuginfo__new(dso__long_name(map__dso(a=
+pd->he->ms.map)));
+> >
+> > This API looks unfortunate. A dso may have a long name (it'd be easier
+> > to understand if this were called path rather than long name) or a
+> > build ID. The API isn't the fault of this change, but I thought I'd
+> > mention as we move toward greater use of build IDs.
+>
+> Are you talking about build-id in MMAP2?  I think it's build-id vs. (dev
+> major/minor + inode) and the long name should be available always.
 
-Update the get_derived_key() function to use an allocated buffer instead
-of a stack buffer.
+I'm thinking of work I'm doing with build IDs like (unmerged):
+https://lore.kernel.org/lkml/20250628045017.1361563-1-irogers@google.com/
+Even with mmap2 events the filename shouldn't be necessary as the
+build ID should be preferred - if you profile remotely there may be a
+file name/path collision on a local machine, but it should be unlikely
+for a build ID collision. In those patches the dso_id is changed to
+instead of considering inode numbers using build IDs when possible. It
+was already the case that the name of a dso could be changed, which
+affects sorting. In general I think we should move away from file
+paths, inodes and the like as the build IDs will avoid races, work
+across systems, etc. I think in this case we could add:
+```
+apd->dbg =3D dso__debuginfo(map__dso(apd->he->ms.map))))
+```
+or possibly just change `apd->dbg` to be the dso and grab the
+debuginfo from the dso when needed. For now the dso__debuginfo would
+be something like:
+```
+struct debuginfo *dso__debuginfo(struct dso *dso)
+{
+     debuginfo__delete(dso->debuginfo);
+     dso->debuginfo =3D debuginfo__new(dso__long_name(dso));
+     return dso->debuginfo;
+}
+```
+but in the future we can find the debuginfo off of the build ID and paths, =
+etc.
 
-Fixes: 7ffeb2fc2670 ("x86/sev: Document requirement for linear mapping of guest request buffers")
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
----
- drivers/virt/coco/sev-guest/sev-guest.c | 27 +++++++++++--------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
-index d2b3ae7113ab..b01ec99106cd 100644
---- a/drivers/virt/coco/sev-guest/sev-guest.c
-+++ b/drivers/virt/coco/sev-guest/sev-guest.c
-@@ -116,13 +116,11 @@ static int get_report(struct snp_guest_dev *snp_dev, struct snp_guest_request_io
- 
- static int get_derived_key(struct snp_guest_dev *snp_dev, struct snp_guest_request_ioctl *arg)
- {
-+	struct snp_derived_key_resp *derived_key_resp __free(kfree) = NULL;
- 	struct snp_derived_key_req *derived_key_req __free(kfree) = NULL;
--	struct snp_derived_key_resp derived_key_resp = {0};
- 	struct snp_msg_desc *mdesc = snp_dev->msg_desc;
- 	struct snp_guest_req req = {};
- 	int rc, resp_len;
--	/* Response data is 64 bytes and max authsize for GCM is 16 bytes. */
--	u8 buf[64 + 16];
- 
- 	if (!arg->req_data || !arg->resp_data)
- 		return -EINVAL;
-@@ -132,8 +130,9 @@ static int get_derived_key(struct snp_guest_dev *snp_dev, struct snp_guest_reque
- 	 * response payload. Make sure that it has enough space to cover the
- 	 * authtag.
- 	 */
--	resp_len = sizeof(derived_key_resp.data) + mdesc->ctx->authsize;
--	if (sizeof(buf) < resp_len)
-+	resp_len = sizeof(derived_key_resp->data) + mdesc->ctx->authsize;
-+	derived_key_resp = kzalloc(resp_len, GFP_KERNEL_ACCOUNT);
-+	if (!derived_key_resp)
- 		return -ENOMEM;
- 
- 	derived_key_req = kzalloc(sizeof(*derived_key_req), GFP_KERNEL_ACCOUNT);
-@@ -149,23 +148,21 @@ static int get_derived_key(struct snp_guest_dev *snp_dev, struct snp_guest_reque
- 	req.vmpck_id = mdesc->vmpck_id;
- 	req.req_buf = derived_key_req;
- 	req.req_sz = sizeof(*derived_key_req);
--	req.resp_buf = buf;
-+	req.resp_buf = derived_key_resp;
- 	req.resp_sz = resp_len;
- 	req.exit_code = SVM_VMGEXIT_GUEST_REQUEST;
- 
- 	rc = snp_send_guest_request(mdesc, &req);
- 	arg->exitinfo2 = req.exitinfo2;
--	if (rc)
--		return rc;
--
--	memcpy(derived_key_resp.data, buf, sizeof(derived_key_resp.data));
--	if (copy_to_user((void __user *)arg->resp_data, &derived_key_resp,
--			 sizeof(derived_key_resp)))
--		rc = -EFAULT;
-+	if (!rc) {
-+		if (copy_to_user((void __user *)arg->resp_data, derived_key_resp,
-+				 sizeof(derived_key_resp->data)))
-+			rc = -EFAULT;
-+	}
- 
- 	/* The response buffer contains the sensitive data, explicitly clear it. */
--	memzero_explicit(buf, sizeof(buf));
--	memzero_explicit(&derived_key_resp, sizeof(derived_key_resp));
-+	memzero_explicit(derived_key_resp, sizeof(*derived_key_resp));
-+
- 	return rc;
- }
- 
-
-base-commit: e180b3a224cb519388c2f61ca7bc1eaf94cec1fb
--- 
-2.46.2
-
+Thanks,
+Ian
+> Thanks,
+> Namhyung
+>
 
