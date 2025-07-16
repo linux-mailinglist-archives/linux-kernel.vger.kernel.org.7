@@ -1,171 +1,180 @@
-Return-Path: <linux-kernel+bounces-734013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857CDB07BF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88819B07BF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19BD1C28072
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:27:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFAE81C27FE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41D62F5C5A;
-	Wed, 16 Jul 2025 17:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14732EACFD;
+	Wed, 16 Jul 2025 17:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llxwcRsL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="O3hAp0Ci"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E1A42049;
-	Wed, 16 Jul 2025 17:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C57D1B394F;
+	Wed, 16 Jul 2025 17:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752686825; cv=none; b=QGeFxDr5vswocoIsnwb4eW3yJO0zCLG2PF7X7nyZ1EQnWnZV+NX04iXb0+z17HBtX5QX+YdGbga/j1n+t1RM+mxBJVqSQaNzE82nUFVsLN8+Kmnq089NHQjlDOfiTB9IV7Jt7BJw54Y8cnrwGnJBCYK8K3oj9mUtJmpGm8z5SyA=
+	t=1752686858; cv=none; b=bdG/1kxS/UP7g3VubF8RaDBgRxmdh2RZ+wZFBMclaEI7wbZgw13u2gPHUvycwSokaWJApo1Mtti9Nm7nscBGsK1HvorGml9GCHmiXVUQuaZ1GjVGbB+kBoJw+rTTfjtIoBlQa5PjFZ3FHkP5ihEmW3g1tbui2brr7bhMrC9YRzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752686825; c=relaxed/simple;
-	bh=ung1/c+VoT7uBwomOYs85t+QB/IG/Pxjtt1tBmMikUM=;
+	s=arc-20240116; t=1752686858; c=relaxed/simple;
+	bh=m7HWsri4AR/rL9PRrA73dXiz7DSOs/HHIpXTIamRInk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i62G6EbY7Aci6Ce4stDtLjDFHP8AbXDmS82UJYLf8E48zlU9x+nLQciHbtWpZ3bqSM6myI1FHucXDTo61ampfe9WbkRJTn7Va1+tDzFiXMuHo6OKsP+/CKjxCnsY9uiBFbWWha1gGPJT1hV/J0vqrf1WOQvJEHALKYOrbd/aT80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llxwcRsL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED23EC4CEF9;
-	Wed, 16 Jul 2025 17:27:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752686824;
-	bh=ung1/c+VoT7uBwomOYs85t+QB/IG/Pxjtt1tBmMikUM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=llxwcRsLciriimjC/YDWuGTfT8JGzVDHw//ZpNeeI++d+FazffRQNFomFtQGbZ0n5
-	 ljN7tbZ1ocxp3bE5CvDKsyqwmLi8zrkQjgA+4ED8dONLxYI/zj3cQSeGmOLNw7euX8
-	 DTFCzMULhVPHSYh5PO1+VdxPh8ChxsUHOg04QSE0V04NFSiLEE8cztZAesNEiK2199
-	 FbcXfOe/waKaWGwn0B4pBVCLOkihwPPyTQp3oN70bcG4s0clLVzN/s+juMjE81ZcuW
-	 5dIIbKp9JcnrCvLaX2VaJi13sdThtiCP5ip5Le55oltIF8AveEwTCT2XsxlAPXcviJ
-	 x46vrJIkLm46A==
-Date: Wed, 16 Jul 2025 10:27:01 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] perf annotate: Add --code-with-type support for
- TUI
-Message-ID: <aHfg5YPlVD_6iMg6@google.com>
-References: <20250716050054.14130-1-namhyung@kernel.org>
- <20250716050054.14130-6-namhyung@kernel.org>
- <CAP-5=fVAYNy9pk9zyQRySrJ-1j12dC9ogiW94133Li_WQHd6RA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p61vZ1/OLjtjOOe49FvEWoY9bCFN5pyKAGZCqEEATqW5EgbnW5BUW8a2Gy2e+dF9222WuvjHcgffJu0ssUAFeZeaulZbY/U2XAUskfZVyv7LgnFBBOlWZhh8XpiXq5Z0WczpWm5UFJNdrCtgzWcPWTrdhSHBGybxB599XdqQmzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=O3hAp0Ci; arc=none smtp.client-ip=212.227.126.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1752686843; x=1753291643; i=christian@heusel.eu;
+	bh=vMiPG79BaSZ4L1hLtwrRDyKYn96Armmq5Ph/ugdG+P4=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=O3hAp0CifQ/eTBlPNqTIXYqKCCZatysp5C04WaQwjcR/FbHaaiqOPCYqgTaZBsFL
+	 D19/Fv9Kum/PtSSyDDBT6wmtOAfUtHYrZRjSCz1DNDXHAvioJB8sabEhAnX05VOCM
+	 Ichs/TvnZ6aDbEf+qH2l5gr4rQFUZe9wGO6/myUP94SSa9XeIxFmy0AvbSijLQlyl
+	 ULoTSqPdI20VHL50awZKDl2c7/4jNqcBb/rhoAJqUfEKrcXHM/NLG1w1+YdrUhACC
+	 jA1jcQLwr7WanqJoaszkZvYXcBO83E+DQADLsT7cZTyghA56Trho/j4cbA1O1Ugvc
+	 WpFGYK3fwbkna7D8Bg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([89.244.90.36]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N8oKc-1uect32ncE-013Nfz; Wed, 16 Jul 2025 19:27:23 +0200
+Date: Wed, 16 Jul 2025 19:27:22 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 6.15 000/192] 6.15.7-rc1 review
+Message-ID: <2e4ed0b4-2842-4800-aa66-f61daef0b8f9@heusel.eu>
+References: <20250715130814.854109770@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7sica6oli6b7agoc"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVAYNy9pk9zyQRySrJ-1j12dC9ogiW94133Li_WQHd6RA@mail.gmail.com>
+In-Reply-To: <20250715130814.854109770@linuxfoundation.org>
+X-Provags-ID: V03:K1:K6XnB3JWmNPX0QTV4zAROE7BZa14Co9A+1RIQI5s36x5KERsKud
+ D+u6I+gYRJyOodI3u2Gak/RMy8h+mAzNo/xhGKXj3xVMJZ2pAms4P4mtVbx2x83O6I28yFa
+ acAM8rCFQCyWR3m3LANEHCTjLFOV/+mGxvnpLgWsA6C46tbXycH8bp4ocTB8OLhTYbbFz7q
+ t++2iiE4+qVYNGKyOC1Ig==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:q2cKHfps5vY=;77Q1iHgHs+55l35VF827FJYriFE
+ U06oey8YgU20iuMtDTvsG8z2ej52dqCVWxpnq8+N54ZKJjszKG0PHMoqllnpwwJecSETH/ext
+ Y2Xj7xT/f2DUTQSX+fMnanlmfACreHydgpMc2gAlt62ZgQjJKBAl1MXPLxqA7k9xCxmCVQHff
+ atrOrcpAAH6HG6DqAitgZxNqVslFIbnLBXxMcX7Dm+3pZrUsINBaUpPX4HMCPuO85rQehYme2
+ nwtQ9Z/IEBvEDCzsgTg4N7gMlKrSXT33EvpuiXBEBWjCwOn4XDMjZe1eD1AemDK84sSopvFs5
+ eA1/Ps1d9JnYaD7uO9dED3wYEF66fex6Ac0Qsif4BoXr6Y+eGbfInxceY2y7pw/rrFYjQjWo3
+ P6qTgYj0aUTYw0Lx5BvQZFnnqw4BGAe1kQxIKIScmAPCu9q9elTgBOyYCteozLK7BJoKs69rA
+ Ys7oJGo7n5AlqG8HNpUHCndEmKbcUwCXhxs2W8BtJY4DpZy3TLNA5MF5c7XnHL+oknD7QBHjq
+ s5UsvtW0/+NxBwXbNLngJAKenqJrXi4/z4qxs6HqS+Vr8jo7INkaVVYehhU3IDt6m8vjAmkMr
+ BMWJaBALHF/vgcSrXlTbCfmr4pAhojfxUm17xCuqWEyk/nJR6S2cgBqVlAmdmsBzWnkvi0sAR
+ hDJYlRwwDSnDYNecKatpEsHC20Zk2TYLlc7oHRqe6bTE6nT+qP6PvgjHUPGq9Uw1b1vG/tHG/
+ Pi4xpx5WatVm+OYtIs2X8zyza3/8Yv2rMHRksM0d5NOjBNcIcPz69JkVRrny6OPO7VglhMZJW
+ 5cQ+HRRKSjbOUDXU/A+XZ/2berTOefSi6MGyc39QDELVl0j6ko+C0LDgcQFcYmXuNYcAV0HJy
+ ui3BeeWqXCW8osuQaKcRhcobpnFGukA+hDQmNaZb9x3YNrh58XQCRJiuLyld1hzqD1dMxwIx+
+ Z63ScXHSoxFZY9Yla9VzZPEDnqbttQAbDZuPmyne7Jrti/WLzULABOjFGNDSYQHDVScmyokiC
+ DubpyKdFIYli/3Cwx0dXN2br+BO6oGfE+tM4Pue/CbA3QdkzM4c53CazUhpnlA4gA+CGvF11S
+ XyU4d695wyQCTY4JhXDCEXlOXCdAo8tkgBSiGDV5rWofm2b+S/I6QBA/UvQaF1U3DXRW+5fwn
+ nwCepZg6Xge82m68fsVEA4dHChlBuUSodx/55wnIuGJnHDk5NduecL1IubsETphg1wuwwvOv5
+ PeXrec0iVKstkyzy1ZzWn2adGOo7HpRGFVXyfOuz9bXWiTFmVqcVj4vfBG5NEDVI6ICINGE0M
+ ijjmrtcnvGtSSpY+gxagRhioHpG2akSpzLwr7rGFb9Mihg7LfH0lr3uSkkMddoZ6KQt0RtuHA
+ NZnmUh8XbBjBE1mavlxkzYSs8i1LS0CRQlVbO42BeOKKH+3s7Ds+/2rzkVpIsOqOQeiFvQtsZ
+ w9THoldTDLWRaB+jr8gqTzh4O+s10t1TLk1hv0vD+lMTF3aJDuLdCYYpQ7V9ZurmN2DPKfQEI
+ XKLg8WYkNJF50nTxkXPC1s1AGVpXGFvZ0sMkeOzQRv9HJZ7o8vjBcod7x1PQvQ==
 
-On Wed, Jul 16, 2025 at 08:00:37AM -0700, Ian Rogers wrote:
-> On Tue, Jul 15, 2025 at 10:01 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Until now, the --code-with-type option is available only on stdio.
-> > But it was an artifical limitation because of an implemention issue.
-> >
-> > Implement the same logic in annotation_line__write() for stdio2/TUI.
-> > Make disasm_line__write() return the number of printed characters so
-> > that it can skip unnecessary operations when the screen is full.
-> >
-> > Remove the limitation and update the man page.
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/Documentation/perf-annotate.txt |  1 -
-> >  tools/perf/builtin-annotate.c              |  5 --
-> >  tools/perf/ui/browsers/annotate.c          |  6 +++
-> >  tools/perf/util/annotate.c                 | 61 +++++++++++++++++++---
-> >  4 files changed, 61 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
-> > index 46090c5b42b4762f..547f1a2680185e3c 100644
-> > --- a/tools/perf/Documentation/perf-annotate.txt
-> > +++ b/tools/perf/Documentation/perf-annotate.txt
-> > @@ -170,7 +170,6 @@ include::itrace.txt[]
-> >
-> >  --code-with-type::
-> >         Show data type info in code annotation (for memory instructions only).
-> > -       Currently it only works with --stdio option.
-> >
-> >
-> >  SEE ALSO
-> > diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> > index 9833c2c82a2fee46..6debd725392db4a4 100644
-> > --- a/tools/perf/builtin-annotate.c
-> > +++ b/tools/perf/builtin-annotate.c
-> > @@ -917,11 +917,6 @@ int cmd_annotate(int argc, const char **argv)
-> >                 symbol_conf.annotate_data_sample = true;
-> >         } else if (annotate_opts.code_with_type) {
-> >                 symbol_conf.annotate_data_member = true;
-> > -
-> > -               if (!annotate.use_stdio) {
-> > -                       pr_err("--code-with-type only works with --stdio.\n");
-> > -                       goto out_delete;
-> > -               }
-> >         }
-> >
-> >         setup_browser(true);
-> > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> > index 23bea5b165774ae7..cdee1969f3131a7c 100644
-> > --- a/tools/perf/ui/browsers/annotate.c
-> > +++ b/tools/perf/ui/browsers/annotate.c
-> > @@ -4,6 +4,7 @@
-> >  #include "../ui.h"
-> >  #include "../../util/annotate.h"
-> >  #include "../../util/debug.h"
-> > +#include "../../util/debuginfo.h"
-> >  #include "../../util/dso.h"
-> >  #include "../../util/hist.h"
-> >  #include "../../util/sort.h"
-> > @@ -1101,6 +1102,9 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
-> >
-> >         ui_helpline__push("Press ESC to exit");
-> >
-> > +       if (annotate_opts.code_with_type)
-> > +               browser.dbg = debuginfo__new(dso__long_name(dso));
-> > +
-> >         browser.b.width = notes->src->widths.max_line_len;
-> >         browser.b.nr_entries = notes->src->nr_entries;
-> >         browser.b.entries = &notes->src->source;
-> > @@ -1111,6 +1115,8 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
-> >
-> >         ret = annotate_browser__run(&browser, evsel, hbt);
-> >
-> > +       if (annotate_opts.code_with_type)
-> > +               debuginfo__delete(browser.dbg);
-> >         if (not_annotated && !notes->src->tried_source)
-> >                 annotated_source__purge(notes->src);
-> >
-> > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> > index d69e406c1bc289cd..06ddc7a9f58722a4 100644
-> > --- a/tools/perf/util/annotate.c
-> > +++ b/tools/perf/util/annotate.c
-> > @@ -1362,6 +1362,11 @@ static int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp,
-> >         };
-> >         struct annotation_line *al;
-> >
-> > +       if (annotate_opts.code_with_type) {
-> > +               evsel__get_arch(apd->evsel, &apd->arch);
-> > +               apd->dbg = debuginfo__new(dso__long_name(map__dso(apd->he->ms.map)));
-> 
-> This API looks unfortunate. A dso may have a long name (it'd be easier
-> to understand if this were called path rather than long name) or a
-> build ID. The API isn't the fault of this change, but I thought I'd
-> mention as we move toward greater use of build IDs.
 
-Are you talking about build-id in MMAP2?  I think it's build-id vs. (dev
-major/minor + inode) and the long name should be available always.
+--7sica6oli6b7agoc
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 6.15 000/192] 6.15.7-rc1 review
+MIME-Version: 1.0
 
-Thanks,
-Namhyung
+On 25/07/15 03:11PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.7 release.
+> There are 192 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Thu, 17 Jul 2025 13:07:32 +0000.
+> Anything received after that time might be too late.
 
+Tested-by: Christian Heusel <christian@heusel.eu>
+
+Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU.
+
+There was one oddity though, that under high IO pressure the following
+messages were emitted and I can't judge the severity of that:
+
+[65524.312500] nvme nvme0: I/O tag 956 (f3bc) opcode 0x1 (Write) QID 11 tim=
+eout, aborting req_op:WRITE(1) size:8192
+[65524.312530] nvme nvme0: I/O tag 957 (e3bd) opcode 0x1 (Write) QID 11 tim=
+eout, aborting req_op:WRITE(1) size:4096
+[65524.312544] nvme nvme0: I/O tag 958 (d3be) opcode 0x1 (Write) QID 11 tim=
+eout, aborting req_op:WRITE(1) size:4096
+[65524.312556] nvme nvme0: I/O tag 959 (d3bf) opcode 0x1 (Write) QID 11 tim=
+eout, aborting req_op:WRITE(1) size:4096
+[65524.312568] nvme nvme0: I/O tag 960 (23c0) opcode 0x1 (Write) QID 11 tim=
+eout, aborting req_op:WRITE(1) size:4096
+[65524.312580] nvme nvme0: I/O tag 961 (73c1) opcode 0x1 (Write) QID 11 tim=
+eout, aborting req_op:WRITE(1) size:4096
+[65524.312592] nvme nvme0: I/O tag 962 (13c2) opcode 0x1 (Write) QID 11 tim=
+eout, aborting req_op:WRITE(1) size:4096
+[65524.312604] nvme nvme0: I/O tag 963 (13c3) opcode 0x1 (Write) QID 11 tim=
+eout, aborting req_op:WRITE(1) size:4096
+[65524.515650] nvme nvme0: Abort status: 0x0
+[65524.536423] nvme nvme0: Abort status: 0x0
+[65524.581238] nvme nvme0: Abort status: 0x0
+[65524.628017] nvme nvme0: Abort status: 0x0
+[65524.661905] nvme nvme0: Abort status: 0x0
+[65524.702179] nvme nvme0: Abort status: 0x0
+[65524.723759] nvme nvme0: Abort status: 0x0
+[65524.779577] nvme nvme0: Abort status: 0x0
+[65524.871981] nvme nvme0: I/O tag 2 (8002) opcode 0x1 (Write) QID 11 timeo=
+ut, aborting req_op:WRITE(1) size:16384
+[65525.019778] nvme nvme0: Abort status: 0x0
+
+I'll loop in the NVME list that they can maybe judge this.
+I also double checked and the device has no SMART issues whatsoever.
+
+Cheers,
+Chris
+
+--7sica6oli6b7agoc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmh34PkACgkQwEfU8yi1
+JYULEQ//ceaDj9+CH3XzBg48rQqsXWWdGAGcISr2cvNeb4c00Kjv4/p3p3q2IH0y
+hRCrtVLwffRzReZiJgFual8AfBxcYvM4f4IwwQAV9lPkfggpSONPxXUoTyrG35K7
+jWcJ4XgoV1tGCnCb7iZOwgvvUgDexa3SRlcFwJinNGyRN529sIwUfvIDR4VxGjuz
+1Y26oWUUuvXq6Es5uWMsYm8rv1ouwbTtFBA4+QFdrhNZT6ShDprMWRWAOml6hI9C
+QtOwTGJx91Lq2wkDSzJ4csbC7C4JxZwpHL89vNM1VQGvD9X+Ar1lfQPAMvdKDYKS
+I5pBsvBWZa7AG8QnIGS8a+RbGd/l1DFwpr3k0ZfXnECIu+H8IfbWUcVgYV5lIe01
+OnsA36NwRlAWvfXk791A0p4lIFRIGtDjuoQsNi0fU/MlLssdvHHwY5CxaMHnADqm
+Q6mJout05zaMVL4t6QfNGziDmLkUJfWNBrDuCt9lrvS5oJBuX6m6VjSR+lNo0nWC
+XdUQo+thpggBV0F+hs1cZwDPaD9ehdlpI4BZ2T0xKSMRC5bhjdOX4hgdM59HLmzt
+MaXnfC7XUN+fe1pJS6RfrueJjkSmpXaISUaNnJ5hMsUBlEl+At2u6cEzyOA6njYi
+DSIKRSp2rY+rjvXUMKFjnJ/tuwRgkAwnc5/kzZqh6RRmtapQRhs=
+=/7Mt
+-----END PGP SIGNATURE-----
+
+--7sica6oli6b7agoc--
 
