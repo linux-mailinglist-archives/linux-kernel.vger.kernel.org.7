@@ -1,128 +1,164 @@
-Return-Path: <linux-kernel+bounces-733581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7DFB07697
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:07:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BF3B076B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91FD61C21D5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:07:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19A567B2D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928F22F3C2C;
-	Wed, 16 Jul 2025 13:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5337913B58A;
+	Wed, 16 Jul 2025 13:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aV+L67EC"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADK5pPO2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9741226A095;
-	Wed, 16 Jul 2025 13:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E40954673;
+	Wed, 16 Jul 2025 13:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752671223; cv=none; b=qzy0vESyRYDBNER8ljZdKum6UTY72diw9lUpW5doNq3+HI7QnBqZyOa9q61D3b8MSEWt4xuDc69YNQ6mmhtToyRRe9boplI97D/u68HR2dZ8CMAAts2rscR4KyNs+8vfrnZQA2Ud2GJyGTGGDbjOccaKwAEOJjsUY2D5klari44=
+	t=1752671840; cv=none; b=eZ0ShrVN5A3ZaaqyA63Vei/PUopelg2z/y410weihhK+BaVKPdEejUCAuviVZInkJxAy4DE3UP+7RpSjpJTsYjndwBT7G5mhGrDjw1kneDV3m6eVu1io7hFxO+fadeWipIhRc7+DnfH46aGJpHiFwFT90C769GlQV2kZ8QiX/OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752671223; c=relaxed/simple;
-	bh=OdAg8UVik1sWPytx8f+dmqwJDHwUtMO74k2Yv62Wlg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GA3seoaKpocz/AAE0PGlDjsmj66WaIEVUqL7xN+j2JA7b2BL3H2ghMLrwfX6r9WjCHPr7IyUauf5xkzsG7PiaJJnFRCUFL9a9C1f8a68Nxe8wlhn4Lu+iuy7ZDu9CAFjBwta/PkXjjZxcJAC96q/y3C4ZTufzvCAeqF3rUiwFg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aV+L67EC; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7Kb38UOihm8MuhCk9V0Io0nyyQaSy9MIGCxhxTLd0a8=; b=aV+L67ECxAfLI7PhNgvNfDzBPK
-	xqZhDgMwv2xQrdBP2NM0gAL2NDtq/M3DTmLw4Ri191byNXmyVAZpmXlhrI33WLDWc7+nXas0uTyEh
-	LhliT0LrP9OjjU/ICLTyyAy9QtngtpAvyhNgw5eTh121pU5TWcfiV8X/iZhW90aS2kH3fu/ru5Lsy
-	BjFxIC8OBcoX3xbXG1BvRrDkfcYirEcN37Jj+todqDvixdFqS2HVXqQptSZOxjWRJoM9iw3xAX8dt
-	vJirfSZwRGqTU/iGiwv8mp6KvUhjrmccD7xs8o6D1V+KEYe0n1+vRic+eaFSVeis/lO1CCR9BIdDC
-	YQXbV9qQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc1qX-0000000GcdK-1LT5;
-	Wed, 16 Jul 2025 13:06:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DCB5A300186; Wed, 16 Jul 2025 15:06:52 +0200 (CEST)
-Date: Wed, 16 Jul 2025 15:06:52 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Breno Leitao <leitao@debian.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	jake@hillion.co.uk
-Subject: Re: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
- disabling preemption
-Message-ID: <20250716130652.GB3429938@noisy.programming.kicks-ass.net>
-References: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
- <20250716085447.06feeb86@gandalf.local.home>
+	s=arc-20240116; t=1752671840; c=relaxed/simple;
+	bh=r06vB+o6n5DzzNy6Vxt3fTI22jXwX0V/KZVy/iAXAG4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QDlnsKtFz3G4fbSr9MVoQiDGPSLjcODbsvPwVvp6t0x2G81lKzsTO+erSfjGJDKqHX3c0SWRxCc0E2/W5nxrsMr6iqFAj25230qdpPaBlH7Ai15B04cW+hGelFzR68O9yFvJ8orAb6vx2MEKcvftuKSp3kFWQJJmtNi6c31hyXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADK5pPO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE3DC4CEF0;
+	Wed, 16 Jul 2025 13:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752671840;
+	bh=r06vB+o6n5DzzNy6Vxt3fTI22jXwX0V/KZVy/iAXAG4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ADK5pPO286DOVrzlh/FIcBydXj8sM/hNc9i0fVqeMd66JBYxjrp09jDkF/KGFS6tT
+	 Hu4dVn4kCd37QyC25XPngqpPb7a1QkvocaKOSOTY9LdlNLe2WaTxzWSxbg67NYdLxw
+	 jql2i6tBUOdDuJlZbzpTpNLbF/3ciU1g+fg+NHdTFg9UwpB1masRaq9fbKg5wFRhBQ
+	 yynC0zCJsYERfHPfPSDyVm8dDZ14AoXjAjhLkIJOTLMgYUYxtW3iZYKlGZPXTGT5cU
+	 Z6uMPjqu/+oKmWnB3CEV4mFZ+ckCeP8fC4puiA9XYBT6nTxMtAhfxXaQfRORQ6XcRX
+	 2L0jKFyouZckg==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 16 Jul 2025 14:08:27 +0100
+Subject: [PATCH 6.6.y] arm64: Filter out SME hwcaps when FEAT_SME isn't
+ implemented
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716085447.06feeb86@gandalf.local.home>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250716-stable-6-6-sme-feat-filt-v1-1-151d319dc41e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAEukd2gC/x2MwQ6CMBAFf4Xs2SVtQ4v4K4RD1VfdBNB0G6Ih/
+ LuNmdMcZnZSZIHSpdkpYxOV11rFnhq6PeP6AMu9OjnjvOmtZy3xOoNDRRdwQiycZC7sMXSu68/
+ W+EQ1f2ck+fzXI4U2tF+ajuMHomQWkXEAAAA=
+X-Change-ID: 20250715-stable-6-6-sme-feat-filt-5e942478105f
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, stable@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Yury Khrustalev <yury.khrustalev@arm.com>, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-cff91
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5113; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=r06vB+o6n5DzzNy6Vxt3fTI22jXwX0V/KZVy/iAXAG4=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBod6ZdYfddNKzn0owWDLlwsYgqjUnj9ZX+RM4An
+ YJCnIX20e2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaHemXQAKCRAk1otyXVSH
+ 0A3OB/sHnmOYNEc+uijXErFaUB4i+F2vgcQaQCOhhXjnY/WaBkJMRObMPMTS9GiY0GV7xoYtCOn
+ wTjsdPDImfmORLFe78Eez1+2K1Ye9zyYLWGjqN82qH6XEjD+mgCM0qFylJwGGwSNua7qlifc3Ov
+ gulq+yKMI3ENME7eqijBgZfTLVp/n6xSw0wDyRC4h6SQavx8YSQ4+nnZLiYKqw4CAmikoO5K5ve
+ 0+06hAlMsq5Am985c+RMDUqd6MnhmfS6jYcz/lNRCFr5+4AH5Stue1fO0K9UheTTt3wyXO5vZ4K
+ lRkp7WoJDYVU4X6IjeXoFHCQKP11XUaoF/Gk+PgNO/AjbpwG
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, Jul 16, 2025 at 08:54:47AM -0400, Steven Rostedt wrote:
-> On Wed, 16 Jul 2025 05:46:15 -0700
-> Breno Leitao <leitao@debian.org> wrote:
-> 
-> > __this_cpu_write() emits a warning if used with preemption enabled.
-> > 
-> > Function update_locked_rq() might be called with preemption enabled,
-> > which causes the following warning:
-> > 
-> > 	BUG: using __this_cpu_write() in preemptible [00000000] code: scx_layered_6-9/68770
-> > 
-> > Disable preemption around the __this_cpu_write() call in
-> > update_locked_rq() to suppress the warning, without affecting behavior.
-> > 
-> > If preemption triggers a  jump to another CPU during the callback it's
-> > fine, since we would track the rq state on the other CPU with its own
-> > local variable.
-> > 
-> > Suggested-by: Andrea Righi <arighi@nvidia.com>
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > Fixes: 18853ba782bef ("sched_ext: Track currently locked rq")
-> > Acked-by: Andrea Righi <arighi@nvidia.com>
-> > ---
-> >  kernel/sched/ext.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> > index b498d867ba210..24fcbd7331f73 100644
-> > --- a/kernel/sched/ext.c
-> > +++ b/kernel/sched/ext.c
-> > @@ -1258,7 +1258,14 @@ static inline void update_locked_rq(struct rq *rq)
-> >  	 */
-> >  	if (rq)
-> >  		lockdep_assert_rq_held(rq);
-> 
-> <blink>
-> 
-> If an rq lock is expected to be held, there had better be no preemption
-> enabled. How is this OK?
+[ Upstream commit a75ad2fc76a2ab70817c7eed3163b66ea84ca6ac ]
 
-The rq=NULL case; but from the usage I've seen that also happens with
-rq lock held.
+We have a number of hwcaps for various SME subfeatures enumerated via
+ID_AA64SMFR0_EL1. Currently we advertise these without cross checking
+against the main SME feature, advertised in ID_AA64PFR1_EL1.SME which
+means that if the two are out of sync userspace can see a confusing
+situation where SME subfeatures are advertised without the base SME
+hwcap. This can be readily triggered by using the arm64.nosme override
+which only masks out ID_AA64PFR1_EL1.SME, and there have also been
+reports of VMMs which do the same thing.
 
-Specifically I think the check ought to be:
+Fix this as we did previously for SVE in 064737920bdb ("arm64: Filter
+out SVE hwcaps when FEAT_SVE isn't implemented") by filtering out the
+SME subfeature hwcaps when FEAT_SME is not present.
 
-	if (rq)
-		lockdep_assert_rq_held(rq)
-	else
-		lockdep_assert_rq_held(__this_cpu_read(locked_rq));
+Fixes: 5e64b862c482 ("arm64/sme: Basic enumeration support")
+Reported-by: Yury Khrustalev <yury.khrustalev@arm.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20250620-arm64-sme-filter-hwcaps-v1-1-02b9d3c2d8ef@kernel.org
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ arch/arm64/kernel/cpufeature.c | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 82778258855d..b6d381f743f3 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -2804,6 +2804,13 @@ static bool has_sve_feature(const struct arm64_cpu_capabilities *cap, int scope)
+ }
+ #endif
+ 
++#ifdef CONFIG_ARM64_SME
++static bool has_sme_feature(const struct arm64_cpu_capabilities *cap, int scope)
++{
++	return system_supports_sme() && has_user_cpuid_feature(cap, scope);
++}
++#endif
++
+ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+ 	HWCAP_CAP(ID_AA64ISAR0_EL1, AES, PMULL, CAP_HWCAP, KERNEL_HWCAP_PMULL),
+ 	HWCAP_CAP(ID_AA64ISAR0_EL1, AES, AES, CAP_HWCAP, KERNEL_HWCAP_AES),
+@@ -2875,20 +2882,20 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+ 	HWCAP_CAP(ID_AA64ISAR2_EL1, MOPS, IMP, CAP_HWCAP, KERNEL_HWCAP_MOPS),
+ 	HWCAP_CAP(ID_AA64ISAR2_EL1, BC, IMP, CAP_HWCAP, KERNEL_HWCAP_HBC),
+ #ifdef CONFIG_ARM64_SME
+-	HWCAP_CAP(ID_AA64PFR1_EL1, SME, IMP, CAP_HWCAP, KERNEL_HWCAP_SME),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, FA64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_FA64),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, SMEver, SME2p1, CAP_HWCAP, KERNEL_HWCAP_SME2P1),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, SMEver, SME2, CAP_HWCAP, KERNEL_HWCAP_SME2),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, I16I64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I64),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F64F64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F64F64),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, I16I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, B16B16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16B16),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F16F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F16),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, I8I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I8I32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, B16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16F32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, BI32I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_BI32I32),
+-	HWCAP_CAP(ID_AA64SMFR0_EL1, F32F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F32F32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64PFR1_EL1, SME, IMP, CAP_HWCAP, KERNEL_HWCAP_SME),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, FA64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_FA64),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SMEver, SME2p1, CAP_HWCAP, KERNEL_HWCAP_SME2P1),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, SMEver, SME2, CAP_HWCAP, KERNEL_HWCAP_SME2),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, I16I64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I64),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F64F64, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F64F64),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, I16I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I16I32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, B16B16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16B16),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F16F16, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F16),
++	HWCAP_CAP(ID_MATCH_ID(has_sme_feature, AA64SMFR0_EL1, I8I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_I8I32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F16F32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, B16F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_B16F32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, BI32I32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_BI32I32),
++	HWCAP_CAP_MATCH_ID(has_sme_feature, ID_AA64SMFR0_EL1, F32F32, IMP, CAP_HWCAP, KERNEL_HWCAP_SME_F32F32),
+ #endif /* CONFIG_ARM64_SME */
+ 	{},
+ };
+
+---
+base-commit: 9247f4e6573a4d05fe70c3e90dbd53da26e8c5cb
+change-id: 20250715-stable-6-6-sme-feat-filt-5e942478105f
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
 
