@@ -1,242 +1,286 @@
-Return-Path: <linux-kernel+bounces-733872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D213B07A07
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B2BB07A04
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76F6C582A1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5663A2595
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B616277CBB;
-	Wed, 16 Jul 2025 15:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1102F1983;
+	Wed, 16 Jul 2025 15:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="JJv1Drvg";
-	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="Bc0fXQAf"
-Received: from mx0a-000eb902.pphosted.com (mx0a-000eb902.pphosted.com [205.220.165.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cgCwbx7i"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885852045B7;
-	Wed, 16 Jul 2025 15:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.212
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680248; cv=fail; b=gPeJACvvRq2sl/Tsu9aTEuddW1oURs1odFYmBMjRMiltUi5SQRIl5Xb+vs/PG19X9MUPdAzYW1XBsBvCSiXX5bhFks8BC6D0vlhgGbR0ny8ba1F+i+HA2AmY9+negDD8DkORGcJE7JSeFpNy/l9U0HQD9/2Xo4Ua8wslexZKhZM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680248; c=relaxed/simple;
-	bh=CD4GQWBIQl/TMmSR076wCfzOJnQ2Sge+izjbiNjPPms=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qDep63d86K068T/qjG0lkng+f0ww/F8s4Qh7ak0JnqjCkM7akWDrfdIu2uWea/wdFDi6P9shHKdkqQhE55AXpmUfoemOeLxQo2gG6lNJCuGV/XRd8f3fB1uNGKTWhdDBOB9ZHimYqaTcTO3I/sZDzVRBjktdANPVPnRbzKHohng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com; spf=pass smtp.mailfrom=garmin.com; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=JJv1Drvg; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=Bc0fXQAf; arc=fail smtp.client-ip=205.220.165.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garmin.com
-Received: from pps.filterd (m0220296.ppops.net [127.0.0.1])
-	by mx0a-000eb902.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GDYdrh011775;
-	Wed, 16 Jul 2025 10:36:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pps1; bh=9o07GlgU9fBL8vxCIs8bKK+HhN6
-	rBf9whs89car8qEE=; b=JJv1DrvgxXNV4ZjMVmJ2HOPvpP+aMgapUfJUH0Fy37t
-	CuULwSgi4RjiF4iE1OGqVobarNc4Lx0tg2ph55daeFnCoOyAyUpu64UnldSERbu7
-	sw17dXFX3E0Fxb6MpuC8jbJn9ijzn38DwWV/lYu1g+DYDRaW82rHPBaQU9ERpuev
-	sU8PQuU5bHV0rezVuyXHdZMpwAwiHJjNsLGKYSLbjI0N7ePFakGiJiTzo1/pA28+
-	pngtzWmVW43pLiRxoPQJvX6+rJpeYsK3PyaaY8diPXQM+H6je5mtXl/tZslHbKHC
-	Xc16JQkZsJg7Ki0gvBUDc8g7pzEPTg+lBIx3A1adMow==
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02on2105.outbound.protection.outlook.com [40.107.95.105])
-	by mx0a-000eb902.pphosted.com (PPS) with ESMTPS id 47xd3109t9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 10:36:49 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SE+iAXUfy3qxBpoOviur7UpL1ZBuiwcoquiNrPCQBsYkLg0X95AE/CJuEA32Qf71vQUqygOf9MGHFDuyYQWBG2pkx8Szyf9QejwY1ZxiTcwMmpPDRjvWwxOg2jiyeEXPOvBJXMc1Mi99RYH1veOprcmDh+WzO8FCA5xnRdL6+XQNbbUFrhRswAgiTB9gyWuuJm1rrWhCN1+2+/Hgwibo3fZyFJWeFLmJiqi6xOWQ0qIt8Uz0RHJqyYlpQ/Ciqw2udH2KMlhsF2O8yWkytd3U5jtq0OgxM5p4/bjd2n0089tbA8szkjAMEgocUVcIjZM/EQPUHRaPs9T8/sqUR0HKnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9o07GlgU9fBL8vxCIs8bKK+HhN6rBf9whs89car8qEE=;
- b=ryO60i7/+7XoWLrCjTzxADl2QlljM34bydDz7e+9cJZV92qNJVMVXcM+34nuCbPos9xtwsdEs6xQ4a+PRlEWOiSQDaCVIVuWEzCCI2dbttr+2Qw2rN5SgKAhcW6fw9lPd6uvClRwjEOtL62mRsMzOeKAWI2Hm2ePkbGY9PBC8XSc1qoDxm/aHuyi6jKFnelach/osJtVVFq+978/STE8nBZbs99Uh7ajFJFzFKFRNjDDxTDVBCdtoO5Vi18EBsLsCRuovxCOG1dSEvv0jrN5DSMRS+g599OSocC62hByNwfXM/SZBHemP58aGDgywBYn7jH01i3X6D5kj6BmtY5rMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 204.77.163.244) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=garmin.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=garmin.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9o07GlgU9fBL8vxCIs8bKK+HhN6rBf9whs89car8qEE=;
- b=Bc0fXQAfOV8CXKd+YihBdpNraTU+h1MfrC7tT+EziGYmRqnfFRvBq7Wk2YL0u1G0NPYMUuD+MwfCCWNBL2VO3H3JHB/Ql5YRNlKi5XUsBtgRX9Yk9TooMlHiyLirKmFDyLlbZlrMQz2ccp18WWoa7zkDoNdOIODmqy7yLctW7CbirjAAnnPoRvX3wSit5h9Er01/9vOubsUH8u8z2nFho0nW8Psi3oL6ewuLIlwPhVy4x6jjnjiIE/2ckIANBf4f0y4NkyD7e15Hlv40n0blt33oUMVyuEBA/Cj3b3SZR7ejtn7473gMoUUEd69KPCIVunKMwhUbyX4rteK+gNLSqA==
-Received: from SJ0PR13CA0065.namprd13.prod.outlook.com (2603:10b6:a03:2c4::10)
- by SA3PR04MB8978.namprd04.prod.outlook.com (2603:10b6:806:382::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Wed, 16 Jul
- 2025 15:36:45 +0000
-Received: from MWH0EPF000A6730.namprd04.prod.outlook.com
- (2603:10b6:a03:2c4:cafe::8a) by SJ0PR13CA0065.outlook.office365.com
- (2603:10b6:a03:2c4::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Wed,
- 16 Jul 2025 15:36:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 204.77.163.244)
- smtp.mailfrom=garmin.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=garmin.com;
-Received-SPF: Pass (protection.outlook.com: domain of garmin.com designates
- 204.77.163.244 as permitted sender) receiver=protection.outlook.com;
- client-ip=204.77.163.244; helo=edgetransport.garmin.com; pr=C
-Received: from edgetransport.garmin.com (204.77.163.244) by
- MWH0EPF000A6730.mail.protection.outlook.com (10.167.249.22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.21 via Frontend Transport; Wed, 16 Jul 2025 15:36:45 +0000
-Received: from kc3wpa-exmb6.ad.garmin.com (10.65.32.86) by cv1wpa-edge1
- (10.60.4.252) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 16 Jul
- 2025 10:36:29 -0500
-Received: from cv1wpa-exmb4.ad.garmin.com (10.5.144.74) by
- kc3wpa-exmb6.ad.garmin.com (10.65.32.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.26; Wed, 16 Jul 2025 10:36:30 -0500
-Received: from cv1wpa-exmb1.ad.garmin.com (10.5.144.71) by
- CV1WPA-EXMB4.ad.garmin.com (10.5.144.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 16 Jul 2025 10:36:29 -0500
-Received: from CAR-4RCMR33.ad.garmin.com (10.5.209.17) by smtp.garmin.com
- (10.5.144.71) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 16 Jul 2025 10:36:29 -0500
-From: Joseph Huang <Joseph.Huang@garmin.com>
-To: <netdev@vger.kernel.org>
-CC: Joseph Huang <Joseph.Huang@garmin.com>,
-        Joseph Huang
-	<joseph.huang.2024@gmail.com>,
-        Nikolay Aleksandrov <razor@blackwall.org>,
-        "Ido Schimmel" <idosch@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        "Paolo Abeni" <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        Vladimir
- Oltean <vladimir.oltean@nxp.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "Tobias Waldekranz" <tobias@waldekranz.com>, <bridge@lists.linux.dev>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 net] net: bridge: Do not offload IGMP/MLD messages
-Date: Wed, 16 Jul 2025 11:35:50 -0400
-Message-ID: <20250716153551.1830255-1-Joseph.Huang@garmin.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3780481CD
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752680175; cv=none; b=IvZoN98gfDNwbGQaY3jTwaCkwp1hSLunF97/m/5hYPHO5OEo2jSYJDrHbl7BERbBMFWi//NFEoaWR//GgqqW8nyJ3UMwE2ihP1JQ1ezzIR6dSt4AL46aXzFlcrxZnr8SS5karGynooyBCNa0aG80rgAg1spHSc2BZYOOk9BrVH8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752680175; c=relaxed/simple;
+	bh=UOlPAAovmKrMRUsNzrf+Fv+Hb6gtp5IG/AXs7W9HC1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lz3Igwc90EAGJMVPviZqDGyuuCkvvssDYuDvC3Y8mPr8qFl5ZNhaWJ9WaJ1orq1FlsSkYViCHlJ2+kcwYtRISdVHGljyHk1pmtOfffZ9CPwiMdSpTnwHD0x0L4Jit6Lxbe2FQ3ZgbN4SFmVK+EOnXE8dkZXkI6dD3bYpitKJm1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cgCwbx7i; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32b7123edb9so69183971fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:36:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1752680171; x=1753284971; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d44dYcfHmwqbX+zpmz2euXgeuat7OAXV3SVWxkrjZNE=;
+        b=cgCwbx7iHP5+AzQrhzGLjwZZgrxn/VCBKuNGMMx/d1THlgEEv5AIjID/LlTaKHv5as
+         QY1UTEcdYt3imHNscU985vhBKe2aig5IxazMMsOV0EPv//OPGsp1sRINLCCiLch65OsL
+         KHI3JgfPlSxdhwWhhqi+BDdtFRDOvNngRmM1kuxWzHVKL4jjNAbTwJq8yzMuOlC2YEM4
+         gpbCDJN7cCZslZGaFCSbpnjc+v+GGkg3kgEVwheNUxtV06VkudNbCLu2hEoHAmHsy2Bj
+         IS8zA41J6J5RFbkVvcKzzfZmsEiSHunEnr7N8cAf6po6maOFNpnetUYN9/RUQcvO1ahm
+         qCkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752680171; x=1753284971;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d44dYcfHmwqbX+zpmz2euXgeuat7OAXV3SVWxkrjZNE=;
+        b=O5mR1fUIau8YRlpd9deUnMdVfD285FALdXL8NokPLcDNT9L/2+KacH028UlnKg48tT
+         8VtcvToxgnoHMwqEW8BesYTIKZxyEgndX5JpweuEYe09oc1z9eQ3LFxFe5zXUpJpFpRO
+         q2oh0ZykalpV/IY2ZgRrGaf9t4qn6v6ZUDzkexfq9qPd05yE2a4pHf3air8jH1Uw92k0
+         Ca+sU9tkYQRnqEhzI06WV0koMPbWOcIfQBPK4due+glkqXR2QnsCeieRIYP0KGz/gtyT
+         BNTGJSBLXhATHTCnWyNlIVXqYVMe/QueIeBgh4S8od3OvrMH47Y0hFjwxtrXeEiwnnvM
+         Z/GA==
+X-Forwarded-Encrypted: i=1; AJvYcCWT5vYRYr3N94qxDftcs49aU5OmhJrsXsWfHKk97Ta3io5dJmG2om1L/OlZuBinycdOCafWdYZ3+N0PHTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytTI9o/NcUk2z8RXqTCcs5U9rD6eFjrjFfC5mpihv8u1znO5D+
+	r5bnqCopGyhNC5EWlHP4IGgIcUKpHvA1X2cKUvG6Y0uFqiacmqlIlmB725qsxFnPxwulFeniWV4
+	T+ewTVhqxkXY4tMMuMW69xACsvEVZdw1MmvHsNzCE5Q==
+X-Gm-Gg: ASbGncspUAxNuxEiVsvjPcezjAqIdO607gKxlo2cCStjUjnrAIe6KoDTHWCKd8cMcMC
+	p5wyb3l605kYrxs6U4OPCqVS1NOJH0gwqTYOJVuvLsnYPO0VxprBMSVy1pF2+kXgw6PrrsbRdLH
+	I5n1u8d30phoT1moDCri+FbhFV6M3SNOB/3egHbA7pq+mrmJYAsc8SKDPMBmCULCzWxc+a8+Nc5
+	Y10GL0=
+X-Google-Smtp-Source: AGHT+IHU9G+jOG1JR6TA+0PMNpzeORjZBKpBQWTiu105me1EpFHWyXS44ekens1krtL2zYDhYV41TvUtVC15iDhIVIg=
+X-Received: by 2002:a05:651c:88c:b0:310:81a0:64f7 with SMTP id
+ 38308e7fff4ca-3308f5df10emr7433971fa.24.1752680170539; Wed, 16 Jul 2025
+ 08:36:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6730:EE_|SA3PR04MB8978:EE_
-X-MS-Office365-Filtering-Correlation-Id: d6fb5436-9a5c-472f-625c-08ddc47e9219
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9u/w+ot2LJh2GyC8wUNFoCpa84SfnI8ntBeJFYstApkUNrkVGzK3A6OMGio7?=
- =?us-ascii?Q?HAXB8dkEpxC/cNrzFfcUgGCzV4lPpA4/elbzKEMYDlRn+mXgtwND/ZT2gYPo?=
- =?us-ascii?Q?JzAPmkJQtrMM5BoUQBi/z/Ng5rkS8DJ5n6CKyiUy8+Y2RR0E8+/ZD+yqbyrS?=
- =?us-ascii?Q?3kbqYBo/OZ4gW62DCCLwfsg/v1RcC40XMmJr3YvOxwndkhaIVdAM2DGCqBOW?=
- =?us-ascii?Q?hTjY+CDI6NxeTP+K7WQxdfwCs6BHBk1IbFwRFOjyim1tRcsV+hvlhkjnoHFN?=
- =?us-ascii?Q?5dqbq1vRAoYnnuyMy8mnKHGrtE5+Wmr+elYEPj0k5YJxXBpFbT3ROsVD3i7F?=
- =?us-ascii?Q?dG8dVZx/G6aX+UXACdKuqVHbyZBrae8csdExjNQAXFuupwipTXG1tUpWWP8k?=
- =?us-ascii?Q?dz66A5m1PCuGewckIYMnuNR+V8ms652x2gAPL0FrbrgceyIqmUZVGvJMlu5a?=
- =?us-ascii?Q?JSmLlphdbo3IpP9hnKuFxc/EXhnNtl37AiH6R0G+TX1gIqhg1NXU+OZGKD/3?=
- =?us-ascii?Q?mBz+O1wh+8oQm6XuWx7t5DqfMxaIGfnm8bNq9c730gbWNNHEcFMQwBTrFgep?=
- =?us-ascii?Q?j06gTAeqLlqRQk3YCIq/EORXZHyt9+UWvSywDAE2tHSMNfhsYVY9ZYL/FSOM?=
- =?us-ascii?Q?5fclJbo7oBf+WfWLCvQ6UIRqYKmvA8WNS+RbdW64FNRSDAIgRb2fju5TEh21?=
- =?us-ascii?Q?Nu0SxlGg1Pk+Btauxebkunt12kS0fuL7b52DpXye77eCRxr0qDCyaG9AQIVm?=
- =?us-ascii?Q?dn08zCi+HF99yjsnLeU0L05lr+hEYOFb+cDiLDpFW9qWjpJ0kWJPZix0MAfw?=
- =?us-ascii?Q?wnSbhia7cq2B6vpVRY03IAxyONnKLXysPVshE3MZ+UkrCl4/BZ0ZoadEGiD5?=
- =?us-ascii?Q?96gN29VJ0qH8GgpJWyTYYzSWeEotBN3frDb3ZX4xsob/7NjWuIDoqBgmjesN?=
- =?us-ascii?Q?2nJYZUyM+eZRddn+ThUzNr99sm4JxTWOGHAJaKbILOqzXrscmISdyBqR7uO4?=
- =?us-ascii?Q?QZxEbdI5vEKX0g62dF3Mzs3tByi0cT57/LFpfSlh6PiUAGgIujExrYpvs6QR?=
- =?us-ascii?Q?63H3WwGM3Ds4Ic9xXIN92mUlmA9NxGP7ZfEjOZzAl6bfEsdlpSZTf64TGZnC?=
- =?us-ascii?Q?IHg5gLDYoiOS9iUXD2Tj6AwZr+2Ya+TTD1sPuDbVkDuDLNFG0rv5Vc/V5OnX?=
- =?us-ascii?Q?bSk0m7BwnyDdHwjVOTTLjzBcjB3KEtu6JvlJJA/frnG5IK0WarY7yoO5PEdA?=
- =?us-ascii?Q?l+R9ftUhLNKOtnEE/AnaQrENW9k2wfZshkEWcYCs2OIimj67sDJgo1fhd/ge?=
- =?us-ascii?Q?Jb4OhCNkRni+qFdM44kJvEyrTwEkb1iFEKAu60wnDwyG5rM0+o/d4RDADA67?=
- =?us-ascii?Q?GOn900pSMk/cM+8x0LWcZ+/Pu8ntdqILGezCHiFBLuFQbGMgL6N016GEHg3r?=
- =?us-ascii?Q?MthCHgl/ezbY0byVBbHH5ilfSexTwOijVKxOE1HKNSQj2mXrxd4VR1jj36hJ?=
- =?us-ascii?Q?6j+zn1OkE1vDsfftfrZAJKUhPck7lPY5PgTtWGFylqWgVXJvMFPQns84uA?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:204.77.163.244;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:edgetransport.garmin.com;PTR:extedge.garmin.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: garmin.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 15:36:45.0920
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6fb5436-9a5c-472f-625c-08ddc47e9219
-X-MS-Exchange-CrossTenant-Id: 38d0d425-ba52-4c0a-a03e-2a65c8e82e2d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38d0d425-ba52-4c0a-a03e-2a65c8e82e2d;Ip=[204.77.163.244];Helo=[edgetransport.garmin.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6730.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR04MB8978
-X-Authority-Analysis: v=2.4 cv=PoeTbxM3 c=1 sm=1 tr=0 ts=6877c711 cx=c_pps a=9OTTZpjfxByIXFTGz5ZA5w==:117 a=YA0UzX50FYCGjWi3QxTvkg==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=h8e1o3o8w34MuCiiGQrqVE4VwXA=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=Wb1JkmetP80A:10 a=qm69fr9Wx_0A:10 a=VwQbUJbxAAAA:8 a=NbHB2C0EAAAA:8 a=x3fvyDcQ3smC9DqSbicA:9 cc=ntf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDE0MCBTYWx0ZWRfX/jFitJYbm89j EFcxOxq0gGOXnDdZl9bQ4hqeIoPGS61s3QWDBbWJl1S8kt+fCz5NhllwExmoZbw086ViT+2OPdx 94+yR06TLpZK4gMCnvuMYmTnwsuzhgLk4GjdOS88r4HezN7i+8d5N4dRtvMcH7cjtkvEsY+F6Zu
- U/DHAUxsD7pMGIwrJgj2Wi7XKn/fckny1EC/qHlqvRF56S0GWglcqXWSkGtOU7FaNn9IB3cWlu3 UJoMtcTaSE7gZFM9UP7aew7JmKY6253K88/nyHbmsEEoziuQbBQ3szbSOjihlNKtxq8awzK6QGn bsgtiKEb+ZwnxJf4Jy1uFWDmBBS9J6jg1xYjdH98qKJTifRFlcNObyuAZIXasV/5GkwA4XzlJY7
- DiINN9IUZHU66p+iTpPygbp7KKf42UKZRzRDeGe8kcsJkgOBp0IHFXuujRR+VZBrcHFCJLkD
-X-Proofpoint-ORIG-GUID: 5RiXqAS83qfe3Trzu2lmQGk-W3v9RLHp
-X-Proofpoint-GUID: 5RiXqAS83qfe3Trzu2lmQGk-W3v9RLHp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 phishscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
- spamscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=notification
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505280000
- definitions=main-2507160140
+References: <20250704070356.1683992-1-apatel@ventanamicro.com> <74f147f3-c671-41f0-bfe7-a59aadc73f1b@ghiti.fr>
+In-Reply-To: <74f147f3-c671-41f0-bfe7-a59aadc73f1b@ghiti.fr>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Wed, 16 Jul 2025 21:05:58 +0530
+X-Gm-Features: Ac12FXzbe5BOnCFn1O4nVsR27ZwfI4fS2L19PcJ1MRU0GdaiTAjWgXHKlujTpVk
+Message-ID: <CAK9=C2Vf2gqj73CJbCepQVecwjKNDu1TMUShnvXcMUwEztHPtA@mail.gmail.com>
+Subject: Re: [PATCH v8 00/24] Linux SBI MPXY and RPMI drivers
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Do not offload IGMP/MLD messages as it could lead to IGMP/MLD Reports
-being unintentionally flooded to Hosts. Instead, let the bridge decide
-where to send these IGMP/MLD messages.
-
-Consider the case where the local host is sending out reports in response
-to a remote querier like the following:
-
-       mcast-listener-process (IP_ADD_MEMBERSHIP)
-          \
-          br0
-         /   \
-      swp1   swp2
-        |     |
-  QUERIER     SOME-OTHER-HOST
-
-In the above setup, br0 will want to br_forward() reports for
-mcast-listener-process's group(s) via swp1 to QUERIER; but since the
-source hwdom is 0, the report is eligible for tx offloading, and is
-flooded by hardware to both swp1 and swp2, reaching SOME-OTHER-HOST as
-well. (Example and illustration provided by Tobias.)
-
-Fixes: 472111920f1c ("net: bridge: switchdev: allow the TX data plane forwarding to be offloaded")
-Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
----
-v1: https://lore.kernel.org/netdev/20250701193639.836027-1-Joseph.Huang@garmin.com/
-v2: https://lore.kernel.org/netdev/20250714150101.1168368-1-Joseph.Huang@garmin.com/
-    Updated commit message.
-v3: Return early if it's an IGMP/MLD packet.
----
- net/bridge/br_switchdev.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
-index 95d7355a0407..9a910cf0256e 100644
---- a/net/bridge/br_switchdev.c
-+++ b/net/bridge/br_switchdev.c
-@@ -17,6 +17,9 @@ static bool nbp_switchdev_can_offload_tx_fwd(const struct net_bridge_port *p,
- 	if (!static_branch_unlikely(&br_switchdev_tx_fwd_offload))
- 		return false;
- 
-+	if (br_multicast_igmp_type(skb))
-+		return false;
+On Wed, Jul 16, 2025 at 6:52=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
+te:
+>
+> Hi Anup,
+>
+> On 7/4/25 09:03, Anup Patel wrote:
+> > The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
+> > are frozen and finished public review at the RISC-V International.
+> >
+> > Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
+> > Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
+> > and RPMI system MSI driver This series also includes ACPI support
+> > for SBI MPXY mailbox controller and RPMI system MSI drivers.
+> >
+> > These patches can be found in the riscv_sbi_mpxy_mailbox_v8 branch
+> > at: https://github.com/avpatel/linux.git
+> >
+> > To test these patches, boot Linux on "virt,rpmi=3Don,aia=3Daplic-imsic"
+> > machine with OpenSBI and QEMU from the dev-upstream branch at:
+> > https://github.com/ventanamicro/opensbi.git
+> > https://github.com/ventanamicro/qemu.git
+> >
+> > [1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases
+> > [2] https://github.com/riscv-non-isa/riscv-rpmi/releases
+> >
+> > Changes since v7:
+> >   - Addressed comments on PATCH3, PATCH7, PATCH10, PATCH14, and PATCH21
+> >
+> > Changes since v6:
+> >   - Rebased the series on Linux-6.16-rc4
+> >   - Added Stephen's Reviewed-by in appropriate patches
+> >   - Addressed Andy's comments on PATCH5, PATCH6, PATCH9, and PATCH14
+> >   - New PATCH6 in this series which is factored-out from PATCH7
+> >
+> > Changes since v5:
+> >   - Rebased the series on Linux-6.16-rc2
+> >   - Added Conor's Reviewed-by in all DT binding patches
+> >   - Addressed Andy's comments on PATCH5
+> >   - Addressed Tglx's comments on PATCH12 and PATCH21
+> >
+> > Changes since v4:
+> >   - Rebased the series on Linux-6.16-rc1
+> >   - Dropped PATCH1 since a similar change is already merged
+> >     https://lore.kernel.org/linux-riscv/20250523101932.1594077-4-cleger=
+@rivosinc.com/
+> >   - Addressed Andy's comments on PATCH4, PATCH5, PATCH6, PATCH7,
+> >     PATCH13, and PATCH17
+> >   - Addressed Atish's comments on PATCH11 and PATCH12
+> >   - Addressed Conor's comments on PATCH9
+> >
+> > Changes since v3:
+> >   - Rebased the series on Linux-6.15-rc7
+> >   - Updated PATCH2 DT bindings as-per Rob's suggestion
+> >   - Improved request_threaded_irq() usage in PATCH7
+> >   - Updated PATCH10 clk-rpmi driver as-per commments from Andy
+> >   - Updated PATCH13 irq-riscv-rpmi-sysmsi driver as-per comments
+> >     from Andy and Tglx
+> >   - Addressed ACPI related comments in PATCH14, PATCH15, PATCH18,
+> >     PATCH20 and PATCH21
+> >
+> > Changes since v2:
+> >   - Dropped the "RFC" tag from series since the SBI v3.0 and
+> >     RPMI v1.0 specifications are now frozen
+> >   - Rebased the series on Linux-6.15-rc5
+> >   - Split PATCH8 of v2 into two patches adding separate DT
+> >     bindings for "riscv,rpmi-mpxy-clock" and "riscv,rpmi-clock"
+> >   - Split PATCH10 of v2 into two patches adding separate DT
+> >     bindings for "riscv,rpmi-mpxy-system-msi" and
+> >     "riscv,rpmi-system-msi"
+> >   - Addressed comments from TGLX on PATCH11 of v2 adding irqchip
+> >     driver for RPMI system MSI
+> >   - Addressed ACPI related comments in PATCH15 and PATCH16 of v2
+> >   - New PATCH17 and PATCH18 in this series
+> >
+> > Changes since v1:
+> >   - Addressed DT bindings related comments in PATCH2, PATCH3, and
+> >     PATCH7 of v1 series
+> >   - Addressed comments in PATCH6 and PATCH8 of v1 series
+> >   - New PATCH6 in v2 series to allow fwnode based mailbox channel
+> >     request
+> >   - New PATCH10 and PATCH11 to add RPMI system MSI based interrupt
+> >     controller driver
+> >   - New PATCH12 to PATCH16 which adds ACPI support in SBI MPXY
+> >     mailbox driver and RPMI system MSI driver
+> >   - New PATCH17 to enable required kconfig option to allow graceful
+> >     shutdown on QEMU virt machine
+> >
+> > Anup Patel (14):
+> >    dt-bindings: mailbox: Add bindings for RPMI shared memory transport
+> >    dt-bindings: mailbox: Add bindings for RISC-V SBI MPXY extension
+> >    RISC-V: Add defines for the SBI message proxy extension
+> >    mailbox: Add common header for RPMI messages sent via mailbox
+> >    mailbox: Allow controller specific mapping using fwnode
+> >    byteorder: Add memcpy_to_le32() and memcpy_from_le32()
+> >    mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox driver
+> >    dt-bindings: clock: Add RPMI clock service message proxy bindings
+> >    dt-bindings: clock: Add RPMI clock service controller bindings
+> >    dt-bindings: Add RPMI system MSI message proxy bindings
+> >    dt-bindings: Add RPMI system MSI interrupt controller bindings
+> >    irqchip: Add driver for the RPMI system MSI service group
+> >    RISC-V: Enable GPIO keyboard and event device in RV64 defconfig
+> >    MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
+> >
+> > Rahul Pathak (1):
+> >    clk: Add clock driver for the RISC-V RPMI clock service group
+> >
+> > Sunil V L (9):
+> >    ACPI: property: Refactor acpi_fwnode_get_reference_args() to support
+> >      nargs_prop
+> >    ACPI: Add support for nargs_prop in acpi_fwnode_get_reference_args()
+> >    ACPI: scan: Update honor list for RPMI System MSI
+> >    ACPI: RISC-V: Create interrupt controller list in sorted order
+> >    ACPI: RISC-V: Add support to update gsi range
+> >    ACPI: RISC-V: Add RPMI System MSI to GSI mapping
+> >    irqchip/irq-riscv-imsic-early: Export imsic_acpi_get_fwnode()
+> >    mailbox/riscv-sbi-mpxy: Add ACPI support
+> >    irqchip/riscv-rpmi-sysmsi: Add ACPI support
+> >
+> >   .../bindings/clock/riscv,rpmi-clock.yaml      |   64 ++
+> >   .../bindings/clock/riscv,rpmi-mpxy-clock.yaml |   64 ++
+> >   .../riscv,rpmi-mpxy-system-msi.yaml           |   67 ++
+> >   .../riscv,rpmi-system-msi.yaml                |   74 ++
+> >   .../mailbox/riscv,rpmi-shmem-mbox.yaml        |  124 ++
+> >   .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml |   51 +
+> >   MAINTAINERS                                   |   15 +
+> >   arch/riscv/configs/defconfig                  |    2 +
+> >   arch/riscv/include/asm/irq.h                  |    6 +
+> >   arch/riscv/include/asm/sbi.h                  |   63 +
+> >   drivers/acpi/property.c                       |  128 ++-
+> >   drivers/acpi/riscv/irq.c                      |   75 +-
+> >   drivers/acpi/scan.c                           |    2 +
+> >   drivers/base/property.c                       |    2 +-
+> >   drivers/clk/Kconfig                           |    8 +
+> >   drivers/clk/Makefile                          |    1 +
+> >   drivers/clk/clk-rpmi.c                        |  616 ++++++++++
+> >   drivers/irqchip/Kconfig                       |    7 +
+> >   drivers/irqchip/Makefile                      |    1 +
+> >   drivers/irqchip/irq-riscv-imsic-early.c       |    2 +
+> >   drivers/irqchip/irq-riscv-rpmi-sysmsi.c       |  328 ++++++
+> >   drivers/mailbox/Kconfig                       |   11 +
+> >   drivers/mailbox/Makefile                      |    2 +
+> >   drivers/mailbox/mailbox.c                     |   65 +-
+> >   drivers/mailbox/riscv-sbi-mpxy-mbox.c         | 1017 ++++++++++++++++=
 +
- 	return (p->flags & BR_TX_FWD_OFFLOAD) &&
- 	       (p->hwdom != BR_INPUT_SKB_CB(skb)->src_hwdom);
- }
--- 
-2.50.1
+> >   include/linux/byteorder/generic.h             |   16 +
+> >   include/linux/mailbox/riscv-rpmi-message.h    |  243 ++++
+> >   include/linux/mailbox_controller.h            |    3 +
+> >   include/linux/wordpart.h                      |   16 +
+> >   29 files changed, 2990 insertions(+), 83 deletions(-)
+> >   create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi=
+-clock.yaml
+> >   create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi=
+-mpxy-clock.yaml
+> >   create mode 100644 Documentation/devicetree/bindings/interrupt-contro=
+ller/riscv,rpmi-mpxy-system-msi.yaml
+> >   create mode 100644 Documentation/devicetree/bindings/interrupt-contro=
+ller/riscv,rpmi-system-msi.yaml
+> >   create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rp=
+mi-shmem-mbox.yaml
+> >   create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sb=
+i-mpxy-mbox.yaml
+> >   create mode 100644 drivers/clk/clk-rpmi.c
+> >   create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+> >   create mode 100644 drivers/mailbox/riscv-sbi-mpxy-mbox.c
+> >   create mode 100644 include/linux/mailbox/riscv-rpmi-message.h
+> >
+>
+> Most of the patches have been AB/RB by their respective maintainers, so
+> how do you expect the patchset to be merged? Should it go through the
+> riscv tree?
+>
+> Let me know how you want to proceed, I'd be happy to merge it if that's
+> easier for everyone.
+>
 
+We discussed this series in today's patchwork meeting and
+Palmer has agreed to take this through the RISC-V tree. He
+will also provide a shared tag for the benefit of other maintainers.
+
+Please sync-up with Palmer whenever you can.
+
+Thanks,
+Anup
 
