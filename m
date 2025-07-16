@@ -1,116 +1,244 @@
-Return-Path: <linux-kernel+bounces-733698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CB0B077F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:26:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A655B077F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3E591C25010
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58A85853EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EE62459F6;
-	Wed, 16 Jul 2025 14:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FB823E34C;
+	Wed, 16 Jul 2025 14:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdvsUVtw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IUwoEVc6"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2043.outbound.protection.outlook.com [40.107.237.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A511C2335;
-	Wed, 16 Jul 2025 14:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752675965; cv=none; b=dRx0tSIVPVOlvbvPt+cdKYUUiOJw5/MyuhePheTJLjndYWOvYLNZhNikZwfogliguRzkJ7+jtUjRen7g+erT/jrKVkVz1QOpEHqTGwPjInYa4XKPcpz8+4u7bWQSJ9OZUZ5DpNc+B0+qpz1LcW8Glgpe7szwCFs71ftf3r00V58=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752675965; c=relaxed/simple;
-	bh=N9SUrkNq3KKn2zkzbDNcNNFbAR128RbgvLOba/W9yP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ef2wKTx7o5SfRms0TdXeaOTaHwmW7DGKhozdctRitbljFbIPKeJo8gPFk7iYYZtDi4+gIw+o3t9ktB7dLFWRb7wZfkyhDVYxJsojU5IdBIoyZMFigFpRM/GCjfSz6VSdwqrsXA4i7SZHL4N5cd6WiA+vDOV4QD/jM1boCXnZYiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdvsUVtw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D93A4C4CEE7;
-	Wed, 16 Jul 2025 14:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752675964;
-	bh=N9SUrkNq3KKn2zkzbDNcNNFbAR128RbgvLOba/W9yP4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MdvsUVtwD7/K4fZw4qsxwDfsfa4G2P48z430/9vSItOs18NVSN/V15Phg1hxiF9B9
-	 xQ42plymaXG4hmUGtDN9PwDvvIs7e9W33RCzzTG3u7PNj96kyDiwr/eLiNcHqA+0iR
-	 gSTn1NwxK9dOS0GxGshLdH654wF8z2BAR91+m16lP9uQn/+QQ/PLR8ovzgdtKsyn5x
-	 QBxpOgr3fSgE81Gx59A7N4/rhTbJefEUOyHJITtpszB0oYpihmk5U3783e/nK66EA7
-	 c3m1ucMb8z10K+fBjSqgeOmC5X0M8eZgh7RfcyXel81eWYzrozWP9pf49j1LseC55M
-	 7ig9rUiLxK7Ig==
-Date: Wed, 16 Jul 2025 07:26:02 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, Geliang
- Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Christoph Paasch
- <cpaasch@openai.com>, Davide Caratti <dcaratti@redhat.com>, Florian
- Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH net v2 0/2] selftests: mptcp: connect: cover alt modes
-Message-ID: <20250716072602.386a8963@kernel.org>
-In-Reply-To: <20250715185308.2ad30691@kernel.org>
-References: <20250715-net-mptcp-sft-connect-alt-v2-0-8230ddd82454@kernel.org>
-	<20250715185308.2ad30691@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D424B230BF8
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752675998; cv=fail; b=PYvUs90reFqZoTT6IE1taxLG8h8ckuuWm+EUPEWyFP+S9q/tnoRy+25wjffR9Tq8EZn26/OcVbEwUrf7WeBuBSQSqG80IFt9iZD6wbedFEv+pDL4VHnEDPzckhoGB9jx8be5cUZvenBKuyATAXCXMG4tNWQgxeslSF2kxOzBYh4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752675998; c=relaxed/simple;
+	bh=I1Ai4m0XdpDGD9cTSqxbLjph1sr1fBs2j5qwIeMEhLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rNMoqgqN6Gb9md4Ems9M3/70Ts1ROOwBbtiMsQ1RQ7eYnLGBbhOS4AdDzOBqw+xzA/ymslMYXJK2JUW1eSf0ILaO6G+AExSbnROpZIRJlxiqsgb6KqTFWw5CXw6uUBi9/bQ6hg2C1tAG9qGAyg7oIcEZ0RBJ4j9OVmwunATgrnM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IUwoEVc6; arc=fail smtp.client-ip=40.107.237.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R3W3CMrKgqqfyaHP7tHwtQWRt+wfPoejmhKIEZdnqxXlaGIpcqYbg0D4QcdrVO1LK+j9n87EyoTCYPTBRrSO/pAlEZROJbTBO1Hd+JRw0K77AqdaRqejPZlGDqvxMSlv12iSP9tIQ/Tspp3tu8TEuiaU1i/PnmhQ+iEuCJGJI0AaXXOZB/NDYLoEHHQIi8ppSSccpTEWeIQXwcYqRcf/NVtUjyihIag+0pfU5vdeMk0kZSm9ICT80AOISrno8uIHAYjjydIDDiHGrHlju2lTQeis9duqt9MjLrjjJsinvWCAxuj+vNW8BWCWZ+gXOxAvwYl0vyhBjHqsRG84ILXSVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=seel2Z4JKtszoBpy4oUla+bkcrJc8kcGzJDlon1DhJk=;
+ b=nzqTEOou5OZs1mila6wmN3kKu4nVVwPvRGLWxpHcQ2JQKvJpTomsK6mzNi59gkAhl6c03PzncAXe1yzXOePKFAiBoWgOU9LSsFlykAODWXpouij4EAjAzCFmvi9hfHW/rCA+J8mVyIfAtJA1AB1mCsBHh7kVjULHvlqv4EqAH16HixOD/ISBVw1+Inu0LSBBWTRbOPmTlV/gLM0mVPkD8lLMFAZCCBXwmn4RH+3TuUTDUd+eNXsF6CPdwrgKixm6KMysBkBIEReWsyscO9ur4TAfbi8ZlRxPfIY7S72+igIcfWpjdyhnYH8geUp/6tL5n0Ts7cZ6dFRmAUrl0OarQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=seel2Z4JKtszoBpy4oUla+bkcrJc8kcGzJDlon1DhJk=;
+ b=IUwoEVc6Fmznxtu5sj/k4ylOXA8eOi9BEmU5jCyEZ/vJKK12lWiWJT249uAWayQT+XWxLqUoz9l9JCfheK5dvfqtskIf6nIj7AXVZ7rW9yT/RVo26iIQeAqc4QZY8yxU5Iv5MFo/xMUpw+xjoU8rmtPelLxQq6cZeOdJNzQBO2wL3L+/X8RmlAa68bhsqqq2cZ6IVzNtCnef7rfzh3P8+Whbhn6dCx+SUpoXxOGxF9KvNX1eZkAaz77/ANeQKAfeSs6GLXj3E8mV7aT1LlP3ldFYCx7iXVLtpSpDT1ryUwAIZRMp1G7oVzbR6mDhEzmoGMpFBhc7K74uyE5yKIqbVg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by DM3PR12MB9349.namprd12.prod.outlook.com (2603:10b6:0:49::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.36; Wed, 16 Jul
+ 2025 14:26:33 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
+ 14:26:33 +0000
+Date: Wed, 16 Jul 2025 16:26:23 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Breno Leitao <leitao@debian.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	jake@hillion.co.uk
+Subject: Re: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
+ disabling preemption
+Message-ID: <aHe2j6pIyQiBf1S_@gpd4>
+References: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
+ <20250716125128.GX905792@noisy.programming.kicks-ass.net>
+ <aHel4LvT_Y5gpYfy@gpd4>
+ <20250716133631.GZ905792@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716133631.GZ905792@noisy.programming.kicks-ass.net>
+X-ClientProxiedBy: MI1P293CA0012.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:2::10) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DM3PR12MB9349:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4cf6d8df-6a4a-48e0-186b-08ddc474c361
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ri8SfSrOHYfoex98QbptoMZf/383d5CCkkHLjDBt/92Bl4MJ2J8PbKKzY5z+?=
+ =?us-ascii?Q?XTOLEvUuIuacKscIS9QnVLNBnSPb6WTqOvm4NQA3cK9KBUsb0To0qwV15pwR?=
+ =?us-ascii?Q?vVbUINjGfz/iUFgSgoc1Rvt1sPOgbbPkuNbSKTao2EEuR46hGtmxn8HdweKm?=
+ =?us-ascii?Q?Q6Vsudcf1nH80fH94I+IiiWd0fSeN4SvTbrK5E8d0PliAuzXt0k+C/6IqxzB?=
+ =?us-ascii?Q?qg+JUtYyqkSxHAFcURD9FeBNhKU9N6hnWWRFytZc5qvjYpRB33JcREhL5xAB?=
+ =?us-ascii?Q?CA74bmR9hRTLF8U3AkDTMmQjm2bFG09X9tjPIaEVv7EUq9FFr+L3tGCHyyiA?=
+ =?us-ascii?Q?OHV7KqYDneBo+nctirB2UPmgTZa2xrlWpdZvfp+zywNqkxksvf5taIwaRu/Q?=
+ =?us-ascii?Q?a27avTmcterHwo7Dnvv2rDSOyUrlvvjQRdXnK5Yp3W6jDsk/HohCGfwqm4jA?=
+ =?us-ascii?Q?U7fMuGFk5QpdxYsdIMGz4MNHqp2YoC+0jLOXD07XMlkZlFoybyE5QrZtg7PP?=
+ =?us-ascii?Q?5e3r7QOrSI33e2S0qlcz1El0V36cCzaxCQ03kBnCZasoJaeyy6yGH+Yuh/7c?=
+ =?us-ascii?Q?C7C5NYSbkvass+ezJEfL4+0E9UbRvHJ15j/LV8Kl8aPlWexUjlKvyG0S7TYP?=
+ =?us-ascii?Q?b6JGV+uJ78OEHbima5z2OqqykuJyHa0Ig1fFwE71kL3gbnDuLdn9EXLBPixn?=
+ =?us-ascii?Q?bZr0On8rIQ0W1ZCee0H9rUcBt/IP3TbJXR5PuS7BUzC2EepS5rld2gX7wIva?=
+ =?us-ascii?Q?II56MeXdo6Vd0mJm9/bhu8elwPR94+HrUVa/dV4sMjpi1AxX5RawpOHHjGMP?=
+ =?us-ascii?Q?bl5jTBQ5G2pRnhcKo1MmdKC7wqPfHBz7P1xyPuMx6XSmqZQ0Br/mBgHGZYHi?=
+ =?us-ascii?Q?ZlEQpEPJ40vMhNTjjI/R7+RawA7aDp+bmHlofIwYRIwZQN2WaJidLuf2QJwy?=
+ =?us-ascii?Q?Q1X8GDt2ecQbGz63eUcUaJgcG6HIqOxq/4vbfyxFl2RzRAkOAKuPlvbPp7Yk?=
+ =?us-ascii?Q?BogEAU91dPBzqD04TbW+Hrh5De0mrD80jq+vu9ibViZJWdZQr+IeNgWCGFH2?=
+ =?us-ascii?Q?xZyhS6UNBWaVQgduA2G2u2k1aZD/ZyRq6rv5i5lEnoFSLLAKuf6ZQEcKh7wv?=
+ =?us-ascii?Q?NAx8uq9wNvgtqRYVdt21sNyH+MQlTdQQIOgBoMaReE049VULkNaTrBXHdtou?=
+ =?us-ascii?Q?ncwqtw/y3lz8T1XO78E6TTrgwKTNCm7infTa+chdY7gN8vDPsOZON7uqh78Y?=
+ =?us-ascii?Q?CL48R0rIeqiD+zbWXgnfEhEigJujdFWalUlTJ/4or9AMIgFoHluXLyKIXdix?=
+ =?us-ascii?Q?lNwoQe3+liSJsF0iasrEjCOuXobGdG4G/g66KqlYJ1EFYt3gAjeBlfn9RUQ3?=
+ =?us-ascii?Q?wjqXz0BB8OoswLlwVN1ohPiQbT9dq9BpMPjtf4zU3DLpn9yvPQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nbhyL4EheXZ9kjH3YD/jSdvoZX843PcxbPfLVh4sYnc5G8HI5zPUCG/mnbTk?=
+ =?us-ascii?Q?On+8EXuo1kMGoMEGRTJMQKELHy4pYA8GIGGNJ8Q+WHTgTjyYevPZLD6NsvZP?=
+ =?us-ascii?Q?0psDV3fVZHg2TYEsqz/yWql2chVPyGHzQqDbeuVLURAse7D6N5potrTp4AfG?=
+ =?us-ascii?Q?lGnWGMxbcuWbuYdyLGw6MGpE82SowxFQ38wRg6utKMddaJy+GdUGLQ0KhPhA?=
+ =?us-ascii?Q?AuV1/PhKlZheN8gM/kAU968Me9rlyEdGlj9lJPlwwhaOhyIpf9YkM6SWAobC?=
+ =?us-ascii?Q?sV3DYfXFIEQEftZmmRV24OBMNvRa2FA5HHRaZom6+SfVlWEqp1u7AFIRXFjF?=
+ =?us-ascii?Q?8XrNVu4ykzu7slDse4lrSWKXjlbj3BiADkvECYOJD9QueWfeofTq7iswvhLE?=
+ =?us-ascii?Q?FWJsdyz2IBF2IbBp6qnp8Bz7tjwUDT+pp+qG5Op5nPukX3IN5oQummf6R7QI?=
+ =?us-ascii?Q?pNl9tCxcdh20jXXjSJqGmB+8qcYlBWqkjNl3+ROEh7n762o1FmOjxQtCDGAU?=
+ =?us-ascii?Q?qBcKadCvGq+KlDahLcIdpxgfRXjiAHpmkgu+yvPNVm/C7ltBtdDg5jGsBYsF?=
+ =?us-ascii?Q?HxxQ8JMtdZzTSnVYxya/dLmVx02CA0W7TqGH6DkxEqRa27RBMScA1yJypI/G?=
+ =?us-ascii?Q?eSln/QtEW1aiQVOpb5LgM0VKm8Jr/3Tjy5LDh2ilpmQFcBIvnaBBl5Lbwo63?=
+ =?us-ascii?Q?rklDcS/xusvopgTkWE4wyqFosKshdpJqgW7ZiLV8SHwWF06Dl4aouMKcJl95?=
+ =?us-ascii?Q?wfDLgt1xkIqygIRcIkzNj/Y7/itwa08CZXE+kPbnV8sxVH6hHmSqXYzzrAdD?=
+ =?us-ascii?Q?IrwAIIcnd/BIt5jaZJt2pkn0Gi0y1OVlayIMShqH2do95IJv9XG8peXpL4ou?=
+ =?us-ascii?Q?Z/tFdoymO6zb0bqF/dy7i2c+Zlqml7TM1Uv9U5B5C820ayjQAcYa3Cpy++Yh?=
+ =?us-ascii?Q?e2draAlxv3jLqJdC6bivBHz5rr9Ww5VEtW/ULy2YvZqh+QG41sKGPbKvbZEm?=
+ =?us-ascii?Q?rWIhIB++pBUF3oHHhpiqWsvCU9qxa84CqEH3mo47Pvs2jV9kH91OZEcKdGrA?=
+ =?us-ascii?Q?TqCBd31ptzYpLO/NRgEB/38VfHEsya5+xHF9YVWg76EjBcvLuv3nopHqKtbA?=
+ =?us-ascii?Q?Z6lESMqcHegPvHJ49ke/aTGkrdJ8weaV0dXEBXCileGux+cZny8GHccdDKTu?=
+ =?us-ascii?Q?ZehHNusQvk25VKmmCxfyA4mwyGORKZBQ68HgKCzIwZr91gsWiwfQTbAT+br4?=
+ =?us-ascii?Q?1yg6MkHxhZQ3gigcJG53qXObXSQforcBlgUWRvoVIBYEgIH4I80MPxifsIbA?=
+ =?us-ascii?Q?mDe4IfFcbKJojzxnf4l5L+1UohJK8PafEOHSHWczDebcLtesesGyhVDhkM1f?=
+ =?us-ascii?Q?e72fkiIyd3SK3iJS2khzCivfB8TeFnEm5IOwAK02/pTEdTWH6H2bZdiC2Lj+?=
+ =?us-ascii?Q?3ibmhLVIiPJOuox6mtd6ZiwQIVHD+a/wf2Q7wvC6ktP2XDnyznq8dIAQAitX?=
+ =?us-ascii?Q?4L7jImLjZ8j5N36kGf6OWYBDcoNPjQEUSzlRAwvp9pQlb0qSwLuhdUDCrbVH?=
+ =?us-ascii?Q?UGm16vJli5nVyVZOnkpXctmuDViQukb4wWVrz97I?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cf6d8df-6a4a-48e0-186b-08ddc474c361
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 14:26:33.1102
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jBgxrvx6XE1sGEgKrtE2QtAVZEfx+OLNgGEh5FG5aQ/y8SJzyp4tjmvgkrlZud33ieE+BMxR70N8bi7qYLfV9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9349
 
-On Tue, 15 Jul 2025 18:53:08 -0700 Jakub Kicinski wrote:
-> On Tue, 15 Jul 2025 20:43:27 +0200 Matthieu Baerts (NGI0) wrote:
-> > mptcp_connect.sh can be executed manually with "-m <MODE>" and "-C" to
-> > make sure everything works as expected when using "mmap" and "sendfile"
-> > modes instead of "poll", and with the MPTCP checksum support.
-> >=20
-> > These modes should be validated, but they are not when the selftests are
-> > executed via the kselftest helpers. It means that most CIs validating
-> > these selftests, like NIPA for the net development trees and LKFT for
-> > the stable ones, are not covering these modes.
-> >=20
-> > To fix that, new test programs have been added, simply calling
-> > mptcp_connect.sh with the right parameters.
-> >=20
-> > The first patch can be backported up to v5.6, and the second one up to
-> > v5.14. =20
->=20
-> Looks like the failures that Paolo flagged yesterday:
->=20
-> https://lore.kernel.org/all/a7a89aa2-7354-42c7-8219-99a3cafd3b33@redhat.c=
-om/
->=20
-> are back as soon as this hit NIPA :(
->=20
-> https://netdev.bots.linux.dev/contest.html?branch=3Dnet-next-2025-07-16--=
-00-00&executor=3Dvmksft-mptcp&pw-n=3D0&pass=3D0
->=20
-> No idea why TBH, the tests run sequentially and connect.sh run before
-> any of the new ones.
->=20
-> I'm gonna leave it in patchwork in case the next run is clean,
-> please use pw-bot to discard them if they keep failing.
+On Wed, Jul 16, 2025 at 03:36:31PM +0200, Peter Zijlstra wrote:
+> On Wed, Jul 16, 2025 at 03:15:12PM +0200, Andrea Righi wrote:
+> 
+> > The idea is to track the scx callbacks that are invoked with a rq lock held
+> > and, in those cases, store the locked rq. However, some callbacks may also
+> > be invoked from an unlocked context, where no rq is locked and in this case
+> > rq should be NULL.
+> > 
+> > In the latter case, it's acceptable for preemption to remain enabled, but
+> > we still want to explicitly set locked_rq = NULL. If during the execution
+> > of the callback we jump on another CPU, it'd still be in an unlocked state,
+> > so it's locked_rq is still NULL.
+> 
+> Right; but doing superfluous NULL stores seems pointless. So better to
+> avoid the store entirely, rather than making it more expensive and no
+> less pointless, right?
 
-It failed again on the latest run, in a somewhat more concerning way :(
+Right, we can definitely avoid rewriting NULL.
+The following should do the trick.
 
-# (duration 30279ms) [FAIL] file received by server does not match (in, out=
-):
-# -rw------- 1 root root 5171914 Jul 16 05:24 /tmp/tmp.W2c96hxSIz
-# Trailing bytes are:=20
-# w,=D1=90)-rw------- 1 root root 5166208 Jul 16 05:24 /tmp/tmp.s33PNcrN6M
-# Trailing bytes are:=20
-# (<v /&^<=D6=B1rnFsaC7INFO: with peek mode: saveAfterPeek
+Breno, can you give it a try?
 
-https://netdev-3.bots.linux.dev/vmksft-mptcp/results/211121/4-mptcp-connect=
--sh/stdout
+Thanks,
+-Andrea
 
-BTW feeding the random data into hexdump-like formatter seems
-advisable? :P
+ kernel/sched/ext.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index e231450768897..c76d6c9e497b4 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -1290,12 +1290,15 @@ static inline void update_locked_rq(struct rq *rq)
+ 	 */
+ 	if (rq)
+ 		lockdep_assert_rq_held(rq);
++
++	WARN_ON_ONCE(preemptible());
+ 	__this_cpu_write(scx_locked_rq_state, rq);
+ }
+ 
+ #define SCX_CALL_OP(sch, mask, op, rq, args...)					\
+ do {										\
+-	update_locked_rq(rq);							\
++	if (rq)									\
++		update_locked_rq(rq);						\
+ 	if (mask) {								\
+ 		scx_kf_allow(mask);						\
+ 		(sch)->ops.op(args);						\
+@@ -1303,14 +1306,16 @@ do {										\
+ 	} else {								\
+ 		(sch)->ops.op(args);						\
+ 	}									\
+-	update_locked_rq(NULL);							\
++	if (rq)									\
++		update_locked_rq(NULL);						\
+ } while (0)
+ 
+ #define SCX_CALL_OP_RET(sch, mask, op, rq, args...)				\
+ ({										\
+ 	__typeof__((sch)->ops.op(args)) __ret;					\
+ 										\
+-	update_locked_rq(rq);							\
++	if (rq)									\
++		update_locked_rq(rq);						\
+ 	if (mask) {								\
+ 		scx_kf_allow(mask);						\
+ 		__ret = (sch)->ops.op(args);					\
+@@ -1318,7 +1323,8 @@ do {										\
+ 	} else {								\
+ 		__ret = (sch)->ops.op(args);					\
+ 	}									\
+-	update_locked_rq(NULL);							\
++	if (rq)									\
++		update_locked_rq(NULL);						\
+ 	__ret;									\
+ })
+ 
 
