@@ -1,578 +1,297 @@
-Return-Path: <linux-kernel+bounces-734048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01A4B07C5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:55:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324F3B07C5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86C53AC6C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:54:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A17D4A7E39
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65694288530;
-	Wed, 16 Jul 2025 17:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kxLF7OwS";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="p396GH5L"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA49288532;
+	Wed, 16 Jul 2025 17:55:39 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3D328850F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752688510; cv=fail; b=NRx9Z/eC/1QMxnkD4GP4dgPPUm8E6d7ubcjINWlqr0CZ/kO7aF+DbE+yZkEZPwr7JW4bPS8eavv6+eAna7vVhT0HXn5ttJxfDRxM+5fDeAvxlmAx7105Hy5bwxxUbEtVGePaYVzaAZIH607GH8r+oTovbiJbdB2hNthN6wY326s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752688510; c=relaxed/simple;
-	bh=mW5gm18T/vcbYWrWSEjK70H8pnPP8f31t0njzQSipMQ=;
-	h=References:From:To:Cc:Subject:In-reply-to:Message-ID:Date:
-	 Content-Type:MIME-Version; b=FTtJpg9bYVRukFgXwd1BoHQ8t29Xw2xjwWMSITBeXPp+zd0pQE+IzfZOBNIKw+KPLL0CePMFqqSzCxYYXPpj8V/LBCXDiXIfNO+sRqi1tCxZULXv/UPp5TqyfI8P3F+yyJpFtZcnYTYjCV2+8GE4DQ1MO7aBGpTdRlSMBORfG9U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kxLF7OwS; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=p396GH5L; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GHffKE001438;
-	Wed, 16 Jul 2025 17:54:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Mw9cHUVaMgoiSteemJ
-	7ig5k5s0zSAOj+HnBrE9CBfXA=; b=kxLF7OwSuhgn4eDyfblOR95e/BFOoGPZ91
-	kMxl1C/oF1683hcqpc453ZmdJ6g8IUcYqRNVTuM3pSXeZ+hFQNJXmGrjm8GWyr5j
-	34pg7CqnJD0VocQaNEoc6TV0SWYxEqkNgPy8PBEDCJkwlfjLwHZm/0e+PPRzMMZq
-	FrYNvff10OBk0zTWzFEbtTEhj5X3ve88Wb4cbtMfDGfCwtu7OcrfdgcZAVM3gGRf
-	/7Q6+MEDllIYsZD+cdfd+Pdru2MIRQwZKutov5wdxJIM9sX5CS9F5v+TncQ4uY25
-	T2Wi+uYUyYWqVF8g+FjIFQmgdXI1i0b55fu1F6sKiVQQ+UTB7WFw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47uhjf9ykv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Jul 2025 17:54:39 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56GHP7Ie010831;
-	Wed, 16 Jul 2025 17:54:38 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2072.outbound.protection.outlook.com [40.107.243.72])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ue5bpawq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Jul 2025 17:54:38 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ClkHMMZ2+D8gV4kK72pw0zq3ykN+0YMtDytZ9s6OCmK0pHLpXx8ng/meaPba8CqQtmWw9eQRnw2o7dIwGGyHUfN9GmTCmdtbr6fwBRRXLmemUdBslJZdRSp9QgcHasy8xFCsmSXeDKwUzF0t6YIsbNSry64onIsLdS9EO0gqNFYwfRzubaZ8Q4UIaD+mER+wwNqhUr84dH51NoLYyjbv1f6qKhN9BAAOG6WfpBdx3sLl8ZePGLoMxFqxOUncBj+w18ifYTMsLfRYtpfB0ur/56F5CxiZMueapHJOGFiFcIVb5DKzwHzYcmkwNP10Wiq3QCWqY9JIaT+0/uT9MsKa7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mw9cHUVaMgoiSteemJ7ig5k5s0zSAOj+HnBrE9CBfXA=;
- b=x7EBsFPXwgS3SuSfc/SjlUMb6rq0KyjUGkDZ7uRB5NDALbnI3XZj+m6VC15dE7MI/1elFBQXwN6WjzxuXfapg2jFaIVdezbOuHE/puOaS88rZff3fUNeg8dYnWKDwRuVen4SiY+c/p4WEqECP0VoJNB6VJQLwXkr0KH1O8vi+ZEDzUoH0Z8Ot4lGhu169qEBDyM/XrZ9EvMQe6GT6IS5qp6cW/NYroKl8Y+0OgF8Wf2Wo5alQz+8D8JWu5f8PBhUVSFaqvEAJf6B7Vk7ssopdMfPkC+YWL7/YwEeGhQtp6wGnALYAOiANV6duI5sP1XYRyoOeXDq30WxVD/tV2h84A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mw9cHUVaMgoiSteemJ7ig5k5s0zSAOj+HnBrE9CBfXA=;
- b=p396GH5Lw2zsivDiWdz+fwWH57sKnCAiiwr5vgywwi/3TkZMIbBJJIOuIoOnIcMHfJClhiQxrawRKa+Fgx7cf/9AvBXh0XHbsXJvPBav5CoMvBgD+a9dFrom96vaKebTpJYgX+2OJyHq26hLfmgUh6KWWfLS5pWctEtV8QjDURg=
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
- by DS0PR10MB6799.namprd10.prod.outlook.com (2603:10b6:8:13f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Wed, 16 Jul
- 2025 17:54:36 +0000
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.8901.033; Wed, 16 Jul 2025
- 17:54:35 +0000
-References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
- <20250710005926.1159009-14-ankur.a.arora@oracle.com>
- <d6413d17-c530-4553-9eca-dec8dce37e7e@redhat.com>
- <878qkohleu.fsf@oracle.com>
- <213a4333-24de-4216-8d9a-b70ac52c4263@redhat.com>
-User-agent: mu4e 1.4.10; emacs 27.2
-From: Ankur Arora <ankur.a.arora@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org, akpm@linux-foundation.org,
-        bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
-        peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
-        tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH v5 13/14] mm: memory: support clearing page-extents
-In-reply-to: <213a4333-24de-4216-8d9a-b70ac52c4263@redhat.com>
-Message-ID: <878qkof2cm.fsf@oracle.com>
-Date: Wed, 16 Jul 2025 10:54:33 -0700
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR03CA0119.namprd03.prod.outlook.com
- (2603:10b6:303:b7::34) To CO6PR10MB5409.namprd10.prod.outlook.com
- (2603:10b6:5:357::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0FA28850F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752688538; cv=none; b=kuRRsuHPXPuMtytjx0yOskBH/tDghVtmfT+SZSFFmZfvd8qrzhJ4R+e2jyvB558TDmmu8Xa9Bdjeu++FfBdiS+RRt7URibswTVgIi+ZJSEZKr6yWMwzyFL4v5OabHnd0CLPqTk9asTckKbzX4UsV4ZsUr61Y3GhO0NgUX2unGVw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752688538; c=relaxed/simple;
+	bh=zxb+lP8Jro90/2cVStKsesMFvvQDSOMT6wdu1gqqffQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eyTguoqX7F1WXCCc34P6trLZ3iXBp7lGBxhlaU8iy573jXRsqKfRIfcAKO0w4JyD9c7H9y1rvKvMFBDinpEG60KnseffVMJ+//Z7evnUpCh3wj+nCM741dtcuSmqzdO2nriNIMY14NY5fhHRFvQGhpTeA1n2HMet1mtSeLNlWrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-869e9667f58so17366539f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:55:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752688536; x=1753293336;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cMUDBWWPF2h1/3l5ftewK8cyL1mZeJp0T2KQcGOsj3M=;
+        b=N5jFIwqTrXO7vQvjzwr+ZsR5xjcz9u0MBELWF/lwm2wie3qm9S4C60fgG5dhS6x4JW
+         hXI/grwBXIr3tjrb3SY9BBCxJ0wtC5jV+AiopFhV/RRCBDIkxWi1zYaTX3dfZQAThcwi
+         ka8R2ZT7ymJVzbFY39Yb1g8FSpnbIFyXuCAEGxRpIY2JqkXZb1QPmm/Xa0PwjvcOguLB
+         VyXOUk7hXJbe31eKL2DNjeZD8gXJw6F5O92BSSe+dawrNaQBGpp1SFF9QfeGv5O4tSNO
+         /nbOE3oSJv7D/p40WkS/G6BpJ8gyOmtecBxH+04JL99PxGhBu7/LHjAOAYLfKoAOayFP
+         VTIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9mrWuSYBiWm9B/JSUJHO204ly/MIP8XpAok1W6EQdZ9Ewz9Re4p0wQIniib+VusQsQxZyjCdxqZVI8nk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6nuEoTCN8CxCLbzmbpCCJ3KfQQ2fCW1VBV/FsNNowFHFUQ6BC
+	wC/4TMSImm4/f4pUkUbRYqyRips26W0wGZSD8MJ3nom8Xcw1hCDiUZA1KyMo2V9Te2Kz7tYUB0h
+	qQHDhoJWbfjsf2kiGqc7GEzLov0S8TxEl8dcxkmTLwa5vO6l7EaogS/CowQg=
+X-Google-Smtp-Source: AGHT+IHuKJLw5wxetXXjfLia+nEOPNgdqnceoINgISSPQ4qCaiz+n/Daw+fD9QEkR5XZ//ISmGOicz/y3YrAFTfGp6/gFDVKnPTe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|DS0PR10MB6799:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f866894-df2c-48a5-7ef2-08ddc491d306
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?aleaE3lYlJ97WlFFaOMP3DyG3lkD4SiNH2eB6zd9KZy3otqd5o06Ebge9036?=
- =?us-ascii?Q?1AocrZ35fmEbls+UYtGvFDNGIySnthnCzWd9pMONzVXCRwLINyuvVQ9NL/JX?=
- =?us-ascii?Q?ADZcwaypFIVUeTKG9kPZ8Vc388KvA/48YSulNUx31uB5+aS+uFfHTvPAvqXO?=
- =?us-ascii?Q?rD7r8K3zUV4m0J2Xqx3W91lOyARejXhBGFXozuKRrXqRvw0sh1glKalbV4B7?=
- =?us-ascii?Q?75vbYXBDnpVJ7fWr/FZvbDHee2SQ3TmA+YOH5JX0uBiggv6WK+ynRDahJ6CD?=
- =?us-ascii?Q?+EzRYOGa3XzNDPUCPY7P0504ND/TPAGGhi1HTUeaM+sdFWcpfs1++UlVTNUT?=
- =?us-ascii?Q?eY07iLFVpH1gTWihmR5xIs/xAfkiJZ04pB0oDbFFWa+asjmrl+cuHUIj8Z0h?=
- =?us-ascii?Q?zji67yjtEag7tD4d8bTnoIt21mrS/RcCw/OK4VtkOiKpm/Omiw2rBL7/CWdm?=
- =?us-ascii?Q?qW1RjsOBs57kZeEBca7n5EdSHnotVvCT+s9rqFsx6066wohzs8KhqfMq8FAL?=
- =?us-ascii?Q?AifVCJR2JT0eRFB8zRNJS5kJ1yyWfPZ6EKDI5HlR9/HfsTAhEy6QIUp+YfxP?=
- =?us-ascii?Q?iSmZaI/vmRHtXHqa3ALnS/ca9/et6iAM4CDEQt8p+aHY0yPnq6QK48bg0kPh?=
- =?us-ascii?Q?D0uXIYvPuUYfyKK4xTkl65mCZD6WStldGVsQfgNpIngtbfOjNzF9lJTtyGL7?=
- =?us-ascii?Q?/kaA3e9JLJW5SF1aPwJK5E1Oh9Kj98Ant10dbhef9i1MaHLHwKgUC5Yw/4K6?=
- =?us-ascii?Q?HB8WOj065iXBAahEs5GyloqFFkELqM8DShPrBG56AQkxKBBRqfwhX9SJZrqR?=
- =?us-ascii?Q?hkPmHrZmZev5b7ECw92WQnRw9gmdvHdA162vMTh0kSZmFkBbiYXMH9epNXUc?=
- =?us-ascii?Q?z9jFhu1iZM/HCRFXIaWgNPYVuD4JyRSNBIPq1+iO9qkEy6Cv3SIhJTkHS/JG?=
- =?us-ascii?Q?HsxZxRraMZ5XmT9V8PZrDvnTEkGpwrqV+3ctVy0ZALOVnn8ie1FlQq7NgOCX?=
- =?us-ascii?Q?CK0/FsQUax4lrx1Fgb19+YPy04qBmMZumnjk+0s3OvP8tL55t5y/idjnXoG/?=
- =?us-ascii?Q?F1NwCTI/SZwFccmx/3RoIx2NEAYckhOgeVSWXu83564H4d5QsWDYYbi7l+Ny?=
- =?us-ascii?Q?PDHY6/WvEyjOq+iHD8CD02qfc8ocyiNfYHM8EipwedvJP1Rcc/lDF7Gg9wRz?=
- =?us-ascii?Q?XNFXpvFWipSDB9IMKBX8umreomunLH8ZQOHLLhEyrHtEhWVIz8UFtOacOJVK?=
- =?us-ascii?Q?jnIpM/vo1JZo5OABZlsgPSS/9RM7x1wdoAB58m0HgO8MPQw1hVOzNYWZp5F1?=
- =?us-ascii?Q?DiZgVpqnk7VTi4mKLvUATD61jAGfFeU5DddaD2KjpGNfLvZ7YEZEU2zFPnlL?=
- =?us-ascii?Q?z4QRLTFf6+FK7MZ2HC1BdoNKZfOoFn35vEXkiPLmzIwKMILerth/PRCiQ1rb?=
- =?us-ascii?Q?opBru4SAvl4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gf6QUD1ltg0eVEiXjQ+8PhcBNYuuJBjqn1IXTexhGXRxJWv2XHXw5aBtwwxD?=
- =?us-ascii?Q?AQY0EVtu1TW7sMM+8UvUx7bGjOTTXQNrxRAmsgCCcZaIFPogiQhPR8Ue5C1i?=
- =?us-ascii?Q?wOsP7QQXfizxVMtxT367KWv9a+1HDWyYAFUPfdrg3EOE/sjWsn+9AVKC/RFC?=
- =?us-ascii?Q?6jM6CeuaOtFAKxVo8P/eclB7wD3jX9IFwKgI4yblK4uWXu1pXj6Dg/z2GWhH?=
- =?us-ascii?Q?ne711zAbSWzn5G9zRzwGJNhlVCRlfFZEI/s158lj+mraIhaB2lM6njwG41Bh?=
- =?us-ascii?Q?T0cKi6bFw8UqCOVhpOlXXWSdzf8BHqR+gh8Bc8o9h1C98BrV8lOcWbp1g4Jo?=
- =?us-ascii?Q?a0aebQccv45JKMzAOwayh+oBL0wXOlYig85Am7wUcc/yNkdnp2uUQ7VywAmv?=
- =?us-ascii?Q?HgWV+GRngjm18rFE8r5OyHYGoqWrWhispyCeX7HOm5LBswoq6JPW+mc2F55S?=
- =?us-ascii?Q?/zUW2kKoYckMg7nXiufln/55Ptjeq5zUc8Vf7qI41TQX4ZY5n4TdNTpGnxqn?=
- =?us-ascii?Q?Xf6UEIOL+TUJ2AWV27uzDuuUh0i7qoqMnzPyflV/aEgQNE7ZfM9u/D+GtJNc?=
- =?us-ascii?Q?vM8P7SOvafDPFc3tmHtIfR794FdvRKZWF2rKyaG+bHKI+ronA9YywX/YThX9?=
- =?us-ascii?Q?80QziD05fKRyHGwo5TXf6u8LKM56dZx97Hm2bh6wffxAO6wVnGrpBIXefB6w?=
- =?us-ascii?Q?EwppW55XEN30igk5aJTBQhZIEPGQyX++RzgSx7IgUw9fqCWwJMbiw99yahs3?=
- =?us-ascii?Q?P6tOOR8kA/qKfTqUvsC9vgu8Sn8oqMcQ21Os+kCDSAJn8GvRj+L4SEKamZBJ?=
- =?us-ascii?Q?AbKm+62AlAlnLkOxewG916klMMRnNJeGhcNQgRYoyDf28PkRfhzN/mztkFO1?=
- =?us-ascii?Q?S4KrtGHEyTmy1/DqqAve34KlKqhlIrGYQqdcJNiSXtdbrcryGq0lobJrsvcD?=
- =?us-ascii?Q?qYUtn8T7zR3G8ZHKys2id6YVkv8MrIY8QXQBbOZbxu1pCYNDlsQiqiONcuJ9?=
- =?us-ascii?Q?eJcBkZoXZZ4TkC2SLEFaHh2mvDF8FbjRV1056V/4EG5DOl/iOw284OyE+MJj?=
- =?us-ascii?Q?WLoetE/o5NSHuxhbXUmA2MZnJyYgFKwrmNZdTnJBLt2DVizsvmlWgZPmnD2v?=
- =?us-ascii?Q?KorRl/KhS6wzwY93WAHyp9wtSCmnS618+32xHOC+Mm6sHa8kCQeCkQAWCX4u?=
- =?us-ascii?Q?+hpDMfhyrq5RdFQV7Oox+9nkRgrE/rYjzSvBmbVyL96199sBNGxxriSFS2UG?=
- =?us-ascii?Q?Sy6T95gJCtrJ+Dv4p+SSa37c9sopd74L97/Sp2WP8EVfcs9jtCxVVG3DqB0i?=
- =?us-ascii?Q?PY5QkICtrFhXnHLdAimZlj5v4YcA8w6/EBqKtDHlhCTDoapfxhKGVlqxAVnK?=
- =?us-ascii?Q?SJOdAE0haFaEj7XagprK/hirLmWsC/JiJcz19yhidYYet7jVH+6Rg5mHjLK0?=
- =?us-ascii?Q?1eDo3lpyNXkBRFsEv2cs38DWPoQqjRoXnPmb1bXE3p9Ne7u0LqxvhyU8z1KB?=
- =?us-ascii?Q?Sft4m7YDONXMH4D2Gab23q3zqBa2VHpJEa2QDbQIvMe4ex54z55doJftDO6j?=
- =?us-ascii?Q?BgzzFjwMlYaT7swgEB0CHDaMIZSH1EcR//L2Z9eaYX6ZcBnz5eYKBh6ZZPGs?=
- =?us-ascii?Q?Og=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	eOXxUgxjGv41rBvxATlerdyKg8XSSZY7GJhT+XyN7BxJ6xeUllbRl8QmB6XMlJxhG7cO0aYiuzYPg6pfCXTu0JcKT0j2QuDOqokihCmQu5nYotsvLmIf/PwQFulDKvM95ZGfGHZq04fQc3nJmAQPY02Lk73+5oWoc0xG0PjHWjnGcC0u0zXBLtfCaZMRyCjHV1lw40zzBaSObFdwGCmqrn9TE4ktoHob4+QUKThPlxj1P+Vhscq8rxi51U/jdiYGl5huwB9HbBP79tuBqLMbwRZNSD+XJpzFJz0fjfuXz3r7d92iE06QuqDljHqTstqX0bSkvVBNATR9gaaog03d7Gorw3Uh95nVoY1Vn83aOyDZJOENzX68Qy5ZFpaSfmO3COv0XhanBOE+P69B5aLPoYR9Y8kvXMFQK7sHsWPbnf2ccnl9Qba5146jMVXoH8eswyYpyGlpoYulyAlB6BnRyQ5Jfp+sz/oI2NfJMb63S2Q06m722av2F9yGY0j11TQ3hn7msyVojS/SandFm3lwxcYBc/KVAVlvfAm2sUk6ujYAcPSyLzJ3IFVYOXMYuMTt2z9Q1wFGgQlP5vdboDZK91APpZYsYTXZlOyDDqdOClo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f866894-df2c-48a5-7ef2-08ddc491d306
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 17:54:35.6883
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wcViAaL5rbC4JRMfRIBuUBTEKaiuqZFGsB318HhrfLr7cv6q4T7xeHmptm3AA+MsPxbiWLOdTgQTAVE54zaxyVy3CuGDARypdf9cmxXc6bw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6799
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_03,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
- mlxlogscore=999 adultscore=0 phishscore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507160161
-X-Proofpoint-GUID: t_aEFRy1PiOKCOEHb635fMdjxubhex6u
-X-Authority-Analysis: v=2.4 cv=O6g5vA9W c=1 sm=1 tr=0 ts=6877e75f b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=_aWlzPWFGaAEAUwkHjcA:9 cc=ntf awl=host:12062
-X-Proofpoint-ORIG-GUID: t_aEFRy1PiOKCOEHb635fMdjxubhex6u
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDE2MSBTYWx0ZWRfX4YCfCVvKhGre fdoXWXnPO1GyTGqxsujXwvlS71oArH5nx3eVoEJuVgu2qWE8EHP6yEJnaxTH/NzH46m6cgBsx47 lWCetNjZL4mWoqybI95Myyari4F6vk47Iaxr2tPhzYy8JmSANqUcatUp1NHfqxC/904bu01XoRV
- YxKpZHjyzXk2DYuBCugQ9cG/JLsyVdwxGfzpVBHJKMfnTQk+qUFkYC22Nl++erXRqvUR540k1EE fszNakQiwGpR+R6b700A4dTM5eIH/HudWR7obtTjjhHCfZ8ClQbzHD/GZbH8/96zgADcE5qynDL 03iYlnkn4uZTfb8fLqt2RZRXtFMCxONc0dBfgkq3/TDdEK2wd+CVE9nkVyOO7PW7t/dWoBMONAD
- 48AjroWE9y7dR58dImd1I66l2Mk4+1A6Jy8JeIiKjr9IXD6Ox6YnLe4cw5prrnsWn+B71WbF
+X-Received: by 2002:a05:6602:3887:b0:875:b493:a1d0 with SMTP id
+ ca18e2360f4ac-879c282c2d8mr262050539f.3.1752688535710; Wed, 16 Jul 2025
+ 10:55:35 -0700 (PDT)
+Date: Wed, 16 Jul 2025 10:55:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6877e797.a00a0220.3af5df.0012.GAE@google.com>
+Subject: [syzbot] [mm?] KASAN: slab-use-after-free Read in mas_next_slot (2)
+From: syzbot <syzbot+ebfd0e44b5c11034e1eb@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	pfalcato@suse.de, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    0be23810e32e Add linux-next specific files for 20250714
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a9a7d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=adc3ea2bfe31343b
+dashboard link: https://syzkaller.appspot.com/bug?extid=ebfd0e44b5c11034e1eb
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d0658c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15dd858c580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/13b5be5048fe/disk-0be23810.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3d2b3b2ceddf/vmlinux-0be23810.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c7e5fbf3efa6/bzImage-0be23810.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ebfd0e44b5c11034e1eb@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in ma_dead_node lib/maple_tree.c:575 [inline]
+BUG: KASAN: slab-use-after-free in mas_rewalk_if_dead lib/maple_tree.c:4415 [inline]
+BUG: KASAN: slab-use-after-free in mas_next_slot+0x185/0xcf0 lib/maple_tree.c:4697
+Read of size 8 at addr ffff8880755dc600 by task syz.0.656/6830
+
+CPU: 1 UID: 0 PID: 6830 Comm: syz.0.656 Not tainted 6.16.0-rc6-next-20250714-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x230 mm/kasan/report.c:480
+ kasan_report+0x118/0x150 mm/kasan/report.c:593
+ ma_dead_node lib/maple_tree.c:575 [inline]
+ mas_rewalk_if_dead lib/maple_tree.c:4415 [inline]
+ mas_next_slot+0x185/0xcf0 lib/maple_tree.c:4697
+ mas_find+0xb0e/0xd30 lib/maple_tree.c:6062
+ vma_find include/linux/mm.h:855 [inline]
+ remap_move mm/mremap.c:1819 [inline]
+ do_mremap mm/mremap.c:1904 [inline]
+ __do_sys_mremap mm/mremap.c:1968 [inline]
+ __se_sys_mremap+0xaff/0xef0 mm/mremap.c:1936
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4fecf8e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff93ea4718 EFLAGS: 00000246 ORIG_RAX: 0000000000000019
+RAX: ffffffffffffffda RBX: 00007f4fed1b5fa0 RCX: 00007f4fecf8e929
+RDX: 0000000000600002 RSI: 0000000000600002 RDI: 0000200000000000
+RBP: 00007f4fed010b39 R08: 0000200000a00000 R09: 0000000000000000
+R10: 0000000000000007 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f4fed1b5fa0 R14: 00007f4fed1b5fa0 R15: 0000000000000005
+ </TASK>
+
+Allocated by task 6830:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4180 [inline]
+ slab_alloc_node mm/slub.c:4229 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4236
+ mt_alloc_one lib/maple_tree.c:176 [inline]
+ mas_alloc_nodes+0x2e9/0x8e0 lib/maple_tree.c:1255
+ mas_node_count_gfp lib/maple_tree.c:1337 [inline]
+ mas_preallocate+0x3ad/0x6f0 lib/maple_tree.c:5537
+ vma_iter_prealloc mm/vma.h:463 [inline]
+ __split_vma+0x2fa/0xa00 mm/vma.c:528
+ vms_gather_munmap_vmas+0x2de/0x12b0 mm/vma.c:1359
+ __mmap_prepare mm/vma.c:2361 [inline]
+ __mmap_region mm/vma.c:2653 [inline]
+ mmap_region+0x724/0x20c0 mm/vma.c:2741
+ do_mmap+0xc45/0x10d0 mm/mmap.c:561
+ vm_mmap_pgoff+0x2a6/0x4d0 mm/util.c:579
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 23:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2417 [inline]
+ slab_free mm/slub.c:4680 [inline]
+ kmem_cache_free+0x18f/0x400 mm/slub.c:4782
+ rcu_do_batch kernel/rcu/tree.c:2584 [inline]
+ rcu_core+0xca8/0x1710 kernel/rcu/tree.c:2840
+ handle_softirqs+0x283/0x870 kernel/softirq.c:579
+ run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
+ smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Last potentially related work creation:
+ kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
+ __call_rcu_common kernel/rcu/tree.c:3102 [inline]
+ call_rcu+0x157/0x9c0 kernel/rcu/tree.c:3222
+ mas_wr_node_store lib/maple_tree.c:3893 [inline]
+ mas_wr_store_entry+0x1f1b/0x25b0 lib/maple_tree.c:4104
+ mas_store_prealloc+0xb00/0xf60 lib/maple_tree.c:5510
+ vma_iter_store_new mm/vma.h:509 [inline]
+ vma_complete+0x224/0xae0 mm/vma.c:354
+ __split_vma+0x8a6/0xa00 mm/vma.c:568
+ vms_gather_munmap_vmas+0x2de/0x12b0 mm/vma.c:1359
+ do_vmi_align_munmap+0x25d/0x420 mm/vma.c:1527
+ do_vmi_munmap+0x253/0x2e0 mm/vma.c:1584
+ do_munmap+0xe1/0x140 mm/mmap.c:1071
+ mremap_to+0x304/0x7b0 mm/mremap.c:1367
+ remap_move mm/mremap.c:1861 [inline]
+ do_mremap mm/mremap.c:1904 [inline]
+ __do_sys_mremap mm/mremap.c:1968 [inline]
+ __se_sys_mremap+0xa0b/0xef0 mm/mremap.c:1936
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff8880755dc600
+ which belongs to the cache maple_node of size 256
+The buggy address is located 0 bytes inside of
+ freed 256-byte region [ffff8880755dc600, ffff8880755dc700)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x755dc
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801a491000 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801a491000 dead000000000122 0000000000000000
+head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+head: 00fff00000000001 ffffea0001d57701 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000002
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 6828, tgid 6828 (cmp), ts 120765032919, free_ts 112542256570
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2487 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2655
+ new_slab mm/slub.c:2709 [inline]
+ ___slab_alloc+0xbeb/0x1410 mm/slub.c:3891
+ __slab_alloc mm/slub.c:3981 [inline]
+ __slab_alloc_node mm/slub.c:4056 [inline]
+ slab_alloc_node mm/slub.c:4217 [inline]
+ kmem_cache_alloc_noprof+0x283/0x3c0 mm/slub.c:4236
+ mt_alloc_one lib/maple_tree.c:176 [inline]
+ mas_alloc_nodes+0x2e9/0x8e0 lib/maple_tree.c:1255
+ mas_node_count_gfp lib/maple_tree.c:1337 [inline]
+ mas_preallocate+0x3ad/0x6f0 lib/maple_tree.c:5537
+ vma_iter_prealloc mm/vma.h:463 [inline]
+ commit_merge+0x1fd/0x700 mm/vma.c:753
+ vma_expand+0x40c/0x7e0 mm/vma.c:1158
+ vma_merge_new_range+0x6a3/0x860 mm/vma.c:1095
+ __mmap_region mm/vma.c:2666 [inline]
+ mmap_region+0xd46/0x20c0 mm/vma.c:2741
+ do_mmap+0xc45/0x10d0 mm/mmap.c:561
+ vm_mmap_pgoff+0x2a6/0x4d0 mm/util.c:579
+ ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:607
+page last free pid 5955 tgid 5955 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
+ __slab_free+0x303/0x3c0 mm/slub.c:4591
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x97/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4180 [inline]
+ slab_alloc_node mm/slub.c:4229 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4236
+ getname_flags+0xb8/0x540 fs/namei.c:146
+ getname include/linux/fs.h:2914 [inline]
+ do_sys_openat2+0xbc/0x1c0 fs/open.c:1429
+ do_sys_open fs/open.c:1450 [inline]
+ __do_sys_openat fs/open.c:1466 [inline]
+ __se_sys_openat fs/open.c:1461 [inline]
+ __x64_sys_openat+0x138/0x170 fs/open.c:1461
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff8880755dc500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880755dc580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff8880755dc600: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff8880755dc680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880755dc700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
 
-David Hildenbrand <david@redhat.com> writes:
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> On 16.07.25 05:19, Ankur Arora wrote:
->> David Hildenbrand <david@redhat.com> writes:
->>
->>> On 10.07.25 02:59, Ankur Arora wrote:
->>>> folio_zero_user() is constrained to clear in a page-at-a-time
->>>> fashion because it supports CONFIG_HIGHMEM which means that kernel
->>>> mappings for pages in a folio are not guaranteed to be contiguous.
->>>> We don't have this problem when running under configurations with
->>>> CONFIG_CLEAR_PAGE_EXTENT (implies !CONFIG_HIGHMEM), so zero in
->>>> longer page-extents.
->>>> This is expected to be faster because the processor can now optimize
->>>> the clearing based on the knowledge of the extent.
->>>> However, clearing in larger chunks can have two other problems:
->>>>    - cache locality when clearing small folios (< MAX_ORDER_NR_PAGES)
->>>>      (larger folios don't have any expectation of cache locality).
->>>>    - preemption latency when clearing large folios.
->>>> Handle the first by splitting the clearing in three parts: the
->>>> faulting page and its immediate locality, its left and right
->>>> regions; the local neighbourhood is cleared last.
->>>> The second problem is relevant only when running under cooperative
->>>> preemption models. Limit the worst case preemption latency by clearing
->>>> in architecture specified ARCH_CLEAR_PAGE_EXTENT units.
->>>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
->>>> ---
->>>>    mm/memory.c | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
->>>>    1 file changed, 85 insertions(+), 1 deletion(-)
->>>> diff --git a/mm/memory.c b/mm/memory.c
->>>> index b0cda5aab398..c52806270375 100644
->>>> --- a/mm/memory.c
->>>> +++ b/mm/memory.c
->>>> @@ -7034,6 +7034,7 @@ static inline int process_huge_page(
->>>>    	return 0;
->>>>    }
->>>>    +#ifndef CONFIG_CLEAR_PAGE_EXTENT
->>>>    static void clear_gigantic_page(struct folio *folio, unsigned long addr_hint,
->>>>    				unsigned int nr_pages)
->>>>    {
->>>> @@ -7058,7 +7059,10 @@ static int clear_subpage(unsigned long addr, int idx, void *arg)
->>>>    /**
->>>>     * folio_zero_user - Zero a folio which will be mapped to userspace.
->>>>     * @folio: The folio to zero.
->>>> - * @addr_hint: The address will be accessed or the base address if uncelar.
->>>> + * @addr_hint: The address accessed by the user or the base address.
->>>> + *
->>>> + * folio_zero_user() uses clear_gigantic_page() or process_huge_page() to
->>>> + * do page-at-a-time zeroing because it needs to handle CONFIG_HIGHMEM.
->>>>     */
->>>>    void folio_zero_user(struct folio *folio, unsigned long addr_hint)
->>>>    {
->>>> @@ -7070,6 +7074,86 @@ void folio_zero_user(struct folio *folio, unsigned long addr_hint)
->>>>    		process_huge_page(addr_hint, nr_pages, clear_subpage, folio);
->>>>    }
->>>>    +#else /* CONFIG_CLEAR_PAGE_EXTENT */
->>>> +
->>>> +static void clear_pages_resched(void *addr, int npages)
->>>> +{
->>>> +	int i, remaining;
->>>> +
->>>> +	if (preempt_model_preemptible()) {
->>>> +		clear_pages(addr, npages);
->>>> +		goto out;
->>>> +	}
->>>> +
->>>> +	for (i = 0; i < npages/ARCH_CLEAR_PAGE_EXTENT; i++) {
->>>> +		clear_pages(addr + i * ARCH_CLEAR_PAGE_EXTENT * PAGE_SIZE,
->>>> +			    ARCH_CLEAR_PAGE_EXTENT);
->>>> +		cond_resched();
->>>> +	}
->>>> +
->>>> +	remaining = npages % ARCH_CLEAR_PAGE_EXTENT;
->>>> +
->>>> +	if (remaining)
->>>> +		clear_pages(addr + i * ARCH_CLEAR_PAGE_EXTENT * PAGE_SHIFT,
->>>> +			    remaining);
->>>> +out:
->>>> +	cond_resched();
->>>> +}
->>>> +
->>>> +/*
->>>> + * folio_zero_user - Zero a folio which will be mapped to userspace.
->>>> + * @folio: The folio to zero.
->>>> + * @addr_hint: The address accessed by the user or the base address.
->>>> + *
->>>> + * Uses architectural support for clear_pages() to zero page extents
->>>> + * instead of clearing page-at-a-time.
->>>> + *
->>>> + * Clearing of small folios (< MAX_ORDER_NR_PAGES) is split in three parts:
->>>> + * pages in the immediate locality of the faulting page, and its left, right
->>>> + * regions; the local neighbourhood cleared last in order to keep cache
->>>> + * lines of the target region hot.
->>>> + *
->>>> + * For larger folios we assume that there is no expectation of cache locality
->>>> + * and just do a straight zero.
->>>> + */
->>>> +void folio_zero_user(struct folio *folio, unsigned long addr_hint)
->>>> +{
->>>> +	unsigned long base_addr = ALIGN_DOWN(addr_hint, folio_size(folio));
->>>> +	const long fault_idx = (addr_hint - base_addr) / PAGE_SIZE;
->>>> +	const struct range pg = DEFINE_RANGE(0, folio_nr_pages(folio) - 1);
->>>> +	const int width = 2; /* number of pages cleared last on either side */
->>>> +	struct range r[3];
->>>> +	int i;
->>>> +
->>>> +	if (folio_nr_pages(folio) > MAX_ORDER_NR_PAGES) {
->>>> +		clear_pages_resched(page_address(folio_page(folio, 0)), folio_nr_pages(folio));
->>>> +		return;
->>>> +	}
->>>> +
->>>> +	/*
->>>> +	 * Faulting page and its immediate neighbourhood. Cleared at the end to
->>>> +	 * ensure it sticks around in the cache.
->>>> +	 */
->>>> +	r[2] = DEFINE_RANGE(clamp_t(s64, fault_idx - width, pg.start, pg.end),
->>>> +			    clamp_t(s64, fault_idx + width, pg.start, pg.end));
->>>> +
->>>> +	/* Region to the left of the fault */
->>>> +	r[1] = DEFINE_RANGE(pg.start,
->>>> +			    clamp_t(s64, r[2].start-1, pg.start-1, r[2].start));
->>>> +
->>>> +	/* Region to the right of the fault: always valid for the common fault_idx=0 case. */
->>>> +	r[0] = DEFINE_RANGE(clamp_t(s64, r[2].end+1, r[2].end, pg.end+1),
->>>> +			    pg.end);
->>>> +
->>>> +	for (i = 0; i <= 2; i++) {
->>>> +		int npages = range_len(&r[i]);
->>>> +
->>>> +		if (npages > 0)
->>>> +			clear_pages_resched(page_address(folio_page(folio, r[i].start)), npages);
->>>> +	}
->>>> +}
->>>> +#endif /* CONFIG_CLEAR_PAGE_EXTENT */
->>>> +
->>>>    static int copy_user_gigantic_page(struct folio *dst, struct folio *src,
->>>>    				   unsigned long addr_hint,
->>>>    				   struct vm_area_struct *vma,
->>>
->>> So, folio_zero_user() is only compiled with THP | HUGETLB already.
->>>
->>> What we should probably do is scrap the whole new kconfig option and
->>> do something like this in here:
->> So, in principle I don't disagree and unifying both of these is cleaner
->> than introducing a whole new option.
->
-> Yes, after playing with the code, a new config option just for that is not
-> what we want.
->
->> However that still leaves this code having to contort around CONFIG_HIGHMEM
->> which is probably even less frequently used than THP | HUGETLB.
->
-> Not sure I understand your question correctly, but thp+hugetlb are compatible with
-> 32bit and highmem.
->
-> There are plans of removing highmem support, but that's a different story :)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Oh that would be a godsend! Whenever that happens.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> I think as long as these configs exist, we should just support them, although
-> performance is a secondary concern.
->
->> Maybe we should get rid of ARCH_HAS_CLEAR_PAGES completely and everyone
->> with !HIGHMEM either use a generic version of clear_pages() which loops
->> and calls clear_page() or some architectural override.
->> And, then we can do a similar transformation with copy_pages() (and
->> copy_user_large_folio()).
->> At that point, process_huge_page() is used only for !HIGHMEM configs
->
-> I assume you meant HIGHMEM
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Oh yeah.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
->> configs which likely have relatively small caches and so that leaves
->> it probably over-engineered.
->
-> I don't think we need to jump through hoops to optimize performance on
-> highmem, yes.
->
->> The thing that gives me pause is that non-x86 might perform worse
->> when they switch away from the left-right zeroing approach in
->> process_huge_page() to a generic clear_pages().
->
-> Right. Or they perform better. Hard to know.
->
->> So, maybe allowing architectures to opt in by having to define
->> ARCH_HAS_CLEAR_PAGES would allow doing this in a more measured fashion.
->
-> One tricky thing is dealing with architectures where clear_user_highpage()
-> does cachemanagement.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Oh yeah, I was forgetting that.
-
-> So the more I think about it, I wonder if we really should just design it
-> all around clear_user_highpages and clear_user_pages, and have only a
-> single clearing algorithm.
-
-Great. This is exactly what I was hoping to eventually get to.
-
-> Essentially, something like the following, just that we need a generic
-> clear_user_pages that iterates over clear_user_page.
->
-> Then, x86_64 could simply implement clear_user_pages by routing it to your
-> clear_pages, and define CLEAR_PAGES_RESCHED_NR (although I wonder if we can
-> do better here).
-
-Agreed.
-
-So, essentially just have the lower layer interfaces in place (generic
-and arch specific where needed):
- clear_pages()
- clear_user_pages()
- clear_user_highpages()
-
-With the arch defining whichever of those it needs (and ARCH_CLEAR_PAGES_RESCHED_NR).
-
-And, a folio_zero_user() pretty much as below.
-
-> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-> index 6234f316468c9..031e19c56765b 100644
-> --- a/include/linux/highmem.h
-> +++ b/include/linux/highmem.h
-> @@ -264,6 +264,14 @@ static inline void tag_clear_highpage(struct page *page)
->  #ifdef CONFIG_HIGHMEM
->  void zero_user_segments(struct page *page, unsigned start1, unsigned end1,
->  		unsigned start2, unsigned end2);
-> +static inline void clear_user_highpages(struct page *page, unsigned long vaddr,
-> +		unsigned int nr_pages)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i <= nr_pages; i++)
-> +		clear_user_highpage(nth_page(page, i), vaddr + i * PAGE_SIZE);
-> +}
->  #else
->  static inline void zero_user_segments(struct page *page,
->  		unsigned start1, unsigned end1,
-> @@ -284,6 +292,7 @@ static inline void zero_user_segments(struct page *page,
->  	for (i = 0; i < compound_nr(page); i++)
->  		flush_dcache_page(page + i);
->  }
-> +#define clear_user_highpages clear_user_pages
->  #endif
->    static inline void zero_user_segment(struct page *page,
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 3dd6c57e6511e..8aebf6e0765d8 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -7009,40 +7009,92 @@ static inline int process_huge_page(
->  	return 0;
->  }
->  -static void clear_gigantic_page(struct folio *folio, unsigned long addr_hint,
-> -				unsigned int nr_pages)
-> +#ifndef CLEAR_PAGES_RESCHED_NR
-> +#define CLEAR_PAGES_RESCHED_NR		1
-> +#endif /* CLEAR_PAGES_RESCHED_NR */
-> +
-> +static void clear_user_highpages_resched(struct page *page, unsigned long addr,
-> +		unsigned int nr_pages)
->  {
-> -	unsigned long addr = ALIGN_DOWN(addr_hint, folio_size(folio));
-> -	int i;
-> +	unsigned int i, remaining;
->  -	might_sleep();
-> -	for (i = 0; i < nr_pages; i++) {
-> +	if (preempt_model_preemptible()) {
-> +		clear_user_highpages(page, addr, nr_pages);
-> +		goto out;
-> +	}
-> +
-> +	for (i = 0; i < nr_pages / CLEAR_PAGES_RESCHED_NR; i++) {
-> +		clear_user_highpages(nth_page(page, i * CLEAR_PAGES_RESCHED_NR),
-> +				     addr + i * CLEAR_PAGES_RESCHED_NR * PAGE_SIZE,
-> +				     CLEAR_PAGES_RESCHED_NR);
-> -		clear_user_highpage(folio_page(folio, i), addr + i * PAGE_SIZE);
->  		cond_resched();
->  	}
-> -}
->  -static int clear_subpage(unsigned long addr, int idx, void *arg)
-> -{
-> -	struct folio *folio = arg;
-> +	remaining = nr_pages % CLEAR_PAGES_RESCHED_NR;
->  -	clear_user_highpage(folio_page(folio, idx), addr);
-> -	return 0;
-> +	if (remaining)
-> +		clear_user_highpages(nth_page(page, i * CLEAR_PAGES_RESCHED_NR),
-> +				     addr + i * CLEAR_PAGES_RESCHED_NR * PAGE_SHIFT,
-> +				     remaining);
-> +out:
-> +	cond_resched();
->  }
->  -/**
-> +/*
->   * folio_zero_user - Zero a folio which will be mapped to userspace.
->   * @folio: The folio to zero.
-> - * @addr_hint: The address will be accessed or the base address if uncelar.
-> + * @addr_hint: The address accessed by the user or the base address.
-> + *
-> + * Uses architectural support for clear_pages() to zero page extents
-> + * instead of clearing page-at-a-time.
-> + *
-> + * Clearing of small folios (< MAX_ORDER_NR_PAGES) is split in three parts:
-> + * pages in the immediate locality of the faulting page, and its left, right
-> + * regions; the local neighbourhood cleared last in order to keep cache
-> + * lines of the target region hot.
-> + *
-> + * For larger folios we assume that there is no expectation of cache locality
-> + * and just do a straight zero.
->   */
->  void folio_zero_user(struct folio *folio, unsigned long addr_hint)
->  {
-> -	unsigned int nr_pages = folio_nr_pages(folio);
-> +	const unsigned int nr_pages = folio_nr_pages(folio);
-> +	const unsigned long addr = ALIGN_DOWN(addr_hint, nr_pages * PAGE_SIZE);
-> +	const long fault_idx = (addr_hint - addr) / PAGE_SIZE;
-> +	const struct range pg = DEFINE_RANGE(0, nr_pages - 1);
-> +	const int width = 2; /* number of pages cleared last on either side */
-> +	struct range r[3];
-> +	int i;
-> +
-> +	if (unlikely(nr_pages >= MAX_ORDER_NR_PAGES)) {
-> +		clear_user_highpages_resched(folio_page(folio, 0), addr, nr_pages);
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * Faulting page and its immediate neighbourhood. Cleared at the end to
-> +	 * ensure it sticks around in the cache.
-> +	 */
-> +	r[2] = DEFINE_RANGE(clamp_t(s64, fault_idx - width, pg.start, pg.end),
-> +			    clamp_t(s64, fault_idx + width, pg.start, pg.end));
-> +
-> +	/* Region to the left of the fault */
-> +	r[1] = DEFINE_RANGE(pg.start,
-> +			    clamp_t(s64, r[2].start-1, pg.start-1, r[2].start));
-> +
-> +	/* Region to the right of the fault: always valid for the common fault_idx=0 case. */
-> +	r[0] = DEFINE_RANGE(clamp_t(s64, r[2].end+1, r[2].end, pg.end+1),
-> +			    pg.end);
-> +
-> +	for (i = 0; i <= 2; i++) {
-> +		unsigned int cur_nr_pages = range_len(&r[i]);
-> +		struct page *cur_page = folio_page(folio, r[i].start);
-> +		unsigned long cur_addr = addr + folio_page_idx(folio, cur_page) * PAGE_SIZE;
-> +
-> +		if (cur_nr_pages > 0)
-> +			clear_user_highpages_resched(cur_page, cur_addr, cur_nr_pages);
-> +	}
->  -	if (unlikely(nr_pages > MAX_ORDER_NR_PAGES))
-> -		clear_gigantic_page(folio, addr_hint, nr_pages);
-> -	else
-> -		process_huge_page(addr_hint, nr_pages, clear_subpage, folio);
->  }
->    static int copy_user_gigantic_page(struct folio *dst, struct folio *src,
-> --
-> 2.50.1
->
->
-> On highmem we'd simply process individual pages, who cares.
->
-> On !highmem, we'd use the optimized clear_user_pages -> clear_pages implementation
-> if available. Otherwise, we clear individual pages.
->
-> Yes, we'd lose the left-right pattern.
->
-> If really important we could somehow let the architecture opt in and do the call
-> to the existing process function.
-
-Great. Alright let me work on this.
-
-And, thanks for the very helpful comments.
-
---
-ankur
+If you want to undo deduplication, reply with:
+#syz undup
 
