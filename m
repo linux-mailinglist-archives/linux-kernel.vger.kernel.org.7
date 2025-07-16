@@ -1,188 +1,126 @@
-Return-Path: <linux-kernel+bounces-732899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17FAAB06D79
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC72B06D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53E6A56291D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D1E1AA3724
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AA92E88B6;
-	Wed, 16 Jul 2025 05:55:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3502A2E88BD;
+	Wed, 16 Jul 2025 05:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVR3GIao"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8598115278E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8857317D2;
+	Wed, 16 Jul 2025 05:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752645341; cv=none; b=u9e+kkHS2b96bmdZriRe/k/a0WcSY5Y3G2zlUSRhgMW6g+GFaV0gfy4VnebIolfcvc/sEd99eS553cWiHcYLIQCETW/OYecFBrXoEDPGSpR/4q1wCy8C0+ZkmfrHgmsC/z1MOi8S+JfMrcepBjbbb3XlapPayLL4lYWTU1PsGEg=
+	t=1752645598; cv=none; b=a+JDvznsoRCmzJIGnREZEnVdS8xgRdeGjoODuYq9CZRa9Uz54rsEkhVqP200IHVXAgWGUBrPZyDMEvOl/SVVyLuYpPT/0pCJ0+lC1aKJoP1SCAlqWj7sd/Wp0Ez8+lFtVnwnZThab8IcxeglRhV3EZAFEChhZ89xO59vJRkypWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752645341; c=relaxed/simple;
-	bh=DLu47Sws4affwsWQ7hPDxhVZT/7Eg7SpKUcr9nfWTIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qbNMRecb8qYoUcOHB7xmSwcxv+y5xglq5nsfXePPu1cVEnnfun4H3NdYnazCjz3rX419joMKc2N9kk8VfF6XVGAuA75XJyI7bfUu+g77cVom5w9qxBEkARtX0PXdvFYUtTslTTu//MEpWx97BMFH085NSoCoKah9/TjIVkUtWRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ubv78-0001BD-Hg; Wed, 16 Jul 2025 07:55:34 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ubv78-008h77-0g;
-	Wed, 16 Jul 2025 07:55:34 +0200
-Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 976C7442A70;
-	Wed, 16 Jul 2025 05:55:33 +0000 (UTC)
-Date: Wed, 16 Jul 2025 07:55:32 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Andrei Lalaev <andrey.lalaev@gmail.com>
-Cc: mailhol.vincent@wanadoo.fr, linux-kernel@vger.kernel.org, 
-	linux-can@vger.kernel.org
-Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
-Message-ID: <20250716-godlike-organic-pudu-53deda-mkl@pengutronix.de>
-References: <20250714175520.307467-1-andrey.lalaev@gmail.com>
- <20250715-almond-zebra-of-perception-9d2e6c-mkl@pengutronix.de>
- <b8221fe9-a167-4bcc-81bf-fb793712b48e@gmail.com>
- <20250715-smart-ultra-avocet-d7937a-mkl@pengutronix.de>
- <988d9355-2243-4187-b4ab-78652a1fb008@gmail.com>
+	s=arc-20240116; t=1752645598; c=relaxed/simple;
+	bh=RaEV9yK8YW7NoqQi03NiaVlozt06p1HwyWjvdwJeNcQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=HL4CKUau5MrFx0//ZwstfoU/Q9Q1/B6KNAh6L8Q+xqWp8D25MgOXO2Jz5gg6ROq5/3Fr6na4IZObXTZPLxlbXohlgMC0NsTdgw3I0JVwQQ3/7GGEg5k5gPnuNhamUBnKUUrPf65EF8YbnRFy4bAajpKqcM06TMzLHDiXqvttNmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVR3GIao; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8096EC4CEF5;
+	Wed, 16 Jul 2025 05:59:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752645598;
+	bh=RaEV9yK8YW7NoqQi03NiaVlozt06p1HwyWjvdwJeNcQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QVR3GIao9s0EZ7T4iXMxDlbroBBBMEdQPbVSs3nLs8s2+jcjE3AmtE9egWHytLPUy
+	 0jrPRafDodWOQbdd1Keq5xKHvGgPpPR1Kvh/qUs9zTyAdLuAhWqAdt/rvHFNPCaMqj
+	 mnfxo5cJq0tjj+hD/60NLR24KwB4vWnTFort/ZQGLTea2Tv5gf3kHnOAjkMBayqEzu
+	 HDmXePnEWWrPbS2MwhFX+Kczvo2PyZX75cXJngLsp8Dt6AArAYoxcAtCUZHNhtIefB
+	 0MzPWIjtA3FA2dO7taUUbiZkXljZr17BSOceBoz02QNI1MkqTcs+jjYKjgerxxrozO
+	 o54LhpUSiqjDg==
+Date: Wed, 16 Jul 2025 14:59:54 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, "Steven Rostedt (Google)"
+ <rostedt@goodmis.org>
+Subject: Re: kernel/trace/trace_fprobe.c:1264:12: warning: stack frame size
+ (1032) exceeds limit (1024) in 'trace_fprobe_create_cb'
+Message-Id: <20250716145954.93465b106813127bad546ed0@kernel.org>
+In-Reply-To: <202506240416.nZIhDXoO-lkp@intel.com>
+References: <202506240416.nZIhDXoO-lkp@intel.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s2noy5ddnmfxmu77"
-Content-Disposition: inline
-In-Reply-To: <988d9355-2243-4187-b4ab-78652a1fb008@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Tue, 24 Jun 2025 04:18:46 +0800
+kernel test robot <lkp@intel.com> wrote:
+
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   86731a2a651e58953fc949573895f2fa6d456841
+> commit: 57faaa04804ccbf16582f7fc7a6b986fd0c0e78c tracing: probe-events: Log error for exceeding the number of arguments
+> date:   3 months ago
+> config: s390-defconfig (https://download.01.org/0day-ci/archive/20250624/202506240416.nZIhDXoO-lkp@intel.com/config)
+> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 875b36a8742437b95f623bab1e0332562c7b4b3f)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250624/202506240416.nZIhDXoO-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202506240416.nZIhDXoO-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> kernel/trace/trace_fprobe.c:1264:12: warning: stack frame size (1032) exceeds limit (1024) in 'trace_fprobe_create_cb' [-Wframe-larger-than]
+>     1264 | static int trace_fprobe_create_cb(int argc, const char *argv[])
+>          |            ^
+>    1 warning generated.
+
+Hmm, maybe this includes the stack consumed by internal
+inlined function (trace_fprobe_create_internal()). If so,
+we can allocate some temporary buffer in it.
+
+Thanks, 
+
+> 
+> 
+> vim +/trace_fprobe_create_cb +1264 kernel/trace/trace_fprobe.c
+> 
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17  1263) 
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17 @1264) static int trace_fprobe_create_cb(int argc, const char *argv[])
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17  1265) {
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17  1266) 	struct traceprobe_parse_context ctx = {
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17  1267) 		.flags = TPARG_FL_KERNEL | TPARG_FL_FPROBE,
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17  1268) 	};
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17  1269) 	int ret;
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17  1270) 
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17  1271) 	trace_probe_log_init("trace_fprobe", argc, argv);
+> 8275637215bd3d4 Masami Hiramatsu (Google  2025-01-17  1272) 	ret = trace_fprobe_create_internal(argc, argv, &ctx);
+> b1d1e90490b6714 Masami Hiramatsu (Google  2023-08-23  1273) 	traceprobe_finish_parse(&ctx);
+> 334e5519c375701 Masami Hiramatsu (Google  2023-06-06  1274) 	trace_probe_log_clear();
+> 334e5519c375701 Masami Hiramatsu (Google  2023-06-06  1275) 	return ret;
+> 334e5519c375701 Masami Hiramatsu (Google  2023-06-06  1276) }
+> 334e5519c375701 Masami Hiramatsu (Google  2023-06-06  1277) 
+> 
+> :::::: The code at line 1264 was first introduced by commit
+> :::::: 8275637215bd3d447b31d37f9b8231a013adb042 tracing: Adopt __free() and guard() for trace_fprobe.c
+> 
+> :::::: TO: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> :::::: CC: Steven Rostedt (Google) <rostedt@goodmis.org>
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
 
---s2noy5ddnmfxmu77
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
-MIME-Version: 1.0
-
-On 16.07.2025 07:45:08, Andrei Lalaev wrote:
-> On 15.07.2025 16:29, Marc Kleine-Budde wrote:
-> > On 15.07.2025 16:24:22, Andrei Lalaev wrote:
-> >> I was also surprised because this callback isn't marked as mandatory
-> >> and that there are no additional checks.
-> >>
-> >>>
-> >>> What about this fix?
-> >>>
-> >>> diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netl=
-ink.c
-> >>> index 13826e8a707b..94603c9eb4aa 100644
-> >>> --- a/drivers/net/can/dev/netlink.c
-> >>> +++ b/drivers/net/can/dev/netlink.c
-> >>> @@ -285,6 +285,12 @@ static int can_changelink(struct net_device *dev=
-, struct nlattr *tb[],
-> >>>          }
-> >>> =20
-> >>>          if (data[IFLA_CAN_RESTART_MS]) {
-> >>> +                if (!priv->do_set_mode) {
-> >>> +                        NL_SET_ERR_MSG(extack,
-> >>> +                                       "device doesn't support resta=
-rt from Bus Off");
-> >>> +                        return -EOPNOTSUPP;
-> >>> +                }
-> >>> +
-> >>>                  /* Do not allow changing restart delay while running=
- */
-> >>>                  if (dev->flags & IFF_UP)
-> >>>                          return -EBUSY;
-> >>> @@ -292,6 +298,12 @@ static int can_changelink(struct net_device *dev=
-, struct nlattr *tb[],
-> >>>          }
-> >>> =20
-> >>>          if (data[IFLA_CAN_RESTART]) {
-> >>> +                if (!priv->do_set_mode) {
-> >>> +                        NL_SET_ERR_MSG(extack,
-> >>> +                                       "device doesn't support resta=
-rt from Bus Off");
-> >>> +                        return -EOPNOTSUPP;
-> >>> +                }
-> >>> +
-> >>>                  /* Do not allow a restart while not running */
-> >>>                  if (!(dev->flags & IFF_UP))
-> >>>                          return -EINVAL;
-> >>
-> >> Thanks for the patch. As expected, it fixes the kernel OOPS,
-> >> but the interface never leaves the BUS_OFF state.
-> >=20
-> > Which device and which firmware are you using?
-> >=20
-> > The gs_usb/candlelight interface is un(der)defined when it comes to
-> > bus-off handling.
-> >=20
-> > I think the original candlelight with the stm32f072 does auto bus-off
-> > recovery. Not sure about the candlelight on stm32g0b1.
->=20
-> Sorry, my bad for not mentioning it earlier. I have several USB-CAN adapt=
-ers:
->   - two are based on STM32F072 (not original CandleLight, but using the s=
-ame FW)
->   - one is a original CandleLightFD on STM32G0B1, that I used for testing
->=20
-> And all of them behave exactly as you described:
->   - both STM32F072-based automatically recover from BUS_OFF and I see
->     it in `ip -details link show can0`
->   - STM32G0B1-based doesn't recover and I have to down/up interface to re=
-store it
->=20
-> Since this is expected behavior and no kernel OOPS occurs,
-> I will switch to your patch.
-
-At least the behavior can be explained, it's not expected, though :) I
-think we have to fix the stm32g0b1 firmware to auto recover from bus
-off...and in the long term, extend the candlelight firmware, the USB
-protocol and the Linux driver to support proper Bus-Off handling.
-
-> Thanks a lot for the patch and your help!
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---s2noy5ddnmfxmu77
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmh3PqsACgkQDHRl3/mQ
-kZyrSAf/fxtCelkig39kyxZMYhttLOpJjMKbC3cJDEmx+f9E+dq0I5GMcnX/TCAg
-4eucQduA1M/ptmdG3hmvKFCdni2YqnXw4AMuYTj1z5RVEeNor0bjBTJg0ImFry+v
-8aBSnkz/Cud/OAyAtMGdiu8diUNpfqvXle/JB4UKMBuHMoWpZjVnrnDwLI2gsPfH
-Q3R8bZjogD6NBNfaAImbqfjX5XP1SLuzfkiBIFHSu0kIYjevl8ix5H9LPNPjbiwN
-cfSZNyXa59U93denBVUHyhfQnhZ+j0FmcB+d8wQRIkXuw8J9H0KYjQ+r0iSsta/Z
-qP1aSbgDaIlpoX4kRPk40PkZ49nkOw==
-=scm/
------END PGP SIGNATURE-----
-
---s2noy5ddnmfxmu77--
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
