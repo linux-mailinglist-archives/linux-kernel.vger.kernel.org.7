@@ -1,119 +1,188 @@
-Return-Path: <linux-kernel+bounces-732837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7CBB06CA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:23:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68CFB06CAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA895189F4FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 04:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8331E3BEA86
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 04:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67E4279354;
-	Wed, 16 Jul 2025 04:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kI5NccFh"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95912566;
-	Wed, 16 Jul 2025 04:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1097027A10D;
+	Wed, 16 Jul 2025 04:27:36 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A5027144B;
+	Wed, 16 Jul 2025 04:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752639810; cv=none; b=GYGZuvUFZ2JLnhfku1SJDbv6wAPii8i0kYjmzeLIAlHQzeLzQiX798hnH0KlPOYRtI6/HLPPcZYWwnsvzdP1rzXBplYjzGb+AVQsa7iO9Z1bMqcLokT4x7io+L9SZ1sB2oHR2ULm5b+Bi7+APeVjgHWwXtXL3WijhoaDxHSrpFw=
+	t=1752640055; cv=none; b=LOI383soLGhguaJz8BZTAzlAJWdIAqZ08e6oZ0GU8S3R2alu14vDoaWZcvRInNiivRh49BL1TgCs6cB1oyR6bLk9nfAC3eT7wiA9/gQW7HKiqfPthnNYrCh+HW5dYgK/Xxeht/ys5RfbEy9+1fjuy2cWqEfr791BrGHG5HMygjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752639810; c=relaxed/simple;
-	bh=73IFcWVupDa22EAvo1TBnnPvk06cg4J/HCuj+ho0/fk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TGcNITfG2urRU9IAby419Yc8d7R7dLVIVeLh6eMBsLGYTUIAu1c9oNUA+nqg+Tnt+jeVMk6ur7DeS53DgFa6vU39F4OTn5TlnEweAJ1SXSasRT5ZsxIG6pSz+ONMzdllidXiDySZ/GXPUJY2gQ9qwCHi7WMj9Z5SBXzwj6QNHqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kI5NccFh; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752639691;
-	bh=QXzOlzpMhuicZJm/uhmVqXSqoCfzCxwys9ceX9GeYnY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kI5NccFhPT01jPu2mDvgUh1v5hv013uCfSWqSDru98ABSARb/wiUaT/za/sBK/AZO
-	 uYcJepRANMgIOqN4Fhf2NDw1nc8/vEj4CaCu+3RLZQkZEHHVgJQD0niajaH4LNGfmN
-	 t2VdlsMazBiHlR5TDeIXo8+R6ZaMvoJKCiFx1Wmp8WxKqBze1lZ1to4QJqCjIfCtuQ
-	 COJN4MTz0uiCstf0OFCuF2ALdmF6i1MxVAdhI9eZ82/sjnUxhAZppcZCesx9Cdw8QG
-	 NU6icaAElp51jWy9m5NczUmZGPtlrBnXMvytqxO4mDYkfp7HgOmOPCFL2mBlyynt/o
-	 IBDcSyXKZL3PA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhjYN2vC0z4wbn;
-	Wed, 16 Jul 2025 14:21:28 +1000 (AEST)
-Date: Wed, 16 Jul 2025 14:23:22 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
- <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, =?UTF-8?B?TWHDrXJh?= Canal
- <mcanal@igalia.com>
-Subject: linux-next: manual merge of the drm-misc tree with the origin tree
-Message-ID: <20250716142322.3a681368@canb.auug.org.au>
+	s=arc-20240116; t=1752640055; c=relaxed/simple;
+	bh=gYSJxs1CnBdNF+UKOy6bV8DYyOv8fBWKv4zRjZwmbRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bn2RP3TZfCgjtgGconwhsJwQCLXJ0xtYPlwjLSo4fKVuAK6rSWM0AI45d9Ga67UCrtwDJ+ZP7TI/SMjKE2zWF51gJd+rOX+Sq1aN5S4Nxem2roMQSEQHlyJ+sqKLpoDMq67MfwmhJaBIXY+VsqxCxCF6EEAySf+Ni5aNuTYOLxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-fe-68772a2f6dda
+Date: Wed, 16 Jul 2025 13:27:22 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Mina Almasry <almasrymina@google.com>, willy@infradead.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
+	akpm@linux-foundation.org, andrew+netdev@lunn.ch, toke@redhat.com,
+	david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
+	jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
+	xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com, sgoutham@marvell.com,
+	gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com,
+	bbhushan2@marvell.com, tariqt@nvidia.com, ast@kernel.org,
+	daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
+	sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org,
+	mbloch@nvidia.com, danishanwar@ti.com, rogerq@kernel.org,
+	nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com, sean.wang@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	aleksander.lobakin@intel.com, horms@kernel.org, m-malladi@ti.com,
+	krzysztof.kozlowski@linaro.org, matthias.schiffer@ew.tq-group.com,
+	robh@kernel.org, imx@lists.linux.dev,
+	intel-wired-lan@lists.osuosl.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net-next v10 02/12] netmem: use netmem_desc instead of
+ page to access ->pp in __netmem_get_pp()
+Message-ID: <20250716042722.GA12760@system.software.com>
+References: <20250714120047.35901-1-byungchul@sk.com>
+ <20250714120047.35901-3-byungchul@sk.com>
+ <CAHS8izO393X_BDJxnX2d-auhTwrUZK5wYdoAh_tJc0GBf0AqcQ@mail.gmail.com>
+ <9bed2f6e-6251-4d0c-ad1e-f1b8625a0a10@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/nIh5oueD7MGI6QtG1+F7k8g";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9bed2f6e-6251-4d0c-ad1e-f1b8625a0a10@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUyTVxTHc5/3dm3y2Dl3lZhl3UTHNpnOZCd7CyNZ8vhhyab7MrfomrWj
+	zQqaIhVMNhl0WyCKRDQppWjRIi0Yq2V9mRTUwpQpm1igqxSogmNMimwopKUM1paY8e2X/7nn
+	/M5NDkfKPMw6TlOwX6UrUGjljJgST0kaXs3OOqB+bT66BcyOcwzcftRAQ0usGJruemkI2DG0
+	9cYIMDe7ETyOh1lwVgyR8KjrOgNnGuZIiF84QoH5loGCWcc8CX9cG2Wh2/8vBS3ODyBydpwC
+	3w8eEjpnN8Do0W4GjhgSJNSOfMfA0mCChvb4QxbKvDYC2iddLPS6q2g4Pt9Igqf0btI1FqSh
+	75KZgb7y2whGzi3RMO5PCqO2IRaqWkwI/JftDJQZXoeo6zELf5/oIiFSlQOLRj1cs6yBuZtR
+	BOHGAQKWfF4Wfhs5T0OXw0NA/704CXOH6xmonDqKYKD2EgE99RdosN7sJ5J77ITg0gIBNQEL
+	A2OGCIJA5ygFdd9WIXB0hGj4x5f8ciJmZnJyhc7oNCl4h61I+NF+hxAmqhcJIdRxgxB+Mg2z
+	gsVZJLTasoQzvr8IoTIUIAVncwUjOGeOscJQ0McI3cYEJbRaDwkTrbXow/W7xG8rVVqNXqXL
+	fvdzsbrj1J/0vlJcHEtoStGArBKJOMxvw7GJq8wTdlhOpJniN+A7MzaUYobfiEOhOJni1fzL
+	ePJ3P1uJxBzJN0qws95DpQpP80X49L1QmqU8YINhMt0s48MI91k2Leer8C+199NvyOTQhZOB
+	5FAuyRm4aZFbjp/D5a66tEvEv4NdZQ+JFD/Dv4CvuK8TKS/mZ0R4uqeUWF56Lb5qC1HVaJVp
+	hcK0QmH6X2FaobAgqhnJNAX6fIVGu22zuqRAU7z5i735TpQ857NfL3zqRTO9O/2I55BcIvW+
+	pVfLaIW+sCTfjzBHyldLawLJSKpUlBxU6fbu0RVpVYV+lMFR8melW+cOKGV8nmK/6iuVap9K
+	96RKcKJ1pcia+WB0Vpubt2vP/QdBYVhysfuNNsWv26vh2PqePLu95vm1p7xPRSYG14Tf049/
+	PPb+0JubKozHRcVTmfzBSeUrkZL+nKbz7T5jblCyMTrodp+2ugDteMl3kj9sfPEjVvx9+ZUO
+	bjozY+utz8KHsnfr6768Eb38c/v2TyxK9psK1CanCtWKLVmkrlDxH0J4lOfKAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxiHd+65XzTU3FXEI2Zb7OYkED8WNHkTcSHbMu+27CNbsi3GRBu5
+	2mqpri2Vmpgx6FwgE93AhFZwdXxYwFhzEehcZa4QxckmtsCqfGlR5wI6kUooIOwWs4z/nvN7
+	z3l+7x+Hx5oyNoU3mKyS2aQzalkVrfpgY+HqtWn79eui/UuhwnuahevjJxlomMyDU7d8DATr
+	CPzcNUlBRX0zgmisjwO5qB/DePtlFqpOTmCInT1MQ8U1Bw1PvFMY7l6KcNAReEpDg/w+DNXe
+	o8H/TQuGticrIXKkg4XDjmkMzsGvWZi7Oc3AhdhDDgp8HgraKq8ox5EmDrqaSxgom6rB0JJ/
+	Sykc7mUgdL6ChVDhdQSDp+cYuBdQWkc9/RyUNLgQBH6pY6HAkQGjTVEOHh1rxzBUkgWz5Ta4
+	5E6GiaujCPpqeiiY8/s4+GPwDAPt3hYKum/HMEx8W8lC8YMjCHqc5ynorDzLQPXVbkrZ4xPo
+	nZuhoDToZmHYMYQg2Bah4fhXJQi8rWEGxvwOOutNsW30Hyz6BqqReK7uBiXePzpLieHW3yjx
+	J9cAJ7rlXLHRkyZW+f+mxOJwEItyfREryo+/58T+Xj8rdpRP02Jj9Zfi/UYn+ujFLarMbMlo
+	sEnmta9vV+lbf/iL2ZdP8ianDfmoR1OMEngirCde9zE2zrSwktx47EFxZoVVJByO4TgnCelk
+	5M8AV4xUPBZqEolc2ULHB4uFXPLj7fA8qwUgDsfI/GON0IdIyJ36LH+eXHHemb+DFenMiaAi
+	5RVeTk7N8s/il0hh0/H5rgRhE2kqeEjFeYnwMrnYfJk6iha5FphcC0yu/02uBSY3outRksFk
+	y9EZjBvWWPbo7SZD3pode3NkpPzV2oMz3/lQNLQ5gAQeaRPVvo02vYbR2Sz2nAAiPNYmqUuD
+	SqTO1tkPSOa928y5RskSQMt5WrtU/e5n0naNsEtnlfZI0j7J/N+U4hNS8pGVHX70+ZYZ3QhV
+	68ObMvyryj1Vb4ecv+7Yf3Aq/c6KVGvDh/VlznGjnPhG5oD9i+e6yQpTZ7bbcPFAbU80JWqW
+	TW+ZF1nVO0ufjm0NLDux+b2IPTMjOakrMnmNXUc+TX91YNmSVzp3bsgae8H9sb0oVdx9SJ91
+	ZnXp+oR3Dl34PfmBlrboda+lYbNF9y8C3OucpwMAAA==
+X-CFilter-Loop: Reflected
 
---Sig_/nIh5oueD7MGI6QtG1+F7k8g
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 15, 2025 at 11:37:45AM +0100, Pavel Begunkov wrote:
+> On 7/14/25 20:37, Mina Almasry wrote:
+> > On Mon, Jul 14, 2025 at 5:01 AM Byungchul Park <byungchul@sk.com> wrote:
+> ...>> +static inline struct netmem_desc *pp_page_to_nmdesc(struct page *page)
+> > > +{
+> > > +       DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(page));
+> > > +
+> > > +       /* XXX: How to extract netmem_desc from page must be changed,
+> > > +        * once netmem_desc no longer overlays on page and will be
+> > > +        * allocated through slab.
+> > > +        */
+> > > +       return (struct netmem_desc *)page;
+> > > +}
+> > > +
+> > 
+> > Same thing. Do not create a generic looking pp_page_to_nmdesc helper
+> > which does not check that the page is the correct type. The
+> > DEBUG_NET... is not good enough.
+> > 
+> > You don't need to add a generic helper here. There is only one call
+> > site. Open code this in the callsite. The one callsite is marked as
+> > unsafe, only called by code that knows that the netmem is specifically
+> > a pp page. Open code this in the unsafe callsite, instead of creating
+> > a generic looking unsafe helper and not even documenting it's unsafe.
+> > 
+> > >   /**
+> > >    * __netmem_get_pp - unsafely get pointer to the &page_pool backing @netmem
+> > >    * @netmem: netmem reference to get the pointer from
+> > > @@ -280,7 +291,7 @@ static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+> > >    */
+> > >   static inline struct page_pool *__netmem_get_pp(netmem_ref netmem)
+> > >   {
+> > > -       return __netmem_to_page(netmem)->pp;
+> > > +       return pp_page_to_nmdesc(__netmem_to_page(netmem))->pp;
+> > >   }
+> > 
+> > This makes me very sad. Casting from netmem -> page -> nmdesc...
+> 
+> The function is not used, and I don't think the series adds any
 
-Hi all,
+That's whay I'd been keeping the patch, 'netmem: remove __netmem_get_pp()'
+until v6 [1].
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+[1] https://lore.kernel.org/all/20250620041224.46646-7-byungchul@sk.com/
 
-  drivers/gpu/drm/etnaviv/etnaviv_sched.c
+However, as the following change log described [2], I excluded the patch
+from v7 since __netmem_get_pp() started to be used again by libeth.
 
-between commit:
+[2] https://lore.kernel.org/all/20250625043350.7939-1-byungchul@sk.com/
 
-  61ee19dedb8d ("drm/etnaviv: Protect the scheduler's pending list with its=
- lock")
+> new users? It can be killed then. It's a horrible function anyway,
+> would be much better to have a variant taking struct page * if
+> necessary.
+> 
+> > Instead, we should be able to go from netmem directly to nmdesc. I
+> > would suggest rename __netmem_clear_lsb to netmem_to_nmdesc and have
+> > it return netmem_desc instead of net_iov. Then use it here.
+> 
+> Glad you liked the diff I suggested :) In either case, seems
+> like it's not strictly necessary for this iteration as
+> __netmem_get_pp() should be killed, and the rest of patches work
+> directly with pages.
 
-from the origin tree and commits:
+Killing __netmem_get_pp() would be the best I think.
 
-  0a5dc1b67ef5 ("drm/sched: Rename DRM_GPU_SCHED_STAT_NOMINAL to DRM_GPU_SC=
-HED_STAT_RESET")
-  8902c2b17a6e ("drm/etnaviv: Use DRM_GPU_SCHED_STAT_NO_HANG to skip the re=
-set")
-
-from the drm-misc tree.
-
-I fixed it up (I used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/nIh5oueD7MGI6QtG1+F7k8g
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh3KToACgkQAVBC80lX
-0GxuWQf/YWf/c+mB410Q6KTkfTHbTTyv1OUX7kyvLpDv/qmHKQD5mQVSJUEd+uzA
-ncNzKo7rrVJsy06lzgVnddr1bx8cj+j2jF7GKwiCY4Po7UWXH7ISVryV6XmY7jN0
-Vy7OEqMhzCz6aP8QvkWz+6Q373L+cSqK9FgvsU+fqROGNBPlPHcbgDBYEA3ZbJM3
-ZwFl1Ve7dLhYeZgZKwkX0rUIBUPJWm2Is1nSy6E+aUkepHwwYjENYdxSj+S0fbIN
-foOoz1tolzWy+pLceDW33AyhdXSLGIkynpvcoZ5nmmB90IEo9vwpSBz2hWdWkRKz
-043mvOVHKUL/BFCTE7lQxMYWXVE/mg==
-=Pqeb
------END PGP SIGNATURE-----
-
---Sig_/nIh5oueD7MGI6QtG1+F7k8g--
+	Byungchul
+> 
+> 
+> > We could have an unsafe version of netmem_to_nmdesc which converts the
+> > netmem to netmem_desc without clearing the lsb and mark it unsafe.
+> > 
+> 
+> --
+> Pavel Begunkov
 
