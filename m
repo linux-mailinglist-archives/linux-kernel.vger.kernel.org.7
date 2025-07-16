@@ -1,137 +1,158 @@
-Return-Path: <linux-kernel+bounces-733977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA20B07B79
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:48:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A7F7B07B81
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44774188447A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:48:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7B4584FBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70E4290D95;
-	Wed, 16 Jul 2025 16:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3CE2F546D;
+	Wed, 16 Jul 2025 16:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lSRb5Itj"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RU7U9UTb"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154E728B401
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7F1290D95;
+	Wed, 16 Jul 2025 16:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752684470; cv=none; b=Tt9DUd358sCbbBi7XxZ5Q7RnvviEKBrCxFwwUpnIV0Ht1FnDjl0EEDALolTgB90DDXSZLl6FZlrivNDepP370wWGysivvdpxyTDQrJPxzREmKN4Wdji0lITyfIy2cCyJmZnDJElPK+7VA6JGkt2u2gvTzZwwULCSAVw9FQfLtV8=
+	t=1752684545; cv=none; b=fQBmTtnozVo8L+WGtfhi8ZjeanFbkAVsvvMNKlQNUvr7JNyePC3S6klXf3wWGsHvO9P49SXF+RpP/j5pjo9XyUJQhHZHbiT0o9l1t9sGQtqEJNKWLsXR8ltgmVepz737XlQq/AvISVGZDq7ASEXjT9hagkZKJtmNzPSeZ2vbad4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752684470; c=relaxed/simple;
-	bh=KyfZXJ1BXnhap1nQD8idPegu23pZnjayNIe42nGLmi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ND9Zfk1RwPKFggs9mPOKbMKHQ2sH3hgP7IOSHBWkKHZ4cmy0Grv9AF4DOqeAdaid7UmtYMRc0X2w82iidRZmenoCboGmSUHuDqinCtZthbyM2s8pT+G24h35dwPOouZ0kLkXtZ1whbgq7ubAVe4FOhFpjkZ304YQZFEVcQqlXsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lSRb5Itj; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-235ea292956so299665ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:47:44 -0700 (PDT)
+	s=arc-20240116; t=1752684545; c=relaxed/simple;
+	bh=NJGuRaDpXfHvw6loKwAWFVJW4NxckF0v1yEFcdzHrx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jz1d7LUlFZOnc9uP8PT2noJhoXFXXnu14tr9kO6yYhL0fBuLG6gLaygd+Hvkovq/Xl6aa9t6BGTjESZDOmGgNkkEkAEK0Cq1OxtZKyXQbiHigDcWbpJGIlAJqYFXgUmB+EcwFg7rKwZyLM0zNXsHi9Hyle2+MeYq5cJFFwYhI2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RU7U9UTb; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6fd0a3cd326so1541336d6.1;
+        Wed, 16 Jul 2025 09:49:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752684464; x=1753289264; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=io4H3bGs2Do8eEWfILE3wMRoqcXTJo/vwsNg6GEKpl4=;
-        b=lSRb5ItjWBRSuOMJu3+dDwa3FeqrAGLTxTsUNgcLqYSjp5pXz/vrD+NH1Id3IVKS2G
-         AHZZvj8jj+KFshO+if3GOJMg44wpAeor/jTgc3gHniiLT8UxFVwNQMNUBNmOeR/EJTn7
-         npRhmyMU/Q6GAK3o1GEHbm7JjJpCWJKcfBPs8=
+        d=gmail.com; s=20230601; t=1752684543; x=1753289343; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=EXO8ZWGxoFIW8b4GtjNGg34fGEYa90sLVvc+WxHjZ8E=;
+        b=RU7U9UTbD0ufaRlaF20ZpC2Pm/qaUs+mU+HwoOsg7BhmmlmvC5M23Vb5k9NcJS9HFk
+         8hbj8nw3SsXZCShcZeUzve9Z2pOpzsXpJKM3iAiasy328Bmq1UjxamAyxeWv5AUkF1Ln
+         t1SCpyBG9Qvj0H5oABldLHxFNHsVrtV5ynbu/bJiRytkpoGwuxxCe9T2LuBwMBbgGcAH
+         TyGF5xSk/mfRew/xc+H9DrqONHSMKEYaJHnWUzOobOSwfJTOvjyf75xKtDEr+3CoNxI9
+         yoPSuWMgf3J/BAh/FH92j1zEeXL2j3ZTeTWE8E9CvhCJqGlX+HPA89oB22xUdbi1Sp6l
+         4PXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752684464; x=1753289264;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1752684543; x=1753289343;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=io4H3bGs2Do8eEWfILE3wMRoqcXTJo/vwsNg6GEKpl4=;
-        b=il3RJWbSTdQ73mB2SrDNEvjN/piJorGfsBi8x5Q7sYZBnWFaAYylqs5ulGyNgxOt8x
-         16Tvw0eo9/K03KQhucdT4BtYyRAM1kNXJNP+21M0HbduyMhcW1ppx+VyJxQVl+vcMZOF
-         eqHdPMMTFkc1dZUlcpSuyd+dDzZCuo03miqjEBN+OHWfrwvdC0jVKiX0MqdHHugKJWwL
-         8YoPJgEzDxU7LKrYPUZHgYq3Mq0MMaTVIzoBYPzgiBn8ukQjrdR1cN1DUh/o+trgXEzm
-         N40h34j4vAoDErKd6De2NQtyg7De0tXA1nrPFuYZagkTKcdq60qB4SaQQZ1jOQpsCLAl
-         CPag==
-X-Forwarded-Encrypted: i=1; AJvYcCUXghGu64NuVD+EQ9Lo4+XFRmoORKpdYaC0rA41kfz7vAUb8vlxgBwkkcjLEgSPaDETb6zLMhObT1Ghd+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpVQUj0BK/nCXThPInA+LWs1rXjdt6TTnD5SFsIFppl5ga03Of
-	YEkj6b/8QezSiEmonC2TZDf5FNyvDSnuOJpvskvWiq5MDCQdhXAfsL7WCxyF0ojGtg==
-X-Gm-Gg: ASbGncsOTksRO2/kBD3qJ83+MjJ8whcSvo5EVy/p2Aiudjza3oOeqgvoFKpOhuFQdrx
-	wvKWlRAVdWFwlfg01FpB1xSDlrZuap+yO5SP0pdjIsGk3kF07HcJQwhRryDC3Az5NPPk2Bpuftf
-	BIfvmAlm1HDZr9WWpH9CYD2ZYLql1bppxucQkcyk2miA/LoV4KmMgof3LbARcuQGd5PQoBeOW8e
-	aF/W/gONvsGvL4BynSKF2+ETIJepn/ubqu7mZJBD6FeoFKsP+9mKvJovJoEKaXEwFPingikIuCA
-	arzdmbmg8AyVm0WkepuR7zGPNnL7/jSagaHKgJRFPifYrnH7EMMKoNeBRshbuF6N8QteKhoxStC
-	h6Ov6InjKjN2b0Di3AdJqbgueKpQIpKw885XbNiqo6ghl0ADk8Gi0Oo8zz89L
-X-Google-Smtp-Source: AGHT+IGNR7LutD6oNMe7hCEpNCiuXGBoISy3Dj8Mz9hZcfftgOIlNzGtyTzjgHi2yMdAXezmb77Wuw==
-X-Received: by 2002:a17:902:f64b:b0:234:f4da:7eeb with SMTP id d9443c01a7336-23e25684637mr47153465ad.7.1752684464248;
-        Wed, 16 Jul 2025 09:47:44 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:17f8:90f2:a7bc:b439])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23de42853c0sm126598165ad.28.2025.07.16.09.47.43
+        bh=EXO8ZWGxoFIW8b4GtjNGg34fGEYa90sLVvc+WxHjZ8E=;
+        b=akyjK5gNRRahTdlZ1O8CXK8dDnsnd60De67fw2rV/B3bnjApHXZCaq+XSTt6T8+2vy
+         5NlROo7OsIprEjtDrj7yPWXLcmoDlgIiPEsXZIANxmi9yVUvnzkKkDC1KualhNSEPofP
+         lSm9EjfPHsnWlrEULACvvhuwc2t6iFNG6E8gpIBmZ6ktkmLuhC6T7/Aq2XFRNISi9s/7
+         fnCXwrSM8BgUc2lmGB/NiLUFax4f5w7kDSVRaynoxL0oyHUsCywFVyqsrqbdxVFq1vRB
+         UDmVLwKSAdvCdsUoHU9aMLfuYTsikCfuJSg+ZvdxVqZUyb/vEuD7o3UhP8JLTnPE5FGQ
+         95Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0mPvsFLyZr9fkKLb22oNKAJoE4P2LDjtLWw5QuAGEuisBdY0fsv5QHNeL3tXGo5jwMiy5ginglGTpxXo=@vger.kernel.org, AJvYcCWsCj+iU++qoSRaFHJSDu2coXF0o5Hs+KKwo+P1/v+j7Zx4efVEKziNAW8BlPn44bjkxTaW8v8p@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjnLOG4XMhh5Q9AIdxFy/4U1fFBylxql/3jC82dTkejTFn5kVN
+	3PT2CVkGuF0VTBn20VGI45drcy0JkPuYCnvOgKJ+mhST+aO9xw+dfj+B
+X-Gm-Gg: ASbGncsQNIvXlv8erqiFEa0CvcfBdnlOZ3IF81zwtmNV1OYkS92rrl3LUs7fRjCesa4
+	wcZnpvPFOG43B1ISOx1/6P5LsBHDKfFgay6/EIwueL6rsZy1jmWRtnmAdJdj8MLMNgk8lrAC5+2
+	nm/hS/8SfEZKcA59PhjD3z3tmuTp7qocP3nRG/I5nLGCPBMXTspuo12xTixIUMhXXoKiU/UX4xl
+	5B7xzSP8r1HExKNWyGX6OfwceHmkrelo/FcH4csWuPuOwGk/eF7D9wJ241pmucFqmU/0J98JEm9
+	SMqBsbcPnUCdUdBepN76tozYzpa0Jd0z7KtfwYvTwshCV0owyDcB3wT5/F5JXc8JuXxp8gMYOWg
+	EbZ1uKO3Oz8+Glx7IMkDoqzfeA49yi8a700ljmj/BICtknh6F/Q==
+X-Google-Smtp-Source: AGHT+IFXJAf2tvaHTND6faelQr+HHFLObS0O5YooWkthj37bPVzEe6tAavvR7q+Ct1PA+5+e2O+OiA==
+X-Received: by 2002:a05:6214:4a83:b0:704:85bd:d239 with SMTP id 6a1803df08f44-704f6afbca4mr57030286d6.16.1752684542799;
+        Wed, 16 Jul 2025 09:49:02 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704979e31ddsm72676526d6.43.2025.07.16.09.48.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 09:47:43 -0700 (PDT)
-Date: Wed, 16 Jul 2025 09:47:41 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/pwrctrl: Only destroy alongside host bridge
-Message-ID: <aHfXrT_rU0JAjnVD@google.com>
-References: <20250711174332.1.I623f788178c1e4c5b1a41dbfc8c7fa55966373c0@changeid>
- <xg45pqki76l4v7lgdqsnv34agh5hxqscoabrkexnk2zbzewho5@5dmmk46yebua>
- <aHbGax-7CiRmnKs7@google.com>
- <cnbtk5ziotlksmmledv6hyugpn6zpvyrjlogtkg6sspaw5qcas@humkwz6o5xf6>
+        Wed, 16 Jul 2025 09:49:02 -0700 (PDT)
+Message-ID: <261a5fde-5da9-4f99-a330-e5155a7bdeb3@gmail.com>
+Date: Wed, 16 Jul 2025 09:48:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cnbtk5ziotlksmmledv6hyugpn6zpvyrjlogtkg6sspaw5qcas@humkwz6o5xf6>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 00/78] 5.15.189-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250715163547.992191430@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250715163547.992191430@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 16, 2025 at 09:27:55PM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Jul 15, 2025 at 02:21:47PM GMT, Brian Norris wrote:
-> > OTOH, I also see that part of my change is not really doing quite what I
-> > thought it was -- so far, I think there may be some kind of resource
-> > leak (kobj ref), since I'm not seeing pci_release_host_bridge_dev()
-> > called when I think it should be. If I perform cleanup in
-> > pci_free_host_bridge() instead, then I do indeed see
-> > of_platform_device_destroy() tear things down the way I expect.
-> > 
+On 7/15/25 09:36, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.189 release.
+> There are 78 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Oh, that's bad! Which controller it is? I played with making the pcie-qcom
-> driver modular and I unloaded/loaded multiple times, but never saw any
-> refcount warning (I really hope if there was any leak, it would've tripped over
-> during insmod).
+> Responses should be made by Thu, 17 Jul 2025 16:35:29 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.189-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I'm still trying to tease this apart, and I'm not sure when I'll have
-plenty of time to get further on this. I'm also primarily using a
-non-upstream DWC-based driver, which isn't really ready to be published.
-I also have some systems that use
-drivers/pci/controller/pcie-rockchip-host.c and are fully
-upstream-supported, so I'll see if I can replicate my observations
-there.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-But I think there are at least two problems:
-
-(1) I'm adding code to bridge->dev.release(). release() is only called
-    when the device's refcount drops to zero. And child devices hold a
-    refcount on their parent (the bridge). So, I have a circular
-    refcount, if there were any pwrctrl children present.
-
-    I think this is easily solved by moving the child destruction to
-    pci_free_host_bridge() instead.
-
-(2) Even after resolving 1, I'm seeing pci_free_host_bridge() exit with
-    a bridge->dev.kboj.kref refcount of 1 in some cases. I don't yet
-    have an explanation of that one.
-
-IIUC, this kind of error would be considered a leak, but crucially, I
-also don't think it would produce any kind of refcount warning or other
-error. It's "just" a device that has been removed (a la, device_del()),
-but still has some client holding a reference count (i.e., not enough
-put_device()).
-
-Brian
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
