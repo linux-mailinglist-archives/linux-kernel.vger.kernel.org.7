@@ -1,148 +1,125 @@
-Return-Path: <linux-kernel+bounces-733259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452BEB07237
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:54:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A402CB0723A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818095649C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:54:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA3A4E3C92
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D142F2346;
-	Wed, 16 Jul 2025 09:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308C92F270F;
+	Wed, 16 Jul 2025 09:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K8G5rT3V"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bjKkeIiu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDEB275860
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1489B2F2700;
+	Wed, 16 Jul 2025 09:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752659638; cv=none; b=OJD8g1i4Ou5wXggFLBbxMSP2RLGDgfwMPtRYLIuAdEwyPMVNQpGbK5sEf5xo3/M89te/bVD90N07EeOjo0OsaEhFG5J3Nhfuw0rMbNGIvv7wr8puW7yNqLZ1r/9Wha90krUmlAueD4PTxqWxKPgDXwKjrvKWRnFzNSIXPjMB/fU=
+	t=1752659642; cv=none; b=B2ICx8gfgZkiPPef+MbUGpNyuvG24eoj+nreYL8zDMSOdoMLMnobw3KM3qkGLXTmYIzuGfRrTQvtgKEfV7wBqv6E3qT9xKr4xQQnDGq7EfloYIVerlSm8wUaGtZfFVOoUYUwmvKuyZZXl5nWvd7Xlyvdst3hrbVhF3O+z8SSaTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752659638; c=relaxed/simple;
-	bh=IPPey8+CpGab2N5ogg1wT1lI6yYs8EVO5/Z23H9KTs8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hv4zoUAQ+IypkI1VYtF1hGYSyA7rAL3dWJIRC8FIHZaOgqPEQMICsd9rq4RD7sVszjfWzOUFAhdG20Oj5RfsZ2bJZLQoxCW9C3eHySFBSGDlKYEwgH/peBp2t/rUz6kmMhIN+m5uKfFlbwGQASeXosmbMcTVs6xsB13Cywpm1/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K8G5rT3V; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G5qJkp023949
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:53:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BrRuWIrtJJsRpQld/wY76CeJGwT/OepkhOwph9UVdAc=; b=K8G5rT3VZqEf1Xsz
-	L2slA5Scj2znACUJCnn1os3ea0JrtuofpHDS1HGmWV762DG14K0RBeW0OpHrlJG4
-	/8zB7xOEFC6ER+rGOYjiFJX1NF5GTwCBe3ckDzwMxd7d2uiuXZ2ESduVj+NGZPsc
-	kZygABe/78Kk3d3e1lkcIu+HLNpZhjcd9dsipjdP1HzyFGZsKk0AEjyhm9GvynDi
-	zhK4bW6VQsRF350uyZ3MrOasq9Do3YON2XMkEd+7PHGRFxxoo+Do70eqbGyfjZ5e
-	jIbooR/RsXlpQ+KkKhdFNJhuY2oY2PfGj7cjNoR1QUuOCoeLCESnryhNi31gfmTH
-	DdbZtQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wkrum4b4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:53:55 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4a58580a76eso2631811cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 02:53:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752659634; x=1753264434;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BrRuWIrtJJsRpQld/wY76CeJGwT/OepkhOwph9UVdAc=;
-        b=namLuvWiWxhRQlHLCuPJuCvqkT11XRRnrFRCW+GewfnkTRjOOBvywwYDwcsHn33AMR
-         /zc0awsPigYjil8/mNwvNY2VSN1aOZZDR/AWV3haxfle1adBSYupgq76HYF62py3bZbH
-         ZKOeKGinxcYLt4XcWpbqh3XfiZCae+h6+VxwfSvl9jKJojuXpvwRnM0Ns9SUthV5ePvq
-         j6/lYIv4rXpgmlJRIFThpxy/5zRnoyiOUp9F8QqW6AMvtZ3oBAh0W8Tzd2FQEpcp5/pj
-         HRzUb3pzrwe2nZrPjlUEmluKzUI+8HZ9AsMkJV7XhSu/eE16hZxIy0eIO7eys1b4aUn6
-         5ryw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK0or4+Ya9j0d5SwTUyCfxXhfWen321sauke0fb3U4mzUulMtXtHWxY7naY36nA1TariaYS6bxwGiKHkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIGPyIfb3l5lF95ed2Y05ZH00q1AHJdxYVCXKsFNsDIrIcb27f
-	M/XzPEGdYjmN2gsQj8UmG6EZUnzSU2DUbxfwvT9vZRgXu/W/gXzKNR2t9f6oGGg3tNZZyS6hMz2
-	ZJQ0E91l62xYZVDgsJ7yDTdLJcfdAW0Sa2jbGfRVWdu6/+jlsbjtOFNs5Qixf6J7X78Q=
-X-Gm-Gg: ASbGncuxZ8QiB2VJX5t4Kx0C5a1NoEQDxnJI0oA1pfpaCL1ZI8+MyBlv5c1x7GrRHuk
-	qKQe9sWO8R3dz6FmtZ8gbuwMLLDFSDwGo2IgE5O6wiKqPAernWEPRai3EQ51e4hopq1sK2m7tgR
-	DMLZbqwObP2hAtQIXcAKMqUa/0lOkQpvL0dpX/RIqY+O8BAYfwknnCn4TWYQgfb7tM9DOPGYqbn
-	qtkqR5uoVTfgSCcU5kEKer3agP6tkVNvaH47ic7v3VUmyHcvxry8IwhtFpdVA5a6zygn0Adn3ma
-	uV2dGylEg9YS9D5SVJHE5RmAIv2Gfd0P9IoI/OiwNLS57SqmlpYbgHe5JbTTOOGK8qFcL9YB96Q
-	5YkFQamVS4ysoGZ26JrsE
-X-Received: by 2002:a05:620a:2949:b0:7c5:8f36:fbeb with SMTP id af79cd13be357-7e342b5cf66mr131696385a.12.1752659634369;
-        Wed, 16 Jul 2025 02:53:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkLEZzcnbHfPM3SUr928KwExQhJl+kNQoZGqThwXwhpNJlenla0nHYpg95UHWVYUVk0gHrQw==
-X-Received: by 2002:a05:620a:2949:b0:7c5:8f36:fbeb with SMTP id af79cd13be357-7e342b5cf66mr131695185a.12.1752659633784;
-        Wed, 16 Jul 2025 02:53:53 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82669cfsm1147729066b.83.2025.07.16.02.53.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 02:53:53 -0700 (PDT)
-Message-ID: <273b7fd1-2554-4466-baeb-792fd7967209@oss.qualcomm.com>
-Date: Wed, 16 Jul 2025 11:53:50 +0200
+	s=arc-20240116; t=1752659642; c=relaxed/simple;
+	bh=EjKF3AVjBjvCyMapA97KDRJPDBSd+GsQrhby3qnAcio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFYURTM+fsw/aqXPtzLarC8qgO/vANiSgb05fnyJ0r8ReOFzDS/7ak20IY6uvxL8CjZzgF3c+MeNUsIQJmFsgXhApicObuMxLVa0KIoYpb+UaaUdfqVCSeySeou7CZBtSL0rSRs51eV22bXcALcLg9Lf6BB3TpieYwQAjaupjkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bjKkeIiu; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752659641; x=1784195641;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EjKF3AVjBjvCyMapA97KDRJPDBSd+GsQrhby3qnAcio=;
+  b=bjKkeIiuTKBe6iAsRX6dQ1L8dOpsjm4vlfOGOW5J4QfgHjVrrCBmrRDu
+   r+pKPtg52dVe+WPYaISwmd22+shc0nNlDC9npU0NWdt7I21cVA03KBoe5
+   lBBoNAIMMmJ/csK2vQ91UXA13lgAbHlCiuaSLhOuyMddZWYMpNGgAqtFT
+   geV5oZHQPo5ZMmk74cTNG8C4N+GpfTvm8yAOOThfd+EDfCghGLvdR9VxR
+   VC9lAsxB+wRAHLfvFqpmPZMRpRZICaPg46HDL5DTDjuy1u4qxGBqBvYbL
+   jLRCGRwVcW92G122O+Y+9nlwePKFUPkx5X7tncy8KqmjNZHxeeeBQ7u7O
+   w==;
+X-CSE-ConnectionGUID: Qamo6bXcRS+dmGzv2naWYg==
+X-CSE-MsgGUID: cQGED2rvSta55DF5zFvsow==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="72470814"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="72470814"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 02:54:00 -0700
+X-CSE-ConnectionGUID: mwdRuX1mT/2liMlY0Jcr2w==
+X-CSE-MsgGUID: AWubPpgZRkewwN2/8W6ZJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="181154085"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 02:53:58 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ubypn-0000000Fu7O-36QO;
+	Wed, 16 Jul 2025 12:53:55 +0300
+Date: Wed, 16 Jul 2025 12:53:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lothar Rubusch <l.rubusch@gmail.com>
+Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
+Message-ID: <aHd2s987EMCdgdrJ@smile.fi.intel.com>
+References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
+ <20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
+ <aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
+ <aHYIBReTFqJMtiXW@smile.fi.intel.com>
+ <vlpqd3jeszhgpcob7qyzp5vljdowwu26my7xuwuvfftf54zg35@czxhsjejgdkm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dpu: correct dpu_plane_virtual_atomic_check()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-References: <20250715-msm-fix-virt-atomic-check-v1-1-9bab02c9f952@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250715-msm-fix-virt-atomic-check-v1-1-9bab02c9f952@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 7USUJwziFxK6_hrIVe0Je5IFpRQY6lVY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA4OCBTYWx0ZWRfX0DKEG4LG6kxx
- ftLMszCM9uzCp5k/8xpoQvAxlDmOQv8j5T/3U2Umm32LikgiiSWVsLPUdF7X00jZC7Zr5Uoz4l4
- 3UEfQuBdniw7Q6FKukgRxBJTqBDRJ5HkS6O/RSyshPAbsO5K5Gv1cNkSeB6b9h5suIbYvuoSw3A
- CYawtEEjwLhpKfw7+HyT7n4I9skYK5rnxa1vbQse0wIOpJ5HV4C6IrI/GWpVzoG7qhvFMrifC3Q
- xgv1Ffp+8I+3HgBIaeue2TamwLui29XNPZdRbtxwsdx8EOY6TyETIbkWnQQ3W5QkkJKPTwWpdE1
- feG+vzF0eTETDV4gzvtsW+OJWjb0rD60KeFZVVsjTacJjsoW8SitR4eJXAvMtsJlfvRSESJMavP
- O++69eQ6VJiavt/ShxhKUu7cglSV3DmgM7y3uGc58Lly4LwoFhJO5DFiwrHC0qVtCORS3JNc
-X-Authority-Analysis: v=2.4 cv=WqUrMcfv c=1 sm=1 tr=0 ts=687776b3 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
- a=EUspDBNiAAAA:8 a=GHZGt2_Oay3Cuwp2bz4A:9 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-ORIG-GUID: 7USUJwziFxK6_hrIVe0Je5IFpRQY6lVY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 mlxlogscore=533 bulkscore=0
- adultscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507160088
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <vlpqd3jeszhgpcob7qyzp5vljdowwu26my7xuwuvfftf54zg35@czxhsjejgdkm>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 7/15/25 7:28 PM, Dmitry Baryshkov wrote:
-> Fix c&p error in dpu_plane_virtual_atomic_check(), compare CRTC width
-> too, in addition to CRTC height.
-> 
-> Fixes: 8c62a31607f6 ("drm/msm/dpu: allow using two SSPP blocks for a single plane")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202507150432.U0cALR6W-lkp@intel.com/
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
+On Tue, Jul 15, 2025 at 08:55:35PM -0300, Gustavo Silva wrote:
+> On Tue, Jul 15, 2025 at 10:49:25AM +0300, Andy Shevchenko wrote:
+> > On Tue, Jul 15, 2025 at 10:37:22AM +0300, Andy Shevchenko wrote:
+> > > On Fri, Jul 11, 2025 at 08:36:03PM -0300, Gustavo Silva wrote:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+...
 
-Konrad
+> > > > +/* 9.81 * 1000000 m/s^2 */
+> > > > +#define BMI270_G_MEGA_M_S_2				9810000
+> > > 
+> > > I thought this is MICRO...
+> > 
+> > Btw, what if we use the device on poles and on equator (or even on orbital
+> > station)? I'm wondering if this constant should be defined in units.h or
+> > even in uAPI that user space may add a correction if needed.
+> > 
+> I certainly hadn't thought about these scenarios.
+> FWIW, the accelerometer scale values also assume g = 9.81 m/s^2.
+> For example, 0.000598 = 2 * 9.81 / 32768
+
+Right, but this should be supplied to user space somehow. OTOH the measure error
+may be high enough (what is the precision of the measurements by the way?) that
+it will neglect the differences in the 'g' constant.
+
+All the details are given in [1].
+
+[1]: https://en.wikipedia.org/wiki/Gravity_of_Earth#:~:text=The%20precise%20strength%20of%20Earth's,/s2)%20by%20definition.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
