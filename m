@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-734041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8F5B07C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:50:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B48B07C51
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A83A4500C55
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6AB1C25857
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4AF28505A;
-	Wed, 16 Jul 2025 17:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D2B28641F;
+	Wed, 16 Jul 2025 17:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="KydT/K+f"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="HhNaNUbB"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBBA274B30;
-	Wed, 16 Jul 2025 17:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752688216; cv=none; b=m2rJfnYUm8fAHTdfIN9lFPXfK9LKuh9xIYmqfeJuAbWbYvCtP1g0TB67fbuv8ql4s62XyXIc9oQDbOalIV7MMeDc4i50kJTkl7G+o3xzQJwulaPtFDvfYYJc7BmI7j7+YUIL/O631V+XxEznuj15IxXV1+2/zQpRvMxCvzpRBdU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752688216; c=relaxed/simple;
-	bh=9nN0kva0mY9DQb5DenPwdNuxS0qpXv2MXqzIS8Rgu2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HvTNYYHr0mJyZJmfVuBDIbQxrVejGCDgjxRrgL9vcVThLxTqVSeXN9db16GCa0mI3Ma1NFRTEk8Js86Ld6FnDffLj3f2V2oA8wzxfzUen9PTEthoycqnLoUBzGKeTe913mfC+ZamxoBcOEOYxO1iwhyhT589hdNRYh2QOMl29aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=KydT/K+f; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9482:6dc:b955:47cb:dcbb] ([IPv6:2601:646:8081:9482:6dc:b955:47cb:dcbb])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56GHnnt61633817
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 16 Jul 2025 10:50:04 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56GHnnt61633817
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752688210;
-	bh=bQLY2XzM/JK8U77oiXwSm5nl5s2y7cLMCH+PlWCqq2o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KydT/K+fLzfjBcfN2UZF9/xZfqQfcsu9I6Vdb6HtNwW0n1WlesTFNCeflBGbyRT/N
-	 4AVfVELUE2faah05zLpgUwlvpR5d6PlWWUmpl8Djqs48WQN4ZCccbWpiF4rVX+tR5Q
-	 W4cxdfvuxLoXNVcZud0tumhyCJ7x8rvl6xntCYdhuOErxNJdVjvn8N5Uqn5h7XcXR4
-	 6CI919aBZLtnX6kSic9dI7HqCfMbiRjCoU1JlbvXbf9rG7nXpWw37NZPzTVXHX4IkK
-	 Rg8uOw/pXyMOzDa/qOmzjucQoY48lzhhfwz/tfFBH1aUDbKRF6Z/Czhm2H128DU6g5
-	 tJhuX+q5G+PvQ==
-Message-ID: <f979468c-434a-43e9-8c50-8e92188abc11@zytor.com>
-Date: Wed, 16 Jul 2025 10:49:43 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C4427FB27;
+	Wed, 16 Jul 2025 17:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752688310; cv=pass; b=BlTm4H+mXlljes3nlMqkD2L0FITBHxikUlhehpBdxIJl6f9yuoesZYXBl+RSz0IQLo/0HKeT9h/f7t1dkW0thjx7AAfTAVR/tMLq9GNgnzoQ9I8VWjxA1U+7GfTvTvdb+R7sYQIG7WKf1IbQp9uskzxIrnJC95nP5KJKIMkW3dQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752688310; c=relaxed/simple;
+	bh=alaKDas8MDRMus9sH7e8520XXy6vOYLth97QDzDsgRM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lv7IkgOVHm+pRsYseAulfr/fWKUh//PDM29zbg8ys/usdEc4uJUQfCvmQYOIkCaC6StS3uq/8btAviQ7vwvHBfMo3VnO5bEDVzDXbn0OqogSK8pXyIlV5qjRcbeHLGmxPoDEMq2hryvzAbJ4M+daV76LtGCOTGxxnWBw+9GKeSI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=HhNaNUbB; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752688289; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BzjyxfR2sL5YooFys1hSLwFgV5Sm9FoG0FemtBkXEAKG6I2OnnjyJfGstSzfW3ilq+as3aZXDL9k44vQxPoV14m2DIn9kGr5Jq1eL7eOA9JeBhKnUicozSkdGuCopXHDKdxa1F3R4RVbOQVAVuq1CRwjjETGHEAF+ZrI6uZsUyI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752688289; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=wscSEYkzCjiCD1rWTQtpVxiv5OUP/ktmu0maV3XJjck=; 
+	b=e6akjULcjCqIES6Ari+sLBGklJ9vm2//Jno+j8er5Jr0x3Pd50LgG1OX1u8VjV67y0Z2Hy5iYUdDu3TZWWVwrybpNt0KGKftml6QDpd4X4f8z+xZs3DMwB9e4PVKbTzP2XWGo8yoGdC1lQblCVrICjOgA1U+KkQG/IdYR+PMwWg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752688289;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=wscSEYkzCjiCD1rWTQtpVxiv5OUP/ktmu0maV3XJjck=;
+	b=HhNaNUbBnBFb8CuLSWUr+Vi1iuYcEv0KggRs39ilCf1KeXdIf88cnY6P9OA89O2p
+	vu2jmeLf2GMjLjA1TkQEGDOcYmWa0LnwdWWgHueiTOStCV0xsngN4dqtsKCN6GPG5lz
+	fMPkE3vJbNPXGSs6enLjmgkkDRDMDGj17yG6GRwg=
+Received: by mx.zohomail.com with SMTPS id 1752688286814730.6421951900096;
+	Wed, 16 Jul 2025 10:51:26 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH v3 0/4] MT8196 CPUFreq Support
+Date: Wed, 16 Jul 2025 19:51:21 +0200
+Message-Id: <20250716-mt8196-cpufreq-v3-0-d440fb810d7e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: USB cdc-acm driver: break and command
-To: Oliver Neukum <oneukum@suse.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, Jiri Slaby <jirislaby@kernel.org>,
-        linux-serial@vger.kernel.org
-References: <ce54ae11-72bb-4ac7-980b-c1cbc798a209@zytor.com>
- <fa20ab91-5ebf-427d-b938-31ea6fb945cf@suse.com>
- <83B89F79-D28B-4F2C-87EA-F5078BD7ED17@zytor.com>
- <2c807a7e-d55d-4670-9a86-e3fcaa3e52ba@suse.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <2c807a7e-d55d-4670-9a86-e3fcaa3e52ba@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJnmd2gC/3XOQQ6CMBAF0KuQrq1pC5TKynsYF20ZpAlQbAvBE
+ O5uBRdG4/JP5r+ZBXlwBjwqkwU5mIw3to8hPSRIN7K/ATZVzIgRlpOCUtwFQU8c62GsHdyx4NW
+ JU2ApIQrF0uCgNvMGXq57jmtjdMM+REp6wNp2nQll0sMc8Nvm6FVojA/WPbaHJro1/t2eKCYYq
+ CIyVZnUnJ61bVuprJPHeGDjJvZJZD8Ei4TWIodCiDzXxTexrusTUdO5+CQBAAA=
+X-Change-ID: 20250711-mt8196-cpufreq-86d961e2300b
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 2025-07-16 09:17, Oliver Neukum wrote:
-> On 16.07.25 17:06, H. Peter Anvin wrote:
-> 
->> SEND_ENCAPSULATED_COMMAND at least takes a command string – it was
->> intended, I believe, to be able to send AT commands to a modem while
->> online without using the +++ escape code and all the potential race
->> conditions (and security issues, since it is trivial for a user to
->> generate) associated with that.
-> 
-> Understood. It still seems dirty to me. If you want to send strings to a
-> device
-> the proper way is to use a device node and write().
->  
+This series adds the necessary bindings and driver changes to integrate
+MT8196 CPUFreq into the existing mediatek-cpufreq-hw driver. This
+necessitated two preparatory cleanup patches to the driver.
 
-There is definitely something to be said for that; or at least a file
-descriptor.  We do have cases in the kernel -- notably opening the pts
-corresponding to a ptmx file descriptor -- that do that sort of
-"auxiliary open" kind of thing.
+The CPU frequency was verified to actually be changing by comparing
+sysbench cpu numbers between fdvfs being enabled and it not being
+enabled.
 
-The big question is how that interacts with the rest of the ACM driver,
-as well as all the lifetime issues you mentioned elsewhere.
+Enablement in the DT will be done once the MT8196 DT lands, so don't be
+surprised that no node uses these new compatibles so far.
 
-	-hpa
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Changes in v3:
+- bindings: changed title as per angelo's suggestions
+- bindings: dropped the fdvfs magic register range
+- bindings: dropped redundant description for #performance-domain-cells
+- driver: made fdvfs frequency divisor a `#define` instead of part of
+  the variant struct
+- driver: dropped fdvfs magic check
+- driver: reworked performance domain resource offset
+- Link to v2: https://lore.kernel.org/r/20250714-mt8196-cpufreq-v2-0-cc85e78855c7@collabora.com
+
+Changes in v2:
+- Split off mt8196-cpufreq-hw into a new binding.
+- Made the fdvfs register regions part of the cpufreq "performance"
+  node, instead of using syscons for this.
+- Adjusted the driver to iomap those, and use the per-variant struct to
+  add an offset for the domains index.
+- Link to v1: https://lore.kernel.org/r/20250711-mt8196-cpufreq-v1-0-e1b0a3b4ac61@collabora.com
+
+---
+Nicolas Frattaroli (4):
+      dt-bindings: cpufreq: Add mediatek,mt8196-cpufreq-hw binding
+      cpufreq: mediatek-hw: Refactor match data into struct
+      cpufreq: mediatek-hw: Separate per-domain and per-instance data
+      cpufreq: mediatek-hw: Add support for MT8196
+
+ .../cpufreq/mediatek,mt8196-cpufreq-hw.yaml        |  82 +++++++++++++
+ drivers/cpufreq/mediatek-cpufreq-hw.c              | 134 +++++++++++++++++----
+ 2 files changed, 192 insertions(+), 24 deletions(-)
+---
+base-commit: 4d088c49d1e49e0149aa66908c3e8722af68ed07
+change-id: 20250711-mt8196-cpufreq-86d961e2300b
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 
