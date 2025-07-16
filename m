@@ -1,204 +1,324 @@
-Return-Path: <linux-kernel+bounces-733675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C02FB077AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:13:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071ACB077B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EDEF1C40195
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:13:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC45556174A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959E421E082;
-	Wed, 16 Jul 2025 14:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAF722333B;
+	Wed, 16 Jul 2025 14:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gERDx8Md"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nO0lDnSU"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2584F19F12D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B923021D5BF;
+	Wed, 16 Jul 2025 14:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752675181; cv=none; b=miAutwv5Kk2OuTtZucE6YH6gNeuE+9GNOzL8/qbyXTjAdlVyKX9uvUGnIelqcfCKdqBGx1T7gWDMmxeydNKAaR4mBwRAepzkLdQuXTBXaNo9mjOxEcD3lwJWI81TM5+03EXEDkOj5Vi8UyJkN7MGcIFon9oua7WNy0XwRJjNZKU=
+	t=1752675189; cv=none; b=YAJN2sTYeVqHKQZKWr5JJAQTmaNt9C9Km/j7hS4RpqLWAmHV6B3Fj95QI0pOMAASuLtsv5hGA/coraS4DT05RNZdDLMYI1N+KcJHr8nJTBlTUXogl2I6V/6SLNy4UQBWvhVucz23FlLedihSSi9gVV9PxAox8g+778ShsYR4sEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752675181; c=relaxed/simple;
-	bh=1UuX6szgOmOAGr0EFSUNwfsGrhCajPIIWCzDM/8ZdDA=;
+	s=arc-20240116; t=1752675189; c=relaxed/simple;
+	bh=osujWBWTkv47BDH9MlpLEqmFC0jybWONqJ+k3LU9KlU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shUDyWMJqnQ44z1zB9A5hLlw3A/PRAjerPnsqn+Xe9gz8ynscSyipdV0Q25ZKiEC6GurjxqFl4tNTgPFjn/SoyWh4aYhhvYz7r/HhhbGVv054ZKvlkemY8+oSihfgs55zJHAMaOHNT1ZWTpPdAiirexZRRKztE1ds6EBdfVcDmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gERDx8Md; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752675178;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I3kQObBm2VhsuQ4Br5dn7g/NxqBvEUCwsbnrpjwtiTk=;
-	b=gERDx8MddWtfbylL9un2fKDwKqUFUyX7KHqHWOHIWMd8HM/sVHbPnrKnk3dXEBIcOFVnMK
-	U/aP+Z2EUqpm0eE8SaWhIynupW1NFw+Vdyr5lKvOU9jQUPzpH1v31NeOXWC+txaDw8+V6z
-	ojMqsz/VpcYbLObBkTB2JdRsjKZdtmM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-522-vbESTXQgPzOnjuj93G4j8A-1; Wed, 16 Jul 2025 10:12:56 -0400
-X-MC-Unique: vbESTXQgPzOnjuj93G4j8A-1
-X-Mimecast-MFC-AGG-ID: vbESTXQgPzOnjuj93G4j8A_1752675176
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4edf5bb4dso4887853f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:12:56 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gaJB/cut8nISfzhLkaDTboUKqsRG7jDoK5oEYqmRPe7UVR5Cc3UGSVc0rA6eeCfbuUcA6yNWAAt8r/htglfA/D1mcMQQsPzK6QersZya7tAUKK3DZe3Wsjrwf8+EoewCzFl9hnKul6IkrTjofLEuQ3N+lWIJtmewJKNxQbwQH2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nO0lDnSU; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e050bd078cso432772785a.3;
+        Wed, 16 Jul 2025 07:13:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752675186; x=1753279986; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5oxEdedDYsBK7iLX0J3I5UZ7nuhhkQxgKr1r6D9i2m0=;
+        b=nO0lDnSUsMLxE1jfdScBxLbDnN43bPb+kwBA3yrgYVxJBQd+0lkzhCi7qDQd3vRxEq
+         aE7KGBkClAc+6D/xCykuMEH0IrM/vfCYGXdXesnZ6fVYUVr6rxw9RDLP8LDqMughP5/X
+         e4W8GLvsfHfpEzdBXcLqaSOca5xTYIPL9hQri/Kp7bF8YBVsjcWnXiCZh9oGaQgzFiXv
+         yfFyUBn0DZ4hvBe8WghV0qIz62aiCYjj3NnKz6gMG40Oy5Galjjr9nHZ3zOIVUp7bmgt
+         MRzSD8Chlv3F6lOPs40M9nKuVYYD9ZFjIpCyeShEl92Y4v+9M/DfXXnhLi6hPBA7ncDg
+         2HiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752675175; x=1753279975;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I3kQObBm2VhsuQ4Br5dn7g/NxqBvEUCwsbnrpjwtiTk=;
-        b=KDx6r5T9cKJvOWy88W9GXrRv4VQ/PXEu7Uya6b0Rni414wRclalMABt4Ga7FXNwovj
-         X8lQiZvcXQTWGlV/7pZc/evNvrS8mvR5hRxE3NAJgAQPJN8ljPIy7AoQ0UFDUzvPjK+V
-         4ULEILvHW7iG8NuhOIpEg0jkzYnq3fNTQC9BKp+ik4C9GKwy3yRpGc/xWHbkItbLxXMB
-         C6LqSA4SgpYDMNsePCblkm4CH8nHMgWjYLUqDUnD8dkWvJ8XzXsiRX1f3l5u0YSaRyTN
-         AgLMXHCwDzupDqwkCYrPgWnIKPjwYYpz+tmMZwJs85x5DyNU8xeN7ejjZPH+5YQoTO0g
-         mUMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLlpbKi5mPo1PujoF93Xko/ek1CCCk+yWafBdsaZFjNQ6a67NBJykIrtS06hiaRJ58CPxBXvyEZjNZOSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3Gnfs9WM5ZtO3CNO7J59vTXfdzA8vxjYDzZK3GF1yVM+8nByN
-	8IBq3hLr36QZ1urcoZxpS7PVTr/BF6+faqETPEKiWIMPl9sLaI9Bocin2971zwStJ6U5ewQax6j
-	l7g0BkHvAJloeKEMWJ+OEdfoC6houLeeC0ztFErFQoDHKmtSDdHdxpssEo6GCouJCRQ==
-X-Gm-Gg: ASbGncuENoVHXZGUBGEm+7veJHiUTga/lzXEh8vFV9L3M8BO1kSzYhiF7tkrPOaKwzn
-	YK1wQnimTnAz7gG1c6uJfnygra0e6e0ckQ3LXyM/LK2rR6IdQWc+XxTfVVHbPAbLMQrPPMawKIk
-	lkl4XimE6iGMAu9wOMAWuAGiTV75ORgQC8j4YZlH/XwsbVYaTY0c3WJ4w6mILYpmG9MelA/slXQ
-	R5GMtprUinbAGH4qck+3OSRD21WZkXyCMDdSn4WrHc63O7bDGTexV8NkegxbyIm6MFtAiSC/xZY
-	73w05BBKpPwy8gMSLppQQia666YGM5Dp
-X-Received: by 2002:a05:6000:64b:b0:3a1:fe77:9e1d with SMTP id ffacd0b85a97d-3b60dd4f79dmr2927577f8f.16.1752675175567;
-        Wed, 16 Jul 2025 07:12:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHcTQHmFkdo4qKszITkM/hDotRfA4R+XuTHN+mNxyUn7y3tAOgVhUvnmBHW+D+Oz3dz00ArzA==
-X-Received: by 2002:a05:6000:64b:b0:3a1:fe77:9e1d with SMTP id ffacd0b85a97d-3b60dd4f79dmr2927547f8f.16.1752675175042;
-        Wed, 16 Jul 2025 07:12:55 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:150d:fc00:de3:4725:47c6:6809])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b600a39281sm10296194f8f.73.2025.07.16.07.12.53
+        d=1e100.net; s=20230601; t=1752675186; x=1753279986;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5oxEdedDYsBK7iLX0J3I5UZ7nuhhkQxgKr1r6D9i2m0=;
+        b=grXPczLVtGnAJh9LcMaVraqGUv2wsVLuReqjBoEes7muiG+S3LTZXxmIXerdjaExKt
+         ZBS7a6ieDugvHWscqiDkZ9klUmx4r91eq6HiTajRGpxcn9GlBRMBh/se3YHtHvEYDswo
+         vS2YPhrbXV8+yS7yolueorpTUMqHacZcExmRApl7BJOeWRRfrOrdkdgZ24TqStLsHlqN
+         NfsAnKVr8wU6oJ5cm75uCtw6WLVtAK/xZvnrpYuxHVPHfRIfKcsjw5bbJN+zzmV2jMDm
+         7V1Bs2S+nrqjgXxOyGaq3PzuTjtvtj+FDx1hKkRxhiGPwX0hcXn3kdtTXY5Cok3CjS6f
+         fG4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV1B5fvNlNzshMaN1VYCJpoeuBOcJxJmtkgW9P6ViQtHrozLc9earOjDfF4jkBzosFy3ewuS2bmrP2JPcc2qu4=@vger.kernel.org, AJvYcCWyndZB3xhhbGjUQdZuW9ds56rXZlmlT+o8KIDnFm4epODvbU3u39WJqwGhKeOvIleSmh62iDC61KKt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYH9y5QY8dzyt6o8B5zu7/D50zjhfGFlsP0M2F4fwfJAQKnXI2
+	3kM2E7V1ry3StNIOp8eE52HUJBMv6RZY1sWTv3uptcEpeb3rmyQzGCul
+X-Gm-Gg: ASbGncvCmf0TiFpD7K9ZHvB00NqbweEzcRaSkClKxymYYVePN9sIH4H/GFaRhCCFBmr
+	fsXUyZPH7hCH6AD3yX4IVIiQ4BfgRjA/oQgzb7bJrGfaPbZLCdmDoUi5dAsmvg/oe77rblj1bmd
+	HEtqzcl0lEPmGLZOMBgdkBSP7rW0qZbNHJPfh/XiD4iNIZNw1DRdFuWSjzG8Hk8OF7beLDdBBcl
+	neKeDpNKPG3UZ0cG7BXsbbvAa864sDbye9Qh+KgJVJaBGVHaYiGOK3yy4wuLvIIN+UuFylHhn7q
+	1ZZmHvHjrGifhgNhKbsZmZub/AMHgH70aX7B9kNiKix9U6x+7KpP1y2yhPPjzf9fqkEWbkd0iGP
+	PQuBoSi7vYkqJyug5l+kBy5cNANWznYj0t8YM3x5gBRrln02nTDMxa+6hfWq5t1YLknS0KggtkN
+	Si5m4C5kH04dZU
+X-Google-Smtp-Source: AGHT+IEHzLsQAehbbrKU/TVMPV7nXUAj+qML9zKFPbg0x8a0TcuYEYgYT/wn98XUxcliDPTG0VwhTg==
+X-Received: by 2002:a05:620a:2285:b0:7e3:4378:ddab with SMTP id af79cd13be357-7e34378ddbbmr274894185a.22.1752675186207;
+        Wed, 16 Jul 2025 07:13:06 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcdebea43bsm754644885a.102.2025.07.16.07.13.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 07:12:54 -0700 (PDT)
-Date: Wed, 16 Jul 2025 10:12:51 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Cindy Lu <lulu@redhat.com>
-Cc: jasowang@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com,
-	nicolas.dichtel@6wind.com, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v13 0/1]vhost: Add support of kthread API
-Message-ID: <20250716101152-mutt-send-email-mst@kernel.org>
-References: <20250714071333.59794-1-lulu@redhat.com>
+        Wed, 16 Jul 2025 07:13:04 -0700 (PDT)
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 8EC99F4006B;
+	Wed, 16 Jul 2025 10:13:03 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Wed, 16 Jul 2025 10:13:03 -0400
+X-ME-Sender: <xms:b7N3aOdt8HjwlA34HF-9A1nbyFA95oonU_oUMuq4L57tOQYqMTSpcw>
+    <xme:b7N3aJu-4W3MMgRCpGmUjOj1BZ36GEQrSx6vme7mF6M3tO4Baz-M9eiEgg_74aWtd
+    5Nri97zvsUNtF4bVQ>
+X-ME-Received: <xmr:b7N3aEHJUP8OQkZKGZ88rrZ1S6ToinilzlOpiMOYVkhj4ZNtSNDt5Oqi6g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjeelvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephfetvdfgtdeukedvkeeiteeiteejieehvdetheduudejvdektdekfeegvddvhedt
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
+    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
+    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohep
+    vdejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlohhsshhinheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhsthhsrdhlihhnuhigrdgu
+    vghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghl
+    vgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrh
+    ihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghi
+    lhdrtghomh
+X-ME-Proxy: <xmx:b7N3aLfAE9TdA6tYKOu6CkHcDrFOcD_eHxL9CKTV9GQeTfKB56XZPA>
+    <xmx:b7N3aIvPOB7dl_k9Ly8hTQumGsfFzHPzdvIlnXsd_s-QXnEIkBcTbg>
+    <xmx:b7N3aKlWb1COumL2IK8veDVN4qcd7bwq2ZJQefO3KsiJixCVShakYw>
+    <xmx:b7N3aLDFwAiFUEtLrbbM-6cH4e3hbk-7Yc8lk8ScwpEUCBWOUWOgpw>
+    <xmx:b7N3aCwtnscGWHWAGUXbsahp-4mc70Pm2v4EQHNTb9c9VlZv9EZsPD9v>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Jul 2025 10:13:02 -0400 (EDT)
+Date: Wed, 16 Jul 2025 07:13:01 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v7 6/9] rust: sync: atomic: Add the framework of
+ arithmetic operations
+Message-ID: <aHezbbzk0FyBW9jS@Mac.home>
+References: <20250714053656.66712-1-boqun.feng@gmail.com>
+ <20250714053656.66712-7-boqun.feng@gmail.com>
+ <DBCL7YUSRMXR.22SMO1P7D5G60@kernel.org>
+ <aHZYt3Csy29GF2HM@Mac.home>
+ <DBCQUAA42DHH.23BNUVOKS38UI@kernel.org>
+ <aHZ-HP1ErzlERfpI@Mac.home>
+ <DBCUJ4RNRNHP.W4QH5QM3TBHU@kernel.org>
+ <aHa2he81nBDgvA5u@tardis-2.local>
+ <DBDENRP6Z2L7.1BU1I3ZTJ21ZY@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250714071333.59794-1-lulu@redhat.com>
+In-Reply-To: <DBDENRP6Z2L7.1BU1I3ZTJ21ZY@kernel.org>
 
-On Mon, Jul 14, 2025 at 03:12:31PM +0800, Cindy Lu wrote:
-> In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),   
-> the vhost now uses vhost_task and operates as a child of the   
-> owner thread. This aligns with containerization principles.   
-> However, this change has caused confusion for some legacy   
-> userspace applications. Therefore, we are reintroducing   
-> support for the kthread API. 
+On Wed, Jul 16, 2025 at 12:25:30PM +0200, Benno Lossin wrote:
+> On Tue Jul 15, 2025 at 10:13 PM CEST, Boqun Feng wrote:
+> > On Tue, Jul 15, 2025 at 08:39:04PM +0200, Benno Lossin wrote:
+> > [...]
+> >> >> > Hmm.. the CAST comment should explain why a pointer of `T` can be a
+> >> >> > valid pointer of `T::Repr` because the atomic_add() below is going to
+> >> >> > read through the pointer and write value back. The comment starting with
+> >> >> > "`*self`" explains the value written is a valid `T`, therefore
+> >> >> > conceptually atomic_add() below writes a valid `T` in form of `T::Repr`
+> >> >> > into `a`.
+> >> >> 
+> >> >> I see, my interpretation was that if we put it on the cast, then the
+> >> >> operation that `atomic_add` does also is valid.
+> >> >> 
+> >> >> But I think this comment should either be part of the `CAST` or the
+> >> >> `SAFETY` comment. Going by your interpretation, it would make more sense
+> >> >> in the SAFETY one, since there you justify that you're actually writing
+> >> >> a value of type `T`.
+> >> >> 
+> >> >
+> >> > Hmm.. you're probably right. There are two safety things about
+> >> > atomic_add():
+> >> >
+> >> > - Whether calling it is safe
+> >> > - Whether the operation on `a` (a pointer to `T` essentially) is safe.
+> >> 
+> >> Well part of calling `T::Repr::atomic_add` is that the pointer is valid.
+> >
+> > Here by saying "calling `T::Repr::atomic_add`", I think you mean the
+> > whole operation, so yeah, we have to consider the validy for `T` of the
+> > result.
 > 
-> In this series, a new UAPI is implemented to allow   
-> userspace applications to configure their thread mode.
+> I meant just the call to `atomic_add`.
 > 
-> Changelog v2:
->  1. Change the module_param's name to enforce_inherit_owner, and the default value is true.
->  2. Change the UAPI's name to VHOST_SET_INHERIT_FROM_OWNER.
+> > But what I'm trying to do is reasoning this in 2 steps:
+> >
+> > First, let's treat it as an `atomic_add(*mut i32, i32)`, then as long as
+> > we provide a valid `*mut i32`, it's safe to call. 
 > 
-> Changelog v3:
->  1. Change the module_param's name to inherit_owner_default, and the default value is true.
->  2. Add a structure for task function; the worker will select a different mode based on the value inherit_owner.
->  3. device will have their own inherit_owner in struct vhost_dev
->  4. Address other comments
+> But the thing is, we're not supplying a valid `*mut i32`. Because the
+> pointer points to a value that is not actually an `i32`. You're only
+> allowed to write certain values and so you basically have to treat it as
+> a transmute + write. And so you need to include a justification for this
+> transmute in the write itself. 
 > 
-> Changelog v4:
->  1. remove the module_param, only keep the UAPI
->  2. remove the structure for task function; change to use the function pointer in vhost_worker
->  3. fix the issue in vhost_worker_create and vhost_dev_ioctl
->  4. Address other comments
+> For example, if we had `bool: AllowAtomic`, then writing a `2` in store
+> would be insta-UB, since we then have a `&UnsafeCell<bool>` pointing at
+> `2`.
 > 
-> Changelog v5:
->  1. Change wakeup and stop function pointers in struct vhost_worker to void.
->  2. merging patches 4, 5, 6 in a single patch
->  3. Fix spelling issues and address other comments.
+> This is part of library vs language UB, writing `2` into a bool and
+> having a reference is language-UB (ie instant UB) and writing a `2` into
+> a variable of type `i32` that is somewhere cast to `bool` is library-UB
+> (since it will lead to language-UB later). 
 > 
-> Changelog v6:
->  1. move the check of VHOST_NEW_WORKER from vhost_scsi to vhost
->  2. Change the ioctl name VHOST_SET_INHERIT_FROM_OWNER to VHOST_FORK_FROM_OWNER
->  3. reuse the function __vhost_worker_flush
->  4. use a ops sturct to support worker relates function
->  5. reset the value of inherit_owner in vhost_dev_reset_owner.
->  
-> Changelog v7: 
->  1. add a KConfig knob to disable legacy app support
->  2. Split the changes into two patches to separately introduce the ops and add kthread support.
->  3. Utilized INX_MAX to avoid modifications in __vhost_worker_flush
->  4. Rebased on the latest kernel
->  5. Address other comments
->  
-> Changelog v8: 
->  1. Rebased on the latest kernel
->  2. Address some other comments 
->  
-> Changelog v9:
->  1. Rebased on the latest kernel. 
->  2. Squashed patches 6‑7. 
->  3. Squashed patches 2‑4. 
->  4. Minor fixes in commit log
->  
->  
-> Changelog v10:
->  1.Add support for the module_param.
->  2.Squash patches 3 and 4.
->  3.Make minor fixes in the commit log.
->  4.Fix the mismatched tabs in Kconfig.
->  5.Rebase on the latest kernel.
-> 
-> Changelog v11:
->  1.make the module_param under Kconfig
->  2.Make minor fixes in the commit log.
->  3.change the name inherit_owner to fork_owner
->  4.add NEW ioctl VHOST_GET_FORK_FROM_OWNER
->  5.Rebase on the latest kernel
-> 
-> Changelog v12:
-> 1.Squash all patches to 1.
-> 2.Add define for task mode and kthread mode
-> 3.Address some other comments
-> 4.Rebase on the latest kernel
-> 
-> Changelog v13:
->  1.enable the kconfig by default
->  2.Rebase on the latest kernel
->       
-> Tested with QEMU with kthread mode/task mode/kthread+task mode
 
+But we are not writing `2` in this case, right? 
 
-I applied this, thanks! But I've rewritten the commit log.
-Pls take a look - commit log must include the motivation,
-and be written in the imperative mood.
+A) we have a pointer `*mut i32`, and the memory location is valid for
+   writing an `i32`, so we can pass it to a function that may write
+   an `i32` to it.
 
-Thanks again!
+B) and at the same time, we prove that the value written was a valid
+   `bool`.
 
+There is no `2` written in the whole process, the proof contains two
+parts, that is it. There is no language-UB or library-UB in the whole
+process, and you're missing it.
 
-> Cindy Lu (1):
->   vhost: Reintroduces support of kthread API and adds mode selection
+It's like if you want to prove 3 < x < 5, you first prove that x > 3
+and then x < 5. It's just that you don't prove it in one go.
+
+> The safety comments become simpler when you use `UnsafeCell<T::Repr>`
+> instead :) since that changes this language-UB into library-UB. (the
+> only safety comment that is more complex then is `get_mut`, but that's
+> only a single one)
 > 
->  drivers/vhost/Kconfig      |  18 +++
->  drivers/vhost/vhost.c      | 244 ++++++++++++++++++++++++++++++++++---
->  drivers/vhost/vhost.h      |  22 ++++
->  include/uapi/linux/vhost.h |  29 +++++
->  4 files changed, 295 insertions(+), 18 deletions(-)
+> If you don't want that, then we can solve this in two ways:
 > 
-> -- 
-> 2.45.0
+> (1) add a guarantee on `atomic_add` (and all other operations) that it
+>     will write `*a + v` to `a` and nothing else.
+> (2) make the safety requirement only require writes of the addition to
+>     be valid.
+> 
+> My preference precedence is: use `T::Repr`, (2) and finally (1). (2)
+> will be very wordy on all operations & the safety comments in this file,
+> but it's clean from a formal perspective. (1) works by saying "what
+> we're supplying is actually not a valid `*mut i32`, but since the
+> guarantee of the function ensures that only specific things are written,
+> it's fine" which isn't very clean. And the `T::Repr` approach avoids all
+> this by just storing value of `T::Repr` circumventing the whole issue.
+> Then we only need to justify why we can point a `&mut T` at it and that
+> we can do by having an invariant that should be simple to keep.
+> 
+> We probably should talk about this in our meeting :)
+> 
 
+I have a better solution:
+
+in ops.rs
+
+    pub struct AtomicRepr<T: AtomicImpl>(UnsafeCell<T>)
+
+    impl AtomicArithmeticOps for i32 {
+        // a *safe* function
+        fn atomic_add(a: &AtomicRepr, v: i32) {
+	    ...
+	}
+    }
+
+in generic.rs
+
+    pub struct Atomic<T>(AtoimcRepr<T::Repr>);
+
+    impl<T: AtomicAdd> Atomic<T> {
+        fn add(&self, v: .., ...) {
+	    T::Repr::atomic_add(&self.0, ...);
+	}
+    }
+
+see:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/log/?h=rust-atomic-impl
+
+Regards,
+Boqun
+
+> ---
+> Cheers,
+> Benno
+> 
+> > And second assume we call it with a valid pointer to `T::Repr`, and a
+> > delta from `rhs_into_delta()`, then per the safety guarantee of
+> > `AllowAtomicAdd`, the value written at the pointer is a valid `T`.
+> >
+> > Based on these, we can prove the whole operation is safe for the given
+> > input.
+> >
+> >> But it actually isn't valid for all operations, only for the specific
+> >> one you have here. If we want to be 100% correct, we actually need to
+> >> change the safety comment of `atomic_add` to say that it only requires
+> >> the result of `*a + v` to be writable... But that is most likely very
+> >> annoying... (note that we also have this issue for `store`)
+> >> 
+> >> I'm not too sure on what the right way to do this is. The formal answer
+> >> is to "just do it right", but then safety comments really just devolve
+> >> into formally proving the correctness of the program. I think -- for now
+> >> at least :) -- that we shouldn't do this here & now (since we also have
+> >> a lot of other code that isn't using normal good safety comments, let
+> >> alone formally correct ones).
+> >> 
+> >> > How about the following:
+> >> >
+> >> >         let v = T::rhs_into_delta(v);
+> >> >         // CAST: Per the safety requirement of `AllowAtomic`, a valid pointer of `T` is a valid
+> >> >         // pointer of `T::Repr` for reads and valid for writes of values transmutable to `T`.
+> >> >         let a = self.as_ptr().cast::<T::Repr>();
+> >> >
+> >> >         // `*self` remains valid after `atomic_add()` because of the safety requirement of
+> >> >         // `AllowAtomicAdd`.
+> >> >         //
+> >> >         // SAFETY:
+> >> >         // - For calling `atomic_add()`:
+> >> >         //   - `a` is aligned to `align_of::<T::Repr>()` because of the safety requirement of
+> >> >         //   `AllowAtomic` and the guarantee of `Atomic::as_ptr()`.
+> >> >         //   - `a` is a valid pointer per the CAST justification above.
+> >> >         // - For accessing `*a`: the value written is transmutable to `T`
+> >> >         //   due to the safety requirement of `AllowAtomicAdd`.
+> >> >         unsafe { T::Repr::atomic_add(a, v) };
 
