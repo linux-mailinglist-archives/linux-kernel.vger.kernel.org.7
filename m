@@ -1,133 +1,136 @@
-Return-Path: <linux-kernel+bounces-733144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1EEB070C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:40:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6518B072CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B43B17DAEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 590521882F9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B8D2EE998;
-	Wed, 16 Jul 2025 08:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952372F2C6B;
+	Wed, 16 Jul 2025 10:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dbXVzg49"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lQpTNV0L"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC9D2641CC
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C5C1D5CED
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752655247; cv=none; b=KLKIcqoO63sGfmN1jCVHMhhns8wLtQfsZDtfHBeuWLKYZS0Znzc8ZwNIugi7EmED6RZtjFdW3xNXqIPmErU+gOuMlw886iZA6OZx0SsZI4ddy8438ELicTL7KW43xAzRFVU1VaxqLMM9dRMkCmn7E2aCc7Wxol9vgkRtcCZWO6U=
+	t=1752660692; cv=none; b=ZsN72IreA4hcDo5Wdce8EEzw5XkmyOfLCUF6E+1BBqxKtEYHP4zQdiNgUPEujTyxgq7nnmTiv5kTWNi/Xo8RxaNz7AFeXfw/YAvLQcnLElaAEZEJj+D27d3PspL+bfYJWAS6t/nMlg2v0N/XcCWgAlwstWzAoJm/YByuq+7UYTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752655247; c=relaxed/simple;
-	bh=qrMBhDY0wRYT8PuFs9DrrojFLigfaPzRLRSNGcKBjFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fjXbSXewLytA+xFVcXvSWbw6X8Hij0a0yJMvRgF6Hx6mp2gFlHXxux+wIOOMyQmh5YO6ZuraYIDi5zmkLgF0jktK541VkHlO8Rp2KYHfvlitpGkTpOc8h+fWMmesEJpCn6zOnjWJ/z+xUPoCgCUBhfSD1N17NXjY//P7EbbN2oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dbXVzg49; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b49ffbb31bso3624147f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 01:40:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752655244; x=1753260044; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BJWUrIQdaBC7NQriNJZiQ1JQak1bftewdlMIEM95H+4=;
-        b=dbXVzg49eBEzGaya6EjZx4Hre9mk4xnYTxI07b4nCnTr3J6OJpNbizsW+yBnf/EpA8
-         X+v0Z4azBJSsjij0ezjnbeq8PPDQ5oYDjx0mVz0X4GDtpFZ1tDi1y2aVPZexejJDR4dd
-         Vddcy3CD2ZfXCT4t35uPpL6Y0QADd9Ytz8tZEw71W+xpwd8xontFd53Mo7MSeyA9+Lct
-         IGURggFZpuSErG1rNlLe2FwP08C0pLpU01rrlGiIrUR0haBKWDqnQN9gAT0QvQELnJfy
-         1IdJdYB6xf+ofsVKdIg9lDlL06sYMPp0tMDAgFjhdeZzmXZy2+8R07XHitmD7aw5eTmT
-         Vyjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752655244; x=1753260044;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BJWUrIQdaBC7NQriNJZiQ1JQak1bftewdlMIEM95H+4=;
-        b=BCVCxQh66bU+bi1//UcKgFJyffDhhyaMUDVeVqatSQHdUXTmRQNie09qwz7a8C12K7
-         +JlcmNhTMvKG2vZEuVxbHaOS8/3dobLr5HY1XwtLvlH09dU1hfKoK7h5/HCBMYqQZe0v
-         584W9hz1pXo0cCOWu35soehzEZSSYdNcq97AfBjzvCa7nMOsEjwxdzngWSAE4lh3gW9A
-         SpxEqOaPyQ5foBjtFCgxmDBF4U70YvI4a4IY4zyNRuxIHN1QYXAjZkH4LHnaoEh+qE2D
-         68QTrkz1W3vH9rNaIRj2y3rkLJRWOnh9gP20WAFNLhUmUabgouK3826H5c1G4TfB4QfI
-         Z1sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCZuHYhMsO8s2NBhbBSo7gSOTywpIFzciajoEAPbcHSmU6XGZcWfrmK4V4cvKaXZlZojLNQK+gvcs+xI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdWsY89Dge8zek3ANBF8iSbJLgNL5PtILXZXy48KHf3uKmf/t6
-	3ssKrZdI4Ts+jp0fZrT0ng6XH2QLOG5al+bHhOQcS95Wvbwu7kY3nwX4uRFD3mplsA==
-X-Gm-Gg: ASbGncuhxCCjxq328RKyFlpvssZ0SS/glVporqjopC+3EmUcU8p1SQStESUpGT7Jx/v
-	mOI3iZd2rKr7NQ5GKmJMY25CCmuolXZ3WttPWb4GqGNg3KUbuSCCmRrBVvbODfePCxrGKhBkgdk
-	UJ5RKzybRlJV/HE4xNG6OlAoiV+qv8EbulEhIMADiZAxNrvKoB0gWTk8hS/K19EsHfEbFc3rzl5
-	kwmHstbl1tpHCzK4GOvhzkNpUqbPg96Stfk0PINJTlI8AQuJozBpX+Ga2TZ1E7dPEwmDTyTWtbV
-	ZiYchNLSQ83urDamTbGmrTWJqWUjDodlKb+Hd31FxkcR9D+dHA0gsCi7NEgOhyR+OUjFULZQ8tF
-	ja2fU7o7QYFvE00wd7i1/GA==
-X-Google-Smtp-Source: AGHT+IG2JVIKdbXCgSujNuX8MaJwzxKIn3RGftig+Rl8Or93NssoDRwCfiPvHo1nvu0ecatAz1qVHQ==
-X-Received: by 2002:a5d:560a:0:b0:3a4:e844:745d with SMTP id ffacd0b85a97d-3b60dd8e738mr1521605f8f.56.1752655243702;
-        Wed, 16 Jul 2025 01:40:43 -0700 (PDT)
-Received: from MiWiFi-CR6608-srv ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de434c9cbsm126694355ad.202.2025.07.16.01.40.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 01:40:43 -0700 (PDT)
-Date: Wed, 16 Jul 2025 16:39:56 -0400
-From: Wei Gao <wegao@suse.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	Brahmajit Das <brahmajit.xyz@gmail.com>,
-	Andrei Vagin <avagin@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/proc: Use inode_get_dev() for device numbers in
- procmap_query
-Message-ID: <aHgOHMWnTsYgsj7C@MiWiFi-CR6608-srv>
-References: <20250716142732.3385310-1-wegao@suse.com>
+	s=arc-20240116; t=1752660692; c=relaxed/simple;
+	bh=0k8sIBC2eJaqsXE9Vm0H5ySguhM1Ecpxm4KlMor9gWU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BN/InvQiIaQRhavPpZ2x0jAQ0UvryUdjK4iHhetBpRX8IiZO5jpAQHlyBgFBK/Y38Ren0aTlzJq/u18qhRrN6LeH5k/NLY2KPTXF6pJB0nxw+7x+O505eS+8Yg+P+EJy4yzCbpN5OS3dqTim5KeZHZ8u02JADVd43ZjeL1KI1m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lQpTNV0L; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G7YUhg022357;
+	Wed, 16 Jul 2025 10:10:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=Jcbuww0Va+k2vq1pry8cOViN1poGtKzkSjZo/Hirn
+	JA=; b=lQpTNV0Lw4FMtcf1W58ihMsnSYzgdQk46cfxQRx5vO9tcm70Z3OoL26YM
+	BD5Oyj1YppQpFxH39uOJn5Y2GLQ2f6+Fqx4SxxP8edq4Bfxhr5ME22ymd5P6RcvZ
+	AoDZDJbRzFNhXxaCSHPpEE3I5fQ/t8ykh5ym0x1nIir9SPYJZOeArSnDUp4LsIN+
+	wAD0p0xOMYMwCuU4uW4w8uBUY4cp2z4B7csFFecScOxKv07HKYNrbQiEYqSpVvwM
+	Zz5HYW5KgQgYV8boxfEPpFqXsx9oPLaR2KpbHtq1k/2vyiU/amlrRa2RXseVuDbk
+	hNIwJWGcWWf7yljOlr5S+faQke8Hw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47vdfmqatw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 10:10:37 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56G7J2cR008909;
+	Wed, 16 Jul 2025 10:10:36 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47v3hmpsb0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 10:10:35 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56GAAV1E36372806
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Jul 2025 10:10:31 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 66D702047D;
+	Wed, 16 Jul 2025 09:48:14 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 227FE2047B;
+	Wed, 16 Jul 2025 09:48:12 +0000 (GMT)
+Received: from li-7bb28a4c-2dab-11b2-a85c-887b5c60d769.ibm.com.com (unknown [9.124.218.143])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 16 Jul 2025 09:48:11 +0000 (GMT)
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+To: mingo@redhat.com, peterz@infradead.org, tglx@linutronix.de,
+        maddy@linux.ibm.com, will@kernel.org
+Cc: sshegde@linux.ibm.com, mark.rutland@arm.com, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2 0/1] powerpc, arm64: move preempt dynamic key into kernel/sched
+Date: Wed, 16 Jul 2025 15:17:44 +0530
+Message-ID: <20250716094745.2232041-1-sshegde@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716142732.3385310-1-wegao@suse.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 4ZzsJPwZ79ZXwGaz41k8LXOnSjIdcWG5
+X-Authority-Analysis: v=2.4 cv=JOI7s9Kb c=1 sm=1 tr=0 ts=68777a9d cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=Wb1JkmetP80A:10 a=cMfPdojDCaELe1LC6y0A:9
+X-Proofpoint-ORIG-GUID: 4ZzsJPwZ79ZXwGaz41k8LXOnSjIdcWG5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA4NyBTYWx0ZWRfXxseXy56oR2xP Ro5dB+r0rxy6hYoJw5vnymvDbhknESe6PeXTUWvp5DHBC2N563erNLiWIYixLA3LaehqZt3/+ED hAQ7hEZ4UX468X9HAWGmWPzdWLM4gkfUL6mRJIAPAZUkbo2TKx6dpl76vcHgvlTUWEiRZBq35CL
+ GvHm/f42MeaiRtNfRzXpOepIZQLAzrfbZNQgdttGbNlp4jn+mrVRA9tSL1XlW2zdvYbS7HDPuj4 4pBBHoab1RGdBYvz4V9qEQ/uDUzsOdvSfnz67VcMBEP/j4q9H38tZqR9KddjrzVERTSep1QvAC+ TbTaq3+AkUeRT5zgls5HKb2XA9yXqu4UAY+devH9hq85brqcPoyYX7wwl7E2Qv5HSVvIR9K1DqP
+ OatUde+g3/sEVKxI0FCcoDIuJT0rTp3/ZAyN9ytpthvPrVCDvqRaJAW5rZ5nvO4i5xRHNdES
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=568 malwarescore=0 clxscore=1015 bulkscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507160087
 
-On Wed, Jul 16, 2025 at 10:27:32AM -0400, Wei Gao wrote:
-> This ensures consistency and proper abstraction when accessing device
-> information associated with an inode.
-> 
-> Signed-off-by: Wei Gao <wegao@suse.com>
-> ---
->  fs/proc/task_mmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 751479eb128f..b113a274f814 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -518,8 +518,8 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
->  		const struct inode *inode = file_user_inode(vma->vm_file);
->  
->  		karg.vma_offset = ((__u64)vma->vm_pgoff) << PAGE_SHIFT;
-> -		karg.dev_major = MAJOR(inode->i_sb->s_dev);
-> -		karg.dev_minor = MINOR(inode->i_sb->s_dev);
-> +		karg.dev_major = MAJOR(inode_get_dev(inode));
-> +		karg.dev_minor = MINOR(inode_get_dev(inode));
->  		karg.inode = inode->i_ino;
->  	} else {
->  		karg.vma_offset = 0;
-> -- 
-> 2.49.0
-> 
+Current usage of preempt dynamic key is not specific to architecture and
+can be moved into sched/core instead. Most of the code around it looks
+similar. (same code for powerpc, arm64). 
 
-Sorry for my mistake, this patch is not correct since upstream has no inode_get_dev function,
-Only suse downstream code defines this function. Please SKIP this patch.
+Since preemption is more associated with scheduler rather than
+entry/exit, it is probably better it should be moved. 
+
+This is tested on powerVM PREEMPT_DYNAMIC=y/n and on arm64 by Mark
+
+v1->v2:
+- Rebase to 6.16-rc6
+- Collected the tags
+
+Ingo, Peter, 
+Can this go via tip sched tree? 
+
+Both arm64, powerpc have acked the changes and been tested. 
+
+Shrikanth Hegde (1):
+  sched: preempt: Move dynamic keys into kernel/sched
+
+ arch/arm64/include/asm/preempt.h   |  1 -
+ arch/arm64/kernel/entry-common.c   |  8 --------
+ arch/powerpc/include/asm/preempt.h | 16 ----------------
+ arch/powerpc/kernel/interrupt.c    |  4 ----
+ include/linux/irq-entry-common.h   |  1 -
+ include/linux/sched.h              |  8 ++++++++
+ kernel/entry/common.c              |  1 -
+ kernel/sched/core.c                |  4 ++++
+ 8 files changed, 12 insertions(+), 31 deletions(-)
+ delete mode 100644 arch/powerpc/include/asm/preempt.h
+
+-- 
+2.43.0
+
 
