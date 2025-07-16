@@ -1,432 +1,301 @@
-Return-Path: <linux-kernel+bounces-733980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A975FB07B86
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:50:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69571B07B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E9C4E2361
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:49:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE59F178126
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095CF2F4A1E;
-	Wed, 16 Jul 2025 16:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CD22F5C25;
+	Wed, 16 Jul 2025 16:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D6lpSti7"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="aT7Z2p38"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D72290D95
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3E62F5466;
+	Wed, 16 Jul 2025 16:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752684618; cv=none; b=IDuqu/b+IsGtbYhQ1DllwRxWBkXoE5tQvb3meq08PzbxWIjI/X6+TtRzIiZf7ZvrmQuMVhV8Ues4Lr+krXYf5V5G57u8qDa1a8R8vgt8vFOHy/s2mfggj1Sb6BDR8aPTRYH83NttMzXSVFhDSJhKVWVY0AHeOldse5EsyCP6Vz8=
+	t=1752684726; cv=none; b=Jlhvjyg4PBl1P4xohsoDYtzJqqf+mvfufZ/qNrL0soPrCLBRITVImQPs23evgRwkOgEgqp94StyBIKXXiSsX0QvuqigSNlh4MwewpxPPUCTyB1xvGr7Xs9dtjejpu0vu12d1s+7W0oNr6bS04mlArnnbqU1MLzWNbjLG/wivSxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752684618; c=relaxed/simple;
-	bh=bqS7hFH5tsT2er6NRnRAC0Ui8sc1c5bUnigerUTye24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uNaRBZnSCH6pvIr6abfbKRhzeLuP234hxqrf2VvIEUl1PrQViLkaOdK6Rjl8wFWt4z9IsSJi6A21FJ2bCcGH4rK8NDXHab1GtiCEB9haqb09a1Nd/RBPXW9pfLJX7zjYajGEKvnnxe+tEad0S6jJ6QnP51yqQw49hqomo0pkPSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D6lpSti7; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso181085b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752684612; x=1753289412; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hjzsf2levIjNEqe5bEQKkMoPkf+yNNdouDikD7reK/E=;
-        b=D6lpSti7hgIS/SyQTNvPlKQBZwXGvDKwXk+ZAx/qe0qFN/+T0AuTkvhZ9DAQeHV20q
-         mHox0SUcP2Vd0Ec6jrnQgK7kE+43nCS4TL97nz/PnbVUF/igz9tu+3hWrZz4fYzKKs1J
-         Zi8Cdb8EEUNPeN+B5xeZhMZZVZVAcDBQu6pZ1OVkfLAdQCb2BH//A/ZDzBfgI7aM2k2A
-         dISPYT9sUhj2dn/KgoEQzmhtRLxIHUo0uGTFLtAfz7VdOgPg3sRwK1ZKbvb6dtUGlS9o
-         jOC/yxVoamA3T1OfRvl7elm0gIOG1yfAvSjZZXN8uWDvLliN5AT07u6qz2Kl7oGGfTIb
-         XOLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752684612; x=1753289412;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hjzsf2levIjNEqe5bEQKkMoPkf+yNNdouDikD7reK/E=;
-        b=dhxY8CiarJhftzT9WgGW6JXpTD5v9x+W1nt1/GYgww7L9mFKizmEU+krflD4uvHxUp
-         HFdZd4MhXerT63j6R2zdO9u0VvojNVaVSkKCkH4Hn50Fb+fui2X3IS9jNRV7VQY+bLy2
-         E2bSti24tVyKvQmJ0+GsgTL7GTrM7aI/isBhsmWZyHcRMfF7s6kvtcLwPjGmNbfS3IUu
-         30K2FqcMH1zWFHp0eO/I2jhHC7+JbmiZx47wkVApeQsh9rR+t6SaiWcy59ZVgNa9fhtd
-         g0vgNEfU0j3e+sikRyREAFxKrixC7zt9FpSa5Mc6nOpjz9nz3BRx2xI0Nov6aBIbEyX/
-         9avw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtINGZdxoQbHIHvRU384vUz4pa5R8UmTP5KcsjEyaRY2d1TF/M0DMRFzlyNASd3uObTbRsdQbT5EIdkvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcp45WSJaRLkjBuBvMgVuPjPo3P+8kvzk78ohqLlGwNtUSVyhm
-	yyS6h7ODZ69OzXpsDji8lxak170snmnZCfxNriEysRdqx990cESfl9rLluNcAMbS7tY=
-X-Gm-Gg: ASbGnctojYN2lmU1AF/Ehv28JcN9O7F/O6OEq2yNTawpAGnof4f1MR6N8/ERj0FJG7b
-	AXLyB9rMOPvo8QTfOzxQu3DangY/pY84a+OIrumuxZn41Rv2p9LHAjzXZRj948VXTXlw7uT+WTz
-	SEAxjZfzuLQ/BcPZkjnDbdtUqPN78gje+BmNczNtlGmtc/M0R/aZqgNq04d2HIQDGRmslkEgOKU
-	5lpnVMpfRfsyJRiU7H9+z+/VIdfPNmegaGZu71gOKitunKiKEwgz+mOCyjsIQWogD1W3fTyF/Vu
-	ac/kVtWB4zfoPFML0h5FGYlZCsjR2CoLn6OkHnBfQ+mfyZJbKlpv3RPFwYPRl+CZXI1lqlCuU18
-	EP/6NMdJthJEynga1RRf6Yy17Cg==
-X-Google-Smtp-Source: AGHT+IG0arZ0Y/HD/4QZM2Mtf9Bhh1MrJkEkPzLO727PMtNgzATpZ/biRDg0ZgLsatdiFJTVZd4WDA==
-X-Received: by 2002:a05:6a20:2590:b0:220:2da8:325c with SMTP id adf61e73a8af0-2380e08ee88mr4831146637.0.1752684611666;
-        Wed, 16 Jul 2025 09:50:11 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:d5f3:b898:53e4:52db])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe57c48asm14184484a12.25.2025.07.16.09.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 09:50:11 -0700 (PDT)
-Date: Wed, 16 Jul 2025 10:50:08 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com,
-	iuliana.prodan@oss.nxp.com,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v7 3/3] remoteproc: imx_rproc: detect and attach to
- pre-booted remote cores
-Message-ID: <aHfYQFvkJcdfq9K_@p14s>
-References: <aHZ0nK4ZZShAr6Xz@p14s>
- <CAPDyKFrWng0CY-ayKoEbnS_yanghSqogxfuizxEVbVogJ4DT=g@mail.gmail.com>
- <20250716132552.bra37ucw4fcjwril@hiagonb>
+	s=arc-20240116; t=1752684726; c=relaxed/simple;
+	bh=c0KFAemiEAizQp2k38W1DuW2PQBYBlNlBSNl4rQu5Qk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vEhOcDNQ/EkWsFlXEfum9FoeHFGf61vkt5gvDJ9Bc8alMQNlXUdMViy+yBqkaoZ/lkIbDVu5Zf7ln6hNqCeWyLQCJRfv9QqRVBpomC8GTE/f8jKmx1zR5fnxMOn/9IPOvT5CzDfh+UEedJ3g3jsQWto7tpnLbRM5umT7+Dx3Do4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=aT7Z2p38; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1752684717; x=1753289517; i=w_armin@gmx.de;
+	bh=c0KFAemiEAizQp2k38W1DuW2PQBYBlNlBSNl4rQu5Qk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=aT7Z2p38CfjeXl6Mmw7esrto1w5FZbGkF68bV+FRaWPQQ4zYZ/ZJvkUbERqzLRyu
+	 qZ/FOe1w9fRHxmJN8ZkI7EnjcWn8vcUqzswG7BwyerfjMoA+slg9ufkY3slOFgaHI
+	 4JeQDr9Z2eihDDB/Nn3omqip2BUeS5x64tu8tRoJW+CTxwz27fCrCNxrfm8/yQVMw
+	 38jF97088LfHUz2m22zelQBOY/jwFicq6gscsI61r7qUCShm15NxIjSYxy+cQbu3R
+	 Iz3e/49RWIclnXW+E56qdWNpQqxEmTkMYj6Vi6eSD0F8pMPtWBCZmtGa6PogpLlKj
+	 m0Ml4UTUUKzpiR+WQQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mel7v-1v9m9I1omb-00o4dP; Wed, 16
+ Jul 2025 18:51:57 +0200
+Message-ID: <20213956-f1f9-4eba-84d0-a4ea5fc745bd@gmx.de>
+Date: Wed, 16 Jul 2025 18:51:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716132552.bra37ucw4fcjwril@hiagonb>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] : [PATCH 3/3] Documentation: laptops: Add
+ documentation for uniwill laptops
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>, ilpo.jarvinen@linux.intel.com,
+ hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
+ wse@tuxedocomputers.com, ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
+ linux-leds@vger.kernel.org, lee@kernel.org, pobrn@protonmail.com
+References: <20250712112310.19964-1-W_Armin@gmx.de>
+ <20250712112310.19964-4-W_Armin@gmx.de>
+ <533f0f95-69d1-4151-9987-84b7702179d2@oracle.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <533f0f95-69d1-4151-9987-84b7702179d2@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kKNpbXcZsNKqp3RQzdjpeMMr5vFRtbkY4YCdoB87SYhLP9UTKXf
+ 48VUcQn2QN8eLMps59JNhbwm6/U82ghSkYf6j8XfByK6wmYQtvzZFOb130E8cD/+QB/7DaE
+ n/qQZy9bipkcxR2bvgGBw2AVAql8BWcxW0MOi+NkfCoQl7Bhud9uHtV5YkvxhPFE0EU8Fvd
+ kfpVjY2jfJjxAF9xtVz0A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0Pi65zeo9Ik=;bUDGapkUCcufhIjeIvb04i/II65
+ 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
 
-On Wed, Jul 16, 2025 at 10:25:52AM -0300, Hiago De Franco wrote:
-> Hi Mathieu, Ulf,
-> 
-> On Tue, Jul 15, 2025 at 09:32:44AM -0600, Mathieu Poirier wrote:
-> > On Sun, Jun 29, 2025 at 02:25:12PM -0300, Hiago De Franco wrote:
-> > > From: Hiago De Franco <hiago.franco@toradex.com>
-> > > 
-> > > When the Cortex-M remote core is started and already running before
-> > > Linux boots (typically by the Cortex-A bootloader using a command like
-> > > bootaux), the current driver is unable to attach to it. This is because
-> > > the driver only checks for remote cores running in different SCFW
-> > > partitions. However in this case, the M-core is in the same partition as
-> > > Linux and is already powered up and running by the bootloader.
-> > > 
-> > > This patch adds a check using dev_pm_genpd_is_on() to verify whether the
-> > > M-core's power domains are already on. If all power domain devices are
-> > > on, the driver assumes the M-core is running and proceed to attach to
-> > > it.
-> > > 
-> > > To accomplish this, we need to avoid passing any attach_data or flags to
-> > > dev_pm_domain_attach_list(), allowing the platform device become a
-> > > consumer of the power domain provider without changing its current
-> > > state.
-> > > 
-> > > During probe, also enable and sync the device runtime PM to make sure
-> > > the power domains are correctly managed when the core is controlled by
-> > > the kernel.
-> > > 
-> > > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > > ---
-> > > v6 -> v7:
-> > >  - Added Peng reviewed-by.
-> > > v5 -> v6:
-> > >  - Commit description improved, as suggested. Added Ulf Hansson reviewed
-> > >    by. Comment on imx-rproc.c improved.
-> > > v4 -> v5:
-> > >  - pm_runtime_get_sync() removed in favor of
-> > >    pm_runtime_resume_and_get(). Now it also checks the return value of
-> > >    this function.
-> > >  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
-> > >    function.
-> > > v3 -> v4:
-> > >  - Changed to use the new dev_pm_genpd_is_on() function instead, as
-> > >    suggested by Ulf. This will now get the power status of the two
-> > >    remote cores power domains to decided if imx_rpoc needs to attach or
-> > >    not. In order to do that, pm_runtime_enable() and
-> > >    pm_runtime_get_sync() were introduced and pd_data was removed.
-> > > v2 -> v3:
-> > >  - Unchanged.
-> > > v1 -> v2:
-> > >  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
-> > >    suggested.
-> > > ---
-> > >  drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
-> > >  1 file changed, 32 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > index 627e57a88db2..24597b60c5b0 100644
-> > > --- a/drivers/remoteproc/imx_rproc.c
-> > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > @@ -18,6 +18,7 @@
-> > >  #include <linux/of_reserved_mem.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/pm_domain.h>
-> > > +#include <linux/pm_runtime.h>
-> > >  #include <linux/reboot.h>
-> > >  #include <linux/regmap.h>
-> > >  #include <linux/remoteproc.h>
-> > > @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
-> > >  static int imx_rproc_attach_pd(struct imx_rproc *priv)
-> > >  {
-> > >  	struct device *dev = priv->dev;
-> > > -	int ret;
-> > > -	struct dev_pm_domain_attach_data pd_data = {
-> > > -		.pd_flags = PD_FLAG_DEV_LINK_ON,
-> > > -	};
-> > > +	int ret, i;
-> > > +	bool detached = true;
-> > >  
-> > >  	/*
-> > >  	 * If there is only one power-domain entry, the platform driver framework
-> > > @@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
-> > >  	if (dev->pm_domain)
-> > >  		return 0;
-> > >  
-> > > -	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
-> > > +	ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
-> > > +	/*
-> > > +	 * If all the power domain devices are already turned on, the remote
-> > > +	 * core is already powered up and running when the kernel booted (e.g.,
-> > > +	 * started by U-Boot's bootaux command). In this case attach to it.
-> > > +	 */
-> > > +	for (i = 0; i < ret; i++) {
-> > > +		if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
-> > > +			detached = false;
-> > > +			break;
-> > > +		}
-> > > +	}
-> > 
-> > I was doing one final review of this work when I noticed the return code for
-> > dev_pm_domain_attach_list() is never checked for error.
-> 
-> As Ulf pointed out, the 'return' a few lines below will return the
-> negative value to the caller of 'imx_rproc_attach_pd', which ultimately
-> will fail 'imx_rproc_detect_mode' and fail the probe of imx_rproc.
-> 
-> Please notice that even tough 'dev_pm_domain_attach_list' fails, the
-> rproc->state will still be set as RPROC_DETACHED because we are starting
-> 'detached' as true, but I am not seeing this as an issue because as
-> mentioned above the probe will fail anyway. Please let me know if you
-> see this as an issue.
+Am 12.07.25 um 14:54 schrieb ALOK TIWARI:
 
-Two things to consider here: 
+> On 7/12/2025 4:53 PM, Armin Wolf wrote:
+>> Add documentation for admins regarding Uniwill laptops. This should
+>> help users to setup the uniwill-laptop and uniwill-wmi drivers, which
+>> sadly cannot be loaded automatically.
+>>
+>> Reported-by: cyear <chumuzero@gmail.com>
+>> Closes:=20
+>> https://urldefense.com/v3/__https://github.com/lm-sensors/lm-sensors/is=
+sues/508__;!!ACWV5N9M2RV99hQ!MfQKq-XQLt4Lj_zRVzpbw1q-Y2RgiAMwHHbA8oE3H1FH_=
+iL99Vb9H29zjLtdHf1xmTUNkT6ZM-xUiZmfJew$
+>> Closes:=20
+>> https://urldefense.com/v3/__https://github.com/Wer-Wolf/uniwill-laptop/=
+issues/3__;!!ACWV5N9M2RV99hQ!MfQKq-XQLt4Lj_zRVzpbw1q-Y2RgiAMwHHbA8oE3H1FH_=
+iL99Vb9H29zjLtdHf1xmTUNkT6ZM-xU2Vmgr2k$
+>> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+>> ---
+>> =C2=A0 Documentation/admin-guide/laptops/index.rst=C2=A0=C2=A0 |=C2=A0 =
+1 +
+>> =C2=A0 .../admin-guide/laptops/uniwill-laptop.rst=C2=A0=C2=A0=C2=A0 | 6=
+8 +++++++++++++++++++
+>> =C2=A0 MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 1 +
+>> =C2=A0 3 files changed, 70 insertions(+)
+>> =C2=A0 create mode 100644=20
+>> Documentation/admin-guide/laptops/uniwill-laptop.rst
+>>
+>> diff --git a/Documentation/admin-guide/laptops/index.rst=20
+>> b/Documentation/admin-guide/laptops/index.rst
+>> index db842b629303..6432c251dc95 100644
+>> --- a/Documentation/admin-guide/laptops/index.rst
+>> +++ b/Documentation/admin-guide/laptops/index.rst
+>> @@ -17,3 +17,4 @@ Laptop Drivers
+>> =C2=A0=C2=A0=C2=A0=C2=A0 sonypi
+>> =C2=A0=C2=A0=C2=A0=C2=A0 thinkpad-acpi
+>> =C2=A0=C2=A0=C2=A0=C2=A0 toshiba_haps
+>> +=C2=A0=C2=A0 uniwill-laptop
+>> diff --git a/Documentation/admin-guide/laptops/uniwill-laptop.rst=20
+>> b/Documentation/admin-guide/laptops/uniwill-laptop.rst
+>> new file mode 100644
+>> index 000000000000..29f6ee88063b
+>> --- /dev/null
+>> +++ b/Documentation/admin-guide/laptops/uniwill-laptop.rst
+>> @@ -0,0 +1,68 @@
+>> +.. SPDX-License-Identifier: GPL-2.0+
+>> +
+>> +Uniwill laptop extra features
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+>> +
+>> +On laptops manufactured by Uniwill (either directly or as ODM), the=20
+>> ``uniwill-laptop`` and
+>> +``uniwill-wmi`` driver both handle various platform-specific features.
+>> +However due to a design flaw in the underlying firmware interface,=20
+>> both drivers might need
+>
+> might need or may need (optional)
+>
+>> +to be loaded manually on some devices.
+>> +
+>> +.. warning:: Not all devices supporting the firmware interface will=20
+>> necessarily support those
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 drivers, please be careful.
+>> +
+>> +Module Loading
+>> +--------------
+>> +
+>> +The ``uniwill-laptop`` driver relies on a DMI table to automatically=
+=20
+>> load on supported devices.
+>> +When using the ``force`` module parameter, this DMI check will be=20
+>> omitted, allowing the driver
+>> +to be loaded on unsupported devices for testing purposes.
+>> +
+>> +The ``uniwill-wmi`` driver always needs to be loaded manually.=20
+>> However the ``uniwill-laptop``
+>> +driver will automatically load it as a dependency.
+>> +
+>> +Hotkeys
+>> +-------
+>> +
+>> +Usually the FN keys work without a special driver. However as soon=20
+>> as the ``uniwill-laptop`` driver
+>> +is loaded, the FN keys need to be handled manually. This is done by=20
+>> the ``uniwill-wmi`` driver.
+>> +
+>> +Keyboard settings
+>> +-----------------
+>> +
+>> +The ``uniwill-laptop`` driver allows the user to enable/disable:
+>> +
+>> + - the FN and super key lock functionality of the integrated keyboard
+>> + - the touchpad toggle functionality of the integrated touchpad
+>> +
+>> +See Documentation/ABI/testing/sysfs-driver-uniwill-laptop for details.
+>> +
+>> +Hwmon interface
+>> +---------------
+>> +
+>> +The ``uniwill-laptop`` driver supports reading of the CPU and GPU=20
+>> temperature and supports up to
+>> +two fans. Userspace applications can access sensor readings over the=
+=20
+>> hwmon sysfs interface.
+>> +
+>> +Platform profile
+>> +----------------
+>> +
+>> +Support for changing the platform performance mode is currently not=20
+>> implemented.
+>> +
+>> +Battery Charging Control
+>> +------------------------
+>> +
+>> +The ``uniwill-laptop`` driver supports controlling the battery=20
+>> charge limit. This happens over
+>> +the standard ``charge_control_end_threshold`` power supply sysfs=20
+>> attribute. All values
+>> +between 1 and 100 percent are supported.
+>> +
+>> +Additionally the driver signals the presence of battery charging=20
+>> issues thru the standard ``health``
+>
+> thru -> through
+>
+Will fix.
 
-(1) It is only a matter of time before someone with a cleaver coccinelle script
-sends me a patch that adds the missing error check.
+Thanks,
+Armin Wolf
 
-(2) I think that @rproc->state being changed on error conditions is a bug
-waiting to happen.  This kind of implicit error handling is difficult to
-maintain and even more difficult for people to make enhancements to the driver.
-
-Adding a simple error check will make sure neither of the above will happen.  It
-is a simple change and we are at rc6 - this work can still go in the merge
-window.
-
-> 
-> > 
-> > Thanks,
-> > Mathieu
-> > 
-> > > +
-> > > +	if (detached)
-> > > +		priv->rproc->state = RPROC_DETACHED;
-> > > +
-> > >  	return ret < 0 ? ret : 0;
-> > >  }
-> > >  
-> > > @@ -1146,6 +1160,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
-> > >  		}
-> > >  	}
-> > >  
-> > > +	if (dcfg->method == IMX_RPROC_SCU_API) {
-> > > +		pm_runtime_enable(dev);
-> > > +		ret = pm_runtime_resume_and_get(dev);
-> > > +		if (ret) {
-> > > +			dev_err(dev, "pm_runtime get failed: %d\n", ret);
-> > > +			goto err_put_clk;
-> > > +		}
-> > > +	}
-> > > +
-> > >  	ret = rproc_add(rproc);
-> > >  	if (ret) {
-> > >  		dev_err(dev, "rproc_add failed\n");
-> > > @@ -1171,6 +1194,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
-> > >  	struct rproc *rproc = platform_get_drvdata(pdev);
-> > >  	struct imx_rproc *priv = rproc->priv;
-> > >  
-> > > +	if (priv->dcfg->method == IMX_RPROC_SCU_API) {
-> > > +		pm_runtime_disable(priv->dev);
-> > > +		pm_runtime_put(priv->dev);
-> > > +	}
-> > >  	clk_disable_unprepare(priv->clk);
-> > >  	rproc_del(rproc);
-> > >  	imx_rproc_put_scu(rproc);
-> > > -- 
-> > > 2.39.5
-> > > 
-> 
-> On Tue, Jul 15, 2025 at 06:03:44PM +0200, Ulf Hansson wrote:
-> > On Tue, 15 Jul 2025 at 17:32, Mathieu Poirier
-> > <mathieu.poirier@linaro.org> wrote:
-> > >
-> > > On Sun, Jun 29, 2025 at 02:25:12PM -0300, Hiago De Franco wrote:
-> > > > From: Hiago De Franco <hiago.franco@toradex.com>
-> > > >
-> > > > When the Cortex-M remote core is started and already running before
-> > > > Linux boots (typically by the Cortex-A bootloader using a command like
-> > > > bootaux), the current driver is unable to attach to it. This is because
-> > > > the driver only checks for remote cores running in different SCFW
-> > > > partitions. However in this case, the M-core is in the same partition as
-> > > > Linux and is already powered up and running by the bootloader.
-> > > >
-> > > > This patch adds a check using dev_pm_genpd_is_on() to verify whether the
-> > > > M-core's power domains are already on. If all power domain devices are
-> > > > on, the driver assumes the M-core is running and proceed to attach to
-> > > > it.
-> > > >
-> > > > To accomplish this, we need to avoid passing any attach_data or flags to
-> > > > dev_pm_domain_attach_list(), allowing the platform device become a
-> > > > consumer of the power domain provider without changing its current
-> > > > state.
-> > > >
-> > > > During probe, also enable and sync the device runtime PM to make sure
-> > > > the power domains are correctly managed when the core is controlled by
-> > > > the kernel.
-> > > >
-> > > > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > > > ---
-> > > > v6 -> v7:
-> > > >  - Added Peng reviewed-by.
-> > > > v5 -> v6:
-> > > >  - Commit description improved, as suggested. Added Ulf Hansson reviewed
-> > > >    by. Comment on imx-rproc.c improved.
-> > > > v4 -> v5:
-> > > >  - pm_runtime_get_sync() removed in favor of
-> > > >    pm_runtime_resume_and_get(). Now it also checks the return value of
-> > > >    this function.
-> > > >  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
-> > > >    function.
-> > > > v3 -> v4:
-> > > >  - Changed to use the new dev_pm_genpd_is_on() function instead, as
-> > > >    suggested by Ulf. This will now get the power status of the two
-> > > >    remote cores power domains to decided if imx_rpoc needs to attach or
-> > > >    not. In order to do that, pm_runtime_enable() and
-> > > >    pm_runtime_get_sync() were introduced and pd_data was removed.
-> > > > v2 -> v3:
-> > > >  - Unchanged.
-> > > > v1 -> v2:
-> > > >  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
-> > > >    suggested.
-> > > > ---
-> > > >  drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
-> > > >  1 file changed, 32 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > > index 627e57a88db2..24597b60c5b0 100644
-> > > > --- a/drivers/remoteproc/imx_rproc.c
-> > > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > > @@ -18,6 +18,7 @@
-> > > >  #include <linux/of_reserved_mem.h>
-> > > >  #include <linux/platform_device.h>
-> > > >  #include <linux/pm_domain.h>
-> > > > +#include <linux/pm_runtime.h>
-> > > >  #include <linux/reboot.h>
-> > > >  #include <linux/regmap.h>
-> > > >  #include <linux/remoteproc.h>
-> > > > @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
-> > > >  static int imx_rproc_attach_pd(struct imx_rproc *priv)
-> > > >  {
-> > > >       struct device *dev = priv->dev;
-> > > > -     int ret;
-> > > > -     struct dev_pm_domain_attach_data pd_data = {
-> > > > -             .pd_flags = PD_FLAG_DEV_LINK_ON,
-> > > > -     };
-> > > > +     int ret, i;
-> > > > +     bool detached = true;
-> > > >
-> > > >       /*
-> > > >        * If there is only one power-domain entry, the platform driver framework
-> > > > @@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
-> > > >       if (dev->pm_domain)
-> > > >               return 0;
-> > > >
-> > > > -     ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
-> > > > +     ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
-> > > > +     /*
-> > > > +      * If all the power domain devices are already turned on, the remote
-> > > > +      * core is already powered up and running when the kernel booted (e.g.,
-> > > > +      * started by U-Boot's bootaux command). In this case attach to it.
-> > > > +      */
-> > > > +     for (i = 0; i < ret; i++) {
-> > > > +             if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
-> > > > +                     detached = false;
-> > > > +                     break;
-> > > > +             }
-> > > > +     }
-> > >
-> > > I was doing one final review of this work when I noticed the return code for
-> > > dev_pm_domain_attach_list() is never checked for error.
-> > 
-> > The for loop covers the error condition correctly, I think. It's only
-> > when ret >=1 when the loop should be started - and ret is propagated
-> > to the caller a few lines below.
-> > 
-> > >
-> > > Thanks,
-> > > Mathieu
-> > >
-> > 
-> > Kind regards
-> > Uffe
-> > 
-> > > > +
-> > > > +     if (detached)
-> > > > +             priv->rproc->state = RPROC_DETACHED;
-> > > > +
-> > > >       return ret < 0 ? ret : 0;
-> > > >  }
-> > > >
-> > > > @@ -1146,6 +1160,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
-> > > >               }
-> > > >       }
-> > > >
-> > > > +     if (dcfg->method == IMX_RPROC_SCU_API) {
-> > > > +             pm_runtime_enable(dev);
-> > > > +             ret = pm_runtime_resume_and_get(dev);
-> > > > +             if (ret) {
-> > > > +                     dev_err(dev, "pm_runtime get failed: %d\n", ret);
-> > > > +                     goto err_put_clk;
-> > > > +             }
-> > > > +     }
-> > > > +
-> > > >       ret = rproc_add(rproc);
-> > > >       if (ret) {
-> > > >               dev_err(dev, "rproc_add failed\n");
-> > > > @@ -1171,6 +1194,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
-> > > >       struct rproc *rproc = platform_get_drvdata(pdev);
-> > > >       struct imx_rproc *priv = rproc->priv;
-> > > >
-> > > > +     if (priv->dcfg->method == IMX_RPROC_SCU_API) {
-> > > > +             pm_runtime_disable(priv->dev);
-> > > > +             pm_runtime_put(priv->dev);
-> > > > +     }
-> > > >       clk_disable_unprepare(priv->clk);
-> > > >       rproc_del(rproc);
-> > > >       imx_rproc_put_scu(rproc);
-> > > > --
-> > > > 2.39.5
-> > > >
-> 
-> Best Regards,
-> 
-> Hiago.
+>> +power supply sysfs attribute.
+>> +
+>> +Lightbar
+>> +--------
+>> +
+>> +The ``uniwill-laptop`` driver exposes the lightbar found on some=20
+>> models as a standard multicolor
+>> +LED class device. The default name of this LED class device is=20
+>> ``uniwill:multicolor:status``.
+>> +
+>> +See Documentation/ABI/testing/sysfs-driver-uniwill-laptop for=20
+>> details on how to control the various
+>> +animation modes of the lightbar.
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 3efec7a99262..fe302a610fe6 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -25495,6 +25495,7 @@ M:=C2=A0=C2=A0=C2=A0 Armin Wolf <W_Armin@gmx.de=
+>
+>> =C2=A0 L:=C2=A0=C2=A0=C2=A0 platform-driver-x86@vger.kernel.org
+>> =C2=A0 S:=C2=A0=C2=A0=C2=A0 Maintained
+>> =C2=A0 F:=C2=A0=C2=A0=C2=A0 Documentation/ABI/testing/sysfs-driver-uniw=
+ill-laptop
+>> +F:=C2=A0=C2=A0=C2=A0 Documentation/admin-guide/laptops/uniwill-laptop.=
+rst
+>> =C2=A0 F:=C2=A0=C2=A0=C2=A0 Documentation/wmi/devices/uniwill-laptop.rs=
+t
+>> =C2=A0 F:=C2=A0=C2=A0=C2=A0 drivers/platform/x86/uniwill/uniwill-laptop=
+.c
+>
+> Thanks,
+> Alok
+>
 
