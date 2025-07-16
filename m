@@ -1,96 +1,128 @@
-Return-Path: <linux-kernel+bounces-732764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2322B06BE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C83B06BDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40F267ABCE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644D83B5C77
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B5627A11E;
-	Wed, 16 Jul 2025 03:04:44 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC77276026;
+	Wed, 16 Jul 2025 03:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FOQ+HQqG"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941E7279351;
-	Wed, 16 Jul 2025 03:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D21275118;
+	Wed, 16 Jul 2025 03:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752635084; cv=none; b=ozbSlMEbhlkeoc+Gtqnwz/T2OCC3RzXLnno7n/f4OaOZifEEgIihXqBtifMmZKL8fK0XRouIGWJmQL6NVZMRucdzHwscqwfQy3cbCPHnGPu0Rr6OH8+aQTfnziqm5ak2zHYzGEOADtkWg4JbcaaGtXDbhFOReWKkoELfiIEgcF8=
+	t=1752635078; cv=none; b=mCCKnAY/q+JYwFGa0LbWlw8UY3LNHZINZzDR1UUEA0Fe6drI9xEgAo6V/IWCusMNOVonxreiyvANVoNlZy86XW07o57wkYId1jZqv0P4OzBwrXYBNXKxJGlVYQQrI1evicAvoMAZ0gq00KgM0ORe/FhhHO51I1buYxw2dasTAwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752635084; c=relaxed/simple;
-	bh=J3SevpmxE9JwDzhpqVldktGHqwOvIFa50/aobyVf94g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bc7HmmmSatK4C+AM9eOI8QONX0BNR8kG5RrX5t6CryQzu4gmC9XDTiuwUFBMA7g1yq5J6ZKtLkwseCPbUY0hKCzR7WxyPe7K2J1iN8d9MgvOG0JkD5XoBSzJjyCOCr0A8X7eV+oLFI6ufNhkwB7Nv5H7YEepbpdT/IFFV56Erpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201612.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202507161104358679;
-        Wed, 16 Jul 2025 11:04:35 +0800
-Received: from localhost.localdomain.com (10.94.16.122) by
- jtjnmail201612.home.langchao.com (10.100.2.12) with Microsoft SMTP Server id
- 15.1.2507.57; Wed, 16 Jul 2025 11:04:34 +0800
-From: chuguangqing <chuguangqing@inspur.com>
-To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-	Zhang Yi <yi.zhang@huawei.com>
-CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>, chuguangqing
-	<chuguangqing@inspur.com>
-Subject: [PATCH v3] ext4: add FALLOC_FL_ALLOCATE_RANGE to supported flags mask
-Date: Wed, 16 Jul 2025 11:04:20 +0800
-Message-ID: <20250716030420.4528-2-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250716030420.4528-1-chuguangqing@inspur.com>
-References: <f42f9a79-75cf-491e-bf46-5ea036cf6656@huawei.com>
- <20250716030420.4528-1-chuguangqing@inspur.com>
+	s=arc-20240116; t=1752635078; c=relaxed/simple;
+	bh=ghDhaR0c6hTsusUYN/do7KgBwZkbeEBUhV5TVSwbOuM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=R4n2LMUNU/otccOyLDb+C387K7nL/Ntc/4a8z38yCW5FY/9QGcOBdDgbClVMPN2lQGyJleDRqXPZi6ip79T/wnL2hGPQVMqMDJYGGlj3QQw2db392IKzeWWM4YXwgCg1mylUY0qYO1TTX0PN3cAmz91qLZpVHym2mq4xj5xOejw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FOQ+HQqG; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752635071; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
+	bh=bz/gT2zU2lHgaYtQPft6aSJWRjBtEX5KzBsJPznda0c=;
+	b=FOQ+HQqGkgI/n59A9mF6LN+bPGDKgk9RHF9mDliwuf8HfYpdqA7CQyTu31mbJUdeMgdy6rSpyfacBenQc4rrWKGn6LOZZNwJRGmi5vpzpfGb+YcZRYxO0x//oZ8tiPpcsSTGJZZyeZV7enWN7UOLcR+J4a+B5hg0HiRnekJBHY0=
+Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wj2Cz4n_1752635068 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Jul 2025 11:04:29 +0800
+Message-ID: <b4c39a87-c5a4-4525-b598-61fc28a8dc36@linux.alibaba.com>
+Date: Wed, 16 Jul 2025 11:04:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
+To: Breno Leitao <leitao@debian.org>
+Cc: Borislav Petkov <bp@alien8.de>, Alexander Graf <graf@amazon.com>,
+ Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ Peter Gonda <pgonda@google.com>, "Luck, Tony" <tony.luck@intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ James Morse <james.morse@arm.com>, "Moore, Robert" <robert.moore@intel.com>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>,
+ "kernel-team@meta.com" <kernel-team@meta.com>
+References: <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
+ <SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
+ <aHWC-J851eaHa_Au@agluck-desk3>
+ <20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
+ <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
+ <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
+ <vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
+ <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
+ <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
+ <p2iytcdfvgm74zif6ihd7gs4kuaeza4b4p52cr5ya4upabiome@kr3yy7fjznwe>
+In-Reply-To: <p2iytcdfvgm74zif6ihd7gs4kuaeza4b4p52cr5ya4upabiome@kr3yy7fjznwe>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 2025716110435112a17cce23ef016dd0104abaf7c8c24
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-Add FALLOC_FL_ALLOCATE_RANGE to the set of supported fallocate mode flags.
-This change improves code clarity and maintains by explicitly showing
-this flag in the supported flags mask.
 
-Note that since FALLOC_FL_ALLOCATE_RANGE is defined as 0x00, this addition
-has no functional modifications.
 
-Signed-off-by: chuguangqing <chuguangqing@inspur.com>
----
- fs/ext4/extents.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+在 2025/7/16 01:25, Breno Leitao 写道:
+> Hello Shuai,
+> 
+> On Tue, Jul 15, 2025 at 09:46:03PM +0800, Shuai Xue wrote:
+>>> It would be really good to sync with other cloud providers here so that we can
+>>> do this one solution which fits all. Lemme CC some other folks I know who do
+>>> cloud gunk and leave the whole mail for their pleasure.
+>>>
+>>> Newly CCed folks, you know how to find the whole discussion. :-)
+>>>
+>>> Thx.
+>>
+>>
+>> For the purpose of counting, how about using the cmdline of rasdaemon?
+> 
+> How do you manage it at a large fleet of hosts? Do you have rasdaemon
+> logging always and how do you correlate with kernel crashes? At Meta, we
+> have an a "clues" tag for each crash, and one of the tags is Machine
+> Check Exception (MCE), which is parsed from dmesg right now (with the
+> regexp I shared earlier).
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index b43aa82c1b39..46cbb8697252 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4784,9 +4784,10 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 		return -EOPNOTSUPP;
- 
- 	/* Return error if mode is not supported */
--	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
--		     FALLOC_FL_ZERO_RANGE | FALLOC_FL_COLLAPSE_RANGE |
--		     FALLOC_FL_INSERT_RANGE | FALLOC_FL_WRITE_ZEROES))
-+	if (mode & ~(FALLOC_FL_ALLOCATE_RANGE | FALLOC_FL_KEEP_SIZE |
-+		     FALLOC_FL_PUNCH_HOLE | FALLOC_FL_COLLAPSE_RANGE |
-+		     FALLOC_FL_ZERO_RANGE | FALLOC_FL_INSERT_RANGE |
-+		     FALLOC_FL_WRITE_ZEROES))
- 		return -EOPNOTSUPP;
- 
- 	inode_lock(inode);
--- 
-2.43.5
+We deploy rasdaemon on each individual node, and then collect the
+rasdaemon logs centrally. At the same time, we collect out-of-band
+error logs. We aggregate and count the types and occurrences of errors,
+and finally use empirical thresholds for operational alerts. The crash
+analysis service consumes these alert messages.
+
+> 
+> My plan with this patch is to have a counter for hardware errors that
+> would be exposed to the crashdump. So, post-morten analyzes tooling can
+> easily query if there are hardware errors and query RAS information in
+> the right databases, in case it seems a smoking gun.
+
+I see your point. But does using a single ghes_recovered_errors counter
+to track all corrected and non-fatal errors for CPU, memory, and PCIe
+really help?
+
+> 
+> Do you have any experience with this type of automatic correlation?
+
+Please see my reply above.
+
+> 
+> Thanks for your insights,
+> --breno
+
+Thanks.
+Shuai
 
 
