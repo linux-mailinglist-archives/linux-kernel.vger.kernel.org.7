@@ -1,95 +1,97 @@
-Return-Path: <linux-kernel+bounces-733180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B06B0713D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:09:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C14B07140
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80B5581746
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F80E189B7FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842852F4302;
-	Wed, 16 Jul 2025 09:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3062F199D;
+	Wed, 16 Jul 2025 09:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jju/lRLS"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COWU1UJp"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6C72F2347;
-	Wed, 16 Jul 2025 09:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B30A2F0028
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752656851; cv=none; b=rMlk0xr1CpvoTLh9UUMAnteUxR39leU6A2KEtDtfqhLcLwKm6duTew6TDZYRxUfqDYlwMyHf30csTDSUqVzJnLAfuwXovdXtb+gAQoCXH5OZQ6VEgSD/nVEJnzXYjlHY6AXd4SUvqqsGmPt3ho0Jn/DFT17viclMOZPlxyDkY+A=
+	t=1752656949; cv=none; b=Um+uucbZvoVzijks5JXFtGJcdfeMjhVBv97zqi5HBxsnTHiWhsnCfGRV3Ajcd60fgbk37ETn6eEDxJIleOhxzsosrBAtoZusMMYHMKBO0GSoKSfVBYKBTbqNUy3VMO++CFvgNDyYrS4pxLYriVodS45hRU9dymalJoUc/EeDqr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752656851; c=relaxed/simple;
-	bh=5Ptgz3f9+MROL/CBA8PmM/l52N7ZDaPCRTd/bnU6Aik=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BomTB3w91TC4aV/KvNg1I+vtxNr+djK/sOSx3Fd+ZnVQxGLwHVEsgI7m5vVQ/Czx0Wqq4pkJFAD8zqAfHHV96BXntv09jOXYSg/ScV9P8RyT53sGFPBWNrmoMaYZMhwD7PHbHm08hAAuXrv6pWbwtmKjUQLQBufA3azAl6/M9KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jju/lRLS; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1752656949; c=relaxed/simple;
+	bh=mlno4CH0IHBcIPXpPJkLJyBuOor1DgbPJpcT93X79q0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=D4aH0/vQXluPnKC5DpOwtZ2kVM1xtirRfLT5MyH7P6hfC98ACdZkuzWaKwQCtRM0WqIHkjKE4v492zWJJoThcei8/HQc0KdgR0iE0052SicrwxTzEh64vSzIpjvphx35GHiyKTHJENNrBgcBLGN7RtupnEbuJlD7XLxjLYsdb5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COWU1UJp; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-73972a54919so5779216b3a.3;
-        Wed, 16 Jul 2025 02:07:29 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo11279613a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 02:09:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752656849; x=1753261649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vomQ2XAeV7E4V+uYTp7TsUwfXDHnmYQsX/lVNvXhnH0=;
-        b=jju/lRLSxVA555/mXephrgaQA0qXox+6HrsqlPra8D0KKkGzIRrX7qizIh6NUlpBFG
-         cemJ3cbmsKPldqa2KLCpWkdyFfIikAawfM03cG8cfJW/vqwkaE6IV7GNKyj+fD3YQdiZ
-         A0Hybu0ALX7zIPQhYvqEfqm3plRSSSpwaK2AtNNbyLSZhhbyXdDMnIZABUQuwmAn5zmq
-         i8TQzHh7FzS6tN+f8kqi0vvXvB6R/8Gxh8jNiYvNZlOv5NUu7gyRTMYJ0xXe1QmDp7jU
-         14Ipsfsgcbm212Vi2abqk6sBAgiKelpXbeejy8hK3t6jJj6i5KLPVEN6Cemr4qSTXNLw
-         EKSQ==
+        d=gmail.com; s=20230601; t=1752656946; x=1753261746; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ihJ+f1NCJBZ9WcLY7Jx42k6HJUZFV7Gfk0PAA31DN8c=;
+        b=COWU1UJpj2+rt4rQ+KCbrgp05aFfoakpPx2C7+EAelwTMi16v93bIG/onSKMdW7i6P
+         almUp7JaY9xvSS3KOvoHoPMeTy/4F3GrJ19vx+8QPkJ3Mc/o4O6wP43NnAsC7zcxFBps
+         NXNgbut6k2VObtxOa8dgxdp39ivyNlih0rs2CfTWarlu2hKJfGYo1ttwqwtKSPV3zgiX
+         dmw/fz0swb59HSK+aCYuX92Ee5ab5HeCdPffs95EpqTJfFrk2WjJICeT7gwYFrYCFZU6
+         zgpscMYf5WUUD/kKRGHPqkFy0nY2X/3lA5+jqjA9Tc0BzaRUGsMLzwM0xjMy+1PSXHKL
+         iTRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752656849; x=1753261649;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vomQ2XAeV7E4V+uYTp7TsUwfXDHnmYQsX/lVNvXhnH0=;
-        b=t6wsViAhkcdQb7v6P+qYkwsRJonRCRCwqs1sMZlYqtqRZASYWo1HrS72DBx+8IjUYl
-         yvLhoDCj77JveMQFOmAf/LNRi+FrzOmtDkpCqcaabnaF5DsJh0VBiLCigI+6SEGDB3E4
-         hoUCnvbjmbB1vlAyFnsLFoPCvE6D27+SGFhGSSdyycjhGrPGYIW5mZgDafL+ltTd8y72
-         eCCrBs4tYae0l+BO+bexqrGKZhLDRvMkYxVKL4kNZ3vVWzK+0QwibSUTu5pP9xWboZiT
-         Zb001XD6GLRDFHQief7hV4v6oJT9/CDDZ1bhOna3mSRzdJiv1NCZsdWbGtHbM5l714Z7
-         eR/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVPG6eyIQelPi8Vz8HAGMEPC+OY8c/fZBdATpkVVHEV/zeDc87FOBz5rA5al6U+KQiiq4+mY4mSfnDZ+g==@vger.kernel.org, AJvYcCX4Rt+syVT4AR9x1vmDu2d++L3AufUd2b5rX3b+7+mwTiTAW0wV/ehVDqF3VsKNBuq7SMM5SZn1vog/g4K+3Us=@vger.kernel.org, AJvYcCXl6dehDZhahZL6OBxpEF36vR/LD6NmFh5RAlY7LuIafESoHbK0LsOzWpoClrjmFJWkBK2ZG9xYI7L6jMuQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxczB7qprANWHrFZDXanfM7FXtpCURBWFPzCn8fvJ4wE2i3LFwj
-	/QCgNusz8+I3Xeew1cssn7BtZUxxp6QW9fs55guVtU+JB2BjGGx1n4vL
-X-Gm-Gg: ASbGncsai0IrQASyd2voJYqP6qgoIqQOE61PrZYK0tr9qANlX8+Wti6bIG15EspMIsc
-	RT1NJ3srH8E5OQU/jAQ5YyoebiwTsdbgVWn1LmgU8RjBWHcaL54QDlO2s35mWpImZyeHdmNmFVS
-	3L4oTms5eoo8GsaXoez66F95xH0BwOzYth2uispQ3HooCtVMCddu5rE3iSpETlT864VX0eeZ/h4
-	xsrYDuLqZITIUszJTxe0qXMtoxr9ok6QibJL7j7zmktItKCQjQxYbGjgXYn3/yCn/x1TCm13TCJ
-	J83vvEqGthPK5bbmsrZXqQsgt7oRKn2Dsap0pXHp2jdn/9wpGcyAAR96nLO0mw9nCJdSIhNSYLw
-	BAbzc0zfuTJE8M/zM8ZBegwBdOKxwuDnJi0DQMgioOw==
-X-Google-Smtp-Source: AGHT+IE+lkGos/eOib4IJ67eb0STRYHcphDfNyAjb9PX948W5/Kn7Y8hVwDkGrkdolb4CGXnvwNc4A==
-X-Received: by 2002:a05:6a00:4fc3:b0:757:51d:9a18 with SMTP id d2e1a72fcca58-75724a82eccmr2427724b3a.16.1752656848715;
-        Wed, 16 Jul 2025 02:07:28 -0700 (PDT)
-Received: from shankari-IdeaPad.. ([2409:4080:410:5eb2:5b3d:132b:96fe:c1fc])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd73d1sm13738806b3a.10.2025.07.16.02.07.21
+        d=1e100.net; s=20230601; t=1752656946; x=1753261746;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ihJ+f1NCJBZ9WcLY7Jx42k6HJUZFV7Gfk0PAA31DN8c=;
+        b=uJ8im6WAOwvpi6cqooHv5o1yfgKjE0IJkpBAyiaxLPoDL3JrdHeJ4rszoReaMb0O+R
+         HQWYg4rYZGBBYeh4yrgJUMHt2HeVNLrSd5CAw2NePfbAf0gpY+ppntyyphx3mEWyC4EN
+         v3QHCYn1nA/0lZ3ZtS1qNQaQVP0Ln59QggIDuHp+Q7WRleMldKXS8DY+op3B5iUF/f/g
+         N/F+2WG0AWSqlGuC7xe/4W0CPqWzSbh8naluw9j/Mwis02tDIbO72F3re0T+Zta9NJKq
+         B6WxCyEON8rtLid7Z/2Hh17BxDm2D1OYAdEYEHR68iYa5m3LLvgIO3hdy6pdM8fBa/MK
+         jGUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7szrK/QqAjj133r6Nr/rjgBpLYQbDRtiKbFuwUIFK2ZQXnUowlB0x0/yiJYeamK9o19P4QIZt3CrCgYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT9+BpZ9Njf4MBhJiR60Mg7tLKwWYIssr8osQk6RD3Qzm6m+07
+	5C2e3hG5rLN3UKu10q4dE+fBxn8Iltn7SdHYYfGkZjr6V4/t+FGLNqO/
+X-Gm-Gg: ASbGncvEVIBLkex75/PzfC8UIPaRGjTljlqNHLelp6bznT2AQpIujSWx3/8HGfG3x1v
+	iBgaF7Pa494hoRCEZOHV+U4kUZrzNEmy9nEooySf4chjRkqpQDo/ukop8vYt3qqH2hrywGwQMHk
+	aPqAcUV2uqGkhfVtgkHkc/VWjjQeMLGNU8K/JjLWXNRGzs6fDf59OEivmgIJuh8QUxA8jZyTkym
+	rIRJW/r/aIcKnKHaLDXRnMUa9LSEQ5xnoxuDwby1Wo84MwMWtsjPzkfdf4h31vWKcIkdgEqgGdj
+	4smbuJqNapFLZjaA4EiTtmK3/QkHf9f1YzgR+iooa7owlfokjzjx/Hjb1GtyiUsppeNh9HoAuJC
+	Qlg5pTjIyAfrQuPiEIpFx3rQwAyAG0ULB2GM+MLjbJiZU7Vbu
+X-Google-Smtp-Source: AGHT+IHQrLA+Eh7cceyTetqJZ6SXtm0nq51LdTyMZs48YkixndfHnbVTKtN1Bm5Jd2lzHTAEkAZrUA==
+X-Received: by 2002:a05:6402:164d:b0:60c:5853:5b7f with SMTP id 4fb4d7f45d1cf-61285dfca8dmr1328144a12.32.1752656945247;
+        Wed, 16 Jul 2025 02:09:05 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.24])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c973360bsm8584453a12.45.2025.07.16.02.09.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 02:07:28 -0700 (PDT)
-From: Shankari Anand <shankari.ak0208@gmail.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	linux-block@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Shankari Anand <shankari.ak0208@gmail.com>
-Subject: [PATCH 1/7] rust: block: update ARef and AlwaysRefCounted imports from sync::aref
-Date: Wed, 16 Jul 2025 14:37:12 +0530
-Message-Id: <20250716090712.809750-1-shankari.ak0208@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 16 Jul 2025 02:09:04 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: bp@alien8.de
+Cc: andrew.cooper3@citrix.com,
+	ardb@kernel.org,
+	brgerst@gmail.com,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	khaliidcaliy@gmail.com,
+	linux-kernel@vger.kernel.org,
+	mingo@redhat.com,
+	tglx@linutronix.de,
+	ubizjak@gmail.com,
+	x86@kernel.org
+Subject: Re: [PATCH v3] x86/boot: Avoid writing to cr4 twice in startup_64()
+Date: Wed, 16 Jul 2025 09:07:20 +0000
+Message-ID: <20250716090755.668-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250716014504.GAaHcEIIUgNOdu_n2s@fat_crate.local>
+References: <20250716014504.GAaHcEIIUgNOdu_n2s@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,102 +100,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Update call sites in the block subsystem to import `ARef` and
-`AlwaysRefCounted` from `sync::aref` instead of `types`.
+> > > diff
+> > > <https://lore.kernel.org/lkml/20250715181709.1040-1-khaliidcaliy@gmail.com/#iZ31arch:x86:kernel:head_64.S>
+> > > --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S index
+> > > 4390a28f7dad..dfb5390e5c9a 100644 --- a/arch/x86/kernel/head_64.S +++
+> > > b/arch/x86/kernel/head_64.S @@ -222,12 +222,9 @@
+> > > SYM_INNER_LABEL(common_startup_64, SYM_L_LOCAL)  
+> > >  	/* Even if ignored in long mode, set PSE uniformly on all logical CPUs. */
+> > >  	btsl	$X86_CR4_PSE_BIT, %ecx
+> > > - movq %rcx, %cr4 - - /* - * Set CR4.PGE to re-enable global
+> > > translations. - */ + /* Set CR4.PGE to re-enable global translations. */  	btsl	$X86_CR4_PGE_BIT, %ecx
+> > > +  	movq	%rcx, %cr4
+> > 
+> > The comments are at best misleading, but you've broken the TLB flush
+> > being performed which depends on the double write.
+> > 
+> > This logic is intentionally performing a write with CR4.PGE=0 followed
+> > by one with CR4.PGE=1 to flush all global mappings.
+> Thanks both of you for the catch - I didn't realize that fact. Zapped now.
+>
+> So yeah, maybe there should be a comment explaining this subtlety.
+>
+> Thx.
 
-This aligns with the ongoing effort to move `ARef` and
-`AlwaysRefCounted` to sync.
+I think the comment is misplaced. It is better if we move starting from "from the SDM"
+to below the endif. The second move the comment above it isn't useful also everyone knows 
+what PGE bit does, so it is better if we replace with the above misplaced comment.
 
-Suggested-by: Benno Lossin <lossin@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1173
-Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
----
-It part of a subsystem-wise split series, as suggested in:
-https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
-This split series is intended to ease review and subsystem-level maintenance.
-
-The original moving patch is here:
-https://lore.kernel.org/rust-for-linux/20250625111133.698481-1-shankari.ak0208@gmail.com/
-
-Gradually the re-export from types.rs will be eliminated in the
-future cycle.
----
- drivers/block/rnull.rs             | 3 +--
- rust/kernel/block/mq.rs            | 8 ++++----
- rust/kernel/block/mq/operations.rs | 2 +-
- rust/kernel/block/mq/request.rs    | 3 ++-
- 4 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/block/rnull.rs b/drivers/block/rnull.rs
-index d07e76ae2c13..80a0f7aa949e 100644
---- a/drivers/block/rnull.rs
-+++ b/drivers/block/rnull.rs
-@@ -20,8 +20,7 @@
-     error::Result,
-     new_mutex, pr_info,
-     prelude::*,
--    sync::{Arc, Mutex},
--    types::ARef,
-+    sync::{aref::ARef, Arc, Mutex},
- };
- 
- module! {
-diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
-index 831445d37181..3e7e0de92604 100644
---- a/rust/kernel/block/mq.rs
-+++ b/rust/kernel/block/mq.rs
-@@ -20,7 +20,7 @@
- //! The kernel will interface with the block device driver by calling the method
- //! implementations of the `Operations` trait.
- //!
--//! IO requests are passed to the driver as [`kernel::types::ARef<Request>`]
-+//! IO requests are passed to the driver as [`kernel::sync::aref::ARef<Request>`]
- //! instances. The `Request` type is a wrapper around the C `struct request`.
- //! The driver must mark end of processing by calling one of the
- //! `Request::end`, methods. Failure to do so can lead to deadlock or timeout
-@@ -57,12 +57,12 @@
- //!
- //! ```rust
- //! use kernel::{
- //!     alloc::flags,
- //!     block::mq::*,
- //!     new_mutex,
- //!     prelude::*,
--//!     sync::{Arc, Mutex},
--//!     types::{ARef, ForeignOwnable},
-+//!     sync::{aref::ARef, Arc, Mutex},
-+//!     types::ForeignOwnable,
- //! };
- //!
- //! struct MyBlkDevice;
-diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
-index c2b98f507bcb..18d858763e08 100644
---- a/rust/kernel/block/mq/operations.rs
-+++ b/rust/kernel/block/mq/operations.rs
-@@ -10,7 +10,7 @@
-     block::mq::Request,
-     error::{from_result, Result},
-     prelude::*,
--    types::ARef,
-+    sync::aref::ARef,
- };
- use core::{marker::PhantomData, sync::atomic::AtomicU64, sync::atomic::Ordering};
- 
-diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
-index fefd394f064a..9cca7852b309 100644
---- a/rust/kernel/block/mq/request.rs
-+++ b/rust/kernel/block/mq/request.rs
-@@ -8,7 +8,8 @@
-     bindings,
-     block::mq::Operations,
-     error::Result,
--    types::{ARef, AlwaysRefCounted, Opaque},
-+    sync::aref::{ARef, AlwaysRefCounted},
-+    types::Opaque,
- };
- use core::{
-     marker::PhantomData,
--- 
-2.34.1
-
+Thanks
+Khalid Ali
 
