@@ -1,103 +1,127 @@
-Return-Path: <linux-kernel+bounces-734299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96AAFB07FAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:32:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D6EB07FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFBD658658F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:32:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E08974A2335
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6956A2EBDEE;
-	Wed, 16 Jul 2025 21:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABBA2ECD06;
+	Wed, 16 Jul 2025 21:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmScn7AR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIYCGT6K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23262EBB95;
-	Wed, 16 Jul 2025 21:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8680F266F05;
+	Wed, 16 Jul 2025 21:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752701544; cv=none; b=UzNvqhMmh0CYW0AybRbXRx/Lbej+3HfvUmFtU/2i6Wb07+/bLM79JsBqiejfJ+v9y7hS10IuQplRYf0DOqQPH7F1l3MfG3SbF5UHdPAMlXMPdLnGRDGa3JsZPNGJKjcFa/dsFBgzPFdA2xNBKNjFng9ztBFEqvzC+v9SRI8BzvY=
+	t=1752701714; cv=none; b=amdBEIXpwn2KBCEeBaU9J7nKrzfNRw9G8oojnb4Z1RyHmE9eDdVR/A2GsDDIZWetR/kF2OsmWZw4PVOd93ZzBtGNA5Q8lbgdY23PXelx8AS4ajqRgb6B2wlAxDEWUWZZePQ1DgaZQYNk1n6qXljs9OYUBVyOYTLr86KyLJGiwbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752701544; c=relaxed/simple;
-	bh=RcJyvGAOYpJenAb2/Ce7hOXw7Nx71fjCzp0c1g1mHhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C41cqA5Tx3OFy0Ju7A2Ivv5s35LQOuVl0rOmVLkSkhfJEtf3gb/WMK8UBmsu1d8JTFYIUG9FV7gefxCZ+QCQZ/wzQVwfVUCCJjqo25SOKzpjI1ERrSZzMkQFErE4VIosT7R3z+JWB9SDMaa+WOelF/sbJZcE9efTJkkLqs8GsrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FmScn7AR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9EBC4CEE7;
-	Wed, 16 Jul 2025 21:32:22 +0000 (UTC)
+	s=arc-20240116; t=1752701714; c=relaxed/simple;
+	bh=I+SsuYKuKb1oPJn8xEiqBq/dE2QgqTu7aIwJzz2nSGM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=u95FbmDK//CIXtzZP+we6XfjqcXnnQQ6WLLPTxgpVO7BcPOM+Gzh3RkmThtC5VappBPHAbGaEUGdiekHTaoQJkaUWl4dKlprMLDcavCIAPIT79zcq62RWXvrlYNnp/x7XGUNuUTHKbB1rZ1a7eJ1Q/J9V80YeOybzwbWr++FDOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIYCGT6K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06CE1C4CEE7;
+	Wed, 16 Jul 2025 21:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752701544;
-	bh=RcJyvGAOYpJenAb2/Ce7hOXw7Nx71fjCzp0c1g1mHhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FmScn7ARSIYqiNmzF+rn6FPk0ApXOqD5XWmA1IyOxXBP9+ppw/H4KAOq6Kjoc+s0+
-	 idi8lHv7rzfwBehXnK/a7gCf1qne5NXHKAJwIw+z6Qu10DZWpjd+LznayCsReVUH5Y
-	 agIyoR524SbkUq7rG2vNfM4MVkHKag/fpwXse/f4fk0DpleuMJlchesk68RgYMaILa
-	 /31s80fEietrfCSKVsz0lhKknnyl8pTxT+de4h9v+yGkRfgRrIDAzqixyTGaK/kwQU
-	 4+P2ydTeGaKKQuRtq20vT8anHAPeKyb6gMXGyP5pQKzqF3mlceWZ8YIC8NaZbgH08l
-	 EgHmVWSkXQ1iA==
-Date: Wed, 16 Jul 2025 14:32:21 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, x86@kernel.org, Steven Rostedt <rostedt@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [RFC PATCH v1 06/16] unwind_user: Enable archs that define CFA =
- SP_callsite + offset
-Message-ID: <qoiocmdhuuaox5v5ig2ui67qbuxkvzl4z3ft4gdp7p3c4b4zfq@trjthmmculkf>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-7-jremus@linux.ibm.com>
+	s=k20201202; t=1752701714;
+	bh=I+SsuYKuKb1oPJn8xEiqBq/dE2QgqTu7aIwJzz2nSGM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=TIYCGT6KEhF7zj5LNSho42EyJc1rH7Veqeu4TNU3xuXjY10FO0fGt9OdG/o9ZEPIi
+	 TqifTc+caMjefREvUC2W6hZutwGSG4S/jDenIoeuSKkBDOhgxDzBhXXCaAIV9R7vyc
+	 tNVDpbGA/yxi/fHzZWljc3+u7E7Jt3QELfNn7TuViQ6wxYBovpIO6GvExdHpFBv6Qu
+	 HG0WWH296RmLIrHnJByQZw5Rv+owREEvR7MgvBDCj3lG4TkFfoX/RMcX9Xmf4r0u96
+	 Gd4Nvo/IhlEQn6aatWlC4xrZQTBMz2tqAJ6TN0obzv+SEsk3MzpKnKIC6kESvHSnCZ
+	 uJtUnAS/kAhZA==
+Date: Wed, 16 Jul 2025 16:35:13 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250710163522.3195293-7-jremus@linux.ibm.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ linux-media@vger.kernel.org, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Julien Massot <julien.massot@collabora.com>, linux-staging@lists.linux.dev, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+To: Cosmin Tanislav <demonsingur@gmail.com>
+In-Reply-To: <20250716193111.942217-15-demonsingur@gmail.com>
+References: <20250716193111.942217-1-demonsingur@gmail.com>
+ <20250716193111.942217-15-demonsingur@gmail.com>
+Message-Id: <175270171321.1284786.126748563521510901.robh@kernel.org>
+Subject: Re: [PATCH v6 14/24] dt-bindings: media: i2c: add MAX9296A,
+ MAX96716A, MAX96792A
 
-On Thu, Jul 10, 2025 at 06:35:12PM +0200, Jens Remus wrote:
-> Most architectures define their CFA as the value of the stack pointer
-> (SP) at the call site in the previous frame, as suggested by the DWARF
-> standard:
+
+On Wed, 16 Jul 2025 22:30:59 +0300, Cosmin Tanislav wrote:
+> The MAX9296A deserializer converts single or dual serial inputs to MIPI
+> CSI-2 outputs. The GMSL2 links operate at a fixed rate of 3Gbps or 6Gbps
+> in the forward direction and 187.5Mbps in the reverse direction.
+> In GMSL1 mode, each serial link can be paired with 3.12Gbps or 1.5Gbps
+> GMSL1 serializers or operate up to 4.5Gbps with GMSL2 serializers with
+> GMSL1 backward compatibility. The MAX9296A supports mixed GMSL2 and
+> GMSL1 links. The serial inputs operate independently, allowing videos
+> with different timings and resolutions to be received on each input.
 > 
->   CFA = <SP at call site>
+> MAX96716A supports both tunnel and pixel mode.
+> MAX96792A supports both tunnel and pixel mode, and has two GMSL3 links.
 > 
-> Enable unwinding of user space for architectures, such as s390, which
-> define their CFA as the value of the SP at the call site in the previous
-> frame with an offset:
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/media/i2c/maxim,max9296a.yaml    | 242 ++++++++++++++++++
+>  MAINTAINERS                                   |   6 +
+>  2 files changed, 248 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9296a.yaml
 > 
->   CFA = <SP at call site> + offset
 
-This is a bit confusing, as the comment and code define it as
+My bot found errors running 'make dt_binding_check' on your patch:
 
-    SP = CFA + offset
+yamllint warnings/errors:
 
-Should the commit log be updated to match that?
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max9296a.example.dtb: serializer@40 (maxim,max96717): compatible: 'oneOf' conditional failed, one must be fixed:
+	['maxim,max96717'] is too short
+	'maxim,max96717' is not one of ['maxim,max9295a', 'maxim,max96717f']
+	from schema $id: http://devicetree.org/schemas/media/i2c/maxim,max96717.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max9296a.example.dtb: serializer@40 (maxim,max96717): compatible: 'oneOf' conditional failed, one must be fixed:
+	['maxim,max96717'] is too short
+	'maxim,max96717' is not one of ['maxim,max9295a', 'maxim,max96717f']
+	from schema $id: http://devicetree.org/schemas/media/i2c/maxim,max96717.yaml#
 
-> +++ b/arch/x86/include/asm/unwind_user.h
-> @@ -8,6 +8,7 @@
->  	.cfa_off	= (s32)sizeof(long) *  2,				\
->  	.ra_off		= (s32)sizeof(long) * -1,				\
->  	.fp_off		= (s32)sizeof(long) * -2,				\
-> +	.sp_val_off	= (s32)0,						\
+doc reference errors (make refcheckdocs):
 
-IIUC, this is similar to ra_off and fp_off in that its an offset from
-the CFA.  Can we call it "sp_off"?
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250716193111.942217-15-demonsingur@gmail.com
 
--- 
-Josh
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
