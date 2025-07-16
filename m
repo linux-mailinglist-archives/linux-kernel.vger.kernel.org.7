@@ -1,117 +1,147 @@
-Return-Path: <linux-kernel+bounces-733554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9FBB0762B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:50:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E49CB0762F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A42D416D2E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:50:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580913BB48C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865032F3C34;
-	Wed, 16 Jul 2025 12:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286A12F4317;
+	Wed, 16 Jul 2025 12:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6y/kIIc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Es7KLKRN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC85DDAD;
-	Wed, 16 Jul 2025 12:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8216C170826;
+	Wed, 16 Jul 2025 12:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752670221; cv=none; b=KdDUT68vghq/EAOF/G8cuPLMuPNJJspfhJaKQ/Lp0jBXOzkn77lfTDW69vi9ahJM2XCNDRiEgoWkypdjFCMBQtqZYZ/w9GQIarDj30IbJhQpyTS8YrHYQ3gSbIWS50D7+eOfRSRl87XFjnQy5Fjo/EgoTJo6vtIsZNGzcUQ+csM=
+	t=1752670230; cv=none; b=lqAqUkBhX04uQRpCfSImCTLTWP9dRbHdgA07TTWRS7RTd64o19Kj0Bx41k+DyjJpVIRr3B7pgyIRav7eYMP7lGG400wLtCOsm5P3qqJY4LaXwTsQBawE7xLxR/41FVP91CLvCGHt7gSMtv0fHMX9npbzB5Jzk//QZ8GjYJqLx4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752670221; c=relaxed/simple;
-	bh=4HH/7+uv1zqsTl9WSybY+wX55rpatVs4WGpQNqy2vsQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pBWsDdlH0Z7F8r0cpBWeNkkfbUhPtKPfdBcYIncPIIzvwgbT7V5mTE9rKRF7sqMOzUIZ8FmO6BZDxQEFDCP5pr3MqIpA1moe96bEM1QEU2vZ8v1sELOOjUKoGEJUltREFnnORfNCMAz8RnmnR4cSxOOxS3T6mCGwWsVIc9q6udg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6y/kIIc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A5CC4CEF0;
-	Wed, 16 Jul 2025 12:50:14 +0000 (UTC)
+	s=arc-20240116; t=1752670230; c=relaxed/simple;
+	bh=PbBIYKj8a/DhaiHCqQ0+OmhTdUwsQip8rGJvIcX1TpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bJ92pM2gbqr9zjh2Cy772WP0Y43hg80AADIZi5p2bjbw5niUMhjPPbQiEk044IpG07ZT3Ixz9c600uEJSWO3aDTF9ljQFaEU0QTi0hKjW9Bn9VF9dvyv0iCxaNfhRxn+YAZvy/4oshkcSBhSXVEcvx2PAt2BTm4a5iogu83J+gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Es7KLKRN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03F0C4CEF0;
+	Wed, 16 Jul 2025 12:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752670219;
-	bh=4HH/7+uv1zqsTl9WSybY+wX55rpatVs4WGpQNqy2vsQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S6y/kIIcjzK27Af//4JSBguOBglPSEovxHsYtB/8Wa8TcuG+tibQdWs4tKJhf9aOP
-	 QAhWvPID1sjc5OU2mMQb9ACaCNT5IdeOBz5k0wIeJAO/T9r4uexndr8qUP8MEEbi3c
-	 dTe/qm0ra4rVRBYhIHD27AIpyq4/UZP6a6a7eIqXxCbDBJY5X6QD8wu6Fyo0w5jff+
-	 N1TvHvPZt9X0nkpkjjZ/MZvJhZ7/uOfEIXdbsbVfM66dJO9/no+J46LR2mtkQUnF1Z
-	 5qQHUbsfXPgi0iUgQvHyGRr3hOr2igv2RsgHFDmA6AC+6L/QCLt+6CzcP5oEx0xWVl
-	 MwkenhVuOckEw==
-From: Christian Brauner <brauner@kernel.org>
-To: =?UTF-8?q?=E9=99=88=E6=B6=9B=E6=B6=9B=20Taotao=20Chen?= <chentaotao@didiglobal.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chentao325@qq.com,
-	frank.li@vivo.com,
-	kernel test robot <lkp@intel.com>,
-	tytso@mit.edu,
-	hch@infradead.org,
-	adilger.kernel@dilger.ca,
-	willy@infradead.org,
-	jani.nikula@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	tursulin@ursulin.net,
-	airlied@gmail.com
-Subject: Re: [PATCH v6 0/5] fs: refactor write_begin/write_end and add ext4 IOCB_DONTCACHE support
-Date: Wed, 16 Jul 2025 14:50:04 +0200
-Message-ID: <20250716-reinigen-kleiden-c6bca9969819@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250716093559.217344-1-chentaotao@didiglobal.com>
-References: <20250716093559.217344-1-chentaotao@didiglobal.com>
+	s=k20201202; t=1752670230;
+	bh=PbBIYKj8a/DhaiHCqQ0+OmhTdUwsQip8rGJvIcX1TpI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Es7KLKRNP2SKOx0Ri4M994NG+tynvzW1d+7SwEfzYzSZoq+V4OAy/+oX15BBNlZ5d
+	 yJz/vbVxZLi+w99DAPZUX6NuLfnsvR3x4l8E3zKn2Sa5tYaoHJddimLDs1L03UXfg/
+	 7J5HofYlNMtND7M296kuLs/Bze4OKA3ogXD7dqGf/vise6f++any8r5UhGVXsNY53L
+	 Y2+RW5vf18zXVlzpogliFFent0DVWcz5MLU8n+vUdE1tyklFDOKGXY74S5TKaPdqRd
+	 nic2gUlE2k5dzLq/JQNfMP+SueV0cbfmydFOlQfwl02Dg4Y1DyRr1c3dgAXFy42JV+
+	 o8d+4HMT5feTw==
+Date: Wed, 16 Jul 2025 13:50:22 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andy Lutomirski <luto@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+	Richard Cochran <richardcochran@gmail.com>,
+	Christopher Hall <christopher.s.hall@intel.com>,
+	Miroslav Lichvar <mlichvar@redhat.com>,
+	Werner Abt <werner.abt@meinberg-usa.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Kurt Kanzenbach <kurt@linutronix.de>,
+	Nam Cao <namcao@linutronix.de>, Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH 06/14] vdso/gettimeofday: Return bool from
+ clock_gettime() helpers
+Message-ID: <3a9504d1-2c6a-459a-a98e-3010d34b546c@sirena.org.uk>
+References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
+ <20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
+ <02bcd954-5323-4663-a766-f53c67c5a18f@samsung.com>
+ <CGME20250708154921eucas1p1fd8fa4374610a991ca5c67bd612ca0c2@eucas1p1.samsung.com>
+ <e8c6b9a7-eaa6-4947-98e1-9d6fecc958d4@samsung.com>
+ <20250709092958-37148883-ed89-40fe-8cd5-ded5dd60957e@linutronix.de>
+ <eb5feef3-0a7d-438c-9dbb-00d1d72fad66@samsung.com>
+ <6bee5ae0-2a9e-4793-a5bd-9e6c72b03f27@sirena.org.uk>
+ <20250716142933-41089f40-0628-4821-83a3-fddbd4c4f9bf@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1628; i=brauner@kernel.org; h=from:subject:message-id; bh=4HH/7+uv1zqsTl9WSybY+wX55rpatVs4WGpQNqy2vsQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSUL2DOebyEZcbbPEnRU9cm911muHQr7+ucJ9+yLqz92 xGumRJk2FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRDycY/hmy+tt+KF+b9IEz adGmKavzZK0ZP8zxW8RVWh8v7Gz5DKjCrHI2G9c7vWotdr9Yn+LdOyvn+O/Pcz7jwmwRuVzK3ZU HAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x0KSMljrFH4DixiE"
+Content-Disposition: inline
+In-Reply-To: <20250716142933-41089f40-0628-4821-83a3-fddbd4c4f9bf@linutronix.de>
+X-Cookie: osteopornosis:
 
-On Wed, 16 Jul 2025 09:36:01 +0000, 陈涛涛 Taotao Chen wrote:
-> From: Taotao Chen <chentaotao@didiglobal.com>
-> 
-> This patch series refactors the address_space_operations write_begin()
-> and write_end() callbacks to take const struct kiocb * as their first
-> argument, allowing IOCB flags such as IOCB_DONTCACHE to propagate to the
-> filesystem's buffered I/O path.
-> 
-> [...]
 
-Applied to the vfs-6.17.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.misc branch should appear in linux-next soon.
+--x0KSMljrFH4DixiE
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+On Wed, Jul 16, 2025 at 02:34:52PM +0200, Thomas Wei=DFschuh wrote:
+> On Wed, Jul 16, 2025 at 01:25:06PM +0100, Mark Brown wrote:
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+> > This issue has been present in -next for a week and is causing a bunch
+> > of disruption to tests that end up relying on the vDSO - do we have any
+> > news on getting a fix merged?  Perhaps it makes sense for Marek to just
+> > send his patch so that it's there if needed?
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+> That fix has been in -next since next-20250710.
+> If you still have issues, I'll take a look.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.misc
+Ah, sorry - I'd not seen followup mails in the thread and was still
+seeing issues that appeared at the same time that had previously
+bisected here.  One is:
 
-[1/5] drm/i915: Use kernel_write() in shmem object create
-      https://git.kernel.org/vfs/vfs/c/e7b840fd4956
-[2/5] drm/i915: Refactor shmem_pwrite() to use kiocb and write_iter
-      https://git.kernel.org/vfs/vfs/c/048832a3f400
-[3/5] fs: change write_begin/write_end interface to take struct kiocb *
-      https://git.kernel.org/vfs/vfs/c/e9d8e2bf2320
-[4/5] mm/pagemap: add write_begin_get_folio() helper function
-      https://git.kernel.org/vfs/vfs/c/b799474b9aeb
-[5/5] ext4: support uncached buffered I/O
-      https://git.kernel.org/vfs/vfs/c/ae21c0c0ac56
+| INFO: Generating a skipfile based on /lava-4170058/1/tests/6_kselftest-de=
+v-errlogs/automated/linux/kselftest/skipfile-lkft.yaml
+| fatal error: nanotime returning zero
+| goroutine 1 [running, locked to thread]:
+| runtime.throw(0x132d83, 0x17)
+| 	/usr/lib/golang/src/runtime/panic.go:774 +0x5c fp=3D0x42c7a4 sp=3D0x42c7=
+90 pc=3D0x3b740
+| runtime.main()
+| 	/usr/lib/golang/src/runtime/proc.go:152 +0x350 fp=3D0x42c7e4 sp=3D0x42c7=
+a4 pc=3D0x3d308
+|A runtime.goexit()
+| 	/usr/lib/golang/src/runtime/asm_arm.s:868 +0x4 fp=3D0x42c7e4 sp=3D0x42c7=
+e4 pc=3D0x645dc
+| ERROR: skipgen failed to generate a skipfile: 2
+
+I'll just kick of a clean bisect for that and see what it comes up with.
+
+Full log:
+
+  https://validation.linaro.org/scheduler/job/4170058#L2215
+
+--x0KSMljrFH4DixiE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh3oA4ACgkQJNaLcl1U
+h9DwZwf9E3TvH0p7biRSX/IC0rBSEc74B1Z8w9/tFm7w3pkwqx9Bi9cbfN7bl95N
+XOCtYoDsnXINhVSynYuPURgHY6hKbntS4r4UaS1e3+3Z+TTgjfbvvDp/3s3Aj0tO
+bdu/c6Ip8Zy22FmmcZJKm1PoPwDG0OZrl0dgCBy1xCKCj0jkxRsiu+0q+oAxDHl9
+8K0V7oUITUtblhOVc4ADk3ESHRXuNBhPqRBGFS4E0CgVunCpOdND1T1jg2AqLDad
+3hVOXuoe1FcKXPd9+6Cvq5bQYEZtALZDoWl/Re4gVc0c2N4CVyzPei/29w00gBO8
+3TKIiTL2tMB/0gkgpIGv2gqsHILS4A==
+=NGo9
+-----END PGP SIGNATURE-----
+
+--x0KSMljrFH4DixiE--
 
