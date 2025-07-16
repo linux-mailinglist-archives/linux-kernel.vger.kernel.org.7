@@ -1,155 +1,91 @@
-Return-Path: <linux-kernel+bounces-732876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A957B06D25
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:22:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281C3B06D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CEAB1AA74E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:22:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8AC67AA7D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF817264FBB;
-	Wed, 16 Jul 2025 05:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xQ7J8GsO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NpQOPaeh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05777279918;
+	Wed, 16 Jul 2025 05:22:28 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBEF86348;
-	Wed, 16 Jul 2025 05:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDC9221FB1;
+	Wed, 16 Jul 2025 05:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752643326; cv=none; b=QTo7ccBy3SSmLX4ojsBz2jn66VaDiMQNnDcba/ZyJpMTEWtelPbn2SV11RNXllrjHsVkxjMwYQrKCgJOkCMKutA55vCV3Sbu07od6EzXddUdJiJWVOPcY7TQDDNxhm4zn+tNZ2gVWs23Hcj7CZbrWWDSnggg0Mbmsr9hRZ1ac48=
+	t=1752643347; cv=none; b=Eij9BihHMx+erXV1D+wGvJa59v5j4yeisKvGNBk0MOuC42Zpbq9ue/eN1uiJqm2Yj58lgyPtiWTISoMUk447ZbXJG0Mps63fLkNjw8lTUnn1q1qYJyai50sesJjDgTf+V5hBUmlUCXFH5lUfNyj6vKlEqQ3mCVX/JXiUV2eu9RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752643326; c=relaxed/simple;
-	bh=80fX+2gJUg3sVb3cwSeiDFCJSI0vRWZBzqVV+Z9QDGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ii1ONze1FyZ2wPUrgRwKo08qvtmvvDI9OkO9fRNkpUHVpiGF55zOJ5xjnIt9sxWXojAExjvcaW1z2E/fbYTCRiky+/5bqV1npmUjjwupysSCYgJbZQ4ei+fyuFg8if9WjN9SharF2yGv1w2PIRo0nAG6iidgL73rxU7mBIfjvCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xQ7J8GsO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NpQOPaeh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 07:22:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752643322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fy7sKnvvB0KBmla1/2OFjJaDVvyUk0O3ZtxVvNDnqCk=;
-	b=xQ7J8GsOMmCoSH5LSDGug2T6VMkcvNPbkUChYYv7kE9W9F+n9ft1unWcjK8sTZHXNkDpSp
-	lB//syvofrW636Wf2NzRa3ZquNyad3nCf+V34HdyQikk6bjDSBkKuCSDH/mo9DG2yoewYz
-	MTXFpy5+hfq8DIB3CNSrPKv7CbDhAR9n0BZ+mEKOWoKUhb11TtcVerbLuo1IFERpNpVTEH
-	LIqKXr7mwesLh4ETvvqkBpaOy37c5udy4y890D00C+YT2rNp+gYvAnfJHCW3u34oXNBGgy
-	QoY/cqYLaLGJim6t8Fj5m3aavJaWXJt5ddb+ayM6b+G1QPyk9mH1CjonbTst2w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752643322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fy7sKnvvB0KBmla1/2OFjJaDVvyUk0O3ZtxVvNDnqCk=;
-	b=NpQOPaehKpuyFMVDwJrAcPAvlyvRHQzbChaBR+mcYdgi2dEq3PHwCHwVN0zfE599tJdVym
-	iUrUzkXKLqnhQMDg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Matthew Wood <thepacketgeek@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH pci-next v2 1/1] PCI/sysfs: Expose PCIe device serial
- number
-Message-ID: <20250716071618-b6d697c0-76e0-42f9-9937-7ba89e1792cc@linutronix.de>
-References: <20250716045323.456863-1-thepacketgeek@gmail.com>
- <20250716045323.456863-2-thepacketgeek@gmail.com>
+	s=arc-20240116; t=1752643347; c=relaxed/simple;
+	bh=3uv1zx3kclCGkKtEHzbYC3eiKbUpQOH1Ffju3cC8Zgw=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=jpjqpJyIIKTEa0RTfMkg6rHYjBjG+/eZIT6DxEejuiPbQW0B5HdEVfcAWE5ngR7tcXSej9xyfxY5iXtSmGVPgw41GUs8qGgIebJaqoEQSYlLlD4IOQEtOAq3sV8qac7CyviWcg3UJ5OdYKWCtWOrMQaTTCQPfeh4XK8tiIFyVTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1ubuay-002BJl-RX;
+	Wed, 16 Jul 2025 05:22:22 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716045323.456863-2-thepacketgeek@gmail.com>
+From: "NeilBrown" <neil@brown.name>
+To: "Namjae Jeon" <linkinjeon@kernel.org>, "Steve French" <smfrench@gmail.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Tom Talpey" <tom@talpey.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] smb/server: various clean-ups
+In-reply-to: <20250608234108.30250-1-neil@brown.name>
+References: <20250608234108.30250-1-neil@brown.name>
+Date: Wed, 16 Jul 2025 15:22:22 +1000
+Message-id: <175264334224.2234665.14956053645355864817@noble.neil.brown.name>
 
-On Tue, Jul 15, 2025 at 09:53:22PM -0700, Matthew Wood wrote:
-> Add a single sysfs read-only interface for reading PCIe device serial
-> numbers from userspace in a programmatic way. This device attribute
-> uses the same hexadecimal 1-byte dashed formatting as lspci serial number
-> capability output. If a device doesn't support the serial number
-> capability, the device_serial_number sysfs attribute will not be visible.
+
+Hi,
+ did anyone have a chance to look at these - no replies and they don't
+ appear in linux-next ??
+
+Thanks,
+NeilBrown
+ 
+
+On Mon, 09 Jun 2025, NeilBrown wrote:
+> I am working towards making some changes to how locking is managed for
+> directory operations.  Prior to attempting to land these changes I am
+> reviewing code that requests directory operations and cleaning up things
+> that might cause me problems later.
 > 
-> Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
-> ---
->  drivers/pci/pci-sysfs.c | 23 ++++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
+> These 4 patches are the result of my review of smb/server.  Note that
+> patch 3 fixes what appears to be a real deadlock that should be trivial
+> to hit if the client can actually set the flag which, as mentioned in
+> the patch, can trigger the deadlock.
 > 
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 268c69daa4d5..d59756bc91c9 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RO(current_link_width);
->  
-> +static ssize_t device_serial_number_show(struct device *dev,
-> +				       struct device_attribute *attr, char *buf)
-> +{
-> +	struct pci_dev *pci_dev = to_pci_dev(dev);
-> +	u64 dsn;
-> +
-> +	dsn = pci_get_dsn(pci_dev);
-> +	if (!dsn)
-> +		return -EINVAL;
-
--EIO
-
-> +
-> +	return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx\n",
-> +		dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >> 32) & 0xff,
-> +		(dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff, dsn & 0xff);
-> +}
-> +static DEVICE_ATTR_RO(device_serial_number);
-> +
->  static ssize_t secondary_bus_number_show(struct device *dev,
->  					 struct device_attribute *attr,
->  					 char *buf)
-> @@ -660,6 +676,7 @@ static struct attribute *pcie_dev_attrs[] = {
->  	&dev_attr_current_link_width.attr,
->  	&dev_attr_max_link_width.attr,
->  	&dev_attr_max_link_speed.attr,
-> +	&dev_attr_device_serial_number.attr,
->  	NULL,
->  };
->  
-> @@ -1749,8 +1766,12 @@ static umode_t pcie_dev_attrs_are_visible(struct kobject *kobj,
->  	struct device *dev = kobj_to_dev(kobj);
->  	struct pci_dev *pdev = to_pci_dev(dev);
->  
-> -	if (pci_is_pcie(pdev))
-> +	if (pci_is_pcie(pdev)) {
-> +		if (strncmp(a->name, "device_serial_number", 20) == 0 &&
-
-Compare to the real 'struct attribute *' instead of the name.
-You could restructure this a bit to be easier to read.
-
-if (!pci_is_pcie(pdev))
-	return 0;
-
-if (a == &dev_addr_device_serial_number.attr && !pci_get_dns(pdev))
-	return 0;
-
-return a->mode;
-
-> +			!pci_get_dsn(pdev))
-> +			return 0;
->  		return a->mode;
-> +	}
-
-Also should have some docs in Documentation/ABI/testing/sysfs-bus-pci.
-
->  
->  	return 0;
->  }
-> -- 
-> 2.50.0
+> Patch 1 is trivial but the others deserve careful review by someone who
+> knows the code.  I think they are correct, but I've been wrong before.
 > 
+> Thanks,
+> NeilBrown
+> 
+>  [PATCH 1/4] smb/server: use lookup_one_unlocked()
+>  [PATCH 2/4] smb/server: simplify ksmbd_vfs_kern_path_locked()
+>  [PATCH 3/4] smb/server: avoid deadlock when linking with
+>  [PATCH 4/4] smb/server: add ksmbd_vfs_kern_path()
+> 
+> 
+
 
