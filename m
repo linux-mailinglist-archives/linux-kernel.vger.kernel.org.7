@@ -1,125 +1,97 @@
-Return-Path: <linux-kernel+bounces-734118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FBDB07D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:00:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4118B07D48
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 810097B88F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DAE61C2321D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2F62BD5A8;
-	Wed, 16 Jul 2025 19:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2535429B778;
+	Wed, 16 Jul 2025 18:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ES2aZlZX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZziudMxs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D13262FE4;
-	Wed, 16 Jul 2025 19:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824621531E8;
+	Wed, 16 Jul 2025 18:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752692406; cv=none; b=dpHDSta4jiog1PlDpenKDSOHeNeQG6gRPkVRdZKnWPYlZmvT4vJFHHuQbQZAQzMub1wrV2BjnBFN43K76yCBC0p4gV4/thNepK0zq5fVeS/mfqmQLFlic1ofPkiyD24i1WaIGsw0YpOUddvQaErsGFaTWUjJX+s5ufpV13tuAsU=
+	t=1752692386; cv=none; b=JS3fhp8gJFHm4WG4tjMr251f8f6KlSlYG3W2BEAbtEzR+XdsWqdfLFgz6rG+rjxsvF8LYHpdBwWOe/0TFQKX9QLeah0VEu/YEze+PEX0BJxtHPLKhnOBQThXW0/b4zZNo29YgJZTfuqXstn0MplduKVCBnNVE3HNVvlgFXbZYl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752692406; c=relaxed/simple;
-	bh=p2+4mqzxD3sDrSRSR0HQQ+5Xty+gSI5dRJC0NlwYk18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JSat83lbC8vCoS5cUOFR2ZDf0WIGGiifLg+qpVtSkoK1lfmrxnsmaeS5Bvz+HcXP+Herplk/glkMbtVp/r+J/TMPYSkMyTK5yv2uc4lZt39lcGg7n0uwpoY8nbiIamJoYSKckbjgjjXLtSF0Znp+YNjgQzQ5T4+HLZkiWQfF0bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ES2aZlZX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA0DFC4CEE7;
-	Wed, 16 Jul 2025 19:00:03 +0000 (UTC)
+	s=arc-20240116; t=1752692386; c=relaxed/simple;
+	bh=ilzWyNdx0uAC4CcFaoFtUw8gBdcNq+o4lK/ViNQhbbM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=oXNnWMZRWRk8Ks26pwi6aq9Z4CdUVo9Z2hvjeCeNGDdJQAN2tscYwC4bYmiU2HdmJ2Gdjx3coUr91fMavLcUrjZo+U3qsjToCFHmXkbBwIkWbzuOKw/ryUuHGbLtVzuYf3I4iYKMdv47HYYkHXhC53pSZRDBuUoIr7wGGXGGi0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZziudMxs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32915C4CEF1;
+	Wed, 16 Jul 2025 18:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752692406;
-	bh=p2+4mqzxD3sDrSRSR0HQQ+5Xty+gSI5dRJC0NlwYk18=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ES2aZlZXOdejVK3HMuuPryg8FNHMpK7gBm4VfINlG1DO0gn157INFfhfIB5Yzz7NK
-	 GFV58NkaQLccxWfFs3UmhtRn3OZvRWkM2kqEKhoQfTxs2F4ZwqHhtpllOb0v0zlG6k
-	 yPjIZq6xpYtX1aZNIdHmpH0wzCYb9F52ep/t72T0a3GWcm22jPXLZFZw2JqSThASQF
-	 i8u1/OGekD5+xJc50GG2iVqIfgvyliSX6d3DwDUdDHXuzcPJaIPnUSg0/M3QEBu3GN
-	 4kV7921M8D1K/FgSymJHzgLCJcAoCVJhVQd23ak++ET8Hht0jbmczQg6aCnFakFLhL
-	 MW4c47ovoG8Hw==
-Date: Wed, 16 Jul 2025 20:00:01 +0100
-From: Simon Horman <horms@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: netdev@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jeffrey Altman <jaltman@auristor.com>,
-	"Junvyyang, Tencent Zhuque Lab" <zhuque@tencent.com>,
-	LePremierHomme <kwqcheii@proton.me>, stable@vger.kernel.org
-Subject: Re: [PATCH net 3/5] rxrpc: Fix notification vs call-release vs
- recvmsg
-Message-ID: <20250716190001.GR721198@horms.kernel.org>
-References: <20250716115307.3572606-1-dhowells@redhat.com>
- <20250716115307.3572606-4-dhowells@redhat.com>
+	s=k20201202; t=1752692386;
+	bh=ilzWyNdx0uAC4CcFaoFtUw8gBdcNq+o4lK/ViNQhbbM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ZziudMxsAkJWGlfAWbzrffeyAvgzcP4nYqLzqg0/BVPS0/cuEj1tyt61UAjWaJXhr
+	 9rMBCuAqorOssJxL3vH/GVXGCB5PBGKqPlS2R1hz3VunWIqq5BKUkq3c/Sw4Td1MPY
+	 41LM0fGlgjH1jd2Zv4kDiMvfcQS3MbDj6KPeo8vlFH0/Q1Gil4h4qZuatJG6CELjlQ
+	 +eU5xc0kzv3Bi91AzwemPggNdcrXmGhuAzvUv9qeGgUxu/6OFW9P8wwDciwNkF5jSP
+	 y+cl9L+04m5Cu24Qt045D+6rCW4We5KOZbdBxeqdZTPsKF3EelJUMNR4I3jJJl232X
+	 sQ1W5Af70KUMw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCD5383BA33;
+	Wed, 16 Jul 2025 19:00:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716115307.3572606-4-dhowells@redhat.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 0/2] Bluetooth: btusb: Sort WCN6855 device IDs and add one
+ more ID
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <175269240650.1291922.1087894854405140890.git-patchwork-notify@kernel.org>
+Date: Wed, 16 Jul 2025 19:00:06 +0000
+References: <20250715-q_newid-v1-0-8a1120c61fc9@oss.qualcomm.com>
+In-Reply-To: <20250715-q_newid-v1-0-8a1120c61fc9@oss.qualcomm.com>
+To: Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, zijun_hu@icloud.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Zijun.Hu@oss.qualcomm.com
 
-On Wed, Jul 16, 2025 at 12:53:02PM +0100, David Howells wrote:
-> When a call is released, rxrpc takes the spinlock and removes it from
-> ->recvmsg_q in an effort to prevent racing recvmsg() invocations from
-> seeing the same call.  Now, rxrpc_recvmsg() only takes the spinlock when
-> actually removing a call from the queue; it doesn't, however, take it in
-> the lead up to that when it checks to see if the queue is empty.  It *does*
-> hold the socket lock, which prevents a recvmsg/recvmsg race - but this
-> doesn't prevent sendmsg from ending the call because sendmsg() drops the
-> socket lock and relies on the call->user_mutex.
+Hello:
+
+This series was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+
+On Tue, 15 Jul 2025 07:27:06 -0700 you wrote:
+> This patch series is to:
+> 1) Sort WCN6855 device IDs by VID and PID
+> 2) Add one more WCN6855 device ID
 > 
-> Fix this by firstly removing the bit in rxrpc_release_call() that dequeues
-> the released call and, instead, rely on recvmsg() to simply discard
-> released calls (done in a preceding fix).
+> Signed-off-by: Zijun Hu <Zijun.Hu@oss.qualcomm.com>
+> ---
+> Zijun Hu (2):
+>       Bluetooth: btusb: Sort WCN6855 device IDs by VID and PID
+>       Bluetooth: btusb: Add one more ID 0x28de:0x1401 for Qualcomm WCN6855
 > 
-> Secondly, rxrpc_notify_socket() is abandoned if the call is already marked
-> as released rather than trying to be clever by setting both pointers in
-> call->recvmsg_link to NULL to trick list_empty().  This isn't perfect and
-> can still race, resulting in a released call on the queue, but recvmsg()
-> will now clean that up.
-> 
-> Fixes: 17926a79320a ("[AF_RXRPC]: Provide secure RxRPC sockets for use by userspace and kernel both")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
+> [...]
 
-...
+Here is the summary with links:
+  - [1/2] Bluetooth: btusb: Sort WCN6855 device IDs by VID and PID
+    https://git.kernel.org/bluetooth/bluetooth-next/c/108c86fadc41
+  - [2/2] Bluetooth: btusb: Add one more ID 0x28de:0x1401 for Qualcomm WCN6855
+    https://git.kernel.org/bluetooth/bluetooth-next/c/315fda1e9eb0
 
-> diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
-
-...
-
-> @@ -638,6 +628,12 @@ void rxrpc_release_calls_on_socket(struct rxrpc_sock *rx)
->  		rxrpc_put_call(call, rxrpc_call_put_release_sock);
->  	}
->  
-> +	while ((call = list_first_entry_or_null(&rx->recvmsg_q,
-> +						struct rxrpc_call, recvmsg_link))) {
-> +		list_del_init(&call->recvmsg_link);
-> +		rxrpc_put_call(call, rxrpc_call_put_release_recvmsg_q);
-> +	}
-> +
->  	_leave("");
->  }
->  
-
-Hi David,
-
-I believe it is addressed in patch 5/5.
-But unfortunately this change breaks bisection.
-
-  .../call_object.c:634:24: error: use of undeclared identifier 'rxrpc_call_put_release_recvmsg_q'
-    634 |                 rxrpc_put_call(call, rxrpc_call_put_release_recvmsg_q);
-        |                                      ^
-
+You are awesome, thank you!
 -- 
-pw-bot: changes-requested
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
