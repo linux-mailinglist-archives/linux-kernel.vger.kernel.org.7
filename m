@@ -1,119 +1,290 @@
-Return-Path: <linux-kernel+bounces-733669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16F1B0779E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:08:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16EA1B077A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEDBA41370
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:07:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1FDD1C21A60
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7CB21C19E;
-	Wed, 16 Jul 2025 14:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F291621CA08;
+	Wed, 16 Jul 2025 14:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JH8YeOwD"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syE+r3sV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D847721C19A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3263621C16A;
+	Wed, 16 Jul 2025 14:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752674874; cv=none; b=VhcGmOYYSgp6EKtT/FGb+xVbAKFLrnfseowGfcnZnZScsdIfrz/Iu2ZGZTspoEeYZsdjo51Pc0VpoAHwAaw3ZYXWm8KF7X+CMvz5CYOL7+NQpOVqReF/IsIDt3wztZ4JY0Q9CloqppfKlMl+A1309SSuvO9XRa0+rxk5WRz8SLE=
+	t=1752674960; cv=none; b=P2lOdp9CBJruPEvtPw6BbegKjjmafw+4fJh1LU8lRmVBnqjGn9hp5skZlBhZPniZJ3xOskRF7mrSZMQDVdrS0MlDYzWu06OQSp2tqJwgFhMzxDBS29X5dqtdnv9UnSqA/Zl7Z2OxknSX5UHFp+SEI4JWgPfDwl59Vl1xwrkspkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752674874; c=relaxed/simple;
-	bh=xnppXDW+/D4BUUfT+nmUqzxni9FLNf119+Kee7lDjQY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VRZGtic6pXkMAvb/OgDLWoJyXJwo9iJeUe/91uzYg2i1eD1yovmncwXR0RmJ2l/bdN+Jzf1ydnhj07ZWs0cyRnE8Fn1GXX59IsuO5HaDfWPKfh0QCVaOwuDOjoPVCFr3Zs9v8HzFnGDtYL+P/hPUDBcFudIeB4Gq82wdK/WhvuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JH8YeOwD; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3138e64b3f1so9869652a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:07:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752674872; x=1753279672; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zTkHFe90gJMMisypW9Kk07LFR5ck7ZI/4vCfu7qJlUI=;
-        b=JH8YeOwD7Kbd6Q63SXat3adOBXFJdhJzWXDh0aQkobSuxhPCUNne8EdKXbzImZMBnR
-         UiMfqSe/yeuA0bE4An6JoNAriXnowF0dGHEgMInUNEms3Oj+QRPbin6/r+4Bag6utQPH
-         khCjzIf3J36LDv0UksybZ6JhqhBMUYBBq6rodbjCLfnavJhi+lFlL4jeGiasAQ4wOjui
-         w0UNnWudubYtcutktOIqCdrIY/fkdOC1ZffxuR6l1BOmvxXG6Sx2mMfgj2aup8E1Cs+A
-         VAlD6i4cavK1sEiqkzrKIAey99T52lEAY6/KoL5he8lAoEk+wy6smESZnR24PNFXHbLG
-         +e8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752674872; x=1753279672;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zTkHFe90gJMMisypW9Kk07LFR5ck7ZI/4vCfu7qJlUI=;
-        b=CkMrqGLi5x/m/0wrR0JD02k9CrFakZ7Pi9JiQMxjrPaFg/IK6yOzcaZiKiQmKasVyw
-         Ufn3/6CP+TNeUozZj1aRtDZrBRllMbR9nr6+WCwbFO4glMLjvsbcom2Qj5qHbNyKZ1xM
-         HhjPHMo14dYm3XEeQxVQobXByETDZJpMnyKioK8QDpSs9aLdt8l3D4qDVejQx+MFXywK
-         pxksRAGYqjYeZZveeAdc0Yvz3SmlB78jkh3Y96S1z7L5Vtf9aot5paK0FBMcmVvcslNY
-         RezlUO+CQop7lsfds3m5EbJI1yaEHn9bxtjYgg2jgmfRRQRBgt9LgzxbclMHIj1W4K0u
-         hPGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWquAhVbMo+zA43ebKdq5eEU5+5Nllj//EDsfCbiNT7H1xpefhpz8NwYsLJZz7GUODgehnL8rH6ve5oEIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfqUxvYxaa+fObRq94xpdoi8AGXmhOxV+2E+zTgWJJeIPlzA2t
-	cI4pV8244ipe4Lw7cr7ykkRT1OTAuyUYC5Q6E5cZcLbrDMtCUvF8GyC9ZEqTei9MSvMMtsCtJpx
-	hnfO+Sg==
-X-Google-Smtp-Source: AGHT+IGH7SKkiv+dEeqsqPQ36yI4iZJKO0Glbz2Nfmg5FFOwhR41KHC8GZ7fd7PWHjk6NrfWpS+ivmnev7w=
-X-Received: from pjbqo11.prod.google.com ([2002:a17:90b:3dcb:b0:311:7d77:229f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5604:b0:31c:38f8:7efb
- with SMTP id 98e67ed59e1d1-31c9f424137mr4936137a91.18.1752674872198; Wed, 16
- Jul 2025 07:07:52 -0700 (PDT)
-Date: Wed, 16 Jul 2025 07:07:50 -0700
-In-Reply-To: <229325e8-a461-6e5c-0d32-1c36086b62f7@amd.com>
+	s=arc-20240116; t=1752674960; c=relaxed/simple;
+	bh=wRoG1SA5cQDEQUbD+BeqOCdpMvHnqL8ubHtD4uhAfmQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SKTfI1iMDTHg9JezshsePYOuIP+E9K1IPfRECy3z4dnSAbQ3QxosddOWDsUnhfT80mswzWQbKh1m5DD8gD4ikADHEK1D2AEKW408vsJ7CQ0rC9l3M4FejjmZbZ0/ROqKEo0PZEal+8bwirBsCv+L7tw1IitW5L85GzzM9nqIVPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syE+r3sV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CD1C4CEE7;
+	Wed, 16 Jul 2025 14:09:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752674959;
+	bh=wRoG1SA5cQDEQUbD+BeqOCdpMvHnqL8ubHtD4uhAfmQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=syE+r3sVJRyeMirB3BxlHoUKGdcwIn/tgwaZVLkT8lnOfgJhBmAkTn6/3dhThpqY/
+	 pd5WZjZKkrtVsOgvhFownz1juJndJ/exCDgrOCpJPDgnAHE/KgVxw3XmXNcd5i3dgw
+	 9911OS5dHqzOdZoOWuzCMroXUyeXi6HC1+YSlJ2JcIFPprQqp91eoJA6XmPyidbBZ4
+	 +of9FywlWrG7XHEbmuDMuwVQhzaMhYvqWc/NgjJWFV7msxhiooreOYP9b4v5m/7RZK
+	 Ho446m7sbjzG2HsxRqPa50J8ljrml6YgdlbGqPw7ZX68Sxl8gbDfsEWsaXjTkNLnkT
+	 I0n7oterzb2cg==
+Message-ID: <b8149d7d-65ca-47c1-9338-45a0db614e77@kernel.org>
+Date: Wed, 16 Jul 2025 16:09:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250716055315.2229037-1-nikunj@amd.com> <229325e8-a461-6e5c-0d32-1c36086b62f7@amd.com>
-Message-ID: <aHeyNvzvbgrWAob5@google.com>
-Subject: Re: [PATCH v2] x86/sev: Improve handling of writes to intercepted TSC MSRs
-From: Sean Christopherson <seanjc@google.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org, bp@alien8.de, 
-	x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, santosh.shukla@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 4/4] media: ti-vpe: Add the VIP driver
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux@armlinux.org.uk, ardb@kernel.org, ebiggers@kernel.org,
+ geert+renesas@glider.be, claudiu.beznea@tuxon.dev, bparrot@ti.com,
+ andre.draszik@linaro.org, kuninori.morimoto.gx@renesas.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, heikki.krogerus@linux.intel.com,
+ kory.maincent@bootlin.com, florian.fainelli@broadcom.com, lumag@kernel.org,
+ dale@farnsworth.org, sbellary@baylibre.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, dagriego@biglakesoftware.com,
+ u-kumar1@ti.com
+References: <20250716111912.235157-1-y-abhilashchandra@ti.com>
+ <20250716111912.235157-5-y-abhilashchandra@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250716111912.235157-5-y-abhilashchandra@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 16, 2025, Tom Lendacky wrote:
-> On 7/16/25 00:53, Nikunj A Dadhania wrote:
-> > From: Sean Christopherson <seanjc@google.com>
-> > 
-> > Currently, when a Secure TSC enabled SNP guest attempts to write to the
-> > intercepted GUEST_TSC_FREQ MSR (a read-only MSR), the guest kernel response
-> > incorrectly implies a VMM configuration error, when in fact it is the usual
-> > VMM configuration to intercept writes to read-only MSRs, unless explicitly
-> > documented.
-> > 
-> > Modify the intercepted TSC MSR #VC handling:
-> > * Write to GUEST_TSC_FREQ will generate a #GP instead of terminating the
-> >   guest
-> > * Write to MSR_IA32_TSC will generate a #GP instead of silently ignoring it
-> > 
-> > Add a WARN_ONCE to log the incident, as well-behaved SNP guest kernels
-> > should never attempt to write to these MSRs.
-> > 
-> > However, continue to terminate the guest when reading from intercepted
-> > GUEST_TSC_FREQ MSR with Secure TSC enabled, as intercepted reads indicate
-> > an improper VMM configuration for Secure TSC enabled SNP guests.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+On 16/07/2025 13:19, Yemike Abhilash Chandra wrote:
 
-Feel free to drop me as author and just give me a Reported-by or Suggested-by.
-At this point, I ain't doing a whole lot of anything for this patch :-)
+> +static int vip_probe_complete(struct platform_device *pdev)
+> +{
+> +	struct vip_shared *shared = platform_get_drvdata(pdev);
+> +	struct regmap *syscon_pol = NULL;
+> +	u32 syscon_pol_offset = 0;
+> +	struct vip_port *port;
+> +	struct vip_dev *dev;
+> +	struct device_node *parent = pdev->dev.of_node;
+> +	struct fwnode_handle *ep = NULL;
+> +	int ret, slice_id, port_id, p;
+> +
+> +	if (parent && of_property_read_bool(parent, "ti,vip-clk-polarity")) {
+> +		syscon_pol = syscon_regmap_lookup_by_phandle(parent,
+> +							     "ti,vip-clk-polarity");
+> +		if (IS_ERR(syscon_pol)) {
+> +			dev_err(&pdev->dev, "failed to get ti,vip-clk-polarity regmap\n");
+> +			return PTR_ERR(syscon_pol);
 
-> > +	if (WARN_ON_ONCE(write)) {
-> 
-> Do we want to capture individual WARNs for each MSR? I guess I'm ok with
-> a single WARN for either MSR, but just asking the question.
+Syntax is return dev_err_probe. If this is not probe path, then this has
+to be fixed.
 
-Or don't WARN at all.  If the caller is doing a bare wrmsrq(), then the kernel
-will WARN in ex_handler_msr().  If the caller is doing wrmsrq_safe(), do we care
-that they're being deliberately weird?
+> +		}
+> +
+> +		if (of_property_read_u32_index(parent, "ti,vip-clk-polarity",
+> +					       1, &syscon_pol_offset)) {
+> +			dev_err(&pdev->dev, "failed to get ti,vip-clk-polarity offset\n");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	for (p = 0; p < (VIP_NUM_PORTS * VIP_NUM_SLICES); p++) {
+> +		ep = fwnode_graph_get_next_endpoint_by_regs(of_fwnode_handle(parent),
+> +							    p, 0);
+> +		if (!ep)
+> +			continue;
+> +
+> +		switch (p) {
+> +		case 0:
+> +			slice_id = VIP_SLICE1;	port_id = VIP_PORTA;
+> +			break;
+> +		case 1:
+> +			slice_id = VIP_SLICE2;	port_id = VIP_PORTA;
+> +			break;
+> +		case 2:
+> +			slice_id = VIP_SLICE1;	port_id = VIP_PORTB;
+> +			break;
+> +		case 3:
+> +			slice_id = VIP_SLICE2;	port_id = VIP_PORTB;
+> +			break;
+> +		default:
+> +			dev_err(&pdev->dev, "Unknown port reg=<%d>\n", p);
+> +			continue;
+> +		}
+> +
+> +		ret = alloc_port(shared->devs[slice_id], port_id);
+> +		if (ret < 0)
+> +			continue;
+> +
+> +		dev = shared->devs[slice_id];
+> +		dev->syscon_pol = syscon_pol;
+> +		dev->syscon_pol_offset = syscon_pol_offset;
+> +		port = dev->ports[port_id];
+> +
+> +		vip_register_subdev_notif(port, ep);
+> +		fwnode_handle_put(ep);
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int vip_probe_slice(struct platform_device *pdev, int slice, int instance_id)
+> +{
+> +	struct vip_shared *shared = platform_get_drvdata(pdev);
+> +	struct vip_dev *dev;
+> +	struct vip_parser_data *parser;
+> +	u32 vin_id;
+> +	int ret;
+> +
+> +	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
+> +	if (!dev)
+> +		return -ENOMEM;
+> +
+> +	dev->instance_id = instance_id;
+> +	vin_id = 1 + ((dev->instance_id - 1) * 2) + slice;
+> +	snprintf(dev->name, sizeof(dev->name), "vin%d", vin_id);
+> +
+> +	dev->irq = platform_get_irq(pdev, slice);
+> +	if (dev->irq < 0)
+> +		return dev->irq;
+> +
+> +	ret = devm_request_irq(&pdev->dev, dev->irq, vip_irq,
+> +			       0, dev->name, dev);
+> +	if (ret < 0)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&dev->slock);
+> +	mutex_init(&dev->mutex);
+> +
+> +	dev->slice_id = slice;
+> +	dev->pdev = pdev;
+> +	dev->res = shared->res;
+> +	dev->base = shared->base;
+> +	dev->v4l2_dev = &shared->v4l2_dev;
+> +
+> +	dev->shared = shared;
+> +	shared->devs[slice] = dev;
+> +
+> +	vip_top_reset(dev);
+> +	vip_set_slice_path(dev, VIP_MULTI_CHANNEL_DATA_SELECT, 1);
+> +
+> +	parser = devm_kzalloc(&pdev->dev, sizeof(*dev->parser), GFP_KERNEL);
+> +	if (!parser)
+> +		return PTR_ERR(parser);
+> +
+> +	parser->res = platform_get_resource_byname(pdev,
+> +						   IORESOURCE_MEM,
+> +						   (slice == 0) ?
+> +						   "parser0" :
+> +						   "parser1");
+> +	parser->base = devm_ioremap_resource(&pdev->dev, parser->res);
+> +	if (IS_ERR(parser->base))
+> +		return PTR_ERR(parser->base);
+> +
+> +	parser->pdev = pdev;
+> +	dev->parser = parser;
+> +
+> +	dev->sc_assigned = VIP_NOT_ASSIGNED;
+> +	dev->sc = sc_create(pdev, (slice == 0) ? "sc0" : "sc1");
+> +	if (IS_ERR(dev->sc))
+> +		return PTR_ERR(dev->sc);
+> +
+> +	dev->csc_assigned = VIP_NOT_ASSIGNED;
+> +	dev->csc = csc_create(pdev, (slice == 0) ? "csc0" : "csc1");
+> +	if (IS_ERR(dev->sc))
+> +		return PTR_ERR(dev->sc);
+> +
+> +	return 0;
+> +}
+> +
+> +static int vip_probe(struct platform_device *pdev)
+> +{
+> +	struct vip_shared *shared;
+> +	struct pinctrl *pinctrl;
+> +	int ret, slice = VIP_SLICE1;
+> +	int instance_id;
+> +	u32 tmp, pid;
+> +	const char *label;
+> +
+> +	if (!of_property_read_string(pdev->dev.of_node, "label", &label)) {
+> +		if (strcmp(label, "vip1") == 0)
+> +			instance_id = 1;
+> +		else if (strcmp(label, "vip2") == 0)
+> +			instance_id = 2;
+> +		else if (strcmp(label, "vip3") == 0)
+
+
+Heh, nice try. You cannot encode instance ID as different property (and
+instance ID is not allowed, see writing bindings in next).
+
+And how does it work with label called "krzk"? Your binding said that
+"krzk" is a perfectly correct label.
+
+You need to think about such cases.
+
+
+> +			instance_id = 3;
+
+And past here you use uninitialized instance_id, because you did not
+consider "krzk".
+
+
+
+Best regards,
+Krzysztof
 
