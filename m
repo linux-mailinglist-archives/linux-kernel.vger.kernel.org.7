@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-733835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2FCB079A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:23:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A98B079BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F352D581091
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8B401C21543
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD462F5C25;
-	Wed, 16 Jul 2025 15:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566D92F5C50;
+	Wed, 16 Jul 2025 15:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXNZqmiM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbb0Vlza"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B31A2F50B1;
-	Wed, 16 Jul 2025 15:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B7528A1C8
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679285; cv=none; b=KxcMoCZgCUGEL+KR6LnQr9yShUWWpRR7DKZaV/ivEVnBpQgjcBrEmA+6rxAzczgHmPhezGrjjWg2DUm9QPoFDKhkeejqC57WEmTuj+1/7hA8WKdgo+jN2YVuPEsVtWOfi1f6xw7oJbe9kOKk5dFvYt+190rPntwlcTAiMLdP9xk=
+	t=1752679286; cv=none; b=oCnJTm3Nj3B+T73TP/JjmW2y6Ju22I90bQLNWdFECoVqXkzTUQdMSqU0SVUuPNEOXmnGV/7gbHo4CdAndc0k61VOSmMv59UWIm7bPKDmNRAc0s9Spt6F0WOWkTqLAJeKQW0wl2xcyEszTxEZj1EKDZTbv9ojar5YBUPzsp+q0Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679285; c=relaxed/simple;
-	bh=p2u05dLVtqQJ3foGrWJXooMdrDiQBdBaUfjuYdOfRI8=;
+	s=arc-20240116; t=1752679286; c=relaxed/simple;
+	bh=hArCQNpeer8Btwx6Mc8fEsoOKg5ua9BNHWdaLPcW2+A=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=VEToshdnukzeWazEVazZkVybY8YKnOi/PqTCR2fW8aV6+20nHygim318F3YmK8sS6HqUKU+zGw7Hi+lhXH0QJBFl0SxnFah+D+DACjffPdLec+G/fCM4aTZfG4w0x0S/d3UziOFBmLRbu/F5H/pP7aQ9KXo9HxPKx+HH0SoSSzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXNZqmiM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D866C4CEF0;
-	Wed, 16 Jul 2025 15:21:24 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rg/5LWZR4q2knYYJ0BLaJI25hbH5tgD8NX+Tm7TNj/ZbHsE9JST0qAI2wfhk4mmea185TgO7n6zL3MycdYKnu4DaQjUQols0h8glo9HcnsfM0EDjIcx200YbjDC25rQbQnK3QlNvF7gLEiq41rP2Rg9Z7jkCZX50GkW7E9mTDV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbb0Vlza; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0214C4CEFD;
+	Wed, 16 Jul 2025 15:21:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752679284;
-	bh=p2u05dLVtqQJ3foGrWJXooMdrDiQBdBaUfjuYdOfRI8=;
+	s=k20201202; t=1752679286;
+	bh=hArCQNpeer8Btwx6Mc8fEsoOKg5ua9BNHWdaLPcW2+A=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=GXNZqmiM3oopAWeII/q3vlE8pvrAug8t7A6wOb+mZy/DJcXF/RELXBzf30puyUdIf
-	 PEw3d7vZ5vmLIX2Xq09I4ZyXuSbI+5Pb8N8RV42b//+EXK/W3DbyLLQ0pOHTYanHAY
-	 JX92xf8rrx7lZTC1MHYEAbzX2ArWb5myVqPJ8Y5D5R4cukMaQcrRysKjKUP32iu5Et
-	 0ia8x2NEVTIQyrzRq0MEJ91tTnQFlcvFQ0p79hJ/naQEIGYFF6FVO33VJmuPXKLqVn
-	 Dk+2KGtpQmzs4PjxM/G+VrGjhCvYY+0TvMLLvdNb0bqZPI1fta3xN4Eas7KfSsVOMd
-	 atDjSa1cvJyqA==
+	b=cbb0VlzaNqARHun1kOkS7sIFQnweTvmyDsC6ESZA0opz9qSKNQy5OOkazAlll8AfM
+	 bEhmyZt1FCKz2RL1Y2UIiuf6+qaNv+3Q2TeyOM4OILXfJpY5+R+GCz3+EDVWKSsOiS
+	 bYJN+sSX7k9ujxo+4CXROgDKLzvNns+9A8F+nOKfdMb/WrrX+2BHV5xY0aUEvTltJD
+	 n2bjXKWWzBQUgxDesUGs2VZrlRzAwfxero0qliYHxe30OjtIq3B6seWxxrB7nMG5S+
+	 UdxqOVg0jyLHVEJEPBAnv1UFMohovCkB4iMdca4c3doPyqF9m1KdYVhZW9zy3c45PI
+	 IH2uAKY/kxihQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 2B757383BA33;
-	Wed, 16 Jul 2025 15:21:46 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 80873383BA33;
+	Wed, 16 Jul 2025 15:21:47 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,47 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 1/1] mm/rmap: fix potential out-of-bounds page table
- access
- during batched unmap
+Subject: Re: [PATCH] riscv: Stop considering R_RISCV_NONE as bad relocations
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <175267930477.1224517.13373842337541537594.git-patchwork-notify@kernel.org>
-Date: Wed, 16 Jul 2025 15:21:44 +0000
-References: <20250701143100.6970-1-lance.yang@linux.dev>
-In-Reply-To: <20250701143100.6970-1-lance.yang@linux.dev>
-To: Lance Yang <ioworker0@gmail.com>
-Cc: linux-riscv@lists.infradead.org, akpm@linux-foundation.org,
- david@redhat.com, 21cnbao@gmail.com, baolin.wang@linux.alibaba.com,
- chrisl@kernel.org, kasong@tencent.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com,
- ryan.roberts@arm.com, v-songbaohua@oppo.com, x86@kernel.org,
- huang.ying.caritas@gmail.com, zhengtangquan@oppo.com, riel@surriel.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, harry.yoo@oracle.com,
- mingzhe.yang@ly.com, stable@vger.kernel.org, baohua@kernel.org,
- lance.yang@linux.dev
+ <175267930621.1224517.5170044226873875267.git-patchwork-notify@kernel.org>
+Date: Wed, 16 Jul 2025 15:21:46 +0000
+References: 
+ <20250710-dev-alex-riscv_none_bad_relocs_v1-v1-1-758f2fcc6e75@rivosinc.com>
+In-Reply-To: 
+ <20250710-dev-alex-riscv_none_bad_relocs_v1-v1-1-758f2fcc6e75@rivosinc.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
-by Andrew Morton <akpm@linux-foundation.org>:
+by Palmer Dabbelt <palmer@dabbelt.com>:
 
-On Tue,  1 Jul 2025 22:31:00 +0800 you wrote:
-> From: Lance Yang <lance.yang@linux.dev>
+On Thu, 10 Jul 2025 08:34:31 +0000 you wrote:
+> Even though those relocations should not be present in the final
+> vmlinux, there are a lot of them. And since those relocations are
+> considered "bad", they flood the compilation output which may hide some
+> legitimate bad relocations.
 > 
-> As pointed out by David[1], the batched unmap logic in try_to_unmap_one()
-> may read past the end of a PTE table when a large folio's PTE mappings
-> are not fully contained within a single page table.
-> 
-> While this scenario might be rare, an issue triggerable from userspace must
-> be fixed regardless of its likelihood. This patch fixes the out-of-bounds
-> access by refactoring the logic into a new helper, folio_unmap_pte_batch().
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4,1/1] mm/rmap: fix potential out-of-bounds page table access during batched unmap
-    https://git.kernel.org/riscv/c/ddd05742b45b
+  - riscv: Stop considering R_RISCV_NONE as bad relocations
+    https://git.kernel.org/riscv/c/82d369b48a6b
 
 You are awesome, thank you!
 -- 
