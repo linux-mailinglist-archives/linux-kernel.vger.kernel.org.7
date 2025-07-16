@@ -1,180 +1,198 @@
-Return-Path: <linux-kernel+bounces-733822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8435B07966
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D2AB0796D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A740D7AFF18
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA943A4708
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079DD26D4D8;
-	Wed, 16 Jul 2025 15:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6525E2857E2;
+	Wed, 16 Jul 2025 15:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="BhZtTmb7"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Pf3Ia2LT"
+Received: from mx4.sberdevices.ru (mx5.sberdevices.ru [95.181.183.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B3914F98
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7F11DE892;
+	Wed, 16 Jul 2025 15:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.181.183.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679082; cv=none; b=ooR67D6qRRtRLfkE+XmQRkrAsJ3q7GwPkHiUNiafzCpxqxW9Cv4fwk9HCTSstIRWr4aG+7eOR3bqXw//W6mBMBJdf4K+mQgDyTZYnrCcvSskjHyoHx2ocKpgUl1RS2mJTkveeBOvnfQ4QoQYJia/b1rVkJKpsXEZrFi0vDR7g5A=
+	t=1752679177; cv=none; b=a/wgxD8fdNDj4hVm+XnNyqQUZ7SZGbF9+5AyJOWcn6l0Ai3urG5xbVBUJdUiOA8d7MuYTyIfhI7B94fBavitm3FvSYtzF3dep4wP5OLb21UQKvVxeqxJnt6LKp2WNOMNm7R1W2WgfPszIER+tu7UDVMmiGlgkTijPWtLLj1Limo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679082; c=relaxed/simple;
-	bh=UmKJT44q8B8tkOYqsIXVCEcob4pl4PUJEQSmsPyn+hk=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=VF2RK/YIeQSeytdRiAA08abTdzAR5jNmTJClgoSbucdlGemJBk5JVGS3rnA8ZoTvhadyd0OfvQeVpzZY1vUPboYUgCEimTk1r5zYgs5tZcxi9mASYg9RX9eVKg9fONDs1PbGLr+ZkAY2QLrU+G1CmIadMKDSKyP3xWKOFnHcECo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=BhZtTmb7; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so7743305a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:17:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1752679079; x=1753283879; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nIjarP2qmIxEUNr1tc1uUPfdZWXV9rUJNqLMiF74jXY=;
-        b=BhZtTmb7sjbxnXaIm6+c4QF0N91mOJroQHgF66JyOsI05onDPmp4pc7iS5Szl7qQwV
-         MEopJ5BJ7Z+jhY2NqjiyP+P950YnBunfAQUvf3SIP5b76ZIYIDVEx+4vDyjHhZtAJ3Qr
-         SnkBN3mO6ljwcPQ60U5LfKUxLNZD4Raw3Asa3WGhhI15J9m+Hwvj7D3nD7a3Vkc5I+xZ
-         Fk2cUBs+7ysWvQ1FR0tfdGpk+f0FiutZrsGJqiAcEsz6lfp9fFaDS2JQHCBsk6BCVopb
-         L9g+IwzwiduPToH6rjHWeSVFh9CXBkLecy7gymXCyin9pnfwlkbNGTCSCqk4I/2SJZCI
-         opPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752679079; x=1753283879;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nIjarP2qmIxEUNr1tc1uUPfdZWXV9rUJNqLMiF74jXY=;
-        b=GEGVSLUO/o/LIIfD7TbD9KmtamNLuixHq9Da4Yvu+3ckizQW8u/HU6UKzSP8OrMWJq
-         mCGsbtSDWI3ZXGO4MG1yQkRIYmRhdRWVvqVgYCDQNSb4xkqU4VSdrcZ4CBJTVjjNE4ba
-         Lk3tqmErJ9A12sNkBmZvR8P/007mhWKpzdUmAop1KjjH6tN8LosbwVsIuubIiw8R7RnT
-         geEjH0B2K9MytKm8VdDcjjHfoW/dmvF/wFFMPbaSYkIXlqa+wGjcfFF/hbSQAZjCcax9
-         yQgYglfLHIzdlVuIcQhuHbveGSUpGVGKbIpYzkcLMZc0BGmPxLPz//ihiYDPDQH+41I4
-         cotg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzGA5estDpPBOSZ8W0ZksI57wY7UUeikuYiWIqnKNuNV3mJuOjsybswqRON54PXeFWx9OdSjQuWvsGZqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBi35gc9vuO0sd29IocjAXYnaYRxQXKRbmAyJ/znBNAXIgoCNx
-	xNU+88olAnARa6+0ZRvuWIVPx9d38iknsBfwbT1kGqO/5cng88NcFyjAvE6qM+JkI00=
-X-Gm-Gg: ASbGncvZoJ1bOAMK77XkDBRVfMJORoRUwiUs9NMXJ5H+VWIvt/3Xlwty3pICum5EFng
-	s2wRK06LBfZ+2yUlVZb92Kmwpfb1exsz2yQvSEvoqCuMihE2K6PZtspnzU1QS7ioJ/RvePwNrZa
-	ASZ9VvyYruMbWDA7SjuA/OlMv7P7M4XhvEBUvUmAfrKGinwEQu1IBOzAUB1EzcJ3jkM4IN1C/5N
-	tV/pzAcpCWCt6hBt0R2X8IVEW2a8nfeLsXva81MZVaeJJxLqPp9RL1W2vKUW/wAjU+Ij8C9EUsU
-	qAOsusO6qpsnu1NqlVO7Ifu1GC8btrJuqBm7LWLNLaXODVh9Eb3MgRlZtTNFjawSbSQKQQEaocP
-	t/QzlSNe4LMpodXVl+erG
-X-Google-Smtp-Source: AGHT+IGQvipCL8I7Jp/o0kQbtdNtCpkDRd45ElcLm4C7rqFsQkVF1I178icC+V6YopeF2v7qVU9sWg==
-X-Received: by 2002:a17:90b:2684:b0:311:ff18:b84b with SMTP id 98e67ed59e1d1-31c9f47c7d7mr4052918a91.25.1752679079182;
-        Wed, 16 Jul 2025 08:17:59 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:500::4:b02a])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23de4323cd5sm127190795ad.126.2025.07.16.08.17.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 08:17:58 -0700 (PDT)
-Date: Wed, 16 Jul 2025 08:17:58 -0700 (PDT)
-X-Google-Original-Date: Wed, 16 Jul 2025 08:17:56 PDT (-0700)
-Subject:     Re: [PATCH] riscv: Stop considering R_RISCV_NONE as bad relocations
-In-Reply-To: <20250711134909.GA73430@iscas.ac.cn>
-CC: alexghiti@rivosinc.com, alexghiti@rivosinc.com, Nelson Chu <nelson@rivosinc.com>,
-  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, Alexandre Ghiti <alex@ghiti.fr>,
-  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: wangjingwei@iscas.ac.cn
-Message-ID: <mhng-4C27A130-61EA-4AA5-A2A6-506D0CB22B7B@palmerdabbelt-mac>
+	s=arc-20240116; t=1752679177; c=relaxed/simple;
+	bh=S1mLX0CmXyiyIIDqfJ4FsDbP3E/qVyjj/U8My9oN4k0=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=irdVFCjfPcFIvZF44wMsLrpTldTtWEwXwbfgopCxG2vEecpLqWXPEAjkGHwlZbpZGXytAK2F4zTdfCfqgBqtgX9yUqkvik203hlw5aNCGzguYYEnjoLIS9nPOdBSZQCkh4QDyaoL1D9fb0j03evzlz7ti3gJMsx/D+BEVly0wu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Pf3Ia2LT; arc=none smtp.client-ip=95.181.183.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-antispam-ksmg-gc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx4.sberdevices.ru (Postfix) with ESMTP id 7564F240011;
+	Wed, 16 Jul 2025 18:19:32 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx4.sberdevices.ru 7564F240011
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=post; t=1752679172;
+	bh=pwdFg7asFBIrrz4P/fKh5gjOXpUllXabeJoiF8Rzc4o=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
+	b=Pf3Ia2LTKy59Sl+DKjQvqslTxExU/wmlM2puLIjB96X1lZJbK/N2+W5S/HMb3hC3o
+	 U5T+zcFoEr/TCyGlkAIZYChOVgdMwh5zgOhR6aVevLNAt9ihpVRD6Xigbxz1BFjlbo
+	 Jlzvi2LdlkoFd0sHASdsJ60jMHbcpq1QibhK5zw1XMB3KqlhYjcelD6TP+ZilqLpvM
+	 VfLCYUOqm1HkIyn98ShjkFWIJCw+Fo3MNS9LwQSEC3k/n72Qc3uoWBC6g2ihFbsB4P
+	 zoS28smBHRr5KRoLMTzaCDo+2o9W5C8BO49PG8cnL8olZi5xbm/lFRWlXuoM8QFI4O
+	 S3Gw3N8sz6SKg==
+Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "sberdevices.ru", Issuer "R11" (verified OK))
+	by mx4.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 16 Jul 2025 18:19:32 +0300 (MSK)
+Message-ID: <56318d97-88a4-6688-9f43-4eca4b8169c2@salutedevices.com>
+Date: Wed, 16 Jul 2025 18:19:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Content-Language: en-US
+To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>
+CC: <oxffffaa@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>
+From: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Subject: [RESEND PATCH v3] Bluetooth: hci_sync: fix double free in
+ 'hci_discovery_filter_clear()'
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: p-exch-cas-a-m1.sberdevices.ru (172.24.201.216) To
+ p-exch-cas-a-m1.sberdevices.ru (172.24.201.216)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
+X-KSMG-AntiSpam-Info: LuaCore: 63 0.3.63 9cc2b4b18bf16653fda093d2c494e542ac094a39, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 194892 [Jul 16 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/07/16 12:49:00 #27639138
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-On Fri, 11 Jul 2025 06:49:09 PDT (-0700), wangjingwei@iscas.ac.cn wrote:
-> Hi all,
->
-> On Thu, Jul 10, 2025 at 11:43:00AM -0700, Palmer Dabbelt wrote:
->> On Thu, 10 Jul 2025 01:34:31 PDT (-0700), alexghiti@rivosinc.com wrote:
->> > Even though those relocations should not be present in the final
->> > vmlinux, there are a lot of them. And since those relocations are
->> > considered "bad", they flood the compilation output which may hide some
->> > legitimate bad relocations.
->> >
->> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->> > ---
->> >  arch/riscv/tools/relocs_check.sh | 4 +++-
->> >  1 file changed, 3 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/arch/riscv/tools/relocs_check.sh b/arch/riscv/tools/relocs_check.sh
->> > index baeb2e7b2290558d696afbc5429d6a3c69ae49e1..742993e6a8cba72c657dd2f8f5dabc4c415e84bd 100755
->> > --- a/arch/riscv/tools/relocs_check.sh
->> > +++ b/arch/riscv/tools/relocs_check.sh
->> > @@ -14,7 +14,9 @@ bad_relocs=$(
->> >  ${srctree}/scripts/relocs_check.sh "$@" |
->> >  	# These relocations are okay
->> >  	#	R_RISCV_RELATIVE
->> > -	grep -F -w -v 'R_RISCV_RELATIVE'
->> > +	#	R_RISCV_NONE
->> > +	grep -F -w -v 'R_RISCV_RELATIVE
->> > +R_RISCV_NONE'
->> >  )
->>
->> I'm not super opposed to it, but is there a way to just warn once or
->> something?  It's probably best to still report something, as there's likely
->> some sort of toolchain issue here.
->>
->
-> I think Alexandre's approach is ideal from the kernel's perspective.
-> This doesn't really seem to be a bug; I see it more as a case where the
-> toolchain's handling of R_RISCV_NONE doesn't quite match the kernel's
-> expectations.
->
-> I found the large number of R_RISCV_NONE relocs only appear in the final
-> vmlinux. The key difference is the kernel build's --emit-relocs flag
-> and the *(.rela.text*) directive in vmlinux.lds.S. This combination
-> forces all relocation entries, including those marked as R_RISCV_NONE,
-> to be written verbatim into the final vmlinux.
+Function 'hci_discovery_filter_clear()' frees 'uuids' array and then
+sets it to NULL. There is a tiny chance of the following race:
 
-Ah, OK, if it's coming from "--emit-relocs" then actually it seems fine.  
-So I think this is the right way to go, then.  It's on fixes, should 
-show up for Linus later this week.
+'hci_cmd_sync_work()'
 
-> I traced this back to BFD's implementation and found that during
-> relaxation (e.g., when an auipc+jalr is optimized to a jal), the linker
-> modifies the first reloc slot to R_RISCV_JAL and marks the second,
-> now-useless slot as R_RISCV_DELETE. In the cleanup phase, to prevent
-> reprocessing, BFD then changes the cleaned-up DELETE marker to
-> R_RISCV_NONE. This is how, when the kernel specifies --emit-relocs,
-> these R_RISCV_NONE markers get preserved in the final .rela.text section.
->
-> To truly change this, it seems to depend on whether the binutils
-> is willing to add a stage to clean up these harmless but
-> useless markers.
->
-> If possible, I was thinking we could perhaps iterate and remove the
-> R_RISCV_NONE entries from .rela.text before the alignment pass.
->
-> But if there's no agreement on the BFD side, Alexandre's approach still
-> seems correct and aligns with the psABI, where R_RISCV_NONE has no
-> operational meaning.
->
->> Also: if you can reproduce it, Nelson can probably fix it.  I'm CCing him.
->>
->
-> Reproducing the issue is simple: you just need a call instruction to
-> create a relaxation opportunity, then link with --emit-relocs and a
-> linker script that includes *(.rela.text*). :)
->
-> For convenience, I've put a minimal, self-contained reproduction case
-> here: https://gist.github.com/Jingwiw/762606e1dc3b77c352b394e8c5e846de
->
->> >
->> >  if [ -z "$bad_relocs" ]; then
->>
->
-> Reviewed-by: Jingwei Wang <wangjingwei@iscas.ac.cn>
->
-> Thanks,
-> Jingwei
+ 'update_passive_scan_sync()'
+
+   'hci_update_passive_scan_sync()'
+
+     'hci_discovery_filter_clear()'
+       kfree(uuids);
+
+       <-------------------------preempted-------------------------------->
+                                           'start_service_discovery()'
+
+                                             'hci_discovery_filter_clear()'
+                                               kfree(uuids); // DOUBLE FREE
+
+       <-------------------------preempted-------------------------------->
+
+      uuids = NULL;
+
+To fix it let's add locking around 'kfree()' call and NULL pointer
+assignment. Otherwise the following backtrace fires:
+
+[ ] ------------[ cut here ]------------
+[ ] kernel BUG at mm/slub.c:547!
+[ ] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+[ ] CPU: 3 UID: 0 PID: 246 Comm: bluetoothd Tainted: G O 6.12.19-kernel #1
+[ ] Tainted: [O]=OOT_MODULE
+[ ] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ ] pc : __slab_free+0xf8/0x348
+[ ] lr : __slab_free+0x48/0x348
+...
+[ ] Call trace:
+[ ]  __slab_free+0xf8/0x348
+[ ]  kfree+0x164/0x27c
+[ ]  start_service_discovery+0x1d0/0x2c0
+[ ]  hci_sock_sendmsg+0x518/0x924
+[ ]  __sock_sendmsg+0x54/0x60
+[ ]  sock_write_iter+0x98/0xf8
+[ ]  do_iter_readv_writev+0xe4/0x1c8
+[ ]  vfs_writev+0x128/0x2b0
+[ ]  do_writev+0xfc/0x118
+[ ]  __arm64_sys_writev+0x20/0x2c
+[ ]  invoke_syscall+0x68/0xf0
+[ ]  el0_svc_common.constprop.0+0x40/0xe0
+[ ]  do_el0_svc+0x1c/0x28
+[ ]  el0_svc+0x30/0xd0
+[ ]  el0t_64_sync_handler+0x100/0x12c
+[ ]  el0t_64_sync+0x194/0x198
+[ ] Code: 8b0002e6 eb17031f 54fffbe1 d503201f (d4210000) 
+[ ] ---[ end trace 0000000000000000 ]---
+
+Fixes: ad383c2c65a5 ("Bluetooth: hci_sync: Enable advertising when LL privacy is enabled")
+Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+---
+ Changelog v1->v2:
+ * Don't call 'hci_dev_lock()' in 'update_passive_scan_sync()' as it
+   triggers deadlock. Instead of that - add spinlock which protects
+   freeing code.
+ Changelog v2->v3:
+ * Rebase on current 'bluetooth' repo due to fuzz.
+
+ include/net/bluetooth/hci_core.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index 54bfeeaa09959..f8eeb15acdcfa 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -29,6 +29,7 @@
+ #include <linux/idr.h>
+ #include <linux/leds.h>
+ #include <linux/rculist.h>
++#include <linux/spinlock.h>
+ 
+ #include <net/bluetooth/hci.h>
+ #include <net/bluetooth/hci_drv.h>
+@@ -92,6 +93,7 @@ struct discovery_state {
+ 	u16			uuid_count;
+ 	u8			(*uuids)[16];
+ 	unsigned long		name_resolve_timeout;
++	spinlock_t		lock;
+ };
+ 
+ #define SUSPEND_NOTIFIER_TIMEOUT	msecs_to_jiffies(2000) /* 2 seconds */
+@@ -878,6 +880,7 @@ static inline void iso_recv(struct hci_conn *hcon, struct sk_buff *skb,
+ 
+ static inline void discovery_init(struct hci_dev *hdev)
+ {
++	spin_lock_init(&hdev->discovery.lock);
+ 	hdev->discovery.state = DISCOVERY_STOPPED;
+ 	INIT_LIST_HEAD(&hdev->discovery.all);
+ 	INIT_LIST_HEAD(&hdev->discovery.unknown);
+@@ -892,8 +895,11 @@ static inline void hci_discovery_filter_clear(struct hci_dev *hdev)
+ 	hdev->discovery.report_invalid_rssi = true;
+ 	hdev->discovery.rssi = HCI_RSSI_INVALID;
+ 	hdev->discovery.uuid_count = 0;
++
++	spin_lock(&hdev->discovery.lock);
+ 	kfree(hdev->discovery.uuids);
+ 	hdev->discovery.uuids = NULL;
++	spin_unlock(&hdev->discovery.lock);
+ }
+ 
+ bool hci_discovery_active(struct hci_dev *hdev);
+-- 
+2.30.1
 
