@@ -1,258 +1,106 @@
-Return-Path: <linux-kernel+bounces-733529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CE1B075D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:38:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FF8B075D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7CA8507C73
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490F63AA57C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E1F2F4A07;
-	Wed, 16 Jul 2025 12:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0BB2F5088;
+	Wed, 16 Jul 2025 12:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="adWC/ws6"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WhCaRL7G"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65782F3C35
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51EA2F49F2;
+	Wed, 16 Jul 2025 12:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669478; cv=none; b=uRP99X0K14/7fvzCGszAEeBAmTgM6LC/g63CgdD1YW7HhjEtbOoKc1Pmd07CSskWCyDyMV39WGR/67PHL4OUio4MPUXfb+1d315eFFy5WrgqY/IWpyhFNRB81x0lcFP9GC3n/iUNGETEXYJW+HX+No6pr8M7Bq2n3sjIP080UbA=
+	t=1752669521; cv=none; b=KJXlEmdHRU+kh3OBLzqYv7WoGYeLdD0dnyajTXbiP23p/JxpbGCkwWHiaz8BmKAB0eX24ncEBDOnLTAdchgiurfW3+CMxBSTRTHSBTdhm6dq7gOn71YErCh2aPPz9R3fthlfs6PX9+J20FxJfu1PQhKjRVfdJxcwjvnCfe9NsBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669478; c=relaxed/simple;
-	bh=5Owa48wB/dCPh/oS/jbcKVDLTJVA5hmFeOA7csZZl9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dzZrXpSi8Q+JuU3eG3stXSUZ6e2T1uzl45Fjjv7iGdfsIpVHVVHRuOE23TDRNpfAbaTIBw8Zy3kH5+bmTnY8Rl1xT6jgnhGpide0ycX71ky35TDky7DMSGt9XtFbzJatJvIDrEajLMSOWeSmxk7peAU1bMSpisqOeUwizB4ebrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=adWC/ws6; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2352400344aso59131805ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1752669476; x=1753274276; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mRLSENgI/MGJbaGVqAa8IBYA8T+PU3c6shTbsSeztZI=;
-        b=adWC/ws6Dh9ng30zukjp8eaE6NXkpJHeNZr4w+O0VQcuz/p0eD2X8KXkf+SV4+Z2/n
-         3Z97rJKt2o9amggd9LQzJ1T4jGv7nE4G+9FbzN4jhWXSRfwSC7prsnBGRTdtavZgWh/E
-         mj6p8FgVnr2pigBU/o/0yQHqvfuKeG+emRXLTCz2COxPukNW199dwU8cAonR30zPuI57
-         Q/4Y69l8rap6zi00gGYGCARXdiYj/dJK+1uy9ccKLbFkwO0F/WybTKiZW/d+bEC3HPLf
-         7KNQy9KeLEFwp6GsJVEGqXCSMFCxKGMaofUVatAAuxjaghGdLWVYBQ/5otk2O0ZcVDOW
-         9JEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752669476; x=1753274276;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mRLSENgI/MGJbaGVqAa8IBYA8T+PU3c6shTbsSeztZI=;
-        b=NVpFFhLvDe5fHr2KhgGzCfEuxAaaSF5lECcOkALe3d998TsdERyTlXuxF1kmDIFTxG
-         gaAAIImoPuO19yXX36VmKP2KHzU77cakrH3YTaJPVA+p8Two+CzbiCUxuDU9GD9wlcUc
-         bl64lZbzXnf+0+FZXxluROppTSH/nUCr6XaYvCWdjqtd2ofGye0OHKXTl18bxWqhDSaB
-         do6Dz4KoDVOAFwvb89jCWDDIleZ3tyBWNodtegMH/o6mE7lpbQ5sHnXms1NHK3K03YD4
-         gnur8Tpf0t5OOYEX+EgkmlpSCOFKoQhpt70j7Xk/Nrsuo5lj3vWRfDtIXeTCnm/f9BF4
-         R17A==
-X-Forwarded-Encrypted: i=1; AJvYcCXvWSbJQzxcc3CqhS2t7KsReC/XPJwpLwGjHLiJu2bN8xXT1HzdfUj8E/6rZgvaTVrshrdfGkaDUZoLA4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+afMz7fgmwpFEH1jPLQKGXE076hxgEtAr9Md/zfreY5bU2mIK
-	ebZbDiPfxpLEOTyEHE0haqvtHJfeC74naSERD027wfvS8+0cEbsfOnIf7f3T3/U7lCE=
-X-Gm-Gg: ASbGncslQ105VY/4TsjB3mEohevA8gKK4d5f5OdxqRHIDHNtr06S1Mn8xMbRKO3PGYH
-	3utvVLalHEr9n0gAmC1wVEL2CqY8KfJrNgeT3HJo9cU6/76LO40gCcEz4211fNZbYBSmtJL0u39
-	T/NyqfXbXjZcweaLiI5UMZfjmUpFwRyTbfRq/I12QyYQ0a7409jQbXVdtgRNtWjlVm/Bov0wYKg
-	Q/evqgFKGnY+IjWk6yBAH5zcnRkIGUn1N7GbQiORU7krvYg+2vx2w11kXvztgTV2nW0/RCpeHqd
-	DtjFuhER+jgMpKC16KCg6H9uUz+zh53ut4cJRljEKaXBU3n2Q2M0MWDd+Freu2ifEX4c0gm68X1
-	d1dixKIU3gJ4DBOnz+mbznzOciN6EqwejgSEfq+3O+8ZqNKySj06wQg==
-X-Google-Smtp-Source: AGHT+IFS0ERKXZDU/2paRwDAwj1qIE00GcJ4rlO9U8G8qiuVi07BwHIJVfO1FD2FE0d9SCuPJE4CnA==
-X-Received: by 2002:a17:902:ecd1:b0:22c:3609:97ed with SMTP id d9443c01a7336-23e24fbf7bcmr36821175ad.30.1752669475780;
-        Wed, 16 Jul 2025 05:37:55 -0700 (PDT)
-Received: from localhost.localdomain ([122.171.23.79])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e2b31aba5sm5148085ad.0.2025.07.16.05.37.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:37:54 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Anup Patel <anup@brainfault.org>,
-	Atish Patra <atish.patra@linux.dev>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v4] irqchip/riscv-imsic: Add kernel parameter to disable IPIs
-Date: Wed, 16 Jul 2025 18:07:45 +0530
-Message-ID: <20250716123745.557585-1-apatel@ventanamicro.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752669521; c=relaxed/simple;
+	bh=pJGLGknho+j+d6pWO0haLRIvL9BBaXCyJHMvVYM3sfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gHqwr6r8Etd0tR5V48gjXfHNyNBUeug+7PaddgFiO+CUDjjZji1mLa+fNRaW8RXnH4RgowIBvVIgz3QjFBhOH1P7Atuu1+TcXkjy2a/5YYdcx00iN9cg2caY+zYrxRFgXt0uPHfV+bd0EfjMMGeD35KZbzzRTTWsROevswr8Tck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WhCaRL7G; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YJ31wuGAs8TcqXb+Gxge288ftyQZu98ZA6TQhn6DLtw=; b=WhCaRL7GpAM1Spp5z2W/JtPBhQ
+	vzBV6v0C3Jt8uI84bVQMaH93KB62qA+nYfM1akEGORcJW5whoWqT0x+VE/F5HSIF3WeHq1JlRpgpa
+	IjthFASYbTN5R2LcX2mcI4mKNY+3n4/r/wUFqR8ly4hsXgIOIuhfcYLRdfOh7o+uXvwhonxWJxhrz
+	2lVdU2/YvKo5h9OaBa+TdEl5Lr4MiWPIeuuicu0MWPBFGSS3nzkKEV4MltQ3VBDHPU4hoQkk1G46E
+	CXbITtD67km8Z4IJ8F8izWgqCtl69z3s7cUF4gB7iorNr9/45N0+S01+Al3Z6FEnt3/yrXnrMyqYt
+	I+9xgPVw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uc1P7-0000000GYu5-0Uwa;
+	Wed, 16 Jul 2025 12:38:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 124D5300186; Wed, 16 Jul 2025 14:38:32 +0200 (CEST)
+Date: Wed, 16 Jul 2025 14:38:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v3 12/17] sched: Adapt sched tracepoints for RV task model
+Message-ID: <20250716123832.GW1613200@noisy.programming.kicks-ass.net>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+ <20250715071434.22508-13-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715071434.22508-13-gmonaco@redhat.com>
 
-When injecting IPIs to a set of harts, the IMSIC IPI support will do
-a separate MMIO write to the SETIPNUM_LE register of each target hart.
-This means on a platform where IMSIC is trap-n-emulated, there will be
-N MMIO traps when injecting IPI to N target harts hence IMSIC IPIs will
-be slow on such platform compared to the SBI IPI extension.
+On Tue, Jul 15, 2025 at 09:14:29AM +0200, Gabriele Monaco wrote:
+> Add the following tracepoints:
+> * sched_set_need_resched(tsk, cpu, tif)
+>     Called when a task is set the need resched [lazy] flag
+> * sched_switch_vain(preempt, tsk, tsk_state)
+>     Called when a task is selected again during __schedule
+>     i.e. prev == next == tsk : no real context switch
 
-Unfortunately, there is no DT, ACPI, or any other way of discovering
-whether the underlying IMSIC is trap-n-emulated. Using MMIO write to
-the SETIPNUM_LE register for injecting IPI is purely a software choice
-in the IMSIC driver hence add a kernel parameter to allow users disable
-IMSIC IPIs on platforms with trap-n-emulated IMSIC.
+> @@ -6592,6 +6598,7 @@ static bool try_to_block_task(struct rq *rq, struct task_struct *p,
+>  	int flags = DEQUEUE_NOCLOCK;
+>  
+>  	if (signal_pending_state(task_state, p)) {
+> +		trace_sched_set_state_tp(p, TASK_RUNNING, true);
+>  		WRITE_ONCE(p->__state, TASK_RUNNING);
+>  		*task_state_p = TASK_RUNNING;
+>  		return false;
 
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
----
-Changes since v3:
- - Rebase upon Linux-6.16-rc4
- - Make imsic_noipi as __ro_after_init
-Changes since v2:
- - Skip enabling/disabling IMSIC_IPI_ID in imsic_ipi_starting_cpu()
-   and imsic_ipi_dying_cpu() when imsic_noipi is set
- - Re-use the reserved IPI ID for devices when imsic_noipi is set
-Changes since v1:
- - Added more details to patch description
----
- .../admin-guide/kernel-parameters.txt         |  7 +++++++
- drivers/irqchip/irq-riscv-imsic-early.c       | 20 ++++++++++++++++++-
- drivers/irqchip/irq-riscv-imsic-state.c       |  7 ++++---
- drivers/irqchip/irq-riscv-imsic-state.h       |  1 +
- 4 files changed, 31 insertions(+), 4 deletions(-)
+I'm confused on the purpose of this. How does this relate to say the
+wakeup in signal_wake_up_state() ?
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f1f2c0874da9..7f0e12d0d260 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2538,6 +2538,13 @@
- 			requires the kernel to be built with
- 			CONFIG_ARM64_PSEUDO_NMI.
- 
-+	irqchip.riscv_imsic_noipi
-+			[RISC-V,EARLY]
-+			Force the kernel to not use IMSIC software injected MSIs
-+			as IPIs. Intended for system where IMSIC is trap-n-emulated,
-+			and thus want to reduce MMIO traps when triggering IPIs
-+			to multiple harts.
-+
- 	irqfixup	[HW]
- 			When an interrupt is not handled search all handlers
- 			for it. Intended to get systems with badly broken
-diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/irq-riscv-imsic-early.c
-index d9ae87808651..2709cacf4855 100644
---- a/drivers/irqchip/irq-riscv-imsic-early.c
-+++ b/drivers/irqchip/irq-riscv-imsic-early.c
-@@ -8,6 +8,7 @@
- #include <linux/acpi.h>
- #include <linux/cpu.h>
- #include <linux/interrupt.h>
-+#include <linux/init.h>
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
-@@ -21,6 +22,14 @@
- #include "irq-riscv-imsic-state.h"
- 
- static int imsic_parent_irq;
-+bool imsic_noipi __ro_after_init;
-+
-+static int __init imsic_noipi_cfg(char *buf)
-+{
-+	imsic_noipi = true;
-+	return 0;
-+}
-+early_param("irqchip.riscv_imsic_noipi", imsic_noipi_cfg);
- 
- #ifdef CONFIG_SMP
- static void imsic_ipi_send(unsigned int cpu)
-@@ -32,12 +41,18 @@ static void imsic_ipi_send(unsigned int cpu)
- 
- static void imsic_ipi_starting_cpu(void)
- {
-+	if (imsic_noipi)
-+		return;
-+
- 	/* Enable IPIs for current CPU. */
- 	__imsic_id_set_enable(IMSIC_IPI_ID);
- }
- 
- static void imsic_ipi_dying_cpu(void)
- {
-+	if (imsic_noipi)
-+		return;
-+
- 	/* Disable IPIs for current CPU. */
- 	__imsic_id_clear_enable(IMSIC_IPI_ID);
- }
-@@ -46,6 +61,9 @@ static int __init imsic_ipi_domain_init(void)
- {
- 	int virq;
- 
-+	if (imsic_noipi)
-+		return 0;
-+
- 	/* Create IMSIC IPI multiplexing */
- 	virq = ipi_mux_create(IMSIC_NR_IPI, imsic_ipi_send);
- 	if (virq <= 0)
-@@ -88,7 +106,7 @@ static void imsic_handle_irq(struct irq_desc *desc)
- 	while ((local_id = csr_swap(CSR_TOPEI, 0))) {
- 		local_id >>= TOPEI_ID_SHIFT;
- 
--		if (local_id == IMSIC_IPI_ID) {
-+		if (!imsic_noipi && local_id == IMSIC_IPI_ID) {
- 			if (IS_ENABLED(CONFIG_SMP))
- 				ipi_mux_process();
- 			continue;
-diff --git a/drivers/irqchip/irq-riscv-imsic-state.c b/drivers/irqchip/irq-riscv-imsic-state.c
-index 77670dd645ac..dc95ad856d80 100644
---- a/drivers/irqchip/irq-riscv-imsic-state.c
-+++ b/drivers/irqchip/irq-riscv-imsic-state.c
-@@ -134,7 +134,7 @@ static bool __imsic_local_sync(struct imsic_local_priv *lpriv)
- 	lockdep_assert_held(&lpriv->lock);
- 
- 	for_each_set_bit(i, lpriv->dirty_bitmap, imsic->global.nr_ids + 1) {
--		if (!i || i == IMSIC_IPI_ID)
-+		if (!i || (!imsic_noipi && i == IMSIC_IPI_ID))
- 			goto skip;
- 		vec = &lpriv->vectors[i];
- 
-@@ -419,7 +419,7 @@ void imsic_vector_debug_show(struct seq_file *m, struct imsic_vector *vec, int i
- 	seq_printf(m, "%*starget_cpu      : %5u\n", ind, "", vec->cpu);
- 	seq_printf(m, "%*starget_local_id : %5u\n", ind, "", vec->local_id);
- 	seq_printf(m, "%*sis_reserved     : %5u\n", ind, "",
--		   (vec->local_id <= IMSIC_IPI_ID) ? 1 : 0);
-+		   (!imsic_noipi && vec->local_id <= IMSIC_IPI_ID) ? 1 : 0);
- 	seq_printf(m, "%*sis_enabled      : %5u\n", ind, "", is_enabled ? 1 : 0);
- 	seq_printf(m, "%*sis_move_pending : %5u\n", ind, "", mvec ? 1 : 0);
- 	if (mvec) {
-@@ -583,7 +583,8 @@ static int __init imsic_matrix_init(void)
- 	irq_matrix_assign_system(imsic->matrix, 0, false);
- 
- 	/* Reserve IPI ID because it is special and used internally */
--	irq_matrix_assign_system(imsic->matrix, IMSIC_IPI_ID, false);
-+	if (!imsic_noipi)
-+		irq_matrix_assign_system(imsic->matrix, IMSIC_IPI_ID, false);
- 
- 	return 0;
- }
-diff --git a/drivers/irqchip/irq-riscv-imsic-state.h b/drivers/irqchip/irq-riscv-imsic-state.h
-index 3202ffa4e849..57f951952b0c 100644
---- a/drivers/irqchip/irq-riscv-imsic-state.h
-+++ b/drivers/irqchip/irq-riscv-imsic-state.h
-@@ -61,6 +61,7 @@ struct imsic_priv {
- 	struct irq_domain			*base_domain;
- };
- 
-+extern bool imsic_noipi;
- extern struct imsic_priv *imsic;
- 
- void __imsic_eix_update(unsigned long base_id, unsigned long num_id, bool pend, bool val);
--- 
-2.43.0
+> @@ -6786,6 +6793,7 @@ static void __sched notrace __schedule(int sched_mode)
+>  		rq = context_switch(rq, prev, next, &rf);
+>  	} else {
+>  		rq_unpin_lock(rq, &rf);
+> +		trace_sched_switch_vain_tp(preempt, prev, prev_state);
+>  		__balance_callbacks(rq);
+>  		raw_spin_rq_unlock_irq(rq);
+>  	}
+
+Hurmph... don't you already have this covered by: trace_sched_exit_tp() ?
+
+Specifically, the only case where is_switch := false, is this case.
 
 
