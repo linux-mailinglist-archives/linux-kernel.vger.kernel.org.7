@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-732726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A933B06B46
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:44:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D96B06B49
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B472564406
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:44:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC193B4738
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD88626E6F4;
-	Wed, 16 Jul 2025 01:43:54 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202592673BE;
-	Wed, 16 Jul 2025 01:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B772673A5;
+	Wed, 16 Jul 2025 01:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Nzn43Nkm"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC1E158874
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 01:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752630234; cv=none; b=MLe3JfVKphz6kuP+OZiGx9IEEvUwWWM8WmUnMIiSKBlDd8PdcR1VjaD1WYEkvgrw6h3QZDhBluVZnbGWH4v+QxGXNh2cnsOzE6EbLvDdnDNUarhL9a7EIOhanJz1Tgj/4BymBBQCvEDIE7GQHzvgryUGXEtFR4TxGHuf+ZzX/aQ=
+	t=1752630335; cv=none; b=VZK2H4BFvn2drJClaapRamO+h7yVTirn1NsKmoNJUrCYr9tb2xIp9yuiSzlL9qnkjzWpyCVPx3ug3NaJ1o6+1+NHSz/tZs3gcY6A4+h44VzFz5KU0KtpqWcb65Sxp0v9unaENUY4oEgKCgEVtfbVVH7k6BM7gDvHLmfDaBj7eYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752630234; c=relaxed/simple;
-	bh=rF0MHVbq+F3cHd/MVDh6va+zZCfHXwW8Po+mxi2i4qE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J7qytHTYAAXRn6nFNXiH9sIn8MjBniRDs259bM0Y2qUVWQBq+NW1cimBU7I0wF/iCpbWW0SZKjwGRldBDeJEvK9dyVh+krokVegWsTtSxIKNZxuiWQO20cPcQiV/Bnret8qri027TYqWhYhR6MaKCcaXYqSFuxdhU/XdU2gRa68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.193])
-	by gateway (Coremail) with SMTP id _____8DxzOLTA3doZs8qAQ--.22524S3;
-	Wed, 16 Jul 2025 09:43:47 +0800 (CST)
-Received: from [10.161.0.102] (unknown [223.64.68.193])
-	by front1 (Coremail) with SMTP id qMiowJAxz8PSA3do4y0ZAA--.16523S2;
-	Wed, 16 Jul 2025 09:43:47 +0800 (CST)
-Message-ID: <26b89619-63f8-4534-9f1c-12acc65502b4@loongson.cn>
-Date: Wed, 16 Jul 2025 09:43:46 +0800
+	s=arc-20240116; t=1752630335; c=relaxed/simple;
+	bh=MMY+IseoBhAhfyGrmzrMh5MIGl5i/XAucfvo+sjTyzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0So0z2cFvcJQQCpxIXIPPgBNbT0+NhZI2mi1ntZWIV/CchIv3dZoSxp4EiYVTcNEWYGCRFCD3zNy+/wF+XcBzgae5jSb5cmmsaDWjw/oChtHLlxnoRXlGEJjhwep0h9AKptaw+cHLLmd+qrl4F4LcDnKnZBAoOQFZN99/GRDe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Nzn43Nkm; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2098F40E0217;
+	Wed, 16 Jul 2025 01:45:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id jpj0VXIEMFJF; Wed, 16 Jul 2025 01:45:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752630324; bh=u6K7VacDI/pVtewPONnYY3NOCbN6k37s0H6GGUivJdw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Nzn43NkmIhWZ9Kq97w7suFVtcdbDKcsRj2l4VJZec+Fy5nVqlU66klZhGcR8cOXyf
+	 5EnbCW+2j/OM1qDgoBZ8CxO67HTOTtzkwypgQ3Eog3v+YC+5kqs9yoFXsC9rKmUQUu
+	 LD8ijTkOHUA7X4brpmik52wrRUpFPfEGw9lbWIpNsvy1QyfGeC2hMKlt8DqyXLPdXw
+	 0rlHLW6EkCHmxkp3rTDhrmiY1ASVepv7WRVPg8KRmxEKWfpZQtB3nNLx/t8wx8AZTD
+	 W/rNrMgA+mGBekEoDRml6iVzFS/d9xTu3E3SUnHC+3Wdjn4xdu/mXkCcXGAeHb8a8p
+	 GD9SRgAjAfRT44xJ9Hs2oXHw5aXAO70MnCbQfMkG8AdxiINyYvgyMmlidcBXb5qIA4
+	 H5RbgHOM9kw+moH3OVaVP1GUBH59Z/P4+cOd1VTwIGM2GtzQeKSmATEoDnA+VOEmuo
+	 Ib0BBp9GSHRX4i7ZwmMq3ctZ34hFk31wAe0ltr6yI1geNL1FlKjVw/4zx8Q2nFlO+1
+	 xB6XJ/HGWmn/dHhwu10mbjI+Whkf62K8N2TiTZcxSxgdj5izb96wgsFBQ2vhhnE2KS
+	 /FpMKDG00FxKL2dT3KZtKCpXph5uZxpmJ0M4MOfZSSu5o8apwJl3IK1VZFGXh07Trm
+	 reCmq75r+187sdg68MGIF0dM=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 35D4040E021A;
+	Wed, 16 Jul 2025 01:45:12 +0000 (UTC)
+Date: Wed, 16 Jul 2025 03:45:04 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: khaliidcaliy@gmail.com, ardb@kernel.org, brgerst@gmail.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	ubizjak@gmail.com, x86@kernel.org
+Subject: Re: [PATCH v3] x86/boot: Avoid writing to cr4 twice in startup_64()
+Message-ID: <20250716014504.GAaHcEIIUgNOdu_n2s@fat_crate.local>
+References: <20250715181709.1040-1-khaliidcaliy@gmail.com>
+ <927f2b0a-7e64-40f2-9773-cba9b1d328a5@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] mmc: loongson2: Fix error code in
- loongson2_mmc_resource_request()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Huacai Chen
- <chenhuacai@kernel.org>, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-In-Reply-To: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxz8PSA3do4y0ZAA--.16523S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrKFWkWF1kXFy8Kw17AFy3KFX_yoWkGrb_ua
-	yjqrn7ur18Gr1Y9FyFqFy8ArWSqFWDW3Wrurs8t3yfuas5t3Z5t34vvrWDGFy3Xr1rCF95
-	uwn5A34xAw1rCosvyTuYvTs0mTUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1EksDUUUUU==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <927f2b0a-7e64-40f2-9773-cba9b1d328a5@citrix.com>
 
-Hi Dan:
+On Tue, Jul 15, 2025 at 10:21:20PM +0100, Andrew Cooper wrote:
+> > diff
+> > <https://lore.kernel.org/lkml/20250715181709.1040-1-khaliidcaliy@gmail.com/#iZ31arch:x86:kernel:head_64.S>
+> > --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S index
+> > 4390a28f7dad..dfb5390e5c9a 100644 --- a/arch/x86/kernel/head_64.S +++
+> > b/arch/x86/kernel/head_64.S @@ -222,12 +222,9 @@
+> > SYM_INNER_LABEL(common_startup_64, SYM_L_LOCAL)  
+> >  	/* Even if ignored in long mode, set PSE uniformly on all logical CPUs. */
+> >  	btsl	$X86_CR4_PSE_BIT, %ecx
+> > - movq %rcx, %cr4 - - /* - * Set CR4.PGE to re-enable global
+> > translations. - */ + /* Set CR4.PGE to re-enable global translations. */  	btsl	$X86_CR4_PGE_BIT, %ecx
+> > +  	movq	%rcx, %cr4
+> 
+> The comments are at best misleading, but you've broken the TLB flush
+> being performed which depends on the double write.
+> 
+> This logic is intentionally performing a write with CR4.PGE=0 followed
+> by one with CR4.PGE=1 to flush all global mappings.
 
-Ah, sorry  for my cheap fault, and thanks for your patch.
+Thanks both of you for the catch - I didn't realize that fact. Zapped now.
 
-On 2025/7/16 07:00, Dan Carpenter wrote:
-> There is a cut and paste bug so we accidentally return the wrong
-> variable.  It should be "ret" instead of PTR_ERR(host->clk).
->
-> Fixes: 2115772014bd ("mmc: loongson2: Add Loongson-2K SD/SDIO controller driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+So yeah, maybe there should be a comment explaining this subtlety.
 
+Thx.
 
-Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
+-- 
+Regards/Gruss,
+    Boris.
 
-> ---
->   drivers/mmc/host/loongson2-mmc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
-> index ba6bb8fd5535..63d01d2cd978 100644
-> --- a/drivers/mmc/host/loongson2-mmc.c
-> +++ b/drivers/mmc/host/loongson2-mmc.c
-> @@ -887,7 +887,7 @@ static int loongson2_mmc_resource_request(struct platform_device *pdev,
->   	if (host->clk) {
->   		ret = devm_clk_rate_exclusive_get(dev, host->clk);
->   		if (ret)
-> -			return PTR_ERR(host->clk);
-> +			return ret;
->   
->   		host->current_clk = clk_get_rate(host->clk);
->   	} else {
-
-
-Thanks.
-Binbin
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
