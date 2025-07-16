@@ -1,145 +1,165 @@
-Return-Path: <linux-kernel+bounces-733480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0408EB0752F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:57:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D196FB07532
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 516557B09DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E1F4E18F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2582F433C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0142F430F;
 	Wed, 16 Jul 2025 11:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="C3/OtXtD"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6+rBBYu"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E5E2F3C20
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AB42F0043;
+	Wed, 16 Jul 2025 11:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752667051; cv=none; b=IXuMmPjpeRSj1wc0dFc+w4rrK/+LcWu6CSHyotR0zR4VrzsMAUiwkQ3l30dpMc8vOYmVesKhZ2/8xOqyfr6XGyWg3N5RBYZMd0bmgHrLWFk/xzgPrVt2Jnr+K4ZaLnVWygUDy2HFZr+lmbEZMVTf3V37iAXYg7QaBP8v57SMZjk=
+	t=1752667050; cv=none; b=RU05maHn3AH4zH1oyPONOC03NmOZl917Umss/5TzJYOKQ+hw6A3Lxyg4vIOqSeA7/urLrqlw+hXjJRnl0izG/WgfOE6fXAETR55zRUuaDlp5G5slm3grCDX0RD0awVwA0ziQuyqGG4sQ8a9ATd8E3v3JII9YkQ5k6oRZbFzyCPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752667051; c=relaxed/simple;
-	bh=csn7WYtvsUdjHkQMbcST2wsNn0ffcZxw8hDRTLxE6DA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rWcdI2LpjYdzUkB+Rp2e6WxCsKTNV6hhc/PLaVouLPppKb2BqmbnacH5jR8269D9hwtUD5tqUqnsuP3SsCXXY6UPkaEGcbekEaQyakGnG1MmK+61CPdsRSVGaxv3i0xOuG8voTL9Tea721uQtYXtnBrdVEcEpwv9iAiiaeuOR4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=C3/OtXtD; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b31c978688dso3375729a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 04:57:29 -0700 (PDT)
+	s=arc-20240116; t=1752667050; c=relaxed/simple;
+	bh=ahNvfh6VoJDlKv5Gqc6oO3rXFasM7n3WmOyQr7d6Gm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rb8IKEdJqPwCX8kc++YcwLyv82iadk1zU1mNkrmfKOtGMGkqVOIbXCOMS47Nun2dKhG/pHC5pzo7e4TA+MENlP0Zee135zYsQWdIJWtiBS7VR/MLrh1esUgRDQM6fIv3WVDGJVKMmc1ERFyrl86b+Sm9FioLVLWILrS2B3yf/aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6+rBBYu; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-451d7b50815so42549565e9.2;
+        Wed, 16 Jul 2025 04:57:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752667049; x=1753271849; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hLRTtR8co0X61jWgkdjoqtJ4EJUXMSFsfzr4OSlttHI=;
-        b=C3/OtXtDnvVJGuFJf8nY9NDTgU3fmyHQp+gokBMNUcTRQdRuuGvm4xknpHBMjCRjTJ
-         H3aXCUckswLpQ07ocQDPDHnn9F9UrVECNpBVaNzrowEMiX9XUhqSjPKvESvS7L6qWZxg
-         1pS6nlg9gnHJbjrPSa62EUhJu3gA7NsxliNt/kZ6kvfuL5Qt0IMRYsi0RktLnapiySVp
-         brgzkUvLeOLoJafJXJNMb262efzaEGY8Iz2NqLjhqhVNX2aNYhNUvahnPXzs+wXNbsCC
-         OH408Ru/u0RMmJX9mVn26RVGkQsWIBkV/+iX/A5nWbMZJVlDhpKnEVraBdulh5rPr91/
-         NaaQ==
+        d=gmail.com; s=20230601; t=1752667047; x=1753271847; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sus59UsnbuGi6q2O4dZ/OSI0C7+7vrhcajwM1ATb9Ko=;
+        b=d6+rBBYufl4mTyf1pcQhLTxUw1UtvpaA5DAwPxY6MHMvzRIMV201FNEDTW7faJfbVF
+         p2rf27ibpBOJgctMcpm2tO/zFNaqjkEeE8+PwKiIlb1byF8B8kJIqmU6+YP9zFUQXf4S
+         2/ELbvBK77Jd9NRBGTGVliB1jXzMGGVC/5cIk31C7J9DtW96ZsfAAwfXjwqaf6reJbau
+         6DbFkd/AKzo4UyyKDFen1SvflsElMEU6OTHJdjzuNuxl1d8v2Ch/1JIM6THjZn/QjTKY
+         0DX6+21uOVGRUrkC4uFKwVQwMUm+G43gP3XtPyEAdyWyi8qEGuD7uDwOQDjPVqdYemsr
+         zy/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752667049; x=1753271849;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hLRTtR8co0X61jWgkdjoqtJ4EJUXMSFsfzr4OSlttHI=;
-        b=Klr5DKgDyp9pNRjiBCYGMtkjFv7Aw72cjBKPrdtS4IRis5jJ8xC2FXa0UmLGx3HBOd
-         RfQNbB6Lhu0i0j1K74XUheNV2PGVLr2U/+o0cEIkZi0QdbMZbpP4o/S9rKQVSdQkXC7H
-         J37orx2N/Wz1IKittumPYVn2+aTznC4ruAUYUS20QiXgKN6F15vmEFB9dcPoVYVVvhtr
-         RO//SE3nU/8fJHbKNLZk8bpzAjRCs5KClqHiKoC1gNhvgrVh+ti2IKzh+w5VEqEH4n02
-         8X5eFiIjQZ1Rr7zw1wFwehRA4cIlOeWlu/pXgb7ayKcnfFYBMXypXVkcfgyXvjZEQFR1
-         e6+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWMk71m2WeAw9piSB4wnCy32GM/tGU6moYZrWkjSFnqLeRAiGUj/tQLfYUsJMlayvS187/DEk/ElPBkZnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbqyqHe7Rk3MPqgRYGIriDu5cvhz5k8w3nMoRTB6oy7rEwf/eP
-	oPnX2mX7ivtwjNRg1IQnvZ4QU4sD4F65ymtL1UyexVz66zHl6a6AR3dtu7RNLw0XJLd30q6ltF0
-	KtT0ePCY=
-X-Gm-Gg: ASbGncu9+OtvobGH+i5uTYk1Bh8rx+NUVuWyYOEkFd5S5vsTs39BqGQU7+lLzRTXeI+
-	hhaP522WhIdcOAo/Xde7g9JJT3utFWuFiz6nGBGt3Uc+Eu3XVcps7nx+KY7Mgs0eBALTbzSBuKS
-	uBq/FsmG6w21+OtoWS7SzIvFUm7NYh5y3JqFxM89lvHOzHQqKAGgE20SvfAaxBwO4yRFzDbbtrU
-	IFaKoVIt4FwgTB/SzEuclzWBT4rqosVKfWpyAqfH0yh50JshdCJ5l3422cl7MceQcU65rlON1gW
-	gvux3L7uadf8NZe5TJKv49N3s64WIKV0R9Qr1APtBx4TodZsCpcJcegO2Tn5NhCfBK5QK5AXS2w
-	PNvCA0UztYcbv6ujQLt6eoDMYmZrogNM1
-X-Google-Smtp-Source: AGHT+IEQPkNtoh9bRZW+IJ62bS4hVLKInbUmsPl/kIaslUF8mapeIjngutJf68Y6R1ZJMkkbtdUZ7Q==
-X-Received: by 2002:a17:90b:1c89:b0:313:2768:3f6b with SMTP id 98e67ed59e1d1-31c9e77ce91mr4104373a91.27.1752667048532;
-        Wed, 16 Jul 2025 04:57:28 -0700 (PDT)
-Received: from vexas.. ([203.208.189.9])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f29ddcbsm1292668a91.36.2025.07.16.04.57.24
+        d=1e100.net; s=20230601; t=1752667047; x=1753271847;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sus59UsnbuGi6q2O4dZ/OSI0C7+7vrhcajwM1ATb9Ko=;
+        b=Pk3xLn/lx92b8o0rdJKocVjsWHbNzOWJa+BbweX7l5bGiEoPWaYnELQ3TM788hF/qE
+         f9Y6mN+rvp3Rx7HLrLMEGhJ8Mb2jaIMzZ14k1BAUmsJHTw9yezZgoy+a+gWnQC1tFXRM
+         Ejw4ggdBXn4vPQvwNdzd8xq5NApLRPhBy2/FeEwkQ4waS1z8VobW4f5nKN7OCxe5mT7l
+         OoDbEoz+RHfVUU3YHpus0ZmX/l5aMILFS8ltwRaWBCsT0xWvVRY2UNMzqgqgSXWO5S43
+         meX8awTiZxjm7tlQ7RAqKVLUmDtQcDjDyQjUD3+NsseWVGWkY7n5XwO58aJgaa0SwoLI
+         OWFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0uda491jc1vjeBf17v1WmElYn5Br69RHPXZHDSvxyiEWAgpM1BiRGHpJXlFH7ZjYDT1gWrYTdV1SEcCw=@vger.kernel.org, AJvYcCXHcM4HwJ94F+8JXQZ3Fugl5elexwX+CMoOCOldKTNcLlCfZzF1qRu+htyRiecvsdX22NMii3lS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwueQJjbUmEAzC6zJWM+fmszNN8Tv5ZeWvkzpbSKpwu4y8SkEGJ
+	br/vGgJc8BXPjdvTmRUqvswB5ojYTBxO600S362xw8XJSmnpFxtL3r5N
+X-Gm-Gg: ASbGnctLlTuaMzgXoMTCXDW6CXpyWkCNE+tD7yMIk/XgKfieS09mL6Zg2PWOkklJxcn
+	WjECR/H4SdgXnhi7PrnDT5ly7RDzEbFVSEvWn91EScHfdXtglEHd7+4IQuG0scgNe35PyY0DCaQ
+	mPwUGpWuOLn8wCpJ6gHwB2tcaSSF2WsLBvuOULtuMi0pn56GxCy+6sGjbzgmEqOv6mVhoe5FQFw
+	iCFLrkw4PnhzSABLedKkvq9XvkVIZFzkF2RFuGaggmdC9i1xl3vHA5mVAMg9e4yHil8hc9JmIVE
+	bCyxZohTH9eABGVarF8s8wQxzlkPLrn2kFwKWT6/ZRIWTjbqUq4vLoXRTl7PPr/zKcX8gH9Xrvz
+	VwuGS9jVtCOxtx78boiiU/e1cALVvPr4x15xUqDIMCkd5I8/MYWSnZ78opIuu
+X-Google-Smtp-Source: AGHT+IEO9Zt2BvzXTefjIV22N0YGVdjcWPFlq7BQGPADENKmKRWYWRGtIPb+nG6tBkrVVWdxVbs8sw==
+X-Received: by 2002:a05:600c:5492:b0:456:207e:fd83 with SMTP id 5b1f17b1804b1-4562e330ff3mr22640315e9.4.1752667046936;
+        Wed, 16 Jul 2025 04:57:26 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1a2bsm17916359f8f.14.2025.07.16.04.57.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 04:57:28 -0700 (PDT)
-From: Zigit Zo <zuozhijie@bytedance.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com
-Cc: zuozhijie@bytedance.com,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	andrew+netdev@lunn.ch,
-	edumazet@google.com
-Subject: [PATCH net v3] virtio-net: fix recursived rtnl_lock() during probe()
-Date: Wed, 16 Jul 2025 19:57:17 +0800
-Message-ID: <20250716115717.1472430-1-zuozhijie@bytedance.com>
-X-Mailer: git-send-email 2.49.0
+        Wed, 16 Jul 2025 04:57:26 -0700 (PDT)
+Date: Wed, 16 Jul 2025 12:57:25 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin
+ Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>, Jann Horn
+ <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>, Dave Hansen
+ <dave.hansen@intel.com>, Alistair Popple <apopple@nvidia.com>, Uladzislau
+ Rezki <urezki@gmail.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai"
+ <yi1.lai@intel.com>, iommu@lists.linux.dev, security@kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+Message-ID: <20250716125725.37aa3f38@pumpkin>
+In-Reply-To: <20250710155319.GK1613633@noisy.programming.kicks-ass.net>
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+	<20250710135432.GO1613376@noisy.programming.kicks-ass.net>
+	<20250710155319.GK1613633@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The deadlock appears in a stack trace like:
+On Thu, 10 Jul 2025 17:53:19 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-  virtnet_probe()
-    rtnl_lock()
-    virtio_config_changed_work()
-      netdev_notify_peers()
-        rtnl_lock()
+> On Thu, Jul 10, 2025 at 03:54:32PM +0200, Peter Zijlstra wrote:
+> 
+> > > @@ -132,8 +136,15 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
+> > >  	if (ret)
+> > >  		goto out_free_domain;
+> > >  	domain->users = 1;
+> > > -	list_add(&domain->next, &mm->iommu_mm->sva_domains);
+> > >  
+> > > +	if (list_empty(&iommu_mm->sva_domains)) {
+> > > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+> > > +			if (list_empty(&iommu_sva_mms))
+> > > +				static_branch_enable(&iommu_sva_present);
+> > > +			list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
+> > > +		}
+> > > +	}
+> > > +	list_add(&domain->next, &iommu_mm->sva_domains);
+> > >  out:
+> > >  	refcount_set(&handle->users, 1);
+> > >  	mutex_unlock(&iommu_sva_lock);
+> > > @@ -175,6 +186,15 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
+> > >  		list_del(&domain->next);
+> > >  		iommu_domain_free(domain);
+> > >  	}
+> > > +
+> > > +	if (list_empty(&iommu_mm->sva_domains)) {
+> > > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+> > > +			list_del(&iommu_mm->mm_list_elm);
+> > > +			if (list_empty(&iommu_sva_mms))
+> > > +				static_branch_disable(&iommu_sva_present);
+> > > +		}
+> > > +	}
+> > > +
+> > >  	mutex_unlock(&iommu_sva_lock);
+> > >  	kfree(handle);
+> > >  }  
+> > 
+> > This seems an odd coding style choice; why the extra unneeded
+> > indentation? That is, what's wrong with:
+> > 
+> > 	if (list_empty()) {
+> > 		guard(spinlock_irqsave)(&iommu_mms_lock);
+> > 		list_del();
+> > 		if (list_empty()
+> > 			static_branch_disable();
+> > 	}  
+> 
+> Well, for one, you can't do static_branch_{en,dis}able() from atomic
+> context...
 
-It happens if the VMM sends a VIRTIO_NET_S_ANNOUNCE request while the
-virtio-net driver is still probing.
+Aren't they also somewhat expensive - so you really want to use them
+for configuration options which pretty much don't change.
 
-The config_work in probe() will get scheduled until virtnet_open() enables
-the config change notification via virtio_config_driver_enable().
+	David
 
-Fixes: df28de7b0050 ("virtio-net: synchronize operstate with admin state on up/down")
-Signed-off-by: Zigit Zo <zuozhijie@bytedance.com>
----
-v3 -> v2:
-* Simplify the changes.
-v1 -> v2:
-* Check vi->status in virtnet_open().
-* https://lore.kernel.org/netdev/20250702103722.576219-1-zuozhijie@bytedance.com/
-v1:
-* https://lore.kernel.org/netdev/20250630095109.214013-1-zuozhijie@bytedance.com/
----
- drivers/net/virtio_net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 5d674eb9a0f2..82b4a2a2b8c4 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -7059,7 +7059,7 @@ static int virtnet_probe(struct virtio_device *vdev)
- 	   otherwise get link status from config. */
- 	netif_carrier_off(dev);
- 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
--		virtnet_config_changed_work(&vi->config_work);
-+		virtio_config_changed(vi->vdev);
- 	} else {
- 		vi->status = VIRTIO_NET_S_LINK_UP;
- 		virtnet_update_settings(vi);
-
-base-commit: dae7f9cbd1909de2b0bccc30afef95c23f93e477
--- 
-2.49.0
+> 
+> Was this ever tested?
+> 
 
 
