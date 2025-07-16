@@ -1,186 +1,179 @@
-Return-Path: <linux-kernel+bounces-733017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8A9B06EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:27:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75DA6B06EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599FA1A65F0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994CB4A860B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0D628AAED;
-	Wed, 16 Jul 2025 07:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF20B28C2BF;
+	Wed, 16 Jul 2025 07:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AuQvSUEZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QQJQuibo"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2059.outbound.protection.outlook.com [40.107.237.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BEA80B;
-	Wed, 16 Jul 2025 07:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752650817; cv=none; b=OvWWWdeAxaO1FnBsKjxIvJQiMWIiNwkFuIrbmGYFhFRlWoR/4fStHwgOT4Gwd1jm0xl2fCn/2SwsYrV+q+SZb/QOEPloJpTAOVJ0FcYftVox+IdmmyzDZuwE4oXnvj+g/7tbDbF5saVhW5QRXzjR9b6BHgcf7pf/r8af6lxccPY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752650817; c=relaxed/simple;
-	bh=r1PQD6nD4pyjJ1Pi4gRFFijXmP3ecaPtaCinH8IuMHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SIMQ7OgC0SMryIMeYsQWK/WpJUYJUQDvFUQMxESpTvO/0rkCP15/YhBkDUnHFmywZCe3eweE7b5blmdMQ9cyS+rPWQ3hMHfa4FLiKTw7y1Py51VoEl3MOc8Zr+05HARBRr6iq8NsBQzgLeVpALU2nrbOxA9JgPO+M2l1bO1+AM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AuQvSUEZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G5sBWU024588;
-	Wed, 16 Jul 2025 07:26:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Y+xBnG3A0ZWzm693I0w1sXLH1FieiMMxSWP430Dc1M0=; b=AuQvSUEZFczPQqwV
-	BuEyrtb3ozVWWzQfZ2/bJeCMQ0JcFkbvT2MyatgYTEyOHq247gJfBjHnqZhWdNsy
-	A+Me2g0Dg339liKfDhagY4qIzlGDA2oq85YXNSaupQ9w+fJ5XlWUvpUZjODK4A4g
-	3vlyYzM71zgLDlZSpBTEKLQ0lzF21UcZxXXF2ZlbevEJ5pd4lM3m3KGoizC/0d6I
-	sblv96dKjO0w2zTjqWQMuw6ouLW+OWB59gH4NNwYNzcoGQEaO/OPriDkzcHggI0v
-	vkPKAcI6nQcsc9QO9hRJSjQwc1XvHtNEwno6UGYsSMgZAQ0SmU2VTWM51FXRxN4c
-	df7Nlg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dpdurb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 07:26:48 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56G7Qm8O005140
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 07:26:48 GMT
-Received: from [10.216.39.173] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 16 Jul
- 2025 00:26:45 -0700
-Message-ID: <1b7e724a-fa91-11b7-3ee8-d97ed930d6ad@quicinc.com>
-Date: Wed, 16 Jul 2025 12:56:42 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD8326B97D;
+	Wed, 16 Jul 2025 07:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752651013; cv=fail; b=rwMnic01JN0etb0xOlc70Ql4S4r0q4lo2KJiOk0skziLgpgDa1bK9RUijValMvGTzN2EmYNYPQjBebpluwDWV6Vg0nn5O2d4sJ9BA6eT0mVtPE3qTzss42s1o4PbhzQKV8yQ/ko5iq21NpBhixZ7NueYC1Awy8RNyyPrR0p57/c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752651013; c=relaxed/simple;
+	bh=N8P6s8t9sIYGKLFKNfFdmB9VJJBc+M/+tjbs8B4pRFU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mG72vp055z6pmMlz9jymVLuKiH/FOTLz9dtBDu5ORLXzsju8BYWwADG3kQ5hGBB3SwVNf0MkLSeHW0o6SejKle3K83TClaaOmXCtyjSQ8jN2ee3gKNHyvOEJbsenGqAUVOsrkhuVgBj2CIp0GC4R0NgPUEMtF+bBfdD4czLdDEU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QQJQuibo; arc=fail smtp.client-ip=40.107.237.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mPUcg4KZGAdOB93q/KXu4wxbdE0HNyuZfqOto442TsxRRqE2IBNBu91wXTIA7DhomovOZe0kVek/8OvfiI97L22K1oSL5gqmgL+aC4PxWT3AtEYtGkjdXOBYhlosRvyLTO3wd43rLli5LflUl2Kh2xwFZ9ZobZ3BupJMUG83XKuLftkkU+sHGLoyarU0awOICs5oOpcoUsp6PtWYV0nhkEITENxwTlK3vFQE4LcmOTcncfg71znQ0SNNvZg+cwuLdTjNY30LTEAM5v7kkZsSyKEL7b6f1rvimZ5Oh56DUMBICFyJZE7g1xTmL1hPCQrI3Ct34iQdRUspjSSbAJeMPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XX0p6QXDoHlqsZVJdfRpjU8ZYpmLXTc/7Hm8sPK6x4Y=;
+ b=LZPCQekHKA6hWVyopdyczKn5RqiS7JYMEqoALaM65rYyuPChVX0xDH4DYBvLHTGYgxPJWiI5n2HTg4xTLxXMKdS2NewFTqJv+QEe0MYI/6bHik6vNvcgFGNyQNsd6gTNuYluBCmSdBHFANlsC9FYxdRoDdgXKhsWU/bVFZHVBHowGrCEbXjytcfnW97kJzsDSJq6xo7Hsj945atcAB4dwRDACHdz24OEYyzjeik+cOZ3hnIIHUERSKw5Ry5rc2T4Yn9y/JFGAsYPX+Kvur1uRsmZw8l1VBEiM697wkp0EnXXiM9qUkdAEtqs4swuUG4v9dAuMFjYRGbASvoKv/UP7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XX0p6QXDoHlqsZVJdfRpjU8ZYpmLXTc/7Hm8sPK6x4Y=;
+ b=QQJQuiboaMnHsrraN0TOuIjBiIfO0aGIMJqA3FvEnxPlrDVpV77p4NAbm97vLS5nc/4TXE/LucsV80uATw42bkvXJeLqMd/iTKHMz6n+KuQcDQ2x3fcrNHOrnd81SrokUbeqoEg05WShEuvZXEhVnDRnpYjbQmG8IYgxKjH3hDyLjS9xKRZr0C3WNImJU1TGGt0tKUjpqq6eLD/RZSXxWLSTSvTBJstiSopqOU1kGoR0m3TOVOVoBg64/Tt0SjGA4SAYMOgY/JNZQrjWYMZg80FYgxyPFLd2HPWSMc8BEJg2mqGJ6CtA5VQ8hwPuFY6lVUIZGOyAKvNVb31Tbp7T2Q==
+Received: from BL1PR13CA0010.namprd13.prod.outlook.com (2603:10b6:208:256::15)
+ by DS2PR12MB9710.namprd12.prod.outlook.com (2603:10b6:8:276::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Wed, 16 Jul
+ 2025 07:30:05 +0000
+Received: from BN2PEPF000055DA.namprd21.prod.outlook.com
+ (2603:10b6:208:256:cafe::2) by BL1PR13CA0010.outlook.office365.com
+ (2603:10b6:208:256::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Wed,
+ 16 Jul 2025 07:30:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN2PEPF000055DA.mail.protection.outlook.com (10.167.245.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8964.1 via Frontend Transport; Wed, 16 Jul 2025 07:30:05 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 16 Jul
+ 2025 00:29:45 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 16 Jul
+ 2025 00:29:44 -0700
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Wed, 16
+ Jul 2025 00:29:41 -0700
+From: Tariq Toukan <tariqt@nvidia.com>
+To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>
+CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Maor Gottlieb <maorg@nvidia.com>
+Subject: [PATCH net] net/mlx5: Update the list of the PCI supported devices
+Date: Wed, 16 Jul 2025 10:29:29 +0300
+Message-ID: <1752650969-148501-1-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 11/25] media: iris: Fix missing LAST flag handling during
- drain
-Content-Language: en-US
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Vedang
- Nagar" <quic_vnagar@quicinc.com>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
- <20250704-iris-video-encoder-v1-11-b6ce24e273cf@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20250704-iris-video-encoder-v1-11-b6ce24e273cf@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA2NiBTYWx0ZWRfX+XbCfmZ86eh7
- nXoxS8mYe0PPpkop90INBf0Zc5Av/fZQR0jbd5unGk+HSE26jGLb2BzBcDkL4QXEln9793FcTj3
- o9FG4so2Fv28l3n9P6niv7Dm0E+no+tc8N5qshPXdPvtXbOrmwkPXxoBOQ3XkWJE7MYUJeGEACR
- 9eq13aLsDPvoNgnhTGfxMsRSDJsBJ0+3qIV7J3gmNlDDvqH19DOskU6LIzBqk1HS+8nOkm+mrL5
- I9HIyRk8E9WVHuhpHHcfpddwaTfPJEFwF6a7AtrOJG/PYPjCh7iIc5OfXWcPa9X6wrjOpEZKZVt
- FbuwKZHZP2gmFHKW3v1QdqzzK98IkSwSuLzjgXJppeORUyDd0I8vbgpCcXt/dc7lvgRE/vXgG3f
- Dl3oTTMNjbiNz9Kcvl8tfoKHwp4ODiZn1pBlTe4IVvLFarAH7K9u729ALoOUxHD2VSDCMktE
-X-Proofpoint-GUID: 1-tsxHVbqSsMhqwsXLitC-jWTM2UayCx
-X-Proofpoint-ORIG-GUID: 1-tsxHVbqSsMhqwsXLitC-jWTM2UayCx
-X-Authority-Analysis: v=2.4 cv=Y+r4sgeN c=1 sm=1 tr=0 ts=68775438 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=KpRsr4bm_Dgpwk9YamYA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=830 phishscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
- bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507160066
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055DA:EE_|DS2PR12MB9710:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ad00e24-367e-465f-162b-08ddc43a959d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3nl/6OhY3f3Re17OpP5NAoGnwH7JyHwiU/XtPbg/MUQ4ZWf1KzVsKqaSsa+e?=
+ =?us-ascii?Q?MhKkFJbs23iapBsSxbRXewyPMBtSssMY2NhHFGKMmLwJ3eUnnjOCCplRQzKe?=
+ =?us-ascii?Q?ZDMt6W8+NxoLyYYl2r1eSlKkYF/9mh6bgbhY6kzoCb0392eq7QutHCj9yMXa?=
+ =?us-ascii?Q?RsW8K9QK+n6e0XDh9j7jjiriL0NCr5NmErrDomN9XBGALQ6DFqmlMuexrqKy?=
+ =?us-ascii?Q?sWrLQ5Z8kL1sgPs4bIIZFWdpU54lvRetfw23/6k4Ey1tZUNnXldFuC639Vdx?=
+ =?us-ascii?Q?jgbLpSudW4xrhkBAKCCWKxIY+rqmuunC4eq+GzXMiDrHyNIceIAokWvFSLHx?=
+ =?us-ascii?Q?Z4NU1FLM7St3lPkJd7fza5u9fFAmB1HVjlPSDjDlmNCcvJoQbMcYpWLDJWMV?=
+ =?us-ascii?Q?4pmfnnZJ6vXhQYZHv+C14w4ylfVl4cqW9CU80p8uiOrJZMxbjcte3+cvoWS1?=
+ =?us-ascii?Q?lF2VOqqHVAQC0k0XBVOOgnHsuHlO7fMErkpWR0veQuzvgguMxzOQrHpyBgg9?=
+ =?us-ascii?Q?LRyjFfJ5MtvVC82hfSx428e165urTzuv+SMGY6BBtSzfKm86u12uT3zXOj54?=
+ =?us-ascii?Q?G5jCHTtgREdR7FtXCBqsPRREYlxG/PMANDOahRj9//GyZpOuxchwIjbiwFRw?=
+ =?us-ascii?Q?gsX8i3mSFbZ7efVzqWAokGhaQOSFnYnGjTQqufhhD2mrpmCJ/b0e0gY2/pxS?=
+ =?us-ascii?Q?bTbmDle3i3bgk4XwpElH7wrMDZLdWJsu9uWTuF7gjlPX20MBFlFevEneMRYx?=
+ =?us-ascii?Q?J79cohYpJgJ21EmwIfB3nWv2k5uYT+kd8bUs6mISTlcomj5untMhofn4EG4R?=
+ =?us-ascii?Q?hudvo7yy5/Cm9nsmgOqWQy6459Tj0oPkEz/8dzPjxwMdytJtmmBWjgP2yA9K?=
+ =?us-ascii?Q?8aX58NjlbB3syWEfJhA2s0SbGjuqF7cgtMRlgysnV72egv26KiBsiwxB6vgz?=
+ =?us-ascii?Q?X0m6GCL3A7fX8sf7M1PcbUIrrhTZAzydQbNQaN+YCBtkueFdS2ayML2vW2X/?=
+ =?us-ascii?Q?9tDxMS+PitCw5e+Sx2ELeGO0PjnafoVRprd0ruuhc9Ak/UqslB5CbBPAsMtr?=
+ =?us-ascii?Q?BYSODMZUY/x9f4NJbCT+axkcqd8N0JKVx9OtYk1tdy9qm6nPnZSQuEuw4n6h?=
+ =?us-ascii?Q?bu68EwquPg4oIY8/BE0rftqO7+AIXuHlc4kcgIGDtEX+sfX8k+8uzphvS670?=
+ =?us-ascii?Q?AOa9MFTHvxDUO2zZFy649xAFrzUU9xHS9VWwuYXcpsTMZPDVvXK14mImUwNJ?=
+ =?us-ascii?Q?+u3PN3eMoN19IS6w+2DHdbXmKHuR9mTLHSeTobR0cLQGPlknE6dqVSIIm1rc?=
+ =?us-ascii?Q?Srv/+ddcMQBnBYTVCZsE89MJ+nutlHuQfv2pV5dJx0sMzgYw7DhI3hOuuwh4?=
+ =?us-ascii?Q?6mqXN9iuGdm6f8Pi0RYVM/TmTK9rmeFexABTBa01OFmRYSptmqXnn9L9zJk9?=
+ =?us-ascii?Q?trDDavUyzlNg9CY5ifcM+Y8amLEF44kY62rDMKbbE1636LPnDjRdB2y7f2dQ?=
+ =?us-ascii?Q?50pItMEzeV98Cqo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 07:30:05.1936
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ad00e24-367e-465f-162b-08ddc43a959d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000055DA.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9710
 
+From: Maor Gottlieb <maorg@nvidia.com>
 
+Add the upcoming ConnectX-10 device ID to the table of supported
+PCI device IDs.
 
-On 7/4/2025 1:23 PM, Dikshita Agarwal wrote:
-> Improve drain handling by ensuring the LAST flag is attached to final
-> capture buffer when drain response is received from the firmware.
-> 
-> Previously, the driver failed to attach the V4L2_BUF_FLAG_LAST flag when
-> a drain response was received from the firmware, relying on userspace to
-> mark the next queued buffer as LAST. This update fixes the issue by
-> checking the pending drain status, attaching the LAST flag to the
-> capture buffer received from the firmware (with EOS attached), and
-> returning it to the V4L2 layer correctly.
-> 
-> Fixes: d09100763bed ("media: iris: add support for drain sequence")
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->  drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c | 4 +---
->  drivers/media/platform/qcom/iris/iris_state.c             | 2 +-
->  drivers/media/platform/qcom/iris/iris_state.h             | 1 +
->  3 files changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-> index 8d1ce8a19a45ebb2b29457e0fef7d72c1c0d9785..2a96458833835422d30c9386d15cc1e4fb226e3d 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-> @@ -416,8 +416,6 @@ static void iris_hfi_gen1_session_ftb_done(struct iris_inst *inst, void *packet)
->  			inst->flush_responses_pending++;
->  
->  		iris_inst_sub_state_change_drain_last(inst);
-> -
-> -		return;
->  	}
->  
->  	if (iris_split_mode_enabled(inst) && pkt->stream_id == 0) {
-> @@ -462,7 +460,7 @@ static void iris_hfi_gen1_session_ftb_done(struct iris_inst *inst, void *packet)
->  		timestamp_us = (timestamp_us << 32) | timestamp_lo;
->  	} else {
->  		if (pkt->stream_id == 1 && !inst->last_buffer_dequeued) {
-> -			if (iris_drc_pending(inst)) {
-> +			if (iris_drc_pending(inst) || iris_drain_pending(inst)) {
->  				flags |= V4L2_BUF_FLAG_LAST;
->  				inst->last_buffer_dequeued = true;
->  			}
-> diff --git a/drivers/media/platform/qcom/iris/iris_state.c b/drivers/media/platform/qcom/iris/iris_state.c
-> index a21238d2818f9606871953bd0bee25382cca0474..d1dc1a863da0b0b1af60974e9ed2ef68ea225cdd 100644
-> --- a/drivers/media/platform/qcom/iris/iris_state.c
-> +++ b/drivers/media/platform/qcom/iris/iris_state.c
-> @@ -252,7 +252,7 @@ bool iris_drc_pending(struct iris_inst *inst)
->  		inst->sub_state & IRIS_INST_SUB_DRC_LAST;
->  }
->  
-> -static inline bool iris_drain_pending(struct iris_inst *inst)
-> +bool iris_drain_pending(struct iris_inst *inst)
->  {
->  	return inst->sub_state & IRIS_INST_SUB_DRAIN &&
->  		inst->sub_state & IRIS_INST_SUB_DRAIN_LAST;
-> diff --git a/drivers/media/platform/qcom/iris/iris_state.h b/drivers/media/platform/qcom/iris/iris_state.h
-> index e718386dbe0402417f408d8fc696a33e5c7f23b3..b09fa54cf17eeee0c9ae254588964ad959c82c80 100644
-> --- a/drivers/media/platform/qcom/iris/iris_state.h
-> +++ b/drivers/media/platform/qcom/iris/iris_state.h
-> @@ -141,5 +141,6 @@ int iris_inst_sub_state_change_drc_last(struct iris_inst *inst);
->  int iris_inst_sub_state_change_pause(struct iris_inst *inst, u32 plane);
->  bool iris_allow_cmd(struct iris_inst *inst, u32 cmd);
->  bool iris_drc_pending(struct iris_inst *inst);
-> +bool iris_drain_pending(struct iris_inst *inst);
->  
->  #endif
-> 
+Fixes: 7472d157cb80 ("net/mlx5: Update the list of the PCI supported devices")
+Signed-off-by: Maor Gottlieb <maorg@nvidia.com>
+Reviewed-by: Mark Bloch <mbloch@nvidia.com>
+Reviewed-by: Eran Ben Elisha <eranbe@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index 41e8660c819c..9c1504d29d34 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -2257,6 +2257,7 @@ static const struct pci_device_id mlx5_core_pci_table[] = {
+ 	{ PCI_VDEVICE(MELLANOX, 0x1021) },			/* ConnectX-7 */
+ 	{ PCI_VDEVICE(MELLANOX, 0x1023) },			/* ConnectX-8 */
+ 	{ PCI_VDEVICE(MELLANOX, 0x1025) },			/* ConnectX-9 */
++	{ PCI_VDEVICE(MELLANOX, 0x1027) },			/* ConnectX-10 */
+ 	{ PCI_VDEVICE(MELLANOX, 0xa2d2) },			/* BlueField integrated ConnectX-5 network controller */
+ 	{ PCI_VDEVICE(MELLANOX, 0xa2d3), MLX5_PCI_DEV_IS_VF},	/* BlueField integrated ConnectX-5 network controller VF */
+ 	{ PCI_VDEVICE(MELLANOX, 0xa2d6) },			/* BlueField-2 integrated ConnectX-6 Dx network controller */
+
+base-commit: dae7f9cbd1909de2b0bccc30afef95c23f93e477
+-- 
+2.31.1
+
 
