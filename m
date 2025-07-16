@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-733834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47741B079A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2FCB079A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E8A27BAF04
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:21:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F352D581091
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6DE2F5098;
-	Wed, 16 Jul 2025 15:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD462F5C25;
+	Wed, 16 Jul 2025 15:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmkuWvqL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXNZqmiM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D072F4A05
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B31A2F50B1;
+	Wed, 16 Jul 2025 15:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679284; cv=none; b=SJISILRKU2pPDjj6AT5+qPzLiQ3tCCSNr+yMM1AyehLI8zwNbEn97BuPQakeKwF26tulAgcFSDz8lZrB06SjcTHnNbQ6ffUiYJAHzbuToQ0R36dXLMERJ8zgSSaWyjtbQQ8xiL9hGGnXrA1xQLrXO53N4ROg4ytxfyA0Qc9fJFc=
+	t=1752679285; cv=none; b=KxcMoCZgCUGEL+KR6LnQr9yShUWWpRR7DKZaV/ivEVnBpQgjcBrEmA+6rxAzczgHmPhezGrjjWg2DUm9QPoFDKhkeejqC57WEmTuj+1/7hA8WKdgo+jN2YVuPEsVtWOfi1f6xw7oJbe9kOKk5dFvYt+190rPntwlcTAiMLdP9xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679284; c=relaxed/simple;
-	bh=N9DR2XoFU8LJ40xmBBEoBU+ULNUrw05MSwSTwA269Vw=;
+	s=arc-20240116; t=1752679285; c=relaxed/simple;
+	bh=p2u05dLVtqQJ3foGrWJXooMdrDiQBdBaUfjuYdOfRI8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=WDtYXHGZkPO4KKrgwzTaFC4Rk3VnjCZMeupXSNhM3Fd+I9YJiQ7hVlDVsObPboulweyEZajrxQXc2rwq2xiuoARJ86IXPJSLdrUm5u/8yq1Vfcl5EhDPlz70RROnPV9BR278KOVGOHgCHhWvJuQnM/Eey34zCPfTRokVpvDaMnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmkuWvqL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E49C4CEF4;
-	Wed, 16 Jul 2025 15:21:23 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=VEToshdnukzeWazEVazZkVybY8YKnOi/PqTCR2fW8aV6+20nHygim318F3YmK8sS6HqUKU+zGw7Hi+lhXH0QJBFl0SxnFah+D+DACjffPdLec+G/fCM4aTZfG4w0x0S/d3UziOFBmLRbu/F5H/pP7aQ9KXo9HxPKx+HH0SoSSzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXNZqmiM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D866C4CEF0;
+	Wed, 16 Jul 2025 15:21:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752679283;
-	bh=N9DR2XoFU8LJ40xmBBEoBU+ULNUrw05MSwSTwA269Vw=;
+	s=k20201202; t=1752679284;
+	bh=p2u05dLVtqQJ3foGrWJXooMdrDiQBdBaUfjuYdOfRI8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AmkuWvqLDRyRSNj9dulYvxOc08DmdmzpwoJID//N3AjazJZ5+3yihVYJWly9foRm1
-	 pY+kagnCLWU5FkldusKOaJmutDjZLVDbmKDaOK0EU+L1NWR3iVZKWsyEKLR00qbaBQ
-	 DGCOL48W401QoXZEsTwlaYRpwzSqXBcgpQ+/5u347J6a8wZ1VXoaRiJuek3fVONzCu
-	 fYtcADOp90PCiI43k5jsD6Detk2zD12p+XpVjB4veJrO1Il8bXiOAEw3yeaZ/VtFHh
-	 10KIPvNIeKqqaTfmdv7/LVyQmu3qjMGKYbtmETulyzOHcS8N/+LQ0NqROfAmMk5u1g
-	 dMl6YmZV1e8Bg==
+	b=GXNZqmiM3oopAWeII/q3vlE8pvrAug8t7A6wOb+mZy/DJcXF/RELXBzf30puyUdIf
+	 PEw3d7vZ5vmLIX2Xq09I4ZyXuSbI+5Pb8N8RV42b//+EXK/W3DbyLLQ0pOHTYanHAY
+	 JX92xf8rrx7lZTC1MHYEAbzX2ArWb5myVqPJ8Y5D5R4cukMaQcrRysKjKUP32iu5Et
+	 0ia8x2NEVTIQyrzRq0MEJ91tTnQFlcvFQ0p79hJ/naQEIGYFF6FVO33VJmuPXKLqVn
+	 Dk+2KGtpQmzs4PjxM/G+VrGjhCvYY+0TvMLLvdNb0bqZPI1fta3xN4Eas7KfSsVOMd
+	 atDjSa1cvJyqA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE772383BA33;
-	Wed, 16 Jul 2025 15:21:44 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 2B757383BA33;
+	Wed, 16 Jul 2025 15:21:46 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,14 +51,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/1] mm/rmap: make folio unmap batching safe and support
- partial batches
+Subject: Re: [PATCH v4 1/1] mm/rmap: fix potential out-of-bounds page table
+ access
+ during batched unmap
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <175267930360.1224517.58776217215607423.git-patchwork-notify@kernel.org>
-Date: Wed, 16 Jul 2025 15:21:43 +0000
-References: <20250627025214.30887-1-lance.yang@linux.dev>
-In-Reply-To: <20250627025214.30887-1-lance.yang@linux.dev>
+ <175267930477.1224517.13373842337541537594.git-patchwork-notify@kernel.org>
+Date: Wed, 16 Jul 2025 15:21:44 +0000
+References: <20250701143100.6970-1-lance.yang@linux.dev>
+In-Reply-To: <20250701143100.6970-1-lance.yang@linux.dev>
 To: Lance Yang <ioworker0@gmail.com>
 Cc: linux-riscv@lists.infradead.org, akpm@linux-foundation.org,
  david@redhat.com, 21cnbao@gmail.com, baolin.wang@linux.alibaba.com,
@@ -67,27 +68,29 @@ Cc: linux-riscv@lists.infradead.org, akpm@linux-foundation.org,
  ryan.roberts@arm.com, v-songbaohua@oppo.com, x86@kernel.org,
  huang.ying.caritas@gmail.com, zhengtangquan@oppo.com, riel@surriel.com,
  Liam.Howlett@oracle.com, vbabka@suse.cz, harry.yoo@oracle.com,
- mingzhe.yang@ly.com, baohua@kernel.org, lance.yang@linux.dev
+ mingzhe.yang@ly.com, stable@vger.kernel.org, baohua@kernel.org,
+ lance.yang@linux.dev
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
 by Andrew Morton <akpm@linux-foundation.org>:
 
-On Fri, 27 Jun 2025 10:52:14 +0800 you wrote:
+On Tue,  1 Jul 2025 22:31:00 +0800 you wrote:
 > From: Lance Yang <lance.yang@linux.dev>
 > 
 > As pointed out by David[1], the batched unmap logic in try_to_unmap_one()
-> can read past the end of a PTE table if a large folio is mapped starting at
-> the last entry of that table.
+> may read past the end of a PTE table when a large folio's PTE mappings
+> are not fully contained within a single page table.
 > 
-> So let's fix the out-of-bounds read by refactoring the logic into a new
-> helper, folio_unmap_pte_batch().
+> While this scenario might be rare, an issue triggerable from userspace must
+> be fixed regardless of its likelihood. This patch fixes the out-of-bounds
+> access by refactoring the logic into a new helper, folio_unmap_pte_batch().
 > 
 > [...]
 
 Here is the summary with links:
-  - [1/1] mm/rmap: make folio unmap batching safe and support partial batches
+  - [v4,1/1] mm/rmap: fix potential out-of-bounds page table access during batched unmap
     https://git.kernel.org/riscv/c/ddd05742b45b
 
 You are awesome, thank you!
