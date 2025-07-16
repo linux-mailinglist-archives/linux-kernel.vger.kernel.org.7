@@ -1,64 +1,42 @@
-Return-Path: <linux-kernel+bounces-732808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17EE4B06C4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:29:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F471B06C47
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BEC1501212
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:28:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7405D3B9C4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2680279354;
-	Wed, 16 Jul 2025 03:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Z+jouwOD"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B1027816B;
+	Wed, 16 Jul 2025 03:26:16 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6349311187;
-	Wed, 16 Jul 2025 03:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D327261D;
+	Wed, 16 Jul 2025 03:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752636545; cv=none; b=iUAvgJKZaiwUo+7BHmbU8eYuYFMBZ+D2xKxAE+FRmUCBnXbPY/e6f5rzHjXV48SGs0fR48kQbNONIl1vj/80OaW67WhRqKBiiJZyeVQQygi2Not6xlid7Q6haBbwtZwrnvA1rphURFjAo9dQ1EHkfLXMR862tNKSHoI0UWZOZRg=
+	t=1752636375; cv=none; b=lrf0Ftf6ZzWkKw12I2m6dJ6s8qfjG88o/n/J5V26d6MDXKIsHe+I+BwiNuQ39n8wTsqQq4KIQbHCD79Cf7ra5pcWNK4ekZDHHEIYYGvMgzbj2ZDh5PBETpxvN5omWBr1nZmAiRW0N8fCJj91/NNt9ijUhree8nCMfqmrmU/TfWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752636545; c=relaxed/simple;
-	bh=9fVuKRupkpK0jeXpqHJzfBtwNx3YJfAqnBuOqi1+Yog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LMneHEj80qEOyqeH91czQ8cBIke2LwH/xFc2RNKFUmv+xEvbexwylNad7JJtr1nS+hmJdN4oSJdBMFZo5swdY8dcCfEK265htOstoxqgPjvRa8h9eQTWiuaz31Gtk6keh7kfh0gepcXrAsprZLCCa+wqjo+KmoXqqpwCerDHoRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Z+jouwOD; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1752636224; bh=rVYXfJ28puNpDsYuCqlsBIEx1NeRES2IwwJ6mZh08HU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Z+jouwODo5fKme7FRH/Ag79iESRnzlQ77J/b0EKsxfiRvcnvOoWGm58iPcQdgPioq
-	 pXM5HsAae9UA2MnRyJ6vESygyrKS4ov2opGA/7WjvezxFIb5IPxnQmz1R+m1v1P3UA
-	 uzDzQdbNrpAYYa3mQlHqMNBZ1NGRsCtnwR9fTEDg=
-Received: from [172.25.20.187] ([111.202.154.66])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 5E88D015; Wed, 16 Jul 2025 11:23:40 +0800
-X-QQ-mid: xmsmtpt1752636220tycb83gcn
-Message-ID: <tencent_1C2FC8524B8F624445562817A2BE18E5700A@qq.com>
-X-QQ-XMAILINFO: OeJ9zRfntlNPdKuf745NpqchrcYrT80cSkGsEezOdvuR17zHQEAfAqb15k9v58
-	 e6/aINkDvUFB6XtpkSJZ5KY6+PyfVNNOTf8mD4q7weZ7nzy0eZssb4PasUrqSFHhZoxI2KFbfqsF
-	 5uLIgB0jbNAWf+qPV0EYjIE56Ia5BU4l6fV2lfFV+vazL7cUVAqssEw6T5qWHQx5ezxPUFU+Ezpe
-	 bZxOa+0uSgVLhYwFMiIaO8LTbBmE9vmzAs1jp/q4c/z9YCJW5yfAIC13ZXcN/pHnW4BAkbQcazmi
-	 4yv9Bp5ceti/eLFLsHe5ClFNl0tWAWWkfOQkmtS7RQM49aSFxG1pwa3bMTWZc97UJFuus71FETLz
-	 6vQXOTiDzKbl7pYAjYRiIvva3K+qDQINKquuXYbwpT3VwI2iRlb4gCmW94pnMtQJXCARi9G0GL9j
-	 2R7D3ZKfqnz1biSCgdZAq0IfkFcoow7tReKz05Ol8TmGhiPqQbawgy1PpGHg8Di0Beoex1rurbnM
-	 avA3ieh+UrpVV7cjuwRhxy5mDeGZIa19rJWmSnp6kvq1kfuZpHIbohexe2U8LFuCt8kcQiMH3n+y
-	 83UmSX+1vH7z67biSLOGUXze5Pxx3D8huAF+HT4f8dzFfNZ6ziDC8kg8LBrdbd3qHtOHgpsSR8VG
-	 Aid7treeFoiLHnqmd3raHkpQAe16YMDfGGb4IfN1W/5CL2CLgz6e3y8AinBfy9NX8uTxTtM0ujr1
-	 ld4DTcuZWv52alaCQ56b+7JyGb48tm+52llAkbeKrkA6I06FBsFCrakEu0y+OO+Qu5gNpvrgnI6d
-	 q+UVJNPSbVSxwv/6WLjRXqsFxzJ+te7n5AjtM2UCDJOnwn8rCF2+v7xLKkN7kmp+CkGm1nrmbN1R
-	 u7etkw9ViyDwluV2oh312yNMag4FfzrZuZDx498iefnQ040V7R39wtKT2FZfzRzeYdgv3BN2IAlP
-	 p7K4/7Dr3eD9QaPAihIasG/TqpR48mGdeu7F6TzZREX2lkb55/EkSpSNxm2Z/hD0kPBeK2KbPWGa
-	 fo8o4tAV5gqaFp8WFGgHxzUB1lZCpXI4ZNTzhBoity48Yz8FYN
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-OQ-MSGID: <99f2ff09-6921-4c68-9783-c590ed4977f2@qq.com>
-Date: Wed, 16 Jul 2025 11:23:40 +0800
+	s=arc-20240116; t=1752636375; c=relaxed/simple;
+	bh=h8NxuTyyqvPmA1Oiab4UpjfjwGlgCel2hu+Qxaf2RUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=PXAm3RNERfPup2wuAmraXqgAv8p4TA1aVBvZdjh/Goy8BMLA3Vh/7JnCV2GuPQxU/Wwxg8OO62f0r9IK1if1AnyWakSWlmDgcN/sT8Y8uaDgj8uIB+4AS7mkp+fFdcg+1Q73pSBNC7wITM7BGEZ3lt1qw0kIZ00cZrzmKhnbw4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.196] (p5b13a973.dip0.t-ipconnect.de [91.19.169.115])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 69AA061E64847;
+	Wed, 16 Jul 2025 05:26:06 +0200 (CEST)
+Message-ID: <4d79d6f7-5648-43fc-b321-ea130a2fd713@molgen.mpg.de>
+Date: Wed, 16 Jul 2025 05:26:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,77 +44,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/5] fs: refactor write_begin/write_end and add ext4
- IOCB_DONTCACHE support
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, frank.li@vivo.com,
- tytso@mit.edu, hch@infradead.org, adilger.kernel@dilger.ca,
- willy@infradead.org, jani.nikula@linux.intel.com, rodrigo.vivi@intel.com,
- tursulin@ursulin.net, airlied@gmail.com
-References: <20250710101404.362146-1-chentaotao@didiglobal.com>
- <20250714-tolerant-begreifbar-970f01d32a30@brauner>
-From: Taotao Chen <chentao325@qq.com>
-In-Reply-To: <20250714-tolerant-begreifbar-970f01d32a30@brauner>
+Subject: Re: [PATCH RESEND] Bluetooth: vhci: Prevent use-after-free by
+ removing debugfs files early
+To: Ivan Pravdin <ipravdin.official@gmail.com>
+References: <20250716004252.125466-2-ipravdin.official@gmail.com>
+Content-Language: en-US
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250716004252.125466-2-ipravdin.official@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Dear Ivan,
 
-在 2025/7/14 17:11, Christian Brauner 写道:
-> On Thu, 10 Jul 2025 10:14:06 +0000, 陈涛涛 Taotao Chen wrote:
->> From: Taotao Chen <chentaotao@didiglobal.com>
->>
->> This patch series refactors the address_space_operations write_begin()
->> and write_end() callbacks to take const struct kiocb * as their first
->> argument, allowing IOCB flags such as IOCB_DONTCACHE to propagate to the
->> filesystem's buffered I/O path.
->>
->> [...]
-> Applied to the vfs-6.17.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs-6.17.misc branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-6.17.misc
->
-> [1/5] drm/i915: Use kernel_write() in shmem object create
->        https://git.kernel.org/vfs/vfs/c/110ae5fb48ed
-> [2/5] drm/i915: Refactor shmem_pwrite() to use kiocb and write_iter
->        https://git.kernel.org/vfs/vfs/c/dd09194ff58c
-> [3/5] fs: change write_begin/write_end interface to take struct kiocb *
->        https://git.kernel.org/vfs/vfs/c/254a06118b31
-> [4/5] mm/pagemap: add write_begin_get_folio() helper function
->        https://git.kernel.org/vfs/vfs/c/ff2219c021c5
-> [5/5] ext4: support uncached buffered I/O
->        https://git.kernel.org/vfs/vfs/c/2677497bc6f4
-Hi Christian,
 
-Kernel testing reported regression bugs in this patch series:
--  Reported-by: kernel test robot <lkp@intel.com>
-    Closes: 
-202507142128.Zr5StnYh-lkp@intel.com/">https://lore.kernel.org/oe-kbuild-all/202507142128.Zr5StnYh-lkp@intel.com/
+Thank you for your patch.
 
-- Reported-by: kernel test robot <lkp@intel.com>
-   Closes: 
-202507142040.wppyoX1s-lkp@intel.com/">https://lore.kernel.org/oe-kbuild-all/202507142040.wppyoX1s-lkp@intel.com/
+Am 16.07.25 um 02:42 schrieb Ivan Pravdin:
+> Move the creation of debugfs files into a dedicated function, and ensure
+> they are explicitly removed during vhci_release(), before associated
+> data structures are freed.
+> 
+> Previously, debugfs files such as "force_suspend", "force_wakeup", and
+> others were created under hdev->debugfs but not removed in
+> vhci_release(). Since vhci_release() frees the backing vhci_data
+> structure, any access to these files after release would result in
+> use-after-free errors.
+> 
+> Although hdev->debugfs is later freed in hci_release_dev(), user can
+> access files after vhci_data is freed but before hdev->debugfs is
+> released.
+> 
+> Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
+> Fixes: ab4e4380d4e1 ("Bluetooth: Add vhci devcoredump support")
 
-I will send an updated version of the patch series shortly to address 
-these issues.
-Please consider dropping the original series from the vfs-6.17.misc 
-branch once the new version is reviewed.
+Not important, but I’d put the Signed-off-by: tag last.
 
-Thanks, and sorry for the trouble.
+> ---
+> Resending because previous patch got archived [1].
+> 
+> [1] https://patchwork.kernel.org/project/bluetooth/patch/20250614235317.304705-1-ipravdin.official@gmail.com/
+> 
+>   drivers/bluetooth/hci_vhci.c | 57 ++++++++++++++++++++++++++----------
+>   1 file changed, 41 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_vhci.c b/drivers/bluetooth/hci_vhci.c
+> index f7d8c3c00655..2fef08254d78 100644
+> --- a/drivers/bluetooth/hci_vhci.c
+> +++ b/drivers/bluetooth/hci_vhci.c
+> @@ -380,6 +380,28 @@ static const struct file_operations force_devcoredump_fops = {
+>   	.write		= force_devcd_write,
+>   };
+>   
+> +static void vhci_debugfs_init(struct vhci_data *data)
+> +{
+> +	struct hci_dev *hdev = data->hdev;
+> +
+> +	debugfs_create_file("force_suspend", 0644, hdev->debugfs, data,
+> +			    &force_suspend_fops);
+> +
+> +	debugfs_create_file("force_wakeup", 0644, hdev->debugfs, data,
+> +			    &force_wakeup_fops);
+> +
+> +	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
+> +		debugfs_create_file("msft_opcode", 0644, hdev->debugfs, data,
+> +				    &msft_opcode_fops);
+> +
+> +	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
+> +		debugfs_create_file("aosp_capable", 0644, hdev->debugfs, data,
+> +				    &aosp_capable_fops);
+> +
+> +	debugfs_create_file("force_devcoredump", 0644, hdev->debugfs, data,
+> +			    &force_devcoredump_fops);
+> +}
+> +
+>   static int __vhci_create_device(struct vhci_data *data, __u8 opcode)
+>   {
+>   	struct hci_dev *hdev;
+> @@ -434,22 +456,8 @@ static int __vhci_create_device(struct vhci_data *data, __u8 opcode)
+>   		return -EBUSY;
+>   	}
+>   
+> -	debugfs_create_file("force_suspend", 0644, hdev->debugfs, data,
+> -			    &force_suspend_fops);
+> -
+> -	debugfs_create_file("force_wakeup", 0644, hdev->debugfs, data,
+> -			    &force_wakeup_fops);
+> -
+> -	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
+> -		debugfs_create_file("msft_opcode", 0644, hdev->debugfs, data,
+> -				    &msft_opcode_fops);
+> -
+> -	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
+> -		debugfs_create_file("aosp_capable", 0644, hdev->debugfs, data,
+> -				    &aosp_capable_fops);
+> -
+> -	debugfs_create_file("force_devcoredump", 0644, hdev->debugfs, data,
+> -			    &force_devcoredump_fops);
+> +	if (!IS_ERR_OR_NULL(hdev->debugfs))
+> +		vhci_debugfs_init(data);
+>   
+>   	hci_skb_pkt_type(skb) = HCI_VENDOR_PKT;
+>   
+> @@ -651,6 +659,21 @@ static int vhci_open(struct inode *inode, struct file *file)
+>   	return 0;
+>   }
+>   
+> +static void vhci_debugfs_remove(struct hci_dev *hdev)
+> +{
+> +	debugfs_lookup_and_remove("force_suspend", hdev->debugfs);
+> +
+> +	debugfs_lookup_and_remove("force_wakeup", hdev->debugfs);
+> +
+> +	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
+> +		debugfs_lookup_and_remove("msft_opcode", hdev->debugfs);
+> +
+> +	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
+> +		debugfs_lookup_and_remove("aosp_capable", hdev->debugfs);
+> +
+> +	debugfs_lookup_and_remove("force_devcoredump", hdev->debugfs);
+> +}
+> +
+>   static int vhci_release(struct inode *inode, struct file *file)
+>   {
+>   	struct vhci_data *data = file->private_data;
+> @@ -662,6 +685,8 @@ static int vhci_release(struct inode *inode, struct file *file)
+>   	hdev = data->hdev;
+>   
+>   	if (hdev) {
+> +		if (!IS_ERR_OR_NULL(hdev->debugfs))
+> +			vhci_debugfs_remove(hdev);
+>   		hci_unregister_dev(hdev);
+>   		hci_free_dev(hdev);
+>   	}
 
-Taotao
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
+
+Kind regards,
+
+Paul
 
