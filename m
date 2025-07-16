@@ -1,115 +1,159 @@
-Return-Path: <linux-kernel+bounces-733844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70797B079BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:26:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3679EB079DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15EDA44C44
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090D3189723E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CD52F5C20;
-	Wed, 16 Jul 2025 15:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3BF2F5319;
+	Wed, 16 Jul 2025 15:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPO42vlp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CM1TTu0F"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EE028A1C8;
-	Wed, 16 Jul 2025 15:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB37023496F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679420; cv=none; b=QsaBk8gbbDnIyQ5hasmC6rpGB5yRN6QaZIng64P7OR2TT35zQlYSvlEPYZShoV/Mew3PrTs+cjm0YTFdeYl9OibHP16XKVUgIFfC1TT8wEaYV9PJWuIqe5IBIkBxeIKmRcYjXTpVdfeCSEyTrG0Hs9dN9zjEgUSHsWHrTx1BlfY=
+	t=1752679467; cv=none; b=Lwdb1pP2SKmyOsJBtahyKyKB3hvjf7sL/2WaZCf7Mi2s2+gD9r+oxKUkQ67LY8DXHwEVSWi8VFMEzioH2yr0q3udNbhVQ/gpAZA+sSGTuKOnrmEhOurP47Lm5g3FyTv/0iw5d6ijUfnXtzsMD8lA/rHBRGHRlvXt79Uu/Be6GGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679420; c=relaxed/simple;
-	bh=tpTs+jX92sQ6oTJ59R/yyANwWHArExgRUeTRqrhTvYc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VydqD5qqri3N+ptpxUTEAv5GOqOjlwwMTLshrvnxfg5PPvzgjjrXu4cdD0AkfjgH5jTV1KRdYUT1bJX/7GyWpUzGPXUhvdNt8u5DanaLuhGxW/mVZk/hfA00PsdSzYoNBKT58LArRIkAWJAwoRuxEtF0BNlW8fM7gI3MrUkaaQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPO42vlp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB00CC4CEF0;
-	Wed, 16 Jul 2025 15:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752679419;
-	bh=tpTs+jX92sQ6oTJ59R/yyANwWHArExgRUeTRqrhTvYc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=iPO42vlpAyw1KrQJuE0mB7ZC9S0O1uik/YV91c1X/9+ES4NhNS8Uj5Ff79sMhHC61
-	 eTR8u9pNkHeiQkAmiDQKnvRXWmT+lBPOSWmGImKbHd2zO9A94fZPwRtIfVlRStS71w
-	 fJyDYuIYl+DoXowwaI/sOS1U22bCdpgsxx0F9plHz8lZb1sidOinJBPz37QWa5TRJG
-	 gMZXTjgyjoAE9bGAHpFTHsJuxyGOKbolMMqRvpq+MRN0i1ACyZo7rwL3EJGk5z8nkL
-	 eFcf2a2I1ddqEEE0dElkQH9XmyQClOHcOnc6eEYO3DAiMugVczgCwMVWTIzsBmp4c0
-	 xFDCGfLTGncsg==
-From: Mark Brown <broonie@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Daniel Almeida <daniel.almeida@collabora.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- Alexandre Courbot <acourbot@nvidia.com>
-In-Reply-To: <20250714-topics-tyr-regulator2-v8-0-c7ab3955d524@collabora.com>
-References: <20250714-topics-tyr-regulator2-v8-0-c7ab3955d524@collabora.com>
-Subject: Re: [PATCH v8 0/2] Add a bare-minimum Regulator abstraction
-Message-Id: <175267941650.716137.1066495222892798076.b4-ty@kernel.org>
-Date: Wed, 16 Jul 2025 16:23:36 +0100
+	s=arc-20240116; t=1752679467; c=relaxed/simple;
+	bh=0fdoyK6vJqa1Pw1pbkER+5BhSUgIQU3RtL6LAGPeubs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r+IalTeLIjYZyCGLndhJEa2mghcb7M+99z/gJeN6AZkOtTw00alkIHmqEyfIMojxuZFRJo8GhdmhTbNomia9ejAewFb7QOVoT4a5MkZ8f+NeM+IbfW6d7hQInG/NIymjAvGxr3ffn8/2L8LHD36IoMuFw2Aam63pm5XzqfLhXNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CM1TTu0F; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b09a15b7-a57e-419f-8e78-28b5ef27ca86@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752679450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t3+kVpN3jTyEkRbDQ8IRvJB3MFw1lUbszjJIVvuCVSM=;
+	b=CM1TTu0FD+QxnZiqawM9n8wCojjI4O1uGEGyr0PSTKSFsyKVoWXjJYJvAp84AUSagtV4Bt
+	jMp8u/L6wv6L5UsN9A3mbNSJfSz6dHQPTzdkD1PA3hC8YDT4Fi3ysS665DxXOeZg5LCEn4
+	vQbkTcBo8sMURLrU6a6jYk1fou75RO8=
+Date: Wed, 16 Jul 2025 08:24:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH bpf-next] libbpf: Fix macro redefined
+Content-Language: en-GB
+To: Feng Yang <yangfeng59949@163.com>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, memxor@gmail.com
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250716080616.1357793-1-yangfeng59949@163.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250716080616.1357793-1-yangfeng59949@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 14 Jul 2025 15:52:03 -0300, Daniel Almeida wrote:
-> Changes in v8:
-> - Added Alex's r-b
-> - Added helpers/regulator.c, since the stubs are declared as inline if
->   CONFIG_REGULATOR is not set (Intel bot)
-> - Removed unneeded "regulator.enable()" line from docs: it was not needed
->   and, ironically, it misused the API by choosing Regulator<Dynamic>
->   and then not keeping the enabled count count balenced (Alex)
-> - Clarified that the "Enabled" state decreases the enabled refcount when it
->   drops (Alex)
-> - Renamed "Microvolt" as "Voltage" and introduced
->   from_microvolts/as_microvolts (Alex)
-> - Fixed the spelling for MAINTAINERS in the second commit (Alex)
-> - Link to v7: https://lore.kernel.org/rust-for-linux/20250704-topics-tyr-regulator-v7-0-77bfca2e22dc@collabora.com/
-> 
-> [...]
 
-Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+On 7/16/25 1:06 AM, Feng Yang wrote:
+> From: Feng Yang <yangfeng@kylinos.cn>
+>
+> When compiling a program that include <linux/bpf.h> and <bpf/bpf_helpers.h>, (For example: make samples/bpf)
+> the following warning will be generated:
+> In file included from tcp_dumpstats_kern.c:7:
+> samples/bpf/libbpf/include/bpf/bpf_helpers.h:321:9: warning: 'bpf_stream_printk' macro redefined [-Wmacro-redefined]
+>    321 | #define bpf_stream_printk(stream_id, fmt, args...)                              \
+>        |         ^
+> include/linux/bpf.h:3626:9: note: previous definition is here
+>   3626 | #define bpf_stream_printk(ss, ...) bpf_stream_stage_printk(&ss, __VA_ARGS__)
+>        |         ^
+>
+> Therefore, similar to bpf_vprintk,
+> two underscores are added to distinguish it from bpf_stream_printk in bpf.h.
+>
+> Fixes: 21a3afc76a31 ("libbpf: Add bpf_stream_printk() macro")
+> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+> ---
+>   tools/lib/bpf/bpf_helpers.h                | 2 +-
+>   tools/testing/selftests/bpf/progs/stream.c | 4 ++--
+>   2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/lib/bpf/bpf_helpers.h b/tools/lib/bpf/bpf_helpers.h
+> index 80c028540656..56391a7bee48 100644
+> --- a/tools/lib/bpf/bpf_helpers.h
+> +++ b/tools/lib/bpf/bpf_helpers.h
+> @@ -318,7 +318,7 @@ enum libbpf_tristate {
+>   extern int bpf_stream_vprintk(int stream_id, const char *fmt__str, const void *args,
+>   			      __u32 len__sz, void *aux__prog) __weak __ksym;
+>   
+> -#define bpf_stream_printk(stream_id, fmt, args...)				\
+> +#define __bpf_stream_printk(stream_id, fmt, args...)				\
 
-Thanks!
+I think we should not change here. If absolutely necessary, we should change
+kernel side (which is not exposed to uapi). E.g., just remove this line
+   #define bpf_stream_printk(ss, ...) bpf_stream_stage_printk(&ss, __VA_ARGS__)
+and directly use bpf_stream_stage_printk(&ss, ...)
 
-[1/2] rust: regulator: add a bare minimum regulator abstraction
-      commit: 9b614ceada7cb846de1a1c3bb0b29b0a2726ef45
-[2/2] MAINTAINERS: add regulator.rs to the regulator API entry
-      commit: d9f334fca5448907cc47ba8553926f9ba148512f
+The main reason is due to below in sample/bpf/Makefile:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+$(obj)/%.o: $(src)/%.c
+         @echo "  CLANG-bpf " $@
+         $(Q)$(CLANG) $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(BPF_EXTRA_CFLAGS) \
+                 -I$(obj) -I$(srctree)/tools/testing/selftests/bpf/ \
+                 -I$(LIBBPF_INCLUDE) $(CLANG_SYS_INCLUDES) \
+                 -D__KERNEL__ -D__BPF_TRACING__ -Wno-unused-value -Wno-pointer-sign \
+                 -D__TARGET_ARCH_$(SRCARCH) -Wno-compare-distinct-pointer-types \
+                 -Wno-gnu-variable-sized-type-not-at-end \
+                 -Wno-address-of-packed-member -Wno-tautological-compare \
+                 -Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
+                 -fno-asynchronous-unwind-tables \
+                 -I$(srctree)/samples/bpf/ -include asm_goto_workaround.h \
+                 -O2 -emit-llvm -Xclang -disable-llvm-passes -c $< -o - | \
+                 $(OPT) -O2 -mtriple=bpf-pc-linux | $(LLVM_DIS) | \
+                 $(LLC) -march=bpf $(LLC_FLAGS) -filetype=obj -o $@
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Here, some kernel data structure is needed for some particular architecture so
+the initial from source to IR is compiled with native arch and after IR optimization
+is done, it is switched to bpf.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Since we have vmlinux.h now. Maybe we can remove such a hack at all.
+Also, sample/bpf is not really tested. Maybe trying to convert some
+useful things to selftests and discard others and eventually remove sample/bpf?
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+>   ({										\
+>   	static const char ___fmt[] = fmt;					\
+>   	unsigned long long ___param[___bpf_narg(args)];				\
+> diff --git a/tools/testing/selftests/bpf/progs/stream.c b/tools/testing/selftests/bpf/progs/stream.c
+> index 35790897dc87..1d0663d56c0a 100644
+> --- a/tools/testing/selftests/bpf/progs/stream.c
+> +++ b/tools/testing/selftests/bpf/progs/stream.c
+> @@ -29,7 +29,7 @@ int stream_exhaust(void *ctx)
+>   	/* Use global variable for loop convergence. */
+>   	size = 0;
+>   	bpf_repeat(BPF_MAX_LOOPS) {
+> -		if (bpf_stream_printk(BPF_STDOUT, _STR) == -ENOSPC && size == 99954)
+> +		if (__bpf_stream_printk(BPF_STDOUT, _STR) == -ENOSPC && size == 99954)
+>   			return 0;
+>   		size += sizeof(_STR) - 1;
+>   	}
+> @@ -72,7 +72,7 @@ SEC("syscall")
+>   __success __retval(0)
+>   int stream_syscall(void *ctx)
+>   {
+> -	bpf_stream_printk(BPF_STDOUT, "foo");
+> +	__bpf_stream_printk(BPF_STDOUT, "foo");
+>   	return 0;
+>   }
+>   
 
 
