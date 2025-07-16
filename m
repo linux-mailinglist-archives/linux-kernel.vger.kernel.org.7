@@ -1,187 +1,182 @@
-Return-Path: <linux-kernel+bounces-733320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FB7B07326
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:19:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F6BB07329
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECA9C7AFE61
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:17:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95157169C8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84C22F3C16;
-	Wed, 16 Jul 2025 10:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0074C2F3C2D;
+	Wed, 16 Jul 2025 10:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="IXSdBJOL";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="Isu7DQLR"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xiypQgZo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UIAP95Cg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EBC2F2C56;
-	Wed, 16 Jul 2025 10:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661136; cv=fail; b=bOm72Y5DfUqtIaYJpqRmmtMAzG106x+12sgoqbHfYRpjuF0ZI4E7Qp6nIehi3MAcmQtCGVVTeVASEZphL/lx8I4H1rjY5SnEHxFk68VpNE3UnhBz3Mi8tdh/9taVPWgL6V16ibmlfeEssRhV8lr0PjsQ0JtRYrsFDtOpecBaDKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661136; c=relaxed/simple;
-	bh=x3gL9h8FD3DE5KG3pYsEmq+kI9Eetyf708n425tZu1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AklHTc8+fxdOj32ljwiFZpk+nJaRp7VAAG4ArjjmrpoqVQAT/BHoZf9GCDtIJcyUEAqttDfYvI8t+7OST4W9S0j4XK7QhJuS4fdr8VDYaG4DLlA2tzpWy+Mg4yYjXt+r0+GiOY2SWMKmW6uFJy4l66LzUoNd1S1Hwfne2a5UkOs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=IXSdBJOL; dkim=fail (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=Isu7DQLR reason="signature verification failed"; arc=fail smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G4UV2U029353;
-	Wed, 16 Jul 2025 05:18:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=/5bPmf31MkHEyE7cD7phxofjLzRYFrjWnyXCXyaNlX8=; b=
-	IXSdBJOLZZR8RF9lTmZFo1vZmxCRJM47ly+YebsduzEmVISU0VqeyHVOkV47ucIw
-	zG+11Le2FFUggxGM84fALuAFRaRZ9fKByI4ykzvbdAzQ1JcTniVwv9JzjpYoFlvA
-	8ma9rPV3vPNHPziwnnOV8wqcN3wNpnc5DOPT502zum8cCDnU0x+/uW5vCJdt3QVj
-	RBIvLL2O5VWWWNTnp2lm1MhjGbqyDkl1VK2oBkoF/2joc96Oir1RBtazjMRjRufb
-	yYkMK3JOTyVEX+EPQ4SHaYh8Huv5276ofbp6fTAkc69xBslQA7qNlkjBJsc5efYe
-	dVijZKNyw7ozxpiKS6Uybw==
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2118.outbound.protection.outlook.com [40.107.244.118])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 47un42dfu6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 05:18:51 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pvgzNo+Mr92C+dDbVxYcL+bA9rBP1IUFifI125/OJV0rhst5gWrUq+cl0HyZSV2TPE5GBrNmP9y/5tVjORhZ7/byd80uSqhXo1I68e//MrPExLG8a2pYS8SfbjEUPXfG/MmX140aFg8E5oec7M7lHFdxWAY5rtixijmDP22Ni2Ie/NIjKjHQ77yr6UrQ+riEMhjZoiFIrYok2PP9sPKlqRVZE83d4RU2q8iALR5ZJGfyswr+JLuu3WCVayXQliA2n4UAwl2nBud39qG6DQ9XOoRRvGeES+Zkmq1/l1dcToWjwZbVVO4AV3MFScUdQdsWXwed9Bv8Ht0JgdLrAaOSzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=orcjX3jQ2VLTAtYRDEQ8hLopYXEhvR+RC0zrBW/UzAY=;
- b=AR9qZWufvr81fVRSu8mAzD2bRVuvvNAQCxNfHq2OgMhrP0+nMUBHokRO8bR7q8hKZFoS8yFwQrmCrOdrGCK7t9RPSNx310Vi6CngC/5zTEBxJEB/hrInEx2Oq0re/9apjbcv+6JWbWnQqjQreeRF+wICkHNTotuXKY9iczW3Gpv12FD7SJLaRcKfRfILsWWY0ujpgEipFLTUqOyyLTNN3UXUIzxMZvLgA48o/MV8HSVp8YFXja5ZFFVjULInqhyjipmHKW1j1/ZfnHEm/Aldt3NSaEvTzfDH6sCayqK/U9IOI+V57Wq5Fm+LTXy5JKASYqkH+Ayn6MtcMiCzmVAdew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=cirrus.com
- smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=opensource.cirrus.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=orcjX3jQ2VLTAtYRDEQ8hLopYXEhvR+RC0zrBW/UzAY=;
- b=Isu7DQLRHj+/QORtdoYiagCerGNiI0o1yvaPFqCxXy+5nzlx55iApT9rk8ooCt1uFU126jY++NErJK+NmZha2YW9bJwkb9Fh1iZGBCMdE1qm3xpU6t8ja0YVyGkSghF/XbWcqIIXOKXGTjrbJCdPR3Wq7ZBqxDCXxiyxHM6co8k=
-Received: from SN6PR01CA0009.prod.exchangelabs.com (2603:10b6:805:b6::22) by
- CY8PR19MB7132.namprd19.prod.outlook.com (2603:10b6:930:50::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8857.16; Wed, 16 Jul 2025 10:18:46 +0000
-Received: from SA2PEPF00003AE4.namprd02.prod.outlook.com
- (2603:10b6:805:b6:cafe::77) by SN6PR01CA0009.outlook.office365.com
- (2603:10b6:805:b6::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.20 via Frontend Transport; Wed,
- 16 Jul 2025 10:18:51 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
- does not designate 84.19.233.75 as permitted sender)
- receiver=protection.outlook.com; client-ip=84.19.233.75;
- helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- SA2PEPF00003AE4.mail.protection.outlook.com (10.167.248.4) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22
- via Frontend Transport; Wed, 16 Jul 2025 10:18:45 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 6CEB3406540;
-	Wed, 16 Jul 2025 10:18:44 +0000 (UTC)
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 4CC70820249;
-	Wed, 16 Jul 2025 10:18:44 +0000 (UTC)
-Date: Wed, 16 Jul 2025 11:18:43 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Maciej Strozek <mstrozek@opensource.cirrus.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-        Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH v2] ACPICA: Add SoundWire File Table (SWFT) signature
-Message-ID: <aHd8gwS7TIhC6HMV@opensource.cirrus.com>
-References: <20250716100337.652657-1-mstrozek@opensource.cirrus.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18D22F3643;
+	Wed, 16 Jul 2025 10:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752661153; cv=none; b=MyMLagCmSSWQ5n0cCKnHBfg+mowgbn3bsj1+vMu5N5mqorXNNJ8C89wK+t+tPtea91xuYnGHieRGlRo8FAtjbAYc1wseDUYwONSmtfQx2EA9rum6tXVg0Feqj3PdCh1O/ZTTAzZ7ezDHtHd1NWCspuQ5w5cc1gbzollBYgpsa0c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752661153; c=relaxed/simple;
+	bh=dWx3lE0Oluia463vcQ6dFzI2NW8+/vOygcPeDt62Dn8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=UQWnu2l572pmBEaAI79xgzzKj3OJBVETBvvcrlD7GwaV4flO00LW9Kzq3D56t80tZjFjJY9thr7DkTUxioZ7I0VAcjO+CaDXB+68DckTV3rcDvyCJtRVPBQcGhiMQvFabajhbmhur8d6Sot3k+Oqhn8vOsonSnp5Mb75O1M84XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xiypQgZo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UIAP95Cg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Jul 2025 10:19:06 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752661148;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i5P0rcU56d3KD5w0GfT1aGVYBx5dqRenk94Cnj0Egis=;
+	b=xiypQgZogezcAiEvsQt5xtN88DkK1fBKhIeI4B/LLxq5UKrsutxSxP/vsrKR8jVZCeGU+L
+	0EjNPT545Fzp/iXwW02CQ6bkxCPEIwOx/3BwiRKrBfwj7xYoVaKTw/7BNBD1TcY1pW5+jc
+	4DdR2/3LJjILKoybbiavSFgmI6LnfjXT7YJNjk9cIJc6Ewb06i/nsPQX9ulnbsDctt0FbN
+	uqqhHkOo3H2IvkNVUMejphBgajf7Om5kjY3l6V7ZdL7ioyj5HoNmq6CsyMNQnGehtLSAW8
+	Zemr1WpWCYoSf6QYNsfQl3NhPQvWh3XdgewcRy+fh6EQHblEfsCbUR43e698+Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752661148;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i5P0rcU56d3KD5w0GfT1aGVYBx5dqRenk94Cnj0Egis=;
+	b=UIAP95CgTB14VUKxqVHQshERk0OHPFrTsK8RWD7uBSQSCFSzwQ9a1SZNFarnMXt55C+swA
+	EmSI1dnxARltAWAg==
+From: "tip-bot2 for Luis Claudio R. Goncalves" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched: Do not call __put_task_struct() on rt if
+ pi_blocked_on is set
+Cc: Crystal Wood <crwood@redhat.com>,
+ "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Wander Lairson Costa <wander@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <aGvTz5VaPFyj0pBV@uudg.org>
+References: <aGvTz5VaPFyj0pBV@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250716100337.652657-1-mstrozek@opensource.cirrus.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE4:EE_|CY8PR19MB7132:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68e05780-8aea-4b16-c7a5-08ddc45225e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|61400799027|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?7pOTG0RoFMZobbRXOBnbY2Fa9bCZ+wwFGsTnFKMVf1r42vcSXQ5HJcpCNi?=
- =?iso-8859-1?Q?QH0RI5gM8HJ8rQgTgDGp4ekHtBj1lcugcy9rTJdfBx0LDdPvZ3jXb5K8/v?=
- =?iso-8859-1?Q?B2vTVCAS3WcrvtTWVarZnpaCoe5gc2AhMl0Kh7nEAe6MsstsrtercvTzKA?=
- =?iso-8859-1?Q?csfB3eMZXoXMOCTPYfyCaCBnGNeZ4Qb3Xkk+Zxd37tK2Jg4/OY4i2aqH8M?=
- =?iso-8859-1?Q?1tu9YtW091zE85cf8kAOOSoRz7fG6cnz1Y5odZMD/2H2d4UEvHjP6WJ9eA?=
- =?iso-8859-1?Q?46K7zRIcJwMiW9YqpLf6fYhZR33Hs9zxNRlTd5mRR1oHnaWvbP1Yqn78we?=
- =?iso-8859-1?Q?AbN9ncEBlI4f7oH8lng0Zo2G1iKqdnbseAMK141nq/1hYN9NdNZp6G254r?=
- =?iso-8859-1?Q?1kVu/4x90Oja0yvWFhCjokr6e/pD0IqitSRUkuEwJ2XyoQ53ubgnBVjhAe?=
- =?iso-8859-1?Q?VOT/HJqbMMWjOZ3NfS3GkBfCoJ4lyL6ym0WG/3lY6HQ2kfaG/FdWc4Cy7C?=
- =?iso-8859-1?Q?C01h/pozDJH8qF0Gh0190vQYdRwBT6aLmVmqQ0gYIhYYUOnkRAtQW+i73F?=
- =?iso-8859-1?Q?sEs1ipAibWNdAqYnKJVwKnDM4mhzruvzCdwvBA1yBuQNLcQib2lWcpnm4e?=
- =?iso-8859-1?Q?uEgKdwQ+DL1nSfg//4A6lDRK3c1YOE3YT+q2lXrgjp17M6UVwIRV7HVvgG?=
- =?iso-8859-1?Q?wdSKG8foMM5iEcnMv8cslu6NbgB/r0/ZqMP0uPCReSSePMqThARvSvmuHr?=
- =?iso-8859-1?Q?1ioByO8vERMT8nxcedyazv4BI6EJyNirv34N/MMBcXMqopFzjMYsAzeauS?=
- =?iso-8859-1?Q?B6GfCyJES+OxpEg8HOqioiWWd3cZtvI9uMMgU5mATYpTOR/6BOTN7xwgNr?=
- =?iso-8859-1?Q?IRCSAZdPneMlE0ijhUcOOHP/ImkqSyZ3VfMXTCpgbJhEf66D2xy0Mj1H/b?=
- =?iso-8859-1?Q?ipeDItzKYMlT4YbjL/dKRt5al57SPWnrRYDCFNv5D9gJoY6f2/zz4hS3XK?=
- =?iso-8859-1?Q?ovTV0CxKmlfmZ9YSr4rbeUlnJIp3sHZJbAJc6oTthSOTJqA3dd9dsildin?=
- =?iso-8859-1?Q?ITzqzJDmC6k86trbb1BB3RlNwnxkD5e62EA2AHvr/+Ok+Jo1c2EUX6Q+o1?=
- =?iso-8859-1?Q?agSx3t7JzeO1+esIQIxUxq+FdmymRNA9om8J4sHNn18AmSKgBGjdyLraT+?=
- =?iso-8859-1?Q?3fejmqi4StGividri51FyDW8fJK3LCS059MvrtVwcfjbDW3N7/RNhbUthX?=
- =?iso-8859-1?Q?+T6FW5yCkIyFUetCXBHy73evrgwEcj35Z1x6V7JqmFmDre3KvOZuXZ3fts?=
- =?iso-8859-1?Q?copyA8dbU6ojdampA6Mo/6ms3f0zXgidg3ethYXzixLSSqe8qJCo+nCoiX?=
- =?iso-8859-1?Q?NYMa8v2AuMiWfknr44qMBP5iSIKCYXClleHE/nxfwUipeJqUD1dKnhNtgP?=
- =?iso-8859-1?Q?SvxYdHoVpoCaNF6HGizCjFmLxmKGPn0cih8ErbXpGILSKV57w8jwVQ5sj0?=
- =?iso-8859-1?Q?YvpszWOAzmibt5Gko0IaGfgW3pW04DvkB483ZgLSlthx52xLs+76dm1wiJ?=
- =?iso-8859-1?Q?64oqRfC55XhuP7BPeRFvrFfn7xDg?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(61400799027)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 10:18:45.5686
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68e05780-8aea-4b16-c7a5-08ddc45225e3
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AE4.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR19MB7132
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDIwMCBTYWx0ZWRfXy5zDpuzNDyiu XOTOqfSWzAdN8gmbBo2Je8/NlHdUbh9A+3xQXrWj66GR5g/D6myJVTD30OhXnV3gl/cywf/noTU ExwzW7qeTp5YpMEcIdawX6njycOg2UYuFjvKbTK+C0WnGNubVdzB25yDppemdERTERPvFDAC6e0
- 5j02lrjynHiLQWf185toDlgkO1cVzJHG3GK0yI8qOCwM0SLkAuXhj8Xp5+z11MMCFnRiJhjZmcj xYsGS0ACZgdlznmPkiyCNy+us4N7t9KxVTUqBHIFatcGrsEEwtYxEs86UIy3A9hZML0y2hz/39A aSoDu0iwViZGe1Ics93vZpvmyv35TU72SndUgKkYi1qRtsKOqBLk6s8bDmN4Y+n4kXxwh6i7gF0 g6mP0xk+
-X-Proofpoint-ORIG-GUID: 0Qdw28GZPEFJShFRU5KQXcMJ9tsZBJ4e
-X-Authority-Analysis: v=2.4 cv=F6tXdrhN c=1 sm=1 tr=0 ts=68777c8b cx=c_pps a=kYxjtQCH8jYJXwz0hAM5nw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=8nJEP1OIZ-IA:10
- a=Wb1JkmetP80A:10 a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8 a=JQJDhRPD3OthYt_GnVkA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
-X-Proofpoint-GUID: 0Qdw28GZPEFJShFRU5KQXcMJ9tsZBJ4e
-X-Proofpoint-Spam-Reason: safe
+Message-ID: <175266114691.406.7896002779139561970.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 16, 2025 at 11:03:37AM +0100, Maciej Strozek wrote:
-> The File Download (FDL) process of SoundWire Class Audio (SDCA) driver,
-> which provides code/data which may be required by an SDCA device,
-> utilizes SWFT to obtain that code/data. There is a single SWFT for the
-> system, and SWFT can contain multiple files (information about the file
-> as well as its binary contents). The SWFT has a standard ACPI Descriptor
-> Table Header, followed by SoundWire File definitions as described in
-> Discovery and Configuration (DisCo) Specification for SoundWire®
-> 
-> Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
-> ---
+The following commit has been merged into the sched/core branch of tip:
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Commit-ID:     8671bad873ebeb082afcf7b4501395c374da6023
+Gitweb:        https://git.kernel.org/tip/8671bad873ebeb082afcf7b4501395c374da6023
+Author:        Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+AuthorDate:    Mon, 07 Jul 2025 11:03:59 -03:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 14 Jul 2025 17:16:33 +02:00
 
-Thanks,
-Charles
+sched: Do not call __put_task_struct() on rt if pi_blocked_on is set
+
+With PREEMPT_RT enabled, some of the calls to put_task_struct() coming
+from rt_mutex_adjust_prio_chain() could happen in preemptible context and
+with a mutex enqueued. That could lead to this sequence:
+
+        rt_mutex_adjust_prio_chain()
+          put_task_struct()
+            __put_task_struct()
+              sched_ext_free()
+                spin_lock_irqsave()
+                  rtlock_lock() --->  TRIGGERS
+                                      lockdep_assert(!current->pi_blocked_on);
+
+This is not a SCHED_EXT bug. The first cleanup function called by
+__put_task_struct() is sched_ext_free() and it happens to take a
+(RT) spin_lock, which in the scenario described above, would trigger
+the lockdep assertion of "!current->pi_blocked_on".
+
+Crystal Wood was able to identify the problem as __put_task_struct()
+being called during rt_mutex_adjust_prio_chain(), in the context of
+a process with a mutex enqueued.
+
+Instead of adding more complex conditions to decide when to directly
+call __put_task_struct() and when to defer the call, unconditionally
+resort to the deferred call on PREEMPT_RT to simplify the code.
+
+Fixes: 893cdaaa3977 ("sched: avoid false lockdep splat in put_task_struct()")
+Suggested-by: Crystal Wood <crwood@redhat.com>
+Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Wander Lairson Costa <wander@redhat.com>
+Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Link: https://lore.kernel.org/r/aGvTz5VaPFyj0pBV@uudg.org
+---
+ include/linux/sched/task.h | 27 ++++++++++-----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
+
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index c517dbc..ea41795 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -131,24 +131,17 @@ static inline void put_task_struct(struct task_struct *t)
+ 		return;
+ 
+ 	/*
+-	 * In !RT, it is always safe to call __put_task_struct().
+-	 * Under RT, we can only call it in preemptible context.
+-	 */
+-	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || preemptible()) {
+-		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
+-
+-		lock_map_acquire_try(&put_task_map);
+-		__put_task_struct(t);
+-		lock_map_release(&put_task_map);
+-		return;
+-	}
+-
+-	/*
+-	 * under PREEMPT_RT, we can't call put_task_struct
++	 * Under PREEMPT_RT, we can't call __put_task_struct
+ 	 * in atomic context because it will indirectly
+-	 * acquire sleeping locks.
++	 * acquire sleeping locks. The same is true if the
++	 * current process has a mutex enqueued (blocked on
++	 * a PI chain).
++	 *
++	 * In !RT, it is always safe to call __put_task_struct().
++	 * Though, in order to simplify the code, resort to the
++	 * deferred call too.
+ 	 *
+-	 * call_rcu() will schedule delayed_put_task_struct_rcu()
++	 * call_rcu() will schedule __put_task_struct_rcu_cb()
+ 	 * to be called in process context.
+ 	 *
+ 	 * __put_task_struct() is called when
+@@ -161,7 +154,7 @@ static inline void put_task_struct(struct task_struct *t)
+ 	 *
+ 	 * delayed_free_task() also uses ->rcu, but it is only called
+ 	 * when it fails to fork a process. Therefore, there is no
+-	 * way it can conflict with put_task_struct().
++	 * way it can conflict with __put_task_struct().
+ 	 */
+ 	call_rcu(&t->rcu, __put_task_struct_rcu_cb);
+ }
 
