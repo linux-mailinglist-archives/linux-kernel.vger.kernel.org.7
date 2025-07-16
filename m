@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-733904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C2AB07A72
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:57:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21063B07A73
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 235613ACBBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87098189B165
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3132F5080;
-	Wed, 16 Jul 2025 15:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256A52F5326;
+	Wed, 16 Jul 2025 15:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sw/z8ivV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eV+FeyVg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB701D5CEA;
-	Wed, 16 Jul 2025 15:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851A92F530F;
+	Wed, 16 Jul 2025 15:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752681412; cv=none; b=dm9dum3/6IKnoW5DnzHKV4LToHxSF/CJ6xDcNyu28+ctUe4ta1iRYjyl1okQriFGkjGsk4WY2tLbueojUZOKO/bkPUZjHB5psbD8hHAk0IkzLP8df/o+VlcUJ7+pBAgOe10JOX3Kow+2W8V70SXR5QLLF0vatkdIHdqT22XCn4E=
+	t=1752681414; cv=none; b=DhfE4GWNasq6vs/6bkU6FF0/tz0jetr05nBHAigqr6sHvZYdY2tW87SJHq85WssszTsnjrsjx5IPSKZo1zyd5WvaQ1lw9IsjPsRRNfMY+V/nLC5ROryzqT5mXL84r6iysC/H/mfZymMTS658kkaNEP10rI1kHEx9DemNewuRfqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752681412; c=relaxed/simple;
-	bh=j3TttxUjfeEIYj/27r+70TqhavnZm9v8n1qfjW7IrTk=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=s0d6Q0DUIAeAwXHtg5YQP9PZ3nEW8qqHWuCF2+j/UJ+HK4Q5XgG5g/mypKgf1kQ8N28DmRW5NgOZOMJkVxMA7IWy/5/le4Ub8pjnZzTPj5aXXRqxzQeayINCqDTF4u/v1jMgTUjCbsVflNelpqyPT6f/HqO9tWTZBVnrvi6KrfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sw/z8ivV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D8AEC4CEE7;
-	Wed, 16 Jul 2025 15:56:49 +0000 (UTC)
+	s=arc-20240116; t=1752681414; c=relaxed/simple;
+	bh=ZbPIlnCHb3kljSiCjkbaqr4lhfzIekyU+AVe5oNS84s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=VRsEGT6ChqbXMvmr+XWPvCJsp3LU4IfagQnytmvQES5zPF31rFJl0dPIL4nBGUN0EVZ1KmtDV4w56QKginUwUe1JzT1agggDaRs5MRZf4JTZmh2OSVOSpQ2lt8oX+cmlXeHm6EmG6tcIxodbBq7rGxJbMOnqkmPsSRp9ddripkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eV+FeyVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F19FFC4CEF0;
+	Wed, 16 Jul 2025 15:56:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752681411;
-	bh=j3TttxUjfeEIYj/27r+70TqhavnZm9v8n1qfjW7IrTk=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=Sw/z8ivVd6dq7SnuhQl9WjoPlHY5E+iLdCym7zhxlRodGfvUeWo+jwloXfYciB79v
-	 Q9OBCRnKRAUGkEllf9Dr8fOYdLnnQVohb9VInbBlOCCpoOg0bSNLPkV1eKhPD2UYjX
-	 4D4Ts1DMeErL69i91RV0Ap+fz8KmOeMfLHBpRiHA6tmohh725iQUbZzjhZ9V68SrGa
-	 ei5A5brpxFA77NAgfssDN6WtJfZ4u7Aw4kTS6tN91XNXPfj5+xaLatkjSldeV0e3H9
-	 SfA7z51DWHVqQ1oQqYVCBsdAt+Go/5R+T4dvmKLvJ63y3/601o1jYHPJC/29DyDp7z
-	 wSctUd8mbuD7g==
+	s=k20201202; t=1752681414;
+	bh=ZbPIlnCHb3kljSiCjkbaqr4lhfzIekyU+AVe5oNS84s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=eV+FeyVg5v2RXXrTPxEhCRsQy2aNMDhlg05iYatMKzjziP5TYcYJ1wL2ZEtcTr8ds
+	 Ht3gAMG7j3woFJgXo5dwdxgms+R6fbMVOVhMQ/8vOAd2MYaUrak2Qy0FOfEh7FcFBn
+	 UB5gpDKyXrIpK4wu/yOKapqvKGVn5cd9hSffnvVpKAcKxfWTyaPrM+Km0xKV2YX9Nf
+	 gA6XJ6xpWiu8Wpsk6tpAlGTqGVKCuKwBCIvEW2FNhCZrdb8FO0VtG/DJfmXHhjYfbi
+	 hq3Z/us+aUzbAEvWc86aqPd0UDtnzc5F/ws/MJ6SWCWpXpL1VIzKpvXRKG2uaE0EXC
+	 49Uc7nhucFmtA==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srini@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250716074957.102402-2-krzysztof.kozlowski@linaro.org>
-References: <20250716074957.102402-2-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] ASoC: dt-bindings: qcom,lpass-va-macro: Define
- clock-names in top-level
-Message-Id: <175268140929.726552.6903010373670247326.b4-ty@kernel.org>
-Date: Wed, 16 Jul 2025 16:56:49 +0100
+To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Peng Fan <peng.fan@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
+ Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250716065708.4041153-1-alexander.stein@ew.tq-group.com>
+References: <20250716065708.4041153-1-alexander.stein@ew.tq-group.com>
+Subject: Re: [PATCH 1/1] ASoC: codec: tlv320aic32x4: Fix reset GPIO check
+Message-Id: <175268141172.726552.8180184869044144609.b4-ty@kernel.org>
+Date: Wed, 16 Jul 2025 16:56:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,18 +62,11 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Wed, 16 Jul 2025 09:49:58 +0200, Krzysztof Kozlowski wrote:
-> Device variants use different amount of clock inputs, but all of them
-> are in the same order, 'clock-names' in top-level properties can define
-> the list and each if:then: block can only narrow the number of items.
+On Wed, 16 Jul 2025 08:57:07 +0200, Alexander Stein wrote:
+> rstn_gpio being a GPIO descriptor the check is wrong (inverted) for
+> releasing the reset of the codec.
 > 
-> This is preferred syntax, because it keeps list unified among devices
-> and encourages adding new entries to the end of the list, instead of
-> adding them in the middle.  The change has no functional impact, but
-> partially reverts approach implemented in commit cfad817095e1 ("ASoC:
-> dt-bindings: qcom,lpass-va-macro: Add missing NPL clock").
 > 
-> [...]
 
 Applied to
 
@@ -83,8 +74,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: dt-bindings: qcom,lpass-va-macro: Define clock-names in top-level
-      commit: aa84580e058c4d7567b2a5e5a9d12f94af75d297
+[1/1] ASoC: codec: tlv320aic32x4: Fix reset GPIO check
+      commit: 8778837f0a5b7c1bc5dbf0cccd7619fec6981588
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
