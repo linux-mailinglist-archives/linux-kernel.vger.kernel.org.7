@@ -1,126 +1,84 @@
-Return-Path: <linux-kernel+bounces-734396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868FEB08103
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C42B080ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E6F1C40E9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:27:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71611C40C6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0459C2F0C5F;
-	Wed, 16 Jul 2025 23:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E52C2EF652;
+	Wed, 16 Jul 2025 23:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNwZc6JC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seYe5Jmi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BADE2F2C73;
-	Wed, 16 Jul 2025 23:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE9F9460;
+	Wed, 16 Jul 2025 23:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752708353; cv=none; b=TNzMzBMjSfB5WPYTjaANgDplnLq9JLJUWxzIyivEl+B1VV9SMNd1ADTw+CR7Ie/sVwIOfUtokbdOhtdpgEqZVQE99kIPpWf9GPn+2FyxaU+g/CHSqOTBUExIdAcmHlLtaCo9s4ud6hNBecoQm6suFymXovcj4t6bQKFNY+I9kiY=
+	t=1752708258; cv=none; b=ulRtngkkuYOUdnt1wZm02BGjQeID4M+7nTW3sbZegxVSuRFox8voMr3NA4uzXWh7LIdZeumnWE2IKQDl3EjltXfKJT6wz6/3fo5zO2IRZQ6ZDwDuvgb4il7/B9z6xT6Jq7WJeLnUTbCosL4V458y5ah+nxzHG7onQfHxuQvzaZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752708353; c=relaxed/simple;
-	bh=tI5mvT66Rm/lpoF3NhwuTmLXhid+pDYJjtfSR7IyuG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aLvr737dkmVnHEDGDtTaU7SRED0fwZvWsBK07D+hjuuk0eJDg9vJk7VUngJWKsUmXEajfc956LWxS3WYFTTm8GCsRqvL8pY/M1Erzc6vI03gMowFShojyitJjbSrT4oS8g3+LsEgbB0iImjrbg56FM98A73IjN2rVbeCRuhHNm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNwZc6JC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793E8C4CEEB;
-	Wed, 16 Jul 2025 23:25:52 +0000 (UTC)
+	s=arc-20240116; t=1752708258; c=relaxed/simple;
+	bh=87yrPSCfmOseXmUWruhQbrJgqmJmo4l2gdof8XUTvzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DUC4frDE4uhMsORtE/WXI1wAIBQQQSWN+9QmeRncjjrxfhM9fmGL/tH80I+DyFXgXb4wirPfkgVeMBWxKSA5dBI7DYcfWVkzUH0DcvZvMTNkPr/D1n3YGTcUv5h9bAR4U9Idk7niLyHO1B/gVFWulrQiOKLlyWoKrm9MK4oNVJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seYe5Jmi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C67B2C4CEEB;
+	Wed, 16 Jul 2025 23:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752708353;
-	bh=tI5mvT66Rm/lpoF3NhwuTmLXhid+pDYJjtfSR7IyuG8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XNwZc6JCuzw2WNstXgyx/8YBuEGUz56WHQqyba30DKYh+CnWwgVFRNLuHvdvol7TF
-	 9yIhhQ2GZK+R2MN9adnpXHHkgX5SYaV0KXvGZfVey57eOn+wCeqjT7OgrenoyOY2jl
-	 XtdWPWzhQi32NQ+6DtkqGZ00OxaysYVajo+0yxEw7C3I89JaFLacrnnhebJgD6buNb
-	 aaaKTdcU6mcTKB+8FO0mUQQ+Wss7sccaoh8QPKZdYqxuxrIfiY8A2jC+i3WIdiJrix
-	 47TzeD4iUkp8KAkFyQm+/3bjRAcCYmChbt1I8y2NflJYFgfFWjgOByT1LmsHgDyG3m
-	 /WwEKNvzWQ4Ig==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] kconfig: gconf: refactor text_insert_help()
-Date: Thu, 17 Jul 2025 08:24:13 +0900
-Message-ID: <20250716232542.873747-6-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250716232542.873747-1-masahiroy@kernel.org>
-References: <20250716232542.873747-1-masahiroy@kernel.org>
+	s=k20201202; t=1752708258;
+	bh=87yrPSCfmOseXmUWruhQbrJgqmJmo4l2gdof8XUTvzc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=seYe5JmizB05LtTRIjZ5S90UDFKCFmvFSi1F9y5Vz++QjSx/3edE4eZkS/fnmcmsM
+	 nKxhAqUe9XmfLiCpiMhv6/SUWewunbIGCBACzfwDOwZUP6yEKnqQuhF7FUCJ8SqGpj
+	 d441VEybt6VQEv7M6pvRYQ9c7WJO6dL+X5Cmow18EYVbwSpjxY4S5LFnSJt7R2E6r6
+	 FO6wo5DTiypsnpkJuPiZ1e1AeE/hx4z5bpIvFt6jp4JemEdTZUY0i8vVnEPYaOEjnU
+	 az+DtvrB8PWRfsh8uZJ3sfOkgkCZd4vvuksawN99Je3VFiwJstlmXn3UUU70O6fgQ7
+	 nD15M9dSr74Tg==
+Date: Wed, 16 Jul 2025 16:24:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Hariprasad Kelam <hkelam@marvell.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sunil Goutham
+ <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, "Subbaraya
+ Sundeep" <sbhatta@marvell.com>, Bharat Bhushan <bbhushan2@marvell.com>,
+ "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Tomasz Duszynski <tduszynski@marvell.com>, Simon
+ Horman <horms@kernel.org>
+Subject: Re: [net PatchV2] Octeontx2-vf: Fix max packet length errors
+Message-ID: <20250716162417.1d691576@kernel.org>
+In-Reply-To: <20250715111351.1440171-1-hkelam@marvell.com>
+References: <20250715111351.1440171-1-hkelam@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-text_insert_help() and text_insert_msg() share similar code.
-Refactor text_insert_help() to eliminate the code duplication.
+On Tue, 15 Jul 2025 16:43:51 +0530 Hariprasad Kelam wrote:
+> +	netdev_stats_to_stats64(stats, &netdev->stats);
+> +
+>  	otx2_get_dev_stats(pfvf);
+>  
+>  	dev_stats = &pfvf->hw.dev_stats;
+> @@ -149,7 +151,7 @@ void otx2_get_stats64(struct net_device *netdev,
+>  
+>  	stats->tx_bytes = dev_stats->tx_bytes;
+>  	stats->tx_packets = dev_stats->tx_frames;
+> -	stats->tx_dropped = dev_stats->tx_drops;
+> +	stats->tx_dropped += dev_stats->tx_drops;
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+Please don't add new uses of netdev->stats.
 
- scripts/kconfig/gconf.c | 35 +++++++++--------------------------
- 1 file changed, 9 insertions(+), 26 deletions(-)
-
-diff --git a/scripts/kconfig/gconf.c b/scripts/kconfig/gconf.c
-index 651140af7d13..8b164ccfa008 100644
---- a/scripts/kconfig/gconf.c
-+++ b/scripts/kconfig/gconf.c
-@@ -64,32 +64,6 @@ static void conf_changed(bool dirty)
- 
- /* Utility Functions */
- 
--
--static void text_insert_help(struct menu *menu)
--{
--	GtkTextBuffer *buffer;
--	GtkTextIter start, end;
--	const char *prompt = menu_get_prompt(menu);
--	struct gstr help = str_new();
--
--	menu_get_ext_help(menu, &help);
--
--	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_w));
--	gtk_text_buffer_get_bounds(buffer, &start, &end);
--	gtk_text_buffer_delete(buffer, &start, &end);
--	gtk_text_view_set_left_margin(GTK_TEXT_VIEW(text_w), 15);
--
--	gtk_text_buffer_get_end_iter(buffer, &end);
--	gtk_text_buffer_insert_with_tags(buffer, &end, prompt, -1, tag1,
--					 NULL);
--	gtk_text_buffer_insert_at_cursor(buffer, "\n\n", 2);
--	gtk_text_buffer_get_end_iter(buffer, &end);
--	gtk_text_buffer_insert_with_tags(buffer, &end, str_get(&help), -1, tag2,
--					 NULL);
--	str_free(&help);
--}
--
--
- static void text_insert_msg(const char *title, const char *msg)
- {
- 	GtkTextBuffer *buffer;
-@@ -109,6 +83,15 @@ static void text_insert_msg(const char *title, const char *msg)
- 					 NULL);
- }
- 
-+static void text_insert_help(struct menu *menu)
-+{
-+	struct gstr help = str_new();
-+
-+	menu_get_ext_help(menu, &help);
-+	text_insert_msg(menu_get_prompt(menu), str_get(&help));
-+	str_free(&help);
-+}
-+
- static void _select_menu(GtkTreeView *view, GtkTreeModel *model,
- 			 GtkTreeIter *parent, struct menu *match)
- {
+	struct net_device_stats	stats; /* not used by modern drivers */
 -- 
-2.43.0
-
+pw-bot: cr
 
