@@ -1,199 +1,233 @@
-Return-Path: <linux-kernel+bounces-733500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE79CB0757F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:24:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73729B0758C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05831AA4329
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:24:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368565840CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0FA2F4A1E;
-	Wed, 16 Jul 2025 12:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D8E2F508D;
+	Wed, 16 Jul 2025 12:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAJ9eJQa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nxXpo6No"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC8A2F49F1;
-	Wed, 16 Jul 2025 12:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEFC2F50A9;
+	Wed, 16 Jul 2025 12:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752668637; cv=none; b=JuTXLMOO9/YZ4K0HUVx9M1NxeDOpa9GKBpTXDc85/+yOna4euTschFbK87JdIDWkoDg2nBbJVCX4qbX1oI7Yv6AAw6X+/K7I/EK38gYG1zFHt1cXzmCjMPsozQGuGleLb0502ZlkiV031Vy5Lecbe1O8V3ZMEafRGcqilJiGbC0=
+	t=1752668722; cv=none; b=KCaFD/NIGo4D+SBCBFrMPIBahHYmUo+dabyWmvz1pZ6hgDfjT1WfKCAKxkRYIhKvI106uA1umxlKi6awOG0RvDiI/G5JwoNwVHGmcFp0Aa0JLWGKqOZG9Xe4DBsEOyrVlTltuWru+qetkAiIeX8Fm1yHVrY7jdQDuri7O3OKYJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752668637; c=relaxed/simple;
-	bh=adfBujZfHC31DSYRyLy0OgdmyJaP5mTjJ9NVnjL4SDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GdLj51OCfad1YX1zOuq+a+ClEM+8AaGFWPZtyCiejLDsr2e01XWfvctULYzwh/j7VnVoaPoOnAW5iyAo+XfflhQaTdZfedIZkGq2lOR2/Yo+lrG8gF6VG83cxIVJwcKIpb7QJPXjgwAw/LoKC9WlI83g2ePUvx2b9Wld+7Y9STo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAJ9eJQa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19569C4CEF4;
-	Wed, 16 Jul 2025 12:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752668636;
-	bh=adfBujZfHC31DSYRyLy0OgdmyJaP5mTjJ9NVnjL4SDY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WAJ9eJQaV1kHxKH2ss7lCYqUDWkYnB3Y/pjXDA305kCIxCYoPV8nwkcjB+rkxddww
-	 cLAixshYaMSVpxlaFEs22AVelL6I5Z8L+tMOn72YkAfVXFdF+aYhUPPq2CJn0D4w/b
-	 gOb4UdMDk5TM4GcSsK3X1X+jpYbq6/wRchZ6xqNXMa3aAxj7UQyN9hUF2TR2pne2Xb
-	 iz9cjRfPXOol8C3rC2rKoQ7sUz54hkCUq616rLlbIHYuIQHP1afoC2pCG+66qLCn2R
-	 evQnzq5jPehqEWgWqScBzGgisL+pfjFGbDYVCAMuy/4DgNLzLQXwoMge7jNqJNG/m9
-	 +HKYtYsaUJrgQ==
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-40a4bf1eb0dso3082473b6e.3;
-        Wed, 16 Jul 2025 05:23:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX21ws5t0w9ICzVh576iS/2JA9scc0DJd+R7l5e35sroD/nSI1xlxAJwplEwjfMeijQoqXzJqy7Y7EOsl4=@vger.kernel.org, AJvYcCXy21h7M2modQrFzz2owJRNeL6rbv89e0BniWoWAf37+DzzwaFtOACnlMHsTTQRQHYWwjPeRjG1VhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGFalJ2reFngjFV90B6KeB8kBt/EVLEe89ze+r8Do+cd03TmGz
-	uW5Q3V/99BfYMZdEdBlaoUHlL8Kuy/Z0y97t2PffGL+FLrZiS6qJDmz+T9a8P3w+CZg41G4sTdz
-	QS6cSrK/6ygFWezevCBY0AWSF6kLgmCg=
-X-Google-Smtp-Source: AGHT+IE5fLu0mPJIYxNwAkT62HeKwY7Lp3Q5SsfJH5r8kneuXOjh/KvASJHdcTnn9K6mPMmo7rapYVfTYKOJItgBXB0=
-X-Received: by 2002:a05:6808:bc4:b0:41c:35b9:acbc with SMTP id
- 5614622812f47-41d032fccefmr1731912b6e.2.1752668635250; Wed, 16 Jul 2025
- 05:23:55 -0700 (PDT)
+	s=arc-20240116; t=1752668722; c=relaxed/simple;
+	bh=BWrLRFAp92FC1Lne9D6uyC23s8dUsoFZLRBGb5z/924=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ukqR9daZ8OKMTO1YhTdrUv4E9kI6ohZsJr+MawApSBKWHkbaknDv7wclM05Ga3fdvLA9UV1TjqDE/0JDRQN8Ae/bhmeFmvXUR9+RbEX0o9ua8Hf6MqFNsJbxzu/TfYx+st/SgVPhR05HAySuptBkNqZIxs1NFv2qIM/8fIFWYB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nxXpo6No; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752668720; x=1784204720;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BWrLRFAp92FC1Lne9D6uyC23s8dUsoFZLRBGb5z/924=;
+  b=nxXpo6NodfGQmyNg02hngwlgbGLYJgxMnVCLchN8ZFcF6P20B73zV5gl
+   /fJn9/YLCsyPEEME4xIqLjJRIi0n98Tvh3tMX7ieNpDVMwAe28F5sb6Gn
+   BR2fIyz+YDXuUAAugJ/NKeqekRhwXm7/5gpcY8osGLoWYeKJb51dxIroV
+   5kZlv8XAvR9VogwkGq8m3lNx7QeT5IZkGhogePn+DxidwzxO3iisUwpes
+   6KU3YCiRdwAWKLWrBSLjx6sZDSRzEtqVJbx7A/91JoqkHClXKgkrrHasN
+   oJhIJG3cwnD9BUH51MF01+huxu3JrIMrTApjlGDT9DunK7yz4vas3CPUD
+   g==;
+X-CSE-ConnectionGUID: 0mW5e1Z2TxqxIAi+KDd/Tg==
+X-CSE-MsgGUID: mnNjbIciTgmtbkAco3BO9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54020733"
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="54020733"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 05:25:19 -0700
+X-CSE-ConnectionGUID: JHf6O6CWSnWFwjKCUsM/Pg==
+X-CSE-MsgGUID: TbiiyrIeSrCVY4Ejj0xc+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="162043447"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 16 Jul 2025 05:25:15 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uc1CD-000CMB-0b;
+	Wed, 16 Jul 2025 12:25:13 +0000
+Date: Wed, 16 Jul 2025 20:24:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, lee@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	lgirdwood@gmail.com, broonie@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com, wenst@chromium.org
+Subject: Re: [PATCH v5 4/8] regulator: Add support for MediaTek MT6363 SPMI
+ PMIC Regulators
+Message-ID: <202507162012.qDNKtUiI-lkp@intel.com>
+References: <20250715140224.206329-5-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250712030824.81474-1-zhangzihuan@kylinos.cn>
- <9d35035d-c63e-4d11-a403-54c50e8b35c1@kylinos.cn> <CAJZ5v0g22fMDc21yV2svePf_4BWZRrcy+b3-efpbfAGLpa2=Lw@mail.gmail.com>
- <76a87abf-8fc9-445b-83d5-0daa33746014@kylinos.cn> <CAJZ5v0jKwHZUpsYLzUkcL4=FDnewXoTeJo5e+ccyHw2bZ+ghTg@mail.gmail.com>
- <79468a7f-061f-479a-9357-e48c69cadbb8@kylinos.cn>
-In-Reply-To: <79468a7f-061f-479a-9357-e48c69cadbb8@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 16 Jul 2025 14:23:42 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j4biD2Jd5isUGFmwAva1RJsPDCHNpb1VEjM5vTBrk-jQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwtXi1zr5T7_1efrXKgutl40aXbTzP8Ps82-K5dI3fE71PQpgPM3bdsf3s
-Message-ID: <CAJZ5v0j4biD2Jd5isUGFmwAva1RJsPDCHNpb1VEjM5vTBrk-jQ@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: suspend: clean up redundant filesystems_freeze/thaw
- handling
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715140224.206329-5-angelogioacchino.delregno@collabora.com>
 
-On Wed, Jul 16, 2025 at 4:04=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
-n> wrote:
->
->
-> =E5=9C=A8 2025/7/15 20:48, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > On Tue, Jul 15, 2025 at 8:12=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylin=
-os.cn> wrote:
-> >> Hi Rafael,
-> >>
-> >> =E5=9C=A8 2025/7/15 01:57, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> >>> Hi,
-> >>>
-> >>> On Mon, Jul 14, 2025 at 10:44=E2=80=AFAM Zihuan Zhang <zhangzihuan@ky=
-linos.cn> wrote:
-> >>>> Hi Rafael,
-> >>>>
-> >>>> Just a gentle ping on this patch.
-> >>> I've lost track of it for some reason, sorry.
-> >>>
-> >>>> I realized I forgot to mention an important motivation in the change=
-log:
-> >>>> calling filesystems_freeze() twice (from both suspend_prepare() and
-> >>>> enter_state()) lead to a black screen and make the system unable to =
-resume..
-> >>>>
-> >>>> This patch avoids the duplicate call and resolves that issue.
-> >>> Now applied as a fix for 6.16-rc7, thank you!
-> >>
-> >> Thanks for the reply!
-> >>
-> >> Just a quick follow-up question =E2=80=94 we noticed that even when th=
-e =E2=80=9Cfreeze
-> >> filesystems=E2=80=9D feature is not enabled, the current code still ca=
-lls
-> >> filesystems_thaw().
-> >>
-> >> Do you think it would make sense to guard this with a static key (or
-> >> another mechanism) to avoid unnecessary overhead?
-> > Possibly, if this overhead is significant, but is it?
->
-> We've done some testing using ftrace to measure the overhead of
-> filesystems_thaw(). When freeze_filesystems is not enabled, the overhead
-> is typically around 15=E2=80=9340 microseconds.
+Hi AngeloGioacchino,
 
-So this is the time that can be saved by adding a
-filesystem_freeze_enabled check before calling filesystems_thaw()
-IIUC.
+kernel test robot noticed the following build errors:
 
-I'd say don't bother.
+[auto build test ERROR on broonie-regulator/for-next]
+[also build test ERROR on lee-mfd/for-mfd-next lee-mfd/for-mfd-fixes lee-leds/for-leds-next linus/master v6.16-rc6 next-20250715]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/dt-bindings-regulator-Document-MediaTek-MT6316-PMIC-Regulators/20250715-222516
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+patch link:    https://lore.kernel.org/r/20250715140224.206329-5-angelogioacchino.delregno%40collabora.com
+patch subject: [PATCH v5 4/8] regulator: Add support for MediaTek MT6363 SPMI PMIC Regulators
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250716/202507162012.qDNKtUiI-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507162012.qDNKtUiI-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507162012.qDNKtUiI-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/regulator/mt6363-regulator.c:519:9: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     519 |                 sel = FIELD_PREP(MT6363_RG_VEMC_VOSEL_1_MASK, sel);
+         |                       ^
+>> drivers/regulator/mt6363-regulator.c:577:10: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     577 |                 vsel = FIELD_GET(MT6363_RG_VEMC_VOSEL_1_MASK, vosel);
+         |                        ^
+   2 errors generated.
 
 
-> However, when freeze is enabled, we observed that filesystems_thaw() can
-> take over 3 seconds to complete (e.g., 3,450,644 us in one test case).
->
-> freeze_filesystems  not enabled:
->
-> # tracer: function_graph
-> #
-> # CPU  DURATION                  FUNCTION CALLS
-> # |     |   |                     |   |   |   |
->    4) + 15.740 us   |  filesystems_thaw();
->   11) + 16.894 us   |  filesystems_thaw();
->   10) + 17.805 us   |  filesystems_thaw();
->    8) + 37.762 us   |  filesystems_thaw();
->   ------------------------------------------
->   11) systemd-54512  =3D> systemd-66433
->   ------------------------------------------
->
->   11) + 15.167 us   |  filesystems_thaw();
->    6) + 16.760 us   |  filesystems_thaw();
->    7) + 14.870 us   |  filesystems_thaw();
->    3) + 16.171 us   |  filesystems_thaw();
->    1) + 16.461 us   |  filesystems_thaw();
->   ------------------------------------------
->    3) systemd-71984  =3D> systemd-73036
->   ------------------------------------------
->
->    3) + 28.314 us   |  filesystems_thaw();
->
-> freeze_filesystems  enabled:
->
->   10)               |  filesystems_thaw() {
->    2) $ 3450644 us  |  } /* filesystems_thaw */
->   ------------------------------------------
->    1) systemd-72561  =3D> systemd-99210
->   ------------------------------------------
->
->    1)               |  filesystems_thaw() {
->   ------------------------------------------
->    7) systemd-71501  =3D> systemd-99210
->   ------------------------------------------
->
->    7) $ 3429306 us  |  } /* filesystems_thaw */
->   ------------------------------------------
->    7) systemd-99210  =3D> systemd-100028
->   ------------------------------------------
->
->    7)               |  filesystems_thaw() {
->   ------------------------------------------
->    4) systemd-53278  =3D> systemd-100028
->   ------------------------------------------
->
->    4) $ 3270122 us  |  } /* filesystems_thaw */
->   ------------------------------------------
->    7) systemd-100028 =3D> systemd-100720
->   ------------------------------------------
->
->    7) $ 3446496 us  |  filesystems_thaw();
->   ------------------------------------------
->    7) systemd-100720 =3D> systemd-112075
->   ------------------------------------------
->
->    7)               |  filesystems_thaw() {
->   ------------------------------------------
->   11) systemd-66433  =3D> systemd-112075
->   ------------------------------------------
->
->   11) $ 3454117 us  |  } /* filesystems_thaw */
->
->
->
+vim +/FIELD_PREP +519 drivers/regulator/mt6363-regulator.c
+
+   481	
+   482	static int mt6363_vemc_set_voltage_sel(struct regulator_dev *rdev, unsigned int sel)
+   483	{
+   484		const u16 tma_unlock_key = MT6363_TMA_UNLOCK_VALUE;
+   485		const struct regulator_desc *rdesc = rdev->desc;
+   486		struct regmap *regmap = rdev->regmap;
+   487		unsigned int range, val;
+   488		int i, ret;
+   489		u16 mask;
+   490	
+   491		for (i = 0; i < rdesc->n_linear_ranges; i++) {
+   492			const struct linear_range *r = &rdesc->linear_ranges[i];
+   493			unsigned int voltages_in_range = linear_range_values_in_range(r);
+   494	
+   495			if (sel < voltages_in_range)
+   496				break;
+   497			sel -= voltages_in_range;
+   498		}
+   499	
+   500		if (i == rdesc->n_linear_ranges)
+   501			return -EINVAL;
+   502	
+   503		ret = regmap_read(rdev->regmap, MT6363_TOP_TRAP, &val);
+   504		if (ret)
+   505			return ret;
+   506	
+   507		if (val > 1)
+   508			return -EINVAL;
+   509	
+   510		/* Unlock TMA for writing */
+   511		ret = regmap_bulk_write(rdev->regmap, MT6363_TOP_TMA_KEY_L,
+   512					&tma_unlock_key, sizeof(tma_unlock_key));
+   513		if (ret)
+   514			return ret;
+   515	
+   516		/* If HW trapping value is 1, use VEMC_VOSEL_1 instead of VEMC_VOSEL_0 */
+   517		if (val == 1) {
+   518			mask = MT6363_RG_VEMC_VOSEL_1_MASK;
+ > 519			sel = FIELD_PREP(MT6363_RG_VEMC_VOSEL_1_MASK, sel);
+   520		} else {
+   521			mask = rdesc->vsel_mask;
+   522		}
+   523	
+   524		sel <<= ffs(rdesc->vsel_mask) - 1;
+   525		sel += rdesc->linear_ranges[i].min_sel;
+   526	
+   527		range = rdesc->linear_range_selectors_bitfield[i];
+   528		range <<= ffs(rdesc->vsel_range_mask) - 1;
+   529	
+   530		/* Write to the vreg calibration register for voltage finetuning */
+   531		ret = regmap_update_bits(regmap, rdesc->vsel_range_reg,
+   532					 rdesc->vsel_range_mask, range);
+   533		if (ret)
+   534			goto lock_tma;
+   535	
+   536		/* Function must return the result of this write operation */
+   537		ret = regmap_update_bits(regmap, rdesc->vsel_reg, mask, sel);
+   538	
+   539	lock_tma:
+   540		/* Unconditionally re-lock TMA */
+   541		val = 0;
+   542		regmap_bulk_write(rdev->regmap, MT6363_TOP_TMA_KEY_L, &val, 2);
+   543	
+   544		return ret;
+   545	}
+   546	
+   547	static int mt6363_vemc_get_voltage_sel(struct regulator_dev *rdev)
+   548	{
+   549		const struct regulator_desc *rdesc = rdev->desc;
+   550		unsigned int vosel, trap, calsel;
+   551		int vcal, vsel, range, ret;
+   552	
+   553		ret = regmap_read(rdev->regmap, rdesc->vsel_reg, &vosel);
+   554		if (ret)
+   555			return ret;
+   556	
+   557		ret = regmap_read(rdev->regmap, rdesc->vsel_range_reg, &calsel);
+   558		if (ret)
+   559			return ret;
+   560	
+   561		calsel &= rdesc->vsel_range_mask;
+   562		for (range = 0; range < rdesc->n_linear_ranges; range++)
+   563			if (rdesc->linear_range_selectors_bitfield[range] != calsel)
+   564				break;
+   565	
+   566		if (range == rdesc->n_linear_ranges)
+   567			return -EINVAL;
+   568	
+   569		ret = regmap_read(rdev->regmap, MT6363_TOP_TRAP, &trap);
+   570		if (ret)
+   571			return ret;
+   572	
+   573		/* If HW trapping value is 1, use VEMC_VOSEL_1 instead of VEMC_VOSEL_0 */
+   574		if (trap > 1)
+   575			return -EINVAL;
+   576		else if (trap == 1)
+ > 577			vsel = FIELD_GET(MT6363_RG_VEMC_VOSEL_1_MASK, vosel);
+   578		else
+   579			vsel = vosel & rdesc->vsel_mask;
+   580	
+   581		vcal = linear_range_values_in_range_array(rdesc->linear_ranges, range);
+   582	
+   583		return vsel + vcal;
+   584	}
+   585	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
