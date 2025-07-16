@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-733942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE477B07AF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:18:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E68B07AF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D6C1891E1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:18:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 432FD562C4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A682F5495;
-	Wed, 16 Jul 2025 16:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB162F5326;
+	Wed, 16 Jul 2025 16:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W5RMj8eT"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G8cLaHYl"
+Received: from mail-qt1-f201.google.com (mail-qt1-f201.google.com [209.85.160.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A7D2F4A16;
-	Wed, 16 Jul 2025 16:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9752638BA
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752682670; cv=none; b=ZLQPPdoge7ptQ0J7WMKyJZr8YFO0+NUARajlrjR6oUPJUb4TrheQBJgK0zBM+PKFLh+HJSWb7+84rHATqzlSLBDimmVdjwlDcMdfElBaJsTrO/ULsgaUw3xEotu0cQGrAH+7oJ8/SwVZXTS1OVF7rHthJXlcbROcsMriBHOOKug=
+	t=1752682683; cv=none; b=PbaH5ya/qARTNKJdtClt3v4jdLKEcdr922sGIc/JkjOWwAvouvLMNaRk6YeTEYO13iXeE1z/VDYWx50w0IDEkGJqH8uBIoHuZkwM8EC3NeGnUNgudikz+6ubpm7zcOMTQJSYyPafRpzGLUMTNQ5VMN7GXQ5hxAyZd3RSVO5/UNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752682670; c=relaxed/simple;
-	bh=iKQzUaMGxuYUL8FUiQ9wuQJu5gCUWzIB6dsqz7ybxAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aWLiCdDKNLP24aPoPsV67zJC2tpSlqGINKCqJOMTC3jrzdiJ2AEYJQRgxlJ8h3FPGqsvCASYkL1TLPyqLS3yKyytjfutU8kcpIaGaUBaRKnhQJKfg71rZX8Js4y2KCMo4JetSQVQNuAl/bf/V9yKIn1eFpXQ6bdotfRMj0aQ6Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=W5RMj8eT; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56GGHSMF2540402;
-	Wed, 16 Jul 2025 11:17:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752682648;
-	bh=ft3Wq6C1Q+KCfARaoberFidaRltktScsYGYlfSEwaro=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=W5RMj8eTZcR2ac5EvYEJwO2NAMxtLHsyT/FOoaCkkSjCdv0vN0A6aUigg4Xgr70H7
-	 THuS9Athxb8CcYb3ckaXDe/helWL0/AN1opyIhptp15Gi9AEB4ihSb3AIQLNztDsli
-	 /K8i+zaBYJ3NYnUF4QoeHAg7pT9bglitwhEzDA48=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56GGHR63998251
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 16 Jul 2025 11:17:27 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 16
- Jul 2025 11:17:27 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 16 Jul 2025 11:17:27 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56GGHQQ9753586;
-	Wed, 16 Jul 2025 11:17:26 -0500
-Message-ID: <d76c0299-a19d-4524-b026-79874fee10ee@ti.com>
-Date: Wed, 16 Jul 2025 11:17:26 -0500
+	s=arc-20240116; t=1752682683; c=relaxed/simple;
+	bh=PSBpWZvHiONB6XIHh8Lwy17sfK8030QTvaG6nhruCTc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nWKaI9XvEQufrpXCIWeEhyn4pLXGNOwhzRV3dQOOm5m5bZ0uV4e+2TQG6rKD1fQx22UeHULbuRjzKKGy9BoJU2Pc80gEJKLZ1OQci862oh+TZQddftBnQwCjMkRamAILhAK3/d9TUDmDWL0RHKw/WXc3wgG+1yN8z1tBF2BaqrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G8cLaHYl; arc=none smtp.client-ip=209.85.160.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com
+Received: by mail-qt1-f201.google.com with SMTP id d75a77b69052e-4ab3b89760bso1152841cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:18:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752682680; x=1753287480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ir9Dm1iVDlHTBwvNdOyXbTQs6IQAHDlj1oD0nETDHQY=;
+        b=G8cLaHYlzXG4kdCwcz7rt8tVC9h7GN1jcYa9lGixpAlbzP8BUUK18CXNloxdg4xWi1
+         6lJzszfK87m+u0KnrEsxWYOiKcII2OyLcDKc5zfMlxfPsvUfSM8vSrqINffiFWIuL5I2
+         pE91Kd1dz/QjERNZ4q380MA7jxQ1x8wD+rwYaUN5NTJlsw5umjiFr6z6dd7Y7fStCnLj
+         mu6H/VSSxicDfA7brkMnkmrzJoqWd/juOFkLfl31wWp8e/Kcqhu4qzYdYjJL7eNtoHVw
+         PR57z+mW2XdAWY9USgD5TFamj1fan8vDJctsC3Vr4VARJhYkWvo2Wq/u0QV+yTumBjxJ
+         pgHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752682680; x=1753287480;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ir9Dm1iVDlHTBwvNdOyXbTQs6IQAHDlj1oD0nETDHQY=;
+        b=h0DXaSnVk9IGiQ4kcFuw+Psglvq0WLKrgC0tuemU5a3bEqUXNNWePs9LnGZcCfdTjz
+         raO8uuFpwcjQurwuBMf0CrjqYDJgZ9ulVBBAqRTem4rIpi5Or2NWhWPiNhdLRlwpBaXq
+         KA2FEJ5GX8t8sJfVPWXKIUA/Ti1wtaX5KYAk0fVaqBxOwYd9Zod5QnlpLzhFr3b3Ub9X
+         zSb6Z/r5Q/V6K/0ZkstkEDaNluizk1nDc94/DqocOUmjfbTeAzGKSnPs3Amz2UEjGOyO
+         +2VTIXR8HLjueEj7UPT2OfM5TZWlG6yKCud1JIc21Y//KUTR0+TzrGbNAixsOAWX91oP
+         pUBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsjsF3RfOXzqheAzyJ4EL94MzgV4dmqVD8oewnJ6/xWCUB4sgrh6/9P2BjyPTN4X6jNrQYpGfPobcJnJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGHeOMpg2Tvn5W7yKAWcffNIcrVc8lpdpT5OKyoiNIv6/+++rQ
+	SwO7uO3F7lR6T3JLZvE60N4YP3+6MZVnf0TF6TS5YLI9m8zrbi0zIR6sl5QjiK/khD870GN7CzM
+	H+XYUuxGIqg==
+X-Google-Smtp-Source: AGHT+IG9kv7zcxxXhqHYD61hjoxEfyvcBYEDFuMJtskgL4tPmm+bSRk8+1YujdpUvyDf2JW2/N9qNordXZz0
+X-Received: from qts19.prod.google.com ([2002:a05:622a:a913:b0:4aa:bba4:8012])
+ (user=bgeffon job=prod-delivery.src-stubby-dispatcher) by 2002:ac8:6f0a:0:b0:4ab:6964:7845
+ with SMTP id d75a77b69052e-4ab93de8a60mr49263361cf.51.1752682679790; Wed, 16
+ Jul 2025 09:17:59 -0700 (PDT)
+Date: Wed, 16 Jul 2025 16:17:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/3] dt-bindings: gpu: img: Add AM62P SoC specific
- compatible
-To: Michael Walle <mwalle@kernel.org>, Frank Binns <frank.binns@imgtec.com>,
-        Matt Coster <matt.coster@imgtec.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth
- Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo
-	<kristo@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20250716134717.4085567-1-mwalle@kernel.org>
- <20250716134717.4085567-2-mwalle@kernel.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250716134717.4085567-2-mwalle@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250716161753.231145-1-bgeffon@google.com>
+Subject: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
+From: Brian Geffon <bgeffon@google.com>
+To: Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
+	Lijo Lazar <lijo.lazar@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
+	Pratap Nirujogi <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>, 
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, Brian Geffon <bgeffon@google.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/16/25 8:47 AM, Michael Walle wrote:
-> The AM62P and the J722S features the same BXS-4 GPU as the J721S2. Add a
-> new SoC specific compatible.
-> 
+Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)")
+allowed for newer ASICs to mix GTT and VRAM, this change also noted that
+some older boards, such as Stoney and Carrizo do not support this.
+It appears that at least one additional ASIC does not support this which
+is Raven.
 
-If the GPU is the same, and the integration is the same, do you really need
-a new compatible?
+We observed this issue when migrating a device from a 5.4 to 6.6 kernel
+and have confirmed that Raven also needs to be excluded from mixing GTT
+and VRAM.
 
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
->   Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> index 4450e2e73b3c..bad3e412a168 100644
-> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> @@ -23,6 +23,7 @@ properties:
->             - const: img,img-rogue
->         - items:
->             - enum:
-> +              - ti,am62p-gpu
+Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)")
+Cc: Luben Tuikov <luben.tuikov@amd.com>
+Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org # 6.1+
+Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Signed-off-by: Brian Geffon <bgeffon@google.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-There is a check below based on SoC compat:
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/a=
+md/amdgpu/amdgpu_object.c
+index 73403744331a..5d7f13e25b7c 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+@@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain(struct amdgpu=
+_device *adev,
+ 					    uint32_t domain)
+ {
+ 	if ((domain =3D=3D (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_GEM_DOMAIN_GTT)) &&
+-	    ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_type =3D=3D CHI=
+P_STONEY))) {
++	    ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_type =3D=3D CHI=
+P_STONEY) ||
++	     (adev->asic_type =3D=3D CHIP_RAVEN))) {
+ 		domain =3D AMDGPU_GEM_DOMAIN_VRAM;
+ 		if (adev->gmc.real_vram_size <=3D AMDGPU_SG_THRESHOLD)
+ 			domain =3D AMDGPU_GEM_DOMAIN_GTT;
+--=20
+2.50.0.727.gbf7dc18ff4-goog
 
->  - if:
->      properties:
->        compatible:
->          contains:
->            enum:
->              - ti,am62-gpu
->              - ti,j721s2-gpu
->    then:
->      properties:
->        clocks:
->          maxItems: 1
-
-If you do add a new SoC specific compatible does this check need updating?
-
-Andrew
-
->                 - ti,j721s2-gpu
->             - const: img,img-bxs-4-64
->             - const: img,img-rogue
 
