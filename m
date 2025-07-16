@@ -1,154 +1,154 @@
-Return-Path: <linux-kernel+bounces-732990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD62B06E81
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:10:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41390B06EA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFAA37A8216
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:08:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE90B1AA107E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E8E289E16;
-	Wed, 16 Jul 2025 07:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970E128D8E7;
+	Wed, 16 Jul 2025 07:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DbQm/y+R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="htAspZ9u"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD3110A1E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4856827146F;
+	Wed, 16 Jul 2025 07:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752649803; cv=none; b=uL8qXNTPA0EgR6vToCNf1gEQiFtTCN8og+AIHGX7DpoJHwwDgr8L8lcrbFKjDHznTlpxWC4F6NzIZx16JbWGqVBLRFyJk2IR7aJ9EjAglwBlLxKSV/fsQiRIV+pHc2bRLz0FVHuAp3aZErxXq7ehR9UiRvO2IQwR7sAo6UzhvNQ=
+	t=1752650051; cv=none; b=SDZjVuVSGy9ofLeq/wHgrnz2yRLb6Yd9Xx0D4Za1gLEYnNzUvmv8RqFRvBfGz9NjHyeEnZhiAQgnBk8S09JUzhSBMxzBtTaWAO3IFLc7ABSEi2qI2tj3L3utUUtMTTrdUlYABHJk4AqcJ09heSoKXxx/DaLABQzqtFyD82p4jJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752649803; c=relaxed/simple;
-	bh=pbzwr583kv2Kv3frGIlUuk0d2ZEJA9N61Pp8J8V7T/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+PS8wMy27rUIhQDlUQ+ihOUlXxKKxIuVvzkbO9nmcw6YAOYO6hQfTkMLOqvI1QXhUWN34fAfPa/Ny7IgCHxEX1y0dxOLYwbfp0wuHbPpVdE6iqDGd8KBph5vFlopZlD6mG2HluPlp1gY28ZY5xvjdckhLcI1ieSKMSOH9tTyWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DbQm/y+R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752649800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QkrGeaLtfkyhuYs4DJLfNNM1RGd1ZIds2xpUAYiTE04=;
-	b=DbQm/y+RSgoq7b9dxf7cFn8Cx7kigyoznxxUEnK5BfCJ+q1LVthfRXZqEPwlLg76ZKewB0
-	QiYljLJ/Qlz1nAid6bIjRs1wIy9Y1/3kRRWHwlRvd8veUu+wAeQACIJz7rK7u4+r2BaLQ8
-	VZ+uHudiRKYk3a3Fye35o51kWTlX5IY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-90ItctHzNwyXJ70pwng09A-1; Wed,
- 16 Jul 2025 03:09:57 -0400
-X-MC-Unique: 90ItctHzNwyXJ70pwng09A-1
-X-Mimecast-MFC-AGG-ID: 90ItctHzNwyXJ70pwng09A_1752649795
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AAC131800C31;
-	Wed, 16 Jul 2025 07:09:53 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.156])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C04D118002AF;
-	Wed, 16 Jul 2025 07:09:51 +0000 (UTC)
-Date: Wed, 16 Jul 2025 15:09:47 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
-	Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/8] mm/shmem, swap: tidy up swap entry splitting
-Message-ID: <aHdQO/SN9MUL5/Bk@MiWiFi-R3L-srv>
-References: <20250710033706.71042-1-ryncsn@gmail.com>
- <20250710033706.71042-5-ryncsn@gmail.com>
+	s=arc-20240116; t=1752650051; c=relaxed/simple;
+	bh=QBIfAjSoRjqJgtJ7y+/mx9oI4j6qBq51SJQNi5rSeLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EUOtxZlzP2969Imn4wIU4+4G9HdnLbkH/qtXoRJP3F+6HIdNy5XQql+Sl+LDzb6YByi/Bu6+URORq5NWYbl+50EuaTIetMK9xUitxfH8UoUH6J/F4jMbu/lJIBdKYzZQccVqexvyMeimYRwpy5U1Ex4GwH7XaIsgHm5twKygIJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=htAspZ9u; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G5vYp0029698;
+	Wed, 16 Jul 2025 07:14:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	40lEk+g3SejQS2IvDC7RqWMlpsJX7b2RKLefb1eGV4A=; b=htAspZ9uwp1Qsz6t
+	aMHW6/7KVeqyx6/hIdeVcVZ0P+eg8HaBwgOOpGZQP94tKInGg2O6mpxcUgc/NWE/
+	BLQdIBrFEa8OvHdr/V/DcqPrRK4gxlr7wNsUxheDf4/EkViP4XfKrSqHefZ3Nark
+	aSOGKe7L85WJfSH1wax8+BIHATRSktoHP4QiZi7XMFPStR0QeTtoxy5NB+8NsfUO
+	20xv6tUSsQ9IEeBnTIKjhwJEp1ttnRF9VsSTv8PM+BBST1c/sTL5jV7TMb8hM4w6
+	+0RBMeKy8B8KuTsg8qxz6My2pSD0lNqtHR4axu7LfXcMAzj/CIDCeIJr7RAoYaQH
+	wREN6A==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxb2y6v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 07:14:03 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56G7Dt7c007777
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 07:13:55 GMT
+Received: from [10.216.39.173] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 16 Jul
+ 2025 00:13:52 -0700
+Message-ID: <13bc6b54-f558-8249-e1a7-4acd31cec70e@quicinc.com>
+Date: Wed, 16 Jul 2025 12:43:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710033706.71042-5-ryncsn@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 09/25] media: iris: Allow stop on firmware only if start
+ was issued.
+Content-Language: en-US
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
+ <20250704-iris-video-encoder-v1-9-b6ce24e273cf@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250704-iris-video-encoder-v1-9-b6ce24e273cf@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nbXwafeGkLu7hBoNl31bfiFEY5fCFr7f
+X-Proofpoint-ORIG-GUID: nbXwafeGkLu7hBoNl31bfiFEY5fCFr7f
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA2NCBTYWx0ZWRfX48deVTZCrD1P
+ 71856hCUM6FPeh82HfbObxbWLL2MIXxfCxwNn6qtZly21mtYVrXUOqc4sux2XHTD0dM6QQW+U9O
+ Yx6kqEcNr0W5PR//kO55CYf8yHyBEuMr8Gblz7GLXFUg4398vC4lRSEsvcOLqAABEIc3hoeLPYj
+ z1NdtBwmuP5nfZUSBrvAvkpYV7AY9+RxvAtx0nJZCpB6075oWVyPYxTvDIVLx6N8IGO9zGd1blE
+ BKoH3AtVlyO00lWsYDbmOdyU6OJfV7g1fn2AtvDXT8a0JEOjz5d+OYzjyf2CuuKDcozTVcWsTbg
+ frkJWMaq3J5u3F1BOaxdsEseDP59u81cGMHHCNnlxzcnIkU+lqDdNhQE+lHJzOqnMgPumTaog+H
+ RYZF/lQC+jWJz+5V7goia1ignxuUWp1Eg6+2FOG/bIwcvsxkMeuLE+gCjhKmj9DZJi+kapi8
+X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=6877513b cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=QtfZ24-MeIpz-YScN-wA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
+ phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507160064
 
-On 07/10/25 at 11:37am, Kairui Song wrote:
-......snip...
-> @@ -2321,46 +2323,35 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
->  		}
+
+On 7/4/2025 1:23 PM, Dikshita Agarwal wrote:
+> For HFI Gen1, the instances substate is changed to LOAD_RESOURCES only
+> when a START command is issues to the firmware. If STOP is called
+> without a prior START, the firmware may reject the command and throw
+> some erros.
+> Handle this by adding a substate check before issuing STOP command to
+> the firmware.
+> 
+> Fixes: 11712ce70f8e ("media: iris: implement vb2 streaming ops")
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> index 5fc30d54af4dc34616cfd08813940aa0b7044a20..5f1748ab80f88393215fc2d82c5c6b4af1266090 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> @@ -184,11 +184,12 @@ static int iris_hfi_gen1_session_stop(struct iris_inst *inst, u32 plane)
+>  	u32 flush_type = 0;
+>  	int ret = 0;
 >  
->  		/*
-> -		 * Now swap device can only swap in order 0 folio, then we
-> -		 * should split the large swap entry stored in the pagecache
-> -		 * if necessary.
-> -		 */
-> -		split_order = shmem_split_large_entry(inode, index, swap, gfp);
-> -		if (split_order < 0) {
-> -			error = split_order;
-> -			goto failed;
-> -		}
-> -
-> -		/*
-> -		 * If the large swap entry has already been split, it is
-> +		 * Now swap device can only swap in order 0 folio, it is
->  		 * necessary to recalculate the new swap entry based on
-> -		 * the old order alignment.
-> +		 * the offset, as the swapin index might be unalgined.
->  		 */
-> -		if (split_order > 0) {
-> -			pgoff_t offset = index - round_down(index, 1 << split_order);
-> -
-> +		if (order) {
-> +			offset = index - round_down(index, 1 << order);
->  			swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
->  		}
->  
-> -		/* Here we actually start the io */
->  		folio = shmem_swapin_cluster(swap, gfp, info, index);
->  		if (!folio) {
->  			error = -ENOMEM;
->  			goto failed;
->  		}
-> -	} else if (order > folio_order(folio)) {
-> +	}
-> +alloced:
+> -	if ((V4L2_TYPE_IS_OUTPUT(plane) &&
+> -	     inst->state == IRIS_INST_INPUT_STREAMING) ||
+> +	if (((V4L2_TYPE_IS_OUTPUT(plane) &&
+> +	      inst->state == IRIS_INST_INPUT_STREAMING) ||
+>  	    (V4L2_TYPE_IS_CAPTURE(plane) &&
+>  	     inst->state == IRIS_INST_OUTPUT_STREAMING) ||
+> -	    inst->state == IRIS_INST_ERROR) {
+> +	    inst->state == IRIS_INST_ERROR) &&
+> +		inst->sub_state & IRIS_INST_SUB_LOAD_RESOURCES) {
+>  		reinit_completion(&inst->completion);
+>  		iris_hfi_gen1_packet_session_cmd(inst, &pkt, HFI_CMD_SESSION_STOP);
+>  		ret = iris_hfi_queue_cmd_write(core, &pkt, pkt.shdr.hdr.size);
+> 
 
-Here, only synchronous device handling will jump to label 'alloced', while
-its folio is allocated with order. Maybe we should move the label down 
-below these if else conditional checking and handling?
-
-Anyway, this is an intermediary patch and code will be changed, not strong
-opinion.
-
-> +	if (order > folio_order(folio)) {
->  		/*
-> -		 * Swap readahead may swap in order 0 folios into swapcache
-> +		 * Swapin may get smaller folios due to various reasons:
-> +		 * It may fallback to order 0 due to memory pressure or race,
-> +		 * swap readahead may swap in order 0 folios into swapcache
->  		 * asynchronously, while the shmem mapping can still stores
->  		 * large swap entries. In such cases, we should split the
->  		 * large swap entry to prevent possible data corruption.
->  		 */
-> -		split_order = shmem_split_large_entry(inode, index, swap, gfp);
-> +		split_order = shmem_split_large_entry(inode, index, index_entry, gfp);
->  		if (split_order < 0) {
-> -			folio_put(folio);
-> -			folio = NULL;
->  			error = split_order;
-> -			goto failed;
-> +			goto failed_nolock;
->  		}
->  
->  		/*
-...snip...
-
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
