@@ -1,70 +1,64 @@
-Return-Path: <linux-kernel+bounces-733647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A64CB07754
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:48:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 887A7B0775B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC35E7B186E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC0231C2547A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9131E572F;
-	Wed, 16 Jul 2025 13:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CC01DB92C;
+	Wed, 16 Jul 2025 13:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/hiXrDM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="A29ps5it"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DF51E503D;
-	Wed, 16 Jul 2025 13:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AF314A09C;
+	Wed, 16 Jul 2025 13:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752673663; cv=none; b=MVeWTlRMaIslpro7DkbWdiJjFmM+864SKAI6c7OQwvfmI3nwpY5HlfeuUishVdUCpaiSMln4BhXw+t+abiCUzBlZtS5NByqoAl1/6gO8HwnxXty0JSHg4NgtF7Scn1cgn4LJj2VQ9lKiLIdLZnRpL+lLeOFtbZNCNiEwfrWC9wM=
+	t=1752673917; cv=none; b=V6bo71slNRV4LoRUkrKWZs/CO2u/rv5sNSRBm/2yIl7Tu3rM49Lq6WHYlqypu9SSsapVNOg7P4izQLUQKK2r3bacutLenQx+3Ky5OoCYG9ufw4qGijLMH7AfYU3YGTmbd+YptBTaj3IEJji4LWOdUmrfEu9yVvW4ypvwYdCl6GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752673663; c=relaxed/simple;
-	bh=rdQDdI9JouSQXlopIgj0zTq8D4QW2KHFO3f9GHrlvrs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=J+eOzQGoOPOFqihfWqY0mPZha75oHXdndflDzgVWUlGfaqzxAARGy3shISID2XGx82Xgmb4AZZh1+v8Ot2Kkyw5QOusVZR7S+ryOZcSUZP6bZmAYDOGn3BWcv6MDwKys/9dQPZGbyR/ncTHakQa1uM9Yo0yaYMAN27slsyEvDBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/hiXrDM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3C0EC4CEF6;
-	Wed, 16 Jul 2025 13:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752673663;
-	bh=rdQDdI9JouSQXlopIgj0zTq8D4QW2KHFO3f9GHrlvrs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J/hiXrDMKTQO05nvgVSvUQAgzWP8ULEvvHhKJo+3ZDWK0YCUhDi/uoyNF+ngznSZ/
-	 DcSEndLqgj70AVgNsiThGVM7FCWx8X4Eyay593WZUaf2YwXapEOr3p9acKsE+yWyVs
-	 uX7ItNEO35RyrxwTE5tKmEo5gLqLQSr+ErY4FQIl+iGrfsOnG/acyciI2AP297H3Uy
-	 xv0o1luCOglbDmxs5OBcpTQN5o9FEH+s01kTHYjYjV827XkWBvc+AMiqXVZDix8lAp
-	 FgpDyfB85TffhRocGdU1pS3T4+GPacOwLmAWspoJZT9cP/9NPGO3o0fhI94mmTj/Bu
-	 IbyM+UqBVYxwQ==
-From: Michael Walle <mwalle@kernel.org>
-To: Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1752673917; c=relaxed/simple;
+	bh=hyGCvrbtw2qdIGIIhqoYr9iBtmwCIV5oIyf682Dj/kc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ngyHKxEYs8skNLgjYKY3AkgW/b6wEdgsFHKoJDkUSmHcB5k4UjHdPvT+hCqAB5Sw/P27n1cEkzeTjS/ZPwK2qkVaiXPmi4SjLMAZdwQJMEGITgN/RI9OApxoGfCoboB/2JPDTEQAkx04P3zkRIJG7Fq/gwYPehINuw2F/aEjlr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=A29ps5it; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=3vytiuZjE/mNXoVykFb8Ntwh9jcp42Gui1jhUZYM32c=; b=A29ps5itkp7tMOka
+	KQrPFZ0Tc5o1ixpBHyUnm7d3A0V3Kf6TZes9Y/iXCfNb0SmMUZCRbdhxoScrngTqmatJJI5p6IibN
+	WE6HTNBm91Wy3GtipxCqZZPbqJTcmPz33MPFY1YAYUcSKiBFTeDQpq7JUtodCxlOlOcIx9KQ5Karn
+	gEgXRKocCuADuyipPF0o8MJDvJvvlWDCDUvw5bCphm06d8xFy87fiNuzEQyYqu31UhkyHDLLwFwh4
+	jXFh0UjeGOJVenJXDFIw9hwz2eE5D+gO91cRAWmPd8BlbUMV5aF7529t0bSadEVGIniVyaSNMh+qk
+	WdqOJXnvMn5jdR7Zsg==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1uc2Xp-00GQnU-3A;
+	Wed, 16 Jul 2025 13:51:38 +0000
+From: linux@treblig.org
+To: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	peterz@infradead.org
+Cc: alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [RFC PATCH 3/3] arm64: dts: ti: add GPU node
-Date: Wed, 16 Jul 2025 15:47:17 +0200
-Message-Id: <20250716134717.4085567-4-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250716134717.4085567-1-mwalle@kernel.org>
-References: <20250716134717.4085567-1-mwalle@kernel.org>
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] perf core: Remove perf_event_attrs and perf_event_refresh
+Date: Wed, 16 Jul 2025 14:51:37 +0100
+Message-ID: <20250716135137.247266-1-linux@treblig.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,38 +67,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The J722S features a BXS-4 GPU. Add the node for it.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Signed-off-by: Michael Walle <mwalle@kernel.org>
+perf_event_refresh() has been unused since the 2015
+commit f63a8daa5812 ("perf: Fix event->ctx locking")
+
+perf_event_attrs() has been unused since the 2017
+commit f91840a32dee ("perf, bpf: Add BPF support to all perf_event types")
+(Note the _ prefix version is still used)
+
+Remove them.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- .../boot/dts/ti/k3-am62p-j722s-common-main.dtsi     | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+  This was originally sent as part of a set with a load of tools/perf
+  cleanups, Ian pointed out it needed to be separate.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-index 17c0949ac1d7..8f3d39d8004b 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-@@ -1229,6 +1229,19 @@ dsi0: dsi@30500000 {
- 		status = "disabled";
- 	};
+ include/linux/perf_event.h | 10 ----------
+ kernel/events/core.c       | 24 ------------------------
+ 2 files changed, 34 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index ec9d96025683..4cecd5122404 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1224,7 +1224,6 @@ extern void perf_event_free_task(struct task_struct *task);
+ extern void perf_event_delayed_put(struct task_struct *task);
+ extern struct file *perf_event_get(unsigned int fd);
+ extern const struct perf_event *perf_get_event(struct file *file);
+-extern const struct perf_event_attr *perf_event_attrs(struct perf_event *event);
+ extern void perf_event_print_debug(void);
+ extern void perf_pmu_disable(struct pmu *pmu);
+ extern void perf_pmu_enable(struct pmu *pmu);
+@@ -1235,7 +1234,6 @@ extern int perf_event_task_enable(void);
  
-+	gpu: gpu@fd80000 {
-+		compatible = "ti,am62p-gpu", "img,img-bxs-4-64", "img,img-rogue";
-+		reg = <0x00 0x0fd80000 0x00 0x80000>;
-+		clocks = <&k3_clks 237 3>;
-+		clock-names = "core";
-+		assigned-clocks = <&k3_clks 237 3>;
-+		assigned-clock-rates = <800000000>;
-+		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 237 TI_SCI_PD_EXCLUSIVE>,
-+				<&k3_pds 242 TI_SCI_PD_EXCLUSIVE>;
-+		power-domain-names = "a", "b";
-+	};
-+
- 	vpu: video-codec@30210000 {
- 		compatible = "ti,j721s2-wave521c", "cnm,wave521c";
- 		reg = <0x00 0x30210000 0x00 0x10000>;
+ extern void perf_pmu_resched(struct pmu *pmu);
+ 
+-extern int perf_event_refresh(struct perf_event *event, int refresh);
+ extern void perf_event_update_userpage(struct perf_event *event);
+ extern int perf_event_release_kernel(struct perf_event *event);
+ 
+@@ -1945,10 +1943,6 @@ static inline const struct perf_event *perf_get_event(struct file *file)
+ {
+ 	return ERR_PTR(-EINVAL);
+ }
+-static inline const struct perf_event_attr *perf_event_attrs(struct perf_event *event)
+-{
+-	return ERR_PTR(-EINVAL);
+-}
+ static inline int perf_event_read_local(struct perf_event *event, u64 *value,
+ 					u64 *enabled, u64 *running)
+ {
+@@ -1957,10 +1951,6 @@ static inline int perf_event_read_local(struct perf_event *event, u64 *value,
+ static inline void perf_event_print_debug(void)				{ }
+ static inline int perf_event_task_disable(void)				{ return -EINVAL; }
+ static inline int perf_event_task_enable(void)				{ return -EINVAL; }
+-static inline int perf_event_refresh(struct perf_event *event, int refresh)
+-{
+-	return -EINVAL;
+-}
+ 
+ static inline void
+ perf_sw_event(u32 event_id, u64 nr, struct pt_regs *regs, u64 addr)	{ }
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 22fdf0c187cd..4b84e808eef7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -3340,22 +3340,6 @@ static int _perf_event_refresh(struct perf_event *event, int refresh)
+ 	return 0;
+ }
+ 
+-/*
+- * See perf_event_disable()
+- */
+-int perf_event_refresh(struct perf_event *event, int refresh)
+-{
+-	struct perf_event_context *ctx;
+-	int ret;
+-
+-	ctx = perf_event_ctx_lock(event);
+-	ret = _perf_event_refresh(event, refresh);
+-	perf_event_ctx_unlock(event, ctx);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(perf_event_refresh);
+-
+ static int perf_event_modify_breakpoint(struct perf_event *bp,
+ 					 struct perf_event_attr *attr)
+ {
+@@ -14196,14 +14180,6 @@ const struct perf_event *perf_get_event(struct file *file)
+ 	return file->private_data;
+ }
+ 
+-const struct perf_event_attr *perf_event_attrs(struct perf_event *event)
+-{
+-	if (!event)
+-		return ERR_PTR(-EINVAL);
+-
+-	return &event->attr;
+-}
+-
+ int perf_allow_kernel(void)
+ {
+ 	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
 -- 
-2.39.5
+2.50.1
 
 
