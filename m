@@ -1,221 +1,136 @@
-Return-Path: <linux-kernel+bounces-732962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124B2B06E35
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:48:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7454B06E38
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13BFD4E46C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8086B5003D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BE7288C02;
-	Wed, 16 Jul 2025 06:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E380285CA5;
+	Wed, 16 Jul 2025 06:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZKA419sh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Et88Ca0c"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8BF218858;
-	Wed, 16 Jul 2025 06:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C482AD0B
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752648503; cv=none; b=kxamjdRoVnL9k6Ll6rHHTpZUDWP3Qxsp6G6VxIAp6zYir3qSftaPBujDuS2rCBnLE0t+/rim3KgxT1PZITINJhQ9EqeSsPzWF2Mfx8nEjzAs6nVHAqY7WdswrbKLAFZzyCviel+ZVftN6hsuFcyWST7veyGpkabAUsu/18QeaWE=
+	t=1752648553; cv=none; b=RkfQDfVCjZNuUpUvaVP/xJURep3drJfDL5VRF7QkkEmIw/v590183on3beh5Yy10QorQcqLoCHghyq03A2OiGjOzdWvN3fMQZENa+QL4ffjtBNTnnPMDio2Oxp7NitYqGKwjZE3fiDJ+bb4cDGVjPnoX9+b/RxIjA0W2ZNF8wNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752648503; c=relaxed/simple;
-	bh=XjqcghoFE2Yqt4skKIZgvD7VX6A2KJo89xrQ6wwiIrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rl39wXN+tSBPKro9fPCN1hWyGSeh+XHtf4aDWSTQ6PnVzZAQ76d3WF/8Sh9rjwaTVgVmsB0xwYpwt0ymBTSGhEMQIUrsbD7wHntfRdU67GqgeLOIM/320CmAG2kPf9bRwQylwagVvRwWY7j68GFcwJA7bJmR+OD9itI47mjL2r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZKA419sh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G6eNNq003467;
-	Wed, 16 Jul 2025 06:48:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	I2CWwloeUWebYWEF9NAI9U78YojSEXoha14qYZuw2gY=; b=ZKA419shi4ZIQIXx
-	aknOLBzOclQsQ5xu0JjZTZ+wzdtBEtQ1RzxZ/tM0bjUDBZLutslOUpjeN4kSBz9f
-	l5IjdfH3essnuh76fDir3EZYhDFXNga8WVF96JWR3ckfvweevD1kVLANxD2mlv3K
-	uDzhitWsFwviladigTr4ngP6CJ5QNrVzCjj5Q+SqIBQnuVC/E9qqN8CBAkOKucuI
-	vgPBeMekfR2Wk4fvkqcOQzdyINV6HsyGmZjxgiz1Jiq11IHvcKerAGHZZWrRwc8Y
-	6cjiPaRNJ0Chuw+1uFuf88Zx0aY+uRol5shrJGIwaPXYPx+g2x+gcp678/z6oIaA
-	4y2STw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5drnrg3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 06:48:14 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56G6mDLh031279
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 06:48:13 GMT
-Received: from [10.216.39.173] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 15 Jul
- 2025 23:48:10 -0700
-Message-ID: <f462ce0e-08d6-d2cd-0e24-47e9cca56abc@quicinc.com>
-Date: Wed, 16 Jul 2025 12:18:07 +0530
+	s=arc-20240116; t=1752648553; c=relaxed/simple;
+	bh=eod/wmVUOGbgIl5/CrDR366hD+D3H9tKO4+uFMa3+Mo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k9ZD5BLrZUZpcy4CJr4NSbgNKrhguAWCURLfwcXDvWBsa8lwyuV3dcxKldPfwTv+jNtEHFwUZD6Nef3yenJC/wddM71XuiYupohD8/s0YRY3UPNlmMi9GIghsxYS8MgpR4KANuC+YmFvw5KZQSbrwR77g9BastuwQAJIOtKhQWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Et88Ca0c; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4f64cdc2dso894106f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 23:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752648550; x=1753253350; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4hIgRND/kgTK+Uu5kTClO4Ajyo6XJhL11o2zXAzcLkM=;
+        b=Et88Ca0cQQTgdSYulI7LxT/nJnGLRmz9eCP8+BOl60PRbOEylCFmcTNat33ufoxmWX
+         yGUkliQpiUpcape5r4nTxTcAWkfXJ73aZP7QxITzgi5fVe7U5zppMcXfYP340ucHaoIC
+         nGhnMdZuSCYj0xWqMW05dhD4DxI7Ot34FSZlJlpyV6jUPOXy9bsrgweCPtwe89UH/IxG
+         1dM9Prf9PIoQAq7urCvmD8lNbD72hZqCZe+OAmXrFC/YHjIh4Z5fbd2cUah3bAc8nYNX
+         izD8zhB1SX+YPJbXJsCx58mPkec7sUSKc3/PhLHBcI21ha1TCP1F8R+OlwbgZE1mjlvL
+         y5gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752648550; x=1753253350;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4hIgRND/kgTK+Uu5kTClO4Ajyo6XJhL11o2zXAzcLkM=;
+        b=wnekQYVoMYOhPETpkRHzGxsL+GbS3L4X10W3IHLCQ+EMH4AqhhSF+1ctqoMZDs1xn2
+         fW8JNhmEyRbASOyXraLZGn1UMZAKkKAvxHfee+gh1lI3/+OHaDQ3EzWM0HqK7SRCeGOP
+         MTEMDmFoWKTgf3zkzlaUZ+55TWfRe9HpNogW6hunburSSM7xdOVoZWmY47m8tqhpO5Q2
+         kq110vrAz/pMn0/iv84vXq5bMaNP8P3ud4uJuMZj9p7ZNRbnDDRcYLXcboUwCnbD+Osy
+         EKhOCufGwKFtQ9NejjjbCmq1KQZ0Geqhe3TjPmZ1+G6YSrSqkmsJAvqYA9ojz3x8KRlf
+         jyaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVC8qOyYJooveZRiINw0Y0hjX/lnS8atyBOLot+yFGVmDxHxmH/YSj8adCFmgLGOrZsNYycuRu0Xp1O2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMryHs2F8UwHamYDRRw2EcPRiAB+bx38HrzVOtZOC48Qntlme8
+	ofW6U4Il22SDDzlJ87YDyGBC6IvNXQqXjl+N4h0yTtOXYI2P1VTZ4wR4c39iCNi1sjtRwp1sf7/
+	Pvg1x
+X-Gm-Gg: ASbGncu4TF+S5aII3Xb1IxtHS0BjwaqHfO7Y61ntAF2kPUm0MB3CF8lDvkAf97wyv3m
+	CZTDtdn9Kl4zbzVrolU3pdV2RjJgYJmVaTmXpqAqITFleBF0mogRbcqC0qMBIC9eEfaiy6koGSn
+	bBEB9G6MU0WcTqFshkhlAswpHTo5q50PX3Nl/c+tMkK7Ghv8Oq2hpGMnylBLSteRJF+ThzidAZI
+	xjM0V2NTeek7rPNJbBGnmPBr5HAfQMJmwQ2MJs3GVk6cPTNuAW9mz3hOQV+qgrW+3jY7Ey55bgK
+	yzq/i6sHaRzrMwo3VAMKX5hRq7ZmO0LFwwyoZCod1X/FzqyRxcMquB48EVq0YSHI4aced7xnaJ6
+	wFybgL1MIz0MXL+8JnFJ/ykcowVgTevZTmXw=
+X-Google-Smtp-Source: AGHT+IEuIg3c5wRFSsVOrhUB5ninrAbasZgWByLB1PQKMayupzuVIAlVKtDbkntiUqVhlwRbVDDXjQ==
+X-Received: by 2002:a05:600c:548b:b0:456:23d4:4ef9 with SMTP id 5b1f17b1804b1-4562e0462d4mr5962165e9.3.1752648550068;
+        Tue, 15 Jul 2025 23:49:10 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562eb63551sm10366865e9.24.2025.07.15.23.49.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 23:49:09 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] cdx: Fix missing GENERIC_MSI_IRQ on compile test
+Date: Wed, 16 Jul 2025 08:49:04 +0200
+Message-ID: <20250716064903.52397-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 05/25] media: iris: Fix port streaming handling
-Content-Language: en-US
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Vedang
- Nagar" <quic_vnagar@quicinc.com>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
- <20250704-iris-video-encoder-v1-5-b6ce24e273cf@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20250704-iris-video-encoder-v1-5-b6ce24e273cf@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4-_XgLYPwUAOGEm8qU9Ar-b91UunbUMK
-X-Authority-Analysis: v=2.4 cv=D4xHKuRj c=1 sm=1 tr=0 ts=68774b2e cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=pdoqPo7vGqYbXQxtSqwA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 4-_XgLYPwUAOGEm8qU9Ar-b91UunbUMK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA1OSBTYWx0ZWRfX0XmSoMPxzsS/
- Esx2ctWcA9J4bm64hkyPcuSARQ5///D3g6ApsNOHB9hVkuO/rZupOdPk/aAYg20laM14xzYzgmY
- Aku/+VMY0Eg2vqnxwchmE9p0z8urNl/fdGqrjtt/8+aZCO/DGVtNQ54r/oVji081OvKC6qru8wB
- Fvc0/FWFNQOL5Q8WpYYDACcOe6uPzNXkSlpCAL2eAAzR4Q9mT4+znHQ5kIqlCQ5vz3punvMOeQp
- 3mRqUPmdIVWd4cJ6+LKJt8arKkGhE3jkkjHnXihaCefBjeyB+d6P7YxYMg635T+CNR9HIN1WqZN
- o/R7n9bHbp/mI3w//fxYFixJJv9VOd5EFBRgN6MSoqnfCvAkq2eHgquW6zlx1o6s0bLWjBmEJaW
- U+4By6vWjm2BnwkymALtymJhJpGjDfv/rMF7G52lK1MmPPs8R1lrWNQJ4gD/dQM3Ltz+PlV1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxlogscore=999 impostorscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 suspectscore=0 bulkscore=0 mlxscore=0
- priorityscore=1501 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507160059
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1032; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=eod/wmVUOGbgIl5/CrDR366hD+D3H9tKO4+uFMa3+Mo=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBod0tfdUUYRJ+08hLNvRtPMJeL3f9+czcvjsV0k
+ 87VpRqoaGiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaHdLXwAKCRDBN2bmhouD
+ 11X6EACbRd05q5MJru62yf++romqY4T0F6gIeLoBPFs65R4AfdmMTyC81Q6R6gmIoxhKYVjh6U0
+ 7qjhPPu/Hm12BMFLi6LjC3ej6753amQHac+XbIMiTc4BJqkCGPHyRkK//EXhmWQgycSGuhYh/Q+
+ 4q1EaGuxdl7P0F6IREHueZ/g4TWq4WdF0YBX+f4MRuhUk44Ja1eseY1YPNHn+mxerqIo9aMqPvj
+ vWc+io23N1AuLaUZlgPOW8vdboizNzYqKxGhWC3QaYwE7henTVJ4zEZ6RxMzvfjLhazVQUUeXHz
+ MGLRA+fgnkKEwqci0XJ+ZD88XDvits6ImTUobAAIr7VOjGAz2CGZtyoyKz1X0tn+TERa2sY37gm
+ 9sfW+Lipxv2tTeJE6SlJxvuxuEniKGwZTAnBLSwqNuJvnhJTTMf5H4y/Y9XIAZ5wOCdCa6FTNt1
+ fJHQuCGiON02/qimHETtNz1dK3WIYtWQ99yBNEJj0wfiJyNf5HuYOdPjZlvFY3NfBoy35uzdmmo
+ gUJapGhFXIZ7YkMQJWW8+AAvfTBcL/HTRc864+pjUkwnyLE6CexSfEeiHyg81n5DLv0pUg6c6yB
+ CdNhy4WKQv+PnJvgUCQ9oA28+JhZzWaYYGCFhlxBAZovdl98KWZ/xr2QgSwkj0yytCkaFdrjFmf cuPcmOPXry1/xaQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
+CDX_BUS driver uses msi_setup_device_data() which is selected by
+GENERIC_MSI_IRQ, thus compile testing without the latter failed:
 
-On 7/4/2025 1:23 PM, Dikshita Agarwal wrote:
-> The previous check to block capture port streaming before output port
-> was incorrect and caused some valid usecase to fail. While removing that
-> check allows capture port to enter streaming independently, it also
-> introduced firmware errors due to premature queuing of DPB buffers
-> before the firmware session was fully started which happens only when
-> streamon is called on output port.
-> 
-> Fix this by deferring DPB buffer queuing to the firmware until both
-> capture and output are streaming and state is 'STREAMING'.
-> 
-> Fixes: 11712ce70f8e ("media: iris: implement vb2 streaming ops")
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->  drivers/media/platform/qcom/iris/iris_buffer.c | 27 ++++++++++++++++++++++++++
->  drivers/media/platform/qcom/iris/iris_buffer.h |  1 +
->  drivers/media/platform/qcom/iris/iris_vb2.c    |  8 ++++----
->  3 files changed, 32 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
-> index 809ce77744f996c23dc07ef9ecb3e8e92b709850..320ebfb833331294ba5ddda8e9cd243c80633408 100644
-> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
-> @@ -334,6 +334,29 @@ int iris_queue_buffer(struct iris_inst *inst, struct iris_buffer *buf)
->  	return 0;
->  }
->  
-> +int iris_queue_internal_deferred_buffers(struct iris_inst *inst, enum iris_buffer_type buffer_type)
-> +{
-> +	struct iris_buffer *buffer, *next;
-> +	struct iris_buffers *buffers;
-> +	int ret = 0;
-> +
-> +	buffers = &inst->buffers[buffer_type];
-> +	list_for_each_entry_safe(buffer, next, &buffers->list, list) {
-> +		if (buffer->attr & BUF_ATTR_PENDING_RELEASE)
-> +			continue;
-> +		if (buffer->attr & BUF_ATTR_QUEUED)
-> +			continue;
-> +
-> +		if (buffer->attr & BUF_ATTR_DEFERRED) {
-> +			ret = iris_queue_buffer(inst, buffer);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  int iris_queue_internal_buffers(struct iris_inst *inst, u32 plane)
->  {
->  	const struct iris_platform_data *platform_data = inst->core->iris_platform_data;
-> @@ -358,6 +381,10 @@ int iris_queue_internal_buffers(struct iris_inst *inst, u32 plane)
->  				continue;
->  			if (buffer->attr & BUF_ATTR_QUEUED)
->  				continue;
-> +			if (buffer->type == BUF_DPB && inst->state != IRIS_INST_STREAMING) {
-> +				buffer->attr |= BUF_ATTR_DEFERRED;
-> +				continue;
-> +			}
->  			ret = iris_queue_buffer(inst, buffer);
->  			if (ret)
->  				return ret;
-> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.h b/drivers/media/platform/qcom/iris/iris_buffer.h
-> index 00825ad2dc3a4bd1ace32d7e95d15b95276315b0..b9b011faa13ae72e08545c191cdcc2f1bcaf9e0a 100644
-> --- a/drivers/media/platform/qcom/iris/iris_buffer.h
-> +++ b/drivers/media/platform/qcom/iris/iris_buffer.h
-> @@ -105,6 +105,7 @@ int iris_get_buffer_size(struct iris_inst *inst, enum iris_buffer_type buffer_ty
->  void iris_get_internal_buffers(struct iris_inst *inst, u32 plane);
->  int iris_create_internal_buffers(struct iris_inst *inst, u32 plane);
->  int iris_queue_internal_buffers(struct iris_inst *inst, u32 plane);
-> +int iris_queue_internal_deferred_buffers(struct iris_inst *inst, enum iris_buffer_type buffer_type);
->  int iris_destroy_internal_buffer(struct iris_inst *inst, struct iris_buffer *buffer);
->  int iris_destroy_all_internal_buffers(struct iris_inst *inst, u32 plane);
->  int iris_destroy_dequeued_internal_buffers(struct iris_inst *inst, u32 plane);
-> diff --git a/drivers/media/platform/qcom/iris/iris_vb2.c b/drivers/media/platform/qcom/iris/iris_vb2.c
-> index 8b17c7c3948798326ed4732ca50ebd98b833401f..e62ed7a57df2debf0a930ad8307e6d945f589922 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vb2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vb2.c
-> @@ -173,9 +173,6 @@ int iris_vb2_start_streaming(struct vb2_queue *q, unsigned int count)
->  
->  	inst = vb2_get_drv_priv(q);
->  
-> -	if (V4L2_TYPE_IS_CAPTURE(q->type) && inst->state == IRIS_INST_INIT)
-> -		return 0;
-> -
->  	mutex_lock(&inst->lock);
->  	if (inst->state == IRIS_INST_ERROR) {
->  		ret = -EBUSY;
-> @@ -203,7 +200,10 @@ int iris_vb2_start_streaming(struct vb2_queue *q, unsigned int count)
->  
->  	buf_type = iris_v4l2_type_to_driver(q->type);
->  
-> -	ret = iris_queue_deferred_buffers(inst, buf_type);
-> +	if (inst->state == IRIS_INST_STREAMING)
-> +		ret = iris_queue_internal_deferred_buffers(inst, BUF_DPB);
-> +	if (!ret)
-> +		ret = iris_queue_deferred_buffers(inst, buf_type);
->  	if (ret)
->  		goto error;
->  
-> 
+  /usr/bin/ld: drivers/cdx/cdx.o: in function `cdx_probe':
+  build/drivers/cdx/cdx.c:314: undefined reference to `msi_setup_device_data'
 
-Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Closes: https://lore.kernel.org/all/b2c54a12-480c-448a-8b90-333cb03d9c14@infradead.org/
+Fixes: 7f81907b7e3f ("cdx: Enable compile testing")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/cdx/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/cdx/Kconfig b/drivers/cdx/Kconfig
+index 1f1e360507d7..3af41f51cf38 100644
+--- a/drivers/cdx/Kconfig
++++ b/drivers/cdx/Kconfig
+@@ -8,6 +8,7 @@
+ config CDX_BUS
+ 	bool "CDX Bus driver"
+ 	depends on OF && ARM64 || COMPILE_TEST
++	select GENERIC_MSI_IRQ
+ 	help
+ 	  Driver to enable Composable DMA Transfer(CDX) Bus. CDX bus
+ 	  exposes Fabric devices which uses composable DMA IP to the
+-- 
+2.43.0
+
 
