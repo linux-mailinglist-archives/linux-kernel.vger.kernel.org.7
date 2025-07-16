@@ -1,104 +1,127 @@
-Return-Path: <linux-kernel+bounces-732881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36EBAB06D34
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:30:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9CBCB06D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B3A16BE92
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0803417AC0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FE82E2F1B;
-	Wed, 16 Jul 2025 05:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3F22E7627;
+	Wed, 16 Jul 2025 05:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="22B1OU6p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4idTolZ/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8VwERaf"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EF22E266C;
-	Wed, 16 Jul 2025 05:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7342A2E7621;
+	Wed, 16 Jul 2025 05:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752643851; cv=none; b=uhJ1Y5fYymDedv2Gj4rreJgI8pSfHFa2W046mjb+lsiBGmo80fHcu0x2w+Pa7bXreYK6qWMRTCVdKqIySQYlohw3mwDmW8Nqqc5+1ni41wTyG1e3Y/gQTkukKZPxMV2u9uW4xbB+suHtT+a6JgZ5fTRFGhtT8UDVYPVvsXVUixw=
+	t=1752643942; cv=none; b=X10w7WL8rnmvJbe06qgj9C0DyzVAiP8gCS3Ji2rfODhwon5kwIBhCaMsO/Ptj6agbDl4At0NbZe9PAG5KiEogPeH8hfOGG8+Y7YlmHZrKJ2BZldlc9Gq2zO92OyyX5JgW22eEUeT4rXfHeTDnTXNsDSdsQ9/wpl7UVyszS65W+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752643851; c=relaxed/simple;
-	bh=v9qQLU/BJWXqPyZKzovvW05GyhD99N/9jPNz+XBBLog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CqGkPeTCVe6MxpBevnaZe+cUGaZEkSAf9BR12+0Zzbtc52AOGohA1iG6HDddiercNAA+kq9HeoWbTq+VOVrORM5vj/iA4hu9SD5KeADpxWgfjeX5n24QakV40WDrlc/OTo2b0hq8gphB7kvHGK8LW9ntq0fWgXf633SWo2FTY2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=22B1OU6p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4idTolZ/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 07:30:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752643847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=597Uwv/nwiJEMg3K3zUxrHDVxe9LBCiZrOEhEZo5dRo=;
-	b=22B1OU6pS5tefu3luqPb6fEOSXD/6CwZa27JZz1GRbDCqje6uLI9E0etqx/LLmz90gTXHW
-	XYCrHB3YsLs6gWMu6cil3228xEI/XVmNuAOe72G98Vsymx4b2Pw441B/ttpXtrE/tfm90S
-	bHmF5MlDbfxgHJFda1PEdaI2oHwxxwWzMI3TIZ3AeuVZ/fTbt2+jjqEIRldq8V6FL1+aUm
-	fJPvKI2EIT/UQt/xkGSvU88tDYIEtGyuvfw9IRlNTrCzLuOT9fTAVu1FvTv9yZXN6gs9uI
-	+C9J4umDr8d6FlZpAzd52VsK5HiOShXhMPDtwWDh6xhqrTM1S1eVCcYMMgPWlg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752643847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=597Uwv/nwiJEMg3K3zUxrHDVxe9LBCiZrOEhEZo5dRo=;
-	b=4idTolZ/c/zsXRlNtYQJpqLSXlkJIPkOsaCx9Me1aK5BRbgFAcrGLsASCjJ0SK+8HEr1vE
-	gzll8GyMnjdvsZAQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Al Viro <viro@zeniv.linux.org.uk>, 
-	Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/15] fs,fork,exit: export symbols necessary for
- KUnit UAPI support
-Message-ID: <20250716072228-2dc39361-80b4-4603-8c20-4670a41e06ec@linutronix.de>
-References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
- <20250626-kunit-kselftests-v4-6-48760534fef5@linutronix.de>
- <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
- <20250711154423.GW1880847@ZenIV>
- <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
+	s=arc-20240116; t=1752643942; c=relaxed/simple;
+	bh=VjZrGkC7ADyps82wJ+kFXJsVELSbQQ4Qa2DtZOZN9fc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ya/BWTNEiruq+slmDd4SciY110xYsx3Eyz+ukU7AKNOHHp8YX4tNlGJ2DPJbx91TQEWcvWR2w2Pc7zaYrvkbkrQ1x3JenTjDbF3qcG7pflXZzNnCOfyHz7UcEfPCCOSor7hA8uPmP/UlDhrT+Z91t5jKC7A0psb0ZPz9+B6zUoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K8VwERaf; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae0de0c03e9so1058593766b.2;
+        Tue, 15 Jul 2025 22:32:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752643939; x=1753248739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cp/akMFaM7KE8tpmX3u+HdSoxH065TZxIp2bHG9cbeY=;
+        b=K8VwERaf9nHsNft5mhEN6oh7uuYrbzW8QxHpyE+O+LUx9d2WyIMP9aLqh/VMn6UJ2d
+         lJ7ISP9S6aOvw/LG5luK9DJeMD3HIIGRv7WKTAA7R5t8tGFLR30zVO1aQj+4OAa/upL2
+         rYHllAIFJc/IC3z9AyYl18tzsF0SY0nTiNyPSgoYazI7n199Ofz/yWZvcqA6ir4tFIzz
+         42rqq85Ez/P/sCDpkzACHic8NXKieoDXUXXqWlLdKtSfYAA0400TMXyqcZ8xmHbXX237
+         guzkb/nM8IDJkdGipJtrCVta9xbgPbJlcQJ2ybEJupG+M6jNGrKh5xHaREwVzzu6Lwqd
+         F0Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752643939; x=1753248739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cp/akMFaM7KE8tpmX3u+HdSoxH065TZxIp2bHG9cbeY=;
+        b=C/NMB7N2twODrjU5CcLwF8La1QqGwKxShEYWtN4eQmvtiYDA0BwdXhxGNUTslj30kT
+         0JFIldnPeTHaSolL3NTJcwKUkyohcjvhWm13TTvjZvowET8AnCfo9LiIXB7ROxqBeV6x
+         8tzOk38mFeQMTw92akqM5YDO2tN5l2bhSIoXWiGIBJ3c8RS4frUKuZ6pg5y5oA0/63Ke
+         +5dYJxhl5x6WiaTr/0JOeadSLSQzTu0RLRS/xpB2kjSKjW2pqz9X90o+YsPoO5n/Axua
+         IVFo6vYIixT8/s9PP/j/xPJfwqxcHf1sCVwVXM4tQnFPuf1E2dG/A8Ch5kgB895luCYe
+         jexg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4AHXw+GPsdiBFEulq8/u4AWKXHOAoxhv+O41QiwRiIU7E6+KgaDBQsJqD0YJz73SMWBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3vpFJ47wWiMJHH1UH8/11huj4ZVbb9J0bcTWgdHLv/9gLWfOk
+	sH9AA/YxtwSPxaoDYedhuBzVtq/3bMcTsAQ+sSsTS0b8XRUU+rpURJSj6KawFhdnusZucoahdgu
+	3ZSojb7qZrkXDPBTGw1a1UacQqNlpPwc8lSIK
+X-Gm-Gg: ASbGncsqCkPCC3Y951KcnjdYvFy9syEfkbBma7uQwiTlk8qGpkam9rzf7Yx0ViSnJRB
+	IWZs4mH81dcg9Mq2c2D3YMHXyrwN2K9w1k+XEady6K0BzjoET1oMH0q/Zwp73Q+pxIQLV6y6O23
+	ZV2kcAZOUE/BIcSQhZ1nptx1e8wtJz1Q5QQuaIqY3yuCKl9rXEcHf6T/FheOYQr+1n/lWk3To8e
+	vas
+X-Google-Smtp-Source: AGHT+IGWzJc/bkqkIzkoQzIlake7ZNKtY+H9lqIhjKYDy3vImUmhxWJB4LjzXDCmQnar9NvkgI/OQYObPV5zuHO3+bs=
+X-Received: by 2002:a17:907:7209:b0:ae0:d804:5bca with SMTP id
+ a640c23a62f3a-ae9c998539emr195067566b.17.1752643938265; Tue, 15 Jul 2025
+ 22:32:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
+References: <20250715200156.2852484-1-joelagnelf@nvidia.com>
+In-Reply-To: <20250715200156.2852484-1-joelagnelf@nvidia.com>
+From: Neeraj upadhyay <neeraj.iitr10@gmail.com>
+Date: Wed, 16 Jul 2025 11:02:06 +0530
+X-Gm-Features: Ac12FXxwqhNdkUabOwevbJjOQPNDfrEdVr2XKIJPHsS-BjxPMWcWkYVc7sYn0lE
+Message-ID: <CAFwiDX9oGOdvFjdRrrfqrnHeFmfz3GHmA1AgHMZAHGdyn6qPPA@mail.gmail.com>
+Subject: Re: [PATCH -next 0/6] Patches for v6.17
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 07:52:28AM +0200, Thomas Weißschuh wrote:
-> On Fri, Jul 11, 2025 at 04:44:23PM +0100, Al Viro wrote:
+Hi Joel,
 
-(...)
+On Wed, Jul 16, 2025 at 1:32=E2=80=AFAM Joel Fernandes <joelagnelf@nvidia.c=
+om> wrote:
+>
+> Just a repost of patches with tags, for our consideration into v6.17.
+>
+> All have tags, and the last commit is a fixup for the deadloop patch whic=
+h can
+> be squashed into the original patch.
+>
+> Joel Fernandes (6):
+>   smp: Document preemption and stop_machine() mutual exclusion
+>   rcu: Refactor expedited handling check in rcu_read_unlock_special()
+>   rcu: Document GP init vs hotplug-scan ordering requirements
+>   rcu: Document separation of rcu_state and rnp's gp_seq
+>   rcu: Document concurrent quiescent state reporting for offline CPUs
+>   [please squash] fixup! rcu: Fix rcu_read_unlock() deadloop due to IRQ
+>     work
+>
 
-> > On Fri, Jul 11, 2025 at 12:35:59PM +0200, Thomas Weißschuh wrote:
-> > > could you take a look at these new symbol exports?
-> > 
-> > > > +EXPORT_SYMBOL_GPL_FOR_MODULES(put_filesystem, "kunit-uapi");
-> > 
-> > What's that one for???
-> 
-> What are you referring to?
+I have included patches 2-6 here:
+https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.g=
+it/log/?h=3Drcu.merge.16.07.2025c
+for testing
 
-Reading this again you probably asked why put_filesystem() is exported.
+Fixed few whitespaces errors in the documentation.
 
-As I see it, that should be called after being done with the return value of
-get_fs_type(). Not that it does anything for the always built-in ramfs.
-The alternatives I see are a commented-out variant with an explanation or
-making put_filesystem() into an inline function.
+I see below warnings while doing `make htmldocs`. Can you suggest a
+fix for these?
+
+Documentation/RCU/Design/Data-Structures/Data-Structures.rst:305:
+ERROR: Unexpected indentation.
+Documentation/RCU/Design/Data-Structures/Data-Structures.rst:307:
+WARNING: Block quote ends without a blank line; unexpected unindent.
 
 
-Thomas
+- Neeraj
 
