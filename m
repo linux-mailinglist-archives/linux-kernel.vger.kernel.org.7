@@ -1,95 +1,96 @@
-Return-Path: <linux-kernel+bounces-733523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDB5B075C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:35:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACAEEB075BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38B3165F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:35:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D79FB4A3A03
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C66D2F5C5C;
-	Wed, 16 Jul 2025 12:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93722F5333;
+	Wed, 16 Jul 2025 12:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qAd9aiKD"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BRKurpOq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409692F5C35
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119531E4AE
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669229; cv=none; b=lv5GlbmRpSjX+ELkUI90Vveug2J8qmeQ2fjqj7e7li5JIHjLa//C365Vig0FiusfExBAixZTgwTS4cBszmnlu1AKelsYBTRZM1DQYMowhLExsouvog/AtWNTSskazLVyrZ8EZbVRaDEhQeIx0RLxAToQGY/TJyxMWDSx6a+NvAU=
+	t=1752669217; cv=none; b=cUgbHyUVJhRJr7q/UWxhwLDTI6Ca2BbY6SM3t1l/jxhKR0i+eZzaM4R/IsvFDQgm3e+C5hFJpWweZE5uDWpG2B+f8pgsClUO8bLVELGXMmLKjOPAtk6tg8AJjjN+GiMeWFS8fE+iNIKntFScMIOZ1Me/cjvHntjwbqWGoi2DL4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669229; c=relaxed/simple;
-	bh=uMr5ewtwM88NHPIIUr3b4SgNh8FJpgI1igYb+ESENyY=;
+	s=arc-20240116; t=1752669217; c=relaxed/simple;
+	bh=4Gv0/T/8U7C4wEDQQZ/epmxFjq6mYJfPd64LXq8Q4lk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GyctMayDkvIReCcXf2EOqD0RQ4IVPzdA3SVrIKEYlAGBf481QeWIN4+onlegrU3MUtWX+0KAMbxini9fdVMALbGqVNe7HPhP4UsgKTJsaxXHJIb1UPSguVvQYoHoqoAfz9ua6lYWo7MAdBEBIn/Xfgx+63vtxxLa1dHROONhQns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qAd9aiKD; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-558facbc19cso5256889e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752669226; x=1753274026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZPBtNDYnm76liocICYdzU8O0GnhwSM9tVX+/thS9jJw=;
-        b=qAd9aiKDUr21frYvaXdCRHpf3IvsucysRiSt0c2AQsDGFWUyODW7BuWJXCQG3iT/iR
-         zxjw2xvtyAiRhu58B8y1y4/l1RXTk12T/C1gg2SsAS5RCNMZbKl85saXutiJA7XA0NZC
-         wI39jIs3+6D+qekQD0KOaETERt91hUzz8R/iNza4J1E+KB5WFWpd1IYsejurjeDnKV2q
-         Cv5EZvJWkumMBeg8ZWfQx/UTr3MAsZA34OyJ8D9Tkv2vV4hrLboCh4UFHFhBzQjztmbX
-         aqiDAa1XMFk3T5+bA6NCYYm2rhgs5zfP0tjxbtrCJj3Lii/2n3eXVxEnSLXzJjeeDeUS
-         HqgQ==
+	 MIME-Version; b=nwDU/O9gCw8R33Xh2ozll3KqprHF039+k3R4wE0GK8jzude7MR+UqBlUm63rRUm56GHtmrTcVbQplnRkdOthYq4qfSKm+iGd5oMOslcKEwPcAo2dQqZgtwuBJ4Cb8fyoE9Z6ffI0XifN3mvAACp60AoTKdMmrF2sJFkiQ6URo8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BRKurpOq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G5khI3008226
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:33:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=9a5kcJc1/lD
+	yZ8ZkJyB88QaZGZA6dNFsqwRCk2TjGtM=; b=BRKurpOqXgaMkHWO2oasG4eivTx
+	0pY/Li/UcFyUE2/y8HwQfNRKWLGf24sLveNUhS1NsAnaJvbklcogcWBfwJWRZ6Z1
+	Dpsqr2Z/A/mKUyb44mTs2gMa0WKyTSW0Z6VUbUmIStbZ7j/Ch6zRQBAw7y28M6eO
+	86sD7C3xkAW9DPu/BjD/IDW+5xG4OIEhD+ltFzZyPEP9sPP1Q0YAfSRh06o1zpk1
+	sILwFRVKRlXKzAtN1fJS14jqqvymB+FNEeDAlq3W9jyqXPPaugt52x1EkYRa1yRd
+	GyyTAw0+gIewOqphkjmRYrhgFunnShQZWtA1ev8eVP0uibUNp6z41nzxHHA==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5v2a5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:33:31 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e2c8137662so563120285a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:33:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752669226; x=1753274026;
+        d=1e100.net; s=20230601; t=1752669210; x=1753274010;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZPBtNDYnm76liocICYdzU8O0GnhwSM9tVX+/thS9jJw=;
-        b=rhnQJlBJJ4cE8+x+hnEDcD2CPqHY18HsNzt+d/aOJrKiZtBJrb48Cw5LbpItHFdknR
-         dKgjE3t/xgMIbWd7MtVpNpy3SQJPiuKUDETesTZPBMhk793bLB5IpQsLfPz7yzEZq1a+
-         aKEdAAKRuRcXQUU7GoyT0V3KAs66v4ud/2+iOVwJtGyb+zrMJGGY6V2aD3f8mFsnT3CY
-         UgdXPmtrPk0Ln8at7qujvMcmt5jFEs+UALgHmc17xsst82yFIxnugQRxDjEEeInNnzEn
-         LsCW2UjrSLWAPWQDJHytYIXKJ6rXjyeSqVghDFS2pls0a6+/Vq5HoJIt5Crw0/zPHteR
-         0g9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWnPq2pilhqkkGRPjzXZUORIaD37TamM8XEe3a97RWktLSHMjn0Hv4/oOqQE3iRXjNbvxsKvBqxEuNNlBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM/zYJFEgG7u5+ZJf0V7Vs5kqhLTkXtPrqEg8pLYAAedTHv/+a
-	jwYLRimflOFqEMzu7zYg8HymqecblKcddee1Rssxa72qllbk1WYysD+vlFpzSIlxrVg=
-X-Gm-Gg: ASbGncsIq9mHvE9wtcWVKeXPavxrRdxLM8pfrSnSNhGeiN3Xb79uzkwh4ccQcDdTWVr
-	EAV54Xwi7tOVsrX5MkQmNjhDCHXat5LBxvFD0FUo8y8m+OH1Q/rrGxjnHn9iaih4Mxe8amNnM4S
-	ZOJs1RwB+UqMvt0QHGNpz/5dGySIQNFii/iZh/DhmoYBbxCJ2IdnVv/No6a7GTNSYu+huXi0GxT
-	h0gAZYUfofhJHPvUmLxOWM+sG6IOVrlzQ3QYxaEc/1b25z41be4Q7dVFVyEzp8ItmgkNJE9NALn
-	ra1J7r7oBbsCBbF4xVSXy7/+vMkLDgKHAfay0JVCCkuxM1CGZCGJz1+9SOKHeuTD4CGTfuGJVqv
-	ownScE1SwKcr7ceHArCweR/1BYuPEK5XcbplwnptqziOocT80oMhP71vwopqEeoj4CFl637le
-X-Google-Smtp-Source: AGHT+IGRhItw3Rx9uduPizZnNMfo3XdSdJYBSLoV85/Au8cZvRZ7HllLBaEgOBko+rtbJAjBxkRJaw==
-X-Received: by 2002:a05:6512:1041:b0:553:2f72:9ce0 with SMTP id 2adb3069b0e04-55a23f964afmr762602e87.52.1752669226288;
-        Wed, 16 Jul 2025 05:33:46 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fa29134d4sm21136211fa.22.2025.07.16.05.33.45
+        bh=9a5kcJc1/lDyZ8ZkJyB88QaZGZA6dNFsqwRCk2TjGtM=;
+        b=aiz5KDAFxRIgtipoRLsZnqeE3OP7AkZc9EpCMWh0baDslhl1scF6UBeKLqncDiv/0y
+         CasXMVQj9kjkVDXQKmQpMw5wbTocospEeCX2Tk6vZbf9foyWz+2Aoo6yNCWZvSfXlEcA
+         gUOLVVjqDdHAheIqz+MECsTEgcIo4EaZ1D/+9gHcHXhNVSSEcubTV0iLKZDchOmfjdwR
+         RAmbHXFBVSwHNgyyzY9LQbVpxc53vqAe+BqHB5zWw8GsJbKK8N9EhKeeaa2TAF89jOdH
+         VgLLcpb3zgjE+LOYAas25aoP7EBIUuI5ay5+4ri/YuBOmuZF1/PJvadEFq8QFxlHyP+X
+         c3og==
+X-Forwarded-Encrypted: i=1; AJvYcCWp6ddipVMffru8T1lK0w+JS5AWrUB3WBPz6YmrYJtKWRTo6Bb3ITME7AyspA+oj2IpA8lvc8soeePjbs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIu66uti30IpF7tdwUsqAnJP2NYbQ9FrtLFSR38pNu+qMXDoQb
+	X7corSbnogyHvxAg9fKui+fTB4BrxGqjgfwhuwkHHWP4EwDxKxkmIv28cBhFcZfX0tGNIxPeCB5
+	yprXct8VDJwkTtm0sN5cZChOw+ncXG4HsEOw8NTUIZLfoWTb7sdRIBgDrwvMwet7WAEs=
+X-Gm-Gg: ASbGnct7yctW3E8R5hTE2YPus3tKLeMY4qVA6Exn36UFzfxcevlbkgbmefgMvoiIbFL
+	cxvjOhhhAw7kLggUbR7NZZSwST/QGUNuA0oPYaOuPRv3YBiUZv2VZ4giYqQq9wLBgTwR/FgjJNg
+	eIFArZ2DXR7WL3kSpEuKd/cYT+Rc/5AfAZyk41WGsBILMwkTAzRbuuloONwgqtE+9e5xct2UY1j
+	X+apLiXz51t2ABVd9GYYD2ISPeZkhIBRtrA0qebwtWVWtNGn1nvAWGF6WLC4OVi0IqQ15E8DLN6
+	0pvQeNVgg8f3I2Wa9QGPR8gvPF8lKbafKFQAHiJfH6dfiS4AJNc/DQ==
+X-Received: by 2002:a05:620a:4506:b0:7d3:f1ff:5bac with SMTP id af79cd13be357-7e3435eb861mr370987185a.27.1752669210050;
+        Wed, 16 Jul 2025 05:33:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqR0kg7Frjotah+6cP1sEYi3co2t1OUjjfvtvORxCjneYUK0aaf6hdlNvSzgfqxruZEDt2SQ==
+X-Received: by 2002:a05:620a:4506:b0:7d3:f1ff:5bac with SMTP id af79cd13be357-7e3435eb861mr370981385a.27.1752669209341;
+        Wed, 16 Jul 2025 05:33:29 -0700 (PDT)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e89c739sm19453335e9.32.2025.07.16.05.33.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:33:45 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@baylibre.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Len Brown <len.brown@intel.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Maulik Shah <quic_mkshah@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: [RFC/PATCH 2/3] pmdomain: Respect the system-wakeup QoS limit at system-wide suspend
-Date: Wed, 16 Jul 2025 14:33:18 +0200
-Message-ID: <20250716123323.65441-3-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250716123323.65441-1-ulf.hansson@linaro.org>
-References: <20250716123323.65441-1-ulf.hansson@linaro.org>
+        Wed, 16 Jul 2025 05:33:28 -0700 (PDT)
+From: srinivas.kandagatla@oss.qualcomm.com
+To: broonie@kernel.org
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, srini@kernel.org,
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, neil.armstrong@linaro.org,
+        krzysztof.kozlowski@linaro.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH 1/5] ASoC: codecs: wcd: add common helper for wcd codecs
+Date: Wed, 16 Jul 2025 13:33:19 +0100
+Message-ID: <20250716123323.5831-2-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250716123323.5831-1-srinivas.kandagatla@oss.qualcomm.com>
+References: <20250716123323.5831-1-srinivas.kandagatla@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,103 +98,970 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=68779c1c cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=wa_gl3HYg-BSzEidaMMA:9
+ a=sbBvEVo_xVyyD6Se:21 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-GUID: v7idcmrZ0cFWc1Sz_b3DrlxapymY1A68
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDExMiBTYWx0ZWRfX+JM8M9rBUWuo
+ sBIK1Pp3pAoNGamJl8BxYkA1VeTTrs3g50EgIqkA0gl00GJ7LdzY6lUnfh5bNCPuNyYMxBNaIso
+ Y6XDBDrhpCWR6EJBx4kIanzrdpPsuSBl/+i+oFntvWZKaXhvXhRUjdddwQ7XY8Ss7M6YwAWUlgg
+ puCJUb7pqJE/uemElyH2HxEFAgkVS+kLS9/FpOpAprOCLyvhuJ7DfzZBoEyTnazdl5etT2/s5NS
+ T0IEgKBhcxcK/rAId3b4N2GNUD96qe3GfGJ8PXwkLxg1E2N3LNYZqyoqmmNDYOYAbMHVShN+Gc2
+ XOs13EjQWHomvTUaRCxJMuuHJhMADmNPRj+OEVOW1Y7IeMVxSdxulOhHt3kURGWo3nQ2j5/qKIy
+ HNSK2rCTCqyJUDjkGlmFrQFiGEgfWs0C9VHK1hCmFNQd3ML8es8wQHCzy2SCagCzNg1P96wI
+X-Proofpoint-ORIG-GUID: v7idcmrZ0cFWc1Sz_b3DrlxapymY1A68
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_01,2025-07-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160112
 
-A system-wakeup QoS limit may have been requested by user-space. To avoid
-entering a too deep state for PM domains that are managed my genpd, let's
-start to take into account the QoS limit when selecting the
-low-power-state.
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 
-If it turns out that none of the states in the list of domain-idlestates
-are suitable to use, let's leave the PM domain powered-on.
+All the Qualcomm WCD codecs have most of its code duplicated across all
+these 3/4 drivers. This patch is an attempt to remove those duplicate
+parts by adding a common helper library for these codecs.
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+To start with move all the micbias parsing and voltage settings these
+are identical in WCD934x, WCD937x, WCD938x and WCD939x codec driver.
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 ---
- drivers/pmdomain/core.c     | 10 ++++++++--
- drivers/pmdomain/governor.c | 23 +++++++++++++++++++++++
- include/linux/pm_domain.h   |  1 +
- 3 files changed, 32 insertions(+), 2 deletions(-)
+ sound/soc/codecs/Kconfig      |  8 ++++
+ sound/soc/codecs/Makefile     |  2 +
+ sound/soc/codecs/wcd-common.c | 66 ++++++++++++++++++++++++++
+ sound/soc/codecs/wcd-common.h | 24 ++++++++++
+ sound/soc/codecs/wcd934x.c    | 82 +++++++++-----------------------
+ sound/soc/codecs/wcd937x.c    | 75 +++++++----------------------
+ sound/soc/codecs/wcd937x.h    |  6 +--
+ sound/soc/codecs/wcd938x.c    | 87 +++++++---------------------------
+ sound/soc/codecs/wcd938x.h    |  1 +
+ sound/soc/codecs/wcd939x.c    | 89 +++++++----------------------------
+ sound/soc/codecs/wcd939x.h    |  1 +
+ 11 files changed, 176 insertions(+), 265 deletions(-)
+ create mode 100644 sound/soc/codecs/wcd-common.c
+ create mode 100644 sound/soc/codecs/wcd-common.h
 
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index a86aeda1c955..5cbe7473c2b9 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -1396,8 +1396,14 @@ static void genpd_sync_power_off(struct generic_pm_domain *genpd, bool use_lock,
- 			return;
- 	}
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 6d7e4725d89c..b4dc28954da5 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -2233,12 +2233,16 @@ config SND_SOC_UDA1380
+ config SND_SOC_WCD_CLASSH
+ 	tristate
  
--	/* Choose the deepest state when suspending */
--	genpd->state_idx = genpd->state_count - 1;
-+	if (genpd->gov && genpd->gov->system_power_down_ok) {
-+		if (!genpd->gov->system_power_down_ok(&genpd->domain))
-+			return;
-+	} else {
-+		/* Default to the deepest state. */
-+		genpd->state_idx = genpd->state_count - 1;
-+	}
++config SND_SOC_WCD_COMMON
++	tristate
 +
- 	if (_genpd_power_off(genpd, false)) {
- 		genpd->states[genpd->state_idx].rejected++;
- 		return;
-diff --git a/drivers/pmdomain/governor.c b/drivers/pmdomain/governor.c
-index 39359811a930..2630ba6f28ef 100644
---- a/drivers/pmdomain/governor.c
-+++ b/drivers/pmdomain/governor.c
-@@ -343,6 +343,27 @@ static bool default_power_down_ok(struct dev_pm_domain *pd)
- 	return _default_power_down_ok(pd, ktime_get());
- }
+ config SND_SOC_WCD9335
+ 	tristate "WCD9335 Codec"
+ 	depends on SLIMBUS
+ 	select REGMAP_SLIMBUS
+ 	select REGMAP_IRQ
+ 	select SND_SOC_WCD_CLASSH
++	select SND_SOC_WCD_COMMON
+ 	help
+ 	  The WCD9335 is a standalone Hi-Fi audio CODEC IC, supports
+ 	  Qualcomm Technologies, Inc. (QTI) multimedia solutions,
+@@ -2254,6 +2258,7 @@ config SND_SOC_WCD934X
+ 	select REGMAP_IRQ
+ 	select REGMAP_SLIMBUS
+ 	select SND_SOC_WCD_CLASSH
++	select SND_SOC_WCD_COMMON
+ 	select SND_SOC_WCD_MBHC
+ 	depends on MFD_WCD934X || COMPILE_TEST
+ 	help
+@@ -2265,6 +2270,7 @@ config SND_SOC_WCD937X
+ 	tristate
+ 	depends on SOUNDWIRE || !SOUNDWIRE
+ 	select SND_SOC_WCD_CLASSH
++	select SND_SOC_WCD_COMMON
  
-+static bool default_system_power_down_ok(struct dev_pm_domain *pd)
+ config SND_SOC_WCD937X_SDW
+ 	tristate "WCD9370/WCD9375 Codec - SDW"
+@@ -2284,6 +2290,7 @@ config SND_SOC_WCD938X
+ 	tristate
+ 	depends on SOUNDWIRE || !SOUNDWIRE
+ 	select SND_SOC_WCD_CLASSH
++	select SND_SOC_WCD_COMMON
+ 	select MULTIPLEXER
+ 
+ config SND_SOC_WCD938X_SDW
+@@ -2303,6 +2310,7 @@ config SND_SOC_WCD939X
+ 	depends on SOUNDWIRE || !SOUNDWIRE
+ 	depends on TYPEC || !TYPEC
+ 	select SND_SOC_WCD_CLASSH
++	select SND_SOC_WCD_COMMON
+ 
+ config SND_SOC_WCD939X_SDW
+ 	tristate "WCD9390/WCD9395 Codec - SDW"
+diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
+index a68c3d192a1b..79e32f319cab 100644
+--- a/sound/soc/codecs/Makefile
++++ b/sound/soc/codecs/Makefile
+@@ -339,6 +339,7 @@ snd-soc-uda1334-y := uda1334.o
+ snd-soc-uda1342-y := uda1342.o
+ snd-soc-uda1380-y := uda1380.o
+ snd-soc-wcd-classh-y := wcd-clsh-v2.o
++snd-soc-wcd-common-y := wcd-common.o
+ snd-soc-wcd-mbhc-y := wcd-mbhc-v2.o
+ snd-soc-wcd9335-y := wcd9335.o
+ snd-soc-wcd934x-y := wcd934x.o
+@@ -761,6 +762,7 @@ obj-$(CONFIG_SND_SOC_UDA1334)	+= snd-soc-uda1334.o
+ obj-$(CONFIG_SND_SOC_UDA1342)	+= snd-soc-uda1342.o
+ obj-$(CONFIG_SND_SOC_UDA1380)	+= snd-soc-uda1380.o
+ obj-$(CONFIG_SND_SOC_WCD_CLASSH)	+= snd-soc-wcd-classh.o
++obj-$(CONFIG_SND_SOC_WCD_COMMON)	+= snd-soc-wcd-common.o
+ obj-$(CONFIG_SND_SOC_WCD_MBHC)	+= snd-soc-wcd-mbhc.o
+ obj-$(CONFIG_SND_SOC_WCD9335)	+= snd-soc-wcd9335.o
+ obj-$(CONFIG_SND_SOC_WCD934X)	+= snd-soc-wcd934x.o
+diff --git a/sound/soc/codecs/wcd-common.c b/sound/soc/codecs/wcd-common.c
+new file mode 100644
+index 000000000000..dffb0431a48c
+--- /dev/null
++++ b/sound/soc/codecs/wcd-common.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0-only
++// Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
++
++#include <linux/export.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/device.h>
++#include <linux/of.h>
++#include <linux/printk.h>
++
++#include "wcd-common.h"
++
++int wcd_get_micb_vout_ctl_val(struct device *dev, u32 micb_mv)
 +{
-+	s64 constraint_ns = system_wakeup_latency_qos_limit() * NSEC_PER_USEC;
-+	struct generic_pm_domain *genpd = pd_to_genpd(pd);
-+	int state_idx = genpd->state_count - 1;
-+
-+	/* Find the deepest state for the latency constraint. */
-+	while (state_idx >= 0) {
-+		s64 latency_ns = genpd->states[state_idx].power_off_latency_ns +
-+				 genpd->states[state_idx].power_on_latency_ns;
-+
-+		if (latency_ns <= constraint_ns) {
-+			genpd->state_idx = state_idx;
-+			return true;
-+		}
-+		state_idx--;
++	/* min micbias voltage is 1V and maximum is 2.85V */
++	if (micb_mv < WCD_MIN_MICBIAS_MV || micb_mv > WCD_MAX_MICBIAS_MV) {
++		dev_err(dev, "Unsupported micbias voltage (%u mV)\n", micb_mv);
++		return -EINVAL;
 +	}
 +
-+	return false;
++	return (micb_mv - WCD_MIN_MICBIAS_MV) / 50;
++}
++EXPORT_SYMBOL_GPL(wcd_get_micb_vout_ctl_val);
++
++static int wcd_get_micbias_val(struct device *dev, int micb_num, u32 *micb_mv)
++{
++	char micbias[32];
++	int mv;
++
++	sprintf(micbias, "qcom,micbias%d-microvolt", micb_num);
++
++	if (of_property_read_u32(dev->of_node, micbias, &mv)) {
++		dev_err(dev, "%s value not found, using default\n", micbias);
++		mv = WCD_DEF_MICBIAS_MV;
++	} else {
++		/* convert it to milli volts */
++		mv = mv/1000;
++	}
++	if (micb_mv)
++		*micb_mv = mv;
++
++	mv = wcd_get_micb_vout_ctl_val(dev, mv);
++	if (mv < 0) {
++		dev_err(dev, "Unsupported %s voltage (%d mV), falling back to default (%d mV)\n",
++				micbias, mv, WCD_DEF_MICBIAS_MV);
++		return wcd_get_micb_vout_ctl_val(dev, WCD_DEF_MICBIAS_MV);
++	}
++
++	return mv;
 +}
 +
- #ifdef CONFIG_CPU_IDLE
- static bool cpu_power_down_ok(struct dev_pm_domain *pd)
++int wcd_dt_parse_micbias_info(struct wcd_common *common)
++{
++	int i;
++
++	for (i = 0; i < common->max_bias; i++) {
++		common->micb_vout[i] = wcd_get_micbias_val(common->dev, i+1, &common->micb_mv[i]);
++		if (common->micb_vout[i] < 0)
++			return -EINVAL;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(wcd_dt_parse_micbias_info);
++MODULE_DESCRIPTION("Common Qualcomm WCD Codec helpers driver");
++MODULE_LICENSE("GPL");
+diff --git a/sound/soc/codecs/wcd-common.h b/sound/soc/codecs/wcd-common.h
+new file mode 100644
+index 000000000000..08c8e7ce9814
+--- /dev/null
++++ b/sound/soc/codecs/wcd-common.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef __WCD_COMMON_H__
++#define __WCD_COMMON_H___
++
++#define WCD_MIN_MICBIAS_MV	1000
++#define WCD_DEF_MICBIAS_MV	1800
++#define WCD_MAX_MICBIAS_MV	2850
++#define WCD_MAX_MICBIAS		4
++
++struct wcd_common {
++	struct device *dev;
++	int max_bias;
++	u32 micb_mv[WCD_MAX_MICBIAS];
++	u32 micb_vout[WCD_MAX_MICBIAS];
++};
++
++int wcd_get_micb_vout_ctl_val(struct device *dev, u32 micb_mv);
++int wcd_dt_parse_micbias_info(struct wcd_common *common);
++
++#endif /* __WCD_COMMON_H___  */
+diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
+index 1bb7e1dc7e6b..d10b457e6c9a 100644
+--- a/sound/soc/codecs/wcd934x.c
++++ b/sound/soc/codecs/wcd934x.c
+@@ -21,6 +21,7 @@
+ #include <sound/soc-dapm.h>
+ #include <sound/tlv.h>
+ #include "wcd-clsh-v2.h"
++#include "wcd-common.h"
+ #include "wcd-mbhc-v2.h"
+ 
+ #include <dt-bindings/sound/qcom,wcd934x.h>
+@@ -116,9 +117,6 @@
+ #define WCD934X_DEC_PWR_LVL_DF		0x00
+ #define WCD934X_DEC_PWR_LVL_HYBRID WCD934X_DEC_PWR_LVL_DF
+ 
+-#define WCD934X_DEF_MICBIAS_MV	1800
+-#define WCD934X_MAX_MICBIAS_MV	2850
+-
+ #define WCD_IIR_FILTER_SIZE	(sizeof(u32) * BAND_MAX)
+ 
+ #define WCD_IIR_FILTER_CTL(xname, iidx, bidx) \
+@@ -530,6 +528,7 @@ struct wcd934x_codec {
+ 	struct slim_device *sdev;
+ 	struct slim_device *sidev;
+ 	struct wcd_clsh_ctrl *clsh_ctrl;
++	struct wcd_common common;
+ 	struct snd_soc_component *component;
+ 	struct wcd934x_slim_ch rx_chs[WCD934X_RX_MAX];
+ 	struct wcd934x_slim_ch tx_chs[WCD934X_TX_MAX];
+@@ -555,7 +554,6 @@ struct wcd934x_codec {
+ 	struct mutex micb_lock;
+ 	u32 micb_ref[WCD934X_MAX_MICBIAS];
+ 	u32 pullup_ref[WCD934X_MAX_MICBIAS];
+-	u32 micb2_mv;
+ };
+ 
+ #define to_wcd934x_codec(_hw) container_of(_hw, struct wcd934x_codec, hw)
+@@ -2168,55 +2166,24 @@ static struct clk *wcd934x_register_mclk_output(struct wcd934x_codec *wcd)
+ 	return NULL;
+ }
+ 
+-static int wcd934x_get_micbias_val(struct device *dev, const char *micbias,
+-				   u32 *micb_mv)
+-{
+-	int mv;
+-
+-	if (of_property_read_u32(dev->parent->of_node, micbias, &mv)) {
+-		dev_err(dev, "%s value not found, using default\n", micbias);
+-		mv = WCD934X_DEF_MICBIAS_MV;
+-	} else {
+-		/* convert it to milli volts */
+-		mv = mv/1000;
+-	}
+-
+-	if (mv < 1000 || mv > 2850) {
+-		dev_err(dev, "%s value not in valid range, using default\n",
+-			micbias);
+-		mv = WCD934X_DEF_MICBIAS_MV;
+-	}
+-
+-	if (micb_mv)
+-		*micb_mv = mv;
+-
+-	return (mv - 1000) / 50;
+-}
+-
+ static int wcd934x_init_dmic(struct snd_soc_component *comp)
  {
-@@ -418,12 +439,14 @@ static bool cpu_power_down_ok(struct dev_pm_domain *pd)
- struct dev_power_governor pm_domain_cpu_gov = {
- 	.suspend_ok = default_suspend_ok,
- 	.power_down_ok = cpu_power_down_ok,
-+	.system_power_down_ok = default_system_power_down_ok,
- };
- #endif
+-	int vout_ctl_1, vout_ctl_2, vout_ctl_3, vout_ctl_4;
+ 	struct wcd934x_codec *wcd = dev_get_drvdata(comp->dev);
+ 	u32 def_dmic_rate, dmic_clk_drv;
++	int ret;
  
- struct dev_power_governor simple_qos_governor = {
- 	.suspend_ok = default_suspend_ok,
- 	.power_down_ok = default_power_down_ok,
-+	.system_power_down_ok = default_system_power_down_ok,
+-	vout_ctl_1 = wcd934x_get_micbias_val(comp->dev,
+-					     "qcom,micbias1-microvolt", NULL);
+-	vout_ctl_2 = wcd934x_get_micbias_val(comp->dev,
+-					     "qcom,micbias2-microvolt",
+-					     &wcd->micb2_mv);
+-	vout_ctl_3 = wcd934x_get_micbias_val(comp->dev,
+-					     "qcom,micbias3-microvolt", NULL);
+-	vout_ctl_4 = wcd934x_get_micbias_val(comp->dev,
+-					     "qcom,micbias4-microvolt", NULL);
++	ret = wcd_dt_parse_mbhc_data(comp->dev, &wcd->mbhc_cfg);
++	if (ret)
++		return ret;
+ 
+ 	snd_soc_component_update_bits(comp, WCD934X_ANA_MICB1,
+-				      WCD934X_MICB_VAL_MASK, vout_ctl_1);
++				      WCD934X_MICB_VAL_MASK, wcd->common.micb_vout[0]);
+ 	snd_soc_component_update_bits(comp, WCD934X_ANA_MICB2,
+-				      WCD934X_MICB_VAL_MASK, vout_ctl_2);
++				      WCD934X_MICB_VAL_MASK, wcd->common.micb_vout[1]);
+ 	snd_soc_component_update_bits(comp, WCD934X_ANA_MICB3,
+-				      WCD934X_MICB_VAL_MASK, vout_ctl_3);
++				      WCD934X_MICB_VAL_MASK, wcd->common.micb_vout[2]);
+ 	snd_soc_component_update_bits(comp, WCD934X_ANA_MICB4,
+-				      WCD934X_MICB_VAL_MASK, vout_ctl_4);
++				      WCD934X_MICB_VAL_MASK, wcd->common.micb_vout[3]);
+ 
+ 	if (wcd->rate == WCD934X_MCLK_CLK_9P6MHZ)
+ 		def_dmic_rate = WCD9XXX_DMIC_SAMPLE_RATE_4P8MHZ;
+@@ -2517,15 +2484,6 @@ static void wcd934x_mbhc_micb_ramp_control(struct snd_soc_component *component,
+ 	}
+ }
+ 
+-static int wcd934x_get_micb_vout_ctl_val(u32 micb_mv)
+-{
+-	/* min micbias voltage is 1V and maximum is 2.85V */
+-	if (micb_mv < 1000 || micb_mv > 2850)
+-		return -EINVAL;
+-
+-	return (micb_mv - 1000) / 50;
+-}
+-
+ static int wcd934x_mbhc_micb_adjust_voltage(struct snd_soc_component *component,
+ 					    int req_volt, int micb_num)
+ {
+@@ -2562,7 +2520,7 @@ static int wcd934x_mbhc_micb_adjust_voltage(struct snd_soc_component *component,
+ 	cur_vout_ctl = snd_soc_component_read_field(component, micb_reg,
+ 						    WCD934X_MICB_VAL_MASK);
+ 
+-	req_vout_ctl = wcd934x_get_micb_vout_ctl_val(req_volt);
++	req_vout_ctl = wcd_get_micb_vout_ctl_val(component->dev, req_volt);
+ 	if (req_vout_ctl < 0) {
+ 		ret = -EINVAL;
+ 		goto exit;
+@@ -2610,10 +2568,10 @@ static int wcd934x_mbhc_micb_ctrl_threshold_mic(struct snd_soc_component *compon
+ 	 * voltage needed to detect threshold microphone, then do
+ 	 * not change the micbias, just return.
+ 	 */
+-	if (wcd934x->micb2_mv >= WCD_MBHC_THR_HS_MICB_MV)
++	if (wcd934x->common.micb_mv[1] >= WCD_MBHC_THR_HS_MICB_MV)
+ 		return 0;
+ 
+-	micb_mv = req_en ? WCD_MBHC_THR_HS_MICB_MV : wcd934x->micb2_mv;
++	micb_mv = req_en ? WCD_MBHC_THR_HS_MICB_MV : wcd934x->common.micb_mv[1];
+ 
+ 	rc = wcd934x_mbhc_micb_adjust_voltage(component, micb_mv, MIC_BIAS_2);
+ 
+@@ -3036,7 +2994,7 @@ static void wcd934x_mbhc_deinit(struct snd_soc_component *component)
+ static int wcd934x_comp_probe(struct snd_soc_component *component)
+ {
+ 	struct wcd934x_codec *wcd = dev_get_drvdata(component->dev);
+-	int i;
++	int i, ret;
+ 
+ 	snd_soc_component_init_regmap(component, wcd->regmap);
+ 	wcd->component = component;
+@@ -3054,7 +3012,12 @@ static int wcd934x_comp_probe(struct snd_soc_component *component)
+ 	for (i = 0; i < NUM_CODEC_DAIS; i++)
+ 		INIT_LIST_HEAD(&wcd->dai[i].slim_ch_list);
+ 
+-	wcd934x_init_dmic(component);
++
++	ret = wcd934x_init_dmic(component);
++	if (ret) {
++		dev_err(component->dev, "Failed to Initialize micbias\n");
++		return ret;
++	}
+ 
+ 	if (wcd934x_mbhc_init(component))
+ 		dev_err(component->dev, "Failed to Initialize MBHC\n");
+@@ -5860,14 +5823,13 @@ static int wcd934x_codec_parse_data(struct wcd934x_codec *wcd)
+ 	cfg->anc_micbias = MIC_BIAS_2;
+ 	cfg->v_hs_max = WCD_MBHC_HS_V_MAX;
+ 	cfg->num_btn = WCD934X_MBHC_MAX_BUTTONS;
+-	cfg->micb_mv = wcd->micb2_mv;
++	cfg->micb_mv = wcd->common.micb_mv[1];
+ 	cfg->linein_th = 5000;
+ 	cfg->hs_thr = 1700;
+ 	cfg->hph_thr = 50;
+ 
+ 	wcd_dt_parse_mbhc_data(dev, cfg);
+ 
+-
+ 	return 0;
+ }
+ 
+@@ -5888,6 +5850,8 @@ static int wcd934x_codec_probe(struct platform_device *pdev)
+ 	wcd->sdev = to_slim_device(data->dev);
+ 	mutex_init(&wcd->sysclk_mutex);
+ 	mutex_init(&wcd->micb_lock);
++	wcd->common.dev = dev->parent;
++	wcd->common.max_bias = 4;
+ 
+ 	ret = wcd934x_codec_parse_data(wcd);
+ 	if (ret)
+diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
+index ccd542033967..69b2a7500c68 100644
+--- a/sound/soc/codecs/wcd937x.c
++++ b/sound/soc/codecs/wcd937x.c
+@@ -21,6 +21,7 @@
+ #include <sound/tlv.h>
+ 
+ #include "wcd-clsh-v2.h"
++#include "wcd-common.h"
+ #include "wcd-mbhc-v2.h"
+ #include "wcd937x.h"
+ 
+@@ -85,6 +86,7 @@ struct wcd937x_priv {
+ 	struct wcd_mbhc_config mbhc_cfg;
+ 	struct wcd_mbhc_intr intr_ids;
+ 	struct wcd_clsh_ctrl *clsh_info;
++	struct wcd_common common;
+ 	struct irq_domain *virq;
+ 	struct regmap_irq_chip_data *irq_chip;
+ 	struct snd_soc_jack *jack;
+@@ -93,9 +95,6 @@ struct wcd937x_priv {
+ 	s32 pullup_ref[WCD937X_MAX_MICBIAS];
+ 	u32 hph_mode;
+ 	int ear_rx_path;
+-	u32 micb1_mv;
+-	u32 micb2_mv;
+-	u32 micb3_mv;
+ 	int hphr_pdm_wd_int;
+ 	int hphl_pdm_wd_int;
+ 	int aux_pdm_wd_int;
+@@ -872,15 +871,6 @@ static int wcd937x_enable_rx3(struct snd_soc_dapm_widget *w,
+ 	return 0;
+ }
+ 
+-static int wcd937x_get_micb_vout_ctl_val(u32 micb_mv)
+-{
+-	if (micb_mv < 1000 || micb_mv > 2850) {
+-		pr_err("Unsupported micbias voltage (%u mV)\n", micb_mv);
+-		return -EINVAL;
+-	}
+-
+-	return (micb_mv - 1000) / 50;
+-}
+ 
+ static int wcd937x_tx_swr_ctrl(struct snd_soc_dapm_widget *w,
+ 			       struct snd_kcontrol *kcontrol, int event)
+@@ -1481,7 +1471,7 @@ static int wcd937x_mbhc_micb_adjust_voltage(struct snd_soc_component *component,
+ 	cur_vout_ctl = snd_soc_component_read_field(component, micb_reg,
+ 						    WCD937X_MICB_VOUT_MASK);
+ 
+-	req_vout_ctl = wcd937x_get_micb_vout_ctl_val(req_volt);
++	req_vout_ctl = wcd_get_micb_vout_ctl_val(component->dev, req_volt);
+ 	if (req_vout_ctl < 0) {
+ 		ret = -EINVAL;
+ 		goto exit;
+@@ -2436,22 +2426,14 @@ static const struct snd_soc_dapm_route wcd9375_audio_map[] = {
+ 	{ "DMIC6_MIXER", "Switch", "DMIC6" },
  };
  
- /*
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 99556589f45e..0ad14cc4ad7f 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -140,6 +140,7 @@ enum genpd_sync_state {
+-static int wcd937x_set_micbias_data(struct wcd937x_priv *wcd937x)
++static void wcd937x_set_micbias_data(struct device *dev, struct wcd937x_priv *wcd937x)
+ {
+-	int vout_ctl[3];
+-
+-	/* Set micbias voltage */
+-	vout_ctl[0] = wcd937x_get_micb_vout_ctl_val(wcd937x->micb1_mv);
+-	vout_ctl[1] = wcd937x_get_micb_vout_ctl_val(wcd937x->micb2_mv);
+-	vout_ctl[2] = wcd937x_get_micb_vout_ctl_val(wcd937x->micb3_mv);
+-	if ((vout_ctl[0] | vout_ctl[1] | vout_ctl[2]) < 0)
+-		return -EINVAL;
+-
+-	regmap_update_bits(wcd937x->regmap, WCD937X_ANA_MICB1, WCD937X_ANA_MICB_VOUT, vout_ctl[0]);
+-	regmap_update_bits(wcd937x->regmap, WCD937X_ANA_MICB2, WCD937X_ANA_MICB_VOUT, vout_ctl[1]);
+-	regmap_update_bits(wcd937x->regmap, WCD937X_ANA_MICB3, WCD937X_ANA_MICB_VOUT, vout_ctl[2]);
+-
+-	return 0;
++	regmap_update_bits(wcd937x->regmap, WCD937X_ANA_MICB1, WCD937X_ANA_MICB_VOUT,
++			wcd937x->commmon.micb_vout[0]);
++	regmap_update_bits(wcd937x->regmap, WCD937X_ANA_MICB2, WCD937X_ANA_MICB_VOUT,
++			wcd937x->commmon.micb_vout[1]);
++	regmap_update_bits(wcd937x->regmap, WCD937X_ANA_MICB3, WCD937X_ANA_MICB_VOUT,
++			wcd937x->commmon.micb_vout[2]);
+ }
+ 
+ static irqreturn_t wcd937x_wd_handle_irq(int irq, void *data)
+@@ -2630,31 +2612,6 @@ static const struct snd_soc_component_driver soc_codec_dev_wcd937x = {
+ 	.endianness = 1,
  };
  
- struct dev_power_governor {
-+	bool (*system_power_down_ok)(struct dev_pm_domain *domain);
- 	bool (*power_down_ok)(struct dev_pm_domain *domain);
- 	bool (*suspend_ok)(struct device *dev);
+-static void wcd937x_dt_parse_micbias_info(struct device *dev, struct wcd937x_priv *wcd)
+-{
+-	struct device_node *np = dev->of_node;
+-	u32 prop_val = 0;
+-	int ret = 0;
+-
+-	ret = of_property_read_u32(np, "qcom,micbias1-microvolt", &prop_val);
+-	if (!ret)
+-		wcd->micb1_mv = prop_val / 1000;
+-	else
+-		dev_warn(dev, "Micbias1 DT property not found\n");
+-
+-	ret = of_property_read_u32(np, "qcom,micbias2-microvolt", &prop_val);
+-	if (!ret)
+-		wcd->micb2_mv = prop_val / 1000;
+-	else
+-		dev_warn(dev, "Micbias2 DT property not found\n");
+-
+-	ret = of_property_read_u32(np, "qcom,micbias3-microvolt", &prop_val);
+-	if (!ret)
+-		wcd->micb3_mv = prop_val / 1000;
+-	else
+-		dev_warn(dev, "Micbias3 DT property not found\n");
+-}
+-
+ static bool wcd937x_swap_gnd_mic(struct snd_soc_component *component)
+ {
+ 	int value;
+@@ -2848,11 +2805,7 @@ static int wcd937x_bind(struct device *dev)
+ 	wcd937x->sdw_priv[AIF1_PB]->slave_irq = wcd937x->virq;
+ 	wcd937x->sdw_priv[AIF1_CAP]->slave_irq = wcd937x->virq;
+ 
+-	ret = wcd937x_set_micbias_data(wcd937x);
+-	if (ret < 0) {
+-		dev_err(dev, "Bad micbias pdata\n");
+-		return ret;
+-	}
++	wcd937x_set_micbias_data(dev, wcd937x);
+ 
+ 	ret = snd_soc_register_component(dev, &soc_codec_dev_wcd937x,
+ 					 wcd937x_dais, ARRAY_SIZE(wcd937x_dais));
+@@ -2920,6 +2873,8 @@ static int wcd937x_probe(struct platform_device *pdev)
+ 
+ 	dev_set_drvdata(dev, wcd937x);
+ 	mutex_init(&wcd937x->micb_lock);
++	wcd937x->common.dev = dev;
++	wcd937x->common.max_bias = 3;
+ 
+ 	wcd937x->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+ 	if (IS_ERR(wcd937x->reset_gpio))
+@@ -2939,7 +2894,9 @@ static int wcd937x_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to get and enable supplies\n");
+ 
+-	wcd937x_dt_parse_micbias_info(dev, wcd937x);
++	ret = wcd_dt_parse_micbias_info(dev, &wcd937x->common);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to get micbias\n");
+ 
+ 	cfg->mbhc_micbias = MIC_BIAS_2;
+ 	cfg->anc_micbias = MIC_BIAS_2;
+diff --git a/sound/soc/codecs/wcd937x.h b/sound/soc/codecs/wcd937x.h
+index 49e5dce6f8c9..0f96b7108a7e 100644
+--- a/sound/soc/codecs/wcd937x.h
++++ b/sound/soc/codecs/wcd937x.h
+@@ -550,21 +550,21 @@ int wcd937x_sdw_hw_params(struct wcd937x_sdw_priv *wcd,
+ 			  struct snd_soc_dai *dai);
+ 
+ #else
+-int wcd937x_sdw_free(struct wcd937x_sdw_priv *wcd,
++static inline int wcd937x_sdw_free(struct wcd937x_sdw_priv *wcd,
+ 		     struct snd_pcm_substream *substream,
+ 		     struct snd_soc_dai *dai)
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
+-int wcd937x_sdw_set_sdw_stream(struct wcd937x_sdw_priv *wcd,
++static inline int wcd937x_sdw_set_sdw_stream(struct wcd937x_sdw_priv *wcd,
+ 			       struct snd_soc_dai *dai,
+ 			       void *stream, int direction)
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
+-int wcd937x_sdw_hw_params(struct wcd937x_sdw_priv *wcd,
++static inline int wcd937x_sdw_hw_params(struct wcd937x_sdw_priv *wcd,
+ 			  struct snd_pcm_substream *substream,
+ 			  struct snd_pcm_hw_params *params,
+ 			  struct snd_soc_dai *dai)
+diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
+index f8d7bf27a6ed..6d77cbcafa70 100644
+--- a/sound/soc/codecs/wcd938x.c
++++ b/sound/soc/codecs/wcd938x.c
+@@ -155,6 +155,7 @@ struct wcd938x_priv {
+ 	struct wcd_mbhc_config mbhc_cfg;
+ 	struct wcd_mbhc_intr intr_ids;
+ 	struct wcd_clsh_ctrl *clsh_info;
++	struct wcd_common common;
+ 	struct irq_domain *virq;
+ 	struct regmap_irq_chip_data *irq_chip;
+ 	struct snd_soc_jack *jack;
+@@ -169,10 +170,6 @@ struct wcd938x_priv {
+ 	struct gpio_desc *us_euro_gpio;
+ 	struct mux_control *us_euro_mux;
+ 	unsigned int mux_state;
+-	u32 micb1_mv;
+-	u32 micb2_mv;
+-	u32 micb3_mv;
+-	u32 micb4_mv;
+ 	int hphr_pdm_wd_int;
+ 	int hphl_pdm_wd_int;
+ 	int aux_pdm_wd_int;
+@@ -1974,15 +1971,6 @@ static void wcd938x_mbhc_micb_ramp_control(struct snd_soc_component *component,
+ 	}
+ }
+ 
+-static int wcd938x_get_micb_vout_ctl_val(u32 micb_mv)
+-{
+-	/* min micbias voltage is 1V and maximum is 2.85V */
+-	if (micb_mv < 1000 || micb_mv > 2850)
+-		return -EINVAL;
+-
+-	return (micb_mv - 1000) / 50;
+-}
+-
+ static int wcd938x_mbhc_micb_adjust_voltage(struct snd_soc_component *component,
+ 					    int req_volt, int micb_num)
+ {
+@@ -2019,7 +2007,7 @@ static int wcd938x_mbhc_micb_adjust_voltage(struct snd_soc_component *component,
+ 	cur_vout_ctl = snd_soc_component_read_field(component, micb_reg,
+ 						    WCD938X_MICB_VOUT_MASK);
+ 
+-	req_vout_ctl = wcd938x_get_micb_vout_ctl_val(req_volt);
++	req_vout_ctl = wcd_get_micb_vout_ctl_val(component->dev, req_volt);
+ 	if (req_vout_ctl < 0) {
+ 		ret = -EINVAL;
+ 		goto exit;
+@@ -2067,10 +2055,10 @@ static int wcd938x_mbhc_micb_ctrl_threshold_mic(struct snd_soc_component *compon
+ 	 * voltage needed to detect threshold microphone, then do
+ 	 * not change the micbias, just return.
+ 	 */
+-	if (wcd938x->micb2_mv >= WCD_MBHC_THR_HS_MICB_MV)
++	if (wcd938x->common.micb_mv[2] >= WCD_MBHC_THR_HS_MICB_MV)
+ 		return 0;
+ 
+-	micb_mv = req_en ? WCD_MBHC_THR_HS_MICB_MV : wcd938x->micb2_mv;
++	micb_mv = req_en ? WCD_MBHC_THR_HS_MICB_MV : wcd938x->common.micb_mv[2];
+ 
+ 	return wcd938x_mbhc_micb_adjust_voltage(component, micb_mv, MIC_BIAS_2);
+ }
+@@ -2975,28 +2963,16 @@ static const struct snd_soc_dapm_route wcd938x_audio_map[] = {
+ 	{"EAR", NULL, "EAR PGA"},
  };
+ 
+-static int wcd938x_set_micbias_data(struct wcd938x_priv *wcd938x)
++static void wcd938x_set_micbias_data(struct device *dev, struct wcd938x_priv *wcd938x)
+ {
+-	int vout_ctl_1, vout_ctl_2, vout_ctl_3, vout_ctl_4;
+-
+-	/* set micbias voltage */
+-	vout_ctl_1 = wcd938x_get_micb_vout_ctl_val(wcd938x->micb1_mv);
+-	vout_ctl_2 = wcd938x_get_micb_vout_ctl_val(wcd938x->micb2_mv);
+-	vout_ctl_3 = wcd938x_get_micb_vout_ctl_val(wcd938x->micb3_mv);
+-	vout_ctl_4 = wcd938x_get_micb_vout_ctl_val(wcd938x->micb4_mv);
+-	if (vout_ctl_1 < 0 || vout_ctl_2 < 0 || vout_ctl_3 < 0 || vout_ctl_4 < 0)
+-		return -EINVAL;
+-
+ 	regmap_update_bits(wcd938x->regmap, WCD938X_ANA_MICB1,
+-			   WCD938X_MICB_VOUT_MASK, vout_ctl_1);
++			   WCD938X_MICB_VOUT_MASK, wcd938x->common.micb_vout[0]);
+ 	regmap_update_bits(wcd938x->regmap, WCD938X_ANA_MICB2,
+-			   WCD938X_MICB_VOUT_MASK, vout_ctl_2);
++			   WCD938X_MICB_VOUT_MASK, wcd938x->common.micb_vout[1]);
+ 	regmap_update_bits(wcd938x->regmap, WCD938X_ANA_MICB3,
+-			   WCD938X_MICB_VOUT_MASK, vout_ctl_3);
++			   WCD938X_MICB_VOUT_MASK, wcd938x->common.micb_vout[2]);
+ 	regmap_update_bits(wcd938x->regmap, WCD938X_ANA_MICB4,
+-			   WCD938X_MICB_VOUT_MASK, vout_ctl_4);
+-
+-	return 0;
++			   WCD938X_MICB_VOUT_MASK, wcd938x->common.micb_vout[3]);
+ }
+ 
+ static irqreturn_t wcd938x_wd_handle_irq(int irq, void *data)
+@@ -3200,37 +3176,6 @@ static const struct snd_soc_component_driver soc_codec_dev_wcd938x = {
+ 	.endianness = 1,
+ };
+ 
+-static void wcd938x_dt_parse_micbias_info(struct device *dev, struct wcd938x_priv *wcd)
+-{
+-	struct device_node *np = dev->of_node;
+-	u32 prop_val = 0;
+-	int rc = 0;
+-
+-	rc = of_property_read_u32(np, "qcom,micbias1-microvolt",  &prop_val);
+-	if (!rc)
+-		wcd->micb1_mv = prop_val/1000;
+-	else
+-		dev_info(dev, "%s: Micbias1 DT property not found\n", __func__);
+-
+-	rc = of_property_read_u32(np, "qcom,micbias2-microvolt",  &prop_val);
+-	if (!rc)
+-		wcd->micb2_mv = prop_val/1000;
+-	else
+-		dev_info(dev, "%s: Micbias2 DT property not found\n", __func__);
+-
+-	rc = of_property_read_u32(np, "qcom,micbias3-microvolt", &prop_val);
+-	if (!rc)
+-		wcd->micb3_mv = prop_val/1000;
+-	else
+-		dev_info(dev, "%s: Micbias3 DT property not found\n", __func__);
+-
+-	rc = of_property_read_u32(np, "qcom,micbias4-microvolt",  &prop_val);
+-	if (!rc)
+-		wcd->micb4_mv = prop_val/1000;
+-	else
+-		dev_info(dev, "%s: Micbias4 DT property not found\n", __func__);
+-}
+-
+ static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component)
+ {
+ 	struct wcd938x_priv *wcd938x = snd_soc_component_get_drvdata(component);
+@@ -3295,13 +3240,15 @@ static int wcd938x_populate_dt_data(struct wcd938x_priv *wcd938x, struct device
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to get and enable supplies\n");
+ 
+-	wcd938x_dt_parse_micbias_info(dev, wcd938x);
++	ret = wcd_dt_parse_micbias_info(&wcd938x->common);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to get and enable supplies\n");
+ 
+ 	cfg->mbhc_micbias = MIC_BIAS_2;
+ 	cfg->anc_micbias = MIC_BIAS_2;
+ 	cfg->v_hs_max = WCD_MBHC_HS_V_MAX;
+ 	cfg->num_btn = WCD938X_MBHC_MAX_BUTTONS;
+-	cfg->micb_mv = wcd938x->micb2_mv;
++	cfg->micb_mv = wcd938x->common.micb_mv[2];
+ 	cfg->linein_th = 5000;
+ 	cfg->hs_thr = 1700;
+ 	cfg->hph_thr = 50;
+@@ -3457,11 +3404,7 @@ static int wcd938x_bind(struct device *dev)
+ 	wcd938x->sdw_priv[AIF1_PB]->slave_irq = wcd938x->virq;
+ 	wcd938x->sdw_priv[AIF1_CAP]->slave_irq = wcd938x->virq;
+ 
+-	ret = wcd938x_set_micbias_data(wcd938x);
+-	if (ret < 0) {
+-		dev_err(dev, "%s: bad micbias pdata\n", __func__);
+-		goto err_remove_rx_link;
+-	}
++	wcd938x_set_micbias_data(dev, wcd938x);
+ 
+ 	ret = snd_soc_register_component(dev, &soc_codec_dev_wcd938x,
+ 					 wcd938x_dais, ARRAY_SIZE(wcd938x_dais));
+@@ -3550,6 +3493,8 @@ static int wcd938x_probe(struct platform_device *pdev)
+ 
+ 	dev_set_drvdata(dev, wcd938x);
+ 	mutex_init(&wcd938x->micb_lock);
++	wcd938x->common.dev = dev;
++	wcd938x->common.max_bias = 4;
+ 
+ 	ret = wcd938x_populate_dt_data(wcd938x, dev);
+ 	if (ret)
+diff --git a/sound/soc/codecs/wcd938x.h b/sound/soc/codecs/wcd938x.h
+index 54ee56b7fbd6..a6fda63d7f98 100644
+--- a/sound/soc/codecs/wcd938x.h
++++ b/sound/soc/codecs/wcd938x.h
+@@ -3,6 +3,7 @@
+ #define __WCD938X_H__
+ #include <linux/soundwire/sdw.h>
+ #include <linux/soundwire/sdw_type.h>
++#include "wcd-common.h"
+ 
+ #define WCD938X_BASE_ADDRESS			(0x3000)
+ #define WCD938X_ANA_PAGE_REGISTER               (0x3000)
+diff --git a/sound/soc/codecs/wcd939x.c b/sound/soc/codecs/wcd939x.c
+index 85730ae40c2c..ef8def695219 100644
+--- a/sound/soc/codecs/wcd939x.c
++++ b/sound/soc/codecs/wcd939x.c
+@@ -191,6 +191,7 @@ struct wcd939x_priv {
+ 	struct wcd_mbhc_config mbhc_cfg;
+ 	struct wcd_mbhc_intr intr_ids;
+ 	struct wcd_clsh_ctrl *clsh_info;
++	struct wcd_common common;
+ 	struct irq_domain *virq;
+ 	struct regmap_irq_chip_data *irq_chip;
+ 	struct snd_soc_jack *jack;
+@@ -201,10 +202,6 @@ struct wcd939x_priv {
+ 	u32 tx_mode[TX_ADC_MAX];
+ 	int variant;
+ 	struct gpio_desc *reset_gpio;
+-	u32 micb1_mv;
+-	u32 micb2_mv;
+-	u32 micb3_mv;
+-	u32 micb4_mv;
+ 	int hphr_pdm_wd_int;
+ 	int hphl_pdm_wd_int;
+ 	int ear_pdm_wd_int;
+@@ -1919,17 +1916,6 @@ static void wcd939x_mbhc_micb_ramp_control(struct snd_soc_component *component,
+ 	}
+ }
+ 
+-static int wcd939x_get_micb_vout_ctl_val(u32 micb_mv)
+-{
+-	/* min micbias voltage is 1V and maximum is 2.85V */
+-	if (micb_mv < 1000 || micb_mv > 2850) {
+-		pr_err("%s: unsupported micbias voltage\n", __func__);
+-		return -EINVAL;
+-	}
+-
+-	return (micb_mv - 1000) / 50;
+-}
+-
+ static int wcd939x_mbhc_micb_adjust_voltage(struct snd_soc_component *component,
+ 					    int req_volt, int micb_num)
+ {
+@@ -1969,7 +1955,7 @@ static int wcd939x_mbhc_micb_adjust_voltage(struct snd_soc_component *component,
+ 	cur_vout_ctl = snd_soc_component_read_field(component, micb_reg,
+ 						    WCD939X_MICB_VOUT_CTL);
+ 
+-	req_vout_ctl = wcd939x_get_micb_vout_ctl_val(req_volt);
++	req_vout_ctl = wcd_get_micb_vout_ctl_val(component->dev, req_volt);
+ 	if (req_vout_ctl < 0) {
+ 		ret = req_vout_ctl;
+ 		goto exit;
+@@ -2021,10 +2007,10 @@ static int wcd939x_mbhc_micb_ctrl_threshold_mic(struct snd_soc_component *compon
+ 	 * voltage needed to detect threshold microphone, then do
+ 	 * not change the micbias, just return.
+ 	 */
+-	if (wcd939x->micb2_mv >= WCD_MBHC_THR_HS_MICB_MV)
++	if (wcd939x->common.micb_mv[1] >= WCD_MBHC_THR_HS_MICB_MV)
+ 		return 0;
+ 
+-	micb_mv = req_en ? WCD_MBHC_THR_HS_MICB_MV : wcd939x->micb2_mv;
++	micb_mv = req_en ? WCD_MBHC_THR_HS_MICB_MV : wcd939x->common.micb_mv[1];
+ 
+ 	return wcd939x_mbhc_micb_adjust_voltage(component, micb_mv, MIC_BIAS_2);
+ }
+@@ -2895,28 +2881,16 @@ static const struct snd_soc_dapm_route wcd939x_audio_map[] = {
+ 	{"EAR", NULL, "EAR PGA"},
+ };
+ 
+-static int wcd939x_set_micbias_data(struct wcd939x_priv *wcd939x)
++static void wcd939x_set_micbias_data(struct device *dev, struct wcd939x_priv *wcd939x)
+ {
+-	int vout_ctl_1, vout_ctl_2, vout_ctl_3, vout_ctl_4;
+-
+-	/* set micbias voltage */
+-	vout_ctl_1 = wcd939x_get_micb_vout_ctl_val(wcd939x->micb1_mv);
+-	vout_ctl_2 = wcd939x_get_micb_vout_ctl_val(wcd939x->micb2_mv);
+-	vout_ctl_3 = wcd939x_get_micb_vout_ctl_val(wcd939x->micb3_mv);
+-	vout_ctl_4 = wcd939x_get_micb_vout_ctl_val(wcd939x->micb4_mv);
+-	if (vout_ctl_1 < 0 || vout_ctl_2 < 0 || vout_ctl_3 < 0 || vout_ctl_4 < 0)
+-		return -EINVAL;
+-
+ 	regmap_update_bits(wcd939x->regmap, WCD939X_ANA_MICB1,
+-			   WCD939X_MICB_VOUT_CTL, vout_ctl_1);
++			   WCD939X_MICB_VOUT_CTL, wcd939x->common.micb_vout[0]);
+ 	regmap_update_bits(wcd939x->regmap, WCD939X_ANA_MICB2,
+-			   WCD939X_MICB_VOUT_CTL, vout_ctl_2);
++			   WCD939X_MICB_VOUT_CTL, wcd939x->common.micb_vout[1]);
+ 	regmap_update_bits(wcd939x->regmap, WCD939X_ANA_MICB3,
+-			   WCD939X_MICB_VOUT_CTL, vout_ctl_3);
++			   WCD939X_MICB_VOUT_CTL, wcd939x->common.micb_vout[2]);
+ 	regmap_update_bits(wcd939x->regmap, WCD939X_ANA_MICB4,
+-			   WCD939X_MICB_VOUT_CTL, vout_ctl_4);
+-
+-	return 0;
++			   WCD939X_MICB_VOUT_CTL, wcd939x->common.micb_vout[3]);
+ }
+ 
+ static irqreturn_t wcd939x_wd_handle_irq(int irq, void *data)
+@@ -3186,37 +3160,6 @@ static int wcd939x_typec_mux_set(struct typec_mux_dev *mux,
+ }
+ #endif /* CONFIG_TYPEC */
+ 
+-static void wcd939x_dt_parse_micbias_info(struct device *dev, struct wcd939x_priv *wcd)
+-{
+-	struct device_node *np = dev->of_node;
+-	u32 prop_val = 0;
+-	int rc = 0;
+-
+-	rc = of_property_read_u32(np, "qcom,micbias1-microvolt",  &prop_val);
+-	if (!rc)
+-		wcd->micb1_mv = prop_val / 1000;
+-	else
+-		dev_info(dev, "%s: Micbias1 DT property not found\n", __func__);
+-
+-	rc = of_property_read_u32(np, "qcom,micbias2-microvolt",  &prop_val);
+-	if (!rc)
+-		wcd->micb2_mv = prop_val / 1000;
+-	else
+-		dev_info(dev, "%s: Micbias2 DT property not found\n", __func__);
+-
+-	rc = of_property_read_u32(np, "qcom,micbias3-microvolt", &prop_val);
+-	if (!rc)
+-		wcd->micb3_mv = prop_val / 1000;
+-	else
+-		dev_info(dev, "%s: Micbias3 DT property not found\n", __func__);
+-
+-	rc = of_property_read_u32(np, "qcom,micbias4-microvolt",  &prop_val);
+-	if (!rc)
+-		wcd->micb4_mv = prop_val / 1000;
+-	else
+-		dev_info(dev, "%s: Micbias4 DT property not found\n", __func__);
+-}
+-
+ #if IS_ENABLED(CONFIG_TYPEC)
+ static bool wcd939x_swap_gnd_mic(struct snd_soc_component *component)
+ {
+@@ -3252,13 +3195,15 @@ static int wcd939x_populate_dt_data(struct wcd939x_priv *wcd939x, struct device
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to get and enable supplies\n");
+ 
+-	wcd939x_dt_parse_micbias_info(dev, wcd939x);
++	ret = wcd_dt_parse_micbias_info(&wcd939x->common);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to get micbias\n");
+ 
+ 	cfg->mbhc_micbias = MIC_BIAS_2;
+ 	cfg->anc_micbias = MIC_BIAS_2;
+ 	cfg->v_hs_max = WCD_MBHC_HS_V_MAX;
+ 	cfg->num_btn = WCD939X_MBHC_MAX_BUTTONS;
+-	cfg->micb_mv = wcd939x->micb2_mv;
++	cfg->micb_mv = wcd939x->common.micb_mv[1];
+ 	cfg->linein_th = 5000;
+ 	cfg->hs_thr = 1700;
+ 	cfg->hph_thr = 50;
+@@ -3444,11 +3389,7 @@ static int wcd939x_bind(struct device *dev)
+ 	wcd939x->sdw_priv[AIF1_PB]->slave_irq = wcd939x->virq;
+ 	wcd939x->sdw_priv[AIF1_CAP]->slave_irq = wcd939x->virq;
+ 
+-	ret = wcd939x_set_micbias_data(wcd939x);
+-	if (ret < 0) {
+-		dev_err(dev, "%s: bad micbias pdata\n", __func__);
+-		goto err_remove_rx_link;
+-	}
++	wcd939x_set_micbias_data(dev, wcd939x);
+ 
+ 	/* Check WCD9395 version */
+ 	regmap_read(wcd939x->regmap, WCD939X_DIGITAL_CHIP_ID1, &id1);
+@@ -3613,6 +3554,8 @@ static int wcd939x_probe(struct platform_device *pdev)
+ 
+ 	dev_set_drvdata(dev, wcd939x);
+ 	mutex_init(&wcd939x->micb_lock);
++	wcd939x->common.dev = dev;
++	wcd939x->common.max_bias = 4;
+ 
+ 	ret = wcd939x_populate_dt_data(wcd939x, dev);
+ 	if (ret) {
+diff --git a/sound/soc/codecs/wcd939x.h b/sound/soc/codecs/wcd939x.h
+index e70445b1a4bc..f587cf22f86f 100644
+--- a/sound/soc/codecs/wcd939x.h
++++ b/sound/soc/codecs/wcd939x.h
+@@ -8,6 +8,7 @@
+ #define __WCD939X_H__
+ #include <linux/soundwire/sdw.h>
+ #include <linux/soundwire/sdw_type.h>
++#include "wcd-common.h"
+ 
+ #define WCD939X_BASE					   (0x3000)
+ #define WCD939X_ANA_PAGE				   (0x3000)
 -- 
-2.43.0
+2.50.0
 
 
