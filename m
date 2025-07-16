@@ -1,112 +1,172 @@
-Return-Path: <linux-kernel+bounces-733812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E224B07947
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:14:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD6CB0794E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 144563B759A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E084E0506
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F03285079;
-	Wed, 16 Jul 2025 15:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BE1275AE0;
+	Wed, 16 Jul 2025 15:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qq/ziE8r"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcN9ivjo"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA6C2641F9;
-	Wed, 16 Jul 2025 15:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D161D5CFB;
+	Wed, 16 Jul 2025 15:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752678850; cv=none; b=hYpJtRhoc+ueey7LL8PUE9hmN3K2A5sZTKgyrplNvs6YWE0zhute7w3C0kzqw7JElm5v66nhEqRCFxVxhUx0BZD15eSx63tybvutp/n/paIz+pEXFsg7il35zIZ3S56z4Nqt6PnlRIGE+82bXfUmlaoIZiVobWS6ZcXcZbGTp/k=
+	t=1752678881; cv=none; b=hn6vNXNn5hC28krTNsN7nt+O5emykDKe2xQv0SSB5aWb/CicFZ+F/VU0kLtBzLdAGJUY/GLwoly9U3gsBlAYTsnRkRZyz+d5Ai/vW8OyrNHo1YYP4l6h61vkEnnotmbt3+9WCn+AwZbIipmd6jERqu93UFeibvqZGyYPKR47tEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752678850; c=relaxed/simple;
-	bh=Flsd7kS22FIpdj4IHrumyJz1cX39T+xmLof5cwJKtFU=;
+	s=arc-20240116; t=1752678881; c=relaxed/simple;
+	bh=JGfjaozL+xMWdV0XXsCKfSFov9DvkeQMxV6cXeLB/VI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YMkIIFtlyl9QJgQAEkmHZ+vpzW0RBJsattZl448tocBPOTX4734h+XI1A1K7GOQW2ZP6a5u8qoFEKZng0EJ/eE9gG/n+X49v73v5g2CcKSDFdsdmKVXRoL95ZZk7kaasNCuMDkqPmusR66dw596kLHLB0TGsy3UTCOQjheCIeIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qq/ziE8r; arc=none smtp.client-ip=209.85.208.173
+	 To:Cc:Content-Type; b=UZdUzi9Z/3drJO+YKPnEMoxPsFYbIxZeHZbMASTIjHwdCJET2F9boMPoe+zmsTFIQ1Yl4rW8E0roNywHZhSCBRZn0l778JBFN55mWdXOsVtG1XIPETuAdbphU4PruEDK7wEeJHs9Ybi9NcfOgQzutp6oQL3qVtOuK/Sc4Q0r9nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KcN9ivjo; arc=none smtp.client-ip=209.85.166.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32f144d0db8so172521fa.0;
-        Wed, 16 Jul 2025 08:14:08 -0700 (PDT)
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3de1875bf9dso50056515ab.2;
+        Wed, 16 Jul 2025 08:14:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752678847; x=1753283647; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752678879; x=1753283679; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Flsd7kS22FIpdj4IHrumyJz1cX39T+xmLof5cwJKtFU=;
-        b=Qq/ziE8rbzwyAfZC86ouRIlgyY9yJp6I1jUWv+pUexrgBsKkhQEEfs4A1AwS5rvJ/o
-         MGS5SF1Iq6l3i0pEhc7hBiEAmK9yc49lnhCNqHRJx2y6Tb+kpQfVYXUPY/Z7vJfDrxSA
-         0YqZDqiRNw+N2+IJvJSkd+bh8gBTrQsN+ZzWWe31f7HXIAZRUCyJ8hCe1iYQnh0BK1bV
-         9rctIsq1VnNGcZuU5dhR8a5yQeSyg0fQ+fIPES8o7nHEfbp3kPZhZ/NYveWHwy7i/u6P
-         ZTT7JZHkgarkZV4TFlRHzisvJXFP71cDetyi0QTFTG9Zu4eS0Z2WgKrOXepQ1J+qz1JK
-         2qUA==
+        bh=Tlzgsqxl7m0sFdq0NXyFVdMSE8vaPjAL8cIJQh6kUxs=;
+        b=KcN9ivjo06XnFKxdnTlMlV7L/B/Hnf4f4JM2JPNKWn2XbOolL1DvmjPK0GEdYaYivp
+         O/KXXUeULWj1sL9H5gg1kTI/8+CNonoxY7OPrOOhlipUR7nY+G8CavR0keEmWH2aGa1U
+         EsP2dClqlcOYGo/W+U9HFDCwZsH8OkOaHBkx+zhiFkWSIZSYfOPIMCd+uCE+moBiskYK
+         agc75xbS9b0OrmugpdNVXha+NGOte/smStoewKFWR/CZgPSTofiP87mQxERk3BW4WFLg
+         AwMMf4+KK2SABgfe2Aoly4clLD2VBNnAx4M3qb9sBh1Wqjv3hCiUq39dwghVfMyxxQe/
+         n23w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752678847; x=1753283647;
+        d=1e100.net; s=20230601; t=1752678879; x=1753283679;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Flsd7kS22FIpdj4IHrumyJz1cX39T+xmLof5cwJKtFU=;
-        b=mOWUsX7AYdrdugluAsMC1JSDNFCZYKSMSqWfhPe9WFWwuPTlG73z0b7WdM0C3YOkdt
-         5QIP16/SdAA9rWomz8b77YeNo1RGcpzWrS5swbQwzTBvdOk2l6vP3mL/Aw0jqzGgjLAu
-         c+S/oCZ727C1qD+mJ4j8RvAAB+an/BAg8WrVMDhIN/irKi4REeXpKnXTBxxPaTAtGkcx
-         AnsgSlsfTUaLdynj4RkDOLLZjILwL2BycC2ah6+GHNQ2LxGxRae4qW/F+wYue99lcJZ/
-         ShydaFM10IXV5oJovRWdsFdIHWL7e0XfK8brINvSOwoM4VJKjWbYRmoe7SqO6jIbXjIU
-         n2/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUbc1gCtBVxKk+t8M2X9Eo5rLaQ80dHa4z6PL//3dXhFUhdX0cOWsT12Ng+J7kIMn0FDOYcccAF6SEnmivK@vger.kernel.org, AJvYcCWSbir8p8vRcC4RoOBokDa8zCDghzHgsSx1UnWeltspctFDWcduOGLn5WbS05sZzNTsIRQyuiNBkMHGeM3LRh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKcfPeyAySWvy6soBt1E2wptrXh5UjjUvrSql+V78lTKHnv0ex
-	MDu474KuxAjfbYjR3uUh64JhQG4MEvytT+tLc4Tn7iUxzMygdiEOyB+M/70JSUFzXMKwRKAjf8u
-	PBtNVUg5Gd0sBUer5F6ZTOW9YTVGaxkwtdA==
-X-Gm-Gg: ASbGnctYv41l0dB6UNKdeNEr1/Tc4SN1UFclhgn+pp6XA6Of1ak9/OX8vyp8uANSLof
-	QkVadszPXWuGW/M3n3+0n9XlcI7Gh4zC186iCW0jftsfjhKHHW/awy2db1MuE/ryj9j4Cz+mAGu
-	RfrBPGXnJZShYRKvmjhLBBlEcm0+SiwCvX2uqzYnmGxaXoqrO0+qhIG+EZjylSjKeU66kKofiRO
-	FcvSQ==
-X-Google-Smtp-Source: AGHT+IH7KVt8Q4jwGwL7RJPZHFMoXnqqp9Nchj7M3SnUU5u0V9MoRzKGEtGta870O9aM1bF8qvqlbCo5iNHdx/PdJn4=
-X-Received: by 2002:a05:651c:4103:b0:32a:e7b9:1dc9 with SMTP id
- 38308e7fff4ca-33081111813mr17377171fa.3.1752678846264; Wed, 16 Jul 2025
- 08:14:06 -0700 (PDT)
+        bh=Tlzgsqxl7m0sFdq0NXyFVdMSE8vaPjAL8cIJQh6kUxs=;
+        b=cgUWL/xUAXlnCguwpJSqbXCTSfL/M+miL8aEcW759Xj8IZmhDpalHgP9u66c24gWte
+         UEzfpCF0HR2wIM3pld4s5K1DNxD6Ul5ja1ZPm8JMiVXVQWAyhwSGCjQc0lFGkHu51cav
+         XKXbHjkmJbDqhGc7pKOiKbNlykKwys/720D6GKKaadqdpxJgkcKAyNezrPfeIZbTYozl
+         0FlCvwReN5mneGQY50K0q/yctwxF+ygsrRX5JF+pVaYcaYRm3ayy3VzxCCU/9o4wbgdY
+         0w+fUXA4bBNXd5JuxZrTBm0Hc7ZdYgvIYkNKNbH1guP7n6zm3wWltt5lGEIgh4egCXZy
+         n6WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB/y1z9P5j21b32jGw8AppR5h5LJ52PS2YaU20+HNDp2cvWx6uded2E5enC+k789CAjwYj6k3c@vger.kernel.org, AJvYcCVLECXRg5jQJiA8jJTX2Vgb/Ijr2gAs1vyvD/UCOfcErLGe0Yxxgmgqk43ovks4osxPQ5RGetk88+SyBKo=@vger.kernel.org, AJvYcCVsavhaKxi2hIx1QcJNFJhkuK8kGPiCpoS9UMfwgkCrr4LVR8W846ahIURkQTWYPas6Bs+WoEw2ClEzboj1@vger.kernel.org
+X-Gm-Message-State: AOJu0YynYEa8F3RrZzSpu98TiBl7LRlyNNRuYGcMU3iZq+IymJMwyP1v
+	DpSL+3cT9MuTixRiZ9qY3HHpWUG7vLQm21PI71ipxolZ4u6sdj3Ef2/PZR6TRsTr35H9YFYoCWG
+	r9M6fPRfnj5oC14c9Y4UG9Rm38q6n55k=
+X-Gm-Gg: ASbGncsB8FH0913suH1qGWCmPbFnFqHVzU/8tvRftoQN2daDzI/GdfX/WUC12Qj+iMX
+	HrRpoeCnzKjQprDnl+xGv5EYeDREpIxGH1i1aspre2aFCtgDVXAoS7Qj2TASN7nKdb/ckd77v6C
+	whVzr0XsAtL86St2Qc7pNlIc6pU2LVX6HXET0BwgI4ydEt9tg/pxQxLJnpZUtCyx0MRbuKqw8Bn
+	vRFKfUnxOWhfe0iwVcfZWnVBT6O9eKbPp0LNcYJSbXZJ5LOeA==
+X-Google-Smtp-Source: AGHT+IGp/w3OhbRlKaM7WBwVtAScqPY2hyXHH8Wk9zGmZCUUR4ZjE70sSQQPOYoyxVo6u3eMkVfJe9O/iwLboHF517E=
+X-Received: by 2002:a05:6e02:1c07:b0:3df:29c5:2972 with SMTP id
+ e9e14a558f8ab-3e282da9cd2mr33620365ab.9.1752678878693; Wed, 16 Jul 2025
+ 08:14:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <257a13b8-6d60-21b3-c714-c6cb74b7b091@salutedevices.com>
- <a408927c-3743-71de-b806-87fd404bb9a2@salutedevices.com> <943f7a75-d1e8-2833-1ae4-f6979008868e@salutedevices.com>
-In-Reply-To: <943f7a75-d1e8-2833-1ae4-f6979008868e@salutedevices.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Wed, 16 Jul 2025 11:13:53 -0400
-X-Gm-Features: Ac12FXz8v_Uaon-w__2rBCPz8XijJTdtFUJUpRx4dpPUH5_Do4epzTESXv9BjLA
-Message-ID: <CABBYNZKDJ+qmzcVtzDpuMd5McUWKFZWmp7Uv7NcoaQ9MLS=WuA@mail.gmail.com>
-Subject: Re: [PATCH v3] Bluetooth: hci_sync: fix double free in 'hci_discovery_filter_clear()'
-To: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, oxffffaa@gmail.com, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel@salutedevices.com
+References: <20250716002607.4927-1-litian@redhat.com> <20250716092927.GO721198@horms.kernel.org>
+In-Reply-To: <20250716092927.GO721198@horms.kernel.org>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Wed, 16 Jul 2025 11:14:27 -0400
+X-Gm-Features: Ac12FXzRov1GHK8odSuvmX5RhEKm0LzXVxiEG0Fsrz9TLbCQQXwLzdiuH9ZNDo4
+Message-ID: <CADvbK_cdOTO_UVg6ovx-Si7-ja=ErYw-MnSnR-CL4HwmtKJ8YQ@mail.gmail.com>
+Subject: Re: [PATCH v3] hv_netvsc: Set VF priv_flags to IFF_NO_ADDRCONF before
+ open to prevent IPv6 addrconf
+To: Simon Horman <horms@kernel.org>
+Cc: Li Tian <litian@redhat.com>, netdev@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Dexuan Cui <decui@microsoft.com>, Stephen Hemminger <stephen@networkplumber.org>, 
+	Long Li <longli@microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Arseniy,
-
-On Wed, Jul 16, 2025 at 11:04=E2=80=AFAM Arseniy Krasnov
-<avkrasnov@salutedevices.com> wrote:
+On Wed, Jul 16, 2025 at 5:29=E2=80=AFAM Simon Horman <horms@kernel.org> wro=
+te:
 >
-> Hi, sorry, 2 weeks, pls ping
-
-Just resend.
-
-> Thanks
+> + Xin Long
 >
-> On 30.06.2025 14:08, Arseniy Krasnov wrote:
-> > Hi, sorry, 2 weeks, pls ping
+Thanks for Ccing me.
+
+> On Wed, Jul 16, 2025 at 08:26:05AM +0800, Li Tian wrote:
+> > Set an additional flag IFF_NO_ADDRCONF to prevent ipv6 addrconf.
 > >
-> > Thanks
+> > Commit under Fixes added a new flag change that was not made
+> > to hv_netvsc resulting in the VF being assinged an IPv6.
+> >
+> > Fixes: 8a321cf7becc ("net: add IFF_NO_ADDRCONF and use it in bonding to=
+ prevent ipv6 addrconf")
+> > Suggested-by: Cathy Avery <cavery@redhat.com>
+> > Signed-off-by: Li Tian <litian@redhat.com>
+> > ---
+> > v3:
+> >   - only fixes commit message.
+> > v2: https://lore.kernel.org/netdev/20250710024603.10162-1-litian@redhat=
+.com/
+> >   - instead of replacing flag, add it.
+> > v1: https://lore.kernel.org/netdev/20250710024603.10162-1-litian@redhat=
+.com/
+> > ---
+> >  drivers/net/hyperv/netvsc_drv.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> Hi Li Tian,
+>
+> Thanks for addressing earlier feedback.
+>
+> I don't think you need to repost because of this, but for future referenc=
+e:
+>
+> 1. Because this is a fix for a commit that is present in net
+>    it should be targeted at that tree.
+>
+>    Subject: [PATCH net vX] ...
+>
+> 2. Please use get_maintainers.pl this.patch to generate the CC list. In
+>    this case Xin Long (now CCed) should be included as he is the author o=
+f the
+>    patch cited in the Fixes tag.
+>
+>    b4 can help you with this and other aspects of patch management.
+>
+> >
+> > diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvs=
+c_drv.c
+> > index c41a025c66f0..8be9bce66a4e 100644
+> > --- a/drivers/net/hyperv/netvsc_drv.c
+> > +++ b/drivers/net/hyperv/netvsc_drv.c
+> > @@ -2317,8 +2317,11 @@ static int netvsc_prepare_bonding(struct net_dev=
+ice *vf_netdev)
+> >       if (!ndev)
+> >               return NOTIFY_DONE;
+> >
+> > -     /* set slave flag before open to prevent IPv6 addrconf */
+> > +     /* Set slave flag and no addrconf flag before open
+> > +      * to prevent IPv6 addrconf.
+> > +      */
+> >       vf_netdev->flags |=3D IFF_SLAVE;
+> > +     vf_netdev->priv_flags |=3D IFF_NO_ADDRCONF;
+If it is only to prevent IPv6 addrconf, I think you can replace IFF_SLAVE
+with IFF_NO_ADDRCONF.
 
+IFF_SLAVE normally comes with IFF_MASTER, like bonding and eql.
+I don't see IFF_MASTER used in netvsc_drv.c, so IFF_SLAVE probably
+should be dropped, including the one in __netvsc_vf_setup()?
 
-
---=20
-Luiz Augusto von Dentz
+> >       return NOTIFY_DONE;
+> >  }
+> >
+> > --
+> > 2.50.0
+> >
+> >
 
