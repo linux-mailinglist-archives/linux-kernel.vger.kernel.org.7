@@ -1,149 +1,122 @@
-Return-Path: <linux-kernel+bounces-733299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578B0B072E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:14:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452B6B072EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11BE16C792
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:14:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7226504F71
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A9A2F273F;
-	Wed, 16 Jul 2025 10:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5352F3629;
+	Wed, 16 Jul 2025 10:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hs7+/44P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOKeeCU/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA8320E704;
-	Wed, 16 Jul 2025 10:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F120E704;
+	Wed, 16 Jul 2025 10:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660866; cv=none; b=UDLe45yy3NswWMPyonzlk1Y+oOHdLo9Dmco+A/0QBZzqWJiKbHDLOhydkPrjOnIcJjFIUBT+gvNUTmywCwogwK0zC3LGLwfT9MM6vMg9tSTmlGwL+tpseulgx5i0nDfopAwhCUOvR9dWeKPW5gII95m/l0fW6bQjDP0Ah97nvhM=
+	t=1752660890; cv=none; b=I2mIyj6pN+129lirOt/SErrcaHYuKi5uc+wbBGb5oZbqUQmGM6zpGhLeUFf/pTPV3EYI6HzeTWNIrHCcJ63PXC80aupq6kpD0H6RSuT4zV5j6LesqRaPebCnxChzlt7QQxQEpbewM1yYW+KCmDBEY7tFzWOLYorgBSX10HpSiJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752660866; c=relaxed/simple;
-	bh=m0GkQbvkvThbtMfGRX5p+R76HkF0hfObpDDkeKsIxnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F5BC0u/gyBk2f+PhR6Sw480oynkhHoIq1hooynEZmVnFagUBh9Hm03g3+QHKILe1onALbFHm6svK3UWFlKMKCYDhm9ZfhmPN9lse4MG5vOc0am+7G7VQkqZRWIE+NUaLNJSEHT40tzwMqz0oGLRNHsCqINe9kMJ52RV+gayAR2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hs7+/44P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0CD5C4CEF0;
-	Wed, 16 Jul 2025 10:14:24 +0000 (UTC)
+	s=arc-20240116; t=1752660890; c=relaxed/simple;
+	bh=ZAJ4hltXuvDrA1GGiGb4i5399iwHMLmhNwupb9CXkxs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Dw7F7Xd++jy7ITZQdyXmRkX6BNfv9A5welbk8ZFoZj+2oxewT7pSj05NzGQbxaumazr1du0kCpNEuAYPEVu2bwTX+HbyXpOvo0c4Vd0EvONXBA7uvRWddPemD/YhD8Fv84z67knfq7gWQETV3ygTckXPZipRimwgR9MlowSe2iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOKeeCU/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8949BC4CEF6;
+	Wed, 16 Jul 2025 10:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752660866;
-	bh=m0GkQbvkvThbtMfGRX5p+R76HkF0hfObpDDkeKsIxnM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hs7+/44PEz6dk8Eic0ZoXJRggzsw21dbl1C9hDgxc8AGypP6pBd6caO1VeojsxKFY
-	 vHPD56h2Wo7d0AWa0aEo2QORV80Ez2rDB51DMI6uP1gOmOsQ2m7PshZz/YMz1MIahl
-	 JdL9FqqdVqluJxAndBZ+uvoYUpeIrBsGqQzySv5NWIKNVlKK4tjM4u55RRuadw1guK
-	 t1jrhvPHmv0nllJTVNdiVwv1qx4recwdyu+7Q1hWKQF4RmxRPSoHRkSpg2frLdsOsN
-	 w39yFazzgJsSKTW3oD+iTwaACNHdahrezLnEP+KGRpFDiKUBA6dLgbg4wvm6sdP2Hb
-	 jclkCfRRM8Tcg==
-Message-ID: <a3240539-04b1-4141-95b8-fde193afa25d@kernel.org>
-Date: Wed, 16 Jul 2025 12:14:23 +0200
+	s=k20201202; t=1752660889;
+	bh=ZAJ4hltXuvDrA1GGiGb4i5399iwHMLmhNwupb9CXkxs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hOKeeCU/pjKMC2NPJSWQ8DxIWEIVjScFWz7ziwxLtCmiGmFGtOzcvx0qzFB0gHEwj
+	 y3OAaC7OkmqXklzm5qmGZyMddX5ZvHHv6x+F8EQa/5mf4t3Mz5v5IEQeyFH6uJt1ox
+	 8JIoXzdurcQ2DS5bSHmAiKnPPw2A5jNQca/KpbXj5/OACZlCbUj5ZZ5D78mG3bNOZA
+	 sWqPKHNfcwDb0aWX6xKZge46mh1CzDsLdG5AUcSzkBQQnYVSWO+9DZSBhXDlIqmFIC
+	 GJPGPGNigitGA8Jm2ggCFE+WNxwyG1EwuLnzjfEH4VMMs58WUl3jzo8TV/TU7g1oyn
+	 JYN71CvwLzciQ==
+From: Mark Brown <broonie@kernel.org>
+To: Support Opensource <support.opensource@diasemi.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Oder Chiou <oder_chiou@realtek.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>, 
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney@redhat.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+In-Reply-To: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
+References: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
+Subject: Re: [PATCH 0/6] sound: convert from clk round_rate() to
+ determine_rate()
+Message-Id: <175266088527.17737.6588270584150732640.b4-ty@kernel.org>
+Date: Wed, 16 Jul 2025 11:14:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] serial: 8250_ce4100: Fix CONFIG_SERIAL_8250=n
- build
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>
-References: <20250716094433.1611477-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250716094433.1611477-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-On 16. 07. 25, 11:44, Andy Shevchenko wrote:
-> On i386, when
+On Thu, 10 Jul 2025 11:51:06 -0400, Brian Masney wrote:
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops, so let's go ahead and convert the
+> drivers in the rtc subsystem using the Coccinelle semantic patch
+> posted below. I did a few minor cosmetic cleanups of the code in a
+> few cases.
 > 
->    CONFIG_X86_INTEL_CE=y
->    # CONFIG_SERIAL_8250 is not set
+> Coccinelle semantic patch:
 > 
-> will try to compile the driver and use the stub simultaneously.
-> This breaks the build. Fix it by making sure that the driver
-> compiles only when CONFIG_SERIAL_8250 is also enabled.
-> 
-> Fixes: acc902de05b2 ("serial: 8250: Move CE4100 quirks to a module under 8250 driver")
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Closes: https://lore.kernel.org/r/cdf4ee46-7bf8-4379-9245-fed9db72e7e8@infradead.org
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   drivers/tty/serial/8250/Makefile | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/tty/serial/8250/Makefile b/drivers/tty/serial/8250/Makefile
-> index e61dc3f4ca50..1d6633bbcd70 100644
-> --- a/drivers/tty/serial/8250/Makefile
-> +++ b/drivers/tty/serial/8250/Makefile
-> @@ -24,7 +24,9 @@ obj-$(CONFIG_SERIAL_8250_ASPEED_VUART)	+= 8250_aspeed_vuart.o
->   obj-$(CONFIG_SERIAL_8250_BCM2835AUX)	+= 8250_bcm2835aux.o
->   obj-$(CONFIG_SERIAL_8250_BCM7271)	+= 8250_bcm7271.o
->   obj-$(CONFIG_SERIAL_8250_BOCA)		+= 8250_boca.o
-> +ifneq ($(CONFIG_SERIAL_8250),)
+> [...]
 
-Why not ifdef CONFIG_SERIAL_8250 then?
+Applied to
 
-Also, what happens if 8250=m and X86_INTEL_CE=y?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
->   obj-$(CONFIG_X86_INTEL_CE)		+= 8250_ce4100.o
-> +endif
->   obj-$(CONFIG_SERIAL_8250_DFL)		+= 8250_dfl.o
->   obj-$(CONFIG_SERIAL_8250_DW)		+= 8250_dw.o
->   obj-$(CONFIG_SERIAL_8250_EM)		+= 8250_em.o
+Thanks!
 
+[1/6] sound: soc: codecs: da7219: convert from round_rate() to determine_rate()
+      commit: 8a4d73121d6bd9a70895e65d6d1014ed6b0a6c8e
+[2/6] sound: soc: codecs: rt5682: convert from round_rate() to determine_rate()
+      commit: 4e15a10f6fb254e33d73a6da3c4d00e3e64d2eb8
+[3/6] sound: soc: codecs: rt5682s: convert from round_rate() to determine_rate()
+      commit: a37d9c8aef1c78876eff0bc8980a889c083de89d
+[4/6] sound: soc: qcom: qdsp6: q6dsp-lpass-clocks: convert from round_rate() to determine_rate()
+      commit: fc62ed665eb2e8fb0f1e12ab9cdb578666704a76
+[5/6] sound: soc: stm: stm32_i2s: convert from round_rate() to determine_rate()
+      commit: afd529d740028a41fa750d4491b106cecbccba3e
+[6/6] sound: soc: stm: stm32_sai_sub: convert from round_rate() to determine_rate()
+      commit: d5f317fd5cd9dfdf5bbe11384001817760c12b75
 
--- 
-js
-suse labs
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
