@@ -1,496 +1,161 @@
-Return-Path: <linux-kernel+bounces-732772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9429B06BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:08:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37710B06BFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B903B34B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:07:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706D0189E3FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0957C288C00;
-	Wed, 16 Jul 2025 03:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB490288C29;
+	Wed, 16 Jul 2025 03:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="opXiIaSR"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f/Cm3yBO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B7828726D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C242797BD;
+	Wed, 16 Jul 2025 03:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752635178; cv=none; b=Gmq69lZzuP6MYf+qZL0aGU59z+83xFEzamPibq81lHjagti7XV7j51XNySNXz+6kwpXWK0+nX43VsjTpwRwH1DECUVxmhtVzcErWdLRZnZ7HAFx7Df45Hp5YYObHDmhljZgBxWJiwPqCZdcAC9r81LYsnbRrULTuIkZ1NFWHMzU=
+	t=1752635188; cv=none; b=kMQrb+JKpbL4aOJglROAkbeg4geLIp1RwfZSYHA3n0LW8EGCe49EwAqFDsZcd3XnQEHNhbSVeR+JxLl5XRChA2/HuNG2Ma4dRGGdKu15BocdrCon17oytWPemDergXwTTVnjzEtkL0aBNFxPAatuN87bMxRtk2H/WDqEii4NMvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752635178; c=relaxed/simple;
-	bh=oYvFfw2em77nggEm2xeU3D+z1Cfni8O5wEzbV1vruOY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=siukmmPI9q18GZl9hgOhU0hAadW2hdft6qJU2dbNA8mxibJeCF0zHzBAr8cvoePEgty0rkjREwICZaOl7qCPelew/C+Lp/C1jLfrdkXhvUUetZBwF6XBDlYW5yBVGGaA0jKig75keHHpiNXPIn45HJXstOvowCFWyI1e0+eydU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=opXiIaSR; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-235f6b829cfso44280255ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:06:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752635176; x=1753239976; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OPwtRwrvPyoO56Fp2A3+1i9CxPrsJGWcxqOdpZT86SM=;
-        b=opXiIaSRW9brSk09FHq99BHCJMwHw5D7ECD4RCSOnBv+sb6EICuGewCygsSdMPEdka
-         G27top+pfaSJ70a79koodCqr6Tu+XZC26zBRmYLD7XXcXdudp6CcWi2R2PTexVv0LTZR
-         iZuOdhiJq2HeJpvXYaWbzRuSNZCJuCnmeoeKtXeossrfOJDt18Y7hK4icVJbLheJj29o
-         nSdUAXE8Gr3JKBpGk1aT6TxMAhAzg7rGTdUMtKPSEj1riArFj8xt8+9118e+0b/7II0b
-         +yotOKNF4JBchb20hZAVbKXwH1SgCrtk0KiDAhF4fsbP1pCs2zcAJOMl9HJeULw2EKK4
-         ALgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752635176; x=1753239976;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OPwtRwrvPyoO56Fp2A3+1i9CxPrsJGWcxqOdpZT86SM=;
-        b=YDcPfS8mtJBv6jVwbCUGmZxXVaybbPZj2E+TcJYY1wHu4QKcfI3q+LqyZmquoDM+B6
-         WcVXzyhEEemea5zVgJIliQRDCzgAOu7WjZEAbqyZUTx0T6p1xiYNelGwaPQu+W202/O0
-         0BP+BB/jhqqosGA4vDp8ekcAF5RFun/h/AFclWChCzYOknpGu+0A/DzCuGvuzKrEWTas
-         URc6fBgZ/mjeg+7R0jElZP7ow0z0opYLnaDhoYLoCQlW242nBdgjbvkBsN5F2MlJ0ji1
-         qS3NAVLJR3i9T2ZOFTJnl2s3rCYI/WHJAgFo2419Li0O+c0dm2aBYMvlaW5YDaJhvgxU
-         2XaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZnYQzPw7cvQvsKfl+4Rxsh1UQwjEYwel/XV4ybaZLnIjplGIIDgbiyEfwZpj45hpleRnHlnFnkdWBo+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3VEE5SOlrxuVeunn6k019pYmDe1V0KkDX0CVulQ+bxzeksHu2
-	8AdHXFnH6QYTkFCChF3PbiYXaAxaKRVFwtUCWW3t3D2fNT/QKwYsUPHZ4y/PJ/2sXVMI4Qu8lX2
-	TZT9g6Q==
-X-Google-Smtp-Source: AGHT+IHyXJbEHIgp2+qVGKBtnHRMJI8uJh40Q+DDdPYoHZcLs9Jo1htz2teqIVJkmR2xgXKKUNDYwihzWlM=
-X-Received: from pjx14.prod.google.com ([2002:a17:90b:568e:b0:311:a4ee:7c3d])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1245:b0:224:10a2:cae7
- with SMTP id d9443c01a7336-23e25770df5mr17655605ad.40.1752635175619; Tue, 15
- Jul 2025 20:06:15 -0700 (PDT)
-Date: Tue, 15 Jul 2025 20:05:56 -0700
-In-Reply-To: <20250716030557.1547501-1-surenb@google.com>
+	s=arc-20240116; t=1752635188; c=relaxed/simple;
+	bh=dCp/UCpr4GavL9cgZvFa6YTICidgQ0aooqsKTZtkXtY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=VBgCvFtvfbRxr/rc58y6Yf+reaZ/T/VE/fT6mcNcaxW3sMPUW7HRcYXcaHNhUy59xB6wsQtfU6DxCguFQ/mAz5yWczKMk/BGZ6pQsh3Eb3Y2Xe84x+0ZwM+hCpskRLe3IPq1jfh5mgt6XfAAaXyh1ixFJ54MwUEScPV8TFrZd/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f/Cm3yBO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FGDU72008226;
+	Wed, 16 Jul 2025 03:06:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=YM4m4LvwJpEIvXehHnO+Z9
+	OI4GIz8l3zpiUHNdqZPDw=; b=f/Cm3yBOnsfQ6nHMxBkcHS7dIXey6ipeM8VvhD
+	Z7wACvSWrDQIYXTzoIic2mkFuK8SFbzqy5bRf3hDc34/w9IRyhOEta2Fi1cHTE30
+	bwGyhpLhwObsKIuxzkpElmuJe2LO7n49Sx6t2Hwau9eLy2hP8GNhY4FddCmDzg94
+	iS4bwn9M2eSEeSaJq4kNpb6bwddwQEkbPV90BzblV5ah8IQx8Hy+c6sOoFZt2aBU
+	JT/xGbx+H44eYK5m04BwdsZN0gbpvH4Y52y7DTCjH+aZa25ENoLwQVBtfvYeXXYm
+	YkOP2ic+5zOjOnxEX5J4O+oolQ4gzCaGpSO8o0ESNdR9vIhg==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5tfqd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 03:06:13 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56G36BsF018523;
+	Wed, 16 Jul 2025 03:06:11 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 47ugsmhveh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 03:06:11 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56G36BuD018518;
+	Wed, 16 Jul 2025 03:06:11 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 56G36ANd018476
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 03:06:11 +0000
+Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id CC98F2122F; Wed, 16 Jul 2025 11:06:09 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
+        Tingguo Cheng <quic_tingguoc@quicinc.com>
+Subject: [PATCH v1 1/1] arm64: dts: qcom: qcs615: Set LDO12A regulator to HPM to avoid boot hang
+Date: Wed, 16 Jul 2025 11:06:01 +0800
+Message-Id: <20250716030601.1705364-1-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250716030557.1547501-1-surenb@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250716030557.1547501-8-surenb@google.com>
-Subject: [PATCH v7 7/7] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
-	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
-	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=68771725 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=ae3z3FTj68mGPq7uMvUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 7NYoC0pDTzXfesvzBybFEgEklgYO2ZeW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDAyNyBTYWx0ZWRfX4X0cQHxWGj4q
+ XkHVzEkBuBdsXGMEXqODLnR88M2hLK0mJhINAZRZElv6t4uDforEm+VsJYzGlBLvUE/TJa/WWDX
+ hBKLk1NRS3bViNMvPHJ3XK9TGsxLQRjWHeSN6jhxznkGcA++ugD77/FDblJaFbkyRzSHmGTl90r
+ cRQIXWCmGFBfU9yGbMBPd3i4UNibvsYTWANWfPr6jjA6S4dEikj8SOKaNm7mp55NxFbLfzzXP9y
+ i8W2IWQr5XclWKUCNhk15iYMPCwRaDHX6xGu8sSuqmZvLrQmaNKKZRy1Ewam2DubGOOjmHAQkJE
+ GzzhULZka8tL60ubAKB6lAKhcs/BRV0oB1gGGDyhQxxOr2Fv+HxqzYlF4Qf7aEo6sfvo6HRnvrK
+ iU834tHm81vV03X6uPCBONwSNVnv96Jkbv6sazs0dz8U9oNsZlD8M056w1uvvQhxZuyvQgxn
+X-Proofpoint-ORIG-GUID: 7NYoC0pDTzXfesvzBybFEgEklgYO2ZeW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160027
 
-With maple_tree supporting vma tree traversal under RCU and per-vma
-locks, /proc/pid/maps can be read while holding individual vma locks
-instead of locking the entire address space.
-A completely lockless approach (walking vma tree under RCU) would be
-quite complex with the main issue being get_vma_name() using callbacks
-which might not work correctly with a stable vma copy, requiring
-original (unstable) vma - see special_mapping_name() for example.
+On certain platforms (e.g., QCS615), consumers of LDO12A—such as PCIe,
+UFS, and eMMC—may draw more than 10mA of current during boot. This can
+exceed the regulator's limit in Low Power Mode (LPM), triggering current
+limit protection and causing the system to hang.
 
-When per-vma lock acquisition fails, we take the mmap_lock for reading,
-lock the vma, release the mmap_lock and continue. This fallback to mmap
-read lock guarantees the reader to make forward progress even during
-lock contention. This will interfere with the writer but for a very
-short time while we are acquiring the per-vma lock and only when there
-was contention on the vma reader is interested in.
+To address this, there are two possible approaches:
+a) Set the regulator's initial mode to High Performance Mode (HPM) in
+   the device tree.
+b) Keep the default LPM setting and have each consumer driver explicitly
+   set its current load.
 
-We shouldn't see a repeated fallback to mmap read locks in practice, as
-this require a very unlikely series of lock contentions (for instance
-due to repeated vma split operations). However even if this did somehow
-happen, we would still progress.
+Since some regulators are shared among multiple consumers, and setting
+the current must be coordinated across all of them, we will initially
+adopt option a by setting the regulator to HPM. We can later migrate to
+option b when the timing is appropriate and all consumer drivers are
+ready.
 
-One case requiring special handling is when a vma changes between the
-time it was found and the time it got locked. A problematic case would
-be if a vma got shrunk so that its vm_start moved higher in the address
-space and a new vma was installed at the beginning:
-
-reader found:               |--------VMA A--------|
-VMA is modified:            |-VMA B-|----VMA A----|
-reader locks modified VMA A
-reader reports VMA A:       |  gap  |----VMA A----|
-
-This would result in reporting a gap in the address space that does not
-exist. To prevent this we retry the lookup after locking the vma, however
-we do that only when we identify a gap and detect that the address space
-was changed after we found the vma.
-
-This change is designed to reduce mmap_lock contention and prevent a
-process reading /proc/pid/maps files (often a low priority task, such
-as monitoring/data collection services) from blocking address space
-updates. Note that this change has a userspace visible disadvantage:
-it allows for sub-page data tearing as opposed to the previous mechanism
-where data tearing could happen only between pages of generated output
-data. Since current userspace considers data tearing between pages to be
-acceptable, we assume is will be able to handle sub-page data tearing
-as well.
-
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
 ---
- fs/proc/internal.h        |   5 ++
- fs/proc/task_mmu.c        | 145 +++++++++++++++++++++++++++++++++++---
- include/linux/mmap_lock.h |  11 +++
- mm/madvise.c              |   3 +-
- mm/mmap_lock.c            |  93 ++++++++++++++++++++++++
- 5 files changed, 246 insertions(+), 11 deletions(-)
+This patch follows a suggestion from Bjorn Andersson regarding USB
+regulator handling where each consumer is expected to explicitly set its
+current load.
+Link: https://lore.kernel.org/linux-arm-msm/37fc7aa6-23d2-4636-8e02-4957019121a3@quicinc.com/
+---
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 3d48ffe72583..7c235451c5ea 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -384,6 +384,11 @@ struct proc_maps_private {
- 	struct task_struct *task;
- 	struct mm_struct *mm;
- 	struct vma_iterator iter;
-+	loff_t last_pos;
-+#ifdef CONFIG_PER_VMA_LOCK
-+	bool mmap_locked;
-+	struct vm_area_struct *locked_vma;
-+#endif
- #ifdef CONFIG_NUMA
- 	struct mempolicy *task_mempolicy;
- #endif
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index b8bc06d05a72..b15d0ef29896 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -127,15 +127,134 @@ static void release_task_mempolicy(struct proc_maps_private *priv)
- }
- #endif
- 
--static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
--						loff_t *ppos)
-+#ifdef CONFIG_PER_VMA_LOCK
-+
-+static void unlock_vma(struct proc_maps_private *priv)
-+{
-+	if (priv->locked_vma) {
-+		vma_end_read(priv->locked_vma);
-+		priv->locked_vma = NULL;
-+	}
-+}
-+
-+static const struct seq_operations proc_pid_maps_op;
-+
-+static inline bool lock_vma_range(struct seq_file *m,
-+				  struct proc_maps_private *priv)
-+{
-+	/*
-+	 * smaps and numa_maps perform page table walk, therefore require
-+	 * mmap_lock but maps can be read with locking just the vma and
-+	 * walking the vma tree under rcu read protection.
-+	 */
-+	if (m->op != &proc_pid_maps_op) {
-+		if (mmap_read_lock_killable(priv->mm))
-+			return false;
-+
-+		priv->mmap_locked = true;
-+	} else {
-+		rcu_read_lock();
-+		priv->locked_vma = NULL;
-+		priv->mmap_locked = false;
-+	}
-+
-+	return true;
-+}
-+
-+static inline void unlock_vma_range(struct proc_maps_private *priv)
-+{
-+	if (priv->mmap_locked) {
-+		mmap_read_unlock(priv->mm);
-+	} else {
-+		unlock_vma(priv);
-+		rcu_read_unlock();
-+	}
-+}
-+
-+static struct vm_area_struct *get_next_vma(struct proc_maps_private *priv,
-+					   loff_t last_pos)
-+{
-+	struct vm_area_struct *vma;
-+
-+	if (priv->mmap_locked)
-+		return vma_next(&priv->iter);
-+
-+	unlock_vma(priv);
-+	vma = lock_next_vma(priv->mm, &priv->iter, last_pos);
-+	if (!IS_ERR_OR_NULL(vma))
-+		priv->locked_vma = vma;
-+
-+	return vma;
-+}
-+
-+static inline bool fallback_to_mmap_lock(struct proc_maps_private *priv,
-+					 loff_t pos)
- {
--	struct vm_area_struct *vma = vma_next(&priv->iter);
-+	if (priv->mmap_locked)
-+		return false;
-+
-+	rcu_read_unlock();
-+	mmap_read_lock(priv->mm);
-+	/* Reinitialize the iterator after taking mmap_lock */
-+	vma_iter_set(&priv->iter, pos);
-+	priv->mmap_locked = true;
- 
-+	return true;
-+}
-+
-+#else /* CONFIG_PER_VMA_LOCK */
-+
-+static inline bool lock_vma_range(struct seq_file *m,
-+				  struct proc_maps_private *priv)
-+{
-+	return mmap_read_lock_killable(priv->mm) == 0;
-+}
-+
-+static inline void unlock_vma_range(struct proc_maps_private *priv)
-+{
-+	mmap_read_unlock(priv->mm);
-+}
-+
-+static struct vm_area_struct *get_next_vma(struct proc_maps_private *priv,
-+					   loff_t last_pos)
-+{
-+	return vma_next(&priv->iter);
-+}
-+
-+static inline bool fallback_to_mmap_lock(struct proc_maps_private *priv,
-+					 loff_t pos)
-+{
-+	return false;
-+}
-+
-+#endif /* CONFIG_PER_VMA_LOCK */
-+
-+static struct vm_area_struct *proc_get_vma(struct seq_file *m, loff_t *ppos)
-+{
-+	struct proc_maps_private *priv = m->private;
-+	struct vm_area_struct *vma;
-+
-+retry:
-+	vma = get_next_vma(priv, *ppos);
-+	/* EINTR of EAGAIN is possible */
-+	if (IS_ERR(vma)) {
-+		if (PTR_ERR(vma) == -EAGAIN && fallback_to_mmap_lock(priv, *ppos))
-+			goto retry;
-+
-+		return vma;
-+	}
-+
-+	/* Store previous position to be able to restart if needed */
-+	priv->last_pos = *ppos;
- 	if (vma) {
--		*ppos = vma->vm_start;
-+		/*
-+		 * Track the end of the reported vma to ensure position changes
-+		 * even if previous vma was merged with the next vma and we
-+		 * found the extended vma with the same vm_start.
-+		 */
-+		*ppos = vma->vm_end;
- 	} else {
--		*ppos = -2;
-+		*ppos = -2; /* -2 indicates gate vma */
- 		vma = get_gate_vma(priv->mm);
- 	}
- 
-@@ -163,28 +282,34 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
- 		return NULL;
- 	}
- 
--	if (mmap_read_lock_killable(mm)) {
-+	if (!lock_vma_range(m, priv)) {
- 		mmput(mm);
- 		put_task_struct(priv->task);
- 		priv->task = NULL;
- 		return ERR_PTR(-EINTR);
- 	}
- 
-+	/*
-+	 * Reset current position if last_addr was set before
-+	 * and it's not a sentinel.
-+	 */
-+	if (last_addr > 0)
-+		*ppos = last_addr = priv->last_pos;
- 	vma_iter_init(&priv->iter, mm, (unsigned long)last_addr);
- 	hold_task_mempolicy(priv);
- 	if (last_addr == -2)
- 		return get_gate_vma(mm);
- 
--	return proc_get_vma(priv, ppos);
-+	return proc_get_vma(m, ppos);
- }
- 
- static void *m_next(struct seq_file *m, void *v, loff_t *ppos)
- {
- 	if (*ppos == -2) {
--		*ppos = -1;
-+		*ppos = -1; /* -1 indicates no more vmas */
- 		return NULL;
- 	}
--	return proc_get_vma(m->private, ppos);
-+	return proc_get_vma(m, ppos);
- }
- 
- static void m_stop(struct seq_file *m, void *v)
-@@ -196,7 +321,7 @@ static void m_stop(struct seq_file *m, void *v)
- 		return;
- 
- 	release_task_mempolicy(priv);
--	mmap_read_unlock(mm);
-+	unlock_vma_range(priv);
- 	mmput(mm);
- 	put_task_struct(priv->task);
- 	priv->task = NULL;
-diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
-index 5da384bd0a26..1f4f44951abe 100644
---- a/include/linux/mmap_lock.h
-+++ b/include/linux/mmap_lock.h
-@@ -309,6 +309,17 @@ void vma_mark_detached(struct vm_area_struct *vma);
- struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
- 					  unsigned long address);
- 
-+/*
-+ * Locks next vma pointed by the iterator. Confirms the locked vma has not
-+ * been modified and will retry under mmap_lock protection if modification
-+ * was detected. Should be called from read RCU section.
-+ * Returns either a valid locked VMA, NULL if no more VMAs or -EINTR if the
-+ * process was interrupted.
-+ */
-+struct vm_area_struct *lock_next_vma(struct mm_struct *mm,
-+				     struct vma_iterator *iter,
-+				     unsigned long address);
-+
- #else /* CONFIG_PER_VMA_LOCK */
- 
- static inline void mm_lock_seqcount_init(struct mm_struct *mm) {}
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 1c30031ab035..9de9b7c797c6 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -108,7 +108,8 @@ void anon_vma_name_free(struct kref *kref)
- 
- struct anon_vma_name *anon_vma_name(struct vm_area_struct *vma)
- {
--	mmap_assert_locked(vma->vm_mm);
-+	if (!rwsem_is_locked(&vma->vm_mm->mmap_lock))
-+		vma_assert_locked(vma);
- 
- 	return vma->anon_name;
- }
-diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-index 5f725cc67334..729fb7d0dd59 100644
---- a/mm/mmap_lock.c
-+++ b/mm/mmap_lock.c
-@@ -178,6 +178,99 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
- 	count_vm_vma_lock_event(VMA_LOCK_ABORT);
- 	return NULL;
- }
-+
-+static struct vm_area_struct *lock_next_vma_under_mmap_lock(struct mm_struct *mm,
-+							    struct vma_iterator *vmi,
-+							    unsigned long from_addr)
-+{
-+	struct vm_area_struct *vma;
-+	int ret;
-+
-+	ret = mmap_read_lock_killable(mm);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	/* Lookup the vma at the last position again under mmap_read_lock */
-+	vma_iter_set(vmi, from_addr);
-+	vma = vma_next(vmi);
-+	if (vma) {
-+		/* Very unlikely vma->vm_refcnt overflow case */
-+		if (unlikely(!vma_start_read_locked(vma)))
-+			vma = ERR_PTR(-EAGAIN);
-+	}
-+
-+	mmap_read_unlock(mm);
-+
-+	return vma;
-+}
-+
-+struct vm_area_struct *lock_next_vma(struct mm_struct *mm,
-+				     struct vma_iterator *vmi,
-+				     unsigned long from_addr)
-+{
-+	struct vm_area_struct *vma;
-+	unsigned int mm_wr_seq;
-+	bool mmap_unlocked;
-+
-+	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "no rcu read lock held");
-+retry:
-+	/* Start mmap_lock speculation in case we need to verify the vma later */
-+	mmap_unlocked = mmap_lock_speculate_try_begin(mm, &mm_wr_seq);
-+	vma = vma_next(vmi);
-+	if (!vma)
-+		return NULL;
-+
-+	vma = vma_start_read(mm, vma);
-+	if (IS_ERR_OR_NULL(vma)) {
-+		/*
-+		 * Retry immediately if the vma gets detached from under us.
-+		 * Infinite loop should not happen because the vma we find will
-+		 * have to be constantly knocked out from under us.
-+		 */
-+		if (PTR_ERR(vma) == -EAGAIN) {
-+			/* reset to search from the last address */
-+			vma_iter_set(vmi, from_addr);
-+			goto retry;
-+		}
-+
-+		goto fallback;
-+	}
-+
-+	/*
-+	 * Verify the vma we locked belongs to the same address space and it's
-+	 * not behind of the last search position.
-+	 */
-+	if (unlikely(vma->vm_mm != mm || from_addr >= vma->vm_end))
-+		goto fallback_unlock;
-+
-+	/*
-+	 * vma can be ahead of the last search position but we need to verify
-+	 * it was not shrunk after we found it and another vma has not been
-+	 * installed ahead of it. Otherwise we might observe a gap that should
-+	 * not be there.
-+	 */
-+	if (from_addr < vma->vm_start) {
-+		/* Verify only if the address space might have changed since vma lookup. */
-+		if (!mmap_unlocked || mmap_lock_speculate_retry(mm, mm_wr_seq)) {
-+			vma_iter_set(vmi, from_addr);
-+			if (vma != vma_next(vmi))
-+				goto fallback_unlock;
-+		}
-+	}
-+
-+	return vma;
-+
-+fallback_unlock:
-+	vma_end_read(vma);
-+fallback:
-+	rcu_read_unlock();
-+	vma = lock_next_vma_under_mmap_lock(mm, vmi, from_addr);
-+	rcu_read_lock();
-+	/* Reinitialize the iterator after re-entering rcu read section */
-+	vma_iter_set(vmi, IS_ERR_OR_NULL(vma) ? from_addr : vma->vm_end);
-+
-+	return vma;
-+}
- #endif /* CONFIG_PER_VMA_LOCK */
- 
- #ifdef CONFIG_LOCK_MM_AND_FIND_VMA
+diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+index a6652e4817d1..7639635c67c4 100644
+--- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
++++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+@@ -166,7 +166,7 @@ vreg_l12a: ldo12 {
+ 			regulator-name = "vreg_l12a";
+ 			regulator-min-microvolt = <1800000>;
+ 			regulator-max-microvolt = <1890000>;
+-			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 			regulator-allow-set-load;
+ 			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+ 						   RPMH_REGULATOR_MODE_HPM>;
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.34.1
 
 
