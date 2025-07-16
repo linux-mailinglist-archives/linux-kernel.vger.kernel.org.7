@@ -1,102 +1,88 @@
-Return-Path: <linux-kernel+bounces-732675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922B5B06A8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78EB2B06A98
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D906B1A64A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87BED3BA4EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DF51E379B;
-	Wed, 16 Jul 2025 00:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A34B139D0A;
+	Wed, 16 Jul 2025 00:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FG44x1IW"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XgwApAU2"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336D81DE4E5;
-	Wed, 16 Jul 2025 00:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD4C1172A;
+	Wed, 16 Jul 2025 00:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752625799; cv=none; b=g3jVjsJtFK7mIxJ0pkfRvBqSEg+gr/plEi9kVrqiGfLwl3REG3IdBjk9/6Dac6P3IscKWaR/LlO+uL4lON8n6mW1QxsMebmws65kkqawsozdTMbnK5kA9AkT/tykbk6DcwZkihAXrfsyV6eHClfZlxcs3mzANP4bVfo37s8FloA=
+	t=1752626339; cv=none; b=GbEa7pmV+wEyFvB78jtJ20QGU88XJGe4dJOzdE29Petsf/WMMtpJHaGtKUs4BzdiQ6PYiTHyEzHXkYDLI4rPia0DM44SUNXFLPoQkkQ8HjCA79Tx2Jx2gDrkZa67Fp8/zeeVMXvkK0KUnUB9m08wP5HPc8Dc7XE++VuLWVu6soc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752625799; c=relaxed/simple;
-	bh=ktfiTtm6vo8ruut5eN/JC6In89YghOq6C8sRNHSyqA8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bOUmXC/N2X+DB5R/Mfsc9CyUZoeSuTIdKG0RieR692Disml1VTmK9THOK458vwpUOBX7LLwGUUfNuMFiwfLce7wEbmvJFEfWGrE1URTPpnGPHQaCYjfxh8Cqewho8GbU8H8YgmW6WyqBMWZKWibCZNyAHcuEwibWawkh9yI9aOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FG44x1IW; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1752626339; c=relaxed/simple;
+	bh=p1GANUfXiRHg8VaqbQmPx3rBJfQZ32WzbGBU5vAfTmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FZpH3+sqD+2DC1MFFGuKTTgiIxOJ9s0gS9rbFm0kLOUReI+JhXBHTHuPB1+ZWjcUU2oXKTQLwdfTwRJjF9dFb485d1SVAmS1RYETmr/6awLMRyIYzZ75x9PpHk2Y/KkpitUQdtA2qlVEjDtDEMpUQqVQBILi1RuJGblmihH8U4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XgwApAU2; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74ad4533ac5so293748b3a.0;
-        Tue, 15 Jul 2025 17:29:57 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-31329098ae8so321733a91.1;
+        Tue, 15 Jul 2025 17:38:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752625797; x=1753230597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FmfwBEHD5XzZTAZF/ja/CxWUT4TXnd/eEvL+FaJnMbM=;
-        b=FG44x1IW1icB+TSHo0biNrRAODi2ubAz2TTNEm3QQa0z5g/fMRc6RN1Xe24lL10CmC
-         IZ/t9/fEtYgj1KzYPUjiRTXy6lYatL7voBDkbuyiMJ5YJQf6XgyA/d6cpHIJqWyzYdnI
-         R8D1q11yGBCoAZwNMGHdzxgXZwuTxiVsh+NMPZozoG5k5K2IwWx+fjNyy7h84O367mPB
-         OQsF86UksEPPY4Sh1P4ZSyLSwTVCbZ3jQS38T418T23LXvRv7e+UdME1n3tfvxLXGcdt
-         pzdEPrGzikzSGyiS9TLLTp/zMatUEZdr1QIuPF+G9jFQ0TQ2QqTES+4pNs8fEOntMVJT
-         LulQ==
+        d=gmail.com; s=20230601; t=1752626336; x=1753231136; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/8/SpxrVW39XGNacOTMEQXkBAgWgvCGxE1meHI4Z2rM=;
+        b=XgwApAU2m3Z30FOsyPu62x1T+WCKA4NVCaUGch17wQsd9sFiy63ZcfSfzayJj6VCsr
+         ESsX386bLiCfKF6z0SlvD7rwEjtVStAsk8vibOnOzzclasvqDRPbPeYlbyWRYmv+LEgW
+         Lk/dj29LH86TSQ/Aydnf5XnjCPImUWPRKQXM62cT7pfD9WCsBO9tgHh07y669CpzuWHM
+         8sxLmXaVxThtx8dZGf+8I4FD1GPz39H1GrOjeBCRKvD+HXROlzWv1kExFkVkYnzJeNey
+         8L1clDMqpp2cndrGBkFFHLSxi0KUpW2sH9tWDZKDnTmBh0wM9hyADRZUJ9WKh+e8+Sf1
+         AEjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752625797; x=1753230597;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FmfwBEHD5XzZTAZF/ja/CxWUT4TXnd/eEvL+FaJnMbM=;
-        b=a2HLccXMjN/7W/OrJJt+VlH3bZq2M9IbgVmt3FKgQcXMXTU19gmXpaVl+Pq7mF0OLd
-         hHi6TDiwk5qmcrta1jahinZUSvfOcg1Dp77pemJ/JUurFrjNlEbd7Pfa4/woaU/ky7Pg
-         5sajRGllxY3EOvWAEJpGNgaY20FNtTBKC8e0LnMaBneZCw8NTnCURYQFK8fATE3+lCsO
-         1NTGXLdKoDpSDHX+Lyd9ZHGQILDiDj5wsKoME9xvhZcHGRApP7gyM6EY/bX0z2I46Z2z
-         CTt8Tf2NbeIUr4bj8LU9Glrpmc0hTU8jIboHQ3a/LwmvMgX+TE4vQcCymLJG1hr8oEqF
-         9mBw==
-X-Forwarded-Encrypted: i=1; AJvYcCURNL0jG+McoAlRfdeL/CCOnelRhoPMyzousOvsuPUVL5HyvlQuAdpJMkO5IDVNM9C29UMCiN7oMIgH3GUu@vger.kernel.org, AJvYcCV6tD2FcmYykC5xqlDFYiyvDPzHCgpS9PMG4G88oDg/zvSVkbbFaca3L/tZ3HynWih70VYOkHhjFDom@vger.kernel.org, AJvYcCW7IFSAZVM0pOnd4O/jnfcrb0EgIo3cltTVD9ytspddsvuGJe+3N7jheSE1oftNxEVs948t5txF@vger.kernel.org
-X-Gm-Message-State: AOJu0YydBLlKIP+IYX2llgwWlwaQSms7ijySRjdOIBZ/NeljaSRDfIiu
-	n36a5h4uLJeDQ03/uOAb/GxX9W7Z1vqS7zD+Lk5beevriMYHm7UzAGQ+
-X-Gm-Gg: ASbGncvzANI5BS3abAJ8SfgE5xapBm7H/oEyX/pXtNV+vLZBY26OPkMlSpGM9UdrE4z
-	yl0cABDEb1jPUqf/SuwXZUVCQax8aehoE/hWss0211MwF81ZqWu5zHRBIDq1J7EgiNqFB9wg+ih
-	BdQkT0UWtTXIM115UACuheCsclgKrS08/zdpSemciAdV44JT7waWX2zzdRXwlpkmK2VCjDO25NR
-	ughQy5WBZILGwovgNZ0fotnGB0Gip8Ay+mWk/3SYEuf3gLJXzH4NDQBZTPLOhWXMxYuU3xbZcHX
-	g3CUCLLBQq9RLu+v4NN3gWdod2Ncit6FqB/h19D9S6BqCeoIXdneNXfnlx4aIzeS+/UVqkgr6qJ
-	bQXQW+4YLj4coaJCCnCFYEx4r1mjL0TpfFMR1jdAf
-X-Google-Smtp-Source: AGHT+IEId/lysdk98bS0p7XOPZ2jFxsP0iqPZvLbSv6tjaNWGHFpTCiVPIDehQITbNHvZNv2MwVx9g==
-X-Received: by 2002:a05:6a20:12cb:b0:225:ba92:447d with SMTP id adf61e73a8af0-237e19630efmr1979168637.9.1752625797409;
-        Tue, 15 Jul 2025 17:29:57 -0700 (PDT)
-Received: from localhost.localdomain ([207.34.150.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ebfd2d26asm11145720b3a.76.2025.07.15.17.29.56
+        d=1e100.net; s=20230601; t=1752626336; x=1753231136;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/8/SpxrVW39XGNacOTMEQXkBAgWgvCGxE1meHI4Z2rM=;
+        b=WlAer8DTZEA0HfgpxoD3qJwLI90mJ6GG7B1HjljUYj1kgozxT0VWDRWVz5qBBBqa0F
+         BHtC2/6U7vfhMkNC/znUeZ4hCJUOLQ7si1PP8aP0866toPJZ9lkhzkSw++v5vmlFAm/Z
+         +eVKlsZrI+n4aBuyP2oEjyEeLp4pR0wZidSw6LxNaqKRAKMK5+tRYJ5FUH3OLsu/Y8Q7
+         onOQjIkbA1F+C7fVtwHyyAIfF/Vx4/bA02kUnYhUAWNMvgj6SJAluAI+u+tDaEbzCUa/
+         rgKtepl6J6MzhQErnGSaFNMqIaje0emWwv0sOfxl6ePxMRa9z/47Kb69N7CIoqgHTdKR
+         V4IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4PTQz4re6+KCHt85QVkuzFUi22a9TK+Cm0lICF/+bv/L0plnBL8TqAxp91XqkiiiRA+Wrth/qbWK6m0r7@vger.kernel.org, AJvYcCWtB4mMQFmsa+7d2OXOVbQAK5h4qVxGP6NTuEy1MZqD1GzB9Dif/V//pDZoWmHgkdGHn0i27+goCag1PWutJAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJmeXQCXAoIsgXDDVls3NIu9uqbpZksUsoV3FemqF71eteEhn9
+	IuJ8gMNo++ktpRndIO0qtYQjF2lWNxy1AWzvWY7WLKcAZgG6Qw3PB60T
+X-Gm-Gg: ASbGncsGu2vz1Ts42Gio2BGN8LWgeKLyAs4EFkd2/n70NkcbyxoCfGeuey6pe1rpw66
+	NavFu+mNA11NmtZs+YoBR7JjSkhN70I8EGUDOoacU4mPfsQwBRjvwKBSG3iR43HG+5MPbYIWWJS
+	IuAXWTaoT5T2EhARWiU8bRYl/QGXVwNuV3YhVJ4lCRZGwNopKWzB9zGvu4UY9DIhkw5ioTAuBC/
+	e6u2in2V8s7b2/ahvWSURvcxRUy76wgtQSrtH6Y57RkZA/wGVdb3/1es4k9B4N7Y61vI+r1SEF0
+	yfP8WoYjagObF+LCWJlQyZNhd+wSMVn2CmLBMbUWSCdaNhmbNdYepTT0H+FnJyliSpMx3bAxG5S
+	6gqv7mi6qCxJNbK5dLP6L5n+jJ6K9g9h5ANkzWhYBC4d9hZQStMVx8ZNYhVVFdnbwg1iZSZoYeg
+	==
+X-Google-Smtp-Source: AGHT+IENCNp98Mpy7+gmQGhDA7h9LD4Q8l3ORuqgJnm7vOJ9eVbfN+YACysiTt2mt4ctA7gIDEoY+w==
+X-Received: by 2002:a17:90b:1b4d:b0:2ff:4a8d:74f9 with SMTP id 98e67ed59e1d1-31c9e73efe6mr1714893a91.10.1752626336111;
+        Tue, 15 Jul 2025 17:38:56 -0700 (PDT)
+Received: from ipravd-Nitro-AN515-55.hsd1.ca.comcast.net ([2601:646:a000:5fc0:cbd:b87b:a7dd:f79d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f29ddcbsm203912a91.36.2025.07.15.17.38.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 17:29:57 -0700 (PDT)
-From: Kyle Hendry <kylehendrydev@gmail.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: noltari@gmail.com,
-	jonas.gorski@gmail.com,
-	Kyle Hendry <kylehendrydev@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
+        Tue, 15 Jul 2025 17:38:55 -0700 (PDT)
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com,
+	linux-bluetooth@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 8/8] net: dsa: b53: mmap: Implement bcm63xx ephy power control
-Date: Tue, 15 Jul 2025 17:29:07 -0700
-Message-ID: <20250716002922.230807-9-kylehendrydev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250716002922.230807-1-kylehendrydev@gmail.com>
-References: <20250716002922.230807-1-kylehendrydev@gmail.com>
+Cc: Ivan Pravdin <ipravdin.official@gmail.com>,
+	syzbot+ac3c79181f6aecc5120c@syzkaller.appspotmail.com
+Subject: [PATCH v2] Bluetooth: coredump: Use tmp buffer with dev_coredumpv
+Date: Tue, 15 Jul 2025 20:37:26 -0400
+Message-ID: <20250716003726.124975-2-ipravdin.official@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,101 +91,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement the phy enable/disable calls for b53 mmap, and
-set the power down registers in the ephy control register
-appropriately.
+Create and use new vmalloc'ed buffer with dev_coredumpv. From
+dev_coredumpv documentation:
 
-Signed-off-by: Kyle Hendry <kylehendrydev@gmail.com>
+`This function takes ownership of the vmalloc'ed data and will free
+it when it is no longer used.`
+
+As hdev->dump is used after dev_coredumpv, create temporary buffer to
+hold hdev->dump data.
+
+Reported-by: syzbot+ac3c79181f6aecc5120c@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67eaa688.050a0220.1547ec.014a.GAE@google.com
+Fixes: b257e02ecc46 ("HCI: coredump: Log devcd dumps into the monitor")
+Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
 ---
- drivers/net/dsa/b53/b53_mmap.c | 50 ++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+v1 -> v2: Changed subject prefix to Bluetooth:
 
-diff --git a/drivers/net/dsa/b53/b53_mmap.c b/drivers/net/dsa/b53/b53_mmap.c
-index 8f5914e2a790..f06c3e0cc42a 100644
---- a/drivers/net/dsa/b53/b53_mmap.c
-+++ b/drivers/net/dsa/b53/b53_mmap.c
-@@ -24,9 +24,12 @@
- #include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/b53.h>
-+#include <linux/regmap.h>
+ net/bluetooth/coredump.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/net/bluetooth/coredump.c b/net/bluetooth/coredump.c
+index 819eacb38762..1232c9a94f95 100644
+--- a/net/bluetooth/coredump.c
++++ b/net/bluetooth/coredump.c
+@@ -243,6 +243,7 @@ static void hci_devcd_handle_pkt_pattern(struct hci_dev *hdev,
+ static void hci_devcd_dump(struct hci_dev *hdev)
+ {
+ 	struct sk_buff *skb;
++	char *coredump;
+ 	u32 size;
  
- #include "b53_priv.h"
+ 	bt_dev_dbg(hdev, "state %d", hdev->dump.state);
+@@ -250,7 +251,11 @@ static void hci_devcd_dump(struct hci_dev *hdev)
+ 	size = hdev->dump.tail - hdev->dump.head;
  
-+#define BCM63XX_EPHY_REG 0x3C
-+
- struct b53_phy_info {
- 	u32 ephy_enable_mask;
- 	u32 ephy_port_mask;
-@@ -38,6 +41,7 @@ struct b53_mmap_priv {
- 	void __iomem *regs;
- 	struct regmap *gpio_ctrl;
- 	const struct b53_phy_info *phy_info;
-+	u32 phys_enabled;
- };
- 
- static const u32 bcm6318_ephy_offsets[] = {4, 5, 6, 7};
-@@ -266,6 +270,50 @@ static int b53_mmap_phy_write16(struct b53_device *dev, int addr, int reg,
- 	return -EIO;
- }
- 
-+static int bcm63xx_ephy_set(struct b53_device *dev, int port, bool enable)
-+{
-+	struct b53_mmap_priv *priv = dev->priv;
-+	const struct b53_phy_info *info = priv->phy_info;
-+	struct regmap *gpio_ctrl = priv->gpio_ctrl;
-+	u32 mask, val;
-+
-+	if (enable) {
-+		mask = (info->ephy_enable_mask << info->ephy_offset[port])
-+				| BIT(info->ephy_bias_bit);
-+		val = 0;
-+	} else {
-+		mask = (info->ephy_enable_mask << info->ephy_offset[port]);
-+		if (!((priv->phys_enabled & ~BIT(port)) & info->ephy_port_mask))
-+			mask |= BIT(info->ephy_bias_bit);
-+		val = mask;
+ 	/* Emit a devcoredump with the available data */
+-	dev_coredumpv(&hdev->dev, hdev->dump.head, size, GFP_KERNEL);
++	coredump = vmalloc(size);
++	if (coredump) {
++		memcpy(coredump, hdev->dump.head, size);
++		dev_coredumpv(&hdev->dev, coredump, size, GFP_KERNEL);
 +	}
-+	return regmap_update_bits(gpio_ctrl, BCM63XX_EPHY_REG, mask, val);
-+}
-+
-+static void b53_mmap_phy_enable(struct b53_device *dev, int port)
-+{
-+	struct b53_mmap_priv *priv = dev->priv;
-+	int ret = 0;
-+
-+	if (priv->phy_info && (BIT(port) & priv->phy_info->ephy_port_mask))
-+		ret = bcm63xx_ephy_set(dev, port, true);
-+
-+	if (!ret)
-+		priv->phys_enabled |= BIT(port);
-+}
-+
-+static void b53_mmap_phy_disable(struct b53_device *dev, int port)
-+{
-+	struct b53_mmap_priv *priv = dev->priv;
-+	int ret = 0;
-+
-+	if (priv->phy_info && (BIT(port) & priv->phy_info->ephy_port_mask))
-+		ret = bcm63xx_ephy_set(dev, port, false);
-+
-+	if (!ret)
-+		priv->phys_enabled &= ~BIT(port);
-+}
-+
- static const struct b53_io_ops b53_mmap_ops = {
- 	.read8 = b53_mmap_read8,
- 	.read16 = b53_mmap_read16,
-@@ -279,6 +327,8 @@ static const struct b53_io_ops b53_mmap_ops = {
- 	.write64 = b53_mmap_write64,
- 	.phy_read16 = b53_mmap_phy_read16,
- 	.phy_write16 = b53_mmap_phy_write16,
-+	.phy_enable = b53_mmap_phy_enable,
-+	.phy_disable = b53_mmap_phy_disable,
- };
  
- static int b53_mmap_probe_of(struct platform_device *pdev,
+ 	/* Send a copy to monitor as a diagnostic packet */
+ 	skb = bt_skb_alloc(size, GFP_ATOMIC);
 -- 
-2.43.0
+2.45.2
 
 
