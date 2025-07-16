@@ -1,186 +1,208 @@
-Return-Path: <linux-kernel+bounces-733267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC25B07265
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:00:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F98B07269
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6763916A6FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E175B5039C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E3254F81;
-	Wed, 16 Jul 2025 10:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B16E2F2708;
+	Wed, 16 Jul 2025 10:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D6qUjVCW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="J+rSTzgs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64379239086
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E3C1E1A17;
+	Wed, 16 Jul 2025 10:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660032; cv=none; b=B4eVQLsDS6OwT3pfsy/rWXRdTXCCm+KecZfZd5gWx8aYih48TJ4d3tQvTJ68YWDk29Asi66QuiKkt69gH6+Gi1SPbu3rdh0WiKkQNQb/kIcQY4tjlOQAH/NR9ESAFjU3grC9reoqum7y2u+EufMUSZIUcMgm4OU5/Mu6Wq5XmRk=
+	t=1752660053; cv=none; b=n1sDab8EprFy6KUyLDtAhSqV5APivhZsWaVW4QHzs+B3cTLc0yKfrt2TPMV9d04ysNktsGv5+Mo0/IGALekRbXGwGPUMsOP6HQWua77NJ2tc3Mj6Vurg7BCA4Q+Ws3C+zW7VimuC+z8VCbb7Mek6XLH6JWjSk+WjpGow495v0Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752660032; c=relaxed/simple;
-	bh=GHlX23A7Hvn+p5ZNPSjNs+wmfu94EHZOaRggXGBJYNU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=r7x/URMx/jUX2jm3JQ4hp4BN/gnDsTrmuIwWasM90jih20hNZm+9MKzhG4btssNohk162hzTVAAQUDGIhbjmfhiN4kdCg8qvkHGKIunZ41tIbsrSXaVbyq2k4+oW3Wa+lBEA85DFc4B2RuqmaI9zhZBOl1VwJgafgGUxloKEoGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D6qUjVCW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752660029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=c0eHc6+5H9SgZz4Xcjm6r2qNKf2VLwrklymOhya5fbw=;
-	b=D6qUjVCWSM0XVI+D6HHqzbtE/WUrKSSrdGx0xzQjK3pp83oZU45N9tIon7BGKBNnBHx1jk
-	jBMujGufD0Eu2I4ZU6eVJ8LUiq6jaK+jRUFJ0L/79ttVPpAZ/rbmSfMzQc3mzsLdTHR/UI
-	1fl+uxDEu/NDazeOeKUI6Z5JSKWSDXc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-298-VlcgV_mfPkO01k23_4LzkQ-1; Wed, 16 Jul 2025 06:00:28 -0400
-X-MC-Unique: VlcgV_mfPkO01k23_4LzkQ-1
-X-Mimecast-MFC-AGG-ID: VlcgV_mfPkO01k23_4LzkQ_1752660027
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso4961055e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:00:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752660027; x=1753264827;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c0eHc6+5H9SgZz4Xcjm6r2qNKf2VLwrklymOhya5fbw=;
-        b=oFBZf2jm4rfqkif+ZAO48NhccdaL9XU94wYkNLj34awM9RtXmr/ISTyEMcKG2Kyjug
-         C+zlo8mgyPRIoGJRqKqow2gnBqjh5Kd6f+P6klo6iooorLGJ/kTeqRJboAy+6ViLsUcf
-         N10FU78q7spFKTQ2c7tn7LXNtQ4cC4SyXXWso4uCwTzGnhB7akMWhGjI/xbIjhaF7E1k
-         aw++1P5xTbyZOhSyazG/NTE2iuHykvIpDLN0TO4x+z3Qubp+78VS+sZQwOJqeNhtJMOr
-         rwsiKgN2vAI7mtBvv1e6BuKRlN9GLqCOxUm+1IIY2VpxXspfennqnKy/FRxMyE3c8ma+
-         OIgw==
-X-Gm-Message-State: AOJu0Yyt8o0LgVs26uVOej8oP9aAfQMAvhFirbjQhEAO5LUY1vWiLklo
-	VpY68z/Z9eS+zpOkVyIKVSYEIc2JXv+6ULNFSXkkVZk6mdJBY/yqkjP83Wh75o74TjN1xFgmZ1+
-	9Al+26cReKMG8G7emthbXWvH9I0n3cmFqQafOvFFfPA1gjgiKRUX26fgFhjhkVOOe8g==
-X-Gm-Gg: ASbGncuXyMraiVlLdTl2QTqq810MMEFNO+N9NlL1ldWq8rZsbaPBI6EDPNZHoYCMnjo
-	AjmQvuToohnj9vTAF8EggNZQs7xWlvhhWEDa5HYEJU8J8AymcSdefPnSNuea9i/Bl1zGBz0LDrH
-	m87v8vCN+t0Zf9c8AsrWy8fkIp6nQR7P8+zX+zGsIWXWpjybP5iz89t2v78pYN7M/Bf6eFGtLaz
-	IRWsC05y0Z1P8kG8HjPYOS4xTDRZxWTBc+fhVkQkKBFLfIjGnZseUQDONJ97BbHzjyzMYegiobm
-	qpqerscW5zP/ODxqwvDnfb+gXnhbSnz8YmMzv+xMtFTkWdU342n/fG4B8EiyAm/1BQ==
-X-Received: by 2002:a05:600c:2ad3:b0:456:15be:d113 with SMTP id 5b1f17b1804b1-45625e12572mr49088475e9.1.1752660026631;
-        Wed, 16 Jul 2025 03:00:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIZgKfShCpN0AhUR7T0WU+hhCNt02vphv8/fP10yQjGMUW3uuMd1ZkzEMXXpDi1pz7gSrpXg==
-X-Received: by 2002:a05:600c:2ad3:b0:456:15be:d113 with SMTP id 5b1f17b1804b1-45625e12572mr49088185e9.1.1752660026195;
-        Wed, 16 Jul 2025 03:00:26 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc21e7sm17399303f8f.36.2025.07.16.03.00.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 03:00:25 -0700 (PDT)
-Message-ID: <ecc8217af9ad8142abb73d6ef2fe9bdac9df6c95.camel@redhat.com>
-Subject: Re: [PATCH v3 17/17] rv: Add opid per-cpu monitor
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Tomas Glozar
-	 <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark Williams
-	 <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Date: Wed, 16 Jul 2025 12:00:24 +0200
-In-Reply-To: <20250716093825.rWXnBtv5@linutronix.de>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
-	 <20250715071434.22508-18-gmonaco@redhat.com>
-	 <20250716093825.rWXnBtv5@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1752660053; c=relaxed/simple;
+	bh=G6lcWY0d1p8bWzM4tmGlqrNUUn72x9lcJMxsGMphNFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SaBFQZZYCyY7ZcqUJYWmT4QtkX9qe+5dYsy61cQBuM7BKbbG4zb7AbsIXTyaGzSkv4ydm8CJcNTeOjsVMpjf2ZrZQiUEbq7V4bA7KzUcM8MaBkev4/jKpHV5adcVlWBZiEwfzZARiz9l2o5OMmLMHcs+6wHXas972kf4F0IhtNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=J+rSTzgs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E50DC4CEF0;
+	Wed, 16 Jul 2025 10:00:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752660052;
+	bh=G6lcWY0d1p8bWzM4tmGlqrNUUn72x9lcJMxsGMphNFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J+rSTzgs+wfKgcT66JRwYRyRdfyybjnYbuQAo18wRb3Sp8o6yMPoDzZRzrOn0JBoH
+	 SNExiblRDRK8U9bMhfqj4YWXVK/7GpxMbtA5C5hr4ijKxpS8Uha4mF/YhPq6r8C0bP
+	 VRRCoRDMRyKeaHpsL2ydtTlFkxngdpFbA2FjAW3I=
+Date: Wed, 16 Jul 2025 12:00:50 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Johan Hovold <johan@kernel.org>, Corentin Labbe <clabbe@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	david@ixit.cz
+Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
+Message-ID: <2025071639-annotate-huddle-0e11@gregkh>
+References: <20250204135842.3703751-1-clabbe@baylibre.com>
+ <20250204135842.3703751-2-clabbe@baylibre.com>
+ <aCHHfY2FkVW2j0ML@hovoldconsulting.com>
+ <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
+ <2025071631-thesaurus-blissful-58f3@gregkh>
+ <CAFBinCAMGR2f4M1ARKytOwG1z9ORcD-OMNLH2FqZHb+tOm0tEQ@mail.gmail.com>
+ <2025071613-ethics-component-e56d@gregkh>
+ <CAFBinCA8cMP3o483c40RjHkMAEt4RCmL6uCTTk5DPmrNVN6_NQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFBinCA8cMP3o483c40RjHkMAEt4RCmL6uCTTk5DPmrNVN6_NQ@mail.gmail.com>
+
+On Wed, Jul 16, 2025 at 11:31:49AM +0200, Martin Blumenstingl wrote:
+> On Wed, Jul 16, 2025 at 10:57 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, Jul 16, 2025 at 10:28:22AM +0200, Martin Blumenstingl wrote:
+> > > On Wed, Jul 16, 2025 at 9:44 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Tue, Jul 15, 2025 at 11:20:33PM +0200, Martin Blumenstingl wrote:
+> > > > > Hi Johan,
+> > > > >
+> > > > > I'm excluding comments that are clear to me in this reply.
+> > > > >
+> > > > > On Mon, May 12, 2025 at 12:03 PM Johan Hovold <johan@kernel.org> wrote:
+> > > > > [...]
+> > > > > > > +     if (ret) {
+> > > > > > > +             dev_err(&port->serial->dev->dev,
+> > > > > > > +                     "Failed to configure UART_MCR, err=%d\n", ret);
+> > > > > > > +             return ret;
+> > > > > > > +     }
+> > > > > >
+> > > > > > The read urbs should be submitted at first open and stopped at last
+> > > > > > close to avoid wasting resources when no one is using the device.
+> > > > > >
+> > > > > > I know we have a few drivers that do not do this currently, but it
+> > > > > > shouldn't be that hard to get this right from the start.
+> > > > > If you're aware of an easy approach or you can recommend an existing
+> > > > > driver that implements the desired behavior then please let me know.
+> > > > >
+> > > > > The speciality about ch348 is that all ports share the RX/TX URBs.
+> > > > > My current idea is to implement this using a ref count (for the number
+> > > > > of open ports) and mutex for locking.
+> > > >
+> > > > How do you know if a port is "open" or not and keep track of them all?
+> > > > Trying to manage that is a pain and a refcount shouldn't need locking if
+> > > > you use the proper refcount_t type in a sane way.
+> > > >
+> > > > Try to keep it simple please.
+> > > I'm currently refcounting from usb_serial_driver.{open,close}
+> > > The additional challenge is that I need to open two URBs at the right
+> > > time to "avoid wasting resources". At least in my head I can't make it
+> > > work without an additional lock.
+> >
+> > Urbs really aren't all that large of a "resource", so don't worry about
+> > that.  Get it working properly first before attempting to care about
+> > small buffers like this :)
+> I understood that this is a requirement from Johan, he wrote (on May
+> 12th in this thread):
+> > The read urbs should be submitted at first open and stopped at last
+> > close to avoid wasting resources when no one is using the device.
+> >
+> > I know we have a few drivers that do not do this currently, but it
+> > shouldn't be that hard to get this right from the start.
+> 
+> The original approach was to submit these URBs in .attach (e.g. during
+> probe time) and kill them in .detach
+
+Ok, that's fine, but as you are multiplexing stuff, so reference counts
+are going to get complex.  I'll defer to Johan, but this seems messy.
+
+> > If you are sharing endpoints, try looking at one of the other usb-serial
+> > drivers that do this today, like io_edgeport.c, that has had shared
+> > endpoints for 25 years, it's not a new thing :)
+> My understanding is that io_edgeport is submits the URBs that are
+> shared across ports outside of .open/.close.
+
+Yes it does.
+
+sorry about that, I misunderstood Johan's review comments here.  I'll
+defer to him.
 
 
+> So this will be a question for Johan: am I still good with the
+> original approach - or can you convince Greg that a different approach
+> is better?
+> 
+> [...]
+> > > > > > With this implementation writing data continuously to one port will
+> > > > > > starve the others.
+> > > > > >
+> > > > > > The vendor implementation appears to write to more than one port in
+> > > > > > parallel and track THRE per port which would avoid the starvation issue
+> > > > > > and should also be much more efficient.
+> > > > > >
+> > > > > > Just track THRE per port and only submit the write urb when it the
+> > > > > > transmitter is empty or when it becomes empty.
+> > > > > I'm trying as you suggest:
+> > > > > - submit the URB synchronously for port N
+> > > > > - submit the URB synchronously for port N + 1
+> > > > > - ...
+> > > > >
+> > > > > This seems to work (using usb_bulk_msg). What doesn't work is
+> > > > > submitting URBs in parallel (this is what the vendor driver prevents
+> > > > > as well).
+> > > >
+> > > > Why would submitting urbs in parallel not work?  Is the device somehow
+> > > > broken and can't accept multiple requests at the same time?
+> > > I don't know the reason behind this.
+> > > These are requests to the same bulk out endpoint. When submitting
+> > > multiple serial TX requests at the same time then some of the data is
+> > > lost / corrupted.
+> > >
+> > > The vendor driver basically does this in their write function (very
+> > > much simplified, see [0] for their original code):
+> > >   spin_lock_irqsave(&ch9344->write_lock, flags);
+> > >   usb_submit_urb(wb->urb, GFP_ATOMIC); /* part of ch9344_start_wb */
+> > >   spin_unlock_irqrestore(&ch9344->write_lock, flags);
+> >
+> > that's crazy, why the timeout logic in there?  This is a write function,
+> > submit the data to the device and get out of the way, that's all that
+> > should be needed here.
+> >From what I've seen during my tests:
+> - we fire the URB with TX data
+> - the device receives it and puts the data into a per-port TX buffer
+> - it indicates that it's done processing the URB
+> - the TX buffer is then written out (the host can move on do something else)
+> - the device signals to the host (via the STATUS endpoint) that it has
+> written out all data from the TX buffer
+> 
+> With that timeout logic my understanding is that they're trying to
+> catch cases where the last step (STATUS signal) did not work (for
+> whatever reason) so that the host can continue sending more data.
 
-On Wed, 2025-07-16 at 11:38 +0200, Nam Cao wrote:
-> On Tue, Jul 15, 2025 at 09:14:34AM +0200, Gabriele Monaco wrote:
-> > diff --git a/kernel/trace/rv/monitors/nrp/Kconfig
-> > b/kernel/trace/rv/monitors/nrp/Kconfig
-> > index f37ff70e8d204..a175c430d351f 100644
-> > --- a/kernel/trace/rv/monitors/nrp/Kconfig
-> > +++ b/kernel/trace/rv/monitors/nrp/Kconfig
-> > @@ -3,7 +3,7 @@
-> > =C2=A0config RV_MON_NRP
-> > =C2=A0	depends on RV
-> > =C2=A0	depends on RV_MON_SCHED
-> > -	default y if !ARCH_ARM64
-> > +	default y if !ARM64
->=20
-> I think this is not supposed to be in this patch? It has nothing to
-> do with
-> the opid monitor.
+Why can't the host just keep sending data?  Only "stall" if you don't
+have an active urb to send?  Or just keep creating new urbs for every
+send transaction and then destroying them when finished?  That way the
+data gets queued up in the kernel (have a max able to be allocated so
+you don't create a DoS accidentally), and you should be ok.  I think
+some of the other drivers do this, or used to in the past.
 
-Damn, fixed up the wrong patch, will move it to the other one..
+> > > If you have any suggestions: please tell me - I'm happy to try them out!
+> >
+> > Try keeping it simple first, the vendor driver looks like it was written
+> > by someone who was paid per line of code :)
+> The original approach when upstreaming the ch348 driver was just to
+> submit TX URBs (without any custom code, just letting usb-serial core
+> handle it).
 
->=20
-> > =C2=A0	select DA_MON_EVENTS_ID
-> > =C2=A0	bool "nrp monitor"
-> > =C2=A0	help
-> > diff --git a/kernel/trace/rv/monitors/opid/Kconfig
-> > b/kernel/trace/rv/monitors/opid/Kconfig
-> > new file mode 100644
-> > index 0000000000000..23b43d2704153
-> > --- /dev/null
-> > +++ b/kernel/trace/rv/monitors/opid/Kconfig
-> > @@ -0,0 +1,17 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +#
-> > +config RV_MON_OPID
-> > +	depends on RV
-> > +	depends on TRACE_IRQFLAGS
-> > +	depends on TRACE_PREEMPT_TOGGLE
-> > +	depends on RV_MON_SCHED
-> > +	default y if PREEMPT_RT
-> > +	select DA_MON_EVENTS_IMPLICIT
->=20
-> Shouldn't we add "depends on PREEMPT_RT"? I tried this monitor on
-> non-RT x86 kernel, and got some errors. That could confuse people.
+Ah, and what happened with that version?  Did it not work?
 
-Mmh, my rationale was that it reports errors on non PREEMPT_RT, but it
-does build. If someone wants to try it out there, they are free to do
-it. We are just not supporting it officially.
-The monitor might start working in the future also on non RT kernels,
-or at least if someone wants to try whether it's the case, they can do
-it easily.
+thanks,
 
-Same idea for the ARM64 thing above.
-
-But I should definitely mention this explicitly in the Kconfig entry
-not to confuse people..
-
->=20
-> And the monitor reports some errors on riscv64 with PREEMPT_RT=3Dy:
->=20
-> root@riscv:~/rv-tests# uname -a
-> Linux riscv 6.16.0-rc6-00054-g7590637d9ca2 #87 SMP PREEMPT_RT Wed Jul
-> 16 11:26:00 CEST 2025 riscv64 GNU/Linux
-> root@riscv:~/rv-tests# stress-ng --cpu-sched -1
-> stress-ng: info:=C2=A0 [452] defaulting to a 1 day run per stressor
-> stress-ng: info:=C2=A0 [452] dispatching hogs: 4 cpu-sched
-> [=C2=A0 614.390462] rv: monitor opid does not allow event irq_entry on
-> state in_irq
->=20
-
-Mmh riscv.. I haven't tested it there, guess I need to start keeping a
-VM somewhere.
-
-Thanks,
-Gabriele
-
+greg k-h
 
