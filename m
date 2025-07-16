@@ -1,116 +1,170 @@
-Return-Path: <linux-kernel+bounces-733886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34674B07A3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:48:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98309B07A39
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1701A1894415
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB6C18927E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E43E2F3C13;
-	Wed, 16 Jul 2025 15:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F02273D9E;
+	Wed, 16 Jul 2025 15:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AM+mZd0a"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lSiLDVk+"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2EE23496F;
-	Wed, 16 Jul 2025 15:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48181E9B04;
+	Wed, 16 Jul 2025 15:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680879; cv=none; b=ToZhObZUVfcrbF79MNZpPjamvSYxcCrq7niV8GfKyTtguylUyz6sCKqDxHB5Qgs4cu6C/tbzvg9r7mM/ZXSD+/MK88iAkBXr7DneXE0p9dWifDwTBh9tpz4UZtRnfUTyXJEdiCu06gtTWH5byurdOvGnrMdht9vVxzWQwBIVyLc=
+	t=1752680840; cv=none; b=E1oxTJ2py98tD2lxRNDkxRfCdJuH8WXecp5+b+dGBOA4cd5sXXxLlqsOtA5QXJcvI2PRw3P079q1Tlyi+b7Pa5Jsi3jaAjGFRSN/iFJBN3nEW3IWEzTZw87wjmCJulnbS8u4/con+VjRdvYjRBMmJ5I36vIeLjihEDNtrLGk4Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680879; c=relaxed/simple;
-	bh=Ow9KW3YcVSr0/nPhBv9tKtnie2AY1M86cNe3h2YVq1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MIQBpseoyunesXaJPqtQP2WS2nY0iK0QfUEO0dSKRAVw2mXW/k1zq5A7eEI4nT34GvNJzaKwPGG52Hkll2ON1FQd/F4cY11B519HjSSKsOk2ZlKlbKcUhSh56/DPAc/kATxK+f+6qWTjD/e4uYTODha3Gc8izLB0YsRlPuJ7CJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AM+mZd0a; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 26A9544459;
-	Wed, 16 Jul 2025 15:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752680870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RLD1DeoM4SdeI+gMUKY34n91PgjQmdYcZNQgzI0w0C0=;
-	b=AM+mZd0aeFQmPJRgEKM6bcmPJ9hKMGRsBMJDZR0VIUE/nWg33d8pTzSzL9b/JQjWe6+Qt/
-	97mP7M7Pv+4iB79TQN30FvYCqZLyz/aluoSd52J5787agkBN0szBSLd+wuwyhcf0+Rz4Ho
-	YvCx8QzoyLqlveBc5QLDcbpuy4ixUFYKye1Ynf69x8EDlS0LiLba34oqucOX4Xgt2l3FPR
-	+nRNpU/pxsaiKxj5Mr8gL6Dr0IHqJGM6s3QzOKk7svUNzw2/CtDSsoX1qAG7xEKLgFon4t
-	oYs/D1SPqOljt7szAO/vIE35FDAWvaI26ijIsyfOUim4SfOSrVAzHQGyWtoJgQ==
-From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+	s=arc-20240116; t=1752680840; c=relaxed/simple;
+	bh=+ej0Li+ybEpVi6WOJdWC/IeM2Ed57TAaTMEZeBQuxR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kVAdqQGbjmthHV8iKJQKcn4xDlUEpQC1tfC4kfdDB3MV/C+MRQYoCCybU76qSqXuz4WN9L/h2xe3VX1Z5I8+kk781Q1wWlTKiny6FHaXw80d5e0yGAgYpnhX0P93LDo1MU6PTyX7vlDRAaDCyNWr/BquubB4NHWCt8Bc2ORGNVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lSiLDVk+; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=kQp9niGFdxjjTm3CxvjlNv+zsOKxSnjexpdcO8s6UCA=; b=lSiLDVk+A2rodzgAJSBwZkDIax
+	cpTA189O619kuvIcPIMNDKYurkFYTgEMtRkk1wVJWSnI0Mxdyj5kYPPRn4m90DaCFh74mL0qb+x+d
+	ZyGOarXkiCtRIQrFsZro4gGNjbfuywjGOCen7MKmkdaqj8mRBqZf+mRnCJUceth16NbTt4n/MdAYx
+	BH4I0x6yPLtHnj/O+v3aoEUKnvOhnGb45HOjttSzrIe0aWXqKMH2d34RJS8ozscfTO8cx0KJKeyyD
+	KvRSi7RBgzTYzgIXQnFX9/vMoNOylJzUN6nSF7gIcIIriVqlAuY/T0IMrLn5ZjitagsC6d61BdiR9
+	92i8HEVw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uc4Li-0000000A7hf-2FPF;
+	Wed, 16 Jul 2025 15:47:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1BB943000DA; Wed, 16 Jul 2025 17:47:14 +0200 (CEST)
 Date: Wed, 16 Jul 2025 17:47:14 +0200
-Subject: [PATCH v3 3/6] mmc: mmc_test: use mmc_card cmd23 helpers
+From: Peter Zijlstra <peterz@infradead.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v3 12/17] sched: Adapt sched tracepoints for RV task model
+Message-ID: <20250716154714.GZ1613200@noisy.programming.kicks-ass.net>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+ <20250715071434.22508-13-gmonaco@redhat.com>
+ <20250716123832.GW1613200@noisy.programming.kicks-ass.net>
+ <cbb840b204f7de7e6304bc811e9c629eb0f77486.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250716-mobileye-emmc-for-upstream-4-v3-3-dc979d8edef0@bootlin.com>
-References: <20250716-mobileye-emmc-for-upstream-4-v3-0-dc979d8edef0@bootlin.com>
-In-Reply-To: <20250716-mobileye-emmc-for-upstream-4-v3-0-dc979d8edef0@bootlin.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, 
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehkedutdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeeuvghnohpfthcuofhonhhinhcuoegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudefgfdugfffgfeuhfeguedvuefhkeektdeludelvdelteelteejjeeiteetvedtnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemudehfeejmehffeehmeelfeeiugemvgelvdehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeduheefjeemfhefheemleefiegumegvledvhedphhgvlhhopegludelvddrudeikedruddtrddukeejngdpmhgrihhlfhhrohhmpegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepledprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmhgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthgrfihfihhkrdgsrgihohhukhesmhhosghilhgvhigvr
- dgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrughrihgrnhdrhhhunhhtvghrsehinhhtvghlrdgtohhmpdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhg
-X-GND-Sasl: benoit.monin@bootlin.com
+In-Reply-To: <cbb840b204f7de7e6304bc811e9c629eb0f77486.camel@redhat.com>
 
-Use mmc_card_can_cmd23 instead of using a local and partial
-implementation, and check for the CMD23 quirk with
-mmc_card_blk_no_cmd23.
+On Wed, Jul 16, 2025 at 05:09:43PM +0200, Gabriele Monaco wrote:
+> On Wed, 2025-07-16 at 14:38 +0200, Peter Zijlstra wrote:
+> > On Tue, Jul 15, 2025 at 09:14:29AM +0200, Gabriele Monaco wrote:
+> > > Add the following tracepoints:
+> > > * sched_set_need_resched(tsk, cpu, tif)
+> > > ††† Called when a task is set the need resched [lazy] flag
+> > > * sched_switch_vain(preempt, tsk, tsk_state)
+> > > ††† Called when a task is selected again during __schedule
+> > > ††† i.e. prev == next == tsk : no real context switch
+> > 
+> > > @@ -6592,6 +6598,7 @@ static bool try_to_block_task(struct rq *rq,
+> > > struct task_struct *p,
+> > > †	int flags = DEQUEUE_NOCLOCK;
+> > > †
+> > > †	if (signal_pending_state(task_state, p)) {
+> > > +		trace_sched_set_state_tp(p, TASK_RUNNING, true);
+> > > †		WRITE_ONCE(p->__state, TASK_RUNNING);
+> > > †		*task_state_p = TASK_RUNNING;
+> > > †		return false;
+> > 
+> > I'm confused on the purpose of this. How does this relate to say the
+> > wakeup in signal_wake_up_state() ?
+> 
+> Also this adds more context: models like sssw (in this series) expect
+> that, after a task is set to sleepable, it either goes to sleep or is
+> woken up/set to runnable.
+> 
+> In this specific case, the task is set to runnable without tracing it,
+> so the model doesn't know what happened, since it may not see a wakeup
+> after that (the task is already runnable).
+> 
+> Now I'm not sure if there are other events that we are guaranteed to
+> see to reconstruct this specific case (at some point we should see the
+> signal, I assume).
+> This just simplified things as that is the only state change that was
+> not traced.
+> 
+> Am I missing anything obvious here?
 
-Signed-off-by: Beno√Æt Monin <benoit.monin@bootlin.com>
----
- drivers/mmc/core/mmc_test.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-index 80e5d87a5e50bea772c06443bca8f48f042d6ad5..67d4a301895c905bf52776f970bfc7a8f86a65aa 100644
---- a/drivers/mmc/core/mmc_test.c
-+++ b/drivers/mmc/core/mmc_test.c
-@@ -180,20 +180,14 @@ static int mmc_test_set_blksize(struct mmc_test_card *test, unsigned size)
- 	return mmc_set_blocklen(test->card, size);
- }
- 
--static bool mmc_test_card_cmd23(struct mmc_card *card)
--{
--	return mmc_card_mmc(card) ||
--	       (mmc_card_sd(card) && card->scr.cmds & SD_SCR_CMD23_SUPPORT);
--}
--
- static void mmc_test_prepare_sbc(struct mmc_test_card *test,
- 				 struct mmc_request *mrq, unsigned int blocks)
- {
- 	struct mmc_card *card = test->card;
- 
- 	if (!mrq->sbc || !mmc_host_can_cmd23(card->host) ||
--	    !mmc_test_card_cmd23(card) || !mmc_op_multi(mrq->cmd->opcode) ||
--	    (card->quirks & MMC_QUIRK_BLK_NO_CMD23)) {
-+	    !mmc_card_can_cmd23(card) || !mmc_op_multi(mrq->cmd->opcode) ||
-+	    mmc_card_blk_no_cmd23(card)) {
- 		mrq->sbc = NULL;
- 		return;
- 	}
+AFAICT this is just a normal wakeup race.
 
--- 
-2.50.1
+Given:
+
+  for (;;) {
+    set_current_state(TASK_UNINTERRUPTIBLE);
+    if (COND)
+      break;
+    schedule();
+  }
+  __set_current_state(TASK_RUNNING);
+
+vs
+
+  COND=1;
+  wake_up_state(p, TASK_UNINTERRUPTIBLE);
+
+The race is seeing COND before or after hitting schedule(). With
+interruptible this simply becomes:
+
+
+  for (;;) {
+    set_current_state(TASK_INTERRUPTIBLE);
+    if (SIGPENDING || COND)
+      break;
+    schedule();
+  }
+  __set_current_state(TASK_RUNNING);
+
+vs
+
+  COND=1;
+  wake_up_state(p, TASK_INTERRUPTIBLE);
+
+vs
+
+  set_tsk_thread_flag(p, TIF_SIGPENDING);
+  wake_up_state(p, TASK_INTERRUPTIBLE);
+
+
+(same with KILLABLE, but for fatal signals only)
+(except the signal thing will often exit with -EINTR / -ERESTARTSYS, but
+that should matter here, right?)
+
+How is the race for seeing SIGPENDING different from seeing COND?
+
+Both will issue a wakeup; except in one case the wakeup is superfluous
+because schedule didn't end up blocking because it already saw the
+condition, while in the other case it did block and the wakeup is indeed
+needed.
+
+Anyway, I don't mind tracing it, but I am confused on that new (3rd)
+argument to trace_sched_set_state_tp().
 
 
