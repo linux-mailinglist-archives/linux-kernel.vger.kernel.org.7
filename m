@@ -1,115 +1,261 @@
-Return-Path: <linux-kernel+bounces-733423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0866DB0747E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:20:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB90B07485
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0FC3BB0ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:19:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60809566BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429772F2C6B;
-	Wed, 16 Jul 2025 11:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FE52F2C6B;
+	Wed, 16 Jul 2025 11:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2523PTZ"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="RC7XYkoO"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1097F233156;
-	Wed, 16 Jul 2025 11:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E042F1FF2
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752664794; cv=none; b=u+/BBbJyTqWAR656hH5sZ8GFrMGoPq6g4wW3cWaW2TrxdbvUESeMrQ3GyMkx4EEdPyMtNKiqNxVyoyemsgC8eDzul30iC5zkAEaOL0WmQ3oeBep41lBApy1JDvY5E8eDMxhsmRR8bpNG++n2gNKa/j4J7EqSUuWzwRApdEH+UPA=
+	t=1752664834; cv=none; b=FxxbMGnq+QN9fFhWDVNE77+rRVXI9i1SlRw+kBXmrXEB/Q4I98A1I9PI7+WcX6ASk+xKT/IgOPhJ8r/b4WmP3VMAsRSyazXqrMvrfvDdXp/azXG+Ky2CV5N+HSMbB0Yl6iIIGJSPVjjlOrYtbDXxVhd4nhqEa7/0cs/qwnFDiVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752664794; c=relaxed/simple;
-	bh=2/+ag4ICElQ4Q+psba2kn0DCArP86wbi55dAl04YbMg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DFl+tiIXfgRN/iOSXoVtDmWDrUt6YLlq9hhmpV6iy3yvRhm1nLGqyGI+IYDlD4T3O/59p+NiIw5ln1ozLSS6W3W9mCCR8AWuWZaqjtZouYa7mEEP8/pV0QfDEp0hnmS4Qdg9RGu3r8JQMDAlmiTQK+ySa6ZNLLYoeX1CPm3BhcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W2523PTZ; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a510432236so4553252f8f.0;
-        Wed, 16 Jul 2025 04:19:52 -0700 (PDT)
+	s=arc-20240116; t=1752664834; c=relaxed/simple;
+	bh=rdVfHRyHli6kYrkwY39Hd8R+U1nb5c5moANmUD9cIOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LKehaxzLw/j9J66V6J+P4a5ItNGD/RD/7OcNB7f+6nPQAZRw2TWk/NIYHzX4c60KYgMhuXwKG2P5xWVZYpCEtfbBSEBPlsMZUNbPtEXdzvWyKGZJwETWHfRWgqLXa+LcHHzViNa1V1i19gMu5oSgMvaebPtrGfjzuljbHLhkVeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=RC7XYkoO; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7490702fc7cso3970998b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 04:20:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752664791; x=1753269591; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2/+ag4ICElQ4Q+psba2kn0DCArP86wbi55dAl04YbMg=;
-        b=W2523PTZRimz6GzegdunPa0raB///onXlDqg63Wa3X8qnIYzGtcDlsPSF6BeO2YTqo
-         mhlCd/4spZQWbI9/ERWHR34SRH2VL17zfREhqBiC8xG915f+ACsYG8cZJBQH2CAbGhzN
-         x2ZnO2GJhQUbaGNguK3b0j6o2ZTjVQa7+ogB4EO9gLzuCWQa/S+Vfq20kSHMpN9D1zYM
-         5EZG+rXOToOlL8YIJgCIChdtAh1+Txq477FC5ECYuWUYBZYH4HiYf55fVO2yBiEgGl8S
-         YlOEUArliWbMZY57wOJhoWa9CHoMR9hYntslzUCmps3HKZ1XJT/du2cQe/tDHq3sX7il
-         uG0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752664791; x=1753269591;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=bytedance.com; s=google; t=1752664831; x=1753269631; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2/+ag4ICElQ4Q+psba2kn0DCArP86wbi55dAl04YbMg=;
-        b=V6lNybmULSlfVZIoF06lLNbkY8rxUYDDaDpBmDgWFe5XFDRkWymhazyND1+v2lObFW
-         3nGVobTstaj2trGyLvflQf/2SZdhi6ykzd0oSLvaRrXolESjZIvrjZlYYKKw+aBFPOwE
-         TiPAk5sifNkvQUNPKCOJEos5si7839d4vW4W9OwE1gphNqpEknGZBY1wF9DunmD8crl2
-         BhhHQVhzwZeW1YzFGJ22TEKluLVSS6yeGPe+/NHYeWcDsr3xXfDsjDUqaLEO2evsqnKR
-         1KmFu9U86VeG8O7y6+vjT59eQQoYGAGQwF/I05fdB2aoHOedQqxQBmz1MQCIg94yCMO8
-         bEtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKE7m9gygTBrN+EhvgFvCWDkzdefCJnAXUdA2s3LsbdSPSQtba1xXjdcPqJ8Hkmd/QPmWm9uKnCdWLgZI=@vger.kernel.org, AJvYcCXQfToSTjUPDqRD/j3G0cz2DtyGXQ269xFvbGDlrhvbwtD2XSLJRHjWZNiH/6IKnLbOlKceDmss@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjGl0jWPmvoOWw+ZhmAn+2eyl44SO0+e6NiUKrPlyh5tzbUEOA
-	DrStYspZmGOS2pph303pt8lKUs/2OAISPDBFshraVfdJquUqGouBATa8F3jNwV8Z
-X-Gm-Gg: ASbGncvNRgOkRIcahvVaKupM5N3PLr1NOqtSBfu3QAic4cFD8GsoNe81Q26JVfK2ePC
-	pxjM/NXWpp7xvrz6S5ZKbi+u2LGncQMnem+N0JrCpNvqT9d03kvcEMk7yYTwZw9sLPSpKtCp0Hs
-	QbLJoI7m9f6HmBBiirNmuIHFwvb1HlthNDHVqT5JdZirMkbLJiv9cWyHhb1cFVo/o32oNq1T/4z
-	MsoujpghxpWemMw81MQINozuezX0W9M2fRvg29nH5q3dxz6/B/mXPZjZ3fElE0Sp76p2oO9dh1n
-	6evbwosWRhVIRh7ZTxv7DKaddMMFzzSTQNJuYzX+kiU4FZYclnMY2Lm11dGzVBMrKwS6fuDzeYf
-	tdoI7cmYwTZzEjlDlGe4MBVi5Rmc=
-X-Google-Smtp-Source: AGHT+IEEr4ccM6coYKotowH9Jy+jQdG6I8S+0YrbO7kBD4j2w1Bq+V1+s8bEv2nneyGcNP2dL1rKJg==
-X-Received: by 2002:a05:6000:200e:b0:3a1:fcd6:1e6b with SMTP id ffacd0b85a97d-3b60e541208mr1962478f8f.57.1752664791151;
-        Wed, 16 Jul 2025 04:19:51 -0700 (PDT)
-Received: from [10.22.59.228] ([131.251.24.228])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1a2bsm17836414f8f.14.2025.07.16.04.19.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 04:19:50 -0700 (PDT)
-Message-ID: <9ba42e9ae61e8274bf5d677f8d53c84f6841ccd8.camel@gmail.com>
-Subject: Re: [PATCH net v2] et131x: Add missing check after DMA map
-From: mark.einon@gmail.com
-To: Thomas Fourier <fourier.thomas@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,  Ingo Molnar
- <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- netdev@vger.kernel.org, 	linux-kernel@vger.kernel.org, Simon Horman
- <horms@kernel.org>
-Date: Wed, 16 Jul 2025 12:19:50 +0100
-In-Reply-To: <20250716094733.28734-2-fourier.thomas@gmail.com>
-References: <20250716094733.28734-2-fourier.thomas@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        bh=tBkJ72ZaxCg3y6ThdifmajrH59yMRxqhR6Yi2cpcKlM=;
+        b=RC7XYkoOReC6AcaAVyNDNbmfpIjG3coIy8kTvyU6U2yKpE2O5vyEOh89dXUXe5byvA
+         r1V5EBakRK+nMGdxfT3JdP3+Rf0D0AccQpGVEssgwse0fUdiI3s3x847B09rFTfY57zd
+         dVJdOXhUcDxTdCLWFOywyaPBjL0Sh6O/l21COBMUWfpF22HKBdLu10VPhCXloQLdnRcH
+         aC/1PE17fuSnDrnW9FmGVbrWvIGdGeaBeXKjORqRyn3GSDkZ80APG5PMXv0q0XkU73Ft
+         kGB5FHFaoaPEzFrW85p3dRrTUaVqN3Jvl//I3Ec3MbXcidB4drhiDB+0wDhT525JpLt3
+         WBuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752664831; x=1753269631;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tBkJ72ZaxCg3y6ThdifmajrH59yMRxqhR6Yi2cpcKlM=;
+        b=GStT4BgKpmkKFawDsJeE+XSeNikItuPWGnHt0c90LRSB49uo2+WJBd3OzwpDPt2Jl+
+         Iglkf0x+6Y5R1py3y2PxeDWtCttrErNKCOZHs0KmPDNGHgfxTEQPNqAxLi2Sg7/FTL6/
+         A2zLvgeXSB47lNN6gTa7bC8TnsDhJVpw1EB0KWx2pZ5hFsv2dTAaAHhdnzt9Lk9Rk/tE
+         7Mh2Xv7a0MUHLOa8CG7q5zireE9PWD4JbagbAKTZ66VQtVY1MxWB4yGz5G7r1dRlIIuK
+         b40VSzk+GbDsudk/ihFvQaKhTKitmcUxo/96/8O/2BkxlkKN7YoqnZB3+9cC52zTfTuP
+         y4sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPGDfNU15cmD9BwGaM9u5PAsXVlZmW3x394OsGrXKT9Nn4D6vKtE941aFUg2XC3jOpvULp4zMHIIgd2WM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9Q/9DC+G8OYLcwCRr4YVfjgpoB2DTMUWX8geoAUNHyQkthczh
+	wbGzNwzmw3eCAoSyILnNPbUtjGEI/bIacuGzqV61QX+HIP4ijSszIvFJCCNLKIBpxRM=
+X-Gm-Gg: ASbGncujxR7ME5O+kIiPwnbNcpwyTmLsJ1r+Y7zA5Z+T/5oS/S+4Crac2Y3JdTa0WYO
+	vQ4i/uwZ0IuK5l5VLWy3RjAnIJohq2uxxBNPrEVuuAAoPilt4S2w3jbejjXydgiMiUD2IAOSEaE
+	t4GW+8CQ5i4Zoo8+Sr8OTYZBcj/xu2fAWOMSCcoQBBqj431NFOVYdHpFKEnvdl659KdJknj5K3R
+	9pm8fwfw+2OtEgPQG+YQIS+kCG9A00HSk6ysmCG6h+IRD2vdxrSutI+UoQ3xQrRO++rGpPT28QV
+	j/6Zw95gPHD9lOSRE4a28s+IM1ovae2j5yyBfnz+rlz29bk0+cB0dvR1Io/sWMGheL62/A1OVoK
+	5GhUW8SIv65MIdhIwMaKYfEBd/RbURq7SezEnkWVsYA8=
+X-Google-Smtp-Source: AGHT+IGlAPLsLx7LcyONRmAEOzWgymSbYJ0QmJ8EZHjtr8ZNky5ajwfD9mZageUtIzN0LsSNejopBg==
+X-Received: by 2002:a05:6a21:3299:b0:231:c295:136d with SMTP id adf61e73a8af0-237d5a04b98mr5085396637.14.1752664831266;
+        Wed, 16 Jul 2025 04:20:31 -0700 (PDT)
+Received: from [10.74.26.146] ([203.208.189.11])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f4bc51sm13775462b3a.116.2025.07.16.04.20.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 04:20:30 -0700 (PDT)
+Message-ID: <9a2b5887-3874-4d3d-bbd8-0b5a25d3e605@bytedance.com>
+Date: Wed, 16 Jul 2025 19:20:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: Re: [PATCH net v2] virtio-net: fix a rtnl_lock() deadlock
+ during probing
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, zuozhijie@bytedance.com
+References: <20250702103722.576219-1-zuozhijie@bytedance.com>
+ <CACGkMEvjXBZ-Q77-8YRyd_EV0t9xMT8R8-FT5TKJBnqAOed=pQ@mail.gmail.com>
+ <d5ad1b10-f485-4939-b9de-918b378362b9@bytedance.com>
+ <CACGkMEvZ5dqjc6+1uwoq98x-78eymGFHXpOJtbViG3U9mOyn8g@mail.gmail.com>
+Content-Language: en-US
+From: Zigit Zo <zuozhijie@bytedance.com>
+In-Reply-To: <CACGkMEvZ5dqjc6+1uwoq98x-78eymGFHXpOJtbViG3U9mOyn8g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-07-16 at 11:47 +0200, Thomas Fourier wrote:
-> The DMA map functions can fail and should be tested for errors.
-> If the mapping fails, unmap and return an error.
->=20
-> Fixes: 38df6492eb51 ("et131x: Add PCIe gigabit ethernet driver et131x
-> to drivers/net")
-> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
-> ---
-> v1 -> v2:
-> =C2=A0 - Fix subject
-> =C2=A0 - Fix double decrement of frag
-> =C2=A0 - Make comment more explicit about why there are two loops
+On 7/16/25 10:47 AM, Jason Wang wrote:
+> Hi Zigit:
+> 
+> On Tue, Jul 15, 2025 at 7:00 PM Zigit Zo <zuozhijie@bytedance.com> wrote:
+>>
+>> On 7/15/25 5:31 PM, Jason Wang wrote:
+>>> On Wed, Jul 2, 2025 at 6:37 PM Zigit Zo <zuozhijie@bytedance.com> wrote:
+>>>>
+>>>> This bug happens if the VMM sends a VIRTIO_NET_S_ANNOUNCE request while
+>>>> the virtio-net driver is still probing with rtnl_lock() hold, this will
+>>>> cause a recursive mutex in netdev_notify_peers().
+>>>>
+>>>> Fix it by temporarily save the announce status while probing, and then in
+>>>> virtnet_open(), if it sees a delayed announce work is there, it starts to
+>>>> schedule the virtnet_config_changed_work().
+>>>>
+>>>> Another possible solution is to directly check whether rtnl_is_locked()
+>>>> and call __netdev_notify_peers(), but in that way means we need to relies
+>>>> on netdev_queue to schedule the arp packets after ndo_open(), which we
+>>>> thought is not very intuitive.
+>>>>
+>>>> We've observed a softlockup with Ubuntu 24.04, and can be reproduced with
+>>>> QEMU sending the announce_self rapidly while booting.
+>>>>
+>>>> [  494.167473] INFO: task swapper/0:1 blocked for more than 368 seconds.
+>>>> [  494.167667]       Not tainted 6.8.0-57-generic #59-Ubuntu
+>>>> [  494.167810] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>>>> [  494.168015] task:swapper/0       state:D stack:0     pid:1     tgid:1     ppid:0      flags:0x00004000
+>>>> [  494.168260] Call Trace:
+>>>> [  494.168329]  <TASK>
+>>>> [  494.168389]  __schedule+0x27c/0x6b0
+>>>> [  494.168495]  schedule+0x33/0x110
+>>>> [  494.168585]  schedule_preempt_disabled+0x15/0x30
+>>>> [  494.168709]  __mutex_lock.constprop.0+0x42f/0x740
+>>>> [  494.168835]  __mutex_lock_slowpath+0x13/0x20
+>>>> [  494.168949]  mutex_lock+0x3c/0x50
+>>>> [  494.169039]  rtnl_lock+0x15/0x20
+>>>> [  494.169128]  netdev_notify_peers+0x12/0x30
+>>>> [  494.169240]  virtnet_config_changed_work+0x152/0x1a0
+>>>> [  494.169377]  virtnet_probe+0xa48/0xe00
+>>>> [  494.169484]  ? vp_get+0x4d/0x100
+>>>> [  494.169574]  virtio_dev_probe+0x1e9/0x310
+>>>> [  494.169682]  really_probe+0x1c7/0x410
+>>>> [  494.169783]  __driver_probe_device+0x8c/0x180
+>>>> [  494.169901]  driver_probe_device+0x24/0xd0
+>>>> [  494.170011]  __driver_attach+0x10b/0x210
+>>>> [  494.170117]  ? __pfx___driver_attach+0x10/0x10
+>>>> [  494.170237]  bus_for_each_dev+0x8d/0xf0
+>>>> [  494.170341]  driver_attach+0x1e/0x30
+>>>> [  494.170440]  bus_add_driver+0x14e/0x290
+>>>> [  494.170548]  driver_register+0x5e/0x130
+>>>> [  494.170651]  ? __pfx_virtio_net_driver_init+0x10/0x10
+>>>> [  494.170788]  register_virtio_driver+0x20/0x40
+>>>> [  494.170905]  virtio_net_driver_init+0x97/0xb0
+>>>> [  494.171022]  do_one_initcall+0x5e/0x340
+>>>> [  494.171128]  do_initcalls+0x107/0x230
+>>>> [  494.171228]  ? __pfx_kernel_init+0x10/0x10
+>>>> [  494.171340]  kernel_init_freeable+0x134/0x210
+>>>> [  494.171462]  kernel_init+0x1b/0x200
+>>>> [  494.171560]  ret_from_fork+0x47/0x70
+>>>> [  494.171659]  ? __pfx_kernel_init+0x10/0x10
+>>>> [  494.171769]  ret_from_fork_asm+0x1b/0x30
+>>>> [  494.171875]  </TASK>
+>>>>
+>>>> Fixes: df28de7b0050 ("virtio-net: synchronize operstate with admin state on up/down")
+>>>> Signed-off-by: Zigit Zo <zuozhijie@bytedance.com>
+>>>> ---
+>>>> v1 -> v2:
+>>>> - Check vi->status in virtnet_open().
+>>>> v1:
+>>>> - https://lore.kernel.org/netdev/20250630095109.214013-1-zuozhijie@bytedance.com/
+>>>> ---
+>>>>  drivers/net/virtio_net.c | 43 ++++++++++++++++++++++++----------------
+>>>>  1 file changed, 26 insertions(+), 17 deletions(-)
+>>>>
+>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+>>>> index e53ba600605a..859add98909b 100644
+>>>> --- a/drivers/net/virtio_net.c
+>>>> +++ b/drivers/net/virtio_net.c
+>>>> @@ -3151,6 +3151,10 @@ static int virtnet_open(struct net_device *dev)
+>>>>         if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
+>>>>                 if (vi->status & VIRTIO_NET_S_LINK_UP)
+>>>>                         netif_carrier_on(vi->dev);
+>>>> +               if (vi->status & VIRTIO_NET_S_ANNOUNCE) {
+>>>> +                       vi->status &= ~VIRTIO_NET_S_ANNOUNCE;
+>>>> +                       schedule_work(&vi->config_work);
+>>>> +               }
+>>>>                 virtio_config_driver_enable(vi->vdev);
+>>>
+>>> Instead of doing tricks like this.
+>>>
+>>> I wonder if the fix is as simple as calling
+>>> virtio_config_driver_disable() before init_vqs()?
+>>>
+>>> Thanks
+>>>
+>>
+>> That might not work as the device like QEMU will set the VIRTIO_NET_S_ANNOUNCE
+>> regardless of most of the driver status, QEMU only checks whether the driver has
+>> finalized it's features with VIRTIO_NET_F_GUEST_ANNOUNCE & VIRTIO_NET_F_CTRL_VQ.
+>>
+>> We've made a little patch to verify, don't know if it matches your thought, but
+>> it does not seem to work :(
+>>
+>>     diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+>>     index e53ba600605a..f309ce3fe243 100644
+>>     --- a/drivers/net/virtio_net.c
+>>     +++ b/drivers/net/virtio_net.c
+>>     @@ -6903,6 +6903,9 @@ static int virtnet_probe(struct virtio_device *vdev)
+>>                     vi->curr_queue_pairs = num_online_cpus();
+>>             vi->max_queue_pairs = max_queue_pairs;
+>>
+>>     +       /* Disable config change notification until ndo_open. */
+>>     +       virtio_config_driver_disable(vi->vdev);
+>>     +
+>>             /* Allocate/initialize the rx/tx queues, and invoke find_vqs */
+>>             err = init_vqs(vi);
+>>             if (err)
+>>     @@ -6965,9 +6968,6 @@ static int virtnet_probe(struct virtio_device *vdev)
+>>                     goto free_failover;
+>>             }
+>>
+>>     -       /* Disable config change notification until ndo_open. */
+>>     -       virtio_config_driver_disable(vi->vdev);
+>>     -
+>>             virtio_device_ready(vdev);
+>>
+>>             if (vi->has_rss || vi->has_rss_hash_report) {
+>>
+>> For reproduce details,
+>>
+>> 1. Spawn qemu with monitor, like `-monitor unix:qemu.sock,server`
+>> 2. In another window, run `while true; echo "announce_self"; end | socat - unix-connect:qemu.sock > /dev/null`
+>> 3. The boot up will get hanged when probing the virtio_net
+>>
+>> The simplest version we've made is to revert the usage of
+>> `virtnet_config_changed_work()` back to the `schedule_work()`, but as in v1,
+>> we're still trying to understand the impact, making sure that it won't break
+>> other things.
+>>
+>> Regards,
+>>
+> 
+> Thanks for the clarification. Now I see the issue.
+> 
+> It looks like the root cause is to call virtio_config_changed_work()
+> directly during probe().
+> 
+> Let's switch to use virtio_config_changed() instead so that we can
+> properly check the config_driver_disabled.
+> 
+> Thanks
+> 
 
-Thanks for the updates Thomas, LGTM (also CC'd Simon who provided the
-initial comments).
+Yes, we just wonder why there's a change to `virtnet_config_changed_work()`
+in commit df28de7b0050, and therefore try to keep this behavior as much
+as possible, to avoid breaking something.
 
-Acked-by: Mark Einon <mark.einon@gmail.com>
+Anyway, v3 will be sent off soon, thanks for the reviewing!
+
+Regards,
 
