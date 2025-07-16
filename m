@@ -1,137 +1,289 @@
-Return-Path: <linux-kernel+bounces-733666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0668B07798
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:07:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1ECCB0779C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24E73B4885
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:07:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CE4F584E39
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A1A21C188;
-	Wed, 16 Jul 2025 14:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CFitWqS5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102C221C18D;
+	Wed, 16 Jul 2025 14:07:48 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BC91E8332
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23731C54A9
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752674845; cv=none; b=nKHJrvdt4jPfC7P3Qi17V5deyfUlkq3NxrHftPKFfYeYLzhhU5jFMHg7zJ4O+dXJNcPL6/9LxGtYjg6qWeQIHNfxUiyVW4oJ2fTa2qeCiifpz2w7tO6slaRexGHknWR/JV+U0dlddnNslktsMmJDGS5dZOqWFDogfOt/OSAPixo=
+	t=1752674867; cv=none; b=NKK18nu1w/c34JGxpO4jl0/LCXrWrINy1qVXlP7nZ7pmwVrtsTs1A75Zqa5xZw11S0iGwvUagZVepPe6nJUHbjBrXNtagX7D8aAK/HGMyIIF1ffuYLcZbjAe8O8EO2aFeLPulQ1Wa4/TRthZ05D8rw1kD5Sc1LK5ZZaIPJ3t5t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752674845; c=relaxed/simple;
-	bh=tB2hd0yWjPoO6MlhQbxYZc4V8AzKcbCfWKCdItp3044=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bSd7yYTxlb2kEVv6bUaiT7D0bO68twkd8LznOqJVkjdmsXoI4U6B0Adcg7us1c9vHghCSlxHX6dl4q73DpRTvrfDUJFnyrtVRHdpk4H6I8nha9zShCPGhq/5jGahKhsf9V9LlIuNrXZR97l6rqWTTN6j4ZbK6O/vmauGdz1umQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CFitWqS5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752674843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tB2hd0yWjPoO6MlhQbxYZc4V8AzKcbCfWKCdItp3044=;
-	b=CFitWqS5l5frQBMEsHrqg9jnDwvvkkwRRt2NbotO+EXwYUlgqe0CrEvMHzPu702uCv9fUX
-	DiOcT/H11P/sbh4C0gh6F3m9E9F3dr/B3Z78rWW+m9PbTNgoqBwWYCDhzT7QpEHT/nAFNO
-	HOjkW2x9ocgU/3DRxluqLrpWaqCoT1s=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-341-RSrhnPlGO0au09Hal-_hpA-1; Wed, 16 Jul 2025 10:07:22 -0400
-X-MC-Unique: RSrhnPlGO0au09Hal-_hpA-1
-X-Mimecast-MFC-AGG-ID: RSrhnPlGO0au09Hal-_hpA_1752674841
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4ff581df3so509143f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:07:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752674839; x=1753279639;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tB2hd0yWjPoO6MlhQbxYZc4V8AzKcbCfWKCdItp3044=;
-        b=pWdWEUATKtF7IKwZ6gg0AflpL4yGZrPXN0zqbOanDyFJPPM/fRK8vPojw9yh7vzFKj
-         8js79/YBaRRqWRBiOy/3rMRFYD6kKrZA6Q7HaCMEVXno0zjKMjIckv0cbTEwPYQH2et/
-         zKM6Zmlu+N87icf0ppnktAbj84d9HpNbkyZmkPuW5tbEhsrrGljMmspo+9ydaQkrNh7y
-         +ltDbkCOkX911PTP4bdCTdyJXgXEwMTWpQ7uT44uEwl8BOG9tzguCPzNB49N+ysKmfzr
-         AI2tPHuxMkUlSfnwla/IR4fHe6Zm0sCDB6wfkQLUSJRurzhtUR5u9gMdyM/8vFCW2QrR
-         bvzQ==
-X-Gm-Message-State: AOJu0Yym6UDGrLs3OSb2G8EAOsACvMvtabBvjtIhYT/3J97JCbwBXxFQ
-	jQAchtWTOKuz4LJ/Ba5dhx6R8JJH/9WmpUuP7dolR6XYjd7aPdnyLQqXUYr1bp9lmW/tw9gA57t
-	a6/xeD+gtO0/ZdO4vCmnNV6DpuOZF46yU79MSuK/BMolWGYCmjgFl7J+6THxwv2ryIA==
-X-Gm-Gg: ASbGncv34YiA71yvsnQUvcnUK9c8GMqbo38+EtK60jtZCMX53j8M8hc9JK2G5X6Of82
-	WDnYW1edeMIl5rE/XJKjUBUJ2nVSHojL2fyuqxHityxu+QoqId0liDUO9LPyI5RFWD+tqE0zQQC
-	yBteCsBnDAmMQ2azJMmX8CMqU1InCP61j8jVHC0MrQh9GAppQb0JYibpGF439Z4IfxCIvfnR1Am
-	Qom60+306Nyp61y6ookj78Q0c8YiZHB0CltdLEN/gZZfuDboeprx0pKbepeixxvGQcA5JzBDvo9
-	pnb51RCQhlrttQI0evzN6Y/69w1PJBpo/aWtUHsHSiyP8TdNmfuHkqJZU25UxBd9EQ==
-X-Received: by 2002:a05:6000:2b0c:b0:3a3:70ab:b274 with SMTP id ffacd0b85a97d-3b609524369mr4320863f8f.12.1752674839401;
-        Wed, 16 Jul 2025 07:07:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHMGLnEBjMAuOVnncL9pST+yEzGrrXmlW5O5822Ksx735cKfIpDH13N4slQf+5+QbAygFGD/Q==
-X-Received: by 2002:a05:6000:2b0c:b0:3a3:70ab:b274 with SMTP id ffacd0b85a97d-3b609524369mr4320828f8f.12.1752674838921;
-        Wed, 16 Jul 2025 07:07:18 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e83e1d6sm21934665e9.35.2025.07.16.07.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 07:07:18 -0700 (PDT)
-Message-ID: <fe38ba0b9da0209bcc97c2f348f5a6b266991073.camel@redhat.com>
-Subject: Re: [PATCH v3 12/17] sched: Adapt sched tracepoints for RV task
- model
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>, Tomas
- Glozar	 <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
- Williams	 <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Date: Wed, 16 Jul 2025 16:07:16 +0200
-In-Reply-To: <20250716134513.GB905792@noisy.programming.kicks-ass.net>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
-	 <20250715071434.22508-13-gmonaco@redhat.com>
-	 <20250716123832.GW1613200@noisy.programming.kicks-ass.net>
-	 <122cfd4ba6b0805e91ff09526d5d159ff3871964.camel@redhat.com>
-	 <20250716134513.GB905792@noisy.programming.kicks-ass.net>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1752674867; c=relaxed/simple;
+	bh=oQfYiacrS69ebBncUxb03TAOdjeChVxHp2r5O+gim0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L3J5NQSHX2qQj9riMJ3RRcky4udwJWqmPWYrOS7bRg5LxjyHodfSEQtPVhC4hWk4oZjs2uhRDyO517K6tU7TzZVCyf6jQCFLLg8deN6O9lxvNB4/iPNI0/deOrESS+3oMvG2gL3xrCFgJvEBmbkeAVr15lu4U9TFyRIGqeJ1zy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56GE7OWg078114;
+	Wed, 16 Jul 2025 23:07:24 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56GE7IaE078088
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 16 Jul 2025 23:07:24 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <c83f37f2-a0d5-4c3d-b311-a3bc8ae142c9@I-love.SAKURA.ne.jp>
+Date: Wed, 16 Jul 2025 23:07:17 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] media: imon: make send_packet() more robust
+To: Sean Young <sean@mess.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Hillf Danton <hdanton@sina.com>,
+        syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
+        LKML <linux-kernel@vger.kernel.org>
+References: <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp>
+ <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp>
+ <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp>
+ <282345b9-9aff-43ed-b66d-76cf51cc0deb@I-love.SAKURA.ne.jp>
+ <20250713081148.3880-1-hdanton@sina.com>
+ <d6da6709-d799-4be3-a695-850bddd6eb24@rowland.harvard.edu>
+ <aHa3xpKfGNqAocIO@gofer.mess.org>
+ <c4e88c28-28ee-4e37-9822-8e2999d0f0ee@rowland.harvard.edu>
+ <aHdzD7EowAKT4AhQ@gofer.mess.org>
+ <a44d5568-48d6-44f7-af93-e1b966489a84@I-love.SAKURA.ne.jp>
+ <aHefSptAPBoRG_20@gofer.mess.org>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <aHefSptAPBoRG_20@gofer.mess.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav405.rs.sakura.ne.jp
 
-On Wed, 2025-07-16 at 15:45 +0200, Peter Zijlstra wrote:
->=20
-> I'm not sure I understand the importance of IRQ state when describing
-> task transitions.
->=20
-> You know both:
->=20
-> =C2=A0- schedule() invocations for any one task are in-order;
-> =C2=A0- schedule() invocations for any one CPU are in-order.
->=20
+syzbot is reporting that imon has three problems which result in
+hung tasks due to forever holding device lock [1].
 
-It's to describe latencies, which is the original purpose of the
-scheduler model: if the event supposed to wake up an RT task occurs
-with interrupts disabled while scheduling, we'd need to wait for that
-run to complete.
-Now to be fair, it doesn't really matter whether that call to
-__schedule switches or not, but always having a switch event simplifies
-things while modelling.
-I can rearrange models like sts (added in this series) not to expect
-that.
+First problem is that when usb_rx_callback_intf0() once got -EPROTO error
+after ictx->dev_present_intf0 became true, usb_rx_callback_intf0()
+resubmits urb after printk(), and resubmitted urb causes
+usb_rx_callback_intf0() to again get -EPROTO error. This results in
+printk() flooding (RCU stalls).
 
-Thanks,
-Gabriele
+Alan Stern commented [2] that
+
+  In theory it's okay to resubmit _if_ the driver has a robust
+  error-recovery scheme (such as giving up after some fixed limit on the
+  number of errors or after some fixed time has elapsed, perhaps with a
+  time delay to prevent a flood of errors).  Most drivers don't bother to
+  do this; they simply give up right away.  This makes them more
+  vulnerable to short-term noise interference during USB transfers, but in
+  reality such interference is quite rare.  There's nothing really wrong
+  with giving up right away.
+
+but imon has a poor error-recovery scheme which just retries forever;
+this behavior should be fixed.
+
+Since I'm not sure whether it is safe for imon users to give up upon any
+error code, this patch takes care of only union of error codes chosen from
+modules in drivers/media/rc/ directory which handle -EPROTO error (i.e.
+ir_toy, mceusb and igorplugusb).
+
+Second problem is that when usb_rx_callback_intf0() once got -EPROTO error
+before ictx->dev_present_intf0 becomes true, usb_rx_callback_intf0() always
+resubmits urb due to commit 8791d63af0cf ("[media] imon: don't wedge
+hardware after early callbacks"). The ictx->dev_present_intf0 test was
+introduced by commit 6f6b90c9231a ("[media] imon: don't parse scancodes
+until intf configured"), but that commit did not call usb_unlink_urb()
+when usb_rx_callback_intf0() got an error. Move the ictx->dev_present_intf0
+test to immediately before imon_incoming_packet() so that we can call
+usb_unlink_urb() as needed, or the first problem explained above happens
+without printk() flooding (i.e. hung task).
+
+Third problem is that when usb_rx_callback_intf0() is not called for some
+reason (e.g. flaky hardware; the reproducer for this problem sometimes
+prevents usb_rx_callback_intf0() from being called),
+wait_for_completion_interruptible() in send_packet() never returns (i.e.
+hung task). As a workaround for such situation, change send_packet() to
+wait for completion with timeout of 10 seconds.
+
+Also, move mutex_trylock() in imon_ir_change_protocol() to the beginning,
+for memcpy() which modifies ictx->usb_tx_buf should be protected by
+ictx->lock.
+
+Also, verify at the beginning of send_packet() that ictx->lock is held
+in case send_packet() is by error called from imon_ir_change_protocol()
+when mutex_trylock() failed due to concurrent requests.
+
+Link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a [1]
+Link: https://lkml.kernel.org/r/d6da6709-d799-4be3-a695-850bddd6eb24@rowland.harvard.edu [2]
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+Changes in v2:
+  Updated patch description.
+
+ drivers/media/rc/imon.c | 69 +++++++++++++++++++++++++----------------
+ 1 file changed, 42 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
+index f5221b018808..3469a401a572 100644
+--- a/drivers/media/rc/imon.c
++++ b/drivers/media/rc/imon.c
+@@ -598,6 +598,8 @@ static int send_packet(struct imon_context *ictx)
+ 	int retval = 0;
+ 	struct usb_ctrlrequest *control_req = NULL;
+ 
++	lockdep_assert_held(&ictx->lock);
++
+ 	/* Check if we need to use control or interrupt urb */
+ 	if (!ictx->tx_control) {
+ 		pipe = usb_sndintpipe(ictx->usbdev_intf0,
+@@ -645,12 +647,15 @@ static int send_packet(struct imon_context *ictx)
+ 		smp_rmb(); /* ensure later readers know we're not busy */
+ 		pr_err_ratelimited("error submitting urb(%d)\n", retval);
+ 	} else {
+-		/* Wait for transmission to complete (or abort) */
+-		retval = wait_for_completion_interruptible(
+-				&ictx->tx.finished);
+-		if (retval) {
++		/* Wait for transmission to complete (or abort or timeout) */
++		retval = wait_for_completion_interruptible_timeout(&ictx->tx.finished, 10 * HZ);
++		if (retval <= 0) {
+ 			usb_kill_urb(ictx->tx_urb);
+ 			pr_err_ratelimited("task interrupted\n");
++			if (retval < 0)
++				ictx->tx.status = retval;
++			else
++				ictx->tx.status = -ETIMEDOUT;
+ 		}
+ 
+ 		ictx->tx.busy = false;
+@@ -1121,7 +1126,7 @@ static int imon_ir_change_protocol(struct rc_dev *rc, u64 *rc_proto)
+ 	int retval;
+ 	struct imon_context *ictx = rc->priv;
+ 	struct device *dev = ictx->dev;
+-	bool unlock = false;
++	const bool unlock = mutex_trylock(&ictx->lock);
+ 	unsigned char ir_proto_packet[] = {
+ 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x86 };
+ 
+@@ -1148,8 +1153,6 @@ static int imon_ir_change_protocol(struct rc_dev *rc, u64 *rc_proto)
+ 
+ 	memcpy(ictx->usb_tx_buf, &ir_proto_packet, sizeof(ir_proto_packet));
+ 
+-	unlock = mutex_trylock(&ictx->lock);
+-
+ 	retval = send_packet(ictx);
+ 	if (retval)
+ 		goto out;
+@@ -1745,14 +1748,6 @@ static void usb_rx_callback_intf0(struct urb *urb)
+ 	if (!ictx)
+ 		return;
+ 
+-	/*
+-	 * if we get a callback before we're done configuring the hardware, we
+-	 * can't yet process the data, as there's nowhere to send it, but we
+-	 * still need to submit a new rx URB to avoid wedging the hardware
+-	 */
+-	if (!ictx->dev_present_intf0)
+-		goto out;
+-
+ 	switch (urb->status) {
+ 	case -ENOENT:		/* usbcore unlink successful! */
+ 		return;
+@@ -1761,16 +1756,30 @@ static void usb_rx_callback_intf0(struct urb *urb)
+ 		break;
+ 
+ 	case 0:
+-		imon_incoming_packet(ictx, urb, intfnum);
++		/*
++		 * if we get a callback before we're done configuring the hardware, we
++		 * can't yet process the data, as there's nowhere to send it, but we
++		 * still need to submit a new rx URB to avoid wedging the hardware
++		 */
++		if (ictx->dev_present_intf0)
++			imon_incoming_packet(ictx, urb, intfnum);
+ 		break;
+ 
++	case -ECONNRESET:
++	case -EILSEQ:
++	case -EPROTO:
++	case -EPIPE:
++		dev_warn(ictx->dev, "imon %s: status(%d)\n",
++			 __func__, urb->status);
++		usb_unlink_urb(urb);
++		return;
++
+ 	default:
+ 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
+ 			 __func__, urb->status);
+ 		break;
+ 	}
+ 
+-out:
+ 	usb_submit_urb(ictx->rx_urb_intf0, GFP_ATOMIC);
+ }
+ 
+@@ -1786,14 +1795,6 @@ static void usb_rx_callback_intf1(struct urb *urb)
+ 	if (!ictx)
+ 		return;
+ 
+-	/*
+-	 * if we get a callback before we're done configuring the hardware, we
+-	 * can't yet process the data, as there's nowhere to send it, but we
+-	 * still need to submit a new rx URB to avoid wedging the hardware
+-	 */
+-	if (!ictx->dev_present_intf1)
+-		goto out;
+-
+ 	switch (urb->status) {
+ 	case -ENOENT:		/* usbcore unlink successful! */
+ 		return;
+@@ -1802,16 +1803,30 @@ static void usb_rx_callback_intf1(struct urb *urb)
+ 		break;
+ 
+ 	case 0:
+-		imon_incoming_packet(ictx, urb, intfnum);
++		/*
++		 * if we get a callback before we're done configuring the hardware, we
++		 * can't yet process the data, as there's nowhere to send it, but we
++		 * still need to submit a new rx URB to avoid wedging the hardware
++		 */
++		if (ictx->dev_present_intf1)
++			imon_incoming_packet(ictx, urb, intfnum);
+ 		break;
+ 
++	case -ECONNRESET:
++	case -EILSEQ:
++	case -EPROTO:
++	case -EPIPE:
++		dev_warn(ictx->dev, "imon %s: status(%d)\n",
++			 __func__, urb->status);
++		usb_unlink_urb(urb);
++		return;
++
+ 	default:
+ 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
+ 			 __func__, urb->status);
+ 		break;
+ 	}
+ 
+-out:
+ 	usb_submit_urb(ictx->rx_urb_intf1, GFP_ATOMIC);
+ }
+ 
+-- 
+2.50.1
+
 
 
