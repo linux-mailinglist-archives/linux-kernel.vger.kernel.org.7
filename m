@@ -1,158 +1,432 @@
-Return-Path: <linux-kernel+bounces-733979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7F7B07B81
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:49:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A975FB07B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7B4584FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E9C4E2361
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3CE2F546D;
-	Wed, 16 Jul 2025 16:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095CF2F4A1E;
+	Wed, 16 Jul 2025 16:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RU7U9UTb"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D6lpSti7"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7F1290D95;
-	Wed, 16 Jul 2025 16:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D72290D95
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752684545; cv=none; b=fQBmTtnozVo8L+WGtfhi8ZjeanFbkAVsvvMNKlQNUvr7JNyePC3S6klXf3wWGsHvO9P49SXF+RpP/j5pjo9XyUJQhHZHbiT0o9l1t9sGQtqEJNKWLsXR8ltgmVepz737XlQq/AvISVGZDq7ASEXjT9hagkZKJtmNzPSeZ2vbad4=
+	t=1752684618; cv=none; b=IDuqu/b+IsGtbYhQ1DllwRxWBkXoE5tQvb3meq08PzbxWIjI/X6+TtRzIiZf7ZvrmQuMVhV8Ues4Lr+krXYf5V5G57u8qDa1a8R8vgt8vFOHy/s2mfggj1Sb6BDR8aPTRYH83NttMzXSVFhDSJhKVWVY0AHeOldse5EsyCP6Vz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752684545; c=relaxed/simple;
-	bh=NJGuRaDpXfHvw6loKwAWFVJW4NxckF0v1yEFcdzHrx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jz1d7LUlFZOnc9uP8PT2noJhoXFXXnu14tr9kO6yYhL0fBuLG6gLaygd+Hvkovq/Xl6aa9t6BGTjESZDOmGgNkkEkAEK0Cq1OxtZKyXQbiHigDcWbpJGIlAJqYFXgUmB+EcwFg7rKwZyLM0zNXsHi9Hyle2+MeYq5cJFFwYhI2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RU7U9UTb; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6fd0a3cd326so1541336d6.1;
-        Wed, 16 Jul 2025 09:49:04 -0700 (PDT)
+	s=arc-20240116; t=1752684618; c=relaxed/simple;
+	bh=bqS7hFH5tsT2er6NRnRAC0Ui8sc1c5bUnigerUTye24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNaRBZnSCH6pvIr6abfbKRhzeLuP234hxqrf2VvIEUl1PrQViLkaOdK6Rjl8wFWt4z9IsSJi6A21FJ2bCcGH4rK8NDXHab1GtiCEB9haqb09a1Nd/RBPXW9pfLJX7zjYajGEKvnnxe+tEad0S6jJ6QnP51yqQw49hqomo0pkPSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D6lpSti7; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso181085b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:50:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752684543; x=1753289343; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EXO8ZWGxoFIW8b4GtjNGg34fGEYa90sLVvc+WxHjZ8E=;
-        b=RU7U9UTbD0ufaRlaF20ZpC2Pm/qaUs+mU+HwoOsg7BhmmlmvC5M23Vb5k9NcJS9HFk
-         8hbj8nw3SsXZCShcZeUzve9Z2pOpzsXpJKM3iAiasy328Bmq1UjxamAyxeWv5AUkF1Ln
-         t1SCpyBG9Qvj0H5oABldLHxFNHsVrtV5ynbu/bJiRytkpoGwuxxCe9T2LuBwMBbgGcAH
-         TyGF5xSk/mfRew/xc+H9DrqONHSMKEYaJHnWUzOobOSwfJTOvjyf75xKtDEr+3CoNxI9
-         yoPSuWMgf3J/BAh/FH92j1zEeXL2j3ZTeTWE8E9CvhCJqGlX+HPA89oB22xUdbi1Sp6l
-         4PXg==
+        d=linaro.org; s=google; t=1752684612; x=1753289412; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hjzsf2levIjNEqe5bEQKkMoPkf+yNNdouDikD7reK/E=;
+        b=D6lpSti7hgIS/SyQTNvPlKQBZwXGvDKwXk+ZAx/qe0qFN/+T0AuTkvhZ9DAQeHV20q
+         mHox0SUcP2Vd0Ec6jrnQgK7kE+43nCS4TL97nz/PnbVUF/igz9tu+3hWrZz4fYzKKs1J
+         Zi8Cdb8EEUNPeN+B5xeZhMZZVZVAcDBQu6pZ1OVkfLAdQCb2BH//A/ZDzBfgI7aM2k2A
+         dISPYT9sUhj2dn/KgoEQzmhtRLxIHUo0uGTFLtAfz7VdOgPg3sRwK1ZKbvb6dtUGlS9o
+         jOC/yxVoamA3T1OfRvl7elm0gIOG1yfAvSjZZXN8uWDvLliN5AT07u6qz2Kl7oGGfTIb
+         XOLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752684543; x=1753289343;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1752684612; x=1753289412;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EXO8ZWGxoFIW8b4GtjNGg34fGEYa90sLVvc+WxHjZ8E=;
-        b=akyjK5gNRRahTdlZ1O8CXK8dDnsnd60De67fw2rV/B3bnjApHXZCaq+XSTt6T8+2vy
-         5NlROo7OsIprEjtDrj7yPWXLcmoDlgIiPEsXZIANxmi9yVUvnzkKkDC1KualhNSEPofP
-         lSm9EjfPHsnWlrEULACvvhuwc2t6iFNG6E8gpIBmZ6ktkmLuhC6T7/Aq2XFRNISi9s/7
-         fnCXwrSM8BgUc2lmGB/NiLUFax4f5w7kDSVRaynoxL0oyHUsCywFVyqsrqbdxVFq1vRB
-         UDmVLwKSAdvCdsUoHU9aMLfuYTsikCfuJSg+ZvdxVqZUyb/vEuD7o3UhP8JLTnPE5FGQ
-         95Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0mPvsFLyZr9fkKLb22oNKAJoE4P2LDjtLWw5QuAGEuisBdY0fsv5QHNeL3tXGo5jwMiy5ginglGTpxXo=@vger.kernel.org, AJvYcCWsCj+iU++qoSRaFHJSDu2coXF0o5Hs+KKwo+P1/v+j7Zx4efVEKziNAW8BlPn44bjkxTaW8v8p@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjnLOG4XMhh5Q9AIdxFy/4U1fFBylxql/3jC82dTkejTFn5kVN
-	3PT2CVkGuF0VTBn20VGI45drcy0JkPuYCnvOgKJ+mhST+aO9xw+dfj+B
-X-Gm-Gg: ASbGncsQNIvXlv8erqiFEa0CvcfBdnlOZ3IF81zwtmNV1OYkS92rrl3LUs7fRjCesa4
-	wcZnpvPFOG43B1ISOx1/6P5LsBHDKfFgay6/EIwueL6rsZy1jmWRtnmAdJdj8MLMNgk8lrAC5+2
-	nm/hS/8SfEZKcA59PhjD3z3tmuTp7qocP3nRG/I5nLGCPBMXTspuo12xTixIUMhXXoKiU/UX4xl
-	5B7xzSP8r1HExKNWyGX6OfwceHmkrelo/FcH4csWuPuOwGk/eF7D9wJ241pmucFqmU/0J98JEm9
-	SMqBsbcPnUCdUdBepN76tozYzpa0Jd0z7KtfwYvTwshCV0owyDcB3wT5/F5JXc8JuXxp8gMYOWg
-	EbZ1uKO3Oz8+Glx7IMkDoqzfeA49yi8a700ljmj/BICtknh6F/Q==
-X-Google-Smtp-Source: AGHT+IFXJAf2tvaHTND6faelQr+HHFLObS0O5YooWkthj37bPVzEe6tAavvR7q+Ct1PA+5+e2O+OiA==
-X-Received: by 2002:a05:6214:4a83:b0:704:85bd:d239 with SMTP id 6a1803df08f44-704f6afbca4mr57030286d6.16.1752684542799;
-        Wed, 16 Jul 2025 09:49:02 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704979e31ddsm72676526d6.43.2025.07.16.09.48.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 09:49:02 -0700 (PDT)
-Message-ID: <261a5fde-5da9-4f99-a330-e5155a7bdeb3@gmail.com>
-Date: Wed, 16 Jul 2025 09:48:53 -0700
+        bh=Hjzsf2levIjNEqe5bEQKkMoPkf+yNNdouDikD7reK/E=;
+        b=dhxY8CiarJhftzT9WgGW6JXpTD5v9x+W1nt1/GYgww7L9mFKizmEU+krflD4uvHxUp
+         HFdZd4MhXerT63j6R2zdO9u0VvojNVaVSkKCkH4Hn50Fb+fui2X3IS9jNRV7VQY+bLy2
+         E2bSti24tVyKvQmJ0+GsgTL7GTrM7aI/isBhsmWZyHcRMfF7s6kvtcLwPjGmNbfS3IUu
+         30K2FqcMH1zWFHp0eO/I2jhHC7+JbmiZx47wkVApeQsh9rR+t6SaiWcy59ZVgNa9fhtd
+         g0vgNEfU0j3e+sikRyREAFxKrixC7zt9FpSa5Mc6nOpjz9nz3BRx2xI0Nov6aBIbEyX/
+         9avw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtINGZdxoQbHIHvRU384vUz4pa5R8UmTP5KcsjEyaRY2d1TF/M0DMRFzlyNASd3uObTbRsdQbT5EIdkvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcp45WSJaRLkjBuBvMgVuPjPo3P+8kvzk78ohqLlGwNtUSVyhm
+	yyS6h7ODZ69OzXpsDji8lxak170snmnZCfxNriEysRdqx990cESfl9rLluNcAMbS7tY=
+X-Gm-Gg: ASbGnctojYN2lmU1AF/Ehv28JcN9O7F/O6OEq2yNTawpAGnof4f1MR6N8/ERj0FJG7b
+	AXLyB9rMOPvo8QTfOzxQu3DangY/pY84a+OIrumuxZn41Rv2p9LHAjzXZRj948VXTXlw7uT+WTz
+	SEAxjZfzuLQ/BcPZkjnDbdtUqPN78gje+BmNczNtlGmtc/M0R/aZqgNq04d2HIQDGRmslkEgOKU
+	5lpnVMpfRfsyJRiU7H9+z+/VIdfPNmegaGZu71gOKitunKiKEwgz+mOCyjsIQWogD1W3fTyF/Vu
+	ac/kVtWB4zfoPFML0h5FGYlZCsjR2CoLn6OkHnBfQ+mfyZJbKlpv3RPFwYPRl+CZXI1lqlCuU18
+	EP/6NMdJthJEynga1RRf6Yy17Cg==
+X-Google-Smtp-Source: AGHT+IG0arZ0Y/HD/4QZM2Mtf9Bhh1MrJkEkPzLO727PMtNgzATpZ/biRDg0ZgLsatdiFJTVZd4WDA==
+X-Received: by 2002:a05:6a20:2590:b0:220:2da8:325c with SMTP id adf61e73a8af0-2380e08ee88mr4831146637.0.1752684611666;
+        Wed, 16 Jul 2025 09:50:11 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:d5f3:b898:53e4:52db])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe57c48asm14184484a12.25.2025.07.16.09.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 09:50:11 -0700 (PDT)
+Date: Wed, 16 Jul 2025 10:50:08 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com,
+	iuliana.prodan@oss.nxp.com,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v7 3/3] remoteproc: imx_rproc: detect and attach to
+ pre-booted remote cores
+Message-ID: <aHfYQFvkJcdfq9K_@p14s>
+References: <aHZ0nK4ZZShAr6Xz@p14s>
+ <CAPDyKFrWng0CY-ayKoEbnS_yanghSqogxfuizxEVbVogJ4DT=g@mail.gmail.com>
+ <20250716132552.bra37ucw4fcjwril@hiagonb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 00/78] 5.15.189-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250715163547.992191430@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250715163547.992191430@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716132552.bra37ucw4fcjwril@hiagonb>
 
-On 7/15/25 09:36, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.189 release.
-> There are 78 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Jul 16, 2025 at 10:25:52AM -0300, Hiago De Franco wrote:
+> Hi Mathieu, Ulf,
 > 
-> Responses should be made by Thu, 17 Jul 2025 16:35:29 +0000.
-> Anything received after that time might be too late.
+> On Tue, Jul 15, 2025 at 09:32:44AM -0600, Mathieu Poirier wrote:
+> > On Sun, Jun 29, 2025 at 02:25:12PM -0300, Hiago De Franco wrote:
+> > > From: Hiago De Franco <hiago.franco@toradex.com>
+> > > 
+> > > When the Cortex-M remote core is started and already running before
+> > > Linux boots (typically by the Cortex-A bootloader using a command like
+> > > bootaux), the current driver is unable to attach to it. This is because
+> > > the driver only checks for remote cores running in different SCFW
+> > > partitions. However in this case, the M-core is in the same partition as
+> > > Linux and is already powered up and running by the bootloader.
+> > > 
+> > > This patch adds a check using dev_pm_genpd_is_on() to verify whether the
+> > > M-core's power domains are already on. If all power domain devices are
+> > > on, the driver assumes the M-core is running and proceed to attach to
+> > > it.
+> > > 
+> > > To accomplish this, we need to avoid passing any attach_data or flags to
+> > > dev_pm_domain_attach_list(), allowing the platform device become a
+> > > consumer of the power domain provider without changing its current
+> > > state.
+> > > 
+> > > During probe, also enable and sync the device runtime PM to make sure
+> > > the power domains are correctly managed when the core is controlled by
+> > > the kernel.
+> > > 
+> > > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > > ---
+> > > v6 -> v7:
+> > >  - Added Peng reviewed-by.
+> > > v5 -> v6:
+> > >  - Commit description improved, as suggested. Added Ulf Hansson reviewed
+> > >    by. Comment on imx-rproc.c improved.
+> > > v4 -> v5:
+> > >  - pm_runtime_get_sync() removed in favor of
+> > >    pm_runtime_resume_and_get(). Now it also checks the return value of
+> > >    this function.
+> > >  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
+> > >    function.
+> > > v3 -> v4:
+> > >  - Changed to use the new dev_pm_genpd_is_on() function instead, as
+> > >    suggested by Ulf. This will now get the power status of the two
+> > >    remote cores power domains to decided if imx_rpoc needs to attach or
+> > >    not. In order to do that, pm_runtime_enable() and
+> > >    pm_runtime_get_sync() were introduced and pd_data was removed.
+> > > v2 -> v3:
+> > >  - Unchanged.
+> > > v1 -> v2:
+> > >  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> > >    suggested.
+> > > ---
+> > >  drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
+> > >  1 file changed, 32 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> > > index 627e57a88db2..24597b60c5b0 100644
+> > > --- a/drivers/remoteproc/imx_rproc.c
+> > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > @@ -18,6 +18,7 @@
+> > >  #include <linux/of_reserved_mem.h>
+> > >  #include <linux/platform_device.h>
+> > >  #include <linux/pm_domain.h>
+> > > +#include <linux/pm_runtime.h>
+> > >  #include <linux/reboot.h>
+> > >  #include <linux/regmap.h>
+> > >  #include <linux/remoteproc.h>
+> > > @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
+> > >  static int imx_rproc_attach_pd(struct imx_rproc *priv)
+> > >  {
+> > >  	struct device *dev = priv->dev;
+> > > -	int ret;
+> > > -	struct dev_pm_domain_attach_data pd_data = {
+> > > -		.pd_flags = PD_FLAG_DEV_LINK_ON,
+> > > -	};
+> > > +	int ret, i;
+> > > +	bool detached = true;
+> > >  
+> > >  	/*
+> > >  	 * If there is only one power-domain entry, the platform driver framework
+> > > @@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
+> > >  	if (dev->pm_domain)
+> > >  		return 0;
+> > >  
+> > > -	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
+> > > +	ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+> > > +	/*
+> > > +	 * If all the power domain devices are already turned on, the remote
+> > > +	 * core is already powered up and running when the kernel booted (e.g.,
+> > > +	 * started by U-Boot's bootaux command). In this case attach to it.
+> > > +	 */
+> > > +	for (i = 0; i < ret; i++) {
+> > > +		if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
+> > > +			detached = false;
+> > > +			break;
+> > > +		}
+> > > +	}
+> > 
+> > I was doing one final review of this work when I noticed the return code for
+> > dev_pm_domain_attach_list() is never checked for error.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.189-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
+> As Ulf pointed out, the 'return' a few lines below will return the
+> negative value to the caller of 'imx_rproc_attach_pd', which ultimately
+> will fail 'imx_rproc_detect_mode' and fail the probe of imx_rproc.
 > 
-> thanks,
-> 
-> greg k-h
+> Please notice that even tough 'dev_pm_domain_attach_list' fails, the
+> rproc->state will still be set as RPROC_DETACHED because we are starting
+> 'detached' as true, but I am not seeing this as an issue because as
+> mentioned above the probe will fail anyway. Please let me know if you
+> see this as an issue.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Two things to consider here: 
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+(1) It is only a matter of time before someone with a cleaver coccinelle script
+sends me a patch that adds the missing error check.
+
+(2) I think that @rproc->state being changed on error conditions is a bug
+waiting to happen.  This kind of implicit error handling is difficult to
+maintain and even more difficult for people to make enhancements to the driver.
+
+Adding a simple error check will make sure neither of the above will happen.  It
+is a simple change and we are at rc6 - this work can still go in the merge
+window.
+
+> 
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> > > +
+> > > +	if (detached)
+> > > +		priv->rproc->state = RPROC_DETACHED;
+> > > +
+> > >  	return ret < 0 ? ret : 0;
+> > >  }
+> > >  
+> > > @@ -1146,6 +1160,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
+> > >  		}
+> > >  	}
+> > >  
+> > > +	if (dcfg->method == IMX_RPROC_SCU_API) {
+> > > +		pm_runtime_enable(dev);
+> > > +		ret = pm_runtime_resume_and_get(dev);
+> > > +		if (ret) {
+> > > +			dev_err(dev, "pm_runtime get failed: %d\n", ret);
+> > > +			goto err_put_clk;
+> > > +		}
+> > > +	}
+> > > +
+> > >  	ret = rproc_add(rproc);
+> > >  	if (ret) {
+> > >  		dev_err(dev, "rproc_add failed\n");
+> > > @@ -1171,6 +1194,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
+> > >  	struct rproc *rproc = platform_get_drvdata(pdev);
+> > >  	struct imx_rproc *priv = rproc->priv;
+> > >  
+> > > +	if (priv->dcfg->method == IMX_RPROC_SCU_API) {
+> > > +		pm_runtime_disable(priv->dev);
+> > > +		pm_runtime_put(priv->dev);
+> > > +	}
+> > >  	clk_disable_unprepare(priv->clk);
+> > >  	rproc_del(rproc);
+> > >  	imx_rproc_put_scu(rproc);
+> > > -- 
+> > > 2.39.5
+> > > 
+> 
+> On Tue, Jul 15, 2025 at 06:03:44PM +0200, Ulf Hansson wrote:
+> > On Tue, 15 Jul 2025 at 17:32, Mathieu Poirier
+> > <mathieu.poirier@linaro.org> wrote:
+> > >
+> > > On Sun, Jun 29, 2025 at 02:25:12PM -0300, Hiago De Franco wrote:
+> > > > From: Hiago De Franco <hiago.franco@toradex.com>
+> > > >
+> > > > When the Cortex-M remote core is started and already running before
+> > > > Linux boots (typically by the Cortex-A bootloader using a command like
+> > > > bootaux), the current driver is unable to attach to it. This is because
+> > > > the driver only checks for remote cores running in different SCFW
+> > > > partitions. However in this case, the M-core is in the same partition as
+> > > > Linux and is already powered up and running by the bootloader.
+> > > >
+> > > > This patch adds a check using dev_pm_genpd_is_on() to verify whether the
+> > > > M-core's power domains are already on. If all power domain devices are
+> > > > on, the driver assumes the M-core is running and proceed to attach to
+> > > > it.
+> > > >
+> > > > To accomplish this, we need to avoid passing any attach_data or flags to
+> > > > dev_pm_domain_attach_list(), allowing the platform device become a
+> > > > consumer of the power domain provider without changing its current
+> > > > state.
+> > > >
+> > > > During probe, also enable and sync the device runtime PM to make sure
+> > > > the power domains are correctly managed when the core is controlled by
+> > > > the kernel.
+> > > >
+> > > > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > > > ---
+> > > > v6 -> v7:
+> > > >  - Added Peng reviewed-by.
+> > > > v5 -> v6:
+> > > >  - Commit description improved, as suggested. Added Ulf Hansson reviewed
+> > > >    by. Comment on imx-rproc.c improved.
+> > > > v4 -> v5:
+> > > >  - pm_runtime_get_sync() removed in favor of
+> > > >    pm_runtime_resume_and_get(). Now it also checks the return value of
+> > > >    this function.
+> > > >  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
+> > > >    function.
+> > > > v3 -> v4:
+> > > >  - Changed to use the new dev_pm_genpd_is_on() function instead, as
+> > > >    suggested by Ulf. This will now get the power status of the two
+> > > >    remote cores power domains to decided if imx_rpoc needs to attach or
+> > > >    not. In order to do that, pm_runtime_enable() and
+> > > >    pm_runtime_get_sync() were introduced and pd_data was removed.
+> > > > v2 -> v3:
+> > > >  - Unchanged.
+> > > > v1 -> v2:
+> > > >  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> > > >    suggested.
+> > > > ---
+> > > >  drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
+> > > >  1 file changed, 32 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> > > > index 627e57a88db2..24597b60c5b0 100644
+> > > > --- a/drivers/remoteproc/imx_rproc.c
+> > > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > > @@ -18,6 +18,7 @@
+> > > >  #include <linux/of_reserved_mem.h>
+> > > >  #include <linux/platform_device.h>
+> > > >  #include <linux/pm_domain.h>
+> > > > +#include <linux/pm_runtime.h>
+> > > >  #include <linux/reboot.h>
+> > > >  #include <linux/regmap.h>
+> > > >  #include <linux/remoteproc.h>
+> > > > @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
+> > > >  static int imx_rproc_attach_pd(struct imx_rproc *priv)
+> > > >  {
+> > > >       struct device *dev = priv->dev;
+> > > > -     int ret;
+> > > > -     struct dev_pm_domain_attach_data pd_data = {
+> > > > -             .pd_flags = PD_FLAG_DEV_LINK_ON,
+> > > > -     };
+> > > > +     int ret, i;
+> > > > +     bool detached = true;
+> > > >
+> > > >       /*
+> > > >        * If there is only one power-domain entry, the platform driver framework
+> > > > @@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
+> > > >       if (dev->pm_domain)
+> > > >               return 0;
+> > > >
+> > > > -     ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
+> > > > +     ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+> > > > +     /*
+> > > > +      * If all the power domain devices are already turned on, the remote
+> > > > +      * core is already powered up and running when the kernel booted (e.g.,
+> > > > +      * started by U-Boot's bootaux command). In this case attach to it.
+> > > > +      */
+> > > > +     for (i = 0; i < ret; i++) {
+> > > > +             if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
+> > > > +                     detached = false;
+> > > > +                     break;
+> > > > +             }
+> > > > +     }
+> > >
+> > > I was doing one final review of this work when I noticed the return code for
+> > > dev_pm_domain_attach_list() is never checked for error.
+> > 
+> > The for loop covers the error condition correctly, I think. It's only
+> > when ret >=1 when the loop should be started - and ret is propagated
+> > to the caller a few lines below.
+> > 
+> > >
+> > > Thanks,
+> > > Mathieu
+> > >
+> > 
+> > Kind regards
+> > Uffe
+> > 
+> > > > +
+> > > > +     if (detached)
+> > > > +             priv->rproc->state = RPROC_DETACHED;
+> > > > +
+> > > >       return ret < 0 ? ret : 0;
+> > > >  }
+> > > >
+> > > > @@ -1146,6 +1160,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
+> > > >               }
+> > > >       }
+> > > >
+> > > > +     if (dcfg->method == IMX_RPROC_SCU_API) {
+> > > > +             pm_runtime_enable(dev);
+> > > > +             ret = pm_runtime_resume_and_get(dev);
+> > > > +             if (ret) {
+> > > > +                     dev_err(dev, "pm_runtime get failed: %d\n", ret);
+> > > > +                     goto err_put_clk;
+> > > > +             }
+> > > > +     }
+> > > > +
+> > > >       ret = rproc_add(rproc);
+> > > >       if (ret) {
+> > > >               dev_err(dev, "rproc_add failed\n");
+> > > > @@ -1171,6 +1194,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
+> > > >       struct rproc *rproc = platform_get_drvdata(pdev);
+> > > >       struct imx_rproc *priv = rproc->priv;
+> > > >
+> > > > +     if (priv->dcfg->method == IMX_RPROC_SCU_API) {
+> > > > +             pm_runtime_disable(priv->dev);
+> > > > +             pm_runtime_put(priv->dev);
+> > > > +     }
+> > > >       clk_disable_unprepare(priv->clk);
+> > > >       rproc_del(rproc);
+> > > >       imx_rproc_put_scu(rproc);
+> > > > --
+> > > > 2.39.5
+> > > >
+> 
+> Best Regards,
+> 
+> Hiago.
 
