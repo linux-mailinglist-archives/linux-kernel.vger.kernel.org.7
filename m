@@ -1,141 +1,87 @@
-Return-Path: <linux-kernel+bounces-732662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F54B06A59
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3A5B06A5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A4B1A6371A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:15:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D90A1A6391A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5314FDDAD;
-	Wed, 16 Jul 2025 00:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27098633F;
+	Wed, 16 Jul 2025 00:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnqcTWqm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JTQb1Kvk"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B9010E4;
-	Wed, 16 Jul 2025 00:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BCDEAC7
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752624896; cv=none; b=Pv17Ssv8YURwD28uC/ePAbPTjAaU4U3mUX24HgANp/w7VBImTJOwN6b5WKdV7Cj44atyt/49+8VS1fkNe1xLfbkAem7Hj7ovw8RC4gp/ACZzUHJ4YpjIZAIKQAH1FxHQ2FGimtk/FUoPd3mpJxFLgSOZ84PM8cwgARDUUFzes8Q=
+	t=1752624937; cv=none; b=LHV9F2HTHFScRxgZF/v9S6QuX0/OD1gW7rVU0AK04NomybcAzBn1ylVUUmmLpMHZxd9EVD9dkF8bxG5uROQtNTrpVTFZ/7+WX/+OhBSGstgpUcMh8allB2gedFfzPYw1Kb63LDPsEjdvImBcuLEG9oA0xY8PRspA0pr20EcHpoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752624896; c=relaxed/simple;
-	bh=k5OvjG9s0R19eoy3cMVHKQqAhl4eqqomEfMHhgz3iD8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eVe8U0uIPl6zHe8BIQcN7cs/MaiSXM6m+Y0d07c6NNvTD8o+mw0zMZKtQSTd3NhMYBZzo1sO52B2Lbua4NxrY0jNhl6Zd9jfEJjcEZOQQ/y7ZtL11gHIe9uS4ur6DL82dgOFsI7FIH1AQvXYg/a+A+TWhcjv1OkpiCAlMt8h4/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnqcTWqm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4459CC4CEE3;
-	Wed, 16 Jul 2025 00:14:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752624896;
-	bh=k5OvjG9s0R19eoy3cMVHKQqAhl4eqqomEfMHhgz3iD8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WnqcTWqmRYE8aMLNzExoRV/ovIjjDMvESJktdmkOsMRpeboy7J4ojzwEoMHL+tcY4
-	 ka8COuzLwX6WWyMaZOAhuRbpK1F+NXJWgSOlRLx1EZ6LPf3dbmDC3/nSxIyuZ3r4yE
-	 Jfr7jfpaaaOUWljAn79a561UBVZyUMCq+flPfEx61JS1V1EN1xMH2filvXkoWHRIL1
-	 gOAdRllwluWRdqJBR8o3Kp1CGQ8+afb2beUpCLDnwKSR0lrxixrpBAEVWvDWX15w4E
-	 sdGpekn5/WHVikw+EVW67FzTmo47KBXBLKwV1JqG9VN0y1I0InMMeNe9E6Nsjk8OAP
-	 zWA3ajczpf/TA==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553b16a0e38so6292534e87.1;
-        Tue, 15 Jul 2025 17:14:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVK5iO7qlYGR9gclGtGFHNyWjOywv55c2ahLUlCceTZGNNOwmUmtNLtWp29w6kiXvWx7sxtmWhPVnOwRqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMHKewgx8jlD/sAB4KGO0EEi7+rHXf+zgpsT5fpdqaIJ9n2Gqb
-	PIwtHsP6UEoqGAP5Kz+qSeERDV57mEilqC7egvIWEpnqUwDoHEC2wiReSym+yzsCmTWukORIAca
-	+WjNzHDcDd0gdTvBhp2r42qRSmbt04Bw=
-X-Google-Smtp-Source: AGHT+IEk/hpfHMsHqrRmqU/eGEmZQlk/pMIwScWJdRK1TB+ySXraLjnpIZw7kTeuB20TNRIDJEuVmpKroAGsqe58Qqc=
-X-Received: by 2002:a05:6512:4024:b0:553:cfa8:dd33 with SMTP id
- 2adb3069b0e04-55a2331bac9mr515202e87.19.1752624894935; Tue, 15 Jul 2025
- 17:14:54 -0700 (PDT)
+	s=arc-20240116; t=1752624937; c=relaxed/simple;
+	bh=bF3eAJPKjlAX0gmHM4YTfXjMQhi+hJNSNb/htMc19BY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jUyujzDpFIco1CDwhkwQueH5pJ1R2vHFh38mGonBM5Qkc7NSG5nU9TnNeX+/i3i9KB1USRvZmUKkTDYKDaM6/dORXXHgVC8BXgPv4PKl3oeB/9mhOnxvcjovr1JRTN8eL1APfpgbmiuMG0zr/CWbIpFi8O1Nm4aW/67N4an9JwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JTQb1Kvk; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752624930;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NqDbyW0SQUqhy7PhdCLuIIofPAFpacRqZlTUSJkPTyE=;
+	b=JTQb1Kvksng+jYaz/qIjlUMNHkTE6wJS+drkqD5B6/k3CPzRQtwKqfyb2H6msM8nV7uBRA
+	y3ErCC9r3W8gycNE18Dr41nrdkPFjuhXXNaF3KTdv8h/r1dfC2UUk57d3tiDkIf/1DwamN
+	AA0B31lDb7enfR1pMvq7BcpdkEVjiuY=
+From: Zqiang <qiang.zhang@linux.dev>
+To: oneukum@suse.com,
+	kuba@kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	pabeni@redhat.com
+Cc: qiang.zhang@linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: usb: Make init_satus() return -ENOMEM if alloc failed
+Date: Wed, 16 Jul 2025 08:15:23 +0800
+Message-ID: <20250716001524.168110-1-qiang.zhang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714222923.1107205-1-jeremy.linton@arm.com> <20250714222923.1107205-2-jeremy.linton@arm.com>
-In-Reply-To: <20250714222923.1107205-2-jeremy.linton@arm.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 16 Jul 2025 09:14:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT+KBFe2wrfw32PpHHEvko3YkkaPHPPt54Y6VuYt7PHMA@mail.gmail.com>
-X-Gm-Features: Ac12FXyofase4ZSfqX3E7g3BtavjOSI98x0jUC5ICQ4Kv3lSuIJ_juHG-qlZDOY
-Message-ID: <CAK7LNAT+KBFe2wrfw32PpHHEvko3YkkaPHPPt54Y6VuYt7PHMA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] scripts: add zboot support to extract-vmlinux
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: linux-kbuild@vger.kernel.org, nathan@kernel.org, nicolas.schier@linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 15, 2025 at 7:29=E2=80=AFAM Jeremy Linton <jeremy.linton@arm.co=
-m> wrote:
->
-> Zboot compressed kernel images are used for arm64 kernels on various
-> distros.
->
-> extract-vmlinux fails with those kernels because the wrapped image is
-> another PE. While this could be a bit confusing, the tools primary
-> purpose of unwrapping and decompressing the contained kernel image
-> makes it the obvious place for this functionality.
->
-> Add a 'file' check in check_vmlinux() that detects a contained PE
-> image before trying readelf. Recent (FILES_39, Jun/2020) file
-> implementations output something like:
->
-> "Linux kernel ARM64 boot executable Image, little-endian, 4K pages"
->
-> Which is also a stronger statement than readelf provides so drop that
-> part of the comment. At the same time this means that kernel images
-> which don't appear to contain a compressed image will be returned
-> rather than reporting an error. Which matches the behavior for
-> existing ELF files.
->
-> The extracted PE image can then be inspected, or used as would any
-> other kernel PE.
->
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+This commit make init_status() return -ENOMEM, if invoke
+kmalloc() return failed.
 
-Applied to linux-kbuild.
-Thanks.
+Signed-off-by: Zqiang <qiang.zhang@linux.dev>
+---
+ drivers/net/usb/usbnet.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 921c05bc73e3..26fce452581c 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -254,6 +254,8 @@ static int init_status (struct usbnet *dev, struct usb_interface *intf)
+ 				"status ep%din, %d bytes period %d\n",
+ 				usb_pipeendpoint(pipe), maxp, period);
+ 		}
++	} else {
++		return -ENOMEM;
+ 	}
+ 	return 0;
+ }
+-- 
+2.48.1
 
-> ---
->  scripts/extract-vmlinux | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
->
-> diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
-> index 8995cd304e6e..189956b5a5c8 100755
-> --- a/scripts/extract-vmlinux
-> +++ b/scripts/extract-vmlinux
-> @@ -12,13 +12,12 @@
->
->  check_vmlinux()
->  {
-> -       # Use readelf to check if it's a valid ELF
-> -       # TODO: find a better to way to check that it's really vmlinux
-> -       #       and not just an elf
-> -       readelf -h $1 > /dev/null 2>&1 || return 1
-> -
-> -       cat $1
-> -       exit 0
-> +       if file "$1" | grep -q 'Linux kernel.*boot executable' ||
-> +               readelf -h "$1" > /dev/null 2>&1
-> +       then
-> +               cat "$1"
-> +               exit 0
-> +       fi
->  }
->
->  try_decompress()
-> --
-> 2.50.1
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
