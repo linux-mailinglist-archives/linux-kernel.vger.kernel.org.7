@@ -1,155 +1,142 @@
-Return-Path: <linux-kernel+bounces-733722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6916EB0783A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:35:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A440B07846
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6401B18996C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:35:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 627EE16EE8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD6421B9DE;
-	Wed, 16 Jul 2025 14:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C65D261594;
+	Wed, 16 Jul 2025 14:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dt45FC45"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FYg4ahoW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9747519AD5C;
-	Wed, 16 Jul 2025 14:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FC3233156
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676519; cv=none; b=Rk2qAOQ1++My9bdSUwtSMbgA3YqUQkn8KQhAi8XtQPWGl8sN2xDDYCrNiyV1mcwtGjaj9U80f01GEuWiMrE+w2CEOwkGicpQB44Fls/u+xzX7zs05zHq+zF9Z5zr2ZGDQgR9hmP2hDMHwXXHZyJdpbujut7bbBbT2h64FF9KGkY=
+	t=1752676723; cv=none; b=Rw75FcvYIJEuB8UEEwUE1ZEj3hZjPh3TI7ItcEEtBTOrNa9XkLkVhKBVGHn2wmJ88Zor4dPO9ZAN5dBYoFK0camPP4llZqIBA1D4fGj0qO8ob6zFUC6mgIh/EQQiM2T8b7HtcjevS2iqsCcAleyjJkAW9dtp9ck4Wa+72JFOVJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676519; c=relaxed/simple;
-	bh=m6dMr4mmc+ehuhuOcxxv5TIdC9hKtCvMg4Uo67cqnrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OtLv/tuR3GVYoidNhCQ9NJXcWbr0aTNne08Hg9JUVxYkQN6oMNfg35Ceh3layWK1DYTku2lsmHTlWB94oKfBi63xwb5KYLHAf/huAUpeHPm/yLEJWGDt0gfmKSZNeBk5e/YwEPyteI5C7wCK9JEtkpbUJCRJYq0HF7fFsYxARrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dt45FC45; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B14A3C4CEEB;
-	Wed, 16 Jul 2025 14:35:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752676517;
-	bh=m6dMr4mmc+ehuhuOcxxv5TIdC9hKtCvMg4Uo67cqnrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dt45FC45lr4Y5Yj3uPvtIZIp6ciObQ9O2GVHJqBWqI/DLPZcpWsBg+1utqSq+YDw+
-	 TTJ19/zC3kTV+soJUz1OQg6F20EoxtqkYFznrlG07TYT9OwefLF+uUOoxgh73ZfBBh
-	 8SLneOMyK6P6c1iwB2WDkSzSjY245qEG5+H7F2QqcQx2Mh9mjqPlZFwKhRcF5+24Ct
-	 cNsz5f+KIF7vHtSZJm9SAA2iNaGsi09yJS4bgJ5Rq9l9ZvQpLb37Tq3YiEMeKhwgUF
-	 3O9gxF1imLn9OunEnp/rcY/rLf2AqX97EG5ibd/BdzyrfVM1RgO08vlXbJqogYNczt
-	 9YD87lNN0ufMw==
-Date: Wed, 16 Jul 2025 15:35:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-	Richard Cochran <richardcochran@gmail.com>,
-	Christopher Hall <christopher.s.hall@intel.com>,
-	Miroslav Lichvar <mlichvar@redhat.com>,
-	Werner Abt <werner.abt@meinberg-usa.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Kurt Kanzenbach <kurt@linutronix.de>,
-	Nam Cao <namcao@linutronix.de>, Antoine Tenart <atenart@kernel.org>
-Subject: Re: [PATCH 06/14] vdso/gettimeofday: Return bool from
- clock_gettime() helpers
-Message-ID: <69499cb9-b13b-4eec-a7c4-c219a77c6260@sirena.org.uk>
-References: <20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
- <02bcd954-5323-4663-a766-f53c67c5a18f@samsung.com>
- <CGME20250708154921eucas1p1fd8fa4374610a991ca5c67bd612ca0c2@eucas1p1.samsung.com>
- <e8c6b9a7-eaa6-4947-98e1-9d6fecc958d4@samsung.com>
- <20250709092958-37148883-ed89-40fe-8cd5-ded5dd60957e@linutronix.de>
- <eb5feef3-0a7d-438c-9dbb-00d1d72fad66@samsung.com>
- <6bee5ae0-2a9e-4793-a5bd-9e6c72b03f27@sirena.org.uk>
- <20250716142933-41089f40-0628-4821-83a3-fddbd4c4f9bf@linutronix.de>
- <3a9504d1-2c6a-459a-a98e-3010d34b546c@sirena.org.uk>
- <20250716152041-189100b1-7f5e-4388-8ada-b79ec09d18f5@linutronix.de>
+	s=arc-20240116; t=1752676723; c=relaxed/simple;
+	bh=oWT4UhuprBU4uzVFD1aAq+uce9GMDclGkVsEh4frCuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QlXd2PzdUIIPOoy7BQ0k+s/rcmhy23cLl95DGkYuDZheDBjQZYkv3ijTHrQVsFOAogE7BpXZuk7fdTJX9DyUiHSLoTlkuxkctOjwK6KStbq/xn02D+xCLfBgYbDaYrNoddVR0GlJ8L24oGW4CCF8H5UQv8mZT7PDXZRuTGL8G58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FYg4ahoW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752676720;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ajHJ2tQ5qM4LcKhMqVWF3mLSk9Qiueaa/5Dboted428=;
+	b=FYg4ahoWYiOhw7bATDebMzo+cGkR8WUGSw78OFszcnGPnLsIJpgpuK3UsKNbTjTjvBxynL
+	HZPP2g707v7OQgYCHr6mgfOAz59c7R1Pr+O/+YCJ3guO5KXJBPtFYRfOh1+suY5eR0j+Ih
+	tJxDpVQ/wQ+cVPI22F4Lfk+bh9oqaJc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-183-OGphlmYKOEqL5iCXAj5I7A-1; Wed,
+ 16 Jul 2025 10:38:38 -0400
+X-MC-Unique: OGphlmYKOEqL5iCXAj5I7A-1
+X-Mimecast-MFC-AGG-ID: OGphlmYKOEqL5iCXAj5I7A_1752676718
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C518D195608B;
+	Wed, 16 Jul 2025 14:38:37 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.224.115])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2759419560AB;
+	Wed, 16 Jul 2025 14:38:34 +0000 (UTC)
+From: Tomas Glozar <tglozar@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	John Kacur <jkacur@redhat.com>,
+	Luis Goncalves <lgoncalv@redhat.com>,
+	Attila Fazekas <afazekas@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>
+Subject: [PATCH] tracing/osnoise: Fix crash in timerlat_dump_stack()
+Date: Wed, 16 Jul 2025 16:36:01 +0200
+Message-ID: <20250716143601.7313-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BuIqEQ3Xb0IJOloe"
-Content-Disposition: inline
-In-Reply-To: <20250716152041-189100b1-7f5e-4388-8ada-b79ec09d18f5@linutronix.de>
-X-Cookie: osteopornosis:
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+We have observed kernel panics when using timerlat with stack saving,
+with the following dmesg output:
 
---BuIqEQ3Xb0IJOloe
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+memcpy: detected buffer overflow: 88 byte write of buffer size 0
+WARNING: CPU: 2 PID: 8153 at lib/string_helpers.c:1032 __fortify_report+0x55/0xa0
+CPU: 2 UID: 0 PID: 8153 Comm: timerlatu/2 Kdump: loaded Not tainted 6.15.3-200.fc42.x86_64 #1 PREEMPT(lazy)
+Call Trace:
+ <TASK>
+ ? trace_buffer_lock_reserve+0x2a/0x60
+ __fortify_panic+0xd/0xf
+ __timerlat_dump_stack.cold+0xd/0xd
+ timerlat_dump_stack.part.0+0x47/0x80
+ timerlat_fd_read+0x36d/0x390
+ vfs_read+0xe2/0x390
+ ? syscall_exit_to_user_mode+0x1d5/0x210
+ ksys_read+0x73/0xe0
+ do_syscall_64+0x7b/0x160
+ ? exc_page_fault+0x7e/0x1a0
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-On Wed, Jul 16, 2025 at 03:23:24PM +0200, Thomas Wei=DFschuh wrote:
+__timerlat_dump_stack() constructs the ftrace stack entry like this:
 
-> Can you try the following?
-> I missed this despite the double-checking after the last reported issue.
+struct stack_entry *entry;
+...
+memcpy(&entry->caller, fstack->calls, size);
+entry->size = fstack->nr_entries;
 
-I needed to fix that up a bit, it was missing an update of the final ret
-in the function and didn't apply directly to -next for some reason so I
-had to manually apply but it seems to do the trick, thanks!
+Since commit e7186af7fb26 ("tracing: Add back FORTIFY_SOURCE logic to
+kernel_stack event structure"), struct stack_entry marks its caller
+field with __counted_by(size). At the time of the memcpy, entry->size
+contains garbage from the ringbuffer, which under some circumstances is
+zero, triggering a kernel panic by buffer overflow.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Populate the size field before the memcpy so that the out-of-bounds
+check knows the correct size. This is analogous to
+__ftrace_trace_stack().
 
-with this against -next:
+Cc: stable@vger.kernel.org
+Fixes: e7186af7fb26 ("tracing: Add back FORTIFY_SOURCE logic to kernel_stack event structure")
+Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+---
+ kernel/trace/trace_osnoise.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-index 97aa9059a5c97..487e3458e536e 100644
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -365,18 +365,18 @@ __cvdso_clock_gettime32_data(const struct vdso_time_d=
-ata *vd, clockid_t clock,
- 			     struct old_timespec32 *res)
- {
- 	struct __kernel_timespec ts;
--	int ret;
-+	bool ok;
-=20
--	ret =3D __cvdso_clock_gettime_common(vd, clock, &ts);
-+	ok =3D __cvdso_clock_gettime_common(vd, clock, &ts);
-=20
--	if (unlikely(ret))
-+	if (unlikely(!ok))
- 		return clock_gettime32_fallback(clock, res);
-=20
--	/* For ret =3D=3D 0 */
-+	/* For ok =3D=3D true */
- 	res->tv_sec =3D ts.tv_sec;
- 	res->tv_nsec =3D ts.tv_nsec;
-=20
--	return ret;
-+	return 0;
+Note: This has been so far only reproduced on laptops (three different
+machines). Not sure what the reason for that is, but it is clearly
+a bug.
+
+diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+index 6819b93309ce..fd259da0aa64 100644
+--- a/kernel/trace/trace_osnoise.c
++++ b/kernel/trace/trace_osnoise.c
+@@ -637,8 +637,8 @@ __timerlat_dump_stack(struct trace_buffer *buffer, struct trace_stack *fstack, u
+ 
+ 	entry = ring_buffer_event_data(event);
+ 
+-	memcpy(&entry->caller, fstack->calls, size);
+ 	entry->size = fstack->nr_entries;
++	memcpy(&entry->caller, fstack->calls, size);
+ 
+ 	trace_buffer_unlock_commit_nostack(buffer, event);
  }
-=20
- static __maybe_unused int
+-- 
+2.47.1
 
---BuIqEQ3Xb0IJOloe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh3uJ0ACgkQJNaLcl1U
-h9CA4Af/Tjt27XD+sH0XsHGiqrvVkfVxva7ofqhkGScEh/mKgfSbmkbXHANzMMcN
-i0cqh+YA1JvkdO9PRMQKygFdjOmHF6f8fLJ89tv362PI4fWlABSmiorpUwrX/J76
-1DnAJBk3+BI/Ea4E5KVldzfU+figgDJeX1YWeicBcnGCnMrdHPub+24Wgclm4MIs
-mxPCfZnczo7mLioF3QxjetxtWIFrsPNxoRJp7kJN0Kyz6lGJQBmZc+dY1UzEVtyR
-GBCX/hWkjFxJzX9EBQ3d7C/LgP6AuvykylzYC2M5AZC9TOzvRpEhjp6WGJHCRrwa
-K72ju7AAJ/9Vit9ykmOIMbQUpAZUYA==
-=rAsr
------END PGP SIGNATURE-----
-
---BuIqEQ3Xb0IJOloe--
 
