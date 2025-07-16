@@ -1,142 +1,133 @@
-Return-Path: <linux-kernel+bounces-732776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733CFB06C03
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:09:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D58C6B06C04
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2D2172F27
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9930850015C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB3128033C;
-	Wed, 16 Jul 2025 03:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8857276050;
+	Wed, 16 Jul 2025 03:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZEpJU/d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLeXEjLv"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7C7277C8E;
-	Wed, 16 Jul 2025 03:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFBF211A35
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752635232; cv=none; b=J7QQ6s5zz787oZTE9q0CDEoBL3Yt+0DtM8zp2/TpoaSyTvMFaUKg1mJNTyNC9+1kcOmNbjhQel8oLOFyya2zqgRbwEdZC5ShgB51hXTA7vf9p9EZGVEPuk/EtpJEOqCMkUryL0bG8ouPtI5oVbs0FBPKkUJAAJ7xDjp3PYtLsqU=
+	t=1752635337; cv=none; b=n9HqNLfMjUoMyrQmFM96/TOxDiH9jjRN7o5oMDpnLds8G0EYpRll080AVooOmBwhvV3WCWCM+YHsgqkyO12jQWnYxy5awimKy+Xaxt/uRu9BlaaYPFR1n5vhk306arSfUsaKodmc0/QRv91VwWttGPB/bnnB9jN60R+c3yIdmbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752635232; c=relaxed/simple;
-	bh=XdgH/MWOd67x59+/ndV40VH40+ZO9umQlQ/4xBpYJro=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aluK0Q9CBz/qku79nhdnRyL6xNHYrqV+qTHrZFpqEF17KtLJ+83TsSV1rhyhMVhTzOXm4MuAus/ZZSoBeTAXef1WlRJCdWPG/BefwawI7DAVrmZSigL4D2V13kZ2nF3iMEnzZaN7lCccZjngRF57HhSc60LnprpVwEdNDruUcL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZEpJU/d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CEE0C4CEE3;
-	Wed, 16 Jul 2025 03:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752635232;
-	bh=XdgH/MWOd67x59+/ndV40VH40+ZO9umQlQ/4xBpYJro=;
-	h=From:Date:Subject:To:Cc:From;
-	b=dZEpJU/d6Sx/HlOZ2zO03bRdrr59rA3l/A/Ss0YEZ8Zzx0ffXoCODVMuQ8BA3mBHc
-	 lL8UN5CNui9N5U7INGC6I8/nN8x0baq5rL02AcNEnHDv+TtkXVNJdSzPOFjtOSbBcD
-	 OSjy+LSB/bTPnJzmUiTq1XyDhO4R8iwCTjk51UqdJJkNSK7WCc1XIM9MMnzoh80NiX
-	 ARA/HIXewK6gulvueWHmrV0zfckpbdxF0uxNA1AcZjZXJO11A86Iky4NVoYJp2MWGG
-	 +OreNN+GnnBp22e8G5d18WurZejvTvKgIc26R9PUV7V+rmrvPrChkcbIqYdorabFfk
-	 785GvU4MIgGMQ==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Tue, 15 Jul 2025 20:07:01 -0700
-Subject: [PATCH fixes] riscv: uaccess: Fix -Wuninitialized and -Wshadow in
- __put_user_nocheck
+	s=arc-20240116; t=1752635337; c=relaxed/simple;
+	bh=I9Nl4TGiDRruYlDY3yO9m94E5FnhJMFMO2CZe/mEayw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fsaVrLrIQ12/7U3KcBx2a1aj2P/fdtUld0qL/mCGb8HAP2ODi/zvaFVF6ujoO3zJb4iaZ+cGZHepbG/ymlsvS7K7A2yWjEuh+PFBxmJxxVbYsSsMtvMefxwSo/4Ep5h8TdYU1furh/SDPDX+/zA4HZpF6Dvcwr4SRxfuWOOz2mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MLeXEjLv; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso6531226b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:08:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752635335; x=1753240135; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=txbGeWqBLXyD77pW1MQHtscxDxV1S4JfxJTpEzhLnts=;
+        b=MLeXEjLvyDEi+Z/frlJNrEPUXbNSFqfqLQ+ynbBe1+YruMHLa/OOq6ZTb28g0wP8KP
+         e43EYxL7cxyilB63gTlb3CnpR+casVUpjEjDrgEw7ODcDFzUWKUI1njQy+zSXx5SoNql
+         M/GNmJ+vDDCN1bMTxIQzXZqT+MvVSc53ET2XYciIre11CIpbnYiOgwMxcKYEbtW2n0zr
+         SNco/wek6aF2M24gWuPCHZirNQlVWG4bQFmzmQ7sLWvSVwueBidUzMjjtJmafl+ruH0f
+         gHT4J8b/ghIjyrlzqHQDVIh/7Yqpr20O+2451TaYCEMR80TrVtS7VPuQnnYTQhYfej98
+         AtOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752635335; x=1753240135;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=txbGeWqBLXyD77pW1MQHtscxDxV1S4JfxJTpEzhLnts=;
+        b=EQThZkCEyU6xdFUvEnu64az9IlWH9uDadELCltiRP7TbN6CCPDf4M04Z3tx7JOPnhf
+         dj/XOMNnYPTKisdQV6Jmpw+kEWW+yEaRjL4LP1h5bPjEn4pTjoR7hUUcI2i+zbl227vi
+         fOWu0q41lT968y/Ekdq+xr7to1rCOx6lwQfCbheGYn7OOvIhhY+AhTWAgjnmbTfaZz7O
+         bNpetB0eN1jz0T6qf+xrvjXHe62JAGw1ERfmVEjWmZ6a5aSt2tiQrRWAN62f03MvBTuj
+         lN3fNv2SEQDzzqG2zDHAPqILE66jrHhDjnJAZ7t9jZni6muDgtUE5yD0uSuk6yHggBIY
+         h/nA==
+X-Gm-Message-State: AOJu0Yyscjxyho8b0Dti8/87qOODyKL3W1pgkIkHY8t4Vt4e+1AbJzkJ
+	PvsTZDzOw4+5pJ0KwuKrOEE4Wxnw/V9ZBMfWnv3YxYKsWY6kUvmsf6Q=
+X-Gm-Gg: ASbGncsmu13u0PybZ/4u66zZuLP7imICDsKOaBZ0PXDEs1qMg5RslRRl3LPAc6waRN3
+	WJ+THfQBantFlrYseRsQkeEgNRnjRt+2Jw4m2T4BpJ7YKJZ5mhiqm9Dme3jsJDCk6X+KQtOZCa2
+	A5sC5HMuokStILLNc1nIQGLGXJh5YwT73KlDhAQzyXOou6F97w4GNMdbGDA8WO2tmX7+xLV1lDE
+	Hu6FFAFSx65JcX110gJlp85jQG/Cinvfn4PN6YBltsAQj3DTpqMrIYX6lCmJj03EeJKHWCtt1qv
+	LqHndEnQRpQ26/EX61QND2t7+IMzd+n8yL+HZ76j2GlWBaX30cYdP/JCct7UTioaakI2Na6m0Fg
+	WN1CaTiJZLj+9aEPdHladJUCakmLtP/Aq8bp7P6GxQZnzPWhAV04c8Q2OoFDSIQ==
+X-Google-Smtp-Source: AGHT+IGDwZEiL3QNCCKygKRifffCcxgAnWkx9Gk+aCmxab/qH1Z/dgzSrl2Gl3/I+wu8kFxwy0LopQ==
+X-Received: by 2002:a05:6a21:328d:b0:237:ddb9:286e with SMTP id adf61e73a8af0-23812e4d362mr1404171637.28.1752635335091;
+        Tue, 15 Jul 2025 20:08:55 -0700 (PDT)
+Received: from max-MacBookPro.. (36-237-135-199.dynamic-ip.hinet.net. [36.237.135.199])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd603asm13549549b3a.12.2025.07.15.20.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 20:08:54 -0700 (PDT)
+From: Meng Shao Liu <sau525@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	visitorckw@gmail.com,
+	Meng Shao Liu <sau525@gmail.com>
+Subject: [PATCH 1/2] samples/kobject: fix path comment
+Date: Wed, 16 Jul 2025 11:07:33 +0800
+Message-ID: <5be61d284a1850f573658f1c105f0b6062e41332.1752634732.git.sau525@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-riscv-uaccess-fix-self-init-val-v1-1-82b8e911f120@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFQXd2gC/yWN0QqDMBAEf0Xu2YNoE5T+SvEhJKseSFpyGgriv
- zfUtxkYdk9SZIHSszkpo4jKO1Xp2obC6tMCllidetM7M3SOs2gofPgQoMqzfFmxzSxJdi5+Y0R
- r3WDjYzSguvLJqNH/4UU3Tdf1A1XCPVZ4AAAA
-X-Change-ID: 20250715-riscv-uaccess-fix-self-init-val-ed44574d380e
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <cleger@rivosinc.com>, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3278; i=nathan@kernel.org;
- h=from:subject:message-id; bh=XdgH/MWOd67x59+/ndV40VH40+ZO9umQlQ/4xBpYJro=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBnl4nGic1b8Pa581S4ksUPu/lHnvNVznmmXGqz5dNL2t
- u/pieKMHaUsDGJcDLJiiizVj1WPGxrOOct449QkmDmsTCBDGLg4BWAiv80Z/hfvNzxu+jjlEmtb
- s/+e/w2Oq4NCntfv/No3u3nfVpnI33MY/vvde7oreeXKr284bhbKf1lX8WbjjyBhS+NOh8QXFUw
- 6p/gB
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Transfer-Encoding: 8bit
 
-After a recent change in clang to strengthen uninitialized warnings [1],
-there is a warning from val being uninitialized in __put_user_nocheck
-when called from futex_put_value():
+The introductory comment still says the example creates
+/sys/kernel/kobject-example, but the code actually creates
+/sys/kernel/kobject_example.
 
-  kernel/futex/futex.h:326:18: warning: variable 'val' is uninitialized when used within its own initialization [-Wuninitialized]
-    326 |         unsafe_put_user(val, to, Efault);
-        |         ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
-  arch/riscv/include/asm/uaccess.h:464:21: note: expanded from macro 'unsafe_put_user'
-    464 |         __put_user_nocheck(x, (ptr), label)
-        |         ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
-  arch/riscv/include/asm/uaccess.h:314:36: note: expanded from macro '__put_user_nocheck'
-    314 |                 __inttype(x) val = (__inttype(x))x;                     \
-        |                              ~~~                 ^
+Update both comments to reflect the actual sysfs paths. Also,
+fix "tree"->"three" typo in kset-example.c.
 
-While not on by default, -Wshadow flags the same mistake:
-
-  kernel/futex/futex.h:326:2: warning: declaration shadows a local variable [-Wshadow]
-    326 |         unsafe_put_user(val, to, Efault);
-        |         ^
-  arch/riscv/include/asm/uaccess.h:464:2: note: expanded from macro 'unsafe_put_user'
-    464 |         __put_user_nocheck(x, (ptr), label)
-        |         ^
-  arch/riscv/include/asm/uaccess.h:314:16: note: expanded from macro '__put_user_nocheck'
-    314 |                 __inttype(x) val = (__inttype(x))x;                     \
-        |                              ^
-  kernel/futex/futex.h:320:48: note: previous declaration is here
-    320 | static __always_inline int futex_put_value(u32 val, u32 __user *to)
-        |                                                ^
-
-Use a three underscore prefix for the val variable in __put_user_nocheck
-to avoid clashing with either val or __val, which are both used within
-the put_user macros, clearing up all warnings.
-
-Closes: https://github.com/ClangBuiltLinux/linux/issues/2109
-Fixes: ca1a66cdd685 ("riscv: uaccess: do not do misaligned accesses in get/put_user()")
-Link: https://github.com/llvm/llvm-project/commit/2464313eef01c5b1edf0eccf57a32cdee01472c7 [1]
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Meng Shao Liu <sau525@gmail.com>
 ---
-It would be good if this could make 6.16 final. Otherwise, consider
-adding a 'Cc: stable@vger.kernel.org' during application.
----
- arch/riscv/include/asm/uaccess.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ samples/kobject/kobject-example.c | 2 +-
+ samples/kobject/kset-example.c    | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-index 525e50db24f7..b88a6218b7f2 100644
---- a/arch/riscv/include/asm/uaccess.h
-+++ b/arch/riscv/include/asm/uaccess.h
-@@ -311,8 +311,8 @@ do {								\
- do {								\
- 	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&	\
- 	    !IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr))) {	\
--		__inttype(x) val = (__inttype(x))x;			\
--		if (__asm_copy_to_user_sum_enabled(__gu_ptr, &(val), sizeof(*__gu_ptr))) \
-+		__inttype(x) ___val = (__inttype(x))x;			\
-+		if (__asm_copy_to_user_sum_enabled(__gu_ptr, &(___val), sizeof(*__gu_ptr))) \
- 			goto label;				\
- 		break;						\
- 	}							\
-
----
-base-commit: 5903a7452e642f1475f274373633522db168b60b
-change-id: 20250715-riscv-uaccess-fix-self-init-val-ed44574d380e
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
+diff --git a/samples/kobject/kobject-example.c b/samples/kobject/kobject-example.c
+index c9c3db197..e6d7fc18e 100644
+--- a/samples/kobject/kobject-example.c
++++ b/samples/kobject/kobject-example.c
+@@ -13,7 +13,7 @@
+ 
+ /*
+  * This module shows how to create a simple subdirectory in sysfs called
+- * /sys/kernel/kobject-example  In that directory, 3 files are created:
++ * /sys/kernel/kobject_example  In that directory, 3 files are created:
+  * "foo", "baz", and "bar".  If an integer is written to these files, it can be
+  * later read out of it.
+  */
+diff --git a/samples/kobject/kset-example.c b/samples/kobject/kset-example.c
+index 552d7e363..579ce1502 100644
+--- a/samples/kobject/kset-example.c
++++ b/samples/kobject/kset-example.c
+@@ -14,8 +14,8 @@
+ 
+ /*
+  * This module shows how to create a kset in sysfs called
+- * /sys/kernel/kset-example
+- * Then tree kobjects are created and assigned to this kset, "foo", "baz",
++ * /sys/kernel/kset_example
++ * Then three kobjects are created and assigned to this kset, "foo", "baz",
+  * and "bar".  In those kobjects, attributes of the same name are also
+  * created and if an integer is written to these files, it can be later
+  * read out of it.
+-- 
+2.43.0
 
 
