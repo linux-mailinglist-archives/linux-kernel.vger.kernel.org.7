@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-733222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4CAB071BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:34:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98376B071C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489B31888F6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:34:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD76D581FF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85A72EF664;
-	Wed, 16 Jul 2025 09:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B829A2F0E2D;
+	Wed, 16 Jul 2025 09:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hux4SLkM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LF0sUrre"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2357253356;
-	Wed, 16 Jul 2025 09:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AFC2EAB8D;
+	Wed, 16 Jul 2025 09:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752658441; cv=none; b=pju08R5PiGjc4x2fOzv9EsTNfvk4GhANmrubQTezN3gdfrYZHSl1g6OLZhpwbzcDVWriaYZBC/lwcITkmsgjdaoNHOSHRduHIrhSmyHW7h7qBXjTaD5b5bh2iiLjSxRN0pM7yNKFAbtIMYVOMSXfMAqNCANHWqny2/dvgMfoglg=
+	t=1752658480; cv=none; b=gcb0ZGq7JTlolFJMzbIn3if8FkSNLkWX/PHZ42IwfjyMhjA6ZU110A9Zdg7c/8buNy8fcuN8F2fYZ6gEtyR2g6CqWnObpg0mpu2bllG+q4P9f2B5KvuQhTvgeQBDKl7rqJ7FLoiCgB83wfJ9xCFSlbXYl9wnIvYhbds1oeD1+90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752658441; c=relaxed/simple;
-	bh=cHEfhWFXrCybHnY54wFHNIDzIVXMALti3G4z6Ampkx4=;
+	s=arc-20240116; t=1752658480; c=relaxed/simple;
+	bh=ONBSn5o1H6j3ORHZtSRjG3KCsfOjTLO1GjLY4HdgpRA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pa8tYX7fH4/89BHigRWOaLonChW5Vt2YWHaiJja7ysrY6YY47UZhF9gSjR1D0UDoZfAziqqipsUU9gy6Je7Zb8Tu7gpJJ3HPBYgyrRoXUE30nZf6J9o6arurCmKPZ2Qrj1CcuDGvUdoHFOVy2aZuBayPwes40uOcbP+FVpIxmgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hux4SLkM; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752658440; x=1784194440;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cHEfhWFXrCybHnY54wFHNIDzIVXMALti3G4z6Ampkx4=;
-  b=Hux4SLkMt39Qu6MBoQUCgEWyFikTjHGsXP0uJ8Z1OIcykrmu+v29yVk/
-   vck/Q1raZuTzPzGxyqpjHmoYnvYQgnO7r/sTi+/xKhz6tML+JJcx/kSdE
-   wBCqy1C284bp8XZn57r+EPNQtZmlpln4+J54bqIURijc3bAiDYbV9JfCw
-   X8+DQvgG94S9nNUkFj5FpukAeD9EljN7TzNx6M6u6WN77yGrCH7mw068k
-   +xiG2wpZK1VXk1FoIdJv9qGlGsiTwMM/EEVjyWh3jM2GgtQx0gV2kX2jo
-   X23HveKBdUvyGYpJ80vCEmxqI1hKOJCmTsDWUMIla0YGQMbS9xswcSjvJ
-   g==;
-X-CSE-ConnectionGUID: ETTONqHqS1SeSqMHRiXdxQ==
-X-CSE-MsgGUID: ANUpcb+DTsSALceBPUb51g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="77427916"
-X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="77427916"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 02:33:59 -0700
-X-CSE-ConnectionGUID: m4U72yvrQR2K5QYw9WxicQ==
-X-CSE-MsgGUID: +SA32eI3TFmM0uncvx428w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="161479108"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 02:33:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ubyWQ-0000000FtoD-2doD;
-	Wed, 16 Jul 2025 12:33:54 +0300
-Date: Wed, 16 Jul 2025 12:33:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-serial@vger.kernel.org,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
-Subject: Re: linux-next: Tree for Jul 15
- (drivers/tty/serial/8250/8250_ce4100.c)
-Message-ID: <aHdyAm8tA64YSdOt@smile.fi.intel.com>
-References: <20250715204504.36f41a8e@canb.auug.org.au>
- <cdf4ee46-7bf8-4379-9245-fed9db72e7e8@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fdLjqcgpGPFd5HkOp9xjnleRAcXFuMkQLylYN08gZCyFAhiZgzlhyJYYVAH4QEgTN1gHGcSiEtcCBmYeNKzTh8OKN3WhkelChwVrNgz+q19K3bfFJw4QfqVQ9kCbvT1FpA9Cgyegy0uxZQ6enc1EnRJXivnAgZ4TzCHK2J6FzLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LF0sUrre; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F66C4CEF0;
+	Wed, 16 Jul 2025 09:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752658479;
+	bh=ONBSn5o1H6j3ORHZtSRjG3KCsfOjTLO1GjLY4HdgpRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LF0sUrrez2n0UX4P7X+6kWbZMKh3ESq/U1Am75RKjxzxra1B5w+qXkZ5js7JfJ+mK
+	 AOBBDMjMp9K59MfH/AFlSFr8wlS98u/e+Cvd0u8JUZX13UcJLp6hS2M98nVEbwsLey
+	 E0oHUDnGMr7R9Xn7nWZvDAdOrUhm+zTlZ9sAmFbk=
+Date: Wed, 16 Jul 2025 11:34:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+	Youssef Samir <quic_yabdulra@quicinc.com>,
+	Matthew Leung <quic_mattleun@quicinc.com>,
+	Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+	Kunwu Chan <chentao@kylinos.cn>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+	Yan Zhen <yanzhen@vivo.com>, Sujeev Dias <sdias@codeaurora.org>,
+	Siddartha Mohanadoss <smohanad@codeaurora.org>, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@collabora.com, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] bus: mhi: host: keep bhi buffer through suspend
+ cycle
+Message-ID: <2025071604-scandal-outpost-eb22@gregkh>
+References: <20250715132509.2643305-1-usama.anjum@collabora.com>
+ <20250715132509.2643305-2-usama.anjum@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,33 +65,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cdf4ee46-7bf8-4379-9245-fed9db72e7e8@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250715132509.2643305-2-usama.anjum@collabora.com>
 
-On Tue, Jul 15, 2025 at 06:42:52PM -0700, Randy Dunlap wrote:
-> On 7/15/25 3:45 AM, Stephen Rothwell wrote:
-> > 
-> > Changes since 20250714:
+On Tue, Jul 15, 2025 at 06:25:07PM +0500, Muhammad Usama Anjum wrote:
+> When there is memory pressure, at resume time dma_alloc_coherent()
+> returns error which in turn fails the loading of firmware and hence
+> the driver crashes:
 > 
-> on i386, when
-> CONFIG_X86_INTEL_CE=y
-> # CONFIG_SERIAL_8250 is not set
-> 
-> ../drivers/tty/serial/8250/8250_ce4100.c:90:13: error: redefinition of 'sdv_serial_fixup'
->    90 | void __init sdv_serial_fixup(void)
->       |             ^~~~~~~~~~~~~~~~
-> In file included from ../drivers/tty/serial/8250/8250_ce4100.c:12:
-> ../arch/x86/include/asm/ce4100.h:10:20: note: previous definition of 'sdv_serial_fixup' with type 'void(void)'
->    10 | static inline void sdv_serial_fixup(void) {};
->       |                    ^~~~~~~~~~~~~~~~
+> kernel: kworker/u33:5: page allocation failure: order:7,
+> mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
+> kernel: CPU: 1 UID: 0 PID: 7693 Comm: kworker/u33:5 Not tainted 6.11.11-valve17-1-neptune-611-g027868a0ac03 #1 3843143b92e9da0fa2d3d5f21f51beaed15c7d59
+> kernel: Hardware name: Valve Galileo/Galileo, BIOS F7G0112 08/01/2024
+> kernel: Workqueue: mhi_hiprio_wq mhi_pm_st_worker [mhi]
+> kernel: Call Trace:
+> kernel:  <TASK>
+> kernel:  dump_stack_lvl+0x4e/0x70
+> kernel:  warn_alloc+0x164/0x190
+> kernel:  ? srso_return_thunk+0x5/0x5f
+> kernel:  ? __alloc_pages_direct_compact+0xaf/0x360
+> kernel:  __alloc_pages_slowpath.constprop.0+0xc75/0xd70
+> kernel:  __alloc_pages_noprof+0x321/0x350
+> kernel:  __dma_direct_alloc_pages.isra.0+0x14a/0x290
+> kernel:  dma_direct_alloc+0x70/0x270
+> kernel:  mhi_fw_load_handler+0x126/0x340 [mhi a96cb91daba500cc77f86bad60c1f332dc3babdf]
+> kernel:  mhi_pm_st_worker+0x5e8/0xac0 [mhi a96cb91daba500cc77f86bad60c1f332dc3babdf]
+> kernel:  ? srso_return_thunk+0x5/0x5f
+> kernel:  process_one_work+0x17e/0x330
+> kernel:  worker_thread+0x2ce/0x3f0
+> kernel:  ? __pfx_worker_thread+0x10/0x10
+> kernel:  kthread+0xd2/0x100
+> kernel:  ? __pfx_kthread+0x10/0x10
+> kernel:  ret_from_fork+0x34/0x50
+> kernel:  ? __pfx_kthread+0x10/0x10
+> kernel:  ret_from_fork_asm+0x1a/0x30
+> kernel:  </TASK>
+> kernel: Mem-Info:
+> kernel: active_anon:513809 inactive_anon:152 isolated_anon:0
+>     active_file:359315 inactive_file:2487001 isolated_file:0
+>     unevictable:637 dirty:19 writeback:0
+>     slab_reclaimable:160391 slab_unreclaimable:39729
+>     mapped:175836 shmem:51039 pagetables:4415
+>     sec_pagetables:0 bounce:0
+>     kernel_misc_reclaimable:0
+>     free:125666 free_pcp:0 free_cma:0
 
-Indeed, thanks.
-I'll make a fix ASAP.
+This is not a "crash", it is a warning that your huge memory allocation
+did not succeed.  Properly handle this issue (and if you know it's going
+to happen, turn the warning off in your allocation), and you should be
+fine.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> In above example, if we sum all the consumed memory, it comes out
+> to be 15.5GB and free memory is ~ 500MB from a total of 16GB RAM.
+> Even though memory is present. But all of the dma memory has been
+> exhausted or fragmented.
 
+What caused that to happen?
 
+> Fix it by allocating it only once and then reuse the same allocated
+> memory. As we'll allocate this memory only once, this memory will stay
+> allocated.
+
+As others said, no, don't consume memory for no good reason, that just
+means that other devices will fail more frequently.  If all
+devices/drivers did this, you wouldn't have memory to work either.
+
+thanks,
+
+greg k-h
 
