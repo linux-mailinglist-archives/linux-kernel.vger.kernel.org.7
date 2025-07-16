@@ -1,244 +1,286 @@
-Return-Path: <linux-kernel+bounces-734046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D2BCB07C5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:52:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E152B07C5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5318C58459D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:52:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7373BB02C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47A6288C3A;
-	Wed, 16 Jul 2025 17:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D96286D49;
+	Wed, 16 Jul 2025 17:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="gWiklzTT"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UatdogtQ"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767C428852E;
-	Wed, 16 Jul 2025 17:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752688319; cv=pass; b=fWLPaW1caR9rsRcbSf/23r/5lLZC65jN4TPWbf9N2b/TIWIO8Pgonvn0kUQrz4AZL7fiNPRvC240hLPZrFs+1iF0NbNLDZJB/X2zEun6cP/fxYNkAGO2ut0c30TIxRo85KGlWUQz/NgeFJrwyexVkWUvh8X1rcnOxolCCalTih4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752688319; c=relaxed/simple;
-	bh=2v3neK4iFC1rT0Q8CInwOC6/+wtUhMCpMwGN7hpoG2E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qBXJTubVvQaaemLjUVe877io09wvtLqnOWDAW2I09oN2D8FGxTAgkPWFXWZB0tKjl4SMPmTIQQYqIL1bN+toZcu0YSgpQ9vhcs0l7nKiOi78nuRfmVGR2EKs3EH0h9EsPqUfM8JChBr8WuzvxIIJ1wYtHyTOVNCmeE6x6d1OEjU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=gWiklzTT; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752688301; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=CtcKNsRyUYAYob24gMiwY9gbf6Yw6RRUQE8Znuw7AkeW8muiVXufnUKBU85GhuC/oX25AQ1oievNFc/0nA4ALDmWraISgGEH+uEyIlXezGaewsLKWgMXXqxrxbs6wyA2T47I7HIRGQI8EMr8t9ahlO8zxj5Si0hKwqOZ/ddeMvE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752688301; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FdTJy+hTnMMhv0ByE1VmAHdLgDhK3u720le2ZYwEYBw=; 
-	b=IhziMyv7PyefgE9/vnV5QMwXqNr0mPA6JpzJCVd1zTKan8YkJX7lmsQuFNTV0rkBZuJXWvncY2SrRLlUuuBRiYpCoFFKF5L0uLI04qvMW7r6j9mgDKKzUtmtXG7FmTUypEKHbdLhykvoQtuo27h89SE2mTrORPZgiJFSivDoKk4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752688301;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=FdTJy+hTnMMhv0ByE1VmAHdLgDhK3u720le2ZYwEYBw=;
-	b=gWiklzTT/L2buszEqg82HEr2Tvq4XxrfahjOjVz6RnRdVlAyHwqDj8nuK2KOOhEa
-	pb2js1DyKcjkCm2PDx+nAG4uulqwMHhcvoLf/H2m0T9xL2z3il+sYqTC7xn3URJPZcZ
-	rOYhK+xLU3rn9Zkx5VeAjIfF2zouGFJltEpSACpw=
-Received: by mx.zohomail.com with SMTPS id 175268829909280.288096823606;
-	Wed, 16 Jul 2025 10:51:39 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Wed, 16 Jul 2025 19:51:25 +0200
-Subject: [PATCH v3 4/4] cpufreq: mediatek-hw: Add support for MT8196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD6F286897;
+	Wed, 16 Jul 2025 17:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752688348; cv=none; b=SqNyNUltrLmqw0J3cnTydxYIhoIrTNOqk8Uryzk5g1pvhg3YIDFSW72qmiYpiHlAX4R3jRvM+clZEdbDUWX9H+hg5OBsny5G1ajolYrsRp+d4UUpkIbfw1qLX2srLcMKnTKWMub3Ockc34w9NMwQb6KK0VG9msZ8oY3fDuUR6Ng=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752688348; c=relaxed/simple;
+	bh=R8orBIimh/Lv8kV3Kkad+b1RV8+sDl0p4jXuZ8qFDYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DNVLkWne3gBJCEDHXOI1plV0+TeGiVXfLslReTlhVtw6yobs3CCwBf0hFFSAV7fDKaHWc/Mq8WcywGApuBcArV3HE9HLqIjB8jK0cwIGVb+46TU6ALu9oA9wKhiiWWzez54y7zOfnF6GS3Gjcm88TtqSpWy258Wb+kH2TNdnQTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UatdogtQ; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6faf66905adso1664756d6.2;
+        Wed, 16 Jul 2025 10:52:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752688345; x=1753293145; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NhZYBS1TYlYTN8bgdtKESmbKm8B642FoPKPSdfLXodE=;
+        b=UatdogtQI25Z1z5VUsmXIE1BS441gaEI1OK1CYXGgdnLTlT1VicTjy+HgtLQh0BdkF
+         ooGpFqX41UBCRk2K/G+Si1A77NyyV1PmG0J/RjulaiGJt/J+Qok9TThkqrf0Hf5VavZU
+         YEwuhYl7AKY9ZH2igFXjQO/tsjkHwOPt1+I/dEuVzyy8Yen+EgGxNJ4A9Po7rSv7UOm0
+         LuJhhmz2di4u14gr14Sz3H8KjFyRb1LCl4Uph4JuxZX/Y74j68VsYBd42cB3Dvya1kJt
+         dm6iMgmdnfBAcc6X1G8sc4XfbuTY7dVRKJkOEC7z4Rb8v6BHOg5ds0/dejTK5d4Ywhfm
+         5/0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752688345; x=1753293145;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NhZYBS1TYlYTN8bgdtKESmbKm8B642FoPKPSdfLXodE=;
+        b=mGBgYHheipYELwHzRFRhqoiuVadETSn1WWA/HXQ9DLgPlxVBrhErpDaQ/KoW61ndMq
+         ky8zyR9wFDi+1yH4raZpqL8VJao+Q8b68rlDxPFgBpGXSSozjIUkMKRcRf6k/3ADey6q
+         7UdZzX/KlM26VohzWmQQbjwtIL5D0OpQsJD8UfmkLVdrnnURtmHmtuWgLh72nd6h7Nm1
+         zX/ZLPSH+Ec1fbbztCyKz7b7hgN12ri6EPbEZclXeC6+0g8xEILcuI9ypUaD+9xhx6Nt
+         nOpkIIIu+7GH+baYphIfW2M4REBV9MMapBsfbFbip7yXeuRjtMI2gG5fdylBanjbGJCI
+         iX1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUHS9kaO0TVQwg2I+YlTRh1YUXUdFOm4LwxfVsuL4TumesO2Qg+TCPUX7FCgonSivTU0mE5Da98F5Vm5zqwrhU=@vger.kernel.org, AJvYcCVp/hTh/ev6ye+ZaXugQoVUGRMYse/3N/Eb/R58HyJtz4T2gl1YE0t1COl8w28Gp7ekTUPSrPva4bc4RbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNluyuesXRydyycPP2XsoGR79IwOBGO3lynVJZz658ZeMel1nS
+	3OwTrNwDUCjFQk25V7UW9iwmhHqAkiD7J3lKoy22GpPtR7CuSYjpK/5r
+X-Gm-Gg: ASbGnctYCeS8c1rGOy+RKiMzmAGoIl/QjqDtypRQzauwryT7lVA7ZkD7ZAgeRnw3q09
+	tfYYHu8YOrqx6JfcwmY7T4zhDA5dgvIWGIm7QiTF3tME0SErFv1iBGgrAGLKHgwn93SghhmNi8K
+	OgbWgEslb7dJ0tLpxAu+ZoEiu6BVNi2H3QcsxJpwPduxVkPhWzKmJCHM3STYCe89FUxMA448qr6
+	LbWmZJQguVGd/lYfzRBbPuBbkDEfn0AvDtk4606ZJHVOj+kbZ3w9eCfG1wHQplc/hzKdOLf4jSv
+	uKtMoZsG51rEd58sBucYrt77aVPE76rUGI0kRkfhn6J0TpqqbqaxyGhrpKjtMAiHt6G1AIjsiKm
+	/zKZ9M8AMgYw5/ayNeHiEhlrMdMvEdOKer7znXd8PrWKR6bFAKlO9sQUDswNskLjE9pZV1LOwo8
+	sv/xIPkPkVgGsz
+X-Google-Smtp-Source: AGHT+IHS5VRv6VkyUc17Gj+CedIfSsDAPemumVPyvM5IQ2aSLIbA2ACUNS1G1fJCAa9iWMY5tvez7g==
+X-Received: by 2002:a05:6214:5bc6:b0:704:a6dc:525d with SMTP id 6a1803df08f44-704f6aa03d3mr49677336d6.25.1752688345220;
+        Wed, 16 Jul 2025 10:52:25 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704979f498esm73114646d6.53.2025.07.16.10.52.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 10:52:24 -0700 (PDT)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 420BDF40066;
+	Wed, 16 Jul 2025 13:52:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Wed, 16 Jul 2025 13:52:24 -0400
+X-ME-Sender: <xms:2OZ3aMvBhqVWpfRoy3gNvJJZAahkdc_2LZ6CL3s5XKnmYryeMLf8Wg>
+    <xme:2OZ3aK-BggDjKvfb1jllvvf1IpgTS5Do5ixQ6K49tKhMCrXjF0X-FHrdm43204j7c
+    pU0nbHDdCzEYdiClQ>
+X-ME-Received: <xmr:2OZ3aFZKDuqyQft6Yo_6ZEAMBuH31A4KqSJ1Rn4HLaVOseYsg733vrI93w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehkeefiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephfegtdefveeljeeuueeltdevleehfeeludegteekhfehveeuleegkeelkedtjedt
+    necuffhomhgrihhnpehophgvnhhgrhhouhhprdhorhhgpdgsohhothhlihhnrdgtohhmne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
+    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
+    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
+    nhgrmhgvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvghvhihmihht
+    tghhvghllhdtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorh
+    hnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegrrdhhihhnuggs
+    ohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhooh
+    hglhgvrdgtohhmpdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuh
+X-ME-Proxy: <xmx:2OZ3aGqd5qYG74NR-eLj8vyto9zMOhlr6-tclfia6txxx4KqH2asMg>
+    <xmx:2OZ3aNbdfugv2k1aAfZ-eFcTYANqbkOEPxnQRElZpWHJMFmIir_s2g>
+    <xmx:2OZ3aJ7XOVmbdL77h46GLV1gx75BqGPec_dR1oE0DGhFPQcPeBdClw>
+    <xmx:2OZ3aIRZGyH3g1Kg9MDJZT98KFNdmoj4-xQWeZuVLipnE6zQA44acQ>
+    <xmx:2OZ3aJt0eERFgg8Hs2ezGp7C0NlK8XcO_FShe_OAB1xl-R5b5Y7ae4WV>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Jul 2025 13:52:23 -0400 (EDT)
+Date: Wed, 16 Jul 2025 10:52:22 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Mitchell Levy <levymitchell0@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 3/5] rust: percpu: add a rust per-CPU variable test
+Message-ID: <aHfm1gcdRZbVnwE9@Mac.home>
+References: <68762e19.170a0220.33e203.a0b7@mx.google.com>
+ <DBCLFG5F4MPW.2LF4T3KWOE12R@kernel.org>
+ <aHZhcNCayTOQhvYh@Mac.home>
+ <DBCR1OCNYAUW.1VLAY1HWCHLGI@kernel.org>
+ <aHaCUFNUd_mErL7S@Mac.home>
+ <DBCTCZ5HUZOF.2DJX63Q0VWWFN@kernel.org>
+ <aHbJUfcsjHA92OlE@tardis-2.local>
+ <DBDESSQOH6MB.2I4GNLPBP5ORJ@kernel.org>
+ <aHfGV3l4NCmYSRuv@Mac.home>
+ <DBDNIAW09Z7W.EXO6C61HCNVP@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250716-mt8196-cpufreq-v3-4-d440fb810d7e@collabora.com>
-References: <20250716-mt8196-cpufreq-v3-0-d440fb810d7e@collabora.com>
-In-Reply-To: <20250716-mt8196-cpufreq-v3-0-d440fb810d7e@collabora.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, linux-pm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DBDNIAW09Z7W.EXO6C61HCNVP@kernel.org>
 
-The MT8196 SoC uses DVFS to set a desired target frequency for each CPU
-core. It also uses slightly different register offsets.
+On Wed, Jul 16, 2025 at 07:21:32PM +0200, Benno Lossin wrote:
+> On Wed Jul 16, 2025 at 5:33 PM CEST, Boqun Feng wrote:
+> > On Wed, Jul 16, 2025 at 12:32:04PM +0200, Benno Lossin wrote:
+> >> On Tue Jul 15, 2025 at 11:34 PM CEST, Boqun Feng wrote:
+> >> > On Tue, Jul 15, 2025 at 07:44:01PM +0200, Benno Lossin wrote:
+> >> > [...]
+> >> >> >> >
+> >> >> >> > First of all, `thread_local!` has to be implemented by some sys-specific
+> >> >> >> > unsafe mechanism, right? For example on unix, I think it's using
+> >> >> >> > pthread_key_t:
+> >> >> >> >
+> >> >> >> > 	https://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_key_create.html
+> >> >> >> >
+> >> >> >> > what we are implementing (or wrapping) is the very basic unsafe
+> >> >> >> > mechanism for percpu here. Surely we can explore the design for a safe
+> >> >> >> > API, but the unsafe mechanism is probably necessary to look into at
+> >> >> >> > first.
+> >> >> >> 
+> >> >> >> But this is intended to be used by drivers, right? If so, then we should
+> >> >> >
+> >> >> > Not necessarily only for drivers, we can also use it for implementing
+> >> >> > other safe abstraction (e.g. hazard pointers, percpu counters etc)
+> >> >> 
+> >> >> That's fair, but then it should be `pub(crate)`.
+> >> >> 
+> >> >
+> >> > Fine by me, but please see below.
+> >> >
+> >> >> >> do our usual due diligence and work out a safe abstraction. Only fall
+> >> >> >> back to unsafe if it isn't possible.
+> >> >> >> 
+> >> >> >
+> >> >> > All I'm saying is instead of figuring out a safe abstraction at first,
+> >> >> > we should probably focus on identifying how to implement it and which
+> >> >> > part is really unsafe and the safety requirement for that.
+> >> >> 
+> >> >> Yeah. But then we should do that before merging :)
+> >> >> 
+> >> >
+> >> > Well, who's talknig about merging? ;-) I thought we just began reviewing
+> >> > here ;-)
+> >> 
+> >> I understand [PATCH] emails as "I want to merge this" and [RFC PATCH] as
+> >
+> > But it doesn't mean "merge as it is", right? I don't think either I or
+> > Mitchell implied that, I'm surprised that you had to mention that,
+> 
+> Yeah that is true, but it at least shows the intention :)
+> 
+> > also based on "I often mute those" below, making it "[PATCH]" seems to
+> > be a practical way to get more attention if one wants to get some
+> > reviews.
+> 
+> That is true, I do usually read the titles of RFC patches though and
+> sometimes take a look eg your atomics series.
+> 
+> >> "I want to talk about merging this". It might be that I haven't seen the
+> >> RFC patch series, because I often mute those.
+> >> 
+> >
+> > Well, then you cannot blame people to move from "RFC PATCH" to "PATCH"
+> > stage for more reviews, right? And you cannot make rules about what the
+> > difference between [PATCH] and [RFC PATCH] if you ignore one of them ;-)
+> 
+> I'm not trying to blame anyone. I saw a lot of unsafe in the example and
+> thought "we can do better" and since I haven't heard any sufficient
+> arguments showing that it's impossible to improve, we should do some
+> design work.
+> 
 
-Add support for it, which necessitates reworking how the mmio regs are
-acquired, as mt8196 has the fdvfs register before the performance domain
-registers.
+I agree with you, and I like what you're proposing, but I think design
+work can be done at "PATCH" stage, right? And sometimes, it's also OK to
+do some design work even at some version like "v12" ;-)
 
-I've verified with both `sysbench cpu run` and `head -c 10G \
-/dev/urandom | pigz -p 8 -c - | pv -ba > /dev/null` that we don't just
-get a higher reported clock frequency, but that the observed performance
-also increases, by a factor of 2.64 in an 8 thread sysbench test.
+Also I want to see more forward-progress actions about the design work
+improvement. For example, we can examine every case that makes
+unsafe_get_per_cpu!() unsafe, and see if we can improve that by typing
+or something else. We always can "do better", but the important part is
+how to get there ;-)
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- drivers/cpufreq/mediatek-cpufreq-hw.c | 70 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 68 insertions(+), 2 deletions(-)
+> >> >> >> I'm not familiar with percpu, but from the name I assumed that it's
+> >> >> >> "just a variable for each cpu" so similar to `thread_local!`, but it's
+> >> >> >> bound to the specific cpu instead of the thread.
+> >> >> >> 
+> >> >> >> That in my mind should be rather easy to support in Rust at least with
+> >> >> >> the thread_local-style API. You just need to ensure that no reference
+> >> >> >> can escape the cpu, so we can make it `!Send` & `!Sync` + rely on klint
+> >> >> >
+> >> >> > Not really, in kernel, we have plenty of use cases that we read the
+> >> >> > other CPU's percpu variables. For example, each CPU keeps it's own
+> >> >> > counter and we sum them other in another CPU.
+> >> >> 
+> >> >> But then you need some sort of synchronization?
+> >> >> 
+> >> >
+> >> > Right, but the synchronization can exist either in the percpu operations
+> >> > themselves or outside the percpu operations. Some cases, the data types
+> >> > are small enough to fit in atomic data types, and operations are just
+> >> > load/store/cmpxchg etc, then operations on the current cpu and remote
+> >> > read will be naturally synchronized. Sometimes extra synchronization is
+> >> > needed.
+> >> 
+> >> Sure, so we probably want direct atomics support. What about "extra
+> >> synchronization"? Is that using locks or RCU or what else?
+> >> 
+> >
+> > It's up to the users obviously, It could be some sort of locking or RCU,
+> > it's case by case.
+> 
+> Makes sense, what do you need in the VMS driver?
+> 
 
-diff --git a/drivers/cpufreq/mediatek-cpufreq-hw.c b/drivers/cpufreq/mediatek-cpufreq-hw.c
-index 53611077d0d9a2d9865cf771568ab71abc0e6fbd..e4eadce6f937ceff51b34d22da83c51b4e9aa813 100644
---- a/drivers/cpufreq/mediatek-cpufreq-hw.c
-+++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
-@@ -24,6 +24,8 @@
- #define POLL_USEC			1000
- #define TIMEOUT_USEC			300000
- 
-+#define FDVFS_FDIV_HZ (26 * 1000)
-+
- enum {
- 	REG_FREQ_LUT_TABLE,
- 	REG_FREQ_ENABLE,
-@@ -36,7 +38,9 @@ enum {
- };
- 
- struct mtk_cpufreq_priv {
-+	struct device *dev;
- 	const struct mtk_cpufreq_variant *variant;
-+	void __iomem *fdvfs;
- };
- 
- struct mtk_cpufreq_domain {
-@@ -49,7 +53,9 @@ struct mtk_cpufreq_domain {
- };
- 
- struct mtk_cpufreq_variant {
-+	int (*init)(struct mtk_cpufreq_priv *priv);
- 	const u16 reg_offsets[REG_ARRAY_SIZE];
-+	const bool is_hybrid_dvfs;
- };
- 
- static const struct mtk_cpufreq_variant cpufreq_mtk_base_variant = {
-@@ -63,6 +69,29 @@ static const struct mtk_cpufreq_variant cpufreq_mtk_base_variant = {
- 	},
- };
- 
-+static int mtk_cpufreq_hw_mt8196_init(struct mtk_cpufreq_priv *priv)
-+{
-+	priv->fdvfs = devm_of_iomap(priv->dev, priv->dev->of_node, 0, NULL);
-+	if (IS_ERR_OR_NULL(priv->fdvfs))
-+		return dev_err_probe(priv->dev, PTR_ERR(priv->fdvfs),
-+				     "failed to get fdvfs iomem\n");
-+
-+	return 0;
-+}
-+
-+static const struct mtk_cpufreq_variant cpufreq_mtk_mt8196_variant = {
-+	.init = mtk_cpufreq_hw_mt8196_init,
-+	.reg_offsets = {
-+		[REG_FREQ_LUT_TABLE]	= 0x0,
-+		[REG_FREQ_ENABLE]	= 0x84,
-+		[REG_FREQ_PERF_STATE]	= 0x88,
-+		[REG_FREQ_HW_STATE]	= 0x8c,
-+		[REG_EM_POWER_TBL]	= 0x90,
-+		[REG_FREQ_LATENCY]	= 0x114,
-+	},
-+	.is_hybrid_dvfs = true,
-+};
-+
- static int __maybe_unused
- mtk_cpufreq_get_cpu_power(struct device *cpu_dev, unsigned long *uW,
- 			  unsigned long *KHz)
-@@ -91,12 +120,31 @@ mtk_cpufreq_get_cpu_power(struct device *cpu_dev, unsigned long *uW,
- 	return 0;
- }
- 
-+static void mtk_cpufreq_hw_fdvfs_switch(unsigned int target_freq,
-+					struct cpufreq_policy *policy)
-+{
-+	struct mtk_cpufreq_domain *data = policy->driver_data;
-+	struct mtk_cpufreq_priv *priv = data->parent;
-+	unsigned int cpu;
-+
-+	target_freq = DIV_ROUND_UP(target_freq, FDVFS_FDIV_HZ);
-+	for_each_cpu(cpu, policy->real_cpus) {
-+		writel_relaxed(target_freq, priv->fdvfs + cpu * 4);
-+	}
-+}
-+
- static int mtk_cpufreq_hw_target_index(struct cpufreq_policy *policy,
- 				       unsigned int index)
- {
- 	struct mtk_cpufreq_domain *data = policy->driver_data;
-+	unsigned int target_freq;
- 
--	writel_relaxed(index, data->reg_bases[REG_FREQ_PERF_STATE]);
-+	if (data->parent->fdvfs) {
-+		target_freq = policy->freq_table[index].frequency;
-+		mtk_cpufreq_hw_fdvfs_switch(target_freq, policy);
-+	} else {
-+		writel_relaxed(index, data->reg_bases[REG_FREQ_PERF_STATE]);
-+	}
- 
- 	return 0;
- }
-@@ -127,7 +175,10 @@ static unsigned int mtk_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
- 
- 	index = cpufreq_table_find_index_dl(policy, target_freq, false);
- 
--	writel_relaxed(index, data->reg_bases[REG_FREQ_PERF_STATE]);
-+	if (data->parent->fdvfs)
-+		mtk_cpufreq_hw_fdvfs_switch(target_freq, policy);
-+	else
-+		writel_relaxed(index, data->reg_bases[REG_FREQ_PERF_STATE]);
- 
- 	return policy->freq_table[index].frequency;
- }
-@@ -191,6 +242,13 @@ static int mtk_cpu_resources_init(struct platform_device *pdev,
- 	index = args.args[0];
- 	of_node_put(args.np);
- 
-+	/*
-+	 * In a cpufreq with hybrid DVFS, such as the MT8196, the first declared
-+	 * register range is for FDVFS, followed by the frequency domain MMIOs.
-+	 */
-+	if (priv->variant->is_hybrid_dvfs)
-+		index++;
-+
- 	data->parent = priv;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-@@ -339,6 +397,13 @@ static int mtk_cpufreq_hw_driver_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->variant = data;
-+	priv->dev = &pdev->dev;
-+
-+	if (priv->variant->init) {
-+		ret = priv->variant->init(priv);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	platform_set_drvdata(pdev, priv);
- 	cpufreq_mtk_hw_driver.driver_data = pdev;
-@@ -357,6 +422,7 @@ static void mtk_cpufreq_hw_driver_remove(struct platform_device *pdev)
- 
- static const struct of_device_id mtk_cpufreq_hw_match[] = {
- 	{ .compatible = "mediatek,cpufreq-hw", .data = &cpufreq_mtk_base_variant },
-+	{ .compatible = "mediatek,mt8196-cpufreq-hw", .data = &cpufreq_mtk_mt8196_variant },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, mtk_cpufreq_hw_match);
+In VMBus driver, it's actually isolate, i.e. each CPU only access it's
+own work_struct, so synchronization between CPUs is not needed.
 
--- 
-2.50.1
+Regards,
+Boqun
 
+> >> > Keyword find all these cases are `per_cpu_ptr()`:
+> >> >
+> >> > 	https://elixir.bootlin.com/linux/v6.15.6/A/ident/per_cpu_ptr
+> >> 
+> >> Could you explain to me how to find them? I can either click on one of
+> >> the files with horrible C preprocessor macros or the auto-completion in
+> >> the search bar. But that one only shows 3 suggestions `_hyp_sym`,
+> >> `_nvhe_sym` and `_to_phys` which doesn't really mean much to me.
+> >> 
+> >
+> > You need to find the usage of `per_cpu_ptr()`, which is a function that
+> > gives you a pointer to a percpu variable on the other CPU, and then
+> > that's usually the case where a "remote" read of percpu variable
+> > happens.
+> 
+> Ahh gotcha, I thought you pointed me to some definitions of operations
+> on percpu pointers.
+> 
+> ---
+> Cheers,
+> Benno
 
