@@ -1,151 +1,219 @@
-Return-Path: <linux-kernel+bounces-733378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF31EB073CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:44:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBB3B073D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36C5B5838D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:44:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27BC9583863
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF822F3C24;
-	Wed, 16 Jul 2025 10:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8762C3274;
+	Wed, 16 Jul 2025 10:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QDqMyDRL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="egHqAbpZ"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029332F2702
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBC017A2F6
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752662673; cv=none; b=jWFWF2cLK9QYy8ZPwwwClo1/EMeonWPGOkQQV8UGSWnZ9WJaN5GICmufqhp3V+PNZjlMrcq7N1AnEiBspvFmfeIP4GC1rYVpEky8IOwOR3P+UvUqSRWF+HHTfaD2kExHWDKkr7HAYF0pG+L1pzdGSkU+/2ur4jSrllTKuTQpSx0=
+	t=1752662741; cv=none; b=ejzg4qHdiAQ0KhnDbDJ6H6MGZIIL5KJ3Xb3yL9yhnXohG7o3TzUCUlCLCeU/79/9gkWlQnnUvTNH49gXNY8SZeyQjEumWe+pI++o0dXJwnHpUl4yLcp9e4WfnGKcqOqgST3GgSvTLwAq63dmMTBjUYKfrIRwfzyUl1iDa66s10A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752662673; c=relaxed/simple;
-	bh=Tin8r+U+w/3y+LP84mrbjl934s1RYjdcEk4TcBbna10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bOg1i+7IIJg1MaU3CalCbjdE7ux1OG7Oahu7ZUeP+HrLM+zaA8H5C0/NIkaXcCgRSeSRRaAhDzOnukVDDlQeBw3gYKr2ztCZ9Rk1/eWMxN/pd9Qir24CtGcBJnpxN6Dlw26T54Ot4i30gNDNdBiJBP6fE3avmUi5pLR01JGGH6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QDqMyDRL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G5tlvE018109
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:44:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GwojsqO00L46el7Hbe+U3o4hx2hTDdeThYiZKwFHZxw=; b=QDqMyDRL3w7yoE72
-	BEOQUgysZCP0FV8AwWjuS9dyoHCrUtA4l1s4LU7ErFNnPgS5mRpIlVRRt23sBzw+
-	vvkY+ZgVylMrGMiw9yI8g7weJO81zikOKoI4buzIx/yQFVj1auteKDEPApKonbC3
-	4lPZmhQ453+KgEeXrSBS0g6dGCQdOOUtIKdtn4Xw/CT4zHQrha3lr/x1mF+hZHhb
-	oByoe7fRpi4TRLITCxmRj+xj88sWFUAaAvLTsF3mJ/4H89ZbURMIWgZpzPghVFGd
-	f8nN+CP44BAEyzTfrNL9ou96L4A89JcH7tf78kH01sd85JnuJN0bPUP6OU7/BSOW
-	q8sf4g==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug383q7d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:44:30 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab60b83e11so2208421cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:44:30 -0700 (PDT)
+	s=arc-20240116; t=1752662741; c=relaxed/simple;
+	bh=Jg8QPqxN63wSXCahEjtlcVGTOkL8YAVvkPtplpcfZiQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GB7VZwv7IYHafwrG+Rz7j6usq6eOJZjGmtc7HJPfy3GFBNPKoTHlp7xFZkumCBP6dU1VTF71/QvZi1wrnqk9YwG/N/NHxJpVvpRNrPDLmwiPfwMf2IqW5XQSLwD0+n3qTf6Eft+2AeCkXuLDecbIVVK/RxBPWMB4lbpfJOqyCgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=egHqAbpZ; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so5752176b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752662739; x=1753267539; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=am+nIE1F4DSrpycFS2I1Wo9UrAjSnMRHqnP7j+RzKjs=;
+        b=egHqAbpZwGfEIC/5qqwI4JZrPCkQv5oeOWpXTW20+bZc3F63eR9g3lpWq/A/aMYthQ
+         X/0hCx0/W4XgEWkn5TBsjKgI8qB20H1JyeaU5E2DxBj4Jij5Aeb5EcK724F0i7+3KpTu
+         rIHbdCjkSM6Ekb3+IlVup5AdOUn7RbPCrGsQLu1KVHn4f5DV8uq2xvPqgNQHJHw4amLC
+         WV5ES4xQ7+yePmy1+zi8uear383c+WI7DMq3jFg/3hJ5XJIs0LeZNI9QzCWGys5TlL/j
+         0xk7sfH8sK7wtw+Vulsy276SGPwIYzc6ILbrrle2m03sanK5vhOMCmiP3NR4IAwQEd8+
+         MoSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752662670; x=1753267470;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwojsqO00L46el7Hbe+U3o4hx2hTDdeThYiZKwFHZxw=;
-        b=R8fyqtLz1ZzC1URUtHiYUNNRmEIGrEdYdcdSkyns+uN3aq67JwPjyq+M2LemE6IY5O
-         aX728XzNG7ICXiBpMYYc0L2afVHQn+6qZFPoKDY4TsCirCUAoz/z4ZYryxNgt0syUL6p
-         nObAb0iEtnZ2kBxETTsRuBX7mWBI5KQZtS2t0NLSOd1wtwIe+pm5M4LJzvgEllC0BgHL
-         kT88vkZYTXMV5J5A2R+N237uH/lCRbmCVzo9E+WnqIntMOd/4601RjNYuiPTG8lEapw6
-         joDamm2ir6tRKd/d84t3JyNwxd6Cr4DjBhvAOIncbF6wfMiABdMuEV5BwSjRow9UvFCM
-         R2jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOu048OV/dZ8tOqpU+jKCLzP9DOR4fb/MG7yECVXgXGEF6nqMiU9bIZXvNnWfbrC1jtexGO12jg9QhQ7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUPPVrzavp9ij4KyC1/kJlQVwZsNkD0r8/hvek3CbFcyl3DhNq
-	Q+pITRExffpCTQj/9+PK7c8wc0BKmxb+HsebsvpIcL+L6FvDbCpJ5ewyxXvJCIoHOjybCn1QoQL
-	GkzI1xP2nf8ft1PKLxpQoOOIgoguVyu/HgxXPqF93VsGogRHzOJ7xA0b3MkuHQML2DY4=
-X-Gm-Gg: ASbGncsmgud0P1uJpMvuBouollenIxlZIP8iNNBQEKpHO+0flr1J4psvAarwcBVAt01
-	OC3sW5awjCqHxuHGv+wEs/fZlvZ05wm+9rCfHTWvbWidlr9zZHFiAxR3n1t8O7GOd497Zfx5I6B
-	OJQNmWT+eco+jUpHkOnSTb1uJNmC890RTKIR3KMWF0PXbfSlRrhBKpMuze4Ytd83aRM5bLwnmTW
-	ol1OIYP2nK9l0fsmg8l/DBOk86aUkkSi9LwD6kscso3G68vnsjXl0YPqWsu66lrCTEFPZU7PDFs
-	JhdUplb0RZURL1Z/2HJJSNXG4L8JIroasTLAxLZVasthR233os1ED/0Uk5WnysQT5D2ymrnD48O
-	5V+iYDb4mrZ3GFdmTMJid
-X-Received: by 2002:a05:622a:1b20:b0:4ab:806f:e30f with SMTP id d75a77b69052e-4ab90cc3a56mr14294841cf.14.1752662669713;
-        Wed, 16 Jul 2025 03:44:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH9VYocXZ0PhMt9kgWk1/jx5BjJs0UQSzRLjaw/6hz7Y8Imt/1VQJqU11+DAf4VNiNJClKZrQ==
-X-Received: by 2002:a05:622a:1b20:b0:4ab:806f:e30f with SMTP id d75a77b69052e-4ab90cc3a56mr14294601cf.14.1752662668802;
-        Wed, 16 Jul 2025 03:44:28 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee45ebsm1163531566b.43.2025.07.16.03.44.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 03:44:28 -0700 (PDT)
-Message-ID: <697bb6b0-ecca-4392-9e7c-8d4ef75ec96c@oss.qualcomm.com>
-Date: Wed, 16 Jul 2025 12:44:26 +0200
+        d=1e100.net; s=20230601; t=1752662739; x=1753267539;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=am+nIE1F4DSrpycFS2I1Wo9UrAjSnMRHqnP7j+RzKjs=;
+        b=BSjf5+EJFAPMSIDmBVCfSBPlQrxfAkvjkFD5jmTF0JFJR0dYRHt9NiriFsKL9me3bV
+         MMhY530IOpYG7A6PYV5mhwbSg5tyD4INiGtYx/9ULMP2akX7tWT0KOtvCKrDyQUe0Au0
+         DZkcoIeBLEX3JcV8wwXtpluO8N8YnHKmVOrmW9GgAiasskxGQXg/91ygfNHjffdavsED
+         mLN8Q6ABrhtSXpC3oSLgkm4/jh6RLDlvAjvTkgK3emcSPMcB57OIo1ThylTyiPAnS3QT
+         uIkCgdBoW8GSY4jDICAa3CH3QyK72xP9bka6pzldFau3pR5T/TyZ4m/da2Y0OkoWqmUB
+         DeEg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6X1F0WqA/2JYq7IJH/ycXMZyLKrDECTFOGr4e45g+0Cavj5UXiGqm0U7BHYdNljQHZjQDmWUyxDLZI9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC4q8ogUyy3L5dOyH49MaNvW0JMUZE+IZPzOx/96gDl33Vc9LW
+	oz2J7RpO05F0V9DzgiXi85/x/zXIpyPx8jfZWciHAKdFr5VBBD0fPmSfaNmaNCS0tV+sSpmkYkO
+	KPYudMY1KO7fE9Xl7ZvpDw/Qp4ymcSWDZxGLROT6zcQ==
+X-Gm-Gg: ASbGncs6ne8msLhpPfNz4x8EPkno+RopvCyn4s+6VqwQ48RtL+azcD3+ROZ4EtcUXjP
+	yic+z4jgy66w3ahWsrXqHi9xIJk22T1mz5oVW8KOAtQ8n95Iheaq4tnY1L4z1FhG0dGByqD3pQp
+	1NBHNO9Fp8koOYMkvBLvFmwJkR16XZrdj4cuXHRt8cA8oV2bNSf2XV5kotqB+hpBuKeSGx8gq3f
+	57oTNgiDzl4SonpYx6f27xwHiQYrNY72oP0wL4=
+X-Google-Smtp-Source: AGHT+IEGtieAB4UoSqjXN+Sg8qQxmS8F/1OUpyt87e81VvxutU4sB4qMtakTi8T2flz3Qyim3gB60CfRRRoknOXfGGQ=
+X-Received: by 2002:a05:6a00:4644:b0:746:298e:4ed0 with SMTP id
+ d2e1a72fcca58-756ea1de0c1mr3849454b3a.13.1752662739230; Wed, 16 Jul 2025
+ 03:45:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usb: typec: ucsi: ucsi_glink: Increase buffer size to
- support UCSI v2
-To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
-        heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
-Cc: lumag@kernel.org, neil.armstrong@linaro.org, johan+linaro@kernel.org,
-        quic_bjorande@quicinc.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250716005224.312155-1-anjelique.melendez@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250716005224.312155-1-anjelique.melendez@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA5NiBTYWx0ZWRfXxng4npDEWg3T
- ezNMlFZwlVR5NgILpSLe/v7PxIo9gEZe0dl/TwpG8FvKJaBl93BsFM5sHPeBS4EYRvrBgn/0eLO
- PFCA4CA9BDzZUGuleGzHaMzPv7xYBWzZhbsFUjgyREspggRoiCWKQDptNT58oyhKLZe7Ipbo13g
- vfDII6jgS7G7FqKoRSjrb897gbfn5D2liy5NFQCi/H5uOeKc5Ctb/c3h4tEuBAw/KUpV/0ljy9O
- 4VsY86WL2sIoaUqTZ7XtQXRd/PtqW5C8Oy/W4qrTsxoVCpur2Bs/FAWbmpDlts8naZ/ILNRR3Qy
- jsaJMSZRKAzE9EexHolwMU+ZIIyf7XCkNUirIkjGCIsLMvXtQU8uFCiiU9Vvld6VXR9afSI9Aih
- kjI76sIr6zX+TlbO1p6GWLQXtJP/BeFmKPFISi5BScX7hm7smASFfUwpHb8imyuab9Iw1G/+
-X-Proofpoint-GUID: xtvJmjd1ajHG-G583kPATLrHWiu68TrT
-X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=6877828e cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=TdU0opj9kUmyj219TpoA:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: xtvJmjd1ajHG-G583kPATLrHWiu68TrT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=386 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507160096
+References: <20250703130453.4265-1-quic_jinlmao@quicinc.com>
+ <20250703130453.4265-3-quic_jinlmao@quicinc.com> <20250703141905.GE1039028@e132581.arm.com>
+ <0e7ae7d1-4877-4e8a-a0fb-0fda5cc03cf2@quicinc.com>
+In-Reply-To: <0e7ae7d1-4877-4e8a-a0fb-0fda5cc03cf2@quicinc.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Wed, 16 Jul 2025 11:45:27 +0100
+X-Gm-Features: Ac12FXxbhbcdL16ZxrAYI1cGIXwRPQphg69YtVhrS7_0hd4B1XJVA6e6Ekha30Y
+Message-ID: <CAJ9a7ViQ2A9FQV=fxzhu1DkZEBdiAvAijb6OjOeJriNio1nX6w@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] coresight: Add label sysfs node support
+To: Jinlong Mao <quic_jinlmao@quicinc.com>
+Cc: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/16/25 2:52 AM, Anjelique Melendez wrote:
-> UCSI v2 specification has increased the MSG_IN and MSG_OUT size from
-> 16 bytes to 256 bytes each for the message exchange between OPM and PPM
-> This makes the total buffer size increase from 48 bytes to 528 bytes.
-> Update the buffer size to support this increase.
-> 
-> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-> ---
-> Changes since v1:
->  - Defined buf size in terms of other UCSI defines
->  - Removed UCSI_BUF_SIZE and used the explicit v1 or v2 buffer size macros
->  - Removed Qualcomm copyright
->  - link: https://lore.kernel.org/all/20250624222922.2010820-1-anjelique.melendez@oss.qualcomm.com/
-> ---
+Hi,
 
-[...]
+On Wed, 16 Jul 2025 at 03:43, Jinlong Mao <quic_jinlmao@quicinc.com> wrote:
+>
+>
+>
+> On 2025/7/3 22:19, Leo Yan wrote:
+> > On Thu, Jul 03, 2025 at 09:04:53PM +0800, Mao Jinlong wrote:
+> >
+> > [...]
+> >
+> >> +static ssize_t label_show(struct device *dev,
+> >> +            struct device_attribute *attr, char *buf)
+> >> +{
+> >> +
+> >> +    const char *str;
+> >> +    int ret = 0;
+> >
+> > No need to init ret to 0.
+> >
+> >> +    ret = fwnode_property_read_string(dev_fwnode(dev), "label", &str);
+> >> +    if (ret == 0)
+> >> +            return scnprintf(buf, PAGE_SIZE, "%s\n", str);
+> >> +    else
+> >> +            return ret;
+> >> +}
+> >> +static DEVICE_ATTR_RO(label);
+> >> +
+> >>   static struct attribute *coresight_sink_attrs[] = {
+> >>      &dev_attr_enable_sink.attr,
+> >> +    &dev_attr_label.attr,
+> >>      NULL,
+> >>   };
+> >>   ATTRIBUTE_GROUPS(coresight_sink);
+> >>
+> >>   static struct attribute *coresight_source_attrs[] = {
+> >>      &dev_attr_enable_source.attr,
+> >> +    &dev_attr_label.attr,
+> >>      NULL,
+> >>   };
+> >>   ATTRIBUTE_GROUPS(coresight_source);
+> >>
+> >> +static struct attribute *coresight_link_attrs[] = {
+> >> +    &dev_attr_label.attr,
+> >> +    NULL,
+> >> +};
+> >> +ATTRIBUTE_GROUPS(coresight_link);
+> >> +
+> >> +static struct attribute *coresight_helper_attrs[] = {
+> >> +    &dev_attr_label.attr,
+> >> +    NULL,
+> >> +};
+> >> +ATTRIBUTE_GROUPS(coresight_helper);
+> >> +
+> >
+> > This change adds a 'label' entry for source, link, helper, and sink
+> > components, but the documentation has only updated for three components:
+> > CTI, funnel, and TPDM.
+> >
+> > Should we also update the documentation for all relevant components,
+> > such as ETM, ETR, etc.?
+> >
+> > Additionally, patch 01 is missing the update to the ETM yaml file for
+> > the new property. I checked patch v4 [1], which includes a change to
+> > etm.yaml, but this change was dropped since v5. I briefly read the
+> > v4 discussion thread and didn't see any mention of removing the ETM
+> > related change. Did you see any particular issue when add label for
+> > ETM devices?
+> >
+> > Overall, this series is fine for me. Just please ensure that all
+> > relevant components are covered for completeness.
+> >
+> > Thanks,
+> > Leo
+> >
+>
+> I will update all coresight docs.
+>
+> Thanks
+> Jinlong Mao
+>
+> > [1] https://patchwork.kernel.org/project/linux-arm-msm/cover/20240703122340.26864-1-quic_jinlmao@quicinc.com/
+> >
+> >>   const struct device_type coresight_dev_type[] = {
+> >>      [CORESIGHT_DEV_TYPE_SINK] = {
+> >>              .name = "sink",
+> >> @@ -390,6 +420,7 @@ const struct device_type coresight_dev_type[] = {
+> >>      },
+> >>      [CORESIGHT_DEV_TYPE_LINK] = {
+> >>              .name = "link",
+> >> +            .groups = coresight_link_groups,
+> >>      },
+> >>      [CORESIGHT_DEV_TYPE_LINKSINK] = {
+> >>              .name = "linksink",
+> >> @@ -401,6 +432,7 @@ const struct device_type coresight_dev_type[] = {
+> >>      },
+> >>      [CORESIGHT_DEV_TYPE_HELPER] = {
+> >>              .name = "helper",
+> >> +            .groups = coresight_helper_groups,
+> >>      }
+> >>   };
+> >>   /* Ensure the enum matches the names and groups */
+> >> --
+> >> 2.17.1
+> >>
+> >> _______________________________________________
+> >> CoreSight mailing list -- coresight@lists.linaro.org
+> >> To unsubscribe send an email to coresight-leave@lists.linaro.org
+>
 
-> +	if (!ucsi->ucsi->version || ucsi->ucsi->version >= UCSI_VERSION_2_1) {
+Revisiting this - the label DT attribute is purely optional, and
+provides context for the hardware instance.
+This code as written appears to add a "label" file to all devices,
+irrespective of if the label is set in the DT.or not, with blank
+labels where  the attribute is not present.
+The visibility of the sysfs attribute should be controlled so that it
+only appears if label is present in the DT.
 
-You mention V2 everywhere, but then check for V2_1 here - is that
-intended?
+Mike
 
-Konrad
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
