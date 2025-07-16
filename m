@@ -1,237 +1,150 @@
-Return-Path: <linux-kernel+bounces-733620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568C7B07711
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:33:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1B2B07712
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F6D1C23E14
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:33:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 263B47A3FDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6025D1C6FE1;
-	Wed, 16 Jul 2025 13:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941941D5CC9;
+	Wed, 16 Jul 2025 13:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="EADvPoax"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qy+qhD+g"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D3619E97A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D45335972;
+	Wed, 16 Jul 2025 13:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752672781; cv=none; b=Pn3FMtcsiig64TtfwLyNjKqn3P6OfXqM7TmjDkKilJg3dHt3sjubZJvE7lY+/BqCzJyQjWxapxtAkMyfewVfXrhTyUzAuGxqNdqNRGUxN/l22+jtsW8tBopGGkVn/NbhznHvUjmTXkGoAQf8grXHFbhbXX3gDSzshniU3FamXqM=
+	t=1752672796; cv=none; b=JIrpyzY4VMCBCfWraLLcFow5YRcK/B64RDPWUyjyk76q9iCUMZFBuZZMZpB6QcQqyb9t5MtsEYwROMmrPznF0tuMqZdJotVawYLXAO2RQuliqRmsTqMHpJbxG21gcgqvIxTdLsdLsxQdxYagti+D3W9j0t9W9IuXuUiG4DdVXco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752672781; c=relaxed/simple;
-	bh=UUHoguIdstpvFT2NbvNnnSQZ/Qj3oGXOWaavgxupbqM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qBF9LWfv3hbL8Oo6v/lOwn84CYBDQg5H+Rfca+Zvd/Av/NMF+PU6XRQaBLSCtyvs7ZJRMnF8XBcKz9CW1dV18Cro76pPH/NyJUVyPs0fZhqkaK/AsJboE009SOHGr+mFZcbUx+TDR/zVTI26lMASvyETFX0cXLHx1Th4Lm0E8qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=EADvPoax; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=0qwp6Gi8EUdJZCbe1QwSKwoqDtjQllX3p2oxki7w6wA=; b=EADvPoax3j5VmF75
-	B2zemYLLSCx8UrLSq15zxWdEkUyETHGHpEhTR09OMSgQPDlAqWiu7cBOVid6f6zKZ1ZB2tWZig03w
-	aemjC4MEaXk/4ALqSLbY4iC8qAHjRSNQKsymP4A+Ev/a4cznUbZEzqFRreq+ts6neKtE5jQS2gn9/
-	NHWJ6bEGShDgyS1M/PvtDvoW113umlZv4U0BaBGQ3+GwwOiwaqsO72mZ/Sg1ObMZ1K51ymClZBSJ9
-	ujAEA8oHIguQklXb2Y7qqVfC+yft7qCq29cTJxrAjoKOWX9u2TokWmpZv9JHwoD/N+bxSIIMHC8oM
-	Qe0CBmHD1A3ELW1fWA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uc2Fa-00GQXY-1F;
-	Wed, 16 Jul 2025 13:32:46 +0000
-From: linux@treblig.org
-To: akpm@linux-foundation.org,
-	hch@infradead.org,
-	terrelln@fb.com
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v2] lib/xxhash: Remove unused functions
-Date: Wed, 16 Jul 2025 14:32:45 +0100
-Message-ID: <20250716133245.243363-1-linux@treblig.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752672796; c=relaxed/simple;
+	bh=x6i70Mv2Cezij3IaXwLb1y0bICFN4EcBfdv0Utb/q4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLG3Bq5JOPt7PgKa+8qelT4hCr4wCeoGXcTr+CLRafZyt/R0Anwz5Ta81O6u/eSz7VDl/h2hulSomaGM6WgzexjJADoNwmF0G+pAKGqUdgWkrVYeu87ZDSfTuYmmEadtNFfRxecHzlcdkYYwgC5CLzCqR9OwaxydeKUO8QvDvkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Qy+qhD+g; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7JIhGkXj7jed7Tn8m6IrEdyMDpGTVSbcYUAZwKdgoBE=; b=Qy+qhD+gb3pgMFanQ7Me6t26QK
+	MYQdNecjBni5/BjUWKXv43GI+GjZlDs0xjoOe8xlnsJ3yQh+r59X2WEEyi1EXktloR40O6BKut7O4
+	1/vqWv+M4/Dvus8BMqQInvfCCdiYKaXa7udvtijW1d+GTfIMsczaesLkYmJvO/95ee0RKcMLw7uzE
+	4xzXfeJ6guQRJF/7Wn1NxRnJCKaREp/jahZaHpPyNSsMVpOncz04CHymCxmhXvsG2Hm3FmVhjDgTR
+	sV2r5flmG6F4i4lIRggvBVximL+ir73t2o78VMWFjnKR+V3bJJd/+FYF5FvtQu0WAOyuIOa3R/O9v
+	gciVyqtA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uc2Fv-0000000GhqT-3Aqb;
+	Wed, 16 Jul 2025 13:33:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 55F8C3007A0; Wed, 16 Jul 2025 15:33:07 +0200 (CEST)
+Date: Wed, 16 Jul 2025 15:33:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Breno Leitao <leitao@debian.org>,
+	Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	jake@hillion.co.uk
+Subject: Re: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
+ disabling preemption
+Message-ID: <20250716133307.GY905792@noisy.programming.kicks-ass.net>
+References: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
+ <20250716085447.06feeb86@gandalf.local.home>
+ <20250716130652.GB3429938@noisy.programming.kicks-ass.net>
+ <aHenIcWaLOXL2Yix@gpd4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHenIcWaLOXL2Yix@gpd4>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Wed, Jul 16, 2025 at 03:20:33PM +0200, Andrea Righi wrote:
+> On Wed, Jul 16, 2025 at 03:06:52PM +0200, Peter Zijlstra wrote:
+> > On Wed, Jul 16, 2025 at 08:54:47AM -0400, Steven Rostedt wrote:
+> > > On Wed, 16 Jul 2025 05:46:15 -0700
+> > > Breno Leitao <leitao@debian.org> wrote:
+> > > 
+> > > > __this_cpu_write() emits a warning if used with preemption enabled.
+> > > > 
+> > > > Function update_locked_rq() might be called with preemption enabled,
+> > > > which causes the following warning:
+> > > > 
+> > > > 	BUG: using __this_cpu_write() in preemptible [00000000] code: scx_layered_6-9/68770
+> > > > 
+> > > > Disable preemption around the __this_cpu_write() call in
+> > > > update_locked_rq() to suppress the warning, without affecting behavior.
+> > > > 
+> > > > If preemption triggers a  jump to another CPU during the callback it's
+> > > > fine, since we would track the rq state on the other CPU with its own
+> > > > local variable.
+> > > > 
+> > > > Suggested-by: Andrea Righi <arighi@nvidia.com>
+> > > > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > > > Fixes: 18853ba782bef ("sched_ext: Track currently locked rq")
+> > > > Acked-by: Andrea Righi <arighi@nvidia.com>
+> > > > ---
+> > > >  kernel/sched/ext.c | 7 +++++++
+> > > >  1 file changed, 7 insertions(+)
+> > > > 
+> > > > diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> > > > index b498d867ba210..24fcbd7331f73 100644
+> > > > --- a/kernel/sched/ext.c
+> > > > +++ b/kernel/sched/ext.c
+> > > > @@ -1258,7 +1258,14 @@ static inline void update_locked_rq(struct rq *rq)
+> > > >  	 */
+> > > >  	if (rq)
+> > > >  		lockdep_assert_rq_held(rq);
+> > > 
+> > > <blink>
+> > > 
+> > > If an rq lock is expected to be held, there had better be no preemption
+> > > enabled. How is this OK?
+> > 
+> > The rq=NULL case; but from the usage I've seen that also happens with
+> > rq lock held.
+> > 
+> > Specifically I think the check ought to be:
+> > 
+> > 	if (rq)
+> > 		lockdep_assert_rq_held(rq)
+> > 	else
+> > 		lockdep_assert_rq_held(__this_cpu_read(locked_rq));
+> 
+> Hm... but if the same CPU invokes two "unlocked" callbacks in a row,
+> locked_rq would be NULL during the second call and we would check rq_held
+> against NULL.
 
-xxh32_digest() and xxh32_update() were added in 2017 in the original
-xxhash commit, but have remained unused.
+Current usage in SCX_CALL_OP*() seems to not generate this pattern. It
+is always rq,NULL in order.
 
-Remove them.
+Ooh, there are a few SCX_CALL_OP*() instances where rq:=NULL, which
+messes this up.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
-v2
-  Actually remove the code rather than comment it out (Christoph)
+Changing them to:
 
- include/linux/xxhash.h |  26 ----------
- lib/xxhash.c           | 107 -----------------------------------------
- 2 files changed, 133 deletions(-)
+  if (rq)
+    update_locked_rq(rq);
+  ...
+  if (rq)
+    update_locked_rq(NULL);
 
-diff --git a/include/linux/xxhash.h b/include/linux/xxhash.h
-index df42511438d0..27f57eca8cb1 100644
---- a/include/linux/xxhash.h
-+++ b/include/linux/xxhash.h
-@@ -177,32 +177,6 @@ struct xxh64_state {
-  */
- void xxh32_reset(struct xxh32_state *state, uint32_t seed);
- 
--/**
-- * xxh32_update() - hash the data given and update the xxh32 state
-- *
-- * @state:  The xxh32 state to update.
-- * @input:  The data to hash.
-- * @length: The length of the data to hash.
-- *
-- * After calling xxh32_reset() call xxh32_update() as many times as necessary.
-- *
-- * Return:  Zero on success, otherwise an error code.
-- */
--int xxh32_update(struct xxh32_state *state, const void *input, size_t length);
--
--/**
-- * xxh32_digest() - produce the current xxh32 hash
-- *
-- * @state: Produce the current xxh32 hash of this state.
-- *
-- * A hash value can be produced at any time. It is still possible to continue
-- * inserting input into the hash state after a call to xxh32_digest(), and
-- * generate new hashes later on, by calling xxh32_digest() again.
-- *
-- * Return: The xxh32 hash stored in the state.
-- */
--uint32_t xxh32_digest(const struct xxh32_state *state);
--
- /**
-  * xxh64_reset() - reset the xxh64 state to start a new hashing operation
-  *
-diff --git a/lib/xxhash.c b/lib/xxhash.c
-index b5bd567aa6b3..cf629766f376 100644
---- a/lib/xxhash.c
-+++ b/lib/xxhash.c
-@@ -267,113 +267,6 @@ void xxh64_reset(struct xxh64_state *statePtr, const uint64_t seed)
- }
- EXPORT_SYMBOL(xxh64_reset);
- 
--int xxh32_update(struct xxh32_state *state, const void *input, const size_t len)
--{
--	const uint8_t *p = (const uint8_t *)input;
--	const uint8_t *const b_end = p + len;
--
--	if (input == NULL)
--		return -EINVAL;
--
--	state->total_len_32 += (uint32_t)len;
--	state->large_len |= (len >= 16) | (state->total_len_32 >= 16);
--
--	if (state->memsize + len < 16) { /* fill in tmp buffer */
--		memcpy((uint8_t *)(state->mem32) + state->memsize, input, len);
--		state->memsize += (uint32_t)len;
--		return 0;
--	}
--
--	if (state->memsize) { /* some data left from previous update */
--		const uint32_t *p32 = state->mem32;
--
--		memcpy((uint8_t *)(state->mem32) + state->memsize, input,
--			16 - state->memsize);
--
--		state->v1 = xxh32_round(state->v1, get_unaligned_le32(p32));
--		p32++;
--		state->v2 = xxh32_round(state->v2, get_unaligned_le32(p32));
--		p32++;
--		state->v3 = xxh32_round(state->v3, get_unaligned_le32(p32));
--		p32++;
--		state->v4 = xxh32_round(state->v4, get_unaligned_le32(p32));
--		p32++;
--
--		p += 16-state->memsize;
--		state->memsize = 0;
--	}
--
--	if (p <= b_end - 16) {
--		const uint8_t *const limit = b_end - 16;
--		uint32_t v1 = state->v1;
--		uint32_t v2 = state->v2;
--		uint32_t v3 = state->v3;
--		uint32_t v4 = state->v4;
--
--		do {
--			v1 = xxh32_round(v1, get_unaligned_le32(p));
--			p += 4;
--			v2 = xxh32_round(v2, get_unaligned_le32(p));
--			p += 4;
--			v3 = xxh32_round(v3, get_unaligned_le32(p));
--			p += 4;
--			v4 = xxh32_round(v4, get_unaligned_le32(p));
--			p += 4;
--		} while (p <= limit);
--
--		state->v1 = v1;
--		state->v2 = v2;
--		state->v3 = v3;
--		state->v4 = v4;
--	}
--
--	if (p < b_end) {
--		memcpy(state->mem32, p, (size_t)(b_end-p));
--		state->memsize = (uint32_t)(b_end-p);
--	}
--
--	return 0;
--}
--EXPORT_SYMBOL(xxh32_update);
--
--uint32_t xxh32_digest(const struct xxh32_state *state)
--{
--	const uint8_t *p = (const uint8_t *)state->mem32;
--	const uint8_t *const b_end = (const uint8_t *)(state->mem32) +
--		state->memsize;
--	uint32_t h32;
--
--	if (state->large_len) {
--		h32 = xxh_rotl32(state->v1, 1) + xxh_rotl32(state->v2, 7) +
--			xxh_rotl32(state->v3, 12) + xxh_rotl32(state->v4, 18);
--	} else {
--		h32 = state->v3 /* == seed */ + PRIME32_5;
--	}
--
--	h32 += state->total_len_32;
--
--	while (p + 4 <= b_end) {
--		h32 += get_unaligned_le32(p) * PRIME32_3;
--		h32 = xxh_rotl32(h32, 17) * PRIME32_4;
--		p += 4;
--	}
--
--	while (p < b_end) {
--		h32 += (*p) * PRIME32_5;
--		h32 = xxh_rotl32(h32, 11) * PRIME32_1;
--		p++;
--	}
--
--	h32 ^= h32 >> 15;
--	h32 *= PRIME32_2;
--	h32 ^= h32 >> 13;
--	h32 *= PRIME32_3;
--	h32 ^= h32 >> 16;
--
--	return h32;
--}
--EXPORT_SYMBOL(xxh32_digest);
--
- int xxh64_update(struct xxh64_state *state, const void *input, const size_t len)
- {
- 	const uint8_t *p = (const uint8_t *)input;
--- 
-2.50.1
-
+might help.
 
