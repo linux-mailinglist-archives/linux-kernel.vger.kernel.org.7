@@ -1,202 +1,216 @@
-Return-Path: <linux-kernel+bounces-734103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B763B07D1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:45:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B599B07D1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 770733B33DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 816431C415AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E87029B78D;
-	Wed, 16 Jul 2025 18:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9611C84DF;
+	Wed, 16 Jul 2025 18:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LVuKUsXE"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H6DkAmrb"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB44136347;
-	Wed, 16 Jul 2025 18:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752691529; cv=fail; b=gAtLq0qAA3evW+rH3exzZkJiPInrc3oLOx0ZtL6ekm/NUwcjBKSF7p20O1AeV1Ey9Ykc9EBLtr5VImltbLpXTF/kthw9fYl4UYRCQJjOpFeKSXeAsARq++R1N5gVA0w1Fp+IdzLsnULVXeiYUyZlZS/LPdr9sbSYPOBnwG1lGBg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752691529; c=relaxed/simple;
-	bh=Ioi4JavdJlMryVN+peYnxtvEOMP0r/L3K2xTL9cZ6tw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PqlrQpLr7eeVD/Zo6QSLOhL1K18R5MwG3Zpu0MzhXmIy958BbdRqJHEVokcJ4ozS19RKb2PUuvpOazkulyaXi18SkvSxPKjtu06JpbfiEXb0QWgfcHFdvSGJzw+fulmjSFOHIDCn57ZqewBmbhuzSibjHoHXi9NzeYy0XuWIM1o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LVuKUsXE; arc=fail smtp.client-ip=40.107.94.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SQYHwATUm/tEHQm0wBRPH4Cmu3zIdqpmxkOw0Qdfaqqb/CuyoDpRbOBGEnI2PAwh6ZlPq9g2mQj9GKdWFo1OHNnarhGjDH9A8F0PLHpKeIR6tzKCUgq95CG3D9LeAVSyQkWTRsO+wRG/dV6812hgQw+Y8qsHgIm6wA5NnBoBTbGQtbmbHGXvxPe9SQwUQ13/ZaglSf8gKx4D4YN4dIZTtC0hdQA7P6SzeoAltfO/wmHQWMUVaOsNm+pm8A7/AxJ3NzNMWMP2pqKk/br9Sn7PqdhfjzDlvy9WpANXbPkfTyEziBbL2AW9duBJQWSpYtdR0yLgetLBuBc0Z0c+NtsSeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6FTf1O4NMz2P4p3rOYb10jiYvzSG7t4IoEiLevgn0R8=;
- b=NMYIid3FJah/E1MWRq//t33MmYVcrH7RH1OaXHwgkUt5BWV4FWs/lZhN8vURwu46j6c2Kxsdq+wtAZjqH6/SCPDu17bhvkgyxlt3mYfgEdwfXDW4XgWs4r63IGJ1lAs+TFVciiudt9+NMX9W0lkEAKa00RwCRf+8cQrdSLV6r4NXivPcdeUAchlpvm9kP0Mwu/BnHDrSCsB9Qu7uLPdm+oyUWPkDpQMQj9zFYr81qp3MAQ7Q0Ef6B1OHz4+lBZ/Rz/w/qLJs19qm11Iv/ake1ua+vi5nCRgu/7nur8PyzDgbgtZlKR5a0F1fSym9UkVE96ZzNVIM3/GyZK0NgOtq2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6FTf1O4NMz2P4p3rOYb10jiYvzSG7t4IoEiLevgn0R8=;
- b=LVuKUsXE6OKyP3eTkXQlBhgfWs56R0HTKinoEK4H3qTjHcpww83wp2JrnrAw9QjM1Q4Aig189plmLkBu1a/LzBCrwGxn93qY/kZEfx3M+m4BuSJha20xbUc/acR86c25IcWc8cjPNuXv1R7RkAUlxTFLVPhiV5aOuJunNKOUDD8=
-Received: from IA1PR12MB6044.namprd12.prod.outlook.com (2603:10b6:208:3d4::20)
- by CH3PR12MB7593.namprd12.prod.outlook.com (2603:10b6:610:141::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 16 Jul
- 2025 18:45:23 +0000
-Received: from IA1PR12MB6044.namprd12.prod.outlook.com
- ([fe80::b62f:a186:3978:4a57]) by IA1PR12MB6044.namprd12.prod.outlook.com
- ([fe80::b62f:a186:3978:4a57%5]) with mapi id 15.20.8922.025; Wed, 16 Jul 2025
- 18:45:21 +0000
-From: "Zhu, Yihan" <Yihan.Zhu@amd.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Alex Deucher
-	<alexdeucher@gmail.com>, "Hung, Alex" <Alex.Hung@amd.com>
-CC: "Deucher, Alexander" <Alexander.Deucher@amd.com>, "LIPSKI, IVAN"
-	<IVAN.LIPSKI@amd.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>, "Kazlauskas, Nicholas"
-	<Nicholas.Kazlauskas@amd.com>
-Subject: RE: linux-next: build warning after merge of the amdgpu tree
-Thread-Topic: linux-next: build warning after merge of the amdgpu tree
-Thread-Index: AQHb9jxmRlZrnVblGEiPsy7gdg+6qLQ1Fpwg
-Date: Wed, 16 Jul 2025 18:45:21 +0000
-Message-ID:
- <IA1PR12MB6044F52C3C58284B49DD77DCE356A@IA1PR12MB6044.namprd12.prod.outlook.com>
-References: <20250716202831.68661f12@canb.auug.org.au>
-In-Reply-To: <20250716202831.68661f12@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-07-16T18:43:37.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR12MB6044:EE_|CH3PR12MB7593:EE_
-x-ms-office365-filtering-correlation-id: 254376e1-b168-42ed-aca7-08ddc498eb12
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?GiGhQgmwlQknXGmHa9XWMveiBMpYtiBi7gXwH1clfsPTsb2W7rtHh+bIfRei?=
- =?us-ascii?Q?n1AeQq/louswXo0MXznFELIPoSp93zgcnDK545HSr0mDX1g2zSJgtR/j2aE6?=
- =?us-ascii?Q?xGGyIXy6UKcjKVQRA+YJND4A1lhk+Z1NBfMyWPubMWHIAD1d655BobMdgAy7?=
- =?us-ascii?Q?lM2X70XGtiP9IEETbZOEHHkKbx+0VomxO0Sb5UKmnZIqYGjQR6e29gzr34Zu?=
- =?us-ascii?Q?oQ9cl+urXV4cuUcx9p+lGf6wseMxihLyd85GgN70kJIWLu+3Z1U8+CzDzcqC?=
- =?us-ascii?Q?F1tMs2buVzpwdiZmbsrvmJH9fVX3efl6CkeFVxS7hH4uA3sgz4L7kAFDguUI?=
- =?us-ascii?Q?uCbNmIbvprVvTFQk3HWS6XlKJ0Bv1YgMsfVvvtlD6lLw1UPVIXT2rKfGiC9g?=
- =?us-ascii?Q?gxygzakdotR0NLuj0fL0AUEFc+h7271yUk5WAY6128O7xjSHGCLLY5cnrB/q?=
- =?us-ascii?Q?TAD+awVJxvdi2frUzxSdk1EPKzvzJxj1M8HPE3+tTE/+j0CuPAdswSW3V3Y/?=
- =?us-ascii?Q?AHj+F1p1KRML1kh6M25sXujtavcrLL8iOH3nzoA4tArYPCLaNv2Tyf3kO4ca?=
- =?us-ascii?Q?SgaltHRLd5k/7d1ouxIi8nC4mDgcWNg1SjYOuXSk842fS6JdlFuqbceFEaOH?=
- =?us-ascii?Q?Zv9rIXFDb3Yn1Q/a+2ujJKaQfbwJ6xo+8u8N31bhbBpjEHuqp3WTtGgsSjAH?=
- =?us-ascii?Q?x7xS0j/UPUIRDlkzTk5tCkb53BBhV21aKcdx+pVNQ3rr9q9C36GWR/Cl9fQo?=
- =?us-ascii?Q?DKCbj5td3NswmEZ2dN0EHc1spjw1nxKWhQ0eSM795en8Xf1aGvWGMTm+j/Lr?=
- =?us-ascii?Q?S8mgGysw5yDQkxAsLf2+mrt5Y88XOh08v7x2vWRr4HPbj8YU24RsA9ZhQvhG?=
- =?us-ascii?Q?KhaaFbp/y0BSLS3PVPdrB+nKNNbItPgiQWcg4DUfZpXdZzthzUT3+UvCKXb/?=
- =?us-ascii?Q?xbRaVJzTG7SKrODGK3B05DVshgFWwZ+7PMfsIqNqN3DANXa4Y+E7HsKBt9f/?=
- =?us-ascii?Q?Nh++MkrScFysbynjqgnsWxP5KfhPc5lgNpNsPKXgw487xdCtxByDKzhOSMKT?=
- =?us-ascii?Q?2FtCYm8pizxseXnmIS3eGaupqQSkPhy5hD9yqFyXSSTCO3sDhMU0YnFjDLv2?=
- =?us-ascii?Q?mVV+ySCv1hZZn8e3tfrwZKKEQJ0MWgmNaoml4M9EnYRG+5xesWlUNiW+7O5t?=
- =?us-ascii?Q?tdmSSoYItQCoO29LF+mNf0+hP5Fd2xp6gpaCdx7yyvYZfyY/lwACnnCDM0t/?=
- =?us-ascii?Q?wEyAlofGQvruYVqSZXMR8N6A1jZwZWoNdpZWoJqajAfQfceDFAeAq3MAq9Kx?=
- =?us-ascii?Q?b1BZdA3IptAz3qQmXXSOjT0f7dZZvAy7Md9IFjG6yHWXrKpNyOK0FyHdMWsS?=
- =?us-ascii?Q?7wNUVUX8i3BQZayzPF9LVoNDg6O5Ud3d09BIhaMBO9n3JQN6eD2pnSQo/48N?=
- =?us-ascii?Q?L+g4jt/NYlGG3KE1QGWvIZDv0LGuNboyAtntbV9h52MGR62NLmlEqA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6044.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Ddcsr+3DjZJs31DvfRI+x3XqFjYOgcNEIZmiqiarXILnwaGpkz80xqXaxHTZ?=
- =?us-ascii?Q?746rXdIsMmN/0eRrx9htYDS5uhJy6Z1eKUfjINbXPBdkNntdKwwYmt/reCjK?=
- =?us-ascii?Q?rN5GPTIguXNZTLjkZ0gqiQeCkbT2rFVOJcXvNw6/7HHhgZAUge68QjnB4z3E?=
- =?us-ascii?Q?5zWs/egRJ3z6lgRpyuNiWhcc8mFQBcaB9BthDEi3l+TAIXcNuKNgGuj3glFr?=
- =?us-ascii?Q?f2TWIDSOfzHhOkB8VaR8YqCpJHYAKu1zlkAnB3PxYgh1NeSuwYV39CKZ4jMq?=
- =?us-ascii?Q?0WiXFJQhvJXuZXfmIoEP68zsBprcI6WEedEBTDZaGr8ddZrV7LvrLhNS8sE/?=
- =?us-ascii?Q?8qNOD6mszuCiqUk43UXSyEZaF3HEhS2O1HAHc83o3JNXaV9yfqpgGfp5n7hl?=
- =?us-ascii?Q?AhaLJeIoN0uNt8YQcNLzjLbruWhEei/aFobgbuj4FN08pqPKrN3kKW+CYRvh?=
- =?us-ascii?Q?j9F6GNlGCzO68EEs03HNfQqN/sLMcYBQZ4q5FkWjlxSE558KmI8HXeiANk+y?=
- =?us-ascii?Q?VEkyAMy+0yXX6KeElbnLFZXHWRDw9V6bLAduzav5leayyqLahvMY+pazMmsd?=
- =?us-ascii?Q?ddOOLVJ9vx2QviGe4/aqg/Fu5uMTxoaSlrnbVi+eXa3tgK6XBAYQ/QJXhPLR?=
- =?us-ascii?Q?c4yLbsQzsoutHps1X8+W4jdSwIFhhHWFTOhxLJHz6rWUDoLlgg149Iz2bk/y?=
- =?us-ascii?Q?SycQiM0RUGW3icf6O9feth75ssZhP6AguOb8Jvn6gSaq3JJGaFKVF6AGjZ85?=
- =?us-ascii?Q?S1Gwd3HigeQqTswWZWhqdDrwAZNwRUjyTZEO0EszGp1IWBHdgE5U/+Wr6FYs?=
- =?us-ascii?Q?gVUuna8sCKcI59OcYmGqANFDZ3PaiLW7cYMkfQ/AVnMLCoYfoMW5lFWjcA9m?=
- =?us-ascii?Q?/34KnqfHODJXZ8bwsQ0vNTioKO6Dbog0FtVYdbrQKE5THbKyYtfFDT05QsiH?=
- =?us-ascii?Q?bElqSyZvqrIgOJrD093tPxOisCp1PnVIVMumluhgZ1kwQUfMq9MNhgkWOBOt?=
- =?us-ascii?Q?jQv1dgF2P3jvUGBXYBn00IfyYpSP7BV9CTXto0Bbu9olrfBLoG+exGEDyAvR?=
- =?us-ascii?Q?sLcf9vclnjOpNEQ/hufFp6y4F1oHmET4MM8+przGvJeWPgrvo1+oxIv/r4cr?=
- =?us-ascii?Q?7L5JzbxsiINjC3GmLWhFb4l6A2Ec0alL9rFcbpRDXt5E4ON9B5mJliDXTxpX?=
- =?us-ascii?Q?lhlBWzKZQRLEZpJ0HjIJ2mNrcq3Nehwt6Q6bYXyu6m3Ux0BcpHvV6ezhKvGy?=
- =?us-ascii?Q?mQoxZUqCv0L6PlrgYhNnhVhEvpX6pawisRU9K+eEjNdWHf/1pyb1sWCeb1En?=
- =?us-ascii?Q?ytu80qy+xYHfFjZ6jyoCAuIQ7WdySeAC2acxaDAsa+iGVTfQbRGtflduoXe2?=
- =?us-ascii?Q?2PDgLHJ5w5Q5r+JzUvrI5W7Z6AvAzt6Hd3DdFtDSHw2yDTIaRxxB22Xqh3ZZ?=
- =?us-ascii?Q?EL3pc8SgvMxgdQRRFk6NW0LO0q4E25WPUF3V0RDcemVg2sqKDkqajdNi4+mS?=
- =?us-ascii?Q?Ybt3xPCLT7tushaPPckDBZ+4JVSZqpnB40DvLSuuK2F9mujFJTSua4opDmjH?=
- =?us-ascii?Q?/9KvstCRIzgngc6pA6w=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A17A84A3E;
+	Wed, 16 Jul 2025 18:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752691692; cv=none; b=dcCfcpBbH0lee1WsNifTJLOVMH7dWJ+JS2MIZo7n/hmxMNatvXFVrpT2eyQxZGGaA3Rzn+0BUj/9PZo+2MD3vYh9CKyICHCkTy6hHLt7dOj6x/7I035Dik5KMw6EaXD28nwMER3OE7jBZC3Ka+O/hnyFSCuah+lYZW+R99LAaus=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752691692; c=relaxed/simple;
+	bh=8n3WqsdGagN8W0DhZryy0a4hrWcsi0O0hz8Trf27+yI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=WJySMKSX5rKog7RqCVGimOUNeJg4jPdPKX8a/FeSACehyHmw1xuttpinG1TQxazPRtZaJrEExlAYYPjRAyTzoDNDlKFzsqh/cbIcPAbzDEc0hR7MWQUZs1vhKKs/rKcuBKCD2VgBbmMR3OYMG+uxoSjwDKpuocgPcSFnybet/yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H6DkAmrb; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56GIlX0E305357;
+	Wed, 16 Jul 2025 13:47:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752691653;
+	bh=qTEuwqLVvtb64mUYPFpiLTtsuvwj0j87WEm1+Xxkd+I=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=H6DkAmrbZImWtMmL0l7ALuZmwb995zdh4lcoJMgHxQ4X6lH7uGXiFW8Y+xBoE5HZV
+	 jSThy56gsvKPiTexmMsfnsBP51twch0KBWdvO9wIhxaN7aJXjBCBr7EK/W7B3Ri4d/
+	 j4ALKJ6ckJ8c7OexHKHczYYMHL75JzwgLZnvyB90=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56GIlXvV3817913
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 16 Jul 2025 13:47:33 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 16
+ Jul 2025 13:47:33 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 16 Jul 2025 13:47:33 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56GIlXkW919838;
+	Wed, 16 Jul 2025 13:47:33 -0500
+Message-ID: <fb2cc029-796e-4bc7-a1fa-b43256a86c39@ti.com>
+Date: Wed, 16 Jul 2025 13:47:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6044.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 254376e1-b168-42ed-aca7-08ddc498eb12
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2025 18:45:21.4313
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CWhod8TX7GooHnLZM+g9kqxXDBfmE+LxVj4V/39Nl9sBr53HkYUF0/xmqiNd1x3ZMA+nAhdSxDngp7gJkzn4cQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7593
-
-[AMD Official Use Only - AMD Internal Distribution Only]
-
-Hi,
-
-+Alex Hung +Nick for awareness.
-
-Thanks for the information. I believe Alex helped me to add the description=
- in another patch. Please let me know if any further actions from me.
-
-Regards,
-Yihan Z
-
------Original Message-----
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Sent: Wednesday, July 16, 2025 6:29 AM
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; LIPSKI, IVAN <IVAN.LIPS=
-KI@amd.com>; Zhu, Yihan <Yihan.Zhu@amd.com>; Linux Kernel Mailing List <lin=
-ux-kernel@vger.kernel.org>; Linux Next Mailing List <linux-next@vger.kernel=
-.org>
-Subject: linux-next: build warning after merge of the amdgpu tree
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] watchdog: rti_wdt: Add reaction control
+From: Judith Mendez <jm@ti.com>
+To: Guenter Roeck <linux@roeck-us.net>, Andrew Davis <afd@ti.com>
+CC: Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250707180002.3918865-1-jm@ti.com>
+ <20250707180002.3918865-3-jm@ti.com>
+ <cc37e797-d3e5-444d-8016-c437a0534001@roeck-us.net>
+ <d96541bc-644d-4c90-b9f7-1e4afd16aeb6@ti.com>
+ <953f78a8-3928-479d-8700-dfe1cea15454@roeck-us.net>
+ <299c363a-23c7-4522-b58c-100f49c4eece@ti.com>
+Content-Language: en-US
+In-Reply-To: <299c363a-23c7-4522-b58c-100f49c4eece@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 Hi all,
 
-After merging the amdgpu tree, today's linux-next build (htmldocs) produced=
- this warning:
+On 7/10/25 9:08 AM, Judith Mendez wrote:
+> Hi Guenter, Andrew,
+> 
+> On 7/7/25 5:55 PM, Guenter Roeck wrote:
+>> On Mon, Jul 07, 2025 at 04:49:31PM -0500, Andrew Davis wrote:
+>>> On 7/7/25 3:58 PM, Guenter Roeck wrote:
+>>>> On Mon, Jul 07, 2025 at 01:00:02PM -0500, Judith Mendez wrote:
+>>>>> This allows to configure reaction between NMI and reset for WWD.
+>>>>>
+>>>>> On K3 SoC's other than AM62L SoC [0], watchdog reset output is routed
+>>>>> to the ESM module which can subsequently route the signal to safety
+>>>>> master or SoC reset. On AM62L, the watchdog reset output is routed
+>>>>> to the SoC HW reset block. So, add a new compatible for AM62l to add
+>>>>> SoC data and configure reaction to reset instead of NMI.
+>>>>>
+>>>>> [0] https://www.ti.com/product/AM62L
+>>>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>>>> ---
+>>>>>    drivers/watchdog/rti_wdt.c | 32 ++++++++++++++++++++++++++++----
+>>>>>    1 file changed, 28 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
+>>>>> index d1f9ce4100a8..c9ee443c70af 100644
+>>>>> --- a/drivers/watchdog/rti_wdt.c
+>>>>> +++ b/drivers/watchdog/rti_wdt.c
+>>>>> @@ -35,7 +35,8 @@
+>>>>>    #define RTIWWDRXCTRL    0xa4
+>>>>>    #define RTIWWDSIZECTRL    0xa8
+>>>>> -#define RTIWWDRX_NMI    0xa
+>>>>> +#define RTIWWDRXN_RST    0x5
+>>>>> +#define RTIWWDRXN_NMI    0xa
+>>>>>    #define RTIWWDSIZE_50P        0x50
+>>>>>    #define RTIWWDSIZE_25P        0x500
+>>>>> @@ -63,22 +64,29 @@
+>>>>>    static int heartbeat;
+>>>>> +struct rti_wdt_data {
+>>>>> +    bool reset;
+>>>>> +};
+>>>>> +
+>>>>>    /*
+>>>>>     * struct to hold data for each WDT device
+>>>>>     * @base - base io address of WD device
+>>>>>     * @freq - source clock frequency of WDT
+>>>>>     * @wdd  - hold watchdog device as is in WDT core
+>>>>> + * @data - hold configuration data
+>>>>>     */
+>>>>>    struct rti_wdt_device {
+>>>>>        void __iomem        *base;
+>>>>>        unsigned long        freq;
+>>>>>        struct watchdog_device    wdd;
+>>>>> +    const struct rti_wdt_data *data;
+>>>>>    };
+>>>>>    static int rti_wdt_start(struct watchdog_device *wdd)
+>>>>>    {
+>>>>>        u32 timer_margin;
+>>>>>        struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
+>>>>> +    u8 reaction;
+>>>>>        int ret;
+>>>>>        ret = pm_runtime_resume_and_get(wdd->parent);
+>>>>> @@ -101,8 +109,13 @@ static int rti_wdt_start(struct 
+>>>>> watchdog_device *wdd)
+>>>>>         */
+>>>>>        wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + MAX_HW_ERROR;
+>>>>> -    /* Generate NMI when wdt expires */
+>>>>> -    writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
+>>>>> +    /* Reset device if wdt serviced outside of window or generate 
+>>>>> NMI if available */
+>>>>
+>>>> Shouldn't that be "or generate NMI if _not_ available" ?
+>>>>
+>>>
+>>> For almost all the K3 devices, the WDT has two selectable outputs, 
+>>> one resets
+>>> the device directly, the other is this "NMI" which is wired to an ESM 
+>>> module
+>>> which can take other actions (but usually it just also resets the 
+>>> device).
+>>> For AM62L that second NMI output is not wired (no ESM module), so our 
+>>> only
+>>> choice is to set the WDT to direct reset mode.
+>>>
+>>> The wording is a little strange, but the "or generate NMI if 
+>>> available" meaning
+>>> if NMI is available, then do that. Reset being the fallback when 
+>>> _not_ available.
+>>>
+>>> Maybe this would work better:
+>>>
+>>> /* If WDT is serviced outside of window, generate NMI if available, 
+>>> or reset device */
+>>>
+>>
+>> The problem is that the code doesn't match the comment. The code 
+>> checks the
+>> "reset" flag and requests a reset if available. If doesn't check an "nmi"
+>> flag.
+>>
+>> If the preference is NMI, as your comment suggests, the flag should be 
+>> named
+>> "nmi" and be set if NMI is available. That would align the code and the
+>> comment. Right now both code and comment are misleading, since the 
+>> presence
+>> of a reset flag (and setting it to false) suggests that a direct reset is
+>> not available, and that reset is preferred if available. A reset is the
+>> normally expected behavior for a watchdog, so the fact that this is _not_
+>> the case for this watchdog should be made more visible.
+> 
+> 
+> How about:
+> 
+> 
+> /* If WWDT serviced outside of window, generate NMI or reset the device
+> if NMI not available */
+> 
+> if (wdt->data->reset)
+>      reaction = RTIWWDRXN_RST;
+> else
+>      reaction = RTIWWDRXN_NMI;
 
-drivers/gpu/drm/amd/display/dc/dc.h:255: warning: Function parameter or str=
-uct member 'num_rmcm_3dluts' not described in 'mpc_color_caps'
+Since there is no response, I assume no one has an issue with the above
+comment, so will respin the series with that change.
 
-Introduced by commit
+~ Judith
 
-  26ad78fffc66 ("drm/amd/display: MPC basic allocation logic and TMZ")
 
---
-Cheers,
-Stephen Rothwell
+
 
