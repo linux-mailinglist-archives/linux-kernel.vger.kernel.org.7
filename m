@@ -1,88 +1,165 @@
-Return-Path: <linux-kernel+bounces-733258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED1AB07233
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:53:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46918B07210
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CECDC1C2139E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20F13B5CB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8357A2F2341;
-	Wed, 16 Jul 2025 09:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BAD2877C8;
+	Wed, 16 Jul 2025 09:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wwF8lHON";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3eWALn6I"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwA0tqQw"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB451D79BE
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB222F199B;
+	Wed, 16 Jul 2025 09:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752659586; cv=none; b=rT5ZgGgc2Qw+YMclxilAP/KuGq3kFfky3QnWwiznvg/ZOCDZbMZrOTgrhJlmZrTNVN0xY895HLqsRTOY43qAS296gaeyJEUdCNbTxGL3lJazBuSM8KOuqYJmgHZW7pYfB02fkzkAR3aHKY/RiHfjGvfVvXT2fTcF6ljZ2tOz2XU=
+	t=1752659016; cv=none; b=cDM91kmjbiPutKhX4Lo45KW+bupfQnNryx94b1Qk2bO8H8bunNl66p1GZ5B3ngEed1pGGyVdRYwvruYX9FthWJVmx0tmBe/kJhI6+1UDJ9Odl88HTQ0JfHTSYGF/mobnchOt83qrzGsqNrOO9HFn8Im6VdqvG/Z5s2JH4F5G8Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752659586; c=relaxed/simple;
-	bh=htq/y5LDVi8WvxV6B1yYtF/+yzz9ZOSygQgZN/cQKtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TOWIt0qXRMars8a4XKdxjkFhL+xXye0BI0ymu/NPLgau82NPBt95K9Kz+D0e5D0O215eDHUpwTuThwW3Bt2rpmydm2vGTPy6sm0ICKueF2KWHV8+wM7f7Z4J1pX+BFSIgD0G4ksJW14Di3Iz3xCkOWNcxNdjcXLZqYa8IQeSoaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wwF8lHON; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3eWALn6I; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 11:42:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752658976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=htq/y5LDVi8WvxV6B1yYtF/+yzz9ZOSygQgZN/cQKtk=;
-	b=wwF8lHON0+SEODeAYAVrwIhSdSfLg7v2MW+ipMgP0qGz0XMnO22GoDWBJZXvnHfR50k+d7
-	wFj7Q68/YeScWYfma0ndAxGU4vibTdRwn8mMbtEg02ZOrnBSx52hCoxwcXwYKb/bnZksIi
-	FZHofy2lxwHt2YWJY69RKISoEVNE7vDMHl4hZBoBLoJxgUmBUBkaSTC05QUrpIy/jovwD2
-	lQd7bgSMM1y2WH7Rqj6Kj6Ymo5aJRfo3d8xgZudIult/60+O20juHmmJGfrXnhdn1tHSNU
-	yAYGXiK+wFz1YmED/didVIuIGrS8BI1TI+/7DYDATOiZHgNIwMckFrBfICayuA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752658976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=htq/y5LDVi8WvxV6B1yYtF/+yzz9ZOSygQgZN/cQKtk=;
-	b=3eWALn6IGnUzABSPcuccXGYdAoaeB6fHQXIf9Pxf5E2XVqwxjAuiLy5NFU3PUx8OFACod1
-	wG5qyHCg/l7xyJCA==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v3 00/17] rv: Add monitors to validate task switch
-Message-ID: <20250716094255.G8jDFxdw@linutronix.de>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1752659016; c=relaxed/simple;
+	bh=dhm3xocr5iaNuduS+eigV/azx1gGGvuqWKVuj+K5CNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oKwATQ3VCdkXhgdvhy2emDow0c69GZRIv8qicLWctdiZ7mN38/nzIrlX2SRxR5JHJDdWGJC5vaQlsi1iKsla5HvwcVp6LrYQRQhopjItRv+QB8khtUSXpYm/XXi24bXj2WRRrOQnzZtcuTo1hZ299mfBnRu8+9IfcndEMw6sfDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwA0tqQw; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b3220c39cffso6513835a12.0;
+        Wed, 16 Jul 2025 02:43:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752659014; x=1753263814; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D5vVXw+LoXYmvFQxN+y9Jtu16e9jAjGmsO29XS/9U5o=;
+        b=hwA0tqQwR7aHk3u9zOdBS/NMNw9kWeTykN87aSIbzYeNaWXW3OJ2TQN27rbeKGEGLb
+         mCkJ9W+UF/eNBCqSwG6rTox4KLJ3zsgR0u9ZZlr6t4xnrsaW2X/Mm4j0+KVKWlcsXYHo
+         7Ddn6sdpe4eVs/t2Q4aet7s6SOEkdaKhx8XCn6+N7DJSxDP9fkFuH9QWQVUedEM5F9YO
+         EiwCtT/93kIJIrprm1geeX7t6EKqMwopn0/IM+2+9JVci95/8n/kKbWVworf26vHIv6D
+         3B9mn8dGVwRIJ22TUjhFrCrulIEeEyL3toEbExBPQ+8xu1g/faf3xG+zHyP46v28Grcv
+         Fb8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752659014; x=1753263814;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D5vVXw+LoXYmvFQxN+y9Jtu16e9jAjGmsO29XS/9U5o=;
+        b=o2WHHT8fxz6nAtsOxRTQuCTZLKlPP2YHQ7dOTw52ZN5BVWwH6np3rrCVVJnn5c7k3T
+         ORg1SEyRExSndP0oUgrlzWlAHIOgm/4XfQMNNp0XmDEQvQa3eo0AqyUIvsEO77a6NeUN
+         ISlRoZU+fWXMvf89NSLPuTQffRN+ETS6XmkCZw4sT1JCTesITeaDQRlG0uW7UKnJGzHv
+         QIQGXe/uMQh7KaQvtUTazWEHPMTfcAF2YLFd/Ved9te0XDVXQMZzWs0WhaikCIW8vmYT
+         SaRNv1Y194Vv87TKh8NPuhbf5td55JxKqJfdNd1jTzTtVjX1bMBtEBI2DybIkUfiND7+
+         qrgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUX5oCn5v8LljRobQOlZIu1dXqRYEkKPvAJPgrA/DwfAiG7bUNqdok/Ao2bYs1bQVgaw9tyLI4UHCHOWmD@vger.kernel.org, AJvYcCXlIBLbZHBumY5WNxyOjq9R8vD2d4BX4Y09VrA2lPtOa9uvYcoAz5NZ4HHITrFxQDmPCmN7pRT31R+K@vger.kernel.org
+X-Gm-Message-State: AOJu0YweBOf3jFMMD9oPqaOqnqRcZnQ223CMJ9ZuI/5UzhW0VzUyhAtx
+	+/xirBTKKYurSZCw34MeXqFIC0y5gQWjZjUFxX4ItdXBG8UJjKfEuW7a
+X-Gm-Gg: ASbGncv8AxAbzc2S7wAR3lRadAFyzdNOqg2Q4hSaiMe3YpM2X7h4WQ6kehwrmaq6TMi
+	N4YHgo/r0gi5mVsZZJD+0xR54oo9Rgq2Q/3RFytWzmVwDfE36wGMum4aYuRd9d/mRY/5Fdqgc5b
+	Rn+LxGZdWiKsubJPqFWS8g9+x9JQDw2FsT5+wflEB+wut7ukcR5OhtAJ64exv21bdwQSPobKaE7
+	MxzYPc7veoX7uRaTpP6R2P6l1kriK1MdbuD/tV4w1n0mVvjJiJg9Y9SnHtcZT6QmRPvMgLwqyeY
+	Xc4+uqvAhwk0CtOHW5hxqdXyR+YFADTjQayI0XSL6rkdgTX79bWMPpa/GgOL3AGBKgtu5s48GkH
+	KnjV3+sYuCmnGpv3t3i+9h30wTr2ia9WNKE9DB7w7RCaAS6sYuQxeEYrLTKi7rd8n7ytNrg2FeD
+	xyvHMvbgzQ
+X-Google-Smtp-Source: AGHT+IEQ8TA8a/Tp8JVUJ4l4ZbjYlDYN0wAMilYaPQ7xEw3y9Z5/A8bzzrn/UjeSnv2yhj0GESvLrA==
+X-Received: by 2002:a17:902:d547:b0:23d:f499:79fd with SMTP id d9443c01a7336-23e257647e5mr37218635ad.40.1752659013872;
+        Wed, 16 Jul 2025 02:43:33 -0700 (PDT)
+Received: from pk-pc.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f2350acsm1039503a91.45.2025.07.16.02.43.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 02:43:33 -0700 (PDT)
+From: "P.K. Lee" <pkleequanta@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	joel@jms.id.au,
+	andrew@codeconstruct.com.au,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	patrick@stwcx.xyz
+Cc: Jerry.Lin@quantatw.com,
+	Jason-Hsu@quantatw.com,
+	yang.chen@quantatw.com,
+	p.k.lee@quantatw.com
+Subject: [PATCH v9 0/2] Add Meta (Facebook) Ventura BMC (AST2600)
+Date: Wed, 16 Jul 2025 17:43:27 +0800
+Message-ID: <20250716094329.1069203-1-pkleequanta@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715071434.22508-1-gmonaco@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 15, 2025 at 09:14:17AM +0200, Gabriele Monaco wrote:
-> This series adds three monitors to the sched collection, extends and
-> replaces previously existing monitors:
+Add Linux device tree entry related to Meta (Facebook) Ventura specific
+devices connected to the BMC (AST2600) SoC. The purpose of Ventura is to
+detect liquid leakage from all compute trays, switch trays and rack
+sensors within the rack, log the events, and take necessary actions
+accordingly.
 
-I looked at the patches that I understand. For the others, I lack the
-background knowledge to review them, sorry.
+---
+v1:
+    1. Create ventura dts file.
+    2. Add commit msg.
+    3. Use format-patch to generate patch.
+    4. Add subject prefixes matching the subsystem.
+---
+v2:
+    1. Modify email content.
+---
+v3:
+    1. Add mail list.
+---
+v4:
+    1. Apply git send-email --thread option.
+    2. Sort nodes in the dts alphanumerically.
+---
+v5:
+    1. Run scripts/checkpatch.pl and fix reported warnings.
+    2. Remove unnecessary 88E6393X CONFIG FRU.
+---
+v6:
+    1. Add a new stage for the DTS change.
+    2. Run scripts/checkpatch.pl and fix reported error.
+    3. Fix the issue in a separate patch.
+---
+v7:
+    1. Fix broken indentation in the device tree file.
+    2. Sort nodes alphabetically, then by address if equal.
+    3. Rename fan sensor nodes from 'hwmon' to 'fan-controller'.
+---
+v8:
+    1. This patch series has significant changes compared to
+       previous versions, and quite some time has passed since the last
+       submission.Therefore, previously received Acked-by/Reviewed-by/Tested-by
+       tags are not included in this version.
+       If needed, tags can be added again after review of thisnew version.
+---
+v9:
+    1. Reordered the node sequence under i2c5.
+    2. Added a description of the platform's intended use to the commit
+       messages.
+    3. Added 3 GPIO expanders to i2c10 and defined the necessary GPIO
+       line names.
+---
+P.K. Lee (2):
+  dt-bindings: arm: aspeed: add Meta Ventura board
+  ARM: dts: aspeed: ventura: add Meta Ventura BMC
 
-I gave the series a test run, and beside the opid's errors, everything else
-looks fine.
+ .../bindings/arm/aspeed/aspeed.yaml           |    1 +
+ arch/arm/boot/dts/aspeed/Makefile             |    1 +
+ .../aspeed/aspeed-bmc-facebook-ventura.dts    | 1553 +++++++++++++++++
+ 3 files changed, 1555 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dts
 
-Looking forward to v4.
+-- 
+2.43.0
 
-Nam
 
