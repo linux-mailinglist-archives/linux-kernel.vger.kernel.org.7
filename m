@@ -1,211 +1,172 @@
-Return-Path: <linux-kernel+bounces-734065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FDDB07CAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:21:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4919DB07CB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F671AA5611
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98DD71AA5616
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E7729A300;
-	Wed, 16 Jul 2025 18:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B65D29AAEC;
+	Wed, 16 Jul 2025 18:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p6IwQGWC"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxgV31RK"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFA335949
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 18:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D575D28DEE0;
+	Wed, 16 Jul 2025 18:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752690091; cv=none; b=eZXXhzPftPWFYAD3sjHlQ6FIV53oBw191DMuJl75bQoXpLoMr54EUIHmweVYX8whW3fyqoIK2BfqjQnSZTfghe0YqWcMrDK+vtmZ7dLRTpApgiZUUhlbSnWYJefrmw99aISFg0FCgjwHFCtq4HAk+zkZqsu9MmvTF7Pdg6COu0Y=
+	t=1752690092; cv=none; b=B++epSzWGCwUMRSgz+5akP/VU/VrEuI1kiPdjFee9ORVd3ATsTglEKoSyiYjTuWFfWBbaVdnyjM+Ex1LzZzNJg4EdCmKKgKfK1u3fpiTkvuDyrTxfhda8pJNaIBvi61/gr7MMv9gkEBgaXPkVNrj8qmawpAeaWcRNPctQiYtdrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752690091; c=relaxed/simple;
-	bh=aZRLE1RK5cffLZAs412eXdw+U5HQb0XWe75KFAkS14s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzrJjv+gthyNw8AI3NY5kKdijhDHkxl+UHFech0hv9QqqWD5X0KiBgpWGlSYhVfj5To+tLrA635AEEQHbtBl5ynSYDUStNfHSuTkGIhakWvdMWiZOuIkOFq09Oe5JKEenFmD7lDsmboSExuhppfDPwwydB38FIKF0KJH7JEkEh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p6IwQGWC; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-237f18108d2so28415ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:21:29 -0700 (PDT)
+	s=arc-20240116; t=1752690092; c=relaxed/simple;
+	bh=ok3c5KMhFBYZDlSSRZJA+MwBVa91RHrRE2gQ1sQeZ8M=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ape4yyQZfKnRw3Cdw64YnQ0w11jKo7OrmuPJ6p4jwdySjRld5+adIdgQ5W/i1tG/PXzMWVA4zue1hqDGxORa83SaIrwPa0MN4Gyaf+W3ofnIM51c6yPjVPz/tovtemCFiGZajek8FZVaQkD6V92qBHgNoiAE15CDHGJhfrfnByE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BxgV31RK; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55511c3e203so151950e87.3;
+        Wed, 16 Jul 2025 11:21:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752690089; x=1753294889; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XqYy+Dz+71twI0him0hUjZk/6GLWJWbYmCSfdczxwFc=;
-        b=p6IwQGWC+rw3gk2LaWxeC1IMtSOeqqekT+7iyKjHAh/rNsnjLvm8eziJ2LhHkeRNGf
-         QV9k+6xHTStMyXlIExFK5w7QoYpjJ4CApmTw4zLHipaBIRdwAklY9XfXutc0EpOnktzz
-         m/af/wj/+iLzJt7xFLCfdw6C9bp+7199eM3IqywB2inoVeIe9cxicOw+1XI/LzXkAlBz
-         uNnwQz7tPWxIgxqPk0oiThD8D9Rr2w5UKlsqClPxxEKtE+MCB2yGVfFo2akWToE+aIn/
-         ZhmmJF2nhcwaa+SCKgvfXjV43WR6F5mEw9kWFvVcWfHW4c0ptNJ5v3+qnHumuJp8HphG
-         GpPg==
+        d=gmail.com; s=20230601; t=1752690089; x=1753294889; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZnrCFtIVZL8hyVV2JzefY+gIDN+ezQ0AtgNK2sjo+OQ=;
+        b=BxgV31RKnRlLl0MzYggKqfveEGT+J/GJZi3VIkasOMDp56O3flLZwK1ya919gBguLD
+         bNE4geDbvVoVJG+eqe5fX5gcTQxqXnodoD7ycpf/38nmU5HCSazzHidukN0Tjd6PtUWC
+         P0itsOon68haHvAb4c7NC4AtyJOr7AE2KZbe7y8Zqq1lZC/TBMRDeBZ3R3O0aFwDDYyo
+         VlthEAbXGiiO+foLUjkpx7FyiZFVtQY9C+Oeew+zmeEhIW5jGSFr4XFtwpowGm/7lPaK
+         aTxfEbQKBS7dVWOlNi8yUydbSbDJyHZAp6eTeI9m8gXrhdhBSGyuzDH6IPw0gcl0o9hW
+         Vsow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1752690089; x=1753294889;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XqYy+Dz+71twI0him0hUjZk/6GLWJWbYmCSfdczxwFc=;
-        b=iz3lYwjRNKM/MKVIvbjmwf3A1Bve43sCmunpOL+ZkSuH87wfxO6dtmsJhRqDLaRa8X
-         22O+uZ3A2IJiBqK3Qg/tpNsxqQrYG5jItVKeKScdXfh8V4/GJqJcQLmAzdBVVci2Z4bT
-         FaRNQMSaNrgJj9OgF0kKV4WoRKunoKQNJGfBTII6nYGPRGXJsHcT1z5kbfs08PgFIIMe
-         DnLYR5Qd4dIq34NQ8YsJ3puRn2XtPFrelex+HG/sQ6xAZCtTOnOU/wMFsAFIga8fAQsd
-         jzXR71Z+YmYGlLDshcAF1NrUYPH6xyMCQ3nzndLObkkniC3mrV0HK5x/3nB/7gfz/uw2
-         KEhg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/ccUmyr+uAPI2jgtEMu1QbzbBDqA5+GRPAYK+qkK8N9pljHO0RQ3G2KYviHSP1gTe6gSDIF+N9FjbrFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1JG0JHEstNGavgX/ZoxmDAswPGnj3jowXovvepPPSbK8vGZC5
-	LzPCweWFHVYLLhnKbLyk9mYvBTMrd01VtxSJ7BPF1foGLZa+dUeQx05bVd5itc7Wbg==
-X-Gm-Gg: ASbGncsNRftZtBnnM6DS+1IrjeQXPCnhuqSvirjsMsAuCXgNUhCRCLwEOEKn3jEkarm
-	vNWJODNuUWDBcOdyp5hAZseOozM9t0WDlr4FScHIs42vk5C1vNvNHmzLHjaRmI2sJT3kBfCbrrF
-	RatE+0gLRneOBegRLqEQzRNgXaifRq4uLaVk0DamkkHn8U5cHeuVxtDOpAZFl1EHMxFYDMsHych
-	ntjBhs0PKYb/m1qQPIb3w0hbVvTRmf9PChIZrfJ29XhHYbUmpS/SRLPAfSWz9nqbMXfkKaBu1Ji
-	BJKKkKVwRaEXh48bIJUu97Kshe6rE7B3a8W3zR5Bpi1aWeFYtaxmNnB9Qk7LwZBAnRTPZlZFGLG
-	tb7K1zFyX3lfzkodJixmAgn7iO4uBOeZJFe0aNuBvnFGgjmMW8yutqFLQROVwrv8=
-X-Google-Smtp-Source: AGHT+IGlMcCW/yVhugE6YAY332fyg5msAyrVkd1WM6bK1ZITZ1zHK/NiN+y5Y44tdPQTE58o+NEh5Q==
-X-Received: by 2002:a17:903:3b8e:b0:231:ddc9:7b82 with SMTP id d9443c01a7336-23e2ffdd014mr186685ad.13.1752690088747;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZnrCFtIVZL8hyVV2JzefY+gIDN+ezQ0AtgNK2sjo+OQ=;
+        b=lVyqcu0iOEIomh9grMELQI3mV8zk47pzsvAiovlIMi0NgaAZuB9785fqzrba4+a1VI
+         CCD/5vnwaYZDfRKN2HdHeCb+B7Hv+5zKD6UuN3Z5yEzWeJWnhgRHD0l3zeeSGTG7lUTQ
+         2vj+E4LV3Eiaw3jwNyNl9t1P9j846vzpKMw8LCcoZiJpmzsxf4z/zHfVPm1CpUNc48p2
+         Sa20ZD4sHzmQdZri7r8CU4c61i9Ujlw80Gqo5Zpw6o9hQQV0wJqoaPB1UwLoJFNZBMRj
+         eNVzAf4WAhV16pLootH9hvKLxL59VpcRqryhVK3rEg6p67Y9D23nvZ0I1XZbUkB4h+mY
+         G/UA==
+X-Forwarded-Encrypted: i=1; AJvYcCVS92TIC8XGhg/L6zgenNPzilynitvZApVILrCEgH7TEjTvhCbs2NruRsT4G2Lk2uXFi99+Oy+RDbfgSAo=@vger.kernel.org, AJvYcCVk2XKyyhaj9Ilf6v/1yxT99pBwvBMvRV11FwW03ZbAGOEyOvjXeUjC8Jbt9BgcgKiCmotTXI9t@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ6jqVU5Or+ZHmPQu6XSCcqJRWSlhTk48YU0P8GdlJE/zQlL7W
+	n0+Q1bTajUKaFVBksH6K1MzO/bKwmvSWx7vI8HHri/88sKH3W1ZvJaDCYAD5q849
+X-Gm-Gg: ASbGncs5QflQuQtCmfKBvZgq0bdRFntXVU/8bf1pTvKbuXdLqDyTAB26EJ22Rc1XSPX
+	9WlnrKdjwuzVF9ARxJLccBYZ1N/NwNS2P3ewHRY4xW6gyH7ZOAvIcX60sZp2id1+jVp6IEmO0Rx
+	31tCAHWthRkH0qSog4r4uNJ7ha1RrQzVirhTPp6VbQ2OW96pRq18zMCaPPNpodXVPnxlHWkZ3V0
+	4IQvVYmjnmrDAvaPSIxGEcsenJvpXVoqs24q6XffdtM45vrWtEbrUO0Igu9GIuT8iBue7rVoz3K
+	OUXHNaRGYQLCP5znSZwXV3Hm377p/ynA1Z1qqd5qm0GIeTf04o8tsPn61uKHMw/Er6GmjqJuB/t
+	NgI6cVg9IGQHJAja/He0/mB3/LepCiVnl1TKH93la4q+i3JO2QaENqFW45Q==
+X-Google-Smtp-Source: AGHT+IEQz/zAiPjsnW5zYim84jDmcgUqNS4qYdyO0Gc0hROsmXxeu2rgPFlRY76a52RFnXIwzEU0fQ==
+X-Received: by 2002:a05:6512:61a1:b0:553:314e:81f7 with SMTP id 2adb3069b0e04-55a23ef4e8amr1113594e87.17.1752690088553;
         Wed, 16 Jul 2025 11:21:28 -0700 (PDT)
-Received: from google.com (135.228.125.34.bc.googleusercontent.com. [34.125.228.135])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31ca786eac1sm1153352a91.48.2025.07.16.11.21.25
+Received: from pc636 (host-95-203-27-91.mobileonline.telia.com. [95.203.27.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b6bb54sm2743150e87.179.2025.07.16.11.21.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 16 Jul 2025 11:21:27 -0700 (PDT)
-Date: Wed, 16 Jul 2025 18:21:21 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: =?utf-8?B?5YiY5rW354eVIChIYWl5YW4gTGl1KQ==?= <haiyan.liu@unisoc.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Matthew Maurer <mmaurer@google.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	=?utf-8?B?5ZGo5bmzIChQaW5nIFpob3UvOTAzMik=?= <Ping.Zhou1@unisoc.com>,
-	=?utf-8?B?5Luj5a2Q5Li6IChaaXdlaSBEYWkp?= <Ziwei.Dai@unisoc.com>,
-	=?utf-8?B?5p2o5Li95aicIChMaW5hIFlhbmcp?= <lina.yang@unisoc.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-	=?utf-8?B?546L5Y+MIChTaHVhbmcgV2FuZyk=?= <shuang.wang@unisoc.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 16 Jul 2025 20:21:25 +0200
+To: Marco Elver <elver@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
 	Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
 	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	"kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Brauner <christian@brauner.io>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: Meet compiled kernel binaray abnormal issue while enabling
- generic kasan in kernel 6.12 with some default KBUILD_RUSTFLAGS on
-Message-ID: <aHftocnJcLg64c29@google.com>
-References: <4c459085b9ae42bdbf99b6014952b965@BJMBX01.spreadtrum.com>
- <202507150830.56F8U908028199@SHSPAM01.spreadtrum.com>
- <c34f4f606eb04c38b64e8f3a658cd051@BJMBX01.spreadtrum.com>
- <CANiq72=v6jkOasLiem7RXe-WUSg9PkNqrZneeMOTi1pzwXuHYg@mail.gmail.com>
- <24e87f60203c443abe7549ce5c0e9e75@BJMBX01.spreadtrum.com>
+	kasan-dev@googlegroups.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Yeoreum Yun <yeoreum.yun@arm.com>, Yunseong Kim <ysk@kzalloc.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] kasan: use vmalloc_dump_obj() for vmalloc error reports
+Message-ID: <aHftpSnSit__laMx@pc636>
+References: <20250716152448.3877201-1-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <24e87f60203c443abe7549ce5c0e9e75@BJMBX01.spreadtrum.com>
+In-Reply-To: <20250716152448.3877201-1-elver@google.com>
 
-On Wed, Jul 16, 2025 at 07:01:29AM +0000, 刘海燕 (Haiyan Liu) wrote:
+On Wed, Jul 16, 2025 at 05:23:28PM +0200, Marco Elver wrote:
+> Since 6ee9b3d84775 ("kasan: remove kasan_find_vm_area() to prevent
+> possible deadlock"), more detailed info about the vmalloc mapping and
+> the origin was dropped due to potential deadlocks.
 > 
+> While fixing the deadlock is necessary, that patch was too quick in
+> killing an otherwise useful feature, and did no due-diligence in
+> understanding if an alternative option is available.
 > 
-> > -----邮件原件-----
-> > 发件人: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> > 发送时间: 2025年7月16日 1:51
-> > 收件人: 刘海燕 (Haiyan Liu) <haiyan.liu@unisoc.com>
-> > 抄送: Miguel Ojeda <ojeda@kernel.org>; 周平 (Ping Zhou/9032) <Ping.Zhou1@unisoc.com>; 代子为 (Ziwei Dai)
-> > <Ziwei.Dai@unisoc.com>; 杨丽娜 (Lina Yang) <lina.yang@unisoc.com>; linux-arm-kernel@lists.infradead.org;
-> > linux-kernel@vger.kernel.org; rust-for-linux@vger.kernel.org; 王双 (Shuang Wang) <shuang.wang@unisoc.com>; Andrey Ryabinin
-> > <ryabinin.a.a@gmail.com>; Alexander Potapenko <glider@google.com>; Andrey Konovalov <andreyknvl@gmail.com>; Dmitry Vyukov
-> > <dvyukov@google.com>; Vincenzo Frascino <vincenzo.frascino@arm.com>; kasan-dev@googlegroups.com; Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org>; Arve Hjønnevåg <arve@android.com>; Todd Kjos <tkjos@android.com>; Martijn Coenen
-> > <maco@android.com>; Joel Fernandes <joelagnelf@nvidia.com>; Christian Brauner <christian@brauner.io>; Carlos Llamas
-> > <cmllamas@google.com>; Suren Baghdasaryan <surenb@google.com>; Jamie Cunliffe <Jamie.Cunliffe@arm.com>; Catalin Marinas
-> > <catalin.marinas@arm.com>
-> > 主题: Re: Meet compiled kernel binaray abnormal issue while enabling generic kasan in kernel 6.12 with some default KBUILD_RUSTFLAGS
-> > on
-> > 
-> > 
-> > 注意: 这封邮件来自于外部。除非你确定邮件内容安全，否则不要点击任何链接和附件。
-> > CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender
-> > and know the content is safe.
-> > 
-> > 
-> > 
-> > On Tue, Jul 15, 2025 at 11:41 AM 刘海燕 (Haiyan Liu) <haiyan.liu@unisoc.com> wrote:
-> > >
-> > > The commit changes the fragment and diff is:
-> > 
-> > An Android engineer should know how to handle that, but if you are reporting upstream, it is best to try to reproduce the issue with the
-> > upstream kernels (e.g. arm64 is not in 6.6.y) and provide the full kernel config used.
-> > 
-> > > Only two rust-related global variables in fmr.rs and layout.rs have this issue. Their asan.module_ctor complied binaries are wrong.
-> > 
-> > I am not sure what you mean by `fmr.rs`. As for `layout.rs`, that is in the `kernel` crate in 6.12.y -- isn't there a single `asan.module_ctor`
-> > per TU? Which object file are you referring to? I get the pair for my `rust/kernel.o`.
+> Restore printing more helpful vmalloc allocation info in KASAN reports
+> with the help of vmalloc_dump_obj(). Example report:
 > 
->   NSX:FFFFFFC0800A7C94|F800865E  asan.module_ctor:   str     x30,[x18],#0x8   ; x30,[x18],#8
->    NSX:FFFFFFC0800A7C98|F81F0FFE                      str     x30,[sp,#-0x10]!   ; x30,[sp,#-16]!
->    NSX:FFFFFFC0800A7C9C|F00240A0                      adrp    x0,0xFFFFFFC0848BE000
->    NSX:FFFFFFC0800A7CA0|911D8000                      add     x0,x0,#0x760     ; x0,x0,#1888
->    NSX:FFFFFFC0800A7CA4|52803D61                      mov     w1,#0x1EB        ; w1,#491
->    NSX:FFFFFFC0800A7CA8|94233816                      bl      0xFFFFFFC080975D00   ; __asan_register_globals
->    NSX:FFFFFFC0800A7CAC|F84107FE                      ldr     x30,[sp],#0x10   ; x30,[sp],#16
->    NSX:FFFFFFC0800A7CB0|D50323BF                      autiasp
->    NSX:FFFFFFC0800A7CB4|D65F03C0                      ret
-> The first __asan_global struct value is 
->  ENAXI:FFFFFFC0848BE760|>FFFFFFC082EDB180 000000000000005F ........_.......
->  ENAXI:FFFFFFC0848BE770| 0000000000000080 FFFFFFC0836DC431 ........1.m.....
->  ENAXI:FFFFFFC0848BE780| FFFFFFC082EEC780 0000000000000000 ................
->  ENAXI:FFFFFFC0848BE790| 0000000000000000 FFFFFFFFFFFFFFFF ................
-> The address of the global is 0xFFFFFFC082EDB180 which value is '/proc/self/cwd/prebuilts/rust/linux-x86/1.82.0/lib/rustlib/src/rust/library/core/src/num/fmt.rs' and its viewinfo is 'vmlinux\Global\__unnamed_357'
-> The original size of the global is 0x5F
-> The name of the global is kmalloc-2k
-> The module name of the global is 'core.27758904ccee4c80-cgu.o'
+> | BUG: KASAN: vmalloc-out-of-bounds in vmalloc_oob+0x4c9/0x610
+> | Read of size 1 at addr ffffc900002fd7f3 by task kunit_try_catch/493
+> |
+> | CPU: [...]
+> | Call Trace:
+> |  <TASK>
+> |  dump_stack_lvl+0xa8/0xf0
+> |  print_report+0x17e/0x810
+> |  kasan_report+0x155/0x190
+> |  vmalloc_oob+0x4c9/0x610
+> |  [...]
+> |
+> | The buggy address belongs to a 1-page vmalloc region starting at 0xffffc900002fd000 allocated at vmalloc_oob+0x36/0x610
+> | The buggy address belongs to the physical page:
+> | page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x126364
+> | flags: 0x200000000000000(node=0|zone=2)
+> | raw: 0200000000000000 0000000000000000 dead000000000122 0000000000000000
+> | raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+> | page dumped because: kasan: bad access detected
+> |
+> | [..]
 > 
->    NSX:FFFFFFC0800A7D4C|F800865E  asan.mod.:str     x30,[x18],#0x8   ; x30,[x18],#8
->    NSX:FFFFFFC0800A7D50|F81F0FFE            str     x30,[sp,#-0x10]!   ; x30,[sp,#-16]!
->    NSX:FFFFFFC0800A7D54|F00240E0            adrp    x0,0xFFFFFFC0848C6000
->    NSX:FFFFFFC0800A7D58|912E8000            add     x0,x0,#0xBA0     ; x0,x0,#2976
->    NSX:FFFFFFC0800A7D5C|52800961            mov     w1,#0x4B         ; w1,#75
->    NSX:FFFFFFC0800A7D60|942337E8            bl      0xFFFFFFC080975D00   ; __asan_register_globals
->    NSX:FFFFFFC0800A7D64|F84107FE            ldr     x30,[sp],#0x10   ; x30,[sp],#16
->    NSX:FFFFFFC0800A7D68|D50323BF            autiasp
->    NSX:FFFFFFC0800A7D6C|D65F03C0            ret
-> The second __asan_global struct value is 
->    NSD:FFFFFFC0848C6BA0|>FFFFFFC082EECA80 0000000000000020 ........ .......
->    NSD:FFFFFFC0848C6BB0| 0000000000000040 FFFFFFC0836DC431 @.......1.m.....
->    NSD:FFFFFFC0848C6BC0| FFFFFFC082EEDA80 0000000000000000 ................
->    NSD:FFFFFFC0848C6BD0| 0000000000000000 FFFFFFFFFFFFFFFF ................
-> The address of the global is 0xFFFFFFC082EECA80 which value is 0 and its viewinfo is '<&usize_as_core::f..vmlinux\kernel_9a6cb9fd7c8dfd66_cgu\<&usize_as_core::fmt::Debug>::{vtable}'
-> The original size of the global is 0x20
-> The name of the global is kmalloc-2k
-> The module name of the global is 'kernel.9a6cb9fd7c8dfd66-cgu.o'
+> Fixes: 6ee9b3d84775 ("kasan: remove kasan_find_vm_area() to prevent possible deadlock")
+> Suggested-by: Uladzislau Rezki <urezki@gmail.com>
+> Cc: Alexander Potapenko <glider@google.com>
+> Cc: Andrey Konovalov <andreyknvl@gmail.com>
+> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+> Cc: Yunseong Kim <ysk@kzalloc.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Marco Elver <elver@google.com>
+> ---
+>  mm/kasan/report.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> > Cheers,
-> > Miguel
-
-We have KASAN builds with android16-6.12 and haven't seen this issue.
-Can you share your entire config file, so we can try to reproduce?
-
-Cc: Alice Ryhl <aliceryhl@google.com>
-Cc: Matthew Maurer <mmaurer@google.com>
-
-Alice, Matthew, have you seen this before?
+> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+> index b0877035491f..62c01b4527eb 100644
+> --- a/mm/kasan/report.c
+> +++ b/mm/kasan/report.c
+> @@ -399,7 +399,9 @@ static void print_address_description(void *addr, u8 tag,
+>  	}
+>  
+>  	if (is_vmalloc_addr(addr)) {
+> -		pr_err("The buggy address %px belongs to a vmalloc virtual mapping\n", addr);
+> +		pr_err("The buggy address belongs to a");
+> +		if (!vmalloc_dump_obj(addr))
+> +			pr_cont(" vmalloc virtual mapping\n");
+>  		page = vmalloc_to_page(addr);
+>  	}
+>  
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+> 
+Acked-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
 --
-Carlos Llamas
+Uladzislau Rezki
 
