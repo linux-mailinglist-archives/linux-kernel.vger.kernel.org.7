@@ -1,142 +1,76 @@
-Return-Path: <linux-kernel+bounces-732941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF13B06DE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:27:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A93FB06DED
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB2397B5B69
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:25:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD111A602F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AE5288C02;
-	Wed, 16 Jul 2025 06:27:00 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFDD2877D5;
+	Wed, 16 Jul 2025 06:28:24 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4291D5CED;
-	Wed, 16 Jul 2025 06:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C418634A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752647220; cv=none; b=s5ke9EJfRDOSyQd49vVZwrA4N+UYcooePNJ/K0fbIxvX4vc0yJt5KeAiRw4DqL8cQDYeWS96fGdNMDEUVRuHJQYa2cbWWGzvtDwc3HSlm26/C/SDTr1PX/XJ2Rj3D1iet/wfnowJx0qmMtT8d6WNAE3P8rPhwuPUWVYOhPbPzkc=
+	t=1752647304; cv=none; b=jQa836C6YGDl09YO3UaMVUldGofSvu0h4BBX9hiKHkcYia998imph51hla1ZzOhEBT7Esf4mGRCmaYDZB3nrnZK8P0zjZ/UkNWy82sh8GM9UCB9uAvXafcD2uhNpIwgh2ap+VfSgljSZ+QfSl1d+rbWdvAqxxv99r9fYxkCMVeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752647220; c=relaxed/simple;
-	bh=xR83r5eBLKHajVPWGodmEeBh6ryn9Dznc6P42/wdyoA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l04Xtn5xAMLUr9aclCwzS45CZoSSxFqUDrO+OKf4PaIgfiDIDOzV+oFLJ7ZSX4UIWCDQuzVJKW1h4Vr9Xz0IWMU73BP17z64QhcQuWXXl7vXxEKoB6FbaicTjn+4KVyq9K071eratxGXQBVw977fyxgmYuxLJRwUOGzwNZ+5w0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: da435738620d11f0b29709d653e92f7d-20250716
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:4f2730b9-e7ab-44b3-8960-e8fc8cfb9052,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:6493067,CLOUDID:806aa15322e3e20330aa43b6a0e4f296,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:5,IP:n
-	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
-	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: da435738620d11f0b29709d653e92f7d-20250716
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1950349900; Wed, 16 Jul 2025 14:26:48 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 3D707E008FA3;
-	Wed, 16 Jul 2025 14:26:48 +0800 (CST)
-X-ns-mid: postfix-68774628-70193187
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 31905E008FA2;
-	Wed, 16 Jul 2025 14:26:47 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "rafael J . wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	len brown <len.brown@intel.com>,
-	pavel machek <pavel@kernel.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v4] PM / Freezer: Skip zombie/dead processes to reduce freeze latency
-Date: Wed, 16 Jul 2025 14:26:39 +0800
-Message-Id: <20250716062639.1528066-2-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250716062639.1528066-1-zhangzihuan@kylinos.cn>
-References: <20250716062639.1528066-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1752647304; c=relaxed/simple;
+	bh=yBXzG4i9Dkiru55lQyz1Xr5+cE0Yl9ZHuQy6/bd/lrM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NdiLJau2jdIL4kMykKMDGU8eNn2IA2JBlSQirYxuPN1yqp9vJy6n/CZ6ZuRhxa1FzRUgP+W5JQd8Hh6J01lTscijKv2AStkdAXE4HrwqGqaBzGgM9r+Y4Mi9cbcGOk+1Omfr39MWVRX2tu2XtJVez8bO0iV0QOzErZ00FQ3UbaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddd5cd020dso127971415ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 23:28:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752647302; x=1753252102;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZKU5Kcevzf5gXwIZbo3x8mZboejbG5jsHlKHFlgunn8=;
+        b=QWXXt5bQFsZGOIUeHq2kldPzwX850m74d1v6KFoJAYGxOuiGlaFteXkhYLstby4Trc
+         qWi+xkGk4IEzfsAxNK/Etk+CyiTS9cGMMOwJIjgGL/hMZ/Syn5WuzW6/6FHZcDJaMoGx
+         zcm2MFJyR5XXD2qhIaNG9lsoBKEdRTZ5INbYDEOYHVz/GnewF8pm96qiYQr/zAwqvE3p
+         igQqrOSDOUxp1DX3zhdAY6UU3X1hNnFxfmOa/6KHTizO4ZrIxuH+CGR3uYlhojIsY0j1
+         EHWF+CGih+VGzUea827nDp/+9oR553zCRDlYbTBw5aLCRvKFb5T0+uu8tUmQ3ypusy1i
+         8seg==
+X-Gm-Message-State: AOJu0Yxd5j3a1yOrC84cBDS4WyPxSaqnZGxRvg13mCfF4gMDJk6HnfnF
+	MhnMLp0Pi63TWi3B5CB6bzfBYX5pIGScR9JzLZjL6AAiChcTwJDQ2oZ78WZ4G7qV3dLpHT0k5kE
+	q8NJdZ3UBdxdJEEp+vErHdkK/1V300Yu99e3eUxGS+1DCinSX7KWUOCPvWiA=
+X-Google-Smtp-Source: AGHT+IHm9Ctesji2dlAGVP5WZ2M0m/5Ag8Emykps6/v3JuqHL/nMqmRatLiPqiQIBtzcNFLICLVEFFB940LmVlGS+7tbrP+E1Gqs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:3713:b0:3df:3bb2:b8f8 with SMTP id
+ e9e14a558f8ab-3e282e550e2mr16587165ab.11.1752647302114; Tue, 15 Jul 2025
+ 23:28:22 -0700 (PDT)
+Date: Tue, 15 Jul 2025 23:28:22 -0700
+In-Reply-To: <68754418.050a0220.33d347.000b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68774686.a70a0220.693ce.001f.GAE@google.com>
+Subject: Forwarded: 
+From: syzbot <syzbot+4708579bb230a0582a57@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When freezing user space during suspend or hibernation, the freezer
-iterates over all tasks and attempts to freeze them via
-try_to_freeze_tasks().
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-However, zombie processes (i.e., tasks in EXIT_ZOMBIE state) are no
-longer running and will never enter the refrigerator. Trying to freeze
-them is meaningless and causes extra overhead, especially when there are
-thousands of zombies created during stress conditions such as fork
-storms.
+***
 
-This patch skips zombie processes during the freezing phase.
+Subject: 
+Author: purvayeshi550@gmail.com
 
-In our testing with ~30,000 user processes (including many zombies), the
-average freeze time during suspend (S3) dropped from ~43 ms to ~16 ms:
-
-    - Without the patch: ~43 ms average freeze latency
-    - With the patch:    ~16 ms average freeze latency
-    - Improvement:       ~62%
-
-This confirms that skipping zombies significantly speeds up the freezing
-process when the system is under heavy load with many short-lived tasks.
-
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-
-Changes in v4:
-- Fix incomplete patch title
-- Add a comment: exit_state is better than PF_NOFREEZE if we only intend
-  to skip user processes. TODO added for possible future replacement.
-
-Changes in v3:
-- Added performance test
-
-Changes in v2:
-- Simplified code, added judgment of dead processes
-- Rewrite changelog
----
- kernel/power/process.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/power/process.c b/kernel/power/process.c
-index dc0dfc349f22..c1d6c5150033 100644
---- a/kernel/power/process.c
-+++ b/kernel/power/process.c
-@@ -51,7 +51,15 @@ static int try_to_freeze_tasks(bool user_only)
- 		todo =3D 0;
- 		read_lock(&tasklist_lock);
- 		for_each_process_thread(g, p) {
--			if (p =3D=3D current || !freeze_task(p))
-+			/*
-+			 * Zombie and dead tasks are not running anymore and cannot enter
-+			 * the __refrigerator(). Skipping them avoids unnecessary freeze atte=
-mpts.
-+			 *
-+			 * TODO: Consider using PF_NOFREEZE instead, which may provide
-+			 * a more generic exclusion mechanism for other non-freezable tasks.
-+			 * However, for now, exit_state is sufficient to skip user processes.
-+			 */
-+			if (p =3D=3D current || p->exit_state || !freeze_task(p))
- 				continue;
-=20
- 			todo++;
---=20
-2.25.1
-
+#syz test
 
