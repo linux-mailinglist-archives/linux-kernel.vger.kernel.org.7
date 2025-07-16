@@ -1,100 +1,237 @@
-Return-Path: <linux-kernel+bounces-733618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C168B0770E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:32:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568C7B07711
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA1416CD27
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:32:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F6D1C23E14
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722F21C8626;
-	Wed, 16 Jul 2025 13:32:36 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6025D1C6FE1;
+	Wed, 16 Jul 2025 13:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="EADvPoax"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981C119AD70
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D3619E97A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752672756; cv=none; b=jmLTvMCIEz647+Iki6UWaDfoMQz5Th4OomneAMRqJApBcIMQcyuV7N/Qxvjp0Rx8I3hTH/LkEqsh1UrGdMl/82sAqVWWR7XPLF6TQmbQSiMUKoB3TvhQLf5fR9pUnegMTFq2qWPqICyn76p8QYYdxT2ratC3+/OTInbisFYCVNo=
+	t=1752672781; cv=none; b=Pn3FMtcsiig64TtfwLyNjKqn3P6OfXqM7TmjDkKilJg3dHt3sjubZJvE7lY+/BqCzJyQjWxapxtAkMyfewVfXrhTyUzAuGxqNdqNRGUxN/l22+jtsW8tBopGGkVn/NbhznHvUjmTXkGoAQf8grXHFbhbXX3gDSzshniU3FamXqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752672756; c=relaxed/simple;
-	bh=s9wiVqEv7FVGkYWryVhcyy09SBRSex2NkNIE8XwhuhA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=euyc41m1a9zieByvK5tHrAzPWt1V0dQrRzScYBjOmKtinyFLBdAbd5oRCcksbmq+k+VxGFSfNRa0PUxVTja+KOD17UW8BC4MLwrLFfCK8HMvDblggVyS2lde/bkF9Bo0gBhZjjIr2UWU4701FM+PeGWZDnzeasYHHxx+m2p+Yhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-876afa8b530so704615439f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:32:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752672754; x=1753277554;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vgn0xmZHthjgAn+KnHTiASDgddPV3bcpglBCZEEu6ho=;
-        b=KiURNVvXTJ3i1AhXxbVs0kuMomM8eW5w3pEDpVfMM31ATy5LxdVp4nAjKRBIMFPkSG
-         TN//eV22r2P0eLccwjIZetRdYBt61rI3oPsEkdOM3XxraqvUg/xgoEARQ8cGV03wk5Vo
-         B0y6tXDioFeq0pGyfUxHbpinqF6AE3dsW5KyMRm5sxEetWg2bo8oM8GLFogXCUAUqfJU
-         kvieE4PEgcFwonqnp8SskXged0acjw2ya22rvpURCQBWJErIN9dtj0uYvurYBXeNHzJc
-         DAgHR2eAbtpS0Mppkf3sRW6TcBGdg3DTi4vgnJig+T9vU45TIKCE8IF/hrcC0u4mtxyH
-         BFKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtvzYd+CDORfaBuyYpx/+74ntRfKTj+BxDRwCgJU27lALi7Ea4Vycj4PIE/U3Osb+sSZZh2aOQd3dLQ4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4fDEePe0nnILTcM03tqthuxQLALJ8yGG/ekoEQrBvCjurzRA8
-	6khiQ2ppQ4KeOWZSLvL+9hawwu0fxZNkwqPy1bX2G3ruD5O2BfbxO5pucPZw/UOMptDTI0SrRVC
-	PZ+fWTaLFn9W5mU4Oe8yq64po+ZuvpiFquU3Tv1hsicp64X9A/5xzChf0soQ=
-X-Google-Smtp-Source: AGHT+IFvUraherRgbSXurdx0AB3q8qotMgYb4crkMwuuEZWe8rQcFQ8GHsUQ4Snofe4k92Zo4uae4RrXhBghxCWidt93CgRfeqtR
+	s=arc-20240116; t=1752672781; c=relaxed/simple;
+	bh=UUHoguIdstpvFT2NbvNnnSQZ/Qj3oGXOWaavgxupbqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qBF9LWfv3hbL8Oo6v/lOwn84CYBDQg5H+Rfca+Zvd/Av/NMF+PU6XRQaBLSCtyvs7ZJRMnF8XBcKz9CW1dV18Cro76pPH/NyJUVyPs0fZhqkaK/AsJboE009SOHGr+mFZcbUx+TDR/zVTI26lMASvyETFX0cXLHx1Th4Lm0E8qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=EADvPoax; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=0qwp6Gi8EUdJZCbe1QwSKwoqDtjQllX3p2oxki7w6wA=; b=EADvPoax3j5VmF75
+	B2zemYLLSCx8UrLSq15zxWdEkUyETHGHpEhTR09OMSgQPDlAqWiu7cBOVid6f6zKZ1ZB2tWZig03w
+	aemjC4MEaXk/4ALqSLbY4iC8qAHjRSNQKsymP4A+Ev/a4cznUbZEzqFRreq+ts6neKtE5jQS2gn9/
+	NHWJ6bEGShDgyS1M/PvtDvoW113umlZv4U0BaBGQ3+GwwOiwaqsO72mZ/Sg1ObMZ1K51ymClZBSJ9
+	ujAEA8oHIguQklXb2Y7qqVfC+yft7qCq29cTJxrAjoKOWX9u2TokWmpZv9JHwoD/N+bxSIIMHC8oM
+	Qe0CBmHD1A3ELW1fWA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1uc2Fa-00GQXY-1F;
+	Wed, 16 Jul 2025 13:32:46 +0000
+From: linux@treblig.org
+To: akpm@linux-foundation.org,
+	hch@infradead.org,
+	terrelln@fb.com
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH v2] lib/xxhash: Remove unused functions
+Date: Wed, 16 Jul 2025 14:32:45 +0100
+Message-ID: <20250716133245.243363-1-linux@treblig.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:36ce:b0:861:6f49:626 with SMTP id
- ca18e2360f4ac-879c08a6572mr432116139f.6.1752672753754; Wed, 16 Jul 2025
- 06:32:33 -0700 (PDT)
-Date: Wed, 16 Jul 2025 06:32:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6877a9f1.a70a0220.693ce.0029.GAE@google.com>
-Subject: [syzbot] Monthly v9fs report (Jul 2025)
-From: syzbot <syzbot+listcbdb3965d35bcd9aeb59@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello v9fs maintainers/developers,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-This is a 31-day syzbot report for the v9fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/v9fs
+xxh32_digest() and xxh32_update() were added in 2017 in the original
+xxhash commit, but have remained unused.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 7 issues are still open and 37 have already been fixed.
+Remove them.
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 4792    Yes   WARNING in v9fs_fid_get_acl
-                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
-<2> 1167    Yes   INFO: task hung in v9fs_evict_inode
-                  https://syzkaller.appspot.com/bug?extid=56bd5818697f0f93fdd9
-<3> 916     Yes   INFO: task hung in __iterate_supers
-                  https://syzkaller.appspot.com/bug?extid=b10aefdd9ef275e9368d
-<4> 80      Yes   WARNING: refcount bug in p9_req_put (3)
-                  https://syzkaller.appspot.com/bug?extid=d99d2414db66171fccbb
-
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v2
+  Actually remove the code rather than comment it out (Christoph)
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+ include/linux/xxhash.h |  26 ----------
+ lib/xxhash.c           | 107 -----------------------------------------
+ 2 files changed, 133 deletions(-)
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+diff --git a/include/linux/xxhash.h b/include/linux/xxhash.h
+index df42511438d0..27f57eca8cb1 100644
+--- a/include/linux/xxhash.h
++++ b/include/linux/xxhash.h
+@@ -177,32 +177,6 @@ struct xxh64_state {
+  */
+ void xxh32_reset(struct xxh32_state *state, uint32_t seed);
+ 
+-/**
+- * xxh32_update() - hash the data given and update the xxh32 state
+- *
+- * @state:  The xxh32 state to update.
+- * @input:  The data to hash.
+- * @length: The length of the data to hash.
+- *
+- * After calling xxh32_reset() call xxh32_update() as many times as necessary.
+- *
+- * Return:  Zero on success, otherwise an error code.
+- */
+-int xxh32_update(struct xxh32_state *state, const void *input, size_t length);
+-
+-/**
+- * xxh32_digest() - produce the current xxh32 hash
+- *
+- * @state: Produce the current xxh32 hash of this state.
+- *
+- * A hash value can be produced at any time. It is still possible to continue
+- * inserting input into the hash state after a call to xxh32_digest(), and
+- * generate new hashes later on, by calling xxh32_digest() again.
+- *
+- * Return: The xxh32 hash stored in the state.
+- */
+-uint32_t xxh32_digest(const struct xxh32_state *state);
+-
+ /**
+  * xxh64_reset() - reset the xxh64 state to start a new hashing operation
+  *
+diff --git a/lib/xxhash.c b/lib/xxhash.c
+index b5bd567aa6b3..cf629766f376 100644
+--- a/lib/xxhash.c
++++ b/lib/xxhash.c
+@@ -267,113 +267,6 @@ void xxh64_reset(struct xxh64_state *statePtr, const uint64_t seed)
+ }
+ EXPORT_SYMBOL(xxh64_reset);
+ 
+-int xxh32_update(struct xxh32_state *state, const void *input, const size_t len)
+-{
+-	const uint8_t *p = (const uint8_t *)input;
+-	const uint8_t *const b_end = p + len;
+-
+-	if (input == NULL)
+-		return -EINVAL;
+-
+-	state->total_len_32 += (uint32_t)len;
+-	state->large_len |= (len >= 16) | (state->total_len_32 >= 16);
+-
+-	if (state->memsize + len < 16) { /* fill in tmp buffer */
+-		memcpy((uint8_t *)(state->mem32) + state->memsize, input, len);
+-		state->memsize += (uint32_t)len;
+-		return 0;
+-	}
+-
+-	if (state->memsize) { /* some data left from previous update */
+-		const uint32_t *p32 = state->mem32;
+-
+-		memcpy((uint8_t *)(state->mem32) + state->memsize, input,
+-			16 - state->memsize);
+-
+-		state->v1 = xxh32_round(state->v1, get_unaligned_le32(p32));
+-		p32++;
+-		state->v2 = xxh32_round(state->v2, get_unaligned_le32(p32));
+-		p32++;
+-		state->v3 = xxh32_round(state->v3, get_unaligned_le32(p32));
+-		p32++;
+-		state->v4 = xxh32_round(state->v4, get_unaligned_le32(p32));
+-		p32++;
+-
+-		p += 16-state->memsize;
+-		state->memsize = 0;
+-	}
+-
+-	if (p <= b_end - 16) {
+-		const uint8_t *const limit = b_end - 16;
+-		uint32_t v1 = state->v1;
+-		uint32_t v2 = state->v2;
+-		uint32_t v3 = state->v3;
+-		uint32_t v4 = state->v4;
+-
+-		do {
+-			v1 = xxh32_round(v1, get_unaligned_le32(p));
+-			p += 4;
+-			v2 = xxh32_round(v2, get_unaligned_le32(p));
+-			p += 4;
+-			v3 = xxh32_round(v3, get_unaligned_le32(p));
+-			p += 4;
+-			v4 = xxh32_round(v4, get_unaligned_le32(p));
+-			p += 4;
+-		} while (p <= limit);
+-
+-		state->v1 = v1;
+-		state->v2 = v2;
+-		state->v3 = v3;
+-		state->v4 = v4;
+-	}
+-
+-	if (p < b_end) {
+-		memcpy(state->mem32, p, (size_t)(b_end-p));
+-		state->memsize = (uint32_t)(b_end-p);
+-	}
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(xxh32_update);
+-
+-uint32_t xxh32_digest(const struct xxh32_state *state)
+-{
+-	const uint8_t *p = (const uint8_t *)state->mem32;
+-	const uint8_t *const b_end = (const uint8_t *)(state->mem32) +
+-		state->memsize;
+-	uint32_t h32;
+-
+-	if (state->large_len) {
+-		h32 = xxh_rotl32(state->v1, 1) + xxh_rotl32(state->v2, 7) +
+-			xxh_rotl32(state->v3, 12) + xxh_rotl32(state->v4, 18);
+-	} else {
+-		h32 = state->v3 /* == seed */ + PRIME32_5;
+-	}
+-
+-	h32 += state->total_len_32;
+-
+-	while (p + 4 <= b_end) {
+-		h32 += get_unaligned_le32(p) * PRIME32_3;
+-		h32 = xxh_rotl32(h32, 17) * PRIME32_4;
+-		p += 4;
+-	}
+-
+-	while (p < b_end) {
+-		h32 += (*p) * PRIME32_5;
+-		h32 = xxh_rotl32(h32, 11) * PRIME32_1;
+-		p++;
+-	}
+-
+-	h32 ^= h32 >> 15;
+-	h32 *= PRIME32_2;
+-	h32 ^= h32 >> 13;
+-	h32 *= PRIME32_3;
+-	h32 ^= h32 >> 16;
+-
+-	return h32;
+-}
+-EXPORT_SYMBOL(xxh32_digest);
+-
+ int xxh64_update(struct xxh64_state *state, const void *input, const size_t len)
+ {
+ 	const uint8_t *p = (const uint8_t *)input;
+-- 
+2.50.1
 
-You may send multiple commands in a single email message.
 
