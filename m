@@ -1,528 +1,98 @@
-Return-Path: <linux-kernel+bounces-734339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52A0B0805F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:17:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF09B08061
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA653ADF01
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92301A43066
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BEF286D75;
-	Wed, 16 Jul 2025 22:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960DE28850E;
+	Wed, 16 Jul 2025 22:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BcqKHlCk"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jQvLoN+m"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772CC19D07E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 22:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BD52B9BA;
+	Wed, 16 Jul 2025 22:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752704216; cv=none; b=jwMPkI5tmZ+XWkUr+LgcvI4u/8UVZrvHL34BGE1D/9GmIf4WOQ5ZGfpToIVnbtSedOPdg+QnFgn9sZSCiWpa2SsfeAxihC8VOuioxhNIcSokQw+RV4Dt23hAqi7LCMBj53cp/bdwRMS1mVCBjOPuC4MD4Gcsw0LFIrOgX3bZN7w=
+	t=1752704282; cv=none; b=hji3NceI7AcENMytnkGC28BpxupAfbwL+T1phGwiSHdzGa9e+qi2LsUvfOUN9EIEaU59cTt4S7bie/lvXfek6flTkwcLJiluXz/7MpdLTPAiIzBjP4zvOIkhPF6Ta//9Een3zzfZ+CVoGWiv9awXG54CqBEzrZakwhNUbqQiHb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752704216; c=relaxed/simple;
-	bh=fGA1Wb641rnEdoBsmq2VbpUkvoxWdI/BeXiWrpdxjDU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LyULKhKS7GiJcnQMZORqhhTYCZQQ49noe1y5h6lG5lwaEL9jH5JJGTZTRfOUfbUkYYAqQ16Sa972r251k2YMsj24cyEV5O4icHIQfSANLTQqLN7M7aIXTdjBW8jvw2ByKtNiaMgp2VM0vLCNdgF1gFCGpTsnlDtHYKaET3Ug6lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BcqKHlCk; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-312df02acf5so1374334a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:16:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752704213; x=1753309013; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:user-agent:references:mime-version
-         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ef4o5+Ksis37m7G2+l8USJ7m4HS29GnfXwOZt7/jLAg=;
-        b=BcqKHlCkyVy9Ri45vjk5uokp0T6vCkuNVeEfzCsXeWYi+nQcEc4G+wuSPhEkawQ/+c
-         UCoR/mNQVSxfaTiVketcbB3aO3vMH2GkjUOQ7AUeXPKdGNKKaf+y98IuzXkD4reEZtL2
-         wDZ8cK+dD8GzSzN1cA2Zbm7U5gz6eifVK53lTlbOHFu9EV6zmgk2U+PJxkcxqBR0ekjW
-         gpcaOlQ8WzVqPVspR/1WCgE7avZKb5j/ozIcu0skbgPodu037f8DvNmDZyqA5jtzhwtG
-         g+VbHSsSc4Mv+HS4uAyfRm/GSAuI2dAabEIjkONq30do3iKaBAmDiv55em/LMez5Tsjx
-         80JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752704213; x=1753309013;
-        h=cc:to:from:subject:message-id:user-agent:references:mime-version
-         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ef4o5+Ksis37m7G2+l8USJ7m4HS29GnfXwOZt7/jLAg=;
-        b=DeTRemvWjTqVm6hLmLgkreVIiCXe9XW5x+EcWLSGzZWmq0xM8fy6qRxzS+k9VrphGS
-         V+ii0ARCaQhGHRglnkZlqBxjgTOs/cwiSiR3EN9mo1FgIgDPCniE6i+IDalGoBR9ZjS9
-         UMyGUn4ygsMk6oWnbooTXW6Kx7uda83Wtsp8V9uLykf36Tmn1MFrtOcYkyu57YnXnemy
-         a8Z6GJ524OSLfq/ARNCpBSsF0YVnGjskj8oTCyAx/yOlt3gqxim1LS1da05JoSujsP8K
-         EDvPX5ExB43Kbhuml/V/3AUrPde8sCzfr4oBgvxsZYfwmyoFMSkigX4x5UtrVZAHg7ZH
-         +0kA==
-X-Gm-Message-State: AOJu0Yx3eHMLgZdCILHew6qKO8ozJTvWtwF9nsXB2fxATDdOetSM5URD
-	33p6u3YJcnu3N1JoAq4jyjWxulz8gKoVkQpoZ7kaZFF/Y4ASWWSLv1/QCXjmNG+d2mMFlQUTqDa
-	lELNEw5EYlQ==
-X-Google-Smtp-Source: AGHT+IHhvTCTwE/TNvCLaY453tlr3hrrUmnAqOgy0k7M4q4y1cTiG3efspWBNTUehv/wFDDi+uANDP95q17w
-X-Received: from pjb13.prod.google.com ([2002:a17:90b:2f0d:b0:313:246f:8d54])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c0f:b0:30e:9b31:9495
- with SMTP id 98e67ed59e1d1-31cae9ffe22mr1147236a91.9.1752704213361; Wed, 16
- Jul 2025 15:16:53 -0700 (PDT)
-Date: Wed, 16 Jul 2025 15:16:52 -0700
-In-Reply-To: <CAFuZdDLD=3CBOLSWw3VxCf7Nkf884SSNmt1wresQgxgBwED=eQ@mail.gmail.com>
- (Carlos Llamas's message of "Mon, 14 Jul 2025 21:52:21 -0700")
+	s=arc-20240116; t=1752704282; c=relaxed/simple;
+	bh=Fb5+Z0/dS3VG2z9AkJdIGY6v9M8+Y9kXYI4dhRhPN24=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sHYHZ866BRH/wocwA2dBcD5k8P2Xd5dN+hrI7g4ImbIb9t+qJVeihoxszRNzuldOn3ZimM6o0W7YXmBasCo//xGV5wufY/lBuyzJGCZqPUi3EgxLSKkKCewG7+1Sr9GQA7PpuplTnyvDoNU3oYv/d+djA4/6cUYDDRppI4i9Rt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jQvLoN+m; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752704156;
+	bh=fFYG6PPnbQ8OzebBcsFqUrsGV3OfxtvSBGerPj/Dum4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jQvLoN+mv4bMm3cv2oaWEB784oJl+EHWu08sB3mnzzz2vYYqTWsds/o1kErqlX8qe
+	 4dRRyNggqilodkD284WouKmxEfJdTbYteBjSM+zuQ8tjF6e/jI+6I/IY/7eARwiIKR
+	 kJBElY9NsA72n83YaCW66g2rdIIq1WqF5d69FZn5zu75dtCO6bmKA84zX0N1vbEd6b
+	 0hlUXSAq0rE8rOGnKHUna8yBINdpYd8V5N2bJ4lXRuOGxXARVYVxYUvDL4UmABcnAF
+	 wiaufU9s+D8xF02OEdxrsWBoAmrcz35iky1TWIOJwoH9ELIdupq9S0Pmchj9G4S49y
+	 HmFJtvv1EsF0g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bj9P83Ssjz4x43;
+	Thu, 17 Jul 2025 08:15:56 +1000 (AEST)
+Date: Thu, 17 Jul 2025 08:17:55 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the vhost tree
+Message-ID: <20250717081755.1128d163@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250714185321.2417234-1-ynaffit@google.com> <20250714185321.2417234-5-ynaffit@google.com>
- <CAFuZdDLD=3CBOLSWw3VxCf7Nkf884SSNmt1wresQgxgBwED=eQ@mail.gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Message-ID: <dbx84ivb6asr.fsf@ynaffit-andsys.c.googlers.com>
-Subject: Re: [PATCH v3 4/6] binder: Scaffolding for binder_alloc KUnit tests
-From: Tiffany Yang <ynaffit@google.com>
-To: Carlos Llamas <cmllamas@google.com>
-Cc: linux-kernel@vger.kernel.org, keescook@google.com, kernel-team@android.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/uT+LRpQ0Xza=3ZeUY8QFvUI";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Carlos Llamas <cmllamas@google.com> writes:
+--Sig_/uT+LRpQ0Xza=3ZeUY8QFvUI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Jul 14, 2025 at 11:53:17AM -0700, Tiffany Yang wrote:
->> Add setup and teardown for testing binder allocator code with KUnit.
->> Include minimal test cases to verify that tests are initialized
->> correctly.
+Hi all,
 
->> Tested-by: Rae Moar <rmoar@google.com>
->> Signed-off-by: Tiffany Yang <ynaffit@google.com>
->> ---
->> v2:
->> * Added tested-by tag
->> v3:
->> * Split kunit lib change into separate change
->> ---
->>   drivers/android/Kconfig                    |  11 ++
->>   drivers/android/Makefile                   |   1 +
->>   drivers/android/binder.c                   |   5 +-
->>   drivers/android/binder_alloc.c             |  15 +-
->>   drivers/android/binder_alloc.h             |   6 +
->>   drivers/android/binder_internal.h          |   4 +
->>   drivers/android/tests/.kunitconfig         |   3 +
->>   drivers/android/tests/Makefile             |   3 +
->>   drivers/android/tests/binder_alloc_kunit.c | 166 +++++++++++++++++++++
->>   9 files changed, 208 insertions(+), 6 deletions(-)
->>   create mode 100644 drivers/android/tests/.kunitconfig
->>   create mode 100644 drivers/android/tests/Makefile
->>   create mode 100644 drivers/android/tests/binder_alloc_kunit.c
+Commit
 
->> diff --git a/drivers/android/Kconfig b/drivers/android/Kconfig
->> index 07aa8ae0a058..b1bc7183366c 100644
->> --- a/drivers/android/Kconfig
->> +++ b/drivers/android/Kconfig
->> @@ -47,4 +47,15 @@ config ANDROID_BINDER_IPC_SELFTEST
->>          exhaustively with combinations of various buffer sizes and
->>          alignments.
+  45165a10d85d ("vdpa/mlx5: Fix release of uninitialized resources on error=
+ path")
 
->> +config ANDROID_BINDER_ALLOC_KUNIT_TEST
+is missing a Signed-off-by from its committer.
 
-> I think is OK to have "alloc" in the name. However, this is probably
-> going to grow into just "binder" at some point (hopefully). Then we can
-> just rename the kunit config as such.
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/uT+LRpQ0Xza=3ZeUY8QFvUI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-My original thinking was that it would be nice to have multiple configs
-for various binder tests (i.e., if we wanted to have binderfs unit tests
-and other binder driver unit tests), but upon reflection, I'm not sure
-what purpose that would serve... I'll leave the "alloc" in it for now,
-but I agree we'll probably remove it for the future binder kunit tests.
+-----BEGIN PGP SIGNATURE-----
 
->> +     tristate "KUnit Tests for Android Binder Alloc" if !KUNIT_ALL_TESTS
->> +     depends on ANDROID_BINDER_IPC && KUNIT
->> +     default KUNIT_ALL_TESTS
->> +     help
->> +       This feature builds the binder alloc KUnit tests.
->> +
->> +       Each test case runs using a pared-down binder_alloc struct and
->> +       test-specific freelist, which allows this KUnit module to be  
->> loaded
->> +       for testing without interfering with a running system.
->> +
->>   endmenu
->> diff --git a/drivers/android/Makefile b/drivers/android/Makefile
->> index c9d3d0c99c25..74d02a335d4e 100644
->> --- a/drivers/android/Makefile
->> +++ b/drivers/android/Makefile
->> @@ -4,3 +4,4 @@ ccflags-y += -I$(src)                 # needed for trace  
->> events
->>   obj-$(CONFIG_ANDROID_BINDERFS)               += binderfs.o
->>   obj-$(CONFIG_ANDROID_BINDER_IPC)     += binder.o binder_alloc.o
->>   obj-$(CONFIG_ANDROID_BINDER_IPC_SELFTEST) += binder_alloc_selftest.o
->> +obj-$(CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST)        += tests/
->> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
->> index c463ca4a8fff..9dfe90c284fc 100644
->> --- a/drivers/android/binder.c
->> +++ b/drivers/android/binder.c
->> @@ -68,6 +68,8 @@
->>   #include <linux/sizes.h>
->>   #include <linux/ktime.h>
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh4JRMACgkQAVBC80lX
+0Gxtqgf/TVojOS/vH6KIwOrJwrz7Xht51KkVbnl+NjiquWK3/uVezO3MGpExpeoT
+IyyqW5eiG70LO8cx6/d/Nhp+NFUF/v6AfwsqQ5ZGsa/sj8FoHFVh+KvwYPSP/m3q
+iUG4CxlH6kM/zZizNclSTbKFG8cJmTArK6iDQQRzeJvG7QjwRdSZa6oK3iD4fwrL
+fmX7GHjg7o+Vg2W0N7nQBjm/gqYvU2XyN4KCOw3RuUVc9KE32VxIZTiojF76qDiI
+XJdgsGS6xg0Dp5eglLXe+HalUM/etJ2zbLPhdfpYYO/BpxxyvDOBX0XjuWWBq31O
+siwdcx9Y5muxh6GJFYxpWiewzoWxUg==
+=+lal
+-----END PGP SIGNATURE-----
 
->> +#include <kunit/visibility.h>
->> +
->>   #include <uapi/linux/android/binder.h>
-
->>   #include <linux/cacheflush.h>
->> @@ -5956,10 +5958,11 @@ static void binder_vma_close(struct  
->> vm_area_struct *vma)
->>        binder_alloc_vma_close(&proc->alloc);
->>   }
-
->> -static vm_fault_t binder_vm_fault(struct vm_fault *vmf)
->> +VISIBLE_IF_KUNIT vm_fault_t binder_vm_fault(struct vm_fault *vmf)
->>   {
->>        return VM_FAULT_SIGBUS;
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(binder_vm_fault);
-
->>   static const struct vm_operations_struct binder_vm_ops = {
->>        .open = binder_vma_open,
->> diff --git a/drivers/android/binder_alloc.c  
->> b/drivers/android/binder_alloc.c
->> index 2e89f9127883..c79e5c6721f0 100644
->> --- a/drivers/android/binder_alloc.c
->> +++ b/drivers/android/binder_alloc.c
->> @@ -23,6 +23,7 @@
->>   #include <linux/uaccess.h>
->>   #include <linux/highmem.h>
->>   #include <linux/sizes.h>
->> +#include <kunit/visibility.h>
->>   #include "binder_alloc.h"
->>   #include "binder_trace.h"
-
->> @@ -57,13 +58,14 @@ static struct binder_buffer  
->> *binder_buffer_prev(struct binder_buffer *buffer)
->>        return list_entry(buffer->entry.prev, struct binder_buffer, entry);
->>   }
-
->> -static size_t binder_alloc_buffer_size(struct binder_alloc *alloc,
->> -                                    struct binder_buffer *buffer)
->> +VISIBLE_IF_KUNIT size_t binder_alloc_buffer_size(struct binder_alloc  
->> *alloc,
->> +                                              struct binder_buffer  
->> *buffer)
->>   {
->>        if (list_is_last(&buffer->entry, &alloc->buffers))
->>                return alloc->vm_start + alloc->buffer_size -  
->> buffer->user_data;
->>        return binder_buffer_next(buffer)->user_data - buffer->user_data;
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(binder_alloc_buffer_size);
-
->>   static void binder_insert_free_buffer(struct binder_alloc *alloc,
->>                                      struct binder_buffer *new_buffer)
->> @@ -959,7 +961,7 @@ int binder_alloc_mmap_handler(struct binder_alloc  
->> *alloc,
->>                           failure_string, ret);
->>        return ret;
->>   }
->> -
->> +EXPORT_SYMBOL_IF_KUNIT(binder_alloc_mmap_handler);
-
->>   void binder_alloc_deferred_release(struct binder_alloc *alloc)
->>   {
->> @@ -1028,6 +1030,7 @@ void binder_alloc_deferred_release(struct  
->> binder_alloc *alloc)
->>                     "%s: %d buffers %d, pages %d\n",
->>                     __func__, alloc->pid, buffers, page_count);
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(binder_alloc_deferred_release);
-
->>   /**
->>    * binder_alloc_print_allocated() - print buffer info
->> @@ -1122,6 +1125,7 @@ void binder_alloc_vma_close(struct binder_alloc  
->> *alloc)
->>   {
->>        binder_alloc_set_mapped(alloc, false);
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(binder_alloc_vma_close);
-
->>   /**
->>    * binder_alloc_free_page() - shrinker callback to free pages
->> @@ -1229,8 +1233,8 @@ binder_shrink_scan(struct shrinker *shrink, struct  
->> shrink_control *sc)
-
->>   static struct shrinker *binder_shrinker;
-
->> -static void __binder_alloc_init(struct binder_alloc *alloc,
->> -                             struct list_lru *freelist)
->> +VISIBLE_IF_KUNIT void __binder_alloc_init(struct binder_alloc *alloc,
->> +                                       struct list_lru *freelist)
->>   {
->>        alloc->pid = current->group_leader->pid;
->>        alloc->mm = current->mm;
->> @@ -1239,6 +1243,7 @@ static void __binder_alloc_init(struct  
->> binder_alloc *alloc,
->>        INIT_LIST_HEAD(&alloc->buffers);
->>        alloc->freelist = freelist;
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(__binder_alloc_init);
-
->>   /**
->>    * binder_alloc_init() - called by binder_open() for per-proc  
->> initialization
->> diff --git a/drivers/android/binder_alloc.h  
->> b/drivers/android/binder_alloc.h
->> index aa05a9df1360..dc8dce2469a7 100644
->> --- a/drivers/android/binder_alloc.h
->> +++ b/drivers/android/binder_alloc.h
->> @@ -188,5 +188,11 @@ int binder_alloc_copy_from_buffer(struct  
->> binder_alloc *alloc,
->>                                  binder_size_t buffer_offset,
->>                                  size_t bytes);
-
->> +#if IS_ENABLED(CONFIG_KUNIT)
->> +void __binder_alloc_init(struct binder_alloc *alloc, struct list_lru  
->> *freelist);
->> +size_t binder_alloc_buffer_size(struct binder_alloc *alloc,
->> +                             struct binder_buffer *buffer);
->> +#endif
->> +
->>   #endif /* _LINUX_BINDER_ALLOC_H */
-
->> diff --git a/drivers/android/binder_internal.h  
->> b/drivers/android/binder_internal.h
->> index 1ba5caf1d88d..b5d3014fb4dc 100644
->> --- a/drivers/android/binder_internal.h
->> +++ b/drivers/android/binder_internal.h
->> @@ -592,4 +592,8 @@ void binder_add_device(struct binder_device *device);
->>    */
->>   void binder_remove_device(struct binder_device *device);
-
->> +#if IS_ENABLED(CONFIG_KUNIT)
->> +vm_fault_t binder_vm_fault(struct vm_fault *vmf);
->> +#endif
->> +
->>   #endif /* _LINUX_BINDER_INTERNAL_H */
->> diff --git a/drivers/android/tests/.kunitconfig  
->> b/drivers/android/tests/.kunitconfig
->> new file mode 100644
->> index 000000000000..a73601231049
->> --- /dev/null
->> +++ b/drivers/android/tests/.kunitconfig
->> @@ -0,0 +1,3 @@
->> +CONFIG_KUNIT=y
->> +CONFIG_ANDROID_BINDER_IPC=y
->> +CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST=y
->> diff --git a/drivers/android/tests/Makefile  
->> b/drivers/android/tests/Makefile
->> new file mode 100644
->> index 000000000000..6780967e573b
->> --- /dev/null
->> +++ b/drivers/android/tests/Makefile
->> @@ -0,0 +1,3 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
-
-> All the new files need the copyright notice. Something like:
->          "Copyright 2025 Google LCC"
-
-
-Done.
-
->> +
->> +obj-$(CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST)        +=  
->> binder_alloc_kunit.o
->> diff --git a/drivers/android/tests/binder_alloc_kunit.c  
->> b/drivers/android/tests/binder_alloc_kunit.c
->> new file mode 100644
->> index 000000000000..4b68b5687d33
->> --- /dev/null
->> +++ b/drivers/android/tests/binder_alloc_kunit.c
->> @@ -0,0 +1,166 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Test cases for binder allocator code
->> + */
->> +
->> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->> +
->> +#include <kunit/test.h>
->> +#include <linux/anon_inodes.h>
->> +#include <linux/err.h>
->> +#include <linux/file.h>
->> +#include <linux/fs.h>
->> +#include <linux/mm.h>
->> +#include <linux/mman.h>
->> +#include <linux/sizes.h>
->> +
->> +#include "../binder_alloc.h"
->> +#include "../binder_internal.h"
->> +
->> +MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
->> +
->> +#define BINDER_MMAP_SIZE SZ_128K
->> +
->> +struct binder_alloc_test {
->> +     struct binder_alloc alloc;
->> +     struct list_lru binder_test_freelist;
->> +     struct file *filp;
->> +     unsigned long mmap_uaddr;
->> +};
->> +
->> +static void binder_alloc_test_init_freelist(struct kunit *test)
->> +{
->> +     struct binder_alloc_test *priv = test->priv;
->> +
->> +     KUNIT_EXPECT_PTR_EQ(test, priv->alloc.freelist,
->> +                         &priv->binder_test_freelist);
->> +}
->> +
->> +static void binder_alloc_test_mmap(struct kunit *test)
->> +{
->> +     struct binder_alloc_test *priv = test->priv;
->> +     struct binder_alloc *alloc = &priv->alloc;
->> +     struct binder_buffer *buf;
->> +     struct rb_node *n;
->> +
->> +     KUNIT_EXPECT_EQ(test, alloc->mapped, true);
->> +     KUNIT_EXPECT_EQ(test, alloc->buffer_size, BINDER_MMAP_SIZE);
->> +
->> +     n = rb_first(&alloc->allocated_buffers);
->> +     KUNIT_EXPECT_PTR_EQ(test, n, NULL);
->> +
->> +     n = rb_first(&alloc->free_buffers);
->> +     buf = rb_entry(n, struct binder_buffer, rb_node);
->> +     KUNIT_EXPECT_EQ(test, binder_alloc_buffer_size(alloc, buf),
->> +                     BINDER_MMAP_SIZE);
->> +     KUNIT_EXPECT_TRUE(test, list_is_last(&buf->entry,  
->> &alloc->buffers));
->> +}
->> +
->> +/* ===== End test cases ===== */
->> +
->> +static void binder_alloc_test_vma_close(struct vm_area_struct *vma)
->> +{
->> +     struct binder_alloc *alloc = vma->vm_private_data;
->> +
->> +     binder_alloc_vma_close(alloc);
->> +}
->> +
->> +static const struct vm_operations_struct binder_alloc_test_vm_ops = {
->> +     .close = binder_alloc_test_vma_close,
->> +     .fault = binder_vm_fault,
->> +};
->> +
->> +static int binder_alloc_test_mmap_handler(struct file *filp,
->> +                                       struct vm_area_struct *vma)
->> +{
->> +     struct binder_alloc *alloc = filp->private_data;
->> +
->> +     vm_flags_mod(vma, VM_DONTCOPY | VM_MIXEDMAP, VM_MAYWRITE);
->> +
->> +     vma->vm_ops = &binder_alloc_test_vm_ops;
->> +     vma->vm_private_data = alloc;
->> +
->> +     return binder_alloc_mmap_handler(alloc, vma);
->> +}
->> +
->> +static const struct file_operations binder_alloc_test_fops = {
->> +     .mmap = binder_alloc_test_mmap_handler,
->> +};
->> +
->> +static int binder_alloc_test_init(struct kunit *test)
->> +{
->> +     struct binder_alloc_test *priv;
->> +     int ret;
->> +
->> +     priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
->> +     if (!priv)
->> +             return -ENOMEM;
->> +     test->priv = priv;
->> +
->> +     ret = list_lru_init(&priv->binder_test_freelist);
->> +     if (ret) {
->> +             kunit_err(test, "Failed to initialize test freelist\n");
->> +             return ret;
->> +     }
->> +
->> +     /* __binder_alloc_init requires mm to be attached */
->> +     ret = kunit_attach_mm();
->> +     if (ret) {
->> +             kunit_err(test, "Failed to attach mm\n");
->> +             return ret;
->> +     }
->> +     __binder_alloc_init(&priv->alloc, &priv->binder_test_freelist);
->> +
->> +     priv->filp = anon_inode_getfile("binder_alloc_kunit",
->> +                                     &binder_alloc_test_fops,  
->> &priv->alloc,
->> +                                     O_RDWR | O_CLOEXEC);
->> +     if (IS_ERR_OR_NULL(priv->filp)) {
->> +             kunit_err(test, "Failed to open binder alloc test driver  
->> file\n");
->> +             return priv->filp ? PTR_ERR(priv->filp) : -ENOMEM;
->> +     }
->> +
->> +     priv->mmap_uaddr = kunit_vm_mmap(test, priv->filp, 0,  
->> BINDER_MMAP_SIZE,
->> +                                      PROT_READ, MAP_PRIVATE |  
->> MAP_NORESERVE,
->> +                                      0);
->> +     if (!priv->mmap_uaddr) {
->> +             kunit_err(test, "Could not map the test's transaction  
->> memory\n");
->> +             return -ENOMEM;
->> +     }
->> +
->> +     return 0;
->> +}
->> +
->> +static void binder_alloc_test_exit(struct kunit *test)
->> +{
->> +     struct binder_alloc_test *priv = test->priv;
->> +
->> +     /* Close the backing file to make sure binder_alloc_vma_close runs  
->> */
->> +     if (!IS_ERR_OR_NULL(priv->filp))
->> +             fput(priv->filp);
->> +
->> +     if (priv->alloc.mm)
->> +             binder_alloc_deferred_release(&priv->alloc);
->> +
->> +     /* Make sure freelist is empty */
->> +     KUNIT_EXPECT_EQ(test, list_lru_count(&priv->binder_test_freelist),  
->> 0);
->> +     list_lru_destroy(&priv->binder_test_freelist);
->> +}
->> +
->> +static struct kunit_case binder_alloc_test_cases[] = {
->> +     KUNIT_CASE(binder_alloc_test_init_freelist),
->> +     KUNIT_CASE(binder_alloc_test_mmap),
->> +     {}
->> +};
->> +
->> +static struct kunit_suite binder_alloc_test_suite = {
->> +     .name = "binder_alloc",
->> +     .test_cases = binder_alloc_test_cases,
->> +     .init = binder_alloc_test_init,
->> +     .exit = binder_alloc_test_exit,
->> +};
->> +
->> +kunit_test_suite(binder_alloc_test_suite);
->> +
->> +MODULE_AUTHOR("Tiffany Yang <ynaffit@google.com>");
->> +MODULE_DESCRIPTION("Binder Alloc KUnit tests");
->> +MODULE_LICENSE("GPL");
->> --
->> 2.50.0.727.gbf7dc18ff4-goog
-
-
-> Aside from the missing Copyright, feel free to add:
-
-> Acked-by: Carlos Llamas <cmllamas@google.com>
-
-Thanks for the review!
-
--- 
-Tiffany Y. Yang
+--Sig_/uT+LRpQ0Xza=3ZeUY8QFvUI--
 
