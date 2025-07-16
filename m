@@ -1,154 +1,83 @@
-Return-Path: <linux-kernel+bounces-734337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB92B0805B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:14:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E02B0805C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776874E56CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7EC8188CEEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63A02F0C70;
-	Wed, 16 Jul 2025 22:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED502620DE;
+	Wed, 16 Jul 2025 22:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TjNCPRfn"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XvmUlgCe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26582EE60D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 22:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4E5249EB
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 22:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752703990; cv=none; b=VBKSKr9GjlYNTT6I1CPuQCieo9xVpLI3ewexpT+eYp+U0gr9RoKLhmeQOzDKCdD2jkwdLdpLYuNw9STvumKHS14U9ssA59NQIkHs8S+Stj5V15S1ghQViE6Mv1Bsjp6QAMTT3jp1o3ALmLfJ1HO0YxZxEuN6IqRWdPh+3hN7pOQ=
+	t=1752704145; cv=none; b=YJHMRMiBln62Wk7KhxXXxTzLsBUURAKh7DURGgE9TIDXyUcMMhqntz5Q3lCrrUua4mI5kC6WGnZ+1WUT2SLbYudFSZS55s7gX855pnmTQKihGq3l7qGpZidlElbVI+ahG4oXZoCqspk8pQVZ4+XEZRjxQUJJjEgbXbdYkRyezOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752703990; c=relaxed/simple;
-	bh=g/0rJDTh62fs1OuQGY6mWv2+fbtpd2JeUzuyMQjNtBU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XppwYzFE5cUaE04pUGXwiP8MVAR2qFUY5B4OglgkCUsSYPiNmQJIG/XJPlc9TS5cBgZrNQV26GmbDUtDD3Eqq/cL2nNYDrEqBd1VWk9z2SvrquonXRP/3AUk9MLS1nPf8FB8EemWVuwyHQZtVqbAmRTMQu9MAjBKj/0y7JFgPuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TjNCPRfn; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748cf01de06so414034b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752703988; x=1753308788; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yu1Y/WX4LI1/OWJ9l9Sh1nJTCwMnldh9Ue9QETFr+pU=;
-        b=TjNCPRfnDZAx/rAVq50sJSDY/1JGILyDQJ64WF3SmoOKREXn8h9bnmAj6swjraIbn9
-         2x7wQzlx4zDlQYrtU5lkx52nbYEfOFImklBGVG6lC20rTP7TNK3tFt7588WEwmjLPhZG
-         lPr1bdXa7K0/QYeOSXvWmHGrytEAWlUt1fZKoPCTnBYZBaKQQYoaPQmTp9BXKV0DOs+x
-         6/LnjZID8w6X+E68dj+Mrbs1LedOGp8FoRyXRtBl8DqrJpoJQqo0SJ/fvjir3rLO6lX7
-         dr+O6sWw9XdFmBUJSnvB/xS5SMm1GmrnJLkxKE+EDFDx9BljP1mt2fJI0FdyaM8ENy5r
-         YU/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752703988; x=1753308788;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yu1Y/WX4LI1/OWJ9l9Sh1nJTCwMnldh9Ue9QETFr+pU=;
-        b=NCRatkLhkby3wVyIAfV/kWjs0mCAlAvy74zeuzO1Ob5jDVtqaizaBFhE0zYQU8agC0
-         aDAlBkNH20wTuZpNw2DhJwkUPBlsh5DHkhjPlXJCAeGkzrOia0uI1AQ9BHdPjafCd+Z6
-         CaVrfp/Z5hCepD8PkrGm9auukKoXJT4fWmfw6cvpM7KWsYFKn7g7QdG1t+BetQ2Us5Hh
-         94mB8YT/90emlfgWMAqvtG+qbrTyf0fl1CYRCjb4I5FiFL0bQJsPmjtKhV7evxqvaJcu
-         vFBZYESkXJuqL7ZHYOYkXOyL1hwbRp8vl7XL5Clw9iIfjZRg5d09QGy2SY3GHsArLwq8
-         5pag==
-X-Forwarded-Encrypted: i=1; AJvYcCUPX4tAHXTsGzAHjUj9Dl6mRXDeUj4SbprgrVD3zxBz+G2dnDtl0m45+6EBcemknfPD3E2KBPqq4dq0+Sc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvdfCzujVNWRpy7Vf22JTotOmZ5VnYkxBds5npvfzFntTlTPjx
-	96TIX9A8/d5yzBJY+6Udm23J/+ki3ThYtu8TqmLE831kFag/DnAUOWVeBkGurQtI9yOQBo7GaN8
-	VVwFGmYVFtdLehwnAoCS/Mp7ZRQ==
-X-Google-Smtp-Source: AGHT+IFTIyctnARP6DvIQOo3ksRMBxmoodQwklk+iQs5yZAGv2sb7oP8liEWVf/ikHodKNA/Kg6t20noqC7nJOCkXw==
-X-Received: from pfbcw5.prod.google.com ([2002:a05:6a00:4505:b0:748:f4a1:ae2e])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:3d53:b0:748:3385:a4a with SMTP id d2e1a72fcca58-75724e89802mr5954852b3a.23.1752703988027;
- Wed, 16 Jul 2025 15:13:08 -0700 (PDT)
-Date: Wed, 16 Jul 2025 15:13:06 -0700
-In-Reply-To: <d0b582cc-0cf7-4cdc-b148-d8f61dea7253@linux.intel.com>
+	s=arc-20240116; t=1752704145; c=relaxed/simple;
+	bh=Z+deqNO2fe6wZ794K6K4A3kX9whxvVPUtNuFEqUlAb8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=CAAD6F4yHAouF9nrzACbVT1yPvuaTKzzffT3Ln1x0hoC4uBFi1kICZbB0jUc8Lm/61ScPevXCXLE3FkhJSQbKKHWsCObGNSBB41+LKgNax8D+G713aGP4MBCNOMH+luKw80QI8IN05czOUWLHxyHp89GdEXPNxYQ9gcEh5vhki4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XvmUlgCe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 764B6C4CEEB;
+	Wed, 16 Jul 2025 22:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752704145;
+	bh=Z+deqNO2fe6wZ794K6K4A3kX9whxvVPUtNuFEqUlAb8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XvmUlgCeoCPflDec486GmACayjS9XAXdVi4jQ5IGEwCB7UpM1DdwzIDwrOBUViHzI
+	 97NKK4HSiiPZrhyqy8P7jPQKyxOkz6xrPrftOcT313kroGAY3uZSo538yAqnpKPCOq
+	 yVvmyiWKONxCUbWAhcPwg8zCIzeb9dW9eYwjp2vs=
+Date: Wed, 16 Jul 2025 15:15:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: wang lian <lianux.mm@gmail.com>
+Cc: broonie@kernel.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ sj@kernel.org, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, brauner@kernel.org, jannh@google.com,
+ Liam.Howlett@oracle.com, shuah@kernel.org, vbabka@suse.cz,
+ ludovico.zy.wu@gmail.com, gkwang@linx-info.com, p1ucky0923@gmail.com,
+ ryncsn@gmail.com, zijing.zhang@proton.me
+Subject: Re: [PATCH] selftests/mm: reuse FORCE_READ to replace
+ "asm volatile("" : "+r" (XXX));"
+Message-Id: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
+In-Reply-To: <20250716123126.3851-1-lianux.mm@gmail.com>
+References: <20250716123126.3851-1-lianux.mm@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <e9aaf20d31281d00861b1805404dbed40024f824.1747264138.git.ackerleytng@google.com>
- <d0b582cc-0cf7-4cdc-b148-d8f61dea7253@linux.intel.com>
-Message-ID: <diqza553hjil.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v2 33/51] KVM: guest_memfd: Allocate and truncate from
- custom allocator
-From: Ackerley Tng <ackerleytng@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, brauner@kernel.org, catalin.marinas@arm.com, 
-	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
-	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
-	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Binbin Wu <binbin.wu@linux.intel.com> writes:
+On Wed, 16 Jul 2025 20:31:26 +0800 wang lian <lianux.mm@gmail.com> wrote:
 
-> On 5/15/2025 7:42 AM, Ackerley Tng wrote:
-> [...]
->>   
->>   	list_for_each_entry(gmem, gmem_list, entry)
->>   		kvm_gmem_invalidate_end(gmem, start, end);
->> @@ -776,6 +879,16 @@ static long kvm_gmem_allocate(struct inode *inode, loff_t offset, loff_t len)
->>   
->>   	start = offset >> PAGE_SHIFT;
->>   	end = (offset + len) >> PAGE_SHIFT;
->> +	if (kvm_gmem_has_custom_allocator(inode)) {
->> +		size_t nr_pages;
->> +		void *p;
->> +
->> +		p = kvm_gmem_allocator_private(inode);
->> +		nr_pages = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(p);
->> +
->> +		start = round_down(start, nr_pages);
->> +		end = round_down(end, nr_pages);
-> It's weird here.
-> Should the end be round_up()?
->
+> Several mm selftests use the `asm volatile("" : "+r" (variable));`
+> construct to force a read of a variable, preventing the compiler from
+> optimizing away the memory access. This idiom is cryptic and duplicated
+> across multiple test files.
+> 
+> Following a suggestion from David[1], this patch refactors this
+> common pattern into a FORCE_READ() macro
+> 
+>  tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
+>  tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
+>  tools/testing/selftests/mm/migration.c        | 13 ++++----
+>  tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
+>  .../selftests/mm/split_huge_page_test.c       |  4 +--
+>  5 files changed, 24 insertions(+), 32 deletions(-)
 
-Thanks, you're right.
+The patch forgot to move the FORCE_READ definition into a header?
 
-I believe the current consensus is that fallocate() will only be
-permitted for offset and lengths that are aligned not only to PAGE_SIZE
-but to allocator page size.
-
-In a future revision I'll check for allocator page size earlier on,
-before this function will get called, so this rounding will probably go
-away.
-
->> +	}
->>   
->>   	r = 0;
->>   	for (index = start; index < end; ) {
->>
-> [...]
 
