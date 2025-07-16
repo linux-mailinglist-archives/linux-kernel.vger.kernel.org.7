@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-733337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7936FB0734F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:27:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7609B07354
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A033A293B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C901C2367F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD7E2F2C69;
-	Wed, 16 Jul 2025 10:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578202F3C17;
+	Wed, 16 Jul 2025 10:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VA1sKFZI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJjKu42/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19702309B2;
-	Wed, 16 Jul 2025 10:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB402F3655;
+	Wed, 16 Jul 2025 10:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661631; cv=none; b=ccswbwz0RU4RJxaRJMCpT6dIuazkM9XNLRa1uvS04U20YfvQ/n5bQvLMhFQ5DqiQbAypIrdJxmeVXwLitC7bmed5sTNF24r1ajk0Su1BH5Z8teQ+Kkqcqd8ovuzZBMZ79tDwV1i3tTmvMBBvYV//YMhjFkHPnaePePyslMa3YpQ=
+	t=1752661699; cv=none; b=TyVIcwU9ZPo4nTWqpleFk3LwICtOx2LCPuaQ0kDvR4kk5nPq6sVv0BArlSPXOYKKig/2RPmklLkqP1tLmBZFp+jLM0Pjdm5uYrL5rf/WR0p6ZkP2zbFxCPH7A6a0rFP2QF0dxigDr9n1kjGvWK3SSpy2FO+BzizczTHbuDnEbi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661631; c=relaxed/simple;
-	bh=eje/atnbbOgwfSrIBlbXh9smtB6jfmX0bEMzCbMqs4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Frba703y7LeB7BkQai5lfUmNN6Mvlk9j3bMHGx1yFQpCC/9rMFsURluvA7CwgOwe+3zVYQs2Xc6YeHQqH8SyuAAflRB8bLO/cVcF9zIrc7vphbSNWPdTIzRB05uG16utswigSlxxDk4ogAEtsm//Xax8/t6byKezp1w0m760Hqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VA1sKFZI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64402C4CEF9;
-	Wed, 16 Jul 2025 10:27:09 +0000 (UTC)
+	s=arc-20240116; t=1752661699; c=relaxed/simple;
+	bh=oDfuvhrmXua+Hqf3Lf8EHO9qQZS5NUpc586xNfXqu9o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F5G2xm1X/GCCCtWd/ra3Yb+Kv0YiKUO8uaxoaGnLGeZrrfnJgo7MwXVRhEQ+ttdg98hN/J6uBxsBHkrRK8/hDlA+/szFwnWeVnxoq1AQOlJgVJ3aiI6+DkPxBANMpnRzStzlWh/HDV4ZVuLGfLu+ahHk7MT4gnHvVy35hY8v2SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJjKu42/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7620DC4CEF6;
+	Wed, 16 Jul 2025 10:28:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752661629;
-	bh=eje/atnbbOgwfSrIBlbXh9smtB6jfmX0bEMzCbMqs4w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VA1sKFZIbEZ3qgsMzkohX5PG8eU5gwTJTInpmZwsiN0m2UZAZIANrBBFKdho7x4pe
-	 xSjP9pLdsd8fDoRJ7qOT2PasfZEjQcaOmNkZXoFfQBKo+ObM+7Lnlt3aE1CysLxksh
-	 HfHKmRx24YvlrDROn4dGuwEp++rib66+pk7sNlwkjbXVX4nXHxpzNWDX0avt6Ur94G
-	 tWb0RIb1JXXwseDOjv1KVz1RN4bk7QfOd8VM3eXMo/i0oEORd0SS2PWoz7YG5NtEAj
-	 1MeW6C628UPps1Y4wNrbZNrQTPy63OGfLaVvLC1TJWko59S98MEpb0yh23Cl4t+i7F
-	 N38bM6a+/Chmg==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553b5165cf5so7824776e87.0;
-        Wed, 16 Jul 2025 03:27:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW9iWvVSWs0mJ7EEjm/RUn+nQ7MdVAuBsJN1nZsaWUhyx0g7lnazSLMBMU89pHMbaXtOgKUXFrxIoc=@vger.kernel.org, AJvYcCXdSaFL4RoX/z8KcwErIz/a5ardZqQ9DpddxDd3oL4WWEXojhUiAYBZS43XHnTdyopOmqtZVaUK2/hE5GKI@vger.kernel.org
-X-Gm-Message-State: AOJu0YysgGZTgOdrKNbjSPrC7I/a9AkERsrKDfA5K0yja4p8S7919h9d
-	ljzaQWvJrBGK+zzNXhIb3P7K/h6aJwRDDzYw0hoe6NkAG6BKuAToEeGsxAag9fcog5YHb3h+ryu
-	RsZj1ZP3+EVvyeL/242nCvwZLIpSymeI=
-X-Google-Smtp-Source: AGHT+IEK/ZMlPdJZ+7xoWCkefw45kfpuSaPX7BibFuwf5YPURSnys04j/M4gYNkjPMaq3qTJHwqsrVB27d5KNoWFe4w=
-X-Received: by 2002:a05:6512:ad3:b0:553:26f6:bbf9 with SMTP id
- 2adb3069b0e04-55a2332f102mr976059e87.18.1752661627693; Wed, 16 Jul 2025
- 03:27:07 -0700 (PDT)
+	s=k20201202; t=1752661699;
+	bh=oDfuvhrmXua+Hqf3Lf8EHO9qQZS5NUpc586xNfXqu9o=;
+	h=From:Subject:Date:To:Cc:From;
+	b=GJjKu42/YUdAaWaaXN0wSgm8Ie7P1Afdw5nTlruwuY/KrQtyXtmKCLCod8gRF6tV9
+	 wG9mvgd7aH4gSnxcijMkFtvms9X3yTu2SdMp2wZuLHu4x2Bnno/Ru6mFvFnxx53wem
+	 lyaIS7by1dFLS8rWf0xjAl6iKAnE2MmF1wdcPYZr5RFnLrMhfKkHmzcqX/St0aIHup
+	 KBL0yyDIoLyPl5EGaHBXxB/NdHh7BeSt2U+teK4BCwgkzbxWcQYF0ddlU45EP4G0Ka
+	 GlRla4nStBZpUdGsir+M+MCtmY+M8BgYlNXJFTfxVpYAOOob3NCRz1JI55P2cDjCZm
+	 fQAiawOaMBp8A==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 0/4] mptcp: add TCP_MAXSEG sockopt support
+Date: Wed, 16 Jul 2025 12:28:02 +0200
+Message-Id: <20250716-net-next-mptcp-tcp_maxseg-v1-0-548d3a5666f6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716031814.2096113-24-ardb+git@google.com>
- <20250716031814.2096113-39-ardb+git@google.com> <20250716095446.GV905792@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250716095446.GV905792@noisy.programming.kicks-ass.net>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 16 Jul 2025 20:26:55 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXHNvPdgG+OKX6UB70oTzzbvovfvDhSH73vAj-q7G03c5Q@mail.gmail.com>
-X-Gm-Features: Ac12FXzLkdMBNAYhtzUBtWa7lsljDpOq7i6yiHftVSU24S7MKWzX-Flbj1fcicI
-Message-ID: <CAMj1kXHNvPdgG+OKX6UB70oTzzbvovfvDhSH73vAj-q7G03c5Q@mail.gmail.com>
-Subject: Re: [PATCH v5 15/22] objtool: Add action to check for absence of
- absolute relocations
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
-	Ingo Molnar <mingo@kernel.org>, Kevin Loughlin <kevinloughlin@google.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Nikunj A Dadhania <nikunj@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALJ+d2gC/zWMQQqDMBAAvyJ7dmETqEn7lSJFdJvuwTQkQQLi3
+ 10ED3OYw8wOhbNwgVe3Q+ZNivyjiuk7mH9TDIyyqIMl+yBnBoxclVZxTXVOqHzWqRUOyM6R9U9
+ DnhbQPmX+Srveb7gzGI/jBJdnTAp1AAAA
+X-Change-ID: 20250716-net-next-mptcp-tcp_maxseg-e7702891080d
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+ David Ahern <dsahern@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ moyuanhao <moyuanhao3676@163.com>, Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1327; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=oDfuvhrmXua+Hqf3Lf8EHO9qQZS5NUpc586xNfXqu9o=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDLK6/bytpgtnFmeFnkm+siCoEid3/q2h8SX7P/mefnXh
+ nMvfto6dJSyMIhxMciKKbJIt0Xmz3xexVvi5WcBM4eVCWQIAxenAEzkwEtGhp8S0ftDv4TIiCxr
+ nBN/2uMc21n+f5veT++0z13NfyZx6gZGhol7WWannumuVq5gn/1ktsY8jtOuG6vC9q/J1Eo47KV
+ mxwQA
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Wed, 16 Jul 2025 at 19:54, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Wed, Jul 16, 2025 at 05:18:30AM +0200, Ard Biesheuvel wrote:
-> > index d967ac001498..5d1d38404892 100644
-> > --- a/tools/objtool/check.c
-> > +++ b/tools/objtool/check.c
-> > @@ -4643,6 +4643,39 @@ static void disas_warned_funcs(struct objtool_file *file)
-> >               disas_funcs(funcs);
-> >  }
-> >
-> > +static int check_abs_references(struct objtool_file *file)
-> > +{
-> > +     struct section *sec;
-> > +     struct reloc *reloc;
-> > +     int ret = 0;
-> > +
-> > +     for_each_sec(file, sec) {
-> > +             /* absolute references in non-loadable sections are fine */
-> > +             if (!(sec->sh.sh_flags & SHF_ALLOC))
-> > +                     continue;
-> > +
-> > +             /* section must have an associated .rela section */
-> > +             if (!sec->rsec)
-> > +                     continue;
-> > +
-> > +             /*
-> > +              * Special case for compiler generated metadata that is not
-> > +              * consumed until after boot.
-> > +              */
-> > +             if (!strcmp(sec->name, "__patchable_function_entries"))
-> > +                     continue;
-> > +
-> > +             for_each_reloc(sec->rsec, reloc) {
-> > +                     if (reloc_type(reloc) == R_ABS64) {
->
-> This should probably also check R_ABS32. Yes, your current only user is
-> x86_64 so R_ABS64 covers things, but we're getting more and more archs
-> using objtool. No reason this check shouldn't also work on PPC32 for
-> example.
->
+The TCP_MAXSEG socket option was not supported by MPTCP, mainly because
+it has never been requested before. But there are still valid use-cases,
+e.g. with HAProxy.
 
-Yeah, I was unsure about this.
+- Patch 1 is a small cleanup patch in the MPTCP sockopt file.
 
-This check is sufficient to ensure that PIC code is not emitted with,
-e.g., global variables with absolute addresses, etc. So the R_ABS64
-check here is only a check whether any relocations of the native
-pointer size are present (but no R_ABS_NATIVE exists at this point)
+- Patch 2 expose some code from TCP, to avoid duplicating it in MPTCP.
 
-For robustness, we should actually check for all absolute relocations
-here, including R_X86_64_32S, which is not abstracted into a R_ABSxx
-type for objtool.
+- Patch 3 adds TCP_MAXSEG sockopt support in MPTCP.
 
-So perhaps this needs an arch hook where x86_64 can implement it as
+- Patch 4 is not related to the others, it fixes a typo in a comment.
 
-bool arch_is_abs_reloc(reloc)
-{
-   switch (reloc_type(reloc)) {
-   case R_X86_64_32:
-   case R_X86_64_32S:
-   case R_X86_64_64:
-      return true;
-   }
-   return false;
-}
+Note that the new TCP_MAXSEG sockopt support has been validated by a new
+packetdrill script on the MPTCP CI:
 
-and the default just compares against R_ABS32 / R_ABS64 depending on
-the word size?
+  https://github.com/multipath-tcp/packetdrill/pull/161
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Geliang Tang (3):
+      mptcp: sockopt: drop redundant tcp_getsockopt
+      tcp: add tcp_sock_set_maxseg
+      mptcp: add TCP_MAXSEG sockopt support
+
+moyuanhao (1):
+      mptcp: fix typo in a comment
+
+ include/linux/tcp.h  |  1 +
+ net/ipv4/tcp.c       | 23 ++++++++++++++---------
+ net/mptcp/protocol.c |  2 +-
+ net/mptcp/protocol.h |  1 +
+ net/mptcp/sockopt.c  | 33 +++++++++++++++++++++++++++++----
+ 5 files changed, 46 insertions(+), 14 deletions(-)
+---
+base-commit: c3886ccaadf8fdc2c91bfbdcdca36ccdc6ef8f70
+change-id: 20250716-net-next-mptcp-tcp_maxseg-e7702891080d
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
