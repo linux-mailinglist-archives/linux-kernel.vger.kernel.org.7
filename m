@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-733646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B10B07756
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:48:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A64CB07754
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11E871C4027A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:48:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC35E7B186E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F86D202996;
-	Wed, 16 Jul 2025 13:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9131E572F;
+	Wed, 16 Jul 2025 13:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAo5FcRN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/hiXrDM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A4114A09C;
-	Wed, 16 Jul 2025 13:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DF51E503D;
+	Wed, 16 Jul 2025 13:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752673660; cv=none; b=ia024UfoHFMYPzLtUfCWsNLo3RnmkJaR7D8VgIT336PyInkUhKfyb1CiBHMRdkhuv0e29qKVRsjBJdnhx5cknEe3QJJUPjnYsN3XZILqRPIYrzGY27Xldg1kERF0tj4imIVEBzh0kiSTb9bHLxJn5MdGoC4R7/3jvUAHWr1cijI=
+	t=1752673663; cv=none; b=MVeWTlRMaIslpro7DkbWdiJjFmM+864SKAI6c7OQwvfmI3nwpY5HlfeuUishVdUCpaiSMln4BhXw+t+abiCUzBlZtS5NByqoAl1/6gO8HwnxXty0JSHg4NgtF7Scn1cgn4LJj2VQ9lKiLIdLZnRpL+lLeOFtbZNCNiEwfrWC9wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752673660; c=relaxed/simple;
-	bh=N/5vs2O/O/RBR2chqPpw/Dxeb040MtYLeUEhMQ9qX5E=;
+	s=arc-20240116; t=1752673663; c=relaxed/simple;
+	bh=rdQDdI9JouSQXlopIgj0zTq8D4QW2KHFO3f9GHrlvrs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=glRTklL6ica7D1WZ8aQL30TAbkTiGooegflfj8E2sPIBhTfbYWFXL6Z1Hqfb0KyiKCwxoLtyQY5fuiQZLLBPyn9m21GmPffsn534hW4LPxwJbykzLNnstgL9uSRpTazbp78oY39xILXhrc+ugm8oAJ3zcJmu11WCvfaM++1qlDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAo5FcRN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2563FC4CEF4;
-	Wed, 16 Jul 2025 13:47:35 +0000 (UTC)
+	 MIME-Version; b=J+eOzQGoOPOFqihfWqY0mPZha75oHXdndflDzgVWUlGfaqzxAARGy3shISID2XGx82Xgmb4AZZh1+v8Ot2Kkyw5QOusVZR7S+ryOZcSUZP6bZmAYDOGn3BWcv6MDwKys/9dQPZGbyR/ncTHakQa1uM9Yo0yaYMAN27slsyEvDBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/hiXrDM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3C0EC4CEF6;
+	Wed, 16 Jul 2025 13:47:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752673659;
-	bh=N/5vs2O/O/RBR2chqPpw/Dxeb040MtYLeUEhMQ9qX5E=;
+	s=k20201202; t=1752673663;
+	bh=rdQDdI9JouSQXlopIgj0zTq8D4QW2KHFO3f9GHrlvrs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KAo5FcRN3PXz9NMNZbBrnh5FsWvEZAldcGzxToXaPCn9L6QZ1G2PxLG1TtSbFXbD+
-	 UCO91ePfKzLoJS6NAPQelNjTppFvVUpX14k19rb7VUlHKFufBDBg59xFG/kbL01O/c
-	 bvf3EIbrQfFOjM911H5/xI6MK6hSDm+BiJmFlto/wAPgGAnXI6//3Cb4HHILwc5EcC
-	 qvcilSKvD5kefx3BaY6EI3g72PRLRi/QKW6iQHt4geq4m+noGkFtc8yZp+jwyZIQC6
-	 bqafS29hdEf1WK0HVBn1wfigpzm8PvmAx2tDNsuW9hEOBhvNrv2MRgGmnT3A+VDMeT
-	 J9wzrSTL6uL3w==
+	b=J/hiXrDMKTQO05nvgVSvUQAgzWP8ULEvvHhKJo+3ZDWK0YCUhDi/uoyNF+ngznSZ/
+	 DcSEndLqgj70AVgNsiThGVM7FCWx8X4Eyay593WZUaf2YwXapEOr3p9acKsE+yWyVs
+	 uX7ItNEO35RyrxwTE5tKmEo5gLqLQSr+ErY4FQIl+iGrfsOnG/acyciI2AP297H3Uy
+	 xv0o1luCOglbDmxs5OBcpTQN5o9FEH+s01kTHYjYjV827XkWBvc+AMiqXVZDix8lAp
+	 FgpDyfB85TffhRocGdU1pS3T4+GPacOwLmAWspoJZT9cP/9NPGO3o0fhI94mmTj/Bu
+	 IbyM+UqBVYxwQ==
 From: Michael Walle <mwalle@kernel.org>
 To: Frank Binns <frank.binns@imgtec.com>,
 	Matt Coster <matt.coster@imgtec.com>,
@@ -59,9 +59,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Michael Walle <mwalle@kernel.org>
-Subject: [RFC PATCH 2/3] drm/imagination: fix clock control on the J722S
-Date: Wed, 16 Jul 2025 15:47:16 +0200
-Message-Id: <20250716134717.4085567-3-mwalle@kernel.org>
+Subject: [RFC PATCH 3/3] arm64: dts: ti: add GPU node
+Date: Wed, 16 Jul 2025 15:47:17 +0200
+Message-Id: <20250716134717.4085567-4-mwalle@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250716134717.4085567-1-mwalle@kernel.org>
 References: <20250716134717.4085567-1-mwalle@kernel.org>
@@ -73,43 +73,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The J722S won't let you set the clock frequency if there is no device
-using it. Thus, the assigned-clocks property won't work per se.
-
-As a workaround, set the clock again during the probing of the driver.
+The J722S features a BXS-4 GPU. Add the node for it.
 
 Signed-off-by: Michael Walle <mwalle@kernel.org>
 ---
- drivers/gpu/drm/imagination/pvr_device.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../boot/dts/ti/k3-am62p-j722s-common-main.dtsi     | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/drm/imagination/pvr_device.c
-index 8b9ba4983c4c..e7a7cc1bdf93 100644
---- a/drivers/gpu/drm/imagination/pvr_device.c
-+++ b/drivers/gpu/drm/imagination/pvr_device.c
-@@ -16,6 +16,7 @@
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+index 17c0949ac1d7..8f3d39d8004b 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+@@ -1229,6 +1229,19 @@ dsi0: dsi@30500000 {
+ 		status = "disabled";
+ 	};
  
- #include <linux/bitfield.h>
- #include <linux/clk.h>
-+#include <linux/clk/clk-conf.h>
- #include <linux/compiler_attributes.h>
- #include <linux/compiler_types.h>
- #include <linux/dma-mapping.h>
-@@ -641,6 +642,14 @@ pvr_device_init(struct pvr_device *pvr_dev)
- 	if (err)
- 		return err;
- 
-+	/* Set any 'assigned-clocks' properties again. This is a workaround for
-+	 * the clock handling on k3 platforms. There, one cannot set the clock
-+	 * frequency until there is at least one (enabled) user if it.
-+	 */
-+	err = of_clk_set_defaults(drm_dev->dev->of_node, true);
-+	if (err)
-+		return err;
++	gpu: gpu@fd80000 {
++		compatible = "ti,am62p-gpu", "img,img-bxs-4-64", "img,img-rogue";
++		reg = <0x00 0x0fd80000 0x00 0x80000>;
++		clocks = <&k3_clks 237 3>;
++		clock-names = "core";
++		assigned-clocks = <&k3_clks 237 3>;
++		assigned-clock-rates = <800000000>;
++		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>;
++		power-domains = <&k3_pds 237 TI_SCI_PD_EXCLUSIVE>,
++				<&k3_pds 242 TI_SCI_PD_EXCLUSIVE>;
++		power-domain-names = "a", "b";
++	};
 +
- 	/* Map the control registers into memory. */
- 	err = pvr_device_reg_init(pvr_dev);
- 	if (err)
+ 	vpu: video-codec@30210000 {
+ 		compatible = "ti,j721s2-wave521c", "cnm,wave521c";
+ 		reg = <0x00 0x30210000 0x00 0x10000>;
 -- 
 2.39.5
 
