@@ -1,240 +1,158 @@
-Return-Path: <linux-kernel+bounces-734112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9A0B07D3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:57:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4A4B07D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A173A502A75
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:57:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF4E189D244
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C570228C846;
-	Wed, 16 Jul 2025 18:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55A229B778;
+	Wed, 16 Jul 2025 18:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CUSE3iX2"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOo1MXzb"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3285A285C8A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 18:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C212E29B20A;
+	Wed, 16 Jul 2025 18:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752692240; cv=none; b=KPkiG4I4SzgR0iQtTvtj2k0u61WmGUhnHobejp/DlVr3xHwr0sBIWiksmOywHpykL/K3iAhQhyAbP0Wb6wQXrRjxJs+jBPEX6dDXy7Ng9x5/WYqrSP0g0Ju1B5LmLR0W+UnBnwW0jOHPavwJfEnC74QmEbyVGI3jk8J3+Y8G8rc=
+	t=1752692267; cv=none; b=I4XfUssTtHfFDZBa1Gs6o+P9fsz3DJKrLQz/ExS+RdO5pJWg2VpBPybfbk808w60dAnb887BjCApYiR9OzNF0Lo5tVFNTirSe30miFLTeLvzCwdM9Pzp7nvtSANxNTMorx7fso6+QbOldbapy9H0JNW4Z5tkBRPFwXgA4Va8YSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752692240; c=relaxed/simple;
-	bh=cTuuVg1/aMuU3ILHXxP31OocPr0xkzrGZp0svRgx/9U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tKxjGpTXslyK6EJeD4YKf17BgnG9uwoqL/VCioznxRufqR4/DU4AZLuFpQTwlasDRhkTPdD5vdJzLI+l7m61qyZ1sPIxQl4IUO9L3D9tWprfKt8L8LQu3q39oWmaXp3huhbsYEY1ShTdMEFGz8/zPk2bqTPJaeLKzvG8L/yjp08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CUSE3iX2; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7180bb37846so1010997b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:57:18 -0700 (PDT)
+	s=arc-20240116; t=1752692267; c=relaxed/simple;
+	bh=2VQaiE2f4fpyS1+Nvhu3ATDxCZ8+tmewullTfLLoYms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RYbKLRfHElPb+EbBNt0TNB/3PqTlxo6k+lTV22jQuyrcnC5b3Ursb8h8ngCWtikM5IpYWVwywi1nyk36qPx0KiKUnFrdPpPV9cvawbguSt9VCLO34HtA8PLSBLaT4PTJB18ZcKevBI24QXRpSUbs8YCpWn/RrxATlsD+IkpqKGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kOo1MXzb; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ab61ecc1e8so2025341cf.1;
+        Wed, 16 Jul 2025 11:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752692237; x=1753297037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5T3sOAWKCWrDJApaHZ5HeOfhtiegcEV08YGf9/b2PFE=;
-        b=CUSE3iX2ZNEpecFXzBJZ6JWsdqdLiHwqXCOH5GyXDRkxEqbH0JZuLTuwxEwckOvxWG
-         6mGtiIPB/jkUJFQLJSJY7JE/BTSHSXrOBgHx5VFQdMB9aBMLs/Yz6m7Q1IR9Lra5ulWS
-         TaWPcTWZE5EYr5coh443ZCSmeTTZ+Uo+hDO83utK3O+n5mXMo2sN4V0YN+ZiBFDmJHZx
-         T6IXhnHGfzCeW5hGs4oKlrwNfqmbn7GrONHejghwW+nIw87S4M6RaqfKF4W46ffhEkiP
-         kn19mIaLIRTfc/tRWQ9/S3q6Gvi1aHgJylnDBlVyLib0hPGrQblKQ3GjDYDdwN5vIE4q
-         FhYQ==
+        d=gmail.com; s=20230601; t=1752692264; x=1753297064; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nlc8B6S4byi7qqYIr9GjvMiwX+XsyRJI63r/10AmDZs=;
+        b=kOo1MXzbkO3IyccA84IjrleAnjP3SV71myMvlCUcUm+h9kicnvikytfPxh7V/rFkno
+         R8vzFg5IMKxRNk+8oJEKUdZQA3a4t5807AehofGHAQ76hCD5S44pw8ZCluweBVdT8O1H
+         yB9E+Pkk3kcsb9wuWmd5+GUMPRCmdskdHRjzMLEtp57xPk7iHgiqR0rdgu/xAJbXRv9d
+         BtoJsA85D9qYp2KYSL8UP21ASLAx3yjnpRAsU0Umdj0FdW/xiBemPpayG9Xd85fcp+KS
+         /1YhTppBi6gl5dpDfDV8OeVTeDwnKyW7lvhRS7eIosV+FbZhufzWC4Quj8gv9SSDplxz
+         fqOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752692237; x=1753297037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5T3sOAWKCWrDJApaHZ5HeOfhtiegcEV08YGf9/b2PFE=;
-        b=veMRQN3ZaMLX+0+KL6VSDO3ploKwYh/PVI9krNMhSKWRUmykwgfGD7SoGds2GQe1ud
-         gqm72GEjX+y9/+LqFWb5APGCBElysIvXHBalL4sr85RctwZEv1iPXtFdMvRwG/hjgNtm
-         cDTYpzyANfiYx9M0WvwVDF8AwyLPOAJ06KzQUeV9kFycqZ+446Ru0AeNC52ND0ON9wcv
-         ZycXMacnVgHOAaVBNoWO+YEb3gpaXth5a22Npd2i4decIiqXmc8c3LpQMWbqIpeUiMoX
-         lBXmwW5QCMRh09vbg5oUNbFLMLSBLe5voZGxNP94eZ9VgQHVf/3R652/YFGhtiryW4AW
-         ztFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWv8tIObG2waMqatwnJMa1WD+Qh1S3vGtfOPNCbxMaGSkwkV1pm7AtuZINICSBOZe5kzowVZP4r3sAripc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7cnocXaW1gLH2CbsgqUowjOUPS5Z/exl1TqKpb3rTcalfujBo
-	BJkuE20LmPQxyh+xQT0mfXltA7iTaZ7+UNRJNSzHh7TlSGG4FRj/6O85EkItnCyX02pfpoPTydw
-	xftTJ3ptzwNquouA4ffCxhuIVBtMIpZ+OO687IDqoQg==
-X-Gm-Gg: ASbGnctBT1NUE1B8zk+p2iSK7mkHreRZyI4K8vWqhFNwc7IPUKtp4bD6L2p69m3OBKz
-	LPDch6cL/6hocPwN+/3aVG4k6xiGbSMYSgl+875qFk1h2nck1z9QJJSuCdRc2oLgspTyuGJIQuZ
-	9PEewUf+jzMSd1E7b5E5VBlBD6Y+pG9g+QQJ3zB4nnHtLC4j+P0ucibrh7SXMky8+JCEdLw1eN5
-	SJihP2reUl/QqkGiV4=
-X-Google-Smtp-Source: AGHT+IFboyjGqtZEq5f82RSPNSJDrHYTW3q6drCPtrarFDu2PZ57yVAHJp5U1uDDb/JP+QL0UnyG2hOvxRBeY7szQew=
-X-Received: by 2002:a05:690c:6aca:b0:712:e333:d3a6 with SMTP id
- 00721157ae682-7183733e627mr44145087b3.19.1752692237085; Wed, 16 Jul 2025
- 11:57:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752692264; x=1753297064;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nlc8B6S4byi7qqYIr9GjvMiwX+XsyRJI63r/10AmDZs=;
+        b=ChRTSyIsLZ0e9duimcRj9sULrJm2lKMmo/8ROI44Xs+dJaANgp3WpPu+dmlfQkdxzi
+         zYKgxUgajZP9wk5vfGSNJTQJNeh3uKh3SJUNQFikxeAXgcehNnLJcekOgiyLIKbh2gSL
+         6aPR90IJQm84oMXPvbTILiqC691FsSLlY9BGg24oy5VHZu40hOysRwK16efvzI4oFirR
+         fGp5rNofVixd+OFvadeZOwQsQOxHYI4QQML9JxSqaK0TVdsxHuVhXmMjwnhJA/GRks8I
+         zDX7kbj/yKhc0MpPnAU0qcfNwgX9QZ34mCqmTkSv2vLP8rhKp5IO8V7efK+7eJHrnzIM
+         SiDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1BPPhJW6kqNHyyXvoPUilAQdrjkPZsCa/dodX/MY/PDhKXysw4bgNGNHTGVLATPGCvW0chsp1@vger.kernel.org, AJvYcCWv+lHRg1A8mOCUlVN6y7DROr6t9FRxe7JgC41HkZhmlmi53Yno9UV99f6xEpz0qGNGgqWcd+L+gSABdIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbh+h6d/4XrgnZ78XZwxzB9ftbwqpbZDKiXsux4vyaKSU6oIL5
+	fpmGDmQke/ESI09u0TfvFPviKQjMvfgZMtzqF1Tfun/wwJOsLEG8NJrC
+X-Gm-Gg: ASbGncslLYADcsoXG4dnn/4XIHhbm6uY9AEhkVxU+GvBi+K92d/ADfwxQxaUO2iIz4/
+	HbUHDGhLuDKrexsgj5exOkZtrzgpRX9OIcyiE3m85ZHDay2A6TLiQa9diaOYwBFWd0Bn9x1rLYa
+	gFzhPiLPkNUVYk4gTNRQB/yJ/R/SSrFmPnr5P/MvPKc19hqolrSQLqqWwoqC9MGTXtUjOHkPWON
+	KYEKvZH5CnrN/A+mNdIfJDpJXmXcdTIG8ZYFwwYXhtP5WqxWW7deWBdfEqZr0un/qrvzY4HgnNf
+	cI2RL05PrOAd9hP7Cp5+Nfgb+2Uk9rwAiOzGOBTwimDwz6dKYvA5MgS+9qjZeVteJBc0tQDdDDH
+	68O68TrZ4LJVcbVE1jDbCZuvsug70vkANx5OMQcdm587xPhQiJg==
+X-Google-Smtp-Source: AGHT+IF9GOyyapNBfoqgOuqiv1XZB3qmpXDUP+K9ucgAkq5QF8plhpNilPsAFDYUgoSKKIQonp0F/w==
+X-Received: by 2002:a05:620a:1aa2:b0:7d3:e868:a684 with SMTP id af79cd13be357-7e343635982mr449863385a.51.1752692264133;
+        Wed, 16 Jul 2025 11:57:44 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e32b48255esm374138085a.97.2025.07.16.11.57.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 11:57:43 -0700 (PDT)
+Message-ID: <dada6ceb-bc96-4d8d-9137-4ca1763baf16@gmail.com>
+Date: Wed, 16 Jul 2025 11:57:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aHZ0nK4ZZShAr6Xz@p14s> <CAPDyKFrWng0CY-ayKoEbnS_yanghSqogxfuizxEVbVogJ4DT=g@mail.gmail.com>
- <20250716132552.bra37ucw4fcjwril@hiagonb> <aHfYQFvkJcdfq9K_@p14s> <20250716172308.lzh3aak24d6mt4cs@hiagonb>
-In-Reply-To: <20250716172308.lzh3aak24d6mt4cs@hiagonb>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 16 Jul 2025 20:56:37 +0200
-X-Gm-Features: Ac12FXyGrszMr34Yekpq1kAdjmt5gaU__KNEwdTbqqWzif98sMQ9MbYF1-XPcj4
-Message-ID: <CAPDyKFr8eYiyj5s7wGsru8GJ+CS6h-o+a+BOV-nvCdSzWM0bSw@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] remoteproc: imx_rproc: detect and attach to
- pre-booted remote cores
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/165] 6.12.39-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250715163544.327647627@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250715163544.327647627@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 16 Jul 2025 at 19:23, Hiago De Franco <hiagofranco@gmail.com> wrote:
->
-> On Wed, Jul 16, 2025 at 10:50:08AM -0600, Mathieu Poirier wrote:
-> > On Wed, Jul 16, 2025 at 10:25:52AM -0300, Hiago De Franco wrote:
-> > > Hi Mathieu, Ulf,
-> > >
-> > > On Tue, Jul 15, 2025 at 09:32:44AM -0600, Mathieu Poirier wrote:
-> > > > On Sun, Jun 29, 2025 at 02:25:12PM -0300, Hiago De Franco wrote:
-> > > > > From: Hiago De Franco <hiago.franco@toradex.com>
-> > > > >
-> > > > > When the Cortex-M remote core is started and already running before
-> > > > > Linux boots (typically by the Cortex-A bootloader using a command like
-> > > > > bootaux), the current driver is unable to attach to it. This is because
-> > > > > the driver only checks for remote cores running in different SCFW
-> > > > > partitions. However in this case, the M-core is in the same partition as
-> > > > > Linux and is already powered up and running by the bootloader.
-> > > > >
-> > > > > This patch adds a check using dev_pm_genpd_is_on() to verify whether the
-> > > > > M-core's power domains are already on. If all power domain devices are
-> > > > > on, the driver assumes the M-core is running and proceed to attach to
-> > > > > it.
-> > > > >
-> > > > > To accomplish this, we need to avoid passing any attach_data or flags to
-> > > > > dev_pm_domain_attach_list(), allowing the platform device become a
-> > > > > consumer of the power domain provider without changing its current
-> > > > > state.
-> > > > >
-> > > > > During probe, also enable and sync the device runtime PM to make sure
-> > > > > the power domains are correctly managed when the core is controlled by
-> > > > > the kernel.
-> > > > >
-> > > > > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> > > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > > > > ---
-> > > > > v6 -> v7:
-> > > > >  - Added Peng reviewed-by.
-> > > > > v5 -> v6:
-> > > > >  - Commit description improved, as suggested. Added Ulf Hansson reviewed
-> > > > >    by. Comment on imx-rproc.c improved.
-> > > > > v4 -> v5:
-> > > > >  - pm_runtime_get_sync() removed in favor of
-> > > > >    pm_runtime_resume_and_get(). Now it also checks the return value of
-> > > > >    this function.
-> > > > >  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
-> > > > >    function.
-> > > > > v3 -> v4:
-> > > > >  - Changed to use the new dev_pm_genpd_is_on() function instead, as
-> > > > >    suggested by Ulf. This will now get the power status of the two
-> > > > >    remote cores power domains to decided if imx_rpoc needs to attach or
-> > > > >    not. In order to do that, pm_runtime_enable() and
-> > > > >    pm_runtime_get_sync() were introduced and pd_data was removed.
-> > > > > v2 -> v3:
-> > > > >  - Unchanged.
-> > > > > v1 -> v2:
-> > > > >  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
-> > > > >    suggested.
-> > > > > ---
-> > > > >  drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
-> > > > >  1 file changed, 32 insertions(+), 5 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > > > index 627e57a88db2..24597b60c5b0 100644
-> > > > > --- a/drivers/remoteproc/imx_rproc.c
-> > > > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > > > @@ -18,6 +18,7 @@
-> > > > >  #include <linux/of_reserved_mem.h>
-> > > > >  #include <linux/platform_device.h>
-> > > > >  #include <linux/pm_domain.h>
-> > > > > +#include <linux/pm_runtime.h>
-> > > > >  #include <linux/reboot.h>
-> > > > >  #include <linux/regmap.h>
-> > > > >  #include <linux/remoteproc.h>
-> > > > > @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
-> > > > >  static int imx_rproc_attach_pd(struct imx_rproc *priv)
-> > > > >  {
-> > > > >         struct device *dev = priv->dev;
-> > > > > -       int ret;
-> > > > > -       struct dev_pm_domain_attach_data pd_data = {
-> > > > > -               .pd_flags = PD_FLAG_DEV_LINK_ON,
-> > > > > -       };
-> > > > > +       int ret, i;
-> > > > > +       bool detached = true;
-> > > > >
-> > > > >         /*
-> > > > >          * If there is only one power-domain entry, the platform driver framework
-> > > > > @@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
-> > > > >         if (dev->pm_domain)
-> > > > >                 return 0;
-> > > > >
-> > > > > -       ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
-> > > > > +       ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
-> > > > > +       /*
-> > > > > +        * If all the power domain devices are already turned on, the remote
-> > > > > +        * core is already powered up and running when the kernel booted (e.g.,
-> > > > > +        * started by U-Boot's bootaux command). In this case attach to it.
-> > > > > +        */
-> > > > > +       for (i = 0; i < ret; i++) {
-> > > > > +               if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
-> > > > > +                       detached = false;
-> > > > > +                       break;
-> > > > > +               }
-> > > > > +       }
-> > > >
-> > > > I was doing one final review of this work when I noticed the return code for
-> > > > dev_pm_domain_attach_list() is never checked for error.
-> > >
-> > > As Ulf pointed out, the 'return' a few lines below will return the
-> > > negative value to the caller of 'imx_rproc_attach_pd', which ultimately
-> > > will fail 'imx_rproc_detect_mode' and fail the probe of imx_rproc.
-> > >
-> > > Please notice that even tough 'dev_pm_domain_attach_list' fails, the
-> > > rproc->state will still be set as RPROC_DETACHED because we are starting
-> > > 'detached' as true, but I am not seeing this as an issue because as
-> > > mentioned above the probe will fail anyway. Please let me know if you
-> > > see this as an issue.
-> >
-> > Two things to consider here:
-> >
-> > (1) It is only a matter of time before someone with a cleaver coccinelle script
-> > sends me a patch that adds the missing error check.
-> >
-> > (2) I think that @rproc->state being changed on error conditions is a bug
-> > waiting to happen.  This kind of implicit error handling is difficult to
-> > maintain and even more difficult for people to make enhancements to the driver.
-> >
-> > Adding a simple error check will make sure neither of the above will happen.  It
-> > is a simple change and we are at rc6 - this work can still go in the merge
-> > window.
->
-> Sure, I can submit a new revision with this error check. Sorry I did not
-> see this before, I only had a close look at this '->state' now that you
-> asked on the previous email.
+On 7/15/25 09:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.39 release.
+> There are 165 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 17 Jul 2025 16:35:06 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.39-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Alright. To avoid having you to resend patch1 and patch2 I have
-applied them on my next branch and added Mathieu's ack for patch2.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Note that my vacation is around the corner, so if you want patch3 for
-v6.17 you better be quick. :-)
-
-[...]
-
-Thanks and kind regards
-Uffe
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
