@@ -1,122 +1,146 @@
-Return-Path: <linux-kernel+bounces-732944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37391B06DFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:30:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946D4B06E01
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6A6166CBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:30:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1082F3A2B77
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2527F273D89;
-	Wed, 16 Jul 2025 06:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36CC2882CB;
+	Wed, 16 Jul 2025 06:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iv7JVwW0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mngyDJzY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B53410A1E;
-	Wed, 16 Jul 2025 06:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2047A10A1E;
+	Wed, 16 Jul 2025 06:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752647426; cv=none; b=nQ1nFOD14ag3cB3qdrycX2fXjzQ1t4jmnCP4MK2stNNeJn5sbZS2dEBmJZa4+WHvUkS5q9qXe4VpWw3DoKyV11ni+NfCNOt1W/pLuiRR3QiTKV/ZW1w+/EoaslOik8cz2ZoNF/RMQ2R9KdikgbtmLviaLzueP2OkpYoZ3hkDXi8=
+	t=1752647433; cv=none; b=pQOb9VPF0PjOQNF5b7MaZeNrHuCcOkYNA8o4974ex76DI6taQ4ZUCwCGQF2ptkzfvR/ZZoZX3RdXKJurijXPTJNPqNlAcE87uA07ijBmHaqF5UgC3VzkEhvwCYHceOqyeEFGzLsj0K2/SND8At3CN8dE0gqMfai43biLNh2zlFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752647426; c=relaxed/simple;
-	bh=QR8VQxVZz6CuAK2KpWv4MfQ1K6P33JZ5up0UitzdPFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oE0gquULXpGRCc3Mr7nrc+wOGMREjcmlZNcBgePP2Fxp36B9uwHCTGQ5vONLR0rmc31DvyOB6VclLtlofGsidY3hgf3NqeC4SrL9EDhWeBr7HWv/v2qRub5FHP5us+SVc/D++YbdU5M6eop4dpMaR/8SjYu5t912+AwujRQzgG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iv7JVwW0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C6EAC4CEF7;
-	Wed, 16 Jul 2025 06:30:23 +0000 (UTC)
+	s=arc-20240116; t=1752647433; c=relaxed/simple;
+	bh=cPXUdocH7BWiamPELQtEXH5v8MfZzzXrf+na9+ySFAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n19xTH/5nVodthwDkSFg0FuwTwkcaynarpMBjjrWi4zk1aEIm9m6obOhPeoRW3BUpiU9KIJDASgjeCCsEhkRrpaz/x89xAp8b2tRgPui9TWgIvFBDFZIoEh5UUXrg9cm1dTT5RfT5S8q7I0Tf9LuBpWwNllIBP+JXgnxFiQeAis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mngyDJzY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2166C4CEF0;
+	Wed, 16 Jul 2025 06:30:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752647426;
-	bh=QR8VQxVZz6CuAK2KpWv4MfQ1K6P33JZ5up0UitzdPFo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iv7JVwW0vFzarkChOP9ZiSk8XASYHuuo6SjF91RZ9XL0Vy74BO1OYO59W1x8HUT5U
-	 fdrY7bLL8Euv7n5vKeNsHvvCl9i5t1wZLMuQmY7B16k1xO08CLmjeYbMGa8nkwCl80
-	 4qAZGosJY4wg1cB8+Fm7Q+eI2IxAl3W8A1tY93OPNb2d6DnzCUC3FJGXbkdMU3MWOK
-	 Q0tkqe9llPAP3gXRUR+NPyrfnzedVPu1Lehd9hOhjKsgplylfRNwl+1eshrcxsrvhH
-	 za+2U05XW8qjG3WyUzdMtF/WECHOHQEXzQWDL1LO/5C7+MjHpsUkS2Q6wPIulUAX8l
-	 UJMi8RndOT+dw==
-Message-ID: <042f3b31-8899-430e-ae4a-d12dcbf935c3@kernel.org>
-Date: Wed, 16 Jul 2025 08:30:21 +0200
+	s=k20201202; t=1752647432;
+	bh=cPXUdocH7BWiamPELQtEXH5v8MfZzzXrf+na9+ySFAA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mngyDJzYxswRUKAor6BhdCDEeP7/f1/WiEGIIktBpmkL1q/z1WzrIyXvEqGHnI7Kf
+	 CErmAEVuxZN3MYZi85Fk9HbQLBelB6pX8ZCDI6WKshBqXohNFkMGBDJXIRTsr35vTh
+	 bU+biH50xCXMqTG2Gj3VDYxVU4W+ke5fZ+5we6tIwB5KZ9RLMYLud4ioG2rp7paTTX
+	 6tD7SqlhNlrXWrst7wCeVm3RvAZPuXMEwUKqdymbqipTSjRsA/4CH0lw1SsGZDA7A3
+	 RIF6UKmz39KCqObBiQkuHBwtf5vg2a29vnRjpicoqjUXmndoDDPBz8CKmFap61O6LT
+	 D7tV9HPzzODWA==
+Date: Wed, 16 Jul 2025 08:30:26 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
+ Alexander Graf <graf@amazon.com>, Konrad Rzeszutek Wilk
+ <konrad.wilk@oracle.com>, Peter Gonda <pgonda@google.com>, "Luck, Tony"
+ <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
+ <lenb@kernel.org>, James Morse <james.morse@arm.com>, "Moore, Robert"
+ <robert.moore@intel.com>, "linux-acpi@vger.kernel.org"
+ <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "acpica-devel@lists.linux.dev"
+ <acpica-devel@lists.linux.dev>, "kernel-team@meta.com"
+ <kernel-team@meta.com>
+Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
+Message-ID: <20250716083026.1737fdb4@foz.lan>
+In-Reply-To: <564e0deb-73f0-449f-9d0f-181311d3a348@linux.alibaba.com>
+References: <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
+	<SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	<20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
+	<aHWC-J851eaHa_Au@agluck-desk3>
+	<20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
+	<kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
+	<20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
+	<vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
+	<20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
+	<68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
+	<20250715150947.GAaHZvOxsvEvALZNDd@fat_crate.local>
+	<564e0deb-73f0-449f-9d0f-181311d3a348@linux.alibaba.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: Add INA228 to ina2xx devicetree bindings
-To: Jonas Rebmann <jre@pengutronix.de>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, kernel@pengutronix.de
-References: <20250715-ina228-v1-0-3302fae4434b@pengutronix.de>
- <20250715-ina228-v1-3-3302fae4434b@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250715-ina228-v1-3-3302fae4434b@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 15/07/2025 22:49, Jonas Rebmann wrote:
-> Add the ina228 to ina2xx bindings.
-> 
-> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
-> ---
->  Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+Em Wed, 16 Jul 2025 10:05:27 +0800
+Shuai Xue <xueshuai@linux.alibaba.com> escreveu:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> =E5=9C=A8 2025/7/15 23:09, Borislav Petkov =E5=86=99=E9=81=93:
+> > On Tue, Jul 15, 2025 at 09:46:03PM +0800, Shuai Xue wrote: =20
+> >> For the purpose of counting, how about using the cmdline of rasdaemon?=
+ =20
+> >=20
+> > That would mean you have to run rasdaemon on those machines before they
+> > explode and then carve out the rasdaemon db from the coredump (this is
+> > post-mortem analysis). =20
+>=20
+> Rasdaemon is a userspace tool that will collect all hardware error=20
+> events reported by the Linux Kernel from several sources (EDAC, MCE,=20
+> PCI, ...) into one common framework. And it has been a standard tools
+> in Alibaba. As far as I know, twitter also use Rasdaemon in its productio=
+n.
 
-Best regards,
-Krzysztof
+There are several others using rasdaemon, afaikt. It was originally
+implemented due to a demand from supercomputer customers with thousands
+of nodes in US, and have been shipped on major distros for quite a while.
+
+>=20
+> >=20
+> > I would love for rasdaemon to log over the network and then other tools=
+ can
+> > query those centralized logs but that has its own challenges...
+> >  =20
+>=20
+> I also prefer collecting rasdaemon data in a centralized data center, as=
+=20
+> this is more beneficial for using big data analytics to analyze and=20
+> predict errors. At the same time, the centralized side also uses=20
+> rasdaemon logs as one of the references for machine operations and=20
+> maintenance.
+>=20
+> As for rasdaemon itself, it is just a single-node event collector and=20
+> database, although it does also print logs. In practice, we use SLS [1]=20
+> to collect rasdaemon text logs from individual nodes and parse them on=20
+> the central side.
+
+Well, rasdaemon already uses SQL commands to store on its SQLite database.
+
+It shouldn't be hard to add a patch series to optionally use a centralized
+database directly. My only concern is that delivering logs to an external
+database on a machine that has hardware errors can be problematic and
+eventually end losing events.
+
+Also, supporting different databases can be problematic due to the
+libraries they require. Last time I wrote a code to write to an Oracle
+DB (a life-long time ago), the number of the libraries that were required
+were huge. Also, changing the order with "-l" caused ld to not find the
+right objects. It was messy. Ok, supporting MySQL and PostgreSQL is not
+that hard.
+
+Perhaps a good compromise would be to add a logic there to open a local
+socket or a tcp socket with a logger daemon, sending the events asynchronou=
+sly
+after storing locally at SQLite. Then, write a Python script using SQLAlche=
+my.=20
+This way, we gain for free support for several different databases.
+
+
+Thanks,
+Mauro
 
