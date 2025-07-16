@@ -1,101 +1,114 @@
-Return-Path: <linux-kernel+bounces-734019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F05B07C0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:31:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F17D5B07C1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D2C41C416C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B3D4A400D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD28F2F533A;
-	Wed, 16 Jul 2025 17:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC49B2F6F82;
+	Wed, 16 Jul 2025 17:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIsPrqhy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZnK/T5QT"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA741D8E1A;
-	Wed, 16 Jul 2025 17:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752687062; cv=none; b=ej4jwfWtvCIAUK3/xoTgrulC2pbE5e6mQDzhbGyL7IwPoKX++9KfvRwzXp0ZeAaUeCUMgWny2pEpVEtqbfGpch3oLJoGNcUd9T6rSAvMXPOWQUdXfIz/d03U06pMZes+fpgIRXE6oMWhWiNKTssb0A2XO/KpoAffW/f9BCSud5k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752687062; c=relaxed/simple;
-	bh=PaXYTlyE1AmCd9f7kz8r4SkpNALOlTX1xFZrFy9kj0A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=t7I0qE4UpLN41MRdQW2O6jrNX857Zs2uFye0DyJjERNiAWkWlBVzYPt2SO20aOYsNO8sTL+0nWkO3MNZah+0vZTz7LbKXXjQgpLoFRqnVa8IIfSqYaXd5OQVP0bAQvZ9apXSZm7ZZwZUGlBO/J0WoD7IHxMNzltAewYFtoOpyDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIsPrqhy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A44FDC4CEF0;
-	Wed, 16 Jul 2025 17:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752687061;
-	bh=PaXYTlyE1AmCd9f7kz8r4SkpNALOlTX1xFZrFy9kj0A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RIsPrqhyv6e9Qxaf7h3jN09thDJp15IZQO/mwKshVTqYWa95vzhXZlSxH4erTUW1/
-	 N1F+kqa3Fi0D3Jk5hEhCKwaEXoq64BRYzpY1gqHIcbdfCQWTOavi97qhqzxaEAYnwS
-	 RoRevb3I2gJBTTmtwLo6Szt/gjD56GbFshfWMcfcEkOScawnBl1UvuHzTa4XhgJSGB
-	 5yMeBlder1FV2bxGLHEqLTGSaY3GRInR3di0cjC2jMVct8LRagXyHbBusEth12UhoW
-	 y2OXRTuDA82/dyb5XZ4CwPq4cRG/nOEI2E3sv0x2IQgX+lxtDgrbGBXrDfR/MayeLh
-	 V1civMqJepi3Q==
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-spi@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <fb2a26a2-119b-4b5a-8d44-b29e2c736081@sabinyo.mountain>
-References: <fb2a26a2-119b-4b5a-8d44-b29e2c736081@sabinyo.mountain>
-Subject: Re: [PATCH next] spi: stm32-ospi: Fix NULL vs IS_ERR() bug in
- stm32_ospi_get_resources()
-Message-Id: <175268705940.745920.11297005700076211217.b4-ty@kernel.org>
-Date: Wed, 16 Jul 2025 18:30:59 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C0B276047;
+	Wed, 16 Jul 2025 17:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752687206; cv=pass; b=Wlh0w/i8Sx5Mx4ZCGppyD1SW93bt4qJTmO00fNg3m6wo/08yvGSnjRVU77b5fnGsE5fnMFAFKL8l18GwUeYaOrUQhd7fTcSIlMhY2szIlDdJegq4wUiyiepLl3o71QfHYmaK9JdQo+FeQbOBx5p5pL1UwwlGgIG5kni1CTNoAi0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752687206; c=relaxed/simple;
+	bh=eKZ8wn2hExMcKFc/E8Fjc9OlvJEeRJBW49Qu4mEqXVU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=f4wvsLzD/UHpgYQ3965+lT6+m0CZZvUm6IUV0vSuV94RBSLrx3E/Dk4mUrwSpSdiqiNJY/YUdLtnmQG0U3gtSFQtuXJkv3Br8MzF3nsXjjTjmlZRIgfiKoj/SV47vejlL+aB4SCxBgEWPsaX+OJT+odUDu404B58qgsI+eyz6w8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZnK/T5QT; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752687188; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=eD4WsbtGcm7lioHTOSA2lS57ZO/PvUtTMzNe1m8KFkGEP+093vJHi2H6g5CuAMpOBs4i9fsx7/MCSJtZ/BALzhAeVDx7Laf0OnmEeyNa/er6Pg0vjdNWhKUgMLPeUqcPOG5D320HdJT4wO6FgWHWB9+Y/IngKMo/pdg+UIWrn2s=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752687188; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BT5S3SbZ+apZ/3i1VFodYq7WVuVYZYlgHBmKtWIzlKQ=; 
+	b=e4wIXY0nECaepeemfBRUzqmUXkXRNugp504kVm5x1PZEJ66VBnbqM7clNPpLl8UvC53IUJqXWJVA1FzJHcw2BrQ4LI1i1hn1/nR55/HmJJ5bTxG9x1wTGCgSMcZwFVBub/mvLMGzJCOU0oeV6ps/m9qJ/u9qDplvZZbzMmw2Zf8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752687188;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=BT5S3SbZ+apZ/3i1VFodYq7WVuVYZYlgHBmKtWIzlKQ=;
+	b=ZnK/T5QTOwn2WUE6wImMBlKLdFDTnH9anvgnSsEM/ujcvjz5u+Fo9NcZMsZljClo
+	YjWNNP2+KkCLCjD68d/iIOStw4fKNY4xrzWXUL5uyZIOWpKwuE5XjaPESgMviryXBTO
+	NnS4axuQ4CNXlLH0S39WS0x1jyuAvixwSW3JVFqg=
+Received: by mx.zohomail.com with SMTPS id 1752687186914234.6296756071389;
+	Wed, 16 Jul 2025 10:33:06 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 2/5] rust: dma: add DMA addressing capabilities
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250716150354.51081-3-dakr@kernel.org>
+Date: Wed, 16 Jul 2025 14:32:50 -0300
+Cc: abdiel.janulgue@gmail.com,
+ robin.murphy@arm.com,
+ a.hindborg@kernel.org,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ lossin@kernel.org,
+ aliceryhl@google.com,
+ tmgross@umich.edu,
+ bhelgaas@google.com,
+ kwilczynski@kernel.org,
+ gregkh@linuxfoundation.org,
+ rafael@kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0984E8E7-C442-42E6-A8E7-691616304F6F@collabora.com>
+References: <20250716150354.51081-1-dakr@kernel.org>
+ <20250716150354.51081-3-dakr@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Tue, 15 Jul 2025 18:01:39 -0500, Dan Carpenter wrote:
-> This code was changed from using devm_ioremap() which returns NULL to
-> using devm_ioremap_resource() which returns error pointers.  Update
-> the error checking to match.
-> 
-> 
+Hi Danilo,
 
-Applied to
+> +    #[inline]
+> +    pub const fn new(n: usize) -> Result<Self> {
+> +        Ok(Self(match n {
+> +            0 =3D> 0,
+> +            1..=3D64 =3D> u64::MAX >> (64 - n),
+> +            _ =3D> return Err(EINVAL),
+> +        }))
+> +    }
+> +
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Isn=E2=80=99t this equivalent to genmask_u64(0..=3Dn) ? See [0].
 
-Thanks!
+You should also get a compile-time failure if n is out of bounds by =
+default using
+genmask.
 
-[1/1] spi: stm32-ospi: Fix NULL vs IS_ERR() bug in stm32_ospi_get_resources()
-      commit: 951a6d8d41289b86a564ee5563ededa702b62b1b
+=E2=80=94 Daniel
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+[0]: =
+https://lore.kernel.org/rust-for-linux/20250714-topics-tyr-genmask2-v9-1-9=
+e6422cbadb6@collabora.com/#r=
 
