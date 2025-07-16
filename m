@@ -1,116 +1,275 @@
-Return-Path: <linux-kernel+bounces-733531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1DAB075D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:39:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52DD1B075E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25B0A189C8CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B27CC189C078
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AFA2F50A3;
-	Wed, 16 Jul 2025 12:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3E12F531A;
+	Wed, 16 Jul 2025 12:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AdUFVIpH"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Dc82ryHz"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4092F4A07;
-	Wed, 16 Jul 2025 12:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D2A19CC37;
+	Wed, 16 Jul 2025 12:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669544; cv=none; b=JZKn4uICy4VIM+RvFM2nCtk0f0ykSKmcSyUAQlZLlidTA1Lc7pVDveAEFDQmCF9EggbdAtR/y260itVig3iV1qDucj/6sc+w0mp9Zl0c1BTf89JPS7+DFxaOjoC9wPNFb7fiouYUKiKr6jRSD8asZP5haVemfsYregWTLDdSAE8=
+	t=1752669597; cv=none; b=lNkD8lHUpNi47qRo0c8ZFeqg/3iPBVuDF5hs6+1m+C06wKbzqNskDPHyfb/xkUFXpyeNJAx7vlXbiM1pYR5DUP8JqBykV/RVmqFmz5ogwBbmK8Ttmpj3u9z6hgFBTeUQhuTAsr1SZDnAI+JveL0tXRk784+n3AYKR+dos5mfZp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669544; c=relaxed/simple;
-	bh=t7yMTiyIn5bVl5n5EJK+KgGqnp8cXTzAmhlo+kbDvd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=npFxQ3WT3iMWyB0KQHB6BvO1CeImDk5B6zCZEpEurhmes2XUF4ywqaMWZNjPx7UpM3hMhDZtWbuFeRYLCljY1jfL4HzN8ba56h3v9v4RJq3SlVeuxoL4gkex6nPG3q0Xm28BdIT1dbe3dbC6o/JjjNGzWEzz4ubrWhu/cbKUqC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AdUFVIpH; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-235db423abdso4016075ad.1;
-        Wed, 16 Jul 2025 05:39:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752669542; x=1753274342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t7yMTiyIn5bVl5n5EJK+KgGqnp8cXTzAmhlo+kbDvd8=;
-        b=AdUFVIpHDon3Sp45y0NUMvQdff67kaSYpbyY31Xz8GWLjWeO1RZcZiVkgQXW68idzA
-         R2/MAH5QtCoEgqoYuaUFXH7gH8h+sCRhRlqbb8ltw6iIBekODfOnUHoxL7x3+hZSpelF
-         aQ+37GgKbQhAR+nV9iZvU8FMPpYZVjJPHS6fB38NTcQoaR3s3mvA1mUIm7nnVh0SnIU7
-         /khxAWPvLkWwfanEu3YmKyGTJKl924ybRKiKjojzwYydnuFTP7AtyJhM8eUCeNMmggTE
-         k08TfPwAHKDO9jv/EeMjLEX+KhMsGGcsF5m+3iAFCwqnkEqAz+T1AHZQc8wchABeUnp9
-         Elag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752669542; x=1753274342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t7yMTiyIn5bVl5n5EJK+KgGqnp8cXTzAmhlo+kbDvd8=;
-        b=bnD6m2O1a+Odv14/Vnv2aa0yAtGwSp2799nGkCnVZ9ecne0B2tKxaKQ1miW6SEwS9/
-         yHb5d1z9RNBB0O/qn4TDO7ujNMpBFkIEJYpuxUSEox/ma7nFzerUtDT4CIYSHeBbxSe2
-         98OPEIJuOvhTzI09hMnFs9L/g4rSJRD277Yl7a+MZCHKN4vzWnWsbpyEFtG+Bo7LV1Zb
-         ee6DNHdCDzo9LQfjmpDfaYj+pihyYJYI61c9vrpQPFxkcvjFIDouAmOvTRBL5JJ2Z6Jy
-         57bI5WoNdlc3JHcojHFSRUPoRLI1Cct4tVEoLGVbueSzLjuo11HnRyLyJaFZYennkHFA
-         kgaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaG+yuNhNMJ3RK4tFMeOfrprYevableQIYRXraD0EeuskucUyqag9/TBxDpp2xn+scSXu8EFV2glpDuUqM@vger.kernel.org, AJvYcCW0GtTnJd6Uc8sSMGqwdED5Y13IU6KhNz+O8neqyviHc6yClCWt1PfwlcsWalEI0HwkdEXlbBj9kLLR2A==@vger.kernel.org, AJvYcCWBdl3pS0RQtfuelwe8r5aua+xEjcY/70LqWwLFlmux1Pr0E1e+NIzAOyKbwaQD07A6u52ZmM4WDwSI9pTPbJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQJxY9lQFsyANen/C4IFQicq4pjI0SbZFHMtLv/sugAk0iWwWN
-	6YnI7Sz7CGt0EqctGQKmv1bZfPPtxHtBvZnGTUNZQxZnLEQ1/iKa2pnuxpv+xJXUVe5dtzLPbH7
-	TJ+hvNWNEOjtgSQM+wBluxiPDse8VVQ0=
-X-Gm-Gg: ASbGncs+bqVL3YPGF8liHCak9p5d6ACkF7RJHGVc1k1MVguqDtSCNSt1RFeI5eI05kR
-	tXYK/295rz+avHcSR/gY3FtrJ5chbpb3Mdr2l6fURdccFPG/1ZgVVguC/69BB3zlRaXGSYBSMNR
-	xSW4J9o32Y5a6C/nAyxyuUytZ1JpQIQkCg28MrrGmhMwiN9aY7bbYIdIc4TM5mEtOtfOM66SEoi
-	X0laFpLxnj/sTlE
-X-Google-Smtp-Source: AGHT+IHb7twDbZS717sooFnpEeuTv8foFpUNdQt/t+N7nFBUSXSl8rv6EaBwPEQgIjJO6rxn22+uDFocPFtD3HxmqoA=
-X-Received: by 2002:a17:902:d4cb:b0:236:7165:6ed3 with SMTP id
- d9443c01a7336-23e24f4c2edmr15175785ad.10.1752669542136; Wed, 16 Jul 2025
- 05:39:02 -0700 (PDT)
+	s=arc-20240116; t=1752669597; c=relaxed/simple;
+	bh=ciov7ehAjBjREuTpZUcsqXWJtPxPQ5hAirxi/yh5GH0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N9FrZM26m8QaTIS8kRmu/gt15RElOemH4HOrabyd75Eq0Sm360782u7dydtOpw5BZq/KJdZdJzA8R4dozmaJiw7iUBSHUNnme2DqLs3tFsFZ6t2wTrJshMlocPH/54Ea3s8INHYUnp+3TskxiGsY1H4MY9DGoATUpr3I5BCAt9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Dc82ryHz; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=WxtQsAj1GDvGzyz67FLJJ/sJh6tOfzGHe6iz6EfWQaQ=; b=Dc82ryHz4DrgMI1c7c5pAHLF2e
+	0UZJw7dqr96ryh4mY4vD50skzSL5q6YCve8aVi+QN1n2TxoChUl32+Rx3E9mlleAlNbKte0ElyEH2
+	1vToEsK1Qb+QLlAIlXkiSC0rNNNgJ/vM+lXxgKIrnRfNK5XVz6Hi3Xor1OVuVTWEA87VlcCy4rSiZ
+	oY4Elw4TV9wCI+Q1ODazw1rqfuIgghImjpv4DvTX5kyxu4v1yq0Q5uAcL5PGvyCRqLxj+ViE1PDyl
+	acHQyWD5QN9bdOW6idXoqgZcFiHcBKUod2DTDilljCy1tQDmJMSjg8jAzCev2dEHdonQoq/egkzs1
+	o50Jj01w==;
+Received: from [223.233.66.171] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uc1QB-00HJWV-Q0; Wed, 16 Jul 2025 14:39:40 +0200
+From: Bhupesh <bhupesh@igalia.com>
+To: akpm@linux-foundation.org
+Cc: bhupesh@igalia.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	oliver.sang@intel.com,
+	lkp@intel.com,
+	laoar.shao@gmail.com,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl,
+	peterz@infradead.org,
+	willy@infradead.org,
+	david@redhat.com,
+	viro@zeniv.linux.org.uk,
+	keescook@chromium.org,
+	ebiederm@xmission.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mingo@redhat.com,
+	juri.lelli@redhat.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-trace-kernel@vger.kernel.org,
+	kees@kernel.org,
+	torvalds@linux-foundation.org
+Subject: [PATCH v5 0/3] Add support for long task name
+Date: Wed, 16 Jul 2025 18:09:13 +0530
+Message-Id: <20250716123916.511889-1-bhupesh@igalia.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716090712.809750-1-shankari.ak0208@gmail.com>
-In-Reply-To: <20250716090712.809750-1-shankari.ak0208@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 16 Jul 2025 14:38:49 +0200
-X-Gm-Features: Ac12FXyBbubE7ZsrFEb4VKL5PU_-XhTL2cDJ2Apjzdi3F4Mbeg7nmMtrlhi_wVI
-Message-ID: <CANiq72k1ENBFw7eNc5Kb5cFagysqfsHt9a=Tr4NxuVcV2TD=nQ@mail.gmail.com>
-Subject: Re: [PATCH 1/7] rust: block: update ARef and AlwaysRefCounted imports
- from sync::aref
-To: Shankari Anand <shankari.ak0208@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, linux-block@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 16, 2025 at 11:07=E2=80=AFAM Shankari Anand
-<shankari.ak0208@gmail.com> wrote:
->
-> It part of a subsystem-wise split series, as suggested in:
-> https://lore.kernel.org/rust-for-linux/CANiq72=3DNSRMV_6UxXVgkebmWmbgN4i=
-=3DsfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
-> This split series is intended to ease review and subsystem-level maintena=
-nce.
->
-> The original moving patch is here:
-> https://lore.kernel.org/rust-for-linux/20250625111133.698481-1-shankari.a=
-k0208@gmail.com/
->
-> Gradually the re-export from types.rs will be eliminated in the
-> future cycle.
+Changes since v4:
+================
+- v4 can be seen here: https://lore.kernel.org/lkml/20250507110444.963779-1-bhupesh@igalia.com/
+- As suggested by Kees, replaced tsk->comm with tsk->comm_str, inside 'task_struct'
+  where TASK_COMM_EXT_LEN is 64-bytes.
 
-Thanks for splitting it Shankari, that should help get this landed.
+Changes since v3:
+================
+- v3 can be seen here: https://lore.kernel.org/lkml/20250507110444.963779-1-bhupesh@igalia.com/
+- As suggested by Petr and Steven, used 'comm_ext' name instead of
+  'real_comm'. Correspondingly the macro name is changed to 'TASK_COMM_EXT_LEN'
+  for the 64-byte extended comm.
+- Rebased this patchset on linux-next/master, which contain the following patch from
+  Steven now:
+       155fd6c3e2f0 ("tracing/sched: Use __string() instead of fixed lengths for task->comm")
+- Accordingly, v4 drops the changes done for 'trace/sched' events in v3,
+  but retains the 'safe' memcpy' changes for other kernel trace users.
 
-Cheers,
-Miguel
+Changes since v2:
+================
+- v2 can be seen here: https://lore.kernel.org/lkml/20250331121820.455916-1-bhupesh@igalia.com/
+- As suggested by Yafang and Kees, picked Linus' suggested approach for
+  this version (see: <https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/>).
+- Dropped kthreads patch from this version. It would be sent out
+  separately, if we have a consensus on this approach.
+
+Changes since v1:
+================
+- v1 can be seen here: https://lore.kernel.org/lkml/20250314052715.610377-1-bhupesh@igalia.com/
+- As suggested by Kees, added [PATCH 3/3] to have a consistent
+  'full_name' entry inside 'task_struct' which both tasks and
+  kthreads can use.
+- Fixed the commit message to indicate that the existing ABI
+  '/proc/$pid/task/$tid/comm' remains untouched and a parallel
+  '/proc/$pid/task/$tid/full_name' ABI for new (interested) users.
+
+While working with user-space debugging tools which work especially
+on linux gaming platforms, I found that the task name is truncated due
+to the limitation of TASK_COMM_LEN.
+
+Now, during debug tracing, seeing truncated names is not very useful,
+especially on gaming platforms where the number of tasks running can
+be very high.
+
+This patchset does not touch 'TASK_COMM_LEN' at all, i.e.
+'TASK_COMM_LEN' and the 16-byte design remains untouched.
+
+Via this patchset, as Kees suggested 'tsk->comm' is replaced
+with 'tsk->comm_str', inside 'task_struct':
+       union {
+               char    comm_str[TASK_COMM_EXT_LEN];
+       };
+
+where TASK_COMM_EXT_LEN is 64-bytes.
+
+And then 'get_task_comm()' to pass 'tsk->comm_str'
+to the existing users.
+
+This would mean that ABI is maintained while ensuring that:
+
+- Existing users of 'get_task_comm'/ 'set_task_comm' will get 'tsk->comm_str'
+  truncated to a maximum of 'TASK_COMM_LEN' (16-bytes) to maintain ABI,
+- New / Modified users of 'get_task_comm'/ 'set_task_comm' will get
+ 'tsk->comm_str' supported for a maximum of 'TASK_COMM_EXTLEN' (64-bytes).
+
+Note, that the existing users have not been modified to migrate to
+'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
+dealing with only a 'TASK_COMM_LEN' long 'tsk->comm_str'.
+
+After this change, gdb is able to show full name of the task, using a
+simple app which generates threads with long names [see 1]:
+  # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+  # cat log
+
+  NameThatIsTooLongForComm[4662]
+
+[1]. https://github.com/lostgoat/tasknames
+
+Bhupesh (3):
+  exec: Remove obsolete comments
+  treewide: Switch memcpy() users of 'task->comm' to a more safer
+    implementation
+  treewide: Switch from tsk->comm to tsk->comm_str which is 64 bytes
+    long
+
+ arch/arm64/kernel/traps.c        |  2 +-
+ arch/arm64/kvm/mmu.c             |  2 +-
+ block/blk-core.c                 |  2 +-
+ block/bsg.c                      |  2 +-
+ drivers/char/random.c            |  2 +-
+ drivers/hid/hid-core.c           |  6 +++---
+ drivers/mmc/host/tmio_mmc_core.c |  6 +++---
+ drivers/pci/pci-sysfs.c          |  2 +-
+ drivers/scsi/scsi_ioctl.c        |  2 +-
+ drivers/tty/serial/serial_core.c |  2 +-
+ drivers/tty/tty_io.c             |  8 ++++----
+ drivers/usb/core/devio.c         | 16 ++++++++--------
+ drivers/usb/core/message.c       |  2 +-
+ drivers/vfio/group.c             |  2 +-
+ drivers/vfio/vfio_iommu_type1.c  |  2 +-
+ drivers/vfio/vfio_main.c         |  2 +-
+ drivers/xen/evtchn.c             |  2 +-
+ drivers/xen/grant-table.c        |  2 +-
+ fs/binfmt_elf.c                  |  2 +-
+ fs/coredump.c                    |  4 ++--
+ fs/drop_caches.c                 |  2 +-
+ fs/exec.c                        |  8 ++++----
+ fs/ext4/dir.c                    |  2 +-
+ fs/ext4/inode.c                  |  2 +-
+ fs/ext4/namei.c                  |  2 +-
+ fs/ext4/super.c                  | 12 ++++++------
+ fs/hugetlbfs/inode.c             |  2 +-
+ fs/ioctl.c                       |  2 +-
+ fs/iomap/direct-io.c             |  2 +-
+ fs/jbd2/transaction.c            |  2 +-
+ fs/locks.c                       |  2 +-
+ fs/netfs/internal.h              |  2 +-
+ fs/proc/base.c                   |  2 +-
+ fs/read_write.c                  |  2 +-
+ fs/splice.c                      |  2 +-
+ include/linux/coredump.h         |  3 ++-
+ include/linux/filter.h           |  2 +-
+ include/linux/ratelimit.h        |  2 +-
+ include/linux/sched.h            | 17 ++++++++++-------
+ include/trace/events/block.h     |  5 +++++
+ include/trace/events/oom.h       |  1 +
+ include/trace/events/osnoise.h   |  1 +
+ include/trace/events/signal.h    |  1 +
+ include/trace/events/task.h      |  2 ++
+ init/init_task.c                 |  2 +-
+ ipc/sem.c                        |  2 +-
+ kernel/acct.c                    |  2 +-
+ kernel/audit.c                   |  4 ++--
+ kernel/auditsc.c                 | 10 +++++-----
+ kernel/bpf/helpers.c             |  2 +-
+ kernel/capability.c              |  4 ++--
+ kernel/cgroup/cgroup-v1.c        |  2 +-
+ kernel/cred.c                    |  4 ++--
+ kernel/events/core.c             |  2 +-
+ kernel/exit.c                    |  6 +++---
+ kernel/fork.c                    |  9 +++++++--
+ kernel/freezer.c                 |  4 ++--
+ kernel/futex/waitwake.c          |  2 +-
+ kernel/hung_task.c               | 10 +++++-----
+ kernel/irq/manage.c              |  2 +-
+ kernel/kthread.c                 |  2 +-
+ kernel/locking/rtmutex.c         |  2 +-
+ kernel/printk/printk.c           |  2 +-
+ kernel/sched/core.c              | 22 +++++++++++-----------
+ kernel/sched/debug.c             |  4 ++--
+ kernel/signal.c                  |  6 +++---
+ kernel/sys.c                     |  6 +++---
+ kernel/sysctl.c                  |  2 +-
+ kernel/time/itimer.c             |  4 ++--
+ kernel/time/posix-cpu-timers.c   |  2 +-
+ kernel/tsacct.c                  |  2 +-
+ kernel/workqueue.c               |  6 +++---
+ lib/dump_stack.c                 |  2 +-
+ lib/nlattr.c                     |  6 +++---
+ mm/compaction.c                  |  2 +-
+ mm/filemap.c                     |  4 ++--
+ mm/gup.c                         |  2 +-
+ mm/memfd.c                       |  2 +-
+ mm/memory-failure.c              | 10 +++++-----
+ mm/memory.c                      |  2 +-
+ mm/mmap.c                        |  4 ++--
+ mm/oom_kill.c                    | 18 +++++++++---------
+ mm/page_alloc.c                  |  4 ++--
+ mm/util.c                        |  2 +-
+ net/core/sock.c                  |  2 +-
+ net/dns_resolver/internal.h      |  2 +-
+ net/ipv4/raw.c                   |  2 +-
+ net/ipv4/tcp.c                   |  2 +-
+ net/socket.c                     |  2 +-
+ security/lsm_audit.c             |  4 ++--
+ 90 files changed, 184 insertions(+), 165 deletions(-)
+
+-- 
+2.38.1
+
 
