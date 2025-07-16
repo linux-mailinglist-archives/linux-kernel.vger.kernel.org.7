@@ -1,244 +1,284 @@
-Return-Path: <linux-kernel+bounces-733220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60529B071B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:31:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BB7B071BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A04BE1C2256B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70E764E4688
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277602BE647;
-	Wed, 16 Jul 2025 09:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA282EE96D;
+	Wed, 16 Jul 2025 09:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EaQpLDdc"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="kiN4lXFF"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0778226A0DF
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50332727E1;
+	Wed, 16 Jul 2025 09:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752658306; cv=none; b=iCiYPAPYw2U7s5fqzJpJrjCOU+mVoH+tVq2e/mzp+Em/u6Cow17yb4oCFhmcg++DE1uyUTwLRp1edzdUl+XrAqyCb3nsIBEWV1mfQ0KJkhT6QjMOwA9GrcCCZ7wDgYwIEGvZR2NBhGeCXyOPQOZ8+rU1WR0lPfHQU2IbsgPrZts=
+	t=1752658322; cv=none; b=lq3Y+pCD2YKcFv3fFpVLLX6mrB9P3VtC3XmuzlgZ2AIhvZvRTBJ7QxwK+NX26APnEgunO+PDVkvP8aPyHmQQ1lqk+nrXbW3uLD36RuOZW1A3SFPI/BTS7UW5qkz1Lqb5HThX2cdWIjcVlUeRM7nC4RRc3TT4KtVEObX6xwoVfBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752658306; c=relaxed/simple;
-	bh=LnZtHSBOfuaGiA0+J2QyiVh2FhpEgdY39u4ISd39VwQ=;
+	s=arc-20240116; t=1752658322; c=relaxed/simple;
+	bh=yKqWutVQoIXJSjpvgYXXyg2Dmb9CvmAsJ8fZvEUtISk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TZ0AXf0dckaLnNQf0omGXtgpXP7d8ybCFZvvaZ7y9l7MD9R7iQE1F+GUappXHLOWZj2LEuG1us576sO9gZwg6du2JcJt7NNXubT+oORe1LARFGWV+LPImwWAewm1UrqFJHzExm8ggQTWRQEaQD+hn3QEnHut9zupbhRFCrzstbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EaQpLDdc; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b34a78bb6e7so5131219a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 02:31:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=t8kQ9H7pp9SDbt2Fj2e27skPMDwjIyhI0+BoGqqeP7qv9Bq4RTtj6FVwKqqItaAHtb3Gkon5kHmU0tqhfbdnfhFBwDeA27vvFKhpRS4khnn/LWVHlBiGI7vG4Z05yP+GNICLbN7d8tNIEZkRfwbqwHRnUdQOqIViRHChmqbeAn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=kiN4lXFF; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23508d30142so67832755ad.0;
+        Wed, 16 Jul 2025 02:32:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752658304; x=1753263104; darn=vger.kernel.org;
+        d=googlemail.com; s=20230601; t=1752658320; x=1753263120; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4/TD0xwgjUcH0nigdFj6tR511cNw2GjnqML50p5eZPI=;
-        b=EaQpLDdcUOEBygoHpXE0Oe314SJaypW/oz5hUrhEqGvFlbu/B9UulOxOIFRbbgaYXn
-         j/vNQqqyfo3hbYhc8i5eiZhp0LKFXZrUyUNvCWhl62MBO0WkDDkUReG6rSDIwzkX3396
-         bUzxYPogs6uRu1Kj1vTb1ZH5IkQgsKzkVG62YrgYt+dIrpgHHov9900MwwAYAxuSwLgK
-         jAK0dVOLm+X/gIGP+Fud2enGirPmDq73GKSkeM9dGRD4DKluKFGrBpvxJ9c39AbFHuOW
-         IwczdEGqCLGlGAVdIGRXw9dj9Jd0QvnT0mxO8CTni21iKVglSoYYstWgNu+lDQXjqJdv
-         hDKg==
+        bh=SnwkZ9R1fm4X7i76UqKywh7B6iPRGABfvKieGNC/2LM=;
+        b=kiN4lXFFz7SCEIwRAwO5qlx0TjbC6TZGXzmE6xvHcNWCOkhrQ2eC/HrCncCaDqrrNG
+         IzJbiS4RuylQXx6tzcq736mZMHhjxcp83bCnVJ0qVytCD4XjA8l48FEjr7Ajq4pZdF0z
+         gWsAM8D7UwW31GOxSYT8u8ifVycI5rnelOqK/iXtVmdGwC+WSH9zrG+G3r/kmvOrt+8g
+         T5cNIslfmBkVpaK7DwsgRrgfpwmts6abCzcEW7ev4NEiAgzxBLBX1WPo5xbOfEHMbAaP
+         5kUmD2hXs0I2Sx6SHHjULCvp7dYAN5yY7GZCysNcTxDKSlK4C8F/5I/Hvd2vAx4aBCBO
+         BwbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752658304; x=1753263104;
+        d=1e100.net; s=20230601; t=1752658320; x=1753263120;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4/TD0xwgjUcH0nigdFj6tR511cNw2GjnqML50p5eZPI=;
-        b=F/F/bs/FjNf30vM/qUqgFrPAuGKnIdIzZjby3uEoSmrKccZ3CyLFO7RCQyiQWVWD/N
-         NZTbz98EFDLPgcT0OBjO0zBURiJLgrd3LVEM9SV9Pt8dju0Laq2dz9qYsqtEA12yfFfw
-         t7PGtEU2TJQEyZ4jCvWZOUtSuybbU9Q6voYzM0sSvaO7TXtEM/CsG419nJVZNzIl8i8h
-         ZTbzlnZO04up6x5E3CM/xfSu2K8opN5O+HqTMdUVtpGphccJtcPSDDI2NMZ7hm88GnUd
-         RatzomusR68B/xBNzztT7PJAtvmZdOXZCzZoAw+myvrUNtqO/8hRNHY/EnEZtxntWl2h
-         Qh2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXZqU7Tq136lGc/smTNTOHBs7mc/iqw8IqQaTFjRJ+MKTBHW3sFAk7HlMUHc/eHXeOvHLR7Cg2bpi/K9hQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+udpMhoyvzNdzebMT7uK+g+0JBPXFmExQBHWK5CB4exBy05EE
-	pT/v6oSzYHRKgshkWfzBzMETye3WQsoZSGURuIFgqgQfHTg7vrBo8CMLTpsOGpugdrKGW6m5u47
-	txXmPmhZDUAbrUpr0MxofnJ5kIvEd/+Lk0TxbXBoFBTAFy/UcXrwFzlM=
-X-Gm-Gg: ASbGncv1UOghmg/PAEt6ek9KHQhM88b2p+rdAP0komys7vMAGUlME2p5JIEbWZfRrPx
-	hhrpUXXk7HWjDqnhOeI+a/qhYOQMtj+aaraWnn8mNBjMZyAIlzLbrYv8wsXcDJYrMvAxI4TF9M8
-	BrV+kS2VLg7QePR0i/K6yGrC8/Q5S8V7fxqCkUy1hX6q/l9fx20ASff0d863uoynIbpRzbEt7M7
-	i0uZL88vWKlg+bAVyS23lVvGXtKv3zdI9G3QVUjlxL5FrL4+/s=
-X-Google-Smtp-Source: AGHT+IHHFBG42P6rU2Vz5RaFMP1ftBXPkAZqxVb12Un6mixuudNNh6AfVCr8p4OgBQ3GuE5bUiVIkw221QpnXt/jYX8=
-X-Received: by 2002:a17:90b:5385:b0:31a:bc78:7fe1 with SMTP id
- 98e67ed59e1d1-31c9f42ea51mr3362243a91.18.1752658304194; Wed, 16 Jul 2025
- 02:31:44 -0700 (PDT)
+        bh=SnwkZ9R1fm4X7i76UqKywh7B6iPRGABfvKieGNC/2LM=;
+        b=DRcxlf3DGiKUzPmWARWCyKJme8GCKRL1cITeaM6pAMNdM9vOJdcmW655q+gphD/NuJ
+         xV5OsOXcddjsevtLd3eWaKZFeCG9X7EaTQL3zOcHXMnkGTM7hzsrD4IZCtXsl5+dEhgJ
+         Z+v9QUtDYU0i+9G5E0yavMrE0jkZ+BUxiBpcyAFwdjR2Q5hDbQ/7sz4lZLELQ4C/xfrM
+         GRs9B14z53v+7JGEzXGEeLaEcEzqyD+zWEgj4KMoaWl4jc5VkOY0yioseUV8VMrBGZaE
+         a62md8BXqt57TQ/pDrNktsbZrMlqdaLWuExJAOJgnzllLPShBaGKQzpU8U8MTgAD9Clo
+         OOgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmllpi7PqEF8khftVl+54JSM/CX95JYAQZ8/Kh9hfcyfkfahV/ucQNzrLeqC22nTW4BhEN+WpNLugnwCU=@vger.kernel.org, AJvYcCV7WDeedXpWO2Q95jRMIp02+6bMZPzxIKcOkQDbZQfSDUtrPM0bpXBrI0GSE/YXcETIJNRNjIyn7n2E@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPoHZ4xj9y35Ki1RhEiw1tlzqoUGGxrPniVzGacfwTdJSb7dFx
+	NBfb/44dqo/xXpNet1jq/exI8e5sEmLYqA7MewTXK7PM0XwqlBn/QgkLDboZjc7HjjH6xSyEpbx
+	Seeoa5lfKBWtBarg8b9bQCA72HPWeckh0qp0j
+X-Gm-Gg: ASbGncvmLy2qtlZd4/iEU4JE7hgQs8R6xEU8/s2MJB2auNze9Kq4uSyVR2mNxgCS0+C
+	Qq8DwMLtpF4R4nktqWga4MaSqpQl+hJZZ7ZWyHHZ952hZECLS9R6InV1kjma2rYpSqYP8EPOKJF
+	5dgExKpo5+HQH0Ok05HxGU6x9tzcW9nt4xi2RnAVqe4sn0nspFIQzO5jyRCwtgK3MjV9D240NPY
+	/Eo7SNo5aC0gjqubnMjs4rwBhgkUgQl2jcezcE7
+X-Google-Smtp-Source: AGHT+IGXU0jh38lV+x+5+TbQMyosFk1wul+7Gnz5Q4UXJIBbJoK9XTVMjzaJpGhBXpz0DfkBEfNM7YHcSqP0sWFBPXE=
+X-Received: by 2002:a17:902:ef08:b0:23d:d9ae:3b56 with SMTP id
+ d9443c01a7336-23e256b7467mr31603105ad.22.1752658319993; Wed, 16 Jul 2025
+ 02:31:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715130814.854109770@linuxfoundation.org>
-In-Reply-To: <20250715130814.854109770@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 16 Jul 2025 15:01:32 +0530
-X-Gm-Features: Ac12FXxSgVANGsV-qZo2T8nhVt654kQHynZ9ySnyMDGf6j4ZzdPO2yGy7ih9qPU
-Message-ID: <CA+G9fYvV0sx8g83QVOzjBhoZ77fyBWJfmLte-voa=AgLY7K4nw@mail.gmail.com>
-Subject: Re: [PATCH 6.15 000/192] 6.15.7-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
+References: <20250204135842.3703751-1-clabbe@baylibre.com> <20250204135842.3703751-2-clabbe@baylibre.com>
+ <aCHHfY2FkVW2j0ML@hovoldconsulting.com> <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
+ <2025071631-thesaurus-blissful-58f3@gregkh> <CAFBinCAMGR2f4M1ARKytOwG1z9ORcD-OMNLH2FqZHb+tOm0tEQ@mail.gmail.com>
+ <2025071613-ethics-component-e56d@gregkh>
+In-Reply-To: <2025071613-ethics-component-e56d@gregkh>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Wed, 16 Jul 2025 11:31:49 +0200
+X-Gm-Features: Ac12FXzsx3Iwjc93Y_xAihZbyopvJXmbfLDHrnjW_t-ULvyPYxLbLtVYNYTiLD8
+Message-ID: <CAFBinCA8cMP3o483c40RjHkMAEt4RCmL6uCTTk5DPmrNVN6_NQ@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Johan Hovold <johan@kernel.org>, Corentin Labbe <clabbe@baylibre.com>, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, david@ixit.cz
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 15 Jul 2025 at 19:08, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Wed, Jul 16, 2025 at 10:57=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
 >
-> This is the start of the stable review cycle for the 6.15.7 release.
-> There are 192 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Wed, Jul 16, 2025 at 10:28:22AM +0200, Martin Blumenstingl wrote:
+> > On Wed, Jul 16, 2025 at 9:44=E2=80=AFAM Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+> > >
+> > > On Tue, Jul 15, 2025 at 11:20:33PM +0200, Martin Blumenstingl wrote:
+> > > > Hi Johan,
+> > > >
+> > > > I'm excluding comments that are clear to me in this reply.
+> > > >
+> > > > On Mon, May 12, 2025 at 12:03=E2=80=AFPM Johan Hovold <johan@kernel=
+.org> wrote:
+> > > > [...]
+> > > > > > +     if (ret) {
+> > > > > > +             dev_err(&port->serial->dev->dev,
+> > > > > > +                     "Failed to configure UART_MCR, err=3D%d\n=
+", ret);
+> > > > > > +             return ret;
+> > > > > > +     }
+> > > > >
+> > > > > The read urbs should be submitted at first open and stopped at la=
+st
+> > > > > close to avoid wasting resources when no one is using the device.
+> > > > >
+> > > > > I know we have a few drivers that do not do this currently, but i=
+t
+> > > > > shouldn't be that hard to get this right from the start.
+> > > > If you're aware of an easy approach or you can recommend an existin=
+g
+> > > > driver that implements the desired behavior then please let me know=
+.
+> > > >
+> > > > The speciality about ch348 is that all ports share the RX/TX URBs.
+> > > > My current idea is to implement this using a ref count (for the num=
+ber
+> > > > of open ports) and mutex for locking.
+> > >
+> > > How do you know if a port is "open" or not and keep track of them all=
+?
+> > > Trying to manage that is a pain and a refcount shouldn't need locking=
+ if
+> > > you use the proper refcount_t type in a sane way.
+> > >
+> > > Try to keep it simple please.
+> > I'm currently refcounting from usb_serial_driver.{open,close}
+> > The additional challenge is that I need to open two URBs at the right
+> > time to "avoid wasting resources". At least in my head I can't make it
+> > work without an additional lock.
 >
-> Responses should be made by Thu, 17 Jul 2025 13:07:32 +0000.
-> Anything received after that time might be too late.
+> Urbs really aren't all that large of a "resource", so don't worry about
+> that.  Get it working properly first before attempting to care about
+> small buffers like this :)
+I understood that this is a requirement from Johan, he wrote (on May
+12th in this thread):
+> The read urbs should be submitted at first open and stopped at last
+> close to avoid wasting resources when no one is using the device.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.15.7-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.15.y
-> and the diffstat can be found below.
+> I know we have a few drivers that do not do this currently, but it
+> shouldn't be that hard to get this right from the start.
+
+The original approach was to submit these URBs in .attach (e.g. during
+probe time) and kill them in .detach
+
+> > The following is a simplified/pseudo-code version of what I have at
+> > the moment (which is called from my ch348_open):
+> > static int ch348_submit_urbs(struct usb_serial *serial)
+> > {
+> >   int ret =3D 0;
+> >
+> >   mutex_lock(&ch348->manage_urbs_lock);
+> >
+> >   if (refcount_read(&ch348->num_open_ports))
+> >     goto out_increment_refcount;
+> >
+> >   ret =3D usb_serial_generic_open(NULL, serial_rx);
+> >   if (ret)
+> >     goto out_unlock;
+> >
+> >   ret =3D usb_serial_generic_open(NULL, status);
+> >   if (ret) {
+> >     usb_serial_generic_close(serial_rx); /* undo the first
+> > usb_serial_generic_open */
+> >     goto out_unlock;
+> >   }
 >
-> thanks,
+> That's odd, why use NULL for a tty device?  Ah, we don't even use it for
+> anything anymore, maybe that should be fixed...
+usb_serial_generic_open() doesn't use the tty internally - which is
+why passing NULL doesn't matter now (but who knows what's going to
+happen in future, so better move away from it).
+
+> Anyway, just submit the urbs, why use usb_serial_generic_* at all for
+> the status urb?  That's not normal.
+I can either submit the urbs myself or use usb_serial_generic_submit_read_u=
+rbs()
+
+> And are you trying to only have one set of urbs out for any port being
+> opened (i.e. you only have one control, one read, and one write urb for
+> the whole device, and the port info are multiplexed over these urbs?  Or
+> do you have one endpoint per port?)
+CH348 provides up to 8 serial ports using these four endpoints, so
+multiplexing is going on:
+- one bulk out for TX (see struct ch348_txbuf)
+- one bulk in for RX (see struct ch348_rxbuf)
+- one bulk out for CONFIG handling (see struct ch348_config_buf)
+- one bulk in for STATUS handling (see struct ch348_status_entry)
+
+> If you are sharing endpoints, try looking at one of the other usb-serial
+> drivers that do this today, like io_edgeport.c, that has had shared
+> endpoints for 25 years, it's not a new thing :)
+My understanding is that io_edgeport is submits the URBs that are
+shared across ports outside of .open/.close.
+So this will be a question for Johan: am I still good with the
+original approach - or can you convince Greg that a different approach
+is better?
+
+[...]
+> > > > > With this implementation writing data continuously to one port wi=
+ll
+> > > > > starve the others.
+> > > > >
+> > > > > The vendor implementation appears to write to more than one port =
+in
+> > > > > parallel and track THRE per port which would avoid the starvation=
+ issue
+> > > > > and should also be much more efficient.
+> > > > >
+> > > > > Just track THRE per port and only submit the write urb when it th=
+e
+> > > > > transmitter is empty or when it becomes empty.
+> > > > I'm trying as you suggest:
+> > > > - submit the URB synchronously for port N
+> > > > - submit the URB synchronously for port N + 1
+> > > > - ...
+> > > >
+> > > > This seems to work (using usb_bulk_msg). What doesn't work is
+> > > > submitting URBs in parallel (this is what the vendor driver prevent=
+s
+> > > > as well).
+> > >
+> > > Why would submitting urbs in parallel not work?  Is the device someho=
+w
+> > > broken and can't accept multiple requests at the same time?
+> > I don't know the reason behind this.
+> > These are requests to the same bulk out endpoint. When submitting
+> > multiple serial TX requests at the same time then some of the data is
+> > lost / corrupted.
+> >
+> > The vendor driver basically does this in their write function (very
+> > much simplified, see [0] for their original code):
+> >   spin_lock_irqsave(&ch9344->write_lock, flags);
+> >   usb_submit_urb(wb->urb, GFP_ATOMIC); /* part of ch9344_start_wb */
+> >   spin_unlock_irqrestore(&ch9344->write_lock, flags);
 >
-> greg k-h
+> that's crazy, why the timeout logic in there?  This is a write function,
+> submit the data to the device and get out of the way, that's all that
+> should be needed here.
+From what I've seen during my tests:
+- we fire the URB with TX data
+- the device receives it and puts the data into a per-port TX buffer
+- it indicates that it's done processing the URB
+- the TX buffer is then written out (the host can move on do something else=
+)
+- the device signals to the host (via the STATUS endpoint) that it has
+written out all data from the TX buffer
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+With that timeout logic my understanding is that they're trying to
+catch cases where the last step (STATUS signal) did not work (for
+whatever reason) so that the host can continue sending more data.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > If you have any suggestions: please tell me - I'm happy to try them out=
+!
+>
+> Try keeping it simple first, the vendor driver looks like it was written
+> by someone who was paid per line of code :)
+The original approach when upstreaming the ch348 driver was just to
+submit TX URBs (without any custom code, just letting usb-serial core
+handle it).
+Corentin and Nicolas even wrote test programs to help reproduce issues
+we've seen with the initial driver versions.
+In other words: I don't know how to simplify our (to be upstreamed)
+version without breaking something :-(
 
-## Build
-* kernel: 6.15.7-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: e6001d5f79448ece8e204c0df46072a010b00f6c
-* git describe: v6.15.6-193-ge6001d5f7944
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.15.y/build/v6.15=
-.6-193-ge6001d5f7944
+Also I'm not paid for this driver (at all - that also includes payment
+per line of code), so there's no incentive there ;-).
 
-## Test Regressions (compared to v6.15.5-179-gb283c37b8f14)
 
-## Metric Regressions (compared to v6.15.5-179-gb283c37b8f14)
-
-## Test Fixes (compared to v6.15.5-179-gb283c37b8f14)
-
-## Metric Fixes (compared to v6.15.5-179-gb283c37b8f14)
-
-## Test result summary
-total: 306856, pass: 279725, fail: 7552, skip: 19579, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 138 passed, 1 failed
-* arm64: 57 total, 56 passed, 0 failed, 1 skipped
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 27 passed, 7 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 25 total, 25 passed, 0 failed
-* s390: 22 total, 22 passed, 0 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 49 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* modules
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Best regards,
+Martin
 
