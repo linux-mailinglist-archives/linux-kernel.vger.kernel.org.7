@@ -1,88 +1,137 @@
-Return-Path: <linux-kernel+bounces-734016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC516B07BFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:28:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A28B07C06
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34BED1C2820D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14FBC3B8295
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1732F6F8D;
-	Wed, 16 Jul 2025 17:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901F82F5C55;
+	Wed, 16 Jul 2025 17:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FCFmwb9y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uwl0O+8P"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2325F2F5C43;
-	Wed, 16 Jul 2025 17:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79C8262FF0;
+	Wed, 16 Jul 2025 17:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752686891; cv=none; b=P8EYASltxFkghhWeGzfLFn/95u7DIh7OPmeE/V0Z6JlVOq1gJTDilSypPhDS8G4Yvd2HnGRvYPbjHKGf0IJNUdpfJZX3CFS7zjkd/jYmTuNTiEKgH6EmPaPn6hpDfTamgS7lKSCjqJ/BOwCjXFwnDTfW/1uHTAhorbopjiuWyk4=
+	t=1752686965; cv=none; b=Bk+ifki/OuEqWkTffiy0PKF9aVmVt4Fu7BX9DZFHZVYBObuWxYVhYUu4WsZsU3by80yG9iWwus/KSJCXvfAAymvz/7+Aai0Nw90WOSzueDzsHBDd1PRkDlr1J7m6xcbSRboe/SdiuVaCP6mOEsOGZRqZF1ZogTRksiEAx4CWRCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752686891; c=relaxed/simple;
-	bh=7fa0uYdNMApfcLf1FOlEz+DkNjW/q/Z4QMKW0OGKukI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9V9DKA0LJGMwEAjBbv10THH3r4KYl1LQIG9Hzy4FW96tocs3bBNfmBC4MjvVNhRFn7P71AUWlR1dpkAohrHQYqXFxTsgimbAf+pa3BVNe/oBD2HE+lTjDpqkN2SvIzS5mmOqQDAxGUmwMJrZquNJmUxhBlXU9e9IFkXuUhSv4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FCFmwb9y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A738C4CEF0;
-	Wed, 16 Jul 2025 17:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752686890;
-	bh=7fa0uYdNMApfcLf1FOlEz+DkNjW/q/Z4QMKW0OGKukI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FCFmwb9ybcKO3i37EoZqCJaZqZ0/ldDTbbm1jXDx7eXTHE0Z4e8ofY1poq08kS20O
-	 MujBhvdFddIJK71JNLrmW0jgKFDpZ1DwUh1Whd2VmmpqqlPIeDZDmwL5dZi3PWMIRS
-	 VTpMBdRn/onSDcC+5AhZA2z8H045oO2XgYWnykIY=
-Date: Wed, 16 Jul 2025 19:28:08 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: abdiel.janulgue@gmail.com, daniel.almeida@collabora.com,
-	robin.murphy@arm.com, a.hindborg@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, lossin@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, bhelgaas@google.com, kwilczynski@kernel.org,
-	rafael@kernel.org, rust-for-linux@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] dma::Device trait and DMA mask
-Message-ID: <2025071648-aflutter-crinkle-729c@gregkh>
-References: <20250716150354.51081-1-dakr@kernel.org>
+	s=arc-20240116; t=1752686965; c=relaxed/simple;
+	bh=/CRxn40u4I7Y3Igo8F7RLHEk9wLiNnQv+7XGP+TdYDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lArrFvjkfAnu6RhT/AnmzEZpH1yX4MRObqLpGQGOxec4xHqYNCm4HoehV5Y+b/EUSEZPLFalDSBIUUEzuxabqqVrVO3FA4pH74ZVeoEih7wQBM47eH1IUbpCz5eFjGpoBIQbw54Uok9hk45OgMxcMwnvZd5SS0A2PrtnT1ynYKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uwl0O+8P; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234d3261631so568345ad.1;
+        Wed, 16 Jul 2025 10:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752686963; x=1753291763; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EeNLgPU1RuJx4DVnlAIwci5Aq29THoN9KPCiSfsR7Ek=;
+        b=Uwl0O+8PTuGxtmurFJNVw3vjvtqDDNdkuSfsO2fT6RcEzlB/Gw7H9qC7YL0X8YAhJs
+         RuzgINL0wphT9AW0iRFIbzhB5bRNbwWEz562q7Q05wIDftJa5lGHa5eiE+dPqR5oVtVD
+         OVu6UuqfQRGmDBHF01F0xKPZRkiJf4VTBqVPj4ErDYuSnZsiHdtbglCxNc7/S/SOwyTR
+         gNKB4DNi67VXM4lELv/XNMM4F71CNh53nmrpsKFofK0ud6F7lQ6Dz+5je6l52YG1uyix
+         lmGm26RaBAP+318ox5oblmRjJqX2AWjxn2lFPilzJkvxx1fnrfGj7af+Web8oVcRNqFX
+         rfHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752686963; x=1753291763;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EeNLgPU1RuJx4DVnlAIwci5Aq29THoN9KPCiSfsR7Ek=;
+        b=cqCorNpTIdiu+qJ/OYsWmVs3W8n8c5LLdDmkrKbU5HWgIdHRGiFT1AO5tRzlX9BTZe
+         TbSYw2ezl3G/QVAj1VLdmLB4bLOT9w0ko2rhDyiEouWOiH7DYuUbBCdh47iY9xnfZsB2
+         e+Aj6nbJrEUNXYsQDtxWUT8CzChPCKYrfb6C7LbViGENwaBywJglWsf1pZy7GrLgqjmN
+         g/l/61APTDeXms/YYGLh5yQKT1ylsax8JPk1wUWy+udI0fIJU/XIIR4kmXR33NPzSb3T
+         fP9QOg68sPSaZXIay2TYM0DcIUe9+VDjN2NBqLTOjAR/561WhIq6cQKzJu+fMrG4zayE
+         xxCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpDHMpHoppTYNwUbFdegtinUh3XfpW6c/GaIlK3c20jruF1+RtsR6/4Stux0x9sBWPJYo=@vger.kernel.org, AJvYcCUvvadx7wSByJXa8BcGdKt2RuUKn67V3BO3zMgFG57fHQrcOVcwIvP5WFdm1kijUymbOi3vcf3TFkhhZA==@vger.kernel.org, AJvYcCXSrlx0b39z/07vfSz6Miz98wSI24YFVf9ZSlcD2G8H79ijNOTEB+DBhFMQ3d52vfxebbc8d2G3Xa3xB9z0@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX5Xz79StCa2b9P6cBhgDM7CrRccfwLYVT5cKdCAAr+IQFnI3P
+	BjFwest/lezc2jH6nDjOCyIdlLYNAsVKurfop+AIAtBXpaUSQujQ68ir
+X-Gm-Gg: ASbGnct9u1fj2UF+yVmV8L3ymdWaxH1vTKWdtq3iYrdQwArreV2lDF/olBIaVG0Y5DP
+	JkbyXh+hXL8caSfCLVKmrFMEAa3AUbTKdZ78mCFSm6Clt1KPvGOfPYSLRa2p5wIZkl8Nn/0AL9D
+	Yp2LFkEd7Ghw7Ef1OhGr1OzUtoOIiG50xnACxMc4iqDhPlzVJG+a2Of7OLgoABxuJO2Nd+Jop2r
+	DV7z/7V6Os7U8JmyJV1RHgErBAsbLP+eg1HQadzmJwj50i7UDEWcUQu+gh04IN6Eo4Nf1PEXa+q
+	9c5V0pdawzppmuW9Qsr81dc51VMLFpVCJN145sVsiTY+JaeqSoYGFCQMl8kBgmmw3rs2afzKF87
+	k8duR3NX6woiLOYQ7q2Db5g==
+X-Google-Smtp-Source: AGHT+IFrla4A/7rNoDTY22sMyvGzQlh9NwucP/BhuoqqwEBTVe8gcRHnNT5E8Q/CYhCQFDV2lZpm2w==
+X-Received: by 2002:a17:903:2a88:b0:235:655:11aa with SMTP id d9443c01a7336-23e24f522dbmr46832995ad.39.1752686962871;
+        Wed, 16 Jul 2025 10:29:22 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4359b2dsm130406275ad.206.2025.07.16.10.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 10:29:22 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>
+Subject: [PATCH] mips: kvm: simplify kvm_mips_deliver_interrupts()
+Date: Wed, 16 Jul 2025 13:29:17 -0400
+Message-ID: <20250716172918.26468-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716150354.51081-1-dakr@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 16, 2025 at 05:02:45PM +0200, Danilo Krummrich wrote:
-> This patch series adds the dma::Device trait to be implemented by bus devices on
-> DMA capable busses.
-> 
-> The dma::Device trait implements methods to set the DMA mask for for such
-> devices.
-> 
-> The first two bus devices implementing the trait are PCI and platform.
-> 
-> Unfortunately, the DMA mask setters have to be unsafe for now, since, with
-> reasonable effort, we can't prevent drivers from data races writing and reading
-> the DMA mask fields concurrently (see also [1]).
-> 
-> Link: https://lore.kernel.org/lkml/DB6YTN5P23X3.2S0NH4YECP1CP@kernel.org/ [1]
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/dma-mask
-> 
-> Changes in v2:
->   - replace dma_bit_mask() with a new type DmaMask
->   - mention that DmaMask is the Rust equivalent of the C macro DMA_BIT_MASK()
->   - make DmaMask::new() fallible
->   - inline DmaMask methods
+The function opencodes for_each_set_bit() macro, which makes it bulky.
+Using the proper API makes all the housekeeping code go away.
 
-I like the DmaMask stuff, nice!
+Signed-off-by: Yury Norov <yury.norov@gmail.com>
+---
+ arch/mips/kvm/interrupt.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+diff --git a/arch/mips/kvm/interrupt.c b/arch/mips/kvm/interrupt.c
+index 0277942279ea..895a6f1781fd 100644
+--- a/arch/mips/kvm/interrupt.c
++++ b/arch/mips/kvm/interrupt.c
+@@ -27,27 +27,11 @@ void kvm_mips_deliver_interrupts(struct kvm_vcpu *vcpu, u32 cause)
+ 	unsigned long *pending_clr = &vcpu->arch.pending_exceptions_clr;
+ 	unsigned int priority;
+ 
+-	if (!(*pending) && !(*pending_clr))
+-		return;
+-
+-	priority = __ffs(*pending_clr);
+-	while (priority <= MIPS_EXC_MAX) {
++	for_each_set_bit(priority, pending_clr, MIPS_EXC_MAX + 1)
+ 		kvm_mips_callbacks->irq_clear(vcpu, priority, cause);
+ 
+-		priority = find_next_bit(pending_clr,
+-					 BITS_PER_BYTE * sizeof(*pending_clr),
+-					 priority + 1);
+-	}
+-
+-	priority = __ffs(*pending);
+-	while (priority <= MIPS_EXC_MAX) {
++	for_each_set_bit(priority, pending, MIPS_EXC_MAX + 1)
+ 		kvm_mips_callbacks->irq_deliver(vcpu, priority, cause);
+-
+-		priority = find_next_bit(pending,
+-					 BITS_PER_BYTE * sizeof(*pending),
+-					 priority + 1);
+-	}
+-
+ }
+ 
+ int kvm_mips_pending_timer(struct kvm_vcpu *vcpu)
+-- 
+2.43.0
+
 
