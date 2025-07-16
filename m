@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-733887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A69B07A41
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4815FB07A42
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDDBF18822F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:48:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1182564A5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BD22F50B5;
-	Wed, 16 Jul 2025 15:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0892F5495;
+	Wed, 16 Jul 2025 15:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="e2zOuYjt"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cQ+RHXS1"
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEA52641CC;
-	Wed, 16 Jul 2025 15:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C6726E143;
+	Wed, 16 Jul 2025 15:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680880; cv=none; b=inIWTTRTzBASqBgUZgW7qKYH8OPb2xbg5rO3uygZY4JsB0Pxmnc/sZZfrFoi2Q9HjTHxAUyxCmNnNaulkDJ1q5UBG36u/oI1T66od2UlfwYythiNZmOPs8Z5aKB4kCM0z28MxnQ1x6Pvs6dPG8TG589BTzEHpOsd2tVUehe783c=
+	t=1752680881; cv=none; b=W+AAUdcOaDkR3qXvvqoo9XNPI2dXW1cVV4nTwSk/XXKl1SPLSuu3OKBt6QGwv73DlM0tHwI/Q7b+df/etsAFEi5KJAOlhFXGCF4vEvoJcserlDLApkigUFq+9RKWRhhgK0c5X0yJEXn9ks/5airbj1A3ZS/5klbzfgdceHLmvwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680880; c=relaxed/simple;
-	bh=+D4AuuieIDiT5yylBAhD4ODzcVXVO2cpEOlH+fDrBfg=;
+	s=arc-20240116; t=1752680881; c=relaxed/simple;
+	bh=TdjdAZ5Qcl70q89Fsx6WtjY1GVu0RGAg65fTIwd72lA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eoksCFhAfOQDCj9ZFKHO1aDuXrji1oJDNg/9NFQOvREEXFKE8IjDGepUqJ0aTroGmuikw+/1aYyTvvP6/i+TMedIjcbvO/zL1JmCUR7L8bEqMwN+Gz4WcmyxQD4QEOn/Igfyy+XscsyH1tluzr0pY1C9AxulDk+ASJcNNcZgwuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=e2zOuYjt; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=R3oXLSdUAYrBufxCqARHD3L4J64bXpyOAwFqmHBfrE9WZCtNUIW2+BlEZcR0RWfYZFtVF2UPu9miSJOoebdk5UcS3ak9xH2+41fu60QXgNWeKUClRlZl1543DfxPJEzfQ4vNBnVzqynKv0l0y6nS6WMWWHSzmA3ASNDT1yUABf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cQ+RHXS1; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1098844464;
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 774394446E;
 	Wed, 16 Jul 2025 15:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1752680871;
@@ -38,15 +38,16 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=P+RGyc+JZolUqNUA4hKmoPbrC+oOxx/SPJY9oZeZX2s=;
-	b=e2zOuYjtfbnikpFEqe0XJ71u+xT/nkuuZenq3i4Yfg4Y5eUm1N9avSxzRdCip3j+Qfeg7y
-	x20q807eSWfLOL2vyjSE3katRU6WUgOYezzINu9hP8w6bg5pEUeoLh1ZL5SgkMKcQlqnj2
-	L5MyBavSpiKzLYu6VzyhqZqN+L6IeEYn5PepUMdt8Sykh88Ja3IIsnSvr7xrrI4bzzcZHL
-	9EJzesV3GSkVrg/Js7I3ezjxZgAaRPBc5LqEXdKcyyM3yO1ItOhUjysdceEFEFljqayFGV
-	FdBBrJQHBh/6LB0V01PGSTZtc42rtdhy70z5BZWgsOD711jmimlZ2pdKXSKbiw==
+	bh=cjdubYPyuEPfJm3WKT23YKO+sTW4CBP0Ei8HQieSzRA=;
+	b=cQ+RHXS1Z/EhPM5DLfq30qSBt+nPcw1EVHf0N3khBN933OI+dhM/XZ/LUuYiljkTUX246h
+	SY0daJSUfFtVBUsU5ixzfu0FYCdRXHX1FbtJyNNp8DZZ3fbWnbePWdQAdAmVNziEPXw1ui
+	VhiEA6z/a2FSPVD9u6kwY3bcurO7qnK/LBCYnpzfMhehjfOq2p0WkSlbMXQS+t32hYDZem
+	khucJY/RGMlxPzraAYiArTaf0pEPmQhSlwaUpPlz+slzc8gXL+2lRVnJEGQnk/HBpiqBbc
+	Ee7vaVSyOxPFEmPzFvXciPfjBNUtXt8EwfH1rihtLk28BNKIx2Q4QnXoyaFFEw==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Wed, 16 Jul 2025 17:47:16 +0200
-Subject: [PATCH v3 5/6] mmc: core: add mmc_read_tuning
+Date: Wed, 16 Jul 2025 17:47:17 +0200
+Subject: [PATCH v3 6/6] mmc: sdhci-cadence: implement multi-block read gap
+ tuning
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250716-mobileye-emmc-for-upstream-4-v3-5-dc979d8edef0@bootlin.com>
+Message-Id: <20250716-mobileye-emmc-for-upstream-4-v3-6-dc979d8edef0@bootlin.com>
 References: <20250716-mobileye-emmc-for-upstream-4-v3-0-dc979d8edef0@bootlin.com>
 In-Reply-To: <20250716-mobileye-emmc-for-upstream-4-v3-0-dc979d8edef0@bootlin.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, 
@@ -73,119 +74,125 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehkedutdcutefuodetggdotef
  dgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrughrihgrnhdrhhhunhhtvghrsehinhhtvghlrdgtohhmpdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhg
 X-GND-Sasl: benoit.monin@bootlin.com
 
-Provide a function to the MMC hosts to read some blocks of data as part
-of their tuning. The card parameter is optional since it is not
-available from the execute_tuning() operation, but present in
-execute_hs400_tuning() and prepare_sd_hs_tuning().
+The controller suspends the clock between blocks when reading from the
+MMC as part of its flow-control, called read block gap. At higher clock
+speed and with IO delay between the controller and the MMC, this clock
+pause can happen too late, during the read of the next block and
+trigger a read error.
 
-This function only returns the status of the read operation, not the
-data read.
+To prevent this, the delay can be programmed for each mode via the pair
+of registers HRS37/38. This delay is obtained during tuning, by trying
+a multi-block read and increasing the delay until the read succeeds.
+
+For now, the tuning is only done in HS200, as the read error has only
+been observed at that speed.
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- drivers/mmc/core/mmc_ops.c | 79 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mmc/host.h   |  2 ++
- 2 files changed, 81 insertions(+)
+ drivers/mmc/host/sdhci-cadence.c | 69 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 68 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-index 66283825513cb4ff993a1b2ec1f0b0cac4e74487..d29e5daf3e326ab37e61c99456421b1f66bcb0de 100644
---- a/drivers/mmc/core/mmc_ops.c
-+++ b/drivers/mmc/core/mmc_ops.c
-@@ -1077,3 +1077,82 @@ int mmc_sanitize(struct mmc_card *card, unsigned int timeout_ms)
- 	return err;
+diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+index 2d823e158c59844dc7916db6a1d6e3d8b02ea5a0..0a9a90f9791d343b5d64ed602066f6291efa75b5 100644
+--- a/drivers/mmc/host/sdhci-cadence.c
++++ b/drivers/mmc/host/sdhci-cadence.c
+@@ -36,6 +36,24 @@
+ #define   SDHCI_CDNS_HRS06_MODE_MMC_HS400	0x5
+ #define   SDHCI_CDNS_HRS06_MODE_MMC_HS400ES	0x6
+ 
++/* Read block gap */
++#define SDHCI_CDNS_HRS37		0x94	/* interface mode select */
++#define   SDHCI_CDNS_HRS37_MODE_DS		0x0
++#define   SDHCI_CDNS_HRS37_MODE_HS		0x1
++#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR12	0x8
++#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR25	0x9
++#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR50	0xa
++#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR104	0xb
++#define   SDHCI_CDNS_HRS37_MODE_UDS_DDR50	0xc
++#define   SDHCI_CDNS_HRS37_MODE_MMC_LEGACY	0x20
++#define   SDHCI_CDNS_HRS37_MODE_MMC_SDR		0x21
++#define   SDHCI_CDNS_HRS37_MODE_MMC_DDR		0x22
++#define   SDHCI_CDNS_HRS37_MODE_MMC_HS200	0x23
++#define   SDHCI_CDNS_HRS37_MODE_MMC_HS400	0x24
++#define   SDHCI_CDNS_HRS37_MODE_MMC_HS400ES	0x25
++#define SDHCI_CDNS_HRS38		0x98	/* Read block gap coefficient */
++#define   SDHCI_CDNS_HRS38_BLKGAP_MAX		0xf
++
+ /* SRS - Slot Register Set (SDHCI-compatible) */
+ #define SDHCI_CDNS_SRS_BASE		0x200
+ 
+@@ -251,6 +269,49 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(mmc_sanitize);
-+
+ 
 +/**
-+ * mmc_read_tuning() - read data blocks from the mmc
-+ * @card: mmc card to read from, can be NULL
-+ * @host: mmc host doing the read
-+ * @blksz: data block size
-+ * @blocks: number of blocks to read
++ * sdhci_cdns_tune_blkgap() - tune multi-block read gap
++ * @mmc: MMC host
 + *
-+ * Read one or more blocks of data from the beginning of the mmc. This is a
-+ * low-level helper for tuning operation. If card is NULL, it is assumed that
-+ * CMD23 can be used for multi-block read.
++ * Tune delay used in multi block read. To do so,
++ * try sending multi-block read command with incremented gap, unless
++ * it succeeds.
 + *
-+ * Note: Allocate and free a temporary buffer to store the data read. The data
-+ * is not available outside of the function, only the status of the read
-+ * operation.
-+ *
-+ * Return: 0 in case of success, otherwise -EIO / -ENOMEM / -E2BIG
++ * Return: error code
 + */
-+int mmc_read_tuning(struct mmc_card *card, struct mmc_host *host,
-+		    unsigned int blksz, unsigned int blocks)
++static int sdhci_cdns_tune_blkgap(struct mmc_host *mmc)
 +{
-+	struct mmc_request mrq = {};
-+	struct mmc_command sbc = {};
-+	struct mmc_command cmd = {};
-+	struct mmc_command stop = {};
-+	struct mmc_data data = {};
-+	struct scatterlist sg;
-+	void *buf;
-+	unsigned int len;
++	struct sdhci_host *host = mmc_priv(mmc);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_cdns_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	void __iomem *hrs37_reg = priv->hrs_addr + SDHCI_CDNS_HRS37;
++	void __iomem *hrs38_reg = priv->hrs_addr + SDHCI_CDNS_HRS38;
++	int ret;
++	u32 gap;
++	u32 hrs37_mode;
 +
-+	if (blocks > 1) {
-+		if (mmc_host_can_cmd23(host) &&
-+		    (!card || (mmc_card_can_cmd23(card) &&
-+		     !mmc_card_blk_no_cmd23(card)))) {
-+			mrq.sbc = &sbc;
-+			sbc.opcode = MMC_SET_BLOCK_COUNT;
-+			sbc.arg = blocks;
-+			sbc.flags = MMC_RSP_R1 | MMC_CMD_AC;
-+		}
-+		cmd.opcode = MMC_READ_MULTIPLE_BLOCK;
-+		mrq.stop = &stop;
-+		stop.opcode = MMC_STOP_TRANSMISSION;
-+		stop.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
-+	} else {
-+		cmd.opcode = MMC_READ_SINGLE_BLOCK;
++	switch (host->timing) {
++	case MMC_TIMING_MMC_HS200:
++		hrs37_mode = SDHCI_CDNS_HRS37_MODE_MMC_HS200;
++		break;
++	default:
++		return 0; /* no tuning in this mode */
 +	}
 +
-+	mrq.cmd = &cmd;
-+	cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC;
++	writel(hrs37_mode, hrs37_reg);
 +
-+	mrq.data = &data;
-+	data.flags = MMC_DATA_READ;
-+	data.blksz = blksz;
-+	data.blocks = blocks;
-+	data.blk_addr = 0;
-+	data.sg = &sg;
-+	data.sg_len = 1;
-+	if (card)
-+		mmc_set_data_timeout(&data, card);
-+	else
-+		data.timeout_ns = 1000000000;
++	for (gap = 0; gap <= SDHCI_CDNS_HRS38_BLKGAP_MAX; gap++) {
++		writel(gap, hrs38_reg);
++		ret = mmc_read_tuning(NULL, mmc, 512, 32);
++		if (ret == 0)
++			break;
++	}
 +
-+	if (check_mul_overflow(blksz, blocks, &len))
-+		return -E2BIG;
-+	buf = kmalloc(len, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	sg_init_one(&sg, buf, len);
-+
-+	mmc_wait_for_req(host, &mrq);
-+	kfree(buf);
-+
-+	if (sbc.error || cmd.error || data.error)
-+		return -EIO;
-+
-+	return 0;
++	dev_dbg(mmc_dev(mmc), "read block gap tune %s, gap %d\n",
++		ret == 0 ? "OK" : "failed", gap);
++	return ret;
 +}
-+EXPORT_SYMBOL_GPL(mmc_read_tuning);
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 68f09a955a902047ac517441b6820fa6e4166a13..5a6471a6219222b199a16afd9e6bd5ab74b05c86 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -743,5 +743,7 @@ int mmc_send_status(struct mmc_card *card, u32 *status);
- int mmc_send_tuning(struct mmc_host *host, u32 opcode, int *cmd_error);
- int mmc_send_abort_tuning(struct mmc_host *host, u32 opcode);
- int mmc_get_ext_csd(struct mmc_card *card, u8 **new_ext_csd);
-+int mmc_read_tuning(struct mmc_card *card, struct mmc_host *host,
-+		    unsigned int blksz, unsigned int blocks);
++
+ /*
+  * In SD mode, software must not use the hardware tuning and instead perform
+  * an almost identical procedure to eMMC.
+@@ -261,6 +322,7 @@ static int sdhci_cdns_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 	int max_streak = 0;
+ 	int end_of_streak = 0;
+ 	int i;
++	int ret;
  
- #endif /* LINUX_MMC_HOST_H */
+ 	/*
+ 	 * Do not execute tuning for UHS_SDR50 or UHS_DDR50.
+@@ -288,7 +350,12 @@ static int sdhci_cdns_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 		return -EIO;
+ 	}
+ 
+-	return sdhci_cdns_set_tune_val(host, end_of_streak - max_streak / 2);
++	ret = sdhci_cdns_set_tune_val(host, end_of_streak - max_streak / 2);
++
++	if (!ret)
++		ret = sdhci_cdns_tune_blkgap(host->mmc);
++
++	return ret;
+ }
+ 
+ static void sdhci_cdns_set_uhs_signaling(struct sdhci_host *host,
 
 -- 
 2.50.1
