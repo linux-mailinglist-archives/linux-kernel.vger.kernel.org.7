@@ -1,124 +1,494 @@
-Return-Path: <linux-kernel+bounces-733764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D697DB078C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98238B078C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99EBB189CABB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:55:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57037189A834
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B1126E6F4;
-	Wed, 16 Jul 2025 14:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2ECB26FA5C;
+	Wed, 16 Jul 2025 14:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MWQbTIqm"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xfleh06H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B11264F81
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEDD2236E3;
+	Wed, 16 Jul 2025 14:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752677603; cv=none; b=eNXDqahsNMNFpHtn+WrVlaFwjbdkX/HEqJvXb2GSEANSeyJ1RdJB3ewQRViCMMSnn5LH49/irl5BI+H6BcX8J3IkNq7yW4jJdG8wK89EF1LpqjPvM//ggwZIMdwUVvPelqt8hFIwOYXdhGWCas4qG8s9jbWj4173XWe9EPIPxfs=
+	t=1752677600; cv=none; b=YW1t87m3mrE82HryStScEBSrqvIozXXjm9tkfroAusiScbWzYj8+J9iKLRF5mvp4ROtJstlZUUA4ZQkmxPcyWie9gHfymK7HHTpayYjqrFzxxHJTeabSUKRMKcbuD4NLGQ51a8JTpceUtzUaBEOLcamRsvsdzwBOqLGopf+RhkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752677603; c=relaxed/simple;
-	bh=aObTEVOu65cgXJJYv/X83Rx9FuUZIVPF7FW9+xhRJKE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZEJIjPG6GBScQy1V0fH7KLZiuquJVH7+Uci28it15ksVuneSRRxehSE7g2WCbAFjkhDs/2o/mAG45gh/EGz4kiOzzS/Cl0S/vm4X8QiFd3VlNqKbtu6uLBVkGC+PUkfuobmY8Z7MlUIgjUfeUihkcykhlfDmVWcffa/fAlp2xOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MWQbTIqm; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3df2fb6378cso15975ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1752677600; x=1753282400; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=70hqscYKUMhS36bD6H7W3bD6jK3TRd5Z4bT4xaOOeio=;
-        b=MWQbTIqmiIrD4hLKtEaQU63+mAKpRij0KAy12dNmUM6KGSXpdIbhgTZt+5V2O0O4NG
-         zYXF/UNaqweZ9Tz1ziDJcUDeoi2xiR4v5Xij6pUDdR/RPM5qNjFh2dPkjbeslpaNDf78
-         YqFGaq1SV82kHzNpIPduGBU9zdpPEyTCsxpNA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752677600; x=1753282400;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=70hqscYKUMhS36bD6H7W3bD6jK3TRd5Z4bT4xaOOeio=;
-        b=ETQ4w1F3+bBHGoBsCPpWnz/yRGohhMr0gxA8TIZEN7Yw4kJrZcOnmjPz/5lGsuOJGY
-         jtUCL8ztbAUM/czX35wXySN3AczZojJajOb5xCsVBr6o0ORns6g8c8+wTHSQf0WKSbs1
-         U1cT18HzOd4qESY5KjaTuttkg807M/xo3Z8pUu+I9UT1OiEAyCz37dkVAdOeH/k0ZYmw
-         oxVm8IkBXEHHuW4oL6vrwQjwOE/seOTxLXKR7cZQEFho95gUpLsSRmMvnozqAU/qogZE
-         Zg7hUS8JqycarDAHpVyomhkTsmOA4fPxEvkNiuCt+GYEat1VaQVgKfJOYx34zZoQ8WB9
-         cgLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUg1imkQMI/gBDrBpZtz2qqcx211JYPrFKQ8m1ixSjM1vGMZCbwuaE9H3p9QUeN18nqrSfmYY2sF/2xf+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8kCwQ+y3O3mnC+AsFYYEQ05VpspBOlRv9v396WrjkdNPfe9yw
-	L96ZPJNg9VRqKq4u/FdSSmJmAoLX/Y1ek+Iuw+ZrDTJ9cNceDEbAgpybwfyWgccEZu4Sl9wZ9j1
-	6c0Em
-X-Gm-Gg: ASbGncvwaCPoAEu1vy+sKYtpKAOw53wfGYycBMEoD1R6Wbah5YIGThdbTFcQxgpvLQd
-	hkFsBfnYu/l8c+FoGoDoNg4LZLel7HVZ3On4Qp8HuWfTlyu7LwNGCj1C5d+oErYyKkd2KuFiiAS
-	46Y3fRdU+d//4wbNHIrm0SdfhhUl6I0JZBHvPUtkSxhfvIjKizE6ifpH4jgqE3akQ4XXHSPa5iL
-	L1JbIfyOPedI2r2I2bWymQT5JZaaDMz17XFb9H0eafLSutNXF4dglt0SZ7QOwzR9/6ZOsP5wPix
-	h4gcN9MwDlcmIg2+Qdh7L/CfbYMk/my5Or4CqYKMkWemrGKLDhqPCsv6JdgKFUG+hdDpgifDro7
-	x3tJqI30SLwI2BV3005lzb62VAHZkNDEBkg==
-X-Google-Smtp-Source: AGHT+IG0GNVprRljye1iFIt81jTPpLRCL9X5k/6lyQr0UNEP/58Gv2FGcMU9mg9LCJMzEMaDolb+wA==
-X-Received: by 2002:a92:d64b:0:b0:3dc:879b:be95 with SMTP id e9e14a558f8ab-3e277c6ac35mr57796965ab.5.1752677600268;
-        Wed, 16 Jul 2025 07:53:20 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50556535f2asm3080620173.1.2025.07.16.07.53.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 07:53:19 -0700 (PDT)
-Message-ID: <631a6946-0a8a-4f6e-ab5d-f9b2d0585817@linuxfoundation.org>
-Date: Wed, 16 Jul 2025 08:53:18 -0600
+	s=arc-20240116; t=1752677600; c=relaxed/simple;
+	bh=tjBIkOcDJ6yyvvaX5mZQqHQR0lbb8AXk9MaeiLCxRm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aO2vCG46da9cmFEThwu+LAlYWgRgbJ8TLthtP61KpXctOVrMXhz58+QrbL8ek7tYnbhp1+vgSNk3nJcE+PDoYoS1TilcVqG9Q6iaFNWHKvfiY/OWNpXLeKOqT2ePL7K1MTv+M4TLCcPBE8nZkV4vh0BaEUJgnNEQbUG3dHu6dLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xfleh06H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F2BCC4CEEB;
+	Wed, 16 Jul 2025 14:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752677600;
+	bh=tjBIkOcDJ6yyvvaX5mZQqHQR0lbb8AXk9MaeiLCxRm0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xfleh06HWjK38dlpTLwEBM/U8phRilJ6y/3k8wR9d4JJXQFemrJ2Xb0R0zVaIGZh1
+	 kWGVMB/F0zWXm5rFwDGB+sB9c2C0T05NzkAQOxB+gWm8s1DdisllH1sjZro8tsuZKU
+	 ujNNgUeOjGkUG2Q9uHtPVxYsBjNaE62eBA0WKyX7KFdLqNH5c5WmE3Q2QtFnaT0UiW
+	 sbYUMZykz5r1EvhTzS6llVSYhH1OoTu0pZRRv0Zck5FDMtvrZy79VLqXrXB9+0zYyJ
+	 bhIaH2PrIwiO2WYXdrcznOyohLgGHotkmwfPIDlPjc/LcHgcMPjziU4aFYz+6xbYRc
+	 gAumSafVIV8MQ==
+Date: Wed, 16 Jul 2025 07:53:19 -0700
+From: Kees Cook <kees@kernel.org>
+To: Tiffany Yang <ynaffit@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Subject: Re: [PATCH v3 6/6] binder: encapsulate individual alloc test cases
+Message-ID: <202507160743.15E8044@keescook>
+References: <20250714185321.2417234-1-ynaffit@google.com>
+ <20250714185321.2417234-7-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/109] 6.6.99-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250715130758.864940641@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250715130758.864940641@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714185321.2417234-7-ynaffit@google.com>
 
-On 7/15/25 07:12, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.99 release.
-> There are 109 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Jul 14, 2025 at 11:53:19AM -0700, Tiffany Yang wrote:
+> Each case tested by the binder allocator test is defined by 3 parameters:
+> the end alignment type of each requested buffer allocation, whether those
+> buffers share the front or back pages of the allotted address space, and
+> the order in which those buffers should be released. The alignment type
+> represents how a binder buffer may be laid out within or across page
+> boundaries and relative to other buffers, and it's used along with
+> whether the buffers cover part (sharing the front pages) of or all
+> (sharing the back pages) of the vma to calculate the sizes passed into
+> each test.
 > 
-> Responses should be made by Thu, 17 Jul 2025 13:07:32 +0000.
-> Anything received after that time might be too late.
+> binder_alloc_test_alloc recursively generates each possible arrangement
+> of alignment types and then tests that the binder_alloc code tracks pages
+> correctly when those buffers are allocated and then freed in every
+> possible order at both ends of the address space. While they provide
+> comprehensive coverage, they are poor candidates to be represented as
+> KUnit test cases, which must be statically enumerated. For 5 buffers and
+> 5 end alignment types, the test case array would have 750,000 entries.
+> This change structures the recursive calls into meaningful test cases so
+> that failures are easier to interpret.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.99-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> Signed-off-by: Tiffany Yang <ynaffit@google.com>
+> ---
+> v2:
+> * Fix build warning Reported-by: kernel test robot <lkp@intel.com>
+>   Closes: https://lore.kernel.org/oe-kbuild-all/202506281959.hfOTIUjS-lkp@intel.com/
+> ---
+>  drivers/android/tests/binder_alloc_kunit.c | 234 ++++++++++++++++-----
+>  1 file changed, 181 insertions(+), 53 deletions(-)
 > 
-> thanks,
-> 
-> greg k-h
+> diff --git a/drivers/android/tests/binder_alloc_kunit.c b/drivers/android/tests/binder_alloc_kunit.c
+> index 9e185e2036e5..02aa4a135eb5 100644
+> --- a/drivers/android/tests/binder_alloc_kunit.c
+> +++ b/drivers/android/tests/binder_alloc_kunit.c
+> @@ -24,7 +24,16 @@ MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+>  #define BUFFER_NUM 5
+>  #define BUFFER_MIN_SIZE (PAGE_SIZE / 8)
+>  
+> -static int binder_alloc_test_failures;
+> +#define FREESEQ_BUFLEN ((3 * BUFFER_NUM) + 1)
+> +
+> +#define ALIGN_TYPE_STRLEN (12)
+> +
+> +#define ALIGNMENTS_BUFLEN (((ALIGN_TYPE_STRLEN + 6) * BUFFER_NUM) + 1)
+> +
+> +#define PRINT_ALL_CASES (0)
+> +
+> +/* 5^5 alignment combinations * 2 places to share pages * 5! free sequences */
+> +#define TOTAL_EXHAUSTIVE_CASES (3125 * 2 * 120)
+>  
+>  /**
+>   * enum buf_end_align_type - Page alignment of a buffer
+> @@ -86,18 +95,49 @@ enum buf_end_align_type {
+>  	LOOP_END,
+>  };
+>  
+> -static void pr_err_size_seq(struct kunit *test, size_t *sizes, int *seq)
+> +static const char *const buf_end_align_type_strs[LOOP_END] = {
+> +	[SAME_PAGE_UNALIGNED] = "SP_UNALIGNED",
+> +	[SAME_PAGE_ALIGNED]   = " SP_ALIGNED ",
+> +	[NEXT_PAGE_UNALIGNED] = "NP_UNALIGNED",
+> +	[NEXT_PAGE_ALIGNED]   = " NP_ALIGNED ",
+> +	[NEXT_NEXT_UNALIGNED] = "NN_UNALIGNED",
+> +};
+> +
+> +struct binder_alloc_test_case_info {
+> +	size_t *buffer_sizes;
+> +	int *free_sequence;
+> +	char alignments[ALIGNMENTS_BUFLEN];
+> +	bool front_pages;
+> +};
+> +
+> +static void stringify_free_seq(struct kunit *test, int *seq, char *buf,
+> +			       size_t buf_len)
+>  {
+> +	size_t bytes = 0;
+>  	int i;
+>  
+> -	kunit_err(test, "alloc sizes: ");
+> -	for (i = 0; i < BUFFER_NUM; i++)
+> -		pr_cont("[%zu]", sizes[i]);
+> -	pr_cont("\n");
+> -	kunit_err(test, "free seq: ");
+> -	for (i = 0; i < BUFFER_NUM; i++)
+> -		pr_cont("[%d]", seq[i]);
+> -	pr_cont("\n");
+> +	for (i = 0; i < BUFFER_NUM; i++) {
+> +		bytes += snprintf(buf + bytes, buf_len - bytes, "[%d]", seq[i]);
+> +		if (bytes >= buf_len)
+> +			break;
+> +	}
+> +	KUNIT_EXPECT_LT(test, bytes, buf_len);
+> +}
+> +
+> +static void stringify_alignments(struct kunit *test, int *alignments,
+> +				 char *buf, size_t buf_len)
+> +{
+> +	size_t bytes = 0;
+> +	int i;
+> +
+> +	for (i = 0; i < BUFFER_NUM; i++) {
+> +		bytes += snprintf(buf + bytes, buf_len - bytes, "[ %d:%s ]", i,
+> +				  buf_end_align_type_strs[alignments[i]]);
+> +		if (bytes >= buf_len)
+> +			break;
+> +	}
+> +
+> +	KUNIT_EXPECT_LT(test, bytes, buf_len);
+>  }
+
+For both stringify functions, snprintf is potentially unsafe. In the
+spirit of recent string API discussions, please switch to using a
+seq_buf:
+
+
+static void stringify_free_seq(struct kunit *test, int *seq, seq_buf *buf)
+{
+	unsigned int i;
+
+	for (i = 0; i < BUFFER_NUM; i++)
+		seq_buf_printf(buf, "[%d]", seq[i])
+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(buf));
+}
+...
+
+	DECLARE_SEQ_BUF(freeseq_buf, FREESEQ_BUFLEN);
+	...
+	stringify_free_seq(test, tc->free_sequence, &freeseq_buf);
+
+
+
+>  
+>  static bool check_buffer_pages_allocated(struct kunit *test,
+> @@ -124,28 +164,30 @@ static bool check_buffer_pages_allocated(struct kunit *test,
+>  	return true;
+>  }
+>  
+> -static void binder_alloc_test_alloc_buf(struct kunit *test,
+> -					struct binder_alloc *alloc,
+> -					struct binder_buffer *buffers[],
+> -					size_t *sizes, int *seq)
+> +static unsigned long binder_alloc_test_alloc_buf(struct kunit *test,
+> +						 struct binder_alloc *alloc,
+> +						 struct binder_buffer *buffers[],
+> +						 size_t *sizes, int *seq)
+>  {
+> +	unsigned long failures = 0;
+>  	int i;
+>  
+>  	for (i = 0; i < BUFFER_NUM; i++) {
+>  		buffers[i] = binder_alloc_new_buf(alloc, sizes[i], 0, 0, 0);
+>  		if (IS_ERR(buffers[i]) ||
+> -		    !check_buffer_pages_allocated(test, alloc, buffers[i], sizes[i])) {
+> -			pr_err_size_seq(test, sizes, seq);
+> -			binder_alloc_test_failures++;
+> -		}
+> +		    !check_buffer_pages_allocated(test, alloc, buffers[i], sizes[i]))
+> +			failures++;
+>  	}
+> +
+> +	return failures;
+>  }
+>  
+> -static void binder_alloc_test_free_buf(struct kunit *test,
+> -				       struct binder_alloc *alloc,
+> -				       struct binder_buffer *buffers[],
+> -				       size_t *sizes, int *seq, size_t end)
+> +static unsigned long binder_alloc_test_free_buf(struct kunit *test,
+> +						struct binder_alloc *alloc,
+> +						struct binder_buffer *buffers[],
+> +						size_t *sizes, int *seq, size_t end)
+>  {
+> +	unsigned long failures = 0;
+>  	int i;
+>  
+>  	for (i = 0; i < BUFFER_NUM; i++)
+> @@ -153,17 +195,19 @@ static void binder_alloc_test_free_buf(struct kunit *test,
+>  
+>  	for (i = 0; i <= (end - 1) / PAGE_SIZE; i++) {
+>  		if (list_empty(page_to_lru(alloc->pages[i]))) {
+> -			pr_err_size_seq(test, sizes, seq);
+>  			kunit_err(test, "expect lru but is %s at page index %d\n",
+>  				  alloc->pages[i] ? "alloc" : "free", i);
+> -			binder_alloc_test_failures++;
+> +			failures++;
+>  		}
+>  	}
+> +
+> +	return failures;
+>  }
+>  
+> -static void binder_alloc_test_free_page(struct kunit *test,
+> -					struct binder_alloc *alloc)
+> +static unsigned long binder_alloc_test_free_page(struct kunit *test,
+> +						 struct binder_alloc *alloc)
+>  {
+> +	unsigned long failures = 0;
+>  	unsigned long count;
+>  	int i;
+>  
+> @@ -177,27 +221,70 @@ static void binder_alloc_test_free_page(struct kunit *test,
+>  			kunit_err(test, "expect free but is %s at page index %d\n",
+>  				  list_empty(page_to_lru(alloc->pages[i])) ?
+>  				  "alloc" : "lru", i);
+> -			binder_alloc_test_failures++;
+> +			failures++;
+>  		}
+>  	}
+> +
+> +	return failures;
+>  }
+>  
+> -static void binder_alloc_test_alloc_free(struct kunit *test,
+> +/* Executes one full test run for the given test case. */
+> +static bool binder_alloc_test_alloc_free(struct kunit *test,
+>  					 struct binder_alloc *alloc,
+> -					 size_t *sizes, int *seq, size_t end)
+> +					 struct binder_alloc_test_case_info *tc,
+> +					 size_t end)
+>  {
+> +	unsigned long pages = PAGE_ALIGN(end) / PAGE_SIZE;
+>  	struct binder_buffer *buffers[BUFFER_NUM];
+> -
+> -	binder_alloc_test_alloc_buf(test, alloc, buffers, sizes, seq);
+> -	binder_alloc_test_free_buf(test, alloc, buffers, sizes, seq, end);
+> +	unsigned long failures;
+> +	bool failed = false;
+> +
+> +	failures = binder_alloc_test_alloc_buf(test, alloc, buffers,
+> +					       tc->buffer_sizes,
+> +					       tc->free_sequence);
+> +	failed = failed || failures;
+> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+> +			    "Initial allocation failed: %lu/%u buffers with errors",
+> +			    failures, BUFFER_NUM);
+> +
+> +	failures = binder_alloc_test_free_buf(test, alloc, buffers,
+> +					      tc->buffer_sizes,
+> +					      tc->free_sequence, end);
+> +	failed = failed || failures;
+> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+> +			    "Initial buffers not freed correctly: %lu/%lu pages not on lru list",
+> +			    failures, pages);
+>  
+>  	/* Allocate from lru. */
+> -	binder_alloc_test_alloc_buf(test, alloc, buffers, sizes, seq);
+> -	if (list_lru_count(alloc->freelist))
+> -		kunit_err(test, "lru list should be empty but is not\n");
+> -
+> -	binder_alloc_test_free_buf(test, alloc, buffers, sizes, seq, end);
+> -	binder_alloc_test_free_page(test, alloc);
+> +	failures = binder_alloc_test_alloc_buf(test, alloc, buffers,
+> +					       tc->buffer_sizes,
+> +					       tc->free_sequence);
+> +	failed = failed || failures;
+> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+> +			    "Reallocation failed: %lu/%u buffers with errors",
+> +			    failures, BUFFER_NUM);
+> +
+> +	failures = list_lru_count(alloc->freelist);
+> +	failed = failed || failures;
+> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+> +			    "lru list should be empty after reallocation but still has %lu pages",
+> +			    failures);
+> +
+> +	failures = binder_alloc_test_free_buf(test, alloc, buffers,
+> +					      tc->buffer_sizes,
+> +					      tc->free_sequence, end);
+> +	failed = failed || failures;
+> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+> +			    "Reallocated buffers not freed correctly: %lu/%lu pages not on lru list",
+> +			    failures, pages);
+> +
+> +	failures = binder_alloc_test_free_page(test, alloc);
+> +	failed = failed || failures;
+> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+> +			    "Failed to clean up allocated pages: %lu/%lu pages still installed",
+> +			    failures, (alloc->buffer_size / PAGE_SIZE));
+> +
+> +	return failed;
+>  }
+>  
+>  static bool is_dup(int *seq, int index, int val)
+> @@ -213,24 +300,44 @@ static bool is_dup(int *seq, int index, int val)
+>  
+>  /* Generate BUFFER_NUM factorial free orders. */
+>  static void permute_frees(struct kunit *test, struct binder_alloc *alloc,
+> -			  size_t *sizes, int *seq, int index, size_t end)
+> +			  struct binder_alloc_test_case_info *tc,
+> +			  unsigned long *runs, unsigned long *failures,
+> +			  int index, size_t end)
+>  {
+> +	bool case_failed;
+>  	int i;
+>  
+>  	if (index == BUFFER_NUM) {
+> -		binder_alloc_test_alloc_free(test, alloc, sizes, seq, end);
+> +		char freeseq_buf[FREESEQ_BUFLEN];
+> +
+> +		case_failed = binder_alloc_test_alloc_free(test, alloc, tc, end);
+> +		*runs += 1;
+> +		*failures += case_failed;
+> +
+> +		if (case_failed || PRINT_ALL_CASES) {
+> +			stringify_free_seq(test, tc->free_sequence, freeseq_buf,
+> +					   FREESEQ_BUFLEN);
+> +			kunit_err(test, "case %lu: [%s] | %s - %s - %s", *runs,
+> +				  case_failed ? "FAILED" : "PASSED",
+> +				  tc->front_pages ? "front" : "back ",
+> +				  tc->alignments, freeseq_buf);
+> +		}
+> +
+>  		return;
+>  	}
+>  	for (i = 0; i < BUFFER_NUM; i++) {
+> -		if (is_dup(seq, index, i))
+> +		if (is_dup(tc->free_sequence, index, i))
+>  			continue;
+> -		seq[index] = i;
+> -		permute_frees(test, alloc, sizes, seq, index + 1, end);
+> +		tc->free_sequence[index] = i;
+> +		permute_frees(test, alloc, tc, runs, failures, index + 1, end);
+>  	}
+>  }
+>  
+> -static void gen_buf_sizes(struct kunit *test, struct binder_alloc *alloc,
+> -			  size_t *end_offset)
+> +static void gen_buf_sizes(struct kunit *test,
+> +			  struct binder_alloc *alloc,
+> +			  struct binder_alloc_test_case_info *tc,
+> +			  size_t *end_offset, unsigned long *runs,
+> +			  unsigned long *failures)
+>  {
+>  	size_t last_offset, offset = 0;
+>  	size_t front_sizes[BUFFER_NUM];
+> @@ -238,31 +345,45 @@ static void gen_buf_sizes(struct kunit *test, struct binder_alloc *alloc,
+>  	int seq[BUFFER_NUM] = {0};
+>  	int i;
+>  
+> +	tc->free_sequence = seq;
+>  	for (i = 0; i < BUFFER_NUM; i++) {
+>  		last_offset = offset;
+>  		offset = end_offset[i];
+>  		front_sizes[i] = offset - last_offset;
+>  		back_sizes[BUFFER_NUM - i - 1] = front_sizes[i];
+>  	}
+> +	back_sizes[0] += alloc->buffer_size - end_offset[BUFFER_NUM - 1];
+> +
+>  	/*
+>  	 * Buffers share the first or last few pages.
+>  	 * Only BUFFER_NUM - 1 buffer sizes are adjustable since
+>  	 * we need one giant buffer before getting to the last page.
+>  	 */
+> -	back_sizes[0] += alloc->buffer_size - end_offset[BUFFER_NUM - 1];
+> -	permute_frees(test, alloc, front_sizes, seq, 0,
+> +	tc->front_pages = true;
+> +	tc->buffer_sizes = front_sizes;
+> +	permute_frees(test, alloc, tc, runs, failures, 0,
+>  		      end_offset[BUFFER_NUM - 1]);
+> -	permute_frees(test, alloc, back_sizes, seq, 0, alloc->buffer_size);
+> +
+> +	tc->front_pages = false;
+> +	tc->buffer_sizes = back_sizes;
+> +	permute_frees(test, alloc, tc, runs, failures, 0, alloc->buffer_size);
+>  }
+>  
+>  static void gen_buf_offsets(struct kunit *test, struct binder_alloc *alloc,
+> -			    size_t *end_offset, int index)
+> +			    size_t *end_offset, int *alignments,
+> +			    unsigned long *runs, unsigned long *failures,
+> +			    int index)
+>  {
+>  	size_t end, prev;
+>  	int align;
+>  
+>  	if (index == BUFFER_NUM) {
+> -		gen_buf_sizes(test, alloc, end_offset);
+> +		struct binder_alloc_test_case_info tc = {0};
+> +
+> +		stringify_alignments(test, alignments, tc.alignments,
+> +				     ALIGNMENTS_BUFLEN);
+> +
+> +		gen_buf_sizes(test, alloc, &tc, end_offset, runs, failures);
+>  		return;
+>  	}
+>  	prev = index == 0 ? 0 : end_offset[index - 1];
+> @@ -276,7 +397,9 @@ static void gen_buf_offsets(struct kunit *test, struct binder_alloc *alloc,
+>  		else
+>  			end += BUFFER_MIN_SIZE;
+>  		end_offset[index] = end;
+> -		gen_buf_offsets(test, alloc, end_offset, index + 1);
+> +		alignments[index] = align;
+> +		gen_buf_offsets(test, alloc, end_offset, alignments, runs,
+> +				failures, index + 1);
+>  	}
+>  }
+>  
+> @@ -328,10 +451,15 @@ static void binder_alloc_exhaustive_test(struct kunit *test)
+>  {
+>  	struct binder_alloc_test *priv = test->priv;
+>  	size_t end_offset[BUFFER_NUM];
+> +	int alignments[BUFFER_NUM];
+> +	unsigned long failures = 0;
+> +	unsigned long runs = 0;
+>  
+> -	gen_buf_offsets(test, &priv->alloc, end_offset, 0);
+> +	gen_buf_offsets(test, &priv->alloc, end_offset, alignments, &runs,
+> +			&failures, 0);
+>  
+> -	KUNIT_EXPECT_EQ(test, binder_alloc_test_failures, 0);
+> +	KUNIT_EXPECT_EQ(test, runs, TOTAL_EXHAUSTIVE_CASES);
+> +	KUNIT_EXPECT_EQ(test, failures, 0);
+>  }
+>  
+>  /* ===== End test cases ===== */
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
 > 
 
-Compiled and booted on my test system. No dmesg regressions.
+Otherwise looks good to me.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
+-- 
+Kees Cook
 
