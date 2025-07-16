@@ -1,139 +1,137 @@
-Return-Path: <linux-kernel+bounces-733665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B4BB07795
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:05:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0668B07798
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22F01C40030
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:06:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24E73B4885
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F9D21C192;
-	Wed, 16 Jul 2025 14:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A1A21C188;
+	Wed, 16 Jul 2025 14:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdlgX3dk"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CFitWqS5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30B31C2335;
-	Wed, 16 Jul 2025 14:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BC91E8332
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752674736; cv=none; b=gFo9mn5lTjbn1hJy+OkK35TY4yXflE5LWfoTQ77/TrpqROoS9HJaS9+8Iw8R+XD9M2q43KjJH1cNyFelRRlJdEGmHIRTrBOtd4a1gv4Bd7XLmRdcCvDN0KGjiVCZSNuA9Tjk3q8jZiTOKABAJIO6IJnuN4RmPiLftAD/diXI6Zk=
+	t=1752674845; cv=none; b=nKHJrvdt4jPfC7P3Qi17V5deyfUlkq3NxrHftPKFfYeYLzhhU5jFMHg7zJ4O+dXJNcPL6/9LxGtYjg6qWeQIHNfxUiyVW4oJ2fTa2qeCiifpz2w7tO6slaRexGHknWR/JV+U0dlddnNslktsMmJDGS5dZOqWFDogfOt/OSAPixo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752674736; c=relaxed/simple;
-	bh=9xnLeBla/FFMBBo7v10c52NMg8azTE2NYd7eJgAUNVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iG2rdl/Z0zqEfGYXS0cXIv0bchEh7Cf+JsKRYeUKjBx5j4XDg+q4y7KmCYJltrV2hr0cg5NzKTgKff6QfFlfBsGcGtSp5WxrHv4Vkk528f3wtioQuV469CDpu8IaI8FmBScGguXiV4jTjMu06tq/sSU+us5PyASqsIr5VPMIr9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdlgX3dk; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so5949958b3a.0;
-        Wed, 16 Jul 2025 07:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752674734; x=1753279534; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qngeXK27KFOZ6peAoX++OdVfM+ufKRNsR7T6dP/zpzQ=;
-        b=bdlgX3dkO1uzHQ9gpc1TctzQLihmGi83gMsWGPvUA3lp9MncrAMrGukrZzFNDaMidU
-         rX7pek5Ig9YBkUpjB4eehpYZGSSgkgWVE/3nVziQcgng+cortdxk4ucBdr0MsXFHDnrC
-         enOOKgmJtyWMsjjmVkbcOnWplnT6w8QeYQFon/tFPjr22uf6hdnthBbNUuH9m8tTjrmI
-         mgvC3lvbdWleFQTmhJvvgyflj3qlwQ8ahMHxKLW+4nQcf5eXwyooGPMPUIkvBNG7a6zv
-         7ir0qL4M1bW9f84G5jvr1W0+YA5ERUHuwhpEWwU0pANpWobaQXcds2E8dxysJg2Py/q4
-         N09w==
+	s=arc-20240116; t=1752674845; c=relaxed/simple;
+	bh=tB2hd0yWjPoO6MlhQbxYZc4V8AzKcbCfWKCdItp3044=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bSd7yYTxlb2kEVv6bUaiT7D0bO68twkd8LznOqJVkjdmsXoI4U6B0Adcg7us1c9vHghCSlxHX6dl4q73DpRTvrfDUJFnyrtVRHdpk4H6I8nha9zShCPGhq/5jGahKhsf9V9LlIuNrXZR97l6rqWTTN6j4ZbK6O/vmauGdz1umQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CFitWqS5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752674843;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tB2hd0yWjPoO6MlhQbxYZc4V8AzKcbCfWKCdItp3044=;
+	b=CFitWqS5l5frQBMEsHrqg9jnDwvvkkwRRt2NbotO+EXwYUlgqe0CrEvMHzPu702uCv9fUX
+	DiOcT/H11P/sbh4C0gh6F3m9E9F3dr/B3Z78rWW+m9PbTNgoqBwWYCDhzT7QpEHT/nAFNO
+	HOjkW2x9ocgU/3DRxluqLrpWaqCoT1s=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-341-RSrhnPlGO0au09Hal-_hpA-1; Wed, 16 Jul 2025 10:07:22 -0400
+X-MC-Unique: RSrhnPlGO0au09Hal-_hpA-1
+X-Mimecast-MFC-AGG-ID: RSrhnPlGO0au09Hal-_hpA_1752674841
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4ff581df3so509143f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:07:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752674734; x=1753279534;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qngeXK27KFOZ6peAoX++OdVfM+ufKRNsR7T6dP/zpzQ=;
-        b=et/5U2nqinikrH5gf+ugrk24hGSsm4xA0Cr135vAiGAcq1aq0Q8VO4LihuQ1CQrlpn
-         IUjAulBd8XE17DX38gBR3w9OGadJuY5YQho84j9IhfTocXkJsJl9x6tHC5ImkipJw5Ru
-         mhYVGNaO/GmdE7IE3sD5q0+2zj0+N1Haqqw1tW/QoOkoVLynNZakstiW7Hlnfq2Dv5ey
-         5AtqKw5LjUpVaW5v8LouAGvVpjR+MyiiREeOJ7w4WPr+EROGsrZDgGdujt8XGBX5vgox
-         zXJB2436Y1MC5AvQlaxGePIaKGcMoPuWzL6Dhrn5toWRWsFFj/2DColVoAwj3WGrW/TQ
-         MMog==
-X-Forwarded-Encrypted: i=1; AJvYcCWeMbKStSJDHBzbqU1guoky8g0YJDwQNe9zkqtNPemsGQbXfxSWRqej0b7iWuHH9TSV2bbsILDV@vger.kernel.org, AJvYcCXV3vCmhy8XGpBRiaebAxEUbNS63fICwqjHrzA6tQ/wqnDrM+CxknQhadrMDH9MvHPf5+wLp6WsJNB03XY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuVJEdoF4nz7lO7+nVfnJnNpv2TGBw4PAvwdWs8g1Fj55vxoli
-	qHxsxSaTL8h9Eljz2N8o/xWrMN8QGBi6yagbXOlTyAZVbzt0nJRQh5SfSExzF03H
-X-Gm-Gg: ASbGnctoOyTfG+DbYsEMNTZxV++0dosf+8b2d3bR0T7t0NSO/EOe+uG1NsCU5/BrNwu
-	tcsGvP0vuTIcwntmSK6wu4a1i6PSK8Ti5qM/HoRnJmMXNk5QB4MOoSlClL1SMovuKsRWBo9MqkG
-	yTAAXjJAwukkGTCPEEvA7z8aUvca7CbPIPStZRqifx+VaswKDpYGJZhiekOX5vTZXsYmzuHnfvL
-	cwOVf9wEJ2+yALGDmGee7+Mvm7a0Yx3d7B3m+BKod45NeMPzrXhuioV24WXE7pj+Puec0zUBw5+
-	0XuN78FlGCQbyY2A4zIiV3z9GGcS0UNmA7JR9OEHyITQAsIxFbKQVnBhTgw18PIr87F90yFKkPl
-	KMgZGJhfQkTTqrQVhdI9YVZXfMzA=
-X-Google-Smtp-Source: AGHT+IEPRDlnRInkBbptUzd6OmEvFdGjOYJJ6agFhxVJBBcA22kFZ0bVG2Q4o4Ceq94Kr8Zs+aiIlQ==
-X-Received: by 2002:a05:6a21:6494:b0:237:b321:1e0 with SMTP id adf61e73a8af0-237d661c82amr4911939637.17.1752674733709;
-        Wed, 16 Jul 2025 07:05:33 -0700 (PDT)
-Received: from fedora ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ebfd2d26asm12382332b3a.76.2025.07.16.07.05.29
+        d=1e100.net; s=20230601; t=1752674839; x=1753279639;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tB2hd0yWjPoO6MlhQbxYZc4V8AzKcbCfWKCdItp3044=;
+        b=pWdWEUATKtF7IKwZ6gg0AflpL4yGZrPXN0zqbOanDyFJPPM/fRK8vPojw9yh7vzFKj
+         8js79/YBaRRqWRBiOy/3rMRFYD6kKrZA6Q7HaCMEVXno0zjKMjIckv0cbTEwPYQH2et/
+         zKM6Zmlu+N87icf0ppnktAbj84d9HpNbkyZmkPuW5tbEhsrrGljMmspo+9ydaQkrNh7y
+         +ltDbkCOkX911PTP4bdCTdyJXgXEwMTWpQ7uT44uEwl8BOG9tzguCPzNB49N+ysKmfzr
+         AI2tPHuxMkUlSfnwla/IR4fHe6Zm0sCDB6wfkQLUSJRurzhtUR5u9gMdyM/8vFCW2QrR
+         bvzQ==
+X-Gm-Message-State: AOJu0Yym6UDGrLs3OSb2G8EAOsACvMvtabBvjtIhYT/3J97JCbwBXxFQ
+	jQAchtWTOKuz4LJ/Ba5dhx6R8JJH/9WmpUuP7dolR6XYjd7aPdnyLQqXUYr1bp9lmW/tw9gA57t
+	a6/xeD+gtO0/ZdO4vCmnNV6DpuOZF46yU79MSuK/BMolWGYCmjgFl7J+6THxwv2ryIA==
+X-Gm-Gg: ASbGncv34YiA71yvsnQUvcnUK9c8GMqbo38+EtK60jtZCMX53j8M8hc9JK2G5X6Of82
+	WDnYW1edeMIl5rE/XJKjUBUJ2nVSHojL2fyuqxHityxu+QoqId0liDUO9LPyI5RFWD+tqE0zQQC
+	yBteCsBnDAmMQ2azJMmX8CMqU1InCP61j8jVHC0MrQh9GAppQb0JYibpGF439Z4IfxCIvfnR1Am
+	Qom60+306Nyp61y6ookj78Q0c8YiZHB0CltdLEN/gZZfuDboeprx0pKbepeixxvGQcA5JzBDvo9
+	pnb51RCQhlrttQI0evzN6Y/69w1PJBpo/aWtUHsHSiyP8TdNmfuHkqJZU25UxBd9EQ==
+X-Received: by 2002:a05:6000:2b0c:b0:3a3:70ab:b274 with SMTP id ffacd0b85a97d-3b609524369mr4320863f8f.12.1752674839401;
+        Wed, 16 Jul 2025 07:07:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHMGLnEBjMAuOVnncL9pST+yEzGrrXmlW5O5822Ksx735cKfIpDH13N4slQf+5+QbAygFGD/Q==
+X-Received: by 2002:a05:6000:2b0c:b0:3a3:70ab:b274 with SMTP id ffacd0b85a97d-3b609524369mr4320828f8f.12.1752674838921;
+        Wed, 16 Jul 2025 07:07:18 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e83e1d6sm21934665e9.35.2025.07.16.07.07.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 07:05:33 -0700 (PDT)
-Date: Wed, 16 Jul 2025 14:05:26 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] ipv6: mcast: Simplify
- mld_clear_{report|query}()
-Message-ID: <aHexpi793R81UrAt@fedora>
-References: <20250715120709.3941510-1-yuehaibing@huawei.com>
+        Wed, 16 Jul 2025 07:07:18 -0700 (PDT)
+Message-ID: <fe38ba0b9da0209bcc97c2f348f5a6b266991073.camel@redhat.com>
+Subject: Re: [PATCH v3 12/17] sched: Adapt sched tracepoints for RV task
+ model
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>, Tomas
+ Glozar	 <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
+ Williams	 <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Date: Wed, 16 Jul 2025 16:07:16 +0200
+In-Reply-To: <20250716134513.GB905792@noisy.programming.kicks-ass.net>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+	 <20250715071434.22508-13-gmonaco@redhat.com>
+	 <20250716123832.GW1613200@noisy.programming.kicks-ass.net>
+	 <122cfd4ba6b0805e91ff09526d5d159ff3871964.camel@redhat.com>
+	 <20250716134513.GB905792@noisy.programming.kicks-ass.net>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715120709.3941510-1-yuehaibing@huawei.com>
 
-On Tue, Jul 15, 2025 at 08:07:09PM +0800, Yue Haibing wrote:
-> Use __skb_queue_purge() instead of re-implementing it. Note that it uses
-> kfree_skb_reason() instead of kfree_skb() internally, and pass
-> SKB_DROP_REASON_QUEUE_PURGE drop reason to the kfree_skb tracepoint.
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
-> v2: Add drop reason note
-> ---
->  net/ipv6/mcast.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
-> index 8aecdd85a6ae..36ca27496b3c 100644
-> --- a/net/ipv6/mcast.c
-> +++ b/net/ipv6/mcast.c
-> @@ -845,21 +845,15 @@ static void mld_clear_delrec(struct inet6_dev *idev)
->  
->  static void mld_clear_query(struct inet6_dev *idev)
->  {
-> -	struct sk_buff *skb;
-> -
->  	spin_lock_bh(&idev->mc_query_lock);
-> -	while ((skb = __skb_dequeue(&idev->mc_query_queue)))
-> -		kfree_skb(skb);
-> +	__skb_queue_purge(&idev->mc_query_queue);
->  	spin_unlock_bh(&idev->mc_query_lock);
->  }
->  
->  static void mld_clear_report(struct inet6_dev *idev)
->  {
-> -	struct sk_buff *skb;
-> -
->  	spin_lock_bh(&idev->mc_report_lock);
-> -	while ((skb = __skb_dequeue(&idev->mc_report_queue)))
-> -		kfree_skb(skb);
-> +	__skb_queue_purge(&idev->mc_report_queue);
->  	spin_unlock_bh(&idev->mc_report_lock);
->  }
->  
-> -- 
-> 2.34.1
-> 
+On Wed, 2025-07-16 at 15:45 +0200, Peter Zijlstra wrote:
+>=20
+> I'm not sure I understand the importance of IRQ state when describing
+> task transitions.
+>=20
+> You know both:
+>=20
+> =C2=A0- schedule() invocations for any one task are in-order;
+> =C2=A0- schedule() invocations for any one CPU are in-order.
+>=20
 
-Reviewed-by: Hangbin Liu <liuhangbin@gmail.com>
+It's to describe latencies, which is the original purpose of the
+scheduler model: if the event supposed to wake up an RT task occurs
+with interrupts disabled while scheduling, we'd need to wait for that
+run to complete.
+Now to be fair, it doesn't really matter whether that call to
+__schedule switches or not, but always having a switch event simplifies
+things while modelling.
+I can rearrange models like sts (added in this series) not to expect
+that.
+
+Thanks,
+Gabriele
+
 
