@@ -1,190 +1,144 @@
-Return-Path: <linux-kernel+bounces-733256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C6FB0722F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:50:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FD9B0722B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B720D5810AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:50:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6431C22807
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581BB2F2346;
-	Wed, 16 Jul 2025 09:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6A42F199B;
+	Wed, 16 Jul 2025 09:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eI5yULec"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCeTpfo9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5412BFC9B;
-	Wed, 16 Jul 2025 09:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3445286D4E;
+	Wed, 16 Jul 2025 09:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752659397; cv=none; b=EnQA9hQJUPWJ1Q+oUXV275/oXgc+6e9JeLzhx04WyAIJODTUhahhlNHjSs+qViriNtZQUPUsMZeyQGtSoJlTFvahA4DzWmYqpapiE2jQJxNf8RBnWrA++8ijHyUJoDyZQrBQc41YGaQtPFC6WNryC0Zd+xM+oOT0CQALYU+nVfA=
+	t=1752659313; cv=none; b=IjE1oeK2Yz43CYXAlvTnESsNmBWOmZ40lcINJCb+8z+ikNS4HEpJz/BaSCNASkcDM+PxBzEOdTdw984SQLPPAsFLogMFRxpWtrWYkvu9fqjgmLrqjsgTzB7uohUnctxj23/rXxJM93mQ1S3bnzOKFsZtypcETFtc4Rt6Sj/agWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752659397; c=relaxed/simple;
-	bh=EEdeWg3CLcEY98K4EHAAFMbr4uaieqIt7xKgPk0v/Es=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hwdxAqdwko6mz2J4n1nFBjNJx+yXiqxu9SoLZGOhSzgkPAAqPKHal5BE65iYqJSBBxR0T4zpPG6bGDobAZ1AZ63fQD42Z5grJv4miuA+C2G1rwOLNHMJUfVFbTq6cr76yniFDTyLZrTJYRuLKebwRksY9Mp2WDcCeMP3a9sff90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eI5yULec; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4535fc0485dso8576005e9.0;
-        Wed, 16 Jul 2025 02:49:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752659394; x=1753264194; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IYrQ7+sV7dVTWPVBK1RBCFMdeN88v1wt1t/v9UbOVE8=;
-        b=eI5yULecqdgfxcdVMB1XtIiCnP2zs2ypQ5ACP/q6HNFwkRrXUklZksF20S6ZFN5PCC
-         GKmQcG+Et00nsFyt/OklXMHmgxAnXfI/RS61ZN8CGID67plBI46xl0zFjMjSOVoLiYkQ
-         LD1E7KuBCO4KnyV4vGEHd+f065Xbplq4r0GjPYsevjBKJ3YvYezAo5CPXl/lEtIpQKnO
-         zBCLYFjNEX7nMVrWTvIDfiUPM4g6XMIzdvORsqPWoQlDEkztSb9+gkq8ZEfRT2qs7ogI
-         EL6UYv8WeEwYYEnJjgHEOWe+FsDFsSr1aGHfUZpjrI4GKuTE3CNm92ftIu5m3dDv2Fup
-         ty1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752659394; x=1753264194;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IYrQ7+sV7dVTWPVBK1RBCFMdeN88v1wt1t/v9UbOVE8=;
-        b=f9eql9fZ1AXWRW5HIpDRgEryYxgNlq3gd7X9MpwNA5zX0e4mh2IbFJ8/6yi7BKcT+p
-         fyo82HJ0282bZ9PFbsZ0LJimrNUd7aOUh0vbcPnkm7pNnjJlOPsDswUgvPCbND4sx0gy
-         K8m8dl2HYlakQ1b61GHFgMo3GRoxSD5gY8eqp047CNriVf93XvOxRL8utfSzgPrlrlUY
-         60EadxpF6PoYMmoYjoEkzD1V+p7NdKznjhi85j/smDGoGmkXD5szJYELJfxFrw4IVJyf
-         SP3EtB62y0UUlDfy1gqintAux/CS+1vQpdKvQ6FbD0xfGISo8mCSCgFvplkj5BiuhiRC
-         Abog==
-X-Forwarded-Encrypted: i=1; AJvYcCUEexf//dk9VWlut/Ooyl8IPe2aBtthdvXHI5T6cixEj5scFQI9fz7DMWGv35i4lvczcQiuQOKj@vger.kernel.org, AJvYcCXRQ9HIUFhbMDHvDtMJ7KZCxUJLbgDzlTWEqOD1eP94vZpvmAR/i0ktvpSViltYMC7aNfgneMIM8CKndM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr7a27w4bakA2VIz8Czc13cg4eSEM2mTJVGBb3ZV8gCjAHL65G
-	7s9H/MlRO9YUWm2EQp/ZvLxoB490V/j61R2JbsOjsdSISSK66tD2trkC
-X-Gm-Gg: ASbGncsu+Q5p4Mg+28kLK444xxEaqpM7zLIEQyxEb0/cI0mrM400qrY+tJcgWEJvtZT
-	j0at0PpI5Cqi2qiynCHF7DtxhJ93l2oOk/3z9tpiWGOPoTNFA1aw5ScqVmY2vewo3jVTZg14ble
-	WIy3gQchrbiZvE9rimh115uSoQw7ucfnWxzqnhT2qxRV/DWVma6Gl54RvqVmH+2SoJczbjU/Uoy
-	CF594HoUKXNVcQhdLYsr4b4LTwi+Z6CmW5PfycFkljm9I4b5PDsbAZrO5nSgmejgM2h1Q1hIGuO
-	V7AmX9qFMhQuCFAEOU+mZaLWtNo13M4ypCQEuEeh0rArYUieBjbxWBZAHj1FDiI5445fnp2uIUD
-	i30TD3XN5gC9N2OIvVLQVZZOouvCnwd06YC/jC+KCVDDsHdElJtM=
-X-Google-Smtp-Source: AGHT+IF3heKpRm+ABAaNBtuxBVQgq8WAa+ukmgI7ealy/Apb29VlJ59eiNp/mNklVk0xhpZZa6fecA==
-X-Received: by 2002:a05:6000:2388:b0:3a5:324a:89b5 with SMTP id ffacd0b85a97d-3b60dd68770mr781461f8f.8.1752659394076;
-        Wed, 16 Jul 2025 02:49:54 -0700 (PDT)
-Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:962d:ebf0:4a44:e416])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1f4edsm17150986f8f.83.2025.07.16.02.49.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 02:49:53 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Mark Einon <mark.einon@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2] et131x: Add missing check after DMA map
-Date: Wed, 16 Jul 2025 11:47:30 +0200
-Message-ID: <20250716094733.28734-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752659313; c=relaxed/simple;
+	bh=m8JFTriB+ZYpVz0OfaVQFeSzxcxnfvekJQ6s+KD7B70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UrxmJgP1hjmbe74Y86Iqr+Ti/EHgB1KJCSP1QOzs2M8mnglbDgTbVACVeaR3ANs/NU1GbST3D/JlvjfaHHMQD239pCLuBFX7jEIMMij2uffcURoX6RqS9ORCuLwQwRngx4URhctLd0jYCTLmV7sIUDKsOfgGt57Ym/jswcI7Abg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCeTpfo9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA4F0C4CEF0;
+	Wed, 16 Jul 2025 09:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752659313;
+	bh=m8JFTriB+ZYpVz0OfaVQFeSzxcxnfvekJQ6s+KD7B70=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uCeTpfo9QUUayAOYqOhcVbdXKXUybMMVg1U00cgCpnmtA55G3irdDEaoc8/3lJpdF
+	 aYuJ5gkAxNZcvVZEKiYI34zRHHsBTMSgJ/Nv+8V0ph7ecNJY1+9jcm2sgzKKXpD9PY
+	 oBu/GlqSz6OOhtfKG6BlvKBD4b/IOXpZOhgDm6IY/ySatkKeaXHhox+PlnF1xT7hbj
+	 AVpEyx4CUfGmG0RODsfHPHQT0XWMeM92qDI5gXS/808HYBbOxdKNBveeiSGyXbLif4
+	 YTPgSSQ6VeDAwBbFhaKepSIc4JdJYJnqW6DnDBjlLsesOnCXb7V5DZXdmJ5yCyK1hI
+	 N/9guE3zNAtQA==
+Message-ID: <6077ec05-87f3-4bd2-904d-db9b451d2490@kernel.org>
+Date: Wed, 16 Jul 2025 11:48:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 1/2] dt-bindings: arm: aspeed: add Meta Ventura board
+To: "P.K. Lee" <pkleequanta@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ patrick@stwcx.xyz
+Cc: Jerry.Lin@quantatw.com, Jason-Hsu@quantatw.com, yang.chen@quantatw.com,
+ p.k.lee@quantatw.com
+References: <20250716094329.1069203-1-pkleequanta@gmail.com>
+ <20250716094329.1069203-2-pkleequanta@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250716094329.1069203-2-pkleequanta@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The DMA map functions can fail and should be tested for errors.
-If the mapping fails, unmap and return an error.
+On 16/07/2025 11:43, P.K. Lee wrote:
+> Document the new compatibles used on Meta Ventura.
+> 
+> Signed-off-by: P.K. Lee <pkleequanta@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Fixes: 38df6492eb51 ("et131x: Add PCIe gigabit ethernet driver et131x to drivers/net")
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
 ---
-v1 -> v2:
-  - Fix subject
-  - Fix double decrement of frag
-  - Make comment more explicit about why there are two loops
 
- drivers/net/ethernet/agere/et131x.c | 36 +++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
-diff --git a/drivers/net/ethernet/agere/et131x.c b/drivers/net/ethernet/agere/et131x.c
-index 678eddb36172..5c8217638dda 100644
---- a/drivers/net/ethernet/agere/et131x.c
-+++ b/drivers/net/ethernet/agere/et131x.c
-@@ -2459,6 +2459,10 @@ static int nic_send_packet(struct et131x_adapter *adapter, struct tcb *tcb)
- 							  skb->data,
- 							  skb_headlen(skb),
- 							  DMA_TO_DEVICE);
-+				if (dma_mapping_error(&adapter->pdev->dev,
-+						      dma_addr))
-+					return -ENOMEM;
-+
- 				desc[frag].addr_lo = lower_32_bits(dma_addr);
- 				desc[frag].addr_hi = upper_32_bits(dma_addr);
- 				frag++;
-@@ -2468,6 +2472,10 @@ static int nic_send_packet(struct et131x_adapter *adapter, struct tcb *tcb)
- 							  skb->data,
- 							  skb_headlen(skb) / 2,
- 							  DMA_TO_DEVICE);
-+				if (dma_mapping_error(&adapter->pdev->dev,
-+						      dma_addr))
-+					return -ENOMEM;
-+
- 				desc[frag].addr_lo = lower_32_bits(dma_addr);
- 				desc[frag].addr_hi = upper_32_bits(dma_addr);
- 				frag++;
-@@ -2478,6 +2486,10 @@ static int nic_send_packet(struct et131x_adapter *adapter, struct tcb *tcb)
- 							  skb_headlen(skb) / 2,
- 							  skb_headlen(skb) / 2,
- 							  DMA_TO_DEVICE);
-+				if (dma_mapping_error(&adapter->pdev->dev,
-+						      dma_addr))
-+					goto unmap_first_out;
-+
- 				desc[frag].addr_lo = lower_32_bits(dma_addr);
- 				desc[frag].addr_hi = upper_32_bits(dma_addr);
- 				frag++;
-@@ -2489,6 +2501,9 @@ static int nic_send_packet(struct et131x_adapter *adapter, struct tcb *tcb)
- 						    0,
- 						    desc[frag].len_vlan,
- 						    DMA_TO_DEVICE);
-+			if (dma_mapping_error(&adapter->pdev->dev, dma_addr))
-+				goto unmap_out;
-+
- 			desc[frag].addr_lo = lower_32_bits(dma_addr);
- 			desc[frag].addr_hi = upper_32_bits(dma_addr);
- 			frag++;
-@@ -2578,6 +2593,27 @@ static int nic_send_packet(struct et131x_adapter *adapter, struct tcb *tcb)
- 		       &adapter->regs->global.watchdog_timer);
- 	}
- 	return 0;
-+
-+unmap_out:
-+	// Unmap the body of the packet with map_page
-+	while (--i) {
-+		frag--;
-+		dma_addr = desc[frag].addr_lo;
-+		dma_addr |= (u64)desc[frag].addr_hi << 32;
-+		dma_unmap_page(&adapter->pdev->dev, dma_addr,
-+			       desc[frag].len_vlan, DMA_TO_DEVICE);
-+	}
-+
-+unmap_first_out:
-+	// Unmap the header with map_single
-+	while (frag--) {
-+		dma_addr = desc[frag].addr_lo;
-+		dma_addr |= (u64)desc[frag].addr_hi << 32;
-+		dma_unmap_single(&adapter->pdev->dev, dma_addr,
-+				 desc[frag].len_vlan, DMA_TO_DEVICE);
-+	}
-+
-+	return -ENOMEM;
- }
- 
- static int send_packet(struct sk_buff *skb, struct et131x_adapter *adapter)
--- 
-2.43.0
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
 
+Full context and explanation:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
+Best regards,
+Krzysztof
 
