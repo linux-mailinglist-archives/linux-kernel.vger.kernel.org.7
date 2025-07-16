@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-733889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC13B07A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:49:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34674B07A3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D89FB7B17D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:47:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1701A1894415
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1914B2F5493;
-	Wed, 16 Jul 2025 15:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E43E2F3C13;
+	Wed, 16 Jul 2025 15:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Xd0VeBTi"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AM+mZd0a"
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF21B22F762;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2EE23496F;
 	Wed, 16 Jul 2025 15:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680881; cv=none; b=e6Hcw/sz/ldE7yiIKhBYF2ynf2o84FWak5DL39Rk5OUWqOiyr2zy224r5K15AyReqhboYefrSlyxIa6gQWgEDZaQJeoQQNQEKlJ9xYLOX9e7Y645t8TOBs3HwN0OfvkUTMpot3DKVI4CI9BGXnBBNSHN6sHQa+JpJfYh063egkc=
+	t=1752680879; cv=none; b=ToZhObZUVfcrbF79MNZpPjamvSYxcCrq7niV8GfKyTtguylUyz6sCKqDxHB5Qgs4cu6C/tbzvg9r7mM/ZXSD+/MK88iAkBXr7DneXE0p9dWifDwTBh9tpz4UZtRnfUTyXJEdiCu06gtTWH5byurdOvGnrMdht9vVxzWQwBIVyLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680881; c=relaxed/simple;
-	bh=u/Mh6QMW/fxl5ex7MvG974k7mfVE7yTG8KRGiyJjEtk=;
+	s=arc-20240116; t=1752680879; c=relaxed/simple;
+	bh=Ow9KW3YcVSr0/nPhBv9tKtnie2AY1M86cNe3h2YVq1k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r3NoghL83ns7ItNXYk1xGYFyzUY7fKjZqdptUVtlaACuYfw75mGdl3knA8b/2sfVrVeAlS0gJ1NhK3FexfojmoTGMXDAVb12f37Y7peqB4IkvkUX6ixSNBOlxP0BruozfoRtoBS7jgWoOAIgL85UpFMnUjvnfWd8ndpQTRlEFnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Xd0VeBTi; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=MIQBpseoyunesXaJPqtQP2WS2nY0iK0QfUEO0dSKRAVw2mXW/k1zq5A7eEI4nT34GvNJzaKwPGG52Hkll2ON1FQd/F4cY11B519HjSSKsOk2ZlKlbKcUhSh56/DPAc/kATxK+f+6qWTjD/e4uYTODha3Gc8izLB0YsRlPuJ7CJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AM+mZd0a; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A6BED44408;
-	Wed, 16 Jul 2025 15:47:49 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 26A9544459;
+	Wed, 16 Jul 2025 15:47:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1752680870;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4zMyivun2ZhPaC0c15Jzxv6HXN5r+otqFCrTgy5NlLg=;
-	b=Xd0VeBTijV1ILQGL5QMy3QW/UdW84EfTQE45FD5X3xf2bf/5GT6QmzB8SGrqq3tezK8nnP
-	z4Pm+zVEbO7SAJTbsO8K8MqADzDylk33H42p2nEtusDV+mXLdv2jr8PW0RsKdQr4kEHAJY
-	OwWH7cbYIlMH+R2gL2/SYlORNJXZ3qCmB9i78KoRKUN9ymePn9/vpfzHMxr3gm4zEUe/Fj
-	tVLf4vsd27ma0f3zzbhMRxhz3jpMrt7QTGT5GvFP5A+BMtw7OQyPmid6bioqSo0quOEPkz
-	Qh+dyiHMZWyiTHAmnWu+NlQ+S0lZvL5g/uf4qdT0YC20oT9ey9Mnlkvl/N9w/w==
+	bh=RLD1DeoM4SdeI+gMUKY34n91PgjQmdYcZNQgzI0w0C0=;
+	b=AM+mZd0aeFQmPJRgEKM6bcmPJ9hKMGRsBMJDZR0VIUE/nWg33d8pTzSzL9b/JQjWe6+Qt/
+	97mP7M7Pv+4iB79TQN30FvYCqZLyz/aluoSd52J5787agkBN0szBSLd+wuwyhcf0+Rz4Ho
+	YvCx8QzoyLqlveBc5QLDcbpuy4ixUFYKye1Ynf69x8EDlS0LiLba34oqucOX4Xgt2l3FPR
+	+nRNpU/pxsaiKxj5Mr8gL6Dr0IHqJGM6s3QzOKk7svUNzw2/CtDSsoX1qAG7xEKLgFon4t
+	oYs/D1SPqOljt7szAO/vIE35FDAWvaI26ijIsyfOUim4SfOSrVAzHQGyWtoJgQ==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Wed, 16 Jul 2025 17:47:13 +0200
-Subject: [PATCH v3 2/6] mmc: card: add mmc_card_blk_no_cmd23
+Date: Wed, 16 Jul 2025 17:47:14 +0200
+Subject: [PATCH v3 3/6] mmc: mmc_test: use mmc_card cmd23 helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250716-mobileye-emmc-for-upstream-4-v3-2-dc979d8edef0@bootlin.com>
+Message-Id: <20250716-mobileye-emmc-for-upstream-4-v3-3-dc979d8edef0@bootlin.com>
 References: <20250716-mobileye-emmc-for-upstream-4-v3-0-dc979d8edef0@bootlin.com>
 In-Reply-To: <20250716-mobileye-emmc-for-upstream-4-v3-0-dc979d8edef0@bootlin.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, 
@@ -73,41 +73,42 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehkedutdcutefuodetggdotef
  dgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrughrihgrnhdrhhhunhhtvghrsehinhhtvghlrdgtohhmpdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhg
 X-GND-Sasl: benoit.monin@bootlin.com
 
-Add a helper to check for the missing CMD23 quirk, similar to other
-quirk helpers. Also reorder the helpers to match the order of the quirk
-bits defined in include/linux/mmc/card.h.
+Use mmc_card_can_cmd23 instead of using a local and partial
+implementation, and check for the CMD23 quirk with
+mmc_card_blk_no_cmd23.
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- drivers/mmc/core/card.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/mmc/core/mmc_test.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h
-index 9cbdd240c3a7d42ecbb45cbc52c5562e4664ee35..1200951bab08c2e18ce96becf56693e696b9f30b 100644
---- a/drivers/mmc/core/card.h
-+++ b/drivers/mmc/core/card.h
-@@ -245,14 +245,19 @@ static inline int mmc_blksz_for_byte_mode(const struct mmc_card *c)
- 	return c->quirks & MMC_QUIRK_BLKSZ_FOR_BYTE_MODE;
+diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+index 80e5d87a5e50bea772c06443bca8f48f042d6ad5..67d4a301895c905bf52776f970bfc7a8f86a65aa 100644
+--- a/drivers/mmc/core/mmc_test.c
++++ b/drivers/mmc/core/mmc_test.c
+@@ -180,20 +180,14 @@ static int mmc_test_set_blksize(struct mmc_test_card *test, unsigned size)
+ 	return mmc_set_blocklen(test->card, size);
  }
  
-+static inline int mmc_card_nonstd_func_interface(const struct mmc_card *c)
-+{
-+	return c->quirks & MMC_QUIRK_NONSTD_FUNC_IF;
-+}
-+
- static inline int mmc_card_disable_cd(const struct mmc_card *c)
+-static bool mmc_test_card_cmd23(struct mmc_card *card)
+-{
+-	return mmc_card_mmc(card) ||
+-	       (mmc_card_sd(card) && card->scr.cmds & SD_SCR_CMD23_SUPPORT);
+-}
+-
+ static void mmc_test_prepare_sbc(struct mmc_test_card *test,
+ 				 struct mmc_request *mrq, unsigned int blocks)
  {
- 	return c->quirks & MMC_QUIRK_DISABLE_CD;
- }
+ 	struct mmc_card *card = test->card;
  
--static inline int mmc_card_nonstd_func_interface(const struct mmc_card *c)
-+static inline int mmc_card_blk_no_cmd23(const struct mmc_card *c)
- {
--	return c->quirks & MMC_QUIRK_NONSTD_FUNC_IF;
-+	return c->quirks & MMC_QUIRK_BLK_NO_CMD23;
- }
- 
- static inline int mmc_card_broken_byte_mode_512(const struct mmc_card *c)
+ 	if (!mrq->sbc || !mmc_host_can_cmd23(card->host) ||
+-	    !mmc_test_card_cmd23(card) || !mmc_op_multi(mrq->cmd->opcode) ||
+-	    (card->quirks & MMC_QUIRK_BLK_NO_CMD23)) {
++	    !mmc_card_can_cmd23(card) || !mmc_op_multi(mrq->cmd->opcode) ||
++	    mmc_card_blk_no_cmd23(card)) {
+ 		mrq->sbc = NULL;
+ 		return;
+ 	}
 
 -- 
 2.50.1
