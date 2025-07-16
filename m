@@ -1,306 +1,152 @@
-Return-Path: <linux-kernel+bounces-734199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A012B07E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:44:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49EC9B07E50
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6DE169384
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:44:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B821F1C2434B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C1C28ECF9;
-	Wed, 16 Jul 2025 19:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020652BCF5C;
+	Wed, 16 Jul 2025 19:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JE2kUPjz"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ByYHREL+"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C45218858;
-	Wed, 16 Jul 2025 19:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752695049; cv=none; b=gUvQ7QYBn3X1TG6Y7HcFAuT+Dpzfn85KiOP4hFbb6sPAOms9oRFL+pLyzSeQkJxqq6+V8iKYPuba3XtJs/2v0qL95ziF8cCbFREYXZLJf4bFVQcOqXjaD3ibzhVG2QOZYIRBsYd7ilYMNug7jBmGS7HRh4ZAk8rKafBwmGLPywU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752695049; c=relaxed/simple;
-	bh=/VnGrfVARweMdrKBvQRe10ytz1StrdjfupJlLPy/m8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OV5YJc3KUo59Yb5cKp6S2cEkknf1WVkPwtdf6LuBPpwHuZKV/ku1cC31vJHE0ds7xviJYMwmroiQkcUcnra4A7grt5u7y0UidqZTGnPtSFNqvnBprQPT9o71z7ifA4yKKM/hwxpZ3+0KbgvpIocNlaRKyL71nySMrBuIFqQKElU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JE2kUPjz; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-40a4bf1eb0dso173499b6e.3;
-        Wed, 16 Jul 2025 12:44:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752695046; x=1753299846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+RJb3K1usff7Zb3trCkpJkm8uKCGrOCVfGuf5HpRnA8=;
-        b=JE2kUPjzwBgcfbEC0Wla7a2LL+9wMWRopm6ZozZ71+g+fVj6r3LCEpBYd/rQqP3lE6
-         FHP1CeEd0U939jDyLagnw2yuR+KgO1JR3m3cAopoWELNMlHcpiRtCSr9ZFuKKUjVyAql
-         Sv9HYbCi1hfCfTShtwxHfeYk/nPLni4MfF5KIbki0tBA7SJmCXM2NvR4U2eZtb17hhC4
-         YEsZDEX6pKuJLBhrXvV/q9LNVM42UYP8GB+ztZGjeRY5qU49QeOAoINv/3itNhmQAE7Z
-         4BG7DQmCwtRX1jH9lA1QKLhWU72rJR9C+cQRO04ijE5loESmmfbBM38PuseaSLpYcSDl
-         na3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752695046; x=1753299846;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+RJb3K1usff7Zb3trCkpJkm8uKCGrOCVfGuf5HpRnA8=;
-        b=LlRujuh776Q/ZHyS+3dRApLqN8feMxo5DUdgQ4H9i281rO9fBkoDROw4lkbaqZDndK
-         KB+wq/UQPCiTvv/fIZViF4KSMcFd18ZYImrivEu7tPfX18wvlFAI0hDD5Dg1JgCAHjAZ
-         7U+ocgsKiMHeZhhDe8nEXCqb6w9C43Qy9j7oLDIE1gfgPuqvikHqYCGs/pp2klkO+dsN
-         NusgzmXBE7SpXuL8VgbMkX5HFZUXdphjseMrCfWhFe24DLKvpitsG3p2vHfru7/zpKL1
-         Yeh77gIpi9DTrHzLCLZCqzhjJZLCJ1HzG/8O96n3r5MKXc0rOxhhMFKSHAKE+AbvG+po
-         JSug==
-X-Forwarded-Encrypted: i=1; AJvYcCXUABcsIP5MXXqG8ms6aeQcI2Hk0OxrgT9Pq7Y4y2+KnVuLR3M2yjqqI7F7omPxaWAi0yHlPj7V@vger.kernel.org, AJvYcCXxkE8plnduBXwqjR5YTu3u7D2vNwR16AD4f1nlGdIA7QTQpIhnLJOdA2MMKdqpPHY0YCHuqF7Yt741WSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv7Q8JtoJLZksYLCsLZwGdj+DUY9CxtxpWgF4IouLC5W/UUKbr
-	d0esEcFLAJB+mzNdw08xxAYUudMb9yXbKdlJGnDTT880Lhl/c4TeNukB
-X-Gm-Gg: ASbGncsoafGRPPXjZfeO2SP2SmyFN35muOP2QvBdQfhC0XzjSmZm1GpgGLKXOYKNUbZ
-	v7oBT64guhk3QaHDUNsQ7YRIVqnhnpf3zbJX84NEUI05zKqO9Z2VHMyOz3Thtkj5l1DNQmvmxwr
-	sushX1/wCZLM60Atz3VdWg0Cjx9F7TFDEkLBNJH3sxspXdyGsfHe5tcIGiJrjjMS/AVTKM50R0H
-	+DFKj+f4+Wfl/+qnwdDo0kSMau10alCMF3lBkWGhzMQAYib6wr44XjUcoN0QqDFdS7hm7sr485N
-	46lm4RgPYWGYY5RqSiWXTnhWPXUtNEi6ongP3Tojc06CHufLrK2yz3GMFVHh+NMf7sENrVkl9+a
-	KHm5Xd341qEG17tPNVDdy4jY6On/qz+D1FnQZ5dvFrwfgiEH2fVOW6jzhArd3a2NPU0iEwD5AUu
-	Ty2Y/ezlP8Zg==
-X-Google-Smtp-Source: AGHT+IH7rPU8CPdva5tScZ7spJLADHZI41f7z47LZOz8ijsXYyYSHLF00e7tnDZE6SDaj5d09jFo0Q==
-X-Received: by 2002:a05:6808:189f:b0:408:fbed:c39f with SMTP id 5614622812f47-41d0526cad4mr2996628b6e.26.1752695046312;
-        Wed, 16 Jul 2025 12:44:06 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:ada3:14fa:a3ad:9ccf? ([2603:8080:7400:36da:ada3:14fa:a3ad:9ccf])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4141c78838asm2986824b6e.46.2025.07.16.12.44.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 12:44:05 -0700 (PDT)
-Message-ID: <c1cf6883-a323-40e8-881d-ae7023bbc61a@gmail.com>
-Date: Wed, 16 Jul 2025 14:44:04 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB7729B771;
+	Wed, 16 Jul 2025 19:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752695112; cv=pass; b=d1q6FY3h6OBXfpEI6QNkhur8pH/0AQpnC0+lrgRokmiO4YKlJ7iM2Rsmbv/WHC/7GJ4dDsb+7179a4W6MqOutem+LHN4GUSemyOuSZGNjojh7sIT4ngCsXh4ksZM7qFOWdbdBm67xFTf92Cm8IiJlCbGJDmm33WjtJ73JAOA8rQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752695112; c=relaxed/simple;
+	bh=NARzaEJQyDFC0HMf5RYjkvJeTeaw+ygjo8XkK2VD7bg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=FGT1yBlitN6znVI9aCYcp7tbGsYDAUkmTeIM6vOCaQwKscj7wjMExdo8Rrefwcu1yRv7pxmY9h2eV8PGDMePuMxyMvScc0Ipb0xbSFVu9LunNNdetXcm+yCHnk1RI/xn9iRS96KZE07R/RJ6K+sJRBURc1ZfKmJHWQnaFiokVZY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ByYHREL+; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752695093; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TfbdUrbAtafmvxx370cJ6suLS+ObUsoXpWz4hXpusvUDVIu5xSuaL0DHQVfTgoQXhx20CPaBvvfj4c9IkKwO19dIWrjFRolrfqvhNK/E6/VUTnCmA05IlUwCWQiTUQUs5JGls+ByA7hhkc2VIwx/RHpb2j9IMoeLy3OzyqZJS/8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752695093; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=E6ktWlv2igDhYD09yx09L8Lelk36VOs3Y0BNzCToH2w=; 
+	b=U3nvHT5/pUGZrSfi30LdgCFOIZQHbWtG7YP5We0lP4OmEJUx0IDqptdoH1t3j32s0tbE1LCjGl9fCp9AUva443graYj+M3O2O7NLabKhGHjqoBm1qcAAOdWyhaddPngv6qK9FcY+6kWO4b2niZS5lOW16NtXBzt2hwNNRJ/9A+Q=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752695093;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=E6ktWlv2igDhYD09yx09L8Lelk36VOs3Y0BNzCToH2w=;
+	b=ByYHREL+SIX6bOp7lqHt9VmLen8J891eDuyYBsTmJu09gPjzgaJz+WeuYbIPnOiF
+	x87IAptmziRJ4qDhEDFYKdNfWYH5m/7L/vRCieOgqkUfJhzSDIGg3bK1jIs7Rqjr3bQ
+	Iwc3pgvlcQM71kWcextl27BkPrz5f16f4t43m8Uc=
+Received: by mx.zohomail.com with SMTPS id 1752695090539727.3549366017237;
+	Wed, 16 Jul 2025 12:44:50 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bonding: Switch periodic LACPDU state machine from
- counter to jiffies
-To: Jay Vosburgh <jv@jvosburgh.net>, Carlos Bilbao <bilbao@vt.edu>
-Cc: carlos.bilbao@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, sforshee@kernel.org
-References: <20250715205733.50911-1-carlos.bilbao@kernel.org>
- <c9eac8f6-8e7f-4ed0-b34d-5dc50be8078f@vt.edu> <798952.1752679803@famine>
-Content-Language: en-US
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <798952.1752679803@famine>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Hello Jay,
-
-On 7/16/25 10:30, Jay Vosburgh wrote:
-> Carlos Bilbao <bilbao@vt.edu> wrote:
->
->> FYI, I was able to test this locally but couldn’t find any kselftests to
->> stress the bonding state machine. If anyone knows of additional ways to
->> test it, I’d be happy to run them.
-> 	Your commit message says this change will "help reduce drift
-> under contention," but above you say you're unable to stress the state
-> machine.
->
-> 	How do you induce "drift under contention" to test that your
-> patch actually improves something?  What testing has been done to insure
-> that the new code doesn't change the behavior in other ways (regressions)?
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v9] rust: kernel: add support for bits/genmask macros
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DBDQASMSS32U.FJBYKS3LWEQ6@kernel.org>
+Date: Wed, 16 Jul 2025 16:44:29 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ Alexandre Courbot <acourbot@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1DCA3EA2-5CBB-4193-B1D3-7E286C344A14@collabora.com>
+References: <20250714-topics-tyr-genmask2-v9-1-9e6422cbadb6@collabora.com>
+ <DBDP54SLN4EZ.2EQ004NXWCX2L@kernel.org>
+ <705CD461-60D9-492E-B82F-C88A848A4348@collabora.com>
+ <DBDQASMSS32U.FJBYKS3LWEQ6@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
 
-I tested the bonding driver with and without CPU contention*. With this
-patch, the LACPDU state machine is much more consistent under load, with
-standard deviation of 0.0065 secs between packets. In comparison, the
-current version had a standard deviation of 0.15 secs (~x23 more
-variability). I imagine this gets worsens with greater contention.
 
-When I mentioned a possible kselftest (or similar) to "stress" the state
-machine, I meant whether there's already any testing that checks the
-state machine through different transitions -- e.g., scenarios where the
-switch instruct the bond to change configs (for example, between fast and
-slow LACP modes), resetting the bond under certain conditions, etc. I just
-want to be exhaustive because as you mentioned the state machine has been
-around for long time.
+> On 16 Jul 2025, at 16:32, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Wed Jul 16, 2025 at 9:11 PM CEST, Daniel Almeida wrote:
+>> Let=E2=80=99s transfer this discussion to this patch.
+>>=20
+>>> I also quickly tried genmask and I have a few questions:
+>>>=20
+>>> (1) Why does genmask not use a const generic? I think this makes it =
+more
+>>>     obvious that it's only intended to be used from const context.
+>>=20
+>> I guess none of us thought about it, since the current version also =
+works.
+>=20
+> I think using a const generic would be a bit better for the mentioned =
+reason.
 
-*System was stressed using:
+Btw, how does monomorphization work here? Would we have to codegen all =
+the
+versions? Also, I don't think that you can take a range as a const =
+generic
+argument, i.e., I don't recall ever seeing this syntax:
 
-stress-ng --cpu $(nproc) --timeout 60
+genmask_u64::<0..=3D63>();
 
-Metrics were collected with:
+So we'd have to go back to taking two arguments, and it's less ergonomic =
+than
+a..=3Db (which was discussed a bit at length during the previous =
+iterations).
+Also it would stand out against the non-const (i.e. checked) versions, =
+which would
+still take a range as argument.
 
-sudo tcpdump -e -ni <my interface> ether proto 0x8809 and ether src <mac>
+>=20
+>>>=20
+>>> (2) Why is there no build_assert() when the range exceeds the number =
+of bits
+>>>     of the target type? I would expect genmask_u64(0..100) to fail.
+>>=20
+>> Doesn=E2=80=99t it?
+>>=20
+>> There is a build_assert in the underlying bit implementation. It was =
+redundant
+>> to have it both in bit_* and in genmask, because genmask calls bit().
+>>=20
+>> In your example, bit_u64(100) hits that assert, and so it shouldn't =
+compile.
+>=20
+> Indeed, and it also works, except from doc-tests for some reason, =
+which is what
+> I tried real quick. :)
+>=20
 
+Wait, this was a bit confusing :)
+You=E2=80=99re confirming that it doesn=E2=80=99t compile, correct?
 
->
-> 	Without a specific reproducable bug scenario that this change
-> fixes, I'm leery of applying such a refactor to code that has seemingly
-> been working fine for 20+ years.
->
-> 	I gather that what this is intending to do is reduce the current
-> dependency on the scheduling accuracy of the workqueue event that runs
-> the state machines.  The current implementation works on a "number of
-> invocations" basis, assuming that the event is invoked every 100 msec,
-> and computes various timeouts based on the number of times the state
+> I feel like usize would be a better fit, but not a strong opinion.
 
+I guess this is the same problem as u64: drivers will usually have =
+either
+i32s/u32s and this would require a cast.
 
-Yep.
-
-
-> machine runs.
->
-> 	-J
->
->> Thanks!
->>
->> Carlos
->>
->> On 7/15/25 15:57, carlos.bilbao@kernel.org wrote:
->>> From: Carlos Bilbao <carlos.bilbao@kernel.org>
->>>
->>> Replace the bonding periodic state machine for LACPDU transmission of
->>> function ad_periodic_machine() with a jiffies-based mechanism, which is
->>> more accurate and can help reduce drift under contention.
->>>
->>> Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
->>> ---
->>>    drivers/net/bonding/bond_3ad.c | 79 +++++++++++++---------------------
->>>    include/net/bond_3ad.h         |  2 +-
->>>    2 files changed, 32 insertions(+), 49 deletions(-)
->>>
->>> diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
->>> index c6807e473ab7..8654a51266a3 100644
->>> --- a/drivers/net/bonding/bond_3ad.c
->>> +++ b/drivers/net/bonding/bond_3ad.c
->>> @@ -1421,44 +1421,24 @@ static void ad_periodic_machine(struct port *port, struct bond_params *bond_para
->>>    	    (!(port->actor_oper_port_state & LACP_STATE_LACP_ACTIVITY) && !(port->partner_oper.port_state & LACP_STATE_LACP_ACTIVITY)) ||
->>>    	    !bond_params->lacp_active) {
->>>    		port->sm_periodic_state = AD_NO_PERIODIC;
->>> -	}
->>> -	/* check if state machine should change state */
->>> -	else if (port->sm_periodic_timer_counter) {
->>> -		/* check if periodic state machine expired */
->>> -		if (!(--port->sm_periodic_timer_counter)) {
->>> -			/* if expired then do tx */
->>> -			port->sm_periodic_state = AD_PERIODIC_TX;
->>> -		} else {
->>> -			/* If not expired, check if there is some new timeout
->>> -			 * parameter from the partner state
->>> -			 */
->>> -			switch (port->sm_periodic_state) {
->>> -			case AD_FAST_PERIODIC:
->>> -				if (!(port->partner_oper.port_state
->>> -				      & LACP_STATE_LACP_TIMEOUT))
->>> -					port->sm_periodic_state = AD_SLOW_PERIODIC;
->>> -				break;
->>> -			case AD_SLOW_PERIODIC:
->>> -				if ((port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT)) {
->>> -					port->sm_periodic_timer_counter = 0;
->>> -					port->sm_periodic_state = AD_PERIODIC_TX;
->>> -				}
->>> -				break;
->>> -			default:
->>> -				break;
->>> -			}
->>> -		}
->>> +	} else if (port->sm_periodic_state == AD_NO_PERIODIC)
->>> +		port->sm_periodic_state = AD_FAST_PERIODIC;
->>> +	/* check if periodic state machine expired */
->>> +	else if (time_after_eq(jiffies, port->sm_periodic_next_jiffies)) {
->>> +		/* if expired then do tx */
->>> +		port->sm_periodic_state = AD_PERIODIC_TX;
->>>    	} else {
->>> +		/* If not expired, check if there is some new timeout
->>> +		 * parameter from the partner state
->>> +		 */
->>>    		switch (port->sm_periodic_state) {
->>> -		case AD_NO_PERIODIC:
->>> -			port->sm_periodic_state = AD_FAST_PERIODIC;
->>> -			break;
->>> -		case AD_PERIODIC_TX:
->>> -			if (!(port->partner_oper.port_state &
->>> -			    LACP_STATE_LACP_TIMEOUT))
->>> +		case AD_FAST_PERIODIC:
->>> +			if (!(port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
->>>    				port->sm_periodic_state = AD_SLOW_PERIODIC;
->>> -			else
->>> -				port->sm_periodic_state = AD_FAST_PERIODIC;
->>> +			break;
->>> +		case AD_SLOW_PERIODIC:
->>> +			if ((port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
->>> +				port->sm_periodic_state = AD_PERIODIC_TX;
->>>    			break;
->>>    		default:
->>>    			break;
->>> @@ -1471,21 +1451,24 @@ static void ad_periodic_machine(struct port *port, struct bond_params *bond_para
->>>    			  "Periodic Machine: Port=%d, Last State=%d, Curr State=%d\n",
->>>    			  port->actor_port_number, last_state,
->>>    			  port->sm_periodic_state);
->>> +
->>>    		switch (port->sm_periodic_state) {
->>> -		case AD_NO_PERIODIC:
->>> -			port->sm_periodic_timer_counter = 0;
->>> -			break;
->>> -		case AD_FAST_PERIODIC:
->>> -			/* decrement 1 tick we lost in the PERIODIC_TX cycle */
->>> -			port->sm_periodic_timer_counter = __ad_timer_to_ticks(AD_PERIODIC_TIMER, (u16)(AD_FAST_PERIODIC_TIME))-1;
->>> -			break;
->>> -		case AD_SLOW_PERIODIC:
->>> -			/* decrement 1 tick we lost in the PERIODIC_TX cycle */
->>> -			port->sm_periodic_timer_counter = __ad_timer_to_ticks(AD_PERIODIC_TIMER, (u16)(AD_SLOW_PERIODIC_TIME))-1;
->>> -			break;
->>>    		case AD_PERIODIC_TX:
->>>    			port->ntt = true;
->>> -			break;
->>> +			if (!(port->partner_oper.port_state &
->>> +						LACP_STATE_LACP_TIMEOUT))
->>> +				port->sm_periodic_state = AD_SLOW_PERIODIC;
->>> +			else
->>> +				port->sm_periodic_state = AD_FAST_PERIODIC;
->>> +		fallthrough;
->>> +		case AD_SLOW_PERIODIC:
->>> +		case AD_FAST_PERIODIC:
->>> +			if (port->sm_periodic_state == AD_SLOW_PERIODIC)
->>> +				port->sm_periodic_next_jiffies = jiffies
->>> +					+ HZ * AD_SLOW_PERIODIC_TIME;
->>> +			else /* AD_FAST_PERIODIC */
->>> +				port->sm_periodic_next_jiffies = jiffies
->>> +					+ HZ * AD_FAST_PERIODIC_TIME;
->>>    		default:
->>>    			break;
->>>    		}
->>> @@ -1987,7 +1970,7 @@ static void ad_initialize_port(struct port *port, int lacp_fast)
->>>    		port->sm_rx_state = 0;
->>>    		port->sm_rx_timer_counter = 0;
->>>    		port->sm_periodic_state = 0;
->>> -		port->sm_periodic_timer_counter = 0;
->>> +		port->sm_periodic_next_jiffies = 0;
->>>    		port->sm_mux_state = 0;
->>>    		port->sm_mux_timer_counter = 0;
->>>    		port->sm_tx_state = 0;
->>> diff --git a/include/net/bond_3ad.h b/include/net/bond_3ad.h
->>> index 2053cd8e788a..aabb8c97caf4 100644
->>> --- a/include/net/bond_3ad.h
->>> +++ b/include/net/bond_3ad.h
->>> @@ -227,7 +227,7 @@ typedef struct port {
->>>    	rx_states_t sm_rx_state;	/* state machine rx state */
->>>    	u16 sm_rx_timer_counter;	/* state machine rx timer counter */
->>>    	periodic_states_t sm_periodic_state;	/* state machine periodic state */
->>> -	u16 sm_periodic_timer_counter;	/* state machine periodic timer counter */
->>> +	unsigned long sm_periodic_next_jiffies;	/* state machine periodic next expected sent */
->>>    	mux_states_t sm_mux_state;	/* state machine mux state */
->>>    	u16 sm_mux_timer_counter;	/* state machine mux timer counter */
->>>    	tx_states_t sm_tx_state;	/* state machine tx state */
-> ---
-> 	-Jay Vosburgh, jv@jvosburgh.net
->
-
-Thanks,
-
-Carlos
-
+=E2=80=94 Daniel=
 
