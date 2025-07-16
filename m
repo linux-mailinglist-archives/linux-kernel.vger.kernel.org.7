@@ -1,39 +1,87 @@
-Return-Path: <linux-kernel+bounces-733911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CEDB07A81
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:59:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64485B07A8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88ACA42E80
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996C9189B2DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F492F3C3E;
-	Wed, 16 Jul 2025 15:59:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056471D79BE
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0119B262FC2;
+	Wed, 16 Jul 2025 16:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P2RIXezB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184FF273D72
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752681549; cv=none; b=ppEeyqGFQlAf9vvluptV2HvxYlzAPiRE3/U44r2e6K+OssejOkqp6wKBWyPjj7l0iRkNy7BcOxKqYbeeiJ4FutS48nz+a8y4hp/F6j3Grloz5Qy9ULuEvCnt6TOq1nrFaf6JfLfrarf314kwJSiF1Yw0Mzo/alZZ/YfBvcvKqSc=
+	t=1752681626; cv=none; b=LC7+KbGbyeL9wTTM9EzMfstEKHbf+uqZAQrpQl9Hj1WyR8QsFQHrk1PTLD3cdy2muxnv02py86wDjrNmFnGDd3gTDREDjkOAnqBO4Fl3JpRWj3MGeZSupNZupv9B5dVlf6i3u0OAaWwvkA1BGPa7XhyEcwNkQKO6LwvOHI77wUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752681549; c=relaxed/simple;
-	bh=BJ29zWP+Fo1FE8nFGYS/h04/WngnfxPC7DE3y4NVhJs=;
+	s=arc-20240116; t=1752681626; c=relaxed/simple;
+	bh=ADfJz7MDETMJX4ewoMWeIUjHHd+wXJLC8WGJglMDlo8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CRVKGn2NpV4GhpxV9EAdfKmJ7tBoALVFdz5tQW4NlToaj8VsjQ+Fpxme6u+Qmw6KWTzZHpZOiRu6bNm16n+bIuuDRKFqv9MdyoD7+8jH29DlHsG+3F0fN7wQ2J7nqOLspodApbj2B6TeewyNgmlE4gZUMsZzihWAT3HyXBdBZsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43885113E;
-	Wed, 16 Jul 2025 08:58:59 -0700 (PDT)
-Received: from [10.57.86.212] (unknown [10.57.86.212])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23C053F694;
-	Wed, 16 Jul 2025 08:59:02 -0700 (PDT)
-Message-ID: <04f35ef6-d6d6-4a30-89fe-6e578c3f03be@arm.com>
-Date: Wed, 16 Jul 2025 16:59:00 +0100
+	 In-Reply-To:Content-Type; b=MhFY20ikVuLoxy7vyr7xKdCJO2osSg6gxDVnZSA9QaMfDflB8nS0puE+hB3d1lHsT7P4hEAytrITXsNU23LSXoEXYOxvzI+6yxEY4tztZtojmS/J0BLcfDYg7WNx7oFZGRNQoFhM+unJlB8JtzGTY3SmgFTMn0xjP6ZprVe0N8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P2RIXezB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GCsow9007299
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:00:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Lj+0IuuDHDUmFIdwpugsUGXQmeDRIR2QIraen0zZdPw=; b=P2RIXezBtOZUtoCo
+	dCu0E3V0aCFawd4kNaX0k+sNp4yFzOd8fmTgSDDzD/YcO9ct1P5oMVipzHc+ejuj
+	cqpAuxQ60o2Qirb989CUCowLHUuOsU2LnAkjT+/jpA2oq3aX1i9OPkEkM6staE1A
+	Rd8G/bNp2J/YTcJvO/fP7LwMGaiymm9rHl0UJfg2r6eQ8wL99wNhuCatfK59IznS
+	9mJfP5nipEAt3E0ET6lzW5nbm5ITCF7M8whpvKlVFIfUEA/SR5Pe6RD3cPCPGfyU
+	eSiKN9BbJaUOFvaSjVvi/WOXk5fVbOnUVyP7AKt0ZqRBecraELBQ0rkFvJiQwJIU
+	cMyDSw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5vsxk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:00:24 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ab716c33cdso194321cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:00:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752681607; x=1753286407;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lj+0IuuDHDUmFIdwpugsUGXQmeDRIR2QIraen0zZdPw=;
+        b=enizQL6ndydciK0NxlaS6u5lpf0xyOKskZUCvInxwha7W7VIsZBnpn2ZA2j9XQcGHn
+         Tk2HquQTJdFIdPSXjYvS3hZjmqz6wRe6uuVGeABNOsXhZCS+8tUkRYsjUaiKKiiv4iXx
+         Fiq4HTTOqq7Tlx62YIXkOvgtJ+p+pV92/c/mI578QwoYq+RKguthYYbrASnhH6dClrSm
+         5o1ZCSnbUx08zeCMhxq0O3xctz0IiBqYGXKnkM8fFgapqr4ZMTYl3f68vSmNGBUBk7yB
+         r5t3tvNUk6byyMB2480nr9KjWFiQ/1AHnM+NpaJ9zq93mzl1Ex6HAApDGRpnXhq/n2Um
+         TEig==
+X-Forwarded-Encrypted: i=1; AJvYcCWfcEAcFcIx4QobHryGuTec6cH03W0ql2b3FujuLEKXJ0othIqprI9xQOtjprBLuIzc6kT19L09/jUWpv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKvQY6bD35LJmW/f0Adhngh9h/vN8rvduhtwyaZ74+3om5gsvu
+	bbBXxLnTPVV6KsUbclct3PfzFabEugzub7eUSQFIDgAbe2OGG5zvDTrdKm8JJwj69V0UDESTdJn
+	wc2uLzs/mVwF7qfhWTd9S+Se16fJRwxrD6FYfikE6b+WR3eswyFXzT5z27ZK1mat+hyQ=
+X-Gm-Gg: ASbGnctaGEQO6ye7WO0/oGAy2k0mn7YKlHR+nHff8M7dNIt4A53aQyONeoFaxobQvqA
+	wHe5PWtusiOqOXUfr9lEfl4L/ve80MbM9VCu7z22n09NccrxVjuoclCHs8+bJLpdhbA1iKUEs7i
+	F35WiYXF9HzDqgVYAx+YpyNI+8fhihXdfPi7ytb8ib/tYZjK/VF8GyRLqQB3m4ixbZdbQQ8xYhp
+	HR8nB4mwaE5wQp295QPPsgcPU3xoe21H4FemeDRr1UF9v05PKaYphdgmxKYZBupnjLNXItFEPIt
+	uLrcLO82RfQYjDgDYGEwQGNh8I78qsyfXCS1rEwM2H4MBkGzmG7LxVETkJHz3hnictLCvs1FHCU
+	ob5tmBsEK8vcHowwDjjsx
+X-Received: by 2002:a05:622a:1493:b0:4ab:63f8:ef30 with SMTP id d75a77b69052e-4ab909a993emr26718311cf.3.1752681606781;
+        Wed, 16 Jul 2025 09:00:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IERe9JVAY73uRoPOiv1ZYx9NVNl6QHqwUVE2Ldheh7YUqMzUCoLVYSOkjII3/ToglVnN0G05Q==
+X-Received: by 2002:a05:622a:1493:b0:4ab:63f8:ef30 with SMTP id d75a77b69052e-4ab909a993emr26717951cf.3.1752681606283;
+        Wed, 16 Jul 2025 09:00:06 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c973439bsm9070642a12.47.2025.07.16.09.00.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 09:00:05 -0700 (PDT)
+Message-ID: <9429c00a-b044-4da9-b380-a03d298da7a1@oss.qualcomm.com>
+Date: Wed, 16 Jul 2025 18:00:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,135 +89,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/7] drm/panthor: Add support for repeated mappings
-To: Caterina Shablia <caterina.shablia@collabora.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Lucas De Marchi
- <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- asahi@lists.linux.dev, Asahi Lina <lina@asahilina.net>
-References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
- <20250707170442.1437009-8-caterina.shablia@collabora.com>
- <414aabbe-763b-4786-a85c-a2670475ece5@arm.com> <2244038.Hq7AAxBmiT@xps>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <2244038.Hq7AAxBmiT@xps>
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: sm8250-xiaomi-pipa: Drop unused
+ bq27z561
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Arseniy Velikanov <me@adomerle.pw>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Luka Panio <lukapanio@gmail.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20250716141041.24507-1-me@adomerle.pw>
+ <20250716141041.24507-2-me@adomerle.pw>
+ <c6od65q2e6bnz6jxq65ox7burhjavjmooe3vq6nhhfq3ikglz7@4ufcxbjhp23o>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <c6od65q2e6bnz6jxq65ox7burhjavjmooe3vq6nhhfq3ikglz7@4ufcxbjhp23o>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=6877cc98 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=bjYnimzL4-PixQkOYsUA:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-GUID: JwFWZJc6xwOdtErK8N1UaSEYLO5zQHoo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDE0NCBTYWx0ZWRfXydt9pi5xp+6u
+ duRMg6GmFs0rgIwHQ3stYciyAv6A5YcWp+JZNVlRTjtwHj5tONwYb5CgYBKzf69Zq4hK7vy8Xzb
+ ngAtC8HCESalCuPaZaonlpvPF0dO6TLl4l4g/OEg2NDXGCsTD5TnK6APyMw56TURaUyruwFEHig
+ U57CZUhs1Xs2F2eebpF2Ss+BRsjLadYLfNQftErFeAeViW3KfuPwB7wW8m1fIX7ZPAt7ygGdPfL
+ +ai7spsS02/Mvhk7e1frSIWAGT8ptoDVl/nmxxjBI5jICFII0+5VHbjbBpvST/LcKjjE7CbUsTY
+ gfErqPSs2p+XV9tCb+hGEbaPsDL2e9ovRH5O6dvok7Um4eb49NmzOFRupFadtKWF99Pvjbd4rvY
+ WSc/Dg4/F1MVKl8TDAdKqB0jJr7Ux+unN598D0rzds+0Il1Hjl/iZD9toiI99qso/HpDWvbY
+X-Proofpoint-ORIG-GUID: JwFWZJc6xwOdtErK8N1UaSEYLO5zQHoo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 mlxlogscore=844 mlxscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160144
 
-On 15/07/2025 16:17, Caterina Shablia wrote:
-> El viernes, 11 de julio de 2025 16:03:26 (hora de verano de Europa central), 
-> Steven Price escribió:
->> On 07/07/2025 18:04, Caterina Shablia wrote:
->>> From: Boris Brezillon <boris.brezillon@collabora.com>
->>>
->>> This allows us to optimize mapping of a relatively small
->>> portion of a BO over and over in a large VA range, which
->>> is useful to support Vulkan sparse bindings in an efficient
->>> way.
->>>
->>> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
->>> Co-developed-by: Caterina Shablia <caterina.shablia@collabora.com>
->>> Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
->>
->> This looks like the right sort of shape. From an uAPI perspective I'm
->> not sure whether u32 is the right type for bo_repeat_range. While I
->> can't immediately see a use for having a large repeat range it seems a
->> little silly to close it off when we're going to have padding afterwards
->> anyway. Obviously the kernel would reject large values because the
->> internal APIs are only u32. But it would enable this to be fixed if we
->> ever discover a usecase without a uAPI change.
->>
->>> ---
->>>
->>>  drivers/gpu/drm/panthor/panthor_drv.c |  3 +-
->>>  drivers/gpu/drm/panthor/panthor_mmu.c | 78 ++++++++++++++++++++++++---
->>>  include/uapi/drm/panthor_drm.h        | 23 ++++++++
->>>  3 files changed, 95 insertions(+), 9 deletions(-)
->>>
+On 7/16/25 4:59 PM, Dmitry Baryshkov wrote:
+> On Wed, Jul 16, 2025 at 06:10:40PM +0400, Arseniy Velikanov wrote:
+>> It looks like the fuel gauge is not connected to the battery,
+>> it reports nonsense info. Downstream kernel uses pmic fg.
+> 
+> If you have to repost the patches for any reason, please sched more
+> light on the 'nosense' you are observing.
 
-[...]
+Since it's actually onboard, it would be fair to assume it's there
+for a reason.. Does it also report nonsense when running a
+downstream build?
 
->>> +static int
->>> +panthor_vm_repeated_map_pages(struct panthor_vm *vm, u64 iova, int prot,
->>> +			      struct sg_table *sgt, u64 offset, u64 
-> size,
->>> +			      u64 count)
->>> +{
->>> +	/* FIXME: we really need to optimize this at the io_pgtable level. 
-> */
->>
->> Do you have plans for optimizing this? 
-> I personally don't have any plans, no, but maybe Boris does. I'll forward this 
-> question to him once he's back from his vacation.
->> How bad is the performance
->> without optimizing?
-> It's better than the alternative of poking vm_bind with a morbillion 
-> drm_panthor_vm_bind_ops. More seriously, I don't really have any workloads 
-> beside VK CTS to measure, for now. There's some stuff we should try to do in 
-> panvk first, like using a 2M dummy_page and doing some gymnastics when mapping 
-> it so we get huge mappings, which will hopefully lessen the pressure on this 
-> loop.
-
-Ok, sounds like some more investigation is needed. I'm a little wary of
-a new feature which has a FIXME like this as it sounds like the design
-hasn't been tested yet. I'm happy with the current code if it's indeed
-"good enough", but if it's still too slow to be actually usable then I
-think we need to fix it before merging rather than have a new feature
-which isn't actually fast enough to use.
-
->>
->>> +	for (u64 i = 0; i < count; i++) {
->>> +		int ret;
->>> +
->>> +		ret = panthor_vm_map_pages(vm, iova + (size * i), prot,
->>> +					   sgt, offset, size);
->>> +		if (ret) {
->>> +			panthor_vm_unmap_pages(vm, iova, size * (i - 
-> 1));
->>> +			return ret;
->>> +		}
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>
-
-[...]
-
->>>
->>> +	/**
->>> +	 * @bo_repeat_range: The size of the range to be repeated.
->>> +	 *
->>> +	 * Must be zero if DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT is not set in
->>> +	 * flags.
->>> +	 *
->>> +	 * Size must be a multiple of bo_repeat_range.
->>> +	 */
->>> +	__u32 bo_repeat_range;
->>> +
->>> +	/** @pad: Padding field. MBZ. */
->>> +	__u32 pad;
->>
->> If we're going to have the padding then the kernel needs to check that
->> this padding is zero, so that it can be available for future use.
-> I decided to go with your suggestion to change bo_repeat_range to be an __u64, 
-> but rejecting vm_binds with values above 2^32-1 for now.
-
-Yeah I think that's cleanest. Please do include a comment in the uapi
-file about the 2^32-1 limit though.
-
-Thanks,
-Steve
-
+Konrad
 
