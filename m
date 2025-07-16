@@ -1,117 +1,244 @@
-Return-Path: <linux-kernel+bounces-733219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1561B071B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:31:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60529B071B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFF08501A91
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:30:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A04BE1C2256B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B22329B8C6;
-	Wed, 16 Jul 2025 09:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277602BE647;
+	Wed, 16 Jul 2025 09:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="avVxyJa3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EaQpLDdc"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218AE1FC7E7;
-	Wed, 16 Jul 2025 09:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0778226A0DF
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752658255; cv=none; b=bGbD9cfZwYPgVT6+NOxoWrJlkfrTYN8HLFDNorsSPLxIg1pE4gXKJXLyHweRjJsZJ1tx9vn9QXoJuWSbeUsZEt3lpTkSAFtOjFPhCWgXLMqOMScTA1M570giutbqggDNieP1dxLdNB7B++u1kTPG7RTl7HFXa1hBt4yEp2pI0Pk=
+	t=1752658306; cv=none; b=iCiYPAPYw2U7s5fqzJpJrjCOU+mVoH+tVq2e/mzp+Em/u6Cow17yb4oCFhmcg++DE1uyUTwLRp1edzdUl+XrAqyCb3nsIBEWV1mfQ0KJkhT6QjMOwA9GrcCCZ7wDgYwIEGvZR2NBhGeCXyOPQOZ8+rU1WR0lPfHQU2IbsgPrZts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752658255; c=relaxed/simple;
-	bh=/hsKJp0veEH4CIuPm2ndhfjo7cUmN/Vqzu8v6XUYoSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJpRHTdTrzxooDNOWExf75gFrKQ6DQmLjr8Ns/H/4F6Nt7cBnFHKiN1ID7d/bI/sOh2VYRgvMrJXogdqUDaHAnDfA6ICOs0yKKnrKRZ5NNNY7O13nRgov+XCwREoAmjJ3jb9ZT+44BoCJtiQo8uen/I+z8EU+UBEAEd8zTUzAnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=avVxyJa3; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752658254; x=1784194254;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=/hsKJp0veEH4CIuPm2ndhfjo7cUmN/Vqzu8v6XUYoSU=;
-  b=avVxyJa3jBm/8lAqLuWqmOdp/MdLblWP7HO/WmbNtoLEBq82L0j6Eq21
-   9sO/zxJQU/X+MA7+G4Dinl1eXAJulNjmjkkVvzEdgsnyZgZHLwU0r9lQY
-   V2pIkGpExO+G1GbAMkSSHtA/5NTKFgaPbG2coPwF1jo9hqJSvjUt+ZrOp
-   D2PHjp3XS6LuzfGjZNqdJ9MF6QNQVutRFMZC/r4U6l7F95OMY7/J0Yw5A
-   LG/9/MV4brYHmkYrPeEl6owNOZaak+sy6M38XPHNUKotcMFCCUdohnlpV
-   vKQh1DFR5lSMYf7aadOiZiTfYJPbp24t42cILaiUO2UHlY8OPeK/3he5P
-   Q==;
-X-CSE-ConnectionGUID: 2S1o9mjqQgKmXwtuY0ob8g==
-X-CSE-MsgGUID: V32a81dCQ8iidn6udVgydw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54835494"
-X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="54835494"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 02:30:53 -0700
-X-CSE-ConnectionGUID: BkPsUiPzQyGbtum9ng9Gsg==
-X-CSE-MsgGUID: fY1IOsDsQYCXy7pfFCUQKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="157553881"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 02:30:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ubyTP-0000000FtlP-0IQk;
-	Wed, 16 Jul 2025 12:30:47 +0300
-Date: Wed, 16 Jul 2025 12:30:46 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: devres: release GPIOs in devm_gpiod_put_array()
-Message-ID: <aHdxRvJ6fCEiQ6Rn@smile.fi.intel.com>
-References: <20250715-gpiolib-devres-put-array-fix-v1-1-970d82a8c887@linaro.org>
- <175265695302.15922.15433902408963854171.b4-ty@linaro.org>
+	s=arc-20240116; t=1752658306; c=relaxed/simple;
+	bh=LnZtHSBOfuaGiA0+J2QyiVh2FhpEgdY39u4ISd39VwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TZ0AXf0dckaLnNQf0omGXtgpXP7d8ybCFZvvaZ7y9l7MD9R7iQE1F+GUappXHLOWZj2LEuG1us576sO9gZwg6du2JcJt7NNXubT+oORe1LARFGWV+LPImwWAewm1UrqFJHzExm8ggQTWRQEaQD+hn3QEnHut9zupbhRFCrzstbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EaQpLDdc; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b34a78bb6e7so5131219a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 02:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752658304; x=1753263104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4/TD0xwgjUcH0nigdFj6tR511cNw2GjnqML50p5eZPI=;
+        b=EaQpLDdcUOEBygoHpXE0Oe314SJaypW/oz5hUrhEqGvFlbu/B9UulOxOIFRbbgaYXn
+         j/vNQqqyfo3hbYhc8i5eiZhp0LKFXZrUyUNvCWhl62MBO0WkDDkUReG6rSDIwzkX3396
+         bUzxYPogs6uRu1Kj1vTb1ZH5IkQgsKzkVG62YrgYt+dIrpgHHov9900MwwAYAxuSwLgK
+         jAK0dVOLm+X/gIGP+Fud2enGirPmDq73GKSkeM9dGRD4DKluKFGrBpvxJ9c39AbFHuOW
+         IwczdEGqCLGlGAVdIGRXw9dj9Jd0QvnT0mxO8CTni21iKVglSoYYstWgNu+lDQXjqJdv
+         hDKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752658304; x=1753263104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4/TD0xwgjUcH0nigdFj6tR511cNw2GjnqML50p5eZPI=;
+        b=F/F/bs/FjNf30vM/qUqgFrPAuGKnIdIzZjby3uEoSmrKccZ3CyLFO7RCQyiQWVWD/N
+         NZTbz98EFDLPgcT0OBjO0zBURiJLgrd3LVEM9SV9Pt8dju0Laq2dz9qYsqtEA12yfFfw
+         t7PGtEU2TJQEyZ4jCvWZOUtSuybbU9Q6voYzM0sSvaO7TXtEM/CsG419nJVZNzIl8i8h
+         ZTbzlnZO04up6x5E3CM/xfSu2K8opN5O+HqTMdUVtpGphccJtcPSDDI2NMZ7hm88GnUd
+         RatzomusR68B/xBNzztT7PJAtvmZdOXZCzZoAw+myvrUNtqO/8hRNHY/EnEZtxntWl2h
+         Qh2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZqU7Tq136lGc/smTNTOHBs7mc/iqw8IqQaTFjRJ+MKTBHW3sFAk7HlMUHc/eHXeOvHLR7Cg2bpi/K9hQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+udpMhoyvzNdzebMT7uK+g+0JBPXFmExQBHWK5CB4exBy05EE
+	pT/v6oSzYHRKgshkWfzBzMETye3WQsoZSGURuIFgqgQfHTg7vrBo8CMLTpsOGpugdrKGW6m5u47
+	txXmPmhZDUAbrUpr0MxofnJ5kIvEd/+Lk0TxbXBoFBTAFy/UcXrwFzlM=
+X-Gm-Gg: ASbGncv1UOghmg/PAEt6ek9KHQhM88b2p+rdAP0komys7vMAGUlME2p5JIEbWZfRrPx
+	hhrpUXXk7HWjDqnhOeI+a/qhYOQMtj+aaraWnn8mNBjMZyAIlzLbrYv8wsXcDJYrMvAxI4TF9M8
+	BrV+kS2VLg7QePR0i/K6yGrC8/Q5S8V7fxqCkUy1hX6q/l9fx20ASff0d863uoynIbpRzbEt7M7
+	i0uZL88vWKlg+bAVyS23lVvGXtKv3zdI9G3QVUjlxL5FrL4+/s=
+X-Google-Smtp-Source: AGHT+IHHFBG42P6rU2Vz5RaFMP1ftBXPkAZqxVb12Un6mixuudNNh6AfVCr8p4OgBQ3GuE5bUiVIkw221QpnXt/jYX8=
+X-Received: by 2002:a17:90b:5385:b0:31a:bc78:7fe1 with SMTP id
+ 98e67ed59e1d1-31c9f42ea51mr3362243a91.18.1752658304194; Wed, 16 Jul 2025
+ 02:31:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <175265695302.15922.15433902408963854171.b4-ty@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250715130814.854109770@linuxfoundation.org>
+In-Reply-To: <20250715130814.854109770@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 16 Jul 2025 15:01:32 +0530
+X-Gm-Features: Ac12FXxSgVANGsV-qZo2T8nhVt654kQHynZ9ySnyMDGf6j4ZzdPO2yGy7ih9qPU
+Message-ID: <CA+G9fYvV0sx8g83QVOzjBhoZ77fyBWJfmLte-voa=AgLY7K4nw@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/192] 6.15.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 11:09:31AM +0200, Bartosz Golaszewski wrote:
-> On Tue, 15 Jul 2025 17:00:20 +0100, André Draszik wrote:
-> > devm_gpiod_put_array() is meant to undo the effects of
-> > devm_gpiod_get_array() - in particular, it should release the GPIOs
-> > contained in the array acquired with the latter. It is meant to be the
-> > resource-managed version of gpiod_put_array(), and it should behave
-> > similar to the non-array version devm_gpiod_put().
-> > 
-> > Since commit d1d52c6622a6 ("gpiolib: devres: Finish the conversion to
-> > use devm_add_action()") it doesn't do that anymore, it just removes the
-> > devres action and frees associated memory, but it doesn't actually
-> > release the GPIOs.
+On Tue, 15 Jul 2025 at 19:08, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.15.7 release.
+> There are 192 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 17 Jul 2025 13:07:32 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.15.7-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-[...]
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> Thanks for catching it, I queued it for v6.16-rc7.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Yeah, I used the release function in parameter, but not changed the call.
-Thanks for a good catch!
+## Build
+* kernel: 6.15.7-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: e6001d5f79448ece8e204c0df46072a010b00f6c
+* git describe: v6.15.6-193-ge6001d5f7944
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.15.y/build/v6.15=
+.6-193-ge6001d5f7944
 
--- 
-With Best Regards,
-Andy Shevchenko
+## Test Regressions (compared to v6.15.5-179-gb283c37b8f14)
 
+## Metric Regressions (compared to v6.15.5-179-gb283c37b8f14)
 
+## Test Fixes (compared to v6.15.5-179-gb283c37b8f14)
+
+## Metric Fixes (compared to v6.15.5-179-gb283c37b8f14)
+
+## Test result summary
+total: 306856, pass: 279725, fail: 7552, skip: 19579, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 138 passed, 1 failed
+* arm64: 57 total, 56 passed, 0 failed, 1 skipped
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 27 passed, 7 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 39 passed, 1 failed
+* riscv: 25 total, 25 passed, 0 failed
+* s390: 22 total, 22 passed, 0 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 49 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* modules
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
