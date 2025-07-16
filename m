@@ -1,182 +1,116 @@
-Return-Path: <linux-kernel+bounces-734405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58982B0812A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB9AB0812E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC2A7B2F7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA9F3AFA17
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AF32EF65F;
-	Wed, 16 Jul 2025 23:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD672EF67D;
+	Wed, 16 Jul 2025 23:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GuYO4k+3"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sbp50Zzp"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F7621CA1D;
-	Wed, 16 Jul 2025 23:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA1F2EE5F7;
+	Wed, 16 Jul 2025 23:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752709949; cv=none; b=ruDbjAOTMFwVGCRKf5Ib77ETpSM+9/tlczh8pYpXx5uIbXZkzrK+uHILi1YwTaXt1X7LknUKVkkSgd6zbDU6+na0o1sUxNYdnfzSCz5toGOCsofimF0EOaO4hA+Y6PArdBD3R8CStpLscJj3gBo7lveqj+Xym5LKJoNjmq+4yyc=
+	t=1752710224; cv=none; b=V5YEQuJlA0UPskyT0caGLc/srX0Uddt8aGp6aFnFrvfO/4Ndy1lujo3JV6q72lpDMPjfQleq2W0MAjmJBdmGzngmdtGL7rqLHLWmXXSgHjskJCxHktRF28UJe+2R+his3hIgUxXvuCtCHFdNtvPvBfd3+cdwzeRzVfCg6WD/vnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752709949; c=relaxed/simple;
-	bh=tLcXQCfFKpH9tAyjQMjTNbYv3p000cu/Lr+Fw926E5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bkY7ir/Z5bSVW9XDyuSgF21qOKGNcJcMXcy2FB/KsBvIF501aSp+Pp04ROuMVCC6CckktcyaO/ormxoB91RKtZiBLUHBoPJ9eL6QenZPU1/Xf2mcGMCJ4vZMc8Ga7yxYRuXfEAbYwhKLSyf5rVYcNSRHgTC8yXtF/mPSlISZL4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GuYO4k+3; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1752710224; c=relaxed/simple;
+	bh=k3g0w9pa1u4j2IhXx0X3BkHrOmc8Cshe8hrnzc3HdD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OtVvaiPXUS8FLGPVAiVVGNwWZneGNn3M3fpSk+Zdx764FYgBaPCyXYU/JyKb+F4fIAUllTDJA2Azb18BgfORqjn/oMC/cXyt++9O7ulpL0P1HnLoEVexEPc0Dp/EaonqDiNBFYzVXvimS/7DJpI+LUZHn+aMiFuh2j0uVSRmBgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sbp50Zzp; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-748feca4a61so277927b3a.3;
-        Wed, 16 Jul 2025 16:52:26 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-74b27c1481bso306618b3a.2;
+        Wed, 16 Jul 2025 16:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752709946; x=1753314746; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=jdLXlQ398AT3n/w6cQxZKaJPYRsk9stO2iyTGlX4yIQ=;
-        b=GuYO4k+3rJdUUhxdg+cJLy2vho85eWIkLMc1CGzmbqJ03zCm07lgM7WyfLIe++qvE3
-         MPZ4RUYDA/u7FYmAWrDjZMH71+N+Pqkb4m5QeKZiWSfTHgAsNIDb/O/twQa2Ufy7Msa4
-         2jehc01uVgR/PmuW26766jXe2Kb84ymNjYi2PKvaB/jbEqnCiCAIkYtjIiFfYEknzxsm
-         oAMALFB+9YYNY89ocvonlilf78g9SVu0yoRvkbyZNrp1xt6cyyPbROkNt7wXNRY0vCQR
-         hj/tBNJgGRsAGfwjW9FtPSj2UnHUIQ8luGkNT5YdFccnJiHnW2MfJJA25MKIttGH3c6x
-         vYOQ==
+        d=gmail.com; s=20230601; t=1752710222; x=1753315022; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qZ8pegaK19UnX8P3aXiZbwIlDfmCOBIl37WYmnvnaJU=;
+        b=Sbp50ZzpIEjVCdrJvWyU3fgJmPFT7flOQpK3bbPeR/aUDrtHmyHVRw7u45KEg5FL72
+         dDPTnRvkPr/iq2dxxXEQFwBJfhq3pQaJjIMJzT67IMR746TYoF+cKdPTNjwzSbV0Cf9m
+         DRoUco57SpxJRF5h+5tXMkjclpavm6qFbS1cSeCa3uQC/S75jGgKF0xwtv6IE9b2rNrH
+         scGZRvqpZ49PQP8aOwc73ckM7AsECz1A23a7XyFJtLajy+ufwFr7ISsazaluDqCnNkhu
+         gFj07GKlSNSVosUxmUxTUn3UOqTV7DYoPgwbjZAfev3ctdivhGX8wRA7hewSapcCYD1d
+         HPGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752709946; x=1753314746;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jdLXlQ398AT3n/w6cQxZKaJPYRsk9stO2iyTGlX4yIQ=;
-        b=g+SI249G6QU6l2gFfKCmJOImLFk8ZdmizG09o7yKirITfCKuln2bBY9PIZDFBn4auf
-         COYb9e0oy5/kuUjIkG4rdwHpkRJ6W8YXt31Dg3RFkrn7Eih3ELDNksEH/08jeNv0pNbd
-         bVzy5ni2y3O+KS1Eqe3k+VwIyTP1QFMLq4Dv1J35Ov3X4HiIFklqlQWotaKenYk8+p5n
-         P28xktCWtOXxW5VDY6YO89GCIllC7zx77xX9DedRLR4jg4Lu6Edkzw4OOnRXSCZ3/+nE
-         sdcg9SgYFucMfAHQg9rSn/qrA/PzEgNfanKDQlVMN5U/KjZLpIqA/5l4v25GoaOfYbRq
-         vOYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHw1+J82tVwQarOy3D2nGLSwkUp87wEva71FjuQCA3R8gGL05mYjFz6JJgb/HC11gXd87aI4VoklOSr+Rn@vger.kernel.org, AJvYcCVyUF/lht4PPcaDhFXH7aV3PkmD7xUbSUDMmUUE/YB5e1uVdjMtpkw+9Qs60nEZ/sy9xDmlNQKZLOxP@vger.kernel.org, AJvYcCWgmpEN14VYhv3VTk4OPnO7RyYDPnSQMskDsG2KBEsImBNbiE+X6Td8Lion8gk7ng5psUMTozhlQn3nfaA=@vger.kernel.org, AJvYcCXJQX2VRnENv/PvqAQI5hACIer7dVGslv4xx/+c1UMTRP2YiCU8IYySJTO8RZ9tQ7rwVCdkiiOrA8AB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW1ZgID6TYZGplWwojMkwlwFa11gKEcT0Hq6phb2TJ84cvf5WL
-	FsfGs+eKfIXsr4x7x3q/Njmvrrb+M16NpfKuhzudRRvxpNTetUOpTnm/
-X-Gm-Gg: ASbGnctQDRT3oBJbCy3GPBD6Ng4FZwq6Ow3h8JI7+wrkWhKP6758jro/CXaKogrsPc3
-	R1QJyJ7qKM/RnwdwSbYfHE4st02/0etVQM4aZWqyFGMZts+QE6mpT+H2VDsl6lNsyxOel9PiH21
-	C+LpcK6sJEStuXHBKdv9gdTWQsa5vxyRL5MJQL4C5lKyTiIqwBtEAUwLlN3e85/3oPOaUrvg7Qk
-	h6n6WwkyNm0CFSc3M+6sRqJKTuK4KGuKpyx3aZsCf+7YPpn5y5IWL0mj4/QJd1vr4tbTCqB+nsV
-	aQ86UnJK9TSVZLz6vOAffBq1ELdRR/Kqu9nXGbvwGAgG9ls1k/0atUlUlA+GHft+G5jrIJB1Y0r
-	sSsz1I0WpASfKGwW3ro6t5vRJ8nw2Bdwr6IjPUprCjxH1tDmBwCvMKb1GPA0JLwPU8ww8zss=
-X-Google-Smtp-Source: AGHT+IFt7XBfausG0DgvJ18YaZnajB70cE/ued1Px0iX7hfmK/LW8zAdN9Ef9VpVnLqF8pNdZvf8Aw==
-X-Received: by 2002:a05:6a00:1252:b0:740:a023:5d60 with SMTP id d2e1a72fcca58-7572427b8fdmr6194614b3a.19.1752709946303;
-        Wed, 16 Jul 2025 16:52:26 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f1d507sm14920239b3a.83.2025.07.16.16.52.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 16:52:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752710222; x=1753315022;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qZ8pegaK19UnX8P3aXiZbwIlDfmCOBIl37WYmnvnaJU=;
+        b=iQmrvNRU5dTJ7X5aEGVzDDTpGPZZf0OZrbPtOFTz2YqV1W3chvDhfumouF0jTIjXCc
+         wU6ArPcBQpEcygutrCnAJ0rpdoW2F31J8DupxhshmRsXDLCQeqYv8B7S/Et1Wk/nQ2gi
+         gwJ4zNob9bksqA2bB3/nJOqonnjnh8/+bLmdrQ0kx3ycytkCTajkeWei8bfrH11PZqh9
+         WvJCbo/iEJB0inMQAR75ww0x/horsVhHPxpk2BDA7dm1AobJb53BLH9Odu/DXsWbDG1s
+         dQp0jlN7iMWUjHjs1AGdudnrPBDWq6CWsXCe1ogm/I4fgfYJuHgKCBmzKUGRekCMVBWc
+         fagA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkYg9NcN+GX+TvRg+gRm3CT9XobrCVybb3s+fJOeJLJH9RU3yq7yv4k05axcbqpGY0LszV1H5O6bC8Wkc=@vger.kernel.org, AJvYcCWfF01cl0CbnwfIZpEhs8qeOLIR2dCRB0KQ+fAHLsSGQ8RpaTib4EaCMO/jVlYG6zvhdOY+5Osa320=@vger.kernel.org, AJvYcCXtbN8IYLF0z7spsso8L07KuDowO8/6cf0EHS20LyFxfgbwCBCJ4Ds7p403be5msER40RoWNI0O5Yk2Ncni@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPFqnUS2dfl8ftf8YFwyi8L87EcpJoOeKQ8LlF/QbvN8grGfdn
+	GXNPcrkWPtDNqA9cKC7BD/kG14V8YMoGGzNZKxjbycw2JKUij7sPKC56
+X-Gm-Gg: ASbGncsGbAUam5ge5tBWmTLQfC0ed0kOkULPilFBGC+m5dterZDfNVnVGqlvlNij+Mt
+	PjQ2knR+OeCzvxMUgcsNWIwWZRnjGJHZupY2rb6eGpyA0IJK/t28N9yTjG3oi5QjFaRqCm9Ewx+
+	B3URO+AkJJ43RioZ6OlkcADmzWxXMnKos9nY9ViaIpIpHjnE9yKYLnfHFhFH7QzVl93YF+MtGsf
+	nr1UPdR0/bLAwXOtUMefWFw3GbqTZlxrc3RdHgnHrDRricqxSFl1Toi/mIXCVZZBXJBl0B/TNJw
+	36lxlmYrdCr68dyNymwCq/LkE+gpbaTjX26FRbHG6Kj2YlAY9+C4BVJTGczCEhl3QT2vFcK0kRl
+	emaqhBE8/tB3IGiiQ9QjXzOS2jx/JVEQUswQ=
+X-Google-Smtp-Source: AGHT+IHrZv6GVt9J8YNPbDKjaIrzg0I79N2W6dpo4CjweOKAtdxJMZFTo8vv4NtmBAMBPUMjBpq6Iw==
+X-Received: by 2002:a05:6a00:3e0a:b0:742:aecc:c46b with SMTP id d2e1a72fcca58-756e99fc423mr6735056b3a.15.1752710222283;
+        Wed, 16 Jul 2025 16:57:02 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd5e9asm14800090b3a.25.2025.07.16.16.57.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 16:57:01 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <6a72e973-a142-4592-9b11-908a49f8df13@roeck-us.net>
-Date: Wed, 16 Jul 2025 16:52:22 -0700
+Date: Wed, 16 Jul 2025 16:57:00 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Sung-Chi Li <lschyi@chromium.org>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	Sung-Chi Li <lschyi@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>
+Subject: Re: [PATCH v5 1/3] platform/chrome: update pwm fan control host
+ commands
+Message-ID: <50fbd7ef-8983-4453-92f4-cc9e8516449d@roeck-us.net>
+References: <20250620-cros_ec_fan-v5-0-5979ea1abb31@chromium.org>
+ <20250620-cros_ec_fan-v5-1-5979ea1abb31@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] hwmon: (pmbus) Add support for MPS multi-phase
- mp2869a/mp29612a controllers
-To: tzuhao.wtmh@gmail.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Naresh Solanki <naresh.solanki@9elements.com>,
- Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, Fabio Estevam
- <festevam@gmail.com>, Michal Simek <michal.simek@amd.com>,
- Henry Wu <Henry_Wu@quantatw.com>, Grant Peltier <grantpeltier93@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
- Nuno Sa <nuno.sa@analog.com>, Cherrence Sarip <cherrence.sarip@analog.com>,
- Jerome Brunet <jbrunet@baylibre.com>, Leo Yang <leo.yang.sy0@gmail.com>,
- John Erasmus Mari Geronimo <johnerasmusmari.geronimo@analog.com>,
- Kim Seer Paller <kimseer.paller@analog.com>,
- Alex Vdovydchenko <xzeol@yahoo.com>, Ninad Palsule <ninad@linux.ibm.com>,
- Mariel Tinaco <Mariel.Tinaco@analog.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: peteryin.openbmc@gmail.com, Wensheng Wang <wenswang@yeah.net>
-References: <20250630112120.588246-1-Henry_Wu@quantatw.com>
- <20250630112120.588246-2-Henry_Wu@quantatw.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAmgrMyQFCSbODQkACgkQyx8mb86fmYGcWRAA
- oRwrk7V8fULqnGGpBIjp7pvR187Yzx+lhMGUHuM5H56TFEqeVwCMLWB2x1YRolYbY4MEFlQg
- VUFcfeW0OknSr1s6wtrtQm0gdkolM8OcCL9ptTHOg1mmXa4YpW8QJiL0AVtbpE9BroeWGl9v
- 2TGILPm9mVp+GmMQgkNeCS7Jonq5f5pDUGumAMguWzMFEg+Imt9wr2YA7aGen7KPSqJeQPpj
- onPKhu7O/KJKkuC50ylxizHzmGx+IUSmOZxN950pZUFvVZH9CwhAAl+NYUtcF5ry/uSYG2U7
- DCvpzqOryJRemKN63qt1bjF6cltsXwxjKOw6CvdjJYA3n6xCWLuJ6yk6CAy1Ukh545NhgBAs
- rGGVkl6TUBi0ixL3EF3RWLa9IMDcHN32r7OBhw6vbul8HqyTFZWY2ksTvlTl+qG3zV6AJuzT
- WdXmbcKN+TdhO5XlxVlbZoCm7ViBj1+PvIFQZCnLAhqSd/DJlhaq8fFXx1dCUPgQDcD+wo65
- qulV/NijfU8bzFfEPgYP/3LP+BSAyFs33y/mdP8kbMxSCjnLEhimQMrSSo/To1Gxp5C97fw5
- 3m1CaMILGKCmfI1B8iA8zd8ib7t1Rg0qCwcAnvsM36SkrID32GfFbv873bNskJCHAISK3Xkz
- qo7IYZmjk/IJGbsiGzxUhvicwkgKE9r7a1rOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAmgrMyQFCSbODQkACgkQyx8mb86fmYHlgg/9
- H5JeDmB4jsreE9Bn621wZk7NMzxy9STxiVKSh8Mq4pb+IDu1RU2iLyetCY1TiJlcxnE362kj
- njrfAdqyPteHM+LU59NtEbGwrfcXdQoh4XdMuPA5ADetPLma3YiRa3VsVkLwpnR7ilgwQw6u
- dycEaOxQ7LUXCs0JaGVVP25Z2hMkHBwx6BlW6EZLNgzGI2rswSZ7SKcsBd1IRHVf0miwIFYy
- j/UEfAFNW+tbtKPNn3xZTLs3quQN7GdYLh+J0XxITpBZaFOpwEKV+VS36pSLnNl0T5wm0E/y
- scPJ0OVY7ly5Vm1nnoH4licaU5Y1nSkFR/j2douI5P7Cj687WuNMC6CcFd6j72kRfxklOqXw
- zvy+2NEcXyziiLXp84130yxAKXfluax9sZhhrhKT6VrD45S6N3HxJpXQ/RY/EX35neH2/F7B
- RgSloce2+zWfpELyS1qRkCUTt1tlGV2p+y2BPfXzrHn2vxvbhEn1QpQ6t+85FKN8YEhJEygJ
- F0WaMvQMNrk9UAUziVcUkLU52NS9SXqpVg8vgrO0JKx97IXFPcNh0DWsSj/0Y8HO/RDkGXYn
- FDMj7fZSPKyPQPmEHg+W/KzxSSfdgWIHF2QaQ0b2q1wOSec4Rti52ohmNSY+KNIW/zODhugJ
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250630112120.588246-2-Henry_Wu@quantatw.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250620-cros_ec_fan-v5-1-5979ea1abb31@chromium.org>
 
-On 6/30/25 04:20, tzuhao.wtmh@gmail.com wrote:
-> From: Henry Wu <Henry_Wu@quantatw.com>
+On Fri, Jun 20, 2025 at 02:49:12PM +0800, Sung-Chi Li wrote:
+> From: Sung-Chi Li <lschyi@chromium.org>
 > 
-> Add support for the mp2869a and mp29612a controllers from Monolithic Power
-> Systems, Inc. (MPS). These are dual-loop, digital, multi-phase modulation
-> controllers.
+> Update cros_ec_commands.h to include definitions for getting PWM fan
+> duty, getting and setting the fan control mode.
 > 
+> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+> Acked-by: Tzung-Bi Shih <tzungbi@kernel.org>
+> Reviewed-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 
-This patch needs to be consolidated with the MP2869 part of
-https://patchwork.kernel.org/project/linux-hwmon/patch/20250709093420.456304-2-wenswang@yeah.net/
-That patch uses the _identify function from the PMBus core instead of re-implementing
-it, which is a plus. It also takes more chip configuration details into account.
-But then it only supports mp2869 and not mp2869a or mp29612a.
+Applied.
 
-The chips do not officially exist, so I have a difficult time to determine
-what is actually needed or even makes sense. You'll have to determine that
-with the submitter of the other driver.
-
-Frankly, I am not even sure if I should accept drivers for chips which are
-so super-secret that the manufacturer does not even admit their existence.
-
+Thanks,
 Guenter
-
 
