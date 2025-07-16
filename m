@@ -1,106 +1,116 @@
-Return-Path: <linux-kernel+bounces-733530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FF8B075D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:38:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1DAB075D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490F63AA57C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:38:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25B0A189C8CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0BB2F5088;
-	Wed, 16 Jul 2025 12:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AFA2F50A3;
+	Wed, 16 Jul 2025 12:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WhCaRL7G"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AdUFVIpH"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51EA2F49F2;
-	Wed, 16 Jul 2025 12:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4092F4A07;
+	Wed, 16 Jul 2025 12:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669521; cv=none; b=KJXlEmdHRU+kh3OBLzqYv7WoGYeLdD0dnyajTXbiP23p/JxpbGCkwWHiaz8BmKAB0eX24ncEBDOnLTAdchgiurfW3+CMxBSTRTHSBTdhm6dq7gOn71YErCh2aPPz9R3fthlfs6PX9+J20FxJfu1PQhKjRVfdJxcwjvnCfe9NsBk=
+	t=1752669544; cv=none; b=JZKn4uICy4VIM+RvFM2nCtk0f0ykSKmcSyUAQlZLlidTA1Lc7pVDveAEFDQmCF9EggbdAtR/y260itVig3iV1qDucj/6sc+w0mp9Zl0c1BTf89JPS7+DFxaOjoC9wPNFb7fiouYUKiKr6jRSD8asZP5haVemfsYregWTLDdSAE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669521; c=relaxed/simple;
-	bh=pJGLGknho+j+d6pWO0haLRIvL9BBaXCyJHMvVYM3sfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gHqwr6r8Etd0tR5V48gjXfHNyNBUeug+7PaddgFiO+CUDjjZji1mLa+fNRaW8RXnH4RgowIBvVIgz3QjFBhOH1P7Atuu1+TcXkjy2a/5YYdcx00iN9cg2caY+zYrxRFgXt0uPHfV+bd0EfjMMGeD35KZbzzRTTWsROevswr8Tck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WhCaRL7G; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YJ31wuGAs8TcqXb+Gxge288ftyQZu98ZA6TQhn6DLtw=; b=WhCaRL7GpAM1Spp5z2W/JtPBhQ
-	vzBV6v0C3Jt8uI84bVQMaH93KB62qA+nYfM1akEGORcJW5whoWqT0x+VE/F5HSIF3WeHq1JlRpgpa
-	IjthFASYbTN5R2LcX2mcI4mKNY+3n4/r/wUFqR8ly4hsXgIOIuhfcYLRdfOh7o+uXvwhonxWJxhrz
-	2lVdU2/YvKo5h9OaBa+TdEl5Lr4MiWPIeuuicu0MWPBFGSS3nzkKEV4MltQ3VBDHPU4hoQkk1G46E
-	CXbITtD67km8Z4IJ8F8izWgqCtl69z3s7cUF4gB7iorNr9/45N0+S01+Al3Z6FEnt3/yrXnrMyqYt
-	I+9xgPVw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc1P7-0000000GYu5-0Uwa;
-	Wed, 16 Jul 2025 12:38:33 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 124D5300186; Wed, 16 Jul 2025 14:38:32 +0200 (CEST)
-Date: Wed, 16 Jul 2025 14:38:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v3 12/17] sched: Adapt sched tracepoints for RV task model
-Message-ID: <20250716123832.GW1613200@noisy.programming.kicks-ass.net>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
- <20250715071434.22508-13-gmonaco@redhat.com>
+	s=arc-20240116; t=1752669544; c=relaxed/simple;
+	bh=t7yMTiyIn5bVl5n5EJK+KgGqnp8cXTzAmhlo+kbDvd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=npFxQ3WT3iMWyB0KQHB6BvO1CeImDk5B6zCZEpEurhmes2XUF4ywqaMWZNjPx7UpM3hMhDZtWbuFeRYLCljY1jfL4HzN8ba56h3v9v4RJq3SlVeuxoL4gkex6nPG3q0Xm28BdIT1dbe3dbC6o/JjjNGzWEzz4ubrWhu/cbKUqC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AdUFVIpH; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-235db423abdso4016075ad.1;
+        Wed, 16 Jul 2025 05:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752669542; x=1753274342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t7yMTiyIn5bVl5n5EJK+KgGqnp8cXTzAmhlo+kbDvd8=;
+        b=AdUFVIpHDon3Sp45y0NUMvQdff67kaSYpbyY31Xz8GWLjWeO1RZcZiVkgQXW68idzA
+         R2/MAH5QtCoEgqoYuaUFXH7gH8h+sCRhRlqbb8ltw6iIBekODfOnUHoxL7x3+hZSpelF
+         aQ+37GgKbQhAR+nV9iZvU8FMPpYZVjJPHS6fB38NTcQoaR3s3mvA1mUIm7nnVh0SnIU7
+         /khxAWPvLkWwfanEu3YmKyGTJKl924ybRKiKjojzwYydnuFTP7AtyJhM8eUCeNMmggTE
+         k08TfPwAHKDO9jv/EeMjLEX+KhMsGGcsF5m+3iAFCwqnkEqAz+T1AHZQc8wchABeUnp9
+         Elag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752669542; x=1753274342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t7yMTiyIn5bVl5n5EJK+KgGqnp8cXTzAmhlo+kbDvd8=;
+        b=bnD6m2O1a+Odv14/Vnv2aa0yAtGwSp2799nGkCnVZ9ecne0B2tKxaKQ1miW6SEwS9/
+         yHb5d1z9RNBB0O/qn4TDO7ujNMpBFkIEJYpuxUSEox/ma7nFzerUtDT4CIYSHeBbxSe2
+         98OPEIJuOvhTzI09hMnFs9L/g4rSJRD277Yl7a+MZCHKN4vzWnWsbpyEFtG+Bo7LV1Zb
+         ee6DNHdCDzo9LQfjmpDfaYj+pihyYJYI61c9vrpQPFxkcvjFIDouAmOvTRBL5JJ2Z6Jy
+         57bI5WoNdlc3JHcojHFSRUPoRLI1Cct4tVEoLGVbueSzLjuo11HnRyLyJaFZYennkHFA
+         kgaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaG+yuNhNMJ3RK4tFMeOfrprYevableQIYRXraD0EeuskucUyqag9/TBxDpp2xn+scSXu8EFV2glpDuUqM@vger.kernel.org, AJvYcCW0GtTnJd6Uc8sSMGqwdED5Y13IU6KhNz+O8neqyviHc6yClCWt1PfwlcsWalEI0HwkdEXlbBj9kLLR2A==@vger.kernel.org, AJvYcCWBdl3pS0RQtfuelwe8r5aua+xEjcY/70LqWwLFlmux1Pr0E1e+NIzAOyKbwaQD07A6u52ZmM4WDwSI9pTPbJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQJxY9lQFsyANen/C4IFQicq4pjI0SbZFHMtLv/sugAk0iWwWN
+	6YnI7Sz7CGt0EqctGQKmv1bZfPPtxHtBvZnGTUNZQxZnLEQ1/iKa2pnuxpv+xJXUVe5dtzLPbH7
+	TJ+hvNWNEOjtgSQM+wBluxiPDse8VVQ0=
+X-Gm-Gg: ASbGncs+bqVL3YPGF8liHCak9p5d6ACkF7RJHGVc1k1MVguqDtSCNSt1RFeI5eI05kR
+	tXYK/295rz+avHcSR/gY3FtrJ5chbpb3Mdr2l6fURdccFPG/1ZgVVguC/69BB3zlRaXGSYBSMNR
+	xSW4J9o32Y5a6C/nAyxyuUytZ1JpQIQkCg28MrrGmhMwiN9aY7bbYIdIc4TM5mEtOtfOM66SEoi
+	X0laFpLxnj/sTlE
+X-Google-Smtp-Source: AGHT+IHb7twDbZS717sooFnpEeuTv8foFpUNdQt/t+N7nFBUSXSl8rv6EaBwPEQgIjJO6rxn22+uDFocPFtD3HxmqoA=
+X-Received: by 2002:a17:902:d4cb:b0:236:7165:6ed3 with SMTP id
+ d9443c01a7336-23e24f4c2edmr15175785ad.10.1752669542136; Wed, 16 Jul 2025
+ 05:39:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715071434.22508-13-gmonaco@redhat.com>
+References: <20250716090712.809750-1-shankari.ak0208@gmail.com>
+In-Reply-To: <20250716090712.809750-1-shankari.ak0208@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 16 Jul 2025 14:38:49 +0200
+X-Gm-Features: Ac12FXyBbubE7ZsrFEb4VKL5PU_-XhTL2cDJ2Apjzdi3F4Mbeg7nmMtrlhi_wVI
+Message-ID: <CANiq72k1ENBFw7eNc5Kb5cFagysqfsHt9a=Tr4NxuVcV2TD=nQ@mail.gmail.com>
+Subject: Re: [PATCH 1/7] rust: block: update ARef and AlwaysRefCounted imports
+ from sync::aref
+To: Shankari Anand <shankari.ak0208@gmail.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 09:14:29AM +0200, Gabriele Monaco wrote:
-> Add the following tracepoints:
-> * sched_set_need_resched(tsk, cpu, tif)
->     Called when a task is set the need resched [lazy] flag
-> * sched_switch_vain(preempt, tsk, tsk_state)
->     Called when a task is selected again during __schedule
->     i.e. prev == next == tsk : no real context switch
+On Wed, Jul 16, 2025 at 11:07=E2=80=AFAM Shankari Anand
+<shankari.ak0208@gmail.com> wrote:
+>
+> It part of a subsystem-wise split series, as suggested in:
+> https://lore.kernel.org/rust-for-linux/CANiq72=3DNSRMV_6UxXVgkebmWmbgN4i=
+=3DsfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
+> This split series is intended to ease review and subsystem-level maintena=
+nce.
+>
+> The original moving patch is here:
+> https://lore.kernel.org/rust-for-linux/20250625111133.698481-1-shankari.a=
+k0208@gmail.com/
+>
+> Gradually the re-export from types.rs will be eliminated in the
+> future cycle.
 
-> @@ -6592,6 +6598,7 @@ static bool try_to_block_task(struct rq *rq, struct task_struct *p,
->  	int flags = DEQUEUE_NOCLOCK;
->  
->  	if (signal_pending_state(task_state, p)) {
-> +		trace_sched_set_state_tp(p, TASK_RUNNING, true);
->  		WRITE_ONCE(p->__state, TASK_RUNNING);
->  		*task_state_p = TASK_RUNNING;
->  		return false;
+Thanks for splitting it Shankari, that should help get this landed.
 
-I'm confused on the purpose of this. How does this relate to say the
-wakeup in signal_wake_up_state() ?
-
-> @@ -6786,6 +6793,7 @@ static void __sched notrace __schedule(int sched_mode)
->  		rq = context_switch(rq, prev, next, &rf);
->  	} else {
->  		rq_unpin_lock(rq, &rf);
-> +		trace_sched_switch_vain_tp(preempt, prev, prev_state);
->  		__balance_callbacks(rq);
->  		raw_spin_rq_unlock_irq(rq);
->  	}
-
-Hurmph... don't you already have this covered by: trace_sched_exit_tp() ?
-
-Specifically, the only case where is_switch := false, is this case.
-
+Cheers,
+Miguel
 
