@@ -1,150 +1,127 @@
-Return-Path: <linux-kernel+bounces-733540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5D8B075F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:42:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D35B07603
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E39A1C26A29
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:42:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53AA17B63EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E572F50B8;
-	Wed, 16 Jul 2025 12:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R88IL4R8"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F02E2EA72F;
+	Wed, 16 Jul 2025 12:43:04 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919C82F50A7;
-	Wed, 16 Jul 2025 12:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C9C2F2734;
+	Wed, 16 Jul 2025 12:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669747; cv=none; b=XuiPnRlMXdC46Ov9gbp09tOHS5Vak4F0GJ+t3OTe8EGWMOuE4T1B5JKO8CzLnvsVXpUeltQsKiXb+v7WfnXyyKv+sHK3s+laDCiaTMbTpHg3bsqoJCz9SqJxWRZTfjYZ5XwT2xuX8+VhclWiW0cfk1ZGq/bC4qQuvuVFMV8xxvw=
+	t=1752669784; cv=none; b=bD3n4nfRuT08rByYasG10C84ShXzMY+Beq760zrdaQgHXzsZg0rryGJusn4QyGEbD3DCkCtwn59xalEDpSyv/Ge3Np1UkvQ2nircTvrfb5FRQHdQ4GQ3x4OYGqFy2LFNKLUeSWs7urzxDt//2sIHdX18vUjB3/uYGeiIyw6ud+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669747; c=relaxed/simple;
-	bh=LdY2FA6e8vNjYb+3yFFkKdBdvl2VddseAmXA5ewCPOM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jUEHl6IAXtmmL2ElRg2DrTg8qq9oZKziEUxkLFovUG/EVKW67OyG2jN0LYC0rySqUhyP8Ej45CeFjJ2DB8xe1v560e42kMOqSVHIMmRHy5N5l2JJIlcM0R28VnAtW+4Xrjdwhk/ik7VOdoZzwzNd6Hf/+/FEMQp8l2F1AXVeQXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R88IL4R8; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1752669784; c=relaxed/simple;
+	bh=1pcwcS6neY1sn2H+xK5xryo5Tog9aCx7zCH97zzeIBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R8ecJZsWaToHbE/3W7zqpR0nw5ZSuOkgDLo9v32Dsyp8wNvcu67EUG7yM8oU2UDT1M4b4v6OGqNH+JsOMn+e1V3/aDrouJiCqjz/Mu+Ve65UoLa9ApKjjjFoqqJInlaGGB+PMoFhaqsZYFwxwUJpOgSzdt02+0wvoziHlRdG7b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7490acf57b9so4675837b3a.2;
-        Wed, 16 Jul 2025 05:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752669745; x=1753274545; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=57Q2fhzh+9ypYiu1C19WAgFO9FIiKdNlSYbPpfQ2oEc=;
-        b=R88IL4R8rk2I66nwyOk5jk0JbJnJVjI/lWNCRm/ZQF3f5ci5IdKdGw0IQUlGPnUabI
-         I9thk5/EtAaflL3qRXH80otvGWx6Ero156+I2IdvyEgE3RNYrK1MstMsa/bluiqJWih8
-         I0n66eDAugP5nrm4PM2wCjj+HeKdy518aSRIfK27caPHMUd8otypbLRI4oK9wqbF9uAh
-         WWYTD/PsSAn0DezTtqLLluEDrYTP7+RV++M1zsptSKNhTLT1fGFrxiy5KRbPxo+eltcS
-         UanSaPVxwUn/TeYMQ2Br8Egt8H2blYkFL7XWSUptS+6GYx85BgPRTme+FlA/mMN526na
-         uD7Q==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae36e88a5daso1298337366b.1;
+        Wed, 16 Jul 2025 05:43:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752669745; x=1753274545;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=57Q2fhzh+9ypYiu1C19WAgFO9FIiKdNlSYbPpfQ2oEc=;
-        b=wMYS4grQUyz88MnN3ECoGFAaV89F9M549PWqYarbgfV1j8WAoC+KocRq0UWgPJZR25
-         PF0IOawiDPBQshxSRYTDerTLEp11JA88VgVYoCp8QO63pbg981F8gJvTR3wbgC6EEXwA
-         yk9GfBcwUNNJWHuDDwgoSU7i7el82QTqluduvTPI4jC0kDsWLGRMb+CYV5UWruiUUZ4M
-         NLq5oCJD+fQI2QZtsIkIh3/ntyk0KhIHOBjbTZnHkb86F0PamYmWpjiT1oywzpT+AUSP
-         pxvcl+5dIolpEHp/g02hItkAEdcYf8O3hauzj/MShvNCbOBPsYOX2iln01fOwkyIKPyj
-         pq4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBtfoToROLtf2ATYM52GvKe18gskPIbwsDWZCNKJ9nU8/xQDpzlExeRd4YAIJyWVpm6TI/mVVChBc=@vger.kernel.org, AJvYcCWPNQq4IkWgiVE7uwvPSn7v0Wvo3xJB1RDniRvkAmRgJAfQQ8WzGhdBiz7zwmnloxEIp71sCYGDisIMGNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZqcdi73+bFYufk7kCSCC9K2R7VphoQYvXsyI7l5g/+qnamd1M
-	e32QKQgJLqsXfIMe1nAy9UkEjzy5zSV5yz5eIxThsVxh73F8VWqZp8vp
-X-Gm-Gg: ASbGnctTvLQTuFwoe99lMrZIhAul2QhIPJq2qRH0dIZIsqExzYMpwI7GhhLvHqOivn0
-	FAP5SpPV9RUQgbWTaER3fKyFm6/bV5G8IVhImjQf0lIu6T3FK0ox8Rvw2OepNOHgJrG1w/S6OyM
-	VUP+ygFkW9krKgeSXpIErTTfomnc7UXLgRc2qs0ea5BaWgOE0v+yYWEL/Us2fJ5mL/tltud0YPw
-	bRQ/+1uVOVN3sHQAAi9OeBaPcW1pkx+rmR8ys4SLTeOEJ5QI5NeHoqZ9/KEhNfC+w/ArX4roZ6s
-	CjX3lCGI8LiHvY724ni5+atzOIRmTAOA4N9szvlCXz9RtLMLcl08knYXElaljRR9KE90EH6VzWR
-	hRcRhoQpF4pRxn+E6Hsly8wjYtXY89WF9vTCdtW0AgKze+M8xDDTCBHeJKdVEqVnPtpnLBEbTmd
-	k=
-X-Google-Smtp-Source: AGHT+IGADh+QdEdZfpb4G+4TIgboVAA3ciqlURmOA/3x2Ybx4N+nax8niUc7GqwwwWHdataRV/gtKQ==
-X-Received: by 2002:a05:6a20:a10f:b0:230:69f1:620a with SMTP id adf61e73a8af0-2381313f837mr3801675637.42.1752669744745;
-        Wed, 16 Jul 2025 05:42:24 -0700 (PDT)
-Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([27.57.176.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f4aabdsm13714705b3a.124.2025.07.16.05.42.22
+        d=1e100.net; s=20230601; t=1752669781; x=1753274581;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=47CMAEiZR5yTBll2g42B2pUuFdN90l8OtcScb22RuEY=;
+        b=Wpqvcm+mool5PME/Orvl0kYfEIMvBsMycaNse3pxXzh8/6DjcKBn4b7lAqX9drO7GB
+         +As/Xs4dwulC/hVFgfT41aaS0ZUXdsWLTfuKlCInu5oIrWcuTJfSG69jgjS5INsprypr
+         mut/Zyjk3uqHVqsFPrsEkau/CIoCu3lyDs6hRznP5mVVDVhGl1AC/BWq1/QZzeUHSROX
+         q+hcdAFEKMpxuJSapCpQT+dhQqTaatL1syR15FPAUeX3BtJJAreTQ3BSeTLoi45Q3RdJ
+         hvYVsPOHSAmow9t7Ox6HoCsnvFmv/Rw/bG0vWhMTnJNDvs29Vjz7ZRKWh4UgopAPh/tC
+         IVCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWq3AjQmB6G3q3d3bC0C+RdnTPET6N7A3q/ZGfRVewbWq9MkJbSGm6wRyJlrlXix0RL2BlvRRHNpux2@vger.kernel.org, AJvYcCXBkWALr0nccBSVrvZ6UdqeaJaDzGSmXeRw1jB2momtoGThMX1kpAzEv2P5U1PFFzvz3nxQPvdN0rDK7m72@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3PDgKz1lHuDD42FV4enTt8VrDPoIZuF3JAzUuOEgrKRta/p3+
+	XtOL/9RISNMv6h+cgs1UPY2imjP0xMOd6/1Z8nM9z2N0umEhdczj8PRe
+X-Gm-Gg: ASbGncsvM9QLQOkUS8ufJ8TZyqeSJugsXxE/JaS1YZB/F7bQlJ4N/2QWuh4RqX/rTfl
+	0YVeHOTeVADBnJO/PticymhoT/kw3rRdsPrQ0gVioFsYxYtrSMtsEOLmuYV5qAcDhx1A2Y4Jm3z
+	UbXOdRjeyAr4zV8MT8zIPlJ3YGn4z1KQvx5P7MQNQPLIb9D99R+Fs/IAdthLRIX4cqOIS3ndRk/
+	bdX5wK8h7fXL6D1uBNrru3HgP56sIpdcRL1T1yDYfP9s0dD9XucmljGO7cGdhzgwRtMB0pLhVw+
+	er+ijKxuPLFQXjzRYpqqRItJMEC/EfFoR/EUMAwb3j1fnkl1pQinLjv6BXEN8hBUZzHwOpuoGGt
+	9XSf5QIMeecamEwJJig3m6sU=
+X-Google-Smtp-Source: AGHT+IHl2TvHHkyPF2WMEidSU/J9NKBX3P3D97oaMObyNwb+BsCscwB+ZjdEMjtI9BgxMGx5SAhIew==
+X-Received: by 2002:a17:907:7f94:b0:ae6:c561:764a with SMTP id a640c23a62f3a-ae9cdd82e94mr244577666b.2.1752669780320;
+        Wed, 16 Jul 2025 05:43:00 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:3::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8295623sm1185331866b.116.2025.07.16.05.42.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:42:24 -0700 (PDT)
-From: Darshan Rathod <darshanrathod475@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Len Brown <len.brown@intel.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Darshan Rathod <darshanrathod475@gmail.com>
-Subject: [PATCH] power: snapshot: Fix coding style issues
-Date: Wed, 16 Jul 2025 12:42:16 +0000
-Message-ID: <20250716124216.64329-1-darshanrathod475@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 16 Jul 2025 05:42:59 -0700 (PDT)
+Date: Wed, 16 Jul 2025 05:42:57 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: Borislav Petkov <bp@alien8.de>, Alexander Graf <graf@amazon.com>, 
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Peter Gonda <pgonda@google.com>, 
+	"Luck, Tony" <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, 
+	"Moore, Robert" <robert.moore@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>, 
+	"kernel-team@meta.com" <kernel-team@meta.com>
+Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
+Message-ID: <ckn7d3e3xynnup4bbombn7z7xxvld3a7xmqpg4pzp57qebywfc@t2yrn3zqmnje>
+References: <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
+ <aHWC-J851eaHa_Au@agluck-desk3>
+ <20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
+ <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
+ <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
+ <vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
+ <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
+ <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
+ <p2iytcdfvgm74zif6ihd7gs4kuaeza4b4p52cr5ya4upabiome@kr3yy7fjznwe>
+ <b4c39a87-c5a4-4525-b598-61fc28a8dc36@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b4c39a87-c5a4-4525-b598-61fc28a8dc36@linux.alibaba.com>
 
-Clean up various coding style violations in snapshot.c identified by
-checkpatch.pl.
+hello Shuai,
 
-- Add a space after control flow keywords (for, if).
-- Correct indentation from spaces to tabs for a variable declaration.
+On Wed, Jul 16, 2025 at 11:04:28AM +0800, Shuai Xue wrote:
+> > My plan with this patch is to have a counter for hardware errors that
+> > would be exposed to the crashdump. So, post-morten analyzes tooling can
+> > easily query if there are hardware errors and query RAS information in
+> > the right databases, in case it seems a smoking gun.
+> 
+> I see your point. But does using a single ghes_recovered_errors counter
+> to track all corrected and non-fatal errors for CPU, memory, and PCIe
+> really help?
 
-These changes have no functional impact and improve compliance with the
-Linux Kernel Coding Style.
+It provides a quick indication that hardware issues have occurred, which
+can prompt the operator to investigate further via RAS events.
 
-Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
----
- kernel/power/snapshot.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+That said, Tony proposed a more robust approach—categorizing and
+tracking errors by their source. This would involve maintaining separate
+counters for each source using an counter per enum type:
 
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index 2af36cfe35cd..501df0676a61 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -1536,7 +1536,7 @@ static unsigned long copy_data_pages(struct memory_bitmap *copy_bm,
- 	memory_bm_position_reset(orig_bm);
- 	memory_bm_position_reset(copy_bm);
- 	copy_pfn = memory_bm_next_pfn(copy_bm);
--	for(;;) {
-+	for (;;) {
- 		pfn = memory_bm_next_pfn(orig_bm);
- 		if (unlikely(pfn == BM_END_OF_MAP))
- 			break;
-@@ -2161,13 +2161,13 @@ static const char *check_image_kernel(struct swsusp_info *info)
- {
- 	if (info->version_code != LINUX_VERSION_CODE)
- 		return "kernel version";
--	if (strcmp(info->uts.sysname,init_utsname()->sysname))
-+	if (strcmp(info->uts.sysname, init_utsname()->sysname))
- 		return "system type";
--	if (strcmp(info->uts.release,init_utsname()->release))
-+	if (strcmp(info->uts.release, init_utsname()->release))
- 		return "kernel release";
--	if (strcmp(info->uts.version,init_utsname()->version))
-+	if (strcmp(info->uts.version, init_utsname()->version))
- 		return "version";
--	if (strcmp(info->uts.machine,init_utsname()->machine))
-+	if (strcmp(info->uts.machine, init_utsname()->machine))
- 		return "machine";
- 	return NULL;
- }
-@@ -2361,7 +2361,7 @@ static int unpack_orig_pfns(unsigned long *buf, struct memory_bitmap *bm,
- 		struct memory_bitmap *zero_bm)
- {
- 	unsigned long decoded_pfn;
--        bool zero;
-+	bool zero;
- 	int j;
- 
- 	for (j = 0; j < PAGE_SIZE / sizeof(long); j++) {
--- 
-2.43.0
+	enum recovered_error_sources {
+		ERR_GHES,
+		ERR_MCE,
+		ERR_AER,
+		...
+		ERR_NUM_SOURCES
+	};
 
+See more at: https://lore.kernel.org/all/aHWC-J851eaHa_Au@agluck-desk3/
+
+Do you think this would help you by any chance?
+
+Thanks
+--breno
 
