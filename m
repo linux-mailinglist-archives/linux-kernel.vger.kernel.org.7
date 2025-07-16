@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-734115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A9BB07D45
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:59:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FBDB07D4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4FFE1AA5509
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:59:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 810097B88F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9022929B768;
-	Wed, 16 Jul 2025 18:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2F62BD5A8;
+	Wed, 16 Jul 2025 19:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWzeJQC+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ES2aZlZX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED07E288CA1;
-	Wed, 16 Jul 2025 18:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D13262FE4;
+	Wed, 16 Jul 2025 19:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752692358; cv=none; b=DO4eVD/eaplM9wfr6YLktBcetKbfbNIV4M1qAY34bQL/32hd6JiRbg0i0JF7GzwZ5qBnxyyW6wxa6Ou9hNo23uFIBX/7kczXQTaG0jlb7ug3oLKtr/cJtQva4NZP4ZVkkZnTxSYU5wgjQhxlIDeLQXfzTKm9tZDosnKTSecppDg=
+	t=1752692406; cv=none; b=dpHDSta4jiog1PlDpenKDSOHeNeQG6gRPkVRdZKnWPYlZmvT4vJFHHuQbQZAQzMub1wrV2BjnBFN43K76yCBC0p4gV4/thNepK0zq5fVeS/mfqmQLFlic1ofPkiyD24i1WaIGsw0YpOUddvQaErsGFaTWUjJX+s5ufpV13tuAsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752692358; c=relaxed/simple;
-	bh=/omEhvjVTapPD90QGO2cVGPkfSWUs2Njdx/dD9e79V8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UcqQ82LwVvomUESzoUVV8ITrK6t9NFPPVSTtzL6YmZ5NQ5vQFGeJIuQOKfHyUy5pQDuu2dET4F77jzV6YVzvePaGfDla8COOle59DmuQtNDusekmzIah5sxntdWAkrtYFy+x+zgmS6QPrD2hzNslLnJMt1vjILvZPtNaixVcjzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWzeJQC+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 721FEC4CEF6;
-	Wed, 16 Jul 2025 18:59:17 +0000 (UTC)
+	s=arc-20240116; t=1752692406; c=relaxed/simple;
+	bh=p2+4mqzxD3sDrSRSR0HQQ+5Xty+gSI5dRJC0NlwYk18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSat83lbC8vCoS5cUOFR2ZDf0WIGGiifLg+qpVtSkoK1lfmrxnsmaeS5Bvz+HcXP+Herplk/glkMbtVp/r+J/TMPYSkMyTK5yv2uc4lZt39lcGg7n0uwpoY8nbiIamJoYSKckbjgjjXLtSF0Znp+YNjgQzQ5T4+HLZkiWQfF0bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ES2aZlZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA0DFC4CEE7;
+	Wed, 16 Jul 2025 19:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752692357;
-	bh=/omEhvjVTapPD90QGO2cVGPkfSWUs2Njdx/dD9e79V8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lWzeJQC+mr+oca7xZC3nO0JaKoztvyGFGTDpi5pXfwfCj00YtvhclPclptQ0HDjcr
-	 5hpsawMvEp3Kns1TH1gPrk1Y67UFx4zkELTGsgkWexTrghArMDuEJ8WxXWzOFAl2Fi
-	 BdxOU9Y4XiKA+9pmJuMbyI7DNe7pby+a07Oh1O8ynLfp37v1GgQQoRQPoV8YtfCFyc
-	 0xdjf0RaAMgTl1FaEYwMxGSJT3iXODLfPaE8vaoxxCu9q0be+4DRT05dWyQbeCv8JJ
-	 ml20dwYj7XlY9lMXjoV0l5+DLDEc992rZMrNAby1ODr9Zdou0bljZPFIBL0mkNFXtl
-	 X3WCa4/lSDu+w==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-60d666804ebso642901eaf.1;
-        Wed, 16 Jul 2025 11:59:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUez4EVJGkJRZIVpGC+dxhVTuQMDnUoQSFglVnzZRsI9aT0MJLqiJZNOMXJFgKvqlfd3lnkEJ16vC5xxlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhHlctlCgHdojRD5rJiuczVF6spLw65krDfHG3VMrTSA9EvS74
-	nImA8+jm1Wn5SXn3k1IHsroPi1NJlzRWVu4ykj5gdOV81GvcLaIyGjS2VbOQJfO0PS6MyU03dc6
-	5goNzRqHj1O8yH5P+MNwPg94JUZnhz5E=
-X-Google-Smtp-Source: AGHT+IHNiSZSOiDpfj4Ghoq7jk4CaTDYvI0dRNkivlLTQMRgzcWUP4tRe5rmsbs0JHmGP2fEZEWsDySvyL9QsZSdklM=
-X-Received: by 2002:a4a:ee17:0:b0:613:bd07:54cc with SMTP id
- 006d021491bc7-615acb4ab78mr472990eaf.0.1752692356749; Wed, 16 Jul 2025
- 11:59:16 -0700 (PDT)
+	s=k20201202; t=1752692406;
+	bh=p2+4mqzxD3sDrSRSR0HQQ+5Xty+gSI5dRJC0NlwYk18=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ES2aZlZXOdejVK3HMuuPryg8FNHMpK7gBm4VfINlG1DO0gn157INFfhfIB5Yzz7NK
+	 GFV58NkaQLccxWfFs3UmhtRn3OZvRWkM2kqEKhoQfTxs2F4ZwqHhtpllOb0v0zlG6k
+	 yPjIZq6xpYtX1aZNIdHmpH0wzCYb9F52ep/t72T0a3GWcm22jPXLZFZw2JqSThASQF
+	 i8u1/OGekD5+xJc50GG2iVqIfgvyliSX6d3DwDUdDHXuzcPJaIPnUSg0/M3QEBu3GN
+	 4kV7921M8D1K/FgSymJHzgLCJcAoCVJhVQd23ak++ET8Hht0jbmczQg6aCnFakFLhL
+	 MW4c47ovoG8Hw==
+Date: Wed, 16 Jul 2025 20:00:01 +0100
+From: Simon Horman <horms@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Jeffrey Altman <jaltman@auristor.com>,
+	"Junvyyang, Tencent Zhuque Lab" <zhuque@tencent.com>,
+	LePremierHomme <kwqcheii@proton.me>, stable@vger.kernel.org
+Subject: Re: [PATCH net 3/5] rxrpc: Fix notification vs call-release vs
+ recvmsg
+Message-ID: <20250716190001.GR721198@horms.kernel.org>
+References: <20250716115307.3572606-1-dhowells@redhat.com>
+ <20250716115307.3572606-4-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12722151.O9o76ZdvQC@rjwysocki.net> <998ca55d-13b5-4f10-819e-47d674ba3504@linux.alibaba.com>
-In-Reply-To: <998ca55d-13b5-4f10-819e-47d674ba3504@linux.alibaba.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 16 Jul 2025 20:59:05 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iBQ6MDgTKx9F0vG5EsDCMswkAknZaAHtohAqA8qG=GrA@mail.gmail.com>
-X-Gm-Features: Ac12FXxG0MwX8IAG9qg6MQ8xDH_WFTmdb7QvIY4R3_Nmk4QK4-4oEXkTK5QofNw
-Message-ID: <CAJZ5v0iBQ6MDgTKx9F0vG5EsDCMswkAknZaAHtohAqA8qG=GrA@mail.gmail.com>
-Subject: Re: [PATCH v1] ACPI: APEI: MAINTAINERS: Update reviewers for APEI
-To: Shuai Xue <xueshuai@linux.alibaba.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hanjun Guo <guohanjun@huawei.com>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	James Morse <james.morse@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716115307.3572606-4-dhowells@redhat.com>
 
-On Wed, Jul 16, 2025 at 3:37=E2=80=AFAM Shuai Xue <xueshuai@linux.alibaba.c=
-om> wrote:
->
->
->
-> =E5=9C=A8 2025/7/15 21:20, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Update the ACPI APEI entry in MAINTAINERS by dropping the reviewers
-> > who have not been responsive for over a year and adding a list of
-> > new reviewers.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > The new people in the new APEI reviewers list, please send your ACKs fo=
-r this
-> > change, thanks!
-> >
-> > ---
-> >   MAINTAINERS |    5 +++--
-> >   1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -306,10 +306,11 @@
-> >
-> >   ACPI APEI
-> >   M:  "Rafael J. Wysocki" <rafael@kernel.org>
-> > -R:   Len Brown <lenb@kernel.org>
-> > -R:   James Morse <james.morse@arm.com>
-> >   R:  Tony Luck <tony.luck@intel.com>
-> >   R:  Borislav Petkov <bp@alien8.de>
-> > +R:   Hanjun Guo <guohanjun@huawei.com>
-> > +R:   Mauro Carvalho Chehab <mchehab@kernel.org>
-> > +R:   Shuai Xue <xueshuai@linux.alibaba.com>
-> >   L:  linux-acpi@vger.kernel.org
-> >   F:  drivers/acpi/apei/
-> >
->
-> Acked-by: Shuai Xue <xueshuai@linux.alibaba.com>
+On Wed, Jul 16, 2025 at 12:53:02PM +0100, David Howells wrote:
+> When a call is released, rxrpc takes the spinlock and removes it from
+> ->recvmsg_q in an effort to prevent racing recvmsg() invocations from
+> seeing the same call.  Now, rxrpc_recvmsg() only takes the spinlock when
+> actually removing a call from the queue; it doesn't, however, take it in
+> the lead up to that when it checks to see if the queue is empty.  It *does*
+> hold the socket lock, which prevents a recvmsg/recvmsg race - but this
+> doesn't prevent sendmsg from ending the call because sendmsg() drops the
+> socket lock and relies on the call->user_mutex.
+> 
+> Fix this by firstly removing the bit in rxrpc_release_call() that dequeues
+> the released call and, instead, rely on recvmsg() to simply discard
+> released calls (done in a preceding fix).
+> 
+> Secondly, rxrpc_notify_socket() is abandoned if the call is already marked
+> as released rather than trying to be clever by setting both pointers in
+> call->recvmsg_link to NULL to trick list_empty().  This isn't perfect and
+> can still race, resulting in a released call on the queue, but recvmsg()
+> will now clean that up.
+> 
+> Fixes: 17926a79320a ("[AF_RXRPC]: Provide secure RxRPC sockets for use by userspace and kernel both")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
 
-Applied, thank you all!
+...
+
+> diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
+
+...
+
+> @@ -638,6 +628,12 @@ void rxrpc_release_calls_on_socket(struct rxrpc_sock *rx)
+>  		rxrpc_put_call(call, rxrpc_call_put_release_sock);
+>  	}
+>  
+> +	while ((call = list_first_entry_or_null(&rx->recvmsg_q,
+> +						struct rxrpc_call, recvmsg_link))) {
+> +		list_del_init(&call->recvmsg_link);
+> +		rxrpc_put_call(call, rxrpc_call_put_release_recvmsg_q);
+> +	}
+> +
+>  	_leave("");
+>  }
+>  
+
+Hi David,
+
+I believe it is addressed in patch 5/5.
+But unfortunately this change breaks bisection.
+
+  .../call_object.c:634:24: error: use of undeclared identifier 'rxrpc_call_put_release_recvmsg_q'
+    634 |                 rxrpc_put_call(call, rxrpc_call_put_release_recvmsg_q);
+        |                                      ^
+
+-- 
+pw-bot: changes-requested
+
 
