@@ -1,178 +1,189 @@
-Return-Path: <linux-kernel+bounces-732968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C5CB06E43
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:53:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E8CB06E49
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A3D77AEA75
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:52:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C05E7A3B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B3B288C25;
-	Wed, 16 Jul 2025 06:53:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D97F288C1C
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB9F288C8C;
+	Wed, 16 Jul 2025 06:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YDF7JGR3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8EB221FA4;
+	Wed, 16 Jul 2025 06:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752648806; cv=none; b=siWan9IyggJGEAiz5BLl6W1owyGMpzSjuCyFF6mnBPQZrQyH2SKP/TnLnXvsto19+XgWLkkaVQ9hE0dC4ntRfpwbXHHpT+ZtqmZkYXrXv6HPlGMgE8pKZNVecZnx2VAiqM0EZ7BmYjMEQLqoDtB2lZn0ksnXlb4zPUbxddghUoI=
+	t=1752648849; cv=none; b=UGalRxwpszonrRTdzvGEsJIzw3VBTvwGYace9tgl8eAEBsus5wN3xYjh0Kanj+hFqG7CHPiZ1mWwW2FmkzGSsWG2j2CSjUkbKW4v2PuUddXwADSYY+iAwcyV6pLPGmcjefDF6LxktmQSqdS6Y7JSeBGIgs5UKbMRwuVSdZhYQjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752648806; c=relaxed/simple;
-	bh=j1Cnn0ILf8EM333zAm3FwmMWkz7HDWn9ByH8Gh5FXwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oztBCxvGEixEIQpec+/rgBDHNYyJyeuFCwpJnbXwP7rwHRFGdB00/0JLwZdXcB+MpK9oOTS1ItMgKQtmyz/h5N4DzfDOt6Xdxzc2JzQGkvmMHQF7gP4DMrirNhf0OcF+g3LXwgqru6+bi7YyFME4O55/cvycDGb/Zb4269TWyog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 857BF12FC;
-	Tue, 15 Jul 2025 23:53:08 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B777C3F66E;
-	Tue, 15 Jul 2025 23:53:13 -0700 (PDT)
-Date: Wed, 16 Jul 2025 08:53:01 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Chris Mason <clm@meta.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH v2 01/12] sched/psi: Optimize psi_group_change()
- cpu_clock() usage
-Message-ID: <aHdMTdPeQ1F6f-x9@arm.com>
-References: <20250702114924.091581796@infradead.org>
- <20250702121158.350561696@infradead.org>
- <0d86c527-27a7-44d5-9ddc-f9a153f67b4d@meta.com>
+	s=arc-20240116; t=1752648849; c=relaxed/simple;
+	bh=vbiU6J99smeg4PUQWQsHKAIFmZqBqVfN+1w7iDue7jQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=okTL0lrV5tgFwrdccIwfB6s3C5kzuWNPCNk1M4ki7RoKWaRIHe+D2azB0qo1BGfpsnku76pHuKVcPjqkEPr0qQyTHRe+b9VAbA3Mw8M3SF0IVtOg7qBb7ADOIr4d6zgsZFysluNf8SfjfU3OSYdMqNMYXHmnVlleE9b7L6s/Lqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YDF7JGR3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G5klvM024997;
+	Wed, 16 Jul 2025 06:54:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KdyAir9UGaX/l86jgduIW9RnCbdq1mDvqq12WzLdr0c=; b=YDF7JGR3yD9fEOH6
+	+U/pkQh/A/3LmPPmDyPIJMpt2mnf34WsgVAZ5WpZUzfDftpE47xtjWGycxf3/oHJ
+	Co/rmjY3e02ThDdAMz6hGlR9dHd1ye8sw1ZScCZIUdRLJn+M9ylR3o5gRkK2brBd
+	V7SuMfwHE7wYucEt5sSMDi3o3RpYVea31rt5GHbARkckGKiMFGVThP/WMTmJtlaz
+	NcZ6Uf+NqjrNT0OhKB7BQOL8RPlQvQRAUAgpZEfCaOusMGMRak1SF+ALk/D3PtaU
+	Q+jhZ6t4a0OAbdKwzfVhyuYuPm2U/aOJCl4a8KNvXWVxUxLhOHTM0yh3q/XdfE1h
+	RYlLmg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w58ynpbx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 06:54:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56G6s15j006993
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 06:54:01 GMT
+Received: from [10.218.37.122] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 15 Jul
+ 2025 23:53:57 -0700
+Message-ID: <ead761e1-2b48-4b9d-90cc-f63463a97f60@quicinc.com>
+Date: Wed, 16 Jul 2025 12:23:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d86c527-27a7-44d5-9ddc-f9a153f67b4d@meta.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
+ notifier callback
+To: Manivannan Sadhasivam <mani@kernel.org>,
+        Krishna Chaitanya Chundru
+	<krishna.chundru@oss.qualcomm.com>
+CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@oss.qualcomm.com>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+	<kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Johan Hovold
+	<johan@kernel.org>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
+ <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
+ <jdnjyvw2kkos44unooy5ooix3yn2644r4yvtmekoyk2uozjvo5@atigu3wjikss>
+ <eccae2e8-f158-4501-be21-e4188e6cbd84@oss.qualcomm.com>
+ <qg4dof65dyggzgvkroeo2suhhnvosqs3dnkrmsqpbf4z67dcht@ltzirahk2mxd>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <qg4dof65dyggzgvkroeo2suhhnvosqs3dnkrmsqpbf4z67dcht@ltzirahk2mxd>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA2MCBTYWx0ZWRfXxvW4Au0jHqfz
+ TAIFvbLx3lsIzj4gYaPk+2zHs5inEaESa5ozgUiOK1hM4A4T6zyzWp+8BFcPPC6kKL3GwsxQcLa
+ SSJCFuQYMORSUkuld0KyQy2znS8b4XL3XDFPS44qWeOGSFgG/p80Dmg0ECi4VZydfyCSfAwWIR8
+ 95wH9NUYY+tq3e+G3JVhNNYu4te+PR+yD0WWc5V51FoT28XXoC0QMIs6sPbmi6WAfu5lSJ3YrUP
+ 3pzrfim1CwEuLRBsoJ6Kc/0Wd3yaU8sYJ25dP9wzcR0y16zpNPFBjRRo6YBt1G3KVxL3jCx3OY5
+ X1ljLegaLZUN8EUYsiXQHcC/mGUWGszQcl4OOSgLbc83goyE930MxHCFYJABBqpHQsWWaRTILw4
+ emEocjsZ+bJWdzaC8pnIOPjQ9rsWhshQr17GOnHDlGMgqVII1qmwGAs3ti7lLVCnnHht3d54
+X-Proofpoint-GUID: 7jjvlKF6Z6mekIqBaKN8E03Lu-J0ZLsv
+X-Proofpoint-ORIG-GUID: 7jjvlKF6Z6mekIqBaKN8E03Lu-J0ZLsv
+X-Authority-Analysis: v=2.4 cv=Or9Pyz/t c=1 sm=1 tr=0 ts=68774c8a cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=P-IC7800AAAA:8
+ a=EUspDBNiAAAA:8 a=9XPAJaHZ0NnvTPy2xSYA:9 a=QEXdDO2ut3YA:10
+ a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 malwarescore=0 clxscore=1011 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160060
 
-On Tue, Jul 15, 2025 at 03:11:14PM -0400, Chris Mason wrote:
-> On 7/2/25 7:49 AM, Peter Zijlstra wrote:
-> > Dietmar reported that commit 3840cbe24cf0 ("sched: psi: fix bogus
-> > pressure spikes from aggregation race") caused a regression for him on
-> > a high context switch rate benchmark (schbench) due to the now
-> > repeating cpu_clock() calls.
-> > 
-> > In particular the problem is that get_recent_times() will extrapolate
-> > the current state to 'now'. But if an update uses a timestamp from
-> > before the start of the update, it is possible to get two reads
-> > with inconsistent results. It is effectively back-dating an update.
-> > 
-> > (note that this all hard-relies on the clock being synchronized across
-> > CPUs -- if this is not the case, all bets are off).
-> > 
-> > Combine this problem with the fact that there are per-group-per-cpu
-> > seqcounts, the commit in question pushed the clock read into the group
-> > iteration, causing tree-depth cpu_clock() calls. On architectures
-> > where cpu_clock() has appreciable overhead, this hurts.
-> > 
-> > Instead move to a per-cpu seqcount, which allows us to have a single
-> > clock read for all group updates, increasing internal consistency and
-> > lowering update overhead. This comes at the cost of a longer update
-> > side (proportional to the tree depth) which can cause the read side to
-> > retry more often.
-> > 
-> > Fixes: 3840cbe24cf0 ("sched: psi: fix bogus pressure spikes from aggregation race")
-> > Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> > Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-> > Link: https://lkml.kernel.org/20250522084844.GC31726@noisy.programming.kicks-ass.net 
-> > ---
-> >  include/linux/psi_types.h |    6 --
-> >  kernel/sched/psi.c        |  121 +++++++++++++++++++++++++---------------------
-> >  2 files changed, 68 insertions(+), 59 deletions(-)
-> > 
-> > --- a/include/linux/psi_types.h
-> > +++ b/include/linux/psi_types.h
-> > @@ -84,11 +84,9 @@ enum psi_aggregators {
-> >  struct psi_group_cpu {
-> >  	/* 1st cacheline updated by the scheduler */
-> >  
-> > -	/* Aggregator needs to know of concurrent changes */
-> > -	seqcount_t seq ____cacheline_aligned_in_smp;
-> > -
-> >  	/* States of the tasks belonging to this group */
-> > -	unsigned int tasks[NR_PSI_TASK_COUNTS];
-> > +	unsigned int tasks[NR_PSI_TASK_COUNTS]
-> > +			____cacheline_aligned_in_smp;
-> >  
-> >  	/* Aggregate pressure state derived from the tasks */
-> >  	u32 state_mask;
-> > --- a/kernel/sched/psi.c
-> > +++ b/kernel/sched/psi.c
-> > @@ -176,6 +176,28 @@ struct psi_group psi_system = {
-> >  	.pcpu = &system_group_pcpu,
-> >  };
-> >  
-> > +static DEFINE_PER_CPU(seqcount_t, psi_seq);
-> 
-> [ ... ]
-> 
-> > @@ -186,7 +208,7 @@ static void group_init(struct psi_group
-> >  
-> >  	group->enabled = true;
-> >  	for_each_possible_cpu(cpu)
-> > -		seqcount_init(&per_cpu_ptr(group->pcpu, cpu)->seq);
-> > +		seqcount_init(per_cpu_ptr(&psi_seq, cpu));
-> >  	group->avg_last_update = sched_clock();
-> >  	group->avg_next_update = group->avg_last_update + psi_period;
-> >  	mutex_init(&group->avgs_lock);
-> 
-> I'm not sure if someone mentioned this already, but testing the
-> series I got a bunch of softlockups in get_recent_times()
-> that randomly jumped from CPU to CPU.
 
-... was beaten to it. I can observe the same.
-> 
-> This fixed it for me, but reading it now I'm wondering
-> if we want to seqcount_init() unconditionally even when PSI
-> is off.  
-> 
-> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> index 2024c1d36402d..979a447bc281f 100644
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -207,8 +207,6 @@ static void group_init(struct psi_group *group)
->         int cpu;
-> 
->         group->enabled = true;
-> -       for_each_possible_cpu(cpu)
-> -               seqcount_init(per_cpu_ptr(&psi_seq, cpu));
->         group->avg_last_update = sched_clock();
->         group->avg_next_update = group->avg_last_update + psi_period;
->         mutex_init(&group->avgs_lock);
-> @@ -231,6 +229,7 @@ static void group_init(struct psi_group *group)
-> 
->  void __init psi_init(void)
->  {
-> +       int cpu;
->         if (!psi_enable) {
->                 static_branch_enable(&psi_disabled);
->                 static_branch_disable(&psi_cgroups_enabled);
-> @@ -241,6 +240,8 @@ void __init psi_init(void)
->                 static_branch_disable(&psi_cgroups_enabled);
-> 
->         psi_period = jiffies_to_nsecs(PSI_FREQ);
-> +       for_each_possible_cpu(cpu)
-> +               seqcount_init(per_cpu_ptr(&psi_seq, cpu));
->         group_init(&psi_system);
->  }
-> 
-> 
-Wouldn't it be enough to use SEQCNT_ZERO? Those are static per-cpu ones.
 
----
-BR
-Beata
+On 7/16/2025 12:16 PM, Manivannan Sadhasivam wrote:
+> On Wed, Jul 16, 2025 at 10:24:23AM GMT, Krishna Chaitanya Chundru wrote:
+>>
+>>
+>> On 7/15/2025 4:06 PM, Manivannan Sadhasivam wrote:
+>>> On Tue, Jul 15, 2025 at 11:54:48AM GMT, Konrad Dybcio wrote:
+>>>> On 7/14/25 8:01 PM, Manivannan Sadhasivam wrote:
+>>>>> It allows us to group all the settings that need to be done when a PCI
+>>>>> device is attached to the bus in a single place.
+>>>>>
+>>>>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+>>>>> ---
+>>>>>    drivers/pci/controller/dwc/pcie-qcom.c | 3 +--
+>>>>>    1 file changed, 1 insertion(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>>>>> index b4993642ed90915299e825e47d282b8175a78346..b364977d78a2c659f65f0f12ce4274601d20eaa6 100644
+>>>>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>>>>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>>>>> @@ -1616,8 +1616,6 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+>>>>>    		pci_lock_rescan_remove();
+>>>>>    		pci_rescan_bus(pp->bridge->bus);
+>>>>>    		pci_unlock_rescan_remove();
+>>>>> -
+>>>>> -		qcom_pcie_icc_opp_update(pcie);
+>>>>>    	} else {
+>>>>>    		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+>>>>>    			      status);
+>>>>> @@ -1765,6 +1763,7 @@ static int pcie_qcom_notify(struct notifier_block *nb, unsigned long action,
+>>>>>    	switch (action) {
+>>>>>    	case BUS_NOTIFY_BIND_DRIVER:
+>>>>>    		qcom_pcie_enable_aspm(pdev);
+>>>>> +		qcom_pcie_icc_opp_update(pcie);
+>>>>
+>>>> So I assume that we're not exactly going to do much with the device if
+>>>> there isn't a driver for it, but I have concerns that since the link
+>>>> would already be established(?), the icc vote may be too low, especially
+>>>> if the user uses something funky like UIO
+>>>>
+>>>
+>>> Hmm, that's a good point. Not enabling ASPM wouldn't have much consequence, but
+>>> not updating OPP would be.
+>>>
+>>> Let me think of other ways to call these two APIs during the device addition. If
+>>> there are no sane ways, I'll drop *this* patch.
+>>>
+>> How about using enable_device in host bridge, without pci_enable_device
+>> call the endpoints can't start the transfers. May be we can use that.
+>>
+> 
+> Q: Who is going to call pci_enable_device()?
+> A: The PCI client driver
+> 
+> This is same as relying on BUS_NOTIFY_BIND_DRIVER notifier.
+>
+userspace can enable device using sysfs[1] without attaching
+any kernel drivers.
+
+[1] 
+https://elixir.bootlin.com/linux/v6.16-rc6/source/drivers/pci/pci-sysfs.c#L315
+- Krishna Chaitanya.
+
+> - Mani
+> 
 
