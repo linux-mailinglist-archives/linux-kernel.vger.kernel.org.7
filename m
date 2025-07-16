@@ -1,116 +1,84 @@
-Return-Path: <linux-kernel+bounces-732976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70439B06E5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AAAB06E61
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E0B1A61ADD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:59:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 221F54A584B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7BB288CB3;
-	Wed, 16 Jul 2025 06:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LF5Pck/k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DCA289346;
+	Wed, 16 Jul 2025 07:00:43 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D1224111D;
-	Wed, 16 Jul 2025 06:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B325653BE;
+	Wed, 16 Jul 2025 07:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752649168; cv=none; b=fuwdM/xACvY7H40Jp4kBTVja46WzgErNeXuXgmmpMAp2b8sGR4df9ATCVN/7/igl/9VCIqNvZ4Z2NjF4Q3o1SPSe683/Sb99i+vusxrJcuRSVco0ozu3AixwkCRmc3CdfzPXDveWn+Tv/VKIAf+gOvJX4Ra3x8yStBQHD3gjG78=
+	t=1752649243; cv=none; b=OwbdrNG0ipHojm/zN0YyDlyLshvoT2yuX3eiVvZmorvSXADn2CGIr8PJWUgPU9wlTHrb+WhaAyNixxee2kesdHayD1DoysQbIYdfNlE2ekSL7OdAcphYMgcnUvedafJMUwihj0uBclNR/xS11B3+q97Jz43DA+wMbJZMHeMXzQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752649168; c=relaxed/simple;
-	bh=1YT65WZi+HoNOGQs+MzMBsXQZvYrDhOQEHRhKgQWf5U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mIu9YApWGUJVasYqbyWM+HKlsm7cDfC6tryR7TqWHF9PfZHcKF+e9c+gORq/FVMWuJfMiA4wZKb41ph8LRvEM1MfgMUFMunLnVsuHf/ztOtjxnndKN6P2f17qNAgJZXawA6cTpc0XbUGQg/S3cwoaK5nxp3FICLBl0NydZkCAuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LF5Pck/k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33485C4CEF9;
-	Wed, 16 Jul 2025 06:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752649168;
-	bh=1YT65WZi+HoNOGQs+MzMBsXQZvYrDhOQEHRhKgQWf5U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LF5Pck/k/d8S9DCX0kbMVToPVEonFH+xQNHM++N6QwzI3vmpUOz3CB7/3hITAsK/m
-	 wIToOrUVHmz0LivDXlcRb930EeEATqKyaxYXMuDvPpD9bECoXB/bGEBfmfOJPbTzG1
-	 yzHeUPBAKoD2xbjr/Gk2VzhJWHQrGDcQ54qlOrAvYFnrRfIZJUlAm+EegGjB8Pd1hp
-	 u+FySfV+owrGOFlZpA5ODo9QwP3SBz8llchEo/V0ijPesESM0HKCg0x3daJKsrzyas
-	 upNcWEXdR+FF9gX5QZEQkZVGTyAE3dqW+ovaMoWAVCKgzH7KfBCR4Og/w7gTFq0d/i
-	 rLZdzlrhJgTZA==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-608acb0a27fso8782105a12.0;
-        Tue, 15 Jul 2025 23:59:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVUyjr17EiJkurphvl/wVjnrVL+DuKJxGPaWyIM/imLfeRotbxAKIp/BYW1f3eadPWzM0/Ps2t1/ZP+@vger.kernel.org, AJvYcCWIFyMYsIL8w96A3RqMZDIkkqElvsIuaKdI2gRhs8qgBZCNnNsrISktIDP5LoBbOw6yJDk3MvFZcyvwUHl3@vger.kernel.org, AJvYcCX0+u3h/N+Vv3N2E6wSW9fviQRumwMe8czoZC3GL5s1kay/Q9YQJfz4zszLY9m3uv3bFy5SwerPdabte8xxFA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXhjYB9smNT5mohaMv0et+a5jj2tHIm5cu2F2rrRAaQYJHOkw7
-	Rx5dr13mvSPWx4C1de+Ahf7fKrk/8fNRvgGYAGYjoZAQSCQo423Do3iFe0Xhf33rLhQj+2IeUVS
-	Brx1fDKSnTY9oW9BXIZlTb0HqEzaOG74=
-X-Google-Smtp-Source: AGHT+IGKo3S3B0Tw6XffFhBWZNoPLgGk8VvqoIudUlX7wPELD3zTsnE0xlx5Ew1W4zsHG++4r7Y1iPeGJUV3+0jv41Q=
-X-Received: by 2002:a17:906:ef09:b0:ae0:e123:605f with SMTP id
- a640c23a62f3a-ae9ce0a4611mr134926966b.39.1752649166624; Tue, 15 Jul 2025
- 23:59:26 -0700 (PDT)
+	s=arc-20240116; t=1752649243; c=relaxed/simple;
+	bh=uBBJOOJQAkKxqQu/HK1yEFouftDahuSZhBNcvDUyMi8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jTXvim86CvfhlUUI5aHQgcLG1GERP4FL9cwkfI5a692qD6qW8pXqXQaoVI5F/PHZqRcHDgV2uVo0YC3pXH3MYL9FdLaj0aty86Mhb8z8CYJaYYfhKAAsLe72n4VWwSA+lSdB+aY5wGgR0LmpsPVcIYm55aQcglh0BK3JCkuZWnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.214.181])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1c2e61632;
+	Wed, 16 Jul 2025 15:00:32 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: jonas@kwiboo.se
+Cc: amadeus@jmu.edu.cn,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	ziyao@disroot.org
+Subject: Re: [PATCH v3 4/6] arm64: dts: rockchip: Add ArmSoM Sige1
+Date: Wed, 16 Jul 2025 15:00:25 +0800
+Message-Id: <20250716070025.236160-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <9050b4fe-ce69-4f93-9093-5461a6aa052f@kwiboo.se>
+References: <9050b4fe-ce69-4f93-9093-5461a6aa052f@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250608234108.30250-1-neil@brown.name> <175264334224.2234665.14956053645355864817@noble.neil.brown.name>
-In-Reply-To: <175264334224.2234665.14956053645355864817@noble.neil.brown.name>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 16 Jul 2025 15:59:15 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-KhOYk_fdKFV-ZbtSeX+Afc65ArnfSVrAqVxL6hMXoCQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwfZS2wHAoghNhMxbN-f_A8hoFnoQoeBr1SIRvTZILbUOAaB-G9Mh3M82s
-Message-ID: <CAKYAXd-KhOYk_fdKFV-ZbtSeX+Afc65ArnfSVrAqVxL6hMXoCQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] smb/server: various clean-ups
-To: NeilBrown <neil@brown.name>
-Cc: Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Tom Talpey <tom@talpey.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGRhJVh0aHRlPS0lOTR5MGlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKT1VKQ0pZV1kWGg8SFR0UWUFZT0tIVUpLSUJNS0pVSktLVU
+	tZBg++
+X-HM-Tid: 0a981208f05503a2kunmaae0551a86f5ff
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6N1E6TRw5CDE6Sg8tLUJLS0lJ
+	ORkKCzZVSlVKTE5JTU9CSUhPT09LVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	QlVKSUlVSUpPVUpDSllXWQgBWUFKS09DNwY+
 
-On Wed, Jul 16, 2025 at 2:22=E2=80=AFPM NeilBrown <neil@brown.name> wrote:
->
->
-> Hi,
-Hi Neil,
->  did anyone have a chance to look at these - no replies and they don't
->  appear in linux-next ??
-Sorry, these patches are not in my mailbox for some reason I don't know...
-I guess I missed these ones. I will check and apply the patches now.
+Hi,
 
-Thanks.
->
-> Thanks,
-> NeilBrown
->
->
-> On Mon, 09 Jun 2025, NeilBrown wrote:
-> > I am working towards making some changes to how locking is managed for
-> > directory operations.  Prior to attempting to land these changes I am
-> > reviewing code that requests directory operations and cleaning up thing=
-s
-> > that might cause me problems later.
-> >
-> > These 4 patches are the result of my review of smb/server.  Note that
-> > patch 3 fixes what appears to be a real deadlock that should be trivial
-> > to hit if the client can actually set the flag which, as mentioned in
-> > the patch, can trigger the deadlock.
-> >
-> > Patch 1 is trivial but the others deserve careful review by someone who
-> > knows the code.  I think they are correct, but I've been wrong before.
-> >
-> > Thanks,
-> > NeilBrown
-> >
-> >  [PATCH 1/4] smb/server: use lookup_one_unlocked()
-> >  [PATCH 2/4] smb/server: simplify ksmbd_vfs_kern_path_locked()
-> >  [PATCH 3/4] smb/server: avoid deadlock when linking with
-> >  [PATCH 4/4] smb/server: add ksmbd_vfs_kern_path()
-> >
-> >
->
+> It mention 'not used in combination with eMMC or SDIO', yet I see
+> multiple boards where disable-wp is currently used with eMMC and SDIO.
+
+This seems to be a DT bug introduced from the bsp kernel.
+
+> Do you have anything else to remark before I send a v4 with this prop
+> removed?
+
+No further questions, thanks for your work.
+
+Thanks,
+Chukun
+
+--
+2.25.1
+
 
