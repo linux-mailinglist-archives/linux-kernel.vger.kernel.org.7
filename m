@@ -1,148 +1,159 @@
-Return-Path: <linux-kernel+bounces-733961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998BBB07B48
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:35:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E04B07B50
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347071C23DC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B34116051B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967092F5472;
-	Wed, 16 Jul 2025 16:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B8D2F5472;
+	Wed, 16 Jul 2025 16:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kU2tvkbr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="GX4Y4wKN"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9135433AC;
-	Wed, 16 Jul 2025 16:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A9B433AC;
+	Wed, 16 Jul 2025 16:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752683719; cv=none; b=hiCXVyuLSX3vCbICgfklJgF9u/0vY7EBOQxDQZM0c3OGg14k4GuZT5y+f9fcq0CVjKZLjAhz4HpO1oHJLp8bLDVu6dkbbmOrCckhEOiU+1HFrKshL6ORhDNjsFLwDIOUZl9Oo29jK7x16ShErzigaG/r9jKQybvbbqzoUGDrIZ4=
+	t=1752683883; cv=none; b=WJGnKA3MSAyLwOIpRC3z0gLkccKIQi7CRlPt4U76tmhA3grtC/kdu7q1pFadrt81jSOVgRaWmTuVl1Y3MewvhNdnF3FJgr0bpGtQTlAqDXi2RLWg2zMmI+X6CNv5UEstaHStnt6JBgU/0bk+qpE7KxTJh11HRoOZWn4lyLeseNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752683719; c=relaxed/simple;
-	bh=fmClr32Q4msr69AXsHeosKKjatBXvD+V9yqILAzONGk=;
+	s=arc-20240116; t=1752683883; c=relaxed/simple;
+	bh=zFmtA21AaEV1+kxfnsDnysiKefMlwlfiKdpeTCGGCyk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aoeTXK+LzuN4CPTSb5/LeloBOytMfgW0wD8A26pkoyatOTXR/WtF++mtmtIBReCka7Hn8zsm26BZWumSHYTW9478YLehqFC/dlU9kkxBYPRxJ7GD91LaJkHVNezarFy7rQN27olAsf5LaBpHNc8DLVXigVa/KFMOWruBtwFNZaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kU2tvkbr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 850D5C4CEE7;
-	Wed, 16 Jul 2025 16:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752683717;
-	bh=fmClr32Q4msr69AXsHeosKKjatBXvD+V9yqILAzONGk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kU2tvkbrA58raN8cljGdVARUQniEUwtda+Zmqi7IbA+mS8FxlGcKi2KBox6SU+o7b
-	 tHCSzg3XWjarbBElfre0JDpV+fILOfYboXgkvGx2PaxWH9xyoCC/TOaZqOF/azGl8H
-	 8GrNCFdl4nTinSQ0A1TGmKPj9avPco8HAzpN5RquezleMSEvyAULRg5MaTj0et5CAp
-	 JhztAPtMEDSK7cUfECfoOuUQLxn0AXtT60vg+ll/Qc3MCQqf0KAtAwejBi3T7la45z
-	 KYJWMpUh8+pugutyGQU/20kZbL99TsCer929mlmMiX8lcIs6mnT+y1vaCmqgYNEL8K
-	 /2wCcYbqxGOSQ==
-Message-ID: <e46aadbf-51c6-4e09-bdaa-374698b406f3@kernel.org>
-Date: Wed, 16 Jul 2025 18:35:11 +0200
+	 In-Reply-To:Content-Type; b=fdnk60WBZUMdil5e/39iJPueiD2HbmZskAw+kX05T+jMSrkhKEFa4XSDLXiwCZ7Yghj9wQLOBC+j4LTciZSOGrTUsScqcqqnbjI0QO3xXv1PpdMcAhCcup9Rct6QWQ/2ktJ8kxUtHw8Fe9aer8fATmJp7K0M5zaDGoSW2I1I8ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=GX4Y4wKN; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1752683854; x=1753288654; i=w_armin@gmx.de;
+	bh=zFmtA21AaEV1+kxfnsDnysiKefMlwlfiKdpeTCGGCyk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=GX4Y4wKNu128WgMJ8lxHjftmSrSg5DGfmwzUBmUmJ9dckeBq0oGJ3Uly8aPs0qzc
+	 /sDnCYpqqHNQb8rmPuc4Ktz2tMhtlUActsLWJ684skYiFQpGOQ1paNmqypf9qa1a8
+	 xt4dys9ALbx1HS7l7CIQF/orjbg0btSEnqu60LX8Fjgmx2b/h/rVeJHVEigG0PPbn
+	 AeKnPefuxew6M9T2vTCejXCtU5J6uCNmjyuE0Yh2Enb4eaXHrz6nnud9RBI9JTIpX
+	 lBO7x1QUGjydxt742rv2riSuxLK8ds16N4QmXu7s/ZSESNkkh2d0TEce8/vTTG+o+
+	 8wgkrCyWyQlpLK6VXQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3KPg-1ukA6Z2Pli-00vbSy; Wed, 16
+ Jul 2025 18:37:33 +0200
+Message-ID: <b0ac5ea8-e18c-4460-8366-efef4f6e9cc6@gmx.de>
+Date: Wed, 16 Jul 2025 18:37:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net v2 0/2] selftests: mptcp: connect: cover alt modes
-Content-Language: en-GB, fr-BE
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Christoph Paasch <cpaasch@openai.com>, Davide Caratti <dcaratti@redhat.com>,
- Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250715-net-mptcp-sft-connect-alt-v2-0-8230ddd82454@kernel.org>
- <20250715185308.2ad30691@kernel.org> <20250716072602.386a8963@kernel.org>
- <ae6d333a-f3b2-4463-b930-b4caf56b39f8@kernel.org>
- <20250716083632.72854bd5@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20250716083632.72854bd5@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] : [PATCH 1/3] platform/x86: Add Uniwill WMI driver
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>, ilpo.jarvinen@linux.intel.com,
+ hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
+ wse@tuxedocomputers.com, ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
+ linux-leds@vger.kernel.org, lee@kernel.org, pobrn@protonmail.com
+References: <20250712112310.19964-1-W_Armin@gmx.de>
+ <20250712112310.19964-2-W_Armin@gmx.de>
+ <2cc8f650-e917-4bed-80f0-e74b37a426f5@oracle.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <2cc8f650-e917-4bed-80f0-e74b37a426f5@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:IIPBYNdS1rgS4+iSJyOtw8Yjfx7X1mylxTIVnWb2bfJdthNEabN
+ NQXd8t37MWppKy8Zsz4jxRULKQk9dyan9vCr3XkSTE7rMImJG9uApiqSldEHRQgA2XTijMv
+ XjAHLvFsa9rUhV7cJTxel/GnXC3DTd6Tf6IGmI/SD0I/BWAhp0+cGM6O+mulZjeMhrMAELd
+ BYqNkjKLkIHijprWagR2Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nrN5zB//Kyg=;TJgbUBqtiypFW+cUjVwghzoskK0
+ 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
 
-On 16/07/2025 17:36, Jakub Kicinski wrote:
-> On Wed, 16 Jul 2025 16:55:21 +0200 Matthieu Baerts wrote:
->>>> Looks like the failures that Paolo flagged yesterday:
->>>>
->>>> https://lore.kernel.org/all/a7a89aa2-7354-42c7-8219-99a3cafd3b33@redhat.com/
->>>>
->>>> are back as soon as this hit NIPA :(
->>>>
->>>> https://netdev.bots.linux.dev/contest.html?branch=net-next-2025-07-16--00-00&executor=vmksft-mptcp&pw-n=0&pass=0
->>>>
->>>> No idea why TBH, the tests run sequentially and connect.sh run before
->>>> any of the new ones.  
->>
->> And just to be sure, no CPU or IO overload at that moment? I didn't see
->> such errors reported by our CI, but I can try to reproduce them locally
->> in different conditions.
-> 
-> None that I can see. The test run ~10min after all the builds completed,
-> and we wait now for the CPU load to die down and writeback to finish
-> before we kick off VMs. The VMs for various tests are running at that
-> point, the CPU util averaged across cores is 66%.
-
-Thank you for having checked, and for the explanations!
-
-OK, so maybe running stress-ng in parallel to be able to reproduce the
-issue might not help. We will investigate.
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+QW0gMTIuMDcuMjUgdW0gMTM6NDYgc2NocmllYiBBTE9LIFRJV0FSSToNCg0KPg0KPj4gK8KgwqDC
+oCAvKiBSZXBvcnRlZCB3aGVuIHRoZSB1c2VyIGxvY2tzL3VubG9ja3MgdGhlIHN1cGVyIGtleSAq
+Lw0KPj4gK8KgwqDCoCB7IEtFX0lHTk9SRSzCoMKgwqAgVU5JV0lMTF9PU0RfU1VQRVJfS0VZX0xP
+Q0tfRU5BQkxFLMKgwqDCoCB7IA0KPj4gS0VZX1VOS05PV04gfX0sDQo+PiArwqDCoMKgIHsgS0Vf
+SUdOT1JFLMKgwqDCoCBVTklXSUxMX09TRF9TVVBFUl9LRVlfTE9DS19ESVNBQkxFLMKgwqDCoCB7
+IA0KPj4gS0VZX1VOS05PV04gfX0sDQo+PiArDQo+PiArwqDCoMKgIC8qIFJlcG9ydGVkIGluIG1h
+bnVhbCBtb2RlIHdoZW4gdG9nZ2xpbmcgdGhlIGFpcnBsYW5lIG1vZGUgDQo+PiBzdGF0dXMgKi8N
+Cj4+ICvCoMKgwqAgeyBLRV9LRVkswqDCoMKgIFVOSVdJTExfT1NEX1JGS0lMTCzCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHsgS0VZX1JGS0lMTCB9fSwNCj4+ICsNCj4+ICvCoMKgwqAgLyogUmVwb3J0
+ZWQgd2hlbiB1c2VyIHdhbnRzIHRvIGN5Y2xlIHRoZSBwbGF0Zm9ybSBwcm9maWxlICovDQo+PiAr
+wqDCoMKgIHsgS0VfSUdOT1JFLMKgwqDCoCBVTklXSUxMX09TRF9QRVJGT1JNQU5DRV9NT0RFX1RP
+R0dMRSzCoMKgwqAgeyANCj4+IEtFWV9VTktOT1dOIH19LA0KPj4gKw0KPj4gK8KgwqDCoCAvKiBS
+ZXBvcnRlZCB3aGVuIHRoZSB1c2VyIHdhbnRzIHRvIGFkanVzdCB0aGUgYnJpZ2h0bmVzcyBvZiB0
+aGUgDQo+PiBrZXlib2FyZMKgICovDQo+DQo+IHJlbW92ZSBleHRyYSAiICIgYWZ0ZXIga2V5Ym9h
+cmQNCg0KV2lsbCBkby4NCg0KVGhhbmtzLA0KQXJtaW4gV29sZg0KDQo+DQo+PiArwqDCoMKgIHsg
+S0VfS0VZLCBVTklXSUxMX09TRF9LQkRJTExVTURPV04swqDCoMKgwqDCoMKgwqAgeyBLRVlfS0JE
+SUxMVU1ET1dOIH19LA0KPj4gK8KgwqDCoCB7IEtFX0tFWSzCoMKgwqAgVU5JV0lMTF9PU0RfS0JE
+SUxMVU1VUCzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHsgS0VZX0tCRElMTFVNVVAgDQo+PiB9fSwN
+Cj4+ICsNCj4+ICvCoMKgwqAgLyogUmVwb3J0ZWQgd2hlbiB0aGUgdXNlciB3YW50cyB0byB0b2dn
+bGUgdGhlIG1pY3JvcGhvbmUgbXV0ZSANCj4+IHN0YXR1cyAqLw0KPj4gK8KgwqDCoCB7IEtFX0tF
+WSzCoMKgwqAgVU5JV0lMTF9PU0RfTUlDX01VVEUswqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB7IEtF
+WV9NSUNNVVRFIH19LA0KPj4gKw0KPj4gK8KgwqDCoCAvKiBSZXBvcnRlZCB3aGVuIHRoZSB1c2Vy
+IGxvY2tzL3VubG9ja3MgdGhlIEZuIGtleSAqLw0KPj4gK8KgwqDCoCB7IEtFX0lHTk9SRSzCoMKg
+wqAgVU5JV0lMTF9PU0RfRk5fTE9DSyzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHsgS0VZX0ZOX0VT
+QyB9fSwNCj4+ICsNCj4+ICvCoMKgwqAgLyogUmVwb3J0ZWQgd2hlbiB0aGUgdXNlciB3YW50cyB0
+byB0b2dnbGUgdGhlIGJyaWdodG5lc3Mgb2YgdGhlIA0KPj4ga2V5Ym9hcmQgKi8NCj4NCj4NCj4g
+VGhhbmtzLA0KPiBBbG9rDQo+DQo=
 
