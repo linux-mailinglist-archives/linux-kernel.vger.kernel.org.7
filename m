@@ -1,227 +1,92 @@
-Return-Path: <linux-kernel+bounces-733630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2669B07727
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5106B07728
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECEDD16FD65
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:41:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49AD716FD26
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FC51DA61B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3241DB92C;
 	Wed, 16 Jul 2025 13:40:55 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GlX2PF9l"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B1B1A239A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1125A1C5D44;
 	Wed, 16 Jul 2025 13:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752673255; cv=none; b=Ki9WoS0Nod5yUSVq8RUkvNaiE1xwPKCe89DUsOtqLahtXk8W6Cgg0FJNfJdnFMKhFQtBvejOXIozSE5o7nghquyS6x+Sc/KMNnA+9kXWdbfQrF9+pXjnJwKu87x4h85WzyUdLI7bP/6d4EAwKIMDZ/jA+/tXwldjGHcaFYDIlhg=
+	t=1752673255; cv=none; b=G8AH0d5z/LZLhaHpU7hlRytbYLChr6M9F5nMuivongO0pdjX6P+3DnA8k3ize0yAD7nxNf+1RUxid3sGY+Xd/9N4U7/VEFC1EJPBZDjRK/tc03vNt6WBR8BsEwyxtyS2wMd66M7Q0yEZtNlBEnZYJL0SuHaB3YjBoS/c/ac8cEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752673255; c=relaxed/simple;
-	bh=40DqHiK4rh0x9LVXhFG9r7FwQUIOD7cMellgdwwCDy0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AGfq9NpQIQ+6pvrU18X4FllqOIddYbYG4gYZRjlAu0MwDmDI5DYosusmbQ7wErLqJlCI0nKLAHlpp7LBw1GWDkS6ARTMd/CE4JV9UBmlkKpVnJjcSaqh92R81XWpqVDTUsUbxDF1gER3IZ6hI49vYU7/drgAZ8wONg44I2FBC18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8D0A743A05;
-	Wed, 16 Jul 2025 13:40:37 +0000 (UTC)
-Message-ID: <8865f36d-c8a9-454b-aa55-741a82ca96b4@ghiti.fr>
-Date: Wed, 16 Jul 2025 15:40:37 +0200
+	bh=iw4PyieIQi6kuO7rXJ60xVYzYOooOntjGNeOsZ5zieo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=chRuZ+MB08PNu01F/DRC7sOc+4mCHfCT+1rj8ocMUm4JpG0T0sTGwZktY2KRNNRn6nP5pIU8IJL1oRbZEZwqSwC8G9OdpOPR2dvjrM8zfq1Gi07hvbZhY4jfTbLTEKTqb6RqNLcbcmxkLMQ56OC8mgvPEgET0pQ+rhuQ1ID7xnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GlX2PF9l; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YJ8jj1+LfJaIWyKuEoAy6vQtxhqaDsoQByOxilP1PJs=; b=GlX2PF9lngS6r37wLOB9xFCW68
+	05mDzPOPkvdPjC8DpeDvRQDh8eEgmDYgwl6CE79Nj5HBQuiWuq9j1MAa4xC5zI6BHBdLfIEqaacaa
+	0WNqBvuyTn5az5Jbxv3Ra4uQlNXzSUc/OBfmjM/oMUfYKwCivizIjNyd70MiMDiOSicVskczf3V9+
+	sNTzSHQMz5g7X2dmPf+1cC35jAOrmbNkpFe5m79Dg2BgKMkz4AhqjaESsDZInVdrb00WfK0BsuEHS
+	KNOATegszCEm5o/eXEhIliXIfYo2syxLsWMNtSx3UHj+zFGSCCSTjeWHWi7rfRVkIh4e9CskSNFkQ
+	RlT0gZ3g==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uc2NI-0000000GidN-2BZF;
+	Wed, 16 Jul 2025 13:40:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 70F60300230; Wed, 16 Jul 2025 15:40:43 +0200 (CEST)
+Date: Wed, 16 Jul 2025 15:40:43 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrea Righi <arighi@nvidia.com>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	jake@hillion.co.uk
+Subject: Re: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
+ disabling preemption
+Message-ID: <20250716134043.GA905792@noisy.programming.kicks-ass.net>
+References: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
+ <20250716125128.GX905792@noisy.programming.kicks-ass.net>
+ <aHel4LvT_Y5gpYfy@gpd4>
+ <d2ocjfutd6o6euvjhln5tj4sdnmlblgpy2papponnumtu5slcx@tfc6y5webosm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/5] raid6: riscv: replace one load with a move to
- speed up the caculation
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Charlie Jenkins <charlie@rivosinc.com>, Song Liu <song@kernel.org>,
- Yu Kuai <yukuai3@huawei.com>
-Cc: linux-riscv@lists.infradead.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20250711100930.3398336-1-zhangchunyan@iscas.ac.cn>
- <20250711100930.3398336-3-zhangchunyan@iscas.ac.cn>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250711100930.3398336-3-zhangchunyan@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjeekhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohepiihhrghnghgthhhunhihrghnsehishgtrghsrdgrtgdrtghnpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtr
- dgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihukhhurghifeeshhhurgifvghirdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2ocjfutd6o6euvjhln5tj4sdnmlblgpy2papponnumtu5slcx@tfc6y5webosm>
 
-On 7/11/25 12:09, Chunyan Zhang wrote:
-> Since wp$$==wq$$, it doesn't need to load the same data twice, use move
-> instruction to replace one of the loads to let the program run faster.
->
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
->   lib/raid6/rvv.c | 60 ++++++++++++++++++++++++-------------------------
->   1 file changed, 30 insertions(+), 30 deletions(-)
->
-> diff --git a/lib/raid6/rvv.c b/lib/raid6/rvv.c
-> index b193ea176d5d..89da5fc247aa 100644
-> --- a/lib/raid6/rvv.c
-> +++ b/lib/raid6/rvv.c
-> @@ -44,7 +44,7 @@ static void raid6_rvv1_gen_syndrome_real(int disks, unsigned long bytes, void **
->   		asm volatile (".option	push\n"
->   			      ".option	arch,+v\n"
->   			      "vle8.v	v0, (%[wp0])\n"
-> -			      "vle8.v	v1, (%[wp0])\n"
-> +			      "vmv.v.v	v1, v0\n"
->   			      ".option	pop\n"
->   			      : :
->   			      [wp0]"r"(&dptr[z0][d + 0 * NSIZE])
-> @@ -117,7 +117,7 @@ static void raid6_rvv1_xor_syndrome_real(int disks, int start, int stop,
->   		asm volatile (".option	push\n"
->   			      ".option	arch,+v\n"
->   			      "vle8.v	v0, (%[wp0])\n"
-> -			      "vle8.v	v1, (%[wp0])\n"
-> +			      "vmv.v.v	v1, v0\n"
->   			      ".option	pop\n"
->   			      : :
->   			      [wp0]"r"(&dptr[z0][d + 0 * NSIZE])
-> @@ -218,9 +218,9 @@ static void raid6_rvv2_gen_syndrome_real(int disks, unsigned long bytes, void **
->   		asm volatile (".option	push\n"
->   			      ".option	arch,+v\n"
->   			      "vle8.v	v0, (%[wp0])\n"
-> -			      "vle8.v	v1, (%[wp0])\n"
-> +			      "vmv.v.v	v1, v0\n"
->   			      "vle8.v	v4, (%[wp1])\n"
-> -			      "vle8.v	v5, (%[wp1])\n"
-> +			      "vmv.v.v	v5, v4\n"
->   			      ".option	pop\n"
->   			      : :
->   			      [wp0]"r"(&dptr[z0][d + 0 * NSIZE]),
-> @@ -310,9 +310,9 @@ static void raid6_rvv2_xor_syndrome_real(int disks, int start, int stop,
->   		asm volatile (".option	push\n"
->   			      ".option	arch,+v\n"
->   			      "vle8.v	v0, (%[wp0])\n"
-> -			      "vle8.v	v1, (%[wp0])\n"
-> +			      "vmv.v.v	v1, v0\n"
->   			      "vle8.v	v4, (%[wp1])\n"
-> -			      "vle8.v	v5, (%[wp1])\n"
-> +			      "vmv.v.v	v5, v4\n"
->   			      ".option	pop\n"
->   			      : :
->   			      [wp0]"r"(&dptr[z0][d + 0 * NSIZE]),
-> @@ -440,13 +440,13 @@ static void raid6_rvv4_gen_syndrome_real(int disks, unsigned long bytes, void **
->   		asm volatile (".option	push\n"
->   			      ".option	arch,+v\n"
->   			      "vle8.v	v0, (%[wp0])\n"
-> -			      "vle8.v	v1, (%[wp0])\n"
-> +			      "vmv.v.v	v1, v0\n"
->   			      "vle8.v	v4, (%[wp1])\n"
-> -			      "vle8.v	v5, (%[wp1])\n"
-> +			      "vmv.v.v	v5, v4\n"
->   			      "vle8.v	v8, (%[wp2])\n"
-> -			      "vle8.v	v9, (%[wp2])\n"
-> +			      "vmv.v.v	v9, v8\n"
->   			      "vle8.v	v12, (%[wp3])\n"
-> -			      "vle8.v	v13, (%[wp3])\n"
-> +			      "vmv.v.v	v13, v12\n"
->   			      ".option	pop\n"
->   			      : :
->   			      [wp0]"r"(&dptr[z0][d + 0 * NSIZE]),
-> @@ -566,13 +566,13 @@ static void raid6_rvv4_xor_syndrome_real(int disks, int start, int stop,
->   		asm volatile (".option	push\n"
->   			      ".option	arch,+v\n"
->   			      "vle8.v	v0, (%[wp0])\n"
-> -			      "vle8.v	v1, (%[wp0])\n"
-> +			      "vmv.v.v	v1, v0\n"
->   			      "vle8.v	v4, (%[wp1])\n"
-> -			      "vle8.v	v5, (%[wp1])\n"
-> +			      "vmv.v.v	v5, v4\n"
->   			      "vle8.v	v8, (%[wp2])\n"
-> -			      "vle8.v	v9, (%[wp2])\n"
-> +			      "vmv.v.v	v9, v8\n"
->   			      "vle8.v	v12, (%[wp3])\n"
-> -			      "vle8.v	v13, (%[wp3])\n"
-> +			      "vmv.v.v	v13, v12\n"
->   			      ".option	pop\n"
->   			      : :
->   			      [wp0]"r"(&dptr[z0][d + 0 * NSIZE]),
-> @@ -754,21 +754,21 @@ static void raid6_rvv8_gen_syndrome_real(int disks, unsigned long bytes, void **
->   		asm volatile (".option	push\n"
->   			      ".option	arch,+v\n"
->   			      "vle8.v	v0, (%[wp0])\n"
-> -			      "vle8.v	v1, (%[wp0])\n"
-> +			      "vmv.v.v	v1, v0\n"
->   			      "vle8.v	v4, (%[wp1])\n"
-> -			      "vle8.v	v5, (%[wp1])\n"
-> +			      "vmv.v.v	v5, v4\n"
->   			      "vle8.v	v8, (%[wp2])\n"
-> -			      "vle8.v	v9, (%[wp2])\n"
-> +			      "vmv.v.v	v9, v8\n"
->   			      "vle8.v	v12, (%[wp3])\n"
-> -			      "vle8.v	v13, (%[wp3])\n"
-> +			      "vmv.v.v	v13, v12\n"
->   			      "vle8.v	v16, (%[wp4])\n"
-> -			      "vle8.v	v17, (%[wp4])\n"
-> +			      "vmv.v.v	v17, v16\n"
->   			      "vle8.v	v20, (%[wp5])\n"
-> -			      "vle8.v	v21, (%[wp5])\n"
-> +			      "vmv.v.v	v21, v20\n"
->   			      "vle8.v	v24, (%[wp6])\n"
-> -			      "vle8.v	v25, (%[wp6])\n"
-> +			      "vmv.v.v	v25, v24\n"
->   			      "vle8.v	v28, (%[wp7])\n"
-> -			      "vle8.v	v29, (%[wp7])\n"
-> +			      "vmv.v.v	v29, v28\n"
->   			      ".option	pop\n"
->   			      : :
->   			      [wp0]"r"(&dptr[z0][d + 0 * NSIZE]),
-> @@ -948,21 +948,21 @@ static void raid6_rvv8_xor_syndrome_real(int disks, int start, int stop,
->   		asm volatile (".option	push\n"
->   			      ".option	arch,+v\n"
->   			      "vle8.v	v0, (%[wp0])\n"
-> -			      "vle8.v	v1, (%[wp0])\n"
-> +			      "vmv.v.v	v1, v0\n"
->   			      "vle8.v	v4, (%[wp1])\n"
-> -			      "vle8.v	v5, (%[wp1])\n"
-> +			      "vmv.v.v	v5, v4\n"
->   			      "vle8.v	v8, (%[wp2])\n"
-> -			      "vle8.v	v9, (%[wp2])\n"
-> +			      "vmv.v.v	v9, v8\n"
->   			      "vle8.v	v12, (%[wp3])\n"
-> -			      "vle8.v	v13, (%[wp3])\n"
-> +			      "vmv.v.v	v13, v12\n"
->   			      "vle8.v	v16, (%[wp4])\n"
-> -			      "vle8.v	v17, (%[wp4])\n"
-> +			      "vmv.v.v	v17, v16\n"
->   			      "vle8.v	v20, (%[wp5])\n"
-> -			      "vle8.v	v21, (%[wp5])\n"
-> +			      "vmv.v.v	v21, v20\n"
->   			      "vle8.v	v24, (%[wp6])\n"
-> -			      "vle8.v	v25, (%[wp6])\n"
-> +			      "vmv.v.v	v25, v24\n"
->   			      "vle8.v	v28, (%[wp7])\n"
-> -			      "vle8.v	v29, (%[wp7])\n"
-> +			      "vmv.v.v	v29, v28\n"
->   			      ".option	pop\n"
->   			      : :
->   			      [wp0]"r"(&dptr[z0][d + 0 * NSIZE]),
+On Wed, Jul 16, 2025 at 06:20:02AM -0700, Breno Leitao wrote:
+> Hello Peter,
+> 
+> On Wed, Jul 16, 2025 at 03:15:12PM +0200, Andrea Righi wrote:
+> > On Wed, Jul 16, 2025 at 02:51:28PM +0200, Peter Zijlstra wrote:
+> > > Also, I don't seem to have this scx_layered
+> 
+> This is a rust scheduler that could be found at
+> https://github.com/sched-ext/scx/tree/main/scheds/rust/scx_layered
 
-
-Out of curiosity, did you notice a gain?
-
-Anyway:
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
-
+Well, that just means the Changelog is entirely useless. Please always
+refer to in-tree code when describing a problem.
 
