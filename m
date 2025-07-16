@@ -1,152 +1,103 @@
-Return-Path: <linux-kernel+bounces-733959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8FDB07B40
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:33:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29DF7B07B44
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0AF73B927F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:33:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35E767AAD3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9E6275845;
-	Wed, 16 Jul 2025 16:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C238D2F5466;
+	Wed, 16 Jul 2025 16:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAe0f0M5"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBqhiptl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657A63BBC9;
-	Wed, 16 Jul 2025 16:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE7B1D7E5B;
+	Wed, 16 Jul 2025 16:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752683608; cv=none; b=SW0BnmPT313VXGBxtv7oQ0wc86OtfNX5IRx6r5mAwQrNGdEgEXMmvgLc6mfDRJY1ne/MrtyQo2nXCRw56s/edY3DfcyGz7VUrcvgyeCggCa5KYDQNZ5BodLjHCeuFmioUmkK704dqskMtSlz8N+WeprHioKx27D9Z/vfjK/PEUs=
+	t=1752683627; cv=none; b=UC+/kUfxDAOmXUo3f4R2IGTHMmv6+VsC0ZT8HBwXSYxzR7wuSeUyT/QW2TECJ6DjoUSol4f+xVWGhO75P1UAEh86Rxg5AMj91m5d0Ip1toGPm6reB1A0/9I8MxhSgXPL5E6sGvACRJRyyxMfXKpKcFGVgHqSjCOrhQrUJ94r4aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752683608; c=relaxed/simple;
-	bh=t2VYmA+g3pP4PYiBq6s06JykaFHIJUfcRmzrTy7uh8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zp68qCkX0hnBHujjtVRIql9VPMjTUsQQNQy2y2LAm5imWzD4lrr2/Ls0uKmL5abyHhB4SOR6O/XCodVmDjusSpq1jdJgLQwtL3nL5GgVizSV6raFEPVILob8D62vdyP8knMIXcXLqtEUVRuvQB7OJ0t4+3ky0/XRiOsBXfd4Il8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gAe0f0M5; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-31308f52248so22580a91.2;
-        Wed, 16 Jul 2025 09:33:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752683607; x=1753288407; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D6kvfz6qI7DeZGGpdbs/tIzaH7qf+aL2nFfg6lLF3So=;
-        b=gAe0f0M5TlvjKrrFTY5kzB/F5ftWcgkZbz70bQjeRbrEkLkLeePwNdT5/Mngmtwp+G
-         J7ZitRfvZa0bMVos41oTGvC4nacHTDoCltIJsSn3SNtGzZ4jrrv0Lg8Jkz0eiKUz92vc
-         t2Pv+2akIwPQx1q+ZhLosa5ZEvOcr1LQXMRGdMaoxB0EpdG5RNXJ5jzjfOFBh5wbA8fd
-         66pTia4YJK+3bngkJwx9eVaHvOw3PQs9C+8TZ+GVvq3XQC9l4N6KutLSwPlWP3wNce26
-         2dtTY+Yo4l5Aa4fULUl2pVbS4Osaa5NYnmX5dYeGG1IReHaMabec6DiaZeOylWCSom1r
-         z38Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752683607; x=1753288407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D6kvfz6qI7DeZGGpdbs/tIzaH7qf+aL2nFfg6lLF3So=;
-        b=IxuguXlX02kqT0TXJRmCQ8mKxV5LZjSN1xD0To4WqKPVC25fT7X7SSlZmNFZRm83Dx
-         5tERnewUy/qzLLkoG5bY6UbdDCnUgsU4nUn++qHT7VB2UB2Cl4Ldr2nUqTC690CfTATT
-         sk2W4vv1f6SKaYVCazWa6cQMFzZI1Ucn/+TFF+lUemG/yFYm59Jvjxk1PzudeoH1bPwm
-         oCw6u+hwlAomYTF9MEZ3mWvhQrmP6oV19uUuTAfb1sQbOAxYWF8d9kgBQOrtWgnQi5nb
-         SlamRGNFqpRit/Tz/JKtpSKYreNoQ79tigxksy0VlSHntZ+o1u8DZAme0yT5QbyQgxRs
-         fXbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkl8hQHWClm/ikSec2H1AiUL6hRR2LnvYrwnEitPbAXm/dVhV8vpFRMpyJYnN2qKxdRQMB32j/@vger.kernel.org, AJvYcCWCparWRHHYQ/1fAoNVOT/FdbnWcPLlFXfaBT+H3gDMjz7iJI9S5qQyCyL4mstSMTvAqqwQq9npzy6LqOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAouVHsR5aNfhEIDsDl0iobtV2rqiSDqsWwpyCd4oEF8/J04s3
-	08xCFDS01pMDNnQGOy0mtpQzmV85xB7uoYrRw1qTrEhSbhQfPGsRrFj+8v6yb5Y4TFZahbjFY/n
-	S6+D9MN9N1bXd3s9FIPPOSsHHceQXdRg=
-X-Gm-Gg: ASbGncufP70CqZdAljxkB2wctw+SwKMzRDSsXkvxxTRFRSQvax2tNYVSn8Lo7IxabHN
-	dJ3JfTu4moSvIi1L6ySi182pQjRmeda9rBn3WOXOv45xs3wmz+LRs8F7w3m+IvLYMS06xX8lFmW
-	FsPvGcu1E6NYz2bXxiTjR1mr9kLD8DPTuLJyJBqq/QEVTDc+7EEl9C5S/pLeL0+h4sRZa0ZL9DJ
-	rYGFuESS5mx/4pjsDs=
-X-Google-Smtp-Source: AGHT+IGH02kK3nf0wBnxEd6jFb8Tsf0f+O7BQ8LAJmQ7cLUtzxcWAGs+OU1waCN/Gja7YYGXXxQ/tdPDawx20M8+Yx8=
-X-Received: by 2002:a17:90b:5610:b0:312:1ae9:1537 with SMTP id
- 98e67ed59e1d1-31c9e6048aamr2513820a91.0.1752683606488; Wed, 16 Jul 2025
- 09:33:26 -0700 (PDT)
+	s=arc-20240116; t=1752683627; c=relaxed/simple;
+	bh=uZSKz75Mf4BVvfMWaOmJBSSwWGFguOXiH8tOdDk8GMs=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=MPHjdKo4upa5yxzdsbnu1Flsio1xlFSM/qmfb9XxW0qhf3dsSgTzRu6fyROO6NTEE91juhVZaZSve8tpYyBN3+zgnj36BqgBqg7LKTx+SyPV0/xeUYS0n25i98RlVbSFH1WrNoi2LGzZNxK0mMc2caILaUIyKYR70siosYUuhR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBqhiptl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A74CFC4CEE7;
+	Wed, 16 Jul 2025 16:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752683626;
+	bh=uZSKz75Mf4BVvfMWaOmJBSSwWGFguOXiH8tOdDk8GMs=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=OBqhiptlYcKKe2QAUXcw/3/IpHZr52wDj2xERULgEnGJLjxy1j/QQfn0p4X8z33EF
+	 RXgmnxWe4Gv31RBd1AiyhO3D6/vfI2tT8HuTjD5qMAzX1GR2W8jzPU57tnGhlhvpCo
+	 TXsWPvcM4HtDtpJM4HRI0eHB8AgweVrJ+4KL4CBuz/olbep939jKOz52K/CBnr5gB1
+	 Bu8gIqoQM/KdZ0BmagFouC9cxi8SvGLRh86iwNWqVQAhK8pqmCO+kSNb3Eib2LbdKe
+	 bHhdZOr7NQDRibbgVaFgv+ZRRANrF1np1+isOqA4/JS8AQrsJHSgdQuqoWWaBWNlXy
+	 EQmnJ0BOKC2ww==
+Date: Wed, 16 Jul 2025 11:33:45 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716161753.231145-1-bgeffon@google.com>
-In-Reply-To: <20250716161753.231145-1-bgeffon@google.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 16 Jul 2025 12:33:15 -0400
-X-Gm-Features: Ac12FXynnQtGo7k60pqb-2x03E1O-iBR7bwfy-E4dA6mxcK93JHx0XXz9lriT9c
-Message-ID: <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
-To: Brian Geffon <bgeffon@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
-	Lijo Lazar <lijo.lazar@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>, 
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, krzk+dt@kernel.org, 
+ linux-gpio@vger.kernel.org, quic_rjendra@quicinc.com, andersson@kernel.org, 
+ linus.walleij@linaro.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, conor+dt@kernel.org
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+In-Reply-To: <20250716150822.4039250-2-pankaj.patil@oss.qualcomm.com>
+References: <20250716150822.4039250-1-pankaj.patil@oss.qualcomm.com>
+ <20250716150822.4039250-2-pankaj.patil@oss.qualcomm.com>
+Message-Id: <175268362571.679622.3900348701835739870.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add Glymur pinctrl
+ bindings
 
-On Wed, Jul 16, 2025 at 12:18=E2=80=AFPM Brian Geffon <bgeffon@google.com> =
-wrote:
->
-> Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)=
-")
-> allowed for newer ASICs to mix GTT and VRAM, this change also noted that
-> some older boards, such as Stoney and Carrizo do not support this.
-> It appears that at least one additional ASIC does not support this which
-> is Raven.
->
-> We observed this issue when migrating a device from a 5.4 to 6.6 kernel
-> and have confirmed that Raven also needs to be excluded from mixing GTT
-> and VRAM.
 
-Can you elaborate a bit on what the problem is?  For carrizo and
-stoney this is a hardware limitation (all display buffers need to be
-in GTT or VRAM, but not both).  Raven and newer don't have this
-limitation and we tested raven pretty extensively at the time.
-
-Alex
-
->
-> Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)=
-")
-> Cc: Luben Tuikov <luben.tuikov@amd.com>
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Cc: Alex Deucher <alexander.deucher@amd.com>
-> Cc: stable@vger.kernel.org # 6.1+
-> Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> Signed-off-by: Brian Geffon <bgeffon@google.com>
+On Wed, 16 Jul 2025 20:38:21 +0530, Pankaj Patil wrote:
+> Add DeviceTree binding for Glymur SoC TLMM block
+> 
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm=
-/amd/amdgpu/amdgpu_object.c
-> index 73403744331a..5d7f13e25b7c 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-> @@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain(struct amdg=
-pu_device *adev,
->                                             uint32_t domain)
->  {
->         if ((domain =3D=3D (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_GEM_DOMAIN_GT=
-T)) &&
-> -           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_type =
-=3D=3D CHIP_STONEY))) {
-> +           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_type =
-=3D=3D CHIP_STONEY) ||
-> +            (adev->asic_type =3D=3D CHIP_RAVEN))) {
->                 domain =3D AMDGPU_GEM_DOMAIN_VRAM;
->                 if (adev->gmc.real_vram_size <=3D AMDGPU_SG_THRESHOLD)
->                         domain =3D AMDGPU_GEM_DOMAIN_GTT;
-> --
-> 2.50.0.727.gbf7dc18ff4-goog
->
+>  .../bindings/pinctrl/qcom,glymur-tlmm.yaml    | 128 ++++++++++++++++++
+>  1 file changed, 128 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.yaml
+> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.example.dtb: pinctrl@f100000 (qcom,glymur-tlmm): reg: [[0, 252706816], [0, 15728640]] is too long
+	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,glymur-tlmm.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.example.dtb: pinctrl@f100000 (qcom,glymur-tlmm): Unevaluated properties are not allowed ('reg' was unexpected)
+	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,glymur-tlmm.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250716150822.4039250-2-pankaj.patil@oss.qualcomm.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
