@@ -1,137 +1,130 @@
-Return-Path: <linux-kernel+bounces-733550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9F8B07619
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:47:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF9B0761B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091B6584387
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:47:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148001C26EF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D672F5319;
-	Wed, 16 Jul 2025 12:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F062F5327;
+	Wed, 16 Jul 2025 12:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hBXk9ORg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4wpPEXIQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kblftK53"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F822C1A2;
-	Wed, 16 Jul 2025 12:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD3B2BB17;
+	Wed, 16 Jul 2025 12:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752670033; cv=none; b=ulRwvz4PWDZ57e+Rww9M5NaxvujL7a7hdAJG8Btg60kgP3NsVPhHI5e8nMTzegbvzWLEmwKrg35XaP4vYCjRz6PKh9veOPWks7BaHuMAg0j2XdggmxFy5ATTAhXo5+Nmp0uiCwak16hQnLSn6Sul23wD6lOxMwRG/9MKGc3zEjA=
+	t=1752670041; cv=none; b=InhZTM11Gq4kswBSYEmlp9fMlhRRgNkYopHztYiZcnvi2xZIDFOy4gM3evEl3Xqk+D5I7uA75cCPW5i41Zfk5WnDZ2tiCNobJ7NT9mNIdNNcBGWOBS0JLaUYqYKYvZ9AZx2JOrHwXTaEO8GhBKGM7JRLRjrVFkz9UUAni68+ckc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752670033; c=relaxed/simple;
-	bh=E33oCGnC3dSM3GzEUM81/v7+bAKmIDujf+HQ8+qfR9M=;
+	s=arc-20240116; t=1752670041; c=relaxed/simple;
+	bh=x/Mw/JSlYMZ6Lt3QpSm6w9oNOPkux1bSqs9TbqXd9h8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dim8PsRnE4hHmjI19JDJRE0IPJSK6GL9vBQ4ZzjSoMv9vXzHvd8OFnqDhSDJ5UYelON+GatBJD1Lb7631UE1cDjFyDVtdqUlaj7FVKJ6NIbYbry47DT/sFYujQpHel3tEWky+5EGT6rfBuBz9KpvmLJDXsPtTP9OUVvnY6cLyk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hBXk9ORg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4wpPEXIQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 14:47:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752670029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WqfXUKy/vI83eF5nnnMHFFlDFX1raXpxewjeTec5Ggo=;
-	b=hBXk9ORgvip2fx1qyGcConFE63IkenS1aAXA6eJ6doGYW++1cU3VJSc0JzMFQj7LTWshqk
-	Vhquw/noFUdu6pxfO7FPkb5czREFUp0MBUrDfqR2d/vluvtY/G7lH7+KuWqB03OpaoInRs
-	L/B+kjzkNt5CHR2QoZ60Jv17oeMK2neWMSYK44dxthcG145eSDybmwFox21j5NxnRa1NoU
-	aj/eQABZqwK7WtQUr2WWbAkRUgLkoz85F5O/djCoFSMPAXMX9ikBKZ+UrxTA9IqPVVYS0e
-	9OdqKFV4RnZ+d17O6Yo7bXW/9aIDUrlbpV7vxhihos6ZoopawP8NFRbaiDMkhA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752670029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WqfXUKy/vI83eF5nnnMHFFlDFX1raXpxewjeTec5Ggo=;
-	b=4wpPEXIQztKghYoI9EjheWn47o+FrWS3vgZvNaE5ZQ8pjZYorhP73E+pv8wj4oRarkW1Xu
-	6Hu3/+yQbFNOXoDw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/15] fs,fork,exit: export symbols necessary for
- KUnit UAPI support
-Message-ID: <20250716143500-d42ea724-1bac-476e-80b8-1e033625392a@linutronix.de>
-References: <20250626-kunit-kselftests-v4-6-48760534fef5@linutronix.de>
- <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
- <20250711154423.GW1880847@ZenIV>
- <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
- <20250716072228-2dc39361-80b4-4603-8c20-4670a41e06ec@linutronix.de>
- <aHdE9zgr_vjQlpwH@infradead.org>
- <20250716101207-c4201cef-abbe-481d-bca5-c2b27f324506@linutronix.de>
- <aHeIyNmIYsKkBktV@infradead.org>
- <20250716132337-ee01c8f1-0942-4d45-a906-67d4884a765e@linutronix.de>
- <aHeOxh_yaQGFVVwM@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SheWwb8aiS92PiSGZ75kFNlcAnBSlCCzIm3JMGh4FqqD9xsB0x493w4RPONJ6bgbncBPXMOwxsv4N86C3na2yH4fMwUhXvL8d90Ba68etkPwaflw78EVPUcNs7ah8nQfy5IhQ1pvRofBzOXSjJfS3ouC6gvR7rZDEDCRPRlp9X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kblftK53; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JnkhFjzbZDjJK3u4ETDcTw7sJ97GVgfPFmw1WSp/CBI=; b=kblftK53mxwfrHj+ku4R6OpdeL
+	grQQfbfs955vCi2VqUdBWBygEeFM4Kw/KlMRfgInbXbiGoePXSfVI9OpJFe/OmT0CzBBgm05Gnaxi
+	D9aSg7ZF90u5iC5jA+dnl809lKZOik7znWjMxN9EXGEZhrvwXnjHk2tfnsoEDTUYxmROLYURKcTYB
+	CGi09bL8eSm8r8N8FrePssEO5M6tZbjlWeOMhza4KtPCT/rtT5JNGje+bfcnZcucL7iTrjTZS8dge
+	5ifASPQ3hThNKel7aL6AUlzhWEmYbbaVrxz7dxjaVmPX6BKexrSU5IDZzuPz3hn27GwNT/XtQfI+V
+	uQ/8Frvw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uc1XW-0000000A6Gb-0KyK;
+	Wed, 16 Jul 2025 12:47:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 293B7300186; Wed, 16 Jul 2025 14:47:13 +0200 (CEST)
+Date: Wed, 16 Jul 2025 14:47:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
+	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v7 1/9] rust: Introduce atomic API helpers
+Message-ID: <20250716124713.GW905792@noisy.programming.kicks-ass.net>
+References: <20250714053656.66712-1-boqun.feng@gmail.com>
+ <20250714053656.66712-2-boqun.feng@gmail.com>
+ <2025071611-factsheet-sitter-93b6@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aHeOxh_yaQGFVVwM@infradead.org>
+In-Reply-To: <2025071611-factsheet-sitter-93b6@gregkh>
 
-On Wed, Jul 16, 2025 at 04:36:38AM -0700, Christoph Hellwig wrote:
-> On Wed, Jul 16, 2025 at 01:33:05PM +0200, Thomas Weißschuh wrote:
-> > On Wed, Jul 16, 2025 at 04:11:04AM -0700, Christoph Hellwig wrote:
-> > > On Wed, Jul 16, 2025 at 10:39:57AM +0200, Thomas Weißschuh wrote:
-> > > > Let's take kernel_execve() as example, there is no way around using this
-> > > > function in one way or another. It only has two existing callers.
-> > > > init/main.c: It is completely unsuitable for this usecase.
-> > > > kernel/umh.c: It is also what Al suggested and I am all for it.
-> > > > Unfortunately it is missing features. Citation from my response to Al:
-> > > 
-> > > But why does the code that calls it need to be modular?  I get why
-> > > the actual test cases should be modular, but the core test runner is
-> > > small and needs a lot of kernel internals.  Just require it to be
-> > > built-in and all this mess goes away.
+On Wed, Jul 16, 2025 at 11:23:09AM +0200, Greg Kroah-Hartman wrote:
+> On Sun, Jul 13, 2025 at 10:36:48PM -0700, Boqun Feng wrote:
+> > In order to support LKMM atomics in Rust, add rust_helper_* for atomic
+> > APIs. These helpers ensure the implementation of LKMM atomics in Rust is
+> > the same as in C. This could save the maintenance burden of having two
+> > similar atomic implementations in asm.
 > > 
-> > KUnit UAPI calls into KUnit proper which itself is modular.
-> > As such it needs to be modular, too.
+> > Originally-by: Mark Rutland <mark.rutland@arm.com>
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> >  rust/helpers/atomic.c                     | 1040 +++++++++++++++++++++
+> >  rust/helpers/helpers.c                    |    1 +
+> >  scripts/atomic/gen-atomics.sh             |    1 +
+> >  scripts/atomic/gen-rust-atomic-helpers.sh |   67 ++
+> >  4 files changed, 1109 insertions(+)
+> >  create mode 100644 rust/helpers/atomic.c
+> >  create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
+> > 
+> > diff --git a/rust/helpers/atomic.c b/rust/helpers/atomic.c
+> > new file mode 100644
+> > index 000000000000..cf06b7ef9a1c
+> > --- /dev/null
+> > +++ b/rust/helpers/atomic.c
+> > @@ -0,0 +1,1040 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +// Generated by scripts/atomic/gen-rust-atomic-helpers.sh
+> > +// DO NOT MODIFY THIS FILE DIRECTLY
 > 
-> Not if you depend on KUNIT=y.
+> As this is auto-generated, how do we know when to auto-generate it
+> again?  What files does it depend on?  And why can't we just
+> auto-generate it at build time instead of having a static file in the
+> tree that no one knows when to regenerate it?  :)
 
-This is exactly what I did in the beginning. Then I got told about the distros
-using KUNIT=m [0] and decided that it does make sense to support.
-We'd have this discussion sooner or later. But I'm still not sure what
-difference an in-tree-module-specific export should make.
+It depends on the scripts/atomic/* bits. They hardly if ever change. We
+do it this way because:
 
-> > > That being said some of this stuff, like get_fs_type / put_filesystem
-> > > or replace_fd seem like the wrong level of abstractions for something
-> > > running tests anyway.
-> > 
-> > This was modelled after usermode helper and usermode driver.
-> > To me it makes sense, and I don't see an obvious way to get rid of these.
-> > 
-> > Or do you mean to introduce a new in-core helper to abstract this away?
-> > Then everybody would need to pay the cost for this helper even if it is only
-> > used from some modular code.
-> 
-> I have no idea what you are doing as you only Cc'ed the exports patch
-> but not the actual work to the mailing lists, so I have no way of
-> helping you with the actual code.  I can just tell you my gut feeling
-> based on the symbols, and they are something that doesn't feel outside
-> of very core code.
+ - generating these files every build is 'slow'-ish;
+ - code navigation suffers;
+ - Linus asked for this.
 
-The actual code using these exports [1] was Cc'ed to both linux-fsdevel and
-linux-mm. In addition to the cover-letter and the exports patch.
-The rest of the series does not interact with the exports at all.
-
-[0] https://lore.kernel.org/all/CABVgOSmdcOZ0+-k=SM4LibOVMKtcbF27p6N40kuDX_axTPZ=QQ@mail.gmail.com/
-[1] https://lore.kernel.org/lkml/20250626-kunit-kselftests-v4-12-48760534fef5@linutronix.de/
-
-
-Thomas
+Specifically, pretty much the entire atomic_*() namespace would
+disappear from ctags / code-browsing-tool-of-choice if we would not
+check in these files.
 
