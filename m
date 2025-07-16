@@ -1,98 +1,148 @@
-Return-Path: <linux-kernel+bounces-733622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBCEAB07713
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:33:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD22B07715
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1FE1C259BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:33:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E550B3AA233
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE7C1B6CFE;
-	Wed, 16 Jul 2025 13:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFF51CAA92;
+	Wed, 16 Jul 2025 13:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="iJlGtK+7"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHJEH7Yh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081FA19D092
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4517E4C9D;
+	Wed, 16 Jul 2025 13:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752672814; cv=none; b=O83gzMmg0lragEBC200HEXXWcagMZe0nNNVNtGQWArTg3IcDC8b2INqr4SK3mRaOcgUqnoIyDCxytpquHDE2GsOMiCzrKKpYUVSX0zaEmVqSW7RBqKd6VZEebhXV2Ok7m0WLT4h4SFUlaNre+j6KXVg7lIE7SW1TdbRHxtSFBmU=
+	t=1752672889; cv=none; b=bpMnhTzt1vc5co1DpJdh2DOIS+0T6dqI1nhM6lE9UKQf9NnSHo7bIwBzXfRdaDezxWdvV7p95PSQTTQvUPPm9mwgOvURSPaYNcEmvmuDQ84Nhhie0gDKoTWM7fXdjgz0Ykd/KQhN2VM6jOEvWgC9uUW0Z9srhL2SMfftY1R9hRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752672814; c=relaxed/simple;
-	bh=SBYMWwsVuR79YKqblcUA6idmRhBEnxiah0HOlvk5tjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lZvgR7D5LBX6d+J5HGoNaYUAqqnBJg8+cfP8ke1GeVN+6ig/otbB+Qgh4bjcliMnJM7gfv01S8A7elqSY5XncFJa9MaWYlaXy/Bc2v8lG7k3IJvfc0mC8ufF8h3Wmlgg3S6CO3v6mUTOrjezWedPfx9odU2xLRBqRtRc4nh8PLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=iJlGtK+7; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=xeNcHKC6/mz7f8ocQCh2lyC66kXRR40uhkAC7FLKM+c=; b=iJlGtK+71r/QFXX1
-	IvC7lq9VNrD+JL14oKMTij2Sf3nu3VGNURepl91Gja9xQzoylTCWmhxYgM6uS5GXAQegDgPRn3hd7
-	0Sg17Jb6+U7Q/ktJdm+l8CwiqrydVVBQ9kIsr7YkzsDpswNTRyhKN1NczmljcmDQRNc3fP0bipTn7
-	0QX5Qf7rd7i5lNtkclujfnM8suq2HFVRI7D6I+oyDLOGE4nDJjyALAOKJOsLy0UwzKOUcRCL9NF55
-	WXBh3bKSaUu1TmY9AyqdWwMZJ8ZBtPcvYy2orv9Nkd9B3MgNtR5kT3nZxRjZH5gDW1YkT0Is1MJMK
-	LywdNVFPTx1727amyQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1uc2GG-00GQYz-0b;
-	Wed, 16 Jul 2025 13:33:28 +0000
-Date: Wed, 16 Jul 2025 13:33:28 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: akpm@linux-foundation.org, terrelln@fb.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/xxhash: Comment out unused functions
-Message-ID: <aHeqKPaUqd43X-QS@gallifrey>
-References: <20250714000927.294767-1-linux@treblig.org>
- <aHXwfyKRvXi5AZZT@infradead.org>
+	s=arc-20240116; t=1752672889; c=relaxed/simple;
+	bh=Cv22+gj0eNB2YJMPPZnxEB+DFB8DrWp1lbMdSA0X0Aw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GCc0QgzCM9KvsLJC2+HhYG+XmKo/PEJdPJwqaNqs1STlbc8gD6aBHBhbC9YiKJO1yBapKsHEYyLLmH8Qna0Fxk9yvU5C8A5gdkUyq1ldNZcaAUy8eZwJjnF1AiBv5ZGZN2CHdVHcRxLEFopJ6Z2Miu6lCrCt44/MX8h92gZUymQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHJEH7Yh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E22C4CEF0;
+	Wed, 16 Jul 2025 13:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752672888;
+	bh=Cv22+gj0eNB2YJMPPZnxEB+DFB8DrWp1lbMdSA0X0Aw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=VHJEH7YhOvdrdbi0GtCmcPYm0XZ8oAFDKOWU+v7+uvxPWxJ6Fm/5MK3YK4rpgEIH9
+	 FMtlw3K86yFYW/bpyQ2A4R2EuGEU4nfipI0eKQUOJD5mfV8L2DdPWL7D1xR0D9rY+n
+	 Tbw/AskkggUrz4NxVdLs7tiDJqFqQioYgt53MMjzfYhcYI3c5wZOmD0YgR7q/R087C
+	 iepPf3DPQWmgD4U1erdP8UfPgJSaRTT4nefSR6Uii+Ia+6cKo37eM9i4Yw1ZNY5L3+
+	 EBFVVU0FoXMmriQhKrhmK/89Ly/mHdhmdSrNXsLUaDer9SzFBdVxFf/nW19JFZ9Wli
+	 Ptq8+2vnpypVw==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 16 Jul 2025 09:34:29 -0400
+Subject: [PATCH v2] nfsd: don't set the ctime on delegated atime updates
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <aHXwfyKRvXi5AZZT@infradead.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 13:33:00 up 79 days, 21:46,  1 user,  load average: 0.16, 0.10, 0.03
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250716-tsfix-v2-1-b834899cf4d0@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAGSqd2gC/12MQQrCMBAAv1L2bCRZ0lQ99R/SQzBruyiJbEpQS
+ v5u7NHjDMNskEmYMly6DYQKZ06xAR46uC0+zqQ4NAbU2OvB9GrNd36r4aTRurO2Xhto7Uuo6f1
+ znRovnNckn31bzM/+H4pRRgWPxrk+WIdufJBEeh6TzDDVWr+ctWrjmwAAAA==
+X-Change-ID: 20250715-tsfix-780246904a01
+To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2588; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Cv22+gj0eNB2YJMPPZnxEB+DFB8DrWp1lbMdSA0X0Aw=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBod6pxVKEsHSrhmAAEE6yOXz7ARiUXZSBp5r+iP
+ xbNz4rn4ziJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaHeqcQAKCRAADmhBGVaC
+ FYbJD/96cSXlYBaeAKVMvWBQpM834R4LFovK4DAlaXddeOb5MaDkehnGBmC0u5AhjeNekBRz5NB
+ Nsn7lzG3PuPuqtsKN+W3MitEIr1DboL6NLY+r+wM2FlwLc1r12Gs7bW0VLbUGSou1BNeJbzsIgi
+ 0Pu4ipm9ho07SY4hmo+kzKmCM1EdpFzL3SGDET4EfkkfBYTLoGyiVtzXkVuAFfvdVGBnEnZRK6/
+ 9RCa7kZfbXQqwqY24wQoPEGdti12Ji5Yz0E+tRtMhBVoqF2hORP5xJMGRqLuYYmzY6yK75ulT3T
+ elvDSCwjS6gh7+HStkJiOcFbznSazMriXj6TI5vtN0CHlJK+7nBPSePyD1yxyjBXkpZMuoisRew
+ DNdfQ+EzAl/tiRkUIJ0mTVRDpllg3WUaiQUlEGedVBux6HJqLg0phvMTmznMPKvmSuR2tPsTsly
+ ptz78oPhx4HfBRgBZ5akFZVP5Vzx//Iaun3RyEf/NCtjlHGsYGeCEKA0R6y3BoPAQUnUfx/m0mJ
+ jzNaVQZ2xxxmxfcaRKUetX8egp0fKSV1V2QWvjGPsSn72sth4E4pvCBq62r7HRlOluwBpZs7hhL
+ jib9JRymRZv3I08UlchgmqLUzdL/VY0kkpNrALeSGb2NXWvqZ6v77NzXrUODvaz7JA7QKbm2NZS
+ 1iXOizF+pMbBXRA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-* Christoph Hellwig (hch@infradead.org) wrote:
-> On Mon, Jul 14, 2025 at 01:09:27AM +0100, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > xxh32_digest() and xxh32_update() were added in 2017 in the original
-> > xxhash commit, but have remained unused.
-> > 
-> > While I've mostly been deleting unused functions, this is a general
-> > library and I see erofs is using other bits of xxh32, so it didn't
-> > seem right just to delete them.
-> > 
-> > Comment them out with #if 0.
-> > (Which checkpatch rightly warns about)
-> 
-> Please just remove it like all other dead code.  The same argument
-> that folks can easily look at the git history to resurrect it applies
-> here as everywhere else.
+Clients will typically precede a DELEGRETURN for a delegation with
+delegated timestamp with a SETATTR to set the timestamps on the server
+to match what the client has.
 
-Hmm OK, as requested, v2 posted:
+knfsd implements this by using the nfsd_setattr() infrastructure, which
+will set ATTR_CTIME on any update that goes to notify_change(). This is
+problematic as it means that the client will get a spurious ctime
+updates when updating the atime.
 
-Subject: [PATCH v2] lib/xxhash: Remove unused functions
-Date: Wed, 16 Jul 2025 14:32:45 +0100
-Message-ID: <20250716133245.243363-1-linux@treblig.org>
+POSIX unfortunately doesn't phrase it succinctly, but updating the atime
+due to reads should not update the ctime. In this case, the client is
+sending a SETATTR to update the atime on the server to match its latest
+value. The ctime should not be advanced in this case as that would
+incorrectly indicate a change to the inode.
 
-Dave
+Fix this by not implicitly setting ATTR_CTIME when ATTR_DELEG is set in
+__nfsd_setattr(). The decoder for FATTR4_WORD2_TIME_DELEG_MODIFY already
+sets ATTR_CTIME, so this is sufficient to make it skip setting the ctime
+on atime-only updates.
+
+Fixes: 7e13f4f8d27d ("nfsd: handle delegated timestamps in SETATTR")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+I had missed a place where ATTR_CTIME needed to be set in the previous
+patch. I think this might be a better approach.
+
+Note that I do still see the occasional test failure due to a client bug
+with delegated timestamps, so this isn't enough on its own to enable
+them by default. Stay tuned!
+---
+Changes in v2:
+- only implicitly set ATTR_CTIME if ATTR_DELEG isn't set
+- Link to v1: https://lore.kernel.org/r/20250715-tsfix-v1-1-da21665d4626@kernel.org
+---
+ fs/nfsd/vfs.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index ee78b6fb17098b788b07f5cd90598e678244b57e..c25e43dfa4aa4e3f730ffbb93f6b981d90c19c4c 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -470,7 +470,15 @@ static int __nfsd_setattr(struct dentry *dentry, struct iattr *iap)
+ 	if (!iap->ia_valid)
+ 		return 0;
+ 
+-	iap->ia_valid |= ATTR_CTIME;
++	/*
++	 * If ATTR_DELEG is set, then this an update from a client that holds
++	 * a delegation. If this is only an update for the atime, the ctime should
++	 * not be changed. If the update contains the mtime too, then ATTR_CTIME
++	 * should already be set.
++	 */
++	if (!(iap->ia_valid & ATTR_DELEG))
++		iap->ia_valid |= ATTR_CTIME;
++
+ 	return notify_change(&nop_mnt_idmap, dentry, iap, NULL);
+ }
+ 
+
+---
+base-commit: 7351f1092b3cde79f654dc49a82d51c7ada0a1f2
+change-id: 20250715-tsfix-780246904a01
+
+Best regards,
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Jeff Layton <jlayton@kernel.org>
+
 
