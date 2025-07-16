@@ -1,148 +1,181 @@
-Return-Path: <linux-kernel+bounces-733990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B98B07BAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:00:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877DBB07BB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF9B586EDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30A351896567
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5C12F7CE3;
-	Wed, 16 Jul 2025 16:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4XiHd9s"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DCD2F5C2A;
+	Wed, 16 Jul 2025 17:01:40 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961B52F6F9C;
-	Wed, 16 Jul 2025 16:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15512188A3A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752685182; cv=none; b=XRVrQidUosNsh3fYZLTlgBNJNuStLz5EoOzfhO56YU8bzkIxMJPyqhDeVHFHjj+zolLZdej2y4yoF4L7JuYmW/azSVgrxr6fXln62d2xSrsUotbV31KCcf/07lRXzA6RdbsMQG9BtX6c4gVnaGxQHcCCnggZqsExrc7lEE00o/U=
+	t=1752685300; cv=none; b=c5+yUw/43ux79hbNuU3vgv7HNHc0Ktlpv2KubqleU7GyCXwlK7WfjWvXG3G5lsWxkTr8vi5KB1ZqLyVy3zZiLMoOS16IU23MsYNBX+aRl1WYcVYY0zYM9MDFbY0Qsb0W3YoWVJSuH7LMPSqh3NQBDEvCKbPIfpWeHkp4lsE7e1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752685182; c=relaxed/simple;
-	bh=deNZy0gqTMsn1Sk/pOG5xml3B2QMrUmUO+2dpO3ZPv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bPnXOg25bmpRgAE8VMPibKwo8qfgeY2MSBtRPP5ide85Vbzh4sFjkGqXyXrxktjmY2VrutyLGyyZaDcqH8oigryPr4QD4C8R8YbiEDZokT8NUUnlc4aUgTC0oHgc8884BNc2yvyFV/gwnq1m1jSXlkUupXWmH1BvTjGtajzDUcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4XiHd9s; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-235f9ea8d08so353045ad.1;
-        Wed, 16 Jul 2025 09:59:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752685179; x=1753289979; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x9i9Yeqsjy/MBvGhDry9fFhgb0aml5g6UAa/VUCvHos=;
-        b=P4XiHd9s+H5w5oCF2tZpAzXEr8eJetgj2mCdaefcJ8qNttPF0NXLvKV76uCgrQh86z
-         VEmFymE+JChvhn6wMYv9BaLIzR//kJq6TNG3o1m8DNjcZx4HrEoXw4rfTeWQhixynTHs
-         tce3EmhAWbEmA7K5v08cBPLXidbfxJo8ZtWKPHMxIX0E+PnJYw0nUwzf6cLTjymvcKn+
-         FLwuN+kVNkZCFMitoQGvq+HDVEe2ei8nOSVRD+P7yRyGMrG1P60TkqP5/l0u4PJ8jYqN
-         oOowsW/LVTP46g5gTrlxQShZvHVxhz2gVAmlP4Z3mh2DaeAZRyTD0RhMI3pZO/3DHT2e
-         Iq5A==
+	s=arc-20240116; t=1752685300; c=relaxed/simple;
+	bh=e0yD3duGWfrYlQrpRQ5Eo7EbZCP52YDpCQ9BN8+ZzRA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Hwchuri9r7yaT73pyPzX3fre0DWxEl5zu6lWz9bxh0IhAKtBZ94ix7PNgSnztUh22FHbqWlg1fPDs2q5LJbQ+PUT7AVebL1KNy8nlMfXZUTWpuUaR6e5kbKDaQefj/zGbxkq/Oe7l1e5S4gWySsKwI21JaM+mwsCTAnc4OLwMbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e28b249a24so348965ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:01:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752685179; x=1753289979;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x9i9Yeqsjy/MBvGhDry9fFhgb0aml5g6UAa/VUCvHos=;
-        b=HijqA7ueFR2XS8r3jxntsbAuBSD/jnF9nHq3iq9qjMs8T5NZrLA2kY9Xle8+k252rD
-         nd5g1h1C9FcDpLHd8PsN6sDHxUccFgOkoK9JCqaQO7jxybX352gQwBJkYf/F7zPm6EMe
-         FltpaP9/tbdkxcKS6lY+PHDD24phLjMdnANR52vjQyad0wVlBULNIhkI3Fz+ln2i3lZh
-         qs5fjL99emIeBOi3DObEbGt4M1zcNSi1sCI3CZnhYP9b9rENsL3NZvHy2tQs9pvnQs5e
-         UafKNQUy7Pbap8PACHNvddt5jc/0YVGrlht8DMSjEiN5JApDjhq8j7YyXDH8eL+lTwV9
-         NdCw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4GkwPIpRjNiLVV8l1v60isCkj/xqEbGfxdUlGTMeRJYCxOFIQ/+D3PZKnd1CPs7GJtqM=@vger.kernel.org, AJvYcCXGU/Vjs6pv9VLqHPtuRXTwtoy2LCfz58GuX/w/TbpdzjVHI+2ZAH42fuAfWTsajQ+DYpan7a8UfNBv+Goh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxLHc50GFXq942OtTm7ejbP+FoMjWgaNF4b9Kpr89dQuPKsuTg
-	UuOQ7F5nib6KOVJSJg0fopCyr84hLtS2g4tCL7gSv/bOcnBBLv7gisS5
-X-Gm-Gg: ASbGncvHuZYBTO7XIkfxovJK0b21KSl7/tIyF7J+YdWjLpxKb+HPRzAkZF2VprcAcp+
-	nyeSqvuKkA1ySC9r2IZFRbnwY6rySu4V2okWG7m9F3yxwq+ZK0dWdqck/w/DcGWuJDpPBhh9gF3
-	DsN4UGC7xcjoz9tnW8rH8oVttEzor2TqqQcqsEX/ikg6Igc1zIjxoIiUpq/0vYfNdhQUN2qE7WG
-	XJuPfFpwv6xsTW79pCb0EArbyt/QWHKcnTkiMP8wMrXOvByVPnGBriRO4Jm733NCGF+qBYiXCqj
-	Er3GShw5Xz9ZJwmCTRqmd7MW7FrPI7jZtN51BudycgX+VZzD3Z9pv4QYxJz+9JU8fIrocRWTCqb
-	QNX4eiKDtENFzN9Y7/8FHt8NyNumGzHEE
-X-Google-Smtp-Source: AGHT+IFDKpvzgv7uLs+wBQtKXYWTaK3q+F2DNaQGyC1M1O4xIioma5k1pZH/BBkL+8lpjDhwWdQUPQ==
-X-Received: by 2002:a17:902:ccc3:b0:220:c4e8:3b9f with SMTP id d9443c01a7336-23e24e129d1mr60238965ad.0.1752685178720;
-        Wed, 16 Jul 2025 09:59:38 -0700 (PDT)
-Received: from localhost ([216.228.127.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4359ddcsm126901705ad.207.2025.07.16.09.59.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 09:59:38 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>
-Subject: [PATCH 2/2] LoongArch: KVM:: simplify kvm_deliver_intr()
-Date: Wed, 16 Jul 2025 12:59:27 -0400
-Message-ID: <20250716165929.22386-3-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250716165929.22386-1-yury.norov@gmail.com>
-References: <20250716165929.22386-1-yury.norov@gmail.com>
+        d=1e100.net; s=20230601; t=1752685294; x=1753290094;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cBmetddKLkjuJQ98nhwMXAQpQ48VqF4cEgqzN1+zBjs=;
+        b=CtKGBoR+TzCloXnIE1YL5XkPJovf+hWmh0cXEH3hZuoiQM40oBvIvABmpWuBv7iwWy
+         lbIPozU0AiSCa+axL8ToKXLt3JfCYwD7kyisXznw6zuJtu4huUCrpWVDqgu7+AfK2JS0
+         CB7jcbwyHjS7OZI+pgXtnCjWqP2O6BZX2y/WCRzUfmlvfLhCMwyj20/04Y5q0/7IolHU
+         mxT1TNsQNWpT7wZjj69yMIppKQJFMrf7e33Mk4L7fEyDslD8CxUfmyE81SfTZ48rDXSa
+         VYTbWggxZFc59TJrw5m/l2Gp42qYrsJiGTwBhqvvVxymc7yhDn/+NVXB7HwiW/oc31YM
+         0ICA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtS9PdcFTUzqc+8nD28agRTDndMS7rG0TSGEHyMyd1+Xegqs25+nx4rtPujYWoRxUl8L2pfWCu3lEa0yQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe8c/mxHQk3L7AVt5lCCQwuRDfrqY0VOwqg5TpdAg5OlB/vk2u
+	FYpiHk3dsLL5b3V3Y1TfZPqTU6RbUtOvGumNwNUyHp47dM+4aNEJ/qgwiMhX3It3ZhxdOQhyPMW
+	oVOagV2CTrO/0FG2X9UtC8J1s/O2n1SqtV61uGRd+149UL856yTmpYjdFufk=
+X-Google-Smtp-Source: AGHT+IE+24eO6q3p4Mj9R1gSkyzP3EXdEW8uoZpqJYRJ6dWbgB29GJiWHDLeF1dRE39CyLgtV3NqYhCRbeciDZXhLWSAmHz842uL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:741:b0:3e1:63a5:5aaa with SMTP id
+ e9e14a558f8ab-3e282dc60a8mr34517555ab.6.1752685294134; Wed, 16 Jul 2025
+ 10:01:34 -0700 (PDT)
+Date: Wed, 16 Jul 2025 10:01:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6877daee.a70a0220.693ce.002d.GAE@google.com>
+Subject: [syzbot] [wireless?] INFO: rcu detected stall in sock_close (5)
+From: syzbot <syzbot+9a29e1dba699b6f46a03@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	jmaloy@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+Hello,
 
-The function opencodes for_each_set_bit() macro, which makes it bulky.
-Using the proper API makes all the housekeeping code going away.
+syzbot found the following issue on:
 
-Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+HEAD commit:    379f604cc3dc Merge tag 'pci-v6.16-fixes-3' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1690fe8c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
+dashboard link: https://syzkaller.appspot.com/bug?extid=9a29e1dba699b6f46a03
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1190fe8c580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-379f604c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/355475904f2c/vmlinux-379f604c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c247a5b19c2d/bzImage-379f604c.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9a29e1dba699b6f46a03@syzkaller.appspotmail.com
+
+watchdog: BUG: soft lockup - CPU#0 stuck for 123s! [syz.0.2011:11811]
+Modules linked in:
+irq event stamp: 337922703
+hardirqs last  enabled at (337922702): [<ffffffff8185b0dd>] __local_bh_enable_ip+0x12d/0x1c0 kernel/softirq.c:412
+hardirqs last disabled at (337922703): [<ffffffff8b6f3f4e>] sysvec_apic_timer_interrupt+0xe/0xc0 arch/x86/kernel/apic/apic.c:1050
+softirqs last  enabled at (584): [<ffffffff8b0f4de9>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
+softirqs last  enabled at (584): [<ffffffff8b0f4de9>] tipc_skb_peek_port net/tipc/msg.h:1235 [inline]
+softirqs last  enabled at (584): [<ffffffff8b0f4de9>] tipc_sk_rcv+0x3e9/0x2ba0 net/tipc/socket.c:2489
+softirqs last disabled at (586): [<ffffffff8b0f4e21>] spin_trylock_bh include/linux/spinlock.h:411 [inline]
+softirqs last disabled at (586): [<ffffffff8b0f4e21>] tipc_sk_rcv+0x421/0x2ba0 net/tipc/socket.c:2494
+CPU: 0 UID: 0 PID: 11811 Comm: syz.0.2011 Not tainted 6.16.0-rc5-syzkaller-00224-g379f604cc3dc #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:should_resched arch/x86/include/asm/preempt.h:104 [inline]
+RIP: 0010:__local_bh_enable_ip+0x135/0x1c0 kernel/softirq.c:414
+Code: 8b e8 6f b2 e9 09 65 66 8b 05 6f 9f 1a 11 66 85 c0 75 5a bf 01 00 00 00 e8 a8 32 0b 00 e8 b3 11 42 00 fb 65 8b 05 4b 9f 1a 11 <85> c0 75 05 e8 82 f5 ad ff 48 c7 04 24 0e 36 e0 45 4b c7 04 37 00
+RSP: 0018:ffffc9000e456540 EFLAGS: 00000286
+RAX: 0000000000000201 RBX: 0000000000000201 RCX: 1216cf3644652a00
+RDX: 0000000000000002 RSI: ffffffff8d998e51 RDI: ffffffff8be29e00
+RBP: ffffc9000e4565d0 R08: ffffffff8fa1f5f7 R09: 1ffffffff1f43ebe
+R10: dffffc0000000000 R11: fffffbfff1f43ebf R12: ffffffff8b0f4de9
+R13: dffffc0000000000 R14: dffffc0000000000 R15: 1ffff92001c8aca8
+FS:  00007fa71c0906c0(0000) GS:ffff88808d21b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000009000 CR3: 0000000043757000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ spin_unlock_bh include/linux/spinlock.h:396 [inline]
+ tipc_skb_peek_port net/tipc/msg.h:1235 [inline]
+ tipc_sk_rcv+0x3e9/0x2ba0 net/tipc/socket.c:2489
+ tipc_node_xmit+0x1c9/0xe90 net/tipc/node.c:1701
+ tipc_node_xmit_skb+0xf4/0x150 net/tipc/node.c:1766
+ tipc_sk_rcv+0x29c4/0x2ba0 net/tipc/socket.c:2520
+ tipc_node_xmit+0x1c9/0xe90 net/tipc/node.c:1701
+ tipc_sk_push_backlog net/tipc/socket.c:1312 [inline]
+ tipc_sk_filter_connect net/tipc/socket.c:2253 [inline]
+ tipc_sk_filter_rcv+0x12a0/0x30b0 net/tipc/socket.c:2362
+ tipc_sk_enqueue net/tipc/socket.c:2443 [inline]
+ tipc_sk_rcv+0x8a5/0x2ba0 net/tipc/socket.c:2495
+ tipc_node_xmit+0x1c9/0xe90 net/tipc/node.c:1701
+ tipc_node_xmit_skb net/tipc/node.c:1766 [inline]
+ tipc_node_distr_xmit+0x2a0/0x3b0 net/tipc/node.c:1781
+ tipc_sk_backlog_rcv+0x1a1/0x230 net/tipc/socket.c:2410
+ sk_backlog_rcv include/net/sock.h:1148 [inline]
+ __release_sock+0x249/0x350 net/core/sock.c:3213
+ release_sock+0x5f/0x1f0 net/core/sock.c:3767
+ tipc_release+0x16e2/0x2160 net/tipc/socket.c:650
+ __sock_release net/socket.c:647 [inline]
+ sock_close+0xc3/0x240 net/socket.c:1391
+ __fput+0x449/0xa70 fs/file_table.c:465
+ task_work_run+0x1d1/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:114
+ exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa71b18e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fa71c090038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: 00000000000203a0 RBX: 00007fa71b3b5fa0 RCX: 00007fa71b18e929
+RDX: 0000000000000000 RSI: 00002000000003c0 RDI: 0000000000000003
+RBP: 00007fa71b210b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fa71b3b5fa0 R15: 00007fffdf037f88
+ </TASK>
+
+
 ---
- arch/loongarch/kvm/interrupt.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/loongarch/kvm/interrupt.c b/arch/loongarch/kvm/interrupt.c
-index 4c3f22de4b40..8462083f0301 100644
---- a/arch/loongarch/kvm/interrupt.c
-+++ b/arch/loongarch/kvm/interrupt.c
-@@ -83,28 +83,11 @@ void kvm_deliver_intr(struct kvm_vcpu *vcpu)
- 	unsigned long *pending = &vcpu->arch.irq_pending;
- 	unsigned long *pending_clr = &vcpu->arch.irq_clear;
- 
--	if (!(*pending) && !(*pending_clr))
--		return;
--
--	if (*pending_clr) {
--		priority = __ffs(*pending_clr);
--		while (priority <= INT_IPI) {
--			kvm_irq_clear(vcpu, priority);
--			priority = find_next_bit(pending_clr,
--					BITS_PER_BYTE * sizeof(*pending_clr),
--					priority + 1);
--		}
--	}
-+	for_each_set_bit(priority, pending_clr, INT_IPI + 1)
-+		kvm_irq_clear(vcpu, priority);
- 
--	if (*pending) {
--		priority = __ffs(*pending);
--		while (priority <= INT_IPI) {
--			kvm_irq_deliver(vcpu, priority);
--			priority = find_next_bit(pending,
--					BITS_PER_BYTE * sizeof(*pending),
--					priority + 1);
--		}
--	}
-+	for_each_set_bit(priority, pending, INT_IPI + 1)
-+		kvm_irq_deliver(vcpu, priority);
- }
- 
- int kvm_pending_timer(struct kvm_vcpu *vcpu)
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
