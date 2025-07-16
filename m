@@ -1,382 +1,323 @@
-Return-Path: <linux-kernel+bounces-734126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A13B07D62
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:10:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0BEB07D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD7961C27567
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:10:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E83105811C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4EE293C78;
-	Wed, 16 Jul 2025 19:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6CD29A9CD;
+	Wed, 16 Jul 2025 19:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNDV1bih"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="b6+g8NlJ"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010028.outbound.protection.outlook.com [52.101.69.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48864235362;
-	Wed, 16 Jul 2025 19:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752693006; cv=none; b=dwU2NE9hIl74l9q7/qmHR0SBfdyHYaOtxqcvvrwtQU+1dpyk5myMP7aGizJKM50GPMoZNK3yZ0uYVyjlfJZwbcBKr5FAyVtZDPMQmriaRe6txWxfQzsSsrsivYKsoQ1BYT1gji3Bm7+2C4PRi0fIUl6QsUGYEy9K0lk/dJjkJ6I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752693006; c=relaxed/simple;
-	bh=5ONk/dhgxzx4BEgIyWuPo/yrDaN7XiSUNZxPs1Nfnis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bsSpdoVyE2Gx+RSyZ/Pd4Iyor5h8xjYzqQ8bZUVzZDYOglE+AqIzqqzwl66R7WV70hYvC48Lv59bpfLuRzJSaDffmM9jkWQ0ZjVuY42t2CHQXDanspCij9Q8Pmt/pcyqQURZzg6ZxgOVcSnXulKtZz3cz/Grs+niloVQH9f+fdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNDV1bih; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4915C4CEF4;
-	Wed, 16 Jul 2025 19:10:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752693005;
-	bh=5ONk/dhgxzx4BEgIyWuPo/yrDaN7XiSUNZxPs1Nfnis=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pNDV1bihDjCd/R4DTX17sdlI8xs4hNrne1rmuOO3P1ISN/Tr8d4lkvhljqml2ce/p
-	 ebayJ7XL4JzqRet2zO/UD4heFIJCYduOgf2GnCFigntkNjuqh56uA5ADnksjaUsC0R
-	 bCfzCOmMZ7XzdfgGlcu4i2zxerQH5UQPBFO5UkjZ7cA7+OPJfrEkJFVtVR0TY39uqN
-	 mOw85vwd3mDC1RfYtBbALcc2HtCha7psNR4GwC7aQD7JH981Hxe38lvmQ+RqKVPzQz
-	 NNujmMt4ejV60SLjZ/EOA+R67XdT0VSfnMMUSzUNePPmW/RVmJVg3lHEbJh/3iX4nd
-	 jRIeIM+fezu6A==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-615a80bb75cso48210eaf.2;
-        Wed, 16 Jul 2025 12:10:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWdbgRQ7OFqOg/BIq8/OFV4sKH28MNNEXQ2Udk7Xw8daQaZMaeEzlxRLFnfrofpfj/XPA4VDTo/DZc5FdIs@vger.kernel.org, AJvYcCXHXBsIOBr8DAC3hxzONqj4gf/o7uqYaKTXXk09rVK9DbEkE47L+UFbYQj77i3H3UQYSJFJyEjhdWmA@vger.kernel.org, AJvYcCXR/8YWLMf6MYGMrgcttDSlNlIf7AHvcP+4nd68/Sjp5gTgWqSQbjRhAIQaEDetSbBX81ELrj9Qz0lysw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1jWXI14Yxi3N/auSltL+PQ+xn2b2dHeNkMo67SfoLGF7n5+31
-	pwd1CPhzRlavlPqdX3R/iotCKKmzbQaeisJmNncObMIItEKaBIPOLP7qc/JvPoS9bPktg68tYR3
-	QZifaAkKsDxFWtZofkfr4K+EzPEAHNLo=
-X-Google-Smtp-Source: AGHT+IF3+GPKGX9g9hYSOvtBePiC6ouh/Pa+vawVOjx2y0KZXvQTfL0WJR+bmcWjTV/eg7Dfl887GmDhIhlgJ7nbE9U=
-X-Received: by 2002:a4a:a5cb:0:b0:615:9c11:a072 with SMTP id
- 006d021491bc7-6159ff4340amr2510895eaf.8.1752693004962; Wed, 16 Jul 2025
- 12:10:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E08C235362;
+	Wed, 16 Jul 2025 19:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752693020; cv=fail; b=X/lahD6XWHj2aksPXSq5/G/7GR07JOCMTENFv4T8w3z71RSMasA8pqdPYXwvbL3QGsbcqNmxxYUfZfOaKiPZqsCMZ50CZLMBJKZyRMTmVp2ushvRj+8vhl5QNvl2c0oLKuSbfhaIy82VP9VkfJhMPUZUawmDD3DryKjNFeMc+1U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752693020; c=relaxed/simple;
+	bh=pnu5qmxGeuukJ3SbHNG7M22z7zdHWwGwhR0vHp5o7Wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mPk7itKYyGU9FRWPFbmal9oUpypfqSrPIVM/JFqy6vzvs+tz3WrenjjeSBFartsGiTanV/QWiSvLPTez7qmluscN20wyOFlmzLBbOQlcvbro4U1/KIehXosAu5oN7g3D9vma1ae8Zg/vN7qBAeODAaqqoA+S09Jh92j9Hg/C82E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=b6+g8NlJ; arc=fail smtp.client-ip=52.101.69.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Fwv89xUJ/xoGL/H5Gf07ugfJwqgdvGo0VqWa/BPVQIrJAo7Na7rEq3issWtPOoL0ZmJu30pNRMbZyLaJenvXpJZgiJZ9wzppU+B/FfRw2FZzCuaIJD8Aq8Kaz8sxLRDBk8Y2Ah/2Ri+dHQTg5ZYIKalJbgOchwJgVxFY6eTykiRviOqYdUvYrQhcTHuVKicPTjTnF/jKQsdoMOiWOXkzWZv6MN+J0AyHR1h2X6jqZqv+cqCLhNHjfZTPmQTXIkJrE29WBxFUx6FCqtT+5SGaPTb0eN1q4X8gDduBvZsKuPyXAJFJUAk1Q7OrDlv0Hhc8APk9FnwXmRWdHZkSo/PH4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yCt64gnOUhcJeaHkttc14bicUHRNBRsAw96kmQqi3xE=;
+ b=GTWX8eCzGNI1GqyCRjjQB0PzlBZ3U5+hWZE+MlbBBdgRs0+Mn0DDG4NNIZC/1H9C4UWKV5XMSjiQLUN2f4LB6wjsc7sxSOb6sAdQSkKLhSb7hCDdRoio+sJlOEQkdDjTlazCSOdbkgcN+aQp63gJqj3fMCXQaPVAkpb3I77vCBgsgSUwxZKWtehFI/7HeuescZtTDRi3zvvKCh6DlBEom5gACJL2FKdGYudVX5YgZW7/14zHxUHKWM9RPRrI3KZnlaMF2fNqbZa2jKODuci3mLWlwdbAx4aWdsFEJrBUsinfL+Qfd3UqmNxxI5d7uY8ID9yQxdbXXYZ3e2YcexJBYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yCt64gnOUhcJeaHkttc14bicUHRNBRsAw96kmQqi3xE=;
+ b=b6+g8NlJZ3N0YgWbi4HAORWYHbWyIY5mO/rQV4GZKo6Nd4dTPPPey1GW/g4bGLtAaFt21Fs9/be4EHtbMK/JVAxcKyoN3rk6Aep/EvyQeNLH6v5piJwx8mN/1VUAgw2zmnX92uhqQKKGzTltXYz0JLn+EkiPovrGzIZ95tQrw3iX4o2v/WtfaduGqIaOsOVPAZx/j1f/oVfQUgwfXQean16XFlZheXGl79z9Rzu+z0XAjZfmcssnNd6jkpshJ7bbMWPh6IIs9WHN/ollSksLo/8JIlwDt2++K3zBNlyDz1ZnwgjJaZUBKsoXdFkm0jwmQnT8j559VjDWrkBC8WvFqQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8564.eurprd04.prod.outlook.com (2603:10a6:20b:423::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Wed, 16 Jul
+ 2025 19:10:07 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
+ 19:10:07 +0000
+Date: Wed, 16 Jul 2025 15:10:02 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: imx@lists.linux.dev, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/10] arm64: dts: imx943-evk: Add display support
+ using IT6263
+Message-ID: <aHf5CisGvyHLWy3Y@lizhi-Precision-Tower-5810>
+References: <20250716081519.3400158-1-laurentiu.palcu@oss.nxp.com>
+ <20250716081519.3400158-10-laurentiu.palcu@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716081519.3400158-10-laurentiu.palcu@oss.nxp.com>
+X-ClientProxiedBy: AS4P195CA0030.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d6::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714114212.31660-1-xueshuai@linux.alibaba.com>
-In-Reply-To: <20250714114212.31660-1-xueshuai@linux.alibaba.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 16 Jul 2025 21:09:53 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gmuBwCXovP7WvmUss7midrJdPXNDCbhTV0tCWMb_V2ZQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzuJJVotxHfi5JXQgRoZINZEL1SjopFGDk1sL5TkrIFpGNDE-craBpu6EI
-Message-ID: <CAJZ5v0gmuBwCXovP7WvmUss7midrJdPXNDCbhTV0tCWMb_V2ZQ@mail.gmail.com>
-Subject: Re: [PATCH v19 0/2] ACPI: APEI: fix potential hardlockup due to
- infinite SEA excepction loop
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: catalin.marinas@arm.com, sudeep.holla@arm.com, guohanjun@huawei.com, 
-	lpieralisi@kernel.org, linux-acpi@vger.kernel.org, yazen.ghannam@amd.com, 
-	mark.rutland@arm.com, mingo@redhat.com, robin.murphy@arm.com, 
-	Jonathan.Cameron@huawei.com, bp@alien8.de, rafael@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, wangkefeng.wang@huawei.com, 
-	tanxiaofei@huawei.com, mawupeng1@huawei.com, tony.luck@intel.com, 
-	linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com, 
-	tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org, 
-	jarkko@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	akpm@linux-foundation.org, linux-edac@vger.kernel.org, x86@kernel.org, 
-	justin.he@arm.com, ardb@kernel.org, ying.huang@linux.alibaba.com, 
-	ashish.kalra@amd.com, baolin.wang@linux.alibaba.com, tglx@linutronix.de, 
-	dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com, 
-	robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com, 
-	zhuo.song@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8564:EE_
+X-MS-Office365-Filtering-Correlation-Id: c602fdd9-475a-4804-5372-08ddc49c606c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|7416014|19092799006|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?N6CuurHa48HIqaf2X3EejId0cQIqNGTkOS9xHkqWjs6gDApRRL5ZqUVaan0V?=
+ =?us-ascii?Q?+gh+b9lgtCBQeC2VRSg/PQy3yPX9y+EPlI7c6ukL7bxNP3fKcxX6ELqs68xK?=
+ =?us-ascii?Q?nyGQTo7idy8ltwZE4USayn22Y2Q7BhQtB/3l3uK2kQefe+XREj1ovI+ewZ2f?=
+ =?us-ascii?Q?JPwO9SiBZrTzbsgxkgICTSQ53eS8hQWmX0OioPf0Og9s27Xqf1wMnLGrLkuo?=
+ =?us-ascii?Q?3qjx10C0q7G8s0GnjctDP9Iv11iWmFHoVsuE3Pbf2/yPjhcnmkgrj8DONARG?=
+ =?us-ascii?Q?6lKSc+AJoJVMSUcP7XCRmAgtwTv07T2hzh+aH7OMshEaV7wDhZF4RnwYQZzM?=
+ =?us-ascii?Q?UCYBShMhYfh8vQt9IRrBBoe2lEbH8JT2nKwhLF6oUp81eMWUPdL4PIwul1Pd?=
+ =?us-ascii?Q?2MicA1PFmoDdPolLf3EH5kJQcujAA/JvU0WHqYJHuUffByOUckcEhgsNiW2E?=
+ =?us-ascii?Q?f4d3PR1G96vSUXzO5YOpwQiz6F9b23AsmX+YQejVRi9KVDlkzUhLBsT4KIVI?=
+ =?us-ascii?Q?nC4m8D0J7ZQQDHYvb8pIRqETpPERMQ1eBGh1oykLzR4YPryeJB+t4CO21uv7?=
+ =?us-ascii?Q?4zDJxuns9YfnrbMnB0l4vaw77RDzkBiVMFwn2c+onw8AsqtOMHwlRGJ3lOKf?=
+ =?us-ascii?Q?s9Ucqsj7Z3BZ4JQ4ZwxkbM510a55as7hOFtQAdGHuyZZAOYfqcM90hvHq6pU?=
+ =?us-ascii?Q?jzTADuodNQ5JHnXF12+EV4yAgcrKTyfbk/9xsjnFipju1RVUj3ZV2kCtyXEt?=
+ =?us-ascii?Q?fDneAs1tvyyk5G4q+Spqw4dH25qQG+ky/Ma09pxNZNOTGxSo7s41r2HOUC9p?=
+ =?us-ascii?Q?5zcFb/y4sZOeLcOOTIFf8mWmAB9jtEQu9tZDZAja7q0tyVH7GjM7xHyap/ys?=
+ =?us-ascii?Q?Em+raIWLEEIF/AxDKwCxHXcG6UBzavmCkllfEMpyqKdXpXOuhi4uhsBLdHSt?=
+ =?us-ascii?Q?uLvuhaQsSf6h3uWIUEPW9VsdXDhPhayhQVgv2JHVvk2ZysgNNR6E9DihliwG?=
+ =?us-ascii?Q?t0aBwTh3cRSMDu2CliSyx/p20vicEMzQ63/8jh1yyb+afQJyB5z6rNesKuRP?=
+ =?us-ascii?Q?Sx3f2qDr+UAefWbabr4BXzs32Udz1u2WioDsSYsaTj26aBpvchNH+1um9ns0?=
+ =?us-ascii?Q?4axMqG2M6T5DbcfKF1zuDnBGq5ec5X6zZzhWnB3cQjl5SqkIyAVBVgEQ+kAm?=
+ =?us-ascii?Q?gsJxR1vHjC82Ldi6yHR90XSSj17oJaoRDB8KY80g+olxMl/LFIVwQ1AtcQw5?=
+ =?us-ascii?Q?h+x58DNvdcr9YB8ocwNqPNYQNML4iyV6VlOeup9qkLI53Z1atD/Q11Og8pjp?=
+ =?us-ascii?Q?ss9l94XjKGGqUQYKzEvt7z6Elljwp85vEcbZ2kYYUgekIGa5DNczbRztiyBQ?=
+ =?us-ascii?Q?BaWc1dOjqvEf0PmEKhqX3hUhI3R07JBd8WUNwq9WHbigSZtuTgzJoqr+qRxA?=
+ =?us-ascii?Q?jHm5uLFJAaxBV1urltgYVcINwW4kQIhXGyKF0qsGyUwVtfawKWXo5ryeeOYT?=
+ =?us-ascii?Q?/Dr2lrTuORn9NzA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(19092799006)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?oHTLN65hxqyQgkeiPgSQD6EMcMfzA+JCKChd/fKwkdzxSbCV5D5P8Ax3IkLv?=
+ =?us-ascii?Q?CqkSeXg95U1gHOZNnhNwSnVYbqNXmHpUxxVCBrXch+3QofbtsTuDh3s/ln4f?=
+ =?us-ascii?Q?eMjfwHH9M6ThAQgR9rxkWd5ZEOXBRd5VCgX7m2ilDoWnbBqdf63QYP1cwVoq?=
+ =?us-ascii?Q?tGktXhUJwqzRH1LWlUfj7YbWz0dtJ1xZ6OTFDTEH8DT7JYEqRePAL4BmxzGQ?=
+ =?us-ascii?Q?QiTo27b5xw+lDgW8UjavNEhH9ySWQAnot5/zMP7HfUSGIJziSBFwGOcoQ1x6?=
+ =?us-ascii?Q?wauHWd0Kp1Agq+MaX23s9FMFkjhoA2SE95BxDw8IRBh1CDvzjtPD1f/xoQNG?=
+ =?us-ascii?Q?kkN71gkawKvY0EDowtWIIDExK+GACNFQJ7yqMYCPdZsB4Sh7l3Kga4VvJGs4?=
+ =?us-ascii?Q?sXXd1WAjlz+LaNXcoLSpWHUI1c+Lmw6FA9O/W+Zo1kB5iuJTxLAtGeiF7T3W?=
+ =?us-ascii?Q?9/+NgDTpknEnnc2Bc+YrjzFKM7j5Ibrgnpn7umx0l3ygxXpyNRXA3k2wBZAn?=
+ =?us-ascii?Q?Iklvjlod0nA0b4U7SxOB89N3fxrHoh0Gs+/qSM1eQqZ/t0AoGjP/aY09cvrr?=
+ =?us-ascii?Q?lMyIzkS9x+QID7u5WpBRyIwU9YAtvgpoi8HeoZt8pHlLgwLuk+QXb0ZwdCnZ?=
+ =?us-ascii?Q?trACtSUTWnwk0fsFTsMlJ6tPWx+EuQRskjVaJ89OFnFY+Em5jbMyEJBHmrg8?=
+ =?us-ascii?Q?WEFC4wQlasDujZI/N+kr+qtkLYB+rWRZORK3O7cRJeNT9TVs4qNshwETmosS?=
+ =?us-ascii?Q?dbzRzi66XTSSBbrxGooVM3XNCSw2rxthol7SI3K860s4+U4Vsx2/VvrBfwMY?=
+ =?us-ascii?Q?xPzagqgVsYXX6qfUNqJyLDblvzMeOpFDPrIdkazSp4ieGlZRRY6Rz7crCLbZ?=
+ =?us-ascii?Q?Eh9hQgA0haDp7oDmithRSKXFYa8DuFrkuGkBJtRXjUBDLlJNOBxZb77gwSh9?=
+ =?us-ascii?Q?V2htsboRGeqscX2QzyIAtzfwmPyo08mB06RznAo7DYFjXLig8wLN3BhfDzp2?=
+ =?us-ascii?Q?ifZZjU2HwbtmDw5JBCsajydB2KakgoAiJ4lpEdKqO/jbDgGSwh8kjPf+ACX1?=
+ =?us-ascii?Q?cSE8e33Bsv9BdfJXuC78hdjY36mLQ0EsmblIk2dOdzpFuxeB1WpmFVpwLcn9?=
+ =?us-ascii?Q?EqRmLGth81QI+O9dFBcKFUCOIrOnZQ2/dhcQ72brF7k7xngkh6l17N7yjKSD?=
+ =?us-ascii?Q?IbltlxRyHEk5dOgZxcPjSjIhI4Y08Mu/bEQzFt+zo1sZmFfb3xH4U6sO5cTX?=
+ =?us-ascii?Q?PRKRHxeMYwrVtaFbugNUJYEaWzJieSMlb7fLRcM9bsRPBjnRwP0t/lXYtCr7?=
+ =?us-ascii?Q?5HfGKlKIT/ank+dVcytCXKxQ76kShlEZzyLyB6OKzkC7BN2GD2teGno60OXs?=
+ =?us-ascii?Q?36+6INBbWxiaFW2qtPm1oEiki4GkDIRXdR2xL6pKRA/2S9rpINN79VSAPDzh?=
+ =?us-ascii?Q?Ug4/dWBr255DQgFySIzm6hjLvNy2wtIYxYaFIX48RPkRWta1ghVPJuRqdfbn?=
+ =?us-ascii?Q?BGA44WCLU5vSm6+x+JNf3p3n5MJAPkCVlDFoNbc/Quk87wd6SYmRhmHEmJoF?=
+ =?us-ascii?Q?wP6/GBAhefHZKIAcz+11IWPnN6looZlhcUnzdSUe?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c602fdd9-475a-4804-5372-08ddc49c606c
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 19:10:07.3396
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OLWlLdig+L4KVyXHP7r3s+EUDqhixzESStdPYKu5ysocYyXN/JP2hlUpMZyAsAQ/czM5tgaZ4M3LY/LsypVO7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8564
 
-On Mon, Jul 14, 2025 at 1:42=E2=80=AFPM Shuai Xue <xueshuai@linux.alibaba.c=
-om> wrote:
+On Wed, Jul 16, 2025 at 11:15:13AM +0300, Laurentiu Palcu wrote:
+> The ITE IT6263 based NXP LVDS to HDMI converter can be attached to the
+> i.MX943 EVK board LVDS port using the mini-SAS connector.
+
+Generally, attached devices should be overlay file. You'd better mention
+it is default configuration for shipped EVK board in commit message.
+
 >
-> Dear maintainer:
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx943-evk.dts | 123 +++++++++++++++++++
+>  1 file changed, 123 insertions(+)
 >
-> I am writing to respectfully request your review and consideration for me=
-rging
-> this patch series, which addresses potential hardlockup due to infinite
-> SEA excepction loop ( see bellow for details).
+> diff --git a/arch/arm64/boot/dts/freescale/imx943-evk.dts b/arch/arm64/boot/dts/freescale/imx943-evk.dts
+> index c8c3eff9df1a2..636913782f983 100644
+> --- a/arch/arm64/boot/dts/freescale/imx943-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx943-evk.dts
+> @@ -125,6 +125,129 @@ memory@80000000 {
+>  		reg = <0x0 0x80000000 0x0 0x80000000>;
+>  		device_type = "memory";
+>  	};
+> +
+> +	hdmi-connector {
+> +		compatible = "hdmi-connector";
+> +		label = "hdmi";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_connector_in: endpoint {
+> +				remote-endpoint = <&it6263_out>;
+> +			};
+> +		};
+> +	};
+
+Please run https://github.com/lznuaa/dt-format to keep all node correct
+orderred i.mx943's dts file already keep order when upstream.
+
+I remember hdmi-connector should before memory@80000000.
+
+> +};
+> +
+> +&dcif {
+> +	status = "okay";
+> +};
+> +
+> +&ldb {
+> +	assigned-clocks = <&scmi_clk IMX94_CLK_LDBPLL_VCO>,
+> +			  <&scmi_clk IMX94_CLK_LDBPLL>;
+> +	assigned-clock-rates = <4158000000>, <1039500000>;
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@1 {
+> +			reg = <1>;
+
+reg = <1> already set in dtsi file. So needn't set again.
+
+Frank
+> +
+> +			lvds_out: endpoint {
+> +				remote-endpoint = <&it6263_in>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&lpi2c3 {
+> +	clock-frequency = <400000>;
+> +	pinctrl-0 = <&pinctrl_lpi2c3>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +
+> +	pca9548_i2c3: i2c-mux@77 {
+> +		compatible = "nxp,pca9548";
+> +		reg = <0x77>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		i2c@0 {
+> +			reg = <0>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c@1 {
+> +			reg = <1>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c@2 {
+> +			reg = <2>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c@3 {
+> +			reg = <3>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			lvds-to-hdmi-bridge@4c {
+> +				compatible = "ite,it6263";
+> +				reg = <0x4c>;
+> +				data-mapping = "jeida-24";
+> +				reset-gpios = <&pcal6416_i2c3_u171 8 GPIO_ACTIVE_HIGH>;
+> +
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +
+> +						it6263_in: endpoint {
+> +							remote-endpoint = <&lvds_out>;
+> +						};
+> +					};
+> +
+> +					port@2 {
+> +						reg = <2>;
+> +
+> +						it6263_out: endpoint {
+> +							remote-endpoint = <&hdmi_connector_in>;
+> +						};
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		i2c@4 {
+> +			reg = <4>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c@5 {
+> +			reg = <5>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c@6 {
+> +			reg = <6>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c@7 {
+> +			reg = <7>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +	};
+>  };
 >
-> As noted by @Catalin,
->
-> > James Morse is listed as reviewer of the ACPI APEI code but he's busy
-> > with resctrl/MPAM. Adding Lorenzo, Sudeep and Hanjun as arm64 ACPI
-> > maintainers, hopefully they can help.
->
-> This patch series has undergone extensive review through 19 iterations Re=
-ceived
-> 13 'Reviewed-by' tags from various reviewers. Notably includes review app=
-roval
-> from arm64 ACPI maintainer Hanjun Guo.
->
-> The patches have been thoroughly tested and refined based on community fe=
-edback.
-> I believe they are ready for integration into the mainline kernel.
->
-> I would greatly appreciate your time in reviewing these changes and
-> providing your ack if you find them acceptable for merging.
->
-> Thank you for your continued support and maintenance of the kernel.
->
-> changes since last v18:
-> - add reviewed-by tag for patch 1-2 from Hanjun
->
-> no code changes since last v18:
-> - drop a mm/hwpoison patch which is merged into mainline
->
-> changes singce v17:
-> - rebase to Linux 6.13-rc7 with no functional changes
-> - add reviewed-by tag for patch 1-3 from Jane Chu
-> - add reviewed-by tag for patch 3 from Yazen
->
-> changes singce v16:
-> - add reviewed-by tag for patch 1 and patch 2 from Yazen
-> - rewrite warning message for force kill (per Yazen)
-> - warn with dev_err in ghes (per Jarkko)
-> - add return value -ENXIO in memory_failure comments  (per Yazen)
-> - Link: https://lore.kernel.org/lkml/20241104015430.98599-1-xueshuai@linu=
-x.alibaba.com/
->
-> changes singce v15:
-> - add HW_ERR and GHES_PFX prefix per Yazen
->
-> changes since v14:
-> - add reviewed-by tags from Jarkko and Jonathan
-> - remove local variable and use twcb->pfn
->
-> changes since v13:
-> - add reviewed-by tag from Jarkko
-> - rename task_work to ghes_task_work (per Jarkko)
->
-> changes since v12:
-> - tweak error message for force kill (per Jarkko)
-> - fix comments style (per Jarkko)
-> - fix commit log typo (per Jarko)
->
-> changes since v11:
-> - rebase to Linux 6.11-rc6
-> - fix grammer and typo in commit log (per Borislav)
-> - remove `sync_` perfix of `sync_task_work`  (per Borislav)
-> - comments flags and description of `task_work`  (per Borislav)
->
-> changes since v10:
-> - rebase to v6.8-rc2
->
-> changes since v9:
-> - split patch 2 to address exactly one issue in one patch (per Borislav)
-> - rewrite commit log according to template (per Borislav)
-> - pickup reviewed-by tag of patch 1 from James Morse
-> - alloc and free twcb through gen_pool_{alloc, free) (Per James)
-> - rewrite cover letter
->
-> changes since v8:
-> - remove the bug fix tag of patch 2 (per Jarkko Sakkinen)
-> - remove the declaration of memory_failure_queue_kick (per Naoya Horiguch=
-i)
-> - rewrite the return value comments of memory_failure (per Naoya Horiguch=
-i)
->
-> changes since v7:
-> - rebase to Linux v6.6-rc2 (no code changed)
-> - rewritten the cover letter to explain the motivation of this patchset
->
-> changes since v6:
-> - add more explicty error message suggested by Xiaofei
-> - pick up reviewed-by tag from Xiaofei
-> - pick up internal reviewed-by tag from Baolin
->
-> changes since v5 by addressing comments from Kefeng:
-> - document return value of memory_failure()
-> - drop redundant comments in call site of memory_failure()
-> - make ghes_do_proc void and handle abnormal case within it
-> - pick up reviewed-by tag from Kefeng Wang
->
-> changes since v4 by addressing comments from Xiaofei:
-> - do a force kill only for abnormal sync errors
->
-> changes since v3 by addressing comments from Xiaofei:
-> - do a force kill for abnormal memory failure error such as invalid PA,
-> unexpected severity, OOM, etc
-> - pcik up tested-by tag from Ma Wupeng
->
-> changes since v2 by addressing comments from Naoya:
-> - rename mce_task_work to sync_task_work
-> - drop ACPI_HEST_NOTIFY_MCE case in is_hest_sync_notify()
-> - add steps to reproduce this problem in cover letter
->
-> changes since v1:
-> - synchronous events by notify type
-> - Link: https://lore.kernel.org/lkml/20221206153354.92394-3-xueshuai@linu=
-x.alibaba.com/
->
-> ## Cover Letter
->
-> There are two major types of uncorrected recoverable (UCR) errors :
->
-> - Synchronous error: The error is detected and raised at the point of the
->   consumption in the execution flow, e.g. when a CPU tries to access
->   a poisoned cache line. The CPU will take a synchronous error exception
->   such as Synchronous External Abort (SEA) on Arm64 and Machine Check
->   Exception (MCE) on X86. OS requires to take action (for example, offlin=
-e
->   failure page/kill failure thread) to recover this uncorrectable error.
->
-> - Asynchronous error: The error is detected out of processor execution
->   context, e.g. when an error is detected by a background scrubber. Some =
-data
->   in the memory are corrupted. But the data have not been consumed. OS is
->   optional to take action to recover this uncorrectable error.
->
-> Currently, both synchronous and asynchronous error use
-> memory_failure_queue() to schedule memory_failure() exectute in kworker
-> context. As a result, when a user-space process is accessing a poisoned
-> data, a data abort is taken and the memory_failure() is executed in the
-> kworker context:
->
->   - will send wrong si_code by SIGBUS signal in early_kill mode, and
->   - can not kill the user-space in some cases resulting a synchronous
->     error infinite loop
->
-> Issue 1: send wrong si_code in early_kill mode
->
-> Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
-> MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
-> could be used to determine whether a synchronous exception occurs on
-> ARM64 platform.  When a synchronous exception is detected, the kernel is
-> expected to terminate the current process which has accessed poisoned
-> page. This is done by sending a SIGBUS signal with an error code
-> BUS_MCEERR_AR, indicating an action-required machine check error on
-> read.
->
-> However, when kill_proc() is called to terminate the processes who have
-> the poisoned page mapped, it sends the incorrect SIGBUS error code
-> BUS_MCEERR_AO because the context in which it operates is not the one
-> where the error was triggered.
->
-> To reproduce this problem:
->
->   # STEP1: enable early kill mode
->   #sysctl -w vm.memory_failure_early_kill=3D1
->   vm.memory_failure_early_kill =3D 1
->
->   # STEP2: inject an UCE error and consume it to trigger a synchronous er=
-ror
->   #einj_mem_uc single
->   0: single   vaddr =3D 0xffffb0d75400 paddr =3D 4092d55b400
->   injecting ...
->   triggering ...
->   signal 7 code 5 addr 0xffffb0d75000
->   page not present
->   Test passed
->
-> The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
-> error and it is not fact.
->
-> To fix it, queue memory_failure() as a task_work so that it runs in
-> the context of the process that is actually consuming the poisoned data.
->
-> After this patch set:
->
->   # STEP1: enable early kill mode
->   #sysctl -w vm.memory_failure_early_kill=3D1
->   vm.memory_failure_early_kill =3D 1
->
->   # STEP2: inject an UCE error and consume it to trigger a synchronous er=
-ror
->   #einj_mem_uc single
->   0: single   vaddr =3D 0xffffb0d75400 paddr =3D 4092d55b400
->   injecting ...
->   triggering ...
->   signal 7 code 4 addr 0xffffb0d75000
->   page not present
->   Test passed
->
-> The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
-> error as we expected.
->
-> Issue 2: a synchronous error infinite loop due to memory_failure() failed
->
-> If a user-space process, e.g. devmem, a poisoned page which has been set
-> HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
-> current processs with error info. Because the memory_failure() is
-> executed in the kworker contex, it will just do nothing but return
-> EFAULT. So, devmem will access the posioned page and trigger an
-> excepction again, resulting in a synchronous error infinite loop. Such
-> loop may cause platform firmware to exceed some threshold and reboot
-> when Linux could have recovered from this error.
->
-> To reproduce this problem:
->
->   # STEP 1: inject an UCE error, and kernel will set HWPosion flag for re=
-lated page
->   #einj_mem_uc single
->   0: single   vaddr =3D 0xffffb0d75400 paddr =3D 4092d55b400
->   injecting ...
->   triggering ...
->   signal 7 code 4 addr 0xffffb0d75000
->   page not present
->   Test passed
->
->   # STEP 2: access the same page and it will trigger a synchronous error =
-infinite loop
->   devmem 0x4092d55b400
->
-> To fix it, if memory_failure() failed, perform a force kill to current pr=
-ocess.
->
-> Issue 3: a synchronous error infinite loop due to no memory_failure() que=
-ued
->
-> No memory_failure() work is queued unless all bellow preconditions check =
-passed:
->
-> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_m=
-emory_failure()
-> - `if (flags =3D=3D -1)` in ghes_handle_memory_failure()
-> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_f=
-ailure()
-> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghe=
-s_do_memory_failure()
->
-> If the preconditions are not passed, the user-space process will trigger =
-SEA again.
-> This loop can potentially exceed the platform firmware threshold or even
-> trigger a kernel hard lockup, leading to a system reboot.
->
-> To fix it, if no memory_failure() queued, perform a force kill to current=
- process.
->
-> And the the memory errors triggered in kernel-mode[5], also relies on thi=
-s
-> patchset to kill the failure thread.
->
-> Lv Ying and XiuQi from Huawei also proposed to address similar problem[2]=
-[4].
-> Acknowledge to discussion with them.
->
-> [1] Add ARMv8 RAS virtualization support in QEMU https://patchew.org/QEMU=
-/20200512030609.19593-1-gengdongjiu@huawei.com/
-> [2] https://lore.kernel.org/lkml/20221205115111.131568-3-lvying6@huawei.c=
-om/
-> [3] https://lkml.kernel.org/r/20220914064935.7851-1-xueshuai@linux.alibab=
-a.com
-> [4] https://lore.kernel.org/lkml/20221209095407.383211-1-lvying6@huawei.c=
-om/
-> [5] https://patchwork.kernel.org/project/linux-arm-kernel/cover/202405280=
-85915.1955987-1-tongtiangen@huawei.com/
->
-> Shuai Xue (2):
->   ACPI: APEI: send SIGBUS to current task if synchronous memory error
->     not recovered
->   ACPI: APEI: handle synchronous exceptions in task work
->
->  drivers/acpi/apei/ghes.c | 88 +++++++++++++++++++++++++---------------
->  include/acpi/ghes.h      |  3 --
->  include/linux/mm.h       |  1 -
->  mm/memory-failure.c      | 13 ------
->  4 files changed, 55 insertions(+), 50 deletions(-)
->
+>  &lpi2c3 {
 > --
-
-Both patches applied as 6.17 material with some minor edits in the changelo=
-gs.
-
-Thanks!
+> 2.34.1
+>
 
