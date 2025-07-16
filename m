@@ -1,90 +1,185 @@
-Return-Path: <linux-kernel+bounces-732862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E11B06CF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E22B06D1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D053A79D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FCF1AA731A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D3B274B4F;
-	Wed, 16 Jul 2025 05:10:10 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687BF215F6B;
-	Wed, 16 Jul 2025 05:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0A4279DB7;
+	Wed, 16 Jul 2025 05:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b="F0TbjaZM"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0861E2E36F7
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752642610; cv=none; b=schVp18PAUPq8m4FRS0FojoyC7UWvo/mUmLcgxYcayHtWBSqQkCJTS0/97MfmNG3lQ0fQx449qBjYQAMpLr68MDzPsGtlvDDn65CKz3xEW8ElPkQwFNBe/kuzcX3ARNEKMY1WY90CW9yv5/dB42SW6BvSsgdIRZymTeMEetfpPE=
+	t=1752643273; cv=none; b=nOSVuZwQBZcJSxjXqCiSnAYS3eTxcnRQW3kHXfkBT0MtLm6R/yoOKO9Djq0MuQbwbXGnuKoIDkOLRHmylMnpkjsS2pwoB0K/7Hw+IDoryDL7bkV3iVkxGwcpuH9QyHeG5coBNGAMFssx5isNnwdK14jeQmUo7edBZAfauWaTKQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752642610; c=relaxed/simple;
-	bh=FSVZXZ0piEv9K/0SMye10YrMFNijterWjh/iy8IQ7fs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=O1e2LVYu1+p4EwVbaz7PPkjIfAXnPaoT5+6MzMlmoKyCTWQSLf9y7k8WGzf9l/fo5ycw+eDGfobUvhcWJxK8YBGRAl4jpymretaSLOIU/zYiOgFCB6gCZKan13spvH7yPGwsuNquGrx7sIadNMQXohUu7CKSaz0r/y1Y62buRBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxTOIsNHdoPfAqAQ--.48183S3;
-	Wed, 16 Jul 2025 13:10:04 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJDxQ+QqNHdoeFsZAA--.5851S3;
-	Wed, 16 Jul 2025 13:10:03 +0800 (CST)
-Subject: Re: [RFC PATCH] LoongArch: BPF: Add struct ops support for trampoline
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Hengqi Chen <hengqi.chen@gmail.com>, bpf@vger.kernel.org,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250716043915.15034-1-yangtiezhu@loongson.cn>
- <CAAhV-H5yPPcU03MGenKDH=sUTkmMPnsGj13zkLA1h-uHVMcHOQ@mail.gmail.com>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <cd190c8a-a7b9-53de-d363-c3d695fe3191@loongson.cn>
-Date: Wed, 16 Jul 2025 13:10:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1752643273; c=relaxed/simple;
+	bh=k76J4N3tpRxkQiTM9N5mJl9SvbCP7Rd+XDLyZnXS/k0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EBWm9xNbBHXKymRwwWqgz1tomjoBhvxXjX6JCfP+mnJqrqUj9/ON90GqAMgsln1H7pXdFLBtP/skdszjWKxcBHYOQ5A44XAQAuvCzfFmnFpHG5h3Q+Y4BBxCB+TZTYXhrZaaQ9uRGYVHuZkS48luqYmzDpY20GDCalbM3nay4QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b=F0TbjaZM; arc=none smtp.client-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20250716051056b923524737c65d3fc9
+        for <linux-kernel@vger.kernel.org>;
+        Wed, 16 Jul 2025 07:10:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=huaqian.li@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=+UTSSsG+8WtOQHPmAJe+rsYM12ki9cccLWC6Gxd4wAI=;
+ b=F0TbjaZMWELyzxcExSE6uxUGMe9594SDs8ddo1HT4amPeoMO2y+yUUaLS7wAx1D6G151aq
+ boruBnsthC43l86VyrYTmeUkPBOcmFgWQDg6TxxNy/15bDuWAzmC2IoOIDq6LUCAC6oG+sRX
+ Kwpq0UlJVCMR95aHbxdw/YKYmggEPadhzFYH4q3yr2Y7uflbmaxUYVPG1ZcBefww9c523UZI
+ yZE5vqXBUKVHF9ML9Nq9Nd2vsg8YcdyCk9UF+twBDD9wCRErwA79P7leAtZSBz9VL/OgM/7f
+ IJ3bIXQ8seW8pwyKR0p5jIYD02N0A9wyygnJfYogRsCG3F4SVaGSa2XQ==;
+From: huaqian.li@siemens.com
+To: s-vadapalli@ti.com
+Cc: baocheng.su@siemens.com,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	diogo.ivo@siemens.com,
+	helgaas@kernel.org,
+	huaqian.li@siemens.com,
+	jan.kiszka@siemens.com,
+	kristo@kernel.org,
+	krzk+dt@kernel.org,
+	kw@linux.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	lpieralisi@kernel.org,
+	nm@ti.com,
+	robh@kernel.org,
+	ssantosh@kernel.org,
+	vigneshr@ti.com
+Subject: [PATCH v9 0/8] soc: ti: Add and use PVU on K3-AM65 for DMA isolation
+Date: Wed, 16 Jul 2025 13:10:28 +0800
+Message-Id: <20250716051035.170988-1-huaqian.li@siemens.com>
+In-Reply-To: <e21c6ead-2bcb-422b-a1b9-eb9dd63b7dc7@ti.com>
+References: <e21c6ead-2bcb-422b-a1b9-eb9dd63b7dc7@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H5yPPcU03MGenKDH=sUTkmMPnsGj13zkLA1h-uHVMcHOQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDxQ+QqNHdoeFsZAA--.5851S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E
-	14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
-	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280
-	aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2
-	xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
-	xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
-	C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
-	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-	CTnIWIevJa73UjIFyTuYvjxU7_MaUUUUU
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-959203:519-21489:flowmailer
 
-On 2025/7/16 下午12:42, Huacai Chen wrote:
-> Hi, Tiezhu,
-> 
-> I hope this patch can be squashed to V4 of chenghao's patchset, as a
-> co-developer.
+From: Li Hua Qian <huaqian.li@siemens.com>
 
-No, do not squash, just add it as the last patch if necessary.
+Changes in v8:
+ - remove patch 8 from this series to simplify the patchset
+ - fix dt_bindings_check warnings (patch 2), 'memory-region' must
+   not be a required property
 
-I think keep it as a single patch is proper due to it is an
-additional independent feature and the log can be clear.
+Changes in v7:
+ - add schema expressing dependency as suggested on pci-host bindings
+ - resolve review comments on pci-keystone driver
+ - add a new patch to make IO_TLB_SEGSIZE configurable
+ - improve patches based on checkpath.pl
 
-Thanks,
-Tiezhu
+Changes in v6:
+ - make restricted DMA memory-region available to all pci-keystone
+   devices, moving property to unconditional section (patch 2)
+
+Changes in v5:
+ - resolve review comments on pci-host bindings
+ - reduce DMA memory regions to 1 - swiotlb does not support more
+ - move activation into overlay (controlled via firmware)
+ - use ks_init_vmap helper instead of loop in
+   rework ks_init_restricted_dma
+ - add more comments to pci-keystone
+ - use 2 chained TLBs of PVU to support maximum of swiotlb (320 MB)
+
+Changes in v4:
+ - reorder patch queue, moving all DTS changes to the back
+ - limit activation to IOT2050 Advanced variants
+ - move DMA pool to allow firmware-based expansion it up to 512M
+
+Changes in v3:
+ - fix ti,am654-pvu.yaml according to review comments
+ - address review comments on ti,am65-pci-host.yaml
+ - differentiate between different compatibles in ti,am65-pci-host.yaml
+ - move pvu nodes to k3-am65-main.dtsi
+ - reorder patch series, pulling bindings and generic DT bits to the front
+
+Changes in v2:
+ - fix dt_bindings_check issues (patch 1)
+ - address first review comments (patch 2)
+ - extend ti,am65-pci-host bindings for PVU (new patch 3)
+
+Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
+against DMA-based attacks of external PCI devices. The AM65 is without
+an IOMMU, but it comes with something close to it: the Peripheral
+Virtualization Unit (PVU).
+
+The PVU was originally designed to establish static compartments via a
+hypervisor, isolate those DMA-wise against each other and the host and
+even allow remapping of guest-physical addresses. But it only provides
+a static translation region, not page-granular mappings. Thus, it cannot
+be handled transparently like an IOMMU.
+
+Now, to use the PVU for the purpose of isolated PCI devices from the
+Linux host, this series takes a different approach. It defines a
+restricted-dma-pool for the PCI host, using swiotlb to map all DMA
+buffers from a static memory carve-out. And to enforce that the devices
+actually follow this, a special PVU soc driver is introduced. The driver
+permits access to the GIC ITS and otherwise waits for other drivers that
+detect devices with constrained DMA to register pools with the PVU.
+
+For the AM65, the first (and possibly only) driver where this is
+introduced is the pci-keystone host controller. Finally, this series
+provides a DT overlay for the IOT2050 Advanced devices (all have
+MiniPCIe or M.2 extension slots) to make use of this protection scheme.
+Application of this overlay will be handled by firmware.
+
+Due to the cross-cutting nature of these changes, multiple subsystems
+are affected. However, I wanted to present the whole thing in one series
+to allow everyone to review with the complete picture in hands. If
+preferred, I can also split the series up, of course.
+
+Jan
+
+Jan Kiszka (7):
+  dt-bindings: soc: ti: Add AM65 peripheral virtualization unit
+  dt-bindings: PCI: ti,am65: Extend for use with PVU
+  soc: ti: Add IOMMU-like PVU driver
+  PCI: keystone: Add support for PVU-based DMA isolation on AM654
+  arm64: dts: ti: k3-am65-main: Add PVU nodes
+  arm64: dts: ti: k3-am65-main: Add VMAP registers to PCI root complexes
+  arm64: dts: ti: iot2050: Add overlay for DMA isolation for devices
+    behind PCI RC
+
+ .../bindings/pci/ti,am65-pci-host.yaml        |  28 +-
+ .../bindings/soc/ti/ti,am654-pvu.yaml         |  51 ++
+ arch/arm64/boot/dts/ti/Makefile               |   5 +
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      |  38 +-
+ ...am6548-iot2050-advanced-dma-isolation.dtso |  33 ++
+ drivers/pci/controller/dwc/pci-keystone.c     | 106 ++++
+ drivers/soc/ti/Kconfig                        |   4 +
+ drivers/soc/ti/Makefile                       |   1 +
+ drivers/soc/ti/ti-pvu.c                       | 500 ++++++++++++++++++
+ include/linux/ti-pvu.h                        |  32 ++
+ 10 files changed, 791 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-dma-isolation.dtso
+ create mode 100644 drivers/soc/ti/ti-pvu.c
+ create mode 100644 include/linux/ti-pvu.h
+
+-- 
+2.34.1
 
 
