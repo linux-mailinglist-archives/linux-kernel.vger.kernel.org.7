@@ -1,231 +1,2652 @@
-Return-Path: <linux-kernel+bounces-733854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2D5B079D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:29:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18050B079DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D50A40E0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:28:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC6917F52E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61F12F1987;
-	Wed, 16 Jul 2025 15:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E1B2F5308;
+	Wed, 16 Jul 2025 15:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YuBpSUN2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GCH2aroD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CB7288CAF
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6F12EFDA0
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679729; cv=none; b=jqxX1Zq/RWrIOjAlphIe5vjMEX3jOal3MZKuGFfI+o7rMMe3UDlJfqZ84RtlmJ6aAmaCGcDyz65o0nBuieF301dyN4zwKKkipx2hYgeLP2f3Kra4ro/2oWN0VsAoezuN1cZd4Ozl1TdOo9YOX4EvGKaxATa+mkhjSPfGVaG+Nq0=
+	t=1752679733; cv=none; b=QW/nzeLfQdRU85iLb6MCBIXbndMzTrqHLusDmLZVrxXWoKUdF8jo5/eTtQmtJlw3bGBs5qZapzLtGN0gtAPaE3LjLozUlx4Vk4xhDlPpobEnfREuqQq23sRJc+F7Tv5XqL/Nlt6TvjtkCamscGc2W7DDrUjEt1gjruYyf0CZefo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679729; c=relaxed/simple;
-	bh=/5CfB2A12LDeJKCGmDi9/diDz7khZu+BKzJSqKXUUlo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u+yEsefk3OeBNbPJ3r328zLUPq3YmlfSHf/kWhfoGBzwjypPS9H8qf+gpEIzbFAgFV7aoRHCa11K4uqzyG3Yd5fnbkhkFxv+BOuqGNBCdKxvDN78c1Xfm/bdMuoNDQ8Wtka7i92FG5AhF6gnS4cjx9WDsZSDVPAWHJ1FjlNX66Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YuBpSUN2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752679726;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=b9muf3y2moPaIuS6pt5tTbdr04dlviAIBJWO4rVo/Lo=;
-	b=YuBpSUN2FRJw60QxpZ/Xz0QYaMjq2p1+ZhnPE+6ZAw0PfNBZrkNpJlAx3Z6S/D4PuZ0eRV
-	hS0qD66tHv4Fm/6QE30OUf7HJMct0PRzidp0PzXF4u7ZuGI+a7HVzYxpNebC6gNGlpRrLe
-	dTaV2O4G3EV3SvwxbMpf9Di9xMgHac8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-373-rpQFeSU8NzCTaSDXTsnO-w-1; Wed, 16 Jul 2025 11:28:45 -0400
-X-MC-Unique: rpQFeSU8NzCTaSDXTsnO-w-1
-X-Mimecast-MFC-AGG-ID: rpQFeSU8NzCTaSDXTsnO-w_1752679724
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f3796779so3221417f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:28:45 -0700 (PDT)
+	s=arc-20240116; t=1752679733; c=relaxed/simple;
+	bh=nhSN1p+1smnHSNAMkhT4W8G8m/1DxMBPx8uJ3EKd9MY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=APy74A8Y0NrEXBclH+p5yacuCktGAeUZSR916oUQ7y33Br36IS51DdVjSx+W3iT0d/MGPnfQehjtmnByOGAFcaizVEZVI8WXp3ySV8KpifzVqk4NJuKVHhXrDNcKMl6JcnrF0dJWiQCF49pwj7ju8EUh7gH/2Tsc60zjrluHWxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GCH2aroD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GC8PrF019208
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:28:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=VzpPO2igRXgXSrJgwsm4zYkM
+	ZO0e6zSecWJCzO4IuRg=; b=GCH2aroDR3wgjMECi4Cr6Cv6YdSMRGgyR1K5iNSA
+	jDG4uBB4bdEG/sHziXo5Xtgihge6A2oQNfuBqzzblqg7HQm/Zwpc3Rc0PfoNq2hU
+	ysq5cLcrSWecWXKPLGA96kwSWsYXnVRcvkn1u97DgupA7Yb0ZihQ/ROwrxP0ez6U
+	9U6/nqfPoCU/ZgMK6vUJxP+CiHvzb58bGZSSzBOBc5k5X6TXNIKE9oP9sq1S1g/A
+	eo5HK1I7SFhfukr4UDl20i8HOKoSs+09ZEexRGM2ZwDiqN+tr8W93MLto5VW3sAp
+	Y+N/zz60T/AuGh53MC3FKLhB8x0l+GNGjX1iUgzimuOYHQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47xbsq8pm5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:28:48 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e06402c7daso731711385a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:28:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752679724; x=1753284524;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=b9muf3y2moPaIuS6pt5tTbdr04dlviAIBJWO4rVo/Lo=;
-        b=Msm4dshoha22xeCwc203OZDyOHuMGdJvR+YxYtOLTHxlPu5P8AjqYqONaK76I5Pe90
-         b9DYSpEs+g6b2uyq6E5y4Cgf/hysa+cJUeIz05w0xPwuVfu7q1J6J16M0yioIu+bdJfS
-         /6VH+cYwX8fBxfak1Xbl9nIap126QVTNIMqKcWF+V6QmnmdwZZQu4k5OY2tWb5nCm11H
-         L6oFPjqFEVI5OO+n6uzLnRaMlPRtf6NIB7JaOo9R31le67ri/jj1Ut5A97yrlEK0+6/G
-         YH9TeWOlfl3TBHzAlW+eAfJUmrw75DD/fwTR9sGYlDRse6+UjnmdNQHf+oR7FDvqv4e3
-         3+5A==
-X-Forwarded-Encrypted: i=1; AJvYcCW02k4PFfDNL1zeN4DmB5+DTgmgPV4tLPjMXXQGOVWVU4M2irdvSKSEcyLgeHcQ4eE3Hx59UTfMhzlbZrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb1E7YUsF+D00UWXO1WTkTQkH/j1p5HHthUljRYDmeml6cavsk
-	n33eYrFT39wHQB07m1levcQo7Hl9nAQJ/N2p1Di7IQxw6seZD7347vowVvxi380ANtEFCuOFTm8
-	NXwS1zSHxoHiIUD3kSys5oKxTyxr75oKNtPrhyhgAvsKA7QAU5m85pDWb8RqYQhk8ig==
-X-Gm-Gg: ASbGncsusGOvAacU8YXZn/Q+Hz5Zc5vz56Tdw9ANRYex2Bg8lo47qn5T/O9D3/9dK1y
-	dLjDPpyTIU9nagvPYjTo9bcso5VRDqWpQTUW/g6Jyrt6OukQmN4LAxxhAw4n8eJ4fqpQL3aoe61
-	rH/p6wtkzdd6sbCT4N+6qVmBl5g2vrR78Fw93T+4wi+NB0uM+MuUF5/oQTPDOwKvvDVThgGmq05
-	OgxMHTFNhd65pWZ7mcUoUFdVqELTMC4NU7w6BzxoQqqzeU7rxF6mHlOFTvfLJ0+ovKX8BuyYp5n
-	pYf0u+5Eob8VjWpYAIzEVjiCg39ToTjnm2t6avEc+S7FvHtYiBHWzw1/CjYF3UvYnTflpcLv+el
-	SbQSUor95Hgosx+HX7ts4y95QmUC1fTpwx5/lDpV/AY1E34Cm0myc8nSB5pnAI802LdU=
-X-Received: by 2002:a05:6000:440e:b0:3a5:1222:ac64 with SMTP id ffacd0b85a97d-3b60dd7b02dmr1895366f8f.38.1752679723961;
-        Wed, 16 Jul 2025 08:28:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEJ78SQM/s0rFpWwJyId0Hih86btopCIgnmO+eV3iVi5SnTVg5Chr4inRc9LECMRO+/9cofVg==
-X-Received: by 2002:a05:6000:440e:b0:3a5:1222:ac64 with SMTP id ffacd0b85a97d-3b60dd7b02dmr1895313f8f.38.1752679723386;
-        Wed, 16 Jul 2025 08:28:43 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1d:ed00:1769:dd7c:7208:eb33? (p200300d82f1ded001769dd7c7208eb33.dip0.t-ipconnect.de. [2003:d8:2f1d:ed00:1769:dd7c:7208:eb33])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc1de0sm18023660f8f.24.2025.07.16.08.28.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 08:28:42 -0700 (PDT)
-Message-ID: <3b8d32dd-9d40-44b1-a0ab-8185073b9072@redhat.com>
-Date: Wed, 16 Jul 2025 17:28:40 +0200
+        d=1e100.net; s=20230601; t=1752679727; x=1753284527;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VzpPO2igRXgXSrJgwsm4zYkMZO0e6zSecWJCzO4IuRg=;
+        b=Lt8RarORNwmIe2kzllRTudHYckkiNPe+HEbYf6xhD4GYEvbT/0HkzWunRV8i2dANNY
+         ruLt0AMupj27fQ1lfAU2mm+tJ2r4NDouzS4KJWAdHz8yFZK6cL9hcxxlaUsex83L/H0F
+         K1Z0mRvo2Olf3MG47MMcKFbo9Yc+p7dwA7InoBjxogm7TXw+wb325vvggnP9piDyI7Ol
+         oqs95hGRxgt/ynYbScwldH8aQRUHlwe/VP2FD5Ul2op73JFtXLJJ0qRRo/OLmgNCio4Y
+         YPa5HtOVPp+yrlH4496fqjyr2yOBHvZr8CURzV6z4BG3Es79/WP8l+H5eG2LjWs3WZ5r
+         dXiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgHqVoSe0o8VurGy2i0B3uWbZjnPYYWmyY7qp6tLFBBDXN97inYcvTJbCvUF2pBgY0BuPwhIM9eSSTfo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtqUB4FzF2jOjL0bmFyfR9q5WL1rE9xNnZ14u4wELj3L56uaen
+	jbONNVB7vNNvqTsgE9wPXX+JoIrwXGxFPiF8yB7QqQmNIQ2a5PhiYaMaO7D4dxVwc1qyQ67kZJ/
+	X7MzVLD59Ei33aJVb8rIW7na6JwEI/j805Uu9iJPZFKe16CIPBVgz/bDe+hyjyypx5oc=
+X-Gm-Gg: ASbGnctvSwPaK9q8CsB/3BCXUYWDC72K4eAKSAju24ay6cVEvjMLQ5v0C7VC7IZ3orL
+	9UOF+Xu6aIulJR3aGvZbyRHog8P8ZGSMK2IUYjsrPfKDZI3HW3yDVAIumjV8CMiBmpFrgN6QWl5
+	mix5udHlgQ2fIFE09aZOaf/5R+aJoMxegoY9sYaxc+AxrLIG7tEOIU3HMfrJFS+83tYyhsJcs0o
+	fGVyTP3MQmtpwB2jJ8AY8HoxZFjaZsyNNp8oZZJiCy4X6HaLxIUredoaiQqd4Wdc4VfJIVrJODj
+	jB3/6AWFrDIbmxTMPSkRpB8oEv8F3XyvNlkDxUCwbxvKCv2KqMHhH5z4J0NcDOdvvpdBEfrkLHR
+	+KQlWeqWNheX1pmMo90VEVII5orKQLVqSnu6ZmpQz7/tMYDFfXkye
+X-Received: by 2002:a05:620a:8393:b0:7e3:30ac:8cb3 with SMTP id af79cd13be357-7e342a6041amr448641285a.12.1752679726864;
+        Wed, 16 Jul 2025 08:28:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHD7XIQqewqE/pT6gA4OLTUw2DYOjKsXIH6uiV2ujbEewCO5YE2qIqlM7vprzmxGIS9q/3w3A==
+X-Received: by 2002:a05:620a:8393:b0:7e3:30ac:8cb3 with SMTP id af79cd13be357-7e342a6041amr448633385a.12.1752679725899;
+        Wed, 16 Jul 2025 08:28:45 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7bbd55sm2708088e87.23.2025.07.16.08.28.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 08:28:44 -0700 (PDT)
+Date: Wed, 16 Jul 2025 18:28:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: djakov@kernel.org, lumag@kernel.org, a39.skl@gmail.com, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, quic_rjendra@quicinc.com,
+        raviteja.laggyshetty@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] interconnect: qcom: add glymur interconnect provider
+ driver
+Message-ID: <y5mqsl7ix7y54v54hltt54n5f3ofzg33lkgon4aoayy2nnkojk@r4qlsjd5wdqg>
+References: <20250716151535.4054172-1-pankaj.patil@oss.qualcomm.com>
+ <20250716151535.4054172-3-pankaj.patil@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 10/14] khugepaged: allow khugepaged to check all
- anonymous mTHP orders
-To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
- vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
- yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
- aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com
-References: <20250714003207.113275-1-npache@redhat.com>
- <20250714003207.113275-11-npache@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
- 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
- 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
- OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
- kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
- GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
- s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
- Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
- FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
- OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
- NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
- Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
- 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
- /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
- bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
- RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
- m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
- CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
- vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
- WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250714003207.113275-11-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716151535.4054172-3-pankaj.patil@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=ad1hnQot c=1 sm=1 tr=0 ts=6877c530 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=Kq_5X9aTx99tFhdvtQ4A:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-ORIG-GUID: mfp-rCmbWBVy3_lv5Ys-2oAFD9A0ZfZ5
+X-Proofpoint-GUID: mfp-rCmbWBVy3_lv5Ys-2oAFD9A0ZfZ5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzOSBTYWx0ZWRfXzY0MhvmjX5UR
+ nfnZCeYHU0Bi9LJow8iPZgh615E/j6ip7SFoCSQRY21gIRXcWfZ09gCc+j4ntb3KPZjSY3H3piu
+ cSNP4IIo7jw1zk+8D95O/sKgea92s1jLE3gXfir7xlz4rA/A0QpK893DdxY/iVv7KZwC8LxxH3z
+ QROhPP9rz9D1g8nyjZD3eyBGvcDIxt6r7TyLm0JZiFPBAfQSE8hZ4PYtfU/0ha8A7s7Ogxqfj4e
+ Q+TYYyh1uC4oLwjcC4uXICYE9Fcuop0Ipz13bkV/OGjt+JyTZU60KTFGOHBpA4/etk82mN5pm87
+ OmC/bE+8PAh1CLyFEhzM2hMCiX2Iu39J6VQ5pO7SPuUfke0DRaiLvODVdQA3Q+JC6wVnXIAaZj5
+ 9Cen2zn5MDtgMmzXSH6+7BesyUy8ijUtVcimWRAlpjPp/QG53fgCWmJoNo1Zp9rDs/1NIcKb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 spamscore=0
+ malwarescore=0 phishscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160139
 
-On 14.07.25 02:32, Nico Pache wrote:
-> From: Baolin Wang <baolin.wang@linux.alibaba.com>
+On Wed, Jul 16, 2025 at 08:45:35PM +0530, Pankaj Patil wrote:
+> From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+> 
+> Add driver for the Qualcomm interconnect buses found in glymur
+> based platforms. The topology consists of several NoCs that are
+> controlled by a remote processor that collects the aggregated
+> bandwidth for each master-slave pairs.
 
-Should the subject better be
-
-"mm/khugepaged: enable collapsing mTHPs even when PMD THPs are disabled"
-
-(in general, I assume all subjects should be prefixed by "mm/khugepaged:")
+I'd kindly ask to rebase on top of [1] unless Georgi says otherwise.
 
 > 
-> We have now allowed mTHP collapse, but thp_vma_allowable_order() still only
-> checks if the PMD-sized mTHP is allowed to collapse. This prevents scanning
-> and collapsing of 64K mTHP when only 64K mTHP is enabled. Thus, we should
-> modify the checks to allow all large orders of anonymous mTHP.
-> 
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
+> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 > ---
->   mm/khugepaged.c | 13 +++++++++----
->   1 file changed, 9 insertions(+), 4 deletions(-)
+>  drivers/interconnect/qcom/Kconfig  |    9 +
+>  drivers/interconnect/qcom/Makefile |    2 +
+>  drivers/interconnect/qcom/glymur.c | 2259 ++++++++++++++++++++++++++++
+>  drivers/interconnect/qcom/glymur.h |  185 +++
+>  4 files changed, 2455 insertions(+)
+>  create mode 100644 drivers/interconnect/qcom/glymur.c
+>  create mode 100644 drivers/interconnect/qcom/glymur.h
 > 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 7a9c4edf0e23..3772dc0d78ea 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -491,8 +491,11 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
->   {
->   	if (!test_bit(MMF_VM_HUGEPAGE, &vma->vm_mm->flags) &&
->   	    hugepage_pmd_enabled()) {
-> -		if (thp_vma_allowable_order(vma, vm_flags, TVA_ENFORCE_SYSFS,
-> -					    PMD_ORDER))
-> +		unsigned long orders = vma_is_anonymous(vma) ?
-> +					THP_ORDERS_ALL_ANON : BIT(PMD_ORDER);
+> diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
+> index 1219f4f23d40..18234110d4b3 100644
+> --- a/drivers/interconnect/qcom/Kconfig
+> +++ b/drivers/interconnect/qcom/Kconfig
+> @@ -8,6 +8,15 @@ config INTERCONNECT_QCOM
+>  config INTERCONNECT_QCOM_BCM_VOTER
+>  	tristate
+>  
+> +config INTERCONNECT_QCOM_GLYMUR
+> +	tristate "Qualcomm GLYMUR interconnect driver"
+> +	depends on INTERCONNECT_QCOM_RPMH_POSSIBLE
+> +	select INTERCONNECT_QCOM_RPMH
+> +	select INTERCONNECT_QCOM_BCM_VOTER
+> +	help
+> +	  This is a driver for the Qualcomm Network-on-Chip on glymur-based
+> +	  platforms.
 > +
-> +		if (thp_vma_allowable_orders(vma, vm_flags, TVA_ENFORCE_SYSFS,
-> +					    orders))
->   			__khugepaged_enter(vma->vm_mm);
->   	}
->   }
-> @@ -2624,6 +2627,8 @@ static unsigned int collapse_scan_mm_slot(unsigned int pages, int *result,
->   
->   	vma_iter_init(&vmi, mm, khugepaged_scan.address);
->   	for_each_vma(vmi, vma) {
-> +		unsigned long orders = vma_is_anonymous(vma) ?
-> +					THP_ORDERS_ALL_ANON : BIT(PMD_ORDER);
->   		unsigned long hstart, hend;
->   
->   		cond_resched();
-> @@ -2631,8 +2636,8 @@ static unsigned int collapse_scan_mm_slot(unsigned int pages, int *result,
->   			progress++;
->   			break;
->   		}
-> -		if (!thp_vma_allowable_order(vma, vma->vm_flags,
-> -					TVA_ENFORCE_SYSFS, PMD_ORDER)) {
-> +		if (!thp_vma_allowable_orders(vma, vma->vm_flags,
-> +			TVA_ENFORCE_SYSFS, orders)) {
->   skip:
->   			progress++;
->   			continue;
-
-Acked-by: David Hildenbrand <david@redhat.com>
+>  config INTERCONNECT_QCOM_MSM8909
+>  	tristate "Qualcomm MSM8909 interconnect driver"
+>  	depends on INTERCONNECT_QCOM
+> diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
+> index 7887b1e8d69b..e205f923f85a 100644
+> --- a/drivers/interconnect/qcom/Makefile
+> +++ b/drivers/interconnect/qcom/Makefile
+> @@ -4,6 +4,7 @@ obj-$(CONFIG_INTERCONNECT_QCOM) += interconnect_qcom.o
+>  
+>  interconnect_qcom-y			:= icc-common.o
+>  icc-bcm-voter-objs			:= bcm-voter.o
+> +qnoc-glymur-objs			:= glymur.o
+>  qnoc-msm8909-objs			:= msm8909.o
+>  qnoc-msm8916-objs			:= msm8916.o
+>  qnoc-msm8937-objs			:= msm8937.o
+> @@ -45,6 +46,7 @@ qnoc-x1e80100-objs			:= x1e80100.o
+>  icc-smd-rpm-objs			:= smd-rpm.o icc-rpm.o icc-rpm-clocks.o
+>  
+>  obj-$(CONFIG_INTERCONNECT_QCOM_BCM_VOTER) += icc-bcm-voter.o
+> +obj-$(CONFIG_INTERCONNECT_QCOM_GLYMUR) += qnoc-glymur.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_MSM8909) += qnoc-msm8909.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_MSM8916) += qnoc-msm8916.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_MSM8937) += qnoc-msm8937.o
+> diff --git a/drivers/interconnect/qcom/glymur.c b/drivers/interconnect/qcom/glymur.c
+> new file mode 100644
+> index 000000000000..f4aa1b085b47
+> --- /dev/null
+> +++ b/drivers/interconnect/qcom/glymur.c
+> @@ -0,0 +1,2259 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + *
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/interconnect.h>
+> +#include <linux/interconnect-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <dt-bindings/interconnect/qcom,glymur-rpmh.h>
+> +
+> +#include "bcm-voter.h"
+> +#include "icc-rpmh.h"
+> +#include "glymur.h"
+> +
+> +static struct qcom_icc_node qxm_crypto = {
+> +	.name = "qxm_crypto",
+> +	.id = GLYMUR_MASTER_CRYPTO,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A1NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qxm_soccp = {
+> +	.name = "qxm_soccp",
+> +	.id = GLYMUR_MASTER_SOCCP_PROC,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A1NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_qdss_etr_0 = {
+> +	.name = "xm_qdss_etr_0",
+> +	.id = GLYMUR_MASTER_QDSS_ETR,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A1NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_qdss_etr_1 = {
+> +	.name = "xm_qdss_etr_1",
+> +	.id = GLYMUR_MASTER_QDSS_ETR_1,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A1NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_ufs_mem = {
+> +	.name = "xm_ufs_mem",
+> +	.id = GLYMUR_MASTER_UFS_MEM,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A2NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_usb3_2 = {
+> +	.name = "xm_usb3_2",
+> +	.id = GLYMUR_MASTER_USB3_2,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A2NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_usb4_2 = {
+> +	.name = "xm_usb4_2",
+> +	.id = GLYMUR_MASTER_USB4_2,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A2NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qhm_qspi = {
+> +	.name = "qhm_qspi",
+> +	.id = GLYMUR_MASTER_QSPI_0,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qhm_qup0 = {
+> +	.name = "qhm_qup0",
+> +	.id = GLYMUR_MASTER_QUP_0,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qhm_qup1 = {
+> +	.name = "qhm_qup1",
+> +	.id = GLYMUR_MASTER_QUP_1,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qhm_qup2 = {
+> +	.name = "qhm_qup2",
+> +	.id = GLYMUR_MASTER_QUP_2,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qxm_sp = {
+> +	.name = "qxm_sp",
+> +	.id = GLYMUR_MASTER_SP,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_sdc2 = {
+> +	.name = "xm_sdc2",
+> +	.id = GLYMUR_MASTER_SDCC_2,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_sdc4 = {
+> +	.name = "xm_sdc4",
+> +	.id = GLYMUR_MASTER_SDCC_4,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_usb2_0 = {
+> +	.name = "xm_usb2_0",
+> +	.id = GLYMUR_MASTER_USB2,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_usb3_mp = {
+> +	.name = "xm_usb3_mp",
+> +	.id = GLYMUR_MASTER_USB3_MP,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_usb3_0 = {
+> +	.name = "xm_usb3_0",
+> +	.id = GLYMUR_MASTER_USB3_0,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A4NOC_HSCNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_usb3_1 = {
+> +	.name = "xm_usb3_1",
+> +	.id = GLYMUR_MASTER_USB3_1,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A4NOC_HSCNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_usb4_0 = {
+> +	.name = "xm_usb4_0",
+> +	.id = GLYMUR_MASTER_USB4_0,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A4NOC_HSCNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_usb4_1 = {
+> +	.name = "xm_usb4_1",
+> +	.id = GLYMUR_MASTER_USB4_1,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_A4NOC_HSCNOC },
+> +};
+> +
+> +static struct qcom_icc_node qup0_core_master = {
+> +	.name = "qup0_core_master",
+> +	.id = GLYMUR_MASTER_QUP_CORE_0,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_QUP_CORE_0 },
+> +};
+> +
+> +static struct qcom_icc_node qup1_core_master = {
+> +	.name = "qup1_core_master",
+> +	.id = GLYMUR_MASTER_QUP_CORE_1,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_QUP_CORE_1 },
+> +};
+> +
+> +static struct qcom_icc_node qup2_core_master = {
+> +	.name = "qup2_core_master",
+> +	.id = GLYMUR_MASTER_QUP_CORE_2,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_QUP_CORE_2 },
+> +};
+> +
+> +static struct qcom_icc_node qsm_cfg = {
+> +	.name = "qsm_cfg",
+> +	.id = GLYMUR_MASTER_CNOC_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 51,
+> +	.links = { GLYMUR_SLAVE_AHB2PHY_SOUTH, GLYMUR_SLAVE_AHB2PHY_NORTH,
+> +			   GLYMUR_SLAVE_AHB2PHY_2, GLYMUR_SLAVE_AHB2PHY_3,
+> +			   GLYMUR_SLAVE_AV1_ENC_CFG, GLYMUR_SLAVE_CAMERA_CFG,
+> +			   GLYMUR_SLAVE_CLK_CTL, GLYMUR_SLAVE_CRYPTO_0_CFG,
+> +			   GLYMUR_SLAVE_DISPLAY_CFG, GLYMUR_SLAVE_GFX3D_CFG,
+> +			   GLYMUR_SLAVE_IMEM_CFG, GLYMUR_SLAVE_PCIE_0_CFG,
+> +			   GLYMUR_SLAVE_PCIE_1_CFG, GLYMUR_SLAVE_PCIE_2_CFG,
+> +			   GLYMUR_SLAVE_PCIE_3A_CFG, GLYMUR_SLAVE_PCIE_3B_CFG,
+> +			   GLYMUR_SLAVE_PCIE_4_CFG, GLYMUR_SLAVE_PCIE_5_CFG,
+> +			   GLYMUR_SLAVE_PCIE_6_CFG, GLYMUR_SLAVE_PCIE_RSCC,
+> +			   GLYMUR_SLAVE_PDM, GLYMUR_SLAVE_PRNG,
+> +			   GLYMUR_SLAVE_QDSS_CFG, GLYMUR_SLAVE_QSPI_0,
+> +			   GLYMUR_SLAVE_QUP_0, GLYMUR_SLAVE_QUP_1,
+> +			   GLYMUR_SLAVE_QUP_2, GLYMUR_SLAVE_SDCC_2,
+> +			   GLYMUR_SLAVE_SDCC_4, GLYMUR_SLAVE_SMMUV3_CFG,
+> +			   GLYMUR_SLAVE_TCSR, GLYMUR_SLAVE_TLMM,
+> +			   GLYMUR_SLAVE_UFS_MEM_CFG, GLYMUR_SLAVE_USB2,
+> +			   GLYMUR_SLAVE_USB3_0, GLYMUR_SLAVE_USB3_1,
+> +			   GLYMUR_SLAVE_USB3_2, GLYMUR_SLAVE_USB3_MP,
+> +			   GLYMUR_SLAVE_USB4_0, GLYMUR_SLAVE_USB4_1,
+> +			   GLYMUR_SLAVE_USB4_2, GLYMUR_SLAVE_VENUS_CFG,
+> +			   GLYMUR_SLAVE_CNOC_PCIE_SLAVE_EAST_CFG,
+> +			   GLYMUR_SLAVE_CNOC_PCIE_SLAVE_WEST_CFG,
+> +			   GLYMUR_SLAVE_LPASS_QTB_CFG, GLYMUR_SLAVE_CNOC_MNOC_CFG,
+> +			   GLYMUR_SLAVE_NSP_QTB_CFG, GLYMUR_SLAVE_PCIE_EAST_ANOC_CFG,
+> +			   GLYMUR_SLAVE_PCIE_WEST_ANOC_CFG, GLYMUR_SLAVE_QDSS_STM,
+> +			   GLYMUR_SLAVE_TCU },
+> +};
+> +
+> +static struct qcom_icc_node qnm_hscnoc_cnoc = {
+> +	.name = "qnm_hscnoc_cnoc",
+> +	.id = GLYMUR_MASTER_HSCNOC_CNOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 8,
+> +	.links = { GLYMUR_SLAVE_AOSS, GLYMUR_SLAVE_IPC_ROUTER_CFG,
+> +			   GLYMUR_SLAVE_SOCCP, GLYMUR_SLAVE_TME_CFG,
+> +			   GLYMUR_SLAVE_APPSS, GLYMUR_SLAVE_CNOC_CFG,
+> +			   GLYMUR_SLAVE_BOOT_IMEM, GLYMUR_SLAVE_IMEM },
+> +};
+> +
+> +static struct qcom_icc_node alm_gpu_tcu = {
+> +	.name = "alm_gpu_tcu",
+> +	.id = GLYMUR_MASTER_GPU_TCU,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 2,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC },
+> +};
+> +
+> +static struct qcom_icc_node alm_pcie_qtc = {
+> +	.name = "alm_pcie_qtc",
+> +	.id = GLYMUR_MASTER_PCIE_TCU,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 2,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC },
+> +};
+> +
+> +static struct qcom_icc_node alm_sys_tcu = {
+> +	.name = "alm_sys_tcu",
+> +	.id = GLYMUR_MASTER_SYS_TCU,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 2,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC },
+> +};
+> +
+> +static struct qcom_icc_node chm_apps = {
+> +	.name = "chm_apps",
+> +	.id = GLYMUR_MASTER_APPSS_PROC,
+> +	.channels = 6,
+> +	.buswidth = 32,
+> +	.num_links = 4,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC,
+> +			   GLYMUR_SLAVE_PCIE_EAST, GLYMUR_SLAVE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qnm_aggre_noc_east = {
+> +	.name = "qnm_aggre_noc_east",
+> +	.id = GLYMUR_MASTER_AGGRE_NOC_EAST,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 4,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC,
+> +			   GLYMUR_SLAVE_PCIE_EAST, GLYMUR_SLAVE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qnm_gpu = {
+> +	.name = "qnm_gpu",
+> +	.id = GLYMUR_MASTER_GFX3D,
+> +	.channels = 4,
+> +	.buswidth = 32,
+> +	.num_links = 4,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC,
+> +			   GLYMUR_SLAVE_PCIE_EAST, GLYMUR_SLAVE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qnm_lpass = {
+> +	.name = "qnm_lpass",
+> +	.id = GLYMUR_MASTER_LPASS_GEM_NOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 4,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC,
+> +			   GLYMUR_SLAVE_PCIE_EAST, GLYMUR_SLAVE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qnm_mnoc_hf = {
+> +	.name = "qnm_mnoc_hf",
+> +	.id = GLYMUR_MASTER_MNOC_HF_MEM_NOC,
+> +	.channels = 2,
+> +	.buswidth = 32,
+> +	.num_links = 4,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC,
+> +			   GLYMUR_SLAVE_PCIE_EAST, GLYMUR_SLAVE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qnm_mnoc_sf = {
+> +	.name = "qnm_mnoc_sf",
+> +	.id = GLYMUR_MASTER_MNOC_SF_MEM_NOC,
+> +	.channels = 2,
+> +	.buswidth = 32,
+> +	.num_links = 4,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC,
+> +			   GLYMUR_SLAVE_PCIE_EAST, GLYMUR_SLAVE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qnm_nsp_noc = {
+> +	.name = "qnm_nsp_noc",
+> +	.id = GLYMUR_MASTER_COMPUTE_NOC,
+> +	.channels = 4,
+> +	.buswidth = 32,
+> +	.num_links = 4,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC,
+> +			   GLYMUR_SLAVE_PCIE_EAST, GLYMUR_SLAVE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qnm_pcie_east = {
+> +	.name = "qnm_pcie_east",
+> +	.id = GLYMUR_MASTER_PCIE_EAST,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 2,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_pcie_west = {
+> +	.name = "qnm_pcie_west",
+> +	.id = GLYMUR_MASTER_PCIE_WEST,
+> +	.channels = 1,
+> +	.buswidth = 64,
+> +	.num_links = 2,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_snoc_sf = {
+> +	.name = "qnm_snoc_sf",
+> +	.id = GLYMUR_MASTER_SNOC_SF_MEM_NOC,
+> +	.channels = 1,
+> +	.buswidth = 64,
+> +	.num_links = 4,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC,
+> +			   GLYMUR_SLAVE_PCIE_EAST, GLYMUR_SLAVE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qxm_wlan_q6 = {
+> +	.name = "qxm_wlan_q6",
+> +	.id = GLYMUR_MASTER_WLAN_Q6,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 4,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_CNOC, GLYMUR_SLAVE_LLCC,
+> +			   GLYMUR_SLAVE_PCIE_EAST, GLYMUR_SLAVE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node xm_gic = {
+> +	.name = "xm_gic",
+> +	.id = GLYMUR_MASTER_GIC,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_LLCC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_lpiaon_noc = {
+> +	.name = "qnm_lpiaon_noc",
+> +	.id = GLYMUR_MASTER_LPIAON_NOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_LPASS_GEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_lpass_lpinoc = {
+> +	.name = "qnm_lpass_lpinoc",
+> +	.id = GLYMUR_MASTER_LPASS_LPINOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_LPIAON_NOC_LPASS_AG_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_lpinoc_dsp_qns4m = {
+> +	.name = "qnm_lpinoc_dsp_qns4m",
+> +	.id = GLYMUR_MASTER_LPASS_PROC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_LPICX_NOC_LPIAON_NOC },
+> +};
+> +
+> +static struct qcom_icc_node llcc_mc = {
+> +	.name = "llcc_mc",
+> +	.id = GLYMUR_MASTER_LLCC,
+> +	.channels = 12,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_EBI1 },
+> +};
+> +
+> +static struct qcom_icc_node qnm_av1_enc = {
+> +	.name = "qnm_av1_enc",
+> +	.id = GLYMUR_MASTER_AV1_ENC,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_camnoc_hf = {
+> +	.name = "qnm_camnoc_hf",
+> +	.id = GLYMUR_MASTER_CAMNOC_HF,
+> +	.channels = 2,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_HF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_camnoc_icp = {
+> +	.name = "qnm_camnoc_icp",
+> +	.id = GLYMUR_MASTER_CAMNOC_ICP,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_camnoc_sf = {
+> +	.name = "qnm_camnoc_sf",
+> +	.id = GLYMUR_MASTER_CAMNOC_SF,
+> +	.channels = 2,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_eva = {
+> +	.name = "qnm_eva",
+> +	.id = GLYMUR_MASTER_EVA,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_mdp = {
+> +	.name = "qnm_mdp",
+> +	.id = GLYMUR_MASTER_MDP,
+> +	.channels = 2,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_HF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_vapss_hcp = {
+> +	.name = "qnm_vapss_hcp",
+> +	.id = GLYMUR_MASTER_CDSP_HCP,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_video = {
+> +	.name = "qnm_video",
+> +	.id = GLYMUR_MASTER_VIDEO,
+> +	.channels = 4,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_video_cv_cpu = {
+> +	.name = "qnm_video_cv_cpu",
+> +	.id = GLYMUR_MASTER_VIDEO_CV_PROC,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_video_v_cpu = {
+> +	.name = "qnm_video_v_cpu",
+> +	.id = GLYMUR_MASTER_VIDEO_V_PROC,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_MNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qsm_mnoc_cfg = {
+> +	.name = "qsm_mnoc_cfg",
+> +	.id = GLYMUR_MASTER_CNOC_MNOC_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_SERVICE_MNOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_cpucp = {
+> +	.name = "xm_cpucp",
+> +	.id = GLYMUR_MASTER_CPUCP,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 2,
+> +	.links = { GLYMUR_SLAVE_NSINOC_SYSTEM_NOC, GLYMUR_SLAVE_SERVICE_NSINOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_nsp = {
+> +	.name = "qnm_nsp",
+> +	.id = GLYMUR_MASTER_CDSP_PROC,
+> +	.channels = 4,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_NSP0_HSC_NOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_mem_sp = {
+> +	.name = "xm_mem_sp",
+> +	.id = GLYMUR_MASTER_OOBMSS_SP_PROC,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_OOBMSS_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qsm_pcie_east_anoc_cfg = {
+> +	.name = "qsm_pcie_east_anoc_cfg",
+> +	.id = GLYMUR_MASTER_PCIE_EAST_ANOC_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_SERVICE_PCIE_EAST_AGGRE_NOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_pcie_0 = {
+> +	.name = "xm_pcie_0",
+> +	.id = GLYMUR_MASTER_PCIE_0,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_PCIE_EAST_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_pcie_1 = {
+> +	.name = "xm_pcie_1",
+> +	.id = GLYMUR_MASTER_PCIE_1,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_PCIE_EAST_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_pcie_5 = {
+> +	.name = "xm_pcie_5",
+> +	.id = GLYMUR_MASTER_PCIE_5,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_PCIE_EAST_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_hscnoc_pcie_east = {
+> +	.name = "qnm_hscnoc_pcie_east",
+> +	.id = GLYMUR_MASTER_HSCNOC_PCIE_EAST,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 3,
+> +	.links = { GLYMUR_SLAVE_PCIE_0, GLYMUR_SLAVE_PCIE_1,
+> +			   GLYMUR_SLAVE_PCIE_5 },
+> +};
+> +
+> +static struct qcom_icc_node qsm_cnoc_pcie_east_slave_cfg = {
+> +	.name = "qsm_cnoc_pcie_east_slave_cfg",
+> +	.id = GLYMUR_MASTER_CNOC_PCIE_EAST_SLAVE_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 2,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_PCIE_EAST_MS_MPU_CFG, GLYMUR_SLAVE_SERVICE_PCIE_EAST },
+> +};
+> +
+> +static struct qcom_icc_node qsm_pcie_west_anoc_cfg = {
+> +	.name = "qsm_pcie_west_anoc_cfg",
+> +	.id = GLYMUR_MASTER_PCIE_WEST_ANOC_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_SERVICE_PCIE_WEST_AGGRE_NOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_pcie_2 = {
+> +	.name = "xm_pcie_2",
+> +	.id = GLYMUR_MASTER_PCIE_2,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_PCIE_WEST_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_pcie_3a = {
+> +	.name = "xm_pcie_3a",
+> +	.id = GLYMUR_MASTER_PCIE_3A,
+> +	.channels = 1,
+> +	.buswidth = 64,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_PCIE_WEST_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_pcie_3b = {
+> +	.name = "xm_pcie_3b",
+> +	.id = GLYMUR_MASTER_PCIE_3B,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_PCIE_WEST_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_pcie_4 = {
+> +	.name = "xm_pcie_4",
+> +	.id = GLYMUR_MASTER_PCIE_4,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_PCIE_WEST_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node xm_pcie_6 = {
+> +	.name = "xm_pcie_6",
+> +	.id = GLYMUR_MASTER_PCIE_6,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_PCIE_WEST_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qnm_hscnoc_pcie_west = {
+> +	.name = "qnm_hscnoc_pcie_west",
+> +	.id = GLYMUR_MASTER_HSCNOC_PCIE_WEST,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 5,
+> +	.links = { GLYMUR_SLAVE_PCIE_2, GLYMUR_SLAVE_PCIE_3A,
+> +			   GLYMUR_SLAVE_PCIE_3B, GLYMUR_SLAVE_PCIE_4,
+> +			   GLYMUR_SLAVE_PCIE_6 },
+> +};
+> +
+> +static struct qcom_icc_node qsm_cnoc_pcie_west_slave_cfg = {
+> +	.name = "qsm_cnoc_pcie_west_slave_cfg",
+> +	.id = GLYMUR_MASTER_CNOC_PCIE_WEST_SLAVE_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 2,
+> +	.links = { GLYMUR_SLAVE_HSCNOC_PCIE_WEST_MS_MPU_CFG, GLYMUR_SLAVE_SERVICE_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qnm_aggre1_noc = {
+> +	.name = "qnm_aggre1_noc",
+> +	.id = GLYMUR_MASTER_A1NOC_SNOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_SNOC_GEM_NOC_SF },
+> +};
+> +
+> +static struct qcom_icc_node qnm_aggre2_noc = {
+> +	.name = "qnm_aggre2_noc",
+> +	.id = GLYMUR_MASTER_A2NOC_SNOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_SNOC_GEM_NOC_SF },
+> +};
+> +
+> +static struct qcom_icc_node qnm_aggre3_noc = {
+> +	.name = "qnm_aggre3_noc",
+> +	.id = GLYMUR_MASTER_A3NOC_SNOC,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_SNOC_GEM_NOC_SF },
+> +};
+> +
+> +static struct qcom_icc_node qnm_nsi_noc = {
+> +	.name = "qnm_nsi_noc",
+> +	.id = GLYMUR_MASTER_NSINOC_SNOC,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_SNOC_GEM_NOC_SF },
+> +};
+> +
+> +static struct qcom_icc_node qnm_oobmss = {
+> +	.name = "qnm_oobmss",
+> +	.id = GLYMUR_MASTER_OOBMSS,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_SLAVE_SNOC_GEM_NOC_SF },
+> +};
+> +
+> +static struct qcom_icc_node qns_a1noc_snoc = {
+> +	.name = "qns_a1noc_snoc",
+> +	.id = GLYMUR_SLAVE_A1NOC_SNOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_A1NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qns_a2noc_snoc = {
+> +	.name = "qns_a2noc_snoc",
+> +	.id = GLYMUR_SLAVE_A2NOC_SNOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_A2NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qns_a3noc_snoc = {
+> +	.name = "qns_a3noc_snoc",
+> +	.id = GLYMUR_SLAVE_A3NOC_SNOC,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_A3NOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node qns_a4noc_hscnoc = {
+> +	.name = "qns_a4noc_hscnoc",
+> +	.id = GLYMUR_SLAVE_A4NOC_HSCNOC,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_AGGRE_NOC_EAST },
+> +};
+> +
+> +static struct qcom_icc_node qup0_core_slave = {
+> +	.name = "qup0_core_slave",
+> +	.id = GLYMUR_SLAVE_QUP_CORE_0,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qup1_core_slave = {
+> +	.name = "qup1_core_slave",
+> +	.id = GLYMUR_SLAVE_QUP_CORE_1,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qup2_core_slave = {
+> +	.name = "qup2_core_slave",
+> +	.id = GLYMUR_SLAVE_QUP_CORE_2,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_ahb2phy0 = {
+> +	.name = "qhs_ahb2phy0",
+> +	.id = GLYMUR_SLAVE_AHB2PHY_SOUTH,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_ahb2phy1 = {
+> +	.name = "qhs_ahb2phy1",
+> +	.id = GLYMUR_SLAVE_AHB2PHY_NORTH,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_ahb2phy2 = {
+> +	.name = "qhs_ahb2phy2",
+> +	.id = GLYMUR_SLAVE_AHB2PHY_2,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_ahb2phy3 = {
+> +	.name = "qhs_ahb2phy3",
+> +	.id = GLYMUR_SLAVE_AHB2PHY_3,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_av1_enc_cfg = {
+> +	.name = "qhs_av1_enc_cfg",
+> +	.id = GLYMUR_SLAVE_AV1_ENC_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_camera_cfg = {
+> +	.name = "qhs_camera_cfg",
+> +	.id = GLYMUR_SLAVE_CAMERA_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_clk_ctl = {
+> +	.name = "qhs_clk_ctl",
+> +	.id = GLYMUR_SLAVE_CLK_CTL,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_crypto0_cfg = {
+> +	.name = "qhs_crypto0_cfg",
+> +	.id = GLYMUR_SLAVE_CRYPTO_0_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_display_cfg = {
+> +	.name = "qhs_display_cfg",
+> +	.id = GLYMUR_SLAVE_DISPLAY_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_gpuss_cfg = {
+> +	.name = "qhs_gpuss_cfg",
+> +	.id = GLYMUR_SLAVE_GFX3D_CFG,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_imem_cfg = {
+> +	.name = "qhs_imem_cfg",
+> +	.id = GLYMUR_SLAVE_IMEM_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pcie0_cfg = {
+> +	.name = "qhs_pcie0_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_0_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pcie1_cfg = {
+> +	.name = "qhs_pcie1_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_1_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pcie2_cfg = {
+> +	.name = "qhs_pcie2_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_2_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pcie3a_cfg = {
+> +	.name = "qhs_pcie3a_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_3A_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pcie3b_cfg = {
+> +	.name = "qhs_pcie3b_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_3B_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pcie4_cfg = {
+> +	.name = "qhs_pcie4_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_4_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pcie5_cfg = {
+> +	.name = "qhs_pcie5_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_5_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pcie6_cfg = {
+> +	.name = "qhs_pcie6_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_6_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pcie_rscc = {
+> +	.name = "qhs_pcie_rscc",
+> +	.id = GLYMUR_SLAVE_PCIE_RSCC,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_pdm = {
+> +	.name = "qhs_pdm",
+> +	.id = GLYMUR_SLAVE_PDM,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_prng = {
+> +	.name = "qhs_prng",
+> +	.id = GLYMUR_SLAVE_PRNG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_qdss_cfg = {
+> +	.name = "qhs_qdss_cfg",
+> +	.id = GLYMUR_SLAVE_QDSS_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_qspi = {
+> +	.name = "qhs_qspi",
+> +	.id = GLYMUR_SLAVE_QSPI_0,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_qup0 = {
+> +	.name = "qhs_qup0",
+> +	.id = GLYMUR_SLAVE_QUP_0,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_qup1 = {
+> +	.name = "qhs_qup1",
+> +	.id = GLYMUR_SLAVE_QUP_1,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_qup2 = {
+> +	.name = "qhs_qup2",
+> +	.id = GLYMUR_SLAVE_QUP_2,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_sdc2 = {
+> +	.name = "qhs_sdc2",
+> +	.id = GLYMUR_SLAVE_SDCC_2,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_sdc4 = {
+> +	.name = "qhs_sdc4",
+> +	.id = GLYMUR_SLAVE_SDCC_4,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_smmuv3_cfg = {
+> +	.name = "qhs_smmuv3_cfg",
+> +	.id = GLYMUR_SLAVE_SMMUV3_CFG,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_tcsr = {
+> +	.name = "qhs_tcsr",
+> +	.id = GLYMUR_SLAVE_TCSR,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_tlmm = {
+> +	.name = "qhs_tlmm",
+> +	.id = GLYMUR_SLAVE_TLMM,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_ufs_mem_cfg = {
+> +	.name = "qhs_ufs_mem_cfg",
+> +	.id = GLYMUR_SLAVE_UFS_MEM_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_usb2_0_cfg = {
+> +	.name = "qhs_usb2_0_cfg",
+> +	.id = GLYMUR_SLAVE_USB2,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_usb3_0_cfg = {
+> +	.name = "qhs_usb3_0_cfg",
+> +	.id = GLYMUR_SLAVE_USB3_0,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_usb3_1_cfg = {
+> +	.name = "qhs_usb3_1_cfg",
+> +	.id = GLYMUR_SLAVE_USB3_1,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_usb3_2_cfg = {
+> +	.name = "qhs_usb3_2_cfg",
+> +	.id = GLYMUR_SLAVE_USB3_2,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_usb3_mp_cfg = {
+> +	.name = "qhs_usb3_mp_cfg",
+> +	.id = GLYMUR_SLAVE_USB3_MP,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_usb4_0_cfg = {
+> +	.name = "qhs_usb4_0_cfg",
+> +	.id = GLYMUR_SLAVE_USB4_0,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_usb4_1_cfg = {
+> +	.name = "qhs_usb4_1_cfg",
+> +	.id = GLYMUR_SLAVE_USB4_1,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_usb4_2_cfg = {
+> +	.name = "qhs_usb4_2_cfg",
+> +	.id = GLYMUR_SLAVE_USB4_2,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_venus_cfg = {
+> +	.name = "qhs_venus_cfg",
+> +	.id = GLYMUR_SLAVE_VENUS_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qss_cnoc_pcie_slave_east_cfg = {
+> +	.name = "qss_cnoc_pcie_slave_east_cfg",
+> +	.id = GLYMUR_SLAVE_CNOC_PCIE_SLAVE_EAST_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_CNOC_PCIE_EAST_SLAVE_CFG },
+> +};
+> +
+> +static struct qcom_icc_node qss_cnoc_pcie_slave_west_cfg = {
+> +	.name = "qss_cnoc_pcie_slave_west_cfg",
+> +	.id = GLYMUR_SLAVE_CNOC_PCIE_SLAVE_WEST_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_CNOC_PCIE_WEST_SLAVE_CFG },
+> +};
+> +
+> +static struct qcom_icc_node qss_lpass_qtb_cfg = {
+> +	.name = "qss_lpass_qtb_cfg",
+> +	.id = GLYMUR_SLAVE_LPASS_QTB_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qss_mnoc_cfg = {
+> +	.name = "qss_mnoc_cfg",
+> +	.id = GLYMUR_SLAVE_CNOC_MNOC_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_CNOC_MNOC_CFG },
+> +};
+> +
+> +static struct qcom_icc_node qss_nsp_qtb_cfg = {
+> +	.name = "qss_nsp_qtb_cfg",
+> +	.id = GLYMUR_SLAVE_NSP_QTB_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qss_pcie_east_anoc_cfg = {
+> +	.name = "qss_pcie_east_anoc_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_EAST_ANOC_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_PCIE_EAST_ANOC_CFG },
+> +};
+> +
+> +static struct qcom_icc_node qss_pcie_west_anoc_cfg = {
+> +	.name = "qss_pcie_west_anoc_cfg",
+> +	.id = GLYMUR_SLAVE_PCIE_WEST_ANOC_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_PCIE_WEST_ANOC_CFG },
+> +};
+> +
+> +static struct qcom_icc_node xs_qdss_stm = {
+> +	.name = "xs_qdss_stm",
+> +	.id = GLYMUR_SLAVE_QDSS_STM,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node xs_sys_tcu_cfg = {
+> +	.name = "xs_sys_tcu_cfg",
+> +	.id = GLYMUR_SLAVE_TCU,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_aoss = {
+> +	.name = "qhs_aoss",
+> +	.id = GLYMUR_SLAVE_AOSS,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_ipc_router = {
+> +	.name = "qhs_ipc_router",
+> +	.id = GLYMUR_SLAVE_IPC_ROUTER_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_soccp = {
+> +	.name = "qhs_soccp",
+> +	.id = GLYMUR_SLAVE_SOCCP,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_tme_cfg = {
+> +	.name = "qhs_tme_cfg",
+> +	.id = GLYMUR_SLAVE_TME_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qns_apss = {
+> +	.name = "qns_apss",
+> +	.id = GLYMUR_SLAVE_APPSS,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qss_cfg = {
+> +	.name = "qss_cfg",
+> +	.id = GLYMUR_SLAVE_CNOC_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_CNOC_CFG },
+> +};
+> +
+> +static struct qcom_icc_node qxs_boot_imem = {
+> +	.name = "qxs_boot_imem",
+> +	.id = GLYMUR_SLAVE_BOOT_IMEM,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qxs_imem = {
+> +	.name = "qxs_imem",
+> +	.id = GLYMUR_SLAVE_IMEM,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qns_hscnoc_cnoc = {
+> +	.name = "qns_hscnoc_cnoc",
+> +	.id = GLYMUR_SLAVE_HSCNOC_CNOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_HSCNOC_CNOC },
+> +};
+> +
+> +static struct qcom_icc_node qns_llcc = {
+> +	.name = "qns_llcc",
+> +	.id = GLYMUR_SLAVE_LLCC,
+> +	.channels = 12,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_LLCC },
+> +};
+> +
+> +static struct qcom_icc_node qns_pcie_east = {
+> +	.name = "qns_pcie_east",
+> +	.id = GLYMUR_SLAVE_PCIE_EAST,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_HSCNOC_PCIE_EAST },
+> +};
+> +
+> +static struct qcom_icc_node qns_pcie_west = {
+> +	.name = "qns_pcie_west",
+> +	.id = GLYMUR_SLAVE_PCIE_WEST,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_HSCNOC_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node qns_lpass_ag_noc_gemnoc = {
+> +	.name = "qns_lpass_ag_noc_gemnoc",
+> +	.id = GLYMUR_SLAVE_LPASS_GEM_NOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_LPASS_GEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qns_lpass_aggnoc = {
+> +	.name = "qns_lpass_aggnoc",
+> +	.id = GLYMUR_SLAVE_LPIAON_NOC_LPASS_AG_NOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_LPIAON_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qns_lpi_aon_noc = {
+> +	.name = "qns_lpi_aon_noc",
+> +	.id = GLYMUR_SLAVE_LPICX_NOC_LPIAON_NOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_LPASS_LPINOC },
+> +};
+> +
+> +static struct qcom_icc_node ebi = {
+> +	.name = "ebi",
+> +	.id = GLYMUR_SLAVE_EBI1,
+> +	.channels = 8,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qns_mem_noc_hf = {
+> +	.name = "qns_mem_noc_hf",
+> +	.id = GLYMUR_SLAVE_MNOC_HF_MEM_NOC,
+> +	.channels = 2,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_MNOC_HF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qns_mem_noc_sf = {
+> +	.name = "qns_mem_noc_sf",
+> +	.id = GLYMUR_SLAVE_MNOC_SF_MEM_NOC,
+> +	.channels = 2,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_MNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_node srvc_mnoc = {
+> +	.name = "srvc_mnoc",
+> +	.id = GLYMUR_SLAVE_SERVICE_MNOC,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qns_system_noc = {
+> +	.name = "qns_system_noc",
+> +	.id = GLYMUR_SLAVE_NSINOC_SYSTEM_NOC,
+> +	.channels = 1,
+> +	.buswidth = 8,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_NSINOC_SNOC },
+> +};
+> +
+> +static struct qcom_icc_node srvc_nsinoc = {
+> +	.name = "srvc_nsinoc",
+> +	.id = GLYMUR_SLAVE_SERVICE_NSINOC,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qns_nsp_hscnoc = {
+> +	.name = "qns_nsp_hscnoc",
+> +	.id = GLYMUR_SLAVE_NSP0_HSC_NOC,
+> +	.channels = 4,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_COMPUTE_NOC },
+> +};
+> +
+> +static struct qcom_icc_node qns_oobmss_snoc = {
+> +	.name = "qns_oobmss_snoc",
+> +	.id = GLYMUR_SLAVE_OOBMSS_SNOC,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_OOBMSS },
+> +};
+> +
+> +static struct qcom_icc_node qns_pcie_east_mem_noc = {
+> +	.name = "qns_pcie_east_mem_noc",
+> +	.id = GLYMUR_SLAVE_PCIE_EAST_MEM_NOC,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_PCIE_EAST },
+> +};
+> +
+> +static struct qcom_icc_node srvc_pcie_east_aggre_noc = {
+> +	.name = "srvc_pcie_east_aggre_noc",
+> +	.id = GLYMUR_SLAVE_SERVICE_PCIE_EAST_AGGRE_NOC,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_hscnoc_pcie_east_ms_mpu_cfg = {
+> +	.name = "qhs_hscnoc_pcie_east_ms_mpu_cfg",
+> +	.id = GLYMUR_SLAVE_HSCNOC_PCIE_EAST_MS_MPU_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node srvc_pcie_east = {
+> +	.name = "srvc_pcie_east",
+> +	.id = GLYMUR_SLAVE_SERVICE_PCIE_EAST,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node xs_pcie_0 = {
+> +	.name = "xs_pcie_0",
+> +	.id = GLYMUR_SLAVE_PCIE_0,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node xs_pcie_1 = {
+> +	.name = "xs_pcie_1",
+> +	.id = GLYMUR_SLAVE_PCIE_1,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node xs_pcie_5 = {
+> +	.name = "xs_pcie_5",
+> +	.id = GLYMUR_SLAVE_PCIE_5,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qns_pcie_west_mem_noc = {
+> +	.name = "qns_pcie_west_mem_noc",
+> +	.id = GLYMUR_SLAVE_PCIE_WEST_MEM_NOC,
+> +	.channels = 1,
+> +	.buswidth = 64,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_PCIE_WEST },
+> +};
+> +
+> +static struct qcom_icc_node srvc_pcie_west_aggre_noc = {
+> +	.name = "srvc_pcie_west_aggre_noc",
+> +	.id = GLYMUR_SLAVE_SERVICE_PCIE_WEST_AGGRE_NOC,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qhs_hscnoc_pcie_west_ms_mpu_cfg = {
+> +	.name = "qhs_hscnoc_pcie_west_ms_mpu_cfg",
+> +	.id = GLYMUR_SLAVE_HSCNOC_PCIE_WEST_MS_MPU_CFG,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node srvc_pcie_west = {
+> +	.name = "srvc_pcie_west",
+> +	.id = GLYMUR_SLAVE_SERVICE_PCIE_WEST,
+> +	.channels = 1,
+> +	.buswidth = 4,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node xs_pcie_2 = {
+> +	.name = "xs_pcie_2",
+> +	.id = GLYMUR_SLAVE_PCIE_2,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node xs_pcie_3a = {
+> +	.name = "xs_pcie_3a",
+> +	.id = GLYMUR_SLAVE_PCIE_3A,
+> +	.channels = 1,
+> +	.buswidth = 64,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node xs_pcie_3b = {
+> +	.name = "xs_pcie_3b",
+> +	.id = GLYMUR_SLAVE_PCIE_3B,
+> +	.channels = 1,
+> +	.buswidth = 32,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node xs_pcie_4 = {
+> +	.name = "xs_pcie_4",
+> +	.id = GLYMUR_SLAVE_PCIE_4,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node xs_pcie_6 = {
+> +	.name = "xs_pcie_6",
+> +	.id = GLYMUR_SLAVE_PCIE_6,
+> +	.channels = 1,
+> +	.buswidth = 16,
+> +	.num_links = 0,
+> +};
+> +
+> +static struct qcom_icc_node qns_gemnoc_sf = {
+> +	.name = "qns_gemnoc_sf",
+> +	.id = GLYMUR_SLAVE_SNOC_GEM_NOC_SF,
+> +	.channels = 1,
+> +	.buswidth = 64,
+> +	.num_links = 1,
+> +	.links = { GLYMUR_MASTER_SNOC_SF_MEM_NOC },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_acv = {
+> +	.name = "ACV",
+> +	.enable_mask = BIT(0),
+> +	.num_nodes = 1,
+> +	.nodes = { &ebi },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_ce0 = {
+> +	.name = "CE0",
+> +	.num_nodes = 1,
+> +	.nodes = { &qxm_crypto },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_cn0 = {
+> +	.name = "CN0",
+> +	.keepalive = true,
+> +	.enable_mask = BIT(0),
+> +	.num_nodes = 60,
+> +	.nodes = { &qsm_cfg, &qhs_ahb2phy0,
+> +		   &qhs_ahb2phy1, &qhs_ahb2phy2,
+> +		   &qhs_ahb2phy3, &qhs_av1_enc_cfg,
+> +		   &qhs_camera_cfg, &qhs_clk_ctl,
+> +		   &qhs_crypto0_cfg, &qhs_gpuss_cfg,
+> +		   &qhs_imem_cfg, &qhs_pcie0_cfg,
+> +		   &qhs_pcie1_cfg, &qhs_pcie2_cfg,
+> +		   &qhs_pcie3a_cfg, &qhs_pcie3b_cfg,
+> +		   &qhs_pcie4_cfg, &qhs_pcie5_cfg,
+> +		   &qhs_pcie6_cfg, &qhs_pcie_rscc,
+> +		   &qhs_pdm, &qhs_prng,
+> +		   &qhs_qdss_cfg, &qhs_qspi,
+> +		   &qhs_qup0, &qhs_qup1,
+> +		   &qhs_qup2, &qhs_sdc2,
+> +		   &qhs_sdc4, &qhs_smmuv3_cfg,
+> +		   &qhs_tcsr, &qhs_tlmm,
+> +		   &qhs_ufs_mem_cfg, &qhs_usb2_0_cfg,
+> +		   &qhs_usb3_0_cfg, &qhs_usb3_1_cfg,
+> +		   &qhs_usb3_2_cfg, &qhs_usb3_mp_cfg,
+> +		   &qhs_usb4_0_cfg, &qhs_usb4_1_cfg,
+> +		   &qhs_usb4_2_cfg, &qhs_venus_cfg,
+> +		   &qss_cnoc_pcie_slave_east_cfg, &qss_cnoc_pcie_slave_west_cfg,
+> +		   &qss_lpass_qtb_cfg, &qss_mnoc_cfg,
+> +		   &qss_nsp_qtb_cfg, &qss_pcie_east_anoc_cfg,
+> +		   &qss_pcie_west_anoc_cfg, &xs_qdss_stm,
+> +		   &xs_sys_tcu_cfg, &qnm_hscnoc_cnoc,
+> +		   &qhs_aoss, &qhs_ipc_router,
+> +		   &qhs_soccp, &qhs_tme_cfg,
+> +		   &qns_apss, &qss_cfg,
+> +		   &qxs_boot_imem, &qxs_imem },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_cn1 = {
+> +	.name = "CN1",
+> +	.num_nodes = 1,
+> +	.nodes = { &qhs_display_cfg },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_co0 = {
+> +	.name = "CO0",
+> +	.enable_mask = BIT(0),
+> +	.num_nodes = 2,
+> +	.nodes = { &qnm_nsp, &qns_nsp_hscnoc },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_lp0 = {
+> +	.name = "LP0",
+> +	.num_nodes = 2,
+> +	.nodes = { &qnm_lpass_lpinoc, &qns_lpass_aggnoc },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_mc0 = {
+> +	.name = "MC0",
+> +	.keepalive = true,
+> +	.num_nodes = 1,
+> +	.nodes = { &ebi },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_mm0 = {
+> +	.name = "MM0",
+> +	.num_nodes = 1,
+> +	.nodes = { &qns_mem_noc_hf },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_mm1 = {
+> +	.name = "MM1",
+> +	.enable_mask = BIT(0),
+> +	.num_nodes = 11,
+> +	.nodes = { &qnm_av1_enc, &qnm_camnoc_hf,
+> +		   &qnm_camnoc_icp, &qnm_camnoc_sf,
+> +		   &qnm_eva, &qnm_mdp,
+> +		   &qnm_vapss_hcp, &qnm_video,
+> +		   &qnm_video_cv_cpu, &qnm_video_v_cpu,
+> +		   &qns_mem_noc_sf },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_qup0 = {
+> +	.name = "QUP0",
+> +	.keepalive = true,
+> +	.vote_scale = 1,
+> +	.num_nodes = 1,
+> +	.nodes = { &qup0_core_slave },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_qup1 = {
+> +	.name = "QUP1",
+> +	.keepalive = true,
+> +	.vote_scale = 1,
+> +	.num_nodes = 1,
+> +	.nodes = { &qup1_core_slave },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_qup2 = {
+> +	.name = "QUP2",
+> +	.keepalive = true,
+> +	.vote_scale = 1,
+> +	.num_nodes = 1,
+> +	.nodes = { &qup2_core_slave },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_sh0 = {
+> +	.name = "SH0",
+> +	.keepalive = true,
+> +	.num_nodes = 1,
+> +	.nodes = { &qns_llcc },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_sh1 = {
+> +	.name = "SH1",
+> +	.enable_mask = BIT(0),
+> +	.num_nodes = 18,
+> +	.nodes = { &alm_gpu_tcu, &alm_pcie_qtc,
+> +		   &alm_sys_tcu, &chm_apps,
+> +		   &qnm_aggre_noc_east, &qnm_gpu,
+> +		   &qnm_lpass, &qnm_mnoc_hf,
+> +		   &qnm_mnoc_sf, &qnm_nsp_noc,
+> +		   &qnm_pcie_east, &qnm_pcie_west,
+> +		   &qnm_snoc_sf, &qxm_wlan_q6,
+> +		   &xm_gic, &qns_hscnoc_cnoc,
+> +		   &qns_pcie_east, &qns_pcie_west },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_sn0 = {
+> +	.name = "SN0",
+> +	.keepalive = true,
+> +	.num_nodes = 1,
+> +	.nodes = { &qns_gemnoc_sf },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_sn1 = {
+> +	.name = "SN1",
+> +	.enable_mask = BIT(0),
+> +	.num_nodes = 1,
+> +	.nodes = { &qnm_oobmss },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_sn2 = {
+> +	.name = "SN2",
+> +	.num_nodes = 1,
+> +	.nodes = { &qnm_aggre1_noc },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_sn3 = {
+> +	.name = "SN3",
+> +	.num_nodes = 1,
+> +	.nodes = { &qnm_aggre2_noc },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_sn4 = {
+> +	.name = "SN4",
+> +	.num_nodes = 1,
+> +	.nodes = { &qnm_aggre3_noc },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_sn5 = {
+> +	.name = "SN5",
+> +	.num_nodes = 1,
+> +	.nodes = { &qns_a4noc_hscnoc },
+> +};
+> +
+> +static struct qcom_icc_bcm bcm_sn6 = {
+> +	.name = "SN6",
+> +	.num_nodes = 4,
+> +	.nodes = { &qns_pcie_east_mem_noc, &qnm_hscnoc_pcie_east,
+> +		   &qns_pcie_west_mem_noc, &qnm_hscnoc_pcie_west },
+> +};
+> +
+> +static struct qcom_icc_bcm * const aggre1_noc_bcms[] = {
+> +	&bcm_ce0,
+> +};
+> +
+> +static struct qcom_icc_node * const aggre1_noc_nodes[] = {
+> +	[MASTER_CRYPTO] = &qxm_crypto,
+> +	[MASTER_SOCCP_PROC] = &qxm_soccp,
+> +	[MASTER_QDSS_ETR] = &xm_qdss_etr_0,
+> +	[MASTER_QDSS_ETR_1] = &xm_qdss_etr_1,
+> +	[SLAVE_A1NOC_SNOC] = &qns_a1noc_snoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_aggre1_noc = {
+> +	.nodes = aggre1_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(aggre1_noc_nodes),
+> +	.bcms = aggre1_noc_bcms,
+> +	.num_bcms = ARRAY_SIZE(aggre1_noc_bcms),
+> +};
+> +
+> +static struct qcom_icc_node * const aggre2_noc_nodes[] = {
+> +	[MASTER_UFS_MEM] = &xm_ufs_mem,
+> +	[MASTER_USB3_2] = &xm_usb3_2,
+> +	[MASTER_USB4_2] = &xm_usb4_2,
+> +	[SLAVE_A2NOC_SNOC] = &qns_a2noc_snoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_aggre2_noc = {
+> +	.nodes = aggre2_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(aggre2_noc_nodes),
+> +};
+> +
+> +static struct qcom_icc_node * const aggre3_noc_nodes[] = {
+> +	[MASTER_QSPI_0] = &qhm_qspi,
+> +	[MASTER_QUP_0] = &qhm_qup0,
+> +	[MASTER_QUP_1] = &qhm_qup1,
+> +	[MASTER_QUP_2] = &qhm_qup2,
+> +	[MASTER_SP] = &qxm_sp,
+> +	[MASTER_SDCC_2] = &xm_sdc2,
+> +	[MASTER_SDCC_4] = &xm_sdc4,
+> +	[MASTER_USB2] = &xm_usb2_0,
+> +	[MASTER_USB3_MP] = &xm_usb3_mp,
+> +	[SLAVE_A3NOC_SNOC] = &qns_a3noc_snoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_aggre3_noc = {
+> +	.nodes = aggre3_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(aggre3_noc_nodes),
+> +};
+> +
+> +static struct qcom_icc_bcm * const aggre4_noc_bcms[] = {
+> +	&bcm_sn5,
+> +};
+> +
+> +static struct qcom_icc_node * const aggre4_noc_nodes[] = {
+> +	[MASTER_USB3_0] = &xm_usb3_0,
+> +	[MASTER_USB3_1] = &xm_usb3_1,
+> +	[MASTER_USB4_0] = &xm_usb4_0,
+> +	[MASTER_USB4_1] = &xm_usb4_1,
+> +	[SLAVE_A4NOC_HSCNOC] = &qns_a4noc_hscnoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_aggre4_noc = {
+> +	.nodes = aggre4_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(aggre4_noc_nodes),
+> +	.bcms = aggre4_noc_bcms,
+> +	.num_bcms = ARRAY_SIZE(aggre4_noc_bcms),
+> +};
+> +
+> +static struct qcom_icc_bcm * const clk_virt_bcms[] = {
+> +	&bcm_qup0,
+> +	&bcm_qup1,
+> +	&bcm_qup2,
+> +};
+> +
+> +static struct qcom_icc_node * const clk_virt_nodes[] = {
+> +	[MASTER_QUP_CORE_0] = &qup0_core_master,
+> +	[MASTER_QUP_CORE_1] = &qup1_core_master,
+> +	[MASTER_QUP_CORE_2] = &qup2_core_master,
+> +	[SLAVE_QUP_CORE_0] = &qup0_core_slave,
+> +	[SLAVE_QUP_CORE_1] = &qup1_core_slave,
+> +	[SLAVE_QUP_CORE_2] = &qup2_core_slave,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_clk_virt = {
+> +	.nodes = clk_virt_nodes,
+> +	.num_nodes = ARRAY_SIZE(clk_virt_nodes),
+> +	.bcms = clk_virt_bcms,
+> +	.num_bcms = ARRAY_SIZE(clk_virt_bcms),
+> +};
+> +
+> +static struct qcom_icc_bcm * const cnoc_cfg_bcms[] = {
+> +	&bcm_cn0,
+> +	&bcm_cn1,
+> +};
+> +
+> +static struct qcom_icc_node * const cnoc_cfg_nodes[] = {
+> +	[MASTER_CNOC_CFG] = &qsm_cfg,
+> +	[SLAVE_AHB2PHY_SOUTH] = &qhs_ahb2phy0,
+> +	[SLAVE_AHB2PHY_NORTH] = &qhs_ahb2phy1,
+> +	[SLAVE_AHB2PHY_2] = &qhs_ahb2phy2,
+> +	[SLAVE_AHB2PHY_3] = &qhs_ahb2phy3,
+> +	[SLAVE_AV1_ENC_CFG] = &qhs_av1_enc_cfg,
+> +	[SLAVE_CAMERA_CFG] = &qhs_camera_cfg,
+> +	[SLAVE_CLK_CTL] = &qhs_clk_ctl,
+> +	[SLAVE_CRYPTO_0_CFG] = &qhs_crypto0_cfg,
+> +	[SLAVE_DISPLAY_CFG] = &qhs_display_cfg,
+> +	[SLAVE_GFX3D_CFG] = &qhs_gpuss_cfg,
+> +	[SLAVE_IMEM_CFG] = &qhs_imem_cfg,
+> +	[SLAVE_PCIE_0_CFG] = &qhs_pcie0_cfg,
+> +	[SLAVE_PCIE_1_CFG] = &qhs_pcie1_cfg,
+> +	[SLAVE_PCIE_2_CFG] = &qhs_pcie2_cfg,
+> +	[SLAVE_PCIE_3A_CFG] = &qhs_pcie3a_cfg,
+> +	[SLAVE_PCIE_3B_CFG] = &qhs_pcie3b_cfg,
+> +	[SLAVE_PCIE_4_CFG] = &qhs_pcie4_cfg,
+> +	[SLAVE_PCIE_5_CFG] = &qhs_pcie5_cfg,
+> +	[SLAVE_PCIE_6_CFG] = &qhs_pcie6_cfg,
+> +	[SLAVE_PCIE_RSCC] = &qhs_pcie_rscc,
+> +	[SLAVE_PDM] = &qhs_pdm,
+> +	[SLAVE_PRNG] = &qhs_prng,
+> +	[SLAVE_QDSS_CFG] = &qhs_qdss_cfg,
+> +	[SLAVE_QSPI_0] = &qhs_qspi,
+> +	[SLAVE_QUP_0] = &qhs_qup0,
+> +	[SLAVE_QUP_1] = &qhs_qup1,
+> +	[SLAVE_QUP_2] = &qhs_qup2,
+> +	[SLAVE_SDCC_2] = &qhs_sdc2,
+> +	[SLAVE_SDCC_4] = &qhs_sdc4,
+> +	[SLAVE_SMMUV3_CFG] = &qhs_smmuv3_cfg,
+> +	[SLAVE_TCSR] = &qhs_tcsr,
+> +	[SLAVE_TLMM] = &qhs_tlmm,
+> +	[SLAVE_UFS_MEM_CFG] = &qhs_ufs_mem_cfg,
+> +	[SLAVE_USB2] = &qhs_usb2_0_cfg,
+> +	[SLAVE_USB3_0] = &qhs_usb3_0_cfg,
+> +	[SLAVE_USB3_1] = &qhs_usb3_1_cfg,
+> +	[SLAVE_USB3_2] = &qhs_usb3_2_cfg,
+> +	[SLAVE_USB3_MP] = &qhs_usb3_mp_cfg,
+> +	[SLAVE_USB4_0] = &qhs_usb4_0_cfg,
+> +	[SLAVE_USB4_1] = &qhs_usb4_1_cfg,
+> +	[SLAVE_USB4_2] = &qhs_usb4_2_cfg,
+> +	[SLAVE_VENUS_CFG] = &qhs_venus_cfg,
+> +	[SLAVE_CNOC_PCIE_SLAVE_EAST_CFG] = &qss_cnoc_pcie_slave_east_cfg,
+> +	[SLAVE_CNOC_PCIE_SLAVE_WEST_CFG] = &qss_cnoc_pcie_slave_west_cfg,
+> +	[SLAVE_LPASS_QTB_CFG] = &qss_lpass_qtb_cfg,
+> +	[SLAVE_CNOC_MNOC_CFG] = &qss_mnoc_cfg,
+> +	[SLAVE_NSP_QTB_CFG] = &qss_nsp_qtb_cfg,
+> +	[SLAVE_PCIE_EAST_ANOC_CFG] = &qss_pcie_east_anoc_cfg,
+> +	[SLAVE_PCIE_WEST_ANOC_CFG] = &qss_pcie_west_anoc_cfg,
+> +	[SLAVE_QDSS_STM] = &xs_qdss_stm,
+> +	[SLAVE_TCU] = &xs_sys_tcu_cfg,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_cnoc_cfg = {
+> +	.nodes = cnoc_cfg_nodes,
+> +	.num_nodes = ARRAY_SIZE(cnoc_cfg_nodes),
+> +	.bcms = cnoc_cfg_bcms,
+> +	.num_bcms = ARRAY_SIZE(cnoc_cfg_bcms),
+> +};
+> +
+> +static struct qcom_icc_bcm * const cnoc_main_bcms[] = {
+> +	&bcm_cn0,
+> +};
+> +
+> +static struct qcom_icc_node * const cnoc_main_nodes[] = {
+> +	[MASTER_HSCNOC_CNOC] = &qnm_hscnoc_cnoc,
+> +	[SLAVE_AOSS] = &qhs_aoss,
+> +	[SLAVE_IPC_ROUTER_CFG] = &qhs_ipc_router,
+> +	[SLAVE_SOCCP] = &qhs_soccp,
+> +	[SLAVE_TME_CFG] = &qhs_tme_cfg,
+> +	[SLAVE_APPSS] = &qns_apss,
+> +	[SLAVE_CNOC_CFG] = &qss_cfg,
+> +	[SLAVE_BOOT_IMEM] = &qxs_boot_imem,
+> +	[SLAVE_IMEM] = &qxs_imem,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_cnoc_main = {
+> +	.nodes = cnoc_main_nodes,
+> +	.num_nodes = ARRAY_SIZE(cnoc_main_nodes),
+> +	.bcms = cnoc_main_bcms,
+> +	.num_bcms = ARRAY_SIZE(cnoc_main_bcms),
+> +};
+> +
+> +static struct qcom_icc_bcm * const hscnoc_bcms[] = {
+> +	&bcm_sh0,
+> +	&bcm_sh1,
+> +};
+> +
+> +static struct qcom_icc_node * const hscnoc_nodes[] = {
+> +	[MASTER_GPU_TCU] = &alm_gpu_tcu,
+> +	[MASTER_PCIE_TCU] = &alm_pcie_qtc,
+> +	[MASTER_SYS_TCU] = &alm_sys_tcu,
+> +	[MASTER_APPSS_PROC] = &chm_apps,
+> +	[MASTER_AGGRE_NOC_EAST] = &qnm_aggre_noc_east,
+> +	[MASTER_GFX3D] = &qnm_gpu,
+> +	[MASTER_LPASS_GEM_NOC] = &qnm_lpass,
+> +	[MASTER_MNOC_HF_MEM_NOC] = &qnm_mnoc_hf,
+> +	[MASTER_MNOC_SF_MEM_NOC] = &qnm_mnoc_sf,
+> +	[MASTER_COMPUTE_NOC] = &qnm_nsp_noc,
+> +	[MASTER_PCIE_EAST] = &qnm_pcie_east,
+> +	[MASTER_PCIE_WEST] = &qnm_pcie_west,
+> +	[MASTER_SNOC_SF_MEM_NOC] = &qnm_snoc_sf,
+> +	[MASTER_WLAN_Q6] = &qxm_wlan_q6,
+> +	[MASTER_GIC] = &xm_gic,
+> +	[SLAVE_HSCNOC_CNOC] = &qns_hscnoc_cnoc,
+> +	[SLAVE_LLCC] = &qns_llcc,
+> +	[SLAVE_PCIE_EAST] = &qns_pcie_east,
+> +	[SLAVE_PCIE_WEST] = &qns_pcie_west,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_hscnoc = {
+> +	.nodes = hscnoc_nodes,
+> +	.num_nodes = ARRAY_SIZE(hscnoc_nodes),
+> +	.bcms = hscnoc_bcms,
+> +	.num_bcms = ARRAY_SIZE(hscnoc_bcms),
+> +};
+> +
+> +static struct qcom_icc_node * const lpass_ag_noc_nodes[] = {
+> +	[MASTER_LPIAON_NOC] = &qnm_lpiaon_noc,
+> +	[SLAVE_LPASS_GEM_NOC] = &qns_lpass_ag_noc_gemnoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_lpass_ag_noc = {
+> +	.nodes = lpass_ag_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(lpass_ag_noc_nodes),
+> +};
+> +
+> +static struct qcom_icc_bcm * const lpass_lpiaon_noc_bcms[] = {
+> +	&bcm_lp0,
+> +};
+> +
+> +static struct qcom_icc_node * const lpass_lpiaon_noc_nodes[] = {
+> +	[MASTER_LPASS_LPINOC] = &qnm_lpass_lpinoc,
+> +	[SLAVE_LPIAON_NOC_LPASS_AG_NOC] = &qns_lpass_aggnoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_lpass_lpiaon_noc = {
+> +	.nodes = lpass_lpiaon_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(lpass_lpiaon_noc_nodes),
+> +	.bcms = lpass_lpiaon_noc_bcms,
+> +	.num_bcms = ARRAY_SIZE(lpass_lpiaon_noc_bcms),
+> +};
+> +
+> +static struct qcom_icc_node * const lpass_lpicx_noc_nodes[] = {
+> +	[MASTER_LPASS_PROC] = &qnm_lpinoc_dsp_qns4m,
+> +	[SLAVE_LPICX_NOC_LPIAON_NOC] = &qns_lpi_aon_noc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_lpass_lpicx_noc = {
+> +	.nodes = lpass_lpicx_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(lpass_lpicx_noc_nodes),
+> +};
+> +
+> +static struct qcom_icc_bcm * const mc_virt_bcms[] = {
+> +	&bcm_acv,
+> +	&bcm_mc0,
+> +};
+> +
+> +static struct qcom_icc_node * const mc_virt_nodes[] = {
+> +	[MASTER_LLCC] = &llcc_mc,
+> +	[SLAVE_EBI1] = &ebi,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_mc_virt = {
+> +	.nodes = mc_virt_nodes,
+> +	.num_nodes = ARRAY_SIZE(mc_virt_nodes),
+> +	.bcms = mc_virt_bcms,
+> +	.num_bcms = ARRAY_SIZE(mc_virt_bcms),
+> +};
+> +
+> +static struct qcom_icc_bcm * const mmss_noc_bcms[] = {
+> +	&bcm_mm0,
+> +	&bcm_mm1,
+> +};
+> +
+> +static struct qcom_icc_node * const mmss_noc_nodes[] = {
+> +	[MASTER_AV1_ENC] = &qnm_av1_enc,
+> +	[MASTER_CAMNOC_HF] = &qnm_camnoc_hf,
+> +	[MASTER_CAMNOC_ICP] = &qnm_camnoc_icp,
+> +	[MASTER_CAMNOC_SF] = &qnm_camnoc_sf,
+> +	[MASTER_EVA] = &qnm_eva,
+> +	[MASTER_MDP] = &qnm_mdp,
+> +	[MASTER_CDSP_HCP] = &qnm_vapss_hcp,
+> +	[MASTER_VIDEO] = &qnm_video,
+> +	[MASTER_VIDEO_CV_PROC] = &qnm_video_cv_cpu,
+> +	[MASTER_VIDEO_V_PROC] = &qnm_video_v_cpu,
+> +	[MASTER_CNOC_MNOC_CFG] = &qsm_mnoc_cfg,
+> +	[SLAVE_MNOC_HF_MEM_NOC] = &qns_mem_noc_hf,
+> +	[SLAVE_MNOC_SF_MEM_NOC] = &qns_mem_noc_sf,
+> +	[SLAVE_SERVICE_MNOC] = &srvc_mnoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_mmss_noc = {
+> +	.nodes = mmss_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(mmss_noc_nodes),
+> +	.bcms = mmss_noc_bcms,
+> +	.num_bcms = ARRAY_SIZE(mmss_noc_bcms),
+> +};
+> +
+> +static struct qcom_icc_node * const nsinoc_nodes[] = {
+> +	[MASTER_CPUCP] = &xm_cpucp,
+> +	[SLAVE_NSINOC_SYSTEM_NOC] = &qns_system_noc,
+> +	[SLAVE_SERVICE_NSINOC] = &srvc_nsinoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_nsinoc = {
+> +	.nodes = nsinoc_nodes,
+> +	.num_nodes = ARRAY_SIZE(nsinoc_nodes),
+> +};
+> +
+> +static struct qcom_icc_bcm * const nsp_noc_bcms[] = {
+> +	&bcm_co0,
+> +};
+> +
+> +static struct qcom_icc_node * const nsp_noc_nodes[] = {
+> +	[MASTER_CDSP_PROC] = &qnm_nsp,
+> +	[SLAVE_NSP0_HSC_NOC] = &qns_nsp_hscnoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_nsp_noc = {
+> +	.nodes = nsp_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(nsp_noc_nodes),
+> +	.bcms = nsp_noc_bcms,
+> +	.num_bcms = ARRAY_SIZE(nsp_noc_bcms),
+> +};
+> +
+> +static struct qcom_icc_node * const oobm_ss_noc_nodes[] = {
+> +	[MASTER_OOBMSS_SP_PROC] = &xm_mem_sp,
+> +	[SLAVE_OOBMSS_SNOC] = &qns_oobmss_snoc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_oobm_ss_noc = {
+> +	.nodes = oobm_ss_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(oobm_ss_noc_nodes),
+> +};
+> +
+> +static struct qcom_icc_bcm * const pcie_east_anoc_bcms[] = {
+> +	&bcm_sn6,
+> +};
+> +
+> +static struct qcom_icc_node * const pcie_east_anoc_nodes[] = {
+> +	[MASTER_PCIE_EAST_ANOC_CFG] = &qsm_pcie_east_anoc_cfg,
+> +	[MASTER_PCIE_0] = &xm_pcie_0,
+> +	[MASTER_PCIE_1] = &xm_pcie_1,
+> +	[MASTER_PCIE_5] = &xm_pcie_5,
+> +	[SLAVE_PCIE_EAST_MEM_NOC] = &qns_pcie_east_mem_noc,
+> +	[SLAVE_SERVICE_PCIE_EAST_AGGRE_NOC] = &srvc_pcie_east_aggre_noc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_pcie_east_anoc = {
+> +	.nodes = pcie_east_anoc_nodes,
+> +	.num_nodes = ARRAY_SIZE(pcie_east_anoc_nodes),
+> +	.bcms = pcie_east_anoc_bcms,
+> +	.num_bcms = ARRAY_SIZE(pcie_east_anoc_bcms),
+> +};
+> +
+> +static struct qcom_icc_bcm * const pcie_east_slv_noc_bcms[] = {
+> +	&bcm_sn6,
+> +};
+> +
+> +static struct qcom_icc_node * const pcie_east_slv_noc_nodes[] = {
+> +	[MASTER_HSCNOC_PCIE_EAST] = &qnm_hscnoc_pcie_east,
+> +	[MASTER_CNOC_PCIE_EAST_SLAVE_CFG] = &qsm_cnoc_pcie_east_slave_cfg,
+> +	[SLAVE_HSCNOC_PCIE_EAST_MS_MPU_CFG] = &qhs_hscnoc_pcie_east_ms_mpu_cfg,
+> +	[SLAVE_SERVICE_PCIE_EAST] = &srvc_pcie_east,
+> +	[SLAVE_PCIE_0] = &xs_pcie_0,
+> +	[SLAVE_PCIE_1] = &xs_pcie_1,
+> +	[SLAVE_PCIE_5] = &xs_pcie_5,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_pcie_east_slv_noc = {
+> +	.nodes = pcie_east_slv_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(pcie_east_slv_noc_nodes),
+> +	.bcms = pcie_east_slv_noc_bcms,
+> +	.num_bcms = ARRAY_SIZE(pcie_east_slv_noc_bcms),
+> +};
+> +
+> +static struct qcom_icc_bcm * const pcie_west_anoc_bcms[] = {
+> +	&bcm_sn6,
+> +};
+> +
+> +static struct qcom_icc_node * const pcie_west_anoc_nodes[] = {
+> +	[MASTER_PCIE_WEST_ANOC_CFG] = &qsm_pcie_west_anoc_cfg,
+> +	[MASTER_PCIE_2] = &xm_pcie_2,
+> +	[MASTER_PCIE_3A] = &xm_pcie_3a,
+> +	[MASTER_PCIE_3B] = &xm_pcie_3b,
+> +	[MASTER_PCIE_4] = &xm_pcie_4,
+> +	[MASTER_PCIE_6] = &xm_pcie_6,
+> +	[SLAVE_PCIE_WEST_MEM_NOC] = &qns_pcie_west_mem_noc,
+> +	[SLAVE_SERVICE_PCIE_WEST_AGGRE_NOC] = &srvc_pcie_west_aggre_noc,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_pcie_west_anoc = {
+> +	.nodes = pcie_west_anoc_nodes,
+> +	.num_nodes = ARRAY_SIZE(pcie_west_anoc_nodes),
+> +	.bcms = pcie_west_anoc_bcms,
+> +	.num_bcms = ARRAY_SIZE(pcie_west_anoc_bcms),
+> +};
+> +
+> +static struct qcom_icc_bcm * const pcie_west_slv_noc_bcms[] = {
+> +	&bcm_sn6,
+> +};
+> +
+> +static struct qcom_icc_node * const pcie_west_slv_noc_nodes[] = {
+> +	[MASTER_HSCNOC_PCIE_WEST] = &qnm_hscnoc_pcie_west,
+> +	[MASTER_CNOC_PCIE_WEST_SLAVE_CFG] = &qsm_cnoc_pcie_west_slave_cfg,
+> +	[SLAVE_HSCNOC_PCIE_WEST_MS_MPU_CFG] = &qhs_hscnoc_pcie_west_ms_mpu_cfg,
+> +	[SLAVE_SERVICE_PCIE_WEST] = &srvc_pcie_west,
+> +	[SLAVE_PCIE_2] = &xs_pcie_2,
+> +	[SLAVE_PCIE_3A] = &xs_pcie_3a,
+> +	[SLAVE_PCIE_3B] = &xs_pcie_3b,
+> +	[SLAVE_PCIE_4] = &xs_pcie_4,
+> +	[SLAVE_PCIE_6] = &xs_pcie_6,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_pcie_west_slv_noc = {
+> +	.nodes = pcie_west_slv_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(pcie_west_slv_noc_nodes),
+> +	.bcms = pcie_west_slv_noc_bcms,
+> +	.num_bcms = ARRAY_SIZE(pcie_west_slv_noc_bcms),
+> +};
+> +
+> +static struct qcom_icc_bcm * const system_noc_bcms[] = {
+> +	&bcm_sn0,
+> +	&bcm_sn1,
+> +	&bcm_sn2,
+> +	&bcm_sn3,
+> +	&bcm_sn4,
+> +};
+> +
+> +static struct qcom_icc_node * const system_noc_nodes[] = {
+> +	[MASTER_A1NOC_SNOC] = &qnm_aggre1_noc,
+> +	[MASTER_A2NOC_SNOC] = &qnm_aggre2_noc,
+> +	[MASTER_A3NOC_SNOC] = &qnm_aggre3_noc,
+> +	[MASTER_NSINOC_SNOC] = &qnm_nsi_noc,
+> +	[MASTER_OOBMSS] = &qnm_oobmss,
+> +	[SLAVE_SNOC_GEM_NOC_SF] = &qns_gemnoc_sf,
+> +};
+> +
+> +static const struct qcom_icc_desc glymur_system_noc = {
+> +	.nodes = system_noc_nodes,
+> +	.num_nodes = ARRAY_SIZE(system_noc_nodes),
+> +	.bcms = system_noc_bcms,
+> +	.num_bcms = ARRAY_SIZE(system_noc_bcms),
+> +};
+> +
+> +static const struct of_device_id qnoc_of_match[] = {
+> +	{ .compatible = "qcom,glymur-aggre1-noc",
+> +	  .data = &glymur_aggre1_noc},
+> +	{ .compatible = "qcom,glymur-aggre2-noc",
+> +	  .data = &glymur_aggre2_noc},
+> +	{ .compatible = "qcom,glymur-aggre3-noc",
+> +	  .data = &glymur_aggre3_noc},
+> +	{ .compatible = "qcom,glymur-aggre4-noc",
+> +	  .data = &glymur_aggre4_noc},
+> +	{ .compatible = "qcom,glymur-clk-virt",
+> +	  .data = &glymur_clk_virt},
+> +	{ .compatible = "qcom,glymur-cnoc-cfg",
+> +	  .data = &glymur_cnoc_cfg},
+> +	{ .compatible = "qcom,glymur-cnoc-main",
+> +	  .data = &glymur_cnoc_main},
+> +	{ .compatible = "qcom,glymur-hscnoc",
+> +	  .data = &glymur_hscnoc},
+> +	{ .compatible = "qcom,glymur-lpass-ag-noc",
+> +	  .data = &glymur_lpass_ag_noc},
+> +	{ .compatible = "qcom,glymur-lpass-lpiaon-noc",
+> +	  .data = &glymur_lpass_lpiaon_noc},
+> +	{ .compatible = "qcom,glymur-lpass-lpicx-noc",
+> +	  .data = &glymur_lpass_lpicx_noc},
+> +	{ .compatible = "qcom,glymur-mc-virt",
+> +	  .data = &glymur_mc_virt},
+> +	{ .compatible = "qcom,glymur-mmss-noc",
+> +	  .data = &glymur_mmss_noc},
+> +	{ .compatible = "qcom,glymur-nsinoc",
+> +	  .data = &glymur_nsinoc},
+> +	{ .compatible = "qcom,glymur-nsp-noc",
+> +	  .data = &glymur_nsp_noc},
+> +	{ .compatible = "qcom,glymur-oobm-ss-noc",
+> +	  .data = &glymur_oobm_ss_noc},
+> +	{ .compatible = "qcom,glymur-pcie-east-anoc",
+> +	  .data = &glymur_pcie_east_anoc},
+> +	{ .compatible = "qcom,glymur-pcie-east-slv-noc",
+> +	  .data = &glymur_pcie_east_slv_noc},
+> +	{ .compatible = "qcom,glymur-pcie-west-anoc",
+> +	  .data = &glymur_pcie_west_anoc},
+> +	{ .compatible = "qcom,glymur-pcie-west-slv-noc",
+> +	  .data = &glymur_pcie_west_slv_noc},
+> +	{ .compatible = "qcom,glymur-system-noc",
+> +	  .data = &glymur_system_noc},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, qnoc_of_match);
+> +
+> +static struct platform_driver qnoc_driver = {
+> +	.probe = qcom_icc_rpmh_probe,
+> +	.remove = qcom_icc_rpmh_remove,
+> +	.driver = {
+> +		.name = "qnoc-glymur",
+> +		.of_match_table = qnoc_of_match,
+> +		.sync_state = icc_sync_state,
+> +	},
+> +};
+> +
+> +static int __init qnoc_driver_init(void)
+> +{
+> +	return platform_driver_register(&qnoc_driver);
+> +}
+> +core_initcall(qnoc_driver_init);
+> +
+> +static void __exit qnoc_driver_exit(void)
+> +{
+> +	platform_driver_unregister(&qnoc_driver);
+> +}
+> +module_exit(qnoc_driver_exit);
+> +
+> +MODULE_DESCRIPTION("GLYMUR NoC driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/interconnect/qcom/glymur.h b/drivers/interconnect/qcom/glymur.h
+> new file mode 100644
+> index 000000000000..cf0ec91775ce
+> --- /dev/null
+> +++ b/drivers/interconnect/qcom/glymur.h
+> @@ -0,0 +1,185 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +#ifndef __DRIVERS_INTERCONNECT_QCOM_GLYMUR_H
+> +#define __DRIVERS_INTERCONNECT_QCOM_GLYMUR_H
+> +
+> +#define GLYMUR_MASTER_GPU_TCU				0
+> +#define GLYMUR_MASTER_PCIE_TCU				1
+> +#define GLYMUR_MASTER_SYS_TCU				2
+> +#define GLYMUR_MASTER_APPSS_PROC			3
+> +#define GLYMUR_MASTER_LLCC				4
+> +#define GLYMUR_MASTER_QSPI_0				5
+> +#define GLYMUR_MASTER_QUP_0				6
+> +#define GLYMUR_MASTER_QUP_1				7
+> +#define GLYMUR_MASTER_QUP_2				8
+> +#define GLYMUR_MASTER_A1NOC_SNOC			9
+> +#define GLYMUR_MASTER_A2NOC_SNOC			10
+> +#define GLYMUR_MASTER_A3NOC_SNOC			11
+> +#define GLYMUR_MASTER_AGGRE_NOC_EAST			12
+> +#define GLYMUR_MASTER_AV1_ENC				13
+> +#define GLYMUR_MASTER_CAMNOC_HF				14
+> +#define GLYMUR_MASTER_CAMNOC_ICP			15
+> +#define GLYMUR_MASTER_CAMNOC_SF				16
+> +#define GLYMUR_MASTER_EVA				17
+> +#define GLYMUR_MASTER_GFX3D				18
+> +#define GLYMUR_MASTER_HSCNOC_CNOC			19
+> +#define GLYMUR_MASTER_HSCNOC_PCIE_EAST			20
+> +#define GLYMUR_MASTER_HSCNOC_PCIE_WEST			21
+> +#define GLYMUR_MASTER_LPASS_GEM_NOC			22
+> +#define GLYMUR_MASTER_LPASS_LPINOC			23
+> +#define GLYMUR_MASTER_LPIAON_NOC			24
+> +#define GLYMUR_MASTER_LPASS_PROC			25
+> +#define GLYMUR_MASTER_MDP				26
+> +#define GLYMUR_MASTER_MNOC_HF_MEM_NOC			27
+> +#define GLYMUR_MASTER_MNOC_SF_MEM_NOC			28
+> +#define GLYMUR_MASTER_NSINOC_SNOC			29
+> +#define GLYMUR_MASTER_CDSP_PROC				30
+> +#define GLYMUR_MASTER_COMPUTE_NOC			31
+> +#define GLYMUR_MASTER_OOBMSS				32
+> +#define GLYMUR_MASTER_PCIE_EAST				33
+> +#define GLYMUR_MASTER_PCIE_WEST				34
+> +#define GLYMUR_MASTER_SNOC_SF_MEM_NOC			35
+> +#define GLYMUR_MASTER_CDSP_HCP				36
+> +#define GLYMUR_MASTER_VIDEO				37
+> +#define GLYMUR_MASTER_VIDEO_CV_PROC			38
+> +#define GLYMUR_MASTER_VIDEO_V_PROC			39
+> +#define GLYMUR_MASTER_CNOC_CFG				40
+> +#define GLYMUR_MASTER_CNOC_PCIE_EAST_SLAVE_CFG		41
+> +#define GLYMUR_MASTER_CNOC_PCIE_WEST_SLAVE_CFG		42
+> +#define GLYMUR_MASTER_CNOC_MNOC_CFG			43
+> +#define GLYMUR_MASTER_PCIE_EAST_ANOC_CFG		44
+> +#define GLYMUR_MASTER_PCIE_WEST_ANOC_CFG		45
+> +#define GLYMUR_MASTER_QUP_CORE_0			46
+> +#define GLYMUR_MASTER_QUP_CORE_1			47
+> +#define GLYMUR_MASTER_QUP_CORE_2			48
+> +#define GLYMUR_MASTER_CRYPTO				49
+> +#define GLYMUR_MASTER_SOCCP_PROC			50
+> +#define GLYMUR_MASTER_SP				51
+> +#define GLYMUR_MASTER_WLAN_Q6				52
+> +#define GLYMUR_MASTER_CPUCP				53
+> +#define GLYMUR_MASTER_GIC				54
+> +#define GLYMUR_MASTER_OOBMSS_SP_PROC			55
+> +#define GLYMUR_MASTER_PCIE_0				56
+> +#define GLYMUR_MASTER_PCIE_1				57
+> +#define GLYMUR_MASTER_PCIE_2				58
+> +#define GLYMUR_MASTER_PCIE_3A				59
+> +#define GLYMUR_MASTER_PCIE_3B				60
+> +#define GLYMUR_MASTER_PCIE_4				61
+> +#define GLYMUR_MASTER_PCIE_5				62
+> +#define GLYMUR_MASTER_PCIE_6				63
+> +#define GLYMUR_MASTER_QDSS_ETR				64
+> +#define GLYMUR_MASTER_QDSS_ETR_1			65
+> +#define GLYMUR_MASTER_SDCC_2				66
+> +#define GLYMUR_MASTER_SDCC_4				67
+> +#define GLYMUR_MASTER_UFS_MEM				68
+> +#define GLYMUR_MASTER_USB2				69
+> +#define GLYMUR_MASTER_USB3_0				70
+> +#define GLYMUR_MASTER_USB3_1				71
+> +#define GLYMUR_MASTER_USB3_2				72
+> +#define GLYMUR_MASTER_USB3_MP				73
+> +#define GLYMUR_MASTER_USB4_0				74
+> +#define GLYMUR_MASTER_USB4_1				75
+> +#define GLYMUR_MASTER_USB4_2				76
+> +#define GLYMUR_SLAVE_EBI1				77
+> +#define GLYMUR_SLAVE_AHB2PHY_SOUTH			78
+> +#define GLYMUR_SLAVE_AHB2PHY_NORTH			79
+> +#define GLYMUR_SLAVE_AHB2PHY_2				80
+> +#define GLYMUR_SLAVE_AHB2PHY_3				81
+> +#define GLYMUR_SLAVE_AOSS				82
+> +#define GLYMUR_SLAVE_AV1_ENC_CFG			83
+> +#define GLYMUR_SLAVE_CAMERA_CFG				84
+> +#define GLYMUR_SLAVE_CLK_CTL				85
+> +#define GLYMUR_SLAVE_CRYPTO_0_CFG			86
+> +#define GLYMUR_SLAVE_DISPLAY_CFG			87
+> +#define GLYMUR_SLAVE_GFX3D_CFG				88
+> +#define GLYMUR_SLAVE_HSCNOC_PCIE_EAST_MS_MPU_CFG	89
+> +#define GLYMUR_SLAVE_HSCNOC_PCIE_WEST_MS_MPU_CFG	90
+> +#define GLYMUR_SLAVE_IMEM_CFG				91
+> +#define GLYMUR_SLAVE_IPC_ROUTER_CFG			92
+> +#define GLYMUR_SLAVE_PCIE_0_CFG				93
+> +#define GLYMUR_SLAVE_PCIE_1_CFG				94
+> +#define GLYMUR_SLAVE_PCIE_2_CFG				95
+> +#define GLYMUR_SLAVE_PCIE_3A_CFG			96
+> +#define GLYMUR_SLAVE_PCIE_3B_CFG			97
+> +#define GLYMUR_SLAVE_PCIE_4_CFG				98
+> +#define GLYMUR_SLAVE_PCIE_5_CFG				99
+> +#define GLYMUR_SLAVE_PCIE_6_CFG				100
+> +#define GLYMUR_SLAVE_PCIE_RSCC				101
+> +#define GLYMUR_SLAVE_PDM				102
+> +#define GLYMUR_SLAVE_PRNG				103
+> +#define GLYMUR_SLAVE_QDSS_CFG				104
+> +#define GLYMUR_SLAVE_QSPI_0				105
+> +#define GLYMUR_SLAVE_QUP_0				106
+> +#define GLYMUR_SLAVE_QUP_1				107
+> +#define GLYMUR_SLAVE_QUP_2				108
+> +#define GLYMUR_SLAVE_SDCC_2				109
+> +#define GLYMUR_SLAVE_SDCC_4				110
+> +#define GLYMUR_SLAVE_SMMUV3_CFG				111
+> +#define GLYMUR_SLAVE_SOCCP				112
+> +#define GLYMUR_SLAVE_TCSR				113
+> +#define GLYMUR_SLAVE_TLMM				114
+> +#define GLYMUR_SLAVE_TME_CFG				115
+> +#define GLYMUR_SLAVE_UFS_MEM_CFG			116
+> +#define GLYMUR_SLAVE_USB2				117
+> +#define GLYMUR_SLAVE_USB3_0				118
+> +#define GLYMUR_SLAVE_USB3_1				119
+> +#define GLYMUR_SLAVE_USB3_2				120
+> +#define GLYMUR_SLAVE_USB3_MP				121
+> +#define GLYMUR_SLAVE_USB4_0				122
+> +#define GLYMUR_SLAVE_USB4_1				123
+> +#define GLYMUR_SLAVE_USB4_2				124
+> +#define GLYMUR_SLAVE_VENUS_CFG				125
+> +#define GLYMUR_SLAVE_A1NOC_SNOC				126
+> +#define GLYMUR_SLAVE_A2NOC_SNOC				127
+> +#define GLYMUR_SLAVE_A3NOC_SNOC				128
+> +#define GLYMUR_SLAVE_A4NOC_HSCNOC			129
+> +#define GLYMUR_SLAVE_APPSS				130
+> +#define GLYMUR_SLAVE_SNOC_GEM_NOC_SF			131
+> +#define GLYMUR_SLAVE_HSCNOC_CNOC			132
+> +#define GLYMUR_SLAVE_LLCC				133
+> +#define GLYMUR_SLAVE_LPASS_GEM_NOC			134
+> +#define GLYMUR_SLAVE_LPIAON_NOC_LPASS_AG_NOC		135
+> +#define GLYMUR_SLAVE_LPICX_NOC_LPIAON_NOC		136
+> +#define GLYMUR_SLAVE_MNOC_HF_MEM_NOC			137
+> +#define GLYMUR_SLAVE_MNOC_SF_MEM_NOC			138
+> +#define GLYMUR_SLAVE_NSP0_HSC_NOC			139
+> +#define GLYMUR_SLAVE_OOBMSS_SNOC			140
+> +#define GLYMUR_SLAVE_PCIE_EAST				141
+> +#define GLYMUR_SLAVE_PCIE_EAST_MEM_NOC			142
+> +#define GLYMUR_SLAVE_PCIE_WEST				143
+> +#define GLYMUR_SLAVE_PCIE_WEST_MEM_NOC			144
+> +#define GLYMUR_SLAVE_NSINOC_SYSTEM_NOC			145
+> +#define GLYMUR_SLAVE_CNOC_CFG				146
+> +#define GLYMUR_SLAVE_CNOC_PCIE_SLAVE_EAST_CFG		147
+> +#define GLYMUR_SLAVE_CNOC_PCIE_SLAVE_WEST_CFG		148
+> +#define GLYMUR_SLAVE_LPASS_QTB_CFG			149
+> +#define GLYMUR_SLAVE_CNOC_MNOC_CFG			150
+> +#define GLYMUR_SLAVE_NSP_QTB_CFG			151
+> +#define GLYMUR_SLAVE_PCIE_EAST_ANOC_CFG			152
+> +#define GLYMUR_SLAVE_PCIE_WEST_ANOC_CFG			153
+> +#define GLYMUR_SLAVE_QUP_CORE_0				154
+> +#define GLYMUR_SLAVE_QUP_CORE_1				155
+> +#define GLYMUR_SLAVE_QUP_CORE_2				156
+> +#define GLYMUR_SLAVE_BOOT_IMEM				157
+> +#define GLYMUR_SLAVE_IMEM				158
+> +#define GLYMUR_SLAVE_SERVICE_MNOC			159
+> +#define GLYMUR_SLAVE_SERVICE_NSINOC			160
+> +#define GLYMUR_SLAVE_SERVICE_PCIE_EAST			161
+> +#define GLYMUR_SLAVE_SERVICE_PCIE_EAST_AGGRE_NOC	162
+> +#define GLYMUR_SLAVE_SERVICE_PCIE_WEST			163
+> +#define GLYMUR_SLAVE_SERVICE_PCIE_WEST_AGGRE_NOC	164
+> +#define GLYMUR_SLAVE_PCIE_0				165
+> +#define GLYMUR_SLAVE_PCIE_1				166
+> +#define GLYMUR_SLAVE_PCIE_2				167
+> +#define GLYMUR_SLAVE_PCIE_3A				168
+> +#define GLYMUR_SLAVE_PCIE_3B				169
+> +#define GLYMUR_SLAVE_PCIE_4				170
+> +#define GLYMUR_SLAVE_PCIE_5				171
+> +#define GLYMUR_SLAVE_PCIE_6				172
+> +#define GLYMUR_SLAVE_QDSS_STM				173
+> +#define GLYMUR_SLAVE_TCU				174
+> +
+> +#endif
+> -- 
+> 2.34.1
+> 
 
 -- 
-Cheers,
-
-David / dhildenb
-
+With best wishes
+Dmitry
 
