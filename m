@@ -1,58 +1,92 @@
-Return-Path: <linux-kernel+bounces-733268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F98B07269
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:01:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6290B07270
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E175B5039C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:00:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F04537ACC7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B16E2F2708;
-	Wed, 16 Jul 2025 10:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11622F2716;
+	Wed, 16 Jul 2025 10:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="J+rSTzgs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hz0B7jlF"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E3C1E1A17;
-	Wed, 16 Jul 2025 10:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA281E1A17;
+	Wed, 16 Jul 2025 10:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660053; cv=none; b=n1sDab8EprFy6KUyLDtAhSqV5APivhZsWaVW4QHzs+B3cTLc0yKfrt2TPMV9d04ysNktsGv5+Mo0/IGALekRbXGwGPUMsOP6HQWua77NJ2tc3Mj6Vurg7BCA4Q+Ws3C+zW7VimuC+z8VCbb7Mek6XLH6JWjSk+WjpGow495v0Bg=
+	t=1752660096; cv=none; b=C/tY48rFd245VnYwCoZGs0b9iAJRYPQ8Z9p1eBcMyu/hWegPur0x1l/yZ8dmj6KfmuDpKbjjIpOcPByX5Ji9pi3Wmz1Wzn0eHzb3T3tEolUiAaMQzrCk1vRbbwBSEngh6/B0IBRFkAovySKVmm8KEPv4WTmJmCTex+exxkVXgrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752660053; c=relaxed/simple;
-	bh=G6lcWY0d1p8bWzM4tmGlqrNUUn72x9lcJMxsGMphNFM=;
+	s=arc-20240116; t=1752660096; c=relaxed/simple;
+	bh=F1e3od86GWp18tAJQqHphAbdUx2CQFKA8BOYukDggbE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SaBFQZZYCyY7ZcqUJYWmT4QtkX9qe+5dYsy61cQBuM7BKbbG4zb7AbsIXTyaGzSkv4ydm8CJcNTeOjsVMpjf2ZrZQiUEbq7V4bA7KzUcM8MaBkev4/jKpHV5adcVlWBZiEwfzZARiz9l2o5OMmLMHcs+6wHXas972kf4F0IhtNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=J+rSTzgs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E50DC4CEF0;
-	Wed, 16 Jul 2025 10:00:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752660052;
-	bh=G6lcWY0d1p8bWzM4tmGlqrNUUn72x9lcJMxsGMphNFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J+rSTzgs+wfKgcT66JRwYRyRdfyybjnYbuQAo18wRb3Sp8o6yMPoDzZRzrOn0JBoH
-	 SNExiblRDRK8U9bMhfqj4YWXVK/7GpxMbtA5C5hr4ijKxpS8Uha4mF/YhPq6r8C0bP
-	 VRRCoRDMRyKeaHpsL2ydtTlFkxngdpFbA2FjAW3I=
-Date: Wed, 16 Jul 2025 12:00:50 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Johan Hovold <johan@kernel.org>, Corentin Labbe <clabbe@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	david@ixit.cz
-Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
-Message-ID: <2025071639-annotate-huddle-0e11@gregkh>
-References: <20250204135842.3703751-1-clabbe@baylibre.com>
- <20250204135842.3703751-2-clabbe@baylibre.com>
- <aCHHfY2FkVW2j0ML@hovoldconsulting.com>
- <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
- <2025071631-thesaurus-blissful-58f3@gregkh>
- <CAFBinCAMGR2f4M1ARKytOwG1z9ORcD-OMNLH2FqZHb+tOm0tEQ@mail.gmail.com>
- <2025071613-ethics-component-e56d@gregkh>
- <CAFBinCA8cMP3o483c40RjHkMAEt4RCmL6uCTTk5DPmrNVN6_NQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hP2Os6TTvuovBO+I4k6XIfQF8kf5E9jcLupkBe2F74ZTcIUTfgbQPtnjghWLtMFOQ3PLF9n7rUbRa4U9ziMUA1LOArLxRsrbWaE0RCTyQtlhhM86w+MtBhl9a82Doiu9B46fiy2eiEqhUCDD0kir5Fn1JcyjQtXyISNKd1537M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hz0B7jlF; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b350704f506so619671a12.0;
+        Wed, 16 Jul 2025 03:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752660094; x=1753264894; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lBVUcNuqA3qfhYBvm1KQnYeeoyTvAgFUysKMSPuuX/Q=;
+        b=Hz0B7jlF8p5QPLuBB4wuFQXTD5rgKk6S9HfDiBjLrYX1+3ky7aSEwpguajasNP7wJW
+         aRLQvHGL6ATq5g5Yy6BvJ20D05OYCOknzWELeas1XBs3ajdibMMy4IeumZ9BEi1UaFAj
+         ssviTigb0bJReOzPIzCPGe7g3+jIstoFbe3HeEn22uNJlHlwOEsCZRdGs24LTAnpI5Kl
+         UyPvs6VX+lLkx80w3aEzmKxg+dspoUzXFjJqfKIl6uZJwUmQmwVH+/OIorXmaWQZaYnF
+         yAJOSbAMaZTxLwnk2ukBVhhsSHYfc4V3lfRetotS3aSPOg2EWvy7Nr0VeJtogojDHddw
+         zhlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752660094; x=1753264894;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lBVUcNuqA3qfhYBvm1KQnYeeoyTvAgFUysKMSPuuX/Q=;
+        b=EQD+dj+MgsDKpJi/bDnq/+IOhp7RJX5GkGPyHw496xW+cpjZvRT7W+OmXxBakSG3J1
+         df3+jxFHliPPtPDDS5nDiRTC21ic6a6NJkN4yi9dEaNPw6ef5APHpXapits2U04Frrgv
+         NEwEo+dQo45Ci0Wbu0n8RMrxBqzK+rRqrD34TceFN4Xfld3EwjSRcC8pqGyFz2UrBu/p
+         bk6csCO3GP2lgorEeFzEasSc0PBg8BICmDHNb10Bd42uD5U6yWW3Yv+NaJFbJDc/xDKI
+         /PvA+cpk0YV8r6eG+ho84X+nCVWQZZImVrOmE8pFI+3Wh+pLv8ttD6KNkj4DlIZlgMr7
+         ChZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXphPenjlfUup8gDpxj7op2VxmHq0CXfPGNC0gi+jeGZV+HRbv7LRGDuzED5miNbsoa8eW35KyJ6ujszpO+G19@vger.kernel.org, AJvYcCXMZWZZ83kvu5yNLzpWHW68kEthziks4fRSIi9PgaQ9geVFAo4akVVZFw7vu57Lj+gO4zKvcnqTIbY6Af8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQBTIn3+vm2aqGHrs/YrletB66PYqHYRUlNb+NIZ0jvRcqGVQ6
+	Ekg+2H4vkDboCNgVpqpL/oD7O0AX9o0S2IxPkVupj3HLTuwRtRuaCdbl
+X-Gm-Gg: ASbGncvOIcw+Hqf/uvxlTonlGVukvZvL+BnyDt32pYOfNTmncV7FAe7NR/FiHmCROUA
+	wPaPfPwOGo4LEyf2syFGnemHuiEI++hjP5b6PiT2VhaRBEWYLlC9r23T7YF2oGv3OCq2vqoLvOI
+	lyNH10kOHWFm8Wke6WPNU4mUx/fTooqENcJSiZQOIE7IBgvbGmTB1nC7ww5qtEMdiKI/s+uSvc+
+	Q23EyBJiw4qNcOP6F7AWh1Q6+bvUQeuB8RSvXwA7sEuH4yhG3kwtHSbspAV9ugK9rSWZLWl46wW
+	gaz2i4FRs9yMJvadT623L98PEM9IWvqYGxzHBoELxQmkX5dPnvAdIliTbyPF+6yQy9L3RoAHxRa
+	9SjQWlXT973fNjTT+iDUghGQkX8A=
+X-Google-Smtp-Source: AGHT+IGu0vl7a8IpcxbiAM6bYbghrCeBRJAqOGsujg3WsE9DK32zJWSkRhUg70YdqcXoa6xfK+v+pg==
+X-Received: by 2002:a17:903:1205:b0:234:7837:91de with SMTP id d9443c01a7336-23e1a4e4086mr103843035ad.26.1752660093710;
+        Wed, 16 Jul 2025 03:01:33 -0700 (PDT)
+Received: from fedora ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe727e33sm13665636a12.68.2025.07.16.03.01.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 03:01:33 -0700 (PDT)
+Date: Wed, 16 Jul 2025 10:01:25 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Jay Vosburgh <jv@jvosburgh.net>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 1/2] bonding: update ntt to true in passive mode
+Message-ID: <aHd4ddc1YzeT1lN3@fedora>
+References: <20250709090344.88242-1-liuhangbin@gmail.com>
+ <20250709090344.88242-2-liuhangbin@gmail.com>
+ <765825.1752639589@famine>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,147 +96,103 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCA8cMP3o483c40RjHkMAEt4RCmL6uCTTk5DPmrNVN6_NQ@mail.gmail.com>
+In-Reply-To: <765825.1752639589@famine>
 
-On Wed, Jul 16, 2025 at 11:31:49AM +0200, Martin Blumenstingl wrote:
-> On Wed, Jul 16, 2025 at 10:57 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Jul 16, 2025 at 10:28:22AM +0200, Martin Blumenstingl wrote:
-> > > On Wed, Jul 16, 2025 at 9:44 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Tue, Jul 15, 2025 at 11:20:33PM +0200, Martin Blumenstingl wrote:
-> > > > > Hi Johan,
-> > > > >
-> > > > > I'm excluding comments that are clear to me in this reply.
-> > > > >
-> > > > > On Mon, May 12, 2025 at 12:03 PM Johan Hovold <johan@kernel.org> wrote:
-> > > > > [...]
-> > > > > > > +     if (ret) {
-> > > > > > > +             dev_err(&port->serial->dev->dev,
-> > > > > > > +                     "Failed to configure UART_MCR, err=%d\n", ret);
-> > > > > > > +             return ret;
-> > > > > > > +     }
-> > > > > >
-> > > > > > The read urbs should be submitted at first open and stopped at last
-> > > > > > close to avoid wasting resources when no one is using the device.
-> > > > > >
-> > > > > > I know we have a few drivers that do not do this currently, but it
-> > > > > > shouldn't be that hard to get this right from the start.
-> > > > > If you're aware of an easy approach or you can recommend an existing
-> > > > > driver that implements the desired behavior then please let me know.
-> > > > >
-> > > > > The speciality about ch348 is that all ports share the RX/TX URBs.
-> > > > > My current idea is to implement this using a ref count (for the number
-> > > > > of open ports) and mutex for locking.
-> > > >
-> > > > How do you know if a port is "open" or not and keep track of them all?
-> > > > Trying to manage that is a pain and a refcount shouldn't need locking if
-> > > > you use the proper refcount_t type in a sane way.
-> > > >
-> > > > Try to keep it simple please.
-> > > I'm currently refcounting from usb_serial_driver.{open,close}
-> > > The additional challenge is that I need to open two URBs at the right
-> > > time to "avoid wasting resources". At least in my head I can't make it
-> > > work without an additional lock.
-> >
-> > Urbs really aren't all that large of a "resource", so don't worry about
-> > that.  Get it working properly first before attempting to care about
-> > small buffers like this :)
-> I understood that this is a requirement from Johan, he wrote (on May
-> 12th in this thread):
-> > The read urbs should be submitted at first open and stopped at last
-> > close to avoid wasting resources when no one is using the device.
-> >
-> > I know we have a few drivers that do not do this currently, but it
-> > shouldn't be that hard to get this right from the start.
+On Tue, Jul 15, 2025 at 09:19:49PM -0700, Jay Vosburgh wrote:
+> Hangbin Liu <liuhangbin@gmail.com> wrote:
 > 
-> The original approach was to submit these URBs in .attach (e.g. during
-> probe time) and kill them in .detach
-
-Ok, that's fine, but as you are multiplexing stuff, so reference counts
-are going to get complex.  I'll defer to Johan, but this seems messy.
-
-> > If you are sharing endpoints, try looking at one of the other usb-serial
-> > drivers that do this today, like io_edgeport.c, that has had shared
-> > endpoints for 25 years, it's not a new thing :)
-> My understanding is that io_edgeport is submits the URBs that are
-> shared across ports outside of .open/.close.
-
-Yes it does.
-
-sorry about that, I misunderstood Johan's review comments here.  I'll
-defer to him.
-
-
-> So this will be a question for Johan: am I still good with the
-> original approach - or can you convince Greg that a different approach
-> is better?
-> 
-> [...]
-> > > > > > With this implementation writing data continuously to one port will
-> > > > > > starve the others.
-> > > > > >
-> > > > > > The vendor implementation appears to write to more than one port in
-> > > > > > parallel and track THRE per port which would avoid the starvation issue
-> > > > > > and should also be much more efficient.
-> > > > > >
-> > > > > > Just track THRE per port and only submit the write urb when it the
-> > > > > > transmitter is empty or when it becomes empty.
-> > > > > I'm trying as you suggest:
-> > > > > - submit the URB synchronously for port N
-> > > > > - submit the URB synchronously for port N + 1
-> > > > > - ...
-> > > > >
-> > > > > This seems to work (using usb_bulk_msg). What doesn't work is
-> > > > > submitting URBs in parallel (this is what the vendor driver prevents
-> > > > > as well).
-> > > >
-> > > > Why would submitting urbs in parallel not work?  Is the device somehow
-> > > > broken and can't accept multiple requests at the same time?
-> > > I don't know the reason behind this.
-> > > These are requests to the same bulk out endpoint. When submitting
-> > > multiple serial TX requests at the same time then some of the data is
-> > > lost / corrupted.
-> > >
-> > > The vendor driver basically does this in their write function (very
-> > > much simplified, see [0] for their original code):
-> > >   spin_lock_irqsave(&ch9344->write_lock, flags);
-> > >   usb_submit_urb(wb->urb, GFP_ATOMIC); /* part of ch9344_start_wb */
-> > >   spin_unlock_irqrestore(&ch9344->write_lock, flags);
+> >When lacp_active is set to off, the bond operates in passive mode, meaning it
+> >will only "speak when spoken to." However, the current kernel implementation
+> >only sends an LACPDU in response when the partner's state changes.
 > >
-> > that's crazy, why the timeout logic in there?  This is a write function,
-> > submit the data to the device and get out of the way, that's all that
-> > should be needed here.
-> >From what I've seen during my tests:
-> - we fire the URB with TX data
-> - the device receives it and puts the data into a per-port TX buffer
-> - it indicates that it's done processing the URB
-> - the TX buffer is then written out (the host can move on do something else)
-> - the device signals to the host (via the STATUS endpoint) that it has
-> written out all data from the TX buffer
+> >In this situation, once LACP negotiation succeeds, the actor stops sending
+> >LACPDUs until the partner times out and sends an "expired" LACPDU.
+> >This leads to endless LACP state flapping.
 > 
-> With that timeout logic my understanding is that they're trying to
-> catch cases where the last step (STATUS signal) did not work (for
-> whatever reason) so that the host can continue sending more data.
+> 	From the above, I suspect our implementation isn't compliant to
+> the standard.  Per IEEE 802.1AX-2014 6.4.1 LACP design elements:
+> 
+> c)	Active or passive participation in LACP is controlled by
+> 	LACP_Activity, an administrative control associated with each
+> 	Aggregation Port, that can take the value Active LACP or Passive
+> 	LACP. Passive LACP indicates the Aggregation Port’s preference
+> 	for not transmitting LACPDUs unless its Partner’s control value
+> 	is Active LACP (i.e., a preference not to speak unless spoken
+> 	to). Active LACP indicates the Aggregation Port’s preference to
 
-Why can't the host just keep sending data?  Only "stall" if you don't
-have an active urb to send?  Or just keep creating new urbs for every
-send transaction and then destroying them when finished?  That way the
-data gets queued up in the kernel (have a max able to be allocated so
-you don't create a DoS accidentally), and you should be ok.  I think
-some of the other drivers do this, or used to in the past.
+OK, so this means the passive side should start sending LACPDUs when receive
+passive actor's LACPDUs, with the slow/fast rate based on partner's rate?
 
-> > > If you have any suggestions: please tell me - I'm happy to try them out!
+Hmm, then when we should stop sending LACPDUs? After
+port->sm_mux_state == AD_MUX_DETACHED ?
+
+> 	participate in the protocol regardless of the Partner’s control
+> 	value (i.e., a preference to speak regardless).
+> 
+> d)	Periodic transmission of LACPDUs occurs if the LACP_Activity
+> 	control of either the Actor or the Partner is Active LACP. These
+> 	periodic transmissions will occur at either a slow or fast
+> 	transmission rate depending upon the expressed LACP_Timeout
+> 	preference (Long Timeout or Short Timeout) of the Partner
+> 	System.
+> 
+> 	Which, in summary, means that if either end (actor or partner)
+> has LACP_Activity set, both ends must send periodic LACPDUs at the rate
+> specified by their respective partner's LACP_Timeout rate.
+> 
+> >To avoid this, we need update ntt to true once received an LACPDU from the
+> >partner, ensuring an immediate reply. With this fix, the link becomes stable
+> >in most cases, except for one specific scenario:
 > >
-> > Try keeping it simple first, the vendor driver looks like it was written
-> > by someone who was paid per line of code :)
-> The original approach when upstreaming the ch348 driver was just to
-> submit TX URBs (without any custom code, just letting usb-serial core
-> handle it).
+> >Actor: lacp_active=off, lacp_rate=slow
+> >Partner: lacp_active=on, lacp_rate=fast
+> >
+> >In this case, the partner expects frequent LACPDUs (every 1 second), but the
+> >actor only responds after receiving an LACPDU, which, in this setup, the
+> >partner sends every 30 seconds due to the actor's lacp_rate=slow. By the time
+> >the actor replies, the partner has already timed out and sent an "expired"
+> >LACPDU.
+> 
+> 	Presuming that I'm correct that we're not implementing 6.4.1 d),
+> above, correctly, then I don't think this is a proper fix, as it kind of
+> band-aids over the problem a bit.
+> 
+> 	Looking at the code, I suspect the problem revolves around the
+> "lacp_active" check in ad_periodic_machine():
+> 
+> static void ad_periodic_machine(struct port *port, struct bond_params *bond_params)
+> {
+> 	periodic_states_t last_state;
+> 
+> 	/* keep current state machine state to compare later if it was changed */
+> 	last_state = port->sm_periodic_state;
+> 
+> 	/* check if port was reinitialized */
+> 	if (((port->sm_vars & AD_PORT_BEGIN) || !(port->sm_vars & AD_PORT_LACP_ENABLED) || !port->is_enabled) ||
+> 	    (!(port->actor_oper_port_state & LACP_STATE_LACP_ACTIVITY) && !(port->partner_oper.port_state & LACP_STATE_LACP_ACTIVITY)) ||
+> 	    !bond_params->lacp_active) {
+> 		port->sm_periodic_state = AD_NO_PERIODIC;
+> 	}
+> 
+> 	In the above, because all the tests are chained with ||, the
+> lacp_active test overrides the two correct-looking
+> LACP_STATE_LACP_ACTIVITY tests.
+> 
+> 	It looks like ad_initialize_port() always sets
+> LACP_STATE_LACP_ACTIVITY in the port->actor_oper_port_state, and nothing
+> ever clears it.
+> 
+> 	Thinking out loud, perhaps this could be fixed by
+> 
+> 	a) remove the test of bond_params->lacp_active here, and,
+> 
+> 	b) The lacp_active option setting controls whether LACP_ACTIVITY
+> is set in port->actor_oper_port_state.
+> 
+> 	Thoughts?
 
-Ah, and what happened with that version?  Did it not work?
+As the upper question. When should we stop sending the LACPDUs?
 
-thanks,
-
-greg k-h
+Thanks
+Hangbin
 
