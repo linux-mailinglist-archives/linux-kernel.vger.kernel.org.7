@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-733891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70E3B07A49
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FB5B07A4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE521189335B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:49:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24DA61897C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DA62EA14E;
-	Wed, 16 Jul 2025 15:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0572F5C4B;
+	Wed, 16 Jul 2025 15:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KFBA4PxH"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YeFCOxI+"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13C32EF646;
-	Wed, 16 Jul 2025 15:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA142EFDA0;
+	Wed, 16 Jul 2025 15:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680896; cv=none; b=vAsoSQQ8+oh2m3ABBnSAVPyO7BJDh7FMMkXfnZIKwRBLMPE6hhIRUakJzYx5K7/8S+l8SGiez/LVvda8K082CNWNkqXo8+gkKOMaGmS4T7iHDG7tVG4zgn2/lJtBBHr00cuUyve0pklmY6lJhgEfJJKjNUoBJ1OVO5M/LsplNWE=
+	t=1752680899; cv=none; b=d4oFopOQTuusj05NXdOvQirGR0c7RTN9sfn0pRK4qP0J5/TTx4RE7ZVOXu5v5BJlgA4iOaQxbZWHYzfkZaPeR5Wa4bVP/OO6cofa/higVU6pWnHYu69sdzNx+oW4Ej2Weh15nGnQFFIl0nm2VC6zw1wktE+cEYxBkB0xVCT0PPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680896; c=relaxed/simple;
-	bh=GOkZ+kxSzALlySorLSCA6cXsPChjBJFPrqHDc+rhD6A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A/VavQlXxqUa2E6GoaRQtUWNJePqXSJi19L2Cjd+s0gXwMH4IRYuuZsQbk/F7+799astQqB0hSOgStT8FSqGXwN4uCDnYI7GZesZwoLNTYtTWdF+KJJGa5xDp2A9ge44KztoDsPkb3XUGmPxQnWeyMX5WgVGiS44qY9hoBUgSvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KFBA4PxH; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1752680899; c=relaxed/simple;
+	bh=KPPLhBl4MQOOqUtzFDuqHAu4KG2FSZigpCahI9GPht0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DTaVXV+5KwfuJhB2Pn3Aknx/g0lX4G7k9folVkliF0cyjwGq8Qr7o8/n8U0U43J/VCqWPb8LA2TiAnLPdG31ZrxRrUMxZze7E5sM3EQQynI97ZrSR5slPVtF1i+vFDGwHZfuYkvjRKNhorqRES5YhKaZZlvjoGsXK1GXLMBNxX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YeFCOxI+; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60c5b7cae8bso10936349a12.1;
-        Wed, 16 Jul 2025 08:48:14 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60c79bedc19so11824344a12.3;
+        Wed, 16 Jul 2025 08:48:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752680893; x=1753285693; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lKjVbstUaXUkfpWGZfi4yqhbObtoazSimLO3Mc4PdaA=;
-        b=KFBA4PxHxSHdlTsfkV/U33yuR/IbUe30pCqbnw/BznE18+oRZ5gJQSHVb9ZOJV3I9X
-         9KEZo7YU7uJebjCQjQYwUT6b9jackx6Ld7oDhry0DxOa6+nNrdA4M7TUL5oEMPiOPrzI
-         jrAPYjdZx8dVUrRI6YRr9fYOv9/TCSRlKe8qwCBX95wqgjMFahlZondjQcYLbfkuTTpT
-         caX8Efg9G1RaUIbWaKqUROhR5bMrhs2pLvpuF46iF18o29fI+a5qik6vubgyrlPvpYWK
-         i3MQU4Y4nQbjNylK59p9ypj58CGswj2/2VzZDbNVC8edG+tr2ESEPlmAzwpr2Zk9I0Mk
-         tlhg==
+        d=gmail.com; s=20230601; t=1752680895; x=1753285695; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nrltEk6+3hF6VsUp3/raIH9c76LdjZyg5wwwr6SNNp4=;
+        b=YeFCOxI+65L7n2pUhbyBTqQuqEBs1ZvGDS9FLoDBgKdnQ/tLhfQGQzfUq/5jHRQ0Jn
+         d9ffP5DTrtsWO85fhV6mdWlzfrwnF7sntS4RbYIRhEDPpy/SRFE+OM65trQYhoV+pEly
+         GgDpYbWOFgx+AzfBQRZPurQ+qcSj0AtDiwxVulSNmbZfFWJUETbcd57w+umJjcn7rYCp
+         32jwo2iOgaxYPluky9zCHLJFZYPtVjha0FE6PjCw4sJmSunXXVghV3wz/fT2o562gNU1
+         lv8lKEQ7gIuQk5xLW9bGWS/Bs0NZmqBPDS8XO+7MOSSJTyH95BsM75590+RxTKcCy8ly
+         8o5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752680893; x=1753285693;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lKjVbstUaXUkfpWGZfi4yqhbObtoazSimLO3Mc4PdaA=;
-        b=PEE4jPKVw/antCrL76KAlRauxVQAb9O9gBWdKNeaV508siRr9vRe2JJ3nP9pqqiOYa
-         4BflxR0ixHV7M37oTVBV2MZX2fljZM+1gv76Xp1UXmLQbxes9ELh8UlvmGNZjIGWw4B9
-         tkA/2ISPO4o0hNTGz655vDcHpwdssWmdhjzrMPakfDiXMLQyQobwW0xTSoXgSAmKdyg4
-         zeCW6kGOeUa4f3y6O0/f76R+cadkHtKaGChYfhHMnRSj/MNOocZ2tzh5k0AGGy3qG04Y
-         BNJSzzBApJffD6EuwOFd2a95WCeedOLoyl1a0KptPflP8xDXKpt2RsptMFUdpL2+9ARh
-         GmlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJe9vv04CiGEPsrEaXuXx4weYLL46VG66mUGR3XAzNWQvSz1BOe1PYDTGZ9IcM5xzTPrKLe7y3YP9zZcol@vger.kernel.org, AJvYcCXrtYnRZZWWxmj948aQZfc0MvPsoI/6ZSAhGaVrp2BO0ZUXnSbkRAp+1dnattMSoXpl1hGf5Saw+Wdy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp1Dc55PWpMZTwNuyg3P5uDQ7r4HrAUEMiqmUBiSBApdBdLZre
-	+P5vJHSK2nPuXAPqxAGJe5Z5Kv/DvAdCiMZaIE2vRNqztRgnedUhiR2e
-X-Gm-Gg: ASbGnctmVWvUSwG66nGvoR2T5AodRTfB4HGz0g39HZ0uyoKGPuq8EsDOE50LSvORcHq
-	iCXasukUHLQh70ywE/Fh91vsHPI3Iz5qWTpZiwQxPLSJ3kZidZhBfj0PHucTjgJZGLxm2ReEPnw
-	pKqic54k9TMRgTBR5DEFTJGJORqDee1Hhhikvr8Jrbnr2qoeGs8V6q9AABBHpP413kPfRbTEkhJ
-	XhWraRjdSzubxTbEC1BfUgTEhenk+6RVWBihqav0yfgtYVXrJ80SJuD5kqOzI6O2CCFy8BEXY/4
-	oZ/0mGWa5hPEKiyoqLuPmydX5UDSyyP9a/K00iXRYX/SqR5MKU1u2SbWa8e24+bbNoTJBnWawLn
-	gIrXMawRsVTuLFgmsbxNCOGMYHA==
-X-Google-Smtp-Source: AGHT+IFex17gwksYmEfwRekLYMBaX4AofLHIu+ZY9di4Kvn6YVkKnhCVyoBbL95UX6lWR4Ue7UJ9Pg==
-X-Received: by 2002:a17:907:d24:b0:ae2:9291:9226 with SMTP id a640c23a62f3a-ae9ce1e71b1mr337656766b.59.1752680892887;
-        Wed, 16 Jul 2025 08:48:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752680895; x=1753285695;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nrltEk6+3hF6VsUp3/raIH9c76LdjZyg5wwwr6SNNp4=;
+        b=kwC2IHeq57G5uwswLsIXwIB1iLrIKbsvCm8cxhe9hWptOtzRVPX8iedWgZlP9vOWYX
+         ozxjkMbHtWm93RhG3YFftjC4cz4erWA03P4rnGHpzY2Iu8PZOWDvxRQNXjnmMbdwROvc
+         t8gDjyz8RLxZn5yRKgA1EKC/rXlNq8NMgHbcAeTCp2hCS1QqIUeTgBAJepodjVvNg1Ja
+         +CfkrsfPH5rj8NyWdFZ4KUbBT1+FgUeyeKfyNrP0ImV1fJ7eKu/qbDn9hwoyQfl2cnfm
+         dV0Giwz/5H4CDYrJA+OPG3Oax+vLsWyYLRR3HPJRGMcqp00lhxbf6lfxbZ8GmyZihvP0
+         Qz/g==
+X-Forwarded-Encrypted: i=1; AJvYcCX6kNDsYwD3C7mg2ZtA+OiBSndN6IiF3F8icnf9qs6B5KtzMVVwFmsTC5jRqdzISN1+cGSRCgJbb9Bh@vger.kernel.org, AJvYcCXMFkW9ab6YuIawZUfSpN9wrRxDbwnODAugYgRNUMk4xnsfJkD2DPS5xD+IbKI3HhfMhG0IXF3qZX3IEXfr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwllwGyH3yvdxS57KLm1I2ZAhe6PPOoHx4kya7vgmlNLVP0DLV
+	hJWsOVyRW6DmeP85eAl0en/B3FTtkdnzOs37G9R+C7t+iV2XgiUps59a
+X-Gm-Gg: ASbGnctoOkBd9+p4UXqqjHGJp3rj4MOY5YJgnXb3QL1Y3Rpk6dgROlX8+03WI0Zf5uO
+	gsz1ARnv0nX03YFJKw98GPvvW0tvJYnMqsGdbgxhzsRQrnYGpJUK7BxyWTdgQHyLVO4NfStACCd
+	9v7Eu7gxY6ZI67aBRpHpVN27Qt/K0dZ1nXQ2j94JgcFYKgf6ey6ZJ2EykoOhZ9jdwIepqAQcP/3
+	IgTq/SGPTyiw/49CckWKH5VdI9C45xqY2IQfCBZ0oQxdJC+aJnbHyJ9CHR6mqQ2PYVNl1bb2d9G
+	u0BU4ZSLLaoM/tx1Co6crgf0YFjOBV+i6abrKIGJ7qlKblEmMtBx/yhgqCWzvWL8GcBs7UzDTD5
+	PSrvfkvOJUd20NFV3hWQbtuOHEQyM56/LsP2b
+X-Google-Smtp-Source: AGHT+IE8vN8iDrpEck2ZL8pFvrdx9RHifPaHz77OU0YQTwxeYuEHRH4jGkcTFVSWayZ6ccRSNRHHTA==
+X-Received: by 2002:a17:907:cb81:b0:ae9:c494:1ade with SMTP id a640c23a62f3a-ae9ce199db0mr319557666b.53.1752680895141;
+        Wed, 16 Jul 2025 08:48:15 -0700 (PDT)
 Received: from wslxew242.. ([188.193.103.108])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8293fe7sm1196705266b.123.2025.07.16.08.48.11
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8293fe7sm1196705266b.123.2025.07.16.08.48.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 08:48:12 -0700 (PDT)
+        Wed, 16 Jul 2025 08:48:14 -0700 (PDT)
 From: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <goran.radni@gmail.com>
 To: Frank.li@nxp.com,
 	robh@kernel.org,
@@ -85,10 +87,12 @@ Cc: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <goran.radni@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 0/3] arm64: dts: Add support for Ultratronik i.MX8MP Ultra-MACH SBC
-Date: Wed, 16 Jul 2025 17:48:03 +0200
-Message-ID: <20250716154808.335138-1-goran.radni@gmail.com>
+Subject: [PATCH v5 1/3] MAINTAINERS: Add i.MX8MP Ultra-MACH SBC to ULTRATRONIK BOARD SUPPORT
+Date: Wed, 16 Jul 2025 17:48:04 +0200
+Message-ID: <20250716154808.335138-2-goran.radni@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250716154808.335138-1-goran.radni@gmail.com>
+References: <20250716154808.335138-1-goran.radni@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,76 +102,33 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This patch series adds support for the Ultratronik i.MX8MP-based Ultra-MACH SBC.
+The i.MX8MP-based Ultra-MACH SBC is supported by Ultratronik, and its
+device tree has been added under arch/arm64/boot/dts/freescale/.
 
-The Ultra-MACH SBC is an industrial-grade single-board computer based on the NXP i.MX8M Plus SoC. This initial support includes:
+To ensure proper maintainer coverage and notification of relevant
+changes, add the imx8mp-ultra-mach-sbc.dts file to the existing
+ULTRATRONIK BOARD SUPPORT section.
 
-- Updating the MAINTAINERS file to include the new board in the Ultratronik support section.
-- Adding a compatible string entry for the board to `fsl.yaml` in device tree bindings.
-- Introducing a new device tree source file `imx8mp-ultra-mach-sbc.dts` with basic hardware support.
+This follows the established pattern already used for the STM32MP157C-
+based Ultra-FLY SBC.
 
-This series is modeled after the support added for the STM32MP157C-based Ultra-FLY SBC and aims to follow the conventions used for other i.MX8MP boards in mainline..
+Signed-off-by: Goran Rađenović <goran.radni@gmail.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v2:
-  - Use `enum` with `const:` values in fsl.yaml to correctly represent multiple compatibles.
-  - Updated SPI child node name to use the generic `nfc-transceiver` per DT naming conventions.
-  - Renamed several peripheral nodes (`crypto@35`, `pmic@25`, etc.) to standard names.
-  - Minor formatting cleanup and compliance fixes per review feedback.
-
-Changes in v3:
-- Added "ultratronik,imx8mp-ultra-mach-sbc" to the shared i.MX8MP enum block in `fsl.yaml` [1].
-- Ensured the compatible entry is validated by the existing binding structure.
-- Updated `imx8mp-ultra-mach-sbc.dts` to address review feedback from v2 [2], including:
-  - Proper formatting and indentation fixes.
-  - Cleaned up node ordering and property alignment.
-
-Changes in v4:
-  - Moved `status = "okay";` to the last property in the TPM node.
-  - Fixed indentation of `cs-gpios` multi-line property in the ecspi2 node.
-  - Removed an outdated comment.
-
-Changes in v5:
-
-  - Reordered and grouped pinctrl-names and pinctrl-0 at the top of nodes for consistency.
-  - Removed redundant status = "okay"; from TPM and NFC nodes, as their parent nodes already enable them.
-  - Inserted required newlines between properties and child nodes (e.g., in ports {} block).
-  - Cleaned up minor formatting and property order issues in regulator and gpio-leds nodes.
-
-No functional changes otherwise. Patch series is based on feedback from Frank Li, Krzysztof Kozlowski and Shawn Guo.
-
-Thanks for the reviews!
-
-Link to v2 DT binding discussion:
-[1] https://lore.kernel.org/all/578ea477-c68c-4427-8013-550bf4f9c05b@kernel.org/#t
-
-Link to v2 DTS review:
-[2] https://lore.kernel.org/all/aEmh7VL7BHkXp5Fu@lizhi-Precision-Tower-5810/
-
-The board is based on NXP's i.MX8MP SoC and includes eMMC, LPDDR4, USB-C, Ethernet, and HDMI.
-
-Tested with:
-- `make ARCH=arm64 dtbs_check` (passes)
-- Boot tested on hardware
-
-Best regards,  
-Goran Rađenović
-
-
-Goran Rađenović (3):
-  MAINTAINERS: Add i.MX8MP Ultra-MACH SBC to ULTRATRONIK BOARD SUPPORT
-  dt-bindings: arm: imx8mp: Add Ultratronik Ultra-MACH SBC
-  arm64: dts: imx8mp: Add initial support for Ultratronik
-    imx8mp-ultra-mach-sbc board
-
- .../devicetree/bindings/arm/fsl.yaml          |   1 +
- MAINTAINERS                                   |   1 +
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../dts/freescale/imx8mp-ultra-mach-sbc.dts   | 907 ++++++++++++++++++
- 4 files changed, 910 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-ultra-mach-sbc.dts
-
-
-base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 60bba48f5479..0ab09226e0aa 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25450,6 +25450,7 @@ M:	Goran Rađenović <goran.radni@gmail.com>
+ M:	Börge Strümpfel <boerge.struempfel@gmail.com>
+ S:	Maintained
+ F:	arch/arm/boot/dts/st/stm32mp157c-ultra-fly-sbc.dts
++F:	arch/arm64/boot/dts/freescale/imx8mp-ultra-mach-sbc.dts
+ 
+ UNICODE SUBSYSTEM
+ M:	Gabriel Krisman Bertazi <krisman@kernel.org>
 -- 
 2.43.0
 
