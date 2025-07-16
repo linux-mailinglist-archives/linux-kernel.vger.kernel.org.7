@@ -1,148 +1,122 @@
-Return-Path: <linux-kernel+bounces-733317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18945B07320
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:18:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3981AB07324
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1628D7AD21B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:17:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CF2417AF5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE53D2F4309;
-	Wed, 16 Jul 2025 10:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0672F2C5A;
+	Wed, 16 Jul 2025 10:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MU4cvV9D"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="McWX6sSF"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A7F2F363D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17952F272B
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661027; cv=none; b=d3PloJpmyMNOmzHMIHrTJ9embg4uO9G4ih0RPtpvTd244nO2nloj+aDNNpzvjh+CUhpfZe8pLyCDuvVvBCG2f2MvS2feU/XRwp7e6PqMTWGzPzSdjgRsR/g6zj+Bq1RJ10wzGy9TPwJNTF87Dk50t4AmyLbKJlNkMNBi3BGnfME=
+	t=1752661036; cv=none; b=erG5s8Qg/Pu0Z4fhpfKPZcFUBgnDHwTc3uTr+HRwjD9bKhYDbWq91LmPXeO4SjF9S9GzzPddgbwHpsM2g+rGqUGOFn8R5gi3OneUJx5kj6ZcdJ0MBYetjUHQxoFs+Js0M8UfeIKazSDDRZaxbN+fvvLJg1ypg8dpwbvCmdLL+GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661027; c=relaxed/simple;
-	bh=96AIiKafW5Ss/eN27DKKDqLBLqFsLnsuhXOTJ2lFR0w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NiFLZTCZLyI0bYvRmNB7SxrYTVukM/pzJZ4vIlEYs8MLu7rE/Kz2ZEOkZaNUSm1bXfj6IKjJwhEZ/5Oewyawev+zkSsaRl5j2zLLE6e4dE4rCkYmQlFnEfNpmLejtTWmb1Swx9Et6cq8t0nE2AENbWJKLELqZuFm6pQWolq+xi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MU4cvV9D; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752661024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SSG5PjOM1vuacWsSNMsK+egpHtJUvGDNlOP+EjzmQwI=;
-	b=MU4cvV9Dk2MEGUpMdXDZpbuV1F49/ux9pxse24Sa40Sw2PhlFXFjIV3hWFg2DtaO/Zc3NG
-	pz0meuuLpLwW6ZjLEdjArB2KNqjnSZVWCDJZxaPysc9rEG07nN7tWmB2Qeu2/8aprt5eIU
-	bWKCOjSnB9UGEdg9ZWMb3ipyOnQ76EU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-jJPRHZXWNNmPYfKs_-Bh7g-1; Wed, 16 Jul 2025 06:17:03 -0400
-X-MC-Unique: jJPRHZXWNNmPYfKs_-Bh7g-1
-X-Mimecast-MFC-AGG-ID: jJPRHZXWNNmPYfKs_-Bh7g_1752661022
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4561dfd07bcso16894105e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:17:03 -0700 (PDT)
+	s=arc-20240116; t=1752661036; c=relaxed/simple;
+	bh=1A8o6kRiuW8vyC3o1Wr9Kb7XB1aNcDzaBk0lVQcSk2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lNeQF/JMe7MYEx6GebNTPL0dPjT7UubH13FGmkAd81s9zrKDTyMog2chUnGZkrHhuPQsEVFQ2uzTGUs7n9fc0RGwo4iFkUZ4PrjFId2NHRWTM2XFHM8E3FWWTNMgcfi2EZ7EqSZerSrEbLOWlrc2yPLtA4U8uayEr1RN2dGswJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=McWX6sSF; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-553ba7f11cbso6448016e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752661033; x=1753265833; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C/rjLstk9J7bxXZhoSGr3W2khQJ7prtVRovXZQWjOE4=;
+        b=McWX6sSFKsScnf6RV2B6zI5Y/9+BQ5nyiOsvRDPHBvq9uiJJXn4tGV2ULbMueX1Lt7
+         Msie76iy0L3q2HGWmXYeFzR5vzM94yawqRJUvaylWARNVBeAFMfZ3UmUel1kzOWzqd13
+         8kRwKQG+d36S/Fg/dY3Sk/Wf4RmX2KyjXgjG9tOnX2WwpK+A3P+VHLjqasafoMwGHiEa
+         5Msl5wPJRcS5mJu3Ds65wXZcnUJFgvIhBPqlHIx3BzHh/Ap0payY6SdgxhCnQhxpKZOI
+         ZSx72c0Thg7lTkyAOF9izId8ncpqDc2bq4we/FPwRRDXGTSqlflvDOQUIM1cbFqo/4FN
+         J0hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752661021; x=1753265821;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SSG5PjOM1vuacWsSNMsK+egpHtJUvGDNlOP+EjzmQwI=;
-        b=APYD/cqYhOAcPW2jNMPlnOUYwEzd5IlhnFYNjFO57wiPc9RViVjos7rbDfTLR2lTcu
-         VD44zbcd4duK4YaLBwDBTkKdhcm7pUq43Diwpj1lJ/6kYDMSibcA+To+SxzITPrhX0iQ
-         xe99umaAr8P4NslZn5T0rfM09mLYM0j8uXhHiFD9fD8Ny96WT9Ptq9lVhmqE0XPiDFZ6
-         wTOJBOYTQDdSLqfyMlG0OgI0kBxGZ6D8l8WTYizLg0PvyQrKIq8EDF5ujHISS986J+Ln
-         uN7f7LNe6kV7fTBd5kO9/SRPuCEMFAI1TFbvPMmx8ZLdb5Gt1Xzpk9wc3TmI5vUvhDlv
-         Tcfg==
-X-Gm-Message-State: AOJu0YwFUBueWLR5BzlTDZWi3yKY19o5NHkcZplyXJOzcTE7k0UXApt6
-	pS+hESENVSHaeKl1khE4qUss82hW1cJE32s8WyDeAyEXNFwyn8K4zocLk7A5JEagqerPEoT/dHR
-	SSS4soK+cm75irSl578pjpqAYJCyqIDwUgF0YdMWPQ2WpVEcbFM+OrLU2ePF4gTodpWLOEZbY5C
-	BvnHaj1lzMCmOGKzhGfWpfLeJqOjnx5AKvcr219d2hPRJ7wx1r0D+2
-X-Gm-Gg: ASbGncuYnuuUXGe3yal3aJp6vIUX9DEF0HSy/locBdWHTGTtEaV0dyj7HqD6Xe9ZyY3
-	jZUuXNmpqXuxFVFUvxXHP5xJrDBouNNvBM6Zet2kN2H3LRZl6o6YWw1nT/kqCwRyMuLFcGQXoDK
-	DQyugZib0kF0qqwevAaxdK8BKrfMQgfhWrBTn9baejCvpUh4VYnMc3fr5XKQptXHgBrnBcAq8/3
-	oRlMkzwapetlIImzXlnsEJDzhLjPmLYbA8w+vXFTrOIyIfIE4Mcx2bja7jD2UJ1cQ1+oDeXaMUy
-	BKCCacv78YQPfYu3wLkrGADu1bkSvQnx4kfbEZADqvjPPcCyM5ks1vXFf4yNPCwIkQ==
-X-Received: by 2002:a05:600c:3b29:b0:456:2ac6:cca4 with SMTP id 5b1f17b1804b1-4562e34bad0mr20159315e9.13.1752661021279;
-        Wed, 16 Jul 2025 03:17:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXeNswO26008TyCVbd1BrUc5pJw0QJ11lHj1/vBSnGgP+du3DSrXSLyMDTcfCk1ml8cEQtJA==
-X-Received: by 2002:a05:600c:3b29:b0:456:2ac6:cca4 with SMTP id 5b1f17b1804b1-4562e34bad0mr20158905e9.13.1752661020728;
-        Wed, 16 Jul 2025 03:17:00 -0700 (PDT)
-Received: from localhost ([89.128.88.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e82cf22sm16587455e9.26.2025.07.16.03.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 03:16:59 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: ipedrosa@redhat.com, Conor Dooley <conor+dt@kernel.org>, David Airlie
- <airlied@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Marcus Folkesson
- <marcus.folkesson@gmail.com>, Maxime Ripard <mripard@kernel.org>, Rob
- Herring <robh@kernel.org>, Simona Vetter <simona@ffwll.ch>, Thomas
- Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 0/5] drm/sitronix/st7571-i2c: Add support for the
- ST7567 Controller
-In-Reply-To: <20250715110411.448343-1-javierm@redhat.com>
-References: <20250715110411.448343-1-javierm@redhat.com>
-Date: Wed, 16 Jul 2025 12:16:58 +0200
-Message-ID: <87y0sobftx.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20230601; t=1752661033; x=1753265833;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C/rjLstk9J7bxXZhoSGr3W2khQJ7prtVRovXZQWjOE4=;
+        b=MOSXEHmeq6EmanNIUA+B6DL/a432YqJduddWJmDyJxCaW2cHIdxJuiTPLmYhfNyRZu
+         DZOrxHvumIe9d9AVDb69AFknTk3qDma5LrggPsZRHq6febRNDFkOqflALND6jGBdN9Wq
+         r9HeUCAWe7VBUqq5o3ens2DVPqmo/jTldGJNxzfSdMXgWqSSKLZ34dr6AEK8S474uFJx
+         0uayANGV20+O30e2RIEzJJKxg0erTRLQ8/Yl7H4cRRAnY4DTNpRW13CK78IpEr3Gr+Wl
+         nZa3q3pRa2Wffcize2A6nu8u3HXWEVq8BZEIayK/FiInSoON3/Xnpz5FZpzeSxTwvjUF
+         6R+w==
+X-Gm-Message-State: AOJu0YzbBEwqE7ayiUkQGzpPZGoaonNu+xuMUKQQL5nXVS+vIDvb4MJ1
+	GqQRuzkfahAu8OMUdD7S+S/ohl8lbpS4dFgn+6/YomDGjW2ee6inuobZKTPvEw==
+X-Gm-Gg: ASbGncvuDKaJJYeKVkEeNZniVhaLYXad7+3r0ePfKaW/mNt8Wgw14UL8m2kusNgUr9o
+	jp04VunrGBdOK+NzOQhl10fwopdE3O5yKnp8D9DidFEpXiRx6YrALLNguoRrCaJF4HiRXb0PfQP
+	8ip5CfynmQaC6QCGoKUCp+0vEVjbJq8R1Sw8mvRhru6OPlL7JcrOlfCf5FgJySK7CxZhPebHizw
+	eA7Pa9UJOJuBCKJOoXeLBRFb1MyonwVP/SB+0GkPlchG+q2drC+X39cdcEFD2RqjoBt3xE/T53c
+	XOsMz8nL0QI2wElpJeBzUVCwV/ewbzD9rZWViSPGnOAaJ2T4nSOUHMRvXNKoab8TnNefzyJ7zmn
+	fZWpqQlR2GRvBiI90NWz1dQkjJM2A62DAt5k=
+X-Google-Smtp-Source: AGHT+IH+nzz6UA6RHD59VDllRdFf1NJTE7sdxALnNy3mT1iRo7gb7xE8BLzehOi9TxmlSqReQwaXXg==
+X-Received: by 2002:ac2:5d47:0:b0:553:25e4:274b with SMTP id 2adb3069b0e04-55a2339d5e5mr676354e87.41.1752661032532;
+        Wed, 16 Jul 2025 03:17:12 -0700 (PDT)
+Received: from [192.168.0.131] ([194.183.54.57])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c9d0b42sm2605220e87.136.2025.07.16.03.17.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 03:17:11 -0700 (PDT)
+Message-ID: <531a8d30-3cfb-4803-ba46-16c13d7694f4@gmail.com>
+Date: Wed, 16 Jul 2025 12:17:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: Are LED functions strings or uint32 in
+ Documentation/devicetree/bindings/leds/common.yaml
+To: E Shattow <e@freeshell.de>, Pavel Machek <pavel@ucw.cz>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <91d71a35-bb22-4482-8b49-398899ee37ae@freeshell.de>
+Content-Language: en-US
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+In-Reply-To: <91d71a35-bb22-4482-8b49-398899ee37ae@freeshell.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Javier Martinez Canillas <javierm@redhat.com> writes:
+Hello,
 
-> This patch-series adds support for the Sitronix ST7567 Controller, which is a
-> monochrome Dot Matrix LCD Controller that has SPI, I2C and parallel interfaces.
->
-> The st7571-i2c driver only has support for I2C so displays using other transport
-> interfaces are currently not supported.
->
-> The DRM_FORMAT_R1 pixel format and data commands are the same than what is used
-> by the ST7571 controller, so only is needed a different callback that implements
-> the expected initialization sequence for the ST7567 chip and a different callback
-> to parse the sub-set of DT properties needed by the ST7567.
->
-> Patches #1 and #2 are some trivial cleanups for the driver.
->
-> Patch #3 is a preparatory change that adds the level of indirection for the DT
-> parsing logic.
->
-> Patch #4 adds a Device Tree binding schema for the ST7567 Controller.
->
-> Patch #5 finally extends the st7571-i2c driver to also support the ST7567 device.
->
-> Changes in v3:
-> - Fix reset typo in commit message (Marcus Folkesson).
-> - Explicitly set ST7571_SET_REVERSE(0) instead of relying on defaults.
->
-> Changes in v2:
-> - Use a different parse DT function (Thomas Zimmermann).
->
-> Javier Martinez Canillas (5):
->   drm/sitronix/st7571-i2c: Fix encoder callbacks function names
->   drm/sitronix/st7571-i2c: Log probe deferral cause for GPIO get failure
->   drm/sitronix/st7571-i2c: Add an indirection level to parse DT
->   dt-bindings: display: Add Sitronix ST7567 LCD Controller
->   drm/sitronix/st7571-i2c: Add support for the ST7567 Controller
->
+On 7/16/25 05:19, E Shattow wrote:
+> Hello,
+> 
+> Documentation/devicetree/bindings/leds/common.yaml [1] describes a
+> uint32 but the $ref is for a string, for "function". What's going on
 
-Pushed to drm-misc (drm-misc-next). Thanks!
+In which line function is described as uint32?
+
+> there? Also what is the reasoning for that sort ordering [2] in the
+> examples, are we saying that gpios is like a register and function or
+> default-state is a kind of status?
+> 
+> 1:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/leds/common.yaml
+> 
+> 2:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/leds/leds-gpio.yaml
+> 
+> -E Shattow
+> 
+> 
 
 -- 
 Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+Jacek Anaszewski
 
 
