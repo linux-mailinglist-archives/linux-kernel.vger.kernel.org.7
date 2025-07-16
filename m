@@ -1,293 +1,254 @@
-Return-Path: <linux-kernel+bounces-732695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9A3B06AB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:46:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CE5B06AEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E45E16FFAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:46:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F7C16C2A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410871465A5;
-	Wed, 16 Jul 2025 00:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D6021A445;
+	Wed, 16 Jul 2025 00:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BzQHO2zb"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K9DI5IvW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D382B9BA
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350E421773F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752626802; cv=none; b=Yi5lUpiSVRqIw2XlLXkADl74eh0Sl+SXi+tMKNjT0glH+G2RwV2cQOAxHjHueqwWAE+uJwWNuCsk/7fsyw6o//anQjJsQKwkG9WMxtDdwsXXwcO1IB3NvZuP8zJ9BF8azJh32CHHLNXo5suROyGVtgCTKqpDVMWex9Os4ZHdmwU=
+	t=1752627150; cv=none; b=V+uWWoP0XZwuYsl4lQutDK75UDmXgYRAQ1tNWQ7RZKIlx2P21QJwvDBj50ngYFIKD+z3nTBqROg2H35KssvDF1un657GmqfzMh+hlFfCBzcDBav6fM+ab8HNDETC6x7qUtsDTg+qp+xoD6mVKt+svR0mwJrgi/DWdsuQ2cWWXps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752626802; c=relaxed/simple;
-	bh=A84GfCjcITi8AiOzIpygW57B+h5ZDq5fbeJel7bZmD8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=OnmIuJwOmOZahlrCxPHAPggTkxjn+0p7MJynBFjKAs8RU6VU8lV1bVyzaQ8VlCXCzOQxGauiZ89qtypf3F4aD7pRF5MBlprpIjO1tszFKeau7fMmdQ+Npth7338ajJBKkN2Wtx6skhRFUIHye9nAwrb4iC9ZfvyBZgxb8jdHw98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BzQHO2zb; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-235089528a0so3286025ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:46:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752626800; x=1753231600; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FSiMDXfM4cpD5u4hTNtqX5LKR2sTa7aLbN2a0UDDlHE=;
-        b=BzQHO2zbORHhpo9tuxW4Wm18yAcXWkLz26wsBc7shtSIuIaJjU/9iSWF6b+1ppnE1Y
-         6kAnaTJ2apPvo8s1TWO4I4XRiW4kK6A1bO9EQqgkiU3KwZ3xF2hIsx1iSvBQAIHf7C95
-         5an8fld60OMnTJvZT+NRR/bHZo7gDBw2DkrUZdqOaLgZcsuGQMcBWEJTbzgwzO6akmWq
-         iPln1xwGz6m3ZoO6zBbdSqivKidxH10TT6znd/k4yuNZOx5yfHa+7Vc9jnfAeUlzL+Ll
-         KVusTwukniMxYY0D+sr9CbVipZ7y+cYode+feacLsGtfB3QlrGDikT34tdsn50bgOLR3
-         99AQ==
+	s=arc-20240116; t=1752627150; c=relaxed/simple;
+	bh=KMT5z8mhczbyFwWS7RYpw5Qrr1RGxPSb+bo/wxuCfOk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RqRDZummKynHoYvvdSLi6liOnTpkcq2AFxZq5ppMdVN+61BDFAMUHmLvEsNmwj3yx8by3aikYxh5hgqFt61ojGaUTGK4nrczpLYSaFCgg8Pf1VemRmdO84+mcD3tLuZj1wSJ9LQSGL6HDL0XP/sK1Y4Y+u+ATHGFwT/wuzhfUVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K9DI5IvW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FGDHYs031159
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:52:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=25xQM2KEtU4vblrflgweIvHQ5dspnQlwKDq
+	ajlJ5ujY=; b=K9DI5IvW4EJecxEAH+s8vIlHUrT511UVAXWSQrvov3zfsjRY8Vt
+	Sq9drhV8OecLtG386+YC7DcEEKjlckjLElKpB5VNAsmcWs0eTa4xjjpVmtGZbTLF
+	1UalJyhgSTPLLQ4lwWNJ9WmxbRRiPP4VDYU8HMX4v4bOEFwMRJCyQcJRM/FFIFKQ
+	X2S1yCY7b+J2oL90EhQYZcmlQDYbuzrt0NaHu/SnqKqj9p6ed37Kec7nYWqM7Pmg
+	AejiXKDAuKdTFFyHLLPdKdXF12qLmqBW0N0lXqtGty1LDMgHQ+Qb0Lp7kLxl3Uj+
+	jPQiV6kPrX/5P+ZfMY0EOzs79mk0U11ya4w==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufut9x3b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:52:27 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-748f3d4c7e7so5575343b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:52:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752626800; x=1753231600;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FSiMDXfM4cpD5u4hTNtqX5LKR2sTa7aLbN2a0UDDlHE=;
-        b=gAsMy0Ai48MyPlYror6Sv74aJG1vHmuI5N7syarIMds1CrFYm/dejWM1DslggkOk36
-         zExoIPKBqkNC/kNfMWwHHYMdrukquUxtFh9Lchu37DHTYXnWFNQk2vkyGgbcK5Jkdsv7
-         Ft3cF/PDoKkGX82XB6QjVAL/gSNqcCCGHxCzlqUJbJ4Lzs0hsrCqIRGX+pmJgz4ynPE4
-         nCJxujO+jIvKv8kjGzsFykPVm0frg1J5D3/2tc8xaO9I7XWaUhWdznJ0knjmCjZugjuF
-         BQ7y/5UpT7gyskYBBlJHcCEGAej42agAb0mSvj3YLbGcaWAmJnokb64OZR4q9kVwNDDz
-         dcEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+7xnh5jyh2kWMY4w6FKEdZAytJIKRhFY72Bz/G8GlB8CnN3gvwLgvkwoENLAuwGjAkfsoUCQkZTnbULg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbyfL5WYg6Hi11zv5e7YwChMaRQ6OVLH9+VREcF9Ep1+P67gBC
-	G1QDL8aRGjSWP5O6CxdjVXX9DRKw4/+7oRwEekXvjtq69zbE2rTGg0ef6NkHyS/ONByKHdGFiZy
-	Uq6FkISrJjQ==
-X-Google-Smtp-Source: AGHT+IERW0Jkpu6iHZi02K60bdWT88CcoXfpHjLAzQFOMyGMZ+LYLQwDV4fHXEaIISA1euoseJmK3f6ddsP4
-X-Received: from pjxx3.prod.google.com ([2002:a17:90b:58c3:b0:313:2d44:397b])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:18a:b0:234:9fe1:8fc6
- with SMTP id d9443c01a7336-23e1a4c6791mr84890435ad.18.1752626800112; Tue, 15
- Jul 2025 17:46:40 -0700 (PDT)
-Date: Tue, 15 Jul 2025 17:46:35 -0700
+        d=1e100.net; s=20230601; t=1752627147; x=1753231947;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=25xQM2KEtU4vblrflgweIvHQ5dspnQlwKDqajlJ5ujY=;
+        b=B3QsCDzggxobqppHXUaCbF8gXCKnoPdcdWQqIZOOhs3FvQLXk3FolJrRNbk2VQaRqd
+         oFrwes9BMBJ5YtqYoakG8Meo8sNtFpbOgOPYsNX/x9Y4FNIClFjV/+PKgRk5omu56Bto
+         hfjYejowZsp7nPBh1gGIsTT5R3Fko5cMhfgnwhgT6wZL+2B9k9KCa/XO6HjLw7YDmgQ9
+         gsr9nuM6njjVyeXPjXW4gD3t+IDE+eujRQ+dD8TEF94Gt/8XN7l1Ttduzbd2LJE/N9LD
+         Va0V3vmt28P4d7Cww/B7sQdFXKEXHflqY8PqdksM6KKt65a7HxfuYeG5xf7n9NswU88K
+         2OKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhmQuQkhGj9UcoPESGKhaAJZy/i1Es0rm0HRdTXcqnCWS0S4xw1PUUDIeaZJgxAWa8HAz9nbFufCF4AU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1W/2Egn6kQl04CLT+EfENfYyv/IWyhOM1K1uauuUDnkvwUt//
+	S2HOvrr737MxJ5BCTwEMkXFcN6SRwYIt+FUWCfGHGUWyEHp4xNIUmC/o8pjiN8OaWTaxtvyMFUL
+	SbkgAd7Aoh3K5jpRFDZw015zvxLnEpRRVxEjeh02PiUKWDtiFLr2/i8txROAEL2foGk0=
+X-Gm-Gg: ASbGncvt73Gh3/FFDE8U52s45p40uj5VveQe7EgTpoEPr4UyuYndY9jlMCoO2UhBhOU
+	JFwcArmb5egGxGnLacknAJEPYeMBJyGmSg/8ONkYSOXdqtWL9kHI11GssJuJV8VlYKgtilyPFqV
+	DKNla0NcY4J8JAo1ONOEbSK72HuviRkJWOd4wgZ15zVWdVehM+Z+ts7zkJ5wr5vSlNPs3hQlfTW
+	QSZjK9T4wPahSfXxbi7FRk4lLIbiIl16M6VM4bIF8uhlkpOsHgOPQFismOac2jnZ25iMVuus28M
+	u9Fjyhg8CYUTIa1AqoTDinpRwo7jP0nr7JzU3EwK5sMpiuyACVh05t3FGC/Z4fBIesbvQKnCwdV
+	HvMsq0/VNWHGNDmdJ2NjnwJiaXco=
+X-Received: by 2002:a05:6a21:648a:b0:231:4bbc:ff09 with SMTP id adf61e73a8af0-2381313ca9bmr1001224637.36.1752627146632;
+        Tue, 15 Jul 2025 17:52:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYu/eOGeqhr9LJldFOKWzeuC3GEI23AZZeiCfg36XrTPAaeml4wmmR1iwzwasmrypGBn2QCQ==
+X-Received: by 2002:a05:6a21:648a:b0:231:4bbc:ff09 with SMTP id adf61e73a8af0-2381313ca9bmr1001189637.36.1752627146224;
+        Tue, 15 Jul 2025 17:52:26 -0700 (PDT)
+Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6f7507sm12752326a12.56.2025.07.15.17.52.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Jul 2025 17:52:25 -0700 (PDT)
+From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
+Cc: lumag@kernel.org, neil.armstrong@linaro.org, johan+linaro@kernel.org,
+        quic_bjorande@quicinc.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2] usb: typec: ucsi: ucsi_glink: Increase buffer size to support UCSI v2
+Date: Tue, 15 Jul 2025 17:52:24 -0700
+Message-Id: <20250716005224.312155-1-anjelique.melendez@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250716004635.31161-1-irogers@google.com>
-Subject: [PATCH v1] perf flamegraph: Fix minor pylint/type hint issues
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Wangyang Guo <wangyang.guo@intel.com>, 
-	Tim Chen <tim.c.chen@linux.intel.com>, Zhiguo Zhou <zhiguo.zhou@intel.com>, 
-	Tianyou Li <tianyou.li@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=e7gGSbp/ c=1 sm=1 tr=0 ts=6876f7cc cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=HougwLLIzSuBeMajkRwA:9
+ a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-GUID: mSTiZR7nSI7CaEej8XSPLYVI8Gb6aVf-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDAwNSBTYWx0ZWRfX2oUZNcqWUygN
+ E8GbI0uzn4zUx0cNsKw/cf8uV7AXmWX1Pe55iul6c5CVDMt9l/oMJEzfQgYWVHgR0RILF1Q8dtK
+ NHAOjk4xRGYthBJ2MYBPUJuA4rcNewpC014c0dzbMRx8B8Dlt89ff+oELAUIYxTeWEeILeOq9h7
+ dkYGMu/41G7ewUUvTWGNRXkGdi8XF+sTswsw4/ywR9bqS7t7/wMWr0sOX+zg3WhsXT7Xpr9EO4c
+ u4Jc1llSqKiBHh8evgdRgezl/A8iaLMFSJCUvLMMJyDyNS6QWwvE/KxXA+D0VirgHJfJUc6Ni1d
+ gmmYzAOibLsdB1QIYkp6wryZHTju82KGAMHs+CZ2TUmO8CwxpxaV5vAzkaIr0BlWAbN88S0MNSH
+ IjzWeYOzmbosX5YuMHoblACg8uR8ZZHLKdMW4a6XQi8Ag/UiUbzkEHiiXZRyDilBIIeMsWMj
+X-Proofpoint-ORIG-GUID: mSTiZR7nSI7CaEej8XSPLYVI8Gb6aVf-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-15_05,2025-07-15_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ malwarescore=0 mlxlogscore=777 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507160005
 
-Switch to assuming python3. Fix minor pylint issues on line length,
-repeated compares, not using f-strings and variable case. Add type
-hints and check with mypy.
+UCSI v2 specification has increased the MSG_IN and MSG_OUT size from
+16 bytes to 256 bytes each for the message exchange between OPM and PPM
+This makes the total buffer size increase from 48 bytes to 528 bytes.
+Update the buffer size to support this increase.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
 ---
- tools/perf/scripts/python/flamegraph.py | 61 +++++++++++++------------
- 1 file changed, 33 insertions(+), 28 deletions(-)
+Changes since v1:
+ - Defined buf size in terms of other UCSI defines
+ - Removed UCSI_BUF_SIZE and used the explicit v1 or v2 buffer size macros
+ - Removed Qualcomm copyright
+ - link: https://lore.kernel.org/all/20250624222922.2010820-1-anjelique.melendez@oss.qualcomm.com/
+---
+ drivers/usb/typec/ucsi/ucsi_glink.c | 58 ++++++++++++++++++++++++-----
+ 1 file changed, 48 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/scripts/python/flamegraph.py b/tools/perf/scripts/python/flamegraph.py
-index e49ff242b779..ad735990c5be 100755
---- a/tools/perf/scripts/python/flamegraph.py
-+++ b/tools/perf/scripts/python/flamegraph.py
-@@ -18,7 +18,6 @@
- # pylint: disable=missing-class-docstring
- # pylint: disable=missing-function-docstring
+diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+index 8af79101a2fc..2918c88e54d2 100644
+--- a/drivers/usb/typec/ucsi/ucsi_glink.c
++++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+@@ -16,10 +16,10 @@
  
--from __future__ import print_function
- import argparse
- import hashlib
- import io
-@@ -26,9 +25,10 @@ import json
- import os
- import subprocess
- import sys
-+from typing import Dict, Optional, Union
- import urllib.request
+ #define PMIC_GLINK_MAX_PORTS		3
  
--minimal_html = """<head>
-+MINIMAL_HTML = """<head>
-   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/d3-flame-graph@4.1.3/dist/d3-flamegraph.css">
- </head>
- <body>
-@@ -50,20 +50,20 @@ minimal_html = """<head>
+-#define UCSI_BUF_SIZE                   48
++#define UCSI_BUF_V1_SIZE               (UCSI_MESSAGE_OUT + (UCSI_MESSAGE_OUT - UCSI_MESSAGE_IN))
++#define UCSI_BUF_V2_SIZE               (UCSIv2_MESSAGE_OUT + (UCSIv2_MESSAGE_OUT - UCSI_MESSAGE_IN))
  
- # pylint: disable=too-few-public-methods
- class Node:
--    def __init__(self, name, libtype):
-+    def __init__(self, name: str, libtype: str):
-         self.name = name
-         # "root" | "kernel" | ""
-         # "" indicates user space
-         self.libtype = libtype
--        self.value = 0
--        self.children = []
-+        self.value: int = 0
-+        self.children: list[Node] = []
+ #define MSG_TYPE_REQ_RESP               1
+-#define UCSI_BUF_SIZE                   48
  
--    def to_json(self):
-+    def to_json(self) -> Dict[str, Union[str, int, list[Dict]]]:
-         return {
-             "n": self.name,
-             "l": self.libtype,
-             "v": self.value,
--            "c": self.children
-+            "c": [x.to_json() for x in self.children]
-         }
+ #define UC_NOTIFY_RECEIVER_UCSI         0x0
+ #define UC_UCSI_READ_BUF_REQ            0x11
+@@ -32,13 +32,25 @@ struct ucsi_read_buf_req_msg {
  
+ struct ucsi_read_buf_resp_msg {
+ 	struct pmic_glink_hdr   hdr;
+-	u8                      buf[UCSI_BUF_SIZE];
++	u8                      buf[UCSI_BUF_V1_SIZE];
++	u32                     ret_code;
++};
++
++struct ucsi_v2_read_buf_resp_msg {
++	struct pmic_glink_hdr   hdr;
++	u8                      buf[UCSI_BUF_V2_SIZE];
+ 	u32                     ret_code;
+ };
  
-@@ -73,7 +73,7 @@ class FlameGraphCLI:
-         self.stack = Node("all", "root")
+ struct ucsi_write_buf_req_msg {
+ 	struct pmic_glink_hdr   hdr;
+-	u8                      buf[UCSI_BUF_SIZE];
++	u8                      buf[UCSI_BUF_V1_SIZE];
++	u32                     reserved;
++};
++
++struct ucsi_v2_write_buf_req_msg {
++	struct pmic_glink_hdr   hdr;
++	u8                      buf[UCSI_BUF_V2_SIZE];
+ 	u32                     reserved;
+ };
  
-     @staticmethod
--    def get_libtype_from_dso(dso):
-+    def get_libtype_from_dso(dso: Optional[str]) -> str:
-         """
-         when kernel-debuginfo is installed,
-         dso points to /usr/lib/debug/lib/modules/*/vmlinux
-@@ -84,7 +84,7 @@ class FlameGraphCLI:
-         return ""
+@@ -72,7 +84,7 @@ struct pmic_glink_ucsi {
+ 	bool ucsi_registered;
+ 	bool pd_running;
  
-     @staticmethod
--    def find_or_create_node(node, name, libtype):
-+    def find_or_create_node(node: Node, name: str, libtype: str) -> Node:
-         for child in node.children:
-             if child.name == name:
-                 return child
-@@ -93,7 +93,7 @@ class FlameGraphCLI:
-         node.children.append(child)
-         return child
+-	u8 read_buf[UCSI_BUF_SIZE];
++	u8 read_buf[UCSI_BUF_V2_SIZE];
+ };
  
--    def process_event(self, event):
-+    def process_event(self, event) -> None:
-         # ignore events where the event name does not match
-         # the one specified by the user
-         if self.args.event_name and event.get("ev_name") != self.args.event_name:
-@@ -106,7 +106,7 @@ class FlameGraphCLI:
-             comm = event["comm"]
-             libtype = "kernel"
-         else:
--            comm = "{} ({})".format(event["comm"], pid)
-+            comm = f"{event['comm']} ({pid})"
-             libtype = ""
-         node = self.find_or_create_node(self.stack, comm, libtype)
+ static int pmic_glink_ucsi_read(struct ucsi *__ucsi, unsigned int offset,
+@@ -131,8 +143,9 @@ static int pmic_glink_ucsi_read_message_in(struct ucsi *ucsi, void *val, size_t
+ static int pmic_glink_ucsi_locked_write(struct pmic_glink_ucsi *ucsi, unsigned int offset,
+ 					const void *val, size_t val_len)
+ {
+-	struct ucsi_write_buf_req_msg req = {};
++	struct ucsi_v2_write_buf_req_msg req = {};
+ 	unsigned long left;
++	size_t len;
+ 	int ret;
  
-@@ -121,7 +121,7 @@ class FlameGraphCLI:
-             node = self.find_or_create_node(node, name, libtype)
-         node.value += 1
+ 	req.hdr.owner = PMIC_GLINK_OWNER_USBC;
+@@ -142,7 +155,18 @@ static int pmic_glink_ucsi_locked_write(struct pmic_glink_ucsi *ucsi, unsigned i
  
--    def get_report_header(self):
-+    def get_report_header(self) -> str:
-         if self.args.input == "-":
-             # when this script is invoked with "perf script flamegraph",
-             # no perf.data is created and we cannot read the header of it
-@@ -131,7 +131,8 @@ class FlameGraphCLI:
-             # if the file name other than perf.data is given,
-             # we read the header of that file
-             if self.args.input:
--                output = subprocess.check_output(["perf", "report", "--header-only", "-i", self.args.input])
-+                output = subprocess.check_output(["perf", "report", "--header-only",
-+                                                  "-i", self.args.input])
-             else:
-                 output = subprocess.check_output(["perf", "report", "--header-only"])
+ 	reinit_completion(&ucsi->write_ack);
  
-@@ -140,10 +141,10 @@ class FlameGraphCLI:
-                 result += "\nFocused event: " + self.args.event_name
-             return result
-         except Exception as err:  # pylint: disable=broad-except
--            print("Error reading report header: {}".format(err), file=sys.stderr)
-+            print(f"Error reading report header: {err}", file=sys.stderr)
-             return ""
+-	ret = pmic_glink_send(ucsi->client, &req, sizeof(req));
++	if (!ucsi->ucsi->version || ucsi->ucsi->version >= UCSI_VERSION_2_1) {
++		/* If UCSI version is unknown, use the maximum buffer size */
++		len = sizeof(req);
++	} else {
++		/*
++		 * If UCSI V1, buffer size should be UCSI_BUF_V1_SIZE so update
++		 * len accordingly
++		 */
++		len = sizeof(struct ucsi_write_buf_req_msg);
++	}
++
++	ret = pmic_glink_send(ucsi->client, &req, len);
+ 	if (ret < 0) {
+ 		dev_err(ucsi->dev, "failed to send UCSI write request: %d\n", ret);
+ 		return ret;
+@@ -216,12 +240,26 @@ static const struct ucsi_operations pmic_glink_ucsi_ops = {
  
--    def trace_end(self):
-+    def trace_end(self) -> None:
-         stacks_json = json.dumps(self.stack, default=lambda x: x.to_json())
+ static void pmic_glink_ucsi_read_ack(struct pmic_glink_ucsi *ucsi, const void *data, int len)
+ {
+-	const struct ucsi_read_buf_resp_msg *resp = data;
++	const struct ucsi_v2_read_buf_resp_msg *resp = data;
++	u32 ret_code, buffer_len;
++
++	if (!ucsi->ucsi->version || ucsi->ucsi->version >= UCSI_VERSION_2_1) {
++		/* If UCSI version is unknown, use the maximum buffer size */
++		ret_code = resp->ret_code;
++		buffer_len = UCSI_BUF_V2_SIZE;
++	} else {
++		/*
++		 * If UCSI V1, use UCSI_BUF_V1_SIZE buffer size and
++		 * update ret_code offset accordingly
++		 */
++		ret_code = ((struct ucsi_read_buf_resp_msg *)data)->ret_code;
++		buffer_len = UCSI_BUF_V1_SIZE;
++	}
  
-         if self.args.format == "html":
-@@ -167,7 +168,8 @@ graph template (--template PATH) or use another output format (--format
- FORMAT).""",
-                               file=sys.stderr)
-                         if self.args.input == "-":
--                            print("""Not attempting to download Flame Graph template as script command line
-+                            print(
-+"""Not attempting to download Flame Graph template as script command line
- input is disabled due to using live mode. If you want to download the
- template retry without live mode. For example, use 'perf record -a -g
- -F 99 sleep 60' and 'perf script report flamegraph'. Alternatively,
-@@ -176,37 +178,40 @@ https://cdn.jsdelivr.net/npm/d3-flame-graph@4.1.3/dist/templates/d3-flamegraph-b
- and place it at:
- /usr/share/d3-flame-graph/d3-flamegraph-base.html""",
-                                   file=sys.stderr)
--                            quit()
-+                            sys.exit(1)
-                         s = None
--                        while s != "y" and s != "n":
--                            s = input("Do you wish to download a template from cdn.jsdelivr.net? (this warning can be suppressed with --allow-download) [yn] ").lower()
-+                        while s not in ["y", "n"]:
-+                            s = input("Do you wish to download a template from cdn.jsdelivr.net?" +
-+                                      "(this warning can be suppressed with --allow-download) [yn] "
-+                                      ).lower()
-                         if s == "n":
--                            quit()
--                    template = "https://cdn.jsdelivr.net/npm/d3-flame-graph@4.1.3/dist/templates/d3-flamegraph-base.html"
-+                            sys.exit(1)
-+                    template = ("https://cdn.jsdelivr.net/npm/d3-flame-graph@4.1.3/dist/templates/"
-+                                "d3-flamegraph-base.html")
-                     template_md5sum = "143e0d06ba69b8370b9848dcd6ae3f36"
+-	if (resp->ret_code)
++	if (ret_code)
+ 		return;
  
-             try:
--                with urllib.request.urlopen(template) as template:
-+                with urllib.request.urlopen(template) as url_template:
-                     output_str = "".join([
--                        l.decode("utf-8") for l in template.readlines()
-+                        l.decode("utf-8") for l in url_template.readlines()
-                     ])
-             except Exception as err:
-                 print(f"Error reading template {template}: {err}\n"
-                       "a minimal flame graph will be generated", file=sys.stderr)
--                output_str = minimal_html
-+                output_str = MINIMAL_HTML
-                 template_md5sum = None
- 
-             if template_md5sum:
-                 download_md5sum = hashlib.md5(output_str.encode("utf-8")).hexdigest()
-                 if download_md5sum != template_md5sum:
-                     s = None
--                    while s != "y" and s != "n":
-+                    while s not in ["y", "n"]:
-                         s = input(f"""Unexpected template md5sum.
- {download_md5sum} != {template_md5sum}, for:
- {output_str}
- continue?[yn] """).lower()
-                     if s == "n":
--                        quit()
-+                        sys.exit(1)
- 
-             output_str = output_str.replace("/** @options_json **/", options_json)
-             output_str = output_str.replace("/** @flamegraph_json **/", stacks_json)
-@@ -220,12 +225,12 @@ continue?[yn] """).lower()
-             with io.open(sys.stdout.fileno(), "w", encoding="utf-8", closefd=False) as out:
-                 out.write(output_str)
-         else:
--            print("dumping data to {}".format(output_fn))
-+            print(f"dumping data to {output_fn}")
-             try:
-                 with io.open(output_fn, "w", encoding="utf-8") as out:
-                     out.write(output_str)
-             except IOError as err:
--                print("Error writing output file: {}".format(err), file=sys.stderr)
-+                print(f"Error writing output file: {err}", file=sys.stderr)
-                 sys.exit(1)
- 
+-	memcpy(ucsi->read_buf, resp->buf, UCSI_BUF_SIZE);
++	memcpy(ucsi->read_buf, resp->buf, buffer_len);
+ 	complete(&ucsi->read_ack);
+ }
  
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.34.1
 
 
