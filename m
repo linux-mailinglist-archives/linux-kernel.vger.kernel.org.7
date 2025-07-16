@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-733167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB55B07116
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:07:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5414CB070D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 781F516B11F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:07:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C3C3B43EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A22A2EF9C1;
-	Wed, 16 Jul 2025 09:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB292EF299;
+	Wed, 16 Jul 2025 08:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Irr1jidL"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nGGfDAvO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wMBUlA6K"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A97628B4EA
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7A024337B;
+	Wed, 16 Jul 2025 08:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752656828; cv=none; b=fr34JVdp7WVCiwbVnDCe23unueMb65r4x0H/tL4dDGwPeYLgzuvalpKqf/N7ouEXUTtfLzgkZqSpFcGlC8QaXH5U4ecxy9qcWTYWzfrTt9ouYGWccj+uUWpb/a/Zt2xATF7iJ+GhnKW+t/7iTb4ogeQ94uLGwrQlO+1Qe4PyBik=
+	t=1752655525; cv=none; b=bt+A1JfVA/q08izH9RHiKKZuXk9J/T+4UZwzwZGBhIc6gkGhLNuCy8V3ZtbbuzZKnOZ6TpGX0gEq0KqapTmbIdqyOqnkMhMXKzFpxTIUrImv0fjtLFXJCLqKr3tOR8xQPy+okQzILIKU5seDzjBUKLe3YrsRjEb4JdY3wttQNv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752656828; c=relaxed/simple;
-	bh=snu8pRbxtL7EyXfOuCqadiLZhbMnHxEmMNZD9Vr2iKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=UNemGIIiQRpih1gLPLu3TNMwfn2FhNWAtjrH1YIUYCmwrHdBujCN7TrPZn2EmN/tCviSmxPE6P47vSs7N8Lw3ei1+ErR4BT41iuEezqPNvC8apxfRsOIRXNGCCdDz0gJSslZXbKE1HrkPXLfQfJEqqwS13kiv0OwBK5AOkh6PXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Irr1jidL; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250716090657epoutp0170614e5d87644660d9ddc51a3acfcfbe~SsBbgdYFL0162801628epoutp01u
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:06:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250716090657epoutp0170614e5d87644660d9ddc51a3acfcfbe~SsBbgdYFL0162801628epoutp01u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752656817;
-	bh=UK+cRw6BHYgTBmSStxePjW4JegDUuN5eHUVjHh3Sfsw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Irr1jidLTOmi+AAPyuMjxI+Y4ICrCtctTwbCaiRkiKyBAhCgsj8PbxAqxOqctB8h0
-	 aFEtA4K/Y/W+wCpqEDNjz/N+4HU9nb2cXX7YX+Et7TNuUvTxXOZL/w9xyoyUP6bWK5
-	 sVqBDrF0UVHJ0B5ZxTwEuWJUGtsc7GZyc3DHOTaU=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250716090656epcas5p26d47c2071c38c26bf298cb3102ff6783~SsBbNtVV03245832458epcas5p2z;
-	Wed, 16 Jul 2025 09:06:56 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.86]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bhqtm1zgSz3hhT4; Wed, 16 Jul
-	2025 09:06:56 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250716084412epcas5p4c412b3a6b918366d7548c3c97e772ad6~SrtkYPm0t1570715707epcas5p4T;
-	Wed, 16 Jul 2025 08:44:12 +0000 (GMT)
-Received: from green245.gost (unknown [107.99.41.245]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250716084411epsmtip29395a4ec2326d3467d11e1e96bcff583~Srtjc1HHi0326203262epsmtip2F;
-	Wed, 16 Jul 2025 08:44:11 +0000 (GMT)
-Date: Wed, 16 Jul 2025 14:13:55 +0530
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
-	gost.dev@samsung.com, nitheshshetty@gmail.com,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmet: Add support for FDP devices in fabrics passthru
- path
-Message-ID: <20250716084301.aulmx23rmumae3ba@green245.gost>
+	s=arc-20240116; t=1752655525; c=relaxed/simple;
+	bh=1NXbWx2kLzPZS55lk3fbpz5DfeiM3JWRD20iG+FWHdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1znX1oz0bHkqp+cjuksCkGo1BMCxgv7sRSc6VwRJi22FDFO6+cprakmcXBEnPsDJzK5iv6iptpmgyyNJmG230OkGyB5QMeDiq0lagKIPZnWCsT6eusCyCw51/D4sH+JohDvs5fJka9MydkpKyBeb3sDv0vXj/NkM/Asf4xGImo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nGGfDAvO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wMBUlA6K; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Jul 2025 10:45:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752655522;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nIiIKG0sIFehb8gE9KkNPCWT2c8bsmOUJ77N6v2fQnA=;
+	b=nGGfDAvOgfbxvQ+ItbHkuKmJc7fhNMXdylQtXADVW6Pij1apU1+3cuJ5OUI84mO4RRfzXq
+	xODQFegvJwHIbgOo6xm8clKlUdYBUdjn/R6BKdubKI2P4+ZnKApoHS8vS8rME+eLCA3Gnv
+	tpOaiwcxF93rKVPTUkl2XsCEq9lL/i7an95fxhH0NdGFVXPEXoaQXPOc4mlZesRxGsOOB3
+	/FZG+epCxkvLNTFW+uBSrdb/0xxnSAGcmp+Cp4YWHM6cuHRYZeSmZsaZiXnpobBHTwfp0m
+	bLk4Q2lKSWLv3nMw/AcBQJTrI5vqexMKjcxlfwZeqJZ8/wsAG3pYej5Tts3JMQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752655522;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nIiIKG0sIFehb8gE9KkNPCWT2c8bsmOUJ77N6v2fQnA=;
+	b=wMBUlA6K9yd+vXdEYF702fvYHvbOcxNNvsiv9ZaMcN1ZXk4UrgpBDIlvZMzJMvM7zyhA/v
+	bKKqh5wGUWgaBdCQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v3 11/17] rv: Retry when da monitor detects race
+ conditions
+Message-ID: <20250716084520._QLbd5AY@linutronix.de>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+ <20250715071434.22508-12-gmonaco@redhat.com>
+ <20250715152322.Os4lDq_B@linutronix.de>
+ <e2f4f8d372612cd61689b91562e73677599d08de.camel@redhat.com>
+ <20250716082712.L9z_ptHK@linutronix.de>
+ <f7028488e9d820848955de87ead3ec619fe5dbec.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250715080958.GA20790@lst.de>
-X-CMS-MailID: 20250716084412epcas5p4c412b3a6b918366d7548c3c97e772ad6
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_17f05_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250715061856epcas5p196a0b67fe58b71e1f81f98a903e429c0
-References: <CGME20250715061856epcas5p196a0b67fe58b71e1f81f98a903e429c0@epcas5p1.samsung.com>
-	<20250715061804.1954522-1-nj.shetty@samsung.com>
-	<20250715080958.GA20790@lst.de>
-
-------CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_17f05_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <f7028488e9d820848955de87ead3ec619fe5dbec.camel@redhat.com>
 
-On 15/07/25 10:09AM, Christoph Hellwig wrote:
->On Tue, Jul 15, 2025 at 11:48:04AM +0530, Nitesh Shetty wrote:
->> In nvmet passthru path FDP is disabled, because of failure of
->> admin_get_features FDP(0x1d) feature command.
->> Supporting this through nvmet_setup_passthru_command enables FDP.
->
->I don't think this is safe - the feature has endurance group scope
->and thus can affect other controllers not passed through as well.
->
-Agree, how about only enabling only for nvme_admin_get_features,
-but not for nvme_admin_set_features, something like below?
+On Wed, Jul 16, 2025 at 10:38:11AM +0200, Gabriele Monaco wrote:
+> On Wed, 2025-07-16 at 10:27 +0200, Nam Cao wrote:
+> > Can't you bring the monitor back to the init state, and start over
+> > again?
+> > 
+> > I think "da_mon->monitoring = 0;" does the trick?
+> > 
+> 
+> Yes you can, but I wouldn't do so silently.
 
---- a/drivers/nvme/target/passthru.c
-+++ b/drivers/nvme/target/passthru.c
-@@ -533,6 +533,8 @@ u16 nvmet_parse_passthru_admin_cmd(struct nvmet_req *req)
-  		case NVME_FEAT_HOST_ID:
-  			req->execute = nvmet_execute_get_features;
-  			return NVME_SC_SUCCESS;
-+		case NVME_FEAT_FDP:
-+			return nvmet_setup_passthru_command(req);
-  		default:
-  			return nvmet_passthru_get_set_features(req);
-  		}
+Why not? The absolute worst that we get, is the rare case where a bug
+appears at the exact same time. In that case, we would get a false
+negative.
 
-Thanks,
-Nitesh
+And I think that is really really rare.
 
-------CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_17f05_
-Content-Type: text/plain; charset="utf-8"
+> I'd say the cleanest approach without reaction is to still return false
+> for the system to do all the cleanup but trace the event or, at the
+> very least, print a warning.
+> 
+> But you're right, this is more relevant for who develops the monitor
+> rather than for the user, so should probably be tracked separately.
 
+Yes, if you really want to emit some sort of warning here, it should be
+absolutely clear that the monitor itself is having a hiccup, not the
+monitored kernel.
 
-------CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_17f05_--
+Nam
 
