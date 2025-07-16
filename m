@@ -1,98 +1,117 @@
-Return-Path: <linux-kernel+bounces-734340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF09B08061
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:18:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9403CB08065
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92301A43066
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:17:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8778B17CEBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960DE28850E;
-	Wed, 16 Jul 2025 22:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525DF2EE607;
+	Wed, 16 Jul 2025 22:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jQvLoN+m"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSjrje0n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BD52B9BA;
-	Wed, 16 Jul 2025 22:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A257729292F;
+	Wed, 16 Jul 2025 22:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752704282; cv=none; b=hji3NceI7AcENMytnkGC28BpxupAfbwL+T1phGwiSHdzGa9e+qi2LsUvfOUN9EIEaU59cTt4S7bie/lvXfek6flTkwcLJiluXz/7MpdLTPAiIzBjP4zvOIkhPF6Ta//9Een3zzfZ+CVoGWiv9awXG54CqBEzrZakwhNUbqQiHb8=
+	t=1752704284; cv=none; b=qSNhi3ty/JAAFh/AlvNx4IkXjFmFEndIjnGft96hL7vT9BdxfBR4DcxE9CMus3mIef5CN8IF0tk0xBZNurE3ImX8N8ZPpMyj6Npcvx0vuExlHzWfOq+4TpcSNvLqekT8cKjaPCQ9yrNmVR0Ne1DQowzutqe13sY9rpsLqoHtYdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752704282; c=relaxed/simple;
-	bh=Fb5+Z0/dS3VG2z9AkJdIGY6v9M8+Y9kXYI4dhRhPN24=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sHYHZ866BRH/wocwA2dBcD5k8P2Xd5dN+hrI7g4ImbIb9t+qJVeihoxszRNzuldOn3ZimM6o0W7YXmBasCo//xGV5wufY/lBuyzJGCZqPUi3EgxLSKkKCewG7+1Sr9GQA7PpuplTnyvDoNU3oYv/d+djA4/6cUYDDRppI4i9Rt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jQvLoN+m; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752704156;
-	bh=fFYG6PPnbQ8OzebBcsFqUrsGV3OfxtvSBGerPj/Dum4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jQvLoN+mv4bMm3cv2oaWEB784oJl+EHWu08sB3mnzzz2vYYqTWsds/o1kErqlX8qe
-	 4dRRyNggqilodkD284WouKmxEfJdTbYteBjSM+zuQ8tjF6e/jI+6I/IY/7eARwiIKR
-	 kJBElY9NsA72n83YaCW66g2rdIIq1WqF5d69FZn5zu75dtCO6bmKA84zX0N1vbEd6b
-	 0hlUXSAq0rE8rOGnKHUna8yBINdpYd8V5N2bJ4lXRuOGxXARVYVxYUvDL4UmABcnAF
-	 wiaufU9s+D8xF02OEdxrsWBoAmrcz35iky1TWIOJwoH9ELIdupq9S0Pmchj9G4S49y
-	 HmFJtvv1EsF0g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bj9P83Ssjz4x43;
-	Thu, 17 Jul 2025 08:15:56 +1000 (AEST)
-Date: Thu, 17 Jul 2025 08:17:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the vhost tree
-Message-ID: <20250717081755.1128d163@canb.auug.org.au>
+	s=arc-20240116; t=1752704284; c=relaxed/simple;
+	bh=s0XeFi4M45UhztDB8nNFt5fpQOlFtgg3p1lNOevOBQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9wGcUpnxutB9mxXD9quDYBJBXfy4qKZ964iv36u6ITtZGKCFCN16J+dBp3jka0amoqPR3MiBH0blX5wU5PhuhAldnQ9xgB4upv5lehj75nwN0yFT+VrUUEqD3xuy8G5ll4BtdAdmQ4daCKsXft19rXFNvNEO8Y69SRaXbdxRTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSjrje0n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90CDFC4CEE7;
+	Wed, 16 Jul 2025 22:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752704284;
+	bh=s0XeFi4M45UhztDB8nNFt5fpQOlFtgg3p1lNOevOBQE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dSjrje0nyo4eij7hffvPVv094KgbCYp0h+Y3Lqdg2Lv+F0ADlh3f/IdqIBQUaA8CS
+	 QhFbg01H0sNSO2dTFqM+t0DFc5Jc7X600UrED+s7FuNEgn7xDlYqeTM+UNbPSdgwU3
+	 QCO1clzQ5EwyOhig2arFjvGn4c2nFzwz1HOrbKMLwccQXLX4LMYrlVnFxqz1Oe9Qyk
+	 Qntl4kNlsH+O52IvS64roJOznAf94vTtfSEbaJv1S6qp00bMKohj5483Sm+qd5akKG
+	 FzLlQaJyuWEH0gF/9ixrZ8Y6WyGkxuljlacOgEPvMTKAafFEmg0hFeH1X/BvAPwuLI
+	 3BuQ8KJ0GMMTw==
+Date: Thu, 17 Jul 2025 00:17:59 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: forbidden405@outlook.com
+Cc: Stephan Gerhold <stephan.gerhold@kernkonzept.com>, 
+	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] i2c: qup: jump out of the loop in case of timeout
+Message-ID: <7up54twtzt2ljricy6pf4xfggi5ztcuspr3tysb43rqreminrc@tjqmujuglhnl>
+References: <20250616-qca-i2c-v1-1-2a8d37ee0a30@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uT+LRpQ0Xza=3ZeUY8QFvUI";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616-qca-i2c-v1-1-2a8d37ee0a30@outlook.com>
 
---Sig_/uT+LRpQ0Xza=3ZeUY8QFvUI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 16, 2025 at 12:01:10AM +0800, Yang Xiwen via B4 Relay wrote:
+> From: Yang Xiwen <forbidden405@outlook.com>
+> 
+> Original logic only sets the return value but doesn't jump out of the
+> loop if the bus is kept active by a client. This is not expected. A
+> malicious or buggy i2c client can hang the kernel in this case and
+> should be avoided. This is observed during a long time test with a
+> PCA953x GPIO extender.
+> 
+> Fix it by changing the logic to not only sets the return value, but also
+> jumps out of the loop and return to the caller with -ETIMEDOUT.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
 
-Hi all,
+I think you also need:
 
-Commit
+Fixes: fbfab1ab0658 ("i2c: qup: reorganization of driver code to remove polling for qup v1")
 
-  45165a10d85d ("vdpa/mlx5: Fix release of uninitialized resources on error=
- path")
+> ---
+>  drivers/i2c/busses/i2c-qup.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+> index 3a36d682ed57..5b053e51f4c9 100644
+> --- a/drivers/i2c/busses/i2c-qup.c
+> +++ b/drivers/i2c/busses/i2c-qup.c
+> @@ -452,8 +452,10 @@ static int qup_i2c_bus_active(struct qup_i2c_dev *qup, int len)
+>  		if (!(status & I2C_STATUS_BUS_ACTIVE))
+>  			break;
+>  
+> -		if (time_after(jiffies, timeout))
+> +		if (time_after(jiffies, timeout)) {
+>  			ret = -ETIMEDOUT;
+> +			break;
+> +		}
 
-is missing a Signed-off-by from its committer.
+Well spotted Yang! I think this was the original idea, as well.
+Merged to i2c/i2c-host-fixes.
 
---=20
-Cheers,
-Stephen Rothwell
+Andi
 
---Sig_/uT+LRpQ0Xza=3ZeUY8QFvUI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh4JRMACgkQAVBC80lX
-0Gxtqgf/TVojOS/vH6KIwOrJwrz7Xht51KkVbnl+NjiquWK3/uVezO3MGpExpeoT
-IyyqW5eiG70LO8cx6/d/Nhp+NFUF/v6AfwsqQ5ZGsa/sj8FoHFVh+KvwYPSP/m3q
-iUG4CxlH6kM/zZizNclSTbKFG8cJmTArK6iDQQRzeJvG7QjwRdSZa6oK3iD4fwrL
-fmX7GHjg7o+Vg2W0N7nQBjm/gqYvU2XyN4KCOw3RuUVc9KE32VxIZTiojF76qDiI
-XJdgsGS6xg0Dp5eglLXe+HalUM/etJ2zbLPhdfpYYO/BpxxyvDOBX0XjuWWBq31O
-siwdcx9Y5muxh6GJFYxpWiewzoWxUg==
-=+lal
------END PGP SIGNATURE-----
-
---Sig_/uT+LRpQ0Xza=3ZeUY8QFvUI--
+>  
+>  		usleep_range(len, len * 2);
+>  	}
+> 
+> ---
+> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> change-id: 20250615-qca-i2c-d41bb61aa59e
+> 
+> Best regards,
+> -- 
+> Yang Xiwen <forbidden405@outlook.com>
+> 
+> 
 
