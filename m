@@ -1,102 +1,149 @@
-Return-Path: <linux-kernel+bounces-733462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC49B074FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00DA9B074FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3827581CC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DEB9506547
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6702F2C6C;
-	Wed, 16 Jul 2025 11:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E843242D9F;
+	Wed, 16 Jul 2025 11:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DASq/s3K"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9v9Ybns"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3170B28B4E1
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB2920110B;
+	Wed, 16 Jul 2025 11:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752666446; cv=none; b=OeMI071J1Xe0e7rlQ3oh+T19kj0G3sdbd0r3AAre9zRjQrR2flHyPBIk6cUsYuePS+TX/GwkRs9ptgjIBK+aOGf6FL2DI2iS+u3/Ywy2t8FpSLCXcMtFTRDhKEx0mMF5rcj9b+HoYvANq9e/GkiVi49HPKceVQhZUiuR3G7BwjM=
+	t=1752666372; cv=none; b=DfrfEZBps0DEqT3WcknVMQRUHEJcwUZ7rYHzI8nYkTv0g5HERBcKYH0jMZNTSlb4kT7KLVQEz2xNbMJ8IZmeMeUBULLYhZtItaOtr36tMdq8oKw00ooG2BOeQfcbuSnRPolSTJ1nfkTbDkKawm6qaN8mcE8pKjskP3IgNBFNn4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752666446; c=relaxed/simple;
-	bh=yDDAJEpZf+lUqfoEU0akUVtKLnubm2iRh5Qg5aVI1Jc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cVxSoQeau3b9J98QIJ2u+Fg9QuaUExW/rLQrU5amEb6iQomfEtZiJJx4R1VO6MlI02PqrTbRg2UllagIsA1jeWNvy5sCa0ozdBGdW3D8ZRZgUZuolSEbCC//IqRQzCMkrkFdbLPW9ULfAkW0Gt7wwTg+2Cnl3ybmgAgj95G8lNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DASq/s3K; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752666433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wiod6XbhM/QrU3bpL3n3j3qQ4Gej0nHSyPhBljvPbrI=;
-	b=DASq/s3KZdpoixfH0oN++ixavr4/BgpnyqylFzFDQUMHIma/Qwsnxnmh9mG+ugX/0q0YP0
-	qdShpcD7pQ/oaf8s59z4U1cAy/HAGQ6gotrN9WjQVMyKPYIFdMb2Uq0q0Y0HqnRTHBdadQ
-	BI4IwKkbfcr53Q5wsFIwtxuU5JltC0w=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Menglong Dong <menglong8.dong@gmail.com>, alexei.starovoitov@gmail.com,
- rostedt@goodmis.org, jolsa@kernel.org, bpf@vger.kernel.org,
- Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH bpf-next v2 15/18] libbpf: add skip_invalid and attach_tracing for
- tracing_multi
-Date: Wed, 16 Jul 2025 19:46:05 +0800
-Message-ID: <3937006.kQq0lBPeGt@7940hx>
-In-Reply-To:
- <CAEf4BzY4RaB5n1k7-O5XtCAOc9Rq=sYS1zLt_mDLih=4ypvb7g@mail.gmail.com>
-References:
- <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <21970a1e-dcda-4c23-af84-553419007a38@linux.dev>
- <CAEf4BzY4RaB5n1k7-O5XtCAOc9Rq=sYS1zLt_mDLih=4ypvb7g@mail.gmail.com>
+	s=arc-20240116; t=1752666372; c=relaxed/simple;
+	bh=NXanfPZpH2ceGudSk2SUYSm9HbVf2NruYNTN6drDoyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uJ13waeDax78FqcYr84IIkvVYmMMrwDTuahLH3SOLZg+4u36TyB+PdgNQrPH2AaajZKj3Z9kIGAEzmlUmWGyGDukq3uf49fjvg4fc9GZ6i9Hf2VLnoHguHjXDtf+q8tAGv2eeHHBWihoIxy84JR8OWqnSYkiNLT1tOjwjbEqNIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9v9Ybns; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-454ac069223so5752005e9.1;
+        Wed, 16 Jul 2025 04:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752666369; x=1753271169; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qRK0uTRJWMXudiGrHPLDeir9C8aaiiInPobNXttZUgA=;
+        b=Q9v9Ybnsh5pwDLyXr6+8URc/Cpn7f/FwoByU+hjXXm3CGlLJ4W15XHUSJ3Tt4paYP4
+         sY3kajQFRDnOYJ3kGFVwoy6q8Kylb+hd+zSb+58MaGIm/M3iper+9dE49tKaI7skh9xe
+         8N5ivx0PT87HUYOHthlRXgDzQ/A/kASeT3uPZ4/V8VTwab1vk1zfCxwt/PZdCgEfY56T
+         kxCZtTWnOyTOs4WrbjimmKpLM84nCQ7YES5dEbaT6ufnvvTjUPi0Hl6CydEpzQsBLTue
+         vU3ZilugujblXXclZHlme2aiHOfT/v8UmV3hvwy4iqRAAoN0IDu8C/Rqkl1bDDTcysRW
+         odqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752666369; x=1753271169;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qRK0uTRJWMXudiGrHPLDeir9C8aaiiInPobNXttZUgA=;
+        b=h0TuDSkrui9RmfciqlwlboBK901By9VHtiVCbWNwXSGTKU77ZaFpAHZ4z87akrJhFb
+         KqzlbdEe6fI7mVWoQCy/cunhI0ZJapHMC45w4WzYHTiOq2JHELoXIAEmzVgAC2FYwbCL
+         htWV8KybyqfRQ8BCeWTgJktAqbMHh5y1q/MaaMBipQ59tVG770UtqUFjQgAR/S7vnUuz
+         lWCJm8joYxyA6TEeoQ8BiFWEoVPvvgYCqywn0Eb/9lxBePCQex0vbwDt+6IZ/shdFggh
+         n5CFmrv0geV/YfolRWFBuDj/MZPldLstnrDbrE9cJRLeFnk4lALdOn++IIFQaxc5WKoJ
+         YiSA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Viy3eaK74nDDv4y8DCUWyvA9+f8wPdg6hjb4hAiLyXVoEACncn3Hnzj600FXEUMoIG0oq7xu@vger.kernel.org, AJvYcCX8vsYKzMJ8HCLibaZgwpC23H3sW99ExlL9NZE3RckJX0puTpannckQyBRZ6/78AxFI5t+DHOVEz31zU/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4hLnObNL4s5kTYGH5V2W7V/Dqy6pqnWp045txuEg6ato9CGJp
+	fwAHRk9zsFNUGFp8SMLS+N7WbhFuw8hzh59QGHhRIXblu59a/TQvCNN9
+X-Gm-Gg: ASbGncu0qI7zkvQpbgQC+4jyY2PjZUE2hvhzl7TzdRzBxCEMi/opcwafZyTT9v21RX7
+	Sl2Vu7ycPqHJbUdjDAY9+ft89MnTcFQrAtdQs3qqrTsM41r6hkmX4MLhU/s/CkTwhvG0DbSoUT1
+	AmLYVVmMauPfH6f7nc0FBTl1tINsEQh9GcOqiB68zmZf8UrdO0dj7djh865+MWvE22JeE0z+Mu+
+	ZTsMrSm21Mj7wA9odnlpsw4tLva4hbAnsob0MRy58hyl6aRjetALShkTf/jgJLv5WTNk3Ga0XAP
+	4A8Yl3nFBgGc1FUXQN0b76aUUjgKF1iHtvFX5XxKUliyImU+yZyDdidKr/hl0D/6ReI+YuwJ7xn
+	nQOdP8mvWdCLLsDvd07qEIQZVZIMBJYt36enaCVIm9Bj/No9xXvvm1TV70rzl
+X-Google-Smtp-Source: AGHT+IGe9mrawVK8DME5xTxzobrY4snOPO/udcok/amD5IGmZSO+Gh8mRnJF9n9m5I8NmSps33RJrQ==
+X-Received: by 2002:a05:6000:144a:b0:3b5:e077:af52 with SMTP id ffacd0b85a97d-3b60dd7a1efmr2532215f8f.25.1752666368419;
+        Wed, 16 Jul 2025 04:46:08 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26938sm17491288f8f.89.2025.07.16.04.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 04:46:08 -0700 (PDT)
+Date: Wed, 16 Jul 2025 12:46:07 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: sashal@kernel.org, linux-kernel@vger.kernel.org, frederic@kernel.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, paulmck@kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] kernel/fork: Increase minimum number of allowed threads
+Message-ID: <20250716124607.50fc5e34@pumpkin>
+In-Reply-To: <0e855c4f-2ff9-4007-854a-20955dec052b@hauke-m.de>
+References: <20250711230348.213841-1-hauke@hauke-m.de>
+	<0e855c4f-2ff9-4007-854a-20955dec052b@hauke-m.de>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wednesday, July 16, 2025 1:23 AM Andrii Nakryiko <andrii.nakryiko@gmail.com> write:
-[......]
-> 
-> The right answer here is you need to know what's attachable and what's
-> not, instead of just ignoring attachment failures somewhere deep
-> inside libbpf API. Filter and check before you try to attach. There is
-> /sys/kernel/tracing/available_filter_functions and some similar
-> blacklist file, consult that, filter out stuff that's not attachable.
-> 
-> We won't be adding libbpf APIs just to make some selftests easier to
-> write by being sloppy.
-> 
-> >
-> > This should be a common use case. And let me do more research to see if
-> > we can do such filter out of the libbpf.
-> 
-> I have similar issues with retsnoop ([0]) and do just fine without
-> abusing libbpf API.
-> 
->   [0] https://github.com/anakryiko/retsnoop/blob/master/src/mass_attacher.c#L749
+On Sat, 12 Jul 2025 01:06:07 +0200
+Hauke Mehrtens <hauke@hauke-m.de> wrote:
 
-Thank you for the reference, and I think it will work to do such
-filtering in the selftests.
+> On 7/12/25 01:03, Hauke Mehrtens wrote:
+> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>  
+> 
+> Sorry this has the wrong from tag, will send a new patch.
+> 
+> Hauke>
+> > A modern Linux system creates much more than 20 threads at bootup.
+> > When I booted up OpenWrt in qemu the system sometimes failed to boot up
+> > when it wanted to create the 419th thread. The VM had 128MB RAM and the
+> > calculation in set_max_threads() calculated that max_threads should be
+> > set to 419. When the system booted up it tried to notify the user space
+> > about every device it created because CONFIG_UEVENT_HELPER was set and
+> > used. I counted 1299 calles to call_usermodehelper_setup(), all of
+> > them try to create a new thread and call the userspace hotplug script in
+> > it.
+> > 
+> > This fixes bootup of Linux on systems with low memory.
 
+I bet it doesn't - it is likely to fail somewhere else instead.
+While 20 is probably too low, the real issue seems to be that
+the hotplug notifications need rate limiting.
 
+	David
 
+> > 
+> > I saw the problem with qemu 10.0.2 using these commands:
+> > qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic
+> > 
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+> > ---
+> >   kernel/fork.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 7966c9a1c163..388299525f3c 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -115,7 +115,7 @@
+> >   /*
+> >    * Minimum number of threads to boot the kernel
+> >    */
+> > -#define MIN_THREADS 20
+> > +#define MIN_THREADS 600
+> >   
+> >   /*
+> >    * Maximum number of threads  
+> 
+> 
 
 
