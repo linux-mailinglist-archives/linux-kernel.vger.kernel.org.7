@@ -1,270 +1,84 @@
-Return-Path: <linux-kernel+bounces-733474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B26B07521
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:55:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CBCB07515
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110BC188D8B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:55:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1F19506D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD022F546F;
-	Wed, 16 Jul 2025 11:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8482F50AF;
+	Wed, 16 Jul 2025 11:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BPnV4TPO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GGFPT/Gk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0E22F5321
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752666828; cv=none; b=Q9QjPNpin4dNT8cBybvvzBn+qBQxyX+YBUrtt/sjGmhmqrld7iGqtET+8XFQkfbwdZS0J7tyXcfLn1PLB+Zc3pdkU9MwLF0fpisknxCObY1CDEWu4WzQGyCH+3WHAMQfn6/hBH48L3/5YmlV1fGiBGwDGyoz58OyyvfH8ZgCUzQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752666828; c=relaxed/simple;
-	bh=2KW2U/A4gk5SgRyGyeIXAj3+QH8TPX34JpTVHS++XsU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R9PzYD+RAJc3D4fhkfUH0rtv0fooRqodUmc4nl2/urntbROUW1xonu2ZrIYsQ61hB4R7fP79jegUvaptpGNHWJzmumYr+10k/g+O+s9dQpdfvuKetFlAIKnjKPPMNfmDLeS0lXKmtE0zFwXTLBTRRWv4Ori/t6Omwsy/UGdmRtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BPnV4TPO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752666826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gTjUnh8vzEtgGLxjFhakJRJqQjzQoh5z0pfGHbTFfL8=;
-	b=BPnV4TPOfPPrUVN21yQcCFEgZMLursy8/xL8zcmR9BCLjdGiYBVxVc+PWaIVnEBFjHHAu/
-	ufIw6hbKWeYTfb3BlBmgdrIvaIazF7g/6Y/hDASc7iTNqCoCV2Bw3PICTdjfLdsU/LTD2c
-	WPAeC4pHGDssgtnVu12bL+AKPWn67ck=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-228-Av5-SLWRMbG6gvHGAc7-Ig-1; Wed,
- 16 Jul 2025 07:53:42 -0400
-X-MC-Unique: Av5-SLWRMbG6gvHGAc7-Ig-1
-X-Mimecast-MFC-AGG-ID: Av5-SLWRMbG6gvHGAc7-Ig_1752666821
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B32419560AA;
-	Wed, 16 Jul 2025 11:53:41 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.2])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1E5DD195E772;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964312F5098;
 	Wed, 16 Jul 2025 11:53:37 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jeffrey Altman <jaltman@auristor.com>,
-	Simon Horman <horms@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH net 5/5] rxrpc: Fix to use conn aborts for conn-wide failures
-Date: Wed, 16 Jul 2025 12:53:04 +0100
-Message-ID: <20250716115307.3572606-6-dhowells@redhat.com>
-In-Reply-To: <20250716115307.3572606-1-dhowells@redhat.com>
-References: <20250716115307.3572606-1-dhowells@redhat.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752666817; cv=none; b=reVe7J3YE2H/BBTO6CS6ZjPIe9Kc9uq9lYUwUMK4lGZ9qKAxQ1wojRz5mgS+lo1YvvGnR0t3QuSptIVBzYMT+Lxp4j0txH82w0pIak/eHtaHfqTFdlZkbiwxPrF2J+Vyp6uGfLCLoA55H+oVlaP3Z9dkbMNPJWYmIJwB+NCxZEs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752666817; c=relaxed/simple;
+	bh=Z/UmLfAfvDDN2pNeQi4tqkc4cBQJdv0CRL+ljKH1eHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lnXJMvY3sLuZ+So52c/GNRt018NnCYfarv1VfNIoV+bZ72uQclV/TRl6Sl5jSXg4WKTgtO8bdauPtZvTSM3+ITV2dN018lKjOwpZ6b5dkb35i2DTxwxMjtryOodNTEO0wFbfK3Ia3SZNvm6BnlQTJa7S7rcjLgyj14K/+wy6G48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GGFPT/Gk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A17C9C4CEF6;
+	Wed, 16 Jul 2025 11:53:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752666817;
+	bh=Z/UmLfAfvDDN2pNeQi4tqkc4cBQJdv0CRL+ljKH1eHY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GGFPT/Gk9K4053/vzVZJiRD+loa8EtbUbNa4vXm0hUMZbTa613cTCmfa0mBUuN4a4
+	 wp4GIdslqVaqfzs2thJ5UIuhhRG2D20vrF2+MHtCRmP4ZpEH03O+Y7A2XN2w8pmR82
+	 kiPjkWpL2HIuK0aC2YNTlKtP6Bhk5C9RqzpWajGc=
+Date: Wed, 16 Jul 2025 13:53:34 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+Cc: arnd@arndb.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	luoyifan@cmss.chinamobile.com, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v6 2/3] eeprom: add driver for ST M24LR series RFID/NFC
+ EEPROM chips
+Message-ID: <2025071651-pushcart-scapegoat-6155@gregkh>
+References: <20250706105311.395162-1-abd.masalkhi@gmail.com>
+ <20250706105311.395162-3-abd.masalkhi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250706105311.395162-3-abd.masalkhi@gmail.com>
 
-Fix rxrpc to use connection-level aborts for things that affect the whole
-connection, such as the service ID not matching a local service.
+On Sun, Jul 06, 2025 at 10:53:10AM +0000, Abd-Alrhman Masalkhi wrote:
+> +/**
+> + * m24lr_parse_le_value - Parse hex string and convert to little-endian binary
+> + * @buf:	Input string buffer (hex format)
+> + * @reg_size:	Size of the register in bytes (must be 1, 2, 4, or 8)
+> + * @output:	Output buffer to store the value in little-endian format
+> + *
+> + * Converts a hexadecimal string to a numeric value of the given register size
+> + * and writes it in little-endian byte order into the provided buffer.
+> + *
+> + * Return: 0 on success, or negative error code on failure
+> + */
+> +static __maybe_unused int m24lr_parse_le_value(const char *buf, u32 reg_size,
+> +					       u8 *output)
 
-Fixes: 57af281e5389 ("rxrpc: Tidy up abort generation infrastructure")
-Reported-by: Jeffrey Altman <jaltman@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
-cc: stable@vger.kernel.org
----
- include/trace/events/rxrpc.h |  1 +
- net/rxrpc/ar-internal.h      |  3 +++
- net/rxrpc/call_accept.c      | 12 ++++++------
- net/rxrpc/io_thread.c        | 14 ++++++++++++++
- net/rxrpc/output.c           | 19 ++++++++++---------
- net/rxrpc/security.c         |  8 ++++----
- 6 files changed, 38 insertions(+), 19 deletions(-)
+Your __maybe_unused marker here hid the fact that it is NOT used
+anywhere in this driver :(
 
-diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 8e5a73eb5268..de6f6d25767c 100644
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -322,6 +322,7 @@
- 	EM(rxrpc_call_put_kernel,		"PUT kernel  ") \
- 	EM(rxrpc_call_put_poke,			"PUT poke    ") \
- 	EM(rxrpc_call_put_recvmsg,		"PUT recvmsg ") \
-+	EM(rxrpc_call_put_release_recvmsg_q,	"PUT rls-rcmq") \
- 	EM(rxrpc_call_put_release_sock,		"PUT rls-sock") \
- 	EM(rxrpc_call_put_release_sock_tba,	"PUT rls-sk-a") \
- 	EM(rxrpc_call_put_sendmsg,		"PUT sendmsg ") \
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index df1a618dbf7d..5b7342d43486 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -44,6 +44,7 @@ enum rxrpc_skb_mark {
- 	RXRPC_SKB_MARK_SERVICE_CONN_SECURED, /* Service connection response has been verified */
- 	RXRPC_SKB_MARK_REJECT_BUSY,	/* Reject with BUSY */
- 	RXRPC_SKB_MARK_REJECT_ABORT,	/* Reject with ABORT (code in skb->priority) */
-+	RXRPC_SKB_MARK_REJECT_CONN_ABORT, /* Reject with connection ABORT (code in skb->priority) */
- };
- 
- /*
-@@ -1253,6 +1254,8 @@ int rxrpc_encap_rcv(struct sock *, struct sk_buff *);
- void rxrpc_error_report(struct sock *);
- bool rxrpc_direct_abort(struct sk_buff *skb, enum rxrpc_abort_reason why,
- 			s32 abort_code, int err);
-+bool rxrpc_direct_conn_abort(struct sk_buff *skb, enum rxrpc_abort_reason why,
-+			     s32 abort_code, int err);
- int rxrpc_io_thread(void *data);
- void rxrpc_post_response(struct rxrpc_connection *conn, struct sk_buff *skb);
- static inline void rxrpc_wake_up_io_thread(struct rxrpc_local *local)
-diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
-index a4d76f2da684..00982a030744 100644
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -374,8 +374,8 @@ bool rxrpc_new_incoming_call(struct rxrpc_local *local,
- 	spin_lock(&rx->incoming_lock);
- 	if (rx->sk.sk_state == RXRPC_SERVER_LISTEN_DISABLED ||
- 	    rx->sk.sk_state == RXRPC_CLOSE) {
--		rxrpc_direct_abort(skb, rxrpc_abort_shut_down,
--				   RX_INVALID_OPERATION, -ESHUTDOWN);
-+		rxrpc_direct_conn_abort(skb, rxrpc_abort_shut_down,
-+					RX_INVALID_OPERATION, -ESHUTDOWN);
- 		goto no_call;
- 	}
- 
-@@ -422,12 +422,12 @@ bool rxrpc_new_incoming_call(struct rxrpc_local *local,
- 
- unsupported_service:
- 	read_unlock_irq(&local->services_lock);
--	return rxrpc_direct_abort(skb, rxrpc_abort_service_not_offered,
--				  RX_INVALID_OPERATION, -EOPNOTSUPP);
-+	return rxrpc_direct_conn_abort(skb, rxrpc_abort_service_not_offered,
-+				       RX_INVALID_OPERATION, -EOPNOTSUPP);
- unsupported_security:
- 	read_unlock_irq(&local->services_lock);
--	return rxrpc_direct_abort(skb, rxrpc_abort_service_not_offered,
--				  RX_INVALID_OPERATION, -EKEYREJECTED);
-+	return rxrpc_direct_conn_abort(skb, rxrpc_abort_service_not_offered,
-+				       RX_INVALID_OPERATION, -EKEYREJECTED);
- no_call:
- 	spin_unlock(&rx->incoming_lock);
- 	read_unlock_irq(&local->services_lock);
-diff --git a/net/rxrpc/io_thread.c b/net/rxrpc/io_thread.c
-index 27b650d30f4d..e939ecf417c4 100644
---- a/net/rxrpc/io_thread.c
-+++ b/net/rxrpc/io_thread.c
-@@ -97,6 +97,20 @@ bool rxrpc_direct_abort(struct sk_buff *skb, enum rxrpc_abort_reason why,
- 	return false;
- }
- 
-+/*
-+ * Directly produce a connection abort from a packet.
-+ */
-+bool rxrpc_direct_conn_abort(struct sk_buff *skb, enum rxrpc_abort_reason why,
-+			     s32 abort_code, int err)
-+{
-+	struct rxrpc_skb_priv *sp = rxrpc_skb(skb);
-+
-+	trace_rxrpc_abort(0, why, sp->hdr.cid, 0, sp->hdr.seq, abort_code, err);
-+	skb->mark = RXRPC_SKB_MARK_REJECT_CONN_ABORT;
-+	skb->priority = abort_code;
-+	return false;
-+}
-+
- static bool rxrpc_bad_message(struct sk_buff *skb, enum rxrpc_abort_reason why)
- {
- 	return rxrpc_direct_abort(skb, why, RX_PROTOCOL_ERROR, -EBADMSG);
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index 17c33b5cf7dd..8b5903b6e481 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -829,7 +829,13 @@ void rxrpc_reject_packet(struct rxrpc_local *local, struct sk_buff *skb)
- 	msg.msg_controllen = 0;
- 	msg.msg_flags = 0;
- 
--	memset(&whdr, 0, sizeof(whdr));
-+	whdr = (struct rxrpc_wire_header) {
-+		.epoch		= htonl(sp->hdr.epoch),
-+		.cid		= htonl(sp->hdr.cid),
-+		.callNumber	= htonl(sp->hdr.callNumber),
-+		.serviceId	= htons(sp->hdr.serviceId),
-+		.flags		= ~sp->hdr.flags & RXRPC_CLIENT_INITIATED,
-+	};
- 
- 	switch (skb->mark) {
- 	case RXRPC_SKB_MARK_REJECT_BUSY:
-@@ -837,6 +843,9 @@ void rxrpc_reject_packet(struct rxrpc_local *local, struct sk_buff *skb)
- 		size = sizeof(whdr);
- 		ioc = 1;
- 		break;
-+	case RXRPC_SKB_MARK_REJECT_CONN_ABORT:
-+		whdr.callNumber	= 0;
-+		fallthrough;
- 	case RXRPC_SKB_MARK_REJECT_ABORT:
- 		whdr.type = RXRPC_PACKET_TYPE_ABORT;
- 		code = htonl(skb->priority);
-@@ -850,14 +859,6 @@ void rxrpc_reject_packet(struct rxrpc_local *local, struct sk_buff *skb)
- 	if (rxrpc_extract_addr_from_skb(&srx, skb) == 0) {
- 		msg.msg_namelen = srx.transport_len;
- 
--		whdr.epoch	= htonl(sp->hdr.epoch);
--		whdr.cid	= htonl(sp->hdr.cid);
--		whdr.callNumber	= htonl(sp->hdr.callNumber);
--		whdr.serviceId	= htons(sp->hdr.serviceId);
--		whdr.flags	= sp->hdr.flags;
--		whdr.flags	^= RXRPC_CLIENT_INITIATED;
--		whdr.flags	&= RXRPC_CLIENT_INITIATED;
--
- 		iov_iter_kvec(&msg.msg_iter, WRITE, iov, ioc, size);
- 		ret = do_udp_sendmsg(local->socket, &msg, size);
- 		if (ret < 0)
-diff --git a/net/rxrpc/security.c b/net/rxrpc/security.c
-index 078d91a6b77f..2bfbf2b2bb37 100644
---- a/net/rxrpc/security.c
-+++ b/net/rxrpc/security.c
-@@ -140,15 +140,15 @@ const struct rxrpc_security *rxrpc_get_incoming_security(struct rxrpc_sock *rx,
- 
- 	sec = rxrpc_security_lookup(sp->hdr.securityIndex);
- 	if (!sec) {
--		rxrpc_direct_abort(skb, rxrpc_abort_unsupported_security,
--				   RX_INVALID_OPERATION, -EKEYREJECTED);
-+		rxrpc_direct_conn_abort(skb, rxrpc_abort_unsupported_security,
-+					RX_INVALID_OPERATION, -EKEYREJECTED);
- 		return NULL;
- 	}
- 
- 	if (sp->hdr.securityIndex != RXRPC_SECURITY_NONE &&
- 	    !rx->securities) {
--		rxrpc_direct_abort(skb, rxrpc_abort_no_service_key,
--				   sec->no_key_abort, -EKEYREJECTED);
-+		rxrpc_direct_conn_abort(skb, rxrpc_abort_no_service_key,
-+					sec->no_key_abort, -EKEYREJECTED);
- 		return NULL;
- 	}
- 
+Please remove this function as it's not needed.
 
+thanks,
+
+greg k-h
 
