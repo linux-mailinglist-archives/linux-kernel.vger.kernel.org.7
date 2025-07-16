@@ -1,181 +1,148 @@
-Return-Path: <linux-kernel+bounces-733003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1484B06EA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:15:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5857EB06EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2508F566A13
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:15:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 955755052F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE9D28C01F;
-	Wed, 16 Jul 2025 07:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A607F28B7DB;
+	Wed, 16 Jul 2025 07:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TS8ulBWy"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pTUecasR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF0D289E03
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A4227146F;
+	Wed, 16 Jul 2025 07:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752650098; cv=none; b=WYWKqnE5DMZZsbKI6BvPZsRAOWGZOgm3FMI6DhWAsqAQenzKymHQd5RcUX5Wx+O7YCJX5l3U/G8KIEWx4HO5IjgO5AmVm1z77a9cwBncJIpjYsbuHs1py23aDbqVJjSLdNUhpdnWSN+JAgVgzwOX0FJqr9bPn8yfJKxrBscSYr0=
+	t=1752650082; cv=none; b=hx1nMGo428lGdszj+o/+chFO7CBCfO9iPSEbrvxzkoMeVx6zGZ8dyEMiC9yyPwp0XIe8G6BL1KASrai2HVrVbkLlHix4pdoXUiwA5RwVa4IkjmRkBkLJiRkLmVX8Ls8MDRTtDElyYtBa7ylINjHMv6BKvKyhg7c+RHPkv/YMRz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752650098; c=relaxed/simple;
-	bh=ofC7dqfc9DFPG3QgK0WOs3oGutxJmh62HXDeShSISsI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k5hfxpaeGBHEm6LXfNo/svuZugjW0jUyqDHr3LlPlntcSP9jtQeXDkiK+wdosXm/eijVR0WCy+1d3k6EgKwm6Hpnqg5v+3eQcAt9O7KBePzeDrTPQy4M3hmBZ3OwO1I8SrytOz0HVoKFmnddN2aHJrRWf8U10jRkds1xQBixG5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TS8ulBWy; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-553be4d2fbfso6867179e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:14:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752650095; x=1753254895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8/TskkqgAknmlMUUx/sc2CfLPBj8HFNCTNNUaHiNnrE=;
-        b=TS8ulBWyrckJv3wvcMYzt0pBWiOPfHo6rtSuViOXKyuhjN4s3pdGUv9S5W7TZi3jq0
-         Zm1IFJenI5qqtcnwkpuwQT+94uD3KAODX78TF4ZyIfrLtTdZq/vMIX5s1UTA8wvWELsq
-         PQrBf+ngkl62rqWP7/j5oyTWDLUWqy+vboc8JYlNdnrOY438MWInkovFKFpTW/lCytKM
-         Bfs9/RzI7K4BRZ8ph/UmYBoWpOQYJvTqHB8rAKvMJRC2qaZeemq/pPDFT3uFn+A6hnan
-         p5ZjN65nK0TMucirGLFjZ9M9K5g/4VWNJlG6ujuS+VRjJ2g+9EPF14nSIRfnbEGm7+Sg
-         RL/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752650095; x=1753254895;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8/TskkqgAknmlMUUx/sc2CfLPBj8HFNCTNNUaHiNnrE=;
-        b=lWJIsey+0h+1+QAkKZQh+reX5KTboIW1TeQ+TEbvS+25uzhOnDwMQeQMCwuF5V/Fn9
-         M6k2p8QPZuJvPzc/ySNik5/A3xi6Lg+onjho8CkUC3Lp/soR8LDz197lW0bhFcZ9dT9V
-         P5YMEj56JZNYCOF4NfX3BTdleBC/4pjNu01cG+LKiL7SGCTk3BxzPSMpezimejxpJop/
-         bj1gh9N5/YIOuYf1PD+T6pnEz5LIU3MdFkyuMvIiOAczbAPtA+ObO6+kHLunPezJwuTQ
-         ndhG2PBFtcjjLixafviIPyhrt+czZ0bj7Y56dSZxQw3YpwHhlEYpVBBk28Sjiguf+30V
-         pYUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpEbOw3yonoFxbTWvtuPALKyv871BoXfQvp3I40NjZI2bkMIJ8bdUa4raVYW+6uHmmRB0BY8Fj1kG8ju4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4uMkDlU0I4vy69oBpFL/tEu+WxDNBfOu0xJ18EhoBHvsnIOmU
-	Zli++6omwhdOGUsK6JPITl4KIRg/3VsmER7oSilF9NgDy3OshhPczlqk3t7MovUiKb5exsunrrQ
-	0OgEyhIMz2QLslXXbmKLpfN3g6h3Io/w=
-X-Gm-Gg: ASbGncsHdiOkHwekbkz/k4BhKSGBVH11SiBDqm37Z7dZN0+b2Pm+ixK0w5u/eJBy1j3
-	+dAyooOGOCztDKWzJOxGEOJN6oStwnMuZ/+VtyWYjMvA5iKW7+WSzDRb2wb9vnXQtnQkuk0/fPV
-	6Rwve/MTIXcrUExaNphAkMv4n0sCU3RD5KHzvko1/M7YKgliweRaB2CEChZj1K0m6m8pM6lwMMO
-	hxYrt4=
-X-Google-Smtp-Source: AGHT+IE10OfJxxq0wMgT/q6inJbMeGnFb6O/fdLgd9emra6LAIDXacfuGpylhnN7yvgi7/OpTqFIOaP6C6WqelkphNM=
-X-Received: by 2002:a2e:b8cf:0:b0:32c:a006:2a36 with SMTP id
- 38308e7fff4ca-3308f5c6b99mr4581721fa.20.1752650094463; Wed, 16 Jul 2025
- 00:14:54 -0700 (PDT)
+	s=arc-20240116; t=1752650082; c=relaxed/simple;
+	bh=6WT5r6KoJPC2KpG01VrkrVYL4IHwOOUcNPc9Gau6cdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cn6ne4sfE/UcUAsNKKIjqDAVxp3DSzcLqTIp5TKwUiPobWXUIqD7q1VK8hdrZEJTQRNLxTNArAYW/L8ZyYaW5ha6NgwiZ+GuZQs0IgC9YMScQUWQYG3YSQxqX+cf/pQDqyZ6mAexVWgd2yNt3UVfDms/UJths1LCU3FaqtUwBeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pTUecasR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G65t5Q029618;
+	Wed, 16 Jul 2025 07:14:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jT3Bh8bK95X2gXiSfeNO8EJjpoS9LKpknUR/eHh3xSU=; b=pTUecasROyVp6qZ3
+	bLkgxbDhxVjqw2Kmhj7xm6I9A3Dle9hacTVYS7c7/UwDj6z86c3o0YubdZugz/xG
+	Bu2DQDxZBwC80Nv9nd+yh0RYSucnxuv9sqTG8vucRFmQDdMWaUunV10HsrT5VM3n
+	mK6wKdiOqOMTWGgWx8X03IOAr67ipoTXW8JMgSuVlWc6nawVi2Ks3s71hx7Eiy8S
+	N2qoD14jeQDWfQtyZxVDRXylhO9RLhtIzvmLKy3lU+IKegQ3mmPMslZruY6vAhY0
+	EtGjskbRGHR0ZGsUYMBuOm5C4MlE1EccKUIfB5EqvLSlfVt5To9mrG7lxnOSLdhU
+	FuFJDg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxb2y9j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 07:14:35 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56G7EYxr011064
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 07:14:34 GMT
+Received: from [10.216.39.173] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 16 Jul
+ 2025 00:14:31 -0700
+Message-ID: <099b06d0-afb0-8cf0-2d37-8adddbe537f2@quicinc.com>
+Date: Wed, 16 Jul 2025 12:44:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710033706.71042-1-ryncsn@gmail.com> <20250710033706.71042-7-ryncsn@gmail.com>
- <57e82add-b8d5-49cb-8a3e-58c7c65768d0@linux.alibaba.com> <CAMgjq7CoFf52Wa9-6GoowFnaU0+VC6Lb+mzgjipB0nrhLeA8yQ@mail.gmail.com>
- <7454d5b3-e8a4-29c2-ea00-435821ebfd37@google.com>
-In-Reply-To: <7454d5b3-e8a4-29c2-ea00-435821ebfd37@google.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 16 Jul 2025 15:14:17 +0800
-X-Gm-Features: Ac12FXwhNHAkGIzUr7aHpF-30otPMcr6GxMfvF6LW6zD8vDq5BNGf6-ioRiGg0Q
-Message-ID: <CAMgjq7A=URzunJD2APwtw=B41zB5JGKUuvOhLDxLrZCS6N_paw@mail.gmail.com>
-Subject: Re: [PATCH v5 6/8] mm/shmem, swap: simplify swapin path and result handling
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 10/25] media: iris: Send dummy buffer address for all
+ codecs during drain
+Content-Language: en-US
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
+ <20250704-iris-video-encoder-v1-10-b6ce24e273cf@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250704-iris-video-encoder-v1-10-b6ce24e273cf@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 16, 2025 at 6:10=E2=80=AFAM Hugh Dickins <hughd@google.com> wro=
-te:
->
-> On Fri, 11 Jul 2025, Kairui Song wrote:
-> > On Fri, Jul 11, 2025 at 2:23=E2=80=AFPM Baolin Wang
-> > <baolin.wang@linux.alibaba.com> wrote:
-> > >
-> > >
-> > >
-> > > On 2025/7/10 11:37, Kairui Song wrote:
-> > > > From: Kairui Song <kasong@tencent.com>
-> > > >
-> > > > Slightly tidy up the different handling of swap in and error handli=
-ng
-> > > > for SWP_SYNCHRONOUS_IO and non-SWP_SYNCHRONOUS_IO devices. Now swap=
-in
-> > > > will always use either shmem_swap_alloc_folio or shmem_swapin_clust=
-er,
-> > > > then check the result.
-> > > >
-> > > > Simplify the control flow and avoid a redundant goto label.
-> > > >
-> > > > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > >
-> > > LGTM, with a nit as follows.
-> > > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > >
-> > > > ---
-> > > >   mm/shmem.c | 45 +++++++++++++++++++--------------------------
-> > > >   1 file changed, 19 insertions(+), 26 deletions(-)
-> > > >
-> > > > diff --git a/mm/shmem.c b/mm/shmem.c
-> > > > index 847e6f128485..80f5b8c73eb8 100644
-> > > > --- a/mm/shmem.c
-> > > > +++ b/mm/shmem.c
-> > > > @@ -2320,40 +2320,33 @@ static int shmem_swapin_folio(struct inode =
-*inode, pgoff_t index,
-> > > >                       count_memcg_event_mm(fault_mm, PGMAJFAULT);
-> > > >               }
-> > > >
-> > > > -             /* Skip swapcache for synchronous device. */
-> > > >               if (data_race(si->flags & SWP_SYNCHRONOUS_IO)) {
-> > > > +                     /* Direct mTHP swapin skipping swap cache & r=
-eadhaed */
-> > > >                       folio =3D shmem_swap_alloc_folio(inode, vma, =
-index, swap, order, gfp);
-> > >
-> > > Nit: the 'mTHP' word can be confusing, since we will skip swapcache f=
-or
-> > > order 0 too. Please drop it.
-> > >
-> >
-> > Yes, thanks for the review.
->
-> And a few words after that 'mTHP ', I keep wincing at 'readhaed':
-> Andrew, you already did a fix to remove the 'mTHP ', I hope we can
-> also persuade you to change 'readhaed' to 'readahead' there - thanks!
->
-> Kairui, I'm a little uneasy about the way this series does arithmetic
-> on swap.val, in the knowledge that swp_offset(entry) involves no shift.
->
-> Perhaps I haven't noticed, but I think this is the first place to
-> make that assumption; and a few years ago it was not true at all -
-> swp_type() was down the bottom.  Usually we would do it all with
-> swp_entry(swp_type(x), arithmetic_on(swp_offset(x))).
->
-> But I guess, let's just agree that it's easier to read and get right
-> the way you have it, and make no change: if I try to "correct" you,
-> or demand that you change it, we shall probably just bring in bugs.
-
-Thanks!
-
-I think maybe we can introduce some helpers for things like rounding
-the swap entry later, we already have other similar helpers for swap
-entries.
-
-There was already same arithmetics in memoy.c some time ago, and I
-remember seeing people doing this several times. Current swap values
-are OK with this, will be easier to track with a helper.
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Rc2de6vbomeRZpo1pzfdSmdHeH1SaVPs
+X-Proofpoint-ORIG-GUID: Rc2de6vbomeRZpo1pzfdSmdHeH1SaVPs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA2NCBTYWx0ZWRfX4QwVSOTMriJh
+ fF/qB50mRZc7v4oftqWV+Yv/tJv8Y7NcU2DEgwjQm6pdrkt4grMLtlf/i0Uf9hRM7pj6/GNyfBt
+ JPPSkHRRrHt05FpqECFtCLQ3AVcg6k/n8KeKlmJMYfobg11N/EJDFOK3ypGgdc7nJZW/Y0eIPbM
+ JfQ9VqjwEca+LViOUj8MdrrqUAWnXtmC0rLW1vdN5PUcYAtPu/Bar106Pb2VyGx7Zk92K4s3h3/
+ 15YThQBC4Uk3Y2Dzl8C69v6yCxMY2uMaSOYY5CAYKxJHSV0Hdv8O6nPwCXbkiumbuDDcrOlhyKD
+ 2I5rNxqGAJRUPJOcNx0WHxjQpEHFVYsesNCeiqaI6stkuqnWHQ1JC/ErocfHYCNELrMZFeaCGkj
+ n8BEBR+H1A8zbydXhOi/tvfGEusV8msp3G0//CoflpOplSWzE++jVrZTsU18BxG+028svBe4
+X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=6877515b cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=EEMiJc2fybtc2XWaA9oA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
+ phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507160064
 
 
-> I'm particularly glad that you now avoid SWP_SYNCHRONOUS_IO readahead:
-> that stupidity had very much annoyed me, once I realized it.
->
-> Thanks,
-> Hugh
+On 7/4/2025 1:23 PM, Dikshita Agarwal wrote:
+> Firmware can handle a dummy address for buffers with the EOS flag. To
+> ensure consistent behavior across all codecs, update the drain
+> command to always send a dummy buffer address.
+> 
+> This makes the drain handling uniform and avoids any codec specific
+> assumptions.
+> 
+> Fixes: 478c4478610d ("media: iris: Add codec specific check for VP9 decoder drain handling")
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> index 5f1748ab80f88393215fc2d82c5c6b4af1266090..5097680ee14ebba3a126213c0584161627ca47d7 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> @@ -402,8 +402,7 @@ static int iris_hfi_gen1_session_drain(struct iris_inst *inst, u32 plane)
+>  	ip_pkt.shdr.hdr.pkt_type = HFI_CMD_SESSION_EMPTY_BUFFER;
+>  	ip_pkt.shdr.session_id = inst->session_id;
+>  	ip_pkt.flags = HFI_BUFFERFLAG_EOS;
+> -	if (inst->codec == V4L2_PIX_FMT_VP9)
+> -		ip_pkt.packet_buffer = 0xdeadb000;
+> +	ip_pkt.packet_buffer = 0xdeadb000;
+>  
+>  	return iris_hfi_queue_cmd_write(inst->core, &ip_pkt, ip_pkt.shdr.hdr.size);
+>  }
+> 
+
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
