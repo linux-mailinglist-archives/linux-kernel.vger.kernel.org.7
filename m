@@ -1,161 +1,214 @@
-Return-Path: <linux-kernel+bounces-734008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FF5B07BE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:18:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F322B07BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C7044A7819
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:18:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBF8A7B0523
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C3E2F5C55;
-	Wed, 16 Jul 2025 17:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB7D2F5C3B;
+	Wed, 16 Jul 2025 17:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hPR9P7Vn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCfXXjU3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36C72F5C44
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF59277030;
+	Wed, 16 Jul 2025 17:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752686306; cv=none; b=QUofSeWxgFOJ6ez93MXGdayBIdSEF31rzbcXVbJrAHIJFvQrVkRChGwEAch+qV8unVFPboe0zvUUP8HTJ+p5D7rppoH5ogFblXp6C8aATs8i8iJNnAHaPjSDJGvTtl7R37Y/m2yEa0EOhhQUsKcy9cLdY+2B40RSJwNgfvBA/zw=
+	t=1752686499; cv=none; b=k4ebCVe82OOTo2AXTnUwHD8O/H2EQRpZ0tJMSkTrhD2t0QiD1Z4Tbnwe8czRUif2ki2Vhc3HaJ6y+wgLJ3zpuYad9jMU/ZLXYNSqEfF6mNZenzCLrSZ2M8uySftE5Bw9KWf8WjBWciykoVRjV0zJeQ+slgJLLjMA2MejVAVbVI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752686306; c=relaxed/simple;
-	bh=6RzJT1L60GvhmajeO4pYpV61WuPIfNveFy1ljekZwUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QjKCBMMBofSmWKqiSIW5P1tNCNyRg81qiuRRPYLX3Sb+09HCicMNMnK1L603P8Te4JZwXZnb6QbP/o4eoox7FKu3IrGfkHFYzmViTa80MXBxHGzKBl5jbPJXTTPoozYwZ448NJV5vzmHEfaMLpCJLN82i7d0se9Gd9Ooz6hC+9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hPR9P7Vn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GGDVtY022256
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:18:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/tMth6o7tHgbIUQxZkR6tUZ2rv+sepU1UeAb/Pu8vhE=; b=hPR9P7VnD6Vfboen
-	Oe0xd1Hbb1CL+U8J8zbXW/1QCBNPzds+NcaxleI45fPoewHe81S+KWfBgRSizcxH
-	h31zRd6dXlLR/y9Rm/X9XG/mF4YAC/sj3YFRp+4p+vjNhp18YNzx9bvF/iqPnMik
-	Ir3mQBdU6YFs+8JXvPZAJCglt7cY6IpMy45ButNyHot1hj5ldKfMLXbg+MgBIb0b
-	DQClV5cw5FosXR/mwchmdNA7PYTmjwNIrr/QfJpOvPxBKe/Ib1TYRrOc9CJkkh6b
-	Hm10V8eIPtpcTZxaskQCLL6LZV6yWsvU9cpzQiy2qpR94snWFQAbWNSOm1kKJAoe
-	9cxjfw==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy4p1f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:18:23 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b31f112c90aso86691a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:18:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752686303; x=1753291103;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/tMth6o7tHgbIUQxZkR6tUZ2rv+sepU1UeAb/Pu8vhE=;
-        b=P30Cd1iZ77mjzmUBtemTMmthecvfXylxm0b3XVibAWo6DSLWJyVyPGtQ89KCMRt+XF
-         qCU6sbxiDI95MwgtgxvVWZvlFbiZOpI9s0OsDDo3yZ4J8MR+ajd3cG6Ps/ZWx+ldLmO9
-         XXM2HiT0k9Acqs1fzBuDzJQJa/lJ4b3u2laJoJRCq54dC1gNekkvDePaBUcJOpI3FcKG
-         xsBd57gN4GznGpT18GSAUCgSi28d8TTS0x7i0evjLQutY+n8ISvw13hcRGqwdwpoliwX
-         FzsoZmagf75ld5kK44GVQPf9tfs+Ma2n089XnEcpZKJtS1v+1Z5nNy0gkns85IVIXvoq
-         q32A==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Hc2O78VACRlPARQQ9olb2fTQJAAGhMU0PErNgXv9ziBOExlGaVziafrL34qIDmTAmOw8PsQEWPhGN24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP8OBV7JSaB4P7bAQYZU+XWvud/XXIcNjKdIrTT3/ghSQOTA6Q
-	FFQiI6krjpeIeQo71Xo6sNvRxYuxtqo/n3bcBOOolaeuRjk3QA9vX34ozq6wj+WfDHzAp2Ildwn
-	0uSH9QXFRora1Ka0sL5uaUJCz/4ty8LOZqdFyv7G2mzGNAK27AyrEJlLdOFmnzArZI8M=
-X-Gm-Gg: ASbGnctUoRwicfjAt3dBnbxtAWB8tFqQS8c8D8az4c5Wf0Kn1fEQxY9eupyLkUHsAHa
-	jrzDsj25kSh/A+bvNUGblCE8wBRNYfppRUIuqftl5zB1DItzuPPdJPdfN5S640ZBONdOF1WB+Au
-	MTiBkPqyHY8AJHV34J89iaGm0hs55WpuYvLhpJyTwaRHNoRDcjipFebwpRDnK91m1HXXiUfcp3d
-	d36k96BLghuKQ01JMXjkBRJTq8/PpvCjqJojsXHdHt+Mc487VskeiDvA9cm9qPguie6WgQcqAH6
-	jOGFUGnCtkXLuwU+Ph52iuCr424e36crpjSMUrCwtue9uP6U6niqvCN39xCrYtpyblhMLRezSe2
-	40yhlvFBnNCWSsoy5eEE=
-X-Received: by 2002:a05:6a20:1584:b0:234:e109:6bdf with SMTP id adf61e73a8af0-2390c56e8bbmr294952637.19.1752686303013;
-        Wed, 16 Jul 2025 10:18:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF56y5nV1rAeM2TuaaRxByMhD0eKi4TFlVWOHGMOxWKdeVyu82Dt3msTx7dIP/gme5crNDFgg==
-X-Received: by 2002:a05:6a20:1584:b0:234:e109:6bdf with SMTP id adf61e73a8af0-2390c56e8bbmr294908637.19.1752686302511;
-        Wed, 16 Jul 2025 10:18:22 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe345f2esm13991621a12.0.2025.07.16.10.18.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 10:18:22 -0700 (PDT)
-Message-ID: <3dc23475-1c16-435b-9c6d-d2d7996280c4@oss.qualcomm.com>
-Date: Wed, 16 Jul 2025 10:18:20 -0700
+	s=arc-20240116; t=1752686499; c=relaxed/simple;
+	bh=2negnZkD72TZWe3BsPmibIcM1Vow8UKfserRA3k3YuA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=KYd+4u32Zhs8tIy8DU3ndz4/B3sTwAd9ZRsTyw1IsRwyvS6KY8w5SeQN3Z862H7G9qfG+4jWN2pN4AhXhscJwZtVL8F+++a+QEUHjEpBFmgBU5CmYC7ILJy5sXpgWNsnp+898FxFZyGzGOqIOmX0hoEuQAcYOwBrA0dV0eCHZ2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCfXXjU3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38B7DC4CEE7;
+	Wed, 16 Jul 2025 17:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752686497;
+	bh=2negnZkD72TZWe3BsPmibIcM1Vow8UKfserRA3k3YuA=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=UCfXXjU3lbjom+okhpOsljp81vLHkWGlaWmae1qR96mYl372TUjEiuJRLvOBMmYzK
+	 h1vGipHbIGGghf3CL8Lfnlvb6bwMbhGpwOLbzYY3LCXya3d1Tjvx1lKnsTAxCan4aY
+	 G3hjFk+fLeA+H5LhNOrzVggbfaSZ3jEU9KSXyo2j4qzq7g0bkGe6cE6hyvBX9cLFn6
+	 A51OOAWDIrHGhgzDIr26/6ad0uXdWdcTZ2log3q7a3ASDWgk3Kowgt8et2m9bEeu4H
+	 bu/sir6KbdIjZnfaBxe8MraXhTsGLPN8djzl7aa5DO7T7wsSBEUXhZAaE/u3IT1f7y
+	 Xt7aLkCkgRwmg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-To: Johannes Berg <johannes@sipsolutions.net>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@kernel.org>
-Cc: Wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-        Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>
-References: <20250716135252.51125baa@canb.auug.org.au>
- <4ee6758a49e6f01c5e42b2f7c27aff905ac07dfa.camel@sipsolutions.net>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <4ee6758a49e6f01c5e42b2f7c27aff905ac07dfa.camel@sipsolutions.net>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDE1NiBTYWx0ZWRfX4+MkZdqFEvKM
- Q9haiCDa+3Ioiit6NMPFUET8OnCk4tKM7Xa+9CRh6xpusn09pcbNQeSBwfbvSKrEenXdGu0qnDl
- Gk3/pei7XIvXpu/OIwXbsVBVt7sR2aR9iMAulNeMaPlblh/ag7PIR1gAE4oUWmNtxJ1+Xvb4b+K
- 9p+1hffx5M06WCCbQesHfF/H4qY3vik89jr+RYS0UXuowviAtGZfmm0zJ3AV7Tp/2kydJTC013H
- M/jdQlY8bgQqxUg77fepyEOTDOBFck5iVantRSVCPybyCKPzuAy0MDK9c+9Sd9b+qC6sfmeDC1e
- nwOzNC2lcrAWSa2otQ1GKGy2ldQURSIn2C9PQr/RPD9IhqmRg88o4ZmyRfXJzdIp/lXuvPFnpFE
- 4vu0HiAxeUAEUErGUHlB2FDVglklOXpnGw164RgpSHwWwJDTwPT/Db3vII7zsiPO9PZ5OgZZ
-X-Proofpoint-GUID: VDWILs06iGSC_nENcjHu_24jH7aC7VFV
-X-Proofpoint-ORIG-GUID: VDWILs06iGSC_nENcjHu_24jH7aC7VFV
-X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=6877dedf cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=ULWNt2tdzX7OOLHh:21 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=Swg7eHfTgBCftI4JXWkA:9 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507160156
+Date: Wed, 16 Jul 2025 19:21:32 +0200
+Message-Id: <DBDNIAW09Z7W.EXO6C61HCNVP@kernel.org>
+Cc: "Mitchell Levy" <levymitchell0@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Dennis Zhou"
+ <dennis@kernel.org>, "Tejun Heo" <tj@kernel.org>, "Christoph Lameter"
+ <cl@linux.com>, "Danilo Krummrich" <dakr@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-mm@kvack.org>
+Subject: Re: [PATCH v2 3/5] rust: percpu: add a rust per-CPU variable test
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250712-rust-percpu-v2-3-826f2567521b@gmail.com>
+ <DBATM1CUS704.28MKE6BIBQB7G@kernel.org>
+ <68762e19.170a0220.33e203.a0b7@mx.google.com>
+ <DBCLFG5F4MPW.2LF4T3KWOE12R@kernel.org> <aHZhcNCayTOQhvYh@Mac.home>
+ <DBCR1OCNYAUW.1VLAY1HWCHLGI@kernel.org> <aHaCUFNUd_mErL7S@Mac.home>
+ <DBCTCZ5HUZOF.2DJX63Q0VWWFN@kernel.org> <aHbJUfcsjHA92OlE@tardis-2.local>
+ <DBDESSQOH6MB.2I4GNLPBP5ORJ@kernel.org> <aHfGV3l4NCmYSRuv@Mac.home>
+In-Reply-To: <aHfGV3l4NCmYSRuv@Mac.home>
 
-On 7/16/2025 1:59 AM, Johannes Berg wrote:
-> On Wed, 2025-07-16 at 13:52 +1000, Stephen Rothwell wrote:
->> Hi all,
->>
->> Today's linux-next merge of the wireless-next tree got conflicts in:
->>
->>   drivers/net/wireless/intel/iwlwifi/fw/regulatory.c
->>   drivers/net/wireless/intel/iwlwifi/mld/regulatory.c
->>
->> between commit:
->>
->>   5fde0fcbd760 ("wifi: iwlwifi: mask reserved bits in chan_state_active_bitmap")
->>
->> from the wireless tree and commit:
->>
->>   ea045a0de3b9 ("wifi: iwlwifi: add support for accepting raw DSM tables by firmware")
->>
->> from the wireless-next tree.
->>
-> 
-> Thanks for the heads-up.
-> 
-> I'll double-check, and give Jakub a heads-up, he's probably going to hit
-> this, unless I defer the wireless-next pull request. We'll figure it
-> out.
+On Wed Jul 16, 2025 at 5:33 PM CEST, Boqun Feng wrote:
+> On Wed, Jul 16, 2025 at 12:32:04PM +0200, Benno Lossin wrote:
+>> On Tue Jul 15, 2025 at 11:34 PM CEST, Boqun Feng wrote:
+>> > On Tue, Jul 15, 2025 at 07:44:01PM +0200, Benno Lossin wrote:
+>> > [...]
+>> >> >> >
+>> >> >> > First of all, `thread_local!` has to be implemented by some sys-=
+specific
+>> >> >> > unsafe mechanism, right? For example on unix, I think it's using
+>> >> >> > pthread_key_t:
+>> >> >> >
+>> >> >> > 	https://pubs.opengroup.org/onlinepubs/009695399/functions/pthre=
+ad_key_create.html
+>> >> >> >
+>> >> >> > what we are implementing (or wrapping) is the very basic unsafe
+>> >> >> > mechanism for percpu here. Surely we can explore the design for =
+a safe
+>> >> >> > API, but the unsafe mechanism is probably necessary to look into=
+ at
+>> >> >> > first.
+>> >> >>=20
+>> >> >> But this is intended to be used by drivers, right? If so, then we =
+should
+>> >> >
+>> >> > Not necessarily only for drivers, we can also use it for implementi=
+ng
+>> >> > other safe abstraction (e.g. hazard pointers, percpu counters etc)
+>> >>=20
+>> >> That's fair, but then it should be `pub(crate)`.
+>> >>=20
+>> >
+>> > Fine by me, but please see below.
+>> >
+>> >> >> do our usual due diligence and work out a safe abstraction. Only f=
+all
+>> >> >> back to unsafe if it isn't possible.
+>> >> >>=20
+>> >> >
+>> >> > All I'm saying is instead of figuring out a safe abstraction at fir=
+st,
+>> >> > we should probably focus on identifying how to implement it and whi=
+ch
+>> >> > part is really unsafe and the safety requirement for that.
+>> >>=20
+>> >> Yeah. But then we should do that before merging :)
+>> >>=20
+>> >
+>> > Well, who's talknig about merging? ;-) I thought we just began reviewi=
+ng
+>> > here ;-)
+>>=20
+>> I understand [PATCH] emails as "I want to merge this" and [RFC PATCH] as
+>
+> But it doesn't mean "merge as it is", right? I don't think either I or
+> Mitchell implied that, I'm surprised that you had to mention that,
 
-I'm planning on sending an ath PR for the 6.17 merge window early next week,
-so I hope there will still be one more wireless-next PR.
+Yeah that is true, but it at least shows the intention :)
 
-/jeff
+> also based on "I often mute those" below, making it "[PATCH]" seems to
+> be a practical way to get more attention if one wants to get some
+> reviews.
+
+That is true, I do usually read the titles of RFC patches though and
+sometimes take a look eg your atomics series.
+
+>> "I want to talk about merging this". It might be that I haven't seen the
+>> RFC patch series, because I often mute those.
+>>=20
+>
+> Well, then you cannot blame people to move from "RFC PATCH" to "PATCH"
+> stage for more reviews, right? And you cannot make rules about what the
+> difference between [PATCH] and [RFC PATCH] if you ignore one of them ;-)
+
+I'm not trying to blame anyone. I saw a lot of unsafe in the example and
+thought "we can do better" and since I haven't heard any sufficient
+arguments showing that it's impossible to improve, we should do some
+design work.
+
+>> >> >> I'm not familiar with percpu, but from the name I assumed that it'=
+s
+>> >> >> "just a variable for each cpu" so similar to `thread_local!`, but =
+it's
+>> >> >> bound to the specific cpu instead of the thread.
+>> >> >>=20
+>> >> >> That in my mind should be rather easy to support in Rust at least =
+with
+>> >> >> the thread_local-style API. You just need to ensure that no refere=
+nce
+>> >> >> can escape the cpu, so we can make it `!Send` & `!Sync` + rely on =
+klint
+>> >> >
+>> >> > Not really, in kernel, we have plenty of use cases that we read the
+>> >> > other CPU's percpu variables. For example, each CPU keeps it's own
+>> >> > counter and we sum them other in another CPU.
+>> >>=20
+>> >> But then you need some sort of synchronization?
+>> >>=20
+>> >
+>> > Right, but the synchronization can exist either in the percpu operatio=
+ns
+>> > themselves or outside the percpu operations. Some cases, the data type=
+s
+>> > are small enough to fit in atomic data types, and operations are just
+>> > load/store/cmpxchg etc, then operations on the current cpu and remote
+>> > read will be naturally synchronized. Sometimes extra synchronization i=
+s
+>> > needed.
+>>=20
+>> Sure, so we probably want direct atomics support. What about "extra
+>> synchronization"? Is that using locks or RCU or what else?
+>>=20
+>
+> It's up to the users obviously, It could be some sort of locking or RCU,
+> it's case by case.
+
+Makes sense, what do you need in the VMS driver?
+
+>> > Keyword find all these cases are `per_cpu_ptr()`:
+>> >
+>> > 	https://elixir.bootlin.com/linux/v6.15.6/A/ident/per_cpu_ptr
+>>=20
+>> Could you explain to me how to find them? I can either click on one of
+>> the files with horrible C preprocessor macros or the auto-completion in
+>> the search bar. But that one only shows 3 suggestions `_hyp_sym`,
+>> `_nvhe_sym` and `_to_phys` which doesn't really mean much to me.
+>>=20
+>
+> You need to find the usage of `per_cpu_ptr()`, which is a function that
+> gives you a pointer to a percpu variable on the other CPU, and then
+> that's usually the case where a "remote" read of percpu variable
+> happens.
+
+Ahh gotcha, I thought you pointed me to some definitions of operations
+on percpu pointers.
+
+---
+Cheers,
+Benno
 
