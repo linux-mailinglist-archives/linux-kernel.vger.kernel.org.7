@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-733701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D2BB077FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:27:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEDFB077FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24FF11C22F19
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:27:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4539C1C232A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5560223F403;
-	Wed, 16 Jul 2025 14:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1757924729A;
+	Wed, 16 Jul 2025 14:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObQ5d1ku"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cbcc5COI"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F7819D06B;
-	Wed, 16 Jul 2025 14:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9329F23F271
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676045; cv=none; b=UoQRQF0UGQuEP9CY8Hf5kuLmBcR7PApt1Arpametsd5L1Okj4K4SF3laRzktgoioa1QVVZJlkR4rmIPE78AZQ/zMH2Y+M/wDtpQRpLyPSSfsYfHrmXOKe+bKU0qD2jPEJCBWKB3VzJzIccoT/qs3yrxIubmSrFw73eQRPqIxyfQ=
+	t=1752676072; cv=none; b=lxAHnJ9jAw0zvrqDOZPv8oax2b3D8Db9KTnU1I04Ilp6wnjcS97kSMGKchSrRAmR8jV6RcZt4sxexuTxXeUMnKe6VbBOnswBksmoH1aXNd1gjtuul9CMm4ym12C4qUDkQNW+oRyDeXnRWt4djQpSK6ZF9tjKC5s01EdJ+92/Hyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676045; c=relaxed/simple;
-	bh=pXX/f4E5QmwaYwM0EsGzbyC0KiWPu9QhVqmKiUeE7kM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMEuF3lk5GfVfJve7ALs4P3g2+tuwkp8FuAkb3MVfyVXZtBKygpT5kvkZh3F4FfTdt0uVZ0SRU3K6mRA1rZra91QU2w0ydz1eX8GkZljZdXb32vIJYo66cPmxjntN5kBerXgD1BF6lRU5AeiQHzuQhX6pE89o7non8sVEN3DXAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObQ5d1ku; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E65C4CEE7;
-	Wed, 16 Jul 2025 14:27:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752676045;
-	bh=pXX/f4E5QmwaYwM0EsGzbyC0KiWPu9QhVqmKiUeE7kM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ObQ5d1kuqquDnrM3q65qQmCnUmX+4u+L0UdWXPHgHmlj5QmFV7mpBjjKZV4PymYN9
-	 k95J/r61gbWZprYfr+b0KzzGHinkKAOgbIRe7ggBfcMB+2jiAj/bD42GSow1nqNCh3
-	 BRXrWOorHEpzuIm1UbAFy4+la5Xur+IsHsedkd5aRhsTlL5Gxaa268x7jSQ2AgZV5z
-	 8K80mpNVwTMF39taZgJ028ifO7szCycdZNqr6o9boSITWLpMZeuOwB/RwXazYxUyLP
-	 BVB1EX7gLqQ0kpmX549rbGFEqZ8GNw4sazPu/vAqtv+d0EbYBT++2o/av0uqo56cTF
-	 1Nn6ydezQP7Uw==
-Date: Wed, 16 Jul 2025 07:27:24 -0700
-From: Kees Cook <kees@kernel.org>
-To: Tiffany Yang <ynaffit@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Subject: Re: [PATCH v3 1/6] binder: Fix selftest page indexing
-Message-ID: <202507160726.EC296DBFA@keescook>
-References: <20250714185321.2417234-1-ynaffit@google.com>
- <20250714185321.2417234-2-ynaffit@google.com>
+	s=arc-20240116; t=1752676072; c=relaxed/simple;
+	bh=cyZO4jBm4kaYmq8XRr10614mGEMaunG47DfNgPoj3+Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GkxL1MvvVZ6r2NcexK3I2q6Tln+iqI7TQbyv2bIDEJOoTUCAsbxkmXok5XoWOVwbRqPR4hRXWfQ2RW//aae5OV9bcP4dFQ0bRBdXKjrTpd75utFaCz8nbPPlhBcV3DhsWTzcP/rBQD1qgKLGRSjPY75idzBuSAiXRUp/TRgzsqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cbcc5COI; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so9347a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:27:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752676069; x=1753280869; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cyZO4jBm4kaYmq8XRr10614mGEMaunG47DfNgPoj3+Q=;
+        b=Cbcc5COISwvDVxOLl2AuIR9A6AyZG2Z4LZn1srBY4TVHfbnWZWo9reKS78+V9jnTfJ
+         sbKtqU+btoKu7OLT31JTSgVh5pl5uUIklF0Q+d9aRDTf25UtcjcrWG//qXKmUyQmsVAD
+         EuyPdZY2Pv4p1lSNH/1X3A0Q2tXrZkSgUg9dsc3vUtqPf/erHqTSpuJe7UjS662T4L8n
+         6WEED7J38WkkBDmBCAYpMLICuV8BLjV+GeuWMfPX+Lc1yxbs9Xnp0TU+EJ4CdD/BL1CJ
+         wiRpCd02sLyRFj9C8RTvxNap6S8qL9OJb3cgxj651P7ZHQPU2WUP5shHEOkBbxnU28zG
+         gZxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752676069; x=1753280869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cyZO4jBm4kaYmq8XRr10614mGEMaunG47DfNgPoj3+Q=;
+        b=PYEoNPSkZ6sUx/JSl0haIeDIdmqaOwx4mo9zE2F3dYq0STx9nZAC3gjZ6RIOGtYV+l
+         QFaLf2c/X7z9ZTVS+OiW2+E4sn0qEh1N4oS9HcHb9QXV5LUbf/GZSE98Ocgz2no3vKEX
+         eGnBHzfpAO9qdu+a+PXKd7VqsZ5T+YEGWI1IIF41C+TzVMuxRyqPX0vQQiLa1s0YNeyK
+         corfG/b+mzDAymdZIu1bf8nT54YKRcUOI30LardYXgOiw6Ytv4xpu1HkclyG3oRjwjXk
+         pBhXaQc2SCCvajRpRIM1PIRArOth/N6nGySwujYm/git7uVP3INWBM8L5u0UWgLblkhK
+         cgDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXC8X39oGyMKrp8aPfSoYlAZRGLauKfWil93GChBfXsGsaMlD8VuOkkFNRyFgi2rbmuKbg4xbpM8vAAszc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHfA16k8Of3Y61s8wefwRmKV1P0zZ3BC7SUamFkrxy0k1j6Vwj
+	+7+nyVfbjjnnNLhBcroRd6+E8cl9uoS+wcKrUX9lUQn4uQVjYciK4z8BF8EWK70EGqYzT1NPIPZ
+	PkNy6Ujczy5du6oZ3feS/s70Fd1XXEjaSMJDF2szY
+X-Gm-Gg: ASbGnctefTDjgxrf2nGEeHOeKbNGtwDFVjs6x9/Okx/RShQlP8hCBuuaxTO896dz/RX
+	Iqa+tPQhX/D2hGdHB+T7dyQ3rgoBcJABaKgFLYwJpEvZ+yVvQ+VVWgHl8M0SxAQWxKScdwmw9h/
+	/XNXVkk1b+S1LfzrQ4IzUWWI4tWVCkJ3sTD+2nA05gKOz4x+zp9rfU5BgkLN49OBY41ecg/opqm
+	Kdi+jePxY7tH81H5qHafS7aAn9wevPDaV/2
+X-Google-Smtp-Source: AGHT+IFtn2Jt43sGdMrRnFbMM4zR7ZvvUOW5aRjpbxzkLX62FzMlCaPlKzcAzbgKN34QMkxqDCHX/orQFd9yCAvuWCQ=
+X-Received: by 2002:aa7:c14c:0:b0:611:e30b:5707 with SMTP id
+ 4fb4d7f45d1cf-6128dc01d52mr57489a12.7.1752676068588; Wed, 16 Jul 2025
+ 07:27:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714185321.2417234-2-ynaffit@google.com>
+References: <f60a932f-71c0-448f-9434-547caa630b72@suse.cz> <CAJuCfpE2H9-kRz6xSC43Ja0dmW+drcJa29hwQwQ53HRsuqRnwg@mail.gmail.com>
+ <3b3521f6-30c8-419e-9615-9228f539251e@suse.cz> <CAJuCfpEgwdbEXKoMyMFiTHJMV15_g77-7N-m6ykReHLjD9rFLQ@mail.gmail.com>
+ <bulkje7nsdfikukca4g6lqnwda6ll7eu2pcdn5bdhkqeyl7auh@yzzc6xkqqllm>
+ <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com>
+ <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com>
+ <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
+ <5ec10376-6a5f-4a94-9880-e59f1b6d425f@suse.cz> <CAJuCfpH8zsboafV1UWufYhbVXN-yKgMOKm=vr2vBYAPNmPtrvw@mail.gmail.com>
+ <07de1e8c-9319-49b8-8e86-97ea0d18142b@lucifer.local> <eb432785-e916-4714-a1e3-4ea5218cfa76@suse.cz>
+In-Reply-To: <eb432785-e916-4714-a1e3-4ea5218cfa76@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 16 Jul 2025 07:27:35 -0700
+X-Gm-Features: Ac12FXzkQUKbjHWly2XAM-75FxXxF7P_PGAXAyUAeeE-cM1Ys06wCiWNzG6_w_w
+Message-ID: <CAJuCfpFohprJEshKXX9awPdwJhRNU1995suvwegXHpiYWO-ONA@mail.gmail.com>
+Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	akpm@linux-foundation.org, david@redhat.com, peterx@redhat.com, 
+	jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
+	shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
+	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
+	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
+	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
+	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 11:53:14AM -0700, Tiffany Yang wrote:
-> The binder allocator selftest was only checking the last page of buffers
-> that ended on a page boundary. Correct the page indexing to account for
-> buffers that are not page-aligned.
-> 
-> Signed-off-by: Tiffany Yang <ynaffit@google.com>
-> ---
->  drivers/android/binder_alloc_selftest.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/android/binder_alloc_selftest.c b/drivers/android/binder_alloc_selftest.c
-> index c88735c54848..486af3ec3c02 100644
-> --- a/drivers/android/binder_alloc_selftest.c
-> +++ b/drivers/android/binder_alloc_selftest.c
-> @@ -142,12 +142,12 @@ static void binder_selftest_free_buf(struct binder_alloc *alloc,
->  	for (i = 0; i < BUFFER_NUM; i++)
->  		binder_alloc_free_buf(alloc, buffers[seq[i]]);
->  
-> -	for (i = 0; i < end / PAGE_SIZE; i++) {
->  		/**
->  		 * Error message on a free page can be false positive
->  		 * if binder shrinker ran during binder_alloc_free_buf
->  		 * calls above.
->  		 */
-> +	for (i = 0; i <= (end - 1) / PAGE_SIZE; i++) {
+On Wed, Jul 16, 2025 at 7:07=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 7/16/25 16:00, Lorenzo Stoakes wrote:
+> > On Tue, Jul 15, 2025 at 01:13:36PM -0700, Suren Baghdasaryan wrote:
+> >> Huh, I completely failed to consider this. In hindsight it is quite
+> >> obvious... Thanks Vlastimil, I owe you a beer or two.
+> >
+> > FYI - Vlasta prefers the 'starobrno' brand of beer, he says he can't ge=
+t
+> > enough :)
+>
+> FYI - Lorenzo is a notorious liar :)
 
-Nit: this comment is now not aligned correctly. Probably the best would
-be the leave the "for" line above the comment.
-
--Kees
-
->  		if (list_empty(page_to_lru(alloc->pages[i]))) {
->  			pr_err_size_seq(sizes, seq);
->  			pr_err("expect lru but is %s at page index %d\n",
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
-> 
-
--- 
-Kees Cook
+A search for starobrno in Tokyo provides a couple of suggestions:
+- Pilsen Alley in Ginza focuses on Czech Pilsner beer, and while they
+feature Pilsner Urquell, they might also carry other Czech brands.
+- Cerveza Japan ShibuyaAXSH, a casual restaurant specializing in
+Spanish paella, also offers an extensive selection of imported craft
+beers from various countries, including the Czech Republic.
 
