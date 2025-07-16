@@ -1,200 +1,101 @@
-Return-Path: <linux-kernel+bounces-734149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC667B07D9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15242B07D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB4C1C20165
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:30:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B04189D8F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CC12BD024;
-	Wed, 16 Jul 2025 19:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ZamgAoxD"
-Received: from mx4.sberdevices.ru (mx4.sberdevices.ru [176.109.96.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AAE1D63C7;
-	Wed, 16 Jul 2025 19:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.109.96.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F6C2BCF6C;
+	Wed, 16 Jul 2025 19:24:21 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A8F28D8FB;
+	Wed, 16 Jul 2025 19:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752694206; cv=none; b=AYrkqGRXZEJS6PS7LhcbJBKMlnskhOIrkWdP4ypmJf/YvnVALxQ0iYSVjvPi+r8Q8WhTryEij7/N4ONtAvX7QsBMUcQXEnAyHfoyB4dcED2OSdA1wwEWffvzuGCzXjB9d96FLMwcIqmiakmGvXPSyR1dP47dMcv4T/8APvpH+8g=
+	t=1752693860; cv=none; b=qnxs5oyCJjF2ArSS7AXHV3sZmdiQBaNZZXnPA/1FbiUzjUF4EEJRBZWqp2Xi0ijWALVL2dRe+tV7e3ucY43GAS/hRrvJZSoMMX5etzWdaTmymJNQmJfH1TJHuwggunwT3NWQOlFwd7C2pexbLepPE6coVcf7T1XGw+FEEuD6JPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752694206; c=relaxed/simple;
-	bh=hnMESY61LUdiBDqSBTytVZr5JQLx7UhMLgO9o+ndu4Y=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=d71k0H0UIq/BLmVSZDEAqFdFRX15dKyHowXXsCascwDVssz/xfxiTWt/X9ChrlBgXBowTD8FsDLvqlOH7IjCWtpJPYifuUBQv0ZiGfl+KNOwppX4it1wNdtP2kpVPiHOMHcepLBDHCHh1cv3YWTxz5gRtCDeQ8JMoivyIgU2wDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ZamgAoxD; arc=none smtp.client-ip=176.109.96.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-antispam-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx4.sberdevices.ru (Postfix) with ESMTP id 1F3754000E;
-	Wed, 16 Jul 2025 22:24:00 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx4.sberdevices.ru 1F3754000E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=post; t=1752693840;
-	bh=HcxKrVAY8DLx+FqQIQRA/Es2dhMC8MRz6HgW+r0XFtE=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
-	b=ZamgAoxDGTr5AwSUlOS0Egg+OpDGkyBmP/sWMJWrSUXsAN1orO920A74jjlmWobCE
-	 oqg7Pa7TExbHhM3qAGvafZQ+zUUTq30L9F9Kg/Azl3l1SCbO1Fx7Rd7tzXc+Cgs9bT
-	 QqFLkm7UpbDxdNXXxm5ivz7KHlqs3MElf8j4j9IoKL+7pJ0pewkF04u6CJzk+ayTp7
-	 OIGKQlVZb9haMXo9R16AMVOZ6dnYB2Y83F28nyrssNFVWjf76yczRS6G0GACxaBXnK
-	 ubw1bWKj31AEYsUZAiDO6VWlRQ+JxFEk+B4gcIXYtLjoC/9c8aEJTMGF0O4wasGuKf
-	 7i1ed65BwW2GA==
-Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "sberdevices.ru", Issuer "R11" (verified OK))
-	by mx4.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 16 Jul 2025 22:23:59 +0300 (MSK)
-Message-ID: <1313ef02-285a-7012-74eb-b6589d471be5@salutedevices.com>
-Date: Wed, 16 Jul 2025 22:23:58 +0300
+	s=arc-20240116; t=1752693860; c=relaxed/simple;
+	bh=NN78oOJyGkBNFGAA9HL4Ihk6/u+7E3V4MXrjEqNAP7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XgkA7wZQyXVQeEYExCAzQdKNxapnXJBZV4GBxOd/XoZ8YbWAIK/K7/ANzZEVRU3ilSIasLD9Oity9D0heApu8+aJgAo99Ji7Tqzw11yFXCBTTihilyKGWqHNm6ZmOFjL/KPEM3s+ikV+02GxNCAPml/PvTWGqzAc7l4QEFQb4/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1uc7jh-0007Fl-00; Wed, 16 Jul 2025 21:24:13 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 110E3C0176; Wed, 16 Jul 2025 21:24:02 +0200 (CEST)
+Date: Wed, 16 Jul 2025 21:24:02 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: WangYuli <wangyuli@uniontech.com>, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zhanjun@uniontech.com,
+	niecheng1@uniontech.com, guanwentao@uniontech.com
+Subject: Re: Gentle ping: [PATCH v2 0/6] MIPS: Resolve build problems on
+ decstation_64
+Message-ID: <aHf8Uo2FEcRqus9T@alpha.franken.de>
+References: <24EC7D2CA58B25F5+20250422101855.136675-1-wangyuli@uniontech.com>
+ <9ED003291C66C906+94d03a66-3573-4e3f-aaac-d7c55f750776@uniontech.com>
+ <alpine.DEB.2.21.2507071545400.56608@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Content-Language: en-US
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <oxffffaa@gmail.com>, <linux-bluetooth@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>
-From: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Subject: [PATCH v4] Bluetooth: hci_sync: fix double free in
- 'hci_discovery_filter_clear()'
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-exch-cas-a-m1.sberdevices.ru (172.24.201.216) To
- p-exch-cas-a-m1.sberdevices.ru (172.24.201.216)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
-X-KSMG-AntiSpam-Info: LuaCore: 63 0.3.63 9cc2b4b18bf16653fda093d2c494e542ac094a39, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 194895 [Jul 16 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/07/16 17:03:00 #27638287
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2507071545400.56608@angie.orcam.me.uk>
 
-Function 'hci_discovery_filter_clear()' frees 'uuids' array and then
-sets it to NULL. There is a tiny chance of the following race:
+On Mon, Jul 07, 2025 at 03:57:01PM +0100, Maciej W. Rozycki wrote:
+> Hi WangYuli,
+> 
+> > This is a gentle ping.
+> > 
+> > I've addressed all the feedback from previous discussions and tried resending
+> > multiple times, but haven't received any response
+> 
+>  Thank you for pinging.
+> 
+>  I've tried to verify your changes at run time and it's turned out that a 
+> generic change to the serial communication subsystem made a while ago has 
+> caused the port to become unbootable, and it now crashes early on in port 
+> registration.
 
-'hci_cmd_sync_work()'
+I'm hitting the same issue for IP22, my dirty hack to get serial console
+back is
 
- 'update_passive_scan_sync()'
-
-   'hci_update_passive_scan_sync()'
-
-     'hci_discovery_filter_clear()'
-       kfree(uuids);
-
-       <-------------------------preempted-------------------------------->
-                                           'start_service_discovery()'
-
-                                             'hci_discovery_filter_clear()'
-                                               kfree(uuids); // DOUBLE FREE
-
-       <-------------------------preempted-------------------------------->
-
-      uuids = NULL;
-
-To fix it let's add locking around 'kfree()' call and NULL pointer
-assignment. Otherwise the following backtrace fires:
-
-[ ] ------------[ cut here ]------------
-[ ] kernel BUG at mm/slub.c:547!
-[ ] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-[ ] CPU: 3 UID: 0 PID: 246 Comm: bluetoothd Tainted: G O 6.12.19-kernel #1
-[ ] Tainted: [O]=OOT_MODULE
-[ ] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[ ] pc : __slab_free+0xf8/0x348
-[ ] lr : __slab_free+0x48/0x348
-...
-[ ] Call trace:
-[ ]  __slab_free+0xf8/0x348
-[ ]  kfree+0x164/0x27c
-[ ]  start_service_discovery+0x1d0/0x2c0
-[ ]  hci_sock_sendmsg+0x518/0x924
-[ ]  __sock_sendmsg+0x54/0x60
-[ ]  sock_write_iter+0x98/0xf8
-[ ]  do_iter_readv_writev+0xe4/0x1c8
-[ ]  vfs_writev+0x128/0x2b0
-[ ]  do_writev+0xfc/0x118
-[ ]  __arm64_sys_writev+0x20/0x2c
-[ ]  invoke_syscall+0x68/0xf0
-[ ]  el0_svc_common.constprop.0+0x40/0xe0
-[ ]  do_el0_svc+0x1c/0x28
-[ ]  el0_svc+0x30/0xd0
-[ ]  el0t_64_sync_handler+0x100/0x12c
-[ ]  el0t_64_sync+0x194/0x198
-[ ] Code: 8b0002e6 eb17031f 54fffbe1 d503201f (d4210000)
-[ ] ---[ end trace 0000000000000000 ]---
-
-Fixes: ad383c2c65a5 ("Bluetooth: hci_sync: Enable advertising when LL privacy is enabled")
-Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
----
- Changelog v1->v2:
- * Don't call 'hci_dev_lock()' in 'update_passive_scan_sync()' as it
-   triggers deadlock. Instead of that - add spinlock which protects
-   freeing code.
- Changelog v2->v3:
- * Rebase on current 'bluetooth' repo due to fuzz.
- Changelog v3->v4:
- * Rebase on current 'bluetooth' repo due patch apply failed.
-
- include/net/bluetooth/hci_core.h | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
-index 1ef9279cfd6f..3728495f0819 100644
---- a/include/net/bluetooth/hci_core.h
-+++ b/include/net/bluetooth/hci_core.h
-@@ -29,6 +29,7 @@
- #include <linux/idr.h>
- #include <linux/leds.h>
- #include <linux/rculist.h>
-+#include <linux/spinlock.h>
- #include <linux/srcu.h>
+diff --git a/drivers/tty/serial/serial_base_bus.c b/drivers/tty/serial/serial_base_bus.c
+index 5d1677f1b651..fccb0f1c3cc5 100644
+--- a/drivers/tty/serial/serial_base_bus.c
++++ b/drivers/tty/serial/serial_base_bus.c
+@@ -78,12 +78,14 @@ static int serial_base_device_init(struct uart_port *port,
+ 		return -EPROBE_DEFER;
+ 	}
  
- #include <net/bluetooth/hci.h>
-@@ -94,6 +95,7 @@ struct discovery_state {
- 	u16			uuid_count;
- 	u8			(*uuids)[16];
- 	unsigned long		name_resolve_timeout;
-+	spinlock_t		lock;
- };
++#if 0
+ 	if (type == &serial_ctrl_type)
+ 		return dev_set_name(dev, "%s:%d", dev_name(port->dev), ctrl_id);
  
- #define SUSPEND_NOTIFIER_TIMEOUT	msecs_to_jiffies(2000) /* 2 seconds */
-@@ -889,6 +891,7 @@ static inline void iso_recv(struct hci_conn *hcon, struct sk_buff *skb,
+ 	if (type == &serial_port_type)
+ 		return dev_set_name(dev, "%s:%d.%d", dev_name(port->dev),
+ 				    ctrl_id, port_id);
++#endif
  
- static inline void discovery_init(struct hci_dev *hdev)
- {
-+	spin_lock_init(&hdev->discovery.lock);
- 	hdev->discovery.state = DISCOVERY_STOPPED;
- 	INIT_LIST_HEAD(&hdev->discovery.all);
- 	INIT_LIST_HEAD(&hdev->discovery.unknown);
-@@ -903,8 +906,11 @@ static inline void hci_discovery_filter_clear(struct hci_dev *hdev)
- 	hdev->discovery.report_invalid_rssi = true;
- 	hdev->discovery.rssi = HCI_RSSI_INVALID;
- 	hdev->discovery.uuid_count = 0;
-+
-+	spin_lock(&hdev->discovery.lock);
- 	kfree(hdev->discovery.uuids);
- 	hdev->discovery.uuids = NULL;
-+	spin_unlock(&hdev->discovery.lock);
+ 	return -EINVAL;
  }
- 
- bool hci_discovery_active(struct hci_dev *hdev);
+
+I'm not sure, if port->dev needs to be populated now for every serial
+port or if there should be a check for port->dev == NULL in the code above...
+
+Thomas.
+
 -- 
-2.43.0
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
