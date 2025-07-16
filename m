@@ -1,102 +1,152 @@
-Return-Path: <linux-kernel+bounces-733478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C77DB0752E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:57:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76DBB0752B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646C33A2D74
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AB681C26EB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344592F4A14;
-	Wed, 16 Jul 2025 11:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C462F2F4330;
+	Wed, 16 Jul 2025 11:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Rp0tARzF"
-Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOVYVcrw"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652AE2BE647
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50832F430D;
+	Wed, 16 Jul 2025 11:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752666963; cv=none; b=Zt1Y8Wch2xC8Qwi5d+gxqAJwIKo3P6JhQG9LV9QTqb5tAc9DnJnFAOkEQlUw2BKN1K4CHGhz7DNArNDFHxcYLLdPU9rYXKFZnPuHvXGcmCFYrgb+0dNw8VAqllO5P7/tI8zlCz0HqPw0gmA64tOZ+rDnqIm+mL+mCe2Iet+yukU=
+	t=1752666960; cv=none; b=a/o3uDF8VHTFmuAceJkN+6yxGTmnrlAuzjJrq8w0N6Mz5PjJYkLwEm96w52aJyJYMqaEm7BpmyuetBn+lsOWJ/HloR/19DxL/UaD8Aj5kw4EEFzdH4hjyw7sWliJ5sCZiVJEvMbLH/0CTAvmCBQu1pBzfZbVJGSC4lWfj8Bl1Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752666963; c=relaxed/simple;
-	bh=OgsvFMXRn2zZp50k7sbQGQYkdfixjsmzZn/vsvELM7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nT+6s6OI/H4vst7innqtz+GVEwxiQpxvRvtWurlYDaWIvPpuCefpYw7txOreIRtgHfigT5glHSwsl8UYP1Rm6g8wdX0BpE+NlhjZObb/fIHci6IhoktXVYejGjQVblKK2+8dmmELVrEND11CIZOyiQV3vK1aq5n5Or208EsmB44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Rp0tARzF; arc=none smtp.client-ip=202.108.3.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752666958;
-	bh=ScUq0qxBv9+lwXrh7usT/F4ApTrXMfYTA/RM1sJnWv8=;
-	h=From:Subject:Date:Message-ID;
-	b=Rp0tARzFgWmsd/zKeZXADr5cO98Gjaw67sbrGxNsAMHFlI21KYh4H6iFudLo0WVaD
-	 DsIbJqtDJd4ScfMZ3MC9D8MVdgdhDR48Ri2v4lqtyDBbbgUuN9/TOxuvsu3GNPMwNQ
-	 6qhmdkTyWIzBwv+0Z+g6ehyeQLr+jfyvjBOh+IxE=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 6877934400001D59; Wed, 16 Jul 2025 19:55:49 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 6259636291973
-X-SMAIL-UIID: 4C57464769F042CBA700BEB9672EFBF0-20250716-195549-1
-From: Hillf Danton <hdanton@sina.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Sean Young <sean@mess.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
-	LKML <linux-kernel@vger.kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: imon: make send_packet() more robust
-Date: Wed, 16 Jul 2025 19:55:37 +0800
-Message-ID: <20250716115538.2206-1-hdanton@sina.com>
-In-Reply-To: <a44d5568-48d6-44f7-af93-e1b966489a84@I-love.SAKURA.ne.jp>
-References: <53c07aa0-9f83-4c83-8ab5-6d8663f51b91@I-love.SAKURA.ne.jp> <8be733a4-2232-4bb9-942d-f13f8766a6de@I-love.SAKURA.ne.jp> <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp> <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp> <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp> <282345b9-9aff-43ed-b66d-76cf51cc0deb@I-love.SAKURA.ne.jp> <20250713081148.3880-1-hdanton@sina.com> <d6da6709-d799-4be3-a695-850bddd6eb24@rowland.harvard.edu> <aHa3xpKfGNqAocIO@gofer.mess.org> <c4e88c28-28ee-4e37-9822-8e2999d0f0ee@rowland.harvard.edu> <aHdzD7EowAKT4AhQ@gofer.mess.org>
+	s=arc-20240116; t=1752666960; c=relaxed/simple;
+	bh=46KRWc6CL8rDgHI0Ds+dVS1e/7PnwHqn6Cb6seF0cFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=debzadqBzkbcLp1HTKZ46qFuOiQU8dBvbTMRB94Jw62w2vyOnMRY4dGrXMpp3G4x8QUFnvPdkNjkafgpbDM4dLoBkG7cXe6/x7xybQQD6GP3lIUwjswf6tM3Kn58RJSzpmJyTF+sKkOX+KvS7aHOcTz0tUco7p6CEdBNx1H8hxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOVYVcrw; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61598534619so746225eaf.2;
+        Wed, 16 Jul 2025 04:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752666958; x=1753271758; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EgpuWStD+g9XlsGil0a2qM7CDtMSHNw/qYVDjYHubzs=;
+        b=eOVYVcrwbGTJMDixo3OolOWGc3/yHj8Tuh9Kv1DrJrXnEKM73vOenDbZN3Dx3VChNv
+         1qv/r/VTUPMOgUxxzw9Q95+J+vLMPTSGrpQqSEnMzSTFyu7FFknQXFIowYZHAWfaznkF
+         YKoXPWZzBGCUga9vyhRhL4TFrbiB+7thV61Gf4ykyFCIIUT7wPZxvbAG1uT5BUUc9GZg
+         ESwyNVloLs8+ghf983lv6qtG5mSaOy/E9HmPCqrljG5BC3ec+Jacc9rlwdXfJ14If2Dm
+         U4GVYc9S05lGwy0JGLXs1ctVkLw4LUgHd/FIkLIxb1z2KiBPseeOSoncq/0zadUhOJ/l
+         iILA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752666958; x=1753271758;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EgpuWStD+g9XlsGil0a2qM7CDtMSHNw/qYVDjYHubzs=;
+        b=gvSpFBPUTt7vHQxNvXEYsbBShUIXhKkjeUdDkdfq9bgO99Jj5n4TYXbs7youHFFZwg
+         8kwWktn1i7WM8kiartPJYZp3J7UstGsdqlOdV4UPDnN52sKYDB3AYYnzNWzTorLYoNwz
+         gz6gF0SPwzb0BRFWAjDFrMJBe+PJ6I/3NGdEIakYobE4KnDmqzoR6zSCf82zEEdi3jPl
+         HZhwpvJPtm16bcCXSieH97Rk3XXPYDmCO++4GBa2khkJt5rE+ntQeJR8OvQXxeb8u8pr
+         FsRIs7L1KxD18yDZkyC5kqvUXiR1OloedDlglk8xSA1JhEYOaWfsZ91LiLzK4xoRNo46
+         LpgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyyL9Hmdw3e0sNrkg0NO2qEyVKVfiIynyTrYJFdrOEBgE9cxE70JZu2NPZ+QW6iu12d0h2R572UsVYPKN3@vger.kernel.org, AJvYcCVxhYmjIsnJb8CFDgbsPv92YRcK+WSkHgM2noKKVOvuyHGCsUvNvQW/VPuH9/5uLhiztn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9fxA1pi1oI8jef7p67uGlxM8H1a87FB9Nm3EoSOhM4YMSJnU7
+	4jEDzqwZs/NSAAc445HwojDLhoy7ljchVSAvAIf1RdV1+xqoWJ8cXwPH7/QGsmFLDBI9eJDFNgV
+	C74ISHO5dFshwyWJAFFdsQMSTIf8wNzs=
+X-Gm-Gg: ASbGncsIPb4UBfiDi2mkPlIZ1hsqoCTVITytFV2poB2dC1IyJp7S+Z9dmtI7Mh3/jo8
+	a4lcA0mgHPOxfB5rmbYrUlp+SxD+SkFjgK6S7LqsfQ8C9MAVLsBz2jR5IyG8rcaki8OAl/g8ng+
+	wpdJtyMeoJDgxqpNtRCar+Qx5TznXFNItsg8EiH6JoqUtbstpg5Ym7UO5oNgej/LKjeAVQMkiLG
+	n0pHbE=
+X-Google-Smtp-Source: AGHT+IETKnvezmKlq+zmC9uwg6Ch1WE6f4Jt7hYDCbTCtYguhAyXT7+KyCQsYA1VXTT6YMNAqwQVB9dyT+azQ5SC4qs=
+X-Received: by 2002:a05:6820:1e03:b0:611:a799:cb65 with SMTP id
+ 006d021491bc7-615a1ed3996mr1490965eaf.2.1752666957689; Wed, 16 Jul 2025
+ 04:55:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250709055029.723243-1-duanchenghao@kylinos.cn> <20250709055029.723243-3-duanchenghao@kylinos.cn>
+In-Reply-To: <20250709055029.723243-3-duanchenghao@kylinos.cn>
+From: Hengqi Chen <hengqi.chen@gmail.com>
+Date: Wed, 16 Jul 2025 19:55:46 +0800
+X-Gm-Features: Ac12FXz_Ud4KBSmMLY9gQ2gi1DdYRSZe-UgrRD1--igSRHmSf1PEp6zyl_Z6UoY
+Message-ID: <CAEyhmHSs5Ev5LBp8KWDnK93NcJnfvVZPy=X80Miy9PnP4rMA=A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] LoongArch: BPF: Update the code to rename
+ validate_code to validate_ctx.
+To: Chenghao Duan <duanchenghao@kylinos.cn>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 16 Jul 2025 19:09:51 +0900 Tetsuo Handa wrote:
->On 2025/07/16 18:38, Sean Young wrote:
->> On Tue, Jul 15, 2025 at 09:30:02PM -0400, Alan Stern wrote:
->>> On Tue, Jul 15, 2025 at 09:19:18PM +0100, Sean Young wrote:
->>>> Hi Alan,
->>>>
->>>> On Sun, Jul 13, 2025 at 11:21:24AM -0400, Alan Stern wrote:
->>>>> On Sun, Jul 13, 2025 at 04:11:47PM +0800, Hillf Danton wrote:
->>>>>> [loop Alan in]
->>>>>
->>>>> I assume you're interested in the question of when to avoid resubmitting 
->>>>> URBs.
-> 
-> I think that what Hillf wanted to know (and I wanted maintainers of this
-> driver to respond) is whether timeout of 10 seconds is reasonable
-> 
-Yes. In product environments like car cockpit I have option like change
-to BOM if urb 10s timedout in general could be reliably reproduced twice
-a month for example.
+On Wed, Jul 9, 2025 at 1:50=E2=80=AFPM Chenghao Duan <duanchenghao@kylinos.=
+cn> wrote:
+>
+> Update the code to rename validate_code to validate_ctx.
+> validate_code is used to check the validity of code.
+> validate_ctx is used to check both code validity and table entry
+> correctness.
+>
 
-> -		/* Wait for transmission to complete (or abort) */
-> -		retval = wait_for_completion_interruptible(
-> -				&ictx->tx.finished);
-> -		if (retval) {
-> +		/* Wait for transmission to complete (or abort or timeout) */
-> +		retval = wait_for_completion_interruptible_timeout(&ictx->tx.finished, 10 * HZ);
-> 
-> because the reproducer for this problem sometimes prevents
-> usb_rx_callback_intf0() from being called. Unless we somehow
-> handle such situation, the hung task reports won't go away.
-> 
+The commit message is awkward to read.
+Please describe the purpose of this change.
+* Rename the existing validate_code() to validate_ctx()
+* Factor out the code validation handling into a new helper validate_code()
+
+The new validate_code() will be used in subsequent changes.
+
+> Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> ---
+>  arch/loongarch/net/bpf_jit.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> index fa1500d4a..7032f11d3 100644
+> --- a/arch/loongarch/net/bpf_jit.c
+> +++ b/arch/loongarch/net/bpf_jit.c
+> @@ -1180,6 +1180,14 @@ static int validate_code(struct jit_ctx *ctx)
+>                         return -1;
+>         }
+>
+> +       return 0;
+> +}
+> +
+> +static int validate_ctx(struct jit_ctx *ctx)
+> +{
+> +       if (validate_code(ctx))
+> +               return -1;
+> +
+>         if (WARN_ON_ONCE(ctx->num_exentries !=3D ctx->prog->aux->num_exen=
+tries))
+>                 return -1;
+>
+> @@ -1288,7 +1296,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_pro=
+g *prog)
+>         build_epilogue(&ctx);
+>
+>         /* 3. Extra pass to validate JITed code */
+> -       if (validate_code(&ctx)) {
+> +       if (validate_ctx(&ctx)) {
+>                 bpf_jit_binary_free(header);
+>                 prog =3D orig_prog;
+>                 goto out_offset;
+> --
+> 2.43.0
+>
 
