@@ -1,65 +1,58 @@
-Return-Path: <linux-kernel+bounces-733301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452B6B072EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA7DB072F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7226504F71
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F05750667B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5352F3629;
-	Wed, 16 Jul 2025 10:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754BE2F3649;
+	Wed, 16 Jul 2025 10:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOKeeCU/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZRpQi/d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F120E704;
-	Wed, 16 Jul 2025 10:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3DA2F3629;
+	Wed, 16 Jul 2025 10:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660890; cv=none; b=I2mIyj6pN+129lirOt/SErrcaHYuKi5uc+wbBGb5oZbqUQmGM6zpGhLeUFf/pTPV3EYI6HzeTWNIrHCcJ63PXC80aupq6kpD0H6RSuT4zV5j6LesqRaPebCnxChzlt7QQxQEpbewM1yYW+KCmDBEY7tFzWOLYorgBSX10HpSiJk=
+	t=1752660909; cv=none; b=sHVTYJrF2SN350UOZWt8ZZyqWPQTCchkVXiNlv2lR1Jnp9AEQuZbrZn3A3Ch3+Al3YAshTN7eAHdQhveAO75vcaV85PvB7JgpYMaveXuNRyNJhjqiTY05fhV6J2nRYByYEXkiYEksvQTx/appv9PjkQqXfG0mghygc9UO7HSqbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752660890; c=relaxed/simple;
-	bh=ZAJ4hltXuvDrA1GGiGb4i5399iwHMLmhNwupb9CXkxs=;
+	s=arc-20240116; t=1752660909; c=relaxed/simple;
+	bh=uHygiQuZVYuOZyP60B4wmiODV+vXIaSuz4a87aEJAcA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Dw7F7Xd++jy7ITZQdyXmRkX6BNfv9A5welbk8ZFoZj+2oxewT7pSj05NzGQbxaumazr1du0kCpNEuAYPEVu2bwTX+HbyXpOvo0c4Vd0EvONXBA7uvRWddPemD/YhD8Fv84z67knfq7gWQETV3ygTckXPZipRimwgR9MlowSe2iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOKeeCU/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8949BC4CEF6;
-	Wed, 16 Jul 2025 10:14:45 +0000 (UTC)
+	 MIME-Version:Content-Type; b=o0KUdpzSziVYxXh85KZJ1hS3TdLxSbAU0ow7EuV39mz9eOZ6an7r9m2SomXcDAgvk25c1tyww7zkgD2MT/rNsohk4D0A/Mp3Jl9gA7wugxsKiGGYYw1ZbNUbuJLmX0vJOGtJF/UHDtICCjTLANb74NmMySXwj5b3pvvaivIPTtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZRpQi/d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9185FC4CEF1;
+	Wed, 16 Jul 2025 10:15:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752660889;
-	bh=ZAJ4hltXuvDrA1GGiGb4i5399iwHMLmhNwupb9CXkxs=;
+	s=k20201202; t=1752660909;
+	bh=uHygiQuZVYuOZyP60B4wmiODV+vXIaSuz4a87aEJAcA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hOKeeCU/pjKMC2NPJSWQ8DxIWEIVjScFWz7ziwxLtCmiGmFGtOzcvx0qzFB0gHEwj
-	 y3OAaC7OkmqXklzm5qmGZyMddX5ZvHHv6x+F8EQa/5mf4t3Mz5v5IEQeyFH6uJt1ox
-	 8JIoXzdurcQ2DS5bSHmAiKnPPw2A5jNQca/KpbXj5/OACZlCbUj5ZZ5D78mG3bNOZA
-	 sWqPKHNfcwDb0aWX6xKZge46mh1CzDsLdG5AUcSzkBQQnYVSWO+9DZSBhXDlIqmFIC
-	 GJPGPGNigitGA8Jm2ggCFE+WNxwyG1EwuLnzjfEH4VMMs58WUl3jzo8TV/TU7g1oyn
-	 JYN71CvwLzciQ==
+	b=JZRpQi/dMHYUWl7Q+dyLlIcrudLpctqmrV8P1+rLksWPshl3BEoO1oH01cDpOZw9j
+	 MvSG6h/5RwLjTnDVb5WX01su7FWAoMAXmnQbGaP0nH5C8VZtNl65RuVBvWmpjDdmZ4
+	 bqYML/a+xI04WiUM6iWgVUalRZCQStG+ZFYdcRXu6HxSiQlZQprBHUaRD7knHpScQv
+	 dZHbX2+4kmC/7gJuumgoKqvUnDwCZ0o46KBy6MGTJOqHOr0uO9uXRBZsZPOljiPHp3
+	 sEnKpRlVnlBNnAtM9wsxG9QeJ8Gj8N0yLwxD/qf2CC5HbKoNIj9FY88SCcGQ/gSpMF
+	 8WyaLPPgnIdEg==
 From: Mark Brown <broonie@kernel.org>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Oder Chiou <oder_chiou@realtek.com>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Olivier Moysan <olivier.moysan@foss.st.com>, 
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney@redhat.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-In-Reply-To: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
-References: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
-Subject: Re: [PATCH 0/6] sound: convert from clk round_rate() to
- determine_rate()
-Message-Id: <175266088527.17737.6588270584150732640.b4-ty@kernel.org>
-Date: Wed, 16 Jul 2025 11:14:45 +0100
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Chris Packham <chris.packham@alliedtelesis.co.nz>, 
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250715202711.1882103-1-robh@kernel.org>
+References: <20250715202711.1882103-1-robh@kernel.org>
+Subject: Re: [PATCH] spi: dt-bindings: spi-mux: Drop "spi-max-frequency" as
+ required
+Message-Id: <175266090631.17966.7228159355506888801.b4-ty@kernel.org>
+Date: Wed, 16 Jul 2025 11:15:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,35 +63,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Thu, 10 Jul 2025 11:51:06 -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops, so let's go ahead and convert the
-> drivers in the rtc subsystem using the Coccinelle semantic patch
-> posted below. I did a few minor cosmetic cleanups of the code in a
-> few cases.
+On Tue, 15 Jul 2025 15:27:10 -0500, Rob Herring (Arm) wrote:
+> There's little reason to require the SPI mux to define a maximum bus
+> frequency as the muxing is just the chip select and devices still define
+> their maximum freq. In fact, several users don't set "spi-max-frequency"
+> which caused warnings.
 > 
-> Coccinelle semantic patch:
 > 
-> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/6] sound: soc: codecs: da7219: convert from round_rate() to determine_rate()
-      commit: 8a4d73121d6bd9a70895e65d6d1014ed6b0a6c8e
-[2/6] sound: soc: codecs: rt5682: convert from round_rate() to determine_rate()
-      commit: 4e15a10f6fb254e33d73a6da3c4d00e3e64d2eb8
-[3/6] sound: soc: codecs: rt5682s: convert from round_rate() to determine_rate()
-      commit: a37d9c8aef1c78876eff0bc8980a889c083de89d
-[4/6] sound: soc: qcom: qdsp6: q6dsp-lpass-clocks: convert from round_rate() to determine_rate()
-      commit: fc62ed665eb2e8fb0f1e12ab9cdb578666704a76
-[5/6] sound: soc: stm: stm32_i2s: convert from round_rate() to determine_rate()
-      commit: afd529d740028a41fa750d4491b106cecbccba3e
-[6/6] sound: soc: stm: stm32_sai_sub: convert from round_rate() to determine_rate()
-      commit: d5f317fd5cd9dfdf5bbe11384001817760c12b75
+[1/1] spi: dt-bindings: spi-mux: Drop "spi-max-frequency" as required
+      commit: d5255ae7ec48ac1f702e95b472801dbb7bf1e97f
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
