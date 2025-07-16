@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-732994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934E9B06E87
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:13:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98488B06E88
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FBCB1A6392C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:13:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C00C35041CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDC128B7DA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA18D28B4EA;
 	Wed, 16 Jul 2025 07:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MS7fB0N4"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="czzlQeCk"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830B5289E16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8C9289355
 	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752649970; cv=none; b=ZqCan5f2tg9xb4v5np6kgSsLueSHUWWIdFt/Mg2nxt7G2W7exQYFp4do16qJ+gsAnjbqeYtGs2sy3M4ckd4Jbw2XqQyc0maL2tSxcARQFE33Pm7OyUzG7Tewmul3M23kXLaSk998qvMluxUc2z1EpQXxRcinjcVq3sIuWPaFVTQ=
+	t=1752649969; cv=none; b=RCzaMjXjPh0SGRn0jA0+BdN5STK7fqkD4jCmSvs4acVTvmjohYjVrg2dQN2ja/8KW9idhoDtCwHKYpV5OxqolFxr0RQy9cchSmLAS07sjgfKlG+u12VHjzdH6hXYcWdQ9eNscx/QvskEEIknOp1BbLsTrrcwwz+hSqbMW4qX53s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752649970; c=relaxed/simple;
-	bh=M0kCbGdguK2I01sYIudQTuezVBCEY6JDjSwYgkYvvVE=;
+	s=arc-20240116; t=1752649969; c=relaxed/simple;
+	bh=EPmB3ER5RAbb7WUUJI2oQq79I7IlOIoDuKOxpyoZWOY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IBATtXkfO5Dl+rWuEQtWqiWnU/RzLP4o5fWfcfk3JMLCGqFpH/k9lcf2qSWKw2apDbmfJ+UNAKaNsr2RNgdcnNUeGDCMUchFWOi909Doovh7eMfGegsKNYdU/FuJ/i+scLl8hiJXA0xCu34MgjxyaBTIvHiOg4+/lN6ELAaOK3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MS7fB0N4; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version; b=K0kZZHEEr8HO0g38jdPbvo4z3ITEAk2/Gxft/nY4yA9uOF6JELpLrxJttsxNf5ZOSA5mUboIapYsYuikxYc00Maho8tTr2ug8IMW2nVWvgO3NBV5W6UaVXP1wnxAwX9+PZuhkVHXtMVDcNdYmVLUzwguxd6ks/2vixaVk1g26Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=czzlQeCk; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752649969; x=1784185969;
+  t=1752649968; x=1784185968;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=M0kCbGdguK2I01sYIudQTuezVBCEY6JDjSwYgkYvvVE=;
-  b=MS7fB0N4UwaHt+drPdy+iosriAkzhE5Uup8mcKQ7RVPaLT2f38az8znd
-   9AClt5O8z1YUqNyKwz8Q09dBaQB3L1s7ngmmgeEEIER2GnSAlKjVXD1I8
-   zDtZflGDgxPo4Dvrgs1pHXW8Ki+XyrSav5NL8fFmUxACl/aPiBVaCwndP
-   MIhqchC5DOJEYleJrMb418ivQlCm0fbRCwAF9ogV66Iy1EfZ4YD4HZNz5
-   828I8iQknj9lJZ1VNhBp1e5ynhNhb+etOLEY8yFJcjV5DNXkW+T1giJqh
-   XRbRnyCvpz2c6+kOarESEu5+D9JFCMaZ15cJWUisooiH29OqfQw0zEcAo
-   Q==;
-X-CSE-ConnectionGUID: dV/COuAuRT2DaHFylPwo/A==
-X-CSE-MsgGUID: TZsN+ROrQSau3wS8sZ4k4g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58540798"
+  bh=EPmB3ER5RAbb7WUUJI2oQq79I7IlOIoDuKOxpyoZWOY=;
+  b=czzlQeCkLDzTbax2cBzSz2SBOlGo8X0UKp15Tb+0GCbBBV6EowSpQ9OO
+   dIIS2JTc/mXYRxMPangsOex2phO+JV5ZSH+1/9WXrquz65LxyedAVy5+t
+   G1WD5BQFTeSKcfEoGzaXYrBjt/kUYK5yCsHDQKcOas2gpRHIs10ol+XXb
+   5pirhTFCgZTtx2eBS9/lYPpsUjMiv3NPJhIAWqZdToT2pZUM8Tgsh49Us
+   X2uAn6VuUP5KFTPPmS8VzVfiuN5c9WszWf6w15pkd8jP77GFlBfoVp4BT
+   7YC4/zAsNOem9vwiGJcuPFoGYB+6RAuXyGXxSP01wsDMRVcziEe1ofjy8
+   g==;
+X-CSE-ConnectionGUID: hhgyIbtMQLCJ/MHU+T7MFg==
+X-CSE-MsgGUID: CcrV/9EJQJOPz96BeWjWpQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58540812"
 X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="58540798"
+   d="scan'208";a="58540812"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:12:37 -0700
-X-CSE-ConnectionGUID: j9rzoG2zTP+vUbJ97F1ByA==
-X-CSE-MsgGUID: vo9QC6qAThyXxKIvxVVXKQ==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:12:40 -0700
+X-CSE-ConnectionGUID: 2KHVZEhMRH+FoRgpVKFGsQ==
+X-CSE-MsgGUID: xxsexjI7RNiyxt6M6Vt78w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="161453640"
+   d="scan'208";a="161453643"
 Received: from yilunxu-optiplex-7050.sh.intel.com ([10.239.159.165])
-  by fmviesa003.fm.intel.com with ESMTP; 16 Jul 2025 00:12:33 -0700
+  by fmviesa003.fm.intel.com with ESMTP; 16 Jul 2025 00:12:36 -0700
 From: Xu Yilun <yilun.xu@linux.intel.com>
 To: jgg@nvidia.com,
 	jgg@ziepe.ca,
@@ -73,9 +73,9 @@ Cc: iommu@lists.linux.dev,
 	dan.j.williams@intel.com,
 	baolu.lu@linux.intel.com,
 	yilun.xu@intel.com
-Subject: [PATCH v6 2/8] iommufd: Add iommufd_object_tombstone_user() helper
-Date: Wed, 16 Jul 2025 15:03:43 +0800
-Message-Id: <20250716070349.1807226-3-yilun.xu@linux.intel.com>
+Subject: [PATCH v6 3/8] iommufd: Add a pre_destroy() op for objects
+Date: Wed, 16 Jul 2025 15:03:44 +0800
+Message-Id: <20250716070349.1807226-4-yilun.xu@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250716070349.1807226-1-yilun.xu@linux.intel.com>
 References: <20250716070349.1807226-1-yilun.xu@linux.intel.com>
@@ -87,133 +87,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the iommufd_object_tombstone_user() helper, which allows the caller
-to destroy an iommufd object created by userspace.
+Add a pre_destroy() op which gives objects a chance to clear their
+short term users references before destruction. This op is intended for
+external driver created objects (e.g. idev) which does deterministic
+destruction.
 
-This is useful on some destroy paths when the kernel caller finds the
-object should have been removed by userspace but is still alive. With
-this helper, the caller destroys the object but leave the object ID
-reserved (so called tombstone). The tombstone prevents repurposing the
-object ID without awareness of the original user.
+In order to manage the lifecycle of interrelated objects as well as the
+deterministic destruction (e.g. vdev can't outlive idev, and idev
+destruction can't fail), short term users references are allowed to
+live out of an ioctl execution. An immediate use case is, vdev holds
+idev's short term user reference until vdev destruction completes, idev
+leverages existing wait_shortterm mechanism to ensure it is destroyed
+after vdev.
 
-Since this happens for abnormal userspace behavior, for simplicity, the
-tombstoned object ID would be permanently leaked until
-iommufd_fops_release(). I.e. the original user gets an error when
-calling ioctl(IOMMU_DESTROY) on that ID.
-
-The first use case would be to ensure the iommufd_vdevice can't outlive
-the associated iommufd_device.
+This extended usage makes the referenced object unable to just wait for
+its reference gone. It needs to actively trigger the reference removal,
+as well as prevent new references before wait. Should implement these
+work in pre_destroy().
 
 Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
 Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Co-developed-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
 Tested-by: Nicolin Chen <nicolinc@nvidia.com>
 Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
 ---
- drivers/iommu/iommufd/iommufd_private.h | 23 ++++++++++++++++++++++-
- drivers/iommu/iommufd/main.c            | 24 +++++++++++++++++++++++-
- 2 files changed, 45 insertions(+), 2 deletions(-)
+ drivers/iommu/iommufd/main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-index cd14163abdd1..149545060029 100644
---- a/drivers/iommu/iommufd/iommufd_private.h
-+++ b/drivers/iommu/iommufd/iommufd_private.h
-@@ -202,7 +202,8 @@ void iommufd_object_finalize(struct iommufd_ctx *ictx,
- 			     struct iommufd_object *obj);
- 
- enum {
--	REMOVE_WAIT_SHORTTERM = 1,
-+	REMOVE_WAIT_SHORTTERM	= BIT(0),
-+	REMOVE_OBJ_TOMBSTONE	= BIT(1),
- };
- int iommufd_object_remove(struct iommufd_ctx *ictx,
- 			  struct iommufd_object *to_destroy, u32 id,
-@@ -228,6 +229,26 @@ static inline void iommufd_object_destroy_user(struct iommufd_ctx *ictx,
- 	WARN_ON(ret);
- }
- 
-+/*
-+ * Similar to iommufd_object_destroy_user(), except that the object ID is left
-+ * reserved/tombstoned.
-+ */
-+static inline void iommufd_object_tombstone_user(struct iommufd_ctx *ictx,
-+						 struct iommufd_object *obj)
-+{
-+	int ret;
-+
-+	ret = iommufd_object_remove(ictx, obj, obj->id,
-+				    REMOVE_WAIT_SHORTTERM | REMOVE_OBJ_TOMBSTONE);
-+
-+	/*
-+	 * If there is a bug and we couldn't destroy the object then we did put
-+	 * back the caller's users refcount and will eventually try to free it
-+	 * again during close.
-+	 */
-+	WARN_ON(ret);
-+}
-+
- /*
-  * The HWPT allocated by autodomains is used in possibly many devices and
-  * is automatically destroyed when its refcount reaches zero.
 diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
-index 69c2195e77ca..71135f0ec72d 100644
+index 71135f0ec72d..53085d24ce4a 100644
 --- a/drivers/iommu/iommufd/main.c
 +++ b/drivers/iommu/iommufd/main.c
-@@ -225,7 +225,7 @@ int iommufd_object_remove(struct iommufd_ctx *ictx,
- 		goto err_xa;
- 	}
+@@ -23,6 +23,7 @@
+ #include "iommufd_test.h"
  
--	xas_store(&xas, NULL);
-+	xas_store(&xas, (flags & REMOVE_OBJ_TOMBSTONE) ? XA_ZERO_ENTRY : NULL);
- 	if (ictx->vfio_ioas == container_of(obj, struct iommufd_ioas, obj))
- 		ictx->vfio_ioas = NULL;
- 	xa_unlock(&ictx->objects);
-@@ -311,19 +311,41 @@ static int iommufd_fops_release(struct inode *inode, struct file *filp)
- 	while (!xa_empty(&ictx->objects)) {
- 		unsigned int destroyed = 0;
- 		unsigned long index;
-+		bool empty = true;
+ struct iommufd_object_ops {
++	void (*pre_destroy)(struct iommufd_object *obj);
+ 	void (*destroy)(struct iommufd_object *obj);
+ 	void (*abort)(struct iommufd_object *obj);
+ };
+@@ -160,6 +161,9 @@ static int iommufd_object_dec_wait_shortterm(struct iommufd_ctx *ictx,
+ 	if (refcount_dec_and_test(&to_destroy->shortterm_users))
+ 		return 0;
  
-+		/*
-+		 * We can't use xa_empty() to end the loop as the tombstones
-+		 * are stored as XA_ZERO_ENTRY in the xarray. However
-+		 * xa_for_each() automatically converts them to NULL and skips
-+		 * them causing xa_empty() to be kept false. Thus once
-+		 * xa_for_each() finds no further !NULL entries the loop is
-+		 * done.
-+		 */
- 		xa_for_each(&ictx->objects, index, obj) {
-+			empty = false;
- 			if (!refcount_dec_if_one(&obj->users))
- 				continue;
++	if (iommufd_object_ops[to_destroy->type].pre_destroy)
++		iommufd_object_ops[to_destroy->type].pre_destroy(to_destroy);
 +
- 			destroyed++;
- 			xa_erase(&ictx->objects, index);
- 			iommufd_object_ops[obj->type].destroy(obj);
- 			kfree(obj);
- 		}
-+
-+		if (empty)
-+			break;
-+
- 		/* Bug related to users refcount */
- 		if (WARN_ON(!destroyed))
- 			break;
- 	}
-+
-+	/*
-+	 * There may be some tombstones left over from
-+	 * iommufd_object_tombstone_user()
-+	 */
-+	xa_destroy(&ictx->objects);
-+
- 	WARN_ON(!xa_empty(&ictx->groups));
- 
- 	mutex_destroy(&ictx->sw_msi_lock);
+ 	if (wait_event_timeout(ictx->destroy_wait,
+ 			       refcount_read(&to_destroy->shortterm_users) == 0,
+ 			       msecs_to_jiffies(60000)))
 -- 
 2.25.1
 
