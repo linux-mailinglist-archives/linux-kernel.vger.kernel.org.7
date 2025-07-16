@@ -1,155 +1,127 @@
-Return-Path: <linux-kernel+bounces-733547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570E8B07612
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:47:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97754B07615
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 468DB7B763F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:45:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A15D53B5D1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4DF2F3C34;
-	Wed, 16 Jul 2025 12:46:27 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821472264DC;
+	Wed, 16 Jul 2025 12:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JMise5/c"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7D015E90
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4BF341AA
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669986; cv=none; b=cjvb2QyZCYtgaloYM+2lNVFW9hop9vuyMgCrj6Ri9WzfP/m85hbNGeglotp/a8RmQk+GtlC1PX0rBXt0EFFZG/vC+UYmGTL8lS7/RFmSfW3REdb9HbGUCUB5e9sSxF09LmoP/AMPDXG9izTK5sz5KoC30H462v3znSlqutWoOOY=
+	t=1752670030; cv=none; b=Ril8Deu9V27b8Xlm24Wze4t6m/8ueb5EiiifuUCN6eVTh1BCVXIDOih9gM8tJrmMl8LY87qdLqeFf/el2s5oJRMLw8Ranhwrhlabj3tM/v9epkggcfK2pxx0AKlYsRssMha33xyw6T1CcQVab3iu4Lscb4zwbWsy9prjnWjuk9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669986; c=relaxed/simple;
-	bh=VtLZKHWeEQrix0u/ie+VyyTC5fO943Q83nJWFCiDwoM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b0qcccHc9LfBJySSMkcnBONnDXarqhXKfAMJceLz/LquN4qVWjKkodz1RcGs+CjJqGbw7LLu4bbjDDcRXQ8rtqKxIjTUCqbD8KXCJiXPNlMwwmYRutamhMkHWp6K0HMz/1Y0WpFqB1zYljg2UxbS0ZMIq10Zg4GRNZsXdXRE8T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae35f36da9dso1346007366b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:46:24 -0700 (PDT)
+	s=arc-20240116; t=1752670030; c=relaxed/simple;
+	bh=v+NeI4oPDFcDXRLGoGYINFchF4i+6dwoVmcAAxulswU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VA7La1yunAbMzevSot69N8pQmVUspCsUmuWxUoYB85C26S3CRgm8ZuxF7J1Vu6Ts0E4uWooz6t6msbSbUmbiYYgha2SFl2EsqXpXWBB/wkjrf1btyoSPHfChfaRhNIneI/2jzhd62yW1KcPXYnjkDqWibMXI291TXCKsX7eA7lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JMise5/c; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e8bb626b20cso1844226276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752670028; x=1753274828; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+NeI4oPDFcDXRLGoGYINFchF4i+6dwoVmcAAxulswU=;
+        b=JMise5/cmiz5XWn5PazZ9Nhl3BjliiOnUpMs2oNBYK/z3W4kUwHON4jvgMbcS4LJ3u
+         YYtbmCqgYk/pMeXQDZDLM896DKVWB5pjX0nIPwBSxkOJylnTodEiXsT/NrM0z2Wiqm1t
+         E0PY1479UyA2p28bSl1Rxfvwk6i5+4xLCLrIsV7GdqJbALrdmefKtD/vKvtH1VCTBt6G
+         QY/vVDp0pMndaOhhY/sUqyCksvNmzaU58442N8t75KClpVe4ffGIAQ1NSCqf0xi5RhF0
+         lUg0/wX4n3+bOQFyTeLFtNVj7eUyuMq386lKziLGQtdwfKgoCs8+bC56kDDviP+mCxOL
+         9ymQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752669983; x=1753274783;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1752670028; x=1753274828;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2nHi/Drr0uAysvpOhqgFMruCENictBdFBEyIV3Omq/E=;
-        b=IDe4lsgqVRxHaiAkbBET+6/Ks38Zhsif6shYVORIpd2pHswg/Nc/B5DgOvIUuRXyxY
-         RrMiro+Tepk5nO+VUxuPawDZfsuT/4unmP5X4wUQIGOMZsrg48hzhZrdoTxS33rYi/Ff
-         aFUcmg9gLUNHiNonjXzarGDOdOLk05Hqznwj5nOCPCZ4eu6KKSGsEixSCHHcxiejiRzw
-         RX0dFlSUw3FLpWLtviukijd11NEsiXajy5g40u6vM2Cls2V4/OTNx73bYmu66JUAuZvZ
-         QYTKh/nN0ctcmODfq6JgGuaNQr/2n77bdEdwTvZXxcQiUhQtIqN9CRoO3MtODR+e07u5
-         9rKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXn4UjmYyCXw31xcMQKgAJ44Wr5Ei4WzyLn5XS1jDJOklSP1+twxfmf2akKE1wBq4DbyTshUb51pQM6g2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhqzMz3JXETzFFIHV+CTKvrhYGQuUsIJGC4B9dcPH7QTbdXt9i
-	CO3kptk81+3HNLEo4RyjfDEOUNEgz9oHcyCEryE8PkYnfm7ZrgkAfvre
-X-Gm-Gg: ASbGnct166Hj/3nnqn2q5nE1i0/amVVgprYQpENB5ZWxnpNXjcew1pLEv7zfTA08eHa
-	AqtYB6uWMc4y8KLCD9TZnCR4stYGJTU/LFjdDT0CfHwc/LCQhA4bQfv5IKRItwyWyRa77NJ3kaW
-	W3AdTIIBGVzG1lmL7fMKMjC+BjePL1xJU331rBPCtk45V0Z498tW7insyjJioQeDoRg2obeaJ8h
-	Gx1WFA0oyZMvZYH9D9y0qffarL0QwVHosVWdaPaAHkRYcvb9XJslsunlWmkgDshb5WwM8oIt15F
-	qofwmqOOgUjMeVohKCf6NEuOYgkEgD7oGc9+Fku/awOnej/4muAarMAgjd8WWwb4qJD/v8mgV+f
-	6nAyAnNLYrO1m
-X-Google-Smtp-Source: AGHT+IHGQ4kq/7+AoGST06tjPNkopo5tZZQH4Vq1wEvkzrB7zFCChXgmwb/g3sz6G4TXC7budQyvTQ==
-X-Received: by 2002:a17:906:3956:b0:ae4:85e:6207 with SMTP id a640c23a62f3a-ae9ce110d20mr190064266b.50.1752669982940;
-        Wed, 16 Jul 2025 05:46:22 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee46cdsm1209083466b.60.2025.07.16.05.46.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:46:22 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 16 Jul 2025 05:46:15 -0700
-Subject: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
- disabling preemption
+        bh=v+NeI4oPDFcDXRLGoGYINFchF4i+6dwoVmcAAxulswU=;
+        b=DlRvTgKBTaF662RZk1tyCHbEoPryeltFelCzKT/GL4OR/NOiyjeNWWZ2abcQ/RnOfQ
+         ZARqg/Sf5XFbiGO31oiOX8Zo0wJ1k0JmlQ0dP4A53XmjeAfXB+PMCOgPvH6p3cRJICiB
+         5flEq5ypK34k/U9ldbjeaZLaDdZZBJ5qJ0Qp1524Q5jPTt9Dbh6O4sW+8c8UVbPke29v
+         bekpTPy2zcVzSn0PS4J83GLyV/O2jjSiGnnD9Nix6wk2gMolgeE76E4A5jWNDSpgHO79
+         tgEsSvdDOl1C/KMRxN5mJRNPqyExOJTHHlLIG4QmuubXHzhdRUl5c0OubChNEtKckE33
+         E04A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCBXBZmO0bD0s0NAckQXwT1ymQTqs+KK6nA3u4NdYds3zWEAday1yPL2U7HUGXd4OaLw+gBPB/S31UJO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3d4F8CjfYjg3s8AOcAQ0EiqcN5KXzLP4CPZykPr/BLhNJyLYM
+	nPDcXiXhWu6nYp510b1+nnCzYLNCC1EJqyOdqU1tZP65berSZLpmcmuAH0ssRdJWTjRCebPSmHA
+	P4Y7fxg+q+t/vPGQkjsHe3EBU7DA3vgZrYaBJGmGCUA==
+X-Gm-Gg: ASbGncsOA4AS2Rg+BLdX/ChRuc4DzUMKjs2I/mUx9Dkjsr1n/27NWZ3dzPt64wkfjZO
+	g3W3uG7lbh/vTIiiPU2xAdpmL9/8YymEyWfdr8hgMFay1hzM8p+yhdOzZZZEqc2Nv4/qzzrCTcv
+	Ud2plYavgABxFg2Di00G31BLWd6ecTzd0RbF3KBwnbfsNO2qYoiS023Y44e6IFH78q0n7r4XjUO
+	kVk2jIp
+X-Google-Smtp-Source: AGHT+IFnmV7tqHnKAAZin05zl23pu/BOmTcDrsz6MJtyOoKAjZsusep8borKW7RWSkgBxZIsdcr3u8g53bJV87ZlM/s=
+X-Received: by 2002:a05:690c:6504:b0:70f:6ec6:62b3 with SMTP id
+ 00721157ae682-7183515bbd1mr45195087b3.26.1752670028190; Wed, 16 Jul 2025
+ 05:47:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
-X-B4-Tracking: v=1; b=H4sIABafd2gC/x3MWwqAIBAF0K0M9ztBe+NWIkJsrPmxUKgg3HvQW
- cB5kTkJZ1h6kfiSLEeEJVMR/O7ixkpWWEKt604PplfZP8vtUpS4qc60jQ9mCKPuURHOxEGef5v
- mUj6kZwukXQAAAA==
-X-Change-ID: 20250716-scx_warning-5143cf17f806
-To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, 
- Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, 
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-Cc: sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, jake@hillion.co.uk, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1603; i=leitao@debian.org;
- h=from:subject:message-id; bh=VtLZKHWeEQrix0u/ie+VyyTC5fO943Q83nJWFCiDwoM=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBod58dZupF7dIoNxfa79oXtv/lhj51fVSyLx/8q
- Uvze7a9VbiJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaHefHQAKCRA1o5Of/Hh3
- bQ5/D/9zPFs4LKba02f3jKhFIkABvfbU2WfdVlBht/GYm35jp6b/C8cnukMTfHNVelKazFXIVYK
- mgfvlw2tBiP5qGe0kiTOgUlzthcd7vfVwYoMM8HSssObBolpkmFJw4CEFBLThc8UqVNS++yTAVS
- /4pC797s+eol9g/a5guSMg8U5e+URSoEN/K3+HmNipcBoQ5eMbPBIg1BKFw+5Wuu1i6PzJ9JGOs
- YkcpxZgCXhBONsy5fWpBtkpeuqvY5SjKdy9E18MyjAs33TEFC+NQwN5vV6rTutHspL2/K0wTwzc
- l2T7y8+7R3INAHfBKbxeVjK+Cf6tqZ/3Zd/z+tPLEV12ZiazpG6fT4T76iVuaqflahRpapFSGHz
- iyL5dIGK/BUnDM99BoB97rfcRD0HoODDxL6V+tHHKxOOzSi5BlYh/zZC5T91PYndlHHLrIK1KaU
- CY720ax/XWx1i8XZOTj/BuG/dPhamwCIH4A3RCVxk9J89wxyZLwAhUIAiFWTAR84lNNJxP0fuPw
- R3nxhHh2SW3oMm0CbLhtkeVw0akAFPz6GzzyYl1iK0PkY1fiHOgAY+opIKuj1HyCJ0v2wUHYBTI
- Fj/J2z9xe7bu47Hx0TgWSArMzg/l3BNVGZSffGz40CVhH2tmuve3up0FuZK3TtZHoS7sdNjxD/v
- e4koLE/M+p3mlxQ==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com> <DBCI05B4Y2ZX.VM9KNB61PGU2@kernel.org>
+In-Reply-To: <DBCI05B4Y2ZX.VM9KNB61PGU2@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 16 Jul 2025 14:46:30 +0200
+X-Gm-Features: Ac12FXzurDUmM43xe6kzQuLOxwsQlwsDpzV3_U4qJupNwsd3iX_y9_VZPsZolOc
+Message-ID: <CAPDyKFqUHmMi6tBOJyA2YAOYLX-c_kDMskyRTC1Q+c9B4q_g8w@mail.gmail.com>
+Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-__this_cpu_write() emits a warning if used with preemption enabled.
+On Tue, 15 Jul 2025 at 10:50, Danilo Krummrich <dakr@kernel.org> wrote:
+>
+> Hi Ulf,
+>
+> On Wed Jul 9, 2025 at 1:30 PM CEST, Ulf Hansson wrote:
+> > I decided it was time to give this a try, so I have queued this up for
+> > v6.17 via the next branch at my pmdomain tree.
+> >
+> > If you encounter any issues, please let me know so I can help to fix them.
+>
+> Can you please address my concern in patch 17 ("driver core: Export
+> get_dev_from_fwnode()")?
+>
+> Since this has been applied already, a subsequent patch would be perfectly fine.
 
-Function update_locked_rq() might be called with preemption enabled,
-which causes the following warning:
+Hi Danilo,
 
-	BUG: using __this_cpu_write() in preemptible [00000000] code: scx_layered_6-9/68770
+As Greg and Saravana were happy, I didn't want to hold back the whole
+series only because of a minor comment on some missing documentation.
 
-Disable preemption around the __this_cpu_write() call in
-update_locked_rq() to suppress the warning, without affecting behavior.
+But, yes, let me look into it. It may take a while though, as vacation
+is getting closer. If you want to send a patch yourself, please, feel
+free to do it.
 
-If preemption triggers a  jump to another CPU during the callback it's
-fine, since we would track the rq state on the other CPU with its own
-local variable.
+Note that, while at it, we should probably also add some documentation
+of device_set_node() (next to get_dev_from_fwnode()) as it also lacks
+it.
 
-Suggested-by: Andrea Righi <arighi@nvidia.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 18853ba782bef ("sched_ext: Track currently locked rq")
-Acked-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/ext.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index b498d867ba210..24fcbd7331f73 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1258,7 +1258,14 @@ static inline void update_locked_rq(struct rq *rq)
- 	 */
- 	if (rq)
- 		lockdep_assert_rq_held(rq);
-+	/*
-+	 * __this_cpu_write() emits a warning when used with preemption enabled.
-+	 * While there's no functional issue if the callback runs on another
-+	 * CPU, we disable preemption here solely to suppress that warning.
-+	 */
-+	preempt_disable();
- 	__this_cpu_write(locked_rq, rq);
-+	preempt_enable();
- }
- 
- /*
-
----
-base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
-change-id: 20250716-scx_warning-5143cf17f806
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+Kind regards
+Uffe
 
