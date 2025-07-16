@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-733798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E51B07942
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:13:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E79BB07915
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055D3189F311
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:06:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE1D3B07B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DA828D82F;
-	Wed, 16 Jul 2025 15:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6555926658A;
+	Wed, 16 Jul 2025 15:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="mxAk9pFd"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEEaNQ2L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1CA2727E5;
-	Wed, 16 Jul 2025 15:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD473263F4A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752678382; cv=none; b=o2KaxPEaxleeRfnkZ6H8ZUAVbcAgqGBAJQQBML0roDYS2EqlHuoXDcPL45v7Gq55RW0OEgVAgVigbFEN4ZIR7a0rAB0zFt+yhe90nBWU9NwGBN99Mf1YjiU8XpmXB6pCRI1LR2KKysdkv0t7ovdhOwyXm2yhTpUZ9PmY11P8GmQ=
+	t=1752678378; cv=none; b=b1hyMd+HU93YIMBE88B4ITAxrb2WcKtdVz8xQtPDDe+jClQw5tv0iLi6Non6glXMWT2ey9inYI2Nn87EuPHNKbx8+BETKX625yNthiHM4TL33+Y5eWshOJbxZgt9zRVCm1QIG3fswjTCqi7a/+fS19KAoGbsy1SjCWG6UMB9Fzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752678382; c=relaxed/simple;
-	bh=Kx6KvPlh1ofSdmFCjKixoOudnflMFht2fe6t0IectFU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=iF2ZixsSLcBbTOERYkCErFhZeU0T4afwzFTyD1yKLicFcp9nEDz8NZhUA6rfaJV2WAcqixh4uIt5MfhRwr4PNbyfMFSYIWzlkCtCY9S2R9gHKJdRtvUpJHB6FN0xEBAEuGlavnEk1pAqf7buWMpsdbB4zzy4Hmigj0WnUkwSWOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=mxAk9pFd; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56GF6DEX1555693
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 16 Jul 2025 08:06:13 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56GF6DEX1555693
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752678374;
-	bh=Zn6hFpgIn1dP/feaC10D15o+3qV/K6KyEB/+fOIAQ+w=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=mxAk9pFdBMT1RdVKgKdMbK2PJnJ2tsIfengVTi8GPItYSrojC02I9vaPV/ccSH4yD
-	 tnP91FzZieWZK9FHLiQqUaMAbsC7ZIq8DCf2R9AakNCk8hcznWHL/VxAKIKo+b1rQS
-	 iaFy+9JWPIQy8LZlDnlIf/HkXp+P7cdIUvJktrAH1Dw5ntzYbZbObHSRY1ewTmoCXu
-	 j2I5m/CrKt5LFCANYEHlRIpRIY38WjLOJBe+BVnuaDDsLyJl9lQemGPcYhFxckouB3
-	 odOd2GyAOJBRF0cYIkq6u8SNXYk+pVO6FRTi5kaHp/YATgqvzm2ZHA8JMapzfVJh3h
-	 qE1DKk7qhmZVw==
-Date: Wed, 16 Jul 2025 08:06:11 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Oliver Neukum <oneukum@suse.com>
-CC: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, Jiri Slaby <jirislaby@kernel.org>,
-        linux-serial@vger.kernel.org
-Subject: Re: USB cdc-acm driver: break and command
-User-Agent: K-9 Mail for Android
-In-Reply-To: <fa20ab91-5ebf-427d-b938-31ea6fb945cf@suse.com>
-References: <ce54ae11-72bb-4ac7-980b-c1cbc798a209@zytor.com> <fa20ab91-5ebf-427d-b938-31ea6fb945cf@suse.com>
-Message-ID: <83B89F79-D28B-4F2C-87EA-F5078BD7ED17@zytor.com>
+	s=arc-20240116; t=1752678378; c=relaxed/simple;
+	bh=WKuwpKVt9zZ8ckB0vN8JO0JzK0NC6moeuIOO+N1EA6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PgvtvDflS/6h3FfIWQYieonQkQudt6yb14GGlymxJJRNjgfxK2+nmKI22bKXzVWj42oUKPfRVOkWzfs9ZJfweKFyymxPwQh00EBqNx54VCCzoAuH2SfFU5ZYIIS+7LWj+uP9oCQporeWveRcTCVpEICu7AN6Bd1uE9IZ2OWQ2zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEEaNQ2L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4EBDC4CEF0;
+	Wed, 16 Jul 2025 15:06:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752678378;
+	bh=WKuwpKVt9zZ8ckB0vN8JO0JzK0NC6moeuIOO+N1EA6g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UEEaNQ2Lnv9psWcfzpuCU4ZdFuvDDrKfSznX2c4YLP88gmiefl3G5DvqYG7qoTO/g
+	 mZS8dcFpeJxjDmeuDQqkksGWYYsYLN567tGiz8D/dGAI2k6+aLu6Y+lkJYe+qaeWsF
+	 nANZthvWtUtzw0iAdXgu1PXjxxiPiB/NuszRRJG5R15qfYQQ1HEAKiT2r3RpbPO9SC
+	 CILntfpJ7sk/ALCXo9KFr8GciZczhJcszPtrtXS9gsiuj5QYphvjDSHJoJWB54275d
+	 226RG26RjP2snleAB/gMqd39MSXeIJ7upvyVVKsdl2blDUa/QDj9q8O9yOto5da0+z
+	 N4T5nN7ro/fuA==
+Date: Wed, 16 Jul 2025 17:06:15 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Dmitry Baryshkov <lumag@kernel.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] drm/tests: edid: Update CTA-861 HDMI Vendor Specific
+ Data Block
+Message-ID: <20250716-realistic-cream-ammonite-304cca@houat>
+References: <20250625-drm-update-edid-v1-0-2d963743ab9e@kernel.org>
+ <20250625-drm-update-edid-v1-2-2d963743ab9e@kernel.org>
+ <046193df-bb11-4d84-98a4-c6d46d359316@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="alj2dibegux2zdfp"
+Content-Disposition: inline
+In-Reply-To: <046193df-bb11-4d84-98a4-c6d46d359316@suse.de>
+
+
+--alj2dibegux2zdfp
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/3] drm/tests: edid: Update CTA-861 HDMI Vendor Specific
+ Data Block
+MIME-Version: 1.0
 
-On July 16, 2025 1:29:27 AM PDT, Oliver Neukum <oneukum@suse=2Ecom> wrote:
->On 15=2E07=2E25 23:00, H=2E Peter Anvin wrote:
->> Hi,
->>=20
->> I noticed looking at the CDC-ACM driver that it uses the assert/local d=
-elay/deassert method of sending BREAK=2E=C2=A0 Given that the CDC model has=
- a delay specifier in the command packet, is there any reason not to set TT=
-Y_DRIVER_HARDWARE_BREAK and sending only one packet?
->
->1=2E The existing code is tested and usually works=2E
->2=2E The locking goes away=2E I have no idea what happens if you are
->sending a second break while a break is still going on=2E
->
->> I'm also wondering if it would make sense to support the SEND_ENCAPSULA=
-TED_COMMAND and GET_ENCAPSULATED_RESPONSE commands, presumably via an ioctl=
-()=2E=C2=A0 I'm not 100% sure because I'm not sure there aren't potential s=
-ecurity issues=2E
->
->Well, one of the purposes of the CDC-ACM driver is to hide that
->you are talking to a USB device=2E
->In theory we could do that=2E I don't quite see the value=2E
->Sending arbitrary data from user space to a control endpoint
->does not make me happy=2E
->
->	HTH
->		Oliver
+Hi Thomas,
+
+On Mon, Jul 14, 2025 at 01:02:33PM +0200, Thomas Zimmermann wrote:
+> Hi
 >=20
-However, the flipside is that ACM devices are very often used because it i=
-s one of the few ways you can avoid requiring device drivers on Windows=2E
+> Am 25.06.25 um 17:14 schrieb Maxime Ripard:
+> > For some reason, the HDMI VSDBs in our kunit EDIDs had a length longer
+> > than expected.
+> >=20
+> > While this was harmless, we should get rid of it to make it somewhat
+> > predictable.
+>=20
+> Dump question: should these errors be kept in another test specifically f=
+or
+> detecting this problem?
 
-This is why some devices do absolutely insane crap like Arduino which trig=
-ger a board reset if you set the speed to 1200 baud=2E
+I'm not entirely sure what you mean here, sorry. Did you mean that we
+should get some tests to prevent that kind of EDIDs from being accepted
+by the kernel?
 
-SEND_ENCAPSULATED_COMMAND at least takes a command string =E2=80=93 it was=
- intended, I believe, to be able to send AT commands to a modem while onlin=
-e without using the +++ escape code and all the potential race conditions (=
-and security issues, since it is trivial for a user to generate) associated=
- with that=2E
+If so, I guess it would mean getting a test suite for the EDID parser
+itself, which is definitely something that should happen at some point
+but seems a little out of scope to me.
 
-I am not suggesting that we ought to allow sending *arbitrary USB commands=
-*; if that is what's needed then use the USB device interface, which of cou=
-rse has its own permission flags=2E The main problem with that is exactly t=
-hat it is all-or-nothing (it is also a bit of a pain to find the underlying=
- USB device corresponding to an ACM or USB tty, but that's another matter e=
-ntirely; it is at least doable=2E)
+Maxime
 
-As far as BREAK is concerned, there is also the option of locking out a se=
-cond BREAK for the delay time; however, this probably should belong in the =
-tty core=2E  What do other drivers supporting TTY_DRIVER_HARDWARE_BREAK do?
+--alj2dibegux2zdfp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaHe/5gAKCRAnX84Zoj2+
+dsewAYD1axpR1DkXlPCwINCEdtcqV1K1gc0Ck3unBBJukPewwJ3aJFdIse3nSCGc
+N0S9ApgBgN1b6+5aCRPHfzDWSkeB2bDfR6afkUsugIHUpFNGeh5BKu96GBJ/E+vh
+ezDP9N6nig==
+=+J+F
+-----END PGP SIGNATURE-----
+
+--alj2dibegux2zdfp--
 
