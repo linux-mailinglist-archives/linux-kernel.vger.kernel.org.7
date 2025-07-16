@@ -1,172 +1,271 @@
-Return-Path: <linux-kernel+bounces-733641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483E3B07742
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:47:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E495CB07746
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4C91899196
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FD3564AF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BB0155C88;
-	Wed, 16 Jul 2025 13:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EF21CAA92;
+	Wed, 16 Jul 2025 13:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ITqEzOdq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jiQ9Mi5M"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9884B2F2E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3B42F2E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752673619; cv=none; b=dW+StCB+ZVMNmLNNrQnBoVc4CWAI3MGLNdHzwF7kYVnHMJaFs6ytiaQpkNbMn/3Q4XFeLo329YqEjs9W0Mvc6Cf405acapGDis6S0Jw4pbqRqiH88rqqdiEFA3Zbe6EUnnFqPXTqCXM1a2Jksj9k97GXRUjDcUNddG80KSIUw3Y=
+	t=1752673646; cv=none; b=EvkE8lxOqe+uPr2knrmASGeNVnrhWsO/CrFUst9pOE87bEH0Vogh5LVipteYNt1ud+iJ0lxS3T27qv9DFsAIEUdM0hHqpy3EtwugINqPAtzFpD19zAjAPFufPijRNOXat1NFpc0H1NdsSdUr2WSLnphU41Vvn96EO4OhgGrgnu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752673619; c=relaxed/simple;
-	bh=oWqfY4IYFYnZ6rkfKGKz2+ZwKtIQvii/tCymvVf7m4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8YqPtK3EKlW5lQ9N+MkhoRzJ1/X29tp8qO8ldi1LhqICGnRgCoTxJSOsJBsUuija5lbwEG6KXJDKRiZs90Hcy35bnCslZ0dlnl2yhi0bhuVgy0YmRRaHslFWr2JnuvOKQmlIBqm9HF6GEkXfr6T8IW6jS6kjGzbh0a1MwULLPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ITqEzOdq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752673616;
+	s=arc-20240116; t=1752673646; c=relaxed/simple;
+	bh=y0yltTcJqulGpZ53fnr5joFFfG+L5pFlkTmcXWh9i6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rs6nXxDdMKP2C1AIuSx2euwc8hTTTHSxeLFCbQz58zw5F2T+icDbpEAvMgtuASmsxB5N3D8RZUOWFlOE8VmKTBxin4IyA0jyo29p2BUF0iCBABVeM+JZCUel6aBRlVvaRv2mE73yaPJ6/waccr1QXedGGA7n6hK3JRpf2lis394=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jiQ9Mi5M; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752673631;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wMSdNvGF0+Gq7PI8vtKmcbLGIURl0DxCtzS+LlFdMfo=;
-	b=ITqEzOdqMC212jJvmC3ecjTvSobfO/ydgqWleM7tOS+jE7J6dJJhC961KNXPkD3QW4nao9
-	kBjQ3WApqRllPUJitCXQvvgfnxjnAMLs9t/wpLlKo6y1021Br1bfqmSlC/q+6ziWupQUiS
-	Pr7MM5OGZty9mDfaI+3TnKH80X76u0c=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-695-WC3Bwjj9P0K5A8YwX8acZw-1; Wed,
- 16 Jul 2025 09:46:53 -0400
-X-MC-Unique: WC3Bwjj9P0K5A8YwX8acZw-1
-X-Mimecast-MFC-AGG-ID: WC3Bwjj9P0K5A8YwX8acZw_1752673612
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C6D219560B0;
-	Wed, 16 Jul 2025 13:46:51 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.44.32.96])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB9E61955F16;
-	Wed, 16 Jul 2025 13:46:44 +0000 (UTC)
-Date: Wed, 16 Jul 2025 09:46:40 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, clm@meta.com
-Subject: Re: [PATCH v2 00/12] sched: Address schbench regression
-Message-ID: <20250716134640.GA20846@pauld.westford.csb>
-References: <20250702114924.091581796@infradead.org>
- <132949bc-f901-40e6-a34c-d1d67d03d8b6@linux.ibm.com>
- <20250707091136.GB1099709@noisy.programming.kicks-ass.net>
- <49a9e43b-7ca5-4c90-a8b2-c43a84c34aeb@linux.ibm.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cjcdcwIptp2ApGCqk64OfxPdesKWDlhn8m1LcCCbceI=;
+	b=jiQ9Mi5M9O4/YVz549DCxdnv08BnJa3aVVuqpv5wB4W2xMBe7FnouGCq9W3LpKymFp66ua
+	tY5WaPKDJiDySV8Qy3DZ2SsvhzcfAiJnEs1uUsqmGh92Ef82WhSy+pyQTdVxxroaLHbBEL
+	7dJzHaXWs1CdcWwc8GLcvnvKJnLKZ4c=
+From: Tao Chen <chen.dylane@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	willemb@google.com,
+	kerneljasonxing@gmail.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v3 1/2] bpf: Add struct bpf_token_info
+Date: Wed, 16 Jul 2025 21:46:53 +0800
+Message-ID: <20250716134654.1162635-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <49a9e43b-7ca5-4c90-a8b2-c43a84c34aeb@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Migadu-Flow: FLOW_OUT
 
+The 'commit 35f96de04127 ("bpf: Introduce BPF token object")' added
+BPF token as a new kind of BPF kernel object. And BPF_OBJ_GET_INFO_BY_FD
+already used to get BPF object info, so we can also get token info with
+this cmd.
+One usage scenario, when program runs failed with token, because of
+the permission failure, we can report what BPF token is allowing with
+this API for debugging.
 
-Hi Peter,
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+---
+ include/linux/bpf.h            | 11 +++++++++++
+ include/uapi/linux/bpf.h       |  8 ++++++++
+ kernel/bpf/syscall.c           | 18 ++++++++++++++++++
+ kernel/bpf/token.c             | 25 ++++++++++++++++++++++++-
+ tools/include/uapi/linux/bpf.h |  8 ++++++++
+ 5 files changed, 69 insertions(+), 1 deletion(-)
 
-On Mon, Jul 07, 2025 at 03:08:08PM +0530 Shrikanth Hegde wrote:
-> 
-> 
-> On 7/7/25 14:41, Peter Zijlstra wrote:
-> > On Mon, Jul 07, 2025 at 02:35:38PM +0530, Shrikanth Hegde wrote:
-> > > 
-> > > 
-> > > On 7/2/25 17:19, Peter Zijlstra wrote:
-> > > > Hi!
-> > > > 
-> > > > Previous version:
-> > > > 
-> > > >     https://lkml.kernel.org/r/20250520094538.086709102@infradead.org
-> > > > 
-> > > > 
-> > > > Changes:
-> > > >    - keep dl_server_stop(), just remove the 'normal' usage of it (juril)
-> > > >    - have the sched_delayed wake list IPIs do select_task_rq() (vingu)
-> > > >    - fixed lockdep splat (dietmar)
-> > > >    - added a few preperatory patches
-> > > > 
-> > > > 
-> > > > Patches apply on top of tip/master (which includes the disabling of private futex)
-> > > > and clm's newidle balance patch (which I'm awaiting vingu's ack on).
-> > > > 
-> > > > Performance is similar to the last version; as tested on my SPR on v6.15 base:
-> > > > 
-> > > 
-> > > 
-> > > Hi Peter,
-> > > Gave this a spin on a machine with 5 cores (SMT8) PowerPC system.
-> > > 
-> > > I see significant regression in schbench. let me know if i have to test different
-> > > number of threads based on the system size.
-> > > Will go through the series and will try a bisect meanwhile.
-> > 
-> > Urgh, those are terrible numbers :/
-> > 
-> > What do the caches look like on that setup? Obviously all the 8 SMT
-> > (is this the supercore that glues two SMT4 things together for backwards
-> > compat?) share some cache, but is there some shared cache between the
-> > cores?
-> 
-> It is a supercore(we call it as bigcore) which glues two SMT4 cores. LLC is
-> per SMT4 core. So from scheduler perspective system is 10 cores (SMT4)
-> 
+Change list:
+ v2 -> v3:
+  - remove info_copy variable.(Andrii)
+  - assign the err when ASSERT_EQ fails in selftest.(Andrii)
+  - Acked from Andrii
+ v2: https://lore.kernel.org/bpf/20250715035831.1094282-1-chen.dylane@linux.dev
 
-We've confirmed the issue with schbench on EPYC hardware. It's not limited
-to PPC systems, although this system may also have interesting caching. 
-We don't see issues with our other tests.
+ v1 -> v2:
+  - fix compilation warning reported by kernel test robot
+ v1: https://lore.kernel.org/bpf/20250711094517.931999-1-chen.dylane@linux.dev
 
----------------
-
-Here are the latency reports from schbench on a single-socket AMD EPYC
-9655P server with 96 cores and 192 CPUs.
-
-Results for this test:
-./schbench/schbench -L -m 4 -t 192 -i 30 -r 30
-
-6.15.0-rc6  baseline
-threads  wakeup_99_usec  request_99_usec
-1        5               3180
-16       5               3996
-64       3452            14256
-128      7112            32960
-192      11536           46016
-
-6.15.0-rc6.pz_fixes2 (with 12 part series))
-threads  wakeup_99_usec  request_99_usec
-1        5               3172
-16       5               3844
-64       3348            17376
-128      21024           100480
-192      44224           176384
-
-For 128 and 192 threads, Wakeup and Request latencies increased by a factor of
-3x.
-
-We're testing now with NO_TTWU_QUEUE_DELAYED and I'll try to report on
-that when we have results. 
-
-Cheers,
-Phil
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 34dd90ec7fa..2c772f1556d 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2350,6 +2350,7 @@ extern const struct super_operations bpf_super_ops;
+ extern const struct file_operations bpf_map_fops;
+ extern const struct file_operations bpf_prog_fops;
+ extern const struct file_operations bpf_iter_fops;
++extern const struct file_operations bpf_token_fops;
+ 
+ #define BPF_PROG_TYPE(_id, _name, prog_ctx_type, kern_ctx_type) \
+ 	extern const struct bpf_prog_ops _name ## _prog_ops; \
+@@ -2546,6 +2547,9 @@ void bpf_token_inc(struct bpf_token *token);
+ void bpf_token_put(struct bpf_token *token);
+ int bpf_token_create(union bpf_attr *attr);
+ struct bpf_token *bpf_token_get_from_fd(u32 ufd);
++int bpf_token_get_info_by_fd(struct bpf_token *token,
++			     const union bpf_attr *attr,
++			     union bpf_attr __user *uattr);
+ 
+ bool bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd);
+ bool bpf_token_allow_map_type(const struct bpf_token *token, enum bpf_map_type type);
+@@ -2944,6 +2948,13 @@ static inline struct bpf_token *bpf_token_get_from_fd(u32 ufd)
+ 	return ERR_PTR(-EOPNOTSUPP);
+ }
+ 
++static inline int bpf_token_get_info_by_fd(struct bpf_token *token,
++					   const union bpf_attr *attr,
++					   union bpf_attr __user *uattr)
++{
++	return -EOPNOTSUPP;
++}
++
+ static inline void __dev_flush(struct list_head *flush_list)
+ {
+ }
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 0670e15a610..233de867738 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -450,6 +450,7 @@ union bpf_iter_link_info {
+  *		* **struct bpf_map_info**
+  *		* **struct bpf_btf_info**
+  *		* **struct bpf_link_info**
++ *		* **struct bpf_token_info**
+  *
+  *	Return
+  *		Returns zero on success. On error, -1 is returned and *errno*
+@@ -6803,6 +6804,13 @@ struct bpf_link_info {
+ 	};
+ } __attribute__((aligned(8)));
+ 
++struct bpf_token_info {
++	__u64 allowed_cmds;
++	__u64 allowed_maps;
++	__u64 allowed_progs;
++	__u64 allowed_attachs;
++} __attribute__((aligned(8)));
++
+ /* User bpf_sock_addr struct to access socket fields and sockaddr struct passed
+  * by user and intended to be used by socket (e.g. to bind to, depends on
+  * attach type).
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 3f36bfe1326..c21b6bba62a 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -5234,6 +5234,21 @@ static int bpf_link_get_info_by_fd(struct file *file,
+ }
+ 
+ 
++static int token_get_info_by_fd(struct file *file,
++				struct bpf_token *token,
++				const union bpf_attr *attr,
++				union bpf_attr __user *uattr)
++{
++	struct bpf_token_info __user *uinfo = u64_to_user_ptr(attr->info.info);
++	u32 info_len = attr->info.info_len;
++	int err;
++
++	err = bpf_check_uarg_tail_zero(USER_BPFPTR(uinfo), sizeof(*uinfo), info_len);
++	if (err)
++		return err;
++	return bpf_token_get_info_by_fd(token, attr, uattr);
++}
++
+ #define BPF_OBJ_GET_INFO_BY_FD_LAST_FIELD info.info
+ 
+ static int bpf_obj_get_info_by_fd(const union bpf_attr *attr,
+@@ -5257,6 +5272,9 @@ static int bpf_obj_get_info_by_fd(const union bpf_attr *attr,
+ 	else if (fd_file(f)->f_op == &bpf_link_fops || fd_file(f)->f_op == &bpf_link_fops_poll)
+ 		return bpf_link_get_info_by_fd(fd_file(f), fd_file(f)->private_data,
+ 					      attr, uattr);
++	else if (fd_file(f)->f_op == &bpf_token_fops)
++		return token_get_info_by_fd(fd_file(f), fd_file(f)->private_data,
++					    attr, uattr);
+ 	return -EINVAL;
+ }
+ 
+diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+index 26057aa1350..0bbe412f854 100644
+--- a/kernel/bpf/token.c
++++ b/kernel/bpf/token.c
+@@ -103,7 +103,7 @@ static void bpf_token_show_fdinfo(struct seq_file *m, struct file *filp)
+ 
+ static const struct inode_operations bpf_token_iops = { };
+ 
+-static const struct file_operations bpf_token_fops = {
++const struct file_operations bpf_token_fops = {
+ 	.release	= bpf_token_release,
+ 	.show_fdinfo	= bpf_token_show_fdinfo,
+ };
+@@ -210,6 +210,29 @@ int bpf_token_create(union bpf_attr *attr)
+ 	return err;
+ }
+ 
++int bpf_token_get_info_by_fd(struct bpf_token *token,
++			     const union bpf_attr *attr,
++			     union bpf_attr __user *uattr)
++{
++	struct bpf_token_info __user *uinfo = u64_to_user_ptr(attr->info.info);
++	struct bpf_token_info info;
++	u32 info_len = attr->info.info_len;
++
++	info_len = min_t(u32, info_len, sizeof(info));
++	memset(&info, 0, sizeof(info));
++
++	info.allowed_cmds = token->allowed_cmds;
++	info.allowed_maps = token->allowed_maps;
++	info.allowed_progs = token->allowed_progs;
++	info.allowed_attachs = token->allowed_attachs;
++
++	if (copy_to_user(uinfo, &info, info_len) ||
++	    put_user(info_len, &uattr->info.info_len))
++		return -EFAULT;
++
++	return 0;
++}
++
+ struct bpf_token *bpf_token_get_from_fd(u32 ufd)
+ {
+ 	CLASS(fd, f)(ufd);
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index 0670e15a610..233de867738 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -450,6 +450,7 @@ union bpf_iter_link_info {
+  *		* **struct bpf_map_info**
+  *		* **struct bpf_btf_info**
+  *		* **struct bpf_link_info**
++ *		* **struct bpf_token_info**
+  *
+  *	Return
+  *		Returns zero on success. On error, -1 is returned and *errno*
+@@ -6803,6 +6804,13 @@ struct bpf_link_info {
+ 	};
+ } __attribute__((aligned(8)));
+ 
++struct bpf_token_info {
++	__u64 allowed_cmds;
++	__u64 allowed_maps;
++	__u64 allowed_progs;
++	__u64 allowed_attachs;
++} __attribute__((aligned(8)));
++
+ /* User bpf_sock_addr struct to access socket fields and sockaddr struct passed
+  * by user and intended to be used by socket (e.g. to bind to, depends on
+  * attach type).
 -- 
+2.48.1
 
 
