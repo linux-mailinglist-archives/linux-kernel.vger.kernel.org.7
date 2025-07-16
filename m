@@ -1,147 +1,178 @@
-Return-Path: <linux-kernel+bounces-734379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AEC0B080CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:02:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1437DB080D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 210093B106C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:01:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495BD4A3006
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F332EF2AC;
-	Wed, 16 Jul 2025 23:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509C72EF652;
+	Wed, 16 Jul 2025 23:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qR6dHzFj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0NvWwdvM"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE6A3FE7;
-	Wed, 16 Jul 2025 23:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304F528C2BB
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752706912; cv=none; b=MZ/06XSUBv/J7HMWx6xQsoeeCFNIKRwVMV3xxm2f54PdTjPH+k4+OERJad7KJaIjJVaIYTpk2Ri9tUCIsQGebhF9Vj34+Wha9Ifjs2et7p5Ir0vpTfoZ8mfQtcNc7Rjff3ZtzXD8uN7EqCpYMcgyniRy+9kDRkbY5/QEGlrJSQo=
+	t=1752707177; cv=none; b=WXSxJeE2c5Y2Pl1wLU55bi6hkeopPzyXrUQM/SKg9wPbcWPzUyN/SBeDVuXOptiUdcgdFT5N/Bm4Mtlqxb0xQtVUKGm6e/Fji65Ip2mezHg2J6DtdJb5zmSTjBi7KG65riQF45cPJF12d0+dcRPe9txelMhL05X31GKzkA0gZSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752706912; c=relaxed/simple;
-	bh=eTSM2gEEJQ5T9pQPDPvIpmLJmmh1g3S1O9etB6ZruuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d7Z/8yQOH+2jmtVQTY/JWkKQr2MVPEYKwUxuwvGWSmR2iWia8p5m1fFqGESU0PR1g/KIBlaz3w99BSM0NdotFzIXyx9gR+XkKGj0K7NjhELkKLYQC/CMOlEM8yVw/J2CUEt/AB+iRnwP61lBBH59GVlY1jetAnh62WjdVJjqMgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qR6dHzFj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61178C4CEE7;
-	Wed, 16 Jul 2025 23:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752706912;
-	bh=eTSM2gEEJQ5T9pQPDPvIpmLJmmh1g3S1O9etB6ZruuI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qR6dHzFj+fN4ONLZqFvs7Gy7vsE2TI+UNv6Chfj0G+PSeRF/6Dd8l3wcredHKjb8A
-	 OU9pUhBZQUtK3f0nTQf5gowTU0I/xtZQAOoVQ6Rl7AYfB3S46L+SvOzd50Wr3iMqZS
-	 tlqwNCBatSdIJ8osvA88MUFcqZ813n/yzpUwa+xECkQ3yV1y4V8hPAesTPQR5BwOdD
-	 4FtH/FnlAokS/zLeE210c0yIgXKTGVPgLGUF7e2rhCG3Hp76nLayFfOjlT5VIJz22y
-	 1O1sTaZHeyU7/SWFb4/Xaes32s3h7Qop4Y8HY598qlwgl02RfKvFLXDqZ7ye7mPJWf
-	 EIJ/6ANnmkt1Q==
-Date: Wed, 16 Jul 2025 16:01:48 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, x86@kernel.org, Steven Rostedt <rostedt@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [RFC PATCH v1 07/16] unwind_user: Enable archs that do not
- necessarily save RA
-Message-ID: <xgbpe46th7rbpslybo5xdt57ushlgwr5xyrq4epuft5nfrqms3@izeojto3wzu4>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-8-jremus@linux.ibm.com>
+	s=arc-20240116; t=1752707177; c=relaxed/simple;
+	bh=6zRY70nEbDsA1kkyqfI9kHtVCDHZXeIjCB38pisAjpQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JwBgvgxHietv3EJFCWIbmNAjnL/MpUOSvI2ovk0PGqzft6CxKbv4IZ01XFKUCOgEq6/gkTBlFlQ7wA/T3NlMvqGzJPP7Twc3Obo9+3BXyQq68R3apSZ1xmczm6GaP+pnnnJrit3KidN/7E6yMX9kzFzLOlON2UVzwXEpzMkY8Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0NvWwdvM; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74928291bc3so240124b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752707175; x=1753311975; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=adcqncZXuKWrstQvgpFavoHNK5nsVYpbKX4vNDqmYr8=;
+        b=0NvWwdvMmmcuC9OJC9hGWen4CUzG+dntzVMaKVZEOYUDG+qv18qneC+czlCElGqwe4
+         lYNBPc9bb0CejnN+b0qUwccSMZzl++O/sWjhU+iAJDMqaSBLlxVKsuI5+Tb+zEUNUik+
+         5J35OUVfc3J+RgVgHzxFweioou3uz6cSUuuEKBQA10uw0xcKuypT7uCe5GqoRCHN2PIl
+         6A03mn5YmdVVmEf1LndmqK2WAuTILmnBZ9NhCnbQ03AMNTtJcyDXDs7i+3Vj1jqcZzmu
+         T8mlDPkg+TGGvJOjDg5WyZZhNjYEnD5on8PUdrCKfdu5bl4xMdDy7Duz97QA4jqwAIJv
+         nFqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752707175; x=1753311975;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=adcqncZXuKWrstQvgpFavoHNK5nsVYpbKX4vNDqmYr8=;
+        b=C2A//FoJyMY3/24vd7mY2OxQJ/jJaj7xlMIUc8xf9UOGPJxCs84Gc3Vj0dTFvNcBnU
+         cnl8kaQQ8DM/+naoYgAJBwrv0QsXmEYqp1AkE1HoKfqREyA4YiMxCKuEveUtV5HgTrfG
+         obBHaQOn6vkecf0AWmdTza4C8Y01T2x1trGKQstO4vg2APh87pMHa7P7OXMLqzMhp+LV
+         VAhWtUGmPllW68AcGP9i5jPYxBWmO5bC8wlx246y+9eq4RaiB8P1ZL3WP3UXgxj65NrG
+         jX4NCMBHRgHEm5DzpKgMZSNXLlY5XNokQyjIUhQV3K8e+SHHixdq0bEWX0T3omFtvuXs
+         BOnw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2OhnraIBzTZomHdEIOhUIjLYZwhPPK0z3BOkBiyECaLMfuBSU67/IUCo8bKYDEN8Oq5URIBQ6ULml0Xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3ylnyMKiYuLOBWULkrzBK8yN9Wds2+k4whrZXt11G7WY3Ngse
+	Z+DrUNIGodE/jrMbhCk22IbiK6xWVp4VcKG/qp6VI0PeNXN8jp3n06fkBckYIPnXFdqx4hdCcNf
+	Jb+5FunVlIjtskxDbQVyY9FKteQ==
+X-Google-Smtp-Source: AGHT+IEkMWa2Fbym2vWCv7D3Erwky7+KyVGpa/foKNybzbL0WNkaHxozAp9QYAhPJYnoNy6cgJaknHtaJQ+s/tVRNw==
+X-Received: from pfxa17.prod.google.com ([2002:a05:6a00:1d11:b0:756:c6cf:2462])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:92a7:b0:74d:f997:1b45 with SMTP id d2e1a72fcca58-756e81a0b16mr8759465b3a.8.1752707175027;
+ Wed, 16 Jul 2025 16:06:15 -0700 (PDT)
+Date: Wed, 16 Jul 2025 16:06:13 -0700
+In-Reply-To: <CA+EHjTzQwt4Xux7AtB_eiuerKXeCmann2PFBoJTDZ8+qvFuX+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250710163522.3195293-8-jremus@linux.ibm.com>
+Mime-Version: 1.0
+References: <aGNw4ZJwlClvqezR@yzhao56-desk.sh.intel.com> <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
+ <aGxXWvZCfhNaWISY@google.com> <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
+ <006899ccedf93f45082390460620753090c01914.camel@intel.com>
+ <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
+ <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+ <aG07j4Pfkd5EEobQ@google.com> <CA+EHjTx0UkYSduDxe13dFi4+J5L28H+wB4FBXLsMRC5HaHaaFg@mail.gmail.com>
+ <aG1UenipkaGyVUz-@google.com> <CA+EHjTzQwt4Xux7AtB_eiuerKXeCmann2PFBoJTDZ8+qvFuX+w@mail.gmail.com>
+Message-ID: <diqz5xfrhh22.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Ackerley Tng <ackerleytng@google.com>
+To: Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>
+Cc: Vishal Annapurve <vannapurve@google.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	"pvorel@suse.cz" <pvorel@suse.cz>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, Jun Miao <jun.miao@intel.com>, 
+	Kirill Shutemov <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
+	"vbabka@suse.cz" <vbabka@suse.cz>, "peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"amoorthy@google.com" <amoorthy@google.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "keirf@google.com" <keirf@google.com>, 
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"fvdl@google.com" <fvdl@google.com>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
+	"bfoster@redhat.com" <bfoster@redhat.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
+	"anup@brainfault.org" <anup@brainfault.org>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, "steven.price@arm.com" <steven.price@arm.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "hughd@google.com" <hughd@google.com>, 
+	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, Erdem Aktas <erdemaktas@google.com>, 
+	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, Fan Du <fan.du@intel.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
+	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, 
+	Chao P Peng <chao.p.peng@intel.com>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
+	Alexander Graf <graf@amazon.com>, "nikunj@amd.com" <nikunj@amd.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "jroedel@suse.de" <jroedel@suse.de>, 
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "jgowans@amazon.com" <jgowans@amazon.com>, 
+	Yilun Xu <yilun.xu@intel.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
+	Ira Weiny <ira.weiny@intel.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "will@kernel.org" <will@kernel.org>, 
+	"roypat@amazon.co.uk" <roypat@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 10, 2025 at 06:35:13PM +0200, Jens Remus wrote:
-> +++ b/arch/Kconfig
-> @@ -450,6 +450,11 @@ config HAVE_UNWIND_USER_SFRAME
->  	bool
->  	select UNWIND_USER
->  
-> +config HAVE_USER_RA_REG
-> +	bool
-> +	help
-> +	  The arch passes the return address (RA) in user space in a register.
+Fuad Tabba <tabba@google.com> writes:
 
-How about "HAVE_UNWIND_USER_RA_REG" so it matches the existing
-namespace?
+> On Tue, 8 Jul 2025 at 18:25, Sean Christopherson <seanjc@google.com> wrote:
+>>
+>> On Tue, Jul 08, 2025, Fuad Tabba wrote:
+>> > > > I don't think we need a flag to preserve memory as I mentioned in [2]. IIUC,
+>> > > > 1) Conversions are always content-preserving for pKVM.
+>> > >
+>> > > No?  Perserving contents on private => shared is a security vulnerability waiting
+>> > > to happen.
+>> >
+>> > Actually it is one of the requirements for pKVM as well as its current
+>> > behavior. We would like to preserve contents both ways, private <=>
+>> > shared, since it is required by some of the potential use cases (e.g.,
+>> > guest handling video encoding/decoding).
+>> >
+>> > To make it clear, I'm talking about explicit sharing from the guest,
+>> > not relinquishing memory back to the host. In the case of
+>> > relinquishing (and guest teardown), relinquished memory is poisoned
+>> > (zeroed) in pKVM.
+>>
+>> I forget, what's the "explicit sharing" flow look like?  E.g. how/when does pKVM
+>> know it's ok to convert memory from private to shared?  I think we'd still want
+>> to make data preservation optional, e.g. to avoid potential leakage with setups
+>> where memory is private by default, but a flag in KVM's uAPI might not be a good
+>> fit since whether or not to preserve data is more of a guest decision (or at least
+>> needs to be ok'd by the guest).
+>
+> In pKVM all sharing and unsharing is triggered by the guest via
+> hypercalls. The host cannot unshare.
 
-> @@ -310,6 +307,12 @@ static __always_inline int __find_fre(struct sframe_section *sec,
->  		return -EINVAL;
->  	fre = prev_fre;
->  
-> +	if ((!IS_ENABLED(CONFIG_HAVE_USER_RA_REG) || !topmost) && !fre->ra_off) {
-> +		dbg_sec_uaccess("fde addr 0x%x: zero ra_off\n",
-> +				fde->start_addr);
-> +		return -EINVAL;
-> +	}
+In pKVM's case, would the conversion ioctl be disabled completely, or
+would the ioctl be allowed, but conversion always checks with pKVM to
+see if the guest had previously requested a unshare?
 
-The topmost frame doesn't necessarily (or even likely) come from before
-the prologue, or from a leaf function, so this check would miss the case
-where a non-leaf function wrongly has !ra_off after its prologue.
-
-Which in reality is probably fine, as there are other guardrails in
-place to catch such bad sframe data.
-
-But then do we think the !ra_off check is still worth the effort?  It
-would be simpler to just always assume !ra_off is valid for the
-CONFIG_HAVE_USER_RA_REG case.
-
-I think I prefer the simplicity of removing the check, as the error
-would be rare, and corrupt sframe would be caught in other ways.
-
-> @@ -86,18 +88,28 @@ static int unwind_user_next(struct unwind_user_state *state)
->  
->  	/* Get the Stack Pointer (SP) */
->  	sp = cfa + frame->sp_val_off;
-> -	/* Make sure that stack is not going in wrong direction */
-> -	if (sp <= state->sp)
-> +	/*
-> +	 * Make sure that stack is not going in wrong direction.  Allow SP
-> +	 * to be unchanged for the topmost frame, by subtracting topmost,
-> +	 * which is either 0 or 1.
-> +	 */
-> +	if (sp <= state->sp - topmost)
->  		goto done;
->  
-> -	/* Make sure that the address is word aligned */
-> -	shift = sizeof(long) == 4 || compat_fp_state(state) ? 2 : 3;
-> -	if ((cfa + frame->ra_off) & ((1 << shift) - 1))
-> -		goto done;
->  
->  	/* Get the Return Address (RA) */
-> -	if (unwind_get_user_long(ra, cfa + frame->ra_off, state))
-> -		goto done;
-> +	if (frame->ra_off) {
-> +		/* Make sure that the address is word aligned */
-> +		shift = sizeof(long) == 4 || compat_fp_state(state) ? 2 : 3;
-> +		if ((cfa + frame->ra_off) & ((1 << shift) - 1))
-> +			goto done;
-> +		if (unwind_get_user_long(ra, cfa + frame->ra_off, state))
-> +			goto done;
-> +	} else {
-> +		if (!IS_ENABLED(CONFIG_HAVE_USER_RA_REG) || !topmost)
-> +			goto done;
-
-I think this check is redundant with the one in __find_fre()?
-
--- 
-Josh
+> That said, making data
+> preservation optional works for pKVM and is a good idea, for the
+> reasons that you've mentioned.
+>
+> Cheers,
+> /fuad
 
