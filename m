@@ -1,237 +1,308 @@
-Return-Path: <linux-kernel+bounces-733020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB67B06EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:34:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114E4B06F03
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5973B4E560D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:33:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110C2189A5FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C111628CF65;
-	Wed, 16 Jul 2025 07:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CC728C5A7;
+	Wed, 16 Jul 2025 07:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="misSRJfn"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RweUfreE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253D627146F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40551A2398;
+	Wed, 16 Jul 2025 07:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752651227; cv=none; b=GKUVA00y2+FniGyrwzx8pVQ8Wh+RhlFbvoUsJvc7nr2JIq8GGf++usSyVW+XammbxYgqgIHPbiVDBPfZfeTA+bdxJUAEuRuBaruGv4LDk36rD72wKpTbxyFtnApbbhytHOFyqDZ42P5+ErekSn6yZwL2qY1zMiRBpDQXQ2HOM70=
+	t=1752651275; cv=none; b=q1505mW3kQ4eY0w1hsatwsPrzzPSBLD9+xmSJ0N54CArv5AGPdkZUGdn24qrXAL9D2qigCnyHEmty5UQUlgz05cdUjh5cxUeGGe2FZkXFvN8iaMXZTznCUyahgtMZJjvpkFvyA7DvhhCj/UJzGEB2oHqT6ed/vRD8PuqWCfH59w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752651227; c=relaxed/simple;
-	bh=J1fmkXzQhdy/B2HqE648pLqXswaIxo5hZ2X+m0elNBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p6KKM2hLFXyaHvZ4fBDjtATaUfQWAnSxxxAcf/tabbBfQ76LQp0yOGCKSf6BYtm64Kf63rA+XZauJMpM6DxQgT3zKf3ej69WqntdFgirvNUWjlmdFiQPZZWxNS09Ib9xAxrl5U003n2BK1ERJmBMbROfbttSjCUV+cnQxvO2xVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=misSRJfn; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e8187601f85so5568321276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:33:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1752651224; x=1753256024; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PW8oj8yyNVG5XPISXOtfA3n2P3zOnfj4By+Eha4u0hU=;
-        b=misSRJfnE5w/pnaSiy1gvtx4w/fzsVlLI5ffuKbQa4C0hghm6aCyOH+Njhh0zrWR6V
-         5Qad0PQGyyfcE6wSPlkg4UNmwMzUU81aYaqyX6mLGRalwxRDBBtxAaWE4ngJLO4tJ/P2
-         Irl1oQ/q+xBDhXzGRfv2gzsTGtPKG5/oD+95gNnxODzG2IfLKoZxYW0iS5p7KeTEpSI7
-         cwi8hB0jW7kFj+C3OpAB74HroXqQiFRiT7pkDEXPsKYw6S8qHq/KWtOB0l8ybcjOjm0d
-         RVY5ljL2drR54iTwW5Ts6z+NiAP3DcrwRjJ1iO5hxNZGHHXjt7r2gKbCCWBwtlT2RG1X
-         ea2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752651224; x=1753256024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PW8oj8yyNVG5XPISXOtfA3n2P3zOnfj4By+Eha4u0hU=;
-        b=xHubz1goIV2Uj9NN3FaEl172inSmfo4tMaGJjn0DMGAPbkHVTuMva5M7P9ojwb8ZJG
-         P5cua/MhCrNxslyhvSatqlPGvYA4siniRJKP3FbmHOzN3SozCleJpV/2X9KLvYDQgBSg
-         KQaZG3bKdXL/uKk39FT64iKlYPu36ThefhwtXy9eqw9YbvLqee0to3Wuwgws1nkJSgnZ
-         doGLv3M0C15RYAs7cPQ40vRXpvY5aik6PGs4/hBfuzvM8BrIZB6Q2P7c6qgrf/ZQE2Iq
-         70bTIgloXcCqzSKQMnzfiv0G3qOsKVpBnbiDAQhHsLFK8tHlgsbDt12cn6njneh4vGwJ
-         R9Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ1QMwX5h43wsy1Q2ijjNj8UaXrwIusIMJmVWi7V4IoDOc+M9k7QuNjgvZTphxa1BS0NqbFMZjiQLNSVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK/KsNmK0S3rJ/CB8P8yDEp+BP/Kl999j4eyUtWSfqq5MdlmnA
-	BVpkh/J/n+6BwuvCv7FZ2MUePfSYCJe+3YFTuuSqOwk/J2JD5+9cq1+p3S9Ja6wm5cy6nzDvBOw
-	KlszMZ8tPS4HAS+JRoKkt4XzfUT12Bpt4fPUWcZwhSg==
-X-Gm-Gg: ASbGnct3A3j/2rA8kI6pIxvxFIRcSU/n/hCTQ8foDBEUfpHX+F70cP/8Cu4AsRnF75F
-	UsU4C0flz3UYK6ATpCxL2mGzbUOmcNkAtR+xw+9/Tl62cKQ4ceqqpentnHcbusSpa/gAZFC+kWg
-	urMBj1Na85rmqF0C0dNVUeD1+DNiqt9yjP+dCGmGHKCovK/bEWwfkvrlKrzYkTR3eZq3VxD393c
-	veSdbNN
-X-Google-Smtp-Source: AGHT+IEBFim0sebTg/GJVvyxJNrliMi5B8Z1CirXQugUtw/MAG7MtHjoXp3XBPYhkfJvHfUUj+zVmynVQDiKVlguiXc=
-X-Received: by 2002:a05:690c:6d0b:b0:6fb:b1dd:a00d with SMTP id
- 00721157ae682-7183516330bmr29836477b3.30.1752651223909; Wed, 16 Jul 2025
- 00:33:43 -0700 (PDT)
+	s=arc-20240116; t=1752651275; c=relaxed/simple;
+	bh=zJBkCq9nG4bFfG6dyPIdRv/h4JagCaQuSj9HeSyqV0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cdkpb2D9m3KmtWPlQKed/z+c4YqKwwcTiGx6KLxb13KD2BLJwaBVVwG8k6qcfqfP3soqjcheKecA7NCgaZGM7ijB0wCjz5GoLzMRoCSlbfLNciblKY9v1xuEDoD5nJ0joGITtW+Bhmjefntrjo2LuMwhEpa/VUVopRSDLCN4q8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RweUfreE; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752651274; x=1784187274;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zJBkCq9nG4bFfG6dyPIdRv/h4JagCaQuSj9HeSyqV0k=;
+  b=RweUfreEk1mLdJeU4awmn22xcRt3dlF6V7I9qMRSNh9JSvgM8APYlJOC
+   /C254vv67PGW6uETCW06L+0WpIMgILPKidiTEkt+scjaiPPO1/3kYpBfk
+   PlNMR1KX0TZpy8GZ1Iz2iuRtUkV/mBLXexPftnevSU2k9lVmul5RgJIwQ
+   +pZFy8XXtraKZj0MXIbu3/WhiZrQnEUAnIxmVXEFzheFn67rGgl5deXvo
+   LTTxv97BwDrSwTtClQ2G7XbktpsYVkpPNXviD83kfKD4nRI1w56QDRnBF
+   HwXZ7oZmMeOI65fpH9noT8GeVmBW61+YZlq5DsRDPRNiCco2M9Qnf9HsY
+   w==;
+X-CSE-ConnectionGUID: 0ihm17xxS8WuKNRcwTQY7w==
+X-CSE-MsgGUID: oxsgkGkzQiqBQ+Os36FbrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54594996"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="54594996"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:34:34 -0700
+X-CSE-ConnectionGUID: OPt0dNK1TvaGjhnyo5ZyHQ==
+X-CSE-MsgGUID: 64ff7W5kSMmW1SEZYNvOjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="161981683"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:34:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ubwen-0000000Fr2b-3mjg;
+	Wed, 16 Jul 2025 10:34:25 +0300
+Date: Wed, 16 Jul 2025 10:34:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andreas Klinger <ak@it-klinger.de>
+Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, lars@metafoo.de,
+	javier.carrasco.cruz@gmail.com, mazziesaccount@gmail.com,
+	arthur.becker@sentec.com, perdaniel.olsson@axis.com,
+	mgonellabolduc@dimonoff.com, muditsharma.info@gmail.com,
+	clamor95@gmail.com, emil.gedenryd@axis.com,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/3] iio: light: add support for veml6046x00 RGBIR
+ color sensor
+Message-ID: <aHdWAUMMH43tIqV4@smile.fi.intel.com>
+References: <20250715085810.7679-1-ak@it-klinger.de>
+ <20250715085810.7679-3-ak@it-klinger.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604-v5_user_cfi_series-v17-0-4565c2cf869f@rivosinc.com>
- <20250604-v5_user_cfi_series-v17-15-4565c2cf869f@rivosinc.com>
- <CANXhq0pRXX_OMW2g2ui-k7Z_ZT+5a8Sra8oE28nBh5B9K2L5bQ@mail.gmail.com>
- <CANXhq0p3MVLMsr_r0RWMti476pT0EMx61PQArjo2fUauTdpXaQ@mail.gmail.com>
- <CAKC1njRNkSfb_0pUQoH0RwJQhWTsz9sdg_3o08w-NuSO5WypcA@mail.gmail.com> <CANXhq0oZz=TTT=py=1BO3OZf45Wg=-bFyNpn+JRLNufHceLjcQ@mail.gmail.com>
-In-Reply-To: <CANXhq0oZz=TTT=py=1BO3OZf45Wg=-bFyNpn+JRLNufHceLjcQ@mail.gmail.com>
-From: Deepak Gupta <debug@rivosinc.com>
-Date: Wed, 16 Jul 2025 00:33:29 -0700
-X-Gm-Features: Ac12FXyXP37ODEjfHSjK8_gGHbTe6nbCLu3r93joGlrq46qsQaqRghNBDnEKWgk
-Message-ID: <CAKC1njRqox8_YNEhQJT8NRMjGuqpDt55ck6QVV2aNPLwTsaj5w@mail.gmail.com>
-Subject: Re: [PATCH v17 15/27] riscv/traps: Introduce software check exception
- and uprobe handling
-To: Zong Li <zong.li@sifive.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715085810.7679-3-ak@it-klinger.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Jul 15, 2025 at 7:06=E2=80=AFPM Zong Li <zong.li@sifive.com> wrote:
->
-> On Wed, Jul 16, 2025 at 5:34=E2=80=AFAM Deepak Gupta <debug@rivosinc.com>=
- wrote:
-> >
-> > Hi Zong,
-> >
-> >
-> > On Thu, Jun 19, 2025 at 7:16=E2=80=AFPM Zong Li <zong.li@sifive.com> wr=
-ote:
-> > >
-> > > On Mon, Jun 16, 2025 at 3:31=E2=80=AFPM Zong Li <zong.li@sifive.com> =
-wrote:
-> > > >
-> > > > On Thu, Jun 5, 2025 at 1:17=E2=80=AFAM Deepak Gupta <debug@rivosinc=
-.com> wrote:
-> > > > >
-> > > > > zicfiss / zicfilp introduces a new exception to priv isa `softwar=
-e check
-> > > > > exception` with cause code =3D 18. This patch implements software=
- check
-> > > > > exception.
-> > > > >
-> > .....
-> >
-> > > > When a user mode CFI violation occurs, the ELP state should be 1, a=
-nd
-> > > > the system traps into supervisor mode. During this trap, sstatus.SP=
-ELP
-> > > > is set to 1, and the ELP state is reset to 0. If we don=E2=80=99t c=
-lear
-> > > > sstatus.SPELP, the ELP state will become 1 again after executing th=
-e
-> > > > sret instruction. As a result, the system might trigger another
-> > > > forward CFI violation upon executing the next instruction in the us=
-er
-> > > > program, unless it happens to be a lpad instruction.
-> > > >
-> > > > The previous patch was tested on QEMU, but QEMU does not set the
-> > > > sstatus.SPELP bit to 1 when a forward CFI violation occurs. Therefo=
-re,
-> > > > I suspect that QEMU might also require some fixes.
-> > >
-> > > Hi Deepak,
-> > > The issue with QEMU was that the sw-check exception bit in medeleg
-> > > couldn't be set. This has been fixed in the latest QEMU mainline. I
-> > > have re-tested the latest QEMU version, and it works.
-> >
-> > What was this issue, can you point me to the patch in mainline?
->
-> Hi Deepak
-> The issue was that my QEMU setup somehow missed the change of
-> `target/riscv/csr.c` in your following patch:
-> https://github.com/qemu/qemu/commit/6031102401ae8a69a87b20fbec2aae666625d=
-96a
-> After I upgraded to the latest QEMU source, I found the kernel issue
-> if we didn't clear sstatus.SPELP in the handler
-> Thanks
+On Tue, Jul 15, 2025 at 10:58:09AM +0200, Andreas Klinger wrote:
+> Add Vishay VEML6046X00 high accuracy RGBIR color sensor.
+> 
+> This sensor provides three colour (red, green and blue) as well as one
+> infrared (IR) channel through I2C.
+> 
+> Support direct and buffered mode.
+> 
+> An optional interrupt for signaling green colour threshold underflow or
+> overflow is not supported so far.
 
-Aah ok, got it.
+...
 
->
-> >
-> > >
-> > > >
-> > > > Thanks
-> > > >
-> > > > > +
-> > > > > +       if (is_fcfi || is_bcfi) {
-> > > > > +               do_trap_error(regs, SIGSEGV, SEGV_CPERR, regs->ep=
-c,
-> > > > > +                             "Oops - control flow violation");
-> > > > > +               return true;
-> > > > > +       }
-> > > > > +
-> > > > > +       return false;
-> > > > > +}
-> > > > > +
-> > > > > +/*
-> > > > > + * software check exception is defined with risc-v cfi spec. Sof=
-tware check
-> > > > > + * exception is raised when:-
-> > > > > + * a) An indirect branch doesn't land on 4 byte aligned PC or `l=
-pad`
-> > > > > + *    instruction or `label` value programmed in `lpad` instr do=
-esn't
-> > > > > + *    match with value setup in `x7`. reported code in `xtval` i=
-s 2.
-> > > > > + * b) `sspopchk` instruction finds a mismatch between top of sha=
-dow stack (ssp)
-> > > > > + *    and x1/x5. reported code in `xtval` is 3.
-> > > > > + */
-> > > > > +asmlinkage __visible __trap_section void do_trap_software_check(=
-struct pt_regs *regs)
-> > > > > +{
-> > > > > +       if (user_mode(regs)) {
-> > > > > +               irqentry_enter_from_user_mode(regs);
-> > > > > +
-> > > > > +               /* not a cfi violation, then merge into flow of u=
-nknown trap handler */
-> > > > > +               if (!handle_user_cfi_violation(regs))
-> > > > > +                       do_trap_unknown(regs);
-> > > > > +
-> > > > > +               irqentry_exit_to_user_mode(regs);
-> > > > > +       } else {
-> > > > > +               /* sw check exception coming from kernel is a bug=
- in kernel */
-> > > > > +               die(regs, "Kernel BUG");
-> > > > > +       }
-> > > > > +}
-> > > > > +
-> > > > >  #ifdef CONFIG_MMU
-> > > > >  asmlinkage __visible noinstr void do_page_fault(struct pt_regs *=
-regs)
-> > > > >  {
-> > > > >
-> > > > > --
-> > > > > 2.43.0
-> > > > >
+> +#define	VEML6046X00_GAIN_1          0x0
+> +#define	VEML6046X00_GAIN_2          0x1
+> +#define	VEML6046X00_GAIN_0_66       0x2
+> +#define	VEML6046X00_GAIN_0_5        0x3
+
+Is it defined as hexadecimal in the datasheet? Otherwise use plain decimal
+numbers.
+
+...
+
+> +static int veml6046x00_get_it_usec(struct veml6046x00_data *data, unsigned int *it_usec)
+> +{
+> +	int ret;
+> +	unsigned int reg;
+> +
+> +	ret = regmap_field_read(data->rf.it, &reg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (reg >= ARRAY_SIZE(veml6046x00_it))
+> +		return -EINVAL;
+> +
+> +	*it_usec = (unsigned int)veml6046x00_it[reg][1];
+
+Is this casting needed? According to the C standard unsigned has higher rank
+than signed.
+
+> +	return IIO_VAL_INT_PLUS_MICRO;
+> +}
+
+...
+
+> +static int veml6046x00_wait_data_available(struct iio_dev *iio, unsigned int usecs)
+> +{
+> +	struct veml6046x00_data *data = iio_priv(iio);
+> +	int ret;
+> +
+> +	ret = veml6046x00_read_data_ready(data);
+
+> +	if (ret == 0) {
+
+What's wrong with the regular pattern, i.e.
+
+	if (ret)
+		return ret;
+
+?
+
+> +		fsleep(usecs);
+> +		ret = veml6046x00_read_data_ready(data);
+> +	}
+> +
+> +	return ret;
+> +}
+
+...
+
+> +	ret = veml6046x00_wait_data_available(iio, it_usec * 4);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (ret == 0)
+> +		return -EAGAIN;
+> +
+> +	if (!iio_device_claim_direct(iio))
+> +		return -EBUSY;
+> +
+> +	ret = regmap_bulk_read(data->regmap, addr, &reg, sizeof(reg));
+> +	iio_device_release_direct(iio);
+> +	if (ret)
+> +		return ret;
+
+All error paths above are missing the below runtime PM calls, is it on purpose?
+If so, comment is a must to explain what's going on here.
+
+> +	pm_runtime_mark_last_busy(dev);
+> +	pm_runtime_put_autosuspend(dev);
+> +
+> +	*val = le16_to_cpu(reg);
+> +
+> +	return IIO_VAL_INT;
+> +
+> +no_data:
+> +	pm_runtime_mark_last_busy(dev);
+> +	pm_runtime_put_autosuspend(dev);
+> +
+> +	return -EAGAIN;
+
+...
+
+> +static irqreturn_t veml6046x00_trig_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *iio = pf->indio_dev;
+> +	struct veml6046x00_data *data = iio_priv(iio);
+> +	int ret;
+> +	struct {
+> +		__le16 chans[4];
+> +		aligned_s64 timestamp;
+> +	} scan = {};
+
+Do you need this (nullification) assignment?
+
+> +	ret = regmap_bulk_read(data->regmap, VEML6046X00_REG_R,
+> +			       &scan.chans, sizeof(scan.chans));
+> +	if (ret)
+> +		goto done;
+> +
+> +	iio_push_to_buffers_with_timestamp(iio, &scan, iio_get_time_ns(iio));
+> +
+> +done:
+> +	iio_trigger_notify_done(iio->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+...
+
+> +static int veml6046x00_validate_part_id(struct veml6046x00_data *data)
+> +{
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	unsigned int part_id;
+> +	int ret;
+> +	__le16 reg;
+> +
+> +	ret = regmap_bulk_read(data->regmap, VEML6046X00_REG_ID,
+> +			       &reg, sizeof(reg));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to read ID\n");
+> +
+> +	part_id = le16_to_cpu(reg);
+> +	if (part_id != 0x0001)
+> +		dev_info(dev, "Unknown ID %#04x\n", part_id);
+
+For 0 it will print 0 and not 0x0000. Is it okay?
+
+> +	return 0;
+> +}
+
+...
+
+> +static int veml6046x00_setup_device(struct iio_dev *iio)
+> +{
+> +	struct veml6046x00_data *data = iio_priv(iio);
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	int ret;
+> +	__le16 reg16;
+> +	u8 reg[2] = { VEML6046X00_CONF0_AF, 0x00 };
+
+0x00 looks like a part of the reg. If so, this should be actually typed as
+__le16. Otherwise, in case this is just a simple terminator, use (decimal) 0.
+
+> +	ret = regmap_bulk_write(data->regmap, VEML6046X00_REG_CONF0,
+> +				reg, sizeof(reg));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to set configuration\n");
+
+So, this actually will be as simple as
+
+	reg16 = cpu_to_le16(VEML6046X00_CONF0_AF);
+	ret = regmap_bulk_write(data->regmap, VEML6046X00_REG_CONF0,
+				&reg16, sizeof(reg16));
+	if (ret)
+		return dev_err_probe(dev, ret, "Failed to set configuration\n");
+
+> +	reg16 = cpu_to_le16(0);
+> +	ret = regmap_bulk_write(data->regmap, VEML6046X00_REG_THDL,
+> +				&reg16, sizeof(reg16));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to set low threshold\n");
+> +
+> +	reg16 = cpu_to_le16(U16_MAX);
+> +	ret = regmap_bulk_write(data->regmap, VEML6046X00_REG_THDH,
+> +				&reg16, sizeof(reg16));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to set high threshold\n");
+> +
+> +	ret = regmap_bulk_read(data->regmap, VEML6046X00_REG_INT,
+> +			       &reg16, sizeof(reg16));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to clear interrupts\n");
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static const struct of_device_id veml6046x00_of_match[] = {
+> +	{
+> +		.compatible = "vishay,veml6046x00",
+> +	},
+
+Can be just a single line.
+
+	{ .compatible = "vishay,veml6046x00" },
+
+> +	{ }
+> +};
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
