@@ -1,596 +1,224 @@
-Return-Path: <linux-kernel+bounces-733192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB946B0715C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:14:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 441B1B07169
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4EAE3BCBB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834A01AA1E26
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47F52F4A11;
-	Wed, 16 Jul 2025 09:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2669328A1C8;
+	Wed, 16 Jul 2025 09:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RN+Ia/TY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQnI1kBn"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2452F004B;
-	Wed, 16 Jul 2025 09:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F81230997
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752657029; cv=none; b=XKfweRrvresOEt9tVwhbLc6fLPj/XynZAxNipY/ITFTHkuI+RktCoy6QH0IA/NjTa+/A3GEVqZTcMq8hHAgj6FC4a6jkxC46HFU8t+PinUq4qvPAXnsdHddRywbnCxXj6jW4205FfFZ0sCW7Rskm1fiBu0xJeffQavtAQPc+bXo=
+	t=1752657416; cv=none; b=j4fa8bSId2V2bfBDmeCTR1Z3h9ND9TmIHHrTSl85wsCsIGit4ebRSoRzpMpUjBgYQFjVewXV4ReRftSpaAEVtx8XvF9IV85OhblDheM1i7M+0nS4lKkDfbVJnA2BlPCX2C7gpek/zq5UCbuGwFv+Mxt07jUMqJ29qmrKFmRnPWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752657029; c=relaxed/simple;
-	bh=QpBzlDT1iyEWFpAEZC6I0xIWmpZwo6tBBZNY8MkatiM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=j0PxR1VCSfPhq2brWk60j7W3p5ncRzjcD+4MdcAG/WbmBNZl0CYqkJDJ6dXlCU3aTNx8vCP25w3dTKocDxMtbejkIJx0CpRl2os/txtQuw4k8aX3LZlHsmI5PpbKV7OFVDsdu+FHyPv72+2uZrZO3iisMuloYqNORGDKKuY7inI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RN+Ia/TY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G5vAS4025949;
-	Wed, 16 Jul 2025 09:10:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	G5gH6uBlUAkvet3Bh+WBjap2edZNH54VU3cplTt52Qs=; b=RN+Ia/TYC7WBQz/j
-	8JJ4v01rzyDqCIIFUdpHSoC/slYbjRY4kcddfJLMMLaGrsXkHtiYggNHEg/eJ7kD
-	dgmIiTdg7UQPOw+Vz+kS+JXHkuRFk9GQnrui6iGSPgEjhbHduyntbsWC85MFiEZ8
-	HW7ZiCEhiTtCrwT9DTU19ToEOl3ck5s/Xzdf+10oIt7hcHIcg8xPm0b+ALBX6zPd
-	KU0nIRdzBc+Ybx7xPOg6yNXiHftFUu0EBINvapmQ9ldYo3yguQcRWoLXM7GfMmYA
-	ZYSQCZTUYaKbEiWIhOQuT/3QkfRrMbyUUFgNigQ2ekK7gvz9slmuDUluXK8pXiM0
-	GDR5hQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy3279-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 09:10:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56G9AFhp008763
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 09:10:16 GMT
-Received: from [10.50.31.103] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 16 Jul
- 2025 02:10:10 -0700
-Message-ID: <7b0a984f-b62a-ac4d-74bf-a6e839c59272@quicinc.com>
-Date: Wed, 16 Jul 2025 14:40:01 +0530
+	s=arc-20240116; t=1752657416; c=relaxed/simple;
+	bh=x+ThiAf2IfpTUIJqeyKJ44bSEUgDEng6wJcVgmUVm1g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S+W1i5kdNv6wb2mbyAVQ8tdGDRYcio4CgkjIsHMIpgKjwTaIEUJf9cOhndbLRa5S417+U4T8v/DdzjXwLD6PR2QcwRM2lNELtKJfzwltjua7bt5Bl/gxvBBUjc+PWLdbZRcaFG89r5ExwJElafHbQULkCAthrWOQRGXqbVKVUMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQnI1kBn; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae9be1697easo131281966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 02:16:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752657413; x=1753262213; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hv6Hl+2YyPTqtc8nGbHZ9ko3Hunk3VMkk1zOQdOepio=;
+        b=JQnI1kBnLC8zGpM4fDySoE6O0smUyfNETw663MbJZ4Zt/du+3OCHavLBgbvpTsRfKG
+         PipxI6sopFcatBBabXuQtsYOb4XQA4Pk3DYlRDh7tWNYRHgJojSeQC+GxQLDaBshj2Rh
+         /yQgoMg0rx1rMt6Q3Wf6RMd3YebGYiRrK7XubLhLO8NEEBbX1+DS5JxOCsyjf8NbvwwZ
+         snIRg07G695BGT0FxQsIDyxanIhYFSacdsMoxokTpV/GUCMg5u2+rBzO7vj1SJfjBHXK
+         4L1BhMZGU0+MisnfylM38pgcWCn+siUP4I1ej/rhTqb5DaKQTphtXp4E9XycTZs/iNvP
+         MTsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752657413; x=1753262213;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hv6Hl+2YyPTqtc8nGbHZ9ko3Hunk3VMkk1zOQdOepio=;
+        b=k7Sr5bBhoX1QfagDaUqPVnUmQ7/Kts3A0eNt/1U7egLHKL0U2hk/nA4NF5i6QKK/WM
+         z/JsFOeF7bhloMtGiE3Ndu0LLYZGiVZYdBueg7xmP5tN1SAPLm08V9/kSEasWJWG9Yaa
+         n40jYDwNkKXnXNHi0uSwcVipiZdtrPELrf/Qh+NWBcJmyjvLRGtA4e8z/k0kmpwt1J1K
+         Mm4N6A4npPQ9SusOJv3p0v4HWKquVLrKBYeRHeqYjwbyhbA0gYBjNHuMte0azIOPwVF0
+         A3wNYWUhSdMwOMiWpXoRMd+AtiXtlTncPlca7cb8cLuoogUEzGh9cNgJNTWx8VLXPOqE
+         PESw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2P/iayqWaYEYTZ4BuIsOURgPRaSGI3fKiQ8GDnkprDcO46cg0W+aXDlURUODfYuyiTQw4RGmnfk5jS5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUN5JznpA9zx4+Rv+ltBHNCVh7+MJuvO/duO98gy9RF4OnqdAz
+	DuLn3E/CXQLMmBgACADgrwykExlvscVwn+crCkDnX+Gbq8eZj1nv0n11
+X-Gm-Gg: ASbGncvH/8dvPjgCG5SmpDF2ATcb+bLxFsm4Qa9O9JB6lLa27BolNYicSiAtfeNEyY+
+	wXE+N2FMgEmgdEB9NloqG4MQOPyykQ/Hj/gGM/oKRO66bGWnpFDIn40krvSYj0JGHNpWZjwdkPY
+	udYOeyJRFJ+KFBwPoX4f46VAtDQ/lSBNKvXXncJq6itjcs4F+5D2g0M5r9I7awIDGrR3i1Th7hm
+	ZRnCaZOevh6Vs8o6JTS8cCsLaC1paIA6/cSePmnH7Gi7sXo7ujKzEdjukbkzPHcZJcS04HWdTGL
+	HOr8qaBEIy1XwlJwXA6D+q0sZbFmqf4EXpe+6G3/3xB/DUTBhNdnDPBpMdzDdWT7DPhlPxiG/sk
+	0StkmCoc4y9/fHMKl7ll94MZQ8FiU3qBR1c8hmA==
+X-Google-Smtp-Source: AGHT+IEppGO69kxYrvFU5r2wACB/kXIKp4N/uEY2pkQF7RTfdUcKYPxBeIMgNGHrsc4gW1mBZ2l5SA==
+X-Received: by 2002:a17:906:fe08:b0:ae0:c1c4:645 with SMTP id a640c23a62f3a-ae9b5d7f353mr570037166b.21.1752657412664;
+        Wed, 16 Jul 2025 02:16:52 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.24])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82dee16sm1156966066b.152.2025.07.16.02.16.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 02:16:52 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com
+Cc: x86@kernel.org,
+	hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	Khalid Ali <khaliidcaly@gmail.com>,
+	Kai Huang <kai.huang@intel.com>
+Subject: [PATCH v8] x86/boot: Don't return encryption mask from __startup_64()
+Date: Wed, 16 Jul 2025 09:11:34 +0000
+Message-ID: <20250716091332.737-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 3/3] media: iris: Add support for SM8750 (VPU v3.5)
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250714-sm8750-iris-v1-0-3006293a5bc7@linaro.org>
- <20250714-sm8750-iris-v1-3-3006293a5bc7@linaro.org>
-Content-Language: en-US
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <20250714-sm8750-iris-v1-3-3006293a5bc7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA4MSBTYWx0ZWRfX7VntqBmkx+wG
- E5yUwb1aBn2nT2QBWmKbQp+5CFElhL3/KzmnTr6MbWMw324PK5fXSTtq7b2KRSpxDcOSuTb2yve
- lWgiVMYGvQlEZvv56JgEzXjM36WqU1tnjHZ6Z3c8sGhBGLxWgLwbvkrNr/B8mVjJScak3almtWT
- zaJzYnUZ05293uNeGdl65SGAiAoUcLnHUZSHYmfYraGuxCJ5rfRy6vg56kUGe/m5gdnc+ydwycq
- zwFljPqTJkU4uTDyR79p04I6zLbL+Ku2HxyWIbB83sKsAWhu7UtO0tv1ZBuJRGLhsqb10wpSp21
- uWDFvP12r6UdCPZgLz6NarwLRzX0t0RAAIvUytNpD51fCysphXdjICzjXtWO3bhZZTsGdYr4bRY
- BmyrL0SHW0Ax+881v/+qfJYOQ1Qsp0rYo+kEpGiihW5urY60klqgF/PfuJVP8kB9TijV8ZZ4
-X-Proofpoint-GUID: n7-gfq_0Ss8CYofZ-SN4iy09ZlEQzvTg
-X-Proofpoint-ORIG-GUID: n7-gfq_0Ss8CYofZ-SN4iy09ZlEQzvTg
-X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=68776c78 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8
- a=ACxjjzN5Br_y0B3igH0A:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507160081
+Content-Transfer-Encoding: 8bit
 
+From: Khalid Ali <khaliidcaly@gmail.com>
 
+Avoid returning encryption mask to callers of __startup_64().
 
-On 7/14/2025 7:11 PM, Krzysztof Kozlowski wrote:
-> Add support for SM8750 Iris codec with major differences against
-> previous generation SM8650:
-> 
-> 1. New clocks and new resets, thus new power up and power down
->    sequences,
-> 
-> 2. New WRAPPER_IRIS_VCODEC_VPU_WRAPPER_SPARE_0 register programmed
->    during boot-up
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../platform/qcom/iris/iris_platform_common.h      |   6 +-
->  .../media/platform/qcom/iris/iris_platform_gen2.c  |  68 +++++++
->  .../platform/qcom/iris/iris_platform_sm8750.h      |  22 +++
->  drivers/media/platform/qcom/iris/iris_probe.c      |   4 +
->  drivers/media/platform/qcom/iris/iris_vpu3x.c      | 203 +++++++++++++++++++++
->  drivers/media/platform/qcom/iris/iris_vpu_common.c |   4 +
->  drivers/media/platform/qcom/iris/iris_vpu_common.h |   2 +
->  7 files changed, 308 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index adafdce8a856f9c661aabc5ca28f0faceaa93551..fd5a6e69e01cfd00253f4ffb282d40112b93073b 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -38,11 +38,15 @@ extern struct iris_platform_data qcs8300_data;
->  extern struct iris_platform_data sm8250_data;
->  extern struct iris_platform_data sm8550_data;
->  extern struct iris_platform_data sm8650_data;
-> +extern struct iris_platform_data sm8750_data;
->  
->  enum platform_clk_type {
-> -	IRIS_AXI_CLK,
-> +	IRIS_AXI_CLK, /* AXI0 in case of platforms with multiple AXI clocks */
->  	IRIS_CTRL_CLK,
->  	IRIS_HW_CLK,
-> +	IRIS_AXI1_CLK,
-> +	IRIS_CTRL_FREERUN_CLK,
-> +	IRIS_HW_FREERUN_CLK,
->  };
->  
->  struct platform_clk_data {
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> index d3026b2bcb708c7ec31f134f628df7e57b54af4f..795efe2226228c4d7155ce18ff42ba9cb74b4af2 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
->   * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2025 Linaro Ltd
->   */
->  
->  #include "iris_core.h"
-> @@ -12,6 +13,7 @@
->  
->  #include "iris_platform_qcs8300.h"
->  #include "iris_platform_sm8650.h"
-> +#include "iris_platform_sm8750.h"
->  
->  #define VIDEO_ARCH_LX 1
->  
-> @@ -463,6 +465,72 @@ struct iris_platform_data sm8650_data = {
->  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
->  };
->  
-> +struct iris_platform_data sm8750_data = {
-> +	.get_instance = iris_hfi_gen2_get_instance,
-> +	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
-> +	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-> +	.vpu_ops = &iris_vpu35_ops,
-> +	.set_preset_registers = iris_set_sm8550_preset_registers,
-> +	.icc_tbl = sm8550_icc_table,
-> +	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
-> +	.clk_rst_tbl = sm8750_clk_reset_table,
-> +	.clk_rst_tbl_size = ARRAY_SIZE(sm8750_clk_reset_table),
-> +	.bw_tbl_dec = sm8550_bw_table_dec,
-> +	.bw_tbl_dec_size = ARRAY_SIZE(sm8550_bw_table_dec),
-> +	.pmdomain_tbl = sm8550_pmdomain_table,
-> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8550_pmdomain_table),
-> +	.opp_pd_tbl = sm8550_opp_pd_table,
-> +	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
-> +	.clk_tbl = sm8750_clk_table,
-> +	.clk_tbl_size = ARRAY_SIZE(sm8750_clk_table),
-> +	/* Upper bound of DMA address range */
-> +	.dma_mask = 0xe0000000 - 1,
-> +	.fwname = "qcom/vpu/vpu35_4v.mbn",
-Could you clarify where this firmware has been merged? Also, it appears
-that the naming convention hasn't been followed.
-> +	.pas_id = IRIS_PAS_ID,
-> +	.inst_caps = &platform_inst_cap_sm8550,
-> +	.inst_fw_caps = inst_fw_cap_sm8550,
-> +	.inst_fw_caps_size = ARRAY_SIZE(inst_fw_cap_sm8550),
-> +	.tz_cp_config_data = &tz_cp_config_sm8550,
-> +	.core_arch = VIDEO_ARCH_LX,
-> +	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
-> +	.ubwc_config = &ubwc_config_sm8550,
-> +	.num_vpp_pipe = 4,
-> +	.max_session_count = 16,
-> +	.max_core_mbpf = NUM_MBS_8K * 2,
-> +	.input_config_params_default =
-> +		sm8550_vdec_input_config_params_default,
-> +	.input_config_params_default_size =
-> +		ARRAY_SIZE(sm8550_vdec_input_config_params_default),
-> +	.input_config_params_hevc =
-> +		sm8550_vdec_input_config_param_hevc,
-> +	.input_config_params_hevc_size =
-> +		ARRAY_SIZE(sm8550_vdec_input_config_param_hevc),
-> +	.input_config_params_vp9 =
-> +		sm8550_vdec_input_config_param_vp9,
-> +	.input_config_params_vp9_size =
-> +		ARRAY_SIZE(sm8550_vdec_input_config_param_vp9),
-> +	.output_config_params =
-> +		sm8550_vdec_output_config_params,
-> +	.output_config_params_size =
-> +		ARRAY_SIZE(sm8550_vdec_output_config_params),
-> +	.dec_input_prop = sm8550_vdec_subscribe_input_properties,
-> +	.dec_input_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_input_properties),
-> +	.dec_output_prop_avc = sm8550_vdec_subscribe_output_properties_avc,
-> +	.dec_output_prop_avc_size =
-> +		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_avc),
-> +	.dec_output_prop_hevc = sm8550_vdec_subscribe_output_properties_hevc,
-> +	.dec_output_prop_hevc_size =
-> +		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_hevc),
-> +	.dec_output_prop_vp9 = sm8550_vdec_subscribe_output_properties_vp9,
-> +	.dec_output_prop_vp9_size =
-> +		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_vp9),
-> +
-> +	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
-> +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
-> +	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
-> +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
-> +};
-> +
->  /*
->   * Shares most of SM8550 data except:
->   * - inst_caps to platform_inst_cap_qcs8300
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8750.h b/drivers/media/platform/qcom/iris/iris_platform_sm8750.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..719056656a5baf48a7bced634d2582629333cf5c
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8750.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2025 Linaro Ltd
-> + */
-> +
-> +#ifndef __MEDIA_IRIS_PLATFORM_SM8750_H__
-> +#define __MEDIA_IRIS_PLATFORM_SM8750_H__
-> +
-> +static const char * const sm8750_clk_reset_table[] = {
-> +	"bus0", "bus1", "core", "vcodec0_core"
-> +};
-> +
-> +static const struct platform_clk_data sm8750_clk_table[] = {
-> +	{IRIS_AXI_CLK,		"iface"			},
-> +	{IRIS_CTRL_CLK,		"core"			},
-> +	{IRIS_HW_CLK,		"vcodec0_core"		},
-> +	{IRIS_AXI1_CLK,		"iface1"		},
-> +	{IRIS_CTRL_FREERUN_CLK,	"core_freerun"		},
-> +	{IRIS_HW_FREERUN_CLK,	"vcodec0_core_freerun"	},
-> +};
-> +
-> +#endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index 4e6e92357968d7419f114cc0ffa9b571bad19e46..5fb936a04155e72f4298cd6760eff6e9d1da6310 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> @@ -353,6 +353,10 @@ static const struct of_device_id iris_dt_match[] = {
->  		.compatible = "qcom,sm8650-iris",
->  		.data = &sm8650_data,
->  	},
-> +	{
-> +		.compatible = "qcom,sm8750-iris",
-> +		.data = &sm8750_data,
-> +	},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, iris_dt_match);
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-> index c235112057aa7b7eab1995737541b7a8276ff18b..b00702a4d6c23258550a77373eb34740e785ef22 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
->   * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2025 Linaro Ltd
->   */
->  
->  #include <linux/iopoll.h>
-> @@ -19,8 +20,11 @@
->  #define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
->  #define REQ_POWER_DOWN_PREP			BIT(0)
->  #define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
-> +#define WRAPPER_CORE_POWER_CONTROL		(WRAPPER_BASE_OFFS + 0x84)
->  #define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
->  #define CORE_CLK_RUN				0x0
-> +/* VPU v3.5 */
-> +#define WRAPPER_IRIS_VCODEC_VPU_WRAPPER_SPARE_0	(WRAPPER_BASE_OFFS + 0x78)
->  
->  #define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
->  #define CTL_AXI_CLK_HALT			BIT(0)
-> @@ -52,6 +56,8 @@
->  #define AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL	(AON_BASE_OFFS + 0x20)
->  #define NOC_HALT				BIT(0)
->  #define AON_WRAPPER_SPARE			(AON_BASE_OFFS + 0x28)
-> +#define AON_WRAPPER_MVP_VIDEO_CTL_NOC_LPI_CONTROL	(AON_BASE_OFFS + 0x2C)
-> +#define AON_WRAPPER_MVP_VIDEO_CTL_NOC_LPI_STATUS	(AON_BASE_OFFS + 0x30)
->  
->  static bool iris_vpu3x_hw_power_collapsed(struct iris_core *core)
->  {
-> @@ -225,6 +231,194 @@ static int iris_vpu33_power_off_controller(struct iris_core *core)
->  	return 0;
->  }
->  
-> +static int iris_vpu35_power_on_hw(struct iris_core *core)
-> +{
-> +	int ret;
-> +	u32 val;
-> +
-> +	ret = iris_enable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Switch GDSC to SW control */
-> +	writel(0x0, core->reg_base + WRAPPER_CORE_POWER_CONTROL);
-GDSCs have been transitioned from HW_CTRL to HW_CTRL_TRIGGER, placing them
-under software control by default, what is the need of doing this?
-> +	ret = readl_poll_timeout(core->reg_base + WRAPPER_CORE_POWER_STATUS,
-> +				 val, val & BIT(1), 200, 2000);
-> +	if (ret)
-> +		goto err_disable_power;
-> +
-> +	ret = iris_prepare_enable_clock(core, IRIS_AXI_CLK);
-> +	if (ret)
-> +		goto err_gdsc;
-> +
-> +	ret = iris_prepare_enable_clock(core, IRIS_HW_FREERUN_CLK);
-> +	if (ret)
-> +		goto err_disable_axi_clk;
-> +
-> +	ret = iris_prepare_enable_clock(core, IRIS_HW_CLK);
-> +	if (ret)
-> +		goto err_disable_hw_free_clk;
-> +
-> +	ret = dev_pm_genpd_set_hwmode(core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN], true);
-> +	if (ret)
-> +		goto err_disable_hw_clk;
-> +
-> +	return 0;
-> +
-> +err_disable_hw_clk:
-> +	iris_disable_unprepare_clock(core, IRIS_HW_CLK);
-> +err_disable_hw_free_clk:
-> +	iris_disable_unprepare_clock(core, IRIS_HW_FREERUN_CLK);
-> +err_disable_axi_clk:
-> +	iris_disable_unprepare_clock(core, IRIS_AXI_CLK);
-> +err_gdsc:
-> +	writel(BIT(0), core->reg_base + WRAPPER_CORE_POWER_CONTROL);
-> +err_disable_power:
-> +	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
-> +
-> +	return ret;
-> +}
-> +
-> +static void iris_vpu35_power_off_hw(struct iris_core *core)
-> +{
-> +	u32 val = 0, value, i;
-> +	int ret;
-> +
-> +	if (iris_vpu3x_hw_power_collapsed(core))
-> +		goto disable_power;
-> +
-> +	value = readl(core->reg_base + WRAPPER_CORE_CLOCK_CONFIG);
-> +	if (value)
-> +		writel(CORE_CLK_RUN, core->reg_base + WRAPPER_CORE_CLOCK_CONFIG);
-> +
-> +	for (i = 0; i < core->iris_platform_data->num_vpp_pipe; i++) {
-> +		ret = readl_poll_timeout(core->reg_base + VCODEC_SS_IDLE_STATUSN + 4 * i,
-> +					 val, val & 0x400000, 2000, 20000);
-> +		if (ret)
-> +			goto disable_power;
-> +	}
-> +
-> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
-> +				 val, val & BIT(0), 200, 2000);
-what are you polling here for?
-> +	if (ret)
-> +		goto disable_power;
-> +
-> +	/* set MNoC to low power, set PD_NOC_QREQ (bit 0) */
-Could you share the reference for this sqeunece, this looks half-cooked.
-Would recommend following Hardware programmin guide(HPG) for this.
-> +	writel(BIT(0), core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
-> +
-> +	writel(CORE_BRIDGE_SW_RESET | CORE_BRIDGE_HW_RESET_DISABLE,
-> +	       core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
-> +	writel(CORE_BRIDGE_HW_RESET_DISABLE, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
-> +	writel(0x0, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
-> +
-> +disable_power:
-> +	dev_pm_genpd_set_hwmode(core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN], false);
-> +	iris_disable_unprepare_clock(core, IRIS_HW_CLK);
-> +	iris_disable_unprepare_clock(core, IRIS_HW_FREERUN_CLK);
-> +	iris_disable_unprepare_clock(core, IRIS_AXI_CLK);
-> +
-> +	writel(BIT(0), core->reg_base + WRAPPER_CORE_POWER_CONTROL);
-> +	/*
-> +	 * Do not wait for power-down, because hardware might delay it (it
-> +	 * always timeouts).
-> +	 */
-> +
-> +	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
-> +}
-> +
-> +static int iris_vpu35_power_off_controller(struct iris_core *core)
-> +{
-> +	u32 xo_rst_tbl_size = core->iris_platform_data->controller_rst_tbl_size;
-where is controller_rst_tbl_size defined for this SOC?
-> +	u32 clk_rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
-> +	u32 val = 0;
-> +	int ret;
-> +
-> +	writel(MSK_SIGNAL_FROM_TENSILICA | MSK_CORE_POWER_ON, core->reg_base + CPU_CS_X2RPMH);
-> +
-> +	writel(REQ_POWER_DOWN_PREP, core->reg_base + WRAPPER_IRIS_CPU_NOC_LPI_CONTROL);
-> +
-> +	ret = readl_poll_timeout(core->reg_base + WRAPPER_IRIS_CPU_NOC_LPI_STATUS,
-> +				 val, val & BIT(0), 200, 2000);
-> +	if (ret)
-> +		goto disable_power;
-> +
-> +	writel(0x0, core->reg_base + WRAPPER_IRIS_CPU_NOC_LPI_CONTROL);
-> +
-> +	writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_VIDEO_CTL_NOC_LPI_CONTROL);
-> +	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_VIDEO_CTL_NOC_LPI_STATUS,
-> +				 val, val & (BIT(0) | BIT(1) | BIT(2)), 15, 1000);
-doesn't seems right and missing retry logic. would recommend referring HPG.
-> +	if (ret)
-> +		goto disable_power;
-> +
-> +	writel(0x0, core->reg_base + AON_WRAPPER_MVP_VIDEO_CTL_NOC_LPI_CONTROL);
-> +
-> +	writel(0x0, core->reg_base + WRAPPER_DEBUG_BRIDGE_LPI_CONTROL);
-> +
-> +	ret = readl_poll_timeout(core->reg_base + WRAPPER_DEBUG_BRIDGE_LPI_STATUS,
-> +				 val, val == 0, 200, 2000);
-> +	if (ret)
-> +		goto disable_power;
-> +
-> +disable_power:
-> +	iris_disable_unprepare_clock(core, IRIS_CTRL_CLK);
-> +	iris_disable_unprepare_clock(core, IRIS_CTRL_FREERUN_CLK);
-> +	iris_disable_unprepare_clock(core, IRIS_AXI1_CLK);
-> +
-> +	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
-> +
-> +	reset_control_bulk_reset(clk_rst_tbl_size, core->resets);
-> +
-> +	reset_control_bulk_assert(xo_rst_tbl_size, core->controller_resets);
-??
-> +
-> +	usleep_range(400, 500);
-> +
-> +	reset_control_bulk_deassert(xo_rst_tbl_size, core->controller_resets);
-> +
-> +	return 0;
-> +}
-> +
-> +static int iris_vpu35_power_on_controller(struct iris_core *core)
-> +{
-> +	u32 rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
-> +	int ret;
-> +
-> +	ret = iris_enable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = reset_control_bulk_reset(rst_tbl_size, core->resets);
-what is the reference for this?
+The encryption mask is available to callers and canbe accessed
+sme_get_me_mask() in C code and sme_me_mask symbol in assembly code.
 
-Thanks,
-Dikshita
-> +	if (ret)
-> +		goto err_disable_power;
-> +
-> +	ret = iris_prepare_enable_clock(core, IRIS_AXI1_CLK);
-> +	if (ret)
-> +		goto err_disable_power;
-> +
-> +	ret = iris_prepare_enable_clock(core, IRIS_CTRL_FREERUN_CLK);
-> +	if (ret)
-> +		goto err_disable_axi1_clk;
-> +
-> +	ret = iris_prepare_enable_clock(core, IRIS_CTRL_CLK);
-> +	if (ret)
-> +		goto err_disable_ctrl_free_clk;
-> +
-> +	return 0;
-> +
-> +err_disable_ctrl_free_clk:
-> +	iris_disable_unprepare_clock(core, IRIS_CTRL_FREERUN_CLK);
-> +err_disable_axi1_clk:
-> +	iris_disable_unprepare_clock(core, IRIS_AXI1_CLK);
-> +err_disable_power:
-> +	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
-> +
-> +	return ret;
-> +}
-> +
-> +static void iris_vpu35_program_bootup_registers(struct iris_core *core)
-> +{
-> +	writel(0x1, core->reg_base + WRAPPER_IRIS_VCODEC_VPU_WRAPPER_SPARE_0);
-> +}
-> +
->  static u64 iris_vpu3x_calculate_frequency(struct iris_inst *inst, size_t data_size)
->  {
->  	struct platform_inst_caps *caps = inst->core->iris_platform_data->inst_caps;
-> @@ -277,3 +471,12 @@ const struct vpu_ops iris_vpu33_ops = {
->  	.power_on_controller = iris_vpu_power_on_controller,
->  	.calc_freq = iris_vpu3x_calculate_frequency,
->  };
-> +
-> +const struct vpu_ops iris_vpu35_ops = {
-> +	.power_off_hw = iris_vpu35_power_off_hw,
-> +	.power_on_hw = iris_vpu35_power_on_hw,
-> +	.power_off_controller = iris_vpu35_power_off_controller,
-> +	.power_on_controller = iris_vpu35_power_on_controller,
-> +	.program_bootup_registers = iris_vpu35_program_bootup_registers,
-> +	.calc_freq = iris_vpu3x_calculate_frequency,
-> +};
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> index 6c51002f72ab3d9e16d5a2a50ac712fac91ae25c..bb98950e018fadf69ac4f41b3037f7fd6ac33c5b 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> @@ -84,6 +84,7 @@ static void iris_vpu_interrupt_init(struct iris_core *core)
->  static void iris_vpu_setup_ucregion_memory_map(struct iris_core *core)
->  {
->  	u32 queue_size, value;
-> +	const struct vpu_ops *vpu_ops = core->iris_platform_data->vpu_ops;
->  
->  	/* Iris hardware requires 4K queue alignment */
->  	queue_size = ALIGN(sizeof(struct iris_hfi_queue_table_header) +
-> @@ -105,6 +106,9 @@ static void iris_vpu_setup_ucregion_memory_map(struct iris_core *core)
->  		value = (u32)core->sfr_daddr + core->iris_platform_data->core_arch;
->  		writel(value, core->reg_base + SFR_ADDR);
->  	}
-> +
-> +	if (vpu_ops->program_bootup_registers)
-> +		vpu_ops->program_bootup_registers(core);
->  }
->  
->  int iris_vpu_boot_firmware(struct iris_core *core)
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
-> index d95b305ca5a89ba8f08aefb6e6acd9ea4a721a8b..d636e287457adf0c44540af5c85cfa69decbca8b 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
-> @@ -11,12 +11,14 @@ struct iris_core;
->  extern const struct vpu_ops iris_vpu2_ops;
->  extern const struct vpu_ops iris_vpu3_ops;
->  extern const struct vpu_ops iris_vpu33_ops;
-> +extern const struct vpu_ops iris_vpu35_ops;
->  
->  struct vpu_ops {
->  	void (*power_off_hw)(struct iris_core *core);
->  	int (*power_on_hw)(struct iris_core *core);
->  	int (*power_off_controller)(struct iris_core *core);
->  	int (*power_on_controller)(struct iris_core *core);
-> +	void (*program_bootup_registers)(struct iris_core *core);
->  	u64 (*calc_freq)(struct iris_inst *inst, size_t data_size);
->  };
->  
-> 
+This change aligns the way the mask is retrieved in
+secondary_startup_64_no_verify().
+
+No functionality change intended, only consistency improvement, so the
+code becomes cleaner.
+
+On intel processors sme_me_mask is zero. So, it is safe to add mask only
+if CONFIG_AMD_MEM_ENCRYPT.
+
+Signed-off-by: Khalid Ali <khaliidcaly@gmail.com>
+Acked-by: Kai Huang <kai.huang@intel.com>
+---
+
+Changes in v8:
+  * Improve commit message for clarity.
+
+Changes in v7:
+  * Improve commit message for better clarity.
+  * Add Huang, Kai Ack tag.
+  * Fix parameter aligment.
+  * Fix patch style issues.
+
+ arch/x86/boot/startup/map_kernel.c | 17 ++++++-----------
+ arch/x86/include/asm/setup.h       |  2 +-
+ arch/x86/kernel/head_64.S          | 14 ++++++++------
+ 3 files changed, 15 insertions(+), 18 deletions(-)
+
+diff --git a/arch/x86/boot/startup/map_kernel.c b/arch/x86/boot/startup/map_kernel.c
+index 332dbe6688c4..d25e849af563 100644
+--- a/arch/x86/boot/startup/map_kernel.c
++++ b/arch/x86/boot/startup/map_kernel.c
+@@ -30,9 +30,9 @@ static inline bool check_la57_support(void)
+ 	return true;
+ }
+ 
+-static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
+-						    pmdval_t *pmd,
+-						    unsigned long p2v_offset)
++static void __head sme_postprocess_startup(struct boot_params *bp,
++					   pmdval_t *pmd,
++					   unsigned long p2v_offset)
+ {
+ 	unsigned long paddr, paddr_end;
+ 	int i;
+@@ -68,11 +68,6 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
+ 		}
+ 	}
+ 
+-	/*
+-	 * Return the SME encryption mask (if SME is active) to be used as a
+-	 * modifier for the initial pgdir entry programmed into CR3.
+-	 */
+-	return sme_get_me_mask();
+ }
+ 
+ /*
+@@ -84,8 +79,8 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
+  * the 1:1 mapping of memory. Kernel virtual addresses can be determined by
+  * subtracting p2v_offset from the RIP-relative address.
+  */
+-unsigned long __head __startup_64(unsigned long p2v_offset,
+-				  struct boot_params *bp)
++void __head __startup_64(unsigned long p2v_offset,
++			 struct boot_params *bp)
+ {
+ 	pmd_t (*early_pgts)[PTRS_PER_PMD] = rip_rel_ptr(early_dynamic_pgts);
+ 	unsigned long physaddr = (unsigned long)rip_rel_ptr(_text);
+@@ -213,5 +208,5 @@ unsigned long __head __startup_64(unsigned long p2v_offset,
+ 	for (; i < PTRS_PER_PMD; i++)
+ 		pmd[i] &= ~_PAGE_PRESENT;
+ 
+-	return sme_postprocess_startup(bp, pmd, p2v_offset);
++	sme_postprocess_startup(bp, pmd, p2v_offset);
+ }
+diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+index 692af46603a1..c09a4bf18706 100644
+--- a/arch/x86/include/asm/setup.h
++++ b/arch/x86/include/asm/setup.h
+@@ -50,7 +50,7 @@ extern unsigned long acpi_realmode_flags;
+ 
+ extern void reserve_standard_io_resources(void);
+ extern void i386_reserve_resources(void);
+-extern unsigned long __startup_64(unsigned long p2v_offset, struct boot_params *bp);
++extern void  __startup_64(unsigned long p2v_offset, struct boot_params *bp);
+ extern void startup_64_setup_gdt_idt(void);
+ extern void startup_64_load_idt(void *vc_handler);
+ extern void early_setup_idt(void);
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 3e9b3a3bd039..0cba493cab26 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -106,18 +106,20 @@ SYM_CODE_START_NOALIGN(startup_64)
+ 
+ 	/*
+ 	 * Perform pagetable fixups. Additionally, if SME is active, encrypt
+-	 * the kernel and retrieve the modifier (SME encryption mask if SME
+-	 * is active) to be added to the initial pgdir entry that will be
+-	 * programmed into CR3.
+-	 */
++	 * the kernel.
++	*/
+ 	movq	%r15, %rsi
+ 	call	__startup_64
+ 
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	leaq	early_top_pgt(%rip), %rcx
+-	addq	%rcx, %rax
++	leaq	early_top_pgt(%rip), %rax
+ 
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
++	/* Retrieve the modifier (SME encryption mask if SME
++	 * is active) to be added to the initial pgdir entry that will be
++	 * programmed into CR3.
++	 */
++	addq	sme_me_mask(%rip), %rax
+ 	mov	%rax, %rdi
+ 
+ 	/*
+-- 
+2.49.0
+
 
