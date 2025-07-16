@@ -1,109 +1,112 @@
-Return-Path: <linux-kernel+bounces-733148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5414CB070D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:45:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281B3B070D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C3C3B43EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 302253B5879
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB292EF299;
-	Wed, 16 Jul 2025 08:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AC72EF282;
+	Wed, 16 Jul 2025 08:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nGGfDAvO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wMBUlA6K"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IKbhq97R"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7A024337B;
-	Wed, 16 Jul 2025 08:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8565423FC42
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752655525; cv=none; b=bt+A1JfVA/q08izH9RHiKKZuXk9J/T+4UZwzwZGBhIc6gkGhLNuCy8V3ZtbbuzZKnOZ6TpGX0gEq0KqapTmbIdqyOqnkMhMXKzFpxTIUrImv0fjtLFXJCLqKr3tOR8xQPy+okQzILIKU5seDzjBUKLe3YrsRjEb4JdY3wttQNv4=
+	t=1752655554; cv=none; b=lSVo53WG4Zq0u+KhCNYhpirhMJDgW+7D/XbmQCwLZTQBMEhC9AIfT5zxUUEG/3A0ytbiszjm/sYCPiSVNcV2NuNeWw9K7A3aoMZJCF3STj3HTGlb6KE7lWdF3euVOenDiOmgSwTXr75rJ8jEVZ8h2herHYNQByWkzcsFHo7alnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752655525; c=relaxed/simple;
-	bh=1NXbWx2kLzPZS55lk3fbpz5DfeiM3JWRD20iG+FWHdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1znX1oz0bHkqp+cjuksCkGo1BMCxgv7sRSc6VwRJi22FDFO6+cprakmcXBEnPsDJzK5iv6iptpmgyyNJmG230OkGyB5QMeDiq0lagKIPZnWCsT6eusCyCw51/D4sH+JohDvs5fJka9MydkpKyBeb3sDv0vXj/NkM/Asf4xGImo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nGGfDAvO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wMBUlA6K; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 10:45:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752655522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nIiIKG0sIFehb8gE9KkNPCWT2c8bsmOUJ77N6v2fQnA=;
-	b=nGGfDAvOgfbxvQ+ItbHkuKmJc7fhNMXdylQtXADVW6Pij1apU1+3cuJ5OUI84mO4RRfzXq
-	xODQFegvJwHIbgOo6xm8clKlUdYBUdjn/R6BKdubKI2P4+ZnKApoHS8vS8rME+eLCA3Gnv
-	tpOaiwcxF93rKVPTUkl2XsCEq9lL/i7an95fxhH0NdGFVXPEXoaQXPOc4mlZesRxGsOOB3
-	/FZG+epCxkvLNTFW+uBSrdb/0xxnSAGcmp+Cp4YWHM6cuHRYZeSmZsaZiXnpobBHTwfp0m
-	bLk4Q2lKSWLv3nMw/AcBQJTrI5vqexMKjcxlfwZeqJZ8/wsAG3pYej5Tts3JMQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752655522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nIiIKG0sIFehb8gE9KkNPCWT2c8bsmOUJ77N6v2fQnA=;
-	b=wMBUlA6K9yd+vXdEYF702fvYHvbOcxNNvsiv9ZaMcN1ZXk4UrgpBDIlvZMzJMvM7zyhA/v
-	bKKqh5wGUWgaBdCQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v3 11/17] rv: Retry when da monitor detects race
- conditions
-Message-ID: <20250716084520._QLbd5AY@linutronix.de>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
- <20250715071434.22508-12-gmonaco@redhat.com>
- <20250715152322.Os4lDq_B@linutronix.de>
- <e2f4f8d372612cd61689b91562e73677599d08de.camel@redhat.com>
- <20250716082712.L9z_ptHK@linutronix.de>
- <f7028488e9d820848955de87ead3ec619fe5dbec.camel@redhat.com>
+	s=arc-20240116; t=1752655554; c=relaxed/simple;
+	bh=OsergoVcgVPfjK+w3ZmNoDii+kpsp6XiHQ03wmjMffM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=eRbtBZWS053yp30B2josSGFm0mtIzC6UPuGjLDnjUjLk3GEc5uR9+EkP9AYVdG502PxfJzKfDLfM/Pw5L+GfY6HclmNmE0kIxW48H6Qc7b2QNBAWfwbVgzq6s87RjyjmYL2JrmQUzkM/Guc1t7hlL3AH3JC747ivvNriXseihoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IKbhq97R; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752655552; x=1784191552;
+  h=date:from:to:cc:subject:message-id;
+  bh=OsergoVcgVPfjK+w3ZmNoDii+kpsp6XiHQ03wmjMffM=;
+  b=IKbhq97RBp2d3Y5Bhjliy/BSAlXTY61hYG5FirJX7cxO7VnflwvendKh
+   vwSkHKdqwpUadnmLHaL4IMwt63OzeusGaL9miK57TbKmw1f2OVZQqc+RU
+   JPmkKtGbJHWFiAUSXLyItO94JdFFMqUG2ZtcS7frDaOGAZP/xh+sqBDDv
+   WPtc2wl7Fne4VqypiMazX2pXZPCbU+hO2wUWUe7rJqsQn6QH9OboIQEPw
+   WYJgFUTmtImAcTUDbZRTyPJS1NYVHq1MrvvpfsH3PS/yAostvt7EQnrnx
+   h+aXpAXldAfMZzDXJFcW7AfxwGEQdgQ34qIIAMHqiCEz3Jn56Cb3IhN7C
+   w==;
+X-CSE-ConnectionGUID: jyJ3TsblRGSoAcNoggX/0w==
+X-CSE-MsgGUID: X6/qTTbMQ0KmJfL3PAG9tA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58548118"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="58548118"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 01:45:52 -0700
+X-CSE-ConnectionGUID: 2J1F/LiDTSiVP2rY0bNQ3w==
+X-CSE-MsgGUID: kRQ0SNFWRticU5OP7C+lhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="157110811"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 16 Jul 2025 01:45:50 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubxls-000C7r-2i;
+	Wed, 16 Jul 2025 08:45:48 +0000
+Date: Wed, 16 Jul 2025 16:45:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ 6b995d01683feae619aa3263d18a6aa19bface16
+Message-ID: <202507161634.u1cfXOWS-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7028488e9d820848955de87ead3ec619fe5dbec.camel@redhat.com>
 
-On Wed, Jul 16, 2025 at 10:38:11AM +0200, Gabriele Monaco wrote:
-> On Wed, 2025-07-16 at 10:27 +0200, Nam Cao wrote:
-> > Can't you bring the monitor back to the init state, and start over
-> > again?
-> > 
-> > I think "da_mon->monitoring = 0;" does the trick?
-> > 
-> 
-> Yes you can, but I wouldn't do so silently.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: 6b995d01683feae619aa3263d18a6aa19bface16  x86/sev: Work around broken noinstr on GCC
 
-Why not? The absolute worst that we get, is the rare case where a bug
-appears at the exact same time. In that case, we would get a false
-negative.
+elapsed time: 1431m
 
-And I think that is really really rare.
+configs tested: 20
+configs skipped: 119
 
-> I'd say the cleanest approach without reaction is to still return false
-> for the system to do all the cleanup but trace the event or, at the
-> very least, print a warning.
-> 
-> But you're right, this is more relevant for who develops the monitor
-> rather than for the user, so should probably be tracked separately.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Yes, if you really want to emit some sort of warning here, it should be
-absolutely clear that the monitor itself is having a hiccup, not the
-monitored kernel.
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20250715    gcc-12
+i386    buildonly-randconfig-002-20250715    gcc-12
+i386    buildonly-randconfig-003-20250715    gcc-12
+i386    buildonly-randconfig-004-20250715    clang-20
+i386    buildonly-randconfig-005-20250715    clang-20
+i386    buildonly-randconfig-006-20250715    clang-20
+i386                            defconfig    clang-20
+x86_64                        allnoconfig    clang-20
+x86_64                       allyesconfig    clang-20
+x86_64  buildonly-randconfig-001-20250715    clang-20
+x86_64  buildonly-randconfig-002-20250715    gcc-12
+x86_64  buildonly-randconfig-003-20250715    gcc-12
+x86_64  buildonly-randconfig-004-20250715    gcc-11
+x86_64  buildonly-randconfig-005-20250715    gcc-12
+x86_64  buildonly-randconfig-006-20250715    gcc-12
+x86_64                          defconfig    gcc-11
+x86_64                      rhel-9.4-rust    clang-20
 
-Nam
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
