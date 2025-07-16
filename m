@@ -1,350 +1,158 @@
-Return-Path: <linux-kernel+bounces-733946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4B8B07B0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:21:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F92B07B19
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0A7816BA36
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:21:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4921518982BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55FD2F3C3E;
-	Wed, 16 Jul 2025 16:21:52 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E662F5465;
+	Wed, 16 Jul 2025 16:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AtgzgmHy"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6898C481CD
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CBE28A1C8;
+	Wed, 16 Jul 2025 16:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752682912; cv=none; b=WUqhvAcCjSi/e8fRvLGkd/aM0Us806HLl/vnJ7MwkG+rwvkT+lzMJeI+g+LYywUH2PIMYBJuRVZ5EAz8MOHs9Jo4pE/1inf2qYYoMzGB0k/74tqG1UBHCjJOzuYXzYHd1pLvae9l0SpTwNzJZtwEoEf1EIDWbqzbEdeWSCl/vTM=
+	t=1752682945; cv=none; b=TK8wp4y5bU6laQjVDuxijPv8tdqaQS3md9kKttH1lpAWv9C2GeVvbuSAhU6WgkcLWgWfE2bR51hfipUyJrPHnRebO9GtBBg2cA7KKwEYGzDBpavH1KLkswicQb1N3IXGo2bFtxtz77dRc0lJ/zeBCxjxgfsetiAVn2vV4D8uO0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752682912; c=relaxed/simple;
-	bh=M1oZgVTyYsLbNfFExN5SMkfDRrewPjlJvZlI2EMnlaU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tFBK5tyB959Y+El7RB9QMKVyTCsmt2gKZZghR2g5NYkqUVB3k4q4+wAPxLOqxBMNynmMFpRSxaenX7P07GoScDkWmJNdAzOApZytI2mPatphlCrbfNZdwT4Rlk6X+3cBTXb8zjZOeLUr9o3zj9BHF5lvb3lUDnpSjbn3OaDCXFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bj1W32DCTz6M4P9;
-	Thu, 17 Jul 2025 00:20:31 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id EE67814038F;
-	Thu, 17 Jul 2025 00:21:46 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Jul
- 2025 18:21:45 +0200
-Date: Wed, 16 Jul 2025 17:21:44 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	"Rob Herring" <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>, Rohit
- Mathew <rohit.mathew@arm.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	"Zeng Heng" <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
-	"Carl Worth" <carl@os.amperecomputing.com>,
-	<shameerali.kolothum.thodi@huawei.com>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <lcherian@marvell.com>,
-	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
-	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
-	<xhao@linux.alibaba.com>, <peternewman@google.com>, <dfustini@baylibre.com>,
-	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Rex Nie
-	<rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>, Koba Ko
-	<kobak@nvidia.com>, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [RFC PATCH 07/36] ACPI / PPTT: Find cache level by cache-idUIRE
-Message-ID: <20250716172144.00000715@huawei.com>
-In-Reply-To: <20250711183648.30766-8-james.morse@arm.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
-	<20250711183648.30766-8-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1752682945; c=relaxed/simple;
+	bh=AEkYO6oYj3n8YvSDi56gQddt6FxNyzr/xpDU2dcuCbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K8L0Xx1snDj7OssZmE6Bc+pIVJu/lCUUpdm+MYiE/ijc6VHRcog4zroMKin7ezoVYaqNDSauW5xp8hQe/ktxOmvHR2PiRFmELKxOdaEBeBQliSSklx+CD2Ptt39D0WdPMy9u4ZfIhAwSHT+LGF1R5awvsHdQKyzV1HfTINqTUWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AtgzgmHy; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6fabb948e5aso1286816d6.1;
+        Wed, 16 Jul 2025 09:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752682943; x=1753287743; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8JyUIA1wZL/E/w4gMI2RQwwZYPmSniyeepn20poSwjQ=;
+        b=AtgzgmHyuz3B6Gubs/JqCwwdJ7oH+zUkM1oy3k6O5o6Hbsx/6dILZEr78YzcPO8FXF
+         jnybWqsVWp1pb3fF/SGpXbR8NS7qeubrB+cc/VryAa4ZiaLz/OPH9sXbm9ppZj6JGW5T
+         ApJFtSzdlhGmRBdvk7lDA2PyiXr8bOt9HVrYajZID4ETuIijzxeztJFsrS9pIL7n/qOK
+         01xLmZewowqDsOZ/ojVk/O8fORW6UFh/5INO7YKi52y24VtiaVKSwHJPzVvVseMwX3wT
+         W9NkG/NBOoypV6gwtQTIQpMf6RM9J6qH9ymuf0nWbCMqhHzBsIZ2oUkcH+0hRUFbRpkg
+         uueg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752682943; x=1753287743;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8JyUIA1wZL/E/w4gMI2RQwwZYPmSniyeepn20poSwjQ=;
+        b=ICRRHesTy5gCeWmibx1vuK4Aj08DyegVH9lTipyU0YcmSq1tVCJnEYoV0LomiOVUR2
+         Zn6bALndjayshhEIOrUnb9xsc589UxLFkQAfr2s0VJai7cDEid3ZDZZh1gitWvDZZYr2
+         zHWSy6vejS8VYPFhYrbEJWn7kOD9GjqVODYSuTDlV6RVJJ/bZhheQhF9GzPwI5VdODCq
+         nvFjqSygCLZM11YRTBvKz0BFS+pFmRPEOKDmyfF7wzeRDSI8BNlNl1Jiic0YrcR8WBnv
+         tb5vgi6pAauPW5R7hJleMeUp91ohAK4fL32pBueDC9V8i7oDa2Mssz55FuPrcLR8gKzR
+         aJTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVphMUpdS8Bixhw9PnBGFVOz9cZ29Xo2FW0CMFv1CN05WpkwbfOAxwait41U10t/eRzVdwQaCFW@vger.kernel.org, AJvYcCW34wo69fCA3Nn7l8Svgg6S1/kBAaweZBHwiyxKYltMsKoJAjRKwJO6XUQrQRaOp71ZNkpcUjklmSOUxqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzovUrX3PorDXlFig1NrtGgrvO7JATHO9m1PIS3CE8eJKvhPN3p
+	qd6/W5VYe47sJJ11LaSYfqWHrWKu44S1m1XenF4YfOQssGYDCtNYx+xO
+X-Gm-Gg: ASbGncsEqj2krn7C9JENMEZsAaczNtLH7KFlCNztkLcBNiLMdRfeGm/OFTsMo3aNSxM
+	4uo8wUsa+j85um9j0vo+HWJ7Nc20Jbj14QNiOiZBz/qdy9dCuHuo13rHaPIPEGuuzBCMvIxCqAH
+	7goeGwmmTbDiDuSuuEPCw/gvS26bJLTDvrSwHRMwp3Z8zKXnqluZMlCqD1pdQseeK5Yvm3KRfpQ
+	pEGkYKsQtJD4aKiq3M5yaRvRGYwUPI3c7WvPy0YCn2c4isuGIx3bevM0AbFvASqZkeso9lEwsn1
+	UjNctAoy1IANPlJ56vvnWDBu3Jvc8+hsKlAlMMdNQYINYDRttqmoVdGgvo0cwG5yP8vI4SRSC5J
+	qz3xkJor0lydGjWSloCpamWhgwImajjPrWeB83dnWI7cSCzbOwA==
+X-Google-Smtp-Source: AGHT+IGnq+ZTdn91l5dBQONzf+LTqEAMtSkk8h0S1ZABalUhbOBTvCKWG5dV1L2XaCxeaaYdzTNzEQ==
+X-Received: by 2002:a05:6214:31a1:b0:6fa:d8bb:294c with SMTP id 6a1803df08f44-704f6a55fdfmr41080086d6.14.1752682943230;
+        Wed, 16 Jul 2025 09:22:23 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d39d1fsm72406036d6.64.2025.07.16.09.22.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 09:22:22 -0700 (PDT)
+Message-ID: <fc781703-e355-4ea3-aaf9-50c6fe90b628@gmail.com>
+Date: Wed, 16 Jul 2025 09:22:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.4 000/144] 5.4.296-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250716141302.507854168@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250716141302.507854168@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 11 Jul 2025 18:36:19 +0000
-James Morse <james.morse@arm.com> wrote:
-
-> The MPAM table identifies caches by id. The MPAM driver also wants to know
-> the cache level to determine if the platform is of the shape that can be
-> managed via resctrl. Cacheinfo has this information, but only for CPUs that
-> are online.
+On 7/16/25 07:14, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.296 release.
+> There are 144 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Waiting for all CPUs to come online is a problem for platforms where
-> CPUs are brought online late by user-space.
+> Responses should be made by Fri, 18 Jul 2025 14:12:35 +0000.
+> Anything received after that time might be too late.
 > 
-> Add a helper that walks every possible cache, until it finds the one
-> identified by cache-id, then return the level.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.296-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> acpi_count_levels() expects its levels parameter to be initialised to
-> zero as it passes it to acpi_find_cache_level() as starting_level.
-> The existing callers do this. Document it.
+> thanks,
 > 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> greg k-h
 
-A few suggestions inline.  Mostly driven by the number of missing table
-puts I've seen in ACPI code. You don't have any missing here but with a
-bit of restructuring you can make that easy to see.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-> ---
->  drivers/acpi/pptt.c  | 73 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/acpi.h |  5 +++
->  2 files changed, 78 insertions(+)
-> 
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index 13ca2eee3b98..f53748a5df19 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -912,3 +912,76 @@ int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
->  	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
->  					  ACPI_PPTT_ACPI_IDENTICAL);
->  }
-> +
-> +/**
-> + * find_acpi_cache_level_from_id() - Get the level of the specified cache
-> + * @cache_id: The id field of the unified cache
-> + *
-> + * Determine the level relative to any CPU for the unified cache identified by
-> + * cache_id. This allows the property to be found even if the CPUs are offline.
-> + *
-> + * The returned level can be used to group unified caches that are peers.
-> + *
-> + * The PPTT table must be rev 3 or later,
-> + *
-> + * If one CPUs L2 is shared with another as L3, this function will return
-> + * an unpredictable value.
-> + *
-> + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
-> + * Otherwise returns a value which represents the level of the specified cache.
-> + */
-> +int find_acpi_cache_level_from_id(u32 cache_id)
-> +{
-> +	u32 acpi_cpu_id;
-> +	acpi_status status;
-> +	int level, cpu, num_levels;
-> +	struct acpi_pptt_cache *cache;
-> +	struct acpi_table_header *table;
-> +	struct acpi_pptt_cache_v1 *cache_v1;
-> +	struct acpi_pptt_processor *cpu_node;
-> +
-> +	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
-> +	if (ACPI_FAILURE(status)) {
-> +		acpi_pptt_warn_missing();
-> +		return -ENOENT;
-> +	}
-> +
-> +	if (table->revision < 3) {
-
-Maybe a unified exit path given all paths need to do
-acpi_put_table() and return either error or level.
-
-Or maybe it's time for some cleanup.h magic for acpi tables. I've
-been thinking about it for a while and mostly stuck on the name ;)
-(simpler suggestion follows)
-
-static struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
-{
-	struct acpi_table_header *table;
-	int status = acpi_get_table(signature, instance, &table);
-	
-	if (ACPI_FAILURE(status))
-		return ERR_PTR(-ENOENT);
-	return table;
-}
-
-DEFINE_FREE(acpi_table, struct acpi_table_header *, if (!IS_ERR(_T)) acpi_put_table(_T))
-
-Finally in here and loads of other places we avoid chance of missing an acpi_put_table
-and generally simplify the code a little.
-
-int find_acpi_cache_level_from_id(u32 cache_id)
-{
-	u32 acpi_cpu_id;
-	acpi_status status;
-	int level, cpu, num_levels;
-	struct acpi_pptt_cache *cache;
-	struct acpi_pptt_cache_v1 *cache_v1;
-	struct acpi_pptt_processor *cpu_node;
-
-
-	struct acpi_table_header *table __free(acpi_table) =
-		acpi_get_table_ret(ACPI_SIG_PPTT, 0);
-
-	if (IS_ERR(table)
-		return PTR_ERR(table);
-
-	if (table->revision < 3)
-		return -ENOENT;
-
-	/*
-	 * If we found the cache first, we'd still need to walk from each CPU
-	 * to find the level...
-	 */
-	for_each_possible_cpu(cpu) {
-		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
-		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
-		if (!cpu_node)
-			return -ENOENT;
-		acpi_count_levels(table, cpu_node, &num_levels, NULL);
-
-		/* Start at 1 for L1 */
-		for (level = 1; level <= num_levels; level++) {
-			cache = acpi_find_cache_node(table, acpi_cpu_id,
-						     ACPI_PPTT_CACHE_TYPE_UNIFIED,
-						     level, &cpu_node);
-			if (!cache)
-				continue;
-
-			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
-						cache,
-						sizeof(struct acpi_pptt_cache));
-
-			if (cache->flags & ACPI_PPTT_CACHE_ID_VALID &&
-			    cache_v1->cache_id == cache_id) {
-				acpi_put_table(table);
-				return level;
-			}
-		}
-	}
-	return -ENOENT;
-}
-
-
-A less 'fun' alternative is pull some code out as a helper to make put the get and put
-near each other with no conditionals to confuse things.
-
-
-static int __find_acpi_cache_level_from_id(u32 cache_id, struct acpi_table_header *head);
-{
-	u32 acpi_cpu_id;
-	int level, cpu, num_levels;
-	struct acpi_pptt_cache *cache;
-	struct acpi_pptt_cache_v1 *cache_v1;
-	struct acpi_pptt_processor *cpu_node;
-
-	if (table->revision < 3)
-		return -ENOENT;
-
-	/*
-	 * If we found the cache first, we'd still need to walk from each CPU
-	 * to find the level...
-	 */
-	for_each_possible_cpu(cpu) {
-		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
-		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
-		if (!cpu_node)
-			return -ENOENT;
-		acpi_count_levels(table, cpu_node, &num_levels, NULL);
-
-		/* Start at 1 for L1 */
-		for (level = 1; level <= num_levels; level++) {
-			cache = acpi_find_cache_node(table, acpi_cpu_id,
-						     ACPI_PPTT_CACHE_TYPE_UNIFIED,
-						     level, &cpu_node);
-			if (!cache)
-				continue;
-
-			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
-						cache,
-						sizeof(struct acpi_pptt_cache));
-
-			if (cache->flags & ACPI_PPTT_CACHE_ID_VALID &&
-			    cache_v1->cache_id == cache_id)
-				return level;
-		}
-	}
-
-	return -ENOENT;
-}
-
-int find_acpi_cache_level_from_id(u32 cache_id)
-{
-	int ret;
-	acpi_status status;
-	struct acpi_table_header *table;
-
-	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
-	if (ACPI_FAILURE(status)) {
-		acpi_pptt_warn_missing();
-		return -ENOENT;
-	}
-
-	ret = __find_acpi_cache_level_from_id(cache_id, table)
-	acpi_put_table(table);
-	return ret;
-}
-
-
-> +		acpi_put_table(table);
-> +		return -ENOENT;
-> +	}
-> +
-> +	/*
-> +	 * If we found the cache first, we'd still need to walk from each CPU
-> +	 * to find the level...
-> +	 */
-> +	for_each_possible_cpu(cpu) {
-> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
-> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
-> +		if (!cpu_node)
-> +			break;
-> +		acpi_count_levels(table, cpu_node, &num_levels, NULL);
-> +
-> +		/* Start at 1 for L1 */
-> +		for (level = 1; level <= num_levels; level++) {
-> +			cache = acpi_find_cache_node(table, acpi_cpu_id,
-> +						     ACPI_PPTT_CACHE_TYPE_UNIFIED,
-> +						     level, &cpu_node);
-> +			if (!cache)
-> +				continue;
-> +
-> +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
-> +						cache,
-> +						sizeof(struct acpi_pptt_cache));
-> +
-> +			if (cache->flags & ACPI_PPTT_CACHE_ID_VALID &&
-> +			    cache_v1->cache_id == cache_id) {
-> +				acpi_put_table(table);
-> +				return level;
-> +			}
-> +		}
-> +	}
-> +
-> +	acpi_put_table(table);
-> +	return -ENOENT;
-> +}
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 8c3165c2b083..82947f6d2a43 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -1542,6 +1542,7 @@ int find_acpi_cpu_topology_cluster(unsigned int cpu);
->  int find_acpi_cpu_topology_package(unsigned int cpu);
->  int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
->  int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
-> +int find_acpi_cache_level_from_id(u32 cache_id);
->  #else
->  static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
->  {
-> @@ -1568,6 +1569,10 @@ static inline int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
->  {
->  	return -EINVAL;
->  }
-> +static inline int find_acpi_cache_level_from_id(u32 cache_id)
-> +{
-> +	return -EINVAL;
-> +}
->  #endif
->  
->  void acpi_arch_init(void);
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
