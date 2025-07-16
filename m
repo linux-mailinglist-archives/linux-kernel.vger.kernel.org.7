@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-733356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF1CB0738B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:34:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E49DB07394
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5831D179F6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D4C189C2C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8432F3636;
-	Wed, 16 Jul 2025 10:34:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365762F2C4C;
-	Wed, 16 Jul 2025 10:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA872BFC9B;
+	Wed, 16 Jul 2025 10:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzhtJfg0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499051953BB;
+	Wed, 16 Jul 2025 10:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752662041; cv=none; b=TeWe7o5+8XfULmnLJZVYXXx7P8aVJSe1PC79vquPKwmVpXJvGzdzw/NeRRYoGiRs0b5MyoDh5cQH+G46hj+Q3QGLXCWLTX0x/ksMiNYK+tQ9IsZXq0z5mIv8oKTXtzNo9XP0wTGLP+uJLlFVa2nnPytm1h8wZXRZBbqSkAiIZHY=
+	t=1752662228; cv=none; b=Zky03lHNPPMMOr96PV8gsUaTxmYvCzR/0wx2uftSlsg28CQ61PUh8723Tq/p3jdY4vVg2966THAMJ4+ygVTdI6swyEaR30Rs2kN2iFNhWj8+ZhxpoG6E14ur8RttfzWET2UX/JrZJnQlubhg9Z75x5VXeUXvm9eUC9vvtDnBxGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752662041; c=relaxed/simple;
-	bh=iHbQwUEQskSRpiTgjfjfk3baG4wJ79U65ioEyJgGVXE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DzT9UEJviy2yr4ZIW+QlmyWURFS2Xn0kHvOADMyGQOjyShmd5gSvmj3NzgHlHxRDCL14vVOjyvhdfUWTK12lRUyTVj00Sbnt+sY5zghhQnHpln2k/HnsYIxefLlqnbc6gMnKtuc6/M6FeY+mJuyvtatlVluPoOULZdgCheRJD0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6285F12FC;
-	Wed, 16 Jul 2025 03:33:51 -0700 (PDT)
-Received: from [10.57.0.109] (unknown [10.57.0.109])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D65E83F694;
-	Wed, 16 Jul 2025 03:33:56 -0700 (PDT)
-Message-ID: <c848cb8d-c040-4d4b-8d7b-558f2e041f0c@arm.com>
-Date: Wed, 16 Jul 2025 11:33:54 +0100
+	s=arc-20240116; t=1752662228; c=relaxed/simple;
+	bh=j8kv5dfLRfwnaSS0W2qeEJ+Bh2ETTIYU9oxV9ZBlXjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBTrLjJlWlnRARGqPZoHotJxCeM57EZk6hTYr5EJABXnXUfZQ6cYJLlGMj5NNcAIyjkYrdv6GzJTP7rA5uvjh4eLJym/HJGEQRG95A7EMlreQ0pk2xsVKE+iMMAdMTMD8NKuBiPW37LuH/7YlX3MTnAOqcF9lxRgDYr3EGQEduU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzhtJfg0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C7DC4CEF1;
+	Wed, 16 Jul 2025 10:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752662228;
+	bh=j8kv5dfLRfwnaSS0W2qeEJ+Bh2ETTIYU9oxV9ZBlXjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nzhtJfg0CmGUiIWofiXXu/5QgT+f/nYyONOSNO1X0ZK7XeQiTNBxxOJ+oalSp/gtX
+	 xEP6GO8GyCF+EYhBvive4tkJSwqSqLsUxB2yTl+oRhtybtKZkSu4wekrmtwZpaZVD8
+	 M8JQoSRD42Z//5lsUfqTS+trx99mUhnl48zr2F1C77LguPJu9rqqcY9LWfin9TWyRm
+	 FxHQgp9/2jIa0tvjDRFDm+Wg1cUGhEsng02abmQxsl4dkaMF+9AFhAm6/gYtWyTFnH
+	 5OsFfkNxSG3EmIOt7wboOgvpM3ROM/mMRkLaJewPHYvTcdJlfLboIobj5VMKQ91S80
+	 oZ4bXwkfum7zA==
+Date: Wed, 16 Jul 2025 11:37:03 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/arm4: Provide local defines for AT_HWCAP3
+Message-ID: <d8755ea7-cbec-4669-b3cb-2652d5e1fbd0@sirena.org.uk>
+References: <20250715-arm64-selftest-bodge-hwcap3-v1-1-541b54bc43bb@kernel.org>
+ <a717d6ee-3b24-47de-a1fc-90a4ad0a020d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: arm-smmu: Remove sdm845-cheza
- specific entry
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rob Clark <robin.clark@oss.qualcomm.com>,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250716-topic-goodnight_cheza-v2-0-6fa8d3261813@oss.qualcomm.com>
- <20250716-topic-goodnight_cheza-v2-3-6fa8d3261813@oss.qualcomm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250716-topic-goodnight_cheza-v2-3-6fa8d3261813@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5kCLaUznQgiWpTag"
+Content-Disposition: inline
+In-Reply-To: <a717d6ee-3b24-47de-a1fc-90a4ad0a020d@arm.com>
+X-Cookie: osteopornosis:
 
-On 2025-07-16 11:16 am, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> The firmware on SDM845-based Cheza boards did not provide the same
-> level of feature support for SMMUs (particularly around the Adreno
-> GPU integration).
-> 
-> Now that Cheza is being removed from the kernel (almost none exist at
-> this point in time), retire the entry as well.
-> 
-> Most notably, it's not being marked as deprecated instead, as there is
-> no indication that any more of those ~7 year old devboards will be
-> built.
 
-And even if someone did want to make a new batch, they'd have no excuse 
-not to fix the firmware by now...
+--5kCLaUznQgiWpTag
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Robin Murphy <robin.murphy@arm.com>
+On Wed, Jul 16, 2025 at 08:04:54AM +0530, Anshuman Khandual wrote:
+> On 16/07/25 2:41 AM, Mark Brown wrote:
 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->   Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 4 ----
->   1 file changed, 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> index 7b9d5507d6ccd6b845a57eeae59fe80ba75cc652..646814ec7d15f6d8a0136de73b7eaddae232ea64 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> @@ -132,10 +132,6 @@ properties:
->                 - qcom,sm7150-smmu-v2
->             - const: qcom,adreno-smmu
->             - const: qcom,smmu-v2
-> -      - description: Qcom Adreno GPUs on Google Cheza platform
-> -        items:
-> -          - const: qcom,sdm845-smmu-v2
-> -          - const: qcom,smmu-v2
->         - description: Marvell SoCs implementing "arm,mmu-500"
->           items:
->             - const: marvell,ap806-smmu-500
-> 
+> >  #define TESTS_PER_HWCAP 3
 
+> > +#ifndef AT_HWCAP3
+> > +#define AT_HWCAP3 29
+
+> Just wondering - would it be better to add a comment that this is a
+> temporary construct till libc headers pick up AT_HWCAP3 definitions.
+
+Possibly?  We tend to be against comments for this stuff in the tests
+though.  We don't 100% need people's libcs updating, if we can work out
+how to get the kernel header picked up in favour of the libc one
+robustly that'd be fine too.
+
+--5kCLaUznQgiWpTag
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh3gM8ACgkQJNaLcl1U
+h9BdhQf/fXXinBuS1YPKnswjW+xhZEzJ4w71pBnxGflHRm2ENLBmsYG+8cavaq2V
++xjYo6AtBUlYxXMCRTTBYjzomp/8fdoorOgUL+U7BgqNSlByQyA4H5gwo4geWveo
+jn/DE6zpOXxm3d/vsWFmL9i+61AoXr71YioCzO3PAB8+EBQ8bcCN/dNmX5e1ZF/z
+Kk7EbZ3JWwbgquPPGQyo5PK69J6s/lsRwm8giklYJEnZ9CRh4KbLU+Fd6zhy/dlA
+JneKgR66XIzLlo0WMr8z6R2yROHE/aQCNi02L+uCyGMES5So6n8+n0osoAFBlqka
+x7DjDbr97QU3jsw6iVfsX5YKvzY19Q==
+=7P+i
+-----END PGP SIGNATURE-----
+
+--5kCLaUznQgiWpTag--
 
