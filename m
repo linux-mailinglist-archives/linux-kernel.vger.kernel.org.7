@@ -1,172 +1,141 @@
-Return-Path: <linux-kernel+bounces-734064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8350EB07CA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:20:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B8FB07CCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96FB67AAB26
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:18:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F063AD231
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50AE29A300;
-	Wed, 16 Jul 2025 18:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F1B29B227;
+	Wed, 16 Jul 2025 18:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="L3B1MJn5"
-Received: from mail19.out.titan.email (mail19.out.titan.email [3.64.226.213])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="liNkbB/y"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4A3293C60
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 18:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.226.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301B629AAFA;
+	Wed, 16 Jul 2025 18:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752690008; cv=none; b=MYx9e5MvZQqNP4ai1Dhght9NGm7y2Rydci3PN0vpZRxTyNseBv0o+nlgnLT5034nrhrAyDs5+igA9pBmMDhxDbczHl8mU40uJ4sdiSAdgsYm9Kv6ZQq4RT+SyWeJZa8Sbsrf/J+/oiIeM0l3+9+N5cELfLwDd9vRrvMD5S8rctY=
+	t=1752690152; cv=none; b=VFEv0aNdN/tZMcecXY9PDIiFaYlwUUYD0ueDcmdu3Sr68QXVVr2BSclgYfbMkibGeIgEm3sl2kYksZgGzbCAeIIVJOX0Om2gPYpqcAKDP4eXLiPDQslSX+9SaxVPBmHNkH8W6SRDd265iKHIm2u9O2p2Ja8EVI1N3vtuKCL98b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752690008; c=relaxed/simple;
-	bh=UXDq76QcHfQcob22kc3Ti66fdIyDj1Elb1GfW4AzB+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OMI4Lq892XoCWnRImCmkUJRc+oVBCn/rR5YnwRFPC3hutGbSQGS1kbEBjvneLCXCMbeRnvk5ZuEowfBpEcRojDbfuNEozFwqjzrHERY4jg1BBj0I1o4wYYIuwZjpG5OL4lxAJn2oxquZDr4NEZy7PZ/bPDsSqsDhpjJPaberz3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=L3B1MJn5; arc=none smtp.client-ip=3.64.226.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
-Received: from localhost (localhost [127.0.0.1])
-	by smtp-out0101.titan.email (Postfix) with ESMTP id 18FCBA0005;
-	Wed, 16 Jul 2025 18:19:56 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=w0MYgwTmMLKpGiMa0739mReOceioqC+7wOwm6DcGSdU=;
-	c=relaxed/relaxed; d=techsingularity.net;
-	h=from:to:in-reply-to:date:cc:subject:mime-version:message-id:references:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1752689995; v=1;
-	b=L3B1MJn5rJF47ONjcpoHdYpsLe13LSw1oGk0QpZ8fD5EfSg/TJHDPV7inrk1libVzl1kH62x
-	7g848EKbLwBqOZZXst4Mavn5Tu/ZhX/UYS2pjX+WcOqaz7Xkv4DCooJsDw3OMENNKZUt/5ObaZX
-	/FgnCnmCG4rR3rq9Hd4VHHF8=
-Received: from mail.blacknight.com (ip-84-203-196-90.broadband.digiweb.ie [84.203.196.90])
-	by smtp-out0101.titan.email (Postfix) with ESMTPA id 37FEFA0002;
-	Wed, 16 Jul 2025 18:19:55 +0000 (UTC)
-Date: Wed, 16 Jul 2025 19:19:53 +0100
-Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Chris Mason <clm@meta.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/12] sched/deadline: Less agressive dl_server
- handling
-Message-ID: <khfhrdrxesp645dy7hphefvovhfarjke2qn5nvldyjavhg2j7p@vbv3jsskhc2j>
-References: <20250702114924.091581796@infradead.org>
- <20250702121158.465086194@infradead.org>
- <22aju4edxl4hf7tihzl6672cg234eam5kcgazxbf2ga5thsmm6@l2wwkn2wth7r>
- <3c67ae44-5244-4341-9edd-04a93b1cb290@meta.com>
+	s=arc-20240116; t=1752690152; c=relaxed/simple;
+	bh=0nl090ZOoinWZd1DwjTnbdyiFKG+e4UcxDg20wSOmbg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=IFW3o41gn1NTHqCA/2Wm5wRTtFJRPOh1gbfkaydzzKoqcLLKARUBwSR6J7czzehmaS37VVES/FqNZKw1qHRZTUYZIDSUVonc0IlQ5zruwKbpaGziIwFtLjZS6yrijWcEr7LFu+Qli//49LpFKgzSZYlI1/Ejmnaefv9AVQhUqNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=liNkbB/y; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-40a4de1753fso112858b6e.1;
+        Wed, 16 Jul 2025 11:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752690150; x=1753294950; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kviAVPIV6QiWJ6mSBU1RXU0icX9kGbvx4g3kYZu467c=;
+        b=liNkbB/yUILBz6AZNSFCbyfMsjZZ3BQbmR1lMngd2I1uGTdbHCM1mWsOfeiushPryu
+         l8Q5O6YvM/+SMU1ViumjeFJM2vXhm6lFgatZ+V++sy2JHQ37gAHCX4V12vPYWeZ3OfvO
+         YjFKhYuQ6hbKjZs1AFClczKxZ/AaFEZQhSpspK/xEbd1SFVgO+/GUrljIXALkcTAtI65
+         823/kQ7RdOD/UxJCQeuCmRsl+1t73ZTOZwCtFzwMrSU/WSboGsitOTXOZpGKnRBfRTOV
+         pPc6YT3wVtpTB8OXMIph4/W1kjqKVfj3G+sgTrLwjO6p+ZdPRpigYGgZ1xDZeqj//bzA
+         qRBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752690150; x=1753294950;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kviAVPIV6QiWJ6mSBU1RXU0icX9kGbvx4g3kYZu467c=;
+        b=eQA+iwzlNO3wdnimEeJS9j+im4fnyOdfOFLCmJy5pB8TfwesmUr7uJ2SHfDd0N5TYW
+         X9fwqxp9Ju8bW/nKBeYgGAEk+Wo2nwQIApGyyw4bf6KctRPIvBix41py8DUXQn/Berdn
+         ZAYtno0CGuXRdyZ71C76TZa/uMpN9In5oarPKMM+LjCEMQbiiJNLnm4AHlw7I7CVPTuC
+         RgEudNfv/3JiH7y/8FYrXtCrR0CvaSLvQmB+799STk+bj7JnK4Plj2+vgia/3AWxCTSV
+         +nFPfRkFWA7Ee2MBvBTjJjGMykjV+qVz3XQne1o/Vo6SDvf1iwAadGwQZSLuOvNyxDXx
+         AIcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEjsCIVdnUW3BWBMEGlIPj6DOfVmlFsA8n5kAJD3Ygvm0hIgNM4sJRE4NgKzltkMADszJkDYzBRkBJ@vger.kernel.org, AJvYcCWtg3W+IsIL4kPbMW6pIS4wRuOYygj+y2DoL/IAs5tJNRxB6r8Uhn2P+LX8v25GD792ICtbVpies3mYfrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT6AxgyhZAkUnGJ1HlK0ZsNpq8h54aZdcE8Hi3TdojIgsWFHzu
+	u2pYkEQSJD2kkgvUO8O14Aai1m0pV9pHoibSXCWaMZzXj6sC2wMquJFZ
+X-Gm-Gg: ASbGncvTCFilXl6zrQR9WHYvbIkIGAi1cTwDao/uw3Q81lzB8ZvUseqVI/cVuMu1aVO
+	Mw2tmEn7pd203x5N/bWXugEiBuTf9xsm0KNBwEtvkjJncs/+aCuqb5Gk27KZ3geITSMUZZw0r36
+	mNT9IUgGmJxh3OesntCXhutzcIhG2QaxzQYStz9J9INTrgOkXWwtCWJdR6n6TmONUAukNmo0ZDS
+	ml6D9ajNBmHeO3Ei8QCQVu3SG1e21NIPg5IbTPuN+ttGTofBF68hL21gmm3WoHvIu0op6KLxJtq
+	8YeVJ74jCboi4ne7o9FJZuec88ikfwegD/N9QUkd8me8rKIKZfS712KQAaaVVeDBd+se2lnnuFr
+	k8UrHYsdM
+X-Google-Smtp-Source: AGHT+IFx9+UvCZpBpSMindy2yzPwVLH4FcTuwv6wnARoO6WOcLt4gVPyFH4qADi0Hk7H9lfiXsliUg==
+X-Received: by 2002:a05:6808:15a8:b0:408:fe75:419f with SMTP id 5614622812f47-41e28c748b2mr426539b6e.13.1752690150075;
+        Wed, 16 Jul 2025 11:22:30 -0700 (PDT)
+Received: from fedora ([2804:14c:64:af90::1000])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-613d9f14472sm2317697eaf.29.2025.07.16.11.22.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 11:22:29 -0700 (PDT)
+From: Marcelo Moreira <marcelomoreira1905@gmail.com>
+To: cem@kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] xfs: Replace strncpy with strscpy
+Date: Wed, 16 Jul 2025 15:20:37 -0300
+Message-ID: <20250716182220.203631-1-marcelomoreira1905@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <3c67ae44-5244-4341-9edd-04a93b1cb290@meta.com>
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1752689995890563792.2206.3876445093170258710@prod-euc1-smtp-out1002.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=FN3hx/os c=1 sm=1 tr=0 ts=6877ed4b
-	a=+XWPlUOTt03IZrtNKHUAqA==:117 a=+XWPlUOTt03IZrtNKHUAqA==:17
-	a=Q9fys5e9bTEA:10 a=CEWIc4RMnpUA:10 a=VwQbUJbxAAAA:8 a=FOH2dFAWAAAA:8
-	a=NEAV23lmAAAA:8 a=VabnemYjAAAA:8 a=98rf8SrY6nUp-J8-n5cA:9
-	a=PUjeQqilurYA:10 a=gKebqoRLp9LExxC7YDUY:22
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 15, 2025 at 10:55:03AM -0400, Chris Mason wrote:
-> On 7/14/25 6:56 PM, Mel Gorman wrote:
-> > On Wed, Jul 02, 2025 at 01:49:26PM +0200, Peter Zijlstra wrote:
-> >> Chris reported that commit 5f6bd380c7bd ("sched/rt: Remove default
-> >> bandwidth control") caused a significant dip in his favourite
-> >> benchmark of the day. Simply disabling dl_server cured things.
-> >>
-> > 
-> > Unrelated to the patch but I've been doing a bit of arcology recently
-> > finding the motivation for various decisions and paragraphs like this
-> > have been painful (most recent was figuring out why a decision was made
-> > for 2.6.32). If the load was described, can you add a Link: tag?  If the
-> > workload is proprietary, cannot be described or would be impractical to
-> > independently created than can that be stated here instead?
-> > 
-> 
-> Hi Mel,
-> 
-> "benchmark of the day" is pretty accurate, since I usually just bash on
-> schbench until I see roughly the same problem that I'm debugging from
-> production.  This time, it was actually a networking benchmark (uperf),
-> but setup for that is more involved.
-> 
-> This other thread describes the load, with links to schbench and command
-> line:
-> 
-> https://lore.kernel.org/lkml/20250626144017.1510594-2-clm@fb.com/
-> 
-> The short version:
-> 
-> https://github.com/masoncl/schbench.git
-> schbench -L -m 4 -M auto -t 256 -n 0 -r 0 -s 0
-> 
-> - 4 CPUs waking up all the other CPUs constantly
->   - (pretending to be network irqs)
+The `strncpy` function is deprecated for NUL-terminated strings as
+explained in the "strncpy() on NUL-terminated strings" section of
+Documentation/process/deprecated.rst.
 
-Ok, so the 4 CPUs are a simulation of network traffic arriving that can be
-delivered to any CPU. Sounds similar to MSIX where interrupts can arrive
-on any CPU and I'm guessing you're not doing any packet steering in the
-"real" workload. I'm also guessing there is nothing special about "4"
-other than it was enough threads to keep the SUT active even if the worker
-tasks did no work.
+In `xrep_symlink_salvage_inline()`, the `target_buf` (which is `sc->buf`)
+is intended to hold a NUL-terminated symlink path. The original code
+used `strncpy(target_buf, ifp->if_data, nr)`, where `nr` is the maximum
+number of bytes to copy. This approach is problematic because `strncpy()`
+does not guarantee NUL-termination if the source string is truncated
+exactly at `nr` bytes, which can lead to out-of-bounds read issues
+if the buffer is later treated as a NUL-terminated string.
+Evidence from `fs/xfs/scrub/symlink.c` (e.g., `strnlen(sc->buf,
+XFS_SYMLINK_MAXLEN)`) confirms that `sc->buf` is indeed expected to be
+NUL-terminated. Furthermore, `sc->buf` is allocated with
+`kvzalloc(XFS_SYMLINK_MAXLEN + 1, ...)`, explicitly reserving space for
+the NUL terminator.
 
-> - 1024 total worker threads spread over the other CPUs
+`strscpy()` is the proper replacement because it guarantees NUL-termination
+of the destination buffer, correctly handles the copy limit, and aligns
+with current kernel string-copying best practices.
+Other recommended functions like `strscpy_pad()`, `memcpy()`, or
+`memcpy_and_pad()` were not used because:
+- `strscpy_pad()` would unnecessarily zero-pad the entire buffer beyond the
+  NUL terminator, which is not required as the function returns `nr` bytes.
+- `memcpy()` and `memcpy_and_pad()` do not guarantee NUL-termination, which
+  is critical given `target_buf` is used as a NUL-terminated string.
 
-Ok.
+This change improves code safety and clarity by using a safer function for
+string copying.
 
-> - all the workers immediately going idle after waking
+Signed-off-by: Marcelo Moreira <marcelomoreira1905@gmail.com>
+---
+ fs/xfs/scrub/symlink_repair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So 0 think time to stress a corner case.
-
-> - single socket machine with ~250 cores and HT.
-> 
-
-To be 100% sure, 250 cores + HT is 500 logical CPUs correct? Using 1024 would
-appear to be an attempt to simulate strict deadlines for minimal processing
-of data received from the network while processors are saturated. IIUC,
-the workload would stress wakeup preemption, LB and finding an idle CPU
-decisions while ensuring EEVDF rules are adhered to.
-
-> The basic recipe for the regression is as many CPUs as possible going in
-> and out of idle.
-> 
-> (I know you're really asking for these details in the commit or in the
-> comments, but hopefully this is useful for Link:'ing)
-> 
-
-Yes it is. Because even adding this will capture the specific benchmark
-for future reference -- at least as long as lore lives.
-
-Link: https://lore.kernel.org/r/3c67ae44-5244-4341-9edd-04a93b1cb290@meta.com
-
-Do you mind adding this or ensure it makes it to the final changelog?
-It's not a big deal, just a preference. Historically there was no push
-for something like this but most recent history was dominated by CFS.
-There were a lot of subtle heuristics there that are hard to replicate in
-EEVDF without violating the intent of EEVDF.
-
-I had seen that schbench invocation and I was 99% certain it was the
-"favourite benchmark of the day".  The pattern seems reasonable as a
-microbench favouring latency over throughput for fast dispatching of work
-from network ingress to backend processing. Thats enough to name a mmtests
-configuration based on the existing schbench implementation. Maybe something
-like schbench-fakenet-fastdispatch.  This sort of pattern is not even that
-unique as such as IO-intensive workloads may also exhibit a similar pattern,
-particularly if XFS is the filesystem. That is a reasonable scenario
-whether DL is involved or not.
-
-Thanks Chris.
-
+diff --git a/fs/xfs/scrub/symlink_repair.c b/fs/xfs/scrub/symlink_repair.c
+index 953ce7be78dc..ce21c7f0ef54 100644
+--- a/fs/xfs/scrub/symlink_repair.c
++++ b/fs/xfs/scrub/symlink_repair.c
+@@ -185,7 +185,7 @@ xrep_symlink_salvage_inline(
+ 		return 0;
+ 
+ 	nr = min(XFS_SYMLINK_MAXLEN, xfs_inode_data_fork_size(ip));
+-	strncpy(target_buf, ifp->if_data, nr);
++	strscpy(target_buf, ifp->if_data, XFS_SYMLINK_MAXLEN + 1);
+ 	return nr;
+ }
+ 
 -- 
-Mel Gorman
-SUSE Labs
+2.50.0
+
 
