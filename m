@@ -1,126 +1,180 @@
-Return-Path: <linux-kernel+bounces-733821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990F7B07992
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:22:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8435B07966
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2181894A96
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:17:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A740D7AFF18
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4372857E2;
-	Wed, 16 Jul 2025 15:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079DD26D4D8;
+	Wed, 16 Jul 2025 15:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="DSPExOo6"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="BhZtTmb7"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DA1199939;
-	Wed, 16 Jul 2025 15:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B3914F98
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679017; cv=none; b=K9RfHrC8bz6JKh+9jxuCtcAN0rKJloWWm18+CsLNzEA/YxkcxuU8hXDy2VMxdZGwwFTZyiobDyfOwL/HIGDvgroQMT8QJs2TSe+RHWGYxaXtgdRtqchael/th9quCzjAH+uFdYGX77EWQ5m25mfRGe6NpPe2JggYBX2OSR5zkp8=
+	t=1752679082; cv=none; b=ooR67D6qRRtRLfkE+XmQRkrAsJ3q7GwPkHiUNiafzCpxqxW9Cv4fwk9HCTSstIRWr4aG+7eOR3bqXw//W6mBMBJdf4K+mQgDyTZYnrCcvSskjHyoHx2ocKpgUl1RS2mJTkveeBOvnfQ4QoQYJia/b1rVkJKpsXEZrFi0vDR7g5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679017; c=relaxed/simple;
-	bh=MAPCXd746dLBijiuAG9wc56q0nopYPabJGjrqlYl2NE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hjykyJTUp7ejM5x6cm/AmIBukA01XuHDkuoras6kRJ2pOt8boG2XKqaIX3/pDvRi+E+XOri6Jb715tXIq0l8wnAR4FOzo08jIn8KYoEZ+gWdFXgTKhfH2IHwgF6ZcOKR/QVc9SnCTGJxHdvWkoA2zxHTOB8k7kUx3DQ1QSmy0R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=DSPExOo6; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a575a988f9so3964247f8f.0;
-        Wed, 16 Jul 2025 08:16:56 -0700 (PDT)
+	s=arc-20240116; t=1752679082; c=relaxed/simple;
+	bh=UmKJT44q8B8tkOYqsIXVCEcob4pl4PUJEQSmsPyn+hk=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=VF2RK/YIeQSeytdRiAA08abTdzAR5jNmTJClgoSbucdlGemJBk5JVGS3rnA8ZoTvhadyd0OfvQeVpzZY1vUPboYUgCEimTk1r5zYgs5tZcxi9mASYg9RX9eVKg9fONDs1PbGLr+ZkAY2QLrU+G1CmIadMKDSKyP3xWKOFnHcECo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=BhZtTmb7; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so7743305a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:17:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1752679015; x=1753283815; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=avBWJ25ynfi1WXdhKE1sihofZACgr0iOjzJgTGpVu4I=;
-        b=DSPExOo6+PXB2D7J0QBHoD2dE3oLCVUhruyPM+Ii2V0pSrRn5c0xA5OAATll9w5G/p
-         u11RwOSl9bgkb/cy8nzE4eINEmdF2aLumQxru8FFHqK3OnjnRVMbjRO17uY/5PT6ll0c
-         AVu3cv7nqLVD8jqA68E+JY8aNji12EZmBquc+tRRLvHDxPfg10jvCxfkIH0wJwsmtMKi
-         IEWCVQgP5I7Y0rGULLYkGjgLGNJo7AjLRLZE6ULgMnGJ6HUqYcT2DsjEvFgkJo2JjNA4
-         lMvQ5ECqAiRt8Ui4/q/TzRO/c4kStnj2amFnYF5+QqKKRt5hM9pBHWSjlDn+2FinElSk
-         6Ckw==
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1752679079; x=1753283879; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nIjarP2qmIxEUNr1tc1uUPfdZWXV9rUJNqLMiF74jXY=;
+        b=BhZtTmb7sjbxnXaIm6+c4QF0N91mOJroQHgF66JyOsI05onDPmp4pc7iS5Szl7qQwV
+         MEopJ5BJ7Z+jhY2NqjiyP+P950YnBunfAQUvf3SIP5b76ZIYIDVEx+4vDyjHhZtAJ3Qr
+         SnkBN3mO6ljwcPQ60U5LfKUxLNZD4Raw3Asa3WGhhI15J9m+Hwvj7D3nD7a3Vkc5I+xZ
+         Fk2cUBs+7ysWvQ1FR0tfdGpk+f0FiutZrsGJqiAcEsz6lfp9fFaDS2JQHCBsk6BCVopb
+         L9g+IwzwiduPToH6rjHWeSVFh9CXBkLecy7gymXCyin9pnfwlkbNGTCSCqk4I/2SJZCI
+         opPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752679015; x=1753283815;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=avBWJ25ynfi1WXdhKE1sihofZACgr0iOjzJgTGpVu4I=;
-        b=o3E2/HGqgCV3SY+uGh9le8SWcuZZe2Reoq2UFxn5BatIDMg7rI+OtSo5241S6eYE6q
-         bIxbBqau44TY9C7S66CfiV6h7nUmeKhXgdhmz2MsCWHqCVPzlIHusLLHd+Rvjs26aWuy
-         tRfynK3ZN8npS9XhQu+ZWQY1KspgpQoAMv6tGY6AcNKXbnVjAC6AW23r9WKKkRBYz1RI
-         flBhClV4BKGcL2szkM+LAmkiiDnc7jWIGHmGH0tBwnG7cuknWOt9UeHT67MKGvXeSLpL
-         ie6JiuJnwv+Ub37dgGVMhpeSjwqStN2EwUjbCu4/aQxIv+Pnly+JyPH3FQKDuPM3TMiy
-         1vvA==
-X-Forwarded-Encrypted: i=1; AJvYcCULkwOxPviu4f4Ny60epOhRi/eQT1bic4OvkK5GnAStVmfqGvOvj/YsPdRnYLOYU/OrNeJtFHeTvVArx/s=@vger.kernel.org, AJvYcCVDiFc6sZ5BHh5ljgnHvwTQyDJid+kfo5bKuow0xVjVmATKf8yqrBjqrEUaMPH91nLq4FdI9epB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw49gtT8qzZKPWG/Y1nrruVftsYmJ7K4wFf7lkmDIjpfrw5amcM
-	ePkV2lBsfwGtwguptLfcZntBEDiUWhbz/GXR0rUGLddlN6YBjZsSVcg=
-X-Gm-Gg: ASbGncsFKWaK6wdA0u06cadaM6RtLgFnyexhzjumm0x622eWXwTzUB06dcos/MIDhza
-	G52un1onwnjV+HSui/6/Ip9IeCEP5ec72aWA9xCe6wNSrnwnQr/XP5J4TnLIlRVOUCbtweCrykw
-	GSDOpGaGKvIfx3dUT89FD92CZ5b6RGw/xwB4X6IYE9yRgd4AQg3uY7vvv+pQ+oRhyXjfP04uQZm
-	H1SThN7ptrVcj7mgh+A0A1fiFtb144OHMlr7VSK5j6mrrWMa710N6QhGjyfPIpuWRwOMAQQqOhU
-	SBxU9Abnv3w9lOJW4YgtXxHnWcVHOLxNh9wNX2tT3+0Uwwo4sDKPMfxMp+8woddpTJNiiHlLGIX
-	Zz5m5PMea3st4LAxef1awcImlGpxghQDjdxrzWobqyG3+XeGO7ejpwQGYXLdgUTFJKPHgpvfGyJ
-	Ci
-X-Google-Smtp-Source: AGHT+IEEwF9/Vt1NN9RTGjqLRAvAvAprCYcNaMdoOJjP5OOWxXTAo0qCZRqZKCsXUdsgjQgLX+bBVw==
-X-Received: by 2002:a05:6000:4a06:b0:3a4:dc32:6cbc with SMTP id ffacd0b85a97d-3b60dd53fe5mr3490110f8f.20.1752679014473;
-        Wed, 16 Jul 2025 08:16:54 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ac571.dip0.t-ipconnect.de. [91.42.197.113])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e25e75sm18016432f8f.87.2025.07.16.08.16.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 08:16:53 -0700 (PDT)
-Message-ID: <da83a1d7-3609-4fda-932e-0a4e41be890c@googlemail.com>
-Date: Wed, 16 Jul 2025 17:16:52 +0200
+        d=1e100.net; s=20230601; t=1752679079; x=1753283879;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nIjarP2qmIxEUNr1tc1uUPfdZWXV9rUJNqLMiF74jXY=;
+        b=GEGVSLUO/o/LIIfD7TbD9KmtamNLuixHq9Da4Yvu+3ckizQW8u/HU6UKzSP8OrMWJq
+         mCGsbtSDWI3ZXGO4MG1yQkRIYmRhdRWVvqVgYCDQNSb4xkqU4VSdrcZ4CBJTVjjNE4ba
+         Lk3tqmErJ9A12sNkBmZvR8P/007mhWKpzdUmAop1KjjH6tN8LosbwVsIuubIiw8R7RnT
+         geEjH0B2K9MytKm8VdDcjjHfoW/dmvF/wFFMPbaSYkIXlqa+wGjcfFF/hbSQAZjCcax9
+         yQgYglfLHIzdlVuIcQhuHbveGSUpGVGKbIpYzkcLMZc0BGmPxLPz//ihiYDPDQH+41I4
+         cotg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzGA5estDpPBOSZ8W0ZksI57wY7UUeikuYiWIqnKNuNV3mJuOjsybswqRON54PXeFWx9OdSjQuWvsGZqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBi35gc9vuO0sd29IocjAXYnaYRxQXKRbmAyJ/znBNAXIgoCNx
+	xNU+88olAnARa6+0ZRvuWIVPx9d38iknsBfwbT1kGqO/5cng88NcFyjAvE6qM+JkI00=
+X-Gm-Gg: ASbGncvZoJ1bOAMK77XkDBRVfMJORoRUwiUs9NMXJ5H+VWIvt/3Xlwty3pICum5EFng
+	s2wRK06LBfZ+2yUlVZb92Kmwpfb1exsz2yQvSEvoqCuMihE2K6PZtspnzU1QS7ioJ/RvePwNrZa
+	ASZ9VvyYruMbWDA7SjuA/OlMv7P7M4XhvEBUvUmAfrKGinwEQu1IBOzAUB1EzcJ3jkM4IN1C/5N
+	tV/pzAcpCWCt6hBt0R2X8IVEW2a8nfeLsXva81MZVaeJJxLqPp9RL1W2vKUW/wAjU+Ij8C9EUsU
+	qAOsusO6qpsnu1NqlVO7Ifu1GC8btrJuqBm7LWLNLaXODVh9Eb3MgRlZtTNFjawSbSQKQQEaocP
+	t/QzlSNe4LMpodXVl+erG
+X-Google-Smtp-Source: AGHT+IGQvipCL8I7Jp/o0kQbtdNtCpkDRd45ElcLm4C7rqFsQkVF1I178icC+V6YopeF2v7qVU9sWg==
+X-Received: by 2002:a17:90b:2684:b0:311:ff18:b84b with SMTP id 98e67ed59e1d1-31c9f47c7d7mr4052918a91.25.1752679079182;
+        Wed, 16 Jul 2025 08:17:59 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:500::4:b02a])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23de4323cd5sm127190795ad.126.2025.07.16.08.17.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 08:17:58 -0700 (PDT)
+Date: Wed, 16 Jul 2025 08:17:58 -0700 (PDT)
+X-Google-Original-Date: Wed, 16 Jul 2025 08:17:56 PDT (-0700)
+Subject:     Re: [PATCH] riscv: Stop considering R_RISCV_NONE as bad relocations
+In-Reply-To: <20250711134909.GA73430@iscas.ac.cn>
+CC: alexghiti@rivosinc.com, alexghiti@rivosinc.com, Nelson Chu <nelson@rivosinc.com>,
+  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, Alexandre Ghiti <alex@ghiti.fr>,
+  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: wangjingwei@iscas.ac.cn
+Message-ID: <mhng-4C27A130-61EA-4AA5-A2A6-506D0CB22B7B@palmerdabbelt-mac>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/111] 6.6.99-rc2 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Jann Horn <jannh@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-References: <20250715163542.059429276@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250715163542.059429276@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Am 15.07.2025 um 18:37 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.99 release.
-> There are 111 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, 11 Jul 2025 06:49:09 PDT (-0700), wangjingwei@iscas.ac.cn wrote:
+> Hi all,
+>
+> On Thu, Jul 10, 2025 at 11:43:00AM -0700, Palmer Dabbelt wrote:
+>> On Thu, 10 Jul 2025 01:34:31 PDT (-0700), alexghiti@rivosinc.com wrote:
+>> > Even though those relocations should not be present in the final
+>> > vmlinux, there are a lot of them. And since those relocations are
+>> > considered "bad", they flood the compilation output which may hide some
+>> > legitimate bad relocations.
+>> >
+>> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>> > ---
+>> >  arch/riscv/tools/relocs_check.sh | 4 +++-
+>> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/arch/riscv/tools/relocs_check.sh b/arch/riscv/tools/relocs_check.sh
+>> > index baeb2e7b2290558d696afbc5429d6a3c69ae49e1..742993e6a8cba72c657dd2f8f5dabc4c415e84bd 100755
+>> > --- a/arch/riscv/tools/relocs_check.sh
+>> > +++ b/arch/riscv/tools/relocs_check.sh
+>> > @@ -14,7 +14,9 @@ bad_relocs=$(
+>> >  ${srctree}/scripts/relocs_check.sh "$@" |
+>> >  	# These relocations are okay
+>> >  	#	R_RISCV_RELATIVE
+>> > -	grep -F -w -v 'R_RISCV_RELATIVE'
+>> > +	#	R_RISCV_NONE
+>> > +	grep -F -w -v 'R_RISCV_RELATIVE
+>> > +R_RISCV_NONE'
+>> >  )
+>>
+>> I'm not super opposed to it, but is there a way to just warn once or
+>> something?  It's probably best to still report something, as there's likely
+>> some sort of toolchain issue here.
+>>
+>
+> I think Alexandre's approach is ideal from the kernel's perspective.
+> This doesn't really seem to be a bug; I see it more as a case where the
+> toolchain's handling of R_RISCV_NONE doesn't quite match the kernel's
+> expectations.
+>
+> I found the large number of R_RISCV_NONE relocs only appear in the final
+> vmlinux. The key difference is the kernel build's --emit-relocs flag
+> and the *(.rela.text*) directive in vmlinux.lds.S. This combination
+> forces all relocation entries, including those marked as R_RISCV_NONE,
+> to be written verbatim into the final vmlinux.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Ah, OK, if it's coming from "--emit-relocs" then actually it seems fine.  
+So I think this is the right way to go, then.  It's on fixes, should 
+show up for Linus later this week.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
-
-
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+> I traced this back to BFD's implementation and found that during
+> relaxation (e.g., when an auipc+jalr is optimized to a jal), the linker
+> modifies the first reloc slot to R_RISCV_JAL and marks the second,
+> now-useless slot as R_RISCV_DELETE. In the cleanup phase, to prevent
+> reprocessing, BFD then changes the cleaned-up DELETE marker to
+> R_RISCV_NONE. This is how, when the kernel specifies --emit-relocs,
+> these R_RISCV_NONE markers get preserved in the final .rela.text section.
+>
+> To truly change this, it seems to depend on whether the binutils
+> is willing to add a stage to clean up these harmless but
+> useless markers.
+>
+> If possible, I was thinking we could perhaps iterate and remove the
+> R_RISCV_NONE entries from .rela.text before the alignment pass.
+>
+> But if there's no agreement on the BFD side, Alexandre's approach still
+> seems correct and aligns with the psABI, where R_RISCV_NONE has no
+> operational meaning.
+>
+>> Also: if you can reproduce it, Nelson can probably fix it.  I'm CCing him.
+>>
+>
+> Reproducing the issue is simple: you just need a call instruction to
+> create a relaxation opportunity, then link with --emit-relocs and a
+> linker script that includes *(.rela.text*). :)
+>
+> For convenience, I've put a minimal, self-contained reproduction case
+> here: https://gist.github.com/Jingwiw/762606e1dc3b77c352b394e8c5e846de
+>
+>> >
+>> >  if [ -z "$bad_relocs" ]; then
+>>
+>
+> Reviewed-by: Jingwei Wang <wangjingwei@iscas.ac.cn>
+>
+> Thanks,
+> Jingwei
 
