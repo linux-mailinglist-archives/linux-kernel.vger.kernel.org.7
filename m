@@ -1,164 +1,182 @@
-Return-Path: <linux-kernel+bounces-732986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1838B06E78
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:04:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14560B06E7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C93562937
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:04:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBF5E7A6DB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5F1289831;
-	Wed, 16 Jul 2025 07:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E646289E04;
+	Wed, 16 Jul 2025 07:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QVStu8eP"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFG6zI2u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE9D2857CD;
-	Wed, 16 Jul 2025 07:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58D02857CD;
+	Wed, 16 Jul 2025 07:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752649489; cv=none; b=R4PLcl24Es6hb7SS88QJUm+ZY8HVWBLsNkhZqraf+zA/xPGvvxQ1T+xZZGXnxVnF8qsD+lgG6LcPDNAENAmDTxN3AeIUAuRS1vy2RdvVr23I2mFn3fdBZIvtvtzpOuhWHF+fCqGCnoWAfEyiSHGKZB6w+sfoxqjuVuZmVT4iPWI=
+	t=1752649496; cv=none; b=EFkTqZVIS69IZnlRb6DU5ARZ4jThdOxiLeIUCIXnayMD8GSPdC6NMOTVvRhS/aamp8P4Kxfjh5Wb3fkEWyhejp0zDj/CwKNApmrKOorPicJwvKjUEkzt5KK9NF6Nw3OKX/tJXppHrZCQcceUf+DuYypzM6M8nVXSNyseVnzGjQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752649489; c=relaxed/simple;
-	bh=mVpCntK75xS5jzzTpeuJ3CoLQsH6KBrp3X5Ed3AgC5U=;
+	s=arc-20240116; t=1752649496; c=relaxed/simple;
+	bh=n5jDS6P6Z09q/E7TBP2aC3Jqc7A6owgR1MsLzr1mN+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQj15pN2vM6yu18RH9pQDPAIKqOhX639QOTYRO6rpBZDxQFqHZLT5hex8rG5DZd13jTBCmyQmScrh/N3tVmec2BvCkiPVUJuhqCkuwWS4M0U8WOM3OYXVQlEHeBy+jGhNscpZguq2/zu9Oxf27WZ0ciMTRch9KmW4DIGRs04SWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QVStu8eP; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B172C14000C1;
-	Wed, 16 Jul 2025 03:04:46 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 16 Jul 2025 03:04:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1752649486; x=1752735886; bh=PUDpJ8glISb5rW5RwOBPI0cKFoJihOy1ltu
-	IeJ0T9XA=; b=QVStu8ePl8+cSqRx3Sg+fo3N55GNPrbIeL2VauUH7CO8t/x1IVm
-	wYvciHjA9mO4cKZ81UOSmOIP5Dy+uvE0gpMkuYgsQ+ZR/rJalv15Kkae45632+HN
-	5yLDslM2+u6Mbif0t2rB3v7T91zymt1GiOCeQZiBLQ2f7LgeyFNrpdLD+gwgyhB7
-	y5sZWRZB4hu43OV6E9CMcZfP3epnMXB1A6PcnG1dDUtNw+PEaPjgqDbLzJsttyeK
-	TU1BiYpDa+jZFTxP/GiiJvCdEuvCKJNAB/norStjHtsMMM7xfJ1AUsd3EhdjI+kG
-	ginF3RCgVvfM5t7Lpc6WF+0Qv8+ZcvZeDVg==
-X-ME-Sender: <xms:DU93aBAg0CoHWR3q4e0VUAY39w8V5sosQ2qOJiKXl6kMeSTLuBFBSQ>
-    <xme:DU93aJkRFj8XCjTMeIdV70zFy1zck6Uez7o8zwsU1eEz0jzvRZbK9LQAUUuWMnJx5
-    9ySVPGVg6ngzQI>
-X-ME-Received: <xmr:DU93aBhA66QtQNklu1TPz1VhGfavxDjD50OvOoK90w-MfUUD2DvjHm5i-2af>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjedtjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefkughoucfutghh
-    ihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucggtffrrghtthgvrh
-    hnpeevgeeguefgudeuudeuveelgefgjeeftdelgeffgfejjeduudfffefftddthedtteen
-    ucffohhmrghinhepshihiihkrghllhgvrhdrrghpphhsphhothdrtghomhenucevlhhush
-    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihgu
-    ohhstghhrdhorhhgpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepughonhhgtghhvghntghhvghnvdeshhhurgifvghirdgtohhmpdhrtghp
-    thhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumh
-    griigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
-    ephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhirhhisehrvghsnhhu
-    lhhlihdruhhspdhrtghpthhtohepohhstghmrggvshelvdesghhmrghilhdrtghomhdprh
-    gtphhtthhopehlihhnuhigsehtrhgvsghlihhgrdhorhhg
-X-ME-Proxy: <xmx:DU93aDi9zfOPu3EFbcYCWJe7p_gqtktO0jRNigK3nTNS3wavAXd7-Q>
-    <xmx:DU93aDvU_0MXSyh4mZYjIma6BoaSsALfMA723BA2LQXO_g6v68wGGQ>
-    <xmx:DU93aLusdWQyxmtXXMEtgvpF-AAP_i-IfrRWv0vGPqqcXUxWhLZRcA>
-    <xmx:DU93aBrVLhZYLSMBhxPr3bWk3OMyrZAEAY6SGYO_lNW6-GzSSbubww>
-    <xmx:Dk93aMUiT5Zi42GJtUVllf40mSoDSF--9goV3psyA0P5_RsNy6e7TO12>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Jul 2025 03:04:44 -0400 (EDT)
-Date: Wed, 16 Jul 2025 10:04:42 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Dong Chenchen <dongchenchen2@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, jiri@resnulli.us,
-	oscmaes92@gmail.com, linux@treblig.org, pedro.netdev@dondevamos.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	zhangchangzhong@huawei.com
-Subject: Re: [PATCH net v3 1/2] net: vlan: fix VLAN 0 refcount imbalance of
- toggling filtering during runtime
-Message-ID: <aHdPCpsUUVH-p-mX@shredder>
-References: <20250716034504.2285203-1-dongchenchen2@huawei.com>
- <20250716034504.2285203-2-dongchenchen2@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eNRJaMLisH5LmXrQU2V9RbzmsCOWZf/G5QEVYquSM+ZxWCeXb1ZkoqdCl7kWnUg9Ls+6+nKalwF6/1RBYcBUrg6qaTtQnBVQLRnzpPrIPqzMzk78j640vJuHAUduNM9bBjU3vctid9gI0vhNa2feCem2lwXoR9owjqHYO9WEfXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFG6zI2u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9143C4CEF0;
+	Wed, 16 Jul 2025 07:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752649494;
+	bh=n5jDS6P6Z09q/E7TBP2aC3Jqc7A6owgR1MsLzr1mN+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VFG6zI2u3XoXatQkR4SlZo52it/lESL/DyhxEF0NS77I3sT4leBM8M05KCYXtTesu
+	 BorGIFj7gurVfgONyWkOcyO1uw81eoyit106tHI6NsrirMjR3jB7QaItKM8FpP5IU6
+	 zGkh4I9oq4dE+2M3sXxfyxJ9RwSBH01O36TTvMawiFRFPZnNr4TPEDpeLA5KYweCCy
+	 qPY8RlIRorDHmHMLwKQK5eWp4XKMFSdHnAz8lC4YXzX39fVTMiqblPaX00Jkh8/U9L
+	 A30BmTkcku0hSCFi7Bk+dtU9eJl2slthDeh1Gz7tZQt+ADY2YV2mTtuESR+O86LVkL
+	 /1kJ73qVsWHlg==
+Date: Wed, 16 Jul 2025 09:04:51 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Arseniy Velikanov <me@adomerle.pw>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: mediatek: Describe MT6789
+ clock controllers
+Message-ID: <20250716-manipulative-dormouse-of-current-9af4e6@krzk-bin>
+References: <20250715222221.29406-1-me@adomerle.pw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250716034504.2285203-2-dongchenchen2@huawei.com>
+In-Reply-To: <20250715222221.29406-1-me@adomerle.pw>
 
-On Wed, Jul 16, 2025 at 11:45:03AM +0800, Dong Chenchen wrote:
-> Assuming the "rx-vlan-filter" feature is enabled on a net device, the
-> 8021q module will automatically add or remove VLAN 0 when the net device
-> is put administratively up or down, respectively. There are a couple of
-> problems with the above scheme.
-> 
-> The first problem is a memory leak that can happen if the "rx-vlan-filter"
-> feature is disabled while the device is running:
-> 
->  # ip link add bond1 up type bond mode 0
->  # ethtool -K bond1 rx-vlan-filter off
->  # ip link del dev bond1
-> 
-> When the device is put administratively down the "rx-vlan-filter"
-> feature is disabled, so the 8021q module will not remove VLAN 0 and the
-> memory will be leaked [1].
-> 
-> Another problem that can happen is that the kernel can automatically
-> delete VLAN 0 when the device is put administratively down despite not
-> adding it when the device was put administratively up since during that
-> time the "rx-vlan-filter" feature was disabled. null-ptr-unref or
-> bug_on[2] will be triggered by unregister_vlan_dev() for refcount
-> imbalance if toggling filtering during runtime:
-> 
-> $ ip link add bond0 type bond mode 0
-> $ ip link add link bond0 name vlan0 type vlan id 0 protocol 802.1q
-> $ ethtool -K bond0 rx-vlan-filter off
-> $ ifconfig bond0 up
-> $ ethtool -K bond0 rx-vlan-filter on
-> $ ifconfig bond0 down
-> $ ip link del vlan0
-> 
-> Root cause is as below:
-> step1: add vlan0 for real_dev, such as bond, team.
-> register_vlan_dev
->     vlan_vid_add(real_dev,htons(ETH_P_8021Q),0) //refcnt=1
-> step2: disable vlan filter feature and enable real_dev
-> step3: change filter from 0 to 1
-> vlan_device_event
->     vlan_filter_push_vids
->         ndo_vlan_rx_add_vid //No refcnt added to real_dev vlan0
-> step4: real_dev down
-> vlan_device_event
->     vlan_vid_del(dev, htons(ETH_P_8021Q), 0); //refcnt=0
->         vlan_info_rcu_free //free vlan0
-> step5: delete vlan0
-> unregister_vlan_dev
->     BUG_ON(!vlan_info); //vlan_info is null
-> 
-> Fix both problems by noting in the VLAN info whether VLAN 0 was
-> automatically added upon NETDEV_UP and based on that decide whether it
-> should be deleted upon NETDEV_DOWN, regardless of the state of the
-> "rx-vlan-filter" feature.
+On Wed, Jul 16, 2025 at 02:22:20AM +0400, Arseniy Velikanov wrote:
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt6789-afe
+> +          - mediatek,mt6789-camsys
+> +          - mediatek,mt6789-camsys-rawa
+> +          - mediatek,mt6789-camsys-rawb
+> +          - mediatek,mt6789-imgsys
+> +          - mediatek,mt6789-imp-iic-wrap-c
+> +          - mediatek,mt6789-imp-iic-wrap-en
+> +          - mediatek,mt6789-imp-iic-wrap-w
+> +          - mediatek,mt6789-ipesys
+> +          - mediatek,mt6789-mdpsys
+> +          - mediatek,mt6789-mfgcfg
+> +          - mediatek,mt6789-vdecsys
+> +          - mediatek,mt6789-vencsys
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    afe: clock-controller@11210000 {
+> +        compatible = "mediatek,mt6789-afe";
+> +        reg = <0x11210000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
 
-[...]
+Drop the rest of nodes. One example is enough. They are ALL THE SAME.
 
-> Fixes: ad1afb003939 ("vlan_dev: VLAN 0 should be treated as "no vlan tag" (802.1p packet)")
-> Reported-by: syzbot+a8b046e462915c65b10b@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=a8b046e462915c65b10b
-> Suggested-by: Ido Schimmel <idosch@idosch.org>
-> Signed-off-by: Dong Chenchen <dongchenchen2@huawei.com>
+...
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
+> new file mode 100644
+> index 000000000000..d6f70ee918ad
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/mediatek,mt6789-sys-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek System Clock Controller for MT6789
+> +
+> +maintainers:
+> +  - Arseniy Velikanov <me@adomerle.pw>
+> +
+> +description:
+> +  The Mediatek system clock controller provides various clocks and system configuration
+> +  like reset and bus protection on MT6789.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt6789-apmixedsys
+
+Why this does not fit existing binding file? Or Mediatek maintainers
+preference was to switch to one-binding-per-SoC?
+
+
+> +          - mediatek,mt6789-topckgen
+> +          - mediatek,mt6789-infracfg-ao
+> +          - mediatek,mt6789-mcusys
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    mcusys: syscon@c530000 {
+
+Drop unused labels, everywhere.
+
+Also, node name is supposed to be clock or reset controller, not syscon.
+
+> +      compatible = "mediatek,mt6789-mcusys", "syscon";
+> +      reg = <0xc530000 0x1000>;
+> +      #clock-cells = <1>;
+> +    };
+> +
+
+Drop the rest
+
+Best regards,
+Krzysztof
+
 
