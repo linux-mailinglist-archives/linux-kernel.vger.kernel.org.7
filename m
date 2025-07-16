@@ -1,139 +1,154 @@
-Return-Path: <linux-kernel+bounces-732878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6BCEB06D2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:28:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD5BB06D30
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458C51C20030
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A47473A6DFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D90D29B8E0;
-	Wed, 16 Jul 2025 05:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFB5264A6E;
+	Wed, 16 Jul 2025 05:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snDUiCqG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nfy1ADgS"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B62134BD;
-	Wed, 16 Jul 2025 05:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB221134BD
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752643691; cv=none; b=TBttkvJltxmPVPpyvgnjUE9YUONj7kzTW8pBAJ8EFWKI/FFgJDKL9CF45bTD4Ta9981LZ84h1qbFzndjJ84MPb1PsDb9NAEhcOudLsgTiWONn7CYykyaeD2Pi+zPP/idoFfvY2J8JJcpaBOuqtPCpFyMiTtvlT5CpGemeomXJwU=
+	t=1752643731; cv=none; b=XWNK045FtkvibcC/p/cEyHKv8VTwBHU2m9FbgEU67ty6mA90ZqZfZ2FWpyDFl2qQ/MVOEfHXpgHaMmAKxbLlYye7zRaakK5qELRKYwuEFXBQi2gjU2HzI/y7yFwfzc7FexMMQXdnlO9ETWzssadV1Q0yVSzxrgp03NtvDFGP78U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752643691; c=relaxed/simple;
-	bh=9O93w4B7Hk3WGCGlAA9pG4sEPSW2m4KxTBY8MylOZhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m652hWgBH2gWfd4Q8k/jYqrt4G2QDIz5ymZ/s+YuX8PaXvvKMhBohiwMpNBT2Zn0DBG9pMkjn27Oio3BHwZa/LHGtq9WFrh6gi7S3TUFUxJjAbo9VovwXwzToGpsp2Kw9jT78nJeVNSFrx6eN1GRIkZcDTbnz9V2xNKzgXuhfaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snDUiCqG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C45CC4CEF0;
-	Wed, 16 Jul 2025 05:28:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752643691;
-	bh=9O93w4B7Hk3WGCGlAA9pG4sEPSW2m4KxTBY8MylOZhc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=snDUiCqGE+4XXcQLWm/p/ERjkuprsYJajXTwWYRWhl5hSBejuJQE3owYtndGtd8dR
-	 hTOUC6D+02JdAsXgjIGpjlq1uTi/RqkrP09ikXZwedX7j9KcDZqSts109BBGzPUZIN
-	 xnjk+CxPQh8IByACuK3UtXzvt32iJWAehnvwKoS4Cxm3cZ5gUSLmnWAwWjadV01Ljx
-	 PXiUnU+E28VNZBr/HK7uxyApsaiTx7gJEMVOuvYKn9VMeJBw++Qs4rriwhD9iLNxZ6
-	 /LSTs8WrbSoyhR7+zPHSWaLra3IwnAnP+5QUQWzgb285U9b54BwNOjO0Ycnh3S5NU7
-	 DdZeHw6p/xZGg==
-Date: Wed, 16 Jul 2025 10:58:01 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Johan Hovold <johan@kernel.org>, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
- notifier callback
-Message-ID: <kyu4bpuqvmc3iyqekmqvbpxqpbbxbq7df725dcpiu3dnvcztyy@yyqwm2uqjobj>
-References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
- <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
- <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
- <jdnjyvw2kkos44unooy5ooix3yn2644r4yvtmekoyk2uozjvo5@atigu3wjikss>
- <55f2e014-044c-4021-8b01-99bdf2a0fd7f@oss.qualcomm.com>
+	s=arc-20240116; t=1752643731; c=relaxed/simple;
+	bh=VutHikv1pvEMGzxLE3PRw2qY+nMCiEHHyOZJtbI+ik4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Je4icotczc/bg9y7ZelPHDurWCoEfS4mJRsR58dClV9rR3vzdPbBQbFCNubS85hGkSd1NVYfpgT228baNR1rmeU9zGh7LxPqqMl2gxAVKS9E30t3YtS4UQiIrxBhqBng0CGW3o1iwRhnuL4dK3tdgAAi9mrTtUPRr4fcIjePO4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nfy1ADgS; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d9716ac8-b6b1-4524-8c94-2f7261f9b5cf@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752643726;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xyhZ/FnFe6rb1lJ+3cQ1tnL5rn/O/A2CII8bIqwgAEI=;
+	b=nfy1ADgSrX3vI0IWtmxsIz3mEDMcMNgniXaLYdsFYXQZ+ZJSrsIwNcbcOhaUODUkhu92qC
+	vdTp5gESXRpGAGbaPlaYpY/6ZQY9diwpP9gCYyOLzyNSuPlGEI6YXLppjUK33Ftzk8kVw/
+	u3PnOyZflaFAHZhiDDD5wi8XcNTj5qg=
+Date: Wed, 16 Jul 2025 13:28:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Subject: Re: [PATCH bpf-next v2 2/2] bpf/selftests: Add selftests for token
+ info
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, willemb@google.com,
+ kerneljasonxing@gmail.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250715035831.1094282-1-chen.dylane@linux.dev>
+ <20250715035831.1094282-2-chen.dylane@linux.dev>
+ <CAEf4Bza8FVL55qLds5ZWaKuz5Hw_r+bwg-MeXWX9H7ZsA_8ZJw@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <CAEf4Bza8FVL55qLds5ZWaKuz5Hw_r+bwg-MeXWX9H7ZsA_8ZJw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <55f2e014-044c-4021-8b01-99bdf2a0fd7f@oss.qualcomm.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 15, 2025 at 12:45:36PM GMT, Konrad Dybcio wrote:
-> On 7/15/25 12:36 PM, Manivannan Sadhasivam wrote:
-> > On Tue, Jul 15, 2025 at 11:54:48AM GMT, Konrad Dybcio wrote:
-> >> On 7/14/25 8:01 PM, Manivannan Sadhasivam wrote:
-> >>> It allows us to group all the settings that need to be done when a PCI
-> >>> device is attached to the bus in a single place.
-> >>>
-> >>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> >>> ---
-> >>>  drivers/pci/controller/dwc/pcie-qcom.c | 3 +--
-> >>>  1 file changed, 1 insertion(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> >>> index b4993642ed90915299e825e47d282b8175a78346..b364977d78a2c659f65f0f12ce4274601d20eaa6 100644
-> >>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> >>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> >>> @@ -1616,8 +1616,6 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
-> >>>  		pci_lock_rescan_remove();
-> >>>  		pci_rescan_bus(pp->bridge->bus);
-> >>>  		pci_unlock_rescan_remove();
-> >>> -
-> >>> -		qcom_pcie_icc_opp_update(pcie);
-> >>>  	} else {
-> >>>  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
-> >>>  			      status);
-> >>> @@ -1765,6 +1763,7 @@ static int pcie_qcom_notify(struct notifier_block *nb, unsigned long action,
-> >>>  	switch (action) {
-> >>>  	case BUS_NOTIFY_BIND_DRIVER:
-> >>>  		qcom_pcie_enable_aspm(pdev);
-> >>> +		qcom_pcie_icc_opp_update(pcie);
-> >>
-> >> So I assume that we're not exactly going to do much with the device if
-> >> there isn't a driver for it, but I have concerns that since the link
-> >> would already be established(?), the icc vote may be too low, especially
-> >> if the user uses something funky like UIO
-> >>
-> > 
-> > Hmm, that's a good point. Not enabling ASPM wouldn't have much consequence, but
-> > not updating OPP would be.
-> > 
-> > Let me think of other ways to call these two APIs during the device addition. If
-> > there are no sane ways, I'll drop *this* patch.
+在 2025/7/16 05:51, Andrii Nakryiko 写道:
+> On Mon, Jul 14, 2025 at 8:59 PM Tao Chen <chen.dylane@linux.dev> wrote:
+>>
+>> A previous change added bpf_token_info to get token info with
+>> bpf_get_obj_info_by_fd, this patch adds a new test for token info.
+>>
+>>   #461/12  token/bpf_token_info:OK
+>>
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   .../testing/selftests/bpf/prog_tests/token.c  | 39 +++++++++++++++++++
+>>   1 file changed, 39 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testing/selftests/bpf/prog_tests/token.c
+>> index cfc032b910c..a16f25bdd4c 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/token.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/token.c
+>> @@ -1047,6 +1047,36 @@ static int userns_obj_priv_implicit_token_envvar(int mnt_fd, struct token_lsm *l
+>>
+>>   #define bit(n) (1ULL << (n))
+>>
+>> +static int userns_bpf_token_info(int mnt_fd, struct token_lsm *lsm_skel)
+>> +{
+>> +       int err, token_fd = -1;
+>> +       struct bpf_token_info info;
+>> +       u32 len = sizeof(struct bpf_token_info);
+>> +
+>> +       /* create BPF token from BPF FS mount */
+>> +       token_fd = bpf_token_create(mnt_fd, NULL);
+>> +       if (!ASSERT_GT(token_fd, 0, "token_create")) {
+>> +               err = -EINVAL;
+>> +               goto cleanup;
+>> +       }
+>> +
+>> +       memset(&info, 0, len);
+>> +       err = bpf_obj_get_info_by_fd(token_fd, &info, &len);
+>> +       if (!ASSERT_ERR(err, "bpf_obj_get_token_info"))
+>> +               goto cleanup;
+>> +       if (!ASSERT_EQ(info.allowed_cmds, bit(BPF_MAP_CREATE), "token_info_cmds_map_create"))
+>> +               goto cleanup;
+>> +       if (!ASSERT_EQ(info.allowed_progs, bit(BPF_PROG_TYPE_XDP), "token_info_progs_xdp"))
+>> +               goto cleanup;
 > 
-> Would it be too naive to assume BUS_NOTIFY_ADD_DEVICE is a good fit?
+> nit: there is no harm in just doing a few ASSERT_EQ() checks
+> unconditionally, it's cleaner and more succinct (and either way you
+> return err == 0 in this case)
+>
 
-BUS_NOTIFY_ADD_DEVICE is not currently a good fit as ASPM link state
-initialization happen after all the devices are enumerated for the slot. This is
-something to be fixed in the PCI core and would allow us to use
-BUS_NOTIFY_ADD_DEVICE.
+It seems necessary to assign the err when ASSERT_EQ fails, will fix it 
+in v3, thanks.
 
-I talked to Bjorn H and we both agreed that this needs to be revisited. But I'm
-just worrried that until this happens, we cannot upstream the ASPM fix and not
-even backport it to 6.16/16.
+>> +
+>> +       /* The BPF_PROG_TYPE_EXT is not set in token */
+>> +       ASSERT_EQ(info.allowed_progs, bit(BPF_PROG_TYPE_EXT), "token_info_progs_ext");
+>> +
+>> +cleanup:
+>> +       zclose(token_fd);
+>> +       return err;
+>> +}
+>> +
+>>   void test_token(void)
+>>   {
+>>          if (test__start_subtest("map_token")) {
+>> @@ -1150,4 +1180,13 @@ void test_token(void)
+>>
+>>                  subtest_userns(&opts, userns_obj_priv_implicit_token_envvar);
+>>          }
+>> +       if (test__start_subtest("bpf_token_info")) {
+>> +               struct bpffs_opts opts = {
+>> +                       .cmds = bit(BPF_MAP_CREATE),
+>> +                       .progs = bit(BPF_PROG_TYPE_XDP),
+>> +                       .attachs = ~0ULL,
+>> +               };
+>> +
+>> +               subtest_userns(&opts, userns_bpf_token_info);
+>> +       }
+>>   }
+>> --
+>> 2.48.1
+>>
 
-So maybe we need to resort to this patch as an interim fix if everyone agrees.
-
-> Do
-> ASPM setting need to be reapplied after the PCIe device is reset? (well
-> I would assume there are probably multiple levels of "reset" :/)
-> 
-
-I'm assuming that you are referring to link down reset here. PCI core takes care
-of saving both the endpoint as well as Root Port config space when that happens
-and restores them afterwards.
-
-- Mani
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Best Regards
+Tao Chen
 
