@@ -1,81 +1,102 @@
-Return-Path: <linux-kernel+bounces-733563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE1EB07657
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:55:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9DFB0767A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20B017EEE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:55:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60B9B188D0E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EC42F3C2F;
-	Wed, 16 Jul 2025 12:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B8D2F5323;
+	Wed, 16 Jul 2025 12:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tethera.net header.i=@tethera.net header.b="MR9kmxwY"
-Received: from phubs.tethera.net (phubs.tethera.net [192.99.9.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC64D28C2CA;
-	Wed, 16 Jul 2025 12:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.99.9.157
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XoEVx3gX"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C6128C2CA
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752670549; cv=none; b=MhQMP/YXozhn9kIfDJFLoLM2NvcjdpBi6izxJ4cdhHzELPdEfvsbRRHnRoHnZoTP7h+2xapY9KDsOzMPw8TRl8H/F64DLrXVQtWd9cmwoqeJyaBxG09XDIHqXD39Z+UrbEX+uERJ2EgFjaK5PjGHB60TTJhj6iUl5bMnQBKFWSU=
+	t=1752670630; cv=none; b=PW3LQtiysH0LkwRTQctDaALvLlUZzvug3LU45xuiRNvSR4XkvsEx6sAWFxS1oNFoiQ4bHE7VzBHkAkBZanrirZKXrkFeC1SVv2Aj2W6Jh3Zod3fDz7zCKId6qrbEs4sj5WpcGXljwIU9OhwkiYBeUUZ2YpFaYsDGqJUMg+PUiTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752670549; c=relaxed/simple;
-	bh=Ia9GyGbk8B9rjMX/RPITkTLboZkRzYcVoZFfzz+/9ho=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FQcgXoxQLp09FUwtARKtNg3PJM4hhelgzmJhUB2dv0+s9wj31sNpA4JxS+gZhIXClXilMwV/sxaexeh20qGJfLikXL6leIpeErnq6pXj7CYPEDCFcSn8cHjCRQPfLqanEq5qecw16CBAGjrFoFupT0a3rPSRC1P3YmuaP56TU1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tethera.net; spf=pass smtp.mailfrom=tethera.net; dkim=pass (2048-bit key) header.d=tethera.net header.i=@tethera.net header.b=MR9kmxwY; arc=none smtp.client-ip=192.99.9.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tethera.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tethera.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tethera.net;
- i=@tethera.net; q=dns/txt; s=2024; t=1752670540; h=from : to : cc :
- subject : in-reply-to : references : date : message-id : mime-version
- : content-type : from;
- bh=Ia9GyGbk8B9rjMX/RPITkTLboZkRzYcVoZFfzz+/9ho=;
- b=MR9kmxwYKgoB6qvgTWe3XASPi1F6c62HiYwIBJY1Dvg0Tk2YovQguaaJ7sFv+f/USkCV+
- cnyR39/CZ5fvL6Z5D52jKrP0gEQug6JbX9TK/AuKThrXmmA3EEe2V3+MUqdqukW4EkQ+C5H
- BKV4bFVRuSJQ/V8TH2/H/B0bv4LHwUMjYQchBjYu6TOQJaPnjm+I2DhXwlZGFyZotwqTyto
- otGcMWlzXuUmLOGrhs0ntxhQwsNmfo4NQ0s9a+YqSs/DN4jccWFFGyfHWtdoef6hVd5tOCJ
- fZz2v1+IitN+g9Q32K/amKtTL+C8yiEOLWmB/rqs9tFqoFTVM2fBsL6+eE+Q==
-Received: from tethera.net (fctnnbsc51w-159-2-211-58.dhcp-dynamic.fibreop.nb.bellaliant.net [159.2.211.58])
-	by phubs.tethera.net (Postfix) with ESMTPS id 9AD4118006D;
-	Wed, 16 Jul 2025 09:55:39 -0300 (ADT)
-Received: (nullmailer pid 2675178 invoked by uid 1000);
-	Wed, 16 Jul 2025 12:55:39 -0000
-From: David Bremner <david@tethera.net>
-To: Niklas Cassel <nks@flawful.org>
-Cc: wilfred.opensource@gmail.com, alistair@alistair23.me, bhelgaas@google.com, cassel@kernel.org, dlemoal@kernel.org, heiko@sntech.de, kw@linux.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org, lpieralisi@kernel.org, mani@kernel.org, p.zabel@pengutronix.de, robh@kernel.org, wilfred.mallawa@wdc.com, Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: [PATCH v3] PCI: dw-rockchip: Add support for slot reset on link
- down event
-In-Reply-To: <aHSs6ZF8rQIqEOyR@flawful.org>
-References: <20250509-b4-pci_dwc_reset_support-v3-1-37e96b4692e7@wdc.com>
- <87cya6wdhc.fsf@tethera.net> <aHSs6ZF8rQIqEOyR@flawful.org>
-Date: Wed, 16 Jul 2025 09:55:39 -0300
-Message-ID: <87zfd41eic.fsf@tethera.net>
+	s=arc-20240116; t=1752670630; c=relaxed/simple;
+	bh=AN62lcBWY69uwEkPF1uDE2Au3sGNpTVZStdoirzCP8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oRCJy1zUu7L6TdnQhY0ZrkPxmWhFFIumJ2Ifv4r6mGrbg4B1Vz2br7a78vdYiD0W2ED0tigsjlUnPJCrLn+YP5DNT30NU8wp4WV7W6kBVh42eM39ZdnEJKKgUWHs+0XoSSc8zjN6B+okl2LrcB7s3CNDkVjNQmSPSixfobFF3Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XoEVx3gX; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=qp
+	Y2tXiGnHNxTZTvdSzkjoCg54zO4OlGJ2IYtvRcdfk=; b=XoEVx3gXhw40Dt9AgC
+	HfIIgDMIC4T+UWsiFoWhH7I1TTF6vdKFNV/hDc8m3z0p2K3GIz0gxm1dYkF5ze+/
+	390RXrGTS72qSty98fNYhZ4qzniqMMtMK1rhl10bB4PJF6GR1lqqYDfXK1DOeVB+
+	VtDxJHNaqvRb7LIEyKkv2sk1k=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDnz4VkoXdox0oSFQ--.65528S2;
+	Wed, 16 Jul 2025 20:56:09 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: dmitry.baryshkov@oss.qualcomm.com
+Cc: simona@ffwll.ch,
+	sfr@canb.auug.org.au,
+	airlied@gmail.com,
+	jernej.skrabec@gmail.com,
+	jonas@kwiboo.se,
+	Laurent.pinchart@ideasonboard.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	tzimmermann@suse.de,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Andy Yan <andyshrk@163.com>
+Subject: [PATCH] drm/bridge: Describe the newly introduced drm_connector parameter for drm_bridge_detect
+Date: Wed, 16 Jul 2025 20:55:55 +0800
+Message-ID: <20250716125602.3166573-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnz4VkoXdox0oSFQ--.65528S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrur17Ww4UJFW8GFW3AFW3GFg_yoWDuwc_uF
+	nYq34UJws0kr98Kr17AFWfZ342kw18uFZayr1kK39xtrsxAr18Ja42qry3Xr1xAFy8AFy7
+	J3WUGF47Ar1IkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRKAwIDUUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAWMXmh3ljHbzwABsq
 
-Niklas Cassel <nks@flawful.org> writes:
+This fix the make htmldocs warnings:
+drivers/gpu/drm/drm_bridge.c:1242: warning: Function parameter or struct
+member 'connector' not described in 'drm_bridge_detect'
 
+Fixes: 5d156a9c3d5e ("drm/bridge: Pass down connector to drm bridge detect hook")
+Signed-off-by: Andy Yan <andyshrk@163.com>
+---
 
-> That said, if you have problems with suspend/resume, perhaps you want to
-> try this patch instead:
-> https://lore.kernel.org/linux-pci/1744940759-23823-1-git-send-email-shawn.lin@rock-chips.com/
->
-> I don't know if Shawn intends to send a new version or not.
+ drivers/gpu/drm/drm_bridge.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks for the suggestion. In fact the hardware vendor (mnt research)
-ships a version of this patch with a 6.15.x kernel. An updated version
-would be helpful, as the previous version(s) no longer apply (with git
-am). Failing that I can have a go at manually rebasing the patch.
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index dd45d9b504d8..4bde00083047 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -1227,6 +1227,7 @@ EXPORT_SYMBOL(drm_atomic_bridge_chain_check);
+ /**
+  * drm_bridge_detect - check if anything is attached to the bridge output
+  * @bridge: bridge control structure
++ * @connector: attached connector
+  *
+  * If the bridge supports output detection, as reported by the
+  * DRM_BRIDGE_OP_DETECT bridge ops flag, call &drm_bridge_funcs.detect for the
+-- 
+2.43.0
 
-d
+base-commit: b5e5ea72502e635ae10c33dd877c918c880f7bf0
+branch: drm-misc-next
+
 
