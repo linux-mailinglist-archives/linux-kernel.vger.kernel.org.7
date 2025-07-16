@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-733400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E24B0744C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:09:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E0DAB0744A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 912317B2E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE0B1AA739F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22862F432F;
-	Wed, 16 Jul 2025 11:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666152F4A03;
+	Wed, 16 Jul 2025 11:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KGPB21K/"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QZ3BZ3oU"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470402F3C36
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDFA2F3C3E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752664069; cv=none; b=MtR/hXTZvAoZkl3zTt1JWIzPVgkGa0CisAQ9BZP538c1hhE7vM9UbPxH/jOn7189hTPD0UHHy4i7ycoI4zdzquyQE0KsL4IXManW2Hjk0c8Xt4bDMxcGLfm74YZFZkTjqkOBXb+KXzFcvY/eMgadqGA4b4LINftuALRBR02EeTs=
+	t=1752664070; cv=none; b=r9ssUCYkvTU6eFcj6pb6EJWWGrFv497/uX7YAQUXt7acfFtLLM6pYmHCDdBSmRyYYmf6m3Q+ZPJtiWeI0rA4/wGf28hS0Dg+eYaY9Z2quHHEFjHY7BCjvvkAuILyTmTTLsjs0xE6Dfk0ymYLtdAezvAnEvE5zokPyrCG/U5Phbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752664069; c=relaxed/simple;
-	bh=7MCXu2XIExm1XsO3hQiAoT4CvnT5CB3Dy282TZ97t3U=;
+	s=arc-20240116; t=1752664070; c=relaxed/simple;
+	bh=PrPZi9FLkMWKmIdJSQLq3BcigSFeFqZOp9S9N0GiAU8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rADBJ8jh9M2+4zrceNZ+eFAqFYEGoLXx0yYAKsTlO5XpxEW8WKDPly1CH4vl96yxPHwDF0ZH0EHAAkZgTrmIIHTFbcio39OWCpUdjtihybYcV2tGv2IUfChwty0AWOM9nO5oM/LJ4imjzxWvPS296ESgt92G+youdbF22B+PVPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KGPB21K/; arc=none smtp.client-ip=209.85.221.74
+	 To:Cc:Content-Type; b=izI9vTEzQ/5yepsRmH1VbLclsWCHz66oxe+JSgoTcetVcVrt/B+bKzUJoEM4INmFTHq6ZG8mnqHJ/PRjd3imzOKs7os71rh6JMMRYzdYPgAKy8HS7HNu6CVw1XUhyxV4g5M1MbQvUM3E1zoSKFJExl/uLRezc0yGiNyk7u0XCsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QZ3BZ3oU; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--keirf.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso4896085f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 04:07:45 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-454dee17a91so50627445e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 04:07:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752664064; x=1753268864; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752664066; x=1753268866; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lw9Wdz3TAUoCooOMv3X14CEUxWY0AuV/hf0NzcKNFE8=;
-        b=KGPB21K/wFDrm3ArnevTOzbNa0dlmdb8VQFUxn1geeeW9/fwrbhbxjMWWystOnUPOA
-         RShHNYAmZ2Xe8ypB8PPRaeBMe+eSHG1yUgf76MQDC8cOrnwLwNK/rF2ZiQna9lk3HLyS
-         1CR993ZYB+wyZulszyisgY2S6esPjON/a1LiAPqP2KJv0N/d7nP0C8bT4IZfAlF4H48Q
-         WiGvY1bZ3p82EeMnxgGfo13kifv+HuQB/NMkLwtOUEx2QYqJhMAm4NZ1x2/9EhilkCB0
-         OGeM/TbPxdAKq6mCaJNAApv461aRMttAIJ+/hJQ9oPn/Gk5f3ohaQsBQv9HUAmqpb9+O
-         LUQA==
+        bh=Hxqszaeuljrqlm0t8DgnPuG7w9pgNEhhBTVGlWt0Bfs=;
+        b=QZ3BZ3oUkA5fkjLHPoQ7w9WB+U8mzCKcAEeN0r8Iyqav47Z++28pidd4psSSn/x8V4
+         poA1PNJO9vGFIzQEGMey0jzvcgnsMnAsiaxZybhVZPKqAPJldexQNKA8MBKjxcrvYxm9
+         zCN5m5sNokork1u9xiDzhF23F0cNV/zX2xEzLZmjAK5hBC90emprwHkoJWtiZWrhahv9
+         U4mj3AXpurSCJiI6lyoKrTyxUuNJUVhuTXYVNA/oYZsznxg5Zzr1HCkCyrOAg9BkiRvT
+         e88onoQZYFS3OWSmk1HvkklD6L/PGLg6gHNCWz+wcYYXj/3V5GcHwNfwRMoGba9RpoBF
+         ibng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752664064; x=1753268864;
+        d=1e100.net; s=20230601; t=1752664066; x=1753268866;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lw9Wdz3TAUoCooOMv3X14CEUxWY0AuV/hf0NzcKNFE8=;
-        b=jRCfAfLpMQC7OpCMWHGywqZ+ebkPEWw+CNU1w38PDRjMnoN5cjBh2UEsFlph0LfU5j
-         Am7GFUp1crHRTBXNl6lPgE4lg76kAy4IGzzkvNvxYzqRi12Bw5LJ4Mt8qeHCaLnikTQf
-         xVxS2g8Gv8tMoQKPUtV1zyXMMzm94hb4coWs5ZgLjfoLH1UNLVL+IhFAQ81rilNV/wn9
-         eTYBPoLy167uZp+nu50GamLtUTN0DbgH4Q4zuUbDMfVEGiFDOr/5Ig6T8eZqCpPusUjO
-         8xUUAUmqsDvdZNygrLNfWLQCjsZfoYdQ08lbYQ2iYwBUqgpba6MxZR3tuFj9AF4pxCZh
-         9osA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBlWlM0sOh1T005zP5xv2iiJzfD4TQMV45+q95WvnODXKF3vYsCsKQq+bEqDw0fqUa8bam8rrS7MAx1Tc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp25s0BtwBbFvEK6eFtpSalTW1e6fY2fC7pHtUxZsFh1GVoJYV
-	8euAoQness1CfjM7PJJLRAGktZMMlgyLA0oXHzWVwjy91+WP703DIece4inkMmXGgN/Hp53aoa2
-	QEQ==
-X-Google-Smtp-Source: AGHT+IHuNxCrx7B1F7XbHUaYm3AAwwPyLKTJsfFZ+D2KSuL1269JyI8e442f/hH+yv6mKmRQSSBPsJCPSA==
-X-Received: from wmbek10.prod.google.com ([2002:a05:600c:3eca:b0:451:4d6b:5b7e])
- (user=keirf job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3481:b0:43c:fcbc:9680
- with SMTP id 5b1f17b1804b1-4562e3c4b8bmr18712195e9.25.1752664064367; Wed, 16
- Jul 2025 04:07:44 -0700 (PDT)
-Date: Wed, 16 Jul 2025 11:07:34 +0000
+        bh=Hxqszaeuljrqlm0t8DgnPuG7w9pgNEhhBTVGlWt0Bfs=;
+        b=C6uk8Cv62ttx5JQYNqzcGLI4Q8yrAVlHYNontZvF9LNT5eSOr9CHr/ClqI4E0A9j40
+         jwSuq2G9mmL2q5cRkrNReDazgWSyruTanGb7N82HP1akPiZMQ2rCptLwtI2yi/nALGfL
+         m5xt1Do+eiCO/RFjIa+JagXgnRb5dQWSIDANkU2dLLzEDUAvKk2dXANCBNJ4N7DcWmtU
+         5P8IuFfcaL6rql+6d1bURZswzddLRi75iFNQfaocnnQ/FkjD1FaQRmEKE8cpBlDHUqh1
+         6srDbuEfsi6xixnY+w+vvTMx8UlA7NJufZcekiTTvUlrl8C10gnaGUN/wvT2t8MBTxxX
+         tfqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdx53uKw4lud3SmLAonDu8Odf1Tp0Q+/CVVBT5R+fIBdQWgoOpNy37R9iIDgRMkY+LzBDQ42Gfv0JAnFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGSKdA49BQQKQJ5bN06TOUwBPdT5DWtuFmzGystkfhvizrR6LU
+	lJn0XzHqLjuXL5cyh0IbfpTAGoUZCEu3VjgekocJaHjvCl5omlYtjDkoZnNdHd/3csES7Ouplp7
+	l5A==
+X-Google-Smtp-Source: AGHT+IEc90RI4GCOsQRZO8PqFs/HKd6dYrEM+oA0RTzrbntMXuFw8OS9F/kKOUPw5mrVP3l/ZU5GEG7EJA==
+X-Received: from wmqa10.prod.google.com ([2002:a05:600c:348a:b0:455:76a8:b3a])
+ (user=keirf job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:5299:b0:456:1c4a:82ca
+ with SMTP id 5b1f17b1804b1-4562e3c227cmr18678235e9.32.1752664065812; Wed, 16
+ Jul 2025 04:07:45 -0700 (PDT)
+Date: Wed, 16 Jul 2025 11:07:35 +0000
 In-Reply-To: <20250716110737.2513665-1-keirf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250716110737.2513665-1-keirf@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250716110737.2513665-2-keirf@google.com>
-Subject: [PATCH v2 1/4] KVM: arm64: vgic-init: Remove vgic_ready() macro
+Message-ID: <20250716110737.2513665-3-keirf@google.com>
+Subject: [PATCH v2 2/4] KVM: arm64: vgic: Explicitly implement
+ vgic_dist::ready ordering
 From: Keir Fraser <keirf@google.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
 	kvm@vger.kernel.org
@@ -83,55 +84,45 @@ Cc: Sean Christopherson <seanjc@google.com>, Eric Auger <eric.auger@redhat.com>,
 	Paolo Bonzini <pbonzini@redhat.com>, Keir Fraser <keirf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-It is now used only within kvm_vgic_map_resources(). vgic_dist::ready
-is already written directly by this function, so it is clearer to
-bypass the macro for reads as well.
+In preparation to remove synchronize_srcu() from MMIO registration,
+remove the distributor's dependency on this implicit barrier by
+direct acquire-release synchronization on the flag write and its
+lock-free check.
 
 Signed-off-by: Keir Fraser <keirf@google.com>
 ---
- arch/arm64/kvm/vgic/vgic-init.c | 5 ++---
- include/kvm/arm_vgic.h          | 1 -
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ arch/arm64/kvm/vgic/vgic-init.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
 diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
-index eb1205654ac8..502b65049703 100644
+index 502b65049703..bc83672e461b 100644
 --- a/arch/arm64/kvm/vgic/vgic-init.c
 +++ b/arch/arm64/kvm/vgic/vgic-init.c
-@@ -559,7 +559,6 @@ int vgic_lazy_init(struct kvm *kvm)
-  * Also map the virtual CPU interface into the VM.
-  * v2 calls vgic_init() if not already done.
-  * v3 and derivatives return an error if the VGIC is not initialized.
-- * vgic_ready() returns true if this function has succeeded.
-  */
- int kvm_vgic_map_resources(struct kvm *kvm)
- {
-@@ -568,12 +567,12 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+@@ -567,7 +567,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
  	gpa_t dist_base;
  	int ret = 0;
  
--	if (likely(vgic_ready(kvm)))
-+	if (likely(dist->ready))
+-	if (likely(dist->ready))
++	if (likely(smp_load_acquire(&dist->ready)))
  		return 0;
  
  	mutex_lock(&kvm->slots_lock);
- 	mutex_lock(&kvm->arch.config_lock);
--	if (vgic_ready(kvm))
-+	if (dist->ready)
- 		goto out;
+@@ -598,14 +598,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+ 		goto out_slots;
+ 	}
  
- 	if (!irqchip_in_kernel(kvm))
-diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-index 4a34f7f0a864..233eaa6d1267 100644
---- a/include/kvm/arm_vgic.h
-+++ b/include/kvm/arm_vgic.h
-@@ -399,7 +399,6 @@ u64 vgic_v3_get_misr(struct kvm_vcpu *vcpu);
- 
- #define irqchip_in_kernel(k)	(!!((k)->arch.vgic.in_kernel))
- #define vgic_initialized(k)	((k)->arch.vgic.initialized)
--#define vgic_ready(k)		((k)->arch.vgic.ready)
- #define vgic_valid_spi(k, i)	(((i) >= VGIC_NR_PRIVATE_IRQS) && \
- 			((i) < (k)->arch.vgic.nr_spis + VGIC_NR_PRIVATE_IRQS))
- 
+-	/*
+-	 * kvm_io_bus_register_dev() guarantees all readers see the new MMIO
+-	 * registration before returning through synchronize_srcu(), which also
+-	 * implies a full memory barrier. As such, marking the distributor as
+-	 * 'ready' here is guaranteed to be ordered after all vCPUs having seen
+-	 * a completely configured distributor.
+-	 */
+-	dist->ready = true;
++	smp_store_release(&dist->ready, true);
+ 	goto out_slots;
+ out:
+ 	mutex_unlock(&kvm->arch.config_lock);
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
