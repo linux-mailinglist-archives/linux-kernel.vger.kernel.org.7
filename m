@@ -1,241 +1,242 @@
-Return-Path: <linux-kernel+bounces-734148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1E0B07D9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5F1B07D9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C451E1756C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8AF170F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CFA2BDC34;
-	Wed, 16 Jul 2025 19:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA762BCF53;
+	Wed, 16 Jul 2025 19:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="buJTPI9T"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013015.outbound.protection.outlook.com [40.107.162.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5OvmxYi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BF6293C78;
-	Wed, 16 Jul 2025 19:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752694111; cv=fail; b=BZmIwRe577OcO7IUshpRqQfCNQkvtXfjUvO/ZwH/Bi2HrP0bG9buKvmS7G/6sEnvcSQFdF+njMa9m7FsOrgH2C6KIje1V0dGlDmC+R8aAfcMkQOEyVJ47+X2YYKiItJb2V7RvEEth8Muo5rWR3UY/O7lybhKhfLlbUuK9vf+/sA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752694111; c=relaxed/simple;
-	bh=7Z9AM10fAOA/5764v/NUqJiwpL/xYXwYgUIHjYhQppU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=c3ik7F8bVlBA3H3RdRdDsfnrRNB7hSHy92Ju+73q2VpFZmqHkJaG0cOuRWzVTt11PkXe8AMql+8DO8D6KZMl8dh7oGAFWr40ywcC0vvzix2AW5YUGlXz2ZNF86bHoRNQ6wvn137UsNxoPW4DJZVL9eZWVNEUKCU9Ka8w7qalXHk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=buJTPI9T; arc=fail smtp.client-ip=40.107.162.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Db+MiDqudUsoxAerVsjV48UN20VDrRDHybL5CKt6J4csDqsUz1f8fWyRcvFH+k8tfuZWB5RgsDuYy/rCJi+i5SpImiOZ7iumUrgpI/k8Fui0AhuSMp+nUTzINjKgmmeP8hBlXmO97p9xuev9t4HIkzX2eILW/AE9XOcsya0vmjDhicQBOrCJfbDC2S729w4Q5DteIOwGFHzV8WANfjef62L+c1LMterIhn6mKyHLgA8VBOowB9m6lJVw+HEsjPvncB5meZAX0m57Pu3a7knbuW81u3ByYpTMwAa5svAhtJVclaj5brAjS1QR6hUZdi1AOvgZVZqusymdMoQ2phjJGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vDxKg1c4cwCtfQb1Ki5h6PYtrIdWfZLJNsRVOBE2c0E=;
- b=I1uLxK1CihgvoS1Ee50we7ffzeFXg7csr9hsj/TwC+clUeZ7Zn+kr6Gsr9NNgkZA6ybXpXZdwCXb61PngSSjeTehTjtmQ7RVk2peYAc4Df5NwL7XYvxNxZRIC8Zwx6p0QeBEUn2PWz+XraWl8AksA2KJT5mZ9c3Lx0YaF9R6PmsHRjMj48y1jjRdzg2GZLj9g9vEpFfzHQTM4Ya0X4W38CylTduorTQ2tX92Bt6r2+rDf8K0/+i+gm+kgZJRH1T/ps8qViUDs5Jak4AHWK34KzHQVN3OvqJZ0h4Elygo3Qpt0reNF33KfCkOzPd/pQA9DrPO6KUCVabDTApHlnVG+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vDxKg1c4cwCtfQb1Ki5h6PYtrIdWfZLJNsRVOBE2c0E=;
- b=buJTPI9Th/3bpqhIwA6zAlFiOI1tEmH3yWtJJqtWAz2IYpN5wf3ylq0Z0PeViu2pkzdxr0dlTMo3ns4SjNC5Uu078goP3tWoCWXyn8sxTie1QdBuzZoxIzDRVcGcmrUEDmEWmmNDh++XJefqJmye8M5Mr7m5z2PFnvrJbin7/VsSpNv5bEob1bT8zt+okhIMFDsE0c1cOgDAwJ/4xMahgRuI2G18MqSE+a/XVnPk6q2F/yAjjsWZbdVpAhSXjcg+xNpGbsN7ylCGCmwBMHctyhIl6gC4nr3FkI/JDH+UQ/EE60we0TVxwvG83+W/dS8GKxUIaIs3U+wi/GPB97bNoA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GVXPR04MB10022.eurprd04.prod.outlook.com (2603:10a6:150:11a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Wed, 16 Jul
- 2025 19:28:24 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
- 19:28:24 +0000
-Date: Wed, 16 Jul 2025 15:28:17 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	richardcochran@gmail.com, claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	fushi.peng@nxp.com, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v2 net-next 02/14] dt-bindings: net: add nxp,netc-timer
- property
-Message-ID: <aHf9UfUQggd/Oxh/@lizhi-Precision-Tower-5810>
-References: <20250716073111.367382-1-wei.fang@nxp.com>
- <20250716073111.367382-3-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716073111.367382-3-wei.fang@nxp.com>
-X-ClientProxiedBy: AM0PR02CA0022.eurprd02.prod.outlook.com
- (2603:10a6:208:3e::35) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5B129A333;
+	Wed, 16 Jul 2025 19:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752694104; cv=none; b=r2Aa2VIiu+dm++XaH8dAVNbxWfT0+0yngWlO9BNeXw65QQvJvCAxrrz/aK1mXmD8VtHmBpc2gIOxH/t3gcKUtOue3JY+526pq2WyHX+rVsYYLFZ2I6xvsNMnysswLv/n+OH8AvxAQpYQjLO83jKCqs+MObh7PDIx8VkYERNr1go=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752694104; c=relaxed/simple;
+	bh=HGLoEru3GZos235OcFAiBcaGzj/e/XYruiqhbm87C1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KT62CMEhWCfWEjsvtp0p4v7aPbOowb5GXgQpC0wNGxyeNAruj0lwU6NWQdxHoLq+wHnxYn5lWSNj17rPeFazhvd1niFWX2TswI2KXesg0b0OLGBmuk2T9d2oqUtcWCDlxEUb3Vt+vO56+BMs4LkxbvUC8FS3Fk+yxFrmV6JU4Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5OvmxYi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73B41C4CEE7;
+	Wed, 16 Jul 2025 19:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752694103;
+	bh=HGLoEru3GZos235OcFAiBcaGzj/e/XYruiqhbm87C1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X5OvmxYiPhoQ4X+5kKFV2jfGtZzAfBKysjUZXsgnfXW4c1HZD5Htwf5CNzVODZc3X
+	 cvfOfLpgoUg2nsZG9G3TZ9bWYfxP6mKuEd6FWjCCisjOPlI8dyJSjeHnZMqk5VVBB0
+	 ArBFwtdIpOBcXObbbMxFOP8p0xMlgBdxZm+ak/+g8OXtT7kaJHK4y2PYE5nU6hBzcw
+	 JeMsj1mPLJkw4bHB/z8Lyk5bWlhmpWpj34lB8Q08d/ZlQnnnK23xY2YxvOr1QSzkEz
+	 Lh0JwYv/kuM6G2Jqlmy5cxgXh4Hup9IHtNG7DVGWI+M0+jIdi1Btc2WqXdP37Yq0RJ
+	 3AzkeGGgEKfHg==
+Date: Wed, 16 Jul 2025 14:28:20 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Ling Xu <quic_lxu5@quicinc.com>
+Cc: srini@kernel.org, amahesh@qti.qualcomm.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, arnd@arndb.de, 
+	gregkh@linuxfoundation.org, quic_kuiw@quicinc.com, ekansh.gupta@oss.qualcomm.com, 
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v7 3/4] misc: fastrpc: Cleanup the domain names
+Message-ID: <p7la5xeudperckksogd2qsxjmvj2q33gud36aylrt3dlfusqnc@243j5siplhoy>
+References: <20250714054133.3769967-1-quic_lxu5@quicinc.com>
+ <20250714054133.3769967-4-quic_lxu5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB10022:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6956d8b7-fb66-4e6a-fd66-08ddc49eee44
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hEXXrfOgKrgQqSQps4x7RaOOK29zReKAeXjrq0Bc7WrfqVJaVTOin+lAVytP?=
- =?us-ascii?Q?sgJTJ7dt6FNgXyEohg5dQujpBEI2UD4AALcb+aXv5d1nRSZGwldmsGTp45Is?=
- =?us-ascii?Q?I6TjSMTc39Wma4IbN4dy9JPH19Mjd7mwGf1Zb1qndNAkzG10wqLyF+zFRzUq?=
- =?us-ascii?Q?CRVRgy+B3jW7Cq3Ja7mdALGE3o4/p7p2RRCwgMsu/m01fALhoroGfKJJnL1s?=
- =?us-ascii?Q?mR6sU4tGFMkfWwxb0bPj7a7iLPyC5mzjYYPy0jSW3wlrPJVjmNowkeyWZbiZ?=
- =?us-ascii?Q?rAeA04RtAkLBy5hCVM0spa90alhr//BiNRTgLElnXGbxIM4h+C2VRkqHN4/y?=
- =?us-ascii?Q?6dkobRPVtp0njP4JZjVSlcIPu8mDtGSChj4v96sf0Ma86l7XiXK73zm98/V1?=
- =?us-ascii?Q?/Cm3X5bQxGgm103/Kwy+NVV4if8RWm1zyJiebKvGGCeRWXSURTsLLiqGlvjB?=
- =?us-ascii?Q?kPrPGUiQowuc7p/hdzYqSdIzZW0TIYP93efE6Jtqn2GsXQBbjrch+R4yK42t?=
- =?us-ascii?Q?KYi8bccyaPmtCXN37HySK7fi9so8sEbiU0vj+IsgNMVBVALFMOaE3ZwF9dEe?=
- =?us-ascii?Q?7vfVRZRdAtUztijHgYz0Mudsv/OalCT57pBCtTWWHTSnAWSBJUgm8WuCO/y0?=
- =?us-ascii?Q?a9NfX95e3Rg1xQ2hw4bmGCWIA8gpQMeMO+lFmHVvDbu2D4MrW1oDuHyAVDx5?=
- =?us-ascii?Q?dc5QwY4VnhGVDwa1iv4xXPSa66wYXwBSRN5eL6NooWu3aZcyOewXLIeQSlnf?=
- =?us-ascii?Q?57u8uE+zr/dS/lUYqotndTcwGwHW69gtJLIgom7uCI3qbJ4ni0ZBgp9HDwcP?=
- =?us-ascii?Q?Yc67VPqcvo5VcgnJZhaxU+gfG63BEHJ6HXUUzkIwiHh9zr/viyYvEGnKn62J?=
- =?us-ascii?Q?bWW+qYN+bgSXpvDLlR9HIfirZz/4gJ1zjACCvPyh883dub1Wh/5RSoNTpF+a?=
- =?us-ascii?Q?Lk1teuNxicwxMjAZ9mpWreyb552Jja0ymDdc1BGbEQdFMlNouzfwSYn8TEz8?=
- =?us-ascii?Q?OZ2EWNp39KpFBlisMCHsDFFegpCdT1s35q0jn0uUDsVvoLLqYnxQ2RVR6vdt?=
- =?us-ascii?Q?2mM4I7peFFi9eEZZe2YJ/Z2v3cvyguIJz72cvjNJmt9UDqBL2sBrX0TQ0ucb?=
- =?us-ascii?Q?8miN8y8VCvN/0NJAEJb2+yp3g0UOXvDxTb0Pa5CBP1H9x0IrHL7CYTnK6Z74?=
- =?us-ascii?Q?idxNHDBtw4In4TOOVkTxWr+dD3BezU1ZhTLFth0EFMlmQyUug9RUiupPBxWp?=
- =?us-ascii?Q?AIE/1DpS2ugAhET75rTBdfdrkn33OPkmnYdooh+ytWDbnjloib8Y3XG/7HTD?=
- =?us-ascii?Q?s5L5rzMcGRJF6ikyZioWD0PuLuVoWycB0VitD7po+VB4yH1WIV02vfCGi36t?=
- =?us-ascii?Q?cWeSGUu7u+IkSmG/Z4xUwKo/yHs5ph7ms3fHvFuuJyJfo+Cy5mcLic8pF0DI?=
- =?us-ascii?Q?X7MQTgOcNJ2b2Yd/thkJOr05ZSzlbDzHYpQmJUS/5mByqHAhOUHbtA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kVXlebX2iFpm5MPAvsD9Wmg5rnPvuaLisZAbx80GRrRkiK7fpnRJxYzN6HdA?=
- =?us-ascii?Q?T92dZjAYAOPYqLzGAteqkneDZ+xANYcyiLUUKaOI/GIUXN7zEvopK4Qp6MmT?=
- =?us-ascii?Q?2hT3B3Iv1mgpy5SzMGFYELTWKjESWC7NqvBiwwbh/iC/XwPHU3LQUcsGpKv0?=
- =?us-ascii?Q?DJHzV722I3yB3evPIf9Jrj8nFL4mGwSiHccEnQKpQs8bME6T9sLWUBzCYQSC?=
- =?us-ascii?Q?mQx1NL72TP/AKtE21+FnUBIlHTgiANWddCDQQlXEU7Mc522tiNVawOg7/jmM?=
- =?us-ascii?Q?ixYd8tiJIlkp1blPQsMyX6r4A07WA+9LOfLxTpCfvX8cA3Oftet63Djsiv7B?=
- =?us-ascii?Q?G7rCC4AEpMj7qOPyVo9i8uEU8s2oiqYlXvXIpdrZxVzJEOCpKI+Edo+TCrcr?=
- =?us-ascii?Q?sLgSRqmY/jscnK3bKx0v2OeD9knMpK7DPNN+74Qv7lOASvtj3UJB0K/Xs1tl?=
- =?us-ascii?Q?ztWo7f8GWgUgrTm2xWChIeIiWHQvEV9PzgBdsDSNmnmKln5QNjDNPK56JyNS?=
- =?us-ascii?Q?yy7dqkq3PmlprbRHj1RAUegcWdlgehYv9Si8eREgK8UrLsImh2OTe3AoW5j+?=
- =?us-ascii?Q?BkIYFKZ3f+ADmhAH0xqzRS6+wQLCA9cLU7GYBy/qxJ0lHWI/OozSYa+Samu+?=
- =?us-ascii?Q?N7jAMdivqL6xiHgWPxEp4cuXF7NOPH+JAQtE55pOPSQ51YfHyjKBGjBkbTx0?=
- =?us-ascii?Q?8PRp86HyfuSGWSwUoVMnAGzELy2d41Z3ov6AqxR9c78JFytoEbLFHzYICSUj?=
- =?us-ascii?Q?dDKUC1JYYI0AyZl+f4PS2tjDEU9v+cs2ENQ3JIGoCs/ESGv90SZ4mQoup/ew?=
- =?us-ascii?Q?lbyFPI0dqCsoJySpJLBPXNfwEo48RoFpa04OXk4gtNo1698+EN0DHIrpKfL+?=
- =?us-ascii?Q?CpgcyFhtlDmcrV2lwgExsAtmFQhvFTFdpQ98xxPPHREU9WlBs66cCXlctMvR?=
- =?us-ascii?Q?tMBAQCVIKNpzt/Xexz+zxwqQ6LK/XM73G0eng/W29KpI7XVrFjFlre0Umu29?=
- =?us-ascii?Q?x1pcvdY0T5Ow+R8bFg+VeHSzgqQ0eqSt8y3GRl76kNhCFVm46ZdOvJl+fxyM?=
- =?us-ascii?Q?PY0ja2jst9Gq0rRRnP5YkS8jETTJF7FSnZhhl8QBDz3iU2exVEuyg374ZjSS?=
- =?us-ascii?Q?Q/4YfCkLoGhJeBfbsGyBOy0WaakTn3SGQbBVdMsbxs9dEzT2yKddmnxqpYDL?=
- =?us-ascii?Q?sYW7IJvK8bwKYk2vrPKsvD+Owv8oAsE3BDUBol0mF14E4clA66AcqrwnbUZc?=
- =?us-ascii?Q?/Cd57l6HmnnI4cOAKpq1LNzVrAQAWgHlOmL1huBqAGAo/k8BiiYIzH7sGnhz?=
- =?us-ascii?Q?WqwMOn+Kp3PJkyZ2kYvtRbOij5GBanmxd5JDLn3nnLqEln6irCpKd47GALzn?=
- =?us-ascii?Q?+qZyzZgtnxI6GyURJG6Q/ImrG23eVKFMuH8CsdZgSS1q853nFQ+6WLXor+56?=
- =?us-ascii?Q?xjuNRkdAEAlzj7IZQl9l51lduJTkJ9KRTlqwwrsaSFmZN9avS+MqvwkB0/6H?=
- =?us-ascii?Q?p7IWRU4YGzBfjNRRr5P2yAo2RH3Utx9ftFLjf9sku4OHp2VNGHPeosgnuoUP?=
- =?us-ascii?Q?d0wQFgSOc1wp07sb0F2132WXYwC6vmcMZmehcvXC?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6956d8b7-fb66-4e6a-fd66-08ddc49eee44
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 19:28:23.9952
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x00aB8nda0pfUVPfn1Vd3Qr3BqvW3hmiZfSqX0zNVPUZuNTbwNR7DYknEW2EVunzN8lNtozQ0IJwBAvvEpaZEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714054133.3769967-4-quic_lxu5@quicinc.com>
 
-On Wed, Jul 16, 2025 at 03:30:59PM +0800, Wei Fang wrote:
-> NETC is a multi-function PCIe Root Complex Integrated Endpoint (RCiEP)
-> that contains multiple PCIe functions, such as ENETC and Timer. Timer
-> provides PTP time synchronization functionality and ENETC provides the
-> NIC functionality.
->
-> For some platforms, such as i.MX95, it has only one timer instance, so
-> the binding relationship between Timer and ENETC is fixed. But for some
-> platforms, such as i.MX943, it has 3 Timer instances, by setting the
-> EaTBCR registers of the IERB module, we can specify any Timer instance
-> to be bound to the ENETC instance.
->
-> Therefore, add "nxp,netc-timer" property to bind ENETC instance to a
-> specified Timer instance so that ENETC can support PTP synchronization
-> through Timer.
->
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
->
+On Mon, Jul 14, 2025 at 11:11:32AM +0530, Ling Xu wrote:
+> Currently the domain ids are added for each instance of domains, this is
+> totally not scalable approach.
+
+This sentence only makes sense for people in your team or participants
+of some recent meeting or (private) mail thread of yours. When providing
+you problem description [1], do so in a way that it makes sense to
+people outside that bubble - and yourself next month.
+
+[1] https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+
+> Clean this mess and create domain ids for
+> only domains not its instances.
+> 
+
+Is the "mess" that the domain is part of the ioctl, or is the mess that
+the names of the domains are defined in an array and you prefer them to
+be listed out in code (fastrpc_get_domain_id())?
+
+> Co-developed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
 > ---
-> v2 changes:
-> new patch
-> ---
->  .../devicetree/bindings/net/fsl,enetc.yaml    | 23 +++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> index ca70f0050171..ae05f2982653 100644
-> --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> @@ -44,6 +44,13 @@ properties:
->      unevaluatedProperties: false
->      description: Optional child node for ENETC instance, otherwise use NETC EMDIO.
->
-> +  nxp,netc-timer:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Specifies a reference to a node representing a NETC Timer device,
-> +      which provides time synchronization as required for IEEE 1588 and
-> +      IEEE 802.1AS-2020.
+>  drivers/misc/fastrpc.c      | 50 ++++++++++++++++---------------------
+>  include/uapi/misc/fastrpc.h |  2 +-
+>  2 files changed, 22 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index 378923594f02..85b6eb16b616 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -27,8 +27,6 @@
+>  #define MDSP_DOMAIN_ID (1)
+>  #define SDSP_DOMAIN_ID (2)
+>  #define CDSP_DOMAIN_ID (3)
+> -#define CDSP1_DOMAIN_ID (4)
+> -#define FASTRPC_DEV_MAX		5 /* adsp, mdsp, slpi, cdsp, cdsp1 */
+>  #define FASTRPC_MAX_SESSIONS	14
+>  #define FASTRPC_MAX_VMIDS	16
+>  #define FASTRPC_ALIGN		128
+> @@ -106,8 +104,6 @@
+>  
+>  #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
+>  
+> -static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
+> -						"sdsp", "cdsp", "cdsp1" };
+>  struct fastrpc_phy_page {
+>  	u64 addr;		/* physical address */
+>  	u64 size;		/* size of contiguous region */
+> @@ -1723,7 +1719,6 @@ static int fastrpc_get_info_from_kernel(struct fastrpc_ioctl_capability *cap,
+>  	uint32_t attribute_id = cap->attribute_id;
+>  	uint32_t *dsp_attributes;
+>  	unsigned long flags;
+> -	uint32_t domain = cap->domain;
+>  	int err;
+>  
+>  	spin_lock_irqsave(&cctx->lock, flags);
+> @@ -1741,7 +1736,7 @@ static int fastrpc_get_info_from_kernel(struct fastrpc_ioctl_capability *cap,
+>  	err = fastrpc_get_info_from_dsp(fl, dsp_attributes, FASTRPC_MAX_DSP_ATTRIBUTES);
+>  	if (err == DSP_UNSUPPORTED_API) {
+>  		dev_info(&cctx->rpdev->dev,
+> -			 "Warning: DSP capabilities not supported on domain: %d\n", domain);
+> +			 "Warning: DSP capabilities not supported\n");
+>  		kfree(dsp_attributes);
+>  		return -EOPNOTSUPP;
+>  	} else if (err) {
+> @@ -1769,17 +1764,6 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
+>  		return  -EFAULT;
+>  
+>  	cap.capability = 0;
+> -	if (cap.domain >= FASTRPC_DEV_MAX) {
+> -		dev_err(&fl->cctx->rpdev->dev, "Error: Invalid domain id:%d, err:%d\n",
+> -			cap.domain, err);
+> -		return -ECHRNG;
+> -	}
+> -
+> -	/* Fastrpc Capablities does not support modem domain */
+> -	if (cap.domain == MDSP_DOMAIN_ID) {
+> -		dev_err(&fl->cctx->rpdev->dev, "Error: modem not supported %d\n", err);
+> -		return -ECHRNG;
+> -	}
+>  
+>  	if (cap.attribute_id >= FASTRPC_MAX_DSP_ATTRIBUTES) {
+>  		dev_err(&fl->cctx->rpdev->dev, "Error: invalid attribute: %d, err: %d\n",
+> @@ -2255,6 +2239,20 @@ static int fastrpc_device_register(struct device *dev, struct fastrpc_channel_ct
+>  	return err;
+>  }
+>  
+> +static int fastrpc_get_domain_id(const char *domain)
+> +{
+> +	if (!strncmp(domain, "adsp", 4))
+> +		return ADSP_DOMAIN_ID;
+> +	else if (!strncmp(domain, "cdsp", 4))
+> +		return CDSP_DOMAIN_ID;
+> +	else if (!strncmp(domain, "mdsp", 4))
+> +		return MDSP_DOMAIN_ID;
+> +	else if (!strncmp(domain, "sdsp", 4))
+> +		return SDSP_DOMAIN_ID;
 > +
 
-I think it is quite common. add ptp-timer ethernet-controller.yaml?
+The removed code performs a string compare and you replace this with a
+string prefix compare, but there's no motivation given to why this is
+done.
 
-Frank
+I'm also wondering why cdsp1 is now in CDSP_DOMAIN_ID, is that
+intentional? Was it wrong before? If so, that change should be done
+alone and with a Fixes: 
 
->  required:
->    - compatible
->    - reg
-> @@ -62,6 +69,7 @@ allOf:
->        properties:
->          clocks: false
->          clock-names: false
-> +        nxp,netc-timer: false
->
->  unevaluatedProperties: false
->
-> @@ -86,3 +94,18 @@ examples:
->              };
->          };
->      };
-> +  - |
-> +    pcie {
-> +      #address-cells = <3>;
-> +      #size-cells = <2>;
+Regards,
+Bjorn
+
+> +	return -EINVAL;
+> +}
 > +
-> +      ethernet@0,0 {
-> +          compatible = "pci1131,e101";
-> +          reg = <0x000000 0 0 0 0>;
-> +          clocks = <&scmi_clk 102>;
-> +          clock-names = "ref";
-> +          nxp,netc-timer = <&netc_timer>;
-> +          phy-handle = <&ethphy0>;
-> +          phy-mode = "rgmii-id";
-> +      };
-> +    };
-> --
+>  static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  {
+>  	struct device *rdev = &rpdev->dev;
+> @@ -2272,15 +2270,10 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  		return err;
+>  	}
+>  
+> -	for (i = 0; i < FASTRPC_DEV_MAX; i++) {
+> -		if (!strcmp(domains[i], domain)) {
+> -			domain_id = i;
+> -			break;
+> -		}
+> -	}
+> +	domain_id = fastrpc_get_domain_id(domain);
+>  
+>  	if (domain_id < 0) {
+> -		dev_info(rdev, "FastRPC Invalid Domain ID %d\n", domain_id);
+> +		dev_info(rdev, "FastRPC Domain %s not supported\n", domain);
+>  		return -EINVAL;
+>  	}
+>  
+> @@ -2330,21 +2323,20 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  	case ADSP_DOMAIN_ID:
+>  	case MDSP_DOMAIN_ID:
+>  	case SDSP_DOMAIN_ID:
+> -		/* Unsigned PD offloading is only supported on CDSP and CDSP1 */
+> +		/* Unsigned PD offloading is only supported on CDSP */
+>  		data->unsigned_support = false;
+> -		err = fastrpc_device_register(rdev, data, secure_dsp, domains[domain_id]);
+> +		err = fastrpc_device_register(rdev, data, secure_dsp, domain);
+>  		if (err)
+>  			goto err_free_data;
+>  		break;
+>  	case CDSP_DOMAIN_ID:
+> -	case CDSP1_DOMAIN_ID:
+>  		data->unsigned_support = true;
+>  		/* Create both device nodes so that we can allow both Signed and Unsigned PD */
+> -		err = fastrpc_device_register(rdev, data, true, domains[domain_id]);
+> +		err = fastrpc_device_register(rdev, data, true, domain);
+>  		if (err)
+>  			goto err_free_data;
+>  
+> -		err = fastrpc_device_register(rdev, data, false, domains[domain_id]);
+> +		err = fastrpc_device_register(rdev, data, false, domain);
+>  		if (err)
+>  			goto err_deregister_fdev;
+>  		break;
+> diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
+> index f33d914d8f46..c6e2925f47e6 100644
+> --- a/include/uapi/misc/fastrpc.h
+> +++ b/include/uapi/misc/fastrpc.h
+> @@ -134,7 +134,7 @@ struct fastrpc_mem_unmap {
+>  };
+>  
+>  struct fastrpc_ioctl_capability {
+> -	__u32 domain;
+> +	__u32 unused; /* deprecated, ignored by the kernel */
+>  	__u32 attribute_id;
+>  	__u32 capability;   /* dsp capability */
+>  	__u32 reserved[4];
+> -- 
 > 2.34.1
->
+> 
 
