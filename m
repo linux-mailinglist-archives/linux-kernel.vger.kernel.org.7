@@ -1,142 +1,172 @@
-Return-Path: <linux-kernel+bounces-733901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C95FB07A5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:52:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FC0B07A66
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB363AFFD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:52:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22AE91881A6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F8A291C3B;
-	Wed, 16 Jul 2025 15:51:56 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9762F3C03;
+	Wed, 16 Jul 2025 15:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJz4tDpD"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2747C18C31
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0939718C31;
+	Wed, 16 Jul 2025 15:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752681116; cv=none; b=KmSscFsViiCyoxDIhLJmFEnQ/TekRGFoDstWVbDUUdSuEht7csaI3cHC2Y5p8VBF1fN20rSiJkk1yHy+KQCfhJqsDCqcd9QFuLnLdaE69ElU5R1UnmoWKWDfyu/m5fbyGhoLo16FV32Iyuvb8YwUnjwuZ6wmzpddhOQUefZFKKk=
+	t=1752681146; cv=none; b=QNkC4YlV8MEdykUIK8HfWuQQKFI/KxsY1lLupEsSNZfr5fii7E2IEzVHQWfT44wgNTivK4jwMDUbE3sXxYBvPVQBRDPL/5zISe3gOPwc7ZaiHZyY3UNIqZxje4u5RvRqR+2wee/2Ldlh4aXgandqzRtzUhxpJDJsayA63rd+L58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752681116; c=relaxed/simple;
-	bh=kgoN0NIdQy8Ar5SkTkM0vtuIw1gfYA2TnRXxLCNg4WU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VpPI/IkuGLZx1//gHaw7TApq7gvp8EMlLV+NAmRxgcuIj82xhNC1WntVs/AONQ7MqZZdUBDGTTp4DYYpMOSVM8PpKmkPbpo3IzFIzoNnlGg/8lg6QGfLzYqrzRmw6ZChnt8yzZjuQKyYNdn52072vwgP+0LIVRhIMdbKZSxfA90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bj0rP208dz6GDPD;
-	Wed, 16 Jul 2025 23:50:29 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id DE746140276;
-	Wed, 16 Jul 2025 23:51:44 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Jul
- 2025 17:51:43 +0200
-Date: Wed, 16 Jul 2025 16:51:42 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	"Rob Herring" <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>, Rohit
- Mathew <rohit.mathew@arm.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	"Zeng Heng" <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
-	"Carl Worth" <carl@os.amperecomputing.com>,
-	<shameerali.kolothum.thodi@huawei.com>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <lcherian@marvell.com>,
-	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
-	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
-	<xhao@linux.alibaba.com>, <peternewman@google.com>, <dfustini@baylibre.com>,
-	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Rex Nie
-	<rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>, Koba Ko
-	<kobak@nvidia.com>, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [RFC PATCH 06/36] ACPI / PPTT: Stop acpi_count_levels()
- expecting callers to clear levels
-Message-ID: <20250716165142.00002c46@huawei.com>
-In-Reply-To: <20250711183648.30766-7-james.morse@arm.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
-	<20250711183648.30766-7-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1752681146; c=relaxed/simple;
+	bh=OylttVKD8mE7KPJBFkYcv6Rwt2AGyCAk9mSgrHZheW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VcBB0LeUg1FlhqFt5bp/pUHaB0EMm0NWfrBpQwp6bVIwGq4Yc+YzG5t4+I/Ey95UVafQNaRJd+QZyWKYQGYCzo6VZhuQqaSW3i723OB7YoM0fl3FkwWKYls1SYAwmnZhisPCDKyBXQxKU0JUB+wvk3M7i8s5Pa9Da8LqiuBb+GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJz4tDpD; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b3182c6d03bso7802345a12.0;
+        Wed, 16 Jul 2025 08:52:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752681144; x=1753285944; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Ukl7MYBC3ANSBm9jO5Nq81UCjp7PwuTwU9cCInIjQY=;
+        b=bJz4tDpDhlXoM84gsLYzHAI316HUqnqzGRkmhNGJyacCdUUmoFWbaA++bLvutx3iKf
+         yhGQnhg7aLZk3m4MLvhPeKXyc5ii54uoOHMqoQ762j3nplax1vJPt6evF9OmHpfIq7AY
+         ZyhxsQUKN81ynhocl5xGKIW4SfEB27ES+yVzK8Hd6avOi8f8WfDRKjEGLTdzgy6doNvx
+         URwW6ZC0amoudwVwMyG2DYGqz9htK7mO0H9DSr6pvPBI1TPfMXgRVsgojD/CUOGBnapn
+         z5WVnIMEREmjqt2JjwWikGOY1W84eDytGQVyaPFlZxqAW0OoWSwozhBO3NizTAa7wdGd
+         SUfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752681144; x=1753285944;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Ukl7MYBC3ANSBm9jO5Nq81UCjp7PwuTwU9cCInIjQY=;
+        b=CDx2882HWqHz/aAvnyuonStXEarxb1qoB8VbcYbzHTLJXc7Hon4ul/+4cJ0dFiHfYJ
+         LuViPGPZqHdBrba2hm/HxXAkTi5oqp6ux9ldsx4Fi7GxuWxz8niNS9xvAFe9ZZME2n2z
+         tvpO7JRfd6J4o6H4lmzOul14It2LK+/iun1SzTpLDjED/yOvRyAfkzBN0LmQb2am0cz5
+         VHRHDu9EvSRmXuVGAF/fWDo0ISNxJ2MOPQdFxWNlh+95xWO2iBMl4ZqtJ9YlCkPExNJn
+         2hKy/UP+1uTKeGf2aPuHL0rq/Fyta+vFWuGwzh1L6oLqHg+1+bSnV8Xb34Dhvmtq3x/C
+         fhag==
+X-Forwarded-Encrypted: i=1; AJvYcCUBf/gIzjDOZoieyv3LU9tpEzgF/T4MQKL7vSJvAknFyGDmauEO7HKBffV7vAaeJUz0CS+CxQHN/Xqi@vger.kernel.org, AJvYcCVt2pfE9k1Gm/22JufROmrW4Ukraf23FWa/IVjy9V7SQsTSjpPXM6Tl0ekjw/YNHDbWc1xuTSwjmiuuGTb0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZoSG30neceCsVDM3vP2VFm1hohIsObvD7mGjbotsLt+rvVUBw
+	mAYJYtxHSzSgNMo7/2SKULA6gz2p1yyiZwn/QkL48bgFGiYjDpXD3UvL
+X-Gm-Gg: ASbGncuGxafxs2GKmf9whpGvYRmnz7bBddPWn4dffC1Sd0/hiO2RUVY/rpEpVZTryiE
+	K0ARQQp+msOI4rxKwfbATRDBMsbxBLY7ZEcnbRRV4aFGfxtpxHENaga0kNWkRopWrul/ZfUQGL5
+	Gwfj1s+UYYu/jVKBg4AOS9lYKqHWsiCN+8sGULbM81wco7FH4eAHuA1AYy/Yv7FzlMQodligJqP
+	fwZMxpfuNGT7AjICZGFV0A3N5NGB4uYIohpYGYZQdrSRAWAV9fXzaLADQtZ02suyEFXy+E5uGtC
+	CHz9UyhZSMskTJ39GgwYEOpFGwKs+J9sIr27TUODmI96iY2UqQhjBRGqjMFCm0kgr5MFJldCdTN
+	rGlj+lM9Sa8S549vQOFWD3Zb7TY1CXZRvSKyj8VjgxtfncOu421sR0aPfCSv0GgzZBCh8ilA=
+X-Google-Smtp-Source: AGHT+IGTic8ujSiqr54AymsdvHDmW5v2mjFxNtDYCrb53c4AgefCHXmbrE0m0SWvFE3f1PRmTa/4gw==
+X-Received: by 2002:a17:90b:580c:b0:313:1a8c:c2c6 with SMTP id 98e67ed59e1d1-31c9e76aa70mr5838168a91.16.1752681144241;
+        Wed, 16 Jul 2025 08:52:24 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f1fd90csm1620366a91.28.2025.07.16.08.52.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 08:52:23 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <8e6d8c2f-ab9a-495d-8b43-878dbc0451ee@roeck-us.net>
+Date: Wed, 16 Jul 2025 08:52:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] hwmon: ina238: Fix inconsistent whitespace
+To: Jonas Rebmann <jre@pengutronix.de>, Jean Delvare <jdelvare@suse.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
+ kernel@pengutronix.de
+References: <20250715-ina228-v1-0-3302fae4434b@pengutronix.de>
+ <20250715-ina228-v1-1-3302fae4434b@pengutronix.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250715-ina228-v1-1-3302fae4434b@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 11 Jul 2025 18:36:18 +0000
-James Morse <james.morse@arm.com> wrote:
-
-> acpi_count_levels() passes the number of levels back via a pointer argument.
-> It also passes this to acpi_find_cache_level() as the starting_level, and
-> preserves this value as it walks up the cpu_node tree counting the levels.
+On 7/15/25 13:49, Jonas Rebmann wrote:
+> Some purely cosmetic changes in ina238.c:
 > 
-> The only caller acpi_get_cache_info() happens to have already initialised
-> levels to zero, which acpi_count_levels() depends on to get the correct
-> result.
+>   - When aligning definitions, do so consistently with tab stop of 8.
+>   - Use spaces instead of tabs around operators.
+>   - Align wrapped lines.
 > 
-> Explicitly zero the levels variable, so the count always starts at zero.
-> This saves any additional callers having to work out they need to do this.
-
-Hi James,
-
-This is all a bit fiddly as we now end up with that initialized in various
-different places. Perhaps simpler to have acpi_count_levels() return the
-number of levels rather than void. Then return number of levels rather
-than 0 on success from acpi_get_cache_info(). Negative error codes used
-for failure just like now.
-
-That would leave only a local variable in acpi_count_levels being
-initialized to 0 and passed to acpi_find_cache_level() before being
-returned when the loop terminates.
-
-I think that sequence then makes it such that we can't fail to
-initialize it at without the compiler noticing and screaming.
-
-Requires a few changes from if (ret) to if (ret < 0) at callers
-of acpi_get_cache_info() but looks simple (says the person who
-hasn't actually coded it!)
-
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
 > ---
->  drivers/acpi/pptt.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>   drivers/hwmon/ina238.c | 30 +++++++++++++++---------------
+>   1 file changed, 15 insertions(+), 15 deletions(-)
+...
+>   static struct i2c_driver ina238_driver = {
+>   	.driver = {
+> -		.name	= "ina238",
+> +		.name = "ina238",
+
+This was aligned with ".probe" below. Either leave it alone or change the tabs below as well.
+
+Thanks,
+Guenter
+
+
+>   		.of_match_table = of_match_ptr(ina238_of_match),
+>   	},
+>   	.probe		= ina238_probe,
 > 
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index 13619b1b821b..13ca2eee3b98 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -183,7 +183,7 @@ acpi_find_cache_level(struct acpi_table_header *table_hdr,
->   * @cpu_node: processor node we wish to count caches for
->   * @levels: Number of levels if success.
->   * @split_levels:	Number of split cache levels (data/instruction) if
-> - *			success. Can by NULL.
-> + *			success. Can be NULL.
-
-Grumpy reviewer hat.  Unrelated cleanup up - good to have but not in this patch where
-it's a distraction.
-
->   *
->   * Given a processor node containing a processing unit, walk into it and count
->   * how many levels exist solely for it, and then walk up each level until we hit
-> @@ -196,6 +196,8 @@ static void acpi_count_levels(struct acpi_table_header *table_hdr,
->  			      struct acpi_pptt_processor *cpu_node,
->  			      unsigned int *levels, unsigned int *split_levels)
->  {
-> +	*levels = 0;
-> +
->  	do {
->  		acpi_find_cache_level(table_hdr, cpu_node, levels, split_levels, 0, 0);
->  		cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
 
 
