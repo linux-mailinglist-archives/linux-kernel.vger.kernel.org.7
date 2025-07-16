@@ -1,190 +1,120 @@
-Return-Path: <linux-kernel+bounces-733023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E0EB06F09
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:35:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DA7B06F10
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AACD750410B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:34:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84CAF189A88A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EE128B407;
-	Wed, 16 Jul 2025 07:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B7C28CF6E;
+	Wed, 16 Jul 2025 07:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N4cGcm2h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wcivdutf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EC44A11;
-	Wed, 16 Jul 2025 07:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84B1289E0B;
+	Wed, 16 Jul 2025 07:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752651306; cv=none; b=g7aMfnENonmhWclHP6dPGZzTIR5xaaJWZXTZM6azPo57XwAisK5+ILnYb5x7EZoRKjZEpjaliZQf/EjsjFaA6Yqrcg849BCKx6KPFgSwMx73EJSRbks26CHJrPqu2JapZCIEFwknxfI4wLQsXQsnBUmBI/YtIZAtNIxFF1ynGAU=
+	t=1752651369; cv=none; b=WdKZXw8vY8PleqQKLq3zIWv2XxsYV8NzxzYi5jg7s8ESR4uDeb0h8KgCbwuvL1kUhFjAoafeY0CwguuWVgcnL42EmDL1o+9aC4Dc+/ssfMOsbqwYuO9ulQDECoLyZpglpNWcs0J7gpoYkCeAfouksofNJqRhG2zWuat/ieb6F9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752651306; c=relaxed/simple;
-	bh=0tuKormBsP6swmsUBQoxnh8G7NopetuC3C1pYAEYNqI=;
+	s=arc-20240116; t=1752651369; c=relaxed/simple;
+	bh=SLxwHXEqd1OUWiEYMVIKGR7ibc8WPwr3uMVi8v3Vptw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kzK5J6HhgoB8K9WWi8DskFajtoy/IERf1hKtbs3Rs1BvdvAOU4/g0oPuKg4to7QTnicAG9UZmAoOHVveDWLGPnT3+skS9RtE/D6Y/bX8R5ApMwMMwG4nyqai1WOqHbfKHyCUvzWGgQttMqI8hh4Jw/xiuhZKL0jWRtLRFWmhnG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N4cGcm2h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6047EC4CEF0;
-	Wed, 16 Jul 2025 07:35:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752651305;
-	bh=0tuKormBsP6swmsUBQoxnh8G7NopetuC3C1pYAEYNqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N4cGcm2hKCV43g0MpO8JciXX3TNMVb5fuEtEGqkgIvdgWhx0HoLGqHOO+jzxhVhUU
-	 6lnv+TlezJF2un8EWNxvDcUDS9k7cadcHTO+8FwhjL6zR0+mEeOgzosnSNROs0vqzv
-	 wsmiFFPkNciO5nqORekL0gmfXUahsA+JWYXo+biI=
-Date: Wed, 16 Jul 2025 09:35:03 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ignacio =?iso-8859-1?Q?Pe=F1a?= <ignacio.pena87@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: Fix multiple checkpatch warnings in
- rtl8723b_cmd.c
-Message-ID: <2025071640-audibly-sketch-9d55@gregkh>
-References: <20250716041236.61270-1-ignacio.pena87@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a3Wy0TUFMUth4bw2g6DQaVAR0NTUpx9Ra6eREI1pkUT6PYDpnO3cJEqGHuYnzN9HRq0MMX+jCX6zcJqZqk7q4FNwYDsWo+zgBrzkIGfUgYrcFg2UZX4ycXNtufUUoeTRCvXZxy5ehVY29Unk0+vUmNIdctBt2N2ot1r0YuRZJ3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wcivdutf; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752651368; x=1784187368;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SLxwHXEqd1OUWiEYMVIKGR7ibc8WPwr3uMVi8v3Vptw=;
+  b=WcivdutfNN85F3mKegftkmmAZb+XjPuJfrkFzfKcbSqRtiEm+0FTko9J
+   hOKeWXNTHcZYwbhaSUmZ+Mz/KgvW3b2NSNYMxOytV7D6abEHyQ8IIWZUL
+   0+cdpXvhCjfFZVIDRWRCwGjf2xJyNIrx3hTKEGQ1LeYUJN+e5v5iC9Yda
+   flIFXWihWfs8tV6bsicjiK1hzqYRU15SGcygv1tKOdQsn/mJ2Y9YJkHJ1
+   Ql8Vzef3cszNYdPvrbPCXl1AN12E7eGLEiONwhIY3dJnsyiTRDwt3gs79
+   7gEEwzFz1kajNIhq3bRVmim/owVAOynUWL5R4u4mXj1h2m5zk8wmLpNnQ
+   A==;
+X-CSE-ConnectionGUID: bpCP9Rh7ScihEAKqgEQwvQ==
+X-CSE-MsgGUID: jBrzcU3ZT/SO6uef5YH9TQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="65458026"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="65458026"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:36:06 -0700
+X-CSE-ConnectionGUID: hY0dnPHtTOiIv2bf3XuWdg==
+X-CSE-MsgGUID: +jK6Yk6xTfOJ47JGHLkZWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="157985544"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:35:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ubwg6-0000000Fr3T-1IQh;
+	Wed, 16 Jul 2025 10:35:46 +0300
+Date: Wed, 16 Jul 2025 10:35:46 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: airlied@gmail.com, akpm@linux-foundation.org,
+	alison.schofield@intel.com, andrew+netdev@lunn.ch,
+	arend.vanspriel@broadcom.com, bp@alien8.de,
+	brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
+	colin.i.king@gmail.com, cvam0000@gmail.com,
+	dan.j.williams@intel.com, dave.hansen@linux.intel.com,
+	dave.jiang@intel.com, dave@stgolabs.net, davem@davemloft.net,
+	dri-devel@lists.freedesktop.org, edumazet@google.com,
+	gregkh@linuxfoundation.org, guanwentao@uniontech.com, hpa@zytor.com,
+	ilpo.jarvinen@linux.intel.com, intel-xe@lists.freedesktop.org,
+	ira.weiny@intel.com, j@jannau.net, jeff.johnson@oss.qualcomm.com,
+	jgross@suse.com, jirislaby@kernel.org, johannes.berg@intel.com,
+	jonathan.cameron@huawei.com, kuba@kernel.org, kvalo@kernel.org,
+	kvm@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-wireless@vger.kernel.org, linux@treblig.org,
+	lucas.demarchi@intel.com, marcin.s.wojtas@gmail.com,
+	ming.li@zohomail.com, mingo@kernel.org, mingo@redhat.com,
+	netdev@vger.kernel.org, niecheng1@uniontech.com,
+	oleksandr_tyshchenko@epam.com, pabeni@redhat.com,
+	pbonzini@redhat.com, quic_ramess@quicinc.com, ragazenta@gmail.com,
+	rodrigo.vivi@intel.com, seanjc@google.com, shenlichuan@vivo.com,
+	simona@ffwll.ch, sstabellini@kernel.org, tglx@linutronix.de,
+	thomas.hellstrom@linux.intel.com, vishal.l.verma@intel.com,
+	x86@kernel.org, xen-devel@lists.xenproject.org,
+	yujiaoliang@vivo.com, zhanjun@uniontech.com
+Subject: Re: [PATCH v2 6/8] serial: 8250_dw: Fix typo "notifer"
+Message-ID: <aHdWUu58e_nCadX4@smile.fi.intel.com>
+References: <BD5C52D2838AEA48+20250715134050.539234-1-wangyuli@uniontech.com>
+ <2BF1749F02ADE664+20250715134407.540483-6-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250716041236.61270-1-ignacio.pena87@gmail.com>
+In-Reply-To: <2BF1749F02ADE664+20250715134407.540483-6-wangyuli@uniontech.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Jul 16, 2025 at 12:12:36AM -0400, Ignacio Peña wrote:
-> Fix the following checkpatch warnings:
-> - Comparisons should place the constant on the right side
-> - Braces {} are not necessary for single statement blocks
-> - Block comments should align the * on each line
-> - No space before tabs
-> 
-> These are coding style fixes that improve code readability.
-> 
-> Signed-off-by: Ignacio Peña <ignacio.pena87@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c | 40 ++++++++++----------
->  1 file changed, 19 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
-> index 56526056d..4f33f4f0c 100644
-> --- a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
-> +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
-> @@ -24,9 +24,8 @@ static u8 _is_fw_read_cmd_down(struct adapter *padapter, u8 msgbox_num)
->  
->  	do {
->  		valid = rtw_read8(padapter, REG_HMETFR) & BIT(msgbox_num);
-> -		if (0 == valid) {
-> +		if (valid == 0)
->  			read_down = true;
-> -		}
->  	} while ((!read_down) && (retry_cnts--));
->  
->  	return read_down;
-> @@ -35,13 +34,13 @@ static u8 _is_fw_read_cmd_down(struct adapter *padapter, u8 msgbox_num)
->  
->  
->  /*****************************************
-> -* H2C Msg format :
-> -*| 31 - 8		|7-5	| 4 - 0	|
-> -*| h2c_msg	|Class	|CMD_ID	|
-> -*| 31-0						|
-> -*| Ext msg					|
-> -*
-> -******************************************/
-> + * H2C Msg format :
-> + * | 31 - 8		|7-5	| 4 - 0	|
-> + * | h2c_msg	|Class	|CMD_ID	|
-> + * | 31-0						|
-> + * | Ext msg					|
-> + *
-> + ******************************************/
->  s32 FillH2CCmd8723B(struct adapter *padapter, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
->  {
->  	u8 h2c_box_num;
-> @@ -57,13 +56,11 @@ s32 FillH2CCmd8723B(struct adapter *padapter, u8 ElementID, u32 CmdLen, u8 *pCmd
->  	if (mutex_lock_interruptible(&(adapter_to_dvobj(padapter)->h2c_fwcmd_mutex)))
->  		return ret;
->  
-> -	if (!pCmdBuffer) {
-> +	if (!pCmdBuffer)
->  		goto exit;
-> -	}
->  
-> -	if (CmdLen > RTL8723B_MAX_CMD_LEN) {
-> +	if (CmdLen > RTL8723B_MAX_CMD_LEN)
->  		goto exit;
-> -	}
->  
->  	if (padapter->bSurpriseRemoved)
->  		goto exit;
-> @@ -80,7 +77,7 @@ s32 FillH2CCmd8723B(struct adapter *padapter, u8 ElementID, u32 CmdLen, u8 *pCmd
->  		else {
->  			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, 3);
->  			memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer+3, CmdLen-3);
-> -/* 			*(u8 *)(&h2c_cmd) |= BIT(7); */
-> +/* *(u8 *)(&h2c_cmd) |= BIT(7); */
->  		}
->  
->  		*(u8 *)(&h2c_cmd) |= ElementID;
-> @@ -438,13 +435,14 @@ void rtl8723b_set_FwPwrMode_cmd(struct adapter *padapter, u8 psmode)
->  
->  		}
->  
-> -/* offload to FW if fw version > v15.10
-> -		pmlmeext->DrvBcnEarly = 0;
-> -		pmlmeext->DrvBcnTimeOut =7;
-> -
-> -		if ((pmlmeext->DrvBcnEarly!= 0Xff) && (pmlmeext->DrvBcnTimeOut!= 0xff))
-> -			u1H2CPwrModeParm[H2C_PWRMODE_LEN-1] = BIT(0) | ((pmlmeext->DrvBcnEarly<<1)&0x0E) |((pmlmeext->DrvBcnTimeOut<<4)&0xf0) ;
-> -*/
-> +/*
-> + * offload to FW if fw version > v15.10
-> + *		pmlmeext->DrvBcnEarly = 0;
-> + *		pmlmeext->DrvBcnTimeOut =7;
-> + *
-> + *		if ((pmlmeext->DrvBcnEarly!= 0Xff) && (pmlmeext->DrvBcnTimeOut!= 0xff))
-> + *			u1H2CPwrModeParm[H2C_PWRMODE_LEN-1] = BIT(0) | ((pmlmeext->DrvBcnEarly<<1)&0x0E) |((pmlmeext->DrvBcnTimeOut<<4)&0xf0) ;
-> + */
->  
->  	}
->  
-> -- 
-> 2.39.5 (Apple Git-154)
-> 
-> 
+On Tue, Jul 15, 2025 at 09:44:05PM +0800, WangYuli wrote:
+> There is a spelling mistake of 'notifer' in the comment which
+> should be 'notifier'.
 
-Hi,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-You are receiving this message because of the following common error(s)
-as indicated below:
 
-- Your patch did many different things all at once, making it difficult
-  to review.  All Linux kernel patches need to only do one thing at a
-  time.  If you need to do multiple things (such as clean up all coding
-  style issues in a file/driver), do it in a sequence of patches, each
-  one doing only one thing.  This will make it easier to review the
-  patches to ensure that they are correct, and to help alleviate any
-  merge issues that larger patches can cause.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
