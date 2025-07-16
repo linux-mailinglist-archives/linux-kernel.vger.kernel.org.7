@@ -1,170 +1,229 @@
-Return-Path: <linux-kernel+bounces-732897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCFAB06D72
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:45:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF43B06D77
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5799B3B0E1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:44:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344EE56012C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A5D2E88B7;
-	Wed, 16 Jul 2025 05:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D52D2E88AC;
+	Wed, 16 Jul 2025 05:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNJmO0Vo"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Tnmp4xzj"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2083.outbound.protection.outlook.com [40.107.236.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584022E88AC;
-	Wed, 16 Jul 2025 05:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752644714; cv=none; b=ObasxgP+4/00DEGFlDnBFQwqwD8SDFIiFJjbB/plmuEXe0LwaB+2LB3Adn5V7nCcQLDNVYhInE5hCuo7cY3hoRFXyiV81cnWz+V03F1wwSeOCtxPN2XKmeFFe3KW0jApTXiTu/cWRU/xzAIKodv/VXUNIAycil/0wBKJYtGsXRw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752644714; c=relaxed/simple;
-	bh=eGdmZ5ZlH53gCPFGCYBewJegI1vbomC/3tBl4QNtNbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b+ykEXh8XXQ9V74OYdXq3wGiZunD4ALUxnTLUWjAKzOSXM2jM2rJgL/H53x7gIsP6ftvkfWawghf5hHp3W/t5YKnwPsWiYamnS4zQ44L3tdUaRHbv09dH2lmiKz3pqmqt4DEL4EeaMD9z2FVz4U8acENOwgB6dj5vxy9uMGaT60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FNJmO0Vo; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so9525793a12.0;
-        Tue, 15 Jul 2025 22:45:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752644710; x=1753249510; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MsFglb7UC5zu8qt+U6fwU5eJBn30GK+9qLadqgQeJ5k=;
-        b=FNJmO0VoQSA6e70i3ehANlcn39RM/lej6jt7Uy22LE6f8B+0yv+HXEH4fSRf4wYbog
-         3VtqdojVD3Sz9MboPjncioIQGj1vEiE4/NjVaMydQz6QUcUzXqIis6FTWHZy8YhrbGdi
-         Bq4OfP9FTxKHmZPPjNzPqf+syaVfA75rz34BECZWJNeOQ5B339rq2q1UgbnkBXQlQWdn
-         QXbQbRQAvFUy/F9EO4QvULw6Rzn5/QmBM6QwIOb+FpTpM7EbhnWuO1YajRaG7xOTFKUS
-         EgxhKoBPi08jCdl1RseojInZ0/N+QcYAvme7Q4H55BEHwyN88AMe7ETHQTpDICtoVw8J
-         tTJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752644710; x=1753249510;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MsFglb7UC5zu8qt+U6fwU5eJBn30GK+9qLadqgQeJ5k=;
-        b=VRvs+385GYciSygomnsSHhivpjbxWEk8xKAR2T4e05VczqoBsDDIGtTJEH1HYVFFIj
-         tlxCXvb42r4lqWYmn+0fdxkd1lGlCKu2e3xxBD+JPbFl6epDo33WLd0k2MhB0sUNdC9o
-         YFFHwnT9G1fDyu3hL0k//9ECZ7mFeOxMiHerpgGpNXSewceHc+3na9CRYxIk2KGrVT52
-         ppTFhlZ4W6BvBPhwotYMNQayGkkW2WhDHX2bcMgpk5TfYhU1fAr+9de6hgCGmEfaJMZ3
-         Q7axm11MYFuU96F5DZ6zTlDqsfzUJtQ8kA6k4GQRC7ryRqEQrniN1APuqRcQTZ+wzqAm
-         IgVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUimEL9Bnz4N5+6SESK+t/1m62WDd3bCxoax0dvpQanBefa8KIw8J1ot1LS/reny32vR2r/OaaLsbwFCqqo@vger.kernel.org, AJvYcCUnkH3QrHlW47quMZJRCczlxRGko0Phr7doCW8jkiEmCiIrIAACGafoU1NgrpUo16h1DHXVcwJ+OxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT7pJX1pzqpyt0m2dLghZdv+ZYosmh+HQmI9Ys+p4+FlaeWmB1
-	MColElIHiz/270KKfQascPJbj1LkCiRwZGP8+lpKeylBcDxIfVKStQh7KEbkoTPC
-X-Gm-Gg: ASbGncuJ41dkqm7Ct6ojXdJGurolTDOFUaUPB1A0okeRJZT/r16u2SLBfVMtaLQnJO6
-	J4pxEchmwZCjKT33KxZl+4yplZbuCUp4U3ustNmCHfYTwVMRs0jZMJqaiR+IlECmNY/T4HqLpdx
-	YCrRIAC5B9L9JD2E5FSCOW8NAOpqsxX4eM0ne5MqzFhzmO72ssr1K21hlEf+CwHCPRENJEAoT/b
-	AglIJN2AUb1hZxxQjnysxb59CpvKL+PuSaC7xTOwJhaWrfmCd7J8surndEhFUHlwHIo3ltd7kCY
-	3PHFdvkf5oJ2jGZ5Hpl7yYwnvJGlIiqH5He+1yJqnvvDXG+HsNHhlPotJCh5g+042CAYRT+4lJu
-	bqpErq1E/wGj0ERB8ZkWWRDJV9YWcpltiVBmDAFJX4+h1GyUJMokbRVHSzQhLT1sKrczNM3vX8b
-	IpOgNJ
-X-Google-Smtp-Source: AGHT+IHLPZTLnuMNuUUdI1MJK0ukO6DIc9Ucb96DB0s5wllcZ5aFYj53D4KvvbjOVgLPh1ZZH1aBHA==
-X-Received: by 2002:a17:907:1c10:b0:ae3:7c8c:351d with SMTP id a640c23a62f3a-ae9ce1acb18mr129050666b.56.1752644710226;
-        Tue, 15 Jul 2025 22:45:10 -0700 (PDT)
-Received: from [10.196.68.116] (213142096019.public.telering.at. [213.142.96.19])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e8f9b4sm1135555166b.11.2025.07.15.22.45.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 22:45:09 -0700 (PDT)
-Message-ID: <988d9355-2243-4187-b4ab-78652a1fb008@gmail.com>
-Date: Wed, 16 Jul 2025 07:45:08 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D4517D2
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752645230; cv=fail; b=fih0czINK2odsSfcNowYINqZc6xdGsnLYUaWP6MKve2t0xZma+4X2gYXJsSo1X5CkB2SPTIAhkAgShC8fXSoT87HdU8zaspaODA2WKpSFKTtnZf+ZukFz5bnGZaktnQJVOpOA2FsiQmjJ0TRHe6rinvTzkb1gvUVfuN8Elg+53o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752645230; c=relaxed/simple;
+	bh=4LkeckeajseEXbNcf43EiAbVCZOxgha3kxf3opNjqm0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pFP3kenH1zCiOb6SX3v6DX4uQLCaG5AQGohMdNa8TiKZ1ZwZhzwyZ6Da1Qh3aIY4Py0mgt4z5Uz6RWaWjUZ1Q/KS+chAjYYQiBzP4mrBULDZCRevSmuMw/smx6zjpAgfrMPJDoBNwDNU0yqFnKl7cdO7VKxI8zh6Lsu/5vcLiRE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Tnmp4xzj; arc=fail smtp.client-ip=40.107.236.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G9j8NvsImHjlwIwQBUvlyrL5pH6Ji79NnQcE8omJrl+NRReMNwxPyNWvmivnkleJKoe8DSrD7sz75sONGMvHXEWneX0TfPnNKKlE16KvxkqG77UwCHxydi4/8Jb3IUddyGtw458ifN4FZlFJo6VDbM5tnAzs9yNjwa/IIP/vC+PnW79AvZYchIWMjNH4o3SF8EvQ7aVZnWXF8L3OLd9/nJPcPmzqyxfWtPEMnpzEJZndQzeq7Sh1rXxRI2LbLNqzN1BRJPomYGG+HWKz/viM4dPEitlFbARLqiW+/8SF2+sJa4s4U4ksibHNT86irVdkeNKftKTosQkQ1PYQHPCwVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pC6yBa2pq1n/w0WuBDDXz3YDyPoxKa8rYOLyj6idmRE=;
+ b=NmfmryaRiH9WWnaPjI5hHMm9QL/bXYHeYQzry5fSbfsJ4fxO+ejU0RV3d2juIjf1LywmoXaG0yez7tHjkn4n+nuoMDA3xk3o0+/34w5s1fGn+M/tjQ/ncolBhZvVdSpTb48ShRax2mAh8oZVvv5Y3hk/BHNF7bq+t/AeaxEDLdR/3QKxoTknLZDIRyEHBy7GGC3dFoIg17pOqofveETTjcqZKAqz0/rxAXMUG2mDwqvebKQa3TPlGugHE7GWN5ZMQOQ/70XTohcXP7sWgsraXfckRvrgei5eNixXDaciRde09YL4kXQXjsvsfxGfJehOLdPG65uOh3cyydsPtgTJXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pC6yBa2pq1n/w0WuBDDXz3YDyPoxKa8rYOLyj6idmRE=;
+ b=Tnmp4xzjKbfVmfrTxTcXJjTCquqFnRJ1qmvG+hD342A89YDwGvvTEpQ1msVF1jnq+zXg2vkXNj+W6LGox7FUryp97cRiLvRW+gE27tI9uaJNbnehZFJ9XWNuZoB/6oyua4R1RFVZPQ+IKLRMQtZO5O/e6yhVFiuch8raGDw4Gi8=
+Received: from SJ0PR03CA0002.namprd03.prod.outlook.com (2603:10b6:a03:33a::7)
+ by SA3PR12MB7999.namprd12.prod.outlook.com (2603:10b6:806:312::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Wed, 16 Jul
+ 2025 05:53:44 +0000
+Received: from CO1PEPF000044F9.namprd21.prod.outlook.com
+ (2603:10b6:a03:33a:cafe::cb) by SJ0PR03CA0002.outlook.office365.com
+ (2603:10b6:a03:33a::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Wed,
+ 16 Jul 2025 05:53:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044F9.mail.protection.outlook.com (10.167.241.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8964.1 via Frontend Transport; Wed, 16 Jul 2025 05:53:44 +0000
+Received: from gomati.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 16 Jul
+ 2025 00:53:40 -0500
+From: Nikunj A Dadhania <nikunj@amd.com>
+To: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <x86@kernel.org>
+CC: <seanjc@google.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<dave.hansen@linux.intel.com>, <thomas.lendacky@amd.com>,
+	<santosh.shukla@amd.com>, Nikunj A Dadhania <nikunj@amd.com>
+Subject: [PATCH v2] x86/sev: Improve handling of writes to intercepted TSC MSRs
+Date: Wed, 16 Jul 2025 11:23:15 +0530
+Message-ID: <20250716055315.2229037-1-nikunj@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
-Content-Language: en-GB
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: mailhol.vincent@wanadoo.fr, linux-kernel@vger.kernel.org,
- linux-can@vger.kernel.org
-References: <20250714175520.307467-1-andrey.lalaev@gmail.com>
- <20250715-almond-zebra-of-perception-9d2e6c-mkl@pengutronix.de>
- <b8221fe9-a167-4bcc-81bf-fb793712b48e@gmail.com>
- <20250715-smart-ultra-avocet-d7937a-mkl@pengutronix.de>
-From: Andrei Lalaev <andrey.lalaev@gmail.com>
-In-Reply-To: <20250715-smart-ultra-avocet-d7937a-mkl@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F9:EE_|SA3PR12MB7999:EE_
+X-MS-Office365-Filtering-Correlation-Id: 410ec791-ec78-4077-d109-08ddc42d1fe4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?n14/Z4vrRweYSMpu8dQMo8/Vv/4NlOLB5lu/w2Qc04m49blCig0itrdEf3pR?=
+ =?us-ascii?Q?oqjJ1U+JlZPDTzQtgAZAPQ9jvX6obw6pQPBrxubYeINhGyc4I8BvJQRh5bc0?=
+ =?us-ascii?Q?spMlZm1kD54FjmJWuzQKw6GFUaPjt9mJqXbl6/oV/t1RroIPXiV97QWKAihX?=
+ =?us-ascii?Q?NeDgx4enhpBB8DbFNacSTBq5Z28cHrHq5nnbQZIKO693mU2tDAiMQnPh/rHl?=
+ =?us-ascii?Q?KnK6GI5U+nyVUa02bFIffZFinfcW7WRQ4kxMFgvRustqbeXRBtDWeay2rCYW?=
+ =?us-ascii?Q?ad/YXUH1W/bswJg7wCpkBtQSkAW6flHvOioSKQweT7GdgGjSG1pD9StHXMxT?=
+ =?us-ascii?Q?UIoSaNdwL7atZ1DWstONrkUqh0kinEbjoQcT5t0cbd83n7OI3+9BhL5o3qyk?=
+ =?us-ascii?Q?B7QiKYzjYvj8xYWq7O6x1xC9Ca/hrkWo4HxfGkxDWfqUB/yFMz6cqy0g0fTF?=
+ =?us-ascii?Q?zgc4oENOsYawbzo82sdSXi9EBS1Xe9DTJpp27wvmWR/GNIvslfBynijuohAw?=
+ =?us-ascii?Q?ua56VLqBJ/ULbYvTQZusUZxp73b/M19yL1ZBXZBq7LEcGsm4RLti2yjLd2EI?=
+ =?us-ascii?Q?awOB+WOPM8Uf1dSAmh/jRhTky/TmIVkppITEcbWAsdI3DMHXjYF7CNirwghq?=
+ =?us-ascii?Q?4FtNkvPDxcpu+odW8lQ3wXYSGJjfzYmUHE4BwbuKCxNKO+v968WdeUVEKq66?=
+ =?us-ascii?Q?fI3SY8L2nGPcJNuTcnMe+CmPM7jy3WV+ez+DkPH6KfbmQmJ125nvmzjzha4j?=
+ =?us-ascii?Q?PkNWQ5wvUohTXbrIAcJRJr6yQWWoqUos2KFw+QRa2vVKqS5FovRm/N7PoCeA?=
+ =?us-ascii?Q?jzUJiy6v4DbgtONL8f+Nvo1hii1W1OOQDYCdNKJVoCm4rnpcXGTM5uVHdJJJ?=
+ =?us-ascii?Q?KNZcZG30vScYBzgzoj9vCU4FwSE0clS8s6uV2Pg5hBIqm+IXWHuoICGZvK36?=
+ =?us-ascii?Q?ulVRwwfcgVunUPo+49Nz0D8dr5hjz77XcvckLSAXwWKRbxRubQ9ak9YJfwFA?=
+ =?us-ascii?Q?2nOFIs6ku62GT96ImUwJq+pp/A7fUtvEQVRcBvi3Qj+32LZSvo5F5ao7ZK6/?=
+ =?us-ascii?Q?URBmmdN6hi7rcyo5kn2kERC8KOGQzu2Lv2/gZho3KJeEbHlkPIfaWHpaUKSx?=
+ =?us-ascii?Q?Md9Uoe9FOawW4aQ7TQ22fO85kxXQ7ek46VScLufuolyj2b2tZ2VoLSaOhcbA?=
+ =?us-ascii?Q?XsuvNIBO0HCCKTM/VxRYfy8ObDLB/okDoWCzcDS7Ii1NBlPh8zdEKnsjp/en?=
+ =?us-ascii?Q?QdvjCrRydFfhkGpbKNCMkTqOHSZTItMNUF0DI3m4DV+5sZ4EjJvoordqap68?=
+ =?us-ascii?Q?adtMJgyZ24yVTL6HyT8psKkP0g9RIGxGx9imhuhCJEykp8/b5Lb1sNagVZz4?=
+ =?us-ascii?Q?bD5+gyTH8TootDrgzBlfX4IJNqCu8QlQggkwDueShUpt+qsh606sujCZBhaP?=
+ =?us-ascii?Q?7BZ06xXhvT44ZBkLjiLfkm1iuO/Zf7cDPlLFGOqhSW+vxk099Q15gGELJz30?=
+ =?us-ascii?Q?CayQUYMSWwYs+eSTMneS81I5V/GKCoT8CohW?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 05:53:44.2797
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 410ec791-ec78-4077-d109-08ddc42d1fe4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F9.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7999
 
-On 15.07.2025 16:29, Marc Kleine-Budde wrote:
-> On 15.07.2025 16:24:22, Andrei Lalaev wrote:
->> I was also surprised because this callback isn't marked as mandatory
->> and that there are no additional checks.
->>
->>>
->>> What about this fix?
->>>
->>> diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
->>> index 13826e8a707b..94603c9eb4aa 100644
->>> --- a/drivers/net/can/dev/netlink.c
->>> +++ b/drivers/net/can/dev/netlink.c
->>> @@ -285,6 +285,12 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
->>>          }
->>>  
->>>          if (data[IFLA_CAN_RESTART_MS]) {
->>> +                if (!priv->do_set_mode) {
->>> +                        NL_SET_ERR_MSG(extack,
->>> +                                       "device doesn't support restart from Bus Off");
->>> +                        return -EOPNOTSUPP;
->>> +                }
->>> +
->>>                  /* Do not allow changing restart delay while running */
->>>                  if (dev->flags & IFF_UP)
->>>                          return -EBUSY;
->>> @@ -292,6 +298,12 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
->>>          }
->>>  
->>>          if (data[IFLA_CAN_RESTART]) {
->>> +                if (!priv->do_set_mode) {
->>> +                        NL_SET_ERR_MSG(extack,
->>> +                                       "device doesn't support restart from Bus Off");
->>> +                        return -EOPNOTSUPP;
->>> +                }
->>> +
->>>                  /* Do not allow a restart while not running */
->>>                  if (!(dev->flags & IFF_UP))
->>>                          return -EINVAL;
->>
->> Thanks for the patch. As expected, it fixes the kernel OOPS,
->> but the interface never leaves the BUS_OFF state.
-> 
-> Which device and which firmware are you using?
-> 
-> The gs_usb/candlelight interface is un(der)defined when it comes to
-> bus-off handling.
-> 
-> I think the original candlelight with the stm32f072 does auto bus-off
-> recovery. Not sure about the candlelight on stm32g0b1.
-> 
-> regards,
-> Marc
-> 
+From: Sean Christopherson <seanjc@google.com>
 
-Sorry, my bad for not mentioning it earlier. I have several USB-CAN adapters:
-  - two are based on STM32F072 (not original CandleLight, but using the same FW)
-  - one is a original CandleLightFD on STM32G0B1, that I used for testing
+Currently, when a Secure TSC enabled SNP guest attempts to write to the
+intercepted GUEST_TSC_FREQ MSR (a read-only MSR), the guest kernel response
+incorrectly implies a VMM configuration error, when in fact it is the usual
+VMM configuration to intercept writes to read-only MSRs, unless explicitly
+documented.
 
-And all of them behave exactly as you described:
-  - both STM32F072-based automatically recover from BUS_OFF and I see
-    it in `ip -details link show can0`
-  - STM32G0B1-based doesn't recover and I have to down/up interface to restore it
+Modify the intercepted TSC MSR #VC handling:
+* Write to GUEST_TSC_FREQ will generate a #GP instead of terminating the
+  guest
+* Write to MSR_IA32_TSC will generate a #GP instead of silently ignoring it
 
-Since this is expected behavior and no kernel OOPS occurs,
-I will switch to your patch.
+Add a WARN_ONCE to log the incident, as well-behaved SNP guest kernels
+should never attempt to write to these MSRs.
 
-Thanks a lot for the patch and your help!
+However, continue to terminate the guest when reading from intercepted
+GUEST_TSC_FREQ MSR with Secure TSC enabled, as intercepted reads indicate
+an improper VMM configuration for Secure TSC enabled SNP guests.
 
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+Co-developed-by: Nikunj A Dadhania <nikunj@amd.com>
+Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+---
+ arch/x86/coco/sev/vc-handle.c | 31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/coco/sev/vc-handle.c b/arch/x86/coco/sev/vc-handle.c
+index faf1fce89ed4..18be9f8bd015 100644
+--- a/arch/x86/coco/sev/vc-handle.c
++++ b/arch/x86/coco/sev/vc-handle.c
+@@ -371,29 +371,30 @@ static enum es_result __vc_handle_msr_caa(struct pt_regs *regs, bool write)
+  * executing with Secure TSC enabled, so special handling is required for
+  * accesses of MSR_IA32_TSC and MSR_AMD64_GUEST_TSC_FREQ.
+  */
+-static enum es_result __vc_handle_secure_tsc_msrs(struct pt_regs *regs, bool write)
++static enum es_result __vc_handle_secure_tsc_msrs(struct pt_regs *regs, bool write,
++						  struct es_em_ctxt  *ctxt)
+ {
+ 	u64 tsc;
+ 
+ 	/*
+-	 * GUEST_TSC_FREQ should not be intercepted when Secure TSC is enabled.
+-	 * Terminate the SNP guest when the interception is enabled.
++	 * Writing to MSR_IA32_TSC can cause subsequent reads of the TSC to
++	 * return undefined values, and GUEST_TSC_FREQ is read-only. Generate
++	 * a #GP on all writes, but WARN to log a kernel bug.
+ 	 */
+-	if (regs->cx == MSR_AMD64_GUEST_TSC_FREQ)
+-		return ES_VMM_ERROR;
++	if (WARN_ON_ONCE(write)) {
++		ctxt->fi.vector = X86_TRAP_GP;
++		ctxt->fi.error_code = 0;
++		return ES_EXCEPTION;
++	}
+ 
+ 	/*
+-	 * Writes: Writing to MSR_IA32_TSC can cause subsequent reads of the TSC
+-	 *         to return undefined values, so ignore all writes.
+-	 *
+-	 * Reads: Reads of MSR_IA32_TSC should return the current TSC value, use
+-	 *        the value returned by rdtsc_ordered().
++	 * GUEST_TSC_FREQ read should not be intercepted when Secure TSC is
++	 * enabled. Terminate the SNP guest when the interception is enabled.
+ 	 */
+-	if (write) {
+-		WARN_ONCE(1, "TSC MSR writes are verboten!\n");
+-		return ES_OK;
+-	}
++	if (regs->cx == MSR_AMD64_GUEST_TSC_FREQ)
++		return ES_VMM_ERROR;
+ 
++	/* Reads of MSR_IA32_TSC should return the current TSC value. */
+ 	tsc = rdtsc_ordered();
+ 	regs->ax = lower_32_bits(tsc);
+ 	regs->dx = upper_32_bits(tsc);
+@@ -416,7 +417,7 @@ static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
+ 	case MSR_IA32_TSC:
+ 	case MSR_AMD64_GUEST_TSC_FREQ:
+ 		if (sev_status & MSR_AMD64_SNP_SECURE_TSC)
+-			return __vc_handle_secure_tsc_msrs(regs, write);
++			return __vc_handle_secure_tsc_msrs(regs, write, ctxt);
+ 		break;
+ 	default:
+ 		break;
+
+base-commit: 9f4a425223f3bd8ccaebc7f4f42b1d8c5f12fb45
 -- 
-Best regards,
-Andrei Lalaev
+2.43.0
+
 
