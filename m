@@ -1,204 +1,286 @@
-Return-Path: <linux-kernel+bounces-734039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E291B07C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7AC1B07C39
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5049188F914
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:43:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0093B4739
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0127B2F6F93;
-	Wed, 16 Jul 2025 17:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmsABY9h"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06092F549E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B17F2F547B;
 	Wed, 16 Jul 2025 17:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCgegwrw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796EF1DE2C9;
+	Wed, 16 Jul 2025 17:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752687805; cv=none; b=DAAqkECNOQ2rgRIfdor2QSPpvYF6baaJ1P31DaA/X1jnbZGsEixWcUaJOTYFyQC4Zye9pgjM4yL1KEELJe64lq8OrY8Uyc3NN3MJS+UmKU52VHISCCadHigjO2VW7TwwBtVC1h1VeDHPZRBgaSTOm/07siPMFFre2v/Pac8b7Wo=
+	t=1752687802; cv=none; b=WqUwkjircpQjFey13DWdY0mIPdqDMTrtVFGcbtvMMuWFOI0G9v7rFj/AanV6UVBrcEETwu/o0SS17F9gBTZTQFfnZ2CPeUu9ZjI/3H8aQKPxXR/NqaZOOZhl2XszRY1kl/CSB6BLUG9kbbNS03xKmJ1iHYicSDLMG/w1Ej4BcfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752687805; c=relaxed/simple;
-	bh=WNnVrZTyjfQ0iCokOmrNWmhV5/HpncUmCFT0sgwfs4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DTRCldZHB7yjWZG/hu1QWn+XyD6VTzzI04i6eiABiPqgi8XLX4msa3KJz0mMH8o1lScobUXaDpxKJa0RQoMkXXYuSn++s9qSmBB4N7Xeekp5UTKI4QaFjTfWg4onjWtbbEgTpH/XQSuZ3upl90gPOQVJ8lL9ClaaoZjpSGwhu04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmsABY9h; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ab814c4f2dso2726921cf.1;
-        Wed, 16 Jul 2025 10:43:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752687802; x=1753292602; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AA5/tCiuP2JLJTNlACta44IlmdwORZsKRaxa7XE2CPs=;
-        b=RmsABY9hVdLaHmIu4ZlrY1qBr1g63u27X+EbUzE1Svlu1tvzWWTdchK9j0z/Di/ht4
-         0CDkssdUshAfw28gcXP/LAUgpiZcSVK26AIf2c1ogYGr897mj4b7WpqxdanbvqivDNCg
-         ZXHnWcmSPCLwA7aAo4oku3pFfZi6mhl8L/Pum+rcaG2Qi9oYxxpySQJNVWoo4qJ2Vwfp
-         zOBAf2pOWpmwq53Xy2n1Qr5Lq+Z4LGsSJs2j991HjcIYBshkl/UZ7BSATxN441NOKPfH
-         lYfYoYqQLG06J6udI7luTsVRt8xWwAu2PHlvSORBXiYGphrmNl7vQaryk4PryMAxA2no
-         07OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752687802; x=1753292602;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AA5/tCiuP2JLJTNlACta44IlmdwORZsKRaxa7XE2CPs=;
-        b=pQ0VnnQ/+PHKsNK+WflZRIE2boEFw7vkJihlsRqmbDV42U7CiQXZeFDJ0j0FY4yup7
-         qaiqfw79jbmF+s+8cEUzSONfyFscQxh/xOBkuRD93nUZyjV5X+mcx5vZ/seMpNCqAEYN
-         on/gO8e+94Y67i8W9IrlRf9vR1vrJWOLZfsGGcT6wsQsX44cesuzPg3XCQrAc7XEVPIC
-         kMl8ueY3VVJFAoyCzWoj9ix3T3BkYdRcaAhXmMkXNWYND3ST9d0fU6906Ucrh2KvdPlU
-         0Yw7hsYlK7lLHeIwikX0Fs586BESwMzn3wfZlzydvIzPGXU2BTytX+BjhxX95qdmJlM6
-         49tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVspXWZglK5Y4wXl3DeU94ZuNAkVsZX9ZQdYthKqvvCxrb2d8hWrexsBkXzQ0Rw3wmxyWhDzQrOFYl@vger.kernel.org, AJvYcCXjTAHMHTrZkmaMd7RCrYIj6jyPhFcVSfO736BnPzg+MtycrqRyoprAlyLOiQZmzgGJxkYK+02kfH0Chuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYfpnYe6XLqNTnypanDQRiqBko/HTkxHrI1KdlRvZ2Si9E2Xnb
-	kXfvZyxG/mW2QcNxdmhNDnUQsttsf8ess6KHA7HEUZ7n9oJDprWMgEIDIfuB1cADGGW+g2ZNlvs
-	7BHuQJXxlXwY2b6rptEaqMB595vrgBSk=
-X-Gm-Gg: ASbGncvUzhgeC8xgc9j+d9UbYrjPaLl6x09zo/xwv0JtnN3EYlpWMZRPFYMVPdbn4tc
-	zScZMNedycySPINinQ0+jAGv6PBmFEuP2Dav0LDYgVNfjEXy/yW36EyFFqGsecWRDN7tV3odCGb
-	lB+Lkc1km+MbYlJxvFxgRtXmt/JtEjQbtECJmODUpkmyFWYKKtFeOirWYXkXpAQdXQ6iUcH+r7F
-	uq0ZGzSVYeD4g+iN/T2nA==
-X-Google-Smtp-Source: AGHT+IFfxo82ulTnxyDyRWmwoZFor5eUkdLV4oDsU70TChHIlz7F1ILwbmGB0C+lsP2g0aLBdvwTTjLbIlZa2ca9ZV0=
-X-Received: by 2002:a05:622a:41:b0:4ab:8d13:7151 with SMTP id
- d75a77b69052e-4ab93c43046mr59074561cf.7.1752687802445; Wed, 16 Jul 2025
- 10:43:22 -0700 (PDT)
+	s=arc-20240116; t=1752687802; c=relaxed/simple;
+	bh=pVUgd83X7O2yW0R+ZVk/AgaBdop9yiXyxkXpur3QzKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdEjEqZj4Zm730ilLtQn2ZxDwj1i8wT5P09aucFxWI7hUckASJd8jTGD3MMyS0Ni6VN5FtguDxL0qEGUJbU+S0aqEXJ5rFHU/o+r0kgaYr03LDReCwOwcryr+66OCOA6/t2GJpYahDgXV7LR1ruxb3NpwUPRWkIOcUUH0SnudMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCgegwrw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 920F1C4CEE7;
+	Wed, 16 Jul 2025 17:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752687802;
+	bh=pVUgd83X7O2yW0R+ZVk/AgaBdop9yiXyxkXpur3QzKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RCgegwrwu8HbioIGoh4qhjg2GTG/TX1pCmUv9DjiV5NF9spFCtLW3DyxTqkHyWPO8
+	 i+KSVbsj8zeNKBTXd8qiX1RDPGJ5QNWyZCQMYiQGcONn7jPFRLJKQHmpKNaze5Dxd+
+	 4D1w4Kv34wECtYtAAUu7/wmJZMmOq/Q9n04PxRgNVE5UNC6wvVx4bXvzk/qToLcVM5
+	 zpma5uC3BjSqu0wKLpi6+36qfv+QUmIHe6Lq7Sg1wzgapRQ78VuWKHBv+u34mLyiJG
+	 j2XkTshqdYDzkROu7FtHWKPyLQTaof/zCLp+xy8vfy7PuJjKONFQxHLbEf/wHdl3fo
+	 SrO9n6zRP8FmA==
+Date: Wed, 16 Jul 2025 10:43:20 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Wangyang Guo <wangyang.guo@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Zhiguo Zhou <zhiguo.zhou@intel.com>,
+	Tianyou Li <tianyou.li@intel.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf flamegraph: Fix minor pylint/type hint issues
+Message-ID: <aHfkuHCVk74XQ09F@google.com>
+References: <20250716004635.31161-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716163213.469226-1-thepacketgeek@gmail.com>
- <20250716163213.469226-2-thepacketgeek@gmail.com> <7cae9919-4ccd-41ed-a899-0e97ee2c0250@kernel.org>
-In-Reply-To: <7cae9919-4ccd-41ed-a899-0e97ee2c0250@kernel.org>
-From: Matthew Wood <thepacketgeek@gmail.com>
-Date: Wed, 16 Jul 2025 10:43:09 -0700
-X-Gm-Features: Ac12FXwaWGrawL8h0ydexMi8_5v2a909eZYO8ejVbzSWLKEuJ-ZNdpsAGIt5t4c
-Message-ID: <CADvopvZD+daGD2S-eGPe3Dh+Ot2Oq-tEsBBK83vF7QDgaaUtFw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] PCI/sysfs: Expose PCIe device serial number
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250716004635.31161-1-irogers@google.com>
 
-On Wed, Jul 16, 2025 at 10:02=E2=80=AFAM Mario Limonciello <superm1@kernel.=
-org> wrote:
->
-> On 7/16/25 11:32 AM, Matthew Wood wrote:
-> > Add a single sysfs read-only interface for reading PCIe device serial
-> > numbers from userspace in a programmatic way. This device attribute
-> > uses the same hexadecimal 1-byte dashed formatting as lspci serial numb=
-er
-> > capability output. If a device doesn't support the serial number
-> > capability, the device_serial_number sysfs attribute will not be visibl=
-e.
-> >
-> > Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
-> > ---
-> >   Documentation/ABI/testing/sysfs-bus-pci |  7 +++++++
-> >   drivers/pci/pci-sysfs.c                 | 27 ++++++++++++++++++++++--=
--
-> >   2 files changed, 31 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/AB=
-I/testing/sysfs-bus-pci
-> > index 69f952fffec7..f7e84b3a4204 100644
-> > --- a/Documentation/ABI/testing/sysfs-bus-pci
-> > +++ b/Documentation/ABI/testing/sysfs-bus-pci
-> > @@ -612,3 +612,10 @@ Description:
-> >
-> >                 # ls doe_features
-> >                 0001:01        0001:02        doe_discovery
-> > +
-> > +What:                /sys/bus/pci/devices/.../device_serial_number
-> > +Date:                July 2025
-> > +Contact:     Matthew Wood <thepacketgeek@gmail.com>
-> > +Description:
-> > +             This is visible only for PCIe devices that support the se=
-rial
-> > +             number extended capability. The file is read only.
-> > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> > index 268c69daa4d5..b7b52dea6e31 100644
-> > --- a/drivers/pci/pci-sysfs.c
-> > +++ b/drivers/pci/pci-sysfs.c
-> > @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct devi=
-ce *dev,
-> >   }
-> >   static DEVICE_ATTR_RO(current_link_width);
-> >
-> > +static ssize_t device_serial_number_show(struct device *dev,
-> > +                                    struct device_attribute *attr, cha=
-r *buf)
-> > +{
-> > +     struct pci_dev *pci_dev =3D to_pci_dev(dev);
-> > +     u64 dsn;
-> > +
-> > +     dsn =3D pci_get_dsn(pci_dev);
-> > +     if (!dsn)
-> > +             return -EIO;
-> > +
-> > +     return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx=
--%02llx-%02llx\n",
-> > +             dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >=
-> 32) & 0xff,
-> > +             (dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff=
-, dsn & 0xff);
-> > +}
-> > +static DEVICE_ATTR_RO(device_serial_number);
->
-> The serial number /could/ be considered sensitive information.  I think
-> it's better to use DEVICE_ATTR_ADMIN_RO.
+On Tue, Jul 15, 2025 at 05:46:35PM -0700, Ian Rogers wrote:
+> Switch to assuming python3. Fix minor pylint issues on line length,
+> repeated compares, not using f-strings and variable case. Add type
+> hints and check with mypy.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-That makes sense, thanks for the suggestion.
+I've confirmed that it generated the exactly same output.
 
->
-> Also, as this is a "device" attribute is it really necessary to encode
-> the extra word and "number"?
+Tested-by: Namhyung Kim <namhyung@kernel.org>
 
-Another good point. I will remove the device_ prefix however I think
-"serial_number" is helpful to keep as "serial" alone is too easy to
-conflate with any of the other usages of the serial word.
+Thanks,
+Namhyung
 
->
-> > +
-> >   static ssize_t secondary_bus_number_show(struct device *dev,
-> >                                        struct device_attribute *attr,
-> >                                        char *buf)
-> > @@ -660,6 +676,7 @@ static struct attribute *pcie_dev_attrs[] =3D {
-> >       &dev_attr_current_link_width.attr,
-> >       &dev_attr_max_link_width.attr,
-> >       &dev_attr_max_link_speed.attr,
-> > +     &dev_attr_device_serial_number.attr,
-> >       NULL,
-> >   };
-> >
-> > @@ -1749,10 +1766,14 @@ static umode_t pcie_dev_attrs_are_visible(struc=
-t kobject *kobj,
-> >       struct device *dev =3D kobj_to_dev(kobj);
-> >       struct pci_dev *pdev =3D to_pci_dev(dev);
-> >
-> > -     if (pci_is_pcie(pdev))
-> > -             return a->mode;
-> > +     if (!pci_is_pcie(pdev))
-> > +             return 0;
-> > +
-> > +     if (a =3D=3D &dev_attr_device_serial_number.attr && !pci_get_dsn(=
-pdev))
-> > +             return 0;
-> > +
-> > +     return a->mode;
-> >
-> > -     return 0;
-> >   }
-> >
-> >   static const struct attribute_group pci_dev_group =3D {
->
+> ---
+>  tools/perf/scripts/python/flamegraph.py | 61 +++++++++++++------------
+>  1 file changed, 33 insertions(+), 28 deletions(-)
+> 
+> diff --git a/tools/perf/scripts/python/flamegraph.py b/tools/perf/scripts/python/flamegraph.py
+> index e49ff242b779..ad735990c5be 100755
+> --- a/tools/perf/scripts/python/flamegraph.py
+> +++ b/tools/perf/scripts/python/flamegraph.py
+> @@ -18,7 +18,6 @@
+>  # pylint: disable=missing-class-docstring
+>  # pylint: disable=missing-function-docstring
+>  
+> -from __future__ import print_function
+>  import argparse
+>  import hashlib
+>  import io
+> @@ -26,9 +25,10 @@ import json
+>  import os
+>  import subprocess
+>  import sys
+> +from typing import Dict, Optional, Union
+>  import urllib.request
+>  
+> -minimal_html = """<head>
+> +MINIMAL_HTML = """<head>
+>    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/d3-flame-graph@4.1.3/dist/d3-flamegraph.css">
+>  </head>
+>  <body>
+> @@ -50,20 +50,20 @@ minimal_html = """<head>
+>  
+>  # pylint: disable=too-few-public-methods
+>  class Node:
+> -    def __init__(self, name, libtype):
+> +    def __init__(self, name: str, libtype: str):
+>          self.name = name
+>          # "root" | "kernel" | ""
+>          # "" indicates user space
+>          self.libtype = libtype
+> -        self.value = 0
+> -        self.children = []
+> +        self.value: int = 0
+> +        self.children: list[Node] = []
+>  
+> -    def to_json(self):
+> +    def to_json(self) -> Dict[str, Union[str, int, list[Dict]]]:
+>          return {
+>              "n": self.name,
+>              "l": self.libtype,
+>              "v": self.value,
+> -            "c": self.children
+> +            "c": [x.to_json() for x in self.children]
+>          }
+>  
+>  
+> @@ -73,7 +73,7 @@ class FlameGraphCLI:
+>          self.stack = Node("all", "root")
+>  
+>      @staticmethod
+> -    def get_libtype_from_dso(dso):
+> +    def get_libtype_from_dso(dso: Optional[str]) -> str:
+>          """
+>          when kernel-debuginfo is installed,
+>          dso points to /usr/lib/debug/lib/modules/*/vmlinux
+> @@ -84,7 +84,7 @@ class FlameGraphCLI:
+>          return ""
+>  
+>      @staticmethod
+> -    def find_or_create_node(node, name, libtype):
+> +    def find_or_create_node(node: Node, name: str, libtype: str) -> Node:
+>          for child in node.children:
+>              if child.name == name:
+>                  return child
+> @@ -93,7 +93,7 @@ class FlameGraphCLI:
+>          node.children.append(child)
+>          return child
+>  
+> -    def process_event(self, event):
+> +    def process_event(self, event) -> None:
+>          # ignore events where the event name does not match
+>          # the one specified by the user
+>          if self.args.event_name and event.get("ev_name") != self.args.event_name:
+> @@ -106,7 +106,7 @@ class FlameGraphCLI:
+>              comm = event["comm"]
+>              libtype = "kernel"
+>          else:
+> -            comm = "{} ({})".format(event["comm"], pid)
+> +            comm = f"{event['comm']} ({pid})"
+>              libtype = ""
+>          node = self.find_or_create_node(self.stack, comm, libtype)
+>  
+> @@ -121,7 +121,7 @@ class FlameGraphCLI:
+>              node = self.find_or_create_node(node, name, libtype)
+>          node.value += 1
+>  
+> -    def get_report_header(self):
+> +    def get_report_header(self) -> str:
+>          if self.args.input == "-":
+>              # when this script is invoked with "perf script flamegraph",
+>              # no perf.data is created and we cannot read the header of it
+> @@ -131,7 +131,8 @@ class FlameGraphCLI:
+>              # if the file name other than perf.data is given,
+>              # we read the header of that file
+>              if self.args.input:
+> -                output = subprocess.check_output(["perf", "report", "--header-only", "-i", self.args.input])
+> +                output = subprocess.check_output(["perf", "report", "--header-only",
+> +                                                  "-i", self.args.input])
+>              else:
+>                  output = subprocess.check_output(["perf", "report", "--header-only"])
+>  
+> @@ -140,10 +141,10 @@ class FlameGraphCLI:
+>                  result += "\nFocused event: " + self.args.event_name
+>              return result
+>          except Exception as err:  # pylint: disable=broad-except
+> -            print("Error reading report header: {}".format(err), file=sys.stderr)
+> +            print(f"Error reading report header: {err}", file=sys.stderr)
+>              return ""
+>  
+> -    def trace_end(self):
+> +    def trace_end(self) -> None:
+>          stacks_json = json.dumps(self.stack, default=lambda x: x.to_json())
+>  
+>          if self.args.format == "html":
+> @@ -167,7 +168,8 @@ graph template (--template PATH) or use another output format (--format
+>  FORMAT).""",
+>                                file=sys.stderr)
+>                          if self.args.input == "-":
+> -                            print("""Not attempting to download Flame Graph template as script command line
+> +                            print(
+> +"""Not attempting to download Flame Graph template as script command line
+>  input is disabled due to using live mode. If you want to download the
+>  template retry without live mode. For example, use 'perf record -a -g
+>  -F 99 sleep 60' and 'perf script report flamegraph'. Alternatively,
+> @@ -176,37 +178,40 @@ https://cdn.jsdelivr.net/npm/d3-flame-graph@4.1.3/dist/templates/d3-flamegraph-b
+>  and place it at:
+>  /usr/share/d3-flame-graph/d3-flamegraph-base.html""",
+>                                    file=sys.stderr)
+> -                            quit()
+> +                            sys.exit(1)
+>                          s = None
+> -                        while s != "y" and s != "n":
+> -                            s = input("Do you wish to download a template from cdn.jsdelivr.net? (this warning can be suppressed with --allow-download) [yn] ").lower()
+> +                        while s not in ["y", "n"]:
+> +                            s = input("Do you wish to download a template from cdn.jsdelivr.net?" +
+> +                                      "(this warning can be suppressed with --allow-download) [yn] "
+> +                                      ).lower()
+>                          if s == "n":
+> -                            quit()
+> -                    template = "https://cdn.jsdelivr.net/npm/d3-flame-graph@4.1.3/dist/templates/d3-flamegraph-base.html"
+> +                            sys.exit(1)
+> +                    template = ("https://cdn.jsdelivr.net/npm/d3-flame-graph@4.1.3/dist/templates/"
+> +                                "d3-flamegraph-base.html")
+>                      template_md5sum = "143e0d06ba69b8370b9848dcd6ae3f36"
+>  
+>              try:
+> -                with urllib.request.urlopen(template) as template:
+> +                with urllib.request.urlopen(template) as url_template:
+>                      output_str = "".join([
+> -                        l.decode("utf-8") for l in template.readlines()
+> +                        l.decode("utf-8") for l in url_template.readlines()
+>                      ])
+>              except Exception as err:
+>                  print(f"Error reading template {template}: {err}\n"
+>                        "a minimal flame graph will be generated", file=sys.stderr)
+> -                output_str = minimal_html
+> +                output_str = MINIMAL_HTML
+>                  template_md5sum = None
+>  
+>              if template_md5sum:
+>                  download_md5sum = hashlib.md5(output_str.encode("utf-8")).hexdigest()
+>                  if download_md5sum != template_md5sum:
+>                      s = None
+> -                    while s != "y" and s != "n":
+> +                    while s not in ["y", "n"]:
+>                          s = input(f"""Unexpected template md5sum.
+>  {download_md5sum} != {template_md5sum}, for:
+>  {output_str}
+>  continue?[yn] """).lower()
+>                      if s == "n":
+> -                        quit()
+> +                        sys.exit(1)
+>  
+>              output_str = output_str.replace("/** @options_json **/", options_json)
+>              output_str = output_str.replace("/** @flamegraph_json **/", stacks_json)
+> @@ -220,12 +225,12 @@ continue?[yn] """).lower()
+>              with io.open(sys.stdout.fileno(), "w", encoding="utf-8", closefd=False) as out:
+>                  out.write(output_str)
+>          else:
+> -            print("dumping data to {}".format(output_fn))
+> +            print(f"dumping data to {output_fn}")
+>              try:
+>                  with io.open(output_fn, "w", encoding="utf-8") as out:
+>                      out.write(output_str)
+>              except IOError as err:
+> -                print("Error writing output file: {}".format(err), file=sys.stderr)
+> +                print(f"Error writing output file: {err}", file=sys.stderr)
+>                  sys.exit(1)
+>  
+>  
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+> 
 
