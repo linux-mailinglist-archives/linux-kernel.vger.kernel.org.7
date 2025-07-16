@@ -1,308 +1,190 @@
-Return-Path: <linux-kernel+bounces-733021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114E4B06F03
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:34:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E0EB06F09
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110C2189A5FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:35:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AACD750410B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CC728C5A7;
-	Wed, 16 Jul 2025 07:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EE128B407;
+	Wed, 16 Jul 2025 07:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RweUfreE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N4cGcm2h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40551A2398;
-	Wed, 16 Jul 2025 07:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EC44A11;
+	Wed, 16 Jul 2025 07:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752651275; cv=none; b=q1505mW3kQ4eY0w1hsatwsPrzzPSBLD9+xmSJ0N54CArv5AGPdkZUGdn24qrXAL9D2qigCnyHEmty5UQUlgz05cdUjh5cxUeGGe2FZkXFvN8iaMXZTznCUyahgtMZJjvpkFvyA7DvhhCj/UJzGEB2oHqT6ed/vRD8PuqWCfH59w=
+	t=1752651306; cv=none; b=g7aMfnENonmhWclHP6dPGZzTIR5xaaJWZXTZM6azPo57XwAisK5+ILnYb5x7EZoRKjZEpjaliZQf/EjsjFaA6Yqrcg849BCKx6KPFgSwMx73EJSRbks26CHJrPqu2JapZCIEFwknxfI4wLQsXQsnBUmBI/YtIZAtNIxFF1ynGAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752651275; c=relaxed/simple;
-	bh=zJBkCq9nG4bFfG6dyPIdRv/h4JagCaQuSj9HeSyqV0k=;
+	s=arc-20240116; t=1752651306; c=relaxed/simple;
+	bh=0tuKormBsP6swmsUBQoxnh8G7NopetuC3C1pYAEYNqI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cdkpb2D9m3KmtWPlQKed/z+c4YqKwwcTiGx6KLxb13KD2BLJwaBVVwG8k6qcfqfP3soqjcheKecA7NCgaZGM7ijB0wCjz5GoLzMRoCSlbfLNciblKY9v1xuEDoD5nJ0joGITtW+Bhmjefntrjo2LuMwhEpa/VUVopRSDLCN4q8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RweUfreE; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752651274; x=1784187274;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zJBkCq9nG4bFfG6dyPIdRv/h4JagCaQuSj9HeSyqV0k=;
-  b=RweUfreEk1mLdJeU4awmn22xcRt3dlF6V7I9qMRSNh9JSvgM8APYlJOC
-   /C254vv67PGW6uETCW06L+0WpIMgILPKidiTEkt+scjaiPPO1/3kYpBfk
-   PlNMR1KX0TZpy8GZ1Iz2iuRtUkV/mBLXexPftnevSU2k9lVmul5RgJIwQ
-   +pZFy8XXtraKZj0MXIbu3/WhiZrQnEUAnIxmVXEFzheFn67rGgl5deXvo
-   LTTxv97BwDrSwTtClQ2G7XbktpsYVkpPNXviD83kfKD4nRI1w56QDRnBF
-   HwXZ7oZmMeOI65fpH9noT8GeVmBW61+YZlq5DsRDPRNiCco2M9Qnf9HsY
-   w==;
-X-CSE-ConnectionGUID: 0ihm17xxS8WuKNRcwTQY7w==
-X-CSE-MsgGUID: oxsgkGkzQiqBQ+Os36FbrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54594996"
-X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="54594996"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:34:34 -0700
-X-CSE-ConnectionGUID: OPt0dNK1TvaGjhnyo5ZyHQ==
-X-CSE-MsgGUID: 64ff7W5kSMmW1SEZYNvOjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="161981683"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:34:29 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ubwen-0000000Fr2b-3mjg;
-	Wed, 16 Jul 2025 10:34:25 +0300
-Date: Wed, 16 Jul 2025 10:34:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andreas Klinger <ak@it-klinger.de>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, lars@metafoo.de,
-	javier.carrasco.cruz@gmail.com, mazziesaccount@gmail.com,
-	arthur.becker@sentec.com, perdaniel.olsson@axis.com,
-	mgonellabolduc@dimonoff.com, muditsharma.info@gmail.com,
-	clamor95@gmail.com, emil.gedenryd@axis.com,
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] iio: light: add support for veml6046x00 RGBIR
- color sensor
-Message-ID: <aHdWAUMMH43tIqV4@smile.fi.intel.com>
-References: <20250715085810.7679-1-ak@it-klinger.de>
- <20250715085810.7679-3-ak@it-klinger.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kzK5J6HhgoB8K9WWi8DskFajtoy/IERf1hKtbs3Rs1BvdvAOU4/g0oPuKg4to7QTnicAG9UZmAoOHVveDWLGPnT3+skS9RtE/D6Y/bX8R5ApMwMMwG4nyqai1WOqHbfKHyCUvzWGgQttMqI8hh4Jw/xiuhZKL0jWRtLRFWmhnG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N4cGcm2h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6047EC4CEF0;
+	Wed, 16 Jul 2025 07:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752651305;
+	bh=0tuKormBsP6swmsUBQoxnh8G7NopetuC3C1pYAEYNqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N4cGcm2hKCV43g0MpO8JciXX3TNMVb5fuEtEGqkgIvdgWhx0HoLGqHOO+jzxhVhUU
+	 6lnv+TlezJF2un8EWNxvDcUDS9k7cadcHTO+8FwhjL6zR0+mEeOgzosnSNROs0vqzv
+	 wsmiFFPkNciO5nqORekL0gmfXUahsA+JWYXo+biI=
+Date: Wed, 16 Jul 2025 09:35:03 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Ignacio =?iso-8859-1?Q?Pe=F1a?= <ignacio.pena87@gmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: Fix multiple checkpatch warnings in
+ rtl8723b_cmd.c
+Message-ID: <2025071640-audibly-sketch-9d55@gregkh>
+References: <20250716041236.61270-1-ignacio.pena87@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250715085810.7679-3-ak@it-klinger.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250716041236.61270-1-ignacio.pena87@gmail.com>
 
-On Tue, Jul 15, 2025 at 10:58:09AM +0200, Andreas Klinger wrote:
-> Add Vishay VEML6046X00 high accuracy RGBIR color sensor.
+On Wed, Jul 16, 2025 at 12:12:36AM -0400, Ignacio Peña wrote:
+> Fix the following checkpatch warnings:
+> - Comparisons should place the constant on the right side
+> - Braces {} are not necessary for single statement blocks
+> - Block comments should align the * on each line
+> - No space before tabs
 > 
-> This sensor provides three colour (red, green and blue) as well as one
-> infrared (IR) channel through I2C.
+> These are coding style fixes that improve code readability.
 > 
-> Support direct and buffered mode.
+> Signed-off-by: Ignacio Peña <ignacio.pena87@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c | 40 ++++++++++----------
+>  1 file changed, 19 insertions(+), 21 deletions(-)
 > 
-> An optional interrupt for signaling green colour threshold underflow or
-> overflow is not supported so far.
+> diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+> index 56526056d..4f33f4f0c 100644
+> --- a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+> +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+> @@ -24,9 +24,8 @@ static u8 _is_fw_read_cmd_down(struct adapter *padapter, u8 msgbox_num)
+>  
+>  	do {
+>  		valid = rtw_read8(padapter, REG_HMETFR) & BIT(msgbox_num);
+> -		if (0 == valid) {
+> +		if (valid == 0)
+>  			read_down = true;
+> -		}
+>  	} while ((!read_down) && (retry_cnts--));
+>  
+>  	return read_down;
+> @@ -35,13 +34,13 @@ static u8 _is_fw_read_cmd_down(struct adapter *padapter, u8 msgbox_num)
+>  
+>  
+>  /*****************************************
+> -* H2C Msg format :
+> -*| 31 - 8		|7-5	| 4 - 0	|
+> -*| h2c_msg	|Class	|CMD_ID	|
+> -*| 31-0						|
+> -*| Ext msg					|
+> -*
+> -******************************************/
+> + * H2C Msg format :
+> + * | 31 - 8		|7-5	| 4 - 0	|
+> + * | h2c_msg	|Class	|CMD_ID	|
+> + * | 31-0						|
+> + * | Ext msg					|
+> + *
+> + ******************************************/
+>  s32 FillH2CCmd8723B(struct adapter *padapter, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
+>  {
+>  	u8 h2c_box_num;
+> @@ -57,13 +56,11 @@ s32 FillH2CCmd8723B(struct adapter *padapter, u8 ElementID, u32 CmdLen, u8 *pCmd
+>  	if (mutex_lock_interruptible(&(adapter_to_dvobj(padapter)->h2c_fwcmd_mutex)))
+>  		return ret;
+>  
+> -	if (!pCmdBuffer) {
+> +	if (!pCmdBuffer)
+>  		goto exit;
+> -	}
+>  
+> -	if (CmdLen > RTL8723B_MAX_CMD_LEN) {
+> +	if (CmdLen > RTL8723B_MAX_CMD_LEN)
+>  		goto exit;
+> -	}
+>  
+>  	if (padapter->bSurpriseRemoved)
+>  		goto exit;
+> @@ -80,7 +77,7 @@ s32 FillH2CCmd8723B(struct adapter *padapter, u8 ElementID, u32 CmdLen, u8 *pCmd
+>  		else {
+>  			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, 3);
+>  			memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer+3, CmdLen-3);
+> -/* 			*(u8 *)(&h2c_cmd) |= BIT(7); */
+> +/* *(u8 *)(&h2c_cmd) |= BIT(7); */
+>  		}
+>  
+>  		*(u8 *)(&h2c_cmd) |= ElementID;
+> @@ -438,13 +435,14 @@ void rtl8723b_set_FwPwrMode_cmd(struct adapter *padapter, u8 psmode)
+>  
+>  		}
+>  
+> -/* offload to FW if fw version > v15.10
+> -		pmlmeext->DrvBcnEarly = 0;
+> -		pmlmeext->DrvBcnTimeOut =7;
+> -
+> -		if ((pmlmeext->DrvBcnEarly!= 0Xff) && (pmlmeext->DrvBcnTimeOut!= 0xff))
+> -			u1H2CPwrModeParm[H2C_PWRMODE_LEN-1] = BIT(0) | ((pmlmeext->DrvBcnEarly<<1)&0x0E) |((pmlmeext->DrvBcnTimeOut<<4)&0xf0) ;
+> -*/
+> +/*
+> + * offload to FW if fw version > v15.10
+> + *		pmlmeext->DrvBcnEarly = 0;
+> + *		pmlmeext->DrvBcnTimeOut =7;
+> + *
+> + *		if ((pmlmeext->DrvBcnEarly!= 0Xff) && (pmlmeext->DrvBcnTimeOut!= 0xff))
+> + *			u1H2CPwrModeParm[H2C_PWRMODE_LEN-1] = BIT(0) | ((pmlmeext->DrvBcnEarly<<1)&0x0E) |((pmlmeext->DrvBcnTimeOut<<4)&0xf0) ;
+> + */
+>  
+>  	}
+>  
+> -- 
+> 2.39.5 (Apple Git-154)
+> 
+> 
 
-...
+Hi,
 
-> +#define	VEML6046X00_GAIN_1          0x0
-> +#define	VEML6046X00_GAIN_2          0x1
-> +#define	VEML6046X00_GAIN_0_66       0x2
-> +#define	VEML6046X00_GAIN_0_5        0x3
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Is it defined as hexadecimal in the datasheet? Otherwise use plain decimal
-numbers.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-...
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
 
-> +static int veml6046x00_get_it_usec(struct veml6046x00_data *data, unsigned int *it_usec)
-> +{
-> +	int ret;
-> +	unsigned int reg;
-> +
-> +	ret = regmap_field_read(data->rf.it, &reg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (reg >= ARRAY_SIZE(veml6046x00_it))
-> +		return -EINVAL;
-> +
-> +	*it_usec = (unsigned int)veml6046x00_it[reg][1];
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-Is this casting needed? According to the C standard unsigned has higher rank
-than signed.
+thanks,
 
-> +	return IIO_VAL_INT_PLUS_MICRO;
-> +}
-
-...
-
-> +static int veml6046x00_wait_data_available(struct iio_dev *iio, unsigned int usecs)
-> +{
-> +	struct veml6046x00_data *data = iio_priv(iio);
-> +	int ret;
-> +
-> +	ret = veml6046x00_read_data_ready(data);
-
-> +	if (ret == 0) {
-
-What's wrong with the regular pattern, i.e.
-
-	if (ret)
-		return ret;
-
-?
-
-> +		fsleep(usecs);
-> +		ret = veml6046x00_read_data_ready(data);
-> +	}
-> +
-> +	return ret;
-> +}
-
-...
-
-> +	ret = veml6046x00_wait_data_available(iio, it_usec * 4);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret == 0)
-> +		return -EAGAIN;
-> +
-> +	if (!iio_device_claim_direct(iio))
-> +		return -EBUSY;
-> +
-> +	ret = regmap_bulk_read(data->regmap, addr, &reg, sizeof(reg));
-> +	iio_device_release_direct(iio);
-> +	if (ret)
-> +		return ret;
-
-All error paths above are missing the below runtime PM calls, is it on purpose?
-If so, comment is a must to explain what's going on here.
-
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +
-> +	*val = le16_to_cpu(reg);
-> +
-> +	return IIO_VAL_INT;
-> +
-> +no_data:
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +
-> +	return -EAGAIN;
-
-...
-
-> +static irqreturn_t veml6046x00_trig_handler(int irq, void *p)
-> +{
-> +	struct iio_poll_func *pf = p;
-> +	struct iio_dev *iio = pf->indio_dev;
-> +	struct veml6046x00_data *data = iio_priv(iio);
-> +	int ret;
-> +	struct {
-> +		__le16 chans[4];
-> +		aligned_s64 timestamp;
-> +	} scan = {};
-
-Do you need this (nullification) assignment?
-
-> +	ret = regmap_bulk_read(data->regmap, VEML6046X00_REG_R,
-> +			       &scan.chans, sizeof(scan.chans));
-> +	if (ret)
-> +		goto done;
-> +
-> +	iio_push_to_buffers_with_timestamp(iio, &scan, iio_get_time_ns(iio));
-> +
-> +done:
-> +	iio_trigger_notify_done(iio->trig);
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-...
-
-> +static int veml6046x00_validate_part_id(struct veml6046x00_data *data)
-> +{
-> +	struct device *dev = regmap_get_device(data->regmap);
-> +	unsigned int part_id;
-> +	int ret;
-> +	__le16 reg;
-> +
-> +	ret = regmap_bulk_read(data->regmap, VEML6046X00_REG_ID,
-> +			       &reg, sizeof(reg));
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to read ID\n");
-> +
-> +	part_id = le16_to_cpu(reg);
-> +	if (part_id != 0x0001)
-> +		dev_info(dev, "Unknown ID %#04x\n", part_id);
-
-For 0 it will print 0 and not 0x0000. Is it okay?
-
-> +	return 0;
-> +}
-
-...
-
-> +static int veml6046x00_setup_device(struct iio_dev *iio)
-> +{
-> +	struct veml6046x00_data *data = iio_priv(iio);
-> +	struct device *dev = regmap_get_device(data->regmap);
-> +	int ret;
-> +	__le16 reg16;
-> +	u8 reg[2] = { VEML6046X00_CONF0_AF, 0x00 };
-
-0x00 looks like a part of the reg. If so, this should be actually typed as
-__le16. Otherwise, in case this is just a simple terminator, use (decimal) 0.
-
-> +	ret = regmap_bulk_write(data->regmap, VEML6046X00_REG_CONF0,
-> +				reg, sizeof(reg));
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to set configuration\n");
-
-So, this actually will be as simple as
-
-	reg16 = cpu_to_le16(VEML6046X00_CONF0_AF);
-	ret = regmap_bulk_write(data->regmap, VEML6046X00_REG_CONF0,
-				&reg16, sizeof(reg16));
-	if (ret)
-		return dev_err_probe(dev, ret, "Failed to set configuration\n");
-
-> +	reg16 = cpu_to_le16(0);
-> +	ret = regmap_bulk_write(data->regmap, VEML6046X00_REG_THDL,
-> +				&reg16, sizeof(reg16));
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to set low threshold\n");
-> +
-> +	reg16 = cpu_to_le16(U16_MAX);
-> +	ret = regmap_bulk_write(data->regmap, VEML6046X00_REG_THDH,
-> +				&reg16, sizeof(reg16));
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to set high threshold\n");
-> +
-> +	ret = regmap_bulk_read(data->regmap, VEML6046X00_REG_INT,
-> +			       &reg16, sizeof(reg16));
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to clear interrupts\n");
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static const struct of_device_id veml6046x00_of_match[] = {
-> +	{
-> +		.compatible = "vishay,veml6046x00",
-> +	},
-
-Can be just a single line.
-
-	{ .compatible = "vishay,veml6046x00" },
-
-> +	{ }
-> +};
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+greg k-h's patch email bot
 
