@@ -1,107 +1,124 @@
-Return-Path: <linux-kernel+bounces-733537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32DBB075ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:42:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC9BB075F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEC703B85E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:41:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D5623AD9CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C6C2F5322;
-	Wed, 16 Jul 2025 12:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD91C2F546D;
+	Wed, 16 Jul 2025 12:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CGvR57ax"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uxbc5z6d"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44AC2F509E;
-	Wed, 16 Jul 2025 12:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AB82F546F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669671; cv=none; b=bUa2NDaZLg6Pw2ko0Sun0QGXZC5uFhHmK5C2U3M1pkKfBS2Dk5CR8PzT5bS4bX5S+rsgf6GIQFN53c4w/ZM0JEhGl9iNRwqw8ZUylIMxjYY4UP1ZN5JOA0LyFgGLXyUAZSZxD6JcYy2pKCTEINVeLyE/TqB+XvxRXJvuMb9ZHgI=
+	t=1752669675; cv=none; b=KPxokiuSOkr+wsEgktpt2m7zfw5Kd2xPnE2l1vxfvy/WYXx9kjMpIbJZ+Qb1hxjf+gJS09xG1ToP6Yj+za4VhiWL+QqeB+nQH9aU+nS9zQakSVlJy4pcjrv9p/s4acp5U5EwCmyBaVy8f+My5JPrstKPdEvWWgxs26mqN3tl+4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669671; c=relaxed/simple;
-	bh=d6vf6YT0Cqo3aoayFnwgxe9EnRiYFPMOe4uh0hRHtl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TE2uXX/5QfhGIBTP3z9RJtc0X/G0OBEkvXg2GQFckZqAwYYpXt4wffm6o4CzzA2TPMNrWWd+/uLVgt7P6tTJ1IZpRYy3ZCGC1ce4k7bJNfeycHC5bVEzva7Jtx/V/7/rRXVU7axT0gkkak1AgXBm7t6XAGhx8gSCJlPJGAp2GHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CGvR57ax; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UT8NqHgSNeioPkyLMeWHt1AfXpAfZ7XlwNxV5qFIAPk=; b=CGvR57axiNuhVKMDLoeKJy064f
-	AiRcir4FpDSLNgl9Ww6nza8xMIQeTpVgXnJV9o5KabSQeXiIr/PAjqagTM8/2WCRhYOr7xULzBMmf
-	CN3ESdc2/g2k0RtHJepg6vjSoGBudSN2oZT1Q8xQ7RFhpBXh2LuRfBUCY25yK58xxViXaYrSNmHUF
-	o7uTjl/O7SoGEAkb57bi4kWmlZwbzR4kE2xecC00xOJaqKRR87C3YLKJP9edWfGdj9zU0Nm6uqJy8
-	G04gJDUGYKKMbcCgn0f+AWTbyVhsUkGUKavqbMpFqRZvk2hhXDPLCcjcXzCUty9QJLc7rGxdSyJTW
-	hh60rJVg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc1Ra-0000000GZ8m-0j8B;
-	Wed, 16 Jul 2025 12:41:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B0BA2300186; Wed, 16 Jul 2025 14:41:05 +0200 (CEST)
-Date: Wed, 16 Jul 2025 14:41:05 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Nam Cao <namcao@linutronix.de>, Tomas Glozar <tglozar@redhat.com>,
-	Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v3 01/17] tools/rv: Do not skip idle in trace
-Message-ID: <20250716124105.GX1613200@noisy.programming.kicks-ass.net>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
- <20250715071434.22508-2-gmonaco@redhat.com>
- <20250716115027.GV1613200@noisy.programming.kicks-ass.net>
- <21b23f125e20102440e36da08a039d88bdf58eb1.camel@redhat.com>
+	s=arc-20240116; t=1752669675; c=relaxed/simple;
+	bh=cga2vmTkzUhL4ZVMLscasBhMNW0iy5jkUZxhXYAfMeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E94kSvq8atfTVVhxUOc4+HKTIbtsnd8OP4UjxtlYu1rjx+9hgYY8iNgt6HXdjABDmlOQ9Xu6HzrargRp8/IeDlPqDcC4Iv8IQJh1/Xp3hLIpnhShXxdY4dm09AbGRaV7ND3+RkghT7qc4t3o/l5Q/RQ/mYM6rvTkPcsji4oVsFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uxbc5z6d; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-8731c3473c3so43041239f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:41:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752669672; x=1753274472; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5IyO6wUl//owvi+Xi5g+hOG+WKmfJL+fQ0DzM68WhPQ=;
+        b=uxbc5z6d1D1qLOq+D/kU7ZCHjjiSgy+EdypBiqrxs7UbkxwqqH1Rkja/WX+hyyaMVe
+         nHxYAivWhIhmh0qRG9Yl8kkUF9jNznWTTXDpvPrBU7Ww0NgLtzNwRsIbhdBT5oF0FOoh
+         k/3G1OrrIgrukfTIfo2nd+JWhI+t71rMKj8NgscCi6/j9I2kl2J1KbeQ8FldZHymHOfo
+         vZ9YGG5ezLzH0EcLDP0a3Ko2kNmj21exmDKIRsbQx8W3xE8SeaXncamaJzcDv/u7jHUH
+         hvbZ0lx+POXSBX1Ocm+6PCeJQQ4AqhORLmERrQc9y3cdnA+q+MIcNMNvvYZgY/2rLWJ2
+         wLqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752669672; x=1753274472;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5IyO6wUl//owvi+Xi5g+hOG+WKmfJL+fQ0DzM68WhPQ=;
+        b=FP1+QtSg//h+CEQXhPI7C1doct5wm0D7yDMH332AVwxKnTQOhL1PL/F7sbr/cquCw5
+         OFsVh2wGjKfHo2FcUp5P7aYX+kZml1KYVDzY2byspHcL6ENIyv7iuJ/lKUUJ1/M6WtV+
+         Bhdh5xnIceU1pYV6JRBh8Q0eiCyxgYrxM78pt5Kkm/M5qhgZwICtgG+QnrnUuJBExO1x
+         xLA7UyCwbJeCjW39JFv/6fwM/y1tzsKca3VZjPnO0Zp0E7DVpmc7JQU0Wr4IgkMewX9h
+         7qrPcrekz18vW+s1XgdCl5oWCZs1yILhCsXNDAJ1K5K7wLEiGf/KD+yO2/hqeoi3ytj1
+         VJXA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2qpi5ab98ANkFKe6yxxTv/NyKnQkevKyGJUBXLt+BqBUPNe19ZA3W2ETiAvT4SGJKiKMJD2Q/KslxAYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQAodZoRAbSuk/2lWolj56YRgmXV1E0hH9Wag9lx/XhgnO+5Jk
+	qTk43sqcdLyCSgLYSnqnFebwt4uSdnr4b8lEsin82WC60qVB4at/8C6p3XP31Cb2xoYBAHqrgzj
+	D6a2F
+X-Gm-Gg: ASbGncuF3MHqtZRL52dBOIE4bpIZAe/oXZw7YduZ//UcrcPUiSmcY8GyIV9pNhVMAF2
+	cdU1FbPFqO1S2cLwVXmpBqbsI0bV9DcHUWB6P8OeM/qiZT7N6gQz6p3OUWP/48xMCWW3GPxjFRE
+	IVcglPvd/bcqbWU+flAwFqQEUnHbE2RQgKjFwLKnlmrgJG8q1J5O3uoFT+i8YngnXhTiUINddJu
+	gAjheXrQTMShFNzDhkwbot7SJ99Ps3LN7lL1bvYmTDKbrAqpEKwjEjOXUQkHsTBVtM9pOslev0M
+	afH+oDtK/zaYyw8VYF0rwW9j8sw9i8MLfIuHqMtAjH2VCMDRBYrLXs75C8MMfBMxtYMK2GmwJ9S
+	MZ1kP9AAkipV7UOLGXGw=
+X-Google-Smtp-Source: AGHT+IEaXkz1qDW6FctDCit+gCLbqFb/TZneYPdal+/fxuNQLUjjm3E8xB2iDIfQRJdJclhXIeMwNw==
+X-Received: by 2002:a05:6602:641e:b0:861:d71f:33e3 with SMTP id ca18e2360f4ac-879c2877178mr253394639f.5.1752669672141;
+        Wed, 16 Jul 2025 05:41:12 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50556973045sm3044134173.83.2025.07.16.05.41.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 05:41:11 -0700 (PDT)
+Message-ID: <3b28fddb-2171-4f2f-9729-0c0ed14d20cc@kernel.dk>
+Date: Wed, 16 Jul 2025 06:41:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21b23f125e20102440e36da08a039d88bdf58eb1.camel@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing v2 0/3] Bring back `CONFIG_HAVE_MEMFD_CREATE` to
+ fix Android build error
+To: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+ GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ io-uring Mailing List <io-uring@vger.kernel.org>
+References: <20250716004402.3902648-1-alviro.iskandar@gnuweeb.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250716004402.3902648-1-alviro.iskandar@gnuweeb.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 16, 2025 at 02:18:28PM +0200, Gabriele Monaco wrote:
+On 7/15/25 6:43 PM, Alviro Iskandar Setiawan wrote:
+> Hello,
 > 
-> 
-> On Wed, 2025-07-16 at 13:50 +0200, Peter Zijlstra wrote:
-> > On Tue, Jul 15, 2025 at 09:14:18AM +0200, Gabriele Monaco wrote:
-> > > Currently, the userspace RV tool skips trace events triggered by
-> > > the RV
-> > > tool itself, this can be changed by passing the parameter -s, which
-> > > sets
-> > > the variable config_my_pid to 0 (instead of the tool's PID).
-> > > The current condition for per-task monitors (config_has_id) does
-> > > not
-> > > check that config_my_pid isn't 0 to skip. In case we pass -s, we
-> > > show
-> > > events triggered by RV but don't show those triggered by idle (PID
-> > > 0).
-> > > 
-> > > Fix the condition to account this scenario.
-> > 
-> > The distinction between !my_pid and has_id is that you can in fact
-> > trace
-> > pid-0 if you want?
-> > 
-> 
-> Yes pretty much, no flag is meant to skip events from pid-0.
+> This is the v2 revision of the patch series to address the Android
+> build error related to `memfd_create()`. The series consists of three
+> patches:
 
-> > > -	if (config_has_id && (config_my_pid == id))
-> > > +	if (config_my_pid && config_has_id && (config_my_pid == id))
+Took a closer look at this. A few comments:
 
-But should we then not write:
+For patch 1, maybe just bring back the configure test and not bother
+with a revert style commit? There is nothing in test/ that uses
+memfd_create, so there's no point bringing it back in there.
 
-	if (config_has_id && (config_my_pid == id))
+IOW, patch 2 can be dropped, as it's really just dropping bits
+that patch 1 re-added for some reason.
+
+All that's needed is to add it to the examples/ helpers. If it's
+needed for test/ later, then it can get added at that time.
+
+All of that to say, I'd just add the configure bit and the examples/
+helper in a single patch and not worry about test/ at all.
+
+-- 
+Jens Axboe
 
 
