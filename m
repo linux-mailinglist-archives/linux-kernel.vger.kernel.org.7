@@ -1,229 +1,188 @@
-Return-Path: <linux-kernel+bounces-732898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF43B06D77
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:53:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FAAB06D79
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344EE56012C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:53:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53E6A56291D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D52D2E88AC;
-	Wed, 16 Jul 2025 05:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Tnmp4xzj"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2083.outbound.protection.outlook.com [40.107.236.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AA92E88B6;
+	Wed, 16 Jul 2025 05:55:41 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D4517D2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752645230; cv=fail; b=fih0czINK2odsSfcNowYINqZc6xdGsnLYUaWP6MKve2t0xZma+4X2gYXJsSo1X5CkB2SPTIAhkAgShC8fXSoT87HdU8zaspaODA2WKpSFKTtnZf+ZukFz5bnGZaktnQJVOpOA2FsiQmjJ0TRHe6rinvTzkb1gvUVfuN8Elg+53o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752645230; c=relaxed/simple;
-	bh=4LkeckeajseEXbNcf43EiAbVCZOxgha3kxf3opNjqm0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pFP3kenH1zCiOb6SX3v6DX4uQLCaG5AQGohMdNa8TiKZ1ZwZhzwyZ6Da1Qh3aIY4Py0mgt4z5Uz6RWaWjUZ1Q/KS+chAjYYQiBzP4mrBULDZCRevSmuMw/smx6zjpAgfrMPJDoBNwDNU0yqFnKl7cdO7VKxI8zh6Lsu/5vcLiRE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Tnmp4xzj; arc=fail smtp.client-ip=40.107.236.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G9j8NvsImHjlwIwQBUvlyrL5pH6Ji79NnQcE8omJrl+NRReMNwxPyNWvmivnkleJKoe8DSrD7sz75sONGMvHXEWneX0TfPnNKKlE16KvxkqG77UwCHxydi4/8Jb3IUddyGtw458ifN4FZlFJo6VDbM5tnAzs9yNjwa/IIP/vC+PnW79AvZYchIWMjNH4o3SF8EvQ7aVZnWXF8L3OLd9/nJPcPmzqyxfWtPEMnpzEJZndQzeq7Sh1rXxRI2LbLNqzN1BRJPomYGG+HWKz/viM4dPEitlFbARLqiW+/8SF2+sJa4s4U4ksibHNT86irVdkeNKftKTosQkQ1PYQHPCwVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pC6yBa2pq1n/w0WuBDDXz3YDyPoxKa8rYOLyj6idmRE=;
- b=NmfmryaRiH9WWnaPjI5hHMm9QL/bXYHeYQzry5fSbfsJ4fxO+ejU0RV3d2juIjf1LywmoXaG0yez7tHjkn4n+nuoMDA3xk3o0+/34w5s1fGn+M/tjQ/ncolBhZvVdSpTb48ShRax2mAh8oZVvv5Y3hk/BHNF7bq+t/AeaxEDLdR/3QKxoTknLZDIRyEHBy7GGC3dFoIg17pOqofveETTjcqZKAqz0/rxAXMUG2mDwqvebKQa3TPlGugHE7GWN5ZMQOQ/70XTohcXP7sWgsraXfckRvrgei5eNixXDaciRde09YL4kXQXjsvsfxGfJehOLdPG65uOh3cyydsPtgTJXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pC6yBa2pq1n/w0WuBDDXz3YDyPoxKa8rYOLyj6idmRE=;
- b=Tnmp4xzjKbfVmfrTxTcXJjTCquqFnRJ1qmvG+hD342A89YDwGvvTEpQ1msVF1jnq+zXg2vkXNj+W6LGox7FUryp97cRiLvRW+gE27tI9uaJNbnehZFJ9XWNuZoB/6oyua4R1RFVZPQ+IKLRMQtZO5O/e6yhVFiuch8raGDw4Gi8=
-Received: from SJ0PR03CA0002.namprd03.prod.outlook.com (2603:10b6:a03:33a::7)
- by SA3PR12MB7999.namprd12.prod.outlook.com (2603:10b6:806:312::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Wed, 16 Jul
- 2025 05:53:44 +0000
-Received: from CO1PEPF000044F9.namprd21.prod.outlook.com
- (2603:10b6:a03:33a:cafe::cb) by SJ0PR03CA0002.outlook.office365.com
- (2603:10b6:a03:33a::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Wed,
- 16 Jul 2025 05:53:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044F9.mail.protection.outlook.com (10.167.241.199) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8964.1 via Frontend Transport; Wed, 16 Jul 2025 05:53:44 +0000
-Received: from gomati.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 16 Jul
- 2025 00:53:40 -0500
-From: Nikunj A Dadhania <nikunj@amd.com>
-To: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <x86@kernel.org>
-CC: <seanjc@google.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<dave.hansen@linux.intel.com>, <thomas.lendacky@amd.com>,
-	<santosh.shukla@amd.com>, Nikunj A Dadhania <nikunj@amd.com>
-Subject: [PATCH v2] x86/sev: Improve handling of writes to intercepted TSC MSRs
-Date: Wed, 16 Jul 2025 11:23:15 +0530
-Message-ID: <20250716055315.2229037-1-nikunj@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8598115278E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752645341; cv=none; b=u9e+kkHS2b96bmdZriRe/k/a0WcSY5Y3G2zlUSRhgMW6g+GFaV0gfy4VnebIolfcvc/sEd99eS553cWiHcYLIQCETW/OYecFBrXoEDPGSpR/4q1wCy8C0+ZkmfrHgmsC/z1MOi8S+JfMrcepBjbbb3XlapPayLL4lYWTU1PsGEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752645341; c=relaxed/simple;
+	bh=DLu47Sws4affwsWQ7hPDxhVZT/7Eg7SpKUcr9nfWTIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qbNMRecb8qYoUcOHB7xmSwcxv+y5xglq5nsfXePPu1cVEnnfun4H3NdYnazCjz3rX419joMKc2N9kk8VfF6XVGAuA75XJyI7bfUu+g77cVom5w9qxBEkARtX0PXdvFYUtTslTTu//MEpWx97BMFH085NSoCoKah9/TjIVkUtWRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ubv78-0001BD-Hg; Wed, 16 Jul 2025 07:55:34 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ubv78-008h77-0g;
+	Wed, 16 Jul 2025 07:55:34 +0200
+Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 976C7442A70;
+	Wed, 16 Jul 2025 05:55:33 +0000 (UTC)
+Date: Wed, 16 Jul 2025 07:55:32 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Andrei Lalaev <andrey.lalaev@gmail.com>
+Cc: mailhol.vincent@wanadoo.fr, linux-kernel@vger.kernel.org, 
+	linux-can@vger.kernel.org
+Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
+Message-ID: <20250716-godlike-organic-pudu-53deda-mkl@pengutronix.de>
+References: <20250714175520.307467-1-andrey.lalaev@gmail.com>
+ <20250715-almond-zebra-of-perception-9d2e6c-mkl@pengutronix.de>
+ <b8221fe9-a167-4bcc-81bf-fb793712b48e@gmail.com>
+ <20250715-smart-ultra-avocet-d7937a-mkl@pengutronix.de>
+ <988d9355-2243-4187-b4ab-78652a1fb008@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F9:EE_|SA3PR12MB7999:EE_
-X-MS-Office365-Filtering-Correlation-Id: 410ec791-ec78-4077-d109-08ddc42d1fe4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?n14/Z4vrRweYSMpu8dQMo8/Vv/4NlOLB5lu/w2Qc04m49blCig0itrdEf3pR?=
- =?us-ascii?Q?oqjJ1U+JlZPDTzQtgAZAPQ9jvX6obw6pQPBrxubYeINhGyc4I8BvJQRh5bc0?=
- =?us-ascii?Q?spMlZm1kD54FjmJWuzQKw6GFUaPjt9mJqXbl6/oV/t1RroIPXiV97QWKAihX?=
- =?us-ascii?Q?NeDgx4enhpBB8DbFNacSTBq5Z28cHrHq5nnbQZIKO693mU2tDAiMQnPh/rHl?=
- =?us-ascii?Q?KnK6GI5U+nyVUa02bFIffZFinfcW7WRQ4kxMFgvRustqbeXRBtDWeay2rCYW?=
- =?us-ascii?Q?ad/YXUH1W/bswJg7wCpkBtQSkAW6flHvOioSKQweT7GdgGjSG1pD9StHXMxT?=
- =?us-ascii?Q?UIoSaNdwL7atZ1DWstONrkUqh0kinEbjoQcT5t0cbd83n7OI3+9BhL5o3qyk?=
- =?us-ascii?Q?B7QiKYzjYvj8xYWq7O6x1xC9Ca/hrkWo4HxfGkxDWfqUB/yFMz6cqy0g0fTF?=
- =?us-ascii?Q?zgc4oENOsYawbzo82sdSXi9EBS1Xe9DTJpp27wvmWR/GNIvslfBynijuohAw?=
- =?us-ascii?Q?ua56VLqBJ/ULbYvTQZusUZxp73b/M19yL1ZBXZBq7LEcGsm4RLti2yjLd2EI?=
- =?us-ascii?Q?awOB+WOPM8Uf1dSAmh/jRhTky/TmIVkppITEcbWAsdI3DMHXjYF7CNirwghq?=
- =?us-ascii?Q?4FtNkvPDxcpu+odW8lQ3wXYSGJjfzYmUHE4BwbuKCxNKO+v968WdeUVEKq66?=
- =?us-ascii?Q?fI3SY8L2nGPcJNuTcnMe+CmPM7jy3WV+ez+DkPH6KfbmQmJ125nvmzjzha4j?=
- =?us-ascii?Q?PkNWQ5wvUohTXbrIAcJRJr6yQWWoqUos2KFw+QRa2vVKqS5FovRm/N7PoCeA?=
- =?us-ascii?Q?jzUJiy6v4DbgtONL8f+Nvo1hii1W1OOQDYCdNKJVoCm4rnpcXGTM5uVHdJJJ?=
- =?us-ascii?Q?KNZcZG30vScYBzgzoj9vCU4FwSE0clS8s6uV2Pg5hBIqm+IXWHuoICGZvK36?=
- =?us-ascii?Q?ulVRwwfcgVunUPo+49Nz0D8dr5hjz77XcvckLSAXwWKRbxRubQ9ak9YJfwFA?=
- =?us-ascii?Q?2nOFIs6ku62GT96ImUwJq+pp/A7fUtvEQVRcBvi3Qj+32LZSvo5F5ao7ZK6/?=
- =?us-ascii?Q?URBmmdN6hi7rcyo5kn2kERC8KOGQzu2Lv2/gZho3KJeEbHlkPIfaWHpaUKSx?=
- =?us-ascii?Q?Md9Uoe9FOawW4aQ7TQ22fO85kxXQ7ek46VScLufuolyj2b2tZ2VoLSaOhcbA?=
- =?us-ascii?Q?XsuvNIBO0HCCKTM/VxRYfy8ObDLB/okDoWCzcDS7Ii1NBlPh8zdEKnsjp/en?=
- =?us-ascii?Q?QdvjCrRydFfhkGpbKNCMkTqOHSZTItMNUF0DI3m4DV+5sZ4EjJvoordqap68?=
- =?us-ascii?Q?adtMJgyZ24yVTL6HyT8psKkP0g9RIGxGx9imhuhCJEykp8/b5Lb1sNagVZz4?=
- =?us-ascii?Q?bD5+gyTH8TootDrgzBlfX4IJNqCu8QlQggkwDueShUpt+qsh606sujCZBhaP?=
- =?us-ascii?Q?7BZ06xXhvT44ZBkLjiLfkm1iuO/Zf7cDPlLFGOqhSW+vxk099Q15gGELJz30?=
- =?us-ascii?Q?CayQUYMSWwYs+eSTMneS81I5V/GKCoT8CohW?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 05:53:44.2797
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 410ec791-ec78-4077-d109-08ddc42d1fe4
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F9.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7999
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s2noy5ddnmfxmu77"
+Content-Disposition: inline
+In-Reply-To: <988d9355-2243-4187-b4ab-78652a1fb008@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <seanjc@google.com>
 
-Currently, when a Secure TSC enabled SNP guest attempts to write to the
-intercepted GUEST_TSC_FREQ MSR (a read-only MSR), the guest kernel response
-incorrectly implies a VMM configuration error, when in fact it is the usual
-VMM configuration to intercept writes to read-only MSRs, unless explicitly
-documented.
+--s2noy5ddnmfxmu77
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH] can: gs_usb: fix kernel oops during restart
+MIME-Version: 1.0
 
-Modify the intercepted TSC MSR #VC handling:
-* Write to GUEST_TSC_FREQ will generate a #GP instead of terminating the
-  guest
-* Write to MSR_IA32_TSC will generate a #GP instead of silently ignoring it
+On 16.07.2025 07:45:08, Andrei Lalaev wrote:
+> On 15.07.2025 16:29, Marc Kleine-Budde wrote:
+> > On 15.07.2025 16:24:22, Andrei Lalaev wrote:
+> >> I was also surprised because this callback isn't marked as mandatory
+> >> and that there are no additional checks.
+> >>
+> >>>
+> >>> What about this fix?
+> >>>
+> >>> diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netl=
+ink.c
+> >>> index 13826e8a707b..94603c9eb4aa 100644
+> >>> --- a/drivers/net/can/dev/netlink.c
+> >>> +++ b/drivers/net/can/dev/netlink.c
+> >>> @@ -285,6 +285,12 @@ static int can_changelink(struct net_device *dev=
+, struct nlattr *tb[],
+> >>>          }
+> >>> =20
+> >>>          if (data[IFLA_CAN_RESTART_MS]) {
+> >>> +                if (!priv->do_set_mode) {
+> >>> +                        NL_SET_ERR_MSG(extack,
+> >>> +                                       "device doesn't support resta=
+rt from Bus Off");
+> >>> +                        return -EOPNOTSUPP;
+> >>> +                }
+> >>> +
+> >>>                  /* Do not allow changing restart delay while running=
+ */
+> >>>                  if (dev->flags & IFF_UP)
+> >>>                          return -EBUSY;
+> >>> @@ -292,6 +298,12 @@ static int can_changelink(struct net_device *dev=
+, struct nlattr *tb[],
+> >>>          }
+> >>> =20
+> >>>          if (data[IFLA_CAN_RESTART]) {
+> >>> +                if (!priv->do_set_mode) {
+> >>> +                        NL_SET_ERR_MSG(extack,
+> >>> +                                       "device doesn't support resta=
+rt from Bus Off");
+> >>> +                        return -EOPNOTSUPP;
+> >>> +                }
+> >>> +
+> >>>                  /* Do not allow a restart while not running */
+> >>>                  if (!(dev->flags & IFF_UP))
+> >>>                          return -EINVAL;
+> >>
+> >> Thanks for the patch. As expected, it fixes the kernel OOPS,
+> >> but the interface never leaves the BUS_OFF state.
+> >=20
+> > Which device and which firmware are you using?
+> >=20
+> > The gs_usb/candlelight interface is un(der)defined when it comes to
+> > bus-off handling.
+> >=20
+> > I think the original candlelight with the stm32f072 does auto bus-off
+> > recovery. Not sure about the candlelight on stm32g0b1.
+>=20
+> Sorry, my bad for not mentioning it earlier. I have several USB-CAN adapt=
+ers:
+>   - two are based on STM32F072 (not original CandleLight, but using the s=
+ame FW)
+>   - one is a original CandleLightFD on STM32G0B1, that I used for testing
+>=20
+> And all of them behave exactly as you described:
+>   - both STM32F072-based automatically recover from BUS_OFF and I see
+>     it in `ip -details link show can0`
+>   - STM32G0B1-based doesn't recover and I have to down/up interface to re=
+store it
+>=20
+> Since this is expected behavior and no kernel OOPS occurs,
+> I will switch to your patch.
 
-Add a WARN_ONCE to log the incident, as well-behaved SNP guest kernels
-should never attempt to write to these MSRs.
+At least the behavior can be explained, it's not expected, though :) I
+think we have to fix the stm32g0b1 firmware to auto recover from bus
+off...and in the long term, extend the candlelight firmware, the USB
+protocol and the Linux driver to support proper Bus-Off handling.
 
-However, continue to terminate the guest when reading from intercepted
-GUEST_TSC_FREQ MSR with Secure TSC enabled, as intercepted reads indicate
-an improper VMM configuration for Secure TSC enabled SNP guests.
+> Thanks a lot for the patch and your help!
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-Co-developed-by: Nikunj A Dadhania <nikunj@amd.com>
-Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
----
- arch/x86/coco/sev/vc-handle.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+regards,
+Marc
 
-diff --git a/arch/x86/coco/sev/vc-handle.c b/arch/x86/coco/sev/vc-handle.c
-index faf1fce89ed4..18be9f8bd015 100644
---- a/arch/x86/coco/sev/vc-handle.c
-+++ b/arch/x86/coco/sev/vc-handle.c
-@@ -371,29 +371,30 @@ static enum es_result __vc_handle_msr_caa(struct pt_regs *regs, bool write)
-  * executing with Secure TSC enabled, so special handling is required for
-  * accesses of MSR_IA32_TSC and MSR_AMD64_GUEST_TSC_FREQ.
-  */
--static enum es_result __vc_handle_secure_tsc_msrs(struct pt_regs *regs, bool write)
-+static enum es_result __vc_handle_secure_tsc_msrs(struct pt_regs *regs, bool write,
-+						  struct es_em_ctxt  *ctxt)
- {
- 	u64 tsc;
- 
- 	/*
--	 * GUEST_TSC_FREQ should not be intercepted when Secure TSC is enabled.
--	 * Terminate the SNP guest when the interception is enabled.
-+	 * Writing to MSR_IA32_TSC can cause subsequent reads of the TSC to
-+	 * return undefined values, and GUEST_TSC_FREQ is read-only. Generate
-+	 * a #GP on all writes, but WARN to log a kernel bug.
- 	 */
--	if (regs->cx == MSR_AMD64_GUEST_TSC_FREQ)
--		return ES_VMM_ERROR;
-+	if (WARN_ON_ONCE(write)) {
-+		ctxt->fi.vector = X86_TRAP_GP;
-+		ctxt->fi.error_code = 0;
-+		return ES_EXCEPTION;
-+	}
- 
- 	/*
--	 * Writes: Writing to MSR_IA32_TSC can cause subsequent reads of the TSC
--	 *         to return undefined values, so ignore all writes.
--	 *
--	 * Reads: Reads of MSR_IA32_TSC should return the current TSC value, use
--	 *        the value returned by rdtsc_ordered().
-+	 * GUEST_TSC_FREQ read should not be intercepted when Secure TSC is
-+	 * enabled. Terminate the SNP guest when the interception is enabled.
- 	 */
--	if (write) {
--		WARN_ONCE(1, "TSC MSR writes are verboten!\n");
--		return ES_OK;
--	}
-+	if (regs->cx == MSR_AMD64_GUEST_TSC_FREQ)
-+		return ES_VMM_ERROR;
- 
-+	/* Reads of MSR_IA32_TSC should return the current TSC value. */
- 	tsc = rdtsc_ordered();
- 	regs->ax = lower_32_bits(tsc);
- 	regs->dx = upper_32_bits(tsc);
-@@ -416,7 +417,7 @@ static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
- 	case MSR_IA32_TSC:
- 	case MSR_AMD64_GUEST_TSC_FREQ:
- 		if (sev_status & MSR_AMD64_SNP_SECURE_TSC)
--			return __vc_handle_secure_tsc_msrs(regs, write);
-+			return __vc_handle_secure_tsc_msrs(regs, write, ctxt);
- 		break;
- 	default:
- 		break;
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-base-commit: 9f4a425223f3bd8ccaebc7f4f42b1d8c5f12fb45
--- 
-2.43.0
+--s2noy5ddnmfxmu77
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmh3PqsACgkQDHRl3/mQ
+kZyrSAf/fxtCelkig39kyxZMYhttLOpJjMKbC3cJDEmx+f9E+dq0I5GMcnX/TCAg
+4eucQduA1M/ptmdG3hmvKFCdni2YqnXw4AMuYTj1z5RVEeNor0bjBTJg0ImFry+v
+8aBSnkz/Cud/OAyAtMGdiu8diUNpfqvXle/JB4UKMBuHMoWpZjVnrnDwLI2gsPfH
+Q3R8bZjogD6NBNfaAImbqfjX5XP1SLuzfkiBIFHSu0kIYjevl8ix5H9LPNPjbiwN
+cfSZNyXa59U93denBVUHyhfQnhZ+j0FmcB+d8wQRIkXuw8J9H0KYjQ+r0iSsta/Z
+qP1aSbgDaIlpoX4kRPk40PkZ49nkOw==
+=scm/
+-----END PGP SIGNATURE-----
+
+--s2noy5ddnmfxmu77--
 
