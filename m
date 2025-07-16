@@ -1,159 +1,190 @@
-Return-Path: <linux-kernel+bounces-734145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A18CB07D8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:25:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E93B07D95
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42241898BC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A233AB463
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C077329E10F;
-	Wed, 16 Jul 2025 19:25:32 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B39A29E11C;
+	Wed, 16 Jul 2025 19:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BY+543XV"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29BB13D503;
-	Wed, 16 Jul 2025 19:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C0C2AE6A;
+	Wed, 16 Jul 2025 19:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752693932; cv=none; b=b/pThbYU4Ub4WeZcmgykN7XQFNLHwUYaTwZknFEaZ9V1+ZoI4gyobS34AiOkfDb8HpWvogAsR3VIQT6rmMtYSvgM7iCh60vsuWe7aKkxPHsFj1D08cP85kp3sr+uN5hvhXI5L+Fh0SUVSfSI7qWbHGfL2VY2W/EaiWEVY9rXAYw=
+	t=1752694013; cv=none; b=hyvUhAzwUzd8/wu9+xqBbiV6mbKXuwOEcSc7zKxN9jYbM4tzmlOfSrC0wc/SwT8rrg68mPI5GJoHNPWWfovB96Ue0DLSuBaronJrDUqlNfxwEc8gNazPFx3ewdo7b/VFBwpQ84Q4hYFai0y8kPGOnAck1Cyr64OEeBQ5cwMSKQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752693932; c=relaxed/simple;
-	bh=Hv63yMay8mbhFM4zLLO5m/N2tIfthDwtdzQ7Esa2S80=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ky1/6eCEnuns+Jd0U6kZJ/oTgEpl79HUuWOX3Jcr7oRHLHyvQ+i3EoWIkDAdr4GwMbkK0bZkYBN5mi4zJIHDMyglL0D9xqAIEqQ0o5A+zdkzCClgE4RnRCh9YZH1ZV0+jLgzKafPFyMuNZm95T/tAREla0MgYiUgekHP7NLBZzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 8201114051A;
-	Wed, 16 Jul 2025 19:25:21 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id CE1E920025;
-	Wed, 16 Jul 2025 19:25:16 +0000 (UTC)
-Date: Wed, 16 Jul 2025 15:25:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
- James <sam@gentoo.org>
-Subject: Re: [PATCH v13 10/14] unwind: Clear unwind_mask on exit back to
- user space
-Message-ID: <20250716152515.20699c64@batman.local.home>
-In-Reply-To: <20250716143352.54d9d965@batman.local.home>
-References: <20250708012239.268642741@kernel.org>
-	<20250708012359.345060579@kernel.org>
-	<20250715102912.GQ1613200@noisy.programming.kicks-ass.net>
-	<20250716142609.47f0e4a5@batman.local.home>
-	<20250716143352.54d9d965@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752694013; c=relaxed/simple;
+	bh=VP3X54e1B36Xv5PL/K+L7jb542DADGIk7+jcWaWteg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P8o46diuGzPcTShzhZVmmoWtKYYDLB7maY9DBAh/R2S836jpy8pkRuPUq8fSnjec4O+ZY/2gZrbCYzItR/q2ugSswLo3QhtTWLseTutkCpjuM+Q11hzEgL8P4JsLCgRl8BDHhR+8GgS3LN0Xx+iEEm+JBwDZrMv8ABspjtuA7Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BY+543XV; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4561ca74829so2316735e9.0;
+        Wed, 16 Jul 2025 12:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752694010; x=1753298810; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xDDM8l3h0Fw3qJuqS7zowlihC7cLJKPy3Un6rJmnlMs=;
+        b=BY+543XVrXpcPubzie9W9kYi20gTBHSYLTrSjfGa29afubzxv7IjJlZDt9HrlCSd37
+         1jyFkjs5yyc5tY8ff1LXM+CS4l2XYPLb6ABJPLnId8Fr+QRycA3oEd8+Jliw8Rx6xCS1
+         SuIduHhTTRnYJL4I4htVN5uW/6BrC5y3e2iuOq1LPBDISHjecPTkQ7q5LZ99fNjyX33R
+         8eY6pHM1GQySxJ8UR6iPsfIIoMybBxcAaYwf1GB1N4QJJufsUZXDe5m2zXSGL01VlpB9
+         LCR8G2hK8+oo3T+AZeJEwE1/I98+Rs/lVNJNcrT2hWwBJy5uPn7NXfWTmMf3x1dGF4Vs
+         5WmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752694010; x=1753298810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xDDM8l3h0Fw3qJuqS7zowlihC7cLJKPy3Un6rJmnlMs=;
+        b=OiC0ywhrxcTcXuQhyW9gCYxiFVxNZ/qFBl2WgWLNI8APnvHSiwhH9Cglp8et/1DSi2
+         yI8mtZUSRSdg+RUyMKXgAFD9P4jXIwOymuok2AGfQ+K5i9e7JBkKSdrCTYKzP+Vw7pJR
+         fjnugXocg6+3Y3GmQSyKEsS+vnUCxhH0knvyFZtcI2bhrV07kUCdrF296EYMoJGigbQj
+         4o6uZOO+UhZGWJt6tafMtCeIg/g1Ehb24ghyIgylzBgSYPAbFEOc8R3oEV6gnjtTRVHb
+         Kry09ZaA/BYNjlV/1xGmzmPNCUzs7PsxQrV6bRrszPpQJTDKm/lZnVo8zpEndqckb2PA
+         JYTA==
+X-Forwarded-Encrypted: i=1; AJvYcCV//Uu//z/FvVhZl7VEoJKBPb6YEBgpIFHMaHj/YJW1oHxKwuxyjaVi6/8bPcy75O7bO+cJUUi6uCcyCbQZ5LXmdTM=@vger.kernel.org, AJvYcCVaCce72pv1WmVIHqM2zGtEg5dRcKNrYvZ/nqLfd0RlUZyojPnFrTavXAQeuMWnpm/ffRfQilmd@vger.kernel.org, AJvYcCVnIOIJwfViAHVUJe1XZ7zUV/huyq2spdUKvHdw921WFXuBREaPwhMAY83JnMXQcuvN/mco9Ac3O87SGTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKqAJ6EzBSWAM18Xa1n15FBlZScFlp8oPqJEq1peZvM/XA03tP
+	KjgXXDoTCCIcql2U2Pvbil/2H1iBvhpNdWVJDjmAjGwis0y7ooI6gZbFpZbtACXolVeIoRaTvkw
+	lE7n4oAWkSPxswoN+Tz2qbKvvQDbul04=
+X-Gm-Gg: ASbGncsKNLbMaVJFDdC4J59CjGAU7smWDtlq+6ozlKaWCwLRCDrICSOZR5V6wWRF//Z
+	XAzXr9MhJ8n1BFeppXLT8544rKlsTX2hLpQXGsjf0JIM2/ikdlk9R2yf9awbhVk7GSjwqUb5Kki
+	aFcyd+Jo8qhuEdWwxkDTVSG49GjO/6STlPh2tCc1PZZ3/gdJBq67i0qQDf5DFa+QW4EO2+BPbUG
+	UQn0zEzuwPr0b6XiT8=
+X-Google-Smtp-Source: AGHT+IG4hycp+esWmsd2Z1+rpj9/YEraQLvhtZn7APofxtvpj7YLxfhmQfzBkZnpCvMDICpuYr9ivl1mVrd1KFZdmyg=
+X-Received: by 2002:a05:600c:8b67:b0:456:19be:5cc with SMTP id
+ 5b1f17b1804b1-4562e38a883mr37986905e9.14.1752694009872; Wed, 16 Jul 2025
+ 12:26:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: yqzgk9yxdrffy97jtommr38674rsztpz
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: CE1E920025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1++iWTZbjkHMBToQzNUvwO99krfymIct90=
-X-HE-Tag: 1752693916-499051
-X-HE-Meta: U2FsdGVkX1/+uRuX2HxufIA1KYgJgnoqc5TCl/FWSkKdz8KThzUUeGFW3dCnqRBdDkJX7qOICyzu7TKJJXgqieZ3HscvgW+0Z4D7q5xXB1naLq0n/YNYZrULMskuZPHNKNjOC3jeo6WobKCiZfhB7Ks9VatY5T/0aNOhL/IOe4Fb7RskgwcSBCPlX6sqvpTGQdNSGbu2FLKbO9GWPmSp2CDzJLYu3Hv7ZD350/I8RyhKugeiNIT+eDKMrEnb7LL1LmUQU32ry+hdx1c/3TF/mj+fM6+hN39d7EVcw5XKxpUTDArpAaQ0VVLv1VT0vd6CCTSzQyLIVOgkeSK9i6UPmraFuCeBDsvGAQew+1ATPrZUQM0hN4xkGqK+uPLZ3Ii9
+References: <20250705170326.106073-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250705170326.106073-1-biju.das.jz@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 16 Jul 2025 20:26:23 +0100
+X-Gm-Features: Ac12FXzHx2y0J4y7k-9UUt0aRslx85AqxD4tqzLHcP623nHbyWD8RXhTbillqKI
+Message-ID: <CA+V-a8tZKMfDjxmrkTJhN+=WoGBR0711yoZYgQWDKd361f9q_A@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: stmmac: dwmac-renesas-gbeth: Add PM
+ suspend/resume callbacks
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Biju Das <biju.das.au@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 16 Jul 2025 14:33:52 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Sat, Jul 5, 2025 at 6:03=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com=
+> wrote:
+>
+> Add PM suspend/resume callbacks for RZ/G3E SMARC EVK.
+>
+> The PM deep entry is executed by pressing the SLEEP button and exit from
+> entry is by pressing the power button.
+>
+> Logs:
+> root@smarc-rzg3e:~# PM: suspend entry (deep)
+> Filesystems sync: 0.115 seconds
+> Freezing user space processes
+> Freezing user space processes completed (elapsed 0.002 seconds)
+> OOM killer disabled.
+> Freezing remaining freezable tasks
+> Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+> printk: Suspending console(s) (use no_console_suspend to debug)
+> NOTICE:  BL2: v2.10.5(release):2.10.5/rz_soc_dev-162-g7148ba838
+> NOTICE:  BL2: Built : 14:23:58, Jul  5 2025
+> NOTICE:  BL2: SYS_LSI_MODE: 0x13e06
+> NOTICE:  BL2: SYS_LSI_DEVID: 0x8679447
+> NOTICE:  BL2: SYS_LSI_PRR: 0x0
+> NOTICE:  BL2: Booting BL31
+> renesas-gbeth 15c30000.ethernet end0: Link is Down
+> Disabling non-boot CPUs ...
+> psci: CPU3 killed (polled 0 ms)
+> psci: CPU2 killed (polled 0 ms)
+> psci: CPU1 killed (polled 0 ms)
+> Enabling non-boot CPUs ...
+> Detected VIPT I-cache on CPU1
+> GICv3: CPU1: found redistributor 100 region 0:0x0000000014960000
+> CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+> CPU1 is up
+> Detected VIPT I-cache on CPU2
+> GICv3: CPU2: found redistributor 200 region 0:0x0000000014980000
+> CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
+> CPU2 is up
+> Detected VIPT I-cache on CPU3
+> GICv3: CPU3: found redistributor 300 region 0:0x00000000149a0000
+> CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
+> CPU3 is up
+> dwmac4: Master AXI performs fixed burst length
+> 15c30000.ethernet end0: No Safety Features support found
+> 15c30000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+> 15c30000.ethernet end0: configuring for phy/rgmii-id link mode
+> dwmac4: Master AXI performs fixed burst length
+> 15c40000.ethernet end1: No Safety Features support found
+> 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+> 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
+> OOM killer enabled.
+> Restarting tasks: Starting
+> Restarting tasks: Done
+> random: crng reseeded on system resumption
+> PM: suspend exit
+>
+> 15c30000.ethernet end0: Link is Up - 1Gbps/Full - flow control rx/tx
+> root@smarc-rzg3e:~# ifconfig end0 192.168.10.7 up
+> root@smarc-rzg3e:~# ping 192.168.10.1
+> PING 192.168.10.1 (192.168.10.1) 56(84) bytes of data.
+> 64 bytes from 192.168.10.1: icmp_seq=3D1 ttl=3D64 time=3D2.05 ms
+> 64 bytes from 192.168.10.1: icmp_seq=3D2 ttl=3D64 time=3D0.928 ms
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> This patch is tested with out-of tree patch for save/restore
+> ethernet OEN registers in the pinctrl block.
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> [Task enters kernel]
->   request -> add cookie
->   request -> add cookie
->   [..]
->   callback -> add trace + cookie
->  [ftrace clears bits]
->   callback -> add trace + cookie
-> [Task exits back to user space]
+Cheers,
+Prabhakar
 
-Another solution could be to add another unwind mask of completed
-callbacks. Then we could use the fetch_or(). I guess that could look
-like this:
-
-diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
-index 15045999c5e2..0124865aaab4 100644
---- a/include/linux/unwind_deferred.h
-+++ b/include/linux/unwind_deferred.h
-@@ -61,8 +61,10 @@ static __always_inline void unwind_reset_info(void)
- 		} while (!try_cmpxchg(&info->unwind_mask, &bits, 0UL));
- 		current->unwind_info.id.id = 0;
- 
--		if (unlikely(info->cache))
-+		if (unlikely(info->cache)) {
- 			info->cache->nr_entries = 0;
-+			info->cache->unwind_completed = 0;
-+		}
- 	}
- }
- 
-diff --git a/include/linux/unwind_deferred_types.h b/include/linux/unwind_deferred_types.h
-index 5dc9cda141ff..33b62ac25c86 100644
---- a/include/linux/unwind_deferred_types.h
-+++ b/include/linux/unwind_deferred_types.h
-@@ -3,6 +3,7 @@
- #define _LINUX_UNWIND_USER_DEFERRED_TYPES_H
- 
- struct unwind_cache {
-+	unsigned long		unwind_completed;
- 	unsigned int		nr_entries;
- 	unsigned long		entries[];
- };
-diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
-index 60cc71062f86..9a3e06ee9d63 100644
---- a/kernel/unwind/deferred.c
-+++ b/kernel/unwind/deferred.c
-@@ -170,13 +170,19 @@ static void process_unwind_deferred(struct task_struct *task)
- 
- 	unwind_user_faultable(&trace);
- 
-+	if (info->cache)
-+		bits &= ~(info->cache->unwind_completed);
-+
- 	cookie = info->id.id;
- 
- 	guard(srcu_lite)(&unwind_srcu);
- 	list_for_each_entry_srcu(work, &callbacks, list,
- 				 srcu_read_lock_held(&unwind_srcu)) {
--		if (test_bit(work->bit, &bits))
-+		if (test_bit(work->bit, &bits)) {
- 			work->func(work, &trace, cookie);
-+			if (info->cache)
-+				info->cache->unwind_completed |= BIT(work->bit);
-+		}
- 	}
- }
- 
-Instead of adding another long word in the tasks struct, I just use the
-unwind_cache that gets allocated on the first use.
-
-I think this can work. I'll switch it over to this and then I can use
-the fetch_or() and there should be no extra callbacks, even if an
-already called callback is requested again after another callback was
-requested which would trigger another task work.
-
-I'll update this patch (and fold it into the bitmask patch) with the
-fetch_or() and create this patch as a separate patch that just gets rid
-of spurious callbacks.
-
--- Steve
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c b/=
+drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+> index 9a774046455b..df4ca897a60c 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+> @@ -136,6 +136,7 @@ static struct platform_driver renesas_gbeth_driver =
+=3D {
+>         .probe  =3D renesas_gbeth_probe,
+>         .driver =3D {
+>                 .name           =3D "renesas-gbeth",
+> +               .pm             =3D &stmmac_pltfr_pm_ops,
+>                 .of_match_table =3D renesas_gbeth_match,
+>         },
+>  };
+> --
+> 2.43.0
+>
+>
 
