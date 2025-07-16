@@ -1,158 +1,112 @@
-Return-Path: <linux-kernel+bounces-733733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70922B07858
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:42:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14A98B0785E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C21F8166425
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB34167084
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B2A262FE4;
-	Wed, 16 Jul 2025 14:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1C3262FDD;
+	Wed, 16 Jul 2025 14:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8jJt2At"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQV9YA3J"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CEC26057A;
-	Wed, 16 Jul 2025 14:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FED208AD;
+	Wed, 16 Jul 2025 14:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676937; cv=none; b=OaCUDCiYc+O0pCxsoz9sGmsbjJDUbD7zMwncAZR8zTssBKb8Kf/zG66piEO+Azt9QEcjsBQe0y+lihhPCgptE5cqzk5PAbd8D4Gf7Y7di/dW5ApguD4k2XYllYNUlgNAJnYai+/HB1HB5EaU4dea1MHsI/Mk3Sbyd7Cr6+794Ys=
+	t=1752676978; cv=none; b=CgrgOLv1X/J5vVcNH2OekAVNEEiNnd27pHHTkRxcBqRGpbS+zRtIAgHamJ2WhKzFzkMJGtrQuJCeexWB+eyAUOHz3GHZ7ZhvwZW3l3mRWfZk/aMspmIA5APHBHfc0uqLc49QsnTN+exntT396HDtmCZVZdzd4Yi4OdW1CoesPZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676937; c=relaxed/simple;
-	bh=F6z40T/vA8Ei0+4sNeywLtfPgjy3l6PcL0URr5IK4xc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VlAYsv51WoKJu3VZIZy1vRWdj8Ch9zYmO2cG1pQrx+9nXj9ZWPOnFB4bmWl7oZia4JZbeURwHzn6la3YJTmiGe/5fJFnWLaUlVoafHTmcg5mJyRXBcWb3Xzhlng/uo21/k/RBFbuBkYitF2gEgohruGvKz+/qmUYtiXpkJQjFSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8jJt2At; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89FF8C4CEF0;
-	Wed, 16 Jul 2025 14:42:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752676935;
-	bh=F6z40T/vA8Ei0+4sNeywLtfPgjy3l6PcL0URr5IK4xc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=O8jJt2At0i4PBZvisCUvJRjIrEeC3Vd8UUl/tLvreBieauXs0kiHMKbnB/y98DIoq
-	 Ivv1bUqi4/Ep5ZqfdZWxAKe+pBbILEP6Ad3953Xe2LLn3vk8F4ZEYYBQBdWupm2yHy
-	 r+iUdJC239xMctGos31QBdkAJJ+/Y+zhC24n053qDl/ogiAS0RKWh2OcDtyqYCImFn
-	 TK7vMQCTRKAxOVf+cooIaYp2QlAM0Y9p6oBZP7bss82jO1bkvERO6ZkV59OW6Ym7g5
-	 83nV8+ZvBpI2b7IWdAM6BlBM65aHahKabkxZQrV2h5VX7IAIJ8wmioTvvv3unJHRdZ
-	 6CSEvV5K2Giaw==
-From: srini@kernel.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	"Michael C. Pratt" <mcpratt@pm.me>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	stable@vger.kernel.org,
-	Srinivas Kandagatla <srini@kernel.org>
-Subject: [PATCH v2] nvmem: layouts: u-boot-env: remove crc32 endianness conversion
-Date: Wed, 16 Jul 2025 15:42:10 +0100
-Message-ID: <20250716144210.4804-1-srini@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752676978; c=relaxed/simple;
+	bh=IAd6FGrTOnFlsfoLEXylbpURFbSM2zQvX3rpv/2c8Bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gg08PMCC0kYTKS+K7LreiQ5+AtWVHX0+a+819F6sJzSLDADsPW/7DSiyRacxdewHpas56hV9ODydqtd17uVn6Xf0HMN0pD+tQVTDpe90Ne27eAbh19Mrn1qtpAMi6BWY7e31siPT7x63f6Y+1IJGA74B/hRDma5FdHgPtTqZZCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQV9YA3J; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b350704f506so10531a12.0;
+        Wed, 16 Jul 2025 07:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752676976; x=1753281776; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HrmhfqwuOeFzpsTcMEpOex8e00HhWOAyQQZ7a9DYdsw=;
+        b=jQV9YA3JqW6lrokeX1JJeBJcukmsJ/8gROET6FsyYCG5wAvbNfJ4doAzRdrFNjdUbk
+         PQLMum7+IZgMLI0TpwZbuGzVUSPM/8Slkiz01FtdKtVygFVJVGtfCoJi3VV7N47SKkg4
+         auP2X+IN8Mg3e3mWCSiu4zAjv9e7DnSXXMYfgdd/fBrQHYxEh1ec65nXAWt3MIANxQnH
+         H4JFwR7CtI2OAPACT+ERdVCgSws6P6UcJhiDgWZPUApN4OVKchTTAGOnQvySEU2Ohl3L
+         aHYFFoo9ltXg2c481Yh9aNy3MFzBZ+akOOpL01Ca/R9xytqzWkLk+GCXZa03ioVtvBig
+         9aHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752676976; x=1753281776;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HrmhfqwuOeFzpsTcMEpOex8e00HhWOAyQQZ7a9DYdsw=;
+        b=oECFPkkjcA1M7QbIpoAh9PQkrm0PavAL5DBVo6nQb7EI1kMGisdt9b+TlslUx+xkPP
+         7UjKuC70m61+aGv5E0VV2nKpuKG0rk95AVbOecxC66jc8x9iEV3CsUfnQOhiHwJvbaLU
+         qc38Jz/eqIRCKp+N9OMLFvpx0iPt0DAfJHen6XWFAjPIPbF0rL38hkC9HBWn46wvCyvR
+         68SY+1WuKkAaAakaxn21zxFjXYu6+V1kRlwbXAJESFsn63JF0u5tYo1hfTdmHHIHd43N
+         D4Mg4MIwNJNdnKeKFV7E76DhC8H5hKA5AqNqRvL2IO0GiInqV6Bem8sykHnFbCJQUnG8
+         G9Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0SIzVgyCf/aTL76SF6YyfvgitA9HmZzSRm7e750uYPg4czdFaOi6qg5H7fdQ/2tXYiQMgTHXETS/G0Go=@vger.kernel.org, AJvYcCUvEFg/cdZmVE0KAwQswix4I4zfMvjOilLxE61OpYkNYEitr1ihnR9M88K1JaOCCc+2mWW7025BmmyP@vger.kernel.org, AJvYcCWK6BoZ3tq4FxlXI9TDs7i6blTjLflIAvR6Wejf6jFPbta5peEeRljFSBVmSpzrVYBtwqSrO0Ee32eZJ0M2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLEpGBXY3i/XqRfJ+PBkd7knBV3wU6LkGk+/n4ruD8siF9Vlbj
+	SbvrHpym24DOpPYt7AOOY1l4SsFBxygi+cu37I10jXEDPOv0zptJSaKI
+X-Gm-Gg: ASbGncsKCxk0NiZhgJARozCR+5Cc7mIPFin6EcnYk43i4cmznfpGMOpCebkK7cOp+KS
+	GNRJzhnjgwcEWregWC1dUruAHArfJRQvQxQebIzF5QG4Q4xkLIdunAQ2HWVOX5BrFflIxv3jlon
+	j45B0CdFqg5ctecE7C0HcmpQvzFZQRoAJBV1ukCSBvUQ7QzfTi/AouT7qByLIuot/uJlRLUFIku
+	TqQKMQ5T0yD0wfFf3jY56MiLGJXo5x/FpIFYJslD4eeRyosWRxECrbmPcIfiWvn6lgJbs0ITfJ3
+	KC0DqB2v256fJQlzMhEJvQexHUqLMaw9eeOrTIcKoqE+AgUrgLjligUzzyZI/DWxVIbwKIc9atX
+	5GEMh649bg9DpBC5puhL0KCcWe5OZFPEMR7yF7SZubnnO4w==
+X-Google-Smtp-Source: AGHT+IHObnP8GezmxTlYlIYtkOUzK6Ep6LQLCbe4+JRZX/WB5H4tbtiYyfiRybBF0UxHRZ5aN1U4Ug==
+X-Received: by 2002:a17:903:3d0e:b0:23c:6d5e:db4e with SMTP id d9443c01a7336-23e1a43ad36mr123801255ad.8.1752676976182;
+        Wed, 16 Jul 2025 07:42:56 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe719d07sm13946337a12.63.2025.07.16.07.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 07:42:55 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 16 Jul 2025 07:42:54 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Jim Wright <wrightj@linux.vnet.ibm.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] dt-bindings: hwmon: lltc,ltc2978: Add lltc,ltc713
+ compatible
+Message-ID: <d17a538e-834b-4d0b-9c82-7d1a939831c3@roeck-us.net>
+References: <20250701-dt-hwmon-compatibles-v1-0-ad99e65cf11b@kernel.org>
+ <20250701-dt-hwmon-compatibles-v1-3-ad99e65cf11b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701-dt-hwmon-compatibles-v1-3-ad99e65cf11b@kernel.org>
 
-From: "Michael C. Pratt" <mcpratt@pm.me>
+On Tue, Jul 01, 2025 at 04:00:42PM -0500, Rob Herring (Arm) wrote:
+> The lltc,ltc713 compatible is already in use. Add it to the lltc,ltc2978
+> binding as the device appears to be similar.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-On 11 Oct 2022, it was reported that the crc32 verification
-of the u-boot environment failed only on big-endian systems
-for the u-boot-env nvmem layout driver with the following error.
+Applied.
 
-  Invalid calculated CRC32: 0x88cd6f09 (expected: 0x096fcd88)
-
-This problem has been present since the driver was introduced,
-and before it was made into a layout driver.
-
-The suggested fix at the time was to use further endianness
-conversion macros in order to have both the stored and calculated
-crc32 values to compare always represented in the system's endianness.
-This was not accepted due to sparse warnings
-and some disagreement on how to handle the situation.
-Later on in a newer revision of the patch, it was proposed to use
-cpu_to_le32() for both values to compare instead of le32_to_cpu()
-and store the values as __le32 type to remove compilation errors.
-
-The necessity of this is based on the assumption that the use of crc32()
-requires endianness conversion because the algorithm uses little-endian,
-however, this does not prove to be the case and the issue is unrelated.
-
-Upon inspecting the current kernel code,
-there already is an existing use of le32_to_cpu() in this driver,
-which suggests there already is special handling for big-endian systems,
-however, it is big-endian systems that have the problem.
-
-This, being the only functional difference between architectures
-in the driver combined with the fact that the suggested fix
-was to use the exact same endianness conversion for the values
-brings up the possibility that it was not necessary to begin with,
-as the same endianness conversion for two values expected to be the same
-is expected to be equivalent to no conversion at all.
-
-After inspecting the u-boot environment of devices of both endianness
-and trying to remove the existing endianness conversion,
-the problem is resolved in an equivalent way as the other suggested fixes.
-
-Ultimately, it seems that u-boot is agnostic to endianness
-at least for the purpose of environment variables.
-In other words, u-boot reads and writes the stored crc32 value
-with the same endianness that the crc32 value is calculated with
-in whichever endianness a certain architecture runs on.
-
-Therefore, the u-boot-env driver does not need to convert endianness.
-Remove the usage of endianness macros in the u-boot-env driver,
-and change the type of local variables to maintain the same return type.
-
-If there is a special situation in the case of endianness,
-it would be a corner case and should be handled by a unique "compatible".
-
-Even though it is not necessary to use endianness conversion macros here,
-it may be useful to use them in the future for consistent error printing.
-
-Fixes: d5542923f200 ("nvmem: add driver handling U-Boot environment variables")
-Reported-by: INAGAKI Hiroshi <musashino.open@gmail.com>
-Link: https://lore.kernel.org/all/20221011024928.1807-1-musashino.open@gmail.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael C. Pratt <mcpratt@pm.me>
-Signed-off-by: Srinivas Kandagatla <srini@kernel.org>
----
-Changes since v1:
-	- removed long list of short git ids as it was too much for
-	  small patch.
-
- drivers/nvmem/layouts/u-boot-env.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/nvmem/layouts/u-boot-env.c b/drivers/nvmem/layouts/u-boot-env.c
-index 436426d4e8f9..8571aac56295 100644
---- a/drivers/nvmem/layouts/u-boot-env.c
-+++ b/drivers/nvmem/layouts/u-boot-env.c
-@@ -92,7 +92,7 @@ int u_boot_env_parse(struct device *dev, struct nvmem_device *nvmem,
- 	size_t crc32_data_offset;
- 	size_t crc32_data_len;
- 	size_t crc32_offset;
--	__le32 *crc32_addr;
-+	uint32_t *crc32_addr;
- 	size_t data_offset;
- 	size_t data_len;
- 	size_t dev_size;
-@@ -143,8 +143,8 @@ int u_boot_env_parse(struct device *dev, struct nvmem_device *nvmem,
- 		goto err_kfree;
- 	}
- 
--	crc32_addr = (__le32 *)(buf + crc32_offset);
--	crc32 = le32_to_cpu(*crc32_addr);
-+	crc32_addr = (uint32_t *)(buf + crc32_offset);
-+	crc32 = *crc32_addr;
- 	crc32_data_len = dev_size - crc32_data_offset;
- 	data_len = dev_size - data_offset;
- 
--- 
-2.43.0
-
+Thanks,
+Guenter
 
