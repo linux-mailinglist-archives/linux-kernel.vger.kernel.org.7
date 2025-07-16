@@ -1,157 +1,398 @@
-Return-Path: <linux-kernel+bounces-733486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B83DB0754A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:05:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654EEB0754D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F89B3BB7F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A53C01C23FE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B77B2F0043;
-	Wed, 16 Jul 2025 12:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0342F0043;
+	Wed, 16 Jul 2025 12:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="cN05VeDP"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uTBThkP5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0131D2264DC
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4B1288513
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752667551; cv=none; b=I3ZGw1EanL8CpCr1Zxp7PblzZcwyO5CTJjjtWly8zN8ELUI+xUc64r/bM085gosb14KK+VcOpmikthyJ1Ev55fHPvpi/spXIxBe7xpSzGkzg3Vd14I4/rPKe7+la71zU7cJpakAkSYwvQmWdsk5DvPzG2BFkuAiBnD1Ut98Dz1s=
+	t=1752667674; cv=none; b=ZFObNeLRQL11QaTidn1oY1oE5gLiOWbzePWA/1qsrEttW+g43Vb7dLo4bWC9gxr6xDcirdg/cKEoCOP4B24I1dm/6qPk2V4UCI/vFUtiSDhcAPJQoiM3IQIuFuJ4Nw2xFiNQwHZ1AnhGDZ6nEzClz9xjLTDaS081n/aj+BfgXfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752667551; c=relaxed/simple;
-	bh=mqWEUluC/ejSKjmWKztJJt6Jp0vNzXefaNC/LDpRSPw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gGW7WyO4cJ/1IgbEFht+KEgWdT8YCV/8dcqRtHPgbGA1MqbOWhzjgBYt5iYajVr8lZmRwTN0JjjyrXS7QiZDNxzZqnsVVbpeWhfikhQjMdWWBt5pcn70IRpCvWuQfWMZh+c1dvHCOXRH4VNz85guJ0yakkTQec5Vn2qojuwF/5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=cN05VeDP; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3122368d7c4so5475485a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1752667549; x=1753272349; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mv1g9KTy4MBNS32Uw6S8h2XR0Uo4HzG8ylTUFdR6He8=;
-        b=cN05VeDPL406GW7g+E+51icm+t4emBWlIPI13mfjvJtLk8Rs9U/7AJGv5AOifvObSP
-         1tyaqDYHxSKhruZvdfB1ZC5EHhwsRGJ341V7e2ooHe/3w4LyoiQQvxu1c6DIIYPQQg2S
-         gdXHS4PS9RfLCQ76OGvVgu+323HW+SEY4Cxed5dcpeVkWOeWFk/OGBXoKc6NTGl/aRc+
-         dtYj6OFPhPpfk6U4qSGTzWzs09h/YUHKh7SGVBU1ESsowov6R7mrhQoPdVb1/TxdUGTI
-         jV2cmTi+CMrUhxFRac808DAdZFH/sr6CZvrMGrA2ixYcavRzeNm7pt4hbd0KVsJHnRQy
-         G0YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752667549; x=1753272349;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mv1g9KTy4MBNS32Uw6S8h2XR0Uo4HzG8ylTUFdR6He8=;
-        b=m2L9IcFzpuxOkUzhT1zBouxIZcqHUPeSLTaGitOHuYbduYWx6O1UkVER9WlbADkZHV
-         wF8EgyOjB179Np722QvhILhMSTOvgRWwisGZdgow0oiEYEq7JLUwzxZN7jLte038FJpK
-         XRM5aDQ79x4kGJuUEJeY1E/iMqG82eYz5tS8FVEAyWe3CcJkBTyD4FrTr6o1p0vrGndr
-         1hrLaIXmDECwz2rPOXpTiQql0PBM+wFNdO2BrOibsKb2WuJ9DVB3VlFwBwjiaJVnc7kW
-         ArZ17oKls8Q5PtOz5c8xdeMnAwOT6z5MT2+O/PchHPsEgIQ+a1NB/q82PLqlgu/mwk+I
-         5ZgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUskqIBU285zwTGx+LBC9HV60eWGm0o3Y4O5z7f5V79sruwIP7qleBf79yBsK49fio2oA29YN1mrhizcm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuQmwIQv9eMve4bVt8v5n1uTz8fudHiyvrlBa3WNXpZgGn2YC5
-	WG+FPQBzRRoAfGedEhQFvX1q++LUeN67eLqYNRqNxd666GeFjyxbBm2Tad3pcyTlBXY=
-X-Gm-Gg: ASbGncvCXdbIJYM4OsbKL0a6ZNqEwLU66b5gKqDy08C/3+1JK4F9EeBf/1LvY+EIrVp
-	HQgTz92LFTQhgW1Ee6DJBb6tdmNd94T0ZnqL83rXxqTinJPCDW/7pKaSrvNdcXRpWmtPPjmcGBG
-	7On5DdJrGyCigI+oC/zlUYwm/iyjvJChXZNmVEZh8jDxSqvZl/R8wOkv112lgUQo8QYsUEEx4pH
-	G2nVVJWArJ4xZzVZGRW4nib44vTd88viRULItTAXVHsZeP/3DHvYSkUOqvXoOIowrbM8dizFXb7
-	t3dakgL7NNnXx4f/4CPc3FfRg0GJiNWi/UGIPhGmY0rqF+qusiwcd5QIzPmqD3hpjE8wLn7hnOv
-	ZPK2AxCW34c2DmIH9rSIUgvZGNs1WnE08sTi6fswqCjrw9Q3LF11t5UXVsY1b2GjNfw7g+ZCD9h
-	GueC3N
-X-Google-Smtp-Source: AGHT+IFHR63eCjaXHy6ZUAG7RHZy+oj/uFE7LzrrP+Ag+oxEgYcVF+c+wEYZkXLgOiJuODKL1x5tiQ==
-X-Received: by 2002:a17:90b:3942:b0:30e:5c7f:5d26 with SMTP id 98e67ed59e1d1-31c9e77a443mr4186090a91.24.1752667548984;
-        Wed, 16 Jul 2025 05:05:48 -0700 (PDT)
-Received: from alexghiti.eu.rivosinc.com (alexghiti.eu.rivosinc.com. [141.95.202.232])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f287bcasm1303067a91.32.2025.07.16.05.05.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:05:48 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Wed, 16 Jul 2025 12:05:16 +0000
-Subject: [PATCH] riscv: Stop supporting static ftrace
+	s=arc-20240116; t=1752667674; c=relaxed/simple;
+	bh=5XxmMpiNivgy5x7EwQrHsjMsktIGZJhPZWumYq2AU+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMg08/6wtSS7EtndcpgNuhI1MRMROAzWumtfhgaBqEBCY6H8yS6IaqIS9hPgMVOJxjFvLEy4FXCwYiuBTrGHTmGOm0lNTExJwIHGJDSGbLbMETQVDLmnT/PMeRwY7Up7KXj6AHZISM/4H/q3zQ+88TBHTSljXH17UkqcLH8LtqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uTBThkP5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BABC4C4CEF0;
+	Wed, 16 Jul 2025 12:07:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752667674;
+	bh=5XxmMpiNivgy5x7EwQrHsjMsktIGZJhPZWumYq2AU+E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uTBThkP5kbGoAl5tVL0SZsHkdjjbLYbpaq5ysOZ4VCpd2jhzXv+eFYzB0P05KCyeL
+	 k6gUqUmoJQUFn+cbq71ORbL/6fY1CCwgZ5VSmRAmev548WWTbaobb0g5TEfvbPx7FR
+	 uW99833h7YVJ8EVUYDADQ5tN0zw0kiFjtkKZVdTE=
+Date: Wed, 16 Jul 2025 14:07:51 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
+Cc: "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Ceraolo Spurio, Daniele" <daniele.ceraolospurio@intel.com>,
+	"Gupta, Anshuman" <anshuman.gupta@intel.com>,
+	"Nilawar, Badal" <badal.nilawar@intel.com>
+Subject: Re: [PATCH 2/9] mei: late_bind: add late binding component driver
+Message-ID: <2025071603-guide-definite-70e3@gregkh>
+References: <20250710150831.3018674-11-rodrigo.vivi@intel.com>
+ <20250710150831.3018674-13-rodrigo.vivi@intel.com>
+ <2025071611-decode-hastiness-df63@gregkh>
+ <CY5PR11MB63666310C54B48FB3624D9E0ED56A@CY5PR11MB6366.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250716-dev-alex-static_ftrace-v1-1-ba5d2b6fc9c0@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIAHuVd2gC/x3MQQqAIBBA0avErBtQo5SuEhGmYw1EhUoE0d2Tl
- m/x/wOJIlOCvnog0sWJj71A1hW41e4LIftiUEK1QssOPV1oN7oxZZvZTSFH6wiNUUF407R6DlD
- iM1Lg+x8P4/t+m+Ih7WgAAAA=
-X-Change-ID: 20250716-dev-alex-static_ftrace-882f0d8357bf
-To: Steven Rostedt <rostedt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Andy Chiu <andybnac@gmail.com>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- chenmiao <chenmiao.ku@gmail.com>, kernel test robot <lkp@intel.com>, 
- Alexandre Ghiti <alexghiti@rivosinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1957;
- i=alexghiti@rivosinc.com; h=from:subject:message-id;
- bh=mqWEUluC/ejSKjmWKztJJt6Jp0vNzXefaNC/LDpRSPw=;
- b=owGbwMvMwCGWYr9pz6TW912Mp9WSGDLKp06Ycu9B3QqrZapv5BXnnrRpj+Fa7dN1YPMy1eMn7
- 1V0h+lf7ShlYRDjYJAVU2RRME/oarE/Wz/7z6X3MHNYmUCGMHBxCsBEXhoy/PeeqV3/ZabxRtOK
- j7/qXt8/0+b3LVOj9dTzdrbZ7n7bZSMZGRbVVpfsuuMsaVistW1DNl9mpFKOW9HGgKpiPW+H780
- r2AA=
-X-Developer-Key: i=alexghiti@rivosinc.com; a=openpgp;
- fpr=DC049C97114ED82152FE79A783E4BA75438E93E3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY5PR11MB63666310C54B48FB3624D9E0ED56A@CY5PR11MB6366.namprd11.prod.outlook.com>
 
-Now that DYNAMIC_FTRACE was introduced, there is no need to support
-static ftrace as it is way less performant. This simplifies the code and
-prevents build failures as reported by kernel test robot when
-!DYNAMIC_FTRACE.
+On Wed, Jul 16, 2025 at 11:58:19AM +0000, Usyskin, Alexander wrote:
+> > Subject: Re: [PATCH 2/9] mei: late_bind: add late binding component driver
+> > 
+> > On Thu, Jul 10, 2025 at 11:08:33AM -0400, Rodrigo Vivi wrote:
+> > > From: Alexander Usyskin <alexander.usyskin@intel.com>
+> > >
+> > > Introduce a new MEI client driver to support Late Binding firmware
+> > > upload/update for Intel discrete graphics platforms.
+> > >
+> > > Late Binding is a runtime firmware upload/update mechanism that allows
+> > > payloads, such as fan control and voltage regulator, to be securely
+> > > delivered and applied without requiring SPI flash updates or
+> > > system reboots. This driver enables the Xe graphics driver and other
+> > > user-space tools to push such firmware blobs to the authentication
+> > > firmware via the MEI interface.
+> > >
+> > > The driver handles authentication, versioning, and communication
+> > > with the authentication firmware, which in turn coordinates with
+> > > the PUnit/PCODE to apply the payload.
+> > >
+> > > This is a foundational component for enabling dynamic, secure,
+> > > and re-entrant configuration updates on platforms like Battlemage.
+> > >
+> > > Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> > > Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
+> > > Reviewed-by: Anshuman Gupta <anshuman.gupta@intel.com>
+> > > Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> > > ---
+> > >
+> > > Changes in this revision:
+> > > - Proper commit message
+> > > - Proper explanation of 'Late Binding' on Kconfig help and doc
+> > > - Consistency in naming:
+> > >   + mei_ prefix where it makes sense
+> > >   + use 'lb' for short of 'Late Binding' instead of 'late_bind'
+> > >     Including s/CONFIG_INTEL_MEI_LATE_BIND/CONFIG_INTEL_MEI_LB
+> > >   + remove stray 'struct module'
+> > >   + Fix structs and enum documentation style and fields
+> > >   + Remove 'CSC' to avoid yet another acronym. 'Authentication firmware' it
+> > is.
+> > >   + specify size unit
+> > >   + s/push_config/push_payload
+> > >
+> > >  drivers/misc/mei/Kconfig                   |  13 +
+> > >  drivers/misc/mei/Makefile                  |   1 +
+> > >  drivers/misc/mei/mei_lb.c                  | 315 +++++++++++++++++++++
+> > >  include/drm/intel/i915_component.h         |   1 +
+> > >  include/drm/intel/intel_lb_mei_interface.h |  70 +++++
+> > >  5 files changed, 400 insertions(+)
+> > >  create mode 100644 drivers/misc/mei/mei_lb.c
+> > >  create mode 100644 include/drm/intel/intel_lb_mei_interface.h
+> > >
+> > > diff --git a/drivers/misc/mei/Kconfig b/drivers/misc/mei/Kconfig
+> > > index 7575fee96cc6..f8b04e49e4ba 100644
+> > > --- a/drivers/misc/mei/Kconfig
+> > > +++ b/drivers/misc/mei/Kconfig
+> > > @@ -81,6 +81,19 @@ config INTEL_MEI_VSC
+> > >  	  This driver can also be built as a module. If so, the module
+> > >  	  will be called mei-vsc.
+> > >
+> > > +config INTEL_MEI_LB
+> > > +	tristate "Intel Late Binding (LB) support on ME Interface"
+> > > +	depends on INTEL_MEI_ME
+> > > +	depends on DRM_XE
+> > > +	help
+> > > +	  Enable support for Intel Late Binding (LB) via the MEI interface.
+> > > +
+> > > +	  Late Binding is a method for applying firmware updates at runtime,
+> > > +	  allowing the Intel Xe driver to load firmware payloads such as
+> > > +	  fan controller or voltage regulator. These firmware updates are
+> > > +	  authenticated and versioned, and do not require firmware flashing
+> > > +	  or system reboot.
+> > > +
+> > >  source "drivers/misc/mei/hdcp/Kconfig"
+> > >  source "drivers/misc/mei/pxp/Kconfig"
+> > >  source "drivers/misc/mei/gsc_proxy/Kconfig"
+> > > diff --git a/drivers/misc/mei/Makefile b/drivers/misc/mei/Makefile
+> > > index 6f9fdbf1a495..a203ed766b33 100644
+> > > --- a/drivers/misc/mei/Makefile
+> > > +++ b/drivers/misc/mei/Makefile
+> > > @@ -31,6 +31,7 @@ CFLAGS_mei-trace.o = -I$(src)
+> > >  obj-$(CONFIG_INTEL_MEI_HDCP) += hdcp/
+> > >  obj-$(CONFIG_INTEL_MEI_PXP) += pxp/
+> > >  obj-$(CONFIG_INTEL_MEI_GSC_PROXY) += gsc_proxy/
+> > > +obj-$(CONFIG_INTEL_MEI_LB) += mei_lb.o
+> > >
+> > >  obj-$(CONFIG_INTEL_MEI_VSC_HW) += mei-vsc-hw.o
+> > >  mei-vsc-hw-y := vsc-tp.o
+> > > diff --git a/drivers/misc/mei/mei_lb.c b/drivers/misc/mei/mei_lb.c
+> > > new file mode 100644
+> > > index 000000000000..fddef862712d
+> > > --- /dev/null
+> > > +++ b/drivers/misc/mei/mei_lb.c
+> > > @@ -0,0 +1,315 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Copyright (C) 2025 Intel Corporation
+> > > + */
+> > > +#include <drm/intel/i915_component.h>
+> > > +#include <drm/intel/intel_lb_mei_interface.h>
+> > > +#include <linux/component.h>
+> > > +#include <linux/pci.h>
+> > > +#include <linux/mei_cl_bus.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/overflow.h>
+> > > +#include <linux/slab.h>
+> > > +#include <linux/uuid.h>
+> > > +
+> > > +#include "mkhi.h"
+> > > +
+> > > +/**
+> > > + * DOC: Late Binding Firmware Update/Upload
+> > > + *
+> > > + * Late Binding is a firmware update/upload mechanism that allows
+> > configuration
+> > > + * payloads to be securely delivered and applied at runtime, rather than
+> > > + * being embedded in the system firmware image (e.g., IFWI or SPI flash).
+> > > + *
+> > > + * This mechanism is used to update device-level configuration such as:
+> > > + * - Fan controller
+> > > + * - Voltage regulator (VR)
+> > > + *
+> > > + * Key Characteristics:
+> > > + * ---------------------
+> > > + * - Runtime Delivery:
+> > > + *   Firmware blobs are loaded by the host driver (e.g., Xe KMD)
+> > > + *   after the GPU or SoC has booted.
+> > > + *
+> > > + * - Secure and Authenticated:
+> > > + *   All payloads are signed and verified by the authentication firmware.
+> > > + *
+> > > + * - No Firmware Flashing Required:
+> > > + *   Updates are applied in volatile memory and do not require SPI flash
+> > > + *   modification or system reboot.
+> > > + *
+> > > + * - Re-entrant:
+> > > + *   Multiple updates of the same or different types can be applied
+> > > + *   sequentially within a single boot session.
+> > > + *
+> > > + * - Version Controlled:
+> > > + *   Each payload includes version and security version number (SVN)
+> > > + *   metadata to support anti-rollback enforcement.
+> > > + *
+> > > + * Upload Flow:
+> > > + * ------------
+> > > + * 1. Host driver (KMD or user-space tool) loads the late binding firmware.
+> > > + * 2. Firmware is passed to the MEI interface and forwarded to
+> > > + *    authentication firmware.
+> > > + * 3. Authentication firmware authenticates the payload and extracts
+> > > + *    command and data arrays.
+> > > + * 4. Authentication firmware delivers the configuration to PUnit/PCODE.
+> > > + * 5. Status is returned back to the host via MEI.
+> > > + */
+> > > +
+> > > +#define INTEL_LB_CMD 0x12
+> > > +#define INTEL_LB_RSP (INTEL_LB_CMD | 0x80)
+> > > +
+> > > +#define INTEL_LB_SEND_TIMEOUT_MSEC 3000
+> > > +#define INTEL_LB_RECV_TIMEOUT_MSEC 3000
+> > > +
+> > > +/**
+> > > + * struct mei_lb_req - Late Binding request structure
+> > > + * @header: MKHI message header (see struct mkhi_msg_hdr)
+> > > + * @type: Type of the Late Binding payload
+> > > + * @flags: Flags to be passed to the authentication firmware (e.g.
+> > %INTEL_LB_FLAGS_IS_PERSISTENT)
+> > > + * @reserved: Reserved for future use by authentication firmware, must be
+> > set to 0
+> > > + * @payload_size: Size of the payload data in bytes
+> > > + * @payload: Payload data to be sent to the authentication firmware
+> > > + */
+> > > +struct mei_lb_req {
+> > > +	struct mkhi_msg_hdr header;
+> > > +	__le32 type;
+> > > +	__le32 flags;
+> > > +	__le32 reserved[2];
+> > > +	__le32 payload_size;
+> > > +	u8  payload[] __counted_by(payload_size);
+> > > +} __packed;
+> > > +
+> > > +/**
+> > > + * struct mei_lb_rsp - Late Binding response structure
+> > > + * @header: MKHI message header (see struct mkhi_msg_hdr)
+> > > + * @type: Type of the Late Binding payload
+> > > + * @reserved: Reserved for future use by authentication firmware, must be
+> > set to 0
+> > > + * @status: Status returned by authentication firmware (see enum
+> > intel_lb_status)
+> > > + */
+> > > +struct mei_lb_rsp {
+> > > +	struct mkhi_msg_hdr header;
+> > > +	__le32 type;
+> > > +	__le32 reserved[2];
+> > > +	__le32 status;
+> > > +} __packed;
+> > > +
+> > > +static int mei_lb_check_response(const struct device *dev, const struct
+> > mkhi_msg_hdr *hdr)
+> > > +{
+> > > +	if (hdr->group_id != MKHI_GROUP_ID_GFX) {
+> > > +		dev_err(dev, "Mismatch group id: 0x%x instead of 0x%x\n",
+> > > +			hdr->group_id, MKHI_GROUP_ID_GFX);
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	if (hdr->command != INTEL_LB_RSP) {
+> > > +		dev_err(dev, "Mismatch command: 0x%x instead of 0x%x\n",
+> > > +			hdr->command, INTEL_LB_RSP);
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	if (hdr->result) {
+> > > +		dev_err(dev, "Error in result: 0x%x\n", hdr->result);
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int mei_lb_push_payload(struct device *dev,
+> > > +			       enum intel_lb_type type, u32 flags,
+> > > +			       const void *payload, size_t payload_size)
+> > > +{
+> > > +	struct mei_cl_device *cldev;
+> > > +	struct mei_lb_req *req = NULL;
+> > > +	struct mei_lb_rsp rsp;
+> > > +	size_t req_size;
+> > > +	ssize_t bytes;
+> > > +	int ret;
+> > > +
+> > > +	cldev = to_mei_cl_device(dev);
+> > > +
+> > > +	ret = mei_cldev_enable(cldev);
+> > > +	if (ret) {
+> > > +		dev_dbg(dev, "mei_cldev_enable failed. %d\n", ret);
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	req_size = struct_size(req, payload, payload_size);
+> > > +	if (req_size > mei_cldev_mtu(cldev)) {
+> > > +		dev_err(dev, "Payload is too big %zu\n", payload_size);
+> > > +		ret = -EMSGSIZE;
+> > > +		goto end;
+> > > +	}
+> > > +
+> > > +	req = kmalloc(req_size, GFP_KERNEL);
+> > > +	if (!req) {
+> > > +		ret = -ENOMEM;
+> > > +		goto end;
+> > > +	}
+> > > +
+> > > +	req->header.group_id = MKHI_GROUP_ID_GFX;
+> > > +	req->header.command = INTEL_LB_CMD;
+> > > +	req->type = cpu_to_le32(type);
+> > > +	req->flags = cpu_to_le32(flags);
+> > > +	req->reserved[0] = 0;
+> > > +	req->reserved[1] = 0;
+> > > +	req->payload_size = cpu_to_le32(payload_size);
+> > > +	memcpy(req->payload, payload, payload_size);
+> > > +
+> > > +	bytes = mei_cldev_send_timeout(cldev,
+> > > +				       (void *)req, req_size,
+> > INTEL_LB_SEND_TIMEOUT_MSEC);
+> > > +	if (bytes < 0) {
+> > > +		dev_err(dev, "mei_cldev_send failed. %zd\n", bytes);
+> > > +		ret = bytes;
+> > > +		goto end;
+> > > +	}
+> > > +
+> > > +	bytes = mei_cldev_recv_timeout(cldev,
+> > > +				       (void *)&rsp, sizeof(rsp),
+> > INTEL_LB_RECV_TIMEOUT_MSEC);
+> > > +	if (bytes < 0) {
+> > > +		dev_err(dev, "mei_cldev_recv failed. %zd\n", bytes);
+> > > +		ret = bytes;
+> > > +		goto end;
+> > > +	}
+> > > +	if (bytes < sizeof(rsp.header)) {
+> > > +		dev_err(dev, "bad response header from the firmware: size
+> > %zd < %zu\n",
+> > > +			bytes, sizeof(rsp.header));
+> > > +		ret = -EPROTO;
+> > > +		goto end;
+> > > +	}
+> > > +	if (mei_lb_check_response(dev, &rsp.header)) {
+> > > +		dev_err(dev, "bad result response from the firmware:
+> > 0x%x\n",
+> > > +			*(uint32_t *)&rsp.header);
+> > 
+> > What exactly are you printing out to userspace here?  A pointer?  Or a
+> > random value from the firmware?  Why?
+> We've checked this data for validity and check is failed.
+> Sometimes whole header needed to debug the issue, so we are printing it here.
+> 
+> > 
+> > > +		ret = -EPROTO;
+> > > +		goto end;
+> > > +	}
+> > 
+> > You forgot to check the type and reserved fields of the rsp structure :(
+> You are right, better to check type too.
+> Should reserved bits be checked for 0? Or it will be overkill?
 
-Also make sure that FUNCTION_TRACER can only be selected if
-DYNAMIC_FTRACE is supported (we have a dependency on the toolchain).
+The reserved bytes HAVE TO BE CHECKED, otherwise you can NEVER use them
+in the future.  You say so in your documentation for the structure :)
 
-Co-developed-by: chenmiao <chenmiao.ku@gmail.com>
-Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
-Fixes: b2137c3b6d7a ("riscv: ftrace: prepare ftrace for atomic code patching")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506191949.o3SMu8Zn-lkp@intel.com/
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
- arch/riscv/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> > > +	if (bytes < sizeof(rsp)) {
+> > > +		dev_err(dev, "bad response from the firmware: size %zd <
+> > %zu\n",
+> > > +			bytes, sizeof(rsp));
+> > > +		ret = -EPROTO;
+> > > +		goto end;
+> > > +	}
+> > 
+> > Why not check this above when you check against the size of the header?
+> > You only need one size check, not 2.
+> Firmware may return only header with result field set without the data.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index d71ea0f4466fc3eefd1bd89f37637193d9a464da..1c5544401530fed9ecade4dd11c1c33a0bd6a2da 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -98,6 +98,7 @@ config RISCV
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
- 	select CPU_PM if CPU_IDLE || HIBERNATION || SUSPEND
-+	select DYNAMIC_FTRACE if FUNCTION_TRACER
- 	select EDAC_SUPPORT
- 	select FRAME_POINTER if PERF_EVENTS || (FUNCTION_TRACER && !DYNAMIC_FTRACE)
- 	select FTRACE_MCOUNT_USE_PATCHABLE_FUNCTION_ENTRY if DYNAMIC_FTRACE
-@@ -162,7 +163,7 @@ config RISCV
- 	select HAVE_FTRACE_MCOUNT_RECORD if !XIP_KERNEL
- 	select HAVE_FUNCTION_GRAPH_TRACER if HAVE_DYNAMIC_FTRACE_WITH_ARGS
- 	select HAVE_FUNCTION_GRAPH_FREGS
--	select HAVE_FUNCTION_TRACER if !XIP_KERNEL
-+	select HAVE_FUNCTION_TRACER if !XIP_KERNEL && HAVE_DYNAMIC_FTRACE
- 	select HAVE_EBPF_JIT if MMU
- 	select HAVE_GUP_FAST if MMU
- 	select HAVE_FUNCTION_ARG_ACCESS_API
+Then the firmware is broken :)
 
----
-base-commit: 5bd6225da2e2d8bbf2b6713fde42159f85ad3fdb
-change-id: 20250716-dev-alex-static_ftrace-882f0d8357bf
+> We are parsing the header first and then starting to parse data.
+> If we check for whole message size at the beginning we'll miss the result data.
 
-Best regards,
--- 
-Alexandre Ghiti <alexghiti@rivosinc.com>
+You mean you will make it harder to debug the firmware, as you will not
+be printing out the header information?  Or something else?  The
+bytes variable HAS to match the full structure size, not just the header
+size, according to this code.  So just test for that and be done with
+it!
 
+thanks,
+
+greg k-h
 
