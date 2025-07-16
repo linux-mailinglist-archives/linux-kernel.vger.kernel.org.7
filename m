@@ -1,210 +1,178 @@
-Return-Path: <linux-kernel+bounces-733335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C28B07348
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8465DB0734D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B645B3BAF5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:25:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48BB1C22955
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D372F363D;
-	Wed, 16 Jul 2025 10:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A885D2F3641;
+	Wed, 16 Jul 2025 10:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNXJ7kO7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ljasKkbH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E599E219311;
-	Wed, 16 Jul 2025 10:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2C62F2359
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661538; cv=none; b=cy8XsXJszyOdCo02/ZOG7Q/zzsBfVMametUMgaoazJEPUPhpk2O1r7w2SxNrfmhNAO3tFWb1hE/SVkPoxFOxn+w2f3jaHSwQpLdB4QtDjsKz6Q/hThWPcLTO+uvbQbzBcVGmbYFgXmYsx4yDlaE+WlRsJ1ZffXc+rcdG+Kklg1A=
+	t=1752661618; cv=none; b=ml1c187NsS3G3fyEe6j5//dIcDg1+1C6MpzyFm/Os92MLzSiq8Q55LUW9wHFkr3km7NNVu7tikXo5DjFreL2eD3pJmPltMnEEbNoyixln0/YsxyTsdiZps2EIRYQC/rSLxZFvEhmevo5xrmCDkybLox+djy+ciWJnWI1tF8+eaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661538; c=relaxed/simple;
-	bh=473mc3MZXvs9Act5kTmKwMLGqXiBcGDDVJRhHEO7Ys4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=huEFQcEeULFEcY8PpscfujIdxoM8/9rvgoJuAtg4nr1Wqch0AhoNaEc38MeJ2ZfBXnXiC5SQnOQjcRCp3axUB3RkPRVmUfXjhOsk0k/ecHR4ZALbR835bmqbeXjAixZ8BlEhsmxX7goTa1WO/II7e3XRAjm4Xz0ZWytlkECmb18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNXJ7kO7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9961BC4CEF0;
-	Wed, 16 Jul 2025 10:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752661537;
-	bh=473mc3MZXvs9Act5kTmKwMLGqXiBcGDDVJRhHEO7Ys4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=KNXJ7kO7LGJI1r9yNP4C5/mN2N+02+5CVPLcdykvfjopwfG0v26zIpWZgD6yxB38w
-	 3uAd4qsc82nWkq5rEtBRzuxJ+3m5e35smpBgakpVJxFIlNNM+GlFCo5EfPGNxS2VOR
-	 WsfBneItZkNxuOxeAJz2ttBhQCx/EiXORxXd5H7Dx3u1D9kNirD91xvJUo2EvZn7sh
-	 dWimR4iEevzYjNY3yQWrtGLlTG+s6fU7aAQI4IC6XrN3l4T5+fIuhLXfJlngHHuaHe
-	 eNxS5i9z6tvuEPAz2qTqZe2LEZ7PAtjRQFUFc0BgZfsciquRhhyS1KwKMkVH/T89XH
-	 L/BZb7Ar9O+Yg==
+	s=arc-20240116; t=1752661618; c=relaxed/simple;
+	bh=dkcnz2DvhVBraNdPkknEde5QEnIQI0sshBOKGYDq0/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qXoWuK9VBU9E38cFUbcXABulyj64gIf0Iz6fuPPzKhmQRjdAb2YeV+0aA2RmKMcDTruqlbm/qbRB84gChdofSYvrlJyjW/HMfcL0VY2+PrP4++wyK455YYJtKj8X9CZH7um80Ph7Gk/+p/4q/N5tMlm37uUxT1FDngCy6FHXq1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ljasKkbH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G63EQ2022730
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:26:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UEIv5Q5pbfuoiy+cWUkNc8sRfBTll0fo56yYG/WZqis=; b=ljasKkbHOwB5hHZn
+	chg7RZpzIk5HwOWIvCZBx0RRM3Wnr+WjffkaTPH/R6/BBz4O9KUUZUHbZlDh1NGn
+	amZtYIGOIPkIQ+sD2cKWUBoiX9Ym/xdcSiL8KovIPk4HrOsDmRwX06Z7HlOupFtr
+	YDUzfUuPPN+kamJOOCh7slUpXv9ayZvEas2CssZL4KD6NDGhmsAnyARTiQlbTrAu
+	xgNEnpvMB4DVCd+5+ZiLSHtAykJFFAEAtHkCQ9CfiLf25y/DoXAf78WNo3MVv2D1
+	7FvZYFoe5afRfYEHcMSZXIRKIBgb/MDVTyKyKcQj7apPi8sLUbRiFnk8Z6ozMSTP
+	uTKk0Q==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wkrum7pm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:26:55 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ab77393308so10998711cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:26:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752661614; x=1753266414;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEIv5Q5pbfuoiy+cWUkNc8sRfBTll0fo56yYG/WZqis=;
+        b=FmJMAOGlXhjBldTX1RXBFgqMJ9KV7t2130O83XVHJol3owkmpPtMNauKLjyxIHWFmQ
+         qxNsx8ZOIKJ5iS3c4B96EHssa99u7tSONeGDjlVAl5YkSAnwZeDLmPj0dF2d7qmDo7kY
+         4mDeH2UcLEJviX4WAqae1yWCHCN62cLkImk+sMBU/2M8u1N+7+OOASBRtczvygv6+OIt
+         HfYnRmFMLS+QBM4KEdrJMPdx7Ut+HpqfTPhqR7r34Awn2MR9t18CsPSqg0nj3lTh9XEP
+         FwBYFlWKwWM5J+id8WXihdj7xxXtpFqbYKOaFGSR16KOsqaISDUsGMUJvheGbsYpR4ty
+         bmZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUskyXkj3ecCnQzgKVKTdOxc6NMeDhp+WaeDQt91gkzInIVEhtGzgDPOPNKzdsg7aPIQuNJGFWoGEOs9Vo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+MmJrG5KEVwjBGUfZi8qgtXyh5/9PdRDQ6Z3rJkOZ4cnnSxdO
+	F1cQp9aPoCEoAvzNnWmtLyO9S6FN40qyAzt/Egp4JpftwjqHAtF23bBzfDQIOx30iX35A9QWKvG
+	bB2kbsfXW1vi7ZesH9qnwEeZuDdaitgH4OjiAvbdSTbM91MmlI7grxVMRDmpErdRX7W0=
+X-Gm-Gg: ASbGncu9spi4+SCtMM9CCjLLjanzg1RJB+H30XEoHna7eiL+C4CHV9RJsFCixM7FAzi
+	ceWVshCOuQKVhTZsQ7on6oKTHrVoHzydSycT2/Hxx9xkoSyqR+7VV/JAGHxDhmVsd69OkqCm1n1
+	lQJKX0+/HT8zofjb8yCrt/2HK8yOahmDJABVnAaJ4b347DX5vKbK+rUnT+3qAXr+fbLYzov1air
+	Wb9Rz8ussr85+Gxyxeb4c+e60rbA/TuFYAPrsFahRxqMN1q9682tPytpK/J9/ADoYRCEt1B2Ybi
+	E1XzrMKuXta32V6u619cTlB6lfubjDnzo+0H3MEX4BnBJb/dHxuIPZ3D6Hiu3RbtJQ37J+S0vd0
+	/+n+9vIvcGCDFS/iF/07x
+X-Received: by 2002:ac8:5942:0:b0:4ab:7a5c:fc9a with SMTP id d75a77b69052e-4ab90aa14camr16129361cf.8.1752661614029;
+        Wed, 16 Jul 2025 03:26:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHS/bx6dHr7YlW34OZ9B32jhEtnpkNZ3+stxyMSlcMbABfC0piVan4Nuc13I/veqJQKwZHKuA==
+X-Received: by 2002:ac8:5942:0:b0:4ab:7a5c:fc9a with SMTP id d75a77b69052e-4ab90aa14camr16129141cf.8.1752661613342;
+        Wed, 16 Jul 2025 03:26:53 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7eeae5fsm1171801466b.64.2025.07.16.03.26.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 03:26:52 -0700 (PDT)
+Message-ID: <e65c43fc-c188-4acf-a0ae-c34ad171fded@oss.qualcomm.com>
+Date: Wed, 16 Jul 2025 12:26:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: arm: qcom: Document HAMOA-IOT-EVK board
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Yijie Yang <yijie.yang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com>
+ <20250716-hamoa_initial-v1-1-f6f5d0f9a163@oss.qualcomm.com>
+ <604a5823-c563-4d37-ab14-e3164f3b1cd8@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <604a5823-c563-4d37-ab14-e3164f3b1cd8@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Jul 2025 12:25:30 +0200
-Message-Id: <DBDENRP6Z2L7.1BU1I3ZTJ21ZY@kernel.org>
-Subject: Re: [PATCH v7 6/9] rust: sync: atomic: Add the framework of
- arithmetic operations
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-X-Mailer: aerc 0.20.1
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-7-boqun.feng@gmail.com>
- <DBCL7YUSRMXR.22SMO1P7D5G60@kernel.org> <aHZYt3Csy29GF2HM@Mac.home>
- <DBCQUAA42DHH.23BNUVOKS38UI@kernel.org> <aHZ-HP1ErzlERfpI@Mac.home>
- <DBCUJ4RNRNHP.W4QH5QM3TBHU@kernel.org> <aHa2he81nBDgvA5u@tardis-2.local>
-In-Reply-To: <aHa2he81nBDgvA5u@tardis-2.local>
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: WdN8L2ahn4Xb78hq91Rb5iJbIRND66Hv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA5MyBTYWx0ZWRfXxJ/sDcDsdX93
+ CZJlhYlb2LWHYPjRAzHaL1bCUrqnvDoX8YcyAF4/+aPTQB7tHulCRi7lrvaI7g9E60monmUfyy0
+ MTTrO0z+TFTyky81zD906l4amL3sQV23PE/Wiu8TJo1IlO9snGBXr81carf9BaysjI53tB1SVYg
+ p0e4J4Hj5H8xB5H4JTeqQeA440fXxV1zF8hIETi3wqekkZ41Hh+aRTDewCcA2/0+E7pQ6t7FzIS
+ ZgrWVSTGEQHUZ80G3Dfyaj6m0ob7rh33NUBrohEpkyQV58/NzokLFzK9s9IvOdmCwJxEZQo5EWz
+ /LZIepNsINJxwJClHBw2ZT0NL0b9JgmgYXL2ZCsfcsVBt2asfuRZonBDT/6Q8H7MMRwuNUhcYf0
+ D7XYwbfJGO7kenDDsmgJpyWb5cK7UblVMvvJi3yxOqNh/UQEWhQBXw1uejuZd2ZcrHfPN2xL
+X-Authority-Analysis: v=2.4 cv=WqUrMcfv c=1 sm=1 tr=0 ts=68777e6f cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=VgApEbnXb6FI9c-La98A:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-ORIG-GUID: WdN8L2ahn4Xb78hq91Rb5iJbIRND66Hv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160093
 
-On Tue Jul 15, 2025 at 10:13 PM CEST, Boqun Feng wrote:
-> On Tue, Jul 15, 2025 at 08:39:04PM +0200, Benno Lossin wrote:
-> [...]
->> >> > Hmm.. the CAST comment should explain why a pointer of `T` can be a
->> >> > valid pointer of `T::Repr` because the atomic_add() below is going =
-to
->> >> > read through the pointer and write value back. The comment starting=
- with
->> >> > "`*self`" explains the value written is a valid `T`, therefore
->> >> > conceptually atomic_add() below writes a valid `T` in form of `T::R=
-epr`
->> >> > into `a`.
->> >>=20
->> >> I see, my interpretation was that if we put it on the cast, then the
->> >> operation that `atomic_add` does also is valid.
->> >>=20
->> >> But I think this comment should either be part of the `CAST` or the
->> >> `SAFETY` comment. Going by your interpretation, it would make more se=
-nse
->> >> in the SAFETY one, since there you justify that you're actually writi=
-ng
->> >> a value of type `T`.
->> >>=20
->> >
->> > Hmm.. you're probably right. There are two safety things about
->> > atomic_add():
->> >
->> > - Whether calling it is safe
->> > - Whether the operation on `a` (a pointer to `T` essentially) is safe.
->>=20
->> Well part of calling `T::Repr::atomic_add` is that the pointer is valid.
->
-> Here by saying "calling `T::Repr::atomic_add`", I think you mean the
-> whole operation, so yeah, we have to consider the validy for `T` of the
-> result.
+On 7/16/25 11:30 AM, Krzysztof Kozlowski wrote:
+> On 16/07/2025 11:08, Yijie Yang wrote:
+>> Document the device tree binding for a new board named "EVK" based on
+>> the Qualcomm Hamoa-IoT platform.
+>>
+>> The "hamoa" name refers to a family of SoCs that share the same silicon
+>> die but are offered in multiple speed bins. The specific SoC used in
+>> this board is the x1e80100, which represents one such bin within the
+>> Hamoa family.
+>>
+>> Although "qcom,hamoa-iot-evk" is introduced as the board-specific
+>> compatible, the fallback compatible remains "qcom,x1e80100" to preserve
+>> compatibility with existing in-kernel drivers and software that already
+>> depend on this identifier.
+>>
+>> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+>> ---
+>>  Documentation/devicetree/bindings/arm/qcom.yaml | 9 +++++++--
+>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> index ae43b35565808ed27cd8354b9a342545c4a98ed6..83b09ec1100ca03044c832212a99e65cc1177985 100644
+>> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> @@ -100,8 +100,8 @@ description: |
+>>          sm8550
+>>          sm8650
+>>          sm8750
+>> -        x1e78100
+>> -        x1e80100
+>> +        x1e78100 # hamoa
+>> +        x1e80100 # hamoa
+> 
+> 
+> Huh? Why, no drop.
 
-I meant just the call to `atomic_add`.
+I suggested this, so that people who read this file for the first
+time have an idea of which magic numbers correspond to what magic
+name for existing platforms (where new DTs will be expected to include
+the codename in the file name (just like this submission) to get away
+from SKU/speedbin names).
 
-> But what I'm trying to do is reasoning this in 2 steps:
->
-> First, let's treat it as an `atomic_add(*mut i32, i32)`, then as long as
-> we provide a valid `*mut i32`, it's safe to call.=20
+We can drop it if you insist, but I'd rather keep it for newcomers.
 
-But the thing is, we're not supplying a valid `*mut i32`. Because the
-pointer points to a value that is not actually an `i32`. You're only
-allowed to write certain values and so you basically have to treat it as
-a transmute + write. And so you need to include a justification for this
-transmute in the write itself.=20
+Konrad
 
-For example, if we had `bool: AllowAtomic`, then writing a `2` in store
-would be insta-UB, since we then have a `&UnsafeCell<bool>` pointing at
-`2`.
-
-This is part of library vs language UB, writing `2` into a bool and
-having a reference is language-UB (ie instant UB) and writing a `2` into
-a variable of type `i32` that is somewhere cast to `bool` is library-UB
-(since it will lead to language-UB later).=20
-
-The safety comments become simpler when you use `UnsafeCell<T::Repr>`
-instead :) since that changes this language-UB into library-UB. (the
-only safety comment that is more complex then is `get_mut`, but that's
-only a single one)
-
-If you don't want that, then we can solve this in two ways:
-
-(1) add a guarantee on `atomic_add` (and all other operations) that it
-    will write `*a + v` to `a` and nothing else.
-(2) make the safety requirement only require writes of the addition to
-    be valid.
-
-My preference precedence is: use `T::Repr`, (2) and finally (1). (2)
-will be very wordy on all operations & the safety comments in this file,
-but it's clean from a formal perspective. (1) works by saying "what
-we're supplying is actually not a valid `*mut i32`, but since the
-guarantee of the function ensures that only specific things are written,
-it's fine" which isn't very clean. And the `T::Repr` approach avoids all
-this by just storing value of `T::Repr` circumventing the whole issue.
-Then we only need to justify why we can point a `&mut T` at it and that
-we can do by having an invariant that should be simple to keep.
-
-We probably should talk about this in our meeting :)
-
----
-Cheers,
-Benno
-
-> And second assume we call it with a valid pointer to `T::Repr`, and a
-> delta from `rhs_into_delta()`, then per the safety guarantee of
-> `AllowAtomicAdd`, the value written at the pointer is a valid `T`.
->
-> Based on these, we can prove the whole operation is safe for the given
-> input.
->
->> But it actually isn't valid for all operations, only for the specific
->> one you have here. If we want to be 100% correct, we actually need to
->> change the safety comment of `atomic_add` to say that it only requires
->> the result of `*a + v` to be writable... But that is most likely very
->> annoying... (note that we also have this issue for `store`)
->>=20
->> I'm not too sure on what the right way to do this is. The formal answer
->> is to "just do it right", but then safety comments really just devolve
->> into formally proving the correctness of the program. I think -- for now
->> at least :) -- that we shouldn't do this here & now (since we also have
->> a lot of other code that isn't using normal good safety comments, let
->> alone formally correct ones).
->>=20
->> > How about the following:
->> >
->> >         let v =3D T::rhs_into_delta(v);
->> >         // CAST: Per the safety requirement of `AllowAtomic`, a valid =
-pointer of `T` is a valid
->> >         // pointer of `T::Repr` for reads and valid for writes of valu=
-es transmutable to `T`.
->> >         let a =3D self.as_ptr().cast::<T::Repr>();
->> >
->> >         // `*self` remains valid after `atomic_add()` because of the s=
-afety requirement of
->> >         // `AllowAtomicAdd`.
->> >         //
->> >         // SAFETY:
->> >         // - For calling `atomic_add()`:
->> >         //   - `a` is aligned to `align_of::<T::Repr>()` because of th=
-e safety requirement of
->> >         //   `AllowAtomic` and the guarantee of `Atomic::as_ptr()`.
->> >         //   - `a` is a valid pointer per the CAST justification above=
-.
->> >         // - For accessing `*a`: the value written is transmutable to =
-`T`
->> >         //   due to the safety requirement of `AllowAtomicAdd`.
->> >         unsafe { T::Repr::atomic_add(a, v) };
 
