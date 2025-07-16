@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-734006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943DDB07BDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C5AB07BDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D797C4A497C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 208D11663B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458B52F5C4A;
-	Wed, 16 Jul 2025 17:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90542F5C39;
+	Wed, 16 Jul 2025 17:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IA/Ii8Gr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KWp0HYhC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fonCkGI1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ACB2798EA;
-	Wed, 16 Jul 2025 17:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD1E27510F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752686169; cv=none; b=Mf3NKJbbRxO6WQ/bpzqtjqvgwCmPUa3jIFKM1HaQ9FSW38/0yAJ0N2mZsvEFO1D7McfWKC3Q4BvmOw1Boh65sxK/tKWIYviv9AM/pAH2L/ScvAFSA4JB7G9CId7jnsGbnZkaI2GJ1JGjvbtee+CE0hlvMc8yaqvAV8jBfuwbq8c=
+	t=1752686286; cv=none; b=MYwZKcw81eTyyQXoga7OVs91HfsooVMT00PQ+N83pxC7i8KBPRnsRpa/vndN+fCveCO+t3IQzX1o2L/MqRrmJMn1t2HVM7HD/Pb2fSr0ZDeTahxw1ly7JZg5peKXyrm7e8LISJIeiY1INsMjVPxy2bxPOY+jyR3BlI6U3ktcmoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752686169; c=relaxed/simple;
-	bh=WjN4ZftabKpQLXbiJ4dykt/E4neOL6d8HDXxD+KsYsg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=gz89g86y6qeZ0WGWR5atkn1xMcAU0/zTqBNNfEmD4nVBEU4gFKrIz+wrL5avAvG0cgM5OxSX0abojQf2ZoOTRZ120IH7umiuu1j1qYRGN5yjvU120pHkLcVSf6Bd0PoqPQ/+Vc2qFW8WsEDJBGbxj4e/P6AsEN7b9bGNeP/YOqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IA/Ii8Gr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51355C4CEE7;
-	Wed, 16 Jul 2025 17:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752686169;
-	bh=WjN4ZftabKpQLXbiJ4dykt/E4neOL6d8HDXxD+KsYsg=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=IA/Ii8Gr1Za8zAw0xmiaujSA2tjTH3ppWsobaRIC5xDJ4lz7/LrX4Z/YNh6SuUInl
-	 PMK4HGV001yLzrsg2LbYEhx9By4cRSW+CzwnX91J7W3NENGjWiRfqTaL/ohM7opau7
-	 jWxomSpQgWYJvxuWslffSJNpagRcv8Z2zgIQ7HgBWJaqnYyKHICkrih+m3reZPVlQF
-	 Q6ZuEnAtWuShSi9+SRKHv7M1Dq+4VcA8IFTAE04YpsK5gFXu7Xr0uOO4MM/wdH1BZY
-	 q7y+vcAjXZ+usJdExDd5IE80beP7X6xVLW8Skoknj8UAHGek0ZL9YrFIqOMBf8v9XS
-	 2WPgTnoMYEImg==
+	s=arc-20240116; t=1752686286; c=relaxed/simple;
+	bh=cAoVPxkt/dinsa6nJwl+96VpyIGHPL7qFsPziq3Z1r8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t6Iyfj8K0mGSRfPpaklxWHroqtkMwMx4EBB5ZbQBZidGLOH1mo7B8cGHm9MKMa/UADi6kB5qIZHxoOlTQOfXTVbjGUfj3CmDA/y6pZ3QU0ck4LBRsg6rxpopB96n8ssbMlM9C4cI8mauuOoCG7N3pUMDARUBE9aIY3fL6J1fv1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KWp0HYhC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fonCkGI1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Jul 2025 19:17:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752686273;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PFNvBmuWcrSDG+7MTp9BSMX1nNEj1yPghZI+Kgwr7fA=;
+	b=KWp0HYhCCmSRIhzS/mgd4Hb433TYSiUd6hjruBiZsfBNH3O3ldqZr77YBWJP5hAv/sQzmL
+	ovTa9Edy9+4EbPkne0Gbr8fy6hGbL1EtUHuxw7VI/I0DO8hukJ7jWC7EivCBwACs3svwS4
+	ecYtf+Nc0XmRPVzk58bpSpu48TS4fB0dHwxyUgS8w6CWychMXieomcJzhT8QjOY53jowZj
+	Nkrr6UjO31SsdiT4ILEGb9CWVWDrTqaNx5c4XZo8EFBDzbk+fSZ+q+p5b9Ck9FKac4/tSM
+	fl6Pyy/nSIYEqUT3cnOJBCA8tDx4Zgz2/sPot3ztPteE7JTf7k6r8QhwDis6hA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752686273;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PFNvBmuWcrSDG+7MTp9BSMX1nNEj1yPghZI+Kgwr7fA=;
+	b=fonCkGI1Tk1whOZH+s5kMMPnYyht+a62wgXi4OeuKLujHGLgy5giIr7DgOA8HvPfYzse1J
+	SR9QOeTWDObeCVCA==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 6/6] x86/cpu: <asm/processor.h>: Do not include CPUID
+ API header
+Message-ID: <aHfevkaADwRv0Fzb@lx-t490>
+References: <20250709203033.90125-7-darwi@linutronix.de>
+ <202507150403.hKKg9xjJ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Jul 2025 19:16:02 +0200
-Message-Id: <DBDNE3CNUOZP.1H168Z8BD6ZKK@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 6/9] rust: sync: atomic: Add the framework of
- arithmetic operations
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250714053656.66712-7-boqun.feng@gmail.com>
- <DBCL7YUSRMXR.22SMO1P7D5G60@kernel.org> <aHZYt3Csy29GF2HM@Mac.home>
- <DBCQUAA42DHH.23BNUVOKS38UI@kernel.org> <aHZ-HP1ErzlERfpI@Mac.home>
- <DBCUJ4RNRNHP.W4QH5QM3TBHU@kernel.org> <aHa2he81nBDgvA5u@tardis-2.local>
- <DBDENRP6Z2L7.1BU1I3ZTJ21ZY@kernel.org> <aHezbbzk0FyBW9jS@Mac.home>
- <DBDL9KI7VNO2.1QZBWS222KQGP@kernel.org> <aHfJx5_kMcULUd7t@Mac.home>
-In-Reply-To: <aHfJx5_kMcULUd7t@Mac.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202507150403.hKKg9xjJ-lkp@intel.com>
 
-On Wed Jul 16, 2025 at 5:48 PM CEST, Boqun Feng wrote:
-> On Wed, Jul 16, 2025 at 05:36:05PM +0200, Benno Lossin wrote:
-> [..]
->> >
->> > I have a better solution:
->> >
->> > in ops.rs
->> >
->> >     pub struct AtomicRepr<T: AtomicImpl>(UnsafeCell<T>)
->> >
->> >     impl AtomicArithmeticOps for i32 {
->> >         // a *safe* function
->> >         fn atomic_add(a: &AtomicRepr, v: i32) {
->> > 	    ...
->> > 	}
->> >     }
->> >
->> > in generic.rs
->> >
->> >     pub struct Atomic<T>(AtoimcRepr<T::Repr>);
->> >
->> >     impl<T: AtomicAdd> Atomic<T> {
->> >         fn add(&self, v: .., ...) {
->> > 	    T::Repr::atomic_add(&self.0, ...);
->> > 	}
->> >     }
->> >
->> > see:
->> >
->> > 	https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/log/?=
-h=3Drust-atomic-impl
->>=20
->> Hmm what does the additional indirection give you?
->>=20
+Hi!
+
+On Tue, 15 Jul 2025, kernel test robot wrote:
 >
-> What additional indirection you mean? You cannot make atomic_add() safe
-> with only `UnsafeCell<T::Repr>`.
+> All errors:
+>
+>    drivers/char/agp/efficeon-agp.c: ...
+>
 
-What is the advantage of making it safe? It just moves the safety
-comments into `ops.rs` which makes it harder to read due to the macros.
+Sorry, my "i386 compilation testing" was to do an allyesconfig, disable
+CONFIG_64BIT, then compile…
 
----
-Cheers,
-Benno
+This — now I embarrasingly discover — does not enable the kconfig options
+that depend on X86_32=y; e.g., the CONFIG_AGP_EFFICEON case above.
+
+It seems that, kinda like cross compilation, an "ARCH=i386" environment
+variable should do the job well with allyesconfig and the rest.
+
+I'll make sure that all future CPUID work passes that step before sending
+it mainline.
+
+Thanks a lot,
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
