@@ -1,104 +1,137 @@
-Return-Path: <linux-kernel+bounces-733730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73015B0784F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:40:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DE2B07852
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58EDCA419C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612B83A7CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B587F262FC8;
-	Wed, 16 Jul 2025 14:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AC2262FD7;
+	Wed, 16 Jul 2025 14:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mc6m4x4F"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxnAO2U+"
+Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39029220F2D;
-	Wed, 16 Jul 2025 14:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC85119F40A;
+	Wed, 16 Jul 2025 14:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676814; cv=none; b=QsnKsE4VIINJkf1ljqdDd1UPFLwLk1mQdTgTur/TsRmlmA1Fn9q7FFhy06taT1VFKR2+7JgJUPq5yakYFJRjLOStEBrcWhcEUWMM7hYAPtEzfk+LoAKK4q77aHyD+QZEfjMAar0AGXXFsm0LNFnX7OiSXORKLPL4eGNKKGyVI7g=
+	t=1752676859; cv=none; b=MPK2yRTKQ3t1rPj4aMDp78WfbJMWskxF0c/rDhSjWwS9I4fAsO/ojqApuho9kZAn1rYCzd7uWrS9A0MayIYGS9qUE7PD04ysCOhkK16kEQmBO7h2cWabTScx3W+cuhIEX3cpO1jh4RkYDo6EpoCNHbcjfLTW0d6fjo9DSxE5HYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676814; c=relaxed/simple;
-	bh=kGOHToV1J7kqTOy5nhKX9N6MPzipS3aGSHKwSahMaZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h6ISP92SNqN8ju88Jz0tiG9rudW9+nj/7vXQgNPDKB4WNxRtvsJIxnqPjchd4QDae90rHe6NdMLbOGssEIa7rqADM3LnM9sQ2sAkKhACbJsxXEtHrV31WzMYLK+hD7NNHbHGMLusIn1vpAQ3xQRc1Ke9DpiIiytemPTxsQac2w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mc6m4x4F; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1752676859; c=relaxed/simple;
+	bh=pfwYeQ0lSxFqkmbHNbtiMcwWyHLPm2mIdKPW8D3rFWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XSSRLPHLdQvqxSWtKh3Xf20CFYKqbdmj6TVhBAZm2Vv3a+SEYrfAp5sVMlrKSfEOWqQ4TlNXWPObFx8Pkk56aSDck2V2YArz7P0Ad87CYi7EujIeqaMDRPikdF1AADFqQLKP2JvvLQqxlemp0z8iwSQ9mb31rsz6a0skWB+BEz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxnAO2U+; arc=none smtp.client-ip=209.85.219.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23602481460so63940475ad.0;
-        Wed, 16 Jul 2025 07:40:12 -0700 (PDT)
+Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e8bd171826cso315362276.3;
+        Wed, 16 Jul 2025 07:40:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752676811; x=1753281611; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pRuI93NfBbD4JMygr13VWxhIviExAdSOd88w8cYV4VQ=;
-        b=Mc6m4x4FHg9txu6e5HbtXULFG8nq8ZZsaT5oLv7DeT92uKchtH29Jyzhv696rcgoiz
-         6I5x+z1LdAklN9znh++nBGD+jamaOzRXmtlkSdvBzcxSdRWsiro8dsMC6Sfa6Ys2ayBT
-         axBkc8vJFFKaKd+rLiF6UJlkVfn3kF523a1PK+KzRmyj75RADJa1NGjFrLc21X/zH9NT
-         2AQJF77tAZS7ov1+HW8OtrEccXa18C1KUg1ygmu6U0OMSuJSkdIR1gZVLw8/GbATSnSe
-         zhTdOByG0DW7sbmXcEdNPFO4lFJa0Fk6WvMVRTIr7Fe67B4dTPl666PC6kxZ+X4K6uAU
-         tDLA==
+        d=gmail.com; s=20230601; t=1752676856; x=1753281656; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pfwYeQ0lSxFqkmbHNbtiMcwWyHLPm2mIdKPW8D3rFWA=;
+        b=CxnAO2U+dEL/tkywJlpiZnh46YQfJZFgAQ2VXFpsR/EhweHqf5uSjgJlgpX0hFH5jz
+         cMWZB8iJKS1KrR24wpDjabEFLJIcIwMpJJDPtUkq+zuenicwONYDOFNFqbZsIlFwT/An
+         dzO0V3VzlO6ZSgycTY1+JkIpuZUM1UgtJZdqgL2DDINWcKr4hFdVssLRioxB/jjS2Yos
+         70qqUgKU1b/QPSs2ERdZGiHGG/r9aD1RR7HjFrmAMetU+IXvGx5c71lSfjRb339DG1cV
+         iP1mR7cUH5oEJWt0OkKYqrC9wB7IyzHAzy1mJm8JMkAc0DGzSHUZa1x4eDBaD2uUcby1
+         VW3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752676811; x=1753281611;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752676856; x=1753281656;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pRuI93NfBbD4JMygr13VWxhIviExAdSOd88w8cYV4VQ=;
-        b=jiYcsxtHON4zHYSxgFp+abzvVcTZLa/92u7eU6Ozp68o5iXAH8hz6QK9Jmh1I23n/6
-         2GKu2C8PbRjE6CuHAbADqbdwCxLQzK/fdkPDxvx1fHCLXBH4QYykcQSscLpWJYbz7Y7S
-         T3Go2ar5DwCfaARlPyBsHreRueewkz4oVv/Gxor+0Sl9LUtK4KihoQIgriht2X0wO+y5
-         BV1Bd0Jg7K06m5eNXGk31R7v8v4ob6345/iXen+KWSMJaXsjQMI0e/t1EPO7sR5R//Hz
-         mOC1kFYLAe3uJeC4rS/lsbuqO7JVR10ADarYh54T4hLUXtyE7lWw84QwID6KTHgfxmYM
-         EkmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgAvqDI3eGMajLyv3Z/chFVdvfMgAaJsBMxZvPbT8vIzitqL5Q6XretCFagTtgASwWKwazLYav3cJHwkMGeRg=@vger.kernel.org, AJvYcCVDfV3mL5dURNPoq7eWk/kDUJwExv06fus0FmwXj16WA1AYl7PnPAGSAg/apEaOX5K8wFQ0shEFGWca/ds=@vger.kernel.org, AJvYcCWB56kRSBLfTNsrXW/1kW2hYXCKBKvkw7CfpVsswCGNC1mEXguTPvKBOCMlZSPwpUbdQUjzRAGyATIw+N7G@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGHfiu9YFJ8uvNlmi1Wv5HhEFZ2RHKtiyKM/TuUEG3Cil2NBca
-	UaA1WdHgrM0CYwUXG2lOdrePtp2MtjMP71777E8T22P8ubwcjVa+KuiXKQag7A==
-X-Gm-Gg: ASbGncumvdSwFH7/gqUjZ64J/MOTKsDDrrPl2tH0S+jeq+YB23VLdtRP+dsOJ+bE5r5
-	6JnirAMZd/mHjw3EzvHHhZcR8wIivtaCYX/ciSSdCUil/LAB0jb7F1nHU1Ep+5lO5VDGwH8pt0U
-	54GiFLbc0IzvKqQAWro9TSRU4R3YamY7Rs933au/wqKJXJdd+1c/PQlcsjCBKEM0c0m4WDc8FqF
-	2buQ+oa9N7dWJksEi1AsXqRudtZqLpWICEOVbjT8LBLDRwICP0OOYP9KshR+cHNzRRRicZApsOz
-	4X2wrZL9li8NgV/C6YeMwZDENfXLDkIo4fwpm3TGJ0Ql9ADmIh9Mh66eVwb8/eoY7LWLt1fuoLz
-	jkTEuucQ1h7sK7qSZ6jdMB3qKKrU0fYFRKVo=
-X-Google-Smtp-Source: AGHT+IHf1DvUVwTjYng73AEZoysczEQhV7icrvRQHXOxfIiXakEuliCr0Pejt20CVRynR8ZyGms4FQ==
-X-Received: by 2002:a17:902:cf11:b0:234:ba37:87ae with SMTP id d9443c01a7336-23e24f3648dmr39945445ad.4.1752676811250;
-        Wed, 16 Jul 2025 07:40:11 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4333c90sm126851345ad.157.2025.07.16.07.40.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 07:40:10 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 16 Jul 2025 07:40:08 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] hwmon: w83627ehf: make the read-only arrays 'bit'
- static const
-Message-ID: <a9e8e4f0-f933-43a4-9d2a-a56e09083779@roeck-us.net>
-References: <20250714155505.1234012-1-colin.i.king@gmail.com>
+        bh=pfwYeQ0lSxFqkmbHNbtiMcwWyHLPm2mIdKPW8D3rFWA=;
+        b=gkUExtFWo8OzdS6+grI/8SRU6p2ZyfeXJpv//JTKTdCSlquoYPwc45/epyDx4n0v2r
+         YDoGmbuHiwfszIw6Df1KROyEIO5/RYluW4leNOJI823EzsN25uRXHliFA+1WhlO8ZbX4
+         ISTol/J0Rbr0WR8NniZB5HxYivAITj79ppbkhJpG19NEQZVSbYE1dJwcPokQUtaGv7sQ
+         FgkJajn2yZFDf940xtJvk3SFokiupK8BU46131j4XKfli4hLih9J0xzd7zjrwQCX0tof
+         aO+u2IFAwrsaTAGx8RuDO/OY/UnZpxzAiLX/cqVxnSdB9EUEdIQ1eAKzeoRdJiKrJxc6
+         sWaw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2YUWbOzRt68e4k6cbxN+cYqjbS1Vjx3vspDpnCULkfmkYs419t9GwdaWo5+/lHHI3MEDMNvfsF3iEz+7a@vger.kernel.org, AJvYcCU8aDc4uAsVlX3HEmownYcqJIurqz1g+iFuCrT1Hxj1hN+jPTxiZqu9pifjTJmZ0bxh9s+3YLRx@vger.kernel.org, AJvYcCUR701OLNhTic/i0UVnJx6uKMovU09sWvsw+0B1NVIfCDyPMp8lX7mNua6wR7kVhCvdVXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYrTlwbCActBEG9qS345Ar2XUtg1ewUNNuqI/uNn5FyD6/N7SS
+	2YRVgpYu7G+6xXBftRCXs4+71csYfUMuL8880bJPv5t3cA6TyH3Zhlfk8Qws7wMOaoXwWwP8DYO
+	6sTYexg/krcLZaC2M2GmjoBo7zg2263W2GpQ7q5pLYA==
+X-Gm-Gg: ASbGncvLivG/ftp0L90vALGXQ+CpGpdRHVRg83USKiDy7pFXMOSMYTjyH4v26KAWHlr
+	llVHlHhP+z0LDa2NidILZ8OAs2Wk3PdesgTtC86VelQlEqyaBK0efVBbd3blmozOpRzTC9UgbhN
+	my0pD0VcG8qmc+O0uBjVhCQqY37vQtiJgyXv0WLxq8wYrbmVDFv2d+nAATC4EqUJSluMpwKXPyL
+	URJG0o=
+X-Google-Smtp-Source: AGHT+IEEsGkjeJRr+4AxB4v8yEdFBdHjv0f7mCtSLB+EbeD9EY0YJN/yeyk9YT3I1MCKXufJeinGe9qxBV4f6r3UUfs=
+X-Received: by 2002:a05:690c:3693:b0:710:f09c:b00f with SMTP id
+ 00721157ae682-7183712dc18mr40453547b3.15.1752676855537; Wed, 16 Jul 2025
+ 07:40:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714155505.1234012-1-colin.i.king@gmail.com>
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <20250703121521.1874196-3-dongml2@chinatelecom.cn> <CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
+ <45f4d349-7b08-45d3-9bec-3ab75217f9b6@linux.dev> <CAADnVQ+7NhegoZGHkiRyNO8ywks3ssPzQd6ipQzumZsWUHJALg@mail.gmail.com>
+In-Reply-To: <CAADnVQ+7NhegoZGHkiRyNO8ywks3ssPzQd6ipQzumZsWUHJALg@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 16 Jul 2025 22:40:54 +0800
+X-Gm-Features: Ac12FXwhFnOEikntgmWcObUoZ2zctoMhZNba-RlPeEbc7K2an5Dl4pIZ79cUM88
+Message-ID: <CADxym3bT8P796Qqcd0mtJwR09bgs0Bc45GuPkb39ELLsg1MQ_g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 02/18] x86,bpf: add bpf_global_caller for
+ global trampoline
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Menglong Dong <menglong.dong@linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 04:55:05PM +0100, Colin Ian King wrote:
-> Don't populate the read-only arrays 'bit' on the stack at run time,
-> instead make them static const.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Wed, Jul 16, 2025 at 12:35=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Tue, Jul 15, 2025 at 1:37=E2=80=AFAM Menglong Dong <menglong.dong@linu=
+x.dev> wrote:
+> >
+> >
+> > On 7/15/25 10:25, Alexei Starovoitov wrote:
+[......]
+> >
+> > According to my benchmark, it has ~5% overhead to save/restore
+> > *5* variants when compared with *0* variant. The save/restore of regs
+> > is fast, but it still need 12 insn, which can produce ~6% overhead.
+>
+> I think it's an ok trade off, because with one global trampoline
+> we do not need to call rhashtable lookup before entering bpf prog.
+> bpf prog will do it on demand if/when it needs to access arguments.
+> This will compensate for a bit of lost performance due to extra save/rest=
+ore.
 
-Applied.
+I just think of another benefit of defining multiple global trampolines
+here, which you may be interested in. In the feature, we can make
+the global trampoline supports functions that have 7+ arguments.
+If we use _one_ global trampoline, it's not possible, as we can't handle
+the arguments in the stack. However, it's possible if we define
+different global trampoline for the functions that have different arguments
+count, and what we need to do in the feature is do some adjustment
+to CALLER_DEFINE().
 
-Guenter
+Wish you are interested in this idea :)
+
+Thanks!
+Menglong Dong
+
+
+>
+> PS
+> pls don't add your chinatelecom.cn email in cc.
+> gmail just cannot deliver there and it's annoying to keep deleting
+> it manually in every reply.
 
