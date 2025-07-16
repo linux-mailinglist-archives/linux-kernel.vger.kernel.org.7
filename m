@@ -1,134 +1,176 @@
-Return-Path: <linux-kernel+bounces-733122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79ED0B07078
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0300B0707C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1D01887D38
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F15431889A3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B312EAB9E;
-	Wed, 16 Jul 2025 08:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83682EAB7B;
+	Wed, 16 Jul 2025 08:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GLJO5q1/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mUjFoMAi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="be89xxRr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E33328E61E;
-	Wed, 16 Jul 2025 08:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440182EACE9;
+	Wed, 16 Jul 2025 08:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752654437; cv=none; b=U0YG5SvGQPZrGSzCKHNBC1FnSqQg9Cc5GAqmR17f6CqHX5EcrqgwpMDVAsbkNZ4KY9yuw9f9qz0hEAFmpAGI1aqy67FrlS9TRimweQc16gn5+WBXkhrr8pW7cXA+KfRpB2f8jBmI6XkLVLdr8ACNHYavMy3qaDZyly9zNTPaXlE=
+	t=1752654439; cv=none; b=CNhXlgErlM4YsP9/4PmkELu1Lv6SFL7laOdt2L9/vtCpwLx+YkEnGm9iA42DhCKWosDpDtTDaMpHybPqDW8Pfu4LR/um84UN4KM+MhYKGoSXGwgDN0mK5tJ+rQfZqeEAcOASMRf+8D/FbWM/cmfel88+CZ5nX4WNIHDCsdwowdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752654437; c=relaxed/simple;
-	bh=4u2lay4hovL5zKYuyCR5r46djizrppNKT21L58JI2mo=;
+	s=arc-20240116; t=1752654439; c=relaxed/simple;
+	bh=jA5FOSjFCNJGkBGVQ3T0NygKzKDwksb4u4k+DuY6Ba4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cmt7028kdGWhew56WjUatNQ8T+q4+nxcZgg6bb97upL2g7yvQG39DgfJABY1nJpCCt+xL+R/zhFih7uKV4eVmtUg2MwDvqR8kV0xTF5dyTrAPaizCIrrNnnsuPbXy3bo/AUHN7BQ3J2SIK+1k1lcS3r3EtUrAegBwV1fCAljk/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GLJO5q1/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mUjFoMAi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 10:27:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752654434;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNzvlBDk9taOAY9Sh/nOLKJL9wqAlXmEj8E2u0/5lI4=;
-	b=GLJO5q1/uHkLhc/S8mrakS/X5wxx/6DRe0yVrQV/7Ksg5l7tBgWRRGSWZpXR99375ssSbu
-	brGmlrtwan7qczA6OTD7UdmgSyq4QXoP7a4UusK79vc7rHR9t9SRMzmMUhQ0XcpPUGE5u4
-	sRCdqi0aRfMGROu/2VTEzA6NfTuxQVMPWawFPpV8MB/DfQH8V3wFe4uLL5Fd45rSU8c1jJ
-	oi3falJrB8HGYok9lN6RDe5uwm1jLbnMjaPaTjmmHju4GdAfxrFrsv7gyfpUAMvV2gxvTC
-	+NLZC0kcWa0ziWA4NAgQr6lWr5uruytGgqtkd32guNzosm4Oyi0FaUStxPWJtA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752654434;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNzvlBDk9taOAY9Sh/nOLKJL9wqAlXmEj8E2u0/5lI4=;
-	b=mUjFoMAi3T5Q6CQaJ2YcYkH/WtpV1LLbFgP5o8EmsqxIiQVDuGkg1VIvehBwORbzo0Wqws
-	VVUYHoFoONQ0pjDQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v3 11/17] rv: Retry when da monitor detects race
- conditions
-Message-ID: <20250716082712.L9z_ptHK@linutronix.de>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
- <20250715071434.22508-12-gmonaco@redhat.com>
- <20250715152322.Os4lDq_B@linutronix.de>
- <e2f4f8d372612cd61689b91562e73677599d08de.camel@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BxbMhNK6THbjHz+2JJTztjNFyZd1loQVIGWKoWc2YfxnoRqDQcV1mn4RvchTp7R5FsXsBDz5FDaE6DZK99NOG+OC/0ZB0LW2oltN73PO7GpsZgnMoQhzc3olRwQyYjB1tZZkI1HuCoEWdeV2HL5qyWt/NR8KGzo9c6THWaUTlac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=be89xxRr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F140C4CEF0;
+	Wed, 16 Jul 2025 08:27:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752654438;
+	bh=jA5FOSjFCNJGkBGVQ3T0NygKzKDwksb4u4k+DuY6Ba4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=be89xxRrv9xuxcIrfDxAYLIU64qDm+AhV8+M6ZIRIHCV6NppRf5AJ8o0NCluJ2xnX
+	 hSiKyhZD+ICPEpqMknx+RBzxKFD5dm6ESQ2smgvsBvzpQDiBzd+uOsuEKINp2NBc+4
+	 Ow9bH4ecBU8nxkuGEmi5Vm76U/1jskLNLgCK+j8iE9IcqlssP94zZCzNxubpn1bglP
+	 8QBH0Vaaf13M+t1q580dgn/uJViuDVecG6wZ2QfQpJP4eRa95IUBj1iMy0rXCPp1+u
+	 x/q8hOrqYIxVowZRisT94c+q6Wr+Jlzz9bc39vjnwJ2fUOJL4NLrvO8Vty7rZ0Kjdd
+	 gEwd8c0O2CWpw==
+Date: Wed, 16 Jul 2025 10:27:16 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	joel@jms.id.au, andrew@codeconstruct.com.au, linux-aspeed@lists.ozlabs.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
+	linus.walleij@linaro.org, p.zabel@pengutronix.de, BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v2 03/10] dt-bindings: PCI: Add ASPEED PCIe RC support
+Message-ID: <20250716-watchful-enigmatic-condor-0fc6b3@krzk-bin>
+References: <20250715034320.2553837-1-jacky_chou@aspeedtech.com>
+ <20250715034320.2553837-4-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e2f4f8d372612cd61689b91562e73677599d08de.camel@redhat.com>
+In-Reply-To: <20250715034320.2553837-4-jacky_chou@aspeedtech.com>
 
-On Wed, Jul 16, 2025 at 10:20:39AM +0200, Gabriele Monaco wrote:
-> On Tue, 2025-07-15 at 17:23 +0200, Nam Cao wrote:
-> > If I understand correctly, if after 3 tries and we still fail to
-> > change the
-> > state, we will invoke the reactor and trace_error? Doesn't that cause
-> > a
-> > false positive? Because it is not a violation of the model, it is
-> > just a
-> > race making us fail to change the state.
-> > 
+On Tue, Jul 15, 2025 at 11:43:13AM +0800, Jacky Chou wrote:
+> This binding describes the required and optional properties for
+
+No, describe the hardware, not "this binding".
+
+> configuring the PCIe RC node, including support for syscon phandles,
+> MSI, clocks, resets, and interrupt mapping. The schema enforces strict
+> property validation and provides a comprehensive example for reference.
+
+Don't say what schema does or does not. It's completely redundant.
+Describe the hardware.
+
+Your entire commit is redundantn and not helpful at all.
+
 > 
-> Yes, that's correct.
-> My rationale was that, at that point, the monitor is likely no longer
-> in sync, so silently ignoring the situation is not really an option.
-> In this case, the reaction includes an invalid current state (because
-> in fact we don't know what the current state is) and tools may be able
-> to understand that.
 
-Can't you bring the monitor back to the init state, and start over again?
+...
 
-I think "da_mon->monitoring = 0;" does the trick?
+> +
+> +  aspeed,ahbc:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the ASPEED AHB Controller (AHBC) syscon node.
+> +      This reference is used by the PCIe controller to access
+> +      system-level configuration registers related to the AHB bus.
+> +      To enable AHB access for the PCIe controller.
+> +
+> +  aspeed,pciecfg:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the ASPEED PCIe configuration syscon node.
+> +      This reference allows the PCIe controller to access
+> +      SoC-specific PCIe configuration registers. There are the others
+> +      functions such PCIe RC and PCIe EP will use this common register
+> +      to configure the SoC interfaces.
+> +
+> +  aspeed,pciephy:
 
-> I know you wouldn't be able to do that in LTL..  By the way, LTL uses
-> multiple statuses, so this lockless approach may not really work.
+No, phys are not syscons. I already told you that in v1.
 
-Let's worry about one thing at a time ;)
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the ASPEED PCIe PHY syscon node.
+> +      This property provides access to the PCIe PHY control
+> +      registers required for link initialization and management.
+> +      The other functions such PCIe RC and PCIe EP will use this
+> +      common register to configure the PHY interfaces and get some
+> +      information from the PHY.
+> +
+> +  interrupt-controller:
+> +    description: Interrupt controller node for handling legacy PCI interrupts.
+> +    type: object
+> +    properties:
+> +      '#address-cells':
+> +        const: 0
+> +      '#interrupt-cells':
+> +        const: 1
+> +      interrupt-controller: true
+> +
+> +    required:
+> +      - '#address-cells'
+> +      - '#interrupt-cells'
+> +      - interrupt-controller
+> +
+> +    additionalProperties: false
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-bus-common.yaml#
 
-> I don't see this situation happening often: I only ever observed 2
-> events able to race, 4 happening at the same time is wild, but of
-> course cannot be excluded in principle for any possible monitor.
-> Yet, I have the feeling a monitor where this can happen is not well
-> designed and RV should point that out.
-> Do you have ideas of potential monitors where more than 3 events can
-> race?
-> 
-> Perhaps a full blown reaction is a bit aggressive in this situation, as
-> the /fault/ may not be necessarily in the monitor.
-> We could think of a special tracepoint or just printing.
-> 
-> > Same below.
-> > 
-> > Also, I wouldn't use goto unless necessary. Perhaps it is better to
-> > put the
-> > code at "out_react:" and "out_success:" into the loop. But that's
-> > just my
-> > personal preference, up to you.
-> 
-> That could be done if we do a whole different thing when retries run
-> out, instead of defaulting to out_react.
-> I liked to avoid excessive indentation with those goto as well but
-> yeah, it may not be quite necessary.
+No other binding references this. Don't write completely different code
+than all other SoCs. This entire binding is written such way.
 
-Sure, as I said before, "just my personal preference, up to you."
+> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> +  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: aspeed,ast2600-pcie
+> +    then:
+> +      required:
+> +        - aspeed,ahbc
+> +    else:
+> +      properties:
+> +        aspeed,ahbc: false
+> +
+> +required:
+> +  - reg
+> +  - interrupts
+> +  - bus-range
+> +  - ranges
+> +  - resets
+> +  - reset-names
+> +  - msi-parent
+> +  - msi-controller
+> +  - aspeed,pciecfg
+> +  - interrupt-map-mask
+> +  - interrupt-map
+> +  - interrupt-controller
+> +
+> +unevaluatedProperties: false
+> +
+> +patternProperties:
+> +  "^pcie@[0-9a-f,]+$":
 
-Nam
+Why do you need it? Also, order things according to example schema.
+
+Best regards,
+Krzysztof
+
 
