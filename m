@@ -1,228 +1,193 @@
-Return-Path: <linux-kernel+bounces-734268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E1FB07F37
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:01:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD97DB07F41
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126241AA6478
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0180562995
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4575528B3EF;
-	Wed, 16 Jul 2025 21:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F167256C9E;
+	Wed, 16 Jul 2025 21:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lYX+mONq"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ox6WDTTy"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65444A11;
-	Wed, 16 Jul 2025 21:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E2526FA4E;
+	Wed, 16 Jul 2025 21:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752699708; cv=none; b=F8E/XCdvls68y6YoKk6kYX7d9EXfqUrSinThPbNf+vvRYicy1a481PqHeYOtzRZOLNNaUnd0yHaVvkqNZqhliJMWsbn97ceMxWIwKhDblfV7tdpIRiPKiRkOTwEP1e+M1C+v/jyr6+zIdF2qVXVCNjl5RCcew7k9pUv18cVFCDQ=
+	t=1752699794; cv=none; b=kFQeQVXQJ/M+mPiVnfPvNfTHuk7pqeTB1eP2VzmeTHO2VyEedY6jRrqlMTtpgVpxW2T1Xz4mGHYkUPdCKnYeY4PpSKpnkQxE1XKDM5eu8Qg/aY/bmheM2RKvEx4a+eVuvonB97KTnBl4obBWY029Ah3by3IBs1HX5SbDvQaTNEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752699708; c=relaxed/simple;
-	bh=16cOYaLTWUv5flwdnb8fd0dKCXcCDUJJ8SZVwCa217Q=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=Cg685nJBTCMkVYndY2F+jxW4D+3SA8okXA/tICHaSEzlokIc7L7oQ8Keb7zq7m73SjYnYi9pB2ZSL95Pfm2ncxHk0Dm8zGHVKN3+nhNhAylV0F3e1rcSDPu0bMGzANNZqU05C6LpjFpITb8/dSL06EZzGn6YUKBn9Ot9BQbevpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lYX+mONq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GIJsFe019585;
-	Wed, 16 Jul 2025 21:01:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=Mut158230U+m2kTnExwafiIfEzNI
-	IV6rfk9jG8LI7Y4=; b=lYX+mONquo1SKht3fkEFIOkrVwBKod72muqcpLlS6qYh
-	6RcFFEu1zlJx+k0aP1znyINpHm5L+WtsFPps7q/TAXqVIZ62/tMPwvxIJ5eM7qxQ
-	t0k1GLYVJ4bKBe+7tyToFnccrUqAS1ALaELrGNyWelw5crvIDkhHbLXiLYHRrGkb
-	RXb/8Py0rbE7V/n70VEWWos/qssLuUevpi/0gjOkN4sss8GkuxDcvRgctGB3LWYw
-	Z9v9b2KprzQzS/kBP23951f3zmg7i55NflJyQKd/dHiLwsqL0iwefzZUjZG9aUcD
-	+xOLrwnlpRCI8vucgrvRsuXqcxDrhk/4mFysM8RPAg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47xh900p6n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 21:01:38 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56GKsp3v003981;
-	Wed, 16 Jul 2025 21:01:37 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47xh900p6f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 21:01:37 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56GHc5uj031902;
-	Wed, 16 Jul 2025 21:01:36 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47v21u9g90-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 21:01:36 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56GL1agp30474976
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Jul 2025 21:01:36 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5E74A58065;
-	Wed, 16 Jul 2025 21:01:36 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 095B05805D;
-	Wed, 16 Jul 2025 21:01:35 +0000 (GMT)
-Received: from [9.61.118.124] (unknown [9.61.118.124])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 16 Jul 2025 21:01:34 +0000 (GMT)
-Message-ID: <780b1ce5-dc05-4fd7-8a1c-15b283de0e69@linux.ibm.com>
-Date: Wed, 16 Jul 2025 16:01:28 -0500
+	s=arc-20240116; t=1752699794; c=relaxed/simple;
+	bh=q0Q9+rj56dxBlENaBCdvs7m1IadW9ziKI1ujcrk188I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MvA/K5foybhWOSoKm6Hx8rajUiRDBPtSAmpNEsh6pukqeiq1kBkuvaujY7MMpoxYyVsVYXjHsMtLvZOf8sqlPyk2UAq0mLPiED8uSEASQ6GBBE4w1oda747lpV8MRROnjPTvhtQ1lNKTn3jsJxkHwj+PQPFgVWYZ8kvuyVZFpuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ox6WDTTy; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23de2b47a48so184545ad.2;
+        Wed, 16 Jul 2025 14:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752699791; x=1753304591; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c6UIkM+5JfCoSV3Rr9tFp4Y8vvVmQFZv80ACh/YnQDA=;
+        b=Ox6WDTTyJQzIc+td8xrRn/4P9tgmGX7j3EbSCuWYEI0QGOKrNjhajmHJScIz5SEfqu
+         RjGizrNt87s1HXM3yVjtz0v7pskSL82sO6scFWiJqXQu24YrEYnErPCLoTUxVD4Ot68J
+         8+qyOXEb53uGAHuYF/TYNwNPZ+Ifl5gjd6dP1TmwIrpDZQxNCZHzitAnilWCMLDPoTh4
+         kj41whKHkyspoAfezPU0pH4frXEsCFTxxigW4vYoLZWVdDG+9q/6iUMsfpfe1Hk5UI/T
+         2nrlupjQFmqojI/bmzNtAy5DU6vd8B7v+FPtiOk7LgMRrSACPr/R4KuVjjpGVLxCJHCt
+         adFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752699791; x=1753304591;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c6UIkM+5JfCoSV3Rr9tFp4Y8vvVmQFZv80ACh/YnQDA=;
+        b=bZDqGI89xd/tiukhBqk7YK+n1LZpDL+QCTFaRyhJtV0nkvFzN2UB1DRgDoXaiYpEVV
+         cw5VHNgiTzyboumWJEHe7HkrppVyKgU8aKpLDH7qVsrS5AfenuJ4yz9PdvX7iqj+kqUy
+         RiclTDpx+x7fZ6yUg8hGg8kRa0sXPJV841EDtd188nIMzsf9CqUFD90IAKGeGJsQW8qc
+         yBF8wNoszVTIhGKty9rrdSIWqnC1Kw+bNQlKy8lbqiNuNbF7GTaKSBcGzaruFt20Zsgq
+         F9Ys1z2kS+i1IbjEQjKcBO+NyYH+BzNHr5PlLTvpxqs9EgC4RfQYGj5k1ymEQ3L0f/nl
+         ou2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWCLWelV7hMnhrduQeT8zYX20zWErwGR57Sl7qYP+uAxEOyl8aWZZ/g1KGXcRt+AkfPmRX57TkFd/WC1ik=@vger.kernel.org, AJvYcCWPHXHNdkb34TDYBCe0lh5FG707Fi52S3pim7qlD1GOsSh1KY/wf25LoZ5GBZckl5JlBdPrcL9T@vger.kernel.org
+X-Gm-Message-State: AOJu0YypE5iuidMLwD6fK75sDBW+kGW/6GmMr9sEkrbdlQYxu1+6FbVk
+	cXZk2A2Cxn7oLM9rQrOgmlMqiqSd9pce4WYIXNlzsBWlRzQaJRSVm66gzid5Pxn9oRV+whQBUMf
+	jqkVhaNE/bEsItrhnwDgoxvHlntbVlKE=
+X-Gm-Gg: ASbGnctP0xYEghk5Kr4H+VF03HxRT2sxfQG88jw+vjh31DvAAVq0dpOwqT0WUhcKpc3
+	Elf+LpetFO65J5VvyfryUL9pUDXwK6WfCTOKkKpaHBa5RwTCanyPqX9Dnf3Sfp+NSQxpZnaspvP
+	cyBvhpRff8GyOoPxG7iB6g6BapWBZklP5VW1VxE/M0BR4h59lvdB4n3zHEwZRS8YhHYnGuLBqJs
+	bkfdg3n
+X-Google-Smtp-Source: AGHT+IHsghxRhO1E0ZijyAH2I0nUHRxro/f8IUv0wNQCuD6VDXxJySfi/1GlXQbFrEdYhyP2vJpz+Q//Pz6HZeGbkkc=
+X-Received: by 2002:a17:902:e5c8:b0:234:a734:4abe with SMTP id
+ d9443c01a7336-23e24ec7c0dmr27962075ad.1.1752699791287; Wed, 16 Jul 2025
+ 14:03:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: sam@mendozajonas.com, peter@pjd.dev, delphine_cc_chiu@wiwynn.com,
-        Paul Fertser <fercerpav@gmail.com>, davem@davemloft.net,
-        Jakub Kicinski <kuba@kernel.org>, Potin Lai <potin.lai.pt@gmail.com>,
-        pabeni@redhat.com
-From: Eddie James <eajames@linux.ibm.com>
-Subject: NCSI incorrect response type to command
-Cc: netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        eajames@linux.ibm.com
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: pbhKnUizILKPIExUUOJsqXmhcSatQyZG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDE4NyBTYWx0ZWRfXyQlPN1yS/4+4 qAUsAxUQDQDxr0wvJUQBGfgGq32r6mI6/Y+5/WSST5YDB/xZDYRtL/WnjyvrFvVKqZoL99hSmU8 zmPO518gtLcKB+LevwYrWZeO5D1RAcUt9yPBJqbavlnZZEUx8ArcvbcVnWi0iE/2jQaOgw34Tp6
- SokQUB6ehQv5RN5xQtqzY7X93ArUk5X+8O0bC8XnLUwZtdmCTeV/YfWgCukGxztb0C7Hjt2mIAo Ie/kU7U1UaVq1JQrkRgr1+ZzI/OOAENeoqYftY4aRn+wodNtwMA5iPb05hS/djDaxtnPNiNVhvH KXH75oQwPDfWT38IX930WPvNF06GuOAliHRKyz7YvnxhBN+Qhd57c5+eOlmxQ9bTmMHEMHFxk7V
- 9Aw7Wdnb6DbfNvH8LBCGHormNWJe/sjjsP2IPSd3ZzZAa2o1kRc1bSFUDwCr2CimwGzNoyME
-X-Proofpoint-GUID: CEU1fuxyGsu19UydhB8TUvR-p1uudJOr
-X-Authority-Analysis: v=2.4 cv=C43pyRP+ c=1 sm=1 tr=0 ts=68781332 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=SdooGX4x0a49zq6R3TUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_04,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 clxscore=1011 lowpriorityscore=0 bulkscore=0
- adultscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507160187
+References: <20250716161753.231145-1-bgeffon@google.com> <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
+ <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com>
+In-Reply-To: <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 16 Jul 2025 17:02:59 -0400
+X-Gm-Features: Ac12FXwLG4TN6wJTWjc81ebRG8OmwjrBMB7idQ0T2AQxzZyfSqA0dNIRVGujuQ8
+Message-ID: <CADnq5_OeTJqzg0DgV06b-u_AmgaqXL5XWdQ6h40zcgGj1mCE_A@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
+To: Brian Geffon <bgeffon@google.com>, "Wentland, Harry" <Harry.Wentland@amd.com>, 
+	"Leo (Sunpeng) Li" <Sunpeng.Li@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
+	Lijo Lazar <lijo.lazar@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
+	Pratap Nirujogi <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>, 
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello all,
+On Wed, Jul 16, 2025 at 12:40=E2=80=AFPM Brian Geffon <bgeffon@google.com> =
+wrote:
+>
+> On Wed, Jul 16, 2025 at 12:33=E2=80=AFPM Alex Deucher <alexdeucher@gmail.=
+com> wrote:
+> >
+> > On Wed, Jul 16, 2025 at 12:18=E2=80=AFPM Brian Geffon <bgeffon@google.c=
+om> wrote:
+> > >
+> > > Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible =
+(v2)")
+> > > allowed for newer ASICs to mix GTT and VRAM, this change also noted t=
+hat
+> > > some older boards, such as Stoney and Carrizo do not support this.
+> > > It appears that at least one additional ASIC does not support this wh=
+ich
+> > > is Raven.
+> > >
+> > > We observed this issue when migrating a device from a 5.4 to 6.6 kern=
+el
+> > > and have confirmed that Raven also needs to be excluded from mixing G=
+TT
+> > > and VRAM.
+> >
+> > Can you elaborate a bit on what the problem is?  For carrizo and
+> > stoney this is a hardware limitation (all display buffers need to be
+> > in GTT or VRAM, but not both).  Raven and newer don't have this
+> > limitation and we tested raven pretty extensively at the time.
+>
+> Thanks for taking the time to look. We have automated testing and a
+> few igt gpu tools tests failed and after debugging we found that
+> commit 81d0bcf99009 is what introduced the failures on this hardware
+> on 6.1+ kernels. The specific tests that fail are kms_async_flips and
+> kms_plane_alpha_blend, excluding Raven from this sharing of GTT and
+> VRAM buffers resolves the issue.
 
-I am trying to debug an NCSI issue where the driver ends up with
++ Harry and Leo
 
- > eth0: NCSI: No channel found to configure!
+This sounds like the memory placement issue we discussed last week.
+In that case, the issue is related to where the buffer ends up when we
+try to do an async flip.  In that case, we can't do an async flip
+without a full modeset if the buffers locations are different than the
+last modeset because we need to update more than just the buffer base
+addresses.  This change works around that limitation by always forcing
+display buffers into VRAM or GTT.  Adding raven to this case may fix
+those tests but will make the overall experience worse because we'll
+end up effectively not being able to not fully utilize both gtt and
+vram for display which would reintroduce all of the problems fixed by
+81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v2)").
 
-during boot and I cannot ping the system. This is AST2600 BMC using 
-ftgmac100 in NCSI mode to an Intel I210. By adding some debug prints I 
-found that this happens because the response to the CIS command on 
-channel 0 never returns or returns the wrong response type. As seen 
-below, after CIS (packet type 0x0) is sent, a GLS (get link state, 0x8a) 
-response is seen. Unfortunately I did not print the sequence number. The 
-BMC gets a few correct responses (though NCSI state machine cannot 
-handle them since CIS didn't respond) and then no more responses to any 
-commands, so no channel is found. Has anyone seen similar or have any 
-suggestions for further debug?
+Alex
 
-Thanks,
-
-Eddie
-
-
-[   21.186332] systemd[1]: Started Network Configuration.
-[   21.201977] 8021q: adding VLAN 0 to HW filter on device eth0
-[   21.209910] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x200 pkg:0
-[   21.219708] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x2
-[   21.229468] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x2
-[   21.230140] ftgmac100 1e670000.ethernet eth0: NCSI: Handler for 
-packet type 0x82 returned -19
-[   21.237713] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x2
-[   21.255476] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x2
-[   21.263680] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x2
-[   21.271935] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x2
-[   21.280170] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x2
-[   21.288441] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x2
-[   21.345826] systemd[1]: Starting Wait for Network to be Configured...
-[   22.314495] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x202 pkg:0
-[   22.323088] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x1
-[   22.331929] ftgmac100 1e670000.ethernet eth0: NCSI: Handler for 
-packet type 0x81 success
-[   22.341190] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x203 pkg:0
-[   22.363321] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x206 pkg:0
-[   22.372049] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x0
-[   22.380844] ftgmac100 1e670000.ethernet eth0: NCSI: Handler for 
-packet type 0x8a returned -19
-[   22.394122] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x208 pkg:0
-[   22.402856] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x15
-[   22.412073] ftgmac100 1e670000.ethernet eth0: NCSI: Handler for 
-packet type 0x95 returned -19
-[   22.422259] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x209 pkg:0
-[   22.430986] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x16
-[   22.440141] ftgmac100 1e670000.ethernet eth0: NCSI: Handler for 
-packet type 0x96 returned -19
-[   22.449987] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x20a pkg:0
-[   22.458684] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0xa
-[   22.468979] ftgmac100 1e670000.ethernet eth0: NCSI: Handler for 
-packet type 0x8a returned -19
-[   22.480251] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x206 pkg:0
-[   22.490479] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x0
-[   23.514450] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x208 pkg:0
-[   23.523040] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x15
-[   23.988455] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x50
-[   23.997826] ftgmac100 1e670000.ethernet eth0: NCSI: Handler for 
-packet type 0xd0 success
-[   24.554418] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x209 pkg:0
-[   24.564436] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x16
-[   25.594426] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x20a pkg:0
-[   25.603126] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0xa
-[   26.634449] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x206 pkg:0
-[   26.643134] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x0
-[   27.674640] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x208 pkg:0
-[   27.683312] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x15
-[   28.714443] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x209 pkg:0
-[   28.724744] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0x16
-[   29.754439] ftgmac100 1e670000.ethernet eth0: NCSI: Probe channel 
-state:0x20a pkg:0
-[   29.763047] ftgmac100 1e670000.ethernet eth0: NCSI: Command for 
-packet type 0xa
-
-
+>
+> Brian
+>
+> >
+> >
+> > Alex
+> >
+> > >
+> > > Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible =
+(v2)")
+> > > Cc: Luben Tuikov <luben.tuikov@amd.com>
+> > > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > > Cc: Alex Deucher <alexander.deucher@amd.com>
+> > > Cc: stable@vger.kernel.org # 6.1+
+> > > Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> > > Signed-off-by: Brian Geffon <bgeffon@google.com>
+> > > ---
+> > >  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu=
+/drm/amd/amdgpu/amdgpu_object.c
+> > > index 73403744331a..5d7f13e25b7c 100644
+> > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > > @@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain(struct =
+amdgpu_device *adev,
+> > >                                             uint32_t domain)
+> > >  {
+> > >         if ((domain =3D=3D (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_GEM_DOMAI=
+N_GTT)) &&
+> > > -           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_typ=
+e =3D=3D CHIP_STONEY))) {
+> > > +           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_typ=
+e =3D=3D CHIP_STONEY) ||
+> > > +            (adev->asic_type =3D=3D CHIP_RAVEN))) {
+> > >                 domain =3D AMDGPU_GEM_DOMAIN_VRAM;
+> > >                 if (adev->gmc.real_vram_size <=3D AMDGPU_SG_THRESHOLD=
+)
+> > >                         domain =3D AMDGPU_GEM_DOMAIN_GTT;
+> > > --
+> > > 2.50.0.727.gbf7dc18ff4-goog
+> > >
 
