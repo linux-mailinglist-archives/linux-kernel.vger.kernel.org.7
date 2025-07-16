@@ -1,79 +1,151 @@
-Return-Path: <linux-kernel+bounces-733421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B67B07476
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:16:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6F7B07481
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49A30170849
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:16:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8421C24F41
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F982F1FF2;
-	Wed, 16 Jul 2025 11:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FBF2F362F;
+	Wed, 16 Jul 2025 11:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t/yW9oRv"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="exTFlg0x"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802682F2375;
-	Wed, 16 Jul 2025 11:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65732F2375;
+	Wed, 16 Jul 2025 11:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752664586; cv=none; b=Ig7KCAavA8Mbmjt+vW/UvLriMl0kHasnLC0XBf9wJqBLvlqNv5Dgmi9qZ2+Wm89vxO6NsyWgOBD71HyTe2xP4xCNrEdCQUP8tC3qkITcjbiSCMuuM15prYDikGvfFCUHATwaplGDj8YERSfvU79dQAs6UX0Y2mMfXe/ZCQ45daY=
+	t=1752664827; cv=none; b=TJZ6lUOGogmp7OUAP82djZPSqI7Js/g9X6U0Wn766ZhkEvt9jvPAF2vMobWY0y1v4IRM48YWF3QGUfNnxVIFDeWKS4ziVxHlX9HYYCQ9mAVL0fHPTVWgx8IVNCfLhrsvmIBF62NcwzRBzO0xDKfFgqLOYRv4H++RZvPjMNpylFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752664586; c=relaxed/simple;
-	bh=4EA8LcV/PNdhLRaJOQnhh/fhowvl5u7sYYahdk32Cws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNlyZ79J1FBMK4R2fktSY/kfthrnDc9lE7Tpi50pBD+G5b6O/HK5NOptQur7Hacy/ZCXYDC2kD0MvPWNxvqA+NxTO9FtVcEJagzL2GqBZdALQVwSXpBhfD3xfFzpE01nqgyQxcqN+Z54zJoP07IQOwLpyr8X/N5r2XTwQy8Tyvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=t/yW9oRv; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4EA8LcV/PNdhLRaJOQnhh/fhowvl5u7sYYahdk32Cws=; b=t/yW9oRvD6+AjbAem5K1CHApHt
-	2xa0R0BEbhtHX9cfNRk8qk8ztwFilIed1G+xhL0cWwMQB1Xw57Mbx8tYxGwGxvvA0gKgvwXoAtpLV
-	TFpKgvtCtzXEcs2Y5K8y9rENRxDV2KeY9XmwTa4oR9zIgdrX9TIaygddVQH5GXTAlX8m1cH2wj2IQ
-	waD7/edG4bbW4+bDf74Hfz7rlCOcC+uvswp0MYAzkWvWt8t9CYzqTKUCN+GLWkXkpjr/miFvgLUNL
-	EBCGDbyBP7ead6KMbxKeROEMPPYa8WKBIYoABG0EDCMkiA8Jraiec81/lkC1QynS+yfhOfRhFdXJP
-	8QFXQMug==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc07b-00000007XFM-371o;
-	Wed, 16 Jul 2025 11:16:23 +0000
-Date: Wed, 16 Jul 2025 04:16:23 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Sergey Bashirov <sergeybashirov@gmail.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Konstantin Evtushenko <koevtushenko@yandex.com>
-Subject: Re: [PATCH v2 3/3] NFSD: Minor cleanup in layoutcommit decoding
-Message-ID: <aHeKB3drKSuMk24G@infradead.org>
-References: <20250715153319.37428-1-sergeybashirov@gmail.com>
- <20250715153319.37428-4-sergeybashirov@gmail.com>
+	s=arc-20240116; t=1752664827; c=relaxed/simple;
+	bh=jHMCP7bTXZ3MXBAzip3AE+MywjHMj3JI7rUw87lQY4A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QB543ZB066CVJzyhxLhbdwBpd8F5xI8XQ0wxl4T7BmfL9PsfrRR3PWqO1hwS+iGKC8NeIIh5pZBEPResBfZt+PxoMGDm4hLX65biZxlyjrHjqYrooryWH4FxcdEwHNqm1MT1NoTePFolZpFC1LsUIpRXomJhaxaSkkYuXFtw2PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=exTFlg0x; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56GBJn9E235380;
+	Wed, 16 Jul 2025 06:19:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752664789;
+	bh=0u+F4uSXWp4fu1jXml3y1tvKJ+rRK+QNJHYGF1V9ge4=;
+	h=From:To:CC:Subject:Date;
+	b=exTFlg0xv8WWt9fJGv9s9HwmPZX8tmq86TxceyH/7hcnbaTqfzFl7UI9Ek3URsTgU
+	 LFUqiQqqsAUpPKbAcD3atZVSg3ETos43IhH3/unU9ok2nk5HLzacugjJ4vjWE2++mJ
+	 Ag3SJBwL/NSWvGUdsRMCDvWj1VLdPdsomnuIk2ic=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56GBJnle1343225
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 16 Jul 2025 06:19:49 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 16
+ Jul 2025 06:19:48 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 16 Jul 2025 06:19:48 -0500
+Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [172.24.227.115])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56GBJep0344714;
+	Wed, 16 Jul 2025 06:19:41 -0500
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux@armlinux.org.uk>, <ardb@kernel.org>, <ebiggers@kernel.org>,
+        <geert+renesas@glider.be>, <claudiu.beznea@tuxon.dev>,
+        <bparrot@ti.com>, <andre.draszik@linaro.org>,
+        <kuninori.morimoto.gx@renesas.com>,
+        <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        <heikki.krogerus@linux.intel.com>, <kory.maincent@bootlin.com>,
+        <florian.fainelli@broadcom.com>, <lumag@kernel.org>,
+        <dale@farnsworth.org>, <sbellary@baylibre.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <dagriego@biglakesoftware.com>, <u-kumar1@ti.com>,
+        <y-abhilashchandra@ti.com>
+Subject: [PATCH V2 0/4] Add support for VIP
+Date: Wed, 16 Jul 2025 16:49:08 +0530
+Message-ID: <20250716111912.235157-1-y-abhilashchandra@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715153319.37428-4-sergeybashirov@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Jul 15, 2025 at 06:32:20PM +0300, Sergey Bashirov wrote:
-> Use the appropriate xdr function to decode the lc_newoffset field,
-> which is a boolean value. See RFC 8881, section 18.42.1.
+This patch series add support for the TI VIP video capture engine.
+VIP stands for Video Input Port, it can be found on devices such as
+DRA7xx and provides a parallel interface to a video source such as
+a sensor or TV decoder. 
 
-Looks good:
+Each VIP can support two inputs (slices) and a SoC can be configured
+with a variable number of VIP's. Each slice can support two ports
+each connected to its own sub-device.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+The first patch in this series updates the outdated MAINTAINERS entry
+for the TI VPE and CAL drivers. The subsequent three patches introduce
+support for the TI VIP (Video Input Port) driver.
+
+Link for v1: https://lore.kernel.org/all/20200522225412.29440-1-bparrot@ti.com/
+The v1 patch series was posted in the year 2020. This v2 series resumes the
+effort to upstream VIP support by addressing all previous review comments
+
+Changelog:
+Changes in v2:
+- Remove array and just use hsync: true in bindings (Patch 3/5)
+- Remove array and use enum for bus width in bindings (Patch 3/5)
+- Use pattern properties since properties across ports are same (Patch 3/5)
+- Remove vip_dbg, vip_info, vip_err aliases and just use v4l2_dbg, v4l2_info
+  and v4l2_err instead (Patch 4/5)
+- Remove color space information from vip_formats struct (Patch 4/5)
+- Use g_std instead of g_std_output (Patch 4/5)
+- Do not touch pix.priv (Patch 4/5)
+- Remove all comments with just register values (Patch 4/5)
+- Remove support for vidioc_default ioctl (Patch 4/5)
+- In case of any error while streaming, push all pending buffers to vb2 (Patch 4/5)
+- Address some minor comments made by Hans throughout the driver (Patch 4/5)
+- Update copyright year at various places
+
+v4l2-compliance output: https://gist.github.com/Yemike-Abhilash-Chandra/b0791cb465fadc11d4c995197cb22f29
+
+v4l2-compliance cropping and composing tests are failing likely
+due to OV10635 sensor supporting several discrete frame sizes,
+fail: v4l2-test-formats.cpp(1560): node->frmsizes_count[pixfmt] > 1
+
+Test logs: https://gist.github.com/Yemike-Abhilash-Chandra/98504ab56416aef38b851036aef5eeb1
+
+Dale Farnsworth (2):
+  dt-bindings: media: ti: vpe: Add bindings for Video Input Port
+  media: ti-vpe: Add the VIP driver
+
+Yemike Abhilash Chandra (2):
+  MAINTAINERS: Update maintainers of TI VPE and CAL
+  Revert "media: platform: ti: Remove unused vpdma_update_dma_addr"
+
+ .../devicetree/bindings/media/ti,vip.yaml     |  211 +
+ MAINTAINERS                                   |    3 +-
+ drivers/media/platform/ti/Kconfig             |   13 +
+ drivers/media/platform/ti/vpe/Makefile        |    2 +
+ drivers/media/platform/ti/vpe/vip.c           | 3824 +++++++++++++++++
+ drivers/media/platform/ti/vpe/vip.h           |  719 ++++
+ drivers/media/platform/ti/vpe/vpdma.c         |   32 +
+ drivers/media/platform/ti/vpe/vpdma.h         |    3 +
+ 8 files changed, 4806 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/media/ti,vip.yaml
+ create mode 100644 drivers/media/platform/ti/vpe/vip.c
+ create mode 100644 drivers/media/platform/ti/vpe/vip.h
+
+-- 
+2.34.1
 
 
