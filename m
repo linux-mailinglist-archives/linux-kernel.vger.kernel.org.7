@@ -1,137 +1,151 @@
-Return-Path: <linux-kernel+bounces-734017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A28B07C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:29:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F2CB07C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14FBC3B8295
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:29:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9F717466B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901F82F5C55;
-	Wed, 16 Jul 2025 17:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937182F273C;
+	Wed, 16 Jul 2025 17:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uwl0O+8P"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Gy2t0WPv"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79C8262FF0;
-	Wed, 16 Jul 2025 17:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE3F1114;
+	Wed, 16 Jul 2025 17:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752686965; cv=none; b=Bk+ifki/OuEqWkTffiy0PKF9aVmVt4Fu7BX9DZFHZVYBObuWxYVhYUu4WsZsU3by80yG9iWwus/KSJCXvfAAymvz/7+Aai0Nw90WOSzueDzsHBDd1PRkDlr1J7m6xcbSRboe/SdiuVaCP6mOEsOGZRqZF1ZogTRksiEAx4CWRCI=
+	t=1752687044; cv=none; b=ASEgRjmJNkTql8JyMnSpU0fzWNnL74//O4oUfp9zn+++4uhNA6Uzyh/Mpgwa4cVONFbvAaPyTY+y9QGnO7VPf2WBvF+vFKzvzT297uMF0jOXdv0XdThNyjAjiD1THWjr/6l/mVKT6kM8vqXXYvEShwiWKnkE53EmIXJe69vh8NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752686965; c=relaxed/simple;
-	bh=/CRxn40u4I7Y3Igo8F7RLHEk9wLiNnQv+7XGP+TdYDw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lArrFvjkfAnu6RhT/AnmzEZpH1yX4MRObqLpGQGOxec4xHqYNCm4HoehV5Y+b/EUSEZPLFalDSBIUUEzuxabqqVrVO3FA4pH74ZVeoEih7wQBM47eH1IUbpCz5eFjGpoBIQbw54Uok9hk45OgMxcMwnvZd5SS0A2PrtnT1ynYKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uwl0O+8P; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234d3261631so568345ad.1;
-        Wed, 16 Jul 2025 10:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752686963; x=1753291763; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EeNLgPU1RuJx4DVnlAIwci5Aq29THoN9KPCiSfsR7Ek=;
-        b=Uwl0O+8PTuGxtmurFJNVw3vjvtqDDNdkuSfsO2fT6RcEzlB/Gw7H9qC7YL0X8YAhJs
-         RuzgINL0wphT9AW0iRFIbzhB5bRNbwWEz562q7Q05wIDftJa5lGHa5eiE+dPqR5oVtVD
-         OVu6UuqfQRGmDBHF01F0xKPZRkiJf4VTBqVPj4ErDYuSnZsiHdtbglCxNc7/S/SOwyTR
-         gNKB4DNi67VXM4lELv/XNMM4F71CNh53nmrpsKFofK0ud6F7lQ6Dz+5je6l52YG1uyix
-         lmGm26RaBAP+318ox5oblmRjJqX2AWjxn2lFPilzJkvxx1fnrfGj7af+Web8oVcRNqFX
-         rfHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752686963; x=1753291763;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EeNLgPU1RuJx4DVnlAIwci5Aq29THoN9KPCiSfsR7Ek=;
-        b=cqCorNpTIdiu+qJ/OYsWmVs3W8n8c5LLdDmkrKbU5HWgIdHRGiFT1AO5tRzlX9BTZe
-         TbSYw2ezl3G/QVAj1VLdmLB4bLOT9w0ko2rhDyiEouWOiH7DYuUbBCdh47iY9xnfZsB2
-         e+Aj6nbJrEUNXYsQDtxWUT8CzChPCKYrfb6C7LbViGENwaBywJglWsf1pZy7GrLgqjmN
-         g/l/61APTDeXms/YYGLh5yQKT1ylsax8JPk1wUWy+udI0fIJU/XIIR4kmXR33NPzSb3T
-         fP9QOg68sPSaZXIay2TYM0DcIUe9+VDjN2NBqLTOjAR/561WhIq6cQKzJu+fMrG4zayE
-         xxCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpDHMpHoppTYNwUbFdegtinUh3XfpW6c/GaIlK3c20jruF1+RtsR6/4Stux0x9sBWPJYo=@vger.kernel.org, AJvYcCUvvadx7wSByJXa8BcGdKt2RuUKn67V3BO3zMgFG57fHQrcOVcwIvP5WFdm1kijUymbOi3vcf3TFkhhZA==@vger.kernel.org, AJvYcCXSrlx0b39z/07vfSz6Miz98wSI24YFVf9ZSlcD2G8H79ijNOTEB+DBhFMQ3d52vfxebbc8d2G3Xa3xB9z0@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX5Xz79StCa2b9P6cBhgDM7CrRccfwLYVT5cKdCAAr+IQFnI3P
-	BjFwest/lezc2jH6nDjOCyIdlLYNAsVKurfop+AIAtBXpaUSQujQ68ir
-X-Gm-Gg: ASbGnct9u1fj2UF+yVmV8L3ymdWaxH1vTKWdtq3iYrdQwArreV2lDF/olBIaVG0Y5DP
-	JkbyXh+hXL8caSfCLVKmrFMEAa3AUbTKdZ78mCFSm6Clt1KPvGOfPYSLRa2p5wIZkl8Nn/0AL9D
-	Yp2LFkEd7Ghw7Ef1OhGr1OzUtoOIiG50xnACxMc4iqDhPlzVJG+a2Of7OLgoABxuJO2Nd+Jop2r
-	DV7z/7V6Os7U8JmyJV1RHgErBAsbLP+eg1HQadzmJwj50i7UDEWcUQu+gh04IN6Eo4Nf1PEXa+q
-	9c5V0pdawzppmuW9Qsr81dc51VMLFpVCJN145sVsiTY+JaeqSoYGFCQMl8kBgmmw3rs2afzKF87
-	k8duR3NX6woiLOYQ7q2Db5g==
-X-Google-Smtp-Source: AGHT+IFrla4A/7rNoDTY22sMyvGzQlh9NwucP/BhuoqqwEBTVe8gcRHnNT5E8Q/CYhCQFDV2lZpm2w==
-X-Received: by 2002:a17:903:2a88:b0:235:655:11aa with SMTP id d9443c01a7336-23e24f522dbmr46832995ad.39.1752686962871;
-        Wed, 16 Jul 2025 10:29:22 -0700 (PDT)
-Received: from localhost ([216.228.127.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4359b2dsm130406275ad.206.2025.07.16.10.29.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 10:29:22 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>
-Subject: [PATCH] mips: kvm: simplify kvm_mips_deliver_interrupts()
-Date: Wed, 16 Jul 2025 13:29:17 -0400
-Message-ID: <20250716172918.26468-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752687044; c=relaxed/simple;
+	bh=r2DRgij26xF5m6ZdI1q8r2pxawboAB2+pBWnHW4lsNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hTNgENsJP4+c0/KRZszTrNm7ddlDShcw7Jf3xxpJ5cLo0GeSRzA5y6WhrVTxlKNp0knerfpCqC6p1p3/CdgLZZoHX5kq8rIxAGNLHCCQZDlUkQQcJmOntMv0WNPhB7C6GyAlUcoz6oEaPooLL+ojzHCdBwb4HCZxoA6OzOtOQzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Gy2t0WPv; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9482:6dc:b955:47cb:dcbb] ([IPv6:2601:646:8081:9482:6dc:b955:47cb:dcbb])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56GHUYEe1625675
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 16 Jul 2025 10:30:34 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56GHUYEe1625675
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1752687035;
+	bh=0trOfPgTp1BfkTElS9aX20q6MRULueSy68TJTaUES2U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Gy2t0WPvdz+He897EQMoQcH0JfPQeIHBqi7z44XsIN5Nrj6G4/vvwFJYYRm27clDo
+	 wettSG+p998Gz9erjq+lCC4bX7EDQCaZC2J6tccHwtKXmMJlAYAkggSHjdwQafbtwB
+	 YMf8KY3V0t4TStJrxg6GbjwY4G96l6b41D1Go02EWCvHFbOZWvIzmKWaIucPeSKZrg
+	 d+TpGHKh7CSjGdMeD7btX/B6WkA/u6RhXn5RhGNTc1c/1ghMNxh71cMozKMrk8UiKO
+	 88hdbru2v4FgWDxViL+nQ9hYQlK1xwJBW65aWDlrsUiSsXBlEYrXfHzn+se/6UWkcg
+	 E7ByWA8+U735A==
+Message-ID: <927f2d40-1004-4738-a1bc-0000d4d3e179@zytor.com>
+Date: Wed, 16 Jul 2025 10:30:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: USB cdc-acm driver: break and command
+To: Oliver Neukum <oneukum@suse.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org
+References: <ce54ae11-72bb-4ac7-980b-c1cbc798a209@zytor.com>
+ <fa20ab91-5ebf-427d-b938-31ea6fb945cf@suse.com>
+ <83B89F79-D28B-4F2C-87EA-F5078BD7ED17@zytor.com>
+ <2c807a7e-d55d-4670-9a86-e3fcaa3e52ba@suse.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <2c807a7e-d55d-4670-9a86-e3fcaa3e52ba@suse.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The function opencodes for_each_set_bit() macro, which makes it bulky.
-Using the proper API makes all the housekeeping code go away.
+On 2025-07-16 09:17, Oliver Neukum wrote:
+> 
+> If you really wanted to use that API as it is right now, you'd
+> have breaks racing with each other and, worse, with open()
+> and close().
+> Are you sure POSIX says nothing about how to handle such cases?
+> 
 
-Signed-off-by: Yury Norov <yury.norov@gmail.com>
----
- arch/mips/kvm/interrupt.c | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+This is the POSIX definition for tcsendbreak():
 
-diff --git a/arch/mips/kvm/interrupt.c b/arch/mips/kvm/interrupt.c
-index 0277942279ea..895a6f1781fd 100644
---- a/arch/mips/kvm/interrupt.c
-+++ b/arch/mips/kvm/interrupt.c
-@@ -27,27 +27,11 @@ void kvm_mips_deliver_interrupts(struct kvm_vcpu *vcpu, u32 cause)
- 	unsigned long *pending_clr = &vcpu->arch.pending_exceptions_clr;
- 	unsigned int priority;
- 
--	if (!(*pending) && !(*pending_clr))
--		return;
--
--	priority = __ffs(*pending_clr);
--	while (priority <= MIPS_EXC_MAX) {
-+	for_each_set_bit(priority, pending_clr, MIPS_EXC_MAX + 1)
- 		kvm_mips_callbacks->irq_clear(vcpu, priority, cause);
- 
--		priority = find_next_bit(pending_clr,
--					 BITS_PER_BYTE * sizeof(*pending_clr),
--					 priority + 1);
--	}
--
--	priority = __ffs(*pending);
--	while (priority <= MIPS_EXC_MAX) {
-+	for_each_set_bit(priority, pending, MIPS_EXC_MAX + 1)
- 		kvm_mips_callbacks->irq_deliver(vcpu, priority, cause);
--
--		priority = find_next_bit(pending,
--					 BITS_PER_BYTE * sizeof(*pending),
--					 priority + 1);
--	}
--
- }
- 
- int kvm_mips_pending_timer(struct kvm_vcpu *vcpu)
--- 
-2.43.0
+NAME
+
+    tcsendbreak — send a break for a specific duration
+
+SYNOPSIS
+
+    #include <termios.h>
+
+    int tcsendbreak(int fildes, int duration);
+
+DESCRIPTION
+
+    If the terminal is using asynchronous serial data transmission,
+tcsendbreak() shall cause transmission of a continuous stream of
+zero-valued bits for a specific duration. If duration is 0, it shall
+cause transmission of zero-valued bits for at least 0.25 seconds, and
+not more than 0.5 seconds. If duration is not 0, it shall send
+zero-valued bits for an implementation-defined period of time.
+
+    The fildes argument is an open file descriptor associated with a
+terminal.
+
+    If the terminal is not using asynchronous serial data transmission,
+it is implementation-defined whether tcsendbreak() sends data to
+generate a break condition or returns without taking any action.
+
+    Attempts to use tcsendbreak() from a process which is a member of a
+background process group on a fildes associated with its controlling
+terminal shall cause the process group to be sent a SIGTTOU signal. If
+the calling thread is blocking SIGTTOU signals or the process is
+ignoring SIGTTOU signals, the process shall be allowed to perform the
+operation, and no signal is sent.
+
+RETURN VALUE
+
+    Upon successful completion, 0 shall be returned. Otherwise, -1 shall
+be returned and errno set to indicate the error.
+
+ERRORS
+
+    The tcsendbreak() function shall fail if:
+
+    [EBADF]
+        The fildes argument is not a valid file descriptor.
+    [EIO]
+        The process group of the writing process is orphaned, the
+calling thread is not blocking SIGTTOU, and the process is not ignoring
+SIGTTOU.
+    [ENOTTY]
+        The file associated with fildes is not a terminal.
+
+--- ---
+
+The only other mentions of BREAK I can find are the BRKINT and IGNBRK
+flags, respectively.
+
+>
+> You'd probably have to start a timer in the driver in send_break().
+> That timer would need to be properly handled in disconnect(),
+> pre/post_reset() and suspend()
+> That API is really not nice to use.
+> 
+
+That's why I said if that is what is needed, it really belongs in the
+tty core.  That's where the current internal delay is, after all.
+
+	-hpa
 
 
