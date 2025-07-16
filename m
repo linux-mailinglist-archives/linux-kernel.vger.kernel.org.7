@@ -1,163 +1,182 @@
-Return-Path: <linux-kernel+bounces-733351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C040DB07379
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:32:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315D6B0737A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF741C251F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5DF3A7CAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5AB27C84B;
-	Wed, 16 Jul 2025 10:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvyQTHES"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96D523FC42;
+	Wed, 16 Jul 2025 10:32:17 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4528585260;
-	Wed, 16 Jul 2025 10:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27232F2702;
+	Wed, 16 Jul 2025 10:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661930; cv=none; b=G6JQMXNENzylmPBk0kud6Ad2ZHTrNGBwr90q2L2LB9bg465KD1tgrWEhzdcT8zjrlM1onLDwiJ8JFtxR5wH3o7XUFEB8BUVDoi74DN2RZzoS/Uxnfe52o4/u9S4jBYDwDW/VlUQZIhA9E77fjqLo1yGexoeRsBSFhxfrtPL350k=
+	t=1752661937; cv=none; b=pNVlqrhtOWdTXtpqqDAuzcOzMm6lowqG0Og3oyXIyUbWjgME7l9I6cFu67TA7+UzO/cM2f9xQh7Pv9vUWjaSawB3ChCjaEHU5t6hgu2kOHV+69W9Dyy3a1/PwOanVN04WE4FKcFkDFl0/CBPMG4IBLmYF5+WnQaD3zgtejqA2Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661930; c=relaxed/simple;
-	bh=4MZ1bakhn2IrJDIzOvrnSvSgvN0+Mb+1IfcHUPCpa+Y=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=qlko8f76C4JcWbgPTMAb/hSoSX8R6BDM2kXmFizKhJqrr+DuhlqzQbfY3o64TGZIuynXboMfDtC5/vm3Muxzf5M4h6Sy9eEjlJ9wIR1HEOh6WVOsow/hm3wk3hzzrOMjoltNC8K9pn2oHjDvs00viTtreVW04rcmBQdsDMDaSos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvyQTHES; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D3AC4CEF0;
-	Wed, 16 Jul 2025 10:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752661929;
-	bh=4MZ1bakhn2IrJDIzOvrnSvSgvN0+Mb+1IfcHUPCpa+Y=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=bvyQTHESXLlAvBKivoq3pKLQrlaqma74imBvhg2c7VhpXXYKCTvuCpjn3U7ul+S4e
-	 dRtU2UQjMYlZIMH/ACKSn4+RDTa1gwitf0B+s/snWu0c7PrsG9Fn3sqUmxx3hDdgkL
-	 cKKgFsWEXs64aME/J2OPZNOygILHVpNuAuIIP3tS1RsmtMQOPopjO3uL8qdtqq9Jr4
-	 rxSCjetOzvZ4QQOJnl17nfHburlktXBzc05hje4nqrV1RaWe8EJ08FbREe32fh+fkL
-	 HndYM7E2MRWD1y+I/Zelma+KOp9ipCJjazfoXV8Am8g+XUCYxeww3tbbS+ofrSVtvi
-	 CAzBKjJ3hTskg==
+	s=arc-20240116; t=1752661937; c=relaxed/simple;
+	bh=Imqn83baOky6c8t+GEo3fMlMKkLIRiNV6oosALBDxag=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GGv8fmEDB6GIt+J33iP793PayQtSFt/9/8ohMrLRawchmGw8Zrf8a2z0f2EjIFknYeSXX+tbE3kurjrpjwKsxhTp1JIj56bq0uH6/FSnnhAZZQT7Fis2ULvPnn+NDqo1DSB4uZhWKcpz9f83iWe2PIp1QriuYiTP2OKM53+sxUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bhsj20g3Vz6L4xm;
+	Wed, 16 Jul 2025 18:28:38 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7673914044F;
+	Wed, 16 Jul 2025 18:32:10 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Jul
+ 2025 12:32:09 +0200
+Date: Wed, 16 Jul 2025 11:32:08 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <dan.j.williams@intel.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, Alison
+ Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Peter
+ Zijlstra (Intel)" <peterz@infradead.org>
+Subject: Re: [PATCH v3 7/8] cxl/region: Consolidate
+ cxl_decoder_kill_region() and cxl_region_detach()
+Message-ID: <20250716113208.00001c7d@huawei.com>
+In-Reply-To: <6876856d329fb_2ead10062@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250711234932.671292-1-dan.j.williams@intel.com>
+	<20250711234932.671292-8-dan.j.williams@intel.com>
+	<20250715165607.000036c4@huawei.com>
+	<6876856d329fb_2ead10062@dwillia2-xfh.jf.intel.com.notmuch>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Jul 2025 12:32:04 +0200
-Message-Id: <DBDESSQOH6MB.2I4GNLPBP5ORJ@kernel.org>
-Cc: "Mitchell Levy" <levymitchell0@gmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Andrew Morton" <akpm@linux-foundation.org>, "Dennis Zhou"
- <dennis@kernel.org>, "Tejun Heo" <tj@kernel.org>, "Christoph Lameter"
- <cl@linux.com>, "Danilo Krummrich" <dakr@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-mm@kvack.org>
-Subject: Re: [PATCH v2 3/5] rust: percpu: add a rust per-CPU variable test
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250712-rust-percpu-v2-0-826f2567521b@gmail.com>
- <20250712-rust-percpu-v2-3-826f2567521b@gmail.com>
- <DBATM1CUS704.28MKE6BIBQB7G@kernel.org>
- <68762e19.170a0220.33e203.a0b7@mx.google.com>
- <DBCLFG5F4MPW.2LF4T3KWOE12R@kernel.org> <aHZhcNCayTOQhvYh@Mac.home>
- <DBCR1OCNYAUW.1VLAY1HWCHLGI@kernel.org> <aHaCUFNUd_mErL7S@Mac.home>
- <DBCTCZ5HUZOF.2DJX63Q0VWWFN@kernel.org> <aHbJUfcsjHA92OlE@tardis-2.local>
-In-Reply-To: <aHbJUfcsjHA92OlE@tardis-2.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue Jul 15, 2025 at 11:34 PM CEST, Boqun Feng wrote:
-> On Tue, Jul 15, 2025 at 07:44:01PM +0200, Benno Lossin wrote:
-> [...]
->> >> >
->> >> > First of all, `thread_local!` has to be implemented by some sys-spe=
-cific
->> >> > unsafe mechanism, right? For example on unix, I think it's using
->> >> > pthread_key_t:
->> >> >
->> >> > 	https://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_=
-key_create.html
->> >> >
->> >> > what we are implementing (or wrapping) is the very basic unsafe
->> >> > mechanism for percpu here. Surely we can explore the design for a s=
-afe
->> >> > API, but the unsafe mechanism is probably necessary to look into at
->> >> > first.
->> >>=20
->> >> But this is intended to be used by drivers, right? If so, then we sho=
-uld
->> >
->> > Not necessarily only for drivers, we can also use it for implementing
->> > other safe abstraction (e.g. hazard pointers, percpu counters etc)
->>=20
->> That's fair, but then it should be `pub(crate)`.
->>=20
->
-> Fine by me, but please see below.
->
->> >> do our usual due diligence and work out a safe abstraction. Only fall
->> >> back to unsafe if it isn't possible.
->> >>=20
->> >
->> > All I'm saying is instead of figuring out a safe abstraction at first,
->> > we should probably focus on identifying how to implement it and which
->> > part is really unsafe and the safety requirement for that.
->>=20
->> Yeah. But then we should do that before merging :)
->>=20
->
-> Well, who's talknig about merging? ;-) I thought we just began reviewing
-> here ;-)
+On Tue, 15 Jul 2025 09:44:29 -0700
+dan.j.williams@intel.com wrote:
 
-I understand [PATCH] emails as "I want to merge this" and [RFC PATCH] as
-"I want to talk about merging this". It might be that I haven't seen the
-RFC patch series, because I often mute those.
+> Jonathan Cameron wrote:
+> > On Fri, 11 Jul 2025 16:49:31 -0700
+> > Dan Williams <dan.j.williams@intel.com> wrote:
+> >   
+> > > Both detach_target() and cxld_unregister() want to tear down a cxl_region
+> > > when an endpoint decoder is either detached or destroyed.
+> > > 
+> > > When a region is to be destroyed cxl_region_detach() releases
+> > > cxl_region_rwsem unbinds the cxl_region driver and re-acquires the rwsem.
+> > > 
+> > > This "reverse" locking pattern is difficult to reason about, not amenable
+> > > to scope-based cleanup, and the minor differences in the calling context of
+> > > detach_target() and cxld_unregister() currently results in the
+> > > cxl_decoder_kill_region() wrapper.
+> > > 
+> > > Introduce cxl_decoder_detach() to wrap a core __cxl_decoder_detach() that
+> > > serves both cases. I.e. either detaching a known position in a region
+> > > (interruptible), or detaching an endpoint decoder if it is found to be a
+> > > member of a region (uninterruptible).
+> > > 
+> > > Cc: Davidlohr Bueso <dave@stgolabs.net>
+> > > Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> > > Cc: Dave Jiang <dave.jiang@intel.com>
+> > > Cc: Alison Schofield <alison.schofield@intel.com>
+> > > Cc: Vishal Verma <vishal.l.verma@intel.com>
+> > > Cc: Ira Weiny <ira.weiny@intel.com>
+> > > Acked-by: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+> > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>  
+> > One query inline about what I think is a change in when a reference count is
+> > held on the region device.  I'm struggling to reason about whether that change
+> > would have always been safe or if there is another change here that makes
+> > it fine now?
+> > 
+> > (or whether I'm just misreading the change).
+> > 
+> > Jonathan  
+> [..]
+> >   
+> > > diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> > > index eb46c6764d20..087a20a9ee1c 100644
+> > > --- a/drivers/cxl/core/port.c
+> > > +++ b/drivers/cxl/core/port.c
+> > > @@ -2001,12 +2001,9 @@ EXPORT_SYMBOL_NS_GPL(cxl_decoder_add, "CXL");
+> > >  
+> > >  static void cxld_unregister(void *dev)
+> > >  {
+> > > -	struct cxl_endpoint_decoder *cxled;
+> > > -
+> > > -	if (is_endpoint_decoder(dev)) {
+> > > -		cxled = to_cxl_endpoint_decoder(dev);
+> > > -		cxl_decoder_kill_region(cxled);
+> > > -	}
+> > > +	if (is_endpoint_decoder(dev))
+> > > +		cxl_decoder_detach(NULL, to_cxl_endpoint_decoder(dev), -1,
+> > > +				   DETACH_INVALIDATE);
+> > >  
+> > >  	device_unregister(dev);
+> > >  }
+> > > diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> > > index 2a97fa9a394f..4314aaed8ad8 100644
+> > > --- a/drivers/cxl/core/region.c
+> > > +++ b/drivers/cxl/core/region.c
+> > > @@ -2135,27 +2135,43 @@ static int cxl_region_attach(struct cxl_region *cxlr,
+> > >  	return 0;
+> > >  }
+> > >  
+> > > -static int cxl_region_detach(struct cxl_endpoint_decoder *cxled)
+> > > +static struct cxl_region *
+> > > +__cxl_decoder_detach(struct cxl_region *cxlr,
+> > > +		     struct cxl_endpoint_decoder *cxled, int pos,
+> > > +		     enum cxl_detach_mode mode)
+> > >  {
+> > > -	struct cxl_port *iter, *ep_port = cxled_to_port(cxled);
+> > > -	struct cxl_region *cxlr = cxled->cxld.region;
+> > >  	struct cxl_region_params *p;
+> > > -	int rc = 0;
+> > >  
+> > >  	lockdep_assert_held_write(&cxl_region_rwsem);
+> > >  
+> > > -	if (!cxlr)
+> > > -		return 0;
+> > > +	if (!cxled) {
+> > > +		p = &cxlr->params;
+> > >  
+> > > -	p = &cxlr->params;
+> > > -	get_device(&cxlr->dev);  
+> > 
+> > This is a fairly nasty patch to unwind and fully understand but
+> > I'm nervous that in the existing we have a get_device(&cxlr->dev)
+> > before potential cxl_region_decode_reset(cxlr, ...)
+> > and now we don't.  I'm not sure if that is a real problem though,
+> > it just makes me nervous.  
+> 
+> The reference count is not for cxl_region_decode_reset(). The reference
+> count is to keep the region from being freed when the lock is dropped so
+> that device_release_driver() can see if it has work to do.
+> 
+> The lookup result from endpoint decoder to region is only stable while
+> the lock is held and the region could be freed at any point after that.
+> The pin holds that off until we are done with the potential follow-on
+> work from detaching a decoder.
+> 
+> The reference is not taken in other paths like region sysfs because
+> userspace activity in sysfs attributes holds off attribute
+> unregistration.
+Fair enough and thanks for the explanation.
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
->> >> I'm not familiar with percpu, but from the name I assumed that it's
->> >> "just a variable for each cpu" so similar to `thread_local!`, but it'=
-s
->> >> bound to the specific cpu instead of the thread.
->> >>=20
->> >> That in my mind should be rather easy to support in Rust at least wit=
-h
->> >> the thread_local-style API. You just need to ensure that no reference
->> >> can escape the cpu, so we can make it `!Send` & `!Sync` + rely on kli=
-nt
->> >
->> > Not really, in kernel, we have plenty of use cases that we read the
->> > other CPU's percpu variables. For example, each CPU keeps it's own
->> > counter and we sum them other in another CPU.
->>=20
->> But then you need some sort of synchronization?
->>=20
->
-> Right, but the synchronization can exist either in the percpu operations
-> themselves or outside the percpu operations. Some cases, the data types
-> are small enough to fit in atomic data types, and operations are just
-> load/store/cmpxchg etc, then operations on the current cpu and remote
-> read will be naturally synchronized. Sometimes extra synchronization is
-> needed.
+> 
 
-Sure, so we probably want direct atomics support. What about "extra
-synchronization"? Is that using locks or RCU or what else?
-
-> Keyword find all these cases are `per_cpu_ptr()`:
->
-> 	https://elixir.bootlin.com/linux/v6.15.6/A/ident/per_cpu_ptr
-
-Could you explain to me how to find them? I can either click on one of
-the files with horrible C preprocessor macros or the auto-completion in
-the search bar. But that one only shows 3 suggestions `_hyp_sym`,
-`_nvhe_sym` and `_to_phys` which doesn't really mean much to me.
-
----
-Cheers,
-Benno
 
