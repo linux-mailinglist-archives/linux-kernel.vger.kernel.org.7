@@ -1,176 +1,189 @@
-Return-Path: <linux-kernel+bounces-732916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A347B06DA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:09:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471F3B06DC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B083B12C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 590903B9D54
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE5A2E8DF0;
-	Wed, 16 Jul 2025 06:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B88B264A6E;
+	Wed, 16 Jul 2025 06:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZE0otUxH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WnzNeD8H"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D7228643D;
-	Wed, 16 Jul 2025 06:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49972126F0A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752646147; cv=none; b=fIIow6bhx19THDQW3o6RRaofHMdIFFZKMwqbItfAw2ax+yo4dCMU0G2rKPnWfgfjc44Ecy53sfJecNkbTzHeeCO9Wlb2NE3fOD0qUVaoZHqmbZY9x2IYgQFyACypDkMcKYrXVAYF6tSzBZ0D8VddXjRNDtU7Dg1qS9RhW3JcTJs=
+	t=1752646670; cv=none; b=Tq8+tWI2/DryqoKGMiipXTTON7DqM0RnIeBHWCjyS3HuyEIRHI8xoFxiNsBiKd7QEH3wc1B801M2O7V3VpA1hb5VxG4S+c4nxsQmtJBkJfApAQe2S+0LfOhiUMfx659S8f+tRRZuS9EMRCF0DwDWf9Rn2j6NJ7fe2yc5XftTt7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752646147; c=relaxed/simple;
-	bh=WXik5hm0YBezPzduWKdaaPdlhUv2rICd8xQLuIP16Ok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mu4X3SWSm/qwcyOkItO1kwb1pmh3uVLSsXjgOK++IATeHa49T8VEcvYL2k/Zg33NOX/REFLTFXJhHg/35ey35uOHHxt2VfSbcB2GjrabPQuK7yUrpZA5H/gpK3mQlCfEMf45KX/+o3Xdms0bVmVZDxMR+35fiTmDtFRmE8tkza4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZE0otUxH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G5oUUi014550;
-	Wed, 16 Jul 2025 06:09:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sGWMYfKYXHBTO6nQiM4Oenkg/Zl+chXD+X/m7Iz33oU=; b=ZE0otUxHuyk55pOC
-	qfm+q/UCrVVHk9MRFH97RHnm8fRFnLBV99jgr+7luG47Hw1z2YKaRXCXrOTh1b65
-	iHWaMEZsAalsrKCDnKagEciGyydsY/NfQcBec8C+FF3WoBEbtw+I+vcuWV6AGUrl
-	d9WDhzTVo1PmyH+8ZE6UsLwI9gXBG6yaDx9Xz9W6D8X4NPAV1BixR7ol5B7bzmAa
-	SAeZ3DuvYYFO1iYnsYVqx6KTXRajDO/0xSJsfH0bzZbU2VTreXmEFtoVg4LIiT/9
-	n0Oy2oSHh4Tm/t+LHATvXsDPowQ3aBUMcRqHWLt2CXJvWBuAvegnvsoJLXXUUWc7
-	VDgyBw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dynkv5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 06:08:59 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56G68xTh031062
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 06:08:59 GMT
-Received: from [10.50.25.16] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 15 Jul
- 2025 23:08:56 -0700
-Message-ID: <b755aa4f-0083-29f8-f846-fa9523c660b1@quicinc.com>
-Date: Wed, 16 Jul 2025 11:38:52 +0530
+	s=arc-20240116; t=1752646670; c=relaxed/simple;
+	bh=wkOZJPyJqrbsm0LYBqzhTXhmaX0v8cwgBhlqzwwUj+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MnP+x5+RbDW7ZMZol1N7HXoAT5IYex2pv4oF5VbRVngBB7ioi+rbTEvEuipk+BlWkdb8H8pYnczoa/UcPdJyJvBfqxa8NBOq7CqE98HD7DVd03dsMEbk4IGVcn3ry+u7zHW+DIYNJepdTpNXebOOJddubeD78zB2jMSrkzS89/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WnzNeD8H; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752646669; x=1784182669;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wkOZJPyJqrbsm0LYBqzhTXhmaX0v8cwgBhlqzwwUj+c=;
+  b=WnzNeD8HDuYrsQW8S2/nvjN0QGJaEBNjKgL7PR1lKEKlq/dPVbhRL8H3
+   urYjCUjTMqdNBksAvQ1qZuC99rnugAENHyA/9mvK3CndHGLAC8vcXGo2M
+   4aSrmCJA+EhdrWSLi7dfjsv6ftTyAQcEQP6SQn+7ZUN3cEA88puy7sJxc
+   jLUkcIebQqd0MaZ9AJRZm6vugOb9F4+7ETXjhO2BBGpNCol6CKI/D1HRd
+   Sx3IZJTrXMIsfjxqxCK5Ua0ZMiIh7gClcAyODtxRGo36aKuEzW27jNjiW
+   2ro/b/HiAJcQBCPFNx1b4ncprnfP53/QS9Z0YNEd99LQq19CTvd/xySNl
+   Q==;
+X-CSE-ConnectionGUID: kz02jhASQPyi6wbKx0QTng==
+X-CSE-MsgGUID: qdQ7G6GoTZiyZmRpJIfY9w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54753485"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="54753485"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 23:17:48 -0700
+X-CSE-ConnectionGUID: C3yVr/VMTj+ACgs7tEJc6Q==
+X-CSE-MsgGUID: kTHRzzaCQTCPQcpw/x1fLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="161436760"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa003.fm.intel.com with ESMTP; 15 Jul 2025 23:17:45 -0700
+Date: Wed, 16 Jul 2025 14:09:07 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
+	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
+	shuah@kernel.org, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v5 5/8] iommufd/vdevice: Remove struct device reference
+ from struct vdevice
+Message-ID: <aHdCAznEunT1Kcej@yilunxu-OptiPlex-7050>
+References: <20250715063245.1799534-1-yilun.xu@linux.intel.com>
+ <20250715063245.1799534-6-yilun.xu@linux.intel.com>
+ <aHakX0SzQ9/EX3AT@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 04/25] media: iris: Fix buffer timestamp handling
-Content-Language: en-US
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Vedang
- Nagar" <quic_vnagar@quicinc.com>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
- <20250704-iris-video-encoder-v1-4-b6ce24e273cf@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20250704-iris-video-encoder-v1-4-b6ce24e273cf@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Dt-EGGMuhEJZ9ZSGwpHQCKT-RfsgFqeN
-X-Authority-Analysis: v=2.4 cv=RtXFLDmK c=1 sm=1 tr=0 ts=687741fb cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=sEUFuLeS8ZX_1iLzen0A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA1MiBTYWx0ZWRfX2vsSadzaq8fc
- bRHRcytcAtQ9GDMN/ugW/x/NoKnbcoKc7elaOcUTG6v3HAjvofgJBEBzV3rdo3h/q7vTU3A34p0
- cwQgPSGwFCxIYsc9n5ztlrS3CTcKJJZZXo0OQyCvIphlR9t7m6DeInd6BDXdciwYGE8VzqjStHJ
- 78BaVAdoXczkvivv+WrOQZJ6gPq5XOtoXrkr/Bqjh/wSUwqzny0qnKyff/SHOlUmeb30REPQbAf
- 9xJ2RJ4vafTpsH1Rt3jib5OndchdfnAaktJPWq5EVQElAMwGjFmcXeHENzo28Dq2Zg8E2/5Uuze
- YOVYY66YrU64pq7eVrp7Zk7h3eO2TY+XEvhVPyFHA6s9nqzksmGC4tQ4pxGMjetAnrAfiiJG9fw
- xl+uKULRgh5uojL2pHoPmBjEKpnLaYRNL0CVc3eJAxouMXX3gdHprqwyPtrYUeGQJcoyLywT
-X-Proofpoint-GUID: Dt-EGGMuhEJZ9ZSGwpHQCKT-RfsgFqeN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999
- priorityscore=1501 phishscore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507160052
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHakX0SzQ9/EX3AT@Asurada-Nvidia>
 
-
-On 7/4/2025 1:23 PM, Dikshita Agarwal wrote:
-> The internal driver logic operates with timestamps in microseconds
-> while the buffer timestamp received by vb2 is in nanosecond, this
-> mismatch in units causing issue in buffer handling.
-> Update the timestamp handling logic by converting the buffer timestamp
-> to microseconds before using it internally in driver for all the
-> timestamp assignments, comparisons, and metadata handling.
+On Tue, Jul 15, 2025 at 11:56:31AM -0700, Nicolin Chen wrote:
+> On Tue, Jul 15, 2025 at 02:32:42PM +0800, Xu Yilun wrote:
+> > diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> > index eb90af5093d8..8a515987b948 100644
+> > --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> > +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> > @@ -1218,7 +1218,7 @@ static void tegra241_vintf_destroy_vsid(struct iommufd_vdevice *vdev)
+> >  
+> >  static int tegra241_vintf_init_vsid(struct iommufd_vdevice *vdev)
+> >  {
+> > -	struct arm_smmu_master *master = dev_iommu_priv_get(vdev->dev);
+> > +	struct arm_smmu_master *master = dev_iommu_priv_get(vdev->idev->dev);
 > 
-> Fixes: 17f2a485ca67 ("media: iris: implement vb2 ops for buf_queue and firmware response")
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->  drivers/media/platform/qcom/iris/iris_buffer.c | 6 +++---
->  drivers/media/platform/qcom/iris/iris_vdec.c   | 1 +
->  2 files changed, 4 insertions(+), 3 deletions(-)
+> Hmm, this breaks :(
 > 
-> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
-> index 9f664c241149362d44d3a8fa65e2266f9c2e80e0..809ce77744f996c23dc07ef9ecb3e8e92b709850 100644
-> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
-> @@ -579,14 +579,14 @@ iris_helper_find_buf(struct iris_inst *inst, u32 type, u32 idx)
->  		return v4l2_m2m_dst_buf_remove_by_idx(m2m_ctx, idx);
+> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c: In function 'tegra241_vintf_init_vsid':
+> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:1230:71: error: invalid use of undefined type 'struct iommufd_device'
+>  1230 |         struct arm_smmu_master *master = dev_iommu_priv_get(vdev->idev->dev);
+> 
+> Unfortunately the iommufd_device structure is defined in the
+> private header that's not shared with any IOMMU driver.
+> 
+> So, we need in the driver.c a new helper that converts a vdev
+> pointer to dev. Something like:
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> index ff6bbd2137146..fd6b083535271 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> @@ -1227,7 +1227,8 @@ static void tegra241_vintf_destroy_vsid(struct iommufd_vdevice *vdev)
+>  
+>  static int tegra241_vintf_init_vsid(struct iommufd_vdevice *vdev)
+>  {
+> -	struct arm_smmu_master *master = dev_iommu_priv_get(vdev->idev->dev);
+> +	struct device *dev = iommufd_vdevice_to_device(vdev);
+> +	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+>  	struct tegra241_vintf *vintf = viommu_to_vintf(vdev->viommu);
+>  	struct tegra241_vintf_sid *vsid = vdev_to_vsid(vdev);
+>  	struct arm_smmu_stream *stream = &master->streams[0];
+> diff --git a/drivers/iommu/iommufd/driver.c b/drivers/iommu/iommufd/driver.c
+> index df25db6d2eafc..6f1010da221c9 100644
+> --- a/drivers/iommu/iommufd/driver.c
+> +++ b/drivers/iommu/iommufd/driver.c
+> @@ -83,6 +83,12 @@ void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
+>  }
+>  EXPORT_SYMBOL_NS_GPL(_iommufd_destroy_mmap, "IOMMUFD");
+>  
+> +struct device *iommufd_vdevice_to_device(struct iommufd_vdevice *vdev)
+> +{
+> +	return vdev->idev->dev;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iommufd_vdevice_to_device, "IOMMUFD");
+> +
+>  /* Caller should xa_lock(&viommu->vdevs) to protect the return value */
+>  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+>  				       unsigned long vdev_id)
+> @@ -92,7 +98,7 @@ struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+>  	lockdep_assert_held(&viommu->vdevs.xa_lock);
+>  
+>  	vdev = xa_load(&viommu->vdevs, vdev_id);
+> -	return vdev ? vdev->idev->dev : NULL;
+> +	return vdev ? iommufd_vdevice_to_device(vdev) : NULL;
+>  }
+>  EXPORT_SYMBOL_NS_GPL(iommufd_viommu_find_dev, "IOMMUFD");
+>  
+> @@ -109,7 +115,7 @@ int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
+>  
+>  	xa_lock(&viommu->vdevs);
+>  	xa_for_each(&viommu->vdevs, index, vdev) {
+> -		if (vdev->idev->dev == dev) {
+> +		if (iommufd_vdevice_to_device(vdev) == dev) {
+>  			*vdev_id = vdev->virt_id;
+>  			rc = 0;
+>  			break;
+> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
+> index 61410a78cbce7..ee88e90021870 100644
+> --- a/include/linux/iommufd.h
+> +++ b/include/linux/iommufd.h
+> @@ -266,6 +266,7 @@ int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct iommufd_object *owner,
+>  			unsigned long *offset);
+>  void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
+>  			   struct iommufd_object *owner, unsigned long offset);
+> +struct device *iommufd_vdevice_to_device(struct iommufd_vdevice *vdev);
+>  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+>  				       unsigned long vdev_id);
+>  int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
+> @@ -300,6 +301,12 @@ static inline void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
+>  {
 >  }
 >  
-> -static void iris_get_ts_metadata(struct iris_inst *inst, u64 timestamp_ns,
-> +static void iris_get_ts_metadata(struct iris_inst *inst, u64 timestamp_us,
->  				 struct vb2_v4l2_buffer *vbuf)
->  {
->  	u32 mask = V4L2_BUF_FLAG_TIMECODE | V4L2_BUF_FLAG_TSTAMP_SRC_MASK;
->  	u32 i;
->  
->  	for (i = 0; i < ARRAY_SIZE(inst->tss); ++i) {
-> -		if (inst->tss[i].ts_ns != timestamp_ns)
-> +		if (inst->tss[i].ts_us != timestamp_us)
->  			continue;
->  
->  		vbuf->flags &= ~mask;
-> @@ -653,7 +653,7 @@ int iris_vb2_buffer_done(struct iris_inst *inst, struct iris_buffer *buf)
->  	}
->  
->  	state = VB2_BUF_STATE_DONE;
-> -	vb2->timestamp = buf->timestamp;
-> +	vb2->timestamp = buf->timestamp * NSEC_PER_USEC;
->  	v4l2_m2m_buf_done(vbuf, state);
->  
->  	return 0;
-> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
-> index d670b51c5839d1fad54d34f373cf71d5f3973a96..05340e201e6538b9599387cdd57814005b904e76 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
-> @@ -561,6 +561,7 @@ iris_vdec_vb2_buffer_to_driver(struct vb2_buffer *vb2, struct iris_buffer *buf)
->  	buf->data_size = vb2->planes[0].bytesused - vb2->planes[0].data_offset;
->  	buf->flags = vbuf->flags;
->  	buf->timestamp = vb2->timestamp;
-> +	do_div(buf->timestamp, NSEC_PER_USEC);
->  	buf->attr = 0;
->  
->  	return 0;
-> 
+> +static inline struct device *
+> +iommufd_vdevice_to_device(struct iommufd_vdevice *vdev)
+> +{
+> +	return ERR_PTR(-ENODEV);
 
-Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+I prefer return NULL, which is consistent with iommufd_viommu_find_dev().
+
+Others good to me, and thanks for your fixing.
+
+> +}
+> +
+>  static inline struct device *
+>  iommufd_viommu_find_dev(struct iommufd_viommu *viommu, unsigned long vdev_id)
+>  {
+> 
 
