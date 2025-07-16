@@ -1,139 +1,155 @@
-Return-Path: <linux-kernel+bounces-732874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4032AB06D1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:20:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A957B06D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2593B5612
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:19:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CEAB1AA74E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0702727EB;
-	Wed, 16 Jul 2025 05:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF817264FBB;
+	Wed, 16 Jul 2025 05:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="ZQwB5Pdq"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xQ7J8GsO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NpQOPaeh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA47E1C9DE5
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBEF86348;
+	Wed, 16 Jul 2025 05:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752643219; cv=none; b=iFfbXzQEethoh68Asigww0w9Sn7aVjCczCPHayzV2XXpbZxrIt1Q5zGSbPxSBIdpwCtyDT6ShxGIb8ddAHFe9+sL0I4Bl5cqKn/WZANdp1HVTiAXUtLg+83KstfT7CwHK9mEdXdoF9mG6d/jDbIasgBkWk/YhCpg9vOisEO8xSA=
+	t=1752643326; cv=none; b=QTo7ccBy3SSmLX4ojsBz2jn66VaDiMQNnDcba/ZyJpMTEWtelPbn2SV11RNXllrjHsVkxjMwYQrKCgJOkCMKutA55vCV3Sbu07od6EzXddUdJiJWVOPcY7TQDDNxhm4zn+tNZ2gVWs23Hcj7CZbrWWDSnggg0Mbmsr9hRZ1ac48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752643219; c=relaxed/simple;
-	bh=/ktSjyUZX0dfbAs7P4VFPYdLWMzAPv8W3aDVhnylNsQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RD3ddi7CF+LsPFilORNxMOdI6p8z1dd5OBmofFR4dStrv/Qr86zYUkE0jeIxJxZzFSR6y/6RHxM5DJGeoCh32nV6zQovjUKYYYVQg5YWtFFPdxSp94tAgIqHRO2vgXDVogglwAnhLyKJsVPTlKQQDUiyJPnsMA/1OYAVBToEoRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=ZQwB5Pdq; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3df2d111fefso53386005ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1752643217; x=1753248017; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7pr0CgkuBDoCBojEhq3SOwjdkjudDtqxy7ZuiK0Se4o=;
-        b=ZQwB5Pdq4vJHgFysY0APTd6kt8YEFn2dLjZfKMCPeKy+wAJx/6s+ka87efhvbXn02D
-         0Pp1BlNjf2dgR9i892l7XI20jExfW0bqj+wMqkJwsLZF1Ku9h2wTNEbi2TfA4PGc1ulh
-         nFED4houCN2fi5B90m0wnt+q8ufPMWOC2hWZ+Px8MKdG7qh+StYJYcb8AaScVTo6hly1
-         JZRSlirkouBPh6fwY9O5xX859cO/4DkVTTmcxwzDgMuXpS4WR4szvN1833symUG9OSdm
-         kIpVAzuq3lRjz8oQezaOmVnJg2sb+/QJFL4DHyaURlJsjQbWestJeXEAghbgvWnbyAag
-         IIFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752643217; x=1753248017;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7pr0CgkuBDoCBojEhq3SOwjdkjudDtqxy7ZuiK0Se4o=;
-        b=vZZvE9wEteCKzpj1/DOoMiVyYdxM6Twf4NL4N/YG70obayXcgmCu8JlUwyBhChhetQ
-         piek1rtzAylwaX+2vMlwMDrO4fo+IWTcptBXAZsl5s9EMCSk0jty42ZMbpT3o6Hp8KCS
-         lcS49/98r/2JEz0p/C/vGxf3fN2bsWzlq5V/qhettldNqHE4vAbDQLGhyXIGlUT0O1NQ
-         v20E99k/NA0qPks720IfoMqXHdwMmsU7aL6iVvYnhKRh3k8v9DOIB08va2lVndLYrIMV
-         bSebXu+F/uRzD68/UeOO0lM1d0FHUjfRRxycgA/tKMdMd3JrjzhlJuhCN06xkZh1B291
-         E4/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWfdXjjRf/vnE8WhpTkcQRN1E9ZIYaTvkOWMUGG649G6U+AJPmtQ9t3svt+LcOiOOU2ImhnASdCVGJlNW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5FLLipFfdirKrRQBUS5SvuoiKbvbvz8quxhQ36/D0iFQKcico
-	MrUt0GO6NcCFgNCDwqvAxF/ibI63LNJlb6E6cjyZqbzb7yB2wdpRz5DXDyhVMqeCR8Fvpj6E81F
-	O5bqQ9plg94Blt2dqnjwjrKT/gm9dXRqm/501MeXVBA==
-X-Gm-Gg: ASbGnctGcsN+vJ5zUHZByHZksBLK0w5s7P8SwFkY78KnSBUolrzJyLH1ZH765hAdsWo
-	GjGxc/pUJIzP4kORuw0mEpKWHM/vTmXAuaCJgB7L5f9paTt4Q/rtFDm+kL+hJ/tFVM7O/LiFJ82
-	agu4euqOxlzGVPcT5bMCttuk9EvtR/8Nzw5ebCr6vixO+G4ydXMbgsSSwxjkHUTJgGXR05f4okC
-	ZEOXQ8+6rikNYU1
-X-Google-Smtp-Source: AGHT+IG8QMvIrF4Nh6TtjPYY/OImrdrVsXWR40Aodp+LssWG0nbwGxcm5vyJpoaN8ajvyQHU4KVCDRQEYdjX4PMmHto=
-X-Received: by 2002:a05:6e02:1c07:b0:3df:29c5:2972 with SMTP id
- e9e14a558f8ab-3e282da9cd2mr14405455ab.9.1752643216752; Tue, 15 Jul 2025
- 22:20:16 -0700 (PDT)
+	s=arc-20240116; t=1752643326; c=relaxed/simple;
+	bh=80fX+2gJUg3sVb3cwSeiDFCJSI0vRWZBzqVV+Z9QDGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ii1ONze1FyZ2wPUrgRwKo08qvtmvvDI9OkO9fRNkpUHVpiGF55zOJ5xjnIt9sxWXojAExjvcaW1z2E/fbYTCRiky+/5bqV1npmUjjwupysSCYgJbZQ4ei+fyuFg8if9WjN9SharF2yGv1w2PIRo0nAG6iidgL73rxU7mBIfjvCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xQ7J8GsO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NpQOPaeh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Jul 2025 07:22:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752643322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fy7sKnvvB0KBmla1/2OFjJaDVvyUk0O3ZtxVvNDnqCk=;
+	b=xQ7J8GsOMmCoSH5LSDGug2T6VMkcvNPbkUChYYv7kE9W9F+n9ft1unWcjK8sTZHXNkDpSp
+	lB//syvofrW636Wf2NzRa3ZquNyad3nCf+V34HdyQikk6bjDSBkKuCSDH/mo9DG2yoewYz
+	MTXFpy5+hfq8DIB3CNSrPKv7CbDhAR9n0BZ+mEKOWoKUhb11TtcVerbLuo1IFERpNpVTEH
+	LIqKXr7mwesLh4ETvvqkBpaOy37c5udy4y890D00C+YT2rNp+gYvAnfJHCW3u34oXNBGgy
+	QoY/cqYLaLGJim6t8Fj5m3aavJaWXJt5ddb+ayM6b+G1QPyk9mH1CjonbTst2w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752643322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fy7sKnvvB0KBmla1/2OFjJaDVvyUk0O3ZtxVvNDnqCk=;
+	b=NpQOPaehKpuyFMVDwJrAcPAvlyvRHQzbChaBR+mcYdgi2dEq3PHwCHwVN0zfE599tJdVym
+	iUrUzkXKLqnhQMDg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Matthew Wood <thepacketgeek@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH pci-next v2 1/1] PCI/sysfs: Expose PCIe device serial
+ number
+Message-ID: <20250716071618-b6d697c0-76e0-42f9-9937-7ba89e1792cc@linutronix.de>
+References: <20250716045323.456863-1-thepacketgeek@gmail.com>
+ <20250716045323.456863-2-thepacketgeek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714094554.89151-1-luxu.kernel@bytedance.com>
-In-Reply-To: <20250714094554.89151-1-luxu.kernel@bytedance.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 16 Jul 2025 10:50:05 +0530
-X-Gm-Features: Ac12FXys72h69btMJ897A7pa9H69kTczP7dldA--hcTTkswEbCjKDSzqpxxAxFs
-Message-ID: <CAAhSdy2XEyphi5K1xk29JXY991aie0LA5YF2zRbgA_8imSjXQQ@mail.gmail.com>
-Subject: Re: [PATCH v4] RISC-V: KVM: Delegate illegal instruction fault to VS mode
-To: Xu Lu <luxu.kernel@bytedance.com>
-Cc: rkrcmar@ventanamicro.com, cleger@rivosinc.com, atish.patra@linux.dev, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716045323.456863-2-thepacketgeek@gmail.com>
 
-On Mon, Jul 14, 2025 at 3:16=E2=80=AFPM Xu Lu <luxu.kernel@bytedance.com> w=
-rote:
->
-> Delegate illegal instruction fault to VS mode by default to avoid such
-> exceptions being trapped to HS and redirected back to VS.
->
-> The delegation of illegal instruction fault is particularly important
-> to guest applications that use vector instructions frequently. In such
-> cases, an illegal instruction fault will be raised when guest user thread
-> uses vector instruction the first time and then guest kernel will enable
-> user thread to execute following vector instructions.
->
-> The fw pmu event counter remains undeleted so that guest can still query
-> illegal instruction events via sbi call. Guest will only see zero count
-> on illegal instruction faults and know 'firmware' has delegated it.
->
-> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
-
-LGTM.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Queued this patch for Linux-6.17
-
-Thanks,
-Anup
-
+On Tue, Jul 15, 2025 at 09:53:22PM -0700, Matthew Wood wrote:
+> Add a single sysfs read-only interface for reading PCIe device serial
+> numbers from userspace in a programmatic way. This device attribute
+> uses the same hexadecimal 1-byte dashed formatting as lspci serial number
+> capability output. If a device doesn't support the serial number
+> capability, the device_serial_number sysfs attribute will not be visible.
+> 
+> Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
 > ---
->  arch/riscv/include/asm/kvm_host.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/k=
-vm_host.h
-> index 85cfebc32e4cf..3f6b9270f366a 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -44,6 +44,7 @@
->  #define KVM_REQ_STEAL_UPDATE           KVM_ARCH_REQ(6)
->
->  #define KVM_HEDELEG_DEFAULT            (BIT(EXC_INST_MISALIGNED) | \
-> +                                        BIT(EXC_INST_ILLEGAL)     | \
->                                          BIT(EXC_BREAKPOINT)      | \
->                                          BIT(EXC_SYSCALL)         | \
->                                          BIT(EXC_INST_PAGE_FAULT) | \
-> --
-> 2.20.1
->
+>  drivers/pci/pci-sysfs.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 268c69daa4d5..d59756bc91c9 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(current_link_width);
+>  
+> +static ssize_t device_serial_number_show(struct device *dev,
+> +				       struct device_attribute *attr, char *buf)
+> +{
+> +	struct pci_dev *pci_dev = to_pci_dev(dev);
+> +	u64 dsn;
+> +
+> +	dsn = pci_get_dsn(pci_dev);
+> +	if (!dsn)
+> +		return -EINVAL;
+
+-EIO
+
+> +
+> +	return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx\n",
+> +		dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >> 32) & 0xff,
+> +		(dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff, dsn & 0xff);
+> +}
+> +static DEVICE_ATTR_RO(device_serial_number);
+> +
+>  static ssize_t secondary_bus_number_show(struct device *dev,
+>  					 struct device_attribute *attr,
+>  					 char *buf)
+> @@ -660,6 +676,7 @@ static struct attribute *pcie_dev_attrs[] = {
+>  	&dev_attr_current_link_width.attr,
+>  	&dev_attr_max_link_width.attr,
+>  	&dev_attr_max_link_speed.attr,
+> +	&dev_attr_device_serial_number.attr,
+>  	NULL,
+>  };
+>  
+> @@ -1749,8 +1766,12 @@ static umode_t pcie_dev_attrs_are_visible(struct kobject *kobj,
+>  	struct device *dev = kobj_to_dev(kobj);
+>  	struct pci_dev *pdev = to_pci_dev(dev);
+>  
+> -	if (pci_is_pcie(pdev))
+> +	if (pci_is_pcie(pdev)) {
+> +		if (strncmp(a->name, "device_serial_number", 20) == 0 &&
+
+Compare to the real 'struct attribute *' instead of the name.
+You could restructure this a bit to be easier to read.
+
+if (!pci_is_pcie(pdev))
+	return 0;
+
+if (a == &dev_addr_device_serial_number.attr && !pci_get_dns(pdev))
+	return 0;
+
+return a->mode;
+
+> +			!pci_get_dsn(pdev))
+> +			return 0;
+>  		return a->mode;
+> +	}
+
+Also should have some docs in Documentation/ABI/testing/sysfs-bus-pci.
+
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.50.0
+> 
 
