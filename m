@@ -1,215 +1,100 @@
-Return-Path: <linux-kernel+bounces-734328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75646B08011
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:59:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C585B08013
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB2C3B71A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:58:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 646607A8F86
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39692EE283;
-	Wed, 16 Jul 2025 21:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021112EE27B;
+	Wed, 16 Jul 2025 21:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAUAZ6/f"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="xrauqQ7R"
+Received: from mail-106102.protonmail.ch (mail-106102.protonmail.ch [79.135.106.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE38D2C3756;
-	Wed, 16 Jul 2025 21:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CFF2EE261
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 21:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752703141; cv=none; b=WSCA+N58uY9kKBcuBna4Tj1pzZe2h71Xqkys7Qjevqy4kVPLYt3ydxUeiuJoybbjBx8fhrkg/yiIoGMZZolC6d32+c+cn8Q33QiLE8/bL1yaMIoyIwXh8L/L9IH/tD8olkUpOcKsHcXAgBBU0MIugR2aRpII1GaCrE+ek7VquMk=
+	t=1752703150; cv=none; b=PDFGkzaBlOGyvKJGSN7JytUzrsySdw3xEaVUe/TCpOeSVNevZnaaWFdYATvWRT7J0lvuAaGwU6RV6KhnrjvmkRj8sUqQ1nUTrhZe5bkoqzIGt4jAXGv40FK+UMkwj0wCWREYFUsI0eFL4AVn/NfTBHOas3ok62CuObAFsMjVvOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752703141; c=relaxed/simple;
-	bh=UkBJ9cHYRd6RJlLltFrluzjDP16UJwlZC6ZXRxpXOZc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SWQLfvH/owZewZcWLaiFZtdM7PtkJiYW4kOWOOLPM1wBTJBqBRHeIjO3y649/C7mxzxlEo3HR5Tn5SFnUn4iOn/uFnA3af5q1BqoKkbhn37scc3O3CNWLYJyaTqIDguSEnd923pmxQZKUf8bO/sFntCvxJN2VRI42lsFvM5Iop0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XAUAZ6/f; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3df210930f7so1777365ab.1;
-        Wed, 16 Jul 2025 14:58:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752703137; x=1753307937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bRyPRnH4RA0lEl0YXiJRnsaPybpKGPwgWOjr0WxsL+4=;
-        b=XAUAZ6/fblSDGgk4m1yFwyn2zD9aLmUSEUBQKIjpQpIElyJmSCBHs7nmQxKa+MlZMM
-         HSz66lgHh5rCurGJWFjaaCuZ0toYhk0eeaKR9E5rDbYViyJQ5CxHoGHzU5juKsxnQlrv
-         2IaSi5Km/1u2qTFwKn/4gHDOKiPqn7yq62mvqQ7tfWNQ5l6XxxT937cSdUicrrvRHT8A
-         udx49iEgg1klP5O+fHpbziDIAESIopt1p5e4ITZf5rkfXkzYiBEyvVeRhMYnUfLrIw8p
-         0uvPqA/8yuXH3k36uiJ1oCDJIsrmEcq9qWh6+qv74snK2lQzVm2IjtTfn43rB12YKQtz
-         AppA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752703137; x=1753307937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bRyPRnH4RA0lEl0YXiJRnsaPybpKGPwgWOjr0WxsL+4=;
-        b=HslZ+bvNdSzU+IUVa8qBFxCyazM/NZqZV3l1gbR7Tz3OMQcKjkeW7GvkgtHZUkZGMz
-         J/6fgQcoqOlM2fZxCeEVRBiSpPDMYxTGqx739KJhDm4xV2Ou9iOoPN4EBlbzizM9m53m
-         YA68MkcIaBIsLXhK9W6sbQkvApHaZ3eBs2DjWvnofDB0aq0onk4okm2kqCIEBIL5dD2G
-         W1KD5DqSfwL2ssCVN9wQ3ac9A2VOb8MeYrP2Ztw0p3CLSezZAkEsfr1lopz7de39whnd
-         NRgbsqO0KIP2s3X5vNmN95Z38p7UQ3ItTxe8qjmHiXnMGKwVVTdD9BTD+oryG8SlzJQV
-         YRkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbVWQaqxzrlSb8Ad2Wt8cb6dBwzFfAVbucTmPLKz1HjjCJQmgnWPBQsJf1Z9A3CKK/aIL6BygIdBZP+fk=@vger.kernel.org, AJvYcCX3sgqyAz7yoY6XuqXWgO8xkkuegQ0BLthifGKepxhPow/AH6ZVK6qZJNJGOO5y1TE9qK4O6mob@vger.kernel.org, AJvYcCXSMkNDQbEXDkPoTit6GyFC35oY4n/L0ij7h3xU7hJXLR75WeSPWe4QeGtaJSVlXeyrEQAOmjvPIIx25J8I@vger.kernel.org
-X-Gm-Message-State: AOJu0YztBTdJEaHQxPl/y/vmCIS9N+45050yovZN8Q4oMHEhxjxBZaqE
-	NvtDUmPIn6s6/NFS4VZtwqlkysRJJlrir20V1HRTGwIg0zB5PijSyVXp1PCTIHp2mi7grCeHmob
-	wTRfwf/sBlawISfuVTGFR6cPHQCXbFbDGIJxY
-X-Gm-Gg: ASbGnct7jh0N524gOhXmmMYW5DK0IzqwtVFEJRDA7qQrPlSRkMXjbWb8BLrmYMJLDmK
-	8cAtikEVA++ELk0N7pOYEbWs9FPlZPHRkjWQiPOtmnqbhPfNSMbIOhZhxOkvudK0LRts7K+cD2Y
-	81jUOKUyxzEyrb/BELY2QKrD9CepNE1aicYd6zDDRa1Xb5pXwXT45ZIHPM8lp9foMiwHOav6xWV
-	VikD6iD+YisVVwTvBd29M5DicLKLgkWbmziFzFXyQ==
-X-Google-Smtp-Source: AGHT+IE3a6WhwJDruIuFMeBsTOmTR/N3kTnhGSIPlruRWVnOf+Fd9QQFjbSI3bmdZbPZcMnwYlm9nS7oMyOIHKd4+3o=
-X-Received: by 2002:a92:c649:0:b0:3e1:3491:e873 with SMTP id
- e9e14a558f8ab-3e28ba05923mr13473965ab.10.1752703136658; Wed, 16 Jul 2025
- 14:58:56 -0700 (PDT)
+	s=arc-20240116; t=1752703150; c=relaxed/simple;
+	bh=Hl07FxAtdNbkRG17OKg4eb9lsA+Zl2El7hudon5km68=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SQUaicqTOX/X70i0ilpZ87CZLKtQL8zA227pjgRFNdVylB2+MV3Hh+yD8BbecGs1GG4YbQcYwfFZT6upczBIbtfiCmIV+4TlV3rBgO9dX+eLs4/U7HYnIaRnY7Sl1Ev09EPSyzXhZvGojsn0Jfy0rLZLNsMblbkYGXuYuk+XamI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=xrauqQ7R; arc=none smtp.client-ip=79.135.106.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1752703139; x=1752962339;
+	bh=Hl07FxAtdNbkRG17OKg4eb9lsA+Zl2El7hudon5km68=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=xrauqQ7RaxnmWmfIcMnpxplVdZsi4RDhTQKE43DF6cA5IX1FJaHuOpdzITH71vHUo
+	 dBfPgoYv2JsDR8ossLSmKCqohxeCOxmD9HB/TL0Zi7gondo9cDUvJSyS6Y/86tBYI/
+	 KPIy6vikv4PL2QQ8DMc7KRY4TaQdaUyOt9FmSXSViexgyT2jZJfIqeE/n9VivGH5hn
+	 qfpt4oKyO7OB4hDm30wsyZUAmGd35PxFC7i1JxDzCmD5pV+2nD1bkNv0YQBf2uJ1mu
+	 srf89hZ9mpvckETIDYYYQ5RVmiZq5LEkk66rVJZhqpqdHIA+Yst3V7Wuj0sKJMs/YM
+	 +XdXtH4Q0wmDQ==
+Date: Wed, 16 Jul 2025 21:58:51 +0000
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+From: cristian_ci <cristian_ci@protonmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] Add initial device tree for Billion Capture+
+Message-ID: <clyMtNobNGJ9iLau0esd8U36HYaH3YDSGV3omgjp4uN5OPQ9n5BXWCOcgzuKhAc6_HYyPhrwqEK2M_HDfFTZlTNzvU1Erz9DItHox4IpDV8=@protonmail.com>
+In-Reply-To: <cb863e23-79c9-444d-8511-033dd75c02e6@oss.qualcomm.com>
+References: <20250629-rimob-initial-devicetree-v4-0-7cf84fa142af@protonmail.com> <cb863e23-79c9-444d-8511-033dd75c02e6@oss.qualcomm.com>
+Feedback-ID: 27475468:user:proton
+X-Pm-Message-ID: 8e16e3cf7cd9949ede4bd0190b760dedb97ab5a2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716002607.4927-1-litian@redhat.com> <20250716092927.GO721198@horms.kernel.org>
- <CADvbK_cdOTO_UVg6ovx-Si7-ja=ErYw-MnSnR-CL4HwmtKJ8YQ@mail.gmail.com> <SN6PR2101MB0943EAAB55E0BF97E0841419CA56A@SN6PR2101MB0943.namprd21.prod.outlook.com>
-In-Reply-To: <SN6PR2101MB0943EAAB55E0BF97E0841419CA56A@SN6PR2101MB0943.namprd21.prod.outlook.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Wed, 16 Jul 2025 17:58:45 -0400
-X-Gm-Features: Ac12FXyPbx72VLC09xD0LTQCjT62SZmePXXnJFipm7Xmc3IgwrmJvHi6smqgTY0
-Message-ID: <CADvbK_cgPq8x5OR2RomZqL9+_ce8-e=-EG2pZw6TK4mE1ova3Q@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v3] hv_netvsc: Set VF priv_flags to
- IFF_NO_ADDRCONF before open to prevent IPv6 addrconf
-To: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Simon Horman <horms@kernel.org>, Li Tian <litian@redhat.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Stephen Hemminger <stephen@networkplumber.org>, Long Li <longli@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 12:15=E2=80=AFPM Haiyang Zhang <haiyangz@microsoft.=
-com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Xin Long <lucien.xin@gmail.com>
-> > Sent: Wednesday, July 16, 2025 11:14 AM
-> > To: Simon Horman <horms@kernel.org>
-> > Cc: Li Tian <litian@redhat.com>; netdev@vger.kernel.org; linux-
-> > hyperv@vger.kernel.org; linux-kernel@vger.kernel.org; Haiyang Zhang
-> > <haiyangz@microsoft.com>; Dexuan Cui <decui@microsoft.com>; Stephen
-> > Hemminger <stephen@networkplumber.org>; Long Li <longli@microsoft.com>
-> > Subject: [EXTERNAL] Re: [PATCH v3] hv_netvsc: Set VF priv_flags to
-> > IFF_NO_ADDRCONF before open to prevent IPv6 addrconf
-> >
-> > On Wed, Jul 16, 2025 at 5:29=E2=80=AFAM Simon Horman <horms@kernel.org>=
- wrote:
-> > >
-> > > + Xin Long
-> > >
-> > Thanks for Ccing me.
-> >
-> > > On Wed, Jul 16, 2025 at 08:26:05AM +0800, Li Tian wrote:
-> > > > Set an additional flag IFF_NO_ADDRCONF to prevent ipv6 addrconf.
-> > > >
-> > > > Commit under Fixes added a new flag change that was not made
-> > > > to hv_netvsc resulting in the VF being assinged an IPv6.
-> > > >
-> > > > Fixes: 8a321cf7becc ("net: add IFF_NO_ADDRCONF and use it in bondin=
-g
-> > to prevent ipv6 addrconf")
-> > > > Suggested-by: Cathy Avery <cavery@redhat.com>
-> > > > Signed-off-by: Li Tian <litian@redhat.com>
-> > > > ---
-> > > > v3:
-> > > >   - only fixes commit message.
-> > > > v2:
-> > https://lore.ker/
-> > nel.org%2Fnetdev%2F20250710024603.10162-1-
-> > litian%40redhat.com%2F&data=3D05%7C02%7Chaiyangz%40microsoft.com%7C8048=
-5948c
-> > b344b12f2dd08ddc47b7c6e%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C63=
-888
-> > 2756868249313%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwL=
-jAu
-> > MDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&s=
-dat
-> > a=3D1ljWIFtnhAiGjdIEgNNlQZGK%2F%2FZHdgHVkvyCWY9%2BKxI%3D&reserved=3D0
-> > > >   - instead of replacing flag, add it.
-> > > > v1:
-> > https://lore.ker/
-> > nel.org%2Fnetdev%2F20250710024603.10162-1-
-> > litian%40redhat.com%2F&data=3D05%7C02%7Chaiyangz%40microsoft.com%7C8048=
-5948c
-> > b344b12f2dd08ddc47b7c6e%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C63=
-888
-> > 2756868272381%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwL=
-jAu
-> > MDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&s=
-dat
-> > a=3Do%2B2BM9YEi3O2zcqQu9KfPae6PZerBWO%2FhL5KCIeJ9xI%3D&reserved=3D0
-> > > > ---
-> > > >  drivers/net/hyperv/netvsc_drv.c | 5 ++++-
-> > > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > >
-> > > Hi Li Tian,
-> > >
-> > > Thanks for addressing earlier feedback.
-> > >
-> > > I don't think you need to repost because of this, but for future
-> > reference:
-> > >
-> > > 1. Because this is a fix for a commit that is present in net
-> > >    it should be targeted at that tree.
-> > >
-> > >    Subject: [PATCH net vX] ...
-> > >
-> > > 2. Please use get_maintainers.pl this.patch to generate the CC list. =
-In
-> > >    this case Xin Long (now CCed) should be included as he is the auth=
-or
-> > of the
-> > >    patch cited in the Fixes tag.
-> > >
-> > >    b4 can help you with this and other aspects of patch management.
-> > >
-> > > >
-> > > > diff --git a/drivers/net/hyperv/netvsc_drv.c
-> > b/drivers/net/hyperv/netvsc_drv.c
-> > > > index c41a025c66f0..8be9bce66a4e 100644
-> > > > --- a/drivers/net/hyperv/netvsc_drv.c
-> > > > +++ b/drivers/net/hyperv/netvsc_drv.c
-> > > > @@ -2317,8 +2317,11 @@ static int netvsc_prepare_bonding(struct
-> > net_device *vf_netdev)
-> > > >       if (!ndev)
-> > > >               return NOTIFY_DONE;
-> > > >
-> > > > -     /* set slave flag before open to prevent IPv6 addrconf */
-> > > > +     /* Set slave flag and no addrconf flag before open
-> > > > +      * to prevent IPv6 addrconf.
-> > > > +      */
-> > > >       vf_netdev->flags |=3D IFF_SLAVE;
-> > > > +     vf_netdev->priv_flags |=3D IFF_NO_ADDRCONF;
-> > If it is only to prevent IPv6 addrconf, I think you can replace IFF_SLA=
-VE
-> > with IFF_NO_ADDRCONF.
-> >
-> > IFF_SLAVE normally comes with IFF_MASTER, like bonding and eql.
-> > I don't see IFF_MASTER used in netvsc_drv.c, so IFF_SLAVE probably
-> > should be dropped, including the one in __netvsc_vf_setup()?
->
-> The IFF_SLAVE is not just for ipv6, the comment should be updated.
-> IFF_SLAVE is also used by udev and our other user mode daemons, so it nee=
-ds
-> to stay.
->
-Got it, then the patch looks good to me.
+On Monday, June 30th, 2025 at 12:37, Konrad Dybcio <konrad.dybcio@oss.qualc=
+omm.com> wrote:
 
-Reviewed-by: Xin Long <lucien.xin@gmail.com>
+>=20
+> On 29-Jun-25 08:44, Cristian Cozzolino via B4 Relay wrote:
+>=20
+> > Billion Capture+ is a handset using the MSM8953 SoC released in 2017
+> > and sold by Flipkart.
+> >=20
+> > Add a device tree with initial support for:
+> >=20
+> > - GPIO keys
+> > - SDHCI (internal and external storage)
+> > - USB Device Mode
+> > - Regulators
+> > - Simple framebuffer
+> >=20
+> > Signed-off-by: Cristian Cozzolino cristian_ci@protonmail.com
+> > ---
+> > Changes in v4:
+> > - pick up tags (Rob);
+> > - Link to v3: https://lore.kernel.org/r/20250626-rimob-initial-devicetr=
+ee-v3-0-4017ac9fd93d@protonmail.com
+> >=20
+> > Changes in v3:
+> > - (patch 3/3): pick up tag (Konrad);
+> > - Link to v2: https://lore.kernel.org/r/20250624-rimob-initial-devicetr=
+ee-v2-0-34f6045ebc30@protonmail.com
+>=20
+>=20
+> Resending just to pick up tags is not necessary, maintainer scripts
+> take care of grabbing them
+>=20
+> Konrad
+
+BTW, I'm not sure about that.
 
