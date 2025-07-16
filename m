@@ -1,113 +1,160 @@
-Return-Path: <linux-kernel+bounces-733208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA05B0718C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:23:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C0FB0718E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8476D581C2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:23:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABAB4177A6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D07A2F2363;
-	Wed, 16 Jul 2025 09:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="r4E4XvUn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCBE2F002A;
+	Wed, 16 Jul 2025 09:23:35 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E1D2F199D;
-	Wed, 16 Jul 2025 09:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81132BFC85;
+	Wed, 16 Jul 2025 09:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752657792; cv=none; b=n4YyZvsjbxzoWjF1DFQfXVYS9xd2ES75JWav6ahklIFeoeRLec/IWbUIcWxvmSIWF/URsn4ei2EkhV+jmQyb8dwnJtHRTFZMXOtGRLbDT2t6kk86MZ+gxQV3EPKBteY9+24IMbwmrVTsjqufiMDkKRjh9HzALLdtBG+SCGf8t3A=
+	t=1752657815; cv=none; b=FnSBJKHAk+8t4IZfZmcfloOinkpMa2qWyZmhzZNvqSJEB8JRP81tT22bLWMm27uRETvRBkeKR4+6+iHjYGfEyErxMlEtb3Q5i2W+aYP+4OEJ4UROUQk68tBOIOXUH1eesnTD1njurF0ccd2z7yniiz2ebwdrDvA3YwQcxN6PQc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752657792; c=relaxed/simple;
-	bh=4jltuwgu6UQqufrQ8GvuspkBPjXn1RWYCM93+tWOJVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gH4fINc6P9mk61w0k6nGDBHx4fKLaYIMoclkDUJSbFqXkMRmN0/JQ9jZOmORqSjpW6aOKscG+O8Sq5aOfFFPR+i371gA9eiSLw42p5BCUH8UTxlBRWNeIlRAV2QOAvBREgjlB6PYnR+vBsz8+huglI9IRQRgPuERpd0wAIrhhuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=r4E4XvUn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72F09C4CEF0;
-	Wed, 16 Jul 2025 09:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752657792;
-	bh=4jltuwgu6UQqufrQ8GvuspkBPjXn1RWYCM93+tWOJVU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r4E4XvUnxanHChML6nxeDzNh9ns3fWEKEkH3oU7CfD2IHPiw5NUnT87sqj/8j8WUp
-	 XnpaJKcG8aoQcG4e3aE7i/B7m8B2dXedE/h/BdcX+Eedb/7RcB+aq36RNKwBHzo34L
-	 vimyJxjHVUEEqXR8GiE/Cz9HDSqRZFIefY8RyYOg=
-Date: Wed, 16 Jul 2025 11:23:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 1/9] rust: Introduce atomic API helpers
-Message-ID: <2025071611-factsheet-sitter-93b6@gregkh>
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-2-boqun.feng@gmail.com>
+	s=arc-20240116; t=1752657815; c=relaxed/simple;
+	bh=nIw50wvMBSzzyxFwSsDu5oFDKjklXIKlkflt+XNJNAc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nBnRbxnuPxxRT+YdD6GJiGrRG++UT5l6MlkQ/vecvIBXyXIsuqF1Jc7xACRcG7bwecSGBf4W8PwWqRnE1j5oNiWwLca8+GYbaJ4HsEwW9s0ogUvqTNJK+GW7nJkYBvV/LpfeqVlHwZv165AjisesB0rsIQjsrkJUaXAai4dADkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bhr9n1MDkz6L50s;
+	Wed, 16 Jul 2025 17:19:57 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6BF4F1400D7;
+	Wed, 16 Jul 2025 17:23:29 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Jul
+ 2025 11:23:29 +0200
+Date: Wed, 16 Jul 2025 10:23:27 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Matthew Wood <thepacketgeek@gmail.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH pci-next v1 0/1] PCI/sysfs: Expose PCIe device serial
+ number
+Message-ID: <20250716102327.00004dd7@huawei.com>
+In-Reply-To: <CADvopvZZKCdwT=XfaJzgFRgH=eXcTmjsdA8-86hJaki5PDjx=A@mail.gmail.com>
+References: <20250713011714.384621-1-thepacketgeek@gmail.com>
+	<20250715121929.00007ef2@huawei.com>
+	<CADvopvZZKCdwT=XfaJzgFRgH=eXcTmjsdA8-86hJaki5PDjx=A@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714053656.66712-2-boqun.feng@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Sun, Jul 13, 2025 at 10:36:48PM -0700, Boqun Feng wrote:
-> In order to support LKMM atomics in Rust, add rust_helper_* for atomic
-> APIs. These helpers ensure the implementation of LKMM atomics in Rust is
-> the same as in C. This could save the maintenance burden of having two
-> similar atomic implementations in asm.
-> 
-> Originally-by: Mark Rutland <mark.rutland@arm.com>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> ---
->  rust/helpers/atomic.c                     | 1040 +++++++++++++++++++++
->  rust/helpers/helpers.c                    |    1 +
->  scripts/atomic/gen-atomics.sh             |    1 +
->  scripts/atomic/gen-rust-atomic-helpers.sh |   67 ++
->  4 files changed, 1109 insertions(+)
->  create mode 100644 rust/helpers/atomic.c
->  create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
-> 
-> diff --git a/rust/helpers/atomic.c b/rust/helpers/atomic.c
-> new file mode 100644
-> index 000000000000..cf06b7ef9a1c
-> --- /dev/null
-> +++ b/rust/helpers/atomic.c
-> @@ -0,0 +1,1040 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Generated by scripts/atomic/gen-rust-atomic-helpers.sh
-> +// DO NOT MODIFY THIS FILE DIRECTLY
+On Tue, 15 Jul 2025 08:59:42 -0700
+Matthew Wood <thepacketgeek@gmail.com> wrote:
 
-As this is auto-generated, how do we know when to auto-generate it
-again?  What files does it depend on?  And why can't we just
-auto-generate it at build time instead of having a static file in the
-tree that no one knows when to regenerate it?  :)
+> On Tue, Jul 15, 2025 at 4:19=E2=80=AFAM Jonathan Cameron
+> <Jonathan.Cameron@huawei.com> wrote:
+> >
+> > On Sat, 12 Jul 2025 18:17:12 -0700
+> > Matthew Wood <thepacketgeek@gmail.com> wrote:
+> > =20
+> > > Add a single sysfs read-only interface for reading PCIe device serial
+> > > numbers from userspace in a programmatic way. This device attribute
+> > > uses the same 2-byte dashed formatting as lspci serial number capabil=
+ity
+> > > output:
+> > >
+> > >     more /sys/devices/pci0000:c0/0000:c0:01.1/0000:c1:00.0/0000:c2:1f=
+.0/0000:cc:00.0/device_serial_number
+> > >     00-80-ee-00-00-00-41-80
+> > > =20
+> >
+> > What is the use case for this? I can think of some possibilities but go=
+od to
+> > see why you care here. =20
+>=20
+> Two primary use cases we have are for inventory tooling and health
+> check tooling; being able to
+> reliably collect device serial numbers for tracking unique devices
+> whose BDFs could change is
+> critical. Sometimes in the process of hardware troubleshooting, cards
+> are swapped and BDF idents
+> change but we want to track devices by serial number without possibly
+> fragile regexps.
 
-thanks,
+Ok.  So you want to avoid having pull this from lspci output which
+makes sense to me. Not sure what Bjorn and others think about this
+though.
 
-greg k-h
+
+>=20
+> >
+> > =20
+> > > Accompanying lspci output:
+> > >
+> > >     sudo lspci -vvv -s cc:00.0
+> > >         cc:00.0 Serial Attached SCSI controller: Broadcom / LSI PCIe =
+Switch management endpoint (rev b0)
+> > >             Subsystem: Broadcom / LSI Device 0144
+> > >             ...
+> > >             Capabilities: [100 v1] Device Serial Number 00-80-ee-00-0=
+0-00-41-80
+> > >             ...
+> > >
+> > > If a device doesn't support the serial number capability, userspace w=
+ill receive
+> > > an empty read: =20
+> >
+> > Better if possible to not expose the sysfs attribute if no such capabil=
+ity.
+> > We already have pcie_dev_attrs_are_visible() so easy to extend that. =20
+>=20
+> That's a great point, it looks like I could match on the attribute
+> name to specifically hide device_serial_number
+> if the device does not support the cap, but I can't find any precedent
+> for matching on a->name in pci-sysfs.c.
+> Would something like this be alright after the check for pci_is_pcie(dev):
+>=20
+>     if (a->name =3D=3D "device_serial_number") {
+>         // check if device has serial, if not return 0
+>     }
+
+if (a =3D=3D &dev_attr_device_serial_number.attr)
+or something like that.
+
+No need for string matching.
+
+Jonathan
+
+
+>=20
+> >
+> > =20
+> > >
+> > >     more /sys/devices/pci0000:00/0000:00:07.1/device_serial_number
+> > >     echo $?
+> > >     0
+> > >
+> > >
+> > > Matthew Wood (1):
+> > >   PCI/sysfs: Expose PCIe device serial number
+> > >
+> > >  drivers/pci/pci-sysfs.c | 17 +++++++++++++++++
+> > >  1 file changed, 17 insertions(+)
+> > > =20
+> > =20
+
 
