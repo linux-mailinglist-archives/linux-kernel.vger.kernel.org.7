@@ -1,103 +1,639 @@
-Return-Path: <linux-kernel+bounces-734275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFBDB07F53
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:09:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED124B07F57
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090381674CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:09:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE051C423E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E2D291C21;
-	Wed, 16 Jul 2025 21:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB73291C36;
+	Wed, 16 Jul 2025 21:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MihocQ5C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r9alFGzo"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E6028B3EF;
-	Wed, 16 Jul 2025 21:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF6A2900AA
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 21:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752700169; cv=none; b=axCeR4Kzg3WB/w2QkjolqSiRVOghR1YMKPf2w/bmWGhPzVmPPybrVarQflQkzg0XBkNXntCGjP6Iadn6a44CrjUYkt75Brk5fh+cf2seABAOoKdX6YEZhNjQrsbDNNS+I4LCLxThgh6tEHxjeuzJ9QsCZjLUtdBe6/71rg11HZw=
+	t=1752700290; cv=none; b=HO5FeAZRHx+3lqqMsFQkkUdVMh8bGprWi/HCtho+VJ6mIh52l+KfE1QzK/xXkomWflZNcaYG5FBwVY4v6fQzMOO7QeK4hj3137vJLsIGNoYYIk0L1NvwF14rl0m1Cs8FsF74CnaIIabD+k9k3Y/pfAYixiymXct59b5s6+jVueY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752700169; c=relaxed/simple;
-	bh=ZvjiIuDfrlWWbykzDv6yMKlbKFJ9c3SfR0on8ygzWv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kO1NMTtCu9yq9dzFXtgnkzb3mIJ3RANkw4KP6EN8kOQTbleXlhd7A0GAbwQ+aFxaXbgWy6SPFLr6SWV/52DACX4sUOJ4Df8EdMPtQUUXoDbn3FKEXRFOrhzRuvMjD1CA4c3zzaNm2xLGKq4ejREb19uIAIePb+dwlASuiRJeQsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MihocQ5C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1FEAC4CEE7;
-	Wed, 16 Jul 2025 21:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752700168;
-	bh=ZvjiIuDfrlWWbykzDv6yMKlbKFJ9c3SfR0on8ygzWv8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MihocQ5CfRgKpACI/aeFhkJ5efmhxN3ecKFo8AYnY89VPMXR1C4T9t3Q5aqmsISYQ
-	 qCkS257leQLzb3LjhZJLla7Ra3zItwwNU0vjngd7HF8DOwzYXcApTXAtRKMdASzWXk
-	 bsIuuYDUqO8H9+hXjPIpDIyxKpdq9ojwWIjBZpnPONeJ+NUMqJfY9apufkcTpVxGf+
-	 mqxztjqJ45Cuf0YQFLrSYrn+NgT04N5m5cXOPE0zL4wk8Md5xd1+z++31VnqlA3wDv
-	 MPZi8dXrwsIGfwlsTYa1mm6JKvAWH2KnMbiq1NDRbD5vdqWTAuBn4wx7y3ZTYAYN7r
-	 p1LStuyyw3sgQ==
-Date: Wed, 16 Jul 2025 14:09:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Parvathi Pudi <parvathi@couthit.com>
-Cc: danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>,
- andrew+netdev <andrew+netdev@lunn.ch>, davem <davem@davemloft.net>,
- edumazet <edumazet@google.com>, pabeni <pabeni@redhat.com>, robh
- <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, conor+dt
- <conor+dt@kernel.org>, ssantosh <ssantosh@kernel.org>, richardcochran
- <richardcochran@gmail.com>, s hauer <s.hauer@pengutronix.de>, m-karicheri2
- <m-karicheri2@ti.com>, glaroque <glaroque@baylibre.com>, afd <afd@ti.com>,
- saikrishnag <saikrishnag@marvell.com>, m-malladi <m-malladi@ti.com>, jacob
- e keller <jacob.e.keller@intel.com>, diogo ivo <diogo.ivo@siemens.com>,
- javier carrasco cruz <javier.carrasco.cruz@gmail.com>, horms
- <horms@kernel.org>, s-anna <s-anna@ti.com>, basharath
- <basharath@couthit.com>, linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>, netdev <netdev@vger.kernel.org>,
- devicetree <devicetree@vger.kernel.org>, linux-kernel
- <linux-kernel@vger.kernel.org>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, pratheesh <pratheesh@ti.com>, Prajith
- Jayarajan <prajith@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, praneeth
- <praneeth@ti.com>, srk <srk@ti.com>, rogerq <rogerq@ti.com>, krishna
- <krishna@couthit.com>, pmohan <pmohan@couthit.com>, mohan
- <mohan@couthit.com>
-Subject: Re: [PATCH net-next v10 04/11] net: ti: prueth: Adds link
- detection, RX and TX support.
-Message-ID: <20250716140926.3aa10894@kernel.org>
-In-Reply-To: <1616453705.30524.1752671471644.JavaMail.zimbra@couthit.local>
-References: <20250702140633.1612269-1-parvathi@couthit.com>
-	<20250702151756.1656470-5-parvathi@couthit.com>
-	<20250708180107.7886ea41@kernel.org>
-	<723330733.1712525.1752237188810.JavaMail.zimbra@couthit.local>
-	<1616453705.30524.1752671471644.JavaMail.zimbra@couthit.local>
+	s=arc-20240116; t=1752700290; c=relaxed/simple;
+	bh=khIpO9nEi5JNAN+84qJe8YJsbNQ5sLQK5mEclr5WCkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0cBxMgkWtUOAigwjsPrSteZ0GrEbuQ+dBvdGrzXFJcT+Ql5zdSqjc4RgRnK5s/suordWGQln4gQ4fk72OgbLzEESlq6lgOsg9uE593GFhRYtRc2cb/Js3Nr3F2+eNSUn6K7vJB9hGbkzJ2Xl4nmVilhaSye5yOG9tF/xQgiAss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r9alFGzo; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a50fc7ac4dso120220f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752700287; x=1753305087; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cYWXOrwNiK0Go9DsX9otPJZKea4HQNwTD7zd0doQnOc=;
+        b=r9alFGzoDyF+SWoiNWW7rTnTyrWHJDRTjjgITnHFGNik2BqcBAytnnEHgIAIlkuyaq
+         YvD4XCJ4cZ9IN3PERGyh2ohEAb4igiMstn+QS5ysHF9eouxyV/7+R4zSLvzgZUfx3QvP
+         gAmVkXAua0VaF4zZwPaTtK3bs7p5hp1DbGRwLfnQ18U9OmvrPczc4+yS1SKwacxZ4/Pl
+         nt+ty0qpoX1waHsbvJdt3RhRGvIeOyjr1qlKu0mtftCYSw3qUHov2/8SvsPj6OuX9Upb
+         oM17Z/WjyiwE/MS6W4FH5p099AhqsNdkhZ+/rY9byA7ZnpUgXG3Ub9+kYB+np8I0CK8G
+         PNUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752700287; x=1753305087;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cYWXOrwNiK0Go9DsX9otPJZKea4HQNwTD7zd0doQnOc=;
+        b=IpnzQFApmMcbuMZpimAIJggPWC5cXDQMDTY3p9ypmZh9n39kX9bVS+29hW1eRf9FN6
+         TtfTw+JiubPnpdrRsw4HQQrzEni04NOh05q8cRSh2DOumBFo7GoxhgFQWRJWqZD7v70Q
+         49IYcz4uyHZx1kt2TUxtUBNI/6TJDoFvoY71wiCOTrWh9yH9UEGyYEJOpvk+rkXws95j
+         9wUlN83ENculk6uV/1Q8Sfbj5K746bwe7QxHNlyTSFP9JwDriZ1N3xUHK/thuaGoIQsa
+         fjYu/2n1Z9a86Y0/P0iMtLvCagiNEmiZ8YQnrYtyypTt3cT1dUnKjoEA47ZokhNxsqjO
+         /esg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6Ugg4oho5QR2b/b3XkIZU2LNnmcwciYPcWPUn/fIuykiefcLMGkGbxireKriGEcnDoWR6leFTTdGwHpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym4SCOAo3/HbVw8CPIr3YULZHLSifQCDnRTC0+5OwtR8eTj+yD
+	g+RSBh7KA2/SP+vl6yFpXLLuw3O+FJfMoneY3Gcgrh1uLBCSlFezOVwHj4W2FhkDBs8=
+X-Gm-Gg: ASbGncvSav0AdSYRw2gaIqOfT3pEAipMmDNm4QJbRESFG6rgahPD+t4/jWuRvp2LLEB
+	TCEwFCp7GIKyKQ4o6yOmqHiIztNkSfxHfmg1gSrCLJSKk8wb6zlFw93myPQOnW6kmMFxBdxxtuG
+	cJkdLFcpIIoJhW3RFVi7NrLEYSyArSzmoZRNn+0vQ1EvX49AV/n1yyIOt5nX4kdND3kZ413SzmO
+	avpr3X1ZFUygixPiqOBE0dliikJN+y5QBgk1+xDl3Cug1ZiA+vjvo6qqlveExJLeiYX0ZCnM/M3
+	+WxG4l5r27vhF24wu0FIju/YsuoCpMyYjVTf1WjeyTUdN+6F8MTFQfcjSKz+cDodJZpXnTOKW6D
+	PP4/1BlmfEBVhHVq8AdZFcz8tEEdscYS1ihBa+YsHjcUqxrAHqO3xhz+IX+pZ
+X-Google-Smtp-Source: AGHT+IEbtnGkx+XfY6oPS27DeBh2gAEVWp32K89aS6BpC+8luM0wQ46Jt/i5p231dSJ/9oZhKVLoBg==
+X-Received: by 2002:a5d:5f02:0:b0:3a4:f520:8bfc with SMTP id ffacd0b85a97d-3b613e984aemr311543f8f.36.1752700286621;
+        Wed, 16 Jul 2025 14:11:26 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc1e4fsm18700417f8f.21.2025.07.16.14.11.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 14:11:25 -0700 (PDT)
+Date: Wed, 16 Jul 2025 23:11:23 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org,
+	rafael@kernel.org, biju.das.jz@bp.renesas.com,
+	devicetree@vger.kernel.org, john.madieu@gmail.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, lukasz.luba@arm.com,
+	magnus.damm@gmail.com, robh@kernel.org, rui.zhang@intel.com,
+	sboyd@kernel.org, niklas.soderlund+renesas@ragnatech.se
+Subject: Re: [PATCH v6 3/5] thermal: renesas: rzg3e: Add thermal driver for
+ the Renesas RZ/G3E SoC
+Message-ID: <aHgVe0YwPWapIYed@mai.linaro.org>
+References: <20250522182252.1593159-1-john.madieu.xa@bp.renesas.com>
+ <20250522182252.1593159-4-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250522182252.1593159-4-john.madieu.xa@bp.renesas.com>
 
-On Wed, 16 Jul 2025 18:41:11 +0530 (IST) Parvathi Pudi wrote:
-> >> Something needs to stop the queue, right? Otherwise the stack will
-> >> send the frame right back to the driver.
-> >=20
-> > Yes, we will notify upper layer with =E2=80=9Cnetif_tx_stop_queue()=E2=
-=80=9D when returning
-> > =E2=80=9CNETDEV_TX_BUSY=E2=80=9D to not push again immediately.
->=20
-> We reviewed the flow and found that the reason for NETDEV_TX_BUSY being
-> notified to the upper layers is due lack of support for reliably detecting
-> the TX completion event.
->=20
-> In case of ICSSM PRU Ethernet, we do not have support for TX complete
-> notification back to the driver from firmware and its like store and
-> forget approach. So it will be tricky to enable back/resume the queue
-> if we stop it when we see busy status.
+On Thu, May 22, 2025 at 08:22:46PM +0200, John Madieu wrote:
+> The RZ/G3E SoC integrates a Temperature Sensor Unit (TSU) block designed
+> to monitor the chip's junction temperature. This sensor is connected to
+> channel 1 of the APB port clock/reset and provides temperature measurements.
+> 
+> It also requires calibration values stored in the system controller registers
+> for accurate temperature measurement. Add a driver for the Renesas RZ/G3E TSU.
+> 
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> ---
+> 
+> Changes:
+> 
+> v1 -> v2: fixes IRQ names
+> v2 -> v3: no changes
+> v3 -> v4: no changes
+> v5: removes curly braces arround single-line protected scoped guards
+> v6: Clarified comments in driver
+> 
+>  MAINTAINERS                             |   7 +
+>  drivers/thermal/renesas/Kconfig         |   7 +
+>  drivers/thermal/renesas/Makefile        |   1 +
+>  drivers/thermal/renesas/rzg3e_thermal.c | 443 ++++++++++++++++++++++++
+>  4 files changed, 458 insertions(+)
+>  create mode 100644 drivers/thermal/renesas/rzg3e_thermal.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 79a8e2c73908..eb11494795e8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21161,6 +21161,13 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/iio/potentiometer/renesas,x9250.yaml
+>  F:	drivers/iio/potentiometer/x9250.c
+>  
+> +RENESAS RZ/G3E THERMAL SENSOR UNIT DRIVER
+> +M:	John Madieu <john.madieu.xa@bp.renesas.com>
+> +L:	linux-pm@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
+> +F:	drivers/thermal/renesas/rzg3e_thermal.c
+> +
+>  RESET CONTROLLER FRAMEWORK
+>  M:	Philipp Zabel <p.zabel@pengutronix.de>
+>  S:	Maintained
+> diff --git a/drivers/thermal/renesas/Kconfig b/drivers/thermal/renesas/Kconfig
+> index dcf5fc5ae08e..10cf90fc4bfa 100644
+> --- a/drivers/thermal/renesas/Kconfig
+> +++ b/drivers/thermal/renesas/Kconfig
+> @@ -26,3 +26,10 @@ config RZG2L_THERMAL
+>  	help
+>  	  Enable this to plug the RZ/G2L thermal sensor driver into the Linux
+>  	  thermal framework.
+> +
+> +config RZG3E_THERMAL
+> +	tristate "Renesas RZ/G3E thermal driver"
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+> +	help
+> +	  Enable this to plug the RZ/G3E thermal sensor driver into the Linux
+> +	  thermal framework.
+> diff --git a/drivers/thermal/renesas/Makefile b/drivers/thermal/renesas/Makefile
+> index bf9cb3cb94d6..5a3eba0dedd0 100644
+> --- a/drivers/thermal/renesas/Makefile
+> +++ b/drivers/thermal/renesas/Makefile
+> @@ -3,3 +3,4 @@
+>  obj-$(CONFIG_RCAR_GEN3_THERMAL)	+= rcar_gen3_thermal.o
+>  obj-$(CONFIG_RCAR_THERMAL)	+= rcar_thermal.o
+>  obj-$(CONFIG_RZG2L_THERMAL)	+= rzg2l_thermal.o
+> +obj-$(CONFIG_RZG3E_THERMAL)	+= rzg3e_thermal.o
+> diff --git a/drivers/thermal/renesas/rzg3e_thermal.c b/drivers/thermal/renesas/rzg3e_thermal.c
+> new file mode 100644
+> index 000000000000..348229da9ef4
+> --- /dev/null
+> +++ b/drivers/thermal/renesas/rzg3e_thermal.c
+> @@ -0,0 +1,443 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Renesas RZ/G3E TSU Temperature Sensor Unit
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corporation
+> + */
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
+> +#include <linux/thermal.h>
+> +#include <linux/units.h>
+> +
+> +#include "../thermal_hwmon.h"
+> +
+> +/* SYS Trimming register offsets macro */
+> +#define SYS_TSU_TRMVAL(x) (0x330 + (x) * 4)
+> +
+> +/* TSU Register offsets and bits */
+> +#define TSU_SSUSR		0x00
+> +#define TSU_SSUSR_EN_TS		BIT(0)
+> +#define TSU_SSUSR_ADC_PD_TS	BIT(1)
+> +#define TSU_SSUSR_SOC_TS_EN	BIT(2)
+> +
+> +#define TSU_STRGR		0x04
+> +#define TSU_STRGR_ADST		BIT(0)
+> +
+> +#define TSU_SOSR1		0x08
+> +#define TSU_SOSR1_ADCT_8	0x03
+> +#define TSU_SOSR1_OUTSEL_AVERAGE	BIT(9)
+> +
+> +/* Sensor Code Read Register */
+> +#define TSU_SCRR		0x10
+> +#define TSU_SCRR_OUT12BIT_TS	GENMASK(11, 0)
+> +
+> +/* Sensor Status Register */
+> +#define TSU_SSR			0x14
+> +#define TSU_SSR_CONV_RUNNING	BIT(0)
+> +
+> +/* Compare Mode Setting Register */
+> +#define TSU_CMSR		0x18
+> +#define TSU_CMSR_CMPEN		BIT(0)
+> +#define TSU_CMSR_CMPCOND	BIT(1)
+> +
+> +/* Lower Limit Setting Register */
+> +#define TSU_LLSR		0x1C
+> +#define TSU_LLSR_LIM		GENMASK(11, 0)
+> +
+> +/* Upper Limit Setting Register */
+> +#define TSU_ULSR		0x20
+> +#define TSU_ULSR_ULIM		GENMASK(11, 0)
+> +
+> +/* Interrupt Status Register */
+> +#define TSU_SISR		0x30
+> +#define TSU_SISR_ADF		BIT(0)
+> +#define TSU_SISR_CMPF		BIT(1)
+> +
+> +/* Interrupt Enable Register */
+> +#define TSU_SIER		0x34
+> +#define TSU_SIER_ADIE		BIT(0)
+> +#define TSU_SIER_CMPIE		BIT(1)
+> +
+> +/* Interrupt Clear Register */
+> +#define TSU_SICR		0x38
+> +#define TSU_SICR_ADCLR		BIT(0)
+> +#define TSU_SICR_CMPCLR		BIT(1)
+> +
+> +/* Temperature calculation constants */
+> +#define TSU_D		41
+> +#define TSU_E		126
+> +#define TSU_TRMVAL_MASK	GENMASK(11, 0)
+> +
+> +#define TSU_POLL_DELAY_US	50
+> +#define TSU_TIMEOUT_US		10000
+> +#define TSU_MIN_CLOCK_RATE	24000000
+> +
+> +/**
+> + * struct rzg3e_thermal_priv - RZ/G3E thermal private data structure
+> + * @base: TSU base address
+> + * @dev: device pointer
+> + * @syscon: regmap for calibration values
+> + * @zone: thermal zone pointer
+> + * @mode: current tzd mode
+> + * @conv_complete: ADC conversion completion
+> + * @reg_lock: protect shared register access
+> + * @cached_temp: last computed temperature (milliCelsius)
+> + * @trmval: trim (calibration) values
+> + */
+> +struct rzg3e_thermal_priv {
+> +	void __iomem *base;
+> +	struct device *dev;
+> +	struct regmap *syscon;
+> +	struct thermal_zone_device *zone;
+> +	enum thermal_device_mode mode;
+> +	struct completion conv_complete;
+> +	spinlock_t reg_lock;
+> +	int cached_temp;
+> +	u32 trmval[2];
+> +};
+> +
+> +static void rzg3e_thermal_hw_disable(struct rzg3e_thermal_priv *priv)
+> +{
+> +	/* Disable all interrupts first */
+> +	writel(0, priv->base + TSU_SIER);
+> +	/* Clear any pending interrupts */
+> +	writel(TSU_SICR_ADCLR | TSU_SICR_CMPCLR, priv->base + TSU_SICR);
+> +	/* Put device in power down */
+> +	writel(TSU_SSUSR_ADC_PD_TS, priv->base + TSU_SSUSR);
+> +}
+> +
+> +static void rzg3e_thermal_hw_enable(struct rzg3e_thermal_priv *priv)
+> +{
+> +	/* First clear any pending status */
+> +	writel(TSU_SICR_ADCLR | TSU_SICR_CMPCLR, priv->base + TSU_SICR);
+> +	/* Disable all interrupts */
+> +	writel(0, priv->base + TSU_SIER);
+> +
+> +	/* Enable thermal sensor */
+> +	writel(TSU_SSUSR_SOC_TS_EN | TSU_SSUSR_EN_TS, priv->base + TSU_SSUSR);
+> +	/* Setup for averaging mode with 8 samples */
+> +	writel(TSU_SOSR1_OUTSEL_AVERAGE | TSU_SOSR1_ADCT_8, priv->base + TSU_SOSR1);
+> +}
+> +
+> +static irqreturn_t rzg3e_thermal_cmp_irq(int irq, void *dev_id)
+> +{
+> +	struct rzg3e_thermal_priv *priv = dev_id;
+> +	u32 status;
+> +
+> +	status = readl(priv->base + TSU_SISR);
+> +	if (!(status & TSU_SISR_CMPF))
+> +		return IRQ_NONE;
+> +
+> +	/* Clear the comparison interrupt flag */
+> +	writel(TSU_SICR_CMPCLR, priv->base + TSU_SICR);
+> +
+> +	return IRQ_WAKE_THREAD;
+> +}
+> +
+> +static irqreturn_t rzg3e_thermal_cmp_threaded_irq(int irq, void *dev_id)
+> +{
+> +	struct rzg3e_thermal_priv *priv = dev_id;
+> +
+> +	thermal_zone_device_update(priv->zone, THERMAL_EVENT_UNSPECIFIED);
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static irqreturn_t rzg3e_thermal_adc_irq(int irq, void *dev_id)
+> +{
+> +	struct rzg3e_thermal_priv *priv = dev_id;
+> +	u32 status;
+> +	u32 result;
+> +
+> +	/* Check if this is our interrupt */
+> +	status = readl(priv->base + TSU_SISR);
+> +	if (!(status & TSU_SISR_ADF))
+> +		return IRQ_NONE;
+> +
+> +	/* Disable all interrupts */
+> +	writel(0, priv->base + TSU_SIER);
+> +	/* Clear conversion complete interrupt */
+> +	writel(TSU_SICR_ADCLR, priv->base + TSU_SICR);
+> +
+> +	/* Read ADC conversion result */
+> +	result = readl(priv->base + TSU_SCRR) & TSU_SCRR_OUT12BIT_TS;
+> +
+> +	/*
+> +	 * Calculate temperature using compensation formula
+> +	 * Section 7.11.7.8 (Temperature Compensation Calculation)
+> +	 *
+> +	 * T(°C) = ((e - d) / (c -b)) * (a - b) + d
+> +	 *
+> +	 * a = 12 bits temperature code read from the sensor
+> +	 * b = SYS trmval[0]
+> +	 * c = SYS trmval[1]
+> +	 * d = -41
+> +	 * e = 126
+> +	 */
+> +	s64 temp_val = div_s64(((TSU_E + TSU_D) * (s64)(result - priv->trmval[0])),
+> +				priv->trmval[1] - priv->trmval[0]) - TSU_D;
+> +	int new_temp = temp_val * MILLIDEGREE_PER_DEGREE;
+> +
+> +	scoped_guard(spinlock_irqsave, &priv->reg_lock)
+> +		priv->cached_temp = new_temp;
+> +
+> +	complete(&priv->conv_complete);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int rzg3e_thermal_get_temp(struct thermal_zone_device *zone, int *temp)
+> +{
+> +	struct rzg3e_thermal_priv *priv = thermal_zone_device_priv(zone);
+> +	u32 val;
+> +	int ret;
+> +
+> +	if (priv->mode == THERMAL_DEVICE_DISABLED)
+> +		return -EBUSY;
 
-IIUC this is all implemented in SW / FW. You either need to add=20
-the notification or use a timer to unblock the queue.
+Why ?
+
+> +	reinit_completion(&priv->conv_complete);
+> +
+> +	/* Enable ADC interrupt */
+> +	writel(TSU_SIER_ADIE, priv->base + TSU_SIER);
+
+Why enable irq here ?
+
+> +	/* Verify no ongoing conversion */
+> +	ret = readl_poll_timeout_atomic(priv->base + TSU_SSR, val,
+> +					!(val & TSU_SSR_CONV_RUNNING),
+> +					TSU_POLL_DELAY_US, TSU_TIMEOUT_US);
+> +	if (ret) {
+> +		dev_err(priv->dev, "ADC conversion timed out\n");
+> +		return ret;
+> +	}
+> +
+> +	/* Start conversion */
+> +	writel(TSU_STRGR_ADST, priv->base + TSU_STRGR);
+> +
+> +	if (!wait_for_completion_timeout(&priv->conv_complete,
+> +					 msecs_to_jiffies(100))) {
+> +		dev_err(priv->dev, "ADC conversion completion timeout\n");
+> +		return -ETIMEDOUT;
+> +	}
+
+Can you explain what is happening here ?
+
+> +	scoped_guard(spinlock_irqsave, &priv->reg_lock)
+> +		*temp = priv->cached_temp;
+> +
+> +	return 0;
+> +}
+> +
+> +/* Convert temperature in milliCelsius to raw sensor code */
+> +static int rzg3e_temp_to_raw(struct rzg3e_thermal_priv *priv, int temp_mc)
+> +{
+> +	s64 raw = div_s64(((temp_mc / 1000) - TSU_D) *
+> +			  (priv->trmval[1] - priv->trmval[0]),
+> +			  (TSU_E - TSU_D));
+> +	return clamp_val(raw, 0, 0xFFF);
+> +}
+> +
+> +static int rzg3e_thermal_set_trips(struct thermal_zone_device *tz, int low, int high)
+> +{
+> +	struct rzg3e_thermal_priv *priv = thermal_zone_device_priv(tz);
+> +	int ret;
+> +	int val;
+> +
+> +	if (low >= high)
+> +		return -EINVAL;
+> +
+> +	if (priv->mode == THERMAL_DEVICE_DISABLED)
+> +		return -EBUSY;
+
+That is not supposed to happen. set_trips is called from
+thermal_zone_device_update but the thermal zone is disabled, the
+function bails out, thus it should not call this callback.
+
+> +	/* Set up comparison interrupt */
+> +	writel(0, priv->base + TSU_SIER);
+> +	writel(TSU_SICR_ADCLR | TSU_SICR_CMPCLR, priv->base + TSU_SICR);
+> +
+> +	/* Set thresholds */
+> +	writel(rzg3e_temp_to_raw(priv, low), priv->base + TSU_LLSR);
+> +	writel(rzg3e_temp_to_raw(priv, high), priv->base + TSU_ULSR);
+> +
+> +	/* Configure comparison:
+> +	 * - Enable comparison function (CMPEN = 1)
+> +	 * - Set comparison condition (CMPCOND = 0 for out of range)
+> +	 */
+> +	writel(TSU_CMSR_CMPEN, priv->base + TSU_CMSR);
+> +
+> +	/* Enable comparison irq */
+> +	writel(TSU_SIER_CMPIE, priv->base + TSU_SIER);
+> +
+> +	/* Verify no ongoing conversion */
+> +	ret = readl_poll_timeout_atomic(priv->base + TSU_SSR, val,
+> +					!(val & TSU_SSR_CONV_RUNNING),
+> +					TSU_POLL_DELAY_US, TSU_TIMEOUT_US);
+> +	if (ret) {
+> +		dev_err(priv->dev, "ADC conversion timed out\n");
+> +		return ret;
+> +	}
+> +
+> +	/* Start a conversion to trigger comparison */
+> +	writel(TSU_STRGR_ADST, priv->base + TSU_STRGR);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzg3e_thermal_get_trimming(struct rzg3e_thermal_priv *priv)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_read(priv->syscon, SYS_TSU_TRMVAL(0), &priv->trmval[0]);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(priv->syscon, SYS_TSU_TRMVAL(1), &priv->trmval[1]);
+> +	if (ret)
+> +		return ret;
+> +
+> +	priv->trmval[0] &= TSU_TRMVAL_MASK;
+> +	priv->trmval[1] &= TSU_TRMVAL_MASK;
+> +
+> +	if (!priv->trmval[0] || !priv->trmval[1])
+> +		return dev_err_probe(priv->dev, -EINVAL, "invalid trimming values");
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzg3e_thermal_change_mode(struct thermal_zone_device *tz,
+> +				     enum thermal_device_mode mode)
+> +{
+> +	struct rzg3e_thermal_priv *priv = thermal_zone_device_priv(tz);
+> +
+> +	if (mode == THERMAL_DEVICE_DISABLED)
+> +		rzg3e_thermal_hw_disable(priv);
+> +	else
+> +		rzg3e_thermal_hw_enable(priv);
+> +
+> +	priv->mode = mode;
+> +	return 0;
+> +}
+> +
+> +static const struct thermal_zone_device_ops rzg3e_tz_of_ops = {
+> +	.get_temp = rzg3e_thermal_get_temp,
+> +	.set_trips = rzg3e_thermal_set_trips,
+> +	.change_mode = rzg3e_thermal_change_mode,
+> +};
+> +
+> +static int rzg3e_thermal_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct rzg3e_thermal_priv *priv;
+> +	struct reset_control *rstc;
+> +	char *adc_name, *cmp_name;
+> +	int adc_irq, cmp_irq;
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->dev = dev;
+> +
+> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(priv->base))
+> +		return dev_err_probe(dev, PTR_ERR(priv->base),
+> +				"Failed to map I/O memory");
+> +
+> +	priv->syscon = syscon_regmap_lookup_by_phandle(dev->of_node,
+> +						       "renesas,tsu-calibration-sys");
+> +	if (IS_ERR(priv->syscon))
+> +		return dev_err_probe(dev, PTR_ERR(priv->syscon),
+> +				"Failed to get calibration syscon");
+> +
+> +	adc_irq = platform_get_irq_byname(pdev, "adi");
+> +	if (adc_irq < 0)
+> +		return adc_irq;
+> +
+> +	cmp_irq = platform_get_irq_byname(pdev, "adcmpi");
+> +	if (cmp_irq < 0)
+> +		return cmp_irq;
+> +
+> +	rstc = devm_reset_control_get_exclusive_deasserted(dev, NULL);
+> +	if (IS_ERR(rstc))
+> +		return dev_err_probe(dev, PTR_ERR(rstc),
+> +				     "Failed to acquire deasserted reset");
+> +
+> +	platform_set_drvdata(pdev, priv);
+> +
+> +	spin_lock_init(&priv->reg_lock);
+> +	init_completion(&priv->conv_complete);
+> +
+> +	clk = devm_clk_get_enabled(dev, NULL);
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(dev, PTR_ERR(clk),
+> +				     "Failed to get and enable clock");
+> +
+> +	if (clk_get_rate(clk) < TSU_MIN_CLOCK_RATE)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "Clock rate too low (minimum %d Hz required)",
+> +				     TSU_MIN_CLOCK_RATE);
+> +
+> +	ret = rzg3e_thermal_get_trimming(priv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	adc_name = devm_kasprintf(dev, GFP_KERNEL, "%s-adc", dev_name(dev));
+> +	if (!adc_name)
+> +		return -ENOMEM;
+> +
+> +	cmp_name = devm_kasprintf(dev, GFP_KERNEL, "%s-cmp", dev_name(dev));
+> +	if (!cmp_name)
+> +		return -ENOMEM;
+> +
+> +	/* Unit in a known disabled mode */
+> +	rzg3e_thermal_hw_disable(priv);
+> +
+> +	ret = devm_request_irq(dev, adc_irq, rzg3e_thermal_adc_irq,
+> +			       IRQF_TRIGGER_RISING, adc_name, priv);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to request ADC IRQ");
+> +
+> +	ret = devm_request_threaded_irq(dev, cmp_irq, rzg3e_thermal_cmp_irq,
+> +					rzg3e_thermal_cmp_threaded_irq,
+> +					IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
+> +					cmp_name, priv);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to request comparison IRQ");
+> +
+> +	/* Register Thermal Zone */
+> +	priv->zone = devm_thermal_of_zone_register(dev, 0, priv, &rzg3e_tz_of_ops);
+> +	if (IS_ERR(priv->zone))
+> +		return dev_err_probe(dev, PTR_ERR(priv->zone),
+> +				"Failed to register thermal zone");
+> +
+> +	ret = devm_thermal_add_hwmon_sysfs(dev, priv->zone);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to add hwmon sysfs");
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id rzg3e_thermal_dt_ids[] = {
+> +	{ .compatible = "renesas,r9a09g047-tsu" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, rzg3e_thermal_dt_ids);
+> +
+> +static struct platform_driver rzg3e_thermal_driver = {
+> +	.driver = {
+> +		.name	= "rzg3e_thermal",
+> +		.of_match_table = rzg3e_thermal_dt_ids,
+> +	},
+> +	.probe = rzg3e_thermal_probe,
+> +};
+> +module_platform_driver(rzg3e_thermal_driver);
+> +
+> +MODULE_DESCRIPTION("Renesas RZ/G3E TSU Thermal Sensor Driver");
+> +MODULE_AUTHOR("John Madieu <john.madieu.xa@bp.renesas.com>");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.25.1
+> 
+
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
