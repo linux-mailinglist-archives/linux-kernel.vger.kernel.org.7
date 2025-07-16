@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-734368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA95B080AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:50:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D566B080AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6710567FA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6E63A6D44
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9B12EE979;
-	Wed, 16 Jul 2025 22:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PpPd7o+L"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A142EE987;
+	Wed, 16 Jul 2025 22:49:34 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10809295504;
-	Wed, 16 Jul 2025 22:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB17295504;
+	Wed, 16 Jul 2025 22:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752706187; cv=none; b=jq6WJxhrV+8grjn60KLeo2lM5j30LNppth8/FdNo5olfIHOxtX4B1ptgCXHA7jrvxYCGbPx/4Tr/FRP/0+RSoo0fEfEe+jx9c+B7X5usoNqKYPria4d5/Se6esxQzwiegZ5QZeDNAcJeoG6XMI9XWkhr7oeU0gC+AUuQ8nHtnJU=
+	t=1752706174; cv=none; b=isguiukOTdQB4W/oqmR7qBPX3uEQny1gGn5tEVb4tJJ+y6on2sapSb8An7i53sGn9QEPxfi6icsTvFpBsRHqSF8YbIRraIHvEdPkXNvJ2y5JWlCTJOgW7l/ca+e7pNeL02QUFix4MjiaMAwyOIw6dfNghiZHtICVfUIKY7ny1Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752706187; c=relaxed/simple;
-	bh=EyJTuRR9KSK4RX5G5/kJLBZK7Ju6ILW5wpu/i9l2HkE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DXbK+BHEkeYKL/FM96ydecvBhBlORNtQhcG/fBKYvJo0uqEI/o/9iUsIpLP1JL0Oqzvf1JMKG6wJr8KNCB7hAnn88KlWTzuDwsDPGZzDdztzbxmcCQ+w8nekIIe1Jp1YBvI/AUVv0G0KtOcKHLKynu/+r4lyyH8zHidV29+NHnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PpPd7o+L; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-31306794b30so69276a91.2;
-        Wed, 16 Jul 2025 15:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752706185; x=1753310985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v//3UBkCMbiLFLeuBtGql5RmFNCDtwUoFx4ncSofsIg=;
-        b=PpPd7o+LeRkk8v9OufDo1LpfId32/i2HjIvW8sD03ZZzT6HGTgCAv67SwATbG2qrrh
-         pfNyu7Fq7KuzhxjTnAEpMXYjgY2HF3r+SW1AuduoqYM+K//XiVzBGXoP4KHTYyg+YPhG
-         KutxabihZJslMsYlSzjXK9KG21UWrRED5XOs+FP8XZ/+KA3TrnqPyXWiNkO8LED2ECOV
-         nojfMH3iQpch69Gn9yTaDJH5E5k+92iPAvRiOUacBNlsTUmlyhks71rKpgOr63ca3fAu
-         xhn36/uIPLVni6vTOOICCsM/4ZQ66dmlYox+BaGr683rKJXLGJC/fNqSmb86+5xBMxvc
-         REYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752706185; x=1753310985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v//3UBkCMbiLFLeuBtGql5RmFNCDtwUoFx4ncSofsIg=;
-        b=fEaURp8LsFMUthjNrPfACC9SMTAxGVrIojowE3GS/ouo1d99jeqGO/iXSWVa9t2j2U
-         peLCCAB1gkq49jClNlQOlaxKjEXDChDREW2eF0KgCc91PstXiv4ecDXU+q5FuerBQXbQ
-         J84Fw1v8dV/ynnkkJb6Ce9B1diI/ez6i6A0vfcsR6NaWykmc/08NDgJq06nQJIgOW2Wv
-         sYGMahtO2EU0STjggsvN3A5ERh3UHZjaTPXBFaojSp1ZtKfHeLO89KeDR1oevzmadc//
-         NmhuFeRNSNAQ+VO4o3io0z2G/6lkGOSOPde+IZss8Ulu14z20T2GFb51ts0ViknVccZv
-         JVdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmzGMMxB+CswOPWgyPUVUjUFxMqvzmGMfKtsBsYAuKBzb2FEXS5eXUaNZ6E2y7RNzXv/w2TWb8S7jHkEOugGY=@vger.kernel.org, AJvYcCXTwKUTd6v6vgVATIWJ9nfAYtC2m3bLonZMFRapyBJuIelLlrRfnpVG0QC1G3mn/LUiLG4yJBCXq4U26JU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIJcjYLtYH3KqcEyKFaQNYfGEhCUNDf21JapAnEz0Q4nd6rCxL
-	WbEneMkc8g812XHDZ5OjTfinYTGtOL3Y6cBcQ5EbmPea90ISkIzWOJ9Rf20l+QR3bd2IxFY6K2G
-	Dkqb9CuoZoNL++cYHkJhdddddHwHX3M4=
-X-Gm-Gg: ASbGncvF1sHLNRao5A3Eky97ZkEidUPKZDO3k7bpR4ygmWMgEb4/jkh+JYBMJk7qw/T
-	4SdnrP5SWuRGlonsmvb/CBjAbMAOPk/bR0HtGGBNeMWo7jP2QkhHQCBpVNZoT3JH6Xab9lhAZeC
-	y3B1I51YMy6zhJqxHjqzmJTn8HgVZffjS4XL9LTtR5ElyRhbXLbG6kfTWMZSIzR8vjdW6FhODLG
-	aCsJA==
-X-Google-Smtp-Source: AGHT+IF2FyfdRt4/WjI7YWqu6cvz+ZQn0OnT19l1sxu4Z2oAw3gTfBbYI/cvlgLvUs3kU5QRfXuJ8gwGg8NFl38Sk+I=
-X-Received: by 2002:a17:903:1a68:b0:236:71f1:d345 with SMTP id
- d9443c01a7336-23e24ecb7damr28125495ad.1.1752706185220; Wed, 16 Jul 2025
- 15:49:45 -0700 (PDT)
+	s=arc-20240116; t=1752706174; c=relaxed/simple;
+	bh=FgobWPPL5UJc6tkHmmcGVrP9O6ENfzQiu0LKmH5ZpE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LB3ILn6T/7StPdHN90W9hLE4A+DyjYZdnmdDXLfNMdaxOvC8j0Wt6TzgngN5ZvxKuLMflLW2R4+Nt7NKN2ecbLlGpSVKjXlnBaEK0RgNCe5gh1pG6CfLOs9/yW6U27Qhip+eaHAfhYb6ZGnl/nhAfA/n/+HBMGxEehpgdlh66rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 193E5140557;
+	Wed, 16 Jul 2025 22:49:23 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id BACAB30;
+	Wed, 16 Jul 2025 22:49:20 +0000 (UTC)
+Date: Wed, 16 Jul 2025 18:49:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Menglong Dong
+ <menglong.dong@linux.dev>, Menglong Dong <menglong8.dong@gmail.com>, Jiri
+ Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, LKML
+ <linux-kernel@vger.kernel.org>, Network Development
+ <netdev@vger.kernel.org>, "Jose E. Marchesi" <jemarch@gnu.org>
+Subject: Re: Inlining migrate_disable/enable. Was: [PATCH bpf-next v2 02/18]
+ x86,bpf: add bpf_global_caller for global trampoline
+Message-ID: <20250716184940.17b6b073@gandalf.local.home>
+In-Reply-To: <CAADnVQ+5sEDKHdsJY5ZsfGDO_1SEhhQWHrt2SMBG5SYyQ+jt7w@mail.gmail.com>
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+	<20250703121521.1874196-3-dongml2@chinatelecom.cn>
+	<CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
+	<45f4d349-7b08-45d3-9bec-3ab75217f9b6@linux.dev>
+	<3bccb986-bea1-4df0-a4fe-1e668498d5d5@linux.dev>
+	<CAADnVQ+Afov4E=9t=3M=zZmO9z4ZqT6imWD5xijDHshTf3J=RA@mail.gmail.com>
+	<20250716182414.GI4105545@noisy.programming.kicks-ass.net>
+	<CAADnVQ+5sEDKHdsJY5ZsfGDO_1SEhhQWHrt2SMBG5SYyQ+jt7w@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624-opaque-from-raw-v2-0-e4da40bdc59c@google.com>
-In-Reply-To: <20250624-opaque-from-raw-v2-0-e4da40bdc59c@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 17 Jul 2025 00:49:32 +0200
-X-Gm-Features: Ac12FXz9BaX-Wl5vT6RJ3n-TUcpyTsdzFMKNs4pOPLbp14a-OstkS9DkN8Ggm-c
-Message-ID: <CANiq72kyhTMkZxizgL0Uu1NEbeGP=G09VP+Evb47mg4FyxZJZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Add Opaque::cast_from
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Miguel Ojeda <ojeda@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, dri-devel@lists.freedesktop.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ufh5hsfdw5t91djwkb8yex8xz3cjq94s
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: BACAB30
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18aOmIcpJFcSov7N18CBrghm4Qd1QnVBRI=
+X-HE-Tag: 1752706160-545995
+X-HE-Meta: U2FsdGVkX18axJzQyde3/IMQq3kuGKLF/jWYLgUKd0VE15CKbNOoe0NrkFzGWrAODBtiUaMiEoGkYM1btK7OfGewpTQfnATc/DYa3A6F973lC32nEwDHI0gm8sLLX8GvT/i0vsY35qw4vDI7TAHCb+jjFnSCl7vdZ2ukoDqaSucuLY+fanJ7yfWY/yTvuaIClr/jRWLQkSEquZrwwvnP+LIV/MLl0bQxQvYHO9iskBweQKt9WcUgsj6g5O5Tw3bJuyMY8hY665TP9ceZrBak1nSEm6qRBu+dI2JTcwnYyxEcv4M3AcWYSYSy05+UhEPO99hq0Dq/Kr39Wd6QgjatMgmHakKG4yvpNqO7c/u1uefJzLjRmE3s7A==
 
-On Tue, Jun 24, 2025 at 5:28=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> Since commit b20fbbc08a36 ("rust: check type of `$ptr` in
-> `container_of!`") we have enforced that the field pointer passed to
-> container_of! must match the declared field. This caused mismatches when
-> using a pointer to bindings::x for fields of type Opaque<bindings::x>.
->
-> This situation encourages the user to simply pass field.cast() to the
-> container_of! macro, but this is not great because you might
-> accidentally pass a *mut bindings::y when the field type is
-> Opaque<bindings::x>, which would be wrong.
->
-> To help catch this kind of mistake, add a new Opaque::cast_from that
-> wraps a raw pointer in Opaque without changing the inner type. Also
-> rename raw_get() to cast_into() for naming consistency.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On Wed, 16 Jul 2025 15:35:16 -0700
+Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
 
-Applied (yesterday) to `rust-next` -- thanks everyone!
+> 4.
+> Maybe we should extend clang/gcc to support attr(preserve_access_index)
+> on x86 and other architectures ;)
+> We rely heavily on it in bpf backend.
+> Then one can simply write:
+> 
+> struct rq___my {
+>   unsigned int nr_pinned;
+> } __attribute__((preserve_access_index));
+> 
+> struct rq___my *rq;
+> 
+> rq = this_rq();
+> rq->nr_pinned++;
+> 
+> and the compiler will do its magic of offset adjustment.
+> That's how BPF CORE works.
 
-    [ Removed `HrTimer::raw_get` change. - Miguel ]
+GNU Cauldron in Porto, Portugal is having a kernel track (hopefully if it
+gets accepted). I highly recommend you attending and recommending these
+features. It's happening two days after Kernel Recipes (I already booked my
+plane tickets).
 
-Cheers,
-Miguel
+ https://gcc.gnu.org/wiki/cauldron2025
+
+Peter, maybe you can attend too?
+
+-- Steve
 
