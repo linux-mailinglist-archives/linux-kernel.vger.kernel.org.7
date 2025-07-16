@@ -1,148 +1,94 @@
-Return-Path: <linux-kernel+bounces-733623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD22B07715
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:34:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07FB5B0771A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E550B3AA233
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:34:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 865D21C23775
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFF51CAA92;
-	Wed, 16 Jul 2025 13:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7431CAA6C;
+	Wed, 16 Jul 2025 13:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHJEH7Yh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WOVBcWbz"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4517E4C9D;
-	Wed, 16 Jul 2025 13:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736E41A76BB;
+	Wed, 16 Jul 2025 13:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752672889; cv=none; b=bpMnhTzt1vc5co1DpJdh2DOIS+0T6dqI1nhM6lE9UKQf9NnSHo7bIwBzXfRdaDezxWdvV7p95PSQTTQvUPPm9mwgOvURSPaYNcEmvmuDQ84Nhhie0gDKoTWM7fXdjgz0Ykd/KQhN2VM6jOEvWgC9uUW0Z9srhL2SMfftY1R9hRI=
+	t=1752672999; cv=none; b=R4gwWqZFFOI5XGkTmKt+3x6UAemhGyttXMmfpd+/WF0ubz5NdMwNcIsGPhdJ5rvjgIcMXj2OXTMEuxs31EtUbztVgvcLFMo3UifdtatYHgJHR972R35dzm278s3v3LhEOoPGZXANQhty0gqlHKzom3C388zln7Wq7Hp98irjlbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752672889; c=relaxed/simple;
-	bh=Cv22+gj0eNB2YJMPPZnxEB+DFB8DrWp1lbMdSA0X0Aw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GCc0QgzCM9KvsLJC2+HhYG+XmKo/PEJdPJwqaNqs1STlbc8gD6aBHBhbC9YiKJO1yBapKsHEYyLLmH8Qna0Fxk9yvU5C8A5gdkUyq1ldNZcaAUy8eZwJjnF1AiBv5ZGZN2CHdVHcRxLEFopJ6Z2Miu6lCrCt44/MX8h92gZUymQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHJEH7Yh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E22C4CEF0;
-	Wed, 16 Jul 2025 13:34:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752672888;
-	bh=Cv22+gj0eNB2YJMPPZnxEB+DFB8DrWp1lbMdSA0X0Aw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=VHJEH7YhOvdrdbi0GtCmcPYm0XZ8oAFDKOWU+v7+uvxPWxJ6Fm/5MK3YK4rpgEIH9
-	 FMtlw3K86yFYW/bpyQ2A4R2EuGEU4nfipI0eKQUOJD5mfV8L2DdPWL7D1xR0D9rY+n
-	 Tbw/AskkggUrz4NxVdLs7tiDJqFqQioYgt53MMjzfYhcYI3c5wZOmD0YgR7q/R087C
-	 iepPf3DPQWmgD4U1erdP8UfPgJSaRTT4nefSR6Uii+Ia+6cKo37eM9i4Yw1ZNY5L3+
-	 EBFVVU0FoXMmriQhKrhmK/89Ly/mHdhmdSrNXsLUaDer9SzFBdVxFf/nW19JFZ9Wli
-	 Ptq8+2vnpypVw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 16 Jul 2025 09:34:29 -0400
-Subject: [PATCH v2] nfsd: don't set the ctime on delegated atime updates
+	s=arc-20240116; t=1752672999; c=relaxed/simple;
+	bh=AKxGT5AMNeusYivSHXb8iYN0qH5N9KGc2AIgJkaPLKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9KFAvuRlcA4isg80MCQqDjkxJqOm1a6bbDt4LACfUFbtdjnqvMSpodj+qq3p4gtDYXcaJYWhKLzred93dxEGzAfhOMuFnNs2SMHTu331tAwL7/ZLN2jQ+LTQqQdyETc9QfMLUTYAKJLssqypr5r6oed9C9uhJT2I+AdY8YYooo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WOVBcWbz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yTMgUcFyj0zsIpb13A6gWhzlFrFD+gidzrUP42fMUAw=; b=WOVBcWbzjWlfYZpJajfN2CwZlk
+	DuUPv9MrkC/a81JDpQB35SkMaIfsWsH8Ziks/zAo8tCvb7emLsN5uzVwmxbHXLgBW4dF0NIVFwdOK
+	5QdS0MFRJvZwLIpmGGYUpSpNAXtc0/oUJM0wOri58bGD1XrqGI+PuTCYOMgTwHm8NHG5PW3OwLWlE
+	vnnx38kzZUh+NL6L4Drp0IGZ1ZCF9gxsTzrncx5oZiTAN6agtFI/khE2wqVCT6hWP2ZXWuOFOTXfG
+	RYa1b06gqobcGSnF30KseOKSwyCy+f4/l/qf1qAAhB69P2Yvn94w9ODSfyvkan4etYpgLx4bmIB6u
+	U+R5bFOQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uc2JE-0000000GiCN-1U4a;
+	Wed, 16 Jul 2025 13:36:32 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F2F67300186; Wed, 16 Jul 2025 15:36:31 +0200 (CEST)
+Date: Wed, 16 Jul 2025 15:36:31 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Breno Leitao <leitao@debian.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	jake@hillion.co.uk
+Subject: Re: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
+ disabling preemption
+Message-ID: <20250716133631.GZ905792@noisy.programming.kicks-ass.net>
+References: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
+ <20250716125128.GX905792@noisy.programming.kicks-ass.net>
+ <aHel4LvT_Y5gpYfy@gpd4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250716-tsfix-v2-1-b834899cf4d0@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAGSqd2gC/12MQQrCMBAAv1L2bCRZ0lQ99R/SQzBruyiJbEpQS
- v5u7NHjDMNskEmYMly6DYQKZ06xAR46uC0+zqQ4NAbU2OvB9GrNd36r4aTRurO2Xhto7Uuo6f1
- znRovnNckn31bzM/+H4pRRgWPxrk+WIdufJBEeh6TzDDVWr+ctWrjmwAAAA==
-X-Change-ID: 20250715-tsfix-780246904a01
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2588; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Cv22+gj0eNB2YJMPPZnxEB+DFB8DrWp1lbMdSA0X0Aw=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBod6pxVKEsHSrhmAAEE6yOXz7ARiUXZSBp5r+iP
- xbNz4rn4ziJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaHeqcQAKCRAADmhBGVaC
- FYbJD/96cSXlYBaeAKVMvWBQpM834R4LFovK4DAlaXddeOb5MaDkehnGBmC0u5AhjeNekBRz5NB
- Nsn7lzG3PuPuqtsKN+W3MitEIr1DboL6NLY+r+wM2FlwLc1r12Gs7bW0VLbUGSou1BNeJbzsIgi
- 0Pu4ipm9ho07SY4hmo+kzKmCM1EdpFzL3SGDET4EfkkfBYTLoGyiVtzXkVuAFfvdVGBnEnZRK6/
- 9RCa7kZfbXQqwqY24wQoPEGdti12Ji5Yz0E+tRtMhBVoqF2hORP5xJMGRqLuYYmzY6yK75ulT3T
- elvDSCwjS6gh7+HStkJiOcFbznSazMriXj6TI5vtN0CHlJK+7nBPSePyD1yxyjBXkpZMuoisRew
- DNdfQ+EzAl/tiRkUIJ0mTVRDpllg3WUaiQUlEGedVBux6HJqLg0phvMTmznMPKvmSuR2tPsTsly
- ptz78oPhx4HfBRgBZ5akFZVP5Vzx//Iaun3RyEf/NCtjlHGsYGeCEKA0R6y3BoPAQUnUfx/m0mJ
- jzNaVQZ2xxxmxfcaRKUetX8egp0fKSV1V2QWvjGPsSn72sth4E4pvCBq62r7HRlOluwBpZs7hhL
- jib9JRymRZv3I08UlchgmqLUzdL/VY0kkpNrALeSGb2NXWvqZ6v77NzXrUODvaz7JA7QKbm2NZS
- 1iXOizF+pMbBXRA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHel4LvT_Y5gpYfy@gpd4>
 
-Clients will typically precede a DELEGRETURN for a delegation with
-delegated timestamp with a SETATTR to set the timestamps on the server
-to match what the client has.
+On Wed, Jul 16, 2025 at 03:15:12PM +0200, Andrea Righi wrote:
 
-knfsd implements this by using the nfsd_setattr() infrastructure, which
-will set ATTR_CTIME on any update that goes to notify_change(). This is
-problematic as it means that the client will get a spurious ctime
-updates when updating the atime.
+> The idea is to track the scx callbacks that are invoked with a rq lock held
+> and, in those cases, store the locked rq. However, some callbacks may also
+> be invoked from an unlocked context, where no rq is locked and in this case
+> rq should be NULL.
+> 
+> In the latter case, it's acceptable for preemption to remain enabled, but
+> we still want to explicitly set locked_rq = NULL. If during the execution
+> of the callback we jump on another CPU, it'd still be in an unlocked state,
+> so it's locked_rq is still NULL.
 
-POSIX unfortunately doesn't phrase it succinctly, but updating the atime
-due to reads should not update the ctime. In this case, the client is
-sending a SETATTR to update the atime on the server to match its latest
-value. The ctime should not be advanced in this case as that would
-incorrectly indicate a change to the inode.
-
-Fix this by not implicitly setting ATTR_CTIME when ATTR_DELEG is set in
-__nfsd_setattr(). The decoder for FATTR4_WORD2_TIME_DELEG_MODIFY already
-sets ATTR_CTIME, so this is sufficient to make it skip setting the ctime
-on atime-only updates.
-
-Fixes: 7e13f4f8d27d ("nfsd: handle delegated timestamps in SETATTR")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-I had missed a place where ATTR_CTIME needed to be set in the previous
-patch. I think this might be a better approach.
-
-Note that I do still see the occasional test failure due to a client bug
-with delegated timestamps, so this isn't enough on its own to enable
-them by default. Stay tuned!
----
-Changes in v2:
-- only implicitly set ATTR_CTIME if ATTR_DELEG isn't set
-- Link to v1: https://lore.kernel.org/r/20250715-tsfix-v1-1-da21665d4626@kernel.org
----
- fs/nfsd/vfs.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index ee78b6fb17098b788b07f5cd90598e678244b57e..c25e43dfa4aa4e3f730ffbb93f6b981d90c19c4c 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -470,7 +470,15 @@ static int __nfsd_setattr(struct dentry *dentry, struct iattr *iap)
- 	if (!iap->ia_valid)
- 		return 0;
- 
--	iap->ia_valid |= ATTR_CTIME;
-+	/*
-+	 * If ATTR_DELEG is set, then this an update from a client that holds
-+	 * a delegation. If this is only an update for the atime, the ctime should
-+	 * not be changed. If the update contains the mtime too, then ATTR_CTIME
-+	 * should already be set.
-+	 */
-+	if (!(iap->ia_valid & ATTR_DELEG))
-+		iap->ia_valid |= ATTR_CTIME;
-+
- 	return notify_change(&nop_mnt_idmap, dentry, iap, NULL);
- }
- 
-
----
-base-commit: 7351f1092b3cde79f654dc49a82d51c7ada0a1f2
-change-id: 20250715-tsfix-780246904a01
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Right; but doing superfluous NULL stores seems pointless. So better to
+avoid the store entirely, rather than making it more expensive and no
+less pointless, right?
 
