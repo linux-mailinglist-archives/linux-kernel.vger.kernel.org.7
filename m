@@ -1,98 +1,146 @@
-Return-Path: <linux-kernel+bounces-733605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981A1B076D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:26:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADB1B076F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC04D584B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:26:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCC037A5AAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095631A8F6D;
-	Wed, 16 Jul 2025 13:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17E11C6FFD;
+	Wed, 16 Jul 2025 13:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HvrrFjzl"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oPE9QAtM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1097B1A5B9E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9329052F88;
+	Wed, 16 Jul 2025 13:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752672359; cv=none; b=E3lSKkWP5aQLoT1igg6NB/5PLk63EdC14L+tmlud8vufUDLhSC/9A8SClOREZsi9diuHIWaYyEhTaLJmAzy2zofXaIzhMzW0sY4pxInohR4ulDAVO6tekYsPfO6gIbXpv7h56PJ0U5jWd0CrmsWV1KayPrT/Z2zFzVSJP5Rn3Bo=
+	t=1752672562; cv=none; b=O89d2KEMEwJDxL38BR5C0gP8N+P6iqjycclwg/ueFny86gMREG2h7dpGCqbvg7PIJaIVtfTwif3ACr7Zn9ui5+Alv+wcGrypJ2Mz2d5E9YT38hK9JWKYCCeUfJtBXajwgT9zI6GrYN9TLonEVPl9yAPV5AtYECfx5CyxRxnxxqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752672359; c=relaxed/simple;
-	bh=0+zCImxReXOlCaZt5r9WsCGwm5+umUGVWUe3YxjQOU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iz8iIf0Xw61NyXbZFETvyLJ8v3cRs9jtZQik9RaYHa0zvebktwV8tLVCIAlW5gtTuO5qRa+6w5/B2eCTay9dg1srtCuGtQhNYiudkTvqKZil3FGxzN8dC6LkGmaNRV0+aDRO3zej6VvweTYT/bS09OVtsGdJnURR9yqH1PDJGN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HvrrFjzl; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7D20940E0217;
-	Wed, 16 Jul 2025 13:25:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 30ul8XKi027v; Wed, 16 Jul 2025 13:25:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752672350; bh=3CHBYx1Td1VVwAhblA81o/vMGhCuwmhfT1cbjZ6pKfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HvrrFjzlXAFsz+UpQOZuNR3WTCXy1AgzeGCfjM999j7WxZy1i+xOiWCjH7XmhIx8o
-	 Rxv0o/DdztqzBsCKiqW/DK1albQhpjv+NPN79f0ftQwdZ93xWT0ON8XxAHOawmWqel
-	 Ff0F6F6asWyYThD19UlFfaSvsh+IF+plEs67BKBh6tYSW2FFqDK5paomc6njzXzhnd
-	 e1GEdHf1gT71Qu5l82bVkK6fxnneZhSDCfMdy6jP7pS/OHQR4VaWV06Pq6CKyJEPgQ
-	 gLAjXjSUlhx9MxlRkv6z1WV5tvxaasJGD8hD5aJheEWn1KpCAPqyQmjL9pPx8KKplD
-	 bkgn9c1HYvKMJZdhj5nlJhj4cqjsp36A6yZJ8S8cHdtM83YgYINKoIOiyGTNjT4K4c
-	 NruEvDkGnOcAsaU86UKxmwjyPO+un58Hl3QUVJgeZQtXak9L9SCk6GUKfzy19orJsL
-	 M3dnsg3zMhjef7VMcrkfqdh6yQr9FLZuxLM/m1idho2VtU2JfyN5NateEfu1wLXfRB
-	 c9E1/Y1b0/CX9QA/yyowsN2/14JedlJPWeRHzKGBEj2LniLh6lTdaxuvTKPAGf7Pep
-	 ZaMofg6FM4gpTs4/KzpKEOAPvUDA18i6/c7m1AbTFGJKUsEZYLPGrSYTQ6wI8hSz77
-	 WOej4Tbll0GlDtaZHIXrR12M=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E819B40E01FC;
-	Wed, 16 Jul 2025 13:25:38 +0000 (UTC)
-Date: Wed, 16 Jul 2025 15:27:35 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Khalid Ali <khaliidcaliy@gmail.com>
-Cc: andrew.cooper3@citrix.com, ardb@kernel.org, brgerst@gmail.com,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	ubizjak@gmail.com, x86@kernel.org
-Subject: Re: [PATCH v3] x86/boot: Avoid writing to cr4 twice in startup_64()
-Message-ID: <20250716132735.GAaHeox8nvd00imsIV@renoirsky.local>
-References: <20250716014504.GAaHcEIIUgNOdu_n2s@fat_crate.local>
- <20250716090755.668-1-khaliidcaliy@gmail.com>
+	s=arc-20240116; t=1752672562; c=relaxed/simple;
+	bh=xGDQHVKVaYo4kXEePdalUf6IYhlWMbR6VoXt203HmgE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ETRcGj2FnzQVVGFRJP1ViaWn5eC3sdC4dt+zZvNlZyFzmvVCKJeqsjiTBFOz1KreLgzMdFZNFb2xPjQPp1rInpsgMF/tDYg2Bu2jKbjKSVXPREGOd9wUnZyDBxwLLkCUpgLsBgeuOJBtaZJWz/y5Rti4maeB2uokX4KCeCSHPD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oPE9QAtM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GD1ijE014502;
+	Wed, 16 Jul 2025 13:29:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=umpelYDRPaENSzFdU/fdMi
+	J120l4CwR4raHIWu0Krjc=; b=oPE9QAtMqZXFzI/kqv+OqaLDXK2+FRl6OaY0Xp
+	diQ/yJhsiOL4Um5LUctzkuqDrPxsq5cjk24aVL8wtdLmWRPMYK+iWlcL38QqTnE1
+	zJ8FUSyzURCvugEiGiJluVhsypimxE7YgKhdOClkY5cweqvGXJ5EEJSINpRv9hZc
+	j1ZYHvb/EOhlf/cmn9n8EMl/iru0q1KFmRzECE/xDfTxvcLKE7vGA7oNzVmkBZfP
+	e8CtgaoqddoN9bltTD1d2EXLyYD6kR2giar7ICC7gWTOmiEV4yDUlS0NTrVunw9z
+	cvY5YY9clqF7bBpeVVfaFxG408jH5U6MOSD+7XUInqRLnkLg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dypy9k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 13:29:13 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56GDTCal031009
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 13:29:12 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 16 Jul 2025 06:29:08 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <srini@kernel.org>, <amahesh@qti.qualcomm.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>
+CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Ling Xu
+	<quic_lxu5@quicinc.com>
+Subject: [PATCH v9 0/5] Add support for gdsp remoteproc on sa8775p
+Date: Wed, 16 Jul 2025 18:58:31 +0530
+Message-ID: <20250716132836.1008119-1-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250716090755.668-1-khaliidcaliy@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: D2aQFu3kL5zUfEb6BCjMbrSQ0cCXB8w0
+X-Authority-Analysis: v=2.4 cv=RtXFLDmK c=1 sm=1 tr=0 ts=6877a929 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=qgJfyGv91k1fQCYRv54A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEyMSBTYWx0ZWRfXzBHRFFPgfNWY
+ GPTSStnWX747/HEqJAD5OpNcOS7kQkJIJpYLv5al27K/99s3qMt3VCUlj2onAQO5z2eMf9Y291W
+ SYQTMaYTT69mx4z71hRTnlva8+x5UdNdINcf3AoKduFuR1e5zDAqyXmVWxLw0mIiRuaWoSnHNZl
+ zj8G1Mu7pFLx+L0TgZ6a7rww0TeIqJCTMc8IjblHz5pL8CIzOtoK1j/u7xmewS/u0Ct/r9y98Du
+ cTmaKadLflZ+TanCW27gew9krm0cK82tEu9QRMN/d52dwR3tWROgZXblCV0VTC1JqRRRFIs5zdX
+ MNKRaeK+yzOi4JwMr5wEjtpeqti6Kh71fkZ6Lrwmr+IMfFYIVxBLBvTJdtEhPb2t/wHtqsgpyic
+ c+oN65EY/ixXo5ogbF2l9RiDSEMO4E0vbfDfvlq9fgfwHgjNmf1JfgYmFL7ikUj10vDfHXpM
+X-Proofpoint-GUID: D2aQFu3kL5zUfEb6BCjMbrSQ0cCXB8w0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_02,2025-07-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 mlxlogscore=637
+ priorityscore=1501 phishscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160121
 
-On Wed, Jul 16, 2025 at 09:07:20AM +0000, Khalid Ali wrote:
-> I think the comment is misplaced. It is better if we move starting from "from the SDM"
-> to below the endif. The second move the comment above it isn't useful also everyone knows 
-> what PGE bit does, so it is better if we replace with the above misplaced comment.
+The fastrpc driver has support for 5 types of remoteprocs. There are
+some products which support GDSP remoteprocs. GDSP is General Purpose
+DSP where tasks can be offloaded. Add fastrpc nodes and task offload
+support for GDSP. Also strict domain IDs for domain.
+Patch [v9]: https://lore.kernel.org/linux-arm-msm/20250715085227.224661-1-quic_lxu5@quicinc.com/
 
-The comment's fine. The %cr4 writes need a comment explaining what
-they do because their sequence is special.
+Changes in v9:
+  - Change the patches order.
+Changes in v8:
+  - Split patch.
+Changes in v7:
+  - Edit commit message.
+Changes in v6:
+  - Edit commit message.
+  - Remove unused definition.
+Changes in v5:
+  - Edit commit message and add sapce before comment end.
+  - Move domain definitions back to driver.
+Changes in v4:
+  - Split patch and change to common syntax.
+Changes in v3:
+  - Restrict domain IDs to represent a domain.
+Changes in v2:
+  - Add GPDSP labels in dt-bindings.
 
-I don't mind documenting non-obvious asm in a more detailed fashion.
+Ling Xu (5):
+  dt-bindings: misc: qcom,fastrpc: Add GDSP label
+  arm64: dts: qcom: sa8775p: add GDSP fastrpc-compute-cb nodes
+  misc: fastrpc: Remove kernel-side domain checks from capability ioctl
+  misc: fastrpc: Cleanup the domain names
+  misc: fastrpc: add support for gdsp remoteproc
+
+ .../bindings/misc/qcom,fastrpc.yaml           |  2 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 57 +++++++++++++++++++
+ drivers/misc/fastrpc.c                        | 54 ++++++++----------
+ include/uapi/misc/fastrpc.h                   |  2 +-
+ 4 files changed, 85 insertions(+), 30 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
