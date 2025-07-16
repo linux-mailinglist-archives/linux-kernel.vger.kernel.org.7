@@ -1,190 +1,258 @@
-Return-Path: <linux-kernel+bounces-734131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D3BB07D6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:12:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0ABB07D6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3E73B72AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08DB3BBD7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508D128F933;
-	Wed, 16 Jul 2025 19:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3D028DEE0;
+	Wed, 16 Jul 2025 19:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FmemoE3V"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2084.outbound.protection.outlook.com [40.107.92.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAt7IQli"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AB924A07A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752693165; cv=fail; b=bAk0mv9T+ZDk9eouw+8nzaYqrJypvMifE3DagJ5pdHdqYugD/TAAK9/E9fWb9+aIoGf8o8W9sZEmc3zjIPzXuCSgl2B8bNAS9RV+3UPi6wgKdCHb0idbO3BL9nZ9AFZppncnFVx1MPKed4BCeRCKUNYVYaPJPJ2VnvZAHIRqDiQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752693165; c=relaxed/simple;
-	bh=XyhflZl4ee7g6f4Fj43oYfFJP3TMRO+E2zdD4o0tgjE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NNBrQ5neQOVQtoiSOJiH0bsWr1aKbc5mmqv8hUeW+nT48vpmRaJ9OQhXIMCDTXAMPwDhqUPeVcA2vlHz6LA1FI6cyecESPaLNMSfiR6hhOdt54WehoFsJ4kR2p7CiWRz6vujOP5dFDsW5v92tq3UiOy75rySf2+cKxCl3VdW010=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FmemoE3V; arc=fail smtp.client-ip=40.107.92.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LEu1r11rgbcYWwvTusZGtB2KhJNToiVqVVmH33GqoS30bi7l+SNjig/bUhS44VKghOZWNMvMZoZ9cKJxzOM3o3/rPrenciPhtMPVkiIdmEwbNrs3/Yw5lbVOoyMSpCOBd6VlUCO1kaTDJgLsD/I8NUAT6bbEG7UEJqXsqB3Z7fUPBQKHQojt3p9snUy1ri75yVfCSVTgxDTJN0DXHGvhGlhhyeF+YBT+wd3756KjTGnyWScFDoLsvTnRgTR5qswhJlMGlYpv5cPqq6Ck+EUA/iT163LiBgGWm1cKdxZLx+/a+CF/Q7o8U5BDwDSH9m9CNC9feg3NBaAY3PAdY3sb2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5f+iMnKaOXqMocYRIsrfB0SyI8tmS00rb52lqJ2QxGs=;
- b=XdHR67vdd2AQzsIH8f72sF3uzjIiAk/yFKLOAq9p92de6evWIXixLLRLgR1uv0qJAcbcIlnJ4SULMAXQc1RrRJs2zvRzT5BGA4YUsXPcILPe8B3UJG1/HZ4FYwG7BDaUZZdX0BBEviOmJv5zyxzB/ZWkMx0m2GR3PeuK1RkO68cGl8gFNDdvhaBqFGyrUaFyPJ1xv+3Uk2tdnQC494zGPbkXIpFiRCQw8TO7eLp5mAxsBWFkbF6OhL9z7eJqhApEghT3sgNHbi5c0xwdOr35m3agktUMKgOy7Y3/lpEnZIoMLGyM6sbvuLurvC+hFtiuaWJYKOtXxOZ2pIScIyhoMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5f+iMnKaOXqMocYRIsrfB0SyI8tmS00rb52lqJ2QxGs=;
- b=FmemoE3V6JosL1o/eUxcFvyaF+a6kJLJsm0MYK6PwDCVJ2UvFSpMxWL8BZZsYKGS4yk23jr03kzKeQWHRalvLu0dHB3EWC05ulze2KQ6U4wB7DyEQGuIOShHF5+0nWE/uP1IGolb3rG2r2MCFxIYBTgMm6X0YfUYstSVlaTO4W1ub0+J7LvIFOxlRJkL3ifRi+fGjsYePBNho94scXDsr2BmndUNkrYXwvvaShYr+1vNXSCBGTZykMcjr7gZJGSWE3hcgaVJ8pXGFmQ+jJ9G3G9A/RUBAK9f18K93HQDUowlQY/BvEYFkbffmQtc8wJMASST7BDPQNsMFpcpYnI53Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DS0PR12MB8444.namprd12.prod.outlook.com (2603:10b6:8:128::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8835.28; Wed, 16 Jul 2025 19:12:39 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.8922.023; Wed, 16 Jul 2025
- 19:12:37 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Antonio Quartulli <antonio@mandelbit.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Kirill Shutemov <k.shutemov@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/huge_memory: refactor after-split (page) cache code.
-Date: Wed, 16 Jul 2025 15:12:34 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <B0B7369E-2D65-4FD3-A1C9-2701FB455019@nvidia.com>
-In-Reply-To: <38ef66fa-f10d-43ac-a650-233d53cfe65b@suswa.mountain>
-References: <20250716171112.3666150-1-ziy@nvidia.com>
- <38ef66fa-f10d-43ac-a650-233d53cfe65b@suswa.mountain>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL0PR1501CA0021.namprd15.prod.outlook.com
- (2603:10b6:207:17::34) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8297024A07A;
+	Wed, 16 Jul 2025 19:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752693174; cv=none; b=MZmTqmPVWOzlJgoGCF8jNWiHbHVbIQjSGS5ql1vgXnwa4TDRuUoubbiYD9nmKtbQkFHzmnByyU4TLLFRdiUzaD24nKx40gL8uTH/6OlPxzL+CQVc1AgHqTMi3uDvWE72dZDHQHXsjNesjQfK1ncmo9g+3/HA1oYM9P/4dlsnEPQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752693174; c=relaxed/simple;
+	bh=2ehDL48ivmszxrAvnXVIU2R/XJNVWt0laGlvCyDSyFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YXfbPk3e/x3FIKUVFMlo1WIa4WUo/xzDLVa5I3Nfj3OwvhYsg7nptCZEYgUHqHtimuwp2F/iFWIyjTjFZURm0ybij0QVtF4ySryVEdgRjOfaJ3EfvvGEdyvrnmIRy/XtSi1jZ9t3CxfZhjYPb9MLXLFNCaY50JbE3GwNZc2eIn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAt7IQli; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-235ea292956so1573445ad.1;
+        Wed, 16 Jul 2025 12:12:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752693172; x=1753297972; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=nO+4D6qUstj9TupJdLpujSDtzD1jBC1X1DNWicmX2CY=;
+        b=hAt7IQli2nhfOOpCHeJmVxjQfJsaF3MX8axmDYFXlzgAuNy278sOkR+tsB8paG10hG
+         5XvPQZVq0JGmqnUhexVS2SkD2rbb3bDNy2bZh8rK+B3NRVugZUxpWxAwo2WUC8lWuWAa
+         5Yf4noZzHwoLyQBdCvhMBMWpz7BdPoqKAMr4lJHB3WyOXeT+mJdQwqdESeCuP2DPKHV6
+         v4QHb9BQSqN3KZGmssiU/jhbjhOW0v58NjogEoOmIRZVldPHQgLYzS+IVD32h0lmwZpx
+         NCCd8aQKLu3Yxoe3u0OTKfzVUJTz2nytgSuT+hTxScdTtYjZ9vbo1ZxoPGYk7q8sUX6z
+         oGuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752693172; x=1753297972;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nO+4D6qUstj9TupJdLpujSDtzD1jBC1X1DNWicmX2CY=;
+        b=BTgzV2423prtbbDnu9Ey8i2Oah+hRFmGKxwnk12p6Reazy8gclcVT8ndqsS3OB26Wz
+         wO+g/4tKyRkUhwbZ/bH/xZkAN/ddcyUXE/i6TQQqSbOQeOlaUmDH5FcebrrX1FhzMSNw
+         g9uAWt+Je6h/DXUTx2msbqtHEYfewrl+udPWIKFb4jIIbDGXJksqOKPw+Or6r3hc/Txl
+         Rpw+9MxxQ6rPPWSIXcg3GNGOljkFRjfFxllKcQgBjWMSQLdmmKjtYE4Y0ku/uaV2+Y0u
+         K7AytVPbJnY/SSsZPebUV27whnrKc8VQHX6Tv7A4erLV8kAx+WR7F5nMpKFcpjputkry
+         nKxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVy4oGXNqYXLPac+8c2PI+ddghBQYXcFcfD+dr2gq+PIBHjFHUTEYv7Yb6wAjC4GvQH6M+x7ZY5q0fpiQ==@vger.kernel.org, AJvYcCWNEEhWvpxxSKklIdHAg9xF8vkyGHBNmDndyEmY8T79hHMQ1P7wSK2rVrmlgtYW6lQ8rlfEPdArQf7l71Lc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0fyOvesOL0rDVn6Wo4QBIvZYLWu16JiUC2vQg2s7m0j/3glm1
+	L+ioCxjMFfJQEqMGYMsidie5d/WNdcIMsVzOy+m7rvTmeQLn2psBtLC0ekHT3Q==
+X-Gm-Gg: ASbGncv4RTnSNB1/JE4FwifTVL5QulRCbo0ZBTeZ2EsPp4Sxp/nvk6okohbS863yjh+
+	W0r6Fsw0IegvvtDC53PMHUw9kUcn4lGBlOiuOk5TY842qKq84E30CE1ZlmoZsAIIytOqCcERbBv
+	qPNJ4rXq7kK9tbOrravjNDkAzIEQgRbTvFL0JH0GURm8A0D8pyc3J+00/rrADpwRmXr3zaP+RYX
+	zqVbJNb7+2sjNsgBX90mX3YTA4FBf1yepyyeSuzwclfXZrMgmlevOu+dM++0xifsyMHEBYIuI3K
+	beJe7tADd2xOZKMMZxMLzc4+sW4Y66e9AnZtetOTnRwEjtxsHSwxvc+nsoV9iZC8F96rgKAuUAb
+	bdwFcNNRzasI3UXJdElSGdEFZ4s1gFVXHzRHq1qikmcStKWR5Vvwpq3JPI4d3zSgZPw6EQeE=
+X-Google-Smtp-Source: AGHT+IGWF3ZUujTOj3bQevHQqqfbitVdO/eANTXysFB2r6VlUMEPD63Amfo08n/+5QNgliORInJJZw==
+X-Received: by 2002:a17:903:94d:b0:234:d679:72f7 with SMTP id d9443c01a7336-23e256d189dmr48696605ad.23.1752693171512;
+        Wed, 16 Jul 2025 12:12:51 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4359b6fsm128164545ad.212.2025.07.16.12.12.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 12:12:50 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <5ffdeb33-2e78-4cdd-9b0e-5e7d78d25d73@roeck-us.net>
+Date: Wed, 16 Jul 2025 12:12:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS0PR12MB8444:EE_
-X-MS-Office365-Filtering-Correlation-Id: fab6c363-53dc-470b-4c32-08ddc49cba4f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pPxDphWCI1cAk8UxLqC//SenqerEtXAF2K3JyljpzU+z/0T5sHojsSodehuf?=
- =?us-ascii?Q?e0A/xJzHnYEBZHZu3TEhf3t+Rnrv6ZcgCBSgPOJl+h3kOSqmMXuR93HWNSy9?=
- =?us-ascii?Q?1n9Q+VPs8AtGbzR4sj9m2b/tQkfBCQh4hdqKNB5hzHfcHUsMAxb6LQAgTizy?=
- =?us-ascii?Q?GBGKeWU2ZcTvPKESm55qygAtld56B0MqtEuakeR9ZIJQ375YO8GJEh0xBRnl?=
- =?us-ascii?Q?YAQTvbt82IYjsvyfeOKFvH2V6SPQdCtzm3B121uVDc3DqwUgMtR0J/zrPOtG?=
- =?us-ascii?Q?kr5V9BwPZz3yFlJ8X1g5T5ziUf68/foLWMKfuyMstzVr7CJdgm7CARtLhRx4?=
- =?us-ascii?Q?wgj59/59eXFFye9VyyU3jhc9mSSAttnRhc76v6ctt7/gCHehDIiPmAwzm9wd?=
- =?us-ascii?Q?ooOK4VK18DHq6OA1tc4uGvERvIhTWJFCSdwlgsDRKihH6iAvxArDZ3kJAUeJ?=
- =?us-ascii?Q?Rue/6ezXkzp/vuSYLYpI+9YUJVcxLucrmpLRagXbgu2aT1hNUZqi1tvfLEc+?=
- =?us-ascii?Q?FDVw9oQRS14HzD74a94qjsoyfWP17fVTcxyosru/i4GdxTkBPsubF8SG7pOW?=
- =?us-ascii?Q?Au/VO0yGj67Mz2Ty+T9anjTHaj6Gcm+OxlGE62pgJubs/ngSLQEEnN/1URVJ?=
- =?us-ascii?Q?0vWdsXCQO0MWUJs+gR6WLS1rFtnprrGJ8lNJaADDvzg2WRkgDInh18R6tCtV?=
- =?us-ascii?Q?xTByqOsMnOs10OUrgkdzjq1oNoZUX8SuX03yeRB0PXAprFvhKBoU29KGBLxP?=
- =?us-ascii?Q?u4RLS2lQSAX6+Ix9OQxi42DYEHfdgLa7cPApnFJkcYNTHvsTIkaQcMiJ/pxc?=
- =?us-ascii?Q?Yg+FxQ0pE1L5OjR86N9Z07pQzoJPPavzE1mt5+w1KUmEc/zwZiI2eVAdc49p?=
- =?us-ascii?Q?DmP1bSpFbRtMxlYUXFUvKqJb4Ec7gEw30C0O2kVmDRzE1WYdpwh9lWpmSBn2?=
- =?us-ascii?Q?R1VuLwNB01IIxLTV3RDp+YB4I3+bcIduTFxcU3sq6H5LM41P+2wxl8y2cyKV?=
- =?us-ascii?Q?WWJeJ8H8ezrZpo6pJepitHMQLmdpwT3MmFAWdyNQtn+eStzTBG8snjraOls/?=
- =?us-ascii?Q?6RXPccYPcr/s4+7NzefOctUUDligWiBs6NrTz+KKxfEnEtmbOdxCCxjQTQO2?=
- =?us-ascii?Q?phPBcsgU9MkN/imJsDOG3FZ3g9Tw5u5I/zQaXVBUiplbxPxUtJ6JAwScfytu?=
- =?us-ascii?Q?oiSY6ILFJGFPkMLNNY9GpKcMK5eHjTJShuwhd3Yxvc2gar5L1+hIeFVFYmBd?=
- =?us-ascii?Q?NnfHGiHLUvWaLHguptroV2jcyBIJsPdJgAUIndgYREjfs52AbUK3O0hVInGq?=
- =?us-ascii?Q?nIbEXUGMLXrPfqjn/0q2Web1AkKuuEb99jcOGo4eInHyxrhNyQPQ+PIjAwm9?=
- =?us-ascii?Q?uTjGb1LYrbIbtzs4DNCgvgMrOaHgQtZe2+oIisup9q1IeOtL7Ern0M6O45bI?=
- =?us-ascii?Q?GXB7eWuVnEQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?aAIfx1T3Cbfh3WTqDYpRgiWdfGIqEk+thTfHP/9dizy7MBV2rsE/zxisMVfN?=
- =?us-ascii?Q?np4BV3fwoS+z78n8ozBsrROGdCii5xX1lMEGnLivsgtvB691cin3CzOOav+o?=
- =?us-ascii?Q?nAH8mqv7BCzSQIemXVe4Omo5ul2LHnlEE+tMWYZKb/YWCfkplvk3cMa7XgLz?=
- =?us-ascii?Q?F4jw8yoLTE3qvqs/A9fFzB4D71fAPfp5TJsTEJo3qsWDVproDKzEcl+1c0eZ?=
- =?us-ascii?Q?5Btl6dzoGyRLDWGQMyLK7Y+UzU0DSOjGmlTr98KjZqMAk25pP9wVgYk2LfCb?=
- =?us-ascii?Q?WJUJXyak+bEOc9ewGCqrbe7w1JydahVHd9iWgwpQ7sgrzIg3KFuSEB6zMYM3?=
- =?us-ascii?Q?upCFYc7/NDyP2+Ej4sc+H8AQHiVnlMZRjycLbDmfcoHWzNIEotoaDzJpbEqR?=
- =?us-ascii?Q?Af97qzzbcgDws3hswKFROxWfhYEnGcgb9Pi3di/+18CNqKXG2HZjRupY78Wd?=
- =?us-ascii?Q?7jOIk8B0gYpZn6TmYJIqJ3CBZtQQGi9Djmm3FQuHu1EMV0xyQt8qeVTg32ii?=
- =?us-ascii?Q?DSj6etfDB6j9g2D+9lWYnQfwLukk24iUQbQ33ppDTfne4TIiBsaEJxGojKH1?=
- =?us-ascii?Q?p7nlPUv9mlgZTNX065LDZ/s7RMY7Ac8NuVkeaQa5W92YJL6GBAHrrm/rRsnM?=
- =?us-ascii?Q?KuAUl4EHENzr2Odbcl+Jz1Nl1Z2P2w+w+F0JUZQHBp8a561oGdYQEOPJ4Y+k?=
- =?us-ascii?Q?fZrvywJcop5H/z+L8KnBao+QD2y3mP018wquXo4lxuWDoeaEQqQqs6pdrab2?=
- =?us-ascii?Q?t1cDGzfcxuQLSiKVe7a8Y6OV4pOBUhgj+0EylS7XlZEVsJvIvf8ShA/EpvSh?=
- =?us-ascii?Q?C1SyE5UbWlE4mNfccKDjL36Q/kv/Zs02HRudyIMX8w1sDogu3A226ZlCCsFa?=
- =?us-ascii?Q?Mn7jtnp8EnHgFMwtfAi93pd8UktUaAxJI4/7baR4J3N2dp5Rkl9rOLyGOFtJ?=
- =?us-ascii?Q?VIA2DEOyjkkDfBObGbPqEmy6YzBuanZJHxR22m/3n1qS9hhxnmpOqIUtOPJb?=
- =?us-ascii?Q?/uQkr5v4GpBWtFrUT7V0RaTE5bYCUv0kNbbny/GVmtdrUit9eJG43q2eP+Ob?=
- =?us-ascii?Q?USVUB0yRXPFVlwY8UzBPmubg6hojBbAp9TnO1BWdpft06v3TAp7wnx/pMCFi?=
- =?us-ascii?Q?2eHhye2g3FwgOdGOQiO2+TFAt2G4idN6Ii7f2+mUEZww0QpKV9YEhadgOcnI?=
- =?us-ascii?Q?vvt9B0Jo1COTm0PNf1jSGDMuDcwZXkB8QqKaoLGBF8sqHgVCHHIKFM0JX8sW?=
- =?us-ascii?Q?VqIvFiFX4/hPQqMPOq9aIDRfnk4ItEmuKuicemouEQ7r55oQchwJEgTsh4s8?=
- =?us-ascii?Q?VTxRCmuNEC2IIqBTcxJrY5+qEEaHsffV4VqzijeJeAiXKPf48w3FL0zGoCui?=
- =?us-ascii?Q?++Mno0qKoZU/he4SOZt8lKn4zZDWoQS+tLQUZXQ7NBAXzfVAGv5Yhu/WAjtj?=
- =?us-ascii?Q?WLevpUZLcLW/AbovMeHK/THue4mtGj+EGN73HrFrQ3NLP50HVDcvxbVdVLAP?=
- =?us-ascii?Q?kiLlfh4f48KcyfK/NhWYw24eFZ6gcc1pj7e7qdlNgDos6hz2is3lCMIRopBq?=
- =?us-ascii?Q?r2fEpvL0dI2o8pgM7xeBeTpPos3YLfn6MLHbbsM3?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fab6c363-53dc-470b-4c32-08ddc49cba4f
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 19:12:37.7396
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SzRzh5EeR5aHdx1MH8rh7Cd0dzg0IodpYwHje6GaCngNWjSAcwFMlMRue+KHfjRS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8444
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] hwmon: (pmbus/q54sj108a2) Add support for q50sn12072
+ and q54sn120a1
+To: Cheng.JackHY@inventec.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+References: <20250701-add-support-for-q50sn12072-and-q54sn120a1-v1-0-c387baf928cb@inventec.com>
+ <20250701-add-support-for-q50sn12072-and-q54sn120a1-v1-2-c387baf928cb@inventec.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250701-add-support-for-q50sn12072-and-q54sn120a1-v1-2-c387baf928cb@inventec.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 16 Jul 2025, at 13:59, Dan Carpenter wrote:
+On 7/1/25 05:03, Jack Cheng via B4 Relay wrote:
+> From: Jack Cheng <cheng.jackhy@inventec.com>
+> 
+> The Q54SN12072 and Q54SN120A1 are high-efficiency, high-density DC-DC power
+> module from Delta Power Modules.
+> 
+> The Q54SN12072, quarter brick, single output 12V. This product provides up
+> to 1200 watts of output power at 38~60V. The Q54SN12072 offers peak
+> efficiency up to 98.3%@54Vin.
+> 
+> The Q54SN120A1, quarter brick, single output 12V. This product provides up
+> to 1300 watts of output power at 40~60V. The Q54SN120A1 offers peak
+> efficiency up to 98.1%@54Vin.
+> 
+> Add support for them to q54sj108a2 driver.
+> 
+> Signed-off-by: Jack Cheng <cheng.jackhy@inventec.com>
+> ---
+>   drivers/hwmon/pmbus/q54sj108a2.c | 51 ++++++++++++++++++++++++++++++++++++++--
+>   1 file changed, 49 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/pmbus/q54sj108a2.c b/drivers/hwmon/pmbus/q54sj108a2.c
+> index 4d7086d83aa3..34233d955c48 100644
+> --- a/drivers/hwmon/pmbus/q54sj108a2.c
+> +++ b/drivers/hwmon/pmbus/q54sj108a2.c
+> @@ -21,11 +21,14 @@
+>   #define PMBUS_FLASH_KEY_WRITE		0xEC
+>   
+>   enum chips {
+> -	q54sj108a2
+> +	q50sn12072,
+> +	q54sj108a2,
+> +	q54sn120a1
+>   };
+>   
+>   enum {
+> -	Q54SJ108A2_DEBUGFS_OPERATION = 0,
+> +	Q50SN12072_DEBUGFS_VOUT_COMMAND = 0,
+> +	Q54SJ108A2_DEBUGFS_OPERATION,
+>   	Q54SJ108A2_DEBUGFS_CLEARFAULT,
+>   	Q54SJ108A2_DEBUGFS_WRITEPROTECT,
+>   	Q54SJ108A2_DEBUGFS_STOREDEFAULT,
+> @@ -54,6 +57,20 @@ struct q54sj108a2_data {
+>   #define to_psu(x, y) container_of((x), struct q54sj108a2_data, debugfs_entries[(y)])
+>   
+>   static struct pmbus_driver_info q54sj108a2_info[] = {
+> +	[q50sn12072] = {
+> +		.pages = 1,
+> +
+> +		/* Source : Delta Q50SN12072 */
+> +		.format[PSC_TEMPERATURE] = linear,
+> +		.format[PSC_VOLTAGE_IN] = linear,
+> +		.format[PSC_CURRENT_OUT] = linear,
+> +
+> +		.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_PIN |
+> +		PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
+> +		PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
+> +		PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP |
+> +		PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_POUT,
+> +	},
+>   	[q54sj108a2] = {
+>   		.pages = 1,
+>   
+> @@ -68,6 +85,20 @@ static struct pmbus_driver_info q54sj108a2_info[] = {
+>   		PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP |
+>   		PMBUS_HAVE_STATUS_INPUT,
+>   	},
+> +	[q54sn120a1] = {
+> +		.pages = 1,
+> +
+> +		/* Source : Delta Q54SN120A1 */
+> +		.format[PSC_TEMPERATURE] = linear,
+> +		.format[PSC_VOLTAGE_IN] = linear,
+> +		.format[PSC_CURRENT_OUT] = linear,
+> +
+> +		.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_PIN |
+> +		PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
+> +		PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
+> +		PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP |
+> +		PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_POUT,
+> +	},
+>   };
+>   
+>   static ssize_t q54sj108a2_debugfs_read(struct file *file, char __user *buf,
+> @@ -177,6 +208,7 @@ static ssize_t q54sj108a2_debugfs_write(struct file *file, const char __user *bu
+>   {
+>   	u8 flash_key[4];
+>   	u8 dst_data;
+> +	u16 val;
+>   	ssize_t rc;
+>   	int *idxp = file->private_data;
+>   	int idx = *idxp;
+> @@ -187,6 +219,17 @@ static ssize_t q54sj108a2_debugfs_write(struct file *file, const char __user *bu
+>   		return rc;
+>   
+>   	switch (idx) {
+> +	case Q50SN12072_DEBUGFS_VOUT_COMMAND:
+> +		rc = kstrtou16_from_user(buf, count, 0, &val);
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		rc = pmbus_write_word_data(psu->client, 0x00,
+> +					   PMBUS_VOUT_COMMAND, (const u16)val);
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		break;
 
-> On Wed, Jul 16, 2025 at 01:11:12PM -0400, Zi Yan wrote:
->> Smatch/coverity checkers report NULL mapping referencing issues[1][2][=
-3]
->> every time the code is modified, because they do not understand that
->> mapping cannot be NULL when a folio is in page cache in the code.
->> Refactor the code to make it explicit.
->>
->> No functional change is intended.
->>
->> [1]https://lore.kernel.org/linux-mm/2afe3d59-aca5-40f7-82a3-a6d976fb0f=
-4f@stanley.mountain/
->> [2]https://lore.kernel.org/oe-kbuild/64b54034-f311-4e7d-b935-c16775dbb=
-642@suswa.mountain/
->> [3]https://lore.kernel.org/linux-mm/20250716145804.4836-1-antonio@mand=
-elbit.com/
->>
->> Suggested-by: David Hildenbrand <david@redhat.com>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->> ---
->
-> This silences the Smatch warning.  :)
+That change is completely unrelated to the added chip support. On top of that,
+it is dangerous, and the output voltage can be manipulated using regulator
+support if needed. Given that, I do not see the point of this change.
 
-Thank you for the confirmation.
+Guenter
 
-Best Regards,
-Yan, Zi
 
