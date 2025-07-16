@@ -1,104 +1,140 @@
-Return-Path: <linux-kernel+bounces-732660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F4DB06A51
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C883B06A53
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0830D1A60A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:09:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C76494E452A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17694A08;
-	Wed, 16 Jul 2025 00:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461434A08;
+	Wed, 16 Jul 2025 00:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dlnIusNm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Bgku7uGO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AF0634;
-	Wed, 16 Jul 2025 00:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BDD20EB;
+	Wed, 16 Jul 2025 00:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752624534; cv=none; b=OqC+/r/LOmK+IkAlrMei8squJNROW3O8nVHmiGtCCYlUGzOCAa+gjgzG3JysH1kTjoQlk4pANDYKeSDMTx0Tra2qoVvpLJh+RcWpfcq2M1axAt+wAXAkKK7miw0QZJ1hweeOQIeCtTYNqgH7fm2oJTA0XOFv6mxX7lcI4irXkoQ=
+	t=1752624731; cv=none; b=BIAfJ5ZIkgk2eVS/sTaBNLDrO3NIC/+93B4tcaAqn1lqVp1CKbsG1RUQKGNsR2vrr5jXcuZ76kxKnUI0C6wBtmBVZ0GzzZZ4ohcMUv8+UgsWmXTV8rEC6osonQfyvaS+zsTKMlWY9UrnVy+10KdMHDdz/iQb8Uf/UeBOB0wSYSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752624534; c=relaxed/simple;
-	bh=XdTozw9SeWnYJKO34jlRMm1atgrylh7X/YNvThna1SI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=LXpJQlDcxo9GvV+LuVweHMl+GstI4QZITLtldJdc7m9UosjIIkqKh8Gre5+ZY1I22+R0ng3FCCqqJXjbSpwC/xYoQLRVOAo/KeS/s1ea5wWjDCoTiWGOKFLJ6Bwzt6np8cZOSp3r2CpShwOsp3Y52k9H06eSyr7t/1YbAFLuK3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dlnIusNm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A6A7C4CEE3;
-	Wed, 16 Jul 2025 00:08:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752624533;
-	bh=XdTozw9SeWnYJKO34jlRMm1atgrylh7X/YNvThna1SI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dlnIusNm7JiiK5MYJ5R+EFfeHMi9x8k5Xosd+TG1LASG2W8Y0rHcTMqs+0Vui+e9p
-	 QsRGbIcpBj5U09553O3+GQ8dXv10Ofu35Kkayy4Fd65sNT+NySe1NFqSELuw5fuW3N
-	 8YeTjUVReHhLf68gl3HvCrFCoTwB3ViL2ui0hUBA=
-Date: Tue, 15 Jul 2025 17:08:52 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: syzbot <syzbot+d4316c39e84f412115c9@syzkaller.appspotmail.com>
-Cc: andrii@kernel.org, david@redhat.com, hdanton@sina.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- lorenzo.stoakes@oracle.com, surenb@google.com,
- syzkaller-bugs@googlegroups.com, linux-mm@kvack.org
-Subject: Re: [syzbot] [fs?] WARNING: bad unlock balance in
- query_matching_vma
-Message-Id: <20250715170852.e616b82a53a88e757ee342af@linux-foundation.org>
-In-Reply-To: <687628be.a00a0220.3af5df.0002.GAE@google.com>
-References: <68757288.a70a0220.5f69f.0003.GAE@google.com>
-	<687628be.a00a0220.3af5df.0002.GAE@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752624731; c=relaxed/simple;
+	bh=+u/jGslySO5xdEMu6aS2DWSW2tM57c6IFs/o/Dq1cTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zap7YutDzEr6JlTfJnLx0A1UuWfylhUD5ZWF7qeRDbIEdCBZvwjMJNsFq2oVmaU0BlYN6+WkJ2K9fKgdvM03jhJI9fXDdTOpukQzZPpZEcyQDpjeBCu/Bp6jppo4Hi59BZVhgkJZDsw+YqlfQSQTVvhfnLwi+r2WorC2+Wpbvew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Bgku7uGO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 09DC07E1;
+	Wed, 16 Jul 2025 02:11:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752624695;
+	bh=+u/jGslySO5xdEMu6aS2DWSW2tM57c6IFs/o/Dq1cTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bgku7uGOMTCaysTpNMft5AZXqXl0YiW1UrpfPX5noFDwzB5JBnBTyjBsPwqc+tpX4
+	 ahxSUVI6sC3YdCI5nlztvabrX3Yd/82X6CY00VQsLB1d6uqI5eSA9t1T7YNKDrUb1K
+	 DGkxup6Gv6HQ3Szlaz+6a4vttnwYaFJXMM1NJZxM=
+Date: Wed, 16 Jul 2025 03:12:05 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mirela Rabulea <mirela.rabulea@nxp.com>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+	hverkuil-cisco@xs4all.nl, ribalda@chromium.org,
+	jai.luthra@ideasonboard.com, laurentiu.palcu@nxp.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	LnxRevLi@nxp.com, julien.vuillaumier@nxp.com,
+	celine.laurencin@nxp.com
+Subject: Re: [RFC 0/2] Add standard exposure and gain controls for multiple
+ captures
+Message-ID: <20250716001205.GG19299@pendragon.ideasonboard.com>
+References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
+ <20250715235952.GE19299@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250715235952.GE19299@pendragon.ideasonboard.com>
 
-On Tue, 15 Jul 2025 03:09:02 -0700 syzbot <syzbot+d4316c39e84f412115c9@syzkaller.appspotmail.com> wrote:
-
-> syzbot has bisected this issue to:
+On Wed, Jul 16, 2025 at 02:59:54AM +0300, Laurent Pinchart wrote:
+> On Fri, Jul 11, 2025 at 01:05:42AM +0300, Mirela Rabulea wrote:
+> > Add new standard controls as U32 arrays, for sensors with multiple
+> > captures: V4L2_CID_EXPOSURE_MULTI, V4L2_CID_AGAIN_MULTI and
+> > V4L2_CID_DGAIN_MULTI. These will be particularly useful for sensors
+> > that have multiple captures, but the HDR merge is done inside the sensor,
+> > in the end exposing a single stream, but still requiring AEC control
+> > for all captures.
 > 
-> commit fb8a9ee1f05345b1fae37902d32d954d2150437b
-> Author: Suren Baghdasaryan <surenb@google.com>
-> Date:   Fri Jul 4 06:07:26 2025 +0000
+> It's also useful for sensors supporting DOL or DCG with HDR merge being
+> performed outside of the sensor.
+
+Regarless of where HDR merge is implemented, we will also need controls
+to select the HDR mode. We have V4L2_CID_HDR_SENSOR_MODE, which doesn't
+standardize the values, and that's not good enough. At least for DOL and
+DCG with HDR merge implemented outside of the sensor, we need to
+standardize the modes.
+
+Can you tell which sensor(s) you're working with ?
+
+> > All controls are in the same class, so they could all be set
+> > atomically via VIDIOC_S_EXT_CTRLS, this could turn out to be
+> > useful in case of sensors with context switching.
 > 
->     fs/proc/task_mmu: execute PROCMAP_QUERY ioctl under per-vma locks
+> Agreed, we should be able to set them all. Are we still unable to set
+> controls from multiple classes atomatically ? I thought that limitation
+> has been lifted.
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=171c27d4580000
-> start commit:   a62b7a37e6fc Add linux-next specific files for 20250711
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=149c27d4580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=109c27d4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bb4e3ec360fcbd0f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d4316c39e84f412115c9
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ad50f0580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1173018c580000
+> > Each element of the array will hold an u32 value (exposure or gain)
+> > for one capture. The size of the array is up to the sensor driver which
+> > will implement the controls and initialize them via v4l2_ctrl_new_custom().
+> > With this approach, the user-space will have to set valid values
+> > for all the captures represented in the array.
 > 
-> Reported-by: syzbot+d4316c39e84f412115c9@syzkaller.appspotmail.com
+> I'll comment on the controls themselves in patch 2/2.
+> 
+> > The v4l2-core only supports one scalar min/max/step value for the
+> > entire array, and each element is validated and adjusted to be within
+> > these bounds in v4l2_ctrl_type_op_validate(). The significance for the
+> > maximum value for the exposure control could be "the max value for the
+> > long exposure" or "the max value for the sum of all exposures". If none
+> > of these is ok, the sensor driver can adjust the values as supported and
+> > the user space can use the TRY operation to query the sensor for the
+> > minimum or maximum values.
+> 
+> Hmmmm... I wonder if we would need the ability to report different
+> limits for different array elements. There may be over-engineering
+> though, my experience with libcamera is that userspace really needs
+> detailed information about those controls, and attempting to convey the
+> precise information through the kernel-userspace API is bound to fail.
+> That's why we implement a sensor database in libcamera, with information
+> about how to convert control values to real gain and exposure time.
+> Exposing (close to) raw register values and letting userspace handle the
+> rest may be better.
+> 
+> > Mirela Rabulea (2):
+> >   LF-15161-6: media: Add exposure and gain controls for multiple
+> >     captures
+> >   LF-15161-7: Documentation: media: Describe exposure and gain controls
+> >     for multiple captures
+> 
+> Did you forget to remove the LF-* identifiers ? :-)
+> 
+> > 
+> >  .../media/v4l/ext-ctrls-image-source.rst             | 12 ++++++++++++
+> >  drivers/media/v4l2-core/v4l2-ctrls-defs.c            |  8 ++++++++
+> >  include/uapi/linux/v4l2-controls.h                   |  3 +++
+> >  3 files changed, 23 insertions(+)
 
-Thanks.
+-- 
+Regards,
 
-This email (and the original bug report) lacked a cc:linux-mm@kvack.org.
-
-> Fixes: fb8a9ee1f053 ("fs/proc/task_mmu: execute PROCMAP_QUERY ioctl under per-vma locks")
-
-Could I suggest that your scripts be altered to parse the fb8a9ee1f053
-changelog for its Link:, fetch the submitter's original email and from
-that, figure out which mailing list(s) were cc'ed?
-
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-Suren, I'll drop the v6 series from mm-new.  Links which I have
-accumulated are:
-
-https://lkml.kernel.org/r/6871f94b.a00a0220.26a83e.0070.GAE@google.com
-https://lkml.kernel.org/r/f532558b-b19a-40ea-b594-94d1ba92188d@lucifer.local
-https://lkml.kernel.org/r/687628be.a00a0220.3af5df.0002.GAE@google.com
-https://lkml.kernel.org/r/687628be.a00a0220.3af5df.0002.GAE@google.com
+Laurent Pinchart
 
