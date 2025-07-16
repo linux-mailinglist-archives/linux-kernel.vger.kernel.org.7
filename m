@@ -1,76 +1,93 @@
-Return-Path: <linux-kernel+bounces-733604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DD5B076D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:24:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42F3B076D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5B43B7CDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F925023EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167FD1B0F23;
-	Wed, 16 Jul 2025 13:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD771C549F;
+	Wed, 16 Jul 2025 13:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="zwVpBnPN"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6/pKGdc"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA4B19F12D;
-	Wed, 16 Jul 2025 13:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD411AF4D5;
+	Wed, 16 Jul 2025 13:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752672276; cv=none; b=neaisK2AbbT0FAHWuhtMLlkMKyu/jqzrlaesf9tHgrDwSAwJ6nuT7eGPWNpw7qFaEtEqipTuWk9QM/0KSyBCzd/Tw+ZkQrAQqAFqA/rvEf4Qt2tvqbhfIgu3iOzfMI7qWOXy47av1nML9xBlTql7GbkVVohNy2YrtlwEQt7BNOQ=
+	t=1752672363; cv=none; b=OHSTr8hlbK+2qlqmPb8udrEL7KHSBl476Hxq+VZ04DjTltc67tY2T2tCccalzcO1H9j00wwR3LcLaZY8Y0bMmTyTG0XAFOzkisGv9W6COgXAdUuhRcxPEGYW23z+6O/lENJ4gWj9gLqX0xSw/hMcuOnEmCA4Csyn0HozkNA1h+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752672276; c=relaxed/simple;
-	bh=Ycwee0KUkPIlMLpAT8kxcS0EgasHZ2db48sjv7B7q6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ppo5fxhVwmszY8EHSFENDn7f5/7YTV+PyKCM4ENTFEXU35e4rlw5E2UuL34O8NW5mYCDL6oDW2NNdHTWLXqd2ZrpWMTZzho/vYLsKTUvXleir5bJwOER5IXF3H40zI8sYvJWP7jMhxhItGOr9esWewzBiAeRtniwrr2wTlyc3t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=zwVpBnPN; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bhxby5ZxHz9t8l;
-	Wed, 16 Jul 2025 15:24:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1752672270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHp5F9+QAl3YKyU3XfG8xzFMXFlv6fbOmGfaI4nwnt4=;
-	b=zwVpBnPNzovwfOdVnSWLfhcYGiGiJEXhxzQrhRqGFn2d1MYmkECMGNYtM1hjRJDwn7SnmX
-	dK+0aG/gqVEyChEP3hSDpXmH3A/iPGHUHxe5aLCH/jTVmee5f+NKtIwrXSO76ZUSKbWNu0
-	Pi+6w/vmUhzQW6+w1b5p2334kGkEuol3d6r7XqPRKT5U3vMp6A30G9eKmGjFMAXqGHnfjH
-	6oSQdLm6uSsGZpMAO0vaGjeyi1YnaJN9kngf+/RAwASAD4oDPv1lbZWYU0eO36C4xP7cHv
-	v9vD+x4EHnlJZydg33row3vnk06ulMTou2I0K0BcvEvyNO7xOlBmLDJ4zv+ksQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Wed, 16 Jul 2025 15:24:16 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
-	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v2 5/5] block: use largest_zero_folio in
- __blkdev_issue_zero_pages()
-Message-ID: <ugprcoay3meavw4malotv5ebxlghyyrnh3jcqbrkbzfeoo22jj@cqpfvjso6spb>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
- <20250707142319.319642-6-kernel@pankajraghav.com>
- <f7ad4e56-7634-400d-9e7c-3c3b65f9b1d0@lucifer.local>
+	s=arc-20240116; t=1752672363; c=relaxed/simple;
+	bh=dbxzvjuh8YM2u5ndqzlAhVP/gpf1B58HzI5D6CUG4TY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QnewrVgLAZmT1yAjQrBpcwAF9tuYpIWsL2bHoeeuSN285FH5G48COypRR3S51dCl5umK0pJvjukOXnC9wX3IOkWfpL+zYOhIXzxdzL04mzBIXOZW04xOcBay+Qt9rBTSG/gOjRUlytNxrXbXIl64dJNDENhwRwfIoKdNbrNSQ+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6/pKGdc; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86fea8329cdso4053528241.1;
+        Wed, 16 Jul 2025 06:26:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752672360; x=1753277160; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d6kfc10B6ok/s3QG/0BYXTIDoit26JaipG2QuAEmJ7I=;
+        b=G6/pKGdc0asbk7zPixcfO1m/g1BUMGtrwCgB/qklmxqVL/5EU3hLEN23sX6YkZk4eE
+         7P44k4ZC8dvaGQ1BCcYv3CU8r+LV9A3yeZgtxz0JFmAe85aASA2ap5f7/VrvlV4DpC/c
+         zlJzEBA/3Kt52OM3nXqADz1lUHHuuS8J+XzpSeX8S8qAFIL6Q2/OMJEy34s0Sa06XKnd
+         YPupIwIv/eu3FsrK8MZ35UXehMoIsbFL5AArJYjpdPAFS1K53o+9NNb9s1P+8l+ru+2E
+         U54C8LuFGpSXyP0z53dHR+nVCss6ys092TcMrF1s3DNmKOj4Dtq7Gsjcnd44LdarAIsN
+         p7sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752672360; x=1753277160;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d6kfc10B6ok/s3QG/0BYXTIDoit26JaipG2QuAEmJ7I=;
+        b=dsB5QWaGFb0sc5yVWRn+aojnX/lrxeYnokZ7Wu4dGHird+3EDy8zURN+jhzWzki1A9
+         I8Smb1sec1C0Wsf2aB6x7yx9HaGlCih8folFsrgFaFP9BLKLHC+fDeu0WK1m4840Ggls
+         4pLVryrcfbASY5Fj7zkx44LyjheR6ZtVvXoxdxOrDnqeux5CbbDknD4A/hq4Be944V1M
+         4/cZcQxEFF73g6IpgdaW2hg4n2o9hZOGzxWGWkRGO9P25bO1QWuVPs6JSZ7uBekBDf8T
+         qNy9C72GNXLC3+zjoiWAEdHnXNAmShMLb2aYVlv7cnt4oLdWZSFiINFxRTYIJPCZl96K
+         oXKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxmmIMO0QFg2yyMdQSrtb1VUQfH+W5q+OYhXX8iwz9Wy3YIfQ1D/AmIix1Tu/A/4uTof8Ba7aPJIwkfJM=@vger.kernel.org, AJvYcCXcXNS/eDofenGrD5AXVGGsMutZ3UTidm3Go409dUj+Bii+3aiWoyuEzol0Y9m+P/6n+sEHe2SFHf3vo3rsRswz5w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQbGrUeOWj2ln6qHdsYBauz8b0FidxP73cF65Scj+RLYkjxyL2
+	XCioBH/yVfW8l3V5DQpYIifkhZxOtNaQvT00D9i2la5YKn/F98MfuXsi
+X-Gm-Gg: ASbGncu3K14JV+2ONiOYUE3/yBlDjqVoxFG6Rz/AEZe5yOm4u/ng+xYYQQPZ7qXKKZ+
+	ZHBmDiuj0HBUuwdqa3oCEp8pyoui5bTBMIDsNeUTXIiMHp/3zuqnhN/Qk2BlRyFEwqz4gbVS8JL
+	hFDNuG2+R2niNQnEO5fy668ypd1IBZFRRJaBAh7E3QhioEA3v9TKWChhH2YeafG8ICltwWB6uZU
+	xeAovPKR57t+dhDoMBG5OVp6o8nLapyZKxRxOyCazKYsfKu94MWSp2W8g4XoRBq39PmU7P6ITuE
+	XT8Nkwes1ppmsADY7W9arlvbSczrbq2O9YAuobPJo6aGVKbYqAC74q1LRuPJU9PdZkb0EpFtCCl
+	HXjbUFMV7mYUzumsiNRc=
+X-Google-Smtp-Source: AGHT+IGLZtQSK5F5avY+4+/nRGti/F+DWgaDPqtV4DEb2TtE0xcBhcqnIWzqD/MfxQq4TFm15BZo2w==
+X-Received: by 2002:a05:6102:808d:b0:4e5:fe5e:2be4 with SMTP id ada2fe7eead31-4f89999f155mr1651316137.22.1752672359482;
+        Wed, 16 Jul 2025 06:25:59 -0700 (PDT)
+Received: from hiagonb ([2804:1b3:a7c1:459e:e3dd:d2e:b1ee:b9ec])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-888ec44ad97sm3105837241.25.2025.07.16.06.25.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 06:25:58 -0700 (PDT)
+Date: Wed, 16 Jul 2025 10:25:52 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com,
+	iuliana.prodan@oss.nxp.com,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v7 3/3] remoteproc: imx_rproc: detect and attach to
+ pre-booted remote cores
+Message-ID: <20250716132552.bra37ucw4fcjwril@hiagonb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,82 +96,321 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f7ad4e56-7634-400d-9e7c-3c3b65f9b1d0@lucifer.local>
-X-Rspamd-Queue-Id: 4bhxby5ZxHz9t8l
+In-Reply-To: <aHZ0nK4ZZShAr6Xz@p14s>
+ <CAPDyKFrWng0CY-ayKoEbnS_yanghSqogxfuizxEVbVogJ4DT=g@mail.gmail.com>
 
-On Tue, Jul 15, 2025 at 05:19:54PM +0100, Lorenzo Stoakes wrote:
-> On Mon, Jul 07, 2025 at 04:23:19PM +0200, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> >
-> > Use largest_zero_folio() in __blkdev_issue_zero_pages().
-> >
-> > On systems with CONFIG_STATIC_PMD_ZERO_PAGE enabled, we will end up
-> > sending larger bvecs instead of multiple small ones.
-> >
-> > Noticed a 4% increase in performance on a commercial NVMe SSD which does
-> > not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
-> > gains might be bigger if the device supports bigger MDTS.
-> >
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+Hi Mathieu, Ulf,
+
+On Tue, Jul 15, 2025 at 09:32:44AM -0600, Mathieu Poirier wrote:
+> On Sun, Jun 29, 2025 at 02:25:12PM -0300, Hiago De Franco wrote:
+> > From: Hiago De Franco <hiago.franco@toradex.com>
+> > 
+> > When the Cortex-M remote core is started and already running before
+> > Linux boots (typically by the Cortex-A bootloader using a command like
+> > bootaux), the current driver is unable to attach to it. This is because
+> > the driver only checks for remote cores running in different SCFW
+> > partitions. However in this case, the M-core is in the same partition as
+> > Linux and is already powered up and running by the bootloader.
+> > 
+> > This patch adds a check using dev_pm_genpd_is_on() to verify whether the
+> > M-core's power domains are already on. If all power domain devices are
+> > on, the driver assumes the M-core is running and proceed to attach to
+> > it.
+> > 
+> > To accomplish this, we need to avoid passing any attach_data or flags to
+> > dev_pm_domain_attach_list(), allowing the platform device become a
+> > consumer of the power domain provider without changing its current
+> > state.
+> > 
+> > During probe, also enable and sync the device runtime PM to make sure
+> > the power domains are correctly managed when the core is controlled by
+> > the kernel.
+> > 
+> > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
 > > ---
-> >  block/blk-lib.c | 17 ++++++++++-------
-> >  1 file changed, 10 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/block/blk-lib.c b/block/blk-lib.c
-> > index 4c9f20a689f7..70a5700b6717 100644
-> > --- a/block/blk-lib.c
-> > +++ b/block/blk-lib.c
-> > @@ -196,6 +196,10 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
-> >  		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
-> >  		struct bio **biop, unsigned int flags)
+> > v6 -> v7:
+> >  - Added Peng reviewed-by.
+> > v5 -> v6:
+> >  - Commit description improved, as suggested. Added Ulf Hansson reviewed
+> >    by. Comment on imx-rproc.c improved.
+> > v4 -> v5:
+> >  - pm_runtime_get_sync() removed in favor of
+> >    pm_runtime_resume_and_get(). Now it also checks the return value of
+> >    this function.
+> >  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
+> >    function.
+> > v3 -> v4:
+> >  - Changed to use the new dev_pm_genpd_is_on() function instead, as
+> >    suggested by Ulf. This will now get the power status of the two
+> >    remote cores power domains to decided if imx_rpoc needs to attach or
+> >    not. In order to do that, pm_runtime_enable() and
+> >    pm_runtime_get_sync() were introduced and pd_data was removed.
+> > v2 -> v3:
+> >  - Unchanged.
+> > v1 -> v2:
+> >  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> >    suggested.
+> > ---
+> >  drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
+> >  1 file changed, 32 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> > index 627e57a88db2..24597b60c5b0 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -18,6 +18,7 @@
+> >  #include <linux/of_reserved_mem.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_domain.h>
+> > +#include <linux/pm_runtime.h>
+> >  #include <linux/reboot.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/remoteproc.h>
+> > @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
+> >  static int imx_rproc_attach_pd(struct imx_rproc *priv)
 > >  {
-> > +	struct folio *zero_folio;
+> >  	struct device *dev = priv->dev;
+> > -	int ret;
+> > -	struct dev_pm_domain_attach_data pd_data = {
+> > -		.pd_flags = PD_FLAG_DEV_LINK_ON,
+> > -	};
+> > +	int ret, i;
+> > +	bool detached = true;
+> >  
+> >  	/*
+> >  	 * If there is only one power-domain entry, the platform driver framework
+> > @@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
+> >  	if (dev->pm_domain)
+> >  		return 0;
+> >  
+> > -	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
+> > +	ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+> > +	/*
+> > +	 * If all the power domain devices are already turned on, the remote
+> > +	 * core is already powered up and running when the kernel booted (e.g.,
+> > +	 * started by U-Boot's bootaux command). In this case attach to it.
+> > +	 */
+> > +	for (i = 0; i < ret; i++) {
+> > +		if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
+> > +			detached = false;
+> > +			break;
+> > +		}
+> > +	}
+> 
+> I was doing one final review of this work when I noticed the return code for
+> dev_pm_domain_attach_list() is never checked for error.
+
+As Ulf pointed out, the 'return' a few lines below will return the
+negative value to the caller of 'imx_rproc_attach_pd', which ultimately
+will fail 'imx_rproc_detect_mode' and fail the probe of imx_rproc.
+
+Please notice that even tough 'dev_pm_domain_attach_list' fails, the
+rproc->state will still be set as RPROC_DETACHED because we are starting
+'detached' as true, but I am not seeing this as an issue because as
+mentioned above the probe will fail anyway. Please let me know if you
+see this as an issue.
+
+> 
+> Thanks,
+> Mathieu
+> 
 > > +
-> > +	zero_folio = largest_zero_folio();
-> 
-> Just assign this in the decl :)
-Yeah!
-> 
+> > +	if (detached)
+> > +		priv->rproc->state = RPROC_DETACHED;
 > > +
-> >  	while (nr_sects) {
-> >  		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
-> >  		struct bio *bio;
-> > @@ -208,15 +212,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
-> >  			break;
+> >  	return ret < 0 ? ret : 0;
+> >  }
+> >  
+> > @@ -1146,6 +1160,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
+> >  		}
+> >  	}
+> >  
+> > +	if (dcfg->method == IMX_RPROC_SCU_API) {
+> > +		pm_runtime_enable(dev);
+> > +		ret = pm_runtime_resume_and_get(dev);
+> > +		if (ret) {
+> > +			dev_err(dev, "pm_runtime get failed: %d\n", ret);
+> > +			goto err_put_clk;
+> > +		}
+> > +	}
+> > +
+> >  	ret = rproc_add(rproc);
+> >  	if (ret) {
+> >  		dev_err(dev, "rproc_add failed\n");
+> > @@ -1171,6 +1194,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
+> >  	struct rproc *rproc = platform_get_drvdata(pdev);
+> >  	struct imx_rproc *priv = rproc->priv;
+> >  
+> > +	if (priv->dcfg->method == IMX_RPROC_SCU_API) {
+> > +		pm_runtime_disable(priv->dev);
+> > +		pm_runtime_put(priv->dev);
+> > +	}
+> >  	clk_disable_unprepare(priv->clk);
+> >  	rproc_del(rproc);
+> >  	imx_rproc_put_scu(rproc);
+> > -- 
+> > 2.39.5
+> > 
+
+On Tue, Jul 15, 2025 at 06:03:44PM +0200, Ulf Hansson wrote:
+> On Tue, 15 Jul 2025 at 17:32, Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
 > >
-> >  		do {
-> > -			unsigned int len, added;
-> > +			unsigned int len;
+> > On Sun, Jun 29, 2025 at 02:25:12PM -0300, Hiago De Franco wrote:
+> > > From: Hiago De Franco <hiago.franco@toradex.com>
+> > >
+> > > When the Cortex-M remote core is started and already running before
+> > > Linux boots (typically by the Cortex-A bootloader using a command like
+> > > bootaux), the current driver is unable to attach to it. This is because
+> > > the driver only checks for remote cores running in different SCFW
+> > > partitions. However in this case, the M-core is in the same partition as
+> > > Linux and is already powered up and running by the bootloader.
+> > >
+> > > This patch adds a check using dev_pm_genpd_is_on() to verify whether the
+> > > M-core's power domains are already on. If all power domain devices are
+> > > on, the driver assumes the M-core is running and proceed to attach to
+> > > it.
+> > >
+> > > To accomplish this, we need to avoid passing any attach_data or flags to
+> > > dev_pm_domain_attach_list(), allowing the platform device become a
+> > > consumer of the power domain provider without changing its current
+> > > state.
+> > >
+> > > During probe, also enable and sync the device runtime PM to make sure
+> > > the power domains are correctly managed when the core is controlled by
+> > > the kernel.
+> > >
+> > > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > > ---
+> > > v6 -> v7:
+> > >  - Added Peng reviewed-by.
+> > > v5 -> v6:
+> > >  - Commit description improved, as suggested. Added Ulf Hansson reviewed
+> > >    by. Comment on imx-rproc.c improved.
+> > > v4 -> v5:
+> > >  - pm_runtime_get_sync() removed in favor of
+> > >    pm_runtime_resume_and_get(). Now it also checks the return value of
+> > >    this function.
+> > >  - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
+> > >    function.
+> > > v3 -> v4:
+> > >  - Changed to use the new dev_pm_genpd_is_on() function instead, as
+> > >    suggested by Ulf. This will now get the power status of the two
+> > >    remote cores power domains to decided if imx_rpoc needs to attach or
+> > >    not. In order to do that, pm_runtime_enable() and
+> > >    pm_runtime_get_sync() were introduced and pd_data was removed.
+> > > v2 -> v3:
+> > >  - Unchanged.
+> > > v1 -> v2:
+> > >  - Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> > >    suggested.
+> > > ---
+> > >  drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
+> > >  1 file changed, 32 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> > > index 627e57a88db2..24597b60c5b0 100644
+> > > --- a/drivers/remoteproc/imx_rproc.c
+> > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > @@ -18,6 +18,7 @@
+> > >  #include <linux/of_reserved_mem.h>
+> > >  #include <linux/platform_device.h>
+> > >  #include <linux/pm_domain.h>
+> > > +#include <linux/pm_runtime.h>
+> > >  #include <linux/reboot.h>
+> > >  #include <linux/regmap.h>
+> > >  #include <linux/remoteproc.h>
+> > > @@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
+> > >  static int imx_rproc_attach_pd(struct imx_rproc *priv)
+> > >  {
+> > >       struct device *dev = priv->dev;
+> > > -     int ret;
+> > > -     struct dev_pm_domain_attach_data pd_data = {
+> > > -             .pd_flags = PD_FLAG_DEV_LINK_ON,
+> > > -     };
+> > > +     int ret, i;
+> > > +     bool detached = true;
+> > >
+> > >       /*
+> > >        * If there is only one power-domain entry, the platform driver framework
+> > > @@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
+> > >       if (dev->pm_domain)
+> > >               return 0;
+> > >
+> > > -     ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
+> > > +     ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+> > > +     /*
+> > > +      * If all the power domain devices are already turned on, the remote
+> > > +      * core is already powered up and running when the kernel booted (e.g.,
+> > > +      * started by U-Boot's bootaux command). In this case attach to it.
+> > > +      */
+> > > +     for (i = 0; i < ret; i++) {
+> > > +             if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
+> > > +                     detached = false;
+> > > +                     break;
+> > > +             }
+> > > +     }
 > >
-> > -			len = min_t(sector_t,
-> > -				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
-> > -			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
-> > -			if (added < len)
-> > +			len = min_t(sector_t, folio_size(zero_folio),
-> > +				    nr_sects << SECTOR_SHIFT);
-> > +			if (!bio_add_folio(bio, zero_folio, len, 0))
+> > I was doing one final review of this work when I noticed the return code for
+> > dev_pm_domain_attach_list() is never checked for error.
 > 
-> Hmm, will this work if nr_sects << SECTOR_SHIFT size isn't PMD-aligned?
-
-Yeah, that should not be a problem as long as (nr_sects << SECTOR_SHIFT) < PMD_SIZED
-folio.
-
+> The for loop covers the error condition correctly, I think. It's only
+> when ret >=1 when the loop should be started - and ret is propagated
+> to the caller a few lines below.
 > 
-> I guess it actually just copies individual pages in the folio as needed?
+> >
+> > Thanks,
+> > Mathieu
+> >
 > 
-> Does this actually result in a significant performance improvement? Do we
-> have numbers for this to justify the series?
-I put it in my commit message:
-```
-Noticed a 4% increase in performance on a commercial NVMe SSD which does
-not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
-gains might be bigger if the device supports bigger MDTS.
-```
+> Kind regards
+> Uffe
+> 
+> > > +
+> > > +     if (detached)
+> > > +             priv->rproc->state = RPROC_DETACHED;
+> > > +
+> > >       return ret < 0 ? ret : 0;
+> > >  }
+> > >
+> > > @@ -1146,6 +1160,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
+> > >               }
+> > >       }
+> > >
+> > > +     if (dcfg->method == IMX_RPROC_SCU_API) {
+> > > +             pm_runtime_enable(dev);
+> > > +             ret = pm_runtime_resume_and_get(dev);
+> > > +             if (ret) {
+> > > +                     dev_err(dev, "pm_runtime get failed: %d\n", ret);
+> > > +                     goto err_put_clk;
+> > > +             }
+> > > +     }
+> > > +
+> > >       ret = rproc_add(rproc);
+> > >       if (ret) {
+> > >               dev_err(dev, "rproc_add failed\n");
+> > > @@ -1171,6 +1194,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
+> > >       struct rproc *rproc = platform_get_drvdata(pdev);
+> > >       struct imx_rproc *priv = rproc->priv;
+> > >
+> > > +     if (priv->dcfg->method == IMX_RPROC_SCU_API) {
+> > > +             pm_runtime_disable(priv->dev);
+> > > +             pm_runtime_put(priv->dev);
+> > > +     }
+> > >       clk_disable_unprepare(priv->clk);
+> > >       rproc_del(rproc);
+> > >       imx_rproc_put_scu(rproc);
+> > > --
+> > > 2.39.5
+> > >
 
-Even though it is more of a synthetic benchmark, but this goes to show the
-effects of adding multiple bio_vecs with ZERO_PAGE instead of single
-PMD_ZERO_PAGE.
+Best Regards,
 
---
-Pankaj
+Hiago.
 
