@@ -1,188 +1,265 @@
-Return-Path: <linux-kernel+bounces-732715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF02B06B26
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:30:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C049AB06B33
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58AB84E3BC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:29:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1197156391F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34368231C8D;
-	Wed, 16 Jul 2025 01:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="mRrv8uBw"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24EC265621;
+	Wed, 16 Jul 2025 01:36:31 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40607261D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 01:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8382C18A;
+	Wed, 16 Jul 2025 01:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752629408; cv=none; b=RLDgWV2cSSWl6U/+/DCn0yZSokcMVecd54RIEihAnK7zRiYbmO9/JRvJnYAZue4K8yaZqO6uBDTA7oQ9bcV2ICUEIJWQ7ODwXl0kBa1wAW4MMwuXTXwIjMojEXoCzhtz+1hmb3mjGjRiGHK+ti14jffBeKaRs2PVwhSIObMmJ1I=
+	t=1752629791; cv=none; b=hf8YJlMYYtXv0xEUI2SsGATU9oXZgo1kZHsTcJzI1cqWB8Wg/t7j/NfP9j/JsobikGMZMzAHtd7ca7F9BkkW9Pbqre3amlkBM1UiEIfscbGuTIrjuTyf+RJG/BiHfMVe8SGdIanjaxTvTDF8PyEpJYtnyRI9DQbCa2rjZ65NWIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752629408; c=relaxed/simple;
-	bh=d3KVtq+WoVzGTcNKjqxti39IdH648bayT2pyH40hic4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLb3cOiwHlK4Cr57M76dMgF3Ba0pioo4PClsyIv3DE0CYufmU5bdElb0BotOpB5YMKyKgqI1u0SXggqTVTGsnruUVrFbsA214nO1VaT1w/CqtJIcaZIW+fcyFG20brqLOeWzniXFWtEK9A6h+FC3s1BoIXQcideR59BVr7yj2do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=mRrv8uBw; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7d95b08634fso394164485a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 18:30:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1752629406; x=1753234206; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PNm3aMuppLy64ZNAQILeIwFlzttxMP8D3ycLLACl+HE=;
-        b=mRrv8uBwHucRwiN8QourBdgnU+lTVq3h3pDF6w0XB+zhltBrmtplD0wbEhFZBa0BIk
-         oeyMSznQHe6mL3D2KCNSbyqsyWatU0AVJ9zyMug2FIMsSLOTrGPqnQGFg4f7ddEmTpkK
-         Ms9HBpPIj183GMFd4E3cGNF3HDchm8qm7pcGjkzWLrtnbnNMqD6hNBoAxNOsuhJh8cjv
-         zSauA8Cj2Gv/l1qEIdesz4li+Y22jU4Xe+CP31AdMggtShXJ/VxT50emfzlgOqpAxFDd
-         AV5wjEdrdlaUY678OQl10FnDRLsbOYQslGLkP8jM/fJEhTm2DEQoENMXW2i7L9abAp0p
-         EWZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752629406; x=1753234206;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PNm3aMuppLy64ZNAQILeIwFlzttxMP8D3ycLLACl+HE=;
-        b=wHTk7tfKUX0+hpzwzLJMFRqkMevlol1rRYRrLCr2cL5S6ngkp012h4WNEdvMdgyFPE
-         tM/DUoroaZGWgY6hSe0GHW987NkKDB0Z0zaxWgIxcscJmHPysGnUyVQo0GEt89tVhAT4
-         C4XBV/mMVayiWwoiHQxp9o6CFn2nBY0arsGPdvmpTG+kNcyLHHPcW9D9rvDPjd6K3+87
-         bpifIzm76+nK530b7/0xiaibIjt/8iDjF9IONIX0YBFfop92BK+uWzd1uzw1Nj8DSDYm
-         re9F133+RxkAoQldudcw++drDKgmKDjmXCclgF0tGcPWMYJyw9aaw8jnnz4IFrMN5Zx7
-         1Xng==
-X-Forwarded-Encrypted: i=1; AJvYcCVX1Jn3IRpRe7xC83YnQjWCG6BYUW6ywNkA+4oYEHsnDug1KpHLYiXcbqk79HkLYT4W9eK2peF0nQiIBYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDeVF4cj0wDthgJAXggEiVUl43RalO1zRIrq48FREjqmha4K0k
-	GDE8eXLzyfAvDFOR3uv/446wlVIWOWx9eJzgIk8BH5k49pumvou3EIQ6QBkd9jBmQ3+Q4gn3ZiJ
-	8rJU=
-X-Gm-Gg: ASbGncvwRL4Sz8I8u7iuSZnBjV1jBAUAScIf1vARfHQ9xhXQAR1Qeu5OhZlwTXYmYBf
-	3da5FU+fQYbpOzMzztgpqXxz6CbF8ejg1ISkO02DtSFVL37u8YyTUFWFExAlVQEl6UIp0Vw8Cdh
-	RCdtWlyelnTXAuBDSgHIyR5ybJMwtDeC1JP7lQUanGlvjeouufeH/wdWgYa07f/IVS/OHqDZwdN
-	6daAtLpfk4Nx4eOTFcTjgBcazDhTXyurvhBwQXYIsV7c0rd7vw+LT+p5alkuTX65LYL8Dzv47BT
-	YoLjh2LumdZpJHthDWQgNtG6aSuT3umZFWmrpJQNWj1Si4LVbj8EEqUITj1XaHQdVoRsYYZOaMc
-	9ktNflelGHo+pJ48l6hc4V0Y=
-X-Google-Smtp-Source: AGHT+IFZYouHfS/WMwXr26mi/f/nKNKS5kpQDQOq14AfpG1XyVaPaU0Asf0eatjth3Lag++QTU9C6Q==
-X-Received: by 2002:a05:620a:7017:b0:7e3:38e4:43f with SMTP id af79cd13be357-7e3433518a9mr155685885a.8.1752629405383;
-        Tue, 15 Jul 2025 18:30:05 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::a2fa])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcdc0f7d06sm686561285a.40.2025.07.15.18.30.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 18:30:04 -0700 (PDT)
-Date: Tue, 15 Jul 2025 21:30:02 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Sean Young <sean@mess.org>
-Cc: Hillf Danton <hdanton@sina.com>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
-	LKML <linux-kernel@vger.kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: imon: make send_packet() more robust
-Message-ID: <c4e88c28-28ee-4e37-9822-8e2999d0f0ee@rowland.harvard.edu>
-References: <924bf5c7-9466-49dc-ad26-53939ca49825@I-love.SAKURA.ne.jp>
- <53c07aa0-9f83-4c83-8ab5-6d8663f51b91@I-love.SAKURA.ne.jp>
- <8be733a4-2232-4bb9-942d-f13f8766a6de@I-love.SAKURA.ne.jp>
- <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp>
- <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp>
- <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp>
- <282345b9-9aff-43ed-b66d-76cf51cc0deb@I-love.SAKURA.ne.jp>
- <20250713081148.3880-1-hdanton@sina.com>
- <d6da6709-d799-4be3-a695-850bddd6eb24@rowland.harvard.edu>
- <aHa3xpKfGNqAocIO@gofer.mess.org>
+	s=arc-20240116; t=1752629791; c=relaxed/simple;
+	bh=CeL1Z2vZkHAyOW7t5MITp2UXBQD/Klw2OZ/1iJ/qUYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LG7mfggU6mWUkP0EiK+yNjeR7ykC2zm5Fdf16chloSTso68qjZ7olHnSxN7DmmFjTq6h9Jg0p3oRqRWF2lye7ANC8d5EPk8i2OEzPWfVOyTo+/otPH5qT6EAI4pLPNJJl3/7ymsCkF/wIJoe3Pm8R/qqGaVZivcxCl1vmrDol9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [98.97.26.71])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id 9B71AB4D186C;
+	Wed, 16 Jul 2025 03:30:59 +0200 (CEST)
+Message-ID: <e2ec3809-a538-4475-ac3a-db289271fe7a@freeshell.de>
+Date: Tue, 15 Jul 2025 18:30:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHa3xpKfGNqAocIO@gofer.mess.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] riscv: dts: starfive: add DT for Orange Pi RV
+To: Icenowy Zheng <uwu@icenowy.me>, Yao Zi <ziyao@disroot.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
+ Jisheng Zhang <jszhang@kernel.org>,
+ Michael Zhu <michael.zhu@starfivetech.com>,
+ Drew Fustini <drew@beagleboard.org>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250409091801.855083-1-uwu@icenowy.me>
+ <20250409091801.855083-2-uwu@icenowy.me> <Z_f30vAuATR1DCWk@pie>
+ <8fbd6ffdd053760b6d0980173c7f8af6c09963ba.camel@icenowy.me>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <8fbd6ffdd053760b6d0980173c7f8af6c09963ba.camel@icenowy.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 15, 2025 at 09:19:18PM +0100, Sean Young wrote:
-> Hi Alan,
+On 4/10/25 18:29, Icenowy Zheng wrote:
+> 在 2025-04-10星期四的 16:54 +0000，Yao Zi写道：
+>> On Wed, Apr 09, 2025 at 05:18:01PM +0800, Icenowy Zheng wrote:
+>>> Orange Pi RV is a newly released SBC with JH7110 SoC, single GbE
+>>> port
+>>> (connected to JH7110 GMAC0 via a YT8531 PHY), 4 USB ports (via a
+>>> VL805
+>>> PCIe USB controller connected to JH7110 PCIE0), a M.2 M-key slot
+>>> (connected to JH7110 PCIE1), a HDMI video output, a 3.5mm audio
+>>> output
+>>> and a microSD slot.
+>>>
+>>> Onboard peripherals contain a SPI NOR (which contains the U-Boot
+>>> firmware) and an Ampak AP6256 SDIO Wi-Fi module.
+>>>
+>>> As the schematics isn't available yet, the SDIO Wi-Fi is left
+>>> disabled
+>>> yet.
+>>>
+>>> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+>>> ---
+>>>  arch/riscv/boot/dts/starfive/Makefile         |  1 +
+>>>  .../boot/dts/starfive/jh7110-orangepi-rv.dts  | 73
+>>> +++++++++++++++++++
+>>>  2 files changed, 74 insertions(+)
+>>>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-orangepi-
+>>> rv.dts
+>>>
+>>> diff --git a/arch/riscv/boot/dts/starfive/Makefile
+>>> b/arch/riscv/boot/dts/starfive/Makefile
+>>> index b3bb12f78e7d5..24f1a44828350 100644
+>>> --- a/arch/riscv/boot/dts/starfive/Makefile
+>>> +++ b/arch/riscv/boot/dts/starfive/Makefile
+>>> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-
+>>> visionfive-v1.dtb
+>>>  
+>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
+>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
+>>> +dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-orangepi-rv.dtb
+>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
+>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
+>>> v1.2a.dtb
+>>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
+>>> v1.3b.dtb
+>>> diff --git a/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+>>> b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+>>> new file mode 100644
+>>> index 0000000000000..bde01f117e0b2
+>>> --- /dev/null
+>>> +++ b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+>>> @@ -0,0 +1,73 @@
+>>> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>>> +/*
+>>> + * Copyright (C) 2025 Icenowy Zheng <uwu@icenowy.me>
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +#include "jh7110-common.dtsi"
+>>> +#include <dt-bindings/leds/common.h>
+>>> +
+>>> +/ {
+>>> +       model = "Xunlong Orange Pi RV";
+>>> +       compatible = "xunlong,orangepi-rv", "starfive,jh7110";
+>>> +
+>>> +       leds {
+>>> +               compatible = "gpio-leds";
+>>> +
+>>> +               led-ack {
+>>> +                       gpios = <&aongpio 3 GPIO_ACTIVE_HIGH>;
+>>> +                       color = <LED_COLOR_ID_GREEN>;
+>>> +                       function = LED_FUNCTION_HEARTBEAT;
+>>> +                       linux,default-trigger = "heartbeat";
+>>> +                       label = "ack";
+>>
+>> Should we sort the properties in alphabet order? i.e. color,
+>> function,
+>> gpios, label then linux,default-trigger. See dts-coding-style.rst,
 > 
-> On Sun, Jul 13, 2025 at 11:21:24AM -0400, Alan Stern wrote:
-> > On Sun, Jul 13, 2025 at 04:11:47PM +0800, Hillf Danton wrote:
-> > > [loop Alan in]
-> > 
-> > I assume you're interested in the question of when to avoid resubmitting 
-> > URBs.
-
-> > In theory it's okay to resubmit _if_ the driver has a robust 
-> > error-recovery scheme (such as giving up after some fixed limit on the 
-> > number of errors or after some fixed time has elapsed, perhaps with a 
-> > time delay to prevent a flood of errors).  Most drivers don't bother to 
-> > do this; they simply give up right away.  This makes them more 
-> > vulnerable to short-term noise interference during USB transfers, but in 
-> > reality such interference is quite rare.  There's nothing really wrong 
-> > with giving up right away.
-> > 
-> > As to which error codes drivers should pay attention to...  In most 
-> > cases they only look at -EPROTO.  According to 
-> > Documentation/driver-api/usb/error-codes.rst, -EILSEQ and -ETIME are 
-> > also possible errors when a device has been unplugged, so it wouldn't 
-> > hurt to check for them too.  But most host controller drivers don't 
-> > bother to issue them; -EPROTO is by far the most common error code 
-> > following an unplug.
+> Well in case of GPIO LED, I think gpios is something like reg? Although
+> this is only my personal feel, and label really needs to be reordered
+> then.
 > 
-> Thank you for explaining that, very helpful. Would it be useful to have
-> this in the USB completion handler documentation?
 
-I don't know what USB completion handler documentation you're talking 
-about.  Is it something in the Documentation/ directory?  If it is then 
-it should already include or refer to error-codes.rst.
+Status led description here does instead belong in jh7110-common.dtsi
+since all variant boards are using the same RGPIO3 (fourth GPIO on PMU
+domain).
 
-Or perhaps you're talking about the kerneldoc for this particular 
-completion handler?  There's no reason for that to include all the 
-material that's already in error-codes.rst.  But you might put a comment 
-in the code at the point where -EPROTO errors are handled, explaining 
-that they generally indicate that the device has been unplugged.
-
-> > If the error occurred because the device was unplugged then unlinking 
-> > the outstanding URBs isn't necessary; the USB core will unlink them for 
-> > you after the device's parent hub reports that the unplug took place.
+>>
+>>> The following order of properties in device nodes is preferred:
+>>>
+>>> 1. "compatible"
+>>> 2. "reg"
+>>> 3. "ranges"
+>>> 4. Standard/common properties (defined by common bindings, e.g.
+>>> without
+>>> vendor-prefixes)
+>>> 5. Vendor-specific properties
+>>> 6. "status" (if applicable)
+>>> 7. Child nodes, where each node is preceded with a blank line
+>>
+>>> +               };
+>>> +       };
+>>> +};
+>>> +
+>>> +&gmac0 {
+>>> +       starfive,tx-use-rgmii-clk;
+>>> +       assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+>>> +       assigned-clock-parents = <&aoncrg
+>>> JH7110_AONCLK_GMAC0_RMII_RTX>;
+>>> +       status = "okay";
+>>
+>> Vendor property starfive,tx-use-rgmii-clk should go after the common
+>> ones.
 > 
-> Are you saying there is a case when usb_unlink_urb() is necessary: if the
-> device was not unplugged and -EPROTO is reported?
-
-That depends on the driver.  If it wants to cancel other outstanding 
-URBs merely because one URB got a -EPROTO error but the device wasn't 
-unplugged, then it has to call usb_unlink_urb() or something equivalent.  
-Otherwise it will have to wait for those other URBs to complete in the 
-usual way.
-
-(Of course, when the -EPROTO error code shows up in the completion 
-handler, the driver doesn't know yet whether the device has been 
-unplugged...)
-
-> > > > Second problem is that when usb_rx_callback_intf0() once got -EPROTO error
-> > > > before ictx->dev_present_intf0 becomes true, usb_rx_callback_intf0() always
-> > > > resubmits urb due to commit 8791d63af0cf ("[media] imon: don't wedge
-> > > > hardware after early callbacks"). If some errors should stop resubmitting
-> > > > urb regardless of whether configuring the hardware has completed or not,
-> > > > what that commit is doing is wrong. The ictx->dev_present_intf0 test was
-> > > > introduced by commit 6f6b90c9231a ("[media] imon: don't parse scancodes
-> > > > until intf configured"), but that commit did not call usb_unlink_urb()
-> > > > when usb_rx_callback_intf0() got an error. Move the ictx->dev_present_intf0
-> > > > test to immediately before imon_incoming_packet() so that we can call
-> > > > usb_unlink_urb() as needed, or the first problem explained above happens
-> > > > without printk() flooding (i.e. hung task).
-> > 
-> > It seems odd for a driver to set up normal communications with a device 
-> > before the device has been configured, but of course that decision is up 
-> > to the creators and maintainers of the driver.
+> Okay, I will fix this (and the one below) in next revision.
 > 
-> The usb device has two interfaces, and we need both of them before we can
-> do anything useful. Badly designed hardware.
+> Thanks,
+> Icenowy
+
+Well then does the documentation follow recommended sort ordering?
+
+https://www.kernel.org/doc/Documentation/devicetree/bindings/leds/common.yaml
+
+Looks to me like it is not clear what is going on there with sort
+ordering. The recently accepted dts in-tree are a mix of "who cares?",
+alphabet sort, and preferentially but arbitrarily placing some things
+above others. The documentation is even different than all that.
+
+Maybe if the documentation should be followed we should follow it, else
+fix the documentation firstly.
+
 > 
-> I think that is why this driver code is so awkward.
+>>> +};
+>>> +
+>>> +&i2c0 {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&mmc0 {
+>>> +       /* TODO: Ampak AP6256 Wi-Fi module attached here */
+>>> +       status = "disabled";
+>>> +};
 
-That's what usb_driver_claim_interface() is for.  IIRC, the cdc-acm 
-driver uses it in exactly this way.
+Orange Pi RV schematic is published now. Please implement this
+description here.
 
-Alan Stern
+You may also wish to review the StarFive JH7100 devicetree descriptions
+(and schematic), and additionally the published Milk-V Mars CM / Mars CM
+Lite schematic, for clues about AP6256. The required firmware files'
+intellectual property when during the last discussion about
+linux-firmware was determined to be Synaptics (labeled as Broadcomm) and
+rejected from inclusion due to no clear licensed permission for
+distribution. Maybe it is time to revisit this and find someone willing
+to do the work of resolving the license ambiguity?
+
+>>> +
+>>> +&mmc1 {
+>>> +       /delete-property/ cd-gpios;
+>>> +       broken-cd;
+>>> +};
+>>> +
+>>> +&pcie0 {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&pcie1 {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&phy0 {
+>>> +       motorcomm,tx-clk-adj-enabled;
+>>> +       motorcomm,tx-clk-10-inverted;
+>>> +       motorcomm,tx-clk-100-inverted;
+>>> +       motorcomm,tx-clk-1000-inverted;
+>>> +       motorcomm,rx-clk-drv-microamp = <3970>;
+>>> +       motorcomm,rx-data-drv-microamp = <2910>;
+>>> +       rx-internal-delay-ps = <1500>;
+>>> +       tx-internal-delay-ps = <1500>;
+>>> +};
+>>
+>> Ditto, move the vendor properties below the common ones.
+
+Yes and, one of us may review what is already in starfive/ dts to fix
+and send a patch for this mess of devicetree sort order. The issue
+repeats every time we look for an existing sample to use.
+
+>>
+>>> +&pwmdac {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&spi0 {
+>>> +       status = "okay";
+>>> +};
+>>> -- 
+>>> 2.49.0
+>>>
+>>
+>> Best regards,
+>> Yao Zi
+> 
+
+B.R.,  -E Shattow
 
