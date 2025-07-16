@@ -1,118 +1,92 @@
-Return-Path: <linux-kernel+bounces-733019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56A8B06EF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:31:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89EB9B06F67
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 796393A8AF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:30:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C0C84A2EB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79D228C01F;
-	Wed, 16 Jul 2025 07:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDA228EA56;
+	Wed, 16 Jul 2025 07:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SQ0Pn5ZP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LGTsYc3H"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013019.outbound.protection.outlook.com [40.107.162.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0462627146F;
-	Wed, 16 Jul 2025 07:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE066273FD;
+	Wed, 16 Jul 2025 07:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752651063; cv=fail; b=TZLzh44UESJWb7GsdfL1LpdDoLHxxTnK/YKjVMK8YjNrVRHYptM/Y7aCBv3GoZPYpYuBcBOekxNCHupD4xvyZQXqm4QcorQCI4/oTgenbRbH/8IYF19XCE3Pori2HVAGmthVep2T0JcQCmSaDGV+EPDMUZLJ6izn2JwA6+ryhis=
+	t=1752652263; cv=fail; b=svUoVGwAVI0yWKGk8pIczMyMtfUTlVi8ZOEjjaJcv0aIBpuLES8BMG6pLejJke2Xo/kFbnslUngHncnKPRrS06HFL/zoh0RhchFBULOy8OKqSjxryBsokpHd2JXF14gB5++vSuFXsg6/Yjn2VzS0egFlXNIKQFKe3j+DoiTMqN8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752651063; c=relaxed/simple;
-	bh=TPnz0LFS2vfYzDuhxRURBBjyAFqeY3aX9OCBLN8a2IQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Akct4zx/eEZnf98g7df1elZHg+kgu7JPMry9kes3Vbvjys1klgl/qqqTC2z/VehNWXrqA7t/bxFAarJACWILxebCBAUNVc5B/63k3oqAHLBUrQ//gj6ggHc9Ec6m0g1G/tHjOtlm5bLDZqpeYOAMNVUijOh9dfJiU4qKDpl5iaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SQ0Pn5ZP; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752651062; x=1784187062;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=TPnz0LFS2vfYzDuhxRURBBjyAFqeY3aX9OCBLN8a2IQ=;
-  b=SQ0Pn5ZPE3uqYaLm2W6LSNJOpvEHdx255u5xkuL/SRxnx1JCmMluEHJP
-   DpKvBSJAbwoy409fM0CL+/2mGVNefDZFkbZ9xW6d0un07XpSu3bllbjF+
-   +xyHiDsimUvP5z0xwcSMSZOSo6ShZSde29kURSog5HXq8a8K4fXidvov1
-   OJFis5E1XeB5r+9yq+54skk/gS2TFkoplA3iWnpHP/Kzga51wo0tjNWV/
-   NzPxnYB2nkafmBGwgrnFUzGrD8+9yrSUfgKAKEn5Lhh7DcUOHizfS8k+8
-   57dfE8NJLO3jl2MNO3j1W+PuAEdHQSoWd12EetY8v00vTV0QqkvzuML0O
-   g==;
-X-CSE-ConnectionGUID: ksJ10bGSQeW88ShllTDJ5Q==
-X-CSE-MsgGUID: O4AOMTuOQWG6B5u67iBbYg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="66333734"
-X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="66333734"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:31:01 -0700
-X-CSE-ConnectionGUID: pIVg6714RiqGhHI+J74Fvw==
-X-CSE-MsgGUID: Ded67RSZRsWrSiFUUYhySg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="157522435"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:31:01 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 16 Jul 2025 00:31:00 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 16 Jul 2025 00:31:00 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.58)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 16 Jul 2025 00:30:57 -0700
+	s=arc-20240116; t=1752652263; c=relaxed/simple;
+	bh=dC8MR3VeUHqHHk8XDjJkoMaG5X3ywzi3vFrkAW/xUt4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=PkIWP0jRp+T6YZmzUMWMJ3+/xVgiCXOD+vto4nn4JTtEjhLxM9VIj7pE191hAC2E9QE8Ub4sapFOzDp+70TDv7voRNQKyhLfwPaYbZAsRilTDeCilK8rtrcRWvGtW3E7y0TsQ4qBJgldpWVBKzKgQz8TJmVf3B/Pa6La7JR+V6M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LGTsYc3H; arc=fail smtp.client-ip=40.107.162.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=stlGJ3Jbw+vC5H0V+mJJlIeovYA9WtpHeN9vM0gCe67oBPjizgEKXFq18ABkMgbnB/IIHghDIHC6K9QrVQHtCH30o148T/Bdii19n1AB/Z1IZOa5CX6HFiuDwxS4j31MwStbUOFCqmZKO1I8g7wdt3Y/XlqZqB2cWjzKzxL70i3fET756C7HqTavaa3rNf19lmvZiBWMYHUogYWEM88A9n6TOjBc1tSWm5f827UvamTzp33hIR/ConwAuvICkhGeAu46vZ2Ba412V4eoNdu1pNxhnAkD3UoNFm/a9exNHWW9fbqtZtiHIyBlXz2AOdSai54zU7VfG2X4k8Efu3usWg==
+ b=bc437x5BgVmepBsYoyXsCmtaXAcZlUDS9rTMdWXKFfwWooagFBi7iQameXZzKfCdVNidqgslAEtrySUlsWBae0IQg6TGWIE7wW4CcjAq1aQGhm4cy4QIPb1h3YGW7NtNhylJOXBfk7GeAWqrpb8b+X5sCdpCFp2b37xxHWWy/+VJJ9U2V9HR3TlOWZTFy+tbV5iVDTGhgpgWF14DEkmCoA1OH9Ddhb9A5qOB7WzFv7SQmzw/GfsqiEUejI/EB4qyzsiLWZvKRvSBq3WKsiFipGVkPDbMhbDB2Ztug8yhYbmooEvEas8SJ4ozxz4Cgoyn0d4unuo8iAJeiLKwpeuKRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wKDu4CXMZ8WDpN8mh4PRNIhHMfn6E+yitRQZB9Qmu2g=;
- b=N4na5PRKE9LCKp2OzFj0cvMZdXPai4Kvd+8vclwsdJ9Sqeg39mg8P+YYMCv/7igCW6koilaMPqcWh6lXUwaAgeAQx+D1y3hgSbZio1+k5xsSqCnvbjQKEcDI3X5JAOngC26bK4CISn9SnTt2hoBicRFmp/4qsdr/i6FuI7mhQh1TmeVJHNHN4vsMQmPaJd1N9fpLWOPeyicfw8bmQGk8Q4j48tUvP8Jm8Utzwqslwmuq3ortk8CA4Yj+v/EP/H7zm+5kRCJaBRSvwH1vwzKbdJ4ofxeSn8ckyuFAdW/APlQDKG7TLMTLDuRUxh92ZI5vfWyJk61CVLl5EQSlF1iTIw==
+ bh=31mKZHTk1k0FTlQQ2Gtp0qLtjF0Q/uhZSTFWj5JKkx0=;
+ b=Yze7SRZcpJMiDqlFrUhlXqi+Equ739pjOtP8LSDRGrdN7v/01o3RuONx+SKV19YUf8lhXUh/3zVdFxIEwI/P9jDnKr+xq3eg3w55XjtGM7Ocx3XLJw6SQk17kTpFZNkcOG4ELOPUmPEu+QqQu+7F0CHgwcXJOBZHkjFHAN7S95tQf4YSvn+jMdQFKQW3yvtWwLlvSa3sUJq8mstbdnpCuTxlbXYPwbVvUp0PmoDPbROoVjJ7vSOeEInfbR4DxUBI7DpWHdhyf5JRPYsGPjSNA/tMoGPsH/SZwpAW4+I04xRTn4HKgIqrcQNkeJ5HlkTLeABRAqAbLlg7IVe0P0PeKQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=31mKZHTk1k0FTlQQ2Gtp0qLtjF0Q/uhZSTFWj5JKkx0=;
+ b=LGTsYc3HsoVTBWLcViPF4XWlsdYVIiaTnaVEJkxvUfyW00LBjk6sxOv/qIbRQjMbHGdkE6gL1ffJtg+f0f9iXwZqwpf00KIkdil0FwUwq8XG9FLKHVs7qhHm1lXwqgxCOYNsGHqOlTbO1GZUvzvDjP55WXqjZZaCwjx+VEsLNeD7VGcPSv7q0k9j0+FkKDQHda5++9V6jiCGeyVJjs8AwshGrvFN5HPAqaRMT/3Gr0O0AoGuk+dbuFe3p6DYoLZr23cD2yBjcCRmz0XTA+KPUGdWQ6l7MB0bH4+1zDXo5RfLzXS9nhx+ATxBqbIofh43UB1vaDSe0QVvIIIdtbiNVA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by CH0PR11MB5265.namprd11.prod.outlook.com (2603:10b6:610:e0::19) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by DBBPR04MB7708.eurprd04.prod.outlook.com (2603:10a6:10:20d::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Wed, 16 Jul
- 2025 07:30:47 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%6]) with mapi id 15.20.8901.033; Wed, 16 Jul 2025
- 07:30:47 +0000
-Date: Wed, 16 Jul 2025 15:30:33 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-CC: <linux-coco@lists.linux.dev>, <x86@kernel.org>, <kvm@vger.kernel.org>,
-	<seanjc@google.com>, <pbonzini@redhat.com>, <eddie.dong@intel.com>,
-	<kirill.shutemov@intel.com>, <dave.hansen@intel.com>,
-	<dan.j.williams@intel.com>, <kai.huang@intel.com>,
-	<isaku.yamahata@intel.com>, <elena.reshetova@intel.com>,
-	<rick.p.edgecombe@intel.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar
-	<mingo@redhat.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 00/20] TD-Preserving updates
-Message-ID: <aHdVGYxCP8s6ItTZ@intel.com>
-References: <20250523095322.88774-1-chao.gao@intel.com>
- <aHDFoIvB5+33blGp@intel.com>
- <a7affba9-0cea-4493-b868-392158b59d83@paulmck-laptop>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a7affba9-0cea-4493-b868-392158b59d83@paulmck-laptop>
-X-ClientProxiedBy: SG2PR02CA0113.apcprd02.prod.outlook.com
- (2603:1096:4:92::29) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+ 2025 07:50:58 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
+ 07:50:57 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	richardcochran@gmail.com,
+	claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	vadim.fedorenko@linux.dev,
+	Frank.Li@nxp.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com
+Cc: fushi.peng@nxp.com,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	kernel@pengutronix.de
+Subject: [PATCH v2 net-next 00/14] Add NETC Timer PTP driver and add PTP support for i.MX95
+Date: Wed, 16 Jul 2025 15:30:57 +0800
+Message-Id: <20250716073111.367382-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MA0P287CA0004.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:d9::14) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -120,216 +94,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|CH0PR11MB5265:EE_
-X-MS-Office365-Filtering-Correlation-Id: be63f2b2-1110-458d-b8fe-08ddc43aae73
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|DBBPR04MB7708:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8eb0bc22-99e2-4912-93fd-08ddc43d7ff2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?JEBjN6gjulUoadRw8+F10UfcW8DKk+UGbbcEgx3QzuPUaFFdL5TkZjcoz7Tz?=
- =?us-ascii?Q?zfMaKbAbENOclg8qPaP1XGeit1sFyil78OKDK9qiBPJZ8XBa17Y5SPHuE138?=
- =?us-ascii?Q?CV8H66wzIgq+2p2XDJ51xaCfTCi5XtF/siXkS2UBNoegmPgV4lUk3cNzEa5i?=
- =?us-ascii?Q?5fmMmBMPKl9gqQiQ9k84tIvkwig3gg1GtTBr2Qmq0M5qWNK+2dSJ63oaF9cX?=
- =?us-ascii?Q?9JnwqSA5UhsDqmpR004DkMz3L7snsnT1J5nRqH712sVY3A3KchskjkxbXxYj?=
- =?us-ascii?Q?BOTaR8k/+8FJ6Yo3ZOnxR/Ash6jcaFjx0A7GYiRkpoeCTmsAQdESNtlv4ADx?=
- =?us-ascii?Q?0zGmt78qNdwFig+SifxzeZkX0hQ1TeOflPGXVOVC9IuaFT/qGRYBJico93/T?=
- =?us-ascii?Q?tR33w7v3uGhZ6gvb434vy55tPUMn20lVNed8j7wzzlDKErZApQi6Tg9aBJLn?=
- =?us-ascii?Q?CyXipU3AEtJJqnpBTafYEACSnbBoyPfKDpYin6xYERRx15o0xTNofDBItDPO?=
- =?us-ascii?Q?dVjj8iGQKZlOsh+M2VbOeilRiL6O8FGDhgK4yNgyVmm29wpltclXcIYsXvrQ?=
- =?us-ascii?Q?EwUMeVC01MW5pNsLvHNzr/5ppPXaBPSuDzpIVkknLRZ2FDQOoMSZZxTikR6C?=
- =?us-ascii?Q?/YJSrzvChO5N817j7NUGvP4kthIXXB1h7q2Ni7KYGxb71OuLshFWC5ku9Yj/?=
- =?us-ascii?Q?zd86VJ2LqFpr6RpxgoeNvn9yMZa+3oJ6XcS7PwcxFILGciimTeXH6rElLk4W?=
- =?us-ascii?Q?1NxmWfycurfxbBPWLo57boGmoxbYvjtleHNKRAkenQgy0okYSQLaolusjjpY?=
- =?us-ascii?Q?Lrx43rXSiKBe9VmZzZN01ygf9Mkpwf0krmmwgFCsFTDxxZwzp7EsYLhY13lU?=
- =?us-ascii?Q?bvUW11TodVuLBwEqBLd7Y4CHweEB4rdFIrkyWnxX1o6JAHzbWJ395h4Qv9yD?=
- =?us-ascii?Q?TG43s5JMYwjatUwcnaOZfh4kDNaFNlCQ7DIhp6WTOlb31U6ISg5XdaNBmjvq?=
- =?us-ascii?Q?49A0TAp/UsVuAuG98U88mjAF3Mu1znyVOP0zGm38G2hTkoM99qNA78GjJ6ro?=
- =?us-ascii?Q?MXTRylS8zVpfJRcvY49q/81EPnLXU7HDbYg35/akScxydH7h+p7Xq9nkXZc4?=
- =?us-ascii?Q?vDGyU18lmDRCaR7KwEu7SwQLbGuUU7TPyU3OZgwxp9S+OjCqhry3h2ak0H8C?=
- =?us-ascii?Q?PHBV6EHU2r4Uui1Vx/tW0g4fqy9A+aa4lWQRr5EKZYq1F2OJ7EePAEmo9PKV?=
- =?us-ascii?Q?cFZ26FBZ1pWt5LYkKnhcWip1ifN+R3P3Uz2US8hxRbRjM55ir09vGosqwxJB?=
- =?us-ascii?Q?MdrBcukebBUVUFK1UcIR72mKxyVRIs7wqcnlarCPseGuyjCqgtsgCoaQuZqT?=
- =?us-ascii?Q?Adv89lHVe72WK3IcRjdCqSTcAK9KwSnFMt2dI6EvBdd4wo4sptynuVKgW1N/?=
- =?us-ascii?Q?KCZjJuTgBtI=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|1800799024|366016|7416014|52116014|376014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BEoQdkN5wa43ZrEuwW0Q3m9oiUhmfKhPN7/AxVtGSCACzxluRwn3Kj5wBKsm?=
+ =?us-ascii?Q?saTrg+1WII19LOC+UWnSlWwI+HhxZabOCmCx8x8f8YePw5xo9myOBbcymIMJ?=
+ =?us-ascii?Q?IUNhqzCwEyvtiJ4BdobfbE/gPOUJkVkFJ4CsD8poH61y7EgQH5agPJK44D0m?=
+ =?us-ascii?Q?YA/S6DmC9dJ1OckgHirizr2hHqZkbmmvA0qZxT/xkjfH7UbsBB8raoH+gv3x?=
+ =?us-ascii?Q?5H2helgPGKH/IAWCeLRbyEwiUByDTd/76uJT9xGkNrT2YK3Gjmh/eMw3r2nz?=
+ =?us-ascii?Q?k/+2aWPFR3U3YgBK53hXXEVE0Zo1gc8OqWBqH0O2Mj2JxDBqy1Cqr1IhYGZ5?=
+ =?us-ascii?Q?YKzBKh1J2pJA/6wSQnskJpn7H5QVp9rh9XzfdpAE07Q1S4SoB8D3tGSUOqUY?=
+ =?us-ascii?Q?OAOXNqSWBVxx99k8OIe47AkNBXOfv/hSBJTnz2MsZB0eNgDQrONGTHJPVxBU?=
+ =?us-ascii?Q?eKPNHG0i/tBEh1BLiyImoj4OQETD3pHsy8RcC3Dk0sYwG9KgEY1ugqXZPxgr?=
+ =?us-ascii?Q?QTNjcC2ypljO/9UQc1OkzbpuELX+O1PeFI3WvVr0Z5Ff+mfnIpsVk2AT63t5?=
+ =?us-ascii?Q?4bDDIkpGcmwQEhjWQ8hXSt33N/jy5MybrmbrsI2UU9ue0Mr4HuoUOC1vioD6?=
+ =?us-ascii?Q?KQlxF+bFbqxDg/j1nuezZ0o1LapobSBzB6iqMXK9J/MYHD+oSUsVz70Zvzhb?=
+ =?us-ascii?Q?TnRQ0SGkzly2feAQF/kpi/Mb13IgPn60+Fql1ltBF30OO2wIn7+mx5vgwa32?=
+ =?us-ascii?Q?DUJkna0WRO9jVfVZ+NAcOJF18B+0qtNlIy0LfKrpuWy4fb6XFZ1Z3JZdf+Up?=
+ =?us-ascii?Q?YROBPuiDLs01wr3JyN0n/QE4JgFe3eyLW4r4QRUDFb8urlefk3E/AHHdcre6?=
+ =?us-ascii?Q?nrMlAaAVvn5HksQPP3Vw1HT07usUX6j5OhUX4tBDH9sr0vo98Wxsz1IuEe7X?=
+ =?us-ascii?Q?AHUHKsOw5EUzbEop/QhGRuw30TWisVEyXJ1XYxLKmDigIRJwix4Cl9I8Oo+I?=
+ =?us-ascii?Q?Q6E+Oj6SzyGFTqFVesJwAk6rw1R6OR1/hL8LiK1fGESzhtlJLB6yc8CpLn5I?=
+ =?us-ascii?Q?b9IelZfWLnwSnsQanzkzogp8ojdNYpDwcVYNPH+80tJUfSgOksaCpGQ3wrs2?=
+ =?us-ascii?Q?dXOM/kByvMmb+Vl4NzqaSa2gIJ4CEDbksjPoJkL/1T5JFn25dsbC28ZknL68?=
+ =?us-ascii?Q?g/6evcWFn3qtIbGHRtmGuNQgowS2VVsJMMJDHSLq7iIU2+nsB5fw5Co+559X?=
+ =?us-ascii?Q?104kg7qVngvAHtmSFsnNaBVXpiVBnYrr8IUQn2Ghfr7hvZNZctUBhnveNqsd?=
+ =?us-ascii?Q?g7bp4I7nSzzUUykHUXey9VkgKhf/XHdKtGhliQ+Ark/My6ollI+6xbtRx/cV?=
+ =?us-ascii?Q?jAHTEb48wcWSoQ4/fHdfrikSpHKmFgUFCG2KqQVOPXVfgwlNe7fCPQy6LNlW?=
+ =?us-ascii?Q?0g3rtc9ohTz4Umz9tWClZgJcfPvj75V8c+4RJF+ncudiIJqSldpX97pYXz9X?=
+ =?us-ascii?Q?twbYBVCnVFFmIXM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?opVCtOkEuqtY6HUuE1sPLE3Bz44QqBibSERLvjHJw7me9iEC11k94ga6qpNz?=
- =?us-ascii?Q?VwH2v28/U2tzY16FtUJYYuAqDyoXyhas1MDXKxUyamaxm4ZvWaXa2XCh/1HS?=
- =?us-ascii?Q?NJFvefbheLaaoLCb3uBw58WSIq7NqPo+dN1h2s1vam0aVsvQSokyOFu9OUg6?=
- =?us-ascii?Q?NKyZyjE7xptWzvsRSc6bFBBE9yHdgn6BCXRBhYn4OtI8xoMn48gCfvghCbFJ?=
- =?us-ascii?Q?f4MY2m6vE1OPYNK2kCLy/DglLftbWEWjvdJkMxmMEG4KBUehw95LNrLMlIUw?=
- =?us-ascii?Q?RH3Qo/vww5LL2p1DsqSG2xYqSN3X1Baa43IvumFNlvXMLHHE1dUIaR16/ZcS?=
- =?us-ascii?Q?IzZIJYI1Z0MC7T8JhevyrVorw8t0Jtnllfuld1ECuVmWFP2y8wKE4Qmve9YR?=
- =?us-ascii?Q?fX+XugFcdrE3mSTrqkK4PpELZI30HLG9vNyiNUWHXug3TzHYoRupvwoJfr5v?=
- =?us-ascii?Q?m6FC80M5fSByWChOeumV/1HNm/btxdCU7cR/1CkGnqEVbawnpQgKOQg6XsSH?=
- =?us-ascii?Q?Hsb07V0hI+H5NRVsrxXdRcFQWvysFEmptzuJN+23YBsE7oo3YGGGEJHaiy3w?=
- =?us-ascii?Q?NnreILF0lot5j9uws/HVFZtG23k7fCP1mMKuu+a8/MpTIrFm/DzzUSfs0ceL?=
- =?us-ascii?Q?4Bm2KOnTLmEZRLqM8BYYWgYw/K+RPXrZM+WIrGlQEpSb5IeVUueAcIzrgJJL?=
- =?us-ascii?Q?C3de5eYR6I8PMWRLsXBuSDasf97Y7Jel3wEhocUHVXeRz/LZhu6tCTo6brAA?=
- =?us-ascii?Q?M1OghW2RtIB8l35cWWBaVQC0lQO9LCDkAS8+HFRSkPuWGwVsvUUETXihjznH?=
- =?us-ascii?Q?XmQXOK1Quk5f7P8WshKATBFSrHk0zm7Q8zlDqf2IVyfGFsIIRWbkaYOsf8GR?=
- =?us-ascii?Q?MCI4s7uDpRAnTjncuiEjsq+sk2gzVbzA9bZI2SjMpsedo6jF1Xrtd0nO0wlW?=
- =?us-ascii?Q?wejZDKHKFpxcneP8yQEeyrJV6hRIZfmTQdzbPy64DoCEUUKMXWkhGtnOwrn/?=
- =?us-ascii?Q?ZClWKeIdqH1d1uWwe0pr77ZXTztfD5eKYmK0baG3T9BroOhoNpq1769M42tH?=
- =?us-ascii?Q?TyySnYE3+iirSd9gmVmjI8/wjlSyP+pzF6DkrO7f9MWZLoolYPqJlxxJYZHi?=
- =?us-ascii?Q?7asOXf4XZruxTUAQ+Adg1Pjj2yq7+GCHJbt/ZtkrxttXc4ldCYlQ1dX7GcuM?=
- =?us-ascii?Q?YK4wkz4gEIlksbl+ekuXStTlL/lonrsAtolYt33jgHy+2ZaIx82q72i2V5N6?=
- =?us-ascii?Q?7aZ+E1EP/J8YEwg1/uYWlRAuS6JdyuuE6Cxox81imewqhZD+KUfw8AIhcdtf?=
- =?us-ascii?Q?BTkD9A4b+CZjRIiEABjXEPrsLoG1C8QtuB/VLtQFranYkG/cKFDzJx01EuMT?=
- =?us-ascii?Q?8k4+gJtKxpcxhpT8ci7f9T9x3UfDH0jD9rRfsRo4fFAW/hQVyblJS3hYM634?=
- =?us-ascii?Q?mbPCmxMtaTR9QN0x+3yhd6xrivzJQ+IQIoXijvIEa0KYkYWMbconDI4dvajl?=
- =?us-ascii?Q?M4s7lp2/CrYjBaDaV3Sa8HN378X+2KxTbGJftrJueN3xkRu5fcpphdVSkkwA?=
- =?us-ascii?Q?zlmS0Ym9LsIQSwuZ03BhVyxgDITMXYEKvM1OohDH?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: be63f2b2-1110-458d-b8fe-08ddc43aae73
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RxOTKHdj7ErUGXinhV3ngwozmNKywVJBAmmBoByn4DsyOzz5cYyax1PFFrlP?=
+ =?us-ascii?Q?ofNX2bP1cSqG5b8qy6oKZoDR+PkIlOMLge5prQyk8zMU9373E+U9yWlz8EyD?=
+ =?us-ascii?Q?+CXMmFQd70yiIcnHj76oOmOCVfMjSCa6BCRdh+IwXo1U/yS8dkP4F76yrH42?=
+ =?us-ascii?Q?oVSUvtcbxQA6Fj3NGe/6MxifkZOJsO9eTukK3z0DZpD8L9C3s7wBLzDxtZyi?=
+ =?us-ascii?Q?70Zvi/fnbJJCGo2sQAXeat6Kmf5GYzuoMtK3HFbgTDmR+Xmbesid1qOh2M8b?=
+ =?us-ascii?Q?GPwZMHDreQ7erPNg9idI9o8/riAO3OZrI/99ziRq/eaUsLd7NGq3YdzdlXVy?=
+ =?us-ascii?Q?u2GpKJigFxDiO6Xez5SVwpNLr+czRtOZX3KAC1afDo+G5KGV0sfdTuQs5Ixd?=
+ =?us-ascii?Q?6vd78UjixCyCNUwGJ7gnFYvhrmeNPSmGsu769X+XX2Huedg7u7INuyISPEpq?=
+ =?us-ascii?Q?BVTtyi8Xb/wa9q5w5kGGYIfvzI/txV3XOLQKOA25ad/KoM38t7nHhgrV6eMA?=
+ =?us-ascii?Q?2sfEkSoeuPduji7I4DK5bQ7N6whJXdAOUhZ6cRliLsGMT5HGUH8KC+suZWqL?=
+ =?us-ascii?Q?+UwMsrTSYkoRmnJtsUm2K/iQXEEom/QnzOB8qU22ZL8XYWdg281wJrNRQdMV?=
+ =?us-ascii?Q?VTfXiAhqdHK1Yfee4wyk2uQSg6ZFJ6rh/p1PNI5L18QF3UYPkTNCP7RnzfRz?=
+ =?us-ascii?Q?DMEchlfAuKoQ3RYv+eDjSaAN+ZSX1cIaVrCtmxciqPVMULZ1UrTjy3NV6TaB?=
+ =?us-ascii?Q?0ZU46fAy4o1I1Eyu9hCTIoe8L/p0SyJmmCA9dg/IKfBbzjeh5ZCjkNUctOqo?=
+ =?us-ascii?Q?gMOu5oyFbcwKCSSAXRgsoe44NdwHq89HhIJeVxJUAjqyan9/nMNxyBFXrjLm?=
+ =?us-ascii?Q?XxcPjbV943bgKg2YGqDyQy8T1V67onxyUtflUKCkTT1SwRgdYLfbblNNtGfS?=
+ =?us-ascii?Q?cSrAIePfPPsob1MK3gTDv1NAHh03Myp5e7QusWVndBF5Ws1CQXDxsTja436T?=
+ =?us-ascii?Q?1kX5jWqmd0524WfnkesV/UlPp0LiFrsIIWrElLShZrKIwnSDIdPlsbyD1FXr?=
+ =?us-ascii?Q?RzdwRRXI1L5XWfaLDo9dfD62wwJ8WRbib8cuoLW5+8oCAHlhr50e3/i90Z0v?=
+ =?us-ascii?Q?bSb/8l/3bVnadqRR3CzuuQBB4fD1z0+ZDQGfCqz5Bgd/SWI+nEa4bFd5zbQF?=
+ =?us-ascii?Q?+K2+rNwC2Gla7+uXj1jD+kkfdg9zshV51i0IOLnxDkoV67/YOceCM2qnOWgR?=
+ =?us-ascii?Q?t8QYdFxegKn1Snigm+RbUhMDFEtlxSUSSiXTIa3uRjgP568I0kDNl0hoZVW8?=
+ =?us-ascii?Q?xl5tpVLQghpTy25zvZNWHkMZl26lrebUUahBNoiroAG0VmbmtO8T+kmd06xM?=
+ =?us-ascii?Q?wfTAs2GvqELInmGwCeVk252Te5FLx8c/SNUPXCoBw/qthAMX4wx5teBHbkLH?=
+ =?us-ascii?Q?dLdzisyRPN4X37/SQ8rmWn6adgYRWfPY+kHrKQoyQRJpyHpJGp7A0V/ih8ol?=
+ =?us-ascii?Q?eSenFPVWWkptz0wT6CYk+joCPKKMbac3a6IHnEqYYZUkFoSvLgPUfttUb6po?=
+ =?us-ascii?Q?ifCzz0V+5MUotCWI7QgWtxFzT4LWJOu+kTEeokei?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eb0bc22-99e2-4912-93fd-08ddc43d7ff2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 07:30:47.2217
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 07:50:57.8276
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I8JHnAbalppR72UlBQ8mQR5MTqa5lNB/wnRWR2KlmBykYmCf/FRszBijAaGgaZ6fhDiXrf2tcwGk5aG9jIIoIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5265
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7CyM93RP6tFHGg+tIkidUeGozeEH8hZ9rc/zn1rwk5LHUuQpd2K3DIVFmrYyX5wQifzA8Gc60VhEc60KNcW0/Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7708
 
-On Mon, Jul 14, 2025 at 05:21:47PM -0700, Paul E. McKenney wrote:
->On Fri, Jul 11, 2025 at 04:04:48PM +0800, Chao Gao wrote:
->> On Fri, May 23, 2025 at 02:52:23AM -0700, Chao Gao wrote:
->> >Hi Reviewers,
->> >
->> >This series adds support for runtime TDX module updates that preserve
->> >running TDX guests (a.k.a, TD-Preserving updates). The goal is to gather
->> >feedback on the feature design. Please pay attention to the following items:
->> >
->> >1. TD-Preserving updates are done in stop_machine() context. it copy-pastes
->> >   part of multi_cpu_stop() to guarantee step-locked progress on all CPUs.
->> >   But, there are a few differences between them. I am wondering whether
->> >   these differences have reached a point where abstracting a common
->> >   function might do more harm than good. See more details in patch 10.
->
->Please note that multi_cpu_stop() is used by a number of functions,
->so it is a good example of common code.  But you are within your rights
->to create your own function to pass to stop_machine(), and quite a
->few call sites do just that.  Most of them expect this function to be
->executed on only one CPU, but these run on multiple CPUs:
->
->o	__apply_alternatives_multi_stop(), which has CPU 0 do the
->	work and the rest wati on it.
->
->o	cpu_enable_non_boot_scope_capabilities(), which works on
->	a per-CPU basis.
->
->o	do_join(), which is similar to your do_seamldr_install_module().
->	Somewhat similar, anyway.
->
->o	__ftrace_modify_code(), of which there are several, some of
->	which have some vague resemblance to your code.
->
->o	cache_rendezvous_handler(), which works on a per-CPU basis.
->
->o	panic_stop_irqoff_fn(), which is a simple barrier-wait, with
->	the last CPU to arrive doing the work.
->
->I strongly recommend looking at these functions.  They might
->suggest an improved way to do what you are trying to accomplish with
->do_seamldr_install_module().
+This series adds NETC Timer PTP clock driver, which supports precise
+periodic pulse, time capture on external pulse and PTP synchronization.
+It also adds PTP support to the enetc v4 driver for i.MX95 and optimizes
+the PTP-related code in the enetc driver.
 
-Hi Paul,
+---
+v1 link: https://lore.kernel.org/imx/20250711065748.250159-1-wei.fang@nxp.com/
+---
 
-Thanks for your feedback.
+F.S. Peng (1):
+  ptp: netc: add external trigger stamp support
 
-Let me clarify what do_seamldr_install_module() does. Patch 10 just adds the
-skeleton (sorry for only directing you to patch 10). More functions are added by
-subsequent patches. Specifically:
+Wei Fang (13):
+  dt-bindings: ptp: add NETC Timer PTP clock
+  dt-bindings: net: add nxp,netc-timer property
+  ptp: netc: add NETC Timer PTP driver support
+  ptp: netc: add PTP_CLK_REQ_PPS support
+  ptp: netc: add periodic pulse output support
+  ptp: netc: add debugfs support to loop back pulse signal
+  MAINTAINERS: add NETC Timer PTP clock driver section
+  net: enetc: save the parsed information of PTP packet to skb->cb
+  net: enetc: Add enetc_update_ptp_sync_msg() to process PTP sync packet
+  net: enetc: remove unnecessary CONFIG_FSL_ENETC_PTP_CLOCK check
+  net: enetc: add PTP synchronization support for ENETC v4
+  net: enetc: don't update sync packet checksum if checksum offload is
+    used
+  arm64: dts: imx95: Add NETC Timer support
 
- * TDP_SHUTDOWN (Patch 12)
-	Shut down the running TDX module on any CPU while other CPUs must be idle
- * TDP_CPU_INSTALL (Patch 14)
-	Load a new TDX module on all CPUs serially
- * TDP_CPU_INIT (patch 16)
-	Initialize the new module on all CPUs in parallel
- * TDP_RUN_UPDATE (Patch 17)
-	Import metadata from the old module on any CPU while other CPUs must be idle
+ .../devicetree/bindings/net/fsl,enetc.yaml    |   23 +
+ .../devicetree/bindings/ptp/nxp,ptp-netc.yaml |   67 +
+ MAINTAINERS                                   |    9 +
+ .../boot/dts/freescale/imx95-19x19-evk.dts    |    4 +
+ arch/arm64/boot/dts/freescale/imx95.dtsi      |    1 +
+ drivers/net/ethernet/freescale/enetc/enetc.c  |  209 +--
+ drivers/net/ethernet/freescale/enetc/enetc.h  |   21 +-
+ .../net/ethernet/freescale/enetc/enetc4_hw.h  |    6 +
+ .../net/ethernet/freescale/enetc/enetc4_pf.c  |    3 +
+ .../ethernet/freescale/enetc/enetc_ethtool.c  |   92 +-
+ .../net/ethernet/freescale/enetc/enetc_hw.h   |    1 +
+ drivers/ptp/Kconfig                           |   11 +
+ drivers/ptp/Makefile                          |    1 +
+ drivers/ptp/ptp_netc.c                        | 1193 +++++++++++++++++
+ include/linux/fsl/netc_global.h               |   12 +-
+ 15 files changed, 1551 insertions(+), 102 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/ptp/nxp,ptp-netc.yaml
+ create mode 100644 drivers/ptp/ptp_netc.c
 
-And there are two requirements:
-1. These steps must be executed in a lock-stepped manner, meaning all CPUs must
-   complete step X before any CPU proceeds to step X+1.
-2. If any CPU encounters an error, all CPUs should bail out rather than proceed
-   to the next step.
+-- 
+2.34.1
 
->
->> >2. P-SEAMLDR seamcalls (specificially SEAMRET from P-SEAMLDR) clear current
->> >   VMCS pointers, which may disrupt KVM. To prevent VMX instructions in IRQ
->> >   context from encountering NULL current-VMCS pointers, P-SEAMLDR
->> >   seamcalls are called with IRQ disabled. I'm uncertain if NMIs could
->> >   cause a problem, but I believe they won't. See more information in patch 3.
->> >
->> >3. Two helpers, cpu_vmcs_load() and cpu_vmcs_store(), are added in patch 3
->> >   to save and restore the current VMCS. KVM has a variant of cpu_vmcs_load(),
->> >   i.e., vmcs_load(). Extracting KVM's version would cause a lot of code
->> >   churn, and I don't think that can be justified for reducing ~16 LoC
->> >   duplication. Please let me know if you disagree.
->> 
->> Gentle ping!
->
->I do not believe that I was CCed on the original.  Just in case you
->were wondering why I did not respond.  ;-)
-
-My bad :(. I forgot to CC you when posting the series.
-
-Btw, it seems that stop_machine.c isn't listed under any entry in MAINTAINERS.
-I found your name by checking who submitted pull requests related to
-stop_machine.c to Linus.
-
->
->> There are three open issues: one regarding stop_machine() and two related to
->> interactions with KVM.
->> 
->> Sean and Paul, do you have any preferences or insights on these matters?
->
->Again, you are within your rights to create a new function and pass
->it to stop_machine().  But it seems quite likely that there is a much
->simpler way to get your job done.
->
->Either way, please add a header comment stating what your function
->is trying to do,
-
-Sure. Will do.
-
->which appears to be to wait for all CPUs to enter
->do_seamldr_install_module() and then just leave?
-
-Emm, do_seamldr_install_module() does more than just a simple barrier-wait at
-the end of the series.
-
->Sort of like
->multi_cpu_stop(), except leaving interrupts enabled and not executing a
->"msdata->fn(msdata->data);", correct?
->
->If so, something like panic_stop_irqoff_fn() might be a simpler model,
->perhaps with the touch_nmi_watchdog() and rcu_momentary_eqs() added.
-
-As said above, lockstep is a key requirement. panic_stop_irqoff_fn()-like
-simple model cannot meet our needs here.
-
->
->Oh, and one bug:  You must have interrupts disabled when you call
->rcu_momentary_eqs().  Please fix this.
-
-Actually, interrupts are disabled in multi_cpu_stop() before it calls
-msdata->fn (i.e., do_seamldr_install_module())
-
-In this context, there are two state machines involved. The MULTI_STOP_RUN
-state, part of the outer state machine, includes an inner state machine with
-the following stages:
- * TDP_START
- * TDP_SHUTDOWN
- * TDP_CPU_INSTALL
- * TDP_CPU_INIT
- * TDP_RUN_UPDATE
- * TDP_DONE
-
-I am concerned about the code duplication between do_seamldr_install_module()
-and multi_cpu_stop(). But, I don't see a good way to eliminate the duplication
-without adding more complexity. It seems you can also live with the duplication
-if do_seamldr_install_module() truly requires another state machine, right?
 
