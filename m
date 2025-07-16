@@ -1,100 +1,90 @@
-Return-Path: <linux-kernel+bounces-732861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBBAB06CF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:10:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E11B06CF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D13A3A1B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:09:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D053A79D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F8C27281D;
-	Wed, 16 Jul 2025 05:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u6wJDG2q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F01A1DF26B;
-	Wed, 16 Jul 2025 05:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D3B274B4F;
+	Wed, 16 Jul 2025 05:10:10 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687BF215F6B;
+	Wed, 16 Jul 2025 05:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752642599; cv=none; b=sdH6whosOfn1yLzbPHyU15v9iM33rOvMoKgcGHE7KO623RwxsqxdoGIHvpB1hHzHAtLtnfNOghEfXoHqa82kay3nODqXKunvpLA/RmriXW93Cc4DCRM/5bhsgbNXWSHwoKlg1rgD9vxQgTNaIKHpGaKhdi8gGAlESlAQ/GS9PnE=
+	t=1752642610; cv=none; b=schVp18PAUPq8m4FRS0FojoyC7UWvo/mUmLcgxYcayHtWBSqQkCJTS0/97MfmNG3lQ0fQx449qBjYQAMpLr68MDzPsGtlvDDn65CKz3xEW8ElPkQwFNBe/kuzcX3ARNEKMY1WY90CW9yv5/dB42SW6BvSsgdIRZymTeMEetfpPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752642599; c=relaxed/simple;
-	bh=cOqdqIUO7fxmsC4oJLZT5RjBxfuL037AGc3yeM3iP/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lcSsJu+gXusLs4sBbkEpqcxb37WhttvZdm1evmXHcckN8UHro2MRHM9ATxpM/8zgfrPtVFSj0rLwJfjln2FCqvT0JtH6bdUuZ1yHQBEtjNd+AGElNYwXmj31aRH1JpsigxmBBimgo/DtyEIqMTK2QHlyZiEtSeXtWplsweHY5e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u6wJDG2q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5A9C4CEF0;
-	Wed, 16 Jul 2025 05:09:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752642598;
-	bh=cOqdqIUO7fxmsC4oJLZT5RjBxfuL037AGc3yeM3iP/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u6wJDG2qJ9PFcVAuQRvzw4syFpfe12yzoyafiri8z/8PLrxjmgN5PWVZN9zrFFwFU
-	 qsAn2LaSYuEw5pbSn4RLfMv0isxRHjK4cep5eBorAgYFkvTTRQ0XrB6zCMCaS5RnYE
-	 axk7qMx/nxk7a8zcUGh7uVTJxDRtHvU+jRCX+8Dc=
-Date: Wed, 16 Jul 2025 07:09:55 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH net v2 1/4] auxiliary: Support hexadecimal ids
-Message-ID: <2025071637-doubling-subject-25de@gregkh>
-References: <20250716000110.2267189-1-sean.anderson@linux.dev>
- <20250716000110.2267189-2-sean.anderson@linux.dev>
+	s=arc-20240116; t=1752642610; c=relaxed/simple;
+	bh=FSVZXZ0piEv9K/0SMye10YrMFNijterWjh/iy8IQ7fs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=O1e2LVYu1+p4EwVbaz7PPkjIfAXnPaoT5+6MzMlmoKyCTWQSLf9y7k8WGzf9l/fo5ycw+eDGfobUvhcWJxK8YBGRAl4jpymretaSLOIU/zYiOgFCB6gCZKan13spvH7yPGwsuNquGrx7sIadNMQXohUu7CKSaz0r/y1Y62buRBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxTOIsNHdoPfAqAQ--.48183S3;
+	Wed, 16 Jul 2025 13:10:04 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJDxQ+QqNHdoeFsZAA--.5851S3;
+	Wed, 16 Jul 2025 13:10:03 +0800 (CST)
+Subject: Re: [RFC PATCH] LoongArch: BPF: Add struct ops support for trampoline
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Hengqi Chen <hengqi.chen@gmail.com>, bpf@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250716043915.15034-1-yangtiezhu@loongson.cn>
+ <CAAhV-H5yPPcU03MGenKDH=sUTkmMPnsGj13zkLA1h-uHVMcHOQ@mail.gmail.com>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <cd190c8a-a7b9-53de-d363-c3d695fe3191@loongson.cn>
+Date: Wed, 16 Jul 2025 13:10:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716000110.2267189-2-sean.anderson@linux.dev>
+In-Reply-To: <CAAhV-H5yPPcU03MGenKDH=sUTkmMPnsGj13zkLA1h-uHVMcHOQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDxQ+QqNHdoeFsZAA--.5851S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E
+	14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
+	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280
+	aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2
+	xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
+	xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+	C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
+	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+	CTnIWIevJa73UjIFyTuYvjxU7_MaUUUUU
 
-On Tue, Jul 15, 2025 at 08:01:07PM -0400, Sean Anderson wrote:
-> Support creating auxiliary devices with the id included as part of the
-> name. This allows for hexadecimal ids, which may be more appropriate for
-> auxiliary devices created as children of memory-mapped devices. If an
-> auxiliary device's id is set to AUXILIARY_DEVID_NONE, the name must
-> be of the form "name.id".
+On 2025/7/16 下午12:42, Huacai Chen wrote:
+> Hi, Tiezhu,
 > 
-> With this patch, dmesg logs from an auxiliary device might look something
-> like
-> 
-> [    4.781268] xilinx_axienet 80200000.ethernet: autodetected 64-bit DMA range
-> [   21.889563] xilinx_emac.mac xilinx_emac.mac.80200000 net4: renamed from eth0
-> [   32.296965] xilinx_emac.mac xilinx_emac.mac.80200000 net4: PHY [axienet-80200000:05] driver [RTL8211F Gigabit Ethernet] (irq=70)
-> [   32.313456] xilinx_emac.mac xilinx_emac.mac.80200000 net4: configuring for inband/sgmii link mode
-> [   65.095419] xilinx_emac.mac xilinx_emac.mac.80200000 net4: Link is Up - 1Gbps/Full - flow control rx/tx
-> 
-> this is especially useful when compared to what might happen if there is
-> an error before userspace has the chance to assign a name to the netdev:
-> 
-> [    4.947215] xilinx_emac.mac xilinx_emac.mac.1 (unnamed net_device) (uninitialized): incorrect link mode  for in-band status
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
-> Changes in v2:
-> - Add example log output to commit message
+> I hope this patch can be squashed to V4 of chenghao's patchset, as a
+> co-developer.
 
-I rejected v1, why is this being sent again?
+No, do not squash, just add it as the last patch if necessary.
 
-confused,
+I think keep it as a single patch is proper due to it is an
+additional independent feature and the log can be clear.
 
-greg k-h
+Thanks,
+Tiezhu
+
 
