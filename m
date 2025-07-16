@@ -1,83 +1,85 @@
-Return-Path: <linux-kernel+bounces-734135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD7D3B07D75
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D5FB07D77
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88F03B88A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:14:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A76B3B0C79
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442A0293C4E;
-	Wed, 16 Jul 2025 19:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1557E2BCF41;
+	Wed, 16 Jul 2025 19:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FOMIq4iO"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2083.outbound.protection.outlook.com [40.107.237.83])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="tXZUVWiO"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2102.outbound.protection.outlook.com [40.107.236.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA56288C00
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABFF29A333;
+	Wed, 16 Jul 2025 19:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.102
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752693261; cv=fail; b=lGJRaAyhZlLJETGgz24VwZJ1bdj/ppCE+2wvxzqM7OTTMElwkh7P9Y0uPcE3y2jbJYDoOXoMDtPS+78UF+bVXZRCeR5OI9pLUFuKEwtGE9w1I00oXxZPETQAO3trerhxAysrEf4O1J0SDtp5GOHTc/Q/6mXQjWyNZp1TnHfdpvY=
+	t=1752693304; cv=fail; b=BFoDf6dKumpvM5sn/z/XG2LArVdr2pty0M6mQfswVSGp4wQxi4dPL8Cmd1nQFTSELhLnhxvwpnVhkZmoZVM3qmtWY6pNr/xau8bYyovM7/9/xMHo1XOsFNHRHS63J4nk5i6ifM7crV41Pta4ILockPnH92nU4WVcL1P3/UAV8RY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752693261; c=relaxed/simple;
-	bh=EC2QJBq+NslO8RML7v0lADyR65ktXcpLrbkDxaytiNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XDcCMVlfG4uj143eMrnbIGeRpN3fyjcKYcO/0i9ZIvfy0Mbn9qfD880XOhCB48TPD7FB4VF/M3d8LrE1T2QnirsSDksgZefA6ysnS7ZC2p+i9IVwkia+5aa8dPJ3DcP+MwyOT+3ypt+jbyCqtbpKG20dPs/VM3LEK9nD9hi7gOc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FOMIq4iO; arc=fail smtp.client-ip=40.107.237.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1752693304; c=relaxed/simple;
+	bh=IVYGvGEPL7sqtgVtO/ZKOJ63Yw195VZjieMHQjK6vPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uAl3EhV4VpAA0mTVOKCpjvTMu1iuc/JfqSoc7ijFO1d+n9WDxFHTmqwCAtd0xeSW6IULR8OWmyLHdA8W6wYYRJXxEHXBZ8Q+w8XMDPMhlxV3hED7girgwyKdlTFStmByeQAnZzg1p3kB4UK+SzNThAvGWPS844hUgAt4FyHg5Bs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=fail (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=tXZUVWiO reason="signature verification failed"; arc=fail smtp.client-ip=40.107.236.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inmusicbrands.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SQOcpx7A8UM84Vu2R3LnzMSsfr1kEi4dhNy/omtNLk3kg5tPntlisCQ1c6oVB+HyEExBP9DmEDW14yKRlBer8PqKD6wHGM3krCroPozFyRJLhesuQ0SI0xHSaz8z5JtVi/4TilR5Ygr1zNVDnghv8n5yHer7+VX8tGeBOEUm2LucP+yhhH7sQD+BWumzmJaX/i2QmBDtOmZz7pj3iWZIvF7uqKeF/6dGGAO+Bg0U3MYS0Cb4p/Qf9ZPtlw2tLqhwBRgby4HnS2ht9CU0Ssz71WkLIfP3y3u3mZrwB4oFuWiQjgoiFRJe+iCothM903QfjrXK0dw6LsrPpkw+ab/Vjg==
+ b=BPOVQUgU9UnRMsLzgQJE+EEMDLsc5AAdMKKgI3ZKrFbZg8D0piTqUqkRCeu8MR/pjRvV33oanNK/LI5Imu+tzq6Kxg39VqXnZj9uMS996O7siWZ4WxsVpE6D4zwVNFic3VAJQDOzDh0OyF+C29TDNhZQbhp75qN3DmcoUNwmakD3SAnA0GYCCPhyOMtqkI3hOiAjsDH+lZK20MekjzSZ+AIi8u1evZQ1PEitDMW0qJFLcJ9f1/x/EsmLHsQC1PzXKRxcVN7dQPFUCq5JEtLPFZps3H9Vyi0ih7jzyXRL02r/DTPN0/bptw6Qf4JF4kj3u2gUp5YH8Du6YJ17YpkgWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EC2QJBq+NslO8RML7v0lADyR65ktXcpLrbkDxaytiNU=;
- b=Zpk7MjtcWanrnP3qrIM0163sAln/PiTpVpd5J36SwIlWqJUQd4Kq/VAaXdj7r2JYSPl88Pm8BlsBEBy3fvmRwbDF3ibJXfNp2YIfeLYFDfXEUtUbvV0xTFTH6PQ8+XJ3btbS/M3KA+Lmgv4GVE9PI7A6QCQc+N3jZu3BgbjOl5uXPC3lS76Zg7hi6YnKYJVj0bRkyAhP1AaAn6KEJqHnz3ox7k9/lkz0gBmfxLrYb1HeD2ftjp9k/AWwmeAXAQ/xINJZxJ+Vq8s0Dwq+3lEAPOcSSV9M0B+7fYNj3jI0iVD6+mS+T9zyGpb70Cr7ujmUW+NZlaUIkqjAiqLCHCFJHQ==
+ bh=rFBS474mWwWyzAMjIpNCm6/WO+mDj2nXwLpXPjzST/I=;
+ b=cR4HILyYL4TuNCe2iiWUXZoZpv1rGxfCoJdN9CWAtgkvA7nkHLmq2NIMEUZCr1HtFvdfteZ5qS7dDiUsdAL7ezFKu8cXRjfiaaFnsK/HX7Y5CzXl/3FJGMT6Y1XqWxcQ/k/UetPeQ7978BycFWtQcCP5mfCOxc1AY+zCZxTIMtRqBlgv1yL7Ehcli5CGpXLkZAEbnx2x96H5teyWOY59DXml2GzzGyA78egR16mBias/P1IlcckS9P6SweNvgwfDyl9NjPfoLyIOBRcYCWZAPN7YdVUlYbJgNlbTC2zQBffGvd+dxBA09zyVcAv+zdVNKKQeZ2rQ6LFx9wtu395Qvw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ smtp.mailfrom=inmusicbrands.com; dmarc=pass action=none
+ header.from=inmusicbrands.com; dkim=pass header.d=inmusicbrands.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inmusicbrands.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EC2QJBq+NslO8RML7v0lADyR65ktXcpLrbkDxaytiNU=;
- b=FOMIq4iO4tvV0bH+Wx5B/g97Oaa4X9YvvFq2JVpMxeaVo9t2NmNBYpw4ijUCYz+8pt+EA56G1dpMEmLxlQA14i94hv9kj99aab03Tsf7gOOlTiV2mE0o5eb6+9SoirDOJdiCtVy6AbmfWzs0psKQMw1CARk+7uQBN2ixrEb2cAObwbiGcGNK4NnTbGMrPaSvqPofC9fov0ogsx5rBazbsXtQ4mGKzxnyXIDGrukecHoA98mKS7dvy3HqTX+rxoQRY2+7U/DMh2K45swVRTngmdaNViDKQVXAvcd76u0aoMA3BnlMQLnFqB0PHSnX+B4ZqQwyCJi2SFSkR8jHBR11iw==
+ bh=rFBS474mWwWyzAMjIpNCm6/WO+mDj2nXwLpXPjzST/I=;
+ b=tXZUVWiOjWf0v2rsViHDsKbI2y8FkFL1X0ZO6UfY6Vw0UVcVIXRek3RwM6OYb4ran3Qav+T2pCT0GhiERnLC59Bmdiwhv9XNYl67a/4g+2CQWdoZBeGE0bKhW8IuUKCR+yow2soxPwjuKUFvG8RtFIO6IUxutUbc8NRnOfwzp20=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DS0PR12MB8444.namprd12.prod.outlook.com (2603:10b6:8:128::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8835.28; Wed, 16 Jul 2025 19:14:16 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.8922.023; Wed, 16 Jul 2025
- 19:14:16 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Antonio Quartulli <antonio@mandelbit.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Kirill Shutemov <k.shutemov@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/huge_memory: refactor after-split (page) cache code.
-Date: Wed, 16 Jul 2025 15:14:14 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <B1B03A58-8247-4A1B-9385-666710587C19@nvidia.com>
-In-Reply-To: <76d80492-e85a-4948-8c25-3885be23ca7f@redhat.com>
-References: <20250716171112.3666150-1-ziy@nvidia.com>
- <76d80492-e85a-4948-8c25-3885be23ca7f@redhat.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: MN2PR16CA0040.namprd16.prod.outlook.com
- (2603:10b6:208:234::9) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+ header.d=none;dmarc=none action=none header.from=inmusicbrands.com;
+Received: from PH0PR08MB8275.namprd08.prod.outlook.com (2603:10b6:510:16d::10)
+ by BN8PR08MB6259.namprd08.prod.outlook.com (2603:10b6:408:79::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.33; Wed, 16 Jul
+ 2025 19:14:59 +0000
+Received: from PH0PR08MB8275.namprd08.prod.outlook.com
+ ([fe80::5d18:97d1:98d9:33bd]) by PH0PR08MB8275.namprd08.prod.outlook.com
+ ([fe80::5d18:97d1:98d9:33bd%4]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
+ 19:14:59 +0000
+Date: Wed, 16 Jul 2025 20:14:52 +0100
+From: John Keeping <jkeeping@inmusicbrands.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC/PATCH 2/2] phy: rockchip: usbdp: implement .set_mode
+Message-ID: <aHf6LGtYiLNFRQDF-jkeeping@inmusicbrands.com>
+References: <20250710152252.2532020-1-jkeeping@inmusicbrands.com>
+ <20250710152252.2532020-3-jkeeping@inmusicbrands.com>
+ <3981131.iZASKD2KPV@phil>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3981131.iZASKD2KPV@phil>
+X-ClientProxiedBy: LO2P265CA0254.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:8a::26) To PH0PR08MB8275.namprd08.prod.outlook.com
+ (2603:10b6:510:16d::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,110 +87,191 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS0PR12MB8444:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6b0b24b2-73e9-4a64-842e-08ddc49cf4dc
+X-MS-TrafficTypeDiagnostic: PH0PR08MB8275:EE_|BN8PR08MB6259:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef9cd202-7e09-437d-dc87-08ddc49d0e89
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+	BCL:0;ARA:13230040|52116014|376014|7416014|366016|1800799024|7053199007|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZfB4EnpeS9IWTmI4kbp3UrEjnl0GArTfUro9DDOwgxOtw5iSjU4By7pKgSNi?=
- =?us-ascii?Q?mD0BayDWq+zrJvlS3G88qCLr6IqP2p4bRwW+F42dB9AgDyQmH49gEzVrz0y0?=
- =?us-ascii?Q?Fo2skAJeRoRO75aOnR5LRy8CG44AknpsM83t/zhEr7KOSwLwf8cXFnCNNDgy?=
- =?us-ascii?Q?gnNj6FMLuacSWHFtqEsva7LXyyX7nOkNUKA7bn0fvA6eHY4lf2fWNfj4fr/z?=
- =?us-ascii?Q?jHuUESdBWlpdtzJ7ksR5q0dPZjzWGlm4Eiuqv+RIpVuFUVvdSoHW5sil45c2?=
- =?us-ascii?Q?bqSvOtRg1n0uKFoI6GFxC22pIm21aoSqzKMfsCLlllxmPq2AUKFhzmGARfyT?=
- =?us-ascii?Q?pKBXVQW2Mz7O8kVlA8loBzlb1qpzvnS3opZ4AgE4mltUeXQjfLOhyICSTuQj?=
- =?us-ascii?Q?cRVba0gV16pmu9KHgBdjs8g0lnHv5LyINHTCKeH8SaES1ift9duGqXUps9/K?=
- =?us-ascii?Q?RT2rr3PRjRXd8OZspn5AjjH+bzWpO0bIwWmBkUJEHPaZ0rtmaZPz1SZMgmsC?=
- =?us-ascii?Q?r0EZypP1BRmJwc6I9rrNFs6n+6okuY3vWusXQd0ZFHB6PEIX2D1+VAohL2uS?=
- =?us-ascii?Q?q1/VDF2vGs7siWVRGKyICpL5zZQ2DaG7HAtFRGo4bbQub90E7InK2FXoB2CD?=
- =?us-ascii?Q?r9+YJPPGMJAXiINNVBQEZLdzsN9JsWOr/VnUdjtoAWQzYs74X5MBDjP9LQu5?=
- =?us-ascii?Q?hpZAUC14Qb3y/BtTfDMstCz25E8ndsC1YaXjn4/SI4aL9V4PPXMhoFvebjbO?=
- =?us-ascii?Q?q+TtPVaZZ6UDaNHTniA4zdyXxAIEXSwmprq09AmHvQUaz8D8mCWHp7cXLUdf?=
- =?us-ascii?Q?gIvmgFPuc5PrS4ITHUJ2lS0S2Yoxcb4Azo/g83NFUqI0L7gqPCWyjHBL3S2s?=
- =?us-ascii?Q?gOgsuuSkvobt3EegH2xoTVPT9KBVCYIOJVIeOZ0vMDTs9sjQlm6V19UvZ8T4?=
- =?us-ascii?Q?pP61904SuMDgxQNmEU9M2S6So/KnxlnbkCd3NFZg3MahlbsTUQBw3yfh+b9a?=
- =?us-ascii?Q?M6mTZhM9bgZiEZCkWstfTaogiU5JsJvB6qVByXmtV2+DmFI3Pzik46kP1yfz?=
- =?us-ascii?Q?dE+ttRy50vZtfKSGIoiPD2OAlNBXFXk2SxKgPmFUOdTQhQCXlEC44qqPcgwA?=
- =?us-ascii?Q?ub3o+kDSKymlgFbthZAECtVr1IaGY+JasSpo8xnQLT5YA3ew9ArOxmrmLHB1?=
- =?us-ascii?Q?QhZcwy+kmGv5DWcUqgfnUTXcJRy0CHFEkE00N5kNU2kWzE0t2Ivc2ElLnIOQ?=
- =?us-ascii?Q?8cwpgWB4aRun0nGQajMu90/EiUEtq1B+82/UVfY7uyFpYoCx6JPe3WAvn+6s?=
- =?us-ascii?Q?x+UekrnoBq5mLBwdKZD7hj2iwsS1gx1E0fT4pQ/H1Qo6acuAKGHt5PU5mk/Q?=
- =?us-ascii?Q?M2r4J8lq5Q4Xn/ti1EEhAnMp61f9d6taQpidokqwhWBrqyJkNZjGUGLC2DN/?=
- =?us-ascii?Q?dh9LYQ2rsJs=3D?=
+	=?iso-8859-1?Q?JNtC8YfHBenYiR0nQrfepJFYCjcRb416W6BibDJPjgImlYrD+7LyjJmBut?=
+ =?iso-8859-1?Q?hHWDYuxS+K16pSQNMrgzmpnMiP37YNJbUXMJ121Pbn9zosc9MLn/ALKVd6?=
+ =?iso-8859-1?Q?3QTB/xy6fl1JlcJ3cKlO1g0ytsQ33rptWg+lcRWpNfiQEadVFru0csfW9M?=
+ =?iso-8859-1?Q?Y53yVvglfQkbg18AnDP67k/DoCyyFxBfLaYYdc68dDKgx0k37bvSstXx5d?=
+ =?iso-8859-1?Q?+ic+rcwpMjKZrlARfCzzNQWzHV0CtgehuhhdbJcZG1/23ldJT/GtzvObWx?=
+ =?iso-8859-1?Q?MYVYY3p/bRkmPZEc1KHQQo58z05TIYsyMPPpiOhB2sZv318w2DMmWOKNeV?=
+ =?iso-8859-1?Q?uRwK20XpyPzRhmC6d8oqOmes8g4mvy6Sn3jbX7/oRulr4gxcpkb/H+3phN?=
+ =?iso-8859-1?Q?d7HQpwggWYd6MVTPwIjGHSFzVa+tZPAEPSKy3h4wcXqkvkkVnspZ7kpj3K?=
+ =?iso-8859-1?Q?XDbiUcR9lcoGSr1XMHNoW3ngIxFJ+P9brPIpp8+haEgnvH8vRfeZJJLq0g?=
+ =?iso-8859-1?Q?XczdhOH3y3V16yuE7yjg2FFBW6D4GoGFEaefCjU7GRNmXbyKBYDFwpHbs6?=
+ =?iso-8859-1?Q?dbBnwyking+8XGp++M8BxDC5DVH7sW7Bqkvk63jmt+yIp+CHsLKKuDIMks?=
+ =?iso-8859-1?Q?pnuIUjU5OXbLhtCuPD7nX9kkPQTATLlagYCxwA89hW/3u9JJOauTA2TnQ3?=
+ =?iso-8859-1?Q?f9lxO3P5SEIoe961YUCtVDElBWDErGtVl/Wl6zHY06zMIqZI2YhAapAM+Q?=
+ =?iso-8859-1?Q?xNYsJUyvK0U6wg2/3HYJjmi8rhvVBf+B90IDfUioWtSVjkfuUKd0Gftbqm?=
+ =?iso-8859-1?Q?6SVCb3SONH52AmUPII88rj1GukC1YqfaJPFG7nZzBrObPIsqR/Iinu4pDw?=
+ =?iso-8859-1?Q?JwYBIkdYa/BfJsZQgsJGdwjd7GSPxMU0WZFCRsK3TsO8KPDRQklyxJkOEa?=
+ =?iso-8859-1?Q?6vPGd1BlHkl+kS6VbAHe2tkqlKjHrPqfg5GduXUI7vewLrmcyXkLEWUGkG?=
+ =?iso-8859-1?Q?ECF2Pp1XTN1/vGEK3lTxfFzHQn4oGRjrH+LButaSfa7OcTFl3+mXjlA+DJ?=
+ =?iso-8859-1?Q?iGI7X2VBsyxQcJHHKSF6pYsiJYjCjFSRzXvMi+9NR399fhpAIHZgDp4AIR?=
+ =?iso-8859-1?Q?J3cHUHxVXkyLcf9kKjZjNYl2W2CIgNO4SBeGgdiju9sTHjBfeztx+WPWBN?=
+ =?iso-8859-1?Q?kkFz0XgdCqkIv8OdTX7/PJnHUBmTPoB8S6iRCOyDQlBg8AH0KV+nXHnbRn?=
+ =?iso-8859-1?Q?dp/ECgvtT8yEKE3HTwzcx2OYRNEZXSsUyQCC/v0WPqy1BLb1WGIHT+boDJ?=
+ =?iso-8859-1?Q?h/KrpIfhCcavFKtJOMhd7dqTut/gJrHcnVIVbgUSwuqaH57J6qrdvFbDBU?=
+ =?iso-8859-1?Q?ud/aNCx3bXKOv+Cb82DW50X6P9MGTLQTpK4dqHn20DNoXBS8mUmTs7+jQf?=
+ =?iso-8859-1?Q?d9AGWYOHVorl6nSC6gmrf8r86oLamHugfnm6W8kIkWdTXy3gtUEvwYPQan?=
+ =?iso-8859-1?Q?rwDNdW47sQaxo2l/1t/fvXR2m8gDXumKcRYhywlOrWjV9WMYjCfM47Er5Y?=
+ =?iso-8859-1?Q?EM5/Y8Y=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR08MB8275.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8SkOGGE+hcyvrmFPgqstoj1PaiGHaLC79chO1K1Hl218+n8s6/sghi7UeqfP?=
- =?us-ascii?Q?MOQZf6y8eC1LSZiAwbctPgZBqxNdBpKZORY/ykDhlu2IhMGV7SPFPiVLSeDX?=
- =?us-ascii?Q?EIy1YGmQeMkSRdkHltSbDDFzTUKkbGLIjEXt+CTsDnWS1kIv4E4qWjMByYyO?=
- =?us-ascii?Q?c+DMl/NUAeXHnM+l0rBKB2T4B2oygG0BUa/hVp0OHCCiCdgRI1mUx4BmekCJ?=
- =?us-ascii?Q?v8fTSp21P12wae4kpFMAqI7NdRA3f/Q7ZIhUtbAMXJWOXbAzxu1L24yE2MMj?=
- =?us-ascii?Q?zaEvYSZVvIssttrkVnOWd6oI5c6/uSq6ERjEYsOZ+sXvojQeaPKUau8XMg1B?=
- =?us-ascii?Q?+cm/85DLEFmyn0gtZwoncVvux7JQtioUc+GnxDVbUN/hBOk+KKy0Uz7jYjvQ?=
- =?us-ascii?Q?LQGvX05Jn4OlkzRjmUlrXCBBLfpbfgL4x6pIM/XyAjzI3SvB5AUuQYZWthtS?=
- =?us-ascii?Q?2Q9uOfAxck1j/r58VayvhfM3m3OEUhIckOzNrHZaC4BjvtAGQnVGf90t8Q9N?=
- =?us-ascii?Q?EH9vnpur+a0nf835XcZGt9EHG4Xis7UrihMiC9gp7KGRzbEsohnxbeB1hKYk?=
- =?us-ascii?Q?0xkT91O0h9l3djwBpgOEs6OPvN2lngnojypV9csRzeSJl9Hg+6mDQbgIcLtp?=
- =?us-ascii?Q?E9RAT/N3XbH1A8kcqEapKyDT0fT59sj9KZVSaxYhX6Hxr8gIEhCE1swnMYgW?=
- =?us-ascii?Q?cx6RIIU6bP1mM7OBwUSfCHchj27yxSnXSrZINcgO5tOs36j93PtImqT4Mg1o?=
- =?us-ascii?Q?4M1pmu+54cVpQiHXwzHLiQsvHXRquad0kIQE/X5g7EjHNDGWsX3rGCSfmhoU?=
- =?us-ascii?Q?t4risl41i+aEnuvnaY/+wkILf5HDiYcjnc8fziB8g1iu66gbFMuqcYXysrKn?=
- =?us-ascii?Q?tAbVjrSgoWKKIL7u1nJxjRaGlcvtHBq7ErH8GVuR66OyciXrXzrcu7qHdzLu?=
- =?us-ascii?Q?U5wDKSgQig4zGU56z+KyUzzUZUp2x+o5EmC/1FsTjkyqeGnqNYWHASkLcZW5?=
- =?us-ascii?Q?UDKct1FPDCkBlUWNtuj/DXH5TEHZdb0OnLZZ+aH2FMZL4TTeZgRjOwhYyYD2?=
- =?us-ascii?Q?ORsJd2Nj//rGyyAgqy97b9gS3fPQZX84yb0Nggf18uNnnEV7Ta3WGKpUTSNR?=
- =?us-ascii?Q?HGwMBme7zMA2WmBJOZDirow4Spul0y1YbiuFPgjFpYrIDWoI9Jg6wZhydFvK?=
- =?us-ascii?Q?v51r8DJYxLaL1NvCVPrVHjsboUajCBy7yeTOMjavYCBLo3CYLa84ok//roKl?=
- =?us-ascii?Q?caObR/G3mAUGvflX2angBoxIiXoQZiW9E7Df5ti4poDYphdq1CI2Gc0VGQiA?=
- =?us-ascii?Q?nZQlOTdvEr9+1nKU9UvTcbM2jlXwxii15rRSXCfb2qV1n/v1w9mnCZWpmNHU?=
- =?us-ascii?Q?fNolVRS4oDk2uZUYLowoLez82MOLJgPeyPQ3xzfaCNPsETr+VQmimTAV5p/W?=
- =?us-ascii?Q?0z0Z99c/AHKK8G9htiul9DAegiL0XRuJtjMXYCBkVyC36RfSqFG/RZcQr+6k?=
- =?us-ascii?Q?qFixzg79z9ps5qS6wseNxuryoiuhBHB5yYrmzEpTG3xspiU3+JpFd98mgeTS?=
- =?us-ascii?Q?QA4hak/QgcWXZiGQf4f1f0oPE74LTxqdPAwHTT0K?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b0b24b2-73e9-4a64-842e-08ddc49cf4dc
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+	=?iso-8859-1?Q?BNyt9hlGCUjNsTSAQK1E0GsvJxKZmVWFJp142cYN9SGGl/Y8kd9da+eL3B?=
+ =?iso-8859-1?Q?SRyH+QNsWrdGI7zON1Bg3eWXeM2F85JHWG4RjEjD/T2YnlKQTMylYMzq0j?=
+ =?iso-8859-1?Q?w1DzhrfKhPmPqeiWnoYYXvqILDURF5X0vdh6MPlxlHwYGmre4And0MTNdV?=
+ =?iso-8859-1?Q?RGzicS/JWdgdnQ2reQ8w/P0Ecx/FjdCytCNTaH7UfEIY6aHBRnLM+cV2Nf?=
+ =?iso-8859-1?Q?66uktQ/MW7z7hwFU3ul6lFqAxkkL3dNBhuQqV3lGHBBt/YtNkcguptUpFv?=
+ =?iso-8859-1?Q?QJJeJqbWL9M3gajudq3xbuny3gYLq/vyb3/RWDdkku5W1kyqU5511fWVoK?=
+ =?iso-8859-1?Q?6ttAxOjXvArppMAMhsgu+9Z5eLFa85wlHpZL5+dXRL8m4B9ttLjZD2+ik+?=
+ =?iso-8859-1?Q?HhH10eoNRsiPUByH+KvHA2C5gbL9FDfKl2hdLXKb8x1MS8lbSm0tMSKtm9?=
+ =?iso-8859-1?Q?lNEitWG1dRQh2k6pB9k7bkq6ruCrhNv6pzm3fJJKlIesp0MmFcvnoebtqd?=
+ =?iso-8859-1?Q?n316/jZe2n3muKpwde6PLA7bf2C6NLoVaDZuDwt1RTInVg4v0RWcGBpqmd?=
+ =?iso-8859-1?Q?F1oJ9nfMCHkQuDoz+EATbCIciqeXe4jk0uKGOcicSqboeqjgoNT8ALOvHL?=
+ =?iso-8859-1?Q?ecmnbybhBoyjmeiFT7KSQZZRBvsmwaoCPdc04qrtxIB6w61hb1dRWS+iso?=
+ =?iso-8859-1?Q?nWjpDfsE5CO3Go6PQnC8yDggPB4emwzPHeYFwWXGbC81fFOa4v4xhviP1r?=
+ =?iso-8859-1?Q?RnCkhHnVUGAp48Wtcqnciw4p1oDN1W7QcXAyIX14WBsaul+ZHknkZ92bc1?=
+ =?iso-8859-1?Q?hqDDYwLeixH6mz5t215jKhAVE3eeh53cXHxml+RCy/Gb5lPUgfWMz2ljWd?=
+ =?iso-8859-1?Q?qscs8snxyVwUc/X0BY4gVKuJgFlWz25Uw42B70tcAl3YZjHWnn/xiWraLw?=
+ =?iso-8859-1?Q?eBpzKg1cVK1IacFRnJiXjUvSXMNuPMLdoh3kh2925DeOuZeuE5idrXjRQt?=
+ =?iso-8859-1?Q?4cJBbxN1gb897/Hc++f7VWDiEc/G33CQdzfnELGfEZQjqPYdrL4qxOvHDz?=
+ =?iso-8859-1?Q?E9f+r4ZGQf8MD7T+9wzuaC8lUkyUpDoI0fcwGzKYWWFpvww+wcy4On3suW?=
+ =?iso-8859-1?Q?N0jaqp/tnBnNuWIXKMf7R1ls3iW3O4GalOwSz73pLK+/tdmdWUdjt6v1F7?=
+ =?iso-8859-1?Q?ypycBA9mYNq59RiueMdzUqCKW+glV/8XJRdggZL6t3maGCYbezlhqrdDKD?=
+ =?iso-8859-1?Q?QnVagvgmDbOYsfK3yIcTw9Vv4HqB5erkGoOa8GwN2S2xVeIyvpckJbrvKx?=
+ =?iso-8859-1?Q?uEvlFC4Iattxi9x5faN/nfPHHI99GGyoBxse/UbKsTbDiAXBIEp4pPlzeW?=
+ =?iso-8859-1?Q?2Mya5ooVbK7QLscR2IBTbv4vmimvsQk9OT4ddcp3hvV/XyCh5Cyzb+/GxZ?=
+ =?iso-8859-1?Q?yjcKzP+BCwrdgYM+3JAVdKoAOIRXqWNqp/GLlSbaeoPR7WfG4evfBgO2nK?=
+ =?iso-8859-1?Q?78WvlRJkJ8CSvII7JEzHB/FxykJ14KM/F55JO7MDMUS6ziESvKI0BgFBk8?=
+ =?iso-8859-1?Q?H2zqEqFJarY8lHljLkQzOA+EtctIhDiFrZF/ic8vUDmBGyeicveqYxC7TA?=
+ =?iso-8859-1?Q?43PtqhNhT2ruDp7rzlERhEVAUU9vMr/W321c8T8K5czNIEiQcmlF/TyA?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-OriginatorOrg: inmusicbrands.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef9cd202-7e09-437d-dc87-08ddc49d0e89
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR08MB8275.namprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 19:14:15.9857
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 19:14:59.1268
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 24507e43-fb7c-4b60-ab03-f78fafaf0a65
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 567DaESGPTjZwyyuQFXuyPw0Zp851Mn5diZlVlNf04RIy762L0WTOMem/64QQvQ3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8444
+X-MS-Exchange-CrossTenant-UserPrincipalName: ataL6TxFSFtEDXwUhTRRUjjDSSzrfjR+vs8L3uME9xDLBpADkjYiKoNU0P8zLSni5I5X1YtcSdXT5prIIGt4gDY33txzW9YWskmZH0s6eZU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR08MB6259
 
-On 16 Jul 2025, at 14:14, David Hildenbrand wrote:
+On Tue, Jul 15, 2025 at 12:35:47PM +0200, Heiko Stuebner wrote:
+> Am Donnerstag, 10. Juli 2025, 17:22:50 Mitteleuropäische Sommerzeit schrieb John Keeping:
+> > When the orientation of a type C cable changes, usbdp set the new
+> > configuration in its internal state but does not write this to the
+> > hardware.
+> > 
+> > Make use of phy_ops::set_mode to write this new state.  This should be
+> > called by the USB controller when it is notified of a role change
+> > (assuming it is acting as the role switch) and will be called at a point
+> > when the controller does not expect the phy to be operating normally.
+> > 
+> > Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
+> 
+> with the comments from Ondrej in [0] the whole thing seems to be
+> slightly more complex
+> 
+> 
+> [0] https://patchwork.kernel.org/project/linux-arm-kernel/patch/20250225184519.3586926-3-heiko@sntech.de/
 
-> On 16.07.25 19:11, Zi Yan wrote:
->> Smatch/coverity checkers report NULL mapping referencing issues[1][2][=
-3]
->> every time the code is modified, because they do not understand that
->> mapping cannot be NULL when a folio is in page cache in the code.
->> Refactor the code to make it explicit.
->>
->> No functional change is intended.
->>
->> [1]https://lore.kernel.org/linux-mm/2afe3d59-aca5-40f7-82a3-a6d976fb0f=
-4f@stanley.mountain/
->> [2]https://lore.kernel.org/oe-kbuild/64b54034-f311-4e7d-b935-c16775dbb=
-642@suswa.mountain/
->> [3]https://lore.kernel.org/linux-mm/20250716145804.4836-1-antonio@mand=
-elbit.com/
->>
->> Suggested-by: David Hildenbrand <david@redhat.com>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->> ---
->
-> Thanks!
->
-> Acked-by: David Hildenbrand <david@redhat.com>
->
+I spent some more time looking at this and have found what looks like
+the vendor kernel's approach to this issue [1].  It seems that Rockchip
+set the autosuspend time to 100ms and hope that is sufficiently short to
+allow the controller to suspend whenever a cable is unplugged.
 
-Thanks.
+[1] https://github.com/rockchip-linux/kernel/commit/5ac62b80f7471ee9858ab0459af07180de938b51
 
-Best Regards,
-Yan, Zi
+Having experimented some more, I was able to do something similar
+without needing any changes to the phy driver by applying the changes
+below on top of patch 1/2 in this thread.  This depends on runtime PM to
+ensure the controller is suspended whenever a cable is unplugged, but if
+CONFIG_PM is enabled then it should address those concerns because the
+controller will be shutdown and the phy configured via phy_init() in the
+normal sequence.
+
+It sounds like Thinh doesn't like this approach, but if the requirement
+is for the controller to be shutdown and restarted whenever the
+orientation changes I don't think we can avoid some changes in dwc3.
+
+--- >8 ---
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 6573cca0eeaf5..b707afd38cc27 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -199,6 +199,10 @@ static void __dwc3_set_mode(struct work_struct *work)
+ 		dwc3_otg_update(dwc, 1);
+ 		break;
+ 	default:
++		if (dwc->force_suspended) {
++			pm_runtime_force_resume(dwc->dev);
++			dwc->force_suspended = 0;
++		}
+ 		break;
+ 	}
+ 
+@@ -272,6 +276,9 @@ static void __dwc3_set_mode(struct work_struct *work)
+ 		dwc3_otg_update(dwc, 0);
+ 		break;
+ 	default:
++		ret = pm_runtime_force_suspend(dwc->dev);
++		if (!ret)
++			dwc->force_suspended = 1;
+ 		break;
+ 	}
+ 
+@@ -2485,7 +2492,7 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ 		dwc3_core_exit(dwc);
+ 		break;
+ 	default:
+-		/* do nothing */
++		dwc3_core_exit(dwc);
+ 		break;
+ 	}
+ 
+@@ -2552,7 +2559,9 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
+ 
+ 		break;
+ 	default:
+-		/* do nothing */
++		ret = dwc3_core_init_for_resume(dwc);
++		if (ret)
++			return ret;
+ 		break;
+ 	}
+ 
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index d5b985fa12f4d..7e1d480c59ae1 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -1390,6 +1390,7 @@ struct dwc3 {
+ 	unsigned		sys_wakeup:1;
+ 	unsigned		wakeup_configured:1;
+ 	unsigned		suspended:1;
++	unsigned		force_suspended:1;
+ 	unsigned		susphy_state:1;
+ 
+ 	u16			imod_interval;
+diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
+index 8f427afa8eb93..16aac8384ca3d 100644
+--- a/drivers/usb/dwc3/drd.c
++++ b/drivers/usb/dwc3/drd.c
+@@ -461,6 +461,7 @@ static int dwc3_usb_role_switch_set(struct usb_role_switch *sw,
+ 		break;
+ 	}
+ 
++	flush_work(&dwc->drd_work);
+ 	dwc3_set_mode(dwc, mode);
+ 	return 0;
+ }
 
