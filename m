@@ -1,162 +1,162 @@
-Return-Path: <linux-kernel+bounces-734228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A3BB07EA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:12:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A861B07EA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A2C7AE350
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB34B172623
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703592BEC2C;
-	Wed, 16 Jul 2025 20:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871202BEC20;
+	Wed, 16 Jul 2025 20:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0iMAgNn+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uxWnWyuK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uDYF+pVe"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407312BD024;
-	Wed, 16 Jul 2025 20:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DF215D1
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 20:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752696742; cv=none; b=e/51AGE5SFe1d9nzgjgLR2DyqHXGh2gaQlgZ6i3D4ZgtLMOAS7x1x5kF05q+lf/ZWfZNR2EvCmtfc5SH9FFSqPzpcLwAYx116ZhZM2Cc/6WcqI7lckECLahVU9EjIvuCmH/lVewWxZk/+WEZiJJ1ikmlgm4DWrqe3z0k95VPeKY=
+	t=1752696778; cv=none; b=Cp1BqsP35z7lu5LaKFyHVpRCF9IYFYo0dsG/43+vZVFQ9tnDqCJqw//x4Lg8PjKJFsfUnckMzWDcFV2w1QDn+DevFNhLTHk/DjsaWxF9WlrUykT/AdeJNVc57cY/4PiXolJzMmxZXFeq+g/RYIZjITykrJA3k175c+NR44TEBvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752696742; c=relaxed/simple;
-	bh=Ybp6StaPBlYn6EwhfIdy1XRd1DpGtpI1OGf8ErxYp8E=;
+	s=arc-20240116; t=1752696778; c=relaxed/simple;
+	bh=NsmOJOd0s+K5m+lRJVe9fgt6mq3NwPo2ltWoeCvR03Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mVM3k/96NuoFVFBbnQ2Rr6I7efzBOz1g5y5Hzx3cbOdkKwTwujR27epHO3T4jy/+XLPFb3jeLIpwhFHo5AhxlZjI6R1nuBhbr+ISCIPrl4ayfVihZWoipUfxVsMTM4f2dZHoYOn26JqNctMusSJ3DeW6/uHG2ku/et0cDB/JZRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0iMAgNn+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uxWnWyuK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 22:12:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752696738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XsB3pN9BQv4DpfHkiX5eiA//lEFGbcJJHnUld0yEYFc=;
-	b=0iMAgNn+c/kCnByEs8UgRRPA18M+uD9wAaFSuobsvit7xfmdRQSbBav0+R+cyQdTKlATk5
-	Vn497KWdlGQNFc1V6oa8MTrZFVG0mmvtMDZPSoub+gmU+kRj6TVUGsrpHsKELQgGLXpPn2
-	XYdVPop5ISRobjC4HIZxUdmQgGd/H6T48xu+GoLy7117KeNomdpomup7EDjdSK/D3epwba
-	RTBFSYuIRSzAxYgm/Tc9PpoPrGgrfgiRl4R4uPkk06XZy7/4A/MyDtlEhoPRSBOeLVlGZU
-	j78xr90jcjZD1FLRZeQuN93FMC9oFa1dBvTarvUvI/ixexZPa1s9odpdq/6gSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752696738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XsB3pN9BQv4DpfHkiX5eiA//lEFGbcJJHnUld0yEYFc=;
-	b=uxWnWyuKJVvzspABpfi/gXCuMAXydr0WBKa104KKmTR1BllVXpBkb3lsibrME6nMIPgslH
-	iQpjtEr0b8TO10Dg==
-From: Nam Cao <namcao@linutronix.de>
-To: Antonio Quartulli <antonio@mandelbit.com>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
-	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	"K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Joyce Ooi <joyce.ooi@intel.com>, Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 16/16] PCI: vmd: Switch to msi_create_parent_irq_domain()
-Message-ID: <20250716201216.TsY3Kn45@linutronix.de>
-References: <cover.1750858083.git.namcao@linutronix.de>
- <de3f1d737831b251e9cd2cbf9e4c732a5bbba13a.1750858083.git.namcao@linutronix.de>
- <7d8cfcf5-08db-4712-a98f-2cbfb9beeb85@mandelbit.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qRVWQrCSMvnzG3KwqG2cTsr57bR3EdSiIobJSFvj1v8b3dfa/bfe91AWB/N1D9iDlKF3mtGg4SehMBuPjJHbMvV1mT6Bqh8oIK8Gr/zJALB5fKkWOnHL/eJ6hGeO0ftlWn5uYGC+THuW1/pK3VfIyujLsGPXiFXuDS9Dn7CQoaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uDYF+pVe; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-451d54214adso1431255e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:12:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752696776; x=1753301576; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bTFRn/aeMp4S+G4FgB+Q2zAiPMprlJMkEEu55rvT0e8=;
+        b=uDYF+pVe0ZgNIYc2nM6dQvRGo9V8mfm2CxMVgAzS21+VlYYKeJEdtOlrwPqXYPhuY8
+         lHTXRVwOK05JKcz6TINR63Xh6SZGX+vgY6ODKcy8Dz1H2p5d1vH977ToHQNYOS4vN6vU
+         J4b8PvDnG5/MmTrMaiHu9gBZKdWMahUd65uJQApuTzERKNvkUFJ3tKKLBhi6Rcn1hM5Z
+         xcM1Sv7uAfSO+VxwIbGTXR3ApXbvirkUNkQxfRRr/MRiEqpaQnxtu3r2AQYMRBxYxHiV
+         OcF+dh66sorwhoULF6mouxRInMTCVMif/a3fKJK7o5PrM4CTE7MCwTlTerJOXgRtMo78
+         Aviw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752696776; x=1753301576;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bTFRn/aeMp4S+G4FgB+Q2zAiPMprlJMkEEu55rvT0e8=;
+        b=jzRUV2ZUbJH5/jBpwG1/zBiPYgvfWuiEtDxhJ1hFG6ZeopQ7lpUPXRtALYu7suRRYJ
+         zKkSJ2/G4B3VoOR736vW1UH1G0ZC5zbkWK3VzYfc8A1PeWvSigyGbI0xTRlukxwhzQE3
+         0bNimLADkvfKlg8OG2Z4GlgBaPu2j57g+MjYQbeVREQN9BklqAEIUTC34rcM+YZmdIEa
+         o6COna6pfUzRSticSi2SomDYFw0Tmj13QuC8pQKoU6MHC+yg6VSJmc+2+FmeR2llsTL0
+         yY/E63WEzihHPfwKT+cLHs3rR4W/Rm29D3ao/36oReO5CTuE7DpctoUqKavzMxaB52ua
+         glyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFXji4pWiHAQUhAi8oAPSZsTl8YWo8M6qPqwmUHk48Hv7S+egNaI3HcBMaI+NP/1RK8ZH93E2DieOt9RI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7ElmGIon4WcEwsI5uh1ovhm5E2c1fIRCLUMbi9TnTgmnjCfhF
+	6qpbd+pWETxyjNZf1MHD7c7nfgZemN/fpq1lF8vU8PsYmr+cNdzxWAbBzN5ZHv1UWJw=
+X-Gm-Gg: ASbGncvrakGIYiGVps2kJOcl60/UK/JN4D6N4gSwTuqqBZNIseSyN0N/2h05Z/8ZXBx
+	aHIrEXYQdGTN/A/0iH/RJtsgPz7soR/AsBfbryaD16AXG5FQk1s0sl+uSts46d8vugYkhcu7UX2
+	S88joZmgF1xNZqcQWMTfsfeuMe+SvEEd/0Vw08+cmtvsVSq0thbvflAofXzVplXNfVbJ+9XK+x0
+	SVB10Lz0sRF+8tiUXnlJNqULYuebNABvq5ZRKe3egCJBqWnxH1Ez/KPrOyQwbTUMszN4Y/EmU8K
+	ooG0bvH0k0PtYPZopYy0FwKJfOa5MtFzpQ+PanP3+vbAJPckd5W7QwKAY0E29xVgwpQDdu6MSev
+	9G4VdbOKQ47WDNdK4MlvVkoAz58OFN+HUie4QfMoipystws698c0kR/f6Ea8v
+X-Google-Smtp-Source: AGHT+IECjdi+MWNAvcqWs+1OLsKCHSKbh3tJIUEemW3jQjXS2P935Ehl7efgOxAko9BQ18ZlI2cxCw==
+X-Received: by 2002:a05:600c:1c12:b0:456:2379:c238 with SMTP id 5b1f17b1804b1-4563532c8eamr1285045e9.17.1752696775581;
+        Wed, 16 Jul 2025 13:12:55 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e14ce6sm18964814f8f.68.2025.07.16.13.12.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 13:12:54 -0700 (PDT)
+Date: Wed, 16 Jul 2025 22:12:53 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Alexey Charkov <alchark@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Jonas Karlman <jonas@kwiboo.se>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	kernel@collabora.com, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Ye Zhang <ye.zhang@rock-chips.com>
+Subject: Re: [PATCH v6 0/7] RK3576 thermal sensor support, including OTP trim
+ adjustments
+Message-ID: <aHgHxR1_Gzu8Dwbm@mai.linaro.org>
+References: <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7d8cfcf5-08db-4712-a98f-2cbfb9beeb85@mandelbit.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
 
-On Wed, Jul 16, 2025 at 09:52:05PM +0200, Antonio Quartulli wrote:
-> Hi Nam,
-Hi Antonio,
-
-> On 26/06/2025 16:48, Nam Cao wrote:
-> [...]
-> > -static void vmd_msi_free(struct irq_domain *domain,
-> > -			struct msi_domain_info *info, unsigned int virq)
-> > +static void vmd_msi_free(struct irq_domain *domain, unsigned int virq, unsigned int nr_irqs)
-> >   {
-> >   	struct vmd_irq *vmdirq = irq_get_chip_data(virq);
-> > -	synchronize_srcu(&vmdirq->irq->srcu);
-> > +	for (int i = 0; i < nr_irqs; ++i) {
-> > +		synchronize_srcu(&vmdirq->irq->srcu);
-> > -	/* XXX: Potential optimization to rebalance */
-> > -	scoped_guard(raw_spinlock_irq, &list_lock)
-> > -		vmdirq->irq->count--;
-> > +		/* XXX: Potential optimization to rebalance */
-> > +		scoped_guard(raw_spinlock_irq, &list_lock)
-> > +			vmdirq->irq->count--;
-> > -	kfree(vmdirq);
-> > +		kfree(vmdirq);
-> > +	}
+On Tue, Jun 10, 2025 at 02:32:36PM +0200, Nicolas Frattaroli wrote:
+> This series adds support for the RK3576's thermal sensor.
 > 
-> By introducing a for loop in this function, you are re-using vmdirq after
-> free'ing it.
+> The sensor has six channels, providing measurements for the package
+> temperature, the temperature of the big cores, the temperature of the
+> little cores, and the GPU, NPU and DDR controller.
 > 
-> I can't send a patch because I am not faimliar with this API and I don't
-> know how to fix it.
+> In addition to adding support for the sensor itself, the series also
+> adds support for reading thermal trim values out of the device tree.
+> Most of this functionality is not specific to this SoC, but needed to be
+> implemented to make the sensors a little more accurate in order to
+> investigate whether the TRM swapped GPU and DDR or downstream swapped
+> GPU and DDR in terms of channel IDs, as downstream disagrees with what's
+> in the TRM, and the difference is so small and hard to pin down with
+> testing that the constant offset between the two sensors was a little
+> annoying for me to deal with.
 > 
-> However, the issue was reported today by Coverity.
+> I ended up going with the channel assignment the TRM lists, as I see the
+> DDR sensor get a larger deviation from baseline temperatures during memory
+> stress tests (stress-ng --memrate 8 --memrate-flush) than what the TRM
+> claims is the GPU sensor but downstream claims is the DDR sensor. Input
+> from Rockchip engineers on whether the TRM is right or wrong welcome.
 > 
-> Any idea? :-)
+> The trim functionality is only used by RK3576 at the moment. Code to
+> handle other SoCs can rely on the shared otp reading and perhaps even
+> the IP revision specific function, but may need its own IP revision
+> specific functions added as well. Absent trim functionality in other
+> SoCs should not interfere with the modified common code paths.
+> 
+> Patch 1 is a cleanup patch for the rockchip thermal driver, where a
+> function was confusingly named.
+> 
+> Patch 2 adds the RK3576 compatible to the bindings.
+> 
+> Patch 3 adds support for this SoC's thermal chip to the driver. It is a
+> port of the downstream commit adding support for this.
+> 
+> Patch 4 adds some documentation for imminent additional functionality to
+> the binding, namely the trim value stuff.
+> 
+> Patch 5 adds support for reading these OTP values in the
+> rockchip_thermal driver, and makes use of them. The code is mostly new
+> upstream code written by me, using downstream code as reference.
 
-Thanks for the report. That was indeed a mistake from my side.
+Replaced previously applied version V5 with this V6 patches 1-5
 
-I hope PCI maintainers don't mind squashing the below diff.
+Thanks
 
-Sorry for the troubles so far,
-Nam
+  -- Daniel
 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index 48a6096cbbc0..50f0c91d561c 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -280,9 +280,11 @@ static int vmd_msi_alloc(struct irq_domain *domain, unsigned int virq,
- static void vmd_msi_free(struct irq_domain *domain, unsigned int virq,
- 			 unsigned int nr_irqs)
- {
--	struct vmd_irq *vmdirq = irq_get_chip_data(virq);
-+	struct vmd_irq *vmdirq;
- 
- 	for (int i = 0; i < nr_irqs; ++i) {
-+		vmdirq = irq_get_chip_data(virq + i);
-+
- 		synchronize_srcu(&vmdirq->irq->srcu);
- 
- 		/* XXX: Potential optimization to rebalance */
+-- 
 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
