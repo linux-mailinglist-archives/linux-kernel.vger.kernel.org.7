@@ -1,95 +1,93 @@
-Return-Path: <linux-kernel+bounces-733522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E348B075C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:35:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AB5B075B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A62E1891979
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F0D9507C8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB95D2F5C38;
-	Wed, 16 Jul 2025 12:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB272F5097;
+	Wed, 16 Jul 2025 12:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jBs68Z56"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X9WP+4DC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE9B2F49FD
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345942F3C31
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669229; cv=none; b=KHggvbfrbdyubA+nylJ+zT3q/EJPQQbjyK+J1G9Ysc/rJ9xGMN5W8RXzx1tmQIiHpAr+JWWPmcso7VpooVTlgOG4enbXZ2ljX+JuMSBppiHCs9rMkTT1laTi+Mabx9ogfhRoiYsmetNPtG5V+D4r8ouH2vAkc+af6Y04UXtgyZE=
+	t=1752669212; cv=none; b=qP7lMK9wZszpiSXad1UOkLJ6xlOMIJWFJuM5ShLbjJ7G/KXzZDJSi2Tfd7cKYfsn9uoRKo3hw5y4Urcz/X0q8nQG8gi09hA6W35/kY+3RcQvZE6W8G6wON/MbNjn/PVIJEcGmqMbr7sIQUbsdCvBGwXfB5zW4R+2hSLl372U83o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669229; c=relaxed/simple;
-	bh=eAEoFvEDTvqGKJe3E3TphilXxDtGezqIPzxZRf+E1m4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o9Bo12NrdIhWS+kCrckbQ08jWtN/AZ+RdeovZSWNOej7tkDLTq+FM2P40RkWYgSQMqZU0ywt4AhRjWu+EAgzyf79tddymfO0hpR4gW06dZyW+/TfzhmSjDPWuC5UoNuNDH2BUaplAeb4zI1x3uAZ7XWS+BckIT0zUvd3oLdVIAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jBs68Z56; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b2f5d91c8so49572771fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:33:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752669225; x=1753274025; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OkDwg9Z86buzPjpSBkyXeXCd7fLEh0X0HNEXKRkal4k=;
-        b=jBs68Z561BG62iY3C8TnykuSarqyjszuMarj8O/SuKAwElr6D69q7KFGCsZZAicWZP
-         iiq0NSJMvOsc+cjng7ox78yY/nbtdCAG2A2eWkA5AEd06b8qNzNqYWejxRogJCDDx/Ud
-         5TPXuD+q1qnlECD4aMmjJl9md3gW2R+6SpSFR/YXNHTyib3l/TIz8nIXYM67FlvVPQgU
-         +xiyAMuzkj6gzxe4Q4vVuaAoben3Nu1lxlH41uAfFEBQIGqAyUt58pbdJT1O0alRRCW7
-         syz0wNrObHMV3InbSlJQzPif6ndbVFzh4nwF8OS56R2pxpwstbWMm5kDgu99rm+u+lTh
-         xMaQ==
+	s=arc-20240116; t=1752669212; c=relaxed/simple;
+	bh=js0Yh7zWjepjcGAJhsG6IlvWE80VSXdh9uM5B/1KfIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rTQXoUetmfPznVUbi8vypO6oShUGvkbVZ8VwoIS8O9LrQmWKd6gmr09iP54SeemgWgggZybdEFhG81pDe2kczLGa/iP5/02EsubezNjFW9xd5n6N5BOiP+cxMKWVh/uHsvaf5DGrO0bBF8IJvrW599wIb1LfXjvz0NAfm1WiXaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X9WP+4DC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G67Bbo007291
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:33:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=6dl8L70xm1HlStY566wq1OfeEIWB7ioldI4
+	dZagkJzA=; b=X9WP+4DCcgGkip/bAqz8I0+P4m7UMaiz2rhRBxny0b8mahUe5xi
+	TqcPlaT1oHCh1mVhM/+6vxuVPkVQxqw76myMjfEZ/PbBDd1gbYdjwKY8Iy5bDeNm
+	HBQMTmFMXqDlqevTOrrf5ViIN3xncXr7M1Jk8RJgNSxDkSDJh9G1QvRrV/bhBIW/
+	Gu1E0X2ECljAM7KrtSQWO1esMkLTTEpNeFa3HtH0DSd4oSwhNRm+GeW10giQVO/r
+	ldQwjjIMR63+2L9iOcOlmDulj7v9ut+MLI0vNgXQN8GPva6p8vyi5KeqtywSUFEI
+	ugOZmHbUR7iBgDKrHisWmZEGaa4WXTbuZAA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5v2a2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:33:30 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e333fae758so562767285a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:33:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752669225; x=1753274025;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OkDwg9Z86buzPjpSBkyXeXCd7fLEh0X0HNEXKRkal4k=;
-        b=ATMbI9/AQYbmMGMB3F7jJtB+jPr2P3HkyDdIycYjZoUN9KFi7Rni6E1yu7iXW/vtKA
-         1iuPvwOs54p6gM7zsYaKQBzvu7ICBAexpvTbVTsAYc/7gXMRVdbgyXm645ZYyjQy9eUn
-         ZcyPRjkFI2hi32rCxUl6AFJoIQWrXkptSZdlG+uvzDjKXVilGY4SHxMf6u/UnPgaFk3a
-         0Aj0VTQQcAQkgsqMpzsFKXqCnrZjuq0F1KK6yofES2fw/y6+dDvY/bL2nmE7JbsOwh9j
-         V8VxcUHwXGzRib1SaaS9sZ7eGLpG6NW2ci4Li3vg2+1f3vAWnn2S5hhhOAIAmExhUSHW
-         hswA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0gY8WZUqlwLZ4WQzwHB6/Od7OvwFhwcG1QDqCpIbyUNyfR0eP9HupOYWZ1ZAJEEfkeuyiZSSeCny9MpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDPPkx12ngujYSql2NUsG/6N8P6/6bOqMQsiWiWbv6iB1knij4
-	NT0edx4co4tBStfH+onwvvW12yLLkAfQ390XREpL2k5e94aKR6XEnHJQ0IGPZoA2kkA=
-X-Gm-Gg: ASbGnctKyhdJqeG1Vkm6Dg5cVJ+/RAP5uwqC/9NExHm32UGeqx2VPa8+tHhdkanOWJZ
-	ZZRKT3kVDXgtMUyXNbQ8ntRN+Zrat9tMcYisSKNVRaGwyktF9hoQiOUY4Y7ud1HwfQhgFy/Pxvx
-	hejuifd/9FLMRUrjtSZOe8AtPMEVXcDxvFqrac3OQ770bQiIiXy2yfw4/mYH7leVgMsaVH64Pbe
-	HYWMSeakJ/g1Q42Z44dLfs4LCJzcM3ncvMiyXcVQTR4D60n00lIrHZQXkVR3RySshfTsOMUYU2g
-	0mxtCoRs4MdhafyjKDnixN/wqiePXkAqKHfFU1KAMpSrGZ0brMy+KDcf4My/btuLxQEBx19/S8r
-	8kHMmiDetvJVIiKATml5UgH5JpINyX7lw4UeoCbrAjWC+DmyHAKv28UsBhIR67TO3EvHRUsVt
-X-Google-Smtp-Source: AGHT+IHG98mZtuvNkqZvzA4vLTR1noVqA1xBF65Lev95RChrA7kTMsUpnxtT4HT7cd/pUSOzNKtHRQ==
-X-Received: by 2002:a2e:a7c1:0:b0:32c:a771:9899 with SMTP id 38308e7fff4ca-3308f4b79afmr8286091fa.9.1752669225074;
-        Wed, 16 Jul 2025 05:33:45 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fa29134d4sm21136211fa.22.2025.07.16.05.33.44
+        d=1e100.net; s=20230601; t=1752669209; x=1753274009;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6dl8L70xm1HlStY566wq1OfeEIWB7ioldI4dZagkJzA=;
+        b=tluoAvPnxbQ2ufdMGGGKzJfMBlKenWhc+D3xE0yN3qteWzaJnwJMG9GymRKsdLLl6W
+         GPba3ruDnHD6cTNYZSViecyx6Bz3v/9+HPl45AdP11myz1qkzQmbNNZcQYx2kLizqvco
+         /vXabLBQQ/PWkiKDKJbNF3w98QVAL0e25BQjLQyR/zhPkIlumhpLGd/nuztfLDinDzyS
+         wEB+rqGQApsqnf4Csr/ZfvbcnXZOQI+eZI0mE8WtPnRZTW5CBPqZGfJ31ILag4tXs1lP
+         WtXqKbfM3pu+v8nLwMwE4m/lsgkquIFf6I1jTCu2YdASr1OZ49nnKYhOzJv2NLRwc3w4
+         0y6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUhUWaAJFWR79R91z3AkaBdDwbPqxNPUB/NjOyC5+L/5UlGPTpHt4AWlOitTuwHeIRov7I0dSP/6+NI26M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRljnNuX+g9nSg3Bt9Hu9gQsdLCbxQseGeUJnmGnqckp3zaGzj
+	GgfN7bLafGjCIYsEbn5rxviJE+SdrKjjwSH08mBbTreunjEdb5H3fzaniCZWBcbVgD855vYBlks
+	w3JRSSERXzUBm3+NENrAYdIhbsapHRuDzI45tQZV4L2w/F2kepRLB801BgRMWkxZqR4Y=
+X-Gm-Gg: ASbGncs92D9tDBA0RqEt/qTvp3DqqUSNERvZof150ky457Lu/87IbK8VqxX0WDEtzqO
+	aZDAhCUNvNxMjCrTUetiOGw7fd58w0Mv+wyT1DTyZD09ZioSylP82vEbqFPMmwIfwbzN+RjuJ39
+	P+xGZ03h59WqcE5zTUlDkk3ejqzDIhuGxYOvWlj5bc3afvkzXuMGTqO5W/vzBmeFdWx7IODxnsr
+	rwJwV2y7uE7D6oW4QcwTlQ0nH09TDP+ZLDYkBF3gXvUwBjwAfiXLEN69abKe9+wchSi7PaZwp4Z
+	RjPmOLSO8+SnxxUKveNzVhVIF6tuPqhwpjViaS/q4PEfABfa5td8Wg==
+X-Received: by 2002:a05:620a:2681:b0:7e3:16b7:bf26 with SMTP id af79cd13be357-7e34334b831mr347069485a.4.1752669208855;
+        Wed, 16 Jul 2025 05:33:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6xtwwfW8AddMhJZGFRGstSkga85qp3uQ6/xodWuP1paQp/Pn/v4wA1DQuvRudLT9g1U2RYw==
+X-Received: by 2002:a05:620a:2681:b0:7e3:16b7:bf26 with SMTP id af79cd13be357-7e34334b831mr347063785a.4.1752669208186;
+        Wed, 16 Jul 2025 05:33:28 -0700 (PDT)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e89c739sm19453335e9.32.2025.07.16.05.33.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:33:44 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@baylibre.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Len Brown <len.brown@intel.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Maulik Shah <quic_mkshah@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
-Date: Wed, 16 Jul 2025 14:33:17 +0200
-Message-ID: <20250716123323.65441-2-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250716123323.65441-1-ulf.hansson@linaro.org>
-References: <20250716123323.65441-1-ulf.hansson@linaro.org>
+        Wed, 16 Jul 2025 05:33:27 -0700 (PDT)
+From: srinivas.kandagatla@oss.qualcomm.com
+To: broonie@kernel.org
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, srini@kernel.org,
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, neil.armstrong@linaro.org,
+        krzysztof.kozlowski@linaro.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH 0/5] ASoC: codecs: wcd93xxx: remove code duplication
+Date: Wed, 16 Jul 2025 13:33:18 +0100
+Message-ID: <20250716123323.5831-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,172 +95,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=68779c1a cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=Wb1JkmetP80A:10 a=OLL_FvSJAAAA:8 a=EUspDBNiAAAA:8 a=DXjLId-kC2nHtiOjzpQA:9
+ a=sPFwb3Qtu_UA:10 a=kl_IBrakYWIA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+ a=oIrB72frpwYPwTMnlWqB:22
+X-Proofpoint-GUID: jWdLg_Kr0J42HMU5tr9N1lKRCinZi3RG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDExMiBTYWx0ZWRfX7kGeKJg233IE
+ 7EwaXcSgbK87UwjfVbZNf7KDIdqnx3mrSlzwwDRtxWk69OsFfI1iWXs9RitMcJUN+ptbjnSTFT7
+ dn38A9vS+xb459Pe4asD65MlGzy4ipn0bSnhyv6PpWPg93PDMhatlwzaqEum/g/sm43QYjj0eTw
+ cdGyNujk+eHxu9cWrnunJREyOIew6Q/A/K2eTm/8JW1EtG2e3RpGZoafev/a1/HqfPkpaYRAj+V
+ x09NK1SIt/JWa2yR0gA661QKhALZcxixH7POGwbcfTvkGwVxtnjsFtpMaL8LujJUgqDe+JgPrQR
+ qqmQ8Mjq0NXpWeIN1DGaYHyoKKQssuFj3RnCikfuGuCpt4q8TyTsrS++DXs/LlP6GN4eFu/U2ur
+ dRcmRq2yATiQ5looe1bOR4LfLBKMLjARKwQR4pASaFxsq7mwZBZrPXPH9T9XVhvrAui12ng3
+X-Proofpoint-ORIG-GUID: jWdLg_Kr0J42HMU5tr9N1lKRCinZi3RG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_01,2025-07-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 mlxlogscore=547 mlxscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160112
 
-Some platforms and devices supports multiple low-power-states than can be
-used for system-wide suspend. Today these states are selected on per
-subsystem basis and in most cases it's the deepest possible state that
-becomes selected.
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 
-For some use-cases this is a problem as it isn't suitable or even breaks
-the system-wakeup latency constraint, when we decide to enter these deeper
-states during system-wide suspend.
+All the Qualcomm WCD codecs and WCD based codecs have lots of code in
+common, resulting in lot of duplicate code.
+This series is an attempt to clean some of this by moving the common
+code to wcd-common library.
 
-Therefore, let's introduce an interface for user-space, allowing us to
-specify the system-wakeup QoS limit. Subsequent changes will start taking
-into account the QoS limit.
+Currently I have done cleanups for 4 codecs wcd934x, wcd937x, wcd938x
+and wcd939x, however any new Qualcomm codecs can avoid this duplication
+by using the wcd-common library.
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- include/linux/pm_qos.h |   9 ++++
- kernel/power/qos.c     | 114 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 123 insertions(+)
+There is still a some code that is duplicate, but this is just a
+starting point for such cleanups.
 
-diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-index 4a69d4af3ff8..5f84084f19c8 100644
---- a/include/linux/pm_qos.h
-+++ b/include/linux/pm_qos.h
-@@ -143,6 +143,15 @@ bool pm_qos_update_flags(struct pm_qos_flags *pqf,
- 			 struct pm_qos_flags_request *req,
- 			 enum pm_qos_req_action action, s32 val);
- 
-+#ifdef CONFIG_PM_SLEEP
-+s32 system_wakeup_latency_qos_limit(void);
-+#else
-+static inline s32 system_wakeup_latency_qos_limit(void)
-+{
-+	return PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
-+}
-+#endif
-+
- #ifdef CONFIG_CPU_IDLE
- s32 cpu_latency_qos_limit(void);
- bool cpu_latency_qos_request_active(struct pm_qos_request *req);
-diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-index 4244b069442e..fb496c220ffe 100644
---- a/kernel/power/qos.c
-+++ b/kernel/power/qos.c
-@@ -209,6 +209,120 @@ bool pm_qos_update_flags(struct pm_qos_flags *pqf,
- 	return prev_value != curr_value;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static struct pm_qos_constraints system_wakeup_latency_constraints = {
-+	.list = PLIST_HEAD_INIT(system_wakeup_latency_constraints.list),
-+	.target_value = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-+	.default_value = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-+	.no_constraint_value = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-+	.type = PM_QOS_MIN,
-+};
-+
-+/**
-+ * system_wakeup_latency_qos_limit - Current system wakeup latency QoS limit.
-+ *
-+ * Returns the current system wakeup latency QoS limit that may have been
-+ * requested by user-space.
-+ */
-+s32 system_wakeup_latency_qos_limit(void)
-+{
-+	return pm_qos_read_value(&system_wakeup_latency_constraints);
-+}
-+
-+static int system_wakeup_latency_qos_open(struct inode *inode,
-+					  struct file *filp)
-+{
-+	struct pm_qos_request *req;
-+
-+	req = kzalloc(sizeof(*req), GFP_KERNEL);
-+	if (!req)
-+		return -ENOMEM;
-+
-+	req->qos = &system_wakeup_latency_constraints;
-+	pm_qos_update_target(req->qos, &req->node, PM_QOS_ADD_REQ,
-+			     PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
-+	filp->private_data = req;
-+
-+	return 0;
-+}
-+
-+static int system_wakeup_latency_qos_release(struct inode *inode,
-+					     struct file *filp)
-+{
-+	struct pm_qos_request *req = filp->private_data;
-+
-+	filp->private_data = NULL;
-+	pm_qos_update_target(req->qos, &req->node, PM_QOS_REMOVE_REQ,
-+			     PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
-+	kfree(req);
-+
-+	return 0;
-+}
-+
-+static ssize_t system_wakeup_latency_qos_read(struct file *filp,
-+					      char __user *buf,
-+					      size_t count,
-+					      loff_t *f_pos)
-+{
-+	s32 value = pm_qos_read_value(&system_wakeup_latency_constraints);
-+
-+	return simple_read_from_buffer(buf, count, f_pos, &value, sizeof(s32));
-+}
-+
-+static ssize_t system_wakeup_latency_qos_write(struct file *filp,
-+					       const char __user *buf,
-+					       size_t count, loff_t *f_pos)
-+{
-+	struct pm_qos_request *req = filp->private_data;
-+	s32 value;
-+
-+	if (count == sizeof(s32)) {
-+		if (copy_from_user(&value, buf, sizeof(s32)))
-+			return -EFAULT;
-+	} else {
-+		int ret;
-+
-+		ret = kstrtos32_from_user(buf, count, 16, &value);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (value < 0)
-+		return -EINVAL;
-+
-+	pm_qos_update_target(req->qos, &req->node, PM_QOS_UPDATE_REQ, value);
-+
-+	return count;
-+}
-+
-+static const struct file_operations system_wakeup_latency_qos_fops = {
-+	.open = system_wakeup_latency_qos_open,
-+	.release = system_wakeup_latency_qos_release,
-+	.read = system_wakeup_latency_qos_read,
-+	.write = system_wakeup_latency_qos_write,
-+	.llseek = noop_llseek,
-+};
-+
-+static struct miscdevice system_wakeup_latency_qos_miscdev = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "system_wakeup_latency",
-+	.fops = &system_wakeup_latency_qos_fops,
-+};
-+
-+static int __init system_wakeup_latency_qos_init(void)
-+{
-+	int ret;
-+
-+	ret = misc_register(&system_wakeup_latency_qos_miscdev);
-+	if (ret < 0)
-+		pr_err("%s: %s setup failed\n", __func__,
-+		       system_wakeup_latency_qos_miscdev.name);
-+
-+	return ret;
-+}
-+late_initcall(system_wakeup_latency_qos_init);
-+#endif /* CONFIG_PM_SLEEP */
-+
- #ifdef CONFIG_CPU_IDLE
- /* Definitions related to the CPU latency QoS. */
- 
+This patch depends on the other cleanup patch series 
+("[PATCH v2 0/4] ASoC: codecs: wcd937x/8x/9x: cleanup") that was sent few weeks
+back: https://www.spinics.net/linux/fedora/linux-sound/msg25202.html
+
+Am happy to merge both of them if it makes it things easy.
+
+I have tested this on T14s, any testing is appreciated.
+
+Srinivas Kandagatla (5):
+  ASoC: codecs: wcd: add common helper for wcd codecs
+  ASoC: codecs: wcd-common: move WCD_SDW_CH to common
+  ASoC: codecs: wcd-common: move component ops to common
+  ASoC: codecs: wcd939x: move to using dev_get_regmap
+  ASoC: codecs: wcd-common: move status_update callback to common
+
+ sound/soc/codecs/Kconfig       |   8 ++
+ sound/soc/codecs/Makefile      |   2 +
+ sound/soc/codecs/wcd-common.c  | 139 +++++++++++++++++++++++++++++++++
+ sound/soc/codecs/wcd-common.h  |  46 +++++++++++
+ sound/soc/codecs/wcd934x.c     |  82 ++++++-------------
+ sound/soc/codecs/wcd937x-sdw.c |  61 ++-------------
+ sound/soc/codecs/wcd937x.c     |  75 ++++--------------
+ sound/soc/codecs/wcd937x.h     |  22 ++----
+ sound/soc/codecs/wcd938x-sdw.c |  65 ++-------------
+ sound/soc/codecs/wcd938x.c     |  89 ++++-----------------
+ sound/soc/codecs/wcd938x.h     |  14 +---
+ sound/soc/codecs/wcd939x-sdw.c |  84 ++------------------
+ sound/soc/codecs/wcd939x.c     |  97 +++++------------------
+ sound/soc/codecs/wcd939x.h     |  20 +----
+ 14 files changed, 303 insertions(+), 501 deletions(-)
+ create mode 100644 sound/soc/codecs/wcd-common.c
+ create mode 100644 sound/soc/codecs/wcd-common.h
+
 -- 
-2.43.0
+2.50.0
 
 
