@@ -1,200 +1,174 @@
-Return-Path: <linux-kernel+bounces-733890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4815FB07A42
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:49:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E70E3B07A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1182564A5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:49:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE521189335B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0892F5495;
-	Wed, 16 Jul 2025 15:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DA62EA14E;
+	Wed, 16 Jul 2025 15:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cQ+RHXS1"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KFBA4PxH"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C6726E143;
-	Wed, 16 Jul 2025 15:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13C32EF646;
+	Wed, 16 Jul 2025 15:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680881; cv=none; b=W+AAUdcOaDkR3qXvvqoo9XNPI2dXW1cVV4nTwSk/XXKl1SPLSuu3OKBt6QGwv73DlM0tHwI/Q7b+df/etsAFEi5KJAOlhFXGCF4vEvoJcserlDLApkigUFq+9RKWRhhgK0c5X0yJEXn9ks/5airbj1A3ZS/5klbzfgdceHLmvwQ=
+	t=1752680896; cv=none; b=vAsoSQQ8+oh2m3ABBnSAVPyO7BJDh7FMMkXfnZIKwRBLMPE6hhIRUakJzYx5K7/8S+l8SGiez/LVvda8K082CNWNkqXo8+gkKOMaGmS4T7iHDG7tVG4zgn2/lJtBBHr00cuUyve0pklmY6lJhgEfJJKjNUoBJ1OVO5M/LsplNWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680881; c=relaxed/simple;
-	bh=TdjdAZ5Qcl70q89Fsx6WtjY1GVu0RGAg65fTIwd72lA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R3oXLSdUAYrBufxCqARHD3L4J64bXpyOAwFqmHBfrE9WZCtNUIW2+BlEZcR0RWfYZFtVF2UPu9miSJOoebdk5UcS3ak9xH2+41fu60QXgNWeKUClRlZl1543DfxPJEzfQ4vNBnVzqynKv0l0y6nS6WMWWHSzmA3ASNDT1yUABf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cQ+RHXS1; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 774394446E;
-	Wed, 16 Jul 2025 15:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752680871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cjdubYPyuEPfJm3WKT23YKO+sTW4CBP0Ei8HQieSzRA=;
-	b=cQ+RHXS1Z/EhPM5DLfq30qSBt+nPcw1EVHf0N3khBN933OI+dhM/XZ/LUuYiljkTUX246h
-	SY0daJSUfFtVBUsU5ixzfu0FYCdRXHX1FbtJyNNp8DZZ3fbWnbePWdQAdAmVNziEPXw1ui
-	VhiEA6z/a2FSPVD9u6kwY3bcurO7qnK/LBCYnpzfMhehjfOq2p0WkSlbMXQS+t32hYDZem
-	khucJY/RGMlxPzraAYiArTaf0pEPmQhSlwaUpPlz+slzc8gXL+2lRVnJEGQnk/HBpiqBbc
-	Ee7vaVSyOxPFEmPzFvXciPfjBNUtXt8EwfH1rihtLk28BNKIx2Q4QnXoyaFFEw==
-From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Wed, 16 Jul 2025 17:47:17 +0200
-Subject: [PATCH v3 6/6] mmc: sdhci-cadence: implement multi-block read gap
- tuning
+	s=arc-20240116; t=1752680896; c=relaxed/simple;
+	bh=GOkZ+kxSzALlySorLSCA6cXsPChjBJFPrqHDc+rhD6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A/VavQlXxqUa2E6GoaRQtUWNJePqXSJi19L2Cjd+s0gXwMH4IRYuuZsQbk/F7+799astQqB0hSOgStT8FSqGXwN4uCDnYI7GZesZwoLNTYtTWdF+KJJGa5xDp2A9ge44KztoDsPkb3XUGmPxQnWeyMX5WgVGiS44qY9hoBUgSvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KFBA4PxH; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60c5b7cae8bso10936349a12.1;
+        Wed, 16 Jul 2025 08:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752680893; x=1753285693; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lKjVbstUaXUkfpWGZfi4yqhbObtoazSimLO3Mc4PdaA=;
+        b=KFBA4PxHxSHdlTsfkV/U33yuR/IbUe30pCqbnw/BznE18+oRZ5gJQSHVb9ZOJV3I9X
+         9KEZo7YU7uJebjCQjQYwUT6b9jackx6Ld7oDhry0DxOa6+nNrdA4M7TUL5oEMPiOPrzI
+         jrAPYjdZx8dVUrRI6YRr9fYOv9/TCSRlKe8qwCBX95wqgjMFahlZondjQcYLbfkuTTpT
+         caX8Efg9G1RaUIbWaKqUROhR5bMrhs2pLvpuF46iF18o29fI+a5qik6vubgyrlPvpYWK
+         i3MQU4Y4nQbjNylK59p9ypj58CGswj2/2VzZDbNVC8edG+tr2ESEPlmAzwpr2Zk9I0Mk
+         tlhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752680893; x=1753285693;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lKjVbstUaXUkfpWGZfi4yqhbObtoazSimLO3Mc4PdaA=;
+        b=PEE4jPKVw/antCrL76KAlRauxVQAb9O9gBWdKNeaV508siRr9vRe2JJ3nP9pqqiOYa
+         4BflxR0ixHV7M37oTVBV2MZX2fljZM+1gv76Xp1UXmLQbxes9ELh8UlvmGNZjIGWw4B9
+         tkA/2ISPO4o0hNTGz655vDcHpwdssWmdhjzrMPakfDiXMLQyQobwW0xTSoXgSAmKdyg4
+         zeCW6kGOeUa4f3y6O0/f76R+cadkHtKaGChYfhHMnRSj/MNOocZ2tzh5k0AGGy3qG04Y
+         BNJSzzBApJffD6EuwOFd2a95WCeedOLoyl1a0KptPflP8xDXKpt2RsptMFUdpL2+9ARh
+         GmlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJe9vv04CiGEPsrEaXuXx4weYLL46VG66mUGR3XAzNWQvSz1BOe1PYDTGZ9IcM5xzTPrKLe7y3YP9zZcol@vger.kernel.org, AJvYcCXrtYnRZZWWxmj948aQZfc0MvPsoI/6ZSAhGaVrp2BO0ZUXnSbkRAp+1dnattMSoXpl1hGf5Saw+Wdy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp1Dc55PWpMZTwNuyg3P5uDQ7r4HrAUEMiqmUBiSBApdBdLZre
+	+P5vJHSK2nPuXAPqxAGJe5Z5Kv/DvAdCiMZaIE2vRNqztRgnedUhiR2e
+X-Gm-Gg: ASbGnctmVWvUSwG66nGvoR2T5AodRTfB4HGz0g39HZ0uyoKGPuq8EsDOE50LSvORcHq
+	iCXasukUHLQh70ywE/Fh91vsHPI3Iz5qWTpZiwQxPLSJ3kZidZhBfj0PHucTjgJZGLxm2ReEPnw
+	pKqic54k9TMRgTBR5DEFTJGJORqDee1Hhhikvr8Jrbnr2qoeGs8V6q9AABBHpP413kPfRbTEkhJ
+	XhWraRjdSzubxTbEC1BfUgTEhenk+6RVWBihqav0yfgtYVXrJ80SJuD5kqOzI6O2CCFy8BEXY/4
+	oZ/0mGWa5hPEKiyoqLuPmydX5UDSyyP9a/K00iXRYX/SqR5MKU1u2SbWa8e24+bbNoTJBnWawLn
+	gIrXMawRsVTuLFgmsbxNCOGMYHA==
+X-Google-Smtp-Source: AGHT+IFex17gwksYmEfwRekLYMBaX4AofLHIu+ZY9di4Kvn6YVkKnhCVyoBbL95UX6lWR4Ue7UJ9Pg==
+X-Received: by 2002:a17:907:d24:b0:ae2:9291:9226 with SMTP id a640c23a62f3a-ae9ce1e71b1mr337656766b.59.1752680892887;
+        Wed, 16 Jul 2025 08:48:12 -0700 (PDT)
+Received: from wslxew242.. ([188.193.103.108])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8293fe7sm1196705266b.123.2025.07.16.08.48.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 08:48:12 -0700 (PDT)
+From: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <goran.radni@gmail.com>
+To: Frank.li@nxp.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	boerge.struempfel@gmail.com,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com
+Cc: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <goran.radni@gmail.com>,
+	kernel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 0/3] arm64: dts: Add support for Ultratronik i.MX8MP Ultra-MACH SBC
+Date: Wed, 16 Jul 2025 17:48:03 +0200
+Message-ID: <20250716154808.335138-1-goran.radni@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250716-mobileye-emmc-for-upstream-4-v3-6-dc979d8edef0@bootlin.com>
-References: <20250716-mobileye-emmc-for-upstream-4-v3-0-dc979d8edef0@bootlin.com>
-In-Reply-To: <20250716-mobileye-emmc-for-upstream-4-v3-0-dc979d8edef0@bootlin.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, 
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehkedutdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeeuvghnohpfthcuofhonhhinhcuoegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudefgfdugfffgfeuhfeguedvuefhkeektdeludelvdelteelteejjeeiteetvedtnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemudehfeejmehffeehmeelfeeiugemvgelvdehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeduheefjeemfhefheemleefiegumegvledvhedphhgvlhhopegludelvddrudeikedruddtrddukeejngdpmhgrihhlfhhrohhmpegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepledprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmhgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthgrfihfihhkrdgsrgihohhukhesmhhosghilhgvhigvr
- dgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrughrihgrnhdrhhhunhhtvghrsehinhhtvghlrdgtohhmpdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhg
-X-GND-Sasl: benoit.monin@bootlin.com
 
-The controller suspends the clock between blocks when reading from the
-MMC as part of its flow-control, called read block gap. At higher clock
-speed and with IO delay between the controller and the MMC, this clock
-pause can happen too late, during the read of the next block and
-trigger a read error.
+This patch series adds support for the Ultratronik i.MX8MP-based Ultra-MACH SBC.
 
-To prevent this, the delay can be programmed for each mode via the pair
-of registers HRS37/38. This delay is obtained during tuning, by trying
-a multi-block read and increasing the delay until the read succeeds.
+The Ultra-MACH SBC is an industrial-grade single-board computer based on the NXP i.MX8M Plus SoC. This initial support includes:
 
-For now, the tuning is only done in HS200, as the read error has only
-been observed at that speed.
+- Updating the MAINTAINERS file to include the new board in the Ultratronik support section.
+- Adding a compatible string entry for the board to `fsl.yaml` in device tree bindings.
+- Introducing a new device tree source file `imx8mp-ultra-mach-sbc.dts` with basic hardware support.
 
-Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
----
- drivers/mmc/host/sdhci-cadence.c | 69 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 68 insertions(+), 1 deletion(-)
+This series is modeled after the support added for the STM32MP157C-based Ultra-FLY SBC and aims to follow the conventions used for other i.MX8MP boards in mainline..
 
-diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-index 2d823e158c59844dc7916db6a1d6e3d8b02ea5a0..0a9a90f9791d343b5d64ed602066f6291efa75b5 100644
---- a/drivers/mmc/host/sdhci-cadence.c
-+++ b/drivers/mmc/host/sdhci-cadence.c
-@@ -36,6 +36,24 @@
- #define   SDHCI_CDNS_HRS06_MODE_MMC_HS400	0x5
- #define   SDHCI_CDNS_HRS06_MODE_MMC_HS400ES	0x6
- 
-+/* Read block gap */
-+#define SDHCI_CDNS_HRS37		0x94	/* interface mode select */
-+#define   SDHCI_CDNS_HRS37_MODE_DS		0x0
-+#define   SDHCI_CDNS_HRS37_MODE_HS		0x1
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR12	0x8
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR25	0x9
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR50	0xa
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR104	0xb
-+#define   SDHCI_CDNS_HRS37_MODE_UDS_DDR50	0xc
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_LEGACY	0x20
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_SDR		0x21
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_DDR		0x22
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_HS200	0x23
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_HS400	0x24
-+#define   SDHCI_CDNS_HRS37_MODE_MMC_HS400ES	0x25
-+#define SDHCI_CDNS_HRS38		0x98	/* Read block gap coefficient */
-+#define   SDHCI_CDNS_HRS38_BLKGAP_MAX		0xf
-+
- /* SRS - Slot Register Set (SDHCI-compatible) */
- #define SDHCI_CDNS_SRS_BASE		0x200
- 
-@@ -251,6 +269,49 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
- 	return 0;
- }
- 
-+/**
-+ * sdhci_cdns_tune_blkgap() - tune multi-block read gap
-+ * @mmc: MMC host
-+ *
-+ * Tune delay used in multi block read. To do so,
-+ * try sending multi-block read command with incremented gap, unless
-+ * it succeeds.
-+ *
-+ * Return: error code
-+ */
-+static int sdhci_cdns_tune_blkgap(struct mmc_host *mmc)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_cdns_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	void __iomem *hrs37_reg = priv->hrs_addr + SDHCI_CDNS_HRS37;
-+	void __iomem *hrs38_reg = priv->hrs_addr + SDHCI_CDNS_HRS38;
-+	int ret;
-+	u32 gap;
-+	u32 hrs37_mode;
-+
-+	switch (host->timing) {
-+	case MMC_TIMING_MMC_HS200:
-+		hrs37_mode = SDHCI_CDNS_HRS37_MODE_MMC_HS200;
-+		break;
-+	default:
-+		return 0; /* no tuning in this mode */
-+	}
-+
-+	writel(hrs37_mode, hrs37_reg);
-+
-+	for (gap = 0; gap <= SDHCI_CDNS_HRS38_BLKGAP_MAX; gap++) {
-+		writel(gap, hrs38_reg);
-+		ret = mmc_read_tuning(NULL, mmc, 512, 32);
-+		if (ret == 0)
-+			break;
-+	}
-+
-+	dev_dbg(mmc_dev(mmc), "read block gap tune %s, gap %d\n",
-+		ret == 0 ? "OK" : "failed", gap);
-+	return ret;
-+}
-+
- /*
-  * In SD mode, software must not use the hardware tuning and instead perform
-  * an almost identical procedure to eMMC.
-@@ -261,6 +322,7 @@ static int sdhci_cdns_execute_tuning(struct sdhci_host *host, u32 opcode)
- 	int max_streak = 0;
- 	int end_of_streak = 0;
- 	int i;
-+	int ret;
- 
- 	/*
- 	 * Do not execute tuning for UHS_SDR50 or UHS_DDR50.
-@@ -288,7 +350,12 @@ static int sdhci_cdns_execute_tuning(struct sdhci_host *host, u32 opcode)
- 		return -EIO;
- 	}
- 
--	return sdhci_cdns_set_tune_val(host, end_of_streak - max_streak / 2);
-+	ret = sdhci_cdns_set_tune_val(host, end_of_streak - max_streak / 2);
-+
-+	if (!ret)
-+		ret = sdhci_cdns_tune_blkgap(host->mmc);
-+
-+	return ret;
- }
- 
- static void sdhci_cdns_set_uhs_signaling(struct sdhci_host *host,
+Changes in v2:
+  - Use `enum` with `const:` values in fsl.yaml to correctly represent multiple compatibles.
+  - Updated SPI child node name to use the generic `nfc-transceiver` per DT naming conventions.
+  - Renamed several peripheral nodes (`crypto@35`, `pmic@25`, etc.) to standard names.
+  - Minor formatting cleanup and compliance fixes per review feedback.
 
+Changes in v3:
+- Added "ultratronik,imx8mp-ultra-mach-sbc" to the shared i.MX8MP enum block in `fsl.yaml` [1].
+- Ensured the compatible entry is validated by the existing binding structure.
+- Updated `imx8mp-ultra-mach-sbc.dts` to address review feedback from v2 [2], including:
+  - Proper formatting and indentation fixes.
+  - Cleaned up node ordering and property alignment.
+
+Changes in v4:
+  - Moved `status = "okay";` to the last property in the TPM node.
+  - Fixed indentation of `cs-gpios` multi-line property in the ecspi2 node.
+  - Removed an outdated comment.
+
+Changes in v5:
+
+  - Reordered and grouped pinctrl-names and pinctrl-0 at the top of nodes for consistency.
+  - Removed redundant status = "okay"; from TPM and NFC nodes, as their parent nodes already enable them.
+  - Inserted required newlines between properties and child nodes (e.g., in ports {} block).
+  - Cleaned up minor formatting and property order issues in regulator and gpio-leds nodes.
+
+No functional changes otherwise. Patch series is based on feedback from Frank Li, Krzysztof Kozlowski and Shawn Guo.
+
+Thanks for the reviews!
+
+Link to v2 DT binding discussion:
+[1] https://lore.kernel.org/all/578ea477-c68c-4427-8013-550bf4f9c05b@kernel.org/#t
+
+Link to v2 DTS review:
+[2] https://lore.kernel.org/all/aEmh7VL7BHkXp5Fu@lizhi-Precision-Tower-5810/
+
+The board is based on NXP's i.MX8MP SoC and includes eMMC, LPDDR4, USB-C, Ethernet, and HDMI.
+
+Tested with:
+- `make ARCH=arm64 dtbs_check` (passes)
+- Boot tested on hardware
+
+Best regards,  
+Goran Rađenović
+
+
+Goran Rađenović (3):
+  MAINTAINERS: Add i.MX8MP Ultra-MACH SBC to ULTRATRONIK BOARD SUPPORT
+  dt-bindings: arm: imx8mp: Add Ultratronik Ultra-MACH SBC
+  arm64: dts: imx8mp: Add initial support for Ultratronik
+    imx8mp-ultra-mach-sbc board
+
+ .../devicetree/bindings/arm/fsl.yaml          |   1 +
+ MAINTAINERS                                   |   1 +
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../dts/freescale/imx8mp-ultra-mach-sbc.dts   | 907 ++++++++++++++++++
+ 4 files changed, 910 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-ultra-mach-sbc.dts
+
+
+base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
 -- 
-2.50.1
+2.43.0
 
 
