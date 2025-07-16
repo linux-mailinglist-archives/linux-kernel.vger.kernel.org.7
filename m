@@ -1,193 +1,154 @@
-Return-Path: <linux-kernel+bounces-733842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C39B079B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66850B079B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B56ED172F67
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:24:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05186582C6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC1D2F4A16;
-	Wed, 16 Jul 2025 15:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MighXWEU"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4062F548A;
+	Wed, 16 Jul 2025 15:23:28 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230CC2BEFF2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECA62F50A2;
+	Wed, 16 Jul 2025 15:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679392; cv=none; b=i2AO1CUMz92ud0Eo3czbdV9Pc+YyilvVCD5fLVNi4EbDmKJqMf4ZoqKlcTPTsrR0nKqSeiHcO1T+4oxmNS8uN2SxsaUdppDbGz1Liz/eivCHr0llfKzEEQnY/NTibPeM8VS3/99+yZzCKFitqcHYHKc9HP6H+R6gIfkd6eFw1Uw=
+	t=1752679407; cv=none; b=o56TXg1pJsmwL6rtm0s2mo1QnOFKhx/fOglvKuJqD3RaXMU7/pULdckbwIGzgN1Og1yFoqdXVkXH+lwhn6FTRp0jcHGOW2fzY6g2LnF5qij/mMiW0YsdXqKm597fT6KA6vJhH0Hc6az40ooE2BxF96JZ0iZ78l4n6YsrWaW4QJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679392; c=relaxed/simple;
-	bh=vMTqPP+6hRnC8KSmRmuaiUDWv7LwGHOKrFpBtQvXb0Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VQceaYROSSk95SW6loMn4Zl5dhKBH1NHS/aY1B/GCFOq3PAy8R4W34PPXkMRv8fKMeedhlPoOlTxaVRMJdiuZ9Q2YrHDrnhJymgOFFCWOXnYDmcIRUdWEVNFtdIubnTtrTmg6LX6dRRE9V+5ILiiCDKdpZH1WjXhG2F0gQAtT7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MighXWEU; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b39280167fdso5282317a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752679390; x=1753284190; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwpljzDZuqwMskm2tic+OBYPfr5JC6dHkTuTGvwL8MI=;
-        b=MighXWEUjurE3gLc5KZNGxCvC4owfeYJQ+951nqO9HmpU8ee+sYUYjqoHKj7uuPDzS
-         n7I159/PguWQwVoezSZKeNPTvOv8Bolw7sJX5G7td4eMSWTiGdfiSuA/sqIsmPVPrr7j
-         pbqNiPwGSnKLCIJhmTcryWE9vk0rowQrWXlIcnCvqZycSLhdaJcQncQjo0bH1XP77M8F
-         0VB8cfn5JzKx+Z9tCzZXnvH5Q46yLM9u4ecbnCAUD/GcoUigglKYPUffmCGLLBraW5TS
-         RVMTvh1sLvVzH8bXD8gFR0fBOarn6D09XepkHu56/IFhJGgY1TZrm4Jw45BBZStpYwAk
-         YIew==
+	s=arc-20240116; t=1752679407; c=relaxed/simple;
+	bh=6d/z/JM0vRopTks4Dy05BIgYYynaCP/0UpCIvbjGVro=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=s6JrbEPFHh783ZYcQhtbnh0EhGWdS7PDHyylAhzaWBaWxMU2fWYy7L4RUcMICHT1ISfitULdXtksg8UseWN/lX7s2W4up+VhyqGY2eH8SaGfI9ORnI43UYZQEvRt7BdOB5yhqAPUJpd9HJ5CcxbbqsCaU86g6yaqv2ehGmFXlMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae3703c2a8bso1249959666b.0;
+        Wed, 16 Jul 2025 08:23:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752679390; x=1753284190;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwpljzDZuqwMskm2tic+OBYPfr5JC6dHkTuTGvwL8MI=;
-        b=d4onqzMwCwvFMZ1Q/+kpjHrHiYSbOcfiYQ5VJ2Ywc2xyIZQI4qbc0GxECA9RxDZWDM
-         3Ei3/GB+ZvpjsGcnl1nfp4ZgucgEedjcI+n5gNIY8hB9bjPwHLnSHF8OArCSRLuZDapN
-         dOk9wIHXd3461OmiwJ6+QFrX6cc0TzqlJSku7CtY15s11iTstaxDWK2AyhB9mZhm38vZ
-         PQyTFesRqonstFSua4YgU2ZbXuvnOK9NqvliZP1PUI2j7nigmbt+crnuUe2h2xPhqqDk
-         Br7nQoLc2SoFPVwWix50LD1aebqnUCnGgOtDu5UDjMPULWIY1BPqmg2M+uejJlYV1hLc
-         rx4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUHUAelC79HErgyYg4plOVgu1cMzUUG+sRG938WNUKVCPRCudBBVY69lI0p8vGCL5Kksuf73AOClSfuAGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy748h/V4uC791BHT6dpcRLgrb0qgKDNoiQ+OWlsFgFHyFEqJ+4
-	CyxbFa5Edfd4tytyNhQJW4uSa4Fkdn609PCC9PQMbKPR8a1eE6Pl+ShG5jxz/qkOMV53E6yoFht
-	wH2t+WA==
-X-Google-Smtp-Source: AGHT+IFmGBmTlWKZZF0mdM3myKSr0azToc5tQH6o7fqNOcb7x4qSKMo3FJ0Wc56gzWm7MYI9bYn2QWmmSbg=
-X-Received: from pjh16.prod.google.com ([2002:a17:90b:3f90:b0:312:eaf7:aa0d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c89:b0:313:2768:3f6b
- with SMTP id 98e67ed59e1d1-31c9e77ce91mr5085592a91.27.1752679390400; Wed, 16
- Jul 2025 08:23:10 -0700 (PDT)
-Date: Wed, 16 Jul 2025 08:23:08 -0700
-In-Reply-To: <6877331d.a00a0220.3af5df.000c.GAE@google.com>
+        d=1e100.net; s=20230601; t=1752679404; x=1753284204;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jdr7eFxAVBCcDOsPNpaxeLOEWWpZL0xyOYM5/939UUE=;
+        b=GOpTJZmNysEZC99yPwGmyvNpP+V1RlxNkToNMPz1KjmnkVM1utGpO8hJtaUNZ+G15x
+         jSPl0f8nXCf/3x4DTGP2MYLXg0yUuNVWHTkN4jPdGrP+t8klFFhGzV/DQZVGG5oSjbYF
+         X1tplO/6ls5hNPkK3v7hNg33hf51uaLBosNGRGS5qslul3iNrJ5hGD9cBqbjPSvXoALR
+         w44oszLvTsHL8XRioloPmdrgoA4XFUH3pMPXNQt3e/X5yg9/qC9C3GsbLt5kghgOsd84
+         KfaXhHwvktWSsQNDKxgKRhKDTgxPG/fwnqWS696GKVXuIMo1hRZe8iUDwul5zwSlfjwi
+         GCsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjzrJcmCtB/Q9nbAL8fOzWu/AF5l+7RDbzMTGJ3dY99SHVo4qQ8vAcxIgxkA9KLq9+N2dNqouDgD5Urdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiKAbekSJ95nRFyS6ezNqrn1CXBvKnDbE7zyJzfLtgTacG1j3v
+	HK0AJPpRQKrUL2RqQBXxrQx7dTGT6PNldA5a9jA6LlhbsDfwBJFgbJZt
+X-Gm-Gg: ASbGncs2xuelw6K8bhwEsbhX1Z8MUwG8r2mpuUQ+MOrKHoFyDmkkLKiPLJrj1kFgpo9
+	gykpb8kbtCBICA9SeMdFt5+MDQUP5ZN2aBzCN0LcxyZjBY6dCJOmOscBW4P7C9Oek5P9EqPrMxv
+	cgl5/l5c9dZsR9/VXClFUeryLJls1UD0BYNXsT4PkI8zVozZ9YwxdYl5yVRlAblFgae8Xs14LvX
+	0SXCIwep3xXJUdJ3JtgCuDPCrbMgGaiTWBPGFrzRfuZCwvdptHvVyDqzUNCjbmrkH7kSZx/rCYU
+	H4lnGokWx1yIGurPi1bicZOnLQU6WIfNX04jg/neov8/m3m24uy9CuKqnoK6Ro63FGL+tKEo8aH
+	QDwedpJUzSpuLCw==
+X-Google-Smtp-Source: AGHT+IFZbL+/2sJddqrKb4phOIKXDl53PiA5uPHHd6EEAnxpw1PQuA6/wv3Q0nabeydTFVJko60AWw==
+X-Received: by 2002:a17:907:3ccc:b0:ad8:9257:5717 with SMTP id a640c23a62f3a-ae9c9997303mr358177766b.13.1752679404040;
+        Wed, 16 Jul 2025 08:23:24 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:72::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee471asm1226983166b.54.2025.07.16.08.23.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 08:23:23 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Wed, 16 Jul 2025 08:23:12 -0700
+Subject: [PATCH v2] efivarfs: Fix memory leak of efivarfs_fs_info in
+ fs_context error paths
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <6877331d.a00a0220.3af5df.000c.GAE@google.com>
-Message-ID: <aHfD3MczrDpzDX9O@google.com>
-Subject: Re: [syzbot] [kvm?] WARNING in kvm_read_guest_offset_cached
-From: Sean Christopherson <seanjc@google.com>
-To: syzbot <syzbot+bc0e18379a290e5edfe4@syzkaller.appspotmail.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250716-kmemleak_efi-v2-1-871878b767f5@debian.org>
+X-B4-Tracking: v=1; b=H4sIAN/Dd2gC/1XMSwqDMBQF0K2ENzYlsf5w1H0UKdFc9WE1JSmhR
+ bL3UqGDTs/g7BTgGYFasZNH5MBuo1bkmaBhNtsEyZZaQbnKS1XrQi4r1jvMcsPIsocdUTTmrAp
+ LmaCHx8ivo7t2maCZw9P597FH/dVfVP5HUUstB1Wjaoa6MmguFj2b7eT8RF1K6QPaT5yaqQAAA
+ A==
+X-Change-ID: 20250714-kmemleak_efi-bedfe48a304d
+To: Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>, 
+ Matthew Garrett <mgarrett@aurora.tech>, Jiao Zhou <jiaozhou@google.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, 
+ James Bottomley <James.Bottomley@HansenPartnership.com>, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1830; i=leitao@debian.org;
+ h=from:subject:message-id; bh=6d/z/JM0vRopTks4Dy05BIgYYynaCP/0UpCIvbjGVro=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBod8Pq4jj/t+MfByIcYcekmZBjU65+EWlMz7s8l
+ /cfs0fG6pWJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaHfD6gAKCRA1o5Of/Hh3
+ bQDKD/9jTqRDa48z4FMb5skPOyKO7xMKaCMpXiYWVb4TXICyv/I7iAGJjIDGHljGNoy1fOrwxJ0
+ WkU1o6W5I0v7GHtmMKIG3maiZY5vyc091TYknfVTmRY0w4d2PjjSLFKsC59chh0nr8tKzZLQMMM
+ NLr9w8iNriHiWiCJ4nQYBGOhi2Ho7rR1EPRl1Ra2/Yw28hlIcOkSu7kyKSS/WhOyPueks1JUNej
+ kvakmgn8wrP02X1SM7bCZ9h+mW1eu6zNzrU/qhj8+GlajPOha27lbMDkG8Hpn0e96FmQ7SR8O92
+ 5IUTlo6qeSo+/r6nP8zBloYjD/VM0OLrypLYUQoSfr+jC4J/Wt2YTX0G21Rgn51iMkTE5V01hIA
+ 8eWEf2qVCTQa+qn3KM1IW2ji/Z278ITh2bYApTTLp2C/39t1d6lR4b9oiH6Ta+YUP3HW2rCVTTP
+ Ch2SxYwDJvRyzxRMcZZrgJ4rtxigir/bGUapDkBVNLoELwBnHNPlughi/63cc7S1DM1xlz+pHeu
+ JQ1+ktYX5iTsnRTC77MFb1b/Mo7a4kGev0WeohEhUI0hIiz6FYKH138WlT6jCiRlFB++ls2wT1r
+ CiZ41UdxjxWT7bPLGhiryLmtIr0Drdw/QE/FJljEsG+YdcokeuohsutHPvw1gMpmkgEk+NlNeM5
+ PHSsiOWQbGr3qQA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Tue, Jul 15, 2025, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    155a3c003e55 Merge tag 'for-6.16/dm-fixes-2' of git://git...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=103e858c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8d5ef2da1e1c848
-> dashboard link: https://syzkaller.appspot.com/bug?extid=bc0e18379a290e5edfe4
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153188f0580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16f6198c580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-155a3c00.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/725a320dfe66/vmlinux-155a3c00.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/9f06899bb6f3/bzImage-155a3c00.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+bc0e18379a290e5edfe4@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 6107 at arch/x86/kvm/../../../virt/kvm/kvm_main.c:3459 kvm_read_guest_offset_cached+0x3f5/0x4b0 virt/kvm/kvm_main.c:3459
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 6107 Comm: syz.0.16 Not tainted 6.16.0-rc6-syzkaller-00002-g155a3c003e55 #0 PREEMPT(full) 
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:kvm_read_guest_offset_cached+0x3f5/0x4b0 virt/kvm/kvm_main.c:3459
-> Code: 0f 01 e8 3e 6c 61 00 e9 9b fc ff ff e8 14 25 85 00 48 8b 3c 24 31 d2 48 89 ee e8 16 bf fa 00 e9 2e fe ff ff e8 fc 24 85 00 90 <0f> 0b 90 bb ea ff ff ff e9 4d fe ff ff e8 e9 24 85 00 48 8b 74 24
-> RSP: 0018:ffffc9000349f960 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff888050329898 RCX: ffffffff8136ca66
-> RDX: ffff88803cfa8000 RSI: ffffffff8136cd84 RDI: 0000000000000006
-> RBP: 0000000000000004 R08: 0000000000000006 R09: 0000000000000008
-> R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000004
-> R13: ffffc90003921000 R14: 0000000000000000 R15: ffffc900039215a0
-> FS:  000055558378f500(0000) GS:ffff8880d6713000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 0000000025de6000 CR4: 0000000000352ef0
-> Call Trace:
->  <TASK>
->  apf_pageready_slot_free arch/x86/kvm/x86.c:13452 [inline]
+When processing mount options, efivarfs allocates efivarfs_fs_info (sfi)
+early in fs_context initialization. However, sfi is associated with the
+superblock and typically freed when the superblock is destroyed. If the
+fs_context is released (final put) before fill_super is called—such as
+on error paths or during reconfiguration—the sfi structure would leak,
+as ownership never transfers to the superblock.
 
-kvm_pv_enable_async_pf() sets vcpu->arch.apf.msr_en_val even if the gpa is bad,
-which leaves the cache in an empty state.  Something like so over a few patches
-fixes the problem:
+Implement the .free callback in efivarfs_context_ops to ensure any
+allocated sfi is properly freed if the fs_context is torn down before
+fill_super, preventing this memory leak.
 
+Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Fixes: 5329aa5101f73c ("efivarfs: Add uid/gid mount options")
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- arch/x86/kvm/x86.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+Changes in v2:
+- instead of silenting the warning, just fix the problem.
+- Link to v1: https://lore.kernel.org/r/20250715-kmemleak_efi-v1-1-c07e68c76ae8@debian.org
+---
+ fs/efivarfs/super.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index a1c49bc681c4..0fbbf297b3c8 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -3547,11 +3547,16 @@ static int set_msr_mce(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index c900d98bf4945..284d6dbba2ece 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -390,10 +390,16 @@ static int efivarfs_reconfigure(struct fs_context *fc)
  	return 0;
  }
  
--static inline bool kvm_pv_async_pf_enabled(struct kvm_vcpu *vcpu)
-+static bool __kvm_pv_async_pf_enabled(u64 msr_en_val)
- {
- 	u64 mask = KVM_ASYNC_PF_ENABLED | KVM_ASYNC_PF_DELIVERY_AS_INT;
- 
--	return (vcpu->arch.apf.msr_en_val & mask) == mask;
-+	return (msr_en_val & mask) == mask;
++static void efivarfs_free(struct fs_context *fc)
++{
++	kfree(fc->s_fs_info);
 +}
 +
-+static inline bool kvm_pv_async_pf_enabled(struct kvm_vcpu *vcpu)
-+{
-+	return __kvm_pv_async_pf_enabled(vcpu->arch.apf.msr_en_val);
- }
+ static const struct fs_context_operations efivarfs_context_ops = {
+ 	.get_tree	= efivarfs_get_tree,
+ 	.parse_param	= efivarfs_parse_param,
+ 	.reconfigure	= efivarfs_reconfigure,
++	.free		= efivarfs_free,
+ };
  
- static int kvm_pv_enable_async_pf(struct kvm_vcpu *vcpu, u64 data)
-@@ -3573,22 +3578,21 @@ static int kvm_pv_enable_async_pf(struct kvm_vcpu *vcpu, u64 data)
- 	if (!lapic_in_kernel(vcpu))
- 		return data ? 1 : 0;
- 
-+	if (__kvm_pv_async_pf_enabled(data) &&
-+	    kvm_gfn_to_hva_cache_init(vcpu->kvm, &vcpu->arch.apf.data, gpa,
-+				      sizeof(u64)))
-+		return 1;
-+
- 	vcpu->arch.apf.msr_en_val = data;
--
--	if (!kvm_pv_async_pf_enabled(vcpu)) {
--		kvm_clear_async_pf_completion_queue(vcpu);
--		kvm_async_pf_hash_reset(vcpu);
--		return 0;
--	}
--
--	if (kvm_gfn_to_hva_cache_init(vcpu->kvm, &vcpu->arch.apf.data, gpa,
--					sizeof(u64)))
--		return 1;
--
- 	vcpu->arch.apf.send_always = (data & KVM_ASYNC_PF_SEND_ALWAYS);
- 	vcpu->arch.apf.delivery_as_pf_vmexit = data & KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT;
- 
--	kvm_async_pf_wakeup_all(vcpu);
-+	if (kvm_pv_async_pf_enabled(vcpu)) {
-+		kvm_clear_async_pf_completion_queue(vcpu);
-+		kvm_async_pf_hash_reset(vcpu);
-+	} else {
-+		kvm_async_pf_wakeup_all(vcpu);
-+	}
- 
- 	return 0;
- }
+ static int efivarfs_check_missing(efi_char16_t *name16, efi_guid_t vendor,
 
-base-commit: 2a046f6a4ecce47ada50dba529ec726dd0d34351
---
+---
+base-commit: 8c2e52ebbe885c7eeaabd3b7ddcdc1246fc400d2
+change-id: 20250714-kmemleak_efi-bedfe48a304d
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
+
 
