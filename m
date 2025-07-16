@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-733964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC24CB07B55
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:40:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F11B07B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8B7C1C245C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:40:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8EA167FEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B316E2F5331;
-	Wed, 16 Jul 2025 16:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAC52F5472;
+	Wed, 16 Jul 2025 16:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NX7cVoYK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="y5FJ2XgP"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78ACD28B401
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51061D528;
+	Wed, 16 Jul 2025 16:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752683999; cv=none; b=adZmsaeNP62vAZ/DAJENgGEz7ykQf9mL1rd2M3M2a7d+LwJJkopDSW2M/D+0MBL8atOny2nSJ1hrzBYoaySbotaC/5A5jrTQU9nWXnCQDR3YO6FAqarPzqxwWAKyMocVp8CfNBMAPekxm78rkHb25xj/4veROGg1SUX9eYgPBCA=
+	t=1752683960; cv=none; b=cN7LDKld0ZFYAF4+gMzcvOxSLzyy9cJjsb7caqiRJJV6r7+N1s3ENH8Fr+FJbf6lt9JjpS/IBkXUC5wV3KKnFGheoHDwasN6cMiDza/XIpTSE0Gs968CwIwr8w+sYD1BhjUJ+IYFq/r4uV/uTOg0Fx7avz98adq667TGIIJ6T3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752683999; c=relaxed/simple;
-	bh=pfZR/2u7W8/6HgT9wLum9rQ1ZFFBE2W4KpQ2JWvSvwA=;
+	s=arc-20240116; t=1752683960; c=relaxed/simple;
+	bh=W8xgVhhwZWuTdjr7lS0rwtLzvbY4CBMrrpJ7DWC87Ho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ns9f5cZggReRvkyhluSMJ12HExWdK5SOaKnGeUMCMurffl2zNuWGbyW1+z0oylerMXrrRloFdqwTa6HVKNp3CuF82ODn7CCjX9ahTCMKibieOuBZ6fT0RbFARgAvWjpJYRu0mFvqgDAfng6qo0LgNFS6Z+8MTmAQqKm076H4O9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NX7cVoYK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752683996;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MWm03jBczOfqH0toUNXJ1+5OAe5fFoVsbG14rgdUNFU=;
-	b=NX7cVoYKH5TrtDGkvRyBH4SlC2AOjX1RT9/BM7YYSJ1G1h/MQd5CPR3+atSuKps7C3ofkP
-	2o6pKQfQE3HMyRB5Ux7D88/5V46HCFTqJCtT9U048aJDpyP4kc3CnjpnjFWBJQ68R7D4ca
-	5wUgrPCEpv9eSGB60uXiTXiKAqcyuMM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-664-npuIb313OTW1IVpwICBB7g-1; Wed,
- 16 Jul 2025 12:39:52 -0400
-X-MC-Unique: npuIb313OTW1IVpwICBB7g-1
-X-Mimecast-MFC-AGG-ID: npuIb313OTW1IVpwICBB7g_1752683991
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C06CF1800447;
-	Wed, 16 Jul 2025 16:39:50 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.192])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4045618002B6;
-	Wed, 16 Jul 2025 16:39:46 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 16 Jul 2025 18:39:00 +0200 (CEST)
-Date: Wed, 16 Jul 2025 18:38:55 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "rafael J . wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] PM / Freezer: Skip zombie/dead processes to reduce
- freeze latency
-Message-ID: <20250716163854.GE16401@redhat.com>
-References: <20250716062639.1528066-1-zhangzihuan@kylinos.cn>
- <20250716062639.1528066-2-zhangzihuan@kylinos.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pzCfmP7gEYvwLenacOaSau6KD9dFbTRPkZfcFQfktMNnwlgq/QIzK3CfqTC8g0qabhMkwBJszM4btTGSwvyorIBcGnoNRi/ibMrIF4PWbxwpg+awq6il+DIH6ftIJgtIp9dHIYcPXZYh0Mlph+3RT0TmGS3KIWHxRAp5zY/sKXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=y5FJ2XgP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=7EI7/tzVVxb3gkfkxEXZPPT7eC9VGWHM194adz+fKxk=; b=y5FJ2XgPCb7mWK2aDISMIxvNXP
+	RtKFjkvDvvPGTMXJoi1z5hrniOzTgQcMskEXX7a5F2UdynJqyX+noLw/DiFUJSxaEMy1yDBwy32xa
+	GayO+h6h9n2g6gcqCeOqrFBw7fYR8POnhEBeFvdELMInTRXtnsnDp6OfywDtmNUgOl/Q=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uc59o-001hvE-V6; Wed, 16 Jul 2025 18:39:00 +0200
+Date: Wed, 16 Jul 2025 18:39:00 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	Frank.Sae@motor-comm.com, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, shenjian15@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] net: phy: motorcomm: Add support for PHY
+ LEDs on YT8521
+Message-ID: <4a622284-66db-49c4-943f-5da1f1a6ba65@lunn.ch>
+References: <20250716100041.2833168-1-shaojijie@huawei.com>
+ <20250716100041.2833168-2-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,35 +65,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250716062639.1528066-2-zhangzihuan@kylinos.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250716100041.2833168-2-shaojijie@huawei.com>
 
-On 07/16, Zihuan Zhang wrote:
->
-> @@ -51,7 +51,15 @@ static int try_to_freeze_tasks(bool user_only)
->  		todo = 0;
->  		read_lock(&tasklist_lock);
->  		for_each_process_thread(g, p) {
-> -			if (p == current || !freeze_task(p))
-> +			/*
-> +			 * Zombie and dead tasks are not running anymore and cannot enter
-> +			 * the __refrigerator(). Skipping them avoids unnecessary freeze attempts.
-> +			 *
-> +			 * TODO: Consider using PF_NOFREEZE instead, which may provide
-> +			 * a more generic exclusion mechanism for other non-freezable tasks.
-> +			 * However, for now, exit_state is sufficient to skip user processes.
+On Wed, Jul 16, 2025 at 06:00:40PM +0800, Jijie Shao wrote:
+> Add minimal LED controller driver supporting
+> the most common uses with the 'netdev' trigger.
+> 
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> ---
+>  drivers/net/phy/motorcomm.c | 120 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 120 insertions(+)
+> 
+> diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
+> index 0e91f5d1a4fd..e1a1c3a1c9d0 100644
+> --- a/drivers/net/phy/motorcomm.c
+> +++ b/drivers/net/phy/motorcomm.c
+> @@ -213,6 +213,23 @@
+>  #define YT8521_RC1R_RGMII_2_100_NS		14
+>  #define YT8521_RC1R_RGMII_2_250_NS		15
+>  
+> +/* LED CONFIG */
+> +#define YT8521_MAX_LEDS				3
+> +#define YT8521_LED0_CFG_REG			0xA00C
+> +#define YT8521_LED1_CFG_REG			0xA00D
+> +#define YT8521_LED2_CFG_REG			0xA00E
+> +#define YT8521_LED_ACT_BLK_IND			BIT(13)
+> +#define YT8521_LED_FDX_ON_EN			BIT(12)
+> +#define YT8521_LED_HDX_ON_EN			BIT(11)
+> +#define YT8521_LED_TXACT_BLK_EN			BIT(10)
+> +#define YT8521_LED_RXACT_BLK_EN			BIT(9)
+> +/* 1000Mbps */
+> +#define YT8521_LED_GT_ON_EN			BIT(6)
+> +/* 100Mbps */
+> +#define YT8521_LED_HT_ON_EN			BIT(5)
+> +/* 10Mbps */
+> +#define YT8521_LED_BT_ON_EN			BIT(4)
 
-I don't really understand the comment... The freeze_task() paths already
-consider PF_NOFREEZE, although we can check it earlier as Peter suggests.
+Rather than comments, why not call these YT8521_LED_1000_ON_EN,
+YT8521_LED_100_ON_EN, YT8521_LED_100_ON_EN ? That makes the rest of
+the driver easier to read.
 
-> +			 */
-> +			if (p == current || p->exit_state || !freeze_task(p))
->  				continue;
+> +static int yt8521_led_hw_control_get(struct phy_device *phydev, u8 index,
+> +				     unsigned long *rules)
+> +{
+> +	int val;
+> +
+> +	if (index >= YT8521_MAX_LEDS)
+> +		return -EINVAL;
+> +
+> +	val = ytphy_read_ext(phydev, YT8521_LED0_CFG_REG + index);
+> +	if (val < 0)
+> +		return val;
+> +
+> +	if (val & YT8521_LED_TXACT_BLK_EN)
+> +		set_bit(TRIGGER_NETDEV_TX, rules);
+> +
+> +	if (val & YT8521_LED_RXACT_BLK_EN)
+> +		set_bit(TRIGGER_NETDEV_RX, rules);
 
-I leave this to you and Rafael, but this change doesn't look safe to me.
-What if the exiting task does some IO after exit_notify() ?
+This looks to be missing YT8521_LED_ACT_BLK_IND.
 
-Oleg.
+    Andrew
 
+---
+pw-bot: cr
 
