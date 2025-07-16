@@ -1,155 +1,134 @@
-Return-Path: <linux-kernel+bounces-733121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3065B07075
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:27:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79ED0B07078
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A76903BE87D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:26:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1D01887D38
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7382EAB95;
-	Wed, 16 Jul 2025 08:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B312EAB9E;
+	Wed, 16 Jul 2025 08:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Z8RocUg6"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GLJO5q1/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mUjFoMAi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECA6256C6D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E33328E61E;
+	Wed, 16 Jul 2025 08:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752654421; cv=none; b=Sfc2DxtB09j7xLc7dos/MI3Fj9J5yGd0FqRiJXn114KHyz+sQmdLFyMAsgm7anLBvWfTXGuRmRH4Ay+lUP85ADonJ/Q/25fSt1ZPueFM0UZbfrJQ+Wj9+WimpX8Agtgv+0fpwP3RjAl3Xa0NbFZnv6V0zEaMhF/sDcy7LYSG6RQ=
+	t=1752654437; cv=none; b=U0YG5SvGQPZrGSzCKHNBC1FnSqQg9Cc5GAqmR17f6CqHX5EcrqgwpMDVAsbkNZ4KY9yuw9f9qz0hEAFmpAGI1aqy67FrlS9TRimweQc16gn5+WBXkhrr8pW7cXA+KfRpB2f8jBmI6XkLVLdr8ACNHYavMy3qaDZyly9zNTPaXlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752654421; c=relaxed/simple;
-	bh=oZruOfLx6vYtvv9SzkE9hxxMTRFU83m0JHjiDSurRQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gGwx2ANTiVxJQxRuWGL5XTg1tm0D9LE/KzKOmTjF9/FPr+jWsgU/vrkQbnSvFs2u5OyC25pyYNBKSewL0q6QCVgy6y96qEBNYyi1bvOAldesBGTvjdiZAnaplLp1Uau1+8l8A6FKXdtaf5gkEAgp/44VFrQ/jIByKxs9g92Y23Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Z8RocUg6; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553d52cb80dso713591e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 01:26:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752654416; x=1753259216; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oZruOfLx6vYtvv9SzkE9hxxMTRFU83m0JHjiDSurRQ4=;
-        b=Z8RocUg6LBNxFw0IT6L5cvymGYN0gfwL1wpqar6d7Si0N10t79CnpC9O8RWqyzDZZi
-         aiy+fhvEOXU75B4HJtNjq9KIhRV3hlOWiGY3eHUksW+8kcMasz+Mh5Qy79yFAMCtVMhH
-         cG3vdulu2qkEAADOxlwT6LUDcxh3Az+LqQU2LAI2n1zdC2qOSPPIHxEJPnlEN2Gb2TXN
-         vsfMlbQYFTzIsPoun1gfNtKgPIcvPi2b0UoLggqkw0ZZrF6+L9VlOT1/YgXprAyU0myb
-         Awm/VlauyQTO5cKEpYg74P5rVdIePJdBgI/lwyoa7AtggX1ZgRoBVQhETJHe7ukH3Beu
-         kd0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752654416; x=1753259216;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oZruOfLx6vYtvv9SzkE9hxxMTRFU83m0JHjiDSurRQ4=;
-        b=IpTDSde57LjcRaZ05p0XI2lBFNkLx5fsYuprDC6PYL2gVx1hv4U1G/Y9PTaEZ5M4WC
-         DW7ueEsgXuwtcfrKh6wiWBrbzbrSYErFBbntfm+N5RCS4OjUxXXsGmtZzGTOAIV8mIZ9
-         UmHIzhM8knuu8Wuf8PKFLHIFK3ZOtYZS2gf1kx1e3Kli8pmkJ+Kcy5VaELiiIplNI5q4
-         pGx+RhmmaQOFdqsCz0yiUqU5QsWcNb2PUphmLJ8E0R7jwigJtGcaWB+A9vd03PUXmb8V
-         +0KAwv1bH9jmqjUQtakMM6VluHyqwpvTKrQCVhJv+3HGaUK3LM+1mRwsy3tOJQz7R/Lz
-         xxYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzdZ/u/E75OiAzhwuK6XvpVFrnFWkJMQTA53Xx+Pyt7kbFDg1BJbGHZ6ta87z+kVSEe/M1mESm7JTknPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+8QxDdY4lRZVjnJQIEpMxYHdUVCMumgIGGqohTHQZavSU9Xrr
-	Iz5AsVvOjyKaVIRoJxDNz0Z691PLHtOB8UH0m6o+xpE8eNs/L0OqEyu8xRzQ+owShtaCNTKxBLR
-	GvYcFHZR70/rA+7xwgRPmcUnttW44mKq85nU56bKXnA==
-X-Gm-Gg: ASbGncu8rmkDcQ1/YTWwMDWN9K73DWyOBbB54JpvdRMClZSCQUX7smQxofu5rqjkhcG
-	G7jH0wughJ0HfL9UT5Y4uvRZY+q4ysCizyoITEidwdoN0FEU4vcSBFxHyL4aewXK26yC3txHoCD
-	Tf2qzl29HZqOhN+GuMAkMg2oUKdL0G3+GY3a/YrifnNF1hvmrOiFVNQwoqiuTTaD9oKgT8OWQX4
-	iXmCAj2bYDgP5+CteooUdSl7a2KYu4IIc3f7u0=
-X-Google-Smtp-Source: AGHT+IFMU33bMlBg+SJGlu9Fd1Nu2AUbYMepUe+1nUovUoAemOaOJTZDwF5FiRr3lwqVEVPiugd2XbwVQxqB2INMLfo=
-X-Received: by 2002:a05:6512:3b8e:b0:553:2969:1d6d with SMTP id
- 2adb3069b0e04-55a238634dfmr630042e87.13.1752654415531; Wed, 16 Jul 2025
- 01:26:55 -0700 (PDT)
+	s=arc-20240116; t=1752654437; c=relaxed/simple;
+	bh=4u2lay4hovL5zKYuyCR5r46djizrppNKT21L58JI2mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cmt7028kdGWhew56WjUatNQ8T+q4+nxcZgg6bb97upL2g7yvQG39DgfJABY1nJpCCt+xL+R/zhFih7uKV4eVmtUg2MwDvqR8kV0xTF5dyTrAPaizCIrrNnnsuPbXy3bo/AUHN7BQ3J2SIK+1k1lcS3r3EtUrAegBwV1fCAljk/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GLJO5q1/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mUjFoMAi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Jul 2025 10:27:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752654434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nNzvlBDk9taOAY9Sh/nOLKJL9wqAlXmEj8E2u0/5lI4=;
+	b=GLJO5q1/uHkLhc/S8mrakS/X5wxx/6DRe0yVrQV/7Ksg5l7tBgWRRGSWZpXR99375ssSbu
+	brGmlrtwan7qczA6OTD7UdmgSyq4QXoP7a4UusK79vc7rHR9t9SRMzmMUhQ0XcpPUGE5u4
+	sRCdqi0aRfMGROu/2VTEzA6NfTuxQVMPWawFPpV8MB/DfQH8V3wFe4uLL5Fd45rSU8c1jJ
+	oi3falJrB8HGYok9lN6RDe5uwm1jLbnMjaPaTjmmHju4GdAfxrFrsv7gyfpUAMvV2gxvTC
+	+NLZC0kcWa0ziWA4NAgQr6lWr5uruytGgqtkd32guNzosm4Oyi0FaUStxPWJtA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752654434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nNzvlBDk9taOAY9Sh/nOLKJL9wqAlXmEj8E2u0/5lI4=;
+	b=mUjFoMAi3T5Q6CQaJ2YcYkH/WtpV1LLbFgP5o8EmsqxIiQVDuGkg1VIvehBwORbzo0Wqws
+	VVUYHoFoONQ0pjDQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v3 11/17] rv: Retry when da monitor detects race
+ conditions
+Message-ID: <20250716082712.L9z_ptHK@linutronix.de>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+ <20250715071434.22508-12-gmonaco@redhat.com>
+ <20250715152322.Os4lDq_B@linutronix.de>
+ <e2f4f8d372612cd61689b91562e73677599d08de.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704-gpio-sysfs-chip-export-v4-0-9289d8758243@linaro.org>
- <CAMRc=Mc7HaVjchDWN_oWUuqgVZbj3ZVYvU-bwiA+ZUH+0gEXSQ@mail.gmail.com> <20250714013813.GA12284@rigel>
-In-Reply-To: <20250714013813.GA12284@rigel>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 16 Jul 2025 10:26:44 +0200
-X-Gm-Features: Ac12FXxUY_OHqWeT-LEYjNq-JhVtr5AVNAES-8xycaxtO2gXxWorpIyfgab_aOs
-Message-ID: <CAMRc=MeH=BB7QTOa5FoANLPS-BLutT87+E_guVjsWRvpEgDTnA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] gpio: sysfs: add a per-chip export/unexport
- attribute pair
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>, =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>, 
-	Marek Vasut <marex@denx.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e2f4f8d372612cd61689b91562e73677599d08de.camel@redhat.com>
 
-On Mon, Jul 14, 2025 at 3:38=E2=80=AFAM Kent Gibson <warthog618@gmail.com> =
-wrote:
->
-> On Sun, Jul 13, 2025 at 10:48:03AM +0200, Bartosz Golaszewski wrote:
-> > On Fri, Jul 4, 2025 at 2:58=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.=
-pl> wrote:
-> > >
-> > > Following our discussion[1], here's a proposal for extending the sysf=
-s
-> > > interface with attributes not referring to GPIO lines by their global
-> > > numbers in a backward compatible way.
-> > >
-> > > Long story short: there is now a new class device for each GPIO chip.
-> > > It's called chipX where X is the ID of the device as per the driver
-> > > model and it lives next to the old gpiochipABC where ABC is the GPIO
-> > > base. Each new chip class device has a pair of export/unexport
-> > > attributes which work similarly to the global ones under /sys/class/g=
-pio
-> > > but take hardware offsets within the chip as input, instead of the
-> > > global numbers. Finally, each exported line appears at the same time =
-as
-> > > the global /sys/class/gpio/gpioABC as well as per-chip
-> > > /sys/class/gpio/chipX/gpioY sysfs group except that the latter only
-> > > implements a minimal subset of the functionality of the former, namel=
-y:
-> > > only the 'direction' and 'value' attributes and it doesn't support ev=
-ent
-> > > polling.
-> > >
-> > > The series contains the implementation of a parallel GPIO chip entry =
-not
-> > > containing the base GPIO number in the name and the corresponding sys=
-fs
-> > > attribute group for each exported line that lives under the new chip
-> > > class device as well as a way to allow to compile out the legacy part=
-s
-> > > leaving only the new elements of the sysfs ABI.
-> > >
-> > > This series passes the compatibility tests I wrote while working on t=
-he
-> > > user-space compatibility layer for sysfs[2].
-> > >
-> > > [1] https://lore.kernel.org/all/CAMRc=3DMcUCeZcU6co1aN54rTudo+JfPjjFo=
-ru4iKQ5npwXk6GXA@mail.gmail.com/
-> > > [2] https://github.com/brgl/gpio-sysfs-compat-tests
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > ---
-> >
-> > Alright, so what are we doing about this? Should I queue these patches
-> > for v6.17? Kent, any additional comments?
->
-> Nothing beyond what I've already said.
->
-> Cheers,
-> Kent.
+On Wed, Jul 16, 2025 at 10:20:39AM +0200, Gabriele Monaco wrote:
+> On Tue, 2025-07-15 at 17:23 +0200, Nam Cao wrote:
+> > If I understand correctly, if after 3 tries and we still fail to
+> > change the
+> > state, we will invoke the reactor and trace_error? Doesn't that cause
+> > a
+> > false positive? Because it is not a violation of the model, it is
+> > just a
+> > race making us fail to change the state.
+> > 
+> 
+> Yes, that's correct.
+> My rationale was that, at that point, the monitor is likely no longer
+> in sync, so silently ignoring the situation is not really an option.
+> In this case, the reaction includes an invalid current state (because
+> in fact we don't know what the current state is) and tools may be able
+> to understand that.
 
-Ok, let's queue them up for v6.17 then.
+Can't you bring the monitor back to the init state, and start over again?
 
-Bart
+I think "da_mon->monitoring = 0;" does the trick?
+
+> I know you wouldn't be able to do that in LTL..  By the way, LTL uses
+> multiple statuses, so this lockless approach may not really work.
+
+Let's worry about one thing at a time ;)
+
+> I don't see this situation happening often: I only ever observed 2
+> events able to race, 4 happening at the same time is wild, but of
+> course cannot be excluded in principle for any possible monitor.
+> Yet, I have the feeling a monitor where this can happen is not well
+> designed and RV should point that out.
+> Do you have ideas of potential monitors where more than 3 events can
+> race?
+> 
+> Perhaps a full blown reaction is a bit aggressive in this situation, as
+> the /fault/ may not be necessarily in the monitor.
+> We could think of a special tracepoint or just printing.
+> 
+> > Same below.
+> > 
+> > Also, I wouldn't use goto unless necessary. Perhaps it is better to
+> > put the
+> > code at "out_react:" and "out_success:" into the loop. But that's
+> > just my
+> > personal preference, up to you.
+> 
+> That could be done if we do a whole different thing when retries run
+> out, instead of defaulting to out_react.
+> I liked to avoid excessive indentation with those goto as well but
+> yeah, it may not be quite necessary.
+
+Sure, as I said before, "just my personal preference, up to you."
+
+Nam
 
