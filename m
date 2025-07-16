@@ -1,191 +1,202 @@
-Return-Path: <linux-kernel+bounces-733895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42CBB07A54
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:51:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BACB07A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DA9D7BA06D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:48:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78453165383
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94252F6FAF;
-	Wed, 16 Jul 2025 15:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029CF2F7CF5;
+	Wed, 16 Jul 2025 15:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DgKqTKQp"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFEe5QQS"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986C433AC;
-	Wed, 16 Jul 2025 15:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE152F4A03;
+	Wed, 16 Jul 2025 15:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680904; cv=none; b=blt+yBOHXawsZCQK9skXKtwyFQPPxIIVN6Om+zkXjjMG505F83Fd5G09PBMCk9I1Bzqlc3qwdTwrBhY9cs9s+4Fo+pBPUE+AOiV3gxA5RlsoxE86ZbGvzvWTfZC54DfE5bKXH/HYoH/A9eczNuyuZiY6ekj9wGUJkQwNUmu5dqA=
+	t=1752680909; cv=none; b=tzHKub+GQPNBYXYqrC2MhuZmpkrKtyBq1V9HEAPViUe5RzZZiQ1zHxFEYfw4Wz6WvogjY7b5nAszKHUOLQss6dPtmKobqEP9RIVMRJ2WPh7DwYDVRrtMpVwXlnN+11jimohSlV8RPsqZp09LxV5sLZsVyzUQBuC0oMQUuO8w0+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680904; c=relaxed/simple;
-	bh=luNcCeVwgq4z+l5cMRU2yESpupALk7pbDHbenqpr7AA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HH6n0dBhjLwEi9BmAUETOq0/yW+5CLf7WG56jCYwLuO8WHfXTj7x3BQ2we5e0C8VNXziGlAy1RNlHAgAbRPVXSfkKUhojb6+uSfKyY4ShSAClG1F8FThnmFilSAb/bW0G/CFUQs60PvcvOAgvJExTPho6lzLUTgGf9JK208U7Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DgKqTKQp; arc=none smtp.client-ip=209.85.160.180
+	s=arc-20240116; t=1752680909; c=relaxed/simple;
+	bh=9QObaE15aA2HF9A4bZEW1whQFC6WEn59Tf4pkxZV2O8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAaogjIHeSWRnlov3imTDHTJGm78WdPNuFVcHwFodadayo8Tnl75L0b0Sv4d2oFE8NQy5PIk0HRVjsaa1pFODU5CcMutuS+UUyCJtTaHwf2BDIflmdHTQ8u5q1sbKcFIwDpTd8J7YEf2ZxV82IHtMbxFLbe/ETLOZWIzANqNLv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFEe5QQS; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a77ffcb795so455331cf.0;
-        Wed, 16 Jul 2025 08:48:22 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab60e97cf8so592201cf.0;
+        Wed, 16 Jul 2025 08:48:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752680901; x=1753285701; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752680906; x=1753285706; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b/rm8scvzUXrihtknqjtLAemYGQPHMAAfEFq95mpGyA=;
-        b=DgKqTKQpDnjj94Ku8vUlNe1lW7W+4MFvx2bQfx+rhnMApb6wwTk9QWHVNuQBd7ZHaQ
-         1gj494u3Xicl5Ne7gFlLiCDMTreF+6J4bzOOgJCP4xFsc3GXuvoU+xC96nKOLvZIFOEt
-         JAhxw/8Hx9+DNTcGhbMCDOr57ccpj4taUwuOXTRgcf+mn0TdgAzUToYEdQluel1uywct
-         UeUUsqSoiyiUyPPfU2DwSrKFwIfTpi6gilJUUzgrnDXgnswq6xen97asKtNZBBknYWgU
-         686Z/R5VvTcW/7Y0umj26L01yoZpWB9neojEpl16igiFWilb05/DcPYKE7pcEgs8/hYj
-         Gkiw==
+        bh=6HO8xWa8N6E+EadbzyVIIdblu5LfP5/dbhHokIsV+v4=;
+        b=QFEe5QQS/i6SUMRjJAgWQ4CvdQ7GOv0iDnIv5dsIxP6AwwsInLuM1MHr6vPnFc9cH9
+         WsKJsxG8ppfycjYHb5hG8s96im19b6ZCGqERGKG2r55oOp2qjph9zimSG+UQnwqqW248
+         bsT1r5A6YfKWM21zce/YaeK1+HgRX4p/ziNIHnzcZYxU4dFNLiiOr08Xw49if6vEZlYo
+         hWYEbxWFR/Depk8ueulin8332GPU6//Ah/d9HuQoJ/4AjCw03io1MPfQi7OgLZYI3PyK
+         6PxLb071hZmYKE7UaFTRHlKQfbTOQFuiuFXVKjAvLJ9HdwgTDb7Gal1nIgPFtucqbE7q
+         ELSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752680901; x=1753285701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752680906; x=1753285706;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b/rm8scvzUXrihtknqjtLAemYGQPHMAAfEFq95mpGyA=;
-        b=QUL8ZShrGvyXhcOsAHooiQlP0LpNwuWTJT+Nnl7MnLY+ONBZXGhzG0ey+Wo/JoXaxE
-         4YU1r0Mbo1j9J0Y6SDsiiNzzwB7KGXIL4Eaw+kXPC4K7CG4PvatmHi73n/ylVH4YeoSm
-         8i0lZ8063pMIabCt040PXa08h5BLGkKy6BO8ooyWJPRCs+BLwIaYiczpmkZDwo+CdiW9
-         3imXRArkD9slmojMJjAcBpB0uJqWwLKIGf1Yxc2Aptfv5k8KHLKzZCLmJD+xjoIPpKnE
-         QBrQMpgiNFT0bydU1wfIQ6VmYZ/msktUAAlkQFj9p8n41QUeJDkJ56j/Qhdlj5KnOHl/
-         Jrlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAQBimSk3lrU2Wf6WdHNTK9Jn3anbqTZrEEghWZ/bQTZDLUlvn5mscOjKAKuulhds0YgKU9GD3pg6n@vger.kernel.org, AJvYcCUJLaVPC9UpiN0vv0SzZ/5pkNwzO6k+pAA4UOSuhr3t5qkVRy3GR7VFh84ySexpxWiMdVAOm76i0MK2pJwO@vger.kernel.org
-X-Gm-Message-State: AOJu0YylVfi1ku9Qx9t5e0MP9X0lHpsDfHuDb13Uk15ZGEPIixSX5zNT
-	o4YZF7LyHQxOg+MIxkRjhHZmF4V83oexHsZCgcLZL3bvrGbQ3eoOBAE8eNWEYM9aoc/Onaxppa3
-	envpBJJqJWQTNXoIohRK3Gr5gKuo04JM=
-X-Gm-Gg: ASbGncvAN3ki73VmFrOOh0j8V6G7YJQE8gRQ9Kz2JuKq2hmlwUOBl52rw7Zibaffxmy
-	oVyLGc4D107/34oZREqJtmJDgQBD3ccjXuPQyw5Bvn8l2PZn+4lSzqoPP8dNG8jMjhfPDGTGwLV
-	WtyjKy8YDlmZ9eAY4LZfsnmsqf/H0IsTpAdAIW7O16+Dr+p0+XoenLB9cRgAHbcyG+jsJsprcmU
-	L5xl2wZ
-X-Google-Smtp-Source: AGHT+IGZkuwYf/CRlFpg8ouV1Ni1Gc+/D2pROcmk1GXPjk7rcMxm2v3iwcET9Iy7rmi/yw6IZUJYr4N4D+vNkrJvXEw=
-X-Received: by 2002:a05:622a:1309:b0:4a7:70a5:e726 with SMTP id
- d75a77b69052e-4ab90cc9bedmr58696201cf.52.1752680901038; Wed, 16 Jul 2025
- 08:48:21 -0700 (PDT)
+        bh=6HO8xWa8N6E+EadbzyVIIdblu5LfP5/dbhHokIsV+v4=;
+        b=ERqALl3li0jZcSZQn8roVOvAg7saX2dkZulHcGuelH9c01nt5ZYF4iqsA06sV1TYWc
+         8e/KMyf4xYUkEvnbiv28KhSMic5YiM+VdP4ldJrq9L/IJtlA8qE063CmrKe+dAtkPitd
+         D52Po5hFZzR4L8uATrsXuuHbWZf0X5KUAoKv945CM8OZsIe5pV7DXUFrb+FB2saEsX6F
+         q1fGtlfsM4yajA3gk2y83gQt8sUqyvKVnj9US5bAmkOeZaOObvOT/E8BemeMYuC9Xt+I
+         r62eHZPU7qkmCcsden1dBudAvvJJ8Qw+hw/0GR7odCZa8n4RAun2lmXzlO2FBPR0eYNP
+         uB8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUSotnEoMcHrmcpSbQLq7uEot/ju3svikO/3bfY3WDImPaUd3qPZwYIheJm+Uh8MBNM8jXptBULBotDxQh3UtQ=@vger.kernel.org, AJvYcCWO/ifqHZTpYYUvvZ/r3OjlKt3AXzdVrHKjAPKsJ4HFCPZ5G9hLUsfsLpP4ymCagUdr6Lnipxqrolbm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpntWNK5xmPqDxZA0MvtpGRgIhv8U4ow7ML2ukuzh5etxXr5JJ
+	lxBjiwFe+zwEgJJlQhnsXyKb+HSxm3zdmJknw0jKo0lxElvTJ5j7st9d
+X-Gm-Gg: ASbGncu7Yg0mVvviSZJRl9RJTqSXMUfpkHF6kIsPUxTjJ3dST89KKdBZWd7reD1v4fd
+	FOgvrLbyFac6I6mWivh5m4kssPqva569rbtrKWDDEMAb/tCFnaasam5Q6uaBRP4wUAvEXvPU/w9
+	Q9/mudzJqxrhkl/pxyl3+MtTPXZyAMrWJgnGU5ZOTyBivI/RVkGcd4DOUpwDMtjM7GdYYSWv0qo
+	pv6V49rUP8yGr3Dp8cHfwON6UZRYZMnUuyJwOz8ZQ1avKMczuwBrY1CPdUKm1vr1tptTzU85nDN
+	fBKDAOw2OOJ30ueK0k6Sg3K+yvIbJnFiCr0ewCtv3BfvmV8fyHdZ54EHkrqVaFkTqVwXVr0XMAS
+	Ihjz2TIuFijGA8MlF6kFnK5U6rJJ8AXFbys/j1wKBQexPcgKuVKPMUmx9xxXgYOeYZFDcfgQEhl
+	xkZkBEjSpRy1x5
+X-Google-Smtp-Source: AGHT+IHBnCkbkHcfWeZMyZZz/YOPnOdee30pCHkZOcxDxSemJI0bQD9ig/IPq89o8eZkA2Xn9bn7Ew==
+X-Received: by 2002:a05:622a:5591:b0:4aa:df14:983f with SMTP id d75a77b69052e-4ab93df38bbmr41572161cf.51.1752680906378;
+        Wed, 16 Jul 2025 08:48:26 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ab5b9a1949sm43793561cf.55.2025.07.16.08.48.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 08:48:26 -0700 (PDT)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 50CBBF40066;
+	Wed, 16 Jul 2025 11:48:25 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Wed, 16 Jul 2025 11:48:25 -0400
+X-ME-Sender: <xms:ycl3aOD1J4fjv5aIUx2IPox0q1oe7YiNy7M5hfMqhZlITw4n69kISA>
+    <xme:ycl3aKBZPKfWsPSs-xAmeuEUsU4YDO8pOGedMKo-7dQ_HPxfWuFDIKvxSgpdLpXrY
+    gXlPQRA1mhob3lXag>
+X-ME-Received: <xmr:ycl3aGJIxxAt1ztjrTEeSLAoswXBPsFjluzSfmJiRyt-hRkPGzXgyps3Gw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehkedutdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephfetvdfgtdeukedvkeeiteeiteejieehvdetheduudejvdektdekfeegvddvhedt
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
+    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
+    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohep
+    vdejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlohhsshhinheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhsthhsrdhlihhnuhigrdgu
+    vghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghl
+    vgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrh
+    ihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghi
+    lhdrtghomh
+X-ME-Proxy: <xmx:ycl3aMSHK4pnfJZA2eRBtaw6SDJ44Pqw9ItMoXndaEiS5eYcvmTJNw>
+    <xmx:ycl3aBQ-KsnX3u3tR70z8V2gZ-ZnkdimOlnZWkHrBQQTK46PUO_gJA>
+    <xmx:ycl3aP581rbjIAC1WVX49CvoU9FPX_PX-c2B0lCJ9ueP5_x-PO7DMg>
+    <xmx:ycl3aOF1eFtbg7claoiZP746xzSYGjCTQq7CuoLE-yTnb4QKx6qDqg>
+    <xmx:ycl3aAk4TPOJzM59lpdV-8GfFKwUCmibcTxfstvyT5RabH4QYFRim3gn>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Jul 2025 11:48:24 -0400 (EDT)
+Date: Wed, 16 Jul 2025 08:48:23 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v7 6/9] rust: sync: atomic: Add the framework of
+ arithmetic operations
+Message-ID: <aHfJx5_kMcULUd7t@Mac.home>
+References: <20250714053656.66712-7-boqun.feng@gmail.com>
+ <DBCL7YUSRMXR.22SMO1P7D5G60@kernel.org>
+ <aHZYt3Csy29GF2HM@Mac.home>
+ <DBCQUAA42DHH.23BNUVOKS38UI@kernel.org>
+ <aHZ-HP1ErzlERfpI@Mac.home>
+ <DBCUJ4RNRNHP.W4QH5QM3TBHU@kernel.org>
+ <aHa2he81nBDgvA5u@tardis-2.local>
+ <DBDENRP6Z2L7.1BU1I3ZTJ21ZY@kernel.org>
+ <aHezbbzk0FyBW9jS@Mac.home>
+ <DBDL9KI7VNO2.1QZBWS222KQGP@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABjd4YzCL3U9yf65FUBE6EMqFjZHosULU7fUcjVo9VJ_=Ov+Dw@mail.gmail.com>
- <20250716143016.620430-1-amadeus@jmu.edu.cn>
-In-Reply-To: <20250716143016.620430-1-amadeus@jmu.edu.cn>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Wed, 16 Jul 2025 19:48:09 +0400
-X-Gm-Features: Ac12FXy9WoL4TICFh6J03oGYZT5PkKMhZ242n-cx_vXoVMHQVGR-YEvxeooikVM
-Message-ID: <CABjd4YzVqOssjMH0VUiUJF78dV9n6Dq6EipWYqUXoxHu6ehUSw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency
- scaling support
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de, 
-	jonas@kwiboo.se, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	ziyao@disroot.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DBDL9KI7VNO2.1QZBWS222KQGP@kernel.org>
 
-On Wed, Jul 16, 2025 at 6:30=E2=80=AFPM Chukun Pan <amadeus@jmu.edu.cn> wro=
-te:
->
-> Hi,
->
-> > > There has often been the argument that selecting a frequency that has
-> > > the same voltage as a faster frequency does not save any power.
-> > >
-> > > Hence I remember that we dropped slower frequencies on other socs
-> > > that share the same voltage with a higher frequency.
->
-> Sorry, but soc.dtsi on rockchip doesn't seem to have dropped slower
-> frequencies with the same voltage?
->
-> rk3562.dtsi: CPU 408MHz -  816MHz 825mV | GPU 300MHz - 600MHz 825mV
-> rk3566.dtsi: CPU 408MHz -  816MHz 850mV | GPU 200MHz - 400MHz 850mV
-> rk3576.dtsi: CPU 408MHz - 1200MHz 700mV | GPU 300MHz - 600MHz 700mV
-
-They were dropped for RK3588 when merging the CPU OPPs that I
-submitted, after respective feedback from Daniel Lezcano [1]. GPU OPPs
-for RK3588 were merged before that discussion, so they still carry
-"lower frequency, same voltage" entries.
-
-[1] https://lore.kernel.org/all/731aac66-f698-4a1e-b9ee-46a7f24ecae5@linaro=
-.org/
-
-> > I.e. here the mainline kernel will always choose opp-1008000000 as
-> > long as the regulator voltage is 875000 uV, unless explicitly
-> > prevented from doing so by userspace. Whereas the BSP kernel [1] would
-> > request different frequencies for different silicon, e.g.
-> > opp-1200000000 for a silicon specimen with a leakage value of L4 and
-> > opp-1416000000 for a silicon specimen with a leakage value of L8 - all
-> > for the same regulator voltage of 875000 uV.
+On Wed, Jul 16, 2025 at 05:36:05PM +0200, Benno Lossin wrote:
+[..]
 > >
-> > So my 2 cents would be: no added benefit in having "lower frequency,
-> > same voltage" OPPs defined here until we implement an OPP driver
-> > reading the NVMEM programmed leakage values and selecting different
-> > *-L* voltages for each OPP depending on those. Once there is this
-> > support in the drivers, those OPPs can be added together with
-> > leakage-specific voltages (opp-microvolt-L0..11).
->
-> I assume this has nothing to do with the NVMEM driver?
+> > I have a better solution:
+> >
+> > in ops.rs
+> >
+> >     pub struct AtomicRepr<T: AtomicImpl>(UnsafeCell<T>)
+> >
+> >     impl AtomicArithmeticOps for i32 {
+> >         // a *safe* function
+> >         fn atomic_add(a: &AtomicRepr, v: i32) {
+> > 	    ...
+> > 	}
+> >     }
+> >
+> > in generic.rs
+> >
+> >     pub struct Atomic<T>(AtoimcRepr<T::Repr>);
+> >
+> >     impl<T: AtomicAdd> Atomic<T> {
+> >         fn add(&self, v: .., ...) {
+> > 	    T::Repr::atomic_add(&self.0, ...);
+> > 	}
+> >     }
+> >
+> > see:
+> >
+> > 	https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/log/?h=rust-atomic-impl
+> 
+> Hmm what does the additional indirection give you?
+> 
 
-There is an OPP driver in BSP code (for v6 BSP kernels) or a custom
-cpufreq driver (for v5 BSP kernels) which read factory determined
-leakage values for the particular silicon specimen from an OTP (NVMEM)
-cell and select different initial voltage values for each OPP based on
-that. Those voltages come from opp-microvolt-L0..11 DT properties,
-where -L0..11 represent different leakage values. Default is no -L*
-suffix.
+What additional indirection you mean? You cannot make atomic_add() safe
+with only `UnsafeCell<T::Repr>`.
 
-These are then further tuned in the BSP code by stepping over adjacent
-regulator voltages until the PVTPLL provides a frequency closest to
-what the OPP defines. The kernel then uses this calibrated voltage for
-the particular OPP instead of the original DT provided one, as it
-better suits the particular silicon specimen and operating conditions
-(PVTPLL =3D process, voltage and temperature adjusting PLL).
+Regards,
+Boqun
 
-The calibration process can result in varying voltages for PVTPLL
-based OPPs, even if the DT listed the same voltage for each, so it
-might make sense to list those once OPP calibration support gets
-included in mainline driver code. Before then they won't be used by
-any of the energy aware governors and would thus only add bloat.
-
-> From [1], we can see that the voltage used by the same board from
-> 408MHz to 1008MHz is the same. The actual test is also like this:
->
-> The first  board: CPU 408MHz - 1008MHz both 850mV | 1200MHz 862mV
-> The second board: CPU 408MHz - 1008MHz both 875mV | 1200MHz 875mV
->
-> [1] https://github.com/rockchip-linux/kernel/blob/develop-5.10/arch/arm64=
-/boot/dts/rockchip/rk3528.dtsi#L227-L271
->
-> > Right now OPP values with frequencies lower than 1008000000 won't be
-> > selected by any of the energy-aware cpufreq governors anyway, because
-> > their voltages are the same. Exercise for the reader: try to convince
-> > e.g. the "schedutil" governor to select anything below 1008000000
-> > without touching
-> > /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq :) This may
-> > change if OPP tuning logic is implemented such as in [2]: that will
-> > try and find the _voltage_ resulting in PVTPLL providing a frequency
-> > closest to what cpufreq requested, and use that for the in-memory OPP
-> > table instead of what was provided by the DTS.
->
-> Thanks for the clarification, so should we remove 408MHz, 600MHz and
-> 816MHz from the opp-table? Is this also the case with GPU's opp-table?
-
-I would say yes, drop for now and add them later when the need arises
-(i.e. once we have driver support for OPP calibration using
-PVTM/PVTPLL feedback).
-
-They do not hurt per se, but they result in something unused right now
-becoming part of the device tree ABI, thus limiting options to rethink
-stuff later.
-
-Best regards,
-Alexey
+> Otherwise this looks like the `T::Repr` approach that I detailed above,
+> so I like it :)
+> 
+> ---
+> Cheers,
+> Benno
 
