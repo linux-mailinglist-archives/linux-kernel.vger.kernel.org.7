@@ -1,261 +1,124 @@
-Return-Path: <linux-kernel+bounces-734121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154D0B07D53
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:02:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F03B07D57
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5968F586688
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F0DAA4240F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164E32857F1;
-	Wed, 16 Jul 2025 19:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE0D28C846;
+	Wed, 16 Jul 2025 19:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MZwr3q58"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010022.outbound.protection.outlook.com [52.101.69.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqtN2jo8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649501BD01D;
-	Wed, 16 Jul 2025 19:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752692533; cv=fail; b=cP45YhC8ZECIs/UmZlxM6P4rnSUUUxd3AZ9Q8KW2AVdSkH40dD7P6ovUSc+/HtMc4hBMpE12MU0CqfXqM2Roa01miiVLcX8speGnE0P63xPs243mMTvjP9Tg+kg99sSTzzdhJODNvN4N1T8ukvi6sYqM7iRU7660Nmd49wHE++g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752692533; c=relaxed/simple;
-	bh=k5mVCQlrHe+WcjEH+BCAA0t7FdzeqzTKuDzzSmY2OCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=f0dYwIcq4okSQWstkCUoAhyn+xpOsQmzBOsg5BsY9g2dgqFX7MGzG1M2rFyrTXuqOZ73bzd8T3RtXDEGPMtthCoIJPkPLs/9U+h0v07NL6TJFwXHXN/WhHvwVUH2nbl9Ry9TneOzty64J82FsCwPoplevb0UDow7RXnWNzwQzXg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MZwr3q58; arc=fail smtp.client-ip=52.101.69.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AWksBRRvlOn6rvinfnb3cz1djXfQPEFQ6JhAX+NOozSRJDehXhOUdgLSeC2k/GIlEA1Gpb28MeGlB/fsjblNzbWX5GItP03Gh/Lx1fEpm7hVFLmmgKC8vwa6SzZU79e2DHXcrMqCgMKEkd5sldK2ovUWwsHYz4dL43b5I9GQV07QdfT/HgG9+pxMdumbrdA3ZsrO7Ctyzje9RgXdDZtice6M6gA5E1t0Fym4NMPGIk34GVfOVBfyzLtyripWD9jkoRrc9qd51LK2CN6Btc0jwfGr5laM2g0sePQqGRIHF9JTG7vLnk6yquk3POEEvpvAax6MDeKXOUtmikjtMZvacw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YzlqL+mWmBkkhjeQY63ZmSzsg8rLazCn5Nnc/5U0A+w=;
- b=fAW0xUnMKAsc9Vkw8HMsAvaA5nYFgoVr6+1z3/h6CekE0s3GBjYalqL1ovj9/c2JhnBxncNyq/BbET653yhgVEM4ZmIecczswSswE6tjiEQw+vRstwK4uq3ORLWYg4KTECvws9B0fseA6XNWMs8RllJi1QPresLM4OaI+f4RAw0tDOV583sPYns+9BPCBLAl90mooPUJFBvzBqnt5h/odpDLleSp3EGFhzDaFCa9fGhNOknOQDVXzBFyswGhiIVeJz88fq/EJ0T+Od0CAiz43G3eybsSHP8YzTBoBrgTLTbrGxQG00tB6TIAl5QEzjZtiSs+5itiYhpZbvbUJijeHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YzlqL+mWmBkkhjeQY63ZmSzsg8rLazCn5Nnc/5U0A+w=;
- b=MZwr3q58lhdbA0PyyZlcpsodilRHiku/B1q5Vk40J8khXoycMBKNkUMs6Djr3AvkAKseHzDFqmGhEvUTyh5QtQx66tiKRk9ip48Q+dPzjt17cPDtg+Ddu+FtV4kUphnARfMTYrBetUQtDyiITyZmqYntFyKHryWxEYctIrHhmIN80fbU8ViEYCI+BKlDoGqmtmJ3ShTnOwu1CfufKBYo3YpPEg4bNcAYZBiBYsMLOCetgK1I5gYhkxYf02cFCIe+tAjfbMedaN/F7Pz0Xx+/zPFCG92J9hYJx6OqVk46XnoanXLMDO2IHjexagjke19QVl/lwv+sezRB/lCRfHnbBw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DBAPR04MB7287.eurprd04.prod.outlook.com (2603:10a6:10:1a4::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Wed, 16 Jul
- 2025 19:02:07 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
- 19:02:07 +0000
-Date: Wed, 16 Jul 2025 15:02:02 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: imx@lists.linux.dev, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/10] arm64: dts: imx943: Add display pipeline nodes
-Message-ID: <aHf3KsEyvwYgxJ/a@lizhi-Precision-Tower-5810>
-References: <20250716081519.3400158-1-laurentiu.palcu@oss.nxp.com>
- <20250716081519.3400158-9-laurentiu.palcu@oss.nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716081519.3400158-9-laurentiu.palcu@oss.nxp.com>
-X-ClientProxiedBy: AS4P189CA0066.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:659::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC541BD01D;
+	Wed, 16 Jul 2025 19:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752692576; cv=none; b=o+lwEUsnF7SvMGK1RToQ0c4e+UPJoEVC/IJ5opcUtIQsMTPf4vRumm5yNa7C29+aYUl7J3nNF87dKPIpmorwH8cdGYk0bX+/vFfoIJwcZLk/TTinRtOcWRjU+qcb7YmwKJjwHNHuaS9S4slCVeehgbPtyxCkGBv0d5nxal5IQIY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752692576; c=relaxed/simple;
+	bh=bef9KrYszCOyAn/Gpb5m62WS2dlMDwaxiTRKKJJ+JWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uy2DHvpP7NTY1oYBUixt29ztCpJ7ETsPYplptuHdTm27FwK52ct2cEzgHWQx+QUhqvxbskYUeUpNuG58o0lGmoZ0N6QZ35iEL8Yh+tWIT5idUxPPpO/dq169XS8TnsMDDrhS1n8r57wZqkopM8x/S+A4W2Hd7mag9ZlMuSHREWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqtN2jo8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DF1C4CEE7;
+	Wed, 16 Jul 2025 19:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752692576;
+	bh=bef9KrYszCOyAn/Gpb5m62WS2dlMDwaxiTRKKJJ+JWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FqtN2jo823CampHz2Hd0lPbaqmI2x9Jx63+NkKj2EK/tX6O8h7xKuqs34mXPlJ3Dd
+	 6X9ukp8/T5ZdKihlxax3A7TnyXKKCadYtSy4WeCtb9xYITSMotAqRn+ChDi3zsgoOk
+	 rWPHCfQDhxssIz5nwbkKGUu5YVe87zQfWxEZp65LuJa3Pcq6+J8s950n9EeYcljlpV
+	 yNIIf8WsbI5HDivfpXpwuCjBNDa5/KK4G9PwPkdXGJzoXzbZu1mWoWBgZm9xydwEe6
+	 m+j0aFWE4Xq2tyOPtiEVI5OE/i9DWqvRo3vpqRAtmWfZafvvP1JjvI5UKQ3T84VHPP
+	 ck3Bi6Fp4dY7w==
+Date: Wed, 16 Jul 2025 14:02:53 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Maximilian Luz <luzmaximilian@gmail.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Steev Klimaszewski <steev@kali.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH v4 5/8] firmware; qcom: scm: enable QSEECOM on SC8280XP
+ CRD
+Message-ID: <ggqoniunmds7ghvbp4t4kmbas4mr5vm5xvmjv22yznp6sq3bin@j55eff6yxb5b>
+References: <20250625-more-qseecom-v4-0-aacca9306cee@oss.qualcomm.com>
+ <20250625-more-qseecom-v4-5-aacca9306cee@oss.qualcomm.com>
+ <e5e3e8f1-4328-4929-825a-3d8e836cf072@oss.qualcomm.com>
+ <95c46d39-5b4a-46dd-aa73-1b3b9bf81019@oss.qualcomm.com>
+ <aF6NUeNLPrR5vqEf@hovoldconsulting.com>
+ <f55a057d-2cdd-411e-97b9-5ede1300a4e9@oss.qualcomm.com>
+ <aF6Tkh75LRym8MQY@hovoldconsulting.com>
+ <hf66fa3pvm5jrw3qv57xoofmkoz74ds4g3nwzsdz7pip6e7nej@w3h7qn7qu457>
+ <aGKAOtgJtTozo-ac@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBAPR04MB7287:EE_
-X-MS-Office365-Filtering-Correlation-Id: e8597934-d46a-4f30-6661-08ddc49b42ae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|7416014|366016|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?C37TFoYOQmINAqkH+cO+uBKDrLXvMFHgf2asrVAHV8eC1sTjmtsGaSvrbuoR?=
- =?us-ascii?Q?EojkwlZa8v9gCslCew3nojAEr6f87OS/xg8hqKTmDBGB3td6O2AvMLAu7N6k?=
- =?us-ascii?Q?1aZD8CPFiFzxE3q7PN0SNNoa5oQTeqpBNv9oKUw/EJ442lYNn+ukJGt+cvN3?=
- =?us-ascii?Q?5K+ntXJdNp2tvjqpGFf8jBcxCmneehGqwRHyevfcqjvKCwMwyVvbRgsNRlYz?=
- =?us-ascii?Q?bas2gr4NDarLGvJPF78uWhDCWrczeWRSDT/yUZHFrTqDszEtqYJ+rD7XOcOV?=
- =?us-ascii?Q?s51ZyTQgauyBTDY8vcbczHxQV196f9huU7txYVPFAcLFWpUmuQH5Am6tIcfg?=
- =?us-ascii?Q?Kl7UkdshUu9XiNStrMSY+VyuJ3BjpH1jH82QtO4O08ObRFvNhmvPjUjKwP4i?=
- =?us-ascii?Q?W4yFT8uJmr0/+maWyzGqGIu5vyMEYw9qITetC8KgciOyhwxH95cnvY8f9N4r?=
- =?us-ascii?Q?2UPkB6LzqxxeQKdDYr0pIyYJig1kVc6MKy3x2qRYWY1rts/IJ0YSjV5rn5Na?=
- =?us-ascii?Q?V2hZbMMG6iJdPbdERwKha1bo3R2ruUib1KGgzY4uTI0BLXO/pnDMTWxsNuzz?=
- =?us-ascii?Q?YHVz4lEC87maGKLgUxBZw9rQQLmT+Mrpmgusqd7HXrB3R6ZdKDICcjUjf211?=
- =?us-ascii?Q?tLuKpUNr8CHlVoNZn116MBFU3fru5UspgLAopNfeTBLnz5bdL3g4cpghKmwS?=
- =?us-ascii?Q?jXx2efVJPj8CwwOk3cxmqPuSx1wbUX+9+946hZfDAH5BbGRD3wKphvOXgtpo?=
- =?us-ascii?Q?sMaiVwj6l4z/8jM2tSxBPdZRjmXW01T7mCjX5qF0EvKBX35zGcmxGKTDFFvR?=
- =?us-ascii?Q?xJh+OhVGshpmRUhNB1xok36ZvzufpcNY3MEwl8Ugyj/sXZzR5rZ/3aIx3Kz+?=
- =?us-ascii?Q?DWBKsb1ZmFdRbeMUMFz0KAoZRKFhecXT9qpES0HseEz/2jG82UdVdmIhJGtS?=
- =?us-ascii?Q?3WgueoJ8m2bOFfhzf2YARf2i0bDaXPdgBNbMk6LujKWTYEXk1qKPmuEMlv6S?=
- =?us-ascii?Q?bwGNHAe3sJJk0q1meh9K/TCV+vO+E+C1CweCgBuRGdN1Ll2v2FvVd5CcRVNl?=
- =?us-ascii?Q?2DzB0f7JlnIH2qqJ1VjGbIMwrq2vvzJuXqPuRS6NjKW5KFEkZb1WuOD0yMAr?=
- =?us-ascii?Q?VA7Hp0MJBgNIydLsYSQPpkt6F6bFlEkJiN/od9CjluH9W88thjHS3ZE82U6w?=
- =?us-ascii?Q?EkVsCH2NXJAlJBs7W3sg+Y9LvB6bWwY+CCx/yq+mDJoXqVKXeS4M7McqTyte?=
- =?us-ascii?Q?kHnfzNsvI6xlg3G1IRY7Y6tOsImLl3qURINMKRHNBq3mC1fGUX3DpCv9fIeT?=
- =?us-ascii?Q?2gVCYO96kOhUHwSbF4lnr3X3P/L6WqzAH+op0G01ywR9jpOzsLterlAyfM44?=
- =?us-ascii?Q?Yd27R0IirzDGacL6HRbetXRDD6EpLpjV2vSfhfxz0VcFv72VS6sj0IqHUGVi?=
- =?us-ascii?Q?MmzHhQi2XByfWXrB/m7pT2dUcVLA9R+EJ1KZEOxamCqERs5eE1967w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(7416014)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Kl5GYD3r2qxMl1GRwL9FS1uwpqXYKaRd0kEhFXdsVkRBqw0FlN/Pvx0jTl4v?=
- =?us-ascii?Q?Hd60+ODOT/mp0t4TrbcJXSKB7cGE38ZRu5P2xx4SDgpaswuSG/L7ugVgiy/v?=
- =?us-ascii?Q?WdYOsB5sonSIT7QD9szi6TCA5vbh1BBMLg3sntDkIZYkGSYxv+zYT2DFAU+m?=
- =?us-ascii?Q?3YgMOzQR3s6rW51t8A4NeaWl7zPbwiO+fyYXyHrl0wsLmWNYYf39R2xVHuii?=
- =?us-ascii?Q?AAPa2fnDfaLQHgdYhSIZCf1DnIYsFniFeQn5BjD+7mWjt/OFC3IhhwMqI9j7?=
- =?us-ascii?Q?z50Lc88RO0fo4YXCImRCFBZkxlyh9OYuWMCJaOb4U2VTjwKIvOp5Fme1P5aW?=
- =?us-ascii?Q?M9c2mFwKVfdgPTiTu8DEWq0I9U/kGPubF7ZnEbqQHf1aQ+8qEAX3/EMLwypO?=
- =?us-ascii?Q?ESaTGBMCgYfxD6zWeNGo9cjBHoJs2PeFuhxZjugk6JCDv0ekinwDkEHCGKzD?=
- =?us-ascii?Q?JrXkzzvfup0opCfhH4KoudkXXgBFYsv7kp+j1qhJsKRVPGKhSey6fX+Yad/L?=
- =?us-ascii?Q?TA8AMCzDWNkLuGDreEJdpo7nDntiK4qmnG9qMTN7AzSGpu5N8YUxC8oLwbdU?=
- =?us-ascii?Q?QY+0uepnX8ofuo8zuqmF+1reoRp7aodlda3YIT695aLClHnM2rRxJXwTjW7m?=
- =?us-ascii?Q?96swke0SNx9n5vZmLRYVMtIXL0PenV7hi0ckeWlYx6wVJcdCVu2xE3CJgIrO?=
- =?us-ascii?Q?d++TYIptAir2jcdQFuHLynpvIK/j8Otw2joAa02zVm7Ekjd2RYXH5+BiYPl1?=
- =?us-ascii?Q?/shRLh+NbKOet+oK2cuMe5DQncuCVjTK0ZBP16GWV/y+sV49I89u998d+6Uh?=
- =?us-ascii?Q?9n6U/qPdDacDrdgP/IQpDS4bMYZtQbDz8FmX9n98M9RKJodgOdo539wGS980?=
- =?us-ascii?Q?7Cf3vKfentxpOqdQIhNKEcXwUBhdupznziz94xK/4YIIR6L2QoA5UyPrsMj9?=
- =?us-ascii?Q?Kjqlr7+ux8Ot6QvNWT8CVjdz4V9A8Xi6/yofBi4i0gt25GithbZpWJ4sr8H1?=
- =?us-ascii?Q?uvIjT1DKcPtR6lEnts+TwbTDUk3L1hVzp/VJ0R1B9l982K/kimlNHn5UiVFY?=
- =?us-ascii?Q?AYnysq89ud696fxW8115M//GpICgS9/JZkNnDw8wWtfdJlebHpIbONEKSIRx?=
- =?us-ascii?Q?77VE4MB3hh6dWw/dnO8UG1gvUoq/z6cUtNg5ZEvlRdUOsMjevPzqutg7CBC6?=
- =?us-ascii?Q?dv9136x3fmW+EZsBI/asloDU9FulxKhUHk6qbrs8LLkZhJ5jJZz4pFl7Zl/K?=
- =?us-ascii?Q?I3f8Ip12oTBcK+9Xhbppg+/lA4rstf+FAiI/ZEmEAJizz0Z7wx3kOka46AUR?=
- =?us-ascii?Q?9zzeiAI6GLCtuu6rEmGREjhpeBtMAnec3u4BBx2ccAQ8K3ShX3UKOXFCZgtz?=
- =?us-ascii?Q?tj/+ruBbY/cOcrZmAtUd+2bssAYmOjwY7B4hbg7yG7awL3zPM48OgHR3q3Eh?=
- =?us-ascii?Q?ycZL3W3dMaNz70okeW6mIbzI9wdhGA1anVDsnCZeCScxA4ZhpNDCpMwGNTxS?=
- =?us-ascii?Q?3Kmvyr/48mIa+LOEppYs8bOR0whkjuIDt00z2NQ0HNXX95pJlJxA7ghW6lKS?=
- =?us-ascii?Q?C0k9s9dglolpZwEH6BZhoiTKGxRHcWe3Ds+FOr7a?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8597934-d46a-4f30-6661-08ddc49b42ae
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 19:02:07.5931
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t72XtcpeStOJJu5QLeYwfi5c/AxmSSgc4EN3rkmiCKsZA5wshm6fz7WxLTnJJ2vCd+ShIXRmDkqg43YNGI5UxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7287
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGKAOtgJtTozo-ac@hovoldconsulting.com>
 
-On Wed, Jul 16, 2025 at 11:15:12AM +0300, Laurentiu Palcu wrote:
-> Add display controller and LDB support in imx943.
->
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx943.dtsi | 56 ++++++++++++++++++++++-
->  1 file changed, 55 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx943.dtsi b/arch/arm64/boot/dts/freescale/imx943.dtsi
-> index 657c81b6016f2..db00a94812e18 100644
-> --- a/arch/arm64/boot/dts/freescale/imx943.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx943.dtsi
-> @@ -148,7 +148,7 @@ l3_cache: l3-cache {
->  		};
->  	};
->
-> -	clock-ldb-pll-div7 {
-> +	clock_ldb_pll_div7: clock-ldb-pll-div7 {
->  		compatible = "fixed-factor-clock";
->  		#clock-cells = <0>;
->  		clocks = <&scmi_clk IMX94_CLK_LDBPLL>;
-> @@ -173,10 +173,64 @@ dispmix_csr: syscon@4b010000 {
->
->  		lvds_csr: syscon@4b0c0000 {
->  			compatible = "nxp,imx94-lvds-csr", "syscon";
+On Mon, Jun 30, 2025 at 02:16:58PM +0200, Johan Hovold wrote:
+> On Sat, Jun 28, 2025 at 05:50:49PM +0300, Dmitry Baryshkov wrote:
+> > On Fri, Jun 27, 2025 at 02:50:26PM +0200, Johan Hovold wrote:
+> > > On Fri, Jun 27, 2025 at 02:26:41PM +0200, Konrad Dybcio wrote:
+> > > > On 6/27/25 2:23 PM, Johan Hovold wrote:
+> > > > > On Fri, Jun 27, 2025 at 01:54:37AM +0200, Konrad Dybcio wrote:
+> > > > >> On 6/27/25 1:34 AM, Konrad Dybcio wrote:
+> > > > >>> On 6/25/25 12:53 AM, Dmitry Baryshkov wrote:
+> > > 
+> > > > >>>> As reported by Johan, this platform also doesn't currently support
+> > > > >>>> updating of the UEFI variables. In preparation to reworking match list
+> > > > >>>> for QSEECOM mark this platform as supporting QSEECOM with R/O UEFI
+> > > > >>>> variables.
+> > > 
+> > > > >>>> +	{ .compatible = "qcom,sc8280xp-crd", .data = &qcom_qseecom_ro_uefi, },
+> > > > >>>
+> > > > >>> R/W works for me (tm).. the META version may be (inconclusive) 2605
+> > > > >>
+> > > > >> Looked at the wrong SoC META table.. the build date is 05/25/2023
+> > > > > 
+> > > > > Could be that my machine was not provisioned properly. Do you boot from
+> > > > > UFS or NVMe?
+> > > > > 
+> > > > > My fw is also older: 01/10/2022.
+> > > > 
+> > > > The machine has UFS, NVME and SPINOR, however the boot log definitely says:
+> > > > 
+> > > > S - Boot Interface: SPI
+> > > 
+> > > Mine says:
+> > > 
+> > > S - Boot Interface: UFS
+> > 
+> > Is this META even supported? I think it's recommended to update
+> > firmware to the latest releases.
+> 
+> It most likely has nothing to do with the meta version, but whether you
+> boot from SPI-NOR or UFS.
+> 
 
-Did you update nxp,imx94-lvds-csr's binding doc to allow add child node
-ldb@4 ?
+It would make sense that the UFS firmware then acts as the firwmare on
+any other UFS-based device relies on UFS for EFI variable storage -
+using yet to be implemented mechanisms. This would explain why you don't
+have persistent storage on your device after ExitBootServices...
 
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
->  			reg = <0x0 0x4b0c0000 0x0 0x10000>;
+Regards,
+Bjorn
 
-reg should be second property. add address-cells after reg
-
->  			clocks = <&scmi_clk IMX94_CLK_DISPAPB>;
->  			#clock-cells = <1>;
->  			power-domains = <&scmi_devpd IMX94_PD_DISPLAY>;
-> +
-> +			ldb: ldb@4 {
-> +				compatible = "fsl,imx94-ldb";
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-
-the same here.
-
-Frank
-> +				reg = <0x4 0x4>, <0x8 0x4>;
-> +				reg-names = "ldb", "lvds";
-> +				clocks = <&lvds_csr IMX94_CLK_DISPMIX_LVDS_CLK_GATE>;
-> +				clock-names = "ldb";
-> +				status = "disabled";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +
-> +						lvds_in: endpoint {
-> +							remote-endpoint = <&dcif_out>;
-> +						};
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		dcif: display-controller@4b120000 {
-> +			compatible = "nxp,imx94-dcif";
-> +			reg = <0x0 0x4b120000 0x0 0x300000>;
-> +			interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "common", "bg_layer", "fg_layer";
-> +			clocks = <&scmi_clk IMX94_CLK_DISPAPB>,
-> +				 <&scmi_clk IMX94_CLK_DISPAXI>,
-> +				 <&dispmix_csr IMX94_CLK_DISPMIX_CLK_SEL>;
-> +			clock-names = "apb", "axi", "pix";
-> +			assigned-clocks = <&dispmix_csr IMX94_CLK_DISPMIX_CLK_SEL>;
-> +			assigned-clock-parents = <&clock_ldb_pll_div7>;
-> +			power-domains = <&scmi_devpd IMX94_PD_DISPLAY>;
-> +			nxp,blk-ctrl = <&dispmix_csr>;
-> +			status = "disabled";
-> +
-> +			port {
-> +				dcif_out: endpoint {
-> +					remote-endpoint = <&lvds_in>;
-> +				};
-> +			};
->  		};
->  	};
->  };
-> --
-> 2.34.1
->
+> Johan
 
