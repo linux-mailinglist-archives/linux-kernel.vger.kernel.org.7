@@ -1,86 +1,79 @@
-Return-Path: <linux-kernel+bounces-733877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4D0B07A21
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 717EDB07A22
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A853ADBC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D00E3B5295
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2A2273D72;
-	Wed, 16 Jul 2025 15:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E89F28643D;
+	Wed, 16 Jul 2025 15:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h3WYU0Hy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="i1kO+21c"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D7A1A841F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4391D79BE
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680552; cv=none; b=YIxzApueLswCDiIpgzypOj+NOTiAO+fcHbeJBUxSdOuBIEfPRMCn3+87MTG6/M4icZ+z6eGdO+r8Qd12C1VRpCw4kGmI5YMX/ZhfyYHmHf3+Bsb3kafFkkUvFPoRSRUxiKlvvf7ty8nW9J+2TPsfHtFbFzBaLXRPbNppNR+lLMc=
+	t=1752680572; cv=none; b=Bbv5G2TDfmGhPjgsnQ1LMssXoF5iTiO+PZz4K74kn6oHpOOnMSMP8C7XONtDjgMz7hpSvwhby5bQS2sFXgHY96P6lsLjxBSVjCdXmpXIE/2ncsRWgaoXwmhPcoxTpJlnfqY40HGERaowRq4KZqFZU8tJ8brPSwxcLyI1VbM4bbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680552; c=relaxed/simple;
-	bh=h76MNZpvg3PD3BP0hhcapb3tGEq/Jmn/n9Wy2CzLnd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=tpAQpbCeEFib3jL+FZrd7Hjwo7zYY+iFGPjEaIA8fuA/2RGLjnTzQ7ogOAiebLx9W3jF0SZvF2Gz3poe9AEDLF+60CJlvy14o3pY81/FpVhkcO2tDNdO5IV92vqsl2Ec1O2VQUhaPYttROVB1HizRG87Q3Y+TixkMwkxufhhFsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h3WYU0Hy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752680549;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rndApbRUJH/9ySRaZuvuddd+LJ0qzZtoIf8UZGoyWl0=;
-	b=h3WYU0HyKzFrKjr1ghuXyPKFSXN2bSH2ZHjt68yEZj3KYQUEb6i10zaz8LjDm7bds5lk54
-	TKGrMpNN1gQZGUr8XaRpWJxc35Ap5sWPD2V5jOTp31FfcNWbDOy0RZenGd5bKSq1iYDMhT
-	94183THpDQCE9a2vNgoUXCqjP+WoLp8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-124-2FKpjNpOM36c8lyZ2_qC2w-1; Wed, 16 Jul 2025 11:42:26 -0400
-X-MC-Unique: 2FKpjNpOM36c8lyZ2_qC2w-1
-X-Mimecast-MFC-AGG-ID: 2FKpjNpOM36c8lyZ2_qC2w_1752680546
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-456013b59c1so26852185e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:42:26 -0700 (PDT)
+	s=arc-20240116; t=1752680572; c=relaxed/simple;
+	bh=LkfYF7pYFAHo2uQSC7pPYzH3bZTmHka3sLvqjeIRpbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gkF9e/orq9rCdPlkEddzL5/zibOfuI7RcJZK4v7DgT9iVijBisSBvhoTFUigoqhLvMBlf9JsiLBCz1W82Q0PqtVnab9ptgZrWxyW80gnhe03lLzaYZ1v+TwXfAdNHOAU/IB/VaofGPazkG6b/vwz/ZUcopT9z4IxXnp/jIoZmQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=i1kO+21c; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0b2ead33cso11772466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1752680569; x=1753285369; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KxjVPc9lLv7029fkYsxMY5nTf0b4uYTpgTGxXCLpHBQ=;
+        b=i1kO+21cCeo7W1/aDgEkRR9vtxOOMn9LoyV1Esz8w26gSg6bCy+sqxAvxnfBwc6IQm
+         GlslMeGi8Vx4CHnp4R5BuaeS8JAudfGweM7G+TCTxmyACQJGGft4xlI6ifHsmOeTq0dV
+         NC292onhmtdzfCQwJqZX/+YjzcGIKjHrsaRYDkP+/uuOPN5buq2j+NNKHmyXJOU4OKoM
+         J9EpoT9b6XrXDS9r0gnnv267tm+fYCnRRekcm59QOQNZVQMD+zwmnHp5rFFn4kAGP1qS
+         tAwHDU80L3vUHbHa9zjlVjxWVGCLMGSnRUIfPIygmX473WJZFglkmTdRPahBV/NIl9eJ
+         QofQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752680545; x=1753285345;
-        h=content-transfer-encoding:in-reply-to:from:cc:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1752680569; x=1753285369;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rndApbRUJH/9ySRaZuvuddd+LJ0qzZtoIf8UZGoyWl0=;
-        b=GqrCEhQK+q1HKJ+2VbOUhvSieAknHvFyI+JCjke9kJGGv1pr33ZtvA34VpfbryDRC9
-         XSujnGuFIgwlVXHiHzk27sZAftGgI/Css2TuG/zS/x+ZNMpscx9qKRxNmSUJ2WR+2FaZ
-         tjEkvks2elalNuCOS5jlZaL1W/6NgibzQrBfjRuF9QgD52fIwGdaYHRlQLO93HdsCbsO
-         iDnPt8Aejkah97O+U0mMFs7RqQI3Xm/smtzrLv8KLuIF5j65Re+ygTz3Cu7F9smpbCkn
-         U7INlbB3eKxJctMXCjXsC3jYk7Mcm92fUjQDif+OuuO+IOSUiZutsXaywixQRidYn9tH
-         0viA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFMtLahR4mpBkiTyc9xVfcd0gx4HDlI0xAVe+0swTKPRkRL9l1sZ1avJ2ZI38WZo00lr5/1xh6AnXPUrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNtnnCwxF6CYyLUIvp6C+ayM+OyBpsahMyPcqvovg/4Gq5Lq5t
-	N+uk7dc4EbZy+0Et7bqvxzYgmPjdL2DzhXFs7hzg2JKaqvki19YVbWGsCxffnTzQz6XNpDL4fDj
-	PVchHKW0EKxEx9plsnzLSD06L5SM4agcw+Mg/FOs9AJ83Ko0JvFLF2jdCTFa3vZAc0A==
-X-Gm-Gg: ASbGncv7uIpSpO1aD7gvQQUWeFnw1CeMyRJfKmO25ux6+LpdcfRiipjN0KvSkTi5A/c
-	NXUQzb6CaxAi3DYg4wd2WrKXBbo+UYA3VWaIPd6Hla+yE1IeYXxRzME1nL4eUGHDBlv49U3K15B
-	fzNo5XZpEoF2eTP171DlWfWgTF7y83Vs0mMGM1idTM0A0/2acHBFnv8+wEIEzIdDtBJGQBTUEAb
-	lW/qtTJBlCLeC215jaf4rGIQbFIJU1cwcJeeb96vEVH5/OLAZl8z6u4ODz2ZBgqnr0TCN7ABfE2
-	xoa7/21NgjAs1/X5CvPiLpQNfFb7AjML+BwaGyyZWBR55lcREx5RskNvT+DZzsKiNHnGR37Hr4V
-	Rgh8549PNB2EmIXgGcifKCo0=
-X-Received: by 2002:a05:600c:4f85:b0:456:43d:1198 with SMTP id 5b1f17b1804b1-4562e3801ddmr31526005e9.32.1752680545545;
-        Wed, 16 Jul 2025 08:42:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkT6yS8w4ehV4jjOkM8mP1KeYO29OfS+l5HmUZtNYcvdpsyg0R71zObOMaHVlGlr5caUOuqQ==
-X-Received: by 2002:a05:600c:4f85:b0:456:43d:1198 with SMTP id 5b1f17b1804b1-4562e3801ddmr31525855e9.32.1752680545168;
-        Wed, 16 Jul 2025 08:42:25 -0700 (PDT)
-Received: from [192.168.1.167] (cpc76484-cwma10-2-0-cust967.7-3.cable.virginm.net. [82.31.203.200])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e819c01sm24635795e9.19.2025.07.16.08.42.24
+        bh=KxjVPc9lLv7029fkYsxMY5nTf0b4uYTpgTGxXCLpHBQ=;
+        b=fQ+wyTnmcIVMuMMvIzwjIUbvyK5rzBuucvEcOJnlzl4uqhAqi11HNKdVnjPg4hrbd/
+         XYGdN0jHRjeJUIOIYkZhTFdguUJl+7qXUiE5e8ELRS+Yfx0I05AyY+v1soKKdwfw+22S
+         h1trnKhQMwP5pNWSCXKZRMdQkUcKrIZ/B01fdQRVE/sA7GtdMqoXJnZ99CVZGaltbzg1
+         BknzE8YOr5HE6KyRZuUHcjXRZ4ootiHmfN/as24HNCtN4/t4Junn41qb55RiSfE/TsvU
+         Bm0EU1g1XZLtNnRszPER9V0ebXd2zQZqGwaW0ZZzBteABUBs2dboudzjtDsYRYKCyMax
+         tUxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVewS608Fm2sdQLlfuQB2V92hg4KKj3ENYfmGpJDKwV4RSLwEi/tUZWUXhJN7dGGqN8m0sX+bPM4AnMfW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe0KHwve9di7niy4wVAQCJOMpnWy3ql8kT746RhQK3Rg760QP7
+	qlyBA66HwqvJMrh7MC5ETkP44gfq9OHkG+02+/VwalSfbyQmnEe+Z+Ga2hEeyr8R0oI=
+X-Gm-Gg: ASbGncv7V5FqacVKPskzTyjiHAMFE+9HzPtSidY31/aYcNm8CDNpnb0I0wVuYYK48TF
+	0TZRob05ZtIKfWzo5LfoqrCgWPNBjQdJIoZ+6gA6DqGeiW6j5l8PRUZ37X+oeoyUs8GwL7jOYi8
+	E6wLU834VCbRPqTNeL/8c479TJQE2PCg3wpb+P9td+EAEBhtYWRSGLl2dCe1whSbkpcNBKmncJY
+	xiOjmho5+ui+2hTAbPkA/H48zsjACsPEBWDAnUdPPWtG94PsoHrd9Q+gs546Qj5N8AeYIELwYLe
+	Oplwn+JQO5/1Z1ufhCZObqHmX363ieOL7mJ4b2G3+A8jx0H4y/gYky9opDpvJJjvtVj3HUlrUHU
+	Tb4nSwLoPbIuDe4WMEKIBMTfvzqCOZZmV38k6JqBijdfG6F85KCdmOQ==
+X-Google-Smtp-Source: AGHT+IEXxAmRZhBfXJJ6RXAaXnDHc3IiJuVLZMZWlWOmL9qwv0jbe41xNN9dmF6K4gloyVg6nJBmJw==
+X-Received: by 2002:a17:907:3f94:b0:ae6:d51a:4ca3 with SMTP id a640c23a62f3a-aec4cff8016mr2809166b.25.1752680568653;
+        Wed, 16 Jul 2025 08:42:48 -0700 (PDT)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82df2efsm1217605566b.151.2025.07.16.08.42.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 08:42:24 -0700 (PDT)
-Message-ID: <0591ddb7-d279-4b13-bf2f-ffb913e82720@redhat.com>
-Date: Wed, 16 Jul 2025 16:42:23 +0100
+        Wed, 16 Jul 2025 08:42:48 -0700 (PDT)
+Message-ID: <1757a42e-573c-41ab-b2c4-b8e1f2c8f46b@blackwall.org>
+Date: Wed, 16 Jul 2025 18:42:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,30 +81,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [gfs2?] UBSAN: shift-out-of-bounds in gfs2_dir_read (2)
+Subject: Re: [PATCH v3 net] net: bridge: Do not offload IGMP/MLD messages
+To: Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org
+Cc: Joseph Huang <joseph.huang.2024@gmail.com>,
+ Ido Schimmel <idosch@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Tobias Waldekranz <tobias@waldekranz.com>, bridge@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250716153551.1830255-1-Joseph.Huang@garmin.com>
 Content-Language: en-US
-To: syzbot <syzbot+4708579bb230a0582a57@syzkaller.appspotmail.com>
-References: <68754d09.a70a0220.5f69f.0001.GAE@google.com>
-Cc: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-From: Andrew Price <anprice@redhat.com>
-In-Reply-To: <68754d09.a70a0220.5f69f.0001.GAE@google.com>
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20250716153551.1830255-1-Joseph.Huang@garmin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/07/2025 19:31, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
+On 7/16/25 18:35, Joseph Huang wrote:
+> Do not offload IGMP/MLD messages as it could lead to IGMP/MLD Reports
+> being unintentionally flooded to Hosts. Instead, let the bridge decide
+> where to send these IGMP/MLD messages.
 > 
-> HEAD commit:    347e9f5043c8 Linux 6.16-rc6
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11afb18c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f62a2ef17395702a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4708579bb230a0582a57
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172470f0580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d0fd82580000
+> Consider the case where the local host is sending out reports in response
+> to a remote querier like the following:
+> 
+>        mcast-listener-process (IP_ADD_MEMBERSHIP)
+>           \
+>           br0
+>          /   \
+>       swp1   swp2
+>         |     |
+>   QUERIER     SOME-OTHER-HOST
+> 
+> In the above setup, br0 will want to br_forward() reports for
+> mcast-listener-process's group(s) via swp1 to QUERIER; but since the
+> source hwdom is 0, the report is eligible for tx offloading, and is
+> flooded by hardware to both swp1 and swp2, reaching SOME-OTHER-HOST as
+> well. (Example and illustration provided by Tobias.)
+> 
+> Fixes: 472111920f1c ("net: bridge: switchdev: allow the TX data plane forwarding to be offloaded")
+> Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
+> ---
+> v1: https://lore.kernel.org/netdev/20250701193639.836027-1-Joseph.Huang@garmin.com/
+> v2: https://lore.kernel.org/netdev/20250714150101.1168368-1-Joseph.Huang@garmin.com/
+>     Updated commit message.
+> v3: Return early if it's an IGMP/MLD packet.
+> ---
+>  net/bridge/br_switchdev.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
+> index 95d7355a0407..9a910cf0256e 100644
+> --- a/net/bridge/br_switchdev.c
+> +++ b/net/bridge/br_switchdev.c
+> @@ -17,6 +17,9 @@ static bool nbp_switchdev_can_offload_tx_fwd(const struct net_bridge_port *p,
+>  	if (!static_branch_unlikely(&br_switchdev_tx_fwd_offload))
+>  		return false;
+>  
+> +	if (br_multicast_igmp_type(skb))
+> +		return false;
+> +
+>  	return (p->flags & BR_TX_FWD_OFFLOAD) &&
+>  	       (p->hwdom != BR_INPUT_SKB_CB(skb)->src_hwdom);
+>  }
 
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git for-next
+LGTM,
+Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
 
 
