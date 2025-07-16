@@ -1,301 +1,234 @@
-Return-Path: <linux-kernel+bounces-733981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69571B07B8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:52:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 416F3B07B91
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE59F178126
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:52:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12B3F7AF2D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CD22F5C25;
-	Wed, 16 Jul 2025 16:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07052F5C34;
+	Wed, 16 Jul 2025 16:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="aT7Z2p38"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RmALGIE+"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2066.outbound.protection.outlook.com [40.107.237.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3E62F5466;
-	Wed, 16 Jul 2025 16:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752684726; cv=none; b=Jlhvjyg4PBl1P4xohsoDYtzJqqf+mvfufZ/qNrL0soPrCLBRITVImQPs23evgRwkOgEgqp94StyBIKXXiSsX0QvuqigSNlh4MwewpxPPUCTyB1xvGr7Xs9dtjejpu0vu12d1s+7W0oNr6bS04mlArnnbqU1MLzWNbjLG/wivSxI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752684726; c=relaxed/simple;
-	bh=c0KFAemiEAizQp2k38W1DuW2PQBYBlNlBSNl4rQu5Qk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vEhOcDNQ/EkWsFlXEfum9FoeHFGf61vkt5gvDJ9Bc8alMQNlXUdMViy+yBqkaoZ/lkIbDVu5Zf7ln6hNqCeWyLQCJRfv9QqRVBpomC8GTE/f8jKmx1zR5fnxMOn/9IPOvT5CzDfh+UEedJ3g3jsQWto7tpnLbRM5umT7+Dx3Do4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=aT7Z2p38; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1752684717; x=1753289517; i=w_armin@gmx.de;
-	bh=c0KFAemiEAizQp2k38W1DuW2PQBYBlNlBSNl4rQu5Qk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=aT7Z2p38CfjeXl6Mmw7esrto1w5FZbGkF68bV+FRaWPQQ4zYZ/ZJvkUbERqzLRyu
-	 qZ/FOe1w9fRHxmJN8ZkI7EnjcWn8vcUqzswG7BwyerfjMoA+slg9ufkY3slOFgaHI
-	 4JeQDr9Z2eihDDB/Nn3omqip2BUeS5x64tu8tRoJW+CTxwz27fCrCNxrfm8/yQVMw
-	 38jF97088LfHUz2m22zelQBOY/jwFicq6gscsI61r7qUCShm15NxIjSYxy+cQbu3R
-	 Iz3e/49RWIclnXW+E56qdWNpQqxEmTkMYj6Vi6eSD0F8pMPtWBCZmtGa6PogpLlKj
-	 m0Ml4UTUUKzpiR+WQQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mel7v-1v9m9I1omb-00o4dP; Wed, 16
- Jul 2025 18:51:57 +0200
-Message-ID: <20213956-f1f9-4eba-84d0-a4ea5fc745bd@gmx.de>
-Date: Wed, 16 Jul 2025 18:51:54 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3DD2F5C24;
+	Wed, 16 Jul 2025 16:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752684759; cv=fail; b=oQRmqyDqEsI91Vf2Ud60cShM2mfDsdrMlI6mbtTJzGqmr02MbnffG6kASUzq4YKy52+ENHFPL7iCGdFTj8SmwfSuihW2Cv8wEWlEfMSYJ1CvBI2acsEz5qBkxZtpCPht/TJcQpQTlvR54LW/0VM2IgSdQmwdlpT1YWNYIL8Xgko=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752684759; c=relaxed/simple;
+	bh=s/GxeAGSz2VrbeVqJ8M2fpwdvPqTmMmHO6Nx8Ev1cQo=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=UR69DpcERsoufRe/MF3Pq4JnmwmB4i2gzQgNF3Zbtp4jPWjO8U5VwpVigp1sC22xFmg46rAdY69iYs5hodF120Fr6uEfwlnYOlwCSwjInTteAjI1vuY66VXEMV0q/JeK3RIAY9YGsAtem/6wt7zGu03JGBvBPaj+xfIkkt2eYUg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RmALGIE+; arc=fail smtp.client-ip=40.107.237.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=x/YFAnXpAbNxxv63uD5eUujOP7120ZDLjpd9aAcXS9lsDx1mYe9CRZLXgqBsSRRhb9stpKXBWMJR8WGCWVdnFI89AlQFfuNKP15rwv2RFupbKieGigz2HUURLOKJEjoUs9+we8uxP+PCoh7lNG3fAOUpMIDvwPqSkX+cxZj3env2L3Rjz0di6M4ooSUyFOd8jYppxB1ZpxA3BuSOmrlZ8O2cZN643HKzJqWIikR7IvRdIhK4wGKS68yNcYl8hEuggtzOV8+h018OzAwiYOtm2EeCZ51A8cb/hpn03TBuQX40GreYdy/7/a+fTyTSu2ZqqjeyQ95sbDMKhr+eSNKCsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZLtJ1U0oZ98SvvWeP25U68yuS6jfh4+PCa7Qh4DP3jc=;
+ b=LVQBeoGQU1cm6fae4Lyu1YR9LPf0juy3nkYHJwvKaH7L4WB1r9gajlWV47pJZMKKWJZvqktNoTw8beXZq7W+qlcu03MZjFmgB6gbdJRIuFdKIU62pgpcnD0LZ3qzYXztQ8ol69GGup6LX9VcS7wDwIM/cRc/hAtO/8jGOvSqwNRgEmkMCV+G5Dt4mdbIOWi69JUpHd3onbuW5nb7c0zT06NKmDqtROwuvbKGmuZqYtf4VuZ6SC9SJ8hyuT/Ic4FqqsXg157SznNO5LDPdxKO0yaAUbZWqEFCrXX2a3mA46hTK9zp/F8Vo+cVKhlhA8u3D+6Ez4lZMf5lEnK52DXXUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZLtJ1U0oZ98SvvWeP25U68yuS6jfh4+PCa7Qh4DP3jc=;
+ b=RmALGIE+tM70DDpbT8GKfcsl/Sy1+O2q4LTVTApPgS5JpJwQSgiC9KOrSBJU+xdHYOB4/TP1PxLciHh27Ul835cEADykyYOkFRJBM3cRyOTWLxm5p+JtXVhu6MpARWvPuWkjZpj8QdxfnNXDwaDQuG/XpOd2DD0GOJ5SywgTb6c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by SJ0PR12MB6829.namprd12.prod.outlook.com (2603:10b6:a03:47b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Wed, 16 Jul
+ 2025 16:52:31 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8922.035; Wed, 16 Jul 2025
+ 16:52:31 +0000
+Message-ID: <93f9ea0e-acfa-076d-ee39-42b7582675a3@amd.com>
+Date: Wed, 16 Jul 2025 11:52:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org
+Cc: linux-efi@vger.kernel.org, x86@kernel.org,
+ Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@kernel.org>, Kevin Loughlin <kevinloughlin@google.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Nikunj A Dadhania <nikunj@amd.com>
+References: <20250716031814.2096113-24-ardb+git@google.com>
+ <20250716031814.2096113-25-ardb+git@google.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v5 01/22] x86/sev: Separate MSR and GHCB based snp_cpuid()
+ via a callback
+In-Reply-To: <20250716031814.2096113-25-ardb+git@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR05CA0018.namprd05.prod.outlook.com
+ (2603:10b6:806:2d2::18) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] : [PATCH 3/3] Documentation: laptops: Add
- documentation for uniwill laptops
-To: ALOK TIWARI <alok.a.tiwari@oracle.com>, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
- wse@tuxedocomputers.com, ggo@tuxedocomputers.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
- linux-leds@vger.kernel.org, lee@kernel.org, pobrn@protonmail.com
-References: <20250712112310.19964-1-W_Armin@gmx.de>
- <20250712112310.19964-4-W_Armin@gmx.de>
- <533f0f95-69d1-4151-9987-84b7702179d2@oracle.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <533f0f95-69d1-4151-9987-84b7702179d2@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kKNpbXcZsNKqp3RQzdjpeMMr5vFRtbkY4YCdoB87SYhLP9UTKXf
- 48VUcQn2QN8eLMps59JNhbwm6/U82ghSkYf6j8XfByK6wmYQtvzZFOb130E8cD/+QB/7DaE
- n/qQZy9bipkcxR2bvgGBw2AVAql8BWcxW0MOi+NkfCoQl7Bhud9uHtV5YkvxhPFE0EU8Fvd
- kfpVjY2jfJjxAF9xtVz0A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0Pi65zeo9Ik=;bUDGapkUCcufhIjeIvb04i/II65
- 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
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|SJ0PR12MB6829:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2986ccb-0923-44ad-3d60-08ddc4892784
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L2dTeGZ2QnhLcVU3dGM2TmZldXBkSklwR21xOE9LQmxXYlFZb3RaN3Bxd3Fy?=
+ =?utf-8?B?RjUyeE8zeVpvREs5c09zNmFEZ0FNUWxJaUYrWXJSNFNOMEZiMWsvVktEVGxK?=
+ =?utf-8?B?c2JsZFErbEd3UVV6STdCRDQvZkw1SjV6SHZ0dHhSTXdvNWkwRmFqejNPZnU1?=
+ =?utf-8?B?a3phcUx6OEFJZEVnR2VKNFhSVU9ZQTFVTXRwZmpQdTB5STFtWWp1OHluSnIy?=
+ =?utf-8?B?aGVUbU9CeHFmaXpHenc3WC9OVUxneGxESThZYi9INGJMdUljZ2pLUXlkei9K?=
+ =?utf-8?B?MHlya0RHRlUwOGFVWFJlRU1JcUZQL2ExclI5blhHcXNrODQ5YmFSZDIrWTZn?=
+ =?utf-8?B?NWc0eVltbHgramV1QlFrczRBelIwbnFzOFdOQWpkYmV3QmFJUGpqUk42SzJB?=
+ =?utf-8?B?Sm44dTZPN0NwbzgyYzgzeTlDcEdiMVUyVUlQV2tjYmtkLytGdTlwL0REU0d2?=
+ =?utf-8?B?WE5tNjdBNnZHeVJiT0FkU3hsOG96OTFrRVF3MHptZFMxbGZ5TUx3YzVrMzN4?=
+ =?utf-8?B?OGxmcVN6d1BMa1Bvc0tnVzl3OTd3RXBQSE5ya0NpOVVaMlpSdHZ4ZWUvMEYv?=
+ =?utf-8?B?NVJuNzl2R2RyUG9UVmQvWFkwd0R1ekx3YVBTbnRBZ1JHcldWYlowaVdOSUVw?=
+ =?utf-8?B?eHp2V0hDemxUWnB4OTJFM29qd2cvQSszWnJ2ZFBKWTByY2dCR3FMR2pqWDBw?=
+ =?utf-8?B?aEN0a3lCQ2dLdUtQcFZrYlZFVmtMZzEwQ3o3RW8reEgxZzJqRHVwN1pSVWdN?=
+ =?utf-8?B?WXNSVm1QdnByMHBEcmt0OXAzNnJIb25VbkZQa1ducUtXQTdyVG5DWkFUYXZX?=
+ =?utf-8?B?UElYa2pEb1FBTlZpaUU4MzFUVUN1VVo0cnc5OVJ1M3lXT2dnUmo4Vk1ZdjV3?=
+ =?utf-8?B?SFBTTEVpckwwWVNXRTF3YWlIMEdGS21FS1BzTmszTHJ1aFdmZ1o4SEZwWnp1?=
+ =?utf-8?B?WDEzaGNTQTBTaFVRNmpZUFpiRUx2V1ZpNXptRjJiSVlFQ016K2pXRm8yQUMr?=
+ =?utf-8?B?U010MlI0cWNyZDRGSEhBRFU5M2Zacnp5K3R1dytZQTJOdFgxNkc2bzhYbjZu?=
+ =?utf-8?B?NGhRYkdINkZGa2plZFRKc1JUU0dVTWY4VVVjUmdRc1FTZlNBa3B4UHFPQXEx?=
+ =?utf-8?B?cXRKQTlRTy9peFl0cmlmbzhRekkxTTRRdVdQS0RqRUExOTZhTUNlRE54cGdm?=
+ =?utf-8?B?dWl6QzN3Z0poTHh6Z2QxWU9LakczK2FHank4SkRtQW5sc1FuZlRuVzYveUtw?=
+ =?utf-8?B?cDI1TVRNVXYwUzYrVk0zQWlXNlBxWnR6WXVZbjBYSXNWcVg5WkhSVzdWd1Ir?=
+ =?utf-8?B?VWQwU2dDRmo1NlNmTWUzZENTbG5aNCsvbThJZnVtYWUvelZoL05xaXpzMzFP?=
+ =?utf-8?B?dC9VQzBmdlk5Z0VySFZ2Q01mbmFkMTRWcnhMNU82aGI5MmNyWlJLTUtQTll0?=
+ =?utf-8?B?NDBENTlUc1BZOFRRY0tvUksyMzAxMUJhblNhRkduY3hIOFZ4dHE2bUhMTHdE?=
+ =?utf-8?B?c0dRQnhLQ0hMTVRwejJYMnR0T25MRGp2SXg0aEtvYWVkelJIcVFVWkJDQmg3?=
+ =?utf-8?B?N1BjNTllTXJ5WHhPMjc4NC9BWURWZzRHeVJha1RtRVFrZkxDbmdZSHVOTE9z?=
+ =?utf-8?B?VWNBL0cvWjlpWkRVYm85ZVl3MUtJdzVkemFhTjN5a1ZhbzhFZVk2WUpUdTZX?=
+ =?utf-8?B?a0JZLzZITno5dkZiLzFieGJuOVVDcjQzZlZONkQxWFpnOGlwN2VuR2NXTE9x?=
+ =?utf-8?B?eUpPcG9vS3RJZEV2Q0hOcUlGOHNmTUtZVWl0Y3AxRWE5VUIzWFRRZmFsUGJs?=
+ =?utf-8?B?T3dtaFFQdHpVQ1E2UU4wUFJZSDJEaElXeTk2dkwwMXRRTGhvR2RoUkNiYTBk?=
+ =?utf-8?B?Y1ZpOTlYeERUcm50K05WRkkrOVlBYTNINDE2N2xuNUFpYXc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NzI3eHdZT0R4aDlWMENvaitBYkRHUHJEVExMenJOL2d0Z01tVFJuZVpaUnFq?=
+ =?utf-8?B?WHRwWHkvaWtWeXBPM3dPcmtMOFl0akk4eVZmazBUeG1JSDVXaVhoUWVCbEpT?=
+ =?utf-8?B?VUVnRzZLcHFQakFCb0c1K3FWRHd5VS9RVURkeE15YzRxSEhPOGQ3Z3RiaGFl?=
+ =?utf-8?B?ZkU3TVNMVDVYb1JpK2EzR0V6MU1GQnBGV2QrTDFmWHFmM3lhdndXZnpFM2Iy?=
+ =?utf-8?B?VUFxeEJkcDEydER4RStqWmVzVVRWeGZPeTEvam9aellySGtHYkhLYW5SMlVM?=
+ =?utf-8?B?aS9RbjdBQjlLdmxET1ZvS1hLaE1kZno1VzdXQStra2hxT3plbmZQdXRadnR1?=
+ =?utf-8?B?MVkwR1gyekFFWEVvVE1naExSS1NCU0Zpb3dLODhjSUsvUHVkWnYxcXM4WVR0?=
+ =?utf-8?B?Q1I0UnJXQVJFRkNQZmZuckJnSXExUXJpWGw3Z3hISm5Demd5VE1Vb3ZyQ09D?=
+ =?utf-8?B?Ny9YZEtSeGc3b1R3MFQyYnJBUWlPK0REZGQ0dWIxYkZGRENOQlQyY3h3bVFG?=
+ =?utf-8?B?TDk1cjIyRUFjeEIzaFJDMUUrTWJ0cjRYd1NIcTVRWVZHNk4vNXhEQm14TDV1?=
+ =?utf-8?B?RXAvTk4vYmwvaTZOZWUrZ0hiMzMwWTdWTU9WUUovNER3UC9hd3dSSUdsclpF?=
+ =?utf-8?B?ZlFNV2toL2xOQ3RCTXRDZW82OGNKNjkyTWc5WXFORnpIc2J3YzNSV1Q2ZWtn?=
+ =?utf-8?B?S25wemNLL2pZSmloY25QcGxFWCtFSzFnYmZma25TMm1aRmhwYWhQeXVUVlBw?=
+ =?utf-8?B?QWNhUnhpOFRBT0pMSzRoU2dmMWl2bW9LNlhldjU1U3FqbXVJOGQ3Y2h2eW00?=
+ =?utf-8?B?RWxINEZXamZTYldBRVJNMlJqN2lWcHdNbkhaSGlNMVJFSnlQNWFQY0xMRCtx?=
+ =?utf-8?B?UmgxSi94cmtXUXVVUFBYYjhEZkdUTjhVSUVYWVVSZHIyY2ZiU3BGZ0sxSHN0?=
+ =?utf-8?B?SGw3YkU1SnFmSy9HblBJbmNIc2xSUnFIRlB3SEhXN3hUbGRjMElJREYvWGEz?=
+ =?utf-8?B?VGM2bTJhRk9wN08vT2hOSjhqYVk1czF4K1p1ZUVPZDNGUkZYanlodkV4Q1ZV?=
+ =?utf-8?B?WmVlZm5wa3RFcnl5NDY3V1lDbXVpczVodWQzeG02dThzOUtVQXdKaytoU3Vm?=
+ =?utf-8?B?cis3SU80YS91Z25WMkRRYWE2MlBhWnEyZ0ZVcEVscS9DTUl0U1B1R2d5TXZ5?=
+ =?utf-8?B?cnBqdXlxYzZXMHBqNGVnRjBnaWE4T0pCaHRJOVQ1UkdsT0tSTkpLV1hSVDJX?=
+ =?utf-8?B?Ykhxa1JEZHUyNXFnME03QVNtMVFQell5T01uVlhhRHNHRzFPOEFPaFduOFhl?=
+ =?utf-8?B?alJ6elV2d0h0QXJaRVhJeUlhRHpxZDJXMTk4TGJLSmNZMktaMzExVVhVdnov?=
+ =?utf-8?B?TjI2V0RPbnVHakw5TjhzTkNxeUpETC80aVdMcVFEYlJibGFYRXZMN1p3VFJ5?=
+ =?utf-8?B?TlUrUmYwaWtwd2JPaUhXMGIyZ0xRNThFaC9UbG9ZU1ZtMUlKUTNpb3Y5d2Zn?=
+ =?utf-8?B?WDd4K3JoVVEwVjhhdjFNMWJtWWwvUk5aWkQvYXF4b2FmcmFNT0s2OG5kMVBX?=
+ =?utf-8?B?Rnp3cFdHTHNOWnVNNysvdnlTWjZMUm0rcWxWRGx5ZGc4VlR1U0lXQk56eWFj?=
+ =?utf-8?B?RHlxa0wySWV3MUxTbVlLQzFnYTV5c3hISFdDbWwyaGtCUHBZNVNIQ0ZGV3hF?=
+ =?utf-8?B?YmFNZjJCR1lGd0FPcGNDYStzTGUvamxSeHVSMXZHbVF4M21nNjZyNlFJdkZx?=
+ =?utf-8?B?WGxqYWRDUmlMYlNiNUx3VTd0d05iZW1wL3QxdkQ4aXgwSUJJQ0k3VXZ3OThw?=
+ =?utf-8?B?Wjh4SkN0RFFHZzdSREhtR2VwYW92ZmRBKzQrRVBhaDdlK3NWN2pya1RTaTVa?=
+ =?utf-8?B?SWZDTTVkZmN0ZnVUQVFNeXVSVTNTWVR3dWtCL3ZRa2J3R3g5eEY1am5Ha0Mx?=
+ =?utf-8?B?eVhwV0NheXlVekY1KzY3L0N5U0hoWDJoRStVMFRQQ2M2eTl3MjU5R3A5NEZm?=
+ =?utf-8?B?ZGQ0V011c2Y3WnQxRFFma3I2ZEM5a0dPV0RpU0dlR0JQUURzb3J1ZGltc0Ez?=
+ =?utf-8?B?eTlZU21XVXdsQzE3MzZtSXdjWDBDR3NvTDhPYkVTMmJuaEJvT0ZONzd1WnBx?=
+ =?utf-8?Q?RygjszHdDJ5qGewkxgUsdXWek?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2986ccb-0923-44ad-3d60-08ddc4892784
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 16:52:31.1502
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WTnRAm/E24UrGPiDRR5VjtwfdmSrDJTyOGJRpfbt2XXOB+2f+nVcZSle+WZG1Fc0j5Fy0kb6Si9kOWLk4BiWuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6829
 
-Am 12.07.25 um 14:54 schrieb ALOK TIWARI:
+On 7/15/25 22:18, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> There are two distinct callers of snp_cpuid(): one where the MSR
+> protocol is always used, and one where the GHCB page based interface is
+> always used.
+> 
+> The snp_cpuid() logic does not care about the distinction, which only
+> matters at a lower level. But the fact that it supports both interfaces
+> means that the GHCB page based logic is pulled into the early startup
+> code where PA to VA conversions are problematic, given that it runs from
+> the 1:1 mapping of memory.
+> 
+> So keep snp_cpuid() itself in the startup code, but factor out the
+> hypervisor calls via a callback, so that the GHCB page handling can be
+> moved out.
+> 
+> Code refactoring only - no functional change intended.
+> 
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 
-> On 7/12/2025 4:53 PM, Armin Wolf wrote:
->> Add documentation for admins regarding Uniwill laptops. This should
->> help users to setup the uniwill-laptop and uniwill-wmi drivers, which
->> sadly cannot be loaded automatically.
->>
->> Reported-by: cyear <chumuzero@gmail.com>
->> Closes:=20
->> https://urldefense.com/v3/__https://github.com/lm-sensors/lm-sensors/is=
-sues/508__;!!ACWV5N9M2RV99hQ!MfQKq-XQLt4Lj_zRVzpbw1q-Y2RgiAMwHHbA8oE3H1FH_=
-iL99Vb9H29zjLtdHf1xmTUNkT6ZM-xUiZmfJew$
->> Closes:=20
->> https://urldefense.com/v3/__https://github.com/Wer-Wolf/uniwill-laptop/=
-issues/3__;!!ACWV5N9M2RV99hQ!MfQKq-XQLt4Lj_zRVzpbw1q-Y2RgiAMwHHbA8oE3H1FH_=
-iL99Vb9H29zjLtdHf1xmTUNkT6ZM-xU2Vmgr2k$
->> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->> ---
->> =C2=A0 Documentation/admin-guide/laptops/index.rst=C2=A0=C2=A0 |=C2=A0 =
-1 +
->> =C2=A0 .../admin-guide/laptops/uniwill-laptop.rst=C2=A0=C2=A0=C2=A0 | 6=
-8 +++++++++++++++++++
->> =C2=A0 MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 1 +
->> =C2=A0 3 files changed, 70 insertions(+)
->> =C2=A0 create mode 100644=20
->> Documentation/admin-guide/laptops/uniwill-laptop.rst
->>
->> diff --git a/Documentation/admin-guide/laptops/index.rst=20
->> b/Documentation/admin-guide/laptops/index.rst
->> index db842b629303..6432c251dc95 100644
->> --- a/Documentation/admin-guide/laptops/index.rst
->> +++ b/Documentation/admin-guide/laptops/index.rst
->> @@ -17,3 +17,4 @@ Laptop Drivers
->> =C2=A0=C2=A0=C2=A0=C2=A0 sonypi
->> =C2=A0=C2=A0=C2=A0=C2=A0 thinkpad-acpi
->> =C2=A0=C2=A0=C2=A0=C2=A0 toshiba_haps
->> +=C2=A0=C2=A0 uniwill-laptop
->> diff --git a/Documentation/admin-guide/laptops/uniwill-laptop.rst=20
->> b/Documentation/admin-guide/laptops/uniwill-laptop.rst
->> new file mode 100644
->> index 000000000000..29f6ee88063b
->> --- /dev/null
->> +++ b/Documentation/admin-guide/laptops/uniwill-laptop.rst
->> @@ -0,0 +1,68 @@
->> +.. SPDX-License-Identifier: GPL-2.0+
->> +
->> +Uniwill laptop extra features
->> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
->> +
->> +On laptops manufactured by Uniwill (either directly or as ODM), the=20
->> ``uniwill-laptop`` and
->> +``uniwill-wmi`` driver both handle various platform-specific features.
->> +However due to a design flaw in the underlying firmware interface,=20
->> both drivers might need
->
-> might need or may need (optional)
->
->> +to be loaded manually on some devices.
->> +
->> +.. warning:: Not all devices supporting the firmware interface will=20
->> necessarily support those
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 drivers, please be careful.
->> +
->> +Module Loading
->> +--------------
->> +
->> +The ``uniwill-laptop`` driver relies on a DMI table to automatically=
-=20
->> load on supported devices.
->> +When using the ``force`` module parameter, this DMI check will be=20
->> omitted, allowing the driver
->> +to be loaded on unsupported devices for testing purposes.
->> +
->> +The ``uniwill-wmi`` driver always needs to be loaded manually.=20
->> However the ``uniwill-laptop``
->> +driver will automatically load it as a dependency.
->> +
->> +Hotkeys
->> +-------
->> +
->> +Usually the FN keys work without a special driver. However as soon=20
->> as the ``uniwill-laptop`` driver
->> +is loaded, the FN keys need to be handled manually. This is done by=20
->> the ``uniwill-wmi`` driver.
->> +
->> +Keyboard settings
->> +-----------------
->> +
->> +The ``uniwill-laptop`` driver allows the user to enable/disable:
->> +
->> + - the FN and super key lock functionality of the integrated keyboard
->> + - the touchpad toggle functionality of the integrated touchpad
->> +
->> +See Documentation/ABI/testing/sysfs-driver-uniwill-laptop for details.
->> +
->> +Hwmon interface
->> +---------------
->> +
->> +The ``uniwill-laptop`` driver supports reading of the CPU and GPU=20
->> temperature and supports up to
->> +two fans. Userspace applications can access sensor readings over the=
-=20
->> hwmon sysfs interface.
->> +
->> +Platform profile
->> +----------------
->> +
->> +Support for changing the platform performance mode is currently not=20
->> implemented.
->> +
->> +Battery Charging Control
->> +------------------------
->> +
->> +The ``uniwill-laptop`` driver supports controlling the battery=20
->> charge limit. This happens over
->> +the standard ``charge_control_end_threshold`` power supply sysfs=20
->> attribute. All values
->> +between 1 and 100 percent are supported.
->> +
->> +Additionally the driver signals the presence of battery charging=20
->> issues thru the standard ``health``
->
-> thru -> through
->
-Will fix.
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+
+Just a minor comment below...
+
+> ---
+>  arch/x86/boot/startup/sev-shared.c | 60 ++++----------------
+>  arch/x86/coco/sev/vc-shared.c      | 49 +++++++++++++++-
+>  arch/x86/include/asm/sev.h         |  3 +-
+>  3 files changed, 61 insertions(+), 51 deletions(-)
+> 
+
+
+> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+> index 89075ff19afa..2cabf617de3c 100644
+> --- a/arch/x86/include/asm/sev.h
+> +++ b/arch/x86/include/asm/sev.h
+> @@ -552,7 +552,8 @@ struct cpuid_leaf {
+>  	u32 edx;
+>  };
+>  
+> -int snp_cpuid(struct ghcb *ghcb, struct es_em_ctxt *ctxt, struct cpuid_leaf *leaf);
+> +int snp_cpuid(void (*cpuid_hv)(void *ctx, struct cpuid_leaf *),
+
+You use cpuid_fn elsewhere in the patch. I'm ok with either one, but
+they should match name-wise.
+
+Also, you should provide an argument name for the leaf pointer or no
+argument name for the void pointer (throughout).
 
 Thanks,
-Armin Wolf
+Tom
 
->> +power supply sysfs attribute.
->> +
->> +Lightbar
->> +--------
->> +
->> +The ``uniwill-laptop`` driver exposes the lightbar found on some=20
->> models as a standard multicolor
->> +LED class device. The default name of this LED class device is=20
->> ``uniwill:multicolor:status``.
->> +
->> +See Documentation/ABI/testing/sysfs-driver-uniwill-laptop for=20
->> details on how to control the various
->> +animation modes of the lightbar.
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 3efec7a99262..fe302a610fe6 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -25495,6 +25495,7 @@ M:=C2=A0=C2=A0=C2=A0 Armin Wolf <W_Armin@gmx.de=
->
->> =C2=A0 L:=C2=A0=C2=A0=C2=A0 platform-driver-x86@vger.kernel.org
->> =C2=A0 S:=C2=A0=C2=A0=C2=A0 Maintained
->> =C2=A0 F:=C2=A0=C2=A0=C2=A0 Documentation/ABI/testing/sysfs-driver-uniw=
-ill-laptop
->> +F:=C2=A0=C2=A0=C2=A0 Documentation/admin-guide/laptops/uniwill-laptop.=
-rst
->> =C2=A0 F:=C2=A0=C2=A0=C2=A0 Documentation/wmi/devices/uniwill-laptop.rs=
-t
->> =C2=A0 F:=C2=A0=C2=A0=C2=A0 drivers/platform/x86/uniwill/uniwill-laptop=
-.c
->
-> Thanks,
-> Alok
->
+> +	      void *ctx, struct cpuid_leaf *leaf);
+>  
+>  void __noreturn sev_es_terminate(unsigned int set, unsigned int reason);
+>  enum es_result sev_es_ghcb_hv_call(struct ghcb *ghcb,
 
