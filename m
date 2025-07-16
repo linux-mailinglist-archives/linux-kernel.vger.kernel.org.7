@@ -1,79 +1,55 @@
-Return-Path: <linux-kernel+bounces-732927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4B5B06DC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9FCB06DCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BF2D18913C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:20:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 342A31893618
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846382857CA;
-	Wed, 16 Jul 2025 06:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442CC287519;
+	Wed, 16 Jul 2025 06:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cAvmAHj6"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="YzPYSKVk"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1724A244666
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C45198E8C;
+	Wed, 16 Jul 2025 06:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752646795; cv=none; b=W+KLmWkyNJvTmNiDJdeLUU62EI4aY/TmaoEH+FAPt3dh1Q6wV9k0ayp/8AqbZwVq46ECfNuei3bXGWHdblcuIqVyhFYEMBY4TyNROtz7RgkJ+jMPCOtupq89Rmx2lPbAgiL1rJ/IcziOnRuPyRTyYolIs6BTzqMCUmTlhSfdgg4=
+	t=1752646876; cv=none; b=Ko7Z8pKUZedEpqvyyfpVfx4KgrxPq+8mmaQ2kTEihtYjziZnvnmScos2ezLJxhHA/qEnFHEMK9QUwsWtjAr5xXD4UqYTAGgkLzJVsKp4LCg6HQoVb6fw5HPF5dZS3yCiMMd+IHCqvI5nho0XrsfJ+P4F3Uhh9IVjBuV1VIdz3Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752646795; c=relaxed/simple;
-	bh=N5O7Zmv+CoGIhXmzSjswUPzYw8i+fXXsX2KBPeBEbJo=;
+	s=arc-20240116; t=1752646876; c=relaxed/simple;
+	bh=AwSGTpX43FxBW3QEbJaXzRq3ikYTNoZRw3/bc98cmn8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CBXPr1DCLfdXMmnsI362yLKGAzm6nJDzByPdgy1ezCpWJ8DWe2s237Gw9FXeampux6meT8K7vSo9JPjpiv6PM0gTCiUymjzm4Sho6ogZOGc5W9qa8HODFd+oWFJ/lT2bvAHyhSYfx5JdhC9SY/Yg5EistNQ5+UAuabrHQxos7mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cAvmAHj6; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b39c46e1cfso778088f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 23:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752646792; x=1753251592; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UAF6zkhihHyJEjRriO3U2GgOKlyQi3H90FYrzq25aUU=;
-        b=cAvmAHj6RsTXPh+nabXG9G9ZW/8GP2pSzuTMx3vB52i522GjLDXbGjkJaSwwYBlfFg
-         RUlqAvae88Ihtqx3hw2AvkG94Qnr3g9fiXbKrVfd6t0AHhNjg5OrXRDhrKVFzc87Nlwj
-         LDKSSuHK2mp/55apzkC2ymlhQPt144cw+NmpE6CpXhYHN2ONMMMurOyJrwS3iS5iDhT4
-         +1J7cG0dYRTp/6l7BMo0oQARIs1WTurG8lhilBsedFajBQqhVlBT77xdcOl9ojWB4jyt
-         Q4nBr2naqLU6khYXXau7LwT/Z+dx7PDsF5HfRjJ2JfvVy6YyA0s4mMKz4KTBZ6ir4/mT
-         yN7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752646792; x=1753251592;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UAF6zkhihHyJEjRriO3U2GgOKlyQi3H90FYrzq25aUU=;
-        b=q0XdX5qKw/0s+mMsmk2sbvwsu6dDVFgOkv+iNXn4CLpaJ1rdNYBarIGGRvlZS3AFRA
-         1s3gufELrvIO5ouZhs8/FcoTq5MCXLJlC0Au9vzLcR0l0BCUbefYDqEqztzBu+JwjNgG
-         x+ygP1QL4GPkDOhASeHuKvr2Y8mOBuivnoSms2whTXoApy1gnKQ9SYYZLErHBRYDOsoD
-         dpgOgJYFf3XZAN9DZmWnuTQ2TdUOdBgoVzWXuRsCwrEZKO7cT7VbTHI30q5wYSnBuLay
-         CGU7YaFYfwlVtdmCNrDEvtVXf0kjTTCe4tSYQmHEdC55xqEQRsX74oQxmJcTU3Jl4gyx
-         xOCQ==
-X-Gm-Message-State: AOJu0Yy2TWcBOcWpDGUa9o5J/bhmueYYhzHb858rbd8BTPswpqX69X8/
-	VQ+p0gTuU/Cd7fBzjQK9L/x3lC7Vo/fGrlH4RoibeU4oiIxRiOIQw1+wKNY6iJ5phOo=
-X-Gm-Gg: ASbGncu7mUdAtn/PKHaQ+Yn53rmukrxVuE44bUuyDuqqXaSINhLHRWFzIbxlrO9D1RD
-	jlJt8g8yn79VaKpiqjVXdIN8iXJOzNcTF5dmAPYCfQfxUR6Doe0wATSM9iaNL+C9PdRqD7+22kL
-	3Ak/KTG7kFobIrjAajgCPsH6MNmMXttvM0O6Ezx2RPm4DvVad4iBX29B90E8lOyc8x8J122HrXz
-	m+W7stYAab8WezyODrHer/tOgOYGm4h5IWNYl4z04Lyoq9cjI42zDvqhJNJ3Hq5a0fnNqoz6ctJ
-	ZrPsFw6G79RigSUx1/OFKsv/Hragdr2vTwKfZHAUbLBV7NyfedvO7yqKqyuDJFw+4s7m3/ooQDE
-	uZn+d2oRrScdr6C4NQ6HZvbEScU5MARCwWryoMzcP9g==
-X-Google-Smtp-Source: AGHT+IHI0hd/n8NAa98HjZDNO6oTeVz/r9RT2yB1ZLU6gmZTDJajNmBr9/wXERA7va12tk1kFVAPhQ==
-X-Received: by 2002:a05:6000:21c5:b0:3a3:6e85:a550 with SMTP id ffacd0b85a97d-3b60dd525aemr353932f8f.5.1752646792292;
-        Tue, 15 Jul 2025 23:19:52 -0700 (PDT)
-Received: from [192.168.1.110] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1e332sm16996174f8f.79.2025.07.15.23.19.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jul 2025 23:19:51 -0700 (PDT)
-Message-ID: <5a000710-516d-462f-8c0d-9e58e4abf4c3@linaro.org>
-Date: Wed, 16 Jul 2025 08:19:50 +0200
+	 In-Reply-To:Content-Type; b=uiNF+3Tfd4sXzgLNh0A5PZ4oLjPAoLsH18PRN8qWDceuxB0lj3x8XVkjemV+Wp0cv0KldhjDoC2F2rVrCMWTW+/4zOwHVbYPD4Qc8wqYcUT90jRBirek3vyPE2Hn9ZRUZm7laWEAYg0gc0dJqQokinObhTFH8NGFR0esj0haorE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=YzPYSKVk; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nCTAka4Z34Vup8fOFjJvbq1l+srqLEDBoJV6NHCQMmI=; b=YzPYSKVk7NMvpPPeTgZYPk9D8E
+	RZfTRT2hFezsdc8cAEpa1P4xxUqE/iAXCyoX6KityJo/9WtF76J2+Ybb7TKGz2LNXWqyJqcTK6mJq
+	OnUn3yWf4sG8WfkB3x7T6nlHcpy0mn0EymSx1N0wIxD1AnfTF3+VhuiDOWZQPv3GFfL+xfWDhcxU3
+	RkKN8kpa0yZs0HzF3nf4Ks/zdTDxVGmp9liFNcm83kWiFSoTbpqr0TLV6iGP+pWEbAn1ev4FpZ3IZ
+	yXF5OllpjG8Ww2yju3AclUdkzZs1mhE8LpQz2XL7j0PU6IoJiRJC0IZVxhJTCsAVhrDzWsGe+sYov
+	4DmOwKjA==;
+Received: from [89.212.21.243] (port=41462 helo=[192.168.69.116])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1ubvVr-007q6F-0M;
+	Wed, 16 Jul 2025 08:21:07 +0200
+Message-ID: <b32ebf83-0c4f-4321-94b3-1efcbb811073@norik.com>
+Date: Wed, 16 Jul 2025 08:21:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,92 +57,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Jul 15 (drivers/cdx/cdx.o)
-To: Randy Dunlap <rdunlap@infradead.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>
-References: <20250715204504.36f41a8e@canb.auug.org.au>
- <b2c54a12-480c-448a-8b90-333cb03d9c14@infradead.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 10/12] arm64: dts: imx93-kontron: Add RTC interrupt signal
+To: Frieder Schrempf <frieder@fris.de>, linux-arm-kernel@lists.infradead.org,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20250714141852.116455-1-frieder@fris.de>
+ <20250714141852.116455-11-frieder@fris.de>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <b2c54a12-480c-448a-8b90-333cb03d9c14@infradead.org>
+From: Primoz Fiser <primoz.fiser@norik.com>
+Autocrypt: addr=primoz.fiser@norik.com; keydata=
+ xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
+ JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
+ ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
+ gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
+ jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
+ 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
+ TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
+ AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
+Organization: Norik systems d.o.o.
+In-Reply-To: <20250714141852.116455-11-frieder@fris.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 16/07/2025 03:32, Randy Dunlap wrote:
-> 
-> 
-> On 7/15/25 3:45 AM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20250714:
->>
-> 
-> on x86_64, when
-> CONFIG_COMPILE_TEST=y
-> # CONFIG_PCI_MSI is not set
-> CONFIG_CDX_BUS=y
-> # CONFIG_CDX_CONTROLLER is not set
-> # CONFIG_GENERIC_MSI_IRQ is not set
-> 
-> ld: drivers/cdx/cdx.o: in function `cdx_probe':
-> /home/rdunlap/lnx/next/linux-next-20250715/X64/../drivers/cdx/cdx.c:314:(.text+0xc8b): undefined reference to `msi_setup_device_data'
+Hi Frieder,
 
-Thanks, I can reproduce it.
+On 14. 07. 25 16:17, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+>
+> The RTC EVI ouptut is connected to a GPIO. Add the interrupt
+> so it can be used by the RTC driver.
 
-The driver was never selecting CONFIG_GENERIC_MSI_IRQ and that part was
-missing. I wonder why arm64 compile testing without GIC, SMMU and other
-drivers, which select it, never reported it.
+AFAIK, RV3028's EVI is an input pin (EVent Input).
 
-I'll send a fix.
+Please check.
+
+BR,
+
+Primoz
+
+>
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> ---
+>  arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi b/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
+> index 119a162070596..c79b1df339db1 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
+> @@ -205,6 +205,9 @@ eeprom@50 {
+>  	rv3028: rtc@52 {
+>  		compatible = "microcrystal,rv3028";
+>  		reg = <0x52>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_rtc>;
+> +		interrupts-extended = <&gpio3 19 IRQ_TYPE_LEVEL_LOW>;
+>  	};
+>  };
+>  
+> @@ -468,6 +471,12 @@ MX93_PAD_CCM_CLKO4__GPIO4_IO29			0x31e /* CARRIER_PWR_EN */
+>  		>;
+>  	};
+>  
+> +	pinctrl_rtc: rtcgrp {
+> +		fsl,pins = <
+> +			MX93_PAD_SD2_VSELECT__GPIO3_IO19		0x31e
+> +		>;
+> +	};
+> +
+>  	pinctrl_sai3: sai3grp {
+>  		fsl,pins = <
+>  			MX93_PAD_GPIO_IO20__SAI3_RX_DATA00		0x31e /* I2S_A_DATA_IN */
 
 
-Best regards,
-Krzysztof
+-- 
+Primoz Fiser
+phone: +386-41-390-545
+email: primoz.fiser@norik.com
+--
+Norik systems d.o.o.
+Your embedded software partner
+Slovenia, EU
+phone: +386-41-540-545
+email: info@norik.com
+
 
