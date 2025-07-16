@@ -1,261 +1,211 @@
-Return-Path: <linux-kernel+bounces-733425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB90B07485
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF6DB0748F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60809566BFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BFDF1C25FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FE52F2C6B;
-	Wed, 16 Jul 2025 11:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CBE2F50A9;
+	Wed, 16 Jul 2025 11:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="RC7XYkoO"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cwc4CFLj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E042F1FF2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752664834; cv=none; b=FxxbMGnq+QN9fFhWDVNE77+rRVXI9i1SlRw+kBXmrXEB/Q4I98A1I9PI7+WcX6ASk+xKT/IgOPhJ8r/b4WmP3VMAsRSyazXqrMvrfvDdXp/azXG+Ky2CV5N+HSMbB0Yl6iIIGJSPVjjlOrYtbDXxVhd4nhqEa7/0cs/qwnFDiVU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752664834; c=relaxed/simple;
-	bh=rdVfHRyHli6kYrkwY39Hd8R+U1nb5c5moANmUD9cIOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LKehaxzLw/j9J66V6J+P4a5ItNGD/RD/7OcNB7f+6nPQAZRw2TWk/NIYHzX4c60KYgMhuXwKG2P5xWVZYpCEtfbBSEBPlsMZUNbPtEXdzvWyKGZJwETWHfRWgqLXa+LcHHzViNa1V1i19gMu5oSgMvaebPtrGfjzuljbHLhkVeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=RC7XYkoO; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7490702fc7cso3970998b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 04:20:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752664831; x=1753269631; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tBkJ72ZaxCg3y6ThdifmajrH59yMRxqhR6Yi2cpcKlM=;
-        b=RC7XYkoOReC6AcaAVyNDNbmfpIjG3coIy8kTvyU6U2yKpE2O5vyEOh89dXUXe5byvA
-         r1V5EBakRK+nMGdxfT3JdP3+Rf0D0AccQpGVEssgwse0fUdiI3s3x847B09rFTfY57zd
-         dVJdOXhUcDxTdCLWFOywyaPBjL0Sh6O/l21COBMUWfpF22HKBdLu10VPhCXloQLdnRcH
-         aC/1PE17fuSnDrnW9FmGVbrWvIGdGeaBeXKjORqRyn3GSDkZ80APG5PMXv0q0XkU73Ft
-         kGB5FHFaoaPEzFrW85p3dRrTUaVqN3Jvl//I3Ec3MbXcidB4drhiDB+0wDhT525JpLt3
-         WBuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752664831; x=1753269631;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tBkJ72ZaxCg3y6ThdifmajrH59yMRxqhR6Yi2cpcKlM=;
-        b=GStT4BgKpmkKFawDsJeE+XSeNikItuPWGnHt0c90LRSB49uo2+WJBd3OzwpDPt2Jl+
-         Iglkf0x+6Y5R1py3y2PxeDWtCttrErNKCOZHs0KmPDNGHgfxTEQPNqAxLi2Sg7/FTL6/
-         A2zLvgeXSB47lNN6gTa7bC8TnsDhJVpw1EB0KWx2pZ5hFsv2dTAaAHhdnzt9Lk9Rk/tE
-         7Mh2Xv7a0MUHLOa8CG7q5zireE9PWD4JbagbAKTZ66VQtVY1MxWB4yGz5G7r1dRlIIuK
-         b40VSzk+GbDsudk/ihFvQaKhTKitmcUxo/96/8O/2BkxlkKN7YoqnZB3+9cC52zTfTuP
-         y4sg==
-X-Forwarded-Encrypted: i=1; AJvYcCXPGDfNU15cmD9BwGaM9u5PAsXVlZmW3x394OsGrXKT9Nn4D6vKtE941aFUg2XC3jOpvULp4zMHIIgd2WM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9Q/9DC+G8OYLcwCRr4YVfjgpoB2DTMUWX8geoAUNHyQkthczh
-	wbGzNwzmw3eCAoSyILnNPbUtjGEI/bIacuGzqV61QX+HIP4ijSszIvFJCCNLKIBpxRM=
-X-Gm-Gg: ASbGncujxR7ME5O+kIiPwnbNcpwyTmLsJ1r+Y7zA5Z+T/5oS/S+4Crac2Y3JdTa0WYO
-	vQ4i/uwZ0IuK5l5VLWy3RjAnIJohq2uxxBNPrEVuuAAoPilt4S2w3jbejjXydgiMiUD2IAOSEaE
-	t4GW+8CQ5i4Zoo8+Sr8OTYZBcj/xu2fAWOMSCcoQBBqj431NFOVYdHpFKEnvdl659KdJknj5K3R
-	9pm8fwfw+2OtEgPQG+YQIS+kCG9A00HSk6ysmCG6h+IRD2vdxrSutI+UoQ3xQrRO++rGpPT28QV
-	j/6Zw95gPHD9lOSRE4a28s+IM1ovae2j5yyBfnz+rlz29bk0+cB0dvR1Io/sWMGheL62/A1OVoK
-	5GhUW8SIv65MIdhIwMaKYfEBd/RbURq7SezEnkWVsYA8=
-X-Google-Smtp-Source: AGHT+IGlAPLsLx7LcyONRmAEOzWgymSbYJ0QmJ8EZHjtr8ZNky5ajwfD9mZageUtIzN0LsSNejopBg==
-X-Received: by 2002:a05:6a21:3299:b0:231:c295:136d with SMTP id adf61e73a8af0-237d5a04b98mr5085396637.14.1752664831266;
-        Wed, 16 Jul 2025 04:20:31 -0700 (PDT)
-Received: from [10.74.26.146] ([203.208.189.11])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f4bc51sm13775462b3a.116.2025.07.16.04.20.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 04:20:30 -0700 (PDT)
-Message-ID: <9a2b5887-3874-4d3d-bbd8-0b5a25d3e605@bytedance.com>
-Date: Wed, 16 Jul 2025 19:20:25 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F902F4A11
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752664841; cv=fail; b=irC1qQh9SRpD5ceq1/xil0jMr5PS/xXpaXsZuXXqIYCj2nh9pcUspfuSdhELP8Hjfaou9expVna6OE86GbgY+BbwH7qswU8nXUef12BySu/9rczCHRvDQeo5CKkBdBA2gOhTLUAcZJG5ntSmf3W9xYpWVg0fXbYQT0Q86/Xhkzo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752664841; c=relaxed/simple;
+	bh=tuv5L7N7pjmc+epwR5j6wFMqx/bYDfTTQHGGUTidnmE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=d9rVav3+5AzsJkTIx1uzwCbCUQrX+pQoEJm2SUlZReDEnPXTR6z/7nL1Z6MMbVzMTSnzxQcxS/7ObECHGQW0BmqH380EVU7+LGFmcRSTewwc1n1T5jBJqkEPGaqwVBeHBs2UP03aNg5lRG2/9IZnPQ8p8r8Lgv7s4HB0ncpNFn8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cwc4CFLj; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752664840; x=1784200840;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=tuv5L7N7pjmc+epwR5j6wFMqx/bYDfTTQHGGUTidnmE=;
+  b=Cwc4CFLjY5uq9clTslm1Rjcmid8rfDZwGzItEqILp1wJKcvo9g67uTtH
+   Jf1DMTuiPBVwzxyW/qFazdovKPFUF5IRQemhDUt9pdIIUyD1FEFwKuJeS
+   tn1CvC9x6c5rCJ57X53bWKUKMiMHeNm5Tt639Kpl5G5XU4eUj1sLuVa/y
+   7wo9ms2OE/69kXDLXiTzrM4VYK0iXSgIcn1XfUAe+zbGWPKDaGECL8MI0
+   6xh+w705GEFIwL+ux++/C2t44kp0L32KkraFW9Nh2uZF2ICTTCqXci8Jc
+   KI/5Z0PTTaVE5CIEsGwct2oMbxUl0fNbGWkEQ1/SoxRVe7nYU9t/0V0oR
+   Q==;
+X-CSE-ConnectionGUID: zTnvZQXISv6Qm2DbKfpK2g==
+X-CSE-MsgGUID: pS+ZYHjLRj+wqKCTcjMsLA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54845436"
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="54845436"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 04:20:39 -0700
+X-CSE-ConnectionGUID: b0RxoOx7RaahP+MG8tuyPQ==
+X-CSE-MsgGUID: R8TuW40LQX+HPl1rhr6jwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="156879566"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 04:20:39 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 16 Jul 2025 04:20:38 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 16 Jul 2025 04:20:38 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.70)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 16 Jul 2025 04:20:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VkeH/g93+jFuUZP4Qw0SX2arXYp0EJBA+H8z8JcFQ/y1+/331CnRv1k2laf9M+Lr68DWUr290fU3kY1X0lRc+wrIqBDwQe3g4UsLWGYdvRMx7RdCh1wjG9DLqv7RWZLVHBND7eBICmYFg9u6r+BXVC4oJZ5BXvvG19AU6C6hcYDVLK5Xnq77UYX4ouP+kzhK0wLAolBIGwkEJJYHucXeXUiittEYWm8mTyQa/aGDhvVXJQszB3FnAqMeZS8Vx/XXawvUiHFksLVyqDqLYIkJbuP9RMV7LGHcs9ynzyGIYtzJvkk6P+lnmYRROxuFezvlmxux8gAp0ZgU5iWzf4p0MQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tuv5L7N7pjmc+epwR5j6wFMqx/bYDfTTQHGGUTidnmE=;
+ b=ZnQ6c9eSOh6OzTnGx6wYwdv5iJ2pTUDLKCfq2CNwLNnU4SZljR/iibWNUausrp40shwLrpvfSm/sV3xyws3R0EJlWJ2HHTy+eysx4crBtuV8R6Wv6/bP3oaqz9WyrBKorXZHi9kqDSxFOFYshwHASm4uhUaDHmbgVxGFJ2Zgu8gpR2NKKqBJzWxS1TPg8/9Fdogq9ZZ5JAOzMAg/R3nkbLI0SR2asI73ZbBAAwcOJL5HEjRz1iOQfalvghY101rWCs2WnAqIEsF48qr7qKqoP04a45ibkErqzGZYqxYeojoEfMqyT1aS1goyGn607c0uvZD7s9UfGbULtmxy+DTDSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MW3PR11MB4681.namprd11.prod.outlook.com (2603:10b6:303:57::14)
+ by BY1PR11MB8056.namprd11.prod.outlook.com (2603:10b6:a03:533::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Wed, 16 Jul
+ 2025 11:20:32 +0000
+Received: from MW3PR11MB4681.namprd11.prod.outlook.com
+ ([fe80::6561:fd02:e89d:5b06]) by MW3PR11MB4681.namprd11.prod.outlook.com
+ ([fe80::6561:fd02:e89d:5b06%5]) with mapi id 15.20.8922.035; Wed, 16 Jul 2025
+ 11:20:32 +0000
+From: "Temerkhanov, Sergey" <sergey.temerkhanov@intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David
+ Woodhouse" <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, "Joerg
+ Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+	<robin.murphy@arm.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: RE: [PATCH v1 4/4] iommu: Notify requesters of IOMMU fault failures
+Thread-Topic: [PATCH v1 4/4] iommu: Notify requesters of IOMMU fault failures
+Thread-Index: AQHb8aCKDb2q7kDp10Gg8Qrig+ZLpLQxvNSAgALjtwA=
+Date: Wed, 16 Jul 2025 11:20:32 +0000
+Message-ID: <MW3PR11MB4681FD69CC7DA5276BC68E798056A@MW3PR11MB4681.namprd11.prod.outlook.com>
+References: <20250710134215.97840-1-sergey.temerkhanov@intel.com>
+ <20250710134215.97840-5-sergey.temerkhanov@intel.com>
+ <20250714150031.GI1870174@ziepe.ca>
+In-Reply-To: <20250714150031.GI1870174@ziepe.ca>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MW3PR11MB4681:EE_|BY1PR11MB8056:EE_
+x-ms-office365-filtering-correlation-id: 1778203c-a7b8-4eb3-548a-08ddc45ac75c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?ngD8ra5Iq8LVUtXJdUd/qHvqIYLgUUvoGFq7eApA+Pp5YKOQYpSGXRKsb5b7?=
+ =?us-ascii?Q?E89gW2zya+FjNa6pk4BA4O7Crx8BIdd2Xmw8k6C67z5nwvyYraBXxt4+y0uA?=
+ =?us-ascii?Q?OX5tSGOYJE6k14DoEeamSCy7kZoKnjq8oLvzC36x40GfiqSw0yCP/Rq7zHVW?=
+ =?us-ascii?Q?B8BbSTCsUivixOYZbIyh09fOKPpsAPckF9AhIgnYu+MmhiJiiAB0nIS+pKIb?=
+ =?us-ascii?Q?84L88pBRM2+sZvSJtJL9hAy78RhrtJ08wbCRHL3bddFPDy7biCeU+T7aTGmr?=
+ =?us-ascii?Q?bHOdQVoY/3BvY2ijHqltRWGWxvuYex6Nihm0snwjUCx6O3DBHa/uaIwpBCC4?=
+ =?us-ascii?Q?s1WxxB83SbxrKy4L36V0IQ7XmVzaZuqeUT/+KU7Xx1bi0r55u+Luv0BpzXx8?=
+ =?us-ascii?Q?Us+lKTwW+lMXKOA1t9qKNbIoveckpLpjaHFvc+iT2zpGVz3ZlgOX2yYvv7MV?=
+ =?us-ascii?Q?3XfKhYOubN/qZuoKiKnwBjnOB4QWq5q3UCzaT7Ha7+qg8M13HNixs/vGOq6h?=
+ =?us-ascii?Q?JflwssRJMiQ4SlQmK9+dPPRQzI2++UvfdrqpOiiJ7xIqvZGvA/44hpBtcqfi?=
+ =?us-ascii?Q?2HnEOhyi90zWX+FN22+GlytJJHdNecax2GZTJL5t9k/jWqhXC5i7l4wAPhRz?=
+ =?us-ascii?Q?FCyIros9NN7lAtRizbrhawNgTwZCuCM5KBErYZJ7JWjgl0u5VC+Ux+ny0zOR?=
+ =?us-ascii?Q?2WPSfRSvRtemoEWs41Y0cOeiMyelKY45oATX4m4RBdkckSwz3sAveRRDt2kV?=
+ =?us-ascii?Q?KljChW1YCuEbhIv8hfK0dTTHBY21Wv8yhBTXJ9CuO5D0uwyV4R/2w5Gmfe/f?=
+ =?us-ascii?Q?Afp3Qk/Ose4IadQA6CXHPlAOvfVrmIH998zotnbBj2QcbP9BWcjYDrY/+doe?=
+ =?us-ascii?Q?2gyhpSLe+ljDz6azy41brTHy5HVGKDoRtE9xDzwCPIMo74aafMjFTKct+9XC?=
+ =?us-ascii?Q?VAdaPTpsHCnCru+cqoIQNjeq2LIjGXPZFbkd3kWLml3KEuKHAaQznUw0jmag?=
+ =?us-ascii?Q?pU3uNyqx7aHdiAL1VRV7aUur4IM9QcXjFHsRDsH3XKVdo3PZWOAcTAuDO/VZ?=
+ =?us-ascii?Q?IhA5IhTyaM2xwCvIrZ4K5laKG0dfD5GvOD3LwPJk6ucJCt/Xo9y0F/2blf0A?=
+ =?us-ascii?Q?d9gQUTLpedFoYYkEJ8SchduBleMKG4sl+ZdXrXrImyMY307Rdv4Vsdz/DuMT?=
+ =?us-ascii?Q?HMHC4TVLxkaCyu6uy7rKgpQqA4ERcIWzbKsYONmP7jFFHMckpUh8SowJN0mI?=
+ =?us-ascii?Q?Tbn+NsxWZ+1TPZ0N0LVb/qrv84AmwtfMYFSEkNy3wAbr47ROAtjQiGT5VsJX?=
+ =?us-ascii?Q?iPA91IKnXMJnuoJuNvyUo0XRCL3tLZRn62tsriL2E6WlM8vBZ02fLf13CsEm?=
+ =?us-ascii?Q?pK3L9WSiMa9B/PC83eP1GRuSPGP7NS6hczqJ4yWPzQJlG96HHsTYMdKa/WWV?=
+ =?us-ascii?Q?nmXrpHXMy3rtHmn8TsvgIZF4P/RZ6kIFFqRuXd16li1zBc9tU+/L1A=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR11MB4681.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?UIzZgT2wmuoSXiCTNk8T7kPGUf1jddWd4DTRvSsELeFR2uWXqPQG7pHfVgCa?=
+ =?us-ascii?Q?3N6uErbGymPk8Re57CIT/HhquYU3OkmJRaM+uR6u8c35UrwtAW+S1wUncCds?=
+ =?us-ascii?Q?brswBaJJAu+d5Nz2UB8n71JjeCGAouHt8R2O+fvvhQT1iDg2eIpevs0+ssRk?=
+ =?us-ascii?Q?dAHQE20rl9gPeLVUHC7U48TyVgJq6BBXL77oNAASyep6JykgAQAqEWCxveKS?=
+ =?us-ascii?Q?i1tOjYM8UXNp/9a/Ec9MDkAt+xXpSCnYxnB5aEzko4A9HxfyGoxDcdrsjMUi?=
+ =?us-ascii?Q?nuCUTxCVmtkQPf2sW3Y8RZyeF7Z7YGXiMClyC5BjGhQJX1/Z8fBCX1pkrSS8?=
+ =?us-ascii?Q?3IS93bci5WEveEYjQG9l34EUmRvqfkH0MSqjNCQ/WttRzyZ7ggpdMyP+QcvN?=
+ =?us-ascii?Q?kM9WXkXoBASeKSqA9Z3pJ3hlsOBvrYtCVOGNY00BAcRp8ttje4uQub3PmJTC?=
+ =?us-ascii?Q?lnpkC+XjAv/SkkBrdHzKkiWbsyqEpD2p56H1ppiuzV4G97w8hAdk7IA1ixty?=
+ =?us-ascii?Q?JS6PTS8RGYTp3QwiDdxbEkxJ9O/1pA9WAFPG+3i5gnAEae7PE2ouxCv8J4R8?=
+ =?us-ascii?Q?cdcC7mX9+PrGWx6LmbLTwhZc7XPL8xVLHihxNOLIjTJnQlpWnDxADS0NU/QD?=
+ =?us-ascii?Q?GbceG6P16plgbIWW5y9WLq4PMeSNUQy3rA5eNf74rHC0cph/YxgKlAa55NZM?=
+ =?us-ascii?Q?pwDxtxPZ6TRx96KtIVOAyplYwXMt5qFb4TokRqtSuoBrmNwuuVWNK7yWXyyR?=
+ =?us-ascii?Q?6kj7ygNlu2Mny3ddwbkWZWbY68Xvf3runE+nrOWYSkaSKfYSbBJAzZb1A2dr?=
+ =?us-ascii?Q?paSAVK2UuP9NuVPD72pkt7aIco9xfma7buIZOts0i72VZyiaHKV1LPHxOXoT?=
+ =?us-ascii?Q?v5wRc4FtsZf/N/jsqbcO7+N0JEwlahuVZiBrQ/Ao1O6sNg6Ku9/lQBscfyS8?=
+ =?us-ascii?Q?6T8aZm6PB9jKFDoB8bkyVrD2BUnRIOIB+4UCZYi6TBo5ZCSxF6tigJLs0Ghm?=
+ =?us-ascii?Q?+SJVq1ERfO+1bSIc/t4ufanrDaqSKWr5WAEdptjx9mdsXudHd86/UhQZeAKZ?=
+ =?us-ascii?Q?OJnmW+UXMIHXIuOojfybwiMkVqAGsXCN+9Fa+3lquBFYwm9UfxRW2TvfqMbz?=
+ =?us-ascii?Q?9HaYKNMLTdsIiWVCH2L5S70A9gE3+gNWBmVMkiqKSRin9urtJCaBjPfF7Lpw?=
+ =?us-ascii?Q?NxB1+Etd+ajIZlfw+jVrEIzaN+8CxrdiB57Z19OrGYQtxLmDB3l3HEpFHUlZ?=
+ =?us-ascii?Q?DdAPfuyJBwUoQ2yIVsJoY5Apr8ExRZ5ypzobqC+2v2r24HwZkzFCRKTOlJ2M?=
+ =?us-ascii?Q?WqyuJtcHMcfMsCXhI3BOdd7kSyXmciLyTrk4xPLa0Q1GzuGqcMjznp2GwZfo?=
+ =?us-ascii?Q?A5estfj6Ulx1Ml8jo0qkVnDQm8gRzIiq2JYXiOPeMPAIeW6JMacB0vQ4je6D?=
+ =?us-ascii?Q?rGKE1dysGYBBFuhsxVmYXg8LAIY2ycTEAglkEqjTYOxy0Q+HHkv6huluvTpo?=
+ =?us-ascii?Q?S5ji3AzKGj+lP9AeEuy4Ib5uusQklWXCYqOwT40W6KvQE3d4YBeKF8wskY62?=
+ =?us-ascii?Q?O+c0AmmNcb7wA5mKwMNj8jZcy07iAC9svRXMv031?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Re: Re: [PATCH net v2] virtio-net: fix a rtnl_lock() deadlock
- during probing
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
- virtualization@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, zuozhijie@bytedance.com
-References: <20250702103722.576219-1-zuozhijie@bytedance.com>
- <CACGkMEvjXBZ-Q77-8YRyd_EV0t9xMT8R8-FT5TKJBnqAOed=pQ@mail.gmail.com>
- <d5ad1b10-f485-4939-b9de-918b378362b9@bytedance.com>
- <CACGkMEvZ5dqjc6+1uwoq98x-78eymGFHXpOJtbViG3U9mOyn8g@mail.gmail.com>
-Content-Language: en-US
-From: Zigit Zo <zuozhijie@bytedance.com>
-In-Reply-To: <CACGkMEvZ5dqjc6+1uwoq98x-78eymGFHXpOJtbViG3U9mOyn8g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR11MB4681.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1778203c-a7b8-4eb3-548a-08ddc45ac75c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2025 11:20:32.6737
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xYNZY8bNV8+35HbqnaD5f26pP7QcXytGO+b/SMs7+yYqUKmKganjIQ9O4SsmNJQV/oKUofiZSES1TvRs9qrbbAxxR1kGdBAkYsp/r/hT4nI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8056
+X-OriginatorOrg: intel.com
 
-On 7/16/25 10:47 AM, Jason Wang wrote:
-> Hi Zigit:
-> 
-> On Tue, Jul 15, 2025 at 7:00 PM Zigit Zo <zuozhijie@bytedance.com> wrote:
->>
->> On 7/15/25 5:31 PM, Jason Wang wrote:
->>> On Wed, Jul 2, 2025 at 6:37 PM Zigit Zo <zuozhijie@bytedance.com> wrote:
->>>>
->>>> This bug happens if the VMM sends a VIRTIO_NET_S_ANNOUNCE request while
->>>> the virtio-net driver is still probing with rtnl_lock() hold, this will
->>>> cause a recursive mutex in netdev_notify_peers().
->>>>
->>>> Fix it by temporarily save the announce status while probing, and then in
->>>> virtnet_open(), if it sees a delayed announce work is there, it starts to
->>>> schedule the virtnet_config_changed_work().
->>>>
->>>> Another possible solution is to directly check whether rtnl_is_locked()
->>>> and call __netdev_notify_peers(), but in that way means we need to relies
->>>> on netdev_queue to schedule the arp packets after ndo_open(), which we
->>>> thought is not very intuitive.
->>>>
->>>> We've observed a softlockup with Ubuntu 24.04, and can be reproduced with
->>>> QEMU sending the announce_self rapidly while booting.
->>>>
->>>> [  494.167473] INFO: task swapper/0:1 blocked for more than 368 seconds.
->>>> [  494.167667]       Not tainted 6.8.0-57-generic #59-Ubuntu
->>>> [  494.167810] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>>> [  494.168015] task:swapper/0       state:D stack:0     pid:1     tgid:1     ppid:0      flags:0x00004000
->>>> [  494.168260] Call Trace:
->>>> [  494.168329]  <TASK>
->>>> [  494.168389]  __schedule+0x27c/0x6b0
->>>> [  494.168495]  schedule+0x33/0x110
->>>> [  494.168585]  schedule_preempt_disabled+0x15/0x30
->>>> [  494.168709]  __mutex_lock.constprop.0+0x42f/0x740
->>>> [  494.168835]  __mutex_lock_slowpath+0x13/0x20
->>>> [  494.168949]  mutex_lock+0x3c/0x50
->>>> [  494.169039]  rtnl_lock+0x15/0x20
->>>> [  494.169128]  netdev_notify_peers+0x12/0x30
->>>> [  494.169240]  virtnet_config_changed_work+0x152/0x1a0
->>>> [  494.169377]  virtnet_probe+0xa48/0xe00
->>>> [  494.169484]  ? vp_get+0x4d/0x100
->>>> [  494.169574]  virtio_dev_probe+0x1e9/0x310
->>>> [  494.169682]  really_probe+0x1c7/0x410
->>>> [  494.169783]  __driver_probe_device+0x8c/0x180
->>>> [  494.169901]  driver_probe_device+0x24/0xd0
->>>> [  494.170011]  __driver_attach+0x10b/0x210
->>>> [  494.170117]  ? __pfx___driver_attach+0x10/0x10
->>>> [  494.170237]  bus_for_each_dev+0x8d/0xf0
->>>> [  494.170341]  driver_attach+0x1e/0x30
->>>> [  494.170440]  bus_add_driver+0x14e/0x290
->>>> [  494.170548]  driver_register+0x5e/0x130
->>>> [  494.170651]  ? __pfx_virtio_net_driver_init+0x10/0x10
->>>> [  494.170788]  register_virtio_driver+0x20/0x40
->>>> [  494.170905]  virtio_net_driver_init+0x97/0xb0
->>>> [  494.171022]  do_one_initcall+0x5e/0x340
->>>> [  494.171128]  do_initcalls+0x107/0x230
->>>> [  494.171228]  ? __pfx_kernel_init+0x10/0x10
->>>> [  494.171340]  kernel_init_freeable+0x134/0x210
->>>> [  494.171462]  kernel_init+0x1b/0x200
->>>> [  494.171560]  ret_from_fork+0x47/0x70
->>>> [  494.171659]  ? __pfx_kernel_init+0x10/0x10
->>>> [  494.171769]  ret_from_fork_asm+0x1b/0x30
->>>> [  494.171875]  </TASK>
->>>>
->>>> Fixes: df28de7b0050 ("virtio-net: synchronize operstate with admin state on up/down")
->>>> Signed-off-by: Zigit Zo <zuozhijie@bytedance.com>
->>>> ---
->>>> v1 -> v2:
->>>> - Check vi->status in virtnet_open().
->>>> v1:
->>>> - https://lore.kernel.org/netdev/20250630095109.214013-1-zuozhijie@bytedance.com/
->>>> ---
->>>>  drivers/net/virtio_net.c | 43 ++++++++++++++++++++++++----------------
->>>>  1 file changed, 26 insertions(+), 17 deletions(-)
->>>>
->>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>>> index e53ba600605a..859add98909b 100644
->>>> --- a/drivers/net/virtio_net.c
->>>> +++ b/drivers/net/virtio_net.c
->>>> @@ -3151,6 +3151,10 @@ static int virtnet_open(struct net_device *dev)
->>>>         if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
->>>>                 if (vi->status & VIRTIO_NET_S_LINK_UP)
->>>>                         netif_carrier_on(vi->dev);
->>>> +               if (vi->status & VIRTIO_NET_S_ANNOUNCE) {
->>>> +                       vi->status &= ~VIRTIO_NET_S_ANNOUNCE;
->>>> +                       schedule_work(&vi->config_work);
->>>> +               }
->>>>                 virtio_config_driver_enable(vi->vdev);
->>>
->>> Instead of doing tricks like this.
->>>
->>> I wonder if the fix is as simple as calling
->>> virtio_config_driver_disable() before init_vqs()?
->>>
->>> Thanks
->>>
->>
->> That might not work as the device like QEMU will set the VIRTIO_NET_S_ANNOUNCE
->> regardless of most of the driver status, QEMU only checks whether the driver has
->> finalized it's features with VIRTIO_NET_F_GUEST_ANNOUNCE & VIRTIO_NET_F_CTRL_VQ.
->>
->> We've made a little patch to verify, don't know if it matches your thought, but
->> it does not seem to work :(
->>
->>     diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>     index e53ba600605a..f309ce3fe243 100644
->>     --- a/drivers/net/virtio_net.c
->>     +++ b/drivers/net/virtio_net.c
->>     @@ -6903,6 +6903,9 @@ static int virtnet_probe(struct virtio_device *vdev)
->>                     vi->curr_queue_pairs = num_online_cpus();
->>             vi->max_queue_pairs = max_queue_pairs;
->>
->>     +       /* Disable config change notification until ndo_open. */
->>     +       virtio_config_driver_disable(vi->vdev);
->>     +
->>             /* Allocate/initialize the rx/tx queues, and invoke find_vqs */
->>             err = init_vqs(vi);
->>             if (err)
->>     @@ -6965,9 +6968,6 @@ static int virtnet_probe(struct virtio_device *vdev)
->>                     goto free_failover;
->>             }
->>
->>     -       /* Disable config change notification until ndo_open. */
->>     -       virtio_config_driver_disable(vi->vdev);
->>     -
->>             virtio_device_ready(vdev);
->>
->>             if (vi->has_rss || vi->has_rss_hash_report) {
->>
->> For reproduce details,
->>
->> 1. Spawn qemu with monitor, like `-monitor unix:qemu.sock,server`
->> 2. In another window, run `while true; echo "announce_self"; end | socat - unix-connect:qemu.sock > /dev/null`
->> 3. The boot up will get hanged when probing the virtio_net
->>
->> The simplest version we've made is to revert the usage of
->> `virtnet_config_changed_work()` back to the `schedule_work()`, but as in v1,
->> we're still trying to understand the impact, making sure that it won't break
->> other things.
->>
->> Regards,
->>
-> 
-> Thanks for the clarification. Now I see the issue.
-> 
-> It looks like the root cause is to call virtio_config_changed_work()
-> directly during probe().
-> 
-> Let's switch to use virtio_config_changed() instead so that we can
-> properly check the config_driver_disabled.
-> 
-> Thanks
-> 
+> Look at how iommufd already associates faults back to its own struct devi=
+ce
+> structure side-structure.
+>=20
+> I think all you want for this problem is a way to hook the fault callback=
+ chain
+> on a domain, and that should be local to the domain not global to the dev=
+ice..
+>=20
 
-Yes, we just wonder why there's a change to `virtnet_config_changed_work()`
-in commit df28de7b0050, and therefore try to keep this behavior as much
-as possible, to avoid breaking something.
-
-Anyway, v3 will be sent off soon, thanks for the reviewing!
+Moving this to a domain sounds reasonable, however the main goal is to reus=
+e the kernel
+SVA IOPF handling code to the maximum extent and only provide "feedback" wh=
+en
+iommu_sva_handle_iopf() returns an error for some reason.
 
 Regards,
+Sergey
 
