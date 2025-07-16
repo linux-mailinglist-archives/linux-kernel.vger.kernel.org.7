@@ -1,124 +1,104 @@
-Return-Path: <linux-kernel+bounces-734351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E5FB08080
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:27:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B368B08083
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5FC1C41912
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBD41C419B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9CF2ED177;
-	Wed, 16 Jul 2025 22:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F85A2EE5E3;
+	Wed, 16 Jul 2025 22:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/eAttnB"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FQ20TfVJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462BA2857F1;
-	Wed, 16 Jul 2025 22:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB842857F1;
+	Wed, 16 Jul 2025 22:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752704822; cv=none; b=gfBaUDo25rLwhY6WQPY7BwNy3OWlB0sUoo5Ha6DyR1dkqX0W2tSSS9zd8CBbUBDsl3TFHuFyw7f2BuRzQmKyXwKKqrgzq01AdVk/cUsm/45tNwvStlvpZqfpgf/Ya5l03SIaBpbacXEy0rV65N720Hxhd/tCDRi4+IBBOligDIA=
+	t=1752704832; cv=none; b=eoZCDXBu4t4E4tyXd3J8S+wr42lcfHxXDAod36ZosQihC9WlSXwO1A6CTES4jeDaFznbPbCZh76PpS0gQhz9f3dF1TmZuiITOw7Srogdrq3w0YY3EEtCwXqfUcXuxArFfsh+JKlQu7/wMzrQj2xOrncICfXOSVjoC9jk7+h6PMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752704822; c=relaxed/simple;
-	bh=VWiMnfVkctMhG5AlTXkvWT96z1+mAJjyPXAHpEo2YYo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=RWn3rJ6PF+sHE9NzbUbFv3W1uvcHP8mBrpmxlxFxTLJwM6Ji57PPdMbNYVy1mhmjL4HD4UUfd9NCwniwtU3P/8MMDn6B/Dbk+eUrA2VDbAiejfy8+Ee23zpR4o4Khmk1PCrFvql633Qf4ZrTtohb8+rpBDH4D2qpN4gTnGzvoeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/eAttnB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B9BC4CEE7;
-	Wed, 16 Jul 2025 22:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752704821;
-	bh=VWiMnfVkctMhG5AlTXkvWT96z1+mAJjyPXAHpEo2YYo=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=u/eAttnBxnKtSGUIn6xKXfbMj4QNL74PfEm/pyrSgnV+cUh33g4z1U/7izFbxzePW
-	 NLGNiTQg4f11rilpi3AG2LgmY2iFDe8yHYtc/rTFW4KfQKMbbK6OFGkRzL9VHrrOk6
-	 IOP6tSDaQzVsR7hFCKO3sPSGuAl5OwhkfNBMAtPhLarlcxpgECEXj1DU/mhw1yFvDq
-	 r80iB8JudzUxgEWCmjhz1MvT1z78Xu7WToVjQqsuH7cddWz3y41pZQRpUuTzbDCYdQ
-	 eI9GVuaGP4dmqXeBewki5NaUy6P+HSybhtyxYiS4r9fpUy68OyV0/GjicT6NwYmLmk
-	 1e85y9bdcttcw==
+	s=arc-20240116; t=1752704832; c=relaxed/simple;
+	bh=Tu5JRrTaLxjAsLV5SCPpe1Ex1V91jjvN1Tb/KDM9lNw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=YkW93tqJ0B0gQYLnOVcHyuEL9CKfvS49c271PXnAOfLXKzEaiENxPPzARqV9gi6VJAkeqpV6Hy93KC50Nus29+TM8W6Ld0PUzW/AUbo9i5wOrxJhybX2QdQ3IBk4gVURibdlXd/o0bCI7HsH3Q+S2pPruHbtezI5giJfzsQ3S4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FQ20TfVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087D3C4CEE7;
+	Wed, 16 Jul 2025 22:27:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752704832;
+	bh=Tu5JRrTaLxjAsLV5SCPpe1Ex1V91jjvN1Tb/KDM9lNw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FQ20TfVJv7WHG4iy+EX6C5O/ThLRdHt1x2CyduQoJ7kBpnfwVRY4iaXRGrPLDkcGE
+	 DBema/GEK6i5vtv2C20l0NWl0W9bQMb+oyV+Fhec+AWeSTRdsHVXB/JrmwlAloVh2r
+	 aiQsmw0UH40iuqW+2aualml7hoCW1ijLrIVxgQ0o=
+Date: Wed, 16 Jul 2025 15:27:10 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
+ nvdimm@lists.linux.dev, Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>, Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>, Dan Williams <dan.j.williams@intel.com>,
+ Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, Alexander
+ Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
+ <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, Ryan
+ Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
+ <baohua@kernel.org>, Jann Horn <jannh@google.com>, Pedro Falcato
+ <pfalcato@suse.de>, Hugh Dickins <hughd@google.com>, Oscar Salvador
+ <osalvador@suse.de>, Lance Yang <lance.yang@linux.dev>
+Subject: Re: [PATCH v1 0/9] mm: vm_normal_page*() improvements
+Message-Id: <20250716152710.59e09fe5056010322de2a1a3@linux-foundation.org>
+In-Reply-To: <17a539fa-977c-4f3f-bedf-badd1fc1287a@redhat.com>
+References: <20250715132350.2448901-1-david@redhat.com>
+	<20250715163126.7bcaca25364dd68835bd9c8b@linux-foundation.org>
+	<17a539fa-977c-4f3f-bedf-badd1fc1287a@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 17 Jul 2025 00:26:57 +0200
-Message-Id: <DBDU05DKSHHB.SHRSPEM7J6MQ@kernel.org>
-Subject: Re: [PATCH v14 2/3] rust: io: mem: add a generic iomem abstraction
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250716-topics-tyr-platform_iomem-v14-0-2c2709135cb2@collabora.com> <20250716-topics-tyr-platform_iomem-v14-2-2c2709135cb2@collabora.com> <8A8152BD-A314-4A23-B104-AD802F7E2DB6@collabora.com>
-In-Reply-To: <8A8152BD-A314-4A23-B104-AD802F7E2DB6@collabora.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed Jul 16, 2025 at 11:52 PM CEST, Daniel Almeida wrote:
-> Hi,
->
-> [=E2=80=A6]
->
->> +
->> +/// An exclusive memory-mapped IO region.
->> +///
->> +/// # Invariants
->> +///
->> +/// - [`ExclusiveIoMem`] has exclusive access to the underlying [`IoMem=
-`].
->> +pub struct ExclusiveIoMem<const SIZE: usize> {
->> +    /// The underlying `IoMem` instance.
->> +    iomem: IoMem<SIZE>,
->> +
->> +    /// The region abstraction. This represents exclusive access to the
->> +    /// range represented by the underlying `iomem`.
->> +    ///
->> +    /// This field is needed for ownership of the region.
->> +    _region: Region,
->> +}
->> +
->> +impl<const SIZE: usize> ExclusiveIoMem<SIZE> {
->> +    /// Creates a new `ExclusiveIoMem` instance.
->> +    fn ioremap(resource: &Resource) -> Result<Self> {
->> +        let start =3D resource.start();
->> +        let size =3D resource.size();
->> +        let name =3D resource.name().ok_or(EINVAL)?;
->
-> Note the change above. If there=E2=80=99s no name, we fail.
->
-> I just noticed that this may not be the right approach, but OTOH we shoul=
-d note that
-> =E2=80=9Cnot having a name=E2=80=9D is apparently considered a bug in the=
- C code under some
-> circumstances:
+On Wed, 16 Jul 2025 10:47:29 +0200 David Hildenbrand <david@redhat.com> wrote:
 
-If we'd consider it to be a bug strictly speaking we should not make it an
-Option and fix the bugs instead.
+> > 
+> > However the series rejects due to the is_huge_zero_pmd ->
+> > is_huge_zero_pfn changes in Luiz's "mm: introduce snapshot_page() v3"
+> > series, so could we please have a redo against present mm-new?
+> 
+> I'm confused: mm-new *still* contains the patch from Luiz series that
+> was originally part of the RFC here.
+> 
+> commit 791cb64cd7f8c2314c65d1dd5cb9e05e51c4cd70
+> Author: David Hildenbrand <david@redhat.com>
+> Date:   Mon Jul 14 09:16:51 2025 -0400
+> 
+>      mm/memory: introduce is_huge_zero_pfn() and use it in vm_normal_page_pmd()
+> 
+> If you want to put this series here before Luiz', you'll have to move that
+> single patch as well.
+> 
+> But probably this series should be done on top of Luiz work, because Luiz
+> fixes something.
 
-However, I don't think this is a bug, there are plenty of "constructor" mac=
-ros
-that create resource structures with a NULL pointer for the name field
-(DEFINE_RES_IRQ(),  DEFINE_RES_REG(), etc.).
+I'm confused at your confused.  mm-new presently contains Luiz's latest
+v3 series "mm: introduce snapshot_page()" which includes a copy of your
+"mm/memory: introduce is_huge_zero_pfn() and use it in
+vm_normal_page_pmd()".
 
-Besides that, also the C APIs do the name check, __devm_ioremap_resource() =
-[1]
-is such an example.
-
-Busses often assign the corresponding device name later on, but I wouldn't =
-bet
-on this to be a hard rule and nothing this abstraction can rely on anyways.
-
-I think we should just pick a fallback string.
-
-[1] https://elixir.bootlin.com/linux/v6.15.6/source/lib/devres.c#L144
+> [that patch was part of the RFC series, but Luiz picked it up for his work, so I dropped it
+> from this series and based it on top of current mm-new]
 
