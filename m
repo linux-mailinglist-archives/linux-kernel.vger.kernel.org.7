@@ -1,164 +1,98 @@
-Return-Path: <linux-kernel+bounces-733112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3395AB07051
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:22:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9159B07050
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1DF189BF5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:21:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D22467A2866
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F16292910;
-	Wed, 16 Jul 2025 08:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BB82E9EDD;
+	Wed, 16 Jul 2025 08:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kra/SNnC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k/6sTKZd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kra/SNnC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k/6sTKZd"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDcIb0sR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BE729614C
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082BB291C3B;
+	Wed, 16 Jul 2025 08:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752654053; cv=none; b=OkwsAamTQ4qJqKpOUkFdIvsQpXRoGJ79EE2Bn19I3vIa7ix/Z0pdFLK6T61PEICyPQWLfKTWFK8CzFtRkLWzQ9PMwX2mo2Uiau08eY4fx8QSn6ibPoIeJy79R+omoFYFz9rPKxn18+sVBk9nrkJYZKA1eMfuaoeZOyM0JgwSldU=
+	t=1752654106; cv=none; b=R3KG+4pzXY6EFQRY2i5nhLxzEMDj8rMTHWnnvMu9SYLVcx9ylOALbyvLyklp1hxtnLekiKo02byLxPIjDRhCwfFGpfLNgciLYKGRqCfIbqVR12+xwC82xfTE3031/+munxYarUGpIwiCsaz3fPEAot/0/0Uay6XN0n0izjmVJZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752654053; c=relaxed/simple;
-	bh=2zhu4E5WvqW3arFsj3d/kom8REjveF6QEqV1Z4f8OAc=;
+	s=arc-20240116; t=1752654106; c=relaxed/simple;
+	bh=WFDobUiu1Nd43r6dikjiTbbFv38dHAAytYCHWG5v6TI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWLUD2ZH2+pjIxpB/0MgRaJFtijdIbs2aRMIt0C+eEo/Ch2aDY/BSX08njxf93oiDB0I/ivRwBJ/eVy3xGpyqzvVMXfC9ifgGs8AESHiRDRnVBHCcNhhV70J7/OpuVd3QEngD+/oSgMy7A7p8KQvVPeiT84WqQvqIDQpmb0oYD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kra/SNnC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k/6sTKZd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kra/SNnC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k/6sTKZd; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D381321235;
-	Wed, 16 Jul 2025 08:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752654046; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7R+hCBYnvSZ+PSORPTHDk4t1hNJZ7tafG6Xa+YTLyPY=;
-	b=Kra/SNnCnlFmArihgtpkJnlBzxIFiix4eMZf8WbVVkUNgMLSzRRITKBrwHMb+8Ue4kkSbB
-	6PvwD7ORnT9v0Rmx+Wr3QL4PXlhl3U9RJ/JDrXNXqtGIqOF3x47fvHiOWLZ3Sx72WtF/d6
-	pM64q1fFj3EuMQZlsG/KvMhVtNdQQks=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752654046;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7R+hCBYnvSZ+PSORPTHDk4t1hNJZ7tafG6Xa+YTLyPY=;
-	b=k/6sTKZdoXEEDiueorLGp+Ptu/WsaOoSciT+ZR/RD/N7j9lULKWQVfeKfHwwdOHcPUBzS1
-	88PpQ07hwEjfNxDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752654046; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7R+hCBYnvSZ+PSORPTHDk4t1hNJZ7tafG6Xa+YTLyPY=;
-	b=Kra/SNnCnlFmArihgtpkJnlBzxIFiix4eMZf8WbVVkUNgMLSzRRITKBrwHMb+8Ue4kkSbB
-	6PvwD7ORnT9v0Rmx+Wr3QL4PXlhl3U9RJ/JDrXNXqtGIqOF3x47fvHiOWLZ3Sx72WtF/d6
-	pM64q1fFj3EuMQZlsG/KvMhVtNdQQks=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752654046;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7R+hCBYnvSZ+PSORPTHDk4t1hNJZ7tafG6Xa+YTLyPY=;
-	b=k/6sTKZdoXEEDiueorLGp+Ptu/WsaOoSciT+ZR/RD/N7j9lULKWQVfeKfHwwdOHcPUBzS1
-	88PpQ07hwEjfNxDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5085E138D2;
-	Wed, 16 Jul 2025 08:20:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8H0GEd1gd2jdEQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 16 Jul 2025 08:20:45 +0000
-Date: Wed, 16 Jul 2025 10:20:43 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-	Hugh Dickins <hughd@google.com>, Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH v1 8/9] mm: introduce and use vm_normal_page_pud()
-Message-ID: <aHdg2y_JJduCVaYw@localhost.localdomain>
-References: <20250715132350.2448901-1-david@redhat.com>
- <20250715132350.2448901-9-david@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFVm2K6MHbLhAvxMOb2+DquV5JzEhKJnbLETZ2AGrHDzEpeZGHg04OdUg1nwLU4RmFYmkWop1LiC86PjbptPc9mImAE3XEfBNiuWCnSYqtyRnnrOMX+3TtcbcQ+Tl0qNYTkaToGCVkCcZ7ZPV2F7ujNFCWYSgNiQiDu33eZmPlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDcIb0sR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0254BC4CEF0;
+	Wed, 16 Jul 2025 08:21:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752654105;
+	bh=WFDobUiu1Nd43r6dikjiTbbFv38dHAAytYCHWG5v6TI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HDcIb0sR0K8DHNBwuF3l6zfjuhEd+srpTrUcNN5vM26ynlP8Rapji7XnX3ituaxfv
+	 yhHLARSCd4vO8do4/x/xokvvPcPsagYw8XC8YZMWS86u/kZzf0uL+lS0ldVPJI9pGs
+	 BcdTW0baB8Y7WwPzvSqC39dhwz6XGPDWwtwPat0/ZA2I7F6qnDMi6YLXwNp4ENPiGa
+	 hzuDBsZLIr2l4AdyYD8CrCiGXzPiUI+M1r/nxsfSpG88+LwyYqN3qrn7J7b2bvBJeH
+	 mfMjVJOFMAQlyeMGOHnSb9T/9y2gdK1pLfJ+CI4mc8FQ+zKbaDAdY9CfN+IWEiCBDE
+	 HNp8KE63b6YwQ==
+Date: Wed, 16 Jul 2025 10:21:42 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Kevin Chen <kevin_chen@aspeedtech.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH v2] dt-bindings: interrupt-controller: aspeed: Add parent
+ node compatibles and refine documentation
+Message-ID: <20250716-spotted-spirited-axolotl-c94e0b@krzk-bin>
+References: <20250715024258.2304665-1-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250715132350.2448901-9-david@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[31];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLhwqoz3wsm4df3nfubx4grhps)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,localhost.localdomain:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+In-Reply-To: <20250715024258.2304665-1-ryan_chen@aspeedtech.com>
 
-On Tue, Jul 15, 2025 at 03:23:49PM +0200, David Hildenbrand wrote:
-> Let's introduce vm_normal_page_pud(), which ends up being fairly simple
-> because of our new common helpers and there not being a PUD-sized zero
-> folio.
+On Tue, Jul 15, 2025 at 10:42:58AM +0800, Ryan Chen wrote:
+> - Add 'aspeed,ast2700-intc0' and 'aspeed,ast2700-intc1' compatible
+> strings for parent interrupt controller nodes, in addition to the
+> existing 'aspeed,ast2700-intc-ic' for child nodes.
+> - Clarify the relationship and function of INTC0, INTC1, and the GIC.
+> - Update and clarify documentation, block diagram, and examples
+> to reflect the hierarchy and compatible usage.
+> - Documentation and example refine.
+
+So 7 lines describing obvious - what you did and three lines below
+describing non-obvious, why you did it. It should be reversed.
+
 > 
-> Use vm_normal_page_pud() in folio_walk_start() to resolve a TODO,
-> structuring the code like the other (pmd/pte) cases. Defer
-> introducing vm_normal_folio_pud() until really used.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> This change allows the device tree and driver to distinguish between
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Why driver needs would matter here?
 
- 
+> parent (top-level) and child (group) interrupt controller nodes,
+> enabling more precise driver matching SOC register space allocation.
 
--- 
-Oscar Salvador
-SUSE Labs
+This just does not make sense. You do not change "precise driver
+matching" via bindings. You fix driver. Especially that there is no
+driver patch here at all and aspeed,ast2700-intc0 are totally unused!
+Don't add ABI which has no users.
+
+Again, you need to start describing the hardware and the REASONS BEHIND
+from the hardware point of view. Not drivers.
+
+This change alone based on above explanation makes no sense at all.
+
+Best regards,
+Krzysztof
+
 
