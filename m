@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-733829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D04B0798D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:21:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25A3B07991
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 481137BBB3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED153B6AC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BA928CF40;
-	Wed, 16 Jul 2025 15:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885DE2F2341;
+	Wed, 16 Jul 2025 15:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mBSIobQf"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lStun/B9"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28DC245006
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E812F237B
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679247; cv=none; b=px7PGcncAW8zixPkH/RQAustToIT/72Pvt7EJmXhTin310Wa45SRWS4SquByguxyGulAJ4BOKskxxBRNbQj+7xKfeWHN9RrnUu8poKH8ykJs+9SJdv/+sVxJxo4XgTw6yazhCktzNv7mEOBVj/W2liRn30wR6RxNq7AhEkvJ8Fw=
+	t=1752679250; cv=none; b=F9ZgEBLAsIUfCUkrqAymDcrSY/l5e3QfMr7J2ZQw7qf83RznCvIzra8/I/tGaWtszrjeT4pcN1m++u9abhrnLRwqozNwZ7HoECEAz7j/zV+4Qq26Utlu7qr2lpOvKDH9qvQQiyAXJ+05IdNXvuyOGw97Z2X4qP7jT4fJ9IEr4ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679247; c=relaxed/simple;
-	bh=iSXFZ/rxSfqiYe032EgSZdLxuNhPgtOw+DCydKf66Q4=;
+	s=arc-20240116; t=1752679250; c=relaxed/simple;
+	bh=6JQf4O8NMe/CubAcA+bvLEOkTG1XpMAvA3q5EVQGE+s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KgcNMfHMMnHxwWvJUU1AYogMdomm3TUl86wCYY5+VJxEWg5iDE8GlIzJh7a3PhuJLgSMpA/ldxRmu3nHjff+I+b1hdqRzNNSuaH03z5lde9kwVHlCXRXQXlXKbrawp8FA78SIHRlLzUY4o7XpN4Sr9q9m7s6xCsLncm1mG1y7v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mBSIobQf; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version; b=b67R+Pt7y5nam+rrH8ZaXNigSJL5ghgIkLVWJzeD00Yn+SWjQuOgekfmWl8KZMP76r+p7DMXGuhP1j94zry5es5KwjegC1XRIvVPqWT88hse2swCjL8RMeeN0wwqczbQs+4myecmpd7akyjufA1yDG8/t/yARlC/LUO7Bj878tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lStun/B9; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GDgHtw018086
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:20:45 GMT
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GD1dLf011674
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:20:48 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=KeWo6NhvYfL
-	SpZC4i2L+Ou9NoRlmlKN1CvQ6KpYQ+j4=; b=mBSIobQf3aVJSci4MgOtVXV+25K
-	RmvnH6s8JyyRBOKoao8r31UDEb5uq5oV3KJMtc/1mGHCJb+ziDvOB8fr20FWAe42
-	GZpMVO4a0kMAuG6gjF5Ll7DyiA/TsN6cZJytLp/uRD35jrySa+vhZlK06tFfKDCo
-	aj7/bPoX4eoSLwl1ruuecLyauCEG6CTyJ2r0JvCDChNC2rIMDnBfKvL3H65+vlLS
-	mITlnRFq0J7jWt7O0YrPhDYn/2goL4vdI5b+EH3nL1F9wiuZ7XoPpGW9B3iDKVGI
-	vC9yvIURrdUT3T36yzMuzg7B0CU++ASc6wajVsfAM0HXQd5M58r5MABKniA==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug384kgt-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=i/UzvBI9fx7
+	W4AtWjhd/P7aklE++DS1Rd0idD9jTzhc=; b=lStun/B9UnbPZcXc8vZVg0cFYh6
+	bseqFKGgZJ2vt8SpuVcL3cbx2BZ7f9hDpYRd+++a7fWwwNxkVjuCN/i5ViazOzE/
+	eqFszgXfrOK8yill0nmrbz3YFVPILOgNo7T4SPRVjYPoucqts4m0oxn9jK7HGXvk
+	+FceQ+SNuzxRsrtC83riYIlAQCGBqA4XLl3fnRyItFaIhnOKN7LX6HoBhRW4E82M
+	T6XFx8B9O0PNuqPBS117+Elxb/P3N81CEMGl50oHJ9LEG0dOYx7/2S4lDc0kpaHx
+	uXO1yNSOwyYV//E/3TJQiK70U9Cat9HfAzPlpiriN1wHOThk7oiqpG3cYJw==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxb4gt3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:20:44 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b31ff607527so5394293a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:20:44 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:20:48 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-748f3d4c7e7so22102b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:20:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752679243; x=1753284043;
+        d=1e100.net; s=20230601; t=1752679247; x=1753284047;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KeWo6NhvYfLSpZC4i2L+Ou9NoRlmlKN1CvQ6KpYQ+j4=;
-        b=EqI1p9T0oPVMv7Xy8LKcs7TAgox2siJhjrh/TxJzk0XlLAcBO2ZjM1hTO3M2eEhAOO
-         tjS0imsH+7gts/0j7tsOjwbX2XKgACJY6b0PoWEc7FWwFD4gzdr7NstnKVrFACtd/gu7
-         DOFds+Yfud6t81Zx+LjZJgb9nwWuTrKV5V+Hr0tHrE42GTiA6RAARevtTY3L22Lk5bwt
-         KC7L3xOIr40y958e0KITS+75h44r/wgidN0dQ+RLGjKc2TJcCraYspKSpCS+i16EIA9e
-         Y/W05tKO67JxXAW3bY2MgXk/kgJ+gLhImlOL6wH7wUj0bAQgHxcOH8pW2IOyp2itUeYn
-         GETg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjHfiMXeEzONzfMGQWrEh6Um6R5M5SBjE4Lv/+R7HYAfWYIXqStAjSCi5vmK0qNNF2+xgCPBwqU8pvK2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/Vw6AB3wotyL4xAFk1eCGu+hAptUycHmkmoDC7hy0y2ELPJRT
-	JDHoZqaH6inn3a3bTvDntYtpltHkxDhU5HQ5JxfjBqIAZTsECAOPKe/IZ7E6IV+hvj9M8910I5u
-	v9tgeLMUsb9hRjEDqAk68Z//ayxECLT3VhL5fioM6hft0IiAb6HG4tbKF1Ke17/PlaJQ=
-X-Gm-Gg: ASbGncs0rNxFORYP1QUSChbDIHyjSWyKLN8fM1gL2X7RCmI171i7GBgy2DkNbzoqDlb
-	sWbg0i/swJqKPVa1mkz4mzFTog75V+0cHcLIhYXcnRvQ/9xJmRnfmyH3uLNtCsHn8dB+qerfAMV
-	0AyX9//JjV94QKlMzZeh3m4OqBofmBK55EL+cCYJSVXKQMLmbdKdh7kZsH0U3mL0FTySbfvGN4b
-	u4QQKB8iu/Mj5rCvr9uCasHBvuBM/I0KtPkKd7e+vDO7DvqRjjFmJMw9BLi5lRuYP1UuIHRKJKC
-	VouLmmhM5q+PA9Wg8t1vpMuie3aw79xHDJ8uYnNKmi7HN5uoLrFrfmQ2Ed/iy5828C82MSrhdLd
-	rLqHiENqoBT4DQ7jnq4a1D/lHk1NnM4QyvVakcfWVSuM1THuvFcamElVze4bz
-X-Received: by 2002:a05:6300:6d0b:b0:238:cded:d32d with SMTP id adf61e73a8af0-238cdedd407mr1274380637.23.1752679243316;
-        Wed, 16 Jul 2025 08:20:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGalH6XH9sbSz8Z1EVkarL4o21D07/XcWEc3VRsCi3TM9BgHq254ZLszBRAS/A60P5dNPeUGA==
-X-Received: by 2002:a05:6300:6d0b:b0:238:cded:d32d with SMTP id adf61e73a8af0-238cdedd407mr1274334637.23.1752679242755;
-        Wed, 16 Jul 2025 08:20:42 -0700 (PDT)
+        bh=i/UzvBI9fx7W4AtWjhd/P7aklE++DS1Rd0idD9jTzhc=;
+        b=voZu56NpfoeQAHzDJAXPB6ddIZYK3FYWlrcDUSD158DIQMiw+hHK/LYizGt+TOpu75
+         c3M47O6yKx0A/Ru/MTCfLgBnnTM8nMIuacsMUS6zs8oojMp3SkIMwdilMePxIyr7OyB7
+         wzPqSgFitXkWsF+zz2MWkk7Qe4VANpswylvQ4S0GYWbT8ofWhkS2NmNxbDXsiX216yxJ
+         RMJhJgKfACPsXUrLSGgtJhyhu2ajKO3G6NhySwbPeDejvouKYXL306+nJ/xjDlpGB/ry
+         pJtZO3VXbqXlvo/YwFkuTFCAKKC6Jsr8yovXjOJRpXu/1pmZoYRjoj24vLpGBQxjcKoW
+         RukQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAX6XJ6eQgm/x1396ZeJCPyMCJuNTc0pTejY9mP5h421uLyQ+oq4kg2k8Ead/zD4CquACQNlJ6QwgK04Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkFVxYWy01PEW91JVeH0qyRsQmS2/Tu82iOSU3jrKXk71vV4xC
+	vVUbx7W5/H6JfXKEICVM3iTDZz70PeeQkdUHHzScl1sWGlbGcuWSZuVqxFA0NDhEfojWTHkS/lF
+	Qc6RY7AEdkTQQloJxG8hM95sWJL3On07tD91xCLz+JcdB6AmNT8085ELrO3sgAgLI0vo=
+X-Gm-Gg: ASbGncu1eDNOxhEaRRMAmQVYYdKbNGKYbgPUIKalBlD0Prk2Rqp0u73DPxXJhzXgMzC
+	zh1/UWK5evccMBfVCz/CFDbm9/ycAzlfxEwmBS82wDEFUA60621k3ZgUQUW/0jqJn9Njs3vZ6qJ
+	gqVT/pChhb2hnDRqDIHAYbdb3geGrdsnImb/ewQmw9bl+z3DUd4FZT0XpEFsk9zT7bWzZyejNX3
+	YlIgwWR+ugKqHXBAaH9/5fvW2JXzp1TWTAFlDNuZdMLesSccm5XHg0moYyoaWDlXX/nEvyJG6+h
+	jLlKLM3cwRgP2Bf3+fGE9niFzolEqxAGDw5TgqaoLTmoMja8pX3x4Hw54EQhFDpadtTUwIRvR1z
+	NRXr8r8qtq2BJlM1lNT0aMKvZegJ3kcwdQD6hzPAhu1y9ZUCeCoONY8GP4jgG
+X-Received: by 2002:a05:6a21:648a:b0:1f5:6c7b:8920 with SMTP id adf61e73a8af0-23810666ffbmr4906026637.9.1752679246751;
+        Wed, 16 Jul 2025 08:20:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFKLc+0bFiDHzoomsqf9Ui03eq/1TMOrYjYRIlLvU0csjZfUBwRKUHtvMxEGuec0rVMcA4QtA==
+X-Received: by 2002:a05:6a21:648a:b0:1f5:6c7b:8920 with SMTP id adf61e73a8af0-23810666ffbmr4905980637.9.1752679246306;
+        Wed, 16 Jul 2025 08:20:46 -0700 (PDT)
 Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6bd8f8sm13912054a12.38.2025.07.16.08.20.39
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6bd8f8sm13912054a12.38.2025.07.16.08.20.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 08:20:42 -0700 (PDT)
+        Wed, 16 Jul 2025 08:20:46 -0700 (PDT)
 From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 To: sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org,
         robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
         quic_rjendra@quicinc.com, taniya.das@oss.qualcomm.com
 Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] clk: qcom: rpmh: Add support for Glymur rpmh clocks
-Date: Wed, 16 Jul 2025 20:50:14 +0530
-Message-Id: <20250716152017.4070029-5-pankaj.patil@oss.qualcomm.com>
+Subject: [PATCH 5/7] clk: qcom: clk-alpha-pll: Add support for Taycan EKO_T PLL
+Date: Wed, 16 Jul 2025 20:50:15 +0530
+Message-Id: <20250716152017.4070029-6-pankaj.patil@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
 References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
@@ -98,87 +98,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzOCBTYWx0ZWRfXzTB/J7bmCgNk
- q7LdgT5rvBC5ejbm+cY8kCJic5luCIW5DR6IBle1JgQNi+4QpKHMWkoAwgPKBj87pXE9Ynwxufw
- IJuSp8bNw9+hXqA9l67aP+H1/n1OCo+TI3Ga1Ncjct3g9A+laStV2kj1zEkfqAQmTxLDCLdDoi+
- hJqt88opK4D3HuZ55llAHjtEQnYF70Z2XGUZQQ4SU3hRkF5XplUX06MSO/q3hUYFve4K1kPClFY
- MuMq0v248SUP7HeCIK4jeBr+bioPGXSYVLRoRHZGUP6gq5OJQzENRPP5DeEEFCLHSpXLmJYsbuk
- cWTfyMzjeBAHRHhkUIDak5O8ZWpgfLZzUBMOR5S0zqKpL00gcx+M6acoidW6qiviZsBDaplWSgE
- 8IkfWlKMYFvBgq5ajonopSTXJZMzNljvBgNBI5ky20oR8IBR5ZbAdyLEXAXxWq3fQJPDg5ej
-X-Proofpoint-GUID: LCAFQLgwEYM79Jea6BKkYaYTUQgCRfj_
-X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=6877c34c cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=RRvC4NyyfoRIYhV0TvUA:9
- a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-ORIG-GUID: LCAFQLgwEYM79Jea6BKkYaYTUQgCRfj_
+X-Proofpoint-GUID: IhGNZW2B63d_-2C-ICXftMflMh_ghqYa
+X-Proofpoint-ORIG-GUID: IhGNZW2B63d_-2C-ICXftMflMh_ghqYa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzOCBTYWx0ZWRfX43u0ePJ1a/6D
+ nWSkIjvEa4t+aMRuphc/5B/1Nmc0CdySGZDzdbA0PiibmfVltgESYBOUsUJZXVExoeXMaY4E3wS
+ vLvJSFRW5PL0LapPctZuW+BQfF1L3XnT8lRHhkUtdEgMbjgd2ZhPiKnChkmBNxU2jET3chpwign
+ /LbhIYsfh6VXgrjB2dTJpdgQAwqVSNfARJjrroasFBH1T2DDd+eFEE6tL/c0JxubWqqVTDT52Wx
+ JgYzQ7PM8j6x/C+0f8HJt7Q6VVDuvNkBfjp7fZ+FxVHfP/1zHm8L2TBDQW4kKlb7EP75ROJDyRy
+ eUZUndAa2Lt5DD8qa0acE2Jy8M/eLpz5e2ODnaucX4u1AUSRAx09ZzEmlRcmsnppQXfi9e/Menw
+ K1OH/ZthxWWX9aRItlRHg/tS84ZBeiCYzoRq7/6tzgRiImwtoTXrgiFJMeb06aLzjcr1RDQu
+X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=6877c350 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=9yNAuCQw4ehsCnPPvT8A:9
+ a=IoOABgeZipijB_acs4fv:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507160138
+ bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
+ phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507160138
 
 From: Taniya Das <taniya.das@oss.qualcomm.com>
 
-Add RPMH clock support for the Glymur SoC to enable proper clock
-management.
+Add clock operations and register offsets to enable control of the Taycan
+EKO_T PLL, allowing for proper configuration and management of the PLL.
 
 Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 ---
- drivers/clk/qcom/clk-rpmh.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/clk/qcom/clk-alpha-pll.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 00fb3e53a388..1bc1333087b4 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -388,6 +388,11 @@ DEFINE_CLK_RPMH_VRM(clk8, _a2, "clka8", 2);
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 7f35aaa7a35d..2294ae99cff3 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -29,6 +29,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_LUCID_OLE,
+ 	CLK_ALPHA_PLL_TYPE_PONGO_ELU,
+ 	CLK_ALPHA_PLL_TYPE_TAYCAN_ELU,
++	CLK_ALPHA_PLL_TYPE_TAYCAN_EKO_T = CLK_ALPHA_PLL_TYPE_TAYCAN_ELU,
+ 	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
+ 	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
+ 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
+@@ -192,14 +193,17 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
  
- DEFINE_CLK_RPMH_VRM(div_clk1, _div2, "divclka1", 2);
+ extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
+ #define clk_alpha_pll_taycan_elu_ops clk_alpha_pll_lucid_evo_ops
++#define clk_alpha_pll_taycan_eko_t_ops clk_alpha_pll_lucid_evo_ops
+ extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
+ #define clk_alpha_pll_reset_lucid_ole_ops clk_alpha_pll_reset_lucid_evo_ops
+ extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
+ #define clk_alpha_pll_fixed_lucid_ole_ops clk_alpha_pll_fixed_lucid_evo_ops
+ #define clk_alpha_pll_fixed_taycan_elu_ops clk_alpha_pll_fixed_lucid_evo_ops
++#define clk_alpha_pll_fixed_taycan_eko_t_ops clk_alpha_pll_fixed_lucid_evo_ops
+ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
+ #define clk_alpha_pll_postdiv_lucid_ole_ops clk_alpha_pll_postdiv_lucid_evo_ops
+ #define clk_alpha_pll_postdiv_taycan_elu_ops clk_alpha_pll_postdiv_lucid_evo_ops
++#define clk_alpha_pll_postdiv_taycan_eko_t_ops clk_alpha_pll_postdiv_lucid_evo_ops
  
-+DEFINE_CLK_RPMH_VRM(clk3, _a, "C3A_E0", 1);
-+DEFINE_CLK_RPMH_VRM(clk4, _a, "C4A_E0", 1);
-+DEFINE_CLK_RPMH_VRM(clk5, _a, "C5A_E0", 1);
-+DEFINE_CLK_RPMH_VRM(clk8, _a, "C8A_E0", 1);
-+
- DEFINE_CLK_RPMH_BCM(ce, "CE0");
- DEFINE_CLK_RPMH_BCM(hwkm, "HK0");
- DEFINE_CLK_RPMH_BCM(ipa, "IP0");
-@@ -854,6 +859,22 @@ static const struct clk_rpmh_desc clk_rpmh_sm8750 = {
- 	.clka_optional = true,
- };
+ extern const struct clk_ops clk_alpha_pll_pongo_elu_ops;
+ extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
+@@ -232,6 +236,8 @@ void clk_pongo_elu_pll_configure(struct clk_alpha_pll *pll, struct regmap *regma
+ 				 const struct alpha_pll_config *config);
+ #define clk_taycan_elu_pll_configure(pll, regmap, config) \
+ 	clk_lucid_evo_pll_configure(pll, regmap, config)
++#define clk_taycan_eko_t_pll_configure(pll, regmap, config) \
++	clk_lucid_evo_pll_configure(pll, regmap, config)
  
-+static struct clk_hw *glymur_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
-+	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
-+	[RPMH_RF_CLK3]		= &clk_rpmh_clk3_a.hw,
-+	[RPMH_RF_CLK3_A]	= &clk_rpmh_clk3_a_ao.hw,
-+	[RPMH_RF_CLK4]		= &clk_rpmh_clk4_a.hw,
-+	[RPMH_RF_CLK4_A]	= &clk_rpmh_clk4_a_ao.hw,
-+	[RPMH_RF_CLK5]		= &clk_rpmh_clk5_a.hw,
-+	[RPMH_RF_CLK5_A]	= &clk_rpmh_clk5_a_ao.hw,
-+};
-+
-+static const struct clk_rpmh_desc clk_rpmh_glymur = {
-+	.clks = glymur_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(glymur_rpmh_clocks),
-+};
-+
- static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
- 					 void *data)
- {
-@@ -943,6 +964,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id clk_rpmh_match_table[] = {
-+	{ .compatible = "qcom,glymur-rpmh-clk", .data = &clk_rpmh_glymur},
- 	{ .compatible = "qcom,qcs615-rpmh-clk", .data = &clk_rpmh_qcs615},
- 	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
- 	{ .compatible = "qcom,sa8775p-rpmh-clk", .data = &clk_rpmh_sa8775p},
+ void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 				  const struct alpha_pll_config *config);
 -- 
 2.34.1
 
