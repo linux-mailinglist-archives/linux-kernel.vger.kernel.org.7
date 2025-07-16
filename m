@@ -1,127 +1,263 @@
-Return-Path: <linux-kernel+bounces-733541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D35B07603
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:45:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8B2B075F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53AA17B63EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:41:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B486A16D163
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F02E2EA72F;
-	Wed, 16 Jul 2025 12:43:04 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944472F50B5;
+	Wed, 16 Jul 2025 12:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TCsPaXPw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C9C2F2734;
-	Wed, 16 Jul 2025 12:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE73121B9C8;
+	Wed, 16 Jul 2025 12:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669784; cv=none; b=bD3n4nfRuT08rByYasG10C84ShXzMY+Beq760zrdaQgHXzsZg0rryGJusn4QyGEbD3DCkCtwn59xalEDpSyv/Ge3Np1UkvQ2nircTvrfb5FRQHdQ4GQ3x4OYGqFy2LFNKLUeSWs7urzxDt//2sIHdX18vUjB3/uYGeiIyw6ud+s=
+	t=1752669831; cv=none; b=HyM+qu59cbpmuugt1iU7b/GUhteNPBFV2SnE4CBy2RznKGKg0Y0ck4Pxs4iwI6DKiwu7uulqWX4bAgf3m7adZQUUAt05CgO06xfcryEJQfX+9r07+0urJmvKdI4QYbaMXEEYClAUnCVa/OvIMRi+2Ieu+pLlSjMqQzV00eKoKAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669784; c=relaxed/simple;
-	bh=1pcwcS6neY1sn2H+xK5xryo5Tog9aCx7zCH97zzeIBs=;
+	s=arc-20240116; t=1752669831; c=relaxed/simple;
+	bh=Ie/vudHyUAw0gcZE2VY84j6FL1GN4ErvwXH8B3crDUM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R8ecJZsWaToHbE/3W7zqpR0nw5ZSuOkgDLo9v32Dsyp8wNvcu67EUG7yM8oU2UDT1M4b4v6OGqNH+JsOMn+e1V3/aDrouJiCqjz/Mu+Ve65UoLa9ApKjjjFoqqJInlaGGB+PMoFhaqsZYFwxwUJpOgSzdt02+0wvoziHlRdG7b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae36e88a5daso1298337366b.1;
-        Wed, 16 Jul 2025 05:43:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752669781; x=1753274581;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=47CMAEiZR5yTBll2g42B2pUuFdN90l8OtcScb22RuEY=;
-        b=Wpqvcm+mool5PME/Orvl0kYfEIMvBsMycaNse3pxXzh8/6DjcKBn4b7lAqX9drO7GB
-         +As/Xs4dwulC/hVFgfT41aaS0ZUXdsWLTfuKlCInu5oIrWcuTJfSG69jgjS5INsprypr
-         mut/Zyjk3uqHVqsFPrsEkau/CIoCu3lyDs6hRznP5mVVDVhGl1AC/BWq1/QZzeUHSROX
-         q+hcdAFEKMpxuJSapCpQT+dhQqTaatL1syR15FPAUeX3BtJJAreTQ3BSeTLoi45Q3RdJ
-         hvYVsPOHSAmow9t7Ox6HoCsnvFmv/Rw/bG0vWhMTnJNDvs29Vjz7ZRKWh4UgopAPh/tC
-         IVCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWq3AjQmB6G3q3d3bC0C+RdnTPET6N7A3q/ZGfRVewbWq9MkJbSGm6wRyJlrlXix0RL2BlvRRHNpux2@vger.kernel.org, AJvYcCXBkWALr0nccBSVrvZ6UdqeaJaDzGSmXeRw1jB2momtoGThMX1kpAzEv2P5U1PFFzvz3nxQPvdN0rDK7m72@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3PDgKz1lHuDD42FV4enTt8VrDPoIZuF3JAzUuOEgrKRta/p3+
-	XtOL/9RISNMv6h+cgs1UPY2imjP0xMOd6/1Z8nM9z2N0umEhdczj8PRe
-X-Gm-Gg: ASbGncsvM9QLQOkUS8ufJ8TZyqeSJugsXxE/JaS1YZB/F7bQlJ4N/2QWuh4RqX/rTfl
-	0YVeHOTeVADBnJO/PticymhoT/kw3rRdsPrQ0gVioFsYxYtrSMtsEOLmuYV5qAcDhx1A2Y4Jm3z
-	UbXOdRjeyAr4zV8MT8zIPlJ3YGn4z1KQvx5P7MQNQPLIb9D99R+Fs/IAdthLRIX4cqOIS3ndRk/
-	bdX5wK8h7fXL6D1uBNrru3HgP56sIpdcRL1T1yDYfP9s0dD9XucmljGO7cGdhzgwRtMB0pLhVw+
-	er+ijKxuPLFQXjzRYpqqRItJMEC/EfFoR/EUMAwb3j1fnkl1pQinLjv6BXEN8hBUZzHwOpuoGGt
-	9XSf5QIMeecamEwJJig3m6sU=
-X-Google-Smtp-Source: AGHT+IHl2TvHHkyPF2WMEidSU/J9NKBX3P3D97oaMObyNwb+BsCscwB+ZjdEMjtI9BgxMGx5SAhIew==
-X-Received: by 2002:a17:907:7f94:b0:ae6:c561:764a with SMTP id a640c23a62f3a-ae9cdd82e94mr244577666b.2.1752669780320;
-        Wed, 16 Jul 2025 05:43:00 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:3::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8295623sm1185331866b.116.2025.07.16.05.42.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:42:59 -0700 (PDT)
-Date: Wed, 16 Jul 2025 05:42:57 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Borislav Petkov <bp@alien8.de>, Alexander Graf <graf@amazon.com>, 
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Peter Gonda <pgonda@google.com>, 
-	"Luck, Tony" <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, 
-	"Moore, Robert" <robert.moore@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>, 
-	"kernel-team@meta.com" <kernel-team@meta.com>
-Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
-Message-ID: <ckn7d3e3xynnup4bbombn7z7xxvld3a7xmqpg4pzp57qebywfc@t2yrn3zqmnje>
-References: <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
- <aHWC-J851eaHa_Au@agluck-desk3>
- <20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
- <kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
- <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
- <vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
- <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
- <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
- <p2iytcdfvgm74zif6ihd7gs4kuaeza4b4p52cr5ya4upabiome@kr3yy7fjznwe>
- <b4c39a87-c5a4-4525-b598-61fc28a8dc36@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9yndH2g2Gb6EzjZBg+nWWwRvANqp0h+BiCt3jcxt0qhzLBG9r6rHWSd0yvQR13R0DR4npem1+qePde9g/lWSL21ZcoMPOqqTpKZFKLFk6t8/WbmdI8tMfbWhIdGA9ESZWt4hugXUOC8gKbdVMlwfJddbkpA4vGolHnm4ETrBHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TCsPaXPw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E4CC4CEF0;
+	Wed, 16 Jul 2025 12:43:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752669830;
+	bh=Ie/vudHyUAw0gcZE2VY84j6FL1GN4ErvwXH8B3crDUM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TCsPaXPwDySpyV0F+5fg5akK205LWTDPjc+nQxMjMnMTS25ziEdReHyN1ZI0ckoJy
+	 995/flkzHfWCECdiEQv0YVaHDwynRE/JiEoBn8KaOAFJhKOl/POE4HzzGKyI4GjGI+
+	 c0QZ9tsNkK4yZPEnTx2lF/KlTkz7Uq5MaTz0019k=
+Date: Wed, 16 Jul 2025 14:43:47 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v11 3/7] power: reset: Introduce PSCR Recording Framework
+ for Non-Volatile Storage
+Message-ID: <2025071645-panoramic-pyromania-2f8c@gregkh>
+References: <20250618120255.3141862-4-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b4c39a87-c5a4-4525-b598-61fc28a8dc36@linux.alibaba.com>
+In-Reply-To: <20250618120255.3141862-4-o.rempel@pengutronix.de>
 
-hello Shuai,
+Overall, no real issues, just some very minor ones:
 
-On Wed, Jul 16, 2025 at 11:04:28AM +0800, Shuai Xue wrote:
-> > My plan with this patch is to have a counter for hardware errors that
-> > would be exposed to the crashdump. So, post-morten analyzes tooling can
-> > easily query if there are hardware errors and query RAS information in
-> > the right databases, in case it seems a smoking gun.
-> 
-> I see your point. But does using a single ghes_recovered_errors counter
-> to track all corrected and non-fatal errors for CPU, memory, and PCIe
-> really help?
+On Wed, Jun 18, 2025 at 02:02:51PM +0200, Oleksij Rempel wrote:
+> + * Sysfs Interface:
+> + * ----------------
+> + *   /sys/kernel/pscrr/reason       - Read/write current power state change
+> + *				      reason
+> + *   /sys/kernel/pscrr/reason_boot  - Read-only last recorded reason from
+> + *				      previous boot
 
-It provides a quick indication that hardware issues have occurred, which
-can prompt the operator to investigate further via RAS events.
+The sysfs documentation is in the ABI file, so it's not needed here.
 
-That said, Tony proposed a more robust approach—categorizing and
-tracking errors by their source. This would involve maintaining separate
-counters for each source using an counter per enum type:
+> +static int pscrr_reboot_notifier(struct notifier_block *nb,
+> +				 unsigned long action, void *unused)
+> +{
+> +	struct pscrr_backend *backend;
+> +	int ret;
+> +
+> +	guard(g_pscrr)(&g_pscrr);
+> +
+> +	backend = g_pscrr.backend;
+> +
+> +	if (!backend || !backend->ops || !backend->ops->write_reason)
+> +		return NOTIFY_DONE;
+> +
+> +	ret = backend->ops->write_reason(get_psc_reason());
+> +	if (ret) {
+> +		pr_err("PSCRR: Failed to store reason %d (%s) at reboot, err=%pe\n",
+> +		       get_psc_reason(), psc_reason_to_str(get_psc_reason()),
+> +		       ERR_PTR(ret));
+> +	} else {
+> +		pr_info("PSCRR: Stored reason %d (%s) at reboot.\n",
+> +			get_psc_reason(), psc_reason_to_str(get_psc_reason()));
 
-	enum recovered_error_sources {
-		ERR_GHES,
-		ERR_MCE,
-		ERR_AER,
-		...
-		ERR_NUM_SOURCES
-	};
+Why print anything?  If this works properly, it should be quiet, right?
 
-See more at: https://lore.kernel.org/all/aHWC-J851eaHa_Au@agluck-desk3/
+> +static ssize_t reason_show(struct kobject *kobj, struct kobj_attribute *attr,
+> +			   char *buf)
+> +{
+> +	struct pscrr_backend *backend;
+> +	enum psc_reason r;
+> +
+> +	guard(g_pscrr)(&g_pscrr);
+> +
+> +	backend = g_pscrr.backend;
+> +
+> +	if (!backend || !backend->ops)
+> +		return scnprintf(buf, PAGE_SIZE, "No backend registered\n");
 
-Do you think this would help you by any chance?
+So a string, or an int will be returned?  That's crazy, just return an
+error here, -ENODEV?
 
-Thanks
---breno
+> +
+> +	/* If the backend can read from hardware, do so. Otherwise, use our cached value. */
+> +	if (backend->ops->read_reason) {
+> +		if (backend->ops->read_reason(&r) == 0) {
+> +			/* Also update our cached value for consistency */
+> +			set_psc_reason(r);
+> +		} else {
+> +			/* If read fails, fallback to cached. */
+> +			r = get_psc_reason();
+> +		}
+> +	} else {
+> +		r = get_psc_reason();
+> +	}
+> +
+> +	return scnprintf(buf, PAGE_SIZE, "%d\n", r);
+
+sysfs files should use sysfs_emit() so you don't get people sending you
+patches later on to convert it :)
+
+> +static ssize_t reason_store(struct kobject *kobj, struct kobj_attribute *attr,
+> +			    const char *buf, size_t count)
+> +{
+> +	struct pscrr_backend *backend;
+> +	long val;
+> +	int ret;
+> +
+> +	guard(g_pscrr)(&g_pscrr);
+> +
+> +	backend = g_pscrr.backend;
+> +
+> +	if (!backend || !backend->ops || !backend->ops->write_reason)
+> +		return -ENODEV;
+> +
+> +	ret = kstrtol(buf, 10, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (val > U32_MAX)
+> +		return -ERANGE;
+> +
+> +	if (val < PSCR_UNKNOWN || val > PSCR_MAX_REASON)
+> +		/*
+> +		 * Log a warning, but still attempt to write the value. In
+> +		 * case the backend can handle it, we don't want to block it.
+> +		 */
+> +		pr_warn("PSCRR: writing unknown reason %ld (out of range)\n",
+> +			val);
+
+Do not let userspace cause a DoS of kernel log messages just because it
+sent you an invalid data range.
+
+> +static struct kobj_attribute reason_attr = __ATTR(reason, 0644, reason_show,
+> +						  reason_store);
+
+__ATTR_RW(), right?  If not, why not?
+
+> +static struct kobj_attribute reason_boot_attr =
+> +	__ATTR(reason_boot, 0444, reason_boot_show, NULL); /* Read-only */
+
+__ATTR_RO(), right?  Then no comment is needed :)
+
+> +int pscrr_core_init(const struct pscrr_backend_ops *ops)
+> +{
+> +	enum psc_reason stored_val = PSCR_UNKNOWN;
+> +	struct pscrr_backend *backend;
+> +	int ret;
+> +
+> +	guard(g_pscrr)(&g_pscrr);
+> +
+> +	backend = g_pscrr.backend;
+> +
+> +	if (backend) {
+> +		pr_err("PSCRR: Core is already initialized!\n");
+
+All of the "PSCRR:" stuff should just be set with pr_fmt being defined
+at the top of this file, don't put it everywhere manually.
+
+> +		return -EBUSY;
+> +	}
+> +
+> +	if (!ops->read_reason) {
+> +		pr_err("PSCRR: Backend must provide read callbacks\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	backend = kzalloc(sizeof(*backend), GFP_KERNEL);
+> +	if (!backend)
+> +		return -ENOMEM;
+> +
+> +	backend->ops = ops;
+> +	backend->last_boot_reason = PSCR_UNKNOWN;
+> +	g_pscrr.backend = backend;
+> +
+> +	ret = ops->read_reason(&stored_val);
+> +	if (!ret) {
+> +		backend->last_boot_reason = stored_val;
+> +		pr_info("PSCRR: Initial read_reason: %d (%s)\n",
+> +			stored_val, psc_reason_to_str(stored_val));
+
+When code works properly, it should be quiet.  Don't spam the boot log
+please.
+
+> +	ret = sysfs_create_group(g_pscrr.kobj, &pscrr_attr_group);
+> +	if (ret) {
+> +		pr_err("PSCRR: Failed to create sysfs group, err=%pe\n",
+> +		       ERR_PTR(ret));
+> +		goto err_kobj_put;
+> +	}
+> +
+> +	pr_info("PSCRR: initialized successfully.\n");
+
+Same here, be quiet.
+
+> +void pscrr_core_exit(void)
+> +{
+> +	guard(g_pscrr)(&g_pscrr);
+> +
+> +	if (!g_pscrr.backend)
+> +		return;
+> +
+> +	if (g_pscrr.kobj) {
+> +		sysfs_remove_group(g_pscrr.kobj, &pscrr_attr_group);
+> +		kobject_put(g_pscrr.kobj);
+> +	}
+> +
+> +	unregister_reboot_notifier(&g_pscrr.reboot_nb);
+> +
+> +	kfree(g_pscrr.backend);
+> +	g_pscrr.backend = NULL;
+> +
+> +	pr_info("PSCRR: exited.\n");
+
+Same here, please be quiet.
+
+thanks,
+
+greg k-h
 
