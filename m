@@ -1,135 +1,148 @@
-Return-Path: <linux-kernel+bounces-733331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BF6B0733D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:22:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B57B0733C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A17B3A9B3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87FB2582827
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306122F365B;
-	Wed, 16 Jul 2025 10:19:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351F22F365C;
-	Wed, 16 Jul 2025 10:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7CA2F50AD;
+	Wed, 16 Jul 2025 10:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfuLaJ/+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A4E2F4316;
+	Wed, 16 Jul 2025 10:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661190; cv=none; b=JTR4Moa+PsaDkWVnWm7ZY9wUbyXp59zRgnwRikZsvEdZuzj1vXPuBL9+XuoQjTLXWJqv9xPVsgGmGaTjwXwfpkAQXCGKSKNvjZp/kdy/oGUtdCZ44lM1BQzbL23OZ49p/6ol9NV26EoDXKBJWaIJk5Pa8cavKb+UOxhTF4a0hxk=
+	t=1752661195; cv=none; b=h2MOdVljB/5115FYhfOHNSlLWbx8P+i7V3t1FRjUMbppUOixA78PTRGM16Zb4BreMnyv1JuXKpzYO89jcbWZHGTMmChl0U01w0mPskABCX7SFDSmlJR9zwFXr0R8fUBgthEgOf2LVcNgTBxLcN7LVciZ39Rf6kjEvHo6g+qYO0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661190; c=relaxed/simple;
-	bh=GU87xhkdBDpExOBMbJ4fKdt9ZysCHC+dF/RFFvA7GxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iAjFe7PEYswEF59WVLsk2PJoF+KW1pLMwxgVssHXwm8gmu+dfYC8DpMmelw2mFIjLLcOlNe2pQb3ZLctqgBFYAmtXNVoAWU/Mx5r53JRRUH7jhLeyQkNL+kNX0olNDk91o+pi/9vEQ2AinMa2pwMYq+TGGDCLY+IRam6igGDblI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F5A112FC;
-	Wed, 16 Jul 2025 03:19:38 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 251AC3F694;
-	Wed, 16 Jul 2025 03:19:44 -0700 (PDT)
-Date: Wed, 16 Jul 2025 11:19:38 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
-	kernel-team@meta.com, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, osandov@fb.com, leo.yan@arm.com,
-	rmikey@meta.com
-Subject: Re: [PATCH v2] arm64: Mark kernel as tainted on SAE and SError panic
-Message-ID: <aHd8uvMegWXHyhvN@J2N7QTR9R3>
-References: <20250716-vmcore_hw_error-v2-1-f187f7d62aba@debian.org>
+	s=arc-20240116; t=1752661195; c=relaxed/simple;
+	bh=8kJXGogC+xtdCvbe6QsC3MjM2fHwl2vl79nSR9/Gos8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Swi1xD5/shmSS37ArjfIqGGUvNUGjBhfOaT2GLX8yGPM+wPdxoyfksxmBAMWFmKrePdS07o8moAda+O2+X64iFB8r6dOBmCGc46/z0hUGoSXS/TPTknTav6kqOkfGEUkFU8fSlbhYnBoju6PvQnmRkOCVcGtZh+t94AExsl5lGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfuLaJ/+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC24C4CEF8;
+	Wed, 16 Jul 2025 10:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752661194;
+	bh=8kJXGogC+xtdCvbe6QsC3MjM2fHwl2vl79nSR9/Gos8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GfuLaJ/+AOvSNpOsqhDdfXD+K8c2pJd6/CpflJsmMGXmwFT0+C5SW9vvcKSfkqf2Z
+	 gG4cXCHWpmn2UwZhQ+JzgH7N9Xu8tAciCrSYhCtxLGF4LDmCnJY4aXoJPWyGgxWsud
+	 EJ+O5XiYpl2/TDvGKVKtz4HsGEa0HiagZjmH0LBfC1yNyES3X+w743LPLL2J2q8h/q
+	 A+eS2c7nC17dFMisVww5y6YrhuP9cDJKLr9PDxaQdI5XFFWlH4Q9gxQZoVbhMfZ1iJ
+	 pqbVuwRtkaiIaPEpFq3m1cxa5lFID22T6Of4dLH0/3cuBpRs+1waStPQcCURHjjaNL
+	 29Ckx8rACeA2g==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6099d89a19cso11665496a12.2;
+        Wed, 16 Jul 2025 03:19:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWher+HcwQ55NGogmFZrVQgWir2EluqUTi3kaMTMucYMLZJe1ckyQMbwDAHzzsxP8RHKGwTzX/u+iY+P4m2@vger.kernel.org, AJvYcCWt65UL6ywBsuWoP8rUGlDCGmm1a0b37ZgXJIqvjcCTNDmtz0kDmlQ+CYp6i4q0OTnsRJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQLPT444nAhk0bOFmZ6sOgA7Sne08vJrUWdAu0DPhD0K1eosmY
+	YmhWuw7nJHNQF2uZigVtjAaG+Fe6/rJT1BOyLxhqH+y/qAYSa4g1rcUZWrkg5bGz4f6YULZhbwu
+	z3OKIb6Wjc2M+W2V+xPa+pxKnnoys6WU=
+X-Google-Smtp-Source: AGHT+IGLf5F9ZG/NbE6Kve8ltdtbhY1XiBDXCOYdVJpmYYdvFJQIqMrlvYIypc/8SJSdFnawU6v27XpLcqd5fjLTl9c=
+X-Received: by 2002:a05:6402:348a:b0:606:df70:7aa2 with SMTP id
+ 4fb4d7f45d1cf-61285bf41c5mr1880418a12.31.1752661193141; Wed, 16 Jul 2025
+ 03:19:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716-vmcore_hw_error-v2-1-f187f7d62aba@debian.org>
+References: <20250709080233.3948503-1-maobibo@loongson.cn>
+In-Reply-To: <20250709080233.3948503-1-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Wed, 16 Jul 2025 18:19:41 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5x_V8CjX=Keb0k5+5zFtqh01MBWEo_hTFwwge-01jT9Q@mail.gmail.com>
+X-Gm-Features: Ac12FXwd2qxljM80M1yo635HrTRXipUsmKiKsDP_pvPFX0beAQYXth9PLs0uqjU
+Message-ID: <CAAhV-H5x_V8CjX=Keb0k5+5zFtqh01MBWEo_hTFwwge-01jT9Q@mail.gmail.com>
+Subject: Re: [PATCH v6 0/8] LoongArch: KVM: Enhancement with eiointc emulation
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Xianglai Li <lixianglai@loongson.cn>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Breno,
+Applied with some modifications. E.g., Patch6 removes offset, and
+Patch8 adds it back, so I combine these two.
 
-On Wed, Jul 16, 2025 at 02:42:01AM -0700, Breno Leitao wrote:
-> Set TAINT_MACHINE_CHECK when SError or Synchronous External Abort (SEA)
-> interrupts trigger a panic to flag potential hardware faults. This
-> tainting mechanism aids in debugging and enables correlation of
-> hardware-related crashes in large-scale deployments.
-> 
-> This change aligns with similar patches[1] that mark machine check
-> events when the system crashes due to hardware errors.
-> 
-> Link: https://lore.kernel.org/all/20250702-add_tain-v1-1-9187b10914b9@debian.org/ [1]
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+Since the code is a little different, it is better to test it again [1].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongs=
+on.git/log/?h=3Dloongarch-kvm
+
+
+
+Huacai
+
+On Wed, Jul 9, 2025 at 4:02=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrote=
+:
+>
+> This series add generic eiointc 8 bytes access interface, so that 1/2/4/8
+> bytes access can use the generic 8 bytes access interface. It reduce
+> about 500 lines redundant code and make eiointc emulation driver
+> simpler than ever.
+>
 > ---
-> Changes in v2:
-> - Also taint the kernel on Synchronous External Abort panics (Will Deacon)
-> - Link to v1: https://lore.kernel.org/r/20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org
-
-I think something went wrong when respinning this patch, because the v1
-link above is incorrect, and should be:
-
-  https://lore.kernel.org/linux-arm-kernel/20250710-arm_serror-v1-1-2a3def3740d7@debian.org/
-
-The Cc header for this posting matches that of the unrelated patch (and
-excludes Will, Catalin, etc), rather than that of the real v1. The
-change-id trailer also doesn't match v1.
-
-The actual patch and commit message look fine to me, so:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-I assume that Will or Catalin will be happy to pick this up. I've added
-those missing folk to this reply, so I don't imagine this should need a
-respin.
-
-Mark.
-
+> v5 ... v6:
+>   1. Merge previous patch 5 & 6 into one, patch 7 & 10 into into one and
+>      patch 12 and patch 13 into one.
+>   2. Use sign extension with destination register for IOCSRRD.{B/H/W}
+>      kernel emulation.
+>
+> v4 ... v5
+>   1. Rebase patch on latest kernel where bugfix of eiointc has been
+>      merged.
+>   2. Add generic eiointc 8 bytes access interface, 1/2/4/8 bytes access
+>      uses generic 8 bytes access interface.
+>
+> v3 ... v4:
+>   1. Remove patch about enhancement and only keep bugfix relative
+>      patches.
+>   2. Remove INTC indication in the patch title.
+>   3. With access size, keep default case unchanged besides 1/2/4/8 since
+>      here all patches are bugfix
+>   4. Firstly check return value of copy_from_user() with error path,
+>      keep the same order with old patch in patch 4.
+>
+> v2 ... v3:
+>   1. Add prefix INTC: in title of every patch.
+>   2. Fix array index overflow when emulate register EIOINTC_ENABLE
+>      writing operation.
+>   3. Add address alignment check with eiointc register access operation.
+>
+> v1 ... v2:
+>   1. Add extra fix in patch 3 and patch 4, add num_cpu validation check
+>   2. Name of stat information keeps unchanged, only move it from VM stat
+>      to vCPU stat.
 > ---
->  arch/arm64/kernel/traps.c | 1 +
->  arch/arm64/mm/fault.c     | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-> index 9bfa5c944379d..7468b22585cef 100644
-> --- a/arch/arm64/kernel/traps.c
-> +++ b/arch/arm64/kernel/traps.c
-> @@ -931,6 +931,7 @@ void __noreturn panic_bad_stack(struct pt_regs *regs, unsigned long esr, unsigne
->  
->  void __noreturn arm64_serror_panic(struct pt_regs *regs, unsigned long esr)
->  {
-> +	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
->  	console_verbose();
->  
->  	pr_crit("SError Interrupt on CPU%d, code 0x%016lx -- %s\n",
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index ec0a337891ddf..004106ff4bd03 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -826,6 +826,7 @@ static int do_sea(unsigned long far, unsigned long esr, struct pt_regs *regs)
->  		 */
->  		siaddr  = untagged_addr(far);
->  	}
-> +	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
->  	arm64_notify_die(inf->name, regs, inf->sig, inf->code, siaddr, esr);
->  
->  	return 0;
-> 
-> ---
-> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> change-id: 20250707-vmcore_hw_error-322429e6c316
-> 
-> Best regards,
-> --  
-> Breno Leitao <leitao@debian.org>
-> 
-> 
+> Bibo Mao (8):
+>   LoongArch: KVM: Use standard bitops API with eiointc
+>   LoongArch: KVM: Remove unused parameter len
+>   LoongArch: KVM: Add stat information with kernel irqchip
+>   LoongArch: KVM: Remove never called default case statement
+>   LoongArch: KVM: Use generic function loongarch_eiointc_read()
+>   LoongArch: KVM: Remove some unnecessary local variables
+>   LoongArch: KVM: Replace eiointc_enable_irq() with eiointc_update_irq()
+>   LoongArch: KVM: Add generic function loongarch_eiointc_write()
+>
+>  arch/loongarch/include/asm/kvm_host.h |  12 +-
+>  arch/loongarch/kvm/intc/eiointc.c     | 558 ++++----------------------
+>  arch/loongarch/kvm/intc/ipi.c         |  28 +-
+>  arch/loongarch/kvm/intc/pch_pic.c     |   4 +-
+>  arch/loongarch/kvm/vcpu.c             |   8 +-
+>  5 files changed, 102 insertions(+), 508 deletions(-)
+>
+>
+> base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
+> --
+> 2.39.3
+>
 
