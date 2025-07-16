@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-733288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07993B072AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:09:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C94FB072BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29A41C22293
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:09:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09BA3BD94C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1368B2F2718;
-	Wed, 16 Jul 2025 10:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0972F2C5E;
+	Wed, 16 Jul 2025 10:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFVyG3Tv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sb7cT2DB"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636BC2F2708;
-	Wed, 16 Jul 2025 10:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA132F362F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660520; cv=none; b=ERctnpMF+/n9TLLWw+Sg+Cu93zaV2b8fgXrLA5W6RNDyLr+J3iojobjg1vVpGqKg0Y8DrY2LcMzkge28CeKhov2PrzK1/817+ZCPy/KJiJnbmk4o95kB0HUjkrQMEviqcGjd0v0foKqpkFWjDxhGhY+776loU37I1ahl760121E=
+	t=1752660552; cv=none; b=gtHC71s/ZcpxZYZUUmMyZAvhyKyetLcH1CyySymL82UbuG1smAweBs7W958Yf2TAvQRvn32IfIXWlwOz/KvKRZDLx+tL7DPYPgFhmdSh3HCeJSZclHazqXXGs3XBzfr92SLTH4NA0KZWNDP9Y5LYe+33Fgzdji7y8IU+j0s8HPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752660520; c=relaxed/simple;
-	bh=ygRdgWBky8NpY2ERRzAFKmGtSKpHj58BdrOI5Bf4iUk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=dwRXUrZm8t0C7LFpHuUMblBRYiYcpiYsE6PbWQdyoyyEQ3SFR6sMfoXuHVAVknACQuI3lR9cTjA18F7lo9BW60LKXJkCUHcEghDOUuXgSgYNbPxSCDR7/9JYDlwbs0lE3e0YP9BGN8dPm9VDVruf3p5B97beRdd/jcSlV5HsQtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFVyG3Tv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 282B1C4CEF0;
-	Wed, 16 Jul 2025 10:08:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752660517;
-	bh=ygRdgWBky8NpY2ERRzAFKmGtSKpHj58BdrOI5Bf4iUk=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=uFVyG3TvCB03QVldUaVg5CCpKIhNAn84Wmt45Uz68lM7CAe7Iz+PN8G9lf2FvQVue
-	 x0zDy5XH+adwlxqkvwuQ1TUg+8EkyDqOLxjm5lq5HQ0ai71ce/TtyUGicQnmSXvlQU
-	 5W/oQV8/IQs740+swphfWgxq5jrmUJKPleg/u4L34tnwi+Ivzz2xP+J6qATfW5H3H+
-	 i3r2QVzRyh5dkxn6zH+I91hBeTlbrPZBi3c5BcVg1NcIPkW3HRjdTLCo3aYjxkWpP4
-	 1QBIO+2tp3x1nUMP91YPqF4Mm6rvcS8Yj8U0+NcRwuPwXR1jKBEgRjARybreGHjeij
-	 FRI8ZlWxN4nKA==
+	s=arc-20240116; t=1752660552; c=relaxed/simple;
+	bh=bYR1c9LIUL6l7D6Wuh18sl8qUWFTwYdOeejSsA0iDBU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cbDEB85QG3iWjzR66F3K6WsCs1XO4oZuvvbRX1N0TUXru3F1KMn74RH2sVqVNFQaI0YyUrtfFnTw0KzQ2btbfZwdASZ7UuOUW4+qeE7ffc8e1kFOiUebNOukq2yhuOG4AzA32g6ZNjVkkdDN5SJPC7UFeGHh6RUVVXIBdAbXziI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sb7cT2DB; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e733e25bfc7so5549890276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752660549; x=1753265349; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aaSlIX5JSMkPDXYG9OHGWw9rTnf4dMbBtDMCUX1oXGk=;
+        b=Sb7cT2DBKzu0dLJA4pKIFaNSayrw3zi+x/xQ1PZ07iSCbQWylfToz1gQ5LJTB+4eMk
+         mBPS1BqqFR7JQDvuySXht3HTE1SOXSmNG9+dw8v0ny+BMr1M82EF4s/0gUIpuj/jXM5Q
+         3uotcC4RsxC+YZ+DpnpxkHRX/NUYBOTxzaXh5npZtBtvwWPTipOUMqXkbCp026HlODlb
+         Nzh4HmVpUcq+e9Jhf3miiQQ1Z6Xh/2Yq3iQNZ+FVgiM4X7AfkX+dMyvL0NNPbNOMKxec
+         t6WUe9qhAxRCNbunJn/TdNP8v8OrA1ncgobXzOmB42NPXfT2aYp3cfWWSnPhAbDKCc6Z
+         joOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752660549; x=1753265349;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aaSlIX5JSMkPDXYG9OHGWw9rTnf4dMbBtDMCUX1oXGk=;
+        b=A8r+dxtFiknHIfVvlusV6u25H6JrVIl83rWc2jE8zPmRf9bl293h98t8JdgSDMh4Ta
+         XZ59MGZCy7IiVKTgCHsNdU9jenUdCkJgknRmg36Mb3zf4hsl6eRhdiIKWZfjVJ63EVjR
+         Qn9W3fbyOYuqrAOW/NvJP+rI2QJ34z2x8Z1Rah73EGImlrICEmZ4NxeckSTxCRuKirpW
+         zx/cqFbkxIBNI10jOtqdiEmDQS2Urtqz5kfVSYWl0hMcQRmB2NxQYVY2yDyuXFLUVVdU
+         diHvrrQRObw7sdCqr8sngmpo3wo6zGLzAts6Dmb4Gd2ttdjV0M3GWPwIqbNenyAaorKQ
+         cQzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvRo7mtHgn0ZEn2PeoUz9SSd8ukSqYxL1XlKTb1+SWYTRzJODpuu5w9D7h/hum3EMw1SalJxe7M0kGKy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZGpiNqPqk8a4QFYbPGPL2QltAsVkLEioLO0ZfTXvuG8XeuqsB
+	wgTYPC9j8BHNaDazG3nrt0G4PzkAE7QOIMULNbDzB0a5QIFMTtiKcpISzeAJfV6kDLOdNeVswy7
+	QHgf339Llp1R/m6RQXsOkVomjS5MMhu0uQYtUgYJhhQ==
+X-Gm-Gg: ASbGnctkHu6zft6g5X9FSma7ZbC1zptt1gOyu+xmZbBU9qy09BNtnt0YX7KS8n7zOlI
+	W867AVfxf7kcjb/MH/Q7YqtlOB+HQcmFND/hRz+Hns2v8Av5cC60wSH7Z/btXiUYthDK9f0LHe1
+	OEgxGY/iKRndgAepUCXhXrWUYFgha1Wv4N/IsX2V+ljNzIIhjfWK+QwusuD4J9X7O21JnVUbkgd
+	cyAV863
+X-Google-Smtp-Source: AGHT+IEVrqdnzjgna0nPf8/QlqPaakZ0z/Y4vr73ndJXG6lcTCHSif5oJvQaIYU9G6d6AxqzY4LsoRudWzSfDn6eIO8=
+X-Received: by 2002:a05:690c:22c5:b0:70e:2ba2:659d with SMTP id
+ 00721157ae682-7183747da57mr24628487b3.23.1752660548791; Wed, 16 Jul 2025
+ 03:09:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Jul 2025 12:08:32 +0200
-Message-Id: <DBDEARWBQERF.WCGQ708G934O@kernel.org>
-Subject: Re: [PATCH 2/5] rust: dma: add DMA addressing capabilities
-Cc: <abdiel.janulgue@gmail.com>, <daniel.almeida@collabora.com>,
- <robin.murphy@arm.com>, <a.hindborg@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <aliceryhl@google.com>,
- <tmgross@umich.edu>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
- <rafael@kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250710194556.62605-1-dakr@kernel.org>
- <20250710194556.62605-3-dakr@kernel.org>
- <2025071627-outlet-slacker-9382@gregkh>
-In-Reply-To: <2025071627-outlet-slacker-9382@gregkh>
+MIME-Version: 1.0
+References: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
+In-Reply-To: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 16 Jul 2025 12:08:33 +0200
+X-Gm-Features: Ac12FXzW2XIbQtUDaHN3eu8QGSaXiZ3-1JrKO6jE043zd7_dvv1edcxvTnJN-Gw
+Message-ID: <CAPDyKFqsP7bHrN6oBi0Wvy-MRZNko3uOq6wiH8vf9QxOeJuEug@mail.gmail.com>
+Subject: Re: [PATCH next] mmc: loongson2: Fix error code in loongson2_mmc_resource_request()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed Jul 16, 2025 at 11:15 AM CEST, Greg KH wrote:
-> On Thu, Jul 10, 2025 at 09:45:44PM +0200, Danilo Krummrich wrote:
->> +/// Returns a bitmask with the lowest `n` bits set to `1`.
->> +///
->> +/// For `n` in `0..=3D64`, returns a mask with the lowest `n` bits set.
->> +/// For `n > 64`, returns `u64::MAX` (all bits set).
->> +///
->> +/// # Examples
->> +///
->> +/// ```
->> +/// use kernel::dma::dma_bit_mask;
->> +///
->> +/// assert_eq!(dma_bit_mask(0), 0);
->> +/// assert_eq!(dma_bit_mask(1), 0b1);
->> +/// assert_eq!(dma_bit_mask(64), u64::MAX);
->> +/// assert_eq!(dma_bit_mask(100), u64::MAX); // Saturates at all bits s=
-et.
->> +/// ```
->> +pub const fn dma_bit_mask(n: usize) -> u64 {
->> +    match n {
->> +        0 =3D> 0,
->> +        1..=3D64 =3D> u64::MAX >> (64 - n),
->> +        _ =3D> u64::MAX,
->> +    }
->> +}
+On Wed, 16 Jul 2025 at 01:01, Dan Carpenter <dan.carpenter@linaro.org> wrote:
 >
-> This is just the C macro DMA_BIT_MASK(), right?  If so, can that be said
-> here somewhere?
+> There is a cut and paste bug so we accidentally return the wrong
+> variable.  It should be "ret" instead of PTR_ERR(host->clk).
+>
+> Fixes: 2115772014bd ("mmc: loongson2: Add Loongson-2K SD/SDIO controller driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Yes, I think that'd be good.
+Applied for next, thanks!
 
-> Or, how about turning DMA_BIT_MASK() into an inline
-> function which could then be just called by the rust code directly
-> instead?
+Kind regards
+Uffe
 
-Unfortunately, bindgen doesn't pick up either, so converting to an inline
-function wouldn't help.
 
-We could use it through a Rust helper though, but I considered this to be
-unnecessary overhead. Whether that's relevant in this case is of course
-questionable though. :)
-
-Given that we also concluded that we want to return a new type (i.e. DmaMas=
-k)
-rather than a u64, I feel like it's a bit cleaner to keep it self-contained=
-.
+> ---
+>  drivers/mmc/host/loongson2-mmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
+> index ba6bb8fd5535..63d01d2cd978 100644
+> --- a/drivers/mmc/host/loongson2-mmc.c
+> +++ b/drivers/mmc/host/loongson2-mmc.c
+> @@ -887,7 +887,7 @@ static int loongson2_mmc_resource_request(struct platform_device *pdev,
+>         if (host->clk) {
+>                 ret = devm_clk_rate_exclusive_get(dev, host->clk);
+>                 if (ret)
+> -                       return PTR_ERR(host->clk);
+> +                       return ret;
+>
+>                 host->current_clk = clk_get_rate(host->clk);
+>         } else {
+> --
+> 2.47.2
+>
 
