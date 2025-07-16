@@ -1,125 +1,167 @@
-Return-Path: <linux-kernel+bounces-733073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F58B06FD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:04:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633F5B06FDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BACD7A7BA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:03:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A82B14A106D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400D228EA70;
-	Wed, 16 Jul 2025 08:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D9328A3ED;
+	Wed, 16 Jul 2025 08:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZQ6Cde4"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qqL94Yuf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931F92459E5;
-	Wed, 16 Jul 2025 08:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD53291C00;
+	Wed, 16 Jul 2025 08:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752653072; cv=none; b=ZKp1yeCbWaQeXqzUgNy8AXIt0RNl7NL9CpfOSOMPQQvMH++L+2epBWh3C3cwAYRTLOUYNoQWU0g3qjgEGQWVEp7BWdC4iIaR0xLqThwLX53E94TG5xchi8IDgNiloESgSdCIy91uK0+UxPs7YwxnsfU9ja0chbahzp4siFnAOTc=
+	t=1752653125; cv=none; b=TioqaBwyIyRAfZusYlzsAMp/i4HkazzuA8Ebzy5qDhYFX1ORchUZCGnr9wQ8UBD5eRo7kmbbnzGWjTYSd/Y657mdoxRmpgfDLTrNqgrxqY+bkQ7oJabf6u5AqObFS0+/ViUjnGreOdrEnCRKorlRVuxBx8Sj0VojOFyb/k7F+g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752653072; c=relaxed/simple;
-	bh=ppdzzBKFjI7kQ1+tfDKaU9iIioZYEueihsIby5RUlvM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=CrYEgU86Ie6GFfKlqbR6oRnyvSL9K/v9x9zNFxmKowNYNzrhk0E+WpbSUPuViwkG7hZSE0JjvH44F7qXzdxPFF5jq0N6mFJcg8aHs/Qe4oj8Ud2z6aR/8M5AukmWjdK0OhOMKUpiLhf8ct8i7aEc1Bke8dhidp+Yq9C/Ft2kuYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZQ6Cde4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37F2DC4CEF5;
-	Wed, 16 Jul 2025 08:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752653072;
-	bh=ppdzzBKFjI7kQ1+tfDKaU9iIioZYEueihsIby5RUlvM=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=SZQ6Cde4tKBs5gp02BFQ9EVkSWglErefqVfDkCkMu8lWX5LeLWDJX8ktww+9bfn2R
-	 9ww66zZqY5Z7F6cHKIQwMes6P1Voz0xw/dXWqeF34w3A3j5paM7yO1cHGd//BvSCBA
-	 SZ91RBqh0y40lVQ/DFnLLjufTvUlDJqKkdFQVYOUi6qrDbqZsyk9tPM/MLNkbnQHEb
-	 +/kejUWStkPBocshqEvZ602J6qxil6UPml7SV8SPFFdnI6M/Sz1tFhVl9ewWSFYhwA
-	 fLJMpOiwHwlVtgG+IQEojJ9WFAMQUk5VrbiE2L5FnD6UrV89JVpSUsp2Pb3IfVO4rh
-	 zQ3/OHTrxL03A==
+	s=arc-20240116; t=1752653125; c=relaxed/simple;
+	bh=8qbPegzDRBzlWplhuGMyDYIRnilnuHyUzqx/BpKWE0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cxuVbTXj1hWVi1UTMBnh6TkYTNf/0NkbvnuCnTTFBGqvA3H0wjCIhTlEZovSiW+eAujvLXHnFMRgi0Pr51k/mLpR6hHwQ/T6s6T3rfZDe3/eK/RshsS8GVVteXZ5BA1EEbOu1ljh3fDdav36E8Nky0zkhRFr/f6YpNHN1xjLlRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qqL94Yuf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA467C4CEF0;
+	Wed, 16 Jul 2025 08:05:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752653125;
+	bh=8qbPegzDRBzlWplhuGMyDYIRnilnuHyUzqx/BpKWE0I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qqL94Yuf+pnwlUQWA19R8lZkukE0iAVmbq5wLa/sCq+VhR/RvyVA2LXCPEdNIf5ah
+	 SGiIvrKQkzTXGoRKiZW5Z1xdMi6g8LCxjI4FZZ4PVnYesyMB76NfJivQrQoLzTJet7
+	 EAHFjLqnSYu8E+gwJoAbsdtABFRmTPkl9kOXIyo4=
+Date: Wed, 16 Jul 2025 10:05:22 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Marwan Seliem <marwanmhks@gmail.com>
+Cc: jirislaby@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2] tty: sysrq: Introduce compile-time crash-only mode
+Message-ID: <2025071614-enlisted-railway-06b6@gregkh>
+References: <20250708075701.22988-1-marwanmhks@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Jul 2025 10:04:26 +0200
-Message-Id: <DBDBNRC9VEU5.2MXQF7KLR2HA7@kernel.org>
-Subject: Re: [PATCH 2/5] rust: dma: add DMA addressing capabilities
-Cc: <abdiel.janulgue@gmail.com>, <daniel.almeida@collabora.com>,
- <robin.murphy@arm.com>, <a.hindborg@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <aliceryhl@google.com>,
- <tmgross@umich.edu>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
- <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250710194556.62605-1-dakr@kernel.org>
- <20250710194556.62605-3-dakr@kernel.org>
- <DBD5KXIOSD22.L4RPVLDQ7WDQ@nvidia.com>
-In-Reply-To: <DBD5KXIOSD22.L4RPVLDQ7WDQ@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708075701.22988-1-marwanmhks@gmail.com>
 
-On Wed Jul 16, 2025 at 5:18 AM CEST, Alexandre Courbot wrote:
-> On Fri Jul 11, 2025 at 4:45 AM JST, Danilo Krummrich wrote:
->> @@ -18,7 +18,83 @@
->>  /// The [`dma::Device`](Device) trait should be implemented by bus spec=
-ific device representations,
->>  /// where the underlying bus is DMA capable, such as [`pci::Device`](::=
-kernel::pci::Device) or
->>  /// [`platform::Device`](::kernel::platform::Device).
->> -pub trait Device: AsRef<device::Device<Core>> {}
->> +pub trait Device: AsRef<device::Device<Core>> {
->> +    /// Set up the device's DMA streaming addressing capabilities.
->> +    ///
->> +    /// This method is usually called once from `probe()` as soon as th=
-e device capabilities are
->> +    /// known.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// This method must not be called concurrently with any DMA alloca=
-tion or mapping primitives,
->> +    /// such as [`CoherentAllocation::alloc_attrs`].
->
-> I'm a bit confused by the use of "concurrently" in this sentence. Do you
-> mean that it must be called *before* any DMA allocation of mapping
-> primitives? In this case, wouldn't it be clearer to make the order
-> explicit?
+On Tue, Jul 08, 2025 at 10:57:01AM +0300, Marwan Seliem wrote:
+> The Magic SysRq facility, while a powerful tool for debugging, presents a
+> significant attack surface. A user with console access or sufficient
+> privileges can use SysRq commands to reboot the system ('b'), terminate
+> all processes ('i'), or perform other disruptive actions. These actions
+> can lead to denial-of-service or be used to hide traces of an intrusion.
+> 
+> While SysRq can be disabled via a sysctl, a privileged user can often
+> re-enable it at runtime. For hardened systems where the only required
+> SysRq functionality is generating a kdump for post-mortem analysis, a
+> stronger, permanent restriction is necessary.
+> 
+> This commit introduces the Kconfig option `CONFIG_MAGIC_SYSRQ_CRASH_ONLY`
+> to provide a compile-time guarantee that only the 'c' (crash) command
+> is available. This allows system administrators to build a kernel that
+> supports critical crash dump generation while completely removing the
+> attack surface presented by all other SysRq commands.
+> 
+> When `CONFIG_MAGIC_SYSRQ_CRASH_ONLY` is enabled, the kernel is hardened
+> in the following ways:
+> 
+> 1.  Restricted Commands: Only the 'c' (trigger a system crash/dump)
+>     SysRq command is operational. All other built-in SysRq commands are
+>     disabled at compile time.
+> 
+> 2.  Runtime Registration Disabled: The kernel rejects any attempt to
+>     register new SysRq key operations at runtime via `register_sysrq_key()`,
+>     returning -EPERM.
+> 
+> 3.  Crash Command Unregistration Prevented: The 'c' (crash) command
+>     cannot be unregistered.
+> 
+> 4.  Sysctl Hardening: The `/proc/sys/kernel/sysrq` interface is neutered.
+>     Any write to this interface is rejected with -EPERM, preventing
+>     runtime attempts to alter the SysRq mask. The kernel will only
+>     permit the crash operation, regardless of the `sysrq_always_enabled`
+>     kernel command line parameter.
+> 
+> 5.  Trigger Hardening: Writing any character other than 'c' to
+>     `/proc/sysrq-trigger` is rejected with -EPERM.
+> 
+> 6.  Restricted Help Output: The help message, triggered by an invalid
+>     SysRq key, will only list the 'c' (crash) command.
+> 
+> This feature provides a robust, compile-time mechanism to lock down
+> SysRq functionality, ensuring that even a privileged user cannot bypass
+> the intended security policy.
+> 
+> ---
+> v2:
+> - Adjust #ifdef style to align with existing patterns in sysrq.c.
+> - Block writes to the /proc/sys/kernel/sysrq sysctl with -EPERM when
+>   in crash-only mode, with a rate-limited warning.
+> - Return -EPERM from the /proc/sysrq-trigger write handler if the
+>   requested command is not 'c'.
+> - Rate-limit warning messages generated from userspace-triggered events
+>   to prevent log-flooding.
+> 
+> Affected files:
+> - lib/Kconfig.debug: Added `CONFIG_MAGIC_SYSRQ_CRASH_ONLY`.
+> - drivers/tty/sysrq.c: Implemented the conditional logic for
+>   restricted mode.
+> - kernel/sysctl.c: Use the sysrq_toggle_support return to deny illegal toggle
+> 
+> Signed-off-by: Marwan Seliem <marwanmhks@gmail.com>
+> ---
+>  drivers/tty/sysrq.c | 87 +++++++++++++++++++++++++++++++++++++++++++--
+>  kernel/sysctl.c     |  4 +--
+>  lib/Kconfig.debug   | 27 ++++++++++++++
+>  3 files changed, 113 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+> index 6853c4660e7c..cccfdb0ed6d4 100644
+> --- a/drivers/tty/sysrq.c
+> +++ b/drivers/tty/sysrq.c
+> @@ -59,11 +59,25 @@
+>  static int __read_mostly sysrq_enabled = CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE;
+>  static bool __read_mostly sysrq_always_enabled;
+>  
+> +#ifdef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
+> +	/*
+> +	* In CRASH_ONLY mode, sysrq is considered "on" only for the purpose
+> +	* of allowing the crash command. The actual check for individual
+> +	* commands happens in sysrq_on_mask().
+> +	* For general "is sysrq on?" queries (like for input handler reg),
+> +	* it should reflect that at least something (crash) is possible.
+> +	*/
+> +static bool sysrq_on(void)
+> +{
+> +	return true;
+> +}
+> +#else
+>  static bool sysrq_on(void)
+>  {
+>  	return sysrq_enabled || sysrq_always_enabled;
+>  }
+>  
+> +#endif
 
-Setting the mask before any DMA allocations might only be relevant from a
-semantical point of view, but not safety wise.
+As stated before, I really don't like this new config option, and feel
+that it does not do anything.  But becides this, you have implemented it
+in a way that is almost unmaintainable, with these #ifdef in the .c
+file.  That's not the proper kernel style at all, and will be a pain if
+this would be accepted, so independent of the "is this a good idea or
+not", we couldn't take this patch.
 
-We need to prevent concurrent accesses to dev->dma_mask and
-dev->coherent_dma_mask.
+thanks,
 
->> +    unsafe fn dma_set_mask(&self, mask: u64) -> Result {
->
-> Do we want to allow any u64 as a valid mask? If not, shall we restrict
-> the accepted values by taking either the parameter to give to
-> `dma_bit_mask`, or a bit range (similarly to Daniel's bitmask series
-> [1], which it might make sense to leverage)?
->
-> [1]
-> https://lore.kernel.org/rust-for-linux/20250714-topics-tyr-genmask2-v9-1-=
-9e6422cbadb6@collabora.com/
-
-I think it would make sense to make dma_bit_mask() return a new type, e.g.
-DmaMask and take this instead.
-
-Taking the parameter dma_bit_mask() takes directly in dma_set_mask() etc. m=
-akes
-sense, but changes the semantics of the mask parameter *subtly* compared to=
- the
-C versions, which I want to avoid.
-
-Using the infrastructure in [1] doesn't seem to provide much value, since w=
-e
-don't want a range [M..N], but [0..N], so we should rather only ask for N.
+greg k-h
 
