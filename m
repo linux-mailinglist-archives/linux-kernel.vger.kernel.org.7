@@ -1,132 +1,168 @@
-Return-Path: <linux-kernel+bounces-733963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F11B07B53
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:39:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84077B07B59
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8EA167FEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:39:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C971416B0C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAC52F5472;
-	Wed, 16 Jul 2025 16:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86782F5475;
+	Wed, 16 Jul 2025 16:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="y5FJ2XgP"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bMT+OiY4"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51061D528;
-	Wed, 16 Jul 2025 16:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B481328B401
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752683960; cv=none; b=cN7LDKld0ZFYAF4+gMzcvOxSLzyy9cJjsb7caqiRJJV6r7+N1s3ENH8Fr+FJbf6lt9JjpS/IBkXUC5wV3KKnFGheoHDwasN6cMiDza/XIpTSE0Gs968CwIwr8w+sYD1BhjUJ+IYFq/r4uV/uTOg0Fx7avz98adq667TGIIJ6T3s=
+	t=1752684055; cv=none; b=a9u8lbSa8PS3etHStuUvlaEfEAg0mZo6t7qk0DDK8pCQXy57PjVjytKf4LU2+mBW68IX7NnbhMvjuwBHGi+G1D39dpetvVnyuQfbCAkCkvrQqWcOU381ROGvwMBr/sWPcgwpoxoD6jYHVcPbpzWXnoU1yvQvpnnh0QgR+8k97Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752683960; c=relaxed/simple;
-	bh=W8xgVhhwZWuTdjr7lS0rwtLzvbY4CBMrrpJ7DWC87Ho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzCfmP7gEYvwLenacOaSau6KD9dFbTRPkZfcFQfktMNnwlgq/QIzK3CfqTC8g0qabhMkwBJszM4btTGSwvyorIBcGnoNRi/ibMrIF4PWbxwpg+awq6il+DIH6ftIJgtIp9dHIYcPXZYh0Mlph+3RT0TmGS3KIWHxRAp5zY/sKXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=y5FJ2XgP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=7EI7/tzVVxb3gkfkxEXZPPT7eC9VGWHM194adz+fKxk=; b=y5FJ2XgPCb7mWK2aDISMIxvNXP
-	RtKFjkvDvvPGTMXJoi1z5hrniOzTgQcMskEXX7a5F2UdynJqyX+noLw/DiFUJSxaEMy1yDBwy32xa
-	GayO+h6h9n2g6gcqCeOqrFBw7fYR8POnhEBeFvdELMInTRXtnsnDp6OfywDtmNUgOl/Q=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uc59o-001hvE-V6; Wed, 16 Jul 2025 18:39:00 +0200
-Date: Wed, 16 Jul 2025 18:39:00 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	Frank.Sae@motor-comm.com, hkallweit1@gmail.com,
-	linux@armlinux.org.uk, shenjian15@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] net: phy: motorcomm: Add support for PHY
- LEDs on YT8521
-Message-ID: <4a622284-66db-49c4-943f-5da1f1a6ba65@lunn.ch>
-References: <20250716100041.2833168-1-shaojijie@huawei.com>
- <20250716100041.2833168-2-shaojijie@huawei.com>
+	s=arc-20240116; t=1752684055; c=relaxed/simple;
+	bh=CbvY90bhc3awJD+x7JLrq/FPlnYJA1NgO71SEWJ9yPY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ty/a01ESb97Dz9q7FmDLkccnhGgjN4fQ3dH6wCpb2F+1aLhG9AZSnto1Xs4IZnXc0TKZijA/MsEUOPRcj9Sn6nR7+xXnWZdYuIsn2QhOrzxD5xrFYd+FTE7xez36QViBE/82TLmnwaoEYLCO9txWfl1OQEfLyyPeMA0ZmUa4NbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bMT+OiY4; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-237f18108d2so2845ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752684052; x=1753288852; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BBVaXc10A4jRruPriSxBpOpyudYSZuIpQyGPNMCEI5A=;
+        b=bMT+OiY4ZwKwOHoKbo6HNa4WOL2HxC51sx2NAM4dPC3xfpjzPFWtWPYTs8JqWeCdwn
+         eosotO4KyvDAuXznqasHWWOSTcOxpXXvK5alYhVpLRoSELt/CEDhuVdwwJ72DFtpq0yj
+         209xp2R01numQsatcTu6geXnCAlGKa/bZDgEPcRvmzSMfiDKVpQ6iwv/kq0gj6Zm6XwK
+         pWzci5PZJ5G4rJYAG2BpiIdnKhIMNMJvNOIOa999IxVWh6l8tLzjc/fo5AZvNRI01Vy4
+         5qTJqt1aYAdVTywwrNFXoY0VOnKDy+7EvQZIJ56G/HN8f4ejX4+ofVZ7sn+9hqY7iMQU
+         IAVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752684052; x=1753288852;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BBVaXc10A4jRruPriSxBpOpyudYSZuIpQyGPNMCEI5A=;
+        b=YYhQRBTCJVCr0iA7l2W5P/8ZUU0KG0ka93DBX5u4u3qQ+iJlndJWtQnd4Fk6BKR7AM
+         zmPFWLduU4/Yg8g+x6Xg1evv/tkNrA1DVnKqBFQpgVdpvxSeIhowLiGYsN2Rtcdpkzko
+         nYq3vP2qPCucL3Ttj4GFruN7cuTbbcAWmkbQVRLspsUVdRfWi9S30a1PApZLtS/sUpva
+         B6YsaSDX1hF3OXuqdMPLtY2CaIzGo3OTrfHgb0Uvb2M9rQg4/o7/DVLs6X6w2ZOHOuW2
+         8zHZK7Gm8RqyFS+cjbMARaTR8xkbl5w6VmkTtFL1x8QujMRvxehkzqn4lupnVgxJSI64
+         LBrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPn4WIsOQbw4ktHLeL6DvfgQY6tAD1A3xqxLRrQpWYO2ttfFzNav8k8h6IUBD1WcS4KMdIdxDPWYtoWI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMR277+1p+/ap6L7fAZecmUo8nzdkgVHGtGpliy153qMTnYFqh
+	ZWoif9bS3DtL6DMmWck+KOboCjDkN4yiQ2ZQFaRRnaqECqVw/AI8GVa//AwVW7aRxb/1xdJmD9e
+	MoJTkuKtJV4N+wml6DaCfzTF0Tit9Xp8QyedwwK3S
+X-Gm-Gg: ASbGncsgp3K/joz7Hm14TfimVk01uKUcVUVSOviUIinvZ1vsxaXXtTOK7oQ+zslYAWC
+	WznO5+rriFasoZyJ26vodPP2C4bldDg/ycr8jcCJ9uvBXvvzyrHQ8cliB5yvBIGAnKONdgwk9yn
+	SHjc+SknpcvaoME45zXXExZiyOOpuSwmoUaIKiT0dIH7XFhaUu9JvfvIKxzJUbNYWaXxEEfQxGN
+	+uEyhWxOuZo2ccD
+X-Google-Smtp-Source: AGHT+IHYQT5VXdCLT8hxrmg+0yfaXwrBL7UyuNaYscaOfd+9wb7KNDQaQqvXeihVJ+Iuuagh7P0Alzo8AVqhcyLotSs=
+X-Received: by 2002:a17:902:e5c2:b0:235:f298:cbbb with SMTP id
+ d9443c01a7336-23e2644036cmr3043915ad.26.1752684051728; Wed, 16 Jul 2025
+ 09:40:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716100041.2833168-2-shaojijie@huawei.com>
+References: <20250716161753.231145-1-bgeffon@google.com> <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
+In-Reply-To: <CADnq5_P+a2g_YzKW7S4YSF5kQgXe+PNrMKEOAHuf9yhFg98pSQ@mail.gmail.com>
+From: Brian Geffon <bgeffon@google.com>
+Date: Wed, 16 Jul 2025 12:40:15 -0400
+X-Gm-Features: Ac12FXyULN47EIoDp4OeB3JlE-FJDnHi4sIL1ptSRWoQg8L9yjUdgo_BV4vPoWI
+Message-ID: <CADyq12zB7+opz0vUgyAQSdbHcYMwbZrZp+qxKdYcqaeCeRVbCw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Raven: don't allow mixing GTT and VRAM
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
+	Lijo Lazar <lijo.lazar@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
+	Pratap Nirujogi <pratap.nirujogi@amd.com>, Luben Tuikov <luben.tuikov@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Garrick Evans <garrick@google.com>, 
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 06:00:40PM +0800, Jijie Shao wrote:
-> Add minimal LED controller driver supporting
-> the most common uses with the 'netdev' trigger.
-> 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> ---
->  drivers/net/phy/motorcomm.c | 120 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 120 insertions(+)
-> 
-> diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
-> index 0e91f5d1a4fd..e1a1c3a1c9d0 100644
-> --- a/drivers/net/phy/motorcomm.c
-> +++ b/drivers/net/phy/motorcomm.c
-> @@ -213,6 +213,23 @@
->  #define YT8521_RC1R_RGMII_2_100_NS		14
->  #define YT8521_RC1R_RGMII_2_250_NS		15
->  
-> +/* LED CONFIG */
-> +#define YT8521_MAX_LEDS				3
-> +#define YT8521_LED0_CFG_REG			0xA00C
-> +#define YT8521_LED1_CFG_REG			0xA00D
-> +#define YT8521_LED2_CFG_REG			0xA00E
-> +#define YT8521_LED_ACT_BLK_IND			BIT(13)
-> +#define YT8521_LED_FDX_ON_EN			BIT(12)
-> +#define YT8521_LED_HDX_ON_EN			BIT(11)
-> +#define YT8521_LED_TXACT_BLK_EN			BIT(10)
-> +#define YT8521_LED_RXACT_BLK_EN			BIT(9)
-> +/* 1000Mbps */
-> +#define YT8521_LED_GT_ON_EN			BIT(6)
-> +/* 100Mbps */
-> +#define YT8521_LED_HT_ON_EN			BIT(5)
-> +/* 10Mbps */
-> +#define YT8521_LED_BT_ON_EN			BIT(4)
+On Wed, Jul 16, 2025 at 12:33=E2=80=AFPM Alex Deucher <alexdeucher@gmail.co=
+m> wrote:
+>
+> On Wed, Jul 16, 2025 at 12:18=E2=80=AFPM Brian Geffon <bgeffon@google.com=
+> wrote:
+> >
+> > Commit 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v=
+2)")
+> > allowed for newer ASICs to mix GTT and VRAM, this change also noted tha=
+t
+> > some older boards, such as Stoney and Carrizo do not support this.
+> > It appears that at least one additional ASIC does not support this whic=
+h
+> > is Raven.
+> >
+> > We observed this issue when migrating a device from a 5.4 to 6.6 kernel
+> > and have confirmed that Raven also needs to be excluded from mixing GTT
+> > and VRAM.
+>
+> Can you elaborate a bit on what the problem is?  For carrizo and
+> stoney this is a hardware limitation (all display buffers need to be
+> in GTT or VRAM, but not both).  Raven and newer don't have this
+> limitation and we tested raven pretty extensively at the time.
 
-Rather than comments, why not call these YT8521_LED_1000_ON_EN,
-YT8521_LED_100_ON_EN, YT8521_LED_100_ON_EN ? That makes the rest of
-the driver easier to read.
+Thanks for taking the time to look. We have automated testing and a
+few igt gpu tools tests failed and after debugging we found that
+commit 81d0bcf99009 is what introduced the failures on this hardware
+on 6.1+ kernels. The specific tests that fail are kms_async_flips and
+kms_plane_alpha_blend, excluding Raven from this sharing of GTT and
+VRAM buffers resolves the issue.
 
-> +static int yt8521_led_hw_control_get(struct phy_device *phydev, u8 index,
-> +				     unsigned long *rules)
-> +{
-> +	int val;
-> +
-> +	if (index >= YT8521_MAX_LEDS)
-> +		return -EINVAL;
-> +
-> +	val = ytphy_read_ext(phydev, YT8521_LED0_CFG_REG + index);
-> +	if (val < 0)
-> +		return val;
-> +
-> +	if (val & YT8521_LED_TXACT_BLK_EN)
-> +		set_bit(TRIGGER_NETDEV_TX, rules);
-> +
-> +	if (val & YT8521_LED_RXACT_BLK_EN)
-> +		set_bit(TRIGGER_NETDEV_RX, rules);
+Brian
 
-This looks to be missing YT8521_LED_ACT_BLK_IND.
-
-    Andrew
-
----
-pw-bot: cr
+>
+>
+> Alex
+>
+> >
+> > Fixes: 81d0bcf99009 ("drm/amdgpu: make display pinning more flexible (v=
+2)")
+> > Cc: Luben Tuikov <luben.tuikov@amd.com>
+> > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > Cc: Alex Deucher <alexander.deucher@amd.com>
+> > Cc: stable@vger.kernel.org # 6.1+
+> > Tested-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> > Signed-off-by: Brian Geffon <bgeffon@google.com>
+> > ---
+> >  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/d=
+rm/amd/amdgpu/amdgpu_object.c
+> > index 73403744331a..5d7f13e25b7c 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+> > @@ -1545,7 +1545,8 @@ uint32_t amdgpu_bo_get_preferred_domain(struct am=
+dgpu_device *adev,
+> >                                             uint32_t domain)
+> >  {
+> >         if ((domain =3D=3D (AMDGPU_GEM_DOMAIN_VRAM | AMDGPU_GEM_DOMAIN_=
+GTT)) &&
+> > -           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_type =
+=3D=3D CHIP_STONEY))) {
+> > +           ((adev->asic_type =3D=3D CHIP_CARRIZO) || (adev->asic_type =
+=3D=3D CHIP_STONEY) ||
+> > +            (adev->asic_type =3D=3D CHIP_RAVEN))) {
+> >                 domain =3D AMDGPU_GEM_DOMAIN_VRAM;
+> >                 if (adev->gmc.real_vram_size <=3D AMDGPU_SG_THRESHOLD)
+> >                         domain =3D AMDGPU_GEM_DOMAIN_GTT;
+> > --
+> > 2.50.0.727.gbf7dc18ff4-goog
+> >
 
