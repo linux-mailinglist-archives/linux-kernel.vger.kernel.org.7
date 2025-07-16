@@ -1,95 +1,156 @@
-Return-Path: <linux-kernel+bounces-733195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C267AB07167
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2112B0716B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91EDC7AA63C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:15:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7FC3B8BC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A6D2F0C4E;
-	Wed, 16 Jul 2025 09:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6D02BE7DD;
+	Wed, 16 Jul 2025 09:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="y56dsiQ1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="j1EHC8d+"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67960157493;
-	Wed, 16 Jul 2025 09:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50537230997
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752657393; cv=none; b=HkWCOWgzAfQiOc1lW1fcsPOpDejQ8g7k2UYBYbZ8+0D88BBjzfCw9vICDCnHo/hL89cyv0DQJERrIuMHcheKToiPy5yYkulgLnpmKt7msLPdzKfbGOOPjDGAmsKQS7NYCTw3YtfRgxdxdtEGwtEDt37E2cpV9h54mwzj1uwfoI8=
+	t=1752657469; cv=none; b=H3fX0DRlPdipAWD7JWimLQcd1WSJSUDKFpzfcObo5SaGbC0Ay7k1f8UaECkmc07XMBiPEYL78yd8Zi1NL1jZCWF80i0UU7ymORFf/XFd2BH2MuCig8cEHUCtvc88ejzDuFjGDFmv7aoRHtA21JJBvdTOL6Au0neikU57PlkdjUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752657393; c=relaxed/simple;
-	bh=Hfea+Wf59XZhqO9zfMH1UF/iDdhqNgx3KK5CietkH3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QA4hQdiZehtAxLvgCgMMzbVmTBy3yIYKaiPV1TOZDGow/p7Ms0HqierLsNRvOBo4XCsyXffvWJvf8VG/EYDBVMpx61G8jkZ8jmUWhzEcRYOX3W8oT3ikWspo8h4WjuVGlWd6kCKb+Qatc0feiFRW9MuFurIt5CQyZHHINoypXGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=y56dsiQ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEDFC4CEF0;
-	Wed, 16 Jul 2025 09:16:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752657393;
-	bh=Hfea+Wf59XZhqO9zfMH1UF/iDdhqNgx3KK5CietkH3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=y56dsiQ1PjVkVp1XJED61755uulFZ4+msW57aAe4eHvbg/nbszwlABUifs2B5Bb+8
-	 Kym9V/L7DI+8IZKY0ud0kFnECSsJpabjgBuXJRe18zsopmP8z9ALihS03C+rVaoqJu
-	 BtBw3HNu3r8//9sAlIvmBxfsKQIIpVhM/OF5cimw=
-Date: Wed, 16 Jul 2025 11:16:30 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] device: rust: rename Device::as_ref() to
- Device::from_raw()
-Message-ID: <2025071622-recast-posing-ce98@gregkh>
-References: <20250711-device-as-ref-v2-0-1b16ab6402d7@google.com>
- <20250711-device-as-ref-v2-1-1b16ab6402d7@google.com>
+	s=arc-20240116; t=1752657469; c=relaxed/simple;
+	bh=p3psaIpWekDleS8qDEO04vSUVnVKKBHCUq3cEc5+TWw=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QWOkMF7HOqGft3VIDg6pNXFfKDF2ySSnl0kNTZ9RlKfwEDOdR84mjNGo4ALnisX8CWZLl8AUsyreul0lzsh0IbObRnUi7R0plZoo+ahCfkLz0ACbzJDlyBbsNK0Ja158IbpMWCPYV1Zq2aD0eODPaoYWghO+QeYdNBLW9CFbp7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=j1EHC8d+; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com [209.85.222.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0BFE83F46D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:17:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1752657457;
+	bh=lKJkCknNqquqLUrS/r00x/I5WEOOcl1UCaCBMQgpdJU=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=j1EHC8d+rmobtLe1vN5cpjrTShQXI85i0/G7nz4p7KGFxtDDWrddB6jCf2DoWzIjR
+	 bPjAYEwswTs6mGY5IoxzOTfQntHk3VANOYljzXLMlXArmL0qoDrJyjFOXfvZjjR0uy
+	 SWvF4y37WjG+KdBbL1PF5le7T/A1LCPtOQptsRCHLW2j6qbiNWzZs5xUquX3HrJsYm
+	 rSiRR4YNReyAg5JsHt7MGiGcDfXmIl4U5vNMW5t7Ay9/fIqOx8qoh8pJm1tcPIhWw5
+	 0qTgUdbsZ8ezBcwAaqfUS0TQYhhJxJFeOKs1xPsIoNhZlChPcRebAUKhsqczcyDOgy
+	 Z+y+yRAyeB8dg==
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-886df024fd5so860727241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 02:17:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752657455; x=1753262255;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lKJkCknNqquqLUrS/r00x/I5WEOOcl1UCaCBMQgpdJU=;
+        b=u2boz2tVeEvKV5EHRoHI9ZRuGW6afR921kK51NdDGivvWRgaqBdMNx9ICmqTonxZCg
+         +oINTByPnVZQXcFztJpQYiwlZXhgRuHUaOzYZ/dNEoSyvOelqEtt/gqzEvm1dFyU1vGp
+         LkT+4ab+kb44OVsh8UPl3JYvLjzeORo32CtrKl0Va5BAlON8ke92AThWQPArWSaz5N1L
+         XkeGwXcByqzxc7lH6eX4l9Su9g9VOPf8T/q9EwXw0OFCgC1aZ+y6WochEWpX3xgNNsQ5
+         6VccGh9UyzSr4Jy5Li1kE1p3r00xlS83Pe4F/UGVx8CRiRJMGhFAwjKes6hvTO6BZiQL
+         c5/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXVzM171kg09ND3StQMrOoebQhugFKXZbpe5OPB/5HTWPLOHVpsyn6EjwHqlwzGH4mEXWS08rAvLuK6CNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXYrpsDnXUPIwbF+JSnChs+QQtNHnmCQF1ecW/IFtaxhMQPZBN
+	0DU+lo1ZBiVg/cQQzIF+/BNPieapv7rpCrR4CVefWLG9hK8orv0dptHSSLQwiqce2MSTBb5QcLF
+	rNmcyGUAQEur+tI8CAaPEf63f2NWemFLor/KglU3ZnIPWEFj6zEshL4JvoSkZpI9RkPPj1EEwAk
+	aO3A6w69eiVe6wUX2idlD994gXSTOtYrGsfkDOmEIzRfBc63b+wiuwF2od
+X-Gm-Gg: ASbGncv9DOH9YOfXgYcs5Op1svqi5gDhl4lxwdjneTmrWSEgup3+1RDP/5oDcygp8qC
+	+lPYJnWPbWZs88pifV/66sn6/wTcXpRnOa4MYmk/oWiSCWTJmcVEDyfB1Wz52KHH2BHZN5+Ywsl
+	R9EuuE5nsvyiG9PqsMuz9WIDYhh+cQQR1abnGFVtwK/vTpum93XTVvtQ==
+X-Received: by 2002:a05:6102:3909:b0:4ee:5244:6607 with SMTP id ada2fe7eead31-4f7ecce6f6amr3650959137.11.1752657455257;
+        Wed, 16 Jul 2025 02:17:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEiavZVdxpFEKHgbgCF35PoW7jjegI2SWdWpd8C3ymcjoql3WT3rxALLt4r4tuR4OhbDAZbKkza9zz3i73RUPE=
+X-Received: by 2002:a05:6102:3909:b0:4ee:5244:6607 with SMTP id
+ ada2fe7eead31-4f7ecce6f6amr3650944137.11.1752657454900; Wed, 16 Jul 2025
+ 02:17:34 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 16 Jul 2025 02:17:34 -0700
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 16 Jul 2025 02:17:34 -0700
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20250716061940.180231-1-e@freeshell.de>
+References: <20250716061940.180231-1-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711-device-as-ref-v2-1-1b16ab6402d7@google.com>
+Mime-Version: 1.0
+Date: Wed, 16 Jul 2025 02:17:34 -0700
+X-Gm-Features: Ac12FXxB4Yd_B-giOtO9phydLKQkpjDC5FpqIWq0GIfPuitk-kXsg_LMxgUuYUs
+Message-ID: <CAJM55Z_77aygReSPJyZMtfZWk_UPYTzYLH5E5uEw6K=GSu0LNQ@mail.gmail.com>
+Subject: Re: [PATCH] riscv: dts: starfive: jh7110-milkv-mars sort properties
+To: E Shattow <e@freeshell.de>, Emil Renner Berthing <kernel@esmil.dk>, Conor Dooley <conor@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 11, 2025 at 08:04:37AM +0000, Alice Ryhl wrote:
-> The prefix as_* should not be used for a constructor. Constructors
-> usually use the prefix from_* instead.
-> 
-> Some prior art in the stdlib: Box::from_raw, CString::from_raw,
-> Rc::from_raw, Arc::from_raw, Waker::from_raw, File::from_raw_fd.
-> 
-> There is also prior art in the kernel crate: cpufreq::Policy::from_raw,
-> fs::File::from_raw_file, Kuid::from_raw, ARef::from_raw,
-> SeqFile::from_raw, VmaNew::from_raw, Io::from_raw.
-> 
-> Link: https://lore.kernel.org/r/aCd8D5IA0RXZvtcv@pollux
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+E Shattow wrote:
+> Improve style with node property order sort of common properties before
+> vendor prefixes
+>
+> Signed-off-by: E Shattow <e@freeshell.de>
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thanks!
+
+Acked-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+
+> ---
+>  arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> index 3bd62ab78523..fdaf6b4557da 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> @@ -12,9 +12,9 @@ / {
+>  };
+>
+>  &gmac0 {
+> -	starfive,tx-use-rgmii-clk;
+>  	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+>  	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
+> +	starfive,tx-use-rgmii-clk;
+>  	status = "okay";
+>  };
+>
+> @@ -31,14 +31,14 @@ &pcie1 {
+>  };
+>
+>  &phy0 {
+> -	motorcomm,tx-clk-adj-enabled;
+> +	rx-internal-delay-ps = <1500>;
+> +	tx-internal-delay-ps = <1500>;
+> +	motorcomm,rx-clk-drv-microamp = <3970>;
+> +	motorcomm,rx-data-drv-microamp = <2910>;
+>  	motorcomm,tx-clk-10-inverted;
+>  	motorcomm,tx-clk-100-inverted;
+>  	motorcomm,tx-clk-1000-inverted;
+> -	motorcomm,rx-clk-drv-microamp = <3970>;
+> -	motorcomm,rx-data-drv-microamp = <2910>;
+> -	rx-internal-delay-ps = <1500>;
+> -	tx-internal-delay-ps = <1500>;
+> +	motorcomm,tx-clk-adj-enabled;
+>  };
+>
+>  &pwm {
+>
+> base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
+> --
+> 2.50.0
+>
 
