@@ -1,131 +1,81 @@
-Return-Path: <linux-kernel+bounces-733562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B9CB07652
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:55:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE1EB07657
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAE2A4A1635
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20B017EEE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394B02F5308;
-	Wed, 16 Jul 2025 12:54:43 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EC42F3C2F;
+	Wed, 16 Jul 2025 12:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tethera.net header.i=@tethera.net header.b="MR9kmxwY"
+Received: from phubs.tethera.net (phubs.tethera.net [192.99.9.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60BE2F3C2F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC64D28C2CA;
+	Wed, 16 Jul 2025 12:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.99.9.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752670482; cv=none; b=XrNhYneA6/+/NNXLGqFbA8K0cvF92kqNTZbHdNDO/lpc8Qp2nC+shUsvTKlvJ7iBmQdFUSrYdJ8rbtWgGq2nNpMlIDFU6lxFNaBrTQALZlRIusHbh/Z9zQGhv7VPFg7RgsP8bJfAoRpn0yApLf1SX4xqj7zYQuQD0T8/Hqiom20=
+	t=1752670549; cv=none; b=MhQMP/YXozhn9kIfDJFLoLM2NvcjdpBi6izxJ4cdhHzELPdEfvsbRRHnRoHnZoTP7h+2xapY9KDsOzMPw8TRl8H/F64DLrXVQtWd9cmwoqeJyaBxG09XDIHqXD39Z+UrbEX+uERJ2EgFjaK5PjGHB60TTJhj6iUl5bMnQBKFWSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752670482; c=relaxed/simple;
-	bh=nBFtaQVvD8Z1f+t4c2aOVAFPBmeOIuqesSj5OuCdDzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EyPPSdXFMEm+HwY2RJUiO6gBLJzrhEmdzA2bys/kmqv9Lp4y+vfu9MuLHkgkTT/BeIiXU28z99TkBReM3Kiz8xT+tndjVzfsoEiCF34UsfEq9waKxyTv45RQPSW0RWwx/FD8hhVC3LyVF/3V1Wg+G8s70DsbtvEZhzoa/tjg3cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id A587D10F862;
-	Wed, 16 Jul 2025 12:54:32 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id EAD222002C;
-	Wed, 16 Jul 2025 12:54:28 +0000 (UTC)
-Date: Wed, 16 Jul 2025 08:54:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, Andrea
- Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, Ingo Molnar
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
- <vschneid@redhat.com>, sched-ext@lists.linux.dev,
- linux-kernel@vger.kernel.org, kernel-team@meta.com, jake@hillion.co.uk
-Subject: Re: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
- disabling preemption
-Message-ID: <20250716085447.06feeb86@gandalf.local.home>
-In-Reply-To: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
-References: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752670549; c=relaxed/simple;
+	bh=Ia9GyGbk8B9rjMX/RPITkTLboZkRzYcVoZFfzz+/9ho=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FQcgXoxQLp09FUwtARKtNg3PJM4hhelgzmJhUB2dv0+s9wj31sNpA4JxS+gZhIXClXilMwV/sxaexeh20qGJfLikXL6leIpeErnq6pXj7CYPEDCFcSn8cHjCRQPfLqanEq5qecw16CBAGjrFoFupT0a3rPSRC1P3YmuaP56TU1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tethera.net; spf=pass smtp.mailfrom=tethera.net; dkim=pass (2048-bit key) header.d=tethera.net header.i=@tethera.net header.b=MR9kmxwY; arc=none smtp.client-ip=192.99.9.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tethera.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tethera.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tethera.net;
+ i=@tethera.net; q=dns/txt; s=2024; t=1752670540; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version
+ : content-type : from;
+ bh=Ia9GyGbk8B9rjMX/RPITkTLboZkRzYcVoZFfzz+/9ho=;
+ b=MR9kmxwYKgoB6qvgTWe3XASPi1F6c62HiYwIBJY1Dvg0Tk2YovQguaaJ7sFv+f/USkCV+
+ cnyR39/CZ5fvL6Z5D52jKrP0gEQug6JbX9TK/AuKThrXmmA3EEe2V3+MUqdqukW4EkQ+C5H
+ BKV4bFVRuSJQ/V8TH2/H/B0bv4LHwUMjYQchBjYu6TOQJaPnjm+I2DhXwlZGFyZotwqTyto
+ otGcMWlzXuUmLOGrhs0ntxhQwsNmfo4NQ0s9a+YqSs/DN4jccWFFGyfHWtdoef6hVd5tOCJ
+ fZz2v1+IitN+g9Q32K/amKtTL+C8yiEOLWmB/rqs9tFqoFTVM2fBsL6+eE+Q==
+Received: from tethera.net (fctnnbsc51w-159-2-211-58.dhcp-dynamic.fibreop.nb.bellaliant.net [159.2.211.58])
+	by phubs.tethera.net (Postfix) with ESMTPS id 9AD4118006D;
+	Wed, 16 Jul 2025 09:55:39 -0300 (ADT)
+Received: (nullmailer pid 2675178 invoked by uid 1000);
+	Wed, 16 Jul 2025 12:55:39 -0000
+From: David Bremner <david@tethera.net>
+To: Niklas Cassel <nks@flawful.org>
+Cc: wilfred.opensource@gmail.com, alistair@alistair23.me, bhelgaas@google.com, cassel@kernel.org, dlemoal@kernel.org, heiko@sntech.de, kw@linux.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org, lpieralisi@kernel.org, mani@kernel.org, p.zabel@pengutronix.de, robh@kernel.org, wilfred.mallawa@wdc.com, Shawn Lin <shawn.lin@rock-chips.com>
+Subject: Re: [PATCH v3] PCI: dw-rockchip: Add support for slot reset on link
+ down event
+In-Reply-To: <aHSs6ZF8rQIqEOyR@flawful.org>
+References: <20250509-b4-pci_dwc_reset_support-v3-1-37e96b4692e7@wdc.com>
+ <87cya6wdhc.fsf@tethera.net> <aHSs6ZF8rQIqEOyR@flawful.org>
+Date: Wed, 16 Jul 2025 09:55:39 -0300
+Message-ID: <87zfd41eic.fsf@tethera.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: EAD222002C
-X-Stat-Signature: afn5nuhziiy6sbhpr349xn4d5u6kfx4j
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX188QncSd6KETI4SzQbvHnl99aSvwULRtAI=
-X-HE-Tag: 1752670468-570265
-X-HE-Meta: U2FsdGVkX1/rtGLPXr4VR193lnhwg21mVpNnc3ORz/3h9h0lCQcApRbIya1y2WRzVPRPPUCAaKtL4JYzHTSQ3YvKbBWwKRGzSIW4lNzQWlmuHcYsX5Tp/lhv7vJY651eVg2U5gu7nVTY2y+56AdIFWnsRxyClTwpO1yoz4p2kPYT0Rp1jevYJO5NB+2qe6Uc9hmm3IRjns5a2QxpX2xC/lAUGggc3oIDO6Bmvvua4dmECZLx9hPqO4YwR1uKv8tngcjJbp2kGLvYXccGe+s3o5ofF2cSJNKr0eIBfwcQqFqKZsnEYk8YiBNne9RJIDCHoHqF5ji9HHcZGdXaiACUq/YOh/R+54YSEoPmxOT/YwLTRYiFZJpXsg==
+Content-Type: text/plain
 
-On Wed, 16 Jul 2025 05:46:15 -0700
-Breno Leitao <leitao@debian.org> wrote:
-
-> __this_cpu_write() emits a warning if used with preemption enabled.
-> 
-> Function update_locked_rq() might be called with preemption enabled,
-> which causes the following warning:
-> 
-> 	BUG: using __this_cpu_write() in preemptible [00000000] code: scx_layered_6-9/68770
-> 
-> Disable preemption around the __this_cpu_write() call in
-> update_locked_rq() to suppress the warning, without affecting behavior.
-> 
-> If preemption triggers a  jump to another CPU during the callback it's
-> fine, since we would track the rq state on the other CPU with its own
-> local variable.
-> 
-> Suggested-by: Andrea Righi <arighi@nvidia.com>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Fixes: 18853ba782bef ("sched_ext: Track currently locked rq")
-> Acked-by: Andrea Righi <arighi@nvidia.com>
-> ---
->  kernel/sched/ext.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index b498d867ba210..24fcbd7331f73 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -1258,7 +1258,14 @@ static inline void update_locked_rq(struct rq *rq)
->  	 */
->  	if (rq)
->  		lockdep_assert_rq_held(rq);
-
-<blink>
-
-If an rq lock is expected to be held, there had better be no preemption
-enabled. How is this OK?
-
--- Steve
+Niklas Cassel <nks@flawful.org> writes:
 
 
-> +	/*
-> +	 * __this_cpu_write() emits a warning when used with preemption enabled.
-> +	 * While there's no functional issue if the callback runs on another
-> +	 * CPU, we disable preemption here solely to suppress that warning.
-> +	 */
-> +	preempt_disable();
->  	__this_cpu_write(locked_rq, rq);
-> +	preempt_enable();
->  }
->  
->  /*
-> 
-> ---
-> base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
-> change-id: 20250716-scx_warning-5143cf17f806
-> 
-> Best regards,
-> --  
-> Breno Leitao <leitao@debian.org>
+> That said, if you have problems with suspend/resume, perhaps you want to
+> try this patch instead:
+> https://lore.kernel.org/linux-pci/1744940759-23823-1-git-send-email-shawn.lin@rock-chips.com/
+>
+> I don't know if Shawn intends to send a new version or not.
 
+Thanks for the suggestion. In fact the hardware vendor (mnt research)
+ships a version of this patch with a 6.15.x kernel. An updated version
+would be helpful, as the previous version(s) no longer apply (with git
+am). Failing that I can have a go at manually rebasing the patch.
+
+d
 
