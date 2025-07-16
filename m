@@ -1,161 +1,219 @@
-Return-Path: <linux-kernel+bounces-732856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D926B06CE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:02:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9D0B06CE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28E2503DD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:01:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C165661ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA46F2874E5;
-	Wed, 16 Jul 2025 05:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED4D39FD9;
+	Wed, 16 Jul 2025 05:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLAN9u5J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NdqIiKML"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988C6285CB4;
-	Wed, 16 Jul 2025 05:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D51B80B;
+	Wed, 16 Jul 2025 05:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752642064; cv=none; b=lD9+cu+mDRRGhwA758+pGURRuTvfSMhBLUUwhv5CerAdPaw0Rh9JWljNAiFhqywfWn0OsfZQtctKQrK+RIaCMy1cHMXViEAlpgIFWncGrFwD59d6mJEFyUJdNg4+VZlqWo/pdRqVSoFmOAqPBaqPS355DSX0zBI/fYwSNqcRobw=
+	t=1752642163; cv=none; b=tI3Ud9gTdckzfuMnjh5S0kecySEMeWADsufSd4DaPDHCwkSyG7GcidAOZSWEy8xaF31bhSKu5EHq8cZagM90bvOHzdJ0MXlmp5pLk/CohOm4imdJbv1k8bh+aDMHXd1bxZNZmNw/i/MNRUODd4zkbi7nbQVyAaax3kJmEiPkxEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752642064; c=relaxed/simple;
-	bh=dGkePWjxmc1b+xI6uDt27ho5uz1BYPXe3lQGO5In9qo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VJ/KZysgaJaCKcv/tJd1jvFXkQccorEUxlN3tYHCXU6oXf8oZRCAQsTXAHuLceynK+OxbSfRe8pwVdn9C+m9GkWfPP8U9x1f1+nOZXaNrf6COh+ltDyPvJlwmou4mVeEWbIzDfHOxZPObMoRigsszW/8rUbIm95yO4rhD1AEVcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLAN9u5J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C9BEC4CEF4;
-	Wed, 16 Jul 2025 05:01:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752642064;
-	bh=dGkePWjxmc1b+xI6uDt27ho5uz1BYPXe3lQGO5In9qo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eLAN9u5J62zUALQZAN5GMiJHS5WpnqH3DqN6XpU+7eiq+eaTjsaVAXtI6gzRP1c/Y
-	 2eA9AeK03ekrw3cKN0t8bcC0608NbmljYzTJhzsjlm1iFqllPwY/90bmOw5DshannT
-	 ljX80Y+JpTFIWWHoQZ7zdSTW2bwEqpJOKsLXLmDOa+0OBNB0xkATwyLYLxuUHmjnSz
-	 CXRK5sGtaQsJdQ670wDDoKfIdxZJG8itdbN/U34BTEWW6xM8meh/x7HL/8jYH4/Amf
-	 qB7mtR0f2TB0eGxo+COCNADbXAitoCulAsaaQHuRLRWZsxWf0TFuniPolpB7d/EUZf
-	 aBS+THNEou7sw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH v3 8/8] perf annotate: Hide data-type for stack operation and canary
-Date: Tue, 15 Jul 2025 22:00:54 -0700
-Message-ID: <20250716050054.14130-9-namhyung@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250716050054.14130-1-namhyung@kernel.org>
-References: <20250716050054.14130-1-namhyung@kernel.org>
+	s=arc-20240116; t=1752642163; c=relaxed/simple;
+	bh=Bdm6Z+rIcZb52afCL05qwI9t84Oprd8A8oXx3N79dWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZMWGvX3keT33ALIkKyHvqnlyOsGIRagHiFuSAU4w6nK+HIRNLAcSpy7ooTSP+p0GfCFJP+hcnjAGgo+HjBu2mPg+OUejX4RlpVBeL5mr5sDxyT9whWOtpca3XDVEceukduXvUZqF2sU58IdOV/F8Ag3ORoIXwamO7Btgga+8pJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NdqIiKML; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752642041;
+	bh=p97HC3PRGkP2K2c9i06BIOEYcA8nOtYu4zUjYK8Gjq8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NdqIiKML49VUDyVb1RaegLwzCdC17TrYEzolO2q+eiBUPpZOpumTtyobc4CNOKJ10
+	 sQTRFlDbif1N58VHKXjyLv3ZwLBV4LQ5bVamYg287IN1O9tzr2/u0vRs/Cn0VyOVR1
+	 foEH739fIZfFoCV5sM0F0efiVa+tabWnvfaBC8Gpvq7rfwtHTQRyetcN4CFU9P+ELR
+	 YN5mXqMar7T+XoaTiM9PP9MXIMtcTkx6xPg3dPArxAkRKf1Af6kZRrnM1W++SfMWct
+	 HsVA/X15taRukjAvWTnGexUGxU3u//qMFnqETM3pD+VibEjLsTasH6OX7vwehSBNTP
+	 VDHe0if3GsZug==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhkQc3zgkz4w2Q;
+	Wed, 16 Jul 2025 15:00:40 +1000 (AEST)
+Date: Wed, 16 Jul 2025 15:02:34 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the block tree with the jc_docs tree
+Message-ID: <20250716150234.52ec0d5f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/nbaLaHHG=c60=MtgujnNaI4";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-It's mostly unnecessary to print when it has no actual type information
-like in the stack operations and canary.  Let's have them if -v option
-is given.
+--Sig_/nbaLaHHG=c60=MtgujnNaI4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Before:
-  $ perf annotate --code-with-type
-  ...
-         : 0    0xd640 <_dl_relocate_object>:
-    0.00 :      0:       endbr64
-    0.00 :      4:       pushq   %rbp           # data-type: (stack operation)
-    0.00 :      5:       movq    %rsp, %rbp
-    0.00 :      8:       pushq   %r15           # data-type: (stack operation)
-    0.00 :      a:       pushq   %r14           # data-type: (stack operation)
-    0.00 :      c:       pushq   %r13           # data-type: (stack operation)
-    0.00 :      e:       pushq   %r12           # data-type: (stack operation)
-    0.00 :     10:       pushq   %rbx           # data-type: (stack operation)
-    0.00 :     11:       subq    $0xf8, %rsp
-    ...
-    0.00 :     d4:       testl   %eax, %eax
-    0.00 :     d6:       jne     0xf424
-    0.00 :     dc:       movq    0xf0(%r14), %rbx               # data-type: struct link_map +0xf0
-    0.00 :     e3:       testq   %rbx, %rbx
-    0.00 :     e6:       jne     0xf2dd
-    0.00 :     ec:       cmpq    $0, 0xf8(%r14)         # data-type: struct link_map +0xf8
-    ...
+Hi all,
 
-After:
-         : 0    0xd640 <_dl_relocate_object>:
-    0.00 :      0:       endbr64
-    0.00 :      4:       pushq   %rbp
-    0.00 :      5:       movq    %rsp, %rbp
-    0.00 :      8:       pushq   %r15
-    0.00 :      a:       pushq   %r14
-    0.00 :      c:       pushq   %r13
-    0.00 :      e:       pushq   %r12
-    0.00 :     10:       pushq   %rbx
-    0.00 :     11:       subq    $0xf8, %rsp
-    ...
-    0.00 :     d4:       testl   %eax, %eax
-    0.00 :     d6:       jne     0xf424
-    0.00 :     dc:       movq    0xf0(%r14), %rbx               # data-type: struct link_map +0xf0
-    0.00 :     e3:       testq   %rbx, %rbx
-    0.00 :     e6:       jne     0xf2dd
-    0.00 :     ec:       cmpq    $0, 0xf8(%r14)         # data-type: struct link_map +0xf8
-    ...
+Today's linux-next merge of the block tree got a conflict in:
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/annotate.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+  Documentation/userspace-api/ioctl/ioctl-number.rst
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 06ddc7a9f58722a4..6fc07971631ac8a3 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -765,6 +765,17 @@ __hist_entry__get_data_type(struct hist_entry *he, struct arch *arch,
- 			    struct debuginfo *dbg, struct disasm_line *dl,
- 			    int *type_offset);
- 
-+static bool needs_type_info(struct annotated_data_type *data_type)
-+{
-+	if (data_type == NULL || data_type == NO_TYPE)
-+		return false;
-+
-+	if (verbose)
-+		return true;
-+
-+	return (data_type != &stackop_type) && (data_type != &canary_type);
-+}
-+
- static int
- annotation_line__print(struct annotation_line *al, struct annotation_print_data *apd,
- 		       struct annotation_options *opts, int printed,
-@@ -844,7 +855,7 @@ annotation_line__print(struct annotation_line *al, struct annotation_print_data
- 
- 			data_type = __hist_entry__get_data_type(apd->he, apd->arch,
- 								apd->dbg, dl, &offset);
--			if (data_type && data_type != NO_TYPE) {
-+			if (needs_type_info(data_type)) {
- 				char buf[4096];
- 
- 				printf("\t\t# data-type: %s",
-@@ -2138,7 +2149,7 @@ void annotation_line__write(struct annotation_line *al, struct annotation *notes
- 								apd->dbg,
- 								disasm_line(al),
- 								&offset);
--			if (data_type && data_type != NO_TYPE) {
-+			if (needs_type_info(data_type)) {
- 				char member[256];
- 
- 				printed = scnprintf(bf, sizeof(bf),
--- 
-2.50.0
+between commit:
 
+  15afd5def819 ("Documentation: ioctl-number: Extend "Include File" column =
+width")
+
+from the jc_docs tree and commit:
+
+  1cea5180f2f8 ("block: remove pktcdvd driver")
+
+from the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/userspace-api/ioctl/ioctl-number.rst
+index 677456c31228,4f1532a251d2..000000000000
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@@ -223,32 -219,31 +223,31 @@@ Code  Seq#    Include Fil
+               fs/xfs/linux-2.6/xfs_ioctl32.h,
+               include/linux/falloc.h,
+               linux/fs.h,
+ -'X'   all    fs/ocfs2/ocfs_fs.h                                      conf=
+lict!
+ +'X'   all    fs/ocfs2/ocfs_fs.h                                        co=
+nflict!
+- 'X'   01     linux/pktcdvd.h                                           co=
+nflict!
+  'Z'   14-15  drivers/message/fusion/mptctl.h
+ -'['   00-3F  linux/usb/tmc.h                                         USB =
+Test and Measurement Devices
+ -                                                                     <mai=
+lto:gregkh@linuxfoundation.org>
+ -'a'   all    linux/atm*.h, linux/sonet.h                             ATM =
+on linux
+ -                                                                     <htt=
+p://lrcwww.epfl.ch/>
+ -'a'   00-0F  drivers/crypto/qat/qat_common/adf_cfg_common.h          conf=
+lict! qat driver
+ -'b'   00-FF                                                          conf=
+lict! bit3 vme host bridge
+ -                                                                     <mai=
+lto:natalia@nikhefk.nikhef.nl>
+ -'b'   00-0F  linux/dma-buf.h                                         conf=
+lict!
+ -'c'   00-7F  linux/comstats.h                                        conf=
+lict!
+ -'c'   00-7F  linux/coda.h                                            conf=
+lict!
+ -'c'   00-1F  linux/chio.h                                            conf=
+lict!
+ -'c'   80-9F  arch/s390/include/asm/chsc.h                            conf=
+lict!
+ +'['   00-3F  linux/usb/tmc.h                                           US=
+B Test and Measurement Devices
+ +                                                                       <m=
+ailto:gregkh@linuxfoundation.org>
+ +'a'   all    linux/atm*.h, linux/sonet.h                               AT=
+M on linux
+ +                                                                       <h=
+ttp://lrcwww.epfl.ch/>
+ +'a'   00-0F  drivers/crypto/qat/qat_common/adf_cfg_common.h            co=
+nflict! qat driver
+ +'b'   00-FF                                                            co=
+nflict! bit3 vme host bridge
+ +                                                                       <m=
+ailto:natalia@nikhefk.nikhef.nl>
+ +'b'   00-0F  linux/dma-buf.h                                           co=
+nflict!
+ +'c'   00-7F  linux/comstats.h                                          co=
+nflict!
+ +'c'   00-7F  linux/coda.h                                              co=
+nflict!
+ +'c'   00-1F  linux/chio.h                                              co=
+nflict!
+ +'c'   80-9F  arch/s390/include/asm/chsc.h                              co=
+nflict!
+  'c'   A0-AF  arch/x86/include/asm/msr.h conflict!
+ -'d'   00-FF  linux/char/drm/drm.h                                    conf=
+lict!
+ -'d'   02-40  pcmcia/ds.h                                             conf=
+lict!
+ +'d'   00-FF  linux/char/drm/drm.h                                      co=
+nflict!
+ +'d'   02-40  pcmcia/ds.h                                               co=
+nflict!
+  'd'   F0-FF  linux/digi1.h
+ -'e'   all    linux/digi1.h                                           conf=
+lict!
+ -'f'   00-1F  linux/ext2_fs.h                                         conf=
+lict!
+ -'f'   00-1F  linux/ext3_fs.h                                         conf=
+lict!
+ -'f'   00-0F  fs/jfs/jfs_dinode.h                                     conf=
+lict!
+ -'f'   00-0F  fs/ext4/ext4.h                                          conf=
+lict!
+ -'f'   00-0F  linux/fs.h                                              conf=
+lict!
+ -'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                     conf=
+lict!
+ +'e'   all    linux/digi1.h                                             co=
+nflict!
+ +'f'   00-1F  linux/ext2_fs.h                                           co=
+nflict!
+ +'f'   00-1F  linux/ext3_fs.h                                           co=
+nflict!
+ +'f'   00-0F  fs/jfs/jfs_dinode.h                                       co=
+nflict!
+ +'f'   00-0F  fs/ext4/ext4.h                                            co=
+nflict!
+ +'f'   00-0F  linux/fs.h                                                co=
+nflict!
+ +'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                       co=
+nflict!
+  'f'   13-27  linux/fscrypt.h
+  'f'   81-8F  linux/fsverity.h
+  'g'   00-0F  linux/usb/gadgetfs.h
+
+--Sig_/nbaLaHHG=c60=MtgujnNaI4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh3MmoACgkQAVBC80lX
+0GxOwwgAmxnFBP1MkgidiDGk0ioFO3qx4XASPDKxSv6p1X+QQ2j6kjUWECbZgd2P
+axiQd7srnLTehrR60tAOIQVhmUP+n011JqeoIZxTtzShdUfc5MMqDMYNsTCgdKS/
+Y0t+d6XF7JK9+eDJdOwltjmpEdxN1DO4PB73UpLBALKH49U0LTNld2Dqz8J3Tkan
+6REkCRe97UcjxAC1oV+sx4jA2/sWrSYTQprX/EAoZelIzUAalCBng6hOHQsbKzuR
+fL2owp6jC9jjwzfMslq/A1tcpfCvGALyKjUEVQks1inQzFkHgnctgJG0JRkZ2VB7
+7+9lbjGu6Fa2+G+uMYQbLwN8PQTlIQ==
+=b2CR
+-----END PGP SIGNATURE-----
+
+--Sig_/nbaLaHHG=c60=MtgujnNaI4--
 
