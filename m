@@ -1,157 +1,79 @@
-Return-Path: <linux-kernel+bounces-734082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20775B07CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:25:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64723B07CBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CAD83B79B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:25:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78ED501B43
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C7429A333;
-	Wed, 16 Jul 2025 18:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b="iSI+ss6z"
-Received: from silver.cherry.relay.mailchannels.net (silver.cherry.relay.mailchannels.net [23.83.223.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F4827EFE7;
-	Wed, 16 Jul 2025 18:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.166
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752690254; cv=pass; b=PKukAXAZsK6b6hwVe4Z8hSZfU+WJ9+BLPPenawCVW+hsM9BQtUQyFzi/TLYuLvolaunSiuEpGr7QFEArrUPpBD1MxM7nQc7wveyqhIlYUYN6s1D3is5zvaaP3Vm7Yu6Y15cNOzykltDX9+2MZPoud84/jTeCJtd2Zjf+GHhbvXI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752690254; c=relaxed/simple;
-	bh=Qmt52f8/2LwAYjUUXxSr5QUHtvrdlC+AIEn/M3eHj6A=;
-	h=From:To:Cc:Subject:Message-ID:In-Reply-To:References:MIME-Version:
-	 Date; b=h62+iEfylgLh26mU1B84PSHUsEreBcqNdnpMUqfD838CSmJRb1HAm3S0i/AFv+vQ22RlDc/8Mk6MyfU40fBhTPphy9wxJhV/7nLDPkuljoyJY5YmxBlvM6GlCDqiVi93339t5zjkO8TMzIn+Aev+HtWk1tm1ejrO0UOEdYYMucs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com; spf=pass smtp.mailfrom=rootcommit.com; dkim=pass (2048-bit key) header.d=rootcommit.com header.i=@rootcommit.com header.b=iSI+ss6z; arc=pass smtp.client-ip=23.83.223.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rootcommit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 02ED68A33A2;
-	Wed, 16 Jul 2025 17:44:47 +0000 (UTC)
-Received: from fr-int-smtpout8.hostinger.io (trex-blue-5.trex.outbound.svc.cluster.local [100.120.203.220])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id E72DE8A47BC;
-	Wed, 16 Jul 2025 17:44:45 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1752687886; a=rsa-sha256;
-	cv=none;
-	b=CTwgrtC/r2COz2baFj1hpQb8aDto+AsYYXLLXz4L1KLxre8nftjHf2d8a9hlMqmCJjHzra
-	FGSR5maH0sGSqcN8Wk7oHs1FdvSHheLTga/Niqcs7a38UpGERB+Pl+chSjKnHQcLbhIUTi
-	8BIaEfvAV36fTbL5p8otkZ0Dq/zDJgJTAE15ukiOO2++D+bVVrSXfOu2e57KRLKRkB8Jxr
-	S48GlkOYcQVoFKTIycK+CIlPvHJOXAu35XeAvW9d5ig/bYuHNcT/2Y7vYv0U8hNRjEG5cu
-	U46UYHB618KTisiZ7QNA7EAzdt7PcAx4b80u6hkNOZRaYv0/vJ2OTyO/hijZwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1752687886;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=GlX3hB3FvSNa7llX9TkDQGn9lDzE4VQESKNVIVhRQIA=;
-	b=rypdO+OmMHJfMqUH6gMrouDKprQ3O1gIBEfifA4XI0OiJsaOm/jL4lfecO9kqnXJwyj/q1
-	88o1eWcbeiCsEE2b4Iu6wAC7f6fDuJdRR5mLpirmQ8Pq6MvUl+qIoX6Ei+vvpYzGN8l8uJ
-	/p3O3BlT/I4VI6ng1DWAQ40Jl/hIIKNS/4hPVDlSTTK77vO91YXXUixqJpJgPPTvM66BwY
-	9M4DB6YwhhJaBQN2P+kYlXV24IvvurrkE2HxAcltGX1HWVW2b1NTYXB0OVxEorJJJirF3T
-	T+C7p3/bhztnWuww0aaoX8wr5gMKU7djceRcCUm45G7bn99OZ9wVDNaMZKBCoQ==
-ARC-Authentication-Results: i=1;
-	rspamd-57f6596c64-h2sh4;
-	auth=pass smtp.auth=hostingeremail
- smtp.mailfrom=michael.opdenacker@rootcommit.com
-X-Sender-Id: hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId:
- hostingeremail|x-authuser|michael.opdenacker@rootcommit.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Ruddy-Decisive: 0a0ad1b23dda1374_1752687886909_4056919767
-X-MC-Loop-Signature: 1752687886909:3143730403
-X-MC-Ingress-Time: 1752687886909
-Received: from fr-int-smtpout8.hostinger.io (fr-int-smtpout8.hostinger.io
- [89.116.146.204])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.120.203.220 (trex/7.1.3);
-	Wed, 16 Jul 2025 17:44:46 +0000
-Received: from localhost.localdomain (unknown [IPv6:2001:861:4448:6b00:e8b0:7f05:ab28:ab3])
-	(Authenticated sender: michael.opdenacker@rootcommit.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4bj3NC5Yswz4dDjZ;
-	Wed, 16 Jul 2025 17:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rootcommit.com;
-	s=hostingermail-a; t=1752687883;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GlX3hB3FvSNa7llX9TkDQGn9lDzE4VQESKNVIVhRQIA=;
-	b=iSI+ss6z3OAo4CFilTxB1e0uvRCB8Ay0dmYtyE5wKx8QlrBPQE+4XWl5n/Qxv8iwcdf2sn
-	+O2HMUPVaVYqGDn3iXOSpp2V7HQYE8ud+FSZzDPomolaXAm4cGDznZPfRsHyTWx0Mv1Cbf
-	zPd9PWG/qnb4bRbloqa+sY0amt3gk09l8ovxbfviIvgIKFh9i1DRN9ubeJrr2W+/iPQ1mi
-	HwSnIL+b3kT620KQvUGWLAq6Jip9eRWFAOwgA09yGJSvia8+hFygQvQDke0wZ5juB358eP
-	TwRTM5kR4g786rLkAT3kpxJcutjXGIyKEuclE4Z3x8AWyxNE8cCl0DihYPxvuw==
-From: michael.opdenacker@rootcommit.com
-To: anshulusr@gmail.com,
-	dmitry.torokhov@gmail.com
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Opdenacker <michael.opdenacker@rootcommit.com>
-Subject: [PATCH 2/2] Input: adafruit-seesaw: fix "flat" value to avoid drifting
-Message-ID: <20250716174422.860500-2-michael.opdenacker@rootcommit.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250716174422.860500-1-michael.opdenacker@rootcommit.com>
-References: <20250716174422.860500-1-michael.opdenacker@rootcommit.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5D829AB1E;
+	Wed, 16 Jul 2025 18:21:53 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1163829E0F2;
+	Wed, 16 Jul 2025 18:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752690113; cv=none; b=ptB6aLMk09zqp8LwOTGLMbg8SOyw1FkpYCc9qeisv5j1zdgsdljDTMax8s0dg5GPLiqOtZXNtsgaqH8hRx1SQbFXKX44iKex/Ii1EUB5vivx/z9zULO+QVRH2nTysNoe9hWdMfkESODCz26CKTSM+Eq+cBBP/5y4mc6kORK97Mo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752690113; c=relaxed/simple;
+	bh=Pu+bzorDPjOZ+A8Rzw4I29bbTRHuIWu0zxXuR2zx1Ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dS2Yscw5YL3m6x8O7Dutpe6qlMmTnyij3AHvcDwDZGZZSKOjEhx1NLKAEGqIsTG8xc7IPfXfoHE/7yznnfm+rrIQ9OQdqcw8RCA1rpWLbmLF8nE0nTlPICruRu8eWhh9oppolMPKpZ2nWGMUXZLn+SvCKGJ7gPWiLszVnIu856w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1uc6ZW-0006DL-00; Wed, 16 Jul 2025 20:09:38 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id B244AC0176; Wed, 16 Jul 2025 20:04:35 +0200 (CEST)
+Date: Wed, 16 Jul 2025 20:04:35 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH v2] MIPS: mm: tlb-r4k: Uniquify TLB entries on init
+Message-ID: <aHfpszi6l_YRSOjY@alpha.franken.de>
+References: <20250607-tlb-fix-v2-1-6751eccd86f1@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Date: Wed, 16 Jul 2025 17:44:43 +0000 (UTC)
-X-CM-Analysis: v=2.4 cv=Vv1xAP2n c=1 sm=1 tr=0 ts=6877e50b a=73ergSEiYqifmUh+pZZJJw==:617 a=xqWC_Br6kY4A:10 a=d70CFdQeAAAA:8 a=zP-fLRyayCjw1eh9aOgA:9 a=NcxpMcIZDGm-g932nG_k:22
-X-CM-Envelope: MS4xfO6jovlNKzIM4XcILRHEyN9euk5wFBXL4B+4YTU23x7DqjfAOzZS1CWJkhSXTmeiVujAKhJix6c9Pmlh2YdUpXoAvJems1H0sj1MldaJocfJe23XRO8M wKGiGOQwyGiYzViUEke6nHsSpRnAF7X/zXzrkgP/W+OJ/v/dDHFVKQlEldpkYyNjWLQ2a9gBlwunQ8EBiEtTwH3iqbDZsDxYjWKNvyBgsOgWs/5xeC08QTIV pRUGItpHjFv7co/0HRy4j9A41YnkHYpe6E7S4Td/eT2a7ZtcDPzw0m8syzfgM8+Nv3Xgj154bAcptmwXdMmpEYLgAFE93SwQOMMmXlu+nenGpTGJkBNY6mln ILnRWL54DqSnQrJ9jNUj7RwgocVX7NS2b0eluUzUyFnve4gqx5YL3Ozovjqdvixtoqyrf13BdSb7GQhV6O+XVc2rvhsEfozfXQVXYM6xuB7dcx3r5fk=
-X-AuthUser: michael.opdenacker@rootcommit.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250607-tlb-fix-v2-1-6751eccd86f1@flygoat.com>
 
-From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+On Sat, Jun 07, 2025 at 01:43:56PM +0100, Jiaxun Yang wrote:
+> Hardware or bootloader will initialize TLB entries to any value, which
+> may collide with kernel's UNIQUE_ENTRYHI value. On MIPS microAptiv/M5150
+> family of cores this will trigger machine check exception and cause boot
+> failure. On M5150 simulation this could happen 7 times out of 1000 boots.
+> 
+> Replace local_flush_tlb_all() with r4k_tlb_uniquify() which probes each
+> TLB ENTRIHI unique value for collisions before it's written, and in case
+> of collision try a different ASID.
+> 
+> Cc: stable@kernel.org
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> Changes in v2:
+> - Cycle ASID instead of ENTRYHI index in case of collison.
+> - Avoid int over flow UB (Maciej)
+> - Link to v1: https://lore.kernel.org/r/20250605-tlb-fix-v1-1-4af496f17b2f@flygoat.com
+> ---
+>  arch/mips/mm/tlb-r4k.c | 56 +++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 55 insertions(+), 1 deletion(-)
 
-Tests on 9 Adafruit Mini I2C Gamepad devices have shown that
-the center X and Y values (when the joystick is left at its center position)
-deviate from 511, which is the center of the [0, 1023] value range:
+applied to mips-next.
 
-Device     Center X   Vs. Expected (511) Center Y   Vs. Expected (511)
-1          519        8                  493        -18
-2          524        13                 518        7     Not very stable data!
-3          508        -3                 531        20
-4          531        20                 508        -3
-5          505        -6                 521        10
-6          519        8                  477        -34   Big outlier, ignored!
-7          519        8                  524        13
-8          524        13                 510        -1
-9          517        6                  511        0
+Thomas.
 
-This change causes any X and Y value that is withing a [-20, +20]
-interval around 511, to be reported as centered. This avoids
-unwanted drifting (towards left, right, top or bottom)
-and makes playing with this device easier.
-
-Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
----
- drivers/input/joystick/adafruit-seesaw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/input/joystick/adafruit-seesaw.c b/drivers/input/joystick/adafruit-seesaw.c
-index 2b18451a0953..03eb181d5aef 100644
---- a/drivers/input/joystick/adafruit-seesaw.c
-+++ b/drivers/input/joystick/adafruit-seesaw.c
-@@ -50,7 +50,7 @@
- 
- #define SEESAW_JOYSTICK_MAX_AXIS	1023
- #define SEESAW_JOYSTICK_FUZZ		2
--#define SEESAW_JOYSTICK_FLAT		4
-+#define SEESAW_JOYSTICK_FLAT		20
- 
- #define SEESAW_GAMEPAD_POLL_INTERVAL_MS	16
- #define SEESAW_GAMEPAD_POLL_MIN		8
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
