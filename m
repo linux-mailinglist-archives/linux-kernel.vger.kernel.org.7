@@ -1,104 +1,310 @@
-Return-Path: <linux-kernel+bounces-734352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B368B08083
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:27:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE83B08086
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBD41C419B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:27:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BFB1C41A3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F85A2EE5E3;
-	Wed, 16 Jul 2025 22:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FA41DE2AD;
+	Wed, 16 Jul 2025 22:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FQ20TfVJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="diKb9C16"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB842857F1;
-	Wed, 16 Jul 2025 22:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C0328A1F5
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 22:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752704832; cv=none; b=eoZCDXBu4t4E4tyXd3J8S+wr42lcfHxXDAod36ZosQihC9WlSXwO1A6CTES4jeDaFznbPbCZh76PpS0gQhz9f3dF1TmZuiITOw7Srogdrq3w0YY3EEtCwXqfUcXuxArFfsh+JKlQu7/wMzrQj2xOrncICfXOSVjoC9jk7+h6PMQ=
+	t=1752704934; cv=none; b=WMFWzxXSAkh1AoaZ01GM3xkp2xrEllLX6Bs3tKOYNtvqfui1vz9Bpfe595XDMulimW/HKqIeJG/lHDeu1tqA/06M4gv3ZHudOmj82RvDP50LFjm4aWObSRDEpTM6w1R97yenukrMnL/8obyiIn6cg3FmrDl1YZnTZaFUSU+gzyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752704832; c=relaxed/simple;
-	bh=Tu5JRrTaLxjAsLV5SCPpe1Ex1V91jjvN1Tb/KDM9lNw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=YkW93tqJ0B0gQYLnOVcHyuEL9CKfvS49c271PXnAOfLXKzEaiENxPPzARqV9gi6VJAkeqpV6Hy93KC50Nus29+TM8W6Ld0PUzW/AUbo9i5wOrxJhybX2QdQ3IBk4gVURibdlXd/o0bCI7HsH3Q+S2pPruHbtezI5giJfzsQ3S4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FQ20TfVJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087D3C4CEE7;
-	Wed, 16 Jul 2025 22:27:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752704832;
-	bh=Tu5JRrTaLxjAsLV5SCPpe1Ex1V91jjvN1Tb/KDM9lNw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FQ20TfVJv7WHG4iy+EX6C5O/ThLRdHt1x2CyduQoJ7kBpnfwVRY4iaXRGrPLDkcGE
-	 DBema/GEK6i5vtv2C20l0NWl0W9bQMb+oyV+Fhec+AWeSTRdsHVXB/JrmwlAloVh2r
-	 aiQsmw0UH40iuqW+2aualml7hoCW1ijLrIVxgQ0o=
-Date: Wed, 16 Jul 2025 15:27:10 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
- nvdimm@lists.linux.dev, Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Dan Williams <dan.j.williams@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, Ryan
- Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Jann Horn <jannh@google.com>, Pedro Falcato
- <pfalcato@suse.de>, Hugh Dickins <hughd@google.com>, Oscar Salvador
- <osalvador@suse.de>, Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH v1 0/9] mm: vm_normal_page*() improvements
-Message-Id: <20250716152710.59e09fe5056010322de2a1a3@linux-foundation.org>
-In-Reply-To: <17a539fa-977c-4f3f-bedf-badd1fc1287a@redhat.com>
-References: <20250715132350.2448901-1-david@redhat.com>
-	<20250715163126.7bcaca25364dd68835bd9c8b@linux-foundation.org>
-	<17a539fa-977c-4f3f-bedf-badd1fc1287a@redhat.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752704934; c=relaxed/simple;
+	bh=ykOgo4+A9qk5wgoO8dpUtvcXviSdygtbrOBUfEIyyGE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qnlbmWAkoWxqpRFsqz442Qjw90XvyMY6hPsJ0j3DsgGEFwgxEzNxwj5ZGj2bQgX71yJ61TalZijPLEOP2jLmMU0o4hrYxjbY9TMIRZjkGdGyWcog8qXglfqZr0dHMWD+bYeOJdc9g2azsNxh+GMaAye0FO7rf6guZN+bVs3vpMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=diKb9C16; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-311ae2b6647so351407a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:28:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752704931; x=1753309731; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=15czGDWr7Av2AvYISrTaYu5BE5KphOq8Xz2cmMY6+AI=;
+        b=diKb9C16a1LLfKia8x+8v/w2d9eZkgP0btuV64jVfHM49X3YE8FJBiaYoxKmsbN99z
+         0XYXk27D+MNwStQFDMa58z7iNID5G7DPckWxRdmskDzXRZLldG67+4GxbEDIKMThes/v
+         gzUJn2ovum3xnxPcpAmjnHzOwef9mzFR6VYmgXHUkg2x4rSd2O4lm379jOCVOrGXEU01
+         R8M5S91e7zI266+EYEXKdjGBmHRwh5UEhAJNtSVdjSV37gmK6U0EyH3rGHn10K6RtC4z
+         QBE70eCq0OqtGI+EunJ7xM5CCi6wHbAce7kXBJOXel7Ngw6o24VNm4jiGzGk9Jtvz0Qt
+         WNqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752704931; x=1753309731;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=15czGDWr7Av2AvYISrTaYu5BE5KphOq8Xz2cmMY6+AI=;
+        b=oKxlaiai7DW8EL4/U5z2o+nqfKpqBBUSo4Kc14yFcmZjiZh31b3V8vv3XrWvCUTFxA
+         1Yjeqg4MpSVVAVf+p/OPzuiRJKW72DBiMLKQK9QA/3RQv1J/NLImbx+SfWYusmj8LPpj
+         VbGYQ1uGAuITS+DUtqt0LgqYCwQ7aHgLxoZ1Zhe+43+FENX0Ob/NvBMVCMICha/S0aTt
+         RKhgFzBBVjmHwqB4yRWSdPoO6EbgAu085PsmxEzEcfGFvrOER5aY62cj0tIDJbY7IvSK
+         vOawOv+GJB7h3TBlFHvoBfymWg+N5dwr/5+Ks0DcA87Lp+cC3/rfselU6xsLETI/xbLF
+         PoZg==
+X-Gm-Message-State: AOJu0YwCpsMViZOcp6Oh0Rd4NuKOwuL+SXoDFRB5YgPzgDvYZyqD2EjB
+	V/1mRCq/vOTeUyH89d1xYlf3jRwDy6Hke7DE1RJTZpViV1sspiQcHcixCjzMU3Y9ZgqtiM8cbxr
+	16DWzlnRmZw==
+X-Google-Smtp-Source: AGHT+IGlaI9dHBfTHBGYmlQ9O6eaSEOflYyGrE07FMmFWZU0MYHYTEDRhkfEO4kx9V4K+hW05Pm4fRgwkPtF
+X-Received: from pja3.prod.google.com ([2002:a17:90b:5483:b0:312:1af5:98c9])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c83:b0:315:9cae:bd8
+ with SMTP id 98e67ed59e1d1-31c9e76b79dmr6302352a91.23.1752704930917; Wed, 16
+ Jul 2025 15:28:50 -0700 (PDT)
+Date: Wed, 16 Jul 2025 15:28:49 -0700
+In-Reply-To: <202507160735.C76466BB@keescook> (Kees Cook's message of "Wed, 16
+ Jul 2025 07:37:51 -0700")
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250714185321.2417234-1-ynaffit@google.com> <20250714185321.2417234-5-ynaffit@google.com>
+ <202507160735.C76466BB@keescook>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Message-ID: <dbx8seiv4voe.fsf@ynaffit-andsys.c.googlers.com>
+Subject: Re: [PATCH v3 4/6] binder: Scaffolding for binder_alloc KUnit tests
+From: Tiffany Yang <ynaffit@google.com>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Arve =?utf-8?B?SGrDuG5uZXY=?= =?utf-8?B?w6Vn?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On Wed, 16 Jul 2025 10:47:29 +0200 David Hildenbrand <david@redhat.com> wrote:
+Kees Cook <kees@kernel.org> writes:
 
-> > 
-> > However the series rejects due to the is_huge_zero_pmd ->
-> > is_huge_zero_pfn changes in Luiz's "mm: introduce snapshot_page() v3"
-> > series, so could we please have a redo against present mm-new?
-> 
-> I'm confused: mm-new *still* contains the patch from Luiz series that
-> was originally part of the RFC here.
-> 
-> commit 791cb64cd7f8c2314c65d1dd5cb9e05e51c4cd70
-> Author: David Hildenbrand <david@redhat.com>
-> Date:   Mon Jul 14 09:16:51 2025 -0400
-> 
->      mm/memory: introduce is_huge_zero_pfn() and use it in vm_normal_page_pmd()
-> 
-> If you want to put this series here before Luiz', you'll have to move that
-> single patch as well.
-> 
-> But probably this series should be done on top of Luiz work, because Luiz
-> fixes something.
+>> ...
 
-I'm confused at your confused.  mm-new presently contains Luiz's latest
-v3 series "mm: introduce snapshot_page()" which includes a copy of your
-"mm/memory: introduce is_huge_zero_pfn() and use it in
-vm_normal_page_pmd()".
+> I'm used to the "#ifdef CONFIG_..." idiom, but looking at the tree, I
+> see that "#if IS_ENANLED(CONFIG...)" is relatively common too. I don't
+> think there is a function difference, so I leave the style choice up to
+> you! ;)
 
-> [that patch was part of the RFC series, but Luiz picked it up for his work, so I dropped it
-> from this series and based it on top of current mm-new]
+
+IIRC, I had tried using the #ifdef to inject test-specific code in some
+places, but that created issues when we were loading KUnit as a module
+because it causes the built-in code to be built as though the
+"CONFIG_..." is undefined. Consequently, I started using IS_ENABLED by
+default, but I'm not sure if it's strictly necessary for exposing
+functions with a header file since I'd assume "CONFIG_..." will be
+defined when we're building the module?
+
+>> +
+>>   #endif /* _LINUX_BINDER_INTERNAL_H */
+>> diff --git a/drivers/android/tests/.kunitconfig  
+>> b/drivers/android/tests/.kunitconfig
+>> new file mode 100644
+>> index 000000000000..a73601231049
+>> --- /dev/null
+>> +++ b/drivers/android/tests/.kunitconfig
+>> @@ -0,0 +1,3 @@
+>> +CONFIG_KUNIT=y
+>> +CONFIG_ANDROID_BINDER_IPC=y
+>> +CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST=y
+>> diff --git a/drivers/android/tests/Makefile  
+>> b/drivers/android/tests/Makefile
+>> new file mode 100644
+>> index 000000000000..6780967e573b
+>> --- /dev/null
+>> +++ b/drivers/android/tests/Makefile
+>> @@ -0,0 +1,3 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +obj-$(CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST)	+= binder_alloc_kunit.o
+>> diff --git a/drivers/android/tests/binder_alloc_kunit.c  
+>> b/drivers/android/tests/binder_alloc_kunit.c
+>> new file mode 100644
+>> index 000000000000..4b68b5687d33
+>> --- /dev/null
+>> +++ b/drivers/android/tests/binder_alloc_kunit.c
+>> @@ -0,0 +1,166 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Test cases for binder allocator code
+>> + */
+>> +
+>> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>> +
+>> +#include <kunit/test.h>
+>> +#include <linux/anon_inodes.h>
+>> +#include <linux/err.h>
+>> +#include <linux/file.h>
+>> +#include <linux/fs.h>
+>> +#include <linux/mm.h>
+>> +#include <linux/mman.h>
+>> +#include <linux/sizes.h>
+>> +
+>> +#include "../binder_alloc.h"
+>> +#include "../binder_internal.h"
+>> +
+>> +MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+>> +
+>> +#define BINDER_MMAP_SIZE SZ_128K
+>> +
+>> +struct binder_alloc_test {
+>> +	struct binder_alloc alloc;
+>> +	struct list_lru binder_test_freelist;
+>> +	struct file *filp;
+>> +	unsigned long mmap_uaddr;
+>> +};
+>> +
+>> +static void binder_alloc_test_init_freelist(struct kunit *test)
+>> +{
+>> +	struct binder_alloc_test *priv = test->priv;
+>> +
+>> +	KUNIT_EXPECT_PTR_EQ(test, priv->alloc.freelist,
+>> +			    &priv->binder_test_freelist);
+>> +}
+>> +
+>> +static void binder_alloc_test_mmap(struct kunit *test)
+>> +{
+>> +	struct binder_alloc_test *priv = test->priv;
+>> +	struct binder_alloc *alloc = &priv->alloc;
+>> +	struct binder_buffer *buf;
+>> +	struct rb_node *n;
+>> +
+>> +	KUNIT_EXPECT_EQ(test, alloc->mapped, true);
+>> +	KUNIT_EXPECT_EQ(test, alloc->buffer_size, BINDER_MMAP_SIZE);
+>> +
+>> +	n = rb_first(&alloc->allocated_buffers);
+>> +	KUNIT_EXPECT_PTR_EQ(test, n, NULL);
+>> +
+>> +	n = rb_first(&alloc->free_buffers);
+>> +	buf = rb_entry(n, struct binder_buffer, rb_node);
+>> +	KUNIT_EXPECT_EQ(test, binder_alloc_buffer_size(alloc, buf),
+>> +			BINDER_MMAP_SIZE);
+>> +	KUNIT_EXPECT_TRUE(test, list_is_last(&buf->entry, &alloc->buffers));
+>> +}
+>> +
+>> +/* ===== End test cases ===== */
+>> +
+>> +static void binder_alloc_test_vma_close(struct vm_area_struct *vma)
+>> +{
+>> +	struct binder_alloc *alloc = vma->vm_private_data;
+>> +
+>> +	binder_alloc_vma_close(alloc);
+>> +}
+>> +
+>> +static const struct vm_operations_struct binder_alloc_test_vm_ops = {
+>> +	.close = binder_alloc_test_vma_close,
+>> +	.fault = binder_vm_fault,
+>> +};
+>> +
+>> +static int binder_alloc_test_mmap_handler(struct file *filp,
+>> +					  struct vm_area_struct *vma)
+>> +{
+>> +	struct binder_alloc *alloc = filp->private_data;
+>> +
+>> +	vm_flags_mod(vma, VM_DONTCOPY | VM_MIXEDMAP, VM_MAYWRITE);
+>> +
+>> +	vma->vm_ops = &binder_alloc_test_vm_ops;
+>> +	vma->vm_private_data = alloc;
+>> +
+>> +	return binder_alloc_mmap_handler(alloc, vma);
+>> +}
+>> +
+>> +static const struct file_operations binder_alloc_test_fops = {
+>> +	.mmap = binder_alloc_test_mmap_handler,
+>> +};
+>> +
+>> +static int binder_alloc_test_init(struct kunit *test)
+>> +{
+>> +	struct binder_alloc_test *priv;
+>> +	int ret;
+>> +
+>> +	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
+>> +	if (!priv)
+>> +		return -ENOMEM;
+>> +	test->priv = priv;
+>> +
+>> +	ret = list_lru_init(&priv->binder_test_freelist);
+>> +	if (ret) {
+>> +		kunit_err(test, "Failed to initialize test freelist\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* __binder_alloc_init requires mm to be attached */
+>> +	ret = kunit_attach_mm();
+>> +	if (ret) {
+>> +		kunit_err(test, "Failed to attach mm\n");
+>> +		return ret;
+>> +	}
+>> +	__binder_alloc_init(&priv->alloc, &priv->binder_test_freelist);
+>> +
+>> +	priv->filp = anon_inode_getfile("binder_alloc_kunit",
+>> +					&binder_alloc_test_fops, &priv->alloc,
+>> +					O_RDWR | O_CLOEXEC);
+>> +	if (IS_ERR_OR_NULL(priv->filp)) {
+>> +		kunit_err(test, "Failed to open binder alloc test driver file\n");
+>> +		return priv->filp ? PTR_ERR(priv->filp) : -ENOMEM;
+>> +	}
+>> +
+>> +	priv->mmap_uaddr = kunit_vm_mmap(test, priv->filp, 0, BINDER_MMAP_SIZE,
+>> +					 PROT_READ, MAP_PRIVATE | MAP_NORESERVE,
+>> +					 0);
+>> +	if (!priv->mmap_uaddr) {
+>> +		kunit_err(test, "Could not map the test's transaction memory\n");
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void binder_alloc_test_exit(struct kunit *test)
+>> +{
+>> +	struct binder_alloc_test *priv = test->priv;
+>> +
+>> +	/* Close the backing file to make sure binder_alloc_vma_close runs */
+>> +	if (!IS_ERR_OR_NULL(priv->filp))
+>> +		fput(priv->filp);
+>> +
+>> +	if (priv->alloc.mm)
+>> +		binder_alloc_deferred_release(&priv->alloc);
+>> +
+>> +	/* Make sure freelist is empty */
+>> +	KUNIT_EXPECT_EQ(test, list_lru_count(&priv->binder_test_freelist), 0);
+>> +	list_lru_destroy(&priv->binder_test_freelist);
+>> +}
+>> +
+>> +static struct kunit_case binder_alloc_test_cases[] = {
+>> +	KUNIT_CASE(binder_alloc_test_init_freelist),
+>> +	KUNIT_CASE(binder_alloc_test_mmap),
+>> +	{}
+>> +};
+>> +
+>> +static struct kunit_suite binder_alloc_test_suite = {
+>> +	.name = "binder_alloc",
+>> +	.test_cases = binder_alloc_test_cases,
+>> +	.init = binder_alloc_test_init,
+>> +	.exit = binder_alloc_test_exit,
+>> +};
+>> +
+>> +kunit_test_suite(binder_alloc_test_suite);
+>> +
+>> +MODULE_AUTHOR("Tiffany Yang <ynaffit@google.com>");
+>> +MODULE_DESCRIPTION("Binder Alloc KUnit tests");
+>> +MODULE_LICENSE("GPL");
+
+> Reviewed-by: Kees Cook <kees@kernel.org>
+
+-- 
+Tiffany Y. Yang
 
