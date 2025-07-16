@@ -1,113 +1,113 @@
-Return-Path: <linux-kernel+bounces-733750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF36B0789C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D36FB0789D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1234188BF49
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:51:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D71501892B3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4176B2F532D;
-	Wed, 16 Jul 2025 14:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7B02F5C27;
+	Wed, 16 Jul 2025 14:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZBhBEoX"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iT3Lq+bW"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157912F50B9;
-	Wed, 16 Jul 2025 14:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039A52F5337;
+	Wed, 16 Jul 2025 14:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752677319; cv=none; b=QXgS3Xyd5+iVqXwFc+IPP4NS84cbzf+TM0KaoLxk4Yt+5hgYusTO6ofE9C8wh0WU+9NJ2CIZFWBW/7sRF/ryzQjDOkIs7C1yJOFMl2FeqD07bjTN+yoF5jh90lb5I0aMJ9zBoqYcFU/FRPhMwcdTq6CV0Wwc8hr8YOmCnSE/t9s=
+	t=1752677323; cv=none; b=tjpvHUiwCMJ8F/K7eYrK+KCtl6Jr20YnqzrWX4kDrjd/vQQ4aIn5Zsiio56P7lIgw0xSJVBIyWq9cDmcbDhPMKsXLW/NC9D+HGgeczmUDiwjqyKaqYBgM56J33qwZ/sWa+GtcL5U8qKi6XHPjYRW+Uje64PUyS83kxNjUBMl/ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752677319; c=relaxed/simple;
-	bh=pxyK4IpdvEaEPjWoT9x1mfZguglA3t2FbpKgw8SoBMs=;
+	s=arc-20240116; t=1752677323; c=relaxed/simple;
+	bh=qi+QVChNF8r4ZRImMMEYigXjb6VC+AHzdyzKRRP1h7w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WFvAWDyyLJ5okgqxW/Bx1qExy68ZtuUYInHIeufRRoaWlVAlTAE6iKVyNPGz3wn5c3xBJ+IZ2X1OJQPYxqMDZVGteNzgZZW99+wmCJB4tNBMyyKIwWSXUrXI107vEyoKv+OI5u+9Z8iYN9pU8Qd/V0WAoSa8at1JVNmY/61xdHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZBhBEoX; arc=none smtp.client-ip=209.85.160.169
+	 MIME-Version; b=tbXDRdQaEPA7U5ifRLmwryjtUmAtwFGj5COLG/F/sNAMMoxIYkgs/aMf1F+jAp+dec8v8Nzw2TujWV5GFGqtvg/Gh7HtGWI0H1Vb/X18rnudWBUHqa+359kCSKQhvghpJvNPxFZwGLgs7mJJo2m1c52nEUzRGvhylBYjebpKlIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iT3Lq+bW; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a9bff7fc6dso9251571cf.1;
-        Wed, 16 Jul 2025 07:48:37 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-700fee04941so83746d6.1;
+        Wed, 16 Jul 2025 07:48:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752677317; x=1753282117; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752677320; x=1753282120; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=EWuK6FBVFxtsuJtQ1WZQ4cQFsX6B+KpTxg+/m9X09UM=;
-        b=BZBhBEoXMkSRbQVx9wrqHusQje5GpWKfES1pYj6cFniP6PNAgqYsUA/3hwqKU4tfUJ
-         pCafLDVGJrKubWpLzk7+BrBCtKSzNy9xaxXcT0EIK0+f//BIXponDHL0udWwz2X8L98O
-         g+NTRhbT/WGnYSnCg5OrlcheVqqm0EcxLHBc9lpIzQEnzbJ0hETxggdhsNNGypaRmIla
-         XEugeI90v8PJX6YCewKO0mCHwHBblsYvsi2YdcuMjkQQUa0+cu0c1+Dlmb7oVVDRKxRz
-         Kagc3ghDlc0Px8SJqNCujVqyLH0Y9Mjvnb6KtRkOpT4JRdhqKoU8H7eK89fmlEXJZlf/
-         HF2w==
+        bh=2jJtlf9oYQnJT+FKbRuWUa6nbrsl5qwGbSwAIcd7eA8=;
+        b=iT3Lq+bWnya/xQujgx7YsuQsOAE/31Q2vHHDdLmOMtJoKK3cZQDYq4mWovCOOyi0c3
+         5MLSz5tJjgbK3EiDkr3tp8H5RpJKH7rL47p+WujO/IuEWVNAi/th0YH5VeCuEUHZoJi1
+         9xVLW5PHL+2pck5XndLfbOuFs4yfi5fYArymTNwQXRVjlyYRM283eVbLEflrmlXn9fON
+         XD0SEfvgU/y9bDUn9V07RJOEkxrK4yPAayyadlqSWS4dnCRH1IAo8CWxn7Jd3moH74fH
+         OfjBPBKIB8RrprcR/jp1Znh0HUThqJRq8MvwGDo5h4bWS5FfxNGCfCtg9/r40BhY6Ik2
+         RPeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752677317; x=1753282117;
+        d=1e100.net; s=20230601; t=1752677320; x=1753282120;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EWuK6FBVFxtsuJtQ1WZQ4cQFsX6B+KpTxg+/m9X09UM=;
-        b=tqwdWLps0sD4FoLXNgqEqBxOG9aXBXJmuMMb3Tc/zEGChtNDwM9wM/+U2UXP4SZuTQ
-         LvEP9WGIwZdrumnoULosGPiVR1BjAh6ba9LwLgNhFeTH/HvUX5Pi3YujBFWf0WqDYnhu
-         ulDaw0JSJtMMHj9s4usdWhirlMAg5OgO/peBhhleWy1GQEoFRwG4bP+3bYOyDkxGp1Zg
-         Yq0KpLsQCX2JvLp4ml1gaLHagsBtFFk0Q8KKBhKe78XxuIgkb3UCn90vTETxsYV/QBxq
-         Mlf5g1uO5o5xqsYYVAS2bRtu+Q80/3WDYPaKaR23KvF4Hqr6bDw6oAww8Zmn4h6OSStd
-         jbzA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2C8xNlPn+jJoYbHHXb2UmSBXbT1EGF96bCpg2+xOPQj3dqNxPh/tGrTy2DYejpHXKvfZqbziEXNzCVRQ=@vger.kernel.org, AJvYcCWjrCSlsz0czboaAbRUkuGvTST1eIb29I7gywiRsh0U9F4CJKA6Ona162IdGo9UIYmmPm6S+8JqVuqpk2nlr9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza+etJpmkS73n87Yjm/1zSD7cvnnPtJv5nz4kh/G5oscaB1A/s
-	eGJiglhYskOkuJhhGCmb5kWUOP8Yl9UiRJXjSMKQBJK1O7H02beu94V5
-X-Gm-Gg: ASbGncsPy6hh1FfpvrtTcUTlB54QU+j4mlqcW/XdeHn4tyixdzTHs9gZIgqHclzkgLv
-	+W4NxCvJoIpPL/l8K3nIyKinXo9wJskJGESColj4y+c6+aQC085nvaE+YqhQ6zozjbmBS1147/O
-	r0e4h9FXBoKlpGR/6ff2yED0cR3Ns9zutkoLawzeIP93K8NGm67uA+2mc7Yfaxx/v5zolKXgey0
-	adghJICJNGL98s5VGtStkAU2M9zpgStoPkeYfeR7RTnocnRL9eWpzKPD6vOFChBRrp+/q3MUd2t
-	8YLzNItqxCELTmVRqH6d4jpUk0b2d6YKsGD/+Fli8M52X7GzK/WDIQSbm8+cIOK4JWGOYEqjstL
-	X+DJJzTFH6EJidlwlafhrZjyb1Otfu8ynALDvwx1YUwr4HGEd29YHjV4JsuE+Eulmc7f73nfmYU
-	PI0pJ3ZmFUPXqDAVhK0lVrlAA=
-X-Google-Smtp-Source: AGHT+IEGElqA+vZ903nEvCUg2SlvUTiLvXQ59tX8l7tJ7HhfxJMyUuFXWKpgRdMMDvOukqTU7aB5Lw==
-X-Received: by 2002:ac8:6f0b:0:b0:4ab:63b8:3320 with SMTP id d75a77b69052e-4ab7f9d73bdmr111166751cf.23.1752677316720;
-        Wed, 16 Jul 2025 07:48:36 -0700 (PDT)
+        bh=2jJtlf9oYQnJT+FKbRuWUa6nbrsl5qwGbSwAIcd7eA8=;
+        b=wbYcdltwQsPQY9MVaZkkZVCAkyDZdSIVMYuXEFJHkoQhr1eEpOicHKQsvMC2wFBTHM
+         nZaJAeNHd+AyLMRjgQuF2I/XNY0frxeoVBAYkYJxQqi7mfLGub5Zv9UdPSMN5tj+xYIC
+         /B2Ei1K3ltMZY0Vb9jcBRdmnuCIYL7mRNJ14PGnkAaeIpiAuYj4tODzSXsV1B+nZvPUG
+         f9H1Q135uD8q2pI3IgLN0jZpjiBrEvgPk6LEQ1z9iXcu4T0dbWUxFwY6Ez4+v7Lyvj/T
+         QiqQlT8a/4e10fyQa6pFn+mly+kzBL0j8BJoNgkSIPPF9B0YR2zZLQWMulBD+wJWOFYR
+         dlfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaRH8ud8nGdrlxvzXvRxca92TMzqj0+ZaA0LVY1UTlknV0anAZ7fymPjD+XTZ+7nwHAUvUuJ2bYJWCIIAiHh0=@vger.kernel.org, AJvYcCVzcgflL9XcJ35m9Ozl9Hy2jZXrQPf0XdWdzuZb1CRd84CSpd16vS1e4w3r/ke4/0EoK+djt4s6A7qkYzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbRM39jh4cEOaHQ3wnUPqhxYgvFoytzvP1xUC2MMPntS0IgmpL
+	riGmHquxhysn4KAExnXTHYVAS+c3eZqQt9aL2dmano4lgY6eC+cNN4ID
+X-Gm-Gg: ASbGncuVkzmdCa+bx9KkLrj61PzSAfIe4m/A+W0Z0YgfsOqy0a7Bz5HMjWtIYamqIKl
+	UMFV306cStj0Zo0sXUGs0TYEFglY4IbYaafOiQw9yk97fAhYC79QbjxVngeTm6fu6pK48oYokER
+	MiIdupNJ+1Rbq8LHlYUYVnHvRyvSFC2nyEEevn8XSiULtHHMrcbnDAorqNn+QFTyebxrA0A9FXf
+	Dudmr/fslU54fjE80R4AcAaRCB3/aXVZS8w4M2VJlNUkoRfXdJpFEvwexsiF2I+3h16goZfB0wG
+	PGeo6OZH8xR4W9Cc85Wsy92JjLW5nBzxox2MaekSn3kH6qBSph0vhiReeLPNK1TlMxnWQhOKb6X
+	dGXr62SBkhUovUp0sVaLD7QGZQ4HLnZgd7lGBlgHCsL8j6hnZHCYzrVp5GJfTzz6CCq+zHWs2Yy
+	1GNgSxyzbsWx64
+X-Google-Smtp-Source: AGHT+IGjHp1Ke1LEs2zbb4+T5KyROgCWMtI+o6wcUP7tagagMNPKp5SmYUeYbfbyVctwuicdjiFBoQ==
+X-Received: by 2002:ad4:5c6c:0:b0:704:7fe1:b26a with SMTP id 6a1803df08f44-704f480b480mr56588116d6.16.1752677319397;
+        Wed, 16 Jul 2025 07:48:39 -0700 (PDT)
 Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ab75211016sm28194701cf.45.2025.07.16.07.48.36
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704979e459csm71272446d6.49.2025.07.16.07.48.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 07:48:36 -0700 (PDT)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 08898F40068;
-	Wed, 16 Jul 2025 10:48:36 -0400 (EDT)
+        Wed, 16 Jul 2025 07:48:39 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 9C955F40068;
+	Wed, 16 Jul 2025 10:48:38 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 16 Jul 2025 10:48:36 -0400
-X-ME-Sender: <xms:w7t3aNN7jRBvcJAqtfXHrwHxawcTmrBdKaotzh7X17o9ZgtooV7vSQ>
-    <xme:w7t3aFfhi5DYmj953JMsm5ptmrItb-6tfy_n_2K5EIiUA5XhW-fl837tqyNRa5xBK
-    L5Pw9tWkQEfVc3-Fg>
-X-ME-Received: <xmr:w7t3aLXtNZEowP_S8YfjkJPTmtLFLGiBuJjjh2xtFVq5kBx1MgMnceBASw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjeelkecutefuodetggdotefrod
+  by phl-compute-10.internal (MEProxy); Wed, 16 Jul 2025 10:48:38 -0400
+X-ME-Sender: <xms:xrt3aCd_YHf-HlOeaFAhgNsvlHiBaMDTR_elW7mTxBh0_yQJImF8Ew>
+    <xme:xrt3aBvE0dbB2_MIyo5x-GWFAoytvq0T0HVbCKa8WuC-mvrJN_os7mS5vn392Jixb
+    ghFgSuuOiifTdTbsw>
+X-ME-Received: <xmr:xrt3aCmTY0uuQ_6mNIT5zdvfQqblZuJMlxdZD7rDSZVuvN--lZqth9sfuQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjeellecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
     hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeeuohhquhhnucfh
     vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepkeetteejgeduieekudejfedvvddtiefgieffffeljeefieehiefffedvfeffgfet
-    necuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgv
-    shhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehhe
-    ehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-    pdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmh
-    hinhhgoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgr
-    uggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlohhnghhmrghnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehojhgvuggr
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvg
-    drtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehlvghithgrohesuggvsghirghnrdhorhhg
-X-ME-Proxy: <xmx:w7t3aODh-yljAkSWRD732ItNG6yUbbc0LQis4ZcamKBQwxike85jjg>
-    <xmx:w7t3aO7qGPqRWcAHRbiIw6aw4j1175KQaSEDUUAthWxIzQb50VDbUQ>
-    <xmx:w7t3aN38BVToaS35wMk-Czh-3E3xfjPZs_JV4t6F6BJw_nqb4N68xw>
-    <xmx:w7t3aKnX5E6A_tHYVuVwSK1PD_EDtU6Tr8F_qYKufKGbOP7GwnHMmw>
-    <xmx:xLt3aL6z5yfm0ytwrgpyblP-QKDsHayOUorMhrdb4S8dqL0bnkR60yrt>
+    hrnhepgffhffevhffhvdfgjefgkedvlefgkeegveeuheelhfeivdegffejgfetuefgheei
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
+    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
+    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohep
+    uddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhnghhosehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgt
+    phhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonhhgmhgrnh
+    esrhgvughhrghtrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhgvihhtrghoseguvggsihgrnhdrohhrgh
+X-ME-Proxy: <xmx:xrt3aESMAZFH2pcHmcZ5qe3_RbcgcfjRxTGMdtqJeeEsfgx2d2hWbg>
+    <xmx:xrt3aIJPyLrmI77ughtTlbB2rfltDAzsCyQTLYCnp4vc6LZTaxk-2g>
+    <xmx:xrt3aOHHgAPN95-msiGuArgHdgJfcvB15aBCFE_aKOSfXguiPPSDOg>
+    <xmx:xrt3aF3gQvh6sllKxHQR1vJZRy7tBt_q4y6khnnV3_qZiIZruQ4X1Q>
+    <xmx:xrt3aGIgs95YXtFD6jzYcxo53Zt3CT6rw3Oir7Zf0HAokaGMmcnbF2Sd>
 Feedback-ID: iad51458e:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Jul 2025 10:48:34 -0400 (EDT)
+ 16 Jul 2025 10:48:36 -0400 (EDT)
 From: Boqun Feng <boqun.feng@gmail.com>
 To: Ingo Molnar <mingo@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>
@@ -119,11 +119,11 @@ Cc: "Will Deacon" <will@kernel.org>,
 	rust-for-linux@vger.kernel.org,
 	Breno Leitao <leitao@debian.org>,
 	"Paul E. McKenney" <paulmck@kernel.org>,
-	Jason Devers <dev.json2@gmail.com>,
+	Jinliang Zheng <alexjlzheng@tencent.com>,
 	Boqun Feng <boqun.feng@gmail.com>
-Subject: [PATCH 4/9] rust: sync: Add #[must_use] to Lock::try_lock()
-Date: Wed, 16 Jul 2025 07:48:13 -0700
-Message-Id: <20250716144818.47650-5-boqun.feng@gmail.com>
+Subject: [PATCH 5/9] locking/rwsem: Use OWNER_NONSPINNABLE directly instead of OWNER_SPINNABLE
+Date: Wed, 16 Jul 2025 07:48:14 -0700
+Message-Id: <20250716144818.47650-6-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250716144818.47650-1-boqun.feng@gmail.com>
 References: <20250716144818.47650-1-boqun.feng@gmail.com>
@@ -135,39 +135,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jason Devers <dev.json2@gmail.com>
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-The `Lock::try_lock()` function returns an `Option<Guard<...>>`, but it
-currently does not issue a warning if the return value is unused.
-To avoid potential bugs, the `#[must_use]` annotation is added to ensure
-proper usage.
+After commit 7d43f1ce9dd0 ("locking/rwsem: Enable time-based spinning on
+reader-owned rwsem"), OWNER_SPINNABLE contains all possible values except
+OWNER_NONSPINNABLE, namely OWNER_NULL | OWNER_WRITER | OWNER_READER.
 
-Note that `T` is `#[must_use]` but `Option<T>` is not.
-For more context, see: https://github.com/rust-lang/rust/issues/71368.
+Therefore, it is better to use OWNER_NONSPINNABLE directly to determine
+whether to exit optimistic spin.
 
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Link: https://github.com/Rust-for-Linux/linux/issues/1133
-Signed-off-by: Jason Devers <dev.json2@gmail.com>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+And, remove useless OWNER_SPINNABLE to simplify the code.
+
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Acked-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Link: https://lore.kernel.org/r/20241212154753.139563-1-dev.json2@gmail.com
+Link: https://lore.kernel.org/r/20250610130158.4876-1-alexjlzheng@tencent.com
 ---
- rust/kernel/sync/lock.rs | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/locking/rwsem.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index e82fa5be289c..27202beef90c 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -175,6 +175,8 @@ pub fn lock(&self) -> Guard<'_, T, B> {
-     /// Tries to acquire the lock.
-     ///
-     /// Returns a guard that can be used to access the data protected by the lock if successful.
-+    // `Option<T>` is not `#[must_use]` even if `T` is, thus the attribute is needed here.
-+    #[must_use = "if unused, the lock will be immediately unlocked"]
-     pub fn try_lock(&self) -> Option<Guard<'_, T, B>> {
-         // SAFETY: The constructor of the type calls `init`, so the existence of the object proves
-         // that `init` was called.
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index 2ddb827e3bea..8572dba95af4 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -727,8 +727,6 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
+ 	return ret;
+ }
+ 
+-#define OWNER_SPINNABLE		(OWNER_NULL | OWNER_WRITER | OWNER_READER)
+-
+ static inline enum owner_state
+ rwsem_owner_state(struct task_struct *owner, unsigned long flags)
+ {
+@@ -835,7 +833,7 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
+ 		enum owner_state owner_state;
+ 
+ 		owner_state = rwsem_spin_on_owner(sem);
+-		if (!(owner_state & OWNER_SPINNABLE))
++		if (owner_state == OWNER_NONSPINNABLE)
+ 			break;
+ 
+ 		/*
 -- 
 2.39.5 (Apple Git-154)
 
