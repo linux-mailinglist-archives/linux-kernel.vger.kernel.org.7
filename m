@@ -1,155 +1,289 @@
-Return-Path: <linux-kernel+bounces-733992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5A5B07BB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:02:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D32CB07BBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D5E4E2404
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA061894AFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155072F5475;
-	Wed, 16 Jul 2025 17:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0741A2F546C;
+	Wed, 16 Jul 2025 17:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0hz4ujV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CYfgaO50"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011015.outbound.protection.outlook.com [52.101.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD7442049;
-	Wed, 16 Jul 2025 17:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752685361; cv=none; b=pQVX3a1+LVvpl17R3J7kEaR9LSztXWaFWBGyOgWrIcrEL35PbiknZUDy1xEoABPyEJQPzSJbI6kOuFKCpRzxlNJmYuSjP4gWtaVrxS+qZvL+Y68EeCdF9yDUKi9dL7B2HDTqJHEro/rrHvO6xgxitsgSc62S/o2MMeij84npuGc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752685361; c=relaxed/simple;
-	bh=Nk8r5lNpqHLsdZRzSm9gX+C1MJ9SZPhZTOf9SPBThE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UUvnlUsfwuNW1+pN9BtQK8+nXCGIE/sK7yy+W2DNfH/sRfwSmY94UFuS1ZXyephPInQBPuAr8etxngXbF5o/OntJ3JCnLUpS7I0OWWaYXcYIRf2fAFQihVEghVh1RQE8SsNSsI57Xh48Tk9Vex61L470veMaGlu5oFuszkLAPIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0hz4ujV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A556C4CEF0;
-	Wed, 16 Jul 2025 17:02:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752685361;
-	bh=Nk8r5lNpqHLsdZRzSm9gX+C1MJ9SZPhZTOf9SPBThE4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M0hz4ujVXE1KJoc71fTUWld9G+IpQLR6Um2ibxRYH181fHJtv3kl3CvVGDnxFjEU+
-	 COQtMsW5XUGiBEpgtDGcH/KRbS3ta3foPVTJQmkCydCAjI0rWzL9QC+CPqjrquN5o+
-	 cqmKO8A3SnLINk1fWj5O2/N6SVREhJSUB6W42pGm45hR8BK3r7IpQqzN+Pz7QWgHuo
-	 nZjGAwbdivlc0ezxyIrwAsKi0jcxnXD4Z+vz5aUxUf3mULtp13c7qOo2yg0DUFPOou
-	 okSvVfhHr/5Uka08xAvJe9nmx5pkw4DrgcrW7Aq71Py+Gh2ZFauHa3x78n4zWEc0Ud
-	 2Xd952f1lQbMg==
-Message-ID: <7cae9919-4ccd-41ed-a899-0e97ee2c0250@kernel.org>
-Date: Wed, 16 Jul 2025 12:02:39 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E40D1A841F;
+	Wed, 16 Jul 2025 17:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752685431; cv=fail; b=ITH+6G79XSrF0jpsmSA01AF3vAToCuZRzVOzzbXw8kz9OgTX6ky7oLCsFkVhQI5yq3JBR7EJ5gdg0HQouMxqjsVCA4K42TiABq/zWTIwOhKCrc7LA+tVlL0fxd2CzNJEL5/HGXnDrAjg4mLWUbxJq2+UHobeJ+0E5Ztvep2tcYY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752685431; c=relaxed/simple;
+	bh=qrU9B8bSkd/njqdi5sx6cSD+4+8Il7kat/0MwJVvxC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QGXdG0OL2n1DJmjP+4n98C3CK8XDArjT12ahjlpqg6gKzjHg1UIynhLEM5U+ubNHc/KTPVGtw9S8L0LQ9jAIq6R420oLnR+WG5EfiCGlTTywveF8NlZNMlKCqvYs8dvb4yVxDXl85Hm1WNTzuoj6HujRLV55cOcTR/6oP5y9FzE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CYfgaO50; arc=fail smtp.client-ip=52.101.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FlhnSMugzzTpzV0z4/NIvMcr/PqcBqwEdAGon0ybTR7T89MZa5wvm/qy3HF8DBZXqpwxM5iXtgkxWh14XZbfDZGxPCN3ER34FA00/YT2BhHHfnq+VhLDX/3M1wWEVSxlwJKZfk9XFmWIgKuf3AxTMFRTQ5LBQno9Xqu85jzctfyPkRTz1aOLMjzunOiSI+jI391f4x7Ea0cZ5pwWTGOqckoNod3i5omfGfgW5nHR+cCDce6nEdDYfPSL/gHurt3IFHRHDvXOuvFhrHV/UheT2z6nPLDdAKeobMR7zSrNiYUpQbR6zm88pZf9ZmLSU1sjzTDJcs6Rjkrb/ETwbYz9ZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KLkcmV32B6VWrV829QV0kCz5xp4E9A11vPCVrFGsNfE=;
+ b=SiPF2ciNdUNeI+sUqqzNitiI9sK5V5M0sdrALxmH1U62LCNIXNf7C26zsf1veipXZMmB2yF0Ky4uF+Z8O3GVQguawjE0oHfT1LBcRF0x60yujsF7CT1HqvM8qrsbR1LfGNpJXA/97yLNNw9UANCNW6+U2mK0S74NOfERgNg84vo9GZEfs9GI4b6rM361b040znGNJR7nBJmpbM6zIVdeppDmw4x87yzN+wRbi7cbUkbpqnEtIqhZ9psToJezzGzIUqori+kPaoi7mEoupA6lQMjnsPDMHWdkwKwpYyDcBx36p3bxg4CGmI8v0jDw0gjdkqVD6mB+EZ/hRdSyu241Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KLkcmV32B6VWrV829QV0kCz5xp4E9A11vPCVrFGsNfE=;
+ b=CYfgaO50pXeQwPE7nb82FtUDdle39qrEMLtAg5o47aHTfROIfjAZBczlFY+rwQDPK+38Tv8HRM/XCA0Vc4LOIKT3oRGmfzBR/s4yKRLN22FpRbTS7bxLZrMcrGQbnVV0aP9G4zdlYKZQTuPCdEXW6wN+G4m2QjlIUi+6Bl+wmjX27Y7mXnbqahnLQi9BSSfxw2Vl3Ahw2182cwGWRd8He+2jmVuaI0BwkyjgAaXPj80oW95U9ILA8fYACBxFGL9ABkKJg6wVJH1zMsdGJUeWIphLD76PYjx7ZVU1CD3s7fGg2PeUdPyIiPVoOvwj96ZYYgpkah7Vlpqpn2tS3OMSHg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8884.eurprd04.prod.outlook.com (2603:10a6:20b:42f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.36; Wed, 16 Jul
+ 2025 17:03:42 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
+ 17:03:42 +0000
+Date: Wed, 16 Jul 2025 13:03:36 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] clk: imx95-blk-ctl: Save platform data in
+ imx95_blk_ctl structure
+Message-ID: <aHfbaILkxv8pe3fa@lizhi-Precision-Tower-5810>
+References: <20250716081519.3400158-1-laurentiu.palcu@oss.nxp.com>
+ <20250716081519.3400158-2-laurentiu.palcu@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716081519.3400158-2-laurentiu.palcu@oss.nxp.com>
+X-ClientProxiedBy: AS4PR10CA0029.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d8::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] PCI/sysfs: Expose PCIe device serial number
-To: Matthew Wood <thepacketgeek@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250716163213.469226-1-thepacketgeek@gmail.com>
- <20250716163213.469226-2-thepacketgeek@gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250716163213.469226-2-thepacketgeek@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8884:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62ecd267-2462-4c90-1304-08ddc48ab7a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fWflJWoBdzDJ7L+JEjkr87RxPFEBO2JpBndodjLiyitn/iZgNNIYT7iytk3N?=
+ =?us-ascii?Q?k8XbdXnWZAjvEj44a6i2+SSAKe4vjYKeP60lRpgAUVpNm/MzOHgGuElFXHH4?=
+ =?us-ascii?Q?7M7Qa7Ly+vkbrragCfp8cveGwtaKYr8NYV9NHKe4eCe5JGsJw8a8EwaYN3Oa?=
+ =?us-ascii?Q?3GADmahl4PzteHBLMtiZaLuhqJzC+SzrhX/7Uh/GbtdGk41kCbLIJdL5ref6?=
+ =?us-ascii?Q?ZI8xudpDcyybbnSq616P9AZvF+UvLDdNhxvkgbMng4Ocf/ErrKsqoWv0pKSq?=
+ =?us-ascii?Q?mEVqXyxXw46tccRl2L8NwuXBtBhXmi6V2VVeNgo98TldfaBd7smJ0V6DjaY4?=
+ =?us-ascii?Q?Z20ppD+Uuw/VTKD4p0nMO+jDknaH7x+4dYzYNGsglUMxk7mGEkNVTJcacxqf?=
+ =?us-ascii?Q?+aF04u9q18Nr8ULVF8glyxgErYDrrVkNVQRfgxXdkd0AoPoc/6jL2RvVb/bk?=
+ =?us-ascii?Q?BWm+mJTlRGIVq+PNqKzN417TGwQmErFx25xcVxEldVzC/QfdEaD4/w7yY8+v?=
+ =?us-ascii?Q?hlv736YdkS/t6CvO+mHI0D3LVfRl9Fb60f7RPM6PylkgVqJhLXfMThkI82Kr?=
+ =?us-ascii?Q?cLpZIPGvltKz/iy3tadcfXocsgcn7yvdDW525mhi+nQTx29rVrUFl5dkQCi1?=
+ =?us-ascii?Q?LTnmMln2svs+hMXkdzftoBBWSLk4PH65oCbQgG7khxf1GBQFUeBCh/eM3NnA?=
+ =?us-ascii?Q?iKjUVrT62t7ruhtVF37z63gqtiqQIHtYjYw8v0tRVVFYc25wa6jw1KdZlmNq?=
+ =?us-ascii?Q?Ezg5AMYZG/Ophz3amGjUgK2mqlcE3c/byWx62bLO30zspJFLOw0BSPiLRjv9?=
+ =?us-ascii?Q?anPDS6Ghkt30+lDPCxDJrRk6taPw0+juLoVjG2OOEUwcNMRBixD6dirERCw0?=
+ =?us-ascii?Q?LtVDWmmg0C3MhVGVPxO4QvGt/6lZoru47T4sf43/UQT4XXWw9dvINprEOnI2?=
+ =?us-ascii?Q?mM7tJzlGpXQfxAa+R+O7x19G9dqEfR9k+KyQ2FY4PgAka1Hmi+nL7FZNT3NZ?=
+ =?us-ascii?Q?21TWZ48/rEEXgGUTNjwShjxTtZa7rWLPbT4DycaDWh313NrxdZaqL3L7ezwd?=
+ =?us-ascii?Q?0DWW5tLkv1/zFP/ekVGgVZOOAqPwxvTPOM/LAYiviCzHNairEagFUM/72zCO?=
+ =?us-ascii?Q?ZW8UB4XjdDiFK+tZY3dBNeLSzB3DLgHS4uv7LtjVAjvsSKlHKpIJ7ht0y6fN?=
+ =?us-ascii?Q?W6ZxIpjFg/2owKMPgwT8b65ExK0M0aGrYee5Gc26+dtztsLY8o8OdVMcwG0/?=
+ =?us-ascii?Q?F2X09GvnWRjepSmNniPTf5pAZ3Tlt6iOyMfMYGTHG8yqxAtXGGqH5Ijb4Rhu?=
+ =?us-ascii?Q?hwEc1Twfx+0jlKFHoPZVyKqLpkW98N7KPx2Xtvtbra+zYd4mo5xeE0ijwpc/?=
+ =?us-ascii?Q?0HUBK5xdZcp080mVPXJrg4AiIiyZkZVnqDb0O8dOc4lUQU0klSeXv8tMOlSG?=
+ =?us-ascii?Q?XdasM9F6IeUfkuq9IseDamZo46Jg+Ea/5iqQWwIeY2FE9atd/Sa5Gw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sCqxKTUAR+oVgi54+LdAqn3YYbOPwPlGNLviBHnJDHIxqthW/zuLgyiJ6jgN?=
+ =?us-ascii?Q?MAsYlTwYLJnS873GCru6MggpF+CnoHuUXjXDfki9VnuCki7GuCD32b2ROS1Y?=
+ =?us-ascii?Q?lqIKF+Rl/qHDLX0XKlHMNkOJ80GDVwF5BSla5fITecgIf6K0MXn06u0+98iU?=
+ =?us-ascii?Q?NEWVzZPBFnl/PCp2QXfuu+KxxXBxUAv/qU7BuR3a7BbipAjpa/vAp26ew8oj?=
+ =?us-ascii?Q?kJ27cWifR1tqMHcTL5/ocVpZ+nargo2ug0I4CthCOyH/YHHi3RZ05O7nlYY2?=
+ =?us-ascii?Q?hnVijMEpD/uYyGdeCadF6jPmUmNryz+j78RF2c7IDRDfNYHdHsBanfFOsGtr?=
+ =?us-ascii?Q?TOGsAKJL6UYFdAL8PfOUSRMBZFLJT21dwusRyS5/o38iHMVvoswNXCeUEOgk?=
+ =?us-ascii?Q?xcPy5+dHbXtIWZKEl1m1v4ArpHRb3B0Ymh7FE2Iwu/8fhSJTIfyWTI5/bK/D?=
+ =?us-ascii?Q?o79Y0KbsVKK7uXmH/UKy5yduFxGUtd0mK354vcEQyroqEz2aeAfla7on1qIh?=
+ =?us-ascii?Q?wxtXVEIyZg52pGRPKzMXgpylxWgteqFabQ7ciCIbhiillVzAp5lmhpFllQz8?=
+ =?us-ascii?Q?ltkvV3FKcMfMbWBHxGd08pwppxKDxLgVbZrxdHWPH7UgYIesPHkCM+oOjTEy?=
+ =?us-ascii?Q?zmwlV/htcqTp9ZfHjrWIywnZJViOGalUDp0WzWIXVkBh6aoj08ORQTz7cqZ3?=
+ =?us-ascii?Q?6U03e8IZr1xvCdSZQ1vnrhNBrfUPjrMlwQHoWJG/XuLsnVvjNmsj0VDErfpw?=
+ =?us-ascii?Q?y+dheuIS99lNAXe1AazDmuXIrViBQBAA+vYVLYv6YpCjK5zIl89ExYvB7dwN?=
+ =?us-ascii?Q?RYdcBFDsXz1sBaKZW0dAne1EduT59+urdUbI3E3OAWnpqoL1Rbp/YymY5BBH?=
+ =?us-ascii?Q?q64KqoR4qnhJN3TLIo3J9dmiKJutL8yfrfEx3mx1RMhqfcecSDqqzrXKzoFZ?=
+ =?us-ascii?Q?SkeH1+oNZeu5vc5BHcABrcKkzn+IGsHouRFV+d8KJnwIfuDYmM0YUjGAeXW2?=
+ =?us-ascii?Q?Kvg595jfeweIxOcvhEWvvlH1mQ28fNqPPaB/Z56GrzarMTboyKlL5Z9hAWkt?=
+ =?us-ascii?Q?simwfRHuwwLA7lHeRhKpACllWWO9EukP/d/yJOpyie6tFZ2a+2cEhU7xKn3T?=
+ =?us-ascii?Q?FY7Qh1tMqwfGsWmMl47aLOeENS050hqq1pSfRp0gzAh6AA/n4RgMbjUL0Y5I?=
+ =?us-ascii?Q?FLqapsuncW/KmyyMVx5j4+oCl634+XflEjd7QtnIfzKLk2Cqx7SeKATy8jSs?=
+ =?us-ascii?Q?RDdXeS0+1q3FukdZD7hnP4DTsUAaW/soojXQNj3Yo+VGtabIVwKqugKfzX0i?=
+ =?us-ascii?Q?McrPJr2KvCB65d85Tbn9wKhAS3f8xY2cQU1Rusm8vZqiDzHc+Kl0I50xW9UT?=
+ =?us-ascii?Q?LRw4uIiS1c+XiGHSreuDBPscR2imBSgTjte2VSibYJ8o2I+vJwbENoce+l5j?=
+ =?us-ascii?Q?F8C0hFGreZ432zl2o5NnLcCYUwDVj0RbEGAD/+Ehny90HUrc31/hFog50/Pr?=
+ =?us-ascii?Q?a50BXDLTxiy1tqa070F75vx/bPX5Y6PWttWwVE3sG6BT3AZhMGSUldpkaDXy?=
+ =?us-ascii?Q?XjqoyTtz2wINmh8IOg0=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62ecd267-2462-4c90-1304-08ddc48ab7a3
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 17:03:42.3668
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MoTdX0NqSyL750Is7Or6zJGiNfPhh727dp5WFk9hh4UVvMUfEB2gpWien9lquTOxQFgjCooUu6QvYHfsJ8IpAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8884
 
-On 7/16/25 11:32 AM, Matthew Wood wrote:
-> Add a single sysfs read-only interface for reading PCIe device serial
-> numbers from userspace in a programmatic way. This device attribute
-> uses the same hexadecimal 1-byte dashed formatting as lspci serial number
-> capability output. If a device doesn't support the serial number
-> capability, the device_serial_number sysfs attribute will not be visible.
-> 
-> Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
+On Wed, Jul 16, 2025 at 11:15:05AM +0300, Laurentiu Palcu wrote:
+> Currently, besides probe(), the platform data is read in both suspend()
+> and resume(). Let's avoid this by making pdata a member of imx95_blk_ctl
+> structure.
+
+suggested commit message.
+
+Add a platform data (pdata) member to struct imx95_blk_ctl to store the
+result of of_device_get_match_data() during probe to avoid redundant calls
+in suspend and resume functions.
+
+Frank
+>
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
 > ---
->   Documentation/ABI/testing/sysfs-bus-pci |  7 +++++++
->   drivers/pci/pci-sysfs.c                 | 27 ++++++++++++++++++++++---
->   2 files changed, 31 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-> index 69f952fffec7..f7e84b3a4204 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-pci
-> +++ b/Documentation/ABI/testing/sysfs-bus-pci
-> @@ -612,3 +612,10 @@ Description:
->   
->   		  # ls doe_features
->   		  0001:01        0001:02        doe_discovery
-> +
-> +What:		/sys/bus/pci/devices/.../device_serial_number
-> +Date:		July 2025
-> +Contact:	Matthew Wood <thepacketgeek@gmail.com>
-> +Description:
-> +		This is visible only for PCIe devices that support the serial
-> +		number extended capability. The file is read only.
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 268c69daa4d5..b7b52dea6e31 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct device *dev,
->   }
->   static DEVICE_ATTR_RO(current_link_width);
->   
-> +static ssize_t device_serial_number_show(struct device *dev,
-> +				       struct device_attribute *attr, char *buf)
-> +{
-> +	struct pci_dev *pci_dev = to_pci_dev(dev);
-> +	u64 dsn;
-> +
-> +	dsn = pci_get_dsn(pci_dev);
-> +	if (!dsn)
-> +		return -EIO;
-> +
-> +	return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx\n",
-> +		dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >> 32) & 0xff,
-> +		(dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff, dsn & 0xff);
-> +}
-> +static DEVICE_ATTR_RO(device_serial_number);
-
-The serial number /could/ be considered sensitive information.  I think 
-it's better to use DEVICE_ATTR_ADMIN_RO.
-
-Also, as this is a "device" attribute is it really necessary to encode 
-the extra word and "number"?
-
-> +
->   static ssize_t secondary_bus_number_show(struct device *dev,
->   					 struct device_attribute *attr,
->   					 char *buf)
-> @@ -660,6 +676,7 @@ static struct attribute *pcie_dev_attrs[] = {
->   	&dev_attr_current_link_width.attr,
->   	&dev_attr_max_link_width.attr,
->   	&dev_attr_max_link_speed.attr,
-> +	&dev_attr_device_serial_number.attr,
->   	NULL,
->   };
->   
-> @@ -1749,10 +1766,14 @@ static umode_t pcie_dev_attrs_are_visible(struct kobject *kobj,
->   	struct device *dev = kobj_to_dev(kobj);
->   	struct pci_dev *pdev = to_pci_dev(dev);
->   
-> -	if (pci_is_pcie(pdev))
-> -		return a->mode;
-> +	if (!pci_is_pcie(pdev))
-> +		return 0;
-> +
-> +	if (a == &dev_attr_device_serial_number.attr && !pci_get_dsn(pdev))
-> +		return 0;
-> +
-> +	return a->mode;
->   
-> -	return 0;
->   }
->   
->   static const struct attribute_group pci_dev_group = {
-
+>  drivers/clk/imx/clk-imx95-blk-ctl.c | 36 +++++++++++------------------
+>  1 file changed, 13 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> index 7e88877a62451..c72debaf3a60b 100644
+> --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
+> +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> @@ -36,6 +36,7 @@ struct imx95_blk_ctl {
+>  	void __iomem *base;
+>  	/* clock gate register */
+>  	u32 clk_reg_restore;
+> +	const struct imx95_blk_ctl_dev_data *pdata;
+>  };
+>
+>  struct imx95_blk_ctl_clk_dev_data {
+> @@ -349,7 +350,6 @@ static const struct imx95_blk_ctl_dev_data imx94_dispmix_csr_dev_data = {
+>  static int imx95_bc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	const struct imx95_blk_ctl_dev_data *bc_data;
+>  	struct imx95_blk_ctl *bc;
+>  	struct clk_hw_onecell_data *clk_hw_data;
+>  	struct clk_hw **hws;
+> @@ -379,25 +379,25 @@ static int imx95_bc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>
+> -	bc_data = of_device_get_match_data(dev);
+> -	if (!bc_data)
+> +	bc->pdata = of_device_get_match_data(dev);
+> +	if (!bc->pdata)
+>  		return devm_of_platform_populate(dev);
+>
+> -	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, bc_data->num_clks),
+> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, bc->pdata->num_clks),
+>  				   GFP_KERNEL);
+>  	if (!clk_hw_data)
+>  		return -ENOMEM;
+>
+> -	if (bc_data->rpm_enabled) {
+> +	if (bc->pdata->rpm_enabled) {
+>  		devm_pm_runtime_enable(&pdev->dev);
+>  		pm_runtime_resume_and_get(&pdev->dev);
+>  	}
+>
+> -	clk_hw_data->num = bc_data->num_clks;
+> +	clk_hw_data->num = bc->pdata->num_clks;
+>  	hws = clk_hw_data->hws;
+>
+> -	for (i = 0; i < bc_data->num_clks; i++) {
+> -		const struct imx95_blk_ctl_clk_dev_data *data = &bc_data->clk_dev_data[i];
+> +	for (i = 0; i < bc->pdata->num_clks; i++) {
+> +		const struct imx95_blk_ctl_clk_dev_data *data = &bc->pdata->clk_dev_data[i];
+>  		void __iomem *reg = base + data->reg;
+>
+>  		if (data->type == CLK_MUX) {
+> @@ -439,7 +439,7 @@ static int imx95_bc_probe(struct platform_device *pdev)
+>  	return 0;
+>
+>  cleanup:
+> -	for (i = 0; i < bc_data->num_clks; i++) {
+> +	for (i = 0; i < bc->pdata->num_clks; i++) {
+>  		if (IS_ERR_OR_NULL(hws[i]))
+>  			continue;
+>  		clk_hw_unregister(hws[i]);
+> @@ -469,14 +469,9 @@ static int imx95_bc_runtime_resume(struct device *dev)
+>  static int imx95_bc_suspend(struct device *dev)
+>  {
+>  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+> -	const struct imx95_blk_ctl_dev_data *bc_data;
+>  	int ret;
+>
+> -	bc_data = of_device_get_match_data(dev);
+> -	if (!bc_data)
+> -		return 0;
+> -
+> -	if (bc_data->rpm_enabled) {
+> +	if (bc->pdata->rpm_enabled) {
+>  		ret = pm_runtime_get_sync(bc->dev);
+>  		if (ret < 0) {
+>  			pm_runtime_put_noidle(bc->dev);
+> @@ -484,7 +479,7 @@ static int imx95_bc_suspend(struct device *dev)
+>  		}
+>  	}
+>
+> -	bc->clk_reg_restore = readl(bc->base + bc_data->clk_reg_offset);
+> +	bc->clk_reg_restore = readl(bc->base + bc->pdata->clk_reg_offset);
+>
+>  	return 0;
+>  }
+> @@ -492,15 +487,10 @@ static int imx95_bc_suspend(struct device *dev)
+>  static int imx95_bc_resume(struct device *dev)
+>  {
+>  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+> -	const struct imx95_blk_ctl_dev_data *bc_data;
+> -
+> -	bc_data = of_device_get_match_data(dev);
+> -	if (!bc_data)
+> -		return 0;
+>
+> -	writel(bc->clk_reg_restore, bc->base + bc_data->clk_reg_offset);
+> +	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
+>
+> -	if (bc_data->rpm_enabled)
+> +	if (bc->pdata->rpm_enabled)
+>  		pm_runtime_put(bc->dev);
+>
+>  	return 0;
+> --
+> 2.34.1
+>
 
