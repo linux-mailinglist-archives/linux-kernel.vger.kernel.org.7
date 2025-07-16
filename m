@@ -1,122 +1,165 @@
-Return-Path: <linux-kernel+bounces-733491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06BDB07557
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:11:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A39B07556
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15DFF4A31E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4061F1893673
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489F92F50AA;
-	Wed, 16 Jul 2025 12:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E8D2F508C;
+	Wed, 16 Jul 2025 12:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NXbw7B8D"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hOIZnrXz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HB9OuTQK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hOIZnrXz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HB9OuTQK"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167D92F49F2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0342F49EE
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752667844; cv=none; b=YujRBWkyMN7BhIB9VdTdMM2/rdtWoHmaxV0s3Q+NjlQR7uJcsynKDI+R1RLWZ6QLilM57gtGYOtA42W2pnOjF2syNke03GF+GvCVJwKok+N35JjLlTFudBmki9IGTOtl63lgnMZlvOmgPeglC5t+mo4sfB26LtxHH7rgQPdi94g=
+	t=1752667842; cv=none; b=jL/kGoSmxuaB3zO8TEdrUHKeOwamfEDr5ynufUgrB8nBI4AZrXNbHdytLLJhFGKJ6q8LX67UqW0jfNqE5vMCjy1VnZ1927Z8a4WisAvsYAbD9gAHYxqGsiGNateS0dapT1G6syTn+b94AAzUuJ6yz42YwamjCOqNXLcF+uvkc5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752667844; c=relaxed/simple;
-	bh=DqrxxRzNrVElQiSFybdiqSTB8zLMpM9xyST4z/mLO2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XUBsPwxnxL0O52U16q8xME9rHZZlzTppBbi/1FeS3wuTaHdwktxifI2lrzPHYB373o5FK5e0ZBUTEd/G6vO5yfYxYynIrEEXw/0ETK0TxaKceDr4oqih4s4TP9zIH5KRmp852wu9UgoZe2agu9slMrcE+gyeo3296yzCy1v92Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NXbw7B8D; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-702cbfe860cso61151326d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1752667842; x=1753272642; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WIP3ya1BLuzxXr6bkJRT0LOoJh7qbBYpTnmvsHp5Va0=;
-        b=NXbw7B8DwUBhfMUH17Cyz2zgE6kHg4vP1f/G+kjMWkL1imyVEzI18mrUVwVZTzvifU
-         H0f3U+cgmGzXyGD8v9qIPNKSbF/WskJCsEdOEpYC1JUgOF67gcSEzeHRI2qhJsVjkR4N
-         5POR77yghfIbjNVwCJJ/x8lcCndosm+fno1YHPt1RZAYJUZjsbKY9MFSvoJPcxMV8koq
-         hYAh5WWlnL9NSr7D/+3k6RkZDd7pOB5iMnTGLSsngFrMykj45mq1DxALw3E4JkPLwrHc
-         NcIX+flLMipvi/uz1LaCFIWGanTPRzn+VxwUg/Lpgd4TYX/Mfg49E0s4A60SK665mCZJ
-         0z1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752667842; x=1753272642;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WIP3ya1BLuzxXr6bkJRT0LOoJh7qbBYpTnmvsHp5Va0=;
-        b=WrINfOq/PFSDUpCJSKIiyky2/vCsgw/o1ysHXVz8ef3Wfg1rt07GEmmldTn9wG3gZi
-         53Bzq++PXz5BLSaVQ9n+rWv1Motnbe/CrfGGVt8fwsW5Agzx/h1QhdGDxP9NY8g0xf+c
-         TJP5sr0LGmpdCnxohobp2x0tr7s9Y4N6ALl4z69+EHOG2/twd//zRrh2ShTFpXKH82lW
-         5e3k+10hmcPSu6M3fdjYwnzxran8iTIwOSict2tJz5GMApcZDpccqbqc0AegZZf1hDbY
-         xk8IeLO3IIfKGh2RYNOMhUPf2GvvJWF6uEP0VHaDA/Q5JLiQRZ8q4PcRSoiqG0T+n6JU
-         c7GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXamNfb/XIN1zizTSw/RAxWcyOJgjcP8wJBl/q8lljwOoKJcLFws3oky0kWHNb1lntFjQUG+h6zSNc4EVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdG5/iuph54KUAN8/qzwIW4LBMZCPORv76q+b/iWDX3DNiKk8V
-	NfMIPanOCEXWMcE14dxyuDraoMlwwKP6ogx3Ti0XcrAZcoJ+Tzr1QjOPd0tc+aawEOE=
-X-Gm-Gg: ASbGncserpuDC7q08ulwFbPYohGS5J+g5N6pUtJpNfvXRB5plujA6c3eqIqQKRFYiS8
-	vxFZwnWpQVrVUJ+TFyqTtJFvSYdMVHODTwc3mC181P5u88NPDrMAslooEKCi787w8IkQd/zrKae
-	/eObot46kFjJF14olWSjLOIK6VlOo/QCoVvTr02pM1LO/BZcJeW6kGJLPUHSkxkzwOi1H8nRWF8
-	a6F5jS4DDyv5jn/fyEFMrKNj84bkzTCLUCkJx/5IDTY6HdIRhtbxVHLhYi81iCgk/toaVBKwGLL
-	PdAUph1Z2bKpnwFXFQRv3s+XqhISE/KP2z4qezFubd3udSeTk8c3w7a6uDVuma2JSPg8i4ssxNA
-	CYkksZ22RwbGLOsK2jUnb3Han46QY5nJu3uAPC5AFggobXL4UWCV7qx4XSSBKFX+IcR4npWsj9A
-	==
-X-Google-Smtp-Source: AGHT+IEaMMoAabKIvy/6hUm3Pz2Mj624nFTDoPAXqr71BGISR01CFU/2f0dv9kGGDC6bv7sfs6TmXA==
-X-Received: by 2002:a05:6214:4283:b0:704:7df7:c1a0 with SMTP id 6a1803df08f44-704f47fa4bemr46732856d6.7.1752667838252;
-        Wed, 16 Jul 2025 05:10:38 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ab3d44b3d6sm51417661cf.56.2025.07.16.05.10.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:10:37 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uc0y4-00000008xUh-2T4l;
-	Wed, 16 Jul 2025 09:10:36 -0300
-Date: Wed, 16 Jul 2025 09:10:36 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Temerkhanov, Sergey" <sergey.temerkhanov@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v1 0/4] Implement IOMMU SVA page fault processing error
- notifiers
-Message-ID: <20250716121036.GA2120051@ziepe.ca>
-References: <20250710134215.97840-1-sergey.temerkhanov@intel.com>
- <20250714145658.GH1870174@ziepe.ca>
- <MW3PR11MB46813837E82395797CEE39AF8056A@MW3PR11MB4681.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1752667842; c=relaxed/simple;
+	bh=+DQSWx3yVyCtQC6RXEyoICfnEwzSiuB0gZtQFWEjymo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hwO1DGt2FM/sKwRbRy8XXdrx7azzRkmtMzHoFT6JKmD8id9vMUnJFLpGCv9VU+3TaovqxvGnFD1DlmSb7JpJ0CjqRWTTpZQOeY9f47jVZRpoM7qLFFcD4wsCqnvJLSCmtU1Q+8UNu/QXh/r0T2jGGqiIiFFQn2UTW3ujUqxsRmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hOIZnrXz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HB9OuTQK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hOIZnrXz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HB9OuTQK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 97AB9211D2;
+	Wed, 16 Jul 2025 12:10:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752667838; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ILZQ7nnSubmNzfn9RrR/2T0GRSSWHJQ0gQAQvz3WxPE=;
+	b=hOIZnrXz3fPJvoUOEdOhXvyOBQj9YYDzZ97TC4bk+CpiNNUEC8sqaF1OzntBbmWcjz6Lur
+	YmVkTgu8cpBAL02dhudA5bEk7BxzF8FKn6AscazLNutzO/Yx8GbgF6FNQSEwWQig48SpGf
+	RALjRZXlyNPju3VeWcrEqLbAH6Va0Po=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752667838;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ILZQ7nnSubmNzfn9RrR/2T0GRSSWHJQ0gQAQvz3WxPE=;
+	b=HB9OuTQK77wzVWqTa4//BlL9FFNi+Hs4Fu/7B6R+eDYD+KP0tHVpyBwQo8d8EbYm3JpY9n
+	FMcA1G7ztNUWssDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hOIZnrXz;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=HB9OuTQK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752667838; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ILZQ7nnSubmNzfn9RrR/2T0GRSSWHJQ0gQAQvz3WxPE=;
+	b=hOIZnrXz3fPJvoUOEdOhXvyOBQj9YYDzZ97TC4bk+CpiNNUEC8sqaF1OzntBbmWcjz6Lur
+	YmVkTgu8cpBAL02dhudA5bEk7BxzF8FKn6AscazLNutzO/Yx8GbgF6FNQSEwWQig48SpGf
+	RALjRZXlyNPju3VeWcrEqLbAH6Va0Po=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752667838;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ILZQ7nnSubmNzfn9RrR/2T0GRSSWHJQ0gQAQvz3WxPE=;
+	b=HB9OuTQK77wzVWqTa4//BlL9FFNi+Hs4Fu/7B6R+eDYD+KP0tHVpyBwQo8d8EbYm3JpY9n
+	FMcA1G7ztNUWssDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 69BEA138D2;
+	Wed, 16 Jul 2025 12:10:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UNmMGL6Wd2jaXQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 16 Jul 2025 12:10:38 +0000
+Date: Wed, 16 Jul 2025 14:10:38 +0200
+Message-ID: <878qko8hfl.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Erick Karanja <karanja99erick@gmail.com>
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	julia.lawall@inria.fr
+Subject: Re: [PATCH v2] staging: sound: Adjust mutex unlock order
+In-Reply-To: <20250716081804.727623-1-karanja99erick@gmail.com>
+References: <20250716081804.727623-1-karanja99erick@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MW3PR11MB46813837E82395797CEE39AF8056A@MW3PR11MB4681.namprd11.prod.outlook.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 97AB9211D2
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-On Wed, Jul 16, 2025 at 11:07:50AM +0000, Temerkhanov, Sergey wrote:
-> > -----Original Message-----
-> > From: Jason Gunthorpe <jgg@ziepe.ca>
-> > 
-> > You need to come with a driver using this as well.
-> > 
+On Wed, 16 Jul 2025 10:18:04 +0200,
+Erick Karanja wrote:
 > 
-> There is an OOT driver which would use this facility do report and
-> handle possible invalid accesses (e.g. mismatched VMA permissions)
-> during the SVA operation
+> The mutexes qdev_mutex and chip->mutex are acquired in that order
+> throughout the driver. To preserve proper lock hierarchy and avoid
+> potential deadlocks, they must be released in the reverse
+> order of acquisition.
+> 
+> This change reorders the unlock sequence to first release chip->mutex
+> followed by qdev_mutex, ensuring consistency with the locking pattern.
+> 
+> changes since v1:
+>    - Applied the unlock reordering in other functions with this pattern.
+> 
+> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
 
-Upstream a basic driver first then ask for iommu changes to enhance
-it.
+The code change looks good, but could you resubmit with the proper
+subject prefix (e.g. "ALSA: usb: qcom:"), and with a Fixes tag?
 
-This is normal stuff, we don't change the kernel to accomodate OOT
-drivers.
 
-Jason
+thanks,
+
+Takashi
 
