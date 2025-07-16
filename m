@@ -1,138 +1,134 @@
-Return-Path: <linux-kernel+bounces-732870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181FFB06D0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:13:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF1C2B06D12
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD0DF3AD7AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:12:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067BC189BE1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFC727586A;
-	Wed, 16 Jul 2025 05:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F1C274B2E;
+	Wed, 16 Jul 2025 05:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8ayQNE0"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aC+0/tDI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5864B265637;
-	Wed, 16 Jul 2025 05:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CEF26A0E2;
+	Wed, 16 Jul 2025 05:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752642760; cv=none; b=V1kyLQ64koBN+3GTNeYyjjJfBaACvXNK/eToICBqHQLRCCVxMFKwu7YPIcGGGQW88q13HBmIxWATB9yFZRW+8NYQ1Jyn4fQA2Zz3wNYOQKKBUipcGa0FYYFmyKwqn8jziFJ6cEK5BGLUglAxTHhUD5LHaDrXkbdPAbyIUfTjSGo=
+	t=1752642887; cv=none; b=Sd27o03OsYwa0bXRecBVL26W8MGItRsN1jJUlF95s06np3yLbKoMsHcUE8fHeD3ZAu1yFqg4+xi0nF1X6b1ihnSwuecOeG/aSN2W8yfEm46+CSYpyhawLP9dAm3Lzlrn5b9sGYu7tP2ajUrrbCQ95S0UY3LpQDso/sWfMwG0/lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752642760; c=relaxed/simple;
-	bh=ahY39kA4/GdhCBCf1OgJc2964cn1f3MWXDmo3UIOqKc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eYeFwXhdD+jUJnwxvR3H4QGz27Ao9e3c20LMZaBvZV84z47KzoG9wlsc6q+i3hpmTfnxbHk5MSFUyAqbR40oFQZOFA41v2NgHHw7kx/UCvrLU3ILEykyk0TLEAI/riDV2N6MOKDb+zfCR5M71eWe7V7rEAUPX2sggrFPiYkaNt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8ayQNE0; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-236192f8770so3392845ad.0;
-        Tue, 15 Jul 2025 22:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752642759; x=1753247559; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AGq8gh8YJJj7VRgjTYum73G2tm35yu1h3rAMJLROjF8=;
-        b=D8ayQNE0cC69UP+m8WgZHTlT4qCFVzff56k6HL7EpXUmQUFj7UPOUSKQGrBKxKu5k6
-         Js36rv6GhyshEj/uZa+4riwMxgTYFjNJteetFo6lQanFs7ZbMMHchesoXsw7zxyquVIq
-         aYmXAoZm7p/aX2kthf4zBqcmY2u/a30FJ+Y/z5lytT09engY+ZV1Gx4KNrW2jb+yPl+5
-         lwO0XUYo937ZvlORbf1Io2MLcRP4IhMXOwFEiWcv/So0cT8gGAXGe7U3qNNGZwPC5PtX
-         hhLpymzsqVsC6NfkpnorEYPStuAEHLo21d7xzP6CUcJcSTAoDhpaq4LHxhGRh+5D29Ck
-         dKYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752642759; x=1753247559;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AGq8gh8YJJj7VRgjTYum73G2tm35yu1h3rAMJLROjF8=;
-        b=BDYM6u4j+fHEa/KHIpHGt62EW85siWBSIYndLEMGnLB9F562wLqH0TjiovszHshbr0
-         bqBsrF7lp6k8ozJjV3H0YAjQuDkHDkQpJzx09UUcGX39MAj5XPyX4jHkld3xCzAdE+PO
-         Q2JSC616ZTBnEBRTNjPmM33Oo065Qb5pPWRL14iSqg0eAFEnuNIfmJJFNdD2Z9Fblrpr
-         RA7Sw+aO080whi7aCiUgDsyWEqM1mcJAJ657c+o/08RPc13Vx2bYM0AVnntbchXPp6mc
-         NmiYG2eBDSfJKA71J72RLOvQNTFg3WguzViTqQIxCTBDYS4N7TTEOvRBw374coShVvbj
-         GwQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZJXWDv1HmXI0ePE/zkwBlnjfsdn2gRHau6uCK/6tBCp63u7ZdTjzqabD2uBKG6UxIFiR/DH2F@vger.kernel.org, AJvYcCV9xOMOkgWG1He9Nlbv4fz+pCVrMV1UY2QeT4rFDRjqdnMil3TStw7/3fQ49D89GpfPQy3HFdLvXR0LZVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi1tZdQRkdYR7RHNLURg8HxRmkEtGt3uSnq9T2LLRaV+Qq9LoO
-	Ckezvc7I6Z4oVaMlCVIq5936ht20D+LCSwbDuZCtYzFTqoQunjMThfEn655otjFRHSj1thHd9uf
-	H7vkxcWpUWVtkRErxyYRAJTTancKpgUo=
-X-Gm-Gg: ASbGncvZSBE/G3PywgU0+X/UqTrK6yB8cuJFd+XUIZQzfR7sIU3QhbcTYURJoNQ+JLH
-	vVx+0nt48kHIQsQBtILgP7ZVl9VfEkPIsti8J6GU/Akhwv1JQA02+3Zh97eBPMLwAs0C6V7/OnN
-	sPxcZfwv4IJLqwlYYX/Rv0Y0Htvo52HiRDii0B7b+XgHtfVsejpo+tXhG662IE6U3mNEaIOaN+G
-	yEVxM7OjDeTBUeZNA==
-X-Google-Smtp-Source: AGHT+IERLnP0cUDJM5lmJTdDDKFfNHKyZXlbGmV4mkPrTGgHja8s8AxyWFfKBX+0tgpCsAVihL4oVBlBEqJRASlo/5U=
-X-Received: by 2002:a17:902:fc4d:b0:235:f059:17de with SMTP id
- d9443c01a7336-23e1a4ab102mr87062845ad.15.1752642758539; Tue, 15 Jul 2025
- 22:12:38 -0700 (PDT)
+	s=arc-20240116; t=1752642887; c=relaxed/simple;
+	bh=zaPIWiKkOjG4zU9eSUxzP+ONhIb3xwwH3H2x0zXworA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bFOD65pCIaUDbA/S2xRIeISPwuTMr1spN5+ggmyZPkM/T6QxQYR0baw5kBhBrUkR+Zm/fXSEdo89uOoxQIODZzXCOxNegror3IlpKb8HiH6+rOE+b4rmbK9fbd0vkwbRxym/jKRpc1KEWF5uUD81Cs6U7coMaOfkUxzcuhhcT3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aC+0/tDI; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752642882; x=1784178882;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zaPIWiKkOjG4zU9eSUxzP+ONhIb3xwwH3H2x0zXworA=;
+  b=aC+0/tDIfX3UhOtV16BZcPqPOzw0uRx5VZhC8hBKdlcIMGWfg00NJq37
+   IKQQefbpTUm8xVfefBtrWCvamP8aheLmcy01qBoI6AKwDvf3DGXbH3++2
+   ErCSJpnoLF0SnCpXAynZxtGig+aYDR7XEplmV8R87DNR8eAiVGP5f/9Gl
+   PAxVuFFNoWqsfTMcvwIq/oE5uYREBOvGAoe4WibJrahvtLvSWuAc6Wgjq
+   xeEbmSTjLlhEEcq61y2V2cBUjdZsCEAX3NF/KnBMutrjgB0Tw1Sdyfg96
+   uBkfuUqTQuOVVqIWXtR++7UT+veYTSOkS0aj0atTkqR+nYTGsTHX+ZEEx
+   w==;
+X-CSE-ConnectionGUID: XGAiNanrRjuWnqM6Wc9mzA==
+X-CSE-MsgGUID: HVM7E6CDQn+LZy3SDfXAzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="53986203"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="53986203"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 22:14:26 -0700
+X-CSE-ConnectionGUID: GsMZ5fi9QMGvABkN4sCtPw==
+X-CSE-MsgGUID: EH8KzFxlSO6NXqi4RMIUlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="163045675"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 15 Jul 2025 22:14:24 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubuTF-000BvP-21;
+	Wed, 16 Jul 2025 05:14:21 +0000
+Date: Wed, 16 Jul 2025 13:13:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jakub Czapiga <czapiga@google.com>, Mark Brown <broonie@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, Konrad Adamczyk <konrada@google.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jakub Czapiga <czapiga@google.com>
+Subject: Re: [PATCH] spi: intel: Allow writeable MTD partition with module
+ param
+Message-ID: <202507161228.D92rDToS-lkp@intel.com>
+References: <20250715095007.896620-1-czapiga@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250705145031.140571-1-aha310510@gmail.com> <20250707171118.55fc88cc@kernel.org>
-In-Reply-To: <20250707171118.55fc88cc@kernel.org>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Wed, 16 Jul 2025 14:12:27 +0900
-X-Gm-Features: Ac12FXwndjp3ARCRHwgBaow85_Xhx6Eh_EXZT8i8UvveeojiwsvEgyFJX6n1gfM
-Message-ID: <CAO9qdTHdZnD5fC-V8E2JqKiM+ijOj15GRZjfwO+aAg_CUhNDnw@mail.gmail.com>
-Subject: Re: [PATCH net] ptp: prevent possible ABBA deadlock in ptp_clock_freerun()
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, yangbo.lu@nxp.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+7cfb66a237c4a5fb22ad@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715095007.896620-1-czapiga@google.com>
 
-Hello,
+Hi Jakub,
 
-Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Sat,  5 Jul 2025 23:50:31 +0900 Jeongjun Park wrote:
-> > ABBA deadlock occurs in the following scenario:
-> >
-> >        CPU0                           CPU1
-> >        ----                           ----
-> >   n_vclocks_store()
-> >     lock(&ptp->n_vclocks_mux) [1]
-> >                                      pc_clock_adjtime()
-> >                                        lock(&clk->rwsem) [2]
-> >                                        ...
-> >                                        ptp_clock_freerun()
-> >                                          ptp_vclock_in_use()
-> >                                            lock(&ptp->n_vclocks_mux) [3]
-> >     ptp_clock_unregister()
-> >       posix_clock_unregister()
-> >         lock(&clk->rwsem) [4]
-> >
-> > To solve this with minimal patches, we should change ptp_clock_freerun()
-> > to briefly release the read lock before calling ptp_vclock_in_use() and
-> > then re-lock it when we're done.
->
-> Dropping locks randomly is very rarely the correct fix.
+kernel test robot noticed the following build errors:
 
-Of course, we can change it to lock clk->rwsem before calling
-ptp_clock_unregister(), but it would require a lot of code modifications,
-and posix_clock_unregister() would also have to be modified, so I don't
-think it's very appropriate.
+[auto build test ERROR on broonie-spi/for-next]
+[also build test ERROR on broonie-sound/for-next westeri-thunderbolt/next linus/master v6.16-rc6 next-20250715]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-That's why I suggested a way to briefly release the lock in
-ptp_clock_freerun().
+url:    https://github.com/intel-lab-lkp/linux/commits/Jakub-Czapiga/spi-intel-Allow-writeable-MTD-partition-with-module-param/20250715-175230
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20250715095007.896620-1-czapiga%40google.com
+patch subject: [PATCH] spi: intel: Allow writeable MTD partition with module param
+config: arc-randconfig-001-20250716 (https://download.01.org/0day-ci/archive/20250716/202507161228.D92rDToS-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 13.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507161228.D92rDToS-lkp@intel.com/reproduce)
 
->
-> Either way - you forgot to CC Vladimir, again.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507161228.D92rDToS-lkp@intel.com/
 
-No need to reference Vladimir, as this bug is a structural issue that has
-been around since the n_vclocks feature was added, as indicated in the
-Fixes tag.
+All errors (new ones prefixed by >>):
 
-> --
-> pw-bot: cr
+>> drivers/spi/spi-intel.c:195:34: error: expected ')' before string constant
+     195 |         ignore_protection_status,
+         |                                  ^
+         |                                  )
+     196 |         "Do not block SPI flash chip write access even if it is write-protected (default=0)");
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Regards,
 
-Jeongjun Park
+vim +195 drivers/spi/spi-intel.c
+
+   188	
+   189	static bool writeable;
+   190	module_param(writeable, bool, 0);
+   191	MODULE_PARM_DESC(writeable, "Enable write access to SPI flash chip (default=0)");
+   192	static bool ignore_protection_status;
+   193	module_param(ignore_protection_status, bool, 0);
+   194	MODULE_PARAM_DESC(
+ > 195		ignore_protection_status,
+   196		"Do not block SPI flash chip write access even if it is write-protected (default=0)");
+   197	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
