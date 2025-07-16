@@ -1,153 +1,153 @@
-Return-Path: <linux-kernel+bounces-733240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5ED7B07207
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:42:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423FDB07206
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD8907B88A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029233B461B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D992F19B5;
-	Wed, 16 Jul 2025 09:42:17 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CE12F0E50;
+	Wed, 16 Jul 2025 09:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Al71AiLa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB322EF646;
-	Wed, 16 Jul 2025 09:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EF02701CE;
+	Wed, 16 Jul 2025 09:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752658937; cv=none; b=WBvB5s54CMDCHxQ/PEO5osJwoxBjdz9UifDKfGFXge7vAqxFyYdn0RCRRgVzkTOEBsZzZEJyIw2Eq+DomINgz5thej+Z971JOf3OFq8Ie+s0YSwyLoxa8cJku0kttWtjUMCWbCNuI4ErZV55vfvxkhtxRSxWuLp7f7NJsCLtqh8=
+	t=1752658928; cv=none; b=EXKsG7VCYs30OyBQgWT6ki0DOdpgf4KmgT+ya3tG4CMhJ6KUHA7wa5BhJKOOaT9L8OVgkRX7FK38IZ1//z7x3FLyiXnlwsq4UcysA3HUiBqG2slCWGfxvKUVdmIMM3nxQfVfM5LMz3patAdfKLoMhysbiyh2eulWFQBYYbBeOMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752658937; c=relaxed/simple;
-	bh=VpVP5wDdJUADopR44kBGcroZazLAbCqHn1yQXetBaB0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XeL3PVre/pEtTcfexUyeKP2IFY7tW7a/KDmPCGczNcdFEq7JvcNAe6DVW9gi/77YoNVkwo1mVUsZwmmzB/BWxwXf/qPtPmODDQu4w7onj5++YzhZnM6alyct3A6YL5ecN7QR0WOKha2RtUcD+z0CrSSCbTJBW+pRDw4k5/A3ya8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0bc7aa21bso1332449266b.2;
-        Wed, 16 Jul 2025 02:42:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752658932; x=1753263732;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MFSywZB5jlv0hgu5XQpZ5VJL9BXcLP8sDIeWcu7IkK8=;
-        b=XekID/izfc+2rVp5PWVfTTKHoDH4LXABl5wUn1wBOkK9EhcDduS3VZe5ehVLkynXRV
-         j84kFxYgkxncPD21wIImndwV5wqzEMgy/XqctKrzqcxHWn/+m+0aueo3exMuOCCGBpnQ
-         76qSqCMysTVhPE/kSnivEnHZ0jnPgnQ0fRO3Fs/BJsAZKe/juIr1T76TdDE6joyCLe0l
-         uOCnYRzmi/TNoFs9tt3Fn9PefYsJZcbb5NvwV2rQboexEkAD5SjEBHsP8Rqt+5q28Mt2
-         peIYE70nDhaFkrkRgJ3fh7p+Bj1P2LWEKOnlqlqtYNnRPGLXxUYUuyIDqEu1NUcSh88Q
-         +mjg==
-X-Forwarded-Encrypted: i=1; AJvYcCV31EIRblLDrtWVxjV44h+HDNeZ9oopJb0JrbcJXruEwuFUV4wIHEMtO0ynNfCZg5N0sVq2V3zA6Bv5K6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDB+ohXWubwYLCy/k9/V7vd7ZdJMMZd1nUAesFqt62lQOROfFE
-	uihXjM71cwqjyseibOetV78u5XsBVkz7WY7yCfBGdbkZ+2DS7/kzoYIX
-X-Gm-Gg: ASbGncsNokfy2D/LzABVJA7JyFu03BtuB3JNs905qY4vvPEkzn83oWdoo4OEodo1cBk
-	yE0N6ku2+DQXglJGfi8YQmkWPk/YOoRONbSg99zO471b0r5mKWFRkcSBrZ/mN4lS5DCyQGzVyXY
-	uVgCyrxl554SVoftq+QJXMtdfSoisViSo92QqgicqEpQz+SonNKE9db0MZRyeLJdl2roA4SLrqy
-	MmA9fPAv8bfSQ8T36hk1DR+SRfAy5qaFzxfg+MYYBct8dfBxW0+tER1NKcU68Rq9VNdJXGV5yxV
-	8GZ8XPZfAmkIiAHPGZZaLqDBLzPhQZAbtu0NUz26HVoZsOR1jsSHV71Hkel0ChawKaKGQIacLxl
-	NgJDuDEC/vrbL
-X-Google-Smtp-Source: AGHT+IGQu+odODYAB1D2AI4zb6eNSRou+CjyiarGYyccEHFqscLgIPqzpZaUfTHzVSOC5ARYzOSqYQ==
-X-Received: by 2002:a17:907:894b:b0:ae3:90cc:37b3 with SMTP id a640c23a62f3a-ae9cddddbd9mr201034766b.17.1752658932108;
-        Wed, 16 Jul 2025 02:42:12 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:2::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e829629dsm1164430966b.138.2025.07.16.02.42.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 02:42:11 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 16 Jul 2025 02:42:01 -0700
-Subject: [PATCH v2] arm64: Mark kernel as tainted on SAE and SError panic
+	s=arc-20240116; t=1752658928; c=relaxed/simple;
+	bh=sn26vG9Lu7xSLIkMBif0HOVxMMvKjr4ApngzjQSu0Vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R54nduzIvV4naAgbrevCOEX+R/gv1VVuN27DO/akd+Y38hTHMn71cD6TfBbAqQpwUEWoEq85ic5Ono/o+tKOhmE7iTtKOuUOzoSkPfbWZcaCp0xE0U6gRPeiXudPkBCg1eT8HwmtHmW23sYCDei8f0r58nTIfPm8X5uClfv91xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Al71AiLa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B65AEC4CEF0;
+	Wed, 16 Jul 2025 09:42:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752658928;
+	bh=sn26vG9Lu7xSLIkMBif0HOVxMMvKjr4ApngzjQSu0Vk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Al71AiLaI/dpXeER9zPwY30mq0qNyAGHefX0OEvfJFBjNNKE4WmSEyVWgKckjuIVC
+	 srJxfiYeO+d6AoPSqqK6HyCsZuIUkokJaMZ1L3/VDbN92IJPTYtZvbQ1X5e5mXJ6Z+
+	 tUP2o9EwGzHBHGUOnow0nKfE+XNRyt5NwOIaF+Bk=
+Date: Wed, 16 Jul 2025 11:42:05 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Srinivas Kandagatla <srini@kernel.org>
+Cc: linux-kernel@vger.kernel.org, "Michael C. Pratt" <mcpratt@pm.me>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] nvmem: layouts: u-boot-env: remove crc32 endianness
+ conversion
+Message-ID: <2025071656-heap-student-9163@gregkh>
+References: <20250712181729.6495-1-srini@kernel.org>
+ <20250712181729.6495-2-srini@kernel.org>
+ <2025071308-upfront-romp-fa1e@gregkh>
+ <2025071313-zippy-boneless-da1c@gregkh>
+ <b25f83e8-7e5d-44f8-9f16-909cb005aadd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250716-vmcore_hw_error-v2-1-f187f7d62aba@debian.org>
-X-B4-Tracking: v=1; b=H4sIAOhzd2gC/2XNTQ6CMBBA4as0s6aG/lCUlfcwhEA7wCykZGqqh
- nB3I3Hn9i2+t0FCJkzQiA0YMyWKCzRCFwL83C8TSgrQCNClrsq6rGW++8jYzc8OmSNLo7XVF3T
- eKAeFgJVxpNch3tpCwEzpEfl9DLL61p+l7J+VlVTy7EdbYRicMfYacKB+OUWeoN33/QMX3ZF1r
- wAAAA==
-X-Change-ID: 20250707-vmcore_hw_error-322429e6c316
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
- Borislav Petkov <bp@alien8.de>, Robert Moore <robert.moore@intel.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- acpica-devel@lists.linux.dev, kernel-team@meta.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1948; i=leitao@debian.org;
- h=from:subject:message-id; bh=VpVP5wDdJUADopR44kBGcroZazLAbCqHn1yQXetBaB0=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBod3Py9RV5rOmNyM93i9ucAzXR0Rg4SeTvLEoCf
- LrVQ5xHwJ+JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaHdz8gAKCRA1o5Of/Hh3
- ba6YD/497AWz3l/e5LLZNjAOgecknbGypw5z5LO5ryICEBddhQfKzvBikVlIv3QlaZomDG9vQ5h
- zCr1hgF+GLrWHiup+QvuN4vM7wa/1BStxBaderz0wnbVptevHKnrhAt0E0ntwGeHECe/rRmqhY3
- e+zINnrBKUO8MFhjHiHpDj3RtOWLLfEePGEdcyF3VbBdhgWzqAK0grxkKjNasftQr0kOea0GRdH
- meK3Fn2QRFDom0u0kyuPP9fR84d7eV/BILcgaxS4czDYQUk6qxUbJUdDzPGiovckW/Lliwwvr3A
- UjSfzG24mI9X0a2zC7sDVVkcCQfikwCiv5uNkg/GqLpSDpinmNIgTIiZjTfoGASZ0KV67e4TcFs
- g1ILLfJq1Iq7ggRgQyt7QYzDpmtMbYs8s8VK/Y68wCe1/fLaJdsmYCc0DdYEb5uRNdzykUgseP4
- v9lPxwaHGtWl0j0Q5ksencE6mWwBJtJdk7Z278dUij57eTImN8YdpFIt0ieL6FP62hbLaRgFFjp
- aX5o9ABtUTjT28Y8ynhhpu0iajjnn8cgQdKOg6YWR8mP/SBUBHseEsFZX3ix8nWAhaTHjB+7mt2
- LAulzyE9/3H75BdCM9gpeHDN3nqXuZ2fh/wHGnxKPHqNoFSrIAFECv0dqPIKmTDWqMm8P1Ka7RY
- NU0FOdMRYuGFJBA==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b25f83e8-7e5d-44f8-9f16-909cb005aadd@kernel.org>
 
-Set TAINT_MACHINE_CHECK when SError or Synchronous External Abort (SEA)
-interrupts trigger a panic to flag potential hardware faults. This
-tainting mechanism aids in debugging and enables correlation of
-hardware-related crashes in large-scale deployments.
+On Tue, Jul 15, 2025 at 04:44:00PM +0100, Srinivas Kandagatla wrote:
+> 
+> 
+> On 7/13/25 4:42 PM, Greg KH wrote:
+> > On Sun, Jul 13, 2025 at 05:41:45PM +0200, Greg KH wrote:
+> >> On Sat, Jul 12, 2025 at 07:17:26PM +0100, srini@kernel.org wrote:
+> >>> From: "Michael C. Pratt" <mcpratt@pm.me>
+> >>>
+> >>> On 11 Oct 2022, it was reported that the crc32 verification
+> >>> of the u-boot environment failed only on big-endian systems
+> >>> for the u-boot-env nvmem layout driver with the following error.
+> >>>
+> >>>   Invalid calculated CRC32: 0x88cd6f09 (expected: 0x096fcd88)
+> >>>
+> >>> This problem has been present since the driver was introduced,
+> >>> and before it was made into a layout driver.
+> >>>
+> >>> The suggested fix at the time was to use further endianness
+> >>> conversion macros in order to have both the stored and calculated
+> >>> crc32 values to compare always represented in the system's endianness.
+> >>> This was not accepted due to sparse warnings
+> >>> and some disagreement on how to handle the situation.
+> >>> Later on in a newer revision of the patch, it was proposed to use
+> >>> cpu_to_le32() for both values to compare instead of le32_to_cpu()
+> >>> and store the values as __le32 type to remove compilation errors.
+> >>>
+> >>> The necessity of this is based on the assumption that the use of crc32()
+> >>> requires endianness conversion because the algorithm uses little-endian,
+> >>> however, this does not prove to be the case and the issue is unrelated.
+> >>>
+> >>> Upon inspecting the current kernel code,
+> >>> there already is an existing use of le32_to_cpu() in this driver,
+> >>> which suggests there already is special handling for big-endian systems,
+> >>> however, it is big-endian systems that have the problem.
+> >>>
+> >>> This, being the only functional difference between architectures
+> >>> in the driver combined with the fact that the suggested fix
+> >>> was to use the exact same endianness conversion for the values
+> >>> brings up the possibility that it was not necessary to begin with,
+> >>> as the same endianness conversion for two values expected to be the same
+> >>> is expected to be equivalent to no conversion at all.
+> >>>
+> >>> After inspecting the u-boot environment of devices of both endianness
+> >>> and trying to remove the existing endianness conversion,
+> >>> the problem is resolved in an equivalent way as the other suggested fixes.
+> >>>
+> >>> Ultimately, it seems that u-boot is agnostic to endianness
+> >>> at least for the purpose of environment variables.
+> >>> In other words, u-boot reads and writes the stored crc32 value
+> >>> with the same endianness that the crc32 value is calculated with
+> >>> in whichever endianness a certain architecture runs on.
+> >>>
+> >>> Therefore, the u-boot-env driver does not need to convert endianness.
+> >>> Remove the usage of endianness macros in the u-boot-env driver,
+> >>> and change the type of local variables to maintain the same return type.
+> >>>
+> >>> If there is a special situation in the case of endianness,
+> >>> it would be a corner case and should be handled by a unique "compatible".
+> >>>
+> >>> Even though it is not necessary to use endianness conversion macros here,
+> >>> it may be useful to use them in the future for consistent error printing.
+> >>>
+> >>> Fixes: d5542923f200 ("nvmem: add driver handling U-Boot environment variables")
+> >>
+> >> Note, this is a 6.1 commit id, but:
+> >>
+> >>> Reported-by: INAGAKI Hiroshi <musashino.open@gmail.com>
+> >>> Link: https://lore.kernel.org/all/20221011024928.1807-1-musashino.open@gmail.com
+> >>> Cc: stable@vger.kernel.org # 6.12.x
+> >>> Cc: stable@vger.kernel.org # 6.6.x: f4cf4e5: Revert "nvmem: add new config option"
+> >>> Cc: stable@vger.kernel.org # 6.6.x: 7f38b70: of: device: Export of_device_make_bus_id()
+> >>> Cc: stable@vger.kernel.org # 6.6.x: 4a1a402: nvmem: Move of_nvmem_layout_get_container() in another header
+> >>> Cc: stable@vger.kernel.org # 6.6.x: fc29fd8: nvmem: core: Rework layouts to become regular devices
+> >>> Cc: stable@vger.kernel.org # 6.6.x: 0331c61: nvmem: core: Expose cells through sysfs
+> >>> Cc: stable@vger.kernel.org # 6.6.x: 401df0d: nvmem: layouts: refactor .add_cells() callback arguments
+> >>> Cc: stable@vger.kernel.org # 6.6.x: 6d0ca4a: nvmem: layouts: store owner from modules with nvmem_layout_driver_register()
+> >>> Cc: stable@vger.kernel.org # 6.6.x: 5f15811: nvmem: layouts: add U-Boot env layout
+> >>> Cc: stable@vger.kernel.org # 6.6.x
+> >>
+> >> That's a load of (short) git ids for just 6.6.y?  What about 6.1.y?
+> > 
+> > And really, ALL of those commits are needed for this very tiny patch?
+> May be not, AFAIU  Fixes: d5542923f200 ("nvmem: add driver handling
+> U-Boot environment variables") should be enough.
 
-This change aligns with similar patches[1] that mark machine check
-events when the system crashes due to hardware errors.
+Great, can you fix this up and resend?
 
-Link: https://lore.kernel.org/all/20250702-add_tain-v1-1-9187b10914b9@debian.org/ [1]
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changes in v2:
-- Also taint the kernel on Synchronous External Abort panics (Will Deacon)
-- Link to v1: https://lore.kernel.org/r/20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org
----
- arch/arm64/kernel/traps.c | 1 +
- arch/arm64/mm/fault.c     | 1 +
- 2 files changed, 2 insertions(+)
+thanks,
 
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 9bfa5c944379d..7468b22585cef 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -931,6 +931,7 @@ void __noreturn panic_bad_stack(struct pt_regs *regs, unsigned long esr, unsigne
- 
- void __noreturn arm64_serror_panic(struct pt_regs *regs, unsigned long esr)
- {
-+	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
- 	console_verbose();
- 
- 	pr_crit("SError Interrupt on CPU%d, code 0x%016lx -- %s\n",
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index ec0a337891ddf..004106ff4bd03 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -826,6 +826,7 @@ static int do_sea(unsigned long far, unsigned long esr, struct pt_regs *regs)
- 		 */
- 		siaddr  = untagged_addr(far);
- 	}
-+	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
- 	arm64_notify_die(inf->name, regs, inf->sig, inf->code, siaddr, esr);
- 
- 	return 0;
-
----
-base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-change-id: 20250707-vmcore_hw_error-322429e6c316
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+greg k-h
 
