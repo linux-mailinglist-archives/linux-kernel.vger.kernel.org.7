@@ -1,405 +1,214 @@
-Return-Path: <linux-kernel+bounces-733813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFCBB0794A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:14:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C89B07944
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260893BDF2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:14:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53F287B8E3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8402EA72F;
-	Wed, 16 Jul 2025 15:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30182620FC;
+	Wed, 16 Jul 2025 15:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nV1Ej4oz";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="RxvXfGS9"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="e+gLK6Uh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DD11D5CFB;
-	Wed, 16 Jul 2025 15:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752678852; cv=fail; b=lLmVJdi06SvSUOkRccGykvYyRXa7a9a2QG8btakyXTZWjKgZBgULkBGMkOyYPFheWhGW8qmqtY/k6oMt5GwGE3vAlxukLDvxqWnMnqxEt+MYbM8MjMRhfK9JaHHka7O5d+/rBqQUyr6aeagxkJyDdfiqGOyPaArIjlEOetKf5Tc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752678852; c=relaxed/simple;
-	bh=ZKFa3W6CR8XLjQBj5mXX0PBinfFpMCxIEQpu5P8Rz3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FHOn9hTnJrfWERVGC0hy3rY5egjZ/ApEi63MSE8mh30dPIpP11lwg+OQAcwXOnRnOwJPen/FzKUtJkEiJQ0yc2skgQQNAQ2/DXgh+8Db49vgbUPKOqkGOd0C8+oQwMIquj+3GaZGZboD27sjKZUGhutXn7oRDPbM0xpdhHEg7ZI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nV1Ej4oz; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=RxvXfGS9; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GEtnaX031967;
-	Wed, 16 Jul 2025 15:13:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=3Fs//BuVO9WQE0rhfU
-	WQM0LpAxFPgv90CaRjYLMCN00=; b=nV1Ej4ozk0kf/GCljgznJcltvlJldgUCUM
-	NTjQVNFkkAUYvJzCVRwFYxRF4Xs7iWzBzj2+xb0skGp3nIm3gMuZwMGLgR6hP2in
-	zyFfpaSofHsJm1960nznz6kp5TfxsEJVbohb7sWOcGHvUJKb75RJC6wa8HqEJKZC
-	iIBS7UZCXYyDv+3FrS/k3SeuVZhVHgB5ou6DFSr/IN35NRL9GmDkUrucQol/mCxa
-	ZTTjlS8L/xF41iQXnGn+PE+G7EejxvE2ZKckxdXAIvWMTQCk3EbLv1MaH0BRD43Y
-	3ACb1dNwv03b1DsjkfqzT+kOC2926zQXgNLBs0dCWV16iufiMGPQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47uk8g1727-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Jul 2025 15:13:29 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56GEFtY3029634;
-	Wed, 16 Jul 2025 15:13:29 GMT
-Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11012001.outbound.protection.outlook.com [40.93.200.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ue5b73v4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Jul 2025 15:13:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wBGEkJVUYoGy8vJ5GE3Wc0SU49z/fH/21ct9wdMGErRQVLf56TbJHja1QNGxvqcc2aowckDFoxdBCPv29Wu9TiY3s7J5hkADXsjq4fEO7ZGnYk7eXV80oTr39J//6OwxtYX7zGUKib4Tmw+mGP4JkE1BmtskAQPqDulxC82l8ufLgk1ISzMuIF/tiB/DEZ3LjhHVeq4ZXCpbaNCLEk9qyEQs154rtigQg30mtA0cy1vFfMvel+pl/TpWRkNC7QycGxAtZ4i/Ng9Y45XzkmTarcvB50eZCVc3+Bs8kcOWcUgdAMLIM7QEabl/Z7W8aYenX+MfTZ8Ei+3r/GRY22n0LQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Fs//BuVO9WQE0rhfUWQM0LpAxFPgv90CaRjYLMCN00=;
- b=tdzIRYx4yHW20JVxg+zIPscP8c7AdaJv/9+PJRoCyiEvT16vPt2dZGiSXobCLBb8f3PQU05C2UbYHtay1OHMs727P6RC87xa45djNhFegLOZNaVSYqESC2QcgnIEJ3JfK9d/C3WUIB7bWpzYFORP1uDfX4cG8oPtaDogoxZxGOISyZ+Zsy0Yv51EubsGn8Rj6yMrJ+1VS6nK4PikcWufjdb5NCqqkFt3fOO15sR3mPik1A5t8KqYzfmUSg+yleiOUZtSVCxcwq8uz9mf48ABJ+ObRo/NHnagW3gtIRBl7AQWqkRel/wlzQ7fcbVJ2O2LqQrq9iElCptirC0WynZ4Mg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Fs//BuVO9WQE0rhfUWQM0LpAxFPgv90CaRjYLMCN00=;
- b=RxvXfGS9PynC5wqofB5XlzDDpoJ1+1cF/2ks+mzjWl6Fkf5c/58xEm65FQ/GsSnQyjxsXY9MmkG8k8bvHgGkRAe4YZEu3MWQVbYCSi4hEY553G7YP0c9WRoylA9H9L1y/3VheeKTCjqKD1XZthpVyEnhyfc1pLhg+RLT4jZksTM=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by IA1PR10MB6878.namprd10.prod.outlook.com (2603:10b6:208:422::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Wed, 16 Jul
- 2025 15:13:04 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%6]) with mapi id 15.20.8880.015; Wed, 16 Jul 2025
- 15:13:03 +0000
-Date: Wed, 16 Jul 2025 11:12:57 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-        lorenzo.stoakes@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
-        corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
-        mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-        baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-        wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-        sunnanyong@huawei.com, vishal.moola@gmail.com,
-        thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        raquini@redhat.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
-        tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com,
-        jack@suse.cz, cl@gentwo.org, jglisse@google.com, surenb@google.com,
-        zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
-        mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
-Subject: Re: [PATCH v9 02/14] introduce collapse_single_pmd to unify
- khugepaged and madvise_collapse
-Message-ID: <ifgx5ufi3qxcw7cj2nmkui56xsen5pifd7utv4v7firbjhotuk@2fozz3b7adwk>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Nico Pache <npache@redhat.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, david@redhat.com, 
-	ziy@nvidia.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com, 
-	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, 
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, 
-	baohua@kernel.org, willy@infradead.org, peterx@redhat.com, 
-	wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com, 
-	vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
-	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
-	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org, 
-	dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, jglisse@google.com, 
-	surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com, 
-	mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
-References: <20250714003207.113275-1-npache@redhat.com>
- <20250714003207.113275-3-npache@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714003207.113275-3-npache@redhat.com>
-User-Agent: NeoMutt/20250510
-X-ClientProxiedBy: YT3PR01CA0066.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:84::17) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B48B1F4717
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752678806; cv=none; b=Ot14+/eJ/TxLbjQMM7vrSsODmN2ny4Qae6VcJBQ29My7lphpERmgMtLbWNjy+QsQj7fh4EPoXfJRALAgHA7NHEXus7i5huosy7fLrlmqJUxmoQsKFCSbhdRZYfDdjt86WGwD3gNtEu34vU0xbO5PTreKqWdTFaT9AWTFFVLqyi8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752678806; c=relaxed/simple;
+	bh=LVR9w/dUpPReGresRYLtdEMlsGIW7JaY3/r6knRbqZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Su4GONFaWuGUlmjojnbIkkFNyIFcTz2mbsYwQJXDG3Y90ojk6YwZYp0tplj6YuZcSn7tLJI2aqA5jGAkWcwyXzedJccu/EcZPE7N/g7lb/zzNgqK5EENEHfiy9lljMeXqRhBLvV763PT+4n/IoYLYL61ZiVyAlqzORm/kGLuTTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=e+gLK6Uh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GCrfav003277
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:13:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CtwVruHuIm50LWxWnF3hYBprC3Esh5tU1YhwYPkVmYU=; b=e+gLK6UhreOYA2Aa
+	xtkjKj494E6LYe80ZfIfNJyd3pt+AB4+S7gZ7K48X6MuljSxX99DeoPz0Ng5tQsi
+	UgPgvZB3nmwhm2oOQ8iA/aot5exJoX856ekXbPOZskao02kIRkA3+87oSBXiL9W+
+	ALRrom7w1/khEkQayc0zVpCbCfQhHr/5oS2UJLakYyEse7cQ9IGDpkY5UC7ClauY
+	uDIHQMEI/UotXcNnxnk+AC6CowmPYRbHxAhgx+EgLPib2wPXDCtoBhlde2JGfI2p
+	o+GxVJLBBIkK9C2jTdxQuqqfUMqZgPcmXqigR/VsYLajTcSNQvbM5AxpZND/kLXS
+	EOxzbw==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5drqdax-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:13:23 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b3bde4d4d5cso3093919a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:13:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752678803; x=1753283603;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CtwVruHuIm50LWxWnF3hYBprC3Esh5tU1YhwYPkVmYU=;
+        b=mrSW/kwt5ersDm/BtewzHsk858SAdyRgZd699p+aguAh6qExlwTLeTErDVtzjVJ3Mo
+         7m8EM99VXwi4o2sVYPD02wYnqnGN5i/FGkUm2ui91u/uOtLx6FUkL15el48hgu35xdMo
+         0U01X3/5NO7+OEGc39G4usQozmcOqNx4DhYEEzQ6Ba2acPnqS7Igv7S+8S9f9re8R7I6
+         IQiZG/WRisXCMTKNphM0kuTPFNgFJiufkLremWPqFAUVRAahHIJoDXsAO2r/3wVeBLPv
+         29qAvAqsidC87g86JuOaInaj/RGHJwmgn7e9DccLfIYX+gElUMrlvoHHHBitQPnQjchk
+         3FuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXJQ/id5yXtFA3Mi7d18J5T7U/xmNeLQy5/i24zLkXzBRgxsxhfQAXi6fZPY/wdDbUNHV1Y05uKr17b8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT4q+FD0zLIBrE6VFrY/q+BwGC9BU5fBIucUGdcPy63Ik2YuSs
+	EWw56K2mpMNyy6IMebbfgaTpSok3A9jFm9whMrdEGO4Y8bUuPep2GlMbXGB04An7amQRBTfV7wA
+	2m0hARyxc/c0cvf+dOauNltn5muAw5PlyCJjDSB+WViXW76i5OmNMj3C5sW/RWAR67MA=
+X-Gm-Gg: ASbGncslagEvQocezSJxYJtK+FGfsXlWcuW4E/F0k3TIMDL94Br0JjA7C6sCX8CmwrT
+	rMi96Nw89jJA5eLoARXc0TSUhl8AI3yRhBsj/4VwGswXxwP1Vb7RVEQ5Q90wVP67vV1KLN8bpgh
+	DneylaP7s+MMsfh7JwZAUCGzq9zbh2VgETAoblDW2bbR78fgMatdmIcXbUaKNaDSwDSjh7KBH+g
+	tSrNkm2tdmwUF8g5OFys2SdX0PDDHo5Kw5EEgG4gpjG3NXbfBsGD+PFw/fJHf5NYLfbpkFCf5O7
+	niqcNLab+oROQNt4SZTzCWE6YKagTZIXSj5lyti4+EmGopfuH7TUKht+60HMP7M/NL9Ia5JtbDO
+	LWcNY6aifFt5sMoxc198=
+X-Received: by 2002:a17:90b:530f:b0:312:1ae9:153a with SMTP id 98e67ed59e1d1-31c9f4b4161mr3809054a91.25.1752678802565;
+        Wed, 16 Jul 2025 08:13:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEblc3jY+0h7Aosh+m7nUh8Q/00sNNYAVcErrYvNH3JTZ8WRCcrDKpFARGnKRnqDBN3kK5TlQ==
+X-Received: by 2002:a17:90b:530f:b0:312:1ae9:153a with SMTP id 98e67ed59e1d1-31c9f4b4161mr3809025a91.25.1752678801982;
+        Wed, 16 Jul 2025 08:13:21 -0700 (PDT)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f1ba96bsm1582569a91.7.2025.07.16.08.13.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 08:13:21 -0700 (PDT)
+Message-ID: <833ce5f1-51b2-4d4c-a839-38989ea10344@oss.qualcomm.com>
+Date: Wed, 16 Jul 2025 08:13:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|IA1PR10MB6878:EE_
-X-MS-Office365-Filtering-Correlation-Id: c5d32ab6-4d3a-47dd-d028-08ddc47b4298
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4DdLXyShl06NFVHQDJAAOK6ABZysU82VVmQhASq/s1MycrJlc2Wf5wy4EitZ?=
- =?us-ascii?Q?bO95F1tvVQWqPmOVcUri9YA/HHyWOb/u/jxHrTx9/+Trp2ULWHJ8tel9kds/?=
- =?us-ascii?Q?36KyxpZTpA6nZRrhxI7VlA/3mTEQS+FkWtleObw0qAAwmPEd2Pn4stot2ZPW?=
- =?us-ascii?Q?ozRGpA67oWHXo0AJkjslzEFD5luWCusCT2x77TnfoADC/CoObREX2f8OipE3?=
- =?us-ascii?Q?TPLJoGt/BFgK363WVOzLWy/I04g4Tt2kG00/GqCzG4PEHIi5UG0nIAqgfyP0?=
- =?us-ascii?Q?WW9XYWxftftUPE5sde47D4gRz+/G/bAix27UwbD3Rp483NQgEh3SbvnYBvxr?=
- =?us-ascii?Q?aw85PXQSAirI0ST1b3EDqDPt+/EOQ2L5mSNz5hzvPoQQ55z5wv/ytM6Hsnvw?=
- =?us-ascii?Q?YYSWOYDfujlwNYgvXRp71wrcT3uyIhpWGEjx7wYZbORMPwGe0/pani4L/Fa1?=
- =?us-ascii?Q?wY9KzIURJdBFsRhFAV4Vkz1pOI0K1GvaJvX5SV9OtCLAIfThbDh6bWmxx/sA?=
- =?us-ascii?Q?He8G09y4b0Wv5/W50EMw/UdyfWvqNr8EkhQ2KpQubUPqTXhKdHuNUISfZNwP?=
- =?us-ascii?Q?9TLzjMUIQNkxVwDzYvMku8iG/PEQooXhasLrGQJDC1EwqM+UeZxm6mi3v3mQ?=
- =?us-ascii?Q?UKRQ5YvygxkHWEIpWDnkG4iMlvJUOQccNm3/HL1K2oH7Jh4qX4TNQ0CKveXA?=
- =?us-ascii?Q?MBMdy9eDcmCbNnV5AyN3nVtAXbyHB96pnf2Iv/534DVGA+1hkjOnKKz1sRfJ?=
- =?us-ascii?Q?atmYwEPrd46OzOPwYCfs9cMsroEZjfxqmhFo1FRV6TzaP8XtzkScLwsLpG2m?=
- =?us-ascii?Q?gATvQOXhZkv/CfbKFv6LgCKbo2guvzP3Yk8wZ9WXOy2yF7ca3QMV4D855eHU?=
- =?us-ascii?Q?09Nr304Sf0+iVzmZmC2mgrdRZ+HyRclDLFpr31P6YUKiVYlfPDkL8sCdf7hR?=
- =?us-ascii?Q?BSJI0lCLU1+9K797bzIjiEVi4D4t1GjeKzPm9RfIKhi/BU8u3tzF4OhalvRs?=
- =?us-ascii?Q?phvaD+J7ZgjjBXPHgvju657711wGnUKIhvB81No/cCWV16wiCPrKffxdm5Ur?=
- =?us-ascii?Q?DukXKxdRAgy5G74+nY3h7f/7fYf5I7NzptDOsl+rBfnxOFUv3/pNEu1uEJVa?=
- =?us-ascii?Q?98mfvEMpGXn+Md9Ky7trIGq9PYsGya/DkjfA1i5dylZabS0akDOiWLxkJtN9?=
- =?us-ascii?Q?s1tYqM2xDQCZCDw1jqMcRxNBzo3FfAMBwuPjMPHdNkQupmDJii0WQfDZXPCZ?=
- =?us-ascii?Q?GUPn7xgUxvCpq1gGRSnaOgAhdvcecAMK2Y7MWS96x8xWbaImxfE+Mv7LIdxh?=
- =?us-ascii?Q?zXbaHIaONNZ5Ow1p22n6PldJWK8Q1E1YJzhXmwmS62ibLwVgn5Cvx+G2EdHR?=
- =?us-ascii?Q?OLlYmlNKltO8ot5DKrx/EqgVMciC4kABVzet06aCDulq5a+XmXmnBzAVeUtd?=
- =?us-ascii?Q?ywj1sHJGH0c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?r9aBYhY/jCNEjAVnygo4iu+/C6naEMdZhi4Yw1DseIcLhGP1W8qBEzFUYqtq?=
- =?us-ascii?Q?lLMyTTiEdbdHKlZiodS/BYJ1u3nOCmYZ12AF4sztKzmGHROatUI6L2ALN4Aq?=
- =?us-ascii?Q?fVt00gSLuYMLE/BL64weDgT17+HUY3HIRgiaaU9texhsDfvGKG0vsZzq8itI?=
- =?us-ascii?Q?V4CD7rBW43kuPf3IDr5MFdDROsP7DwxqZnhHINF3xiMnlQUeBgzFoA4F4dgX?=
- =?us-ascii?Q?qVYGscBSWoua1nOOcEwMclbf8O4mpnyUNyrTSu+lSF8KfJzlY4wlJRwZ9RI3?=
- =?us-ascii?Q?QL1EUQX0SmS5f+id6OKNMKnrp4X1WOB5J8F9Y9uOQddbCtnh4RLuFg4csAzp?=
- =?us-ascii?Q?vWtBqLWbDIoEN7bn93OaKYvKitGSY63FuKO08jubuH8tOYJevGKSolBh6pH7?=
- =?us-ascii?Q?W5hG1LxHEElqO2BsgdPdjAoEgLAd90H65OHxGx6McGxzYYDqBB79ZYJGmx9H?=
- =?us-ascii?Q?v94vljtMvLV6hVlaY/5Gzkx6KG+YIaOMt2DD02l7CgkgIQ9NykTlidlX78I0?=
- =?us-ascii?Q?Zcs6rLghhZJ+Zv/2AragpPwDrbxLtLSjjGpW0lEKTsmh7PTED97IIsRunETY?=
- =?us-ascii?Q?Gp4HD3tsPeP1AYUhh1WtdVNWV/03aKHeoVzTx6B+4BciVOhSgn7wN/+XkoUt?=
- =?us-ascii?Q?EmonJwMRuNSJnBW5m+Kix96S3oppW6pJRMH2T6Y5/mC7QTjG31AjxFMpEl4c?=
- =?us-ascii?Q?GftGB+7aUWBW8Ovd58ytQpCCL4m3yIvtZE5GIELXcisdZoQh3zAEeTmUYbjr?=
- =?us-ascii?Q?HPWxL+GS9+MpYvZuLw3ao6ylCWvOsdMjXECnOjXT46lklC2mk5nnNbVj4VpL?=
- =?us-ascii?Q?70HaMkVnVR6Ws3ETGJuiF9EZrtWY2c2bLS2dwbRileV+fZWiu9RVnIPmbpcZ?=
- =?us-ascii?Q?QwxG2/MGo5S0zn966r9PQX6ReSxYknY4CDoHHH6vlogubFjtkKvERVkds8Hn?=
- =?us-ascii?Q?hhxfB5rE/03dh80+eYK/mKy9N07zNPCZg0eIX3WM13kGQxIF/b7IYLG9z0AF?=
- =?us-ascii?Q?Z7iO+bhxilXN4hFg5D8/dabxwUQEy4YM/OwiL6Jo2FAAqI1RIU/q3LkrzC1R?=
- =?us-ascii?Q?L7V5f2s94KD/ah2pJSBzg78kaI82hnvaLaqj+55CH0WuRVOY3oB+8Rbz9Thg?=
- =?us-ascii?Q?9nc8tGZzAtSaa0eAznrBQpc4wIqALHaCuKC9sYnGQTHelKRn0+1LwDR8eYFQ?=
- =?us-ascii?Q?0txK1l19oMwnMy/w4o2+ENxqHh0IIJ9/ccrrBH5UCQYy4pe+QhHXx3ZSd2no?=
- =?us-ascii?Q?aAmoUxDzVbg1eGP1+bRgFkRQ9yy10LjEg3AAkI/rq5mtJi/gzPZR8uT9Q7O4?=
- =?us-ascii?Q?+We5HqaubZq85TU946Cji4UH+HT6SmWRpCNnvUwtl5cbpbawG0ussrjy9Crq?=
- =?us-ascii?Q?t+K3IoArlFetxZ/MH8CtdwLjUrgz6YaUFz+LVOMCum5UZe/+0wLaR+bw5MSA?=
- =?us-ascii?Q?Q5Wh1m2asmhYw+6qJccWh9iaGs+GPLwdb0WWhvuyol+DYjXUR9BVCwz3uDL7?=
- =?us-ascii?Q?ynXEkTefjENMHIjqWt3iiaKMU03dpyTWuWHEP5frRYKpJG3keA7HMPskfAS9?=
- =?us-ascii?Q?qGimvyqhrWT8A0PZtMCQN/WnA3TnzhQneTbyTI9A?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	DRmJeN8aNbMUC+s6K30malHPf5pAfYNgFvFiTB2m7268EPsdWKkuqvWVnz9bM3N3GON5BM0ql3fCeFNOmDSbdyytM61omU8YbHJIIaZBvzlxI3uVlXBz2Zg7jp1GSe5wxuV9glRhPY7reJnMc1Ye4eYEBO7ALk7gVaTvz/mvne+vV7LQcRgLfTubDqgm1vWrtk9FgiP8K1CbfXPNMOJy2r2biKGljLnRar2nRq0jcnPvUA9mSMtwZ76Qgr5KMxmBMdtef7VMHtLOPQ0gZWGMkHe6NbC6K6tmnQ28qbzw9rvO+ndacoHx+bdnkI8QUaoBwWjZQFhb2f1NZ3o7bv/zrNswa7wpM/5NaXxYuZi2vFeTHIcJk+awsghjNcnQoPCUnsC+SpqmO5wgOXzP8AayztzmJm7bhPP/Peg/K+kE8Fqt9KX9W413Gp9BbozrYEMJHBJN2nyp5neNZvu3royI1nxX/J+Ak4UFo4RKsezxG9/wh9nrmH50PCYCj1jittoH9ZdO73i2OC69E66RaJb5A0sMgFxSqxLbsGV+KFItCZIzXxn+TwTNMPBeBUx4rxRlKgzkBoRV3PbYiJCVX0KpJyiB2tps4b8BqnxdJqTjy3M=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5d32ab6-4d3a-47dd-d028-08ddc47b4298
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 15:13:03.7922
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eSMiKUlqSgjZh6aMUr0EBSXSkMHaemn5sfINW0ftpq4ppkSX+zySfRzbPZqQoSxnIdwj5ZcSgZWSaMfkW+ug3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6878
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/11] wifi: ath12k: Fix endianness handling in QMI
+To: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250716075100.1447352-1-alexander.wilhelm@westermo.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250716075100.1447352-1-alexander.wilhelm@westermo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: ZkzJD-FQKiMAk7Aoa3UwNaPiSpwRHids
+X-Authority-Analysis: v=2.4 cv=D4xHKuRj c=1 sm=1 tr=0 ts=6877c193 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=bi_AWBljq3a5P2oXxVQA:9
+ a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-GUID: ZkzJD-FQKiMAk7Aoa3UwNaPiSpwRHids
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzNSBTYWx0ZWRfX886xyDPGMGBw
+ U8MsT2N3H0aPPLYEaKd6ZY2QhTSYKHOldwumq6RR+VhnrmDcNQKDT9JQBFRbZdzOJRgB2YhfIPh
+ Zh+eL8uhBGGzRXkkD2hDpIF28yBh7DjppAIaitDE45x6Sft0SVF1vwvxC8K/xc1TDipp7bH0yKg
+ Sv/ICw4GY2KJ5IZrd74cBzip0nSW6z6U7DMLal3IwLiGiXh1rsA3hMN91usx32cHYCbrYR1NrHt
+ wk7i28Fr7jX50C37f8PutTvtTC3ffCE6oy6Rl8sQT9p4aSqPkic456cf4+pAArIkCsx2Gy+wUs/
+ wiQtMBJjFwio1izbABns1jFpdZZE+kfb+wxzqP8LyUuYz6G5yG+CDXoN3dhgYosNf4jSC4gCJYB
+ 2x4s37+rCkEqiF41b5ypJ6JxvLa0NF3X7ltVyx8d5npxUAs2+kdjh7w7oevUScIeG+uBltzi
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 spamscore=0
- suspectscore=0 adultscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507160137
-X-Proofpoint-ORIG-GUID: nr3tQdFf1Bl8ZYNtTEftHa74_WD4sXE1
-X-Authority-Analysis: v=2.4 cv=Of+YDgTY c=1 sm=1 tr=0 ts=6877c199 cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=20KFwNOVAAAA:8 a=SRrdq9N9AAAA:8 a=mwtmTy9cVi4GeO0HAU4A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: nr3tQdFf1Bl8ZYNtTEftHa74_WD4sXE1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzNyBTYWx0ZWRfXwHl4n9s9mP5H gLd+iatct23wHI1p6f/6w20Cp7lDn1mws70qB2MH7UE9bN07WeCDBbXHBxZko4xxnRICJZFfjY6 vIkRTKBklXqi6u4JqakKaeVr0SKny4jQnfDjC6EHz+D7Hlz4iq44TJ4Nki00VTt/iiwEJeD5myv
- +jrHgGbJon8b63EpZxgzK9RHVroT6v5sQUhBPLhmccxMMWOm1/vsqZkUv+1uFiHVW9Qhaovyl+T wSdbJiGuuWCplQoRWMnSqUg1LcncCfuluxz88TlLhBELh4gPu4dNeAtHEnzS59bWibvw2npXmgc TnnOMiDFRBqxkwLcovTTuwZLM78S/f5K+hbY+SiRAVeV19+awZ8zbTE+6OvWgSPqb7WoHWsmu/g
- Qnj2k+wXQSQgwuzKzjx8XLIM8ZqiEk8vT7ldX+r+v39uY1YX16PTKW7R3uNz3yn9chFmiVwC
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 mlxlogscore=999 impostorscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160135
 
-* Nico Pache <npache@redhat.com> [250713 20:33]:
-> The khugepaged daemon and madvise_collapse have two different
-> implementations that do almost the same thing.
+On 7/16/2025 12:50 AM, Alexander Wilhelm wrote:
+> Fix endianness handling in QMI firmware transfer on big-endian
+> platforms. Without this fix, the firmware download fails due to
+> misinterpreted data structures exchanged between the host and the
+> wireless module.
 > 
-> Create collapse_single_pmd to increase code reuse and create an entry
-> point to these two users.
+> The issue occurs during early bring-up on big endian systems, where QMI
+> messages are not correctly parsed by the driver, leading to failed
+> initialization sequences. Ensure all relevant fields are properly
+> converted between CPU and little-endian format in request and response
+> messages, as expected by the firmware. Attached logs showing the failure
+> before the fix:
 > 
-> Refactor madvise_collapse and collapse_scan_mm_slot to use the new
-> collapse_single_pmd function. This introduces a minor behavioral change
-> that is most likely an undiscovered bug. The current implementation of
-> khugepaged tests collapse_test_exit_or_disable before calling
-> collapse_pte_mapped_thp, but we weren't doing it in the madvise_collapse
-> case. By unifying these two callers madvise_collapse now also performs
-> this check.
+>     ath12k_pci 0001:01:00.0: BAR 0: assigned [mem 0xc00000000-0xc001fffff 64bit]
+>     ath12k_pci 0001:01:00.0: boot pci_mem 0xcd4148e9
+>     ath12k_pci 0001:01:00.0: pci probe 17cb:1109 17cb:1109
+>     ath12k_pci 0001:01:00.0: pci tcsr_soc_hw_version major 2 minor 0
+>     ath12k_pci 0001:01:00.0: request MSI one vector
+>     ath12k_pci 0001:01:00.0: MSI vectors: 1
+>     ath12k_pci 0001:01:00.0: msi base data is 0
+>     ath12k_pci 0001:01:00.0: Hardware name: qcn9274 hw2.0
+>     ath12k_pci 0001:01:00.0: boot firmware request ath12k/QCN9274/hw2.0/firmware-2.bin size 15134776
+>     ath12k_pci 0001:01:00.0: found fw timestamp 1722934582
+>     ath12k_pci 0001:01:00.0: found m3 image ie (421880 B)
+>     ath12k_pci 0001:01:00.0: found fw image ie (7229440 B)
+>     ath12k_pci 0001:01:00.0: found dualmac fw image ie (7483392 B)
+>     ath12k_pci 0001:01:00.0: found firmware features ie (1 B)
+>     ath12k_pci 0001:01:00.0: features
+>     ath12k_pci 0001:01:00.0: using fw api 2
+>     ath12k_pci 0001:01:00.0: dualmac fw selected for board id: 1005
+>     ath12k_pci 0001:01:00.0: Assign MSI to user: MHI, num_vectors: 3, user_base_data: 0, base_vector: 0
+>     ath12k_pci 0001:01:00.0: Number of assigned MSI for MHI is 3, base vector is 0
+>     ath12k_pci 0001:01:00.0: Assign MSI to user: CE, num_vectors: 1, user_base_data: 0, base_vector: 0
+>     ath12k_pci 0001:01:00.0: Assign MSI to user: DP, num_vectors: 1, user_base_data: 0, base_vector: 0
+>     ath12k_pci 0001:01:00.0: irq:18 group:0
+>     ath12k_pci 0001:01:00.0: irq:18 group:1
+>     ath12k_pci 0001:01:00.0: irq:18 group:2
+>     ath12k_pci 0001:01:00.0: irq:18 group:3
+>     ath12k_pci 0001:01:00.0: irq:18 group:4
+>     ath12k_pci 0001:01:00.0: irq:18 group:5
+>     ath12k_pci 0001:01:00.0: irq:18 group:6
+>     ath12k_pci 0001:01:00.0: irq:18 group:7
+>     ath12k_pci 0001:01:00.0: pci after request_irq msi_ep_base_data 0
+>     ath12k_pci 0001:01:00.0: cookie:0x0
+>     ath12k_pci 0001:01:00.0: WLAON_WARM_SW_ENTRY 0x2
+>     ath12k_pci 0001:01:00.0: WLAON_WARM_SW_ENTRY 0x2
+>     ath12k_pci 0001:01:00.0: soc reset cause:0
+>     ath12k_pci 0001:01:00.0: MHISTATUS 0xff04
+>     ath12k_pci 0001:01:00.0: pci link_ctl 0x0000 L0s 0 L1 0
+>     ath12k_pci 0001:01:00.0: pci reg 0x3164 instance 0x11 read val 0x11
+>     ath12k_pci 0001:01:00.0: setting mhi state: INIT(0)
+>     ath12k_pci 0001:01:00.0: setting mhi state: POWER_ON(2)
+>     ath12k_pci 0001:01:00.0: mhi notify status reason UNKNOWN
+>     ath12k_pci 0001:01:00.0: mhi notify status reason MHI_CB_EE_MISSION_MODE
+>     ath12k_pci 0001:01:00.0: qmi wifi fw qmi service connected
+>     ath12k_pci 0001:01:00.0: phy capability resp valid 1 num_phy 2 valid 1 board_id 84934656 valid 1 single_chip_mlo_support 0
+>     ath12k_pci 0001:01:00.0: intra device MLO is disabled hence skip QMI MLO cap
 > 
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->  mm/khugepaged.c | 95 +++++++++++++++++++++++++------------------------
->  1 file changed, 49 insertions(+), 46 deletions(-)
+> Alexander Wilhelm (11):
+>   wifi: ath12k: fix endianness handling in QMI host capability request
+>   wifi: ath12k: fix endianness handling in QMI phy capability response
+>   wifi: ath12k: fix endianness handling in QMI firmware indication
+>   wifi: ath12k: fix endianness handling in QMI firmware memory indication
+>   wifi: ath12k: fix endianness handling in QMI respond firmware memory
+>   wifi: ath12k: fix endianness handling in QMI firmware capabilities
+>   wifi: ath12k: fix endianness handling in QMI bdf download
+>   wifi: ath12k: fix endianness handling in QMI firmware m3 info
+>   wifi: ath12k: fix endianness handling in QMI firmware wlan mode
+>   wifi: ath12k: fix endianness handling in QMI wlan configuration
+>   wifi: ath12k: fix endianness handling in QMI response
 > 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index eb0babb51868..47a80638af97 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -2362,6 +2362,50 @@ static int collapse_scan_file(struct mm_struct *mm, unsigned long addr,
->  	return result;
->  }
->  
-> +/*
-> + * Try to collapse a single PMD starting at a PMD aligned addr, and return
-> + * the results.
-> + */
-> +static int collapse_single_pmd(unsigned long addr,
-> +				   struct vm_area_struct *vma, bool *mmap_locked,
-> +				   struct collapse_control *cc)
-> +{
-> +	int result = SCAN_FAIL;
-> +	struct mm_struct *mm = vma->vm_mm;
-> +
-> +	if (!vma_is_anonymous(vma)) {
-> +		struct file *file = get_file(vma->vm_file);
-> +		pgoff_t pgoff = linear_page_index(vma, addr);
-> +
-> +		mmap_read_unlock(mm);
-> +		*mmap_locked = false;
-
-Okay, just for my sanity, when we reach this part.. mmap_locked will
-be false on return.  Because we set it a bunch more below.. but it's
-always false on return.
-
-Although this is cleaner implementation of the lock, I'm just not sure
-why you keep flipping the mmap_locked variable here?  We could probably
-get away with comments that it will always be false.
-
-
-> +		result = collapse_scan_file(mm, addr, file, pgoff, cc);
-> +		fput(file);
-> +		if (result == SCAN_PTE_MAPPED_HUGEPAGE) {
-> +			mmap_read_lock(mm);
-> +			*mmap_locked = true;
-> +			if (collapse_test_exit_or_disable(mm)) {
-> +				mmap_read_unlock(mm);
-> +				*mmap_locked = false;
-> +				result = SCAN_ANY_PROCESS;
-> +				goto end;
-> +			}
-> +			result = collapse_pte_mapped_thp(mm, addr,
-> +							 !cc->is_khugepaged);
-> +			if (result == SCAN_PMD_MAPPED)
-> +				result = SCAN_SUCCEED;
-> +			mmap_read_unlock(mm);
-> +			*mmap_locked = false;
-> +		}
-> +	} else {
-> +		result = collapse_scan_pmd(mm, vma, addr, mmap_locked, cc);
-> +	}
-> +	if (cc->is_khugepaged && result == SCAN_SUCCEED)
-> +		++khugepaged_pages_collapsed;
-> +end:
-> +	return result;
-> +}
-> +
->  static unsigned int collapse_scan_mm_slot(unsigned int pages, int *result,
->  					    struct collapse_control *cc)
->  	__releases(&khugepaged_mm_lock)
-> @@ -2436,34 +2480,9 @@ static unsigned int collapse_scan_mm_slot(unsigned int pages, int *result,
->  			VM_BUG_ON(khugepaged_scan.address < hstart ||
->  				  khugepaged_scan.address + HPAGE_PMD_SIZE >
->  				  hend);
-> -			if (!vma_is_anonymous(vma)) {
-> -				struct file *file = get_file(vma->vm_file);
-> -				pgoff_t pgoff = linear_page_index(vma,
-> -						khugepaged_scan.address);
-> -
-> -				mmap_read_unlock(mm);
-> -				mmap_locked = false;
-> -				*result = hpage_collapse_scan_file(mm,
-> -					khugepaged_scan.address, file, pgoff, cc);
-> -				fput(file);
-> -				if (*result == SCAN_PTE_MAPPED_HUGEPAGE) {
-> -					mmap_read_lock(mm);
-> -					if (hpage_collapse_test_exit_or_disable(mm))
-> -						goto breakouterloop;
-> -					*result = collapse_pte_mapped_thp(mm,
-> -						khugepaged_scan.address, false);
-> -					if (*result == SCAN_PMD_MAPPED)
-> -						*result = SCAN_SUCCEED;
-> -					mmap_read_unlock(mm);
-> -				}
-> -			} else {
-> -				*result = hpage_collapse_scan_pmd(mm, vma,
-> -					khugepaged_scan.address, &mmap_locked, cc);
-> -			}
-> -
-> -			if (*result == SCAN_SUCCEED)
-> -				++khugepaged_pages_collapsed;
->  
-> +			*result = collapse_single_pmd(khugepaged_scan.address,
-> +						vma, &mmap_locked, cc);
->  			/* move to next address */
->  			khugepaged_scan.address += HPAGE_PMD_SIZE;
->  			progress += HPAGE_PMD_NR;
-> @@ -2780,35 +2799,19 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
->  		mmap_assert_locked(mm);
->  		memset(cc->node_load, 0, sizeof(cc->node_load));
->  		nodes_clear(cc->alloc_nmask);
-> -		if (!vma_is_anonymous(vma)) {
-> -			struct file *file = get_file(vma->vm_file);
-> -			pgoff_t pgoff = linear_page_index(vma, addr);
->  
-> -			mmap_read_unlock(mm);
-> -			mmap_locked = false;
-> -			result = hpage_collapse_scan_file(mm, addr, file, pgoff,
-> -							  cc);
-> -			fput(file);
-> -		} else {
-> -			result = hpage_collapse_scan_pmd(mm, vma, addr,
-> -							 &mmap_locked, cc);
-> -		}
-> +		result = collapse_single_pmd(addr, vma, &mmap_locked, cc);
-> +
->  		if (!mmap_locked)
->  			*lock_dropped = true;
-
-All of this locking is scary, because there are comments everywhere that
-imply that mmap_locked indicates that the lock was dropped at some
-point, but we are using it to indicate that the lock is currently held -
-which are very different things..
-
-Here, for example locked_dropped may not be set to true event though we
-have toggled it through collapse_single_pmd() -> collapse_scan_pmd() ->
-... -> collapse_huge_page().
-
-Maybe these scenarios are safe because of known limitations of what will
-or will not happen, but the code paths existing without a comment about
-why it is safe seems like a good way to introduce races later.
-
->  
-> -handle_result:
->  		switch (result) {
->  		case SCAN_SUCCEED:
->  		case SCAN_PMD_MAPPED:
->  			++thps;
->  			break;
-> -		case SCAN_PTE_MAPPED_HUGEPAGE:
-> -			BUG_ON(mmap_locked);
-> -			mmap_read_lock(mm);
-> -			result = collapse_pte_mapped_thp(mm, addr, true);
-> -			mmap_read_unlock(mm);
-> -			goto handle_result;
->  		/* Whitelisted set of results where continuing OK */
-> +		case SCAN_PTE_MAPPED_HUGEPAGE:
->  		case SCAN_PMD_NULL:
->  		case SCAN_PTE_NON_PRESENT:
->  		case SCAN_PTE_UFFD_WP:
-> -- 
-> 2.50.0
+>  drivers/net/wireless/ath/ath12k/qmi.c | 149 ++++++++++++++------------
+>  drivers/net/wireless/ath/ath12k/qmi.h | 106 +++++++++---------
+>  include/linux/soc/qcom/qmi.h          |   4 +-
+>  3 files changed, 136 insertions(+), 123 deletions(-)
 > 
-> 
+
+Frankly I'm shocked that the low-level QMI encode/decode is not doing the
+endian conversion. Since the Qualcomm internal tool that generates the data
+structures has always generated structs with cpu endianess (i.e. u8, u16, u32,
+etc) I just assumed that endian conversion was handled at a low level.
+
+So should this issue be pushed down to the QMI encode/decode rather than foist
+it upon every client's read & write?
+
+/jeff
 
