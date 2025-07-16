@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-733282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3ADFB072A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:07:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07993B072AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3130C3B1B83
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:06:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29A41C22293
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD6F2F2734;
-	Wed, 16 Jul 2025 10:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1368B2F2718;
+	Wed, 16 Jul 2025 10:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lHtS3x/K"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC5F2F3C2F;
-	Wed, 16 Jul 2025 10:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFVyG3Tv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636BC2F2708;
+	Wed, 16 Jul 2025 10:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660354; cv=none; b=HK26EHPMb3e0JPKcc7o71v0omxfNYQ6bX34E3aPWztmdw9B2F+c6ZSjr0aaHnpAATBPHcCznkDNtOvxjR9reLWKj22NWUoEPlhVvgdVjCTXLDq7C56pS+IsXinzoRhN89v1SWkpNQmQ1KAS6xiFjyov7cxnunxVGt3cblZ1aJg8=
+	t=1752660520; cv=none; b=ERctnpMF+/n9TLLWw+Sg+Cu93zaV2b8fgXrLA5W6RNDyLr+J3iojobjg1vVpGqKg0Y8DrY2LcMzkge28CeKhov2PrzK1/817+ZCPy/KJiJnbmk4o95kB0HUjkrQMEviqcGjd0v0foKqpkFWjDxhGhY+776loU37I1ahl760121E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752660354; c=relaxed/simple;
-	bh=TlFF/wWOnyBUBw2sRYOnF2RANPrGvlRG2sNYPUnSxe0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UeotbHtuICE+EbG8RhepWJ7Q6PgJRsUO3lFKL9dTDjHxm1REgXNX7vLUpEe3fcOW98Y0CHxkv9BK7QEWSYHDlnYyEeClZEzg/museiI4Ly7vbq02pRWrlCrxVinEMmlPahU7BXt1S3QzDo9cDyBOb1YdXzOiAA4KK2aJgty1wIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lHtS3x/K; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Pf
-	96EL1fdLyOPgckgwexr7VHAXtwv685XpN6hfJsmNc=; b=lHtS3x/Kc95+Jei4n2
-	d5KAele+qQIiFpsFIE37B7SildtLfC/HXjlJQ9TLCsNDrA8yMTz2Tw1tDh+eJgqR
-	0Tg5VAC7tnnBHhID4W1695mWeA+UIjUdQk35Zf9zQWcxb18wgEfrZJupZUBgtf3p
-	qF3ZAQWLbpgA7S1xflwyeJa2U=
-Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAH0s46eXdoG0BuFQ--.1985S9;
-	Wed, 16 Jul 2025 18:05:07 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: dmitry.baryshkov@oss.qualcomm.com,
-	heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	mripard@kernel.org,
-	naoki@radxa.com,
-	stephen@radxa.com,
-	cristian.ciocaltea@collabora.com,
-	neil.armstrong@linaro.org,
-	Laurent.pinchart@ideasonboard.com,
-	yubing.zhang@rock-chips.com,
-	krzk+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v5 07/10] arm64: dts: rockchip: Add DP0 for rk3588
-Date: Wed, 16 Jul 2025 18:04:34 +0800
-Message-ID: <20250716100440.816351-8-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250716100440.816351-1-andyshrk@163.com>
-References: <20250716100440.816351-1-andyshrk@163.com>
+	s=arc-20240116; t=1752660520; c=relaxed/simple;
+	bh=ygRdgWBky8NpY2ERRzAFKmGtSKpHj58BdrOI5Bf4iUk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=dwRXUrZm8t0C7LFpHuUMblBRYiYcpiYsE6PbWQdyoyyEQ3SFR6sMfoXuHVAVknACQuI3lR9cTjA18F7lo9BW60LKXJkCUHcEghDOUuXgSgYNbPxSCDR7/9JYDlwbs0lE3e0YP9BGN8dPm9VDVruf3p5B97beRdd/jcSlV5HsQtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFVyG3Tv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 282B1C4CEF0;
+	Wed, 16 Jul 2025 10:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752660517;
+	bh=ygRdgWBky8NpY2ERRzAFKmGtSKpHj58BdrOI5Bf4iUk=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=uFVyG3TvCB03QVldUaVg5CCpKIhNAn84Wmt45Uz68lM7CAe7Iz+PN8G9lf2FvQVue
+	 x0zDy5XH+adwlxqkvwuQ1TUg+8EkyDqOLxjm5lq5HQ0ai71ce/TtyUGicQnmSXvlQU
+	 5W/oQV8/IQs740+swphfWgxq5jrmUJKPleg/u4L34tnwi+Ivzz2xP+J6qATfW5H3H+
+	 i3r2QVzRyh5dkxn6zH+I91hBeTlbrPZBi3c5BcVg1NcIPkW3HRjdTLCo3aYjxkWpP4
+	 1QBIO+2tp3x1nUMP91YPqF4Mm6rvcS8Yj8U0+NcRwuPwXR1jKBEgRjARybreGHjeij
+	 FRI8ZlWxN4nKA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAH0s46eXdoG0BuFQ--.1985S9
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AFyxJryUuw43JrWfGry5CFg_yoW8XFW5p3
-	ZrCrZ3WrW8uF12q39xKw1ktrZ5Aan5CFZYkrnrK340kF1Sqr9rKryfKrnxA34qqr47XwsF
-	vFs3try8KFsrAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j8a9-UUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEgWMXmh3cPPqbgABsc
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 16 Jul 2025 12:08:32 +0200
+Message-Id: <DBDEARWBQERF.WCGQ708G934O@kernel.org>
+Subject: Re: [PATCH 2/5] rust: dma: add DMA addressing capabilities
+Cc: <abdiel.janulgue@gmail.com>, <daniel.almeida@collabora.com>,
+ <robin.murphy@arm.com>, <a.hindborg@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
+ <rafael@kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250710194556.62605-1-dakr@kernel.org>
+ <20250710194556.62605-3-dakr@kernel.org>
+ <2025071627-outlet-slacker-9382@gregkh>
+In-Reply-To: <2025071627-outlet-slacker-9382@gregkh>
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On Wed Jul 16, 2025 at 11:15 AM CEST, Greg KH wrote:
+> On Thu, Jul 10, 2025 at 09:45:44PM +0200, Danilo Krummrich wrote:
+>> +/// Returns a bitmask with the lowest `n` bits set to `1`.
+>> +///
+>> +/// For `n` in `0..=3D64`, returns a mask with the lowest `n` bits set.
+>> +/// For `n > 64`, returns `u64::MAX` (all bits set).
+>> +///
+>> +/// # Examples
+>> +///
+>> +/// ```
+>> +/// use kernel::dma::dma_bit_mask;
+>> +///
+>> +/// assert_eq!(dma_bit_mask(0), 0);
+>> +/// assert_eq!(dma_bit_mask(1), 0b1);
+>> +/// assert_eq!(dma_bit_mask(64), u64::MAX);
+>> +/// assert_eq!(dma_bit_mask(100), u64::MAX); // Saturates at all bits s=
+et.
+>> +/// ```
+>> +pub const fn dma_bit_mask(n: usize) -> u64 {
+>> +    match n {
+>> +        0 =3D> 0,
+>> +        1..=3D64 =3D> u64::MAX >> (64 - n),
+>> +        _ =3D> u64::MAX,
+>> +    }
+>> +}
+>
+> This is just the C macro DMA_BIT_MASK(), right?  If so, can that be said
+> here somewhere?
 
-The DP0 is compliant with the DisplayPort Specification
-Version 1.4, and share the USBDP combo PHY0 with USB 3.1
-HOST0 controller.
+Yes, I think that'd be good.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
----
+> Or, how about turning DMA_BIT_MASK() into an inline
+> function which could then be just called by the rust code directly
+> instead?
 
-(no changes since v1)
+Unfortunately, bindgen doesn't pick up either, so converting to an inline
+function wouldn't help.
 
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+We could use it through a Rust helper though, but I considered this to be
+unnecessary overhead. Whether that's relevant in this case is of course
+questionable though. :)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index 51f11b9c414aa..4a54389c89d75 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -1536,6 +1536,36 @@ dsi1_out: port@1 {
- 		};
- 	};
- 
-+	dp0: dp@fde50000 {
-+		compatible = "rockchip,rk3588-dp";
-+		reg = <0x0 0xfde50000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru PCLK_DP0>, <&cru CLK_AUX16M_0>,
-+			 <&cru CLK_DP0>, <&cru MCLK_I2S4_8CH_TX>,
-+			 <&cru MCLK_SPDIF2_DP0>;
-+		clock-names = "apb", "aux", "hdcp", "i2s", "spdif";
-+		assigned-clocks = <&cru CLK_AUX16M_0>;
-+		assigned-clock-rates = <16000000>;
-+		resets = <&cru SRST_DP0>;
-+		phys = <&usbdp_phy0 PHY_TYPE_DP>;
-+		power-domains = <&power RK3588_PD_VO0>;
-+		#sound-dai-cells = <0>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			dp0_in: port@0 {
-+				reg = <0>;
-+			};
-+
-+			dp0_out: port@1 {
-+				reg = <1>;
-+			};
-+		};
-+	};
-+
- 	hdmi0: hdmi@fde80000 {
- 		compatible = "rockchip,rk3588-dw-hdmi-qp";
- 		reg = <0x0 0xfde80000 0x0 0x20000>;
--- 
-2.43.0
-
+Given that we also concluded that we want to return a new type (i.e. DmaMas=
+k)
+rather than a u64, I feel like it's a bit cleaner to keep it self-contained=
+.
 
