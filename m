@@ -1,137 +1,112 @@
-Return-Path: <linux-kernel+bounces-733731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2DE2B07852
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:41:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF76B07856
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612B83A7CCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57D151664BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AC2262FD7;
-	Wed, 16 Jul 2025 14:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69AD262FD5;
+	Wed, 16 Jul 2025 14:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxnAO2U+"
-Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSa3yVn/"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC85119F40A;
-	Wed, 16 Jul 2025 14:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8150208AD;
+	Wed, 16 Jul 2025 14:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676859; cv=none; b=MPK2yRTKQ3t1rPj4aMDp78WfbJMWskxF0c/rDhSjWwS9I4fAsO/ojqApuho9kZAn1rYCzd7uWrS9A0MayIYGS9qUE7PD04ysCOhkK16kEQmBO7h2cWabTScx3W+cuhIEX3cpO1jh4RkYDo6EpoCNHbcjfLTW0d6fjo9DSxE5HYM=
+	t=1752676918; cv=none; b=YELnX8gUqems3UHiWuvqwCFGBCz+kqcYvyzZQHlF1r3BWgGVzGfJAau8qmyrcx5Ic1pHEzqVoEt21Zguthocq+SW5rkwpY6EiMAEhNdGeiDmriezuLG8INyMc9Rn8dKmXmREJ1NBxkFebLUgrm313fD9yvmCn2ilI2aZQDap3Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676859; c=relaxed/simple;
-	bh=pfwYeQ0lSxFqkmbHNbtiMcwWyHLPm2mIdKPW8D3rFWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XSSRLPHLdQvqxSWtKh3Xf20CFYKqbdmj6TVhBAZm2Vv3a+SEYrfAp5sVMlrKSfEOWqQ4TlNXWPObFx8Pkk56aSDck2V2YArz7P0Ad87CYi7EujIeqaMDRPikdF1AADFqQLKP2JvvLQqxlemp0z8iwSQ9mb31rsz6a0skWB+BEz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxnAO2U+; arc=none smtp.client-ip=209.85.219.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1752676918; c=relaxed/simple;
+	bh=lFPHEHn8FO64LpPGdlmRUTz/8ppyFHalaL5CD6vWlgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=naDDm+YX4wsD/J2P3jXGn7Til94JmK21BOvcANTZjBEcAZrp7UYb0sULJaX1sw6Vo0/YpHZi/jPw6a19YanIzq3EnYRfZ99URoQf8HFH05VEoa7RPjPv6ZYWyNkDU4R+f95F9/x7vE+ZwaqI0zWtGq4HDPXnRRzcYmVzxI781N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SSa3yVn/; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e8bd171826cso315362276.3;
-        Wed, 16 Jul 2025 07:40:56 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-742c3d06de3so19693b3a.0;
+        Wed, 16 Jul 2025 07:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752676856; x=1753281656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pfwYeQ0lSxFqkmbHNbtiMcwWyHLPm2mIdKPW8D3rFWA=;
-        b=CxnAO2U+dEL/tkywJlpiZnh46YQfJZFgAQ2VXFpsR/EhweHqf5uSjgJlgpX0hFH5jz
-         cMWZB8iJKS1KrR24wpDjabEFLJIcIwMpJJDPtUkq+zuenicwONYDOFNFqbZsIlFwT/An
-         dzO0V3VzlO6ZSgycTY1+JkIpuZUM1UgtJZdqgL2DDINWcKr4hFdVssLRioxB/jjS2Yos
-         70qqUgKU1b/QPSs2ERdZGiHGG/r9aD1RR7HjFrmAMetU+IXvGx5c71lSfjRb339DG1cV
-         iP1mR7cUH5oEJWt0OkKYqrC9wB7IyzHAzy1mJm8JMkAc0DGzSHUZa1x4eDBaD2uUcby1
-         VW3Q==
+        d=gmail.com; s=20230601; t=1752676916; x=1753281716; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GbIiA4Lrn5lhcE4V8wonAl/f7aSLqrLYo1bemfK45Ok=;
+        b=SSa3yVn/fQKLrpJEIkSX1Zcf0gxuR1cnOvbPTZ71vHKYPcJFDEwXYFB/WAqOzRdN03
+         ZmVqc4Fg4/VTrTMaQzFXTu7abyr2/c/LLi5Yc5XMAZ4OChl+ysouCCUDa9I/g6IMPXl/
+         Iy7TgDX4jY8DdB2nOc/2DhuN5wQjkii52J+UTmFdySavgadxnkc+oo5MK7/s8bXx3dPQ
+         z76AyKikrwxoV0r5ZpoulzY5mRCSmSjI8Ho9TveFvdiMRuxOfrJTjYL/0vAfx25sUaeH
+         aTldEeEuKLmGfX9ittail3abKd82ofWUw4G/PEsTqH0NrruWpJMzvYn6+vgyJosAO6O1
+         VXWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752676856; x=1753281656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752676916; x=1753281716;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pfwYeQ0lSxFqkmbHNbtiMcwWyHLPm2mIdKPW8D3rFWA=;
-        b=gkUExtFWo8OzdS6+grI/8SRU6p2ZyfeXJpv//JTKTdCSlquoYPwc45/epyDx4n0v2r
-         YDoGmbuHiwfszIw6Df1KROyEIO5/RYluW4leNOJI823EzsN25uRXHliFA+1WhlO8ZbX4
-         ISTol/J0Rbr0WR8NniZB5HxYivAITj79ppbkhJpG19NEQZVSbYE1dJwcPokQUtaGv7sQ
-         FgkJajn2yZFDf940xtJvk3SFokiupK8BU46131j4XKfli4hLih9J0xzd7zjrwQCX0tof
-         aO+u2IFAwrsaTAGx8RuDO/OY/UnZpxzAiLX/cqVxnSdB9EUEdIQ1eAKzeoRdJiKrJxc6
-         sWaw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2YUWbOzRt68e4k6cbxN+cYqjbS1Vjx3vspDpnCULkfmkYs419t9GwdaWo5+/lHHI3MEDMNvfsF3iEz+7a@vger.kernel.org, AJvYcCU8aDc4uAsVlX3HEmownYcqJIurqz1g+iFuCrT1Hxj1hN+jPTxiZqu9pifjTJmZ0bxh9s+3YLRx@vger.kernel.org, AJvYcCUR701OLNhTic/i0UVnJx6uKMovU09sWvsw+0B1NVIfCDyPMp8lX7mNua6wR7kVhCvdVXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYrTlwbCActBEG9qS345Ar2XUtg1ewUNNuqI/uNn5FyD6/N7SS
-	2YRVgpYu7G+6xXBftRCXs4+71csYfUMuL8880bJPv5t3cA6TyH3Zhlfk8Qws7wMOaoXwWwP8DYO
-	6sTYexg/krcLZaC2M2GmjoBo7zg2263W2GpQ7q5pLYA==
-X-Gm-Gg: ASbGncvLivG/ftp0L90vALGXQ+CpGpdRHVRg83USKiDy7pFXMOSMYTjyH4v26KAWHlr
-	llVHlHhP+z0LDa2NidILZ8OAs2Wk3PdesgTtC86VelQlEqyaBK0efVBbd3blmozOpRzTC9UgbhN
-	my0pD0VcG8qmc+O0uBjVhCQqY37vQtiJgyXv0WLxq8wYrbmVDFv2d+nAATC4EqUJSluMpwKXPyL
-	URJG0o=
-X-Google-Smtp-Source: AGHT+IEEsGkjeJRr+4AxB4v8yEdFBdHjv0f7mCtSLB+EbeD9EY0YJN/yeyk9YT3I1MCKXufJeinGe9qxBV4f6r3UUfs=
-X-Received: by 2002:a05:690c:3693:b0:710:f09c:b00f with SMTP id
- 00721157ae682-7183712dc18mr40453547b3.15.1752676855537; Wed, 16 Jul 2025
- 07:40:55 -0700 (PDT)
+        bh=GbIiA4Lrn5lhcE4V8wonAl/f7aSLqrLYo1bemfK45Ok=;
+        b=vXFDkBNpKZx2lvj13pm/OyyvNeRDWjPVMsdj2wsjG0QxT/JR/7NnjktUvYG+O3koGN
+         TYgXycZGpafCkXQTDyEWGuRXVoq1Jn8om4hgyDiqT/2JQKC7egpr53zmQyH/W9TiUseA
+         b1rHxlyhNYpSAhsrbu+CBIH/On5ORyaOt6k/QU1qnsVV36IPu2bMA821su+C4uOc0XYW
+         ETpagS737uMdoXCGjk4uoIZTjl62bC3gsIkaC6XUBbnsAV3DYabcJDB87HsI57taMJ+C
+         47S5MWoo1Lz/9kebpncuKwpRbRQMlNyu8qIIjkSM2a+XnKYrjyCuNEEuApc1R8xa8tWr
+         FfRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2ozp9M9832PBLLMQNEuwmLGwL8BckHqUE2rVhMC9RQcIw+WFHf8W07C+8QmmERIevkPG+RtpOiXOr8PQ=@vger.kernel.org, AJvYcCU6xZWRMZUkFv61e2pmQYr5SCd9WOoJUq/TMBnPd3kCdr1m/X+DWzoF2XWgh65+fRRL/7oR2O/0g7lm@vger.kernel.org, AJvYcCVbaMjzxznaH+KXfdMRdy6Ep8Pc8UuW1vnCRxF2GmrPV1oTvsJncEAVC4L2cNfe3MJHQczR/7gWTnQdmfxp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9WXJlupF2gbw6arrpU+MR+9oNHSTNO7uDJBoyIFvX1AlN1kub
+	VyuREBWmkt578HnhO7RrIxe8ZI9M+8uqnBHAOtAV0O/eCYasQJbnvAyF
+X-Gm-Gg: ASbGncuQOEOAVtHSAYuky/NWALfQwKuCgUpF7cFRC4HGSfBOjL0e10X+UWkzuDDMAlR
+	TI91an89O1bSDCaD8fAtLH6cCLYTI/jOVjZtfUXm8F+sJY/L3fHq4KJLwBgHCFfg8B7OuQI96lQ
+	UWRfv2E57raSzigAdr+2fG3WkpZjNzQ4nGJGaQI3ZUM5VyLLhNtk0QYyFhbNlnjrHFafDAaWcNb
+	iCMgZC6f50uJ+HCuVrTeA83KuSsIg1Fp0i2QCNBlTRd1WD/qtGH9DvtzdYIXZX3MJyT6OSxu0Ss
+	9SXvgwidgk3KX2HzObgvJPy62bXoIhF/vIqfYBX6dfalVS5a3N90u/LjICFU42oYgrkrV01YdXZ
+	u6MKpM/6uW1MHyL2QK7S5agkoyyiJcIc2lKY=
+X-Google-Smtp-Source: AGHT+IFImA08aof3XwI/kXP2dr24zv0EdH7as17SlX0fPIgLzV66SUkcwz634chn804K4HPRH45x+g==
+X-Received: by 2002:a05:6a20:9188:b0:215:e60b:3bcf with SMTP id adf61e73a8af0-23812e5021bmr4863282637.30.1752676916164;
+        Wed, 16 Jul 2025 07:41:56 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f4caa9sm14210175b3a.111.2025.07.16.07.41.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 07:41:55 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 16 Jul 2025 07:41:54 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Jim Wright <wrightj@linux.vnet.ibm.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] dt-bindings: hwmon: ti,lm87: Add adi,adm1024
+ compatible
+Message-ID: <95638555-309a-47d7-bc61-d8a4cf821afd@roeck-us.net>
+References: <20250701-dt-hwmon-compatibles-v1-0-ad99e65cf11b@kernel.org>
+ <20250701-dt-hwmon-compatibles-v1-2-ad99e65cf11b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <20250703121521.1874196-3-dongml2@chinatelecom.cn> <CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
- <45f4d349-7b08-45d3-9bec-3ab75217f9b6@linux.dev> <CAADnVQ+7NhegoZGHkiRyNO8ywks3ssPzQd6ipQzumZsWUHJALg@mail.gmail.com>
-In-Reply-To: <CAADnVQ+7NhegoZGHkiRyNO8ywks3ssPzQd6ipQzumZsWUHJALg@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 16 Jul 2025 22:40:54 +0800
-X-Gm-Features: Ac12FXwhFnOEikntgmWcObUoZ2zctoMhZNba-RlPeEbc7K2an5Dl4pIZ79cUM88
-Message-ID: <CADxym3bT8P796Qqcd0mtJwR09bgs0Bc45GuPkb39ELLsg1MQ_g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 02/18] x86,bpf: add bpf_global_caller for
- global trampoline
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Menglong Dong <menglong.dong@linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701-dt-hwmon-compatibles-v1-2-ad99e65cf11b@kernel.org>
 
-On Wed, Jul 16, 2025 at 12:35=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Jul 15, 2025 at 1:37=E2=80=AFAM Menglong Dong <menglong.dong@linu=
-x.dev> wrote:
-> >
-> >
-> > On 7/15/25 10:25, Alexei Starovoitov wrote:
-[......]
-> >
-> > According to my benchmark, it has ~5% overhead to save/restore
-> > *5* variants when compared with *0* variant. The save/restore of regs
-> > is fast, but it still need 12 insn, which can produce ~6% overhead.
->
-> I think it's an ok trade off, because with one global trampoline
-> we do not need to call rhashtable lookup before entering bpf prog.
-> bpf prog will do it on demand if/when it needs to access arguments.
-> This will compensate for a bit of lost performance due to extra save/rest=
-ore.
+On Tue, Jul 01, 2025 at 04:00:41PM -0500, Rob Herring (Arm) wrote:
+> The adi,adm1024 compatible is already in use. Add it to the lm87
+> binding as the device appears to be compatible.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-I just think of another benefit of defining multiple global trampolines
-here, which you may be interested in. In the feature, we can make
-the global trampoline supports functions that have 7+ arguments.
-If we use _one_ global trampoline, it's not possible, as we can't handle
-the arguments in the stack. However, it's possible if we define
-different global trampoline for the functions that have different arguments
-count, and what we need to do in the feature is do some adjustment
-to CALLER_DEFINE().
+Applied.
 
-Wish you are interested in this idea :)
-
-Thanks!
-Menglong Dong
-
-
->
-> PS
-> pls don't add your chinatelecom.cn email in cc.
-> gmail just cannot deliver there and it's annoying to keep deleting
-> it manually in every reply.
+Thanks,
+Guenter
 
