@@ -1,239 +1,376 @@
-Return-Path: <linux-kernel+bounces-734257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDD2B07F12
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:42:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA5DB07F19
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501B04E2A33
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:42:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21CA27AC089
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50122D322A;
-	Wed, 16 Jul 2025 20:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AA2274FF4;
+	Wed, 16 Jul 2025 20:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q74slgOD"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CV5LG6JA"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012037.outbound.protection.outlook.com [52.101.71.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C187274FF1
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 20:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752698547; cv=none; b=jNNHFNXqnAPKDddTubLGHGuqCfQBVtXjHhpjmfhVpqS+Yf53ciW5ugM9uWrA4qvpfYad/WxfPSNMz+E+u/Oc0l36ZT+BLe7Ff+hLAUAyM3DbGyBxWLhgZtqCHypjr3FA4UbYcnioBeNNLJ/fMrlnSVFoUsvdG/jetrYO50ayZbk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752698547; c=relaxed/simple;
-	bh=untgnyDWEArh1UoVstqivWFtfJ7NZfaSTAzmxoDN32w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZGiVZP8VnceNJl1byfZ+8JLbc53+Oq4NxmHgfyid5qmIi8mb++EGO3WaAKeC5PTt18IBpvEC1P7zE8wK5ha+zxpr67i6mI/KebTSWNt0/81Yl6Wkvua++2leExoWOS64LxmKOzMsdGeGUSPzGchWgIkeuep8UTNXFICBfV2ZaRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q74slgOD; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3e283b2d065so11735ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752698544; x=1753303344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IlQP6cWB5c6EOc1XK+3iu3r9ZzZfzPwNGPOPdZh2/9g=;
-        b=q74slgOD7p4vcw8ePeAw4S8/9rvQBx4qEjpGZk3jIWRA0UYYiMqp+E9vSST2b83dxb
-         QA1H9AnbZYe/8pI7/pHtYlIQOeu8Jfa2nyAewaW50nWm7fgCjzDDDPUsP7KOth6xe0cG
-         ndXJHUVWeMPRXZX96ZlFIKDqKfEjdRfG0XYIwXACbGcvhG7+cLXpDLfc1rHdMS/pgz6g
-         mbxHncNjyT7IXY4SkA9D0zNXY114V43YBHHdHHvmfnzjKMhPWuHCkwXVkQQG6yrBOPpF
-         qAfuMbj+UK6qUu28cK5yRoC+B2YKhmeW72bQgn5J83HPUcU7ZxP0fLpJ3auBGoeWbz4x
-         ap3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752698544; x=1753303344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IlQP6cWB5c6EOc1XK+3iu3r9ZzZfzPwNGPOPdZh2/9g=;
-        b=gxvBhyHVHf/U2ByevROVf/MBLqa1CQVV0fyCrId139TAeIpiRXBKN0+Ij77WvOb8sw
-         oT0QLfD+E7Zom3p1IbvPoMc16AzkDUJdF+kxXWKf2spk7Z0flfgI9eCox/3TaLI4L0ne
-         510aj3rqVShZiEhj/wGyuKqjm4gSa9yeep4ZRQuQUhbTnl1UnMTwtO5OHY0k0qa9UXDo
-         T4clKd9oLMoTyBtLv71AgpCExC1LkpN7BCaOJVaEyCLZW0BNVlEn2qwD7JwhEYSU4Rfy
-         uI5V6H2RMV9Nz13+ei5fuDrM5/xKm5ftTW4VJ03WEJT5vs3l60co/yuRiid2h32dZpVa
-         boLA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1Wuok4qZaY2zDfOXyr+S9Zl/CuI4RPNV+IaEV3zQG7ZDgRslOkGi8x1d4SADGyo5l1wPiHs0kfScE71U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOfKCis7wEwqQGYkFqdU894hUM7SAN4wMHDjnIim4CdJlaFQ1x
-	8wYo02brTKvolG/daS/6Q2UGphxTVGeYzSEE1TqO0I1yIxPNR/LQ8bi9Chdr8mWJRwiI8cn201G
-	n/SNG8AgwEDkd411+c18F6Ef6H6y2fzbk8mdIZrH7
-X-Gm-Gg: ASbGncvzlaGfei2sS1uAkI8OcYJLvt7Jn9FbmOF9Qz+4damJKe96oIyM2bDZoG9SnvP
-	nPgCeYkkQwcBt22pOwL98UvsB1u1NtFrSbAB22eSymOOe9oKxYlJTAhxxn50Ed7jFK7PJF/ucG+
-	jzTJRTDbfgFRf91H7yoUfyiE2PQ8VWHrwIoXVmlkQ7oRZgS/rk0kfA21cYwv9/cpQS+c9q7GgX0
-	vnEHC19aIy6jIk3dlymnozrx+5ZgonVbA==
-X-Google-Smtp-Source: AGHT+IEHRs8DyBpwx31BC4At3emdTm2IEDp0Bj1peZov4YekTcB0/n7pRdCy5Ga1IIYvu5jwdDe21uPeu+W8euKtE5o=
-X-Received: by 2002:a05:6e02:2185:b0:3dc:7e19:fcc4 with SMTP id
- e9e14a558f8ab-3e28c9d6b5bmr1158075ab.8.1752698544209; Wed, 16 Jul 2025
- 13:42:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA4F1CD2C;
+	Wed, 16 Jul 2025 20:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752698780; cv=fail; b=a3mxoCX7n2R56K7MDl2sHzrbzIMp7OweQXva68i4S7KMoyTcYiHi5lA1hJM7A6QfIQ3kOrLWGoCM6Fndh0e7J59KhfP+75shNRtfmvTJGyHcAwYL3c3b81g/ex3YxCXzjrVb0DqVcePd5YLiYtJJThg9lfVE2TEpI/29xb36UKg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752698780; c=relaxed/simple;
+	bh=VWJXuCPYZYYgBOB5vlXHO2GlQZRZwgqY2CzWSl2TFvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=FwwlU49DMlnjGqvx59s4SjoDIXVgDVF9cWEgXh66p9OWl5trfkWiV+Yl/drkOM04CeGUnebmNAg6kfh7sWjh0H0HhZfiZRx5NumGUxpmS3YnZRBtgZSpTIaifq4OLFWpkpvVmPl3iyEO8Zfsk4lI3nkvoNXtX8rHFZXhijyjUg8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CV5LG6JA; arc=fail smtp.client-ip=52.101.71.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Lns0w/g/0KUmFbOeIpcetdO3V7CrfraJVILN92LLWtLpDlGd1UTdqr/bympmWd2m5MIXP+ZNkifBQNe+WD0hxXwKUEx0qpwkjD2YS8y0vk3n4bCX+swGyQZUN+n81Vok9Qvv9CTvdO7xfbpxGSiUJR/TfUbhU80XxZ5EITq+addU0kulcfOKu2SWjOPg0Hb5pnbejd8YPuIMS4jdIkXzl5b79DwVnVD6UzzXYwofskpwvmhgFYlxpnplFochVRGlHrRPBvMhpJH7mRL46eP6K5v2rVyRRlKQNm3KGUFcdbSkvyFlwpMtCLN+exe5FkB9uTFbvJIJPY7mA0bGG4P5Pw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0KZBm3hCTnx2Qqvs8ymoMYdgWGrfzvQjmd4nHp0SC18=;
+ b=SOapuC+GnFX5pyQEEDobX6H7Vf+uzE8X/puN95qGWzQLS5dnHEHFZWw94jSe4KPOr0Io/Zzz5smiOCLWlerhO0EQ7cN2b3RwQDzLLg8wIBV1FPLn7lhYJY4cw8xUKHtXaSUZZq9JFxQROwMGIWyPl2lCmw/qsHzSfSmUGVwlAgb7dg7FBBVSbfOpGLqnAdl+aU1mzJlYx7gfgQ59jeFDJHPcFOvcuVyyLlW1yOkCZzyD35Lc2TbNA6qKM74ea392YvR/y3OdUZMVZheHoGrMYBRguP9S15wO5n/md2iiJEXwTnvzxy06gcY5ed72u9Wr3thM9J0lEkNaKJy1y8WTrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0KZBm3hCTnx2Qqvs8ymoMYdgWGrfzvQjmd4nHp0SC18=;
+ b=CV5LG6JA7H998ja80sV+/ZukZvsjRA0l65U0xT+cY1wSnk3kDaAWnIo2gG6LdniPmEaNF+pZ/v93VcdL1xgEWt0Rj4PshqFdoA3pG/AkVqvmyIbSmXL3Bf7TEnzHaZoE/wRArLj/VTs0FvGkcoKhtdme3pPMpiXNNGjJHvDIL3zZR5b5L0XG5FV3EB5EFPV1nviAVnKUBLkk1QcohVquRxdcMQwDlhzYgLBqaUZMqSBesf7Arv0HQToxva7c/ZacxR5hNzGBdr4Y+fcCpWgbkJgbVH0A8s/bLKEP/QuXpVzhcP4hkDtng5z6kDFEVmG5gOIm3xKNU0NtdduicubOlA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI2PR04MB10192.eurprd04.prod.outlook.com (2603:10a6:800:229::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Wed, 16 Jul
+ 2025 20:46:13 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
+ 20:46:13 +0000
+Date: Wed, 16 Jul 2025 16:46:07 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	richardcochran@gmail.com, claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+	fushi.peng@nxp.com, devicetree@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, kernel@pengutronix.de
+Subject: Re: [PATCH v2 net-next 09/14] net: enetc: save the parsed
+ information of PTP packet to skb->cb
+Message-ID: <aHgPjwiIWfhYnPyC@lizhi-Precision-Tower-5810>
+References: <20250716073111.367382-1-wei.fang@nxp.com>
+ <20250716073111.367382-10-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716073111.367382-10-wei.fang@nxp.com>
+X-ClientProxiedBy: AM0PR01CA0106.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:10e::47) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716050054.14130-1-namhyung@kernel.org> <20250716050054.14130-6-namhyung@kernel.org>
- <CAP-5=fVAYNy9pk9zyQRySrJ-1j12dC9ogiW94133Li_WQHd6RA@mail.gmail.com> <aHfg5YPlVD_6iMg6@google.com>
-In-Reply-To: <aHfg5YPlVD_6iMg6@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 16 Jul 2025 13:42:13 -0700
-X-Gm-Features: Ac12FXxkrnUg-BTp1aAqZYDN1yF2G4GBlam11bOWOTNTxDVzgvehODrb9gA8fV4
-Message-ID: <CAP-5=fV=E4_9RVvf1CW0GM0VY+ubr8sOvnXc+xhGW66PhMFCnA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] perf annotate: Add --code-with-type support for TUI
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI2PR04MB10192:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c23634e-6e94-4800-9a97-08ddc4a9cd70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|52116014|19092799006|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uzka39FxRJEzjb8FDHfipFfNQSnvl9xoUUsbeIrRcLEgZllO5QoU3n5B51uG?=
+ =?us-ascii?Q?cLMtAkFN+PZ5UmSXPYMww+KJcOhnjfAUBHirTpDDAJlZ+vdcnyyNisusXceP?=
+ =?us-ascii?Q?TY6TIAlYd5NXfoHyI8hsV19GGq+wEqF02KGMo1UzhD+abrmOlNoRZA0cq/63?=
+ =?us-ascii?Q?Xvw5ifkl15IVFhSFtZkJDNeIe6me+K1Ih1HWTPS1I6E28K7MjvrNW0RgJU3D?=
+ =?us-ascii?Q?2OFQDzNMjzcnPMshSWAcofI00Q1t64Z/mRwgsGEZgHwJHe6b3qzxSYtaMQxQ?=
+ =?us-ascii?Q?rTqZmso8cZFKSIAebqtRA+9OJRwfV2wZWRX2dTgBnzXNC91QUPGnFCurDwI3?=
+ =?us-ascii?Q?Rd0q4PjPKYGcR+UflIrN3xqhzsLEMS2cl0MN5Rqh0jSZMtfnwgch+kAJYyq5?=
+ =?us-ascii?Q?KGsfM5jFClPD2t5oFNeJZK+uc4/CizLp1gaxsxw7xQSuKO97VIhKJYEjqqPI?=
+ =?us-ascii?Q?77hKJSKOzJXTGm0b3L1YYTGZunrftPHD2whD+51Zo4OFfunETEqfBcAGFVeI?=
+ =?us-ascii?Q?txDIMQZeLhQrv3X1GpHlYQSVzjGgecanyb75pqWGAfMRvZENiqeCL/FNa8e2?=
+ =?us-ascii?Q?ct8lT6vdxV2q5ffX0yEha+tO11cYoAR650vUbAXOgnRgzTaMNkHpyz8W3K17?=
+ =?us-ascii?Q?CKVN6nWJ/20QgOW+HYcFNbagbEY7wLv8r2ykZc/JJbl5+EPr8nmFBwZuO2hy?=
+ =?us-ascii?Q?irYzgB9gk24B3MTz+pL7X4aUoQJr3cHNgxJi3Cv1J0CwKnndO6o81keJabDp?=
+ =?us-ascii?Q?NKpaEFvyAAK0399UPQxWrKGweqPd9W51BQJK2LYRuFp9sQsHIbiJ/J6Xf3j3?=
+ =?us-ascii?Q?LA6r3jyZ4sAKP5HwwaLXHUxAiYccbt61WtW+HE3mcZP8+TVmKgZUnQbsVTW/?=
+ =?us-ascii?Q?r1sHtyP3ayFU76xVewJX9KsVA9KjO8WD1IJ+1O/MNLFHg55zTsWYlBW0Gr2M?=
+ =?us-ascii?Q?WrBl6Y5SW49NR+/uWMobJa9rCGJRiQA7PoCXDhlEiCZ+F3JT40eXuMLcrrN2?=
+ =?us-ascii?Q?S6y5x5z8a032Q20W/B1v1UsoRs/3JMZtIWMNYj4pE0ifr3fyvNFNd8B23n5l?=
+ =?us-ascii?Q?J4FyIKoWe4bskgHxFcHKVRy2HLi0S6lfmsuveDUIAx5MFuxMY7mJOF30x3mQ?=
+ =?us-ascii?Q?NDgU8poRgni+rXbVtHhuVei3wow5WKSHh5aSDcqSCXR30i4rIr84PUWfpnvs?=
+ =?us-ascii?Q?Pvvy4TAhMEAchTocn9iKo2FczJYWhMzXrGP2frCAMvoi4x+nLob4R9leKTv6?=
+ =?us-ascii?Q?3Fb7x/Qt5iKyCt1NXnjrH5YunmCB1TGMkhWxPJ+PY6DSgvJsJz+TUkShfHGQ?=
+ =?us-ascii?Q?UGZn+JkPOLHSkRkWR5IFAGKzVheVsuBFyJAAZbJGDLWYUOmEa9iRciSf90dR?=
+ =?us-ascii?Q?rz+GDYg5Ete08n5+9SiBFfFznAcnMFn4w0v8HyfvoMXdmQYeHaFTntPlV9Mq?=
+ =?us-ascii?Q?7IksYZgjygiDqBuMpwBk8CBrtoZEwz+D4T1wcePGPYDHqqRoL14Z1w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(52116014)(19092799006)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Nzm6jcGLJxyvwW+cOVPwQzC/5fawx08qk+0h1ge5MJhFIYIfOeovFEFPbXk2?=
+ =?us-ascii?Q?Q+8IbSdlxWOxwK+CeLnpNHDvTSqAmwY6M5Al6LrVgPejuVK24Bxc5e8AI4aK?=
+ =?us-ascii?Q?WofsEL6U5yhB6zV3/Z9dmtok2C7EPrw9S1UAPtJtfmH6IXgMDu/z+TFIx7Di?=
+ =?us-ascii?Q?8gLq6UVE11WL2E9Myd7+vkuO9lKcFS6oCCP15fCLLt4s3CzMj1fhWediCWz6?=
+ =?us-ascii?Q?I/gzgs4h1aNfwczXYt2h+LASqEOQIwIUWGfstnzB1BdwPKC6bbfTEftdLGrz?=
+ =?us-ascii?Q?I1AJOq3ZrCCPMDBdCZpm3qviYLXvi72P9p4J5vJMddifQpK8aVxQcNS/Fhy3?=
+ =?us-ascii?Q?IOvrYx5YD8CMh+9OEgbBh7m00U2/W4sq+FBFnEgrnnGNOZwae44NSUyFx9f3?=
+ =?us-ascii?Q?H/soJ8ZynZxVabAw7UKfCaVP84URk3z42yhuBtg5eX+1BL/eipt5a37/KQ6I?=
+ =?us-ascii?Q?hYAp8oMo/r3irN4YLGtdFBth00SijGNBbU/WH4l3GTSKNme45GZj1pSVE8ZK?=
+ =?us-ascii?Q?HMLIs1SYloHYZIRamNJjGSd5v7y18tgNW+X88DTKhfO6jKiwMFf/22U8DALR?=
+ =?us-ascii?Q?Wz/aGXTmMjbyg+PTgHZ4L8Dn04TaMEwqhnfDpDxJvGR2MHORkFqBBvMSHrQt?=
+ =?us-ascii?Q?JxR0KwJumcVbJq3nurIPynTOc6gB0VJBbhl6bVxcusGRGx6A5ukmW+GDrmcr?=
+ =?us-ascii?Q?bLAUGVM+6jKgsZPfZ3nTlsPMcO1odvmoq5KewYXvXJCV+h7hFRPuKd2t2/To?=
+ =?us-ascii?Q?ginEZe1g5HGf4f7iz6n9lxFXxnOoQwxVVEuaCAuJaBBhbYefCjUj3DzlOV71?=
+ =?us-ascii?Q?v3Pbq5YtohA7yiHMtjKmzxrtk6/8gIE2kaMVlSZYYbp0L+cjCYASQWERIYb8?=
+ =?us-ascii?Q?HSb7i0tbajTHPjIeDMRA2IrDz7EuUteQNcQW0H8BoZgsWABQN2svNr7uEOCo?=
+ =?us-ascii?Q?Gd6hGFZ9mkufoIeH74CCFTMUgBjlwzM1P0BT8gwaNwSHmey0cTVdku7Mgx8Z?=
+ =?us-ascii?Q?450w68NlDGc43mD0qgf7nwzhDOwwK4gKHNrMAAtrp8hUQHrI7tsAOG89UC12?=
+ =?us-ascii?Q?k+sDav9Vx1QRaTBqvMlcS1npouven1quQgAXFC7ET80+KK1yN1cO+e4n/AXs?=
+ =?us-ascii?Q?rE5oHbWy7h0VzaVaGP9ghsDh4Qc8nJFFKudSkLVhGM0yUnwxkGiOQGmdVCJ2?=
+ =?us-ascii?Q?112BM+0SzvMQaUZUUl22iMrsQ+QWXof0rWhPSKDseuoobGikbOOzey66hWla?=
+ =?us-ascii?Q?X8p4l1hVK5+WdAi09KomLONLNuTUJvTWAqOYY8FTF4odgj8vGTMXU2q0T9Dk?=
+ =?us-ascii?Q?cTE0lnr+NycQ4BamlZy1ExdHP0YPQOJYTRh67RvETU1nJTVKqnO2CswOY3z+?=
+ =?us-ascii?Q?dgp+ZwIgG1itXKOtUamdsHtLlrekjYAsQm03Pzw80jWPT3IjWmUDBoJeOrQH?=
+ =?us-ascii?Q?WSqP7sMEvinT9meBw3hZkCRKlwBM0YRrHfey1KSY0pJrfmX3TOQ4mD7gEj4G?=
+ =?us-ascii?Q?FGN/ebwGw7zXy8UHr2Fw8lZxCPwQDxG+uo6/ZGs14zhqkvCYVXfgfHzvVwbv?=
+ =?us-ascii?Q?czGlEcq1VDxjiPG5N1P2r2nnLhaYmHBYyigCTqQN?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c23634e-6e94-4800-9a97-08ddc4a9cd70
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 20:46:13.4913
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LuLE4Jz+D11rg8DIlVYrkZLGZW7Uv7esif2p6/mU4cV0VSVBk/9LlaIFgojpV3kfRFPFd8f2TEgJ2FvS36At2w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10192
 
-On Wed, Jul 16, 2025 at 10:27=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
+On Wed, Jul 16, 2025 at 03:31:06PM +0800, Wei Fang wrote:
+> Currently, the Tx PTP packets are parsed twice in the enetc driver, once
+> in enetc_xmit() and once in enetc_map_tx_buffs(). The latter is duplicate
+> and is unnecessary, since the parsed information can be saved to skb->cb
+> so that enetc_map_tx_buffs() can get the previously parsed data from
+> skb->cb. Therefore, we add struct enetc_skb_cb as the format of the data
+> in the skb->cb buffer to save the parsed information of PTP packet.
+
+Add struct enetc_skb_cb as the format of the data in the skb-cb buffer to
+save the parsed information of PTP packet.
+
+Use saved information in enetc_map_tx_buffs() to avoid parse data again.
+
 >
-> On Wed, Jul 16, 2025 at 08:00:37AM -0700, Ian Rogers wrote:
-> > On Tue, Jul 15, 2025 at 10:01=E2=80=AFPM Namhyung Kim <namhyung@kernel.=
-org> wrote:
-> > >
-> > > Until now, the --code-with-type option is available only on stdio.
-> > > But it was an artifical limitation because of an implemention issue.
-> > >
-> > > Implement the same logic in annotation_line__write() for stdio2/TUI.
-> > > Make disasm_line__write() return the number of printed characters so
-> > > that it can skip unnecessary operations when the screen is full.
-> > >
-> > > Remove the limitation and update the man page.
-> > >
-> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > > ---
-> > >  tools/perf/Documentation/perf-annotate.txt |  1 -
-> > >  tools/perf/builtin-annotate.c              |  5 --
-> > >  tools/perf/ui/browsers/annotate.c          |  6 +++
-> > >  tools/perf/util/annotate.c                 | 61 +++++++++++++++++++-=
---
-> > >  4 files changed, 61 insertions(+), 12 deletions(-)
-> > >
-> > > diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/=
-Documentation/perf-annotate.txt
-> > > index 46090c5b42b4762f..547f1a2680185e3c 100644
-> > > --- a/tools/perf/Documentation/perf-annotate.txt
-> > > +++ b/tools/perf/Documentation/perf-annotate.txt
-> > > @@ -170,7 +170,6 @@ include::itrace.txt[]
-> > >
-> > >  --code-with-type::
-> > >         Show data type info in code annotation (for memory instructio=
-ns only).
-> > > -       Currently it only works with --stdio option.
-> > >
-> > >
-> > >  SEE ALSO
-> > > diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annot=
-ate.c
-> > > index 9833c2c82a2fee46..6debd725392db4a4 100644
-> > > --- a/tools/perf/builtin-annotate.c
-> > > +++ b/tools/perf/builtin-annotate.c
-> > > @@ -917,11 +917,6 @@ int cmd_annotate(int argc, const char **argv)
-> > >                 symbol_conf.annotate_data_sample =3D true;
-> > >         } else if (annotate_opts.code_with_type) {
-> > >                 symbol_conf.annotate_data_member =3D true;
-> > > -
-> > > -               if (!annotate.use_stdio) {
-> > > -                       pr_err("--code-with-type only works with --st=
-dio.\n");
-> > > -                       goto out_delete;
-> > > -               }
-> > >         }
-> > >
-> > >         setup_browser(true);
-> > > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browse=
-rs/annotate.c
-> > > index 23bea5b165774ae7..cdee1969f3131a7c 100644
-> > > --- a/tools/perf/ui/browsers/annotate.c
-> > > +++ b/tools/perf/ui/browsers/annotate.c
-> > > @@ -4,6 +4,7 @@
-> > >  #include "../ui.h"
-> > >  #include "../../util/annotate.h"
-> > >  #include "../../util/debug.h"
-> > > +#include "../../util/debuginfo.h"
-> > >  #include "../../util/dso.h"
-> > >  #include "../../util/hist.h"
-> > >  #include "../../util/sort.h"
-> > > @@ -1101,6 +1102,9 @@ int __hist_entry__tui_annotate(struct hist_entr=
-y *he, struct map_symbol *ms,
-> > >
-> > >         ui_helpline__push("Press ESC to exit");
-> > >
-> > > +       if (annotate_opts.code_with_type)
-> > > +               browser.dbg =3D debuginfo__new(dso__long_name(dso));
-> > > +
-> > >         browser.b.width =3D notes->src->widths.max_line_len;
-> > >         browser.b.nr_entries =3D notes->src->nr_entries;
-> > >         browser.b.entries =3D &notes->src->source;
-> > > @@ -1111,6 +1115,8 @@ int __hist_entry__tui_annotate(struct hist_entr=
-y *he, struct map_symbol *ms,
-> > >
-> > >         ret =3D annotate_browser__run(&browser, evsel, hbt);
-> > >
-> > > +       if (annotate_opts.code_with_type)
-> > > +               debuginfo__delete(browser.dbg);
-> > >         if (not_annotated && !notes->src->tried_source)
-> > >                 annotated_source__purge(notes->src);
-> > >
-> > > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> > > index d69e406c1bc289cd..06ddc7a9f58722a4 100644
-> > > --- a/tools/perf/util/annotate.c
-> > > +++ b/tools/perf/util/annotate.c
-> > > @@ -1362,6 +1362,11 @@ static int symbol__annotate_fprintf2(struct sy=
-mbol *sym, FILE *fp,
-> > >         };
-> > >         struct annotation_line *al;
-> > >
-> > > +       if (annotate_opts.code_with_type) {
-> > > +               evsel__get_arch(apd->evsel, &apd->arch);
-> > > +               apd->dbg =3D debuginfo__new(dso__long_name(map__dso(a=
-pd->he->ms.map)));
-> >
-> > This API looks unfortunate. A dso may have a long name (it'd be easier
-> > to understand if this were called path rather than long name) or a
-> > build ID. The API isn't the fault of this change, but I thought I'd
-> > mention as we move toward greater use of build IDs.
+> In addition, the variables offset1 and offset2 in enetc_map_tx_buffs()
+> are renamed to corr_off and tstamp_off to make them easier to understand.
+
+Also, rename variables offset1 and offset2 in enetc_map_tx_buffs() to
+corr_off and tstamp_off for better readability.
+
 >
-> Are you talking about build-id in MMAP2?  I think it's build-id vs. (dev
-> major/minor + inode) and the long name should be available always.
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+>
+> ---
+> v2 changes:
+> 1. Add description of offset1 and offset2 being renamed in the commit
+> message.
+> ---
+>  drivers/net/ethernet/freescale/enetc/enetc.c | 65 ++++++++++----------
+>  drivers/net/ethernet/freescale/enetc/enetc.h |  9 +++
+>  2 files changed, 43 insertions(+), 31 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+> index e4287725832e..c1373163a096 100644
+> --- a/drivers/net/ethernet/freescale/enetc/enetc.c
+> +++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+> @@ -225,13 +225,12 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
+>  {
+>  	bool do_vlan, do_onestep_tstamp = false, do_twostep_tstamp = false;
+>  	struct enetc_ndev_priv *priv = netdev_priv(tx_ring->ndev);
+> +	struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
+>  	struct enetc_hw *hw = &priv->si->hw;
+>  	struct enetc_tx_swbd *tx_swbd;
+>  	int len = skb_headlen(skb);
+>  	union enetc_tx_bd temp_bd;
+> -	u8 msgtype, twostep, udp;
+>  	union enetc_tx_bd *txbd;
+> -	u16 offset1, offset2;
+>  	int i, count = 0;
+>  	skb_frag_t *frag;
+>  	unsigned int f;
+> @@ -280,16 +279,10 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
+>  	count++;
+>
+>  	do_vlan = skb_vlan_tag_present(skb);
+> -	if (skb->cb[0] & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
+> -		if (enetc_ptp_parse(skb, &udp, &msgtype, &twostep, &offset1,
+> -				    &offset2) ||
+> -		    msgtype != PTP_MSGTYPE_SYNC || twostep)
+> -			WARN_ONCE(1, "Bad packet for one-step timestamping\n");
+> -		else
+> -			do_onestep_tstamp = true;
+> -	} else if (skb->cb[0] & ENETC_F_TX_TSTAMP) {
+> +	if (enetc_cb->flag & ENETC_F_TX_ONESTEP_SYNC_TSTAMP)
+> +		do_onestep_tstamp = true;
+> +	else if (enetc_cb->flag & ENETC_F_TX_TSTAMP)
+>  		do_twostep_tstamp = true;
+> -	}
+>
+>  	tx_swbd->do_twostep_tstamp = do_twostep_tstamp;
+>  	tx_swbd->qbv_en = !!(priv->active_offloads & ENETC_F_QBV);
+> @@ -333,6 +326,8 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
+>  		}
+>
+>  		if (do_onestep_tstamp) {
+> +			u16 tstamp_off = enetc_cb->origin_tstamp_off;
+> +			u16 corr_off = enetc_cb->correction_off;
+>  			__be32 new_sec_l, new_nsec;
+>  			u32 lo, hi, nsec, val;
+>  			__be16 new_sec_h;
+> @@ -362,32 +357,32 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
+>  			new_sec_h = htons((sec >> 32) & 0xffff);
+>  			new_sec_l = htonl(sec & 0xffffffff);
+>  			new_nsec = htonl(nsec);
+> -			if (udp) {
+> +			if (enetc_cb->udp) {
+>  				struct udphdr *uh = udp_hdr(skb);
+>  				__be32 old_sec_l, old_nsec;
+>  				__be16 old_sec_h;
+>
+> -				old_sec_h = *(__be16 *)(data + offset2);
+> +				old_sec_h = *(__be16 *)(data + tstamp_off);
+>  				inet_proto_csum_replace2(&uh->check, skb, old_sec_h,
+>  							 new_sec_h, false);
+>
+> -				old_sec_l = *(__be32 *)(data + offset2 + 2);
+> +				old_sec_l = *(__be32 *)(data + tstamp_off + 2);
+>  				inet_proto_csum_replace4(&uh->check, skb, old_sec_l,
+>  							 new_sec_l, false);
+>
+> -				old_nsec = *(__be32 *)(data + offset2 + 6);
+> +				old_nsec = *(__be32 *)(data + tstamp_off + 6);
+>  				inet_proto_csum_replace4(&uh->check, skb, old_nsec,
+>  							 new_nsec, false);
+>  			}
+>
+> -			*(__be16 *)(data + offset2) = new_sec_h;
+> -			*(__be32 *)(data + offset2 + 2) = new_sec_l;
+> -			*(__be32 *)(data + offset2 + 6) = new_nsec;
+> +			*(__be16 *)(data + tstamp_off) = new_sec_h;
+> ++			*(__be32 *)(data + tstamp_off + 2) = new_sec_l;
+> ++			*(__be32 *)(data + tstamp_off + 6) = new_nsec;
 
-I'm thinking of work I'm doing with build IDs like (unmerged):
-https://lore.kernel.org/lkml/20250628045017.1361563-1-irogers@google.com/
-Even with mmap2 events the filename shouldn't be necessary as the
-build ID should be preferred - if you profile remotely there may be a
-file name/path collision on a local machine, but it should be unlikely
-for a build ID collision. In those patches the dso_id is changed to
-instead of considering inode numbers using build IDs when possible. It
-was already the case that the name of a dso could be changed, which
-affects sorting. In general I think we should move away from file
-paths, inodes and the like as the build IDs will avoid races, work
-across systems, etc. I think in this case we could add:
-```
-apd->dbg =3D dso__debuginfo(map__dso(apd->he->ms.map))))
-```
-or possibly just change `apd->dbg` to be the dso and grab the
-debuginfo from the dso when needed. For now the dso__debuginfo would
-be something like:
-```
-struct debuginfo *dso__debuginfo(struct dso *dso)
-{
-     debuginfo__delete(dso->debuginfo);
-     dso->debuginfo =3D debuginfo__new(dso__long_name(dso));
-     return dso->debuginfo;
-}
-```
-but in the future we can find the debuginfo off of the build ID and paths, =
-etc.
+strange why there are two ++ here.
 
-Thanks,
-Ian
-> Thanks,
-> Namhyung
+>
+>  			/* Configure single-step register */
+>  			val = ENETC_PM0_SINGLE_STEP_EN;
+> -			val |= ENETC_SET_SINGLE_STEP_OFFSET(offset1);
+> -			if (udp)
+> +			val |= ENETC_SET_SINGLE_STEP_OFFSET(corr_off);
+> +			if (enetc_cb->udp)
+>  				val |= ENETC_PM0_SINGLE_STEP_CH;
+>
+>  			enetc_port_mac_wr(priv->si, ENETC_PM0_SINGLE_STEP,
+> @@ -938,12 +933,13 @@ static int enetc_map_tx_tso_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb
+>  static netdev_tx_t enetc_start_xmit(struct sk_buff *skb,
+>  				    struct net_device *ndev)
+>  {
+> +	struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
+>  	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+>  	struct enetc_bdr *tx_ring;
+>  	int count;
+>
+>  	/* Queue one-step Sync packet if already locked */
+> -	if (skb->cb[0] & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
+> +	if (enetc_cb->flag & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
+>  		if (test_and_set_bit_lock(ENETC_TX_ONESTEP_TSTAMP_IN_PROGRESS,
+>  					  &priv->flags)) {
+>  			skb_queue_tail(&priv->tx_skbs, skb);
+> @@ -1005,24 +1001,29 @@ static netdev_tx_t enetc_start_xmit(struct sk_buff *skb,
+>
+>  netdev_tx_t enetc_xmit(struct sk_buff *skb, struct net_device *ndev)
+>  {
+> +	struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
+>  	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+>  	u8 udp, msgtype, twostep;
+>  	u16 offset1, offset2;
+>
+> -	/* Mark tx timestamp type on skb->cb[0] if requires */
+> +	/* Mark tx timestamp type on enetc_cb->flag if requires */
+>  	if ((skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
+> -	    (priv->active_offloads & ENETC_F_TX_TSTAMP_MASK)) {
+> -		skb->cb[0] = priv->active_offloads & ENETC_F_TX_TSTAMP_MASK;
+> -	} else {
+> -		skb->cb[0] = 0;
+> -	}
+> +	    (priv->active_offloads & ENETC_F_TX_TSTAMP_MASK))
+> +		enetc_cb->flag = priv->active_offloads & ENETC_F_TX_TSTAMP_MASK;
+> +	else
+> +		enetc_cb->flag = 0;
+>
+>  	/* Fall back to two-step timestamp if not one-step Sync packet */
+> -	if (skb->cb[0] & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
+> +	if (enetc_cb->flag & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
+>  		if (enetc_ptp_parse(skb, &udp, &msgtype, &twostep,
+>  				    &offset1, &offset2) ||
+> -		    msgtype != PTP_MSGTYPE_SYNC || twostep != 0)
+> -			skb->cb[0] = ENETC_F_TX_TSTAMP;
+> +		    msgtype != PTP_MSGTYPE_SYNC || twostep != 0) {
+> +			enetc_cb->flag = ENETC_F_TX_TSTAMP;
+> +		} else {
+> +			enetc_cb->udp = !!udp;
+> +			enetc_cb->correction_off = offset1;
+> +			enetc_cb->origin_tstamp_off = offset2;
+> +		}
+>  	}
+>
+>  	return enetc_start_xmit(skb, ndev);
+> @@ -1214,7 +1215,9 @@ static bool enetc_clean_tx_ring(struct enetc_bdr *tx_ring, int napi_budget)
+>  		if (xdp_frame) {
+>  			xdp_return_frame(xdp_frame);
+>  		} else if (skb) {
+> -			if (unlikely(skb->cb[0] & ENETC_F_TX_ONESTEP_SYNC_TSTAMP)) {
+> +			struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
+> +
+> +			if (unlikely(enetc_cb->flag & ENETC_F_TX_ONESTEP_SYNC_TSTAMP)) {
+>  				/* Start work to release lock for next one-step
+>  				 * timestamping packet. And send one skb in
+>  				 * tx_skbs queue if has.
+> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
+> index 62e8ee4d2f04..ce3fed95091b 100644
+> --- a/drivers/net/ethernet/freescale/enetc/enetc.h
+> +++ b/drivers/net/ethernet/freescale/enetc/enetc.h
+> @@ -54,6 +54,15 @@ struct enetc_tx_swbd {
+>  	u8 qbv_en:1;
+>  };
+>
+> +struct enetc_skb_cb {
+> +	u8 flag;
+> +	bool udp;
+> +	u16 correction_off;
+> +	u16 origin_tstamp_off;
+> +};
+> +
+> +#define ENETC_SKB_CB(skb) ((struct enetc_skb_cb *)((skb)->cb))
+> +
+>  struct enetc_lso_t {
+>  	bool	ipv6;
+>  	bool	tcp;
+> --
+> 2.34.1
 >
 
