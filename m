@@ -1,301 +1,136 @@
-Return-Path: <linux-kernel+bounces-732981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78026B06E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:02:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01190B06E63
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38EB71A623AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:02:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8F13B84F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB4728B3EF;
-	Wed, 16 Jul 2025 07:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7C1289350;
+	Wed, 16 Jul 2025 07:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LwWbsqX2"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2050.outbound.protection.outlook.com [40.107.96.50])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wDCijffF"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84CF288C25;
-	Wed, 16 Jul 2025 07:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752649285; cv=fail; b=Fmw9zAfWpnBbelD8ghvcCOYuY4Ggd9+mdq6Kadl/L5HKnxShjbRMgAdP4mzLOABo3RcllNdNeAX71xNxePmdck1PEoGhlPk5RelUSjObQJQ+UkN4uZfWZ9GzwUryyJuIrtTcNJUuZ8QZB7DSy3yIqFh/SaaVLQ5htkiS08nQdrs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752649285; c=relaxed/simple;
-	bh=+TdH+atfzRZokrCFeBjN8zDkALvPHDLqU26j4TES1Fc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z0qeEv6r0+Z9SvGsMjjTA7OqWIGhUUcS3D1kvB3VLISJ/1lzou9kiyY3dzUhLWxAtJ8iBKEWHNerzgr64Zljh8VppVVCEwXe7WpJz4Ey4VSPCWdo08QUseppS0Lv3DTMj6f5Lz8O/EHPbAc65goZOcebx1Kjr6VVUlgYU426Jf0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LwWbsqX2; arc=fail smtp.client-ip=40.107.96.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GVyeLPZXwMkFCM3DC3E5WjCeC6Xix8Z8GgCWcnCo/43g3kFtWVBLsNk91khzEXBZVf3DU+7+8Ora2+HCKsLpT9PFi1+MBGiphnUmUbzoNODIXqsY70lWKJ4ki9ATOc5SzS8BwBMjwZV6aLOou3MnwDze9eHP/kE8C4He38ul/mJUxNsuDQFQAdzoqGE9BcrGb8zZif19up/ZSAiuQuuLruWtP1M2L+XkgBhaP4pUySZKmuC37llLIehp3OIyWfXO4XfGE0ZqXEs1022V7VQocmyqwPT2FMDUCVIVmIGGfD+RPgflt0OoCqlOJpL4VSIStpBETe+Zo6Yp8QRbrGL0hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tW+qyEUccbzWwuEo0OyaRggn5cAixNth7oUOGYi1NBg=;
- b=cvxvgUMWfvfDE9yqfkDHo6eOEvVclYt5qcFv1EUDPTPm7APFlPjNyyv4+Dm5VAPqDmFuOMH92ZORpRt1wKmlq7RpFz4EJokIIKZjG6PDOf7en7JTfeYgau9QZy9RZGMChX8Q4SHG+mlQDriC/1hkKWDSxNgYUjfyHDGzJaMdb2PVtnpUE6bE24h/Nsz+Ztqmk6H9kuuN76QwyPkGowL7+Ea8c4M4CoIqyHWHzFpvrecs+DtcjrGctKa2fTzHBAG4KNdYeWFX9QC3KmEv7Wn09TXlhrV8GRx7zHnRbqici6I7oVVMD88FSXiEFHnCAqEw2gRbWBrAkPvQBp6a7D+GFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tW+qyEUccbzWwuEo0OyaRggn5cAixNth7oUOGYi1NBg=;
- b=LwWbsqX2nfX31FVbRi/pbW1Ih3TQL4kA4VaN4Jkl2MvX0w4Zv223XGhY3t5ZvR4mmKo8vRKQdrC9wmlTgVaiK5uXa8dsh2Q86U2JsUN96MTaxl7rUwE+gudwnL7SuOZNaoXcHe9I/bD+QVT2ukSyhj8UEhrytU3XFqVtn8fAZg9DOp9ymBuJ08jugCavwbqd50Dw5BVaKFXLMJRQbKimkhmOMGRABj44H0j1Wg98lw1SbpAhK5iLHvB2f5DzGw0L9KlBuE8/666toKd1IoMsGF+Hl+Fs2U/N3/PiacaKhBk9TnIYDA7oQ5eUjXBZ/YQ6pRkH+TuTBMQiZJ6p7G+LDA==
-Received: from SA9PR13CA0038.namprd13.prod.outlook.com (2603:10b6:806:22::13)
- by MN0PR12MB5906.namprd12.prod.outlook.com (2603:10b6:208:37a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Wed, 16 Jul
- 2025 07:01:18 +0000
-Received: from SA2PEPF00001506.namprd04.prod.outlook.com
- (2603:10b6:806:22:cafe::be) by SA9PR13CA0038.outlook.office365.com
- (2603:10b6:806:22::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Wed,
- 16 Jul 2025 07:01:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SA2PEPF00001506.mail.protection.outlook.com (10.167.242.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.22 via Frontend Transport; Wed, 16 Jul 2025 07:01:17 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 16 Jul
- 2025 00:01:05 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 16 Jul 2025 00:01:04 -0700
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Wed, 16 Jul 2025 00:01:01 -0700
-From: Tariq Toukan <tariqt@nvidia.com>
-To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dragos Tatulea <dtatulea@nvidia.com>, "Mina
- Almasry" <almasrymina@google.com>
-Subject: [PATCH net-next] net/mlx5e: TX, Fix dma unmapping for devmem tx
-Date: Wed, 16 Jul 2025 10:00:42 +0300
-Message-ID: <1752649242-147678-1-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3453853BE;
+	Wed, 16 Jul 2025 07:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752649258; cv=none; b=kXHXzAHVYAIBkLkm7bPvcfBvKIOV4ogRawv4whwc0XwlxhYgtGNfSttVP3wyPgjX4KLkzaYsXFmeII6G/kqkTmoBxvgw05igk2//OMlp+EAw2ZBDKYteG/rUksL2AITQzpx/rm8DwmR2NVke/HoAYgAdIhnRM5hyuXiXbtmbZV0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752649258; c=relaxed/simple;
+	bh=TODVAf6bMWKxws9hy9swJj0Vc+U1CCg0ajAqHBjPBSk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SK3ERLKZLaEIaKyhokiapTSBvDJcaaseZIUkifJDwaj9OlSozJZhJ7BL+iZsoz/Pk6xiFYJw2yodNOr6dlJUyQKqTM1GS8mLi3Ly2xGtUIxAPAzGvD9ectF8r2nn0IkzR7ppxpJbVNz97eDLmGVbn0UUe1pFmYkdPTs1etT7SPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wDCijffF; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752649251; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=bVLa1Kcib58l4NG5Ofy5IZrRqpUeoZqxvRab1vYbzG4=;
+	b=wDCijffFVEaAUFdB/nXpG17I7Yb6ezaDZL46jX7OmsNo3p5qgdi3ME1jcUuJmp5QLWFG+Dvv2DQkMiKfosy3491ljpDQ9TP5rwFD2DJZphzKDlytjBYX4N1jrKdleaJt0vu5sL6Ik+9wNLQvj/e8i45v4pFlNJllVerFolilwgQ=
+Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wj3A094_1752649250 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Jul 2025 15:00:50 +0800
+Message-ID: <821acc51-1429-4625-bae5-daa67bddc7bc@linux.alibaba.com>
+Date: Wed, 16 Jul 2025 15:00:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001506:EE_|MN0PR12MB5906:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42bed958-00a1-411b-a9b3-08ddc4368fe5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013|7416014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?x49Gl1r2owF2OsMeWI+PhmU+4JLn1qQwU6WGYEl0b0zO8Kf4CRXZs753a7wD?=
- =?us-ascii?Q?o7SxorZurP+vmXpqpSdMaeYw9tt0Tp3R/Nnjgt9G5QXvH07CD2vTm6kePPPl?=
- =?us-ascii?Q?ykEgoASINOlkhWRMyvU0XASr9waqOeodS2ndacuOTlAEvWOXqtlOcibwwxJl?=
- =?us-ascii?Q?SzYl7r45wljT3WR4Fn4cjBCFm62j3Fw54EtwtRe21GE1BzwHnD4xbGYDdaxx?=
- =?us-ascii?Q?hnc2EqSBE5gP9vl/f7TLEu3y4baCraMYrnlloLxyNhDQLfNklGBzQJ0eA2Bn?=
- =?us-ascii?Q?DRzC7iqL15kYQXyI4U/zYps0mtVdQkuxDtpvPxYgo6ywulsqB4KQqywsVZ4P?=
- =?us-ascii?Q?wG+ESDiBch7vNhNLd38CLeruYi3jRND24RdYFUY76TX54aupByQysFFCkMZ2?=
- =?us-ascii?Q?5/QCdmCQFAUpXB5SUvpsysDPCBPz9SbqpJhVkmNL9sJnuzjpbP0e59zuXvBp?=
- =?us-ascii?Q?FDEqdoat7lOvt07mioDc0+pNpupmHlJDQCJ6mGDj/m1CSRp+4kvJPTYXVfo1?=
- =?us-ascii?Q?+KQayhUEisrMtwBGByPxnMZtDcTW5RkD/OQtY+W8jSkzwiBc6Je9y7RiDHqp?=
- =?us-ascii?Q?peUrg9QVpqP2v4Wb3OflW0Z8TrIMu5iqp8mUTLA/qh6gTFwYixMhFbmy558a?=
- =?us-ascii?Q?HvQjlVn+SfG9ruHp1LOGKDyYL/wR6L80xPuUsgwvrwNaVrjLZrXsWQUzMAVb?=
- =?us-ascii?Q?VbQwTyZ1RMMuJrGyGJ0HPyeqfL0kx7ys6iJuWC6v96fXcPyL3pdBL3OA9Hbp?=
- =?us-ascii?Q?aeLr/gYw5uvx9fbDFcE+nTobfGNySzNpJMX5wG1Yao0saR9navhxTEFLnEgW?=
- =?us-ascii?Q?MaMeQ6b/v33wZUnbsf110+nJx/5wIsboLN39iLA0NnWDGlav/qw1KA8OGQDi?=
- =?us-ascii?Q?sx38JikTEul7FhJfqM1pUFHVZNu/LnAjpcJ4+Em1B/4QtKkdskxIYITI43M8?=
- =?us-ascii?Q?TeiOITdXoE70r7LBsDFrg6ILq3aZxYPNpfPv5rgLQLHEF9bjP331PuDWmZYd?=
- =?us-ascii?Q?j8f9WFxx42j21X9IMf1BZUosJJHm46c9wOvqex6FOUe22wB6jeaf9yz3Q575?=
- =?us-ascii?Q?dxVjHUoi4n2mKXXh6ZbWhl9uczJkJZHVj2qtXIrjuYQFDtE2kVYKYkpqYgTJ?=
- =?us-ascii?Q?X68FGm+saXG2/8DoUQWfbBNAg1Ko8TFvZFHzg0IzdZPbjqVHB6vNrXR01M/5?=
- =?us-ascii?Q?fqFeXglcnoO/mvl6gECIZqtk22lzBWd1ZaXyjdq7ZE8nf18xtWUQTav1Rnvd?=
- =?us-ascii?Q?NUlM20WyWEIZ0Ucfv0nXkmQmc3KkBjWUwbEIJcg3Eql6Ett65DvzN9ZB+ZIR?=
- =?us-ascii?Q?Wq430GN7uyNmH24raNg+vJgO613oJFJNqjzVvtkYLMzw0MrTbNYUPlWtTBmW?=
- =?us-ascii?Q?8v4GIsbD+imlNvDqlIJ65X6tS1naZPUr4OF/qrf9gjlNm4HiJsBPNJZtjtSx?=
- =?us-ascii?Q?Aqu7lVDkOjOUwvd91XXME30ktCylNjCql6Hb75xLU112HczPfPUhq2cjMOBm?=
- =?us-ascii?Q?cBGNHnRBOxdHdn6Y12zfVJ8370LldGMr3ACdONstyPafK6v1YX4duT93TA?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(7416014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 07:01:17.6555
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42bed958-00a1-411b-a9b3-08ddc4368fe5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001506.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5906
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] selftests/pidfd: align stack to fix SP alignment
+ exception
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: Shuah Khan <skhan@linuxfoundation.org>, brauner@kernel.org,
+ shuah@kernel.org, will@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com,
+ catalin.marinas@arm.com, mark.rutland@arm.com
+References: <20250616050648.58716-1-xueshuai@linux.alibaba.com>
+ <ee095fdd-b3c1-4c41-9b06-a8e3695c1863@linuxfoundation.org>
+ <0a8d5fdb-28b9-41f5-a601-cf36641bddbf@linux.alibaba.com>
+In-Reply-To: <0a8d5fdb-28b9-41f5-a601-cf36641bddbf@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Dragos Tatulea <dtatulea@nvidia.com>
 
-net_iovs should have the dma address set to 0 so that
-netmem_dma_unmap_page_attrs() correctly skips the unmap. This was
-not done in mlx5 when support for devmem tx was added and resulted
-in the splat below when the platform iommu was enabled.
 
-This patch addresses the issue by using netmem_dma_unmap_addr_set()
-which handles the net_iov case when setting the dma address. A small
-refactoring of mlx5e_dma_push() was required to be able to use this API.
-The function was split in two versions and each version called
-accordingly. Note that netmem_dma_unmap_addr_set() introduces an
-additional if case.
+在 2025/6/19 10:26, Shuai Xue 写道:
+> 
+> 
+> 在 2025/6/19 05:36, Shuah Khan 写道:
+>> On 6/15/25 23:06, Shuai Xue wrote:
+>>> The pidfd_test fails on the ARM64 platform with the following error:
+>>>
+>>>      Bail out! pidfd_poll check for premature notification on child thread exec test: Failed
+>>>
+>>> When exception-trace is enabled, the kernel logs the details:
+>>>
+>>>      #echo 1 > /proc/sys/debug/exception-trace
+>>>      #dmesg | tail -n 20
+>>>      [48628.713023] pidfd_test[1082142]: unhandled exception: SP Alignment, ESR 0x000000009a000000, SP/PC alignment exception in pidfd_test[400000+4000]
+>>>      [48628.713049] CPU: 21 PID: 1082142 Comm: pidfd_test Kdump: loaded Tainted: G        W   E      6.6.71-3_rc1.al8.aarch64 #1
+>>>      [48628.713051] Hardware name: AlibabaCloud AliServer-Xuanwu2.0AM-1UC1P-5B/AS1111MG1, BIOS 1.2.M1.AL.P.157.00 07/29/2023
+>>>      [48628.713053] pstate: 60001800 (nZCv daif -PAN -UAO -TCO -DIT +SSBS BTYPE=-c)
+>>>      [48628.713055] pc : 0000000000402100
+>>>      [48628.713056] lr : 0000ffff98288f9c
+>>>      [48628.713056] sp : 0000ffffde49daa8
+>>>      [48628.713057] x29: 0000000000000000 x28: 0000000000000000 x27: 0000000000000000
+>>>      [48628.713060] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+>>>      [48628.713062] x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000400e80
+>>>      [48628.713065] x20: 0000000000000000 x19: 0000000000402650 x18: 0000000000000000
+>>>      [48628.713067] x17: 00000000004200d8 x16: 0000ffff98288f40 x15: 0000ffffde49b92c
+>>>      [48628.713070] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+>>>      [48628.713072] x11: 0000000000001011 x10: 0000000000402100 x9 : 0000000000000010
+>>>      [48628.713074] x8 : 00000000000000dc x7 : 3861616239346564 x6 : 000000000000000a
+>>>      [48628.713077] x5 : 0000ffffde49daa8 x4 : 000000000000000a x3 : 0000ffffde49daa8
+>>>      [48628.713079] x2 : 0000ffffde49dadc x1 : 0000ffffde49daa8 x0 : 0000000000000000
+>>>
+>>> According to ARM ARM D1.3.10.2 SP alignment checking:
+>>>
+>>>> When the SP is used as the base address of a calculation, regardless of
+>>>> any offset applied by the instruction, if bits [3:0] of the SP are not
+>>>> 0b0000, there is a misaligned SP.
+>>>
+>>> To fix it, align the stack with 16 bytes.
+>>>
+>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>> ---
+>>
+>> Assuming this is going through Christian's tree.
+>>
+>> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+>>
+>> Let me know if you would like me to pick it up.
+>>
+>> thanks,
+>> -- Shuah
+> 
+> Hi, Shuah
+> 
+> Thanks for your review.
+> 
+> I send this fix in Mar, but it missed last linux version.
+> I think I need your help to pick it up.
+> 
+> Thanks.
+> Shuai
+> 
 
-Splat:
-  WARNING: CPU: 14 PID: 2587 at drivers/iommu/dma-iommu.c:1228 iommu_dma_unmap_page+0x7d/0x90
-  Modules linked in: [...]
-  Unloaded tainted modules: i10nm_edac(E):1 fjes(E):1
-  CPU: 14 UID: 0 PID: 2587 Comm: ncdevmem Tainted: G S          E       6.15.0+ #3 PREEMPT(voluntary)
-  Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
-  Hardware name: HPE ProLiant DL380 Gen10 Plus/ProLiant DL380 Gen10 Plus, BIOS U46 06/01/2022
-  RIP: 0010:iommu_dma_unmap_page+0x7d/0x90
-  Code: [...]
-  RSP: 0000:ff6b1e3ea0b2fc58 EFLAGS: 00010246
-  RAX: 0000000000000000 RBX: ff46ef2d0a2340c8 RCX: 0000000000000000
-  RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
-  RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffff8827a120
-  R10: 0000000000000000 R11: 0000000000000000 R12: 00000000d8000000
-  R13: 0000000000000008 R14: 0000000000000001 R15: 0000000000000000
-  FS:  00007feb69adf740(0000) GS:ff46ef2c779f1000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 00007feb69cca000 CR3: 0000000154b97006 CR4: 0000000000773ef0
-  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  PKRU: 55555554
-  Call Trace:
-   <TASK>
-   dma_unmap_page_attrs+0x227/0x250
-   mlx5e_poll_tx_cq+0x163/0x510 [mlx5_core]
-   mlx5e_napi_poll+0x94/0x720 [mlx5_core]
-   __napi_poll+0x28/0x1f0
-   net_rx_action+0x33a/0x420
-   ? mlx5e_completion_event+0x3d/0x40 [mlx5_core]
-   handle_softirqs+0xe8/0x2f0
-   __irq_exit_rcu+0xcd/0xf0
-   common_interrupt+0x47/0xa0
-   asm_common_interrupt+0x26/0x40
-  RIP: 0033:0x7feb69cd08ec
-  Code: [...]
-  RSP: 002b:00007ffc01b8c880 EFLAGS: 00000246
-  RAX: 00000000c3a60cf7 RBX: 0000000000045e12 RCX: 000000000000000e
-  RDX: 00000000000035b4 RSI: 0000000000000000 RDI: 00007ffc01b8c8c0
-  RBP: 00007ffc01b8c8b0 R08: 0000000000000000 R09: 0000000000000064
-  R10: 00007ffc01b8c8c0 R11: 0000000000000000 R12: 00007feb69cca000
-  R13: 00007ffc01b90e48 R14: 0000000000427e18 R15: 00007feb69d07000
-   </TASK>
+Hi, Shuah,
 
-Cc: Mina Almasry <almasrymina@google.com>
-Reported-by: Stanislav Fomichev <stfomichev@gmail.com>
-Closes: https://lore.kernel.org/all/aFM6r9kFHeTdj-25@mini-arch/
-Fixes: 5a842c288cfa ("net/mlx5e: Add TX support for netmems")
-Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-Reviewed-by: Carolina Jubran <cjubran@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
----
- .../net/ethernet/mellanox/mlx5/core/en/txrx.h    | 16 +++++++++++++---
- .../mellanox/mlx5/core/en_accel/ktls_tx.c        |  2 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_tx.c  |  6 +++---
- 3 files changed, 17 insertions(+), 7 deletions(-)
+Gentle ping,
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/txrx.h b/drivers/net/ethernet/mellanox/mlx5/core/en/txrx.h
-index 6501252359b0..5dc04bbfc71b 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/txrx.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/txrx.h
-@@ -322,14 +322,24 @@ mlx5e_dma_get(struct mlx5e_txqsq *sq, u32 i)
- }
- 
- static inline void
--mlx5e_dma_push(struct mlx5e_txqsq *sq, dma_addr_t addr, u32 size,
--	       enum mlx5e_dma_map_type map_type)
-+mlx5e_dma_push_single(struct mlx5e_txqsq *sq, dma_addr_t addr, u32 size)
- {
- 	struct mlx5e_sq_dma *dma = mlx5e_dma_get(sq, sq->dma_fifo_pc++);
- 
- 	dma->addr = addr;
- 	dma->size = size;
--	dma->type = map_type;
-+	dma->type = MLX5E_DMA_MAP_SINGLE;
-+}
-+
-+static inline void
-+mlx5e_dma_push_netmem(struct mlx5e_txqsq *sq, netmem_ref netmem,
-+		      dma_addr_t addr, u32 size)
-+{
-+	struct mlx5e_sq_dma *dma = mlx5e_dma_get(sq, sq->dma_fifo_pc++);
-+
-+	netmem_dma_unmap_addr_set(netmem, dma, addr, addr);
-+	dma->size = size;
-+	dma->type = MLX5E_DMA_MAP_PAGE;
- }
- 
- static inline
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c
-index 3db31cc10719..08f06984407b 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c
-@@ -744,7 +744,7 @@ tx_post_resync_dump(struct mlx5e_txqsq *sq, skb_frag_t *frag, u32 tisn)
- 	dseg->addr       = cpu_to_be64(dma_addr);
- 	dseg->lkey       = sq->mkey_be;
- 	dseg->byte_count = cpu_to_be32(fsz);
--	mlx5e_dma_push(sq, dma_addr, fsz, MLX5E_DMA_MAP_PAGE);
-+	mlx5e_dma_push_netmem(sq, skb_frag_netmem(frag), dma_addr, fsz);
- 
- 	tx_fill_wi(sq, pi, MLX5E_KTLS_DUMP_WQEBBS, fsz, skb_frag_page(frag));
- 	sq->pc += MLX5E_KTLS_DUMP_WQEBBS;
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-index e6a301ba3254..319061d31602 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-@@ -196,7 +196,7 @@ mlx5e_txwqe_build_dsegs(struct mlx5e_txqsq *sq, struct sk_buff *skb,
- 		dseg->lkey       = sq->mkey_be;
- 		dseg->byte_count = cpu_to_be32(headlen);
- 
--		mlx5e_dma_push(sq, dma_addr, headlen, MLX5E_DMA_MAP_SINGLE);
-+		mlx5e_dma_push_single(sq, dma_addr, headlen);
- 		num_dma++;
- 		dseg++;
- 	}
-@@ -214,7 +214,7 @@ mlx5e_txwqe_build_dsegs(struct mlx5e_txqsq *sq, struct sk_buff *skb,
- 		dseg->lkey       = sq->mkey_be;
- 		dseg->byte_count = cpu_to_be32(fsz);
- 
--		mlx5e_dma_push(sq, dma_addr, fsz, MLX5E_DMA_MAP_PAGE);
-+		mlx5e_dma_push_netmem(sq, skb_frag_netmem(frag), dma_addr, fsz);
- 		num_dma++;
- 		dseg++;
- 	}
-@@ -616,7 +616,7 @@ mlx5e_sq_xmit_mpwqe(struct mlx5e_txqsq *sq, struct sk_buff *skb,
- 
- 	sq->stats->xmit_more += xmit_more;
- 
--	mlx5e_dma_push(sq, txd.dma_addr, txd.len, MLX5E_DMA_MAP_SINGLE);
-+	mlx5e_dma_push_single(sq, txd.dma_addr, txd.len);
- 	mlx5e_skb_fifo_push(&sq->db.skb_fifo, skb);
- 	mlx5e_tx_mpwqe_add_dseg(sq, &txd);
- 	mlx5e_tx_skb_update_ts_flags(skb);
-
-base-commit: c3886ccaadf8fdc2c91bfbdcdca36ccdc6ef8f70
--- 
-2.31.1
+Thanks.
+Shuai
 
 
