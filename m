@@ -1,158 +1,101 @@
-Return-Path: <linux-kernel+bounces-733617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1440B0770A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:31:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB72EB07710
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569C23A34B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:31:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F2813B324D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4D01B983F;
-	Wed, 16 Jul 2025 13:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="hPXCp2Nq"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ECC1D6188;
+	Wed, 16 Jul 2025 13:32:36 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B08219AD70;
-	Wed, 16 Jul 2025 13:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50451A2C0B
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752672688; cv=none; b=Bi5lWD8do3pC5ZJ9tIU19VBNH6TmvWLPnWiAJ4rHAEfceleM5RKj2RvtpNjWYbUjxorQg3khpep1Lmf0MOq48LwoXZ7M20x3uCp8z4k+cjnay7PqP2CLBpHgrGQtI50F10k9EjCyT5Bvx9lwvdUHvKKdOaK/AxSgx46mqXjAWV8=
+	t=1752672756; cv=none; b=Q4Bn55KjvaUHUSJ12fDcMJGosZIARQcIcE2yeL+hSeATB6E4a+d8K/wjNCHHfJu0fLGFloaCd+vgpE79Y31BG+ozy9gHoNMSz5WBv+kDL0sMXhYJxcpYspYOnUoVV7zgho1rhYY1/6AhHhsoV3QV2RSwJ7mIr9tn0quLVfI+SSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752672688; c=relaxed/simple;
-	bh=LJtChCkuv4oDN5YJQpsL32M5XLdNqX3Bk3qR0YQsneU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OzMazfb4ZxNiv2OZilhzzMfyzSbICYQkM8hFZ0sshwXxexqxTBtrmnF+VX2eQ0Sz1HfniemUHSw604WiXbZ+KfKmNOp1puVNbrNdb5z4i+XzKucw+Lw5o3ZkqpB45UqLaqiwrtL0ixX4FMOPAW9U1e/V4/yLQDySUw3hmAhsYnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=hPXCp2Nq; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4195C403E1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1752672686; bh=JnNzVzkbLFwfRckqtOoq/iYPAifrTSt+rYFPQy8Mans=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=hPXCp2Nq2uOh6H9W5cwxhsUoVSnGGABcvW+01Qrzqldre5NmDjZP50m+2XSPg54Yn
-	 c/zNH8cKJ2tY25j2Kyo08EZYwGUdnTNBC8Om9RqW6AvBBtBK2C12ur/SrY1z/bKmCK
-	 c5sxf2WfYInTsdJP1hrTC/BskvjnMenLXJ3y0d24be5UHXRRjZio/w6tj6gRkBFSZv
-	 hz4mjc93kGU8bdrFknVHkazQiGOz702M2pYguiCz13uKyPC05JnQU0G/+fDrYfYFw1
-	 29ARLxvtEYQkFoF03Kz0VAGgP1sxx2TAF6Ci52nHlB+G76Ju58ORfzb3SWi1oHv0It
-	 InQc+wvEBA8cw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 4195C403E1;
-	Wed, 16 Jul 2025 13:31:26 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the block tree with the jc_docs tree
-In-Reply-To: <20250716150234.52ec0d5f@canb.auug.org.au>
-References: <20250716150234.52ec0d5f@canb.auug.org.au>
-Date: Wed, 16 Jul 2025 07:31:25 -0600
-Message-ID: <87ecugdzyq.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1752672756; c=relaxed/simple;
+	bh=0LjF+WEpfWxbMuI94iSle2uStVAP8+DyETXP7hJ2nWE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JGN+3bKvzPkD5qQfNhXuYK1Jio0wIr+zZqMbJfhNQ/2e/kZSF2nu+WDD0OTTLwkaLiQWoYRYlamgcWW1r3YR4q2pnz1cj26AKP1JV/wXyf2akPSlCES+GivuML1dgHbENh7AJHuhav8DWKlHACber6G/PwsHi+N3xGF9WXZjjAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-869e9667f58so1467466739f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:32:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752672754; x=1753277554;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8FKo4QvDVoH70iqyD4IXeGiSxCF2PDv2mvb9DgjsTuQ=;
+        b=fCInHK2pJ7Uepdh3D27wiQrTh7evU4fbVQ76IudGZ3+A/nVELa5qq8E/Fg/Cq0Xv4c
+         XdkvKQdszVnY6+xCLqfhTsJz3J1oHevCqdBQ0WhP5tOyYksgLi1mJ32lpyh3LrLl7ecB
+         Rl4m27XJSNNFhaIu47cFp4T7a1cfo1K3X/5Qs4sjs5Pdq/A53e9LKNpxTUMWGGZRUDLT
+         EeCwnCNaASkKSDHnzjLK93C/2pjfQXDs+/td8ueiL1/mS6jZ7M23/xo+E0XjUYkqdbLe
+         nNiikOCT/1TMV0QagZa3F20tSaAms29a/u8NEFc5yeLhzjkZjiiOKZqQ+8mZjzNvi284
+         4VLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpcPB1GiaI7MbMbqfgBZr1eLdsRIF3Zvex9q5InlXJn0Oo62soheiuJEZ29ZwHh0U9thUhwUMvTlKFJyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEBRh1KqsVw2dER6AubsP6FHjLsUKyp4lSFm3Asqjv5G7t1hb4
+	E//3MN22Zy6Pw1O3+O58gGWHxQVbzS05rEmHyBkbq6PR7Lonvk3Shs4U64gzpm0MZT4uP9PILev
+	IO3ST0FMECFGC8ZJgJkRrlwYfNGZs9asY5GW35PtHebJf/KOXjS26QfLSVsE=
+X-Google-Smtp-Source: AGHT+IGF/kwqN7mja3XdkF3JMxQnYsfIzdVe8SJG2JlSEMJrev647LnGXH+ZgnnCfb6c21qzpSjvMFXxHCtaE/I2Xx80WB5mV8aY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6602:6305:b0:879:72d5:96e7 with SMTP id
+ ca18e2360f4ac-879c28da0b2mr283284239f.8.1752672753981; Wed, 16 Jul 2025
+ 06:32:33 -0700 (PDT)
+Date: Wed, 16 Jul 2025 06:32:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6877a9f1.a70a0220.693ce.002a.GAE@google.com>
+Subject: [syzbot] Monthly wpan report (Jul 2025)
+From: syzbot <syzbot+list57b57add8873522eb296@syzkaller.appspotmail.com>
+To: alex.aring@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-wpan@vger.kernel.org, miquel.raynal@bootlin.com, netdev@vger.kernel.org, 
+	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hello wpan maintainers/developers,
 
-> Hi all,
->
-> Today's linux-next merge of the block tree got a conflict in:
->
->   Documentation/userspace-api/ioctl/ioctl-number.rst
->
-> between commit:
->
->   15afd5def819 ("Documentation: ioctl-number: Extend "Include File" column width")
->
-> from the jc_docs tree and commit:
->
->   1cea5180f2f8 ("block: remove pktcdvd driver")
->
-> from the block tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+This is a 31-day syzbot report for the wpan subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/wpan
 
-That seems like an awful lot of fallout given that the block side, in
-its entirety, just removes a single line.  I guess the resolution is
-correct - thanks - but I don't quite understand why the conflict is so
-widespread.
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 7 issues are still open and 26 have already been fixed.
 
-jon
+Some of the still happening issues:
 
-> diff --cc Documentation/userspace-api/ioctl/ioctl-number.rst
-> index 677456c31228,4f1532a251d2..000000000000
-> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> @@@ -223,32 -219,31 +223,31 @@@ Code  Seq#    Include Fil
->                fs/xfs/linux-2.6/xfs_ioctl32.h,
->                include/linux/falloc.h,
->                linux/fs.h,
->  -'X'   all    fs/ocfs2/ocfs_fs.h                                      conflict!
->  +'X'   all    fs/ocfs2/ocfs_fs.h                                        conflict!
-> - 'X'   01     linux/pktcdvd.h                                           conflict!
->   'Z'   14-15  drivers/message/fusion/mptctl.h
->  -'['   00-3F  linux/usb/tmc.h                                         USB Test and Measurement Devices
->  -                                                                     <mailto:gregkh@linuxfoundation.org>
->  -'a'   all    linux/atm*.h, linux/sonet.h                             ATM on linux
->  -                                                                     <http://lrcwww.epfl.ch/>
->  -'a'   00-0F  drivers/crypto/qat/qat_common/adf_cfg_common.h          conflict! qat driver
->  -'b'   00-FF                                                          conflict! bit3 vme host bridge
->  -                                                                     <mailto:natalia@nikhefk.nikhef.nl>
->  -'b'   00-0F  linux/dma-buf.h                                         conflict!
->  -'c'   00-7F  linux/comstats.h                                        conflict!
->  -'c'   00-7F  linux/coda.h                                            conflict!
->  -'c'   00-1F  linux/chio.h                                            conflict!
->  -'c'   80-9F  arch/s390/include/asm/chsc.h                            conflict!
->  +'['   00-3F  linux/usb/tmc.h                                           USB Test and Measurement Devices
->  +                                                                       <mailto:gregkh@linuxfoundation.org>
->  +'a'   all    linux/atm*.h, linux/sonet.h                               ATM on linux
->  +                                                                       <http://lrcwww.epfl.ch/>
->  +'a'   00-0F  drivers/crypto/qat/qat_common/adf_cfg_common.h            conflict! qat driver
->  +'b'   00-FF                                                            conflict! bit3 vme host bridge
->  +                                                                       <mailto:natalia@nikhefk.nikhef.nl>
->  +'b'   00-0F  linux/dma-buf.h                                           conflict!
->  +'c'   00-7F  linux/comstats.h                                          conflict!
->  +'c'   00-7F  linux/coda.h                                              conflict!
->  +'c'   00-1F  linux/chio.h                                              conflict!
->  +'c'   80-9F  arch/s390/include/asm/chsc.h                              conflict!
->   'c'   A0-AF  arch/x86/include/asm/msr.h conflict!
->  -'d'   00-FF  linux/char/drm/drm.h                                    conflict!
->  -'d'   02-40  pcmcia/ds.h                                             conflict!
->  +'d'   00-FF  linux/char/drm/drm.h                                      conflict!
->  +'d'   02-40  pcmcia/ds.h                                               conflict!
->   'd'   F0-FF  linux/digi1.h
->  -'e'   all    linux/digi1.h                                           conflict!
->  -'f'   00-1F  linux/ext2_fs.h                                         conflict!
->  -'f'   00-1F  linux/ext3_fs.h                                         conflict!
->  -'f'   00-0F  fs/jfs/jfs_dinode.h                                     conflict!
->  -'f'   00-0F  fs/ext4/ext4.h                                          conflict!
->  -'f'   00-0F  linux/fs.h                                              conflict!
->  -'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                     conflict!
->  +'e'   all    linux/digi1.h                                             conflict!
->  +'f'   00-1F  linux/ext2_fs.h                                           conflict!
->  +'f'   00-1F  linux/ext3_fs.h                                           conflict!
->  +'f'   00-0F  fs/jfs/jfs_dinode.h                                       conflict!
->  +'f'   00-0F  fs/ext4/ext4.h                                            conflict!
->  +'f'   00-0F  linux/fs.h                                                conflict!
->  +'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                       conflict!
->   'f'   13-27  linux/fscrypt.h
->   'f'   81-8F  linux/fsverity.h
->   'g'   00-0F  linux/usb/gadgetfs.h
+Ref Crashes Repro Title
+<1> 286     Yes   KMSAN: uninit-value in ieee802154_hdr_push (2)
+                  https://syzkaller.appspot.com/bug?extid=60a66d44892b66b56545
+<2> 36      No    KASAN: global-out-of-bounds Read in mac802154_header_create (2)
+                  https://syzkaller.appspot.com/bug?extid=844d670c418e0353c6a8
+<3> 23      Yes   WARNING in __dev_change_net_namespace (3)
+                  https://syzkaller.appspot.com/bug?extid=3344d668bbbc12996d46
+<4> 10      No    KMSAN: uninit-value in ieee802154_max_payload
+                  https://syzkaller.appspot.com/bug?extid=fe68c78fbbd3c0ad70ee
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
