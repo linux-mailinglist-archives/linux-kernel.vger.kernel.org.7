@@ -1,268 +1,144 @@
-Return-Path: <linux-kernel+bounces-732980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD1DB06E66
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:01:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C023AB06E64
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4752562948
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0D605028F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12F7289831;
-	Wed, 16 Jul 2025 07:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F86289377;
+	Wed, 16 Jul 2025 07:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQSfSJIf"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dsYC/tu0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564F7286D46;
-	Wed, 16 Jul 2025 07:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE64286D46
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752649279; cv=none; b=TwZzlmrChUVPVGnlh/2k7BqLVhPqfaJGSZmwMFnMcOKO1AbtriAW5AkkJ9b7tQ5vo+8+IqwjPNWcrZ1g0Tz0n2dwb7TMIA34XHiQWvzDUizfKAJ/gRX9IZFUsDTriU51tbWT9EQ5GY+aA3QVhQaBaXT6GAqT/3tAowWyjMO6uTw=
+	t=1752649271; cv=none; b=n987OSq0ANXE8qnXWySXZxwGWI8IBWDaAZg18Mc6QOodh96Uvn6Qkjqr3JgJ8MJBwla/drDzYTWxtmeaEQfm5UhIy7mnFyfDW8LE9Us32C7QZMw5IEHxBvcbPQgOJTwcVbl0LdqL7jCBhbZK8yDgPWYkSgDD+eCbZsN1wmE84tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752649279; c=relaxed/simple;
-	bh=2va2SQScBnnEYYo9gevadfn0UAwMFkcSFusOEtW5pSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Sm+/hrOe9SodgPvqo/nsJGwGmWoCqr/FYdtUL2ciDIoDhSyI4NKLGbSdPUcsCtdB0bkcO/tjC15F/EmcNjVcWD4ggP7Yyk3Cs1yCiEAOW2L17qfLahYAzC9Ey9KVx3SBGsJ2ts6ocDDlaWI1NpMb51oZ/RUf+C4rJGfXY5jkLVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQSfSJIf; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-74b27c1481bso3998680b3a.2;
-        Wed, 16 Jul 2025 00:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752649277; x=1753254077; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g+GPfnHGx9m/PlNdIJKdtphvgV6qX+JOK9jrldM8AhU=;
-        b=fQSfSJIfH9W8KDg3z2zxGpPWU8qY3k+MmjZg+WkwnUQgAGQV+jNLALL24fdFZb2oyR
-         d7G+9/1dEvlktEXJyL+1i5SbxZxCO8tcijBURFehOZSlCvuZLucEvEBFvjR5OcI42CN7
-         VaZH9IUc//1BJOKiFEHEQlJxAPr7HO+OYnL74J2e6v2Wm7wkphdOCCQ/0ngQyqaXdRjX
-         1BUgo0oCztWR5gU0q8J510GbrE9AAcS9H+uF5wVvkuBdav6f6gygTxfPmK6LgNfYCmoQ
-         ufALGiaieRmjhikQA3TRLfDy3P1YIhTsBv/8IYXPciQu0Zpxy8MG4Oh+SjyEful4Zf+E
-         sPcA==
+	s=arc-20240116; t=1752649271; c=relaxed/simple;
+	bh=gibYJRAEGcG17h7YF4mYBLpDulc5AmLjWzwDgOANDOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiBWVQLxxiOdjtkEaznxi0pCFuoKrpN8WQCYojUhfO3cMUDICf2DiINn63+Boge767H2scHsNCCSqQjA7G0JNe4ZUd1MxQdSbr3/mK/OAK3F0FeaGUY+jePPviyOJroTK1xZ80qy5d8PvjBHy9Hlo9VHODjsbMOZ2mUSH0eewME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dsYC/tu0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752649269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P3AUeB5zKzLtO+orAl/mtwdxHdQgBluYhKSJJpXA5pc=;
+	b=dsYC/tu0kwAVGdI9kdcIuYSizwmv0QEKJk6XDPjVeUxCfk+ZQOCPhZSkwhPa2/BNZs+LvD
+	W+9VcjN61wgrrhknjSDY4Sv/8KLTVUhoYO+zfacqpBz2rrPQ+s99aSX0/ZjwBLKl0ekPG4
+	hrnr5aY/IAvRqNK5y/429TTuwog9CvY=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-344-BL5TaZCFOHCmi349vO3ZCQ-1; Wed, 16 Jul 2025 03:01:07 -0400
+X-MC-Unique: BL5TaZCFOHCmi349vO3ZCQ-1
+X-Mimecast-MFC-AGG-ID: BL5TaZCFOHCmi349vO3ZCQ_1752649266
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45597cc95d5so25457455e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:01:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752649277; x=1753254077;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g+GPfnHGx9m/PlNdIJKdtphvgV6qX+JOK9jrldM8AhU=;
-        b=GctA+qkQex8zyghi3xV1r5SezbbsCL4LtPzf/SYdmv10GKGZvJZjCMzRhTwnkHN+Pt
-         7+rlQNq3c3e9z/MFtpnrDCK+qM50Ul0qm7/cF4vGO5rcvTNXv/QB4yLB7ITwwsJlCehD
-         l0CTj4UUaCGzvAEkf3rAPU8HbHvaSInno/iw13u+I0Mm7fHrrCQwajlYmuDpZHAqqh4o
-         t+rL+meSOO/rnBszoYCNpeRMNKOcLgFEBWUsA2ecpVoK9WCwCD0ldWYKONdSMlxuZWVn
-         SoWJ+J7xvJ8LABl+DceExWisikcicFp1dlJyk9JUFtRfnOmgnMX3xQzDV+la+M1VpQb4
-         Ijzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjFcuOHkFiJMJbtPEIudmAWBXc1Xuohm6EwO4itOeXBwTQu4NwtP5LSOXJTgHk48ntXJjpMF0r@vger.kernel.org, AJvYcCVF73x7DiDtREahijgoeZecs3i5YF/bKhvv9GxvSiZUKUFaswp6zXpBemM/U12CBJXVrNMoqO1IRnYQ53I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnIU+O6gKELYyMhP1y5+WDproIuwLHoT89rajnl802+dMFFtJH
-	BW5cB4ocr4NNp+lUeK5v8j2gbb1vYyWg3DQC54Kt+dmSS/YUFdztE3l1
-X-Gm-Gg: ASbGncuHFC/ibroFuDsAoDPck4QFAdu6CvM+4PK1rL+O2MgJxlPIG303eJKSQ5VxOZ2
-	2iIx1KY/HR/S2CH1mSNI9iN54fiLYFiK7t/nseb/EcZAv53IftQxBsd6Hvyq5PC6GZJG15JzDRz
-	N7nhjCHNA9v6pJ5qSJtBdW9yh12bLqXY5T6DTpt9cjHMKDk5pEeNzF83yMfdRQq0IHE72o2gHjP
-	LIZdpcbUr5KpVBRPXWTEsY7dsSCfy/1GqLctRvVj7U6zGoGzX4HPeS/cODo3cJym57d6PKCzlpc
-	lcngU6FSTtII+4lTjHuX1rtKNmtyKYQ9rsxU+QH1Hf8XbVLcLfzQKsbvmcftWFqHp5L8xEAIbh0
-	1fx5096Ecqb5kzgwUb+ihrRrMTlUw
-X-Google-Smtp-Source: AGHT+IEvysHCfTX8GcAbRXR3uUaPUplrWU9r8SBAcB4WDnm4IiwmzS05fEwdydHXp4qwARtYpVbPMw==
-X-Received: by 2002:a05:6a21:6f06:b0:234:86ce:9de1 with SMTP id adf61e73a8af0-237d5a04ad2mr3260363637.17.1752649277528;
-        Wed, 16 Jul 2025 00:01:17 -0700 (PDT)
-Received: from syzkaller.mshome.net ([8.210.121.120])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd7341sm13720073b3a.15.2025.07.16.00.01.13
+        d=1e100.net; s=20230601; t=1752649266; x=1753254066;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P3AUeB5zKzLtO+orAl/mtwdxHdQgBluYhKSJJpXA5pc=;
+        b=Pfah9uuS8EonlIz0CTfLeSsX/YCDD3rne/WWNSqyOiFfhi6q6AFWZG3Vqs58NS3du+
+         hlkic1Mml5/9BFyQo6ZuCyUGVdtr1CoF5+mZxOkNsezddotQROGmyew05gNuBRTpYyu0
+         7igaortuvZdnGw/V5xa6SUn5qjlJSF6h1fK0HbCZeP2LK1Ev3sqiaQALzsc6fKpN6sEO
+         zxXKStOuELS0M/Qv0X0tCmguG5RyKkhDbK+yJIsXzGG0kNV+4grTz4o7TUjoEUedjVDk
+         +XeLa7w4wUWMMyo7mSqOWMAKB6B2VEkQM2CAMBXloO3XEpkD3uEEdytPw9h0mgjB5/89
+         xEMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCC0aDUP9IZaRGuv06X3woLKlwj6qFNbJKOYt/W3yDEG/EMLwIqAzxI33QTWiueVuPX09idbY0qB56IDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwopnqA0dhsdsOh9RsvSynpteoOLiFSiM2eWb5igSUU972Gntwl
+	aAmZndcyPfWcdGdHwJ4ip+bJqtKtpZi9ZIDQPWBPlTDITlaj5YFUxp3vCCiz3h3rvGVTACkxFG+
+	e3f0brv/98VPiBjBJcf7Lp8S4KcSSjOdHvKyk5GK/COelfJYUdSQ3dLQcX/thYz0UeQ==
+X-Gm-Gg: ASbGnctkBfpizcxut3Kqq9ddeq19wZJpYgiQJnGst2SVZWfLIuZ1k1Pd54LXLkk040p
+	5HPCpyRLtesu1iQGLEditvWiz9J8zDwt1ZYq3yjdsoI0bP/suEezmVA310x+oIOiTle4ipwQYfT
+	mXwEKPZb+YK0Rc7B2SqDVas1mAZ7xyPIjpP3iUN2ItiHTwBTJfZDV/bfA0lllhQ9ZDQctRIjOrZ
+	Vx4DHlZF98OXr0MKB5BFNmINgQ/UcCNZN7g714jpzcI14e9V3nSJabhSPko4ZVl8Zf2CXL53K1b
+	wJycxiV27AwAppcOZigjCxDlZ7fzQKoi
+X-Received: by 2002:a05:600c:8b2f:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-4562e3a222cmr11904775e9.33.1752649266256;
+        Wed, 16 Jul 2025 00:01:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYSFsbElxZnORXSiqQIoPepQ7xnDr+y5vC+zWHhu4yMUCmvO2Fn7tVx5T9nx+faMjH/PtPcA==
+X-Received: by 2002:a05:600c:8b2f:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-4562e3a222cmr11904415e9.33.1752649265837;
+        Wed, 16 Jul 2025 00:01:05 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:150d:fc00:de3:4725:47c6:6809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e802afasm11616785e9.12.2025.07.16.00.01.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 00:01:17 -0700 (PDT)
-From: "Kito Xu (veritas501)" <hxzene@gmail.com>
-To: davem@davemloft.net
-Cc: "Kito Xu (veritas501)" <hxzene@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6=20=28XIE=20Zhibang=29?= <Yeking@Red54.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: appletalk: Fix use-after-free in AARP proxy probe
-Date: Wed, 16 Jul 2025 07:00:58 +0000
-Message-Id: <20250716070100.708021-1-hxzene@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 16 Jul 2025 00:01:05 -0700 (PDT)
+Date: Wed, 16 Jul 2025 03:01:01 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Igor Mammedov <imammedo@redhat.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>, qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org,
+	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	Yanan Wang <wangyanan55@huawei.com>, Zhao Liu <zhao1.liu@intel.com>,
+	kvm@vger.kernel.org, Cleber Rosa <crosa@redhat.com>,
+	Eduardo Habkost <eduardo@habkost.net>,
+	Eric Blake <eblake@redhat.com>, John Snow <jsnow@redhat.com>,
+	Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
+	Markus Armbruster <armbru@redhat.com>,
+	Michael Roth <michael.roth@amd.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 (RESEND) 00/20] Change ghes to use HEST-based offsets
+ and add support for error inject
+Message-ID: <20250716025618-mutt-send-email-mst@kernel.org>
+References: <cover.1749741085.git.mchehab+huawei@kernel.org>
+ <20250715133423-mutt-send-email-mst@kernel.org>
+ <20250716081117.4b89570a@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716081117.4b89570a@foz.lan>
 
-The AARP proxy‐probe routine (aarp_proxy_probe_network) sends a probe,
-releases the aarp_lock, sleeps, then re-acquires the lock.  During that
-window an expire timer thread (__aarp_expire_timer) can remove and
-kfree() the same entry, leading to a use-after-free.
+On Wed, Jul 16, 2025 at 08:11:17AM +0200, Mauro Carvalho Chehab wrote:
+> Em Tue, 15 Jul 2025 13:36:26 -0400
+> "Michael S. Tsirkin" <mst@redhat.com> escreveu:
+> 
+> > On Thu, Jun 12, 2025 at 05:17:24PM +0200, Mauro Carvalho Chehab wrote:
+> > > Hi Michael,
+> > > 
+> > > This is v10 of the patch series, rebased to apply after release
+> > > 10.0. The only difference against v9 is a minor confict resolution.  
+> > 
+> > Unfortunately, this needs a rebase on top of latest PCIHP
+> > changes in my tree.  The changes are non trivial, too.
+> > I should have let you know more early, sorry :(
+> 
+> If you still accept merging it, I can quickly rebase and send you.
+> Just let me know about what branch you want the rebase.
+> 
+> Regards,
+> Mauro
 
-race condition:
+Well we are in freeze from yesterday, but if you feel any part of this
+can be classified as a bugfix, I can merge that.  You can rebase on my
+for_upstream tag.
 
-         cpu 0                          |            cpu 1
-    atalk_sendmsg()                     |   atif_proxy_probe_device()
-    aarp_send_ddp()                     |   aarp_proxy_probe_network()
-    mod_timer()                         |   lock(aarp_lock) // LOCK!!
-    timeout around 200ms                |   alloc(aarp_entry)
-    and then call                       |   proxies[hash] = aarp_entry
-    aarp_expire_timeout()               |   aarp_send_probe()
-                                        |   unlock(aarp_lock) // UNLOCK!!
-    lock(aarp_lock) // LOCK!!           |   msleep(100);
-    __aarp_expire_timer(&proxies[ct])   |
-    free(aarp_entry)                    |
-    unlock(aarp_lock) // UNLOCK!!       |
-                                        |   lock(aarp_lock) // LOCK!!
-                                        |   UAF aarp_entry !!
 
-==================================================================
-BUG: KASAN: slab-use-after-free in aarp_proxy_probe_network+0x560/0x630 net/appletalk/aarp.c:493
-Read of size 4 at addr ffff8880123aa360 by task repro/13278
-
-CPU: 3 UID: 0 PID: 13278 Comm: repro Not tainted 6.15.2 #3 PREEMPT(full)
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xc1/0x630 mm/kasan/report.c:521
- kasan_report+0xca/0x100 mm/kasan/report.c:634
- aarp_proxy_probe_network+0x560/0x630 net/appletalk/aarp.c:493
- atif_proxy_probe_device net/appletalk/ddp.c:332 [inline]
- atif_ioctl+0xb58/0x16c0 net/appletalk/ddp.c:857
- atalk_ioctl+0x198/0x2f0 net/appletalk/ddp.c:1818
- sock_do_ioctl+0xdc/0x260 net/socket.c:1190
- sock_ioctl+0x239/0x6a0 net/socket.c:1311
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl fs/ioctl.c:892 [inline]
- __x64_sys_ioctl+0x194/0x200 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcb/0x250 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
- </TASK>
-
-Allocated:
- aarp_alloc net/appletalk/aarp.c:382 [inline]
- aarp_proxy_probe_network+0xd8/0x630 net/appletalk/aarp.c:468
- atif_proxy_probe_device net/appletalk/ddp.c:332 [inline]
- atif_ioctl+0xb58/0x16c0 net/appletalk/ddp.c:857
- atalk_ioctl+0x198/0x2f0 net/appletalk/ddp.c:1818
-
-Freed:
- kfree+0x148/0x4d0 mm/slub.c:4841
- __aarp_expire net/appletalk/aarp.c:90 [inline]
- __aarp_expire_timer net/appletalk/aarp.c:261 [inline]
- aarp_expire_timeout+0x480/0x6e0 net/appletalk/aarp.c:317
-
-The buggy address belongs to the object at ffff8880123aa300
- which belongs to the cache kmalloc-192 of size 192
-The buggy address is located 96 bytes inside of
- freed 192-byte region [ffff8880123aa300, ffff8880123aa3c0)
-
-Memory state around the buggy address:
- ffff8880123aa200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff8880123aa280: 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8880123aa300: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                       ^
- ffff8880123aa380: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff8880123aa400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Kito Xu (veritas501) <hxzene@gmail.com>
----
- net/appletalk/aarp.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
-
-diff --git a/net/appletalk/aarp.c b/net/appletalk/aarp.c
-index 9c787e2e4b17..b70a73b6ebad 100644
---- a/net/appletalk/aarp.c
-+++ b/net/appletalk/aarp.c
-@@ -35,6 +35,7 @@
- #include <linux/seq_file.h>
- #include <linux/export.h>
- #include <linux/etherdevice.h>
-+#include <linux/atomic.h>
- 
- int sysctl_aarp_expiry_time = AARP_EXPIRY_TIME;
- int sysctl_aarp_tick_time = AARP_TICK_TIME;
-@@ -44,6 +45,7 @@ int sysctl_aarp_resolve_time = AARP_RESOLVE_TIME;
- /* Lists of aarp entries */
- /**
-  *	struct aarp_entry - AARP entry
-+ *  @refcnt: Reference count
-  *	@last_sent: Last time we xmitted the aarp request
-  *	@packet_queue: Queue of frames wait for resolution
-  *	@status: Used for proxy AARP
-@@ -55,6 +57,7 @@ int sysctl_aarp_resolve_time = AARP_RESOLVE_TIME;
-  *	@next: Next entry in chain
-  */
- struct aarp_entry {
-+	atomic_t	refcnt;
- 	/* These first two are only used for unresolved entries */
- 	unsigned long		last_sent;
- 	struct sk_buff_head	packet_queue;
-@@ -79,6 +82,17 @@ static DEFINE_RWLOCK(aarp_lock);
- /* Used to walk the list and purge/kick entries.  */
- static struct timer_list aarp_timer;
- 
-+static inline void aarp_entry_get(struct aarp_entry *a)
-+{
-+	atomic_inc(&a->refcnt);
-+}
-+
-+static inline void aarp_entry_put(struct aarp_entry *a)
-+{
-+	if (atomic_dec_and_test(&a->refcnt))
-+		kfree(a);
-+}
-+
- /*
-  *	Delete an aarp queue
-  *
-@@ -87,7 +101,7 @@ static struct timer_list aarp_timer;
- static void __aarp_expire(struct aarp_entry *a)
- {
- 	skb_queue_purge(&a->packet_queue);
--	kfree(a);
-+	aarp_entry_put(a);
- }
- 
- /*
-@@ -380,9 +394,11 @@ static void aarp_purge(void)
- static struct aarp_entry *aarp_alloc(void)
- {
- 	struct aarp_entry *a = kmalloc(sizeof(*a), GFP_ATOMIC);
-+	if (!a)
-+		return NULL;
- 
--	if (a)
--		skb_queue_head_init(&a->packet_queue);
-+	atomic_set(&a->refcnt, 1);
-+	skb_queue_head_init(&a->packet_queue);
- 	return a;
- }
- 
-@@ -477,6 +493,7 @@ int aarp_proxy_probe_network(struct atalk_iface *atif, struct atalk_addr *sa)
- 	entry->dev = atif->dev;
- 
- 	write_lock_bh(&aarp_lock);
-+	aarp_entry_get(entry);
- 
- 	hash = sa->s_node % (AARP_HASH_SIZE - 1);
- 	entry->next = proxies[hash];
-@@ -502,6 +519,7 @@ int aarp_proxy_probe_network(struct atalk_iface *atif, struct atalk_addr *sa)
- 		retval = 1;
- 	}
- 
-+	aarp_entry_put(entry);
- 	write_unlock_bh(&aarp_lock);
- out:
- 	return retval;
 -- 
-2.34.1
+MST
 
 
