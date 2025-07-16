@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-733715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A01F9B07827
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:32:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1EBDB07824
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7777F3A284F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:31:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44C01886E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6D4264602;
-	Wed, 16 Jul 2025 14:30:38 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EEF262FD3;
+	Wed, 16 Jul 2025 14:30:25 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B795263889;
-	Wed, 16 Jul 2025 14:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58792594BD;
+	Wed, 16 Jul 2025 14:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676237; cv=none; b=MlF67vIUnXOmYyUgEFpg4zCTJBk722WGCJ4QQQxvurC27F5TQNjVuzkuasSCbZZ66u1efMsJeSNfVlbmweTDN74PKgWhquGhNW92m9RM077XhWTc4YuTWioSGGYdTIKUxCsQ/iD7T54gC5u7ppyYwOQY40fb9wbRC+2K8Xnia2U=
+	t=1752676225; cv=none; b=Y6b9Y1Tiv5n2c3db+tfgpF8Yxx7jC13WUOK5m7fFf2eEJzGvG4pedb/jh6ov1/xGQbyMAKc+0eBk/VJEscn9Q11irwBrEhh7haqJIX3sXy/TemgO4hB9mjbBwVw/7Ze8WnJUKIrfrYxvL+/Nqq0ctpdxwFOjOjTHd9kXF/fI+GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676237; c=relaxed/simple;
-	bh=KYPR5zMwjv9ZkbNWdRQQpTF0AKu9yHdbi7BjAVMCMcc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ne+1vFHs5/zHi4WiRbOls07oLzl1XcAlG7CVnBksjkZ1hIjRcF6gTEwry187BDPfGhLfaOsMPtqUsfS+00izBT9Y4Hlv2fNfXQPZuRHa79PTGL064tY/WDBTCpTassJnv6zO/W8j5GRrhC2UudpdP893RQ/FgBCFBjiLf3AbJU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.214.181])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1c3b8f49f;
-	Wed, 16 Jul 2025 22:30:22 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: alchark@gmail.com
-Cc: amadeus@jmu.edu.cn,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	jonas@kwiboo.se,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	ziyao@disroot.org
-Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency scaling support
-Date: Wed, 16 Jul 2025 22:30:16 +0800
-Message-Id: <20250716143016.620430-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CABjd4YzCL3U9yf65FUBE6EMqFjZHosULU7fUcjVo9VJ_=Ov+Dw@mail.gmail.com>
-References: <CABjd4YzCL3U9yf65FUBE6EMqFjZHosULU7fUcjVo9VJ_=Ov+Dw@mail.gmail.com>
+	s=arc-20240116; t=1752676225; c=relaxed/simple;
+	bh=8oM9MQ66mfTzATcDVH9XtAJsNQRIzw+rxOctjC97cyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uDsT88gvneu8XmRmULTL7AaK919K6v9TQEFaDqZqStEUBNtUNxu6fh5JabNih1Mr9jdm+XilDmVJs5Ail0hlTZnfjqzoW3c2GMI1QLu1NZyA/F6KfUXLCctjOszdHykG7jAUdotTJAZJSc679aa7ACfovQgiqkMxVuIQWcFaoo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0b2ead33cso162591666b.0;
+        Wed, 16 Jul 2025 07:30:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752676222; x=1753281022;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pNwVjl6m3wKgc/VnHpKTaKyRntyURP7PDtl2ZAtqmEg=;
+        b=T++1qXIVZ8SQ9mfCAKCzYOCPRo8iYoau0tcwULQSimZUKbZhQGRcXFJbF8icFYwhMk
+         /cykQkpbmm9YwbEPJzn8vmKc3sLeVmocCd/kUE4xmDidFg9VeKoaiUVJe7uz2k1YkXLi
+         FPz/bSN0v60U5Q/wRME+wLDVY4+7GB7d1x+X/byrX445uRf8A120Z5ypfZCKY4ljvVBL
+         dYFxT2BHBLHTPN5uB3e3NIy6xII43xec8p2m2N3wba88JTvwm8bGFwBeGIcllZeZw5SG
+         Es5P0vYvtFrmU6f+lCn8UkFal7np8Z/OPPQcaD7MT7cz+pATyC9EHr/9CFs3Aw840toL
+         SjXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrNI6GPxVAATBRk2Iww2mV1l7dpIvg/dyY2WaT0r7K6yk56rgBmFxIE7r8DMKhATkINHY5G4zhLiY=@vger.kernel.org, AJvYcCX6JhfEFTFOqdVXYvUyMZdrtEmrAvoDEZcREfHLkmDv3xSRHrVzbZgtvzXlEm5cS+CXDtJOqK+8FDTMGSDF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8aFjm95zX2Qh/INt++TjrJWq04X0KGxXOwNqmvYbbyYj12S7R
+	uFq1dywbIBGjnGvbLX0d9ligiHppBTbNSW6gYzpdFQfLSNyNEv/x3It4
+X-Gm-Gg: ASbGncuCAGZe8MhQ9WzlLO0O0L01PlutOS3qslCH+hEaTWpV+mAYhR7LbpQ+ne8XDXm
+	mmcOtapOfDBgc4IgAUjO3IystDwc842Kwjl92IixpUjtPqAmXlYCVHti1lr1MBXuJKARTowsD7f
+	A/UgL9AlfrzqFRNjR3+T0uzj0D0xt3C4GTA8yK8QDHUYZJ36v3FzSafhx/Oqus0OVl787uJzXAs
+	/69u6t0CNZoQ0WRXkbIQUTEDntJVvGHFmISUplWdbbGgzkPjXlsnyYOy1YknSy7wE4hvDMKjS6q
+	n4wCH5CSJZaaesSjcZx9qQpzTRSOGgbQjWou+i8+M8PbVbbLSJchURQwb/jQyQYq70lmec25IXZ
+	JJkPw7gaoSAKijw==
+X-Google-Smtp-Source: AGHT+IFJa0gqqYlHrTx18e5eprFlql9LapqX5HX9Q5HeZNX+xnHp/a4vEMVPx5GPqECb6siCtRN/zw==
+X-Received: by 2002:a17:907:d2c1:b0:ad8:942b:1d53 with SMTP id a640c23a62f3a-ae9b5dc65b5mr712411766b.27.1752676221747;
+        Wed, 16 Jul 2025 07:30:21 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:71::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e910c7sm1220250266b.15.2025.07.16.07.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 07:30:21 -0700 (PDT)
+Date: Wed, 16 Jul 2025 07:30:19 -0700
+From: Breno Leitao <leitao@debian.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] efivarfs: Suppress false-positive kmemleak warning for
+ sfi
+Message-ID: <pxsmb5nsar65occgepuoetame3ia6mudmw54cx7ah7bu57utkh@b6jeupqvprjz>
+References: <20250715-kmemleak_efi-v1-1-c07e68c76ae8@debian.org>
+ <CAMj1kXHJpRioZD7aUJnkMLWkiTmQ_Nr6MNcSYR0adeLdjf5BrA@mail.gmail.com>
+ <rvlw467lzx5yx3sl56u3xcc2hhhn3vj2fu7msg3e5o4giwtkcb@oomdafhhnqcv>
+ <a3d063f4b0ccaad7595938ea0dca016872882f0d.camel@HansenPartnership.com>
+ <7fe68ef138e43a5cf83c8b5d2dd3fc8101a8a225.camel@HansenPartnership.com>
+ <qdw7skjlcw6dvnewpfrtxc27pm7sroan5eyn53exndehp3blav@z25oqkoo3ohw>
+ <ec0a66f40bc826bd016f338568e01908b86be35a.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSk9CVhpJT0lLSUgdHk5PGVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKT1VKQ0pZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSktLVU
-	pCS0tZBg++
-X-HM-Tid: 0a9813a4c74803a2kunm62c672118974a5
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODI6Hgw*EzExDQ1LVk0MNTM8
-	DTxPCz5VSlVKTE5JTUxNSUlIQ0pNVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	QlVKSUlVSUpPVUpDSllXWQgBWUFITk9LNwY+
+In-Reply-To: <ec0a66f40bc826bd016f338568e01908b86be35a.camel@HansenPartnership.com>
 
-Hi,
+On Wed, Jul 16, 2025 at 09:26:03AM -0400, James Bottomley wrote:
+> On Wed, 2025-07-16 at 06:16 -0700, Breno Leitao wrote:
 
-> > There has often been the argument that selecting a frequency that has
-> > the same voltage as a faster frequency does not save any power.
-> >
-> > Hence I remember that we dropped slower frequencies on other socs
-> > that share the same voltage with a higher frequency.
+> > diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+> > index c900d98bf4945..07a3b9293396b 100644
+> > --- a/fs/efivarfs/super.c
+> > +++ b/fs/efivarfs/super.c
+> > @@ -390,10 +390,22 @@ static int efivarfs_reconfigure(struct
+> > fs_context *fc)
+> >  	return 0;
+> >  }
+> >  
+> > +static void efivarfs_free(struct fs_context *fc)
+> > +{
+> > +	struct efivarfs_fs_info *sfi;
+> > +
+> > +	sfi = fc->s_fs_info;
+> > +	if (!sfi)
+> > +		return;
+> 
+> Here, you'll excite the coccinelle checkers looking for if(x) free(x)
+> because free() already also has a test for NULL.
 
-Sorry, but soc.dtsi on rockchip doesn't seem to have dropped slower
-frequencies with the same voltage?
+Good point.
 
-rk3562.dtsi: CPU 408MHz -  816MHz 825mV | GPU 300MHz - 600MHz 825mV
-rk3566.dtsi: CPU 408MHz -  816MHz 850mV | GPU 200MHz - 400MHz 850mV
-rk3576.dtsi: CPU 408MHz - 1200MHz 700mV | GPU 300MHz - 600MHz 700mV
+> Other than that elision, it looks fine to me.
 
-> I.e. here the mainline kernel will always choose opp-1008000000 as
-> long as the regulator voltage is 875000 uV, unless explicitly
-> prevented from doing so by userspace. Whereas the BSP kernel [1] would
-> request different frequencies for different silicon, e.g.
-> opp-1200000000 for a silicon specimen with a leakage value of L4 and
-> opp-1416000000 for a silicon specimen with a leakage value of L8 - all
-> for the same regulator voltage of 875000 uV.
->
-> So my 2 cents would be: no added benefit in having "lower frequency,
-> same voltage" OPPs defined here until we implement an OPP driver
-> reading the NVMEM programmed leakage values and selecting different
-> *-L* voltages for each OPP depending on those. Once there is this
-> support in the drivers, those OPPs can be added together with
-> leakage-specific voltages (opp-microvolt-L0..11).
-
-I assume this has nothing to do with the NVMEM driver?
-
-From [1], we can see that the voltage used by the same board from
-408MHz to 1008MHz is the same. The actual test is also like this:
-
-The first  board: CPU 408MHz - 1008MHz both 850mV | 1200MHz 862mV
-The second board: CPU 408MHz - 1008MHz both 875mV | 1200MHz 875mV
-
-[1] https://github.com/rockchip-linux/kernel/blob/develop-5.10/arch/arm64/boot/dts/rockchip/rk3528.dtsi#L227-L271
-
-> Right now OPP values with frequencies lower than 1008000000 won't be
-> selected by any of the energy-aware cpufreq governors anyway, because
-> their voltages are the same. Exercise for the reader: try to convince
-> e.g. the "schedutil" governor to select anything below 1008000000
-> without touching
-> /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq :) This may
-> change if OPP tuning logic is implemented such as in [2]: that will
-> try and find the _voltage_ resulting in PVTPLL providing a frequency
-> closest to what cpufreq requested, and use that for the in-memory OPP
-> table instead of what was provided by the DTS.
-
-Thanks for the clarification, so should we remove 408MHz, 600MHz and
-816MHz from the opp-table? Is this also the case with GPU's opp-table?
-
-Thanks,
-Chukun
-
---
-2.25.1
-
+Thanks. I will send a v2.
+--breno
 
