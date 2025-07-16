@@ -1,91 +1,132 @@
-Return-Path: <linux-kernel+bounces-732658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE86B06A41
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:03:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D540B06A4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E297C563C1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:03:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62DBC1A60A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F40C14F98;
-	Wed, 16 Jul 2025 00:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767514C9D;
+	Wed, 16 Jul 2025 00:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="Y3Un8kWL"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SDxUo7cN"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AD610E4;
-	Wed, 16 Jul 2025 00:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F9D10F1;
+	Wed, 16 Jul 2025 00:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752624232; cv=none; b=GJ93f36wkpNVfgFdTchQRC/n2QndMIj94zcaKXVyKMmT5upVTiGzqM/awsH/q9L9eOqz5RpaL0kvEuJmSlqZIP7d74Nb6wad+KqPx5aQ/nVcmy+uRhzSPVVc59KFhAqg+XRtJr0ENRVSuOPy1V6cmitZfFSwpTjYHFXIZNOQjqE=
+	t=1752624463; cv=none; b=h4T5BlP2ab2nKRqnfmN9iipF138HnoHMysrik+xe60a9GWMC/C1+J3iiI+Cw37Aq2xZRLT85TqQBTNHOiqo9a1bUT00AmDfxGTsvWqtxn/YVudQUnWwwlPtft4dDDkIM5S8tDxyLaHk7Jvs7J740Tw7icp7Ze2+nSxULOstKvEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752624232; c=relaxed/simple;
-	bh=Zx8gZ64ZCUPL9p6z3WNV/aCoZ1jX3+uA5S29gR4546A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ew3G41+JTECZIzivo0sKPpAV301gzk2UC5lo1KaZbYk62/fc8jq1lHavXiR+cTvNuCyWW+ZcIQ5SLSeOTMDbJD4v7+c3lMNo2esQQjSZoeBOpTtnD05zcACMEWbahP/EParQjs81L5Ax6ObKKrw7GfpiH2LinSQqrsl3I0BrPN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=Y3Un8kWL; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=default; t=1752624228;
-	bh=Zx8gZ64ZCUPL9p6z3WNV/aCoZ1jX3+uA5S29gR4546A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type:Content-Transfer-Encoding:Message-ID:Date:From:
-	 Reply-To:Subject:To:Cc:In-Reply-To:References:Resent-Date:
-	 Resent-From:Resent-To:Resent-Cc:User-Agent:Content-Type:
-	 Content-Transfer-Encoding;
-	b=Y3Un8kWL0IPuvc9N39bG8Y3kAm7a1Lx4z1TXRP9l3+MHNH7wzdNE6BakGReufLlMK
-	 taVN1DdaxWxytO/XAF06HED33z6vFsx9fgqwQCcsApWN8JQ+dd10CnfK9s8FvFc75A
-	 pvkIZXrp1WGjSuSy5qhD/CgRBREopJg8X6Zl/mx0698zgBi8aimVRYm+GdZm8xrM57
-	 zn/EifSW7sPVMTb6Vv2LxhjcLyobspvthvD+Y7QDAFAOunfGKn1chiBt/RmbOIB2Rh
-	 wwZTS8W+aCuWpO8jyGDVDD2Qloxf8i7eHzKdnLun5AS9gksIO9f0yYyzkGTbSfbemY
-	 deaeYm71GxibA==
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id AA3F62109A7D;
-	Wed, 16 Jul 2025 00:03:48 +0000 (UTC)
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3137c20213cso5771871a91.3;
-        Tue, 15 Jul 2025 17:03:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV7+UpChl4nVXo1IG0rTkwdHv7CMmYExbdLfwSwqIjQ33LI14eB77QMbOM7UYEH6N0iJ/l0s8eXG0VRcfUd@vger.kernel.org, AJvYcCX6OScU7yPgUuMkYobZdWALaE/SovJb71wMSolIVowKwk1ey+0ykEz9q6gwERbpmFqugb95408V1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWs1ZTxCmBG4OJeTDg4UbRL3UGM8Wg74ATRSEQHSMA5GnM6WRJ
-	vWvlM5z4REAOD7UN/WZ0s6yNk7SoCuNC9VDDOhXQ4rNPRQjsTq/lwNWMG4Ljnk5H3WvIXUDUWSt
-	1+93ZBXGPSb5oRaSfChYeHQETgon0Phg=
-X-Google-Smtp-Source: AGHT+IHxE+6NdUlJHc//wMLQbRtx/EAVxdHKQW3RhEimCZx5/yH/prnD5DIs/cjBEUWcJToU9tymJAzKY/Gyx9OecOY=
-X-Received: by 2002:a17:90b:5283:b0:311:d28a:73ef with SMTP id
- 98e67ed59e1d1-31c9f3fbc01mr854728a91.10.1752624226957; Tue, 15 Jul 2025
- 17:03:46 -0700 (PDT)
+	s=arc-20240116; t=1752624463; c=relaxed/simple;
+	bh=CLdIyNYuhLKexW+LZL8Wb7UR7bMpS6UL+IQkQPkomUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuJscxqG2pWu9mli1lUUXUOakrxi31fEAPq30jcwhMWoxsfnvysyEMd6s8QtYr8x5PaJWJ+P2uox+FzrRhiZsDwiu0cuNGeGE2AC+atMofZeW572w1naN+giyxXOkmL6AJ/xdzJ1r/RGapT0k0N16/ijMcx6yUz9ApIO/zKOuEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SDxUo7cN; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 550477E1;
+	Wed, 16 Jul 2025 02:07:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752624427;
+	bh=CLdIyNYuhLKexW+LZL8Wb7UR7bMpS6UL+IQkQPkomUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SDxUo7cNF58az9Ey3k53Cv4TFBP0w4d+P4VRVAnkBtUqLDrbbv/PdRwGr9XO6C2hq
+	 CVo2N42wHpeptD1sBl1T/ziRRfLtei05FF0tab3qxToiSZHGzmnGoMEfqzrJ/dJcaS
+	 5LN6K2RajuDOK4Y+cGA8wu38KsXavahhiHgn7g9Y=
+Date: Wed, 16 Jul 2025 03:07:38 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mirela Rabulea <mirela.rabulea@nxp.com>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+	hverkuil-cisco@xs4all.nl, ribalda@chromium.org,
+	jai.luthra@ideasonboard.com, laurentiu.palcu@nxp.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	LnxRevLi@nxp.com, julien.vuillaumier@nxp.com,
+	celine.laurencin@nxp.com
+Subject: Re: [RFC 2/2] Documentation: media: Describe exposure and gain
+ controls for multiple captures
+Message-ID: <20250716000738.GF19299@pendragon.ideasonboard.com>
+References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
+ <20250710220544.89066-3-mirela.rabulea@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715050629.1513826-1-alviro.iskandar@gnuweeb.org>
- <20250715050629.1513826-2-alviro.iskandar@gnuweeb.org> <4bc75566-9cb5-42ec-a6b7-16e04062e0c6@kernel.dk>
-In-Reply-To: <4bc75566-9cb5-42ec-a6b7-16e04062e0c6@kernel.dk>
-From: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Wed, 16 Jul 2025 07:03:35 +0700
-X-Gmail-Original-Message-ID: <CAOG64qOsyNUWW5xiYQh1ftkFwEH2TryzawtNnZ3CBJobDsgTGg@mail.gmail.com>
-X-Gm-Features: Ac12FXzkS9jDB0DHLmyV5EMpkpYd9fFDus5PR_ReEnMXl5_d7vhDI7MPDeDDWcY
-Message-ID: <CAOG64qOsyNUWW5xiYQh1ftkFwEH2TryzawtNnZ3CBJobDsgTGg@mail.gmail.com>
-Subject: Re: [PATCH liburing 1/3] Revert "test/io_uring_register: kill old
- memfd test"
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, "GNU/Weeb Mailing List" <gwml@vger.gnuweeb.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	io-uring Mailing List <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250710220544.89066-3-mirela.rabulea@nxp.com>
 
-On Tue, Jul 15, 2025 at 9:10=E2=80=AFPM Jens Axboe wrote:
-> Maybe just bring back the configure parts? The test, as mentioned in
-> that commit, is pretty useless.
+Hi Mirela,
 
-Ok, I'll send a v2 with the test omitted.
+Thank you for the patch.
 
--- Viro
+On Fri, Jul 11, 2025 at 01:05:44AM +0300, Mirela Rabulea wrote:
+> The standard controls for exposure and gains allow a
+> single value, for a single capture. For sensors with HDR
+> capabilities or context switching, this is not enough, so
+> add new controls that allow multiple values, one for each
+> capture.
+
+One important question not addressed by this patch is how the new
+controls interact with the old ones. For instance, if a sensor
+implements 2-DOL, it should expose a V4L2_CID_EXPOSURE_MULTI control
+with 2 elements. Should it also expose the V4L2_CID_EXPOSURE control,
+when operating in SDR mode ? What should happen when both controls are
+set ?
+
+There are also sensors that implement multi-exposure with direct control
+of the long exposure, and indirect control of the short exposure through
+an exposure ratio. The sensors I'm working on support both, so we could
+just ignore the exposure ratio, but if I recall correctly CCS allows
+sensors to implement exposure ratio only without direct short exposure
+control. How should we deal with that ?
+
+Finally, I was recently wondering if it would be possible to reuse the
+existing controls instead, allowing them to be either single values or
+arrays. The idea would be that setting the control to a single value
+(essentially ignoring it's an array) would provide the current
+behaviour, while setting values for multiple elements would control the
+separate exposures. I haven't checked if the control framework supports
+this, or if it could be supported with minimum changes. The advantage is
+that we wouldn't need to define how the new and old controls interact if
+we don't introduce new controls. Hans, what do you think ?
+
+> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+> ---
+>  .../media/v4l/ext-ctrls-image-source.rst             | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-image-source.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-image-source.rst
+> index 71f23f131f97..6efdb58dacf5 100644
+> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-image-source.rst
+> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-image-source.rst
+> @@ -92,3 +92,15 @@ Image Source Control IDs
+>      representing a gain of exactly 1.0. For example, if this default value
+>      is reported as being (say) 128, then a value of 192 would represent
+>      a gain of exactly 1.5.
+> +
+> +``V4L2_CID_EXPOSURE_MULTI (__u32 array)``
+> +    Same as V4L2_CID_EXPOSURE, but for multiple exposure sensors. Each
+> +    element of the array holds the exposure value for one capture.
+> +
+> +``V4L2_CID_AGAIN_MULTI (__u32 array)``
+> +    Same as V4L2_CID_ANALOGUE_GAIN, but for multiple exposure sensors. Each
+> +    element of the array holds the analog gain value for one capture.
+> +
+> +``V4L2_CID_DGAIN_MULTI (__u32 array)``
+> +    Same as V4L2_CID_DIGITAL_GAIN, but for multiple exposure sensors. Each
+> +    element of the array holds the digital gain value for one capture.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
