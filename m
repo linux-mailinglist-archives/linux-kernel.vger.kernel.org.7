@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-734306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1155B07FD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:46:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F8DB07FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E7D87AB2BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:44:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A727AEA5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5732EE277;
-	Wed, 16 Jul 2025 21:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD762EE299;
+	Wed, 16 Jul 2025 21:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Hz2DBHig"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XR1vVKey"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14FD2ED84D;
-	Wed, 16 Jul 2025 21:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C6B2ED87D;
+	Wed, 16 Jul 2025 21:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752702340; cv=none; b=evqfu7d6x3xMpMh8tnIYhzB4nus6D3zmpetYpuBjZVoiOY0xhi+cZUYNvL48t0zy5idK2mbqkSFk09mYvHrlPDMJOwUnbkNfkCxvTGbsKwnEi/LuVd4moISgN7vGeR3xwD4GZP1/r3lPmuiZI6dDEoBu1MdPZM6pHosUUtIE4/c=
+	t=1752702342; cv=none; b=KN2MJzr/oXyg2a/xiBqaF77n+ckH211MkUZvqDLSWRkWSmnGBqf3baxiJewwrDvR05vKNQvTvxSbArZriPilI4aSJCm+iFnORkzXfzosSkUMdreWRp+iZUG1buKRe6aaeue+JdEas8Q3mUUGeh+phjX7drUBCTQEXolpoTIBvlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752702340; c=relaxed/simple;
-	bh=NVHP2L7I+F80S0iSXz7Ayio5SqCeQC1UYDi+yY/64nc=;
+	s=arc-20240116; t=1752702342; c=relaxed/simple;
+	bh=wv/Vm8YrvCD/3HksOSprMnMXMEdtKRgjkN9k/T3BkU8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J6dYQz4z18W9WSd/kJYSR9ruS/VYba3GfZob6jShDFoQ9sKsdP6BYyqtyLLxZX9ehB6xUZrPRmMeCdgFhmjVbqxFaTfmyCDI6XCB3Lxw2/Uz+jUdjOWym7ed53viPLZW0jy7pOa1Jx0W3IiqVvfzjM97jU54R7NYIIjvKfl2U4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Hz2DBHig; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=k9WsiOXn/w0+TPrxPcRfimS/WBRnmFO1ngh7KE3G7GJ/BRllexGHyPX0rE49HGJ77J24P/HV8lPnZEYqhOgmtR5TccP7scklIwJ38CQEalqMWCpUZfnF7PuohSR/k08UHLsvOV+OeLCzAvfSQAbJiovjenhyRCl80yoPGQn01cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XR1vVKey; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752702328;
-	bh=NVHP2L7I+F80S0iSXz7Ayio5SqCeQC1UYDi+yY/64nc=;
+	s=mail; t=1752702331;
+	bh=wv/Vm8YrvCD/3HksOSprMnMXMEdtKRgjkN9k/T3BkU8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Hz2DBHig2iA/huelh7HWjMNM9giutkfWS3ES2rK+8afcDcxTzmrYst9FeOBeA0nc0
-	 JDX7NTSwiCVQM4+Y8FPXG4BWNkUmdTOlRI8txI9NqsaI/om3b7EoidfPYs3OPO9USF
-	 eg+SS5hbOiw6qIM1lZ6h1/D1DkgbP+PDr5TCYo+EDIscw9D9qr2vzu0tJ1ldHsMVbU
-	 e2/I+BXAbSAVEW7pCvZrkItyCOoiGAaREFqlOGSPM34hITfE1He3R8pi7MKmIILEQT
-	 VjEoZseZ2uNOL86okc5kjyB5W+HsTb8ufTXOjF08jdSHt3rutuXjd4iGvgL3sQo1lM
-	 bgA8ytbk/cPwQ==
+	b=XR1vVKey9aJ9aN4LAu/9OEOKFnPI+OB8Cwo4kzKo2q1AMFrsrjROCqxL9Wp9CPeyj
+	 Oqz8YdVOhX1NobxYnTJNETV73nUwPBWTbk7q6FrC/faEAu0GHYXq8WN9y2Mc+HpLo4
+	 7FhkIkSqstkZbZD0HdMwUYRbsrlapamGZUjeemBmOFtOHaIbmW/VJTYYpt553y3tPa
+	 33Y+/h4k0LeEpHUxMG4ce6fN2XeTox/YnK/AJ0qqqMjhdwoE0SRFfAX4gilzYVXZCC
+	 1iGHphKMi3vCob5fXEP5Ea+I73+GFqUVI6j6hojKaibmI2yOWZS6ieRQiwqvXxxPPh
+	 sOQ66ClE3ATBA==
 Received: from [192.168.0.2] (unknown [IPv6:2804:14d:72b4:82f6:67c:16ff:fe57:b5a3])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: dwlsalmeida)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6F24E17E10D0;
-	Wed, 16 Jul 2025 23:45:26 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 36FAC17E11ED;
+	Wed, 16 Jul 2025 23:45:29 +0200 (CEST)
 From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Wed, 16 Jul 2025 18:45:13 -0300
-Subject: [PATCH v14 1/3] rust: io: add resource abstraction
+Date: Wed, 16 Jul 2025 18:45:14 -0300
+Subject: [PATCH v14 2/3] rust: io: mem: add a generic iomem abstraction
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250716-topics-tyr-platform_iomem-v14-1-2c2709135cb2@collabora.com>
+Message-Id: <20250716-topics-tyr-platform_iomem-v14-2-2c2709135cb2@collabora.com>
 References: <20250716-topics-tyr-platform_iomem-v14-0-2c2709135cb2@collabora.com>
 In-Reply-To: <20250716-topics-tyr-platform_iomem-v14-0-2c2709135cb2@collabora.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -70,340 +70,348 @@ To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  "Rafael J. Wysocki" <rafael@kernel.org>
 Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- Fiona Behrens <me@kloenk.dev>, 
  Daniel Almeida <daniel.almeida@collabora.com>
 X-Mailer: b4 0.14.2
 
-In preparation for ioremap support, add a Rust abstraction for struct
-resource.
+Add a generic iomem abstraction to safely read and write ioremapped
+regions. This abstraction requires a previously acquired IoRequest
+instance. This makes it so that both the resource and the device match,
+or, in other words, that the resource is indeed a valid resource for a
+given bound device.
 
-A future commit will introduce the Rust API to ioremap a resource from a
-platform device. The current abstraction, therefore, adds only the
-minimum API needed to get that done.
+A subsequent patch will add the ability to retrieve IoRequest instances
+from platform devices.
+
+The reads and writes are done through IoRaw, and are thus checked either
+at compile-time, if the size of the region is known at that point, or at
+runtime otherwise.
+
+Non-exclusive access to the underlying memory region is made possible to
+cater to cases where overlapped regions are unavoidable.
 
 Acked-by: Miguel Ojeda <ojeda@kernel.org>
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Co-developed-by: Fiona Behrens <me@kloenk.dev>
-Signed-off-by: Fiona Behrens <me@kloenk.dev>
 Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 ---
- rust/bindings/bindings_helper.h |   1 +
- rust/helpers/io.c               |  36 +++++++
- rust/kernel/io.rs               |   4 +
- rust/kernel/io/resource.rs      | 229 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 270 insertions(+)
+ rust/helpers/io.c     |   5 +
+ rust/kernel/io.rs     |   1 +
+ rust/kernel/io/mem.rs | 282 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 288 insertions(+)
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 7e8f2285064797d5bbac5583990ff823b76c6bdc..5f795e60e889b9fc887013743c81b1cf92a52adb 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -53,6 +53,7 @@
- #include <linux/file.h>
- #include <linux/firmware.h>
- #include <linux/fs.h>
-+#include <linux/ioport.h>
- #include <linux/jiffies.h>
- #include <linux/jump_label.h>
- #include <linux/mdio.h>
 diff --git a/rust/helpers/io.c b/rust/helpers/io.c
-index 15ea187c5466256effd07efe6f6995a1dd95a967..404776cf6717c8570c7600a24712ce6e4623d3c6 100644
+index 404776cf6717c8570c7600a24712ce6e4623d3c6..c475913c69e647b1042e8e7d66b9148d892947a1 100644
 --- a/rust/helpers/io.c
 +++ b/rust/helpers/io.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/io.h>
-+#include <linux/ioport.h>
- 
- void __iomem *rust_helper_ioremap(phys_addr_t offset, size_t size)
- {
-@@ -99,3 +100,38 @@ void rust_helper_writeq_relaxed(u64 value, void __iomem *addr)
- 	writeq_relaxed(value, addr);
+@@ -8,6 +8,11 @@ void __iomem *rust_helper_ioremap(phys_addr_t offset, size_t size)
+ 	return ioremap(offset, size);
  }
- #endif
-+
-+resource_size_t rust_helper_resource_size(struct resource *res)
+ 
++void __iomem *rust_helper_ioremap_np(phys_addr_t offset, size_t size)
 +{
-+	return resource_size(res);
++	return ioremap_np(offset, size);
 +}
 +
-+struct resource *rust_helper_request_mem_region(resource_size_t start,
-+						resource_size_t n,
-+						const char *name)
-+{
-+	return request_mem_region(start, n, name);
-+}
-+
-+void rust_helper_release_mem_region(resource_size_t start, resource_size_t n)
-+{
-+	release_mem_region(start, n);
-+}
-+
-+struct resource *rust_helper_request_region(resource_size_t start,
-+					    resource_size_t n, const char *name)
-+{
-+	return request_region(start, n, name);
-+}
-+
-+struct resource *rust_helper_request_muxed_region(resource_size_t start,
-+						  resource_size_t n,
-+						  const char *name)
-+{
-+	return request_muxed_region(start, n, name);
-+}
-+
-+void rust_helper_release_region(resource_size_t start, resource_size_t n)
-+{
-+	release_region(start, n);
-+}
+ void rust_helper_iounmap(void __iomem *addr)
+ {
+ 	iounmap(addr);
 diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-index 72d80a6f131e3e826ecd9d2c3bcf54e89aa60cc3..7b70d5b5477e57d6d0f24bcd26bd8b0071721bc0 100644
+index 7b70d5b5477e57d6d0f24bcd26bd8b0071721bc0..b7fc759f8b5d3c3ac6f33f5a66e9f619c58b7405 100644
 --- a/rust/kernel/io.rs
 +++ b/rust/kernel/io.rs
-@@ -7,6 +7,10 @@
+@@ -7,6 +7,7 @@
  use crate::error::{code::EINVAL, Result};
  use crate::{bindings, build_assert};
  
-+pub mod resource;
-+
-+pub use resource::Resource;
-+
- /// Raw representation of an MMIO region.
- ///
- /// By itself, the existence of an instance of this structure does not provide any guarantees that
-diff --git a/rust/kernel/io/resource.rs b/rust/kernel/io/resource.rs
++pub mod mem;
+ pub mod resource;
+ 
+ pub use resource::Resource;
+diff --git a/rust/kernel/io/mem.rs b/rust/kernel/io/mem.rs
 new file mode 100644
-index 0000000000000000000000000000000000000000..ec07af06effbb00d3db186513a0683b491df020b
+index 0000000000000000000000000000000000000000..9534f8ae42b2555ca79ec6317e874d93fc60c04f
 --- /dev/null
-+++ b/rust/kernel/io/resource.rs
-@@ -0,0 +1,229 @@
++++ b/rust/kernel/io/mem.rs
+@@ -0,0 +1,282 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+//! Abstractions for [system
-+//! resources](https://docs.kernel.org/core-api/kernel-api.html#resources-management).
-+//!
-+//! C header: [`include/linux/ioport.h`](srctree/include/linux/ioport.h)
++//! Generic memory-mapped IO.
 +
 +use core::ops::Deref;
-+use core::ptr::NonNull;
 +
++use crate::device::Bound;
++use crate::device::Device;
++use crate::devres::Devres;
++use crate::io;
++use crate::io::resource::Region;
++use crate::io::resource::Resource;
++use crate::io::Io;
++use crate::io::IoRaw;
 +use crate::prelude::*;
-+use crate::str::{CStr, CString};
-+use crate::types::Opaque;
 +
-+/// Resource Size type.
-+///
-+/// This is a type alias to either `u32` or `u64` depending on the config option
-+/// `CONFIG_PHYS_ADDR_T_64BIT`, and it can be a u64 even on 32-bit architectures.
-+pub type ResourceSize = bindings::phys_addr_t;
-+
-+/// A region allocated from a parent [`Resource`].
-+///
-+/// # Invariants
-+///
-+/// - `self.0` points to a valid `bindings::resource` that was obtained through
-+///   `bindings::__request_region`.
-+pub struct Region {
-+    /// The resource returned when the region was requested.
-+    resource: NonNull<bindings::resource>,
-+    /// The name that was passed in when the region was requested. We need to
-+    /// store it for ownership reasons.
-+    _name: CString,
++/// An IO request for a specific device and resource.
++pub struct IoRequest<'a> {
++    device: &'a Device<Bound>,
++    resource: &'a Resource,
 +}
 +
-+impl Deref for Region {
-+    type Target = Resource;
-+
-+    fn deref(&self) -> &Self::Target {
-+        // SAFETY: Safe as per the invariant of `Region`.
-+        unsafe { Resource::from_raw(self.resource.as_ptr()) }
-+    }
-+}
-+
-+impl Drop for Region {
-+    fn drop(&mut self) {
-+        let (flags, start, size) = {
-+            let res = &**self;
-+            (res.flags(), res.start(), res.size())
-+        };
-+
-+        let release_fn = if flags.contains(Flags::IORESOURCE_MEM) {
-+            bindings::release_mem_region
-+        } else {
-+            bindings::release_region
-+        };
-+
-+        // SAFETY: Safe as per the invariant of `Region`.
-+        unsafe { release_fn(start, size) };
-+    }
-+}
-+
-+// SAFETY: `Region` only holds a pointer to a C `struct resource`, which is safe to be used from
-+// any thread.
-+unsafe impl Send for Region {}
-+
-+// SAFETY: `Region` only holds a pointer to a C `struct resource`, references to which are
-+// safe to be used from any thread.
-+unsafe impl Sync for Region {}
-+
-+/// A resource abstraction.
-+///
-+/// # Invariants
-+///
-+/// [`Resource`] is a transparent wrapper around a valid `bindings::resource`.
-+#[repr(transparent)]
-+pub struct Resource(Opaque<bindings::resource>);
-+
-+impl Resource {
-+    /// Creates a reference to a [`Resource`] from a valid pointer.
++impl<'a> IoRequest<'a> {
++    /// Creates a new [`IoRequest`] instance.
 +    ///
 +    /// # Safety
 +    ///
-+    /// The caller must ensure that for the duration of 'a, the pointer will
-+    /// point at a valid `bindings::resource`.
-+    ///
-+    /// The caller must also ensure that the [`Resource`] is only accessed via the
-+    /// returned reference for the duration of 'a.
-+    pub(crate) const unsafe fn from_raw<'a>(ptr: *mut bindings::resource) -> &'a Self {
-+        // SAFETY: Self is a transparent wrapper around `Opaque<bindings::resource>`.
-+        unsafe { &*ptr.cast() }
++    /// Callers must ensure that `resource` is valid for `device` during the
++    /// lifetime `'a`.
++    pub(crate) unsafe fn new(device: &'a Device<Bound>, resource: &'a Resource) -> Self {
++        IoRequest { device, resource }
 +    }
 +
-+    /// Requests a resource region.
++    /// Maps an [`IoRequest`] where the size is known at compile time.
 +    ///
-+    /// Exclusive access will be given and the region will be marked as busy.
-+    /// Further calls to [`Self::request_region`] will return [`None`] if
-+    /// the region, or a part of it, is already in use.
-+    pub fn request_region(
-+        &self,
-+        start: ResourceSize,
-+        size: ResourceSize,
-+        name: CString,
-+        flags: Flags,
-+    ) -> Option<Region> {
-+        // SAFETY:
-+        // - Safe as per the invariant of `Resource`.
-+        // - `__request_region` will store a reference to the name, but that is
-+        // safe as we own it and it will not be dropped until the `Region` is
-+        // dropped.
-+        let region = unsafe {
-+            bindings::__request_region(
-+                self.0.get(),
++    /// This uses the [`ioremap()`] C API.
++    ///
++    /// [`ioremap()`]: https://docs.kernel.org/driver-api/device-io.html#getting-access-to-the-device
++    ///
++    /// # Examples
++    ///
++    /// The following example uses a [`platform::Device`] for illustration
++    /// purposes.
++    ///
++    /// ```no_run
++    /// use kernel::{bindings, c_str, platform, of, device::Core};
++    /// struct SampleDriver;
++    ///
++    /// impl platform::Driver for SampleDriver {
++    ///    # type IdInfo = ();
++    ///    # const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
++    ///
++    ///    fn probe(
++    ///       pdev: &platform::Device<Core>,
++    ///       info: Option<&Self::IdInfo>,
++    ///    ) -> Result<Pin<KBox<Self>>> {
++    ///       let offset = 0; // Some offset.
++    ///
++    ///       // If the size is known at compile time, use [`Self::iomap_sized`].
++    ///       //
++    ///       // No runtime checks will apply when reading and writing.
++    ///       let request = pdev.request_io_by_index(0).ok_or(ENODEV)?;
++    ///       let iomem = request.iomap_sized::<42>();
++    ///       let iomem = KBox::pin_init(iomem, GFP_KERNEL)?;
++    ///
++    ///       let io = iomem.access(pdev.as_ref())?;
++    ///
++    ///       // Read and write a 32-bit value at `offset`.
++    ///       let data = io.read32_relaxed(offset);
++    ///
++    ///       io.write32_relaxed(data, offset);
++    ///
++    ///       # Ok(KBox::new(SampleDriver, GFP_KERNEL)?.into())
++    ///     }
++    /// }
++    /// ```
++    pub fn iomap_sized<const SIZE: usize>(self) -> impl PinInit<Devres<IoMem<SIZE>>, Error> + 'a {
++        IoMem::new(self)
++    }
++
++    /// Same as [`Self::iomap_sized`] but with exclusive access to the
++    /// underlying region.
++    ///
++    /// This uses the [`ioremap()`] C API.
++    ///
++    /// [`ioremap()`]: https://docs.kernel.org/driver-api/device-io.html#getting-access-to-the-device
++    pub fn iomap_exclusive_sized<const SIZE: usize>(
++        self,
++    ) -> impl PinInit<Devres<ExclusiveIoMem<SIZE>>, Error> + 'a {
++        ExclusiveIoMem::new(self)
++    }
++
++    /// Maps an [`IoRequest`] where the size is not known at compile time,
++    ///
++    /// This uses the [`ioremap()`] C API.
++    ///
++    /// [`ioremap()`]: https://docs.kernel.org/driver-api/device-io.html#getting-access-to-the-device
++    ///
++    /// # Examples
++    ///
++    /// The following example uses a [`platform::Device`] for illustration
++    /// purposes.
++    ///
++    /// ```no_run
++    /// use kernel::{bindings, c_str, platform, of, device::Core};
++    /// struct SampleDriver;
++    ///
++    /// impl platform::Driver for SampleDriver {
++    ///    # type IdInfo = ();
++    ///    # const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
++    ///
++    ///    fn probe(
++    ///       pdev: &platform::Device<Core>,
++    ///       info: Option<&Self::IdInfo>,
++    ///    ) -> Result<Pin<KBox<Self>>> {
++    ///       let offset = 0; // Some offset.
++    ///
++    ///       // Unlike [`Self::iomap_sized`], here the size of the memory region
++    ///       // is not known at compile time, so only the `try_read*` and `try_write*`
++    ///       // family of functions should be used, leading to runtime checks on every
++    ///       // access.
++    ///       let request = pdev.request_io_by_index(0).ok_or(ENODEV)?;
++    ///       let iomem = request.iomap();
++    ///       let iomem = KBox::pin_init(iomem, GFP_KERNEL)?;
++    ///
++    ///       let io = iomem.access(pdev.as_ref())?;
++    ///
++    ///       let data = io.try_read32_relaxed(offset)?;
++    ///
++    ///       io.try_write32_relaxed(data, offset)?;
++    ///
++    ///       # Ok(KBox::new(SampleDriver, GFP_KERNEL)?.into())
++    ///     }
++    /// }
++    /// ```
++    pub fn iomap(self) -> impl PinInit<Devres<IoMem<0>>, Error> + 'a {
++        Self::iomap_sized::<0>(self)
++    }
++
++    /// Same as [`Self::iomap`] but with exclusive access to the underlying
++    /// region.
++    pub fn iomap_exclusive(self) -> impl PinInit<Devres<ExclusiveIoMem<0>>, Error> + 'a {
++        Self::iomap_exclusive_sized::<0>(self)
++    }
++}
++
++/// An exclusive memory-mapped IO region.
++///
++/// # Invariants
++///
++/// - [`ExclusiveIoMem`] has exclusive access to the underlying [`IoMem`].
++pub struct ExclusiveIoMem<const SIZE: usize> {
++    /// The underlying `IoMem` instance.
++    iomem: IoMem<SIZE>,
++
++    /// The region abstraction. This represents exclusive access to the
++    /// range represented by the underlying `iomem`.
++    ///
++    /// This field is needed for ownership of the region.
++    _region: Region,
++}
++
++impl<const SIZE: usize> ExclusiveIoMem<SIZE> {
++    /// Creates a new `ExclusiveIoMem` instance.
++    fn ioremap(resource: &Resource) -> Result<Self> {
++        let start = resource.start();
++        let size = resource.size();
++        let name = resource.name().ok_or(EINVAL)?;
++
++        let region = resource
++            .request_region(
 +                start,
 +                size,
-+                name.as_char_ptr(),
-+                flags.0 as c_int,
++                name.to_cstring()?,
++                io::resource::Flags::IORESOURCE_MEM,
 +            )
++            .ok_or(EBUSY)?;
++
++        let iomem = IoMem::ioremap(resource)?;
++
++        let iomem = ExclusiveIoMem {
++            iomem,
++            _region: region,
 +        };
 +
-+        Some(Region {
-+            resource: NonNull::new(region)?,
-+            _name: name,
-+        })
++        Ok(iomem)
 +    }
 +
-+    /// Returns the size of the resource.
-+    pub fn size(&self) -> ResourceSize {
-+        let inner = self.0.get();
-+        // SAFETY: safe as per the invariants of `Resource`.
-+        unsafe { bindings::resource_size(inner) }
++    /// Creates a new `ExclusiveIoMem` instance from a previously acquired [`IoRequest`].
++    pub fn new<'a>(io_request: IoRequest<'a>) -> impl PinInit<Devres<Self>, Error> + 'a {
++        let dev = io_request.device;
++        let res = io_request.resource;
++
++        Devres::new(dev, Self::ioremap(res))
 +    }
++}
 +
-+    /// Returns the start address of the resource.
-+    pub fn start(&self) -> ResourceSize {
-+        let inner = self.0.get();
-+        // SAFETY: safe as per the invariants of `Resource`.
-+        unsafe { (*inner).start }
++impl<const SIZE: usize> Deref for ExclusiveIoMem<SIZE> {
++    type Target = Io<SIZE>;
++
++    fn deref(&self) -> &Self::Target {
++        &self.iomem
 +    }
++}
 +
-+    /// Returns the name of the resource.
-+    pub fn name(&self) -> Option<&CStr> {
-+        let inner = self.0.get();
++/// A generic memory-mapped IO region.
++///
++/// Accesses to the underlying region is checked either at compile time, if the
++/// region's size is known at that point, or at runtime otherwise.
++///
++/// # Invariants
++///
++/// [`IoMem`] always holds an [`IoRaw`] instance that holds a valid pointer to the
++/// start of the I/O memory mapped region.
++pub struct IoMem<const SIZE: usize = 0> {
++    io: IoRaw<SIZE>,
++}
 +
-+        // SAFETY: safe as per the invariants of `Resource`
-+        let name = unsafe { (*inner).name };
-+
-+        if name.is_null() {
-+            return None;
++impl<const SIZE: usize> IoMem<SIZE> {
++    fn ioremap(resource: &Resource) -> Result<Self> {
++        // Note: It looks like there aren't any 32-bit architectures that define
++        // ioremap_np. This means that sometimes this conversion will fail. If
++        // we performed a lossy cast, i.e., using `as`, then `bindings::ioremap`
++        // would return NULL anyway.
++        //
++        // TODO: Properly address this in the C code to avoid this `try_into`.
++        let size = resource.size().try_into()?;
++        if size == 0 {
++            return Err(EINVAL);
 +        }
 +
-+        // SAFETY: In the C code, `resource::name` either contains a null
-+        // pointer or points to a valid NUL-terminated C string, and at this
-+        // point we know it is not null, so we can safely convert it to a
-+        // `CStr`.
-+        Some(unsafe { CStr::from_char_ptr(name) })
++        let res_start = resource.start();
++
++        let addr = if resource
++            .flags()
++            .contains(io::resource::Flags::IORESOURCE_MEM_NONPOSTED)
++        {
++            // SAFETY:
++            // - `res_start` and `size` are read from a presumably valid `struct resource`.
++            // - `size` is known not to be zero at this point.
++            unsafe { bindings::ioremap_np(res_start, size) }
++        } else {
++            // SAFETY:
++            // - `res_start` and `size` are read from a presumably valid `struct resource`.
++            // - `size` is known not to be zero at this point.
++            unsafe { bindings::ioremap(res_start, size) }
++        };
++
++        if addr.is_null() {
++            return Err(ENOMEM);
++        }
++
++        let io = IoRaw::new(addr as usize, size)?;
++        let io = IoMem { io };
++
++        Ok(io)
 +    }
 +
-+    /// Returns the flags associated with the resource.
-+    pub fn flags(&self) -> Flags {
-+        let inner = self.0.get();
-+        // SAFETY: safe as per the invariants of `Resource`
-+        let flags = unsafe { (*inner).flags };
++    /// Creates a new `IoMem` instance from a previously acquired [`IoRequest`].
++    pub fn new<'a>(io_request: IoRequest<'a>) -> impl PinInit<Devres<Self>, Error> + 'a {
++        let dev = io_request.device;
++        let res = io_request.resource;
 +
-+        Flags(flags)
-+    }
-+}
-+
-+// SAFETY: `Resource` only holds a pointer to a C `struct resource`, which is
-+// safe to be used from any thread.
-+unsafe impl Send for Resource {}
-+
-+// SAFETY: `Resource` only holds a pointer to a C `struct resource`, references
-+// to which are safe to be used from any thread.
-+unsafe impl Sync for Resource {}
-+
-+/// Resource flags as stored in the C `struct resource::flags` field.
-+///
-+/// They can be combined with the operators `|`, `&`, and `!`.
-+///
-+/// Values can be used from the [`flags`] module.
-+#[derive(Clone, Copy, PartialEq)]
-+pub struct Flags(c_ulong);
-+
-+impl Flags {
-+    /// Check whether `flags` is contained in `self`.
-+    pub fn contains(self, flags: Flags) -> bool {
-+        (self & flags) == flags
++        Devres::new(dev, Self::ioremap(res))
 +    }
 +}
 +
-+impl core::ops::BitOr for Flags {
-+    type Output = Self;
-+    fn bitor(self, rhs: Self) -> Self::Output {
-+        Self(self.0 | rhs.0)
++impl<const SIZE: usize> Drop for IoMem<SIZE> {
++    fn drop(&mut self) {
++        // SAFETY: Safe as by the invariant of `Io`.
++        unsafe { bindings::iounmap(self.io.addr() as *mut c_void) }
 +    }
 +}
 +
-+impl core::ops::BitAnd for Flags {
-+    type Output = Self;
-+    fn bitand(self, rhs: Self) -> Self::Output {
-+        Self(self.0 & rhs.0)
-+    }
-+}
++impl<const SIZE: usize> Deref for IoMem<SIZE> {
++    type Target = Io<SIZE>;
 +
-+impl core::ops::Not for Flags {
-+    type Output = Self;
-+    fn not(self) -> Self::Output {
-+        Self(!self.0)
-+    }
-+}
-+
-+impl Flags {
-+    /// PCI/ISA I/O ports.
-+    pub const IORESOURCE_IO: Flags = Flags::new(bindings::IORESOURCE_IO);
-+
-+    /// Resource is software muxed.
-+    pub const IORESOURCE_MUXED: Flags = Flags::new(bindings::IORESOURCE_MUXED);
-+
-+    /// Resource represents a memory region.
-+    pub const IORESOURCE_MEM: Flags = Flags::new(bindings::IORESOURCE_MEM);
-+
-+    /// Resource represents a memory region that must be ioremaped using `ioremap_np`.
-+    pub const IORESOURCE_MEM_NONPOSTED: Flags = Flags::new(bindings::IORESOURCE_MEM_NONPOSTED);
-+
-+    const fn new(value: u32) -> Self {
-+        crate::build_assert!(value as u64 <= c_ulong::MAX as u64);
-+        Flags(value as c_ulong)
++    fn deref(&self) -> &Self::Target {
++        // SAFETY: Safe as by the invariant of `IoMem`.
++        unsafe { Io::from_raw(&self.io) }
 +    }
 +}
 
