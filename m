@@ -1,203 +1,119 @@
-Return-Path: <linux-kernel+bounces-733667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9AEB0779A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:07:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16F1B0779E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7053B9E6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEDBA41370
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7739C21C9E9;
-	Wed, 16 Jul 2025 14:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7CB21C19E;
+	Wed, 16 Jul 2025 14:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X4IIgmdZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VJaS6e8x";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X4IIgmdZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VJaS6e8x"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JH8YeOwD"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5349C1C54A9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D847721C19A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752674854; cv=none; b=LpwCTAiyheKkDIojvJkkRsty7dyk/jeBUX6IYiUgnA5eESZ6YsC3JW11Q785+HRJTyksWdV9bf5g4eXteopeqRGASos3jPfJdPTfjFJ2Z9gApJEZlqp73R4sWXJgRTu9y6ZgUc9wRrJYJF4lvHog3LJo7J/QZAJkZWdQLODNEB0=
+	t=1752674874; cv=none; b=VhcGmOYYSgp6EKtT/FGb+xVbAKFLrnfseowGfcnZnZScsdIfrz/Iu2ZGZTspoEeYZsdjo51Pc0VpoAHwAaw3ZYXWm8KF7X+CMvz5CYOL7+NQpOVqReF/IsIDt3wztZ4JY0Q9CloqppfKlMl+A1309SSuvO9XRa0+rxk5WRz8SLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752674854; c=relaxed/simple;
-	bh=yx7p25WRTRXyas+f1nAXfv91An97xMxsmjQ51t8uT2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MHAOUQJfXP8XqRJf63MOtqad1RS2K3mBcnLKhRv+TCd07+0fpESCipQqHgWLCvF9icyU+IC8sCnmT8Pn39/ep7B1FqyF080AnByi2ej3eaYoWsPr+fpr7q/MJmFmE2/9k4DnfU7/Q8GVKtK0I1ztN+jDnP+fhvAOBbCL9qA7y7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X4IIgmdZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VJaS6e8x; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X4IIgmdZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VJaS6e8x; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8DA6A1F38E;
-	Wed, 16 Jul 2025 14:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752674851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T+GYXlxm7dg235cQoGDEIyMUaRob+jYFKsimuF8rPzg=;
-	b=X4IIgmdZvgLPwb3T+t3Xbknr/95lbpT7jZuJgqWa0t6IMorbYM1Q7R9uz2N7kPvk+0SNLz
-	E0uxUj9YDEZXKEkGeMHrb/3Vy/BuerDwfQAPUwb6iSzmgxa8ZKL8Ga2LK4l6R+562/CRKh
-	95k3Vd/HAoSo+yYGmJowvXl/pdJtSD8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752674851;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T+GYXlxm7dg235cQoGDEIyMUaRob+jYFKsimuF8rPzg=;
-	b=VJaS6e8xAvMM9NgwB8c1dUqSqCtyP+IfKDmxZZIpDan20+TigcINmyyCqbQYwG7qt1CQkU
-	LOpof8Voo7kIA/AQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752674851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T+GYXlxm7dg235cQoGDEIyMUaRob+jYFKsimuF8rPzg=;
-	b=X4IIgmdZvgLPwb3T+t3Xbknr/95lbpT7jZuJgqWa0t6IMorbYM1Q7R9uz2N7kPvk+0SNLz
-	E0uxUj9YDEZXKEkGeMHrb/3Vy/BuerDwfQAPUwb6iSzmgxa8ZKL8Ga2LK4l6R+562/CRKh
-	95k3Vd/HAoSo+yYGmJowvXl/pdJtSD8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752674851;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T+GYXlxm7dg235cQoGDEIyMUaRob+jYFKsimuF8rPzg=;
-	b=VJaS6e8xAvMM9NgwB8c1dUqSqCtyP+IfKDmxZZIpDan20+TigcINmyyCqbQYwG7qt1CQkU
-	LOpof8Voo7kIA/AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5DEF7138D2;
-	Wed, 16 Jul 2025 14:07:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id g7V+FiOyd2hQBwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 16 Jul 2025 14:07:31 +0000
-Message-ID: <eb432785-e916-4714-a1e3-4ea5218cfa76@suse.cz>
-Date: Wed, 16 Jul 2025 16:07:31 +0200
+	s=arc-20240116; t=1752674874; c=relaxed/simple;
+	bh=xnppXDW+/D4BUUfT+nmUqzxni9FLNf119+Kee7lDjQY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VRZGtic6pXkMAvb/OgDLWoJyXJwo9iJeUe/91uzYg2i1eD1yovmncwXR0RmJ2l/bdN+Jzf1ydnhj07ZWs0cyRnE8Fn1GXX59IsuO5HaDfWPKfh0QCVaOwuDOjoPVCFr3Zs9v8HzFnGDtYL+P/hPUDBcFudIeB4Gq82wdK/WhvuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JH8YeOwD; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3138e64b3f1so9869652a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:07:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752674872; x=1753279672; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zTkHFe90gJMMisypW9Kk07LFR5ck7ZI/4vCfu7qJlUI=;
+        b=JH8YeOwD7Kbd6Q63SXat3adOBXFJdhJzWXDh0aQkobSuxhPCUNne8EdKXbzImZMBnR
+         UiMfqSe/yeuA0bE4An6JoNAriXnowF0dGHEgMInUNEms3Oj+QRPbin6/r+4Bag6utQPH
+         khCjzIf3J36LDv0UksybZ6JhqhBMUYBBq6rodbjCLfnavJhi+lFlL4jeGiasAQ4wOjui
+         w0UNnWudubYtcutktOIqCdrIY/fkdOC1ZffxuR6l1BOmvxXG6Sx2mMfgj2aup8E1Cs+A
+         VAlD6i4cavK1sEiqkzrKIAey99T52lEAY6/KoL5he8lAoEk+wy6smESZnR24PNFXHbLG
+         +e8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752674872; x=1753279672;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zTkHFe90gJMMisypW9Kk07LFR5ck7ZI/4vCfu7qJlUI=;
+        b=CkMrqGLi5x/m/0wrR0JD02k9CrFakZ7Pi9JiQMxjrPaFg/IK6yOzcaZiKiQmKasVyw
+         Ufn3/6CP+TNeUozZj1aRtDZrBRllMbR9nr6+WCwbFO4glMLjvsbcom2Qj5qHbNyKZ1xM
+         HhjPHMo14dYm3XEeQxVQobXByETDZJpMnyKioK8QDpSs9aLdt8l3D4qDVejQx+MFXywK
+         pxksRAGYqjYeZZveeAdc0Yvz3SmlB78jkh3Y96S1z7L5Vtf9aot5paK0FBMcmVvcslNY
+         RezlUO+CQop7lsfds3m5EbJI1yaEHn9bxtjYgg2jgmfRRQRBgt9LgzxbclMHIj1W4K0u
+         hPGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWquAhVbMo+zA43ebKdq5eEU5+5Nllj//EDsfCbiNT7H1xpefhpz8NwYsLJZz7GUODgehnL8rH6ve5oEIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfqUxvYxaa+fObRq94xpdoi8AGXmhOxV+2E+zTgWJJeIPlzA2t
+	cI4pV8244ipe4Lw7cr7ykkRT1OTAuyUYC5Q6E5cZcLbrDMtCUvF8GyC9ZEqTei9MSvMMtsCtJpx
+	hnfO+Sg==
+X-Google-Smtp-Source: AGHT+IGH7SKkiv+dEeqsqPQ36yI4iZJKO0Glbz2Nfmg5FFOwhR41KHC8GZ7fd7PWHjk6NrfWpS+ivmnev7w=
+X-Received: from pjbqo11.prod.google.com ([2002:a17:90b:3dcb:b0:311:7d77:229f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5604:b0:31c:38f8:7efb
+ with SMTP id 98e67ed59e1d1-31c9f424137mr4936137a91.18.1752674872198; Wed, 16
+ Jul 2025 07:07:52 -0700 (PDT)
+Date: Wed, 16 Jul 2025 07:07:50 -0700
+In-Reply-To: <229325e8-a461-6e5c-0d32-1c36086b62f7@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma
- lock
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org,
- david@redhat.com, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org,
- mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org,
- adobriyan@gmail.com, brauner@kernel.org, josef@toxicpanda.com,
- yebin10@huawei.com, linux@weissschuh.net, willy@infradead.org,
- osalvador@suse.de, andrii@kernel.org, ryan.roberts@arm.com,
- christophe.leroy@csgroup.eu, tjmercier@google.com, kaleshsingh@google.com,
- aha310510@gmail.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-References: <f60a932f-71c0-448f-9434-547caa630b72@suse.cz>
- <CAJuCfpE2H9-kRz6xSC43Ja0dmW+drcJa29hwQwQ53HRsuqRnwg@mail.gmail.com>
- <3b3521f6-30c8-419e-9615-9228f539251e@suse.cz>
- <CAJuCfpEgwdbEXKoMyMFiTHJMV15_g77-7N-m6ykReHLjD9rFLQ@mail.gmail.com>
- <bulkje7nsdfikukca4g6lqnwda6ll7eu2pcdn5bdhkqeyl7auh@yzzc6xkqqllm>
- <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com>
- <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com>
- <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
- <5ec10376-6a5f-4a94-9880-e59f1b6d425f@suse.cz>
- <CAJuCfpH8zsboafV1UWufYhbVXN-yKgMOKm=vr2vBYAPNmPtrvw@mail.gmail.com>
- <07de1e8c-9319-49b8-8e86-97ea0d18142b@lucifer.local>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <07de1e8c-9319-49b8-8e86-97ea0d18142b@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,linux-foundation.org,redhat.com,google.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLqwhhqik4qyk5i1fk54co8f1o)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Mime-Version: 1.0
+References: <20250716055315.2229037-1-nikunj@amd.com> <229325e8-a461-6e5c-0d32-1c36086b62f7@amd.com>
+Message-ID: <aHeyNvzvbgrWAob5@google.com>
+Subject: Re: [PATCH v2] x86/sev: Improve handling of writes to intercepted TSC MSRs
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org, bp@alien8.de, 
+	x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, santosh.shukla@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-On 7/16/25 16:00, Lorenzo Stoakes wrote:
-> On Tue, Jul 15, 2025 at 01:13:36PM -0700, Suren Baghdasaryan wrote:
->> Huh, I completely failed to consider this. In hindsight it is quite
->> obvious... Thanks Vlastimil, I owe you a beer or two.
+On Wed, Jul 16, 2025, Tom Lendacky wrote:
+> On 7/16/25 00:53, Nikunj A Dadhania wrote:
+> > From: Sean Christopherson <seanjc@google.com>
+> > 
+> > Currently, when a Secure TSC enabled SNP guest attempts to write to the
+> > intercepted GUEST_TSC_FREQ MSR (a read-only MSR), the guest kernel response
+> > incorrectly implies a VMM configuration error, when in fact it is the usual
+> > VMM configuration to intercept writes to read-only MSRs, unless explicitly
+> > documented.
+> > 
+> > Modify the intercepted TSC MSR #VC handling:
+> > * Write to GUEST_TSC_FREQ will generate a #GP instead of terminating the
+> >   guest
+> > * Write to MSR_IA32_TSC will generate a #GP instead of silently ignoring it
+> > 
+> > Add a WARN_ONCE to log the incident, as well-behaved SNP guest kernels
+> > should never attempt to write to these MSRs.
+> > 
+> > However, continue to terminate the guest when reading from intercepted
+> > GUEST_TSC_FREQ MSR with Secure TSC enabled, as intercepted reads indicate
+> > an improper VMM configuration for Secure TSC enabled SNP guests.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Feel free to drop me as author and just give me a Reported-by or Suggested-by.
+At this point, I ain't doing a whole lot of anything for this patch :-)
+
+> > +	if (WARN_ON_ONCE(write)) {
 > 
-> FYI - Vlasta prefers the 'starobrno' brand of beer, he says he can't get
-> enough :)
+> Do we want to capture individual WARNs for each MSR? I guess I'm ok with
+> a single WARN for either MSR, but just asking the question.
 
-FYI - Lorenzo is a notorious liar :)
+Or don't WARN at all.  If the caller is doing a bare wrmsrq(), then the kernel
+will WARN in ex_handler_msr().  If the caller is doing wrmsrq_safe(), do we care
+that they're being deliberately weird?
 
