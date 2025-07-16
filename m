@@ -1,121 +1,183 @@
-Return-Path: <linux-kernel+bounces-734137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C379B07D79
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C9C6B07D7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FFCB3AC4E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:15:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E593B3A4974
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA98B29B21D;
-	Wed, 16 Jul 2025 19:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA5729E10F;
+	Wed, 16 Jul 2025 19:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="niMoVXYN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ibHrRFc0"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB7221D5B8;
-	Wed, 16 Jul 2025 19:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A2E13D503
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752693326; cv=none; b=GqWIA+PeN0SQ+VXhGGRTQmKH9YDssk0nR5ZQkGyYZ7Pra7/0ph+gqJuYKc1wYoV6C5mTwaeX/p2BCuhNdhsM5od5pT1Ot6GrriJ7m4zwWUaHdgpWu1nsAJxhLda1f2cGHKUlb5EhRffi3oGP0i2bT0sA7JLgjW/UWQ5ZxjANeTg=
+	t=1752693387; cv=none; b=UCg8hr4Y3fB+r7TI54I/NPlKPWmng5uaXWBu7pgHBad6g5RppoWH9Q0uUQIgX99W/JmUnAd2AY4/gK6Wm4yuV649vmnFHzS8ppzof8pnH49U6OM4Tze+6sV0hATDK7D9wV00VKuR3tqLP91PtD1J9AYfb76xqabyVhYHmduoofw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752693326; c=relaxed/simple;
-	bh=4N3D0mV9fAJhJVXMiEgcyz3tWO3uL3DRXA1riDY7AyE=;
+	s=arc-20240116; t=1752693387; c=relaxed/simple;
+	bh=7a4F/v5t0VTy1cn1BrYaA4E3/yySyypOsX+OzuYTcvQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IdDXFYbLxDDoPMkV+QBJyQuJRcs7LdprdgzORQYChTId0BofxoERtcpM4PWposQlGAOAcrVcJeWbEUzdkARIuOD46Qg7hXAqdHGq7IFD0FinQaqDEZ9RD45I4jtJrrgZf1ktkaK49ZSE1P7wGqlGIp1syHUmBxwOf/+3N9XXVwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=niMoVXYN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90148C4CEF4;
-	Wed, 16 Jul 2025 19:15:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752693325;
-	bh=4N3D0mV9fAJhJVXMiEgcyz3tWO3uL3DRXA1riDY7AyE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=niMoVXYNNXgeKJqWziEe46AupDNORRIcaatSL6UkYXZzieeaMv08BrflIieLLK9/4
-	 COxh5fwbyfKaPFtjnWucgESLgKeC6KJi2/pHdGBSVY/HUfPwPKO2dEaisjGWiGW19R
-	 hEqjJFeZji8aCx3O1ybqoXpz3KLQ+vJxJEcfAv0xR2u0sXVJOT0ULnvPC1e6Go2EhM
-	 JrSHq9jMUI3u6IHrVj4sRSd6FZ/LaOIz158MfZueN3ejIKGNG745HLs7Bx+FABuHyu
-	 SJhxUYLFmQYMhnhvVaiXZkB02856CAT2n0t0zGYJ+0Tlcc83uw/2tY4EmuPtVAne95
-	 UCZKkPYDen4uQ==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-613c7b65039so34320eaf.0;
-        Wed, 16 Jul 2025 12:15:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV0TEQO4553lV9aS3iDY3pqZy6GEZsEbv8XH/T9qjq06mR8UC3DdrtnuYZazQpXHZL+vB9mU4643k6F@vger.kernel.org, AJvYcCVcDAooTQPnSBeZhVZEf3VnsnovY32008GJDM92S9vhU4fediQQvU8vUAiYecEIWUJXrW7OhCdAvQRi3gTu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKTRR/RDorO50oRgj7fwP0ztQPqjOf5bqZGVEoBbN2ssjF0ZNI
-	4dTXDCjHEEOp+oR/iLLW+Yc7EmAp1CgUoXbwZqbynRqjxu7MEVwYQR8/g4va0XPDrtYKpvpcGCA
-	r3JdpWiIGjbQ7v4x/Vx13Ag5ev+LRM7s=
-X-Google-Smtp-Source: AGHT+IEvTv/ggyRIgatYX8jj6pi1Ing2OMrRQ+dXF0gg4eXsN/AjotWLhdtlqAald04JP+4oOgQqob65OSCcVKDSo7A=
-X-Received: by 2002:a05:6808:1814:b0:408:f80a:bab9 with SMTP id
- 5614622812f47-41d033f488dmr2488291b6e.11.1752693324796; Wed, 16 Jul 2025
- 12:15:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZelaZV45FrIZfkoJ5NUf6wchQ8sMvxejV0WgJHxSnlmJ+/NYpQNl3lGDWRbmCB5qIZvPeOVvNOV7qBcUhFJGP/ZCV6rcvLcwnNd++GqdiGEZ4VStEDp47b3qGJkUjmjTGdT+EwYmNKQ0YeBkoLUhyLR7rQj2AvpvSxW1CDCz3+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ibHrRFc0; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-237f18108d2so39665ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:16:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752693384; x=1753298184; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yCXogAk+cweZ2SJB8bYDRGUnX9Id22JuJKEB410D5Ak=;
+        b=ibHrRFc03Sf8/ldGtJILbmnsOevN4x8rgu12BcksInJYOfZa25kEpCiawb7jO4In1+
+         tfH1rpGPCvnBQXe6h1TE2NvnhZpN5fZD+Osw083MSgFuZr37nWZJJ8qLTpGGiIg9O+R7
+         i2XwGDvoqbkD8sDZJxU1XkfhDaUb+yeNZQVMdyOH6g5YItiB9rvIaBTsw92qknkLOWHZ
+         4hXyg9ZEkqpoUfP69z2uNRUtKmUGBHc3RGrhrHMnhkabEpUluN3VT/dcWiJNMp0HtCbj
+         yVsvXISeFbmXaTatSLuwoMkes3xtMIIZw7f79kVeVLTvkP0axFgtFbv3jnsMhRb9SzC0
+         LLLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752693384; x=1753298184;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yCXogAk+cweZ2SJB8bYDRGUnX9Id22JuJKEB410D5Ak=;
+        b=nnJTMRCrJso5nZXYhmQGcjL5JkOihEI03IivNy1Trb6goddmANS28gIrUS6MVAdxuV
+         eNCI2+OZdPk4OmNRaLU1X92MdnJApPcECGV9hJA2yjLmuD5R+KeY+IKw3UU05msGyfe6
+         MqHaaBCqVOj1DIACMa+4XXefhQMOCBVjlwJJRyI/McM3ACnNoSWh9bEx6OLdJ+K3cXpl
+         +uLuia9vzaKpkz4XUaFHJJvWPP45wlqg2XDHfXC6GN5MyD6MvKMwVl+Am24eUapgBPsD
+         8B/Y8NnYeMjMfCxXtuvP+nat4UYc66/1xzg/7RtJt0EZjbEVhOFKcI3ryZCKsCHupfRI
+         rEDg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6C3KeP5kFBT4tTE9Cjp1NfMeZjzBoptevva6ta7FiI8A7KLusp+u3p8YavzsZEwN4lh2HbqYSkCayBtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPK5Z7UIAye5cNTrsixoo5XRWlGCaZRLaH2TePp8JD/XZfY+I3
+	8EePCyn0oVFC5IZYF+rMJ2CdROGesZDi2eq77AcJKXbwpvV0VP3T+4fRRoM1SrKdzNPYCUj9GxX
+	XXJLK9ngI9wwyWqVImASgZ9typTCy07hAZJxzS2i7
+X-Gm-Gg: ASbGncuLYEzVOf0g9ijxzG6jcVmPNrLKeHq/+pfw4QhXy1S3SLQVZ5wjnS/CZ1CqdJw
+	H14ON9AmGFGYrgl5xG5+zmWZ+IkZmpxfZYl62WaWSYmJqXj8nbNv1WtcTtFoC3q/hGFRk76z2Xp
+	GlZdVAfV0p/28F69hx8Hn6IN11JPinifND6uJJiYnbWVbiC/dCk+qnNU1d/ZZZILh6BAwOriNCm
+	WdWMsTn
+X-Google-Smtp-Source: AGHT+IGjz6prczNhR+tpnPf3HqDU6DjfU18vzOHN51hPdE3NBlhP0WNSMfiyXgFly1IMHdVGdlB6xyeXDOHplgNGr7E=
+X-Received: by 2002:a17:903:1b48:b0:223:fd7e:84ab with SMTP id
+ d9443c01a7336-23e2fe9b868mr480835ad.24.1752693384098; Wed, 16 Jul 2025
+ 12:16:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716123543.495628-1-hsukrut3@gmail.com>
-In-Reply-To: <20250716123543.495628-1-hsukrut3@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 16 Jul 2025 21:15:13 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gh2pARpomZnXiLegduYBczBG6ZGUSpzeo6RFb5XTwULg@mail.gmail.com>
-X-Gm-Features: Ac12FXwIRuQuWNCRJKMvRfbs3VifhndfP-tUa3pmbr1B-eojFqmNIPv7xcGWNJc
-Message-ID: <CAJZ5v0gh2pARpomZnXiLegduYBczBG6ZGUSpzeo6RFb5XTwULg@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: TAD: Replace sprintf with sysfs_emit
-To: Sukrut Heroorkar <hsukrut3@gmail.com>
-Cc: rafel@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+References: <1752649242-147678-1-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1752649242-147678-1-git-send-email-tariqt@nvidia.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 16 Jul 2025 12:16:11 -0700
+X-Gm-Features: Ac12FXxxij_WhdVUZejr3zF9wy4BTmiPJrkxcdFq014hkkwU57ufFSCs6aIMXQ0
+Message-ID: <CAHS8izOkpcpO0KwtOZb0WE5kw+hec8nN9cWGarjT7dupw3Z+UQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] net/mlx5e: TX, Fix dma unmapping for devmem tx
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dragos Tatulea <dtatulea@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 2:36=E2=80=AFPM Sukrut Heroorkar <hsukrut3@gmail.co=
-m> wrote:
+On Wed, Jul 16, 2025 at 12:01=E2=80=AFAM Tariq Toukan <tariqt@nvidia.com> w=
+rote:
 >
-> Replace use of sprintf in *_show attributes with sysfs_emit for writing
-> to sysfs. While the current implementation works, sysfs_emit helps preven=
-t
-> potential buffer overflows and aligns with kernel documentation
-> Documentation/filesystems/sysfs.rst.
+> From: Dragos Tatulea <dtatulea@nvidia.com>
 >
-> Tested on an x86_64 system with acpi_tad built as a module:
-> - Inserted patched acpi_tad.ko successfully
-> - Verified /sys/devices/platform/ACPI000E:00/time and /caps are accessibl=
-e
-> - Confirmed correct output from 'cat' with no dmesg errors
+> net_iovs should have the dma address set to 0 so that
+> netmem_dma_unmap_page_attrs() correctly skips the unmap. This was
+> not done in mlx5 when support for devmem tx was added and resulted
+> in the splat below when the platform iommu was enabled.
 >
-> Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
-> ---
->  drivers/acpi/acpi_tad.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> This patch addresses the issue by using netmem_dma_unmap_addr_set()
+> which handles the net_iov case when setting the dma address. A small
+> refactoring of mlx5e_dma_push() was required to be able to use this API.
+> The function was split in two versions and each version called
+> accordingly. Note that netmem_dma_unmap_addr_set() introduces an
+> additional if case.
 >
-> diff --git a/drivers/acpi/acpi_tad.c b/drivers/acpi/acpi_tad.c
-> index 825c2a8acea4..91d7d90c47da 100644
-> --- a/drivers/acpi/acpi_tad.c
-> +++ b/drivers/acpi/acpi_tad.c
-> @@ -233,7 +233,7 @@ static ssize_t time_show(struct device *dev, struct d=
-evice_attribute *attr,
->         if (ret)
->                 return ret;
+> Splat:
+>   WARNING: CPU: 14 PID: 2587 at drivers/iommu/dma-iommu.c:1228 iommu_dma_=
+unmap_page+0x7d/0x90
+>   Modules linked in: [...]
+>   Unloaded tainted modules: i10nm_edac(E):1 fjes(E):1
+>   CPU: 14 UID: 0 PID: 2587 Comm: ncdevmem Tainted: G S          E       6=
+.15.0+ #3 PREEMPT(voluntary)
+>   Tainted: [S]=3DCPU_OUT_OF_SPEC, [E]=3DUNSIGNED_MODULE
+>   Hardware name: HPE ProLiant DL380 Gen10 Plus/ProLiant DL380 Gen10 Plus,=
+ BIOS U46 06/01/2022
+>   RIP: 0010:iommu_dma_unmap_page+0x7d/0x90
+>   Code: [...]
+>   RSP: 0000:ff6b1e3ea0b2fc58 EFLAGS: 00010246
+>   RAX: 0000000000000000 RBX: ff46ef2d0a2340c8 RCX: 0000000000000000
+>   RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
+>   RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffff8827a120
+>   R10: 0000000000000000 R11: 0000000000000000 R12: 00000000d8000000
+>   R13: 0000000000000008 R14: 0000000000000001 R15: 0000000000000000
+>   FS:  00007feb69adf740(0000) GS:ff46ef2c779f1000(0000) knlGS:00000000000=
+00000
+>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>   CR2: 00007feb69cca000 CR3: 0000000154b97006 CR4: 0000000000773ef0
+>   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>   PKRU: 55555554
+>   Call Trace:
+>    <TASK>
+>    dma_unmap_page_attrs+0x227/0x250
+>    mlx5e_poll_tx_cq+0x163/0x510 [mlx5_core]
+>    mlx5e_napi_poll+0x94/0x720 [mlx5_core]
+>    __napi_poll+0x28/0x1f0
+>    net_rx_action+0x33a/0x420
+>    ? mlx5e_completion_event+0x3d/0x40 [mlx5_core]
+>    handle_softirqs+0xe8/0x2f0
+>    __irq_exit_rcu+0xcd/0xf0
+>    common_interrupt+0x47/0xa0
+>    asm_common_interrupt+0x26/0x40
+>   RIP: 0033:0x7feb69cd08ec
+>   Code: [...]
+>   RSP: 002b:00007ffc01b8c880 EFLAGS: 00000246
+>   RAX: 00000000c3a60cf7 RBX: 0000000000045e12 RCX: 000000000000000e
+>   RDX: 00000000000035b4 RSI: 0000000000000000 RDI: 00007ffc01b8c8c0
+>   RBP: 00007ffc01b8c8b0 R08: 0000000000000000 R09: 0000000000000064
+>   R10: 00007ffc01b8c8c0 R11: 0000000000000000 R12: 00007feb69cca000
+>   R13: 00007ffc01b90e48 R14: 0000000000427e18 R15: 00007feb69d07000
+>    </TASK>
 >
-> -       return sprintf(buf, "%u:%u:%u:%u:%u:%u:%d:%u\n",
-> +       return sysfs_emit(buf, "%u:%u:%u:%u:%u:%u:%d:%u\n",
->                        rt.year, rt.month, rt.day, rt.hour, rt.minute, rt.=
-second,
->                        rt.tz, rt.daylight);
->  }
-> @@ -428,7 +428,7 @@ static ssize_t caps_show(struct device *dev, struct d=
-evice_attribute *attr,
->  {
->         struct acpi_tad_driver_data *dd =3D dev_get_drvdata(dev);
->
-> -       return sprintf(buf, "0x%02X\n", dd->capabilities);
-> +       return sysfs_emit(buf, "0x%02X\n", dd->capabilities);
->  }
->
->  static DEVICE_ATTR_RO(caps);
-> --
+> Cc: Mina Almasry <almasrymina@google.com>
+> Reported-by: Stanislav Fomichev <stfomichev@gmail.com>
+> Closes: https://lore.kernel.org/all/aFM6r9kFHeTdj-25@mini-arch/
+> Fixes: 5a842c288cfa ("net/mlx5e: Add TX support for netmems")
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Carolina Jubran <cjubran@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
-Applied as 6.17 material, thanks!
+
+Hmm, a couple of issues I see, but I'm not sure if it's really wrong
+or my own non-understanding.
+
+I don't see  netmem_dma_unmap_page_attrs called anywhere in your
+driver. The point of  netmem_dma_unmap_addr_set setting the addr to 0
+is that a later call to netmem_dma_unmap_page_attrs skips the
+dma-unmap call if it's 0.
+
+I could not understand why the mlx5/core/* files still used the
+non-netmem variant. The netdev->netmem_tx was set to true in
+mlx5/core/en_main.c, so I would have thought at least all the
+mlx5/core/en_tx.c callsites should have gone to that.
+
+--=20
+Thanks,
+Mina
 
