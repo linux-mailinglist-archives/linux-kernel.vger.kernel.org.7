@@ -1,248 +1,118 @@
-Return-Path: <linux-kernel+bounces-734197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C99B07E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:44:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C318DB07E45
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11CC8A41089
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:43:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E3181C42EDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D4A2BE037;
-	Wed, 16 Jul 2025 19:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E4128F528;
+	Wed, 16 Jul 2025 19:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="ylVMaZtV"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RGZqs069"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39FD286D46;
-	Wed, 16 Jul 2025 19:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26739188A3A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752694955; cv=none; b=fAy2f/OD3Wu9s92Kz4bXFKjmazFqGSB9j89z+xY15VQd/Ga66oe5aw/0LG9GTMLlYh1CX9IliG5AOTegXPkX7ihYHqwJqQeFk8NaK++4PTYivnDo85vwej9Nyf8NEDd5BYQl6MuouwL0+8Fsxg6isYPVq3a4OXGKz00emS24am8=
+	t=1752695029; cv=none; b=FeeiqZS9rpI8/nfI/7PzhHcVOb9PKIAtHk9MqiCxkF5nAIOpt/olagw6H9wag15MALnsP9PbEO6OoFG7fz5Cw5LICllF77LQ7Bw+9bqiNXOMdZ9DXwWEUdAp3/c8oLMB7rlU3ryLlPBhj1jPoSHrCgxneJ1HjoEHtzPMP60BytE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752694955; c=relaxed/simple;
-	bh=Pw1fBsv5/TECiWrU0V6LsQwsUBawWDhGo6/SS9Wf7zo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kfxUdUarQsbEf2FnIccjYqddC6rc+qEj7CifX63hAOzfeSDlTWqNuinOFm3wYgaKvql5RXTmq8tH8XuqBpiuzHsOgd3z7TSSTbAfLeEJ9rrCtENOXhd92NmW4Cmiv3rZyo15HhJfK5f2hJkzdIf8dWgWOhr/YEuVcCqUWnzbTxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=ylVMaZtV; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1752694946; bh=Pw1fBsv5/TECiWrU0V6LsQwsUBawWDhGo6/SS9Wf7zo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ylVMaZtVIVVxtiHibKwBdHuJo51ETftah3+pTgLa5GYZznGt01W6s1+Nuv8au7AjZ
-	 Z5gl7LuPDtR7FNNBiOF6E8xVYUYkXKgJS4Uqz0BA2815O2t9gx5Wh2fajPpVp0biES
-	 7uvth2RvhoqRIM+aeIAuBb8QLQBK0SoznmiuuwIk=
-Received: from [192.168.178.20] (53.206.40.145.ftth.as8758.net [145.40.206.53])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id EE21020513AF;
-	Wed, 16 Jul 2025 21:42:25 +0200 (CEST)
-Message-ID: <5ac8d7e3-d778-4ef8-a7d7-1296ffda5dae@ralfj.de>
-Date: Wed, 16 Jul 2025 21:42:25 +0200
+	s=arc-20240116; t=1752695029; c=relaxed/simple;
+	bh=pXfjGryhHsXaEwigYLwe/P3+EpFLiYB6sbYadjHApPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TOMfQwKJX0oVkWmFhLSQT9KNv1ai8ztJDMko0kt2HK7gNVBZjWeAk3MiRtmdtDIOH+6EYba0NA2sm+ZYT0pN9+ZEa7zXACrNpeDITyV94CJCf5HDT3tmKhTX6iSSoWMdCXP+ELr+we7W9MRVNKYLvyvYFASOysQy4W2TYmrIMGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RGZqs069; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2ea34731c5dso211986fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:43:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752695027; x=1753299827; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tmJZX6J1qRoq7AzSQMCUC8rTJXTuje9Df69FamNPBRM=;
+        b=RGZqs0692df34ugkghm93d1RCzV7NdjrQSOhfeM6oogPG5+7Ay9OprEHChizk16PPr
+         /tjnIM6T5sHHJVcO5QTQGCshX9zUtP76xPNJR2DD1ngtvaSSoLyhO8OJxPcOtfOOT2cy
+         H6/Kexs9yHN2qj35Nb9irIxsLrPGBsXrGUgOOoRyo895dJynKlJVKdQ8KzQuFBZ2z5pW
+         UJ+rI1XleO0Q13QTP+wg0BHU93gOmxlhxFT7KLQHg7bzuouC0vc2Rh5KukEmKH3ixfAt
+         165x5bg6G35PBwKlSXFg4hQ2RbNAxOBTJjRuFaFPyEmR/e12VG97QCA6byVfUllNIzkM
+         WpQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752695027; x=1753299827;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tmJZX6J1qRoq7AzSQMCUC8rTJXTuje9Df69FamNPBRM=;
+        b=T5UEvO3GLtmAu53CjCvSHMnKI+5vIpdbudvdIH1RRnH3FWfi6VM4rAn5W1NRMKPjrC
+         QUZ2xZM9o0DeL0w3uSP1iZOLZEQi5jb7uBLH99vXLWHNrHWOeaLRLEZYwdCsfE4Zc8wF
+         +WL7u/jRZGZk2pt1fcX0MQcfNjOn44uTLOdheHMrxmbLSF/2pCepjptpINyg64G5Mdz2
+         l3V0ul/bIWcRC9MoixnQKSmod8J2m/2MIgf9V2Bvjyzv0l3NWvCAhF+8gPGfh8O8GvB+
+         UrodElAHIIsMcx2ePX0zZkpXdw91tpsdJEsu5oULFJyjL6NUOArs7fMVefz1UxFLzS8F
+         I2Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAx8WK6JF7u7z1ZopL41t/yVgtH3hTFaGpHduPQbw2eGV3RomeklCRl0DF8C7fz56h+YG41WGnACOBu2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbsJkDOK6bMQsU4JoT9z7oPsV5FQXjy1zCPtYeOlEXJ277pxCZ
+	La/TcK1XsNw9lU0vyFvp97njkGov5Whiqo/YrnmHd2VJUi6pnzVv0E0TCxrKdRTRY0eagvDeoOa
+	cX52k
+X-Gm-Gg: ASbGncvYrvrhzc2OTUF4/80yLtZMEgWjTI+EerWfoV+0td6PctSRFbjMfHIcc9pNXLN
+	qUv8iSCyccpmZbgioH/inWgavX8ok3z6oCI1munuvI5FwV+NgHQjFk8UKkIO9OZ3c2NrXSkkBrL
+	QcX7t1O3abmUi8PLDSjMo5LlxNXm0Wt5zMZuSbsJaFCK0luQPT2IZlp9XO62G+If4cOEVBQSt55
+	jdZodkxnOvV2HEb0rSd3ZPiBWX5HEEbOHW+OimtGgmN1U0b74h50dRvLhatM9+trZndywg8oAV1
+	o41+I+AwsFU4uiIZ0fHooKYxU24CS+pVAdUrWE7g22JM522mD8vMteUFs0WTek5W2LBBThCbeMb
+	s+i/ecQYEC12FFTxCZtumLaSX2Fs1zhhOx7TkEwcj
+X-Google-Smtp-Source: AGHT+IF8DC41wViyGCjPZEkIppmrGRXKouyjvgC2Rel1VCsq4higRnI+57N6atyy6zVPo8lzk9b3mQ==
+X-Received: by 2002:a05:6870:9f06:b0:2d5:ba2d:80dd with SMTP id 586e51a60fabf-2ffb22506aamr3182710fac.12.1752695027100;
+        Wed, 16 Jul 2025 12:43:47 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:3f28:4161:2162:7ea2])
+        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2ff111c36b8sm3753163fac.10.2025.07.16.12.43.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 12:43:46 -0700 (PDT)
+Date: Wed, 16 Jul 2025 14:43:45 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] irqchip/ls-scfg-msi: Fix NULL dereference in error
+ handling
+Message-ID: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 8/9] rust: sync: Add memory barriers
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
- linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Viresh Kumar <viresh.kumar@linaro.org>, Lyude Paul <lyude@redhat.com>,
- Ingo Molnar <mingo@kernel.org>, Mitchell Levy <levymitchell0@gmail.com>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Alan Stern <stern@rowland.harvard.edu>
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-9-boqun.feng@gmail.com>
- <DB93NWEAK46D.2YW5P9MSAWVCN@kernel.org> <aHFWCsOfcGLSUPAP@tardis-2.local>
- <4d373b56-0f36-4f8a-9052-cee38b90f59b@ralfj.de> <aHZyC4xr7jgN6Mgv@Mac.home>
- <371882d2-3c31-4c5f-a12f-22945027ee33@ralfj.de> <aHZ6Rp4qdCXUoIZy@Mac.home>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <aHZ6Rp4qdCXUoIZy@Mac.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hi Boqun,
+The call to irq_domain_remove(msi_data->parent); was accidentally left
+behind during a code refactor.  It's not necessary to free
+"msi_data->parent" because it is NULL and, in fact, trying to free it
+will lead to a NULL pointer dereference.  Delete the unnecessary code.
 
-On 15.07.25 17:56, Boqun Feng wrote:
-> On Tue, Jul 15, 2025 at 05:35:47PM +0200, Ralf Jung wrote:
->> Hi all,
->>
->> On 15.07.25 17:21, Boqun Feng wrote:
->>> On Mon, Jul 14, 2025 at 05:42:39PM +0200, Ralf Jung wrote:
->>>> Hi all,
->>>>
->>>> On 11.07.25 20:20, Boqun Feng wrote:
->>>>> On Fri, Jul 11, 2025 at 10:57:48AM +0200, Benno Lossin wrote:
->>>>>> On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
->>>>>>> diff --git a/rust/kernel/sync/barrier.rs b/rust/kernel/sync/barrier.rs
->>>>>>> new file mode 100644
->>>>>>> index 000000000000..df4015221503
->>>>>>> --- /dev/null
->>>>>>> +++ b/rust/kernel/sync/barrier.rs
->>>>>>> @@ -0,0 +1,65 @@
->>>>>>> +// SPDX-License-Identifier: GPL-2.0
->>>>>>> +
->>>>>>> +//! Memory barriers.
->>>>>>> +//!
->>>>>>> +//! These primitives have the same semantics as their C counterparts: and the precise definitions
->>>>>>> +//! of semantics can be found at [`LKMM`].
->>>>>>> +//!
->>>>>>> +//! [`LKMM`]: srctree/tools/memory-model/
->>>>>>> +
->>>>>>> +/// A compiler barrier.
->>>>>>> +///
->>>>>>> +/// A barrier that prevents compiler from reordering memory accesses across the barrier.
->>>>>>> +pub(crate) fn barrier() {
->>>>>>> +    // By default, Rust inline asms are treated as being able to access any memory or flags, hence
->>>>>>> +    // it suffices as a compiler barrier.
->>>>>>
->>>>>> I don't know about this, but it also isn't my area of expertise... I
->>>>>> think I heard Ralf talk about this at Rust Week, but I don't remember...
->>>>>>
->>>>>
->>>>> Easy, let's Cc Ralf ;-)
->>>>>
->>>>> Ralf, I believe the question here is:
->>>>>
->>>>> In kernel C, we define a compiler barrier (barrier()), which is
->>>>> implemented as:
->>>>>
->>>>> # define barrier() __asm__ __volatile__("": : :"memory")
->>>>>
->>>>> Now we want to have a Rust version, and I think an empty `asm!()` should
->>>>> be enough as an equivalent as a barrier() in C, because an empty
->>>>> `asm!()` in Rust implies "memory" as the clobber:
->>>>>
->>>>> 	https://godbolt.org/z/3z3fnWYjs
->>>>>
->>>>> ?
->>>>>
->>>>> I know you have some opinions on C++ compiler_fence() [1]. But in LKMM,
->>>>> barrier() and other barriers work for all memory accesses not just
->>>>> atomics, so the problem "So, if your program contains no atomic
->>>>> accesses, but some atomic fences, those fences do nothing." doesn't
->>>>> exist for us. And our barrier() is strictly weaker than other barriers.
->>>>>
->>>>> And based on my understanding of the consensus on Rust vs LKMM, "do
->>>>> whatever kernel C does and rely on whatever kernel C relies" is the
->>>>> general suggestion, so I think an empty `asm!()` works here. Of course
->>>>> if in practice, we find an issue, I'm happy to look for solutions ;-)
->>>>>
->>>>> Thoughts?
->>>>>
->>>>> [1]: https://github.com/rust-lang/unsafe-code-guidelines/issues/347
->>>>
->>>> If I understood correctly, this is about using "compiler barriers" to order
->>>> volatile accesses that the LKMM uses in lieu of atomic accesses?
->>>> I can't give a principled answer here, unfortunately -- as you know, the
->>>> mapping of LKMM through the compiler isn't really in a state where we can
->>>> make principled formal statements. And making principled formal statements
->>>> is my main expertise so I am a bit out of my depth here. ;)
->>>>
->>>
->>> Understood ;-)
->>>
->>>> So I agree with your 2nd paragraph: I would say just like the fact that you
->>>> are using volatile accesses in the first place, this falls under "do
->>>> whatever the C code does, it shouldn't be any more broken in Rust than it is
->>>> in C".
->>>>
->>>> However, saying that it in general "prevents reordering all memory accesses"
->>>> is unlikely to be fully correct -- if the compiler can prove that the inline
->>>> asm block could not possibly have access to a local variable (e.g. because
->>>> it never had its address taken), its accesses can still be reordered. This
->>>> applies both to C compilers and Rust compilers. Extra annotations such as
->>>> `noalias` (or `restrict` in C) can also give rise to reorderings around
->>>> arbitrary code, including such barriers. This is not a problem for
->>>> concurrent code since it would anyway be wrong to claim that some pointer
->>>> doesn't have aliases when it is accessed by multiple threads, but it shows
->>>
->>> Right, it shouldn't be a problem for most of the concurrent code, and
->>> thank you for bringing this up. I believe we can rely on the barrier
->>> behavior if the memory accesses on both sides are done via aliased
->>> references/pointers, which should be the same as C code relies on.
->>>
->>> One thing though is we don't use much of `restrict` in kernel C, so I
->>> wonder the compiler's behavior in the following code:
->>>
->>>       let mut x = KBox::new_uninit(GFP_KERNEL)?;
->>>       // ^ KBox is our own Box implementation based on kmalloc(), and it
->>>       // accepts a flag in new*() functions for different allocation
->>>       // behavior (can sleep or not, etc), of course we want it to behave
->>>       // like an std Box in term of aliasing.
->>>
->>>       let x = KBox::write(x, foo); // A
->>>
->>>       smp_mb():
->>>         // using Rust asm!() for explanation, it's really implemented in
->>>         // C.
->>>         asm!("mfence");
->>>
->>>       let a: &Atomic<*mut Foo> = ...; // `a` was null initially.
->>>
->>>       a.store(KBox::into_raw(x), Relaxed); // B
->>>
->>> Now we obviously want A and B to be ordered, because smp_mb() is
->>> supposed to be stronger than Release ordering. So if another thread does
->>> an Acquire read or uses address dependency:
->>>
->>>       let a: &Atomic<*mut Foo> = ...;
->>>       let foo_ptr = a.load(Acquire); // or load(Relaxed);
->>>
->>>       if !foo_ptr.is_null() {
->>>           let y: KBox<Foo> = unsafe { KBox::from_raw(foo_ptr) };
->>> 	// ^ this should be safe.
->>>       }
->>>
->>> Is it something Rust AM could guarantee?
->>
->> If we pretend these are normal Rust atomics, and we look at the acquire
->> read, then yeah that should work -- the asm block can act like a release
->> fence. With the LKMM, it's not a "guarantee" in the same sense any more
->> since it lacks the formal foundations, but "it shouldn't be worse than in
->> C".
-> 
->>
->> The Rust/C/C++ memory models do not allow that last example with a relaxed
->> load and an address dependency. In C/C++ this requires "consume", which Rust
-> 
-> Sorry I wasn't clear, of course I wasn't going to start a discussion
-> about address dependency and formal guarantee about it ;-)
-> 
-> What I meant was the "prevent reordering A and B because of the asm!()"
-> at the release side, because normally we won't use a restrict pointer to
-> a kmalloc() result, so I'm curious whether Box make the behavior
-> different:
-> 
->      let mut b = Box::new_uninit(...);
->      let b = Box::write(b, ...); // <- this is a write done via noalias
->      asm!(...);
->      a.store(Box::from_raw(b), Relaxed);
-> 
-> But looks like we can just model the asm() as a Rust release fence, so
-> it should work. Thanks!
+Fixes: 94b59d5f567a ("irqchip/ls-scfg-msi: Switch to use msi_create_parent_irq_domain()")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/irqchip/irq-ls-scfg-msi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yeah... this is actually a subtle case and there are some adjacent compiler bugs 
-(when doing the same with local variables, not Box), but those are bugs (and 
-they affect both C and Rust).
-
-Kind regards,
-Ralf
+diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
+index 7eca751d6548..4910f364e568 100644
+--- a/drivers/irqchip/irq-ls-scfg-msi.c
++++ b/drivers/irqchip/irq-ls-scfg-msi.c
+@@ -226,7 +226,6 @@ static int ls_scfg_msi_domains_init(struct ls_scfg_msi *msi_data)
+ 	msi_data->parent = msi_create_parent_irq_domain(&info, &ls_scfg_msi_parent_ops);
+ 	if (!msi_data->parent) {
+ 		dev_err(&msi_data->pdev->dev, "failed to create MSI domain\n");
+-		irq_domain_remove(msi_data->parent);
+ 		return -ENOMEM;
+ 	}
+ 
+-- 
+2.47.2
 
 
