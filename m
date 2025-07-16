@@ -1,109 +1,102 @@
-Return-Path: <linux-kernel+bounces-733475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4558B07523
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C77DB0752E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84DC850729C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:55:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646C33A2D74
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65662F431C;
-	Wed, 16 Jul 2025 11:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344592F4A14;
+	Wed, 16 Jul 2025 11:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YZZempSc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Rp0tARzF"
+Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9293C2F3648;
-	Wed, 16 Jul 2025 11:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652AE2BE647
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752666905; cv=none; b=MkP4z3qU120dzmpJ0g9h/6/N7g/uV13N5/jDGwZf6TqyOT9bkBMBuFqhUJmkutd+RRXV4CvCPOjNZ6QgQ2/WT8rveOibOOL785RRND/0TLuaRSiC3DIW8T8nIOzpdZ5rZbX3izxI6LkEdr2O4MbbDSgXAAiBvr1kdPntoKrMFq8=
+	t=1752666963; cv=none; b=Zt1Y8Wch2xC8Qwi5d+gxqAJwIKo3P6JhQG9LV9QTqb5tAc9DnJnFAOkEQlUw2BKN1K4CHGhz7DNArNDFHxcYLLdPU9rYXKFZnPuHvXGcmCFYrgb+0dNw8VAqllO5P7/tI8zlCz0HqPw0gmA64tOZ+rDnqIm+mL+mCe2Iet+yukU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752666905; c=relaxed/simple;
-	bh=6hS1hhCet8VVQXPHSWs+K0hLedykf6nuOOJw4zP3+e0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AQLAWdpNs6xAsEP99bdztkmarJXiAZsmzhKRvjsuJywaVUDwsMnWMYCuUvRP5cz+VbBsV024wgX6OawG+xrKoxpGIoA6h1hhgbE0y3m1GdTVIJWFWuZo1b0hPhT+Phu0q2GXt4Xu6Pi8jQPG0AKeYA0Owpsx029fMC9sh3OeT0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YZZempSc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752666782;
-	bh=6hS1hhCet8VVQXPHSWs+K0hLedykf6nuOOJw4zP3+e0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YZZempScizbqdERacBRcuYeDs1eVRwwcxVnT/NOSAaqf2Q5JZTAtJmrNxTQolCgoq
-	 Cet+Fwyq3zOILB5SquCcwX9uKeqdUQCE4tWhLeyX+Hvd6t6lJFQy4AuDuul81U/q6q
-	 h2h+TOvzqG4ptu0fkTm9YqPfo3k9uYBB/S50iIjPYURQr62X1/R8klylL1wrhvZ7oQ
-	 RxhCaWXE/ABG4kiriM4DFrAKSIGySgth+k+y9FR+9tZVUUeT3fc1KxdubeFMCKgjji
-	 7Y96U6qZviUVWcm7x+qNM3RSEKxlImIy6NKdZhmQkcCCmG/YLfRW1MOg8jw/UW5TKb
-	 MK49OPPgl7VTQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhvZQ4Nkzz4x11;
-	Wed, 16 Jul 2025 21:53:02 +1000 (AEST)
-Date: Wed, 16 Jul 2025 21:54:56 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Kalle Valo <kvalo@kernel.org>, Wireless
- <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List	
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List	
- <linux-next@vger.kernel.org>, Miri Korenblit
- <miriam.rachel.korenblit@intel.com>, Pagadala Yesu Anjaneyulu
- <pagadala.yesu.anjaneyulu@intel.com>
-Subject: Re: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-Message-ID: <20250716215456.764d3eb1@canb.auug.org.au>
-In-Reply-To: <4ee6758a49e6f01c5e42b2f7c27aff905ac07dfa.camel@sipsolutions.net>
-References: <20250716135252.51125baa@canb.auug.org.au>
-	<4ee6758a49e6f01c5e42b2f7c27aff905ac07dfa.camel@sipsolutions.net>
+	s=arc-20240116; t=1752666963; c=relaxed/simple;
+	bh=OgsvFMXRn2zZp50k7sbQGQYkdfixjsmzZn/vsvELM7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nT+6s6OI/H4vst7innqtz+GVEwxiQpxvRvtWurlYDaWIvPpuCefpYw7txOreIRtgHfigT5glHSwsl8UYP1Rm6g8wdX0BpE+NlhjZObb/fIHci6IhoktXVYejGjQVblKK2+8dmmELVrEND11CIZOyiQV3vK1aq5n5Or208EsmB44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Rp0tARzF; arc=none smtp.client-ip=202.108.3.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752666958;
+	bh=ScUq0qxBv9+lwXrh7usT/F4ApTrXMfYTA/RM1sJnWv8=;
+	h=From:Subject:Date:Message-ID;
+	b=Rp0tARzFgWmsd/zKeZXADr5cO98Gjaw67sbrGxNsAMHFlI21KYh4H6iFudLo0WVaD
+	 DsIbJqtDJd4ScfMZ3MC9D8MVdgdhDR48Ri2v4lqtyDBbbgUuN9/TOxuvsu3GNPMwNQ
+	 6qhmdkTyWIzBwv+0Z+g6ehyeQLr+jfyvjBOh+IxE=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 6877934400001D59; Wed, 16 Jul 2025 19:55:49 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6259636291973
+X-SMAIL-UIID: 4C57464769F042CBA700BEB9672EFBF0-20250716-195549-1
+From: Hillf Danton <hdanton@sina.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Sean Young <sean@mess.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
+	LKML <linux-kernel@vger.kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH] media: imon: make send_packet() more robust
+Date: Wed, 16 Jul 2025 19:55:37 +0800
+Message-ID: <20250716115538.2206-1-hdanton@sina.com>
+In-Reply-To: <a44d5568-48d6-44f7-af93-e1b966489a84@I-love.SAKURA.ne.jp>
+References: <53c07aa0-9f83-4c83-8ab5-6d8663f51b91@I-love.SAKURA.ne.jp> <8be733a4-2232-4bb9-942d-f13f8766a6de@I-love.SAKURA.ne.jp> <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp> <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp> <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp> <282345b9-9aff-43ed-b66d-76cf51cc0deb@I-love.SAKURA.ne.jp> <20250713081148.3880-1-hdanton@sina.com> <d6da6709-d799-4be3-a695-850bddd6eb24@rowland.harvard.edu> <aHa3xpKfGNqAocIO@gofer.mess.org> <c4e88c28-28ee-4e37-9822-8e2999d0f0ee@rowland.harvard.edu> <aHdzD7EowAKT4AhQ@gofer.mess.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/qWyPK7U0zwDAqBtVDW=jkFv";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/qWyPK7U0zwDAqBtVDW=jkFv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 16 Jul 2025 19:09:51 +0900 Tetsuo Handa wrote:
+>On 2025/07/16 18:38, Sean Young wrote:
+>> On Tue, Jul 15, 2025 at 09:30:02PM -0400, Alan Stern wrote:
+>>> On Tue, Jul 15, 2025 at 09:19:18PM +0100, Sean Young wrote:
+>>>> Hi Alan,
+>>>>
+>>>> On Sun, Jul 13, 2025 at 11:21:24AM -0400, Alan Stern wrote:
+>>>>> On Sun, Jul 13, 2025 at 04:11:47PM +0800, Hillf Danton wrote:
+>>>>>> [loop Alan in]
+>>>>>
+>>>>> I assume you're interested in the question of when to avoid resubmitting 
+>>>>> URBs.
+> 
+> I think that what Hillf wanted to know (and I wanted maintainers of this
+> driver to respond) is whether timeout of 10 seconds is reasonable
+> 
+Yes. In product environments like car cockpit I have option like change
+to BOM if urb 10s timedout in general could be reliably reproduced twice
+a month for example.
 
-Hi Johannes,
-
-On Wed, 16 Jul 2025 10:59:31 +0200 Johannes Berg <johannes@sipsolutions.net=
-> wrote:
->
-> I also just noticed that you're still sending this to Kalle - he stepped
-> down as maintainer earlier this year, so you should probably change the
-> contact for the wireless/wireless-next trees to just me.
-
-Fixed. Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/qWyPK7U0zwDAqBtVDW=jkFv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh3kxAACgkQAVBC80lX
-0GxKAgf+KOOETHP2duwnjrfK85tRxjFnz3TlplRbq7hWXxmbVke3ddL4/ZPQuZri
-/oU5wLVNeMo0kHqehrZLYyumx/JN3c6ZYCCmG0yADI57ElS9cP1KvamfRFQmOX+A
-GSGneSU2U3upPAvQBRjJLjyWcaG67VzJeCQlU65/aW8v/DQWYAOZM4+fISraUC8e
-vI2bAy8rGC264WF5oxG1Lw3IX6oZdPW1ADjrtL7756BAF3pioK0jHBI7xPvF0k1N
-bkOId7rLFWGrhN6BoOhq5xdMssVChoOA9QMRyra2cAcvb8MtcsqKNZsSNDEDedTX
-w6b6m7unydD5SuOJB6Kq+aOoCLM3rw==
-=poFu
------END PGP SIGNATURE-----
-
---Sig_/qWyPK7U0zwDAqBtVDW=jkFv--
+> -		/* Wait for transmission to complete (or abort) */
+> -		retval = wait_for_completion_interruptible(
+> -				&ictx->tx.finished);
+> -		if (retval) {
+> +		/* Wait for transmission to complete (or abort or timeout) */
+> +		retval = wait_for_completion_interruptible_timeout(&ictx->tx.finished, 10 * HZ);
+> 
+> because the reproducer for this problem sometimes prevents
+> usb_rx_callback_intf0() from being called. Unless we somehow
+> handle such situation, the hung task reports won't go away.
+> 
 
