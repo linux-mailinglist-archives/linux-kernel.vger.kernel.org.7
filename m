@@ -1,76 +1,90 @@
-Return-Path: <linux-kernel+bounces-733921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE087B07AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:07:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1AEB07AB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 095D2561DFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:07:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3D925649E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9BD2F530E;
-	Wed, 16 Jul 2025 16:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF732F5320;
+	Wed, 16 Jul 2025 16:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VMy4jHag"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="Kr5bivfh"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261D92F546F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F063B1A238C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752682030; cv=none; b=oNh/kmowv67wsoXWmEg3HhpMuI3Bp7CqoYncxrLa18h62+YC32PhIEDcxuNO4xfmbKq4f+z1KByq5wsZlIiZMVJmCdzEN3r40vIV21DBa2Okfti8ZSQ67kE1WLw58md1GBmYs6aVCfkJN1jvs1yrQmGjll2p0ePXU3E3LN1fI5U=
+	t=1752682110; cv=none; b=eDrkgTGjcXZSnujgfLKEUagekJ4iBvGYA42PSlKuRGFfBhT9zLhqkvLGSUzjahC+4CIfhBH7foKAkl5L48IF/RongudjckEV+23m7TKfelIsbHbpMfNG9JyKpj5S7P0iCQv56Y6m2TzFQ7kmMHNRhH6llsxE1sDou3xd5r7UXR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752682030; c=relaxed/simple;
-	bh=IR/pm9RbdXcGGvlgDUhYFq/oaO5VmsfA64RfbDOguBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ocbKe6jP/jz+ybvGNCvWgMQskLdCspMGJw87pvJkd6mxtXFI/x4LSGqbQCUntoHowU075qBBxEOxPwdy7F6wOkgrJc5BuhWKK3I2Gi2VpQM7qQtuY/fpq39hriFH1VWjfkQr/FIdz5gswpro+BIQrmCzQzusFqNGjJpaG2hhBr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VMy4jHag; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752682028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZtE446LAhzUPlnkevY2yDedHqFX+zH/LYimYHOJXwOo=;
-	b=VMy4jHagmiL3Px0WPlutRpIsxvU4YMi7xRIJMXYinF8PA3XvXRfkuSc1EX7FOJ9fUgJWM0
-	ZJdQw7ZmkEoVd53F9+DEMGX7zhHqLU/AaqX+N30elROK8y/6SWlVWUueGIgQNPPqpggqMR
-	b7b9ptOBcw30X+IYsFynBac9M9I/73s=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-510-6us77FgONvOnKWfpaRtqbw-1; Wed,
- 16 Jul 2025 12:07:02 -0400
-X-MC-Unique: 6us77FgONvOnKWfpaRtqbw-1
-X-Mimecast-MFC-AGG-ID: 6us77FgONvOnKWfpaRtqbw_1752682020
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 235291800872;
-	Wed, 16 Jul 2025 16:07:00 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.33.144])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9209719560AB;
-	Wed, 16 Jul 2025 16:06:56 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	s=arc-20240116; t=1752682110; c=relaxed/simple;
+	bh=138O41aLRx0C8uQ8nmwfBEUvIe2sl/hAJ18didtPlt0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fOu3iZHCIRgysVIx6tWb/6/O7Dylj7AarxLcA2UVGGbWjKPjsybSzfC89iYmCDZEHloNU76xk5AqZFNKdVN6Fb4HDyWuybpUjma1FUpEXwWqCo+0xB6CuotDPLMrEM4/8aU4FdnNM2SXXNXt88v66uedboS9bLeVkvDMyRzIrU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=Kr5bivfh; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a575a988f9so20836f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1752682107; x=1753286907; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UH/b0M0CbuYl0NcdEzspfACZMj+PvWET/pTymQ83mm0=;
+        b=Kr5bivfhpGyX1p2RXnhfH9d2U+fqt7eueaJW8cR9orSkAbfP3+svPhpmV8Kc9wMAbN
+         Q+L1H1UCxFcNtvXtyGuC7fyuOoO5wPZlNMfPh1NH/JFOHGcZ2/iMR/waKypVMQ5NNyBj
+         +jZ7L8svVlUBWS410D5Jw5l2H/KeqGOkFjyYk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752682107; x=1753286907;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UH/b0M0CbuYl0NcdEzspfACZMj+PvWET/pTymQ83mm0=;
+        b=srV8RDQOT4h6Sa6ae4ZhrOuq6EZBQW5uzJUpFIR0bUwlfaIMWYaOVzOaoxX9MBlslp
+         Pf1tlk73827dhUad/1aE92/hXWOv0dPPR1TLG+qG/UiVOIGLIHIHuHLN+r7hxDFjmn9l
+         xR2l0/szeAnNkDlnc6I6AVsmJaFiDwRkKdF0nfZ5aQA/E7lElNPvsWAj6dnu2WFDS7Xv
+         UqiqCtEQEzP9H9WKw7DAsOQXRqjak7EjSi5hQa/okjJRUwTy4JFG0nkCQ9F0tvOT3SOh
+         SWF5mpeJpvk7sVWf+C2G+3HWfX7O38iS3ko60M4AOstLKyGJ+92BED+3XIhP2k+dB7qv
+         8FEQ==
+X-Gm-Message-State: AOJu0YzMIwzFdGSgRoBNRgs5teEfRTL12fGEk97BmxQFCBuxmoByA3kE
+	PsfnWtbzZRcIe7uPcVpqj2A32ug3x+AS5NUZ/RBw5IUgVNgSSIbuP/hrdoVapD+zARhXykpeJS5
+	fs9h+SxggDg==
+X-Gm-Gg: ASbGncux1EOAO8psZsCE+KPX2HezczqDu7bXqBiQZkl6gZTYVyObk0kwU1fvdglWpWi
+	I87ZWZKd7o6s9lnGh0vs3LvrRbyjxhLRk2Ms9NhdCRXKLFpYEN/YVGdDPVwEIcXM0SdnmPe3ply
+	0eJOL7usigU5iO0aXMLLoo+RTnQ+Ex4QnSQ7pWifd5jE/7XpGChP7t6+KR+gqkL1qiSsPF0xJAD
+	brd/GihJ2z23qRC37JyJPNuL20bt6JGwkdoTKPM4bxxDJwg+Gs1CARFGRG0k/AJp3s3LoBD9aQN
+	QZ/5HasT4bzYs//xa1sM22+tLYY4YF9FhnhI2oKvIzudjUyh2jE8q3oTxUGUsvgIZck4tffRcMh
+	kBAFWX8vkTVUvRAJxvM4Lp3bueMqAB+niCJJtnz6tOfqybNelX+o7UusYPmxaAsFS91mlQfbowr
+	jT
+X-Google-Smtp-Source: AGHT+IGZut6UJbwTROIQOJAVttYNFrbwGkPjtWqxofeCL3J9C6TqdZ4W8y9PmuJpVrHyeesGriixlw==
+X-Received: by 2002:adf:c789:0:b0:3a4:c909:ce16 with SMTP id ffacd0b85a97d-3b60dd8dce2mr2126777f8f.49.1752682107058;
+        Wed, 16 Jul 2025 09:08:27 -0700 (PDT)
+Received: from localhost.localdomain (host-195-149-20-212.as13285.net. [195.149.20.212])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc91d8sm18033125f8f.42.2025.07.16.09.08.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 09:08:26 -0700 (PDT)
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Ingo Molnar <mingo@redhat.org>
-Subject: [PATCH v2 4/4] selftests/rseq: Add test for mm_cid compaction
-Date: Wed, 16 Jul 2025 18:06:08 +0200
-Message-ID: <20250716160603.138385-10-gmonaco@redhat.com>
-In-Reply-To: <20250716160603.138385-6-gmonaco@redhat.com>
-References: <20250716160603.138385-6-gmonaco@redhat.com>
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Yuntao Wang <yuntao.wang@linux.dev>,
+	Zhang Rui <rui.zhang@intel.com>
+Subject: x86/apic: Drop useless CXL/CPX row from the TSC deadline errata table
+Date: Wed, 16 Jul 2025 17:08:24 +0100
+Message-Id: <20250716160824.2167709-1-andrew.cooper3@citrix.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,270 +92,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-A task in the kernel (task_mm_cid_work) runs somewhat periodically to
-compact the mm_cid for each process. Add a test to validate that it runs
-correctly and timely.
+A microcode revision of 0 is guaranteed to exit apic_validate_deadline_timer()
+early, but a better way is with no row at all.
 
-The test spawns 1 thread pinned to each CPU, then each thread, including
-the main one, runs in short bursts for some time. During this period, the
-mm_cids should be spanning all numbers between 0 and nproc.
+No functional change.
 
-At the end of this phase, a thread with high enough mm_cid (>= nproc/2)
-is selected to be the new leader, all other threads terminate.
-
-After some time, the only running thread should see 0 as mm_cid, if that
-doesn't happen, the compaction mechanism didn't work and the test fails.
-
-The test never fails if only 1 core is available, in which case, we
-cannot test anything as the only available mm_cid is 0.
-
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
 ---
- tools/testing/selftests/rseq/.gitignore       |   1 +
- tools/testing/selftests/rseq/Makefile         |   2 +-
- .../selftests/rseq/mm_cid_compaction_test.c   | 204 ++++++++++++++++++
- 3 files changed, 206 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Borislav Petkov <bp@alien8.de>
+CC: Dave Hansen <dave.hansen@linux.intel.com>
+CC: x86@kernel.org
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Sohil Mehta <sohil.mehta@intel.com>
+CC: Yuntao Wang <yuntao.wang@linux.dev>
+CC: Zhang Rui <rui.zhang@intel.com>
+CC: linux-kernel@vger.kernel.org
 
-diff --git a/tools/testing/selftests/rseq/.gitignore b/tools/testing/selftests/rseq/.gitignore
-index 0fda241fa62b0..b3920c59bf401 100644
---- a/tools/testing/selftests/rseq/.gitignore
-+++ b/tools/testing/selftests/rseq/.gitignore
-@@ -3,6 +3,7 @@ basic_percpu_ops_test
- basic_percpu_ops_mm_cid_test
- basic_test
- basic_rseq_op_test
-+mm_cid_compaction_test
- param_test
- param_test_benchmark
- param_test_compare_twice
-diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-index 0d0a5fae59547..bc4d940f66d40 100644
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -17,7 +17,7 @@ OVERRIDE_TARGETS = 1
- TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
- 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
- 		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice \
--		syscall_errors_test
-+		syscall_errors_test mm_cid_compaction_test
- 
- TEST_GEN_PROGS_EXTENDED = librseq.so
- 
-diff --git a/tools/testing/selftests/rseq/mm_cid_compaction_test.c b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-new file mode 100644
-index 0000000000000..d13623625f5a9
---- /dev/null
-+++ b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-@@ -0,0 +1,204 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+#define _GNU_SOURCE
-+#include <assert.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <stddef.h>
-+
-+#include "../kselftest.h"
-+#include "rseq.h"
-+
-+#define VERBOSE 0
-+#define printf_verbose(fmt, ...)                    \
-+	do {                                        \
-+		if (VERBOSE)                        \
-+			printf(fmt, ##__VA_ARGS__); \
-+	} while (0)
-+
-+/* 50 ms */
-+#define RUNNER_PERIOD 50000
-+/*
-+ * Number of runs before we terminate or get the token.
-+ * The number is slowly increasing with the number of CPUs as the compaction
-+ * process can take longer on larger systems. This is an arbitrary value.
-+ */
-+#define THREAD_RUNS (3 + args->num_cpus/8)
-+
-+/*
-+ * Number of times we check that the mm_cid were compacted.
-+ * Checks are repeated every RUNNER_PERIOD.
-+ */
-+#define MM_CID_COMPACT_TIMEOUT 10
-+
-+struct thread_args {
-+	int cpu;
-+	int num_cpus;
-+	pthread_mutex_t *token;
-+	pthread_barrier_t *barrier;
-+	pthread_t *tinfo;
-+	struct thread_args *args_head;
-+};
-+
-+static void __noreturn *thread_runner(void *arg)
-+{
-+	struct thread_args *args = arg;
-+	int i, ret, curr_mm_cid;
-+	cpu_set_t cpumask;
-+
-+	CPU_ZERO(&cpumask);
-+	CPU_SET(args->cpu, &cpumask);
-+	ret = pthread_setaffinity_np(pthread_self(), sizeof(cpumask), &cpumask);
-+	if (ret) {
-+		errno = ret;
-+		perror("Error: failed to set affinity");
-+		abort();
-+	}
-+	pthread_barrier_wait(args->barrier);
-+
-+	for (i = 0; i < THREAD_RUNS; i++)
-+		usleep(RUNNER_PERIOD);
-+	curr_mm_cid = rseq_current_mm_cid();
-+	/*
-+	 * We select one thread with high enough mm_cid to be the new leader.
-+	 * All other threads (including the main thread) will terminate.
-+	 * After some time, the mm_cid of the only remaining thread should
-+	 * converge to 0, if not, the test fails.
-+	 */
-+	if (curr_mm_cid >= args->num_cpus / 2 &&
-+	    !pthread_mutex_trylock(args->token)) {
-+		printf_verbose(
-+			"cpu%d has mm_cid=%d and will be the new leader.\n",
-+			sched_getcpu(), curr_mm_cid);
-+		for (i = 0; i < args->num_cpus; i++) {
-+			if (args->tinfo[i] == pthread_self())
-+				continue;
-+			ret = pthread_join(args->tinfo[i], NULL);
-+			if (ret) {
-+				errno = ret;
-+				perror("Error: failed to join thread");
-+				abort();
-+			}
-+		}
-+		pthread_barrier_destroy(args->barrier);
-+		free(args->tinfo);
-+		free(args->token);
-+		free(args->barrier);
-+		free(args->args_head);
-+
-+		for (i = 0; i < MM_CID_COMPACT_TIMEOUT; i++) {
-+			curr_mm_cid = rseq_current_mm_cid();
-+			printf_verbose("run %d: mm_cid=%d on cpu%d.\n", i,
-+				       curr_mm_cid, sched_getcpu());
-+			if (curr_mm_cid == 0)
-+				exit(EXIT_SUCCESS);
-+			usleep(RUNNER_PERIOD);
-+		}
-+		exit(EXIT_FAILURE);
-+	}
-+	printf_verbose("cpu%d has mm_cid=%d and is going to terminate.\n",
-+		       sched_getcpu(), curr_mm_cid);
-+	pthread_exit(NULL);
-+}
-+
-+int test_mm_cid_compaction(void)
-+{
-+	cpu_set_t affinity;
-+	int i, j, ret = 0, num_threads;
-+	pthread_t *tinfo;
-+	pthread_mutex_t *token;
-+	pthread_barrier_t *barrier;
-+	struct thread_args *args;
-+
-+	sched_getaffinity(0, sizeof(affinity), &affinity);
-+	num_threads = CPU_COUNT(&affinity);
-+	tinfo = calloc(num_threads, sizeof(*tinfo));
-+	if (!tinfo) {
-+		perror("Error: failed to allocate tinfo");
-+		return -1;
-+	}
-+	args = calloc(num_threads, sizeof(*args));
-+	if (!args) {
-+		perror("Error: failed to allocate args");
-+		ret = -1;
-+		goto out_free_tinfo;
-+	}
-+	token = malloc(sizeof(*token));
-+	if (!token) {
-+		perror("Error: failed to allocate token");
-+		ret = -1;
-+		goto out_free_args;
-+	}
-+	barrier = malloc(sizeof(*barrier));
-+	if (!barrier) {
-+		perror("Error: failed to allocate barrier");
-+		ret = -1;
-+		goto out_free_token;
-+	}
-+	if (num_threads == 1) {
-+		fprintf(stderr, "Cannot test on a single cpu. "
-+				"Skipping mm_cid_compaction test.\n");
-+		/* only skipping the test, this is not a failure */
-+		goto out_free_barrier;
-+	}
-+	pthread_mutex_init(token, NULL);
-+	ret = pthread_barrier_init(barrier, NULL, num_threads);
-+	if (ret) {
-+		errno = ret;
-+		perror("Error: failed to initialise barrier");
-+		goto out_free_barrier;
-+	}
-+	for (i = 0, j = 0; i < CPU_SETSIZE && j < num_threads; i++) {
-+		if (!CPU_ISSET(i, &affinity))
-+			continue;
-+		args[j].num_cpus = num_threads;
-+		args[j].tinfo = tinfo;
-+		args[j].token = token;
-+		args[j].barrier = barrier;
-+		args[j].cpu = i;
-+		args[j].args_head = args;
-+		if (!j) {
-+			/* The first thread is the main one */
-+			tinfo[0] = pthread_self();
-+			++j;
-+			continue;
-+		}
-+		ret = pthread_create(&tinfo[j], NULL, thread_runner, &args[j]);
-+		if (ret) {
-+			errno = ret;
-+			perror("Error: failed to create thread");
-+			abort();
-+		}
-+		++j;
-+	}
-+	printf_verbose("Started %d threads.\n", num_threads);
-+
-+	/* Also main thread will terminate if it is not selected as leader */
-+	thread_runner(&args[0]);
-+
-+	/* only reached in case of errors */
-+out_free_barrier:
-+	free(barrier);
-+out_free_token:
-+	free(token);
-+out_free_args:
-+	free(args);
-+out_free_tinfo:
-+	free(tinfo);
-+
-+	return ret;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	if (!rseq_mm_cid_available()) {
-+		fprintf(stderr, "Error: rseq_mm_cid unavailable\n");
-+		return -1;
-+	}
-+	if (test_mm_cid_compaction())
-+		return -1;
-+	return 0;
-+}
--- 
-2.50.1
+Strictly speaking, this is:
 
+  Fixes: 66abf2388331 ("x86/apic: Convert the TSC deadline timer matching to steppings macro")
+
+but I really don't think it's interesting to backport.
+
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index d73ba5a7b623..6ace71c52bee 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -522,7 +522,6 @@ static const struct x86_cpu_id deadline_match[] __initconst = {
+ 
+ 	X86_MATCH_VFM_STEPS(INTEL_SKYLAKE_X,   0x3, 0x3, 0x01000136),
+ 	X86_MATCH_VFM_STEPS(INTEL_SKYLAKE_X,   0x4, 0x4, 0x02000014),
+-	X86_MATCH_VFM_STEPS(INTEL_SKYLAKE_X,   0x5, 0xf, 0),
+ 
+ 	X86_MATCH_VFM(INTEL_HASWELL,		0x22),
+ 	X86_MATCH_VFM(INTEL_HASWELL_L,		0x20),
 
