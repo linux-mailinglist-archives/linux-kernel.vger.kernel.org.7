@@ -1,199 +1,377 @@
-Return-Path: <linux-kernel+bounces-733879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64E0B07A31
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:45:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCA0B07A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B62188B2EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:43:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4F44E0CC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC652EA72F;
-	Wed, 16 Jul 2025 15:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kiLvyIor"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2040.outbound.protection.outlook.com [40.107.96.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2439819F40A;
-	Wed, 16 Jul 2025 15:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680593; cv=fail; b=AXFjRO5qyBlUQqsrkTO4urtccSNKojaqTIzvYDTYNC9dlXQvqBKLexzqZvNc9HWwCUlL2aJKYI6WeNYoYQjY4uHDXMI4dE8JFvTQ3UNKYr4z2YCv2zOA3q6DeH60Z9qVbZlhck85vnKraMWZOAh2Wp/k4J1l398Td2VuFQspKGM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680593; c=relaxed/simple;
-	bh=pMbceGTmyuaBj9KEPJg2EMheG84uFNimd+xrXjRU8To=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=Cn3QWUsYZqIqwWvN5QaP68LK0YQzMevu4OtPi7pDZFCnvRPMVH4liaMdoSVrxEycEnqWsCIS+7Vuwz05fIR7Af9gQtpui9n3mRN7/va1Jjy/SbPt/tBlcCNJA2z1ACQ4Gg29xLNpXGNdcsBJEfEws4robkxJvb+ee3tKy/10kco=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kiLvyIor; arc=fail smtp.client-ip=40.107.96.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BwTqP9wErHISZaXbAZBwQ+bDJBZrxmaqizVfNiWY3+ASRQunUcvfgQnc+YXVXtiP+BU3tWOCNutTx/DVousaLra7afcS2eQJfP1pGQO5BW2SbHzaBcaFrfRe+QMBgLSPm3+uUhIf2C6P5DfdL6+AvmCGZXWi62wHkSQVRL9xlqLcF/9YQoDUHbmnflMO0HqW4nQmMSvrDr/j8ciSj/vnFwlzmjk/NSNR48Mcq2AMEs5FELuqkednEtqS5jtbUxw/g5m/yPa2OupQFEhNBOBHkxtoMFANCVzx4k+Jc/irO+XXpQKYZ31Bru+T+DEld9gHiKjzcCIgdwZkmtJZTvIriw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7C24a5NQxuwr0Q9XaUWTJozsvizQgGr+MZIvZS5MJLw=;
- b=MTgBlhpKdg99jCXiZSB3or/0/cXjXvHzvHYxKJ7kGbdffIhdVDBroWtvZHJq+QVnAvELSej8Q9L9tqfV0CQxwQBV8k8C6zqvQuyYLLT/huRs5kMowUiJd06EFqeGUoRWwXPiCqNiyLbGI11mOhqvwAva4F7x1vxQMeRqCqPGMNYxW7IxPG7HwJI1T72/wSZgMEmZnVOM1oJTle334CGPM+kP4JCFVJKXoUf4GCOIxoYke1f3HU7hgYkz/tU5MseXtPMniV2OZZUsT4FSe8U+f98L0k07Z91DhKcZKL5kky2ua6/AHdEm15AIIuGcjhNcDhj1qdtXyN2tDhRPeKMvuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7C24a5NQxuwr0Q9XaUWTJozsvizQgGr+MZIvZS5MJLw=;
- b=kiLvyIor9oKHmK+/5ZnCHTxkycWMwZFcCNc3L4OZ6K+TsBVsBwQfb5100ByPwnWncak8WzLXpAYLmZoWW4ab0Emuyd7YcPBIya5nvpwPq3flwsdb80j+INgU/5MdXshfrHKvzJAEWKe1wdgwHhPPcLkmF/TKJZliT/0w0zsVPm+6ZMwsuzvm7RKTGMmxcRczDUUxrE5pYBPu0fGZkzwOLDwzpyF+Z20DqDFrwweQP45LB4+PCmCzFzIO0D8vKa12TmPhsIfx78WMlZoWqLnEw3joIN1TLgnKXkZo2w8mFHwYDkQtJjDapswfOJRiHduyPf9/YBNvYQDV/80Ou1Haqw==
-Received: from SJ0PR13CA0034.namprd13.prod.outlook.com (2603:10b6:a03:2c2::9)
- by IA4PR12MB9834.namprd12.prod.outlook.com (2603:10b6:208:5d3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Wed, 16 Jul
- 2025 15:43:09 +0000
-Received: from CO1PEPF000042A8.namprd03.prod.outlook.com
- (2603:10b6:a03:2c2:cafe::1e) by SJ0PR13CA0034.outlook.office365.com
- (2603:10b6:a03:2c2::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.16 via Frontend Transport; Wed,
- 16 Jul 2025 15:43:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000042A8.mail.protection.outlook.com (10.167.243.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.22 via Frontend Transport; Wed, 16 Jul 2025 15:43:09 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 16 Jul
- 2025 08:42:51 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 16 Jul
- 2025 08:42:50 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 16 Jul 2025 08:42:50 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.4 000/144] 5.4.296-rc2 review
-In-Reply-To: <20250716141302.507854168@linuxfoundation.org>
-References: <20250716141302.507854168@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185DD277CB0;
+	Wed, 16 Jul 2025 15:43:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135831D79BE
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752680615; cv=none; b=Tq3SVxsbxiSM4tBXKc5d3UNzwRYWvr3AThaQ4Di+uMBDT2YHmpYW+OTzuawJaUzc/+eo+NumSRNtgogzOF719hBX8EkBhw96WziMGf5PH4gTGaP64/0AJ7N2NKzlrRSf9MMVC7hqAmljOFlPUcKXApUsPf0lExX1+nkOkQ6Q2bE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752680615; c=relaxed/simple;
+	bh=Ji0775R0HVfNec8p3OHBYoZFw0jpOB2UYWrndZpS8uk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h70XZ570K/YDoCrKBFD4aZ5EMgoIY+RTp9x3U39JXVRxPnRvgEtZa8xAE2N8u6y3YpNA6D8/6crkKtk2U8JJON3BdPhxAorzh9nPuw5wPEDuKaccWo2QTS9Ey72BRduVOav2Sj+OZmFUbM63oGzPzZ3IS4QCMbPG2O+DmvMbb6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDFD8113E;
+	Wed, 16 Jul 2025 08:43:23 -0700 (PDT)
+Received: from [10.57.86.212] (unknown [10.57.86.212])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D3383F66E;
+	Wed, 16 Jul 2025 08:43:26 -0700 (PDT)
+Message-ID: <0108b3cd-dfdd-4e4c-a2d8-157458e26f77@arm.com>
+Date: Wed, 16 Jul 2025 16:43:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <36661855-6678-4fdf-81e0-55d86ae40009@rnnvmail205.nvidia.com>
-Date: Wed, 16 Jul 2025 08:42:50 -0700
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042A8:EE_|IA4PR12MB9834:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b633e72-e266-4fa0-22f2-08ddc47f76fa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZzZ3d1JYTnEzNUhEaFBtNy9QTDVMSDNIdG9jSFM0cGZJR25pTlU2d3lESjU4?=
- =?utf-8?B?emloMDloU2JUUENYbmpoem1PYVBld2IvTE4wcXRnOGNlbGQ4Y2F2dDRLY3Jo?=
- =?utf-8?B?ODRTdE9hUDZLT3pVdVdMY2dLS1c4Wk1zQzdENTZzendUZXJWeUhXUm9tSTZm?=
- =?utf-8?B?RkVBWC91VzFVMjFpVXc5aVBVWGNtSStCYVNyMHN4R29rQk9WNlFReElydCtD?=
- =?utf-8?B?N1UyZ3M0M1FkOFVzdE1xdnlzbVBxSUJRTDRXOFJHcDhQaU5FaGltaHlnT2Vl?=
- =?utf-8?B?K2FoL3Y1c3RONzRoNHhtUWpSTEdJZ3MzY0xwZ1p1ZC82VDNLc0FOU1A5N0hY?=
- =?utf-8?B?MUJmbVJGT0QrZlI3V0dOYnlXSnVWb3U0SzFhRFlvOHVza2s3Um4wRnQ2c1Rt?=
- =?utf-8?B?a1dzaS85RDR2SEtNa21DZGpDOXNkWVF5TGVwdlJJcVJtSGxOWDUxbkRLY25y?=
- =?utf-8?B?cHMwRHVnYVVJdDBSZWFTMlZscjdLVEVqd28zV1A5OGJOMlNNZkdFZ2h3ZVhj?=
- =?utf-8?B?aVlheVB6MXpqUGtRdVBqN3VPdDI4S25VYkdEaTdOTW1qNmozU0JpOXFXRFBk?=
- =?utf-8?B?b3k0TXF1eUdtZTUxK3VYUU42VmtDM2d6K1RpWTJFN1BSWXdyd3VGeDFFdW1n?=
- =?utf-8?B?UktWdVVkSFBUOUpOS0I0aks2OXNaNDVUWWFtUFRhbUNtRlpVaDAyUDBIT0Jk?=
- =?utf-8?B?a3ovdUpDRGtsWGFXQ1pGa3JEanhtQ3VNNG5UNW0wWEhvMVZiVy9DaDFkNVhz?=
- =?utf-8?B?dnpva3ZjQ0VWc0FsMXpFdTdESG9JWXhWWHppMVUzbzhWbVZTL1RlcjdITWNL?=
- =?utf-8?B?djd1K3pPdU8yYlpDeGhEcS9MNkxYY1N0V1NtMWlMclIvTlZaRnRGWjQzQ1Nx?=
- =?utf-8?B?YktMZ2pIWDhFSW4vczh2U1pjcGEwTTdDWW1DTDNMS0NJSU9zNE80TmNXa0Qz?=
- =?utf-8?B?eVVCNEllSi92Wnl4bHVabHJaRWpSeVBoT2ZhQjh2TEs0b212dEd5QndTTkJK?=
- =?utf-8?B?S1ozVFN5VHdmVDBDZzhxM3JaR05BVUI4MXZMdmh4b2M5aWpKQ1NLSy91emJH?=
- =?utf-8?B?b3U4L0Ftbkw3Y3FzQ2xITTFTSk1qQzI2cXd6Q0dmT0QzMHpnVXk4TXNyblFp?=
- =?utf-8?B?NDJwbmZYemdJZEozK1dpYTdnMDFDVHErTXY4MnhLRmlseWl4WjN2Z3V6czVR?=
- =?utf-8?B?dG01SDJzOXIrK1hteWptQTZ3UEVMc1hPeXFuc2ZGczBCelliQW85SWZwUUE1?=
- =?utf-8?B?R29LRCsxdTdvY0d3MnpmTzFmeTR1cmJRenNMZVE1OXdCV2twdG8rT0Y2elFu?=
- =?utf-8?B?UWNGT1ZWMVRPeWpvQVN6SWhOejM0dTV5TkNsS1hxaFk4bkg1N0V4U3FqZVN2?=
- =?utf-8?B?NkhJUXFDQktMbjlwOWM4RGNvY0pKKzlCMTFzeE4rUkJFN0daNUoyd0FJcnA1?=
- =?utf-8?B?QTVXVnlOamlNVDZ2Qit2TWFPOCsrNENUdUtLZ3JVY1ErRlB2ZnIrcndCWU9p?=
- =?utf-8?B?dkE3Qm5YZWJONnpIcHlxY3NaaS9xNFlIV2F5M2dlNmRLc3NBdmh5cVlPNXJa?=
- =?utf-8?B?SFpDajhweWlkbWd5MGxoYVZYbUNseTR1d0U4RkRRbC96Vkh2alJ3bmtzdjgx?=
- =?utf-8?B?YjhGbDZXZTR4Snd4bVlwRWVLRWUxbVJuRWoxdjVLSkF4VkE3YzNnS2lvWmw2?=
- =?utf-8?B?Uk4xMmlHN1lZa1lRTElLRUU4S1Zra3ZoQmp3Q0MvNkRpeHNRWHZlRiszQjJo?=
- =?utf-8?B?QnU3UlNnU214WUNPb2JFS2xRM3BZMEU1M0l6dHMyU29JVWRyN012eG9kYisz?=
- =?utf-8?B?YjhmMGNXNUdBSGpSeVI0TUdXK1BGTmI3cHdXbDNUWUw4T3duNDlveEFJTzJ3?=
- =?utf-8?B?VlBGRi9jd1l5UktqcXFwcndKQmgvTnlLVmRNQ2s2cFRYZ2NUejFBY2dmWEpX?=
- =?utf-8?B?ZE9Jd0gwM2JuckJaRGp5WFhpcmZydFk0Wm9MNytNWXRkZE9wZ0NSR3M1MEF2?=
- =?utf-8?B?YUJFd28xYjVQOVdMaFZyNEs2MXM4VlFmbzZsSGNUN0pISUpkUGtHQUJEREdE?=
- =?utf-8?B?ek8wa0pCWW1QYkpxYjZvelQvSXNaQS91cjRYUT09?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 15:43:09.1043
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b633e72-e266-4fa0-22f2-08ddc47f76fa
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042A8.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9834
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/7] drm/panthor: Add support for atomic page table
+ updates
+To: Caterina Shablia <caterina.shablia@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Lucas De Marchi
+ <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ asahi@lists.linux.dev, Asahi Lina <lina@asahilina.net>
+References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
+ <d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com> <2813151.QOukoFCf94@xps>
+ <2434159.cojqenx9y0@xps>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <2434159.cojqenx9y0@xps>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 16 Jul 2025 16:14:18 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.296 release.
-> There are 144 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 15/07/2025 16:33, Caterina Shablia wrote:
+> El martes, 15 de julio de 2025 17:08:09 (hora de verano de Europa central), 
+> Caterina Shablia escribió:
+>> El viernes, 11 de julio de 2025 15:30:21 (hora de verano de Europa central),
+>> Steven Price escribió:
+>>> On 07/07/2025 18:04, Caterina Shablia wrote:
+>>>> From: Boris Brezillon <boris.brezillon@collabora.com>
+>>>>
+>>>> Move the lock/flush_mem operations around the gpuvm_sm_map() calls so
+>>>> we can implement true atomic page updates, where any access in the
+>>>> locked range done by the GPU has to wait for the page table updates
+>>>> to land before proceeding.
+>>>>
+>>>> This is needed for vkQueueBindSparse(), so we can replace the dummy
+>>>> page mapped over the entire object by actual BO backed pages in an
+>>>> atomic
+>>>> way.
+>>>>
+>>>> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+>>>> Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
+>>>> ---
+>>>>
+>>>>  drivers/gpu/drm/panthor/panthor_mmu.c | 65 +++++++++++++++++++++++++--
+>>>>  1 file changed, 62 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c
+>>>> b/drivers/gpu/drm/panthor/panthor_mmu.c index b39ea6acc6a9..9caaba03c5eb
+>>>> 100644
+>>>> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+>>>> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+>>>> @@ -387,6 +387,15 @@ struct panthor_vm {
+>>>>
+>>>>  	 * flagged as faulty as a result.
+>>>>  	 */
+>>>>  	
+>>>>  	bool unhandled_fault;
+>>>>
+>>>> +
+>>>> +	/** @locked_region: Information about the currently locked region
+>>>> currently. */ +	struct {
+>>>> +		/** @locked_region.start: Start of the locked region.
+>>
+>> */
+>>
+>>>> +		u64 start;
+>>>> +
+>>>> +		/** @locked_region.size: Size of the locked region. */
+>>>> +		u64 size;
+>>>> +	} locked_region;
+>>>>
+>>>>  };
+>>>>  
+>>>>  /**
+>>>>
+>>>> @@ -775,6 +784,10 @@ int panthor_vm_active(struct panthor_vm *vm)
+>>>>
+>>>>  	}
+>>>>  	
+>>>>  	ret = panthor_mmu_as_enable(vm->ptdev, vm->as.id, transtab,
+>>
+>> transcfg,
+>>
+>>>>  	vm->memattr);>
+>>>>
+>>>> +	if (!ret && vm->locked_region.size) {
+>>>> +		lock_region(ptdev, vm->as.id, vm->locked_region.start,
+>>>> vm->locked_region.size); +		ret = wait_ready(ptdev, vm-
+>>>
+>>> as.id);
+>>>
+>>>> +	}
+>>>
+>>> Do we need to do this? It seems odd to restore a MMU context and
+>>> immediately set a lock region. Is there a good reason we can't just
+>>> WARN_ON if there's a lock region set in panthor_vm_idle()?
+>>
+>> So IIUC, when things are otherwise idle and we do a vm_bind, the vm will be
+>> inactive, in which case we're not going to poke the mmu to inform it of the
+>> locked region, because it literally is not aware of this vm. Now if in the
+>> meanwhile something submits a job and activates the vm, we need to inform
+>> the mmu of the locked region, as vm_bind job might still be going on. I
+>> don't see why panthor_vm_idle while a region is locked would be a problem?
+>> That can arise e.g. when a job completes but there's a concurrent vm_bind
+>> going on?
+
+So it's absolutely fine (and normal) to perform a vm_bind while the VM
+is idle. In this case there's no need to perform the lock because
+there's nothing running on the GPU which could be affected by the page
+tables being (temporarily) inconsistent.
+
+What I'm questioning is the design where if, in the middle of a vm_bind
+operation, a job comes in and then we set the lock region rather than
+just waiting for the vm_bind operation to complete. AFAICT simply
+synchronising on the vm->op_lock should achieve this.
+
+>>> I think we need to briefly take vm->op_lock to ensure synchronisation
+>>> but that doesn't seem a big issue. Or perhaps there's a good reason that
+>>> I'm missing?
+>>
+>> I think you're right, all other accesses to locked_region are guarded by
+>> op_lock. GPU job submit poke vm_active concurrently with vm_bind jobs doing
+>> region {,un}locks.
+> Actually no, that's not necessary. Access to locked_region is protected by 
+> slots_lock, which is held here. Trying to lock vm->op_lock would also be 
+> detrimental here, because these locks are often taken together and slots_lock 
+> is taken after op_lock is taken, so taking op_lock here would be extremely 
+> deadlockful.
+
+It would obviously be necessary to acquire vm->op_lock before
+as.slots_lock as you say to avoid deadlocks. Note that as soon as
+as.slots_lock is held vm->op_lock can be dropped.
+
+I just find the current approach a little odd, and unless there's a good
+reason for it would prefer that we don't enable a VM on a new address
+space while there's an outstanding vm_bind still running. Obviously if
+there's a good reason (e.g. we really do expect long running vm_bind
+operations) then that just need documenting in the commit message. But
+I'm not aware that's the case here.
+
+Although in general I'm a bit wary of relying on the whole lock region
+feature - previous GPUs have an errata. But maybe I'm being over
+cautious there.
+
+Thanks,
+
+Steve
+
+>>
+>>>>  out_make_active:
+>>>>  	if (!ret) {
+>>>>
+>>>> @@ -902,6 +915,9 @@ static int panthor_vm_unmap_pages(struct panthor_vm
+>>>> *vm, u64 iova, u64 size)>
+>>>>
+>>>>  	struct io_pgtable_ops *ops = vm->pgtbl_ops;
+>>>>  	u64 offset = 0;
+>>>>
+>>>> +	drm_WARN_ON(&ptdev->base,
+>>>> +		    (iova < vm->locked_region.start) ||
+>>>> +		    (iova + size > vm->locked_region.start + vm-
+>>>
+>>> locked_region.size));
+>>>
+>>>>  	drm_dbg(&ptdev->base, "unmap: as=%d, iova=%llx, len=%llx", vm-
+>>>
+>>> as.id,
+>>>
+>>>>  	iova, size);
+>>>>  	
+>>>>  	while (offset < size) {
+>>>>
+>>>> @@ -915,13 +931,12 @@ static int panthor_vm_unmap_pages(struct
+>>>> panthor_vm
+>>>> *vm, u64 iova, u64 size)>
+>>>>
+>>>>  				iova + offset + unmapped_sz,
+>>>>  				iova + offset + pgsize * pgcount,
+>>>>  				iova, iova + size);
+>>>>
+>>>> -			panthor_vm_flush_range(vm, iova, offset +
+>>
+>> unmapped_sz);
+>>
+>>>>  			return  -EINVAL;
+>>>>  		
+>>>>  		}
+>>>>  		offset += unmapped_sz;
+>>>>  	
+>>>>  	}
+>>>>
+>>>> -	return panthor_vm_flush_range(vm, iova, size);
+>>>> +	return 0;
+>>>>
+>>>>  }
+>>>>  
+>>>>  static int
+>>>>
+>>>> @@ -938,6 +953,10 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64
+>>>> iova,
+>>>> int prot,>
+>>>>
+>>>>  	if (!size)
+>>>>  	
+>>>>  		return 0;
+>>>>
+>>>> +	drm_WARN_ON(&ptdev->base,
+>>>> +		    (iova < vm->locked_region.start) ||
+>>>> +		    (iova + size > vm->locked_region.start + vm-
+>>>
+>>> locked_region.size));
+>>>
+>>>> +
+>>>>
+>>>>  	for_each_sgtable_dma_sg(sgt, sgl, count) {
+>>>>  	
+>>>>  		dma_addr_t paddr = sg_dma_address(sgl);
+>>>>  		size_t len = sg_dma_len(sgl);
+>>>>
+>>>> @@ -985,7 +1004,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64
+>>>> iova,
+>>>> int prot,>
+>>>>
+>>>>  		offset = 0;
+>>>>  	
+>>>>  	}
+>>>>
+>>>> -	return panthor_vm_flush_range(vm, start_iova, iova - start_iova);
+>>>> +	return 0;
+>>>>
+>>>>  }
+>>>>  
+>>>>  static int flags_to_prot(u32 flags)
+>>>>
+>>>> @@ -1654,6 +1673,38 @@ static const char *access_type_name(struct
+>>>> panthor_device *ptdev,>
+>>>>
+>>>>  	}
+>>>>  
+>>>>  }
+>>>>
+>>>> +static int panthor_vm_lock_region(struct panthor_vm *vm, u64 start, u64
+>>>> size) +{
+>>>> +	struct panthor_device *ptdev = vm->ptdev;
+>>>> +	int ret = 0;
+>>>> +
+>>>> +	mutex_lock(&ptdev->mmu->as.slots_lock);
+>>>> +	drm_WARN_ON(&ptdev->base, vm->locked_region.start ||
+>>>> vm->locked_region.size); +	vm->locked_region.start = start;
+>>>> +	vm->locked_region.size = size;
+>>>> +	if (vm->as.id >= 0) {
+>>>> +		lock_region(ptdev, vm->as.id, start, size);
+>>>> +		ret = wait_ready(ptdev, vm->as.id);
+>>>> +	}
+>>>> +	mutex_unlock(&ptdev->mmu->as.slots_lock);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +static void panthor_vm_unlock_region(struct panthor_vm *vm)
+>>>> +{
+>>>> +	struct panthor_device *ptdev = vm->ptdev;
+>>>> +
+>>>> +	mutex_lock(&ptdev->mmu->as.slots_lock);
+>>>> +	if (vm->as.id >= 0) {
+>>>> +		write_cmd(ptdev, vm->as.id, AS_COMMAND_FLUSH_MEM);
+>>>> +		drm_WARN_ON(&ptdev->base, wait_ready(ptdev, vm-
+>>>
+>>> as.id));
+>>>
+>>>> +	}
+>>>> +	vm->locked_region.start = 0;
+>>>> +	vm->locked_region.size = 0;
+>>>> +	mutex_unlock(&ptdev->mmu->as.slots_lock);
+>>>> +}
+>>>
+>>> Do we need to include a drm_dev_enter() somewhere here? I note that
+>>> panthor_vm_flush_range() has one and you've effectively replaced that
+>>> code with the above.
+>>
+>> Looks like we should.
+>>
+>>> Thanks,
+>>> Steve
+>>>
+>>>> +
+>>>>
+>>>>  static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32
+>>>>  status) {
+>>>>  
+>>>>  	bool has_unhandled_faults = false;
+>>>>
+>>>> @@ -2179,6 +2230,11 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct
+>>>> panthor_vm_op_ctx *op,>
+>>>>
+>>>>  	mutex_lock(&vm->op_lock);
+>>>>  	vm->op_ctx = op;
+>>>>
+>>>> +
+>>>> +	ret = panthor_vm_lock_region(vm, op->va.addr, op->va.range);
+>>>> +	if (ret)
+>>>> +		goto out;
+>>>> +
+>>>>
+>>>>  	switch (op_type) {
+>>>>  	
+>>>>  	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP:
+>>>>  		if (vm->unusable) {
+>>>>
+>>>> @@ -2199,6 +2255,9 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct
+>>>> panthor_vm_op_ctx *op,>
+>>>>
+>>>>  		break;
+>>>>  	
+>>>>  	}
+>>>>
+>>>> +	panthor_vm_unlock_region(vm);
+>>>> +
+>>>>
+>>>> +out:
+>>>>  	if (ret && flag_vm_unusable_on_failure)
+>>>>  	
+>>>>  		vm->unusable = true;
 > 
-> Responses should be made by Fri, 18 Jul 2025 14:12:35 +0000.
-> Anything received after that time might be too late.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.296-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
 > 
-> thanks,
 > 
-> greg k-h
 
-All tests passing for Tegra ...
-
-Test results for stable-v5.4:
-    10 builds:	10 pass, 0 fail
-    24 boots:	24 pass, 0 fail
-    54 tests:	54 pass, 0 fail
-
-Linux version:	5.4.296-rc2-g6d1abaaa322e
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
 
