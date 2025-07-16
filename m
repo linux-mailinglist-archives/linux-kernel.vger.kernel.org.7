@@ -1,187 +1,182 @@
-Return-Path: <linux-kernel+bounces-734404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AAC9B08126
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:52:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58982B0812A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6D96583359
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:52:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC2A7B2F7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A51C2EF2AC;
-	Wed, 16 Jul 2025 23:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AF32EF65F;
+	Wed, 16 Jul 2025 23:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Mu8WZV/K"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GuYO4k+3"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12B71C3C1F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F7621CA1D;
+	Wed, 16 Jul 2025 23:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752709930; cv=none; b=i1uGTvPpZtKOWYXYpVx2amAkxY7KARTNdG0aCs4877Lhvi9zm9jnU/PVO5edGartlQ9nh0A8MGo2lkk1BW1U17sWx+fah/tZnQSk+VPvZvRx6eh+2LljTNTO5lIpyGYfqhFSuMPWbwCGFh4VIS3jXhFgR9tbAiHP2+BwVCexafc=
+	t=1752709949; cv=none; b=ruDbjAOTMFwVGCRKf5Ib77ETpSM+9/tlczh8pYpXx5uIbXZkzrK+uHILi1YwTaXt1X7LknUKVkkSgd6zbDU6+na0o1sUxNYdnfzSCz5toGOCsofimF0EOaO4hA+Y6PArdBD3R8CStpLscJj3gBo7lveqj+Xym5LKJoNjmq+4yyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752709930; c=relaxed/simple;
-	bh=8cc2Nz87MAuzNDTFYLrAfgQhXEv/HRfUJbJCoQPND0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DaEmviso9++qzpa1gFQj2wAtHqnUQCLlNYCeVoA7YuMdGbAQOm3Dgdjgrnk3gOpIkzWcWSRLE5RrwD0Ad2lj5SIAt3TxQn3vs9J96PkHplirqozgtLNja2vp8J/XAUP6jI6uaXfFcXXOc3jpqm0uJfBSYCnJHnqc746K1u6Hc9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Mu8WZV/K; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso352682a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:52:08 -0700 (PDT)
+	s=arc-20240116; t=1752709949; c=relaxed/simple;
+	bh=tLcXQCfFKpH9tAyjQMjTNbYv3p000cu/Lr+Fw926E5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bkY7ir/Z5bSVW9XDyuSgF21qOKGNcJcMXcy2FB/KsBvIF501aSp+Pp04ROuMVCC6CckktcyaO/ormxoB91RKtZiBLUHBoPJ9eL6QenZPU1/Xf2mcGMCJ4vZMc8Ga7yxYRuXfEAbYwhKLSyf5rVYcNSRHgTC8yXtF/mPSlISZL4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GuYO4k+3; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-748feca4a61so277927b3a.3;
+        Wed, 16 Jul 2025 16:52:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1752709928; x=1753314728; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V9iYhf+TmOaeuGFTnHtMZsVUbgjznZbhmRqA/iiwsEQ=;
-        b=Mu8WZV/K+dCgYDZ0EFvxwJn7z4YOXD1bsuHZqqP1V/kfTqca+1d9vqEio19KxAlG9/
-         4A7Wo5tRnOOPZ8sniD+dy5ZWXsSBuw1PuErww259WISuPzaFOmB0ZjSUM6FqLXtwY1Ub
-         N29af4gOqV6O5ZkyuhRJRNFX0BhKUnsDTVlCuMXQenDQG/jiic0NhuG5pJmHE3fyxnbQ
-         /YMvVLmmSiV80vHWTkmSCy52sqdWNO4/PNVXO5zegR7ElrsYrys92d12xcR7I1p06VYS
-         VPoYF2Fr532yc0OpsvCDLKUH9gBTBriWyBrV7KWNNv+O8nmtfJVUjvT1S5D5FzhF4sty
-         oo8Q==
+        d=gmail.com; s=20230601; t=1752709946; x=1753314746; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=jdLXlQ398AT3n/w6cQxZKaJPYRsk9stO2iyTGlX4yIQ=;
+        b=GuYO4k+3rJdUUhxdg+cJLy2vho85eWIkLMc1CGzmbqJ03zCm07lgM7WyfLIe++qvE3
+         MPZ4RUYDA/u7FYmAWrDjZMH71+N+Pqkb4m5QeKZiWSfTHgAsNIDb/O/twQa2Ufy7Msa4
+         2jehc01uVgR/PmuW26766jXe2Kb84ymNjYi2PKvaB/jbEqnCiCAIkYtjIiFfYEknzxsm
+         oAMALFB+9YYNY89ocvonlilf78g9SVu0yoRvkbyZNrp1xt6cyyPbROkNt7wXNRY0vCQR
+         hj/tBNJgGRsAGfwjW9FtPSj2UnHUIQ8luGkNT5YdFccnJiHnW2MfJJA25MKIttGH3c6x
+         vYOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752709928; x=1753314728;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1752709946; x=1753314746;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V9iYhf+TmOaeuGFTnHtMZsVUbgjznZbhmRqA/iiwsEQ=;
-        b=Mcdj2UdNqWKWqGpwxrkxGZKfLi8+HjMZHYjcxVbFnCl5sCiQO7qYt5wBwVkxuhYoG4
-         siit+2ECgT9R66z5Qz7fHD2rl4BgLJNAjn3pt94ePKzEcAFrMX3tSub3PAaWaotmeRUM
-         67wgJkvTLpJsRLW9tt/LiHjbO+W16Qfyf5PHBMl3P4Eknoo79BcFlHRmWIlVjJYSIJZx
-         7+xK02t9W6YEIj2aUzKU2jW87pII+pBMwIyTn5JiwP/1fyoiDVUpHjEDZ6DInEmnAMcS
-         RpSwg6GGlpKCO7/xvX/seC9niB1gimcYWCUasiujqmFeYRloxBsqLdOKk6ft0n6TT/D/
-         q+pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAAYGyCVtkhxpWeIbi4Ee2j/cQ7SIZ3XXO+PzFo5LLKPNtOYurFPiiVdUaCgQ1fznbf+Pt5O7K6SIbZD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoClJpSQMCzgj+iCXr0TVTQq4RJUAIICHpIoxrDK5ed8Mk9ljG
-	vRXLeUzsVwxjYAnwnnQ+2SLlNDLqbDZcgVWmAEn0Ga6YIzpRMpGgAzbdzJCxtGr3tn8=
-X-Gm-Gg: ASbGncuepewFN6fbcrEoAkR8TLlVu9z7Cq8M0IZAanswsG1uWIxzKSTJW5nKV0MzDPF
-	EDSqtdK6vulizGwHSHNTmQO+3uE2KPhh6v4r2RQDe0KZZOBEnwu6rPNS8yCQW89+S2aiXEsQIbI
-	VcxevsBpC7Vs1STDAb7nenO+URNfun1STfdYtIhvXKQ4r9r43KDDD4KaWD9q3QOtT98ntZWd4A/
-	SiRXA93kLuthJN9lsKHEJ8eyjP5XX3BSd+wr4063EEPKWMSY+SAik258/TW1anTT5DR3Lu1FKes
-	hMusZghYjn5nuwBfI6eAnTMgWW/EcTTlubhefSQFOeP3F4OtL2ZdEZ2NWTuuNne0uQYqtopf+QE
-	5kfLpM2mCRXkJZZc3ucsMTZRzmG+e25bNunvzhWR79ZH5YuuYO8+v/bTmyauPV1wWRmRN1DTzhw
-	==
-X-Google-Smtp-Source: AGHT+IHUiw/cyohjV69lTrcKLCPTOr7ZJr1M8ncyo7AQFt9fgkchZHyM+/jOrI9YcMR1a/4YY9Pd7A==
-X-Received: by 2002:a05:6a20:734a:b0:220:3870:c61e with SMTP id adf61e73a8af0-23810a5901bmr7838780637.4.1752709928032;
-        Wed, 16 Jul 2025 16:52:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-64-170.pa.nsw.optusnet.com.au. [49.181.64.170])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd714bsm14430679b3a.6.2025.07.16.16.52.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 16:52:07 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1ucBuu-0000000Bx4E-1rfh;
-	Thu, 17 Jul 2025 09:52:04 +1000
-Date: Thu, 17 Jul 2025 09:52:04 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Marcelo Moreira <marcelomoreira1905@gmail.com>
-Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] xfs: Replace strncpy with strscpy
-Message-ID: <aHg7JOY5UrOck9ck@dread.disaster.area>
-References: <20250716182220.203631-1-marcelomoreira1905@gmail.com>
+        bh=jdLXlQ398AT3n/w6cQxZKaJPYRsk9stO2iyTGlX4yIQ=;
+        b=g+SI249G6QU6l2gFfKCmJOImLFk8ZdmizG09o7yKirITfCKuln2bBY9PIZDFBn4auf
+         COYb9e0oy5/kuUjIkG4rdwHpkRJ6W8YXt31Dg3RFkrn7Eih3ELDNksEH/08jeNv0pNbd
+         bVzy5ni2y3O+KS1Eqe3k+VwIyTP1QFMLq4Dv1J35Ov3X4HiIFklqlQWotaKenYk8+p5n
+         P28xktCWtOXxW5VDY6YO89GCIllC7zx77xX9DedRLR4jg4Lu6Edkzw4OOnRXSCZ3/+nE
+         sdcg9SgYFucMfAHQg9rSn/qrA/PzEgNfanKDQlVMN5U/KjZLpIqA/5l4v25GoaOfYbRq
+         vOYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHw1+J82tVwQarOy3D2nGLSwkUp87wEva71FjuQCA3R8gGL05mYjFz6JJgb/HC11gXd87aI4VoklOSr+Rn@vger.kernel.org, AJvYcCVyUF/lht4PPcaDhFXH7aV3PkmD7xUbSUDMmUUE/YB5e1uVdjMtpkw+9Qs60nEZ/sy9xDmlNQKZLOxP@vger.kernel.org, AJvYcCWgmpEN14VYhv3VTk4OPnO7RyYDPnSQMskDsG2KBEsImBNbiE+X6Td8Lion8gk7ng5psUMTozhlQn3nfaA=@vger.kernel.org, AJvYcCXJQX2VRnENv/PvqAQI5hACIer7dVGslv4xx/+c1UMTRP2YiCU8IYySJTO8RZ9tQ7rwVCdkiiOrA8AB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW1ZgID6TYZGplWwojMkwlwFa11gKEcT0Hq6phb2TJ84cvf5WL
+	FsfGs+eKfIXsr4x7x3q/Njmvrrb+M16NpfKuhzudRRvxpNTetUOpTnm/
+X-Gm-Gg: ASbGnctQDRT3oBJbCy3GPBD6Ng4FZwq6Ow3h8JI7+wrkWhKP6758jro/CXaKogrsPc3
+	R1QJyJ7qKM/RnwdwSbYfHE4st02/0etVQM4aZWqyFGMZts+QE6mpT+H2VDsl6lNsyxOel9PiH21
+	C+LpcK6sJEStuXHBKdv9gdTWQsa5vxyRL5MJQL4C5lKyTiIqwBtEAUwLlN3e85/3oPOaUrvg7Qk
+	h6n6WwkyNm0CFSc3M+6sRqJKTuK4KGuKpyx3aZsCf+7YPpn5y5IWL0mj4/QJd1vr4tbTCqB+nsV
+	aQ86UnJK9TSVZLz6vOAffBq1ELdRR/Kqu9nXGbvwGAgG9ls1k/0atUlUlA+GHft+G5jrIJB1Y0r
+	sSsz1I0WpASfKGwW3ro6t5vRJ8nw2Bdwr6IjPUprCjxH1tDmBwCvMKb1GPA0JLwPU8ww8zss=
+X-Google-Smtp-Source: AGHT+IFt7XBfausG0DgvJ18YaZnajB70cE/ued1Px0iX7hfmK/LW8zAdN9Ef9VpVnLqF8pNdZvf8Aw==
+X-Received: by 2002:a05:6a00:1252:b0:740:a023:5d60 with SMTP id d2e1a72fcca58-7572427b8fdmr6194614b3a.19.1752709946303;
+        Wed, 16 Jul 2025 16:52:26 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f1d507sm14920239b3a.83.2025.07.16.16.52.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 16:52:25 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <6a72e973-a142-4592-9b11-908a49f8df13@roeck-us.net>
+Date: Wed, 16 Jul 2025 16:52:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716182220.203631-1-marcelomoreira1905@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] hwmon: (pmbus) Add support for MPS multi-phase
+ mp2869a/mp29612a controllers
+To: tzuhao.wtmh@gmail.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, Fabio Estevam
+ <festevam@gmail.com>, Michal Simek <michal.simek@amd.com>,
+ Henry Wu <Henry_Wu@quantatw.com>, Grant Peltier <grantpeltier93@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>, Cherrence Sarip <cherrence.sarip@analog.com>,
+ Jerome Brunet <jbrunet@baylibre.com>, Leo Yang <leo.yang.sy0@gmail.com>,
+ John Erasmus Mari Geronimo <johnerasmusmari.geronimo@analog.com>,
+ Kim Seer Paller <kimseer.paller@analog.com>,
+ Alex Vdovydchenko <xzeol@yahoo.com>, Ninad Palsule <ninad@linux.ibm.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Cc: peteryin.openbmc@gmail.com, Wensheng Wang <wenswang@yeah.net>
+References: <20250630112120.588246-1-Henry_Wu@quantatw.com>
+ <20250630112120.588246-2-Henry_Wu@quantatw.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250630112120.588246-2-Henry_Wu@quantatw.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 16, 2025 at 03:20:37PM -0300, Marcelo Moreira wrote:
-> The `strncpy` function is deprecated for NUL-terminated strings as
-> explained in the "strncpy() on NUL-terminated strings" section of
-> Documentation/process/deprecated.rst.
+On 6/30/25 04:20, tzuhao.wtmh@gmail.com wrote:
+> From: Henry Wu <Henry_Wu@quantatw.com>
 > 
-> In `xrep_symlink_salvage_inline()`, the `target_buf` (which is `sc->buf`)
-> is intended to hold a NUL-terminated symlink path. The original code
-> used `strncpy(target_buf, ifp->if_data, nr)`, where `nr` is the maximum
-> number of bytes to copy.
+> Add support for the mp2869a and mp29612a controllers from Monolithic Power
+> Systems, Inc. (MPS). These are dual-loop, digital, multi-phase modulation
+> controllers.
+> 
 
-Yes, this prevents source buffer overrun in the event the corrupted
-symlink data buffer is not correctly nul terminated or there is a
-length mismatch between the symlink data and the inode metadata.
+This patch needs to be consolidated with the MP2869 part of
+https://patchwork.kernel.org/project/linux-hwmon/patch/20250709093420.456304-2-wenswang@yeah.net/
+That patch uses the _identify function from the PMBus core instead of re-implementing
+it, which is a plus. It also takes more chip configuration details into account.
+But then it only supports mp2869 and not mp2869a or mp29612a.
 
-This patch removes the explicit source buffer overrun protection the
-code currently provides.
+The chips do not officially exist, so I have a difficult time to determine
+what is actually needed or even makes sense. You'll have to determine that
+with the submitter of the other driver.
 
-> This approach is problematic because `strncpy()`
-> does not guarantee NUL-termination if the source string is truncated
-> exactly at `nr` bytes, which can lead to out-of-bounds read issues
-> if the buffer is later treated as a NUL-terminated string.
+Frankly, I am not even sure if I should accept drivers for chips which are
+so super-secret that the manufacturer does not even admit their existence.
 
-No, that can't happen, because sc->buf is initialised to contain
-NULs and is large enough to hold a max length symlink plus the
-trailing NUL termination.  Hence it will always be NUL-terminated,
-even if the symlink length (nr) is capped at XFS_SYMLINK_MAXLEN.
+Guenter
 
-> Evidence from `fs/xfs/scrub/symlink.c` (e.g., `strnlen(sc->buf,
-> XFS_SYMLINK_MAXLEN)`) confirms that `sc->buf` is indeed expected to be
-> NUL-terminated.
-
-Please read the code more carefully. This is -explicitly- called out
-in a comment in xrep_symlink_salvage() before it starts to process
-the symlink data buffer that we just used strncpy() to place the
-data in:
-
-		/*
-                 * NULL-terminate the buffer because the ondisk target does not
-                 * do that for us.  If salvage didn't find the exact amount of
-                 * data that we expected to find, don't salvage anything.
-                 */
-                target_buf[buflen] = 0;
-                if (strlen(target_buf) != sc->ip->i_disk_size)
-                        buflen = 0;
-
-Also, have a look at the remote symlink data copy above the inline
-salvage code you are changing (xrep_symlink_salvage_remote()).
-
-It uses memcpy() to reconstruct the symlink data from multiple
-source buffers. It does *not* explicitly NUL-terminate sc->buf after
-using memcpy() to copy from the on disk structures to sc->buf. The
-on-disk symlink data is *not* NUL-terminated, either.
-
-IOWs, the salvage code that reconstructs the symlink data does not
-guarantee NUL termination, so we do it explicitly before the data in
-the returned buffer is used.
-
-> Furthermore, `sc->buf` is allocated with
-> `kvzalloc(XFS_SYMLINK_MAXLEN + 1, ...)`, explicitly reserving space for
-> the NUL terminator.
-
-.... and initialising the entire buffer to contain NULs.  IOWs, we
-have multiple layers of defence against data extraction not doing
-NUL-termination of the data it extracts.
-
-> This change improves code safety and clarity by using a safer function for
-> string copying.
-
-I disagree. It is a bad change because it uses strscpy() incorrectly
-for the context. i.e. it removes explicit source buffer overrun
-protection whilst making the incorrect assumption that the callers
-need to be protected from unterminated strings in the destination
-buffer.
-
-This code is dealing with *corrupt structures*, so it -must not-
-make any assumptions about the validity of incoming data structures,
-nor the validity of recovered data.  It has to treat them as is they
-are always invalid, and explicitly protect against all types of
-buffer overruns.
-
-IOW, if you must replace strncpy() in xrep_symlink_salvage_inline(),
-then the correct replacement memcpy().  Using some other strcpy()
-variant is just as easy to get wrong as strncpy() if you don't
-understand why strncpy() is safe to use in the first place.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
