@@ -1,93 +1,95 @@
-Return-Path: <linux-kernel+bounces-732684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8902BB06AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:40:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF77B06AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75B803BE000
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12DD6189F9EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844DB192D97;
-	Wed, 16 Jul 2025 00:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD2F13C695;
+	Wed, 16 Jul 2025 00:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gAEzoZ8w"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ivJzNZCW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6832718FC80
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D751311AC
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752626422; cv=none; b=dTXT0djlHpmqRayrm0wgYYj+TRKDpPs24lkbBzxgeH5bmiybgzbqE6GerjMIeo4aqLXxoIEVH97oB2m27EdsJ54NlaC/qo4ZWPpK2vHkggzSy+iwvEJoqsC9d3DBxLFK1/ETmC2qD1carLR9dTW+JKZzLpYn2BxlZuzcC16x8ZE=
+	t=1752626411; cv=none; b=VV+lAQ9jVN3SWleSzL2RU1WS7jfrrPI6ipO/RJQ1IUfCz0iKVbd3+6j3W+KURyCr40Ybg3mJRGFMoTuVLfLcec4vPbskqCo/z/9gEm1lkOkskOaoCNRKS2XKAXBxwqxADbgGQH4xmwfHxy7SiU6iRiu14v7d0hPVxYp8EqRehoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752626422; c=relaxed/simple;
-	bh=1Z6UkGBZr7oN805L7yjX7D1r1YPj7Qg+OqqyeMr4cyE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZrKDVChtq/GVy9HQJ+aMtfB/qcXVP4CZ4zMHVpXwb+G6GGr97/YKZJZsP1DcUlaWqVp3Md05BXCXzkDXlTLi6XJyqw24QlNaa3TkPpEM+3WcNhQSkGBM/lFilDKDN26aiyt7pbj9mSAxtRque7+1LO82zD10iXWBpXkc3d0vSyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gAEzoZ8w; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1752626411; c=relaxed/simple;
+	bh=DmMC5bCJ9CWUiX4p10MCxK/dY96FoqUa8x52jrnCqLE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TIKZ/s+t6SG0joClnhUnepZS/HeuSiDoESsm2snLePc09FGVGLBi2QEsDyLUlPtZjs0Hbo7FhWf84mY4mMROSCP8PC8JVtDpW+pxcRTorQAiHhXxvp8KbPKe7q+BsswFXdwgnTHLWpBQKrxQYpRL+tY3fkOcPYSkyIgBZXvPAT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ivJzNZCW; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FGDGH4017998
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:40:20 GMT
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FGDEeu025762
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:40:08 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=VzUYJgFGxoAVYBUN5oc7Pqp3z3f3GFuBQrm
-	QxX8NW28=; b=gAEzoZ8wub87aT+QmrD5lAyTodOyu9WtMtiKUyw6qDnVvaIJgQH
-	PfGDkJSUUdqlkMxdTynEnJCSlpNoXWdvVW25FPef7qe51RGS2u30dJ4tVNxLhWPv
-	hgVJuxzIClnJ8hMXJ6L03v5RqEN6FsQrjZVwnFaADyqu1dtKyGXmQ05d6K/rR66B
-	LWuGfFR8dYSOjHeCH53Bmo+H92txnEqtIb9lkoXPDeBnXF7F9lsYDSQ1CjgXjg38
-	d6eu32cZSJsX6bXtjREcTbNmtKz1ke9lnKioCjgWahMRJqt/l7VakNpWgrZRIjZh
-	SSCtEj4VZfa9fO0/cGFoYS97RUqKy3e1XDA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug38256h-1
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=GCF416+VOtu
+	BXP/dynqOe3kMJwo5Rxbt8eiqcDIlK5I=; b=ivJzNZCWSFYVYHZkhoM1WbpWeAg
+	zEExV7vyf094wYQwoPs8Y23OEIH/euhDNXJUwuRD/L2BtMdERS2ePlkbFawZJOvR
+	yl8txOkn0kLGSrH2ovYu5nxaNLhM282ySKONsxGXmUN/adfrlf02e4j5qX7PfRhS
+	uDNJIpjtsYPnW/jPS44QantUn7qbsvBicao3ZL3kzrQbDqoaDO02Li3p9Qu67ECE
+	v/ipWlUnhnHtQdCPZWOYL/1gt5F+s8NVYo4/Yv8K8/jHqu3RmZVFDJwsGl38FurX
+	BmtugrM6zQA+kIwYhZ123GKAiUeMwZ+AUXafeHB5gcNxPymoBlz6UjqusSw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy1s9f-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:40:20 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2369261224bso65584625ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:40:20 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:40:08 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-23536f7c2d7so96845795ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 17:40:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752626406; x=1753231206;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VzUYJgFGxoAVYBUN5oc7Pqp3z3f3GFuBQrmQxX8NW28=;
-        b=uYNCkPly0+Ta9n4brgdc9dp3cA0cNSKLuikZsB7V1Ej2aFZuZb34+Hu4vkgQaTWY7+
-         B74Vif+XwQUREXWqKGHJo6jVz1zlaABuI5e4sZAg01QX8ey0YrclrVYiBhO7DV8sAsLF
-         9wIx+rMPVmn2pha7kB/WCzJRVeg2Gb123itQHFTLRLHg6tnO8RPxChQSx6zpTdgSLEdY
-         MN02EWV06ebl8Z6NaO1WSY2TpVwkb3nL1iW6IjmZSqVDd0FGfxa5AYSXimzbeLTd3WR/
-         t+sKGtuJ8bozGdbRpCU75k+6J89vQpWlw/Qt8SyWCiZ9jS2WpHtfrfBCouxTElZszDZI
-         PE4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWqdXaiPtXDwQYhyS58tAW9r5Xtwogv6zNY1duiPOp1aVH0wbPQnc9IXHN3L7FxmjvwPDQNgC/F4RwnH1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTm7c64qr52K5TQUxkpd2SSAHs+wrLLf2cO0Rov3aTEcxUQ4FX
-	t2oolZ9isBvCe7StY86v91bwJ7SmzUUg+xi5zYdkHshUFvwVqx7jZ/oeRiZwV53sM82ZGefN6IT
-	9+4oYFiLEC/HzSvs7sSzm9isAfSQpdcLl0sEdWxqBQYP1pnCrzytSjW6h/wLiaNXACQp/btLo3Q
-	s=
-X-Gm-Gg: ASbGnctSY+rZsSEBcsYfZX7xvcCJTQtUA+GSl2mHAbgQHHPRD3Q954Y5C7mMctnotWh
-	rjXHt6FRLNLz1LJCyEmxm52byBvG4SQlXRPwUpgMhaVFuXkL5yjgNG8PzEe4EIPj3su0D4gz7DR
-	gaVeXpLpau0VFhnuv1MCfQ/a5rHnhF7Prh4iMlE5ppgb4Nok4NCHURapcuZQj5eWI56ETjoJYSk
-	kTjLqP970+zEI3Xl2GcCEdiM6h1z+sW/0U/umvtb+8LcKpAecVd8ieUzEeoVfKv+k1OX9w/Wijj
-	ciOHMHQKDYn52gAWIUwW9MKkqQirpCRgg42+Pztii77TJeTZD/qHgYqSyM1gpbP9uybbbG8jqFY
-	s4193B3GbypFQRg9/Krnx4zVR+Us=
-X-Received: by 2002:a17:903:28d:b0:234:c7e6:8459 with SMTP id d9443c01a7336-23e256cd95dmr11394235ad.20.1752626406517;
-        Tue, 15 Jul 2025 17:40:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3ES/p6LGhzaV34ArPImL6N73MMe/4t3qyNZuIxxo4xO9vbqvGv7dNf+3w6wdfTXF07zgFqA==
-X-Received: by 2002:a17:903:28d:b0:234:c7e6:8459 with SMTP id d9443c01a7336-23e256cd95dmr11393945ad.20.1752626406059;
-        Tue, 15 Jul 2025 17:40:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752626408; x=1753231208;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GCF416+VOtuBXP/dynqOe3kMJwo5Rxbt8eiqcDIlK5I=;
+        b=rpjXuisKvcKP3Ggu1dlrGcljKImpJR4alD7yAVbGINvzzZtTDwrFfsLj1nYSzAlmPK
+         DqNSrPyKgishap2YEUQJZViumbN8Qk8KRQA/j5kYXz2LF/LmiAOFlbjXQwPKV4tphFXx
+         /NTEuT72ZqsFf/fx4mTb3Bpgk0ThVpBL0u1nykD65lE21qHX4oA9L8yU7fpTck0RiSrd
+         0owTc2Wmj8igqvzckqFsSqg1ywFnsQ8sD0pfhjp6nqnhLUE3phJnQZDHFRju81Cnds7t
+         Mx0i8Mxq7EqN/g3k/YrfIBw4cY02DOWJaSaFwzax5KMpUJt2ktOkBPUd/2vnyCY+hb2X
+         9Npw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSOwu9Wg2FCi3tYMKZz6IjxOGnZ2CZCRxPn4Vy/YUMKHsylna2HgFp0p+S5Cp/kNrUFRTwIka8DroKAWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmS2RuJfBdxGyESKVRX6ToJEp9bdEGjrmHw4MaHdTqNAnMlXf/
+	30yXGaGxubaEy+oZSmYyRvqxkP+83NDAsHwFDcqR5sGtm+hFb9wiVT+ULuVZPpS206wnZdfDpJz
+	nTDiPDgFQSf3+nCOGjwairHUudHl/5WwDI+2z729edtqrmKe9p8V9hAkNdUlX9RnGLW4=
+X-Gm-Gg: ASbGncve8T9dmiNZNjQvJq+XF60qp5UgsgPTjY56WJfUl7V6ZNO2Y4QKRCVjmPpP+OZ
+	1VrQjOzpapj+9w+fyunMfT403fRgC7y3w/biexyY57/f70tWIU8veiZ3lvdCqSDMWrPhdQ0+4BC
+	p4bbGvg+bWUN7Hz8gpta+u0LfMGtvhvhhFjqEE5jLeLHwSROFVIASQG8X7HdJI+Sls95bFado3x
+	tR+Y7pgB+jiBxb+1cLZNoeBsxUzibg0TXmR5Z342hTFNIWbCUiEh+8c1j3/d6WyzmGzRwNmdlzD
+	7HczWuqvrzBpIf+XZ7v4Y4cJoUDBHG558MDTEEMHVzrFs4HSkNJ2e04wrYvGdPItxB+6i3mEJth
+	2k5ILW626gVeyae9u1qYs9pAP1kw=
+X-Received: by 2002:a17:902:ef45:b0:223:619e:71da with SMTP id d9443c01a7336-23e2579d9e0mr11121665ad.49.1752626407747;
+        Tue, 15 Jul 2025 17:40:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZqyh5zhn7aZGpW6wWxn9yXi7t+g6XSOjNdJRS6cnNteJ4YgcV0/RNZrkd+8/jUrZRoleGmg==
+X-Received: by 2002:a17:902:ef45:b0:223:619e:71da with SMTP id d9443c01a7336-23e2579d9e0mr11121395ad.49.1752626407364;
+        Tue, 15 Jul 2025 17:40:07 -0700 (PDT)
 Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42aeadcsm117015525ad.78.2025.07.15.17.40.05
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42aeadcsm117015525ad.78.2025.07.15.17.40.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 17:40:05 -0700 (PDT)
+        Tue, 15 Jul 2025 17:40:06 -0700 (PDT)
 From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
 To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
         krzk+dt@kernel.org, conor+dt@kernel.org
 Cc: dmitry.baryshkov@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] soc: qcom: pmic_glink: Add support for subsystem restart (SSR)
-Date: Tue, 15 Jul 2025 17:40:02 -0700
-Message-Id: <20250716004004.311001-1-anjelique.melendez@oss.qualcomm.com>
+Subject: [PATCH v2 1/2] dt-bindings: soc: qcom: qcom,pmic-glink: Add qcom,subsys-restart property
+Date: Tue, 15 Jul 2025 17:40:03 -0700
+Message-Id: <20250716004004.311001-2-anjelique.melendez@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250716004004.311001-1-anjelique.melendez@oss.qualcomm.com>
+References: <20250716004004.311001-1-anjelique.melendez@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,46 +97,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDAwNCBTYWx0ZWRfXzoJu/C0NVujQ
- LIzFW4Gn9DscLPIEvg+BNgZC14ymbIg6VlX2x+zUub7HogFVXkcWjAqjm6WcSRcHaJ59VVW5N3G
- akFKhKrYWRO0Mi9UeKFhaJb+b1GE/xJvPrslqlXFAfaGOgQ4LOmwGAY+9X9ExxRAwhO6lbfHIcS
- ttCihuAVif36FWeJkh1ekuQ3Wa/Pw01gTtRLtCeFMq0YDcq+5rRZttxVldtFZ6aJgiudVHfO2Nw
- /ciM4/ALIAkWEA47QeNHh5mdSgRmKA/aasMgxkNLLlPOQSooaXkLgaGQim/l3lQkJUBGa+38Xzr
- B6YgEGqf29ghoCZ3ZVAUXsb7Nd/yp49ASnPSfSixhp8ygXbiJ3Zs5pYZ2h3t6mBtWrIiO64HCCx
- x/DB52/uARAtBqmCRKgJU68gsGuKFOvEpE/ET/wnIdRm6dcGVDedMim0kNuO/lskzr1EIiwD
-X-Proofpoint-GUID: oC9kMfIt2F5mNYO5YLaXaLPXmr8s3ip8
-X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=6876f4f4 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=s3rR3T0EdQVOb1-HSqQA:9
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: oC9kMfIt2F5mNYO5YLaXaLPXmr8s3ip8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDAwMyBTYWx0ZWRfX32DZJPHJfk/z
+ eN/uwtDH+H/A1WJEFJF1FjPrSMI+eOJKBnByYEzgvF2CfjpUnKtwAzFdkwQpGAFvFk9e94C+Rdc
+ aSe+Sp3Zhb5QEGuHkIRVaJQnHNNJDp+/DLos5sbF0Rz16oSGoSCvympogjP7gGychKV6cG8yV/d
+ Z5NxO/zjHUcGCmtxU1sDnajTo31wSMC7QqfDGcGRPGbdjyxDm0i/9mghnwXtWS9cd0odxYxQuvF
+ B0MW9vkR5kDmjisDxudjcVGspfAS7OS5MQ6r8mWkHLzmEIPT1sG7wgBk3QsDGVDQ026oqk71C1Q
+ OvjSFyiNbgHfduqcnh/wsfuJ716ii/XbTG0+pPEJVGKdmJAY6L7Ppzx0EMha3AAuMujDpekHecV
+ fCpHvakjRTbwqQakURkFYsB1r7plOJ8vi4yWPR9S7ds+o48KZD/P7v+hXX5BWcdmVZr16nrj
+X-Proofpoint-GUID: -xht8mjE2uLWkGoRQrRs1B4F0d-Qm7b5
+X-Proofpoint-ORIG-GUID: -xht8mjE2uLWkGoRQrRs1B4F0d-Qm7b5
+X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=6876f4e8 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=EnJsE7tHsB2WQhtf5zMA:9
+ a=1OuFwYUASf3TG4hYMiVC:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-15_05,2025-07-15_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507160004
+ malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507160003
 
-Add support for PMIC Glink subsystem restart (SSR) so that PMIC Glink
-clients are aware of when subsytem come up or down. 
+Add new "qcom,subsys-restart" property to enable subsystem restart (SSR)
+notifications.
 
-Changes since v1:
- - Add "qcom,subsys-restart" dt property to enable SSR
- - Add ssr_name to platform data 
- - link: https://lore.kernel.org/all/20250624225535.2013141-1-anjelique.melendez@oss.qualcomm.com/
+Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+---
+ .../devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml         | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Anjelique Melendez (2):
-  dt-bindings: soc: qcom: qcom,pmic-glink: Add qcom,subsys-restart
-    property
-  soc: qcom: pmic_glink: Add support for subsystem restart (SSR)
-
- .../bindings/soc/qcom/qcom,pmic-glink.yaml    |  4 +
- drivers/soc/qcom/pmic_glink.c                 | 80 ++++++++++++++-----
- 2 files changed, 63 insertions(+), 21 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+index 4c9e78f29523..90011096894e 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+@@ -49,6 +49,10 @@ properties:
+   '#size-cells':
+     const: 0
+ 
++  qcom,subsys-restart:
++    description: If property is specified subsystem restart (SSR) notifications will be enabled.
++    type: boolean
++
+   orientation-gpios:
+     description: Array of input gpios for the Type-C connector orientation indication.
+       The GPIO indication is used to detect the orientation of the Type-C connector.
 -- 
 2.34.1
 
