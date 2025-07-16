@@ -1,61 +1,55 @@
-Return-Path: <linux-kernel+bounces-734349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7DEB0807D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF86AB0807F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61321582854
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:25:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2895582398
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F652ED177;
-	Wed, 16 Jul 2025 22:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62472EBDF7;
+	Wed, 16 Jul 2025 22:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLa6uDZJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LdlymgH6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9A12857F1;
-	Wed, 16 Jul 2025 22:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5C026A0DF;
+	Wed, 16 Jul 2025 22:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752704735; cv=none; b=Vi89Ek+nkTPfUhjQbLe/KuoTavxJXjnunF5nfEe9WFVOgygqz3LQi8fCDJLrULMwW0Mh777eHRA7dihE44KB8N50sAUmwDj6w5rD/rs4xDaKDk9UKI3bjbKKziy0FzFgAYG5cxojlFzzmFC1b2NQH7Z0KeEARV/ZB1fOKz5fqsI=
+	t=1752704793; cv=none; b=HoBInxrL3EaQf7rOGZGj0ZdkO6MqY7XuzwOFcr4EHQt2p7cB3KZpam6QxVQfqkxzZ8vL4bmk2JXwMkR226hl01fUPnNRLfsQUy7pjdpfbEiYe7JyBis/Sw/V8ucPnVsAe7Z97dL3Mcvz4rumrXANrKvO+N4jcsos9OlqG/oKMzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752704735; c=relaxed/simple;
-	bh=b8p1yGebBghXJBd69Xqts/21wlzTMjRSUIp9WAfmGtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=jyYVPHWL89PwecH6K91LowoTOM8EodJqf4Q7P7uV2jtadSDRhsNy1xn1Lbzu7zNuQaLX5eLKm4fpYsetOqr2S/fE0xuSxYda8MyXzYeFIHCAYxEWyBoswSUkmzXb1Axl9Pc4DjfP+dDrHGYXo4++Sgb0dHmuPlppXOEZGpGRdBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLa6uDZJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 950FDC4CEE7;
-	Wed, 16 Jul 2025 22:25:34 +0000 (UTC)
+	s=arc-20240116; t=1752704793; c=relaxed/simple;
+	bh=JOJeLyCECI7amC2TB9K36NzTKnzUeHZ0ARDaQeBa6so=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJQgE6Ly3ptbRLqehJpv9nr5YXrGJdj9+YQ3eeZbDG3SrnPIo5r/vKOqkdlwbmUB1uxk2148wSmp3v4q7kGfob19uZEqOQpYoBn7+At7tY2aqYCeAwP+e6faoadjgZhMnMHLnSVhDHcKkqt8KJMy/sgBe8KV9FwoxZXXmd0Ht3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LdlymgH6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46704C4CEE7;
+	Wed, 16 Jul 2025 22:26:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752704734;
-	bh=b8p1yGebBghXJBd69Xqts/21wlzTMjRSUIp9WAfmGtg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=bLa6uDZJw2dw2YRoHZuZEC1yP+RL5rzv8+TnUCg2Uh21tacQ6b1HvrQEUhwOjYwgg
-	 mC624E72HRNtB8vQGOzncBEK0d0FVrGUC4b2eYeUXLZOSD5SX1uRSD+7riCQ6FiAtw
-	 FmSAsFiqCecAH6Cb9qmsQKas/w+wM+eFAvvhYZpOzieQQDLCupaowiwQrTkeqO02bg
-	 jd0FqxrHvZk1gyMncqry/8hYSseU9OQviSsPPzbVJRFT5ZmOkZ8z+wcZd+4OlW+pHM
-	 aqBt9yJ/vMXLCDUWFWfLQce9U466WyajVpKhsKTCr6g9iBrB3KNDwwFgq6b69JpuVe
-	 YVNmiRkjioaPw==
-Date: Wed, 16 Jul 2025 17:25:33 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bhelgaas@google.com,
-	tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
-	davem@davemloft.net, anil.s.keshavamurthy@intel.com,
-	mark.rutland@arm.com, peterz@infradead.org,
-	tianruidong@linux.alibaba.com,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for
- hotplug event
-Message-ID: <20250716222533.GA2559636@bhelgaas>
+	s=k20201202; t=1752704791;
+	bh=JOJeLyCECI7amC2TB9K36NzTKnzUeHZ0ARDaQeBa6so=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LdlymgH6c/n11Ay4TjcMGaQ/JWnaQnUPc6NHyikP7ZNFd+Z1y9zW4Tt51Phu9lQX8
+	 esLs4b9Fr9P+UZ+IWelguH0ZKvp4A053jlvcFwHfhNZeJgBQvkneoWOlPMUYJLeJgi
+	 iETUpGG/qcNNtpmUkZlx3HSwr3wKWnVw5oIvSs9Ph1lgRhtGMX4zO4WHgsVqjNpWwt
+	 Q3kqy0a1ds+wuEOBc/YITMkNetEOuR60rOuCqTshnwq1iRdq2khiBDNKo84Hozi7DK
+	 OrJ1D6LJ2SGWde6eQD2D+PQ2O0eXA3NoJIeiL80yYZYqnGlTdL73B9AxMifFzQS3SG
+	 nk9OToyrbKVVQ==
+Date: Thu, 17 Jul 2025 00:26:27 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Yuesong Li <liyuesong@vivo.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-i2c@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] i2c: lpi2c: convert to use secs_to_jiffies()
+Message-ID: <qe5s4q5pabhbdbvtvxogmcbcchmnqwj556defrlxxhebhgan35@toxghkobdevv>
+References: <20250613110649.3283336-1-liyuesong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,78 +58,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250512013839.45960-1-xueshuai@linux.alibaba.com>
+In-Reply-To: <20250613110649.3283336-1-liyuesong@vivo.com>
 
-[+cc Ilpo, Jonathan (should have been included since the patch has his
-Reviewed-by)]
+Hi Yuesong,
 
-Thanks for the ping; I noticed quite a bit of discussion but didn't
-follow it myself, so didn't know it was basically all resolved.
-
-On Mon, May 12, 2025 at 09:38:39AM +0800, Shuai Xue wrote:
-> Hotplug events are critical indicators for analyzing hardware health,
-> particularly in AI supercomputers where surprise link downs can
-> significantly impact system performance and reliability.
-
-I dropped the "particularly in AI supercomputers" part because I think
-this is relevant in general.
-
-> To this end, define a new TRACING_SYSTEM named pci, add a generic RAS
-> tracepoint for hotplug event to help healthy check, and generate
-> tracepoints for pcie hotplug event.
-
-I'm not quite clear on the difference between "add generic RAS
-tracepoint for hotplug event" and "generate tracepoints for pcie
-hotplug event."  Are these two different things?
-
-I see the new TRACE_EVENT(pci_hp_event, ...) definition.  Is that what
-you mean by the "generic RAS tracepoint"?
-
-And the five new trace_pci_hp_event() calls that use the TRACE_EVENT
-are the "tracepoints for PCIe hotplug event"?
-
-> Add enum pci_hotplug_event in
-> include/uapi/linux/pci.h so applications like rasdaemon can register
-> tracepoint event handlers for it.
+On Fri, Jun 13, 2025 at 07:06:38PM +0800, Yuesong Li wrote:
+> Since secs_to_jiffies()(commit:b35108a51cf7) has been introduced, we can
+> use it to avoid scaling the time to msec.
 > 
-> The output like below:
-> 
-> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
-> $ cat /sys/kernel/debug/tracing/trace_pipe
->     <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:Link Down
-> 
->     <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:Card not present
+> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
 
-> +#define PCI_HOTPLUG_EVENT					\
-> +	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
-> +	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
-> +	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
-> +	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"Card not present")
+merged to i2c/i2c-host.
 
-Running this:
-
-  $ git grep -E "\<(EM|EMe)\("
-
-I notice that these new events don't look like the others, which
-mostly look like "word" or "event-type" or "VERB object".
-
-I'm OK with this, but just giving you a chance to consider what will
-be the least surprise to users and easiest for grep and shell
-scripting.
-
-I also noticed capitalization of "Up" and "Down", but not "present"
-and "not present".
-
-"Card" is only used occasionally and informally in the PCIe spec, and
-not at all in the context of hotplug of Slot Status (Presence Detect
-State refers to "adapter in the slot"), but it does match the pciehp
-dmesg text, so it probably makes sense to use that.
-
-Anyway, I applied this on pci/trace for v6.17.  If there's anything
-you want to tweak in the commit log or event text, we can still do
-that.
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=trace
-
-Bjorn
+Thanks,
+Andi
 
