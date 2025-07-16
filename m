@@ -1,156 +1,85 @@
-Return-Path: <linux-kernel+bounces-733587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E23DB076A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:11:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE594B076A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C087B7AA1FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C15D03A657D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB7A2F50B3;
-	Wed, 16 Jul 2025 13:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA322F508C;
+	Wed, 16 Jul 2025 13:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="mSsRorqp"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtnDQKrW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6D7235072;
-	Wed, 16 Jul 2025 13:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFB415E5BB;
+	Wed, 16 Jul 2025 13:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752671497; cv=none; b=mssk2CqFvsqPKe8B9ZFSoK4UtcNzh5mGlDj6GGB/OMU4Qj58ZlpGSS5b6JWoVibt1onlWsoodek4I/Sa9EjxNMIq0rGHAct4svJfWUh35Ln5SchSHsWK06MYiSyP0trgJDpVB77PdI96I2tOC7Fu5ZEyS1FY1r7D/BlJjVXCgNU=
+	t=1752671609; cv=none; b=CwXX12Z7fjywVLoY+RF2l3u14VZraFDi3lN0jw/01Zxi2sfc4pnzshXQYiXFwxZBFYQCWezqVmf2u8f1GlKiM+37IsGsGJP0uOYjY3mPHAk5f8EibVD0b7yXV5P9FzDOoRUKWxC/ezfKXvytMh10Lkd1y5USyDgTEYzXCWJ+7vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752671497; c=relaxed/simple;
-	bh=hzmHkszYAoyXFUYOkAA7oNySXwfEslhstmlGJGO9cFU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=KDOy0mjUNW3UbhrJPLLAklfp7A5bcH231R1JINdDx6YkJRd+OueXGRI/MMURcEFwhcTGz2mU5JgxMheM5JfVm/1OcapInyutK3bozCv6a9tUwRYI/fBzHUZoqeFlpeRyHtWVa0Vq9NftJ3opTDbTNJvIU14B3Dtjbx6yFRRrRq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=mSsRorqp; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=qCz3qkpSM0PaErwoNukZei1+0CUNeJ1oEHCchsaW8T0=; b=mSsRorqpu8GvUFSOiJ0BQI+6mh
-	JPeC9IG0TZWWoUPrYxSxp/HSk4sfNrro88xvoXztLeT2sWWhWHoK/loc6rAKWyNY89ipAUNhTqnvV
-	n0Qx7fc13cSny0+cZlDbSKoYb3QLub0NkXYJjToQuBVCB5iGE9euU8iEWwqbu8xz0rSFxdiN9utnh
-	2xFhX0vZSoaiavvfmR+RoiFlLtv01kpcoxXHB9XtSWKWvH16wGKXPvATqawaiX79n/ZfVbymvdIy1
-	4jXKo4t2Cqck/hLrZVHpm5bswdpAVoLgdFpuyA1b1px9onoRU4A9w93r0On4zBJ2gu2lMB92G5Zsk
-	gtS1oukg==;
-Received: from [122.175.9.182] (port=31570 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1uc1uq-0000000HP1m-0wjn;
-	Wed, 16 Jul 2025 09:11:20 -0400
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 5A5831784069;
-	Wed, 16 Jul 2025 18:41:12 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 3F13E1784068;
-	Wed, 16 Jul 2025 18:41:12 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CYRcvNkisBKt; Wed, 16 Jul 2025 18:41:12 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id D20231781DBB;
-	Wed, 16 Jul 2025 18:41:11 +0530 (IST)
-Date: Wed, 16 Jul 2025 18:41:11 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: parvathi <parvathi@couthit.com>, kuba <kuba@kernel.org>
-Cc: danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>, 
-	andrew+netdev <andrew+netdev@lunn.ch>, davem <davem@davemloft.net>, 
-	edumazet <edumazet@google.com>, pabeni <pabeni@redhat.com>, 
-	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
-	conor+dt <conor+dt@kernel.org>, ssantosh <ssantosh@kernel.org>, 
-	richardcochran <richardcochran@gmail.com>, 
-	s hauer <s.hauer@pengutronix.de>, m-karicheri2 <m-karicheri2@ti.com>, 
-	glaroque <glaroque@baylibre.com>, afd <afd@ti.com>, 
-	saikrishnag <saikrishnag@marvell.com>, m-malladi <m-malladi@ti.com>, 
-	jacob e keller <jacob.e.keller@intel.com>, 
-	diogo ivo <diogo.ivo@siemens.com>, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
-	horms <horms@kernel.org>, s-anna <s-anna@ti.com>, 
-	basharath <basharath@couthit.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
-	mohan <mohan@couthit.com>
-Message-ID: <1616453705.30524.1752671471644.JavaMail.zimbra@couthit.local>
-In-Reply-To: <723330733.1712525.1752237188810.JavaMail.zimbra@couthit.local>
-References: <20250702140633.1612269-1-parvathi@couthit.com> <20250702151756.1656470-5-parvathi@couthit.com> <20250708180107.7886ea41@kernel.org> <723330733.1712525.1752237188810.JavaMail.zimbra@couthit.local>
-Subject: Re: [PATCH net-next v10 04/11] net: ti: prueth: Adds link
- detection, RX and TX support.
+	s=arc-20240116; t=1752671609; c=relaxed/simple;
+	bh=K6oqX+67eUnHLer7AQlFRevA8MZfB7EPbXq8ipVYL70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bGBtUBWTjauYn5KnrSYKD98su/jECBXV5PlQ94Pm0IZbkXyeOFqQ5t0j2ougDZgXddqigjI/TTRIyNdtuYOlRbD6WoKCHzwoZvo6iPA6y6t/EkpBL11v0sYU5eFRdZYUwkMYP2AiqCuM7moYdZuIAXHSNCIP5LZr+crzdU4uva0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtnDQKrW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F097DC4CEF0;
+	Wed, 16 Jul 2025 13:13:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752671609;
+	bh=K6oqX+67eUnHLer7AQlFRevA8MZfB7EPbXq8ipVYL70=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rtnDQKrWuoJqH4F6fVlF8SWBx9nPHSRzcP6jbEoXeV2vPHB6T4wHLXBJaa0R1K8dW
+	 mYM3PT/Bc940rf2VbK7jC0GztMxfbR7QJpHatRJffUGoXasgQoJAKeMxfNSQajroZV
+	 qJlAmQm9CL1EVPcG4Wj19cv0l1u3Tu63qk88pwcIkFrUaho/nESnf8k8H8yhv4kqaV
+	 Zw/vVJ24oQ4NQr/6ZJQv6rwjTC1ndkUlYw6rZYRlJxLb8c+0uubUm66swIEvG4v9Ds
+	 baX57ISeWDwSDSM5Z1eMZIUjX8xYAZIOZg3vExvWief3oivRmNuCf7ZZRpEFT64A4F
+	 DH/GR7Usi3/FQ==
+Message-ID: <db9fbce3-20a2-417a-9264-7f98c2376b0d@kernel.org>
+Date: Wed, 16 Jul 2025 15:13:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
-Thread-Topic: prueth: Adds link detection, RX and TX support.
-Thread-Index: frcZHpE/y/6hXxyDNRDspT8aDcWlcTdy9M2r
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: duplicate patch in the clockevents tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250716204815.33e16b6a@canb.auug.org.au>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250716204815.33e16b6a@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Il 16/07/25 12:48, Stephen Rothwell ha scritto:
+> Hi all,
+> 
+> The following commit is also in the mediatek tree as a different commit
+> (but the same patch):
+> 
+>    791a2ba9e668 ("dt-bindings: timer: mediatek: add MT6572")
+> 
+> This is commit
+> 
+>    7827b0ff3bb3 ("dt-bindings: timer: mediatek: add MT6572")
+> 
+> in the mediatek tree.
+> 
 
->>> +=09qid =3D icssm_prueth_get_tx_queue_id(emac->prueth, skb);
->>> +=09ret =3D icssm_prueth_tx_enqueue(emac, skb, qid);
->>> +=09if (ret) {
->>> +=09=09if (ret !=3D -ENOBUFS && netif_msg_tx_err(emac) &&
->>> +=09=09    net_ratelimit())
->>> +=09=09=09netdev_err(ndev, "packet queue failed: %d\n", ret);
->>> +=09=09goto fail_tx;
->>> +=09}
->>=20
->>> +=09if (ret =3D=3D -ENOBUFS) {
->>> +=09=09ret =3D NETDEV_TX_BUSY;
->>=20
->>=20
->> Something needs to stop the queue, right? Otherwise the stack will
->> send the frame right back to the driver.
->>=20
->=20
-> Yes, we will notify upper layer with =E2=80=9Cnetif_tx_stop_queue()=E2=80=
-=9D when returning
-> =E2=80=9CNETDEV_TX_BUSY=E2=80=9D to not push again immediately.
->=20
+Sorry, I have unintentionally pushed it to the mediatek tree's for-next.
+Will remove asap.
 
-We reviewed the flow and found that the reason for NETDEV_TX_BUSY being
-notified to the upper layers is due lack of support for reliably detecting
-the TX completion event.
-
-In case of ICSSM PRU Ethernet, we do not have support for TX complete
-notification back to the driver from firmware and its like store and
-forget approach. So it will be tricky to enable back/resume the queue
-if we stop it when we see busy status.
-
-Returning NETDEV_TX_BUSY seems to be the best option so that the stack can
-retry as soon as possible.
-
-
-Thanks and Regards,
-Parvathi.
+Thanks,
+Angelo
 
