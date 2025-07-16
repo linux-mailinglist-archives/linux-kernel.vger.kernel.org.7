@@ -1,109 +1,148 @@
-Return-Path: <linux-kernel+bounces-732833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A8EB06C93
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21184B06C97
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BA6C176BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 04:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA714E7C59
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 04:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B128B27700B;
-	Wed, 16 Jul 2025 04:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA79527700B;
+	Wed, 16 Jul 2025 04:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HwR1GsOb"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XQP/a4Jw"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9481B1C84DF
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 04:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0634D7261E;
+	Wed, 16 Jul 2025 04:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752639510; cv=none; b=C6PLIxWaDuQ/R9MAp9tGd+6mTSIp8BoIXmKvlRdX51y+IGsMsd6RPfkRPiVKW1XSENyrCS0DSk4ZFqycKzQJIjBgXnmafNFSZneBBEIwArx7B5SEG8goYzPR7MuU/tNrQCNC3RrF2123MKtLCi/sJkrVVwVC2DUAJi5d2PMxQH0=
+	t=1752639521; cv=none; b=iRwbTQDWnQvbkEwUlfaOTU9XyBMJSAs7q2tKWmkeOawZ6ZL79l0/vSltXWB87jro7IPju/RB5w95TW73pPhJdhOQfiYL/Np7UemItVmKNCXXFjv9XTu/JKbmSyR1J3w4Sx8HTRqxiUIBcJbNrvhiNWF31o51maGYZwcbV7JiLwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752639510; c=relaxed/simple;
-	bh=oto/n6TCbchQzSB703btk16cJiplLhgQ7zW4XX5nZ4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3xTtWAlNrZbGQWswJ3GqvchoKxMPU2DPbpL6eHEXFuWRnQyW9Nu61crPg7IXc6RubjzsHeftuvluvDp+RlEAzLlf1Dx4g+mK9d3/DMsEtdgp+525hkxALPGuRughJ9UAF815Z3WgnJzvaqb/NnoCPrDC7mBIvsxHh47nG82Si4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HwR1GsOb; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-73e65d29fe9so155250a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 21:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752639507; x=1753244307; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5H4HdKrcQEwabRwfwGJyrWRCmxFyWkQ7fRmOg4zE7oA=;
-        b=HwR1GsOb6XnIFTIzWkEgIudl3S55gotvPqp4XRRbpiRMiqjrWj5m3aXqhFqdMAM6mt
-         /+Sys6Nb2+702qHc/6sX/vTmehSLPyhpF/DCugDn5RTMK0iP5x/muKg9QwShqT+m44zr
-         1Ku1dJ1oOLUdZrCENqpQrxmv3cM5be5mZe3XYiAX87332r4HAsuna/R/a+sgRn9ONJVn
-         HrUIT4m7etNNFMPGQcqxIkod21KH9b1ioe/UAPUtrWLg8DjNedwwFt7smlMywjLyBFsz
-         oEHfheVcO6CBOAFLxTHgkvVuw2sBrPNHNsuCqBI/ISo/9MsF3Q/TXIn9YkJOshRqa2xf
-         HqSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752639507; x=1753244307;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5H4HdKrcQEwabRwfwGJyrWRCmxFyWkQ7fRmOg4zE7oA=;
-        b=OaywrZmgIAfi3Ku43ol4W7GFmrDmYxt1NU00PdcT0pc5sof5TfrM3yoGCqlrhgf+2Q
-         Q7oqZPhj00g3jgv/ZE1IMQV/qI4hPetrAgA7ezdk+RCIx93CVv6uV1f3nY5ShmDQr238
-         HEVDVxyGHzMBng0bKyU7qJWeuiOlLQGOQURP/BLbFSmh93SFrQkIGPHgN1FcxS1Q7Sjb
-         swXL3z2/1oJBhDxQ7Rcwz4t4/Xbg2s3DqXQ9b19IZO6jp4bZY0ICeSKy2QKYyXu14fsL
-         URYXaP/aTxB2yt2CLKtKaqWrbOHjOF1kNAeWyi3mjdpKrtT2ryCkr7RxfQMJ9zD7i7vk
-         1VTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWc0vXIsrqHotGa/wLmuZ7GqGwScV4nu34FGSwDFzowcAGmujwtkIMaksNFzYVKbY9sSIdZH7x93cHwQOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfPSHD/XWUpwAI4OwhxIku0CUzlxJeBpwa2+zm5cds2IJe3y0E
-	JZFP//vw9So1xueZZRwFJpKc25LgJjXviLqN8EFghc51Q6cYgpyd9Iv+SdI/dLcea20=
-X-Gm-Gg: ASbGncuYpwHpRVaS+x5K71/UPxQnxTCImw0omSYXKKZy2Kr6jzHEyaA3SscVPIzgx6q
-	6Bt+QzcXq+2pN1BsH5mLt9XbanTJty4f9kt2iVstZ9R+7pblnV8jd0AvdRlnSaN6TzQrGk9N9jG
-	F7qDZw7yEBchwV7dmqK2G/N065vTLinxGXAQxPQtsLNAyrChZWKVfzSBwbUZCGpTtrE2BTIxl2J
-	197UPhEBm3kPuIGvwyVB0ncbJVGxf6vDb5il0r9iy6aPI9dZ5+L8XhS5MdBQlSH/f7Y4ahoKNM1
-	ucSt4X8xUwrpZI87ZJaJGMV4599mSqauNErP0BlRK/7fYxB6dLKSx4wj392wXlhRk05DB5ngDoO
-	lGbfGJyCHQzqYLPQeTkgk1m+R0Js3zCzIIn4Z7dQ=
-X-Google-Smtp-Source: AGHT+IFhLjhnOeo46E/SOKl3OzTueSgMQlM58Zb0eK9UOOWBXR9DisA8ORH00rRKCtUrLi/toP8HcA==
-X-Received: by 2002:a05:6808:1512:b0:40b:2f3e:5f55 with SMTP id 5614622812f47-41d004038eemr1085693b6e.0.1752639507467;
-        Tue, 15 Jul 2025 21:18:27 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:2564:68a3:7d6:cb7d])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-414197c52a6sm2482751b6e.19.2025.07.15.21.18.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 21:18:26 -0700 (PDT)
-Date: Wed, 16 Jul 2025 07:18:23 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ignacio =?iso-8859-1?Q?Pe=F1a?= <ignacio.pena87@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] staging: sm750fb: Fix const declaration for g_fbmode
- array
-Message-ID: <d7f17f72-d086-4ab2-a22d-33f0ea125f54@suswa.mountain>
-References: <20250716005553.52369-1-ignacio.pena87@gmail.com>
- <20250716005553.52369-2-ignacio.pena87@gmail.com>
+	s=arc-20240116; t=1752639521; c=relaxed/simple;
+	bh=uCOUcDkhRZ13qIpW8bJDPkpyeqUocbXEgTh6JAY0s6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YVsmMNYkJhiI4KywnOPUKZ/LaYvO48hQOMzrjGOkYXf5PIaxA35JbikR12KivISye23H77NXxc7Qu2FZEBAfnJ2/IMxeW2CFGNlvECvJkgRVdCNkriINrXwWKzSZzpjx9zI2+VKfoJ2kH4k7qYw4vSc8WZN6mqtiUj1fCNr/xW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XQP/a4Jw; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752639400;
+	bh=S7mK2SBkhQMa5+gvlYeddVua2aIHqvsHbgJZfEWR6dI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=XQP/a4Jwa5OQi0scktFHKYXE2tJMQNklweWuH8Du+Mn1hontLRAF7k0JJ5mpYgi+W
+	 fUCHG94BkOfHJLUQovuma6vZsBtfJR2qtqls7raqWs/kStlrE+L7gnxxkQ4vyH6zSY
+	 Jrvw2BQ2uVZkk1eAhk6hUwtd6zIvsMHe6ukFOJin9eOab9xs0pH8k9a47pMvw2v/XF
+	 Rgc3LrkJlc4zrBMrjDboj0JzEPBSJCoy7XMGS5t4lLVaioqO/+1mo5wb3GPalV8a1K
+	 LLqe8947E9jewDbQtzlcEPrpELMNy+hrhMQ2Du6vrayOnH9kBbgQu+eH7DdSkj0uL8
+	 vl71nY7ePvItg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhjRq5CDqz4wbY;
+	Wed, 16 Jul 2025 14:16:39 +1000 (AEST)
+Date: Wed, 16 Jul 2025 14:18:32 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>, Simona Vetter
+ <simona.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas
+ Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>
+Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
+ <dri-devel@lists.freedesktop.org>, Imre Deak <imre.deak@intel.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
+ tree
+Message-ID: <20250716141832.5542b414@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250716005553.52369-2-ignacio.pena87@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/jvGgs7I7tXJ4eKmy4eV7tUi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Jul 15, 2025 at 08:55:51PM -0400, Ignacio Peña wrote:
-> The g_fbmode array should be declared as const pointer to const
-> string as its contents never change.
+--Sig_/jvGgs7I7tXJ4eKmy4eV7tUi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Try compiling this code.  The contents do change.
+Hi all,
 
-There are a few other issues as well.  Try running checkpatch on your
-patch.  Also there is a specific format for v2 patches
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+Today's linux-next merge of the drm tree got a conflict in:
 
-regards,
-dan carpenter
+  drivers/gpu/drm/display/drm_dp_helper.c
 
+between commit:
+
+  d34d6feaf4a7 ("drm/dp: Change AUX DPCD probe address from LANE0_1_STATUS =
+to TRAINING_PATTERN_SET")
+
+from the drm-intel-fixes tree and commit:
+
+  b87ed522b364 ("drm/dp: Add an EDID quirk for the DPCD register access pro=
+be")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/display/drm_dp_helper.c
+index ea78c6c8ca7a,1c3920297906..000000000000
+--- a/drivers/gpu/drm/display/drm_dp_helper.c
++++ b/drivers/gpu/drm/display/drm_dp_helper.c
+@@@ -712,20 -741,8 +741,8 @@@ ssize_t drm_dp_dpcd_read(struct drm_dp_
+  {
+  	int ret;
+ =20
+- 	/*
+- 	 * HP ZR24w corrupts the first DPCD access after entering power save
+- 	 * mode. Eg. on a read, the entire buffer will be filled with the same
+- 	 * byte. Do a throw away read to avoid corrupting anything we care
+- 	 * about. Afterwards things will work correctly until the monitor
+- 	 * gets woken up and subsequently re-enters power save mode.
+- 	 *
+- 	 * The user pressing any button on the monitor is enough to wake it
+- 	 * up, so there is no particularly good place to do the workaround.
+- 	 * We just have to do it before any DPCD access and hope that the
+- 	 * monitor doesn't power down exactly after the throw away read.
+- 	 */
+- 	if (!aux->is_remote) {
++ 	if (dpcd_access_needs_probe(aux)) {
+ -		ret =3D drm_dp_dpcd_probe(aux, DP_LANE0_1_STATUS);
+ +		ret =3D drm_dp_dpcd_probe(aux, DP_TRAINING_PATTERN_SET);
+  		if (ret < 0)
+  			return ret;
+  	}
+
+--Sig_/jvGgs7I7tXJ4eKmy4eV7tUi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh3KBgACgkQAVBC80lX
+0GyZMQf/aZIurtBVrIzuWKnDL8tM/37HjkjT5m6LzYhQSfEq+SwMpu/aAYEYeEcg
+BnS95XPcGd7eHZnM8xg2HJ8WFVJCI1k/RzW4CmQO1qt322b/zqMIVZA8hickQpQ+
+RgRk829fRZV0iR9NgJzmXcCVE3J6i6OisGHjwJxcHdIdKX4bCrcSCPhiy/z3mHDk
+FhCa+Sq2PvQDXABNMvsYjpttezXWzQz6w7p0ekI95ccmyQHU5cFg4pL5/ddtu2J1
+xV1jJ+lpeYUxn8UD5GNYc2WX+uGR9J9vX3TJH7hoW+aHp0M3EqWCeDHU238V0KHC
+0psWZSHBraB+kLdJfke193RM3Vb3vQ==
+=2xqe
+-----END PGP SIGNATURE-----
+
+--Sig_/jvGgs7I7tXJ4eKmy4eV7tUi--
 
