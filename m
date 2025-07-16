@@ -1,113 +1,165 @@
-Return-Path: <linux-kernel+bounces-733908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A9AB07A79
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557EDB07A7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFA9189B6EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36CAF4E3185
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEFC2F4A03;
-	Wed, 16 Jul 2025 15:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C4B2F5080;
+	Wed, 16 Jul 2025 15:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMkcO7y/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="v1Yz0V9Q"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB78E1E5701;
-	Wed, 16 Jul 2025 15:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5870F2F4304
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752681488; cv=none; b=tUSw3MC/mAVMd1oZMlEMNboM2RrNIWwzfA/FeVu0ct+LXer5Gcpw+0IjZ2kTQez+/3X8TtsJjs5FrBxOyN/q/7omt3LWQdxyATihfH63TacX+Fe1E3/LXIK8j9PA/61mZ5src2li22b9Hd8FXTLfWihq5WInuG44YOvrxr0H+o4=
+	t=1752681500; cv=none; b=CwmlF8dV6GkVL0RH0LL1xxRKW2CXDk1jAYf4mWfRGvG/PxvstcPQUOXIlTJ8l2ayHeu6zXpi9QugduO4fq1hJcBaO+do32jKqiHYQP7dLsBaV6VnOFSaMhOuBw7nkyBoyamzJB2BkDF6qDVZAQ7lpXvszy1+QYaTIVMVPTac+xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752681488; c=relaxed/simple;
-	bh=gMxD2cNh7slWJ9OWR+KLnow/5tGll0CpQ0ou060BuDk=;
+	s=arc-20240116; t=1752681500; c=relaxed/simple;
+	bh=6nqta9AmEHYZq91Htn1KwyrNmyqwvXdb3uNy1YSYzkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUd4jH+u8pwbNF8DP3llMgA1L8W7J8ev59bl+aS63Ndzn5TWXifaCBRK5JuoP5QLKJ3iaYJw3nesXFfzBhVlk3d2790Id3wrwepoUSR5jkQckGzzmJppMYhDEppSQpDw2Kzyb1gwS1Vvb1EUeWnRdFSLOvAms249+E1Bp+wRtQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMkcO7y/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5992BC4CEE7;
-	Wed, 16 Jul 2025 15:58:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752681487;
-	bh=gMxD2cNh7slWJ9OWR+KLnow/5tGll0CpQ0ou060BuDk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RMkcO7y/gFy/byUU3Ko96z4xcRAMj9wQgPxgwDDWC0pVguGVnnZkur42XlUEVA2/5
-	 n+M6B/F3mtyrgurOZGOlsWIrVtGbRkxWloAGteB/cFYUF6Z9OBRI7jY3c4jXnrGR24
-	 CkeCFrRfGTcC1r3J6R7E9cglOE+ndeJsJskaz4u3jyq/sxtn2oej7xYx/SyQSBEpOl
-	 Ll61W8xYiz+XUMj7MRTpiZ9MgTYKGRvC2qCf4+xXfxLr5DfF7KIWWrG0jEP5POFCse
-	 u0zw9HCizhWwbgO7bYwDz/aUMCX3BXICL18Cf32A6HZ/tE/e//+567YylrODx45eLi
-	 0lvIudrNkkp/A==
-Date: Wed, 16 Jul 2025 21:27:55 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/pwrctrl: Only destroy alongside host bridge
-Message-ID: <cnbtk5ziotlksmmledv6hyugpn6zpvyrjlogtkg6sspaw5qcas@humkwz6o5xf6>
-References: <20250711174332.1.I623f788178c1e4c5b1a41dbfc8c7fa55966373c0@changeid>
- <xg45pqki76l4v7lgdqsnv34agh5hxqscoabrkexnk2zbzewho5@5dmmk46yebua>
- <aHbGax-7CiRmnKs7@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XfHOlYxL9AHbfZnMLtQm4DZh7S7jvEnYMp1OErLt9cI0mXUC391qge/CiWpSOTV9UZDcTMCwUYVKsBk+VvBxPi0MhyTwl/icqkcwjd1NkprzM7Rcdxhnp0SlmXeZlrRHgh4AIQbiS4iSWTSTH+YWteSmK5yaaYmJZMS9I3uAk6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=v1Yz0V9Q; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6fadb9a0325so764346d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:58:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1752681497; x=1753286297; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oCmbG5Cc4Qj+GuEi5hKR3TL5SByYcFwAYZ/BLKGNEyk=;
+        b=v1Yz0V9QhpdCBNwrGl9VkA2KwSRVYbxOyYZ7iYKXINTodHEPOGDCDpCWwa63xArZEQ
+         JJtlce3emswEPUkYg20yq3UtCYk22wJmGujgYqMQ+8fqwxAQNXDPI95I6lmcCAEzbnhq
+         8Co1J8k6OWS/JLSeSvoCPeT4jGd2E36zRAbyfT4DZl84Il5/I/rzS4h+t/NEkIL+96hX
+         blZuxfjiROgrTFPU9B9DUAYJydNWzhnYgh1ExqWRV/V0FfJD9D5NKTC6Jb1ZZiwrUWpC
+         woT1c8YqeLZt+Kbg2xHnLsmpfF07OD8I6YQDS5oJdUo6imHtHek1o7ose+n+BZ8xwy/H
+         tmZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752681497; x=1753286297;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oCmbG5Cc4Qj+GuEi5hKR3TL5SByYcFwAYZ/BLKGNEyk=;
+        b=IpLYORvaKs3v1tZcOvvEoYinsfaoU/eTxhIUvw5J7mtxiefTpJ0uMtbJ+eEFbFLEL/
+         HwAoK9hc7ADQtmEYkOinvR8ee0UBDGBy2NfJeLuoZKP0bJ3DV6u9T5m5TpLc+EmA+ouR
+         OyTbhw6c76K1YxIpZVZ6XGIvheO79AFzURD3LZMlMH7S2WFzmcClsbNae107YHddqAUc
+         VJQqvX1FO8nDX2qpu3aq4vcaYc6wvQBic1GhUwDy+u9JLuofZBE8nCHZ9bdURmogZniS
+         HNigi/HNLl8wNRQ+MNC/Y0vcYOB259+iO/ti5agXBjzvgOKyDB+PJjCW1KvUXjd9y7O+
+         NIww==
+X-Forwarded-Encrypted: i=1; AJvYcCXCOT/rz74Un7tj35I1gSCuJBSnoOK73qnn2kuXKQkL4/5gePsBCoqojLcLF9LGwpKzAxEX3AYAEoVCbi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx738DHGHDUqbxHvHjSLXa7U13TNkkTuFe4TbIhDQ+KG1BuQVPZ
+	4vUNwfIWTsbsMIqHfu+fKnTs7P08zgkszwhBRqzGTCFZjdbJwYr6QjAY1uhGY9cYwg==
+X-Gm-Gg: ASbGnctmci/NFxMhfuCdTEFYeMRabA9y1xPJbgpAnTK4uCnxqaF41jfsDeLHtX86+jL
+	AXAe90jZ4hUJByNny50L0qZvubCDYftLuYwcyX7xXxQqpE9BIav32u90Lr+wxnt2kccpaMWO73S
+	EfBnS6Cjlb4OXhQhEIGs/DBrZL+QJ0tYQM/yPZFVfofSkhexIgGAKJEYpiz/GoRs90CG+JQO4ap
+	PusCAjc4k455+JY4gXldTABbq/sXNxBsxZhtCrH5z6qV9faEg8Lmoc43dVQkPA2mh3FCwM7ysTW
+	XTMkY/hYqMXSqAfk9pd5ssnpauKAU9WTpVQPwwPy18kGgabDr7HIb6cXKEad65jnCeUHs8vHEBf
+	LBcGtcIRVaKwm2cQEF5mIYviItyOAn4jefBBlZYyLqOBzBDaCR8oxDwrlih/XVfiA/AQceWiAug
+	oLuyZJsCG1iggV9OA=
+X-Google-Smtp-Source: AGHT+IFsCw1bCj8/HsfuBMZZD8pEcSDfQxxlKagGV4XvKNFxpy1HQ2TTRQZEdkyv4BFKbjQ0850Wag==
+X-Received: by 2002:a05:6214:3186:b0:704:8f24:f044 with SMTP id 6a1803df08f44-704f6af81efmr51856426d6.34.1752681497195;
+        Wed, 16 Jul 2025 08:58:17 -0700 (PDT)
+Received: from rowland.harvard.edu (nat-65-112-8-52.harvard-secure.wrls.harvard.edu. [65.112.8.52])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7049799e874sm72296036d6.18.2025.07.16.08.58.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 08:58:16 -0700 (PDT)
+Date: Wed, 16 Jul 2025 11:58:14 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>
+Cc: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
+Message-ID: <d21dcce3-88ba-416c-9d18-ea47855c48fc@rowland.harvard.edu>
+References: <8bec1698-5008-428f-8e71-ec002def0c54@rowland.harvard.edu>
+ <6876b0ec.a70a0220.693ce.0019.GAE@google.com>
+ <78c3fb66-c30f-4c64-a499-61c1665186a8@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aHbGax-7CiRmnKs7@google.com>
+In-Reply-To: <78c3fb66-c30f-4c64-a499-61c1665186a8@rowland.harvard.edu>
 
-On Tue, Jul 15, 2025 at 02:21:47PM GMT, Brian Norris wrote:
-> Hi Manivannan,
-> 
-> Thanks for reviewing.
-> 
-> On Sat, Jul 12, 2025 at 10:56:38PM +0530, Manivannan Sadhasivam wrote:
-> > If you take a look at commit f1536585588b ("PCI: Don't rely on
-> > of_platform_depopulate() for reused OF-nodes"), you can realize that the PCI
-> > core clears OF_POPULATED flag while removing the PCI device. So
-> > of_platform_device_destroy() will do nothing.
-> 
-> I've looked through that commit several times, and while I think I
-> understand its claim, I really haven't been able to validate it. I've
-> inspected the code for anything like of_node_clear_flag(nc,
-> OF_POPULATED), and the closest I see for any PCI-relevant code is in
-> drivers/of/platform.c -- mostly in error paths (undoing device creation)
-> or of_platform_device_destroy() or of_platform_depopulate().
-> 
-> I've also tried quite a bit of tracing / printk'ing, and I can't find
-> the OF_POPULATED getting cleared either.
-> 
-> Is there any chance there's a mistake in the claims in commit
-> f1536585588b? e.g., maybe Bartosz was looking at OF_POPULATED_BUS (which
-> is different, but also relevant to his change)? Or am I missing
-> something obvious in here?
-> 
+Benjamin:
 
-Now, I did look into the OF code and I also couldn't see where exactly the
-OF_POPULATED flag is getting cleared by the PCI core :/ So I'll defer the
-question to Bartosz.
-
-> OTOH, I also see that part of my change is not really doing quite what I
-> thought it was -- so far, I think there may be some kind of resource
-> leak (kobj ref), since I'm not seeing pci_release_host_bridge_dev()
-> called when I think it should be. If I perform cleanup in
-> pci_free_host_bridge() instead, then I do indeed see
-> of_platform_device_destroy() tear things down the way I expect.
+On Wed, Jul 16, 2025 at 10:29:38AM -0400, Alan Stern wrote:
+> On Tue, Jul 15, 2025 at 12:50:04PM -0700, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> > UBSAN: shift-out-of-bounds in s32ton
+> > 
+> > microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
+> > microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
+> > hid: s32ton: n 0 val 0 size 0x0
+> > ------------[ cut here ]------------
+> > UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
+> > shift exponent 4294967295 is too large for 32-bit type '__s32' (aka 'int')
 > 
+> Benjamin:
+> 
+> Clearly there's going to be trouble when you try to convert a signed 
+> 32-bit value to a 0-bit number!
+> 
+> My impression is that hid_parser_global() should reject Report Size or 
+> Report Count items with a value of 0.  Such fields would be meaningless 
+> in any case.  The routine checks for values that are too large, but not 
+> for values that are too small.
+> 
+> Does this look like the right approach?
+> 
+> Alan Stern
+> 
+> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git c2ca42f1
+> 
+>  drivers/hid/hid-core.c |    6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> Index: usb-devel/drivers/hid/hid-core.c
+> ===================================================================
+> --- usb-devel.orig/drivers/hid/hid-core.c
+> +++ usb-devel/drivers/hid/hid-core.c
+> @@ -464,7 +464,8 @@ static int hid_parser_global(struct hid_
+>  
+>  	case HID_GLOBAL_ITEM_TAG_REPORT_SIZE:
+>  		parser->global.report_size = item_udata(item);
+> -		if (parser->global.report_size > 256) {
+> +		if (parser->global.report_size > 256 ||
+> +				parser->global.report_size == 0) {
+>  			hid_err(parser->device, "invalid report_size %d\n",
+>  					parser->global.report_size);
+>  			return -1;
+> @@ -473,7 +474,8 @@ static int hid_parser_global(struct hid_
+>  
+>  	case HID_GLOBAL_ITEM_TAG_REPORT_COUNT:
+>  		parser->global.report_count = item_udata(item);
+> -		if (parser->global.report_count > HID_MAX_USAGES) {
+> +		if (parser->global.report_count > HID_MAX_USAGES ||
+> +				parser->global.report_count == 0) {
+>  			hid_err(parser->device, "invalid report_count %d\n",
+>  					parser->global.report_count);
+>  			return -1;
 
-Oh, that's bad! Which controller it is? I played with making the pcie-qcom
-driver modular and I unloaded/loaded multiple times, but never saw any
-refcount warning (I really hope if there was any leak, it would've tripped over
-during insmod).
+This patch didn't work; the error message never showed up in the kernel 
+log.  Nevertheless, hidinput_change_resolution_multipliers() tried to 
+create an output report with a field having size 0.
 
-- Mani
+How can this to happen without hid_scan_report() or hid_open_report() 
+running?  It shouldn't be possible to use a report before it has been 
+checked for validity.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Alan Stern
 
