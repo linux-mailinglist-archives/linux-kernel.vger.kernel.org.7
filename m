@@ -1,137 +1,162 @@
-Return-Path: <linux-kernel+bounces-733435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570F0B074A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:24:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21DA4B074B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE1397B7E29
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:23:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6163F189C4B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD562F365E;
-	Wed, 16 Jul 2025 11:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203952F49EF;
+	Wed, 16 Jul 2025 11:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Nkz+J3Of"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bIUzTA3y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC112F1FF2;
-	Wed, 16 Jul 2025 11:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C752F1FF2;
+	Wed, 16 Jul 2025 11:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752665067; cv=none; b=PlTbWCTAfFjBDeY3yFWNABQYk16HqKrXYUbHgqoGarN8aRL+qUoMyr8MfL2Fgbu8BYjnm4hHiWSdf0jQyh/mg+yC3xHb53JJWKStFsfY2QN+n438Lo9VE8afcwRIWt781okRoTpa+HzLezbdJ8f2k01luGsISsCaR2XKoFfTZ9M=
+	t=1752665139; cv=none; b=WF4fG/7QAuWJ7LztVLmEQ2M2JIzvWjzAy/skOufkMqa1ZpjcfkoUqfaJmyaZjeu/jPP8MJvBW9T0KpOCi/yOfD/nRhaBhW6wzzLUmMJnypO2b5cf+zEsMr4bk64v+v5EPUS1YbzLGjPgYZa4uhTLOoqggLeB+G3cJzzHYLOQu6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752665067; c=relaxed/simple;
-	bh=f4AIqi/Fw9DY2N7mZbmHndvTW9t43xWntHr65s/N59w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h8F3r6CjrZAx4/NthmjCsQzeUEdroiH55/deevEDEFRzDworuT0qZA4AiZHKXB4lnTNk4HBwizaO1RsUtsaxt2Fdt/iHyRe8Eke3ktx4JX44T91In5q7F/GLsMhLBzXTrZUH9G27f8DIhCTSNSMbkSEodvW8zf2jQJEGH580FR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Nkz+J3Of; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23636167b30so58372585ad.1;
-        Wed, 16 Jul 2025 04:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1752665065; x=1753269865; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dotDuLYLN/iXt+U/0felTJMwvc4r74ynMy/X01T15SI=;
-        b=Nkz+J3OfcOCeWr2hwNdfHF4nAP2c5lZOdyW5KoUfgVdFTv4N8ALtqriJDB8x/iWJ27
-         0pt2nn6DtO8sysW5aXcJywgCYK6VgIU/vxGw/onsb8wggYbK/iWD3K97E8dD+cqk4sTR
-         OW+M6XB6NoT6MdZWvRvohru3aNxgkzcAy+IyeQgOIhYGySRBQYJHuVJkORg2iV7zLwNC
-         gMto69tPCHcZVRFEzo9qUQpDnPhJMEyqb49Q8w5wOc0wnjQ+U+ZVc8Wz1Yr6AxkMFzns
-         mxyvMe2kCiiKkV4unmOdyvSdB4Cg5egzgTHm8jY0No9IOteNJTXd0RoKa5k7iHliLy/x
-         qgKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752665065; x=1753269865;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dotDuLYLN/iXt+U/0felTJMwvc4r74ynMy/X01T15SI=;
-        b=cOP2e/OHGlZgRwPkLles9QY02/TLvAfV7JDBXcO0vyhD7K1TsFXod5qyBMApyf6drJ
-         f+aBdMu2rvIb7PufumY5MmbpHkhRbMe/rBGUd2jQcRc7YAr6h2Oa81kZIzAOLd+ex85D
-         zAXnDvkdYdLRDJ+6IO9HMesNaMEUXvnY1Gu5f2ozHFDvfesNKyAlcJdjbNtRLyxmpsyF
-         2zguxqm6xzXskQJHWA7I3Fxzbfmn2ldUEAiavxr+D8WFjdAWjp2yDLmEn2Yiogx8QmJX
-         zaiw8+FChqeTCuMlbKSlG599LtT5HuGAfjXORITNOcRyCaiLyCA5OqCKlejfq64HOJTO
-         D2UA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCcF4UIxkucUxnCDSuyP5a7Ncj/6vg2bzOnXdzGcuygjAI5gCfh4cwzk1X+CGA8lr/vUoBnLlg+EeF@vger.kernel.org, AJvYcCWexTBjF4XnfERssrM+u6ymY2qZCNRVa/Z/HOVCsYzKvThuQ0sGk/Wyo5UqQDgDSQ5CVbCjWrtnxhXHNDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPhjiRYpNk1oHWQAFWKBy6SRMZDWK4Vfs9EudfQgy7j3dlCgWe
-	dxjxnbsyWMpEFyfYOIQ7v8M1fUU90g3jI24gkCsDky+plFdzdiuoRYRjLVtHPsV64eT14+HJlkY
-	I23EbwWrNrMuKL99zzDFiq5272KCwH94=
-X-Gm-Gg: ASbGncvaMM48AsBR0Wsrb2CWTGKmlsz2xh0dR6xicIaadaFFcNVZtNXoNSHjxSngSUf
-	53ax0EQ+F7qwd48D5bT8o3/txEELSgOtMs9hQpLOaJxvKhkTwVq52zYjjuq2zpI8VfBsKmnW8i6
-	z4tGbFPDuPcPeJhJqiHNTQ6a7x38256alFdHEO0jR2ojwkRcmPwneOVAON/lmHfLuqzuCd81X33
-	1Sy6TWg+3zdX3b7vzDy8q+RJ+1ZwI6RMLsAgSez
-X-Google-Smtp-Source: AGHT+IFnVNzGcIE0bNOY91eQmo8Ch4/qdMkQf/sYVo0NGryBs/0yxEncXjaWCxRIEZpcy+IAEitVlIpwJyjafSJ1RSA=
-X-Received: by 2002:a17:903:1b25:b0:234:a139:120d with SMTP id
- d9443c01a7336-23e25685241mr29266375ad.7.1752665065587; Wed, 16 Jul 2025
- 04:24:25 -0700 (PDT)
+	s=arc-20240116; t=1752665139; c=relaxed/simple;
+	bh=p3BSUcDo5y0Wn2DQ5Qi8LbjrebDK6eyOiu8A1DTmYoo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cXvacbpUBzwDX8YFwEYRpSDgt7mOER63464W5youB0vtKK1KNj53BE5V/wdr1ZyblxvcHwb0U48vkhqbNT/8X0G1BmCSegW59G7eQe6tFGbC4hcyHd1GDATtX4XS5ncHGOxj0x8cEM0X+QVpHY7tnu0YEkGKYfoPE0KRxPH4HEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bIUzTA3y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DEE79C4CEF6;
+	Wed, 16 Jul 2025 11:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752665138;
+	bh=p3BSUcDo5y0Wn2DQ5Qi8LbjrebDK6eyOiu8A1DTmYoo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=bIUzTA3yB0fqnHADbrelM61uSuGB1RujDklsx70m5UfsLgpZel2IPTaF0fZwO5JVg
+	 GIkCfvYj+SnnveHffbt/o6mVBVdjXnsIBZN+W0uP/1xCIbifDasGCgfzvtiKpE1J/a
+	 s1Uyj+flvF3UyJzVJGWkyNXv6Ael5OurlVKrBE903Gb1/57M0kyND3XKXHa5wyZD5w
+	 Sv/lH5VMOVBgcrFixO+qKBKgGSjkJCxvbK//2dCxJ5YfI7laiXrlkBfB/d7RECxq1c
+	 oDf+pvoB+pF37fOYSygOZ+MyNo+ykANC765xhnYBcpQsJUfcjG2ZOAbO+YxeI9MC2Z
+	 tI0rx+mgMyUVQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5AFC83F27;
+	Wed, 16 Jul 2025 11:25:38 +0000 (UTC)
+From: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
+Subject: [PATCH v3 0/9] MIPS: loongson32: Convert all platform devices to
+ DT
+Date: Wed, 16 Jul 2025 19:25:09 +0800
+Message-Id: <20250716-loongson1-arch-v3-0-d160974d696b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250204135842.3703751-1-clabbe@baylibre.com> <20250204135842.3703751-2-clabbe@baylibre.com>
- <aCHHfY2FkVW2j0ML@hovoldconsulting.com> <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
- <2025071631-thesaurus-blissful-58f3@gregkh> <CAFBinCAMGR2f4M1ARKytOwG1z9ORcD-OMNLH2FqZHb+tOm0tEQ@mail.gmail.com>
- <2025071613-ethics-component-e56d@gregkh> <CAFBinCA8cMP3o483c40RjHkMAEt4RCmL6uCTTk5DPmrNVN6_NQ@mail.gmail.com>
- <2025071639-annotate-huddle-0e11@gregkh>
-In-Reply-To: <2025071639-annotate-huddle-0e11@gregkh>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Wed, 16 Jul 2025 13:24:14 +0200
-X-Gm-Features: Ac12FXwmH9CLx-aQN6hja2jmj2fX6eE0YjQjoBg8-DbyCeVF_pa0Ya9zUbGjW4g
-Message-ID: <CAFBinCCxdZfEngHuPJPM162bQRc-SZu91kFHEik50Yrk3DYcVQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Johan Hovold <johan@kernel.org>, Corentin Labbe <clabbe@baylibre.com>, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, david@ixit.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABWMd2gC/12Oyw6CMBQFf4V07SVtKY+68j8Mi1ou0AitaZGoh
+ H+3YEyMy1mcObOQgN5gIMdkIR5nE4yzEbJDQnSvbIdgmsiEU55TwQQMztkuOMtAed1DjqrS2Ag
+ tlSRxdPPYmscuPNeRW+9GmHqP6qvJaMkly0TGqpQVUoiiBAZX7O7xLn1tp6duVGZItRs3ZW/C5
+ PxzT5z5Jv7UlFT+18wcKFx02xaYs0pT+WOq13V9A4gnywLvAAAA
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ =?utf-8?q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752665136; l=3912;
+ i=keguang.zhang@gmail.com; s=20231129; h=from:subject:message-id;
+ bh=p3BSUcDo5y0Wn2DQ5Qi8LbjrebDK6eyOiu8A1DTmYoo=;
+ b=bGgm74usr1scB/TvEdJlAVUw5GvU3MMAKStrhD4cikw0SATfq+esZ2p2h3TpmtWONuK1J046W
+ dlyTbPfCw26DLKh/qRfkJhAzEr7GQatC0WfSotQfyVCDDLmZAag6IL+
+X-Developer-Key: i=keguang.zhang@gmail.com; a=ed25519;
+ pk=FMKGj/JgKll/MgClpNZ3frIIogsh5e5r8CeW2mr+WLs=
+X-Endpoint-Received: by B4 Relay for keguang.zhang@gmail.com/20231129 with
+ auth_id=102
+X-Original-From: Keguang Zhang <keguang.zhang@gmail.com>
+Reply-To: keguang.zhang@gmail.com
 
-[...]
-> > >From what I've seen during my tests:
-> > - we fire the URB with TX data
-> > - the device receives it and puts the data into a per-port TX buffer
-> > - it indicates that it's done processing the URB
-> > - the TX buffer is then written out (the host can move on do something else)
-> > - the device signals to the host (via the STATUS endpoint) that it has
-> > written out all data from the TX buffer
-> >
-> > With that timeout logic my understanding is that they're trying to
-> > catch cases where the last step (STATUS signal) did not work (for
-> > whatever reason) so that the host can continue sending more data.
->
-> Why can't the host just keep sending data?  Only "stall" if you don't
-> have an active urb to send?  Or just keep creating new urbs for every
-> send transaction and then destroying them when finished?  That way the
-> data gets queued up in the kernel (have a max able to be allocated so
-> you don't create a DoS accidentally), and you should be ok.  I think
-> some of the other drivers do this, or used to in the past.
-The usb-serial framework queues up data in a kfifo (with max size = PAGE_SIZE).
-After step 3 (CH348 indicates to the host that it has ingested the
-URB) we can continue sending data for another port - that's what I'm
-working on for v9.
+Convert all platform devices to Device Tree.
+Remove all obsolete platform device code.
+Switch to the generic MIPS core.
+Add built-in DTB support.
+Update Kconfig and Makefile accordingly.
+Update and rename the defconfig.
 
-> > > > If you have any suggestions: please tell me - I'm happy to try them out!
-> > >
-> > > Try keeping it simple first, the vendor driver looks like it was written
-> > > by someone who was paid per line of code :)
-> > The original approach when upstreaming the ch348 driver was just to
-> > submit TX URBs (without any custom code, just letting usb-serial core
-> > handle it).
->
-> Ah, and what happened with that version?  Did it not work?
-TX data was truncated/corrupted. There's a recent-ish commit in the
-vendor driver [0] which suggests that parallel (they're calling it
-"independent upload on multiple serial ports") is possible starting
-with chip revision 0x8a but I cannot test this (since my test board
-has a CH348Q revision 0x86).
+Changes in v3:
+- Squash two previous changes that documented DT bindings for the
+  LS1B-DEMO and CQ-T300B into a single patch.
+- Separate the built-in DTB support into a single patch.
+- Move the timer node under the APB bus.
+- Remove redundant console bootargs since it is covered by stdout-path.
+- Replace mtdparts bootargs with a "partitions" node.
+- Link to v2: https://lore.kernel.org/r/20250709-loongson1-arch-v2-0-bcff6e518c09@gmail.com
 
+Changes in v2:
+- Document two new boards: loongson,ls1b-demo and loongson,cq-t300b.
+- Submit complete DTS files for each board.
+- Switch to the generic MIPS kernel.
+- Consolidate Loongson1 defconfigs.
+- Link to v1: https://lore.kernel.org/all/20230729134318.1694467-1-keguang.zhang@gmail.com/
+
+---
+Keguang Zhang (9):
+      dt-bindings: mips: loongson: Add LS1B-DEMO and CQ-T300B
+      MIPS: dts: loongson: Add LS1B-DEMO board
+      MIPS: dts: loongson: Add LSGZ_1B_DEV board
+      MIPS: dts: loongson: Add Smartloong-1C board
+      MIPS: dts: loongson: Add CQ-T300B board
+      MIPS: loongson: Add built-in DTB support
+      MIPS: loongson32: Switch to generic core
+      MIPS: Unify Loongson1 PRID_REV
+      MIPS: configs: Consolidate Loongson1 defconfigs
+
+ .../devicetree/bindings/mips/loongson/devices.yaml |   2 +
+ MAINTAINERS                                        |   3 +-
+ arch/mips/Kconfig                                  |  64 ++---
+ arch/mips/boot/dts/Makefile                        |   1 +
+ arch/mips/boot/dts/loongson/Makefile               |  10 +
+ arch/mips/boot/dts/loongson/cq-t300b.dts           | 110 ++++++++
+ arch/mips/boot/dts/loongson/loongson1.dtsi         | 136 ++++++++++
+ arch/mips/boot/dts/loongson/loongson1b.dtsi        | 198 ++++++++++++++
+ arch/mips/boot/dts/loongson/loongson1c.dtsi        | 141 ++++++++++
+ arch/mips/boot/dts/loongson/ls1b-demo.dts          | 125 +++++++++
+ arch/mips/boot/dts/loongson/lsgz_1b_dev.dts        | 162 ++++++++++++
+ arch/mips/boot/dts/loongson/smartloong-1c.dts      | 110 ++++++++
+ .../{loongson1b_defconfig => loongson1_defconfig}  |  94 +++++--
+ arch/mips/configs/loongson1c_defconfig             | 121 ---------
+ arch/mips/include/asm/cpu-type.h                   |   3 +-
+ arch/mips/include/asm/cpu.h                        |   3 +-
+ arch/mips/include/asm/mach-loongson32/irq.h        | 107 --------
+ arch/mips/include/asm/mach-loongson32/loongson1.h  |  50 ----
+ arch/mips/include/asm/mach-loongson32/platform.h   |  23 --
+ arch/mips/include/asm/mach-loongson32/regs-mux.h   | 124 ---------
+ arch/mips/kernel/cpu-probe.c                       |   6 +-
+ arch/mips/loongson32/Kconfig                       |  43 +---
+ arch/mips/loongson32/Makefile                      |  17 --
+ arch/mips/loongson32/Platform                      |   1 -
+ arch/mips/loongson32/common/Makefile               |   6 -
+ arch/mips/loongson32/common/irq.c                  | 191 --------------
+ arch/mips/loongson32/common/platform.c             | 285 ---------------------
+ arch/mips/loongson32/common/prom.c                 |  42 ---
+ arch/mips/loongson32/common/setup.c                |  26 --
+ arch/mips/loongson32/common/time.c                 |  23 --
+ arch/mips/loongson32/ls1b/Makefile                 |   6 -
+ arch/mips/loongson32/ls1b/board.c                  |  55 ----
+ arch/mips/loongson32/ls1c/Makefile                 |   6 -
+ arch/mips/loongson32/ls1c/board.c                  |  23 --
+ 34 files changed, 1118 insertions(+), 1199 deletions(-)
+---
+base-commit: b5a1f9870f9828bd6625d6c946c66be4983d56f6
+change-id: 20250414-loongson1-arch-5ea8ced4c9a9
 
 Best regards,
-Martin
+-- 
+Keguang Zhang <keguang.zhang@gmail.com>
 
 
-[0] https://github.com/WCHSoftGroup/ch9344ser_linux/commit/875d57b8c6a7dd3f4359eb9adfe3779e2bbb0ac1
 
