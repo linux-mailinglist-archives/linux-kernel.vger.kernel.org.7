@@ -1,176 +1,425 @@
-Return-Path: <linux-kernel+bounces-734354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2423B08089
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:29:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC6DB0808B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B22189A191
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:29:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD65568280
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678952EE600;
-	Wed, 16 Jul 2025 22:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2081A291C21;
+	Wed, 16 Jul 2025 22:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxhFmUcg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RHNDsdS0"
+Received: from mail-ot1-f74.google.com (mail-ot1-f74.google.com [209.85.210.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B294B1DE2AD;
-	Wed, 16 Jul 2025 22:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC4C18C008
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 22:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752704942; cv=none; b=MOJSy/f+GB5aybguJRHgOXakC7SLKkS3fLMR9Ys8HtFHNpQB/WJd3fFx4fxnOaGcDjU2aFDMhcjEZKVVUqXLHkNUn6KyCUUS8h+X0VX29PJa4TDs+ZI8pdwP/xi1hCh61xTm7yKxPXFUHObcppldhl1kJvXRxpwYBaQ4u4JlAQA=
+	t=1752705063; cv=none; b=YK7wBFEivlYjFLRFmdLz77jW/RVqjTcXLY/A8jdt4pnliQnDHE9f1+ci3JBxkk9dWlDScBybclVbBqqE+xIW8jLXLrkGzwcAgMExlB8sGfOqCwlyLcizU06Ft2trHeMupjpZVHEEalJJCiGjgUrE7pcazuTQ4346Y7UDPqO6J2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752704942; c=relaxed/simple;
-	bh=/K8c9O3faeP5vT2aL2aOt7LnXFCGLEyAU4ITOMMFYzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=fyTGpizmH67LacewQK7jZHIm/nk+O1yjDDq/lCC1uR9oMNKnWRbR22gY0DnBQuFm6JUalTnbXHrWKTnvsK/L7BUS/SoZ3OP2gj6MhqF5Bo9LMp8AKBQ/yX0AsMu2p310XCVZX8Vjg5Dm7ByFAdUSMrNixbEVuspdf37ohem8Lqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FxhFmUcg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17132C4CEE7;
-	Wed, 16 Jul 2025 22:29:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752704942;
-	bh=/K8c9O3faeP5vT2aL2aOt7LnXFCGLEyAU4ITOMMFYzI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=FxhFmUcgz5lIBObgaOcFPRX1BPALU5DeVSI2wSOl8YZwa2oYSVm/tHRNsx33k5W2T
-	 oUJA4FDhGAo7j1z8cX8xOlkj6/wmhVyfPHu1x+piN+eM2k6nO0wkYPXU/Wr+hX28mJ
-	 myYN2zHEX/PlnQOUclwCOVJM/XUN9DQSvf4ilargewdAF1dxW10cKNnaQ8jcvX73HY
-	 OiZlf+PMnxs7Ay6+Nf14nc/x5l0JqD6H6kV1ZrFJPCDKiDkAoEDUyyBdfH6auzzRKv
-	 BGQ0qQ2xp6DH1XZ5R+yTOP1NBYZ+chZ47nsgh5g4Wc0hhcP7N+T7QLfgVE3l5K5uUN
-	 tB+cEQgJ3aNEw==
-Date: Wed, 16 Jul 2025 17:29:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev,
-	stefanha@redhat.com, alok.a.tiwari@oracle.com,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH RFC v5 1/5] pci: report surprise removal event
-Message-ID: <20250716222900.GA2556670@bhelgaas>
+	s=arc-20240116; t=1752705063; c=relaxed/simple;
+	bh=zFDZ6jBd78CfXoOTnM1xT+gFaqaZUTFfTyekF5jYwi0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WeUNPzItT/OK4r0zbgUsIbUZH3ewVf79gG1X4s94gGmF3SEG0jr/vqZm1qEsVGHEcXMhGJiU6KekQTiWoiWO7lOgKive4ZeQfLsx7AAylpUjWVmZzuGcktRUfpu9eGW3/nsanqU41Cdcrh63X8QlUBEFx67DK7dJ1hDhTHIAR5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RHNDsdS0; arc=none smtp.client-ip=209.85.210.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
+Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-73c874ac31dso327313a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:31:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752705060; x=1753309860; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NnL6EwkK//4BRL3fe9Zhzql5MxphF3o/wnp7Ix6fo0M=;
+        b=RHNDsdS0WwhVsrrsx5p51nSlMu7WoVPDtyYJS60LQKbHrG8OsxulGDXgQ1Dxfkb2Fq
+         qBGa3xdmZ7B0kdf5zRqx85j/LSXtOR4IpzMHWfNcPT7TN1XHLjo9IT5AB4oDrvr+9y06
+         fT8Ty91pGUsjBEhlP+wBk/eePZBS2L3Ts3kHENElS23buCJ9H6S1ZMly7AvoOxDGOIQW
+         48Tz+V83TUPdLvW/LdDrK7Zo33Cp4nZiEA8o6UYduULhTr15HaM447duOcdbBXAyh3wY
+         xxTIrRUC6ere+jD6Z11p7RDDuSLg5Me+E6Tsf9evTBh422wlYo6EW/37CLytfV0XTx+v
+         QBlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752705060; x=1753309860;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NnL6EwkK//4BRL3fe9Zhzql5MxphF3o/wnp7Ix6fo0M=;
+        b=sDn3KxoWsq2IC36QvZQcbRwzVcdNhtoNB/ziQSCu2/Z/e5+iCih8Y0Q5rECeXzo2UX
+         sxrKA8jFyWihmv4LmQgykaLRurbWKp9YNP4nMQQxUKo5lHG2JywVMlxBXIRrr/XR3sSD
+         CNIrqZKqLFlYZfIJaGDTCPwolJuCyPDpbkJkIvKKwEm+zXE1sx2S0Hw9VEdaR8iAePJX
+         DQ1GXBtzN3kfOLaokJZggX4aNGFD+KXj54xrxRUjn8ATdy1hG5pFmMPRsB5fXRP87aMz
+         3NQd1GXD+g9PsU08FOBNNauKn7JnEE/SMKtSmdLhW05kcILP9XNw3vOzZuibtWCi04+X
+         OlUg==
+X-Gm-Message-State: AOJu0Yx5718DEGsp6wqJcXTnMT9/PaDO9BMvTq2BLXmpl8nSazZHUiJ4
+	Wd4JaiEZBKXY38Yv5BtJwGzq/IPczKEJjhkFM0/J6rGBR+yc768TpHa6ZISGEMKwXRtGZETR8G1
+	YTovfqh10bg==
+X-Google-Smtp-Source: AGHT+IGgEOrnxmdJv8AFdnIqAllBgXdIDoc04sRvyC1o2HQJ66JZ+ZGEHFGJcxigSEzomTXlRjBbf+Vir+6q
+X-Received: from oabpd16.prod.google.com ([2002:a05:6870:1f10:b0:2e9:2323:d48f])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:4d86:b0:72a:1a9f:7dc7
+ with SMTP id 46e09a7af769-73e64a046e7mr3896876a34.7.1752705060656; Wed, 16
+ Jul 2025 15:31:00 -0700 (PDT)
+Date: Wed, 16 Jul 2025 15:30:59 -0700
+In-Reply-To: <202507160743.15E8044@keescook> (Kees Cook's message of "Wed, 16
+ Jul 2025 07:53:19 -0700")
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715022111-mutt-send-email-mst@kernel.org>
+Mime-Version: 1.0
+References: <20250714185321.2417234-1-ynaffit@google.com> <20250714185321.2417234-7-ynaffit@google.com>
+ <202507160743.15E8044@keescook>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Message-ID: <dbx8jz474vks.fsf@ynaffit-andsys.c.googlers.com>
+Subject: Re: [PATCH v3 6/6] binder: encapsulate individual alloc test cases
+From: Tiffany Yang <ynaffit@google.com>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Arve =?utf-8?B?SGrDuG5uZXY=?= =?utf-8?B?w6Vn?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On Tue, Jul 15, 2025 at 02:28:20AM -0400, Michael S. Tsirkin wrote:
-> On Mon, Jul 14, 2025 at 04:13:51PM -0500, Bjorn Helgaas wrote:
-> > On Mon, Jul 14, 2025 at 02:26:19AM -0400, Michael S. Tsirkin wrote:
-> > > On Wed, Jul 09, 2025 at 06:38:20PM -0500, Bjorn Helgaas wrote:
-> > > > On Wed, Jul 09, 2025 at 04:55:26PM -0400, Michael S. Tsirkin wrote:
-> > > > > At the moment, in case of a surprise removal, the regular
-> > > > > remove callback is invoked, exclusively.  This works well,
-> > > > > because mostly, the cleanup would be the same.
-> > > > > 
-> > > > > However, there's a race: imagine device removal was
-> > > > > initiated by a user action, such as driver unbind, and it in
-> > > > > turn initiated some cleanup and is now waiting for an
-> > > > > interrupt from the device. If the device is now
-> > > > > surprise-removed, that never arrives and the remove callback
-> > > > > hangs forever.
-> > > > > 
-> > > > > For example, this was reported for virtio-blk:
-> > > > > 
-> > > > > 	1. the graceful removal is ongoing in the remove() callback, where disk
-> > > > > 	   deletion del_gendisk() is ongoing, which waits for the requests +to
-> > > > > 	   complete,
-> > > > > 
-> > > > > 	2. Now few requests are yet to complete, and surprise removal started.
-> > > > > 
-> > > > > 	At this point, virtio block driver will not get notified by the driver
-> > > > > 	core layer, because it is likely serializing remove() happening by
-> > > > > 	+user/driver unload and PCI hotplug driver-initiated device removal.  So
-> > > > > 	vblk driver doesn't know that device is removed, block layer is waiting
-> > > > > 	for requests completions to arrive which it never gets.  So
-> > > > > 	del_gendisk() gets stuck.
-> > > > > 
-> > > > > Drivers can artificially add timeouts to handle that, but it can be
-> > > > > flaky.
-> > > > > 
-> > > > > Instead, let's add a way for the driver to be notified about the
-> > > > > disconnect. It can then do any necessary cleanup, knowing that the
-> > > > > device is inactive.
-> > > > 
-> > > > This relies on somebody (typically pciehp, I guess) calling
-> > > > pci_dev_set_disconnected() when a surprise remove happens.
-> > > > 
-> > > > Do you think it would be practical for the driver's .remove() method
-> > > > to recognize that the device may stop responding at any point, even if
-> > > > no hotplug driver is present to call pci_dev_set_disconnected()?
-> > > > 
-> > > > Waiting forever for an interrupt seems kind of vulnerable in general.
-> > > > Maybe "artificially adding timeouts" is alluding to *not* waiting
-> > > > forever for interrupts?  That doesn't seem artificial to me because
-> > > > it's just a fact of life that devices can disappear at arbitrary
-> > > > times.
-> > > > 
-> > > > It seems a little fragile to me to depend on some other part of the
-> > > > system to notice the surprise removal and tell you about it or
-> > > > schedule your work function.  I think it would be more robust for the
-> > > > driver to check directly, i.e., assume writes to the device may be
-> > > > lost, check for PCI_POSSIBLE_ERROR() after reads from the device, and
-> > > > never wait for an interrupt without a timeout.
-> > > 
-> > > virtio is ... kind of special, in that users already take it for
-> > > granted that having a device as long as they want to respond
-> > > still does not lead to errors and data loss.
-> > > 
-> > > Makes it a bit harder as our timeout would have to
-> > > check for presence and retry, we can't just fail as a
-> > > normal hardware device does.
-> > 
-> > Sorry, I don't know enough about virtio to follow what you said about 
-> > "having a device as long as they want to respond".
-> > 
-> > We started with a graceful remove.  That must mean the user no longer
-> > needs the device.
-> 
-> I'll try to clarify:
-> 
-> Indeed, the user will not submit new requests,
-> but users might also not know that there are some old requests
-> being in progress of being processed by the device.
-> The driver, currently, waits for that processsing to be complete.
-> Cancelling that with a reset on a timeout might be a regression,
-> unless the timeout is very long.
+Kees Cook <kees@kernel.org> writes:
 
-This seems like a corner case and maybe rare enough that simply making
-the timeout very long would be a possibility.
 
-> > > And there's the overhead thing - poking at the device a lot
-> > > puts a high load on the host.
-> > 
-> > Checking for PCI_POSSIBLE_ERROR() doesn't touch the device.  If you
-> > did a config read already, and the result happened to be ~0, *then* we
-> > have the problem of figuring out whether the actual data from the
-> > device was ~0, or if the read failed and the Root Complex synthesized
-> > the ~0.  In many cases a driver knows that ~0 is not a possible
-> > register value.  Otherwise it might have to read another register that
-> > is known not to be ~0.
-> 
-> To clarify, virtio generally is designed to operate solely
-> by means of DMA and interrupt, completely avoiding any PCI
-> reads. This, due to PCI reads being very expensive in virtualized
-> scenarios.
-> 
-> The extra overhead I refer to is exactly initiating such a read
-> where there would not be one in normal operation.
+> For both stringify functions, snprintf is potentially unsafe. In the
+> spirit of recent string API discussions, please switch to using a
+> seq_buf:
 
-Thanks, this part is very helpful.  And since config accesses are very
-expensive in *all* environments, I expect most drivers for
-high-performance devices work the same way and only do config accesses
-during at probe time.
 
-If that's true, it will make this more understandable if the commit
-log approaches it from that direction and omits virtio specifics.
+> static void stringify_free_seq(struct kunit *test, int *seq, seq_buf *buf)
+> {
+> 	unsigned int i;
 
-Bjorn
+> 	for (i = 0; i < BUFFER_NUM; i++)
+> 		seq_buf_printf(buf, "[%d]", seq[i])
+> 	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(buf));
+> }
+> ...
+
+> 	DECLARE_SEQ_BUF(freeseq_buf, FREESEQ_BUFLEN);
+> 	...
+> 	stringify_free_seq(test, tc->free_sequence, &freeseq_buf);
+
+
+
+
+Thanks for calling attention to this! Will be fixed for v4!
+
+
+>>   static bool check_buffer_pages_allocated(struct kunit *test,
+>> @@ -124,28 +164,30 @@ static bool check_buffer_pages_allocated(struct  
+>> kunit *test,
+>>   	return true;
+>>   }
+
+>> -static void binder_alloc_test_alloc_buf(struct kunit *test,
+>> -					struct binder_alloc *alloc,
+>> -					struct binder_buffer *buffers[],
+>> -					size_t *sizes, int *seq)
+>> +static unsigned long binder_alloc_test_alloc_buf(struct kunit *test,
+>> +						 struct binder_alloc *alloc,
+>> +						 struct binder_buffer *buffers[],
+>> +						 size_t *sizes, int *seq)
+>>   {
+>> +	unsigned long failures = 0;
+>>   	int i;
+
+>>   	for (i = 0; i < BUFFER_NUM; i++) {
+>>   		buffers[i] = binder_alloc_new_buf(alloc, sizes[i], 0, 0, 0);
+>>   		if (IS_ERR(buffers[i]) ||
+>> -		    !check_buffer_pages_allocated(test, alloc, buffers[i], sizes[i]))  
+>> {
+>> -			pr_err_size_seq(test, sizes, seq);
+>> -			binder_alloc_test_failures++;
+>> -		}
+>> +		    !check_buffer_pages_allocated(test, alloc, buffers[i], sizes[i]))
+>> +			failures++;
+>>   	}
+>> +
+>> +	return failures;
+>>   }
+
+>> -static void binder_alloc_test_free_buf(struct kunit *test,
+>> -				       struct binder_alloc *alloc,
+>> -				       struct binder_buffer *buffers[],
+>> -				       size_t *sizes, int *seq, size_t end)
+>> +static unsigned long binder_alloc_test_free_buf(struct kunit *test,
+>> +						struct binder_alloc *alloc,
+>> +						struct binder_buffer *buffers[],
+>> +						size_t *sizes, int *seq, size_t end)
+>>   {
+>> +	unsigned long failures = 0;
+>>   	int i;
+
+>>   	for (i = 0; i < BUFFER_NUM; i++)
+>> @@ -153,17 +195,19 @@ static void binder_alloc_test_free_buf(struct  
+>> kunit *test,
+
+>>   	for (i = 0; i <= (end - 1) / PAGE_SIZE; i++) {
+>>   		if (list_empty(page_to_lru(alloc->pages[i]))) {
+>> -			pr_err_size_seq(test, sizes, seq);
+>>   			kunit_err(test, "expect lru but is %s at page index %d\n",
+>>   				  alloc->pages[i] ? "alloc" : "free", i);
+>> -			binder_alloc_test_failures++;
+>> +			failures++;
+>>   		}
+>>   	}
+>> +
+>> +	return failures;
+>>   }
+
+>> -static void binder_alloc_test_free_page(struct kunit *test,
+>> -					struct binder_alloc *alloc)
+>> +static unsigned long binder_alloc_test_free_page(struct kunit *test,
+>> +						 struct binder_alloc *alloc)
+>>   {
+>> +	unsigned long failures = 0;
+>>   	unsigned long count;
+>>   	int i;
+
+>> @@ -177,27 +221,70 @@ static void binder_alloc_test_free_page(struct  
+>> kunit *test,
+>>   			kunit_err(test, "expect free but is %s at page index %d\n",
+>>   				  list_empty(page_to_lru(alloc->pages[i])) ?
+>>   				  "alloc" : "lru", i);
+>> -			binder_alloc_test_failures++;
+>> +			failures++;
+>>   		}
+>>   	}
+>> +
+>> +	return failures;
+>>   }
+
+>> -static void binder_alloc_test_alloc_free(struct kunit *test,
+>> +/* Executes one full test run for the given test case. */
+>> +static bool binder_alloc_test_alloc_free(struct kunit *test,
+>>   					 struct binder_alloc *alloc,
+>> -					 size_t *sizes, int *seq, size_t end)
+>> +					 struct binder_alloc_test_case_info *tc,
+>> +					 size_t end)
+>>   {
+>> +	unsigned long pages = PAGE_ALIGN(end) / PAGE_SIZE;
+>>   	struct binder_buffer *buffers[BUFFER_NUM];
+>> -
+>> -	binder_alloc_test_alloc_buf(test, alloc, buffers, sizes, seq);
+>> -	binder_alloc_test_free_buf(test, alloc, buffers, sizes, seq, end);
+>> +	unsigned long failures;
+>> +	bool failed = false;
+>> +
+>> +	failures = binder_alloc_test_alloc_buf(test, alloc, buffers,
+>> +					       tc->buffer_sizes,
+>> +					       tc->free_sequence);
+>> +	failed = failed || failures;
+>> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+>> +			    "Initial allocation failed: %lu/%u buffers with errors",
+>> +			    failures, BUFFER_NUM);
+>> +
+>> +	failures = binder_alloc_test_free_buf(test, alloc, buffers,
+>> +					      tc->buffer_sizes,
+>> +					      tc->free_sequence, end);
+>> +	failed = failed || failures;
+>> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+>> +			    "Initial buffers not freed correctly: %lu/%lu pages not on lru  
+>> list",
+>> +			    failures, pages);
+
+>>   	/* Allocate from lru. */
+>> -	binder_alloc_test_alloc_buf(test, alloc, buffers, sizes, seq);
+>> -	if (list_lru_count(alloc->freelist))
+>> -		kunit_err(test, "lru list should be empty but is not\n");
+>> -
+>> -	binder_alloc_test_free_buf(test, alloc, buffers, sizes, seq, end);
+>> -	binder_alloc_test_free_page(test, alloc);
+>> +	failures = binder_alloc_test_alloc_buf(test, alloc, buffers,
+>> +					       tc->buffer_sizes,
+>> +					       tc->free_sequence);
+>> +	failed = failed || failures;
+>> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+>> +			    "Reallocation failed: %lu/%u buffers with errors",
+>> +			    failures, BUFFER_NUM);
+>> +
+>> +	failures = list_lru_count(alloc->freelist);
+>> +	failed = failed || failures;
+>> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+>> +			    "lru list should be empty after reallocation but still has %lu  
+>> pages",
+>> +			    failures);
+>> +
+>> +	failures = binder_alloc_test_free_buf(test, alloc, buffers,
+>> +					      tc->buffer_sizes,
+>> +					      tc->free_sequence, end);
+>> +	failed = failed || failures;
+>> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+>> +			    "Reallocated buffers not freed correctly: %lu/%lu pages not on  
+>> lru list",
+>> +			    failures, pages);
+>> +
+>> +	failures = binder_alloc_test_free_page(test, alloc);
+>> +	failed = failed || failures;
+>> +	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
+>> +			    "Failed to clean up allocated pages: %lu/%lu pages still  
+>> installed",
+>> +			    failures, (alloc->buffer_size / PAGE_SIZE));
+>> +
+>> +	return failed;
+>>   }
+
+>>   static bool is_dup(int *seq, int index, int val)
+>> @@ -213,24 +300,44 @@ static bool is_dup(int *seq, int index, int val)
+
+>>   /* Generate BUFFER_NUM factorial free orders. */
+>>   static void permute_frees(struct kunit *test, struct binder_alloc  
+>> *alloc,
+>> -			  size_t *sizes, int *seq, int index, size_t end)
+>> +			  struct binder_alloc_test_case_info *tc,
+>> +			  unsigned long *runs, unsigned long *failures,
+>> +			  int index, size_t end)
+>>   {
+>> +	bool case_failed;
+>>   	int i;
+
+>>   	if (index == BUFFER_NUM) {
+>> -		binder_alloc_test_alloc_free(test, alloc, sizes, seq, end);
+>> +		char freeseq_buf[FREESEQ_BUFLEN];
+>> +
+>> +		case_failed = binder_alloc_test_alloc_free(test, alloc, tc, end);
+>> +		*runs += 1;
+>> +		*failures += case_failed;
+>> +
+>> +		if (case_failed || PRINT_ALL_CASES) {
+>> +			stringify_free_seq(test, tc->free_sequence, freeseq_buf,
+>> +					   FREESEQ_BUFLEN);
+>> +			kunit_err(test, "case %lu: [%s] | %s - %s - %s", *runs,
+>> +				  case_failed ? "FAILED" : "PASSED",
+>> +				  tc->front_pages ? "front" : "back ",
+>> +				  tc->alignments, freeseq_buf);
+>> +		}
+>> +
+>>   		return;
+>>   	}
+>>   	for (i = 0; i < BUFFER_NUM; i++) {
+>> -		if (is_dup(seq, index, i))
+>> +		if (is_dup(tc->free_sequence, index, i))
+>>   			continue;
+>> -		seq[index] = i;
+>> -		permute_frees(test, alloc, sizes, seq, index + 1, end);
+>> +		tc->free_sequence[index] = i;
+>> +		permute_frees(test, alloc, tc, runs, failures, index + 1, end);
+>>   	}
+>>   }
+
+>> -static void gen_buf_sizes(struct kunit *test, struct binder_alloc  
+>> *alloc,
+>> -			  size_t *end_offset)
+>> +static void gen_buf_sizes(struct kunit *test,
+>> +			  struct binder_alloc *alloc,
+>> +			  struct binder_alloc_test_case_info *tc,
+>> +			  size_t *end_offset, unsigned long *runs,
+>> +			  unsigned long *failures)
+>>   {
+>>   	size_t last_offset, offset = 0;
+>>   	size_t front_sizes[BUFFER_NUM];
+>> @@ -238,31 +345,45 @@ static void gen_buf_sizes(struct kunit *test,  
+>> struct binder_alloc *alloc,
+>>   	int seq[BUFFER_NUM] = {0};
+>>   	int i;
+
+>> +	tc->free_sequence = seq;
+>>   	for (i = 0; i < BUFFER_NUM; i++) {
+>>   		last_offset = offset;
+>>   		offset = end_offset[i];
+>>   		front_sizes[i] = offset - last_offset;
+>>   		back_sizes[BUFFER_NUM - i - 1] = front_sizes[i];
+>>   	}
+>> +	back_sizes[0] += alloc->buffer_size - end_offset[BUFFER_NUM - 1];
+>> +
+>>   	/*
+>>   	 * Buffers share the first or last few pages.
+>>   	 * Only BUFFER_NUM - 1 buffer sizes are adjustable since
+>>   	 * we need one giant buffer before getting to the last page.
+>>   	 */
+>> -	back_sizes[0] += alloc->buffer_size - end_offset[BUFFER_NUM - 1];
+>> -	permute_frees(test, alloc, front_sizes, seq, 0,
+>> +	tc->front_pages = true;
+>> +	tc->buffer_sizes = front_sizes;
+>> +	permute_frees(test, alloc, tc, runs, failures, 0,
+>>   		      end_offset[BUFFER_NUM - 1]);
+>> -	permute_frees(test, alloc, back_sizes, seq, 0, alloc->buffer_size);
+>> +
+>> +	tc->front_pages = false;
+>> +	tc->buffer_sizes = back_sizes;
+>> +	permute_frees(test, alloc, tc, runs, failures, 0, alloc->buffer_size);
+>>   }
+
+>>   static void gen_buf_offsets(struct kunit *test, struct binder_alloc  
+>> *alloc,
+>> -			    size_t *end_offset, int index)
+>> +			    size_t *end_offset, int *alignments,
+>> +			    unsigned long *runs, unsigned long *failures,
+>> +			    int index)
+>>   {
+>>   	size_t end, prev;
+>>   	int align;
+
+>>   	if (index == BUFFER_NUM) {
+>> -		gen_buf_sizes(test, alloc, end_offset);
+>> +		struct binder_alloc_test_case_info tc = {0};
+>> +
+>> +		stringify_alignments(test, alignments, tc.alignments,
+>> +				     ALIGNMENTS_BUFLEN);
+>> +
+>> +		gen_buf_sizes(test, alloc, &tc, end_offset, runs, failures);
+>>   		return;
+>>   	}
+>>   	prev = index == 0 ? 0 : end_offset[index - 1];
+>> @@ -276,7 +397,9 @@ static void gen_buf_offsets(struct kunit *test,  
+>> struct binder_alloc *alloc,
+>>   		else
+>>   			end += BUFFER_MIN_SIZE;
+>>   		end_offset[index] = end;
+>> -		gen_buf_offsets(test, alloc, end_offset, index + 1);
+>> +		alignments[index] = align;
+>> +		gen_buf_offsets(test, alloc, end_offset, alignments, runs,
+>> +				failures, index + 1);
+>>   	}
+>>   }
+
+>> @@ -328,10 +451,15 @@ static void binder_alloc_exhaustive_test(struct  
+>> kunit *test)
+>>   {
+>>   	struct binder_alloc_test *priv = test->priv;
+>>   	size_t end_offset[BUFFER_NUM];
+>> +	int alignments[BUFFER_NUM];
+>> +	unsigned long failures = 0;
+>> +	unsigned long runs = 0;
+
+>> -	gen_buf_offsets(test, &priv->alloc, end_offset, 0);
+>> +	gen_buf_offsets(test, &priv->alloc, end_offset, alignments, &runs,
+>> +			&failures, 0);
+
+>> -	KUNIT_EXPECT_EQ(test, binder_alloc_test_failures, 0);
+>> +	KUNIT_EXPECT_EQ(test, runs, TOTAL_EXHAUSTIVE_CASES);
+>> +	KUNIT_EXPECT_EQ(test, failures, 0);
+>>   }
+
+>>   /* ===== End test cases ===== */
+>> --
+>> 2.50.0.727.gbf7dc18ff4-goog
+
+
+> Otherwise looks good to me.
+
+-- 
+Tiffany Y. Yang
 
