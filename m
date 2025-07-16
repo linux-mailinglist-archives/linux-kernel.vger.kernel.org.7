@@ -1,120 +1,156 @@
-Return-Path: <linux-kernel+bounces-734265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808B5B07F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:56:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCAEB07F31
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D2058608B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 965CD1AA5FDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3151528FAA8;
-	Wed, 16 Jul 2025 20:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2422928ECD8;
+	Wed, 16 Jul 2025 20:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hs7DDZT5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VpJUmjMQ"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C57D1CD2C;
-	Wed, 16 Jul 2025 20:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B5F1CD2C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 20:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752699363; cv=none; b=X9gyc0L5T9WiPGzL/0dS+OLX7I2rcrATE8G/WCDhR/lLZKaT4WtCxHsYn5OWImZxVyc/8GCrVjxIW6//50XPeRahu7OVd7dWAN+A7N9B/wzmgbiJp7b1/PA6wTlbnxxgUftnxng7C+uQRsZEQSn1yPhiW3AsRqTF5AEJJ/ELzpI=
+	t=1752699479; cv=none; b=fOH05EiC387NJZo+K+RLbNiqD4+EuR2hgIWQiKZ8qh2Izkr5I3pQRCRXuvpRtqnKE5lmqfywBfTiimmiMHt2LzBET1PwkZUixGuVko+0GCoZYQzhCZ5tVhfl/v+WyPbqqYyWxvuAJkNWnKiMRSf9KFf7OfUC6WCTkeb+uLcsUhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752699363; c=relaxed/simple;
-	bh=1eT1bU8K2ROCVSdByZdiqCJahWUYakFk0s/KHQHgDy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ojDr9Z4BkqzrxaFrQsWrXF1DDIdsimIo7hzlPCbt8lwKXSOkeakB3UU5oqosZsLvgucHTgh87KwdwVUxBgiPo3ljNosLRfiKrpZcpraoy159lFwi/7sqrufOTnEYEgPp4tqnvv8aD4icLrsXm8iouHLnlplOOVmf6oInYGrGMlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hs7DDZT5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1039DC4CEF1;
-	Wed, 16 Jul 2025 20:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752699363;
-	bh=1eT1bU8K2ROCVSdByZdiqCJahWUYakFk0s/KHQHgDy0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Hs7DDZT5y7ghwrrP2RoLIPD/uvZHmLasbXo2TT4fFIO7edIcBrZV86BNmu6s52Pe2
-	 GiXm1OSTqbaMlmfNhVJedqxHISA/wrhm2gLbzV7c7jkbfhFiiuLC38tyjBoPUYv2SI
-	 c5gN69aqyBcZ6IX7zJxosf4QmOf4AUeQH4BAUNjE40OTOLWHCIupvCvIgEVG53phaI
-	 VPoNle4itK3nDgSes+CYKnpEt2/l5BSdcMpFIOkTJ5n6dtkhB5pcJHezOQoRMlgkK5
-	 GMrfGRzeI23y1uUdJ81ubwpBoYxkrOfhRw2XxAwcTjK+nQQwp+gBPd1oL5R7lGcE7f
-	 CdHEgEcAb4nag==
-Date: Wed, 16 Jul 2025 15:56:01 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: manivannan.sadhasivam@oss.qualcomm.com,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jeff Johnson <jjohnson@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ath12k@lists.infradead.org, ath11k@lists.infradead.org,
-	ath10k@lists.infradead.org, ilpo.jarvinen@linux.intel.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH 2/6] PCI/ASPM: Transition the device to D0 (if required)
- inside pci_enable_link_state_locked() API
-Message-ID: <20250716205601.GA2555277@bhelgaas>
+	s=arc-20240116; t=1752699479; c=relaxed/simple;
+	bh=pJ/4DafB/4w+xjMztWYcyBoqegyacdCJgns1Yhv4hgM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mEI4BToQy8KD2yXlHaI2PpxYPV3pRxPWU7+3uSondILN3fUkj8DC1bmeo87GKvKCvsHS6ZOFYQcNjpBDuJbcdLFXBDhMOqTBo/myhHN9FW824TqXTmyrWEqb25orykjP8qyJ7DyYzl9MqDxO3mRBSS6LCgOjSxh2s1taJGVvc1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VpJUmjMQ; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b38fc4d8dbaso210020a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752699477; x=1753304277; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X9lenlLaUjBwFPsSQEFgMT5DWXk0MgfTQE/56EK1w/o=;
+        b=VpJUmjMQwWFY+CmUT7BrOWNoAEKFv+dTCJXpHWgMsl082XgG1WsJe7s++iotc7Qkak
+         E+XsJA9FguaK5vJEGsrf6OQRSZAV96SvDt1KbZmTC4OyN27NUIvV39DV+RQEYKUiDkOC
+         SlsYDKyV5qL2IeoC2apvSx/CXYMwN84HeoFonCG4srlT0H9odjFTNf2gDJfbyhZeLrV2
+         gC6MA2xGXJH3Eb8UTtzBjp9LIYqCZqrupj751ngKA/oajXbqMMsQY8B8d3VXUQh5O59R
+         zf0vmtBzX2N1Gep16ie0zolYbn5ArUjyW7kV4YH6e68chihYvM0BkPene6F75Vx/e738
+         RnzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752699477; x=1753304277;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X9lenlLaUjBwFPsSQEFgMT5DWXk0MgfTQE/56EK1w/o=;
+        b=lepRmlIDLN4vQ32hQuaRlFPDESUW48oet3yYUFsC7SP3IrYUiRYVapLdcpvj31meYD
+         Yb8+plaKm8yDBRc22eq5jpH4JjRbEaAarr17sgY9ZTMUVCL93RL0/VoVQTlpiRuuGKm3
+         dU8r2LlPAbsODcc90v5LNn6Xy+0aGol32g9bQ5KWRzUXVeox3T3/2ZQYfyC0z1WCymKV
+         7YR5cqcQl454jH2JfQn5th39FRJyWEQpqAjKJT9vG2zpyQU6FgRaRz2pOhkd7Dnks2P1
+         JcfSpuAvUiPIhFZ+4dBHi3e8IXFFzuHod5QMI3DXVEhgxTNLagP7ROHCoRY12gO47XSd
+         xxfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQIb17rxYooDKpGoJk3CiT+Ez/Hqe2a6ITo7Q1TnP9blP5S6EAduE4Xz89dk9ESpryXXhtdls4B2bEEZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBbwX4xd/32SiCrAxSAAtg04Tk9wleHOMCOQsEpeOLLQNzyl8+
+	uwowORM+npf0YJ311l1YmDzQ8rsa8OnvrCIh42FKhsxU8lZW6owUt3UU4mNFcNgNxW3GDSJihxH
+	ZoJX7orJjJ4fvljiVlPDr74Edsw==
+X-Google-Smtp-Source: AGHT+IGNf5oVY5kma+CCr/p05OELE5VhNVLq7ohNlp+ZzdSjlbph404RAAhFoA50xb0uihspcKXEHnrZLqgj7v9bog==
+X-Received: from pfx8.prod.google.com ([2002:a05:6a00:a448:b0:742:a99a:ec52])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6300:6713:b0:218:59b:b2f4 with SMTP id adf61e73a8af0-2381395fed6mr6120657637.42.1752699477363;
+ Wed, 16 Jul 2025 13:57:57 -0700 (PDT)
+Date: Wed, 16 Jul 2025 13:57:55 -0700
+In-Reply-To: <aHb/ETOMSQRm1bMO@yzhao56-desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716-ath-aspm-fix-v1-2-dd3e62c1b692@oss.qualcomm.com>
+Mime-Version: 1.0
+References: <aCVZIuBHx51o7Pbl@yzhao56-desk.sh.intel.com> <diqzfrgfp95d.fsf@ackerleytng-ctop.c.googlers.com>
+ <aEEFRXF+HrZVh5He@yzhao56-desk.sh.intel.com> <diqzecvxizp5.fsf@ackerleytng-ctop.c.googlers.com>
+ <aHb/ETOMSQRm1bMO@yzhao56-desk>
+Message-ID: <diqzfrevhmzw.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge pages
+From: Ackerley Tng <ackerleytng@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: vannapurve@google.com, pbonzini@redhat.com, seanjc@google.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org, 
+	rick.p.edgecombe@intel.com, dave.hansen@intel.com, kirill.shutemov@intel.com, 
+	tabba@google.com, quic_eberman@quicinc.com, michael.roth@amd.com, 
+	david@redhat.com, vbabka@suse.cz, jroedel@suse.de, thomas.lendacky@amd.com, 
+	pgonda@google.com, zhiquan1.li@intel.com, fan.du@intel.com, 
+	jun.miao@intel.com, ira.weiny@intel.com, isaku.yamahata@intel.com, 
+	xiaoyao.li@intel.com, binbin.wu@linux.intel.com, chao.p.peng@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 16, 2025 at 06:26:21PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> 
-> Both of the current callers of the pci_enable_link_state_locked() API
-> transition the device to D0 before calling. This aligns with the PCIe spec
-> r6.0, sec 5.5.4:
-> 
-> "If setting either or both of the enable bits for PCI-PM L1 PM Substates,
-> both ports must be configured as described in this section while in D0."
-> 
-> But it looks redundant to let the callers transition the device to D0. So
-> move the logic inside the API and perform D0 transition only if the PCI-PM
-> L1 Substates are getting enabled.
+Yan Zhao <yan.y.zhao@intel.com> writes:
 
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -1474,13 +1474,20 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
->   * Note that if the BIOS didn't grant ASPM control to the OS, this does
->   * nothing because we can't touch the LNKCTL register.
->   *
-> - * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
-> - * PCIe r6.0, sec 5.5.4.
-> + * Note: The device will be transitioned to D0 state if the PCI-PM L1 Substates
-> + * are getting enabled.
->   *
->   * Return: 0 on success, a negative errno otherwise.
->   */
->  int pci_enable_link_state(struct pci_dev *pdev, int state)
->  {
-> +	/*
-> +	 * Ensure the device is in D0 before enabling PCI-PM L1 PM Substates, per
-> +	 * PCIe r6.0, sec 5.5.4.
-> +	 */
-> +	if (FIELD_GET(PCIE_LINK_STATE_L1_SS_PCIPM, state))
-> +		pci_set_power_state(pdev, PCI_D0);
+> On Thu, Jun 05, 2025 at 03:35:50PM -0700, Ackerley Tng wrote:
+>> Yan Zhao <yan.y.zhao@intel.com> writes:
+>> 
+>> > On Wed, Jun 04, 2025 at 01:02:54PM -0700, Ackerley Tng wrote:
+>> >> Hi Yan,
+>> >> 
+>> >> While working on the 1G (aka HugeTLB) page support for guest_memfd
+>> >> series [1], we took into account conversion failures too. The steps are
+>> >> in kvm_gmem_convert_range(). (It might be easier to pull the entire
+>> >> series from GitHub [2] because the steps for conversion changed in two
+>> >> separate patches.)
+>> > ...
+>> >> [2] https://github.com/googleprodkernel/linux-cc/tree/gmem-1g-page-support-rfc-v2
+>> >
+>> > Hi Ackerley,
+>> > Thanks for providing this branch.
+>> 
+>> Here's the WIP branch [1], which I initially wasn't intending to make
+>> super public since it's not even RFC standard yet and I didn't want to
+>> add to the many guest_memfd in-flight series, but since you referred to
+>> it, [2] is a v2 of the WIP branch :)
+>> 
+>> [1] https://github.com/googleprodkernel/linux-cc/commits/wip-tdx-gmem-conversions-hugetlb-2mept
+>> [2] https://github.com/googleprodkernel/linux-cc/commits/wip-tdx-gmem-conversions-hugetlb-2mept-v2
+> Hi Ackerley,
+>
+> I'm working on preparing TDX huge page v2 based on [2] from you. The current
+> decision is that the code base of TDX huge page v2 needs to include DPAMT
+> and VM shutdown optimization as well.
+>
+> So, we think kvm-x86/next is a good candidate for us.
+> (It is in repo https://github.com/kvm-x86/linux.git
+>  commit 87198fb0208a (tag: kvm-x86-next-2025.07.15, kvm-x86/next) Merge branch 'vmx',
+>  which already includes code for VM shutdown optimization).
+> I still need to port DPAMT + gmem 1G + TDX huge page v2 on top it.
+>
+> Therefore, I'm wondering if the rebase of [2] onto kvm-x86/next can be done
+> from your side. A straightforward rebase is sufficient, with no need for
+> any code modification. And it's better to be completed by the end of next
+> week.
+>
+> We thought it might be easier for you to do that (but depending on your
+> bandwidth), allowing me to work on the DPAMT part for TDX huge page v2 in
+> parallel.
+>
 
-This is really just a move, not new code, but this niggles at me a
-little bit because my impression is that pci_set_power_state() doesn't
-guarantee that the device *stays* in the given state.
+I'm a little tied up with some internal work, is it okay if, for the
+next RFC, you base the changes that you need to make for TDX huge page
+v2 and DPAMT on the base of [2]?
 
-Rafael, is there a get/put interface we should be wrapping this with
-instead?
+That will save both of us the rebasing. [2] was also based on (some
+other version of) kvm/next.
 
-I'm also not sure it's worth the FIELD_GET().  This should be a
-low-frequency operation and making the power state dependent on the
-exact "state" makes more paths to worry about.
+I think it's okay since the main goal is to show that it works. I'll
+let you know when I can get to a guest_memfd_HugeTLB v3 (and all the
+other patches that go into [2]).
 
->  	return __pci_enable_link_state(pdev, state, false);
->  }
+[2] https://github.com/googleprodkernel/linux-cc/commits/wip-tdx-gmem-conversions-hugetlb-2mept-v2
+
+> However, if it's difficult for you, please feel free to let us know.
+>
+> Thanks
+> Yan
 
