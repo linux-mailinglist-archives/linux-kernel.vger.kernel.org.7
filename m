@@ -1,382 +1,141 @@
-Return-Path: <linux-kernel+bounces-734244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31AEDB07EDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:28:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A978B07EE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71E03189C731
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:28:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A15189F497
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EC42C178E;
-	Wed, 16 Jul 2025 20:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF3A2C3271;
+	Wed, 16 Jul 2025 20:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XS9wW+kC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ws715Onn"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9F2274FF1;
-	Wed, 16 Jul 2025 20:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70FA276050;
+	Wed, 16 Jul 2025 20:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752697688; cv=none; b=N0jD6LN41vfKAmGHNR8zPL9Gi/o50dx0iMc0pdteAwsZzLp+6997qbtHv4xIP5lLYvCyGFxIjgQr2R7QPST+NGN4luTGeJm9i4YCn4DXa9Om1bWWez0jT3LqXtSyNd953yNLfs3qN6R5vzVUaSSYREf8pvpJqmqCZGE4ZBrZhZc=
+	t=1752697771; cv=none; b=rYo9Tqh1BIFx/UtIknMzkdBzg5qxaM5rMFDPkomU0geeSXgTTfSga110umgFp8y3Kv1KmPkuM4OYuUtc/Gr1zJFExyvANqCtZvzgikHP3RdVheuzMwLpAW1aIoTYogBTkPSXKj1y7Nd/CAXxv61tWhBk7fs47RI5jOEZ2XTEAmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752697688; c=relaxed/simple;
-	bh=brHo0opNvg7cbMIzp5qYocuQ4Uf/Pi0EVD1qO32ApB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnOXAmjP4/GxpvMdvkB8Ed0BpG6tQQeg/ruUzXlEI2py9da01c+t3E8YcrwlTtf3Ykv6OB4Y3O9FD8m38IMFiRrFDDD0WPubzwQnrbm4+lz0DoW59nOoUSM2LP1AGCJzbArGeSpR2c5OIzdnKAOHyPsEpVygEanFaJaiZAYRjLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XS9wW+kC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5057C4CEE7;
-	Wed, 16 Jul 2025 20:28:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752697687;
-	bh=brHo0opNvg7cbMIzp5qYocuQ4Uf/Pi0EVD1qO32ApB0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XS9wW+kCAdkIs5Bt2XOj2EhOPkuGPB92ZEvnDz/jfOInfmJCwXIbUYlJOwBm5c5C4
-	 SxQhGI5YL9BpuiZX7QsNK5MSlb0s7xfn0e6vkX/uW8mbEVLs2aXFfxpa252kxruxTq
-	 8BL8JKk3oewMZzEva9iMDYJ5o+TTm7B65eS9c2402Dy+XHytd5KUOprfJjZZNIWElb
-	 6h4FWhOqCuVNNwsbSzyN2HBWpIH1uIFjlZlqrXW0F3n2xNrFhuyUkSX0VFJZ6NuRg8
-	 3M5TPVpBWcerUE4g3ExO4XEFF//YqHQ40uaXOy4/HN5Vv0WfZYp1yadLcRiN5+0tDy
-	 8HPsURqRtwzdw==
-Date: Wed, 16 Jul 2025 13:28:05 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Thomas Falcon <thomas.falcon@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ben Gainey <ben.gainey@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>, Levi Yun <yeoreum.yun@arm.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Zhongqiu Han <quic_zhonhan@quicinc.com>,
-	Blake Jones <blakejones@google.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Anubhav Shelat <ashelat@redhat.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
-	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 12/12] perf parse-events: Support user CPUs mixed with
- threads/processes
-Message-ID: <aHgLVcxpEphtYLsB@google.com>
-References: <20250627192417.1157736-1-irogers@google.com>
- <20250627192417.1157736-13-irogers@google.com>
+	s=arc-20240116; t=1752697771; c=relaxed/simple;
+	bh=+Os/S0psLbqwRgePy1azhqHWR/ODfIORB/aObUr/CaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SVTgHUp2hOd4ixb1PbRZ4GIn+Jti9vQCsScSo5y7BPq4TzDnhD1c8boBnBQwL8Zm5yttgmOcvkSTTUUqkX9JRBm2/qAT5gny8OD2EQvxZ34g9r9yjZxZLsU5sIxqUThk4uLEBaoZDowCup0lASQECbf7JUUqmYnI5mLCyos7upM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ws715Onn; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4561ca74829so2886735e9.0;
+        Wed, 16 Jul 2025 13:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752697768; x=1753302568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bv42pwkQ8U2aAJLzyh0onhnRM8bThCgjUOBE6I0x4wk=;
+        b=Ws715OnnuFM+uuirmYP27WgJIA1E9QMWGbrWG0SSnB+y/zM9qD9UpRcOP/NDH6EJEr
+         gsTCoUh6ihFIge6AlG7Z1K00pVZbhJv5ndSHyhzrgQGxYFo4qQ4QIa3Aq5Ucd61bMhL3
+         fh/m/OPypnzwD5YkdkUdcVItg8MEWKUzIQaxNYFvK7WXb5Aly82JSEH2PV40v+aMNU5D
+         27lJRYYxNAr4/BugEF5AoAOeCA+W3EBufyyxIuIkwNi1U5eJr5kBz1+XETGvJFHOhQbD
+         tYUxcCz993jRBO1e5AcrFqPSd3yvXsS0RE0vtyv+aCTHIO8faCIvQ5tOxWImfleJ6j5c
+         odBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752697768; x=1753302568;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bv42pwkQ8U2aAJLzyh0onhnRM8bThCgjUOBE6I0x4wk=;
+        b=HHnf55XKdozpRoyVm0i+L63+kIICmNwfhxWX5UpI8WMAkYhQpY8HKxRffDEkG/Wi06
+         kvGX9ulz/hkFQT5VNkgQYzSrIHnatZ8vfj2bDsyPnXQ1DiSxGzAORlkonPECC7DbcOoQ
+         Kic7R2LzXsOcJSra0/29go61AUwEjLh+2XLRFiHBmpbWzV6NpPmReWeiK4DlWoKPsqAK
+         y4guq8I6okIdrHH4elaTEcj6Qi8/XgO2mizWZIF6XthilJo7JwlZA+Lm791XGZlsihlW
+         BP8sE76bHDY54yijpIi+XyA1SwDMu/lP+Iu0X+9pk7rcoHWXKtT+WUC9YTuG+/Qc7A41
+         WeeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8C9WwGndoe08yFDobKFadVJcJv01UZT0h0HeDQPfbKTOYl6PDeimqcHma+DrTe3D1kXN61UzVceIt85v4@vger.kernel.org, AJvYcCXYho9NER3JbDmKYm7zyfqVoMSjBbLl+QstaYRCyAJCX9l0VHwQ274rpA355qMbNoKVsFqrunK1XH03@vger.kernel.org, AJvYcCXoERFV86CoF3wbI2PpIfKamqJ71AzE3fdHwnA2SFA56LNLpIM8/WQjhgWLIG6nAYo/rtoFI7UzxaF53IAT4lymCTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2iTflHDIQ6ktV2r5HcK+nMSMOXKcpxeo5qeNLodHDNQt2G6nb
+	oq1D17Ku8u7X/koROMcP5zfku/W29HboKOkHaYHG5P4/Gn8maD+R0QK2
+X-Gm-Gg: ASbGncvAMwz2PwG4cpyp93iYX5F4q0S8MW+d0dTYJ8bftvtyD3OusmaIPtCWZFSoYwW
+	4URaTNJlqAsqAEQu2PkEFacTsUUNygOR0SvksN7/fJoRAPlgMNaoz3I1wLWdQlhVMv2Y8sxf12H
+	BZL9VPwJBHDGmZbtGzIrCzNX++eQTYutsJc4JUWHM6DKfb/FaFZH6nyXyEo1Eus2eJJkugKLZj3
+	+/Zjx9Z9M4mc3pH9lZYs2DWpMJ+hMv8eBrmbTJ/9CoIPpRI1ZSFOG8vbS4xY3Xf2t8NkBYTt28m
+	Z1PO5RrvC4D+h6RiU1FeXwIRaiY7Co6Xio3ktvmB4XWpzeIuGlysHva4mQG24XZpOn/D8x4QsR3
+	kLzsWVmg6/3cYh6XuwFIDBjnh15z/eLFm4FWRo5s48b1hYkM=
+X-Google-Smtp-Source: AGHT+IH53+0XDdUwczXbl2+ZIfTEYSel7KTLQmeVOmoZuMxA7trRRVuXUk9gWLbPmT3bhXFLUcwCwQ==
+X-Received: by 2002:a05:6000:2006:b0:3b3:9c94:eff8 with SMTP id ffacd0b85a97d-3b60e51c895mr3135256f8f.27.1752697767613;
+        Wed, 16 Jul 2025 13:29:27 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:7668:11fb:4cef:dbca])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d571sm19068666f8f.57.2025.07.16.13.29.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 13:29:27 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3] dt-bindings: serial: renesas: Document RZ/V2N SCIF
+Date: Wed, 16 Jul 2025 21:29:23 +0100
+Message-ID: <20250716202923.163950-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250627192417.1157736-13-irogers@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 27, 2025 at 12:24:17PM -0700, Ian Rogers wrote:
-> Counting events system-wide with a specified CPU prior to this change worked:
-> ```
-> $ perf stat -e 'msr/tsc/,msr/tsc,cpu=cpu_core/,msr/tsc,cpu=cpu_atom/' -a sleep 1
-> 
->   Performance counter stats for 'system wide':
-> 
->      59,393,419,099      msr/tsc/
->      33,927,965,927      msr/tsc,cpu=cpu_core/
->      25,465,608,044      msr/tsc,cpu=cpu_atom/
-> ```
-> 
-> However, when counting with process the counts became system wide:
-> ```
-> $ perf stat -e 'msr/tsc/,msr/tsc,cpu=cpu_core/,msr/tsc,cpu=cpu_atom/' perf test -F 10
->  10.1: Basic parsing test                                            : Ok
->  10.2: Parsing without PMU name                                      : Ok
->  10.3: Parsing with PMU name                                         : Ok
-> 
->  Performance counter stats for 'perf test -F 10':
-> 
->         59,233,549      msr/tsc/
->         59,227,556      msr/tsc,cpu=cpu_core/
->         59,224,053      msr/tsc,cpu=cpu_atom/
-> ```
-> 
-> Make the handling of CPU maps with event parsing clearer. When an
-> event is parsed creating an evsel the cpus should be either the PMU's
-> cpumask or user specified CPUs.
-> 
-> Update perf_evlist__propagate_maps so that it doesn't clobber the user
-> specified CPUs. Try to make the behavior clearer, firstly fix up
-> missing cpumasks. Next, perform sanity checks and adjustments from the
-> global evlist CPU requests and for the PMU including simplifying to
-> the "any CPU"(-1) value. Finally remove the event if the cpumask is
-> empty.
-> 
-> So that events are opened with a CPU and a thread change stat's
-> create_perf_stat_counter to give both.
-> 
-> With the change things are fixed:
-> ```
-> $ perf stat --no-scale -e 'msr/tsc/,msr/tsc,cpu=cpu_core/,msr/tsc,cpu=cpu_atom/' perf test -F 10
->  10.1: Basic parsing test                                            : Ok
->  10.2: Parsing without PMU name                                      : Ok
->  10.3: Parsing with PMU name                                         : Ok
-> 
->  Performance counter stats for 'perf test -F 10':
-> 
->         63,704,975      msr/tsc/
->         47,060,704      msr/tsc,cpu=cpu_core/                        (4.62%)
->         16,640,591      msr/tsc,cpu=cpu_atom/                        (2.18%)
-> ```
-> 
-> However, note the "--no-scale" option is used. This is necessary as
-> the running time for the event on the counter isn't the same as the
-> enabled time because the thread doesn't necessarily run on the CPUs
-> specified for the counter. All counter values are scaled with:
-> 
->   scaled_value = value * time_enabled / time_running
-> 
-> and so without --no-scale the scaled_value becomes very large. This
-> problem already exists on hybrid systems for the same reason. Here are
-> 2 runs of the same code with an instructions event that counts the
-> same on both types of core, there is no real multiplexing happening on
-> the event:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-This is unfortunate.  The event is in a task context but also has a CPU
-constraint.  So it's not schedulable on other CPUs.
+Document SCIF bindings for the Renesas RZ/V2N (a.k.a R9A09G056) SoC.
+The SCIF interface in Renesas RZ/V2N is identical to the one available
+in RZ/V2H(P), so `renesas,scif-r9a09g057` will be used as a fallback,
+allowing reuse of the existing driver without modifications.
 
-A problem is that it cannot distinguish the real multiplexing..
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Hi All,
 
-> 
-> ```
-> $ perf stat -e instructions perf test -F 10
-> ...
->  Performance counter stats for 'perf test -F 10':
-> 
->         87,896,447      cpu_atom/instructions/                       (14.37%)
->         98,171,964      cpu_core/instructions/                       (85.63%)
-> ...
-> $ perf stat --no-scale -e instructions perf test -F 10
-> ...
->  Performance counter stats for 'perf test -F 10':
-> 
->         13,069,890      cpu_atom/instructions/                       (19.32%)
->         83,460,274      cpu_core/instructions/                       (80.68%)
-> ...
-> ```
-> The scaling has inflated per-PMU instruction counts and the overall
-> count by 2x.
-> 
-> To fix this the kernel needs changing when a task+CPU event (or just
-> task event on hybrid) is scheduled out. A fix could be that the state
-> isn't inactive but off for such events, so that time_enabled counts
-> don't accumulate on them.
+This patch was part of v2 series [1] where rest of the patches were
+applied, so just sending this patch for review.
+[1] https://lore.kernel.org/all/20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-Right, maybe we need to add a new state (UNSCHEDULABLE?) to skip
-updating the enabled time.
+Cheers, Prabhakar
+v2->v3:
+- Added reviewed by tag from Geert.
+---
+ Documentation/devicetree/bindings/serial/renesas,scif.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Namhyung
+diff --git a/Documentation/devicetree/bindings/serial/renesas,scif.yaml b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
+index 8e82999e6acb..24819b204ebf 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
++++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
+@@ -86,6 +86,7 @@ properties:
+       - items:
+           - enum:
+               - renesas,scif-r9a09g047      # RZ/G3E
++              - renesas,scif-r9a09g056      # RZ/V2N
+           - const: renesas,scif-r9a09g057   # RZ/V2H fallback
+ 
+   reg:
+-- 
+2.50.1
 
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/lib/perf/evlist.c        | 118 ++++++++++++++++++++++-----------
->  tools/perf/util/parse-events.c |  10 ++-
->  tools/perf/util/stat.c         |   6 +-
->  3 files changed, 86 insertions(+), 48 deletions(-)
-> 
-> diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
-> index 9d9dec21f510..2d2236400220 100644
-> --- a/tools/lib/perf/evlist.c
-> +++ b/tools/lib/perf/evlist.c
-> @@ -36,49 +36,87 @@ void perf_evlist__init(struct perf_evlist *evlist)
->  static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
->  					  struct perf_evsel *evsel)
->  {
-> -	if (evsel->system_wide) {
-> -		/* System wide: set the cpu map of the evsel to all online CPUs. */
-> -		perf_cpu_map__put(evsel->cpus);
-> -		evsel->cpus = perf_cpu_map__new_online_cpus();
-> -	} else if (evlist->has_user_cpus && evsel->is_pmu_core) {
-> -		/*
-> -		 * User requested CPUs on a core PMU, ensure the requested CPUs
-> -		 * are valid by intersecting with those of the PMU.
-> -		 */
-> +	if (perf_cpu_map__is_empty(evsel->cpus)) {
-> +		if (perf_cpu_map__is_empty(evsel->pmu_cpus)) {
-> +			/*
-> +			 * Assume the unset PMU cpus were for a system-wide
-> +			 * event, like a software or tracepoint.
-> +			 */
-> +			evsel->pmu_cpus = perf_cpu_map__new_online_cpus();
-> +		}
-> +		if (evlist->has_user_cpus && !evsel->system_wide) {
-> +			/*
-> +			 * Use the user CPUs unless the evsel is set to be
-> +			 * system wide, such as the dummy event.
-> +			 */
-> +			evsel->cpus = perf_cpu_map__get(evlist->user_requested_cpus);
-> +		} else {
-> +			/*
-> +			 * System wide and other modes, assume the cpu map
-> +			 * should be set to all PMU CPUs.
-> +			 */
-> +			evsel->cpus = perf_cpu_map__get(evsel->pmu_cpus);
-> +		}
-> +	}
-> +	/*
-> +	 * Avoid "any CPU"(-1) for uncore and PMUs that require a CPU, even if
-> +	 * requested.
-> +	 */
-> +	if (evsel->requires_cpu && perf_cpu_map__has_any_cpu(evsel->cpus)) {
->  		perf_cpu_map__put(evsel->cpus);
-> -		evsel->cpus = perf_cpu_map__intersect(evlist->user_requested_cpus, evsel->pmu_cpus);
-> +		evsel->cpus = perf_cpu_map__get(evsel->pmu_cpus);
-> +	}
->  
-> -		/*
-> -		 * Empty cpu lists would eventually get opened as "any" so remove
-> -		 * genuinely empty ones before they're opened in the wrong place.
-> -		 */
-> -		if (perf_cpu_map__is_empty(evsel->cpus)) {
-> -			struct perf_evsel *next = perf_evlist__next(evlist, evsel);
-> -
-> -			perf_evlist__remove(evlist, evsel);
-> -			/* Keep idx contiguous */
-> -			if (next)
-> -				list_for_each_entry_from(next, &evlist->entries, node)
-> -					next->idx--;
-> +	/*
-> +	 * Globally requested CPUs replace user requested unless the evsel is
-> +	 * set to be system wide.
-> +	 */
-> +	if (evlist->has_user_cpus && !evsel->system_wide) {
-> +		assert(!perf_cpu_map__has_any_cpu(evlist->user_requested_cpus));
-> +		if (!perf_cpu_map__equal(evsel->cpus, evlist->user_requested_cpus)) {
-> +			perf_cpu_map__put(evsel->cpus);
-> +			evsel->cpus = perf_cpu_map__get(evlist->user_requested_cpus);
->  		}
-> -	} else if (!evsel->pmu_cpus || evlist->has_user_cpus ||
-> -		(!evsel->requires_cpu && perf_cpu_map__has_any_cpu(evlist->user_requested_cpus))) {
-> -		/*
-> -		 * The PMU didn't specify a default cpu map, this isn't a core
-> -		 * event and the user requested CPUs or the evlist user
-> -		 * requested CPUs have the "any CPU" (aka dummy) CPU value. In
-> -		 * which case use the user requested CPUs rather than the PMU
-> -		 * ones.
-> -		 */
-> +	}
-> +
-> +	/* Ensure cpus only references valid PMU CPUs. */
-> +	if (!perf_cpu_map__has_any_cpu(evsel->cpus) &&
-> +	    !perf_cpu_map__is_subset(evsel->pmu_cpus, evsel->cpus)) {
-> +		struct perf_cpu_map *tmp = perf_cpu_map__intersect(evsel->pmu_cpus, evsel->cpus);
-> +
->  		perf_cpu_map__put(evsel->cpus);
-> -		evsel->cpus = perf_cpu_map__get(evlist->user_requested_cpus);
-> -	} else if (evsel->cpus != evsel->pmu_cpus) {
-> -		/*
-> -		 * No user requested cpu map but the PMU cpu map doesn't match
-> -		 * the evsel's. Reset it back to the PMU cpu map.
-> -		 */
-> +		evsel->cpus = tmp;
-> +	}
-> +
-> +	/*
-> +	 * Was event requested on all the PMU's CPUs but the user requested is
-> +	 * any CPU (-1)? If so switch to using any CPU (-1) to reduce the number
-> +	 * of events.
-> +	 */
-> +	if (!evsel->system_wide &&
-> +	    perf_cpu_map__equal(evsel->cpus, evsel->pmu_cpus) &&
-> +	    perf_cpu_map__has_any_cpu(evlist->user_requested_cpus)) {
->  		perf_cpu_map__put(evsel->cpus);
-> -		evsel->cpus = perf_cpu_map__get(evsel->pmu_cpus);
-> +		evsel->cpus = perf_cpu_map__get(evlist->user_requested_cpus);
-> +	}
-> +
-> +	/* Sanity check assert before the evsel is potentially removed. */
-> +	assert(!evsel->requires_cpu || !perf_cpu_map__has_any_cpu(evsel->cpus));
-> +
-> +	/*
-> +	 * Empty cpu lists would eventually get opened as "any" so remove
-> +	 * genuinely empty ones before they're opened in the wrong place.
-> +	 */
-> +	if (perf_cpu_map__is_empty(evsel->cpus)) {
-> +		struct perf_evsel *next = perf_evlist__next(evlist, evsel);
-> +
-> +		perf_evlist__remove(evlist, evsel);
-> +		/* Keep idx contiguous */
-> +		if (next)
-> +			list_for_each_entry_from(next, &evlist->entries, node)
-> +				next->idx--;
-> +
-> +		return;
->  	}
->  
->  	if (evsel->system_wide) {
-> @@ -98,6 +136,10 @@ static void perf_evlist__propagate_maps(struct perf_evlist *evlist)
->  
->  	evlist->needs_map_propagation = true;
->  
-> +	/* Clear the all_cpus set which will be merged into during propagation. */
-> +	perf_cpu_map__put(evlist->all_cpus);
-> +	evlist->all_cpus = NULL;
-> +
->  	list_for_each_entry_safe(evsel, n, &evlist->entries, node)
->  		__perf_evlist__propagate_maps(evlist, evsel);
->  }
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> index 4092a43aa84e..0ff7ae75d8f9 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -313,20 +313,18 @@ __add_event(struct list_head *list, int *idx,
->  	if (pmu) {
->  		is_pmu_core = pmu->is_core;
->  		pmu_cpus = perf_cpu_map__get(pmu->cpus);
-> +		if (perf_cpu_map__is_empty(pmu_cpus))
-> +			pmu_cpus = cpu_map__online();
->  	} else {
->  		is_pmu_core = (attr->type == PERF_TYPE_HARDWARE ||
->  			       attr->type == PERF_TYPE_HW_CACHE);
->  		pmu_cpus = is_pmu_core ? cpu_map__online() : NULL;
->  	}
->  
-> -	if (has_user_cpus) {
-> +	if (has_user_cpus)
->  		cpus = perf_cpu_map__get(user_cpus);
-> -		/* Existing behavior that pmu_cpus matches the given user ones. */
-> -		perf_cpu_map__put(pmu_cpus);
-> -		pmu_cpus = perf_cpu_map__get(user_cpus);
-> -	} else {
-> +	else
->  		cpus = perf_cpu_map__get(pmu_cpus);
-> -	}
->  
->  	if (init_attr)
->  		event_attr_init(attr);
-> diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-> index 355a7d5c8ab8..8d3bcdb69d37 100644
-> --- a/tools/perf/util/stat.c
-> +++ b/tools/perf/util/stat.c
-> @@ -769,8 +769,6 @@ int create_perf_stat_counter(struct evsel *evsel,
->  			attr->enable_on_exec = 1;
->  	}
->  
-> -	if (target__has_cpu(target) && !target__has_per_thread(target))
-> -		return evsel__open_per_cpu(evsel, evsel__cpus(evsel), cpu_map_idx);
-> -
-> -	return evsel__open_per_thread(evsel, evsel->core.threads);
-> +	return evsel__open_per_cpu_and_thread(evsel, evsel__cpus(evsel), cpu_map_idx,
-> +					      evsel->core.threads);
->  }
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
-> 
 
