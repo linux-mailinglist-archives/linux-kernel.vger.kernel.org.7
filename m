@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-733277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1644B07295
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F817B07292
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3BD77A84DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39ED3A9753
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488A62F3620;
-	Wed, 16 Jul 2025 10:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB96F2F2C6A;
+	Wed, 16 Jul 2025 10:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j/SZUQe6"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="p1LZaVc4"
 Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170D92F2718;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDF22F2716;
 	Wed, 16 Jul 2025 10:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660348; cv=none; b=PRWlmBunCanOLCpaYCVl+m76vPgRkTsbg5KgEz6HYWWsdyhn3BmEOmn12P/07zGKPQILQ7E0lR129TMASsDYnH5Jew+p1UFXXXHfd1v6SBiQ9OpKDUjbHJ1wDbngChQl7G9e3SfFSgyL+oXcFvixdcW/heHhkLWQQ7emX8ZR/Y4=
+	t=1752660348; cv=none; b=lFvIEyNYtveyC91l8qzv7VcZovrKKKkM1kfCGnqyL43UnaaTjXRpqrWqQGT1Y63AQuDVQuWMQnoSvQWhcSy6HTVzpdJ7uYKozBm9nqqSjT0rE8Fsln0ywt94MvvnN5cSawwnpqNbhr12WO6WOGD6ZQWSuJyAsmelnZtNjhdZouQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752660348; c=relaxed/simple;
-	bh=414gHypClQ8qjkG9acqV6Xosykh7KjUFEInmNBBWKsM=;
+	bh=4MOTPL+eD9R/a8ShunIQD4Ak8F19x2srD1y1ZM5qBns=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yvmx7YhBRE1ljssAbJjYq35XOahzKNSKGBVoyK5M4u/xpwwKf9lj39gO7uAfYsVGpOSBh70Hm62rL5odhs1EmJ6wBFFPCGFtmd7FKVLwBxNlSBp9iNHyvLJCd9IHNaWEAIy2mLjAEUsw0KIeMe1JZB6q/fyhaObgjSEcrmSx6gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=j/SZUQe6; arc=none smtp.client-ip=117.135.210.5
+	 MIME-Version; b=j42qArVykYHB4hQVk7Thl07YeRhSCZwvKd3BtV/4S+rflBOXZveaPiR73fJFH7x+qZLb5gm+ZrCoHVDn/T+sMbunMkqn7VdWGhd6gtP+UGw6CWmzzvf9cBU1/H0O5puMD1VuKhhiDcKKTjv/gXTdk5qAYHyWR46tk8wordPnnco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=p1LZaVc4; arc=none smtp.client-ip=117.135.210.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=bi
-	YaTCyrwwaaHZG3Abnb2xB6q/1qQ8ILOxOpGX0nKs4=; b=j/SZUQe60Y6uWkHgq7
-	/DptRJx8Z+zfyTNi+muN+gj5Me7gw8vmtY93F1IoNRjyRTkPqk3USfCV8fbly7um
-	PQvaPZkmP8XD8H0dzD3mq/BAj9H9Ob8FniYFbGoLOyOmo80i4VJIT5Lm3erkvTrM
-	OEIEpuPdJ7dtANavmkEsvynoc=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=xp
+	tJ5nlr75MekjpYY473ZW53Q3YMWO/bs6PyrYC1z1Q=; b=p1LZaVc4EgGkfW4qQv
+	wm9R5Aaqs5CG5xAGwUSS9ewuTtDGkdyE/z+lS5FD0dZUFnqbh4v8inlqui5YT97/
+	6Wu9ciwQJAHSCVGZ8NCpIMHcrkVO8HnmxTien74xGU6pNpsJ+yJ/sXIeRfdgnkyJ
+	FwOUSpMP85sIVN8BQU7iaKSrI=
 Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAH0s46eXdoG0BuFQ--.1985S11;
-	Wed, 16 Jul 2025 18:05:10 +0800 (CST)
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAH0s46eXdoG0BuFQ--.1985S12;
+	Wed, 16 Jul 2025 18:05:12 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: dmitry.baryshkov@oss.qualcomm.com,
 	heiko@sntech.de
@@ -57,9 +57,9 @@ Cc: hjc@rock-chips.com,
 	robh@kernel.org,
 	sebastian.reichel@collabora.com,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v5 09/10] arm64: dts: rockchip: Enable DisplayPort for rk3588s Cool Pi 4B
-Date: Wed, 16 Jul 2025 18:04:36 +0800
-Message-ID: <20250716100440.816351-10-andyshrk@163.com>
+Subject: [PATCH v5 10/10] arm64: dts: rockchip: Enable DP2HDMI for ROCK 5 ITX
+Date: Wed, 16 Jul 2025 18:04:37 +0800
+Message-ID: <20250716100440.816351-11-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250716100440.816351-1-andyshrk@163.com>
 References: <20250716100440.816351-1-andyshrk@163.com>
@@ -70,90 +70,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAH0s46eXdoG0BuFQ--.1985S11
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ur48WF43Jw4ktFWxGF48WFg_yoW8AFy3p3
-	ZxArsYgrZ7urWUt3sYyF1xJrsxCrs5ua97Jr13u343KFW7WF93Kwn3GrnYkryjvFs3X3yr
-	tr1kZasF9F1DXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j8a9-UUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEgqMXmh3cPPq-wAAsD
+X-CM-TRANSID:_____wAH0s46eXdoG0BuFQ--.1985S12
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CrykKw18Xw43uF4kCF18uFg_yoW8tFW8pF
+	nF9rs5KryxuryYqw1YyF1kZF4DKrs5ua93Jr1aqry0yFW7Xas5K3WrWr9YqF1jvF1xXw4a
+	yr4kXa4j93WDXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jeXdbUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0heMXmh3dDKNdwAAs0
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
-Enable the Mini DisplayPort on this board.
-Note that ROCKCHIP_VOP2_EP_DP0 is defined as 10 in dt-binding header,
-but it will trigger a dtc warning like "graph node unit address error,
-expected "a"" if we use it directly after endpoint, so we use "a"
-instead here.
+The HDMI0(Port next to Headphone Jack) is drived by DP1 on rk3588
+via RA620(a dp2hdmi converter).
+
+Add related dt nodes to enable it.
+
+Note: ROCKCHIP_VOP2_EP_DP1 is defined as 11 in dt-binding header,
+but it will trigger a dtc warning like "graph node unit address
+error, expected "b"" if we use it directly after endpoint, so we
+use "b" instead here.
 
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
 ---
 
-(no changes since v2)
+(no changes since v3)
 
-Changes in v2:
-- Sort in alphabetical order
+Changes in v3:
+- Add RA620 into bridge chain.
 
- .../boot/dts/rockchip/rk3588s-coolpi-4b.dts   | 37 +++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 59 +++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-index 8b717c4017a46..5393c6cc493c3 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-@@ -39,6 +39,18 @@ chosen {
- 		stdout-path = "serial2:1500000n8";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+index 7de17117df7ae..903ad42f97177 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+@@ -57,6 +57,29 @@ analog-sound {
+ 			  "Headphone", "Headphones";
  	};
  
-+	dp-con {
-+		compatible = "dp-connector";
-+		label = "DP OUT";
-+		type = "mini";
++	bridge {
++		compatible = "radxa,ra620";
 +
-+		port {
-+			dp_con_in: endpoint {
-+				remote-endpoint = <&dp0_out_con>;
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			port@0 {
++				reg = <0>;
++				hdmi_bridge_in: endpoint {
++					remote-endpoint = <&dp1_out_con>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++
++				hdmi_bridge_out: endpoint {
++					remote-endpoint = <&hdmi_con_in>;
++				};
 +			};
 +		};
 +	};
 +
- 	hdmi-con {
+ 	gpio-leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -73,6 +96,17 @@ hdd-led2 {
+ 		};
+ 	};
+ 
++	hdmi0-con {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_bridge_out>;
++			};
++		};
++	};
++
+ 	hdmi1-con {
  		compatible = "hdmi-connector";
- 		type = "d";
-@@ -215,6 +227,24 @@ &cpu_b2 {
- 	cpu-supply = <&vdd_cpu_big1_s0>;
+ 		type = "a";
+@@ -268,6 +302,24 @@ &cpu_l3 {
+ 	cpu-supply = <&vdd_cpu_lit_s0>;
  };
  
-+&dp0 {
++&dp1 {
 +	status = "okay";
-+	pinctrl-0 = <&dp0m0_pins>;
 +	pinctrl-names = "default";
++	pinctrl-0 = <&dp1m0_pins>;
 +};
 +
-+&dp0_in {
-+	dp0_in_vp2: endpoint {
-+		remote-endpoint = <&vp2_out_dp0>;
++&dp1_in {
++	dp1_in_vp2: endpoint {
++		remote-endpoint = <&vp2_out_dp1>;
 +	};
 +};
 +
-+&dp0_out {
-+	dp0_out_con: endpoint {
-+		remote-endpoint = <&dp_con_in>;
++&dp1_out {
++	dp1_out_con: endpoint {
++		remote-endpoint = <&hdmi_bridge_in>;
 +	};
 +};
 +
  &gpu {
  	mali-supply = <&vdd_gpu_s0>;
  	status = "okay";
-@@ -889,3 +919,10 @@ vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
- 		remote-endpoint = <&hdmi0_in_vp0>;
+@@ -1261,3 +1313,10 @@ vp1_out_hdmi1: endpoint@ROCKCHIP_VOP2_EP_HDMI1 {
+ 		remote-endpoint = <&hdmi1_in_vp1>;
  	};
  };
 +
 +&vp2 {
-+	vp2_out_dp0: endpoint@a {
-+		reg = <ROCKCHIP_VOP2_EP_DP0>;
-+		remote-endpoint = <&dp0_in_vp2>;
++	vp2_out_dp1: endpoint@b {
++		reg = <ROCKCHIP_VOP2_EP_DP1>;
++		remote-endpoint = <&dp1_in_vp2>;
 +	};
 +};
 -- 
