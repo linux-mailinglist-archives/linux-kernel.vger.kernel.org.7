@@ -1,127 +1,292 @@
-Return-Path: <linux-kernel+bounces-732883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9CBCB06D39
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:32:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE9AB06D38
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0803417AC0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:32:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ABA21C2015B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3F22E7627;
-	Wed, 16 Jul 2025 05:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974F92E7173;
+	Wed, 16 Jul 2025 05:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8VwERaf"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="MxPt2qmI"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7342A2E7621;
-	Wed, 16 Jul 2025 05:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364D62E6D02
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752643942; cv=none; b=X10w7WL8rnmvJbe06qgj9C0DyzVAiP8gCS3Ji2rfODhwon5kwIBhCaMsO/Ptj6agbDl4At0NbZe9PAG5KiEogPeH8hfOGG8+Y7YlmHZrKJ2BZldlc9Gq2zO92OyyX5JgW22eEUeT4rXfHeTDnTXNsDSdsQ9/wpl7UVyszS65W+U=
+	t=1752643937; cv=none; b=jbkzknT7t5UEt1eBOtI10cpD2wiLTb2/qnb6kKOPu2O5aivapJMkU4QmpOHbPmuqKreC/+sikn7vkzg7P2fmkVJXMrRnf144Da0OdyOY9lnc+gHIxaNL1vpzcMKwzjr46juhLcU2+w54oYex5WIYmWUAb36ghJklmybFRUxFo78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752643942; c=relaxed/simple;
-	bh=VjZrGkC7ADyps82wJ+kFXJsVELSbQQ4Qa2DtZOZN9fc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ya/BWTNEiruq+slmDd4SciY110xYsx3Eyz+ukU7AKNOHHp8YX4tNlGJ2DPJbx91TQEWcvWR2w2Pc7zaYrvkbkrQ1x3JenTjDbF3qcG7pflXZzNnCOfyHz7UcEfPCCOSor7hA8uPmP/UlDhrT+Z91t5jKC7A0psb0ZPz9+B6zUoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K8VwERaf; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae0de0c03e9so1058593766b.2;
-        Tue, 15 Jul 2025 22:32:20 -0700 (PDT)
+	s=arc-20240116; t=1752643937; c=relaxed/simple;
+	bh=87KcNmcNCfKzd5C+FHrTqadt2gHiOHzdg+/afSRwOF0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=iMntEY+XE/EGEM51kymJmvWPDbAv2zb/YS4ClfSSdUI1+DHRTXjXjx5066XgwluCDa/fq40H7+iinpjABkoRb+DYT0OsQYhhE9TsYav6gGO+3N7XLzVGcE8f/bWdQ/VbARDXj4JqYhHVO8/a7FBXcFfJC3M7ke3Y6GCw7WDOHQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=MxPt2qmI; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-748e81d37a7so3772338b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:32:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752643939; x=1753248739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=brighamcampbell.com; s=google; t=1752643935; x=1753248735; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cp/akMFaM7KE8tpmX3u+HdSoxH065TZxIp2bHG9cbeY=;
-        b=K8VwERaf9nHsNft5mhEN6oh7uuYrbzW8QxHpyE+O+LUx9d2WyIMP9aLqh/VMn6UJ2d
-         lJ7ISP9S6aOvw/LG5luK9DJeMD3HIIGRv7WKTAA7R5t8tGFLR30zVO1aQj+4OAa/upL2
-         rYHllAIFJc/IC3z9AyYl18tzsF0SY0nTiNyPSgoYazI7n199Ofz/yWZvcqA6ir4tFIzz
-         42rqq85Ez/P/sCDpkzACHic8NXKieoDXUXXqWlLdKtSfYAA0400TMXyqcZ8xmHbXX237
-         guzkb/nM8IDJkdGipJtrCVta9xbgPbJlcQJ2ybEJupG+M6jNGrKh5xHaREwVzzu6Lwqd
-         F0Ow==
+        bh=RCMRUZQFGpcymBqkIe3rm+bYJxEBRs5oUHZ2hwPslEg=;
+        b=MxPt2qmIQ3cyHTHNB7LRPfD3GyJ0/gKnj1/ODxFtfG/jftKCPbF+uOl5SLrVNsOfqx
+         PURLfr2XEWkGweRWT0OQylLQhqm7ZqyrF9TIiGX1aRijWHIsNWU/uqh5qguQMZS9vYaY
+         XbXJtq/YElZVf2w4+aGruBMCQ6xLaOXyQ1UVyKfjc3PjSvZs7tIooqM0nteo9s8k8M2+
+         M5iV4kHpxtuwJAy+eBZUPro0DnhzQRvHh4BmnNvTk0Hb4EhGvIRk8WCvdYIQky67n7Hk
+         /jNRk/IOWFHQGH+O5x6IZUqX1wpQbPwzEWTPTE5Wsevd4Byxu6nTJwJlkiTrruEZrcbq
+         /AGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752643939; x=1753248739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cp/akMFaM7KE8tpmX3u+HdSoxH065TZxIp2bHG9cbeY=;
-        b=C/NMB7N2twODrjU5CcLwF8La1QqGwKxShEYWtN4eQmvtiYDA0BwdXhxGNUTslj30kT
-         0JFIldnPeTHaSolL3NTJcwKUkyohcjvhWm13TTvjZvowET8AnCfo9LiIXB7ROxqBeV6x
-         8tzOk38mFeQMTw92akqM5YDO2tN5l2bhSIoXWiGIBJ3c8RS4frUKuZ6pg5y5oA0/63Ke
-         +5dYJxhl5x6WiaTr/0JOeadSLSQzTu0RLRS/xpB2kjSKjW2pqz9X90o+YsPoO5n/Axua
-         IVFo6vYIixT8/s9PP/j/xPJfwqxcHf1sCVwVXM4tQnFPuf1E2dG/A8Ch5kgB895luCYe
-         jexg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4AHXw+GPsdiBFEulq8/u4AWKXHOAoxhv+O41QiwRiIU7E6+KgaDBQsJqD0YJz73SMWBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3vpFJ47wWiMJHH1UH8/11huj4ZVbb9J0bcTWgdHLv/9gLWfOk
-	sH9AA/YxtwSPxaoDYedhuBzVtq/3bMcTsAQ+sSsTS0b8XRUU+rpURJSj6KawFhdnusZucoahdgu
-	3ZSojb7qZrkXDPBTGw1a1UacQqNlpPwc8lSIK
-X-Gm-Gg: ASbGncsqCkPCC3Y951KcnjdYvFy9syEfkbBma7uQwiTlk8qGpkam9rzf7Yx0ViSnJRB
-	IWZs4mH81dcg9Mq2c2D3YMHXyrwN2K9w1k+XEady6K0BzjoET1oMH0q/Zwp73Q+pxIQLV6y6O23
-	ZV2kcAZOUE/BIcSQhZ1nptx1e8wtJz1Q5QQuaIqY3yuCKl9rXEcHf6T/FheOYQr+1n/lWk3To8e
-	vas
-X-Google-Smtp-Source: AGHT+IGWzJc/bkqkIzkoQzIlake7ZNKtY+H9lqIhjKYDy3vImUmhxWJB4LjzXDCmQnar9NvkgI/OQYObPV5zuHO3+bs=
-X-Received: by 2002:a17:907:7209:b0:ae0:d804:5bca with SMTP id
- a640c23a62f3a-ae9c998539emr195067566b.17.1752643938265; Tue, 15 Jul 2025
- 22:32:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752643935; x=1753248735;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RCMRUZQFGpcymBqkIe3rm+bYJxEBRs5oUHZ2hwPslEg=;
+        b=qmXQQ8P+mO7clg8AqHy8DSNrxBCwJHDCuxQvDc2RgoH1bH3cSIRwNOnKp8nEPqcl+h
+         X2Ylz3urX2SVikAug1LkF169GHwRtTCFUz8FjuzNdgb9ZMETTtGGBohh/S2cPvQwNvse
+         AGxF86/S47hdrmIcqKitLrqxgZLflUODuKqqNsNkSrwI24mCfdwixj3oQY5ucnvHYKih
+         vms2EBs18Q76OsVEPuUmh5BKQJqTH/6HHvCI2Wjc/g46R4xIzxdqrKBf1cwlljz7hbHx
+         36J+f278xoEL/AwvznTiy8/71SKaFGY8t7l24iHn9je9famn8idoo0CBHgFo3U2hZPtU
+         wQrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyF0/WvxjcXvDDOs1yNNT812chkmuBJrFBvhV6vvVo9eWAAVe26DlL1qFH07q4Vm2b467LYm8mXPItBYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+R7Rw/zEJHD8TZI5wdGTB5+r/UE6u7cdgbOPbHsVA1aFGJCrT
+	o7pOq8ZNpyK2EM/sHKnyXeUCF9coN7PMRXecfW0Jw1tGBWt6+Nped0iMIUM6xsZM261TujMficd
+	WbqjtVE4OWw==
+X-Gm-Gg: ASbGncus8YcL0PDnnY1ZHD03tWgynGMesd/UkrQRMWkZ4KWJSaG7bYDiHdMQ3MGomEh
+	iAJubZLu0CPIh+9Y3HZ/6grohzZXm/FvC9pAGR1H7Di7gJ/ViHcPe+SHhUUzrmvNv8fkZ8f5xP4
+	wKh/dj7XyozxPo0tHFCYnvsinKbthEkLcH/7ly/ZIjmlANFSdpNcmRiM2F8eStUbS25cpXC27L8
+	tnUDFCoOoh+bYhEt/iDz6w+/CAlTdBY01GnRBNaRqxG26apT0aUY6FsXbBW8qMGWvA350PaOYOa
+	OlWemilqmVLHFSBfqYAhSlOnUwyzViU5LO4pig+U+HOB+UwZ9XwwmdqIGDZhKzGZFZvniT81SDd
+	uQ+OxPGHhhHR+n68CaCc=
+X-Google-Smtp-Source: AGHT+IGzq1EuT7l9xYvVOR/aL8LMKVAB7h0jn6W/ldNNUwCMMtMkTDWuR5Zq3zFKgnv8U+oOw6+/dA==
+X-Received: by 2002:a05:6a00:887:b0:736:50d1:fc84 with SMTP id d2e1a72fcca58-756ea8b5c61mr2671787b3a.21.1752643935242;
+        Tue, 15 Jul 2025 22:32:15 -0700 (PDT)
+Received: from localhost ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd5a9fsm13908822b3a.11.2025.07.15.22.32.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 22:32:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250715200156.2852484-1-joelagnelf@nvidia.com>
-In-Reply-To: <20250715200156.2852484-1-joelagnelf@nvidia.com>
-From: Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Date: Wed, 16 Jul 2025 11:02:06 +0530
-X-Gm-Features: Ac12FXxwqhNdkUabOwevbJjOQPNDfrEdVr2XKIJPHsS-BjxPMWcWkYVc7sYn0lE
-Message-ID: <CAFwiDX9oGOdvFjdRrrfqrnHeFmfz3GHmA1AgHMZAHGdyn6qPPA@mail.gmail.com>
-Subject: Re: [PATCH -next 0/6] Patches for v6.17
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Jul 2025 23:32:12 -0600
+Message-Id: <DBD8F7HINUHO.2487OZTDLKOWQ@brighamcampbell.com>
+Cc: <tejasvipin76@gmail.com>, <skhan@linuxfoundation.org>,
+ <linux-kernel-mentees@lists.linux.dev>, <dri-devel@lists.freedesktop.org>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Jessica Zhang"
+ <jessica.zhang@oss.qualcomm.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>
+Subject: Re: [PATCH v2 1/3] drm/panel: jdi-lpm102a188a: Update deprecated
+ MIPI function calls
+From: "Brigham Campbell" <me@brighamcampbell.com>
+To: "Doug Anderson" <dianders@chromium.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250708073901.90027-1-me@brighamcampbell.com>
+ <20250708073901.90027-2-me@brighamcampbell.com>
+ <CAD=FV=UaNsMRqv_ncr-Xr9pVQGAxUtwwQPmv7h=xqv6RtDUvmg@mail.gmail.com>
+In-Reply-To: <CAD=FV=UaNsMRqv_ncr-Xr9pVQGAxUtwwQPmv7h=xqv6RtDUvmg@mail.gmail.com>
 
-Hi Joel,
-
-On Wed, Jul 16, 2025 at 1:32=E2=80=AFAM Joel Fernandes <joelagnelf@nvidia.c=
-om> wrote:
+On Mon Jul 14, 2025 at 3:46 PM MDT, Doug Anderson wrote:
+> Hi,
 >
-> Just a repost of patches with tags, for our consideration into v6.17.
+> On Tue, Jul 8, 2025 at 12:39=E2=80=AFAM Brigham Campbell <me@brighamcampb=
+ell.com> wrote:
+>>
+>> Update jdi-lpm102a188a panel driver to use the "multi" variant of MIPI
+>> functions in order to facilitate improved error handling and remove the
+>> panel's dependency on deprecated MIPI functions.
+>>
+>> This patch's usage of the mipi_dsi_multi_context struct is not
+>> idiomatic. Rightfully, the struct wasn't designed to cater to the needs
+>> of panels with multiple MIPI DSI interfaces. This panel is an oddity
+>> which requires swapping the dsi pointer between MIPI function calls in
+>> order to preserve the exact behavior implemented using the non-multi
+>> variant of the macro.
 >
-> All have tags, and the last commit is a fixup for the deadloop patch whic=
-h can
-> be squashed into the original patch.
+> Right. We dealt with this before with "novatek-nt36523"...
 >
-> Joel Fernandes (6):
->   smp: Document preemption and stop_machine() mutual exclusion
->   rcu: Refactor expedited handling check in rcu_read_unlock_special()
->   rcu: Document GP init vs hotplug-scan ordering requirements
->   rcu: Document separation of rcu_state and rnp's gp_seq
->   rcu: Document concurrent quiescent state reporting for offline CPUs
->   [please squash] fixup! rcu: Fix rcu_read_unlock() deadloop due to IRQ
->     work
+>
+>> Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
+>> ---
+>>  drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c | 160 +++++++-----------
+>>  1 file changed, 59 insertions(+), 101 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c b/drivers/gpu=
+/drm/panel/panel-jdi-lpm102a188a.c
+>> index 5b5082efb282..5001bea1798f 100644
+>> --- a/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c
+>> +++ b/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c
+>> @@ -81,25 +81,20 @@ static int jdi_panel_disable(struct drm_panel *panel=
+)
+>>  static int jdi_panel_unprepare(struct drm_panel *panel)
+>>  {
+>>         struct jdi_panel *jdi =3D to_panel_jdi(panel);
+>> -       int ret;
+>> +       struct mipi_dsi_multi_context dsi_ctx;
+>>
+>> -       ret =3D mipi_dsi_dcs_set_display_off(jdi->link1);
+>> -       if (ret < 0)
+>> -               dev_err(panel->dev, "failed to set display off: %d\n", r=
+et);
+>> -
+>> -       ret =3D mipi_dsi_dcs_set_display_off(jdi->link2);
+>> -       if (ret < 0)
+>> -               dev_err(panel->dev, "failed to set display off: %d\n", r=
+et);
+>> +       dsi_ctx.dsi =3D jdi->link1;
+>> +       mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+>> +       dsi_ctx.dsi =3D jdi->link2;
+>> +       mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+>>
+>>         /* Specified by JDI @ 50ms, subject to change */
+>>         msleep(50);
+>
+> Needs to be mipi_dsi_msleep() to avoid the sleep in case the above
+> commands caused an error.
+>
+>
+>> -       ret =3D mipi_dsi_dcs_enter_sleep_mode(jdi->link1);
+>> -       if (ret < 0)
+>> -               dev_err(panel->dev, "failed to enter sleep mode: %d\n", =
+ret);
+>> -       ret =3D mipi_dsi_dcs_enter_sleep_mode(jdi->link2);
+>> -       if (ret < 0)
+>> -               dev_err(panel->dev, "failed to enter sleep mode: %d\n", =
+ret);
+>> +       dsi_ctx.dsi =3D jdi->link1;
+>> +       mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+>> +       dsi_ctx.dsi =3D jdi->link2;
+>> +       mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+>
+> I think you need this here:
+>
+> if (dsi_ctx.accum_err)
+>   return dsi_ctx.accum_err;
+>
+> ...otherwise the code will do the sleeps, GPIO calls, and regulator
+> calls even in the case of an error. You don't want that. Then at the
+> end of the function you'd just have "return 0;"
+>
 >
 
-I have included patches 2-6 here:
-https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.g=
-it/log/?h=3Drcu.merge.16.07.2025c
-for testing
+Regarding these two suggestions, I prepared this patch with the intent
+to change the drivers actual behavior as little as possible. It looks
+like the original driver will happily msleep and try to continue
+initialization even after an error has occurred. Of course, using the
+_multi variants of mipi dbi functions kind of implies that we want to
+stop communicating with a display after an error has occurred. And
+because all _multi functions are effectively no-ops after an error has
+occurred, it doesn't make sense to perform the other half of the
+initialization sequence while anything involving mipi is dutifully
+skipped.
 
-Fixed few whitespaces errors in the documentation.
+I'll make these changes in the next patch revision.
 
-I see below warnings while doing `make htmldocs`. Can you suggest a
-fix for these?
+>>  static int jdi_setup_symmetrical_split(struct mipi_dsi_device *left,
+>>                                        struct mipi_dsi_device *right,
+>>                                        const struct drm_display_mode *mo=
+de)
+>>  {
+>> -       int err;
+>> +       struct mipi_dsi_multi_context dsi_ctx;
+>
+> I think you should actually pass in the "dsi_ctx" to this function
+> since the caller already has one. Then you can change it to a "void"
+> function...
+>
+>
+>>  static int jdi_write_dcdc_registers(struct jdi_panel *jdi)
+>>  {
+>
+> I think you want to pass the context into this function too and make
+> it "void". Then the caller doesn't need to check for the error before
+> calling it...
+>
+> Then the "msleep(150)" after calling this function can change to a
+> `mipi_dsi_msleep()` and you don't need to check the error until right
+> before the LPM flag is cleared...
+>
+>
 
-Documentation/RCU/Design/Data-Structures/Data-Structures.rst:305:
-ERROR: Unexpected indentation.
-Documentation/RCU/Design/Data-Structures/Data-Structures.rst:307:
-WARNING: Block quote ends without a blank line; unexpected unindent.
+About the suggestion, "you don't need to check the error until right
+before the LPM flag is cleared...", if I change
+jdi_setup_symmetrical_split to accept a mipi_dsi_multi_context pointer,
+the driver will output "failed to set up symmetrical split" even if the
+error was encountered well before setting up the symmetrical split
+(meaning the driver doesn't even try to set up symmetrical split at all).
+
+The appropriate solution will be to either maintain the error checks in
+the driver, or remove the print statements. For the next revision, I'll
+simply go ahead and remove the error print statements because:
+  - the mipi _multi functions should handle error printing well enough
+    to facilitate tracking down the particular mipi sequence which
+    caused an error during probe/unprepare.
+  - less logic in this driver makes it easier to maintain
+
+>> +       struct mipi_dsi_multi_context dsi_ctx;
+>> +
+>>         /* Clear the manufacturer command access protection */
+>> -       mipi_dsi_generic_write_seq(jdi->link1, MCS_CMD_ACS_PROT,
+>> +       dsi_ctx.dsi =3D jdi->link1;
+>> +       mipi_dsi_generic_write_seq_multi(&dsi_ctx, MCS_CMD_ACS_PROT,
+>>                                    MCS_CMD_ACS_PROT_OFF);
+>> -       mipi_dsi_generic_write_seq(jdi->link2, MCS_CMD_ACS_PROT,
+>> +       dsi_ctx.dsi =3D jdi->link2;
+>> +       mipi_dsi_generic_write_seq_multi(&dsi_ctx, MCS_CMD_ACS_PROT,
+>>                                    MCS_CMD_ACS_PROT_OFF);
+>
+> All the duplication is annoying. In "novatek-nt36523" I guess we only
+> needed to send _some_ of the commands to both panels and so we ended
+> up with a macro in just that C file just for
+> mipi_dsi_dual_dcs_write_seq_multi(). ...but here you seem to be
+> needing it for lots of functions.
+>
+> Maybe the solution is to add something like this to "drm_mipi_dsi.h":
+>
+> #define mipi_dsi_dual(_func, _dsi1, _dsi2, _ctx, _args...) \
+>   do { \
+>     (_ctx)->dsi =3D (_dsi1); \
+>     (_func)((_ctx), _args); \
+>     (_ctx)->dsi =3D (_dsi2); \
+>     (_func)((_ctx), _args); \
+>   } while (0)
+>
+> Then you could have statements like:
+>
+> mipi_dsi_dual(mipi_dsi_generic_write_seq_multi, jdi->link1,
+> jdi->link2, &dsi_ctx, ...);
+>
+> I _think_ that will work? I at least prototyped it up with some simple
+> test code and it seemed to work... What do others think of that?
+
+In my opinion, this change is absolutely worth making, but the creation
+of a new macro like mipi_dsi_dual in drm_mipi_dsi.h is beyond the scope
+of this patch series because it has implications for panels like
+novatek-nt36523 and others. It looks like you've already effectively
+completed the work of implementing the macro, but I'm happy to address
+the adoption of the macro in lpm102a188a and other drivers as a part of
+a later patch series. Besides, there is no more duplication in this
+driver after applying my patch than there was before.
+
+Of course, maybe that's just me being pedantic. I'm happy to include
+mipi_dsi_dual in this series if you insist.
 
 
-- Neeraj
+Thanks for the thorough review,
+Brigham
 
