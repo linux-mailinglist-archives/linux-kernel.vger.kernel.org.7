@@ -1,155 +1,148 @@
-Return-Path: <linux-kernel+bounces-733915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7CAB07A9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:05:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0BCB07AAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFB33A65B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D611C24209
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E937C2F5333;
-	Wed, 16 Jul 2025 16:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028EB2F532D;
+	Wed, 16 Jul 2025 16:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2zLZRiD"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ArlYSt5M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15B11A238C;
-	Wed, 16 Jul 2025 16:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415331A238C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752681917; cv=none; b=D2VOMuSIpAoqTLLRhfYrOJAmK2tDSzR8DF8sOtdtMabyTVZCW/Jr8QOY9MKZvIPjhqm/SsSeIWJaq7RGcKOMaCgNntqUmtMicuVBcmCwzZkZP8X3VJ3jf7v9vMGyG7dYefveziU0g3QWBmNG/pZZVWq2/hkK29nKY8LvILvBIcs=
+	t=1752682006; cv=none; b=kG2pUZryfh+AtlkMVE3Kjl8OAL7Wu1pDc5NNVigR5/2/eUQZZow5R6dg+r2PifnTSi2ovLARSXOn0vqWYORgnrb5/DSxK7wFHlIkf1fXvqX9PYLK3zx3p6hcGjS10/p6R3JoTY//I2kOia4f7vL66cqQFEBSt2uJmRVWiBFW4Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752681917; c=relaxed/simple;
-	bh=G3lPuCUApuGC7TO34cTcefS+Ne/XTuyO/jotSPqhVf0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iGkvJtH80Ru63ej+A9cKa5o5B7EfxeMAw1uVWldloerrRADGp7gVGWJBzWKfgKM9R3SM24PbKD0kYrT4nFrjSi+vgbTSS6kGpWwrkRpHMwr+3YV7FkdRe+atiJlc6lxbkgQ5cgDrVXwSwRCKOvLEWHS/D4RPbLkTGofnzIzCTdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e2zLZRiD; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-235ef62066eso98053365ad.3;
-        Wed, 16 Jul 2025 09:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752681915; x=1753286715; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=UVgMRJ+lsyx/5PbwWdT9sHA9aSAXobVSKmVW6fnzwaE=;
-        b=e2zLZRiD1O1gDZE2OSeDwOjAQMPvETOtWk5k6GFoaoufkXTefruzNa2XRk0U9NTeXf
-         1O4BiskV4U3yIkUzsWfl8wl+RvAKotberJcI7O0ee53FeKjfCb6e9D2le2iI7sj2LqPy
-         J7+HRzVq0kYof8EdBt8BRgzk4RPBCHypJVeXhiXJKX3QTDJSiyel8uNSjVDFXxcshrB/
-         oeB25m0f3yfFWPPTYt5OqEnpb++WNyBEejeIEkl1v0HEGKK7TJtgUR24sQ6/5gNzJaPI
-         bl1IUVkmIo8KeasClM+Cv/YXWi1D09sicSkoyShYK2LzIaJASMrEfqhQuUYxnW2bJcKh
-         2Yhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752681915; x=1753286715;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UVgMRJ+lsyx/5PbwWdT9sHA9aSAXobVSKmVW6fnzwaE=;
-        b=B1yokx8ePrqaJdX/wD5ZnaVUJLyOyopK0oNBragba7BfZvCo0ivAVyNqakWlo4gd30
-         4Z04YnJQpsE83YppXcnrOmXWI9BBspbz7ZYDHv8YrG/JW/uc7gOe8CuU8fujWZObzCSj
-         /fFd8+rhu+VZoDliSJAen6X28TL/J83WxQ2xlfp1Z8L35d/iaplNoHFp4BjRKUc1ERrg
-         NxEKDMZGnC9pN7omjUiluN8M6FY1LwFVOppvveyq+ETnBDgy3nNL0iHKeyyQWfcJfLID
-         rqP30GtrKKhJJh6R13O0MhhJmA/rdeU65cgLKWdlDGHDev5mwDF0LpIYboVx9Y23NEGH
-         zLYA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1cjrY4Ajzb7pCuE9Jb8odLKZgy76YYYTSURWnnteJf0t3qXUgzcXzMfIQq3MSbXnqbEeOYwviNJvC078=@vger.kernel.org, AJvYcCWhkAIzKwztldSGC/o6JqAXZv36VnmcceAeZ3Cv2DHSPW4FdZ+Xz2sM3/CNqdfDc0agvs+gJF1FWgw0@vger.kernel.org, AJvYcCX0MolqF7iYkeJgVoOCVyIxuHaO+dc+cPiL1Emx8NaeRWL75rrfI2RdfVFTtnBLeLpEjvGg/2S5ro9N@vger.kernel.org, AJvYcCXD12rJRHpoZBmGK7YSEuZUPBuuFBw/Ly/tqXTcfrfYxU4UOnFCy7PNVR0glHXr4fwnT9pyaMZCwvcBMY73@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAY1ZrkDtp9fGUU82Jk/EY2SJiYo0gSlsFUgQQ7lN30muQcdOM
-	gbMtHYucszrR/nPdsCaz88q5iYzJuwwLEwLvITR1ROiWPAkyCpiy9rZna0IVqg==
-X-Gm-Gg: ASbGncvL81Kit2AvVvi5PYC2BSj06dce+8Cv9eFBBMxrihxTx20fejxANRxuyIJqURS
-	E1ppJgAq4v3iRulHa/B7hSE2gLcCLiWUxGy0dVHjRzSSGMua2UnU9wdbR0A3QNzk92fKSc/lsvT
-	Xpg0pYZTVjXBx9qI/gRVtQCDMFALDH1x+euk8xsBdN4i0MeX2ARfatrVFZ6DvN9X7xdlt1WsDH+
-	MFN/NlakYcgGHsnNTTmalEXlANmgYRPqB6EEHarb84Hd0yoQsbkbspJGqn+vlYTD786LXdLSGt7
-	Ff2xf9jSFaHobczeykXxP2AMldq1mFT3HGiJsQ9N86m0q3XalOTFc/amTFE1rG/Z9jxOvmdXmNV
-	53YzuWSF6tdbxgKcO8jgyhEL0PMUvf5eCpFxpbfHs76h7Qejn9iJwU3pw2FiX+28BJ0ObdSo=
-X-Google-Smtp-Source: AGHT+IE38TH5BqmUcE1KaBCkXrsa7LbdbYBffiWCQ78LHEVGn4nG6nxZ9B4/8q3QWyrc6uY70QwxIg==
-X-Received: by 2002:a17:902:cf0f:b0:234:c5c1:9b84 with SMTP id d9443c01a7336-23e24f5516emr49931035ad.37.1752681915052;
-        Wed, 16 Jul 2025 09:05:15 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4323df7sm127453915ad.134.2025.07.16.09.05.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 09:05:14 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e02cda3e-799f-42bc-8651-108a258b3d85@roeck-us.net>
-Date: Wed, 16 Jul 2025 09:05:12 -0700
+	s=arc-20240116; t=1752682006; c=relaxed/simple;
+	bh=RDZ2mWTbje6hcyX2e5UzBfo7bV8KZYGf2bR9tlyCjaA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DcCQe9Pmat9n1BFBhj7sfY/yFGWMb15JgvhmVWw/Ldr8deSIc5mnimpRbVzeJHDrGkX1e/DuzT3/jG7vdLeVhYFKeRBdeKQv2TJZZOEf6hPaaj8b4RvvqJJcTXd8n+CB0ZDr5R0+7lOkJWV6ramjLSmaY5MYbinHVT1N+EnKqM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ArlYSt5M; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752682002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DJweZ7HAhOTKs1636oOLj3qAauQsQxFHS9Twe1Kbvb4=;
+	b=ArlYSt5MCyqT3E+uR7loVOb+seb1P8oa8LuPdEmyGw1TPzH1WL+gtnAq7Cv9alBJH67AwQ
+	vQKUKR+0+T6nRHma5EG5M9RKx3bVn1LT5PcSCOt6JZbrXvyLEPFE9PGpgMlMYVkZICb3WQ
+	Cy5FjWnUnEfk+SSHG4EV2ARjGKv/tjY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-134-oIzkRSOUM3OQqbGbgzI0QA-1; Wed,
+ 16 Jul 2025 12:06:40 -0400
+X-MC-Unique: oIzkRSOUM3OQqbGbgzI0QA-1
+X-Mimecast-MFC-AGG-ID: oIzkRSOUM3OQqbGbgzI0QA_1752681999
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A5E291800371;
+	Wed, 16 Jul 2025 16:06:39 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.33.144])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4678B19560AB;
+	Wed, 16 Jul 2025 16:06:36 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.org>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Subject: [PATCH v2 0/4] sched: Run task_mm_cid_work in batches to lower latency
+Date: Wed, 16 Jul 2025 18:06:04 +0200
+Message-ID: <20250716160603.138385-6-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] drivers: hwmon: add EMC2101 driver
-To: =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
- jdelvare@suse.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- corbet@lwn.net, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250709164829.3072944-1-noltari@gmail.com>
- <20250709164829.3072944-4-noltari@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250709164829.3072944-4-noltari@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 7/9/25 09:48, Álvaro Fernández Rojas wrote:
-> The Microchip EMC2101 is a SMBus 2.0 fan controller with temperature
-> monitoring.
-> It supports up to 1 fan, 1 internal temperature sensor, 1 external
-> temperature sensor and an 8 entry look up table to create a
-> programmable temperature response.
-> 
-> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+This V2 of [1] is a continuation of [2] but using a simpler approach.
+The task_mm_cid_work runs as a task_work returning to userspace and
+causes a non-negligible scheduling latency, mostly due to its iterations
+over all cores.
 
-This looks very much like a clone of LM63. Why does it warrant a new driver ?
+Split the work into several batches, each call to task_mm_cid_work will
+not run for all cpus but just for a configurable number of cpus. Next
+runs will pick up where the previous left off.
+The mechanism that avoids running too frequently (100ms) is enforced
+only when finishing all cpus, that is when starting from 0.
 
-Guenter
+Also improve the predictability of the scan on short running tasks by
+running it from rseq_handle_notify_resume, which runs it on every task
+switch (similar behaviour to [2]), the same workaround on the tick for
+long running tasks seen in [2] was ported also here.
+
+Patch 1 add support for prev_sum_exec_runtime to the RT, deadline and
+sched_ext classes as it is supported by fair, this is required to avoid
+calling rseq_preempt on tick if the runtime is below a threshold.
+
+Patch 2 moves the directly calls task_mm_cid_work instead of relying on
+a task_work, necessary to avoid rseq_handle_notify_resume being called
+twice while enqueuing a task_work.
+
+Patch 3 splits the work into batches.
+
+Patch 4 adds a selftest to validate the functionality of the
+task_mm_cid_work (i.e. to compact the mm_cids).
+
+Changes since V1 [1]:
+* Use cpu_possible_mask in scan.
+* Make sure batches have the same number of CPUs also if mask is sparse.
+* Run the task on rseq_handle_notify_resume as in [2] but call directly.
+* Schedule the work and mm_cid update on tick for long running tasks.
+* Fix condition for need_scan only on first batch.
+* Change RSEQ_CID_SCAN_BATCH default to be a power of 2.
+* Rebase selftest on [2].
+* Increase the selftest timeout on large systems.
+
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@redhat.org>
+
+[1] - https://lore.kernel.org/lkml/20250217112317.258716-1-gmonaco@redhat.com
+[2] - https://lore.kernel.org/lkml/20250707144824.117014-1-gmonaco@redhat.com
+
+Gabriele Monaco (4):
+  sched: Add prev_sum_exec_runtime support for RT, DL and SCX classes
+  rseq: Run the mm_cid_compaction from rseq_handle_notify_resume()
+  sched: Compact RSEQ concurrency IDs in batches
+  selftests/rseq: Add test for mm_cid compaction
+
+ include/linux/mm.h                            |   2 +
+ include/linux/mm_types.h                      |  26 +++
+ include/linux/sched.h                         |   2 +-
+ init/Kconfig                                  |  12 ++
+ kernel/rseq.c                                 |   2 +
+ kernel/sched/core.c                           |  92 ++++++--
+ kernel/sched/deadline.c                       |   1 +
+ kernel/sched/ext.c                            |   1 +
+ kernel/sched/rt.c                             |   1 +
+ kernel/sched/sched.h                          |   2 +
+ tools/testing/selftests/rseq/.gitignore       |   1 +
+ tools/testing/selftests/rseq/Makefile         |   2 +-
+ .../selftests/rseq/mm_cid_compaction_test.c   | 204 ++++++++++++++++++
+ 13 files changed, 323 insertions(+), 25 deletions(-)
+ create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
+
+
+base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
+-- 
+2.50.1
 
 
