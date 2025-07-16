@@ -1,142 +1,163 @@
-Return-Path: <linux-kernel+bounces-733727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A440B07846
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:39:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D010AB0783F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 627EE16EE8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:38:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C17D9564C7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C65D261594;
-	Wed, 16 Jul 2025 14:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F86F19AD5C;
+	Wed, 16 Jul 2025 14:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FYg4ahoW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="H+SOQg/N"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FC3233156
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6E91E9B04
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676723; cv=none; b=Rw75FcvYIJEuB8UEEwUE1ZEj3hZjPh3TI7ItcEEtBTOrNa9XkLkVhKBVGHn2wmJ88Zor4dPO9ZAN5dBYoFK0camPP4llZqIBA1D4fGj0qO8ob6zFUC6mgIh/EQQiM2T8b7HtcjevS2iqsCcAleyjJkAW9dtp9ck4Wa+72JFOVJE=
+	t=1752676589; cv=none; b=mNoLp8gb0E4P//MTn5wH/P5rDRewcn9xn0SSodyeIFMHn/6jiZ+5F8Ytn2nJBf8hraZuiBQVzIMVr+6jgi5IS08RCqt0jU1W07N6w3Juumk6aQhlB3FoNk+Erzk8Q++XiwcptrywDfDOJ4kVxVGqysXFlgR2+zycET2pqUtbIro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676723; c=relaxed/simple;
-	bh=oWT4UhuprBU4uzVFD1aAq+uce9GMDclGkVsEh4frCuM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QlXd2PzdUIIPOoy7BQ0k+s/rcmhy23cLl95DGkYuDZheDBjQZYkv3ijTHrQVsFOAogE7BpXZuk7fdTJX9DyUiHSLoTlkuxkctOjwK6KStbq/xn02D+xCLfBgYbDaYrNoddVR0GlJ8L24oGW4CCF8H5UQv8mZT7PDXZRuTGL8G58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FYg4ahoW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752676720;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ajHJ2tQ5qM4LcKhMqVWF3mLSk9Qiueaa/5Dboted428=;
-	b=FYg4ahoWYiOhw7bATDebMzo+cGkR8WUGSw78OFszcnGPnLsIJpgpuK3UsKNbTjTjvBxynL
-	HZPP2g707v7OQgYCHr6mgfOAz59c7R1Pr+O/+YCJ3guO5KXJBPtFYRfOh1+suY5eR0j+Ih
-	tJxDpVQ/wQ+cVPI22F4Lfk+bh9oqaJc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-183-OGphlmYKOEqL5iCXAj5I7A-1; Wed,
- 16 Jul 2025 10:38:38 -0400
-X-MC-Unique: OGphlmYKOEqL5iCXAj5I7A-1
-X-Mimecast-MFC-AGG-ID: OGphlmYKOEqL5iCXAj5I7A_1752676718
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C518D195608B;
-	Wed, 16 Jul 2025 14:38:37 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.224.115])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2759419560AB;
-	Wed, 16 Jul 2025 14:38:34 +0000 (UTC)
-From: Tomas Glozar <tglozar@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	John Kacur <jkacur@redhat.com>,
-	Luis Goncalves <lgoncalv@redhat.com>,
-	Attila Fazekas <afazekas@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>
-Subject: [PATCH] tracing/osnoise: Fix crash in timerlat_dump_stack()
-Date: Wed, 16 Jul 2025 16:36:01 +0200
-Message-ID: <20250716143601.7313-1-tglozar@redhat.com>
+	s=arc-20240116; t=1752676589; c=relaxed/simple;
+	bh=kWi9q2Y7BtCTuQpXIsV0qVlJCPRpa73NHUr4PkpWIKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cSZoGd6O8aRFzWMhejxW7haXLLrbf0jahYV5nhFra84lxI4JvKokt/dHhFT498TYdh7xcYrxHMnnMHqiEe8yunWFkMy3XpLNaGgGehampbSUq6eDKsI1K6UfPsb/S1Jmu90VlKiLSiUDZcFx2BHvMvT/xTIR85jiXJJsyErSb9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=H+SOQg/N; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GCsMqJ007235
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:36:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yA4UmYowfV6ZSvtoqDZ9mQILLwvVdlfWPK/+o9PtKoc=; b=H+SOQg/NHM9CFRFb
+	Kn2gVgKcJwJLi5vLKyZZpivTylywC1NYYM0Es66fRRgrn21qPug79nha9ZwpgpiR
+	dJiykYMXPG3dGzxnKuIgADcyOjVnMBOB35H7mZ9uT4Tcd5CuUVL/Oy1RyK7wRAs/
+	EWDoj2iaQXjc1qNMUI4atZsQ/TeNvGb82UYD41ziAPTgkV3RLajqoxN/DGQIFc7u
+	3tr7W5ki2OLIhtBehs9xkEXg9/qEUgN2zEnEpkPfOSckSlHKZcAQ4HMKkEEj8euT
+	+oq5VRU/mzmz0fQOPSOYYTQ2xtYPkA95a4/jmu2uAg+J6AJB7gw3gorx8FyJXEgo
+	F/zYgg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5vfan-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:36:27 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab401e333bso18369581cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:36:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752676586; x=1753281386;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yA4UmYowfV6ZSvtoqDZ9mQILLwvVdlfWPK/+o9PtKoc=;
+        b=mAoRJNYfFNd00+XwdFsYkyXKEG9CwIefvQYbUq66MdaIQs5bNMN72t9wF3c8kVgIPr
+         l0/XypeZPNe4hgGmgd2/9pcrX7Aeq2c6dD9f6At9Uz9VbKFIDVDzZhI8LIBkail0ciCT
+         FszY56me0X+yQJF2cY+N40osPkAFMvV+vYxa1F3TceP+9/HN2tsMRjybfnMza3lqWPhL
+         XM68QWrotJ0X4jTCXeGdx+8NcY+S3fk6HjWEcAyCnhIkxLah1j9fCIXeJT6QGiQyfmbY
+         59vM/fhpYA1g8Bxm7ep+PB/z+h1knnM1rPemRvJDOW8yNGTT/QmPk9O0Q3yC2wLH/liO
+         ikmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPhe8xdXnLgtGym+M09jmtoR1+KKh43y/1/TFfWXaTI3G5Z1J8dYJ5vjWB2Tah7SxN06Jn1/RzYJr6hVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKAbcqwzC+4hHm9aWmy5MlmkH5hisD9FIeqTaODGzSD6Jtvyop
+	R+3ufaifkJILFhVmSrLJPnq7FXJej8kn1/dBPWkoedBU/Qmz+D1f2iFd6j8l2LuHxQbJBjiQInE
+	qagCFgcMyJrTSxkFaL+EhgLcm5P1jHv/DzufCJlYleXkl4JTUx/U7om6NNYdiGhxdRq8=
+X-Gm-Gg: ASbGnctl+K63ko+8SOr/gEHYmcbYji7373m4RINecEWlbj28mht1zrlNM34bNSJ4BfJ
+	sM5JT9PCu6Qfwe2j0D8JtACSHGmkzLBF/v8pIpnk3ElbUcO/B3Jj/McIlEptHPD8Q49wIjI9iKm
+	ii5qFFid+EENEOlk8WZs7kO0TOaKQ3WNGqWr5VyQDkOcaIUYt0K5Rf+K7l7lPNxFjxhNHsPzvuw
+	+dsivhHbg9d5WpCgAjlIeHKWmxFbFIi2/SO2MER422gDNfTa6gWqZkcafeOat+nt9Lxouww9kNf
+	iF5iS4dTqxD98HfCIuRdaGgi+SUq98GTJKHmXRa/ytpWWZvH5ko1kMl4xDLwGq4djd8=
+X-Received: by 2002:a05:622a:4cc8:b0:4ab:5b15:fdb1 with SMTP id d75a77b69052e-4ab7f9511eemr119396371cf.15.1752676586191;
+        Wed, 16 Jul 2025 07:36:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGi5okhmPc18F4MSl3Ewd57VpwWpM4vQ1vHWNcrZD3NgHSt79iUlTK7PnkvhFJVebZUhBEygw==
+X-Received: by 2002:a05:622a:4cc8:b0:4ab:5b15:fdb1 with SMTP id d75a77b69052e-4ab7f9511eemr119395741cf.15.1752676585545;
+        Wed, 16 Jul 2025 07:36:25 -0700 (PDT)
+Received: from [192.168.68.118] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc2464sm18418111f8f.38.2025.07.16.07.36.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 07:36:25 -0700 (PDT)
+Message-ID: <6de11c01-5b59-4222-9f4a-c951c74f0128@oss.qualcomm.com>
+Date: Wed, 16 Jul 2025 15:36:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] ASoC: codecs: wcd939x: move to using dev_get_regmap
+To: Mark Brown <broonie@kernel.org>
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, srini@kernel.org,
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, neil.armstrong@linaro.org,
+        krzysztof.kozlowski@linaro.org
+References: <20250716123323.5831-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20250716123323.5831-5-srinivas.kandagatla@oss.qualcomm.com>
+ <9f4c750a-9e23-45a0-a761-4c3fc2c7d8c9@sirena.org.uk>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+In-Reply-To: <9f4c750a-9e23-45a0-a761-4c3fc2c7d8c9@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=6877b8eb cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=iuNjYCSt-HKeNY_OgDcA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: ZT89UVZRFtQwHjQxHikHltP9-7cQrhtn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzMiBTYWx0ZWRfX90685CTUCQDR
+ 8NUsbBMwW12ikNi+6c5ce9btrqZjjY5Ie3Uq83EpFlueDICa8G2HC+RhmYgM4Jryj/0IVVXnr9f
+ NNDZO1c9T3LfqFuD8rUNcBeEDMgpJP8a3mCCRXCanPtVfyIwxjqkvC7hRxkBwoOydYN1buu0Zv3
+ exVUOmAzOxUxbi07rTgP0qG0lRMrhU+YZGpqr3ubPllw81b0Mn3DMMGxI43rOguFwCNAb/aFu12
+ EaDa+hNnf9wnh1udSvdRgrIZOmmnU/2uJtAGUQFlj9gzVe4w/7gMvMVHkHVJ2MDv7xNJVRxevin
+ uWTOBS8CBZiHSfGbU0CmanfnrhqqtQL2fXhIBKbp6d05JAXmSBs67TXV5PaY4NgqvXvN39UNNNI
+ YkTcEusG9Y+zFZBad4HvmroMLVtHGr2NCAksBSkTuUYjRy6w5jHsVS0zno8ocCC/3qKU/J55
+X-Proofpoint-ORIG-GUID: ZT89UVZRFtQwHjQxHikHltP9-7cQrhtn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 mlxlogscore=707 mlxscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160132
 
-We have observed kernel panics when using timerlat with stack saving,
-with the following dmesg output:
+On 7/16/25 3:31 PM, Mark Brown wrote:
+> On Wed, Jul 16, 2025 at 01:33:22PM +0100, srinivas.kandagatla@oss.qualcomm.com wrote:
+> 
+>> Ffor some reason we ended up with a boiler plate for dev_get_regmap in
+>> wcd939x codec and started exporting a symbol for this. Remove this
+>> redundant wrapper and direclty use dev_get_regmap from device pointer..
+> 
+>> -struct regmap *wcd939x_swr_get_regmap(struct wcd939x_sdw_priv *wcd)
+>> -{
+>> -	if (wcd->regmap)
+>> -		return wcd->regmap;
+>> -
+>> -	return ERR_PTR(-EINVAL);
+>> -}
+>> -EXPORT_SYMBOL_GPL(wcd939x_swr_get_regmap);
+> 
+> 
+>>  	/* Get regmap from TX SoundWire device */
+>> -	wcd939x->regmap = wcd939x_swr_get_regmap(wcd939x->sdw_priv[AIF1_CAP]);
+>> -	if (IS_ERR(wcd939x->regmap)) {
+>> +	wcd939x->regmap = dev_get_regmap(wcd939x->txdev, NULL);
+>> +	if (!wcd939x->regmap) {
+> 
+> The existing code should be more efficient than dev_get_regmap(), the
+> latter does a devres_find() to look up the regmap while the above is
+> just a pointer dereference.  It's probably a marginal difference in the
+> context of probe() but there is a reason to do something more direct if
+> you can, dev_get_regmap() is mainly intended for generic APIs that get
+Thanks Mark, I did not realize that dev_get_regmap was devres search at
+the end, Will drop this patch and make something similar changes to
+other codecs too.
 
-memcpy: detected buffer overflow: 88 byte write of buffer size 0
-WARNING: CPU: 2 PID: 8153 at lib/string_helpers.c:1032 __fortify_report+0x55/0xa0
-CPU: 2 UID: 0 PID: 8153 Comm: timerlatu/2 Kdump: loaded Not tainted 6.15.3-200.fc42.x86_64 #1 PREEMPT(lazy)
-Call Trace:
- <TASK>
- ? trace_buffer_lock_reserve+0x2a/0x60
- __fortify_panic+0xd/0xf
- __timerlat_dump_stack.cold+0xd/0xd
- timerlat_dump_stack.part.0+0x47/0x80
- timerlat_fd_read+0x36d/0x390
- vfs_read+0xe2/0x390
- ? syscall_exit_to_user_mode+0x1d5/0x210
- ksys_read+0x73/0xe0
- do_syscall_64+0x7b/0x160
- ? exc_page_fault+0x7e/0x1a0
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-__timerlat_dump_stack() constructs the ftrace stack entry like this:
-
-struct stack_entry *entry;
-...
-memcpy(&entry->caller, fstack->calls, size);
-entry->size = fstack->nr_entries;
-
-Since commit e7186af7fb26 ("tracing: Add back FORTIFY_SOURCE logic to
-kernel_stack event structure"), struct stack_entry marks its caller
-field with __counted_by(size). At the time of the memcpy, entry->size
-contains garbage from the ringbuffer, which under some circumstances is
-zero, triggering a kernel panic by buffer overflow.
-
-Populate the size field before the memcpy so that the out-of-bounds
-check knows the correct size. This is analogous to
-__ftrace_trace_stack().
-
-Cc: stable@vger.kernel.org
-Fixes: e7186af7fb26 ("tracing: Add back FORTIFY_SOURCE logic to kernel_stack event structure")
-Signed-off-by: Tomas Glozar <tglozar@redhat.com>
----
- kernel/trace/trace_osnoise.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Note: This has been so far only reproduced on laptops (three different
-machines). Not sure what the reason for that is, but it is clearly
-a bug.
-
-diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-index 6819b93309ce..fd259da0aa64 100644
---- a/kernel/trace/trace_osnoise.c
-+++ b/kernel/trace/trace_osnoise.c
-@@ -637,8 +637,8 @@ __timerlat_dump_stack(struct trace_buffer *buffer, struct trace_stack *fstack, u
- 
- 	entry = ring_buffer_event_data(event);
- 
--	memcpy(&entry->caller, fstack->calls, size);
- 	entry->size = fstack->nr_entries;
-+	memcpy(&entry->caller, fstack->calls, size);
- 
- 	trace_buffer_unlock_commit_nostack(buffer, event);
- }
--- 
-2.47.1
+--srini
+> passed a struct device.
 
 
