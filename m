@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-732661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C883B06A53
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:12:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F54B06A59
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C76494E452A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A4B1A6371A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461434A08;
-	Wed, 16 Jul 2025 00:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5314FDDAD;
+	Wed, 16 Jul 2025 00:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Bgku7uGO"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnqcTWqm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BDD20EB;
-	Wed, 16 Jul 2025 00:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B9010E4;
+	Wed, 16 Jul 2025 00:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752624731; cv=none; b=BIAfJ5ZIkgk2eVS/sTaBNLDrO3NIC/+93B4tcaAqn1lqVp1CKbsG1RUQKGNsR2vrr5jXcuZ76kxKnUI0C6wBtmBVZ0GzzZZ4ohcMUv8+UgsWmXTV8rEC6osonQfyvaS+zsTKMlWY9UrnVy+10KdMHDdz/iQb8Uf/UeBOB0wSYSY=
+	t=1752624896; cv=none; b=Pv17Ssv8YURwD28uC/ePAbPTjAaU4U3mUX24HgANp/w7VBImTJOwN6b5WKdV7Cj44atyt/49+8VS1fkNe1xLfbkAem7Hj7ovw8RC4gp/ACZzUHJ4YpjIZAIKQAH1FxHQ2FGimtk/FUoPd3mpJxFLgSOZ84PM8cwgARDUUFzes8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752624731; c=relaxed/simple;
-	bh=+u/jGslySO5xdEMu6aS2DWSW2tM57c6IFs/o/Dq1cTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zap7YutDzEr6JlTfJnLx0A1UuWfylhUD5ZWF7qeRDbIEdCBZvwjMJNsFq2oVmaU0BlYN6+WkJ2K9fKgdvM03jhJI9fXDdTOpukQzZPpZEcyQDpjeBCu/Bp6jppo4Hi59BZVhgkJZDsw+YqlfQSQTVvhfnLwi+r2WorC2+Wpbvew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Bgku7uGO; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 09DC07E1;
-	Wed, 16 Jul 2025 02:11:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752624695;
-	bh=+u/jGslySO5xdEMu6aS2DWSW2tM57c6IFs/o/Dq1cTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bgku7uGOMTCaysTpNMft5AZXqXl0YiW1UrpfPX5noFDwzB5JBnBTyjBsPwqc+tpX4
-	 ahxSUVI6sC3YdCI5nlztvabrX3Yd/82X6CY00VQsLB1d6uqI5eSA9t1T7YNKDrUb1K
-	 DGkxup6Gv6HQ3Szlaz+6a4vttnwYaFJXMM1NJZxM=
-Date: Wed, 16 Jul 2025 03:12:05 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mirela Rabulea <mirela.rabulea@nxp.com>
-Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-	hverkuil-cisco@xs4all.nl, ribalda@chromium.org,
-	jai.luthra@ideasonboard.com, laurentiu.palcu@nxp.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	LnxRevLi@nxp.com, julien.vuillaumier@nxp.com,
-	celine.laurencin@nxp.com
-Subject: Re: [RFC 0/2] Add standard exposure and gain controls for multiple
- captures
-Message-ID: <20250716001205.GG19299@pendragon.ideasonboard.com>
-References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
- <20250715235952.GE19299@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1752624896; c=relaxed/simple;
+	bh=k5OvjG9s0R19eoy3cMVHKQqAhl4eqqomEfMHhgz3iD8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eVe8U0uIPl6zHe8BIQcN7cs/MaiSXM6m+Y0d07c6NNvTD8o+mw0zMZKtQSTd3NhMYBZzo1sO52B2Lbua4NxrY0jNhl6Zd9jfEJjcEZOQQ/y7ZtL11gHIe9uS4ur6DL82dgOFsI7FIH1AQvXYg/a+A+TWhcjv1OkpiCAlMt8h4/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnqcTWqm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4459CC4CEE3;
+	Wed, 16 Jul 2025 00:14:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752624896;
+	bh=k5OvjG9s0R19eoy3cMVHKQqAhl4eqqomEfMHhgz3iD8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WnqcTWqmRYE8aMLNzExoRV/ovIjjDMvESJktdmkOsMRpeboy7J4ojzwEoMHL+tcY4
+	 ka8COuzLwX6WWyMaZOAhuRbpK1F+NXJWgSOlRLx1EZ6LPf3dbmDC3/nSxIyuZ3r4yE
+	 Jfr7jfpaaaOUWljAn79a561UBVZyUMCq+flPfEx61JS1V1EN1xMH2filvXkoWHRIL1
+	 gOAdRllwluWRdqJBR8o3Kp1CGQ8+afb2beUpCLDnwKSR0lrxixrpBAEVWvDWX15w4E
+	 sdGpekn5/WHVikw+EVW67FzTmo47KBXBLKwV1JqG9VN0y1I0InMMeNe9E6Nsjk8OAP
+	 zWA3ajczpf/TA==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553b16a0e38so6292534e87.1;
+        Tue, 15 Jul 2025 17:14:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVK5iO7qlYGR9gclGtGFHNyWjOywv55c2ahLUlCceTZGNNOwmUmtNLtWp29w6kiXvWx7sxtmWhPVnOwRqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMHKewgx8jlD/sAB4KGO0EEi7+rHXf+zgpsT5fpdqaIJ9n2Gqb
+	PIwtHsP6UEoqGAP5Kz+qSeERDV57mEilqC7egvIWEpnqUwDoHEC2wiReSym+yzsCmTWukORIAca
+	+WjNzHDcDd0gdTvBhp2r42qRSmbt04Bw=
+X-Google-Smtp-Source: AGHT+IEk/hpfHMsHqrRmqU/eGEmZQlk/pMIwScWJdRK1TB+ySXraLjnpIZw7kTeuB20TNRIDJEuVmpKroAGsqe58Qqc=
+X-Received: by 2002:a05:6512:4024:b0:553:cfa8:dd33 with SMTP id
+ 2adb3069b0e04-55a2331bac9mr515202e87.19.1752624894935; Tue, 15 Jul 2025
+ 17:14:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250715235952.GE19299@pendragon.ideasonboard.com>
+References: <20250714222923.1107205-1-jeremy.linton@arm.com> <20250714222923.1107205-2-jeremy.linton@arm.com>
+In-Reply-To: <20250714222923.1107205-2-jeremy.linton@arm.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 16 Jul 2025 09:14:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT+KBFe2wrfw32PpHHEvko3YkkaPHPPt54Y6VuYt7PHMA@mail.gmail.com>
+X-Gm-Features: Ac12FXyofase4ZSfqX3E7g3BtavjOSI98x0jUC5ICQ4Kv3lSuIJ_juHG-qlZDOY
+Message-ID: <CAK7LNAT+KBFe2wrfw32PpHHEvko3YkkaPHPPt54Y6VuYt7PHMA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] scripts: add zboot support to extract-vmlinux
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: linux-kbuild@vger.kernel.org, nathan@kernel.org, nicolas.schier@linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 02:59:54AM +0300, Laurent Pinchart wrote:
-> On Fri, Jul 11, 2025 at 01:05:42AM +0300, Mirela Rabulea wrote:
-> > Add new standard controls as U32 arrays, for sensors with multiple
-> > captures: V4L2_CID_EXPOSURE_MULTI, V4L2_CID_AGAIN_MULTI and
-> > V4L2_CID_DGAIN_MULTI. These will be particularly useful for sensors
-> > that have multiple captures, but the HDR merge is done inside the sensor,
-> > in the end exposing a single stream, but still requiring AEC control
-> > for all captures.
-> 
-> It's also useful for sensors supporting DOL or DCG with HDR merge being
-> performed outside of the sensor.
+On Tue, Jul 15, 2025 at 7:29=E2=80=AFAM Jeremy Linton <jeremy.linton@arm.co=
+m> wrote:
+>
+> Zboot compressed kernel images are used for arm64 kernels on various
+> distros.
+>
+> extract-vmlinux fails with those kernels because the wrapped image is
+> another PE. While this could be a bit confusing, the tools primary
+> purpose of unwrapping and decompressing the contained kernel image
+> makes it the obvious place for this functionality.
+>
+> Add a 'file' check in check_vmlinux() that detects a contained PE
+> image before trying readelf. Recent (FILES_39, Jun/2020) file
+> implementations output something like:
+>
+> "Linux kernel ARM64 boot executable Image, little-endian, 4K pages"
+>
+> Which is also a stronger statement than readelf provides so drop that
+> part of the comment. At the same time this means that kernel images
+> which don't appear to contain a compressed image will be returned
+> rather than reporting an error. Which matches the behavior for
+> existing ELF files.
+>
+> The extracted PE image can then be inspected, or used as would any
+> other kernel PE.
+>
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 
-Regarless of where HDR merge is implemented, we will also need controls
-to select the HDR mode. We have V4L2_CID_HDR_SENSOR_MODE, which doesn't
-standardize the values, and that's not good enough. At least for DOL and
-DCG with HDR merge implemented outside of the sensor, we need to
-standardize the modes.
+Applied to linux-kbuild.
+Thanks.
 
-Can you tell which sensor(s) you're working with ?
 
-> > All controls are in the same class, so they could all be set
-> > atomically via VIDIOC_S_EXT_CTRLS, this could turn out to be
-> > useful in case of sensors with context switching.
-> 
-> Agreed, we should be able to set them all. Are we still unable to set
-> controls from multiple classes atomatically ? I thought that limitation
-> has been lifted.
-> 
-> > Each element of the array will hold an u32 value (exposure or gain)
-> > for one capture. The size of the array is up to the sensor driver which
-> > will implement the controls and initialize them via v4l2_ctrl_new_custom().
-> > With this approach, the user-space will have to set valid values
-> > for all the captures represented in the array.
-> 
-> I'll comment on the controls themselves in patch 2/2.
-> 
-> > The v4l2-core only supports one scalar min/max/step value for the
-> > entire array, and each element is validated and adjusted to be within
-> > these bounds in v4l2_ctrl_type_op_validate(). The significance for the
-> > maximum value for the exposure control could be "the max value for the
-> > long exposure" or "the max value for the sum of all exposures". If none
-> > of these is ok, the sensor driver can adjust the values as supported and
-> > the user space can use the TRY operation to query the sensor for the
-> > minimum or maximum values.
-> 
-> Hmmmm... I wonder if we would need the ability to report different
-> limits for different array elements. There may be over-engineering
-> though, my experience with libcamera is that userspace really needs
-> detailed information about those controls, and attempting to convey the
-> precise information through the kernel-userspace API is bound to fail.
-> That's why we implement a sensor database in libcamera, with information
-> about how to convert control values to real gain and exposure time.
-> Exposing (close to) raw register values and letting userspace handle the
-> rest may be better.
-> 
-> > Mirela Rabulea (2):
-> >   LF-15161-6: media: Add exposure and gain controls for multiple
-> >     captures
-> >   LF-15161-7: Documentation: media: Describe exposure and gain controls
-> >     for multiple captures
-> 
-> Did you forget to remove the LF-* identifiers ? :-)
-> 
-> > 
-> >  .../media/v4l/ext-ctrls-image-source.rst             | 12 ++++++++++++
-> >  drivers/media/v4l2-core/v4l2-ctrls-defs.c            |  8 ++++++++
-> >  include/uapi/linux/v4l2-controls.h                   |  3 +++
-> >  3 files changed, 23 insertions(+)
+> ---
+>  scripts/extract-vmlinux | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
+> index 8995cd304e6e..189956b5a5c8 100755
+> --- a/scripts/extract-vmlinux
+> +++ b/scripts/extract-vmlinux
+> @@ -12,13 +12,12 @@
+>
+>  check_vmlinux()
+>  {
+> -       # Use readelf to check if it's a valid ELF
+> -       # TODO: find a better to way to check that it's really vmlinux
+> -       #       and not just an elf
+> -       readelf -h $1 > /dev/null 2>&1 || return 1
+> -
+> -       cat $1
+> -       exit 0
+> +       if file "$1" | grep -q 'Linux kernel.*boot executable' ||
+> +               readelf -h "$1" > /dev/null 2>&1
+> +       then
+> +               cat "$1"
+> +               exit 0
+> +       fi
+>  }
+>
+>  try_decompress()
+> --
+> 2.50.1
+>
 
--- 
-Regards,
 
-Laurent Pinchart
+--=20
+Best Regards
+Masahiro Yamada
 
