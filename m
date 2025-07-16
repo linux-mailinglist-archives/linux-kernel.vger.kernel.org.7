@@ -1,151 +1,101 @@
-Return-Path: <linux-kernel+bounces-734018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F2CB07C0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:30:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F05B07C0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9F717466B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D2C41C416C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937182F273C;
-	Wed, 16 Jul 2025 17:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD28F2F533A;
+	Wed, 16 Jul 2025 17:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Gy2t0WPv"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIsPrqhy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE3F1114;
-	Wed, 16 Jul 2025 17:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA741D8E1A;
+	Wed, 16 Jul 2025 17:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752687044; cv=none; b=ASEgRjmJNkTql8JyMnSpU0fzWNnL74//O4oUfp9zn+++4uhNA6Uzyh/Mpgwa4cVONFbvAaPyTY+y9QGnO7VPf2WBvF+vFKzvzT297uMF0jOXdv0XdThNyjAjiD1THWjr/6l/mVKT6kM8vqXXYvEShwiWKnkE53EmIXJe69vh8NQ=
+	t=1752687062; cv=none; b=ej4jwfWtvCIAUK3/xoTgrulC2pbE5e6mQDzhbGyL7IwPoKX++9KfvRwzXp0ZeAaUeCUMgWny2pEpVEtqbfGpch3oLJoGNcUd9T6rSAvMXPOWQUdXfIz/d03U06pMZes+fpgIRXE6oMWhWiNKTssb0A2XO/KpoAffW/f9BCSud5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752687044; c=relaxed/simple;
-	bh=r2DRgij26xF5m6ZdI1q8r2pxawboAB2+pBWnHW4lsNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hTNgENsJP4+c0/KRZszTrNm7ddlDShcw7Jf3xxpJ5cLo0GeSRzA5y6WhrVTxlKNp0knerfpCqC6p1p3/CdgLZZoHX5kq8rIxAGNLHCCQZDlUkQQcJmOntMv0WNPhB7C6GyAlUcoz6oEaPooLL+ojzHCdBwb4HCZxoA6OzOtOQzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Gy2t0WPv; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9482:6dc:b955:47cb:dcbb] ([IPv6:2601:646:8081:9482:6dc:b955:47cb:dcbb])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56GHUYEe1625675
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 16 Jul 2025 10:30:34 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56GHUYEe1625675
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1752687035;
-	bh=0trOfPgTp1BfkTElS9aX20q6MRULueSy68TJTaUES2U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Gy2t0WPvdz+He897EQMoQcH0JfPQeIHBqi7z44XsIN5Nrj6G4/vvwFJYYRm27clDo
-	 wettSG+p998Gz9erjq+lCC4bX7EDQCaZC2J6tccHwtKXmMJlAYAkggSHjdwQafbtwB
-	 YMf8KY3V0t4TStJrxg6GbjwY4G96l6b41D1Go02EWCvHFbOZWvIzmKWaIucPeSKZrg
-	 d+TpGHKh7CSjGdMeD7btX/B6WkA/u6RhXn5RhGNTc1c/1ghMNxh71cMozKMrk8UiKO
-	 88hdbru2v4FgWDxViL+nQ9hYQlK1xwJBW65aWDlrsUiSsXBlEYrXfHzn+se/6UWkcg
-	 E7ByWA8+U735A==
-Message-ID: <927f2d40-1004-4738-a1bc-0000d4d3e179@zytor.com>
-Date: Wed, 16 Jul 2025 10:30:28 -0700
+	s=arc-20240116; t=1752687062; c=relaxed/simple;
+	bh=PaXYTlyE1AmCd9f7kz8r4SkpNALOlTX1xFZrFy9kj0A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=t7I0qE4UpLN41MRdQW2O6jrNX857Zs2uFye0DyJjERNiAWkWlBVzYPt2SO20aOYsNO8sTL+0nWkO3MNZah+0vZTz7LbKXXjQgpLoFRqnVa8IIfSqYaXd5OQVP0bAQvZ9apXSZm7ZZwZUGlBO/J0WoD7IHxMNzltAewYFtoOpyDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIsPrqhy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A44FDC4CEF0;
+	Wed, 16 Jul 2025 17:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752687061;
+	bh=PaXYTlyE1AmCd9f7kz8r4SkpNALOlTX1xFZrFy9kj0A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=RIsPrqhyv6e9Qxaf7h3jN09thDJp15IZQO/mwKshVTqYWa95vzhXZlSxH4erTUW1/
+	 N1F+kqa3Fi0D3Jk5hEhCKwaEXoq64BRYzpY1gqHIcbdfCQWTOavi97qhqzxaEAYnwS
+	 RoRevb3I2gJBTTmtwLo6Szt/gjD56GbFshfWMcfcEkOScawnBl1UvuHzTa4XhgJSGB
+	 5yMeBlder1FV2bxGLHEqLTGSaY3GRInR3di0cjC2jMVct8LRagXyHbBusEth12UhoW
+	 y2OXRTuDA82/dyb5XZ4CwPq4cRG/nOEI2E3sv0x2IQgX+lxtDgrbGBXrDfR/MayeLh
+	 V1civMqJepi3Q==
+From: Mark Brown <broonie@kernel.org>
+To: Rob Herring <robh@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-spi@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <fb2a26a2-119b-4b5a-8d44-b29e2c736081@sabinyo.mountain>
+References: <fb2a26a2-119b-4b5a-8d44-b29e2c736081@sabinyo.mountain>
+Subject: Re: [PATCH next] spi: stm32-ospi: Fix NULL vs IS_ERR() bug in
+ stm32_ospi_get_resources()
+Message-Id: <175268705940.745920.11297005700076211217.b4-ty@kernel.org>
+Date: Wed, 16 Jul 2025 18:30:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: USB cdc-acm driver: break and command
-To: Oliver Neukum <oneukum@suse.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, Jiri Slaby <jirislaby@kernel.org>,
-        linux-serial@vger.kernel.org
-References: <ce54ae11-72bb-4ac7-980b-c1cbc798a209@zytor.com>
- <fa20ab91-5ebf-427d-b938-31ea6fb945cf@suse.com>
- <83B89F79-D28B-4F2C-87EA-F5078BD7ED17@zytor.com>
- <2c807a7e-d55d-4670-9a86-e3fcaa3e52ba@suse.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <2c807a7e-d55d-4670-9a86-e3fcaa3e52ba@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-On 2025-07-16 09:17, Oliver Neukum wrote:
+On Tue, 15 Jul 2025 18:01:39 -0500, Dan Carpenter wrote:
+> This code was changed from using devm_ioremap() which returns NULL to
+> using devm_ioremap_resource() which returns error pointers.  Update
+> the error checking to match.
 > 
-> If you really wanted to use that API as it is right now, you'd
-> have breaks racing with each other and, worse, with open()
-> and close().
-> Are you sure POSIX says nothing about how to handle such cases?
 > 
 
-This is the POSIX definition for tcsendbreak():
+Applied to
 
-NAME
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-    tcsendbreak — send a break for a specific duration
+Thanks!
 
-SYNOPSIS
+[1/1] spi: stm32-ospi: Fix NULL vs IS_ERR() bug in stm32_ospi_get_resources()
+      commit: 951a6d8d41289b86a564ee5563ededa702b62b1b
 
-    #include <termios.h>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-    int tcsendbreak(int fildes, int duration);
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-DESCRIPTION
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-    If the terminal is using asynchronous serial data transmission,
-tcsendbreak() shall cause transmission of a continuous stream of
-zero-valued bits for a specific duration. If duration is 0, it shall
-cause transmission of zero-valued bits for at least 0.25 seconds, and
-not more than 0.5 seconds. If duration is not 0, it shall send
-zero-valued bits for an implementation-defined period of time.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-    The fildes argument is an open file descriptor associated with a
-terminal.
-
-    If the terminal is not using asynchronous serial data transmission,
-it is implementation-defined whether tcsendbreak() sends data to
-generate a break condition or returns without taking any action.
-
-    Attempts to use tcsendbreak() from a process which is a member of a
-background process group on a fildes associated with its controlling
-terminal shall cause the process group to be sent a SIGTTOU signal. If
-the calling thread is blocking SIGTTOU signals or the process is
-ignoring SIGTTOU signals, the process shall be allowed to perform the
-operation, and no signal is sent.
-
-RETURN VALUE
-
-    Upon successful completion, 0 shall be returned. Otherwise, -1 shall
-be returned and errno set to indicate the error.
-
-ERRORS
-
-    The tcsendbreak() function shall fail if:
-
-    [EBADF]
-        The fildes argument is not a valid file descriptor.
-    [EIO]
-        The process group of the writing process is orphaned, the
-calling thread is not blocking SIGTTOU, and the process is not ignoring
-SIGTTOU.
-    [ENOTTY]
-        The file associated with fildes is not a terminal.
-
---- ---
-
-The only other mentions of BREAK I can find are the BRKINT and IGNBRK
-flags, respectively.
-
->
-> You'd probably have to start a timer in the driver in send_break().
-> That timer would need to be properly handled in disconnect(),
-> pre/post_reset() and suspend()
-> That API is really not nice to use.
-> 
-
-That's why I said if that is what is needed, it really belongs in the
-tty core.  That's where the current internal delay is, after all.
-
-	-hpa
+Thanks,
+Mark
 
 
