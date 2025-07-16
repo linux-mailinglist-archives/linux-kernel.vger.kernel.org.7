@@ -1,87 +1,62 @@
-Return-Path: <linux-kernel+bounces-732696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56EDEB06ABB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A77B06AAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB97D3B0678
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AB103A91FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5425D194A73;
-	Wed, 16 Jul 2025 00:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F48513C3CD;
+	Wed, 16 Jul 2025 00:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VMK0/BJG"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="hcHClAxf"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE3C191F91;
-	Wed, 16 Jul 2025 00:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CE312C544;
+	Wed, 16 Jul 2025 00:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752626807; cv=none; b=ZjviBqSvs9QI6Lc2+RDC7SvbtT9nRPFlSS4fHjIkjRuOriLL1xi8z3UvTkXsrdL06ebgtI/Cuej09zvlFIk8lYlibZBjKxbiN7L8a6ovNdziT196CCvuqccgwbKZsXGfc/WKDbSuIon7izH7tZQsPRXePdDYSr1o2Ex+UUSrm44=
+	t=1752626651; cv=none; b=mCFE6xxKPuC5fKf1umAFIL5NcudaD9poKvNTez7a60rc6T3IbmcIu4vwHRZhZsKbNqUMqw94RcP9LH0gJ8yjIKtkncu4ecqc3X51KN4ELyLEDGXypkdSCXp81UOLQZ7o7/XCVxLPh7qv/nUinrvEBAG9dqgPw92HFjSdSbJU/ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752626807; c=relaxed/simple;
-	bh=woAgzFOPYnjFecFnNTShmZq0j+l1H6Ja/Vv6z99qT90=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NFUMk0gs5Gws+9PYRLCcx9zRaPzSrLiV84zOUij95BjL6ZjETJZxJjj1IDG34g8nj57EQiz/JepUNA8zyFg2zc5Wfwon9OAms/pyDNxhsVtucldpCVFh1NWKYDUQ5WrfBmG/axE6qtPD4wtiBmtXbxlpdM7QI0TDtDyw8DBLCVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VMK0/BJG; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-234b9dfb842so54384245ad.1;
-        Tue, 15 Jul 2025 17:46:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752626804; x=1753231604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRTEJWMwRNmGn9tXl/iEoGQRPnhU0bu+ekhvd2LYaEQ=;
-        b=VMK0/BJG3MIQul8SlHWnHdKOWNNg7XlhlJpyeJgQNmLoosUXujzE7041cBVxBRGZJG
-         vlV1RkNC2W/QsOlwcqiT6xfNdYlcJOpjsQmLWw8AyCAiPPzTmWVTStUTNan+jZrpb+sO
-         DYPoxXHPUp2ZOddOb9g53BqYrAoLOXDN2bqbvV2rjoM5opmvEmYVpF1Y5qeIAQIFWELD
-         mQ7Etbcc3lBbsdomXYr4VNZHU6azbi9mq/QpdqUNbrRZ5wHCHrL6R3QnkJtraC5Es0/w
-         80XuO7mNgg6Ra1pbgv5yQGxMUiuIwhF01iqWXJJ+0sHi/vmpyCH/qmtPTXQ8g1Wj9JsS
-         JGnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752626804; x=1753231604;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LRTEJWMwRNmGn9tXl/iEoGQRPnhU0bu+ekhvd2LYaEQ=;
-        b=HEunR3HCNFQSFjRXjk83JG/7XtpQwL3rI9CePFSlHt0qHi6+farm7sDThfbcGFxCNJ
-         CnTjuV5DKYdqB24L+QIvnAONIaB4zgxsM2S57R/GsV89v63izBL4MJp/3hcyKuFgtPgo
-         iuVb7x6g5sxZ4Kci687n7IVlM3I9D7tJtEOv61AV7ga2d+dHdF2xHaaELjukaJ9jnE2o
-         mVzuo8fH5Cdao2rLlosdgONuRmIlnfl1NAmRTw/5cg50gD10z7TV+p0J3wA1OfOCajXH
-         nU1INq1akWD7bCpIbRfi1/X0kVkkAOGnlYvsEguoOAEDolvljyuZvQPOctxB0gOMItDf
-         7amg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5nWAw/g2bDP37ArttsgIULHbpdogrRlWFzjimZftZd1ZHZUTGbPQd219NSy0G+r98PWFIGlGexGPmKpyvygQ=@vger.kernel.org, AJvYcCVXTPaVMlq0+v/qgnieMUlsh8LNnqT7TBWjqPRAlKQKbbr87JZXddO10eGR/QO6TDwmufLm+MSxER7BihIH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3J+g4BPeI5putv59oX7OHQPPUgrmGYO4Ev6Gck5SvcgvxbGmq
-	7YTep3t5OmPKhkuz5hIq0lCLATomliw/HQxp1BbKILgwbM5Tc+EtZKHf
-X-Gm-Gg: ASbGncs4xPhmeEb9B9HK4cQmDOQb9mXE6IqD47IO7c+hS6SIqk3xnJzqbpfIl0QjkcQ
-	G3+2ztlPEkZeStdXe6zVDRU1q0Mv4DsArsDMKkpOfiYy7UDi+Wpy90B4xeyRgVsL5QopwrcDIeS
-	eeugA9pfwqlKc8TjIvzYs/t/vuWeG8O348a1ZaaU4+fnZdqUTxWYcpGPmVWnSOFQbH/RNIKgM2K
-	GA6thI1t1eT8qCg/OAerRfjxFg4fBGPKpYGbYNmbtrCvdtaVIHYdDchQFaRg9fTz5xbSRfC5TuP
-	l5jqIIqGPIoNu4/AdcczB7bglVGZE/2MBHx9nZKugtvPnzsSKfW3papkWdakye4McaQpTiS1aX9
-	hLbpp3j7AjvFmEOtWhN4iclScIbFMWoNVcdPJmYy2pnsx3IicYl9iigwv/Qgv+N1GZuixRiSzPg
-	==
-X-Google-Smtp-Source: AGHT+IG6rCKsKtVMjbxz0oZEbHmPuLfjFMKAZoeQQA0RwebSQXkifPxBSoNLvFq1rG3NqpwRhNqq3A==
-X-Received: by 2002:a17:902:e751:b0:235:225d:3098 with SMTP id d9443c01a7336-23e257706f7mr12490345ad.46.1752626804267;
-        Tue, 15 Jul 2025 17:46:44 -0700 (PDT)
-Received: from ipravd-Nitro-AN515-55.hsd1.ca.comcast.net ([2601:646:a000:5fc0:cbd:b87b:a7dd:f79d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42849d7sm115995915ad.21.2025.07.15.17.46.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 17:46:43 -0700 (PDT)
-From: Ivan Pravdin <ipravdin.official@gmail.com>
-To: marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ivan Pravdin <ipravdin.official@gmail.com>
-Subject: [PATCH RESEND] Bluetooth: vhci: Prevent use-after-free by removing debugfs files early
-Date: Tue, 15 Jul 2025 20:42:53 -0400
-Message-ID: <20250716004252.125466-2-ipravdin.official@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1752626651; c=relaxed/simple;
+	bh=HTdU1t9/CymEpoi9JHQzO+CBlEaFcU1C4gGXbC74CZU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P5wYZD33JurFeuPQKS1C/JQWtAQEn9FCHis7nZxArxE+119pKpOcFaMtrYojEtYDimqIRVkqOh5fXpfXelsPbqt2GWa2TtjxTUMNW6LlA7BC5XvfgukEngIsQrVvSbVPvyNaYcC31iLy8oSClxDyHkUyJvqTNIE6k+/9rkfGMzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=hcHClAxf; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=default; t=1752626647;
+	bh=HTdU1t9/CymEpoi9JHQzO+CBlEaFcU1C4gGXbC74CZU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
+	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=hcHClAxf9PnRM3Ot/fIHvVgsKI3UyfAbZ4V9pZQhWRkEQIJT0V0+aWqiXmgLd+sVr
+	 SY3/J0pIVZ1X+24t2gNIkDFbnIpU+V+uedsZ1UzeM5X4ELHXRi+HeV5Wm0h2TiCBol
+	 8YrtePhXrclnQkVjyNo0UIYklIvmiAZOQZH1Ww7Gb658L1CDUxo9Ap7xJjCAVUlnkV
+	 O0uLlb/D70hPxwXh+P/iQqLXEppL1s/L9V306qv8FVQYSLmgKV05LtvBMBw8umtENx
+	 K6rHFurz7A8Pz7QD+93pA+No+DgDDe8VpVE8rQRcHL8+7HgXzCWlh9iaLnel48ode1
+	 OXSvZNIDGkUfg==
+Received: from localhost.localdomain (unknown [68.183.184.174])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 082752109A7B;
+	Wed, 16 Jul 2025 00:44:05 +0000 (UTC)
+From: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+	Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+	GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	io-uring Mailing List <io-uring@vger.kernel.org>
+Subject: [PATCH liburing v2 0/3] Bring back `CONFIG_HAVE_MEMFD_CREATE` to fix Android build error
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Wed, 16 Jul 2025 07:43:59 +0700
+Message-Id: <20250716004402.3902648-1-alviro.iskandar@gnuweeb.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,120 +65,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move the creation of debugfs files into a dedicated function, and ensure
-they are explicitly removed during vhci_release(), before associated
-data structures are freed.
+Hello,
 
-Previously, debugfs files such as "force_suspend", "force_wakeup", and
-others were created under hdev->debugfs but not removed in
-vhci_release(). Since vhci_release() frees the backing vhci_data
-structure, any access to these files after release would result in
-use-after-free errors.
+This is the v2 revision of the patch series to address the Android
+build error related to `memfd_create()`. The series consists of three
+patches:
 
-Although hdev->debugfs is later freed in hci_release_dev(), user can
-access files after vhci_data is freed but before hdev->debugfs is
-released.
+1) Bring back `CONFIG_HAVE_MEMFD_CREATE` to fix Android build error.
 
-Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
-Fixes: ab4e4380d4e1 ("Bluetooth: Add vhci devcoredump support")
+Partially reverts commit:
+
+  732bf609b670 ("test/io_uring_register: kill old memfd test")
+
+to bring back `CONFIG_HAVE_MEMFD_CREATE` to resolve Android build
+failures caused by:
+
+  93d3a7a70b4a ("examples/zcrx: udmabuf backed areas")
+
+It added a call to `memfd_create()`, which is unavailable on some
+Android toolchains, leading to the following build error:
+```
+  zcrx.c:111:10: error: call to undeclared function 'memfd_create'; ISO C99 and \
+  later do not support implicit function declarations \
+  [-Wimplicit-function-declaration]
+    111 |         memfd = memfd_create("udmabuf-test", MFD_ALLOW_SEALING);
+        |                 ^
+```
+This reversion is a preparation patch for a proper fix by ensuring
+`memfd_create()` usage is guarded and portable. It's only a partial
+revert because the test itself is not restored.
+
+2) Move `memfd_create()` to helpers.c, make it accessible for all tests.
+
+Previously, the static definition of `memfd_create()` was limited to
+io_uring_register.c. Now, promote it to a shared location accessible
+to all test cases, ensuring that future tests using `memfd_create()`
+do not trigger build failures on Android targets where the syscall
+is undefined in the standard headers. It improves portability and
+prevents regressions across test builds.
+
+3) Also, add `memfd_create()` helper in the examples directory.
+
+Changelog:
+v1 -> v2:
+  - Omit the old memfd test because it's not needed anymore (Jens Axboe)
+    Link: https://lore.kernel.org/io-uring/4bc75566-9cb5-42ec-a6b7-16e04062e0c6@kernel.dk
+
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
 ---
-Resending because previous patch got archived [1].
 
-[1] https://patchwork.kernel.org/project/bluetooth/patch/20250614235317.304705-1-ipravdin.official@gmail.com/
+Alviro Iskandar Setiawan (3):
+  Bring back `CONFIG_HAVE_MEMFD_CREATE` to fix Android build errors
+  test: Move `memfd_create()` to helpers.c, make it accessible for all tests
+  examples: Add `memfd_create()` helper
 
- drivers/bluetooth/hci_vhci.c | 57 ++++++++++++++++++++++++++----------
- 1 file changed, 41 insertions(+), 16 deletions(-)
+ configure          | 19 +++++++++++++++++++
+ examples/helpers.c |  8 ++++++++
+ examples/helpers.h |  5 +++++
+ test/helpers.c     |  8 ++++++++
+ test/helpers.h     |  5 +++++
+ 5 files changed, 45 insertions(+)
 
-diff --git a/drivers/bluetooth/hci_vhci.c b/drivers/bluetooth/hci_vhci.c
-index f7d8c3c00655..2fef08254d78 100644
---- a/drivers/bluetooth/hci_vhci.c
-+++ b/drivers/bluetooth/hci_vhci.c
-@@ -380,6 +380,28 @@ static const struct file_operations force_devcoredump_fops = {
- 	.write		= force_devcd_write,
- };
- 
-+static void vhci_debugfs_init(struct vhci_data *data)
-+{
-+	struct hci_dev *hdev = data->hdev;
-+
-+	debugfs_create_file("force_suspend", 0644, hdev->debugfs, data,
-+			    &force_suspend_fops);
-+
-+	debugfs_create_file("force_wakeup", 0644, hdev->debugfs, data,
-+			    &force_wakeup_fops);
-+
-+	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
-+		debugfs_create_file("msft_opcode", 0644, hdev->debugfs, data,
-+				    &msft_opcode_fops);
-+
-+	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
-+		debugfs_create_file("aosp_capable", 0644, hdev->debugfs, data,
-+				    &aosp_capable_fops);
-+
-+	debugfs_create_file("force_devcoredump", 0644, hdev->debugfs, data,
-+			    &force_devcoredump_fops);
-+}
-+
- static int __vhci_create_device(struct vhci_data *data, __u8 opcode)
- {
- 	struct hci_dev *hdev;
-@@ -434,22 +456,8 @@ static int __vhci_create_device(struct vhci_data *data, __u8 opcode)
- 		return -EBUSY;
- 	}
- 
--	debugfs_create_file("force_suspend", 0644, hdev->debugfs, data,
--			    &force_suspend_fops);
--
--	debugfs_create_file("force_wakeup", 0644, hdev->debugfs, data,
--			    &force_wakeup_fops);
--
--	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
--		debugfs_create_file("msft_opcode", 0644, hdev->debugfs, data,
--				    &msft_opcode_fops);
--
--	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
--		debugfs_create_file("aosp_capable", 0644, hdev->debugfs, data,
--				    &aosp_capable_fops);
--
--	debugfs_create_file("force_devcoredump", 0644, hdev->debugfs, data,
--			    &force_devcoredump_fops);
-+	if (!IS_ERR_OR_NULL(hdev->debugfs))
-+		vhci_debugfs_init(data);
- 
- 	hci_skb_pkt_type(skb) = HCI_VENDOR_PKT;
- 
-@@ -651,6 +659,21 @@ static int vhci_open(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
-+static void vhci_debugfs_remove(struct hci_dev *hdev)
-+{
-+	debugfs_lookup_and_remove("force_suspend", hdev->debugfs);
-+
-+	debugfs_lookup_and_remove("force_wakeup", hdev->debugfs);
-+
-+	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
-+		debugfs_lookup_and_remove("msft_opcode", hdev->debugfs);
-+
-+	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
-+		debugfs_lookup_and_remove("aosp_capable", hdev->debugfs);
-+
-+	debugfs_lookup_and_remove("force_devcoredump", hdev->debugfs);
-+}
-+
- static int vhci_release(struct inode *inode, struct file *file)
- {
- 	struct vhci_data *data = file->private_data;
-@@ -662,6 +685,8 @@ static int vhci_release(struct inode *inode, struct file *file)
- 	hdev = data->hdev;
- 
- 	if (hdev) {
-+		if (!IS_ERR_OR_NULL(hdev->debugfs))
-+			vhci_debugfs_remove(hdev);
- 		hci_unregister_dev(hdev);
- 		hci_free_dev(hdev);
- 	}
+
+base-commit: 0272bfa96f02cc47c024ec510a764ef7e37b76bf
 -- 
-2.45.2
+Alviro Iskandar Setiawan
 
 
