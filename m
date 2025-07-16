@@ -1,213 +1,354 @@
-Return-Path: <linux-kernel+bounces-734254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CCD1B07F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:36:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DEDB07F0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7010168676
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DDF11895E4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433772C17AD;
-	Wed, 16 Jul 2025 20:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7030B2D0C7C;
+	Wed, 16 Jul 2025 20:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Hr61oscl"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2048.outbound.protection.outlook.com [40.107.102.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LknWfePa"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0BA265621;
-	Wed, 16 Jul 2025 20:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752698201; cv=fail; b=jtqj7XzOGzhrJeTu5B1aRW/4AZvCPrHTdnL+3mcb8dJXgnqZCW1jM31X1cq5Juycwf0cL5vj3+CcbROwoDAo8OkFJ0GCsgqaNBp16qGZiCxN4lvnbJWpJRoNf2+EE3l7tq6PGxW8IGV5hs/ETANz2MSDDAv9xIsPLruekLNtk24=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752698201; c=relaxed/simple;
-	bh=43unX/+l28VMNA74Q9pXj61oUbV7vMoLHVMP2txc2jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OIFLF17/TAnSh1BvhLFpSVL5LWbDhH4eEym+9XNcqJ6bBlRmVFryrTxe4s5cswBmgNbwkqGJfAT7hLRIxfA1/rEbj+1OhAgz0ekPYSmJQ8xlFld5JsoZrdU1HBj17S1f0jGlh61T/KBJY+GHSHEFLTl6bZtSqj3b7+UkfLm4SVo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Hr61oscl; arc=fail smtp.client-ip=40.107.102.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EB8ZZW0CT8YeyEc9lkjEkIhSsJ05zzsg5cDJ6x77pQwduQVRR034/hw/ApEIrcWWBUj6koBqXgHUeqO2xer+w2X1RyIX7fDymv2DpWv/bset+jOx6Z/SAyInsgA+EEjE3FtRKF3SP6/6dKcKNMkNidd40t9Y0+iOfbWcEPxKhu5a5c9i3DYfuC/z4jI4yyG1ZSkGStJcyptN43ILWwYdXLGU7Rx4Ab30lqpmeNEntPaZh/U7d7bmlHfGAsooPl36uMArAjD4NzpxkVk96AfSYN3DsdvvF9gUGwUJzVvbUrC69vUlIUe57+BOZAIbPfhZN/bG/0at79CoM5cEeJ7HcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KZ/JRUTsbbcU1D+4Tcf3a3VulJ43JRsFksq9BiLmg4U=;
- b=dORjjT3j8SD8VWazHqIye8iy96hyvq9vUUjoEsGthPZZyZ6CCOMiwjuddkkdsJfR+so8yU8qv5/MuCrPwSuPufkQwzHAiUh9uFgf2OQnxn1uJWgItBorRTZzIdUlPA+oC6G9TXmy9rtTxDb1KaDU+w0dqYP+q3NaxMFolnWvL9ynEEq4m9x/bQCQoVpU5u9Jt/Th/Y9DsjxWjcekTQw1kK8bcq8Eyc4BR6LMOcLKzxmueQ/0pDS9P3dV6AvNppidg2wc0YgfAScaQaMdZ2gk+GGRD8xfcHKa5FHz/Wx6atpr4auLcmZk3ISwQKIEoTy1AhNdZeiNUr1SmnmRime0lQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KZ/JRUTsbbcU1D+4Tcf3a3VulJ43JRsFksq9BiLmg4U=;
- b=Hr61oscl5+69BxhfjXjg/4QtQyblKd5oA7u99KLNmLXa2ILUY72Qr5DSYkBCymEESG2nCsKWtX1hvAXQMPQBHRrsCRBum3DenRq3m/qzoVzkJEmWeJXVOz91zFgSD1zptfGOAPW6miMl2qB9KlKb/g1FvITGdn7PWkcwQ6tWork=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com (2603:10b6:208:39b::20)
- by BL3PR12MB6476.namprd12.prod.outlook.com (2603:10b6:208:3bc::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Wed, 16 Jul
- 2025 20:36:30 +0000
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::7298:510:d37d:fa92]) by BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::7298:510:d37d:fa92%3]) with mapi id 15.20.8880.026; Wed, 16 Jul 2025
- 20:36:30 +0000
-Date: Wed, 16 Jul 2025 15:36:24 -0500
-From: John Allen <john.allen@amd.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org, seanjc@google.com,
-	pbonzini@redhat.com, dave.hansen@intel.com,
-	rick.p.edgecombe@intel.com, mlevitsk@redhat.com,
-	weijiang.yang@intel.com, minipli@grsecurity.net, xin@zytor.com,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v11 00/23] Enable CET Virtualization
-Message-ID: <aHgNSC4D2+Kb3Qyv@AUSJOHALLEN.amd.com>
-References: <20250704085027.182163-1-chao.gao@intel.com>
- <88443d81-78ac-45ad-b359-b328b9db5829@intel.com>
- <aGsjtapc5igIjng+@intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGsjtapc5igIjng+@intel.com>
-X-ClientProxiedBy: SJ0PR03CA0033.namprd03.prod.outlook.com
- (2603:10b6:a03:33e::8) To BL1PR12MB5995.namprd12.prod.outlook.com
- (2603:10b6:208:39b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDD126FA4B;
+	Wed, 16 Jul 2025 20:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752698213; cv=none; b=MJYsafdKq+oW813to/1P2Fn+WZaaamTtjfZKTOC8NjzOaHF3Orbje81UzzuBuYZi2OroCLxFEc4LM6OdTvE3v4aNAYj9XsZ257xc7TBDUeAGMzir5Te6EomB8+JjiXBwGr5FwqcVPyqPBLXdwnwEgj/m6CJJdE1CYcI0h6ryEM0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752698213; c=relaxed/simple;
+	bh=MlMNGYQ8dO20s6aDXbSVRiR+xyHC7RFvXF/g3yeXQIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EAQZx5ZKm1HgZ/qD9Jttu38SmI6Pe+ynNLQN69s/J7bYOM1UiWv8NHaPlB+wjzuXM4EDVjzm7pVFbYlj2RukYB4ieFTNB7fPFXKQcwgg95nKRZILhVosWw690U9peKssLO1mPTP2R6aAG05lQX+S+H5PsCdwFmLURSYhEyflURo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LknWfePa; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-74b50c71b0aso229824b3a.0;
+        Wed, 16 Jul 2025 13:36:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752698211; x=1753303011; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=dGK7tdjJS9+xErtdZGDdl6eWBQ2higLM/1xo+A5Ke+E=;
+        b=LknWfePaNtIRvt1s0FyO5kG/kQt4deEOnFC7YciyfIs7AnZIgeN0FTyQlJSBYQ2+OG
+         AJa82iRen5Mvu+pX9acuKQ/9dYIqR8WoqZYyCyfJRe3PfBKXMmvA/r2BzqR76HEYBTXI
+         RnnG041ahEApPrmMLzt305vSsjwhsn/SJ+13X6kyk4iq1V7OkDWU1qsjsk+dZEeLvtPp
+         /366qannB7q10M8sKt0xEmQUO68+H5bGMVRqgVTmF3iZRDdxVlqyExiOR/UgMO9b6Oja
+         7RS+yDDKYOtj3omysfhMhXPhpWmXfeK2XiOjGoW3AR4WxaDI77FLTFRcZLQer7jy+Pi9
+         Z6Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752698211; x=1753303011;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dGK7tdjJS9+xErtdZGDdl6eWBQ2higLM/1xo+A5Ke+E=;
+        b=spSA3udKgTWk1kGd/7CcyMOWtC5eEVs05Kkp1x0pqm11PmSC1eUsEvt9YU43K9urwn
+         QMWnfUChJiCJYi7N8l00V7XV/cuNKRAxBcn/x02WOphMrosS6tskr5lzopMK/0+5Sfo1
+         /VJFd+DcF6qP2q7jFrhdbXgBOp/DPzXxqjUTWHi9ZQ5i8oHEwuYwY2EplIT4f5qlzZC0
+         MgNzfEiF/nAA3G+SkVPW/uCnPIIS3Q0eGNBshk/pqidzLq8DFriTqYJiWEE5LdoBAI6l
+         53Te+NwKXnAILhjytW+465mevguU78Lrls4jijlnL9R1H8WzArUNyHclXLN+O3IgzBQq
+         DVmw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/td0NKnA7fNibDc4I4cwJ/WS9YNUkcLdVZ5mfi+gahmj2jQeBQQzMqZFNU3QViGr+EVeZHbOaEgXy@vger.kernel.org, AJvYcCUfgoYRDaz+OMqq+i/UFQlV6aVplASJ3ijcpiws6l/w3SdGydAJjb9F8JDGzEefOE/9I3bS+CUOMfUJfwI=@vger.kernel.org, AJvYcCV+0mK3cCf0uaFs5VM2HgR+z+kMVW8zLo1cPtIOXW6Qv+Ewem0n1bYIE4umMiIOesiHJcZ5iP2dqk0F@vger.kernel.org, AJvYcCXBbZh+Yr4UzPWa7hoplNITk2Egn9ZjWlTTa63Z4tksp5PhYmduDXjXi26TNGApJK8eCsYmgfHE20dKXTn4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBlaEPKce9ZLQFwZkOhJUMhholmMj6cCLKitQjBB67m+FobBZL
+	Ht3a86ocH5sV/2FoGQf9yVSLaLzhP7TYk/TwRZBcCOwYF7tbhtwwXQw2
+X-Gm-Gg: ASbGncuzF5ByjOpmrwqeCRTTbdEJ+fNtEfb8VpPMk6lWpHlP5AmOAJK3FMctWYN57xq
+	nG2jOHwa5ws4dPL6V8F6RJOyX60Fz2ECC8EJAjOJMT8ItWVEyL0nAMluzDQ3/lFmAZzejGdnMMO
+	IX+0Zl34q8ltrvcyCR4ZtQTygVjJ8tgY/xxPWgrDPYE/ruB3RsHYUZY3iL4619c/fPS98siBmQ3
+	OyUhddk8dB8idirh+sSAPIqwj5cDJy7LT57bkGNCnf4XbUo5v6s2Baf4TQ0mQXLRf/+okXMyTW5
+	G8ZUa0w5Fxw5SMK1FmlC0pmu+NPugw0uKZxzjTQdaTphAr6ZRyvgjGQAZt8BoPh+hDrtrtuQxaU
+	kqZJHeeyBq7p35f2FxKzfy2XP+JoQQYZCcEatpmIzYlY69u3JIzAk90NqwSPl60ulDj40yos=
+X-Google-Smtp-Source: AGHT+IHC2TDtP7ayXT+F/AwOOBUrWElNyGsML+/uuXUSdQ8RGpxEC7Y5K3FXXAP7ltt9S4GgUr6SGA==
+X-Received: by 2002:a05:6a00:2d19:b0:749:14b5:921f with SMTP id d2e1a72fcca58-75724a8ac06mr5687709b3a.18.1752698210983;
+        Wed, 16 Jul 2025 13:36:50 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd7134sm15293965b3a.19.2025.07.16.13.36.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 13:36:50 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <ac652108-68aa-49d1-a448-1c0ee6ca157e@roeck-us.net>
+Date: Wed, 16 Jul 2025 13:36:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5995:EE_|BL3PR12MB6476:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac1268a9-29ee-4a51-afb7-08ddc4a871e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mUEvQ5lM3KX+8T9vLFUbZsrYZvHkjVgiiJ2JvMY4gEik2YLQG2CU5yFCBWJf?=
- =?us-ascii?Q?rI9rwxya6WJgq7x2U25aR4LfZnHmURlmf59Y3u9L7dcktX1Abnih4xsB9Htx?=
- =?us-ascii?Q?MScqKmW3IcEBHAyoXI7mY7cS8eC4zY9NUzupdzxn5TiX8LQq6cmrXWirPLJG?=
- =?us-ascii?Q?ItbgBNM+1gBCpL0fuMTyRH5ugtsnbnbFfOqyoFFlNrZnSXe9Z9IzgE75iCk1?=
- =?us-ascii?Q?MWZ+NFXX9v1ipFcTR8pzx0TemNySzZE3Ns2Fh4IGg22arbziDTjqgUXiWrTi?=
- =?us-ascii?Q?QMCOvWVuKjPLaLUvYf5adtCpBEagxonHb2cc51UeE5LKC5OBp1yAkgSk4l45?=
- =?us-ascii?Q?p82vZy8eS0l7Ij9WStZBMM/uRKwydNR5YhuvO9BIQRRiv7CNSIC2Rr5tfuKW?=
- =?us-ascii?Q?JQb8IkmHTBuawdOcaBeLeiI6u/Mp5Xpp/tnUDtnxJqDYCb8NhFecyN33YHib?=
- =?us-ascii?Q?zaIzLNLCskmT2qbEXt4RVc67XSIxlt+UtvFVSWFe6sDrXtG9N6qjCJQR6hOd?=
- =?us-ascii?Q?kHMgpt6kYKhGxIfWCoRI+PqCxfwoNn5jJAMj+HcOdZ41RenaFGjq4gi84l6N?=
- =?us-ascii?Q?KpUszKDmvquJWDQ3E2iV+vrtjp1nwO7GDUbDMDPVA2QymVCiC7GTZPpYe+Zf?=
- =?us-ascii?Q?xmoNVNnPeh3Ka5LIrQzUMrQB0zyIJVc22ifhS/apZ7S5Qh5DGgmR9CiWWutD?=
- =?us-ascii?Q?NGqd4srr5fS1O4K0D3Z/l03AtuxeL7yzrdCaAhMY3htWh8j6u8SCsOudFRJr?=
- =?us-ascii?Q?TyfZSC+BiLlctI/Nc8b8lzsW67o/Ko9QLbgEgmJ56jXoBKktaGVVBjLujhZQ?=
- =?us-ascii?Q?KTjXJeCXRuypbsJXhLrs+akk9/D9usXkVhhLgbZRWvhUEYZyfJevHIJDBkvW?=
- =?us-ascii?Q?Lcn9SW6gBRaIsyHE7t2t2eE0fm4a5TThXfWHuj6a2r1rrbz59jqlUGhTQFNE?=
- =?us-ascii?Q?3Y8NbQNvxBuxXsLOhUIYHevV5rQDCNlplO0aZqbKck5uKomyFQrrmlPhpk7U?=
- =?us-ascii?Q?yWPVOmMPbtH9DY5/+JSzmlOJnie2bwp0qvhkRv7uQ9lVCebw0a1tvedUQkI1?=
- =?us-ascii?Q?8G9Dq/FSNMmjKPvxTSov1zNkBJrwCNgQchbHKgxMOdAT+r5T9IOoqlCsht+e?=
- =?us-ascii?Q?FNl+Cza2uZsnmsH99tSSr2q3Oy9WIuq3o2ctAU2IQwf8LKVV5muYOEYJ6w8p?=
- =?us-ascii?Q?oz/sQlaWjYlrUg7r5Smjj6AP1kbEbgxyNqIXrgzAYwkW9/gOMaHcVwErnsTA?=
- =?us-ascii?Q?H2+QVGo5CEpf5I6aitcCNr99SYyheH5SRAk4RCizjHS+PMJYaY8/Ki628NUo?=
- =?us-ascii?Q?xiUEAqvnGfgQv2/mMJ1ZMmWONmsEImC4WFWPmtBqv481SV3lSqzWTDxHfy6a?=
- =?us-ascii?Q?Kvls9DRey+ZTPzy21VxcdJDtXbmpUACOc8A6dVBx92nJQUvwg+Q10KOJtvvI?=
- =?us-ascii?Q?DX+F5881+Fs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5995.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?WPjlXbqZZK7jKd5OqS1BeeokAc6/DOe1QUy1mnI7IEabPWcm8Bu3ABWrEWT5?=
- =?us-ascii?Q?Yr8A0TwcMXsSanQg4bB+zKA+pQdd+5RzF+Zz64V93nOi+LMI43LOxE7uuvip?=
- =?us-ascii?Q?9sKaaa5nzzLG+OK4qT+vmduBdpyzCxZy2F6H75/fPGl6aIJKIBE5/XOyJV0B?=
- =?us-ascii?Q?H0g/tzznC2QSsKwDzc33rMA9HZ5SE3uvx/d0Sxrfi49y1xywBEM1la7rttik?=
- =?us-ascii?Q?9udFdF94nHCMyxN2EVu3CsyjbsswwaRuw3jwmDDfxtubNA28kpGkN6Bb4hIt?=
- =?us-ascii?Q?M0lQSMm96leknezI0uNSjhHdZeV+H1X+tkZLDA7dYoj9hfh1eRlFYSvz4TLo?=
- =?us-ascii?Q?ZLuepWYRmGbKNwjkb5PVQUoExow41F1YGq10JpTQXHWq2mhhhH9idJO5HxR3?=
- =?us-ascii?Q?E+e0NuGUDCivIGsxX2n/PWLgI7OiSzfITr8z5oz/0ATFu+ht1Pl3ZYLcpyei?=
- =?us-ascii?Q?4S4E/Gk9dkT2UuP5wA83jZBjzSddQyqkY6+Rs4DxfWw4dJqzpNRjtKweH08i?=
- =?us-ascii?Q?d2k07rM+sWoMnUUXeQZT4azMBAm8scfxV02uX2ZrbnktELyFyI3eFYp+zZr7?=
- =?us-ascii?Q?jQA/0fiSrfvq/kEjtlT2vSI4HdWRrKwvOgI6cZdSURrM4JmGTIgC2/44jk1b?=
- =?us-ascii?Q?vsQtW6XwjX/icAfj4sIy2Cqse7Q4zINxrz5m8ckp+VRvE6QrsqxhsgFLqXR9?=
- =?us-ascii?Q?3GnJFmMZUYO7v+365pP+OKz9snA0yQzwemfr4cbdPjJFEUDreR+RwVg7iKBx?=
- =?us-ascii?Q?9VKebKVVOur5F/7MdkPwAaPOI/RcbEPhblQqupBRtac90Frx2i1Yw7qXVGeH?=
- =?us-ascii?Q?A7YQNpa1Ucg1eR4FdTuHCX7dYOz4ZfsaIa3RKNoSgXp6piAsYbVEul/oeteK?=
- =?us-ascii?Q?CBmiZA1Qt+Dg+wawJ84MhuAHMAXhTQEuNUCNunsxZyD/Tzol7ANDsK33FcOA?=
- =?us-ascii?Q?xxsEYrYItGnt+xUiyGuctbWp6ZRUGQfpO56eZefWeLlgqnQDtbPCxjf++yMh?=
- =?us-ascii?Q?foSSCP0Z79cl910x1DdlhrwiT+04DJ6+mb5ZCYPXmJHTfZGCTkWKuEbNw2gy?=
- =?us-ascii?Q?NbbAJ9nrrtxk+DQ03KY72bYJeIEimzUdm+D9SuH7ZDn3/Ub5bZJn2PNWhf0L?=
- =?us-ascii?Q?Ux6SAO1m5vYaalrMYKFuXLcs7Z9ncdAhNNWin42Ixxgolvkjuepi4/8bZqub?=
- =?us-ascii?Q?tVJlgO/wckVVLkwZbkjmghXQ/3HJDkBHM4bh8btyKFl1cwv4Y9+zTDhMso/6?=
- =?us-ascii?Q?FAHowFP8yCmNBtlOYbdDdscKoFWRqN117rqWXDjY40ZfTk5sMl0qG2XyMhTF?=
- =?us-ascii?Q?Kf6hkuPNX7UYOD8QxOAM1i8zE4wmx9YDa0y+Qf/GI6GDOe1U6GSoHiBlvJQ4?=
- =?us-ascii?Q?Y7faLTEIQYbKiG/d9DrDRW90pWXuzGfHOFGmxooQVv6mY2bQxKClZseps4LT?=
- =?us-ascii?Q?AhhjiSybWJJdFfmotpr13Sx+gFaDktmZDi851DqHpMpucJn5G8aI+RY0zMFg?=
- =?us-ascii?Q?SiwVVWTrqfCx63RUKy9dpILRtAyaSWgvgXfRebOC7lWBimbAqL0o/8PsfNIy?=
- =?us-ascii?Q?w52GmVrVxVjpO5uMSeo3Xirysd9Ryksvd+W0CXDo?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac1268a9-29ee-4a51-afb7-08ddc4a871e2
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5995.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 20:36:30.3840
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4HL5VmQCprnwlG8DjdTWJZCaKqwXGS27WuuFjwJvrRwsvnMZ2v/TNENWXtcG432GeMCND3lXTM9kUbL0ljMhVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6476
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] hwmon: (pmbus) Add support for MPS multi-phase
+ mp2869a/mp29612a controllers
+To: tzuhao.wtmh@gmail.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, Fabio Estevam
+ <festevam@gmail.com>, Michal Simek <michal.simek@amd.com>,
+ Henry Wu <Henry_Wu@quantatw.com>, Grant Peltier <grantpeltier93@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>, Cherrence Sarip <cherrence.sarip@analog.com>,
+ Jerome Brunet <jbrunet@baylibre.com>, Leo Yang <leo.yang.sy0@gmail.com>,
+ John Erasmus Mari Geronimo <johnerasmusmari.geronimo@analog.com>,
+ Kim Seer Paller <kimseer.paller@analog.com>,
+ Alex Vdovydchenko <xzeol@yahoo.com>, Ninad Palsule <ninad@linux.ibm.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Cc: peteryin.openbmc@gmail.com
+References: <20250630112120.588246-1-Henry_Wu@quantatw.com>
+ <20250630112120.588246-2-Henry_Wu@quantatw.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250630112120.588246-2-Henry_Wu@quantatw.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 07, 2025 at 09:32:37AM +0800, Chao Gao wrote:
-> On Mon, Jul 07, 2025 at 12:51:14AM +0800, Xiaoyao Li wrote:
-> >Hi Chao,
-> >
-> >On 7/4/2025 4:49 PM, Chao Gao wrote:
-> >> Tests:
-> >> ======================
-> >> This series passed basic CET user shadow stack test and kernel IBT test in L1
-> >> and L2 guest.
-> >> The patch series_has_ impact to existing vmx test cases in KVM-unit-tests,the
-> >> failures have been fixed here[1].
-> >> One new selftest app[2] is introduced for testing CET MSRs accessibilities.
-> >> 
-> >> Note, this series hasn't been tested on AMD platform yet.
-> >> 
-> >> To run user SHSTK test and kernel IBT test in guest, an CET capable platform
-> >> is required, e.g., Sapphire Rapids server, and follow below steps to build
-> >> the binaries:
-> >> 
-> >> 1. Host kernel: Apply this series to mainline kernel (>= v6.6) and build.
-> >> 
-> >> 2. Guest kernel: Pull kernel (>= v6.6), opt-in CONFIG_X86_KERNEL_IBT
-> >> and CONFIG_X86_USER_SHADOW_STACK options. Build with CET enabled gcc versions
-> >> (>= 8.5.0).
-> >> 
-> >> 3. Apply CET QEMU patches[3] before build mainline QEMU.
-> >
-> >You forgot to provide the links of [1][2][3].
+On 6/30/25 04:20, tzuhao.wtmh@gmail.com wrote:
+> From: Henry Wu <Henry_Wu@quantatw.com>
 > 
-> Oops, thanks for catching this.
+> Add support for the mp2869a and mp29612a controllers from Monolithic Power
+> Systems, Inc. (MPS). These are dual-loop, digital, multi-phase modulation
+> controllers.
 > 
-> Here are the links:
+> Signed-off-by: Henry Wu <Henry_Wu@quantatw.com>
+> ---
+>   Documentation/hwmon/index.rst   |   1 +
+>   Documentation/hwmon/mp2869a.rst |  86 +++++++++
+>   drivers/hwmon/pmbus/Kconfig     |  10 ++
+>   drivers/hwmon/pmbus/Makefile    |   1 +
+>   drivers/hwmon/pmbus/mp2869a.c   | 299 ++++++++++++++++++++++++++++++++
+>   5 files changed, 397 insertions(+)
+>   create mode 100644 Documentation/hwmon/mp2869a.rst
+>   create mode 100644 drivers/hwmon/pmbus/mp2869a.c
 > 
-> [1]: KVM-unit-tests fixup:
-> https://lore.kernel.org/all/20230913235006.74172-1-weijiang.yang@intel.com/
-> [2]: Selftest for CET MSRs:
-> https://lore.kernel.org/all/20230914064201.85605-1-weijiang.yang@intel.com/
-> [3]: QEMU patch:
-> https://lore.kernel.org/all/20230720111445.99509-1-weijiang.yang@intel.com/
-> 
-> Please note that [1] has already been merged. And [3] is an older version of
-> CET for QEMU; I plan to post a new version for QEMU after the KVM series is
-> merged.
+> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
+> index b45bfb4ebf30..10bf4bd77f7b 100644
+> --- a/Documentation/hwmon/index.rst
+> +++ b/Documentation/hwmon/index.rst
+> @@ -172,6 +172,7 @@ Hardware Monitoring Kernel Drivers
+>      menf21bmc
+>      mlxreg-fan
+>      mp2856
+> +   mp2869a
+>      mp2888
+>      mp2891
+>      mp2975
+> diff --git a/Documentation/hwmon/mp2869a.rst b/Documentation/hwmon/mp2869a.rst
+> new file mode 100644
+> index 000000000000..a98ccb3d630d
+> --- /dev/null
+> +++ b/Documentation/hwmon/mp2869a.rst
+> @@ -0,0 +1,86 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +Kernel driver mp2896a
+> +=====================
+> +
+> +Supported chips:
+> +
+> +  * MPS MP2896A
+> +
+> +    Prefix: 'mp2896a'
+> +
+> +  * MPS MP29612A
+> +
+> +    Prefix: 'mp29612a'
+> +
+> +Author:
+> +
+> +    Henry Wu <Henry_WU@quantatw.com>
+> +
+> +Description
+> +-----------
+> +
+> +This driver implements support for Monolithic Power Systems, Inc. (MPS)
+> +MP2896A, a digital, multi-phase voltage regulator controller with PMBus interface.
+> +
+> +This device:
+> +
+> +- Supports up to two power rails.
+> +- Supports multiple PMBus pages for telemetry and configuration.
+> +- Supports VOUT readout in **VID format only** (no support for direct format).
+> +- Supports AMD SVI3 VID protocol with 5-mV/LSB resolution (if applicable).
+> +- Uses vendor-specific registers for VOUT scaling and phase configuration.
+> +
+> +Device supports:
+> +
+> +- SVID interface.
+> +- AVSBus interface.
+> +
+> +Device compliant with:
+> +
+> +- PMBus rev 1.3 interface.
+> +
+> +Sysfs Interface
+> +---------------
+> +
+> +The driver provides the following sysfs attributes:
+> +
+> +**Current measurements:**
+> +
+> +- Index 1: "iin"
+> +- Indexes 2, 3: "iout"
+> +
+> +**curr[1-3]_alarm**
+> +**curr[1-3]_input**
+> +**curr[1-3]_label**
+> +
+> +**Voltage measurements:**
+> +
+> +- Index 1: "vin"
+> +- Indexes 2, 3: "vout"
+> +
+> +**in[1-3]_crit**
+> +**in[1-3]_crit_alarm**
+> +**in[1-3]_input**
+> +**in[1-3]_label**
+> +**in[1-3]_lcrit**
+> +**in[1-3]_lcrit_alarm**
+> +
+> +**Power measurements:**
+> +
+> +- Index 1: "pin"
+> +- Indexes 2, 3: "pout"
+> +
+> +**power[1-3]_alarm**
+> +**power[1-3]_input**
+> +**power[1-3]_label**
+> +
+> +**Temperature measurements:**
+> +
+> +**temp[1-2]_crit**
+> +**temp[1-2]_crit_alarm**
+> +**temp[1-2]_input**
+> +**temp[1-2]_max**
+> +**temp[1-2]_max_alarm**
+> +
+> +
+> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+> index 441f984a859d..93b558761cc6 100644
+> --- a/drivers/hwmon/pmbus/Kconfig
+> +++ b/drivers/hwmon/pmbus/Kconfig
+> @@ -364,6 +364,16 @@ config SENSORS_MP2856
+>   	  This driver can also be built as a module. If so, the module will
+>   	  be called mp2856.
+>   
+> +config SENSORS_MP2869A
+> +	tristate "MP2869A PMBus sensor"
+> +	depends on I2C && PMBUS
+> +	help
+> +	  If you say yes here you get support for the MPS MP2869A MP29612A
+> +	  voltage regulator via the PMBus interface.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called mp2869a.
+> +
+>   config SENSORS_MP2888
+>   	tristate "MPS MP2888"
+>   	help
+> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+> index 29cd8a3317d2..42087d0dedbc 100644
+> --- a/drivers/hwmon/pmbus/Makefile
+> +++ b/drivers/hwmon/pmbus/Makefile
+> @@ -37,6 +37,7 @@ obj-$(CONFIG_SENSORS_MAX31785)	+= max31785.o
+>   obj-$(CONFIG_SENSORS_MAX34440)	+= max34440.o
+>   obj-$(CONFIG_SENSORS_MAX8688)	+= max8688.o
+>   obj-$(CONFIG_SENSORS_MP2856)	+= mp2856.o
+> +obj-$(CONFIG_SENSORS_MP2869A)   += mp2869a.o
+>   obj-$(CONFIG_SENSORS_MP2888)	+= mp2888.o
+>   obj-$(CONFIG_SENSORS_MP2891)	+= mp2891.o
+>   obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
+> diff --git a/drivers/hwmon/pmbus/mp2869a.c b/drivers/hwmon/pmbus/mp2869a.c
+> new file mode 100644
+> index 000000000000..e61f1380dbc1
+> --- /dev/null
+> +++ b/drivers/hwmon/pmbus/mp2869a.c
+> @@ -0,0 +1,299 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Hardware monitoring driver for MP2856A/MP29612A
+> + * Monolithic Power Systems VR Controller
+> + *
+> + * Copyright (C) 2023 Quanta Computer lnc.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/pmbus.h>
+> +#include "pmbus.h"
+> +
+> +/* Vendor specific registers. */
+> +#define MP2869A_VOUT_MODE			 0x20
 
-Do you happen to have a branch with the in-progress qemu patches you are
-testing with? I'm working on testing on AMD and I'm having issues
-getting this old version of the series to work properly.
+Standard register.
 
-Thanks,
-John
+> +#define MP2869A_VOUT_MODE_MASK		 GENMASK(7, 5)
+> +#define MP2869A_VOUT_MODE_VID		 (0 << 5)
+> +
+> +#define MP2869A_READ_VOUT			 0x8b
+
+Standard register.
+> +
+> +#define MP2869A_MFR_VOUT_SCALE_LOOP	 0x29
+
+Standard register.
+
+Guenter
 
 
