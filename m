@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-733919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4FDB07AAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:07:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA17B07AAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D931C25868
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E1681C24AC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236342F4A03;
-	Wed, 16 Jul 2025 16:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5D92F5480;
+	Wed, 16 Jul 2025 16:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i+YWym5q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RzEocr9p"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF472F5336
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701552F530E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752682018; cv=none; b=pumXi7uoj0h97xehbJvu2BFwloaTH0mgUn9guj2LU2q0iMrV+npm3q0i6teJH40DGUBfaqfRigphA1kwHqxE+fo60078U5OAZOZuImBDQBX127bSSx4HFmlfNaD55GL88jDWRNvZM4MZWVyTGah2cHBm/KRO2bG+31IfXkFQk4E=
+	t=1752682023; cv=none; b=p0Netm6M1Tc8xoldP9hjLY81w314BU6LnJo+8AGnSmpiqVIw5edCO6s+sBD0cQa3hWQmNEj1/qGx3eQkqwfEQigFXMX5loPGnCSgqaQevyzvD81pxGaW7wheKxzwhfSRn6RSW42DIt3Lq7vmWhSqadJvuD/4aX2/Npk6bBT/Egc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752682018; c=relaxed/simple;
-	bh=ifMnAwGYNxyxP5tsydOHaDt5x413efy5X35ku/pADAQ=;
+	s=arc-20240116; t=1752682023; c=relaxed/simple;
+	bh=kdUikepQOPp7iFuazxVdT5rzKbgevZ33o4lVcsCV2lU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K8LjDQmE17ibuGXzve5uFWx3br1IUd9SdKPIATKLK7bNb0DpZ4YZ0RFbmxZ5PiU9LgRJQ9s9QOBW5IqjKJMWXhxYJ6CfA3OYtDZRDG24PztQnRrWxe9tIqK6ucnPFBtwUZGD+XoucCz9viJf5O6dihxFpWaL9OW2aj3oDN8FkDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i+YWym5q; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=fKGJyHUyKkZmKk8TpVZbEvX8cgX/xY+Eb6AH2R/Y+VQtUIA/nPYxWC9OB6F3/dW4RObMspsAPhxKd0Pw1T+ZzC6Ii8iJAbdAn4v9HrG4ZtO0o+sVWO7ow9DfwUn4vgbtWkCyPXk52bIwBu/kt/xJb6nZnEQGW+UzMLzkzLP2sWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RzEocr9p; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752682015;
+	s=mimecast20190719; t=1752682020;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MkHMZF+W7s2KVUTf3+zNGyNPfFECcfwDxIyxKbBuCS4=;
-	b=i+YWym5qAP0p+h0HtNlUTFjXzN3d/HuzvIUbhefBajLW5SENSRNOMhQAndCptzxJzx655z
-	FfRNGPAtsz0h6b4URfibAH5JtuQTwAVkF4WSyPxjTvJ1bqeV2sqo2j2ghK+dX7fDqlculQ
-	R5fZCdWX1H3997DE4tKa/guaeNLrthw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=ICf9beWgXfGrKSdsZJKdY+yXhXtYFoWe+KDS9YCRDxI=;
+	b=RzEocr9pQdUeP/CvIAP6gJzoGG9Sy32q4AIC6GM13LpCVTJxmSJqNNiO8Zr7YpqPWmGlDy
+	sEpVdSNYPf6Hm0JKvRkwHn5u2hK/F3Kp5JibV280HjlDhVW7bnHKzkuABUPIQ2/yae1ZRC
+	qyzSSov2Xme+WdoAaZSur6Stp4ygBG8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-624-n75QxM0UM3OWc2VkwffocQ-1; Wed,
- 16 Jul 2025 12:06:52 -0400
-X-MC-Unique: n75QxM0UM3OWc2VkwffocQ-1
-X-Mimecast-MFC-AGG-ID: n75QxM0UM3OWc2VkwffocQ_1752682010
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-67-Iu7prPRiP8Cdi1wrCyuGtA-1; Wed,
+ 16 Jul 2025 12:06:56 -0400
+X-MC-Unique: Iu7prPRiP8Cdi1wrCyuGtA-1
+X-Mimecast-MFC-AGG-ID: Iu7prPRiP8Cdi1wrCyuGtA_1752682015
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2D3101800283;
-	Wed, 16 Jul 2025 16:06:50 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28C7B1800C31;
+	Wed, 16 Jul 2025 16:06:55 +0000 (UTC)
 Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.33.144])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B48B319560AB;
-	Wed, 16 Jul 2025 16:06:45 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7AD6319560AB;
+	Wed, 16 Jul 2025 16:06:51 +0000 (UTC)
 From: Gabriele Monaco <gmonaco@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -63,13 +63,12 @@ To: linux-kernel@vger.kernel.org,
 	Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
 	linux-mm@kvack.org
 Cc: Gabriele Monaco <gmonaco@redhat.com>,
 	Ingo Molnar <mingo@redhat.org>
-Subject: [PATCH v2 2/4] rseq: Run the mm_cid_compaction from rseq_handle_notify_resume()
-Date: Wed, 16 Jul 2025 18:06:06 +0200
-Message-ID: <20250716160603.138385-8-gmonaco@redhat.com>
+Subject: [PATCH v2 3/4] sched: Compact RSEQ concurrency IDs in batches
+Date: Wed, 16 Jul 2025 18:06:07 +0200
+Message-ID: <20250716160603.138385-9-gmonaco@redhat.com>
 In-Reply-To: <20250716160603.138385-6-gmonaco@redhat.com>
 References: <20250716160603.138385-6-gmonaco@redhat.com>
 Precedence: bulk
@@ -81,212 +80,167 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Currently the mm_cid_compaction is triggered by the scheduler tick and
-runs in a task_work, behaviour is more unpredictable with periodic tasks
-with short runtime, which may rarely run during a tick.
+Currently, task_mm_cid_work() is called from resume_user_mode_work().
+This can delay the execution of the corresponding thread for the entire
+duration of the function, negatively affecting the response in case of
+real time tasks.
+In practice, we observe task_mm_cid_work increasing the latency of
+30-35us on a 128 cores system, this order of magnitude is meaningful
+under PREEMPT_RT.
 
-Run the mm_cid_compaction from the rseq_handle_notify_resume() call,
-which runs from resume_user_mode_work. Since the context is the same
-where the task_work would run, skip this step and call the compaction
-function directly.
-The compaction function still exits prematurely in case the scan is not
-required, that is when the pseudo-period of 100ms did not elapse.
+Run the task_mm_cid_work in batches of up to CONFIG_RSEQ_CID_SCAN_BATCH
+CPUs, this reduces the duration of the delay for each scan.
 
-Keep a tick handler used for long running tasks that are never preempted
-(i.e. that never call rseq_handle_notify_resume), which triggers a
-compaction and mm_cid update only in that case.
+The task_mm_cid_work contains a mechanism to avoid running more
+frequently than every 100ms. Keep this pseudo-periodicity only on
+complete scans.
+This means each call to task_mm_cid_work returns prematurely if the
+period did not elapse and a scan is not ongoing (i.e. the next batch to
+scan is not the first).
+This way full scans are not excessively delayed while still keeping each
+run, and introduced latency, short.
 
+Fixes: 223baf9d17f2 ("sched: Fix performance regression introduced by mm_cid")
 Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 ---
- include/linux/mm.h       |  2 ++
- include/linux/mm_types.h | 11 ++++++++
- include/linux/sched.h    |  2 +-
- kernel/rseq.c            |  2 ++
- kernel/sched/core.c      | 55 +++++++++++++++++++++++++---------------
- kernel/sched/sched.h     |  2 ++
- 6 files changed, 53 insertions(+), 21 deletions(-)
+ include/linux/mm_types.h | 15 +++++++++++++++
+ init/Kconfig             | 12 ++++++++++++
+ kernel/sched/core.c      | 37 ++++++++++++++++++++++++++++++++++---
+ 3 files changed, 61 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index fa538feaa8d95..cc8c1c9ae26c1 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2294,6 +2294,7 @@ void sched_mm_cid_before_execve(struct task_struct *t);
- void sched_mm_cid_after_execve(struct task_struct *t);
- void sched_mm_cid_fork(struct task_struct *t);
- void sched_mm_cid_exit_signals(struct task_struct *t);
-+void task_mm_cid_work(struct task_struct *t);
- static inline int task_mm_cid(struct task_struct *t)
- {
- 	return t->mm_cid;
-@@ -2303,6 +2304,7 @@ static inline void sched_mm_cid_before_execve(struct task_struct *t) { }
- static inline void sched_mm_cid_after_execve(struct task_struct *t) { }
- static inline void sched_mm_cid_fork(struct task_struct *t) { }
- static inline void sched_mm_cid_exit_signals(struct task_struct *t) { }
-+static inline void task_mm_cid_work(struct task_struct *t) { }
- static inline int task_mm_cid(struct task_struct *t)
- {
- 	/*
 diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index d6b91e8a66d6d..e6d6e468e64b4 100644
+index e6d6e468e64b4..a822966a584f3 100644
 --- a/include/linux/mm_types.h
 +++ b/include/linux/mm_types.h
-@@ -1420,6 +1420,13 @@ static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumas
- 	WRITE_ONCE(mm->nr_cpus_allowed, cpumask_weight(mm_allowed));
- 	raw_spin_unlock(&mm->cpus_allowed_lock);
+@@ -995,6 +995,13 @@ struct mm_struct {
+ 		 * When the next mm_cid scan is due (in jiffies).
+ 		 */
+ 		unsigned long mm_cid_next_scan;
++		/*
++		 * @mm_cid_scan_batch: Counter for batch used in the next scan.
++		 *
++		 * Scan in batches of CONFIG_RSEQ_CID_SCAN_BATCH. This field
++		 * increments at each scan and reset when all batches are done.
++		 */
++		unsigned int mm_cid_scan_batch;
+ 		/**
+ 		 * @nr_cpus_allowed: Number of CPUs allowed for mm.
+ 		 *
+@@ -1385,6 +1392,7 @@ static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
+ 	raw_spin_lock_init(&mm->cpus_allowed_lock);
+ 	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
+ 	cpumask_clear(mm_cidmask(mm));
++	mm->mm_cid_scan_batch = 0;
  }
+ 
+ static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
+@@ -1423,8 +1431,15 @@ static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumas
+ 
+ static inline bool mm_cid_needs_scan(struct mm_struct *mm)
+ {
++	unsigned int next_batch;
 +
-+static inline bool mm_cid_needs_scan(struct mm_struct *mm)
-+{
-+	if (!mm)
-+		return false;
-+	return time_after(jiffies, READ_ONCE(mm->mm_cid_next_scan));
-+}
- #else /* CONFIG_SCHED_MM_CID */
- static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p) { }
- static inline int mm_alloc_cid(struct mm_struct *mm, struct task_struct *p) { return 0; }
-@@ -1430,6 +1437,10 @@ static inline unsigned int mm_cid_size(void)
- 	return 0;
+ 	if (!mm)
+ 		return false;
++	next_batch = READ_ONCE(mm->mm_cid_scan_batch);
++	/* Always needs scan unless it's the first batch. */
++	if (CONFIG_RSEQ_CID_SCAN_BATCH * next_batch < num_possible_cpus() &&
++	    next_batch)
++		return true;
+ 	return time_after(jiffies, READ_ONCE(mm->mm_cid_next_scan));
  }
- static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask) { }
-+static inline bool mm_cid_needs_scan(struct mm_struct *mm)
-+{
-+	return false;
-+}
- #endif /* CONFIG_SCHED_MM_CID */
+ #else /* CONFIG_SCHED_MM_CID */
+diff --git a/init/Kconfig b/init/Kconfig
+index 666783eb50abd..98d7f078cd6df 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1860,6 +1860,18 @@ config DEBUG_RSEQ
  
- struct mmu_gather;
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index aa9c5be7a6325..a75f61cea2271 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1428,7 +1428,7 @@ struct task_struct {
- 	int				last_mm_cid;	/* Most recent cid in mm */
- 	int				migrate_from_cpu;
- 	int				mm_cid_active;	/* Whether cid bitmap is active */
--	struct callback_head		cid_work;
-+	unsigned long			last_cid_reset;	/* Time of last reset in jiffies */
- #endif
+ 	  If unsure, say N.
  
- 	struct tlbflush_unmap_batch	tlb_ubc;
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index b7a1ec327e811..100f81e330dc6 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -441,6 +441,8 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
- 	}
- 	if (unlikely(rseq_update_cpu_node_id(t)))
- 		goto error;
-+	/* The mm_cid compaction returns prematurely if scan is not needed. */
-+	task_mm_cid_work(t);
- 	return;
- 
- error:
++config RSEQ_CID_SCAN_BATCH
++	int "Number of CPUs to scan at every mm_cid compaction attempt"
++	range 1 NR_CPUS
++	default 8
++	depends on SCHED_MM_CID
++	help
++	  CPUs are scanned pseudo-periodically to compact the CID of each task,
++	  this operation can take a longer amount of time on systems with many
++	  CPUs, resulting in higher scheduling latency for the current task.
++	  A higher value means the CID is compacted faster, but results in
++	  higher scheduling latency.
++
+ config CACHESTAT_SYSCALL
+ 	bool "Enable cachestat() system call" if EXPERT
+ 	default y
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 81c6df746df17..27b856a1cb0a9 100644
+index 27b856a1cb0a9..eae4c8faf980b 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -10589,22 +10589,13 @@ static void sched_mm_cid_remote_clear_weight(struct mm_struct *mm, int cpu,
- 	sched_mm_cid_remote_clear(mm, pcpu_cid, cpu);
- }
+@@ -10591,11 +10591,26 @@ static void sched_mm_cid_remote_clear_weight(struct mm_struct *mm, int cpu,
  
--static void task_mm_cid_work(struct callback_head *work)
-+void task_mm_cid_work(struct task_struct *t)
+ void task_mm_cid_work(struct task_struct *t)
  {
++	int weight, cpu, from_cpu, this_batch, next_batch, idx;
  	unsigned long now = jiffies, old_scan, next_scan;
--	struct task_struct *t = current;
  	struct cpumask *cidmask;
--	struct mm_struct *mm;
- 	int weight, cpu;
-+	struct mm_struct *mm = t->mm;
+-	int weight, cpu;
+ 	struct mm_struct *mm = t->mm;
  
--	WARN_ON_ONCE(t != container_of(work, struct task_struct, cid_work));
--
--	work->next = work;	/* Prevent double-add */
--	if (t->flags & PF_EXITING)
--		return;
--	mm = t->mm;
--	if (!mm)
--		return;
++	/*
++	 * This function is called from __rseq_handle_notify_resume, which
++	 * makes sure t is a user thread and is not exiting.
++	 */
++	this_batch = READ_ONCE(mm->mm_cid_scan_batch);
++	next_batch = this_batch + 1;
++	from_cpu = cpumask_nth(this_batch * CONFIG_RSEQ_CID_SCAN_BATCH,
++			       cpu_possible_mask);
++	if (from_cpu >= nr_cpu_ids) {
++		from_cpu = 0;
++		next_batch = 1;
++	}
++	/* Delay scan only if we are done with all cpus. */
++	if (from_cpu != 0)
++		goto cid_compact;
  	old_scan = READ_ONCE(mm->mm_cid_next_scan);
  	next_scan = now + msecs_to_jiffies(MM_CID_SCAN_DELAY);
  	if (!old_scan) {
-@@ -10643,23 +10634,47 @@ void init_sched_mm_cid(struct task_struct *t)
- 		if (mm_users == 1)
- 			mm->mm_cid_next_scan = jiffies + msecs_to_jiffies(MM_CID_SCAN_DELAY);
- 	}
--	t->cid_work.next = &t->cid_work;	/* Protect against double add */
--	init_task_work(&t->cid_work, task_mm_cid_work);
- }
- 
- void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
- {
--	struct callback_head *work = &curr->cid_work;
--	unsigned long now = jiffies;
-+	u64 rtime = curr->se.sum_exec_runtime - curr->se.prev_sum_exec_runtime;
- 
-+	/*
-+	 * If a task is running unpreempted for a long time, it won't get its
-+	 * mm_cid compacted and won't update its mm_cid value after a
-+	 * compaction occurs.
-+	 * For such a task, this function does two things:
-+	 * A) trigger the mm_cid recompaction,
-+	 * B) trigger an update of the task's rseq->mm_cid field at some point
-+	 * after recompaction, so it can get a mm_cid value closer to 0.
-+	 * A change in the mm_cid triggers an rseq_preempt.
-+	 *
-+	 * B occurs once after the compaction work completes, neither A nor B
-+	 * run as long as the compaction work is pending, the task is exiting
-+	 * or is not a userspace task.
-+	 */
- 	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) ||
--	    work->next != work)
-+	    test_tsk_thread_flag(curr, TIF_NOTIFY_RESUME))
+@@ -10611,17 +10626,33 @@ void task_mm_cid_work(struct task_struct *t)
  		return;
--	if (time_before(now, READ_ONCE(curr->mm->mm_cid_next_scan)))
-+	if (rtime < RSEQ_UNPREEMPTED_THRESHOLD)
+ 	if (!try_cmpxchg(&mm->mm_cid_next_scan, &old_scan, next_scan))
  		return;
--
--	/* No page allocation under rq lock */
--	task_work_add(curr, work, TWA_RESUME);
-+	if (mm_cid_needs_scan(curr->mm)) {
-+		/* Trigger mm_cid recompaction */
-+		rseq_set_notify_resume(curr);
-+	} else if (time_after(jiffies, curr->last_cid_reset +
-+			      msecs_to_jiffies(MM_CID_SCAN_DELAY))) {
-+		/* Update mm_cid field */
-+		int old_cid = curr->mm_cid;
 +
-+		if (!curr->mm_cid_active)
-+			return;
-+		mm_cid_snapshot_time(rq, curr->mm);
-+		mm_cid_put_lazy(curr);
-+		curr->last_mm_cid = curr->mm_cid = mm_cid_get(rq, curr, curr->mm);
-+		if (old_cid != curr->mm_cid)
-+			rseq_preempt(curr);
++cid_compact:
++	if (!try_cmpxchg(&mm->mm_cid_scan_batch, &this_batch, next_batch))
++		return;
+ 	cidmask = mm_cidmask(mm);
+ 	/* Clear cids that were not recently used. */
+-	for_each_possible_cpu(cpu)
++	idx = 0;
++	cpu = from_cpu;
++	for_each_cpu_from(cpu, cpu_possible_mask) {
++		if (idx == CONFIG_RSEQ_CID_SCAN_BATCH)
++			break;
+ 		sched_mm_cid_remote_clear_old(mm, cpu);
++		++idx;
++	}
+ 	weight = cpumask_weight(cidmask);
+ 	/*
+ 	 * Clear cids that are greater or equal to the cidmask weight to
+ 	 * recompact it.
+ 	 */
+-	for_each_possible_cpu(cpu)
++	idx = 0;
++	cpu = from_cpu;
++	for_each_cpu_from(cpu, cpu_possible_mask) {
++		if (idx == CONFIG_RSEQ_CID_SCAN_BATCH)
++			break;
+ 		sched_mm_cid_remote_clear_weight(mm, cpu, weight);
++		++idx;
 +	}
  }
  
- void sched_mm_cid_exit_signals(struct task_struct *t)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 475bb5998295e..90a5b58188232 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3606,6 +3606,7 @@ extern const char *preempt_modes[];
- 
- #define SCHED_MM_CID_PERIOD_NS	(100ULL * 1000000)	/* 100ms */
- #define MM_CID_SCAN_DELAY	100			/* 100ms */
-+#define RSEQ_UNPREEMPTED_THRESHOLD	SCHED_MM_CID_PERIOD_NS
- 
- extern raw_spinlock_t cid_lock;
- extern int use_cid_lock;
-@@ -3809,6 +3810,7 @@ static inline int mm_cid_get(struct rq *rq, struct task_struct *t,
- 	int cid;
- 
- 	lockdep_assert_rq_held(rq);
-+	t->last_cid_reset = jiffies;
- 	cpumask = mm_cidmask(mm);
- 	cid = __this_cpu_read(pcpu_cid->cid);
- 	if (mm_cid_is_valid(cid)) {
+ void init_sched_mm_cid(struct task_struct *t)
 -- 
 2.50.1
 
