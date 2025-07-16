@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-733414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B812AB07467
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:14:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A7EB0746B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD2A3A8327
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF88D1896793
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7972F365C;
-	Wed, 16 Jul 2025 11:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFB32F3C10;
+	Wed, 16 Jul 2025 11:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LL1/fcFv"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="2N7YFRME"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95802AE96;
-	Wed, 16 Jul 2025 11:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1252F2C69
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752664448; cv=none; b=MB61LSw0TLFr27aMufVYj+i2ocPExD0VBNrXYK+7UP+Ep1V2Xa0AMvuYUBIcA3pNJ4T33VAUtqQnhWCaLrvAl5k+l0mCWKjgBC4FjwPysLbJDCBDfIRzHjjApOS+924TJTQdkpemV9CxqIat1OzUoXIEdQ4nsRA83HWQuasaih4=
+	t=1752664468; cv=none; b=uMYn/wyxzpPuz5pSXAYXriYx+WO1iaU+PBvXB3AHPCNblbI13CSx4rU0CqIaS3SYwZJPIp3996OAT/CbRGAn1KAmM8HVBjnWmW/kcN431W8UDTezeWZr25QRMu/cGlA8RjtOayHDNhaLyPg5C8cEQDHdbFUTxg51azGf1F0tBVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752664448; c=relaxed/simple;
-	bh=J66qs/SXX72p0d4K0uZpcaeSmTq3Scy3eqJBX7RqLig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j5NCJUkbplUTpG65mpRYfjRQNUvcKXBm9cVACr3+X4cD3Y3zYogVRxMEYPOtVQt02j/XC4VCk3UNNVWw6D14Q1ADD3YX2sQRNqV2Fs2kfD3G5Xzts5sKYz8TxhoiuhlIkBwUZWq781/JorsXdSrZhCnplC00xyeCZZ4ntQfD018=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LL1/fcFv; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cQP4FEYOudQe7oSNdm7jEn1TS7UAD20Psswd1K+XjMM=; b=LL1/fcFvUFVMocHUtmyWpc25s/
-	tJlzwnIzZxP1lqD7JyrMcihcByFCdWwNaPkUIOrzDJB/IHCbcB0EhCKFhf/l5RCZysIm7HFrPp2VQ
-	MLKDQ7r5Op4YLsGLCpqddEuZhQQW16zSZLfwYqGa2n81Qj1WwHdc0xBFNI5tZRtX5TgEv8PV1D1C0
-	W5HPmRjpy99HkJYeioS5l7lB6CN2vCUvM6zCEzvrsQNpArOUbOlmy3mHjwNnOyM3zF1SrxnLqVIR6
-	yCV7jMkMYoOfaIeAlrSUnRZB/kmMYuuuT7Djr2Ke8hXjn3zR0z5PTc8DPVAuuZqI7oN++C7a0n6CN
-	M9NSriHw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc05M-00000007WqV-1Cwh;
-	Wed, 16 Jul 2025 11:14:04 +0000
-Date: Wed, 16 Jul 2025 04:14:04 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Dragos Tatulea <dtatulea@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Jens Axboe <axboe@kernel.dk>,
-	parav@nvidia.com, Cosmin Ratio <cratiu@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] net: Allow SF devices to be used for ZC DMA
-Message-ID: <aHeJfLYpkmwDvvN8@infradead.org>
-References: <20250711092634.2733340-2-dtatulea@nvidia.com>
- <20250714181136.7fd53312@kernel.org>
- <aHXbgr67d1l5atW8@infradead.org>
- <20250715060649.03b3798c@kernel.org>
+	s=arc-20240116; t=1752664468; c=relaxed/simple;
+	bh=+kWRZdHA5sveSqTRHT7T+wiUa880suE/NcbD2Dsy5A8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDVLl/bdW9EI9NDBrt5jFb3dKIccEndwyAX4UjWHjX1C/F51V2usWbboX8a5POP649qB54uab0FFidoI4znwAXyUJt12JOuuql/Z6KTGabLRWyGHKX45mygH3t6sbuGvM25otEKxS/d8tQPPwF/1rKaouDNvAin57Qh+YBOaONo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=2N7YFRME; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
+	by cmsmtp with ESMTPS
+	id bwaau58LNiuzSc05huiQoY; Wed, 16 Jul 2025 11:14:25 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id c05huRQaLE3Utc05huMr2z; Wed, 16 Jul 2025 11:14:25 +0000
+X-Authority-Analysis: v=2.4 cv=bcJtUvPB c=1 sm=1 tr=0 ts=68778991
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=Fyo-qtgZ5HMtR4iIztsA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Skt+g1XkyWKSJri4D/2V18Sv2BLs34XHvPDFqMQPu5Q=; b=2N7YFRMEWTjDEKxmUlZMTYpZKs
+	lcMdo7no0FRTaXF5bH7zoV0nXuRYfA1E309VMLGjc2XxotTqBP4w2fpJofB2NSTyJ4uHvsPO6k1Rd
+	00hXJb/bymCT6FibiZPWgKhAPmxAubv3/Z5GMohgMrJSfIAYEGpG8hJhY1gDVJ/j4RckLlA01vj+K
+	6/B/S+9kvjOrMFAPbyf3qnxMORoHXP8a7fgwdpIggly/8Am7WkGtM784rMdEf0vrYLAebixpiEWVF
+	b/XqvQzKFkPzjIGi/pW8mKa0Bcj6ltLkt5ko8gDpgAXzcH8GLz8WnJhZXp8NTok9L3zmivo02wBVr
+	VCLqG3tQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:43336 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uc05g-00000002aaj-09oN;
+	Wed, 16 Jul 2025 05:14:24 -0600
+Message-ID: <adc7c120-b80f-4317-8f0b-216e27f6c36d@w6rz.net>
+Date: Wed, 16 Jul 2025 04:14:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715060649.03b3798c@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/89] 6.1.146-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250715163541.635746149@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250715163541.635746149@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uc05g-00000002aaj-09oN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:43336
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 39
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfDs+uo3HbGmjdoRGDeWJzLobSFRvPoB8U93/MIy71UvXZxfwo9isNhFZCNRoXJHoN+fnM3/X8rGPaZ3duMzlp0GG+sLwWOmftGa19q16+ZhCoH+smiZI
+ zW4SJn9yPGWcW/U0/WxCC+GF3xz8y6MJz4PEDSvCKQJpvQf9sPO/Yyf9vIUjGOY0oF4lcY158PNQCvkVIVebL2UW4VDmvJ5Sun4=
 
-On Tue, Jul 15, 2025 at 06:06:49AM -0700, Jakub Kicinski wrote:
-> On Mon, 14 Jul 2025 21:39:30 -0700 Christoph Hellwig wrote:
-> > > LGTM, but we need a better place for this function. netdevice.h is
-> > > included directly by 1.5k files, and indirectly by probably another 5k.
-> > > It's not a great place to put random helpers with 2 callers. 
-> > > Maybe net/netdev_rx_queue.h and net/core/netdev_rx_queue.c?
-> > > I don't think it needs to be a static inline either.  
-> > 
-> > The whole concept is also buggy.  Trying to get a dma-able device by
-> > walking down from an upper level construct like the netdevice can't work
-> > reliably.  You'll need to explicitly provide the dma_device using either
-> > a method or a pointer to it instead of this guesswork.
-> 
-> Yeah, I'm pretty sure we'll end up with a method in queue ops.
-> But it's not that deep, an easy thing to change.
+On 7/15/25 09:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.146 release.
+> There are 89 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 17 Jul 2025 16:35:20 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.146-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Why not get this right now instead of adding more of the hacky parent
-walking?
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+
+Tested-by: Ron Economos <re@w6rz.net>
+
 
