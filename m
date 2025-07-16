@@ -1,69 +1,66 @@
-Return-Path: <linux-kernel+bounces-733557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D16B07638
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:51:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61BE6B07636
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 464BD1795A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A32AC1C248D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49952F50B2;
-	Wed, 16 Jul 2025 12:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF43326A095;
+	Wed, 16 Jul 2025 12:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iV94vVxm"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Kr13GJL+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7E62F4A16;
-	Wed, 16 Jul 2025 12:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADC5DDAD;
+	Wed, 16 Jul 2025 12:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752670301; cv=none; b=F6ImJt9Q8u7KT4MJBqQWgunj826TZ2wyEaQKZIZ/CURknm5HLQmH4EMhqZ0F7T+BNwdT8ghHgOGVYBR9LiAHG5DK6jwfeWQqgiYkbIPIBS+UnauLW/QAS7RsofL8L7G3SMJDVQS5dJXP6NifJKcuPdRhPspZzclT/t70Jt5O21Y=
+	t=1752670297; cv=none; b=SKlWgjlYXwvsbOcT5XI8HqYZqJkwuidKGdF2GQjEHOMVgGUmoCRWXuATSQDwEaWxBHtr6BA7CqCUnGYWc0T1eCovwDy5rAhfoGm+EK3jHbgHRY1+CEwuQ4MrbZMxx7pbIqx/TkaFxgA1QJAJBOVmfkJV8X0hZLttsfHzVqOtRj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752670301; c=relaxed/simple;
-	bh=mMvWaLNOwtl8MXi1ChoYu02nFr3kiqf+L6ufzBWr4MU=;
+	s=arc-20240116; t=1752670297; c=relaxed/simple;
+	bh=J54eoEWwWNy+ylE6R6oz//6xnGPALJEFSyh5pY2yyfw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gauZx0QHyptzpAtipO1qsr4fBDiiD+/2gYH7sHWsjlvRzR+gdoahrnlSlSVgq6X+pebva3hPESOnE4l0HKF9xoLJGCLD5yETorGbFH09rFvgJ1AwfANdusHJ29kUXToAZwtBn4Z+ez93IKNpBIZiujo5LCl1sxkwkbB1p6z3TTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iV94vVxm; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ofeIGZ8x5KoMgSaejtDVRToiFCJTnfX/7IoKzW3fTa8=; b=iV94vVxmRr6Qdcjtg0dyNjtu5R
-	sdoPNd7SBTvXfrqPAYUbispvthgeggoNGrfH/MnzuqHW4vqh01nLwEUFdte0WPVLaO0il3VJAMcNJ
-	JRtrtUkXGUGMf5ALms4acNlEb4qyOnl7NZO8EFRFzJxalvIpZTs2XcflUB7RyhbJTU62tG0dCWCZu
-	hPaFli5uGJZvFDSDvFyi4EHoBMaRScN3RulBNJLywGvqfBCsI7N/IgEC8TCi2Lrg4lF2VSg6zAwnp
-	IeewslqiN9ZeZBlteFaN5+PP5A9jKM3oSIF9AjOXAi4H6+BWlR/hx6ElAc6zuMio0dWZ574495v5j
-	Jrz07ZiA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc1bd-0000000A6IQ-1XUt;
-	Wed, 16 Jul 2025 12:51:29 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E3E94300186; Wed, 16 Jul 2025 14:51:28 +0200 (CEST)
-Date: Wed, 16 Jul 2025 14:51:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	jake@hillion.co.uk
-Subject: Re: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
- disabling preemption
-Message-ID: <20250716125128.GX905792@noisy.programming.kicks-ass.net>
-References: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tnxhH9w6RlSBW0ksFXqBMQPxIZgyMNVqc3FcZPvID2oCAGPoHkJwWIYJD4nVHuN4aBVCEUBXkMSpb37le8UkuVwHyELELz6au+uBypH6v7waZMbB1ZKzBNbD35cW0Jt7Q2/vOGpUQTvpLsz9OUYI+Oh6urL3p8jjr+1F2lVivp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Kr13GJL+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C85C4CEF4;
+	Wed, 16 Jul 2025 12:51:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752670296;
+	bh=J54eoEWwWNy+ylE6R6oz//6xnGPALJEFSyh5pY2yyfw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kr13GJL+eokFFyuUKDnzt0/0vk+dLernPfT1kKSAiOmKkDGx4rFJw7s4CXlbzaTpo
+	 6gXMQLkr0bScacKwD45raj2G5MxUmuKGtySEU+SDrI3PrCyzoi+OP17DVfWPVQ5Kun
+	 dotUfIgmxZ1BTC3yxwaOPUmz+iBRqFdRxDz2gq3g=
+Date: Wed, 16 Jul 2025 14:51:34 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v11 6/7] power: reset: add PSCR NVMEM Driver for
+ Recording Power State Change Reasons
+Message-ID: <2025071631-henna-synthesis-9961@gregkh>
+References: <20250618120255.3141862-7-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,50 +69,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
+In-Reply-To: <20250618120255.3141862-7-o.rempel@pengutronix.de>
 
-On Wed, Jul 16, 2025 at 05:46:15AM -0700, Breno Leitao wrote:
-> __this_cpu_write() emits a warning if used with preemption enabled.
+On Wed, Jun 18, 2025 at 02:02:54PM +0200, Oleksij Rempel wrote:
+> This driver utilizes the Power State Change Reasons Recording (PSCRR)
+> framework to store specific power state change information, such as
+> shutdown or reboot reasons, into a designated non-volatile memory
+> (NVMEM) cell.
 > 
-> Function update_locked_rq() might be called with preemption enabled,
-> which causes the following warning:
-> 
-> 	BUG: using __this_cpu_write() in preemptible [00000000] code: scx_layered_6-9/68770
-> 
-> Disable preemption around the __this_cpu_write() call in
-> update_locked_rq() to suppress the warning, without affecting behavior.
-> 
-> If preemption triggers a  jump to another CPU during the callback it's
-> fine, since we would track the rq state on the other CPU with its own
-> local variable.
-> 
-> Suggested-by: Andrea Righi <arighi@nvidia.com>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Fixes: 18853ba782bef ("sched_ext: Track currently locked rq")
-> Acked-by: Andrea Righi <arighi@nvidia.com>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Tested-by: Francesco Valla <francesco@valla.it>
 > ---
->  kernel/sched/ext.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> changes v6:
+> - rename pscr_reason to psc_reason
+> changes v5:
+> - avoid a build against NVMEM=m
+> changes v4:
+> - remove devicetree dependencies
+> ---
+>  drivers/power/reset/Kconfig       |  22 +++
+>  drivers/power/reset/Makefile      |   1 +
+>  drivers/power/reset/pscrr-nvmem.c | 254 ++++++++++++++++++++++++++++++
+>  3 files changed, 277 insertions(+)
+>  create mode 100644 drivers/power/reset/pscrr-nvmem.c
 > 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index b498d867ba210..24fcbd7331f73 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -1258,7 +1258,14 @@ static inline void update_locked_rq(struct rq *rq)
->  	 */
->  	if (rq)
->  		lockdep_assert_rq_held(rq);
-> +	/*
-> +	 * __this_cpu_write() emits a warning when used with preemption enabled.
-> +	 * While there's no functional issue if the callback runs on another
-> +	 * CPU, we disable preemption here solely to suppress that warning.
-> +	 */
-> +	preempt_disable();
->  	__this_cpu_write(locked_rq, rq);
-> +	preempt_enable();
->  }
+> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> index 69e038e20731..3affef932e4d 100644
+> --- a/drivers/power/reset/Kconfig
+> +++ b/drivers/power/reset/Kconfig
+> @@ -354,3 +354,25 @@ menuconfig PSCRR
+>  	  be recorded unless hardware provides the reset cause.
+>  
+>  	  If unsure, say N.
+> +
+> +if PSCRR
+> +
+> +config PSCRR_NVMEM
+> +	tristate "Generic NVMEM-based Power State Change Reason Recorder"
+> +	depends on NVMEM || !NVMEM
+> +	help
+> +	  This option enables support for storing power state change reasons
+> +	  (such as shutdown, reboot, or power failure events) into a designated
+> +	  NVMEM (Non-Volatile Memory) cell.
+> +
+> +	  This feature allows embedded systems to retain power transition
+> +	  history even after a full system restart or power loss. It is useful
+> +	  for post-mortem debugging, automated recovery strategies, and
+> +	  improving system reliability.
+> +
+> +	  The NVMEM cell used for storing these reasons can be dynamically
+> +	  configured via module parameters.
 
-This looks dodgy as heck. Why can't we do this update_locked_rq(NULL)
-call while still holding rq? Also, I don't seem to have this scx_layered
-thing.
+Module parameters?  Why?
+
+> +
+> +	  If unsure, say N.
+> +
+> +endif
+> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+> index 025da19cb335..cc9008c8bb02 100644
+> --- a/drivers/power/reset/Makefile
+> +++ b/drivers/power/reset/Makefile
+> @@ -34,6 +34,7 @@ obj-$(CONFIG_POWER_RESET_SYSCON) += syscon-reboot.o
+>  obj-$(CONFIG_POWER_RESET_SYSCON_POWEROFF) += syscon-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_RMOBILE) += rmobile-reset.o
+>  obj-$(CONFIG_PSCRR) += pscrr.o
+> +obj-$(CONFIG_PSCRR_NVMEM) += pscrr-nvmem.o
+>  obj-$(CONFIG_REBOOT_MODE) += reboot-mode.o
+>  obj-$(CONFIG_SYSCON_REBOOT_MODE) += syscon-reboot-mode.o
+>  obj-$(CONFIG_POWER_RESET_SC27XX) += sc27xx-poweroff.o
+> diff --git a/drivers/power/reset/pscrr-nvmem.c b/drivers/power/reset/pscrr-nvmem.c
+> new file mode 100644
+> index 000000000000..7d02d989893f
+> --- /dev/null
+> +++ b/drivers/power/reset/pscrr-nvmem.c
+> @@ -0,0 +1,254 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * pscrr_nvmem.c - PSCRR backend for storing shutdown reasons in small NVMEM
+> + *		   cells
+> + *
+> + * This backend provides a way to persist power state change reasons in a
+> + * non-volatile memory (NVMEM) cell, ensuring that reboot causes can be
+> + * analyzed post-mortem. Unlike traditional logging to eMMC or NAND, which
+> + * may be unreliable during power failures, this approach allows storing
+> + * reboot reasons in small, fast-access storage like RTC scratchpads, EEPROM,
+> + * or FRAM.
+> + *
+> + * The module allows dynamic configuration of the NVMEM device and cell
+> + * via module parameters:
+> + *
+> + * Example usage:
+> + *   modprobe pscrr-nvmem nvmem_name=pcf85063_nvram0 cell_name=pscr@0,0
+
+Ugh, no, this isn't the 1990's anymore.  Module parameters don't make
+sense for dynamic systems with multiple devices and names and the like.
+Please use a proper api for this instead of this static one.
+
+> +/*
+> + * Module parameters:
+> + *   nvmem_name: Name of the NVMEM device (e.g. "pcf85063_nvram0").
+> + *   cell_name : Sysfs name of the cell on that device (e.g. "pscr@0,0").
+> + */
+> +static char *nvmem_name;
+> +module_param(nvmem_name, charp, 0444);
+> +MODULE_PARM_DESC(nvmem_name, "Name of the NVMEM device (e.g. pcf85063_nvram0)");
+> +
+> +static char *cell_name;
+> +module_param(cell_name, charp, 0444);
+> +MODULE_PARM_DESC(cell_name, "Sysfs name of the NVMEM cell (e.g. pscr@0,0)");
+
+Again, don't.  Please don't.
+
+You now only have one name, and one device.  WHat happens to the next
+system that has multiple ones?  And who is enforcing this arbitrary
+naming scheme?  Why is that now a user/kernel abi that can never change?
+
+> +	pr_info("PSCRR-nvmem: Loaded (nvmem=%s, cell=%s), can store 0..%zu\n",
+> +		nvmem_name, cell_name, priv->max_val);
+
+Again, when code works, it is quiet.
+
+> +static void __exit pscrr_nvmem_exit(void)
+> +{
+> +	pscrr_core_exit();
+> +
+> +	if (priv) {
+> +		if (priv->cell) {
+> +			nvmem_cell_put(priv->cell);
+> +			priv->cell = NULL;
+> +		}
+> +		if (priv->nvmem) {
+> +			nvmem_device_put(priv->nvmem);
+> +			priv->nvmem = NULL;
+> +		}
+> +		kfree(priv);
+> +		priv = NULL;
+> +	}
+> +
+> +	pr_info("pscrr-nvmem: Unloaded\n");
+
+Again, please be quiet.
+
+And use pr_fmt().
+
+thanks,
+
+greg k-h
 
