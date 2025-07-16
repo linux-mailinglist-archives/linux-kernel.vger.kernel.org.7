@@ -1,66 +1,71 @@
-Return-Path: <linux-kernel+bounces-733236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADF1B071FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:39:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A551DB071FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BC72508373
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA12B4A484C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D610C2F1989;
-	Wed, 16 Jul 2025 09:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214132F2723;
+	Wed, 16 Jul 2025 09:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="Xqgl/pAT"
-Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2gDuXdmW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bThNE/mY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843F5288C96
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50342F1983;
+	Wed, 16 Jul 2025 09:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752658708; cv=none; b=rrb8aPGi+rYmMKgrYaZHh3tdCrk0jTmPQNBH5nMg8cX5dWsF1LNYLLWOMP/FmxuExJgqrVnQRcq+hScs3OFxmlAwtAsepVw30kiafYDOSpFP3uQbr3o/Vh2LUwZffsHharyBW+L6leJVQd82STVSFU134RByo0lN4tNlxJoPpgI=
+	t=1752658710; cv=none; b=Wy30KSkYF2ZnCieRlmOz7Q0YfJBESR6Pd2vmhRpse8mG+zIXsv6uGmYn79r86ES96dcqHLnHZ8TepGBDHazxE9LXsAlfCiQibcGMUYaox01Jlip8eq36b2GiX28Hpx0ja1ZNAheZnVRI7BFaMjWHOn2E4sWlG8S3X0VqI5Uzljc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752658708; c=relaxed/simple;
-	bh=imaJbYmuQZmpGmy9OWbZlTj9Y4oF89YPHcp3uLoAqpM=;
+	s=arc-20240116; t=1752658710; c=relaxed/simple;
+	bh=Tj1BFTRNqGXbBlcXHYlnrb596gQZP8ySHesKylUR+HU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uTbua5CwwdT0PxW0QO5TEVMnX83fa+iLbU7o5vl48oybESGQhQFcZcxk0qre73vUAnpCPWBGjXl2U2W8JmuTl4Vm4Gp5AIQbSwqKihoYckJWdVY5kQ3ocA3Rya2WJqvukugnLHu44f29inCGOUXiPC1J/LFTW4+u9bdoCwbxaFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=Xqgl/pAT; arc=none smtp.client-ip=88.97.38.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1752658703; bh=imaJbYmuQZmpGmy9OWbZlTj9Y4oF89YPHcp3uLoAqpM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xqgl/pATcRb/LJPQVBN5Nk4cLlunkjZMM8ioatshUccZpmawacX76kBcwn1THQSGG
-	 atm4vLh0DpHLXn9q2TAd8FkzkTdRLoPQe/er8K8Itc4Hle1vmf0KSHOW4ag0o3uGh6
-	 aybGE8v3iiqJgiradWHzoa6pa5W2Xn7xXeL8gKm1bsGEQXAP3iudNmvrI0Umiv78sU
-	 6lWtTDTJd8ICiiEFuedQyUAzAXHytrv72Mt5Fv2TMujUat0vSfNqwzl9HscQqdzPuW
-	 s4FGq3kT4e9yyQe/6+qhvnGyOToUG9p+7vq5hcGOcCLTwjSyIpAN+5A9XqgOSjvqoP
-	 r91s1UFY8WQUQ==
-Received: by gofer.mess.org (Postfix, from userid 1000)
-	id AFEBC100D9E; Wed, 16 Jul 2025 10:38:23 +0100 (BST)
-Date: Wed, 16 Jul 2025 10:38:23 +0100
-From: Sean Young <sean@mess.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Hillf Danton <hdanton@sina.com>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com,
-	LKML <linux-kernel@vger.kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: imon: make send_packet() more robust
-Message-ID: <aHdzD7EowAKT4AhQ@gofer.mess.org>
-References: <53c07aa0-9f83-4c83-8ab5-6d8663f51b91@I-love.SAKURA.ne.jp>
- <8be733a4-2232-4bb9-942d-f13f8766a6de@I-love.SAKURA.ne.jp>
- <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp>
- <0ad3effe-efed-4304-862f-4c8f901e79e9@I-love.SAKURA.ne.jp>
- <2ac5d313-c754-4fb9-acd3-21f3b948d653@I-love.SAKURA.ne.jp>
- <282345b9-9aff-43ed-b66d-76cf51cc0deb@I-love.SAKURA.ne.jp>
- <20250713081148.3880-1-hdanton@sina.com>
- <d6da6709-d799-4be3-a695-850bddd6eb24@rowland.harvard.edu>
- <aHa3xpKfGNqAocIO@gofer.mess.org>
- <c4e88c28-28ee-4e37-9822-8e2999d0f0ee@rowland.harvard.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iGA2cnyvfHmL54XO4jJtGGSvecCdYn758D/cuKpQnnNqIJQg7ySMqspnkTOYJ3FYo3XVCmMFTXUTorfQeO2oGXlovcFgsDEDvqxl3VOmwKPnqw+XaMtuy8XqtmNbnXLdFKiAejt9Q4ES8sR2cgsU1GwMDJtg3szstbuk6pGCWoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2gDuXdmW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bThNE/mY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Jul 2025 11:38:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752658706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jZJgktThbWGbxyTtpRlDy8v1yDEBaNNxxxlctLY4gf8=;
+	b=2gDuXdmWvomUDAXd1h0c6lZ5tIAzHDBrAUKmDXdm98Y2qmQoG5OaWptolDsQc/Ip3MXDdH
+	0KbRwD/ol2rPIveMZNfbf8ePjMlgJ2J+oPNqVu+gaZLzYMtNwqZ1/46g055bAvE05qN3t7
+	cXuwKkGp4IOqtPXt7lFGfQ6RvBSysZgvs5WTeKUWzhdyh8jIOkhqp1tOHAiOS9ljaghfZP
+	aDwFXLhG1D7zITuhZieZtQYvNrHe69itED1NDQtArhZFH0/SbG3CLkvgIRz+ecrF3qqZsu
+	x2WhnA+up0bZ8QH3S9WWfDkXsu+WxZSQOjOZwA2Yv3jRghTRi9YgcfUprHJ8wA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752658706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jZJgktThbWGbxyTtpRlDy8v1yDEBaNNxxxlctLY4gf8=;
+	b=bThNE/mYqHR4yQPyNtcs82CR8o2lqtXnl/PMtJBVeCe9YHPcOkz1UPisyHGbD0JbGcaybw
+	8HRJvmxpp8cxnfAQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v3 17/17] rv: Add opid per-cpu monitor
+Message-ID: <20250716093825.rWXnBtv5@linutronix.de>
+References: <20250715071434.22508-1-gmonaco@redhat.com>
+ <20250715071434.22508-18-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,56 +74,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c4e88c28-28ee-4e37-9822-8e2999d0f0ee@rowland.harvard.edu>
+In-Reply-To: <20250715071434.22508-18-gmonaco@redhat.com>
 
-On Tue, Jul 15, 2025 at 09:30:02PM -0400, Alan Stern wrote:
-> On Tue, Jul 15, 2025 at 09:19:18PM +0100, Sean Young wrote:
-> > Hi Alan,
-> > 
-> > On Sun, Jul 13, 2025 at 11:21:24AM -0400, Alan Stern wrote:
-> > > On Sun, Jul 13, 2025 at 04:11:47PM +0800, Hillf Danton wrote:
-> > > > [loop Alan in]
-> > > 
-> > > I assume you're interested in the question of when to avoid resubmitting 
-> > > URBs.
-> 
-> > > In theory it's okay to resubmit _if_ the driver has a robust 
-> > > error-recovery scheme (such as giving up after some fixed limit on the 
-> > > number of errors or after some fixed time has elapsed, perhaps with a 
-> > > time delay to prevent a flood of errors).  Most drivers don't bother to 
-> > > do this; they simply give up right away.  This makes them more 
-> > > vulnerable to short-term noise interference during USB transfers, but in 
-> > > reality such interference is quite rare.  There's nothing really wrong 
-> > > with giving up right away.
-> > > 
-> > > As to which error codes drivers should pay attention to...  In most 
-> > > cases they only look at -EPROTO.  According to 
-> > > Documentation/driver-api/usb/error-codes.rst, -EILSEQ and -ETIME are 
-> > > also possible errors when a device has been unplugged, so it wouldn't 
-> > > hurt to check for them too.  But most host controller drivers don't 
-> > > bother to issue them; -EPROTO is by far the most common error code 
-> > > following an unplug.
-> > 
-> > Thank you for explaining that, very helpful. Would it be useful to have
-> > this in the USB completion handler documentation?
-> 
-> I don't know what USB completion handler documentation you're talking 
-> about.  Is it something in the Documentation/ directory?  If it is then 
-> it should already include or refer to error-codes.rst.
+On Tue, Jul 15, 2025 at 09:14:34AM +0200, Gabriele Monaco wrote:
+> diff --git a/kernel/trace/rv/monitors/nrp/Kconfig b/kernel/trace/rv/monitors/nrp/Kconfig
+> index f37ff70e8d204..a175c430d351f 100644
+> --- a/kernel/trace/rv/monitors/nrp/Kconfig
+> +++ b/kernel/trace/rv/monitors/nrp/Kconfig
+> @@ -3,7 +3,7 @@
+>  config RV_MON_NRP
+>  	depends on RV
+>  	depends on RV_MON_SCHED
+> -	default y if !ARCH_ARM64
+> +	default y if !ARM64
 
-I can't see anything in error-codes.rst or URB.rst about the possibility
-of retrying after -EPROTO errors or how the callback should respond if
-it wants to give up. USB drivers seem to do all manner of different things.
+I think this is not supposed to be in this patch? It has nothing to do with
+the opid monitor.
 
-> > I think that is why this driver code is so awkward.
-> 
-> That's what usb_driver_claim_interface() is for.  IIRC, the cdc-acm 
-> driver uses it in exactly this way.
+>  	select DA_MON_EVENTS_ID
+>  	bool "nrp monitor"
+>  	help
+> diff --git a/kernel/trace/rv/monitors/opid/Kconfig b/kernel/trace/rv/monitors/opid/Kconfig
+> new file mode 100644
+> index 0000000000000..23b43d2704153
+> --- /dev/null
+> +++ b/kernel/trace/rv/monitors/opid/Kconfig
+> @@ -0,0 +1,17 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +config RV_MON_OPID
+> +	depends on RV
+> +	depends on TRACE_IRQFLAGS
+> +	depends on TRACE_PREEMPT_TOGGLE
+> +	depends on RV_MON_SCHED
+> +	default y if PREEMPT_RT
+> +	select DA_MON_EVENTS_IMPLICIT
 
-Very interesting, we should look at re-writing this driver. Note this
-function is not documented in Documentation/driver-api/usb/
+Shouldn't we add "depends on PREEMPT_RT"? I tried this monitor on
+non-RT x86 kernel, and got some errors. That could confuse people.
 
-Thank you for your help
+And the monitor reports some errors on riscv64 with PREEMPT_RT=y:
 
-Sean
+root@riscv:~/rv-tests# uname -a
+Linux riscv 6.16.0-rc6-00054-g7590637d9ca2 #87 SMP PREEMPT_RT Wed Jul 16 11:26:00 CEST 2025 riscv64 GNU/Linux
+root@riscv:~/rv-tests# stress-ng --cpu-sched -1
+stress-ng: info:  [452] defaulting to a 1 day run per stressor
+stress-ng: info:  [452] dispatching hogs: 4 cpu-sched
+[  614.390462] rv: monitor opid does not allow event irq_entry on state in_irq
+
+Best regards,
+Nam
 
