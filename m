@@ -1,244 +1,146 @@
-Return-Path: <linux-kernel+bounces-733868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE13EB07A14
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:39:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F33EB07A06
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 025301886F3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1054D3AAFA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7684E277CB0;
-	Wed, 16 Jul 2025 15:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8712F4303;
+	Wed, 16 Jul 2025 15:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2a5CYWK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G/Wx82xZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB7C19F40A;
-	Wed, 16 Jul 2025 15:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939642641F9
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752680173; cv=none; b=POBfXiYjc5I5o7J/ECZmkFiv6yoAUCDHswHGCtI6gSQlyPJKCgEL1bySF4a9s1skoQY0eYax2g38gH6H00Ic9LdhhsFQYnM+dULUAwHuD4C6Nb0C9oHtp5Zee5Ks7NxPht1m4yknw+I4ykYpSMHO0xLe01vuXX0cLXAf8hI0Vxk=
+	t=1752680184; cv=none; b=AsA1i1otcRlmoeNV/N637N/rBLvhoXwXNtTlJqtdySbbv3vpwOti4pDZ50aXOUSGJrjjAQeTePQuw45mCtCGK/V0QSkdV30pRQoQOHUSOdY93klB+QaabBo8jX4jhFRrfelZhZgKwRKK/GDJK8iuhpnNUixD14Jx9E6h5w9R9lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752680173; c=relaxed/simple;
-	bh=iDuNDBH8DmskIjB6QZW3VDr54ybRnZOA1Zod2ETR3ho=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=roVHTfmOFGxkZuqVSECWzc7jZFKc4PXq3KMIA9VOPSvu7xIgxTKUbzZP20P5PDdQO9mttsYuBoS2nS0FAhCEqAyvvuetTlabEhtDkKE4F1urStn8QdroatH9AtQB2td52za86exHpwZlbVdavDE/D5yCBspv9gQTKhXFb/gfJWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2a5CYWK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B63C3C4CEE7;
-	Wed, 16 Jul 2025 15:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752680173;
-	bh=iDuNDBH8DmskIjB6QZW3VDr54ybRnZOA1Zod2ETR3ho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D2a5CYWKcye/Sn1lYE0QXO2n7hgxKixDFWFGjhQljZo7FnGaoXZW7GwVAa3fGJCV/
-	 4d9TgSa2xoW0ZmGPMQFNrhmOfQ601+e1x7zvMRAVKzXMJNZvwougubW/Mjb7wFwnNo
-	 9zUTCiG2g02zVP0V6RH0CV7m2CVB/Q+1xciIyCJ4Ydf6PS/OscH3sajHOaxZeSU+dP
-	 kBqG61AHMxGMXQ295JYtO65+jSqrg9J7nT0fXiMbA1HoMytimyLhgmrfFRfJktdXVV
-	 myZjKcQQLI+3XPq0dbiwoCTtN6pAMnQ3OJIP0qRnaljgAyfbUzSVklJwmEG/jQJ6gz
-	 IgvyHzW0R7eEw==
+	s=arc-20240116; t=1752680184; c=relaxed/simple;
+	bh=t7DSi05slPCkN4UsojGxy4oP5CIR3/pwbBY7inCPQo0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=evw0M4hQkiH2V0940ZHtW9U7cF+xX+hr7erReDFjHu5Aiu1VJMZ3shjLI4jqRb3Dfjs0uBZhjI4ms4+pLm1CdcE1yxbS0nbJ1j/wmLK+hLOSL/DLf9grQ473lzadOOBwXlIoOPDrnI7MQQze/KRfq8R9JChG+zQ985zkA2ht3KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G/Wx82xZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GCs3WB025762
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:36:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Q7Y+AqcTKt1Ceta1AaX3XL0N
+	rlaKK9iAw6+wkY7W8rE=; b=G/Wx82xZSe2Wc0oWbzWkzHTDG35xXiA2MkyjjaVH
+	sqVYAileg22MC05qJnFNUV+8vjzDAtcjKYzTA5bI87UXmzNmt1hzYgc2x5Qgzah8
+	vsbMNiFZXXohjuSFLiyC81WKdYYBnaYVn6bPkzKlPonuYiBArFFM85OhMCKS7Crn
+	oRIMR0kz7XTJn4xr9S2UDAcVzebIPWlbVtNpd032NpzHuht1fCeFYPZp8vgMmLDK
+	9fXDGNBTaFAH84h5EmC4uqSDyT+elVrP1izxx4pqylM0IGvnt9jIyBqtO3594eq/
+	+3UC13+ffAndvuiU4vhXedqJGB0ju7FJsxLVthcJKUZsNg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy4ckh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:36:22 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7da0850c9e5so1112361285a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:36:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752680181; x=1753284981;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q7Y+AqcTKt1Ceta1AaX3XL0NrlaKK9iAw6+wkY7W8rE=;
+        b=RX3DjG7aWP7oqkmkPLh7po1STIkzSBG6R3c1b6NR66Q9/137bILafPPPXebtPKxqtS
+         HJqzzfe+a8vuZyltQT+1qnjqkxDBxlpRcQxv67pWQFercZFHfDbVNFp1v67JoUlnlkJ3
+         rRBUemyx5RZv2O9avLvCK3iWxwZmaUVWL3ehLG45/exBOy8KNkctrEN60tRWF6lM5lee
+         iawpU9oJrJkziqeJmMsTXngOP2hytXdN0YpjnK2YMjVGkA9VXPiIivWhFUvQ7wm40TCA
+         lFVsuTarq6StKkQ4F3SIKq/hYv0/9UEdt08jmnjP4d2F4htxGz+S2QuVAlLfIpWpHzjl
+         SpgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8hALIfLcWPllmB4TARFXlu3moKQ5iaXCfxsQ+3AA+PSkRbvY+us164qSYxb2/0UVzuznW4PpAjANYVf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbl1CMMvb8d/tQwjbJ2R1x26p31s/S6plFDhRAlOzfEZDBcmr4
+	cecwTmoTAOLztJO5cB+y8heNfTx+xIhJoxyALio3edLs/DJpOxaBbYb4StjCuaOKx+xpz9dTc2j
+	MrjzMzq1TQ2geA8PwZEH7eU83O8Is3tZ0MTqHjv4TcSzNSZaDKFyImqmxYgFxvqYfkFo=
+X-Gm-Gg: ASbGncta2+KcopDu+fpXYWob11VQ+eGt6hZaGJ0n6SLIS53bb1dUDirVBBV+Xrj9idQ
+	g/KXg96s8pnT8CCY1aQr6pFNRQojY8tqIWPhdnpSH7YPx9gWV9YEfGilm0l1Gav8EzjwpO2cpGp
+	yVVCQa99+WI8ss0B5nN2R8T6y0HOgOxxA3VeTDqYLdG+mD6DNRIg4CrAnLnCBnmzIkC8mv+5C4s
+	XpPHJLtaFXUUu/3DU3DS59OCOyDqZSOXV9SSN3hjZkFPDMI0R3dnKHSW3sjMVYExJo4r9kpQ4Q2
+	rq5+Fc/SA+jyn6sicvLyc1ceV/AnGUhJDN3rQo9un13rxouAsE+4iV9UBJ42lxd0EH8owfHCuOa
+	y1tgGXs0PzmQlU+ugV63LfkwA2r0cW2Kt7oIe9S8dMjLjWaTpWow3
+X-Received: by 2002:a05:620a:4546:b0:7d7:2647:da9d with SMTP id af79cd13be357-7e342b5d5d3mr506342285a.42.1752680181190;
+        Wed, 16 Jul 2025 08:36:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhZ0QjrGWwHaDPGp/F9PqlexGFcR5X+X3OWVCipgtBtA0DpbAzcIF8dPzibaOM7PevWMFHeQ==
+X-Received: by 2002:a05:620a:4546:b0:7d7:2647:da9d with SMTP id af79cd13be357-7e342b5d5d3mr506335885a.42.1752680180581;
+        Wed, 16 Jul 2025 08:36:20 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7bbb5dsm2690071e87.18.2025.07.16.08.36.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 08:36:19 -0700 (PDT)
+Date: Wed, 16 Jul 2025 18:36:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        quic_rjendra@quicinc.com, taniya.das@oss.qualcomm.com,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] clk: qcom: clk-alpha-pll: Add support for Taycan
+ EKO_T PLL
+Message-ID: <3exm3tytxfyc2f3vwah5gkxftibf2xrbzowe56gbgtk5j7as4j@ocnobxe7dspl>
+References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+ <20250716152017.4070029-6-pankaj.patil@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Jul 2025 17:36:05 +0200
-Message-Id: <DBDL9KI7VNO2.1QZBWS222KQGP@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v7 6/9] rust: sync: atomic: Add the framework of
- arithmetic operations
-X-Mailer: aerc 0.20.1
-References: <20250714053656.66712-1-boqun.feng@gmail.com>
- <20250714053656.66712-7-boqun.feng@gmail.com>
- <DBCL7YUSRMXR.22SMO1P7D5G60@kernel.org> <aHZYt3Csy29GF2HM@Mac.home>
- <DBCQUAA42DHH.23BNUVOKS38UI@kernel.org> <aHZ-HP1ErzlERfpI@Mac.home>
- <DBCUJ4RNRNHP.W4QH5QM3TBHU@kernel.org> <aHa2he81nBDgvA5u@tardis-2.local>
- <DBDENRP6Z2L7.1BU1I3ZTJ21ZY@kernel.org> <aHezbbzk0FyBW9jS@Mac.home>
-In-Reply-To: <aHezbbzk0FyBW9jS@Mac.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716152017.4070029-6-pankaj.patil@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzOSBTYWx0ZWRfXyRCXVXk0TIwh
+ ooIIl58t+ivR7IqsfXJDce9EeK5T/19oLNeviWSckWrqgjayfZUSSTJJ/A9T1NBRQrazYkqvvdG
+ MAf9GAjMrhyAYLnFWHcFD+M5sqKAETikZhNQOn2RRwhUvSir4qcNVLkkBpHQRofspDEaR+Rfr0M
+ WpMuNN3p4Qv5IV35alk39qMI8g6YmhdWkm+QWXZaCP+565siPgt1jo9kseyFIqT0sZZY5P1/7DO
+ NA/gWLjvsH2WYUZWmI5/34jtz4ey2AUHzc3iyOs9efGveJz+qU7sjCb8PlITHecKfUXbq/Vx3fQ
+ 2JAMXqmsVTOOKMLPNCqANAqpcEClghfWdPHpD5mFYGiZmkAyPQfF7M0QnCMp8/4Bqks3VNzpj0r
+ z4PxtEXegSVrhuvp9l7onf4Xi97IFJROItktXJryzYEhXHK180eMy3Cn3WlIay4MTN2WC7oL
+X-Proofpoint-GUID: ALUekpgmQ5ltc2t2GzaxoFtWyCCHVEvR
+X-Proofpoint-ORIG-GUID: ALUekpgmQ5ltc2t2GzaxoFtWyCCHVEvR
+X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=6877c6f6 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=zIiPdt3-swY5NxfCfPQA:9 a=CjuIK1q_8ugA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxlogscore=951 impostorscore=0 mlxscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507160139
 
-On Wed Jul 16, 2025 at 4:13 PM CEST, Boqun Feng wrote:
-> On Wed, Jul 16, 2025 at 12:25:30PM +0200, Benno Lossin wrote:
->> On Tue Jul 15, 2025 at 10:13 PM CEST, Boqun Feng wrote:
->> > On Tue, Jul 15, 2025 at 08:39:04PM +0200, Benno Lossin wrote:
->> > [...]
->> >> >> > Hmm.. the CAST comment should explain why a pointer of `T` can b=
-e a
->> >> >> > valid pointer of `T::Repr` because the atomic_add() below is goi=
-ng to
->> >> >> > read through the pointer and write value back. The comment start=
-ing with
->> >> >> > "`*self`" explains the value written is a valid `T`, therefore
->> >> >> > conceptually atomic_add() below writes a valid `T` in form of `T=
-::Repr`
->> >> >> > into `a`.
->> >> >>=20
->> >> >> I see, my interpretation was that if we put it on the cast, then t=
-he
->> >> >> operation that `atomic_add` does also is valid.
->> >> >>=20
->> >> >> But I think this comment should either be part of the `CAST` or th=
-e
->> >> >> `SAFETY` comment. Going by your interpretation, it would make more=
- sense
->> >> >> in the SAFETY one, since there you justify that you're actually wr=
-iting
->> >> >> a value of type `T`.
->> >> >>=20
->> >> >
->> >> > Hmm.. you're probably right. There are two safety things about
->> >> > atomic_add():
->> >> >
->> >> > - Whether calling it is safe
->> >> > - Whether the operation on `a` (a pointer to `T` essentially) is sa=
-fe.
->> >>=20
->> >> Well part of calling `T::Repr::atomic_add` is that the pointer is val=
-id.
->> >
->> > Here by saying "calling `T::Repr::atomic_add`", I think you mean the
->> > whole operation, so yeah, we have to consider the validy for `T` of th=
-e
->> > result.
->>=20
->> I meant just the call to `atomic_add`.
->>=20
->> > But what I'm trying to do is reasoning this in 2 steps:
->> >
->> > First, let's treat it as an `atomic_add(*mut i32, i32)`, then as long =
-as
->> > we provide a valid `*mut i32`, it's safe to call.=20
->>=20
->> But the thing is, we're not supplying a valid `*mut i32`. Because the
->> pointer points to a value that is not actually an `i32`. You're only
->> allowed to write certain values and so you basically have to treat it as
->> a transmute + write. And so you need to include a justification for this
->> transmute in the write itself.=20
->>=20
->> For example, if we had `bool: AllowAtomic`, then writing a `2` in store
->> would be insta-UB, since we then have a `&UnsafeCell<bool>` pointing at
->> `2`.
->>=20
->> This is part of library vs language UB, writing `2` into a bool and
->> having a reference is language-UB (ie instant UB) and writing a `2` into
->> a variable of type `i32` that is somewhere cast to `bool` is library-UB
->> (since it will lead to language-UB later).=20
->>=20
->
-> But we are not writing `2` in this case, right?=20
->
-> A) we have a pointer `*mut i32`, and the memory location is valid for
->    writing an `i32`, so we can pass it to a function that may write
->    an `i32` to it.
->
-> B) and at the same time, we prove that the value written was a valid
->    `bool`.
->
-> There is no `2` written in the whole process, the proof contains two
-> parts, that is it. There is no language-UB or library-UB in the whole
-> process, and you're missing it.
+On Wed, Jul 16, 2025 at 08:50:15PM +0530, Pankaj Patil wrote:
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
+> 
+> Add clock operations and register offsets to enable control of the Taycan
+> EKO_T PLL, allowing for proper configuration and management of the PLL.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
-There is no UB here and the public API surface is sound.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-The problem is the internal safe <-> unsafe code interaction & the
-safety documentation.
 
-> It's like if you want to prove 3 < x < 5, you first prove that x > 3
-> and then x < 5. It's just that you don't prove it in one go.
-
-That's true, but not analogous to this case. This is a better analogy:
-
-You have a lemma that proves P given that x =3D=3D 10. Now you want to use
-this lemma, but you are only able to prove that x >=3D 10. You argue that
-this is fine, because the proof of the lemma only uses the fact that
-x >=3D 10.
-    But in this situation you're not following the exact rules of the
-formal system. To do that you would have to reformulate the lemma to
-only ask for x >=3D 10.
-
-The last part is what relaxing the safety requirements would be
-(approach (2) given below).
-
->> The safety comments become simpler when you use `UnsafeCell<T::Repr>`
->> instead :) since that changes this language-UB into library-UB. (the
->> only safety comment that is more complex then is `get_mut`, but that's
->> only a single one)
->>=20
->> If you don't want that, then we can solve this in two ways:
->>=20
->> (1) add a guarantee on `atomic_add` (and all other operations) that it
->>     will write `*a + v` to `a` and nothing else.
->> (2) make the safety requirement only require writes of the addition to
->>     be valid.
->>=20
->> My preference precedence is: use `T::Repr`, (2) and finally (1). (2)
->> will be very wordy on all operations & the safety comments in this file,
->> but it's clean from a formal perspective. (1) works by saying "what
->> we're supplying is actually not a valid `*mut i32`, but since the
->> guarantee of the function ensures that only specific things are written,
->> it's fine" which isn't very clean. And the `T::Repr` approach avoids all
->> this by just storing value of `T::Repr` circumventing the whole issue.
->> Then we only need to justify why we can point a `&mut T` at it and that
->> we can do by having an invariant that should be simple to keep.
->>=20
->> We probably should talk about this in our meeting :)
->>=20
->
-> I have a better solution:
->
-> in ops.rs
->
->     pub struct AtomicRepr<T: AtomicImpl>(UnsafeCell<T>)
->
->     impl AtomicArithmeticOps for i32 {
->         // a *safe* function
->         fn atomic_add(a: &AtomicRepr, v: i32) {
-> 	    ...
-> 	}
->     }
->
-> in generic.rs
->
->     pub struct Atomic<T>(AtoimcRepr<T::Repr>);
->
->     impl<T: AtomicAdd> Atomic<T> {
->         fn add(&self, v: .., ...) {
-> 	    T::Repr::atomic_add(&self.0, ...);
-> 	}
->     }
->
-> see:
->
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/log/?h=
-=3Drust-atomic-impl
-
-Hmm what does the additional indirection give you?
-
-Otherwise this looks like the `T::Repr` approach that I detailed above,
-so I like it :)
-
----
-Cheers,
-Benno
+-- 
+With best wishes
+Dmitry
 
