@@ -1,51 +1,80 @@
-Return-Path: <linux-kernel+bounces-734101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413B6B07D17
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:44:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFF3B07D19
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C49001885505
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336593ABAC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0CC29B221;
-	Wed, 16 Jul 2025 18:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832EF288C2E;
+	Wed, 16 Jul 2025 18:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vJO3Z5WI"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKquZlLo"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952F9188A3A;
-	Wed, 16 Jul 2025 18:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5753D136347;
+	Wed, 16 Jul 2025 18:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752691452; cv=none; b=XdpA/7o3+3ZrWnw2DkRqA5/zTRsLZ0MT2Fl750sxaPJXcqiZ6NpvcnsfQJNGZQWAiXSj2gBx28kxIsLw3Tbi0xzm+dm0JSbQMqxASYLCVyuIIupixFAvohh/7Gtd4eImHdE29jbswijeckne1x68QM+8cocC9yKb5OvIANAR2VA=
+	t=1752691523; cv=none; b=LZcrA228ex558pcxn9ujAM9RnE0xi2MT+jFD0fRJWbFWbbvQBYXiEfq2MU1hr5yulPw4NijWmy+CHzWyUpiJAYs3j053OSYoCT2YVcqdVnc+79f3qmVaICFUzB11X24sMYkaj7QSXzkJX0zwKGZqFGia0e6KHE8mdI7w311Qv/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752691452; c=relaxed/simple;
-	bh=H/UhfH/UokN99g637wobOS9cbry1x5qXgto7yjFY4ag=;
+	s=arc-20240116; t=1752691523; c=relaxed/simple;
+	bh=byOw/hpxqtKlXpx7TvAFWsTV4fu6i3XD8UHZK1Mblxg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O82msgzMA1UuEHbYkA72wZP6NMNTzio/pc+bDD5Nd6xWE72x9Q3CqpPhJ19nUAobOa1Ug7MlU3qhmWW0hq+Z/lfltEPEOq5zBQO+Vjp5NKkQ3BSNXNuA+xjxz6jzpN7VvZJ0mjzSbkaY/5ZdqwUvBFeRYPO2T4iZaKxGunrWjSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vJO3Z5WI; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=pyfFofk4+rHlS825JirWA6ODvtQNZleuH6XhENxvc6Q=; b=vJO3Z5WIqa493yE7wWZ30sODik
-	vaR9uAICxAilMkm05KIc+Zlp0jfwp7eTVa0JCYuM0En0QOwT9qogIIibBgA9adr3FwEd7YEh3k0fF
-	QIuLDq2OvDwWbEnVAu5xFkmeK3GHoKIBwQTzmreqJYp6iohgFspuZMyoOyOYIuIbWpUYT4FPtzIvT
-	R4kIY+FA7rpQJeitDD9lTqAzRaWuPLxX1k0LhrYBZ+rlMebt2vNdwjwQCLkAKRR/JK4QbP9tz5CT6
-	BXg+tTP+uV87kW1oi7ih4QtLo+GuqYARe2Ho0NpmpjVDxD8sXAOf4sbyPCp8wTYOx/ZZp4HWyOgAR
-	FEAnG4pA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc76q-00000008Q9A-3RNM;
-	Wed, 16 Jul 2025 18:44:04 +0000
-Message-ID: <bfcc3a24-b48c-48a6-8280-07f7a2669e6b@infradead.org>
-Date: Wed, 16 Jul 2025 11:44:02 -0700
+	 In-Reply-To:Content-Type; b=tm7z+VsDW5awnSNmewcCjRvQRS2HSOC7BvrqIphpUukpKDmWrBR346BDhQrWeS9FrfqWJ+RsIpX5SqodFe1Ut+2T3X+Wvbm3n9aOlBBZ5wJNnmO9QqIbPuFFYy9nQ/B9BETZP/Gj/Z5dwsoYX4/gYiv6MVePydZIvLadmsuPvj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKquZlLo; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7e34399cdb2so12667885a.3;
+        Wed, 16 Jul 2025 11:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752691521; x=1753296321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=T7Mtx/XdHMXjk5yktialtduM8swoAvbwJzzp+EvAyrQ=;
+        b=lKquZlLoJYqlVtx0gueUIpKyVdGtZYSdB8cLpvEL0UpKOoGiqYhbQ/q+XmBgmuYbj0
+         5nY11Cp5yNA3cHcvcx3IAo7lf26AKqiGDN3Xa6wK3dRLT9uGkVAnoH2UK7KA7egPVMMt
+         EMSDeX34YVXNWKOm+JJrzjwDvnCXxnhuBTAk99ieYaniegzgFueY7/xQ3g9ajzi+t/fz
+         tazKde0LI4FgpPhYZhXsIm5rIDzjttyMc28ua7fYYHHfIxHp7MhRcNzqRpHAhKbRjRKz
+         /6EQdnegwVkvRKW49D+QZWUgdnfTPHmRKn6SdLZPqoqAB0ygmG3Jp8negMFSOPvFagwo
+         5uhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752691521; x=1753296321;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T7Mtx/XdHMXjk5yktialtduM8swoAvbwJzzp+EvAyrQ=;
+        b=N53LQDrkichb3+fhZnGsaifcg6+WmOPMQKqrVDzWnqHNNGkVQ7bW7Hox95Njj+rzcS
+         hwC0TT6oAvCMQoPcrzdmGgmK1KXlS4yWkP1o9J77hIED+jUrIA+9G4UcX7VXxpu32+pH
+         l0NHn5Wi8iZbKqqWbGzzfNp8zH8RsueqT7xzDoJS/HvgwHR5DUSRajkMLbToxCmaTeTz
+         2SPKAK3Bqr45qU7zsDR7k1TLhk4TtjhdSP8OlrX20dnIWqE9cYpqN6zutpJT0/wtup6z
+         BEOwIVX/4qFt9gcxqmv4npJJMZN0NX8hLXOIYBZEZ/mml1KficV9I0mDk+P97oXdmCmD
+         VomA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLKt7h1jPe0aekGI9b8pg6gHPhXhm8XI6VU+npel0ExXOX7xmOdRGfEFa67mcB/jTBF6LuTlWiXqZSxJ0=@vger.kernel.org, AJvYcCWyE91t0judiYq1M3ur3k4ZzvG3Kc2VCEbLN+DOVO6bXmlEEM6QYUzGfrYdOhIVvXayJUfLW2Mg@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZluPMOvELXhM93Fsh45r+lT1V9HNJo+M7p9NNr8Flc++2rWyy
+	LImtpTRFOGlFTO01xSZw/tl2oZfJUHaVYIaX4M4AmgG1mYhSFPFY/Lm7
+X-Gm-Gg: ASbGncuvBif0jlVRX2RWd/kAqXLFbgqhlexIaMjD+YwJtxliblm1Z47JR/1YjDOUL6/
+	wpwpzYCqk0xPbCtA32DM+O39o1IfoziWQbL29Q4FMOVuMXUVCRVI/cIDlnuIb5eMXEDbs3YH65h
+	VaGGd+9t5fpPTBBLTvk4cscFoXjsvDZppjzT79WyUXv6ocUDyoSQEcqbgHYBhxfRbL1m8mBT1Dl
+	nHQanNgeDeCOIa+XZ/O7J+cNKgcbSWA2eN6WVANHAYjfJhRhbsb44phzzaMW+sHxKu7gtarhZlT
+	Dn5Ow9pASO2iMMHaQA4pKHzfebUmFby4imE3g1LQZL41r3hyfwMbtFL0qYegHqrIZxv9/EBGxdY
+	v3k+zXALulYsZiimSdP/bgK38roeC0QDAoubLGfnSCE1vXfRdxQ==
+X-Google-Smtp-Source: AGHT+IFzSQ33OR3O3WHSIuVDvF2qc/J0H63sY67vb2W9Q7U2pQLCbk76JuDDLMKYhTG7U3oziAZvxw==
+X-Received: by 2002:a05:620a:468f:b0:7e3:2c22:6d33 with SMTP id af79cd13be357-7e342a604a7mr531113985a.11.1752691520910;
+        Wed, 16 Jul 2025 11:45:20 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e1bd9c895fsm472612985a.34.2025.07.16.11.45.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 11:45:20 -0700 (PDT)
+Message-ID: <eaa5a3b6-00a2-4c92-a02c-059577e16588@gmail.com>
+Date: Wed, 16 Jul 2025 11:45:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,92 +82,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] tpm, tpm_vtpm_proxy: boot-time TPM
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-kernel@vger.kernel.org
-Cc: keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
- Stefan Berger <stefanb@linux.ibm.com>,
- Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
- Jonathan Corbet <corbet@lwn.net>, Peter Huewe <peterhuewe@gmx.de>,
- Jason Gunthorpe <jgg@ziepe.ca>, Andrew Morton <akpm@linux-foundation.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>,
- Frank van der Linden <fvdl@google.com>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-References: <20250716121823.173949-1-jarkko@kernel.org>
+Subject: Re: [PATCH 6.6 000/111] 6.6.99-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Jann Horn <jannh@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+References: <20250715163542.059429276@linuxfoundation.org>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250716121823.173949-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250715163542.059429276@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-(mostly nits, along with Paul's comments)
-
-
-On 7/16/25 5:18 AM, Jarkko Sakkinen wrote:
-> From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+On 7/15/25 09:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.99 release.
+> There are 111 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Provide a kernel command-line parameter named as `supplicant`, which
-> contains a path to an TPM emulator binary. When defind, the kernel will
-
-                  to a TPM
-
-> launch the program during boot-time.
+> Responses should be made by Thu, 17 Jul 2025 16:35:12 +0000.
+> Anything received after that time might be too late.
 > 
-> This feature is most useful in feature testing e.g., in environments
-
-                                         testing, e.g.,
-
-> where other means are not possible, such as CI runners. Its original use
-> case highlights also quite well of its applicability for pre-production
-> hardware: it was used to provide a TPM implemnentation for a RISC-V SoC
-> running on FPGA with no TPM HW implementation at the time.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.99-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> ---
-> Bumped into this in my archives so thought to make it available just in
-> case anyone is interested.
-> ---
->  .../admin-guide/kernel-parameters.txt         | 14 +++++
->  drivers/char/tpm/tpm_vtpm_proxy.c             | 51 +++++++++++++++++++
->  2 files changed, 65 insertions(+)
+> thanks,
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index f1f2c0874da9..e062de99480e 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -7230,6 +7230,20 @@
->  			defined by Trusted Computing Group (TCG) see
->  			https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
->  
-> +	tpm_vtpm_proxy.supplicant= [TPM]
-> +			When defined, this field must contain a legit path to a
+> greg k-h
 
-			                                        legitimate
-or			                                        valid
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-> +			program emulating a TPM chip, which will be started
-> +			during the driver initialization, thus providing a
-> +			mechanism for the user space have an emulated TPM from
-> +			the get go. Kernel prepares the process with a file
-
-			    get-go.
-or just don't use slang terms.
-
-> +			pre-opened file descriptor in the index 3 for
-> +			/dev/vtpmx.
-> +
-> +			An emulator can optionally provide support for
-> +			localities by reacting to the vendor command defined
-> +			by the driver: 0x20001000. Its payload is a single
-> +			byte containing the new locality.
-> +
->  	tp_printk	[FTRACE]
->  			Have the tracepoints sent to printk as well as the
->  			tracing ring buffer. This is useful for early boot up
-
-thanks.
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-~Randy
-
+Florian
 
