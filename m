@@ -1,341 +1,154 @@
-Return-Path: <linux-kernel+bounces-733010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D439DB06EC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:18:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD62B06E81
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A8A567D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:18:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFAA37A8216
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C116E28AAFD;
-	Wed, 16 Jul 2025 07:17:48 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E8E289E16;
+	Wed, 16 Jul 2025 07:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DbQm/y+R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502DD264F99;
-	Wed, 16 Jul 2025 07:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD3110A1E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752650268; cv=none; b=EzT3H49FZHi3fiVrNdywqQvmQUrcX7pxgR/UC8J3NrHTYTJp88+uI6xdS5SL++M3bPqgejuiEdnQXtphionfx9semN4skdX8+e6+ZRG/qkb3xm3mSOt5groZWW/lIN9buC6WUm0oyT68r87sC9AAHQuKcTM0oA4wBghdRnMyGrQ=
+	t=1752649803; cv=none; b=uL8qXNTPA0EgR6vToCNf1gEQiFtTCN8og+AIHGX7DpoJHwwDgr8L8lcrbFKjDHznTlpxWC4F6NzIZx16JbWGqVBLRFyJk2IR7aJ9EjAglwBlLxKSV/fsQiRIV+pHc2bRLz0FVHuAp3aZErxXq7ehR9UiRvO2IQwR7sAo6UzhvNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752650268; c=relaxed/simple;
-	bh=v4Qtuw0iQCGaRh9wXepraWYmf0E+O5vuzs/bBBqvwyM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oG/99IcByWGSnFx3ALqo2ggAjJLmv7lB8TZfaXC5yIOhFrqjYlY1wzO82C3J5VjZOKMAwwVRx7ZDiD9QzDSPBn2cLijBwwq/XSCQVo5RJwkdi9H+5xk0GDd9A4ahaXBsI1LGp+6UZTKx47HikQGhAGQ7/JGWOjdpQj2YeS1R+5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 758411A0A77;
-	Wed, 16 Jul 2025 09:08:43 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3848B1A017B;
-	Wed, 16 Jul 2025 09:08:43 +0200 (CEST)
-Received: from lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com (lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com [10.52.9.99])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 82808180009C;
-	Wed, 16 Jul 2025 15:08:40 +0800 (+08)
-From: Joseph Guo <qijian.guo@nxp.com>
-Date: Wed, 16 Jul 2025 16:08:31 +0900
-Subject: [PATCH 3/3] drm: bridge: Add waveshare DSI2DPI unit driver
+	s=arc-20240116; t=1752649803; c=relaxed/simple;
+	bh=pbzwr583kv2Kv3frGIlUuk0d2ZEJA9N61Pp8J8V7T/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+PS8wMy27rUIhQDlUQ+ihOUlXxKKxIuVvzkbO9nmcw6YAOYO6hQfTkMLOqvI1QXhUWN34fAfPa/Ny7IgCHxEX1y0dxOLYwbfp0wuHbPpVdE6iqDGd8KBph5vFlopZlD6mG2HluPlp1gY28ZY5xvjdckhLcI1ieSKMSOH9tTyWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DbQm/y+R; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752649800;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QkrGeaLtfkyhuYs4DJLfNNM1RGd1ZIds2xpUAYiTE04=;
+	b=DbQm/y+RSgoq7b9dxf7cFn8Cx7kigyoznxxUEnK5BfCJ+q1LVthfRXZqEPwlLg76ZKewB0
+	QiYljLJ/Qlz1nAid6bIjRs1wIy9Y1/3kRRWHwlRvd8veUu+wAeQACIJz7rK7u4+r2BaLQ8
+	VZ+uHudiRKYk3a3Fye35o51kWTlX5IY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-90ItctHzNwyXJ70pwng09A-1; Wed,
+ 16 Jul 2025 03:09:57 -0400
+X-MC-Unique: 90ItctHzNwyXJ70pwng09A-1
+X-Mimecast-MFC-AGG-ID: 90ItctHzNwyXJ70pwng09A_1752649795
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AAC131800C31;
+	Wed, 16 Jul 2025 07:09:53 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.156])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C04D118002AF;
+	Wed, 16 Jul 2025 07:09:51 +0000 (UTC)
+Date: Wed, 16 Jul 2025 15:09:47 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+	Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/8] mm/shmem, swap: tidy up swap entry splitting
+Message-ID: <aHdQO/SN9MUL5/Bk@MiWiFi-R3L-srv>
+References: <20250710033706.71042-1-ryncsn@gmail.com>
+ <20250710033706.71042-5-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250716-waveshare-v1-3-81cb03fb25a3@nxp.com>
-References: <20250716-waveshare-v1-0-81cb03fb25a3@nxp.com>
-In-Reply-To: <20250716-waveshare-v1-0-81cb03fb25a3@nxp.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, victor.liu@nxp.com, 
- Joseph Guo <qijian.guo@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752649713; l=7757;
- i=qijian.guo@nxp.com; s=20250519; h=from:subject:message-id;
- bh=v4Qtuw0iQCGaRh9wXepraWYmf0E+O5vuzs/bBBqvwyM=;
- b=wuGuKiGK7IKHuQO49/doanJEJC1zjRiQMIAZ0dUjlWzmatxRZzLUBwWJ6xV8MJnQ/hivHlLEE
- zD78BSSGgAfATMaegQ2o/V2YZcaD04ksY6wcz7eMSp5I+KmzHFOl+Hf
-X-Developer-Key: i=qijian.guo@nxp.com; a=ed25519;
- pk=VRjOOFhVecTRwBzK4mt/k3JBnHoYfuXKCm9FM+hHQhs=
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710033706.71042-5-ryncsn@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Waveshare touchscreen consists of a DPI panel and a driver board.
-The waveshare driver board consists of ICN6211 and a MCU to
-convert DSI to DPI and control the backlight.
-This driver treats the MCU and ICN6211 board as a whole unit.
-It can support all resolution waveshare DSI2DPI based panel,
-the timing table should come from 'panel-dpi' panel in the device tree.
+On 07/10/25 at 11:37am, Kairui Song wrote:
+......snip...
+> @@ -2321,46 +2323,35 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+>  		}
+>  
+>  		/*
+> -		 * Now swap device can only swap in order 0 folio, then we
+> -		 * should split the large swap entry stored in the pagecache
+> -		 * if necessary.
+> -		 */
+> -		split_order = shmem_split_large_entry(inode, index, swap, gfp);
+> -		if (split_order < 0) {
+> -			error = split_order;
+> -			goto failed;
+> -		}
+> -
+> -		/*
+> -		 * If the large swap entry has already been split, it is
+> +		 * Now swap device can only swap in order 0 folio, it is
+>  		 * necessary to recalculate the new swap entry based on
+> -		 * the old order alignment.
+> +		 * the offset, as the swapin index might be unalgined.
+>  		 */
+> -		if (split_order > 0) {
+> -			pgoff_t offset = index - round_down(index, 1 << split_order);
+> -
+> +		if (order) {
+> +			offset = index - round_down(index, 1 << order);
+>  			swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
+>  		}
+>  
+> -		/* Here we actually start the io */
+>  		folio = shmem_swapin_cluster(swap, gfp, info, index);
+>  		if (!folio) {
+>  			error = -ENOMEM;
+>  			goto failed;
+>  		}
+> -	} else if (order > folio_order(folio)) {
+> +	}
+> +alloced:
 
-Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
----
- drivers/gpu/drm/bridge/Kconfig         |  11 ++
- drivers/gpu/drm/bridge/Makefile        |   1 +
- drivers/gpu/drm/bridge/waveshare-dsi.c | 210 +++++++++++++++++++++++++++++++++
- 3 files changed, 222 insertions(+)
+Here, only synchronous device handling will jump to label 'alloced', while
+its folio is allocated with order. Maybe we should move the label down 
+below these if else conditional checking and handling?
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index cb3b797fcea1c73e83c9187fef6582296b340305..26fec25c61ed7d950c094e0224f1196946079485 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -472,4 +472,15 @@ config DRM_ITE_IT6161
- 	help
- 	  ITE IT6161 bridge chip driver.
- 
-+config DRM_WAVESHARE_BRIDGE
-+	tristate "Waveshare DSI bridge"
-+	depends on OF
-+	select DRM_PANEL_BRIDGE
-+	select DRM_KMS_HELPER
-+	select DRM_MIPI_DSI
-+	select REGMAP_I2C
-+	help
-+	  Driver for waveshare DSI to DPI bridge board.
-+	  Please say Y if you have such hardware
-+
- endmenu
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index d1db90688a150fdc3a5fd40acebe740798c452b0..3caa4d8f71675804328aa5a51ec67b2587938621 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -48,3 +48,4 @@ obj-$(CONFIG_DRM_ITE_IT6263) += it6263.o
- obj-$(CONFIG_DRM_ITE_IT6161) += it6161.o
- obj-$(CONFIG_DRM_SEC_MIPI_DSIM) += sec-dsim.o
- obj-$(CONFIG_DRM_NXP_SEIKO_43WVFIG) += nxp-seiko-43wvfig.o
-+obj-$(CONFIG_DRM_WAVESHARE_BRIDGE) += waveshare-dsi.o
-diff --git a/drivers/gpu/drm/bridge/waveshare-dsi.c b/drivers/gpu/drm/bridge/waveshare-dsi.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..efb3a2fc501b5725b02f49862526d1704a3a4b7b
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/waveshare-dsi.c
-@@ -0,0 +1,210 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Copyright 2025 NXP
-+ * Based on panel-raspberrypi-touchscreen by Broadcom
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_graph.h>
-+#include <linux/regmap.h>
-+
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_of.h>
-+#include <drm/drm_panel.h>
-+#include <drm/drm_print.h>
-+
-+struct ws_bridge {
-+	struct drm_bridge bridge;
-+	struct drm_bridge *next_bridge;
-+	struct backlight_device *backlight;
-+	struct device *dev;
-+	struct regmap *reg_map;
-+};
-+
-+static const struct regmap_config ws_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = 0xff,
-+	.disable_debugfs = true,
-+};
-+
-+static struct ws_bridge *bridge_to_ws_bridge(struct drm_bridge *bridge)
-+{
-+	return container_of(bridge, struct ws_bridge, bridge);
-+}
-+
-+static int ws_bridge_attach_dsi(struct ws_bridge *ws)
-+{
-+	struct device_node *dsi_host_node;
-+	struct mipi_dsi_host *host;
-+	struct mipi_dsi_device *dsi;
-+	const struct mipi_dsi_device_info info = {
-+		.type = "ws-bridge",
-+		.channel = 0,
-+		.node = NULL,
-+	};
-+	struct device *dev = ws->dev;
-+	int ret;
-+
-+	dsi_host_node = of_graph_get_remote_node(dev->of_node, 0, 0);
-+	if (!dsi_host_node) {
-+		dev_err(dev, "Failed to get remote port\n");
-+		return -ENODEV;
-+	}
-+
-+	host = of_find_mipi_dsi_host_by_node(dsi_host_node);
-+
-+	of_node_put(dsi_host_node);
-+	if (!host)
-+		return dev_err_probe(dev, -EPROBE_DEFER, "Failed to find dsi_host\n");
-+
-+	dsi = devm_mipi_dsi_device_register_full(dev, host, &info);
-+
-+	if (IS_ERR(dsi))
-+		return dev_err_probe(dev, PTR_ERR(dsi), "Failed to create dsi device\n");
-+
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO_HSE | MIPI_DSI_MODE_VIDEO |
-+			  MIPI_DSI_CLOCK_NON_CONTINUOUS;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->lanes = 2;
-+
-+	ret = devm_mipi_dsi_attach(dev, dsi);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to attach dsi to host\n");
-+
-+	return 0;
-+}
-+
-+static int ws_bridge_bridge_attach(struct drm_bridge *bridge,
-+				   enum drm_bridge_attach_flags flags)
-+{
-+	struct ws_bridge *ws = bridge_to_ws_bridge(bridge);
-+	int ret;
-+
-+	ret = ws_bridge_attach_dsi(ws);
-+	if (ret)
-+		return ret;
-+
-+	return drm_bridge_attach(ws->bridge.encoder, ws->next_bridge,
-+				 &ws->bridge, flags);
-+}
-+
-+static void ws_bridge_bridge_enable(struct drm_bridge *bridge)
-+{
-+	struct ws_bridge *ws = bridge_to_ws_bridge(bridge);
-+
-+	regmap_write(ws->reg_map, 0xad, 0x01);
-+	backlight_enable(ws->backlight);
-+}
-+
-+static void ws_bridge_bridge_disable(struct drm_bridge *bridge)
-+{
-+	struct ws_bridge *ws = bridge_to_ws_bridge(bridge);
-+
-+	backlight_disable(ws->backlight);
-+	regmap_write(ws->reg_map, 0xad, 0x00);
-+}
-+
-+static const struct drm_bridge_funcs ws_bridge_bridge_funcs = {
-+	.enable = ws_bridge_bridge_enable,
-+	.disable = ws_bridge_bridge_disable,
-+	.attach = ws_bridge_bridge_attach,
-+};
-+
-+static int ws_bridge_bl_update_status(struct backlight_device *bl)
-+{
-+	struct ws_bridge *ws = bl_get_data(bl);
-+
-+	regmap_write(ws->reg_map, 0xab, 0xff - backlight_get_brightness(bl));
-+	regmap_write(ws->reg_map, 0xaa, 0x01);
-+
-+	return 0;
-+}
-+
-+static const struct backlight_ops ws_bridge_bl_ops = {
-+	.update_status = ws_bridge_bl_update_status,
-+};
-+
-+static struct backlight_device *ws_bridge_create_backlight(struct ws_bridge *ws)
-+{
-+	struct device *dev = ws->dev;
-+	const struct backlight_properties props = {
-+		.type = BACKLIGHT_RAW,
-+		.brightness = 255,
-+		.max_brightness = 255,
-+	};
-+
-+	return devm_backlight_device_register(dev, dev_name(dev), dev, ws,
-+					      &ws_bridge_bl_ops, &props);
-+}
-+
-+static int ws_bridge_probe(struct i2c_client *i2c)
-+{
-+	struct device *dev = &i2c->dev;
-+	struct ws_bridge *ws;
-+	struct drm_panel *panel;
-+	int ret;
-+	struct backlight_device *backlight;
-+
-+	ws = devm_kzalloc(dev, sizeof(*ws), GFP_KERNEL);
-+	if (!ws)
-+		return -ENOMEM;
-+
-+	ws->dev = dev;
-+
-+	ws->reg_map = devm_regmap_init_i2c(i2c, &ws_regmap_config);
-+	if (IS_ERR(ws->reg_map))
-+		return dev_err_probe(dev, PTR_ERR(ws->reg_map), "Failed to allocate regmap\n");
-+
-+	ret = drm_of_find_panel_or_bridge(dev->of_node, 1, -1, &panel, NULL);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to find remote panel\n");
-+
-+	ws->next_bridge = devm_drm_panel_bridge_add(dev, panel);
-+	if (IS_ERR(ws->next_bridge))
-+		return PTR_ERR(ws->next_bridge);
-+
-+	ws->backlight = ws_bridge_create_backlight(ws);
-+	if (IS_ERR(backlight)) {
-+		ret = PTR_ERR(backlight);
-+		dev_err(dev, "Failed to create backlight: %d\n", ret);
-+		return ret;
-+	}
-+
-+	regmap_write(ws->reg_map, 0xc0, 0x01);
-+	regmap_write(ws->reg_map, 0xc2, 0x01);
-+	regmap_write(ws->reg_map, 0xac, 0x01);
-+
-+	ws->bridge.funcs = &ws_bridge_bridge_funcs;
-+	ws->bridge.type = DRM_MODE_CONNECTOR_DPI;
-+	ws->bridge.of_node = dev->of_node;
-+	devm_drm_bridge_add(dev, &ws->bridge);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ws_bridge_of_ids[] = {
-+	{.compatible = "waveshare,dsi2dpi",},
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, ws_bridge_of_ids);
-+
-+static struct i2c_driver ws_bridge_driver = {
-+	.driver = {
-+		.name = "ws_dsi2dpi",
-+		.of_match_table = ws_bridge_of_ids,
-+	},
-+	.probe = ws_bridge_probe,
-+};
-+module_i2c_driver(ws_bridge_driver);
-+
-+MODULE_AUTHOR("Joseph Guo <qijian.guo@nxp.com>");
-+MODULE_DESCRIPTION("Waveshare DSI2DPI bridge driver");
-+MODULE_LICENSE("GPL");
+Anyway, this is an intermediary patch and code will be changed, not strong
+opinion.
 
--- 
-2.34.1
+> +	if (order > folio_order(folio)) {
+>  		/*
+> -		 * Swap readahead may swap in order 0 folios into swapcache
+> +		 * Swapin may get smaller folios due to various reasons:
+> +		 * It may fallback to order 0 due to memory pressure or race,
+> +		 * swap readahead may swap in order 0 folios into swapcache
+>  		 * asynchronously, while the shmem mapping can still stores
+>  		 * large swap entries. In such cases, we should split the
+>  		 * large swap entry to prevent possible data corruption.
+>  		 */
+> -		split_order = shmem_split_large_entry(inode, index, swap, gfp);
+> +		split_order = shmem_split_large_entry(inode, index, index_entry, gfp);
+>  		if (split_order < 0) {
+> -			folio_put(folio);
+> -			folio = NULL;
+>  			error = split_order;
+> -			goto failed;
+> +			goto failed_nolock;
+>  		}
+>  
+>  		/*
+...snip...
 
 
