@@ -1,277 +1,201 @@
-Return-Path: <linux-kernel+bounces-734346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE9EB0806F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:22:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A860B08074
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D44717E881
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:22:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21EC4A45C14
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B41A2ECD25;
-	Wed, 16 Jul 2025 22:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460092EE5E7;
+	Wed, 16 Jul 2025 22:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SheUR8hb"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pi3sp9WA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD96B660
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 22:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926DA28B40D;
+	Wed, 16 Jul 2025 22:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752704530; cv=none; b=F+34/uOTYr/uc/vlWNIJyaib8SK4LN4KsL6HYHsLYEJ01peh9IsmFod+OQmaDbWvmtt1FXYJ7hkna3DY7GQ/Im7Py7CzOn3cvPoRDaXTAIki30qnMlgdb/J1npB64GQj8ijxlRypATagVdYW2yxGWlZKgS1hlIoF/2wq8XW77aU=
+	t=1752704555; cv=none; b=OA79ob4koJb3fQ4Thb+XRqfW8xbQj0Nrf+v+fnHRhtRrL46jbnpsXsLGlgdxswwkrUAt457fvHClsZ2wXVqto2Vvmv++TZ6DIB5zZEcJQrqbL0q8BuB6bW0k7gRIZltiWGuF/uyyDfrnn2H2gTaLa7S8Bv8j9cXyKzhLYUcycgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752704530; c=relaxed/simple;
-	bh=yf3Y8defNvqata8qiCkZ8jV2NsjanhzbT+BLQRoUDQg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SIGsy4fbVqJj6/4KqT/QMMvGox0rlBxgQCochrKjofVYZASRBHYhqIFD21HYrrjB7AKagNYACGOnRT37GE5GNnboTvAHwxT8tjhGw3xBSAZVaVXv+HPr53EYjzvQBu3in4qrlZ3TCcqOLIHBP8S8hozjlivc6odIyQK/g7uaUy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SheUR8hb; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-754f57d3259so394574b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:22:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752704528; x=1753309328; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kHYx0oKJKOX+LIQdUAr0yKPkS6Z6eF8ywIsSJu/uw4Y=;
-        b=SheUR8hbBheBNjso+80ZBfos+HSkWFK6u5Nxtf++voxinXuTlZdYTSq/4qhMNkH9y+
-         mz+JOT6nbhPKC+5cSUUY29tJbWaGKYKQz1wu0V/rvnpYT2gKhTPPZe6MiCEYfGmwpkI+
-         vKVjWO3G5ajtXa0xQU03hENaYgMoEuhpKaRm2YQyt4vfRorS9+tN9AwUhHfkD1cZMLze
-         /SgVe7ABYg4R3NYUK+XPNndHTLO0l/814To1sEY/d+qmLZjqWFXVLj7bTaFaSXP5028Z
-         Q+d0jaqp1E0SycDSO4/VopTHY4npSPK/vChtgvMBBZHisEM8c8N5WneyCRIuJVyWrh1T
-         TvYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752704528; x=1753309328;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kHYx0oKJKOX+LIQdUAr0yKPkS6Z6eF8ywIsSJu/uw4Y=;
-        b=J9RnH7YRILBd27mTv2pEPOdxr64o8wIH43ctl9Qgye9fINAGsajbaDuXHVZPvhtJSG
-         w4U2OZAdqQzWkj0Z2RJUKOlKnhab9sdvjXOkyIl1fKVbIdP5ddCLtRbuCg0/qj4zogvj
-         VAESk/ol0usY15P585/qStmB8aGrsvu0QfrGhdvXkS1PXtXPJGkBqdjtcLZRUf34lI3A
-         bnXijnSbljM2d86E+Nt/LPBzc8A8EJKEqNNTkL1Nzc3OuWDMru8G7NIkhdblLkorz2He
-         KgEugLHzm2Dk75cDjh9i+7xByPNP1jOAZ//GnqjSJa4uZpUpEdawHTZtuJUlfGPMWmnQ
-         joMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUikP+m9RJGdD0M8aXt+kWDOZxyqPWalX1KqqMfiIuhPYDfr6ihQEbf7T0Sf+aZosgR2JynFqktxk00lE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmk0ZPNMYZ8MaL4V215eA7g+/D3HDyGXbN96bjuJQXHH3x/N6W
-	310hKCPcNfBFnNWzkgsZCAtHKNqIEr0RvBlC86ZgL9QY8pXa6HQ1gFje5iJPp4kbqQhti77Zpdp
-	TLCyQzliLPOFezCwXhSmC50y9QQ==
-X-Google-Smtp-Source: AGHT+IG0OvScUbujc+i6/1IIn8ARXzZvFQD59bptEMA3mXCmCDkH6zU0DKQx5NAHGSoU+3a0uG4wqBjqoX5XM1g8tA==
-X-Received: from pfoo10.prod.google.com ([2002:a05:6a00:1a0a:b0:746:3321:3880])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:882:b0:748:ff39:a0ed with SMTP id d2e1a72fcca58-7584b43a0acmr949334b3a.20.1752704527892;
- Wed, 16 Jul 2025 15:22:07 -0700 (PDT)
-Date: Wed, 16 Jul 2025 15:22:06 -0700
-In-Reply-To: <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1752704555; c=relaxed/simple;
+	bh=cZmv93NzRT1+EdMxFCrji+OQ4DsPr8zEjCqbzHfLEow=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HuG8tT5Wd/WUMG2srw0ryUFeZiBHhZo0XcrxUcuvyiuhJqz1WWw1L3cTfdl/4y00h2NraUpifvU8/h1CbZ0+tZBY3guch93j0iUEFtaAAw2AabkjZMcsJG4S3b2EIJr2pWCT1J6e56zyg9GJi6FiR09Prfc7/oA7OLM8eUTgomA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pi3sp9WA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E8EFC4CEE7;
+	Wed, 16 Jul 2025 22:22:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752704554;
+	bh=cZmv93NzRT1+EdMxFCrji+OQ4DsPr8zEjCqbzHfLEow=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pi3sp9WArQOYjtBTL2fg8kyA9+AVbix7VYOzEWgc1FKGyi0tVAHu0CgaRUor8JISP
+	 3zy1IaEZR4yFjLSXOGlwAbKWNPaxAs3pv8h70S+EIoL36zucUrwYstMozHNxmLMdEO
+	 r9OXfZvxqZVbLQWj9sSYu0+OO5HoKlovyyEf+hxP44dz1C/oNp6mwt4MbcvxVk6grn
+	 xmW6A/B0tSOmX6WsWQyaDiXhUX5+ChgFEa/DtY3tlsnCBUFgcXLQbdwhWYp9gD/c2f
+	 HAnW2oYHRKKUjyITuuv7e34BD6ZLl8zNKHqp/ubM96qE9tA6By51RqV1YPsbqnus3a
+	 8x1s4tW9YZXiw==
+Date: Wed, 16 Jul 2025 15:22:33 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Piotr Kubik <piotr.kubik@adtran.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Kory Maincent
+ <kory.maincent@bootlin.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 2/2] net: pse-pd: Add Si3474 PSE controller
+ driver
+Message-ID: <20250716152233.27df2a34@kernel.org>
+In-Reply-To: <b2361682-05fe-4a38-acfd-2191f7596711@adtran.com>
+References: <be0fb368-79b6-4b99-ad6b-00d7897ca8b0@adtran.com>
+	<b2361682-05fe-4a38-acfd-2191f7596711@adtran.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
- <CA+EHjTxtHOgichL=UvAzczoqS1608RSUNn5HbmBw2NceO941ng@mail.gmail.com>
- <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
- <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
- <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com> <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com> <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
-Message-ID: <diqz8qknhj3l.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-From: Ackerley Tng <ackerleytng@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Alexey Kardashevskiy <aik@amd.com>, Fuad Tabba <tabba@google.com>, kvm@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com, 
-	akpm@linux-foundation.org, amoorthy@google.com, anthony.yznaga@oracle.com, 
-	anup@brainfault.org, aou@eecs.berkeley.edu, bfoster@redhat.com, 
-	binbin.wu@linux.intel.com, brauner@kernel.org, catalin.marinas@arm.com, 
-	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
-	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
-	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de, 
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
-	keirf@google.com, kent.overstreet@linux.dev, kirill.shutemov@intel.com, 
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com, 
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net, 
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev, 
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
-	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Yan Zhao <yan.y.zhao@intel.com> writes:
+On Fri, 11 Jul 2025 11:25:02 +0000 Piotr Kubik wrote:
+> +static int si3474_pi_get_admin_state(struct pse_controller_dev *pcdev, int id,
+> +				     struct pse_admin_state *admin_state)
+> +{
+> +	struct si3474_priv *priv = to_si3474_priv(pcdev);
+> +	struct i2c_client *client;
+> +	s32 ret;
+> +	u8 chan0, chan1;
+> +	bool is_enabled = false;
+> +
+> +	if (id >= SI3474_MAX_CHANS)
+> +		return -ERANGE;
 
-> On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
->> On Tue, Jun 24, 2025 at 6:08=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> w=
-rote:
->> >
->> > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
->> >
->> > > Now, I am rebasing my RFC on top of this patchset and it fails in
->> > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
->> > > folios in my RFC.
->> > >
->> > > So what is the expected sequence here? The userspace unmaps a DMA
->> > > page and maps it back right away, all from the userspace? The end
->> > > result will be the exactly same which seems useless. And IOMMU TLB
->>=20
->>  As Jason described, ideally IOMMU just like KVM, should just:
->> 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
->> by IOMMU stack
-> In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs to =
-inform
-> TDX module about which pages are used by it for DMAs purposes.
-> So, if a page is regarded as pinned by TDs for DMA, the TDX module will f=
-ail the
-> unmap of the pages from S-EPT.
->
-> If IOMMU side does not increase refcount, IMHO, some way to indicate that
-> certain PFNs are used by TDs for DMA is still required, so guest_memfd ca=
-n
-> reject the request before attempting the actual unmap.
-> Otherwise, the unmap of TD-DMA-pinned pages will fail.
->
-> Upon this kind of unmapping failure, it also doesn't help for host to ret=
-ry
-> unmapping without unpinning from TD.
->
->
+Avoid defensive programming in the kernel. Since you set nr_lines
+to MAX_CHANS the core should not be calling you with invalid IDs.
 
-Yan, Yilun, would it work if, on conversion,
+> +	si3474_get_channels(priv, id, &chan0, &chan1);
+> +	client = si3474_get_chan_client(priv, chan0);
+> +
+> +	ret = i2c_smbus_read_byte_data(client, PORT_MODE_REG);
+> +	if (ret < 0) {
+> +		admin_state->c33_admin_state =
+> +			ETHTOOL_C33_PSE_ADMIN_STATE_UNKNOWN;
+> +		return ret;
+> +	}
+> +
+> +	is_enabled = (ret & CHAN_MASK(chan0)) |
+> +		     (ret & CHAN_MASK(chan1));
 
-1. guest_memfd notifies IOMMU that a conversion is about to happen for a
-   PFN range
-2. IOMMU forwards the notification to TDX code in the kernel
-3. TDX code in kernel tells TDX module to stop thinking of any PFNs in
-   the range as pinned for DMA?
+nit: here you do (ret & MASK1) | (ret & MASK2) ...
 
-If the above is possible then by the time we get to unmapping from
-S-EPTs, TDX module would already consider the PFNs in the range "not
-pinned for DMA".
+> +	if (is_enabled)
+> +		admin_state->c33_admin_state =
+> +			ETHTOOL_C33_PSE_ADMIN_STATE_ENABLED;
+> +	else
+> +		admin_state->c33_admin_state =
+> +			ETHTOOL_C33_PSE_ADMIN_STATE_DISABLED;
+> +
+> +	return 0;
+> +}
+> +
+> +static int si3474_pi_get_pw_status(struct pse_controller_dev *pcdev, int id,
+> +				   struct pse_pw_status *pw_status)
+> +{
+> +	struct si3474_priv *priv = to_si3474_priv(pcdev);
+> +	struct i2c_client *client;
+> +	s32 ret;
+> +	u8 chan0, chan1;
+> +	bool delivering = false;
+> +
+> +	if (id >= SI3474_MAX_CHANS)
+> +		return -ERANGE;
+> +
+> +	si3474_get_channels(priv, id, &chan0, &chan1);
+> +	client = si3474_get_chan_client(priv, chan0);
+> +
+> +	ret = i2c_smbus_read_byte_data(client, POWER_STATUS_REG);
+> +	if (ret < 0) {
+> +		pw_status->c33_pw_status = ETHTOOL_C33_PSE_PW_D_STATUS_UNKNOWN;
+> +		return ret;
+> +	}
+> +
+> +	delivering = ret & (CHAN_UPPER_BIT(chan0) | CHAN_UPPER_BIT(chan1));
 
->> 2) Directly query pfns from guest_memfd for both shared/private ranges
->> 3) Implement an invalidation callback that guest_memfd can invoke on
->> conversions.
->>=20
->> Current flow:
->> Private to Shared conversion via kvm_gmem_convert_range() -
->>     1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
->> on each bound memslot overlapping with the range
->>          -> KVM has the concept of invalidation_begin() and end(),
->> which effectively ensures that between these function calls, no new
->> EPT/NPT entries can be added for the range.
->>      2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
->> actually unmaps the KVM SEPT/NPT entries.
->>      3) guest_memfd invokes kvm_gmem_execute_work() which updates the
->> shareability and then splits the folios if needed
->>=20
->> Shared to private conversion via kvm_gmem_convert_range() -
->>     1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
->> on each bound memslot overlapping with the range
->>      2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
->> actually unmaps the host mappings which will unmap the KVM non-seucure
->> EPT/NPT entries.
->>      3) guest_memfd invokes kvm_gmem_execute_work() which updates the
->> shareability and then merges the folios if needed.
->>=20
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
->>=20
->> For IOMMU, could something like below work?
->>=20
->> * A new UAPI to bind IOMMU FDs with guest_memfd ranges
->> * VFIO_DMA_MAP/UNMAP operations modified to directly fetch pfns from
->> guest_memfd ranges using kvm_gmem_get_pfn()
->>     -> kvm invokes kvm_gmem_is_private() to check for the range
->> shareability, IOMMU could use the same or we could add an API in gmem
->> that takes in access type and checks the shareability before returning
->> the pfn.
->> * IOMMU stack exposes an invalidation callback that can be invoked by
->> guest_memfd.
->>=20
->> Private to Shared conversion via kvm_gmem_convert_range() -
->>     1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
->> on each bound memslot overlapping with the range
->>      2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
->> actually unmaps the KVM SEPT/NPT entries.
->>            -> guest_memfd invokes IOMMU invalidation callback to zap
->> the secure IOMMU entries.
-> If guest_memfd could determine if a page is used by DMA purposes before
-> attempting the actual unmaps, it could reject and fail the conversion ear=
-lier,
-> thereby keeping IOMMU/S-EPT mappings intact.
->
-> This could prevent the conversion from partially failing.
->
+here for similar logic you do: ret & (MASK1 | MASK2) ...
 
-If the above suggestion works, then instead of checking if pages are
-allowed to be unmapped, guest_memfd will just force everyone to unmap.
+> +	if (delivering)
+> +		pw_status->c33_pw_status =
+> +			ETHTOOL_C33_PSE_PW_D_STATUS_DELIVERING;
+> +	else
+> +		pw_status->c33_pw_status = ETHTOOL_C33_PSE_PW_D_STATUS_DISABLED;
+> +
+> +	return 0;
+> +}
+> +
+> +static int si3474_get_of_channels(struct si3474_priv *priv)
+> +{
+> +	struct pse_pi *pi;
+> +	u32 chan_id;
+> +	s32 ret;
+> +	u8 pi_no;
+> +
+> +	for (pi_no = 0; pi_no < SI3474_MAX_CHANS; pi_no++) {
+> +		pi = &priv->pcdev.pi[pi_no];
+> +		u8 pairset_no;
+> +
+> +		for (pairset_no = 0; pairset_no < 2; pairset_no++) {
+> +			if (!pi->pairset[pairset_no].np)
+> +				continue;
+> +
+> +			ret = of_property_read_u32(pi->pairset[pairset_no].np,
+> +						   "reg", &chan_id);
+> +			if (ret) {
+> +				dev_err(&priv->client[0]->dev,
+> +					"Failed to read channel reg property\n");
+> +				return ret;
+> +			}
+> +			if (chan_id > SI3474_MAX_CHANS) {
+> +				dev_err(&priv->client[0]->dev,
+> +					"Incorrect channel number: %d\n", chan_id);
+> +				return ret;
 
->>      3) guest_memfd invokes kvm_gmem_execute_work() which updates the
->> shareability and then splits the folios if needed
->>      4) Userspace invokes IOMMU map operation to map the ranges in
->> non-secure IOMMU.
->>=20
->> Shared to private conversion via kvm_gmem_convert_range() -
->>     1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
->> on each bound memslot overlapping with the range
->>      2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
->> actually unmaps the host mappings which will unmap the KVM non-seucure
->> EPT/NPT entries.
->>          -> guest_memfd invokes IOMMU invalidation callback to zap the
->> non-secure IOMMU entries.
->>      3) guest_memfd invokes kvm_gmem_execute_work() which updates the
->> shareability and then merges the folios if needed.
->>      4) Userspace invokes IOMMU map operation to map the ranges in secur=
-e IOMMU.
->>=20
->> There should be a way to block external IOMMU pagetable updates while
->> guest_memfd is performing conversion e.g. something like
->> kvm_invalidate_begin()/end().
->>=20
->> > > is going to be flushed on a page conversion anyway (the RMPUPDATE
->> > > instruction does that). All this is about AMD's x86 though.
->> >
->> > The iommu should not be using the VMA to manage the mapping. It should
->>=20
->> +1.
->>=20
->> > be directly linked to the guestmemfd in some way that does not disturb
->> > its operations. I imagine there would be some kind of invalidation
->> > callback directly to the iommu.
->> >
->> > Presumably that invalidation call back can include a reason for the
->> > invalidation (addr change, shared/private conversion, etc)
->> >
->> > I'm not sure how we will figure out which case is which but guestmemfd
->> > should allow the iommu to plug in either invalidation scheme..
->> >
->> > Probably invalidation should be a global to the FD thing, I imagine
->> > that once invalidation is established the iommu will not be
->> > incrementing page refcounts.
->>=20
->> +1.
->>=20
->> >
->> > Jason
->>=20
+ret is not set here (it will be zero because of previous call)
+
+> +			}
+> +
+> +			priv->pi[pi_no].chan[pairset_no] = chan_id;
+> +			/* Mark as 4-pair if second pairset is present */
+> +			priv->pi[pi_no].is_4p = (pairset_no == 1);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int si3474_setup_pi_matrix(struct pse_controller_dev *pcdev)
+> +{
+> +	struct si3474_priv *priv = to_si3474_priv(pcdev);
+> +	s32 ret;
+> +
+> +	ret = si3474_get_of_channels(priv);
+> +	if (ret < 0) {
+> +		dev_warn(&priv->client[0]->dev,
+> +			 "Unable to parse DT PSE power interface matrix\n");
+> +	}
+
+nit: unnecessary brackets around single-line statement
+
+> +	return ret;
+> +}
+-- 
+pw-bot: cr
 
