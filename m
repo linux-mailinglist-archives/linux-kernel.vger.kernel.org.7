@@ -1,218 +1,235 @@
-Return-Path: <linux-kernel+bounces-734080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E505B07CD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:24:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBB3B07CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BDA83B64D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:24:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1679F7A046D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A027C2D5C74;
-	Wed, 16 Jul 2025 18:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F4529DB71;
+	Wed, 16 Jul 2025 18:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IvmqH0le"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2069.outbound.protection.outlook.com [40.107.236.69])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIuvixBK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAD62BE033;
-	Wed, 16 Jul 2025 18:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752690180; cv=fail; b=N2gmSrgBurVI4cjOiVPBS9KVcsk8djOSI+uO/BoOkpKoiev1hsusM45VXtYDrMBlgQoqE5MNjUkTJSKIvGOnQXB7NOvpDGYMfvzoBfoj3CUHuovAiEApIimHw/ztPWbVo+fMv7Iw/x5WsIwhW97vmntp/NcKU17gR/IhZQkRxH0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752690180; c=relaxed/simple;
-	bh=/7WOo+BtJck4Q4y574hjut9eq1lt1iHGoSpns4D/l7U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Cew8BjnDoun4UYCRyMrvOt16MBk4F8oUQgRE5aY93OwRQAtBpGGry4+7LJMC+vgzhBoVvEcsZag3GFLRpeO52wTmd97IbaeZLlFfbNd5bSIznlbyR2AWQnLtesw7o37xkr1cfg0lIPaSlgfhcYIXs+kxL3Wk33wQ7G3XueL3zXU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IvmqH0le; arc=fail smtp.client-ip=40.107.236.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MesYoWK7I33ahnrPTMGAWaYiaeXBJK9f8k2llOK8TVL+MkW78bsOg038KbcWerUzt670k+a37e/dEff+hizNaDoRJoGWvF3sTVT2h22B8kT+nFQ6v0S5hvuObsElhXkQbFKOKPnGWsYbgnaMbvh0psUvGVzwGZYfowpr+/7DJx/C80QkHPPfZjCWujBmuV3uQMbVSOuBwdeEkL8JLXG9kA7Pny4pNW/T/j3Hvl9U4J/LfQBMRe3Bi6Gsc6m+UYU3M33P9fDznbfjD5kL/SzgEi9UVEHJ4m/2buUCGdC7EzLDht3UzfKNXVm01bJaM3jPWuKU5NRP99EAuRqAQkkWew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ucPit7tmu5ulF5bTmehYuLjm8MFVibaVK9xDS2DVKGw=;
- b=enZ050e8vpQN0AgVh+snPO/FLyWLjvbAnCSEc9hylzORRGVpB80RzYfKd0EYJrbgwQHI/I3YTdAnoy6FmZt0v46qJBXosmlCNFxc54xsaJoyQoaDx/QqCxB67vyvDfjOEwtnCz9zDcyDYYs9dRQzKqEpfQeH3WDzcev4+x1etgziezTryqd/XO9D1SHKbtgcbL1j1l98zle5T18enT3ePyiXgse1+iW6rEe4e2RvZNyvTaz8Bgm4eRXzOtlRENReysEppv1PGtyl5+Uu1gFMMVVqgX7G+5Qxz/qB7ARw8zbYnmExIXrFsrmdoLXxnKlNEZ+xfkFxEhiGDxIRY96pFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=lists.ozlabs.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ucPit7tmu5ulF5bTmehYuLjm8MFVibaVK9xDS2DVKGw=;
- b=IvmqH0le2D5Sphvp3F35SKYP5mhsZOnNNGXsjt3FW8ZFmrlAB1BhcAUznpsQe07L02TsCDQ7CY/RQ3hRlcvCjmFdzmd+UrLo13KKQKoryfKtNhCOzGKheQZmLo0S/eLNiGBQfJWtn1N7Oe4U4bHIHxnUlq59hRz7v2CazQbscMRoh56cdmaJ6hXeIsF4YiaTJSC22lBnMk3KuY93Ig05suuazQRaCZJay5F4IhHjQDeBw9mLHO352tIVFjtKpy3UVi5QPByTkTdtFpU7/fmxKRamEWzOh8i+atZEuMNJM6WpNZCdGFd8yHKHjuUR0DJrhy1L5NORs41OstEf+BYeCA==
-Received: from SJ0PR13CA0171.namprd13.prod.outlook.com (2603:10b6:a03:2c7::26)
- by DM4PR12MB7720.namprd12.prod.outlook.com (2603:10b6:8:100::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.22; Wed, 16 Jul
- 2025 18:22:52 +0000
-Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
- (2603:10b6:a03:2c7:cafe::98) by SJ0PR13CA0171.outlook.office365.com
- (2603:10b6:a03:2c7::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.19 via Frontend Transport; Wed,
- 16 Jul 2025 18:22:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.21 via Frontend Transport; Wed, 16 Jul 2025 18:22:50 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 16 Jul
- 2025 11:22:32 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 16 Jul
- 2025 11:22:31 -0700
-Received: from willie-obmc-builder.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Wed, 16 Jul 2025 11:22:31 -0700
-From: Willie Thai <wthai@nvidia.com>
-Date: Wed, 16 Jul 2025 18:21:58 +0000
-Subject: [PATCH v2 4/4] ARM: dts: aspeed: nvidia: gb200nvl: Enable MAC0 for
- BMC network
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DDC29C353;
+	Wed, 16 Jul 2025 18:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752690156; cv=none; b=lUG9EdvGMWcQ/zIFdxNkefs/Enuc/OJhM1yLFLZG50qTZzJ8NUN2wabEIbf66U1c+D29wvZTFSF/g/3XPvqnmxbrqLlgx7zpPvUauklygDdAhfy/TjEvL2Hwh+kyaDgBHS8tIDQxWYL5hdhaq12Q91J+hBa3HgGbJ5bMJzYRUSk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752690156; c=relaxed/simple;
+	bh=OeN+yejltezB0oHCvVEcUaFL4aGPQNlK36DE8/EOhCM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=E0Brl2T7Rkq8FFDa6e53meMzgAVaeChjO3dSq7JXBEurxTt7IX0NIu63v+YtcsSfVbX8IioBme0rk+n6+dUY3fpajEdZ9IPHmHyj28TfRZYy7cQ0IRgopgl7scndnwkzigD75IzV7FMaLf2tyvUfEJb0qolncAqj5q58Xo7ssQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIuvixBK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B324C4CEF5;
+	Wed, 16 Jul 2025 18:22:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752690155;
+	bh=OeN+yejltezB0oHCvVEcUaFL4aGPQNlK36DE8/EOhCM=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=tIuvixBKvt01pdq5U/fT9qlDLFCiTTfA+FTWSfwDLnEZX39iX/+1NWnADEFFr3q0F
+	 Alzef/ZpSKZo+smrTOx82AmeXYGIbViLpwDwhxXYowwEyAPShmRDNUjPF+wqQzrBwE
+	 EZQocoYx2mZ7bdUHPWXFF5psb5ij5bb5VR7O528HMmyvY+WqV4S8VJ5adOf1GybLW7
+	 /FZ5zkmg9aMXmM5B5D3NUYWrzRKOHTYxgEdWrFbPwBetJopEydrlxQ8FBkI9/zazcr
+	 2Owi2whXSHxEyPmZS1SQX+TLZW393t2718FjSL97EkKARJlI52M68T4dyP0iO1XfJh
+	 p7+zJ4W3ZtTFw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250716-update-gb200nvl-dts-for-new-hardware-v2-4-9a1a916f461d@nvidia.com>
-References: <20250716-update-gb200nvl-dts-for-new-hardware-v2-0-9a1a916f461d@nvidia.com>
-In-Reply-To: <20250716-update-gb200nvl-dts-for-new-hardware-v2-0-9a1a916f461d@nvidia.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, "Andrew
- Jeffery" <andrew@codeconstruct.com.au>, <openbmc@lists.ozlabs.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, "Deepak
- Kodihalli" <dkodihalli@nvidia.com>, Ed Tanous <etanous@nvidia.com>, Leo Huang
-	<leohu@nvidia.com>, Willie Thai <wthai@nvidia.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752690148; l=1279;
- i=wthai@nvidia.com; s=20250525; h=from:subject:message-id;
- bh=/7WOo+BtJck4Q4y574hjut9eq1lt1iHGoSpns4D/l7U=;
- b=/YwoTnxHvM6hIMX86j7g+tO+/JNzdSQxLmZwG5wgbVuhStPoHWUmBiJuaMM4rYwfDU+btOs31
- RCF61PKayasDdyT3TPqNlUhHQl6j/YgVEgj8O5cVGyVWyUZ3SnMdMp+
-X-Developer-Key: i=wthai@nvidia.com; a=ed25519;
- pk=i/6dxnUqKdr7Z6GA0KECRkwz5HX4RCiodw0v6kB9fbs=
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|DM4PR12MB7720:EE_
-X-MS-Office365-Filtering-Correlation-Id: 872d3cae-d115-435c-69b1-08ddc495c5f7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OENYWTBoSTFTalhJa2dnM0NTWElYZU1pb21Yci9zaHlWZVI4OGVjTG5TSkUz?=
- =?utf-8?B?S1IyNTgwd3JJNEdoTEUxek5LRHZDNzE3RG5uYWZBNUVBRjA5SnMrSEtKR240?=
- =?utf-8?B?YVdmdSsrOHNNV0ZJdWNmbld6MU42L20zQ2l5eFFGU3NzdFhvUjR5QWs5dnY1?=
- =?utf-8?B?VGNNVHBrRU1uQU9HMjZ3bDVMSlY2ZG56aFRBK3JpL2Z0VkV4Nk1yQm9WSFd4?=
- =?utf-8?B?UTJ2dDlQOElxTmhyalhFK1U1SlI0V1cxVHY0V1ZlOTJpVFhoYU41NmtvOUpk?=
- =?utf-8?B?ZjlxMmJ4RzBNczVQL3QwejlOQS83c2ZGK1ZaWU9YOENrZXdkbnRyZzhzUVhC?=
- =?utf-8?B?K3MzNERZbmhLQ2tiUG8wRUlvWjExS1lEMUFWT3AySC9QZHNmNTg2eDJIclNs?=
- =?utf-8?B?aGtPUU9MTStTb1lWbDdTdEozMFZ0aTUxOE8zbFZ3TkhHT21SMUdrMDQ5MUl1?=
- =?utf-8?B?OHlVZjdZOVI2VFNoVS9xMkxYSXhudEN1UHl2eHFUL3hhODJVUnpmczdUTVJV?=
- =?utf-8?B?a3crb1hUVDRXMTFhWVNtYndQTEhJMUEzSHEvZHg0Wml4dWthQmkxWFVsK1dk?=
- =?utf-8?B?R0NKbHo0RTF5eUh3K292NFlxNkV5QkFqTG1mSzQ1WGNrSVFTT012UWdPMkx4?=
- =?utf-8?B?TTVlUWFxQUI1czAxbmxNMmd1ak8vNDFSelFwZ3IrWU1uZ01Td1NuQ1cvOE1X?=
- =?utf-8?B?djdtemVtbUxBakVzYnc4Zm1iNWlETFEwOEdkQW5KdEd4b20wak5qQjh0WWtm?=
- =?utf-8?B?Y2NLb0xQV0x2RCtEVmw4M0ltYkk1SThYakpXNFRlek1lWkptSmZpcXlmSXRJ?=
- =?utf-8?B?MGFrWEpuT2lJRHQrWGhsSjBtM2ptb2lvdkFUTU9Ibkx3bWk1anh6MW1Ta1dr?=
- =?utf-8?B?L0dnSVJpcVdLbzVmdDdRRXpVb2ZZcUc3c1NTRlpmcVFsZ3hwcFhudnMvNGtl?=
- =?utf-8?B?ZUkydU8wYlozb0I0Qyt4eDQyaFk4cUNnWS9xSDFrU1Q1YlpUZzR5TzVGbDMz?=
- =?utf-8?B?YWIwK3ViSWY4R3hSVUQ4MjJNRnpNdWFFYTZaL01LS0k2QUFrS1VIdkdaampH?=
- =?utf-8?B?NnVBQ0xMRllvNkFNMHNQM29scHZ0VStzdjNhd2RmNXpkM1ZjTXV5Z2ZGZ0tr?=
- =?utf-8?B?SjhnQkd4bE9qVjJEREFRS2ZWUFQ5azg4NGtqR2pzYTVlbGhiTy94SkFGMVF5?=
- =?utf-8?B?bkVZaFBVVDl5WnNJNXl3cXhSUVVZQXpicUxxeFlETk44N3ROd1gxclB2MDVU?=
- =?utf-8?B?VFVQNE9Hc2VoaWgybTJZZ0xwTFVwTmNWSnNWemNEWUdocm9NamdjQ2xSOFpI?=
- =?utf-8?B?azFDcHpPNWQ4Wk15M0l2bC8wL3NLaUp0ek9ZYzI3RU1pQXR3bTJSUnppRXFl?=
- =?utf-8?B?VzNNUm5YdHVucTUxaTdQUlZwTUVWTE5IR05UTTdZeEJTYWtnQ0RVVkpPai9s?=
- =?utf-8?B?Z3hXSzltREdvSC85T3BheVA1bUFRekxBWlB4ZVJTVy9idGpZeUJRVjIrdVVv?=
- =?utf-8?B?dWhrd0pITmtXQytMUTZtaTRXdXRDaDFIRXd2eU1nTnF4OTBCUExQVVdxeVVz?=
- =?utf-8?B?WUhtN29BZkV1ekZObzZwQWtQWUFKZFplTlN0M3FtMDBEL0M5bFFMYlV6Ykgx?=
- =?utf-8?B?T1ZsZXdDZThJaEtNd1h4ODREOCtzTXB5RTVLNXdtT0NmbTFySHNvbCtCV1Ju?=
- =?utf-8?B?WVRXVW5TOU40NXlwSm12NzNqZXhjU1d3MmJzbHBSTnZrUE5rRy9kcFU5bmZt?=
- =?utf-8?B?WU94OXJWU2JWNTdBSXl6SnFSb21Ea2h2bWtobU05SnRJSCtLdE85K21zdjNw?=
- =?utf-8?B?VTNRZm1QYWxHS2tCV212b2NFQjFFSVlDQllnNG1BS3ZFdG42eDhkeHliSnFO?=
- =?utf-8?B?b00vZUw2YnNsUDcwdHZ0bDlHZSs0V0F2eFNkMEFMejRDWmd1WXVYYXJUWUdI?=
- =?utf-8?B?cFNqZ2JVRCt5YU5KZGZ0c1diekFKRzErb1RwM2lSSFBHUGVaME1qWlppZEFz?=
- =?utf-8?B?Nm5xTnZ5elhqVlV2ajJVTEl5R3ZvSS9jU3E3dVpCTkpnaHR4dEhneXM1N1JU?=
- =?utf-8?Q?CeCSTW?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 18:22:50.5384
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 872d3cae-d115-435c-69b1-08ddc495c5f7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7720
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 16 Jul 2025 20:22:30 +0200
+Message-Id: <DBDOSZJJGD99.3FX4Y4MDJR37O@kernel.org>
+Cc: "Mitchell Levy" <levymitchell0@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Dennis Zhou"
+ <dennis@kernel.org>, "Tejun Heo" <tj@kernel.org>, "Christoph Lameter"
+ <cl@linux.com>, "Danilo Krummrich" <dakr@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-mm@kvack.org>
+Subject: Re: [PATCH v2 3/5] rust: percpu: add a rust per-CPU variable test
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <68762e19.170a0220.33e203.a0b7@mx.google.com>
+ <DBCLFG5F4MPW.2LF4T3KWOE12R@kernel.org> <aHZhcNCayTOQhvYh@Mac.home>
+ <DBCR1OCNYAUW.1VLAY1HWCHLGI@kernel.org> <aHaCUFNUd_mErL7S@Mac.home>
+ <DBCTCZ5HUZOF.2DJX63Q0VWWFN@kernel.org> <aHbJUfcsjHA92OlE@tardis-2.local>
+ <DBDESSQOH6MB.2I4GNLPBP5ORJ@kernel.org> <aHfGV3l4NCmYSRuv@Mac.home>
+ <DBDNIAW09Z7W.EXO6C61HCNVP@kernel.org> <aHfm1gcdRZbVnwE9@Mac.home>
+In-Reply-To: <aHfm1gcdRZbVnwE9@Mac.home>
 
-Upstream-Status: Inappropriate Bad devices
+On Wed Jul 16, 2025 at 7:52 PM CEST, Boqun Feng wrote:
+> On Wed, Jul 16, 2025 at 07:21:32PM +0200, Benno Lossin wrote:
+>> On Wed Jul 16, 2025 at 5:33 PM CEST, Boqun Feng wrote:
+>> > On Wed, Jul 16, 2025 at 12:32:04PM +0200, Benno Lossin wrote:
+>> >> On Tue Jul 15, 2025 at 11:34 PM CEST, Boqun Feng wrote:
+>> >> > On Tue, Jul 15, 2025 at 07:44:01PM +0200, Benno Lossin wrote:
+>> >> > [...]
+>> >> >> >> >
+>> >> >> >> > First of all, `thread_local!` has to be implemented by some s=
+ys-specific
+>> >> >> >> > unsafe mechanism, right? For example on unix, I think it's us=
+ing
+>> >> >> >> > pthread_key_t:
+>> >> >> >> >
+>> >> >> >> > 	https://pubs.opengroup.org/onlinepubs/009695399/functions/pt=
+hread_key_create.html
+>> >> >> >> >
+>> >> >> >> > what we are implementing (or wrapping) is the very basic unsa=
+fe
+>> >> >> >> > mechanism for percpu here. Surely we can explore the design f=
+or a safe
+>> >> >> >> > API, but the unsafe mechanism is probably necessary to look i=
+nto at
+>> >> >> >> > first.
+>> >> >> >>=20
+>> >> >> >> But this is intended to be used by drivers, right? If so, then =
+we should
+>> >> >> >
+>> >> >> > Not necessarily only for drivers, we can also use it for impleme=
+nting
+>> >> >> > other safe abstraction (e.g. hazard pointers, percpu counters et=
+c)
+>> >> >>=20
+>> >> >> That's fair, but then it should be `pub(crate)`.
+>> >> >>=20
+>> >> >
+>> >> > Fine by me, but please see below.
+>> >> >
+>> >> >> >> do our usual due diligence and work out a safe abstraction. Onl=
+y fall
+>> >> >> >> back to unsafe if it isn't possible.
+>> >> >> >>=20
+>> >> >> >
+>> >> >> > All I'm saying is instead of figuring out a safe abstraction at =
+first,
+>> >> >> > we should probably focus on identifying how to implement it and =
+which
+>> >> >> > part is really unsafe and the safety requirement for that.
+>> >> >>=20
+>> >> >> Yeah. But then we should do that before merging :)
+>> >> >>=20
+>> >> >
+>> >> > Well, who's talknig about merging? ;-) I thought we just began revi=
+ewing
+>> >> > here ;-)
+>> >>=20
+>> >> I understand [PATCH] emails as "I want to merge this" and [RFC PATCH]=
+ as
+>> >
+>> > But it doesn't mean "merge as it is", right? I don't think either I or
+>> > Mitchell implied that, I'm surprised that you had to mention that,
+>>=20
+>> Yeah that is true, but it at least shows the intention :)
+>>=20
+>> > also based on "I often mute those" below, making it "[PATCH]" seems to
+>> > be a practical way to get more attention if one wants to get some
+>> > reviews.
+>>=20
+>> That is true, I do usually read the titles of RFC patches though and
+>> sometimes take a look eg your atomics series.
+>>=20
+>> >> "I want to talk about merging this". It might be that I haven't seen =
+the
+>> >> RFC patch series, because I often mute those.
+>> >>=20
+>> >
+>> > Well, then you cannot blame people to move from "RFC PATCH" to "PATCH"
+>> > stage for more reviews, right? And you cannot make rules about what th=
+e
+>> > difference between [PATCH] and [RFC PATCH] if you ignore one of them ;=
+-)
+>>=20
+>> I'm not trying to blame anyone. I saw a lot of unsafe in the example and
+>> thought "we can do better" and since I haven't heard any sufficient
+>> arguments showing that it's impossible to improve, we should do some
+>> design work.
+>>=20
+>
+> I agree with you, and I like what you're proposing, but I think design
+> work can be done at "PATCH" stage, right? And sometimes, it's also OK to
+> do some design work even at some version like "v12" ;-)
 
-Signed-off-by: Deepak Kodihalli <dkodihalli@nvidia.com>
-Signed-off-by: Ed Tanous <etanous@nvidia.com>
-Signed-off-by: Willie Thai <wthai@nvidia.com>
+Yeah of course. The thing is just that nobody asked why there was unsafe
+and thus I got the impression that people thought this would be a good
+abstraction for percpu. (don't take from this that it's bad :)
+
+> Also I want to see more forward-progress actions about the design work
+> improvement. For example, we can examine every case that makes
+> unsafe_get_per_cpu!() unsafe, and see if we can improve that by typing
+> or something else. We always can "do better", but the important part is
+> how to get there ;-)
+
+Yeah that would be a starting point :)
+
+>> >> >> >> I'm not familiar with percpu, but from the name I assumed that =
+it's
+>> >> >> >> "just a variable for each cpu" so similar to `thread_local!`, b=
+ut it's
+>> >> >> >> bound to the specific cpu instead of the thread.
+>> >> >> >>=20
+>> >> >> >> That in my mind should be rather easy to support in Rust at lea=
+st with
+>> >> >> >> the thread_local-style API. You just need to ensure that no ref=
+erence
+>> >> >> >> can escape the cpu, so we can make it `!Send` & `!Sync` + rely =
+on klint
+>> >> >> >
+>> >> >> > Not really, in kernel, we have plenty of use cases that we read =
+the
+>> >> >> > other CPU's percpu variables. For example, each CPU keeps it's o=
+wn
+>> >> >> > counter and we sum them other in another CPU.
+>> >> >>=20
+>> >> >> But then you need some sort of synchronization?
+>> >> >>=20
+>> >> >
+>> >> > Right, but the synchronization can exist either in the percpu opera=
+tions
+>> >> > themselves or outside the percpu operations. Some cases, the data t=
+ypes
+>> >> > are small enough to fit in atomic data types, and operations are ju=
+st
+>> >> > load/store/cmpxchg etc, then operations on the current cpu and remo=
+te
+>> >> > read will be naturally synchronized. Sometimes extra synchronizatio=
+n is
+>> >> > needed.
+>> >>=20
+>> >> Sure, so we probably want direct atomics support. What about "extra
+>> >> synchronization"? Is that using locks or RCU or what else?
+>> >>=20
+>> >
+>> > It's up to the users obviously, It could be some sort of locking or RC=
+U,
+>> > it's case by case.
+>>=20
+>> Makes sense, what do you need in the VMS driver?
+>>=20
+>
+> In VMBus driver, it's actually isolate, i.e. each CPU only access it's
+> own work_struct, so synchronization between CPUs is not needed.
+
+I see, so we could either just start out with no sync support or --
+which I would prefer -- get a list of the most common use-cases and
+implement those too (or at least design the first part compatibly with
+further extensions).
+
 ---
- .../dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts  | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts
-index dd2a02a6d1d40cd3fe99af83123a7a3a67149a69..7ce4f5fedc6f45960d45108c62f2039f65811b76 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts
-@@ -227,6 +227,31 @@ &uart_routing {
- 	status = "okay";
- };
- 
-+&mdio0 {
-+	status = "okay";
-+	ethphy0: ethernet-phy@0 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0>;
-+	};
-+};
-+
-+&mdio3 {
-+	status = "okay";
-+	ethphy3: ethernet-phy@2 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <2>;
-+	};
-+};
-+
-+&mac0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	phy-mode = "rgmii-id";
-+	max-speed = <1000>;
-+	phy-handle = <&ethphy3>;
-+	pinctrl-0 = <&pinctrl_rgmii1_default>;
-+};
-+
- &mac2 {
- 	status = "okay";
- 	phy-mode = "rmii";
-
--- 
-2.25.1
-
+Cheers,
+Benno
 
