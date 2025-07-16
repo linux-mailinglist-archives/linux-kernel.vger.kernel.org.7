@@ -1,84 +1,89 @@
-Return-Path: <linux-kernel+bounces-732813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCF8B06C58
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:38:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BF9B06C59
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CAB4503FD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E091AA7B02
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5611FC104;
-	Wed, 16 Jul 2025 03:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557A927511F;
+	Wed, 16 Jul 2025 03:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Et+oFhfk"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBHF9sb/"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7CC1D47B4
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A751F2BAD
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752637090; cv=none; b=l8F5/SiZ6n4wX0TrgQMUtPynnwope2Xl+4rMy+bjKgHaIrIpSX25N56FzkhIIjT+TB/4tdVPlGYPfCJQYUdoGurqyVxlCWzWuAB5u1QC9J8ANL5FizyJZqmOrSNeWYCxCMlrYqz2XW7K64tDR4Yow31MLkTKV0+Z06DcRRbwYjI=
+	t=1752637091; cv=none; b=rPYt79cYzHqjjeeimpQ85hF8eCIQdhUP/abQ4GI7/59qsOnHj56wbqBlar7SpeQyDf11Q8FNv59uBkwS6JLDM6uK6I1m5dvgPwafNZIsc0MR2Rumj36+bIcwqNcF0TlDRRDyoASVxNUMmzbwZCnhde6Lcc2QejuJlbuNnFpN10c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752637090; c=relaxed/simple;
-	bh=+FniijdGolTRpZ5tcmQ7r/3Xic0q+dOZ3BWLQ9qmRBM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=m81H0yS/WP1BdP5Jr02L76unW/ygz2gk2S7qObwVYDNmVT9T+OXZWzPYBuQ0lxOdq3r1Dvkc6AWwXPI+4iMc07A57moofjWtNaSemS0J4U7q2t75fEYFXvFlTF3A6ZyhHCgH4YFbyCEWiQ3z9I9/F3Xph7bPyB7bx87rU7Hj8uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Et+oFhfk; arc=none smtp.client-ip=209.85.210.54
+	s=arc-20240116; t=1752637091; c=relaxed/simple;
+	bh=9fmm5M55Ppy7CKgsyBOqgK6g0dO78d7D3fbfugO4hzE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cDumd83ZyZNGySIsU8hzJhFA5D3rnqizvj6wwgKkaqcaNk6ZzOlOd17OcwGrzZPAC+mSSzMCwBwCu1WYxCZs2zieBjCu6nOuj0sNfpoWUd55OvSXAwmuZDqh9eNS98s1avzgfTWHyefnysdywlGNr4tnIi32RJRW2CpmHeqQtbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBHF9sb/; arc=none smtp.client-ip=209.85.160.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-73e6320e767so410836a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:38:08 -0700 (PDT)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2ea08399ec8so3859148fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 20:38:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752637087; x=1753241887; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ntZePFMmfycEIZ9kKC9D9juc8cWq8Pnx1EdDdBe+348=;
-        b=Et+oFhfka32jRwKDwWPfNbiXaGDYGWsz5RoGFarKgmdqW9xkSOMrSBQSg4d8a/CZbe
-         FY2viDjNG13IOhYfDdYDrb8StwLfXAxbdNIVIVANWuR1vhRLzIFkFJ3fzEMSdWaOcwv5
-         EbsAY4/2dseM7T7qvYE50gbOdEgAJwuQszmC4JJRvITuig52sZkJWSfpf+nX6uitdFCp
-         cXJC9ObFKelJFSLCrFNiGBUzJxyxvBn4KbUFnJOL7MYqER8UnPRh2Py2qLMDo3gEjIav
-         U9iJ6QcxTZqeq5lhsar5ICPoPw9Tla89b1Cw9tz436izpv85Drfzsf/a3Uvi8JkNdY7/
-         0U9g==
+        d=gmail.com; s=20230601; t=1752637089; x=1753241889; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EyAgi04IKnPOMF045RBHfSOBtdrD6l8/VwYx4LR0WfY=;
+        b=ZBHF9sb/XC5xBMcUfEMjTMUoZkU3C8kMtxwC0FKJ2nuTB++4guthewsIAwcGH2sIU/
+         8g8oIKDgRgAU57XALLc0dBsLwUaVyLtJ822ZzeaUAQvrbwslrqPwY5Ed+ldpU8qoHyOx
+         ZMyMelR3QdsPceT2ngt9rLOap3Naun8UIEgKGDPe8zPimbo6/VwTMzLhyj/vhTIsxeem
+         mSiIcNOw/bFN1K+DuyPwvNLfk1eoNSd/RD71mms2WgEPGt/IpBsjaw8rWjutcvmdnW7g
+         +htscYF1zI1yegriK1DmhmuiipSmvPez8REfJ6rkxYPVmImdhQLhfW1KMc6qSPwivtNV
+         lV4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752637087; x=1753241887;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ntZePFMmfycEIZ9kKC9D9juc8cWq8Pnx1EdDdBe+348=;
-        b=dm011O3sNIV27QLOGHmy90oXYMDpHuYqh4PuuRtaD0vSu/2j5T4MpR8hhSfNeMT+Mk
-         XZiZcL9gitNCZbrT4XTpj5GNqaraCY44OtvutXICWh1afi0+CNSP2OxObp8vBLPqAGoo
-         jOsWQwCN1IkHTgnWBvU14NrMJo+nKzDiwkmQ2UB/dYjNAcnjYoUb4sUvVMSZnYgKdmKT
-         CkoFqHLhyu9/FJz6xI2e020SNgXsUqS2sSO9C47cqcHIRyyABYdHF6h4n3cVIJnribA2
-         8cXCfgiGn6HM5KZPTofKIw6exOFBEhVLhaUljk6ouaYA6HtpABfHWdiKwEB2457tVe/8
-         U0yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvS+jQnk7iry6FM+fWDwymCLDvSW7cILPY+Q5cvpGDDBPBxFFYnCfnOudcupijtpA8f2rVEh/ELB+9cwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIJCuRzbfP8QIYdKGtckjo7WqIRPfhXZLJPv7LUm6INLF0HxVX
-	OarZn42XJOR/JzNzue2OsThLbaM8DQXJjDcEpZ6+Xj2tDzODatww3JKi
-X-Gm-Gg: ASbGnct79nB6afhnnVoz6HJWg+7A8d8IpR+46ApXtfM0Qv2tln7ADOrbUWhXFa5p9Pq
-	koHAlWeA5a0YWMycy3VCoLl9ccBUl1Ir8oLUBsANudG6ojWjRvdLp8ISCnYVLO07kzgzOldI2NB
-	2Yi8Dn8HiO87ThCXJmVSBUMAmv49r9wBb/kTBgfE2L9gYiCIvZp1A6Qo2PpvWHpdc12rz17J45p
-	8Kc4/5Zbt7WCht4ysbDUs31T/X2AI6hBVfhJh4Y+8LCdfjrUDX6BFmrwJfKPYdRJNTbubN0+/pp
-	FTnyVwdBJu3IatjFZpCqJ0uBgCN6npJIT7v2c08sQd1At3h+aporeTcw7ztIHXRwKtAZ39+27B3
-	SmaU8tmaCFqM05z9nLgSqkVFK4LT4ZcUcesAzgFcyjqmXPpr4l1OV
-X-Google-Smtp-Source: AGHT+IFoytJfvWvzcNOgoGowJg3xnSsJh6cfYIbKbpf+p6E+SdtGYl4YQM5aoodeCH7BzoE5xfF7vg==
-X-Received: by 2002:a05:6871:890d:b0:2d6:72a4:4c24 with SMTP id 586e51a60fabf-2ffb24b1392mr1085689fac.32.1752637087613;
-        Tue, 15 Jul 2025 20:38:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752637089; x=1753241889;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EyAgi04IKnPOMF045RBHfSOBtdrD6l8/VwYx4LR0WfY=;
+        b=DH07syTw95tCUi9hV8k+s7visUYslTBVpd0WdMUnv0d0ltqOBIpTLACkUPMM23Vr9Q
+         TjgkIQ8xfFWZSoSsqJ0o7s4+6ihtl1H2/M7Mt2oJXqkxvn7sNh5ZY97JMvJt/jIKa4tp
+         e4HCINzi38ET5RjnB4sEbG/W8dE0E4Pi8dkegbkyRa6HDZBgZJbX1gQn4fSh0K2Ysu1q
+         tvcK31dofZNU2xI+q8TMmOYgf78oW1jtwBRojMJVSvQUzT+xUHE+d+MjRk/4Fl8OCO6H
+         5ooZJYBr8LTVJWio0p6ddHNjKcFSxL0Rt580DhKmsNrcngyCCmD6sqrK5cGxANqU+5VU
+         ptcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdjevA7ui6JLlRuOyT3HHJLaXr4yVT9ingVgHRVfEXTj1ICR5JvQDa+FyMQo7fprkVT+i0lPAdsjm8DYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYkV9pdXroBwpOuon2KQQ84HBsvPOaA4cwUPSPjAAiMTZOJ+3C
+	vyHbSMujNMQX5YjXm+txzzDVd+/M2pLTE7D8p6v56mvz4lYKMSdzNScE
+X-Gm-Gg: ASbGncvUiuJLy1oyVPtBTvCv+0V2punBJFvFJTges1o4oJVH4IfiC8N7az1mQHFROjT
+	WA8V/ksFaW+mjj5Inaruf5IWpwLZG6Kh33+z61iLtE7X8SfwZQeiflh0Iirx0NH8jluGtge16OT
+	S892BcET6GVvjmUhP1+27iz5i3vV681eACFaYW3AVkrjl6S9S8zPvPp63IVe7unCZAoYndQ9cvP
+	unpO0D/X5Hlrkk8UV7XhNey7OAvaxhoC1VZvqS23mYjXY0r7dry/uQWl2vDtKV/09Ha+WeAR56n
+	OkWHDEL3uGizgGIpFogdXA+t5JCDpcV/w4ox0ln/aSC+CNuHN7LBEJTRssQvojKZRKs6Wec6Hpb
+	Y+ki/HVb+t95WEB9y1S5v6qj43oD4W8v8zQyCYFiqXKtunoTVbhURPV1hyhXje5U=
+X-Google-Smtp-Source: AGHT+IGQO3BKn2UcWw7Ik8pzXHP0U4Uv/SaDrxeJaOX3rFQLbMUuLy0SunGeQW2s8mb8i4Oejit9nQ==
+X-Received: by 2002:a05:6870:5494:b0:2d5:25b6:ec14 with SMTP id 586e51a60fabf-2ffaf32804bmr1505309fac.15.1752637089255;
+        Tue, 15 Jul 2025 20:38:09 -0700 (PDT)
 Received: from localhost.localdomain ([181.161.11.224])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff116d22easm3140980fac.33.2025.07.15.20.38.06
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff116d22easm3140980fac.33.2025.07.15.20.38.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 20:38:07 -0700 (PDT)
+        Tue, 15 Jul 2025 20:38:08 -0700 (PDT)
 From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
 To: Dan Carpenter <dan.carpenter@linaro.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] staging: sm750fb: Fix checkpatch warnings
-Date: Tue, 15 Jul 2025 23:38:01 -0400
-Message-Id: <20250716033804.59650-1-ignacio.pena87@gmail.com>
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
+Subject: [PATCH v2 1/3] staging: sm750fb: Fix const declaration for g_fbmode array
+Date: Tue, 15 Jul 2025 23:38:02 -0400
+Message-Id: <20250716033804.59650-2-ignacio.pena87@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250716033804.59650-1-ignacio.pena87@gmail.com>
+References: <20250716033804.59650-1-ignacio.pena87@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,26 +93,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Changes in v2:
- - Split single patch into 3 separate patches as requested by Dan Carpenter
- - Each patch now addresses a single type of warning
- - Ensured patches compile independently
+The g_fbmode array should be declared as const pointer to const
+string as its contents never change.
 
-This patch series fixes checkpatch warnings in sm750fb driver.
+Signed-off-by: Ignacio Peña <ignacio.pena87@gmail.com>
+---
+ drivers/staging/sm750fb/sm750.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The patches address:
-1. const declaration for g_fbmode array
-2. function parameter alignment
-3. CamelCase variable naming
-
-Ignacio Peña (3):
-  staging: sm750fb: Fix const declaration for g_fbmode array
-  staging: sm750fb: Fix function parameter alignment  
-  staging: sm750fb: Fix CamelCase variable naming
-
- drivers/staging/sm750fb/sm750.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
-
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index 1d929aca3..d3bce107f 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -33,7 +33,7 @@
+ static int g_hwcursor = 1;
+ static int g_noaccel;
+ static int g_nomtrr;
+-static const char *g_fbmode[] = {NULL, NULL};
++static const char *const g_fbmode[] = {NULL, NULL};
+ static const char *g_def_fbmode = "1024x768-32@60";
+ static char *g_settings;
+ static int g_dualview;
 -- 
 2.39.5 (Apple Git-154)
+
 
