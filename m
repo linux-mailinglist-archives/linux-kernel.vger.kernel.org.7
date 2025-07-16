@@ -1,235 +1,187 @@
-Return-Path: <linux-kernel+bounces-733319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5BDB07323
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:19:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7FB7B07326
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FB7518838C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:19:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECA9C7AFE61
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836322F3655;
-	Wed, 16 Jul 2025 10:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84C22F3C16;
+	Wed, 16 Jul 2025 10:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iSI+KC0g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="IXSdBJOL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="Isu7DQLR"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772EC2F2376
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661084; cv=none; b=J0Qp7kBEkrWTWhM2s1dK47kZx/Fp7DeG1u3ofhnEEaZoC+ssB+OkSRRHhnYxNqip8Y15d84JWeLzqSusPHnZOCpkbydcbhB4yajrmcwMivprhKtXNH0zva9e7Kyi3/qgFhnW+kDYVnojooUYzpcVnyLxKPdtWAA+Ofal5dV5v30=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661084; c=relaxed/simple;
-	bh=+BCYy39AMqDzITOXNSdgjp3a5gMUSkDRbIjVq17oaME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ckZa3Xlr5Y0UOxkR94eCx7H4w3bLmfnl/VxqID3tUo5v5ohU7yfoYBln4NbtbPzmwVMNfCsg1xNjgdAFZcOCFBv4L+xo4MJcXE27EAij7y0Ib3dK68UZ1cHRzkLJDGrsRoRRnFjtqu22DisHPaqokMRYBuD9zKI0YcKpO8OFOso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iSI+KC0g; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752661081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YsseQyL5Dd2+9JOaCaQgdNo4nNbYGDsqRx5aE6mZR5s=;
-	b=iSI+KC0gLa/txwF+9ddl4OiOV6f8uiVx20yKdGp+9yTLxAIhD0QcJNvnJQE1EQKWE2CGdI
-	JNMzfzU7IUpvzOUyQExcjOX1fhJgVSfZxapIEuF+93jqSP1bdUPZ+WpDg1u36hSZyoWx8f
-	Ze5+iBSHz/VH0Hh8qYJx8Q8Sg7+ljB4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-110-9VQ3nRyHPJe1PALDZLKOFw-1; Wed, 16 Jul 2025 06:18:00 -0400
-X-MC-Unique: 9VQ3nRyHPJe1PALDZLKOFw-1
-X-Mimecast-MFC-AGG-ID: 9VQ3nRyHPJe1PALDZLKOFw_1752661079
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f6ba526eso3515390f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:17:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752661079; x=1753265879;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YsseQyL5Dd2+9JOaCaQgdNo4nNbYGDsqRx5aE6mZR5s=;
-        b=NjDjep/FoX0XERN0YsiqNGjVRmBfXitNEuG6i14OrX6O9tKRMats4f1+wWOwOnu30C
-         bHTUFgraVaRkIGj5lcvjhVviNh3nrLOSGxLF42/GFWrM0anr5cLlT56PsskGlj5J2PVY
-         JbLHgB8D1rbVg/z7cqGFY7memfrMa48LZFEaXUYk4RFxRXNW4JJ4BidA9w3R84GevJBb
-         R+gn6+AYbvldYPtFkRKen7048soVaRqJ0kbQjrYGdZBtSzwha2YM4GI9RxQXbcYk3QQJ
-         8clVmgpO09PX85/bLWwTal0iP+2LRIJL9UykRjIqhRNyAd11v/J37yiMgDi+EWMM85I0
-         qWhw==
-X-Gm-Message-State: AOJu0Ywrbxz7AKGrb8PCjh+KqI9af8PhiJp/2CbBVaUarKClOIRpVOP4
-	UiDVNY0wBdzX1SqaVGsGPM7djV1H5eHF9/nHPpyjG5LizH+/eLJ8fpaa/IqQ9QIc7vQ/OjlX8MO
-	5r6jLf8G6ExMuOgLc/n8zrTxu9Zg4dwnuzQibdFcxFZvft3P42vQ35vt4MN4jbwh5Kw==
-X-Gm-Gg: ASbGncuTZJoLZOuDhjpUEqF0ZSLKLaBdPwNpSCODmc/XfAWbyEl8lZQJru+uF784i7t
-	vzGKbLA9NFAtz+4JyYFaEqnx+8AdiiLmLUyfetFHmRoOn6hgCEIwrazg69E99i18j0e7B0+/79M
-	pvWhus3Y+C6QHoshjx8O/HztqY2PE20ndAErj9c4CDrMvz3RIx7pQxrFqvdyYz974fFRzGeh5RF
-	IPOlCWR7SETw/N1KO6OiUQBKoAw7G3C8fjZrwGs/Ro8L1AnCef35zPT8c1KaIAC2dZWw7LwHhDF
-	awSLC3lxG6wkyZf9x31Jdpmkx576fDBWqgF7xj/t5SylEHXs1vKoF7rIEPHLOykgRVfqnr/iygq
-	6TbRHdoyk9pggELvQybEkTvT7l5hQqobtvy+atfHQQlqmOiOiHtBkHjim1geY3BC1yFg=
-X-Received: by 2002:a05:6000:2507:b0:3a5:2cf3:d6ab with SMTP id ffacd0b85a97d-3b60e518456mr1757053f8f.39.1752661078705;
-        Wed, 16 Jul 2025 03:17:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcIjq6zIO/gkSy7gzh0GKTNEgsx/xu2oJMLtckw/u72G5qCwoltWW+38N9T7JRkvurAUbazA==
-X-Received: by 2002:a05:6000:2507:b0:3a5:2cf3:d6ab with SMTP id ffacd0b85a97d-3b60e518456mr1757019f8f.39.1752661078166;
-        Wed, 16 Jul 2025 03:17:58 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1d:ed00:1769:dd7c:7208:eb33? (p200300d82f1ded001769dd7c7208eb33.dip0.t-ipconnect.de. [2003:d8:2f1d:ed00:1769:dd7c:7208:eb33])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e89bfecsm16561425e9.27.2025.07.16.03.17.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 03:17:57 -0700 (PDT)
-Message-ID: <af63e731-d08b-4557-89c4-ae48f7545943@redhat.com>
-Date: Wed, 16 Jul 2025 12:17:56 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EBC2F2C56;
+	Wed, 16 Jul 2025 10:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752661136; cv=fail; b=bOm72Y5DfUqtIaYJpqRmmtMAzG106x+12sgoqbHfYRpjuF0ZI4E7Qp6nIehi3MAcmQtCGVVTeVASEZphL/lx8I4H1rjY5SnEHxFk68VpNE3UnhBz3Mi8tdh/9taVPWgL6V16ibmlfeEssRhV8lr0PjsQ0JtRYrsFDtOpecBaDKU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752661136; c=relaxed/simple;
+	bh=x3gL9h8FD3DE5KG3pYsEmq+kI9Eetyf708n425tZu1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AklHTc8+fxdOj32ljwiFZpk+nJaRp7VAAG4ArjjmrpoqVQAT/BHoZf9GCDtIJcyUEAqttDfYvI8t+7OST4W9S0j4XK7QhJuS4fdr8VDYaG4DLlA2tzpWy+Mg4yYjXt+r0+GiOY2SWMKmW6uFJy4l66LzUoNd1S1Hwfne2a5UkOs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=IXSdBJOL; dkim=fail (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=Isu7DQLR reason="signature verification failed"; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G4UV2U029353;
+	Wed, 16 Jul 2025 05:18:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=/5bPmf31MkHEyE7cD7phxofjLzRYFrjWnyXCXyaNlX8=; b=
+	IXSdBJOLZZR8RF9lTmZFo1vZmxCRJM47ly+YebsduzEmVISU0VqeyHVOkV47ucIw
+	zG+11Le2FFUggxGM84fALuAFRaRZ9fKByI4ykzvbdAzQ1JcTniVwv9JzjpYoFlvA
+	8ma9rPV3vPNHPziwnnOV8wqcN3wNpnc5DOPT502zum8cCDnU0x+/uW5vCJdt3QVj
+	RBIvLL2O5VWWWNTnp2lm1MhjGbqyDkl1VK2oBkoF/2joc96Oir1RBtazjMRjRufb
+	yYkMK3JOTyVEX+EPQ4SHaYh8Huv5276ofbp6fTAkc69xBslQA7qNlkjBJsc5efYe
+	dVijZKNyw7ozxpiKS6Uybw==
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2118.outbound.protection.outlook.com [40.107.244.118])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 47un42dfu6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Jul 2025 05:18:51 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pvgzNo+Mr92C+dDbVxYcL+bA9rBP1IUFifI125/OJV0rhst5gWrUq+cl0HyZSV2TPE5GBrNmP9y/5tVjORhZ7/byd80uSqhXo1I68e//MrPExLG8a2pYS8SfbjEUPXfG/MmX140aFg8E5oec7M7lHFdxWAY5rtixijmDP22Ni2Ie/NIjKjHQ77yr6UrQ+riEMhjZoiFIrYok2PP9sPKlqRVZE83d4RU2q8iALR5ZJGfyswr+JLuu3WCVayXQliA2n4UAwl2nBud39qG6DQ9XOoRRvGeES+Zkmq1/l1dcToWjwZbVVO4AV3MFScUdQdsWXwed9Bv8Ht0JgdLrAaOSzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=orcjX3jQ2VLTAtYRDEQ8hLopYXEhvR+RC0zrBW/UzAY=;
+ b=AR9qZWufvr81fVRSu8mAzD2bRVuvvNAQCxNfHq2OgMhrP0+nMUBHokRO8bR7q8hKZFoS8yFwQrmCrOdrGCK7t9RPSNx310Vi6CngC/5zTEBxJEB/hrInEx2Oq0re/9apjbcv+6JWbWnQqjQreeRF+wICkHNTotuXKY9iczW3Gpv12FD7SJLaRcKfRfILsWWY0ujpgEipFLTUqOyyLTNN3UXUIzxMZvLgA48o/MV8HSVp8YFXja5ZFFVjULInqhyjipmHKW1j1/ZfnHEm/Aldt3NSaEvTzfDH6sCayqK/U9IOI+V57Wq5Fm+LTXy5JKASYqkH+Ayn6MtcMiCzmVAdew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=cirrus.com
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=orcjX3jQ2VLTAtYRDEQ8hLopYXEhvR+RC0zrBW/UzAY=;
+ b=Isu7DQLRHj+/QORtdoYiagCerGNiI0o1yvaPFqCxXy+5nzlx55iApT9rk8ooCt1uFU126jY++NErJK+NmZha2YW9bJwkb9Fh1iZGBCMdE1qm3xpU6t8ja0YVyGkSghF/XbWcqIIXOKXGTjrbJCdPR3Wq7ZBqxDCXxiyxHM6co8k=
+Received: from SN6PR01CA0009.prod.exchangelabs.com (2603:10b6:805:b6::22) by
+ CY8PR19MB7132.namprd19.prod.outlook.com (2603:10b6:930:50::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8857.16; Wed, 16 Jul 2025 10:18:46 +0000
+Received: from SA2PEPF00003AE4.namprd02.prod.outlook.com
+ (2603:10b6:805:b6:cafe::77) by SN6PR01CA0009.outlook.office365.com
+ (2603:10b6:805:b6::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.20 via Frontend Transport; Wed,
+ 16 Jul 2025 10:18:51 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ SA2PEPF00003AE4.mail.protection.outlook.com (10.167.248.4) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22
+ via Frontend Transport; Wed, 16 Jul 2025 10:18:45 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 6CEB3406540;
+	Wed, 16 Jul 2025 10:18:44 +0000 (UTC)
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 4CC70820249;
+	Wed, 16 Jul 2025 10:18:44 +0000 (UTC)
+Date: Wed, 16 Jul 2025 11:18:43 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Maciej Strozek <mstrozek@opensource.cirrus.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH v2] ACPICA: Add SoundWire File Table (SWFT) signature
+Message-ID: <aHd8gwS7TIhC6HMV@opensource.cirrus.com>
+References: <20250716100337.652657-1-mstrozek@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] proc: kpagecount: use snapshot_page()
-To: Luiz Capitulino <luizcap@redhat.com>, willy@infradead.org,
- akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, shivankg@amd.com,
- sj@kernel.org, harry.yoo@oracle.com
-References: <cover.1752499009.git.luizcap@redhat.com>
- <1c05cc725b90962d56323ff2e28e9cc3ae397b68.1752499009.git.luizcap@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
- 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
- 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
- OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
- kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
- GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
- s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
- Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
- FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
- OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
- NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
- Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
- 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
- /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
- bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
- RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
- m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
- CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
- vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
- WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <1c05cc725b90962d56323ff2e28e9cc3ae397b68.1752499009.git.luizcap@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250716100337.652657-1-mstrozek@opensource.cirrus.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE4:EE_|CY8PR19MB7132:EE_
+X-MS-Office365-Filtering-Correlation-Id: 68e05780-8aea-4b16-c7a5-08ddc45225e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|61400799027|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?7pOTG0RoFMZobbRXOBnbY2Fa9bCZ+wwFGsTnFKMVf1r42vcSXQ5HJcpCNi?=
+ =?iso-8859-1?Q?QH0RI5gM8HJ8rQgTgDGp4ekHtBj1lcugcy9rTJdfBx0LDdPvZ3jXb5K8/v?=
+ =?iso-8859-1?Q?B2vTVCAS3WcrvtTWVarZnpaCoe5gc2AhMl0Kh7nEAe6MsstsrtercvTzKA?=
+ =?iso-8859-1?Q?csfB3eMZXoXMOCTPYfyCaCBnGNeZ4Qb3Xkk+Zxd37tK2Jg4/OY4i2aqH8M?=
+ =?iso-8859-1?Q?1tu9YtW091zE85cf8kAOOSoRz7fG6cnz1Y5odZMD/2H2d4UEvHjP6WJ9eA?=
+ =?iso-8859-1?Q?46K7zRIcJwMiW9YqpLf6fYhZR33Hs9zxNRlTd5mRR1oHnaWvbP1Yqn78we?=
+ =?iso-8859-1?Q?AbN9ncEBlI4f7oH8lng0Zo2G1iKqdnbseAMK141nq/1hYN9NdNZp6G254r?=
+ =?iso-8859-1?Q?1kVu/4x90Oja0yvWFhCjokr6e/pD0IqitSRUkuEwJ2XyoQ53ubgnBVjhAe?=
+ =?iso-8859-1?Q?VOT/HJqbMMWjOZ3NfS3GkBfCoJ4lyL6ym0WG/3lY6HQ2kfaG/FdWc4Cy7C?=
+ =?iso-8859-1?Q?C01h/pozDJH8qF0Gh0190vQYdRwBT6aLmVmqQ0gYIhYYUOnkRAtQW+i73F?=
+ =?iso-8859-1?Q?sEs1ipAibWNdAqYnKJVwKnDM4mhzruvzCdwvBA1yBuQNLcQib2lWcpnm4e?=
+ =?iso-8859-1?Q?uEgKdwQ+DL1nSfg//4A6lDRK3c1YOE3YT+q2lXrgjp17M6UVwIRV7HVvgG?=
+ =?iso-8859-1?Q?wdSKG8foMM5iEcnMv8cslu6NbgB/r0/ZqMP0uPCReSSePMqThARvSvmuHr?=
+ =?iso-8859-1?Q?1ioByO8vERMT8nxcedyazv4BI6EJyNirv34N/MMBcXMqopFzjMYsAzeauS?=
+ =?iso-8859-1?Q?B6GfCyJES+OxpEg8HOqioiWWd3cZtvI9uMMgU5mATYpTOR/6BOTN7xwgNr?=
+ =?iso-8859-1?Q?IRCSAZdPneMlE0ijhUcOOHP/ImkqSyZ3VfMXTCpgbJhEf66D2xy0Mj1H/b?=
+ =?iso-8859-1?Q?ipeDItzKYMlT4YbjL/dKRt5al57SPWnrRYDCFNv5D9gJoY6f2/zz4hS3XK?=
+ =?iso-8859-1?Q?ovTV0CxKmlfmZ9YSr4rbeUlnJIp3sHZJbAJc6oTthSOTJqA3dd9dsildin?=
+ =?iso-8859-1?Q?ITzqzJDmC6k86trbb1BB3RlNwnxkD5e62EA2AHvr/+Ok+Jo1c2EUX6Q+o1?=
+ =?iso-8859-1?Q?agSx3t7JzeO1+esIQIxUxq+FdmymRNA9om8J4sHNn18AmSKgBGjdyLraT+?=
+ =?iso-8859-1?Q?3fejmqi4StGividri51FyDW8fJK3LCS059MvrtVwcfjbDW3N7/RNhbUthX?=
+ =?iso-8859-1?Q?+T6FW5yCkIyFUetCXBHy73evrgwEcj35Z1x6V7JqmFmDre3KvOZuXZ3fts?=
+ =?iso-8859-1?Q?copyA8dbU6ojdampA6Mo/6ms3f0zXgidg3ethYXzixLSSqe8qJCo+nCoiX?=
+ =?iso-8859-1?Q?NYMa8v2AuMiWfknr44qMBP5iSIKCYXClleHE/nxfwUipeJqUD1dKnhNtgP?=
+ =?iso-8859-1?Q?SvxYdHoVpoCaNF6HGizCjFmLxmKGPn0cih8ErbXpGILSKV57w8jwVQ5sj0?=
+ =?iso-8859-1?Q?YvpszWOAzmibt5Gko0IaGfgW3pW04DvkB483ZgLSlthx52xLs+76dm1wiJ?=
+ =?iso-8859-1?Q?64oqRfC55XhuP7BPeRFvrFfn7xDg?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(61400799027)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 10:18:45.5686
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68e05780-8aea-4b16-c7a5-08ddc45225e3
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003AE4.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR19MB7132
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDIwMCBTYWx0ZWRfXy5zDpuzNDyiu XOTOqfSWzAdN8gmbBo2Je8/NlHdUbh9A+3xQXrWj66GR5g/D6myJVTD30OhXnV3gl/cywf/noTU ExwzW7qeTp5YpMEcIdawX6njycOg2UYuFjvKbTK+C0WnGNubVdzB25yDppemdERTERPvFDAC6e0
+ 5j02lrjynHiLQWf185toDlgkO1cVzJHG3GK0yI8qOCwM0SLkAuXhj8Xp5+z11MMCFnRiJhjZmcj xYsGS0ACZgdlznmPkiyCNy+us4N7t9KxVTUqBHIFatcGrsEEwtYxEs86UIy3A9hZML0y2hz/39A aSoDu0iwViZGe1Ics93vZpvmyv35TU72SndUgKkYi1qRtsKOqBLk6s8bDmN4Y+n4kXxwh6i7gF0 g6mP0xk+
+X-Proofpoint-ORIG-GUID: 0Qdw28GZPEFJShFRU5KQXcMJ9tsZBJ4e
+X-Authority-Analysis: v=2.4 cv=F6tXdrhN c=1 sm=1 tr=0 ts=68777c8b cx=c_pps a=kYxjtQCH8jYJXwz0hAM5nw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=8nJEP1OIZ-IA:10
+ a=Wb1JkmetP80A:10 a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8 a=JQJDhRPD3OthYt_GnVkA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-GUID: 0Qdw28GZPEFJShFRU5KQXcMJ9tsZBJ4e
+X-Proofpoint-Spam-Reason: safe
 
-On 14.07.25 15:16, Luiz Capitulino wrote:
-> Currently, the call to folio_precise_page_mapcount() from kpage_read()
-> can race with a folio split. When the race happens we trigger a
-> VM_BUG_ON_FOLIO() in folio_entire_mapcount() (see splat below).
+On Wed, Jul 16, 2025 at 11:03:37AM +0100, Maciej Strozek wrote:
+> The File Download (FDL) process of SoundWire Class Audio (SDCA) driver,
+> which provides code/data which may be required by an SDCA device,
+> utilizes SWFT to obtain that code/data. There is a single SWFT for the
+> system, and SWFT can contain multiple files (information about the file
+> as well as its binary contents). The SWFT has a standard ACPI Descriptor
+> Table Header, followed by SoundWire File definitions as described in
+> Discovery and Configuration (DisCo) Specification for SoundWire®
 > 
-> This commit fixes this race by using snapshot_page() so that we
-> retrieve the folio mapcount using a folio snapshot.
-> 
-> [ 2356.558576] page: refcount:1 mapcount:1 mapping:0000000000000000 index:0xffff85200 pfn:0x6f7c00
-> [ 2356.558748] memcg:ffff000651775780
-> [ 2356.558763] anon flags: 0xafffff60020838(uptodate|dirty|lru|owner_2|swapbacked|node=1|zone=2|lastcpupid=0xfffff)
-> [ 2356.558796] raw: 00afffff60020838 fffffdffdb5d0048 fffffdffdadf7fc8 ffff00064c1629c1
-> [ 2356.558817] raw: 0000000ffff85200 0000000000000000 0000000100000000 ffff000651775780
-> [ 2356.558839] page dumped because: VM_BUG_ON_FOLIO(!folio_test_large(folio))
-> [ 2356.558882] ------------[ cut here ]------------
-> [ 2356.558897] kernel BUG at ./include/linux/mm.h:1103!
-> [ 2356.558982] Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-> [ 2356.564729] CPU: 8 UID: 0 PID: 1864 Comm: folio-split-rac Tainted: G S      W           6.15.0+ #3 PREEMPT(voluntary)
-> [ 2356.566196] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
-> [ 2356.566814] Hardware name: Red Hat KVM, BIOS edk2-20241117-3.el9 11/17/2024
-> [ 2356.567684] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [ 2356.568563] pc : kpage_read.constprop.0+0x26c/0x290
-> [ 2356.569605] lr : kpage_read.constprop.0+0x26c/0x290
-> [ 2356.569992] sp : ffff80008fb739b0
-> [ 2356.570263] x29: ffff80008fb739b0 x28: ffff00064aa69580 x27: 00000000ff000000
-> [ 2356.570842] x26: 0000fffffffffff8 x25: ffff00064aa69580 x24: ffff80008fb73ae0
-> [ 2356.571411] x23: 0000000000000001 x22: 0000ffff86c6e8b8 x21: 0000000000000008
-> [ 2356.571978] x20: 00000000006f7c00 x19: 0000ffff86c6e8b8 x18: 0000000000000000
-> [ 2356.572581] x17: 3630303066666666 x16: 0000000000000003 x15: 0000000000001000
-> [ 2356.573217] x14: 00000000ffffffff x13: 0000000000000004 x12: 00aaaaaa00aaaaaa
-> [ 2356.577674] x11: 0000000000000000 x10: 00aaaaaa00aaaaaa x9 : ffffbf3afca6c300
-> [ 2356.578332] x8 : 0000000000000002 x7 : 0000000000000001 x6 : 0000000000000001
-> [ 2356.578984] x5 : ffff000c79812408 x4 : 0000000000000000 x3 : 0000000000000000
-> [ 2356.579635] x2 : 0000000000000000 x1 : ffff00064aa69580 x0 : 000000000000003e
-> [ 2356.580286] Call trace:
-> [ 2356.580524]  kpage_read.constprop.0+0x26c/0x290 (P)
-> [ 2356.580982]  kpagecount_read+0x28/0x40
-> [ 2356.581336]  proc_reg_read+0x38/0x100
-> [ 2356.581681]  vfs_read+0xcc/0x320
-> [ 2356.581992]  ksys_read+0x74/0x118
-> [ 2356.582306]  __arm64_sys_read+0x24/0x38
-> [ 2356.582668]  invoke_syscall+0x70/0x100
-> [ 2356.583022]  el0_svc_common.constprop.0+0x48/0xf8
-> [ 2356.583456]  do_el0_svc+0x28/0x40
-> [ 2356.583930]  el0_svc+0x38/0x118
-> [ 2356.584328]  el0t_64_sync_handler+0x144/0x168
-> [ 2356.584883]  el0t_64_sync+0x19c/0x1a0
-> [ 2356.585350] Code: aa0103e0 9003a541 91082021 97f813fc (d4210000)
-> [ 2356.586130] ---[ end trace 0000000000000000 ]---
-> [ 2356.587377] note: folio-split-rac[1864] exited with irqs disabled
-> [ 2356.588050] note: folio-split-rac[1864] exited with preempt_count 1
-> 
-> Reported-by: syzbot+3d7dc5eaba6b932f8535@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/67812fbd.050a0220.d0267.0030.GAE@google.com/
-> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
+> Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
 > ---
->   fs/proc/page.c | 21 +++++++++++++++++----
->   1 file changed, 17 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/proc/page.c b/fs/proc/page.c
-> index 999af26c7298..936f8bbe5a6f 100644
-> --- a/fs/proc/page.c
-> +++ b/fs/proc/page.c
-> @@ -43,6 +43,22 @@ static inline unsigned long get_max_dump_pfn(void)
->   #endif
->   }
->   
-> +static u64 get_kpage_count(const struct page *page)
-> +{
-> +	struct page_snapshot ps;
-> +	u64 ret;
-> +
-> +	snapshot_page(&ps, page);
 
-Curious, if the snapshot is not faithful, maybe we simply want to return 
-0 or sth. like that?
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-In any case
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+Thanks,
+Charles
 
