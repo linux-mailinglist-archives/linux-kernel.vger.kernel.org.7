@@ -1,166 +1,122 @@
-Return-Path: <linux-kernel+bounces-733511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C521B075A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:29:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6671FB075AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5BA1C243CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D809C1C24639
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A572F5088;
-	Wed, 16 Jul 2025 12:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A906D2EF9C1;
+	Wed, 16 Jul 2025 12:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n15LoGme"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Asz3eX6E"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2093B2F2362;
-	Wed, 16 Jul 2025 12:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C152E36EE;
+	Wed, 16 Jul 2025 12:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752668975; cv=none; b=GfjK5mOnqUoonQbfjOVGgA94lSPHwUnr5XyeeGKu07EM5bZj2RI89ytf9FzDiWbbn24zvJa96hR4Eq8+C9kxqd/EdrYMvd2jNXzKT/znRuWXfvnGhpnByDXPkmuRePD+l0EyHgXVaQ6mT65y7HK25pxPB8pOIcbei1Y3hgF0fmg=
+	t=1752669068; cv=none; b=SRRMuDQUwQMPGWuMg0Bx11EnyjDdqNSr/b8iahy5VVsk8QdrNXMJ/TjWr6yyVlc0jx8zLuQd+GXtiTtnmbh0ThEQV9yCNs3NtFoNQ0u5mBk4juwjBuBK1GVb2e+e+zaxg1SYjSsRZv1lOB4oq2BX8l60bUesIlufbpiMpG7OBj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752668975; c=relaxed/simple;
-	bh=YNtMCftI8pQY9RtM2Y+18wkXEagld4XNiwoXTnj+ydg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sJYwyxyLB2dKh7uDU/rS2ij65CWtXbJgCPHFQYPL5xhyvWkcZKGy0B7KlsgtGrAkDAk/tYFnhKnYHO2ySIpZ9pJH8mBLxyD85gKCKAitbd73yDmCB9AZC/HIiYYe9UPiQvUKCjJ+aFPVkxfGbCpscx1DYP/hgxQ7ubO0T+Kp9Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n15LoGme; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE545C4CEF0;
-	Wed, 16 Jul 2025 12:29:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752668974;
-	bh=YNtMCftI8pQY9RtM2Y+18wkXEagld4XNiwoXTnj+ydg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=n15LoGmeGQA2zCIJ7KoIB/4saTAGEC4pA43xiDaaaddWH+jKoG7lCfaclGedp9siX
-	 Y/zuho+NmMUicsXR+EzZDj/Yg598dT+oP8SrGps+eMofQof3uRFDufPhv/gLhMQJB4
-	 6suX6POe9z0pXjvFGjriAMRCvlrjrPqgq1nEoVNaA2V0DRRbf7kHBBjXuNncSc/Rft
-	 BRVBEPJSqWw0lhvN0a4eUzgtPA+rQ8DlIyAdHiao34U1lbg1KXT7MIEAefvAFsrVLO
-	 bsHgj9KmldgkP3Wrv/fmARKpqG43RSwAqTguQiK5r1w4v6q96uPJjLS/k8OELGVjWo
-	 rxnD1eW+yhDjA==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-73e6320e767so581343a34.2;
-        Wed, 16 Jul 2025 05:29:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBkpJ4zh/15Rzep1kKSmtfp7cvL5LH1Taivv3SdwJUjwAOMuugakhbWPYjlBC4rCmao1Bsd7XNUi75@vger.kernel.org, AJvYcCWXz2T3SbPdr/KuT1Smb5BnO7kf+XNqHbYYYcJC5IPgUmVvZ60h6hhNN8OBcaCOIRXdXYVmcY/iUoLloV5S@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYqOyXunCKatx9HGadq48qww2Y5BoND4wu7ENrjjdLaCi57ash
-	uG4YG8s5QGGj8WwY3iEna5TAkg7F33XXaDqEUetZddkfZQ4V5d6b38jah4u42BTp/R97Sp3qQ4b
-	fwo8KDS/eiAEXiX/qBrqkTpHjr90Qnh8=
-X-Google-Smtp-Source: AGHT+IHXRQPTnxjE5EegGyWvFrmCc/UYQg/fGbXAHH76xTqmYrlc9rXEooTqAMWD7p8gbTOuHrFCsTuEvkveFyO2j94=
-X-Received: by 2002:a05:6808:4488:b0:408:e690:7e38 with SMTP id
- 5614622812f47-41d038e1479mr1894621b6e.16.1752668973986; Wed, 16 Jul 2025
- 05:29:33 -0700 (PDT)
+	s=arc-20240116; t=1752669068; c=relaxed/simple;
+	bh=dLUPkR2qxPchUEitTfh6T0h2IdrvfnIG3tKQAQ2HC90=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lS4yPx0aVINjfZ98FfrSwVoZ6uDiv1EdF5nzkKyFmJMj6jx5VurIKeisHNOPYi2IZrYrLH9xRyO0U372HnPu6SjFCVpQT9/wvKyrekjo26WKOCM81SVnyNibJ7w3wXSH9US99o+Rdip436ZbFBESRJLp0n4ij5BswEjyFM0cN6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Asz3eX6E; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1752669065;
+	bh=dLUPkR2qxPchUEitTfh6T0h2IdrvfnIG3tKQAQ2HC90=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Asz3eX6EU8n438VwLJF8KMUnb4bf5u2H3LWYop3xNql1fbFOv7lOzhfkXFTCCAmj5
+	 eMTLUN/1JaqP2YJyvAvSrG0YgP0bVMqhyxAYHvBE4vSaGd0liVR02AsBC0IBScMrHi
+	 jokOmRs5IcLfcK3Ba7Mm8WUZ4Jof692xRI5wJMQk=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 137CB1C025D;
+	Wed, 16 Jul 2025 08:31:05 -0400 (EDT)
+Message-ID: <a3d063f4b0ccaad7595938ea0dca016872882f0d.camel@HansenPartnership.com>
+Subject: Re: [PATCH] efivarfs: Suppress false-positive kmemleak warning for
+ sfi
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Breno Leitao <leitao@debian.org>, Ard Biesheuvel <ardb@kernel.org>
+Cc: Jeremy Kerr <jk@ozlabs.org>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Date: Wed, 16 Jul 2025 08:31:04 -0400
+In-Reply-To: <rvlw467lzx5yx3sl56u3xcc2hhhn3vj2fu7msg3e5o4giwtkcb@oomdafhhnqcv>
+References: <20250715-kmemleak_efi-v1-1-c07e68c76ae8@debian.org>
+	 <CAMj1kXHJpRioZD7aUJnkMLWkiTmQ_Nr6MNcSYR0adeLdjf5BrA@mail.gmail.com>
+	 <rvlw467lzx5yx3sl56u3xcc2hhhn3vj2fu7msg3e5o4giwtkcb@oomdafhhnqcv>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716100337.652657-1-mstrozek@opensource.cirrus.com>
-In-Reply-To: <20250716100337.652657-1-mstrozek@opensource.cirrus.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 16 Jul 2025 14:29:21 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i24A5N5bwJE-zqw_afcPk2a3OvnPNDCTCCd2tRTy7zBA@mail.gmail.com>
-X-Gm-Features: Ac12FXwdSq0tZ4OCoh28r-_zxZq7h2o2SezU7K0CkYo6Mqx_9hsxygRkkSg9LFk
-Message-ID: <CAJZ5v0i24A5N5bwJE-zqw_afcPk2a3OvnPNDCTCCd2tRTy7zBA@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPICA: Add SoundWire File Table (SWFT) signature
-To: Maciej Strozek <mstrozek@opensource.cirrus.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev, 
-	patches@opensource.cirrus.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 12:04=E2=80=AFPM Maciej Strozek
-<mstrozek@opensource.cirrus.com> wrote:
->
-> The File Download (FDL) process of SoundWire Class Audio (SDCA) driver,
-> which provides code/data which may be required by an SDCA device,
-> utilizes SWFT to obtain that code/data. There is a single SWFT for the
-> system, and SWFT can contain multiple files (information about the file
-> as well as its binary contents). The SWFT has a standard ACPI Descriptor
-> Table Header, followed by SoundWire File definitions as described in
-> Discovery and Configuration (DisCo) Specification for SoundWire=C2=AE
->
-> Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
+On Wed, 2025-07-16 at 04:45 -0700, Breno Leitao wrote:
+> On Wed, Jul 16, 2025 at 10:41:24AM +1000, Ard Biesheuvel wrote:
+> > On Tue, 15 Jul 2025 at 19:31, Breno Leitao <leitao@debian.org>
+> > wrote:
+> > >=20
+> > > When kmemleak is enabled, it incorrectly reports the sfi
+> > > structure allocated during efivarfs_init_fs_context() as leaked:
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0 unreferenced object 0xffff888146250b80 (size 64):
+> > > =C2=A0=C2=A0=C2=A0 __kmalloc_cache_noprof
+> > > =C2=A0=C2=A0=C2=A0 efivarfs_init_fs_context
+> > > =C2=A0=C2=A0=C2=A0 ...
+> > >=20
+> > > On module unload, this object is freed in efivarfs_kill_sb(),
+> > > confirming no actual leak. Also, kfree(sfi) is called at
+> > > efivarfs_kill_sb(). I am not able to explain why kmemleak
+> > > detected it as a leak. To silence this false-positive, mark the
+> > > sfi allocation as ignored by kmemleak right after allocation.
+> > >=20
+> > > This ensures clearer leak diagnostics for this allocation path.
+> > >=20
+> >=20
+> > Can you provide a reproducer? x86 defconfig with kmemleak enabled
+> > does not show this behavior.
+>=20
+> I see this problem all the time when mounting efivars. This is the
+> config I am using: https://pastebin.com/i21Yv0jt
 
-The canonical way to change ACPICA is to submit a PR to the upstream
-ACPICA project on GitHub, wait until it is merged and then
-(optionally) submit a Linux kernel patch based on it and pointing back
-to the original upstream ACPICA commit.
+Actually, there is a way this could be happening: to process the
+options, we have to allocate sfi early when the fs_context is
+initialized, but it is actually a property of the superblock and is
+freed when the superblock is killed.  If we got a situation where
+something did a final put of the fs context before we get to fill_super
+(which is where the handover happens) we would leak sfi's.  This would
+have to be on an error leg I presume (or possibly a reconfigure looking
+at the code).
 
-Thanks!
+If the theory is correct, the leak is genuine and we need to implement
+.free in efivarfs_context_ops to fix it.
 
-> ---
-> v2: Removed Change-Id line
-> ---
->  drivers/acpi/tables.c |  2 +-
->  include/acpi/actbl2.h | 21 +++++++++++++++++++++
->  2 files changed, 22 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-> index 9e1b01c35070..beaef9a8fc02 100644
-> --- a/drivers/acpi/tables.c
-> +++ b/drivers/acpi/tables.c
-> @@ -408,7 +408,7 @@ static const char table_sigs[][ACPI_NAMESEG_SIZE] __i=
-nitconst =3D {
->         ACPI_SIG_PSDT, ACPI_SIG_RSDT, ACPI_SIG_XSDT, ACPI_SIG_SSDT,
->         ACPI_SIG_IORT, ACPI_SIG_NFIT, ACPI_SIG_HMAT, ACPI_SIG_PPTT,
->         ACPI_SIG_NHLT, ACPI_SIG_AEST, ACPI_SIG_CEDT, ACPI_SIG_AGDI,
-> -       ACPI_SIG_NBFT };
-> +       ACPI_SIG_NBFT, ACPI_SIG_SWFT};
->
->  #define ACPI_HEADER_SIZE sizeof(struct acpi_table_header)
->
-> diff --git a/include/acpi/actbl2.h b/include/acpi/actbl2.h
-> index 2e917a8f8bca..267ffabf3b7f 100644
-> --- a/include/acpi/actbl2.h
-> +++ b/include/acpi/actbl2.h
-> @@ -54,6 +54,7 @@
->  #define ACPI_SIG_SDEI           "SDEI" /* Software Delegated Exception I=
-nterface Table */
->  #define ACPI_SIG_SDEV           "SDEV" /* Secure Devices table */
->  #define ACPI_SIG_SVKL           "SVKL" /* Storage Volume Key Location Ta=
-ble */
-> +#define ACPI_SIG_SWFT           "SWFT" /* SoundWire File Table */
->  #define ACPI_SIG_TDEL           "TDEL" /* TD Event Log Table */
->
->  /*
-> @@ -3163,6 +3164,26 @@ enum acpi_svkl_format {
->         ACPI_SVKL_FORMAT_RESERVED =3D 1   /* 1 and greater are reserved *=
-/
->  };
->
-> +/***********************************************************************=
-********
-> + * SWFT - SoundWire File Table
-> + *
-> + * Conforms to "Discovery and Configuration (DisCo) Specification for So=
-undWire"
-> + * Version 2.1, 2 October 2023
-> + *
-> + ***********************************************************************=
-*******/
-> +struct acpi_sw_file {
-> +       u16 vendor_id;
-> +       u32 file_id;
-> +       u16 file_version;
-> +       u32 file_length;
-> +       u8 data[];
-> +};
-> +
-> +struct acpi_table_swft {
-> +       struct acpi_table_header header;
-> +       struct acpi_sw_file files[];
-> +};
-> +
->  /***********************************************************************=
-********
->   *
->   * TDEL - TD-Event Log
-> --
-> 2.39.5
->
->
+Regards,
+
+James
+
 
