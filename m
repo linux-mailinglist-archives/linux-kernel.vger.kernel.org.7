@@ -1,134 +1,76 @@
-Return-Path: <linux-kernel+bounces-733453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C762B074DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:34:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5F8B074DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 235284E6EDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10E353A99FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD5C2F3C2A;
-	Wed, 16 Jul 2025 11:34:01 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42582F3C2C;
+	Wed, 16 Jul 2025 11:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qPJxqQZ3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C334A1DDC0F;
-	Wed, 16 Jul 2025 11:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE26EC2;
+	Wed, 16 Jul 2025 11:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752665641; cv=none; b=Sui3WuIfjS6nn+/bLgHrpL1SB93ZkAGObVH0AqJT2oSfZfu5ZaHEM/CeD6PIdMsQORxiTP5BrO7YVc5vFglx+EcD8ftTQ+3gxmgXO97u0JM2g+bpE/OwEG+4FkYW6m7bjBXS7Fo7mvap6ne1uYssuyVswfkfuyuVBz3wJYL0Acc=
+	t=1752665800; cv=none; b=ATQ09mvvrL0Ke9Vc5Ec0RJqhJJAhCb37RwHjUoULK33NlNBGPafgHTV211U8LNm0zlEGOqBvcLWPKE/VyC/6ifqjT8UMqjg0IXDH+VSCVpnkQNiWKO/Q/BcSOutmkz4fTgyugAlaKiotHEtsHZB40B9eUBSQEPXrENJtgAskxPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752665641; c=relaxed/simple;
-	bh=awABBVIKOIuNLKn63mQp2b5BWohQLkfGP/tBEjJgA7M=;
+	s=arc-20240116; t=1752665800; c=relaxed/simple;
+	bh=EEdNTQ9edhqImKKR7yL1jTK7X6XNu/ZXDr2nrumJtGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJn1njdRbGlfogm9mKIs3FEWztJh/Qf7STevSFgRmzWQOrX5znBwYBDHGqAOdmDE7Pk9LfIK1lHPmt/kS+CZIOVWTjgXydZH8p1zBD2RCwroPUD3nNeuqgFllMXy+IQ6b+mW44uPbzLpnRAcgsgQZ0aus8+ZeR5US3HLPAllVso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id B619C340EC9;
-	Wed, 16 Jul 2025 11:33:58 +0000 (UTC)
-Date: Wed, 16 Jul 2025 19:33:54 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Hendrik Hammernet <hendrik.hamerlinck@hammernet.be>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	paul.walmsley@sifive.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	palmer@dabbelt.com, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] riscv: dts: spacemit: Add OrangePi RV2 board device
- tree
-Message-ID: <20250716113354-GYB546922@gentoo>
-References: <20250711183245.256683-1-hendrik.hamerlinck@hammernet.be>
- <20250711183245.256683-3-hendrik.hamerlinck@hammernet.be>
- <20250715102534-GYA542593@gentoo>
- <95125019-8eaa-4242-8e68-78771ce85947@hammernet.be>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DFyxN6kgP2khnnEYmYjXWw7W5BgBovBVCKd1RFIOISwLKOyz2IrqA87BVieR8LxMt6WfSqKyzOg3I1oLMDAkH8YZROSM2y7M2foJFu3EXdcn7S8cnCVQZC0K+Lzl+iPY8yMYTNJ9peKJQV+8P0LPxurTpWb13d97Pu/nx2bSTFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qPJxqQZ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 658ABC4CEF6;
+	Wed, 16 Jul 2025 11:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752665799;
+	bh=EEdNTQ9edhqImKKR7yL1jTK7X6XNu/ZXDr2nrumJtGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qPJxqQZ3oPlFVetdtZGJOHwLUZ+W4aik7mRKj6oMtlTE4gAI2DzexbmQdFgmwTrWr
+	 g9MQg64VxCQs9hS1GtIFuF8z17NllNzMN6Ti4lWVxFdfKQLdrOi/ZB7fB+N8QOl/WJ
+	 2rbKYmZMOi2IrSgk/dHKbzkXYFL5WS2wfZ9ch6k8=
+Date: Wed, 16 Jul 2025 13:36:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas Huth <thuth@redhat.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-spdx@vger.kernel.org
+Subject: Re: [PATCH v3] powerpc: Drop GPL boilerplate text with obsolete FSF
+ address
+Message-ID: <2025071628-retrace-collected-52b2@gregkh>
+References: <20250711072553.198777-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <95125019-8eaa-4242-8e68-78771ce85947@hammernet.be>
+In-Reply-To: <20250711072553.198777-1-thuth@redhat.com>
 
-Hi Hendrik,
+On Fri, Jul 11, 2025 at 09:25:53AM +0200, Thomas Huth wrote:
+> From: Thomas Huth <thuth@redhat.com>
+> 
+> The FSF does not reside in the Franklin street anymore, so we should not
+> request the people to write to this address. Fortunately, these header
+> files already contain a proper SPDX license identifier, so it should be
+> fine to simply drop all of this license boilerplate code here.
+> 
+> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
 
-On 11:37 Wed 16 Jul     , Hendrik Hammernet wrote:
-> Hello,
-> 
-> Thank you for the review.
-> 
-> On 7/15/25 12:25, Yixun Lan wrote:
-> > On 20:32 Fri 11 Jul     , Hendrik Hamerlinck wrote:
-> >
-> >> +/* Copyright (c) 2023 Ky, Inc */
-> > Copyright should cover current year, which is 2025..
-> > what's "Ky" stand for? Can you give a full description here
-> Regarding the original copyright:
-> This file was based on a version from the Ky, Inc downstream kernel, which
-> itself appears to be adapted from earlier SpacemiT sources (dated 2023).
-> The Orange Pi RV2 board, however, was only released in 2025, suggesting
-> that the Ky version was likely copied and renamed from earlier generic
-> SpacemiT files.
-> 
-> In reviewing the Ky downstream tree, I also noticed that several files had
-> their copyright statements overwritten with "Ky, Inc", while the original
-> years (e.g., 2023) remained unchanged. This makes the provenance a bit
-> unclear.
-> 
-> Since I've significantly reworked the file for the actual Orange Pi RV2
-> hardware, I’d prefer to attribute it under my own name, unless retaining
-> the original "Ky, Inc" is required.
-> 
-Personally, your approach looks good to me
-
-> Please let me know what would be appropriate here.
-> 
-I'm no expert on this, unless people want the more strict way..
-
-Personally, the dts file already has correct Copyright info with
-the "SPDX-License-Identifier" line, additional info gives credits
-for people who really contributed on this..
-
-> >> +	memory@0 {
-> >> +		device_type = "memory";
-> >> +		reg = <0x0 0x00000000 0x0 0x80000000>;
-> >> +	};
-> >> +
-> >> +	memory@100000000 {
-> >> +		device_type = "memory";
-> >> +		reg = <0x1 0x00000000 0x0 0x80000000>;
-> >> +	};
-> >> +
-> > for the memory nodes, there are 2/4/8GB variants from the Link [1], and
-> > you couldn't cover all of them in one dt
-> >
-> > besides, I thought bootloader (u-boot) will populate these info, right?
-> > so the above nodes isn't really necessary
-> >
-> You're absolutely right, U-Boot does populate this information correctly
-> at runtime. I will remove the memory nodes in the next version.
-> 
-> I also noticed that the aliases section is missing in this version, which
-> means the chosen.stdout-path = "serial0" reference won’t resolve unless
-> serial0 = &uart0; is defined. I didn't encounter issues during testing
-> because I'm overriding the boot command in my Buildroot setup, but I’ll
-> add the proper aliases node in the next version to ensure upstream
-> compatibility.
-> 
-right, please!
-
--- 
-Yixun Lan (dlan)
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
