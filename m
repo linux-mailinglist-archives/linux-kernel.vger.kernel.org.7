@@ -1,123 +1,153 @@
-Return-Path: <linux-kernel+bounces-733543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA28B075FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:44:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99048B07607
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBF6E16C41D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:44:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5F71AA15A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B602F531B;
-	Wed, 16 Jul 2025 12:43:56 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723B417A31B;
+	Wed, 16 Jul 2025 12:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rl/OH9by"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A332F5318
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8C92F50BB
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 12:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752669835; cv=none; b=lGOXqI3pyQCflN4M9j9lSqOHHEb0ArQ5OG89A01Ylt+w8fVdBjWtgtDDRSyQb6RDxzKYWYFuKWUXKPns/tFxmwpoJOT3nQ1SwoULUnTK0sM1iWG7TfwsGM0Eg1XPQO1Nntbn9u91nINLXVbEzTkIZCZbaqfzgeRZ+ZqiVBTBA/U=
+	t=1752669908; cv=none; b=X2+U2ML1z2RT3gcEDjA5/2h9k9fokJ8fMU2RI4V1H3O14WfJ1tw6ggnJewAQKh0ZYQExp0fq6VZt3ZAWhvK/Y55OPimadzvheCI53Fu3RdsBNckBH3oCBaFTKzLIcphfHi/K2d4dICEGR+bpAxgJ1QLOuUr37EmxJS8Oh58E68Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752669835; c=relaxed/simple;
-	bh=3V2vrjDDmdtVGky/E/b5pBppQDkqUTC44cZX8IEhM90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cG/icei222Wk8gJuBoOQaVnVDGUIHup2lGYQJuuQaJ7hH+2/QTIdvR5NUVgf8UE8E2UPKySiAM3AXOcef9FJcCD18ge6ZK24FAIWDnkH7ebxOp65pzsAPbJFB5SUYmkQNiqGLEaEMcMB4obMCKCGPQ2f2OjMKd1WSmBh47pajko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0dad3a179so1096371666b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:43:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752669832; x=1753274632;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=luvzlRgx0r28KvN0q8WXZ/8hKbFhIo8ahWW92QmT+Tk=;
-        b=aLtfBfO62t+wQGsSj7GaKlkWVr49uKuZCAtusyRWVibEN02YPP+PXtl6koMJDS2ZiS
-         C61T5KSjeax7kHI6VuICIadSbJ/aZEP4K3ffMbvo9wJFp/wALJfUdzofPwsbyKN0hZrJ
-         5CqA1B3Zc39WOxwPK39fJ1qnKxjch27y9K1zAA/7/XG54/Yqc3Vwv/6bWigZsye0BxAx
-         pbuq64CscdZY9t22rTgPHk1PcFAaTR4z8MAbiE3zLLYNFg3PAF8YajiVSx9t6K/tSvLU
-         1nSdbGLjiPgrdFAbeF4ybQwT4OrCA2D4xXCcauFdMzESFCqkQUsgfABHxT4GRN7Lg7Rr
-         9V/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUS3W3yqWMmySwwzYbSjWARtj4heEDvJiYjcCtweqyjnF0u7WC/nF4BztSqvrPieDWw/Ag3CkZtSlARbcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVgjU81YXYKrkxph667z5J+aL45tqkvnPo38F+B6CVIjV//3b+
-	yYUmiwvQEOUH271jLTbnr/EPCX+UBOuvXpsIU2KXa/e6Jo8PToZaoJSO
-X-Gm-Gg: ASbGnctYp6ajx8/87HzQ5Wr10Flr7KiISvzViroTcT0aVllLiLDQxlCWtceMKFzPdkC
-	zqDDhkRQEwf8cfEnVV24DROuOVh1ZsvWXlc1a7jNMi9CNvnQbZI75GMbeHA7D8H1LOJ6wNXbDzT
-	VVbJQNXLjMIGa2QT/KgERpM8LI4XQVm2RfVUS6fleLwIzixtjtGV/Ox4JA1rTe55/lBBunVOZ1s
-	DNicaGOrhimluCesFYYw1Fs/onIazKBPh3IUbBa6xZKuiXRDPj9r3U/GWWvUSO3eEfPj+kW4BGL
-	imFLPebPKQWoKIxy7bjsx5cP2dI/kSwQ5xlRMJWdubJ1h/rnbZOYAKJRT0kY08kHbrAGuIU+13r
-	rywsqO3HCHhV87edH2PzTMvKw
-X-Google-Smtp-Source: AGHT+IGSndK0JANwbPvfBAJmo/K75O4OeQOvOz59+72pn8Xy8XoJF0wtw9+awJW6p3QO48tnSFu0pg==
-X-Received: by 2002:a17:907:7244:b0:ae3:8c9b:bd61 with SMTP id a640c23a62f3a-ae9c99568d0mr335348266b.12.1752669832226;
-        Wed, 16 Jul 2025 05:43:52 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:7d::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e90c1dsm1185892866b.4.2025.07.16.05.43.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 05:43:51 -0700 (PDT)
-Date: Wed, 16 Jul 2025 05:43:49 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, 
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched_ext: Track currently locked rq
-Message-ID: <f7u4e6bc6anj5nnphkxszmynk2yrrbs6hvpje4gzxwc56a73pq@jlf3dfza7nmm>
-References: <20250422082907.110167-1-arighi@nvidia.com>
- <20250422082907.110167-2-arighi@nvidia.com>
- <xy47uzzirvauag3otkqhhhzwyhlpnnmeh3s77i2snmtoub3jhl@ywoeaxl3iq3x>
- <aHaN3FqRG6gXNwbv@gpd4>
- <qxulb3ckm256bltfep45iac3vifv342o24654ulh4zt6shvg5j@grp7crx56rk3>
- <aHedrl4G5DecVzpS@gpd4>
+	s=arc-20240116; t=1752669908; c=relaxed/simple;
+	bh=bpsgmgeDGEc1PhZcHWMBFolFyeCIgQauwicXcX6/NmU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YzxnCgnjjCgadqd114BTlTASp2/7tOp0QxuGcyW1D6LzwrCdwPxa8AaxeV+6zTNCfG8dF69EKTBzldp2O0TqGpfFC6tPawUYaujEdBvJwr80kvVsTfpaj1bKQfSo8Or8H5YB4MhJm+LAwY5pBa1h+4PdqDSu24P/GDDXyUDe9bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rl/OH9by; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752669906;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/6quTScKxILcudF7nQxBzrgXnyLUQnBhym3m6W7b0cU=;
+	b=Rl/OH9byRFjlesE6HcKql9VmK9/45cE+Mon4/mxnnou2euV8f1Znl8LnIr11m3WOmS4I2w
+	ZqZzXHHXuwqtNymMc33nt9v3U/TYtGUIIiXyROUTwqL9KzL5eHvAHStqlSFZSmfnL4Plw1
+	aWdcScyi4xDA7FC25km8gQ5B3xnSCv4=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-322-cdU086dvM8ubdr7GK5D3jQ-1; Wed,
+ 16 Jul 2025 08:45:03 -0400
+X-MC-Unique: cdU086dvM8ubdr7GK5D3jQ-1
+X-Mimecast-MFC-AGG-ID: cdU086dvM8ubdr7GK5D3jQ_1752669901
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 271821800165;
+	Wed, 16 Jul 2025 12:45:01 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.65.149])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ADA491801712;
+	Wed, 16 Jul 2025 12:44:57 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Guillaume Nault <gnault@redhat.com>
+Cc: Salvatore Bonaccorso <carnil@debian.org>,  Stefano Brivio
+ <sbrivio@redhat.com>,  Jakub Kicinski <kuba@kernel.org>,  "David S.
+ Miller" <davem@davemloft.net>,  David Ahern <dsahern@kernel.org>,  Eric
+ Dumazet <edumazet@google.com>,  Simon Horman <horms@kernel.org>,
+  netdev@vger.kernel.org,  Paolo Abeni <pabeni@redhat.com>,  Charles Bordet
+ <rough.rock3059@datachamp.fr>,  linux-kernel@vger.kernel.org,
+  regressions@lists.linux.dev,  stable@vger.kernel.org,
+  1108860@bugs.debian.org
+Subject: Re: [regression] Wireguard fragmentation fails with VXLAN since
+ 8930424777e4 ("tunnels: Accept PACKET_HOST skb_tunnel_check_pmtu().")
+ causing network timeouts
+In-Reply-To: <aHYiwvElalXstQVa@debian> (Guillaume Nault's message of "Tue, 15
+	Jul 2025 11:43:30 +0200")
+References: <aHVhQLPJIhq-SYPM@eldamar.lan> <aHYiwvElalXstQVa@debian>
+Date: Wed, 16 Jul 2025 08:44:55 -0400
+Message-ID: <f7tjz485mpk.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHedrl4G5DecVzpS@gpd4>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, Jul 16, 2025 at 02:40:14PM +0200, Andrea Righi wrote:
-> Hi Breno,
-> 
-> On Wed, Jul 16, 2025 at 03:47:38AM -0700, Breno Leitao wrote:
-> > Hello Andrea,
-> > 
-> > On Tue, Jul 15, 2025 at 07:20:28PM +0200, Andrea Righi wrote:
-> > > > On Tue, Apr 22, 2025 at 10:26:32AM +0200, Andrea Righi wrote:
-> > 
-> > > > 
-> > > > > +		lockdep_assert_rq_held(rq);
-> > > > > +	__this_cpu_write(locked_rq, rq);
-> > > > 
-> > > > This is hitting the following BUG() on some of my debug kernels:
-> > > > 
-> > > > 	BUG: using __this_cpu_write() in preemptible [00000000] code: scx_layered_6-9/68770
-> > > > 
-> > > > I have lockdep enabled, and I don't see the assert above. I am wondering
-> > > > if rq is locked but preemption continues to be enabled (!?)
-> > > 
-> > > Interesting. And it makes sense, because we may have callbacks called from
-> > > a preemptible context (especially when rq == NULL).
-> > > 
-> > > I think we can just put a preempt_disable() / preempt_enable() around
-> > > __this_cpu_write(). If we jump to another CPU during the callback it's
-> > > fine, since we would track the rq state on the other CPU with its own local
-> > > variable. And if we were able to jump there, it means that preemption was
-> > > disabled as well.
-> > 
-> > First of all thanks for the suggestion!
-> > 
-> > What about a patch like the following:
-> 
-> Looks good to me, feel free to add my:
-> 
-> Acked-by: Andrea Righi <arighi@nvidia.com>
- 
-Thanks. I will send it to the mailing list them.
---breno
+Guillaume Nault <gnault@redhat.com> writes:
+
+> On Mon, Jul 14, 2025 at 09:57:52PM +0200, Salvatore Bonaccorso wrote:
+>> Hi,
+>> 
+>> Charles Bordet reported the following issue (full context in
+>> https://bugs.debian.org/1108860)
+>> 
+>> > Dear Maintainer,
+>> > 
+>> > What led up to the situation?
+>> > We run a production environment using Debian 12 VMs, with a network
+>> > topology involving VXLAN tunnels encapsulated inside Wireguard
+>> > interfaces. This setup has worked reliably for over a year, with MTU set
+>> > to 1500 on all interfaces except the Wireguard interface (set to 1420).
+>> > Wireguard kernel fragmentation allowed this configuration to function
+>> > without issues, even though the effective path MTU is lower than 1500.
+>> > 
+>> > What exactly did you do (or not do) that was effective (or ineffective)?
+>> > We performed a routine system upgrade, updating all packages include the
+>> > kernel. After the upgrade, we observed severe network issues (timeouts,
+>> > very slow HTTP/HTTPS, and apt update failures) on all VMs behind the
+>> > router. SSH and small-packet traffic continued to work.
+>> > 
+>> > To diagnose, we:
+>> > 
+>> > * Restored a backup (with the previous kernel): the problem disappeared.
+>> > * Repeated the upgrade, confirming the issue reappeared.
+>> > * Systematically tested each kernel version from 6.1.124-1 up to
+>> > 6.1.140-1. The problem first appears with kernel 6.1.135-1; all earlier
+>> > versions work as expected.
+>> > * Kernel version from the backports (6.12.32-1) did not resolve the
+>> > problem.
+>> > 
+>> > What was the outcome of this action?
+>> > 
+>> > * With kernel 6.1.135-1 or later, network timeouts occur for
+>> > large-packet protocols (HTTP, apt, etc.), while SSH and small-packet
+>> > protocols work.
+>> > * With kernel 6.1.133-1 or earlier, everything works as expected.
+>> > 
+>> > What outcome did you expect instead?
+>> > We expected the network to function as before, with Wireguard handling
+>> > fragmentation transparently and no application-level timeouts,
+>> > regardless of the kernel version.
+>> 
+>> While triaging the issue we found that the commit 8930424777e4
+>> ("tunnels: Accept PACKET_HOST in skb_tunnel_check_pmtu()." introduces
+>> the issue and Charles confirmed that the issue was present as well in
+>> 6.12.35 and 6.15.4 (other version up could potentially still be
+>> affected, but we wanted to check it is not a 6.1.y specific
+>> regression).
+>> 
+>> Reverthing the commit fixes Charles' issue.
+>> 
+>> Does that ring a bell?
+>
+> It doesn't ring a bell. Do you have more details on the setup that has
+> the problem? Or, ideally, a self-contained reproducer?
+
++1 - I tested this patch with an OVS setup using vxlan and geneve
+tunnels.  A reproducer or more details would help.
+
+>> Regards,
+>> Salvatore
+>> 
+
 
