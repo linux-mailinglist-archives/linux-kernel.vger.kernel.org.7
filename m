@@ -1,105 +1,162 @@
-Return-Path: <linux-kernel+bounces-734227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29976B07E9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:12:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86A3BB07EA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E89A170B77
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A2C7AE350
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572E62BE645;
-	Wed, 16 Jul 2025 20:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703592BEC2C;
+	Wed, 16 Jul 2025 20:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N8ZodEu6"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0iMAgNn+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uxWnWyuK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CB719C566
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 20:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407312BD024;
+	Wed, 16 Jul 2025 20:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752696723; cv=none; b=NGAdZdvhu1xTG2YbXoIJEESzxBpvpd58KGvh3W8Cn/5jjZQ8grc4e8tubQ/GaLCZvuPkPBWhwx1x9X9kyzk09qxYFmyaqgDZKcpOpPO78Ua58m/gWKkoJx79TlANrBNH48ps7yATllNS7Rdt/e5w4Lp30l2eYKHwbaWUNz9k5c4=
+	t=1752696742; cv=none; b=e/51AGE5SFe1d9nzgjgLR2DyqHXGh2gaQlgZ6i3D4ZgtLMOAS7x1x5kF05q+lf/ZWfZNR2EvCmtfc5SH9FFSqPzpcLwAYx116ZhZM2Cc/6WcqI7lckECLahVU9EjIvuCmH/lVewWxZk/+WEZiJJ1ikmlgm4DWrqe3z0k95VPeKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752696723; c=relaxed/simple;
-	bh=sV9x0KM4cBRnlnmOMDIuZu//q5dxMfZg4n/R7O+sTNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WKG9NxXAVol1rSqmqPocafsxRoO5hGPN3odD89oUplIRqqUHhHMATHHBlB7khQY2bcYb1O9ZjxW89luM92/KrybTtmDUvlkQcGeYsLzA33ZODGV1V5+Skk9UayJsP9qNQCVqMqh3vT+MBSJ+6fZx4HvMnrz7X4C95io56thDyDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N8ZodEu6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=WgFYKDUl2s0B5xaygGlNTLzWaP9+dYqOCM1lu07/6HU=; b=N8ZodEu6jElTPv3umW68WE8mmX
-	odIRJNgbydyF5s/XbAPPttwyQtrM+IPKDyB5cGs4AGiKpBQNyb6h64Lft0M+vwotNDFa1zfVZmTkd
-	mKfsWrEB+qcSa3N2BI1m6F9DMbVnfSTX4LwV3agj/wwysn7h394O3fZQYqEUTVr50RtDvkc6HN4Ce
-	z0VOUmVBIH4zFsZG8AZVYO46GOhQVRO4/oMEOJn7fuDElZQYwYfKqop9xYMzj+92UyHb8jMbZ8ffv
-	CI+6VOQl29M+wV+3r9HMk7puBf1bDLi4AWhvWQcWm8CMYuFr+7e9rWLPPF8eFaVxyjTLSOadmzz4P
-	IRE700kg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uc8Tx-00000008a8Z-17fM;
-	Wed, 16 Jul 2025 20:12:01 +0000
-Message-ID: <defde301-c594-4e35-a033-f9410a681b62@infradead.org>
-Date: Wed, 16 Jul 2025 13:12:00 -0700
+	s=arc-20240116; t=1752696742; c=relaxed/simple;
+	bh=Ybp6StaPBlYn6EwhfIdy1XRd1DpGtpI1OGf8ErxYp8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mVM3k/96NuoFVFBbnQ2Rr6I7efzBOz1g5y5Hzx3cbOdkKwTwujR27epHO3T4jy/+XLPFb3jeLIpwhFHo5AhxlZjI6R1nuBhbr+ISCIPrl4ayfVihZWoipUfxVsMTM4f2dZHoYOn26JqNctMusSJ3DeW6/uHG2ku/et0cDB/JZRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0iMAgNn+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uxWnWyuK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Jul 2025 22:12:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752696738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XsB3pN9BQv4DpfHkiX5eiA//lEFGbcJJHnUld0yEYFc=;
+	b=0iMAgNn+c/kCnByEs8UgRRPA18M+uD9wAaFSuobsvit7xfmdRQSbBav0+R+cyQdTKlATk5
+	Vn497KWdlGQNFc1V6oa8MTrZFVG0mmvtMDZPSoub+gmU+kRj6TVUGsrpHsKELQgGLXpPn2
+	XYdVPop5ISRobjC4HIZxUdmQgGd/H6T48xu+GoLy7117KeNomdpomup7EDjdSK/D3epwba
+	RTBFSYuIRSzAxYgm/Tc9PpoPrGgrfgiRl4R4uPkk06XZy7/4A/MyDtlEhoPRSBOeLVlGZU
+	j78xr90jcjZD1FLRZeQuN93FMC9oFa1dBvTarvUvI/ixexZPa1s9odpdq/6gSQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752696738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XsB3pN9BQv4DpfHkiX5eiA//lEFGbcJJHnUld0yEYFc=;
+	b=uxWnWyuKJVvzspABpfi/gXCuMAXydr0WBKa104KKmTR1BllVXpBkb3lsibrME6nMIPgslH
+	iQpjtEr0b8TO10Dg==
+From: Nam Cao <namcao@linutronix.de>
+To: Antonio Quartulli <antonio@mandelbit.com>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	"K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Joyce Ooi <joyce.ooi@intel.com>, Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 16/16] PCI: vmd: Switch to msi_create_parent_irq_domain()
+Message-ID: <20250716201216.TsY3Kn45@linutronix.de>
+References: <cover.1750858083.git.namcao@linutronix.de>
+ <de3f1d737831b251e9cd2cbf9e4c732a5bbba13a.1750858083.git.namcao@linutronix.de>
+ <7d8cfcf5-08db-4712-a98f-2cbfb9beeb85@mandelbit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cdx: Fix missing GENERIC_MSI_IRQ on compile test
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-References: <20250716064903.52397-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250716064903.52397-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d8cfcf5-08db-4712-a98f-2cbfb9beeb85@mandelbit.com>
 
+On Wed, Jul 16, 2025 at 09:52:05PM +0200, Antonio Quartulli wrote:
+> Hi Nam,
+Hi Antonio,
 
-
-On 7/15/25 11:49 PM, Krzysztof Kozlowski wrote:
-> CDX_BUS driver uses msi_setup_device_data() which is selected by
-> GENERIC_MSI_IRQ, thus compile testing without the latter failed:
+> On 26/06/2025 16:48, Nam Cao wrote:
+> [...]
+> > -static void vmd_msi_free(struct irq_domain *domain,
+> > -			struct msi_domain_info *info, unsigned int virq)
+> > +static void vmd_msi_free(struct irq_domain *domain, unsigned int virq, unsigned int nr_irqs)
+> >   {
+> >   	struct vmd_irq *vmdirq = irq_get_chip_data(virq);
+> > -	synchronize_srcu(&vmdirq->irq->srcu);
+> > +	for (int i = 0; i < nr_irqs; ++i) {
+> > +		synchronize_srcu(&vmdirq->irq->srcu);
+> > -	/* XXX: Potential optimization to rebalance */
+> > -	scoped_guard(raw_spinlock_irq, &list_lock)
+> > -		vmdirq->irq->count--;
+> > +		/* XXX: Potential optimization to rebalance */
+> > +		scoped_guard(raw_spinlock_irq, &list_lock)
+> > +			vmdirq->irq->count--;
+> > -	kfree(vmdirq);
+> > +		kfree(vmdirq);
+> > +	}
 > 
->   /usr/bin/ld: drivers/cdx/cdx.o: in function `cdx_probe':
->   build/drivers/cdx/cdx.c:314: undefined reference to `msi_setup_device_data'
+> By introducing a for loop in this function, you are re-using vmdirq after
+> free'ing it.
 > 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Closes: https://lore.kernel.org/all/b2c54a12-480c-448a-8b90-333cb03d9c14@infradead.org/
-> Fixes: 7f81907b7e3f ("cdx: Enable compile testing")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  drivers/cdx/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+> I can't send a patch because I am not faimliar with this API and I don't
+> know how to fix it.
 > 
-> diff --git a/drivers/cdx/Kconfig b/drivers/cdx/Kconfig
-> index 1f1e360507d7..3af41f51cf38 100644
-> --- a/drivers/cdx/Kconfig
-> +++ b/drivers/cdx/Kconfig
-> @@ -8,6 +8,7 @@
->  config CDX_BUS
->  	bool "CDX Bus driver"
->  	depends on OF && ARM64 || COMPILE_TEST
-> +	select GENERIC_MSI_IRQ
->  	help
->  	  Driver to enable Composable DMA Transfer(CDX) Bus. CDX bus
->  	  exposes Fabric devices which uses composable DMA IP to the
+> However, the issue was reported today by Coverity.
+> 
+> Any idea? :-)
 
--- 
-~Randy
+Thanks for the report. That was indeed a mistake from my side.
+
+I hope PCI maintainers don't mind squashing the below diff.
+
+Sorry for the troubles so far,
+Nam
+
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index 48a6096cbbc0..50f0c91d561c 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -280,9 +280,11 @@ static int vmd_msi_alloc(struct irq_domain *domain, unsigned int virq,
+ static void vmd_msi_free(struct irq_domain *domain, unsigned int virq,
+ 			 unsigned int nr_irqs)
+ {
+-	struct vmd_irq *vmdirq = irq_get_chip_data(virq);
++	struct vmd_irq *vmdirq;
+ 
+ 	for (int i = 0; i < nr_irqs; ++i) {
++		vmdirq = irq_get_chip_data(virq + i);
++
+ 		synchronize_srcu(&vmdirq->irq->srcu);
+ 
+ 		/* XXX: Potential optimization to rebalance */
+
 
