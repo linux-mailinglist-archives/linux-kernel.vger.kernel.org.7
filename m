@@ -1,51 +1,66 @@
-Return-Path: <linux-kernel+bounces-733261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C115B0723B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:54:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328DEB0723E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0E6016A52A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81CEA16F257
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4212F234F;
-	Wed, 16 Jul 2025 09:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCDD2F2356;
+	Wed, 16 Jul 2025 09:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tnyiDzi5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uNq51tV6"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07FB22A1E6
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA6E2727E1;
+	Wed, 16 Jul 2025 09:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752659669; cv=none; b=u3k1+NcUYIl7mWqYK3df7YhtO1UXO9UBKQyzEzWzzMY9Xph0MvXuR+UlxmixGxhxxqXPbzOFw9IcNdNADyPogDt2xmPjrZw00jYtEfluhyT9OB/FFSUhnCvE1UKfqu/gvBoq+EqQ1xif914IHZ9Ou21oPy+X3xlIqpIF3tfkUdw=
+	t=1752659700; cv=none; b=pq5mDEWSUSCJgyxtPV8upPguJ05Go9JB3rYzS93N8UN9pF5nB/Y4or/wx1q5WMD6P63fuUVdKGDgW3/vFZxhaxKi8ljCNAZRCOKvWpt6BhKCe4WI1x/HgaTG2KJAoQFsQuAkAD09zzlwKNe2bCdXRlOJxMz0cR0891h2ZJscbK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752659669; c=relaxed/simple;
-	bh=AAlSMrt7X05IcetxRmTOp47BMwnYQEh57TaW9WdB9FI=;
+	s=arc-20240116; t=1752659700; c=relaxed/simple;
+	bh=kEOm77ecIV5R75V8qpciS/uicdu49/LXJvltcPh2imw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nILU0ick/o9EXfuUuasMnYyFonHUXAGNuAwbbLYoa1yL2Xczm+m2w1hfV93iL2miOM2CeHTI9cy8aei3eIRo7yjHa3rYSy/mpUnus8KH9OVanXiDOPKyfyz41Oo0H3ZUUsxI/B/9fu9gnafJ2mx/UrFYi804YA5LD9BffjLYgsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tnyiDzi5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16749C4CEF0;
-	Wed, 16 Jul 2025 09:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752659668;
-	bh=AAlSMrt7X05IcetxRmTOp47BMwnYQEh57TaW9WdB9FI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tnyiDzi5h+nHya3h5NA+r+ILJHud0Lmkw7uUYSJEvgsenk2c96GwENY8djcM9qtyD
-	 7CKv99024wffhrqoOImuyvzbTbuyZueIlPzttvit20K5g9SOhcDXtP1UzNuSIS+f5K
-	 K+cWIU4dBPTIh6/Xikq7ggNVmoEGFTqT+HIKdXms=
-Date: Wed, 16 Jul 2025 11:54:26 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [char-misc-next v3 2/5] mei: make char device control its own
- lifetime
-Message-ID: <2025071601-squatter-lent-4260@gregkh>
-References: <20250709151344.104942-1-alexander.usyskin@intel.com>
- <20250709151344.104942-3-alexander.usyskin@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdTf43KStSWBn/be0a/Lcn77G7a4fsqcPePmOYruQ6505RNvk2syQUQuRzq0fZbdKPdeKpR6jRSBtXK/fGJZ5okFNPKfBbxDAqiQVk5lowRdcHP+vSNRSL63JGhbiOk68x6SCclPbxbPNnoPyst/xLWaKt7qu0F/yGXRWglBLzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uNq51tV6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UIA9FE4LYRJmDHiys+W1RlA6OGCujbo0RUNMRWi9vXc=; b=uNq51tV6Joz/2lK15A4uZaDCup
+	Q269EtJJZCG9gE5Sxdl4TQoYy47zgXjCNQfYotmJydU2vjrswTEhqIxn7oOX4B6W7MHuG/zPWP7Cl
+	oBzS+Ga0Hdj5wSwXlagvZM0wOkpKfGQiEcNXiYtpvw1ErciSD0PqpKnV7EURy7ofn2cHeG2QAl4SZ
+	1gii0OUn1v21cdLPH5IcwMFsvJZeazt0xfeUL/KRFSd0n9GSQ7oHhj93ufEJRSghWNd/zISaPUyEX
+	a+CJ2tazB1xqa9g+orO5ysndczT8dT6ix6bEWzNZ7/yiLAybi890Drl8JkKsFwIKB1i2pmjEI6Yev
+	sdfFC/ew==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ubyqe-0000000G9iT-0jAx;
+	Wed, 16 Jul 2025 09:54:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BB919300186; Wed, 16 Jul 2025 11:54:46 +0200 (CEST)
+Date: Wed, 16 Jul 2025 11:54:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v5 15/22] objtool: Add action to check for absence of
+ absolute relocations
+Message-ID: <20250716095446.GV905792@noisy.programming.kicks-ass.net>
+References: <20250716031814.2096113-24-ardb+git@google.com>
+ <20250716031814.2096113-39-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,40 +69,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250709151344.104942-3-alexander.usyskin@intel.com>
+In-Reply-To: <20250716031814.2096113-39-ardb+git@google.com>
 
-On Wed, Jul 09, 2025 at 06:13:41PM +0300, Alexander Usyskin wrote:
-> Allocate character device dynamically and allow to
-> control its own lifetime as it may outlive mei_device
-> structure while character device closes after parent
-> device is removed from the system.
-> 
-> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-> ---
->  drivers/misc/mei/main.c    | 36 +++++++++++++++++++++++-------------
->  drivers/misc/mei/mei_dev.h |  4 ++--
->  2 files changed, 25 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
-> index 95d4c1d8e4e6..5335cf39d663 100644
-> --- a/drivers/misc/mei/main.c
-> +++ b/drivers/misc/mei/main.c
-> @@ -51,7 +51,9 @@ static int mei_open(struct inode *inode, struct file *file)
+On Wed, Jul 16, 2025 at 05:18:30AM +0200, Ard Biesheuvel wrote:
+> index d967ac001498..5d1d38404892 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -4643,6 +4643,39 @@ static void disas_warned_funcs(struct objtool_file *file)
+>  		disas_funcs(funcs);
+>  }
 >  
->  	int err;
->  
-> -	dev = container_of(inode->i_cdev, struct mei_device, cdev);
-> +	dev = idr_find(&mei_idr, iminor(inode));
+> +static int check_abs_references(struct objtool_file *file)
+> +{
+> +	struct section *sec;
+> +	struct reloc *reloc;
+> +	int ret = 0;
+> +
+> +	for_each_sec(file, sec) {
+> +		/* absolute references in non-loadable sections are fine */
+> +		if (!(sec->sh.sh_flags & SHF_ALLOC))
+> +			continue;
+> +
+> +		/* section must have an associated .rela section */
+> +		if (!sec->rsec)
+> +			continue;
+> +
+> +		/*
+> +		 * Special case for compiler generated metadata that is not
+> +		 * consumed until after boot.
+> +		 */
+> +		if (!strcmp(sec->name, "__patchable_function_entries"))
+> +			continue;
+> +
+> +		for_each_reloc(sec->rsec, reloc) {
+> +			if (reloc_type(reloc) == R_ABS64) {
 
-What keeps the device structure in this idr after it has been removed
-from the system before the char device is closed?  Does the class device
-lifespan outlive this?  It seems like it really isn't saved anywhere,
-but the release function accesses it, right?
+This should probably also check R_ABS32. Yes, your current only user is
+x86_64 so R_ABS64 covers things, but we're getting more and more archs
+using objtool. No reason this check shouldn't also work on PPC32 for
+example.
 
-Or is that a _different_ device pointer?  How many different
-pointers/structures are associated with a struct mei_device now?
-
-confused,
-
-greg k-h
+> +				WARN("section %s has absolute relocation at offset 0x%lx",
+> +				     sec->name, reloc_offset(reloc));
+> +				ret++;
+> +			}
+> +		}
+> +	}
+> +	return ret;
+> +}
 
