@@ -1,50 +1,80 @@
-Return-Path: <linux-kernel+bounces-733252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CAEB07222
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:47:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 951D0B07225
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9DC0189AD53
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:47:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9C2F58296E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAC028D845;
-	Wed, 16 Jul 2025 09:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104532F19BB;
+	Wed, 16 Jul 2025 09:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eC45XgNN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DNPHbP8V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BD0225390
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D938D157493;
+	Wed, 16 Jul 2025 09:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752659232; cv=none; b=NkWzEsvh3EPQ/GNcRad28Jo1DkYX9Qmkw1Tw/p9678Ov7YehKmQYXW9RWY0wC2ubpxDwsf4YsmZ7yl1zLf4j4vDsSI6i0/xLR3/5hI6jzGYug9tNTd8LJSoHCPnxNpdv/I75eov5VgoCkAgKx+FiULUNMDxxMfhp+hwkWWFOI6M=
+	t=1752659244; cv=none; b=kFclekAveif6utLFdEMFimVlIkqBAr04E+DSeAh2Fcb6hIYDft0r5HlHziUlZ80wEWpeJLyBIN6vTRXJuSafP2xt1LlZJrs2T7bK26j96r+46c2R160FTG4de4xzN1M05G2EZnm/rDtJiSoKHVrd5ugOxZaKbor2IZvLqx9yJDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752659232; c=relaxed/simple;
-	bh=c3pa/CHun9Jtv8B9oIp1e9+zJKQTCgMLxojJTTAfdeA=;
+	s=arc-20240116; t=1752659244; c=relaxed/simple;
+	bh=zCyLPNfnMzZrZVOjJyA5bovh+fRwSs7MY4x27YXj+js=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W+k5xkZ7buWJHUmQTHgqz62MueAxPt7PCVr8nq4NfH+1AmXosb+MsPtIbQHr7tqU0/GvVqMBW3uf4Tphau2VYv9dJwrw/tn6qPwdpF+2I6DqIBX6TdshOq3OvtKi9W5ZU+UXqtRZAx9XLCjSp2tLLjGipCU91+WETIFbDZ/hv04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eC45XgNN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 464CCC4CEF0;
-	Wed, 16 Jul 2025 09:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752659231;
-	bh=c3pa/CHun9Jtv8B9oIp1e9+zJKQTCgMLxojJTTAfdeA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eC45XgNN9IB6+Di0gsDHYyh2guHiaoeRj3shRI4wU40kudWG6OpX2HTp8+n8oy1JT
-	 1t0lNynSVPNt1YtpDa1U3cZ6gMB7tB6OCbRJxa7MAjKh56FcMmgG5SORmThnJ4VXx8
-	 fmIorFxzEXXIwJoys3g9P4ZEdN/wAA0xE6qcST0U=
-Date: Wed, 16 Jul 2025 11:47:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [char-misc-next v3 1/5] mei: set parent for char device
-Message-ID: <2025071614-approach-snarl-90d7@gregkh>
-References: <20250709151344.104942-1-alexander.usyskin@intel.com>
- <20250709151344.104942-2-alexander.usyskin@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B2qFcFZBPDppIZZduARbOmTUwbOKcag7MD1Kii56/g5ysxZyBIKe+srPTDA7LFybhBIbcYX+kaUADS7rNbH6ezxyvtUux152OPYB6DyETnuWHRGr0urjbCXZURsl687y6tMT3s/qPm/6XooBODT/h/oioKRmPyNrMkNlwjoQdwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DNPHbP8V; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752659243; x=1784195243;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zCyLPNfnMzZrZVOjJyA5bovh+fRwSs7MY4x27YXj+js=;
+  b=DNPHbP8VqSEviLTT1Dx6SYwj6A7WTjQQKjuQrvLCzigXlnYJnezjrSb7
+   Tk9vhzgykKs5h3iOOoS00ETqPCF4cNEkUoSvsvX+rtvzEFgmLKLlC3UnR
+   g0uVxY2Yp6ESmU50SuYJLryWON8ViqRZ/CXKTJ3pdDLe3OFayZdcx9tgH
+   Vxv73l68KclR8yWGVD1X+yqfIPTU1a40FHo/au0LzZgs5fULOYYpnetPK
+   sD8YHDM8C49ZpRqxLus9H0K6tnMjt0QkvQ+EApUqZghf7rCa2IyFx4JmL
+   SSTYPEaE7YJR3GMIHU8QDcQggyCDA4NUI0lkNQYdIsSg1QXhPhfu0NNS6
+   A==;
+X-CSE-ConnectionGUID: KuV03549Sfq9aDyuC1XHBw==
+X-CSE-MsgGUID: 5gNnjs4ZQkiN5171wV/Rtg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="72470364"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="72470364"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 02:47:22 -0700
+X-CSE-ConnectionGUID: 6eh2VefOQPyhdP7u3EU8sw==
+X-CSE-MsgGUID: oGPR/H2rSB2TMTayxbBm5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="181150913"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 02:47:19 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ubyjM-0000000FtzU-1OxH;
+	Wed, 16 Jul 2025 12:47:16 +0300
+Date: Wed, 16 Jul 2025 12:47:15 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 3/7] iio: Add in-kernel API for events
+Message-ID: <aHd1IzB1_O9pOFvl@smile.fi.intel.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-4-sean.anderson@linux.dev>
+ <aHYPYZgq17ogdEgC@smile.fi.intel.com>
+ <80ed9b12-ba0a-4d1a-bd54-122218edc8a1@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,20 +83,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250709151344.104942-2-alexander.usyskin@intel.com>
+In-Reply-To: <80ed9b12-ba0a-4d1a-bd54-122218edc8a1@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Jul 09, 2025 at 06:13:40PM +0300, Alexander Usyskin wrote:
-> Connect char device to parent device to avoid
-> parent device unload while char device is
-> still held open by user-space.
+On Tue, Jul 15, 2025 at 11:47:07AM -0400, Sean Anderson wrote:
+> On 7/15/25 04:20, Andy Shevchenko wrote:
+> > On Mon, Jul 14, 2025 at 09:20:19PM -0400, Sean Anderson wrote:
 
-Again, this changelog text is not right.  The parent pointer has nothing
-to do with "unloading" anything.  It has everything to do with placing
-the device in the proper place in sysfs.  So please show a before/after
-location of what happens when this patch is applied to make it more
-obvious what is happening here.
+...
 
-thanks,
+> >> +	WARN_ON(atomic_notifier_chain_unregister(&ev_int->notifier, block));
+> > 
+> > Is bug.h already included?
+> 
+> I assume so. No build errors.
 
-greg k-h
+Explicitly? Otherwise it's against IWYU principle.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
