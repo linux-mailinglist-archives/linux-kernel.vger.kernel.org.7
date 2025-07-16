@@ -1,190 +1,139 @@
-Return-Path: <linux-kernel+bounces-732873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD892B06D15
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:19:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4032AB06D1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56073B53CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2593B5612
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 05:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DB5264608;
-	Wed, 16 Jul 2025 05:18:55 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577E92E36F7;
-	Wed, 16 Jul 2025 05:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0702727EB;
+	Wed, 16 Jul 2025 05:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="ZQwB5Pdq"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA47E1C9DE5
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 05:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752643135; cv=none; b=f6n+sHVLDOoR4JkpBcmdmesbXnjRu0BvIBNNwx6YQKyoqwi4CRSwQom9fIFunaTUMME8b1bcSXu51QkaZyRr1seaEdTAlcqn5d9IXL17MIsZemWXIZ5RojKFF1soLYF+IZIgcd/R+6WXnoYurXzAsNJmMiLIqssDUhC6ErOyf+Y=
+	t=1752643219; cv=none; b=iFfbXzQEethoh68Asigww0w9Sn7aVjCczCPHayzV2XXpbZxrIt1Q5zGSbPxSBIdpwCtyDT6ShxGIb8ddAHFe9+sL0I4Bl5cqKn/WZANdp1HVTiAXUtLg+83KstfT7CwHK9mEdXdoF9mG6d/jDbIasgBkWk/YhCpg9vOisEO8xSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752643135; c=relaxed/simple;
-	bh=KVPq5YZ7ao2kg8HQya16vo7K/y5khjCB2vV5QjcuKGs=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eDEKXihQHlRmMdg3M4mfEJK854DLcu5LdSl3eHjij0lCXKVbxossAjC25wSqXx/N/rAcBwSMmRObLSKVYyFbDr7VobkuJ2BphjEsZNfeUB+T87cmcU6kyRv8KjzaLPP1K+3A3TNsGPL0d2ZHRExC5zkdS6W3QB/QRZJTj28dyzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-78-68773639fce4
-Message-ID: <4c83fac5-0990-4280-9a21-969d83582112@sk.com>
-Date: Wed, 16 Jul 2025 14:18:48 +0900
+	s=arc-20240116; t=1752643219; c=relaxed/simple;
+	bh=/ktSjyUZX0dfbAs7P4VFPYdLWMzAPv8W3aDVhnylNsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RD3ddi7CF+LsPFilORNxMOdI6p8z1dd5OBmofFR4dStrv/Qr86zYUkE0jeIxJxZzFSR6y/6RHxM5DJGeoCh32nV6zQovjUKYYYVQg5YWtFFPdxSp94tAgIqHRO2vgXDVogglwAnhLyKJsVPTlKQQDUiyJPnsMA/1OYAVBToEoRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=ZQwB5Pdq; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3df2d111fefso53386005ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jul 2025 22:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1752643217; x=1753248017; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7pr0CgkuBDoCBojEhq3SOwjdkjudDtqxy7ZuiK0Se4o=;
+        b=ZQwB5Pdq4vJHgFysY0APTd6kt8YEFn2dLjZfKMCPeKy+wAJx/6s+ka87efhvbXn02D
+         0Pp1BlNjf2dgR9i892l7XI20jExfW0bqj+wMqkJwsLZF1Ku9h2wTNEbi2TfA4PGc1ulh
+         nFED4houCN2fi5B90m0wnt+q8ufPMWOC2hWZ+Px8MKdG7qh+StYJYcb8AaScVTo6hly1
+         JZRSlirkouBPh6fwY9O5xX859cO/4DkVTTmcxwzDgMuXpS4WR4szvN1833symUG9OSdm
+         kIpVAzuq3lRjz8oQezaOmVnJg2sb+/QJFL4DHyaURlJsjQbWestJeXEAghbgvWnbyAag
+         IIFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752643217; x=1753248017;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7pr0CgkuBDoCBojEhq3SOwjdkjudDtqxy7ZuiK0Se4o=;
+        b=vZZvE9wEteCKzpj1/DOoMiVyYdxM6Twf4NL4N/YG70obayXcgmCu8JlUwyBhChhetQ
+         piek1rtzAylwaX+2vMlwMDrO4fo+IWTcptBXAZsl5s9EMCSk0jty42ZMbpT3o6Hp8KCS
+         lcS49/98r/2JEz0p/C/vGxf3fN2bsWzlq5V/qhettldNqHE4vAbDQLGhyXIGlUT0O1NQ
+         v20E99k/NA0qPks720IfoMqXHdwMmsU7aL6iVvYnhKRh3k8v9DOIB08va2lVndLYrIMV
+         bSebXu+F/uRzD68/UeOO0lM1d0FHUjfRRxycgA/tKMdMd3JrjzhlJuhCN06xkZh1B291
+         E4/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWfdXjjRf/vnE8WhpTkcQRN1E9ZIYaTvkOWMUGG649G6U+AJPmtQ9t3svt+LcOiOOU2ImhnASdCVGJlNW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5FLLipFfdirKrRQBUS5SvuoiKbvbvz8quxhQ36/D0iFQKcico
+	MrUt0GO6NcCFgNCDwqvAxF/ibI63LNJlb6E6cjyZqbzb7yB2wdpRz5DXDyhVMqeCR8Fvpj6E81F
+	O5bqQ9plg94Blt2dqnjwjrKT/gm9dXRqm/501MeXVBA==
+X-Gm-Gg: ASbGnctGcsN+vJ5zUHZByHZksBLK0w5s7P8SwFkY78KnSBUolrzJyLH1ZH765hAdsWo
+	GjGxc/pUJIzP4kORuw0mEpKWHM/vTmXAuaCJgB7L5f9paTt4Q/rtFDm+kL+hJ/tFVM7O/LiFJ82
+	agu4euqOxlzGVPcT5bMCttuk9EvtR/8Nzw5ebCr6vixO+G4ydXMbgsSSwxjkHUTJgGXR05f4okC
+	ZEOXQ8+6rikNYU1
+X-Google-Smtp-Source: AGHT+IG8QMvIrF4Nh6TtjPYY/OImrdrVsXWR40Aodp+LssWG0nbwGxcm5vyJpoaN8ajvyQHU4KVCDRQEYdjX4PMmHto=
+X-Received: by 2002:a05:6e02:1c07:b0:3df:29c5:2972 with SMTP id
+ e9e14a558f8ab-3e282da9cd2mr14405455ab.9.1752643216752; Tue, 15 Jul 2025
+ 22:20:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: kernel_team@skhynix.com, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, damon@lists.linux.dev,
- kernel-team@meta.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 0/4] mm/damon/sysfs: support periodic and automated
- stats update
-Content-Language: ko
-To: SeongJae Park <sj@kernel.org>
-References: <20250716025118.92544-1-sj@kernel.org>
-From: Honggyu Kim <honggyu.kim@sk.com>
-In-Reply-To: <20250716025118.92544-1-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsXC9ZZnka6lWXmGQcdsUYs569ewWTw50M5o
-	8eT/b1aLfReB3IVtS1gsLu+aw2Zxb81/VovDX98wOXB4bFrVyeax6dMkdo8TM36zeLzYPJPR
-	Y3HfZFaPcxcrPD5vkgtgj+KySUnNySxLLdK3S+DKWHljH1tBv0LFpKuXWRoYP0t2MXJySAiY
-	SEzof8UGY78/dJcFxOYVsJRYvmYSkM3BwSKgKnF8vgxEWFDi5MwnYCWiAvIS92/NYO9i5OJg
-	FnjBKHF+72+wOcICURI7f/ezg9jMAiISszvbmEFsEQFFiXOPL7KC2EICRhK/385gArHZBNQk
-	rrycBGZzChhL3G88wQzRaybRtbWLEcKWl9j+dg4zyDIJgctsEpvu72SFOFpS4uCKGywTGAVn
-	ITlwFpLds5DMmoVk1gJGllWMQpl5ZbmJmTkmehmVeZkVesn5uZsYgbGyrPZP9A7GTxeCDzEK
-	cDAq8fDusC7LEGJNLCuuzD3EKMHBrCTCO/kSUIg3JbGyKrUoP76oNCe1+BCjNAeLkjiv0bfy
-	FCGB9MSS1OzU1ILUIpgsEwenVANjwvK9j+bMOxJ3ffG8Mu+dkrbXPOTj5x78d/3vwYm7k+P6
-	rzScOL94MQNPk3zXmTVL/xV/F3Vc5+OxR7Vz3eSy0wxtPxY9+KC98Xd13oImru+/D729qJDy
-	dF7m/y+NKdL8FrwVdyrvRkou4lO6vCUj63QCV1zZrZit5b8WVBXtu9addvnhIpsprEosxRmJ
-	hlrMRcWJADDWs1uRAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsXCNUNLT9fSrDzDYPI+Tos569ewWTw50M5o
-	8eT/b1aLfReB3MNzT7JaLGxbwmJxedccNot7a/6zWhz++obJgdNj06pONo9Nnyaxe5yY8ZvF
-	48XmmYwei/sms3qcu1jhsfjFByaPz5vkAjiiuGxSUnMyy1KL9O0SuDJW3tjHVtCvUDHp6mWW
-	BsbPkl2MnBwSAiYS7w/dZQGxeQUsJZavmQRkc3CwCKhKHJ8vAxEWlDg58wlYiaiAvMT9WzPY
-	uxi5OJgFXjBKnN/7mw0kISwQJbHzdz87iM0sICIxu7ONGcQWEVCUOPf4IiuILSRgJPH77Qwm
-	EJtNQE3iystJYDangLHE/cYTzBC9ZhJdW7sYIWx5ie1v5zBPYOSbheSOWUhWzELSMgtJywJG
-	llWMIpl5ZbmJmTmmesXZGZV5mRV6yfm5mxiBgb+s9s/EHYxfLrsfYhTgYFTi4d1hXZYhxJpY
-	VlyZe4hRgoNZSYR38iWgEG9KYmVValF+fFFpTmrxIUZpDhYlcV6v8NQEIYH0xJLU7NTUgtQi
-	mCwTB6dUA+PyZ/ODKi9+87vWwWZvkMa/llGxJ1XO0qnw6svwq/1n2RhUix48b5VrjUzYddS2
-	6GL5Jke7Bct/rPgQ1+s7e+31ORsZz9ifPV+5J8r36/fbE2Yo/Exj9t0ZrKwcdeDPTMOdNU9P
-	ZFr2zJslOF+kmzWsv8Pz+oo5wU1eM24zPmKqFehc/1otx02JpTgj0VCLuag4EQBGPn4EeAIA
-	AA==
-X-CFilter-Loop: Reflected
+References: <20250714094554.89151-1-luxu.kernel@bytedance.com>
+In-Reply-To: <20250714094554.89151-1-luxu.kernel@bytedance.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Wed, 16 Jul 2025 10:50:05 +0530
+X-Gm-Features: Ac12FXys72h69btMJ897A7pa9H69kTczP7dldA--hcTTkswEbCjKDSzqpxxAxFs
+Message-ID: <CAAhSdy2XEyphi5K1xk29JXY991aie0LA5YF2zRbgA_8imSjXQQ@mail.gmail.com>
+Subject: Re: [PATCH v4] RISC-V: KVM: Delegate illegal instruction fault to VS mode
+To: Xu Lu <luxu.kernel@bytedance.com>
+Cc: rkrcmar@ventanamicro.com, cleger@rivosinc.com, atish.patra@linux.dev, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 14, 2025 at 3:16=E2=80=AFPM Xu Lu <luxu.kernel@bytedance.com> w=
+rote:
+>
+> Delegate illegal instruction fault to VS mode by default to avoid such
+> exceptions being trapped to HS and redirected back to VS.
+>
+> The delegation of illegal instruction fault is particularly important
+> to guest applications that use vector instructions frequently. In such
+> cases, an illegal instruction fault will be raised when guest user thread
+> uses vector instruction the first time and then guest kernel will enable
+> user thread to execute following vector instructions.
+>
+> The fw pmu event counter remains undeleted so that guest can still query
+> illegal instruction events via sbi call. Guest will only see zero count
+> on illegal instruction faults and know 'firmware' has delegated it.
+>
+> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
 
+LGTM.
 
-On 7/16/2025 11:51 AM, SeongJae Park wrote:
-> On Wed, 16 Jul 2025 10:58:06 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
-> 
->> Hi SeongJae,
->>
->> On 7/16/2025 8:43 AM, SeongJae Park wrote:
->>> On Wed, 16 Jul 2025 07:20:57 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
->>>
->>>> Hi SeongJae,
->>>>
->>>> On 7/13/2025 5:46 AM, SeongJae Park wrote:
->>>>> DAMON sysfs interface provides files for reading DAMON internal status
->>>>> including DAMOS stats.  The content of the files are not automatically
->>>>> updated, though.  Users should manually request updates of the contents
->>>>> by writing a special command to 'state' file of each kdamond directory.
->>>>> This interface is good for minimizing overhead, but causes the below
->>>>> problems.
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-[...snip...]
-
->>>>> Introduce a new sysfs file, namely refresh_ms, for asking DAMON sysfs
->>>>> interface to repeat the essential contents update with a user-specified
->>>>> time delay.
->>>>
->>>> Thanks for working on this, but I have a few questions.
->>>> 1. Could you please list up what are the "essential contents"?
->>>
->>> Thank you for asking this.  The contents are auto-tuned monitoring intervals,
->>> DAMOS stats, and auto-tuned effective size quota.
->>
->> Thanks, but I meant the specific list of damon knobs refreshed.  If there are
->> too many knobs, then don't have to list them all.
-> 
-> I guess you are saying about sysfs files?  Yes, I think listing those all is
-> unnecessary.
-
-OK. No problem then.
-
->>> I will add these on the next version cover letter.
->>
->> Thanks.
->>
->>>> 2. Does it mean that it is different from writing "commit" to "state"?
->>>> 3. If not, then is there equivalent action to writing something to "state"?
->>>
->>> "refresh_ms" works same to other DAMON parameter files.  You can set it before
->>> starting DAMON, or "commit" new values (including 0 for turning this refresh
->>> off) in runtime.
->>>
->>> I'm not that confident if I understood your point very well, especially what
->>> "it"s mean.  Let me know if I'm misunderstanding something.
->>
->> I mean writing "commit" to "state" refresh all knobs,
-> 
-> Assuming "knobs" mean sysfs files, this is incorrect.  Writing "commit" to
-> "state" passes the parameters written on appropriate files to running kdamond.
-> It doesn't update any sysfs files until a "update_*" keyword is written to the
-> "state" file.
-
-I thought writing "commit" to "state" applies config changes and updates all the
-readable sysfs files together, but it doesn't.  Thanks for the correction.
-
-> 
->> but it seems "refresh_ms"
->> internally refresh paritial knobs so I was wondering what are refreshed and what
->> aren't.
->>
->> Regarding the "equivalent action", I was also wondering if there is a command
->> that works same as "refresh_ms" internally does among the command below.
->>
->>     update_tuned_intervals
->>     commit_schemes_quota_goals
->>     update_schemes_stats
->>     update_schemes_tried_regions
->>     update_schemes_tried_bytes
->>     clear_schemes_tried_regions
->>     update_schemes_effective_quotas
->>
->> https://docs.kernel.org/admin-guide/mm/damon/usage.html#kdamonds-n
->>
->> In other words, if there is the same command listed above, then users might be
->> able to run a script that regularaly write the command to the current "state"
->> even without this "refresh_ms".  I know having "refresh_ms" is much better
->> though.
-> 
-> Thank you for this nice question.  Yes.  Enabling "refresh_ms" is roughly same
-> to periodically writing
-> "update_{tuned_intervals,schemes_stats,schemes_effective_quotas" to "state"
-> file.
-
-OK. I get that "refresh_ms" does periodic write the combination of them to
-"state" without "update_{schemes_tried_regions,schemes_tried_bytes}.
-
-In other words, it is same as periodic execution of the follows.
-
-   echo update_tuned_intervals > state
-   echo update_schemes_stats > state
-   echo update_schemes_effective_quotas > state
-
-That makes my question clear.  Thanks for the explanation!
+Queued this patch for Linux-6.17
 
 Thanks,
-Honggyu
+Anup
 
-> 
-> 
-> Thanks,
-> SJ
-> 
-> [...]
+> ---
+>  arch/riscv/include/asm/kvm_host.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/k=
+vm_host.h
+> index 85cfebc32e4cf..3f6b9270f366a 100644
+> --- a/arch/riscv/include/asm/kvm_host.h
+> +++ b/arch/riscv/include/asm/kvm_host.h
+> @@ -44,6 +44,7 @@
+>  #define KVM_REQ_STEAL_UPDATE           KVM_ARCH_REQ(6)
+>
+>  #define KVM_HEDELEG_DEFAULT            (BIT(EXC_INST_MISALIGNED) | \
+> +                                        BIT(EXC_INST_ILLEGAL)     | \
+>                                          BIT(EXC_BREAKPOINT)      | \
+>                                          BIT(EXC_SYSCALL)         | \
+>                                          BIT(EXC_INST_PAGE_FAULT) | \
+> --
+> 2.20.1
+>
 
