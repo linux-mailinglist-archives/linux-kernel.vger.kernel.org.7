@@ -1,177 +1,105 @@
-Return-Path: <linux-kernel+bounces-733648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887A7B0775B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:52:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2FA9B07760
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC0231C2547A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD972503E9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CC01DB92C;
-	Wed, 16 Jul 2025 13:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F121DB92C;
+	Wed, 16 Jul 2025 13:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="A29ps5it"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="LT5qDvnG"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AF314A09C;
-	Wed, 16 Jul 2025 13:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B6619E97A;
+	Wed, 16 Jul 2025 13:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752673917; cv=none; b=V6bo71slNRV4LoRUkrKWZs/CO2u/rv5sNSRBm/2yIl7Tu3rM49Lq6WHYlqypu9SSsapVNOg7P4izQLUQKK2r3bacutLenQx+3Ky5OoCYG9ufw4qGijLMH7AfYU3YGTmbd+YptBTaj3IEJji4LWOdUmrfEu9yVvW4ypvwYdCl6GI=
+	t=1752673968; cv=none; b=H8mIhC06giY2RneoEzHNM33tU3rZ4aOjdAQZZVMDEtl2riWtad6FUnFhx6IaolM5kDS+Dc1p8641TQDlaGFuAvs4Hdu6aS0MDWIGs4G/Q7zFnhRKAkeAChd5i6cN3iW6iNdBa2slfhXl5pVPBSWKOcl5ZA2ZlwyjAy/sl31oni8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752673917; c=relaxed/simple;
-	bh=hyGCvrbtw2qdIGIIhqoYr9iBtmwCIV5oIyf682Dj/kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ngyHKxEYs8skNLgjYKY3AkgW/b6wEdgsFHKoJDkUSmHcB5k4UjHdPvT+hCqAB5Sw/P27n1cEkzeTjS/ZPwK2qkVaiXPmi4SjLMAZdwQJMEGITgN/RI9OApxoGfCoboB/2JPDTEQAkx04P3zkRIJG7Fq/gwYPehINuw2F/aEjlr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=A29ps5it; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=3vytiuZjE/mNXoVykFb8Ntwh9jcp42Gui1jhUZYM32c=; b=A29ps5itkp7tMOka
-	KQrPFZ0Tc5o1ixpBHyUnm7d3A0V3Kf6TZes9Y/iXCfNb0SmMUZCRbdhxoScrngTqmatJJI5p6IibN
-	WE6HTNBm91Wy3GtipxCqZZPbqJTcmPz33MPFY1YAYUcSKiBFTeDQpq7JUtodCxlOlOcIx9KQ5Karn
-	gEgXRKocCuADuyipPF0o8MJDvJvvlWDCDUvw5bCphm06d8xFy87fiNuzEQyYqu31UhkyHDLLwFwh4
-	jXFh0UjeGOJVenJXDFIw9hwz2eE5D+gO91cRAWmPd8BlbUMV5aF7529t0bSadEVGIniVyaSNMh+qk
-	WdqOJXnvMn5jdR7Zsg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uc2Xp-00GQnU-3A;
-	Wed, 16 Jul 2025 13:51:38 +0000
-From: linux@treblig.org
-To: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	peterz@infradead.org
-Cc: alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] perf core: Remove perf_event_attrs and perf_event_refresh
-Date: Wed, 16 Jul 2025 14:51:37 +0100
-Message-ID: <20250716135137.247266-1-linux@treblig.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1752673968; c=relaxed/simple;
+	bh=Nq9yEx6E31jeoRxH8hd8CORaLO6Pd8p4ium4hg+EfwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D+IqY8JfAn6aMdeTNC+IELsfyUg8KE0nXNF4qn3Y0P1U8U0YDrfg4iJoFG6T0m+DGockYmASt18BHVTE9fVaNI6TDc3MQIVmfqO0O/U7E8VLgQu0J7dQM38uSiZp2x//Abem+5NL5+H4o690uu52BCz+wEnb+OBj2DVdQASR7Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=LT5qDvnG; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3DD5B1027236F;
+	Wed, 16 Jul 2025 15:52:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1752673962; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=3hFOaUq2sywSBtyfecXmN4EjwGkkmHEspyV74gBX2jg=;
+	b=LT5qDvnGCfK14KHGyejwu/QoWjoUdnhFqjNLCtGm2CZmrD5AblZiN3Z2IrQdSIlLlW0+NI
+	4Y6k25VKAS7Fx4pMDHjEsDGrEEXEgqj9kbd+ocqdfUFrSiwaWLd1m+45+fkDIZh6W35B90
+	+UzAeCtcjf+tY9k2a65gdQBzP12VVpjfMtUx+uwCiFQ94bXMwyl3UG5e+QtnLnCii7ZSi/
+	mYJZ4wUsUkHigvfmSv1uqdTldXOvJXzYdL2EBy+3ze0Q84Vx759QLz2zotanO57TYX9xjk
+	gxX/AY1OfQNfnv4pgOAEjAehtkaMA7Kgb/FWLVdcwEMo0/I1WzwqSq/e8epRhA==
+Date: Wed, 16 Jul 2025 15:52:33 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 00/89] 6.1.146-rc2 review
+Message-ID: <aHeuoVVk5AxyLgwr@duo.ucw.cz>
+References: <20250715163541.635746149@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="q1K6pxNsDL4JnDNC"
+Content-Disposition: inline
+In-Reply-To: <20250715163541.635746149@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-perf_event_refresh() has been unused since the 2015
-commit f63a8daa5812 ("perf: Fix event->ctx locking")
+--q1K6pxNsDL4JnDNC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-perf_event_attrs() has been unused since the 2017
-commit f91840a32dee ("perf, bpf: Add BPF support to all perf_event types")
-(Note the _ prefix version is still used)
+Hi!
 
-Remove them.
+> This is the start of the stable review cycle for the 6.1.146 release.
+> There are 89 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
-  This was originally sent as part of a set with a load of tools/perf
-  cleanups, Ian pointed out it needed to be separate.
+CIP testing did not find any problems here:
 
- include/linux/perf_event.h | 10 ----------
- kernel/events/core.c       | 24 ------------------------
- 2 files changed, 34 deletions(-)
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index ec9d96025683..4cecd5122404 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1224,7 +1224,6 @@ extern void perf_event_free_task(struct task_struct *task);
- extern void perf_event_delayed_put(struct task_struct *task);
- extern struct file *perf_event_get(unsigned int fd);
- extern const struct perf_event *perf_get_event(struct file *file);
--extern const struct perf_event_attr *perf_event_attrs(struct perf_event *event);
- extern void perf_event_print_debug(void);
- extern void perf_pmu_disable(struct pmu *pmu);
- extern void perf_pmu_enable(struct pmu *pmu);
-@@ -1235,7 +1234,6 @@ extern int perf_event_task_enable(void);
- 
- extern void perf_pmu_resched(struct pmu *pmu);
- 
--extern int perf_event_refresh(struct perf_event *event, int refresh);
- extern void perf_event_update_userpage(struct perf_event *event);
- extern int perf_event_release_kernel(struct perf_event *event);
- 
-@@ -1945,10 +1943,6 @@ static inline const struct perf_event *perf_get_event(struct file *file)
- {
- 	return ERR_PTR(-EINVAL);
- }
--static inline const struct perf_event_attr *perf_event_attrs(struct perf_event *event)
--{
--	return ERR_PTR(-EINVAL);
--}
- static inline int perf_event_read_local(struct perf_event *event, u64 *value,
- 					u64 *enabled, u64 *running)
- {
-@@ -1957,10 +1951,6 @@ static inline int perf_event_read_local(struct perf_event *event, u64 *value,
- static inline void perf_event_print_debug(void)				{ }
- static inline int perf_event_task_disable(void)				{ return -EINVAL; }
- static inline int perf_event_task_enable(void)				{ return -EINVAL; }
--static inline int perf_event_refresh(struct perf_event *event, int refresh)
--{
--	return -EINVAL;
--}
- 
- static inline void
- perf_sw_event(u32 event_id, u64 nr, struct pt_regs *regs, u64 addr)	{ }
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 22fdf0c187cd..4b84e808eef7 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3340,22 +3340,6 @@ static int _perf_event_refresh(struct perf_event *event, int refresh)
- 	return 0;
- }
- 
--/*
-- * See perf_event_disable()
-- */
--int perf_event_refresh(struct perf_event *event, int refresh)
--{
--	struct perf_event_context *ctx;
--	int ret;
--
--	ctx = perf_event_ctx_lock(event);
--	ret = _perf_event_refresh(event, refresh);
--	perf_event_ctx_unlock(event, ctx);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(perf_event_refresh);
--
- static int perf_event_modify_breakpoint(struct perf_event *bp,
- 					 struct perf_event_attr *attr)
- {
-@@ -14196,14 +14180,6 @@ const struct perf_event *perf_get_event(struct file *file)
- 	return file->private_data;
- }
- 
--const struct perf_event_attr *perf_event_attrs(struct perf_event *event)
--{
--	if (!event)
--		return ERR_PTR(-EINVAL);
--
--	return &event->attr;
--}
--
- int perf_allow_kernel(void)
- {
- 	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
--- 
-2.50.1
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
 
+Best regards,
+                                                                Pavel
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--q1K6pxNsDL4JnDNC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaHeuoQAKCRAw5/Bqldv6
+8lZDAJ4qvXoLtpQ2cCMaFVZbkQuPLh4MsgCfZ8+PDbZk0AsblafPhgS1ulpXBqo=
+=3U5u
+-----END PGP SIGNATURE-----
+
+--q1K6pxNsDL4JnDNC--
 
