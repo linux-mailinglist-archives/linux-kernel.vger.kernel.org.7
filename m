@@ -1,105 +1,185 @@
-Return-Path: <linux-kernel+bounces-733632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173B7B07729
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:41:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D644B0772B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A14B4E2BD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:40:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92DDB7A7E77
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C871D5CFE;
-	Wed, 16 Jul 2025 13:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632601D8E1A;
+	Wed, 16 Jul 2025 13:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qoUOG/U1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GRTrNxGu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FDE1A239A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132571E1E0B
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 13:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752673282; cv=none; b=BO4pImn7sdGCebM3vlXdJWrIG9bNoZjlIEZPYidIJqtkMJ1rS2OWEOe0BkKHAWxls5UF+ox0S+uTLavn81NY0JgKZWhY0bPWhXK2W1yn1EOo1nxiE+Ud1ZdeOQ7AEkOO0LrF5a1rjFGnq1rBrPGCVmaSuJAobF9PgmQJLGwmvww=
+	t=1752673287; cv=none; b=teTnzv1xjmBBvAwFXV/eY714xejVX9skoQsHyg579bcqrabxUJgb5EwC8FT4udYyUv/CV3lEVt1Cfp+pUZfjqHeV1sitv2tdTA8MKn5oZEhYo7CbQL8rcAlXaozcq2EBaxIJzcqldRdl2LebUMFdb81igQjBfQpmy4JH42HpSqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752673282; c=relaxed/simple;
-	bh=RHI4u2LloKbvszBt3srx70NKJhd2p7vtukt+L4CqdjM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oFHeZTwhY8tpd3RZun5RIOVyv84/INSepW0nbeZfmUCpsXef8/R12Sggma7YBwG09exeGExM1K4CK0BHC8oo+TEDOq2TtfWCYNs4ykArDZJvKQl3GTAsyk+JG2cBpB2QTSeN0AE4NHN7tTBQ+CNspNHNiupzu1XF6HPmC0sxlm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qoUOG/U1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F8DEC4CEF0;
-	Wed, 16 Jul 2025 13:41:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752673282;
-	bh=RHI4u2LloKbvszBt3srx70NKJhd2p7vtukt+L4CqdjM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qoUOG/U1qkTJqbKVCTWTfWgbghtCdaRjlDFhlgr5PdCJZLqxeKx3KJ/PNY78ZzfzQ
-	 LTzDuSBI/+kUIzviMnBg5a6I7ZRo1Tq5XGBa+WM4q9GrJqVC93zBCauopIhCwwpfQz
-	 bnMvUuxvAs1wwMnAEKkBBnkDEqO21e+DaqQuGBdgHK/IMIknJUQQcj6gW/txOnyM8m
-	 B/IZlZ2BPRIm8Rs+SLsQvFviN4BNo4YpRnfzLbanuZR2/c/WesSYrPgAVDg2ugSWv2
-	 CjhsKKGBa175t2ViC5pTqPHVb5GjMibfFsgQZIEYxxDu0j2QqzW43Qss2zISQX5jPv
-	 Z7jDUgRz1JSLA==
-From: Michael Walle <mwalle@kernel.org>
-To: Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH] drm/tidss: encoder: convert to devm_drm_bridge_alloc()
-Date: Wed, 16 Jul 2025 15:41:07 +0200
-Message-Id: <20250716134107.4084945-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752673287; c=relaxed/simple;
+	bh=iNmvB+3FjR5YpHQxAIM62fCqprB5QtRXUOwIR90pYlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f0bNkUcTLp0pyq5eyLTbU1Q1iWMvf25AjFf1FB4PdheBP3dXN345MUgPFamKSsTs8kKqnMfijx6/MVoNSueobu4JtEqEuAF/UmqNd3Kb6Awg4y/ZTSk/rKgkrJIqf+YBiCq08k4b2R7jn/9yil+RwoNTta3NxJZQK27H6KnaCeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GRTrNxGu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752673285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DSCVr707M4//bs71t2yhWnQaxP7JI/FIas88eCQrl50=;
+	b=GRTrNxGuDY3W7WkQoAbe6pV1EG/vVO2kECFYfhGkVb9wpju1T7Hbg1MTk1UYYqqs3k6YQk
+	6rZCemMDLcSVPhnebvr9cPSWoZRYZ6MnrYcyt9j0gLilXejE2UTqCYChR/UuGTo6BRHl1C
+	w39Dd+AvDLB3kEpmUjnIdPtAeUnQv9s=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-5cP8eY1_Mb2wRF4spIT_Kg-1; Wed, 16 Jul 2025 09:41:23 -0400
+X-MC-Unique: 5cP8eY1_Mb2wRF4spIT_Kg-1
+X-Mimecast-MFC-AGG-ID: 5cP8eY1_Mb2wRF4spIT_Kg_1752673282
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso6528475e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:41:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752673282; x=1753278082;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DSCVr707M4//bs71t2yhWnQaxP7JI/FIas88eCQrl50=;
+        b=NyYrAz1VBzvydMIK6/wSguk+LLMkXzXEvvD5XUGI7YsiymjrfdeBDk94jFR9Yn/Z+f
+         qaL7CMF1FjXdcpqW47ZUG2VdMi2B8mVbsJrcE6EwT+/TuZgRtevLMXOuBcB53mdqxnPS
+         yet6A4dusFk31XxyGoV3WBkN2Wj+V6Mh2MhZK5MMYibumV8CQI1dFBLqzi7+hXDY4RCx
+         FivB9oyJCe39nsYRqUGwOa/1syTlCbT7LCvSyDW8AI2ufeSGBPxZs5NVkOaqKffxk/ud
+         GU8W9NSwf/Viitvw1bzeSUj2XLE90Xbo3q7ORYgEg0Z+KQyBHZTmsDDqChem/EK0MWt5
+         IUZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB7kLxMrfs0e5gRIJ74KTHg7jueF3ieBi2xlQTE7U8+kuVJfSJViU+sXQb7kW4LN4zkfHqHAX3GjugdrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpE6e6LL2e2F4f6VBt/5Hwu6OMg8FuLMMzcXXBoxWOS+nYEz/K
+	f/DW2gkO9Scz/Hk15uUKomXCQWVIEH/C4sQUciFju1DYHOwlFqnGWmxzqKVTs/F/Kma9eNTvVvj
+	NWc9AWK/EiczF0C0UzNUSXFavi02Sq33pET1Myho6iItjeobckgdVXZ94yraErlnpNA==
+X-Gm-Gg: ASbGncv9Z5NQSL+gv0Y2vfJ8G7TFsf2PSWvrrn5yrxyVKlSbZSwhVFr+sRJxDelZdkn
+	7GmgG7G2fZaseeoJAAk2jely0dcc9WF3dSm+VlN6yf+qjHGKosFoPv+NuSoCrAw1RKyElB0Pzqp
+	Kutd6uF+NGBBB/w5cI1sMTo1YElbNURsekhga5M2JOKNX47FbbQxH3IoZQWxIV6qJgMxuTlEAoQ
+	RX2USlycx/DTYEkuG4TFxEQRWwwL9ZkFMhQHpq03NmlYz6+aGWnw+ATV8roGrkzDDtJUJGEoiwA
+	R5vrFfRAP8hk3B1psBH7C04VyFTVrvKzMCLtcB3IOk0uGpOeJg1ZryukoQ02kp50VX4J4lSZLNu
+	YFGbb/1CjiAW0RG1XNqpQYoz7mgTbTXz/JxJvlJtlUWBUP03Re7X9FccrZ/Hax87zkwQ=
+X-Received: by 2002:a05:600c:548c:b0:456:22f8:3aa1 with SMTP id 5b1f17b1804b1-45625e124d7mr69996995e9.2.1752673282204;
+        Wed, 16 Jul 2025 06:41:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJRzt4ZrxBpUrSXpkAxQ6hUJtt2LBR2xIpZnBXJ0UGI0iPwXmQCb3pqZ+bPkU+QpfZagZCZQ==
+X-Received: by 2002:a05:600c:548c:b0:456:22f8:3aa1 with SMTP id 5b1f17b1804b1-45625e124d7mr69996615e9.2.1752673281743;
+        Wed, 16 Jul 2025 06:41:21 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1d:ed00:1769:dd7c:7208:eb33? (p200300d82f1ded001769dd7c7208eb33.dip0.t-ipconnect.de. [2003:d8:2f1d:ed00:1769:dd7c:7208:eb33])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e81a6f1sm21719265e9.21.2025.07.16.06.41.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 06:41:21 -0700 (PDT)
+Message-ID: <f5b7067f-7755-4be7-a376-d28070744723@redhat.com>
+Date: Wed, 16 Jul 2025 15:41:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] mm/mseal: rework mseal apply logic
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+References: <cover.1752586090.git.lorenzo.stoakes@oracle.com>
+ <1d6abf27d8eac0001f8ad47b13f0084ceaa6657b.1752586090.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <1d6abf27d8eac0001f8ad47b13f0084ceaa6657b.1752586090.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Convert the tidss encoder to use devm_drm_bridge_alloc(). Instead of
-allocating the memory by drmm_simple_encoder_alloc() use
-devm_drm_bridge_alloc() and initialize the encoder afterwards.
+On 15.07.25 15:37, Lorenzo Stoakes wrote:
+> The logic can be simplified - firstly by renaming the inconsistently named
+> apply_mm_seal() to mseal_apply().
+> 
+> We then wrap mseal_fixup() into the main loop as the logic is simple enough
+> to not require it, equally it isn't a hugely pleasant pattern in mprotect()
+> etc. so it's not something we want to perpetuate.
+> 
+> We remove some redundant comments, and then avoid the entirely unnecessary
+> and slightly bizarre invocation of vma_iter_end() on each loop - really
+> what we want, given we have asserted there are no gaps in the range - is to
+> handle start, end being offset into a VMAs. This is easily handled with
+> MIN()/MAX().
+> 
+> There's no need to have an 'out' label block since on vma_modify_flags()
+> error we abort anyway.
+> 
+> And by refactoring like this we avoid the rather horrid 'pass pointer to
+> prev around' pattern used in mprotect() et al.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+> ---
 
-Fixes: a7748dd127ea ("drm/bridge: get/put the bridge reference in drm_bridge_add/remove()")
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
- drivers/gpu/drm/tidss/tidss_encoder.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Acked-by: David Hildenbrand <david@redhat.com>
 
-diff --git a/drivers/gpu/drm/tidss/tidss_encoder.c b/drivers/gpu/drm/tidss/tidss_encoder.c
-index 95b4aeff2775..81a04f767770 100644
---- a/drivers/gpu/drm/tidss/tidss_encoder.c
-+++ b/drivers/gpu/drm/tidss/tidss_encoder.c
-@@ -90,14 +90,18 @@ int tidss_encoder_create(struct tidss_device *tidss,
- 	struct drm_connector *connector;
- 	int ret;
- 
--	t_enc = drmm_simple_encoder_alloc(&tidss->ddev, struct tidss_encoder,
--					  encoder, encoder_type);
-+	t_enc = devm_drm_bridge_alloc(tidss->dev, struct tidss_encoder,
-+				      bridge, &tidss_bridge_funcs);
- 	if (IS_ERR(t_enc))
- 		return PTR_ERR(t_enc);
- 
-+	ret = drm_simple_encoder_init(&tidss->ddev, &t_enc->encoder,
-+				      encoder_type);
-+	if (ret)
-+		return ret;
-+
- 	t_enc->tidss = tidss;
- 	t_enc->next_bridge = next_bridge;
--	t_enc->bridge.funcs = &tidss_bridge_funcs;
- 
- 	enc = &t_enc->encoder;
- 	enc->possible_crtcs = possible_crtcs;
 -- 
-2.39.5
+Cheers,
+
+David / dhildenb
 
 
