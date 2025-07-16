@@ -1,165 +1,134 @@
-Return-Path: <linux-kernel+bounces-733849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5BF0B079E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:31:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C9BB079E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1601891E71
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:27:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C211B1C43331
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89F526E143;
-	Wed, 16 Jul 2025 15:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480FD19DFAB;
+	Wed, 16 Jul 2025 15:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="Jda32v08"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pMKWZ2Dg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC201ADC97
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6DB28CF40
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679635; cv=none; b=P1ODk/SLDM70Kja3H1iQiMDh9Ah9EiBKyEWpe30fyzQX/H8cOz7eGDWxjDhnc6q/hTwn3VyqzrQNQ33yVIayyRQCYizKaVhrZq2D2gSSaG0kA6rupTVd4d+AMkYQzsmPwTH05aHEeFY1cpn5g3XFdNgScNTAV72nJEmWvFZznxI=
+	t=1752679699; cv=none; b=OxHMiWzgzpcnlonGFXcEVeqyC/+TlALR6vA8vOqW9ESUGIE8jMAdKlh4P6v9IqFBQnQaZcDHhWrrjCOgG/jZH0Q8E0X2VaTtJsRteN+++FoXQ0pf7B6BZTui6IfqhJAL4EBe+VYKNj1FaF7JrHsIzusSqBFsJX/7MZnfwaUVJts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679635; c=relaxed/simple;
-	bh=c9K3Jeyllh9acXj8/pMhkma1YgpPHnE/1br2gKtyXNY=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=V8Z8oebEzmJYO1fb4g1qW3lCqZayyagj86t5yshLOh/z5Ed3dQiu/G1nCXYB6dWiOyZfVB+1DJcS+9IFD9f9T4NCqG/c6QGSvPEz6LvAsq7GzrFl6JQ5eZXO0xF7n6i6Ka+q7S/NJM1IURYxe7klIAxCZ/KwHcQe6lKinJ1Ui+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=Jda32v08; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7490acf57b9so42859b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:27:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1752679632; x=1753284432; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DLHXWx3e4qVyWFktNcTinbMTNqw3Gsd0ZZ2hzOlFYG4=;
-        b=Jda32v08Ah3rz+x38BsvdPZZ3V0SZnG8L0Djg/kNAeZPOo9/eUMf+IqEJXuItY+b01
-         ZI5XgM6OLnZW6DVC8R6Nx/90sPNJs48hCN5qTv5Oye/NPE78822As8XfFTynMlTDFCdH
-         rhs+QFuV7aT6qhEa+DgL2rWkYNa4jL0StHtJ27vt/ZbrNagfDYH05XS3pVkvKFCI1NKs
-         mzkNzIU90Xghu3u3Clxr/aFyYdVc1uZFK/8bZokk/PF68fXahuLF/Vu3glSV3deQM4Zj
-         xAYrhwn9pkJ0lQWxYapYxobh23KFIgDqmgC90aUTbrbZ+AEPbw7GbHpI0FsJNgdkQC78
-         s5Wg==
+	s=arc-20240116; t=1752679699; c=relaxed/simple;
+	bh=HwJpo57RFu4YKFi1G/WbvBeaj5ntOXvHLOhM/OG4UqY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hGiAE+NpcCbbakThrZFBUftorHOxmghjpQaEuSpsLWKv5nCh6EDeomakntpSFTOoXyR1oLnxKsvzCSXoMf5/EXLXNpsKTo3eszCgVHW7l1PUrARSqxG2l5tLbikE/8AKJSmeKWKWZmjqFzWwknF/Abb8MsoVa0SZOZr7JWiASBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pMKWZ2Dg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G91HEv012368
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:28:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=VZKMCsHazxjdkqYHSetpbR5/PKn4CY0xIoo
+	KMOHaHjA=; b=pMKWZ2DgSADpm8HEqZuibDX0UBDDw9AST1FpgKSwjj2Jy+95/dP
+	2NOQQMe0iNEtHHSEbSh81azFQUpxNV6zwu8hZMJTusGiygCOwVl0i5J/mjiRewY4
+	CNmQWEXPHz2aPXV8xTEsqFPFJSKQLaTKixIU1HkEZoaeDpuxhAJfkhPlBOW4pvEG
+	QzOj3qfpixBxJsbJw7jiS2C6iOFadoSo6s2XQIV46Hv0RF5kQcAaXVfSVAR0QAGY
+	Mhn/X2XhSI+9HY/QaF4vYMGlaJO412Wt+fLw77k+u2Y74tJMDlQe1cUhCqU+am2W
+	oMX6vhRWGgSdB2okQax3i0rgrN95bYZKWHQ==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47x8x7h9bg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:28:13 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3132c1942a1so44883a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:28:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752679632; x=1753284432;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DLHXWx3e4qVyWFktNcTinbMTNqw3Gsd0ZZ2hzOlFYG4=;
-        b=PajmsAFmGe0wgpUBybSgvL6MzUrnxfznaViVxlAnANfYJtihcAWmTE9QIcYl3YcHqw
-         V7oYg/qOKUdPtlparCkArns1XUOoHUUB2WsLF31MxGWllJaQI6LHQbFoXC1+pLRRIK75
-         VNewyn4rdGEl7juIrSAKE2SmLs1hKAJhnl07BM3T1vossdamz+jwGVvNJLXtOdkNUJnt
-         H5jS6UWK3rKnaDHZS8OU27nX4NkOWmCY4uyM+9Mk9Tb2M8xeFHJ64N+wuncoU1wgvRpB
-         3yJvh5Zm0ev9G7kmjeOeMVaU8cG1lWv60SCzVvjXI+83Soqsj2BwsQ/ADHTieWxjal3q
-         zq3w==
-X-Gm-Message-State: AOJu0YyIqNHSUhOJ07hYz3fKbaY4+2vS6jfjkkmTTw9V9jLRj8I+RZDr
-	f0/oph7eer84J0M7xoUzSDqFNOwQtZ2ogeTPaV+MF6iXBN7pyePEg2NDO7b8wBE67LkBhjMEOtA
-	YwFpLz9c=
-X-Gm-Gg: ASbGncv8Y6Zh+DdyxdVkwgo5CISu4yTPLM4YWAgo6oCZFxXQJw6ncDgPYiVmeftmRbO
-	1Vkrc55QqsjbANREa6j4EkBewvTqhwROmOmb/FLO/ZcoXzTJgUaEXVbAm0Sz4lRGRP7O3BWbBsv
-	sRit860LuuVPcrf5JZcnXeOSWb61YLFHd24rBFsaOUN0eTOHrxmEE5aghbxpuT/7GJbDemzuREX
-	XQxcbvbdJpc3VZTAU54b/J/J3TfTJy/WTZPhNI86iEdxqEYQKCe1xEpu4r11bJIZFkzrnDcE43L
-	NUd7FlVv8/qME7DZnJSc9RIDu82srHLSDwDYU0hg4/grLCYKuudiEW9lMv/iWxNwbZlgQtMGDQC
-	X8xeOunav+2HvdKc1VxAN
-X-Google-Smtp-Source: AGHT+IH7iBG8I47ZPk3kjc8DlfJqKS+H6u2KneCpl6yYfAutQXIcMVrF/w+WWdKN0EwIATcq6Y7GTg==
-X-Received: by 2002:a05:6a00:22d0:b0:748:e0ee:dcff with SMTP id d2e1a72fcca58-75723d7d2c8mr4843826b3a.11.1752679632185;
-        Wed, 16 Jul 2025 08:27:12 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:500::4:b02a])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-74eb9f22c01sm14929679b3a.101.2025.07.16.08.27.11
+        d=1e100.net; s=20230601; t=1752679692; x=1753284492;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VZKMCsHazxjdkqYHSetpbR5/PKn4CY0xIooKMOHaHjA=;
+        b=IboB37zYsHUcBMaYgeNh7zE8pWK68csXjait2KnUGert43+1cAG+xeLzbbtRixhOfj
+         uT3jHEX3rxlal2yGyRaP8QU5DthcATfO7yHgF9xh7ZSKrbydGGSHijhXsdSdoX/YhtZs
+         4ln3pRYHDwENIbFfnhg9pKpx0CYvnsErdLmYynQjCcmCw36rxDpOF+OzqjjfVOoGaMMX
+         hxZVbGj66UgKsFMBUTIDRJdzteCVKXBfhh7fjU8Xcii7wKQSDgda0jA/cdF5yzXsNJAz
+         vgO9RuBXaye/hkcrKs3FArdkx0GHdl3a+4RW/m0VoYdGFUvb899URTxQEEDryjLQhf17
+         5jyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeUc+n7CNHCS+uVhMVpezCJExWddGLi2qUr5+sR+4zfqVcc96RUfItHVLBByTuCGUX0kJCTPHEj9XM0Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLSiB6zoBx2AdAonsxjQ9ZZADj6ioTCtWG0GLOPv3eEFTF42Zu
+	soFDd/mOlz+Sd2Xw8ku/oWSYZGAlSrgjLAaE4/QjZl51bxh065K91RaOCwsm6BrvfBpW6+CcyfA
+	iRGhQa7E9J2ERz+TCiXl0Ud9kL4f9PTkE43annTRwNEjomTiZTnKg6W4lXQ5uHpvaU9k=
+X-Gm-Gg: ASbGncvACvTyBA7wLzuCCPEYZsAPwsptjpxxxMfkJcsxSr+IYhQQ2kWW4jq71QVLZF8
+	wlWKmW/5nQM2E7YvXB5KtoHA+ByU1BtSrobLGC7e9x9AYlaeG+xCUQmSe7bJvdB1S2EOpRLHadr
+	2ZG8EHO3hGW5L+agdj1syrdfjniWZ6eG711ICzxzZk+fO08n9xyz4SJzmWhBiVn/i2TtP54felu
+	WGpiISsAf0UnSL4gelklXgp/pf2VcGGzFRsQpPxmUvuu19OzUz1wyuNjaJ47RreJxbnWLTtc/uZ
+	XI97AdAkgqZZ0YQ6/P+QflpJOi2/DgOzwk2EqTMotShHKE/aqK12RahGcXjVP1HgItmQsMuXLwt
+	uslIrUkjvQzSvlM1H/B+GtL592y5CpA/1K/cOSSjOLzOzFDp3zDR9wzqxG/Pd
+X-Received: by 2002:a17:90b:2ec7:b0:312:eaea:afa1 with SMTP id 98e67ed59e1d1-31c9f4389ddmr4109797a91.29.1752679691816;
+        Wed, 16 Jul 2025 08:28:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGK4dc/pwGVIwFcWXELIY47gNpp4QXWUC2QB+vNktvv5F/caCsYlOFCAErMO4+m+GGA3ZhrXQ==
+X-Received: by 2002:a17:90b:2ec7:b0:312:eaea:afa1 with SMTP id 98e67ed59e1d1-31c9f4389ddmr4109750a91.29.1752679691396;
+        Wed, 16 Jul 2025 08:28:11 -0700 (PDT)
+Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f20e87bsm1688563a91.35.2025.07.16.08.28.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 08:27:11 -0700 (PDT)
-Date: Wed, 16 Jul 2025 08:27:11 -0700 (PDT)
-X-Google-Original-Date: Wed, 16 Jul 2025 08:27:09 PDT (-0700)
-Subject:     Re: [PATCH v5 0/3] RISC-V: Add ACPI support for IOMMU
-In-Reply-To: <20250716104059.3539482-1-sunilvl@ventanamicro.com>
-CC: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-  linux-acpi@vger.kernel.org, iommu@lists.linux.dev, Paul Walmsley <paul.walmsley@sifive.com>,
-  Alexandre Ghiti <alex@ghiti.fr>, rafael@kernel.org, lenb@kernel.org, tjeznach@rivosinc.com, joro@8bytes.org,
-  Will Deacon <will@kernel.org>, robin.murphy@arm.com, Atish Patra <atishp@rivosinc.com>,
-  apatel@ventanamicro.com, ajones@ventanamicro.com, Sunil V L <sunilvl@ventanamicro.com>
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Sunil V L <sunilvl@ventanamicro.com>
-Message-ID: <mhng-E714E5B9-0828-46CE-B890-9AE61C2E341D@palmerdabbelt-mac>
+        Wed, 16 Jul 2025 08:28:11 -0700 (PDT)
+From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+To: robh@kernel.org, lumag@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        ulf.hansson@linaro.org, konrad.dybcio@oss.qualcomm.com,
+        quic_tingguoc@quicinc.com, quic_rjendra@quicinc.com,
+        kamal.wadhwa@oss.qualcomm.com
+Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Add support for RPMHPD on Glymur SoC
+Date: Wed, 16 Jul 2025 20:57:56 +0530
+Message-Id: <20250716152758.4079467-1-pankaj.patil@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzOSBTYWx0ZWRfXx8NcNvx0Ly64
+ gi/qwMitGiV+jWBDv/xsth6i7lD1AVeqb4K9TxeWby722wvw5oSP07yelIabUy6dNQVEJE7jk46
+ 7ixPHAaFkntwOCv567TxX1+xbNVVbe9yqXPI5lEzBfBVbkEN40N0IbjCED4OMyGcnP2NlMpEoMs
+ 6clNa86oKFC7piV74jc5T5/A2hmO7zy+Jobea0M1tVUvU73Gn8U0G1kbjCNpJg6/T/sE0tv0gL3
+ mUASU9iHRvC+FOxFad5UZy8oyerHhpUZC2LHv767NkDhno9Z1wUP8ibemKSxvDGHsAZ4KZd9k9H
+ 7hnfv8fyV8nXpV/pQgYwCRnaIGJRXbaatvVfpYwJLNjf/WTSqFhMY/PkcvXSqTDZi0zOyMh/YA5
+ LLsZf0ibBr25U4Qk8kE6FxCQ54Yhyf4bTY7GHz1oaLTZvU4B0piZoUPmxC45rLwTCj1OaU8K
+X-Proofpoint-GUID: CUnfybp9ddJRIuJAVgioEhXhstd3Nv2Q
+X-Proofpoint-ORIG-GUID: CUnfybp9ddJRIuJAVgioEhXhstd3Nv2Q
+X-Authority-Analysis: v=2.4 cv=N9YpF39B c=1 sm=1 tr=0 ts=6877c50d cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Wb1JkmetP80A:10 a=76G38qL4IpClrheZAL0A:9 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 mlxlogscore=891 bulkscore=0 adultscore=0
+ priorityscore=1501 clxscore=1015 mlxscore=0 suspectscore=0 impostorscore=0
+ phishscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507160139
 
-On Wed, 16 Jul 2025 03:40:56 PDT (-0700), Sunil V L wrote:
-> This series adds support for RISC-V IOMMU on ACPI based platforms.
-> RISC-V IO Mapping Table (RIMT) is a new static ACPI table [1] introduced
-> to communicate IOMMU information to the OS.
->
-> [1] - https://github.com/riscv-non-isa/riscv-acpi-rimt/releases/download/v1.0/rimt-spec.pdf
->
-> Changes since v4:
-> 	1) Rebased to 6.16-rc6
-> 	2) Addressed Anup's feedback on formatting.
-> 	3) Added RB tag from Will and Anup.
->
-> Changes since v3:
-> 	1) Rebased to 6.16-rc5
-> 	2) Addressed Drew's feedback on v3.
-> 		a) Reordered calling rimt_iommu_configure_id().
-> 		b) Removed unnecessary inline.
-> 		c) Added pr_fmt.
-> 		d) Removed redundant rimt_iommu_configure_id() stub.
-> 	3) Added Drew's RB tag in PATCH 3.
->
-> Changes since v2:
-> 	1) Rebased to 6.16-rc4
-> 	2) Removed Anup's SOB and link tags added by mistake in v2.
->
-> Changes since v1:
-> 	1) Rebased to v6.16-rc1.
-> 	2) Dropped ACPICA patch since it is already available in 6.16-rc1.
-> 	3) Added Rafael's ACK.
-> 	4) Fixed few issues found by bots.
->
-> Sunil V L (3):
->   ACPI: RISC-V: Add support for RIMT
->   ACPI: scan: Add support for RISC-V in acpi_iommu_configure_id()
->   iommu/riscv: Add ACPI support
->
->  MAINTAINERS                          |   1 +
->  arch/riscv/Kconfig                   |   1 +
->  drivers/acpi/Kconfig                 |   4 +
->  drivers/acpi/riscv/Kconfig           |   7 +
->  drivers/acpi/riscv/Makefile          |   1 +
->  drivers/acpi/riscv/init.c            |   2 +
->  drivers/acpi/riscv/init.h            |   1 +
->  drivers/acpi/riscv/rimt.c            | 520 +++++++++++++++++++++++++++
->  drivers/acpi/scan.c                  |   4 +
->  drivers/iommu/riscv/iommu-platform.c |  17 +-
->  drivers/iommu/riscv/iommu.c          |  10 +
->  include/linux/acpi_rimt.h            |  28 ++
+Add support for RPMHPD bindings and driver for the Qualcomm Glymur SoC
 
-Thanks.  Anup came to the patchwork meeting this morning and asked me to 
-pick it up.  It only barely touches arch/riscv stuff so I'd figured it 
-was going somewhere else, but happy to do so.  I've picked it up into my 
-staging tree as
+Kamal Wadhwa (2):
+  dt-bindings: power: rpmpd: Add Glymur power domains
+  pmdomain: qcom: rpmhpd: Add Glymur RPMh Power Domains
 
-    *   e5efe466d9bd - (HEAD -> for-next, palmer/for-next) Merge patch series "RISC-V: Add ACPI support for IOMMU" (2 minutes ago) <Palmer Dabbelt>
-    |\
-    | * 368ed89f7ac9 - iommu/riscv: Add ACPI support (2 minutes ago) <Sunil V L>
-    | * 0d7c16d0df92 - ACPI: scan: Add support for RISC-V in acpi_iommu_configure_id() (2 minutes ago) <Sunil V L>
-    | * ea35561bc965 - ACPI: RISC-V: Add support for RIMT (2 minutes ago) <Sunil V L>
+ .../devicetree/bindings/power/qcom,rpmpd.yaml |  1 +
+ drivers/pmdomain/qcom/rpmhpd.c                | 26 +++++++++++++++++++
+ 2 files changed, 27 insertions(+)
 
-it should show up on for-next assuming it builds and such (it's behind 
-some fixes, so might take a bit).  Happy to do a tag if someone wants, 
-just let me know...
-
->  12 files changed, 595 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/acpi/riscv/Kconfig
->  create mode 100644 drivers/acpi/riscv/rimt.c
->  create mode 100644 include/linux/acpi_rimt.h
+-- 
+2.34.1
 
 
