@@ -1,97 +1,146 @@
-Return-Path: <linux-kernel+bounces-733115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932A7B07057
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:22:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE9BB0705F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA0197A5A9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C651C234B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6AF2EA731;
-	Wed, 16 Jul 2025 08:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2922EACE3;
+	Wed, 16 Jul 2025 08:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6rTud16"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ju9r0yge"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41C72E9EC4;
-	Wed, 16 Jul 2025 08:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A462EAB82;
+	Wed, 16 Jul 2025 08:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752654145; cv=none; b=eYF3Mii9WyfoX7AXu06zdj7yfEEaJDU9nUXl7wRpqHx6J9Y3XIorypYIcv0iUc0fPcgyGGE/TZLbvFAQNXbNcuIcJslq4Urjzwbu0p4UheSK/87wLHLZb41L0xWcETJxTU2dmtfM3cn7GsosONVefnKn0b4mDv9VxawjlO0bzPo=
+	t=1752654150; cv=none; b=PyPUsYMqow+KZfdNQOsWdxtx3WKjxudlI6j8orbfBw3v9n4Eb72CTN71UP/JcQT4YoAyWV5nUf+OXaOoMcizHMyyb28PlwkDgjIfLPnoCayPZutso7aRPnTcJME21WgxNIUcLyR6xVVQAaoDezFVYqd7xoK3MPRPUpm7x1OXU1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752654145; c=relaxed/simple;
-	bh=Xz46mLhAokL1btXLkGGLKHAclMSjaOP7HOtiwCqK/Ug=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A7HE6sYgCSi7qL0gCOm05RC3oJarNxMfhfI6uWEWkoreqlQMH2mb9g8cHR+K4dIqIZ4Twx/UqvJ7ztbmeZe/PZHPQRgB2nomflreeRp4M2eiZmt/eOi+67/72y/EjT/ti4pKh/aSL4cBY3RrplELVGkvslCcLPgYLDK90v7FVaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6rTud16; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24478C4CEF0;
-	Wed, 16 Jul 2025 08:22:21 +0000 (UTC)
+	s=arc-20240116; t=1752654150; c=relaxed/simple;
+	bh=V4D522z6UUEGIW4Wg6YSnm8NKzfzikRtghcHIDH2hWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QF994wi8pWN/2UI8sVYPhp326qGNHhCZql9NoN0jeXXYI0F28X0M0SJxvs2CmkQ5uGc/8r/3HmXzRsGhb1kUxcSyBLhVGAZZLAmJRXKnHywrdyRnrnS7UhqbdcKwnsxHLVJhI3aD9m5ZVN3IL4hjxf/0dciZ57udGGTAvPmAmaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ju9r0yge; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3AC8C4CEF9;
+	Wed, 16 Jul 2025 08:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752654144;
-	bh=Xz46mLhAokL1btXLkGGLKHAclMSjaOP7HOtiwCqK/Ug=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e6rTud16JkckzYWCCt0KclDXkbtntyGaCd9AAy3jw0Raa0FGEK0ASw6f6hpf7M/hQ
-	 V38jVUgRQpdqgYcJH4qRF3e5s2AfXDySX5EJehZOSDkyE+ZyuKL1qKYL8ZqmDLN2Oq
-	 jheb1BcSUNqRiYKWToyekml7paxC3GLSGAVzNePLCrEuPG3TtZCpl0yos1qoDmS/XR
-	 FXaR/jCbGGRGVDYbYt/MsYBW6t0kHyXBS8yrN+btxpV1apLmAVz94FwXsCaIE+8F75
-	 1DS+VjM+uhAmgknSmSRHvma+tACvW+IRSkbwCnqVpgK+UNQIPAQkQGmxucQlXzsaAD
-	 O6JrrDmC8jcGA==
-From: Christian Brauner <brauner@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] fs: tighten a sanity check in file_attr_to_fileattr()
-Date: Wed, 16 Jul 2025 10:22:15 +0200
-Message-ID: <20250716-abdecken-backpulver-576b9e593f38@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <baf7b808-bcf2-4ac1-9313-882c91cc87b2@sabinyo.mountain>
-References: <baf7b808-bcf2-4ac1-9313-882c91cc87b2@sabinyo.mountain>
+	s=k20201202; t=1752654150;
+	bh=V4D522z6UUEGIW4Wg6YSnm8NKzfzikRtghcHIDH2hWc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ju9r0ygeIoehctwwAmdbT/gnfDwO9Wx9CcOiz8KdX+fbbUUW44D3fiXaJL6ORkQll
+	 NStAgkyukkjf0jmlnc+7NmUNmVnsxXJtXtjpIEZfICw+MgHB6EukkgT+gI0GlE0ymn
+	 0sB/lbzBlumLdjrsptDrl/3BbpnNY4NxBxXo79i7geNfD4Ip4W7E7vNPGo6MQ+HL3s
+	 XNk3X9dbyeUezh1dNqRL+ALj9ijiDE+UH1Ko4if/JVXnV6dkA0fqgeaxcUjfplQznk
+	 hmsDIryCvejDyEO1edOecCZ/ea1g5mxVBovVrHfR3gaLjaG7eJTDw3g71cPoAdDVUf
+	 HMZZxthoAuLpg==
+Date: Wed, 16 Jul 2025 10:22:27 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Alex Williamson <alex.williamson@redhat.com>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>, "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
+	"open list:VFIO DRIVER" <kvm@vger.kernel.org>, "open list:SOUND" <linux-sound@vger.kernel.org>, 
+	Daniel Dadap <ddadap@nvidia.com>, Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v8 9/9] PCI: Add a new 'boot_display' attribute
+Message-ID: <20250716-upbeat-tody-of-psychology-93e2a2@houat>
+References: <20250714212147.2248039-1-superm1@kernel.org>
+ <20250714212147.2248039-10-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1197; i=brauner@kernel.org; h=from:subject:message-id; bh=Xz46mLhAokL1btXLkGGLKHAclMSjaOP7HOtiwCqK/Ug=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSUJ1qlHfyVn/Wqpq+SbUHBXItjnkJXGi9w69mqFIrZB ndN2aTQUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJGtNowMp5o2f12Weq/1jc2x 7QUiP/0S571kK45oWiAbLX/yWeHXIEaGbdH5668ee2vz2jQqk9up/yXXVKZsgSmFXHFOATsfndR kBgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="k6j22jwrkd2tjfpl"
+Content-Disposition: inline
+In-Reply-To: <20250714212147.2248039-10-superm1@kernel.org>
 
-On Tue, 15 Jul 2025 18:03:17 -0500, Dan Carpenter wrote:
-> The fattr->fa_xflags is a u64 that comes from the user.  This is a sanity
-> check to ensure that the users are only setting allowed flags.  The
-> problem is that it doesn't check the upper 32 bits.  It doesn't really
-> affect anything but for more flexibility in the future, we want to enforce
-> users zero out those bits.
-> 
-> 
-> [...]
 
-Applied to the vfs-6.17.fileattr branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.fileattr branch should appear in linux-next soon.
+--k6j22jwrkd2tjfpl
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v8 9/9] PCI: Add a new 'boot_display' attribute
+MIME-Version: 1.0
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Hi Mario,
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+On Mon, Jul 14, 2025 at 04:21:46PM -0500, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+>=20
+> On systems with multiple GPUs there can be uncertainty which GPU is the
+> primary one used to drive the display at bootup. In order to disambiguate
+> this add a new sysfs attribute 'boot_display' that uses the output of
+> video_is_primary_device() to populate whether a PCI device was used for
+> driving the display.
+>=20
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v7:
+>  * fix lkp failure
+>  * Add tag
+> v6:
+>  * Only show for the device that is boot display
+>  * Only create after PCI device sysfs files are initialized to ensure
+>    that resources are ready.
+> v4:
+>  * new patch
+> ---
+>  Documentation/ABI/testing/sysfs-bus-pci |  8 +++++
+>  drivers/pci/pci-sysfs.c                 | 46 +++++++++++++++++++++++++
+>  2 files changed, 54 insertions(+)
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/=
+testing/sysfs-bus-pci
+> index 69f952fffec72..8b455b1a58852 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-pci
+> +++ b/Documentation/ABI/testing/sysfs-bus-pci
+> @@ -612,3 +612,11 @@ Description:
+> =20
+>  		  # ls doe_features
+>  		  0001:01        0001:02        doe_discovery
+> +
+> +What:		/sys/bus/pci/devices/.../boot_display
+> +Date:		October 2025
+> +Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
+> +Description:
+> +		This file indicates the device was used as a boot
+> +		display. If the device was used as the boot display, the file
+> +		will be present and contain "1".
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+It would probably be a good idea to define what a "boot display" here
+is. I get what you mean, but it's pretty vague and could easily be
+misunderstood.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.fileattr
+Maxime
 
-[1/1] fs: tighten a sanity check in file_attr_to_fileattr()
-      https://git.kernel.org/vfs/vfs/c/e85931d1cd69
+--k6j22jwrkd2tjfpl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaHdhQwAKCRAnX84Zoj2+
+dmq9AYDxe/0Z5T43z0PYAkTEFn17IfyWd5PSFPwPt5sbAZu5sPFpkiTIYzsW8zQO
+FdVNAZgBgMbsfM0ASem/uZk2LHVlbNAmBeJms8JHF/ENscuRsyCN5ltCZOVlNZM0
+tOdrKjIKvw==
+=zc9C
+-----END PGP SIGNATURE-----
+
+--k6j22jwrkd2tjfpl--
 
