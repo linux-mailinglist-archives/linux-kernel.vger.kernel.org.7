@@ -1,126 +1,104 @@
-Return-Path: <linux-kernel+bounces-733729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CB7B0784B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:39:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73015B0784F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1251565A58
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58EDCA419C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758F925C81C;
-	Wed, 16 Jul 2025 14:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B587F262FC8;
+	Wed, 16 Jul 2025 14:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b="lZ/UvWGE"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mc6m4x4F"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232952620FC
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39029220F2D;
+	Wed, 16 Jul 2025 14:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752676735; cv=none; b=daL9mdSzy/RDgvK5NJzv/bQe0gZo8vvw1ItwLyIBTSLA7ZVPG7JWy8ydW0FPYA0powz6/ORHPVrgFeG9NfnLzT2tjJdhoJcXmN9a9spL9A+aGInMarnMU5bjnw+GkeO9k9zjJfsUhV8SoKbgGkYI4TQZA5D/w95JTZUQO6EWba4=
+	t=1752676814; cv=none; b=QsnKsE4VIINJkf1ljqdDd1UPFLwLk1mQdTgTur/TsRmlmA1Fn9q7FFhy06taT1VFKR2+7JgJUPq5yakYFJRjLOStEBrcWhcEUWMM7hYAPtEzfk+LoAKK4q77aHyD+QZEfjMAar0AGXXFsm0LNFnX7OiSXORKLPL4eGNKKGyVI7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752676735; c=relaxed/simple;
-	bh=G+S/L4vDU7ik5AAtN9qkBKBLi+s5yYxSyrlW2Liq+UM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mmJFwW06DfxAnFoVZ+MKt2QgfzqQPMyPI4w6pOQMgAtC1n/T/4cgKPL3yXBz1zU8kDGKySVgmknYVAf42w8Stj6ABHbkdLlLymJl21ON1wqS5T7XLdu6zqPnOQSAe4MfpPwBzfa7+4hZo+DoOi2iLKCt8jwnWT0c2QSZPS1SDdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com; spf=pass smtp.mailfrom=mandelbit.com; dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b=lZ/UvWGE; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mandelbit.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so47997135e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:38:53 -0700 (PDT)
+	s=arc-20240116; t=1752676814; c=relaxed/simple;
+	bh=kGOHToV1J7kqTOy5nhKX9N6MPzipS3aGSHKwSahMaZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h6ISP92SNqN8ju88Jz0tiG9rudW9+nj/7vXQgNPDKB4WNxRtvsJIxnqPjchd4QDae90rHe6NdMLbOGssEIa7rqADM3LnM9sQ2sAkKhACbJsxXEtHrV31WzMYLK+hD7NNHbHGMLusIn1vpAQ3xQRc1Ke9DpiIiytemPTxsQac2w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mc6m4x4F; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23602481460so63940475ad.0;
+        Wed, 16 Jul 2025 07:40:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mandelbit.com; s=google; t=1752676732; x=1753281532; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sa4++ALrt6t+/8Jjl/X2ucfX3WrNgLwrbp0fvXsZWM0=;
-        b=lZ/UvWGE/MQuu4NfytzroISBiP0LI/yNhRVG+lCK+09feSb1Bb41ecPMPzT0GOWvS4
-         YFkD1mkQVV75QBRS+G/WBDdvUQV+as+1AxSlZEWLlwTlOrL+I6v6RW8IK7D2YzGl4Nsp
-         IXuKuiMP/xRFIi0ZexOzCxdpzHVFOVAEnxo0U24B7bNh1XjAsBXLCZoSigo4Ak4GXGMl
-         OUkIgThJM22zPS60zzFTxd6mVPH4zrpNFbtLAA37sjjGCECglcVgYuQjAerqOWF59MkJ
-         H+LwIOoxboMhIUh0lNb2rXHuoEGsf4Yrmns/CWqy6YaKWuDJb0QMKetgWJ55BZg2d8Jr
-         zVvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752676732; x=1753281532;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1752676811; x=1753281611; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Sa4++ALrt6t+/8Jjl/X2ucfX3WrNgLwrbp0fvXsZWM0=;
-        b=I3l1CSVcb9frh1t3JxeyoY9E99aYpSgyrKvKMcVl1mBiaMgYkuT3s8S3BYQyHWpi/Y
-         p279Tjq4t6CDwSFzOkLvs0ygHX0h+T0V+UmcJnic8RDlRyNlUT2MwUo4Oi0ugEjAA6l1
-         H/Sqn9cEoZQ+++NyMXNxw8cksuw/bt3266mmpir3lEzJffZ7lynn361YzJ/RP0LNNmTq
-         FFBet1aMAVjeswAdJEBqIzrFjCBXnKTSmuk9QuJvaPYz8R0zfj3gfqmzqZmfUwZtZzoE
-         kvGFGRdy0rfH3cuMAtEJhRvnEhlVO5bmGJ3Br25HlsloY9ZxwJ38+4q0tVaXOZUAy1iM
-         C7TA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0YbKJRBHelnRIeNmTiQHHd4Fu39XIiHc9LUA4NXoSRNheCzjs5//aS7epvccWvbjE+/ruXHQU42PvKxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7QnYS1xcib7zDbmx15Qeer8wd9jJylKhzVvR9z6WKkGkZbwMJ
-	eYLCGOl7f1J1SqIZgZ6r4LFbb4Pb3KHLq8uEEoL4bZ6kvCDqkYfpv/VkUx5XjQ/f4aTOQfvwNvY
-	unqdV21E=
-X-Gm-Gg: ASbGnctPOwHKm/wbSeOc1hBpMjdlGkzWl6G6QlncCHR5S1nbuCWeN8FzaXGQnYpj940
-	vem5YXHWdKXl7EFs4dKPzlzyvzAcgWVLCImq2LOVq8Yqr9e9SWaVm4YF1gm2t4rorOls4qtMva9
-	1DwsSqI+izi4MqRv4TbF6ZnxKMK0s6lapGjPYFb+EDVADzi859MXQfEqNRZ9f565FrIHe+2kRgy
-	7P1O2ciOC7Okj5qkTjL6Uwcaii+ZxcX6DNRkdMd8i2ZeEjrQHFfXKBOLkQ0h9NwlRRC9PUjA0AW
-	/2KmqNZSaRvqIpqyO1DudX6CfO2fCGyvUEDAFXp/fSmwDbpbH9u/ICMHU+qYM4JCtOA+tB1mbAv
-	NazO4uVTGAdEZkHhnIwAQsoOOBXc1nhZA7E5Emz5VP0LawP7L
-X-Google-Smtp-Source: AGHT+IGf2Nv6Qpohj3Wa6bab7v4TtpxjOwm0RwXHgagimM5JxzC2vsSdod5ASrIKxtXObfnaxVfabw==
-X-Received: by 2002:a5d:6f16:0:b0:3a5:2d42:aa25 with SMTP id ffacd0b85a97d-3b60ddc6025mr2426874f8f.50.1752676732281;
-        Wed, 16 Jul 2025 07:38:52 -0700 (PDT)
-Received: from inifinity.homelan.mandelbit.com ([2001:67c:2fbc:1:96ff:526e:2192:5194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e14e82sm18202521f8f.71.2025.07.16.07.38.51
+        bh=pRuI93NfBbD4JMygr13VWxhIviExAdSOd88w8cYV4VQ=;
+        b=Mc6m4x4FHg9txu6e5HbtXULFG8nq8ZZsaT5oLv7DeT92uKchtH29Jyzhv696rcgoiz
+         6I5x+z1LdAklN9znh++nBGD+jamaOzRXmtlkSdvBzcxSdRWsiro8dsMC6Sfa6Ys2ayBT
+         axBkc8vJFFKaKd+rLiF6UJlkVfn3kF523a1PK+KzRmyj75RADJa1NGjFrLc21X/zH9NT
+         2AQJF77tAZS7ov1+HW8OtrEccXa18C1KUg1ygmu6U0OMSuJSkdIR1gZVLw8/GbATSnSe
+         zhTdOByG0DW7sbmXcEdNPFO4lFJa0Fk6WvMVRTIr7Fe67B4dTPl666PC6kxZ+X4K6uAU
+         tDLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752676811; x=1753281611;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pRuI93NfBbD4JMygr13VWxhIviExAdSOd88w8cYV4VQ=;
+        b=jiYcsxtHON4zHYSxgFp+abzvVcTZLa/92u7eU6Ozp68o5iXAH8hz6QK9Jmh1I23n/6
+         2GKu2C8PbRjE6CuHAbADqbdwCxLQzK/fdkPDxvx1fHCLXBH4QYykcQSscLpWJYbz7Y7S
+         T3Go2ar5DwCfaARlPyBsHreRueewkz4oVv/Gxor+0Sl9LUtK4KihoQIgriht2X0wO+y5
+         BV1Bd0Jg7K06m5eNXGk31R7v8v4ob6345/iXen+KWSMJaXsjQMI0e/t1EPO7sR5R//Hz
+         mOC1kFYLAe3uJeC4rS/lsbuqO7JVR10ADarYh54T4hLUXtyE7lWw84QwID6KTHgfxmYM
+         EkmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgAvqDI3eGMajLyv3Z/chFVdvfMgAaJsBMxZvPbT8vIzitqL5Q6XretCFagTtgASwWKwazLYav3cJHwkMGeRg=@vger.kernel.org, AJvYcCVDfV3mL5dURNPoq7eWk/kDUJwExv06fus0FmwXj16WA1AYl7PnPAGSAg/apEaOX5K8wFQ0shEFGWca/ds=@vger.kernel.org, AJvYcCWB56kRSBLfTNsrXW/1kW2hYXCKBKvkw7CfpVsswCGNC1mEXguTPvKBOCMlZSPwpUbdQUjzRAGyATIw+N7G@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGHfiu9YFJ8uvNlmi1Wv5HhEFZ2RHKtiyKM/TuUEG3Cil2NBca
+	UaA1WdHgrM0CYwUXG2lOdrePtp2MtjMP71777E8T22P8ubwcjVa+KuiXKQag7A==
+X-Gm-Gg: ASbGncumvdSwFH7/gqUjZ64J/MOTKsDDrrPl2tH0S+jeq+YB23VLdtRP+dsOJ+bE5r5
+	6JnirAMZd/mHjw3EzvHHhZcR8wIivtaCYX/ciSSdCUil/LAB0jb7F1nHU1Ep+5lO5VDGwH8pt0U
+	54GiFLbc0IzvKqQAWro9TSRU4R3YamY7Rs933au/wqKJXJdd+1c/PQlcsjCBKEM0c0m4WDc8FqF
+	2buQ+oa9N7dWJksEi1AsXqRudtZqLpWICEOVbjT8LBLDRwICP0OOYP9KshR+cHNzRRRicZApsOz
+	4X2wrZL9li8NgV/C6YeMwZDENfXLDkIo4fwpm3TGJ0Ql9ADmIh9Mh66eVwb8/eoY7LWLt1fuoLz
+	jkTEuucQ1h7sK7qSZ6jdMB3qKKrU0fYFRKVo=
+X-Google-Smtp-Source: AGHT+IHf1DvUVwTjYng73AEZoysczEQhV7icrvRQHXOxfIiXakEuliCr0Pejt20CVRynR8ZyGms4FQ==
+X-Received: by 2002:a17:902:cf11:b0:234:ba37:87ae with SMTP id d9443c01a7336-23e24f3648dmr39945445ad.4.1752676811250;
+        Wed, 16 Jul 2025 07:40:11 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4333c90sm126851345ad.157.2025.07.16.07.40.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 07:38:51 -0700 (PDT)
-From: Antonio Quartulli <antonio@mandelbit.com>
-To: linux-nfs@vger.kernel.org
-Cc: Antonio Quartulli <antonio@mandelbit.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Sergey Bashirov <sergeybashirov@gmail.com>,
-	Konstantin Evtushenko <koevtushenko@yandex.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pNFS: fix uninitialized pointer access
-Date: Wed, 16 Jul 2025 16:38:48 +0200
-Message-ID: <20250716143848.14713-1-antonio@mandelbit.com>
-X-Mailer: git-send-email 2.49.1
+        Wed, 16 Jul 2025 07:40:10 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 16 Jul 2025 07:40:08 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] hwmon: w83627ehf: make the read-only arrays 'bit'
+ static const
+Message-ID: <a9e8e4f0-f933-43a4-9d2a-a56e09083779@roeck-us.net>
+References: <20250714155505.1234012-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714155505.1234012-1-colin.i.king@gmail.com>
 
-In ext_tree_encode_commit() if no block extent is encoded due to lack
-of buffer space, ret is set to -ENOSPC and we end up accessing be_prev
-despite it being uninitialized.
+On Mon, Jul 14, 2025 at 04:55:05PM +0100, Colin Ian King wrote:
+> Don't populate the read-only arrays 'bit' on the stack at run time,
+> instead make them static const.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Fix this behaviour by bailing out right away when no extent is encoded.
+Applied.
 
-Fixes: d84c4754f874 ("pNFS: Fix extent encoding in block/scsi layout")
-Addresses-Coverity-ID: 1647611 ("Memory - illegal accesses  (UNINIT)")
-Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
----
- fs/nfs/blocklayout/extent_tree.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/fs/nfs/blocklayout/extent_tree.c b/fs/nfs/blocklayout/extent_tree.c
-index 315949a7e92d..82e19205f425 100644
---- a/fs/nfs/blocklayout/extent_tree.c
-+++ b/fs/nfs/blocklayout/extent_tree.c
-@@ -598,6 +598,11 @@ ext_tree_encode_commit(struct pnfs_block_layout *bl, __be32 *p,
- 		if (ext_tree_layoutupdate_size(bl, *count) > buffer_size) {
- 			(*count)--;
- 			ret = -ENOSPC;
-+			/* bail out right away if no extent was encoded */
-+			if (!*count) {
-+				spin_unlock(&bl->bl_ext_lock);
-+				return ret;
-+			}
- 			break;
- 		}
- 
--- 
-2.49.1
-
+Guenter
 
