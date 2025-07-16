@@ -1,117 +1,189 @@
-Return-Path: <linux-kernel+bounces-733768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5C1B078B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:56:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7001EB078BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90EA3BD3AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:55:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46E76584AC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F052F4A09;
-	Wed, 16 Jul 2025 14:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135E726E700;
+	Wed, 16 Jul 2025 14:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rz5VRpAN"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1qYKzn0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079DC2D9EC9;
-	Wed, 16 Jul 2025 14:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465B4199EAD;
+	Wed, 16 Jul 2025 14:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752677699; cv=none; b=thumCxe9108MAzU8KxfCceCCa0IqiXqlndpaVL1RhK9UoN2OrTYmZrSamVqrlqLv7DLN3Y2j3WTNq0CuunH3dgY1DDYjiHD86vtW5CnrO7/zQlXcP/kiSEz9+wbNQl6k7yBGEln8VtJGBLpWNYN6rTEf5KDXQjAzESQrHr/D1tI=
+	t=1752677730; cv=none; b=kyCVrH6mWT2ERHc+4ks2i/ruJV0DeaWilROvElMzsrR66FgHloFtR8Hauuft5xwbYrEXMzj7YXGW9L9tqmfIik4WFfOGpUlgeXKcMqdxX1T8sTP8+HLp/HBSO1h6MwP2OaH1EamypmNYVYbkwmYqrMz8peG2D/Nwh5hkaXZax0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752677699; c=relaxed/simple;
-	bh=U1ye5zeGjQA3o/GBi32Tjzdw9zujFdi18wQ8p2INZ5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J0G6K/mcbE6/T2knaVf5RsE9KiLTH53Gs8rDDlkArJfxpnicAqe04ZiizaHN88Wl9KKXbSDdK+bRCbRGnaEZTs8fQaLsUj9DCFi8rNzteS3L93IYCy2zp1KDslxDBK226HfdMqMirE2jb5vhJubdzSPCVmukrjzBgsCFCJrwiJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rz5VRpAN; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-748d982e92cso13411b3a.1;
-        Wed, 16 Jul 2025 07:54:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752677697; x=1753282497; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mcqy95sD7qVdpf9tbc3dNKLz4mSDqVWr61ddzOReggc=;
-        b=Rz5VRpAN1BEUZcbQS4OnnCe94isTrT4yu7iOF/BEP52Nc5fYYblVtg5YGw2S4srD37
-         /zyOlOJEwvSyFtD8pAKt51g4jeYw6Z2NcKTv1s4xVzFlmPUdSiRyrkIz6B7NF7ukgByK
-         D6ixiTos1uUxJpDSmZCAquOnWxDjY33/fMwFBJvMpAFHmHbFti15x62Iwqbm23UyAhfP
-         j1dCAyP+HGa8tx2Q7vl7KkWbgpldJ/t0Q912qFqF1dAPtA+nbEYhByoVlaptIVIFWXrx
-         a0dGrSaK4oVPprFEU8x9th4grvRLOdpbFgMeXjvEussH47gt4bRx/aWgQtcl1VQthWF8
-         0iKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752677697; x=1753282497;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mcqy95sD7qVdpf9tbc3dNKLz4mSDqVWr61ddzOReggc=;
-        b=eSZM9C2qFLF1mn7hufAkJEv5rw6WOfWkN2VYEZIOgoC2ALd/c3EApXfASO1Q0HqJsp
-         3cHBfZD2PQ0ApIVsNLj/+qeLIjahoVUy2WrH8dfEx+x2pYDLlksrGaLtJhYAt1JRkHQy
-         AFK8ISgLMTfpRikAdRVg3Ixq5brN/62ltpz0EuBvIn2vbXFWsNZ65860whofBxFovK/3
-         z6c9Gu5SGj4MyhmAZbrb4RL7tSbylVSZFdMhdN26s8qOVoF/PKdCleMMXjQM1ueraJNo
-         4QWr571i8vJfiKKG0C5Fjqj3mQJAHBL6N0ZM4ZSM6/cREDeJAd4UDjdnsvFHf8X32Uwt
-         5ADQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoeQxOoAqn/Vn5o5ulXwhqGMGF1w8gn2818+VZ1H8+beY4M1o0ZbYBEVYo2Lfi3vc/j16z4yWNstXf@vger.kernel.org, AJvYcCWEJOO6C9TF9NPvnFYCjuaLzyRFU3E2C0gN8F0omX/SJIamcVAwbsxQl4aP2OxksoaOLbcgwmbDOKYvVVg=@vger.kernel.org, AJvYcCWbeuw0QnBMBqGUWrJn6X1SLIWTpode0UbRj0Nyc/W/GR8J8F+vNVrox6XYqmq9nVtVetMX/rMwgNoihAff@vger.kernel.org, AJvYcCXku48suPvUq1uWggXkveaFm0/gsxPsBVu5YsjMcDBp0x9hQUe9Udr4C1PH6BZ20SJhpnbBkKFCyXmg@vger.kernel.org
-X-Gm-Message-State: AOJu0YySJUZdYOXUho+/9r4QGCoSDYekC8HHcKOux1ILjOQZ6t75K6CZ
-	G7fmuYYffSZtsefOGD2VO59arfc6ACT0tOt4rNqAMOgQka7HYHYBtRvf
-X-Gm-Gg: ASbGncvfEVhVGxxt4Sxp+vd/wWrl7M3GmzPHK/EgVcDBkRt/KhIKZaaPmmjfAbthaYE
-	QDfTDjHrikzxAV8uz2b0N1HCFg4C8Y1m46eqCEYY3SxvKSQnSPrY0etU8V1324imp8WP+F2UY9/
-	uCu3C1uHXK47f1xd1aqgD54g3IRDKSzMWtCWr+2ZzE1Z5t6Gf5Vsw2JIWp7Oo90PZYZVXFn7GuU
-	Qq2zKmv3wfi42wFkOdAS3plVzgtQr8UGyIvTnLY71r6vALclwz92qXrie8x1JrmQ6Wv6Uiyxenf
-	0FYIQf0UCFjtEaov6DOwy57ZpIRx8NmWoIs/xkFJfed73vTWZf8eVjPEB9zIyJnlnDJnEBWSL9i
-	lEXe0+l7SpZARJ4xVW6L+06I01vGyo1YGtf4=
-X-Google-Smtp-Source: AGHT+IGnCbO6LNMPGJhCsUPnIx6V+qt4UYp7p1ebonKVVeiRo1ZGeX6yTN7zXwNrpc+3syhHDIn3Fg==
-X-Received: by 2002:a05:6a20:a103:b0:22d:fd6:95e0 with SMTP id adf61e73a8af0-237d66186dcmr6214394637.11.1752677697119;
-        Wed, 16 Jul 2025 07:54:57 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe579b0esm13908927a12.22.2025.07.16.07.54.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 07:54:56 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 16 Jul 2025 07:54:55 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Radu Sabau <radu.sabau@analog.com>,
-	Alexis Czezar Torreno <alexisczezar.torreno@analog.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] hwmon: (pmbus/adp1050): Add regulator support for
- ltp8800
-Message-ID: <988fecbf-776d-4ae6-b658-97fc2ecb6822@roeck-us.net>
-References: <20250709-adp1051-v5-0-539254692252@analog.com>
- <20250709-adp1051-v5-3-539254692252@analog.com>
+	s=arc-20240116; t=1752677730; c=relaxed/simple;
+	bh=SSReJtbBfV0veA8X/z68WJ/t9z1BMBY8PzraC8gu5yU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YJ/lZPEz3i4An0Uk5TQUWg36DBj2oxqtcG5eJ9SQtNFkIOcKCilRGdkgKpW8ZkM6rql9oeum8pGOiu4rG3J60pehOK9tq0RLKAq605gfLVrMR5IBKTMOdvQkKE3fkVSeQBW6Jg7wHvvO/e0yPTnbX4Gxp3umNiipLU0ZMK1D5RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1qYKzn0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5CF0C4CEE7;
+	Wed, 16 Jul 2025 14:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752677729;
+	bh=SSReJtbBfV0veA8X/z68WJ/t9z1BMBY8PzraC8gu5yU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n1qYKzn03Wc9+yFw8JqV8ahTpJfCeQG/DtQ5e2WZ88DPzmzCRj+ykJSkoeW+SpwS7
+	 JZEDMBT4m7b+zEYGViiu2FcdKozcNKUlVr6w1O8VHOn+eOp0JCcazI01fzJYKP/Xc3
+	 MOGB8czviloprHFvxcq2yoBfc4y0ebCHr778FkCfINmVk5/CaRqLp1PufSbRz4ZKEc
+	 CRGiwrDGavzrXSO8yV/olz/dVVkZdgueCNxwNY2l6BoEurYqxINmsamtC5rgeKTcFv
+	 ZBkHRH3l5k1lHEI+G4O7ZJ0+67vIoGFQ48lRwkkONFTQvaFBOG642e1yUrBb62ajxE
+	 j9tSK4qF1O7XA==
+Message-ID: <ae6d333a-f3b2-4463-b930-b4caf56b39f8@kernel.org>
+Date: Wed, 16 Jul 2025 16:55:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net v2 0/2] selftests: mptcp: connect: cover alt modes
+Content-Language: en-GB, fr-BE
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Christoph Paasch <cpaasch@openai.com>, Davide Caratti <dcaratti@redhat.com>,
+ Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250715-net-mptcp-sft-connect-alt-v2-0-8230ddd82454@kernel.org>
+ <20250715185308.2ad30691@kernel.org> <20250716072602.386a8963@kernel.org>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20250716072602.386a8963@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250709-adp1051-v5-3-539254692252@analog.com>
 
-On Wed, Jul 09, 2025 at 01:43:27PM +0800, Cedric Encarnacion wrote:
-> Add regulator support for the single-channel LTP8800-1A/-2/-4A
-> 150A/135A/200A DC/DC µModule Regulator.
+Hi Jakub,
+
+On 16/07/2025 16:26, Jakub Kicinski wrote:
+> On Tue, 15 Jul 2025 18:53:08 -0700 Jakub Kicinski wrote:
+>> On Tue, 15 Jul 2025 20:43:27 +0200 Matthieu Baerts (NGI0) wrote:
+>>> mptcp_connect.sh can be executed manually with "-m <MODE>" and "-C" to
+>>> make sure everything works as expected when using "mmap" and "sendfile"
+>>> modes instead of "poll", and with the MPTCP checksum support.
+>>>
+>>> These modes should be validated, but they are not when the selftests are
+>>> executed via the kselftest helpers. It means that most CIs validating
+>>> these selftests, like NIPA for the net development trees and LKFT for
+>>> the stable ones, are not covering these modes.
+>>>
+>>> To fix that, new test programs have been added, simply calling
+>>> mptcp_connect.sh with the right parameters.
+>>>
+>>> The first patch can be backported up to v5.6, and the second one up to
+>>> v5.14.  
+>>
+>> Looks like the failures that Paolo flagged yesterday:
+>>
+>> https://lore.kernel.org/all/a7a89aa2-7354-42c7-8219-99a3cafd3b33@redhat.com/
+>>
+>> are back as soon as this hit NIPA :(
+>>
+>> https://netdev.bots.linux.dev/contest.html?branch=net-next-2025-07-16--00-00&executor=vmksft-mptcp&pw-n=0&pass=0
+>>
+>> No idea why TBH, the tests run sequentially and connect.sh run before
+>> any of the new ones.
+
+And just to be sure, no CPU or IO overload at that moment? I didn't see
+such errors reported by our CI, but I can try to reproduce them locally
+in different conditions.
+
+>> I'm gonna leave it in patchwork in case the next run is clean,
+>> please use pw-bot to discard them if they keep failing.
+
+Oops, sorry I forgot to reply: when I checked in the morning, the last
+two builds were clean. I wanted to check the next one, then I forgot :)
+
+> It failed again on the latest run, in a somewhat more concerning way :(
 > 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+> # (duration 30279ms) [FAIL] file received by server does not match (in, out):
+> # -rw------- 1 root root 5171914 Jul 16 05:24 /tmp/tmp.W2c96hxSIz
+> # Trailing bytes are: 
+> # w,Ñ)-rw------- 1 root root 5166208 Jul 16 05:24 /tmp/tmp.s33PNcrN6M
+> # Trailing bytes are: 
+> # (<v /&^<rnFsaC7INFO: with peek mode: saveAfterPeek
+> 
+> https://netdev-3.bots.linux.dev/vmksft-mptcp/results/211121/4-mptcp-connect-sh/stdout
 
-Applied.
+I see, the error can be a bit scary :)
 
-Thanks,
-Guenter
+If I'm not mistaken, there was a poll timeout error before. When it is
+detected, the test is stopped. After each test, even in case of errors,
+the received file is compared with the sending one. So here, this
+concerning error is expected.
+
+Anyway, even if the errors are not caused by this series, I think it is
+better to delay these patches while we are investigating that:
+
+pw-bot: cr
+
+
+> BTW feeding the random data into hexdump-like formatter seems
+> advisable? :P
+
+It is just to check that the CIs can correctly parse random data :-D
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
