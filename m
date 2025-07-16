@@ -1,107 +1,165 @@
-Return-Path: <linux-kernel+bounces-733166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371FEB07115
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 450BDB07124
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA1A216AA3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0A816EF48
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731C02EFDB1;
-	Wed, 16 Jul 2025 09:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B408B2F1FED;
+	Wed, 16 Jul 2025 09:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gl8dgrN1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i4oDevIE"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="L3BF7h5F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B782F0E40;
-	Wed, 16 Jul 2025 09:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7582EF9D8;
+	Wed, 16 Jul 2025 09:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752656565; cv=none; b=EwX/Tzo7P8ibBtu2f+H11VYtUGzAldDkcn+8sf0sA1xtXRhpPQBfnoY6AwGpgQnBmSpLgmauCohbON/qdO/z4zEVk3OwuKdhFrkBM+wFVfFxrRtuSJJy7znSZOHWSbeJzoJYC6Shs7CpYdMYpbaAGoItHPUQmylh+SgV5BUeKcI=
+	t=1752656849; cv=none; b=HUUAqa8gf+DbKWH7Ywje1ptzzZwBMetJI2GrRi0jIolLp1VfCjv3qmrGzcOIBIAzZb+o9JCr2uGwvrgT48fZwoGIVi9bFv7wEWKAG8nhSDNlVoigjtD9rXMhToHVbJ2UVbwJxm1uFlW805RV8NsZTU9AP5YPe3JrkJvWBz2z9ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752656565; c=relaxed/simple;
-	bh=/0PfMbumNAsfChajc9mgwsYf0L1/3DMCYxgGQVts91w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBilvowDIT90Q13gkUgDNH5nqpTUVGc8kYA/TcpU6mDKawPxK0uNA3h69PKO8dnV2JOQiga4FLP8czOJxuyPJWtmTPbpUeWDTDFNwYgPidTyZ25PI98RhzWAQMXgEdHcnj82TLlR7sJ3tHQA8xdv1Ptunlvw5rsPKNKHQ8h1CfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gl8dgrN1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i4oDevIE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 11:02:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752656562;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LefaMQdcauIZipAnc8MzRC5S+mCYs3SiWJQQzgsufic=;
-	b=Gl8dgrN1WVT/bJJjW2FYsh0+y1V4vwcNO8P2pbPdvp4yS6iCAvgKkhqKoGbUTjnu9/W3+N
-	MK7nz+IQFLh+ZcavmK6MznMhvK5KpdqfA88MBnQ56jvJJSlIcXZA9V+dSs6sagQJdEve/1
-	0bRgwA9+G1rk17pLBe2FmCUqhxtgoKo0IqJzVBj9u+V5LJK/PElh9b/Nfm80xxek+VhjFA
-	A1Csj51uAmF3wfeUN3G8M22Sd9KIQUWQ/utD3M/KtYtOk5ZfeMv6EJel6YASdPBgc3NchS
-	qoSy6lhKk2yVIQiQvUAq8D8Ie8p7dXo45PJndhmoIVvKuFvYxVg0mXglnI2xAQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752656562;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LefaMQdcauIZipAnc8MzRC5S+mCYs3SiWJQQzgsufic=;
-	b=i4oDevIEI+4V11wZBqWyZ27066LYlNA6OjJiYWjyAstD4JiH3sHuEGopjAqrzJI1/gFU/X
-	BBVrOLPduBANksAg==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v3 11/17] rv: Retry when da monitor detects race
- conditions
-Message-ID: <20250716090240.PHfqyEfL@linutronix.de>
-References: <20250715071434.22508-1-gmonaco@redhat.com>
- <20250715071434.22508-12-gmonaco@redhat.com>
- <20250715152322.Os4lDq_B@linutronix.de>
- <e2f4f8d372612cd61689b91562e73677599d08de.camel@redhat.com>
- <20250716082712.L9z_ptHK@linutronix.de>
- <f7028488e9d820848955de87ead3ec619fe5dbec.camel@redhat.com>
- <20250716084520._QLbd5AY@linutronix.de>
- <37bc7ab78b03f4e794a5466d9cc0a1e187e1ae72.camel@redhat.com>
+	s=arc-20240116; t=1752656849; c=relaxed/simple;
+	bh=68baIQZipBWvEqXfir+r2Vrc9N9phFMApov6CxSC17A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aV0C/Rk6Elb5RadVc3XE2xR5ZJmFOhnW19kNWX/ym2p4FzCZzI86ik22jxOQQixTmzi3/R5+O7PZBnq+ZFLAmWojSRU4Rp1HqbtoB5um0C0VaNW0nb7CD+guBsJG9F9ClqZJ7NQbDYtRMozcy4dD3pf3tek7eE9SD078d/ZCXUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=L3BF7h5F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 684BAC4CEF0;
+	Wed, 16 Jul 2025 09:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
+	t=1752656848; bh=68baIQZipBWvEqXfir+r2Vrc9N9phFMApov6CxSC17A=;
+	h=From:Subject:Date:To:Cc:From;
+	b=L3BF7h5F7AbA9Kn+L744Re/+BlLj5CadRoZbiWdVoBlXLf9hJV31v+keEAhRuibXM
+	 BGMkJM4Z4TNQ/jKwnd9nYzcoTk5KXmoAEK5JXpuF52v6k6puztdrAD2j+GrvsLfThL
+	 BRiHno6HjLKJOiEjI6dZ8CqJOOHMuHoj9G5v18iE=
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58216C83F22;
+	Wed, 16 Jul 2025 09:07:28 +0000 (UTC)
+From: Richard Leitner <richard.leitner@linux.dev>
+Subject: [PATCH v6 00/11] Add strobe duration and hw strobe signal v4l2
+ ctrl & use it for ov9282
+Date: Wed, 16 Jul 2025 11:06:50 +0200
+Message-Id: <20250716-ov9282-flash-strobe-v6-0-934f12aeff33@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37bc7ab78b03f4e794a5466d9cc0a1e187e1ae72.camel@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKprd2gC/33Oy07DMBAF0F+JvMaVZ+JH3RX/gVj4FWKpTcBOr
+ aIq/45JF6miwPKO7pyZO8khxZDJqbmTFErMcRxqkC8Ncb0ZPgKNvmaCDAVrWUvHovGItDub3NM
+ 8pdEGapy0njGnfZCkbn6m0MXbor69P3IKX9eKT48hsSYH6sbLJU6npsgDSJockN9yH/M0pu/lo
+ wJL+9/jBSijrPNCGRCSW/N6jsP1dvChLF7BJwP4voHVAO6VwSO0HP3WaFeDo9432mogMOECKK0
+ Fbg2+GoKpfYNXQ6FFrR1Y5fTWEKsh4Q9DVEMrid4o7pkUz8Y8zz+HP+gl8wEAAA==
+X-Change-ID: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+ Richard Leitner <richard.leitner@linux.dev>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752656846; l=4286;
+ i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
+ bh=68baIQZipBWvEqXfir+r2Vrc9N9phFMApov6CxSC17A=;
+ b=q4TNjCSIDdfyrnLQKeBk3We50GB32ThqwqwAkk3YTn23rSF0CGdOYzfYqwXkLrImMDYTuUyoh
+ 2ezCp+Ne1haD8AV3XSoY2X+5/ptbx1NaY5skFbCJumnBAXH/y+3rszm
+X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
+ pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
+X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
+ with auth_id=350
 
-On Wed, Jul 16, 2025 at 10:59:44AM +0200, Gabriele Monaco wrote:
-> On Wed, 2025-07-16 at 10:45 +0200, Nam Cao wrote:
-> > On Wed, Jul 16, 2025 at 10:38:11AM +0200, Gabriele Monaco wrote:
-> > > Yes you can, but I wouldn't do so silently.
-> > 
-> > Why not? The absolute worst that we get, is the rare case where a bug
-> > appears at the exact same time. In that case, we would get a false
-> > negative.
-> > 
-> > And I think that is really really rare.
-> 
-> Well, we wouldn't even know how rare it is because we don't track it!
-> 
-> It may be a harmless note but might also be a design flaw in the
-> monitor, so it should be possible to understand when it happens.
+This series adds two new v4l2 controls:
+- V4L2_CID_FLASH_DURATION: "Strobe duration": This control enables
+  setting a desired flash/strobe length/duration in µs.
+- V4L2_CID_FLASH_HW_STROBE_SIGNAL: "Hardware strobe signal": This
+  control enables the hardware strobe output signal of a v4l2 device.
 
-Oh, so you just want to track when this happens, as a RV developer. That
-makes sense.
+As a first user of these new controls add basic flash/strobe support
+for ov9282 sensors using their "hardware strobe output". The duration
+calculation is only interpolated from various measurements, as no
+documentation was found.
 
-Just make sure it won't confuse other people who use the monitors to test
-the kernel.
+Further flash/strobe-related controls as well as a migration to v4l2-cci
+helpers for ov9282 will likely be implemented in future series.
+
+All register addresses/values are based on the OV9281 datasheet v1.53
+(january 2019). This series was tested using an ov9281 VisionComponents
+camera module.
+
+Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+---
+Changes in v6:
+- Fix "Alignment should match open parenthesis" by Media-CI bot in v4l2-flash-led-class.c
+- Fix "format string contains non-ascii character (µ)" by Media-CI bot in ov9282.c
+- Introduce new V4L2_CID_FLASH_HW_STROBE_SIGNAL control (as suggested by Sakari)
+- Implement V4L2_CID_FLASH_HW_STROBE_SIGNAL instead of
+  V4L2_CID_FLASH_LED_MODE in ov9282.c (as suggested by Sakari)
+- Drop "media: v4l2-flash: fix flash_timeout comment" as this was
+  applied (thanks Lee)
+- Link to v5: https://lore.kernel.org/r/20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev
+
+Changes in v5:
+- Improve try_ctrl for flash_duration by using DIV_ROUND_UP() and abs() (thanks Sakari)
+- Drop "leds: flash: Add support for flash/strobe duration" as this was applied upstream
+- Add "media: i2c: ov9282: dynamic flash_duration maximum" (thanks Sakari)
+- Link to v4: https://lore.kernel.org/r/20250507-ov9282-flash-strobe-v4-0-72b299c1b7c9@linux.dev
+
+Changes in v4:
+- Fix FLASH_DURATION implementation in v4l2-flash-led-class.c by adding a
+  missing brace and enum entry (thanks Sakari)
+- Fix format of multiline comment in ov9282.c (thanks Sakari)
+- Add missing NULL check in ov9282.c (thanks Sakari)
+- Adapt nr_of_controls_hint for v4l2 handler in ov9282.c (thanks Sakari)
+- Add patch for implementing try_ctrl for strobe_duration (thanks Sakari)
+- Link to v3: https://lore.kernel.org/r/20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev
+
+Changes in v3:
+- create separate patch for leds driver changes (thanks Lee)
+- Link to v2: https://lore.kernel.org/r/20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev
+
+Changes in v2:
+- remove not needed controls in struct ov9282 (thanks Dave)
+- Fix commit message of 3/3 regarding framerate get/set (thanks Dave)
+- Add V4L2_CID_FLASH_STROBE_SOURCE impementation to ov9282
+- Add new V4L2_CID_FLASH_DURATION control (as suggested by Laurent)
+- Use FLASH_DURATION instead of FLASH_TIMEOUT for ov9282
+- Link to v1: https://lore.kernel.org/r/20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev
+
+---
+Richard Leitner (11):
+      media: v4l: ctrls: add a control for flash/strobe duration
+      media: v4l2-flash: add support for flash/strobe duration
+      Documentation: uAPI: media: add V4L2_CID_FLASH_DURATION
+      media: v4l: ctrls: add a control for enabling hw strobe signal
+      Documentation: uAPI: media: add V4L2_CID_FLASH_HW_STROBE_SIGNAL
+      media: i2c: ov9282: add output enable register definitions
+      media: i2c: ov9282: add hardware strobe signal v4l2 control
+      media: i2c: ov9282: add strobe_duration v4l2 control
+      media: i2c: ov9282: add strobe_source v4l2 control
+      media: i2c: ov9282: implement try_ctrl for strobe_duration
+      media: i2c: ov9282: dynamic flash_duration maximum
+
+ .../userspace-api/media/v4l/ext-ctrls-flash.rst    |  11 ++
+ drivers/media/i2c/ov9282.c                         | 168 ++++++++++++++++++++-
+ drivers/media/v4l2-core/v4l2-ctrls-defs.c          |   3 +
+ drivers/media/v4l2-core/v4l2-flash-led-class.c     |  25 +++
+ include/uapi/linux/v4l2-controls.h                 |   2 +
+ 5 files changed, 203 insertions(+), 6 deletions(-)
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250303-ov9282-flash-strobe-ac6bd00c9de6
 
 Best regards,
-Nam
+-- 
+Richard Leitner <richard.leitner@linux.dev>
+
+
 
