@@ -1,113 +1,155 @@
-Return-Path: <linux-kernel+bounces-733457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B54B074E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:38:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CB2B074EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E623BDDF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8F01C2480C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA40E2F3C20;
-	Wed, 16 Jul 2025 11:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A352F3C22;
+	Wed, 16 Jul 2025 11:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vbxrXZop"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3qBQkwml"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506FD3C33;
-	Wed, 16 Jul 2025 11:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68E33C33
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752665916; cv=none; b=WyeTkzlpuRdK1XSNlHl3etWN1GbveKCMldab6dnOHjlZjjqKdah6tv2VOmY3M26tHy9Je6EMt6FhcGGX5Cf7F9iZWEnrw/sc8LbioBbmHBofC23lhPri+1/Efo8oopEwYs4jOQIUN8Mp2iU2rhPLKUwZ07Ypu4DQ8PeOlT4ThIo=
+	t=1752666007; cv=none; b=WLMuKUS5qbsCFAZien4vEpNcQGkTOyND+Wsc6lqp1s9pUSucEPG4HyYShvD22iC8VJtDcCBQoqR7hJ88BFP/FDq+DS5lid99ur+nX8bFP4rW1RumosTRxDzbU0i7Hd/QbF3mrabEtrLSEtv+eQwjrnPgXCpMcaW7IqPinpoj1y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752665916; c=relaxed/simple;
-	bh=aYdt8vGzptRRAO8yvatFkySIBrpm7hzEWvJLVWm7IhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WXAinxRr76E7jwFdF7TPibI9kTSYt6+PuWO1G5tUMTr2yeOcH2ym60xplvtBWctyYTdynzvPDwo8pbOTqzNVY/S1in6IJ0JUWqDFzVCrR0YcSYVlH343hE9yv4AlGQSM4+hQzS/ogPaZ0fnTKZikFSzyoLYB1AEv5ZPzcYmF9mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vbxrXZop; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 704F6C4CEF0;
-	Wed, 16 Jul 2025 11:38:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752665914;
-	bh=aYdt8vGzptRRAO8yvatFkySIBrpm7hzEWvJLVWm7IhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vbxrXZop0xLAJnO+POp93AJjjCLGckg43qzRwBuOgK5TI/GOUm0mt2og3RPqZwAmq
-	 qGmei+mYeJ1n7jRAQqULbWadMpOAWC1P7Ibymc/yysUU3n0UR2baCoX1vQLxBKwgvy
-	 BmNCXaMc+OtCinQDdoNTXJIWXGNvcfl3YeZN6ELU=
-Date: Wed, 16 Jul 2025 13:38:32 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas Huth <thuth@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-spdx@vger.kernel.org
-Subject: Re: [PATCH] LICENSES: Replace the obsolete address of the FSF
-Message-ID: <2025071620-economy-unifier-b5aa@gregkh>
-References: <20250711054548.195276-1-thuth@redhat.com>
+	s=arc-20240116; t=1752666007; c=relaxed/simple;
+	bh=CH9JMm/EUP3n6sjw2ka/+bL8HgEp7EvOJleoVtviRmw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XvShfU/KpXErjbFi0MLWB/fUBnliRPtvU8Hl3H46XZU2jAbm0ficPOTOszU9zUMobONnNbECvHZ+hAnXz6SZvSCuB84c5kg4XL5G0YOHF4cNdH4w7bKnZglfJInFLoFhuLcFh+F9KCBdtY8Si8kPqabrl5k4jAolVjfdq3o+G0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3qBQkwml; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-531426c7139so2779866e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 04:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752666004; x=1753270804; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PveaVmPwkhZLYXMIoWYWTWMjMxo+ogQMIDtsdfI/JrY=;
+        b=3qBQkwmlMAJquuT7XM4o+y5LbbHYec631V2beVLyXzNAHrBxaMuMBaGcBa3cijZHqr
+         lgBt/HH5ywp89AYe1Wy/dmCY9w/2S53rXdR0YnqMqULomkql79lWK5ikrWrwr04oYRsk
+         YMTcf/wRPmECdT/NVWiIt2iuZ/vsWfwpZgJebJxgbYiy02XSYL1tzl211HRdMVkko9Ns
+         gEeJ/HEX04fV61lgriebVCueXsPXyVkYRK9LBzR0BsqtYXf7/liqNRpq6+fEhICy3/Ue
+         9DcUhTynkv8BqsArCT8MvMlLPCTIFiZ9FiRqksSTEXyWzUgfE28BlPTl32j33cxaz3Kf
+         ARRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752666004; x=1753270804;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PveaVmPwkhZLYXMIoWYWTWMjMxo+ogQMIDtsdfI/JrY=;
+        b=J1Z5ekNJXq2lK7UFJmiRZ2uoo4QgG8elqfM0q7NQSy+JOTzVlLP/ZcX33c0nytHA23
+         K1TPmnp83TiMI47OmBQzGi+sRNqk4f3nW3DAmj4zd0Z0doIEHfWZ2ivTF9bNwqXdfCOz
+         wD6PTuPL3QD6zgdu/4+txQBrPSI64Bz1Q9nVEjsP74OA60eZPY2tYC35KG5ysu3v+pfU
+         ydLi5CzBAoZFEUbCmIfPRbNULXDtwgZP8yaOZNYi9MqkQnMvX6krT0WD/UdACL0ozqHO
+         55TO/fqrsobmREZymlA/lxMJ6l8UotY5EozDgvY+W5PCaZrsNe1QGSmudk2SDi/WwHBq
+         Ie1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWNpmpXb/5sLCcCKdsDh7Mj6w2ujGlHoLSSbcKxXRDC8iRfwXjP5L8xUUHCUGEOX0NgZGbgiHT1ZZifOHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9c3WYhvvD+MO+WR1QFeT3Hgos1n+mtG7u6Q+UUsmahuqeJ29u
+	R7bM+IX+EdbdXHGzY0cTZY+rq+sPrk2F1tQnvFc+TyD9rfAMkLByYtejCtg4e8FRXzhLgO+Yy2j
+	NnOr6R1tU25c5dmNNegm3r0hicxItJjGUmzuHUHlb
+X-Gm-Gg: ASbGnctG6ArkaKMESlcZi9m8mgp8HQJXHo01iEVndw2KA8NGScbCNLbCdRpzKbmiX6L
+	nVJftrOkJsyMGcSK7moTXn5FGF1StuQmjtEwh7cjO+ZyL9ouVQl0PW3GBT3Ga/dCirZlk1dvldv
+	tp9iDser7ZndsYSbYJkzEcIG9ogKRSDiDwpl59vlB3CeGaRcvcHIGqFn5dT/h8Xf+FFUa/jdXxr
+	BLOAP8SAmkxkOz1Hb9MaNFrR6Gru0ytMto=
+X-Google-Smtp-Source: AGHT+IGpIyGjdoXU8K/kqfT9EbCKuZ1P/UbxzuOZAFjAlSCrK9h8UYMlaZpSsyGq96eX7rkgH0LyBg6WuD8/+cT3P+Q=
+X-Received: by 2002:a05:6122:1ac3:b0:530:7a17:88cc with SMTP id
+ 71dfb90a1353d-5373fcb8cc0mr947561e0c.8.1752666004344; Wed, 16 Jul 2025
+ 04:40:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711054548.195276-1-thuth@redhat.com>
+References: <20250711003502.857536-1-raduvele@google.com> <20250711003502.857536-2-raduvele@google.com>
+ <aHCPDXonAevxkMho@google.com> <CACKy9TJHtA5K2YqdNdnMuTvOsz4OCkRds4Hbj8aZdK5VXpMgWw@mail.gmail.com>
+ <aHXwOtrFpn-yRFvs@google.com>
+In-Reply-To: <aHXwOtrFpn-yRFvs@google.com>
+From: Radu Vele <raduvele@google.com>
+Date: Wed, 16 Jul 2025 13:39:53 +0200
+X-Gm-Features: Ac12FXwQS2VC3HS4Kj1qfSCAFYjKoS7ei57V4_5PTFoR4dFZbvp7wS5_4ppSKBo
+Message-ID: <CACKy9TJvkx0Bi69pO187dxs8EUt3foc0seNYjn=vK4WCuTHYxQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] platform/chrome: cros_ec_typec: Add lock per-port
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Benson Leung <bleung@chromium.org>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Jameson Thies <jthies@google.com>, 
+	Andrei Kuchynski <akuchynski@chromium.org>, chrome-platform@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 07:45:48AM +0200, Thomas Huth wrote:
-> From: Thomas Huth <thuth@redhat.com>
-> 
-> The FSF does not reside in the Franklin street anymore. Let's update
-> the address with the link to their website, as suggested in the latest
-> revisions of their licenses.
-> (See https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt for example)
-> 
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
-> ---
->  LICENSES/deprecated/GPL-1.0 |  6 +++---
->  LICENSES/preferred/GPL-2.0  | 10 ++++------
->  LICENSES/preferred/LGPL-2.0 |  5 ++---
->  LICENSES/preferred/LGPL-2.1 |  8 ++++----
->  4 files changed, 13 insertions(+), 16 deletions(-)
-> 
-> diff --git a/LICENSES/deprecated/GPL-1.0 b/LICENSES/deprecated/GPL-1.0
-> index 3a4fa969e4c29..8d0a75431f06d 100644
-> --- a/LICENSES/deprecated/GPL-1.0
-> +++ b/LICENSES/deprecated/GPL-1.0
-> @@ -14,7 +14,8 @@ License-Text:
->  	     Version 1, February 1989
->  
->   Copyright (C) 1989 Free Software Foundation, Inc.
-> -                    675 Mass Ave, Cambridge, MA 02139, USA
-> +                    <https://fsf.org/>
-> +
+On Tue, Jul 15, 2025 at 8:07=E2=80=AFAM Tzung-Bi Shih <tzungbi@kernel.org> =
+wrote:
+>
+> On Mon, Jul 14, 2025 at 10:32:03AM +0200, Radu Vele wrote:
+> > On Fri, Jul 11, 2025 at 6:12=E2=80=AFAM Tzung-Bi Shih <tzungbi@kernel.o=
+rg> wrote:
+> > >
+> > > On Fri, Jul 11, 2025 at 12:35:02AM +0000, Radu Vele wrote:
+> > > > Add a lock associated to each port to protect port data against
+> > > > concurrent access. Concurrency may result from sysfs commands
+> > > > and ec events.
+> > >
+> > > I realized the critical sections are way too large.  What exactly dat=
+a the
+> > > lock tries to protect?  Is the race possibility introduced by any pre=
+vious
+> > > commits?  Please provide more context.
+> >
+> > With the implementation of the role swap operations from the previous
+> > commit (and also enter usb mode from another recent commit) we
+> > introduce the possibility of concurrent access to the cros_ec_typec por=
+t
+> > data from the userspace (e.g. trigger a power role swap from sysfs) vs
+> > from EC events (e.g. partner triggered a role swap that we accept).
+> > This is the main reason to propose a per-port lock. This way we ensure
+> > we protect the state of each port in the cros_ec_typec driver.
+>
+> To make sure I understand, did you mean the lock tries to prevent from
+> sending multiple commands to EC at a time?  If yes, does it still need
+> if the underlying ec_dev is guranteed that [1]?
 
-Nit, this change, differs from this one:
+Not really, as I noticed that both the ec and Type-C connector class
+use their own mutexes.
 
-> --- a/LICENSES/preferred/GPL-2.0
-> +++ b/LICENSES/preferred/GPL-2.0
-> @@ -20,8 +20,8 @@ License-Text:
->  		    GNU GENERAL PUBLIC LICENSE
->  		       Version 2, June 1991
->  
-> - Copyright (C) 1989, 1991 Free Software Foundation, Inc.
-> -                       51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-> + Copyright (C) 1989, 1991 Free Software Foundation, Inc.,
-> + <https://fsf.org/>
->   Everyone is permitted to copy and distribute verbatim copies
->   of this license document, but changing it is not allowed.
->  
+My intention with the mutexes is to avoid race conditions in the case
+when a role swap is in progress but at the same time there is a
+`cros_port_update` that modifies the state of the port. Another
+example I have in mind is when the port is being unregistered and
+a role swap is issued.
 
-Ah, wait, that's what the FSF did on their site, ugh.
+Please let me know what you think.
 
-How about make this 4 patches, one for each file, include a link to
-where each of the changes came from (you only have one link in the
-changelog.)
+>
+> [1] https://elixir.bootlin.com/linux/v6.15/source/drivers/platform/chrome=
+/cros_ec_proto.c#L661
+>
+> By taking the following hunk the patch adds as an example:
+>
+> @@ -54,6 +56,7 @@  static int cros_typec_enter_usb_mode(struct typec_port=
+ *tc_port, enum usb_mode m
+>                 .mode_to_enter =3D CROS_EC_ALTMODE_USB4
+>         };
+>
+> +       guard(mutex)(&port->lock);
+>         return cros_ec_cmd(port->typec_data->ec, 0, EC_CMD_TYPEC_CONTROL,
+>                           &req, sizeof(req), NULL, 0);
+>
+> It seems the lock doesn't protect any data but the command transfer.
 
-Just to be explicit here.
-
-thanks,
-
-greg k-h
+Thanks for pointing that out, indeed I can remove the lock in this
+function.
 
