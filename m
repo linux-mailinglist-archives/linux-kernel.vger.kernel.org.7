@@ -1,188 +1,134 @@
-Return-Path: <linux-kernel+bounces-733454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0E0B074DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:34:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C762B074DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DC3A4E76FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:33:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 235284E6EDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CA32F4312;
-	Wed, 16 Jul 2025 11:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PeZYPos5"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD5C2F3C2A;
+	Wed, 16 Jul 2025 11:34:01 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90212EF292;
-	Wed, 16 Jul 2025 11:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C334A1DDC0F;
+	Wed, 16 Jul 2025 11:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752665649; cv=none; b=QqvgEBywwmUonMhkJdnUupZ+lHFlCpHP3W8hb+s60McfsSwatB+Ee7+WnITb0Ku9jhfrM/V8pjWAtkEUrf7sutEGPIut8DnQEQFcCNyqtqreN6O/mhSjKJ6rQyy2i7FHEb/bfMkj6fAYVGuUIdR84PwsQ9eC7DIU0IbLBFcMYPU=
+	t=1752665641; cv=none; b=Sui3WuIfjS6nn+/bLgHrpL1SB93ZkAGObVH0AqJT2oSfZfu5ZaHEM/CeD6PIdMsQORxiTP5BrO7YVc5vFglx+EcD8ftTQ+3gxmgXO97u0JM2g+bpE/OwEG+4FkYW6m7bjBXS7Fo7mvap6ne1uYssuyVswfkfuyuVBz3wJYL0Acc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752665649; c=relaxed/simple;
-	bh=KWyn0SNq2GNipqxpl7WVzEfJ1H93KzyTOZdOdF3jxY4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H1j/M37374wKV6zF7JE/9s1l9msTBWZZMMNNiD4xZ3KnHRHhuSkdRp9nM5QZqdVF3kU0eDJRlzN5nmKn/3mica/pUXZhyAoGtS5qeelqQm0aBo7BMzLZ3LvhnIHpdAhNxqm5lfsqwnCGza5JVZbhuQaQlpp0MMCkCUMeU4+oLE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PeZYPos5; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-615a68bd0efso75042eaf.2;
-        Wed, 16 Jul 2025 04:34:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752665645; x=1753270445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vAcVyiKfBCpz2acqj/YrO+QxAOg+5ZsQwlmATYrqxAY=;
-        b=PeZYPos5k0cnqMO8S2wI7sW9P8LO5UjYW69MZmR9vHmOO4QjmdfWbkGxwXY1JnP6AI
-         ktUs0O++8DY1qI2CZ1AHT3uEIbsEJG6oBOu8fxWL3cdprTf2b8DtjvV8pfPdCJpqmy+7
-         vUFBDLrjzCgTd6+0xvMwQxTkdCacTtXQTiKIamfSn6xblzfx3mN9WN+6AJLjkJE+4IAU
-         l90xSmlOsC9OXyNhR6DPfcKpcFm/CRwUAoyqBTWFFVbbUvx132qP94noL/+dBIJ4p6d5
-         h4osMoYM+qVlf1UGOFTI9ilEY6ylK9EDLl+NE7MtjbOHZe8KwpPyx73niscd3PBzL6gd
-         OBMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752665645; x=1753270445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vAcVyiKfBCpz2acqj/YrO+QxAOg+5ZsQwlmATYrqxAY=;
-        b=L4Dkjjvl6S7JER+Y0jNsN+wDmRxwqbW6VNPB/O2JsrcR8z3OBmvzDVgvpaYRPISI/v
-         K7hhjydLjoMtDif/fqjdNWSkz5+t82KBGeCY0cizfCI9JUUgWpDVrvRBBctVj5rYAlsJ
-         AFMe0w24R4CGBQ3ORor9XTy4luWHZVyDBvb5eKrWMffxf7fRRzjfXyQLqlKpEp33G8++
-         a1myj6prbh2Yckx2mSdaUgO/JWeRb7v7UW5IWgdzAtkKLjLCFnBntqO5qoUkq4IPUULN
-         bbM0wdPyHeFcorRe8tHjz884V5jOD9tDPbsdoLNxUIzvIRGpRJA8oSib6jTcAPa1ejEy
-         t9gw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5jxK/C6K1NMN0cFy+SBcFgXO28h46xnb3ZTc6yejGeOMYUgvRJsWasWT6eKgOd6ddNSw=@vger.kernel.org, AJvYcCVsycd3mNirmoa70msggnWm4GjVDsXrS3WB0+G9sFFpuWowdMwz3uhwK42XoxUr7eRGAPPinFBEKYfCOG0+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH7VuWBA1PhWjCu/Vo+L4C18DM+LH1EcuP8UpZXv+zDKMLxcLo
-	cTWEUKYSb2ZdOXS84Ia4DI4Yh9e4fAGRzqMZMejQEpzR5JXDwZE76Wk58N6FhJ7Pl96EHSQCeGZ
-	OjxkD3uul0sCKsvZ4s+dWyNCOXtS0SSs=
-X-Gm-Gg: ASbGncvULx3LuhqN8423BMuAkglIY7hMtvtZ9EahaqPfcmiFuyjoOT3O0nNzT81x6Al
-	z8hLzTPAf9wXk4492OyUXWgVqPsPB6EAVRdjC2EmhlYVKKBib/aKmYytbkJ0OXDWpmdkOi/hS6v
-	SdL59WLXvt9iW1nTCF9vtABVY5s15E+FtZhGeOvU4QwajgBGMkv1NXlJ8MlJSrtwm1622NNYmRg
-	Zkk0pc=
-X-Google-Smtp-Source: AGHT+IHjUVB8DeJdmYYw68fY49A7S/gg5agMGiXYQe6PaBXLkFDQIAda+1U9vHi8M4p8rSdTkAvaO5Tapl1Fhp1drXM=
-X-Received: by 2002:a05:6808:7003:b0:41b:3d20:a094 with SMTP id
- 5614622812f47-41d049968dbmr1654821b6e.25.1752665644606; Wed, 16 Jul 2025
- 04:34:04 -0700 (PDT)
+	s=arc-20240116; t=1752665641; c=relaxed/simple;
+	bh=awABBVIKOIuNLKn63mQp2b5BWohQLkfGP/tBEjJgA7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJn1njdRbGlfogm9mKIs3FEWztJh/Qf7STevSFgRmzWQOrX5znBwYBDHGqAOdmDE7Pk9LfIK1lHPmt/kS+CZIOVWTjgXydZH8p1zBD2RCwroPUD3nNeuqgFllMXy+IQ6b+mW44uPbzLpnRAcgsgQZ0aus8+ZeR5US3HLPAllVso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id B619C340EC9;
+	Wed, 16 Jul 2025 11:33:58 +0000 (UTC)
+Date: Wed, 16 Jul 2025 19:33:54 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Hendrik Hammernet <hendrik.hamerlinck@hammernet.be>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	paul.walmsley@sifive.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	palmer@dabbelt.com, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] riscv: dts: spacemit: Add OrangePi RV2 board device
+ tree
+Message-ID: <20250716113354-GYB546922@gentoo>
+References: <20250711183245.256683-1-hendrik.hamerlinck@hammernet.be>
+ <20250711183245.256683-3-hendrik.hamerlinck@hammernet.be>
+ <20250715102534-GYA542593@gentoo>
+ <95125019-8eaa-4242-8e68-78771ce85947@hammernet.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709055029.723243-1-duanchenghao@kylinos.cn> <20250709055029.723243-2-duanchenghao@kylinos.cn>
-In-Reply-To: <20250709055029.723243-2-duanchenghao@kylinos.cn>
-From: Hengqi Chen <hengqi.chen@gmail.com>
-Date: Wed, 16 Jul 2025 19:33:51 +0800
-X-Gm-Features: Ac12FXweD0Sx1J-1wZxPububLXCVBHc4Mt7YozKGWOCrJj4wKvG6dPBm5LpT0qo
-Message-ID: <CAEyhmHSB32tPYbUKqqxFWQqnyDGcNPQsCqBKGdNRrn+U+jMimw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] LoongArch: Add the function to generate the beq
- and bne assembly instructions.
-To: Chenghao Duan <duanchenghao@kylinos.cn>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
-	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
-	Youling Tang <tangyouling@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <95125019-8eaa-4242-8e68-78771ce85947@hammernet.be>
 
-On Wed, Jul 9, 2025 at 1:50=E2=80=AFPM Chenghao Duan <duanchenghao@kylinos.=
-cn> wrote:
->
-> Add branch jump function:
-> larch_insn_gen_beq
-> larch_insn_gen_bne
->
+Hi Hendrik,
 
-Please drop the period from subject line.
-The commit message is kind of vague...
+On 11:37 Wed 16 Jul     , Hendrik Hammernet wrote:
+> Hello,
+> 
+> Thank you for the review.
+> 
+> On 7/15/25 12:25, Yixun Lan wrote:
+> > On 20:32 Fri 11 Jul     , Hendrik Hamerlinck wrote:
+> >
+> >> +/* Copyright (c) 2023 Ky, Inc */
+> > Copyright should cover current year, which is 2025..
+> > what's "Ky" stand for? Can you give a full description here
+> Regarding the original copyright:
+> This file was based on a version from the Ky, Inc downstream kernel, which
+> itself appears to be adapted from earlier SpacemiT sources (dated 2023).
+> The Orange Pi RV2 board, however, was only released in 2025, suggesting
+> that the Ky version was likely copied and renamed from earlier generic
+> SpacemiT files.
+> 
+> In reviewing the Ky downstream tree, I also noticed that several files had
+> their copyright statements overwritten with "Ky, Inc", while the original
+> years (e.g., 2023) remained unchanged. This makes the provenance a bit
+> unclear.
+> 
+> Since I've significantly reworked the file for the actual Orange Pi RV2
+> hardware, I’d prefer to attribute it under my own name, unless retaining
+> the original "Ky, Inc" is required.
+> 
+Personally, your approach looks good to me
 
-Maybe:
-    LoongArch: Add larch_insn_gen_{beq,bne} helpers
+> Please let me know what would be appropriate here.
+> 
+I'm no expert on this, unless people want the more strict way..
 
-    Add larch_insn_gen_beq() and larch_insn_gen_bne() helpers
-    which will be used in BPF trampoline implementation.
+Personally, the dts file already has correct Copyright info with
+the "SPDX-License-Identifier" line, additional info gives credits
+for people who really contributed on this..
 
+> >> +	memory@0 {
+> >> +		device_type = "memory";
+> >> +		reg = <0x0 0x00000000 0x0 0x80000000>;
+> >> +	};
+> >> +
+> >> +	memory@100000000 {
+> >> +		device_type = "memory";
+> >> +		reg = <0x1 0x00000000 0x0 0x80000000>;
+> >> +	};
+> >> +
+> > for the memory nodes, there are 2/4/8GB variants from the Link [1], and
+> > you couldn't cover all of them in one dt
+> >
+> > besides, I thought bootloader (u-boot) will populate these info, right?
+> > so the above nodes isn't really necessary
+> >
+> You're absolutely right, U-Boot does populate this information correctly
+> at runtime. I will remove the memory nodes in the next version.
+> 
+> I also noticed that the aliases section is missing in this version, which
+> means the chosen.stdout-path = "serial0" reference won’t resolve unless
+> serial0 = &uart0; is defined. I didn't encounter issues during testing
+> because I'm overriding the boot command in my Buildroot setup, but I’ll
+> add the proper aliases node in the next version to ensure upstream
+> compatibility.
+> 
+right, please!
 
-> Co-developed-by: George Guo <guodongtai@kylinos.cn>
-> Signed-off-by: George Guo <guodongtai@kylinos.cn>
-> Co-developed-by: Youling Tang <tangyouling@kylinos.cn>
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
-> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
-> ---
->  arch/loongarch/include/asm/inst.h |  2 ++
->  arch/loongarch/kernel/inst.c      | 28 ++++++++++++++++++++++++++++
->  2 files changed, 30 insertions(+)
->
-> diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/a=
-sm/inst.h
-> index 3089785ca..2ae96a35d 100644
-> --- a/arch/loongarch/include/asm/inst.h
-> +++ b/arch/loongarch/include/asm/inst.h
-> @@ -511,6 +511,8 @@ u32 larch_insn_gen_lu12iw(enum loongarch_gpr rd, int =
-imm);
->  u32 larch_insn_gen_lu32id(enum loongarch_gpr rd, int imm);
->  u32 larch_insn_gen_lu52id(enum loongarch_gpr rd, enum loongarch_gpr rj, =
-int imm);
->  u32 larch_insn_gen_jirl(enum loongarch_gpr rd, enum loongarch_gpr rj, in=
-t imm);
-> +u32 larch_insn_gen_beq(enum loongarch_gpr rd, enum loongarch_gpr rj, int=
- imm);
-> +u32 larch_insn_gen_bne(enum loongarch_gpr rd, enum loongarch_gpr rj, int=
- imm);
->
->  static inline bool signed_imm_check(long val, unsigned int bit)
->  {
-> diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
-> index 14d7d700b..674e3b322 100644
-> --- a/arch/loongarch/kernel/inst.c
-> +++ b/arch/loongarch/kernel/inst.c
-> @@ -336,3 +336,31 @@ u32 larch_insn_gen_jirl(enum loongarch_gpr rd, enum =
-loongarch_gpr rj, int imm)
->
->         return insn.word;
->  }
-> +
-> +u32 larch_insn_gen_beq(enum loongarch_gpr rd, enum loongarch_gpr rj, int=
- imm)
-> +{
-> +       union loongarch_instruction insn;
-> +
-> +       if ((imm & 3) || imm < -SZ_128K || imm >=3D SZ_128K) {
-> +               pr_warn("The generated beq instruction is out of range.\n=
-");
-> +               return INSN_BREAK;
-> +       }
-> +
-> +       emit_beq(&insn, rj, rd, imm >> 2);
-> +
-> +       return insn.word;
-> +}
-> +
-> +u32 larch_insn_gen_bne(enum loongarch_gpr rd, enum loongarch_gpr rj, int=
- imm)
-> +{
-> +       union loongarch_instruction insn;
-> +
-> +       if ((imm & 3) || imm < -SZ_128K || imm >=3D SZ_128K) {
-> +               pr_warn("The generated bne instruction is out of range.\n=
-");
-> +               return INSN_BREAK;
-> +       }
-> +
-> +       emit_bne(&insn, rj, rd, imm >> 2);
-> +
-> +       return insn.word;
-> +}
-> --
-> 2.43.0
->
+-- 
+Yixun Lan (dlan)
 
