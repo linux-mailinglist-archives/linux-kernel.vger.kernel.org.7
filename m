@@ -1,158 +1,139 @@
-Return-Path: <linux-kernel+bounces-734124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49EB5B07D5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:06:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 676A7B07D5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E39E1C26EA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:07:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9293A81E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7424D28A406;
-	Wed, 16 Jul 2025 19:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A172228C846;
+	Wed, 16 Jul 2025 19:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d83IKN3o"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpZpjwh3"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706DB2857F1;
-	Wed, 16 Jul 2025 19:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3203263C90;
+	Wed, 16 Jul 2025 19:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752692808; cv=none; b=CqxX738KbIW+dW8ub4gQgJroGNUmPndAvnhxtujNsTQrHus5YfbNArhMjNbwEkZCU9GZZ62vHwAapgt6djFjsn16g31GBcKoGUR8myIn7aIxCqb6K6II7NTRhw/GG5FYQ1p34tE94jLgZFllAw4uXZqA+lGYJnQQejEAwknIl1g=
+	t=1752692928; cv=none; b=F0G6dBXFwQ4167PAouzT1g32BpWsFqMbesQl/xrirxGMyMSnZZrIyqJcT3CopuhiI1RoA/FF1pCu3Dgr2ZAJoXgvipdMMLrF9Ifdzi0Z3iDfP4oFckm0SY4OaueDLH+MyqciEqXUDn6T4HFfRZviQE++vRsokAwK0IPdKFc0d9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752692808; c=relaxed/simple;
-	bh=/vKcTK2gS9ar+FkbSgOeYbXSM+SH8/yNSbDBJIU6g2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j/BkceQO8yD5r8cMLTzNiAvRZc4e7vNfZHtTy7MFj3tFkJe1qyEG/rZjpIfLaQH5yIklZvn/n5+DqrwOWuGBq5LaARpwRl67EspJrUI2e+EGK3qbuTEBYSAZWODzCzOupxkhMJgk5C8b+hDUsrwF57W/vCSWMDdlIF3rlmaL8bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d83IKN3o; arc=none smtp.client-ip=209.85.222.169
+	s=arc-20240116; t=1752692928; c=relaxed/simple;
+	bh=qtAjB4Plpt3Hf4kcMfFv49abgWUs2ExTbuyP9SyArs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RlGhsX/phpUzKyRuYNEVdpC/Y4ro87z0y1iePZfn4vMmVhlAInHDMR83LZKNl5xNzNJKZVdPqRlv98Edgj8lywy/HR7V/WY1NpTAztyVhQwFkgrBnOF3UC7jog/IL+NzlsUlFY6qh31e5i9iPBpP1m6Yv4enhtotE5Z3Urpzv9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpZpjwh3; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e182e4171bso15376785a.3;
-        Wed, 16 Jul 2025 12:06:46 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-31308f52248so49611a91.2;
+        Wed, 16 Jul 2025 12:08:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752692805; x=1753297605; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9BYO9ZuvIfSuMq7ItF8gvh9ttb/3g8sUP4ACrYio1CA=;
-        b=d83IKN3oHc565mawSV73IsrXJgkKtyyoBItEOz6FnMkFKvZKovZKaIu3RD6yUyFy1c
-         G1HTWS6Xqp+WT7te3eorwdMHBSJJpxbukauBMm0ixm9Qlv0hITHFedciHrMTO1EYyWac
-         JBZYw0rOnxkdUmpSkIPOz5eJ+RDkHXulklHR2swvatzuciilS03pwUVunsOcRPIxjLYV
-         rdwnKMkJeT13Er1+iOKatpa8rcxw5PeXaPrFJrZNRmE0ESOUYVW8VnItXLtVEY1RKpRA
-         vzPrU6ZTJk068RQ5GPxzl+TQvvCuY8iZBbxWBalxKLQNZ8dzXD8VHTbt0ZfSs5eSs05T
-         oyfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752692805; x=1753297605;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752692926; x=1753297726; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9BYO9ZuvIfSuMq7ItF8gvh9ttb/3g8sUP4ACrYio1CA=;
-        b=XYCt1LdocD9xFp2hH/swzOaEcPlvvSg/LAOMjla7PnUUaifBc9eh2OuftmKgIP46SG
-         F2OyDV3dtsyq0qsnPnof3RZsdPvo2JU06u2l+8bICgGqP4YNAPqcvhbWT946HE1uyD/a
-         xLicHDbAD77ksBj5hDoUKUh4qjqc8J5Ct6ReDh5f5sGkiSb0VLhfThdFuzHx3Rdn8Jtz
-         XMJKLmXilDvF/T54i+NIrNcHqIzbEU+6mGDNuOVfmdeq2kYTdZasDc/2tyXju73HnjV6
-         F5KMFc2OvgFVfyxkrtl1KvRm//6T6j20DpS0y5XEHXEB63egDsi8nGuMtF9RKKVpmzI3
-         pXHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1KQl57ugG8XbjtMHIrBFmnxOt+4ZsANGOHtNHvfJSfisAM5lPBIt9fwDLOh81m0br0/v/6jFK@vger.kernel.org, AJvYcCVpQUKiWuRnRSWaaI1EcsfX/T0QTzxE8/kHaXtQsfue7depUBdOKr+YgVhnLRjxO9DbVTfiZ9nVvMhypUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwEqojttc+CPkkI6fkHhNGmLzKcmjzsE3bPOJBPufW5Y3zoQjq
-	Zix0wxoeY0O+2+fOQ2XoW30WBinnyRiC3X04DttP/yNYokXw1+1+saxm
-X-Gm-Gg: ASbGncvWRAs5Rn8PozQG8Jn5WySOj26HnsAhzITImOjok28t0ijiBZ+pqt5Qg3YU2KZ
-	Dei4dD1Z0dyumM3lejJBaC80q3WDxYtO+ktxJDAn2U7Y+P5Y1joPZcpkULg3dTXtZZoaeP4ByYZ
-	O55Ra0smMl7Tx8l9Whnl/ZIlJD7+BsPhdR00qXbaPQ2pFpIFtgsSkK0Cb3h+D2wIy8LmFWiQC3a
-	NX6Gj3MUf9Ybb0IxeWex4+ve1ljT7i2Kuj1f8TSqzqJsDAzGZ079ebWcgtmRUYcuCQanG1HwNFj
-	K5MSnNl8Ppdsx85qn4g1z8OuA3FNDTkxx7460im7+EzQnyql7F5dCM/9zZbFUM3epwQVqVsFbj6
-	3hcJncAoTsmiIfO4E35kjJMB0xEOLwHXkyelAshcxu27yaqlFBQ==
-X-Google-Smtp-Source: AGHT+IF+R0G/Oqa9G2czscwCIzUnomPjI8ys3AQGvbnlfLXmg7fVpfblVV0bjxR7QV9TucOkRP8qQQ==
-X-Received: by 2002:a05:620a:7207:b0:7e3:43c4:bdaa with SMTP id af79cd13be357-7e343c4c0d7mr433576585a.4.1752692805197;
-        Wed, 16 Jul 2025 12:06:45 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e3456768b8sm114114985a.90.2025.07.16.12.06.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 12:06:44 -0700 (PDT)
-Message-ID: <829046d2-bcc3-46f0-bd6f-8958932d6fa1@gmail.com>
-Date: Wed, 16 Jul 2025 12:06:36 -0700
+        bh=3hALiMykJN8PH47gwxG1Vb+As3K3sYoOquABDIk+TYo=;
+        b=dpZpjwh3PpP5QpL9APn1I1E82lnpEk0Hwux3HGFWfqa4Qf1Vdt33eKuLsQUQMjfxTw
+         r/AiKEtHcVIZUVn/WrTtDkLOj1RK/lBTazZzo/466EnBHbiU34XYJWB0S76jZ5aNUQ4f
+         fdt8og5SlXcIHXWTFzQzNBUx8WKkVSPnIUQAxzvgW/mD2GU9xQAyOGeofu2RBqzyqkkI
+         L5tPxWVg9fDiuINO9lZAVlOYozXzYz+ecg9JqNOkd9GFWpEe1/EkaRfxK58XCHDhD5cO
+         XDsRKoe5aWkY/N4r6gLFkeH3jtRUyp9stGXNcpArxkTVrOVzwOpQGOKAbWmy7EPv7/bx
+         fTxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752692926; x=1753297726;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3hALiMykJN8PH47gwxG1Vb+As3K3sYoOquABDIk+TYo=;
+        b=rhwVzNqlVw0f2fD0kRNs656pqT8jZVtXdZwUJUENpuXVkvIB/mfMMSDMH6AkMgwhgP
+         wcxVAZ6papizRzquv3rnJcONbXw40msUd6i+U/E+D365JTq6JhecsvI9m7e/HXtQfTTh
+         Rq/aVs0b+Ti41YZ6zW+KyaOU9Fk6810h1SmxBm9bRsUslj5wEtouG25ZVgLoiQ8Sae60
+         7XGwaFiubPlDKEqdJceP9+rfJFUprvhsO6E0TTnmdEUAiO3TJaNObZsDidXOB6R92rcr
+         HxP+0d390nghinTvDVIgLLkdZEpuQ6OYV11c+RI3FPzXfA3cniUmjGvDUAW0IgvvDgxp
+         ZE7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVv57OxsoWK+2IvFA7CYqSlzDU4B51V/sPwaRSI+cwouXEzwRi5SIwg/+f4Pb6jq1LnDNV+NmDxeZ9fDMY=@vger.kernel.org, AJvYcCXdgske4jFBQVwBUk/mh23z2Y99DoPAZJJIyBxYjWPCD+LaRDwhYVYUm+l5r/zF1t6ExXh3r9qn9LAe8w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YysHuxhGgmwvGAUth5/jsHvOz2HPyomVWSUzMwDvyApfKVFFCyr
+	xj4k+Yg0zCgIn8Nx1O/PIfHyQA6b3zjhchGfxgmU7aqoVQOznuspVxq+J6iHXTayiUEzVfav2X7
+	3EaXOE5NC1o1mv0kj9Y+u61GHK8nn3Q0=
+X-Gm-Gg: ASbGnctZhXxsK8giQTyD7Rz4cA2BWtAggvo06+KiNPgo130xxw+0BTByY7SZ02UFRWr
+	H4Q5QEfO8gqVc7SmAqGahp01oWsJwBK2nK9N7rK2HPpWFKIf4diBhRp5oylB8UrowDnJCBEXDfA
+	4rAInnTY0rdjtw3zCx/GwFUzv5PFkP1bG8vwR1XSdQV2iTgrJWaIpFj45uHbcvcbAH0EYvkDO2P
+	cHbR0q/
+X-Google-Smtp-Source: AGHT+IHgGs4v+ff0vXhp2Y64XJ5oOnu9rkpwrIlffN8NjwsfmZ/ZExAv6LDrRInaDSnrnUqQ14ObCdXFH89OS8wwoIQ=
+X-Received: by 2002:a17:90b:5610:b0:312:1ae9:1537 with SMTP id
+ 98e67ed59e1d1-31c9e6048aamr2779048a91.0.1752692925819; Wed, 16 Jul 2025
+ 12:08:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 000/192] 6.15.7-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250715130814.854109770@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250715130814.854109770@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250716202831.68661f12@canb.auug.org.au> <IA1PR12MB6044F52C3C58284B49DD77DCE356A@IA1PR12MB6044.namprd12.prod.outlook.com>
+In-Reply-To: <IA1PR12MB6044F52C3C58284B49DD77DCE356A@IA1PR12MB6044.namprd12.prod.outlook.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 16 Jul 2025 15:08:33 -0400
+X-Gm-Features: Ac12FXw2TDwWP7X1lvxcVFBe7fjGXPhJRxyVAD1UO8MRk_Auivm2YVKiOHK1ZIA
+Message-ID: <CADnq5_MUdC_odm9LM09V31=KW+Td64PkodmvS9VJuFv0e=3w4Q@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the amdgpu tree
+To: "Zhu, Yihan" <Yihan.Zhu@amd.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Hung, Alex" <Alex.Hung@amd.com>, 
+	"Deucher, Alexander" <Alexander.Deucher@amd.com>, "LIPSKI, IVAN" <IVAN.LIPSKI@amd.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	"Kazlauskas, Nicholas" <Nicholas.Kazlauskas@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/15/25 06:11, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.7 release.
-> There are 192 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 17 Jul 2025 13:07:32 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Wed, Jul 16, 2025 at 2:45=E2=80=AFPM Zhu, Yihan <Yihan.Zhu@amd.com> wrot=
+e:
+>
+> [AMD Official Use Only - AMD Internal Distribution Only]
+>
+> Hi,
+>
+> +Alex Hung +Nick for awareness.
+>
+> Thanks for the information. I believe Alex helped me to add the descripti=
+on in another patch. Please let me know if any further actions from me.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Has the fix been sent out yet?  I don't remember seeing it.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Alex
+
+
+>
+> Regards,
+> Yihan Z
+>
+> -----Original Message-----
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Sent: Wednesday, July 16, 2025 6:29 AM
+> To: Alex Deucher <alexdeucher@gmail.com>
+> Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; LIPSKI, IVAN <IVAN.LI=
+PSKI@amd.com>; Zhu, Yihan <Yihan.Zhu@amd.com>; Linux Kernel Mailing List <l=
+inux-kernel@vger.kernel.org>; Linux Next Mailing List <linux-next@vger.kern=
+el.org>
+> Subject: linux-next: build warning after merge of the amdgpu tree
+>
+> Hi all,
+>
+> After merging the amdgpu tree, today's linux-next build (htmldocs) produc=
+ed this warning:
+>
+> drivers/gpu/drm/amd/display/dc/dc.h:255: warning: Function parameter or s=
+truct member 'num_rmcm_3dluts' not described in 'mpc_color_caps'
+>
+> Introduced by commit
+>
+>   26ad78fffc66 ("drm/amd/display: MPC basic allocation logic and TMZ")
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
