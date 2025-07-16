@@ -1,241 +1,122 @@
-Return-Path: <linux-kernel+bounces-732943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432BEB06DFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:29:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37391B06DFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF9373AAD82
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6A6166CBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E862857F1;
-	Wed, 16 Jul 2025 06:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2527F273D89;
+	Wed, 16 Jul 2025 06:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kontron.de header.i=@kontron.de header.b="Atd4gqpN"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11020087.outbound.protection.outlook.com [52.101.69.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iv7JVwW0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E0A2877EF;
-	Wed, 16 Jul 2025 06:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752647336; cv=fail; b=qmBtlWgBv64EeHLH863dPEpY2TfS4lPz6j4FqkxQGKqUEFfXbxjgLtLEcM3O9bGYyGAkdCtfF42Ugi723xG6FNgPDYge5iAwaVxP+HWb0Z25NdNsa2YquZZ3HnUdFtnUkcYNp3FohwwFDQfL8yeArL0JF2UAYMIw0K8nfK6PvL0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752647336; c=relaxed/simple;
-	bh=AbZ4ZfWV2WihvVt2bRAk0GKictwJ5oecmtZGA8KVp34=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IL3/03CYAzXGzFcKAb/hO32/gpZd0lAT9nuUctMQGafZgPDocRbZP8vQs+jWHoRQIoxpW2dR/9YDRb0jkBJd65egfwZjtoN7xLJqj8iga9oC62ovvGWONKTOqPkliBJptM+hHaYPRglJgMV3QjlQhoqHOmncq9wlMOGKjp1OIyY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (2048-bit key) header.d=kontron.de header.i=@kontron.de header.b=Atd4gqpN; arc=fail smtp.client-ip=52.101.69.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wEVu/6eVriDhlQ13SB28UriqKEMPwUrcnHYOVAcuCh9wQL1mQadwLte0jP9j0phosPPbo2j45eaxXjjAmGzvIS44T1k3x7LPyWBK9Gc2P6THT/EDCQd4tLBJeFc93CT1wlpTTN+r8/62UczkQcviu71MEXeqd/6/CNTGmP8T7ikoMJggAC9TsOvMr8sFk5cKUhE0RzckPj3GQkOUN+TxA/56nRNID8Uz+yVpourniwwmMQrSyD2gs7inCoe1h1yqtISWqOLpnI82Fu66gRfQDMszwb/o2qcJwt+uIxiSlla7FgYZ9OgWXx9kai84XjD3wNTpeafE3c1gUnhqClz6ZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UAXlT70bqDPC4tm7EcTmntMhUu5eqv5WgWGupdcDBY8=;
- b=d3lTCU1fTGOCFl+L9WGxdJ84rSZoo2OPaRu/3cPuUCZVgneWMGWPDV584GGQ3M0RgpZRM3oSbUdCikyEU4U/H+qK9ECb3qWAVSnEX+G3iZfWu0d2FpLFFB3m8/+Hdmh3z3veAlU+CuU82N7TE+d6AXr6lgybTwtpZhdFcULAFRI1mw1YL0sZHFVvW1tzCcCgzKEhQTVwfM5euhgb8RApWqqmuTiq7KQznkf9I/4I3U/rvrx7rmg7Di4c6DnSF5BvypK0hHPvjO6a0KofY7a9TyRbAsxtlR2JG5Ghq62wn7aNi9FItp5JYugX6zD4bNz8fM63D0eBjOKsca+1dapZvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
- dkim=pass header.d=kontron.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kontron.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UAXlT70bqDPC4tm7EcTmntMhUu5eqv5WgWGupdcDBY8=;
- b=Atd4gqpNS8+WAQDmixJQRWbWzg/y3TaHX2A6h9uolHai9VZDAb+obWVG6vQESfSbjuwdQD1PdVuuZa9y+CB9pzwiqeNENxWF3W5tIfTTGrEALrXl42jxla08zrR8PPiXWLtGzrnlEbtppnR1Ts3/ttG/accbrralTtiKdmYf+SzCgJLRxNbDSl1OLRwr2VuEgQq6O9SifscqO0DlBX6wTdr2fpMbN6lYAxH4HLK9QC65eptB/vXmIWElTYAG8Qxq23LM7bxWvnhUOuDVhK96tXwoMy/SM3Xmaqm5SzELlmHTa0ET4JZcsVPZMzXZoXdMOlIXUFtvDojtkangK+5H9Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kontron.de;
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
- by DB9PR10MB5858.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:395::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Wed, 16 Jul
- 2025 06:28:50 +0000
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b854:7611:1533:2a19%4]) with mapi id 15.20.8901.033; Wed, 16 Jul 2025
- 06:28:50 +0000
-Message-ID: <691c5adc-9c0f-49dc-a51b-08cca38bf572@kontron.de>
-Date: Wed, 16 Jul 2025 08:28:49 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/12] arm64: dts: imx93-kontron: Add RTC interrupt signal
-To: Primoz Fiser <primoz.fiser@norik.com>, Frieder Schrempf
- <frieder@fris.de>, linux-arm-kernel@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20250714141852.116455-1-frieder@fris.de>
- <20250714141852.116455-11-frieder@fris.de>
- <b32ebf83-0c4f-4321-94b3-1efcbb811073@norik.com>
-Content-Language: en-US, de-DE
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
-In-Reply-To: <b32ebf83-0c4f-4321-94b3-1efcbb811073@norik.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0308.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f6::12) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:263::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B53410A1E;
+	Wed, 16 Jul 2025 06:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752647426; cv=none; b=nQ1nFOD14ag3cB3qdrycX2fXjzQ1t4jmnCP4MK2stNNeJn5sbZS2dEBmJZa4+WHvUkS5q9qXe4VpWw3DoKyV11ni+NfCNOt1W/pLuiRR3QiTKV/ZW1w+/EoaslOik8cz2ZoNF/RMQ2R9KdikgbtmLviaLzueP2OkpYoZ3hkDXi8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752647426; c=relaxed/simple;
+	bh=QR8VQxVZz6CuAK2KpWv4MfQ1K6P33JZ5up0UitzdPFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oE0gquULXpGRCc3Mr7nrc+wOGMREjcmlZNcBgePP2Fxp36B9uwHCTGQ5vONLR0rmc31DvyOB6VclLtlofGsidY3hgf3NqeC4SrL9EDhWeBr7HWv/v2qRub5FHP5us+SVc/D++YbdU5M6eop4dpMaR/8SjYu5t912+AwujRQzgG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iv7JVwW0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C6EAC4CEF7;
+	Wed, 16 Jul 2025 06:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752647426;
+	bh=QR8VQxVZz6CuAK2KpWv4MfQ1K6P33JZ5up0UitzdPFo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iv7JVwW0vFzarkChOP9ZiSk8XASYHuuo6SjF91RZ9XL0Vy74BO1OYO59W1x8HUT5U
+	 fdrY7bLL8Euv7n5vKeNsHvvCl9i5t1wZLMuQmY7B16k1xO08CLmjeYbMGa8nkwCl80
+	 4qAZGosJY4wg1cB8+Fm7Q+eI2IxAl3W8A1tY93OPNb2d6DnzCUC3FJGXbkdMU3MWOK
+	 Q0tkqe9llPAP3gXRUR+NPyrfnzedVPu1Lehd9hOhjKsgplylfRNwl+1eshrcxsrvhH
+	 za+2U05XW8qjG3WyUzdMtF/WECHOHQEXzQWDL1LO/5C7+MjHpsUkS2Q6wPIulUAX8l
+	 UJMi8RndOT+dw==
+Message-ID: <042f3b31-8899-430e-ae4a-d12dcbf935c3@kernel.org>
+Date: Wed, 16 Jul 2025 08:30:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|DB9PR10MB5858:EE_
-X-MS-Office365-Filtering-Correlation-Id: 82139c75-4e4f-4fb1-2bad-08ddc4320701
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VG1POSthUm9qMFdocURNTU4wcWoySmxJSVVpMGE5N2FHRUxwdkRHUVB6L254?=
- =?utf-8?B?SWorL3MzbU40RHBYckVYei9RcXBkRFpPZkpBQWlmaG80MjdidGZQaFU3cnpu?=
- =?utf-8?B?WlFPSEI0TklPbkNrR2pVV096N3NQVjlDNmhjd0pwL3k5eWxWQlNadEVFQ0FT?=
- =?utf-8?B?bmZTalJrcDRRNXN5QXM1N2xRRTZSamRpTnlMVklzQVFxTmVTeVE1bDNsejVt?=
- =?utf-8?B?Uk0yQXhFbWtnZFV5NE0wbThQL1BqYUoyYWgvQVU1c05ZY0Y4Tm9NK0ZZZG54?=
- =?utf-8?B?UUc1K3kyTjF0VTdUQTNDaExhWk81R042VkExVXBwd0lMSit3ZktINXh5OS9R?=
- =?utf-8?B?SEM5KzJndUttaU1UK01lTndrdVZudXVENlZnQ1FPWkJQdXc0UmNob3hqcFpw?=
- =?utf-8?B?Q2NlQlZEczloNnFpNC9LVW5HakR6SW9mNHcrM3JlaGZVdGJKZjgvRkhIcEk4?=
- =?utf-8?B?T2x5UkFsZmVQSTc5S05FeS91RFh2dDd1ODlHaURJaTBWQ3N6Sk1lUFpCQnJD?=
- =?utf-8?B?QWg5M0ZMdnNhR2Fja2RSZEp0WlY1ekIwTUpuZ3U5b2ZRcjBtdjdYZTRacXUv?=
- =?utf-8?B?alVQa1ZGNmpPRTZia3NzWHNlNjVuQ09hVUZsZXJMV1FmWFpEUStvVmxWcCs5?=
- =?utf-8?B?MWVPc0ZRYitwVEpqNEt4VlQ1cFRyNDFabEZxZmR5UEtlSXBiNXNYSE5zU00r?=
- =?utf-8?B?QVI1WnROTkpwKzFRSVlMKzU2azZNY3hwZDN0M2p6dHhsU0pGWFBrSjVkUEU3?=
- =?utf-8?B?bHdzNGNqdmRJU0lKb2NCV0xVcldva3NtQmpGSjkxQ0dDVVZpdTdCWUpIUEhD?=
- =?utf-8?B?WUpuWGZCbjN4cGphWnRSRXdyeGo0VHh4VVR2NFd5VXNLbi9DVVg1M3NjQjhF?=
- =?utf-8?B?WUxrNVhqUFFseWRxQW5VQnZ5N0lxUEh2b2srRlM5dkcvd0l4dlkyQzFhQ3oz?=
- =?utf-8?B?K3QyQ25DYjFKbnhENG1LWDVvczdsSC9PM3pKeE5vTG5TZ2dUV0REMmJ0eGMv?=
- =?utf-8?B?SW5CY0dGWjkxTTdmOENtQ2laTWM3aUdFcDRpUlZGTjQwYWRmeEVGQnozVWxQ?=
- =?utf-8?B?cHdsY0JUend4bE1rNkVLYlJ2MkhlcXp5cFZzZnZINmY4OS9MeVY2OHZHK1pq?=
- =?utf-8?B?RldHbHMxeEVDaW9ReWZaMEVnNFVYV1o5Q3ZMVGc2ODVrT3BPSzl5ZVdydlZx?=
- =?utf-8?B?d0VUL2I0cmxLRjBhMVBHbDZua0EvZFBsZTRWaHM0QmVkME9MRlJEMkRTWkNn?=
- =?utf-8?B?WG9LU0Z2NXNBTmJMRUJiSEVFQWpIdDhUUk0rQzJKTFRKYjd5eFp2b1JoNmVN?=
- =?utf-8?B?TTNrS0R0YlZ2US9PMlZVL2FVbFFzZ2dpMEZyUnd5VWlLWGx4NW1ScTNVbk1G?=
- =?utf-8?B?WFZKVjVYelY0UmxZQi90dFhOSTF4QlRQR1dQcnQ1NjZueGoxeEZvYWJIN1dh?=
- =?utf-8?B?dDJrdTIyaXZkcDhyNi85NGZ0ZjN0VjRZbnpuZ29XYVk2cHlONk5OcWwxOWI0?=
- =?utf-8?B?eVg4QVlNTWF0RXZrRldxcEpSNlJtNHAraitLVWV1alFuams2WktrclA1VStG?=
- =?utf-8?B?cmx3ZWZtZXE2c0dwR1ZudUhQZmFxZTBLTk4vTU1EUTJTQnlBM0ZaVGl2T3Ux?=
- =?utf-8?B?RVVKbXpUV0RBYStCemN5OCtjMVhPbS83RVZ5VnI2V1AyNjlrKzlHVEFFODFO?=
- =?utf-8?B?aEx2N1htWU1qWUlQL3MybzlSSTYrUG1LU1ZiaU1HMzVPVk14TXJPQkljWDA2?=
- =?utf-8?B?L212alpUUFRVdC9UZGo4RHVVQUN5aEhzcDVCSG5ZTjFhQW1SZ1I3Mnh5L0h3?=
- =?utf-8?B?dVdwTTBpbDJXN09BN1BzRGcvcUJSV3BHWEJLNnRjZG9VRTlSSUNjempVRWUx?=
- =?utf-8?B?YUpKeTVuWU5yOTJNaDRLYlhNNVk0U1NqeHE4V0dvYVlqeE1yU0lnMWlhbnR3?=
- =?utf-8?B?OUtKaTc0RkFGaUp2R2Frbm55UzVER0tRREJieFc1c1F5K3VicjlXbWd4ZlBZ?=
- =?utf-8?B?WjRMdkdDZllnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c0tCOXp3RW03S0VkOHNHSW1VOGNrdVU0RzNneE0wYUkzWGhOZ1hrSFhxN254?=
- =?utf-8?B?eW9tZ0x0L3ZXQ0FuREY0aDdQMWJrYld3eTZ4bjdORHlzbkp4c0NITnZkWVYx?=
- =?utf-8?B?STV0YXBRdWJKMmJvOHYwQTd6eVRLNUp2QWMwbTR0TUNSM0pVeWpBTHVOb2VC?=
- =?utf-8?B?SlJQZDgrajVtbkE0RWoxNVk4Nm1vdHZiLzU1czd2dDM3WFJZZkg1ajNMN2dM?=
- =?utf-8?B?QlM2ZzdZRUlyLzlOTE85SFU2aFFlWk5yWnZJRTFuakJGSEwyaERuaWQ5bHYr?=
- =?utf-8?B?d1VLQ2huM3NwY01PTUsyNWRta1JtTVpFMmxTRVg4NnNFRzZJeVI5TnE1QkZn?=
- =?utf-8?B?UlhZYlRQS0l6MHppTDhLbTFMenh3WklXV285d29pUk1rRy9WNHcyaWMva2s5?=
- =?utf-8?B?ZVowcDlrQ3BWRWN4WHRMN041N1YzOFQ5R3J5Zm1najhrbnpHVmM3elh6OS9a?=
- =?utf-8?B?R2x6TExmdkZiUzd0Y2VWb0k1M0NaM1V3dmFacWdWdkJybG03TEtzSmIrcWlq?=
- =?utf-8?B?ei9SakpFdUt4eGI2QlRNVkk5WmhnenhBKzVycXdObmZHcGxLMnlGbE51ZzZ2?=
- =?utf-8?B?RnUyMVRCTitrcE9kUTQrbTJjdzYrTWZxYlFWV1J5eHphWElRU0xJSWd1RFkz?=
- =?utf-8?B?UHd5ZkFkUmFnaHNGRkwrejEvQnBiVWpaOG11UFJmUXpFWkcyMm5TUERtcEov?=
- =?utf-8?B?Rk1RVW5pSWNXbUhoMDR4UjBQNWJIa0RWV3NUaENJbEs0MnJISkNxSTJMRDNB?=
- =?utf-8?B?S0Zidi9YRTJXWUZIajhvbWFLWXI0VjlBUUt0VmVLSENUV0kvWWRoVmU2aENj?=
- =?utf-8?B?T1ZmZVJxVEw0RjZPMzAxb1c4UWx0b1dacXFFbjdJeUNpMHYrY0VYV0RqUFRX?=
- =?utf-8?B?YU9uaWpldjhpVjV3ckViLzNteXZYUldQeVJMVXI5TW1vbzBpMGRmcHdPYUp6?=
- =?utf-8?B?Mk1NUlgyZlp5VUNnWDNMdlJZQ3BJVXNSTFhUU1gzRC9NbDZJSEk5N09XZVBh?=
- =?utf-8?B?cDZKazdJYjhwejgvbnJSakRJcHNZQUpQeSs4WjhvamhtcDgzZFpETzhiWEtJ?=
- =?utf-8?B?VXVWU25jVTQ3dmIyOWhNKzJHK3RVQmRTSTdUT0NqQTJqOGlCNG9qQVc2Nld5?=
- =?utf-8?B?eHVxTGVGYkZLdVErNEJTK1p2QXgzVWRSZnpDS2pVa1AvSU5PL0dqVVhmNXBV?=
- =?utf-8?B?bkhoVlpKYUk2SVplZXBYWmFaUzRjVGxLM3gwWVZxRTBzVmUwSC9wNmRkZ1o0?=
- =?utf-8?B?SVpuRDFvMUFMV0VuL0M5WGdKMExLR1lTa3ROeWJnUS9MaURGRGh2a1ZzN21G?=
- =?utf-8?B?SFJrY3VBZ2dZNWZHTmxYVlhueSsvdkVSYmc2bmJZWDNPOC9RWjdrMDVQK3h5?=
- =?utf-8?B?TjAxQTY4dzg1ZjBlRmZ4ejNCY2JrVW1MMzM0ejNXaVoyWXkzdnVUUFJBMjdx?=
- =?utf-8?B?RXN4S1hJUWdoQW9rUkZISTNheG8yQ2dQNXd4OUtRcnJvU0ZmS1pReTMrc1dO?=
- =?utf-8?B?dDBWNk9ya2tjd0w2Y2ZwenVYVTR0VDlER3I3UmY3d0tYVHMvTXU5YjFVS21O?=
- =?utf-8?B?Q0VWMFNkTXlIQWhDRmdLclVETXplQ1ZNdnpCY2k0ZGhoVjhIZ2FuY0xZalJ6?=
- =?utf-8?B?NUw1VEtBOFl3RWw0a3QxQXVxcWhjMmJBSTBJWUlyLzl6ZW9pSldJZzU4bWdD?=
- =?utf-8?B?aTRWYTd5SjBNTXozUFQzbHV4Qm1oVTBuUlMvZ3BmL1VzWDI3ZGJvVHdFa2RU?=
- =?utf-8?B?MVo1Sk9ONDdDMGs1dVJybURnZXAyeEVuNjY4M0tDa0VFS2xDaDhFZkpybWdE?=
- =?utf-8?B?empjeGNmSlBaKzNISW94bjF3NnBrc1ZkYlR5RWNCYnRsRHphSmQvM2pCWVhN?=
- =?utf-8?B?ZGRBMDhFanMvVURmd2QzSDZuQkZjMHUrN0NPcmx0Sm1TSklpWDNsbmJaSita?=
- =?utf-8?B?ZmNDMGx6UjE0WWhTWldkcGVXTXI5cXZrWC9sWHJtODBycVpjeU5MU051N29y?=
- =?utf-8?B?QTg4cUNITXJmejU2d2pFcUdUeVJ0di82QXQ2V1ZVaEpwdTQ5TnZmalBvWFlU?=
- =?utf-8?B?RHNhSUcyMWt5eEZ1ZDBqWnJONmZjZ295ZHNZeWsyZjNJNzloeE5xdXZxcnpp?=
- =?utf-8?B?RjYza2JIc2hMS2VETHV6WUN3bGhWSXQ4TytSQlYrVmk2ZlhrWnh4ZllKbjY1?=
- =?utf-8?B?d0E9PQ==?=
-X-OriginatorOrg: kontron.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82139c75-4e4f-4fb1-2bad-08ddc4320701
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 06:28:50.3396
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uKjxuouIdI3IbIT155BZpfCSveaC1KC9QlQKk/j3X2ezjutOMDIhaLF9p90kBTHVnA9/KK/sDCyX7z8Z/J3GUrnm0Fal8hXAXYk1cFtlUoI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB5858
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: Add INA228 to ina2xx devicetree bindings
+To: Jonas Rebmann <jre@pengutronix.de>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, kernel@pengutronix.de
+References: <20250715-ina228-v1-0-3302fae4434b@pengutronix.de>
+ <20250715-ina228-v1-3-3302fae4434b@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250715-ina228-v1-3-3302fae4434b@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Primoz,
-
-Am 16.07.25 um 08:21 schrieb Primoz Fiser:
-> Hi Frieder,
+On 15/07/2025 22:49, Jonas Rebmann wrote:
+> Add the ina228 to ina2xx bindings.
 > 
-> On 14. 07. 25 16:17, Frieder Schrempf wrote:
->> From: Frieder Schrempf <frieder.schrempf@kontron.de>
->>
->> The RTC EVI ouptut is connected to a GPIO. Add the interrupt
->> so it can be used by the RTC driver.
-> 
-> AFAIK, RV3028's EVI is an input pin (EVent Input).
-> 
-> Please check.
-
-Thanks for noticing! It seems like the commit message is wrong here. The
-patch is about the INT signal which is an output on the RTC. I will fix
-the description in v2.
-
-Thanks
-Frieder
-
->>
->> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
->> ---
->>  arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi b/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
->> index 119a162070596..c79b1df339db1 100644
->> --- a/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
->> @@ -205,6 +205,9 @@ eeprom@50 {
->>  	rv3028: rtc@52 {
->>  		compatible = "microcrystal,rv3028";
->>  		reg = <0x52>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&pinctrl_rtc>;
->> +		interrupts-extended = <&gpio3 19 IRQ_TYPE_LEVEL_LOW>;
->>  	};
->>  };
->>  
->> @@ -468,6 +471,12 @@ MX93_PAD_CCM_CLKO4__GPIO4_IO29			0x31e /* CARRIER_PWR_EN */
->>  		>;
->>  	};
->>  
->> +	pinctrl_rtc: rtcgrp {
->> +		fsl,pins = <
->> +			MX93_PAD_SD2_VSELECT__GPIO3_IO19		0x31e
->> +		>;
->> +	};
->> +
->>  	pinctrl_sai3: sai3grp {
->>  		fsl,pins = <
->>  			MX93_PAD_GPIO_IO20__SAI3_RX_DATA00		0x31e /* I2S_A_DATA_IN */
-> 
+> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+> ---
+>  Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
