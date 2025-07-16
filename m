@@ -1,100 +1,126 @@
-Return-Path: <linux-kernel+bounces-732930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB776B06DCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:21:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A60B06DCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08C7456419C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:21:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB4567B12B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449AA285CB2;
-	Wed, 16 Jul 2025 06:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9CE27A468;
+	Wed, 16 Jul 2025 06:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mofl2wKn"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOVqfcU0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C878198E8C;
-	Wed, 16 Jul 2025 06:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A658634A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 06:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752646907; cv=none; b=fRHJYxAQ5wf+sTcH2pltJPVUn4iTvrUjaJX/leb0fCYfYgXmpL4qUvMBF2JVCJrROaaFoCbn1qPhfzJwLhZLyjxFWXTPo4HnDBQTzhcw2mc6npBHbR1WQdDl/DAHLBCrlZyAQCh9HONEwkEix3MLtRNuv2GAUTvoAj+yod5KYsk=
+	t=1752646926; cv=none; b=mdzpPfjU0XlFb8lBG+i1kEZvTEsBdGyOviSRw1uUDYKhoalwAql0FnIeXD0xpr1o8TxScyjIqe9sqJTmbY1RHCD+1Vbbm8zbPDF+jkQoRI6yPXII6sQpoXftOMZNHptbo6DyQ9REvv/aFGsPMosNpYIOjys2AGRNJoC43JyRD9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752646907; c=relaxed/simple;
-	bh=9PZIFgfH82r21F06l+nCFRIcTPUzxHwFnEZukofFnz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UR80CLIRS3loGG47wOp3iv5teslQyIG1g1f/INGab1JyAplRQXAmaBKWkN0Hh+W1jWV9PXlRzooHcyUwiHtDA3JkyrSpG46Tf2WmUY7jAiAYw3SfXZl/MyTG3Sdscue7qFt7WMF3suwdegrKKjBFkYfGf3nqiTY4LcgVyFNV6rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Mofl2wKn; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=YKkz8lS5G74bKddbsW4P64woHWlQNnkiSMyItwjDQj8=; b=Mofl2wKno1Md6XD6b+fYMr4jXm
-	7SPSnCY3GTxiKu5cqwg/aT6B8jX4hK5FSYgXzUgPEeSbH8vsn7k5+RdI6SjHvqJZNiUmLuwRSiz+C
-	wwUg2d1683/pnc39qjye0llTFXv04LmqzMPNpl9SSWg4xCnvRiFNIaUPR4gU+x7JjC1T+yqHSfZ4u
-	dSUSRl9+/UF9lUsqkTBlYotLhOsx4hrv+nzwfIAr4nmXVM4xeo33TGKD4eNH4/T9fT/dXryvLz0Rc
-	Mgo863jaxZZSnHCGdU8NGcr/iHEWxBzmp6UIs+hoTFQRESKy8pQSGoeM0hQO+DdseOnpSXCJKfh+o
-	Jbqj6E6w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ubvWR-00000006sCF-1M3N;
-	Wed, 16 Jul 2025 06:21:43 +0000
-Date: Tue, 15 Jul 2025 23:21:43 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>, Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/15] fs,fork,exit: export symbols necessary for
- KUnit UAPI support
-Message-ID: <aHdE9zgr_vjQlpwH@infradead.org>
-References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
- <20250626-kunit-kselftests-v4-6-48760534fef5@linutronix.de>
- <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
- <20250711154423.GW1880847@ZenIV>
- <20250714073704-ad146959-da12-4451-be01-819aba61c917@linutronix.de>
- <20250716072228-2dc39361-80b4-4603-8c20-4670a41e06ec@linutronix.de>
+	s=arc-20240116; t=1752646926; c=relaxed/simple;
+	bh=bXNk16FOygbRrE7KsD8GybCSS+DLDh0tykW0TLKfrJQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=bLn0Kk4I2JTf6+4auKU3dvr5aK+t/eaT0c1IjgholMzG7BFEW440CaRkte9BLa7+k9spDQ/x2C2vls/XfSfffnxlaYXyW0RnNskSfgO9REk3bU+VVn9VljuyUFP5Y+rJE2ZjQg8Oz2tK0PU41o/IF1bUj+U8j1oqZj1G4C1ZOSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOVqfcU0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 421FDC4CEF0;
+	Wed, 16 Jul 2025 06:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752646925;
+	bh=bXNk16FOygbRrE7KsD8GybCSS+DLDh0tykW0TLKfrJQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fOVqfcU0PAg8eLm0AByPsXZe7hVlXCZL9QQITrFre0AowTrb1rgm6KTExOKTghjuy
+	 8yaVuX2os0PDMP/NDaLkjNYg7fv2SuYObWLtXMVsY9PsEsBWs75mAOg/hoqpu+1HkD
+	 OlJV20v3bWVyJ3R5/6AUK+VBvNymLxMQ4hYJhdtWooyxEqUhrnEjDsODz05dJnvnD7
+	 eplL84fgNsV+dahvPUPAjEzu+MNEDts2QshI+voGPnzGtIkugW5h8cddeltrKgQ63f
+	 AZzz34mqWSk6i+hEbsjhsh4V86huUORQtMpqVfuTHS0IWhZPFSz+tZIaeO6r6QWg5O
+	 26Qp8Oa0vpF1g==
+Date: Wed, 16 Jul 2025 15:22:01 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] probes: fixes for v6.16
+Message-Id: <20250716152201.58f9402c011e18f8b0c904ac@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250716072228-2dc39361-80b4-4603-8c20-4670a41e06ec@linutronix.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 16, 2025 at 07:30:46AM +0200, Thomas Weißschuh wrote:
-> On Mon, Jul 14, 2025 at 07:52:28AM +0200, Thomas Weißschuh wrote:
-> > On Fri, Jul 11, 2025 at 04:44:23PM +0100, Al Viro wrote:
-> 
-> (...)
-> 
-> > > On Fri, Jul 11, 2025 at 12:35:59PM +0200, Thomas Weißschuh wrote:
-> > > > could you take a look at these new symbol exports?
-> > > 
-> > > > > +EXPORT_SYMBOL_GPL_FOR_MODULES(put_filesystem, "kunit-uapi");
-> > > 
-> > > What's that one for???
-> > 
-> > What are you referring to?
-> 
-> Reading this again you probably asked why put_filesystem() is exported.
-> 
-> As I see it, that should be called after being done with the return value of
-> get_fs_type(). Not that it does anything for the always built-in ramfs.
-> The alternatives I see are a commented-out variant with an explanation or
-> making put_filesystem() into an inline function.
+Hi Linus,
 
-The right answer is to rework your code to not need all those exports.
-Nothing modular, and especially not something testing only should need
-all these low-level bits.
+Probes fixes for v6.16-rc6:
 
+ - fprobe-event: The @params variable was being used in an error path
+   without being initialized. The fix to return an error code.
+
+
+Please pull the latest probes-fixes-v6.16-rc6 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+probes-fixes-v6.16-rc6
+
+Tag SHA1: ce8ff29973d1200622606428e017c32f36535d8a
+Head SHA1: 1ed171a3afe81531b3ace96bd151a372dda3ee25
+
+
+Nathan Chancellor (1):
+      tracing/probes: Avoid using params uninitialized in parse_btf_arg()
+
+----
+ kernel/trace/trace_probe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+---------------------------
+commit 1ed171a3afe81531b3ace96bd151a372dda3ee25
+Author: Nathan Chancellor <nathan@kernel.org>
+Date:   Tue Jul 15 20:19:44 2025 -0700
+
+    tracing/probes: Avoid using params uninitialized in parse_btf_arg()
+    
+    After a recent change in clang to strengthen uninitialized warnings [1],
+    it points out that in one of the error paths in parse_btf_arg(), params
+    is used uninitialized:
+    
+      kernel/trace/trace_probe.c:660:19: warning: variable 'params' is uninitialized when used here [-Wuninitialized]
+        660 |                         return PTR_ERR(params);
+            |                                        ^~~~~~
+    
+    Match many other NO_BTF_ENTRY error cases and return -ENOENT, clearing
+    up the warning.
+    
+    Link: https://lore.kernel.org/all/20250715-trace_probe-fix-const-uninit-warning-v1-1-98960f91dd04@kernel.org/
+    
+    Cc: stable@vger.kernel.org
+    Closes: https://github.com/ClangBuiltLinux/linux/issues/2110
+    Fixes: d157d7694460 ("tracing/probes: Support BTF field access from $retval")
+    Link: https://github.com/llvm/llvm-project/commit/2464313eef01c5b1edf0eccf57a32cdee01472c7 [1]
+    Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+    Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 424751cdf31f..40830a3ecd96 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -657,7 +657,7 @@ static int parse_btf_arg(char *varname,
+ 		ret = query_btf_context(ctx);
+ 		if (ret < 0 || ctx->nr_params == 0) {
+ 			trace_probe_log_err(ctx->offset, NO_BTF_ENTRY);
+-			return PTR_ERR(params);
++			return -ENOENT;
+ 		}
+ 	}
+ 	params = ctx->params;
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
