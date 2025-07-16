@@ -1,157 +1,103 @@
-Return-Path: <linux-kernel+bounces-734260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13B6B07F20
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:48:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5BEB07F21
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303A8583FB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:48:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC1E1C42403
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024D528C5BD;
-	Wed, 16 Jul 2025 20:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B5D274FF4;
+	Wed, 16 Jul 2025 20:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VP5z/cQK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFjyzLWE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0BC1DB95E;
-	Wed, 16 Jul 2025 20:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69621DB95E;
+	Wed, 16 Jul 2025 20:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752698918; cv=none; b=b46OPGz/PkNt6GJ7AeaeJ3oHqjC8QEG0aOwPVtLyn12ce0XWFOiXa+A9gTq8yPqQi/tyVPKdjv/K6SEoODpu2d4GPBGutY4IMpsxgc5PJmbh7QPXg2VWmg4hfi1DqY8l13aCLZ99r2iR3xRJR/BvPvZCpy++TwkjLbHJVY7x7WQ=
+	t=1752698934; cv=none; b=rZ6ehpuSsxmLtJCt8+Hc5FenH66q1XGscC5+v++RC4xfuwJ0VvzOl3n03r2OsGfNm42chcoXRBdHitQgOSFeMuBlKtHR9yJPhZpjYpCp4//ep/w3YbJjHhCsafo5EM9nnDFNRwoYh4Z68UwzRBOz2Ni86yW1WN94Q94HehJYZTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752698918; c=relaxed/simple;
-	bh=KWKo2w+wYwVfdyFZDx/jBU8IPRmVKs+hPfl6brd0isY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qJd5fd7diSTAD2N3xbB4q2THqDpGcbjGBiXd6XJO+4gYs5Mhzj8lh74HpJ0Sbc9Ri3e/9kWCEsqoOUMHGuv1rpT+mQdXIJ/1YchOZl2g8esh4c3CtCwp/JsJyag6sCcb6WvaeeK6S2XkUYesaIYD9Y6eJRQiAQ4reHAaAEtjO80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VP5z/cQK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C21B8C4CEF1;
-	Wed, 16 Jul 2025 20:48:37 +0000 (UTC)
+	s=arc-20240116; t=1752698934; c=relaxed/simple;
+	bh=Z3CkHZCoZKf5lAaRl/IZ0Dqzf6S69eGU3vBiicfzetA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IUAMHq9jtfjzviCkn8vsVkXNSYNWgylnHwBkS3kiVbUkJEnpakXJeUAh01G9RUNOFOnIDsCa6MiCv5y7eKJe0nWSW3oWyIQzLHeUNOdQW9fzyc80lWmrV0jcVnVtf3vtfDQ1u+5cztzIRsnApEHCPqXFX817uTMXRyyMW0V0SpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFjyzLWE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F9DFC4CEF1;
+	Wed, 16 Jul 2025 20:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752698917;
-	bh=KWKo2w+wYwVfdyFZDx/jBU8IPRmVKs+hPfl6brd0isY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VP5z/cQKOPCn/r3vv9+72jaepxRsE2fVUw7USa7Z0eUzHtJR8HdQIHofcMzIOS+Mi
-	 +xAXQfWkxMj3wLKadT34Z00sPyqSLecipoUN1ap8bQboB7TENrIHBokQ3hH+LKjiIn
-	 KQTjNPGJAaJ0fwIFn4gMFPXONQU6mTRpPNNi2A5fuh2i+Qxu3g9nUjHMQtvK36ilf0
-	 TWvxVdgKevFr2NmgO1N0EHd10H/RkVfCU54mGK8kaNNCNZ08ic6ugyjYeLuyNZHXf7
-	 7LAdmVuWDBU/Wb8mnuiuY62L451+Ywzc2JItY4w3dxCCupeHsMw0dwzMd2xPUZFzpm
-	 ekiXjitFSxq1A==
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fabe9446a0so3297476d6.2;
-        Wed, 16 Jul 2025 13:48:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV71TukagYAO55SW3kVNhejkGVoqnjO8dyfofwcxNnoTaIQIIwK0fbtAUAhoRzuUegMx8w=@vger.kernel.org, AJvYcCXIzxlVCQVi/BhGbDI9B3Ezdc2vJXdTJ+UfuzhhhrPWGFDX+WNo04qRcDTy+nBGw8fmO1FAX50sVLQXI8dl@vger.kernel.org, AJvYcCXYuQXvKqKW1kL96Aq3HQzntG7xzFHD4p0IKM8Ld06yKuGyPN7ykkZEaj8SF84mjMaYLwob/tbCnr0uEQ5rAkX88kDpy5zq@vger.kernel.org, AJvYcCXrAzR57XMMeH7inoNh0DKNUwxEey/eYZMlNcSETuU1v+aUr2BoU/90X8h45HU/5HAmMbRS6w8C+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqU8hFdhRWScMtMX/w2mB6sPMZrmW2beF2Pv3UpqQAt3Nb7xHx
-	xPfZpm/wUxqJBUmjrPhHwQ4tFB8CE7qXZRyXBnhZJD9HRLcvByJsKpQZ5v+IeISRROvXmQUGbb7
-	EgixVlUzQ8jgSR9wgMM4GmTvy2o9C3TE=
-X-Google-Smtp-Source: AGHT+IHu6/IQepea9HxVbCNKNm9Zv8JKQ4BJFdjhKn8ljv9Xd85L/HFi3gcN4fvSjm2ixDXQFRpDYWACaO6UbTFnoS8=
-X-Received: by 2002:a05:6214:300e:b0:704:e5fe:f257 with SMTP id
- 6a1803df08f44-704f4ab6610mr50065046d6.30.1752698916802; Wed, 16 Jul 2025
- 13:48:36 -0700 (PDT)
+	s=k20201202; t=1752698932;
+	bh=Z3CkHZCoZKf5lAaRl/IZ0Dqzf6S69eGU3vBiicfzetA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dFjyzLWEWM8tLNJ2OvtqlOz8IXuNgNfl7vnOD2ypt/WOkNbAXvz+v/UZ0rN7QtGE+
+	 R5sNO1/yvWhxZyuhQWdCBM/Z/863oegfx6P7AdeI1LXs5Q5X7u6tW/oNb9Sa+mhpWg
+	 8fTERzEHmJvbzq+TQTqAZTcK8lYvu1oZZashkjqGr8lKn/jv4VTgpgXZF6G3LF5Vat
+	 wG58ZZKZ/OvQMYoUdaVky+9711oSWabsls/17faxkM+5psMmmfHoFzSdmM4nA5Vah/
+	 K8P+i+YLKPJ22sP5LPKbgP7D/zW92zlGS+kWXHLS7uMJ2s9/z0fun39l6eb8SvfVqh
+	 snuEv2mevMA1Q==
+Date: Wed, 16 Jul 2025 13:48:49 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Ard Biesheuvel <ardb+git@google.com>, 
+	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org, 
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v5 15/22] objtool: Add action to check for absence of
+ absolute relocations
+Message-ID: <dvi4y6u7m2bo6jtesrerxu4sn5nbaw7xjkbnshjgvotvhsp6wa@i3hgg3nu46kj>
+References: <20250716031814.2096113-24-ardb+git@google.com>
+ <20250716031814.2096113-39-ardb+git@google.com>
+ <20250716095446.GV905792@noisy.programming.kicks-ass.net>
+ <CAMj1kXHNvPdgG+OKX6UB70oTzzbvovfvDhSH73vAj-q7G03c5Q@mail.gmail.com>
+ <20250716113243.GU1613200@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
-In-Reply-To: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
-From: Song Liu <song@kernel.org>
-Date: Wed, 16 Jul 2025 13:48:25 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6K95bnGvRVOKj-qBJT7DX8JsaO6WZMNauMi1GEqVT1FA@mail.gmail.com>
-X-Gm-Features: Ac12FXyIg4ONVoNlLp3htfda_3Ao19PzwYItR0iusBKSFl_zDde2_33L59ClXxE
-Message-ID: <CAPhsuW6K95bnGvRVOKj-qBJT7DX8JsaO6WZMNauMi1GEqVT1FA@mail.gmail.com>
-Subject: Re: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	John Johansen <john.johansen@canonical.com>, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250716113243.GU1613200@noisy.programming.kicks-ass.net>
 
-On Tue, Jul 15, 2025 at 3:27=E2=80=AFPM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
-[...]
-> +/**
-> + * lsm_bpf_map_alloc - allocate a composite bpf_map blob
-> + * @map: the bpf_map that needs a blob
-> + *
-> + * Allocate the bpf_map blob for all the modules
-> + *
-> + * Returns 0, or -ENOMEM if memory can't be allocated.
-> + */
-> +static int lsm_bpf_map_alloc(struct bpf_map *map)
-> +{
-> +       if (blob_sizes.lbs_bpf_map =3D=3D 0) {
-> +               map->security =3D NULL;
-> +               return 0;
-> +       }
-> +
-> +       map->security =3D kzalloc(blob_sizes.lbs_bpf_map, GFP_KERNEL);
-> +       if (!map->security)
-> +               return -ENOMEM;
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * lsm_bpf_prog_alloc - allocate a composite bpf_prog blob
-> + * @prog: the bpf_prog that needs a blob
-> + *
-> + * Allocate the bpf_prog blob for all the modules
-> + *
-> + * Returns 0, or -ENOMEM if memory can't be allocated.
-> + */
-> +static int lsm_bpf_prog_alloc(struct bpf_prog *prog)
-> +{
-> +       if (blob_sizes.lbs_bpf_prog =3D=3D 0) {
-> +               prog->aux->security =3D NULL;
-> +               return 0;
-> +       }
-> +
-> +       prog->aux->security =3D kzalloc(blob_sizes.lbs_bpf_prog, GFP_KERN=
-EL);
-> +       if (!prog->aux->security)
-> +               return -ENOMEM;
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * lsm_bpf_token_alloc - allocate a composite bpf_token blob
-> + * @token: the bpf_token that needs a blob
-> + *
-> + * Allocate the bpf_token blob for all the modules
-> + *
-> + * Returns 0, or -ENOMEM if memory can't be allocated.
-> + */
-> +static int lsm_bpf_token_alloc(struct bpf_token *token)
-> +{
-> +       if (blob_sizes.lbs_bpf_token =3D=3D 0) {
-> +               token->security =3D NULL;
-> +               return 0;
-> +       }
-> +
-> +       token->security =3D kzalloc(blob_sizes.lbs_bpf_token, GFP_KERNEL)=
-;
-> +       if (!token->security)
-> +               return -ENOMEM;
-> +
-> +       return 0;
-> +}
+On Wed, Jul 16, 2025 at 01:32:43PM +0200, Peter Zijlstra wrote:
+> On Wed, Jul 16, 2025 at 08:26:55PM +1000, Ard Biesheuvel wrote:
+> 
+> > For robustness, we should actually check for all absolute relocations
+> > here, including R_X86_64_32S, which is not abstracted into a R_ABSxx
+> > type for objtool.
+> > 
+> > So perhaps this needs an arch hook where x86_64 can implement it as
+> > 
+> > bool arch_is_abs_reloc(reloc)
+> > {
+> >    switch (reloc_type(reloc)) {
+> >    case R_X86_64_32:
+> >    case R_X86_64_32S:
+> >    case R_X86_64_64:
+> >       return true;
+> >    }
+> >    return false;
+> > }
+> > 
+> > and the default just compares against R_ABS32 / R_ABS64 depending on
+> > the word size?
+> 
+> Yes, an arch hook like that makes sense. Perhaps make the signature:
+> 
+> bool arch_is_abs_reloc(struct elf *, struct reloc *);
+> 
+> Because the word size comes from elf_addr_size().
 
-We need the above 3 functions inside #ifdef CONFIG_BPF_SYSCALL.
+We already have an arch_pc_relative_reloc(), please try to keep the
+naming consistent.
 
-Also, can we use lsm_blob_alloc() in these functions?
-
-Thanks,
-Song
-
-[...]
+-- 
+Josh
 
