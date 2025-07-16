@@ -1,191 +1,289 @@
-Return-Path: <linux-kernel+bounces-733996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87777B07BC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:05:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438CEB07BC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2270E18889AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:05:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FAE37B2DC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9292E3715;
-	Wed, 16 Jul 2025 17:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973CF2F5C20;
+	Wed, 16 Jul 2025 17:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tVYhfcAo"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XYNDzC3e"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9A525C810
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 17:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017E91A841F;
+	Wed, 16 Jul 2025 17:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752685474; cv=none; b=BhDHGuac8Kk1y9GEOLykmWrOxeTZKXwXM4w5YWrLKpe/YyT5gBtrb3GboXtNNOccwaTbY+dXxlbbIc6WUTO3HNg5lrGTDaY56nMlxJyhHXhx1JaAj2XFsMqNutF6epCKpdMYWZE0iPH+rz01KBB9uG0qKtlHaEv1zy1ge/WNvv0=
+	t=1752685631; cv=none; b=rC89sz9WDA2rvqPjPsfoAYf6YJIfKUPWIYHshwbx28QbqDj8iii5P8s2QA7lXIpCzuzvuRMIlWjbQXKoMdnqBzVMQM0rsJ/ZF9+73QqRY+ohyLnjN5hnDKNbJtwfD45C2eQsiw+xcp2AF5/JfLzO8i9VezWhafSVKO2b6lhksbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752685474; c=relaxed/simple;
-	bh=JjlAfthi00ocbVjlEpO3FDnsasQKvPCOhV9K+WlcWlQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qt2yPKCAQhChbaXv5anxYivmgb2qn37aT+Dosd8go/uHEwx2zis0ILPTe+yEdRQjB3WQUpJub1dg9vGHQ6VrtrfRHRejBZpCKz/0cItK7bmI9OaUN7zu8WxUhuPXMzAxilveu5EyBS6wN+6W3g3fZxq9tlpSaRsUSJQfUWLX6CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tVYhfcAo; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4561ed868b5so644625e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752685468; x=1753290268; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xdZpNOLabO8DeswvXperi80nyiWpJf3rmbhZVDGE4+s=;
-        b=tVYhfcAoem/bVWee1mRep8sP9tIfiMYYtN5SYHDahZIsGuqI72AsiZ1zd0tea0wUjd
-         5EPZxvBogtSkVDce4Om0QUYdQiDyY4sy+1pK7qU0uxmd0nm3w5QPTGDpa+WWrRSBGCCD
-         5dw9CkxAKT8QuWS42gutFfnmwuK4CsqwyQS+cK0DHaMT0qNq2BXH8Z99W37CRYyvgy+G
-         Fv+ttgO/xTYV4iR865/B/bZyTfCJ1Sr+CpONEThTXMuixDWdWCV6LtMJTxhJthklqW1u
-         W0Y30cfKj1pDpOCFI3LXI/EMrqI2Ae8ICcK/FiVNyYd9AvPGGuObJ3SugPGvBz1lfq9w
-         w11w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752685468; x=1753290268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xdZpNOLabO8DeswvXperi80nyiWpJf3rmbhZVDGE4+s=;
-        b=RbG25xVTXLf7Umk0vS3k2zW8JwF36IyiAmtRC2k8G9JbpXLe6G3ekK9XagdYOpJeaa
-         nZ+AW1pCGfb+F7sf+/bbnGjG9LYMWIZMPxUEKlECo/WcVrUIuhNj2+DMBJ7Brx9l5Og8
-         Yw1INkot1ZKi45I5foBoZgBprYd/zMhX8MJkoDz9USDcj8e9fGHTZ53lbJw0THWcOoZE
-         dwKw5+Bh3mksstoNaKaATbj93Qj0JYBBapp8hvXSFRxTRcV8GQkOuJ5e3LQfxFsxtlMX
-         SQ8UtYCZya8fJGwhv9JOTdIXEzMyFYjF8eSOWJ8NlvfV+l24rDGRKKaF1Ps3AxKxbvuz
-         j71A==
-X-Forwarded-Encrypted: i=1; AJvYcCWmnPZc2c+w4FOYDfSL/oXVBMYjxq5JUInxNiJubG/aWAsiX+d/bk+NO66bbqV/00VDB7TWCQwEwzihaA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYtRw4mtx31Lv1HD1FUS1d1AF0yPmYKqERx17YMc+3NQtt/h8s
-	SLSai7dqi1YhKYN2n2sS8TwaNYEavXUUnur+mGi4O/Rv6+G3AFWhdIzYcPYKoRX1fpSImCGDmXG
-	Ble272Husqg7v5/JtlQhU0cSpvxB21Yf+PfrfElXr
-X-Gm-Gg: ASbGncuAxR7+yEL3wokbeBFEKrfmq9skWrV1Ag18oqx1qXv9G2Hx3X+Mncn7oTpth8Q
-	Z9MoGZZpP765xSSbWZMxQc8WOs6nhqefFMbMZ3wDr7xJsbeWR3gEBfPJ06Jd/rFQQdwG2YjNGoo
-	0fBhReHRFdhk3cRYOZ8EPdb2fx7DeNyNmI1TEH8UrCl6GWmpqj+jkpuzIpI2L2qKHCHM95lIt9Y
-	HJuunYB
-X-Google-Smtp-Source: AGHT+IGpCNaC58ho8o80auVphfmPSSlAJH6fVTg274zNDGIUaLEfSNZWe6ti3sRvLr9LT85HGZwDLWSUeXCKst3PbuU=
-X-Received: by 2002:a05:600c:4e8c:b0:43d:4e9:27ff with SMTP id
- 5b1f17b1804b1-4562efa4ccdmr28268175e9.7.1752685467576; Wed, 16 Jul 2025
- 10:04:27 -0700 (PDT)
+	s=arc-20240116; t=1752685631; c=relaxed/simple;
+	bh=ozLL/QFmo2pHoj2feRI+FxBikPSiw+DVoWzCKsX0F7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sdQ8RloUUpxlwDwMPS95dB2MMrrdsVvqQ9n7CtAqlctqebfPKb42JTf4OTXn2uN1dBuG3iove0WnbpiWiuRUQsx+Ej+J/Ag5SmLLU0QmuPht+BzzL6ZGSX/Rjsb5qF3xENb/+RugaXgBFOZlC2zwa8jyARjOPU9ec1BuRW1a024=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XYNDzC3e; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752685626; x=1784221626;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ozLL/QFmo2pHoj2feRI+FxBikPSiw+DVoWzCKsX0F7w=;
+  b=XYNDzC3eEMJcaGAMOMGq5b0YORD7YiutdPElcNYuc+wAHtUdJHmCQ9xj
+   g4YxQJeYIcaEWZj5d4J7icpnUvQXJvbBNwnx/x0loNODujFL1G2F2odLk
+   a+M2K4XnCX7dhOjr8Jl9zKy/oYHF/9dexqp7++jD2PTmwA8rYQEvBHGxc
+   G055GfJS/OsgsYOqY0JVrJGHfm97+pdkJvPoaXShgXSIEjVE717utLQf2
+   pY8cTjSnfVsKFoQvSanzBEKrOxnIAzBL1ClkGYNDZuoeteeIJYBDl2cR3
+   Ry/BIjxrp2np1WonbNwla7BFpRcTbYuA2p27jlMz5PkB76NDhOo2hPI4q
+   A==;
+X-CSE-ConnectionGUID: j98//VqDSFyyLuu38aHxxQ==
+X-CSE-MsgGUID: q74EI4YBRx61V7bT/W2Dyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="55062031"
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="55062031"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 10:07:05 -0700
+X-CSE-ConnectionGUID: zAyo8EnIQBKBo6vorC2p4g==
+X-CSE-MsgGUID: lnn9ExV0QgK+ytn/+P6euA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="163188380"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 16 Jul 2025 10:07:01 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uc5as-000CfR-0h;
+	Wed, 16 Jul 2025 17:06:58 +0000
+Date: Thu, 17 Jul 2025 01:06:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wei Gao <wegao@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Brahmajit Das <brahmajit.xyz@gmail.com>,
+	Andrei Vagin <avagin@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Wei Gao <wegao@suse.com>
+Subject: Re: [PATCH] fs/proc: Use inode_get_dev() for device numbers in
+ procmap_query
+Message-ID: <202507170038.QWz19iZa-lkp@intel.com>
+References: <20250716142732.3385310-1-wegao@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711-topics-tyr-platform_iomem-v13-0-06328b514db3@collabora.com>
- <20250711-topics-tyr-platform_iomem-v13-1-06328b514db3@collabora.com>
- <aHYLWc_KkMHj_jF-@google.com> <D9C5D4EC-FA24-47DB-BE89-609713F093FF@collabora.com>
-In-Reply-To: <D9C5D4EC-FA24-47DB-BE89-609713F093FF@collabora.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 16 Jul 2025 19:04:14 +0200
-X-Gm-Features: Ac12FXyEr3-nxp8z5gzCKUduKa58-13cIw3r7nJu8XJQ_dpW_KpxDB1_UZkq0hc
-Message-ID: <CAH5fLggLm-N1m1CRqfpwAVaX4QnRCA980_GWtzP=uiXgfSsTjA@mail.gmail.com>
-Subject: Re: [PATCH v13 1/3] rust: io: add resource abstraction
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Fiona Behrens <me@kloenk.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716142732.3385310-1-wegao@suse.com>
 
-On Wed, Jul 16, 2025 at 6:53=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
-> Hi Alice,
->
-> >
-> >> +        let inner =3D self.0.get();
-> >> +        // SAFETY: safe as per the invariants of `Resource`.
-> >> +        unsafe { (*inner).start }
-> >> +    }
-> >> +
-> >> +    /// Returns the name of the resource.
-> >> +    pub fn name(&self) -> &'static CStr {
-> >> +        let inner =3D self.0.get();
-> >> +        // SAFETY: safe as per the invariants of `Resource`
-> >> +        unsafe { CStr::from_char_ptr((*inner).name) }
-> >
-> > This is 'static? I would like this safety comment to explicitly say tha=
-t
-> > the string always lives forever no matter what resource you call this
-> > on.
-> >
-> > Alice
-> >
->
-> Actually, we have a bit of a problem here.
->
-> First, there appears to be no guarantee that a `Resource` has a valid nam=
-e.
->
-> In fact:
->
-> #define DEFINE_RES_NAMED(_start, _size, _name, _flags) \
-> DEFINE_RES_NAMED_DESC(_start, _size, _name, _flags, IORES_DESC_NONE)
-> #define DEFINE_RES(_start, _size, _flags) \
-> DEFINE_RES_NAMED(_start, _size, NULL, _flags)
->
-> #define DEFINE_RES_IO_NAMED(_start, _size, _name) \
-> DEFINE_RES_NAMED((_start), (_size), (_name), IORESOURCE_IO)
-> #define DEFINE_RES_IO(_start, _size) \
-> DEFINE_RES_IO_NAMED((_start), (_size), NULL)
->
-> The non _NAMED version of these macros will assign a NULL pointer, so we =
-can't
-> derive a CStr from that at all.
->
-> On top of that, although some call sites do use static names, i.e.:
->
-> struct resource ioport_resource =3D {
-> .name =3D "PCI IO",
-> .start =3D 0,
-> .end =3D IO_SPACE_LIMIT,
-> .flags =3D IORESOURCE_IO,
-> };
-> EXPORT_SYMBOL(ioport_resource);
->
-> struct resource iomem_resource =3D {
-> .name =3D "PCI mem",
-> .start =3D 0,
-> .end =3D -1,
-> .flags =3D IORESOURCE_MEM,
-> };
-> EXPORT_SYMBOL(iomem_resource);
->
-> static struct resource busn_resource =3D {
-> .name =3D "PCI busn",
-> .start =3D 0,
-> .end =3D 255,
-> .flags =3D IORESOURCE_BUS,
-> };
->
-> Some appear to use other, smaller lifetimes, like the one below:
->
-> struct pnp_resource *pnp_add_resource(struct pnp_dev *dev,
->       struct resource *res)
-> {
-> struct pnp_resource *pnp_res;
->
-> pnp_res =3D pnp_new_resource(dev);
-> if (!pnp_res) {
-> dev_err(&dev->dev, "can't add resource %pR\n", res);
-> return NULL;
-> }
->
-> pnp_res->res =3D *res;
-> pnp_res->res.name =3D dev->name;
->
->
-> I guess the easiest solution is to drop 'static in order to account for t=
-he
-> above, and change the signature to return Option<&CStr> instead.
+Hi Wei,
 
-Using Option<&CStr> sounds good to me.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on akpm-mm/mm-everything crng-random/master linus/master v6.16-rc6 next-20250716]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Gao/fs-proc-Use-inode_get_dev-for-device-numbers-in-procmap_query/20250716-103031
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250716142732.3385310-1-wegao%40suse.com
+patch subject: [PATCH] fs/proc: Use inode_get_dev() for device numbers in procmap_query
+config: i386-buildonly-randconfig-002-20250716 (https://download.01.org/0day-ci/archive/20250717/202507170038.QWz19iZa-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507170038.QWz19iZa-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507170038.QWz19iZa-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> fs/proc/task_mmu.c:521:26: error: call to undeclared function 'inode_get_dev'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     521 |                 karg.dev_major = MAJOR(inode_get_dev(inode));
+         |                                        ^
+   fs/proc/task_mmu.c:521:26: note: did you mean 'inode_get_bytes'?
+   include/linux/fs.h:3567:8: note: 'inode_get_bytes' declared here
+    3567 | loff_t inode_get_bytes(struct inode *inode);
+         |        ^
+   1 error generated.
+
+
+vim +/inode_get_dev +521 fs/proc/task_mmu.c
+
+   453	
+   454	static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+   455	{
+   456		struct procmap_query karg;
+   457		struct vm_area_struct *vma;
+   458		struct mm_struct *mm;
+   459		const char *name = NULL;
+   460		char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
+   461		__u64 usize;
+   462		int err;
+   463	
+   464		if (copy_from_user(&usize, (void __user *)uarg, sizeof(usize)))
+   465			return -EFAULT;
+   466		/* argument struct can never be that large, reject abuse */
+   467		if (usize > PAGE_SIZE)
+   468			return -E2BIG;
+   469		/* argument struct should have at least query_flags and query_addr fields */
+   470		if (usize < offsetofend(struct procmap_query, query_addr))
+   471			return -EINVAL;
+   472		err = copy_struct_from_user(&karg, sizeof(karg), uarg, usize);
+   473		if (err)
+   474			return err;
+   475	
+   476		/* reject unknown flags */
+   477		if (karg.query_flags & ~PROCMAP_QUERY_VALID_FLAGS_MASK)
+   478			return -EINVAL;
+   479		/* either both buffer address and size are set, or both should be zero */
+   480		if (!!karg.vma_name_size != !!karg.vma_name_addr)
+   481			return -EINVAL;
+   482		if (!!karg.build_id_size != !!karg.build_id_addr)
+   483			return -EINVAL;
+   484	
+   485		mm = priv->mm;
+   486		if (!mm || !mmget_not_zero(mm))
+   487			return -ESRCH;
+   488	
+   489		err = query_vma_setup(mm);
+   490		if (err) {
+   491			mmput(mm);
+   492			return err;
+   493		}
+   494	
+   495		vma = query_matching_vma(mm, karg.query_addr, karg.query_flags);
+   496		if (IS_ERR(vma)) {
+   497			err = PTR_ERR(vma);
+   498			vma = NULL;
+   499			goto out;
+   500		}
+   501	
+   502		karg.vma_start = vma->vm_start;
+   503		karg.vma_end = vma->vm_end;
+   504	
+   505		karg.vma_flags = 0;
+   506		if (vma->vm_flags & VM_READ)
+   507			karg.vma_flags |= PROCMAP_QUERY_VMA_READABLE;
+   508		if (vma->vm_flags & VM_WRITE)
+   509			karg.vma_flags |= PROCMAP_QUERY_VMA_WRITABLE;
+   510		if (vma->vm_flags & VM_EXEC)
+   511			karg.vma_flags |= PROCMAP_QUERY_VMA_EXECUTABLE;
+   512		if (vma->vm_flags & VM_MAYSHARE)
+   513			karg.vma_flags |= PROCMAP_QUERY_VMA_SHARED;
+   514	
+   515		karg.vma_page_size = vma_kernel_pagesize(vma);
+   516	
+   517		if (vma->vm_file) {
+   518			const struct inode *inode = file_user_inode(vma->vm_file);
+   519	
+   520			karg.vma_offset = ((__u64)vma->vm_pgoff) << PAGE_SHIFT;
+ > 521			karg.dev_major = MAJOR(inode_get_dev(inode));
+   522			karg.dev_minor = MINOR(inode_get_dev(inode));
+   523			karg.inode = inode->i_ino;
+   524		} else {
+   525			karg.vma_offset = 0;
+   526			karg.dev_major = 0;
+   527			karg.dev_minor = 0;
+   528			karg.inode = 0;
+   529		}
+   530	
+   531		if (karg.build_id_size) {
+   532			__u32 build_id_sz;
+   533	
+   534			err = build_id_parse(vma, build_id_buf, &build_id_sz);
+   535			if (err) {
+   536				karg.build_id_size = 0;
+   537			} else {
+   538				if (karg.build_id_size < build_id_sz) {
+   539					err = -ENAMETOOLONG;
+   540					goto out;
+   541				}
+   542				karg.build_id_size = build_id_sz;
+   543			}
+   544		}
+   545	
+   546		if (karg.vma_name_size) {
+   547			size_t name_buf_sz = min_t(size_t, PATH_MAX, karg.vma_name_size);
+   548			const struct path *path;
+   549			const char *name_fmt;
+   550			size_t name_sz = 0;
+   551	
+   552			get_vma_name(vma, &path, &name, &name_fmt);
+   553	
+   554			if (path || name_fmt || name) {
+   555				name_buf = kmalloc(name_buf_sz, GFP_KERNEL);
+   556				if (!name_buf) {
+   557					err = -ENOMEM;
+   558					goto out;
+   559				}
+   560			}
+   561			if (path) {
+   562				name = d_path(path, name_buf, name_buf_sz);
+   563				if (IS_ERR(name)) {
+   564					err = PTR_ERR(name);
+   565					goto out;
+   566				}
+   567				name_sz = name_buf + name_buf_sz - name;
+   568			} else if (name || name_fmt) {
+   569				name_sz = 1 + snprintf(name_buf, name_buf_sz, name_fmt ?: "%s", name);
+   570				name = name_buf;
+   571			}
+   572			if (name_sz > name_buf_sz) {
+   573				err = -ENAMETOOLONG;
+   574				goto out;
+   575			}
+   576			karg.vma_name_size = name_sz;
+   577		}
+   578	
+   579		/* unlock vma or mmap_lock, and put mm_struct before copying data to user */
+   580		query_vma_teardown(mm, vma);
+   581		mmput(mm);
+   582	
+   583		if (karg.vma_name_size && copy_to_user(u64_to_user_ptr(karg.vma_name_addr),
+   584						       name, karg.vma_name_size)) {
+   585			kfree(name_buf);
+   586			return -EFAULT;
+   587		}
+   588		kfree(name_buf);
+   589	
+   590		if (karg.build_id_size && copy_to_user(u64_to_user_ptr(karg.build_id_addr),
+   591						       build_id_buf, karg.build_id_size))
+   592			return -EFAULT;
+   593	
+   594		if (copy_to_user(uarg, &karg, min_t(size_t, sizeof(karg), usize)))
+   595			return -EFAULT;
+   596	
+   597		return 0;
+   598	
+   599	out:
+   600		query_vma_teardown(mm, vma);
+   601		mmput(mm);
+   602		kfree(name_buf);
+   603		return err;
+   604	}
+   605	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
