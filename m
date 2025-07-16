@@ -1,74 +1,92 @@
-Return-Path: <linux-kernel+bounces-734376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C0BB080BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:55:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B888EB080C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E706116E975
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:55:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B414A18C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E263A2EE990;
-	Wed, 16 Jul 2025 22:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AD22EF2A1;
+	Wed, 16 Jul 2025 22:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="xJ/u4t0W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DcoD2fcN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CDD264604;
-	Wed, 16 Jul 2025 22:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178D521421E;
+	Wed, 16 Jul 2025 22:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752706547; cv=none; b=e4d0C+vwDx4FuUH9V7ArIOOyffWlRbloJcvonMb+jq6vF0Rb1c/Tn2i1nyZ2wbaVGSmSVXmj66RJ+nh+kXRL8keSLp1FrOfAICu/HELk3agnLD+2hrvpUDxtpAouSL2v023+VkXjc8zDtJJ+oIEKR/XNwJKHBMGaVN97IYqvT2g=
+	t=1752706683; cv=none; b=s9B7kTpbUUxHVB/yxwOxFsZKH/X81ZlARiXVQw1lqMZ9xmjH+EshVad7VKPHy8HbVDBmkMS+IWH1J7cLTfFaH06aQERK2yJhwVGN9Md64ACe2akG5BGo9VINKrHh/e/Znl5TTSV9ZXV0i73cmQLb1E5DTbGvx4tgHqO3pDJrnNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752706547; c=relaxed/simple;
-	bh=M15hhWxvkrQ1L1CucvfJyp93jR83Hf419GuFwWEd5SI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=qQ/nUiPmii872T8ZcQkPVx+Liy/z/erVwhWg1FjwxShb5kl5aikQuHj8+kO76+9/FIosv0O2u+ye+rZ+4XIabYGIWIkCd/1OwPK5sT3Jf9J9ERp/y/y6iqmNT2WD2Csp8dlINeWkGVUDlvZqilXkyYsHzrd/YkX1jhzUSz+KBTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=xJ/u4t0W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6095C4CEE7;
-	Wed, 16 Jul 2025 22:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752706546;
-	bh=M15hhWxvkrQ1L1CucvfJyp93jR83Hf419GuFwWEd5SI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=xJ/u4t0W6LZyLuQhgQBYJts0DqKsJKkQrPIegf3swDXWAgKsQUQA+pDgZBEl0rlMe
-	 NRi7NpMVQ/mXuW+yNL7vdueD5pKEJSG6QV4aghESMZSEbFiMmU9MxQ9DNBMzpGF8Ns
-	 p7NInuja5l3/ZPEfS0/FPbWAQymGGXImQ/VFhN+U=
-Date: Wed, 16 Jul 2025 15:55:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
- vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org,
- mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org,
- adobriyan@gmail.com, brauner@kernel.org, josef@toxicpanda.com,
- yebin10@huawei.com, linux@weissschuh.net, willy@infradead.org,
- osalvador@suse.de, andrii@kernel.org, ryan.roberts@arm.com,
- christophe.leroy@csgroup.eu, tjmercier@google.com, kaleshsingh@google.com,
- aha310510@gmail.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v7 0/7] use per-vma locks for /proc/pid/maps reads
-Message-Id: <20250716155545.ad2efdd41c85d6812bf328bb@linux-foundation.org>
-In-Reply-To: <20250716030557.1547501-1-surenb@google.com>
-References: <20250716030557.1547501-1-surenb@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752706683; c=relaxed/simple;
+	bh=feyZUWnRLhI1C4HTdJ3yKYnq0VO/UBF9lovva/LkJx0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=GUc4g01nbVmqf+I2IQcg3AJB7wyxXh+2W6Cg/zUaj9DnhL/q5d7LKVqxLy1iiU2K3ryZV9yA4sNaRMX5K15ko77oFIWbuoQFxL15UXyLJb8cvjbCfLusJIsTyMRSmjDN8/yzleb32sdzFClC5ud7E4UwVb9cmnARYajkL6w2fSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DcoD2fcN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80F6AC4CEE7;
+	Wed, 16 Jul 2025 22:57:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752706683;
+	bh=feyZUWnRLhI1C4HTdJ3yKYnq0VO/UBF9lovva/LkJx0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=DcoD2fcNUtdPrjQw90CoOSe4Dwwm2GyYFGYFHUQzSlRaZ2BnYS/u6XKoe1tvumfNO
+	 Ipb6Hphd6iiy4FuSrYLnaaTJQFlkLsf0JwPWmpJPATeV5L1JsI6fzJL9AJfA6I0t+k
+	 6E/6apYDZWLdtyoS6Q6DdMAVjWzB0Zg30b8cmyC396IoK3eFRfibOZcNjgKhRRY+ie
+	 zOU3A6QjLGZ/wtwQ1q/8iPoVaw2HqAByy+gmNq7q8CenPBLYxH3+ZGBPuptULx44qX
+	 JQ4RzWYxyxTr+TUkJXita5jK6kLtdOY8mzMPYBKv9vJdwd7iBoC1mnOf3mFTZFiqE9
+	 QZg4ji8xpMWLQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 17 Jul 2025 00:57:55 +0200
+Message-Id: <DBDUNV3UWXNE.3KHTYC5BEZWYS@kernel.org>
+Subject: Re: [PATCH v2 1/2] device: rust: rename Device::as_ref() to
+ Device::from_raw()
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dave Ertman"
+ <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
+ Romanovsky" <leon@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor
+ Gross" <tmgross@umich.edu>, "Thomas Gleixner" <tglx@linutronix.de>, "Peter
+ Zijlstra" <peterz@infradead.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "FUJITA
+ Tomonori" <fujita.tomonori@gmail.com>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <netdev@vger.kernel.org>, <linux-pci@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250711-device-as-ref-v2-0-1b16ab6402d7@google.com>
+ <20250711-device-as-ref-v2-1-1b16ab6402d7@google.com>
+In-Reply-To: <20250711-device-as-ref-v2-1-1b16ab6402d7@google.com>
 
-On Tue, 15 Jul 2025 20:05:49 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+On Fri Jul 11, 2025 at 10:04 AM CEST, Alice Ryhl wrote:
+> The prefix as_* should not be used for a constructor. Constructors
+> usually use the prefix from_* instead.
+>
+> Some prior art in the stdlib: Box::from_raw, CString::from_raw,
+> Rc::from_raw, Arc::from_raw, Waker::from_raw, File::from_raw_fd.
+>
+> There is also prior art in the kernel crate: cpufreq::Policy::from_raw,
+> fs::File::from_raw_file, Kuid::from_raw, ARef::from_raw,
+> SeqFile::from_raw, VmaNew::from_raw, Io::from_raw.
+>
+> Link: https://lore.kernel.org/r/aCd8D5IA0RXZvtcv@pollux
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-> This patchset switches from holding mmap_lock while reading /proc/pid/maps
-> to taking per-vma locks as we walk the vma tree.
-
-Thanks, I added this v7 series to mm-new.  Which I usually push out
-mid-evening California time.
+Applied to driver-core-testing, thanks!
 
