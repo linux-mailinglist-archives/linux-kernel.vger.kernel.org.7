@@ -1,40 +1,34 @@
-Return-Path: <linux-kernel+bounces-732731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A46CB06B57
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:56:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D31B06B5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BFB4170E78
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECFEF7B299A
 	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F75D27146F;
-	Wed, 16 Jul 2025 01:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="W0jW9R03"
-Received: from mail-m15572.qiye.163.com (mail-m15572.qiye.163.com [101.71.155.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787802AE8E;
-	Wed, 16 Jul 2025 01:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957FF2727E5;
+	Wed, 16 Jul 2025 01:58:19 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A3826E179;
+	Wed, 16 Jul 2025 01:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752631013; cv=none; b=TbFzbBR0x/RAzzNlR5lIHOkwJlGGjO7W1mVSKuR/rXHNSnw/WxiP7lbSkyy3Ex0dEE2KgXZAlveA2p6+5lt0QRX1SH/VgR6q4dxlSaTf/MY1lhYBGCGPtQwtUCkrH30Ly5J0ktd5TIzOR+CYlIFY9UqrepbgRpuXvdgOk9fsooQ=
+	t=1752631099; cv=none; b=VzzluOkOs3QCa+1r5KgkFXaYt5oGARr6hck6blhNQc5nOVW+tRDBIjt9ZwM+IRP6ZR6lTFCEAOLGSAkqeqTuHfQutlm9wX3O0IkXCvLzbQQXN25qltwqqPGLjCXDYsD2Wi1zyM8BVIvDhXVDvo63HCOvEeXu1jnEqgVM9f/bIgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752631013; c=relaxed/simple;
-	bh=e9lUDbvdgYncphaWPprUaZQ6Mg/HpQCIuNBWvPgCjzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jx/6cYSORDcDltEjq0SBRsIz0n+gLv++Fl/j+eiarJC3h6MkaFlNm3n9El2kvONdopZsx6ibgGsfwVt6FEPOxp1Zt0YnfLzLLWJcFcyoxMaiOjV72sRiY6xTmzyZW91+5sX84ocEdIRthNp8L0KwJoba8S68NzCcva7Eeuk2z0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=W0jW9R03; arc=none smtp.client-ip=101.71.155.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1c22589b7;
-	Wed, 16 Jul 2025 09:56:28 +0800 (GMT+08:00)
-Message-ID: <c84cb838-e6e7-4ed0-8d12-67b82f85ff28@rock-chips.com>
-Date: Wed, 16 Jul 2025 09:56:27 +0800
+	s=arc-20240116; t=1752631099; c=relaxed/simple;
+	bh=EJiTLMPRgmPaG1Rq1pRDiA2bIfmxYOyssrBRqts0fH4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=N/3lUjiHjd4hvUgcXDiyYbAs6uwAq/fooLbyDGIaBsre/BwPiYKN3KAt2dVMomuL23JBvrfpT3oJQyG6QYhSnhvAIC6xXD5yKnHGC4il4JZI66bySkLppm0Z0UYvooAK3083vhvAN8oXD6m0rA7tY+OW5eW3FE2p26v0Hs3BIMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-10-6877072e6042
+Message-ID: <5d1aa6f2-fa5f-4cc2-a3c7-3b5144391524@sk.com>
+Date: Wed, 16 Jul 2025 10:58:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,73 +36,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] phy: rockchip: phy-rockchip-typec: Add support for
- Type-C TCPM
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Chaoyi Chen <kernel@airkyi.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
- Diederik de Haas <didi.debian@cknow.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- dri-devel@lists.freedesktop.org
-References: <20250715112456.101-1-kernel@airkyi.com>
- <20250715112456.101-4-kernel@airkyi.com>
- <eqb5m22om6bx2ypjtnlwdjmgfyycpmgrlvro34xwlwjj4j2jeq@mrarg36wetp6>
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <eqb5m22om6bx2ypjtnlwdjmgfyycpmgrlvro34xwlwjj4j2jeq@mrarg36wetp6>
+Cc: kernel_team@skhynix.com, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, damon@lists.linux.dev,
+ kernel-team@meta.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH 0/4] mm/damon/sysfs: support periodic and automated
+ stats update
+Content-Language: ko
+To: SeongJae Park <sj@kernel.org>
+References: <20250715234316.91272-1-sj@kernel.org>
+From: Honggyu Kim <honggyu.kim@sk.com>
+In-Reply-To: <20250715234316.91272-1-sj@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkgYH1ZMGk9MGh0fHhlJH0xWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCS0
-	NVSktLVUpCWQY+
-X-HM-Tid: 0a9810f28ea703abkunm90ac2de114329c6
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pkk6PAw6TzE0CQkqHyMaKTwO
-	FCMwFBxVSlVKTE5JTUhLQkJDTExNVTMWGhIXVRgTGhQCElUYEx4VOwkUGBBWGBMSCwhVGBQWRVlX
-	WRILWUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUNNTDcG
-DKIM-Signature:a=rsa-sha256;
-	b=W0jW9R03pDXvYvm3Rcj4D/OVXpsMGGUD4uR1EzjGrfUvJ1jREzszZ3UvHu9fA4hJSWutBZqokl4p7J5EL4BskBgoitkLIFthMM+EJ1eWoL5y4pjR+pSdm4P3can6FI5v2Cx7gxWVhXUR4sdLwXNQPCr29lZXHdhlnt5R7jcGTaA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=jn0hRWbIM6rr6NocmrIeQ0wNYnfckKljpY3FeBK/+iY=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsXC9ZZnoa4ee3mGwdldGhZz1q9hs3hyoJ3R
+	4sn/36wW+y4CuQvblrBYXN41h83i3pr/rBaHv75hcuDw2LSqk81j06dJ7B4nZvxm8XixeSaj
+	x+K+yawe5y5WeHzeJBfAHsVlk5Kak1mWWqRvl8CVsf+Oc8Ea+YqV/YdYGxhnS3YxcnJICJhI
+	XNjYyAJj/7l3jRHE5hWwlHh6cyETiM0ioCqxcMMHdoi4oMTJmU/A6kUF5CXu35oBFOfiYBZ4
+	wShxfu9vNpCEsECUxM7f/WANzAIiErM725hBbBEBRYlzjy+ygthCAkYSz+f9AlvGJqAmceXl
+	JLBlnALGEk0/25kges0kurZ2MULY8hLb385hBlkmIXCGTWLeztusEFdLShxccYNlAqPgLCQH
+	zkKyexaSWbOQzFrAyLKKUSgzryw3MTPHRC+jMi+zQi85P3cTIzBWltX+id7B+OlC8CFGAQ5G
+	JR7eHdZlGUKsiWXFlbmHGCU4mJVEeCdfAgrxpiRWVqUW5ccXleakFh9ilOZgURLnNfpWniIk
+	kJ5YkpqdmlqQWgSTZeLglGpgtNPyvK8tV8k0+/6KuQZ8szNfHtS8+br78LvGubeUXsotF9+5
+	+uSL8FN1U5TYQteEBbgpi5kv4C+KflvVdKji7t6c+drJ3Flhf68/lT44z9CofFaH1II95Xlr
+	FzRH3l6cEFLozvjoe+bzdwd7EnXOhjhZbxfteW+1wMvG4mrH2bj/2Tej7wscV2Ipzkg01GIu
+	Kk4EAFeB1PiRAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsXCNUNLT1ePvTzD4ORPKYs569ewWTw50M5o
+	8eT/b1aLfReB3MNzT7JaLGxbwmJxedccNot7a/6zWhz++obJgdNj06pONo9Nnyaxe5yY8ZvF
+	48XmmYwei/sms3qcu1jhsfjFByaPz5vkAjiiuGxSUnMyy1KL9O0SuDL233EuWCNfsbL/EGsD
+	42zJLkZODgkBE4k/964xgti8ApYST28uZAKxWQRUJRZu+MAOEReUODnzCQuILSogL3H/1gyg
+	OBcHs8ALRonze3+zgSSEBaIkdv7uB2tgFhCRmN3ZxgxiiwgoSpx7fJEVxBYSMJJ4Pu8X2DI2
+	ATWJKy8ngS3jFDCWaPrZzgTRaybRtbWLEcKWl9j+dg7zBEa+WUjumIVkxSwkLbOQtCxgZFnF
+	KJKZV5abmJljqlecnVGZl1mhl5yfu4kRGPjLav9M3MH45bL7IUYBDkYlHt4d1mUZQqyJZcWV
+	uYcYJTiYlUR4J18CCvGmJFZWpRblxxeV5qQWH2KU5mBREuf1Ck9NEBJITyxJzU5NLUgtgsky
+	cXBKNTCKpP5jShL/VvbdI5HT4oLz5In6j1POa2X+2RCVd2GugtwVJrv4Yxs3cOfN2f3glYNO
+	zLE1KUpbP0yWcz32d2/cquPXmS4/9LWcEhe3+Hns5FdfYzY39c1Mv5xRczhxSw2L1w2t+9z/
+	L89c2PjEZduHj0tOlZsGMSzhzlupYcnT5C1+59aeaKYsJZbijERDLeai4kQASiefnngCAAA=
+X-CFilter-Loop: Reflected
 
-Hi Dmitry,
+Hi SeongJae,
 
-On 2025/7/15 20:05, Dmitry Baryshkov wrote:
-> On Tue, Jul 15, 2025 at 07:24:54PM +0800, Chaoyi Chen wrote:
->> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+On 7/16/2025 8:43 AM, SeongJae Park wrote:
+> On Wed, 16 Jul 2025 07:20:57 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+> 
+>> Hi SeongJae,
 >>
->> This patch add support for Type-C Port Controller Manager.
->> The extcon device should still be supported.
+>> On 7/13/2025 5:46 AM, SeongJae Park wrote:
+>>> DAMON sysfs interface provides files for reading DAMON internal status
+>>> including DAMOS stats.  The content of the files are not automatically
+>>> updated, though.  Users should manually request updates of the contents
+>>> by writing a special command to 'state' file of each kdamond directory.
+>>> This interface is good for minimizing overhead, but causes the below
+>>> problems.
+>>>
+>>> First, the usage is cumbersome.  This is arguably not a big problem,
+>>> since the user-space tool (damo) can do this instead of the user.
+>>>
+>>> Second, it can be too slow.  The update request is not directly handled
+>>> by the sysfs interface but kdamond thread.  And kdamond threads wake up
+>>> only once per the sampling interval.  Hence if sampling interval is not
+>>> short, each update request could take too long time.  The recommended
+>>> sampling interval setup is asking DAMON to automatically tune it, within
+>>> a range between 5 milliseconds and 10 seconds.  On production systems it
+>>> is not very rare to have a few seconds sampling interval as a result of
+>>> the auto-tuning, so this can disturb observing DAMON internal status.
+>>>
+>>> Finally, parallel update requests can conflict with each other.  When
+>>> parallel update requests are received, DAMON sysfs interface simply
+>>> returns -EBUSY to one of the requests.  DAMON user-space tool is hence
+>>> implementing its own backoff mechanism, but this can make the operation
+>>> even slower.
+>>>
+>>> Introduce a new sysfs file, namely refresh_ms, for asking DAMON sysfs
+>>> interface to repeat the essential contents update with a user-specified
+>>> time delay.
 >>
->> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->> ---
->>   drivers/phy/rockchip/phy-rockchip-typec.c | 335 ++++++++++++++++++++--
->>   1 file changed, 319 insertions(+), 16 deletions(-)
-> Please keep TCPM implementation under drivers/usb/typec/tcpm/ . Create
-> an aux device and write an aux driver for the TCPM part.
+>> Thanks for working on this, but I have a few questions.
+>> 1. Could you please list up what are the "essential contents"?
+> 
+> Thank you for asking this.  The contents are auto-tuned monitoring intervals,
+> DAMOS stats, and auto-tuned effective size quota.
 
-Sorry, the commit messages may not be described accurately enough.
+Thanks, but I meant the specific list of damon knobs refreshed.  If there are
+too many knobs, then don't have to list them all.
 
+> I will add these on the next version cover letter.
 
-This patch adds mux/switch operations to the PHY driver to improve 
-communication with the TCPM framework. Since this PHY is a combo USB/DP 
-PHY, it requires configuration changes to the PHY lanes based on the 
-USB-C  plug orientation (CC logic), similar to the existing extcon 
-mechanism implementation. Of course, the original extcon functionality 
-will remain fully compatible.
+Thanks.
 
+>> 2. Does it mean that it is different from writing "commit" to "state"?
+>> 3. If not, then is there equivalent action to writing something to "state"?
+> 
+> "refresh_ms" works same to other DAMON parameter files.  You can set it before
+> starting DAMON, or "commit" new values (including 0 for turning this refresh
+> off) in runtime.
+> 
+> I'm not that confident if I understood your point very well, especially what
+> "it"s mean.  Let me know if I'm misunderstanding something.
+
+I mean writing "commit" to "state" refresh all knobs, but it seems "refresh_ms"
+internally refresh paritial knobs so I was wondering what are refreshed and what 
+aren't.
+
+Regarding the "equivalent action", I was also wondering if there is a command
+that works same as "refresh_ms" internally does among the command below.
+
+   update_tuned_intervals
+   commit_schemes_quota_goals
+   update_schemes_stats
+   update_schemes_tried_regions
+   update_schemes_tried_bytes
+   clear_schemes_tried_regions
+   update_schemes_effective_quotas
+
+https://docs.kernel.org/admin-guide/mm/damon/usage.html#kdamonds-n
+
+In other words, if there is the same command listed above, then users might be
+able to run a script that regularaly write the command to the current "state"
+even without this "refresh_ms".  I know having "refresh_ms" is much better
+though.
+
+Thanks,
+Honggyu
+
+> 
+>>
+>> If possible, then this kind of information is better to be documented because
+>> users might get confused if something isn't udpated when "refresh_ms" is set.
+> 
+> You're right!  I'll add above things on the next version of the cover letter.
+> 
+> 
+> Thanks,
+> SJ
+> 
+> [...]
 
 
