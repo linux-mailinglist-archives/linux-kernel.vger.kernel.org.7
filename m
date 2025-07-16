@@ -1,175 +1,339 @@
-Return-Path: <linux-kernel+bounces-732732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D31B06B5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 03:58:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FE8B06B5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 04:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECFEF7B299A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 01:56:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7059F172001
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957FF2727E5;
-	Wed, 16 Jul 2025 01:58:19 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A3826E179;
-	Wed, 16 Jul 2025 01:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C581E27281F;
+	Wed, 16 Jul 2025 02:00:26 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4EE1581EE;
+	Wed, 16 Jul 2025 02:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752631099; cv=none; b=VzzluOkOs3QCa+1r5KgkFXaYt5oGARr6hck6blhNQc5nOVW+tRDBIjt9ZwM+IRP6ZR6lTFCEAOLGSAkqeqTuHfQutlm9wX3O0IkXCvLzbQQXN25qltwqqPGLjCXDYsD2Wi1zyM8BVIvDhXVDvo63HCOvEeXu1jnEqgVM9f/bIgQ=
+	t=1752631226; cv=none; b=dPs9+gMcJbQQqGkS/YX30WNajD2CAZWKDBvNRXi6wxIED7RsVHbUztQNypWrRMb9mcrK5vUEXdLyQLTy3l0H8G2GwSjDVC8Vxa4nVTFAEpBz2eortNnQmslZBn/A7uQyAwqBNs8pQaa5QMtAhWxH6s/i6iFBEUm/iADgeHTbAU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752631099; c=relaxed/simple;
-	bh=EJiTLMPRgmPaG1Rq1pRDiA2bIfmxYOyssrBRqts0fH4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=N/3lUjiHjd4hvUgcXDiyYbAs6uwAq/fooLbyDGIaBsre/BwPiYKN3KAt2dVMomuL23JBvrfpT3oJQyG6QYhSnhvAIC6xXD5yKnHGC4il4JZI66bySkLppm0Z0UYvooAK3083vhvAN8oXD6m0rA7tY+OW5eW3FE2p26v0Hs3BIMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-10-6877072e6042
-Message-ID: <5d1aa6f2-fa5f-4cc2-a3c7-3b5144391524@sk.com>
-Date: Wed, 16 Jul 2025 10:58:06 +0900
+	s=arc-20240116; t=1752631226; c=relaxed/simple;
+	bh=UTPMJMXu3gVXw7OpSH5sp6TL7U+GSM+lvDW6DuVq6n0=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=acy3FZB5OKRSvrQua7id4STAdTKVTsflnwH3+SmIG7AhAj1kB7gxHStEhZaEn1ceJN8BnwgxkqCHFsbnuOIe00mckCYcxYL68WRjnw2RLa8g6OyaWZEYKabB3zqqmgyKAxBsGCYb2STUE6Wc9+Kh/a0broMOSRjqSLCsPr8PKs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bhfQT5tphz8R03y;
+	Wed, 16 Jul 2025 10:00:17 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl1.zte.com.cn with SMTP id 56G205DB001099;
+	Wed, 16 Jul 2025 10:00:05 +0800 (+08)
+	(envelope-from fan.yu9@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 16 Jul 2025 10:00:06 +0800 (CST)
+Date: Wed, 16 Jul 2025 10:00:06 +0800 (CST)
+X-Zmail-TransId: 2afc687707a628c-d7b06
+X-Mailer: Zmail v1.0
+Message-ID: <20250716100006458kPWBPIJB6IdzWuUKlv4tF@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: kernel_team@skhynix.com, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, damon@lists.linux.dev,
- kernel-team@meta.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 0/4] mm/damon/sysfs: support periodic and automated
- stats update
-Content-Language: ko
-To: SeongJae Park <sj@kernel.org>
-References: <20250715234316.91272-1-sj@kernel.org>
-From: Honggyu Kim <honggyu.kim@sk.com>
-In-Reply-To: <20250715234316.91272-1-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsXC9ZZnoa4ee3mGwdldGhZz1q9hs3hyoJ3R
-	4sn/36wW+y4CuQvblrBYXN41h83i3pr/rBaHv75hcuDw2LSqk81j06dJ7B4nZvxm8XixeSaj
-	x+K+yawe5y5WeHzeJBfAHsVlk5Kak1mWWqRvl8CVsf+Oc8Ea+YqV/YdYGxhnS3YxcnJICJhI
-	XNjYyAJj/7l3jRHE5hWwlHh6cyETiM0ioCqxcMMHdoi4oMTJmU/A6kUF5CXu35oBFOfiYBZ4
-	wShxfu9vNpCEsECUxM7f/WANzAIiErM725hBbBEBRYlzjy+ygthCAkYSz+f9AlvGJqAmceXl
-	JLBlnALGEk0/25kges0kurZ2MULY8hLb385hBlkmIXCGTWLeztusEFdLShxccYNlAqPgLCQH
-	zkKyexaSWbOQzFrAyLKKUSgzryw3MTPHRC+jMi+zQi85P3cTIzBWltX+id7B+OlC8CFGAQ5G
-	JR7eHdZlGUKsiWXFlbmHGCU4mJVEeCdfAgrxpiRWVqUW5ccXleakFh9ilOZgURLnNfpWniIk
-	kJ5YkpqdmlqQWgSTZeLglGpgtNPyvK8tV8k0+/6KuQZ8szNfHtS8+br78LvGubeUXsotF9+5
-	+uSL8FN1U5TYQteEBbgpi5kv4C+KflvVdKji7t6c+drJ3Flhf68/lT44z9CofFaH1II95Xlr
-	FzRH3l6cEFLozvjoe+bzdwd7EnXOhjhZbxfteW+1wMvG4mrH2bj/2Tej7wscV2Ipzkg01GIu
-	Kk4EAFeB1PiRAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsXCNUNLT1ePvTzD4ORPKYs569ewWTw50M5o
-	8eT/b1aLfReB3MNzT7JaLGxbwmJxedccNot7a/6zWhz++obJgdNj06pONo9Nnyaxe5yY8ZvF
-	48XmmYwei/sms3qcu1jhsfjFByaPz5vkAjiiuGxSUnMyy1KL9O0SuDL233EuWCNfsbL/EGsD
-	42zJLkZODgkBE4k/964xgti8ApYST28uZAKxWQRUJRZu+MAOEReUODnzCQuILSogL3H/1gyg
-	OBcHs8ALRonze3+zgSSEBaIkdv7uB2tgFhCRmN3ZxgxiiwgoSpx7fJEVxBYSMJJ4Pu8X2DI2
-	ATWJKy8ngS3jFDCWaPrZzgTRaybRtbWLEcKWl9j+dg7zBEa+WUjumIVkxSwkLbOQtCxgZFnF
-	KJKZV5abmJljqlecnVGZl1mhl5yfu4kRGPjLav9M3MH45bL7IUYBDkYlHt4d1mUZQqyJZcWV
-	uYcYJTiYlUR4J18CCvGmJFZWpRblxxeV5qQWH2KU5mBREuf1Ck9NEBJITyxJzU5NLUgtgsky
-	cXBKNTCKpP5jShL/VvbdI5HT4oLz5In6j1POa2X+2RCVd2GugtwVJrv4Yxs3cOfN2f3glYNO
-	zLE1KUpbP0yWcz32d2/cquPXmS4/9LWcEhe3+Hns5FdfYzY39c1Mv5xRczhxSw2L1w2t+9z/
-	L89c2PjEZduHj0tOlZsGMSzhzlupYcnT5C1+59aeaKYsJZbijERDLeai4kQASiefnngCAAA=
-X-CFilter-Loop: Reflected
+Mime-Version: 1.0
+From: <fan.yu9@zte.com.cn>
+To: <kuba@kernel.org>, <edumazet@google.com>, <ncardwell@google.com>,
+        <davem@davemloft.net>, <dsahern@kernel.org>, <pabeni@redhat.com>,
+        <horms@kernel.org>, <kuniyu@google.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+        <jiang.kun2@zte.com.cn>, <qiu.yutan@zte.com.cn>,
+        <wang.yaxin@zte.com.cn>, <he.peilin@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0IHY2XSB0Y3A6IHRyYWNlIHJldHJhbnNtaXQgZmFpbHVyZXMgaW4gdGNwX3JldHJhbnNtaXRfc2ti?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 56G205DB001099
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 687707B1.001/4bhfQT5tphz8R03y
 
-Hi SeongJae,
+From: Fan Yu <fan.yu9@zte.com.cn>
 
-On 7/16/2025 8:43 AM, SeongJae Park wrote:
-> On Wed, 16 Jul 2025 07:20:57 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
-> 
->> Hi SeongJae,
->>
->> On 7/13/2025 5:46 AM, SeongJae Park wrote:
->>> DAMON sysfs interface provides files for reading DAMON internal status
->>> including DAMOS stats.  The content of the files are not automatically
->>> updated, though.  Users should manually request updates of the contents
->>> by writing a special command to 'state' file of each kdamond directory.
->>> This interface is good for minimizing overhead, but causes the below
->>> problems.
->>>
->>> First, the usage is cumbersome.  This is arguably not a big problem,
->>> since the user-space tool (damo) can do this instead of the user.
->>>
->>> Second, it can be too slow.  The update request is not directly handled
->>> by the sysfs interface but kdamond thread.  And kdamond threads wake up
->>> only once per the sampling interval.  Hence if sampling interval is not
->>> short, each update request could take too long time.  The recommended
->>> sampling interval setup is asking DAMON to automatically tune it, within
->>> a range between 5 milliseconds and 10 seconds.  On production systems it
->>> is not very rare to have a few seconds sampling interval as a result of
->>> the auto-tuning, so this can disturb observing DAMON internal status.
->>>
->>> Finally, parallel update requests can conflict with each other.  When
->>> parallel update requests are received, DAMON sysfs interface simply
->>> returns -EBUSY to one of the requests.  DAMON user-space tool is hence
->>> implementing its own backoff mechanism, but this can make the operation
->>> even slower.
->>>
->>> Introduce a new sysfs file, namely refresh_ms, for asking DAMON sysfs
->>> interface to repeat the essential contents update with a user-specified
->>> time delay.
->>
->> Thanks for working on this, but I have a few questions.
->> 1. Could you please list up what are the "essential contents"?
-> 
-> Thank you for asking this.  The contents are auto-tuned monitoring intervals,
-> DAMOS stats, and auto-tuned effective size quota.
+Background
+==========
+When TCP retransmits a packet due to missing ACKs, the
+retransmission may fail for various reasons (e.g., packets
+stuck in driver queues, receiver zero windows, or routing issues).
 
-Thanks, but I meant the specific list of damon knobs refreshed.  If there are
-too many knobs, then don't have to list them all.
+The original tcp_retransmit_skb tracepoint:
 
-> I will add these on the next version cover letter.
+'commit e086101b150a ("tcp: add a tracepoint for tcp retransmission")'
 
-Thanks.
+lacks visibility into these failure causes, making production
+diagnostics difficult.
 
->> 2. Does it mean that it is different from writing "commit" to "state"?
->> 3. If not, then is there equivalent action to writing something to "state"?
-> 
-> "refresh_ms" works same to other DAMON parameter files.  You can set it before
-> starting DAMON, or "commit" new values (including 0 for turning this refresh
-> off) in runtime.
-> 
-> I'm not that confident if I understood your point very well, especially what
-> "it"s mean.  Let me know if I'm misunderstanding something.
+Solution
+========
+Adds the retval("err") to the tcp_retransmit_skb tracepoint.
+Enables users to know why some tcp retransmission failed and
+users can filter retransmission failures by retval.
 
-I mean writing "commit" to "state" refresh all knobs, but it seems "refresh_ms"
-internally refresh paritial knobs so I was wondering what are refreshed and what 
-aren't.
+Compatibility description
+=========================
+This patch extends the tcp_retransmit_skb tracepoint
+by adding a new "err" field at the end of its
+existing structure (within TP_STRUCT__entry). The
+compatibility implications are detailed as follows:
 
-Regarding the "equivalent action", I was also wondering if there is a command
-that works same as "refresh_ms" internally does among the command below.
+1) Structural compatibility for legacy user-space tools
+Legacy tools/BPF programs accessing existing fields
+(by offset or name) can still work without modification
+or recompilation.The new field is appended to the end,
+preserving original memory layout.
 
-   update_tuned_intervals
-   commit_schemes_quota_goals
-   update_schemes_stats
-   update_schemes_tried_regions
-   update_schemes_tried_bytes
-   clear_schemes_tried_regions
-   update_schemes_effective_quotas
+2) Note: semantic changes
+The original tracepoint primarily only focused on
+successfully retransmitted packets. With this patch,
+the tracepoint now can figure out packets that may
+terminate early due to specific reasons. For accurate
+statistics, users should filter using "err" to
+distinguish outcomes.
 
-https://docs.kernel.org/admin-guide/mm/damon/usage.html#kdamonds-n
+Before patched:
+# cat /sys/kernel/debug/tracing/events/tcp/tcp_retransmit_skb/format
+field:const void * skbaddr; offset:8; size:8; signed:0;
+field:const void * skaddr; offset:16; size:8; signed:0;
+field:int state; offset:24; size:4; signed:1;
+field:__u16 sport; offset:28; size:2; signed:0;
+field:__u16 dport; offset:30; size:2; signed:0;
+field:__u16 family; offset:32; size:2; signed:0;
+field:__u8 saddr[4]; offset:34; size:4; signed:0;
+field:__u8 daddr[4]; offset:38; size:4; signed:0;
+field:__u8 saddr_v6[16]; offset:42; size:16; signed:0;
+field:__u8 daddr_v6[16]; offset:58; size:16; signed:0;
 
-In other words, if there is the same command listed above, then users might be
-able to run a script that regularaly write the command to the current "state"
-even without this "refresh_ms".  I know having "refresh_ms" is much better
-though.
+print fmt: "skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s"
 
-Thanks,
-Honggyu
+After patched:
+# cat /sys/kernel/debug/tracing/events/tcp/tcp_retransmit_skb/format
+field:const void * skbaddr; offset:8; size:8; signed:0;
+field:const void * skaddr; offset:16; size:8; signed:0;
+field:int state; offset:24; size:4; signed:1;
+field:__u16 sport; offset:28; size:2; signed:0;
+field:__u16 dport; offset:30; size:2; signed:0;
+field:__u16 family; offset:32; size:2; signed:0;
+field:__u8 saddr[4]; offset:34; size:4; signed:0;
+field:__u8 daddr[4]; offset:38; size:4; signed:0;
+field:__u8 saddr_v6[16]; offset:42; size:16; signed:0;
+field:__u8 daddr_v6[16]; offset:58; size:16; signed:0;
+field:int err; offset:76; size:4; signed:1;
 
-> 
->>
->> If possible, then this kind of information is better to be documented because
->> users might get confused if something isn't udpated when "refresh_ms" is set.
-> 
-> You're right!  I'll add above things on the next version of the cover letter.
-> 
-> 
-> Thanks,
-> SJ
-> 
-> [...]
+print fmt: "skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s err=%d"
 
+Suggested-by: KuniyukiIwashima <kuniyu@google.com>
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Co-developed-by: xu xin <xu.xin16@zte.com.cn>
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+---
+Change Log
+=========
+v5->v6:
+Some fixes according to
+https://lore.kernel.org/all/20250715183335.860529-1-kuniyu@google.com/
+1. fixed HTML entity conversion in email and adjusted error counting logic.
+
+v4->v5:
+Some fixes according to
+https://lore.kernel.org/all/20250715072058.12f343bb@kernel.org/
+1. Instead of introducing new TCP_RETRANS_* enums, directly
+passing the retval to the tracepoint.
+
+v3->v4:
+Some fixes according to
+https://lore.kernel.org/all/CANn89i+JGSt=_CtWfhDXypWW-34a6SoP3RAzWQ9B9VL4+PHjDw@mail.gmail.com/
+1. Consolidate ENOMEMs into a unified TCP_RETRANS_NOMEM.
+
+v2->v3:
+Some fixes according to
+https://lore.kernel.org/all/CANn89iJvyYjiweCESQL8E-Si7M=gosYvh1BAVWwAWycXW8GSdg@mail.gmail.com/
+1. Rename "quit_reason" to "result". Also, keep "key=val" format concise(no space in vals).
+
+v1->v2:
+Some fixes according to
+https://lore.kernel.org/all/CANn89iK-6kT-ZUpNRMjPY9_TkQj-dLuKrDQtvO1140q4EUsjFg@mail.gmail.com/
+1.Rename TCP_RETRANS_QUIT_UNDEFINED to TCP_RETRANS_ERR_DEFAULT.
+2.Added detailed compatibility consequences section.
+
+ include/trace/events/tcp.h | 27 ++++++++--------------
+ net/ipv4/tcp_output.c      | 46 ++++++++++++++++++++++++--------------
+ 2 files changed, 38 insertions(+), 35 deletions(-)
+
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index 54e60c6009e3..9d2c36c6a0ed 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -13,17 +13,11 @@
+ #include <linux/sock_diag.h>
+ #include <net/rstreason.h>
+
+-/*
+- * tcp event with arguments sk and skb
+- *
+- * Note: this class requires a valid sk pointer; while skb pointer could
+- *       be NULL.
+- */
+-DECLARE_EVENT_CLASS(tcp_event_sk_skb,
++TRACE_EVENT(tcp_retransmit_skb,
+
+-	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
++	TP_PROTO(const struct sock *sk, const struct sk_buff *skb, int err),
+
+-	TP_ARGS(sk, skb),
++	TP_ARGS(sk, skb, err),
+
+ 	TP_STRUCT__entry(
+ 		__field(const void *, skbaddr)
+@@ -36,6 +30,7 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+ 		__array(__u8, daddr, 4)
+ 		__array(__u8, saddr_v6, 16)
+ 		__array(__u8, daddr_v6, 16)
++		__field(int, err)
+ 	),
+
+ 	TP_fast_assign(
+@@ -58,21 +53,17 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+
+ 		TP_STORE_ADDRS(__entry, inet->inet_saddr, inet->inet_daddr,
+ 			      sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
++
++		__entry->err = err;
+ 	),
+
+-	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s",
++	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s err=%d",
+ 		  __entry->skbaddr, __entry->skaddr,
+ 		  show_family_name(__entry->family),
+ 		  __entry->sport, __entry->dport, __entry->saddr, __entry->daddr,
+ 		  __entry->saddr_v6, __entry->daddr_v6,
+-		  show_tcp_state_name(__entry->state))
+-);
+-
+-DEFINE_EVENT(tcp_event_sk_skb, tcp_retransmit_skb,
+-
+-	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
+-
+-	TP_ARGS(sk, skb)
++		  show_tcp_state_name(__entry->state),
++		  __entry->err)
+ );
+
+ #undef FN
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index b616776e3354..caf11920a878 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -3330,8 +3330,10 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	if (icsk->icsk_mtup.probe_size)
+ 		icsk->icsk_mtup.probe_size = 0;
+
+-	if (skb_still_in_host_queue(sk, skb))
+-		return -EBUSY;
++	if (skb_still_in_host_queue(sk, skb)) {
++		err = -EBUSY;
++		goto out;
++	}
+
+ start:
+ 	if (before(TCP_SKB_CB(skb)->seq, tp->snd_una)) {
+@@ -3342,14 +3344,19 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 		}
+ 		if (unlikely(before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))) {
+ 			WARN_ON_ONCE(1);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto out;
++		}
++		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq)) {
++			err = -ENOMEM;
++			goto out;
+ 		}
+-		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq))
+-			return -ENOMEM;
+ 	}
+
+-	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk))
+-		return -EHOSTUNREACH; /* Routing failure or similar. */
++	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk)) {
++		err = -EHOSTUNREACH; /* Routing failure or similar. */
++		goto out;
++	}
+
+ 	cur_mss = tcp_current_mss(sk);
+ 	avail_wnd = tcp_wnd_end(tp) - TCP_SKB_CB(skb)->seq;
+@@ -3360,8 +3367,10 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	 * our retransmit of one segment serves as a zero window probe.
+ 	 */
+ 	if (avail_wnd <= 0) {
+-		if (TCP_SKB_CB(skb)->seq != tp->snd_una)
+-			return -EAGAIN;
++		if (TCP_SKB_CB(skb)->seq != tp->snd_una) {
++			err = -EAGAIN;
++			goto out;
++		}
+ 		avail_wnd = cur_mss;
+ 	}
+
+@@ -3373,11 +3382,15 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	}
+ 	if (skb->len > len) {
+ 		if (tcp_fragment(sk, TCP_FRAG_IN_RTX_QUEUE, skb, len,
+-				 cur_mss, GFP_ATOMIC))
+-			return -ENOMEM; /* We'll try again later. */
++				 cur_mss, GFP_ATOMIC)) {
++			err = -ENOMEM;  /* We'll try again later. */
++			goto out;
++		}
+ 	} else {
+-		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC))
+-			return -ENOMEM;
++		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC)) {
++			err = -ENOMEM;
++			goto out;
++		}
+
+ 		diff = tcp_skb_pcount(skb);
+ 		tcp_set_skb_tso_segs(skb, cur_mss);
+@@ -3431,17 +3444,16 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 		tcp_call_bpf_3arg(sk, BPF_SOCK_OPS_RETRANS_CB,
+ 				  TCP_SKB_CB(skb)->seq, segs, err);
+
+-	if (likely(!err)) {
+-		trace_tcp_retransmit_skb(sk, skb);
+-	} else if (err != -EBUSY) {
++	if (unlikely(err) && err != -EBUSY)
+ 		NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPRETRANSFAIL, segs);
+-	}
+
+ 	/* To avoid taking spuriously low RTT samples based on a timestamp
+ 	 * for a transmit that never happened, always mark EVER_RETRANS
+ 	 */
+ 	TCP_SKB_CB(skb)->sacked |= TCPCB_EVER_RETRANS;
+
++out:
++	trace_tcp_retransmit_skb(sk, skb, err);
+ 	return err;
+ }
+
+-- 
+2.25.1
 
