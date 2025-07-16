@@ -1,156 +1,121 @@
-Return-Path: <linux-kernel+bounces-733304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE819B072F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:15:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF13B072F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A84F567C55
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6948AA404BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08122F3641;
-	Wed, 16 Jul 2025 10:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D94C2F3636;
+	Wed, 16 Jul 2025 10:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KQGVK2iM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZQvsfulS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7302701CC;
-	Wed, 16 Jul 2025 10:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ABD215F6B;
+	Wed, 16 Jul 2025 10:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660934; cv=none; b=Wst04Y2rP6k6a9hwnccWf+hLKuZVZLC0iWCOC2rRXGeZL+hASHAfRWSE43yfwHjfbwh3nvU/7HLJgH8Y+rpU94er1NRDxPZqGuDGz3AqEVYVNaeE2BJJxIOhJ/A8L0ubdBjnp49rQALHjh5XfxVj3t3ILK0hcFV47CLA/x1c4YU=
+	t=1752660923; cv=none; b=sgNZZKPNr5qkKbxV6z+urzM+I8oTUiowrXhEu1SJKHL+IrAMVy2NoJ6Q+9QQ07LM0L8PF0mkmIeNx30rtMGPgqkFInSrjF2aZD10hsi6hsfD71buGDkJuL8c0BG7I/Lrw0ayHxq4YD+4OHo85rPv+5OavN7EjJqmM/ReT6WGm5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752660934; c=relaxed/simple;
-	bh=yd0DIPJ3XCcV12QesWB9zzqcuiXU9dXewiyh+EuEqSA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PNgF9+vz6gemkGmPyQMIrLgo4IK+5gBcDKF15N2NKQl9hmXl4ePqVEyKIWsuCG08ZnDt7CdpUI0adxDmZGy6jzMU+xAgxQS+bo8YCypBAMViUzs0LIcqmaaBcJ1lgeRo7rdRd1QoJkLYB3U7uj6wkf3ZCIQSF26FYWrXxRo2dUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KQGVK2iM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56G5PQaZ029739;
-	Wed, 16 Jul 2025 10:15:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sfk8rrLFPzanXiTxEEwVLneEkAsexCjwMjawuqeCRaQ=; b=KQGVK2iMNQfL50E9
-	VvzuaiIWqhBcbGG/rofZPLpshuwAOZwTSIyIIrvb1z8xtFucgL+mqYl2e7B5J6HD
-	LUJVB81cQqFrzxel91JCBTu4NwYVckRnjhdL3rmCXr7/7BOEz49AhbUi61QgZju9
-	qISpcPPFo6UhGgIn7mtfhi9VUlq2FYQItW9YIJ73734Q8UD/MSmz4MmDU9IBP0vX
-	zEjRwaCisOpaWKZ+CKPIBN2V+iLMCy9wyf9YRQD/KTygAEj9IWw1RdBCoDyuRD35
-	HNkT0rpK5kt4b2Rxvz8Cr6DjRqx/b1TEvj0dOUC47iGLsNXoCeAVK6qaOYespXdD
-	8nMGWA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxb3j98-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 10:15:16 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56GAFFfn029847
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 10:15:15 GMT
-Received: from [10.253.73.252] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 16 Jul
- 2025 03:15:12 -0700
-Message-ID: <23ab18e6-517a-48da-926a-acfcaa76a4e7@quicinc.com>
-Date: Wed, 16 Jul 2025 18:15:10 +0800
+	s=arc-20240116; t=1752660923; c=relaxed/simple;
+	bh=lmGfU8wWODLkZGjJ6sglTKQUADi2ca1DLoWmuG6Wju0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUbc2hrRmbVLaN/PFtVoeBnK5stUwTDLmTTKhfUHl9IJyH31UV+otQadDCQlEXLl02S1pzidRO2Jpvv8E2IK52ZbzhEYTPqokZ49NjWH1vNo8JPV7h+LWHNR8Pa5+w+dRMjgBfSjX4wo3Z9xOTLV9nmZ04WDIzxH86p80jfl05s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZQvsfulS; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752660922; x=1784196922;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lmGfU8wWODLkZGjJ6sglTKQUADi2ca1DLoWmuG6Wju0=;
+  b=ZQvsfulSOpasmyyTtzz9SGaG6++KL8ucdWKhhezOAYHU7ZD75I7OsZFm
+   8mEy3oKHzFxbuFuUEPt9P7za7FSX74S5xGhrIYwl10bzaeuAXdS1oHaCx
+   avkCrdAAWzBuqXHAdQYpPVVJPXdyRiuSYEtk+UBNe357/Lib2QFb6aGdN
+   be+RN7mWwrw9z7dEs9oo+XA+WYGonmnpaV1TivmixZV0VfAxlapgeg6Cn
+   oC2dIL9A9oRm8DHPhuN7bt26bD/mQtU6l4WAQ5ZUbUNOoH0NDfy0ZSSn/
+   L555cRnywoX4tVyJ1lTCW7TCWD+BxX80AjjJSQVvtj+04XMTTXR9st7Ew
+   w==;
+X-CSE-ConnectionGUID: O2iLzlDmRm6dU4NdhD7MGA==
+X-CSE-MsgGUID: 3e88Gur/QO2dx1qTB3vRHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="65470966"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="65470966"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 03:15:21 -0700
+X-CSE-ConnectionGUID: GpsEWWQjTQeexJIg+v77+w==
+X-CSE-MsgGUID: vmjHwrM+QguGpaCiAUgbqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="194609623"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 03:15:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ubzAQ-0000000FuSK-4ATe;
+	Wed, 16 Jul 2025 13:15:14 +0300
+Date: Wed, 16 Jul 2025 13:15:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 1/7] math64: Add div64_s64_rem
+Message-ID: <aHd7srtaK9O-O73a@smile.fi.intel.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-2-sean.anderson@linux.dev>
+ <aHYLYT57eF6UhLvC@smile.fi.intel.com>
+ <7225a8ed-8502-48b5-a39f-870b444d069c@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/3] net: phy: qcom: Add PHY counter support
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King
-	<linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250715-qcom_phy_counter-v3-0-8b0e460a527b@quicinc.com>
- <20250715-qcom_phy_counter-v3-1-8b0e460a527b@quicinc.com>
- <e4b01f45-c282-4cc9-8b31-0869bdd1aae1@lunn.ch>
-Content-Language: en-US
-From: Luo Jie <quic_luoj@quicinc.com>
-In-Reply-To: <e4b01f45-c282-4cc9-8b31-0869bdd1aae1@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: M5X2zcMiwn-irENWv7xRaP0a71Xn4O9p
-X-Proofpoint-ORIG-GUID: M5X2zcMiwn-irENWv7xRaP0a71Xn4O9p
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDA5MSBTYWx0ZWRfX1/T8Q/bRrCk6
- 0mXZ4Rv8xbbR65tp19tFb+Ycay/IdxXf/0JAbfCZoYoG58SNFYRMQ8z8d65MvsEWrDIz5x5q0xC
- W1Tq8djecVAvhxuzVL4HISGs7IYtMH3uiYSRmIhcWW1R5BTRp0gDH0G7/Su7pYM+lBoNk/Y/OJk
- 9kjAGegEeReFdDStIaig8dqXR1+prKKOxzT4KQPLCO8d7BaljJRSreVh/AR4yawSCGle2MoHysA
- uDzARWvy0OxvTvQ3EaZW2yGuWrSAxvAecrhyQdg3j+pm1TU59WsvtOLoojQFv5liBkbJwT8tv2U
- ufE7yBkg/uxOeAk1HB23RnITdPPNFlcicI9+9rtlGGrdPYlitQ8Q4WqsPe6wwqcOk2HCW2gr8Uz
- sZ2HWEINvAjUcSSU1SBkcbT7RpUmbVxfxKOVUYlbQP/0Jg+Xjs2t6sbCq3DxH06XVO+foaAH
-X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=68777bb4 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=dx8Nv9QYUwUAvIcoxGYA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_01,2025-07-15_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507160091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7225a8ed-8502-48b5-a39f-870b444d069c@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-
-
-On 7/16/2025 12:11 AM, Andrew Lunn wrote:
->> +int qcom_phy_update_stats(struct phy_device *phydev,
->> +			  struct qcom_phy_hw_stats *hw_stats)
->> +{
->> +	int ret;
->> +	u32 cnt;
->> +
->> +	/* PHY 32-bit counter for RX packets. */
->> +	ret = phy_read_mmd(phydev, MDIO_MMD_AN, QCA808X_MMD7_CNT_RX_PKT_15_0);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	cnt = ret;
->> +
->> +	ret = phy_read_mmd(phydev, MDIO_MMD_AN, QCA808X_MMD7_CNT_RX_PKT_31_16);
->> +	if (ret < 0)
->> +		return ret;
+On Tue, Jul 15, 2025 at 01:36:33PM -0400, Sean Anderson wrote:
+> On 7/15/25 04:03, Andy Shevchenko wrote:
+> > On Mon, Jul 14, 2025 at 09:20:17PM -0400, Sean Anderson wrote:
+> >> Add a function to do signed 64-bit division with remainder. This is
+> >> implemented using div64_u64_rem in the same way that div_s64_rem is
+> >> implemented using div_u64_rem.
+> > 
+> > LGTM, but one important Q. Can we (start to) add the test cases, please?
 > 
-> Does reading QCA808X_MMD7_CNT_RX_PKT_15_0 cause
-> QCA808X_MMD7_CNT_RX_PKT_31_16 to latch?
-
-Checked with the hardware design team: The high 16-bit counter register
-does not latch when reading the low 16 bits.
-
+> Well, this just calls div64_u64_rem. So I am inclined to make the test something
+> like
 > 
-> Sometimes you need to read the high part, the low part, and then
-> reread the high part to ensure it has not incremented. But this is
-> only needed if the hardware does not latch.
+> #define test(n, d, q, r) ({ \
+> 	u64 _q, _r; \
+> 	_q = div64_u64_rem(n, d, &r); \
+> 	assert(_q == q); \
+> 	assert(_r == r); \
+> })
 > 
-> 	Andrew
+> test( 3,  2,  1,  1);
+> test( 3, -2, -1,  1);
+> test(-3,  2, -1, -1);
+> test(-3, -2,  1, -1);
 
-Since the counter is configured to clear after reading, the clear action
-takes priority over latching the count. This means that when reading the
-low 16 bits, the high 16-bit counter value cannot increment, any new
-packet events occurring during the read will be recorded after the
-16-bit counter is cleared.
+Perhaps, but it should be done somewhere in lib/tests/...
 
-Therefore, the current sequence for reading the counter is correct and
-will not result in missed increments.
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
