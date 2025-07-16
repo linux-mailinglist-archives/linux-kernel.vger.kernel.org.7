@@ -1,119 +1,188 @@
-Return-Path: <linux-kernel+bounces-733923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3767DB07AB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:08:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 676EDB07ACC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217071C243B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:09:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9B1F5669CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83B12F5326;
-	Wed, 16 Jul 2025 16:08:43 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAB6264A71
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA9E2F5C24;
+	Wed, 16 Jul 2025 16:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="V8QWarkJ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181C1274B30;
+	Wed, 16 Jul 2025 16:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752682123; cv=none; b=RzY43msGY1WUELRND5RFC2FEqzITAIxVtHgqVPQEZ89M6qo1qn22C92lg+aJ+bI8VxKBLfe0FoGgFkKmdUHZ9Wq+Ccd7HwsMP3knOaMWXy3IZ1//1+M9brw2bdTHllTb4N15R5VAl/Sojs+h9rEXeCwCDLEUZmyK8TrOXdVwOK4=
+	t=1752682356; cv=none; b=jCP9jtqyuPN1dG7L2fchwVZqwuj/aa4Gerf1PKkNiL/2Z1/8OWQZeorux4pzmsrw2UEjUf2h4KWAMKb/kit3t4+2gaSju8+PCmv7OEO+86oaWVa37c27tUJ1bYweD+rXciPVOVttmGXOQaN9uEwbh1CV6fNQsQnH1eWRkBfLvTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752682123; c=relaxed/simple;
-	bh=RuJ0y6y+QAI9WVzMzX/KikwojyoXGGOl1EPIuSN/pqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eabSS5BRBOjtWr5nRYBXKu6RuDbmSd2Uc9RXGAzQV59f0YmzTJmGSGr1hhu3gglxuKP17gqvMbHeKLzkSFDPv6vKEmSetFH1N9Nhe2vK61NRk5Jy9p9zNp2q7HUb4lBiBRAmYf1APSv9/7G8MGxBB8jrZAnjTo3Lt9QEh4WyhA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso11422553a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 09:08:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752682120; x=1753286920;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HjhPeDzwKMbLRpiaCQVZDGt0RvE2h5eKhuFW3u9Cc4k=;
-        b=nqpQ0EyIPhJPIP25ea+ukhI49JNnGlysgWf6w/flCY+jbag4+Iaxhnz1RZN//OcCYA
-         sZJh0tfQa1epcXJlv1jIKU6cRh6LM6tmVhD7pJD1CbH/iuvCnHaj7qjp8cUTJ089ux0F
-         GzHiPDXbUbHXhDsX1mu/N8/nX5dlBmV/ajy/VVM5j6msrcKG/qaHNABDMlCIgM+UGcVJ
-         BHUljoxM7vafvmBMvva+qPreMm65h5Ke+YR0NR9Z9EIvFld+u65m8N4uQYtMfg6kz83+
-         LKUZcXycT8aMRJzexhGmWZ2yRYa42IfTaQ47bJ17UVnDlu9a7VlXq6ezJCrSMTB1zVbB
-         K92Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVVS9vbkCfEw0SuGieI9xNWn8FzHq2y34FNKLaq4Hfu9xHV8Kw49hhFj/EnMaupbcfrYT0Lud2va68wNMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1JuOVUnmGyXgwdQag8wfRGj8Eufqr7YS5lBlaZm1l512YcV22
-	286/Lm+Lw5osjgbiLFi8S8XW0QVyLi62uiF1Ch8K2v15E415rkeXDfHV
-X-Gm-Gg: ASbGnctKVSIPqX1o+fDNavh8zp/kvXCSSvTxG5K6VUm/Gseqg42uaOmJNTgwhGUvkZx
-	bP8u+Qp15+65rI/aA3o4Fg0fXOmE7AsxzOtAD2SiJcypZRwaQauapDW3OusxbSKwfcW42TnZz8y
-	J0J0X9iSKhMT4lcUfApK4KC46T5cvUSEhsBNw6UDtjn7Z24I0SwImMb4/qKBpq0KSU1mHNi3I8o
-	YAinEU8YpddRGbaj3sYrmD/lTn2GXSZFK4GI+qYxptyWH69JpcbbQZG+4I1t14nEPKwGMFzw/uP
-	845YfwDqTDcRaotJdhdpolzZmqQDpVb8z/no8hq/G5AGElkA7ZFZreli8pon4plOA7LAVPaspl1
-	cqDlxXJ2giuDk
-X-Google-Smtp-Source: AGHT+IFnkeUOGi9pD7dry62krv8SIZuFe1pRe8oR5Vur8GS5Ex8kCG5MXl5cty9UiHysD9gduqJFnA==
-X-Received: by 2002:a05:6402:34c3:b0:60c:40bd:8843 with SMTP id 4fb4d7f45d1cf-612859338a2mr2877101a12.11.1752682119791;
-        Wed, 16 Jul 2025 09:08:39 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:2::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c976ecb6sm8848523a12.56.2025.07.16.09.08.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 09:08:39 -0700 (PDT)
-Date: Wed, 16 Jul 2025 09:08:36 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>, 
-	David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, jake@hillion.co.uk
-Subject: Re: [PATCH] sched/ext: Suppress warning in __this_cpu_write() by
- disabling preemption
-Message-ID: <imrfubmkw3a6qdznnpounrnen5ituzchwtbjmouocuk77upn67@ljrz32ppyqyr>
-References: <20250716-scx_warning-v1-1-0e814f78eb8c@debian.org>
- <20250716125128.GX905792@noisy.programming.kicks-ass.net>
- <aHel4LvT_Y5gpYfy@gpd4>
- <20250716133631.GZ905792@noisy.programming.kicks-ass.net>
- <aHe2j6pIyQiBf1S_@gpd4>
+	s=arc-20240116; t=1752682356; c=relaxed/simple;
+	bh=Y7Y3yvNuOxNpwgHPNpY9Rwif2XuASlswAwe+6Lw2zIE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DTePno8O8siaLN/ojXN4SgDe2JNuIioUuSXa55iY3e5TlUECQ2Pa3AhsrCM4t0CTWydLiczivmknB0DkY2c6K2FnZxeLgHqrpzCx1ptuQ8i9zmoWAuV0DeeOUdDdjfyN0d6OvJTACA/ksGVfTtJNPKvbymKbrCBCANNWShvQEZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=V8QWarkJ; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=0a
+	r1qOZLZdjjoiPFVhTxjLYjGvXCNT27rtc5a+oaVnM=; b=V8QWarkJXsYC8tyggP
+	4HcwpBcsOQ5F88r67UMTAs7wCsvxWSanMnYs7r494w8SAvGcb7BpQWrV3xp0fHOU
+	Vp33JAWfJ7RTnZcvExGn0zq1d1+U+/VFh8max6w1twXTC6yCAceO2sUN+Rq/bQYR
+	tEoJcPfycW3zlyVpcqe0FprmE=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgAnMkhWz3doF6jWAw--.24466S2;
+	Thu, 17 Jul 2025 00:12:08 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com,
+	helgaas@kernel.org,
+	jingoohan1@gmail.com,
+	mani@kernel.org
+Cc: robh@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v14 0/7] Refactor capability search into common macros
+Date: Thu, 17 Jul 2025 00:11:56 +0800
+Message-Id: <20250716161203.83823-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHe2j6pIyQiBf1S_@gpd4>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgAnMkhWz3doF6jWAw--.24466S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAw4DJrW5JFWxCF43KF1DAwb_yoWrtrW7pF
+	4rC3ZxGw48ArZrC3Z7Ja1I9ay3X3Z7A347J3y3Kw13XF13uFy8tr4xKF4rAF9rKrZFq3W7
+	ZF4UtrykCFn8Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piasjUUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhWMo2h3yLuCdwAAsZ
 
-On Wed, Jul 16, 2025 at 04:26:23PM +0200, Andrea Righi wrote:
-> On Wed, Jul 16, 2025 at 03:36:31PM +0200, Peter Zijlstra wrote:
-> > On Wed, Jul 16, 2025 at 03:15:12PM +0200, Andrea Righi wrote:
-> > 
-> > > The idea is to track the scx callbacks that are invoked with a rq lock held
-> > > and, in those cases, store the locked rq. However, some callbacks may also
-> > > be invoked from an unlocked context, where no rq is locked and in this case
-> > > rq should be NULL.
-> > > 
-> > > In the latter case, it's acceptable for preemption to remain enabled, but
-> > > we still want to explicitly set locked_rq = NULL. If during the execution
-> > > of the callback we jump on another CPU, it'd still be in an unlocked state,
-> > > so it's locked_rq is still NULL.
-> > 
-> > Right; but doing superfluous NULL stores seems pointless. So better to
-> > avoid the store entirely, rather than making it more expensive and no
-> > less pointless, right?
-> 
-> Right, we can definitely avoid rewriting NULL.
-> The following should do the trick.
-> 
-> Breno, can you give it a try?
+Dear Maintainers,
 
-Sure thing. I've tested it and I don't see the warning on my side.
+This patch series addresses long-standing code duplication in PCI
+capability discovery logic across the PCI core and controller drivers.
+The existing implementation ties capability search to fully initialized
+PCI device structures, limiting its usability during early controller
+initialization phases where device/bus structures may not yet be
+available.
 
-Would you like to me post the patch, probably removing the WARN_ONCE()
-as raised by peterz?
+The primary goal is to decouple capability discovery from PCI device
+dependencies by introducing a unified framework using config space
+accessor-based macros. This enables:
 
-Thanks
---breno
+1. Early Capability Discovery: Host controllers (e.g., Cadence, DWC)
+can now perform capability searches during pre-initialization stages
+using their native config accessors.
+
+2. Code Consolidation: Common logic for standard and extended capability
+searches is refactored into shared macros (`PCI_FIND_NEXT_CAP` and
+`PCI_FIND_NEXT_EXT_CAP`), eliminating redundant implementations.
+
+3. Safety and Maintainability: TTL checks are centralized within the
+macros to prevent infinite loops, while hardcoded offsets in drivers
+are replaced with dynamic discovery, reducing fragility.
+
+Key improvements include:  
+- Driver Conversions: DesignWare and Cadence drivers are migrated to
+  use the new macros, removing device-specific assumptions and ensuring
+  consistent error handling.
+
+- Enhanced Readability: Magic numbers are replaced with symbolic
+  constants, and config space accessors are standardized for clarity.
+
+- Backward Compatibility: Existing PCI core behavior remains unchanged.
+
+---
+Changes since v13:
+- Split patch 3/6 into two patches for searching standard and extended capability. (Bjorn)
+- Optimize the code based on the review comments from Bjorn.
+- Patch 5/7 and 6/7 use simplified macro definitions: PCI_FIND_NEXT_CAP(), PCI_FIND_NEXT_EXT_CAP().
+- The other patches have not been modified.
+
+Changes since v12:
+- Modify some commit messages, code format issues, and optimize the function return values.
+
+Changes since v11:
+- Resolved some compilation warning.
+- Add some include.
+- Add the *** BLURB HERE *** description(Corrected by Mani and Krzysztof).
+
+Changes since v10:
+- The patch [v10 2/6] remove #include <uapi/linux/pci_regs.h> and add macro definition comments.
+- The patch [v10 3/6] remove #include <uapi/linux/pci_regs.h> and commit message were modified.
+- The other patches have not been modified.
+
+Changes since v9:
+- Resolved [v9 4/6] compilation error.
+  The latest 6.15 rc1 merge __dw_pcie_find_vsec_capability, which uses 
+  dw_pcie_find_next_ext_capability.
+- The other patches have not been modified.
+
+Changes since v8:
+- Split patch.
+- The patch commit message were modified.
+- Other patches(4/6, 5/6, 6/6) are unchanged.
+
+Changes since v7:
+- Patch 2/5 and 3/5 compilation error resolved.
+- Other patches are unchanged.
+
+Changes since v6:
+- Refactor capability search into common macros.
+- Delete pci-host-helpers.c and MAINTAINERS.
+
+Changes since v5:
+- If you put the helpers in drivers/pci/pci.c, they unnecessarily enlarge
+  the kernel's .text section even if it's known already at compile time
+  that they're never going to be used (e.g. on x86).
+- Move the API for find capabilitys to a new file called
+  pci-host-helpers.c.
+- Add new patch for MAINTAINERS.
+
+Changes since v4:
+- Resolved [v4 1/4] compilation warning.
+- The patch subject and commit message were modified.
+
+Changes since v3:
+- Resolved [v3 1/4] compilation error.
+- Other patches are not modified.
+
+Changes since v2:
+- Add and split into a series of patches.
+---
+
+Hans Zhang (7):
+  PCI: Introduce generic bus config read helper function
+  PCI: Clean up __pci_find_next_cap_ttl() readability
+  PCI: Refactor standard capability search into common macro
+  PCI: Refactor extended capability search into common macro
+  PCI: dwc: Use common PCI host bridge APIs for finding the capabilities
+  PCI: cadence: Use common PCI host bridge APIs for finding the
+    capabilities
+  PCI: cadence: Use cdns_pcie_find_*capability to avoid hardcode
+
+ drivers/pci/access.c                          | 15 ++++
+ .../pci/controller/cadence/pcie-cadence-ep.c  | 38 ++++----
+ drivers/pci/controller/cadence/pcie-cadence.c | 30 +++++++
+ drivers/pci/controller/cadence/pcie-cadence.h | 18 ++--
+ drivers/pci/controller/dwc/pcie-designware.c  | 83 ++++--------------
+ drivers/pci/pci.c                             | 76 +++-------------
+ drivers/pci/pci.h                             | 87 +++++++++++++++++++
+ include/uapi/linux/pci_regs.h                 |  3 +
+ 8 files changed, 196 insertions(+), 154 deletions(-)
+
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.25.1
+
 
