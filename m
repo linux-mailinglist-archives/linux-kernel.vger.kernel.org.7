@@ -1,189 +1,113 @@
-Return-Path: <linux-kernel+bounces-733907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00C3B07A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:57:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A9AB07A79
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 113B616AAEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:57:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFA9189B6EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017E32F5084;
-	Wed, 16 Jul 2025 15:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEFC2F4A03;
+	Wed, 16 Jul 2025 15:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HN7Jtlw0"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMkcO7y/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DC42F49F6;
-	Wed, 16 Jul 2025 15:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752681460; cv=fail; b=WyQRtj/EDahk6UTjh94NoEbRZCBJHGrDjjIWya7F2u23JuVc0csED8ueVn7NFFd3BUQAOs+3S3nn8FIG6gZFky94TJikUi+5CYrLBOhoG8/3ysEgVsDZAukcO1v+0hH4ObbPQ0zTisPwvBYMNjtPoXZEvV4zQCoce2C3TyclVtE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752681460; c=relaxed/simple;
-	bh=95sJahQiYjn4im+NHL8AYpEAG47QjzSRyycryBlIu2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dC/K8o9m07vDAKl3yZ2T4rpvXdfTNHfheI3haYxnQpV/yp+N+aPmeuEuk6WKurTL4XsySRXiwj51QBSIhQesfWzQOmUIkCVunLOxTOUubnqaGYzpHKdwaYG30/+AksRtM7UInvqVaQM8RofRqwDk06jSsHmr0CnbnzeMwiyxgXE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HN7Jtlw0; arc=fail smtp.client-ip=40.107.244.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=valGi53DiXiahw3+PFxMVBY13aaAupr9Vd+b2bFEbi2MTD3O+a3ct3kQyJKql5RsqJtOGfM7EJXGsWCnr3PVamvGv9PyZ5xfgnES4TyPBxbJSrBasBEsc2Vo/IVi+H1F+XrVIMSKnOdKR6vDH3oB7Ku3dd4KfEdUXat+YVs4s3AfXR89FjMdK5nshX6J9+6bG8BQgSH4eeU0XtZn4OeA6KfAh/BSWB+8jjVnlf0MD/LuVvkyxD2kK9ZRkoebnU7h2TFoNi/uBxgczaE3+eZv82F4AqcleFE82lTsiLx81qrh9Asj+0RUZKwod/7qlTK6SSfuxa2ruND9i5ak7fnNmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FaSY9VNKF0/xLoayNw//v9m06SCAfzmXT8rhjdXUzPY=;
- b=Ik4CXmIqVdhTXKukuiPD8HQB1i+bgSKG44lg3RMVbuh315/hwiBeagTmX9JR0S1uD28tCCTcnsdWmy64zBA2379PLHLCV5VHxDPMFWQMSQ/uxxCzrKgA8OsSY2UXVivuUTZgaoaLfddBCUvJemE179jTO2obedpZUf4NV51SSCK0YrgCTQZFdL5T5yJ+m/WLc/EdOqh28KnCiYt63YoV8dv0cgJ323IzAvIlj4MuvUe5FcmrFl17JRhtWccuoIQ8U4f9Nv1mcbzd73MNVzUhod3EAUMO8y+eQzCB3TdE44TzYsTLVL8HXMGseKlv1H50opZWjG5zlgQsLM39+JLcBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FaSY9VNKF0/xLoayNw//v9m06SCAfzmXT8rhjdXUzPY=;
- b=HN7Jtlw06af/wnZcHh6jEr36AhqxwIP4NOLMzX+uumvbUiwI/mn+1EhzeghRWqIMJPYrrz72RcQXtrRSOmivVOGgZ71o46Vuur3YAj5rgisK4sDx7WuNeGri5RYbpHbuEkf/zskLG+tGLBRVX2jgshRVJxuSn6O76lJxVAiHCgcJ1KBKnhVoS3+BY310Q10EU3qZPbiqYEgLvy5Vg8FAVQkuOB8D6EQjCzYV7WSKnmORJf71VSm9uVsWqETycSRlZseYMXPcErBTi3+ZgKyQIk44DcvpH6U3QHlZPaLfZISpG46XkrZQTYL6qBmp97ot6gUDhmeeim8k666x4cafJg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
- by CY5PR12MB6477.namprd12.prod.outlook.com (2603:10b6:930:36::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 16 Jul
- 2025 15:57:35 +0000
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8%6]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
- 15:57:35 +0000
-Date: Wed, 16 Jul 2025 18:57:26 +0300
-From: Ido Schimmel <idosch@nvidia.com>
-To: Joseph Huang <Joseph.Huang@garmin.com>
-Cc: netdev@vger.kernel.org, Joseph Huang <joseph.huang.2024@gmail.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Tobias Waldekranz <tobias@waldekranz.com>, bridge@lists.linux.dev,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB78E1E5701;
+	Wed, 16 Jul 2025 15:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752681488; cv=none; b=tUSw3MC/mAVMd1oZMlEMNboM2RrNIWwzfA/FeVu0ct+LXer5Gcpw+0IjZ2kTQez+/3X8TtsJjs5FrBxOyN/q/7omt3LWQdxyATihfH63TacX+Fe1E3/LXIK8j9PA/61mZ5src2li22b9Hd8FXTLfWihq5WInuG44YOvrxr0H+o4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752681488; c=relaxed/simple;
+	bh=gMxD2cNh7slWJ9OWR+KLnow/5tGll0CpQ0ou060BuDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUd4jH+u8pwbNF8DP3llMgA1L8W7J8ev59bl+aS63Ndzn5TWXifaCBRK5JuoP5QLKJ3iaYJw3nesXFfzBhVlk3d2790Id3wrwepoUSR5jkQckGzzmJppMYhDEppSQpDw2Kzyb1gwS1Vvb1EUeWnRdFSLOvAms249+E1Bp+wRtQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMkcO7y/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5992BC4CEE7;
+	Wed, 16 Jul 2025 15:58:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752681487;
+	bh=gMxD2cNh7slWJ9OWR+KLnow/5tGll0CpQ0ou060BuDk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RMkcO7y/gFy/byUU3Ko96z4xcRAMj9wQgPxgwDDWC0pVguGVnnZkur42XlUEVA2/5
+	 n+M6B/F3mtyrgurOZGOlsWIrVtGbRkxWloAGteB/cFYUF6Z9OBRI7jY3c4jXnrGR24
+	 CkeCFrRfGTcC1r3J6R7E9cglOE+ndeJsJskaz4u3jyq/sxtn2oej7xYx/SyQSBEpOl
+	 Ll61W8xYiz+XUMj7MRTpiZ9MgTYKGRvC2qCf4+xXfxLr5DfF7KIWWrG0jEP5POFCse
+	 u0zw9HCizhWwbgO7bYwDz/aUMCX3BXICL18Cf32A6HZ/tE/e//+567YylrODx45eLi
+	 0lvIudrNkkp/A==
+Date: Wed, 16 Jul 2025 21:27:55 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 net] net: bridge: Do not offload IGMP/MLD messages
-Message-ID: <aHfL5kwwd72U5zGh@shredder>
-References: <20250716153551.1830255-1-Joseph.Huang@garmin.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716153551.1830255-1-Joseph.Huang@garmin.com>
-X-ClientProxiedBy: TL2P290CA0008.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:2::11) To SA3PR12MB7901.namprd12.prod.outlook.com
- (2603:10b6:806:306::12)
+Subject: Re: [PATCH] PCI/pwrctrl: Only destroy alongside host bridge
+Message-ID: <cnbtk5ziotlksmmledv6hyugpn6zpvyrjlogtkg6sspaw5qcas@humkwz6o5xf6>
+References: <20250711174332.1.I623f788178c1e4c5b1a41dbfc8c7fa55966373c0@changeid>
+ <xg45pqki76l4v7lgdqsnv34agh5hxqscoabrkexnk2zbzewho5@5dmmk46yebua>
+ <aHbGax-7CiRmnKs7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|CY5PR12MB6477:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62ca8aa4-f9d8-42a8-3ec2-08ddc4817b4c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LZKO8RDuSEaovln29lFjjn2o3KDCho2mQvkrt3WraK6F9tFkcJO57bsHsJTd?=
- =?us-ascii?Q?yNdMWjeFURqrfSTZacgwoMnfk8iCp+5DQUtRRiNZ9LzROAckCiMlLf/XGQ3x?=
- =?us-ascii?Q?JEObr8WrPa5lAXEr3uWbYJ48aYsa+ae+YfhjUL+ue/PqOq8YGKPgPEBfUVhn?=
- =?us-ascii?Q?UAoz7WjJQO6UaQWDCPiYp3nYr3m6tFzQHqbD6mRFYbayLhQSsj/EvXN1Q+xa?=
- =?us-ascii?Q?Or54GS8A2RcJr/5Ms8G/xNln5JaWwrkIiVpmqVfr7j2eA3JFHzzbEhmFuYwq?=
- =?us-ascii?Q?1PucFEs3TlCp6Ofb1jeN92BG53hWgxMyVQAou+baLTysPjOnWGbXMOEbrpUK?=
- =?us-ascii?Q?U8TZWEo5/VsauNA/mAsuo9dnmb2pqogIBRynljF8N8E2GxtONcgGBoUoHkzN?=
- =?us-ascii?Q?VAb5MBAn4yiSwt17od4qNSBLB1jqLb6BciT7bEDpznvwNzKXtaMIdOLqTedf?=
- =?us-ascii?Q?6fKnBpw8eQ7Ehbzo//oUe9X3iNHMiaVbcs2KNuMn63sEctkIzuPI1RSJkuhg?=
- =?us-ascii?Q?0j12oml70MWEL6kc0w02S/ZK0Dhrkpa7CypPOjlAtkW1giwL8u/WAfSYi7mI?=
- =?us-ascii?Q?AWj2EFnNlHQdSF/LHGqJ8ljefIlvqzb4QUuNRRjJbOsDDbSc/3/E2AqFC2By?=
- =?us-ascii?Q?GVuTflUrL/5X5rtL9XtzUQmr0kBPGr8k3YwnZ89iUZkaP2Mh0DoD2ybFAoDP?=
- =?us-ascii?Q?w8+oo4qSuc+6q062pq4r04MjUO+oVSZ6UbgY7q4K91enD9FWPxgyrkGTYWXc?=
- =?us-ascii?Q?adM2J86uo0M9MELbPisiboztlFZ7SIfLzAV1+Fq+b1mAbmC042PWwUS934wt?=
- =?us-ascii?Q?fIWomWDyRVoCOVugd3YzwpCuZYjzinrysj/woQQH4ksBCKY6QJNarVSl2uqG?=
- =?us-ascii?Q?Sh9S2qcuMpWcIPlMxUFy7MuDms2H7rKC8JYcl/tHJvIq/Zh2ih6UCkz3obN+?=
- =?us-ascii?Q?/GxaJIM6tGLLAh1Rne422BSsSsbqjEc93RM8fsd7m5252k5b12njBpHVEd5c?=
- =?us-ascii?Q?2Zcgv6l6QIPE0Koh7We6reyWfJHqtLnl70PkLoHCXKAMfE9ZXBnjC+lsVdBE?=
- =?us-ascii?Q?PwIms8qdz8FBKLEULJKYwAVOsMVrSKwjY5NuXGtYpsVYjHp4BKSK9g5Qe+wh?=
- =?us-ascii?Q?gbz2zuAOegU9asLGDZK9o2TqXoOGX3S+nhVrm/GAuDkrj6k23Ml/W5P4AlXD?=
- =?us-ascii?Q?ZRyKcEyO3U4rjG+DANafYMuSejoVNLq5onbGm8PUzCXIrL7h5jUxU+F+Vr5K?=
- =?us-ascii?Q?InMQcR8x+JxuPhNuw8NFk6FTGPMxqjk5v/F55kF1Aoa5lEnf1CQTSiD2V+5d?=
- =?us-ascii?Q?9SmOKJDqUodWX3swo+gFG6VkoahYlFoHmd9LOUk9NpdUh1qsO+OtEquW8e7l?=
- =?us-ascii?Q?hvEKTiSG9c0wcP6+sJcDXv+vPeuOgoQgCMpLBY2uNMu9B4CJ9bsdBN31Uknp?=
- =?us-ascii?Q?xE9CxVkRZCo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JCg+kj+D/QSEK4ClG9EeNKWwqEeEn7UsFr1ooKLjS3I4c6NkikgYa0/U60pw?=
- =?us-ascii?Q?39YT5fEnHA2Za91JR0Z32Q0XtaZqgzrbKqsXp1TwyY2K8Ocm4+V5N9GOQZSu?=
- =?us-ascii?Q?fxPLq6PmVrviN6D5Poui+RFdvj/3muiUP5tnFOSDKNV7DivYJNKu06AgXNZt?=
- =?us-ascii?Q?Y70wtP700lDwKMIWj7O/2y8m2b7VDXtaBwnIUtqIFvlIN4UrP1Ym+VAfZ10z?=
- =?us-ascii?Q?opIww3VBhUtCe//CfJJOVe0ttbjzKUI4lmqql+X6GZNo8eiKuoHuv1KdZrDB?=
- =?us-ascii?Q?rfCi5ebZHxXv2Pin73v7UpdDSGf9PVhwnJyP67c5WjtcOUyaEq6UB3l4wiO3?=
- =?us-ascii?Q?jNFq8KxAShrO6JOYaFvbRmR7R0oh6nROEVmG47m7zslGF1dn+DmjtPrY/yjh?=
- =?us-ascii?Q?9rz1GgTWCD8DiLhu7ctVNFspsKXnfhoSSECNTE0xHLKeEj9OcE2SB6Y3/X3a?=
- =?us-ascii?Q?Siey2HDBMCUFJFadLy5sE6VJysTkIWW+fF/HYej9stnDXPkIG3mFzMNfWXQU?=
- =?us-ascii?Q?2aKFRoRKJRl0ndNDn39zZxNpq1tj5hOmqbUmma6ZbTdfH3PA/n4kKmvSZjfc?=
- =?us-ascii?Q?pUsEYevNpcvTFtEwYc5eHD4GG0+XkwghmTATFhkxUzyBEzCGm1Q+aKqVkHbF?=
- =?us-ascii?Q?rXXIkMUi5oJS5Z7LLNHbNNzOBzWH1U+dtKQtCXF5HuLeR6zyPvo/go+JjJuf?=
- =?us-ascii?Q?WO/36cFTNI444YyykdWVGsl2cQSu2G3yGZilXoFXz+hspk082gEZQUrn0DUN?=
- =?us-ascii?Q?4hDIwGMaTVH2c4h/48pvaheAQE2ZvVCQB955nbTis1BKWHlqU7n9lm2aB15T?=
- =?us-ascii?Q?eOhW1+N4EAzbLfllr7aD4NmZDJGswXLzrqne+XugTdnMqllSMndfWN8kH4gR?=
- =?us-ascii?Q?/+TrHFfD8Z8h0ylG3upSTr/JxzuCTttoMREwKRRgkceimVuEIIRxuNiU2uBf?=
- =?us-ascii?Q?L64ijNdC9a0YcMK3QIvyULNBIXZUUk3fm2vantvryFK2azEb/FWZCbADzrgD?=
- =?us-ascii?Q?NiQQUv2G5HS06YXIgBNU+GS6adBcq2Ynfd/GajO1BBRH6RoqhuP0bKnxhhKA?=
- =?us-ascii?Q?G2qUVfiLs7aeQy7TPjpDTzPqy6CjU/ucmjLOHzXa1kKiMiC4ILIWt63EQXYK?=
- =?us-ascii?Q?LbBnLaSnkvQme3Y1iEHG+Xla492runk+vWALcaQKPuay6Grlx3YiQ/pBvmvh?=
- =?us-ascii?Q?pGyjs0fIF5RGTsFF0cuuwBmNtofnGnHoR3/ofjWgKvKPMe8J+4Zu7KJA2qFd?=
- =?us-ascii?Q?kQHipqW9QkDXgXPEUKgmtsKQDnnrv9lt7FOb9zpxGjoFpd+AnZtfn6bYXumX?=
- =?us-ascii?Q?GcUcINSeL6QGxtYaBISYy9TdSmCCm5CTiV18zEhOOUwSt5lj7T5A/SkgHMkv?=
- =?us-ascii?Q?OLZ1QOq2N7lKF4ffUO1vmFmVBuTgb8w62QvtXZvoqX48CB7rtVm8ZeVmcfYt?=
- =?us-ascii?Q?1VjVAxtOB44o+BT4IapEA8dWAWfFvT0YfVA5mxE4nfWY3BYI5WCtnNSt6+MF?=
- =?us-ascii?Q?JlS8RSfYr55ErEc01MpVWk63xVlhLCiKayB6UlOgsNTnKpk2GPVfd7lClb0z?=
- =?us-ascii?Q?Z343SVe+9pLYjEBSwkSSqmf29iu0ujRNYnAi1nGc?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62ca8aa4-f9d8-42a8-3ec2-08ddc4817b4c
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 15:57:35.7751
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qVcEbw+b0banAjk8GK59e2B833WFxEXaYEWJOycsRjCzsJ247hc+nFNAu0o5GT4VU6zqmrNd4TsWlsWRvQq1Aw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6477
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aHbGax-7CiRmnKs7@google.com>
 
-On Wed, Jul 16, 2025 at 11:35:50AM -0400, Joseph Huang wrote:
-> Do not offload IGMP/MLD messages as it could lead to IGMP/MLD Reports
-> being unintentionally flooded to Hosts. Instead, let the bridge decide
-> where to send these IGMP/MLD messages.
+On Tue, Jul 15, 2025 at 02:21:47PM GMT, Brian Norris wrote:
+> Hi Manivannan,
 > 
-> Consider the case where the local host is sending out reports in response
-> to a remote querier like the following:
+> Thanks for reviewing.
 > 
->        mcast-listener-process (IP_ADD_MEMBERSHIP)
->           \
->           br0
->          /   \
->       swp1   swp2
->         |     |
->   QUERIER     SOME-OTHER-HOST
+> On Sat, Jul 12, 2025 at 10:56:38PM +0530, Manivannan Sadhasivam wrote:
+> > If you take a look at commit f1536585588b ("PCI: Don't rely on
+> > of_platform_depopulate() for reused OF-nodes"), you can realize that the PCI
+> > core clears OF_POPULATED flag while removing the PCI device. So
+> > of_platform_device_destroy() will do nothing.
 > 
-> In the above setup, br0 will want to br_forward() reports for
-> mcast-listener-process's group(s) via swp1 to QUERIER; but since the
-> source hwdom is 0, the report is eligible for tx offloading, and is
-> flooded by hardware to both swp1 and swp2, reaching SOME-OTHER-HOST as
-> well. (Example and illustration provided by Tobias.)
+> I've looked through that commit several times, and while I think I
+> understand its claim, I really haven't been able to validate it. I've
+> inspected the code for anything like of_node_clear_flag(nc,
+> OF_POPULATED), and the closest I see for any PCI-relevant code is in
+> drivers/of/platform.c -- mostly in error paths (undoing device creation)
+> or of_platform_device_destroy() or of_platform_depopulate().
 > 
-> Fixes: 472111920f1c ("net: bridge: switchdev: allow the TX data plane forwarding to be offloaded")
-> Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
+> I've also tried quite a bit of tracing / printk'ing, and I can't find
+> the OF_POPULATED getting cleared either.
+> 
+> Is there any chance there's a mistake in the claims in commit
+> f1536585588b? e.g., maybe Bartosz was looking at OF_POPULATED_BUS (which
+> is different, but also relevant to his change)? Or am I missing
+> something obvious in here?
+> 
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+Now, I did look into the OF code and I also couldn't see where exactly the
+OF_POPULATED flag is getting cleared by the PCI core :/ So I'll defer the
+question to Bartosz.
+
+> OTOH, I also see that part of my change is not really doing quite what I
+> thought it was -- so far, I think there may be some kind of resource
+> leak (kobj ref), since I'm not seeing pci_release_host_bridge_dev()
+> called when I think it should be. If I perform cleanup in
+> pci_free_host_bridge() instead, then I do indeed see
+> of_platform_device_destroy() tear things down the way I expect.
+> 
+
+Oh, that's bad! Which controller it is? I played with making the pcie-qcom
+driver modular and I unloaded/loaded multiple times, but never saw any
+refcount warning (I really hope if there was any leak, it would've tripped over
+during insmod).
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
