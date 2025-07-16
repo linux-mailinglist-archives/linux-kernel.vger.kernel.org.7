@@ -1,165 +1,151 @@
-Return-Path: <linux-kernel+bounces-733479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D196FB07532
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:58:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB37B07537
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E1F4E18F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE831AA26A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0142F430F;
-	Wed, 16 Jul 2025 11:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3922F3C3F;
+	Wed, 16 Jul 2025 11:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6+rBBYu"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jD0Tm/5t"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AB42F0043;
-	Wed, 16 Jul 2025 11:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94682248B5;
+	Wed, 16 Jul 2025 11:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752667050; cv=none; b=RU05maHn3AH4zH1oyPONOC03NmOZl917Umss/5TzJYOKQ+hw6A3Lxyg4vIOqSeA7/urLrqlw+hXjJRnl0izG/WgfOE6fXAETR55zRUuaDlp5G5slm3grCDX0RD0awVwA0ziQuyqGG4sQ8a9ATd8E3v3JII9YkQ5k6oRZbFzyCPQ=
+	t=1752667145; cv=none; b=uf0S1t/m5N0rmHiWk06KQLL3qVAuvycT8rgfTmtB2b2lCNKd2k4YS6qHziAgWytckfZpLyXqeW51Cdv4Yhs+ETQfxLs6sJFPPJUc1Furhodr8s3xUHh071788lyi5yZQcR9tEdHWFPP6ogiqXoybRVa367KIYlKWpcZ7LsFS5cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752667050; c=relaxed/simple;
-	bh=ahNvfh6VoJDlKv5Gqc6oO3rXFasM7n3WmOyQr7d6Gm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rb8IKEdJqPwCX8kc++YcwLyv82iadk1zU1mNkrmfKOtGMGkqVOIbXCOMS47Nun2dKhG/pHC5pzo7e4TA+MENlP0Zee135zYsQWdIJWtiBS7VR/MLrh1esUgRDQM6fIv3WVDGJVKMmc1ERFyrl86b+Sm9FioLVLWILrS2B3yf/aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6+rBBYu; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1752667145; c=relaxed/simple;
+	bh=3L/FDVcgI5RVk0+TjIGTXEIWyy4DEOqWl8wsq3JUWzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jaJYxBJHyXsNv55FVbZlfDD4BaXcKyGt2KBtCEzaBhnp48AYJKRotBVNQtYbZmT7kw9xUps9nccyaZrAalv9FiKiRAwiqtdEizoJdLstuVwYpMnS5LEMvq6fQjHi2dzydnFTi6hfBI9p4xlQT9fV6gr41bCEesFysFPDWp/801k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jD0Tm/5t; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-451d7b50815so42549565e9.2;
-        Wed, 16 Jul 2025 04:57:28 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a4f64cdc2dso936209f8f.1;
+        Wed, 16 Jul 2025 04:59:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752667047; x=1753271847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sus59UsnbuGi6q2O4dZ/OSI0C7+7vrhcajwM1ATb9Ko=;
-        b=d6+rBBYufl4mTyf1pcQhLTxUw1UtvpaA5DAwPxY6MHMvzRIMV201FNEDTW7faJfbVF
-         p2rf27ibpBOJgctMcpm2tO/zFNaqjkEeE8+PwKiIlb1byF8B8kJIqmU6+YP9zFUQXf4S
-         2/ELbvBK77Jd9NRBGTGVliB1jXzMGGVC/5cIk31C7J9DtW96ZsfAAwfXjwqaf6reJbau
-         6DbFkd/AKzo4UyyKDFen1SvflsElMEU6OTHJdjzuNuxl1d8v2Ch/1JIM6THjZn/QjTKY
-         0DX6+21uOVGRUrkC4uFKwVQwMUm+G43gP3XtPyEAdyWyi8qEGuD7uDwOQDjPVqdYemsr
-         zy/g==
+        d=gmail.com; s=20230601; t=1752667142; x=1753271942; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bw2xFmNta465mg0BZVj3kVzQhBMe5dGgIkaJ9O6M9Js=;
+        b=jD0Tm/5tm/wdSKJx2/YKEK+2Qk+f/Ne2fFefGC0XekkNmEAXO5FGlb2EyeOKLXeSg2
+         /hR+7YQLyfne6ZVy2zrxBswzb3/wQ97tcJ6gJM7cahkuEEGOz+mDFEVPVRvKMD55NGBD
+         YzG6IzwPGJ5ez47ydU/5LyyJq39CeakAp4BimVRrnZRINQpeOB4Sv79tzGfS7msAbcg3
+         hwaxwC5Kud50pLD08Msi1yHclErVd3q4NYILAPgKwZK28NM6kVnFY/FpMiqFY0lvE6+f
+         Io6xUmPs6dRlbbemSQ4tndmMp8A95+7nVgKTfYm/oHEmD4KNHwptNP5nLpOeVa7j10t7
+         Hhzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752667047; x=1753271847;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sus59UsnbuGi6q2O4dZ/OSI0C7+7vrhcajwM1ATb9Ko=;
-        b=Pk3xLn/lx92b8o0rdJKocVjsWHbNzOWJa+BbweX7l5bGiEoPWaYnELQ3TM788hF/qE
-         f9Y6mN+rvp3Rx7HLrLMEGhJ8Mb2jaIMzZ14k1BAUmsJHTw9yezZgoy+a+gWnQC1tFXRM
-         Ejw4ggdBXn4vPQvwNdzd8xq5NApLRPhBy2/FeEwkQ4waS1z8VobW4f5nKN7OCxe5mT7l
-         OoDbEoz+RHfVUU3YHpus0ZmX/l5aMILFS8ltwRaWBCsT0xWvVRY2UNMzqgqgSXWO5S43
-         meX8awTiZxjm7tlQ7RAqKVLUmDtQcDjDyQjUD3+NsseWVGWkY7n5XwO58aJgaa0SwoLI
-         OWFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0uda491jc1vjeBf17v1WmElYn5Br69RHPXZHDSvxyiEWAgpM1BiRGHpJXlFH7ZjYDT1gWrYTdV1SEcCw=@vger.kernel.org, AJvYcCXHcM4HwJ94F+8JXQZ3Fugl5elexwX+CMoOCOldKTNcLlCfZzF1qRu+htyRiecvsdX22NMii3lS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwueQJjbUmEAzC6zJWM+fmszNN8Tv5ZeWvkzpbSKpwu4y8SkEGJ
-	br/vGgJc8BXPjdvTmRUqvswB5ojYTBxO600S362xw8XJSmnpFxtL3r5N
-X-Gm-Gg: ASbGnctLlTuaMzgXoMTCXDW6CXpyWkCNE+tD7yMIk/XgKfieS09mL6Zg2PWOkklJxcn
-	WjECR/H4SdgXnhi7PrnDT5ly7RDzEbFVSEvWn91EScHfdXtglEHd7+4IQuG0scgNe35PyY0DCaQ
-	mPwUGpWuOLn8wCpJ6gHwB2tcaSSF2WsLBvuOULtuMi0pn56GxCy+6sGjbzgmEqOv6mVhoe5FQFw
-	iCFLrkw4PnhzSABLedKkvq9XvkVIZFzkF2RFuGaggmdC9i1xl3vHA5mVAMg9e4yHil8hc9JmIVE
-	bCyxZohTH9eABGVarF8s8wQxzlkPLrn2kFwKWT6/ZRIWTjbqUq4vLoXRTl7PPr/zKcX8gH9Xrvz
-	VwuGS9jVtCOxtx78boiiU/e1cALVvPr4x15xUqDIMCkd5I8/MYWSnZ78opIuu
-X-Google-Smtp-Source: AGHT+IEO9Zt2BvzXTefjIV22N0YGVdjcWPFlq7BQGPADENKmKRWYWRGtIPb+nG6tBkrVVWdxVbs8sw==
-X-Received: by 2002:a05:600c:5492:b0:456:207e:fd83 with SMTP id 5b1f17b1804b1-4562e330ff3mr22640315e9.4.1752667046936;
-        Wed, 16 Jul 2025 04:57:26 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1a2bsm17916359f8f.14.2025.07.16.04.57.26
+        d=1e100.net; s=20230601; t=1752667142; x=1753271942;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bw2xFmNta465mg0BZVj3kVzQhBMe5dGgIkaJ9O6M9Js=;
+        b=opOL9h2l2RsU7mWh0gyhWqB+yBz+AiFVUO7QIH/NYjTIZjajJCJYDT3n0ME5sn8M3W
+         y9a1jWrFOMbMqo24ZiRwOHLOX1uimFCzeU/PvdwEcx4SHwZKPM/0ziByoow9cwam/u1z
+         o/aMRiSGUAJ5Zz7a0fgS61Tm5bX9EgNgzeV1aqQZBc/2NKE+tzI/VOYr+4TPp8F7W3Y8
+         WT2ExEQIgf0Et5CdBf5lILe9ilhWuB+m5GRygOG7bFJhRNsfQzvhzx5lbG+7pINQ3Nb7
+         +GyMzxVVvPM3STFYh4rSQ756HALcGHYJAcet52NeITFzYvPjGWBeCXLW2pnSAm6Ul/7F
+         JIFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTxafoMzvDu2uQ968SeaS1N6RdjUtn0/3M9MJdpoq2EPxC7njkZQinj4dejoJ57c7p50b3kS/Op/WQoh0=@vger.kernel.org, AJvYcCXToOWz8xROWRJZBwi51PaoXGYagkzRidtwDbXr5jxFz1ybflmYDqfVmXlLO2LpV+In4HJz6KN1sdPj0Po=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBhcB6s+8Ha3/gNDEIBJSKqHCpKILREK6XoSrdNhxybHGonKDz
+	6UZV7v9WvuKQW45CvEcisv3WKyYovpm856G2k+g/5LGyYMadhhJeeUKC
+X-Gm-Gg: ASbGncsBHbxfAZbbJTtLeOyx125rqQrf+woKBccoJ5Ci1g0cOgxefiRPILNThfXk3C2
+	R6GRxvlGvtW8/w8N1q6nt/OleJeP6WL9LFKj0C8IP42xTXhidxc2vjT0G9wKq0vIG1gRkhStTQ+
+	lW505lEiaYCR6tyqlcqF1S/SmF1POM91/A6Z7d4/RhMNrCyn/wMlv80U2yAPh51Il0/2gs9s9sL
+	NaUqv8tGCIfUpMbOR5nsnLqbEYojX559j06jVnVSvifZ5EsQyrazU3LHzFIb2Foln0HPXSCXUMh
+	DUj41Aky4tV5gGGjVro0kM+6orqrFhGrx27L9LY6GYVpzt5X4nU+m1Vf6t1oKo/D3LziEQCI4cw
+	eemhOiBLNtuBPg+tKXw5tqAZztOD4eD6WXQk4I+Ed2DGz1hk6aWg=
+X-Google-Smtp-Source: AGHT+IEAPIHSh4hgJXxkGM/gbVDS+wKRULShkohKvDVmhlrfqOr4uXmfMr893MaJQjRUWFri0I9k1g==
+X-Received: by 2002:a05:600c:4f0c:b0:453:76e2:5b16 with SMTP id 5b1f17b1804b1-4562dfc10ddmr11124195e9.0.1752667141765;
+        Wed, 16 Jul 2025 04:59:01 -0700 (PDT)
+Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:1dbb:ef25:3e5c:8636])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b60e3ed902sm1719981f8f.91.2025.07.16.04.59.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 04:57:26 -0700 (PDT)
-Date: Wed, 16 Jul 2025 12:57:25 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin
- Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>, Jann Horn
- <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>, Dave Hansen
- <dave.hansen@intel.com>, Alistair Popple <apopple@nvidia.com>, Uladzislau
- Rezki <urezki@gmail.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai"
- <yi1.lai@intel.com>, iommu@lists.linux.dev, security@kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-Message-ID: <20250716125725.37aa3f38@pumpkin>
-In-Reply-To: <20250710155319.GK1613633@noisy.programming.kicks-ass.net>
-References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
-	<20250710135432.GO1613376@noisy.programming.kicks-ass.net>
-	<20250710155319.GK1613633@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Wed, 16 Jul 2025 04:59:01 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Chris Kennedy <c@groovy.org>,
+	Kevin Thayer <nufan_wfk@yahoo.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ian Armstrong <ian@iarmst.demon.co.uk>,
+	John P Harvey <john.p.harvey@btinternet.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: pci: ivtv: Add missing check after DMA map
+Date: Wed, 16 Jul 2025 13:57:46 +0200
+Message-ID: <20250716115758.58962-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 10 Jul 2025 17:53:19 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+The DMA map functions can fail and should be tested for errors.
+If the mapping fails, free blanking_ptr and set it to 0.  As 0 is a
+valid DMA address, use blanking_ptr to test if the DMA address
+is set.
 
-> On Thu, Jul 10, 2025 at 03:54:32PM +0200, Peter Zijlstra wrote:
-> 
-> > > @@ -132,8 +136,15 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
-> > >  	if (ret)
-> > >  		goto out_free_domain;
-> > >  	domain->users = 1;
-> > > -	list_add(&domain->next, &mm->iommu_mm->sva_domains);
-> > >  
-> > > +	if (list_empty(&iommu_mm->sva_domains)) {
-> > > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
-> > > +			if (list_empty(&iommu_sva_mms))
-> > > +				static_branch_enable(&iommu_sva_present);
-> > > +			list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
-> > > +		}
-> > > +	}
-> > > +	list_add(&domain->next, &iommu_mm->sva_domains);
-> > >  out:
-> > >  	refcount_set(&handle->users, 1);
-> > >  	mutex_unlock(&iommu_sva_lock);
-> > > @@ -175,6 +186,15 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
-> > >  		list_del(&domain->next);
-> > >  		iommu_domain_free(domain);
-> > >  	}
-> > > +
-> > > +	if (list_empty(&iommu_mm->sva_domains)) {
-> > > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
-> > > +			list_del(&iommu_mm->mm_list_elm);
-> > > +			if (list_empty(&iommu_sva_mms))
-> > > +				static_branch_disable(&iommu_sva_present);
-> > > +		}
-> > > +	}
-> > > +
-> > >  	mutex_unlock(&iommu_sva_lock);
-> > >  	kfree(handle);
-> > >  }  
-> > 
-> > This seems an odd coding style choice; why the extra unneeded
-> > indentation? That is, what's wrong with:
-> > 
-> > 	if (list_empty()) {
-> > 		guard(spinlock_irqsave)(&iommu_mms_lock);
-> > 		list_del();
-> > 		if (list_empty()
-> > 			static_branch_disable();
-> > 	}  
-> 
-> Well, for one, you can't do static_branch_{en,dis}able() from atomic
-> context...
+Fixes: 1a0adaf37c30  ("V4L/DVB (5345): ivtv driver for Conexant cx23416/cx23415 MPEG encoder/decoder")
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/media/pci/ivtv/ivtv-irq.c | 2 +-
+ drivers/media/pci/ivtv/ivtv-yuv.c | 8 +++++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-Aren't they also somewhat expensive - so you really want to use them
-for configuration options which pretty much don't change.
-
-	David
-
-> 
-> Was this ever tested?
-> 
+diff --git a/drivers/media/pci/ivtv/ivtv-irq.c b/drivers/media/pci/ivtv/ivtv-irq.c
+index 748c14e87963..4d63daa01eed 100644
+--- a/drivers/media/pci/ivtv/ivtv-irq.c
++++ b/drivers/media/pci/ivtv/ivtv-irq.c
+@@ -351,7 +351,7 @@ void ivtv_dma_stream_dec_prepare(struct ivtv_stream *s, u32 offset, int lock)
+ 
+ 	/* Insert buffer block for YUV if needed */
+ 	if (s->type == IVTV_DEC_STREAM_TYPE_YUV && f->offset_y) {
+-		if (yi->blanking_dmaptr) {
++		if (yi->blanking_ptr) {
+ 			s->sg_pending[idx].src = yi->blanking_dmaptr;
+ 			s->sg_pending[idx].dst = offset;
+ 			s->sg_pending[idx].size = 720 * 16;
+diff --git a/drivers/media/pci/ivtv/ivtv-yuv.c b/drivers/media/pci/ivtv/ivtv-yuv.c
+index 2d9274537725..71f040106647 100644
+--- a/drivers/media/pci/ivtv/ivtv-yuv.c
++++ b/drivers/media/pci/ivtv/ivtv-yuv.c
+@@ -125,7 +125,7 @@ static int ivtv_yuv_prep_user_dma(struct ivtv *itv, struct ivtv_user_dma *dma,
+ 	ivtv_udma_fill_sg_array(dma, y_buffer_offset, uv_buffer_offset, y_size);
+ 
+ 	/* If we've offset the y plane, ensure top area is blanked */
+-	if (f->offset_y && yi->blanking_dmaptr) {
++	if (f->offset_y && yi->blanking_ptr) {
+ 		dma->SGarray[dma->SG_length].size = cpu_to_le32(720*16);
+ 		dma->SGarray[dma->SG_length].src = cpu_to_le32(yi->blanking_dmaptr);
+ 		dma->SGarray[dma->SG_length].dst = cpu_to_le32(IVTV_DECODER_OFFSET + yuv_offset[frame]);
+@@ -929,6 +929,12 @@ static void ivtv_yuv_init(struct ivtv *itv)
+ 		yi->blanking_dmaptr = dma_map_single(&itv->pdev->dev,
+ 						     yi->blanking_ptr,
+ 						     720 * 16, DMA_TO_DEVICE);
++		if (dma_mapping_error(&itv->pdev->dev, yi->blanking_dmaptr)) {
++			kfree(yi->blanking_ptr);
++			yi->blanking_ptr = NULL;
++			yi->blanking_dmaptr = 0;
++			IVTV_DEBUG_WARN("Failed to dma_map yuv blanking buffer\n");
++		}
+ 	} else {
+ 		yi->blanking_dmaptr = 0;
+ 		IVTV_DEBUG_WARN("Failed to allocate yuv blanking buffer\n");
+-- 
+2.43.0
 
 
