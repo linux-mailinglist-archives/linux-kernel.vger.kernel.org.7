@@ -1,311 +1,229 @@
-Return-Path: <linux-kernel+bounces-733925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2587B07ABA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:09:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D381B07ABF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 18:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1C3565672
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:09:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B47535812BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAEB2F5496;
-	Wed, 16 Jul 2025 16:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25692F5C39;
+	Wed, 16 Jul 2025 16:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="GdtmVZFD"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Px4jyw3Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8202F532D;
-	Wed, 16 Jul 2025 16:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752682137; cv=none; b=tFYXBNEFjjM6/Wpf6jW+YtwBy3AII0rf89bb+AdaMPPYMeQfhjqEwa4BJOG7m/TQn9t+JPyrxqCCALToHayzCL3ybAJPUec7Kd2qhOWd31rCb/FL8S8wJh4D4kTFYA9r9BNdM8o0VyD65tf/wDMqhjJ/V+YoM3e/13V/emNP1CQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752682137; c=relaxed/simple;
-	bh=+W09G+Txez91PG0u3dbICXsTHJsZszmOf0ugQkIaaeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RN39ykmseIVHp2acbv3JhA1DuQ2UUbpmv6uouTzqTgvuo8bILSuwCG7N4jH+O+rQIWU+iVhxlzA4d7uJKkYIRwo+lMCUWxC49t81LT+GGMVx/LXgoGLhs4OjEtNhGxkmf3NIP2hvH+p7Ot9ivXKPXLOJUamOw7e7nBrjPQQK/eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=GdtmVZFD; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id DB969204E5;
-	Wed, 16 Jul 2025 18:08:45 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id zWVEH2PJBuQV; Wed, 16 Jul 2025 18:08:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1752682123; bh=+W09G+Txez91PG0u3dbICXsTHJsZszmOf0ugQkIaaeA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GdtmVZFDjG0lz+7Huklm4/jycmaVtH67HDQs5AJa6TZfEKTzBpnruRYP9bAtsf0EW
-	 +rDkAfYaf0HwfeMI2vlLQMKoa0PHcAZbQKmWmG/I+obofupMI1Tv8wyDciVq1FVCtS
-	 umMxZpEoGfqsYPsJKsqSXOMJmqYFtSKxR8ta97N3fwk/dwzsC+G7ylqFyeZfxsvBCT
-	 pLoDvLEf5o69RTrQX34aKiGe4D20GSLZUdeFMC39/uaFuKB31tdMctt7ARCBLQrblC
-	 1T46W4yCEc53FFQu7dpeymOgxG+Nld0G4khR9DiIJwxo7U8LW7QYqJ/fhQxosXBjL7
-	 oVKVE2hh1S63g==
-Date: Wed, 16 Jul 2025 16:08:26 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: E Shattow <e@freeshell.de>, Icenowy Zheng <uwu@icenowy.me>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Michael Zhu <michael.zhu@starfivetech.com>,
-	Drew Fustini <drew@beagleboard.org>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] riscv: dts: starfive: add DT for Orange Pi RV
-Message-ID: <aHfOeo7ZITHvg9P9@pie>
-References: <20250409091801.855083-1-uwu@icenowy.me>
- <20250409091801.855083-2-uwu@icenowy.me>
- <Z_f30vAuATR1DCWk@pie>
- <8fbd6ffdd053760b6d0980173c7f8af6c09963ba.camel@icenowy.me>
- <e2ec3809-a538-4475-ac3a-db289271fe7a@freeshell.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CC22F5C34;
+	Wed, 16 Jul 2025 16:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752682142; cv=fail; b=Egy/xVLmqNHmswqz7cwTDJNsktSucKiKlfOfg9wKPJ+cZl5lzdZbcNpANC8B4ohGYkrgU+/wgsz37qNYzJrLuaO/lvks4In98E/IC7f+iiZ2DeGlAToZaqjM6M/77GN7FMlvKJnD/SJ/hfZRa/IdlGZNVal4/eJ2MzLtP+MKsqE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752682142; c=relaxed/simple;
+	bh=bvyNTFGZBKP9hz07R72m0jt7Qv4xp4XCEeQg30QlNvk=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=SdgjJtWn9Gsw0ABcZn6JPFCg6A3vYfEvt/R+TUBHgKNTya38AeRwGaNh0XV8sNDdyrLFgiFMb+kxgwW3hOTdPkqZUUTz5Vd6kHaj/M/6S3c4H99CavqRFqZ2ogP0PJ0iFsyhTSgwe7gZi8k3d0JdtkU4pIXBYwwN5Y4Rol7AsAo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Px4jyw3Z; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752682141; x=1784218141;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=bvyNTFGZBKP9hz07R72m0jt7Qv4xp4XCEeQg30QlNvk=;
+  b=Px4jyw3ZDyM6/HNhxn8uqZ82BLcPuLPwMhXJ8lIrfKpS4fsbp4t+2Fzw
+   QNXWs6aGsSN99JHigD4IqLMBRgwcLwoL9l7AVLe3t8sp4u9p+ttN0wSG+
+   nzQWAWGlyOWHSGUh74dw4Mm8EDTaxPBYWPyhVTGOCVxs767qf3ujUqTLQ
+   xEStp2oG6p3dSBGmzwcCbD/Bhljw1YqL5lwNs9hYDX4QcBO2fNG3/oIbJ
+   yRC5ngHm7CFoa/fzgxpg8wYmI3hKOG/ytOHc0IZfIW69GeWrP5q6eO7et
+   KvwaCvY8LR+EkIGLFTQoswlmSj6WSDmnn6CZo/UISlT9t9ocS7ha7SoM5
+   w==;
+X-CSE-ConnectionGUID: ViYUdsQsSWGBv4tKYPR4KQ==
+X-CSE-MsgGUID: +N24ShccRk6DVw4eEK1Buw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54153013"
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="54153013"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 09:08:51 -0700
+X-CSE-ConnectionGUID: I/NG00OdTCmlG/JsmqNFiw==
+X-CSE-MsgGUID: gegFC08NT+KjqAEBtBI1CQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="181232912"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 09:08:50 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 16 Jul 2025 09:08:45 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 16 Jul 2025 09:08:45 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.80)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 16 Jul 2025 09:08:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c7PB/6uvPrCfZL2ts34pk2zGOty4f66Z85fkqI5HvfecSCp9B4RomnuWhCsHkfjmQxsjQJ78tgfwwrmLWogOIi44ZT0ZrjdDdqEc5JVYsOmPkhKQq9xKeWcVaO++ZbOrhG1v+2r7wr9qYRLMCFIOtZH/iaHRb5DESQla15U2GEUiFXGkXR1yNScnQE9nc0CmfOcEEFtTjkcCAMfZ7W32XgcjxcB2/5UlQKVqIAHz2yfxBpnmS3fWWbvUWspvfxqPvGSS+ndSpWDcE+R6IiCQsMtfmF0SaY95RrsIY4atxX9eHDbNFoTOErhaGsjlOyhVPWCS0U4Q4Rn5IMcYFmLBkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z+EXxmyNzwENMYAfMp+LXopzgOnmx5MAW6zcVTVx2b0=;
+ b=RTAInETBkoaHgrFKrQUjAxjOHv0KZ7R0bsMvP6sBvrt6VdqaE2qvcVFpi9iCPt/w0ln7JK9J26AxoN0ZcxUAEhPZDjHqXQwK26Q+j32u/DEEywQQi9YytbbqQOxbELpIGihJvgS0SozvDEb6hyJUxDZZGrcOXG7SJNCtxQNCDQGPC5F30ZhcT/OprnczF/Y8qv/tCsjrAYLjFcN4LsVjTvchTlFFPmDO5PBLX7YqjT/zUN3y+LjwMpsfj2Vh6K2am5O1QUh+sPFJf+WzUzRD6c6BxtyMsZxB6/pkRghwQF4ipWCKorhB7q48V+ESyh9H0pgPd6ZlddIHwYXaP47MNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by SA2PR11MB4954.namprd11.prod.outlook.com (2603:10b6:806:11b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Wed, 16 Jul
+ 2025 16:08:38 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
+ 16:08:38 +0000
+From: Dan Williams <dan.j.williams@intel.com>
+To: <bhelgaas@google.com>
+CC: <linux-pci@vger.kernel.org>, <lukas@wunner.de>,
+	<linux-kernel@vger.kernel.org>, <Jonathan.Cameron@huawei.com>, Dexuan Cui
+	<decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y.
+ Srinivasan" <kys@microsoft.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Nirmal Patel
+	<nirmal.patel@linux.intel.com>, Rob Herring <robh@kernel.org>, "Suzuki K
+ Poulose" <suzuki.poulose@arm.com>, Wei Liu <wei.liu@kernel.org>
+Subject: [PATCH 0/3] PCI: Unify domain emulation and misc documentation update
+Date: Wed, 16 Jul 2025 09:08:32 -0700
+Message-ID: <20250716160835.680486-1-dan.j.williams@intel.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR02CA0045.namprd02.prod.outlook.com
+ (2603:10b6:a03:54::22) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e2ec3809-a538-4475-ac3a-db289271fe7a@freeshell.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SA2PR11MB4954:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa18fe75-7614-42a8-a824-08ddc4830649
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?F4zboYk2jPE+PajS7T2IHAbLS1h/lZUlrZlJy9HEytrEQ6WmCcnSxlMzeDOi?=
+ =?us-ascii?Q?7EIlBszyn2nMyyTSL8NTWpnDh1weCAqhZ1D1R0l5YryIu/S6w2fnXxop/i/V?=
+ =?us-ascii?Q?/kwL10UwsfvifFXkTOJepv+rY5wubzBIJ4tS+x2MjMamdUutyGaBR4kQhspy?=
+ =?us-ascii?Q?GWD4kBKbNGtQvaue6LQYIQBPI2spUx4mPszfn6YOt2IFdWkheWLIl1imRJo8?=
+ =?us-ascii?Q?+huwrQT6HWVvir/6EvxGTm9g+KQiT8IrsCXbVS0A9dQsMxrYmC6HKApTufMH?=
+ =?us-ascii?Q?JHu0KzlzsG1cvbuLa27114Z5fBhFRNLFFUTY0v2efuohBtgwxd1vTB16Q+n6?=
+ =?us-ascii?Q?NSEYb9WKlH/E+09ObrrZ/ObaWs+bA8C8xlgJ285k9u9FZ8B/njuwdaFHuVrZ?=
+ =?us-ascii?Q?RsfdbIprc9HkDsVL9TbI7qg3S6qzonNTGsDxxT1LOXMIPDUOeqVCxl+g4a+g?=
+ =?us-ascii?Q?m2R3FvKFHL1XJwozV7kLP1GvI4VlIPJR303iM0o8fg1fgSSMH4d2HXgYFE7R?=
+ =?us-ascii?Q?YvwUFlYGbO281kdDVTz67Q2lyhNRy9S170ayZ93PRPnOwvToBm5N/sfk9Dwm?=
+ =?us-ascii?Q?Cla0+4yxDOOC+/eQqf8kVMoE+HTrpaZC+Y1kMjNVVGLw6AEDlh+e2Tc2GeEU?=
+ =?us-ascii?Q?W0WWoAlbGUEkdCVO0B2lrShAyVxz4ItbeSjXKncCeh2x/ZreWio4HwHPv3Fg?=
+ =?us-ascii?Q?B3yqmhyiZTjY4RQ44d9Jh93A0uuQX/f5XkZkyiAiETgfApfLg7THp3VVXHST?=
+ =?us-ascii?Q?Pajw+t3mZKKSzbI1oqpQflzvKkujlrsXjEfq4wvvA9mQTIZ8gFoFIyO22b1l?=
+ =?us-ascii?Q?3Z7ay2yDqM14KTdhGXWz8as2NYcgXwDrdiYIBYg0rLRyTuKnWNCmG/nEumLZ?=
+ =?us-ascii?Q?K2ulwlz+yndyPDdkV91i1m6uLiYgTfNgPKICWy3QToM+FCoEdQcSviq3SLaw?=
+ =?us-ascii?Q?ImExbhOWKKH1f0LALVGcvBygJn68tDixp+zrm3VQy1yB+HfRhBkszaGMXiN2?=
+ =?us-ascii?Q?CTkt9eyK28X6RDqLvp9pZR4rt9IfQ+OvjhuZ7+WYd+/NbNliSdCi4m783Amf?=
+ =?us-ascii?Q?pDnIKKhFd6eRcIuyOutfbHgG8YReeqr/bIiClBFqaAWzRXo8A2bvEaN44YKY?=
+ =?us-ascii?Q?yPYZHq47s3nbkRHE466asvoyS+hKC6AtJh/9H+wt3c17FUYxESRXnlBjx/iY?=
+ =?us-ascii?Q?WL5TMYrNBFJtcLX6dQOkxAc/QAAaQiueQo5G6MgITLYZy5nnC4oa/FjUdjKx?=
+ =?us-ascii?Q?8Qqzc9KeA4Y9DO3CvT7Rll5keVJBUm3BUmXueRLWYKeXfwW3QXdQMVytXtc/?=
+ =?us-ascii?Q?LFiJEgYg1Lx8j7tEG7Y4aoawLBVqAssk8pc1BXBSu5QpeKLK9ufgWnfU/a0G?=
+ =?us-ascii?Q?P1Oy+WXeonSwjhboUIrfQDFTtc/4pLueAibvnq7//BRTmzq1SCV01fAfIfDX?=
+ =?us-ascii?Q?LnGz96gJel8=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gVUWSfJ4Rs5pMAvgx8lwxZME3z4JJeEiCbKHWwuzmwP9gx2c3or09zigMvd9?=
+ =?us-ascii?Q?mrOYs5f/RHjBc9XP7BSv4DO5ed0xwLaIFlBALt1qd+wA5SFUKSzGqK3sIDmZ?=
+ =?us-ascii?Q?TgCqqO4UDNN9/ruD6MVOOIWqYjpgacXDWGjjH1OLkHSROCnCu2KQ873+aIAV?=
+ =?us-ascii?Q?ZJtnBri87W/PEKrivnsnAvz8IvQQ1T+fy9NNBR1jJ3avvb4hVZ4hkb92TU+N?=
+ =?us-ascii?Q?3/kO5C4j+he0j5XHlSNpHNt7/Q6wo8h5Qn50v2SdOch1O1fiaOSz1pkvlNkD?=
+ =?us-ascii?Q?c0iY0lU3VJnMA7pDvgHh6KkLRnz6pPrshirE02mbOhIqADVS+/SxXjEEfv6H?=
+ =?us-ascii?Q?Hz55mSXzDevqnEiV9S2mdCM+VLyL2X2o6vuMzabU6fNJPdx1b3nS2r3Ayw/h?=
+ =?us-ascii?Q?RGRHsU5pyjib6EIL+9SWQX/TNzChN/K6tHOwyf3QSzK/k7qmLqxy3LV9i74B?=
+ =?us-ascii?Q?xV5FvAXHhzcek+k1x8wvx0VfFKQU5OWRJzi/rLxi/lHx+9se5ZZFqr7y+mV+?=
+ =?us-ascii?Q?Uvmn/3lgRQMFzBgFUQlALc2GDvuVFrWRHON0+soK+2K5rkqruoj0GD/+oXIK?=
+ =?us-ascii?Q?7JkLZPCejEpxhwgh0Fxge9k8tuv759vgeXrm+u3+39wFua3x8d6nEyCIxa1G?=
+ =?us-ascii?Q?eYtiZ4Y1FdwE32RIqkNwbN7eGbEbr2iu5oPubDOrutlVvVijv/Rc9akoqUFL?=
+ =?us-ascii?Q?mo+ZGZs/KHkTayj10Vr6b78dCd0ddrLxnMifx6cU9PYhEclnIp/OD5eZovXs?=
+ =?us-ascii?Q?bBq8Pp4EmJcGDanO61Ohyau9vfUeOaz0JpWvo3sVXjYjKSVW6mHbc/ThIpWt?=
+ =?us-ascii?Q?o64W4e7ZN4TRW8eh3wsCgWNocph8+oUYR63YEWcuDPKMaIPAwiDrTSFxWjMm?=
+ =?us-ascii?Q?6BjAzj1h+rBDG2tnXbAxeAuH9l4quiIv21T1AXr9xWV3tvrDuj+Oe3qT+gq3?=
+ =?us-ascii?Q?Ok6tt1gtEe49femgH8rFkPezSmqBKwcE5RNAuZzq8HmRtXOZIMQCjoJfFcMI?=
+ =?us-ascii?Q?1C1tLT+NS2Hap6XRV0Z64vGS5iHCU29wvg4vYoegmQnzNA5/O033hP1qg5dY?=
+ =?us-ascii?Q?oVIcG2bEWnQCaSqhnEpiciraK9+/uflscN7qgPqSHEoWglcWp3YLzzpwa7OG?=
+ =?us-ascii?Q?In1V/WPDS8asOSCnGTPnCVMIohNR6QZDEh6yMH2fTJ0pD9VbUQeWntIwYfVQ?=
+ =?us-ascii?Q?Wkcm89ax0fuVkfV7uRktn72lrdHz/HLjmtO5rUGYtW3uBVTEE68xZ8hf3aBP?=
+ =?us-ascii?Q?PG2bcnlTgxbcR41qVNCgYxD+A5oxPLjRYUZ/NtEE5zonBCsaTe8TF2+JVTd7?=
+ =?us-ascii?Q?dEU3LR3KTEgiZRHt59pcbDrjkQt04X+HSVBIGQII/Pn2vIMFBc3AYuQqogyP?=
+ =?us-ascii?Q?7+a+ALY5O2yguyFuI2gUAYghCDGEKq/fT16qclHIg0fD+SiKgEmc6/om9mJ2?=
+ =?us-ascii?Q?f5apaNSs9g+ZNpfw7JSvdpKb68ut2TWHbihVrdBLPdZRJKkdpRape7HddCqS?=
+ =?us-ascii?Q?sadM6iF/Tvvllqce5pwnWwf6+qo8u7T0s1sSzWGYnOHQpA8AuA+dbK7+59vP?=
+ =?us-ascii?Q?i/hRtil5nW9uviMStecn8p7sXOIM/kVUpXSFce+D2ITBf5ozjQ8IGXZ5egD4?=
+ =?us-ascii?Q?nA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa18fe75-7614-42a8-a824-08ddc4830649
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 16:08:38.4000
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n7gZfmvPk3OGbLOMMDc0zbuLStdTwG2WQpy/TKUMNhAriXF4rYT30SLvtj45NO70vxO8DP/dWtrubxQLJeyp37Aobez1Q3bAtNZ3nZ6dNX8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4954
+X-OriginatorOrg: intel.com
 
-On Tue, Jul 15, 2025 at 06:30:57PM -0700, E Shattow wrote:
-> On 4/10/25 18:29, Icenowy Zheng wrote:
-> > 在 2025-04-10星期四的 16:54 +0000，Yao Zi写道：
-> >> On Wed, Apr 09, 2025 at 05:18:01PM +0800, Icenowy Zheng wrote:
-> >>> Orange Pi RV is a newly released SBC with JH7110 SoC, single GbE
-> >>> port
-> >>> (connected to JH7110 GMAC0 via a YT8531 PHY), 4 USB ports (via a
-> >>> VL805
-> >>> PCIe USB controller connected to JH7110 PCIE0), a M.2 M-key slot
-> >>> (connected to JH7110 PCIE1), a HDMI video output, a 3.5mm audio
-> >>> output
-> >>> and a microSD slot.
-> >>>
-> >>> Onboard peripherals contain a SPI NOR (which contains the U-Boot
-> >>> firmware) and an Ampak AP6256 SDIO Wi-Fi module.
-> >>>
-> >>> As the schematics isn't available yet, the SDIO Wi-Fi is left
-> >>> disabled
-> >>> yet.
-> >>>
-> >>> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> >>> ---
-> >>>  arch/riscv/boot/dts/starfive/Makefile         |  1 +
-> >>>  .../boot/dts/starfive/jh7110-orangepi-rv.dts  | 73
-> >>> +++++++++++++++++++
-> >>>  2 files changed, 74 insertions(+)
-> >>>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-orangepi-
-> >>> rv.dts
-> >>>
-> >>> diff --git a/arch/riscv/boot/dts/starfive/Makefile
-> >>> b/arch/riscv/boot/dts/starfive/Makefile
-> >>> index b3bb12f78e7d5..24f1a44828350 100644
-> >>> --- a/arch/riscv/boot/dts/starfive/Makefile
-> >>> +++ b/arch/riscv/boot/dts/starfive/Makefile
-> >>> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-
-> >>> visionfive-v1.dtb
-> >>>  
-> >>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
-> >>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
-> >>> +dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-orangepi-rv.dtb
-> >>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
-> >>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
-> >>> v1.2a.dtb
-> >>>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-
-> >>> v1.3b.dtb
-> >>> diff --git a/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
-> >>> b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
-> >>> new file mode 100644
-> >>> index 0000000000000..bde01f117e0b2
-> >>> --- /dev/null
-> >>> +++ b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
-> >>> @@ -0,0 +1,73 @@
-> >>> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> >>> +/*
-> >>> + * Copyright (C) 2025 Icenowy Zheng <uwu@icenowy.me>
-> >>> + */
-> >>> +
-> >>> +/dts-v1/;
-> >>> +#include "jh7110-common.dtsi"
-> >>> +#include <dt-bindings/leds/common.h>
-> >>> +
-> >>> +/ {
-> >>> +       model = "Xunlong Orange Pi RV";
-> >>> +       compatible = "xunlong,orangepi-rv", "starfive,jh7110";
-> >>> +
-> >>> +       leds {
-> >>> +               compatible = "gpio-leds";
-> >>> +
-> >>> +               led-ack {
-> >>> +                       gpios = <&aongpio 3 GPIO_ACTIVE_HIGH>;
-> >>> +                       color = <LED_COLOR_ID_GREEN>;
-> >>> +                       function = LED_FUNCTION_HEARTBEAT;
-> >>> +                       linux,default-trigger = "heartbeat";
-> >>> +                       label = "ack";
-> >>
-> >> Should we sort the properties in alphabet order? i.e. color,
-> >> function,
-> >> gpios, label then linux,default-trigger. See dts-coding-style.rst,
-> > 
-> > Well in case of GPIO LED, I think gpios is something like reg? Although
-> > this is only my personal feel, and label really needs to be reordered
-> > then.
-> > 
-> 
-> Status led description here does instead belong in jh7110-common.dtsi
-> since all variant boards are using the same RGPIO3 (fourth GPIO on PMU
-> domain).
-> 
-> >>
-> >>> The following order of properties in device nodes is preferred:
-> >>>
-> >>> 1. "compatible"
-> >>> 2. "reg"
-> >>> 3. "ranges"
-> >>> 4. Standard/common properties (defined by common bindings, e.g.
-> >>> without
-> >>> vendor-prefixes)
-> >>> 5. Vendor-specific properties
-> >>> 6. "status" (if applicable)
-> >>> 7. Child nodes, where each node is preceded with a blank line
-> >>
-> >>> +               };
-> >>> +       };
-> >>> +};
-> >>> +
-> >>> +&gmac0 {
-> >>> +       starfive,tx-use-rgmii-clk;
-> >>> +       assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
-> >>> +       assigned-clock-parents = <&aoncrg
-> >>> JH7110_AONCLK_GMAC0_RMII_RTX>;
-> >>> +       status = "okay";
-> >>
-> >> Vendor property starfive,tx-use-rgmii-clk should go after the common
-> >> ones.
-> > 
-> > Okay, I will fix this (and the one below) in next revision.
-> > 
-> > Thanks,
-> > Icenowy
-> 
-> Well then does the documentation follow recommended sort ordering?
-> 
-> https://www.kernel.org/doc/Documentation/devicetree/bindings/leds/common.yaml
+Bjorn,
 
-I don't think so.
+This is a small collection of miscellaneous updates that originated in
+the PCI/TSM work, but are suitable to go ahead in v6.17. It is a
+documentation update and a new pci_bus_find_emul_domain_nr() helper.
 
-> Looks to me like it is not clear what is going on there with sort
-> ordering. The recently accepted dts in-tree are a mix of "who cares?",
-> alphabet sort, and preferentially but arbitrarily placing some things
-> above others. The documentation is even different than all that.
-> 
-> Maybe if the documentation should be followed we should follow it, else
-> fix the documentation firstly.
+First, the PCI/TSM work (Trusted Execution Environment Security Manager
+(PCI device assignment for confidential guests)) wants to add some
+additional PCI host bridge sysfs attributes. In preparation for that,
+document what is already there.
 
-Basically agree here, the "sort by alphabetical order" requirement
-(described here[1]) doesn't seem to play well in all cases: what Icenowy
-claimed sounds reasonable to me and looks more natural than the general
-rule. So maybe we should "override" the rule in subsystem-specific
-bindings. I suggest raising a formal discussion about leds/common.yaml
-and see whether this could land formally in the led's binding, and I'm
-willing to do so.
+Next, the PCI/TSM effort proposes samples/devsec/ as a reference and
+test implementation of all the TSM infrastructure. It is implemented via
+host bridge emulation and aims to be cross-architecture compatible. It
+stumbled over the current state of PCI domain number emulation being
+arch and driver specific. Remove some of that differentiation and unify
+the existing x86 host bridge emulators (hyper-v and vmd) on a common
+pci_bus_find_emul_domain_nr() helper.
 
-Futhermore, similar order issues don't only occur in the LED binding,
-but also, for example, the pinctrl stuff. In the example of
-pinctrl-binding.txt[2], pinctrl-names always goes before pinctrl-[0-9]*,
-which doesn't follow the general rule as well, and we could see the
-opposite is also poppular in the accepted devicetrees. This should be
-clarified, too.
+Dan Williams (3):
+  PCI: Establish document for PCI host bridge sysfs attributes
+  PCI: Enable host bridge emulation for PCI_DOMAINS_GENERIC platforms
+  PCI: vmd: Switch to pci_bus_find_emul_domain_nr()
 
-> > 
-> >>> +};
-> >>> +
-> >>> +&i2c0 {
-> >>> +       status = "okay";
-> >>> +};
-> >>> +
-> >>> +&mmc0 {
-> >>> +       /* TODO: Ampak AP6256 Wi-Fi module attached here */
-> >>> +       status = "disabled";
-> >>> +};
-> 
-> Orange Pi RV schematic is published now. Please implement this
-> description here.
-> 
-> You may also wish to review the StarFive JH7100 devicetree descriptions
-> (and schematic), and additionally the published Milk-V Mars CM / Mars CM
-> Lite schematic, for clues about AP6256. The required firmware files'
-> intellectual property when during the last discussion about
-> linux-firmware was determined to be Synaptics (labeled as Broadcomm) and
-> rejected from inclusion due to no clear licensed permission for
-> distribution. Maybe it is time to revisit this and find someone willing
-> to do the work of resolving the license ambiguity?
-> 
-> >>> +
-> >>> +&mmc1 {
-> >>> +       /delete-property/ cd-gpios;
-> >>> +       broken-cd;
-> >>> +};
-> >>> +
-> >>> +&pcie0 {
-> >>> +       status = "okay";
-> >>> +};
-> >>> +
-> >>> +&pcie1 {
-> >>> +       status = "okay";
-> >>> +};
-> >>> +
-> >>> +&phy0 {
-> >>> +       motorcomm,tx-clk-adj-enabled;
-> >>> +       motorcomm,tx-clk-10-inverted;
-> >>> +       motorcomm,tx-clk-100-inverted;
-> >>> +       motorcomm,tx-clk-1000-inverted;
-> >>> +       motorcomm,rx-clk-drv-microamp = <3970>;
-> >>> +       motorcomm,rx-data-drv-microamp = <2910>;
-> >>> +       rx-internal-delay-ps = <1500>;
-> >>> +       tx-internal-delay-ps = <1500>;
-> >>> +};
-> >>
-> >> Ditto, move the vendor properties below the common ones.
-> 
-> Yes and, one of us may review what is already in starfive/ dts to fix
-> and send a patch for this mess of devicetree sort order. The issue
-> repeats every time we look for an existing sample to use.
+ .../ABI/testing/sysfs-devices-pci-host-bridge | 19 +++++++
+ MAINTAINERS                                   |  1 +
+ drivers/pci/controller/pci-hyperv.c           | 53 ++-----------------
+ drivers/pci/controller/vmd.c                  | 33 ++++--------
+ drivers/pci/pci.c                             | 43 ++++++++++++++-
+ drivers/pci/probe.c                           |  8 ++-
+ include/linux/pci.h                           |  4 ++
+ 7 files changed, 86 insertions(+), 75 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-devices-pci-host-bridge
 
-Oops, I've never expected that there're so many vendor-specific
-properties mixed with others in starfive's devicetrees. I'm willing to
-clean them up when available, but feel free to take the work since I'm a
-little busy.
 
-> >>
-> >>> +&pwmdac {
-> >>> +       status = "okay";
-> >>> +};
-> >>> +
-> >>> +&spi0 {
-> >>> +       status = "okay";
-> >>> +};
-> >>> -- 
-> >>> 2.49.0
-> >>>
-> >>
-> >> Best regards,
-> >> Yao Zi
-> > 
-> 
-> B.R.,  -E Shattow
+base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
+-- 
+2.50.1
 
-Regards,
-Yao Zi
-
-[1]: https://elixir.bootlin.com/linux/v6.16-rc6/source/Documentation/devicetree/bindings/dts-coding-style.rst#L115-L124
-[2]: https://elixir.bootlin.com/linux/v6.16-rc6/source/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt#L74-L97
 
