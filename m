@@ -1,391 +1,358 @@
-Return-Path: <linux-kernel+bounces-733463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D95B074FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:48:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 234EAB07501
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72FC83B2181
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:47:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603FF58210E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030461B4F1F;
-	Wed, 16 Jul 2025 11:48:00 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA2E2D63E0;
+	Wed, 16 Jul 2025 11:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kct9J5Op"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FE52698A2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683C11B4F1F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 11:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752666479; cv=none; b=fnvIJQSA+3ErRmws4AF1uAUpMkcxixeyhwVfMd3/YeT4c4WyckxyhIMOQwKMorLfmLAsmQFlFseo9yV4PYTpvfoNeFrfUCr4PnvvFN39LhTLWGZv0TtG7H+74U3ZQR79a8RFhChyLjcR/jnNbTlOK2cf9vABD/FJGs9nsyWRzvA=
+	t=1752666526; cv=none; b=DQH1yAt4YgnIEZPB4oZlPNd2IWxTbUhuY0EbN31lCtVu2IvdD2XbSXAQcYx1AX3IBwKTkwNwazr0ybT/7XihmfvMo2m59zIBPd3Qu0ztg3Ycu77sx8h0d730pfwhn5BQxfj7hysWnnYJ4PgRennBaoqRxmDjhK6830vGrwjHI6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752666479; c=relaxed/simple;
-	bh=KvbHv7U9LgLxDY+ARDXA5g9fWI12rvWLK+DbM883tCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rlKJhrKkISephwBCQAM8Yj3Wv8Xc9qKiQns5yoVoAVQqpLkePpvvIgRBn7t4qDr28P7f1YVfFWGibMgMhVhOtBjTD1mjTBuhMRvSsWv5D1sOpj5C4haXIL/fw4oFULMN1qhn7+wWBWO7YnQoUUurpXjL0u7z5yDELzcz/H7bqCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BE6AA1FD3D;
-	Wed, 16 Jul 2025 11:47:51 +0000 (UTC)
-Message-ID: <75604cd4-65bc-4ff1-9537-92b9cbf06e77@ghiti.fr>
-Date: Wed, 16 Jul 2025 13:47:51 +0200
+	s=arc-20240116; t=1752666526; c=relaxed/simple;
+	bh=tl1rNucj+1PnBWqkjsBduOuaImRbp6Pai12LyS2yc6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dhX2fpo1XvXowOFTji8fYbYQw7DWY9P0pWy5cVqOsPfyPnWIzY40t9yKvEJrJR+a60fsyMiDBLURdvVbEwxgTAd9QzgBInkF2MqBTvupymrgZDXoEA2Eq3K3eV+exFZF1mwEMOIhUKaE6PIo8jF0StWbkwyrNd4TILBzsRXfQUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kct9J5Op; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BEC0C4CEF0;
+	Wed, 16 Jul 2025 11:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752666525;
+	bh=tl1rNucj+1PnBWqkjsBduOuaImRbp6Pai12LyS2yc6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kct9J5OpRx/i/vMo4YAvTF0DcaMw21GfileyTIAJ2VWGixfP/j6q0OXh5R+DZa5Zy
+	 0jO4x351zP5UeFzg5LdQIR/cVMgntgGHShqrolatZhkPPhFPOdIxtE8hslrM8Sfoch
+	 yazJ6Cqv9w7odlA6dLV07IvFGV+wSqCqp2kGjOJA=
+Date: Wed, 16 Jul 2025 13:48:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, daniele.ceraolospurio@intel.com,
+	anshuman.gupta@intel.com, alexander.usyskin@intel.com,
+	Badal Nilawar <badal.nilawar@intel.com>
+Subject: Re: [PATCH 2/9] mei: late_bind: add late binding component driver
+Message-ID: <2025071611-decode-hastiness-df63@gregkh>
+References: <20250710150831.3018674-11-rodrigo.vivi@intel.com>
+ <20250710150831.3018674-13-rodrigo.vivi@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] Fix for riscv vmcore issue
-To: Pnina Feder <PNINA.FEDER@mobileye.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@kernel.org>, Simon Horman <horms@kernel.org>
-Cc: Gregory Greenman <Gregory.Greenman@mobileye.com>,
- "bjorn@rivosinc.com" <bjorn@rivosinc.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- "mick@ics.forth.gr" <mick@ics.forth.gr>,
- "palmer@dabbelt.com" <palmer@dabbelt.com>,
- "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
- Vladimir Kondratiev <Vladimir.Kondratiev@mobileye.com>
-References: <20250409182129.634415-1-bjorn@kernel.org>
- <20250630112309.97162-2-pnina.feder@mobileye.com>
- <87jz4txsjx.fsf@all.your.base.are.belong.to.us>
- <MRWPR09MB80229B89C8D4B4865783B3D78F43A@MRWPR09MB8022.eurprd09.prod.outlook.com>
- <bd2bca3b-2b23-40be-b81b-f842b7afb10e@ghiti.fr>
- <MRWPR09MB80220E49BECD4D18E4AEC5C38F4CA@MRWPR09MB8022.eurprd09.prod.outlook.com>
- <MRWPR09MB8022F4714CF3B62DCCA683D68F54A@MRWPR09MB8022.eurprd09.prod.outlook.com>
- <7207e208-a70f-4445-9acc-d910c4da745c@ghiti.fr>
- <MRWPR09MB8022AE6B2BED3373D55E31DB8F56A@MRWPR09MB8022.eurprd09.prod.outlook.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <MRWPR09MB8022AE6B2BED3373D55E31DB8F56A@MRWPR09MB8022.eurprd09.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjeeifecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepuefffedvleetleetjefhjeehudejteetvedtvddvtdfhieetffelvdffgefgieeinecuffhomhgrihhnpehinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemleehtdgumehftgegieemjeejlegvmedvfhgvfegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheprffpkffptedrhffgfffgtfesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepsghjohhrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheph
- hhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepifhrvghgohhrhidrifhrvggvnhhmrghnsehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopegsjhhorhhnsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhitghksehitghsrdhfohhrthhhrdhgrh
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710150831.3018674-13-rodrigo.vivi@intel.com>
 
-+cc Simon
-
-On 7/16/25 13:05, Pnina Feder wrote:
-> Hi Alex,
-> Thank you for your response!
->
->> Hi Pnina,
->>
->> On 7/14/25 14:00, Pnina Feder wrote:
->>>>>> Hi Pnina,
->>>>>>> Pnina!
->>>>>>>
->>>>>>> Pnina Feder <pnina.feder@mobileye.com> writes:
->>>>>>>
->>>>>>>> We are creating a vmcore using kexec on a Linux 6.15 RISC-V
->>>>>>>> system and analyzing it with the crash tool on the host. This
->>>>>>>> workflow used to work on Linux 6.14 but is now broken in 6.15.
->>>>>>> Thanks for reporting this!
->>>>>>>
->>>>>>>> The issue is caused by a change in the kernel:
->>>>>>>> In Linux 6.15, certain memblock sections are now marked as
->>>>>>>> Reserved in /proc/iomem. The kexec tool excludes all Reserved
->>>>>>>> regions when generating the vmcore, so these sections are missing from the dump.
->>>>>>>> How are you collecting the /proc/vmcore file? A full set of commands would be helpful.
->>>>>> We’ve defined in our system that when a process crashes, we call panic().
->>>>>> To handle crash recovery, we're using kexec with the following command:
->>>>>> kexec -p /Image --initrd=/rootfs.cpio --append "console=${con} earlycon=${earlycon} no4lvl"
->>>>>>
->>>>>> To simulate crash, we trigger it using:
->>>>>> sleep 100 & kill -6 $!
->>>>>>
->>>>>> This boots into the crash kernel (kdump), where we then copy the /proc/vmcore file back to the host for analysis.
->>>>>>
->>>>>>>> However, the kernel still uses addresses in these regions—for
->>>>>>>> example, for IRQ pointers. Since the crash tool needs access to
->>>>>>>> these memory areas to function correctly, their exclusion breaks the analysis.
->>>>>>> Wdym with "IRQ pointers"? Also, what version (sha1) of crash are you using?
->>>>>>>
->>>>>>> We are currently using crash-utility version 9.0.0 (master).
->>>>>>>    From the crash analysis logs, we observed errors like:
->>>>>>>
->>>>>> "......
->>>>>> IRQ stack pointer[0] is  ffffffd6fbdcc068
->>>>>>> crash: read error: kernel virtual address: ffffffd6fbdcc068  type: "IRQ stack pointer"
->>>>>> .....
->>>>>>
->>>>>>> <read_kdump: addr: ffffffff80edf1cc paddr: 8010df1cc cnt: 4>
->>>>>> <readmem: ffffffd6fbdd6880, KVADDR, "runqueues entry (per_cpu)",
->>>>>> 3456, (FOE), 55acf03963e0>
->>>>>>> read_kdump: addr: ffffffd6fbdd6880 paddr: 8fbdd6880 cnt: 1920<
->>>>>> crash: read error: kernel virtual address: ffffffd6fbdd6880  type: "runqueues entry (per_cpu)"
->>>>> I can't reproduce this issue on qemu, booting with sv39. I'm using the latest kexec-tools (which recently merged riscv .support), crash 9.0.0 and kernel 6.16.0-rc4. Note that I'm using crash in qemu.
->>>>>
->>>>> Are you able to reproduce this on qemu too?
->>>> Yes, I am using qemu too on main and crash kernel, with latest
->>>> kexec-tools, crash 9.0.0 and kernel 6.15
->>>>
->>>>
->>>>> Maybe that's related to the config, can you share your config?
->>>> this is my dev_config
->>>>
->>>> CONFIG_SYSVIPC=y
->>>> CONFIG_POSIX_MQUEUE=y
->>>> CONFIG_AUDIT=y
->>>> CONFIG_NO_HZ_IDLE=y
->>>> CONFIG_HIGH_RES_TIMERS=y
->>>> CONFIG_BPF_SYSCALL=y
->>>> CONFIG_PREEMPT_RT=y
->>>> CONFIG_TASKSTATS=y
->>>> CONFIG_TASK_DELAY_ACCT=y
->>>> CONFIG_PSI=y
->>>> CONFIG_IKCONFIG=y
->>>> CONFIG_IKCONFIG_PROC=y
->>>> CONFIG_CGROUPS=y
->>>> CONFIG_MEMCG=y
->>>> CONFIG_CGROUP_SCHED=y
->>>> CONFIG_CFS_BANDWIDTH=y
->>>> CONFIG_RT_GROUP_SCHED=y
->>>> CONFIG_CGROUP_PIDS=y
->>>> CONFIG_CGROUP_FREEZER=y
->>>> CONFIG_CGROUP_HUGETLB=y
->>>> CONFIG_CPUSETS=y
->>>> CONFIG_CGROUP_DEVICE=y
->>>> CONFIG_CGROUP_CPUACCT=y
->>>> CONFIG_CGROUP_PERF=y
->>>> CONFIG_CGROUP_BPF=y
->>>> CONFIG_NAMESPACES=y
->>>> CONFIG_USER_NS=y
->>>> CONFIG_CHECKPOINT_RESTORE=y
->>>> CONFIG_BLK_DEV_INITRD=y
->>>> CONFIG_EXPERT=y
->>>> CONFIG_PROFILING=y
->>>> CONFIG_KEXEC=y
->>>> CONFIG_ARCH_VIRT=y
->>>> CONFIG_NONPORTABLE=y
->>>> CONFIG_SMP=y
->>>> CONFIG_NR_CPUS=32
->>>> CONFIG_HZ_1000=y
->>>> CONFIG_CPU_IDLE=y
->>>> CONFIG_MODULES=y
->>>> CONFIG_MODULE_UNLOAD=y
->>>> CONFIG_IOSCHED_BFQ=y
->>>> CONFIG_PAGE_REPORTING=y
->>>> CONFIG_PERCPU_STATS=y
->>>> CONFIG_NET=y
->>>> CONFIG_PACKET=y
->>>> CONFIG_UNIX=y
->>>> CONFIG_XFRM_USER=m
->>>> CONFIG_INET=y
->>>> CONFIG_IP_MULTICAST=y
->>>> CONFIG_IP_ADVANCED_ROUTER=y
->>>> CONFIG_INET_ESP=m
->>>> CONFIG_NETWORK_SECMARK=y
->>>> CONFIG_NETFILTER=y
->>>> CONFIG_IP_NF_IPTABLES=y
->>>> CONFIG_IP_NF_FILTER=y
->>>> CONFIG_BRIDGE=m
->>>> CONFIG_BRIDGE_VLAN_FILTERING=y
->>>> CONFIG_VLAN_8021Q=m
->>>> CONFIG_NET_SCHED=y
->>>> CONFIG_NET_CLS_CGROUP=m
->>>> CONFIG_NETLINK_DIAG=y
->>>> CONFIG_NET_L3_MASTER_DEV=y
->>>> CONFIG_CGROUP_NET_PRIO=y
->>>> CONFIG_FAILOVER=y
->>>> CONFIG_DEVTMPFS=y
->>>> CONFIG_DEVTMPFS_MOUNT=y
->>>> CONFIG_MTD=y
->>>> CONFIG_MTD_BLOCK=y
->>>> CONFIG_MTD_CFI=y
->>>> CONFIG_MTD_CFI_INTELEXT=y
->>>> CONFIG_MTD_PHYSMAP=y
->>>> CONFIG_MTD_PHYSMAP_OF=y
->>>> CONFIG_BLK_DEV_LOOP=y
->>>> CONFIG_BLK_DEV_LOOP_MIN_COUNT=0
->>>> CONFIG_VIRTIO_BLK=y
->>>> CONFIG_SCSI=y
->>>> CONFIG_BLK_DEV_SD=y
->>>> CONFIG_SCSI_VIRTIO=y
->>>> CONFIG_MD=y
->>>> CONFIG_BLK_DEV_DM=y
->>>> CONFIG_NETDEVICES=y
->>>> CONFIG_MACB=y
->>>> CONFIG_PCS_XPCS=m
->>>> CONFIG_SERIO_LIBPS2=y
->>>> CONFIG_VT_HW_CONSOLE_BINDING=y
->>>> CONFIG_LEGACY_PTY_COUNT=16
->>>> CONFIG_SERIAL_8250=y
->>>> CONFIG_SERIAL_8250_CONSOLE=y
->>>> CONFIG_SERIAL_OF_PLATFORM=y
->>>> CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
->>>> CONFIG_VIRTIO_CONSOLE=y
->>>> CONFIG_HW_RANDOM=y
->>>> CONFIG_HW_RANDOM_VIRTIO=y
->>>> CONFIG_I2C=y
->>>> CONFIG_I2C_DESIGNWARE_CORE=y
->>>> CONFIG_SPI=y
->>>> CONFIG_PINCTRL=y
->>>> CONFIG_PINCTRL_SINGLE=y
->>>> CONFIG_GPIOLIB=y
->>>> CONFIG_GPIO_SYSFS=y
->>>> CONFIG_GPIO_DWAPB=y
->>>> CONFIG_GPIO_SIFIVE=y
->>>> CONFIG_POWER_SUPPLY=y
->>>> CONFIG_WATCHDOG=y
->>>> CONFIG_WATCHDOG_CORE=y
->>>> CONFIG_REGULATOR=y
->>>> CONFIG_REGULATOR_FIXED_VOLTAGE=y
->>>> CONFIG_BACKLIGHT_CLASS_DEVICE=m
->>>> CONFIG_SCSI_UFSHCD=y
->>>> CONFIG_SCSI_UFSHCD_PLATFORM=y
->>>> CONFIG_SCSI_UFS_DWC_TC_PLATFORM=y
->>>> CONFIG_RTC_CLASS=y
->>>> CONFIG_RTC_DRV_M41T80=y
->>>> CONFIG_DMADEVICES=y
->>>> CONFIG_SYNC_FILE=y
->>>> CONFIG_COMMON_CLK_EYEQ=y
->>>> CONFIG_RPMSG_CHAR=y
->>>> CONFIG_RPMSG_CTRL=y
->>>> CONFIG_RPMSG_VIRTIO=y
->>>> CONFIG_RESET_CONTROLLER=y
->>>> CONFIG_RESET_SIMPLE=y
->>>> CONFIG_GENERIC_PHY=y
->>>> CONFIG_EXT4_FS=y
->>>> CONFIG_EXT4_FS_POSIX_ACL=y
->>>> CONFIG_EXT4_FS_SECURITY=y
->>>> CONFIG_MSDOS_FS=y
->>>> CONFIG_VFAT_FS=y
->>>> CONFIG_TMPFS=y
->>>> CONFIG_TMPFS_POSIX_ACL=y
->>>> CONFIG_HUGETLBFS=y
->>>> CONFIG_KEYS=y
->>>> CONFIG_SECURITY=y
->>>> CONFIG_SECURITYFS=y
->>>> CONFIG_SECURITY_NETWORK=y
->>>> CONFIG_SECURITY_PATH=y
->>>> CONFIG_CRYPTO_RSA=y
->>>> CONFIG_CRYPTO_ECB=y
->>>> CONFIG_CRYPTO_BLAKE2B=m
->>>> CONFIG_CRYPTO_XXHASH=m
->>>> CONFIG_CRYPTO_USER_API_HASH=y
->>>> CONFIG_CRC_CCITT=m
->>>> CONFIG_CRC_ITU_T=y
->>>> CONFIG_CRC7=y
->>>> CONFIG_LIBCRC32C=m
->>>> CONFIG_PRINTK_TIME=y
->>>> CONFIG_DYNAMIC_DEBUG=y
->>>> CONFIG_DEBUG_INFO_DWARF5=y
->>>> CONFIG_DEBUG_FS=y
->>>> CONFIG_DEBUG_PAGEALLOC=y
->>>> CONFIG_PTDUMP_DEBUGFS=y
->>>> CONFIG_SCHED_STACK_END_CHECK=y
->>>> CONFIG_DEBUG_VM=y
->>>> CONFIG_DEBUG_VM_PGFLAGS=y
->>>> CONFIG_DEBUG_MEMORY_INIT=y
->>>> CONFIG_DEBUG_PER_CPU_MAPS=y
->>>> CONFIG_SOFTLOCKUP_DETECTOR=y
->>>> CONFIG_WQ_WATCHDOG=y
->>>> CONFIG_DEBUG_RT_MUTEXES=y
->>>> CONFIG_DEBUG_SPINLOCK=y
->>>> CONFIG_DEBUG_ATOMIC_SLEEP=y
->>>> CONFIG_DEBUG_LIST=y
->>>> CONFIG_DEBUG_PLIST=y
->>>> CONFIG_DEBUG_SG=y
->>>> CONFIG_RCU_EQS_DEBUG=y
->>>> CONFIG_MEMTEST=y
->>>>
->>>>>> These failures occur consistently for addresses in the 0xffffffd000000000 region.
->>>>> FYI, this region is the direct mapping (see Documentation/arch/riscv/vm-layout.rst).
->>>>>
->>>>> Thanks,
->>>>>
->>>>> Alex
->>>>>
->>> Hi Alex!
->>>
->>> Do I have something to try or help to process this issue?
->>> maybe, can you give your Config and I will try it on my system?
->>> Any more information I can share?
->>
->> So I'm able to reproduce your issue with your config, it only happens with kexec_load(), not kexec_file_load().
->>
->> Your patch does not fix the problem for me, makedumpfile still fails. I spent quite some time looking for the code that parses the memory regions and exposes them as PT_LOAD segments in vmcore, but I did not find it, do you know where that happens for kexec_load()?
->>
->> Thanks,
->>
->> Alex
->>
->>
-> The code that parses memory regions is located in kexec-tools.
-
-
-Damn, I was not looking there!
-
-
->
-> To fix the issue with missing memory regions in the vmcore, we need to ensure that kexec-tools does not exclude the Reserved-memblock sections when generating ELF headers for kexec_load().
-
-
-I'm still not in favor with this solution, that does not sound right.
-
-I think we should not exclude the "Reserved" regions which lie inside 
-"System RAM" region. The problem is that we mark "nomap" regions as 
-"Reserved" too, I would say this is where we are wrong: "nomap" regions 
-don't even have direct mapping, so they should be presented as a hole 
-rather than "Reserved". And that would allow us to not exclude the 
-"Reserved" regions.
-
-@Simon, @Pnina WDYT?
-
-Thanks,
-
-Alex
-
-
->
-> I’ve added a patch to handle this, and plan to submit it upstream to kexec-tools once this approach is confirmed and approved.
->
-> Kexec-tools patch:
+On Thu, Jul 10, 2025 at 11:08:33AM -0400, Rodrigo Vivi wrote:
+> From: Alexander Usyskin <alexander.usyskin@intel.com>
+> 
+> Introduce a new MEI client driver to support Late Binding firmware
+> upload/update for Intel discrete graphics platforms.
+> 
+> Late Binding is a runtime firmware upload/update mechanism that allows
+> payloads, such as fan control and voltage regulator, to be securely
+> delivered and applied without requiring SPI flash updates or
+> system reboots. This driver enables the Xe graphics driver and other
+> user-space tools to push such firmware blobs to the authentication
+> firmware via the MEI interface.
+> 
+> The driver handles authentication, versioning, and communication
+> with the authentication firmware, which in turn coordinates with
+> the PUnit/PCODE to apply the payload.
+> 
+> This is a foundational component for enabling dynamic, secure,
+> and re-entrant configuration updates on platforms like Battlemage.
+> 
+> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
+> Reviewed-by: Anshuman Gupta <anshuman.gupta@intel.com>
+> Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 > ---
-> diff --git a/kexec/arch/riscv/kexec-riscv.c b/kexec/arch/riscv/kexec-riscv.c
-> index f34b468..1a93b51 100644
-> --- a/kexec/arch/riscv/kexec-riscv.c
-> +++ b/kexec/arch/riscv/kexec-riscv.c
-> @@ -421,8 +421,11 @@ static bool to_be_excluded(char *str, unsigned long long start, unsigned long lo
->   	    !strncmp(str, KERNEL_CODE, strlen(KERNEL_CODE)) ||
->   	    !strncmp(str, KERNEL_DATA, strlen(KERNEL_DATA)))
->   		return false;
-> -	else
-> -		return true;
+> 
+> Changes in this revision:
+> - Proper commit message
+> - Proper explanation of 'Late Binding' on Kconfig help and doc
+> - Consistency in naming:
+>   + mei_ prefix where it makes sense
+>   + use 'lb' for short of 'Late Binding' instead of 'late_bind'
+>     Including s/CONFIG_INTEL_MEI_LATE_BIND/CONFIG_INTEL_MEI_LB
+>   + remove stray 'struct module'
+>   + Fix structs and enum documentation style and fields
+>   + Remove 'CSC' to avoid yet another acronym. 'Authentication firmware' it is.
+>   + specify size unit
+>   + s/push_config/push_payload
+> 
+>  drivers/misc/mei/Kconfig                   |  13 +
+>  drivers/misc/mei/Makefile                  |   1 +
+>  drivers/misc/mei/mei_lb.c                  | 315 +++++++++++++++++++++
+>  include/drm/intel/i915_component.h         |   1 +
+>  include/drm/intel/intel_lb_mei_interface.h |  70 +++++
+>  5 files changed, 400 insertions(+)
+>  create mode 100644 drivers/misc/mei/mei_lb.c
+>  create mode 100644 include/drm/intel/intel_lb_mei_interface.h
+> 
+> diff --git a/drivers/misc/mei/Kconfig b/drivers/misc/mei/Kconfig
+> index 7575fee96cc6..f8b04e49e4ba 100644
+> --- a/drivers/misc/mei/Kconfig
+> +++ b/drivers/misc/mei/Kconfig
+> @@ -81,6 +81,19 @@ config INTEL_MEI_VSC
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called mei-vsc.
+>  
+> +config INTEL_MEI_LB
+> +	tristate "Intel Late Binding (LB) support on ME Interface"
+> +	depends on INTEL_MEI_ME
+> +	depends on DRM_XE
+> +	help
+> +	  Enable support for Intel Late Binding (LB) via the MEI interface.
 > +
-> +	if (!strncmp(str, "Reserved-memblock", strlen("Reserved-memblock")))
-> +		return false;
+> +	  Late Binding is a method for applying firmware updates at runtime,
+> +	  allowing the Intel Xe driver to load firmware payloads such as
+> +	  fan controller or voltage regulator. These firmware updates are
+> +	  authenticated and versioned, and do not require firmware flashing
+> +	  or system reboot.
 > +
-> +	return true;
->   }
->   
->   int get_memory_ranges(struct memory_range **range, int *num_ranges,
-> ---
->
-> With this patch, the kexec-tools will no longer exclude the Reserved-memblock regions, allowing the crash tool to access the necessary memory areas for analysis.
->
-> Thanks,
-> Pnina
->
->>> Thanks a lot,
->>> Pnina
->>>
->>>>>> Upon inspection, we confirmed that the physical addresses corresponding to those virtual addresses are not present in the vmcore, as they fall under Reserved memory sections.
->>>>>> We tested a patch to kexec-tools that prevents exclusion of the Reserved-memblock section from the vmcore. With this patch, the issue no longer occurs, and crash analysis succeeds.
->>>>>> Note: I suspect the same issue exists on ARM64, as both the signal.c and kexec-tools implementations are similar.
->>>>>>
->>>>>>> Thanks!
->>>>>>> Björn
->>> _______________________________________________
->>> linux-riscv mailing list
->>> linux-riscv@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>  source "drivers/misc/mei/hdcp/Kconfig"
+>  source "drivers/misc/mei/pxp/Kconfig"
+>  source "drivers/misc/mei/gsc_proxy/Kconfig"
+> diff --git a/drivers/misc/mei/Makefile b/drivers/misc/mei/Makefile
+> index 6f9fdbf1a495..a203ed766b33 100644
+> --- a/drivers/misc/mei/Makefile
+> +++ b/drivers/misc/mei/Makefile
+> @@ -31,6 +31,7 @@ CFLAGS_mei-trace.o = -I$(src)
+>  obj-$(CONFIG_INTEL_MEI_HDCP) += hdcp/
+>  obj-$(CONFIG_INTEL_MEI_PXP) += pxp/
+>  obj-$(CONFIG_INTEL_MEI_GSC_PROXY) += gsc_proxy/
+> +obj-$(CONFIG_INTEL_MEI_LB) += mei_lb.o
+>  
+>  obj-$(CONFIG_INTEL_MEI_VSC_HW) += mei-vsc-hw.o
+>  mei-vsc-hw-y := vsc-tp.o
+> diff --git a/drivers/misc/mei/mei_lb.c b/drivers/misc/mei/mei_lb.c
+> new file mode 100644
+> index 000000000000..fddef862712d
+> --- /dev/null
+> +++ b/drivers/misc/mei/mei_lb.c
+> @@ -0,0 +1,315 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2025 Intel Corporation
+> + */
+> +#include <drm/intel/i915_component.h>
+> +#include <drm/intel/intel_lb_mei_interface.h>
+> +#include <linux/component.h>
+> +#include <linux/pci.h>
+> +#include <linux/mei_cl_bus.h>
+> +#include <linux/module.h>
+> +#include <linux/overflow.h>
+> +#include <linux/slab.h>
+> +#include <linux/uuid.h>
+> +
+> +#include "mkhi.h"
+> +
+> +/**
+> + * DOC: Late Binding Firmware Update/Upload
+> + *
+> + * Late Binding is a firmware update/upload mechanism that allows configuration
+> + * payloads to be securely delivered and applied at runtime, rather than
+> + * being embedded in the system firmware image (e.g., IFWI or SPI flash).
+> + *
+> + * This mechanism is used to update device-level configuration such as:
+> + * - Fan controller
+> + * - Voltage regulator (VR)
+> + *
+> + * Key Characteristics:
+> + * ---------------------
+> + * - Runtime Delivery:
+> + *   Firmware blobs are loaded by the host driver (e.g., Xe KMD)
+> + *   after the GPU or SoC has booted.
+> + *
+> + * - Secure and Authenticated:
+> + *   All payloads are signed and verified by the authentication firmware.
+> + *
+> + * - No Firmware Flashing Required:
+> + *   Updates are applied in volatile memory and do not require SPI flash
+> + *   modification or system reboot.
+> + *
+> + * - Re-entrant:
+> + *   Multiple updates of the same or different types can be applied
+> + *   sequentially within a single boot session.
+> + *
+> + * - Version Controlled:
+> + *   Each payload includes version and security version number (SVN)
+> + *   metadata to support anti-rollback enforcement.
+> + *
+> + * Upload Flow:
+> + * ------------
+> + * 1. Host driver (KMD or user-space tool) loads the late binding firmware.
+> + * 2. Firmware is passed to the MEI interface and forwarded to
+> + *    authentication firmware.
+> + * 3. Authentication firmware authenticates the payload and extracts
+> + *    command and data arrays.
+> + * 4. Authentication firmware delivers the configuration to PUnit/PCODE.
+> + * 5. Status is returned back to the host via MEI.
+> + */
+> +
+> +#define INTEL_LB_CMD 0x12
+> +#define INTEL_LB_RSP (INTEL_LB_CMD | 0x80)
+> +
+> +#define INTEL_LB_SEND_TIMEOUT_MSEC 3000
+> +#define INTEL_LB_RECV_TIMEOUT_MSEC 3000
+> +
+> +/**
+> + * struct mei_lb_req - Late Binding request structure
+> + * @header: MKHI message header (see struct mkhi_msg_hdr)
+> + * @type: Type of the Late Binding payload
+> + * @flags: Flags to be passed to the authentication firmware (e.g. %INTEL_LB_FLAGS_IS_PERSISTENT)
+> + * @reserved: Reserved for future use by authentication firmware, must be set to 0
+> + * @payload_size: Size of the payload data in bytes
+> + * @payload: Payload data to be sent to the authentication firmware
+> + */
+> +struct mei_lb_req {
+> +	struct mkhi_msg_hdr header;
+> +	__le32 type;
+> +	__le32 flags;
+> +	__le32 reserved[2];
+> +	__le32 payload_size;
+> +	u8  payload[] __counted_by(payload_size);
+> +} __packed;
+> +
+> +/**
+> + * struct mei_lb_rsp - Late Binding response structure
+> + * @header: MKHI message header (see struct mkhi_msg_hdr)
+> + * @type: Type of the Late Binding payload
+> + * @reserved: Reserved for future use by authentication firmware, must be set to 0
+> + * @status: Status returned by authentication firmware (see enum intel_lb_status)
+> + */
+> +struct mei_lb_rsp {
+> +	struct mkhi_msg_hdr header;
+> +	__le32 type;
+> +	__le32 reserved[2];
+> +	__le32 status;
+> +} __packed;
+> +
+> +static int mei_lb_check_response(const struct device *dev, const struct mkhi_msg_hdr *hdr)
+> +{
+> +	if (hdr->group_id != MKHI_GROUP_ID_GFX) {
+> +		dev_err(dev, "Mismatch group id: 0x%x instead of 0x%x\n",
+> +			hdr->group_id, MKHI_GROUP_ID_GFX);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (hdr->command != INTEL_LB_RSP) {
+> +		dev_err(dev, "Mismatch command: 0x%x instead of 0x%x\n",
+> +			hdr->command, INTEL_LB_RSP);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (hdr->result) {
+> +		dev_err(dev, "Error in result: 0x%x\n", hdr->result);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mei_lb_push_payload(struct device *dev,
+> +			       enum intel_lb_type type, u32 flags,
+> +			       const void *payload, size_t payload_size)
+> +{
+> +	struct mei_cl_device *cldev;
+> +	struct mei_lb_req *req = NULL;
+> +	struct mei_lb_rsp rsp;
+> +	size_t req_size;
+> +	ssize_t bytes;
+> +	int ret;
+> +
+> +	cldev = to_mei_cl_device(dev);
+> +
+> +	ret = mei_cldev_enable(cldev);
+> +	if (ret) {
+> +		dev_dbg(dev, "mei_cldev_enable failed. %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	req_size = struct_size(req, payload, payload_size);
+> +	if (req_size > mei_cldev_mtu(cldev)) {
+> +		dev_err(dev, "Payload is too big %zu\n", payload_size);
+> +		ret = -EMSGSIZE;
+> +		goto end;
+> +	}
+> +
+> +	req = kmalloc(req_size, GFP_KERNEL);
+> +	if (!req) {
+> +		ret = -ENOMEM;
+> +		goto end;
+> +	}
+> +
+> +	req->header.group_id = MKHI_GROUP_ID_GFX;
+> +	req->header.command = INTEL_LB_CMD;
+> +	req->type = cpu_to_le32(type);
+> +	req->flags = cpu_to_le32(flags);
+> +	req->reserved[0] = 0;
+> +	req->reserved[1] = 0;
+> +	req->payload_size = cpu_to_le32(payload_size);
+> +	memcpy(req->payload, payload, payload_size);
+> +
+> +	bytes = mei_cldev_send_timeout(cldev,
+> +				       (void *)req, req_size, INTEL_LB_SEND_TIMEOUT_MSEC);
+> +	if (bytes < 0) {
+> +		dev_err(dev, "mei_cldev_send failed. %zd\n", bytes);
+> +		ret = bytes;
+> +		goto end;
+> +	}
+> +
+> +	bytes = mei_cldev_recv_timeout(cldev,
+> +				       (void *)&rsp, sizeof(rsp), INTEL_LB_RECV_TIMEOUT_MSEC);
+> +	if (bytes < 0) {
+> +		dev_err(dev, "mei_cldev_recv failed. %zd\n", bytes);
+> +		ret = bytes;
+> +		goto end;
+> +	}
+> +	if (bytes < sizeof(rsp.header)) {
+> +		dev_err(dev, "bad response header from the firmware: size %zd < %zu\n",
+> +			bytes, sizeof(rsp.header));
+> +		ret = -EPROTO;
+> +		goto end;
+> +	}
+> +	if (mei_lb_check_response(dev, &rsp.header)) {
+> +		dev_err(dev, "bad result response from the firmware: 0x%x\n",
+> +			*(uint32_t *)&rsp.header);
+
+What exactly are you printing out to userspace here?  A pointer?  Or a
+random value from the firmware?  Why?
+
+> +		ret = -EPROTO;
+> +		goto end;
+> +	}
+
+You forgot to check the type and reserved fields of the rsp structure :(
+
+> +	if (bytes < sizeof(rsp)) {
+> +		dev_err(dev, "bad response from the firmware: size %zd < %zu\n",
+> +			bytes, sizeof(rsp));
+> +		ret = -EPROTO;
+> +		goto end;
+> +	}
+
+Why not check this above when you check against the size of the header?
+You only need one size check, not 2.
+
+thanks,
+
+greg k-h
 
