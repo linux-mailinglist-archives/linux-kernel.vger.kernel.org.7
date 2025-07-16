@@ -1,146 +1,170 @@
-Return-Path: <linux-kernel+bounces-732945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946D4B06E01
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:30:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A27B06E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1082F3A2B77
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:30:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 419AA167B20
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 06:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36CC2882CB;
-	Wed, 16 Jul 2025 06:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F24C2877C3;
+	Wed, 16 Jul 2025 06:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mngyDJzY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRAum/J2"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2047A10A1E;
-	Wed, 16 Jul 2025 06:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9C810A1E;
+	Wed, 16 Jul 2025 06:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752647433; cv=none; b=pQOb9VPF0PjOQNF5b7MaZeNrHuCcOkYNA8o4974ex76DI6taQ4ZUCwCGQF2ptkzfvR/ZZoZX3RdXKJurijXPTJNPqNlAcE87uA07ijBmHaqF5UgC3VzkEhvwCYHceOqyeEFGzLsj0K2/SND8At3CN8dE0gqMfai43biLNh2zlFY=
+	t=1752647566; cv=none; b=dHOnV9ORbKs6g4z0kseFHy0SWR6RB1LkIq4iz0kckXTJcPlCL22hfzIMSlIUmonaGpjiurIzVLpKkJAxdd7WDQc1FbkvfRtD/rbPuHAJPEI/UlN/tEPoMJH6YUYqHD2YSTvuy2YTNWPMbg5QxQij3IawwWNgaMJzZ5HSqI1ebv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752647433; c=relaxed/simple;
-	bh=cPXUdocH7BWiamPELQtEXH5v8MfZzzXrf+na9+ySFAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n19xTH/5nVodthwDkSFg0FuwTwkcaynarpMBjjrWi4zk1aEIm9m6obOhPeoRW3BUpiU9KIJDASgjeCCsEhkRrpaz/x89xAp8b2tRgPui9TWgIvFBDFZIoEh5UUXrg9cm1dTT5RfT5S8q7I0Tf9LuBpWwNllIBP+JXgnxFiQeAis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mngyDJzY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2166C4CEF0;
-	Wed, 16 Jul 2025 06:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752647432;
-	bh=cPXUdocH7BWiamPELQtEXH5v8MfZzzXrf+na9+ySFAA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mngyDJzYxswRUKAor6BhdCDEeP7/f1/WiEGIIktBpmkL1q/z1WzrIyXvEqGHnI7Kf
-	 CErmAEVuxZN3MYZi85Fk9HbQLBelB6pX8ZCDI6WKshBqXohNFkMGBDJXIRTsr35vTh
-	 bU+biH50xCXMqTG2Gj3VDYxVU4W+ke5fZ+5we6tIwB5KZ9RLMYLud4ioG2rp7paTTX
-	 6tD7SqlhNlrXWrst7wCeVm3RvAZPuXMEwUKqdymbqipTSjRsA/4CH0lw1SsGZDA7A3
-	 RIF6UKmz39KCqObBiQkuHBwtf5vg2a29vnRjpicoqjUXmndoDDPBz8CKmFap61O6LT
-	 D7tV9HPzzODWA==
-Date: Wed, 16 Jul 2025 08:30:26 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
- Alexander Graf <graf@amazon.com>, Konrad Rzeszutek Wilk
- <konrad.wilk@oracle.com>, Peter Gonda <pgonda@google.com>, "Luck, Tony"
- <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
- <lenb@kernel.org>, James Morse <james.morse@arm.com>, "Moore, Robert"
- <robert.moore@intel.com>, "linux-acpi@vger.kernel.org"
- <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "acpica-devel@lists.linux.dev"
- <acpica-devel@lists.linux.dev>, "kernel-team@meta.com"
- <kernel-team@meta.com>
-Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
-Message-ID: <20250716083026.1737fdb4@foz.lan>
-In-Reply-To: <564e0deb-73f0-449f-9d0f-181311d3a348@linux.alibaba.com>
-References: <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
-	<SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
-	<20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
-	<aHWC-J851eaHa_Au@agluck-desk3>
-	<20250715082939.GAaHYRc3Yn49jyvYzc@fat_crate.local>
-	<kyprjdilgyz3xgw3slnrsemptnpp6h75mipv6a3lgp2dmwqekg@s7azbepy7nu2>
-	<20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
-	<vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
-	<20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
-	<68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
-	<20250715150947.GAaHZvOxsvEvALZNDd@fat_crate.local>
-	<564e0deb-73f0-449f-9d0f-181311d3a348@linux.alibaba.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752647566; c=relaxed/simple;
+	bh=xzw9n5h0vb3VBRoDkMvgNC/mlzbG8DQ/R1GZjQjZYu0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BCMtibeXFlHYrd8Gr2t3HOmVEmlMcG9cceDVbxZ1O34ZIFBmI+vqpsLHNl6CixR/mWbqxqzOaBo+PPaT55m6a8/2NMLrYReeUJY9STie9wQzXAI4aFe9c/+f8Nxc/SkqdbsAG8v9LxJ1e9ZKb0IOmPZ4K5ErJHbqjn4iczzHkWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRAum/J2; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23c8f179e1bso64977035ad.1;
+        Tue, 15 Jul 2025 23:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752647565; x=1753252365; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uZbt95KbFg2hOt+HZBpdMbfT6AMCghvtO+LjH60IXS0=;
+        b=dRAum/J2qDKT2fp265TABmyB0vYyswjG6kU+E3+dbGJge+lmqrTlPguDzGC81SNf6G
+         ecZ4/Yora3MZ3pUrvWe2MCSg/b5mKfAqHQA4HZ8kiLfh0EmvbIWeu6K1gwV7oUPJ/hrl
+         gRebZwtNlWcxnSl3xzgQ32ooaUpkTvEmQfHpuVkHg1hkHs0ZrHv3WvoIzmtm/yNOvEl0
+         aIPsfS05F51WeyGHTVgAmhkoera2fFU3rS4TN2j7kNaFfhWtYx1I/P99sbHjdzqhQ1p8
+         kcL0R3V0HoBPeGGFrIvuWa8v6lOqNUk8HNBk4Ytd5EY6leDdlVo7MI0/XNppc1USbnee
+         8l7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752647565; x=1753252365;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uZbt95KbFg2hOt+HZBpdMbfT6AMCghvtO+LjH60IXS0=;
+        b=c5W/8wzImTUWsWu9Kd7RsMzVG87j9CWf+KeUunbbZ7A/1l6g4zyzd44knRBxa/+eAp
+         G5bxXNkB9YsZPkqABDpxMGZCdFjjPEThTFUdzwN9Sl/PidnmBuOfC5ZPY2lI7pyGBhej
+         9kOKYMjMOhxDkeesv2BMmao61m7Y5TxLoNX5CTAvW4E5X4ySug6mM37jcC+ARIPlVFKH
+         AAcvLMxnzdMoLFPZrNeXOF10S4EETsg8NT/8GMj+ikCjQR+Ncl416XKw3RLOab+NDcLP
+         i9auqDZ3LpT4avqz9rBdXnZiDbjvV0esWlIH38ObO8T8KTy1i1YWSLLu8LCCLfFqDF7/
+         9n7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVrf9XKVSOystgModvj8LoG6p6IKOfrf2l248TI7uUqBBmG6jx8L5DLhSG/j1aJnMnT8K0=@vger.kernel.org, AJvYcCXMmtR0+sragkR1+jGmk7dmr3XWxgy+8dJkBDQaeOmLO1weza/OBglIStn4OX2ha8jVuK8t44VEXhl/WifE@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvbc3PFJ5iwTrn+xcXU9fKKRzVMRf15U5Qso6qWbP4lgz4Heuu
+	V4YJBB8++ek4vEyIVsHjFGAMqlfHhUF5AWrmMjODLLX9z6cW8UCXUXMDGhmhKUSA+zaKQuO4TGX
+	Zq2QFchgeuz4G3qtWyU0clTUd6pyPDUI=
+X-Gm-Gg: ASbGncuYUWVYq2ioQFmo9C4HLQhSeqe7uramNkVkmt97PkdjK0+zuR1PO+Ex+ONKrzY
+	5uL3/YNejZMz12tbiMgcv/ejpe59q0mvJsbAbNUsYiBAsA3XdR9mLJKnJ8bkjJV3py4LmsKnR1N
+	SZxGKlnfLD8wnUAJE9/7BVPl5x3TMJxKaSc8pRBfPCMVyo+MRV9AbFqTmbM5QkYqlZZccBE429t
+	rdl7ik=
+X-Google-Smtp-Source: AGHT+IEitsAvfjlLesg16dXKN9icya/6JJ64IjqPLneFVcZcK2vUVt97Gwrqjkxz24artDbluZrv2FUXFarAfc/S9U4=
+X-Received: by 2002:a17:902:dacb:b0:235:1b91:9079 with SMTP id
+ d9443c01a7336-23e2573640cmr23069065ad.32.1752647564588; Tue, 15 Jul 2025
+ 23:32:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250715075755.114339-1-shankari.ak0208@gmail.com>
+ <CAADnVQJ6_pB8ZU2Cw5S6nB4J-6s7bw5Fp-Hst9M_EE9=HxN8+g@mail.gmail.com> <27c7c76c-becf-47b1-812b-05f260a8cd85@linux.dev>
+In-Reply-To: <27c7c76c-becf-47b1-812b-05f260a8cd85@linux.dev>
+From: Shankari Anand <shankari.ak0208@gmail.com>
+Date: Wed, 16 Jul 2025 12:02:00 +0530
+X-Gm-Features: Ac12FXy6Tp67UctEQFKfmmjnR_XmlFFeJ4lxL_LtloIpi0KU9qVJL8w8_NajKHo
+Message-ID: <CAPRMd3m9NtGXfH3kDWLq-Lu63i1ww4znDJ9aG6ho5J3+Ow_bnQ@mail.gmail.com>
+Subject: Re: [PATCH] bpf: restrict verifier access to bpf_lru_node.ref
+To: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	syzbot+ad4661d6ca888ce7fe11@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Em Wed, 16 Jul 2025 10:05:27 +0800
-Shuai Xue <xueshuai@linux.alibaba.com> escreveu:
+Hello,
+>
+>
+> Also you misread the kcsan report.
 
-> =E5=9C=A8 2025/7/15 23:09, Borislav Petkov =E5=86=99=E9=81=93:
-> > On Tue, Jul 15, 2025 at 09:46:03PM +0800, Shuai Xue wrote: =20
-> >> For the purpose of counting, how about using the cmdline of rasdaemon?=
- =20
-> >=20
-> > That would mean you have to run rasdaemon on those machines before they
-> > explode and then carve out the rasdaemon db from the coredump (this is
-> > post-mortem analysis). =20
->=20
-> Rasdaemon is a userspace tool that will collect all hardware error=20
-> events reported by the Linux Kernel from several sources (EDAC, MCE,=20
-> PCI, ...) into one common framework. And it has been a standard tools
-> in Alibaba. As far as I know, twitter also use Rasdaemon in its productio=
-n.
+> It says that 'read' comes from:
+>
+> read to 0xffff888118f3d568 of 4 bytes by task 4719 on cpu 1:
+>  lookup_nulls_elem_raw kernel/bpf/hashtab.c:643 [inline]
 
-There are several others using rasdaemon, afaikt. It was originally
-implemented due to a demand from supercomputer customers with thousands
-of nodes in US, and have been shipped on major distros for quite a while.
+> which is reading hash and key of htab_elem while
+> write side actually writes hash too:
+> *(u32 *)((void *)node + lru->hash_offset) =3D hash;
 
->=20
-> >=20
-> > I would love for rasdaemon to log over the network and then other tools=
- can
-> > query those centralized logs but that has its own challenges...
-> >  =20
->=20
-> I also prefer collecting rasdaemon data in a centralized data center, as=
-=20
-> this is more beneficial for using big data analytics to analyze and=20
-> predict errors. At the same time, the centralized side also uses=20
-> rasdaemon logs as one of the references for machine operations and=20
-> maintenance.
->=20
-> As for rasdaemon itself, it is just a single-node event collector and=20
-> database, although it does also print logs. In practice, we use SLS [1]=20
-> to collect rasdaemon text logs from individual nodes and parse them on=20
-> the central side.
+Thanks for the clarification. I misattributed the race to the ref
+field, but the KCSAN report indeed points to a data race between a
+reader, lookup_nulls_elem_raw(), accessing the hash or key fields, and
+a writer, bpf_lru_pop_free(), reinitializing and reusing the same
+element from the LRU freelist without waiting for an RCU grace period.
 
-Well, rasdaemon already uses SQL commands to store on its SQLite database.
+> I think it is possible. The elem in the lru's freelist currently does not=
+ wait
+> for a rcu gp before reuse. There is a chance that the rcu reader is still
+> reading the hash value that was put in the freelist, while the writer is =
+reusing
+> and updating it.
+>
+> I think the percpu_freelist used in the regular hashmap should have simil=
+ar
+> behavior, so may be worth finding a common solution, such as waiting for =
+a rcu
+> gp before reusing it.
 
-It shouldn't be hard to add a patch series to optionally use a centralized
-database directly. My only concern is that delivering logs to an external
-database on a machine that has hardware errors can be problematic and
-eventually end losing events.
+To resolve this, would it make sense to ensure that elements popped
+from the free list are only reused after a grace period? Similar to
+how other parts of the kernel manage safe object reuse.
 
-Also, supporting different databases can be problematic due to the
-libraries they require. Last time I wrote a code to write to an Oracle
-DB (a life-long time ago), the number of the libraries that were required
-were huge. Also, changing the order with "-l" caused ld to not find the
-right objects. It was messy. Ok, supporting MySQL and PostgreSQL is not
-that hard.
-
-Perhaps a good compromise would be to add a logic there to open a local
-socket or a tcp socket with a logger daemon, sending the events asynchronou=
-sly
-after storing locally at SQLite. Then, write a Python script using SQLAlche=
-my.=20
-This way, we gain for free support for several different databases.
+--
+Regards,
+Shankari
 
 
-Thanks,
-Mauro
+
+On Wed, Jul 16, 2025 at 2:57=E2=80=AFAM Martin KaFai Lau <martin.lau@linux.=
+dev> wrote:
+>
+> On 7/15/25 7:49 AM, Alexei Starovoitov wrote:
+> > Also you misread the kcsan report.
+> >
+> > It says that 'read' comes from:
+> >
+> > read to 0xffff888118f3d568 of 4 bytes by task 4719 on cpu 1:
+> >   lookup_nulls_elem_raw kernel/bpf/hashtab.c:643 [inline]
+> >
+> > which is reading hash and key of htab_elem while
+> > write side actually writes hash too:
+> > *(u32 *)((void *)node + lru->hash_offset) =3D hash;
+> >
+> > Martin,
+> > is it really possible for these read/write to race ?
+>
+> I think it is possible. The elem in the lru's freelist currently does not=
+ wait
+> for a rcu gp before reuse. There is a chance that the rcu reader is still
+> reading the hash value that was put in the freelist, while the writer is =
+reusing
+> and updating it.
+>
+> I think the percpu_freelist used in the regular hashmap should have simil=
+ar
+> behavior, so may be worth finding a common solution, such as waiting for =
+a rcu
+> gp before reusing it.
 
