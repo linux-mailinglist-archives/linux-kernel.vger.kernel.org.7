@@ -1,49 +1,64 @@
-Return-Path: <linux-kernel+bounces-732652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5594FB06A35
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 021A4B06A36
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 02:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03D741A60082
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:00:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F5D91A60095
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 00:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962E32D8788;
-	Tue, 15 Jul 2025 23:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAE318027;
+	Wed, 16 Jul 2025 00:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0DOPHr6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TxwBT1ea"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CEB2D7803;
-	Tue, 15 Jul 2025 23:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D13DEAC7
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 00:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752623999; cv=none; b=BvC2uiwMq46Tbs8HNQy2aw2UhUvLei1wLNPy1+DtkV2XeZa/UjZICHxFhFlcZhcmbrFz6KS0XgZoasQte9yuys6cQjIlMnlTbdRxDd67ZsdTJ0wKySitJ6oEYh94vhSFdrjGavIlP3FUEvjpwN1RZaOUhYP5+zan9hKN4WFE14E=
+	t=1752624095; cv=none; b=spRREB5TCVU3UP0djGETBnqwTOIBcGBwnL2SSKt8E8fzwQH9oTce7VTAxF4NhQMFG84h1E0nq81de21rhxor57m7zVCcGvM2khcOKuzIz/o7Iwq+5bNS+vZDxyJhF9Lq77Ua81mXNmOmmHcGQukJ28h/EftOSpDDTy5MHq8l0pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752623999; c=relaxed/simple;
-	bh=tgH2czOnoOGUkpLM1SSPMTlXXL7+hEPthxtMRn2obwA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=HFa4vafMbGPKOs0Wufhsc/OTda3H5PqoIlDoWWTXJO9jKwhAaP1Tr9Y1t/x0Wj2+WVoLIXtmO2KqxMkhLgOgLelH4uhccLvOFE1+F0FXU6xHvAYMnzKF6xoJIN5ix4vWrsZ1Xsb+/+wK5jUKlC/bbA6f5rl2NSHO7KzFRXBIuD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0DOPHr6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75922C4CEF7;
-	Tue, 15 Jul 2025 23:59:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752623998;
-	bh=tgH2czOnoOGUkpLM1SSPMTlXXL7+hEPthxtMRn2obwA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=C0DOPHr6P2unBF70Ne/wpCcQh5JAv/ZikFizLbhF+jZFpU3qnUGxPINjSd2hqJjv6
-	 G+A8B+D7pVBI3s9fiMUZQczkdEVDuFc/9M8ap0xWvbJKrp3Kqx1CMpuTzE5mAsxuWs
-	 pGWRqSYgUK/LeQz2rpgwROmOKrCuzV8BqBVY3sb8jIDZej07Q9wbWRTIzN5BcamNsu
-	 GpSAvXgwyYgZDBemehV7UlTVNVjKp347BXvoKeLv6eOIT4gicC8fZ3tpe02jzt6jLU
-	 0Kze8KXUod3tqnWMPkedu17HUPOgtfn2c1nqeq77iWK9BCqsYLFw7Sfjf2p0FCb2q4
-	 HpzEGajP9b16Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C26383BA30;
-	Wed, 16 Jul 2025 00:00:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752624095; c=relaxed/simple;
+	bh=7TcSB0KV5v2ivHNMn+2amZ4S5ERARJNZ0E9iaiJqJyc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZnpADr+SEeggqupXvfxYxlNMyiifSAjDs22rlLqgmTnoBA9KHxokxp1oTKDkE6dyvkWaZjahhQ668ZOuZ3nXmNSzFzYKcmWrJ4mvqqEQLPER5j26ovmTLfZX1mLmoXVybNx6D22CzkmJMFx/UZb0tS2F7wEGoIOAosNO9P4FlWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TxwBT1ea; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752624090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zc6W1LqWhosxLy6inD+3Mw6xi1MjCToPHphw8hvqQkQ=;
+	b=TxwBT1eaS2c9mz51J1mXjV4Nx+b/d5R9SKThusI7I+QKlZwzbwvHUzbdDXdN0iu5BY+jqW
+	KkK49bWAWz+bvPDIjmEDw7HVvaS0Hnq2U2t1fvQwlJy2avkzw3FwBJ1sfxHhqhKyhmJgib
+	MOgX6hzT+p5l2Mx5CAUA5wqCi5ID2po=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dave Ertman <david.m.ertman@intel.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Ira Weiny <ira.weiny@intel.com>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH net v2 0/4] net: axienet: Fix deferred probe loop
+Date: Tue, 15 Jul 2025 20:01:06 -0400
+Message-Id: <20250716000110.2267189-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,69 +66,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V3 net-next 00/10] net: hns3: use seq_file for debugfs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175262401900.621373.9648094414037251084.git-patchwork-notify@kernel.org>
-Date: Wed, 16 Jul 2025 00:00:19 +0000
-References: <20250714061037.2616413-1-shaojijie@huawei.com>
-In-Reply-To: <20250714061037.2616413-1-shaojijie@huawei.com>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
- shenjian15@huawei.com, liuyonglong@huawei.com, chenhao418@huawei.com,
- jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
- salil.mehta@huawei.com, arnd@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+Please refer to patch 4/4 for an extended look at the problem this
+series is attempting to solve.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Changes in v2:
+- Add example log output to commit message
+- Fix building as a module
+- Expand commit message with much more info on the problem and possible
+  solutions
 
-On Mon, 14 Jul 2025 14:10:27 +0800 you wrote:
-> Arnd reported that there are two build warning for on-stasck
-> buffer oversize. As Arnd's suggestion, using seq file way
-> to avoid the stack buffer or kmalloc buffer allocating.
-> 
-> ---
-> ChangeLog:
-> v2 -> v3:
->   - Merge patch (11/11) into the previous two, suggested by Simon Horman
->   v2: https://lore.kernel.org/all/20250711061725.225585-1-shaojijie@huawei.com/
-> v1 -> v2:
->   - Remove unused functions in advance to eliminate compilation warnings, suggested by Jakub Kicinski
->   - Remove unnecessary cast, suggested by Andrew Lunn
->   v1: https://lore.kernel.org/all/20250708130029.1310872-1-shaojijie@huawei.com/
-> 
-> [...]
+Sean Anderson (4):
+  auxiliary: Support hexadecimal ids
+  net: axienet: Fix resource release ordering
+  net: axienet: Rearrange lifetime functions
+  net: axienet: Split into MAC and MDIO drivers
 
-Here is the summary with links:
-  - [V3,net-next,01/10] net: hns3: remove tx spare info from debugfs.
-    https://git.kernel.org/netdev/net-next/c/277ed0cc9d73
-  - [V3,net-next,02/10] net: hns3: clean up the build warning in debugfs by use seq file
-    https://git.kernel.org/netdev/net-next/c/c557c1832626
-  - [V3,net-next,03/10] net: hns3: use seq_file for files in queue/ in debugfs
-    https://git.kernel.org/netdev/net-next/c/eced3d1c41db
-  - [V3,net-next,04/10] net: hns3: use seq_file for files in common/ of hns3 layer
-    https://git.kernel.org/netdev/net-next/c/2b65524d106e
-  - [V3,net-next,05/10] net: hns3: use seq_file for files in tm/ in debugfs
-    https://git.kernel.org/netdev/net-next/c/08a6476e2875
-  - [V3,net-next,06/10] net: hns3: use seq_file for files in mac_list/ in debugfs
-    https://git.kernel.org/netdev/net-next/c/00f9ea261d9c
-  - [V3,net-next,07/10] net: hns3: use seq_file for files in reg/ in debugfs
-    https://git.kernel.org/netdev/net-next/c/2363145ad86e
-  - [V3,net-next,08/10] net: hns3: use seq_file for files in fd/ in debugfs
-    https://git.kernel.org/netdev/net-next/c/3945d94c9f4b
-  - [V3,net-next,09/10] net: hns3: use seq_file for files in common/ of hclge layer
-    https://git.kernel.org/netdev/net-next/c/9e1545b48818
-  - [V3,net-next,10/10] net: hns3: use seq_file for files in tx_bd_info/ and rx_bd_info/ in debugfs
-    https://git.kernel.org/netdev/net-next/c/b0aabb3b1efb
+ drivers/base/auxiliary.c                      |   6 +-
+ drivers/net/ethernet/xilinx/Kconfig           |   1 +
+ .../net/ethernet/xilinx/xilinx_axienet_main.c | 422 ++++++++++--------
+ .../net/ethernet/xilinx/xilinx_axienet_mdio.c |  31 +-
+ include/linux/auxiliary_bus.h                 |   4 +-
+ 5 files changed, 263 insertions(+), 201 deletions(-)
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.35.1.1320.gc452695387.dirty
 
 
