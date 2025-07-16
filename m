@@ -1,214 +1,139 @@
-Return-Path: <linux-kernel+bounces-734009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F322B07BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:21:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6098B07BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 19:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBF8A7B0523
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:20:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491B21C236F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB7D2F5C3B;
-	Wed, 16 Jul 2025 17:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE71A2F5C43;
+	Wed, 16 Jul 2025 17:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCfXXjU3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXgWRBeF"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF59277030;
-	Wed, 16 Jul 2025 17:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF481F0E3E;
+	Wed, 16 Jul 2025 17:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752686499; cv=none; b=k4ebCVe82OOTo2AXTnUwHD8O/H2EQRpZ0tJMSkTrhD2t0QiD1Z4Tbnwe8czRUif2ki2Vhc3HaJ6y+wgLJ3zpuYad9jMU/ZLXYNSqEfF6mNZenzCLrSZ2M8uySftE5Bw9KWf8WjBWciykoVRjV0zJeQ+slgJLLjMA2MejVAVbVI8=
+	t=1752686551; cv=none; b=gNGUJxLWOF7fup3zFFsA5cLkNaRC/Bh8nz7u3ZNW1VDY7qSrbFQrKz+Xyen1q+Z19JvmLe3+qR4/O+PskO0mtyEiIRsadkw/yZQZ9Nu+k9vb7bedfbB61f10K2zZ1KDIbO0LFJHGeuNQin7mvltDkmITeqoV3HKgr+/mEwc7hm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752686499; c=relaxed/simple;
-	bh=2negnZkD72TZWe3BsPmibIcM1Vow8UKfserRA3k3YuA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=KYd+4u32Zhs8tIy8DU3ndz4/B3sTwAd9ZRsTyw1IsRwyvS6KY8w5SeQN3Z862H7G9qfG+4jWN2pN4AhXhscJwZtVL8F+++a+QEUHjEpBFmgBU5CmYC7ILJy5sXpgWNsnp+898FxFZyGzGOqIOmX0hoEuQAcYOwBrA0dV0eCHZ2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCfXXjU3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38B7DC4CEE7;
-	Wed, 16 Jul 2025 17:21:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752686497;
-	bh=2negnZkD72TZWe3BsPmibIcM1Vow8UKfserRA3k3YuA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=UCfXXjU3lbjom+okhpOsljp81vLHkWGlaWmae1qR96mYl372TUjEiuJRLvOBMmYzK
-	 h1vGipHbIGGghf3CL8Lfnlvb6bwMbhGpwOLbzYY3LCXya3d1Tjvx1lKnsTAxCan4aY
-	 G3hjFk+fLeA+H5LhNOrzVggbfaSZ3jEU9KSXyo2j4qzq7g0bkGe6cE6hyvBX9cLFn6
-	 A51OOAWDIrHGhgzDIr26/6ad0uXdWdcTZ2log3q7a3ASDWgk3Kowgt8et2m9bEeu4H
-	 bu/sir6KbdIjZnfaBxe8MraXhTsGLPN8djzl7aa5DO7T7wsSBEUXhZAaE/u3IT1f7y
-	 Xt7aLkCkgRwmg==
+	s=arc-20240116; t=1752686551; c=relaxed/simple;
+	bh=dNvoUpoRa5Y1wjumZTX1amXOcXvjUJSrbmTOAzQ0KP0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gwHtKirEKdaPlcVT/Pty/5B0YD9wbqEaJ6kc2A2ef4VbS/1bqQIFY+swuxf7xCDFxf1rrg4od9XKFNMBHarH57xsBgpwh/3TfF7/dv/buzZuaJymCXTLWNekaLp4SrN8xZCEBZDylPEw2J5CWJeIVAjOPsFJUfCu4bQpbiuIHBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gXgWRBeF; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso207323b3a.0;
+        Wed, 16 Jul 2025 10:22:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752686549; x=1753291349; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=62luRaihefSOD30ytw09M7xPkQEYCchqQIT7epBstqI=;
+        b=gXgWRBeFnbx7eMcobA9z7M0XqtQxqS623rC0DbLwTi5NqL3l/QPtPbQgm82MQumswy
+         7WEnsg82CRp2ObjDdKWAoWawx/dcMEg364yotE1y4faSul+SNmK3LFOSxDORtpO1N2U2
+         AwyXeTeL9jkBylifdbODRhLFmjtP20PqHvGPb8FKY0wWCZNvJ+PM5XEXTSAppmchY+sX
+         CiKv1r2tXp/tjZ+lRS5iT4YNJti4p3Zvr74i7UGSlExfwBVpWTYN5mOeYLcyDX35FQxG
+         iWlIwersIoudwksXKU7xrpEKaNt5M9PN8hwDsecwL7n9JZTo5dIaM99EzQTXNjpIR92A
+         nlpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752686549; x=1753291349;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=62luRaihefSOD30ytw09M7xPkQEYCchqQIT7epBstqI=;
+        b=M66d0nI7PlqfVnkweDPr4CPccCHiMTsDqRxdrQrHa9QPc0fD3BoJBd2mgHzP+TpAgp
+         w4hFhlRIIspLcvDT248aua+2FWBu/i0IhxmGB4UvyuO+SpX0bih+AqyCVsyvvYpOmOQZ
+         bsg8O1sLglduUGfDg0KzKUMsvw8dVsMbOllx/YknOsDfNa7XVsoPClFTiz0SJHAuGWzE
+         4I9hiEP7dtKvfx7YcHU0b5Vsv3+320ct7VRnev8E0q9QNdykTTRe0hj2s6qxS9SHPYjN
+         glJpmS+KdlBdaKeqwn8OBnE6NNDODgr41AgF0iZvKUSryqudXmpDvKDDQUhnkIReHqDs
+         w3zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdTsohEYwbNyHeId92OxPbp6CUoS3erIHZybf6jN1AGYIXxuz0x+5AgNgIkSdb9+9XOSQgWgMp/n1vXYhu@vger.kernel.org, AJvYcCWEPDagKlCMTxG+NgOol/rK3RdE5ff61mSm01eb5GcT5imCSoWizBwa/X6JO2RdNFq2lk0wQQvXgDx8kw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZO5nJQ1bMrijaCtng1ZnkiQASL5zzGNXlFZi3BRwuP5muz7ti
+	ztKhEfNciqL9FrQZZ7qzZgUGjAtVlK7NwF/s94L47n78mI6y89OAc3zj
+X-Gm-Gg: ASbGncv4SmNq3rMVg8dgW2o7Ksfj0waozkmS6C9Nr6il5apjXCtXE8+86zvYpz9aEkr
+	WasnrQpnIh4lu8OTg/ZAKNlBlSP5yA2D/tcKICBIw24pyurdo4BaR/zVhcOEVc+GWK5oasDz+9e
+	oHkjI5OS+3OqoWpIOy4K6fwSYJFQTUdcoSNkLc+ELRsa6r3XWeHC2P48O2x4IoPV90aQBENvTy2
+	icgT11vWiPHBSbU31jd6f0ytffDaXQJbt8saJHlZQvjCJMIN/6a9kXd/OqYDWVYLEBqufsEIViw
+	rp+WgJU45u1SkLyzvcS4vDZAcKapiMBKQLsJ3VSnS9a8QoTkGOeEH/Ab5v7XcfovjKk+Hg2kxUu
+	+yXuNpPvsFXkEhQ2U4eK7h/H2u79C3FS7NBT9LKs6yxUXSP3Dwg==
+X-Google-Smtp-Source: AGHT+IGVPETf5S6BM0ddjqSPJDjZLQAah3dClp+KlwLDPDtT+7iucojanh6xKy2KwjTXAY8Q81UALA==
+X-Received: by 2002:a05:6a00:2387:b0:74c:f1d8:c402 with SMTP id d2e1a72fcca58-75722869d96mr4998947b3a.8.1752686548894;
+        Wed, 16 Jul 2025 10:22:28 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f1b2f6sm15188832b3a.99.2025.07.16.10.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 10:22:28 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: andrew.smirnov@gmail.com,
+	juha.kuikka@gmail.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] HID: microsoft: add a call hid_hw_stop() in probe()
+Date: Thu, 17 Jul 2025 02:22:21 +0900
+Message-Id: <20250716172221.1360886-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 16 Jul 2025 19:21:32 +0200
-Message-Id: <DBDNIAW09Z7W.EXO6C61HCNVP@kernel.org>
-Cc: "Mitchell Levy" <levymitchell0@gmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Andrew Morton" <akpm@linux-foundation.org>, "Dennis Zhou"
- <dennis@kernel.org>, "Tejun Heo" <tj@kernel.org>, "Christoph Lameter"
- <cl@linux.com>, "Danilo Krummrich" <dakr@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-mm@kvack.org>
-Subject: Re: [PATCH v2 3/5] rust: percpu: add a rust per-CPU variable test
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250712-rust-percpu-v2-3-826f2567521b@gmail.com>
- <DBATM1CUS704.28MKE6BIBQB7G@kernel.org>
- <68762e19.170a0220.33e203.a0b7@mx.google.com>
- <DBCLFG5F4MPW.2LF4T3KWOE12R@kernel.org> <aHZhcNCayTOQhvYh@Mac.home>
- <DBCR1OCNYAUW.1VLAY1HWCHLGI@kernel.org> <aHaCUFNUd_mErL7S@Mac.home>
- <DBCTCZ5HUZOF.2DJX63Q0VWWFN@kernel.org> <aHbJUfcsjHA92OlE@tardis-2.local>
- <DBDESSQOH6MB.2I4GNLPBP5ORJ@kernel.org> <aHfGV3l4NCmYSRuv@Mac.home>
-In-Reply-To: <aHfGV3l4NCmYSRuv@Mac.home>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Jul 16, 2025 at 5:33 PM CEST, Boqun Feng wrote:
-> On Wed, Jul 16, 2025 at 12:32:04PM +0200, Benno Lossin wrote:
->> On Tue Jul 15, 2025 at 11:34 PM CEST, Boqun Feng wrote:
->> > On Tue, Jul 15, 2025 at 07:44:01PM +0200, Benno Lossin wrote:
->> > [...]
->> >> >> >
->> >> >> > First of all, `thread_local!` has to be implemented by some sys-=
-specific
->> >> >> > unsafe mechanism, right? For example on unix, I think it's using
->> >> >> > pthread_key_t:
->> >> >> >
->> >> >> > 	https://pubs.opengroup.org/onlinepubs/009695399/functions/pthre=
-ad_key_create.html
->> >> >> >
->> >> >> > what we are implementing (or wrapping) is the very basic unsafe
->> >> >> > mechanism for percpu here. Surely we can explore the design for =
-a safe
->> >> >> > API, but the unsafe mechanism is probably necessary to look into=
- at
->> >> >> > first.
->> >> >>=20
->> >> >> But this is intended to be used by drivers, right? If so, then we =
-should
->> >> >
->> >> > Not necessarily only for drivers, we can also use it for implementi=
-ng
->> >> > other safe abstraction (e.g. hazard pointers, percpu counters etc)
->> >>=20
->> >> That's fair, but then it should be `pub(crate)`.
->> >>=20
->> >
->> > Fine by me, but please see below.
->> >
->> >> >> do our usual due diligence and work out a safe abstraction. Only f=
-all
->> >> >> back to unsafe if it isn't possible.
->> >> >>=20
->> >> >
->> >> > All I'm saying is instead of figuring out a safe abstraction at fir=
-st,
->> >> > we should probably focus on identifying how to implement it and whi=
-ch
->> >> > part is really unsafe and the safety requirement for that.
->> >>=20
->> >> Yeah. But then we should do that before merging :)
->> >>=20
->> >
->> > Well, who's talknig about merging? ;-) I thought we just began reviewi=
-ng
->> > here ;-)
->>=20
->> I understand [PATCH] emails as "I want to merge this" and [RFC PATCH] as
->
-> But it doesn't mean "merge as it is", right? I don't think either I or
-> Mitchell implied that, I'm surprised that you had to mention that,
+If hid_hw_start() succeeds but ms_init_ff() fails, it will return without
+calling hid_hw_stop(), which will cause a memory leak. So to prevent this,
+we need to change probe() to call hid_hw_stop().
 
-Yeah that is true, but it at least shows the intention :)
-
-> also based on "I often mute those" below, making it "[PATCH]" seems to
-> be a practical way to get more attention if one wants to get some
-> reviews.
-
-That is true, I do usually read the titles of RFC patches though and
-sometimes take a look eg your atomics series.
-
->> "I want to talk about merging this". It might be that I haven't seen the
->> RFC patch series, because I often mute those.
->>=20
->
-> Well, then you cannot blame people to move from "RFC PATCH" to "PATCH"
-> stage for more reviews, right? And you cannot make rules about what the
-> difference between [PATCH] and [RFC PATCH] if you ignore one of them ;-)
-
-I'm not trying to blame anyone. I saw a lot of unsafe in the example and
-thought "we can do better" and since I haven't heard any sufficient
-arguments showing that it's impossible to improve, we should do some
-design work.
-
->> >> >> I'm not familiar with percpu, but from the name I assumed that it'=
-s
->> >> >> "just a variable for each cpu" so similar to `thread_local!`, but =
-it's
->> >> >> bound to the specific cpu instead of the thread.
->> >> >>=20
->> >> >> That in my mind should be rather easy to support in Rust at least =
-with
->> >> >> the thread_local-style API. You just need to ensure that no refere=
-nce
->> >> >> can escape the cpu, so we can make it `!Send` & `!Sync` + rely on =
-klint
->> >> >
->> >> > Not really, in kernel, we have plenty of use cases that we read the
->> >> > other CPU's percpu variables. For example, each CPU keeps it's own
->> >> > counter and we sum them other in another CPU.
->> >>=20
->> >> But then you need some sort of synchronization?
->> >>=20
->> >
->> > Right, but the synchronization can exist either in the percpu operatio=
-ns
->> > themselves or outside the percpu operations. Some cases, the data type=
-s
->> > are small enough to fit in atomic data types, and operations are just
->> > load/store/cmpxchg etc, then operations on the current cpu and remote
->> > read will be naturally synchronized. Sometimes extra synchronization i=
-s
->> > needed.
->>=20
->> Sure, so we probably want direct atomics support. What about "extra
->> synchronization"? Is that using locks or RCU or what else?
->>=20
->
-> It's up to the users obviously, It could be some sort of locking or RCU,
-> it's case by case.
-
-Makes sense, what do you need in the VMS driver?
-
->> > Keyword find all these cases are `per_cpu_ptr()`:
->> >
->> > 	https://elixir.bootlin.com/linux/v6.15.6/A/ident/per_cpu_ptr
->>=20
->> Could you explain to me how to find them? I can either click on one of
->> the files with horrible C preprocessor macros or the auto-completion in
->> the search bar. But that one only shows 3 suggestions `_hyp_sym`,
->> `_nvhe_sym` and `_to_phys` which doesn't really mean much to me.
->>=20
->
-> You need to find the usage of `per_cpu_ptr()`, which is a function that
-> gives you a pointer to a percpu variable on the other CPU, and then
-> that's usually the case where a "remote" read of percpu variable
-> happens.
-
-Ahh gotcha, I thought you pointed me to some definitions of operations
-on percpu pointers.
-
+Fixes: 73c5b254c365 ("HID: microsoft: Add rumble support for Xbox One S controller")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 ---
-Cheers,
-Benno
+ drivers/hid/hid-microsoft.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/hid/hid-microsoft.c b/drivers/hid/hid-microsoft.c
+index 18ac21c0bcb2..a27ea59a1bef 100644
+--- a/drivers/hid/hid-microsoft.c
++++ b/drivers/hid/hid-microsoft.c
+@@ -385,22 +385,26 @@ static int ms_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	ret = hid_parse(hdev);
+ 	if (ret) {
+ 		hid_err(hdev, "parse failed\n");
+-		goto err_free;
++		return ret;
+ 	}
+ 
+ 	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT | ((quirks & MS_HIDINPUT) ?
+ 				HID_CONNECT_HIDINPUT_FORCE : 0));
+ 	if (ret) {
+ 		hid_err(hdev, "hw start failed\n");
+-		goto err_free;
++		return ret;
+ 	}
+ 
+ 	ret = ms_init_ff(hdev);
+-	if (ret)
++	if (ret) {
+ 		hid_err(hdev, "could not initialize ff, continuing anyway");
++		goto err_hw_stop;
++	}
+ 
+ 	return 0;
+-err_free:
++
++err_hw_stop:
++	hid_hw_stop(hdev);
+ 	return ret;
+ }
+ 
+--
 
