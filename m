@@ -1,59 +1,80 @@
-Return-Path: <linux-kernel+bounces-733033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1DBB06F3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:42:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69AA5B06F49
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1499F3ABD47
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511B43A3475
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D9A28D841;
-	Wed, 16 Jul 2025 07:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ED128DB78;
+	Wed, 16 Jul 2025 07:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MebXlxNv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gadpyYC3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8230428CF5C;
-	Wed, 16 Jul 2025 07:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C005528A1CA;
+	Wed, 16 Jul 2025 07:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752651721; cv=none; b=oE+U6yjdAK8c8fJAftXrUrwKpoduyI/0PtxObmTEM4enC63VZgMJzjojsG1iJdX0rO0l8q/29seb58P+SdJVVSJPgzCTAtjkBUxv5cRttQK9bfRh3xxOPirBi1Fn6ckF/Zgzpa+p+zd2jAGvs/u7vlLHG4XBazlSLpwgNFcftuM=
+	t=1752651890; cv=none; b=gqAdBIf+/WOkeKUopwzQFX7QnRteWyKNN9FQczDUyCJLAvraycL9l2FXzsMsOPgKWzy3UQgjhRCo2fo7gzOXn7MRxQtXv+X7P0uX70et9/9jMzvbcQuIM2UR65YE4mcIE/+/uQIJrYB5Rp0efxdW/SYb7i2kKt/kWi30e50cuK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752651721; c=relaxed/simple;
-	bh=zdIsE8zMh+Q9b21Tzn+0aEdVw4+F6kLYzxIztPzl06U=;
+	s=arc-20240116; t=1752651890; c=relaxed/simple;
+	bh=rakUwOidur4ow2ll0FZlBfrzzDi2qZ2wFlnPMfyI4NA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MFoG4jV4UjB+DcSIK1QDjriBmrpgaIRC2axARfGfY4ZETMovlIxnErEKd/PTsNc2ctBcRZb1X8y5SqB2d3H3m+NpX5W+fVlASG8pkiqe2rgn4TvxEKhI7Jc1oaUOlB8TP3BZyfetMW3vgjBtlvrF5UZdWCI5EtzM1R1aVZOZQsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MebXlxNv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A0D5C4CEF0;
-	Wed, 16 Jul 2025 07:41:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752651721;
-	bh=zdIsE8zMh+Q9b21Tzn+0aEdVw4+F6kLYzxIztPzl06U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MebXlxNvdo6y4CMS/mqxoQ2xFLxVMUEkAK0nDRI0znnVgjscwpAL6eKw1ElxcNis5
-	 pLFwQ0fTbKA0C3pg4H1dXXyd2CgXFKAmwJY0D3nZ9rQsTE++t4819Eh7/xs/UQ21Wp
-	 mF/RS3IztXa6/ELVGb+PZyJU5a+lbXiGZCXzR8TjQxHROo1+8SKuQe/ucCZa0TM/DX
-	 QORRzVFEHTsMl0upK+DPMk+xfPXU/C2a8Zkk7qxy4fgB78RtKf3fKeqk5WT/YvI8sS
-	 Na/gdoRKRqq8+/pzlFC+zCHX5N/rjrZD/g2HApXyRkgVKadQGvaxU1KDUfYrPOtZlq
-	 0zkTAF5CD23ZA==
-Date: Wed, 16 Jul 2025 09:41:54 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
-	heiko@sntech.de, mani@kernel.org, yue.wang@amlogic.com,
-	pali@kernel.org, neil.armstrong@linaro.org, robh@kernel.org,
-	jingoohan1@gmail.com, khilman@baylibre.com, jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 0/2] Configure root port MPS during host probing
-Message-ID: <aHdXwr-UZz6jZX3f@ryzen>
-References: <20250620155507.1022099-1-18255117159@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUiYnFgunyXWREt23RRV6tMUU2hkiDU4QnvAETrh+3y5I0EDBZwInKKkzrHrRImjzyQ27E5FF3wI3PUur4oNVQ663tdkmHfRWuZUkQHvpvqesI0H2dd1j80L5ES4WkyyzNX1uid8QClrv7fLXV6bWOM3Pdo9spuVCQnHbNUW3Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gadpyYC3; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752651888; x=1784187888;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rakUwOidur4ow2ll0FZlBfrzzDi2qZ2wFlnPMfyI4NA=;
+  b=gadpyYC3uyHYPrtf2MCTJ65tdSEE3lEEXw83eC7OoqaVHvLqntxEGdbA
+   fl9WHk81pwqDMIBU0jfB47TSF92j5aNt8BWknhQwGh+u5Yu32bHvXGN8k
+   jS5jJrfGx5bAvM/SpCIRM9cnqS9GX+6MG661fTxsQrz4nROulgP/l0M/N
+   uJfXwc2Xc401AbOp3vAr3ghRC6HjpyDvd4O/XIFz4QUpmaqyuGq+pXZmL
+   GJMS6ylwiekd20lbAq0ySJXC2EkKV2IB2CXNNj4JcXrVGsiJZcnbu8YHm
+   w0IkHZVGfPB/mXjf4pBpzZV2liJmT7f1n69oQwMqBDdbjovCMENw2wJHU
+   Q==;
+X-CSE-ConnectionGUID: 7kvIwEdCTs2axEGqtYKTDg==
+X-CSE-MsgGUID: GojJPTdXR5aw3LB/lVHKrw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="55036700"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="55036700"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:44:47 -0700
+X-CSE-ConnectionGUID: M1j9vfWJRxC+oysMlnebtw==
+X-CSE-MsgGUID: zyEkj1I3QwWjD+2/1+tvcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="157096427"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 16 Jul 2025 00:44:44 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ubwok-000C4F-1V;
+	Wed, 16 Jul 2025 07:44:42 +0000
+Date: Wed, 16 Jul 2025 15:44:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sean Anderson <sean.anderson@linux.dev>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Andy Shevchenko <andy@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
+Message-ID: <202507161550.frzFNyCa-lkp@intel.com>
+References: <20250715012023.2050178-8-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,29 +83,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250620155507.1022099-1-18255117159@163.com>
+In-Reply-To: <20250715012023.2050178-8-sean.anderson@linux.dev>
 
-On Fri, Jun 20, 2025 at 11:55:05PM +0800, Hans Zhang wrote:
-(snip)
-> ---
-> 
-> Hans Zhang (2):
->   PCI: Configure root port MPS during host probing
->   PCI: dwc: Remove redundant MPS configuration
-> 
->  drivers/pci/controller/dwc/pci-meson.c | 17 -----------------
->  drivers/pci/probe.c                    | 10 ++++++++++
->  2 files changed, 10 insertions(+), 17 deletions(-)
-> 
-> 
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> -- 
-> 2.25.1
-> 
+Hi Sean,
 
-Any chance of this series getting picked up?
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on groeck-staging/hwmon-next akpm-mm/mm-nonmm-unstable linus/master v6.16-rc6 next-20250715]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Kind regards,
-Niklas
+url:    https://github.com/intel-lab-lkp/linux/commits/Sean-Anderson/math64-Add-div64_s64_rem/20250715-092337
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250715012023.2050178-8-sean.anderson%40linux.dev
+patch subject: [PATCH 7/7] hwmon: iio: Add alarm support
+config: i386-randconfig-063-20250716 (https://download.01.org/0day-ci/archive/20250716/202507161550.frzFNyCa-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507161550.frzFNyCa-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507161550.frzFNyCa-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/hwmon/iio_hwmon.c:25:1: sparse: sparse: symbol 'iio_hwmon_listener_lock' was not declared. Should it be static?
+>> drivers/hwmon/iio_hwmon.c:26:1: sparse: sparse: symbol 'iio_hwmon_listeners' was not declared. Should it be static?
+
+vim +/iio_hwmon_listener_lock +25 drivers/hwmon/iio_hwmon.c
+
+    23	
+    24	/* Protects iio_hwmon_listeners and listeners' refcnt */
+  > 25	DEFINE_MUTEX(iio_hwmon_listener_lock);
+  > 26	LIST_HEAD(iio_hwmon_listeners);
+    27	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
