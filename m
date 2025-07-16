@@ -1,120 +1,142 @@
-Return-Path: <linux-kernel+bounces-733007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7D1B06EC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6E3B06ECD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3E3504FD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4545B3AD69D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA1628850E;
-	Wed, 16 Jul 2025 07:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB6928937D;
+	Wed, 16 Jul 2025 07:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNTOOGp1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rF9CvnPI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625C2533D6;
-	Wed, 16 Jul 2025 07:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC87F256C6D;
+	Wed, 16 Jul 2025 07:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752650237; cv=none; b=IAfLQXRcIu7+ZJrCyDK/KBrXqhp/NrCgwb+BoZakxnb58TvNcftTUfsSUoGiQu/8+sGmqjhXd4oaYwrDdw3XGKddT1V3wu1yM+PSGPqhczXm6GP4dBRkksM8+QHjTphGAIRlv7435vlda9MCurKSXpiwlzaYrGGiOPH0bZe6ZrA=
+	t=1752650340; cv=none; b=YDR2GC0gXXxPqznEJ4nPiSHnoD8ueLjASNjojcIznSaS8QTCSwwXMldLdNQZCZKW2lZWWFMaYDnN3r9VsYyrm7exhIEg+eEDG2+mpV6JLraZhKsJx5UbpTF4O+6K1ey9+69eGMg5zujfJtWk2f3g6yTJR/DGtBM/qk/LlgnT1lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752650237; c=relaxed/simple;
-	bh=cd5eTFGt2ZH0e4S6bPNCBDG2UvP/pounWuUyklto8IM=;
+	s=arc-20240116; t=1752650340; c=relaxed/simple;
+	bh=ft9NQ3VgWxxomwjuMEIjAFvCizB7sBVk+rQ5QVmSgk4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iO20FyhemeQIfIasXL03Nvag1GoJlSozpEl91H8PDSTMw2CJF+R2ltfYn4F+itv6nzT3hCZ+Z6MkJSlfSUjECUPl3L+9QlZwGSnF/ObIWA3JmeJT3Pew8DZlFyC8dJLHZnGDlt062Sn37R6P9kfaEkQgXjNItniym0qjc49hYl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNTOOGp1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D59DC4CEF0;
-	Wed, 16 Jul 2025 07:17:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnFa4c3yrdCOzlET9mBiyRM0xnKM8e8Q12hO8WytqMaZWUvmy9IgjlSDzL7sxcUtsslGFl1B3aiYEuQlYvRTHdjEnAeCmZl6FN8ggXArNnjorSkuMc/xoJobD2g+v31LjIiugcPRYIPbIqEVBB5BM8Ba7Ei42RqS4A34CBT42UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rF9CvnPI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A1CC4CEF0;
+	Wed, 16 Jul 2025 07:18:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752650236;
-	bh=cd5eTFGt2ZH0e4S6bPNCBDG2UvP/pounWuUyklto8IM=;
+	s=k20201202; t=1752650340;
+	bh=ft9NQ3VgWxxomwjuMEIjAFvCizB7sBVk+rQ5QVmSgk4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mNTOOGp1fisiEOjXIcRrpXEGRABig1maftTzhlm6DsuFz2zAL0jvsZQ4s/PSppxiR
-	 vhpiqIZhoSS4CV1uJhzSev6asAFYFkZ8yvaF0cbqSeZIvVnoyvise+WObys4lLHI7h
-	 t6OSZ0X8PWQlmweR7qtcjyEXzfy13gXwfxQcYjYiQ9ZsxPLmy5EtfNJ0RSwUWbMNEW
-	 h1i4SngYPocQHPZMv0nQvm6cUYv9KHqYSnuT04DgM+odJXPVhbEim9+k5CEIkxmZEU
-	 gCL7Imzf25DMANhDaBM/Pw4RPRLj/patX0dViwLjZVonEfImUg44BH9FbXXsW0z6Qz
-	 43cOnJYF+99kw==
-Date: Wed, 16 Jul 2025 09:17:14 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: airoha: Fix a NULL vs IS_ERR() bug in
- airoha_npu_run_firmware()
-Message-ID: <aHdR-j2aZ-7wMg2A@lore-desk>
-References: <fc6d194e-6bf5-49ca-bc77-3fdfda62c434@sabinyo.mountain>
+	b=rF9CvnPI38e1mLuhLYgfICUzIGSzoemT9H1BkbWJK9IMG2n8HZ7IYrRGK+ds20qht
+	 SnFkGhmMsVeZsdKU7pfY/qKzAEhEOgeG8+8014/4ONQTib76gY54pgDldKCVWl5rTQ
+	 yH8YFVwZx+16s4cIGvJd2YTqfECB4n5ZDAOdYu2bgFH2/jFXhUu5B39sgArdv9lczz
+	 ugTuyIzSeXXoeNMIJBA/KC7xecgX2ETgBnkyFI54xwsVa0OAjfERv4EfNj2sYdMZaA
+	 +OzehTgdXJhlPeYDoTyNHejp6JGhz23gl7Ui4Ulp5oBMSg3n22wQGZg25DxlrU4hiB
+	 sBd35yZWOzETw==
+Date: Wed, 16 Jul 2025 12:48:45 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
+ notifier callback
+Message-ID: <itpv65wevbe62cvqpypw34u2htaycnk66msaguufynrpt2iqwj@z6m4bjp4ws7r>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
+ <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
+ <jdnjyvw2kkos44unooy5ooix3yn2644r4yvtmekoyk2uozjvo5@atigu3wjikss>
+ <eccae2e8-f158-4501-be21-e4188e6cbd84@oss.qualcomm.com>
+ <qg4dof65dyggzgvkroeo2suhhnvosqs3dnkrmsqpbf4z67dcht@ltzirahk2mxd>
+ <ead761e1-2b48-4b9d-90cc-f63463a97f60@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hNQ6m2oLBFgFtFKp"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <fc6d194e-6bf5-49ca-bc77-3fdfda62c434@sabinyo.mountain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ead761e1-2b48-4b9d-90cc-f63463a97f60@quicinc.com>
 
+On Wed, Jul 16, 2025 at 12:23:54PM GMT, Krishna Chaitanya Chundru wrote:
+> 
+> 
+> On 7/16/2025 12:16 PM, Manivannan Sadhasivam wrote:
+> > On Wed, Jul 16, 2025 at 10:24:23AM GMT, Krishna Chaitanya Chundru wrote:
+> > > 
+> > > 
+> > > On 7/15/2025 4:06 PM, Manivannan Sadhasivam wrote:
+> > > > On Tue, Jul 15, 2025 at 11:54:48AM GMT, Konrad Dybcio wrote:
+> > > > > On 7/14/25 8:01 PM, Manivannan Sadhasivam wrote:
+> > > > > > It allows us to group all the settings that need to be done when a PCI
+> > > > > > device is attached to the bus in a single place.
+> > > > > > 
+> > > > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > > > > ---
+> > > > > >    drivers/pci/controller/dwc/pcie-qcom.c | 3 +--
+> > > > > >    1 file changed, 1 insertion(+), 2 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > > > index b4993642ed90915299e825e47d282b8175a78346..b364977d78a2c659f65f0f12ce4274601d20eaa6 100644
+> > > > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > > > @@ -1616,8 +1616,6 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> > > > > >    		pci_lock_rescan_remove();
+> > > > > >    		pci_rescan_bus(pp->bridge->bus);
+> > > > > >    		pci_unlock_rescan_remove();
+> > > > > > -
+> > > > > > -		qcom_pcie_icc_opp_update(pcie);
+> > > > > >    	} else {
+> > > > > >    		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+> > > > > >    			      status);
+> > > > > > @@ -1765,6 +1763,7 @@ static int pcie_qcom_notify(struct notifier_block *nb, unsigned long action,
+> > > > > >    	switch (action) {
+> > > > > >    	case BUS_NOTIFY_BIND_DRIVER:
+> > > > > >    		qcom_pcie_enable_aspm(pdev);
+> > > > > > +		qcom_pcie_icc_opp_update(pcie);
+> > > > > 
+> > > > > So I assume that we're not exactly going to do much with the device if
+> > > > > there isn't a driver for it, but I have concerns that since the link
+> > > > > would already be established(?), the icc vote may be too low, especially
+> > > > > if the user uses something funky like UIO
+> > > > > 
+> > > > 
+> > > > Hmm, that's a good point. Not enabling ASPM wouldn't have much consequence, but
+> > > > not updating OPP would be.
+> > > > 
+> > > > Let me think of other ways to call these two APIs during the device addition. If
+> > > > there are no sane ways, I'll drop *this* patch.
+> > > > 
+> > > How about using enable_device in host bridge, without pci_enable_device
+> > > call the endpoints can't start the transfers. May be we can use that.
+> > > 
+> > 
+> > Q: Who is going to call pci_enable_device()?
+> > A: The PCI client driver
+> > 
+> > This is same as relying on BUS_NOTIFY_BIND_DRIVER notifier.
+> > 
+> userspace can enable device using sysfs[1] without attaching
+> any kernel drivers.
+> 
 
---hNQ6m2oLBFgFtFKp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+But that's not a common usecase. Even so, we cannot insist users to write to the
+sysfs knob to let ASPM/OPP work without a driver.
 
-> The devm_ioremap_resource() function returns error pointers.  It never
-> returns NULL.  Update the check to match.
+- Mani
 
-Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
-
->=20
-> Fixes: e27dba1951ce ("net: Use of_reserved_mem_region_to_resource{_byname=
-}() for "memory-region"")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/ethernet/airoha/airoha_npu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/airoha/airoha_npu.c b/drivers/net/ether=
-net/airoha/airoha_npu.c
-> index 4e8deb87f751..5b0f66e9cdae 100644
-> --- a/drivers/net/ethernet/airoha/airoha_npu.c
-> +++ b/drivers/net/ethernet/airoha/airoha_npu.c
-> @@ -179,8 +179,8 @@ static int airoha_npu_run_firmware(struct device *dev=
-, void __iomem *base,
->  	}
-> =20
->  	addr =3D devm_ioremap_resource(dev, res);
-> -	if (!addr) {
-> -		ret =3D -ENOMEM;
-> +	if (IS_ERR(addr)) {
-> +		ret =3D PTR_ERR(addr);
->  		goto out;
->  	}
-> =20
-> --=20
-> 2.47.2
->=20
-
---hNQ6m2oLBFgFtFKp
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaHdR+QAKCRA6cBh0uS2t
-rGscAQDafezCTx6Tg7NHRZzwrIG+WrX3UsI4bzfWa7dBHTaBEQEA4NLY1nMESskq
-JR4WxA/oO+Ge5Va28kqhvA6sUqCvzg0=
-=PR8p
------END PGP SIGNATURE-----
-
---hNQ6m2oLBFgFtFKp--
+-- 
+மணிவண்ணன் சதாசிவம்
 
