@@ -1,149 +1,165 @@
-Return-Path: <linux-kernel+bounces-733077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2488AB06FE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:07:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7294DB06FEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189383A56B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:06:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AB517AD47E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 08:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1175D28AAED;
-	Wed, 16 Jul 2025 08:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24042292B5D;
+	Wed, 16 Jul 2025 08:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwwNaPi/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="NHIs7dgb"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBCC2C190;
-	Wed, 16 Jul 2025 08:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F3628FFEC;
+	Wed, 16 Jul 2025 08:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752653223; cv=none; b=cNi49o14NPVJkZK3YTt5m0u0BSIhDGKtsF1SUKCBQQben+tix6s+c8DaKydymtly3ovCS8Klaxfqw8IFb+gx2OosJMeIpGKJJhtmnGkzWNU/8G7g2kDMqypcJeCSwZfETpFnt+Skge2ydawgDe3/JYVj7SgpGsmJPaRr5TVYePY=
+	t=1752653322; cv=none; b=fc1AjStn8r6GCYy4YANs/m4nvhXkjwNJZvcCTxp7nWqWZnw2s38l3QJR2wnXWsBToBrVFQ2uQVJQPWPyGg2vtIA1yTIqtMx37Er6/BLnC1uhOVQa1ab1EEjg2DXi/NsQ7IfYP6iKFlTmGcYL/HuefdzebtHxBcg+S8srpy2Ks0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752653223; c=relaxed/simple;
-	bh=DJw9JK/TOdk/9qj+pemHP4UIRhxxYiSVVqha+NcZJLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e5lnwa5TKQ0ae7sz/ME/ML78yQJ6921LAS+usc5oaeCMQq00dUhtR4/0CI4CpYpAQEf2D9hj9leTan8pu2fa9OxYuJBDV8Cj6qZYWsBJf98m3yzAy/Z78ghQdrqgEiyWzHIhcrVz9YxuOOgKxUpIrDRSTl9RaG1tjDS1Lah0LO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwwNaPi/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C01C4CEF0;
-	Wed, 16 Jul 2025 08:07:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752653223;
-	bh=DJw9JK/TOdk/9qj+pemHP4UIRhxxYiSVVqha+NcZJLo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TwwNaPi/SjGq451dHcV9931uOE1VtkxArZm85J22lc2lwZ9XgKNdRe6AvWM6wplNV
-	 HmffZC7FrrK9oYLzNZJ8DGQC7KabO/MbnYM4sk0hyvubB+CJNcE8frdmO/KyC0UP2w
-	 diNLy+S/aPEmPPgwZCVsJMc+LbwdZTyZNSdO2fAkM7t5tnVJt81J7T/QJKjL8iHOwX
-	 g/eXthXKtCekxbD9xeUhgtff44ivHuAdztfEknA46+ETXK4syaSrUXsacCl7wgnLhd
-	 2Wc10WgcDV8HJHOZQ+WrxX82bX7DIhuUbuE/nUQ4nfOpuJHEeu8r0GIbhevHqQrOU/
-	 BeeCArno+WZ0w==
-Date: Wed, 16 Jul 2025 09:06:55 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] iio: imu: inv_icm42600: Avoid configuring if
- already pm_runtime suspended
-Message-ID: <20250716090655.0ba30a2a@jic23-huawei>
-In-Reply-To: <kcrov3lqigiqzea2eds73ibhix46ovqrqkhodfatqwfmjanxya@l2cla3fkl6ow>
-References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
-	<20250709-icm42pmreg-v1-6-3d0e793c99b2@geanix.com>
-	<20250713153227.08af0a54@jic23-huawei>
-	<kcrov3lqigiqzea2eds73ibhix46ovqrqkhodfatqwfmjanxya@l2cla3fkl6ow>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752653322; c=relaxed/simple;
+	bh=P9oBWoRAWelRRZX9/zMep3aOIbMkGManyEi921DBvwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OeX/OJLak/81kJlf5r5trfxWnyrysrJFVbq8C2cfMRL8r0pWmwr/wWulq+nO1PebNXtrJFUnfzAhVNI9iz44AU8A6InCxEZ53D8SajwU2jMeJmh3fZxfRR7lkS9aE9kRA8u0Wlbs9OCdKXoRWinISc4QXdCPKk6OHP0B4A/AsHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=NHIs7dgb; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bhpbS5fkcz9t8n;
+	Wed, 16 Jul 2025 10:08:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1752653316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XJKrk5r5ltCYBv5q1GLXxMUk75em/r0DRcmzMvc6rA8=;
+	b=NHIs7dgbznvY0/lprePNJMdwzzZwGFnU5cgXO+T38Yssn9hlxixhCbYALK8gBqwE9buqww
+	Z8LGFbi4vAoYzVDIB2IbHsmdtjC8mw8fDjJiNZRadeji3rKqh0z1ve2la5RatQSLKAWSD5
+	ZynK4VF2Ra4NA/GB3Mr63RRaJesjeH7cLysNljrFBA3UFef0dZL/SAfSwJvkyoit+R6Uyy
+	7qPNOssHTMa0KH9wJhAAP7UMZ+/e3LiA/EpRviljZYEBXexEBGbej8MV20GtB7lB+gy2mf
+	YmvLl2lXLSMwkfrdJpq6hQu2dokRq/ZLpwRzrQ3Cvnt6LRUoX9YhztTMu9ZiDQ==
+Date: Wed, 16 Jul 2025 10:08:28 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
+	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v2 2/5] huge_memory: add
+ huge_zero_page_shrinker_(init|exit) function
+Message-ID: <2ir5ul6baqj7dk6uw5opwnsxuxfmobtoehyfxglnsadlrcurjs@7akcf3auqink>
+References: <20250707142319.319642-1-kernel@pankajraghav.com>
+ <20250707142319.319642-3-kernel@pankajraghav.com>
+ <762c0b08-f5a5-4e76-8203-70514de6b5c8@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <762c0b08-f5a5-4e76-8203-70514de6b5c8@lucifer.local>
 
-On Mon, 14 Jul 2025 10:15:59 +0000
-Sean Nyekjaer <sean@geanix.com> wrote:
-
-> On Sun, Jul 13, 2025 at 03:32:27PM +0100, Jonathan Cameron wrote:
-> > On Wed, 09 Jul 2025 14:35:14 +0200
-> > Sean Nyekjaer <sean@geanix.com> wrote:
-> >   
-> > > Do as in suspend, skip resume configuration steps if the device is already
-> > > pm_runtime suspended. This avoids reconfiguring a device that is already
-> > > in the correct low-power state and ensures that pm_runtimeM handles the
-> > > power state transitions properly.
-> > >
-> > > Fixes: 31c24c1e93c3 ("iio: imu: inv_icm42600: add core of new inv_icm42600 driver")
-> > > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> > > ---  
-> > 
-> > Not really related to what you have here, but this code would really
-> > benefit from using guard(mutex)()
-> > 
-> > Jonathan  
+On Tue, Jul 15, 2025 at 03:29:08PM +0100, Lorenzo Stoakes wrote:
+> Nit on subject, function -> functions.
 > 
-> I have converted most of this driver to use guard(mutex).
+> On Mon, Jul 07, 2025 at 04:23:16PM +0200, Pankaj Raghav (Samsung) wrote:
+> > From: Pankaj Raghav <p.raghav@samsung.com>
+> >
+> > Add huge_zero_page_shrinker_init() and huge_zero_page_shrinker_exit().
+> > As shrinker will not be needed when static PMD zero page is enabled,
+> > these two functions can be a no-op.
+> >
+> > This is a preparation patch for static PMD zero page. No functional
+> > changes.
 > 
-> Does it make sense to use guard(mutex) in functions that still relies on
-> goto error out? Like...
-
-No - general rule is never combine cleanup.h magic like guard with gotos.
-
-If you do want to use it in cases like this, factor out the stuff
+> This is nitty stuff, but I think this is a little unclear, maybe something
+> like:
 > 
-> static int inv_icm42600_temp_read(struct inv_icm42600_state *st, s16 *temp)
-> {
-> 	struct device *dev = regmap_get_device(st->map);
-> 	__be16 *raw;
-> 	int ret;
+> 	We will soon be determining whether to use a shrinker depending on
+> 	whether a static PMD zero page is available, therefore abstract out
+> 	shrink initialisation and teardown such that we can more easily
+> 	handle both the shrinker and static PMD zero page cases.
 > 
-> 	pm_runtime_get_sync(dev);
-> 	mutex_lock(&st->lock);
+This looks good. I will use add this to the commit message.
+
+> >
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 > 
+> Other than nits, this LGTM, so with those addressed:
+> 
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-from here
+Thanks.
 
-> 	ret = inv_icm42600_set_temp_conf(st, true, NULL);
+> >  #ifdef CONFIG_SYSFS
+> >  static ssize_t enabled_show(struct kobject *kobj,
+> > @@ -850,33 +868,31 @@ static inline void hugepage_exit_sysfs(struct kobject *hugepage_kobj)
+> >
+> >  static int __init thp_shrinker_init(void)
+> >  {
+> > -	huge_zero_page_shrinker = shrinker_alloc(0, "thp-zero");
+> > -	if (!huge_zero_page_shrinker)
+> > -		return -ENOMEM;
+> > +	int ret = 0;
+> 
+> Kinda no point in initialising to zero, unless...
+> 
+> >
+> >  	deferred_split_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE |
+> >  						 SHRINKER_MEMCG_AWARE |
+> >  						 SHRINKER_NONSLAB,
+> >  						 "thp-deferred_split");
+> > -	if (!deferred_split_shrinker) {
+> > -		shrinker_free(huge_zero_page_shrinker);
+> > +	if (!deferred_split_shrinker)
+> >  		return -ENOMEM;
+> > -	}
+> > -
+> > -	huge_zero_page_shrinker->count_objects = shrink_huge_zero_page_count;
+> > -	huge_zero_page_shrinker->scan_objects = shrink_huge_zero_page_scan;
+> > -	shrinker_register(huge_zero_page_shrinker);
+> >
+> >  	deferred_split_shrinker->count_objects = deferred_split_count;
+> >  	deferred_split_shrinker->scan_objects = deferred_split_scan;
+> >  	shrinker_register(deferred_split_shrinker);
+> >
+> > +	ret = huge_zero_page_shrinker_init();
+> > +	if (ret) {
+> > +		shrinker_free(deferred_split_shrinker);
+> > +		return ret;
+> > +	}
+> 
+> ... you change this to:
+> 
 > 	if (ret)
-> 		goto exit;
-> 
-> 	raw = (__be16 *)&st->buffer[0];
-> 	ret = regmap_bulk_read(st->map, INV_ICM42600_REG_TEMP_DATA, raw, sizeof(*raw));
-> 	if (ret)
-> 		goto exit;
-> 
-> 	*temp = (s16)be16_to_cpup(raw);
-> 	if (*temp == INV_ICM42600_DATA_INVALID)
-> 		ret = -EINVAL;
-> 
-
-to here as a utility function.  Then can use direct returns in that 
-function and there are no gotos to worry about.
-
-> exit:
-> 	mutex_unlock(&st->lock);
-> 	pm_runtime_mark_last_busy(dev);
-> 	pm_runtime_put_autosuspend(dev);
+> 		shrinker_free(deferred_split_shrinker);
 > 
 > 	return ret;
-> }
 > 
-> 
-> If I use guard_scoped(..) it creates a lot of diff lines...
-The only way to use that here and avoid the issue would be with breaks
-which is ugly.   If we are going to pay the cost of churn, then
-factoring out the guts of the function is much cleaner.
+> But it's not a big deal. Maybe I'd rename ret -> err if you keep things as
+> they are (but don't init to 0).
 
-May not be worth bothering though!
+Sounds good.
 
-Jonathan
-
-> 
-> /Sean
-> 
-
+--
+Pankaj
 
