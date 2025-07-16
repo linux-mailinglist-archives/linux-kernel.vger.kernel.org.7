@@ -1,108 +1,137 @@
-Return-Path: <linux-kernel+bounces-733372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E75B073BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:43:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 032C3B073C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998F650686B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:42:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D5E7580E75
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708022F3C11;
-	Wed, 16 Jul 2025 10:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2873F2F0E58;
+	Wed, 16 Jul 2025 10:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pwY4odRn"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYvD4Q1X"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4092F2C40;
-	Wed, 16 Jul 2025 10:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F854221F38;
+	Wed, 16 Jul 2025 10:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752662532; cv=none; b=sl+R6fZjU17E7OfynbcD3Z1p2Sj5UXOyhkjtjNYKlfBqP+7yxq/PBf2guYwsFXCh7WWhxx7uNpjnCL3xtl9wkaPnKySCKhby9uH6AGO5gL56SvGSjsi58sduusO2kumVgc0SQR6/mNDZBry4QD1kOZeOn2mLLxe1+gBkcTh5h6A=
+	t=1752662624; cv=none; b=lWqdILpDl1jBuQZkOc8gcEew+ir++vQ959CVeqVvX51/SSPX831ZpI4fk4CF78JoKyUxBIEveVwF54MDo9BWcg0DMpwG1n0WNWL3E+krcOjl5kR8K3V12eziuKmVMNXU4jFPJfYDCcE9LITuvRLVz6frmzDfeEMSZh9k1B2or4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752662532; c=relaxed/simple;
-	bh=8wNRsQXja0BonOAHeoguimSSVXpsRP8N4I4qkzBw920=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IlD8klwE2bOqRxgAqFqFrNf42YpfNfAqj1y9+SCiaeQwZwG621VdsVfb5IcJ+YIs4DmxKk5AivVbf6dhReQatHTcl8JJ/iXUAweVweTswdy9O6FLIYz9mRWQicnoJWej9sX0K4BeL9eIBs0xtILkv/0YRCpN1v7b3cZNQxvlRG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pwY4odRn; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752662412;
-	bh=V8XjqI0Xeld/vTkN1Sm/WV15DBaZz+ebWX7ejp0KgEw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pwY4odRnpgJ2yoMg29jYSb1CwuRW/ZIfwRtQ/H61MCAtQyH2mwSHK/X1yc5vbv0DZ
-	 azGvEwDy76m+FOHXNRhyLYYuC9pqmZCSDt5zkHvcyDg50/mZ0zJMR2ihCKO2KX6LEo
-	 Mvtv6sEB/b1To21QcsDbYwLipRoQJ37gM77EyeSGoibiaspBLA32X11jFiKDDCpW+6
-	 WMkVjwM2G5WMcuWpiWuyGRIkVo3bu0II6ozzuGpuOjnCnZpHKi8Jw5AaTMXTs+3m/O
-	 025YcNMsLGk1oJ1Wm0sOhjdRUYV8q/3jf/8FX86QG+Rh9rW9wRGAwHSJvn2DrkG5WE
-	 pcTuNxQ5ltU6Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bhsyM6dbpz4x3p;
-	Wed, 16 Jul 2025 20:40:11 +1000 (AEST)
-Date: Wed, 16 Jul 2025 20:42:07 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>, Will Deacon
- <will@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the iommu tree
-Message-ID: <20250716204207.73869849@canb.auug.org.au>
+	s=arc-20240116; t=1752662624; c=relaxed/simple;
+	bh=DSS12tYkb9gpA8k48tPe3Spyi8HtEl2WRA7zK0gVzOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e0+q9AkQjvZGKWhRorM2XZvXFmhY1BSsnvPBl2ttM0SGD0fnr2aoCfPqP7RXmxM5qu13YCtTbxvWagGaq9Uu1vn+Q1cjLgXaxirlAjlLMjO3PII3vfMjpCg6+8vT/RRUZPtjTBOM4N1tX1ZIEFH+TC0kRtZiinD5/ZxK84j29sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYvD4Q1X; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-748feca4a61so3691452b3a.3;
+        Wed, 16 Jul 2025 03:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752662622; x=1753267422; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MqHz3LAqr/WfrRthPIXWiwm5tyxxKiyEt4eW0IKFByc=;
+        b=MYvD4Q1XBExEVUo93hxLnOy47mwvE+qvuENuTl04Ssfl6hG622WYGIsDpYbySfKSLg
+         O6TtEnhzksjgrK02CGnrpPzba9XQrv67wqIZ+lTaQGApRa8Co00AL0LEYs7SFe1MWVmv
+         M+PtdiEQPVfPgZLuB4tskA6HxSJSiUMHwFr3hPdUxZzMQQtQ2AJQtrsCLkuJnxiyrVUM
+         e57nKKl9VMpXjncAyzoTDeeAbCqnUeHQIFQXN3YvdtSbF/P/ypgE9OyP5SAH98OD5Ju4
+         UQwmCIdHcp/Pxv94LO0kNRirrAQLEVHI1p6m6UnHzL5ZIJGd4BwZIAuWzSbHu1c4ZIwD
+         UWNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752662622; x=1753267422;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MqHz3LAqr/WfrRthPIXWiwm5tyxxKiyEt4eW0IKFByc=;
+        b=eJnuIkjV7PLpHabEDomqe95qugLmn89VqYENrsROrRy59gTkextjMWjqEEZjwYDOL2
+         jmq4nipfP9uoObCT7U5atC3yHhLetgeq6g4kRiNs8vYBQ7nVLpgzS1Lbm21UvOStL3cj
+         Ek0tMvdubaY1omWZZDmf0DmsbpXNTuTblxsd/2HUe30JxEN3tD8vAr7TP93bnjYut/O5
+         20yu9bOM6R52kMhGSzu9ErVTSNDkedh56IZryAoK9jSZvLLCjoFUTxk/cGIgHs7ImZDi
+         p25gqQ6YVRrLykx9Zm8qYkLs50vr+tEKUTPZe/bRQa5mmot1lOuEt69U2DF/sXOQARIQ
+         81tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWt+KNGv9JpyEOE7ylNJsFgp3tvQt4X2M1C6A4x7OWbRgo8BJGfscKkVTgDj86U32YA+wYcWQoysP4xJwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbigMPhtpjOuJRDGsh3nALu5RPXLrzk07vBHYHQqgPWkGKdyLk
+	CFxiEVLLygor4/IS434iMedh7bXnuDYdAk6iq3vUMbL3f9bZSmvnUtba
+X-Gm-Gg: ASbGnct48FuOqQUpkwL2mDl52rXh/eKUZsomZdmMP/93nbcrX1r5yGmiacqhPiNs0Ps
+	3w9dIh8AwbvX68UpsdLtHjeZtRSFljVNk9cWoo0LrIidSDtCw/x3qQYxqA7UmrqE6kXqCtDHcYd
+	jfo29fyXuIuOBnzLJFtSwYqkBzL0Owu1BSSsiAnEP3MaMmFKxfu7C7WjrwyFjVSEhImbZzBef/0
+	OaTqy5iR0NMsbUAr1QC48+/jU7xqsjxJLItN07KY0+DiEzGeYS5cSlgIJjRKjSiVRMGHYMJTJDL
+	aA0eCLVIFXiOT3dVWxJfYtXBEhKgkgX5Z/Kchf0M0xNGlqtw7UjmFVmp9bU/8iK7naZCYet2GaP
+	9QEFzsc26CuX68ZBeeYGaGCDbIOhu0GVvepXQMtFh
+X-Google-Smtp-Source: AGHT+IGtF7p5vbbiq8GwYN/PJMWf0axj8zu/NbAS1y+ksEiP135eXQg42/kcUxDpIMMltw/Yl2cNJA==
+X-Received: by 2002:a05:6a00:14d0:b0:74e:aa6f:eae1 with SMTP id d2e1a72fcca58-75723e744d2mr2950355b3a.14.1752662621615;
+        Wed, 16 Jul 2025 03:43:41 -0700 (PDT)
+Received: from victorshih.. ([2402:7500:486:ad4c:7324:5bd6:835d:4ac5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f856fdsm13914933b3a.144.2025.07.16.03.43.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 03:43:41 -0700 (PDT)
+From: Victor Shih <victorshihgli@gmail.com>
+To: ulf.hansson@linaro.org,
+	adrian.hunter@intel.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	benchuanggli@gmail.com,
+	ben.chuang@genesyslogic.com.tw,
+	HL.Liu@genesyslogic.com.tw,
+	Victor Shih <victorshihgli@gmail.com>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Subject: [PATCH V1] mmc: sdhci-pci-gli: GL9763e: Mask the replay timer timeout of AER
+Date: Wed, 16 Jul 2025 18:43:34 +0800
+Message-ID: <20250716104334.44020-1-victorshihgli@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7pqnMI5aY_MNELK_M0GirA7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/7pqnMI5aY_MNELK_M0GirA7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Victor Shih <victor.shih@genesyslogic.com.tw>
 
-Hi all,
+Due to a flaw in the hardware design, the GL9763e replay timer frequently
+times out when ASPM is enabled. As a result, the warning messages will
+often appear in the system log when the system accesses the GL9763e
+PCI config. Therefore, the replay timer timeout must be masked.
 
-After merging the iommu tree, today's linux-next build (htmldocs)
-produced this warning:
+Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+---
+ drivers/mmc/host/sdhci-pci-gli.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Documentation/ABI/testing/debugfs-amd-iommu:31: ERROR: Unexpected indentati=
-on. [docutils]
-Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends w=
-ithout a blank line; unexpected unindent. [docutils]
-Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends w=
-ithout a blank line; unexpected unindent. [docutils]
+diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
+index 4c2ae71770f7..eb3954729a3c 100644
+--- a/drivers/mmc/host/sdhci-pci-gli.c
++++ b/drivers/mmc/host/sdhci-pci-gli.c
+@@ -1754,6 +1754,7 @@ static int gl9763e_add_host(struct sdhci_pci_slot *slot)
+ static void gli_set_gl9763e(struct sdhci_pci_slot *slot)
+ {
+ 	struct pci_dev *pdev = slot->chip->pdev;
++	int aer;
+ 	u32 value;
+ 
+ 	pci_read_config_dword(pdev, PCIE_GLI_9763E_VHS, &value);
+@@ -1780,6 +1781,14 @@ static void gli_set_gl9763e(struct sdhci_pci_slot *slot)
+ 	value |= FIELD_PREP(GLI_9763E_HS400_RXDLY, GLI_9763E_HS400_RXDLY_5);
+ 	pci_write_config_dword(pdev, PCIE_GLI_9763E_CLKRXDLY, value);
+ 
++	/* mask the replay timer timeout of AER */
++	aer = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ERR);
++	if (aer) {
++		pci_read_config_dword(pdev, aer + PCI_ERR_COR_MASK, &value);
++		value |= PCI_ERR_COR_REP_TIMER;
++		pci_write_config_dword(pdev, aer + PCI_ERR_COR_MASK, value);
++	}
++
+ 	pci_read_config_dword(pdev, PCIE_GLI_9763E_VHS, &value);
+ 	value &= ~GLI_9763E_VHS_REV;
+ 	value |= FIELD_PREP(GLI_9763E_VHS_REV, GLI_9763E_VHS_REV_R);
+-- 
+2.43.0
 
-Introduced by commit
-
-  39215bb3b0d9 ("iommu/amd: Add documentation for AMD IOMMU debugfs support=
-")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/7pqnMI5aY_MNELK_M0GirA7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh3gf8ACgkQAVBC80lX
-0Gzsywf/SU8SVdg8SJL1mxzrT0n9QASCTQUWlz8ad0BdHJNxKCgotRelPO5i+LGN
-P2N3t7yx7hQ8M8HtPU62GhbKt4MPO0K1Oqy6mf9rMRFIwtQFq1U52oUuGjB3noL2
-1mqPJ6zbn1kvr9gssrOmVDoA50afNMdautWL9qP2/aA8ZC5o/jFTSC0kyV/VFggR
-Tbef4sd352L0CCgpKtFUzmy/bUDktfV8qaOSJrkWOlLsk+gYc/JvZMHdnzHrGrrX
-briuYjcGe4TpEOPa0Wo8yEXNhmJ8tOqfrAnDwfGsTXXH+8tjon8pokVAlEDZo87d
-bPSP5ALn9t1rtVFmd91kqTWboe4RKQ==
-=9/Gp
------END PGP SIGNATURE-----
-
---Sig_/7pqnMI5aY_MNELK_M0GirA7--
 
