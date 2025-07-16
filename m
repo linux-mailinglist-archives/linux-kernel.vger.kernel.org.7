@@ -1,375 +1,566 @@
-Return-Path: <linux-kernel+bounces-734247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55EFB07EED
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:30:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B95B07EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC0F165420
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6FB1C405AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24422BE057;
-	Wed, 16 Jul 2025 20:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC30C2BE652;
+	Wed, 16 Jul 2025 20:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kRZUrBp8"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011001.outbound.protection.outlook.com [52.101.70.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amVHrlQq"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD260273FD;
-	Wed, 16 Jul 2025 20:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752697840; cv=fail; b=ClxJ5bk4pWHZoJnmjYzo9CoGuC7yJ/vDvtMpnzQWkh2O+z8rfBM9/zCR1fEUxwXTA8Tkf5gGoChV1g1/fkASBSGnBgFa32Swc0Gtqjn5JUg0uN373jy6arWPzQ6g2CNJYoR54D77KIXokYT1UzY9WfxNl742oKqVw1Kprl3EhYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752697840; c=relaxed/simple;
-	bh=ZVVL2eaLNxq3DprS3iz3eKwGHqTe7Oq4Ew1T+pStQl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LfUZQ4ODxWuuy5EDwuiz7FJLcGBqW1Iwneb8uxT7tX/NIsmJnFHgBj30a1uUEOcbT/pB076VEJJDvNhT2targ3weUiEG5hiWtgOHiNlo2fzmAG7NQctffPQ5gAySqMkUwhn379xToeY0GUmyfX6QHWi3zm+eOqNveHXeSAqTtj0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kRZUrBp8; arc=fail smtp.client-ip=52.101.70.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JM+ihQID/Eqv7FfeSOMbmON65EKMpLyI8RBeepo7u4iydYUaTtbZaMOQxNkLNNXuzRsp6Wtf0HImBzglShhd+ZViFIy+kRkvnlKlcpB+H99R31ySHr/yXXUj8vu0AEdhCHLzpmUEoIwsInhkCqU0oGQOcgFEjszMQY80se0rimV6R9SgEUsvjTT+zQaWhF8zAxtO0YKW2qTz7Zlsn4dO347/JH9G+TcnwHOc2nGatBoPsuagnlqp/U1VwmLcuNM/04BxxnUeKMd0BkscOUwb3dfiT0K3+Z+SNq1QKnt0kNpuFiMGyvs3uaX13H0PSf+xADkVZ2oTwcI40Lgw76TTwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pb6iJwqb56dk0rN9QGVZy44OR34IUY8svTLIomr28cM=;
- b=jBjsBAo2yU+rh0yWmz+GZU88RMIEwEjntid3bOCFBr1G+yNQ4tPpJFxY5des025Pq3Lehy9jR8pSWunK6ZdbxeMph+mGSTFGhQRAEMZIpYU5a4hGC9j/3eD8D4WmSx3SuYHZE5wOkJ6J0YgFiCwBsOzwwJuz8cqjDkGum3wTuacL0LPUviGbsijNrXokMyVhCpZyVShquo1zHhBvFwxOtCoLIoTWy7opcoNfmNxveHPiqswqPd1K5vt14dzFTnNBUf06j4CCJDZoF26Q431/xZSi3YYLcp7F5V+t6wW8JbkhcN4n6OWuZS18zbbWedkfTBDe/znFfQMBmD49Xw429g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pb6iJwqb56dk0rN9QGVZy44OR34IUY8svTLIomr28cM=;
- b=kRZUrBp85+pdCsuloyDoeptB336B72o7qSLpjwlIlAYLUOkWZR30z873coBuLCLowH5zuy6kBe1SBkQ6JRbnOT/NkV/4QYrmNRTlN9cFrJPWQsUjFe4hjSrs68IMYtcHWT99TAQdqTIqMRrYw7BJxMNWY38s6LgL9ZoZRn8n8TICof5PgvxOd7ARhlwmmeRpOdOE1epcm7nDHnj+7cvqPjJUXRkWG2+BzYnaDJmaL24pxzfpjxyB8zMo4Bu1aazuMDCJuH0eF/FA4yMHCzEDUEZMls2TUW+VzwelJ8N+bEbz/EqKhnATSlGAx3gY2Yw6xqzsKNuKIfk/9Ajo80UjxQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS1PR04MB9383.eurprd04.prod.outlook.com (2603:10a6:20b:4d9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Wed, 16 Jul
- 2025 20:30:31 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
- 20:30:31 +0000
-Date: Wed, 16 Jul 2025 16:30:25 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	richardcochran@gmail.com, claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	fushi.peng@nxp.com, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v2 net-next 06/14] ptp: netc: add external trigger stamp
- support
-Message-ID: <aHgL4dM2TIeNSCCr@lizhi-Precision-Tower-5810>
-References: <20250716073111.367382-1-wei.fang@nxp.com>
- <20250716073111.367382-7-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716073111.367382-7-wei.fang@nxp.com>
-X-ClientProxiedBy: AM8P191CA0030.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:20b:21a::35) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B7C4501A;
+	Wed, 16 Jul 2025 20:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752697856; cv=none; b=BRYz8F4wC8ph4lTxtbe+nczUAlhBbWY0K8bPG870f0KbopysLxM8luFvk5nkHHiOLiGQODFEtreZ9ruQa0LYvU2jZfkqKVgdZIhopzuAD41BMP1tOKCYW/Vur0UWi/+kpkwKhY0H5QSxbTCaZSc+nagBGDoe5/B3/MtBN4oDgxI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752697856; c=relaxed/simple;
+	bh=W+tj1VjebJyBlbDrUwyTO4k6ZV8Fx/M7ZW+IIVwIEeI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZgraYoU0WqEO0uCsg5iP0T4piNMsLWTIhhlmDkNiWqegadzI5OMX8cGPcMTSvWLyp06BYmvK4V86/kxJIT9vWe/iB8Dxue4waGWu2XrNoRIrSNiJkN+x5rrKKv448rtyJ0vRr6MMu82kc+iU58NmnuVXMCCU5V8HkaErXN+IdL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amVHrlQq; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-748d982e97cso302618b3a.1;
+        Wed, 16 Jul 2025 13:30:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752697854; x=1753302654; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=jToX5vgvYOWNpQ7PhcvwxjAp3iiECWlZTnbgwdsh67M=;
+        b=amVHrlQq01/RHDjHkMha+Cs7NG1vXBEdIw80tdQ9bGaBLSKX3byryTLBpy3A41z0C7
+         u60ybXFRod+tD9/E8u97Jvuc1AXsM7O3pEd/G1G2Lsp28yMNUfJnFzmWdywVKf/Nu/IJ
+         DUNZvdUdK3GV/xdXmRF9CpqRzxjmlYEzWvaVJ7/gs2w9pUQfq2LnjKQQ5P7gPC2wR1pa
+         Xz2Kl9f130jfEv29V3pAAXIJnp9vCn13LBoKDgW0P2qaCPb5FFm4kCavOddIyaToN2Z/
+         N5lXKTCjFNsfSxxTfYiSAm93qPkH7VFkaGcCMPsac+/qA4P9pyDy9os0tHUNb095cwOo
+         4OAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752697854; x=1753302654;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jToX5vgvYOWNpQ7PhcvwxjAp3iiECWlZTnbgwdsh67M=;
+        b=pvfg/V9Isld4kmC22PlpjQ20VXjJFilbEiHq5M0EuqIlhVZ8e0fvoTmsLvPavYHs6e
+         OcC+0Yz3cZ3XWy7p87iJbqa4M5Dp5ARQaLrnuuh9ka5UrynaNmzFXeHFGRSuUCFBjdWs
+         bh0YsVH1+IHy7/oYFBZvH+LuiJbgfGPJE46IhvriaSCdOP8zsNr59wclGjdknNqzlnl1
+         grfDMWIP8QQBO3gBwNP3WaUvtn2T2phDN4esYGmC6Gwxzs+HjyoXtA9RxEPZ05NhxU0Z
+         vbtyeRGBQLtMBnHa4ldlALsa4FUkH/XojLdUvvJxpSO6JvulMPoCbzMwSis7psQ4D+f4
+         zjJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGb6ltacql5wvXb6A/38lBd5XOidIy6IKMkUkg1ZhXp2DvPPy+Wq2RF9h2beo6aXeScvA2cGmwvjOFzJUY@vger.kernel.org, AJvYcCWTIxmsVsuByKw8vHiVbp5fh5uBcUWr2FsNQVatkbYszcPuvKiloWm4ZexQV3brgEyv2tCwhw3E2jeg7nY=@vger.kernel.org, AJvYcCWtX07KWi2CNy4dQkhrQJdu8OKzvfg7ncc+2UPjQzrg9Nvr0UH7MNE7ZJOYZrujQQFsRe/LZ20jYCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUWOFBfC4q4U/Qydq7ltaa3KivRwgefwsbgSgvTCBRgXYBA6B3
+	Q67Ln3FNKvhhw7Ue9QI/B9D/bm2Xe/Px4OvuN63kfYFHCeU9+71f0XnlcdsTHQ==
+X-Gm-Gg: ASbGncuLJFllOIifOKlMTvEKZu4FaoUmgZ9Mu9g8wRCDg/XP2H9oyLEVXYo2jctrJqO
+	cvo+QBtCg0qPx4lg5YtAbS6Hu8PaIiFB+J9EQX3M1gqwlUcFJ4fEl3rBqs0i+25oLvB6cyFk9H4
+	NBuAajO8138b7BnLEdAhOq8XdefDGP/zDTv6YlNaVDBUZMi3sNtkT3w6ty3x2Ey6Kjgcaqhy3eU
+	vqjPKCdxtOtDtKEQQ792JGInPK4WYyxX8zJ3ZCHhWHSVeAucFgv5t35FlIN+4YXKptwS1upuYno
+	AcnDA5FVJqkmrxwKEwNE4PaWVezjZpJXlHCZTx/gVqUYz1Scu7zlMkDL3iqoi1BKzpcd8HmnHZg
+	c8r4ceSjuznFI0EQrQX3MhVU7FiQ+YZH6oYF37AEtpSxK2ga6j0I9VSGbbkuaxjZGHfYcZAI=
+X-Google-Smtp-Source: AGHT+IHAttu6gwxIToTJ+F1XiyqkL1tlyMlREf+ZnPiny7r/1mgK6Gn/BYUZnN0LtcXBYnOaReNjgw==
+X-Received: by 2002:a05:6300:619c:b0:232:c9de:4d98 with SMTP id adf61e73a8af0-23811055d11mr6953618637.11.1752697853925;
+        Wed, 16 Jul 2025 13:30:53 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe52cbcasm14152134a12.4.2025.07.16.13.30.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 13:30:53 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <039c31c3-af15-46e0-98fb-f3a54fcf73e5@roeck-us.net>
+Date: Wed, 16 Jul 2025 13:30:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS1PR04MB9383:EE_
-X-MS-Office365-Filtering-Correlation-Id: 459dc2cc-fdcf-4183-719e-08ddc4a79c0a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|19092799006|7416014|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SjoSb8X1ZBgPamREAWaRG6/2vPa3Us39Tg8xrqxF+0gUUK9++njN+JNLg7Lu?=
- =?us-ascii?Q?2f7SfqfW/zPNMY6LuXyxRXh7Sy7AgRMJ9IRpHdSFt9T3qIHs0ElMYOW42q/2?=
- =?us-ascii?Q?/ShMoFvjNel8xeNfEsRIFv/oed8Z84KMBptrsykfXWCJ1j5+8cb3gJjZ2o9d?=
- =?us-ascii?Q?E6+3qVDDQkwHlre1XY6L+qgg6PJMPg7COstrQECmer8r9vHbxwYjZRiSiMFn?=
- =?us-ascii?Q?vn/9adgVYAwl+MlpF1zbSMR0Vwgbl5k6vRcA1xG21AMh7wkEIOxNcsH9am/b?=
- =?us-ascii?Q?1VWMiZuHEeUIDHEVQQP2CnG3lz3NP0ogtD/tkzQ7TQEG6MpMc4YJAzgRAJlK?=
- =?us-ascii?Q?JfieL+NJG+LcS4+hmmBwJV1hQOzfpEocUdhIiKvIoMKs2czd6Ss7pP4LsgB3?=
- =?us-ascii?Q?7KKohhv/kPsDSnngZiouG1IGOiijBcOfYpP3DhG52ojfC8jDtHQ07w/oijp3?=
- =?us-ascii?Q?SijQWIQ32gAPoG4H8hiB0QSI3VPaRRI8Ft/LS22yl9pdPEenMdckjtXYjXUx?=
- =?us-ascii?Q?2Vs+xZ3gdSC1coH/cKEpENkhupG1zShakdbwkoBto6LBdY+wpdsg98dp8Txn?=
- =?us-ascii?Q?q2mtZ5RQzNOYoUutouiEYP+LiJhN7b8skwlH70jrYjdPu6tXPgGhn6Na/ah8?=
- =?us-ascii?Q?e7/7nfvIMJvD2cMy+RJSKTF1/VoCOlleAN6r54Rmg/Sa5H19HZCrkLlDkeJL?=
- =?us-ascii?Q?3ZQ5y4R2S45dHv9l1wDqLXc6hfdOARiAykEEULJqkx63C3VW2Pr/gxkqusez?=
- =?us-ascii?Q?nq/aRXdjxJlsyVlVL6Sa9dg39fSw54z1+q9Rnf/qRTPaQ6SzBY+YBqX4prrD?=
- =?us-ascii?Q?b0Hizem7HjNtUhzcp8ezJMINyKPJIJnifk8wRHJjJBxc8B3ENDOz9AkJNOZA?=
- =?us-ascii?Q?j2o19CURSxl5LoctxoUJHCKg9oz8rwczRD7aI3ECDNB1Wy6hrjYSHe+e1qEl?=
- =?us-ascii?Q?ZrzDS9P29dITt9/e9TrOAXrxKIq6UsqDEfJu1eoUMy5eTQnrroRiWW56vFNg?=
- =?us-ascii?Q?yEKuCpGZVPrNKyfze+qr32Lz5ZAnyiYshBC4wY5abuuRaW2J6i3+AVpQiSop?=
- =?us-ascii?Q?S5seH6KZmkxGbboKPt5LpyHVMCL8cU//B5Z1XhHN7RiuelYclbcj2lr0n7Zz?=
- =?us-ascii?Q?7vpyDj8gSKB4i/zb0P5W/wr71BVzN5JVJEXByDK6ebEpQZrufZ1DhqmlWHrQ?=
- =?us-ascii?Q?GKt5N8eORtJNvKtuddsBmDcpfLXsEGFTfYLeDdSDlsCDrEm9wWIASnK8XQC1?=
- =?us-ascii?Q?bI4iytcF7fhxVB6Rrk9IyC3jMhhGF9akk45AY8/3osECgo0HcVil/ILfzcrt?=
- =?us-ascii?Q?02aekloBhn+QdfM7GAEwGFW6RNdnN5DnTm5wvbJBiJtYRS6wFhp1zi2PZBPH?=
- =?us-ascii?Q?eTaPlVInQMVR/RRba+L/U+9T/0NVek5rXk7ARVAEglBcWNf7Rqh3KUHB2vfc?=
- =?us-ascii?Q?VW1dVhzoGPWKOGHpSWezAF6i0/228zIEogh/6gixq+8FlvqtoIvJGQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(7416014)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+SI7JrhHyMiAjtklIB9ivDDLEmtK3td+M/ZU77rPaFKUxPu2E5DYMBRmEVnb?=
- =?us-ascii?Q?6D2+D6VgjEB/4Ye8NJ9wLF0h2IJ37XBiYBR8Weq9EskqAik5CL6wdJBo7A23?=
- =?us-ascii?Q?KUXgJjB6QQopRnJ14FWYrHkTUdUuJ6xYofhNv3N4TZ78/1sl0JSr3v/3Pzme?=
- =?us-ascii?Q?BT1K+XpFw8nPtglenofS5jpwi68E1xe0GqKlz7JBefVEXlaiKbz0qw2xJg9O?=
- =?us-ascii?Q?GC0ske1kFqdvOxCxv50miTFh7NaAgmDMh0V2smg3NgUfNIUKWuYJsQchy7+x?=
- =?us-ascii?Q?1x8RcfRmNaKwZ7GZ0JNPWEw1IkseRbVaTljKbdwnUZVL3hyA0WBpwwEb9Vvh?=
- =?us-ascii?Q?A3SWJPkHSWA2g3GCcMZQr4Q1qFQkJx0Ctt8VFewO2AG4bH88S7r2j/gvY35V?=
- =?us-ascii?Q?Ncyyusz2WnljjssmJU46OoxQUhh9wAC7zxdXIhzhfORZ7nbp6Ly+sOBFEQWi?=
- =?us-ascii?Q?qZyjoL1uDLRmJ6rm4NofOfVkTfF9+BvJgWJpfNvdXtPE0BP1yEc264zsg0rY?=
- =?us-ascii?Q?EWBH0epkIZUUsF8CPLO0Ira68CPGH1RBWi/dZVoRcwCVOIoDW+En5B1BbyTA?=
- =?us-ascii?Q?SKJu7A/wBNrAvK1kfalfFRjVnM7wWWB/RBc6iHsj3bKIUlJm8eaW+cT6FZOc?=
- =?us-ascii?Q?k7DES/q73AK6fgS523nHKbnEn2AGdih6o/y7hQ7fhgxRkFr8wrF5PbYfNeP0?=
- =?us-ascii?Q?37Ii3Vqhyn/nr/kckXYYFOrcUSgAW53AAyZ6ongT43dvWWQphiVRksu2MD5K?=
- =?us-ascii?Q?GkQhGc2atQIzdgPlK/1TzFYgR+9vFZTZY7d6aBxvXBMgXGlmdw1omHQJFezn?=
- =?us-ascii?Q?mPPPO1004mXz6E3L1POpTuj5x3zzYizZtOu58hkBoAqXkpyYE0DAz/Rieuz3?=
- =?us-ascii?Q?rzG5hRn1T5DyTZuSFJ6wdaLlVzk8zwFFDdOSm2P7Tv97uyUb+F24hxpwt1iC?=
- =?us-ascii?Q?kbUzrEC6F5Xu8bUgTLimr1uRSicXK3kc0a0tkdsAVrhb99LUQTPjW2grdI3X?=
- =?us-ascii?Q?pxd45dROBuBcgq3WiOxG1WPnZN8P3BUF+/2pe6s/O2GkDwM7nkUYPnWzIiYi?=
- =?us-ascii?Q?WykpgY8UUcAtVdxq2H8dJwSst1RMXH70ktWQENwnQYiFpGQ8If2JjizJUPLl?=
- =?us-ascii?Q?zUgaz26Jvhu8OAiJe116yPn8tQHZkkMn35S0ApKDuRyxN4yXpawgYdhp5AHv?=
- =?us-ascii?Q?QhKHfii658PPlbxpiijz4MAh1WL1DYdwwnonOvSgd6dczWM94VxHN1QFAC8G?=
- =?us-ascii?Q?514sUEsP6SqeBa07y5fQ2CYyTz5MImJgY9mMca1D5pDLNmlmCYVTRZA7YBx5?=
- =?us-ascii?Q?fatrUnanhtx69j5E2a7UwiQ2kDmHuxN+zTCGZTxrjpp38tnOtSmU/Xf5ukk9?=
- =?us-ascii?Q?4yiNi7t2iXWuio/lWLYC34DLzmr6rxGjr0yQI22G4qLYPgdIGZ3XWKmXfaEN?=
- =?us-ascii?Q?GXfS+utgJzngbOl2y8ywYN52pfzwWoO5xF5wohjeA0n0fvuXc7/JwGR6Jt8v?=
- =?us-ascii?Q?UicSncs78Zne70IlWBtnZAXN5+2L3kP4W+8zv/fxstwN6lmqnyBHCNt6ge+2?=
- =?us-ascii?Q?zmB0CBfSKh6w1jImhAMqIyhGL3IoWBDSIsT+J2s1?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 459dc2cc-fdcf-4183-719e-08ddc4a79c0a
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 20:30:31.5847
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7VKoK7TZn3Ol9Wz/U89chGoW834UDcK6OojU4CAlSZdG1XgkdkFvAzg7uAPyAaWdzzJRfl80g37oqQ5f3Lh1vg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9383
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] hwmon: add MP2869 series and MP29502 driver
+To: wenswang@yeah.net, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jdelvare@suse.com, corbet@lwn.net
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250709092734.455976-1-wenswang@yeah.net>
+ <20250709093420.456304-1-wenswang@yeah.net>
+ <20250709093420.456304-2-wenswang@yeah.net>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAmgrMyQFCSbODQkACgkQyx8mb86fmYGcWRAA
+ oRwrk7V8fULqnGGpBIjp7pvR187Yzx+lhMGUHuM5H56TFEqeVwCMLWB2x1YRolYbY4MEFlQg
+ VUFcfeW0OknSr1s6wtrtQm0gdkolM8OcCL9ptTHOg1mmXa4YpW8QJiL0AVtbpE9BroeWGl9v
+ 2TGILPm9mVp+GmMQgkNeCS7Jonq5f5pDUGumAMguWzMFEg+Imt9wr2YA7aGen7KPSqJeQPpj
+ onPKhu7O/KJKkuC50ylxizHzmGx+IUSmOZxN950pZUFvVZH9CwhAAl+NYUtcF5ry/uSYG2U7
+ DCvpzqOryJRemKN63qt1bjF6cltsXwxjKOw6CvdjJYA3n6xCWLuJ6yk6CAy1Ukh545NhgBAs
+ rGGVkl6TUBi0ixL3EF3RWLa9IMDcHN32r7OBhw6vbul8HqyTFZWY2ksTvlTl+qG3zV6AJuzT
+ WdXmbcKN+TdhO5XlxVlbZoCm7ViBj1+PvIFQZCnLAhqSd/DJlhaq8fFXx1dCUPgQDcD+wo65
+ qulV/NijfU8bzFfEPgYP/3LP+BSAyFs33y/mdP8kbMxSCjnLEhimQMrSSo/To1Gxp5C97fw5
+ 3m1CaMILGKCmfI1B8iA8zd8ib7t1Rg0qCwcAnvsM36SkrID32GfFbv873bNskJCHAISK3Xkz
+ qo7IYZmjk/IJGbsiGzxUhvicwkgKE9r7a1rOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAmgrMyQFCSbODQkACgkQyx8mb86fmYHlgg/9
+ H5JeDmB4jsreE9Bn621wZk7NMzxy9STxiVKSh8Mq4pb+IDu1RU2iLyetCY1TiJlcxnE362kj
+ njrfAdqyPteHM+LU59NtEbGwrfcXdQoh4XdMuPA5ADetPLma3YiRa3VsVkLwpnR7ilgwQw6u
+ dycEaOxQ7LUXCs0JaGVVP25Z2hMkHBwx6BlW6EZLNgzGI2rswSZ7SKcsBd1IRHVf0miwIFYy
+ j/UEfAFNW+tbtKPNn3xZTLs3quQN7GdYLh+J0XxITpBZaFOpwEKV+VS36pSLnNl0T5wm0E/y
+ scPJ0OVY7ly5Vm1nnoH4licaU5Y1nSkFR/j2douI5P7Cj687WuNMC6CcFd6j72kRfxklOqXw
+ zvy+2NEcXyziiLXp84130yxAKXfluax9sZhhrhKT6VrD45S6N3HxJpXQ/RY/EX35neH2/F7B
+ RgSloce2+zWfpELyS1qRkCUTt1tlGV2p+y2BPfXzrHn2vxvbhEn1QpQ6t+85FKN8YEhJEygJ
+ F0WaMvQMNrk9UAUziVcUkLU52NS9SXqpVg8vgrO0JKx97IXFPcNh0DWsSj/0Y8HO/RDkGXYn
+ FDMj7fZSPKyPQPmEHg+W/KzxSSfdgWIHF2QaQ0b2q1wOSec4Rti52ohmNSY+KNIW/zODhugJ
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250709093420.456304-2-wenswang@yeah.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 16, 2025 at 03:31:03PM +0800, Wei Fang wrote:
-> From: "F.S. Peng" <fushi.peng@nxp.com>
->
-> The NETC Timer is capable of recording the timestamp on receipt of an
-> external pulse on a GPIO pin. It supports two such external triggers.
-> The recorded value is saved in a 16 entry FIFO accessed by
-> TMR_ETTSa_H/L. An interrupt can be generated when the trigger occurs,
-> when the FIFO reaches a threshold, and if the FIFO overflows.
->
-> Signed-off-by: F.S. Peng <fushi.peng@nxp.com>
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-
+On 7/9/25 02:34, wenswang@yeah.net wrote:
+> From: Wensheng Wang <wenswang@yeah.net>
+> 
+> Add support for MPS VR mp2869 series and mp29502 controller. The
+> driver exposes telemetry and limit value readings and writtings.
+> 
+> Signed-off-by: Wensheng Wang <wenswang@yeah.net>
 > ---
->  drivers/ptp/ptp_netc.c | 118 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 118 insertions(+)
->
-> diff --git a/drivers/ptp/ptp_netc.c b/drivers/ptp/ptp_netc.c
-> index 289cdd50ae3d..c2fc6351db5b 100644
-> --- a/drivers/ptp/ptp_netc.c
-> +++ b/drivers/ptp/ptp_netc.c
-> @@ -18,6 +18,8 @@
->  #define NETC_TMR_CTRL			0x0080
->  #define  TMR_CTRL_CK_SEL		GENMASK(1, 0)
->  #define  TMR_CTRL_TE			BIT(2)
-> +#define  TMR_ETEP1			BIT(8)
-> +#define  TMR_ETEP2			BIT(9)
->  #define  TMR_COMP_MODE			BIT(15)
->  #define  TMR_CTRL_TCLK_PERIOD		GENMASK(25, 16)
->  #define  TMR_CTRL_FS			BIT(28)
-> @@ -28,12 +30,26 @@
->  #define  TMR_TEVENT_PPEN_ALL		GENMASK(7, 5)
->  #define  TMR_TEVENT_ALM1EN		BIT(16)
->  #define  TMR_TEVENT_ALM2EN		BIT(17)
-> +#define  TMR_TEVENT_ETS1_THREN		BIT(20)
-> +#define  TMR_TEVENT_ETS2_THREN		BIT(21)
-> +#define  TMR_TEVENT_ETS1EN		BIT(24)
-> +#define  TMR_TEVENT_ETS2EN		BIT(25)
-> +#define  TMR_TEVENT_ETS1_OVEN		BIT(28)
-> +#define  TMR_TEVENT_ETS2_OVEN		BIT(29)
-> +#define  TMR_TEVENT_ETS1		(TMR_TEVENT_ETS1_THREN | \
-> +					 TMR_TEVENT_ETS1EN | TMR_TEVENT_ETS1_OVEN)
-> +#define  TMR_TEVENT_ETS2		(TMR_TEVENT_ETS2_THREN | \
-> +					 TMR_TEVENT_ETS2EN | TMR_TEVENT_ETS2_OVEN)
->
->  #define NETC_TMR_TEMASK			0x0088
-> +#define NETC_TMR_STAT			0x0094
-> +#define  TMR_STAT_ETS1_VLD		BIT(24)
-> +#define  TMR_STAT_ETS2_VLD		BIT(25)
->  #define NETC_TMR_CNT_L			0x0098
->  #define NETC_TMR_CNT_H			0x009c
->  #define NETC_TMR_ADD			0x00a0
->  #define NETC_TMR_PRSC			0x00a8
-> +#define NETC_TMR_ECTRL			0x00ac
->  #define NETC_TMR_OFF_L			0x00b0
->  #define NETC_TMR_OFF_H			0x00b4
->
-> @@ -51,6 +67,10 @@
->  #define  FIPER_CTRL_PW(i)		(GENMASK(4, 0) << (i) * 8)
->  #define  FIPER_CTRL_SET_PW(i, v)	(((v) & GENMASK(4, 0)) << 8 * (i))
->
-> +#define NETC_TMR_ETTS1_L		0x00e0
-> +#define NETC_TMR_ETTS1_H		0x00e4
-> +#define NETC_TMR_ETTS2_L		0x00e8
-> +#define NETC_TMR_ETTS2_H		0x00ec
->  #define NETC_TMR_CUR_TIME_L		0x00f0
->  #define NETC_TMR_CUR_TIME_H		0x00f4
->
-> @@ -67,6 +87,7 @@
->  #define NETC_TMR_DEFAULT_FIPER		GENMASK(31, 0)
->  #define NETC_TMR_FIPER_MAX_PW		GENMASK(4, 0)
->  #define NETC_TMR_ALARM_NUM		2
-> +#define NETC_TMR_DEFAULT_ETTF_THR	7
->
->  /* 1588 timer reference clock source select */
->  #define NETC_TMR_CCM_TIMER1		0 /* enet_timer1_clk_root, from CCM */
-> @@ -450,6 +471,91 @@ static int net_timer_enable_perout(struct netc_timer *priv,
->  	return err;
->  }
->
-> +static void netc_timer_handle_etts_event(struct netc_timer *priv, int index,
-> +					 bool update_event)
-> +{
-> +	u32 regoff_l, regoff_h, etts_l, etts_h, ets_vld;
-> +	struct ptp_clock_event event;
+> V2 -> V3:
+>      merge patches for MP29502 and MP2869
+> 
+> V1 -> V2:
+>      add Rob's Acked-by
+> 
+>   Documentation/hwmon/index.rst   |   2 +
+>   Documentation/hwmon/mp2869.rst  | 175 ++++++++
+>   Documentation/hwmon/mp29502.rst |  93 +++++
+>   MAINTAINERS                     |   9 +
+>   drivers/hwmon/pmbus/Kconfig     |  18 +
+>   drivers/hwmon/pmbus/Makefile    |   2 +
+>   drivers/hwmon/pmbus/mp2869.c    | 711 ++++++++++++++++++++++++++++++++
+>   drivers/hwmon/pmbus/mp29502.c   | 670 ++++++++++++++++++++++++++++++
+>   8 files changed, 1680 insertions(+)
+>   create mode 100644 Documentation/hwmon/mp2869.rst
+>   create mode 100644 Documentation/hwmon/mp29502.rst
+>   create mode 100644 drivers/hwmon/pmbus/mp2869.c
+>   create mode 100644 drivers/hwmon/pmbus/mp29502.c
+> 
+> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
+> index b45bfb4ebf30..ebc5c92e50b0 100644
+> --- a/Documentation/hwmon/index.rst
+> +++ b/Documentation/hwmon/index.rst
+> @@ -172,8 +172,10 @@ Hardware Monitoring Kernel Drivers
+>      menf21bmc
+>      mlxreg-fan
+>      mp2856
+> +   mp2869
+>      mp2888
+>      mp2891
+> +   mp29502
+>      mp2975
+>      mp2993
+>      mp5023
+> diff --git a/Documentation/hwmon/mp2869.rst b/Documentation/hwmon/mp2869.rst
+> new file mode 100644
+> index 000000000000..2d9d65fc86b6
+> --- /dev/null
+> +++ b/Documentation/hwmon/mp2869.rst
+> @@ -0,0 +1,175 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +	switch (index) {
-> +	case 0:
-> +		ets_vld = TMR_STAT_ETS1_VLD;
-> +		regoff_l = NETC_TMR_ETTS1_L;
-> +		regoff_h = NETC_TMR_ETTS1_H;
-> +		break;
-> +	case 1:
-> +		ets_vld = TMR_STAT_ETS2_VLD;
-> +		regoff_l = NETC_TMR_ETTS2_L;
-> +		regoff_h = NETC_TMR_ETTS2_H;
-> +		break;
-> +	default:
-> +		return;
-> +	}
+> +Kernel driver mp2869
+> +====================
 > +
-> +	if (!(netc_timer_rd(priv, NETC_TMR_STAT) & ets_vld))
-> +		return;
+> +Supported chips:
 > +
-> +	do {
-> +		etts_l = netc_timer_rd(priv, regoff_l);
-> +		etts_h = netc_timer_rd(priv, regoff_h);
-> +	} while (netc_timer_rd(priv, NETC_TMR_STAT) & ets_vld);
+> +  * MPS mp2869
 > +
-> +	if (update_event) {
-> +		event.type = PTP_CLOCK_EXTTS;
-> +		event.index = index;
-> +		event.timestamp = (u64)etts_h << 32;
-> +		event.timestamp |= etts_l;
-> +		ptp_clock_event(priv->clock, &event);
-> +	}
-> +}
+> +    Prefix: 'mp2869'
 > +
-> +static int netc_timer_enable_extts(struct netc_timer *priv,
-> +				   struct ptp_clock_request *rq, int on)
-> +{
-> +	u32 ets_emask, tmr_emask, tmr_ctrl, ettp_bit;
-> +	unsigned long flags;
+> +  * MPS mp29608
 > +
-> +	/* Reject requests to enable time stamping on both edges */
-> +	if ((rq->extts.flags & PTP_EXTTS_EDGES) == PTP_EXTTS_EDGES)
-> +		return -EOPNOTSUPP;
+> +    Prefix: 'mp29608'
 > +
-> +	switch (rq->extts.index) {
-> +	case 0:
-> +		ettp_bit = TMR_ETEP1;
-> +		ets_emask = TMR_TEVENT_ETS1;
-> +		break;
-> +	case 1:
-> +		ettp_bit = TMR_ETEP2;
-> +		ets_emask = TMR_TEVENT_ETS2;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
+> +  * MPS mp29612
 > +
-> +	spin_lock_irqsave(&priv->lock, flags);
+> +    Prefix: 'mp29612'
 > +
-> +	netc_timer_handle_etts_event(priv, rq->extts.index, false);
-> +	tmr_emask = netc_timer_rd(priv, NETC_TMR_TEMASK);
-> +	if (on) {
-> +		tmr_ctrl = netc_timer_rd(priv, NETC_TMR_CTRL);
-> +		if (rq->extts.flags & PTP_FALLING_EDGE)
-> +			tmr_ctrl |= ettp_bit;
-> +		else
-> +			tmr_ctrl &= ~ettp_bit;
+> +  * MPS mp29816
 > +
-> +		netc_timer_wr(priv, NETC_TMR_CTRL, tmr_ctrl);
-> +		tmr_emask |= ets_emask;
-> +	} else {
-> +		tmr_emask &= ~ets_emask;
-> +	}
+> +    Prefix: 'mp29816'
 > +
-> +	netc_timer_wr(priv, NETC_TMR_TEMASK, tmr_emask);
+> +Author:
 > +
-> +	spin_unlock_irqrestore(&priv->lock, flags);
+> +	Wensheng Wang <wenswang@yeah.net>
 > +
-> +	return 0;
-> +}
+> +Description
+> +-----------
 > +
->  static void netc_timer_disable_fiper(struct netc_timer *priv)
->  {
->  	u32 fiper_ctrl = netc_timer_rd(priv, NETC_TMR_FIPER_CTRL);
-> @@ -505,6 +611,8 @@ static int netc_timer_enable(struct ptp_clock_info *ptp,
->  		return netc_timer_enable_pps(priv, rq, on);
->  	case PTP_CLK_REQ_PEROUT:
->  		return net_timer_enable_perout(priv, rq, on);
-> +	case PTP_CLK_REQ_EXTTS:
-> +		return netc_timer_enable_extts(priv, rq, on);
->  	default:
->  		return -EOPNOTSUPP;
->  	}
-> @@ -638,6 +746,9 @@ static const struct ptp_clock_info netc_timer_ptp_caps = {
->  	.n_pins		= 0,
->  	.pps		= 1,
->  	.n_per_out	= 3,
-> +	.n_ext_ts	= 2,
-> +	.supported_extts_flags = PTP_RISING_EDGE | PTP_FALLING_EDGE |
-> +				 PTP_STRICT_FLAGS,
->  	.adjfine	= netc_timer_adjfine,
->  	.adjtime	= netc_timer_adjtime,
->  	.gettimex64	= netc_timer_gettimex64,
-> @@ -670,6 +781,7 @@ static void netc_timer_init(struct netc_timer *priv)
->  		fiper_ctrl &= ~FIPER_CTRL_PG(i);
->  	}
->  	netc_timer_wr(priv, NETC_TMR_FIPER_CTRL, fiper_ctrl);
-> +	netc_timer_wr(priv, NETC_TMR_ECTRL, NETC_TMR_DEFAULT_ETTF_THR);
->
->  	ktime_get_real_ts64(&now);
->  	ns = timespec64_to_ns(&now);
-> @@ -822,6 +934,12 @@ static irqreturn_t netc_timer_isr(int irq, void *data)
->  		ptp_clock_event(priv->clock, &event);
->  	}
->
-> +	if (tmr_event & TMR_TEVENT_ETS1)
-> +		netc_timer_handle_etts_event(priv, 0, true);
+> +This driver implements support for Monolithic Power Systems, Inc. (MPS)
+> +MP2869 Dual Loop Digital Multi-phase Controller.
 > +
-> +	if (tmr_event & TMR_TEVENT_ETS2)
-> +		netc_timer_handle_etts_event(priv, 1, true);
+> +Device compliant with:
 > +
->  	/* Clear interrupts status */
->  	netc_timer_wr(priv, NETC_TMR_TEVENT, tmr_event);
->
-> --
-> 2.34.1
->
+> +- PMBus rev 1.3 interface.
+> +
+> +The driver exports the following attributes via the 'sysfs' files
+> +for input voltage:
+> +
+> +**in1_input**
+> +
+> +**in1_label**
+> +
+> +**in1_crit**
+> +
+> +**in1_crit_alarm**
+> +
+> +**in1_lcrit**
+> +
+> +**in1_lcrit_alarm**
+> +
+> +**in1_min**
+> +
+> +**in1_min_alarm**
+> +
+> +The driver provides the following attributes for output voltage:
+> +
+> +**in2_input**
+> +
+> +**in2_label**
+> +
+> +**in2_crit**
+> +
+> +**in2_crit_alarm**
+> +
+> +**in2_lcrit**
+> +
+> +**in2_lcrit_alarm**
+> +
+> +**in3_input**
+> +
+> +**in3_label**
+> +
+> +**in3_crit**
+> +
+> +**in3_crit_alarm**
+> +
+> +**in3_lcrit**
+> +
+> +**in3_lcrit_alarm**
+> +
+> +The driver provides the following attributes for input current:
+> +
+> +**curr1_input**
+> +
+> +**curr1_label**
+> +
+> +**curr2_input**
+> +
+> +**curr2_label**
+> +
+> +The driver provides the following attributes for output current:
+> +
+> +**curr3_input**
+> +
+> +**curr3_label**
+> +
+> +**curr3_crit**
+> +
+> +**curr3_crit_alarm**
+> +
+> +**curr3_max**
+> +
+> +**curr3_max_alarm**
+> +
+> +**curr4_input**
+> +
+> +**curr4_label**
+> +
+> +**curr4_crit**
+> +
+> +**curr4_crit_alarm**
+> +
+> +**curr4_max**
+> +
+> +**curr4_max_alarm**
+> +
+> +The driver provides the following attributes for input power:
+> +
+> +**power1_input**
+> +
+> +**power1_label**
+> +
+> +**power2_input**
+> +
+> +**power2_label**
+> +
+> +The driver provides the following attributes for output power:
+> +
+> +**power3_input**
+> +
+> +**power3_label**
+> +
+> +**power3_input**
+> +
+> +**power3_label**
+> +
+> +**power3_max**
+> +
+> +**power3_max_alarm**
+> +
+> +**power4_input**
+> +
+> +**power4_label**
+> +
+> +**power4_input**
+> +
+> +**power4_label**
+> +
+> +**power4_max**
+> +
+> +**power4_max_alarm**
+> +
+> +The driver provides the following attributes for temperature:
+> +
+> +**temp1_input**
+> +
+> +**temp1_crit**
+> +
+> +**temp1_crit_alarm**
+> +
+> +**temp1_max**
+> +
+> +**temp1_max_alarm**
+> +
+> +**temp2_input**
+> +
+> +**temp2_crit**
+> +
+> +**temp2_crit_alarm**
+> +
+> +**temp2_max**
+> +
+> +**temp2_max_alarm**
+> diff --git a/Documentation/hwmon/mp29502.rst b/Documentation/hwmon/mp29502.rst
+> new file mode 100644
+> index 000000000000..7743056f0aa6
+> --- /dev/null
+> +++ b/Documentation/hwmon/mp29502.rst
+> @@ -0,0 +1,93 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +Kernel driver mp29502
+> +====================
+> +
+> +Supported chips:
+> +
+> +  * MPS mp29502
+> +
+> +    Prefix: 'mp29502'
+> +
+> +Author:
+> +
+> +	Wensheng Wang <wenswang@yeah.net>
+> +
+> +Description
+> +-----------
+> +
+> +This driver implements support for Monolithic Power Systems, Inc. (MPS)
+> +MP29502 Digital Multi-phase Controller.
+> +
+> +Device compliant with:
+> +
+> +- PMBus rev 1.3 interface.
+> +
+> +The driver exports the following attributes via the 'sysfs' files
+> +for input voltage:
+> +
+> +**in1_input**
+> +
+> +**in1_label**
+> +
+> +**in1_crit**
+> +
+> +**in1_crit_alarm**
+> +
+> +The driver provides the following attributes for output voltage:
+> +
+> +**in2_input**
+> +
+> +**in2_label**
+> +
+> +**in2_crit**
+> +
+> +**in2_crit_alarm**
+> +
+> +**in2_lcrit**
+> +
+> +**in2_lcrit_alarm**
+> +
+> +The driver provides the following attributes for input current:
+> +
+> +**curr1_input**
+> +
+> +**curr1_label**
+> +
+> +The driver provides the following attributes for output current:
+> +
+> +**curr2_input**
+> +
+> +**curr2_label**
+> +
+> +**curr2_crit**
+> +
+> +**curr2_crit_alarm**
+> +
+> +**curr2_max**
+> +
+> +**curr2_max_alarm**
+> +
+> +The driver provides the following attributes for input power:
+> +
+> +**power1_input**
+> +
+> +**power1_label**
+> +
+> +The driver provides the following attributes for output power:
+> +
+> +**power2_input**
+> +
+> +**power2_label**
+> +
+> +The driver provides the following attributes for temperature:
+> +
+> +**temp1_input**
+> +
+> +**temp1_crit**
+> +
+> +**temp1_crit_alarm**
+> +
+> +**temp1_max**
+> +
+> +**temp1_max_alarm**
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 240793fbe64b..b4377f0eb3a1 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16839,6 +16839,15 @@ F:	scripts/module*
+>   F:	tools/testing/selftests/kmod/
+>   F:	tools/testing/selftests/module/
+>   
+> +MONOLITHIC POWER SYSTEM MULTI-PHASE CONTROLLER DRIVER
+> +M:	Wensheng Wang <wenswang@yeah.net>
+> +L:	linux-hwmon@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/hwmon/mp2869.rst
+> +F:	Documentation/hwmon/mp29502.rst
+> +F:	drivers/hwmon/pmbus/mp2869.c
+> +F:	drivers/hwmon/pmbus/mp29502.c
+> +
+>   MONOLITHIC POWER SYSTEM PMIC DRIVER
+>   M:	Saravanan Sekar <sravanhome@gmail.com>
+>   S:	Maintained
+> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+> index 441f984a859d..d0bdd1b5feb6 100644
+> --- a/drivers/hwmon/pmbus/Kconfig
+> +++ b/drivers/hwmon/pmbus/Kconfig
+> @@ -364,6 +364,15 @@ config SENSORS_MP2856
+>   	  This driver can also be built as a module. If so, the module will
+>   	  be called mp2856.
+>   
+> +config SENSORS_MP2869
+> +	tristate "MPS MP2869"
+> +	help
+> +	  If you say yes here you get hardware monitoring support for MPS
+> +	  MP2869 Dual Loop Digital Multi-Phase Controller.
+> +
+> +	  This driver can also be built as a module. If so, the module will
+> +	  be called mp2869.
+> +
+>   config SENSORS_MP2888
+>   	tristate "MPS MP2888"
+>   	help
+> @@ -382,6 +391,15 @@ config SENSORS_MP2891
+>         This driver can also be built as a module. If so, the module will
+>         be called mp2891.
+>   
+> +config SENSORS_MP29502
+> +	tristate "MPS MP29502"
+> +	help
+> +	  If you say yes here you get hardware monitoring support for MPS
+> +	  MP29502 Dual Loop Digital Multi-Phase Controller.
+> +
+> +	  This driver can also be built as a module. If so, the module will
+> +	  be called mp29502.
+> +
+>   config SENSORS_MP2975
+>   	tristate "MPS MP2975"
+>   	help
+> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+> index 29cd8a3317d2..4c5ff3f32c5e 100644
+> --- a/drivers/hwmon/pmbus/Makefile
+> +++ b/drivers/hwmon/pmbus/Makefile
+> @@ -37,8 +37,10 @@ obj-$(CONFIG_SENSORS_MAX31785)	+= max31785.o
+>   obj-$(CONFIG_SENSORS_MAX34440)	+= max34440.o
+>   obj-$(CONFIG_SENSORS_MAX8688)	+= max8688.o
+>   obj-$(CONFIG_SENSORS_MP2856)	+= mp2856.o
+> +obj-$(CONFIG_SENSORS_MP2869)	+= mp2869.o
+>   obj-$(CONFIG_SENSORS_MP2888)	+= mp2888.o
+>   obj-$(CONFIG_SENSORS_MP2891)	+= mp2891.o
+> +obj-$(CONFIG_SENSORS_MP29502)	+= mp29502.o
+>   obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
+>   obj-$(CONFIG_SENSORS_MP2993)	+= mp2993.o
+>   obj-$(CONFIG_SENSORS_MP5023)	+= mp5023.o
+> diff --git a/drivers/hwmon/pmbus/mp2869.c b/drivers/hwmon/pmbus/mp2869.c
+> new file mode 100644
+> index 000000000000..af233ffd5230
+> --- /dev/null
+> +++ b/drivers/hwmon/pmbus/mp2869.c
+> @@ -0,0 +1,711 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Hardware monitoring driver for MPS Multi-phase Digital VR Controllers(MP2869)
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include "pmbus.h"
+> +
+> +#define MFR_READ_PIN_EST	0x94
+> +#define MFR_READ_IIN_EST	0x95
+> +#define MFR_VOUT_SCALE_LOOP	0x29
+
+This is a standard register.
+
+> +#define MFR_SVI3_IOUT_PRT	0x67
+> +#define STATUS_MFR_SPECIFIC	0x80
+
+This is a standard register.
+
+Guenter
 
