@@ -1,198 +1,157 @@
-Return-Path: <linux-kernel+bounces-733823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D2AB0796D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:19:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2147EB0797A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA943A4708
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:19:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EEA17BADBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6525E2857E2;
-	Wed, 16 Jul 2025 15:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B16228A1C8;
+	Wed, 16 Jul 2025 15:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Pf3Ia2LT"
-Received: from mx4.sberdevices.ru (mx5.sberdevices.ru [95.181.183.35])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TTPZGPzJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7F11DE892;
-	Wed, 16 Jul 2025 15:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.181.183.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A8423496F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679177; cv=none; b=a/wgxD8fdNDj4hVm+XnNyqQUZ7SZGbF9+5AyJOWcn6l0Ai3urG5xbVBUJdUiOA8d7MuYTyIfhI7B94fBavitm3FvSYtzF3dep4wP5OLb21UQKvVxeqxJnt6LKp2WNOMNm7R1W2WgfPszIER+tu7UDVMmiGlgkTijPWtLLj1Limo=
+	t=1752679232; cv=none; b=i71C/CrIHepI9NWzWGmfyu7Pu7x9s0sqWIhMme76Trzk/uoYZS7U88Plfs0aoeJ0JAUKxjI/fNzPejQHPf4EpnnjtzR79a01iMb+4nhDmPf3APJIO46AO245eHQlckgWHBHHc5h051z3H7SYKM0VQAssJvmVFBMuC8+05Y3vt7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679177; c=relaxed/simple;
-	bh=S1mLX0CmXyiyIIDqfJ4FsDbP3E/qVyjj/U8My9oN4k0=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=irdVFCjfPcFIvZF44wMsLrpTldTtWEwXwbfgopCxG2vEecpLqWXPEAjkGHwlZbpZGXytAK2F4zTdfCfqgBqtgX9yUqkvik203hlw5aNCGzguYYEnjoLIS9nPOdBSZQCkh4QDyaoL1D9fb0j03evzlz7ti3gJMsx/D+BEVly0wu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Pf3Ia2LT; arc=none smtp.client-ip=95.181.183.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-antispam-ksmg-gc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx4.sberdevices.ru (Postfix) with ESMTP id 7564F240011;
-	Wed, 16 Jul 2025 18:19:32 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx4.sberdevices.ru 7564F240011
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=post; t=1752679172;
-	bh=pwdFg7asFBIrrz4P/fKh5gjOXpUllXabeJoiF8Rzc4o=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
-	b=Pf3Ia2LTKy59Sl+DKjQvqslTxExU/wmlM2puLIjB96X1lZJbK/N2+W5S/HMb3hC3o
-	 U5T+zcFoEr/TCyGlkAIZYChOVgdMwh5zgOhR6aVevLNAt9ihpVRD6Xigbxz1BFjlbo
-	 Jlzvi2LdlkoFd0sHASdsJ60jMHbcpq1QibhK5zw1XMB3KqlhYjcelD6TP+ZilqLpvM
-	 VfLCYUOqm1HkIyn98ShjkFWIJCw+Fo3MNS9LwQSEC3k/n72Qc3uoWBC6g2ihFbsB4P
-	 zoS28smBHRr5KRoLMTzaCDo+2o9W5C8BO49PG8cnL8olZi5xbm/lFRWlXuoM8QFI4O
-	 S3Gw3N8sz6SKg==
-Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "sberdevices.ru", Issuer "R11" (verified OK))
-	by mx4.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 16 Jul 2025 18:19:32 +0300 (MSK)
-Message-ID: <56318d97-88a4-6688-9f43-4eca4b8169c2@salutedevices.com>
-Date: Wed, 16 Jul 2025 18:19:31 +0300
+	s=arc-20240116; t=1752679232; c=relaxed/simple;
+	bh=BI6qVlMF3xOeCX9WCFqLZh1Xpl2v5uGPz6zfIO0mzlA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nM+LJia87mDcm8InK7zjERp4PLoQfTe557L0dfxHutudmUWsU6twmpoeNA94+WIZaoo8B1v0tdPPgTL142Z18xnb+I6dRC3X8MWRV2B0NyrfRGLIJvMTAjR+UACvKBDoBuL/X5+BKrgwTOOqMnLXSaOaW/BC5fU0G3+5KXpT8tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TTPZGPzJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GDUBFT018016
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:20:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=+zNBS1PmSdDbKE+Ml6xSeir27yoPaFDEr7o
+	sJk1m7ps=; b=TTPZGPzJ2Uql7GDggLh+Hp9ps+qhB1w07cCZiRPLWhO+rZIU9pR
+	20Gy7YRexSpfaRnr21+qKkjYcdQTJm3FdQJKUJmGPw+LiUgT9qeRP4ATg8zXrHVH
+	62nP8BpRijb1m7YDaDLzWrHwYMiC+iKegA1bk0eNMwbkElM6NkoZdthWNIBqDLkP
+	ufzu+nDyscZp4IsC9o7wtlIhNvqAm904l6TtRi5bHWM4Gl6KgKU8Ws8mdXLXnwb6
+	6N/FGx1mD3ngoqgipXN8iSbntUmEcC95UDN1CVpxsDhpSMuoqO0F++YHrDa2g3gL
+	jCDS0Y6Tehe0xEyQm5yb0lWJ5tfixY2ihlw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug384keq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:20:30 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-74ad608d60aso32513b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:20:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752679229; x=1753284029;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+zNBS1PmSdDbKE+Ml6xSeir27yoPaFDEr7osJk1m7ps=;
+        b=M6noxvDigd1a/01IaPNX/0GTFr6whLU8PfywrGI86H9b6bxTZBOxup3q4emTVdyuV/
+         zGoPQzQ7BfUtiQPmkl8zztzWqcDF3MInCqMkWvrabmuU3sPYIivVYzif8niF4eioWp2Y
+         KAFJkQwQPArOTwdtV4rMoHmFXexYQTQBL57T22Qd1z2TMVVv6f2bBMkrCl83qXreI0ue
+         Ji1PkRMdsfzwc23T6EOeNChmXXDFlnBHIMz4+s+OfkCiRylQ3vwI15lu5gqHioSOf/qR
+         Gq77boyYT4uOSxH0Wp25MYI5QWEuUIbtRftee3z90T+00fqz7dkd0ps0w4PEDfl11q/k
+         6nKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVD9++MpYh5fOcNOe4uJhFrZwov3dKiV0SWlziEn8yCW1i77jtyKDmwdswjFpl8o3gNzv5ixoc8u7yYR/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxduzznWnnVnxm7E5sP1zWY7fnnVV/VOZJSpUELdrevN71q+TXz
+	PPpI/UQWFt8PsOSB79CnivlSuodSLK05pf/8l7O56fqz0xMrQ1bbEtrBbi/yn65OrMNC3sHYzLZ
+	jZzD4kKRHP586vzrNCXHD4qMWCwIyu/ytVhqraQS7cF3Ujs+EwbstvuTQ/STz6ehvDOs=
+X-Gm-Gg: ASbGncuJdn39XJm/S//i1XOmBj+emnitchSXWrl6amx7GOWiRjXnTrncJddpIPnC2JN
+	+u+fJvElZwdfVfxDziVXZ2Qce78fvpJQskK+3ODJLZ4T+W7Ayoo9piTuO0sA4Cg97xREfXAJrN+
+	uzpFbZDvscYw0qCunK0Vx05J2GQeLrELMDv7U+gclpYTRBeE6QELl8P/VmqWI/+92LgmbDPTUoP
+	O7W+k7wvfRZNwcp4PWTLqOl/HRAG5yguwy81CwiioKfjpsB71Itky8U7pE1t0PXBwkTyqMXZrFt
+	EPzqPPi34Lv2bZDoW0bB2HmHpfg4mkhBvSgYVcJscTARTdLq3VREJCWtuPO5VWx8I3D8WsqWu4D
+	jAjvFL3Ck48b6bl7u0762hGWulNH0RJ9hp1LwiCeKv+TpTGnzCzKRcCej6QS5
+X-Received: by 2002:a05:6a21:648a:b0:231:4bbc:ff09 with SMTP id adf61e73a8af0-2381313ca9bmr4639884637.36.1752679228829;
+        Wed, 16 Jul 2025 08:20:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKwU6o+tpWlwEXgv5gzHLfLU5Ajgm6I1bD672WOsYEy26mbRK7YPdMqUcJVLXOeBXYIhuUrg==
+X-Received: by 2002:a05:6a21:648a:b0:231:4bbc:ff09 with SMTP id adf61e73a8af0-2381313ca9bmr4639840637.36.1752679228388;
+        Wed, 16 Jul 2025 08:20:28 -0700 (PDT)
+Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6bd8f8sm13912054a12.38.2025.07.16.08.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 08:20:28 -0700 (PDT)
+From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+To: sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        quic_rjendra@quicinc.com, taniya.das@oss.qualcomm.com
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] Add support for Clock controllers for Glymur
+Date: Wed, 16 Jul 2025 20:50:10 +0530
+Message-Id: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Content-Language: en-US
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <oxffffaa@gmail.com>, <linux-bluetooth@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>
-From: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Subject: [RESEND PATCH v3] Bluetooth: hci_sync: fix double free in
- 'hci_discovery_filter_clear()'
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: p-exch-cas-a-m1.sberdevices.ru (172.24.201.216) To
- p-exch-cas-a-m1.sberdevices.ru (172.24.201.216)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
-X-KSMG-AntiSpam-Info: LuaCore: 63 0.3.63 9cc2b4b18bf16653fda093d2c494e542ac094a39, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 194892 [Jul 16 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/07/16 12:49:00 #27639138
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEzOCBTYWx0ZWRfX+kMHnUW0zOHd
+ R+ubAyj+RGgx5rTBjy4mfCMTCqdz4MTh67ORGim4H1ZFvEn4PLZgMhkt/qbCh/54IW3NN7MQRwP
+ GY6+YmnW9woHjUjoSrgJ2Ri7fcjz9hjrRA5RP/koW2JBOEYbwE4aATg37yeAwyoY2aaD5Q3DPPf
+ f+i/LzCzqZO3ryQVzzuascwW5+xQ98/qo6uwRVOIQX2eyETnGqtJwy4AToD9r9ZaYxxmjguw+n3
+ TAT1IBNkoB+Mukbpk2uAF2t3qqfTHSjEWZxwoH7xPeD5k8omjCNNIvl+HyyOxn7EK6A6oDs1dxV
+ i/zdAu0mrEs9tcFxOFZgt9g/hMUV38RhF4ipkl4CGzZEiFelf7yHc/Vq9H04xln5R22GfrnfiQP
+ Mih5AGaeNlUiMw/sZr3fM2nQS6XGu7/AaUEqL1jP+6VguyjXiRxk0oYZ279zxW134dDzc7t4
+X-Proofpoint-GUID: RpDHhhKYo05N3aGKS679q9x3QTN-KAQO
+X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=6877c33e cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=ur2kyboyjIJ0vDSx390A:9
+ a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-ORIG-GUID: RpDHhhKYo05N3aGKS679q9x3QTN-KAQO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-16_02,2025-07-16_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxlogscore=969 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507160138
 
-Function 'hci_discovery_filter_clear()' frees 'uuids' array and then
-sets it to NULL. There is a tiny chance of the following race:
+Add support for Global clock controller(GCC), TCSR and the RPMH clock
+controller for the Qualcomm Glymur SoC.
 
-'hci_cmd_sync_work()'
-
- 'update_passive_scan_sync()'
-
-   'hci_update_passive_scan_sync()'
-
-     'hci_discovery_filter_clear()'
-       kfree(uuids);
-
-       <-------------------------preempted-------------------------------->
-                                           'start_service_discovery()'
-
-                                             'hci_discovery_filter_clear()'
-                                               kfree(uuids); // DOUBLE FREE
-
-       <-------------------------preempted-------------------------------->
-
-      uuids = NULL;
-
-To fix it let's add locking around 'kfree()' call and NULL pointer
-assignment. Otherwise the following backtrace fires:
-
-[ ] ------------[ cut here ]------------
-[ ] kernel BUG at mm/slub.c:547!
-[ ] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-[ ] CPU: 3 UID: 0 PID: 246 Comm: bluetoothd Tainted: G O 6.12.19-kernel #1
-[ ] Tainted: [O]=OOT_MODULE
-[ ] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[ ] pc : __slab_free+0xf8/0x348
-[ ] lr : __slab_free+0x48/0x348
-...
-[ ] Call trace:
-[ ]  __slab_free+0xf8/0x348
-[ ]  kfree+0x164/0x27c
-[ ]  start_service_discovery+0x1d0/0x2c0
-[ ]  hci_sock_sendmsg+0x518/0x924
-[ ]  __sock_sendmsg+0x54/0x60
-[ ]  sock_write_iter+0x98/0xf8
-[ ]  do_iter_readv_writev+0xe4/0x1c8
-[ ]  vfs_writev+0x128/0x2b0
-[ ]  do_writev+0xfc/0x118
-[ ]  __arm64_sys_writev+0x20/0x2c
-[ ]  invoke_syscall+0x68/0xf0
-[ ]  el0_svc_common.constprop.0+0x40/0xe0
-[ ]  do_el0_svc+0x1c/0x28
-[ ]  el0_svc+0x30/0xd0
-[ ]  el0t_64_sync_handler+0x100/0x12c
-[ ]  el0t_64_sync+0x194/0x198
-[ ] Code: 8b0002e6 eb17031f 54fffbe1 d503201f (d4210000) 
-[ ] ---[ end trace 0000000000000000 ]---
-
-Fixes: ad383c2c65a5 ("Bluetooth: hci_sync: Enable advertising when LL privacy is enabled")
-Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 ---
- Changelog v1->v2:
- * Don't call 'hci_dev_lock()' in 'update_passive_scan_sync()' as it
-   triggers deadlock. Instead of that - add spinlock which protects
-   freeing code.
- Changelog v2->v3:
- * Rebase on current 'bluetooth' repo due to fuzz.
+Taniya Das (7):
+  dt-bindings: clock: qcom-rpmhcc: Add support for Glymur SoCs
+  dt-bindings: clock: qcom: Add bindings documentation for the Glymur
+    TCSR
+  clk: qcom: Add TCSR clock driver for Glymur
+  clk: qcom: rpmh: Add support for Glymur rpmh clocks
+  clk: qcom: clk-alpha-pll: Add support for Taycan EKO_T PLL
+  dt-bindings: clock: qcom: document the Glymur Global Clock Controller
+  clk: qcom: gcc: Add support for Global Clock Controller
 
- include/net/bluetooth/hci_core.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../bindings/clock/qcom,glymur-gcc.yaml       |  122 +
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml      |    3 +
+ drivers/clk/qcom/Kconfig                      |   18 +
+ drivers/clk/qcom/Makefile                     |    2 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    6 +
+ drivers/clk/qcom/clk-rpmh.c                   |   22 +
+ drivers/clk/qcom/gcc-glymur.c                 | 8623 +++++++++++++++++
+ drivers/clk/qcom/tcsrcc-glymur.c              |  263 +
+ include/dt-bindings/clock/qcom,glymur-gcc.h   |  578 ++
+ .../dt-bindings/clock/qcom,glymur-tcsrcc.h    |   24 +
+ 11 files changed, 9662 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,glymur-gcc.yaml
+ create mode 100644 drivers/clk/qcom/gcc-glymur.c
+ create mode 100644 drivers/clk/qcom/tcsrcc-glymur.c
+ create mode 100644 include/dt-bindings/clock/qcom,glymur-gcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,glymur-tcsrcc.h
 
-diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
-index 54bfeeaa09959..f8eeb15acdcfa 100644
---- a/include/net/bluetooth/hci_core.h
-+++ b/include/net/bluetooth/hci_core.h
-@@ -29,6 +29,7 @@
- #include <linux/idr.h>
- #include <linux/leds.h>
- #include <linux/rculist.h>
-+#include <linux/spinlock.h>
- 
- #include <net/bluetooth/hci.h>
- #include <net/bluetooth/hci_drv.h>
-@@ -92,6 +93,7 @@ struct discovery_state {
- 	u16			uuid_count;
- 	u8			(*uuids)[16];
- 	unsigned long		name_resolve_timeout;
-+	spinlock_t		lock;
- };
- 
- #define SUSPEND_NOTIFIER_TIMEOUT	msecs_to_jiffies(2000) /* 2 seconds */
-@@ -878,6 +880,7 @@ static inline void iso_recv(struct hci_conn *hcon, struct sk_buff *skb,
- 
- static inline void discovery_init(struct hci_dev *hdev)
- {
-+	spin_lock_init(&hdev->discovery.lock);
- 	hdev->discovery.state = DISCOVERY_STOPPED;
- 	INIT_LIST_HEAD(&hdev->discovery.all);
- 	INIT_LIST_HEAD(&hdev->discovery.unknown);
-@@ -892,8 +895,11 @@ static inline void hci_discovery_filter_clear(struct hci_dev *hdev)
- 	hdev->discovery.report_invalid_rssi = true;
- 	hdev->discovery.rssi = HCI_RSSI_INVALID;
- 	hdev->discovery.uuid_count = 0;
-+
-+	spin_lock(&hdev->discovery.lock);
- 	kfree(hdev->discovery.uuids);
- 	hdev->discovery.uuids = NULL;
-+	spin_unlock(&hdev->discovery.lock);
- }
- 
- bool hci_discovery_active(struct hci_dev *hdev);
 -- 
-2.30.1
+2.34.1
+
 
