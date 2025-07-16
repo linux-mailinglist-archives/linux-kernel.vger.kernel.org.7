@@ -1,216 +1,97 @@
-Return-Path: <linux-kernel+bounces-733370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8160EB073BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:43:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09B3B073B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A6B27B9052
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:41:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B2D4583727
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FEE2F0059;
-	Wed, 16 Jul 2025 10:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083B42F3C24;
+	Wed, 16 Jul 2025 10:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="nQbrva2j"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiEr9LU/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F1C2F3C3D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 10:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BA92F3C1C;
+	Wed, 16 Jul 2025 10:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752662489; cv=none; b=d+xa/UQzlXhHw4nrpYzKO8fHqE2A+lnBSuakKt7QyKeabhn86MbIlPkdltZewKOFxOsuznhwLTY44fOmXmoEBwYHddQnwyRYq2czC3SoLRv7Ww29P/Wf1L9BTH5xlBAWxzzEoAiv1hFQm/LBT/HIH0M0XonAF9WZFVU8JEzw3t0=
+	t=1752662472; cv=none; b=EdFXqciDX7X0n4aKYkUVFRSc0PnpVnZwxPdgxILCiYAtkKQViqRisDlpwzBu9Y2BzkZ5UWKvbXOwrp3UlwxfqboP7gUx7vCR9s28VymBirE+kSBartZpWqixdbUB0nbVlhg+3dQcWTg3FjEIZ6flkpf5scpaQ8ZkvNIWxoC585U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752662489; c=relaxed/simple;
-	bh=TiMCJ1JIsrrw0j8yUw5lr7+dQqDn3hFgscmUJMRLbPk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HL63NPACYig+yJIggAm8KrN1Dt3iF3l4SpeKel5zUGqQXtfeTZUZtpfigArD9BwN4Xm1vAqWX0Qk3tR405lW7XtcMi1RljUI4lce/kkd7ozVzgbE77f+vYTciuADXDYqLqkTFozbWx8cIb/KzE+eWKgw1NrxqHjPc3Eq1KabDxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=nQbrva2j; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74801bc6dc5so747551b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 03:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1752662487; x=1753267287; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BZUWpBwM0eiM3bQczAhHsGr1w4CoIgRijBa2HvAnStE=;
-        b=nQbrva2jVKMH0EVWBryyuW8RkZH9yy+RrrLkEXAXb42ZapRnbM2HxvPFWCZH+RDUmW
-         AR/p/QdPqzEDxFz+zzT5fN1WS+D0K9ZXVZrVaewWy+8zVmzCXGbgTlvvGL4rf/I8Nx/O
-         WvY+z6bIgeuSujSARbtUFEP+moe5ZETbUUNcFjJS9OItXUO4vk2+lD+7Zzz1eIy7LhLy
-         2GldHUJHXiJ47oH0UGpza3Jkuwn0n1TkcqNOGI+JjgTHBJzqhlGcP9AFEf+3Hv5VpED4
-         lw6/BrJ68IrGDMBODQu3VWgyIAq7ZpfBFPAoiPHm9Wr1DEJxpa877Q8ydDPzPkaafZp2
-         y5EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752662487; x=1753267287;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BZUWpBwM0eiM3bQczAhHsGr1w4CoIgRijBa2HvAnStE=;
-        b=snKsyqZjAbFJzNMA2YpvK58+NYPrYkQX7sx/SCLQomgy8gX+7Usg8nvSPCbGNghHOJ
-         Qtt3ETcJOVj8R6qsFNyhwSZezGtRImchkxhqkOY005xoBfYZO2KhhvhfBc2xDE3+3yf5
-         fgJubEKMgeHbMostIFMPu1Q345+YLY1litQ+TUi2MjMf8YMbTHSJJb8YS5slFPveDmg9
-         N5GXJPwE/ZvrWK/bHGUGQijTHSqDxVVcZQJJ5tOWhyKP7uTVpVzqWha0jTgVcORoIrhr
-         fn0Kl1k6WcRuU2iOS3m6GCrWU98Qfizm7GrxggrjBy3cDLx2oGERhN+VfwIbLanG6lIh
-         I7Ww==
-X-Gm-Message-State: AOJu0YxVe2GZoHKq42hniCdCLt1Zayw4jmWVlrHsp9O4iIUDALegK8eS
-	lGJZoMHTbotNBFlax5eNuzrnUUSHc+A1MdFNvCzb4s6va8mT9S5bO4huZue07uMkE0TB/e99uaB
-	Oob7Wyg0=
-X-Gm-Gg: ASbGnctkpoPdwCLuX1auWO+/MWhpCdKFOxmcoNlh/R9W7JAY/VSQWwawgAY/LbO8mML
-	uy3BqnVewHLYBoivSd1fOci5Q35h5bXvmEphUk76H0muaNv5asbXEkwCv/k8GsG333qWknHi0b0
-	M935vcbAIsf8CNSIHi2BKFNcDjpr1qTTdPfHEmYgw0aEemI+qbXM4ChbaoJsZoOETS0rj+Qw1v6
-	dLHiTYwSMdxaAFyhuimt4IZOQ+Yngxr1IwC0RVvMd/mTJRxt54FK1O7TvSx9tjZH9WqK2Fx2aX3
-	Zg6ohrouuMw74SOy7MVtXtiLFbB3FgzL0nyJoJnNtfFVdcY8lWBxCQnQ5W6ESst+qIGOEVm4qdF
-	XLoZU2E+tvjyK7vchZiTY5KryHJu0XNOZ
-X-Google-Smtp-Source: AGHT+IH/Lk91h2N/FwA9EAOD0yJlQtTfyDy3TLsMiePhmK16NWxXzdzTp0ubA0n3RaF6EsVZf8LtAg==
-X-Received: by 2002:a05:6a00:ad0:b0:746:195b:bf1c with SMTP id d2e1a72fcca58-75584eb932emr9392926b3a.10.1752662487002;
-        Wed, 16 Jul 2025 03:41:27 -0700 (PDT)
-Received: from sunil-pc.Dlink ([106.51.195.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f1af40sm13946709b3a.72.2025.07.16.03.41.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 03:41:26 -0700 (PDT)
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-acpi@vger.kernel.org,
-	iommu@lists.linux.dev
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Tomasz Jeznach <tjeznach@rivosinc.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Atish Kumar Patra <atishp@rivosinc.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>
-Subject: [PATCH v5 3/3] iommu/riscv: Add ACPI support
-Date: Wed, 16 Jul 2025 16:10:59 +0530
-Message-ID: <20250716104059.3539482-4-sunilvl@ventanamicro.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250716104059.3539482-1-sunilvl@ventanamicro.com>
-References: <20250716104059.3539482-1-sunilvl@ventanamicro.com>
+	s=arc-20240116; t=1752662472; c=relaxed/simple;
+	bh=WAuDPaySVV0HnQUZ5upm3Jxvcf5/doeQ9PZuT7/Zgvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F0Eg0FVe/mR/YKCCdLxY+PsklP6jqiGqPUMprQLL4eW46xeZ2xje52e8VvcD/SkzCvZdZViu0r2gE7pGdyddXoxJQr0S1NOc5Os4hMFq9GKf+3wDQvV9OuuJzaZS7wyhtJr9dqb49MRz4glatMFQUI7DtY5w8yoa9N64aE7UhJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiEr9LU/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C53B2C4CEF1;
+	Wed, 16 Jul 2025 10:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752662472;
+	bh=WAuDPaySVV0HnQUZ5upm3Jxvcf5/doeQ9PZuT7/Zgvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oiEr9LU/K8R3WKCtf5iMDc/qlaWAaakbjXR0l9uwB/GG3VS74I+VS/MwDVikhWCkJ
+	 g1V79O9ZSDPpLVHIRfgOSuSQwtPl3CwKk3E8qpipu8RUGgA1pr2g+3UPyuENB/xv+S
+	 E0BjWFKiLOM/2DENI7B8iFBLYqvfXKO2uAO7RwGyz4jARjpPjSAgB5bAdIRIUB+sIg
+	 wJtSDGwJ4ywQwrEtZS4QrBErtiTTm+a8d1MK+BBfkpn5ZRn9uv7fTqZDwP9gCaNYdK
+	 wyle7yDnIphth3LohIKmVtfxcIp4uAwR6Q7qg9kynVRi8ZSeZCRPCpzTbGzZ89msPf
+	 Q+9T3U4Yd0U0w==
+Date: Wed, 16 Jul 2025 11:41:06 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.1 00/89] 6.1.146-rc2 review
+Message-ID: <20d0ef01-5cca-46eb-aa79-c177e109905e@sirena.org.uk>
+References: <20250715163541.635746149@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="S5AC/qK23ALYIhd5"
+Content-Disposition: inline
+In-Reply-To: <20250715163541.635746149@linuxfoundation.org>
+X-Cookie: osteopornosis:
 
-RISC-V IO Mapping Table (RIMT) provides the information about the IOMMU
-to the OS in ACPI. Add support for ACPI in RISC-V IOMMU drivers by using
-RIMT data.
 
-The changes at high level are,
+--S5AC/qK23ALYIhd5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-a) Register the IOMMU with RIMT data structures.
-b) Enable probing of platform IOMMU in ACPI way using the ACPIID defined
-   for the RISC-V IOMMU in the BRS spec [1]. Configure the MSI domain if
-   the platform IOMMU uses MSIs.
+On Tue, Jul 15, 2025 at 06:37:01PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.146 release.
+> There are 89 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-[1] - https://github.com/riscv-non-isa/riscv-brs/blob/main/acpi-id.adoc
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-Acked-by: Will Deacon <will@kernel.org>
----
- drivers/iommu/riscv/iommu-platform.c | 17 ++++++++++++++++-
- drivers/iommu/riscv/iommu.c          | 10 ++++++++++
- 2 files changed, 26 insertions(+), 1 deletion(-)
+--S5AC/qK23ALYIhd5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/iommu/riscv/iommu-platform.c b/drivers/iommu/riscv/iommu-platform.c
-index 725e919b97ef..83a28c83f991 100644
---- a/drivers/iommu/riscv/iommu-platform.c
-+++ b/drivers/iommu/riscv/iommu-platform.c
-@@ -10,6 +10,8 @@
-  *	Tomasz Jeznach <tjeznach@rivosinc.com>
-  */
- 
-+#include <linux/acpi.h>
-+#include <linux/irqchip/riscv-imsic.h>
- #include <linux/kernel.h>
- #include <linux/msi.h>
- #include <linux/of_irq.h>
-@@ -46,6 +48,7 @@ static int riscv_iommu_platform_probe(struct platform_device *pdev)
- 	enum riscv_iommu_igs_settings igs;
- 	struct device *dev = &pdev->dev;
- 	struct riscv_iommu_device *iommu = NULL;
-+	struct irq_domain *msi_domain;
- 	struct resource *res = NULL;
- 	int vec, ret;
- 
-@@ -76,8 +79,13 @@ static int riscv_iommu_platform_probe(struct platform_device *pdev)
- 	switch (igs) {
- 	case RISCV_IOMMU_CAPABILITIES_IGS_BOTH:
- 	case RISCV_IOMMU_CAPABILITIES_IGS_MSI:
--		if (is_of_node(dev->fwnode))
-+		if (is_of_node(dev_fwnode(dev))) {
- 			of_msi_configure(dev, to_of_node(dev->fwnode));
-+		} else {
-+			msi_domain = irq_find_matching_fwnode(imsic_acpi_get_fwnode(dev),
-+							      DOMAIN_BUS_PLATFORM_MSI);
-+			dev_set_msi_domain(dev, msi_domain);
-+		}
- 
- 		if (!dev_get_msi_domain(dev)) {
- 			dev_warn(dev, "failed to find an MSI domain\n");
-@@ -150,6 +158,12 @@ static const struct of_device_id riscv_iommu_of_match[] = {
- 	{},
- };
- 
-+static const struct acpi_device_id riscv_iommu_acpi_match[] = {
-+	{ "RSCV0004", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, riscv_iommu_acpi_match);
-+
- static struct platform_driver riscv_iommu_platform_driver = {
- 	.probe = riscv_iommu_platform_probe,
- 	.remove = riscv_iommu_platform_remove,
-@@ -158,6 +172,7 @@ static struct platform_driver riscv_iommu_platform_driver = {
- 		.name = "riscv,iommu",
- 		.of_match_table = riscv_iommu_of_match,
- 		.suppress_bind_attrs = true,
-+		.acpi_match_table = riscv_iommu_acpi_match,
- 	},
- };
- 
-diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-index bb57092ca901..45a263c9e0d5 100644
---- a/drivers/iommu/riscv/iommu.c
-+++ b/drivers/iommu/riscv/iommu.c
-@@ -12,6 +12,8 @@
- 
- #define pr_fmt(fmt) "riscv-iommu: " fmt
- 
-+#include <linux/acpi.h>
-+#include <linux/acpi_rimt.h>
- #include <linux/compiler.h>
- #include <linux/crash_dump.h>
- #include <linux/init.h>
-@@ -1651,6 +1653,14 @@ int riscv_iommu_init(struct riscv_iommu_device *iommu)
- 		goto err_iodir_off;
- 	}
- 
-+	if (!acpi_disabled) {
-+		rc = rimt_iommu_register(iommu->dev);
-+		if (rc) {
-+			dev_err_probe(iommu->dev, rc, "cannot register iommu with RIMT\n");
-+			goto err_remove_sysfs;
-+		}
-+	}
-+
- 	rc = iommu_device_register(&iommu->iommu, &riscv_iommu_ops, iommu->dev);
- 	if (rc) {
- 		dev_err_probe(iommu->dev, rc, "cannot register iommu interface\n");
--- 
-2.43.0
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh3gcEACgkQJNaLcl1U
+h9CMPgf/YL+F68HD9kPgYB8OjJrWnulxocqERGdWa2pfq04dVMUB1vf756A9BPZ/
+G/L008ZTdaLaURGSCZiQMBTJlRSJtZLLDszCrL4d9vZe6MqUtWbi31sJf+J1lt2n
+f1ZjwOWWHrQHPL9aHmpi4vzbywOFsMamXHJZUOpfEfpKFWEzM05bKayhjY4mmQSO
+TrrMDajXVoNP58jRD3wPNN5g4Xi0W0lL2H/iC520aZJAz5FFhwGMTAFJ80jJuWkS
+m6YYEA2d+3UklaeHWH7++MzP9A/SxugZ0lCEhDrwX7KmGSKZ8lbc9Hra7ruBrKd9
+fNnMfN1V+z2owp+N8Gh4TSwu/VV1Mg==
+=c0AT
+-----END PGP SIGNATURE-----
+
+--S5AC/qK23ALYIhd5--
 
