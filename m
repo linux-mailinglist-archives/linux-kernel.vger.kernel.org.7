@@ -1,150 +1,115 @@
-Return-Path: <linux-kernel+bounces-733848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF7DB079C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70797B079BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 17:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E64A44733
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15EDA44C44
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4B02BEFF2;
-	Wed, 16 Jul 2025 15:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CD52F5C20;
+	Wed, 16 Jul 2025 15:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0okP4Ksd"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPO42vlp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2274B2F3C1D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EE028A1C8;
+	Wed, 16 Jul 2025 15:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752679503; cv=none; b=AXZgw/QBxAM9JY9D24lLU/9fB1vH3GTqF1B5KFuElpeqLHz/EmNZgWlDpafr4oGTPkCvhNP3NHcBUdgDw8DeNmgDj3PVJ2tXDX7Rg3Ua+ykp0a9YYDQaDif3Ef/rT7fDfTV6pmHwilIeg+pw6UOu8b6pyOAKNXHT1UeE3WyFrew=
+	t=1752679420; cv=none; b=QsaBk8gbbDnIyQ5hasmC6rpGB5yRN6QaZIng64P7OR2TT35zQlYSvlEPYZShoV/Mew3PrTs+cjm0YTFdeYl9OibHP16XKVUgIFfC1TT8wEaYV9PJWuIqe5IBIkBxeIKmRcYjXTpVdfeCSEyTrG0Hs9dN9zjEgUSHsWHrTx1BlfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752679503; c=relaxed/simple;
-	bh=ohTqHGpgfY4UUTSymbW6sLvYas+aSmBkVgsQzVj/EzI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hCqi53bqlIJadAwOtB2Y7+Njov7UwO5FMS+fBFOAyWqE+AeRR/8KuTqGQj1lMZUIOalCCH6iFiUgTKUnsI/NnVz44nANbmNhCWaBiMWmlfjvo4pTPGvFWY82cG+pYijNAaYD2fcVeyePVr6YXWd07BiCn4J1FuZ10wln3Ca9SFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0okP4Ksd; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-451d30992bcso53510735e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 08:25:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752679499; x=1753284299; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Y020Ei9Bk/dDr2jy5oIxQhB4Mux4H8qkRk2Nk2X5B6Y=;
-        b=0okP4KsdUGJdMFYyp3757/SLW9tmoJF3u4SeogKjlC13Dm0j+IXTdSsHPmzSP4ezRx
-         hjBdkwb7heBkseLwDCZCUHDNNehiR0mRrcJGuGzFWfa1nSXYAp4sMgd6kMXjrSuoAWkh
-         lcXmvQuYC65HD0P/2JeyaJFAEUA+hoWsNO2gRGclJrDnomk6nDhFBsdy/CupAUJaXNUs
-         s8oYP9goIM8MbILYl/IzqIkr6MelPgifG78QIH5aQgfOvl+ysOVJ3MGeFjh1/ruOsShY
-         PT7xhY/LgMg3t09JgHTHJigJGI6jtIyjb8XzQOuJwZ/+4cgmrTvpJFHrZk4wkZ0tOyRi
-         IvoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752679499; x=1753284299;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y020Ei9Bk/dDr2jy5oIxQhB4Mux4H8qkRk2Nk2X5B6Y=;
-        b=dZ3bwg++KkNiCZaFYLNjwbiAYUs3TTxNLenHcjUU3g8fyfSOOrCkF8jlikh9w++aL7
-         lA5UAIpJ2ogVL6MsNIJEadZBvz5E6/Lf5bCbMJJpfB0bvu0m7rgzmSuKnhjmY9GxmV4C
-         y0+Une9YMFabsnQL4wwG4xb3RUKdukhHPQ3+f4+p6PbnHNl/4w96ZXqJ2LPvJnWNB4LJ
-         eM/Nm8kTXFAwVN1HCbtJ9uZkXsJNrHXZByk4bxUDaRXFXBWi9azwIaPF8KBtQnw1oqZW
-         ATuOskja/Dxdg0T3TOgvM9ysgo6Eg2L9wE4DrkIR11xtjD6ST6Kxe0tv8sh5Jblo9R1S
-         8rSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjVaHV7kBFFK+LCBG1qEUTXdv5Ss8dtFsfhfceD+hThuElf4cekuCHGfyGdeumgNM7+aGsypnuD9INeWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+TZOvfM4XySxCfxYNVpdLpuMG7HhxDLdE3/6pF5InG/QuoHNb
-	kLhTRuRjKtBUlinHyFtM5CLDZkfJCeXieSzP+IkwyUIjdEIP8vqBH2ydvKjDD6Bu7obbhNmU7wP
-	jiA==
-X-Google-Smtp-Source: AGHT+IG+qln5bQT2mE9wIX8K89bRFDCyEmW+N27eenT0Mz+MKpFiGEtyXe0L5xsEE6EDOAbOFijYhxLGLw==
-X-Received: from wmbhe13.prod.google.com ([2002:a05:600c:540d:b0:43c:ef7b:ffac])
- (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:19cb:b0:43c:ee3f:2c3
- with SMTP id 5b1f17b1804b1-4562e37a0ecmr26916265e9.7.1752679499601; Wed, 16
- Jul 2025 08:24:59 -0700 (PDT)
-Date: Wed, 16 Jul 2025 17:23:28 +0200
+	s=arc-20240116; t=1752679420; c=relaxed/simple;
+	bh=tpTs+jX92sQ6oTJ59R/yyANwWHArExgRUeTRqrhTvYc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=VydqD5qqri3N+ptpxUTEAv5GOqOjlwwMTLshrvnxfg5PPvzgjjrXu4cdD0AkfjgH5jTV1KRdYUT1bJX/7GyWpUzGPXUhvdNt8u5DanaLuhGxW/mVZk/hfA00PsdSzYoNBKT58LArRIkAWJAwoRuxEtF0BNlW8fM7gI3MrUkaaQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPO42vlp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB00CC4CEF0;
+	Wed, 16 Jul 2025 15:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752679419;
+	bh=tpTs+jX92sQ6oTJ59R/yyANwWHArExgRUeTRqrhTvYc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=iPO42vlpAyw1KrQJuE0mB7ZC9S0O1uik/YV91c1X/9+ES4NhNS8Uj5Ff79sMhHC61
+	 eTR8u9pNkHeiQkAmiDQKnvRXWmT+lBPOSWmGImKbHd2zO9A94fZPwRtIfVlRStS71w
+	 fJyDYuIYl+DoXowwaI/sOS1U22bCdpgsxx0F9plHz8lZb1sidOinJBPz37QWa5TRJG
+	 gMZXTjgyjoAE9bGAHpFTHsJuxyGOKbolMMqRvpq+MRN0i1ACyZo7rwL3EJGk5z8nkL
+	 eFcf2a2I1ddqEEE0dElkQH9XmyQClOHcOnc6eEYO3DAiMugVczgCwMVWTIzsBmp4c0
+	 xFDCGfLTGncsg==
+From: Mark Brown <broonie@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Alexandre Courbot <acourbot@nvidia.com>
+In-Reply-To: <20250714-topics-tyr-regulator2-v8-0-c7ab3955d524@collabora.com>
+References: <20250714-topics-tyr-regulator2-v8-0-c7ab3955d524@collabora.com>
+Subject: Re: [PATCH v8 0/2] Add a bare-minimum Regulator abstraction
+Message-Id: <175267941650.716137.1066495222892798076.b4-ty@kernel.org>
+Date: Wed, 16 Jul 2025 16:23:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250716152448.3877201-1-elver@google.com>
-Subject: [PATCH] kasan: use vmalloc_dump_obj() for vmalloc error reports
-From: Marco Elver <elver@google.com>
-To: elver@google.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Yeoreum Yun <yeoreum.yun@arm.com>, 
-	Yunseong Kim <ysk@kzalloc.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-Since 6ee9b3d84775 ("kasan: remove kasan_find_vm_area() to prevent
-possible deadlock"), more detailed info about the vmalloc mapping and
-the origin was dropped due to potential deadlocks.
+On Mon, 14 Jul 2025 15:52:03 -0300, Daniel Almeida wrote:
+> Changes in v8:
+> - Added Alex's r-b
+> - Added helpers/regulator.c, since the stubs are declared as inline if
+>   CONFIG_REGULATOR is not set (Intel bot)
+> - Removed unneeded "regulator.enable()" line from docs: it was not needed
+>   and, ironically, it misused the API by choosing Regulator<Dynamic>
+>   and then not keeping the enabled count count balenced (Alex)
+> - Clarified that the "Enabled" state decreases the enabled refcount when it
+>   drops (Alex)
+> - Renamed "Microvolt" as "Voltage" and introduced
+>   from_microvolts/as_microvolts (Alex)
+> - Fixed the spelling for MAINTAINERS in the second commit (Alex)
+> - Link to v7: https://lore.kernel.org/rust-for-linux/20250704-topics-tyr-regulator-v7-0-77bfca2e22dc@collabora.com/
+> 
+> [...]
 
-While fixing the deadlock is necessary, that patch was too quick in
-killing an otherwise useful feature, and did no due-diligence in
-understanding if an alternative option is available.
+Applied to
 
-Restore printing more helpful vmalloc allocation info in KASAN reports
-with the help of vmalloc_dump_obj(). Example report:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-| BUG: KASAN: vmalloc-out-of-bounds in vmalloc_oob+0x4c9/0x610
-| Read of size 1 at addr ffffc900002fd7f3 by task kunit_try_catch/493
-|
-| CPU: [...]
-| Call Trace:
-|  <TASK>
-|  dump_stack_lvl+0xa8/0xf0
-|  print_report+0x17e/0x810
-|  kasan_report+0x155/0x190
-|  vmalloc_oob+0x4c9/0x610
-|  [...]
-|
-| The buggy address belongs to a 1-page vmalloc region starting at 0xffffc900002fd000 allocated at vmalloc_oob+0x36/0x610
-| The buggy address belongs to the physical page:
-| page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x126364
-| flags: 0x200000000000000(node=0|zone=2)
-| raw: 0200000000000000 0000000000000000 dead000000000122 0000000000000000
-| raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-| page dumped because: kasan: bad access detected
-|
-| [..]
+Thanks!
 
-Fixes: 6ee9b3d84775 ("kasan: remove kasan_find_vm_area() to prevent possible deadlock")
-Suggested-by: Uladzislau Rezki <urezki@gmail.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: Yunseong Kim <ysk@kzalloc.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marco Elver <elver@google.com>
----
- mm/kasan/report.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+[1/2] rust: regulator: add a bare minimum regulator abstraction
+      commit: 9b614ceada7cb846de1a1c3bb0b29b0a2726ef45
+[2/2] MAINTAINERS: add regulator.rs to the regulator API entry
+      commit: d9f334fca5448907cc47ba8553926f9ba148512f
 
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index b0877035491f..62c01b4527eb 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -399,7 +399,9 @@ static void print_address_description(void *addr, u8 tag,
- 	}
- 
- 	if (is_vmalloc_addr(addr)) {
--		pr_err("The buggy address %px belongs to a vmalloc virtual mapping\n", addr);
-+		pr_err("The buggy address belongs to a");
-+		if (!vmalloc_dump_obj(addr))
-+			pr_cont(" vmalloc virtual mapping\n");
- 		page = vmalloc_to_page(addr);
- 	}
- 
--- 
-2.50.0.727.gbf7dc18ff4-goog
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
