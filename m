@@ -1,376 +1,309 @@
-Return-Path: <linux-kernel+bounces-734258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA5DB07F19
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:46:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E77B07F1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21CA27AC089
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA14A42DB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AA2274FF4;
-	Wed, 16 Jul 2025 20:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E5D28EA62;
+	Wed, 16 Jul 2025 20:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CV5LG6JA"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012037.outbound.protection.outlook.com [52.101.71.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdFPs7UK"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA4F1CD2C;
-	Wed, 16 Jul 2025 20:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752698780; cv=fail; b=a3mxoCX7n2R56K7MDl2sHzrbzIMp7OweQXva68i4S7KMoyTcYiHi5lA1hJM7A6QfIQ3kOrLWGoCM6Fndh0e7J59KhfP+75shNRtfmvTJGyHcAwYL3c3b81g/ex3YxCXzjrVb0DqVcePd5YLiYtJJThg9lfVE2TEpI/29xb36UKg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752698780; c=relaxed/simple;
-	bh=VWJXuCPYZYYgBOB5vlXHO2GlQZRZwgqY2CzWSl2TFvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FwwlU49DMlnjGqvx59s4SjoDIXVgDVF9cWEgXh66p9OWl5trfkWiV+Yl/drkOM04CeGUnebmNAg6kfh7sWjh0H0HhZfiZRx5NumGUxpmS3YnZRBtgZSpTIaifq4OLFWpkpvVmPl3iyEO8Zfsk4lI3nkvoNXtX8rHFZXhijyjUg8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CV5LG6JA; arc=fail smtp.client-ip=52.101.71.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lns0w/g/0KUmFbOeIpcetdO3V7CrfraJVILN92LLWtLpDlGd1UTdqr/bympmWd2m5MIXP+ZNkifBQNe+WD0hxXwKUEx0qpwkjD2YS8y0vk3n4bCX+swGyQZUN+n81Vok9Qvv9CTvdO7xfbpxGSiUJR/TfUbhU80XxZ5EITq+addU0kulcfOKu2SWjOPg0Hb5pnbejd8YPuIMS4jdIkXzl5b79DwVnVD6UzzXYwofskpwvmhgFYlxpnplFochVRGlHrRPBvMhpJH7mRL46eP6K5v2rVyRRlKQNm3KGUFcdbSkvyFlwpMtCLN+exe5FkB9uTFbvJIJPY7mA0bGG4P5Pw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0KZBm3hCTnx2Qqvs8ymoMYdgWGrfzvQjmd4nHp0SC18=;
- b=SOapuC+GnFX5pyQEEDobX6H7Vf+uzE8X/puN95qGWzQLS5dnHEHFZWw94jSe4KPOr0Io/Zzz5smiOCLWlerhO0EQ7cN2b3RwQDzLLg8wIBV1FPLn7lhYJY4cw8xUKHtXaSUZZq9JFxQROwMGIWyPl2lCmw/qsHzSfSmUGVwlAgb7dg7FBBVSbfOpGLqnAdl+aU1mzJlYx7gfgQ59jeFDJHPcFOvcuVyyLlW1yOkCZzyD35Lc2TbNA6qKM74ea392YvR/y3OdUZMVZheHoGrMYBRguP9S15wO5n/md2iiJEXwTnvzxy06gcY5ed72u9Wr3thM9J0lEkNaKJy1y8WTrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0KZBm3hCTnx2Qqvs8ymoMYdgWGrfzvQjmd4nHp0SC18=;
- b=CV5LG6JA7H998ja80sV+/ZukZvsjRA0l65U0xT+cY1wSnk3kDaAWnIo2gG6LdniPmEaNF+pZ/v93VcdL1xgEWt0Rj4PshqFdoA3pG/AkVqvmyIbSmXL3Bf7TEnzHaZoE/wRArLj/VTs0FvGkcoKhtdme3pPMpiXNNGjJHvDIL3zZR5b5L0XG5FV3EB5EFPV1nviAVnKUBLkk1QcohVquRxdcMQwDlhzYgLBqaUZMqSBesf7Arv0HQToxva7c/ZacxR5hNzGBdr4Y+fcCpWgbkJgbVH0A8s/bLKEP/QuXpVzhcP4hkDtng5z6kDFEVmG5gOIm3xKNU0NtdduicubOlA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI2PR04MB10192.eurprd04.prod.outlook.com (2603:10a6:800:229::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Wed, 16 Jul
- 2025 20:46:13 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.028; Wed, 16 Jul 2025
- 20:46:13 +0000
-Date: Wed, 16 Jul 2025 16:46:07 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	richardcochran@gmail.com, claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	fushi.peng@nxp.com, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v2 net-next 09/14] net: enetc: save the parsed
- information of PTP packet to skb->cb
-Message-ID: <aHgPjwiIWfhYnPyC@lizhi-Precision-Tower-5810>
-References: <20250716073111.367382-1-wei.fang@nxp.com>
- <20250716073111.367382-10-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716073111.367382-10-wei.fang@nxp.com>
-X-ClientProxiedBy: AM0PR01CA0106.eurprd01.prod.exchangelabs.com
- (2603:10a6:208:10e::47) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365944A06;
+	Wed, 16 Jul 2025 20:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752698848; cv=none; b=uMylxamQLhkb9xJPTJRiY6ZqQRFIoj+BaCgGRSLoWqD9vDWjN95w/0c00uk78e3XVOyzFza4mbxYHKaBKJTq5zFKL5EME4ZV9xzbJtssbThC3GOScx6ON+qYzNc2gB0PvgPZ2a/UU+e0gvHjre1Y5q3p27fwMeSGjr8OZqR1dpo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752698848; c=relaxed/simple;
+	bh=3T4TM5zPbTcVbBZ0F/1W4imNxL6RtnT1EAGJE6R3rDw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NBWOtvqOYXwok4ama7NLqPMEsWlxJbmcLZJG0dySOV46iJ3BY8U+eI2wMtowXD826Dij9705/1Di6b+QdHRxqpsqw94Ykf3f9LpJks0WBdPoyILLdBCtNVCR4G5sxNTMJHfytDqgOLDkYvQ6pFNuyCNUqehLxQYWVTck4H0RrSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdFPs7UK; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313cde344d4so353223a91.0;
+        Wed, 16 Jul 2025 13:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752698846; x=1753303646; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YfwkMeGXYqzQAGqk8KkRHnOsvdBHdZtOcGBtO2IOIII=;
+        b=OdFPs7UKPkewgTF9FdQexnIWsVT6FIs9cu40dA0pAxhjtSJpLgLuoloCs+r9A0EdSX
+         gspb57WdMvqkpQzf7lJ7IxWKN9Bh++CGzAR09BF1PrKWopYmkDL94k4HASi42aQnzYba
+         GdUuTK5yx5XQ2YU095mzidfSYvaiv10fzNFgevA67MyEbK/mzOWIRBE3C+WqGBALko8v
+         HkRVoeAN6hb9gxctSqEeEAUqQcbwE1UN3uamgbWrdFQIZm2OXrzLNpAs6qao9+BtXrV0
+         Ot/ki9NYQ+s+LJXahbuZAE75efwWNoHYAoHBMd8Ss2cUUTLV0VXRd9jeYt/MwqLkQeNv
+         Qc3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752698846; x=1753303646;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YfwkMeGXYqzQAGqk8KkRHnOsvdBHdZtOcGBtO2IOIII=;
+        b=Tzh2N7sf9WSkefJMSi/9kWK1uLjEtdxK6yF5rK3QLp1WPAzteZeicvhXprWphNUErg
+         E0SAMkiwTnYDkJ4PAD/57vtu0IZLH/CGLwgUsl42WOagpxoBqIUoaQcZPRRh9XlGy+iC
+         Z78kbFvvj0ZabbMcV4iowJGc+U60viQKuFC/izYe4GeV2FQhQWv84jfkxGXDxy8be4Af
+         icNhW7HWSOK+NdxQnE8SjFrS+NYSoWOEbZpZuuqS1YaCEIRwpPlc2SkkFjKiJnHHHFo2
+         gQGvqlTIHsbK3VShJqoPalruSL5v32lqZWR5eHJWY6o/r1bJbHOoTL4ZEK1hPRdh3Jh8
+         21fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWZ/7o5vjr5Sbl+MlJ3/iS3pl6oXpg0mbax8CQCtzwscSKksZoJSeGvSECF2vQeQBcx7ZUN837I573+iCt@vger.kernel.org, AJvYcCUYOcXSKlEC4qjWlnDTOyl/A1VqwMTzf89LorCCDKxAYmpmrGyi1ptR2Uk5zkpTqv+O34bZd7dXsJdsKRRkX7OZuQ==@vger.kernel.org, AJvYcCUlmRD/a2hZVmwoLPu6YWgiZf81TW8aznmJL4dUH9xbSDxyXeCdCLvX6U6qNnGQU7P2LcY=@vger.kernel.org, AJvYcCWB1QgpCz9EZPXBWaZ/WDIHE28c6T1+uRKQmY1xBFvxmZj2hKVgkbTTe1lPkAmhZc7M9GzzUv4hLwAn5o/uIw==@vger.kernel.org, AJvYcCWrMCdHIynHUMsEql1OGLj8ER3h5cZTq5V3KpTwbx431GqMzQkL+QrhjYd0rod66SSvtLSlupVkq7iCI+4XYgnPCKcn@vger.kernel.org
+X-Gm-Message-State: AOJu0YybPeTUKpQaTJtbp5bvkJFLCRsZp7xiA971RVlu522zD+JMkg+L
+	iUZ2P01XVvgqZmh2KsmDVt8nQ5VtKCA3j86vYSW0Eps9dl+pD4906HufELktbOiqEki1zD1+mrB
+	5rl2GlXCF7pJDuq//TJcZdFaF3IJaUfc=
+X-Gm-Gg: ASbGncsIDssXzJkilc2pCrDvo1SmtoX8DVhha6ul23GUkpfIYAosqWb06R41ki5Y0tZ
+	SpzO1ptfaECG6kxZprThrIgFBzodo/Dp8UXjYLSlDrp4PROQESOCj4VfU3Ng0yHisjTU256bivC
+	fEDrJiE8SRWNHila/KWVeHXyF/N6hnFcFg8Cl5QCjN6rzacR4MCsH1Nn4Pw83Rjr4Sl/bbobS30
+	vI0xw==
+X-Google-Smtp-Source: AGHT+IFeFCZTHwQq6CWNE4DeVyMG40lwDfFF0lAyew534oOu3sXQDYX/YiTMj9puYV6XchTRtToJMlDgmQp2I20b5wI=
+X-Received: by 2002:a17:90b:270b:b0:312:e8ed:763 with SMTP id
+ 98e67ed59e1d1-31c9f42412cmr4868436a91.22.1752698846319; Wed, 16 Jul 2025
+ 13:47:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI2PR04MB10192:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c23634e-6e94-4800-9a97-08ddc4a9cd70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|52116014|19092799006|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uzka39FxRJEzjb8FDHfipFfNQSnvl9xoUUsbeIrRcLEgZllO5QoU3n5B51uG?=
- =?us-ascii?Q?cLMtAkFN+PZ5UmSXPYMww+KJcOhnjfAUBHirTpDDAJlZ+vdcnyyNisusXceP?=
- =?us-ascii?Q?TY6TIAlYd5NXfoHyI8hsV19GGq+wEqF02KGMo1UzhD+abrmOlNoRZA0cq/63?=
- =?us-ascii?Q?Xvw5ifkl15IVFhSFtZkJDNeIe6me+K1Ih1HWTPS1I6E28K7MjvrNW0RgJU3D?=
- =?us-ascii?Q?2OFQDzNMjzcnPMshSWAcofI00Q1t64Z/mRwgsGEZgHwJHe6b3qzxSYtaMQxQ?=
- =?us-ascii?Q?rTqZmso8cZFKSIAebqtRA+9OJRwfV2wZWRX2dTgBnzXNC91QUPGnFCurDwI3?=
- =?us-ascii?Q?Rd0q4PjPKYGcR+UflIrN3xqhzsLEMS2cl0MN5Rqh0jSZMtfnwgch+kAJYyq5?=
- =?us-ascii?Q?KGsfM5jFClPD2t5oFNeJZK+uc4/CizLp1gaxsxw7xQSuKO97VIhKJYEjqqPI?=
- =?us-ascii?Q?77hKJSKOzJXTGm0b3L1YYTGZunrftPHD2whD+51Zo4OFfunETEqfBcAGFVeI?=
- =?us-ascii?Q?txDIMQZeLhQrv3X1GpHlYQSVzjGgecanyb75pqWGAfMRvZENiqeCL/FNa8e2?=
- =?us-ascii?Q?ct8lT6vdxV2q5ffX0yEha+tO11cYoAR650vUbAXOgnRgzTaMNkHpyz8W3K17?=
- =?us-ascii?Q?CKVN6nWJ/20QgOW+HYcFNbagbEY7wLv8r2ykZc/JJbl5+EPr8nmFBwZuO2hy?=
- =?us-ascii?Q?irYzgB9gk24B3MTz+pL7X4aUoQJr3cHNgxJi3Cv1J0CwKnndO6o81keJabDp?=
- =?us-ascii?Q?NKpaEFvyAAK0399UPQxWrKGweqPd9W51BQJK2LYRuFp9sQsHIbiJ/J6Xf3j3?=
- =?us-ascii?Q?LA6r3jyZ4sAKP5HwwaLXHUxAiYccbt61WtW+HE3mcZP8+TVmKgZUnQbsVTW/?=
- =?us-ascii?Q?r1sHtyP3ayFU76xVewJX9KsVA9KjO8WD1IJ+1O/MNLFHg55zTsWYlBW0Gr2M?=
- =?us-ascii?Q?WrBl6Y5SW49NR+/uWMobJa9rCGJRiQA7PoCXDhlEiCZ+F3JT40eXuMLcrrN2?=
- =?us-ascii?Q?S6y5x5z8a032Q20W/B1v1UsoRs/3JMZtIWMNYj4pE0ifr3fyvNFNd8B23n5l?=
- =?us-ascii?Q?J4FyIKoWe4bskgHxFcHKVRy2HLi0S6lfmsuveDUIAx5MFuxMY7mJOF30x3mQ?=
- =?us-ascii?Q?NDgU8poRgni+rXbVtHhuVei3wow5WKSHh5aSDcqSCXR30i4rIr84PUWfpnvs?=
- =?us-ascii?Q?Pvvy4TAhMEAchTocn9iKo2FczJYWhMzXrGP2frCAMvoi4x+nLob4R9leKTv6?=
- =?us-ascii?Q?3Fb7x/Qt5iKyCt1NXnjrH5YunmCB1TGMkhWxPJ+PY6DSgvJsJz+TUkShfHGQ?=
- =?us-ascii?Q?UGZn+JkPOLHSkRkWR5IFAGKzVheVsuBFyJAAZbJGDLWYUOmEa9iRciSf90dR?=
- =?us-ascii?Q?rz+GDYg5Ete08n5+9SiBFfFznAcnMFn4w0v8HyfvoMXdmQYeHaFTntPlV9Mq?=
- =?us-ascii?Q?7IksYZgjygiDqBuMpwBk8CBrtoZEwz+D4T1wcePGPYDHqqRoL14Z1w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(52116014)(19092799006)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Nzm6jcGLJxyvwW+cOVPwQzC/5fawx08qk+0h1ge5MJhFIYIfOeovFEFPbXk2?=
- =?us-ascii?Q?Q+8IbSdlxWOxwK+CeLnpNHDvTSqAmwY6M5Al6LrVgPejuVK24Bxc5e8AI4aK?=
- =?us-ascii?Q?WofsEL6U5yhB6zV3/Z9dmtok2C7EPrw9S1UAPtJtfmH6IXgMDu/z+TFIx7Di?=
- =?us-ascii?Q?8gLq6UVE11WL2E9Myd7+vkuO9lKcFS6oCCP15fCLLt4s3CzMj1fhWediCWz6?=
- =?us-ascii?Q?I/gzgs4h1aNfwczXYt2h+LASqEOQIwIUWGfstnzB1BdwPKC6bbfTEftdLGrz?=
- =?us-ascii?Q?I1AJOq3ZrCCPMDBdCZpm3qviYLXvi72P9p4J5vJMddifQpK8aVxQcNS/Fhy3?=
- =?us-ascii?Q?IOvrYx5YD8CMh+9OEgbBh7m00U2/W4sq+FBFnEgrnnGNOZwae44NSUyFx9f3?=
- =?us-ascii?Q?H/soJ8ZynZxVabAw7UKfCaVP84URk3z42yhuBtg5eX+1BL/eipt5a37/KQ6I?=
- =?us-ascii?Q?hYAp8oMo/r3irN4YLGtdFBth00SijGNBbU/WH4l3GTSKNme45GZj1pSVE8ZK?=
- =?us-ascii?Q?HMLIs1SYloHYZIRamNJjGSd5v7y18tgNW+X88DTKhfO6jKiwMFf/22U8DALR?=
- =?us-ascii?Q?Wz/aGXTmMjbyg+PTgHZ4L8Dn04TaMEwqhnfDpDxJvGR2MHORkFqBBvMSHrQt?=
- =?us-ascii?Q?JxR0KwJumcVbJq3nurIPynTOc6gB0VJBbhl6bVxcusGRGx6A5ukmW+GDrmcr?=
- =?us-ascii?Q?bLAUGVM+6jKgsZPfZ3nTlsPMcO1odvmoq5KewYXvXJCV+h7hFRPuKd2t2/To?=
- =?us-ascii?Q?ginEZe1g5HGf4f7iz6n9lxFXxnOoQwxVVEuaCAuJaBBhbYefCjUj3DzlOV71?=
- =?us-ascii?Q?v3Pbq5YtohA7yiHMtjKmzxrtk6/8gIE2kaMVlSZYYbp0L+cjCYASQWERIYb8?=
- =?us-ascii?Q?HSb7i0tbajTHPjIeDMRA2IrDz7EuUteQNcQW0H8BoZgsWABQN2svNr7uEOCo?=
- =?us-ascii?Q?Gd6hGFZ9mkufoIeH74CCFTMUgBjlwzM1P0BT8gwaNwSHmey0cTVdku7Mgx8Z?=
- =?us-ascii?Q?450w68NlDGc43mD0qgf7nwzhDOwwK4gKHNrMAAtrp8hUQHrI7tsAOG89UC12?=
- =?us-ascii?Q?k+sDav9Vx1QRaTBqvMlcS1npouven1quQgAXFC7ET80+KK1yN1cO+e4n/AXs?=
- =?us-ascii?Q?rE5oHbWy7h0VzaVaGP9ghsDh4Qc8nJFFKudSkLVhGM0yUnwxkGiOQGmdVCJ2?=
- =?us-ascii?Q?112BM+0SzvMQaUZUUl22iMrsQ+QWXof0rWhPSKDseuoobGikbOOzey66hWla?=
- =?us-ascii?Q?X8p4l1hVK5+WdAi09KomLONLNuTUJvTWAqOYY8FTF4odgj8vGTMXU2q0T9Dk?=
- =?us-ascii?Q?cTE0lnr+NycQ4BamlZy1ExdHP0YPQOJYTRh67RvETU1nJTVKqnO2CswOY3z+?=
- =?us-ascii?Q?dgp+ZwIgG1itXKOtUamdsHtLlrekjYAsQm03Pzw80jWPT3IjWmUDBoJeOrQH?=
- =?us-ascii?Q?WSqP7sMEvinT9meBw3hZkCRKlwBM0YRrHfey1KSY0pJrfmX3TOQ4mD7gEj4G?=
- =?us-ascii?Q?FGN/ebwGw7zXy8UHr2Fw8lZxCPwQDxG+uo6/ZGs14zhqkvCYVXfgfHzvVwbv?=
- =?us-ascii?Q?czGlEcq1VDxjiPG5N1P2r2nnLhaYmHBYyigCTqQN?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c23634e-6e94-4800-9a97-08ddc4a9cd70
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2025 20:46:13.4913
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LuLE4Jz+D11rg8DIlVYrkZLGZW7Uv7esif2p6/mU4cV0VSVBk/9LlaIFgojpV3kfRFPFd8f2TEgJ2FvS36At2w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10192
+References: <20250716123916.511889-1-bhupesh@igalia.com> <20250716123916.511889-4-bhupesh@igalia.com>
+ <CAEf4BzaGRz6A1wzBa2ZyQWY_4AvUHvLgBF36iCxc9wJJ1ppH0g@mail.gmail.com> <c6a0b682-a1a5-f19c-acf5-5b08abf80a24@igalia.com>
+In-Reply-To: <c6a0b682-a1a5-f19c-acf5-5b08abf80a24@igalia.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 16 Jul 2025 13:47:14 -0700
+X-Gm-Features: Ac12FXzdMIUrwTNSRAbXY9z4R-Vg46K1zjuhZoodouCKkxjzhdaHWwCSZWFsfng
+Message-ID: <CAEf4BzaJiCLH8nwWa5eM4D+n1nyCn3X-v0+W4-CwLg7hB2Wthg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] treewide: Switch from tsk->comm to tsk->comm_str
+ which is 64 bytes long
+To: Bhupesh Sharma <bhsharma@igalia.com>
+Cc: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org, kernel-dev@igalia.com, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com, 
+	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org, 
+	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com, 
+	alexei.starovoitov@gmail.com, mirq-linux@rere.qmqm.pl, peterz@infradead.org, 
+	willy@infradead.org, david@redhat.com, viro@zeniv.linux.org.uk, 
+	keescook@chromium.org, ebiederm@xmission.com, brauner@kernel.org, 
+	jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, linux-trace-kernel@vger.kernel.org, 
+	kees@kernel.org, torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 03:31:06PM +0800, Wei Fang wrote:
-> Currently, the Tx PTP packets are parsed twice in the enetc driver, once
-> in enetc_xmit() and once in enetc_map_tx_buffs(). The latter is duplicate
-> and is unnecessary, since the parsed information can be saved to skb->cb
-> so that enetc_map_tx_buffs() can get the previously parsed data from
-> skb->cb. Therefore, we add struct enetc_skb_cb as the format of the data
-> in the skb->cb buffer to save the parsed information of PTP packet.
+On Wed, Jul 16, 2025 at 1:18=E2=80=AFPM Bhupesh Sharma <bhsharma@igalia.com=
+> wrote:
+>
+> On 7/16/25 11:40 PM, Andrii Nakryiko wrote:
+> > On Wed, Jul 16, 2025 at 5:40=E2=80=AFAM Bhupesh <bhupesh@igalia.com> wr=
+ote:
+> >> Historically due to the 16-byte length of TASK_COMM_LEN, the
+> >> users of 'tsk->comm' are restricted to use a fixed-size target
+> >> buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
+> >>
+> >> To fix the same, Kees suggested in [1] that we can replace tsk->comm,
+> >> with tsk->comm_str, inside 'task_struct':
+> >>         union {
+> >>                 char    comm_str[TASK_COMM_EXT_LEN];
+> >>         };
+> >>
+> >> where TASK_COMM_EXT_LEN is 64-bytes.
+> > Do we absolutely have to rename task->comm field? I understand as an
+> > intermediate step to not miss any existing users in the kernel
+> > sources, but once that all is done, we can rename that back to comm,
+> > right?
+> >
+> > The reason I'm asking is because accessing task->comm is *very common*
+> > with all sorts of BPF programs and scripts. Yes, we have way to deal
+> > with that with BPF CO-RE, but every single use case would need to be
+> > updated now to work both with task->comm name on old kernels and
+> > task->comm_str on new kernels (because BPF programs are written in
+> > more or less kernel version agnostic way, so they have to handle many
+> > kernel releases).
+> >
+> > So, unless absolutely necessary, can we please keep the field name the
+> > same? Changing the size of that field is not really a problem for BPF,
+> > so no objections against that.
+>
+> So, as a background we have had several previous discussions regarding
+> renaming the 'tsk->comm' to 'task->comm_str' on the list (please see [1]
+> and [2] for details), and as per Kees's recommendations we have taken
+> this approach in the v5 patchset (may be Kees can add further details if
+> I have missed adding something in the log message above).
+>
+> That being said, ideally one would not like to break any exiting ABI
 
-Add struct enetc_skb_cb as the format of the data in the skb-cb buffer to
-save the parsed information of PTP packet.
+kernel-internal data structures are not ABI to BPF programs, even
+though they do look into kernel internals routinely for observability
+and other reasons, so there is no ABI/API stability issue here.
 
-Use saved information in enetc_map_tx_buffs() to avoid parse data again.
+Having said that, unless absolutely necessary, renaming something so
+commonly used as task->comm is just an unnecessary widespread
+disruption, which ideally we just avoid, unless absolutely necessary.
 
->
-> In addition, the variables offset1 and offset2 in enetc_map_tx_buffs()
-> are renamed to corr_off and tstamp_off to make them easier to understand.
 
-Also, rename variables offset1 and offset2 in enetc_map_tx_buffs() to
-corr_off and tstamp_off for better readability.
+> (which includes existing / older BPF programs). I was having a look at
+> the BPF CO_RE reference guide (see [3]), and was able to make out that
+> BPF CO_RE has a definition of |s||truct task_struct|which doesn't need
+> to match the kernel's struct task_struct definition exactly (as [3]
+> mentions -> only a necessary subset of fields have to be present and
+> compatible):
+>
+> |struct task_struct { intpid; charcomm[16]; struct
+> task_struct*group_leader; } __attribute__((preserve_access_index)); |
+>
+> So, if we add a check here to add  '|charcomm[16]' or||charcomm_str[16]'
+> to BPF CO RE's internal 'struct task_struct' on basis of the underlying
+> kernel version being used (something like using  'KERNEL_VERSION(x, y,
+> 0)' for example), will that suffice? I have ||used and seen these checks
+> being used in the user-space applications (for example, see [4]) at
+> several occasions.
+>
 
->
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
->
-> ---
-> v2 changes:
-> 1. Add description of offset1 and offset2 being renamed in the commit
-> message.
-> ---
->  drivers/net/ethernet/freescale/enetc/enetc.c | 65 ++++++++++----------
->  drivers/net/ethernet/freescale/enetc/enetc.h |  9 +++
->  2 files changed, 43 insertions(+), 31 deletions(-)
->
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
-> index e4287725832e..c1373163a096 100644
-> --- a/drivers/net/ethernet/freescale/enetc/enetc.c
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc.c
-> @@ -225,13 +225,12 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
->  {
->  	bool do_vlan, do_onestep_tstamp = false, do_twostep_tstamp = false;
->  	struct enetc_ndev_priv *priv = netdev_priv(tx_ring->ndev);
-> +	struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
->  	struct enetc_hw *hw = &priv->si->hw;
->  	struct enetc_tx_swbd *tx_swbd;
->  	int len = skb_headlen(skb);
->  	union enetc_tx_bd temp_bd;
-> -	u8 msgtype, twostep, udp;
->  	union enetc_tx_bd *txbd;
-> -	u16 offset1, offset2;
->  	int i, count = 0;
->  	skb_frag_t *frag;
->  	unsigned int f;
-> @@ -280,16 +279,10 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
->  	count++;
->
->  	do_vlan = skb_vlan_tag_present(skb);
-> -	if (skb->cb[0] & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
-> -		if (enetc_ptp_parse(skb, &udp, &msgtype, &twostep, &offset1,
-> -				    &offset2) ||
-> -		    msgtype != PTP_MSGTYPE_SYNC || twostep)
-> -			WARN_ONCE(1, "Bad packet for one-step timestamping\n");
-> -		else
-> -			do_onestep_tstamp = true;
-> -	} else if (skb->cb[0] & ENETC_F_TX_TSTAMP) {
-> +	if (enetc_cb->flag & ENETC_F_TX_ONESTEP_SYNC_TSTAMP)
-> +		do_onestep_tstamp = true;
-> +	else if (enetc_cb->flag & ENETC_F_TX_TSTAMP)
->  		do_twostep_tstamp = true;
-> -	}
->
->  	tx_swbd->do_twostep_tstamp = do_twostep_tstamp;
->  	tx_swbd->qbv_en = !!(priv->active_offloads & ENETC_F_QBV);
-> @@ -333,6 +326,8 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
->  		}
->
->  		if (do_onestep_tstamp) {
-> +			u16 tstamp_off = enetc_cb->origin_tstamp_off;
-> +			u16 corr_off = enetc_cb->correction_off;
->  			__be32 new_sec_l, new_nsec;
->  			u32 lo, hi, nsec, val;
->  			__be16 new_sec_h;
-> @@ -362,32 +357,32 @@ static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb)
->  			new_sec_h = htons((sec >> 32) & 0xffff);
->  			new_sec_l = htonl(sec & 0xffffffff);
->  			new_nsec = htonl(nsec);
-> -			if (udp) {
-> +			if (enetc_cb->udp) {
->  				struct udphdr *uh = udp_hdr(skb);
->  				__be32 old_sec_l, old_nsec;
->  				__be16 old_sec_h;
->
-> -				old_sec_h = *(__be16 *)(data + offset2);
-> +				old_sec_h = *(__be16 *)(data + tstamp_off);
->  				inet_proto_csum_replace2(&uh->check, skb, old_sec_h,
->  							 new_sec_h, false);
->
-> -				old_sec_l = *(__be32 *)(data + offset2 + 2);
-> +				old_sec_l = *(__be32 *)(data + tstamp_off + 2);
->  				inet_proto_csum_replace4(&uh->check, skb, old_sec_l,
->  							 new_sec_l, false);
->
-> -				old_nsec = *(__be32 *)(data + offset2 + 6);
-> +				old_nsec = *(__be32 *)(data + tstamp_off + 6);
->  				inet_proto_csum_replace4(&uh->check, skb, old_nsec,
->  							 new_nsec, false);
->  			}
->
-> -			*(__be16 *)(data + offset2) = new_sec_h;
-> -			*(__be32 *)(data + offset2 + 2) = new_sec_l;
-> -			*(__be32 *)(data + offset2 + 6) = new_nsec;
-> +			*(__be16 *)(data + tstamp_off) = new_sec_h;
-> ++			*(__be32 *)(data + tstamp_off + 2) = new_sec_l;
-> ++			*(__be32 *)(data + tstamp_off + 6) = new_nsec;
+It's simpler on BPF side, we can check the existence of task_struct's
+comm field, and handle either task->comm or task->comm_str
+accordingly. This has been done many times for various things that
+evolved in the kernel.
 
-strange why there are two ++ here.
+But given how frequently task->comm is referenced (pretty much any
+profiler or tracer will capture this), it's just the widespread nature
+of accessing task->comm in BPF programs/scripts that will cause a lot
+of adaptation churn. And given the reason for renaming was to catch
+missing cases during refactoring, my ask was to do this renaming
+locally, validate all kernel code was modified, and then switch the
+field name back to "comm" (which you already did, so the remaining
+part would be just to rename comm_str back to comm). Unless I'm
+missing something else, of course.
 
+> Please let me know your views.
 >
->  			/* Configure single-step register */
->  			val = ENETC_PM0_SINGLE_STEP_EN;
-> -			val |= ENETC_SET_SINGLE_STEP_OFFSET(offset1);
-> -			if (udp)
-> +			val |= ENETC_SET_SINGLE_STEP_OFFSET(corr_off);
-> +			if (enetc_cb->udp)
->  				val |= ENETC_PM0_SINGLE_STEP_CH;
+> |[1]. https://lore.kernel.org/all/202505222041.B639D482FB@keescook/
+> [2].
+> https://lore.kernel.org/all/ba4ddf27-91e7-0ecc-95d5-c139f6978812@igalia.c=
+om/
+> [3]. https://nakryiko.com/posts/bpf-core-reference-guide/
+> [4].
+> https://github.com/crash-utility/crash/blob/master/memory_driver/crash.c#=
+L41C25-L41C49
 >
->  			enetc_port_mac_wr(priv->si, ENETC_PM0_SINGLE_STEP,
-> @@ -938,12 +933,13 @@ static int enetc_map_tx_tso_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb
->  static netdev_tx_t enetc_start_xmit(struct sk_buff *skb,
->  				    struct net_device *ndev)
->  {
-> +	struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
->  	struct enetc_ndev_priv *priv = netdev_priv(ndev);
->  	struct enetc_bdr *tx_ring;
->  	int count;
+> Thanks.
 >
->  	/* Queue one-step Sync packet if already locked */
-> -	if (skb->cb[0] & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
-> +	if (enetc_cb->flag & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
->  		if (test_and_set_bit_lock(ENETC_TX_ONESTEP_TSTAMP_IN_PROGRESS,
->  					  &priv->flags)) {
->  			skb_queue_tail(&priv->tx_skbs, skb);
-> @@ -1005,24 +1001,29 @@ static netdev_tx_t enetc_start_xmit(struct sk_buff *skb,
->
->  netdev_tx_t enetc_xmit(struct sk_buff *skb, struct net_device *ndev)
->  {
-> +	struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
->  	struct enetc_ndev_priv *priv = netdev_priv(ndev);
->  	u8 udp, msgtype, twostep;
->  	u16 offset1, offset2;
->
-> -	/* Mark tx timestamp type on skb->cb[0] if requires */
-> +	/* Mark tx timestamp type on enetc_cb->flag if requires */
->  	if ((skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
-> -	    (priv->active_offloads & ENETC_F_TX_TSTAMP_MASK)) {
-> -		skb->cb[0] = priv->active_offloads & ENETC_F_TX_TSTAMP_MASK;
-> -	} else {
-> -		skb->cb[0] = 0;
-> -	}
-> +	    (priv->active_offloads & ENETC_F_TX_TSTAMP_MASK))
-> +		enetc_cb->flag = priv->active_offloads & ENETC_F_TX_TSTAMP_MASK;
-> +	else
-> +		enetc_cb->flag = 0;
->
->  	/* Fall back to two-step timestamp if not one-step Sync packet */
-> -	if (skb->cb[0] & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
-> +	if (enetc_cb->flag & ENETC_F_TX_ONESTEP_SYNC_TSTAMP) {
->  		if (enetc_ptp_parse(skb, &udp, &msgtype, &twostep,
->  				    &offset1, &offset2) ||
-> -		    msgtype != PTP_MSGTYPE_SYNC || twostep != 0)
-> -			skb->cb[0] = ENETC_F_TX_TSTAMP;
-> +		    msgtype != PTP_MSGTYPE_SYNC || twostep != 0) {
-> +			enetc_cb->flag = ENETC_F_TX_TSTAMP;
-> +		} else {
-> +			enetc_cb->udp = !!udp;
-> +			enetc_cb->correction_off = offset1;
-> +			enetc_cb->origin_tstamp_off = offset2;
-> +		}
->  	}
->
->  	return enetc_start_xmit(skb, ndev);
-> @@ -1214,7 +1215,9 @@ static bool enetc_clean_tx_ring(struct enetc_bdr *tx_ring, int napi_budget)
->  		if (xdp_frame) {
->  			xdp_return_frame(xdp_frame);
->  		} else if (skb) {
-> -			if (unlikely(skb->cb[0] & ENETC_F_TX_ONESTEP_SYNC_TSTAMP)) {
-> +			struct enetc_skb_cb *enetc_cb = ENETC_SKB_CB(skb);
-> +
-> +			if (unlikely(enetc_cb->flag & ENETC_F_TX_ONESTEP_SYNC_TSTAMP)) {
->  				/* Start work to release lock for next one-step
->  				 * timestamping packet. And send one skb in
->  				 * tx_skbs queue if has.
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
-> index 62e8ee4d2f04..ce3fed95091b 100644
-> --- a/drivers/net/ethernet/freescale/enetc/enetc.h
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc.h
-> @@ -54,6 +54,15 @@ struct enetc_tx_swbd {
->  	u8 qbv_en:1;
->  };
->
-> +struct enetc_skb_cb {
-> +	u8 flag;
-> +	bool udp;
-> +	u16 correction_off;
-> +	u16 origin_tstamp_off;
-> +};
-> +
-> +#define ENETC_SKB_CB(skb) ((struct enetc_skb_cb *)((skb)->cb))
-> +
->  struct enetc_lso_t {
->  	bool	ipv6;
->  	bool	tcp;
-> --
-> 2.34.1
+> >> And then modify 'get_task_comm()' to pass 'tsk->comm_str'
+> >> to the existing users.
+> >>
+> >> This would mean that ABI is maintained while ensuring that:
+> >>
+> >> - Existing users of 'get_task_comm'/ 'set_task_comm' will get 'tsk->co=
+mm_str'
+> >>    truncated to a maximum of 'TASK_COMM_LEN' (16-bytes) to maintain AB=
+I,
+> >> - New / Modified users of 'get_task_comm'/ 'set_task_comm' will get
+> >>   'tsk->comm_str' supported for a maximum of 'TASK_COMM_EXTLEN' (64-by=
+tes).
+> >>
+> >> Note, that the existing users have not been modified to migrate to
+> >> 'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
+> >> dealing with only a 'TASK_COMM_LEN' long 'tsk->comm_str'.
+> >>
+> >> [1]. https://lore.kernel.org/all/202505231346.52F291C54@keescook/
+> >>
+> >> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+> >> ---
+> >>   arch/arm64/kernel/traps.c        |  2 +-
+> >>   arch/arm64/kvm/mmu.c             |  2 +-
+> >>   block/blk-core.c                 |  2 +-
+> >>   block/bsg.c                      |  2 +-
+> >>   drivers/char/random.c            |  2 +-
+> >>   drivers/hid/hid-core.c           |  6 +++---
+> >>   drivers/mmc/host/tmio_mmc_core.c |  6 +++---
+> >>   drivers/pci/pci-sysfs.c          |  2 +-
+> >>   drivers/scsi/scsi_ioctl.c        |  2 +-
+> >>   drivers/tty/serial/serial_core.c |  2 +-
+> >>   drivers/tty/tty_io.c             |  8 ++++----
+> >>   drivers/usb/core/devio.c         | 16 ++++++++--------
+> >>   drivers/usb/core/message.c       |  2 +-
+> >>   drivers/vfio/group.c             |  2 +-
+> >>   drivers/vfio/vfio_iommu_type1.c  |  2 +-
+> >>   drivers/vfio/vfio_main.c         |  2 +-
+> >>   drivers/xen/evtchn.c             |  2 +-
+> >>   drivers/xen/grant-table.c        |  2 +-
+> >>   fs/binfmt_elf.c                  |  2 +-
+> >>   fs/coredump.c                    |  4 ++--
+> >>   fs/drop_caches.c                 |  2 +-
+> >>   fs/exec.c                        |  8 ++++----
+> >>   fs/ext4/dir.c                    |  2 +-
+> >>   fs/ext4/inode.c                  |  2 +-
+> >>   fs/ext4/namei.c                  |  2 +-
+> >>   fs/ext4/super.c                  | 12 ++++++------
+> >>   fs/hugetlbfs/inode.c             |  2 +-
+> >>   fs/ioctl.c                       |  2 +-
+> >>   fs/iomap/direct-io.c             |  2 +-
+> >>   fs/jbd2/transaction.c            |  2 +-
+> >>   fs/locks.c                       |  2 +-
+> >>   fs/netfs/internal.h              |  2 +-
+> >>   fs/proc/base.c                   |  2 +-
+> >>   fs/read_write.c                  |  2 +-
+> >>   fs/splice.c                      |  2 +-
+> >>   include/linux/coredump.h         |  2 +-
+> >>   include/linux/filter.h           |  2 +-
+> >>   include/linux/ratelimit.h        |  2 +-
+> >>   include/linux/sched.h            | 11 ++++++++---
+> >>   init/init_task.c                 |  2 +-
+> >>   ipc/sem.c                        |  2 +-
+> >>   kernel/acct.c                    |  2 +-
+> >>   kernel/audit.c                   |  4 ++--
+> >>   kernel/auditsc.c                 | 10 +++++-----
+> >>   kernel/bpf/helpers.c             |  2 +-
+> >>   kernel/capability.c              |  4 ++--
+> >>   kernel/cgroup/cgroup-v1.c        |  2 +-
+> >>   kernel/cred.c                    |  4 ++--
+> >>   kernel/events/core.c             |  2 +-
+> >>   kernel/exit.c                    |  6 +++---
+> >>   kernel/fork.c                    |  9 +++++++--
+> >>   kernel/freezer.c                 |  4 ++--
+> >>   kernel/futex/waitwake.c          |  2 +-
+> >>   kernel/hung_task.c               | 10 +++++-----
+> >>   kernel/irq/manage.c              |  2 +-
+> >>   kernel/kthread.c                 |  2 +-
+> >>   kernel/locking/rtmutex.c         |  2 +-
+> >>   kernel/printk/printk.c           |  2 +-
+> >>   kernel/sched/core.c              | 22 +++++++++++-----------
+> >>   kernel/sched/debug.c             |  4 ++--
+> >>   kernel/signal.c                  |  6 +++---
+> >>   kernel/sys.c                     |  6 +++---
+> >>   kernel/sysctl.c                  |  2 +-
+> >>   kernel/time/itimer.c             |  4 ++--
+> >>   kernel/time/posix-cpu-timers.c   |  2 +-
+> >>   kernel/tsacct.c                  |  2 +-
+> >>   kernel/workqueue.c               |  6 +++---
+> >>   lib/dump_stack.c                 |  2 +-
+> >>   lib/nlattr.c                     |  6 +++---
+> >>   mm/compaction.c                  |  2 +-
+> >>   mm/filemap.c                     |  4 ++--
+> >>   mm/gup.c                         |  2 +-
+> >>   mm/memfd.c                       |  2 +-
+> >>   mm/memory-failure.c              | 10 +++++-----
+> >>   mm/memory.c                      |  2 +-
+> >>   mm/mmap.c                        |  4 ++--
+> >>   mm/oom_kill.c                    | 18 +++++++++---------
+> >>   mm/page_alloc.c                  |  4 ++--
+> >>   mm/util.c                        |  2 +-
+> >>   net/core/sock.c                  |  2 +-
+> >>   net/dns_resolver/internal.h      |  2 +-
+> >>   net/ipv4/raw.c                   |  2 +-
+> >>   net/ipv4/tcp.c                   |  2 +-
+> >>   net/socket.c                     |  2 +-
+> >>   security/lsm_audit.c             |  4 ++--
+> >>   85 files changed, 171 insertions(+), 161 deletions(-)
+> >>
+> > [...]
 >
 
