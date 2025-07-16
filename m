@@ -1,106 +1,103 @@
-Return-Path: <linux-kernel+bounces-734300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0969B07FB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:32:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96AAFB07FAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960844E2678
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:32:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFBD658658F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 21:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEF62ECD24;
-	Wed, 16 Jul 2025 21:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6956A2EBDEE;
+	Wed, 16 Jul 2025 21:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Bwdp/vGc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmScn7AR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D142EBBB8;
-	Wed, 16 Jul 2025 21:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23262EBB95;
+	Wed, 16 Jul 2025 21:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752701547; cv=none; b=ts6SEuu98eLQR8oF3Mt5//7D3uDiFOaKLR16ytPOLNq7FEQ8aA+0L7ksd2BqWI/MHoA1gaV3iifK+PwxbdTfoZBySxBTJAuLzMImbiNi2xg1sPX0p/fEj12vBdI/PvhqGcWeCHyRWSakeSYRiCN5yYiSg5bxwRMECCQPa4G0OQ0=
+	t=1752701544; cv=none; b=UzNvqhMmh0CYW0AybRbXRx/Lbej+3HfvUmFtU/2i6Wb07+/bLM79JsBqiejfJ+v9y7hS10IuQplRYf0DOqQPH7F1l3MfG3SbF5UHdPAMlXMPdLnGRDGa3JsZPNGJKjcFa/dsFBgzPFdA2xNBKNjFng9ztBFEqvzC+v9SRI8BzvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752701547; c=relaxed/simple;
-	bh=bLS9FBu/c7skYJqzY0x6pwzs/M+nGNC/6F5Se1nMpT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iPkXCcYcLBA+H1soOjETfQs/LTtbgBF+4M7gDJW6w/3xX8UfL0cOS9Jpc4HreSl8Tm5xAuuK2nhmKCmQgG2kLWxGjBBOormMqsiqMvd6yqZ0z2nmUoQATqHzS4jAsQJRD56403QItt2bc66vfKWCL0BMjr7Gkm/SQiC9vBssU9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Bwdp/vGc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752701416;
-	bh=BNiY3rYtZ94JFaO6DjYPH5FmoIwDx4Pnjjz+/ZLqKII=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Bwdp/vGcoCWRNaWB+g8ovzQKlEgAmluYjfqtPLWF0NQMt2lTqQu1IloQflhU3XBUo
-	 SRzZUh5ZoDsYzbUEEysOp/ADoBusq3oUrLqfl+8TV0gNdwUodND2HZq+uavzBTStdr
-	 5v+Q8CGiEJzSvwFi2TFhADrCOcOwQ/eVApEDv25bAps4HnvPTyydDEJqo6Qz7LwiAw
-	 lp9rGbRvwawB0QoVALiBYcoOsGiu0A2gXNl4QaKeEvPIYlSyQziqZcARC/kPcl7VWq
-	 Ux8hSexmKor03gwJlmEy67LU1IUN4zSE27kaeZCc20+c7IHGeV0jXWV4E/g8Fv76/x
-	 ISWVAT5yohn8Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bj8NS0Hr5z4x43;
-	Thu, 17 Jul 2025 07:30:12 +1000 (AEST)
-Date: Thu, 17 Jul 2025 07:32:09 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Jens Axboe <axboe@kernel.dk>, Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the block tree with the jc_docs
- tree
-Message-ID: <20250717073209.3228adea@canb.auug.org.au>
-In-Reply-To: <87ecugdzyq.fsf@trenco.lwn.net>
-References: <20250716150234.52ec0d5f@canb.auug.org.au>
-	<87ecugdzyq.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1752701544; c=relaxed/simple;
+	bh=RcJyvGAOYpJenAb2/Ce7hOXw7Nx71fjCzp0c1g1mHhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C41cqA5Tx3OFy0Ju7A2Ivv5s35LQOuVl0rOmVLkSkhfJEtf3gb/WMK8UBmsu1d8JTFYIUG9FV7gefxCZ+QCQZ/wzQVwfVUCCJjqo25SOKzpjI1ERrSZzMkQFErE4VIosT7R3z+JWB9SDMaa+WOelF/sbJZcE9efTJkkLqs8GsrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FmScn7AR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9EBC4CEE7;
+	Wed, 16 Jul 2025 21:32:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752701544;
+	bh=RcJyvGAOYpJenAb2/Ce7hOXw7Nx71fjCzp0c1g1mHhQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FmScn7ARSIYqiNmzF+rn6FPk0ApXOqD5XWmA1IyOxXBP9+ppw/H4KAOq6Kjoc+s0+
+	 idi8lHv7rzfwBehXnK/a7gCf1qne5NXHKAJwIw+z6Qu10DZWpjd+LznayCsReVUH5Y
+	 agIyoR524SbkUq7rG2vNfM4MVkHKag/fpwXse/f4fk0DpleuMJlchesk68RgYMaILa
+	 /31s80fEietrfCSKVsz0lhKknnyl8pTxT+de4h9v+yGkRfgRrIDAzqixyTGaK/kwQU
+	 4+P2ydTeGaKKQuRtq20vT8anHAPeKyb6gMXGyP5pQKzqF3mlceWZ8YIC8NaZbgH08l
+	 EgHmVWSkXQ1iA==
+Date: Wed, 16 Jul 2025 14:32:21 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, x86@kernel.org, Steven Rostedt <rostedt@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
+	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
+	Beau Belgrave <beaub@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [RFC PATCH v1 06/16] unwind_user: Enable archs that define CFA =
+ SP_callsite + offset
+Message-ID: <qoiocmdhuuaox5v5ig2ui67qbuxkvzl4z3ft4gdp7p3c4b4zfq@trjthmmculkf>
+References: <20250710163522.3195293-1-jremus@linux.ibm.com>
+ <20250710163522.3195293-7-jremus@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/D+_Qet95//7UdFbeHecVB.9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250710163522.3195293-7-jremus@linux.ibm.com>
 
---Sig_/D+_Qet95//7UdFbeHecVB.9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 10, 2025 at 06:35:12PM +0200, Jens Remus wrote:
+> Most architectures define their CFA as the value of the stack pointer
+> (SP) at the call site in the previous frame, as suggested by the DWARF
+> standard:
+> 
+>   CFA = <SP at call site>
+> 
+> Enable unwinding of user space for architectures, such as s390, which
+> define their CFA as the value of the SP at the call site in the previous
+> frame with an offset:
+> 
+>   CFA = <SP at call site> + offset
 
-Hi Jon,
+This is a bit confusing, as the comment and code define it as
 
-On Wed, 16 Jul 2025 07:31:25 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
->
-> That seems like an awful lot of fallout given that the block side, in
-> its entirety, just removes a single line.  I guess the resolution is
-> correct - thanks - but I don't quite understand why the conflict is so
-> widespread.
+    SP = CFA + offset
 
-Its just the "git diff" context, I guess.
+Should the commit log be updated to match that?
 
---=20
-Cheers,
-Stephen Rothwell
+> +++ b/arch/x86/include/asm/unwind_user.h
+> @@ -8,6 +8,7 @@
+>  	.cfa_off	= (s32)sizeof(long) *  2,				\
+>  	.ra_off		= (s32)sizeof(long) * -1,				\
+>  	.fp_off		= (s32)sizeof(long) * -2,				\
+> +	.sp_val_off	= (s32)0,						\
 
---Sig_/D+_Qet95//7UdFbeHecVB.9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+IIUC, this is similar to ra_off and fp_off in that its an offset from
+the CFA.  Can we call it "sp_off"?
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh4GlkACgkQAVBC80lX
-0Gx1ogf+PkFQSaUKBmS9Ni5AtlA/AMbNaZLjRSIAD4siscGEqzEXMCFIrs0ChAtd
-97769Qfn/xWO8P5lAxNDRM85bIUF+Ika1raCfFJTexjlqv1Oj6CkXlvbK7TAD9me
-cOSyeyBHzxBp+ezNuAwFo2YuZea3lOVxJwd0cbtzKuAlwfIgwGJgm3jPsFX0HVRD
-UrDhbTWlupDr0TSO6DOawdSZYZYMuEot1KUjGt4TuSmx3KF7tYcX/5K57m1Wg+vQ
-iln/w5djIouqtQeycd0Cj6ofsiI3EsZwsiOPrc1/c3IyLXXvw5lUh+NRhOqsQnH9
-eCALjCF2aTNYsGE8ewa3qhvy4pJtCg==
-=CZgg
------END PGP SIGNATURE-----
-
---Sig_/D+_Qet95//7UdFbeHecVB.9--
+-- 
+Josh
 
