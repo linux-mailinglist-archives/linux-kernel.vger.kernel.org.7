@@ -1,247 +1,125 @@
-Return-Path: <linux-kernel+bounces-734389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F37B080F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:25:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51EEFB080D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B50017B57B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BBD1AA5C9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 23:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66412EF9B3;
-	Wed, 16 Jul 2025 23:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2352EF29F;
+	Wed, 16 Jul 2025 23:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atl.tools header.i=@atl.tools header.b="ZtmD+t22"
-Received: from mail.atl.tools (mail.atl.tools [49.12.87.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ifm2d+JE"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623C427281F;
-	Wed, 16 Jul 2025 23:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.87.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044EE19DF8D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752708321; cv=none; b=Y3FZoFXSOxOq7tEUnjPj9g5sGEYLvwfytnBQn6d7zR9WfPa+ZSYRUIyS4pnHBYA+9yiKyx/S6MsgVRC+DNSdsq+VbIVPXeUg5/HbGMeaJHLpWiz5f0nD0hW5tETizwL+O5p8WcMHu1kurFas2eDhmLYhcILSAJ3pi/IJDMiKmFQ=
+	t=1752707977; cv=none; b=eOtD8vLrMzUy8JEK7xAO5k7UojLfbUxRXfj2MI7BIFOEJKRBbkrPFLbb9xolf+vTpoZBczt3vDvdxTFCIn/poqB+fsMtILljbxiuPvymCK+Uyi+RN9j/CgxQg360pRcSF7/Nsl+juuGVMurEcXz8qsIQc1vE4zdcMKgES029VSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752708321; c=relaxed/simple;
-	bh=NBjdvtm8LNJeNvGYsMe4oNJ+F1RhXYTyTum1QrHGy1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pnrLjqCyK5gNm3Ln1iM3/PBZVN+i02UtYeicdVNzzwmrPVzaYPYZNX355eht1GDBX3ucKb0PY5P+qv7Tob/uGta7cF/lAQiHNUU0CpnQWt/geCM9kL7xYFAZ4tXxPrwk7utupwLEoDWoY5CPjhikSB9qCz0p7hL6W97FxyfKkZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=atl.tools; spf=pass smtp.mailfrom=atl.tools; dkim=pass (2048-bit key) header.d=atl.tools header.i=@atl.tools header.b=ZtmD+t22; arc=none smtp.client-ip=49.12.87.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=atl.tools
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atl.tools
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7CA1A2AB2C;
-	Wed, 16 Jul 2025 23:17:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atl.tools; s=dkim;
-	t=1752707851; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=cpxms3VPXxCnf3lU1v5yy1/NKSae7RJMhLhi8dzLwNg=;
-	b=ZtmD+t22zkjYnSuN+tATDAgq64oexaIB59xuCdbDSDlSQemK/7zdoZr+eE90m/yl0OTEh/
-	6nwtxeiBjbDS1TRJyyd86yfGJkwxWTEzF0Wvd+35JZ/SLkWErZoe7y8YlGFnyNs9epL2l3
-	jfKyLct67JayRwQibJfLOBtf5hmtQAk7aw81TLYzRX0tVPUnh5z4e5rfcOI5rDs2AbLzQl
-	ZP+1IEFO887Ms2++HPy6DaTdyMlZrM0vB6nmXFKD11MEeQORfzgMmWYp6TKm8sPacuST0o
-	Ke07cBveeMzTPmESJtl69Z+25sa+7metcSUg8JIVp4VMht4gWwwsOyf6c4VN7A==
-From: Violet <violet@atl.tools>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/2] arm64: dts: qcom: add initial support for Samsung Galaxy S22
-Date: Wed, 16 Jul 2025 23:17:10 +0000
-Message-ID: <20250716231710.99983-3-violet@atl.tools>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250716231710.99983-1-violet@atl.tools>
-References: <20250716231710.99983-1-violet@atl.tools>
+	s=arc-20240116; t=1752707977; c=relaxed/simple;
+	bh=9/NnJDTcQwKH0nX4EoIsUlDscSEoGQ+CI3cGaPK+Ctg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t8HbOV+xTaxNlaMcb9DRMqCRt+wqh0eE6r6H8S7VgHlefUDcRCZkaG40xz0ed8x47mWex1Y70Wamv7JC9imM3ggecagkyP4a7s/ayKaQO2BAxC0gPGs5/hs932oHVi7k3kcOV3nPSoawn6GYntaA08EfqRhzqe9AUh43pfrsgMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ifm2d+JE; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-609b169834cso2620a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 16:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752707974; x=1753312774; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/NnJDTcQwKH0nX4EoIsUlDscSEoGQ+CI3cGaPK+Ctg=;
+        b=Ifm2d+JE80BYbwXflvBz3bueuGj3YgIHqR4QY99jKgc8N95hmnd3shmqX6OmpFQVrp
+         p42Go6U4UFu0eZsm8GKKSWc3sik/JfpEwKdtvMq4wLN0z/UbAyoRyOHgN6cbdziZeudx
+         PIpjCiz/43rVxFPnOgSmsHrRO9Vsm/rjv3YibMQwiigD0v5YfPIXS6gyKHPf2q2uh2fh
+         o+A1mg7ZRVPctGbmLcTN8VXXsq+XAXLiiI9eaFQBFE1KFJdQhgP2FLXMYFSMMQ3DAu0E
+         zL+nMsHptOWKIGgciwtBOLFbVrarfsOIeUpWMmquKsPQ7iXBM39MywcAsBGCkiK3YGVy
+         n28Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752707974; x=1753312774;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9/NnJDTcQwKH0nX4EoIsUlDscSEoGQ+CI3cGaPK+Ctg=;
+        b=SAy8f1K6C+R4YRnf4/2KS/YVtFtlhuDEzZg4XF6SuCzSgj6Ri7rLmfU6+kecEEsq96
+         P0hnxDMGQ70qsDpETsoulY8pJRHFr36iglR0PCG6FnIdgQQiqz2cGnsINe5KZpEqpJWX
+         jEEwHR0yESVdw/qWbp1qHWZVvybz+Ga5a6t/s3PHcMLxRELVXJCHub9IP8zXT181EQ7t
+         iXPkD8ab1Rp16h5JVkw9AFX0izzYPxrx+1TJDCYnUc9T1z8QZcBAt11Fvgo4SLXB8XCS
+         ldnyZT/dgQ092WXcoBnWgZBUfHfYyuG3VPuxVZb/Y68VVwfZCSNIkfb6uki6M/iOc8qT
+         Iyqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWO985t0YtUJtsprf0xWO+OjNI3s2sQgKZ41bk3D1kfgJ5wuR76/yBL4kz/90pyMaPdktM9kOcrUAec21Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhDyr9f0YFqcZ03SBMCS0rQr1uRJCVTk4toawgjVl1py/thNPc
+	+IuRpI3+TQfQFyv2f8ieajnPUfOegM6zVNQkZcwhOjx5LIBA91LaXMTC1LwpWJIO3pjsvNHJYQb
+	DQ5wYFMAd/ZItUdQJIqe8ZZK4jiw13RSKQQdxb4pN
+X-Gm-Gg: ASbGnctOoQ9eenkk3Z+VeKspBjMhbNLMQkH+MzxLXQhHJQRYlkJzg3ybMoTwGjUXykc
+	7W1vNuMHrdTUuQYH3SfOH7r3OvGrkT7xvZOivNzid0oi43/hQBZNxqLuktiTu36DBqoZJGXeA0U
+	ckwTG3QFkjX16osatvVsjJoESP39//VVStCaOToAKwLlWzdsvjPt0H+bHHy0u5t2Zjt7hIRyG4g
+	j2UF+N2aVd/ePAew133LGy87Fe1ppbU8horg4l8RA3vhYHk
+X-Google-Smtp-Source: AGHT+IEWW6wSvnNGlneW8csSuEUINBhv5Xrj4krisO4j8KjigJe6weh6HtfKmo/FhQRiZhIVz1T5uW67ohk4ura9SHY=
+X-Received: by 2002:a50:d75b:0:b0:601:f23b:a377 with SMTP id
+ 4fb4d7f45d1cf-612a4cf8fc8mr29145a12.6.1752707974101; Wed, 16 Jul 2025
+ 16:19:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <4c459085b9ae42bdbf99b6014952b965@BJMBX01.spreadtrum.com>
+ <202507150830.56F8U908028199@SHSPAM01.spreadtrum.com> <c34f4f606eb04c38b64e8f3a658cd051@BJMBX01.spreadtrum.com>
+ <CANiq72=v6jkOasLiem7RXe-WUSg9PkNqrZneeMOTi1pzwXuHYg@mail.gmail.com>
+ <24e87f60203c443abe7549ce5c0e9e75@BJMBX01.spreadtrum.com> <aHftocnJcLg64c29@google.com>
+ <CAH5fLgiiZE_mFhB4J+G7-Jdz46+d-5NP15npjn2_H7DgSAynxw@mail.gmail.com>
+In-Reply-To: <CAH5fLgiiZE_mFhB4J+G7-Jdz46+d-5NP15npjn2_H7DgSAynxw@mail.gmail.com>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Wed, 16 Jul 2025 16:19:22 -0700
+X-Gm-Features: Ac12FXxXgsXM-s4jPwxbK0qidi2uE_QL2umvn-Fdybn9nHdZCi0VGiyXjMukuYQ
+Message-ID: <CAGSQo03DH9L7OFZsGXU8gt_4iq2zo6gZbJtw3p2hD6tGp0KTzA@mail.gmail.com>
+Subject: Re: Meet compiled kernel binaray abnormal issue while enabling
+ generic kasan in kernel 6.12 with some default KBUILD_RUSTFLAGS on
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Carlos Llamas <cmllamas@google.com>, =?UTF-8?B?5YiY5rW354eVIChIYWl5YW4gTGl1KQ==?= <haiyan.liu@unisoc.com>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	=?UTF-8?B?5ZGo5bmzIChQaW5nIFpob3UvOTAzMik=?= <Ping.Zhou1@unisoc.com>, 
+	=?UTF-8?B?5Luj5a2Q5Li6IChaaXdlaSBEYWkp?= <Ziwei.Dai@unisoc.com>, 
+	=?UTF-8?B?5p2o5Li95aicIChMaW5hIFlhbmcp?= <lina.yang@unisoc.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, 
+	=?UTF-8?B?546L5Y+MIChTaHVhbmcgV2FuZyk=?= <shuang.wang@unisoc.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	"kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <christian@brauner.io>, 
+	Suren Baghdasaryan <surenb@google.com>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add new device support for the Samsung Galaxy S22 (SM-S901E) phone
+The reason removing that code makes your build "work" is because it
+entirely disables pointer authentication in Rust code when you remove
+it. That is likely not what you want.
 
-What works:
-- SimpleFB
-- USB
+> > We have KASAN builds with android16-6.12 and haven't seen this issue.
+> > Can you share your entire config file, so we can try to reproduce?
 
-Signed-off-by: Violet <violet@atl.tools>
----
- arch/arm64/boot/dts/qcom/Makefile             |   1 +
- .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 145 ++++++++++++++++++
- 2 files changed, 146 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 4bfa926b6a08..790613cabd08 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -287,6 +287,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8350-sony-xperia-sagami-pdx214.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8350-sony-xperia-sagami-pdx215.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-hdk.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-qrd.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-samsung-r0q.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-sony-xperia-nagara-pdx223.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-sony-xperia-nagara-pdx224.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8550-hdk.dtb
-diff --git a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
-new file mode 100644
-index 000000000000..3f793fe5cff8
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+
-+#include "sm8450.dtsi"
-+#include "pm8350.dtsi"
-+#include "pm8350c.dtsi"
-+
-+/ {
-+	model = "Samsung Galaxy S22 5G";
-+	compatible = "samsung,r0q", "qcom,sm8450";
-+	chassis-type = "handset";
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		framebuffer: framebuffer@b8000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0xb8000000 0x0 0x2b00000>;
-+			width = <1080>;
-+			height = <2340>;
-+			stride = <(1080 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	vph_pwr: vph-pwr-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	reserved-memory {
-+		/*
-+		 * The bootloader will only keep display hardware enabled
-+		 * if this memory region is named exactly 'splash_region'
-+		 */
-+		splash-region@b8000000 {
-+			reg = <0x0 0xb8000000 0x0 0x2b00000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		compatible = "qcom,pm8350-rpmh-regulators";
-+		qcom,pmic-id = "b";
-+
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+		vdd-s7-supply = <&vph_pwr>;
-+		vdd-s8-supply = <&vph_pwr>;
-+		vdd-s9-supply = <&vph_pwr>;
-+		vdd-s10-supply = <&vph_pwr>;
-+		vdd-s11-supply = <&vph_pwr>;
-+		vdd-s12-supply = <&vph_pwr>;
-+
-+		vdd-l2-l7-supply = <&vreg_bob>;
-+		vdd-l3-l5-supply = <&vreg_bob>;
-+
-+		vreg_l2b_3p07: ldo2 {
-+			regulator-min-microvolt = <3072000>;
-+			regulator-max-microvolt = <3072000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l5b_0p88: ldo5 {
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <888000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,pm8350c-rpmh-regulators";
-+		qcom,pmic-id = "c";
-+
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+		vdd-s7-supply = <&vph_pwr>;
-+		vdd-s8-supply = <&vph_pwr>;
-+		vdd-s9-supply = <&vph_pwr>;
-+		vdd-s10-supply = <&vph_pwr>;
-+
-+		vdd-l1-l12-supply = <&vreg_bob>;
-+		vdd-l2-l8-supply = <&vreg_bob>;
-+		vdd-l3-l4-l5-l7-l13-supply = <&vreg_bob>;
-+		vdd-l6-l9-l11-supply = <&vreg_bob>;
-+
-+		vdd-bob-supply = <&vph_pwr>;
-+
-+		vreg_bob: bob {
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-+		};
-+
-+		vreg_l1c_1p8: ldo1 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <36 4>, <50 1>;
-+};
-+
-+&usb_1 {
-+	/* USB 2.0 only */
-+	qcom,select-utmi-as-pipe-clk;
-+	status = "okay";
-+};
-+
-+&usb_1_dwc3 {
-+	dr_mode = "peripheral";
-+	maximum-speed = "high-speed";
-+	/* Remove USB3 phy */
-+	phys = <&usb_1_hsphy>;
-+	phy-names = "usb2-phy";
-+};
-+
-+&usb_1_hsphy {
-+	vdda-pll-supply = <&vreg_l5b_0p88>;
-+	vdda18-supply = <&vreg_l1c_1p8>;
-+	vdda33-supply = <&vreg_l2b_3p07>;
-+	status = "okay";
-+};
--- 
-2.50.1
-
+This - please provide the config file or instructions to reproduce the
+build. Since this is an upstream avenue, ideally provide instructions
+for reproducing against `linux-next`, or failing that (e.g. if it's
+not broken there) against v6.12.38. The default android16-6.12 build
+will work fine with ASAN. If you can't provide the entire config file
+in a public context, or if you only have instructions for building it
+with Kleaf + fragments, or can only reproduce with the Android tree,
+please reroute this request to our bug intake system (I am pretty sure
+unisoc has access) and cc myself, carlos, and Alice.
 
