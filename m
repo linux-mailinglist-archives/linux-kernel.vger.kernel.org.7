@@ -1,130 +1,161 @@
-Return-Path: <linux-kernel+bounces-733756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E046B078CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:58:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB52B0789F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 16:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AD3D7BE8B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B35716DE0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 14:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E084F26FD8F;
-	Wed, 16 Jul 2025 14:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUuKNjRm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C219F291C05;
+	Wed, 16 Jul 2025 14:50:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451E0223301;
-	Wed, 16 Jul 2025 14:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9B613A244
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 14:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752677380; cv=none; b=VwuTfA7wkcojpfXDoZH2LSb7dhfbxHIvC2iy5fBQ0Hs+1b4UbSfifzRyciPB3sXi2Zb0iUBCXklDAe2c2GyVfePMSWgyIOkJBXqUT89KiGJawaUy5YV4R4rs7LxKXNk9C/9cSvpcGx1k9ByxsDCNiyD8/uqZh5bNwRbsig1gV5Y=
+	t=1752677407; cv=none; b=fOEWy+T6piyqubCAkHc28fJxcdC9AaNsz5PXozcjEE8yst0i+nat3FIYO5YaiRcL+92EEfiFoaO4pbIw+Ct3r2OWOCcQ/GkVqXEYx9vAy+qx229P4i7skikFkZ7O6FFqc5GnzfQ9njI4VcvYX3OHCtpO482x9OSLnBSEbuyf/9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752677380; c=relaxed/simple;
-	bh=7d195KEgIoyVMxoatacwaj+oXYyt+91zLIQ+hn6aE1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=F6OAPVIVDwfbqHrOOmUdJWAb13Z4Os0ypmhjsEPhhDO+wjQpGieF+VRdBDr6ZWCQ86WfcTwFUF1K6ubB5RmZpzI5siZJMqaVZGq6SupqWCMPmR2l3+6C6p72XS3CC4L7QbBESAPIjjlFngCyDco1v28s/V35x2NY1UGGWTthl4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUuKNjRm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D642C4CEE7;
-	Wed, 16 Jul 2025 14:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752677378;
-	bh=7d195KEgIoyVMxoatacwaj+oXYyt+91zLIQ+hn6aE1c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=XUuKNjRmxXmApuk69sTV6VR/FYl7OdAqzFI4vMteudIVc/skTGE0CmXBcFwDlUVPC
-	 RZ5JnMoj2e5e0yHGC/PRx2JxBmF51cOA1AP8kLA7rZ7Je6TWQZr5EGFn0hdx86c2yP
-	 VrV8fDXWmXvJbXD+zwGyQMAjtoYBSHU/CF8YRv2jMoD7r3pXikZZG5DXoki5WsBdSV
-	 kbWxrFMOlE7kaLxz3UcHaNYjdRuyBQKDnSQa9WdNudV7j0n/2unMiVl3QClpefR6/p
-	 46XsISaPV0u4m+NnO1qK0LjwtWgrdlVbaucIh/BLhKD42qaouEUA9isCQcc3MyKRaJ
-	 OSlx9vqW8ZJ1A==
-Date: Wed, 16 Jul 2025 09:49:37 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Nam Cao <namcao@linutronix.de>, Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] pci/controller: Use dev_fwnode()
-Message-ID: <20250716144937.GA2531969@bhelgaas>
+	s=arc-20240116; t=1752677407; c=relaxed/simple;
+	bh=v/cFd8LGc77JiQS6Ma1a9yIBm4YncIv4X5DpZLd5K70=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eBfnZcAKpwHMrAeITPbaKiSd/aNVsdsyMBR/6F7a9RBdMA6/glfao1ohqlGT64fGC4cLamIxPOYUh49eY/Kwbk4PKcWL0POfQtFBNziFvrYmbX10VTnsevHUp60C4dmDmwUJL+2BgSI3QkRMTWksYnATHncggLDpKEnyJ02i6s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-876a8bb06b0so1193503839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:50:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752677405; x=1753282205;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sc0V+S5OAOz3pvNlHvI1SrT3sYqqIKrLyk5lIAGwRxU=;
+        b=I10sfIvED66BDUEk0YHs5CxQHP84CVueRWBCnjRFgEFPyiIF3GKQp1tkeFvjLzlnZr
+         MU3WPKIAECgRmHcoehg8iEdexf5gdJ1tr55TR1pD8L69atvSJqsmCkpkRGJcEPCtiJ1N
+         IkL4FWSmyf6y1EaRtEYeHcXE+M6NztOcUZKlpNcEROriC2XfuJsI3LxFfEb2XNnjc9d1
+         ZiUAEm+7nA2Mxt+m58G8DBBmB3gcc6QRXICnFTEzwdDkJOkidIvXKhaV9yRGfoXSn0a9
+         u2VDBgd4SGEScsVUUaE8+tdYTpJukvbmQ4Q3TraflMJE+JSpNr7AT4BSM/HM+Dq3X7RI
+         DZkA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0g2LKZi5H9WwuylCdchBEwf281gAmGhN4EhKVOuk6uMiyIjJOKvW0hoOagdmEit39nHtOwDzcKHwUJO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWy19wAGb0mJVeKRffqpGJSk2X5dg/PRw4Z2zYxkLai/9dE6ns
+	a38HiJjlq4SQhj5QsW/dfwETJNhiZZL5dHtK6lTUDTXztTRUEaqN9f/PD46EQ1ZCt3fpbMHxOtq
+	MpdohvpdnbhIA8S3yvoMarX36gVfPm/bV5e8qe777qSid9Jd4QPr++jrs5Tg=
+X-Google-Smtp-Source: AGHT+IGdc8vzM7iSvXCp9mmrCm/Yx2viXXS0+jBJNeQ1/3p6asXTO6JfB2XsUtZHnhxp0zGrSm5hmCR7kciIQp0XhsrFyeM0Avm+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716075942.2aCLkdCs@linutronix.de>
+X-Received: by 2002:a05:6602:4f42:b0:873:1c2d:18e7 with SMTP id
+ ca18e2360f4ac-879c2ae999fmr240157039f.10.1752677404683; Wed, 16 Jul 2025
+ 07:50:04 -0700 (PDT)
+Date: Wed, 16 Jul 2025 07:50:04 -0700
+In-Reply-To: <78c3fb66-c30f-4c64-a499-61c1665186a8@rowland.harvard.edu>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6877bc1c.a70a0220.693ce.002b.GAE@google.com>
+Subject: Re: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
+From: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>
+To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-[+cc Arnd]
+Hello,
 
-On Wed, Jul 16, 2025 at 09:59:42AM +0200, Nam Cao wrote:
-> On Tue, Jul 15, 2025 at 01:49:17PM -0500, Bjorn Helgaas wrote:
-> > On Wed, Jun 11, 2025 at 12:43:44PM +0200, Jiri Slaby (SUSE) wrote:
-> > > irq_domain_create_simple() takes fwnode as the first argument. It can be
-> > > extracted from the struct device using dev_fwnode() helper instead of
-> > > using of_node with of_fwnode_handle().
-> > > 
-> > > So use the dev_fwnode() helper.
-> > > 
-> > > Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> > > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > > Cc: linux-pci@vger.kernel.org
-> > > ---
-> > >  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c | 5 ++---
-> > >  drivers/pci/controller/pcie-mediatek-gen3.c          | 3 +--
-> > 
-> > I think the pcie-mediatek-gen3.c part of this is no longer relevant
-> > after Nam's series [1].
-> 
-> fwnode is still needed after my patch. As part of
-> struct irq_domain_info info = { ... }
-> 
-> You could squash this one into my patch. I personally would leave it be.
-> But fine to me either way.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: shift-out-of-bounds in s32ton
 
-Oh, I think I see what happened:
+usb 1-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor, different from the interface descriptor's value: 9
+usb 1-1: New USB device found, idVendor=045e, idProduct=07da, bcdDevice= 0.00
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
+microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
+shift exponent 4294967295 is too large for 32-bit type '__s32' (aka 'int')
+CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0-syzkaller-11339-gc2ca42f190b6-dirty #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+ __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
+ s32ton+0xde/0x140 drivers/hid/hid-core.c:69
+ hid_output_field drivers/hid/hid-core.c:1844 [inline]
+ hid_output_report+0x419/0x790 drivers/hid/hid-core.c:1876
+ __hid_request+0x14a/0x420 drivers/hid/hid-core.c:1999
+ hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
+ hidinput_connect+0x218a/0x3030 drivers/hid/hid-input.c:2327
+ hid_connect+0x499/0x1980 drivers/hid/hid-core.c:2250
+ hid_hw_start+0xa8/0x120 drivers/hid/hid-core.c:2365
+ ms_probe+0x180/0x430 drivers/hid/hid-microsoft.c:391
+ __hid_device_probe drivers/hid/hid-core.c:2735 [inline]
+ hid_device_probe+0x3a0/0x710 drivers/hid/hid-core.c:2772
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26a/0x9a0 drivers/base/dd.c:657
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:799
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:829
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:957
+ bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1029
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3692
+ hid_add_device+0x398/0x540 drivers/hid/hid-core.c:2918
+ usbhid_probe+0xe13/0x12a0 drivers/hid/usbhid/hid-core.c:1435
+ usb_probe_interface+0x644/0xbc0 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26a/0x9a0 drivers/base/dd.c:657
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:799
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:829
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:957
+ bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1029
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3692
+ usb_set_configuration+0x1a87/0x20e0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x8d/0x150 drivers/usb/core/generic.c:250
+ usb_probe_device+0x1c4/0x390 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x26a/0x9a0 drivers/base/dd.c:657
+ __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:799
+ driver_probe_device+0x4f/0x430 drivers/base/dd.c:829
+ __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:957
+ bus_for_each_drv+0x251/0x2e0 drivers/base/bus.c:462
+ __device_attach+0x2b8/0x400 drivers/base/dd.c:1029
+ bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+ device_add+0x7b6/0xb50 drivers/base/core.c:3692
+ usb_new_device+0xa39/0x16c0 drivers/usb/core/hub.c:2663
+ hub_port_connect drivers/usb/core/hub.c:5531 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5671 [inline]
+ port_event drivers/usb/core/hub.c:5831 [inline]
+ hub_event+0x2941/0x4a00 drivers/usb/core/hub.c:5913
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+---[ end trace ]---
 
-  - Jiri replaced of_fwnode_handle() with dev_fwnode() in the
-    irq_domain_create_linear() call [1]
 
-  - On top of that, Nam replaced irq_domain_create_linear() with
-    msi_create_parent_irq_domain(), and moved the dev_fwnode() to the
-    struct irq_domain_info [2]
+Tested on:
 
-  - I rebuilt pci/next with Nam's series merged *before* Jiri's,
-    resulting in a conflict (of_fwnode_handle() was still used in the
-    irq_domain_create_linear() call) which I resolved by using
-    dev_fwnode() when building struct irq_domain_info [3]
+commit:         c2ca42f1 HID: core: do not bypass hid_hw_raw_request
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=16e948f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ec692dfd475747ff
+dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13f6f58c580000
 
-I think the result [4] is OK, but it's not ideal because a
-dev_fwnode() conversion got inserted into Nam's patch without
-explanation.
-
-So I think I'll put Jiri's patches (along with Arnd's similar altera
-patch [5]) on a branch and merge them before Nam's.
-
-Jiri, question for you: even after all this, there are still several
-uses in drivers/pci/ of of_fwnode_handle() to extract the
-fwnode_handle for a struct device * [6,7,8,9,10,11,12].
-
-Should these also be changed?
-
-Bjorn
-
-[1] https://lore.kernel.org/r/20250611104348.192092-16-jirislaby@kernel.org
-[2] https://patch.msgid.link/bfbd2e375269071b69e1aa85e629ee4b7c99518f.1750858083.git.namcao@linutronix.de
-[3] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=dd6fad415071
-[4] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-mediatek-gen3.c?id=beedc9eb3114#n750
-[5] https://lore.kernel.org/r/20250611104348.192092-2-jirislaby@kernel.org
-
-[6] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/dwc/pcie-designware-host.c?id=beedc9eb3114#n217
-[7] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c?id=beedc9eb3114#n442
-[8] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-altera-msi.c?id=beedc9eb3114#n169
-[9] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-mediatek.c?id=beedc9eb3114#n490
-[10] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-xilinx-dma-pl.c?id=beedc9eb3114#n468
-[11] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-xilinx-nwl.c?id=beedc9eb3114#n501
-[12] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/plda/pcie-plda-host.c?id=beedc9eb3114#n156
 
