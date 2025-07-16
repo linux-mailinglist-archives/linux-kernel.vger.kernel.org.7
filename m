@@ -1,163 +1,120 @@
-Return-Path: <linux-kernel+bounces-734264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75FAB07F29
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:52:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 808B5B07F2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1099F585B58
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:52:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D2058608B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 20:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C291928D8CD;
-	Wed, 16 Jul 2025 20:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3151528FAA8;
+	Wed, 16 Jul 2025 20:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nWXrALL4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hs7DDZT5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4F41CD2C;
-	Wed, 16 Jul 2025 20:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C57D1CD2C;
+	Wed, 16 Jul 2025 20:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752699130; cv=none; b=gGsznLAhUp8TZLEiQMi5RSwsgYN3n8LgFQZ8y0zLGArdl2J8IF+9/ehxeII+yIt7ifefHwN503Lav4i7LE4GuUepAc0agoGZ4xVekPJZLzCuNczuOzWMEZ4v+jEHHmuykYbEJBl7Mk30CZ8SsH7tpnPq9eK5emwbv+xZ0AgomD4=
+	t=1752699363; cv=none; b=X9gyc0L5T9WiPGzL/0dS+OLX7I2rcrATE8G/WCDhR/lLZKaT4WtCxHsYn5OWImZxVyc/8GCrVjxIW6//50XPeRahu7OVd7dWAN+A7N9B/wzmgbiJp7b1/PA6wTlbnxxgUftnxng7C+uQRsZEQSn1yPhiW3AsRqTF5AEJJ/ELzpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752699130; c=relaxed/simple;
-	bh=zZ5+IpidhpHjRlgbxgkkSdgbQ4hUjW9s6DcsAAoZ5bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iY6R+9QA9OI4ePDsSCmCzhxlLeI7vo4dli5VY9p1gxWYrEp62UlmReXu2aolqJakWXP7sA9B0W0R3WjmtumqbgYQbBsJWP15XVvTz1GfOT3c/JOwrG9UlNPx8hGLUJJ0rLApFL/dG+uNEZsZD3SIrsyLDbEi0ntOxGua1MbquVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nWXrALL4; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752699128; x=1784235128;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zZ5+IpidhpHjRlgbxgkkSdgbQ4hUjW9s6DcsAAoZ5bk=;
-  b=nWXrALL4yVVjSQKqBpnp6prfTYC26WYwtGVATEhUwme0vbpKzOPq3SHy
-   wWnH7Fisi0IWQbNmIgMqkXf1hRg1jeaqyzejXEukCmuvRP4apPMyflOrh
-   2+kVUHf4Lh1Uv4IOjC6X1HM+3DPm6YxUMcEixG90jA3k4EuFfCR6pzPG+
-   0gkUsMyZjFelj8VekFoNGw3dbPB+drkCYTi5CW+5i8bTEQolRSEePGkJL
-   fzj8/Qky25CB5i3euMsMNXcn7LZ4gwulYssPN+SSIsvtqV9dD8r0jsRCS
-   gsGUMjZvJjo4R5ONJm2543pph0h8w4ap4tiNQygzhGkgpOFoMeO22ip/t
-   g==;
-X-CSE-ConnectionGUID: vCstN/AxQMCEz+nsPnYCWw==
-X-CSE-MsgGUID: DgpLJ33BSsG3lOVQ6JhTbw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="72415399"
-X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
-   d="scan'208";a="72415399"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 13:52:08 -0700
-X-CSE-ConnectionGUID: jMLG/VOaQh+5yPd7yHhEsQ==
-X-CSE-MsgGUID: zxOQAGkwQlmvSeNypqRjQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
-   d="scan'208";a="157010694"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.111.193]) ([10.125.111.193])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 13:52:08 -0700
-Message-ID: <1e52ede4-6256-432c-b5a2-45c3342eca84@intel.com>
-Date: Wed, 16 Jul 2025 13:52:04 -0700
+	s=arc-20240116; t=1752699363; c=relaxed/simple;
+	bh=1eT1bU8K2ROCVSdByZdiqCJahWUYakFk0s/KHQHgDy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ojDr9Z4BkqzrxaFrQsWrXF1DDIdsimIo7hzlPCbt8lwKXSOkeakB3UU5oqosZsLvgucHTgh87KwdwVUxBgiPo3ljNosLRfiKrpZcpraoy159lFwi/7sqrufOTnEYEgPp4tqnvv8aD4icLrsXm8iouHLnlplOOVmf6oInYGrGMlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hs7DDZT5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1039DC4CEF1;
+	Wed, 16 Jul 2025 20:56:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752699363;
+	bh=1eT1bU8K2ROCVSdByZdiqCJahWUYakFk0s/KHQHgDy0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Hs7DDZT5y7ghwrrP2RoLIPD/uvZHmLasbXo2TT4fFIO7edIcBrZV86BNmu6s52Pe2
+	 GiXm1OSTqbaMlmfNhVJedqxHISA/wrhm2gLbzV7c7jkbfhFiiuLC38tyjBoPUYv2SI
+	 c5gN69aqyBcZ6IX7zJxosf4QmOf4AUeQH4BAUNjE40OTOLWHCIupvCvIgEVG53phaI
+	 VPoNle4itK3nDgSes+CYKnpEt2/l5BSdcMpFIOkTJ5n6dtkhB5pcJHezOQoRMlgkK5
+	 GMrfGRzeI23y1uUdJ81ubwpBoYxkrOfhRw2XxAwcTjK+nQQwp+gBPd1oL5R7lGcE7f
+	 CdHEgEcAb4nag==
+Date: Wed, 16 Jul 2025 15:56:01 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: manivannan.sadhasivam@oss.qualcomm.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ath12k@lists.infradead.org, ath11k@lists.infradead.org,
+	ath10k@lists.infradead.org, ilpo.jarvinen@linux.intel.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH 2/6] PCI/ASPM: Transition the device to D0 (if required)
+ inside pci_enable_link_state_locked() API
+Message-ID: <20250716205601.GA2555277@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/8] cleanup: Introduce ACQUIRE(), a guard() for
- conditional locks
-To: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Alison Schofield <alison.schofield@intel.com>,
- David Lechner <dlechner@baylibre.com>, Davidlohr Bueso <dave@stgolabs.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Ira Weiny <ira.weiny@intel.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Shiju Jose <shiju.jose@huawei.com>, Vishal Verma <vishal.l.verma@intel.com>
-References: <20250711234932.671292-1-dan.j.williams@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250711234932.671292-1-dan.j.williams@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716-ath-aspm-fix-v1-2-dd3e62c1b692@oss.qualcomm.com>
 
+On Wed, Jul 16, 2025 at 06:26:21PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> 
+> Both of the current callers of the pci_enable_link_state_locked() API
+> transition the device to D0 before calling. This aligns with the PCIe spec
+> r6.0, sec 5.5.4:
+> 
+> "If setting either or both of the enable bits for PCI-PM L1 PM Substates,
+> both ports must be configured as described in this section while in D0."
+> 
+> But it looks redundant to let the callers transition the device to D0. So
+> move the logic inside the API and perform D0 transition only if the PCI-PM
+> L1 Substates are getting enabled.
 
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -1474,13 +1474,20 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+>   * Note that if the BIOS didn't grant ASPM control to the OS, this does
+>   * nothing because we can't touch the LNKCTL register.
+>   *
+> - * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
+> - * PCIe r6.0, sec 5.5.4.
+> + * Note: The device will be transitioned to D0 state if the PCI-PM L1 Substates
+> + * are getting enabled.
+>   *
+>   * Return: 0 on success, a negative errno otherwise.
+>   */
+>  int pci_enable_link_state(struct pci_dev *pdev, int state)
+>  {
+> +	/*
+> +	 * Ensure the device is in D0 before enabling PCI-PM L1 PM Substates, per
+> +	 * PCIe r6.0, sec 5.5.4.
+> +	 */
+> +	if (FIELD_GET(PCIE_LINK_STATE_L1_SS_PCIPM, state))
+> +		pci_set_power_state(pdev, PCI_D0);
 
-On 7/11/25 4:49 PM, Dan Williams wrote:
-> Changes since v2 [1]:
-> - Pick up Acks and Reviews
-> - Whitespace fixups for cleanup.h changes (Jonathan)
-> - Use consistent local variable style for ACQUIRE_ERR() (Jonathan)
->   - Not addressed: switch to less compact style ACQUIRE_ERR()
-> - Not addressed: pickup checkpatch change for ACQUIRE_ERR() style in
->   this series (Alison)
-> - Drop the cxl_decoder_detach() CLASS() and convert to a helper function (Jonathan)
-> - Refactor attach_target() to make it easier to read (Jonathan)
+This is really just a move, not new code, but this niggles at me a
+little bit because my impression is that pci_set_power_state() doesn't
+guarantee that the device *stays* in the given state.
 
-Applied to cxl/next
-b873adfddeeb337fa8e9f381fd35eb94f7887f2f
+Rafael, is there a get/put interface we should be wrapping this with
+instead?
 
+I'm also not sure it's worth the FIELD_GET().  This should be a
+low-frequency operation and making the power state dependent on the
+exact "state" makes more paths to worry about.
 
-> 
-> [1]: http://lore.kernel.org/20250619050416.782871-1-dan.j.williams@intel.com
-> 
-> For those new to this set, the motivation for this work is that the CXL
-> subsystem adopted scope-based-cleanup helpers and achieved some decent
-> cleanups. However, that work stalled with conditional locks. It stalled
-> due to the pain points of scoped_cond_guard(). See patch1.
-> 
-> In the interim, approaches like rwsem_read_intr_acquire() attempted to
-> workaround the pain points, but started a "parallel universe" of helpers
-> that is not sustainable.
-> 
->     0c6e6f1357cb cxl/edac: Add CXL memory device patrol scrub control feature
-> 
-> Peter fixed all of this up in a manner consistent with existing guards.
-> Take that proposal and run with it to unblock further cleanups of "goto"
-> in unwind paths in the CXL subsystem.
-> 
-> Potential follow-on work identified by this effort:
-> 
-> - __GUARD_IS_ERR() asm helper [2]
-> - Checkpatch fixups for proposed ACQUIRE_ERR() style [3]
-> 
-> [2]: http://lore.kernel.org/20250514064624.GA24938@noisy.programming.kicks-ass.net
-> [3]: http://lore.kernel.org/aGXDMZB6omShJpoj@aschofie-mobl2.lan
-> 
-> Dan Williams (7):
->   cxl/mbox: Convert poison list mutex to ACQUIRE()
->   cxl/decoder: Move decoder register programming to a helper
->   cxl/decoder: Drop pointless locking
->   cxl/region: Split commit_store() into __commit() and queue_reset()
->     helpers
->   cxl/region: Move ready-to-probe state check to a helper
->   cxl/region: Consolidate cxl_decoder_kill_region() and
->     cxl_region_detach()
->   cxl: Convert to ACQUIRE() for conditional rwsem locking
-> 
-> Peter Zijlstra (1):
->   cleanup: Introduce ACQUIRE() and ACQUIRE_ERR() for conditional locks
-> 
->  drivers/cxl/core/cdat.c   |   6 +-
->  drivers/cxl/core/core.h   |  32 ++-
->  drivers/cxl/core/edac.c   |  44 ++--
->  drivers/cxl/core/hdm.c    | 118 +++++-----
->  drivers/cxl/core/mbox.c   |  13 +-
->  drivers/cxl/core/memdev.c |  50 ++--
->  drivers/cxl/core/port.c   |  27 +--
->  drivers/cxl/core/region.c | 473 ++++++++++++++++++++------------------
->  drivers/cxl/cxl.h         |  13 +-
->  drivers/cxl/cxlmem.h      |   4 +-
->  include/linux/cleanup.h   |  95 ++++++--
->  include/linux/mutex.h     |   2 +-
->  include/linux/rwsem.h     |   3 +-
->  13 files changed, 480 insertions(+), 400 deletions(-)
-> 
-> 
-> base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
-
+>  	return __pci_enable_link_state(pdev, state, false);
+>  }
 
