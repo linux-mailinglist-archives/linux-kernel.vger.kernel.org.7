@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-732996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-732997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F335B06E8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5850B06E8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1019503F50
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:13:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B4D50335C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A58F28D8F8;
-	Wed, 16 Jul 2025 07:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DFE28C841;
+	Wed, 16 Jul 2025 07:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MVKKdpb5"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FjOAA60c"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC5928AAE9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F98528BAB9
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 07:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752649972; cv=none; b=g8exiICQ8jZT8F/eI24K/opaI5p/9T0I8gy+9JXxX7CNLzj/IQqjz51c/Gu3yAuXc7ASNoHkQB7SwyzjYZX+Jf1zVDfRxAT7diHyO8OJavvhjCfB1BgyKWiHl4PE7HCySBhHtHBmfc2vrt/WL3ra1pwTVFd8mLIy+y/6qQ635+g=
+	t=1752649973; cv=none; b=Uwo7zFxioeVWMRvXW19+g7eKa2hHN6/NsShATiZKmkM+a6JELxBqcdutu5/I85JJr8qc3AkZIPlQbu5FoiTT6sQOUmcILr+8q02VxvXETGs7zko7BHlDKT97vHlN10mLjlSpmneHHcszQwG+yAgcS+0lwfbyTl+iwdTU2b2H8Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752649972; c=relaxed/simple;
-	bh=nJV35tCeC3FV4M9MblNrza0Hf2M8xmHmaqVlITtrpxY=;
+	s=arc-20240116; t=1752649973; c=relaxed/simple;
+	bh=tm3o1OKvzbmwZmyZhLkn0o0jzJ+ODPPxlZSk76PSRB0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XVlIoc6blHLOxP7SPspoTMbrJtQDboEpcr3CCVZ34dhGSDWC2hdxawd6PhZ4SOUKiuxWPvzb9Nyi/RP8oCWFVOieq9G2IKMV44g+ok9yasDYY9zoGXGBccaitURDT2A2rKQngwag9zlLKLUD1JhmRsGV0XZ+eEMc2ONsDxS04No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MVKKdpb5; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version; b=d2xaY0n2VcJJ9QedLMBE73RqqZ0/yo4j5KppSvlLoIIqwaMENKTnmBE300V2OLdFleX0c5gylYJZDJM24QCygoDIoNJrblwRRz/pgkKEJKL+OFtf7cNJO4ldOc6KdsMyqisdzzr6/jkq6JeoJTnUvxigKXHH0pvDcpP3x+ZvwTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FjOAA60c; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752649970; x=1784185970;
+  t=1752649971; x=1784185971;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=nJV35tCeC3FV4M9MblNrza0Hf2M8xmHmaqVlITtrpxY=;
-  b=MVKKdpb5ZIoNtQZ8KShAdKqITJSIZ7V4rLy9/kFBgUTbrJcOPiR5qmeW
-   Fw39beAXoGFZsYoGJWVLxg+By4g+9OrT1sT6AkM73zKTms8tZmpQuCUjl
-   eXcBC5ZNIM8R7ga8SOwNb70Dzxq6a8UeRJHAC+15jMIEld3/EebvykaLe
-   oL6g/jIJUHfNjV2AaNmWd7UFq7W80LnqxGGo19O12ezx2kN2kCX4UwY6T
-   lTaRX++IDsd+ycirAV7tfvRyV2rcCiPOhuATntwAabbkomsGu//D4Siy0
-   omDoA9JaQznUFOH0hnU4/DMboOtAqh2SjLur2HZBviafU+bVy37GhmdY7
-   Q==;
-X-CSE-ConnectionGUID: LlChxA7IR8Smf3Q6EE2j9A==
-X-CSE-MsgGUID: ET0Q7hTcTuC6oioSPpcTqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58540846"
+  bh=tm3o1OKvzbmwZmyZhLkn0o0jzJ+ODPPxlZSk76PSRB0=;
+  b=FjOAA60cL8pq+cOwLematfHwwlNw0gXP1EqdJaEv2UC/lvxlmvB3BaaJ
+   +ofvkHMAsL5b7ukdRqH9E1KXMmQAewrEXIViQ/Rv+fDHrF4M8eKmWbRjs
+   mr4sqaey3xV6oZe+g+8Sh55sn/TDSYSuYgy+G/F/PuFG5KP7IxMWvW04g
+   7hwb2JIbsm/AU9TbFpZXhMBO6ffeG4PkPVsc7bsbzgiwlzSn+DzjVQlav
+   /diGE2BdoQasjtfTTRBvNlqA+JfVIuteHXW9IU5fIGFv+bJUIvrRu2FK6
+   XnTmcaf6+tBgdpuujv6+RJOHuM6yFYFsK7t0JQ/nvUIN7/GUyoI6aZVF/
+   w==;
+X-CSE-ConnectionGUID: LmDYe7WCQtCztOQNypUrQA==
+X-CSE-MsgGUID: +IF5s1VYS9ePntdrNKlZ6g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58540864"
 X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="58540846"
+   d="scan'208";a="58540864"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:12:47 -0700
-X-CSE-ConnectionGUID: leKmR03/R0OGVM/cL5VZew==
-X-CSE-MsgGUID: WXL3r+GJT1K7Yv+lB5dVSQ==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 00:12:51 -0700
+X-CSE-ConnectionGUID: BQgT1JBATPWHY6+/zRt/jQ==
+X-CSE-MsgGUID: 8gh4cKRdQLWEkqBbCwX8vQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
-   d="scan'208";a="161453654"
+   d="scan'208";a="161453660"
 Received: from yilunxu-optiplex-7050.sh.intel.com ([10.239.159.165])
-  by fmviesa003.fm.intel.com with ESMTP; 16 Jul 2025 00:12:43 -0700
+  by fmviesa003.fm.intel.com with ESMTP; 16 Jul 2025 00:12:47 -0700
 From: Xu Yilun <yilun.xu@linux.intel.com>
 To: jgg@nvidia.com,
 	jgg@ziepe.ca,
@@ -73,9 +73,9 @@ Cc: iommu@lists.linux.dev,
 	dan.j.williams@intel.com,
 	baolu.lu@linux.intel.com,
 	yilun.xu@intel.com
-Subject: [PATCH v6 5/8] iommufd/vdevice: Remove struct device reference from struct vdevice
-Date: Wed, 16 Jul 2025 15:03:46 +0800
-Message-Id: <20250716070349.1807226-6-yilun.xu@linux.intel.com>
+Subject: [PATCH v6 6/8] iommufd/selftest: Explicitly skip tests for inapplicable variant
+Date: Wed, 16 Jul 2025 15:03:47 +0800
+Message-Id: <20250716070349.1807226-7-yilun.xu@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250716070349.1807226-1-yilun.xu@linux.intel.com>
 References: <20250716070349.1807226-1-yilun.xu@linux.intel.com>
@@ -87,131 +87,409 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove struct device *dev from struct vdevice.
+no_viommu is not applicable for some viommu/vdevice tests. Explicitly
+report the skipping, don't do it silently.
 
-The dev pointer is the Plan B for vdevice to reference the physical
-device. As now vdev->idev is added without refcounting concern, just
-use vdev->idev->dev when needed. To avoid exposing
-struct iommufd_device in the public header, export a
-iommufd_vdevice_to_device() helper.
+Opportunistically adjust the line wrappings after the indentation
+changes using git clang-format.
+
+Only add the prints. No functional change intended.
 
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
-Co-developed-by: Nicolin Chen <nicolinc@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 Tested-by: Nicolin Chen <nicolinc@nvidia.com>
 Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
 ---
- drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c |  3 ++-
- drivers/iommu/iommufd/driver.c                 | 10 ++++++++--
- drivers/iommu/iommufd/viommu.c                 |  3 ---
- include/linux/iommufd.h                        |  8 +++++++-
- 4 files changed, 17 insertions(+), 7 deletions(-)
+ tools/testing/selftests/iommu/iommufd.c | 363 ++++++++++++------------
+ 1 file changed, 176 insertions(+), 187 deletions(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index eb90af5093d8..4c86eacd36b1 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -1218,7 +1218,8 @@ static void tegra241_vintf_destroy_vsid(struct iommufd_vdevice *vdev)
+diff --git a/tools/testing/selftests/iommu/iommufd.c b/tools/testing/selftests/iommu/iommufd.c
+index d59d48022a24..1b629bedeb1c 100644
+--- a/tools/testing/selftests/iommu/iommufd.c
++++ b/tools/testing/selftests/iommu/iommufd.c
+@@ -2779,35 +2779,32 @@ TEST_F(iommufd_viommu, viommu_alloc_nested_iopf)
+ 	uint32_t fault_fd;
+ 	uint32_t vdev_id;
  
- static int tegra241_vintf_init_vsid(struct iommufd_vdevice *vdev)
- {
--	struct arm_smmu_master *master = dev_iommu_priv_get(vdev->dev);
-+	struct device *dev = iommufd_vdevice_to_device(vdev);
-+	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
- 	struct tegra241_vintf *vintf = viommu_to_vintf(vdev->viommu);
- 	struct tegra241_vintf_sid *vsid = vdev_to_vsid(vdev);
- 	struct arm_smmu_stream *stream = &master->streams[0];
-diff --git a/drivers/iommu/iommufd/driver.c b/drivers/iommu/iommufd/driver.c
-index e4eae20bcd4e..6f1010da221c 100644
---- a/drivers/iommu/iommufd/driver.c
-+++ b/drivers/iommu/iommufd/driver.c
-@@ -83,6 +83,12 @@ void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
- }
- EXPORT_SYMBOL_NS_GPL(_iommufd_destroy_mmap, "IOMMUFD");
+-	if (self->device_id) {
+-		test_ioctl_fault_alloc(&fault_id, &fault_fd);
+-		test_err_hwpt_alloc_iopf(
+-			ENOENT, dev_id, viommu_id, UINT32_MAX,
+-			IOMMU_HWPT_FAULT_ID_VALID, &iopf_hwpt_id,
+-			IOMMU_HWPT_DATA_SELFTEST, &data, sizeof(data));
+-		test_err_hwpt_alloc_iopf(
+-			EOPNOTSUPP, dev_id, viommu_id, fault_id,
+-			IOMMU_HWPT_FAULT_ID_VALID | (1 << 31), &iopf_hwpt_id,
+-			IOMMU_HWPT_DATA_SELFTEST, &data, sizeof(data));
+-		test_cmd_hwpt_alloc_iopf(
+-			dev_id, viommu_id, fault_id, IOMMU_HWPT_FAULT_ID_VALID,
+-			&iopf_hwpt_id, IOMMU_HWPT_DATA_SELFTEST, &data,
+-			sizeof(data));
++	if (!dev_id)
++		SKIP(return, "Skipping test for variant no_viommu");
  
-+struct device *iommufd_vdevice_to_device(struct iommufd_vdevice *vdev)
-+{
-+	return vdev->idev->dev;
-+}
-+EXPORT_SYMBOL_NS_GPL(iommufd_vdevice_to_device, "IOMMUFD");
+-		/* Must allocate vdevice before attaching to a nested hwpt */
+-		test_err_mock_domain_replace(ENOENT, self->stdev_id,
+-					     iopf_hwpt_id);
+-		test_cmd_vdevice_alloc(viommu_id, dev_id, 0x99, &vdev_id);
+-		test_cmd_mock_domain_replace(self->stdev_id, iopf_hwpt_id);
+-		EXPECT_ERRNO(EBUSY,
+-			     _test_ioctl_destroy(self->fd, iopf_hwpt_id));
+-		test_cmd_trigger_iopf(dev_id, fault_fd);
++	test_ioctl_fault_alloc(&fault_id, &fault_fd);
++	test_err_hwpt_alloc_iopf(ENOENT, dev_id, viommu_id, UINT32_MAX,
++				 IOMMU_HWPT_FAULT_ID_VALID, &iopf_hwpt_id,
++				 IOMMU_HWPT_DATA_SELFTEST, &data, sizeof(data));
++	test_err_hwpt_alloc_iopf(EOPNOTSUPP, dev_id, viommu_id, fault_id,
++				 IOMMU_HWPT_FAULT_ID_VALID | (1 << 31),
++				 &iopf_hwpt_id, IOMMU_HWPT_DATA_SELFTEST, &data,
++				 sizeof(data));
++	test_cmd_hwpt_alloc_iopf(dev_id, viommu_id, fault_id,
++				 IOMMU_HWPT_FAULT_ID_VALID, &iopf_hwpt_id,
++				 IOMMU_HWPT_DATA_SELFTEST, &data, sizeof(data));
+ 
+-		test_cmd_mock_domain_replace(self->stdev_id, self->ioas_id);
+-		test_ioctl_destroy(iopf_hwpt_id);
+-		close(fault_fd);
+-		test_ioctl_destroy(fault_id);
+-	}
++	/* Must allocate vdevice before attaching to a nested hwpt */
++	test_err_mock_domain_replace(ENOENT, self->stdev_id, iopf_hwpt_id);
++	test_cmd_vdevice_alloc(viommu_id, dev_id, 0x99, &vdev_id);
++	test_cmd_mock_domain_replace(self->stdev_id, iopf_hwpt_id);
++	EXPECT_ERRNO(EBUSY, _test_ioctl_destroy(self->fd, iopf_hwpt_id));
++	test_cmd_trigger_iopf(dev_id, fault_fd);
 +
- /* Caller should xa_lock(&viommu->vdevs) to protect the return value */
- struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
- 				       unsigned long vdev_id)
-@@ -92,7 +98,7 @@ struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
- 	lockdep_assert_held(&viommu->vdevs.xa_lock);
- 
- 	vdev = xa_load(&viommu->vdevs, vdev_id);
--	return vdev ? vdev->dev : NULL;
-+	return vdev ? iommufd_vdevice_to_device(vdev) : NULL;
- }
- EXPORT_SYMBOL_NS_GPL(iommufd_viommu_find_dev, "IOMMUFD");
- 
-@@ -109,7 +115,7 @@ int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
- 
- 	xa_lock(&viommu->vdevs);
- 	xa_for_each(&viommu->vdevs, index, vdev) {
--		if (vdev->dev == dev) {
-+		if (iommufd_vdevice_to_device(vdev) == dev) {
- 			*vdev_id = vdev->virt_id;
- 			rc = 0;
- 			break;
-diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-index ecbae5091ffe..6cf0bd5d8f08 100644
---- a/drivers/iommu/iommufd/viommu.c
-+++ b/drivers/iommu/iommufd/viommu.c
-@@ -125,7 +125,6 @@ void iommufd_vdevice_abort(struct iommufd_object *obj)
- 	xa_cmpxchg(&viommu->vdevs, vdev->virt_id, vdev, NULL, GFP_KERNEL);
- 	refcount_dec(&viommu->obj.users);
- 	idev->vdev = NULL;
--	put_device(vdev->dev);
++	test_cmd_mock_domain_replace(self->stdev_id, self->ioas_id);
++	test_ioctl_destroy(iopf_hwpt_id);
++	close(fault_fd);
++	test_ioctl_destroy(fault_id);
  }
  
- void iommufd_vdevice_destroy(struct iommufd_object *obj)
-@@ -203,8 +202,6 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
- 	}
+ TEST_F(iommufd_viommu, viommu_alloc_with_data)
+@@ -2902,169 +2899,161 @@ TEST_F(iommufd_viommu, vdevice_cache)
+ 	uint32_t vdev_id = 0;
+ 	uint32_t num_inv;
  
- 	vdev->virt_id = virt_id;
--	vdev->dev = idev->dev;
--	get_device(idev->dev);
- 	vdev->viommu = viommu;
- 	refcount_inc(&viommu->obj.users);
- 	/*
-diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
-index b88911026bc4..810e4d8ac912 100644
---- a/include/linux/iommufd.h
-+++ b/include/linux/iommufd.h
-@@ -109,7 +109,6 @@ struct iommufd_vdevice {
- 	struct iommufd_object obj;
- 	struct iommufd_viommu *viommu;
- 	struct iommufd_device *idev;
--	struct device *dev;
+-	if (dev_id) {
+-		test_cmd_vdevice_alloc(viommu_id, dev_id, 0x99, &vdev_id);
+-
+-		test_cmd_dev_check_cache_all(dev_id,
+-					     IOMMU_TEST_DEV_CACHE_DEFAULT);
+-
+-		/* Check data_type by passing zero-length array */
+-		num_inv = 0;
+-		test_cmd_viommu_invalidate(viommu_id, inv_reqs,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(!num_inv);
+-
+-		/* Negative test: Invalid data_type */
+-		num_inv = 1;
+-		test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST_INVALID,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(!num_inv);
+-
+-		/* Negative test: structure size sanity */
+-		num_inv = 1;
+-		test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
+-					   sizeof(*inv_reqs) + 1, &num_inv);
+-		assert(!num_inv);
+-
+-		num_inv = 1;
+-		test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
+-					   1, &num_inv);
+-		assert(!num_inv);
+-
+-		/* Negative test: invalid flag is passed */
+-		num_inv = 1;
+-		inv_reqs[0].flags = 0xffffffff;
+-		inv_reqs[0].vdev_id = 0x99;
+-		test_err_viommu_invalidate(EOPNOTSUPP, viommu_id, inv_reqs,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(!num_inv);
+-
+-		/* Negative test: invalid data_uptr when array is not empty */
+-		num_inv = 1;
+-		inv_reqs[0].flags = 0;
+-		inv_reqs[0].vdev_id = 0x99;
+-		test_err_viommu_invalidate(EINVAL, viommu_id, NULL,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(!num_inv);
+-
+-		/* Negative test: invalid entry_len when array is not empty */
+-		num_inv = 1;
+-		inv_reqs[0].flags = 0;
+-		inv_reqs[0].vdev_id = 0x99;
+-		test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
+-					   0, &num_inv);
+-		assert(!num_inv);
+-
+-		/* Negative test: invalid cache_id */
+-		num_inv = 1;
+-		inv_reqs[0].flags = 0;
+-		inv_reqs[0].vdev_id = 0x99;
+-		inv_reqs[0].cache_id = MOCK_DEV_CACHE_ID_MAX + 1;
+-		test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(!num_inv);
++	if (!dev_id)
++		SKIP(return, "Skipping test for variant no_viommu");
  
- 	/*
- 	 * Virtual device ID per vIOMMU, e.g. vSID of ARM SMMUv3, vDeviceID of
-@@ -261,6 +260,7 @@ int _iommufd_alloc_mmap(struct iommufd_ctx *ictx, struct iommufd_object *owner,
- 			unsigned long *offset);
- void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
- 			   struct iommufd_object *owner, unsigned long offset);
-+struct device *iommufd_vdevice_to_device(struct iommufd_vdevice *vdev);
- struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
- 				       unsigned long vdev_id);
- int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
-@@ -295,6 +295,12 @@ static inline void _iommufd_destroy_mmap(struct iommufd_ctx *ictx,
- {
- }
- 
-+static inline struct device *
-+iommufd_vdevice_to_device(struct iommufd_vdevice *vdev)
-+{
-+	return NULL;
-+}
+-		/* Negative test: invalid vdev_id */
+-		num_inv = 1;
+-		inv_reqs[0].flags = 0;
+-		inv_reqs[0].vdev_id = 0x9;
+-		inv_reqs[0].cache_id = 0;
+-		test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(!num_inv);
++	test_cmd_vdevice_alloc(viommu_id, dev_id, 0x99, &vdev_id);
 +
- static inline struct device *
- iommufd_viommu_find_dev(struct iommufd_viommu *viommu, unsigned long vdev_id)
- {
++	test_cmd_dev_check_cache_all(dev_id, IOMMU_TEST_DEV_CACHE_DEFAULT);
++
++	/* Check data_type by passing zero-length array */
++	num_inv = 0;
++	test_cmd_viommu_invalidate(viommu_id, inv_reqs, sizeof(*inv_reqs),
++				   &num_inv);
++	assert(!num_inv);
++
++	/* Negative test: Invalid data_type */
++	num_inv = 1;
++	test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST_INVALID,
++				   sizeof(*inv_reqs), &num_inv);
++	assert(!num_inv);
++
++	/* Negative test: structure size sanity */
++	num_inv = 1;
++	test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
++				   sizeof(*inv_reqs) + 1, &num_inv);
++	assert(!num_inv);
++
++	num_inv = 1;
++	test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST, 1,
++				   &num_inv);
++	assert(!num_inv);
++
++	/* Negative test: invalid flag is passed */
++	num_inv = 1;
++	inv_reqs[0].flags = 0xffffffff;
++	inv_reqs[0].vdev_id = 0x99;
++	test_err_viommu_invalidate(EOPNOTSUPP, viommu_id, inv_reqs,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
++				   sizeof(*inv_reqs), &num_inv);
++	assert(!num_inv);
++
++	/* Negative test: invalid data_uptr when array is not empty */
++	num_inv = 1;
++	inv_reqs[0].flags = 0;
++	inv_reqs[0].vdev_id = 0x99;
++	test_err_viommu_invalidate(EINVAL, viommu_id, NULL,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
++				   sizeof(*inv_reqs), &num_inv);
++	assert(!num_inv);
++
++	/* Negative test: invalid entry_len when array is not empty */
++	num_inv = 1;
++	inv_reqs[0].flags = 0;
++	inv_reqs[0].vdev_id = 0x99;
++	test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST, 0,
++				   &num_inv);
++	assert(!num_inv);
++
++	/* Negative test: invalid cache_id */
++	num_inv = 1;
++	inv_reqs[0].flags = 0;
++	inv_reqs[0].vdev_id = 0x99;
++	inv_reqs[0].cache_id = MOCK_DEV_CACHE_ID_MAX + 1;
++	test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
++				   sizeof(*inv_reqs), &num_inv);
++	assert(!num_inv);
++
++	/* Negative test: invalid vdev_id */
++	num_inv = 1;
++	inv_reqs[0].flags = 0;
++	inv_reqs[0].vdev_id = 0x9;
++	inv_reqs[0].cache_id = 0;
++	test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
++				   sizeof(*inv_reqs), &num_inv);
++	assert(!num_inv);
+ 
+-		/*
+-		 * Invalidate the 1st cache entry but fail the 2nd request
+-		 * due to invalid flags configuration in the 2nd request.
+-		 */
+-		num_inv = 2;
+-		inv_reqs[0].flags = 0;
+-		inv_reqs[0].vdev_id = 0x99;
+-		inv_reqs[0].cache_id = 0;
+-		inv_reqs[1].flags = 0xffffffff;
+-		inv_reqs[1].vdev_id = 0x99;
+-		inv_reqs[1].cache_id = 1;
+-		test_err_viommu_invalidate(EOPNOTSUPP, viommu_id, inv_reqs,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(num_inv == 1);
+-		test_cmd_dev_check_cache(dev_id, 0, 0);
+-		test_cmd_dev_check_cache(dev_id, 1,
+-					 IOMMU_TEST_DEV_CACHE_DEFAULT);
+-		test_cmd_dev_check_cache(dev_id, 2,
+-					 IOMMU_TEST_DEV_CACHE_DEFAULT);
+-		test_cmd_dev_check_cache(dev_id, 3,
+-					 IOMMU_TEST_DEV_CACHE_DEFAULT);
+-
+-		/*
+-		 * Invalidate the 1st cache entry but fail the 2nd request
+-		 * due to invalid cache_id configuration in the 2nd request.
+-		 */
+-		num_inv = 2;
+-		inv_reqs[0].flags = 0;
+-		inv_reqs[0].vdev_id = 0x99;
+-		inv_reqs[0].cache_id = 0;
+-		inv_reqs[1].flags = 0;
+-		inv_reqs[1].vdev_id = 0x99;
+-		inv_reqs[1].cache_id = MOCK_DEV_CACHE_ID_MAX + 1;
+-		test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
+-					   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(num_inv == 1);
+-		test_cmd_dev_check_cache(dev_id, 0, 0);
+-		test_cmd_dev_check_cache(dev_id, 1,
+-					 IOMMU_TEST_DEV_CACHE_DEFAULT);
+-		test_cmd_dev_check_cache(dev_id, 2,
+-					 IOMMU_TEST_DEV_CACHE_DEFAULT);
+-		test_cmd_dev_check_cache(dev_id, 3,
+-					 IOMMU_TEST_DEV_CACHE_DEFAULT);
+-
+-		/* Invalidate the 2nd cache entry and verify */
+-		num_inv = 1;
+-		inv_reqs[0].flags = 0;
+-		inv_reqs[0].vdev_id = 0x99;
+-		inv_reqs[0].cache_id = 1;
+-		test_cmd_viommu_invalidate(viommu_id, inv_reqs,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(num_inv == 1);
+-		test_cmd_dev_check_cache(dev_id, 0, 0);
+-		test_cmd_dev_check_cache(dev_id, 1, 0);
+-		test_cmd_dev_check_cache(dev_id, 2,
+-					 IOMMU_TEST_DEV_CACHE_DEFAULT);
+-		test_cmd_dev_check_cache(dev_id, 3,
+-					 IOMMU_TEST_DEV_CACHE_DEFAULT);
+-
+-		/* Invalidate the 3rd and 4th cache entries and verify */
+-		num_inv = 2;
+-		inv_reqs[0].flags = 0;
+-		inv_reqs[0].vdev_id = 0x99;
+-		inv_reqs[0].cache_id = 2;
+-		inv_reqs[1].flags = 0;
+-		inv_reqs[1].vdev_id = 0x99;
+-		inv_reqs[1].cache_id = 3;
+-		test_cmd_viommu_invalidate(viommu_id, inv_reqs,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(num_inv == 2);
+-		test_cmd_dev_check_cache_all(dev_id, 0);
++	/*
++	 * Invalidate the 1st cache entry but fail the 2nd request
++	 * due to invalid flags configuration in the 2nd request.
++	 */
++	num_inv = 2;
++	inv_reqs[0].flags = 0;
++	inv_reqs[0].vdev_id = 0x99;
++	inv_reqs[0].cache_id = 0;
++	inv_reqs[1].flags = 0xffffffff;
++	inv_reqs[1].vdev_id = 0x99;
++	inv_reqs[1].cache_id = 1;
++	test_err_viommu_invalidate(EOPNOTSUPP, viommu_id, inv_reqs,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
++				   sizeof(*inv_reqs), &num_inv);
++	assert(num_inv == 1);
++	test_cmd_dev_check_cache(dev_id, 0, 0);
++	test_cmd_dev_check_cache(dev_id, 1, IOMMU_TEST_DEV_CACHE_DEFAULT);
++	test_cmd_dev_check_cache(dev_id, 2, IOMMU_TEST_DEV_CACHE_DEFAULT);
++	test_cmd_dev_check_cache(dev_id, 3, IOMMU_TEST_DEV_CACHE_DEFAULT);
+ 
+-		/* Invalidate all cache entries for nested_dev_id[1] and verify */
+-		num_inv = 1;
+-		inv_reqs[0].vdev_id = 0x99;
+-		inv_reqs[0].flags = IOMMU_TEST_INVALIDATE_FLAG_ALL;
+-		test_cmd_viommu_invalidate(viommu_id, inv_reqs,
+-					   sizeof(*inv_reqs), &num_inv);
+-		assert(num_inv == 1);
+-		test_cmd_dev_check_cache_all(dev_id, 0);
+-		test_ioctl_destroy(vdev_id);
+-	}
++	/*
++	 * Invalidate the 1st cache entry but fail the 2nd request
++	 * due to invalid cache_id configuration in the 2nd request.
++	 */
++	num_inv = 2;
++	inv_reqs[0].flags = 0;
++	inv_reqs[0].vdev_id = 0x99;
++	inv_reqs[0].cache_id = 0;
++	inv_reqs[1].flags = 0;
++	inv_reqs[1].vdev_id = 0x99;
++	inv_reqs[1].cache_id = MOCK_DEV_CACHE_ID_MAX + 1;
++	test_err_viommu_invalidate(EINVAL, viommu_id, inv_reqs,
++				   IOMMU_VIOMMU_INVALIDATE_DATA_SELFTEST,
++				   sizeof(*inv_reqs), &num_inv);
++	assert(num_inv == 1);
++	test_cmd_dev_check_cache(dev_id, 0, 0);
++	test_cmd_dev_check_cache(dev_id, 1, IOMMU_TEST_DEV_CACHE_DEFAULT);
++	test_cmd_dev_check_cache(dev_id, 2, IOMMU_TEST_DEV_CACHE_DEFAULT);
++	test_cmd_dev_check_cache(dev_id, 3, IOMMU_TEST_DEV_CACHE_DEFAULT);
++
++	/* Invalidate the 2nd cache entry and verify */
++	num_inv = 1;
++	inv_reqs[0].flags = 0;
++	inv_reqs[0].vdev_id = 0x99;
++	inv_reqs[0].cache_id = 1;
++	test_cmd_viommu_invalidate(viommu_id, inv_reqs, sizeof(*inv_reqs),
++				   &num_inv);
++	assert(num_inv == 1);
++	test_cmd_dev_check_cache(dev_id, 0, 0);
++	test_cmd_dev_check_cache(dev_id, 1, 0);
++	test_cmd_dev_check_cache(dev_id, 2, IOMMU_TEST_DEV_CACHE_DEFAULT);
++	test_cmd_dev_check_cache(dev_id, 3, IOMMU_TEST_DEV_CACHE_DEFAULT);
++
++	/* Invalidate the 3rd and 4th cache entries and verify */
++	num_inv = 2;
++	inv_reqs[0].flags = 0;
++	inv_reqs[0].vdev_id = 0x99;
++	inv_reqs[0].cache_id = 2;
++	inv_reqs[1].flags = 0;
++	inv_reqs[1].vdev_id = 0x99;
++	inv_reqs[1].cache_id = 3;
++	test_cmd_viommu_invalidate(viommu_id, inv_reqs, sizeof(*inv_reqs),
++				   &num_inv);
++	assert(num_inv == 2);
++	test_cmd_dev_check_cache_all(dev_id, 0);
++
++	/* Invalidate all cache entries for nested_dev_id[1] and verify */
++	num_inv = 1;
++	inv_reqs[0].vdev_id = 0x99;
++	inv_reqs[0].flags = IOMMU_TEST_INVALIDATE_FLAG_ALL;
++	test_cmd_viommu_invalidate(viommu_id, inv_reqs, sizeof(*inv_reqs),
++				   &num_inv);
++	assert(num_inv == 1);
++	test_cmd_dev_check_cache_all(dev_id, 0);
++	test_ioctl_destroy(vdev_id);
+ }
+ 
+ TEST_F(iommufd_viommu, hw_queue)
 -- 
 2.25.1
 
