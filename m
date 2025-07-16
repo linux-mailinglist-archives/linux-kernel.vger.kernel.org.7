@@ -1,434 +1,143 @@
-Return-Path: <linux-kernel+bounces-733445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43179B074C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:27:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4C0B074C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 994B77ABAE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:25:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1FB31C25F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B3C2F5462;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD872F2C70;
 	Wed, 16 Jul 2025 11:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gk3tx/ti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fa4gKJ2h"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B621C2F3C3E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F309B2F4331;
 	Wed, 16 Jul 2025 11:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752665139; cv=none; b=hepYH+/Ru1p6uiaC6IZAt/OzcUfWcDmBkG9/e959FD4krhtM9v3wqDLZGh/cJNaoQSiyUmLOrHqGkYU6bOk0rt6MHSVGezoukgTc3j/uhFDPSMkFo420poj2/E/qLPkb6LEyeIj/IcFNWFQTYsSaNUf++y5+9mLf6NTfW47jE8s=
+	t=1752665141; cv=none; b=uxub0/uE6/hbnZGMO8dZ0nNgufUtjWRLu623PlHuhc4JwN88HaXmtwERtYkoq9WR9ErzrPNRSt8W26GONBNmguKthxpJbtp+XPZkJWU9aFhXyaJKgscrg43clWJHFID8O3w7XZG6sS9LvC7URyd6JH3zgGqjiSyuYAB31vxPN4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752665139; c=relaxed/simple;
-	bh=YezpPpr9MkIy8MdAiZQpsV+wych1Eokmh7cdGM1/b9Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UQHCd87zlesrLl0KZs3xIOdjHrlg3lKj1VcGPPIpACVWrImp26Gc7Xxb9RF5yaXwMN488YYblruvnKY61y0w+HamKYiLiRBXotUv1cXWFkSvZoPHUT/S1yYZ1rTo3+62Ytuz26ZChUozk3KdZ/dq2aivqeEswjPsE72RyPsvMlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gk3tx/ti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6805DC4CEF7;
-	Wed, 16 Jul 2025 11:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752665139;
-	bh=YezpPpr9MkIy8MdAiZQpsV+wych1Eokmh7cdGM1/b9Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=gk3tx/tivZ9M2H6ZJ1ebouXZwJTZ7cHj5vyzmGQ+EUnjNQP08kXPhXIXOtuMX2td0
-	 xZNdCC0SUIKVZmbMqiMrC9/yWi/9hPS+hW5l5gQ5r769Wdn7uq70tphW+FHEuzeWWh
-	 VuhPVTHD+HTQ974n6ZxcYkt0x+j2Ra4MHUhHr2l8mXOf8xnqTTJLQ0IH800A5xSnHI
-	 9TNePbKN0uTszVo0dXvFrmTDxxnaaOEzV7VZ7SvBoq8LQoby1JMflx/IJxpFAxmTMC
-	 L5DTivAidpvnYFGWaZZ/imCr+8aHSLiNgPR++KsOpX6vekSlCVGHsTPKDsOsqY982y
-	 UgTXjOjJ/FVaA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6080BC83F34;
-	Wed, 16 Jul 2025 11:25:39 +0000 (UTC)
-From: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
-Date: Wed, 16 Jul 2025 19:25:18 +0800
-Subject: [PATCH v3 9/9] MIPS: configs: Consolidate Loongson1 defconfigs
+	s=arc-20240116; t=1752665141; c=relaxed/simple;
+	bh=EYFfKSlO9xERXs/iTfLLgx0rGMidUjSz1xXZscwEqA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZHfx/DqI41miiGSrqEev225wIJT9x26hYKPLvT+aCJNkCUmdWLbi4w6yZLxXsT5/xFTC0dJ2ILTfA/VHaBZtRhhOk4l6vPU1Cj+/8UV2G0I/BSxk8sfveTBPKzGym814y5PaM/kcXzxPRh6ENLQ21SMr+iyjb/F3lv6A8Ar4Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fa4gKJ2h; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gkZqUKwDbsV/2dL8YJLKH5dlMnuryzNCRhd3vysEFm4=; b=fa4gKJ2hF5gpoA01tjLnk2eIHt
+	RCL6bj/GuUx/+nYFbbLaPZycyPZ8G8kCeblqfgeMGlfW+beH51C+GLZNQFROLHgy0jr6XnG8CZJdZ
+	zZ2n++m9thcaLObnDTqNLl88/PJY7vkrEGeDrJYApnrpapbHH12EKZUwlKaSYlOEYQQhPA1N1o2jt
+	24v3tLUYeZ4jOLSNCZTryT61CM/8VsmKV07STQ4T+ZPQHFKLB0oL9c2edZ6zMkwxthSaIFxT5RQQT
+	Ee3NL9MUylQhHrE5dIZmoxjKvXwYmTvSnxWMJZgZvJIdvke0S2p8Ilk3h0K59FIxBlR/FysuVPV2y
+	uR03+9Dw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uc0GU-0000000A5iS-2lKi;
+	Wed, 16 Jul 2025 11:25:35 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5CA3C300186; Wed, 16 Jul 2025 13:25:33 +0200 (CEST)
+Date: Wed, 16 Jul 2025 13:25:33 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: kernel test robot <oliver.sang@intel.com>, Chris Mason <clm@fb.com>,
+	oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	aubrey.li@linux.intel.com, vincent.guittot@linaro.org
+Subject: Re: [PATCH v2] sched/fair: bump sd->max_newidle_lb_cost when newidle
+ balance fails
+Message-ID: <20250716112533.GS1613200@noisy.programming.kicks-ass.net>
+References: <202507150846.538fc133-lkp@intel.com>
+ <10abe013-98d6-4080-ac43-0f1e02aa41f9@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250716-loongson1-arch-v3-9-d160974d696b@gmail.com>
-References: <20250716-loongson1-arch-v3-0-d160974d696b@gmail.com>
-In-Reply-To: <20250716-loongson1-arch-v3-0-d160974d696b@gmail.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
- Keguang Zhang <keguang.zhang@gmail.com>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752665136; l=10713;
- i=keguang.zhang@gmail.com; s=20231129; h=from:subject:message-id;
- bh=vXaIa8N3GToUGpAmk80FkzsQAYrU6OjHna1ZLvsKN7s=;
- b=TXulWvlekYH10mgmEKNMpSHZTHGFm8BteCB79xroD70KiFpzV6qJYpFNDO4DVjYMiYCQT6p54
- l/U+F+LkfKeCuzSnNVe6ArwGVVhXuauePC+GKQ9Eh7eA2OAgW939W17
-X-Developer-Key: i=keguang.zhang@gmail.com; a=ed25519;
- pk=FMKGj/JgKll/MgClpNZ3frIIogsh5e5r8CeW2mr+WLs=
-X-Endpoint-Received: by B4 Relay for keguang.zhang@gmail.com/20231129 with
- auth_id=102
-X-Original-From: Keguang Zhang <keguang.zhang@gmail.com>
-Reply-To: keguang.zhang@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <10abe013-98d6-4080-ac43-0f1e02aa41f9@intel.com>
 
-From: Keguang Zhang <keguang.zhang@gmail.com>
+On Tue, Jul 15, 2025 at 06:08:43PM +0800, Chen, Yu C wrote:
+> On 7/15/2025 3:08 PM, kernel test robot wrote:
+> > 
+> > 
+> > Hello,
+> > 
+> > kernel test robot noticed a 22.9% regression of unixbench.throughput on:
+> > 
+> > 
+> > commit: ac34cb39e8aea9915ec2f4e08c979eb2ed1d7561 ("[PATCH v2] sched/fair: bump sd->max_newidle_lb_cost when newidle balance fails")
+> > url: https://github.com/intel-lab-lkp/linux/commits/Chris-Mason/sched-fair-bump-sd-max_newidle_lb_cost-when-newidle-balance-fails/20250626-224805
+> > base: https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git 5bc34be478d09c4d16009e665e020ad0fcd0deea
+> > patch link: https://lore.kernel.org/all/20250626144017.1510594-2-clm@fb.com/
+> > patch subject: [PATCH v2] sched/fair: bump sd->max_newidle_lb_cost when newidle balance fails
+> > 
+> > testcase: unixbench
+> > config: x86_64-rhel-9.4
+> > compiler: gcc-12
+> > test machine: 64 threads 2 sockets Intel(R) Xeon(R) Gold 6346 CPU @ 3.10GHz (Ice Lake) with 256G memory
+> > parameters:
+> > 
+> > 	runtime: 300s
+> > 	nr_task: 100%
+> > 	test: shell1
+> > 	cpufreq_governor: performance
+> > 
+> > 
+> ...
+> 
+> > 
+> > commit:
+> >    5bc34be478 ("sched/core: Reorganize cgroup bandwidth control interface file writes")
+> >    ac34cb39e8 ("sched/fair: bump sd->max_newidle_lb_cost when newidle balance fails")
+> > 
+> > 5bc34be478d09c4d ac34cb39e8aea9915ec2f4e08c9
+> > ---------------- ---------------------------
+> >           %stddev     %change         %stddev
+> >               \          |                \
+> ...
+> 
+> >       40.37           +16.9       57.24        mpstat.cpu.all.idle%
+> 
+> This commit inhibits the newidle balance. 
 
-Unify loongson{1b,1c}_defconfig into a single loongson1_defconfig.
+When not successful. So when newidle balance is not succeeding to pull
+tasks, it is backing off and doing less of it.
 
-Enable the following options by default:
- - CONFIG_SERIAL_OF_PLATFORM
- - CONFIG_RTC_DRV_LOONGSON
- - CONFIG_LOONGSON1_APB_DMA
- - CONFIG_MTD_NAND_LOONGSON1
- - CONFIG_SND_LOONGSON1_AC97
+> It seems that some workloads
+> do not like newlyidle balance, like schbench, which is short duration
+> task. While other workloads want the newidle balance to pull at its best
+> effort, like unixbench shell test case.
+> Just wonder if we can check the sched domain's average utilization to
+> decide how hard we should trigger the newly idle balance, or can we check
+> the overutilized flag to decide whether we should launch the
+> new idle balance, something I was thinking of:
 
-Also disable unnecessary options.
+Looking at the actual util signal might be interesting, but as Chris
+already noted, overutilized isn't the right thing to look at. Simply
+taking rq->cfs.avg.util_avg might be more useful. Very high util and
+failure to pull might indicate new-idle just isn't very important /
+effective. While low util and failure might mean we should try harder.
 
-Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
----
- MAINTAINERS                                        |   1 +
- .../{loongson1b_defconfig => loongson1_defconfig}  |  94 +++++++++++++---
- arch/mips/configs/loongson1c_defconfig             | 121 ---------------------
- 3 files changed, 78 insertions(+), 138 deletions(-)
+Other things to look at:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d42a83656879..c73e25af147c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16684,6 +16684,7 @@ L:	linux-mips@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/*/loongson,ls1*.yaml
- F:	arch/mips/boot/dts/loongson/loongson1*
-+F:	arch/mips/configs/loongson1_defconfig
- F:	arch/mips/loongson32/
- F:	drivers/*/*loongson1*
- F:	drivers/mtd/nand/raw/loongson1-nand-controller.c
-diff --git a/arch/mips/configs/loongson1b_defconfig b/arch/mips/configs/loongson1_defconfig
-similarity index 51%
-rename from arch/mips/configs/loongson1b_defconfig
-rename to arch/mips/configs/loongson1_defconfig
-index 68207b31dc20..81acae6f61c8 100644
---- a/arch/mips/configs/loongson1b_defconfig
-+++ b/arch/mips/configs/loongson1_defconfig
-@@ -1,7 +1,6 @@
- # CONFIG_LOCALVERSION_AUTO is not set
- CONFIG_KERNEL_XZ=y
- CONFIG_SYSVIPC=y
--CONFIG_HIGH_RES_TIMERS=y
- CONFIG_PREEMPT=y
- CONFIG_BSD_PROCESS_ACCT=y
- CONFIG_BSD_PROCESS_ACCT_V3=y
-@@ -12,15 +11,16 @@ CONFIG_NAMESPACES=y
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- CONFIG_EXPERT=y
- CONFIG_PERF_EVENTS=y
--# CONFIG_COMPAT_BRK is not set
- CONFIG_MACH_LOONGSON32=y
--# CONFIG_SECCOMP is not set
- # CONFIG_SUSPEND is not set
-+# CONFIG_SECCOMP is not set
-+# CONFIG_GCC_PLUGINS is not set
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
- CONFIG_MODVERSIONS=y
--# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_BLOCK_LEGACY_AUTOLOAD is not set
- # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-+# CONFIG_COMPAT_BRK is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -31,6 +31,7 @@ CONFIG_SYN_COOKIES=y
- # CONFIG_INET_DIAG is not set
- # CONFIG_IPV6 is not set
- # CONFIG_WIRELESS is not set
-+# CONFIG_ETHTOOL_NETLINK is not set
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
- # CONFIG_STANDALONE is not set
-@@ -38,32 +39,75 @@ CONFIG_MTD=y
- CONFIG_MTD_CMDLINE_PARTS=y
- CONFIG_MTD_BLOCK=y
- CONFIG_MTD_RAW_NAND=y
-+CONFIG_MTD_NAND_LOONGSON1=y
- CONFIG_MTD_UBI=y
- CONFIG_BLK_DEV_LOOP=y
- CONFIG_SCSI=m
- # CONFIG_SCSI_PROC_FS is not set
- CONFIG_BLK_DEV_SD=m
-+# CONFIG_BLK_DEV_BSG is not set
- # CONFIG_SCSI_LOWLEVEL is not set
- CONFIG_NETDEVICES=y
-+# CONFIG_NET_VENDOR_ALACRITECH is not set
-+# CONFIG_NET_VENDOR_AMAZON is not set
-+# CONFIG_NET_VENDOR_AQUANTIA is not set
-+# CONFIG_NET_VENDOR_ARC is not set
-+# CONFIG_NET_VENDOR_ASIX is not set
- # CONFIG_NET_VENDOR_BROADCOM is not set
-+# CONFIG_NET_VENDOR_CADENCE is not set
-+# CONFIG_NET_VENDOR_CAVIUM is not set
-+# CONFIG_NET_VENDOR_CORTINA is not set
-+# CONFIG_NET_VENDOR_DAVICOM is not set
-+# CONFIG_NET_VENDOR_ENGLEDER is not set
-+# CONFIG_NET_VENDOR_EZCHIP is not set
-+# CONFIG_NET_VENDOR_FUNGIBLE is not set
-+# CONFIG_NET_VENDOR_GOOGLE is not set
-+# CONFIG_NET_VENDOR_HISILICON is not set
-+# CONFIG_NET_VENDOR_HUAWEI is not set
- # CONFIG_NET_VENDOR_INTEL is not set
-+# CONFIG_NET_VENDOR_LITEX is not set
- # CONFIG_NET_VENDOR_MARVELL is not set
-+# CONFIG_NET_VENDOR_META is not set
- # CONFIG_NET_VENDOR_MICREL is not set
-+# CONFIG_NET_VENDOR_MICROCHIP is not set
-+# CONFIG_NET_VENDOR_MICROSEMI is not set
-+# CONFIG_NET_VENDOR_MICROSOFT is not set
-+# CONFIG_NET_VENDOR_NI is not set
- # CONFIG_NET_VENDOR_NATSEMI is not set
-+# CONFIG_NET_VENDOR_NETRONOME is not set
-+# CONFIG_NET_VENDOR_PENSANDO is not set
-+# CONFIG_NET_VENDOR_QUALCOMM is not set
-+# CONFIG_NET_VENDOR_RENESAS is not set
-+# CONFIG_NET_VENDOR_ROCKER is not set
-+# CONFIG_NET_VENDOR_SAMSUNG is not set
- # CONFIG_NET_VENDOR_SEEQ is not set
-+# CONFIG_NET_VENDOR_SOLARFLARE is not set
- # CONFIG_NET_VENDOR_SMSC is not set
-+# CONFIG_NET_VENDOR_SOCIONEXT is not set
- CONFIG_STMMAC_ETH=y
-+# CONFIG_DWMAC_GENERIC is not set
-+# CONFIG_NET_VENDOR_SYNOPSYS is not set
-+# CONFIG_NET_VENDOR_VERTEXCOM is not set
-+# CONFIG_NET_VENDOR_VIA is not set
-+# CONFIG_NET_VENDOR_WANGXUN is not set
- # CONFIG_NET_VENDOR_WIZNET is not set
-+# CONFIG_NET_VENDOR_XILINX is not set
-+CONFIG_DAVICOM_PHY=y
-+CONFIG_REALTEK_PHY=y
-+# CONFIG_USB_NET_DRIVERS is not set
- # CONFIG_WLAN is not set
- CONFIG_INPUT_EVDEV=y
- # CONFIG_INPUT_KEYBOARD is not set
- # CONFIG_INPUT_MOUSE is not set
- # CONFIG_SERIO is not set
-+# CONFIG_VT_CONSOLE is not set
- CONFIG_VT_HW_CONSOLE_BINDING=y
- CONFIG_LEGACY_PTY_COUNT=8
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
-+# CONFIG_PTP_1588_CLOCK is not set
- CONFIG_GPIOLIB=y
- CONFIG_GPIO_LOONGSON1=y
- # CONFIG_HWMON is not set
-@@ -71,7 +115,15 @@ CONFIG_WATCHDOG=y
- CONFIG_WATCHDOG_NOWAYOUT=y
- CONFIG_WATCHDOG_SYSFS=y
- CONFIG_LOONGSON1_WDT=y
--# CONFIG_VGA_CONSOLE is not set
-+CONFIG_SOUND=y
-+CONFIG_SND=y
-+# CONFIG_SND_SUPPORT_OLD_API is not set
-+# CONFIG_SND_DRIVERS is not set
-+# CONFIG_SND_MIPS is not set
-+# CONFIG_SND_USB is not set
-+CONFIG_SND_SOC=y
-+CONFIG_SND_LOONGSON1_AC97=y
-+CONFIG_SND_SIMPLE_CARD=y
- CONFIG_HID_GENERIC=m
- CONFIG_USB_HID=m
- CONFIG_USB=y
-@@ -86,17 +138,20 @@ CONFIG_NEW_LEDS=y
- CONFIG_LEDS_CLASS=y
- CONFIG_LEDS_GPIO=y
- CONFIG_LEDS_TRIGGERS=y
-+CONFIG_LEDS_TRIGGER_MTD=y
- CONFIG_LEDS_TRIGGER_HEARTBEAT=y
- CONFIG_RTC_CLASS=y
--CONFIG_RTC_DRV_LOONGSON1=y
-+# CONFIG_RTC_NVMEM is not set
-+CONFIG_RTC_DRV_LOONGSON=y
-+CONFIG_DMADEVICES=y
-+CONFIG_LOONGSON1_APB_DMA=y
-+# CONFIG_VIRTIO_MENU is not set
-+# CONFIG_VHOST_MENU is not set
-+# CONFIG_MIPS_PLATFORM_DEVICES is not set
- # CONFIG_IOMMU_SUPPORT is not set
--CONFIG_EXT2_FS=y
--CONFIG_EXT2_FS_XATTR=y
--CONFIG_EXT2_FS_POSIX_ACL=y
--CONFIG_EXT2_FS_SECURITY=y
--CONFIG_EXT3_FS=y
--CONFIG_EXT3_FS_POSIX_ACL=y
--CONFIG_EXT3_FS_SECURITY=y
-+# CONFIG_NVMEM is not set
-+CONFIG_EXT4_FS=y
-+CONFIG_EXT4_FS_POSIX_ACL=y
- # CONFIG_DNOTIFY is not set
- CONFIG_VFAT_FS=y
- CONFIG_PROC_KCORE=y
-@@ -105,16 +160,21 @@ CONFIG_TMPFS_POSIX_ACL=y
- CONFIG_UBIFS_FS=y
- CONFIG_UBIFS_FS_ADVANCED_COMPR=y
- CONFIG_UBIFS_ATIME_SUPPORT=y
-+# CONFIG_UBIFS_FS_SECURITY is not set
- CONFIG_NFS_FS=y
- CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=m
- CONFIG_NLS_ISO8859_1=m
--# CONFIG_CRYPTO_ECHAINIV is not set
- # CONFIG_CRYPTO_HW is not set
-+# CONFIG_XZ_DEC_X86 is not set
-+# CONFIG_XZ_DEC_POWERPC is not set
-+# CONFIG_XZ_DEC_ARM is not set
-+# CONFIG_XZ_DEC_ARMTHUMB is not set
-+# CONFIG_XZ_DEC_ARM64 is not set
-+# CONFIG_XZ_DEC_SPARC is not set
-+# CONFIG_XZ_DEC_RISCV is not set
- CONFIG_DYNAMIC_DEBUG=y
--CONFIG_DEBUG_FS=y
-+# CONFIG_DEBUG_MISC is not set
- CONFIG_MAGIC_SYSRQ=y
--# CONFIG_SCHED_DEBUG is not set
--# CONFIG_DEBUG_PREEMPT is not set
- # CONFIG_FTRACE is not set
- # CONFIG_EARLY_PRINTK is not set
-diff --git a/arch/mips/configs/loongson1c_defconfig b/arch/mips/configs/loongson1c_defconfig
-deleted file mode 100644
-index c3910a9dee9e..000000000000
---- a/arch/mips/configs/loongson1c_defconfig
-+++ /dev/null
-@@ -1,121 +0,0 @@
--# CONFIG_LOCALVERSION_AUTO is not set
--CONFIG_KERNEL_XZ=y
--CONFIG_SYSVIPC=y
--CONFIG_HIGH_RES_TIMERS=y
--CONFIG_PREEMPT=y
--CONFIG_BSD_PROCESS_ACCT=y
--CONFIG_BSD_PROCESS_ACCT_V3=y
--CONFIG_IKCONFIG=y
--CONFIG_IKCONFIG_PROC=y
--CONFIG_LOG_BUF_SHIFT=16
--CONFIG_NAMESPACES=y
--CONFIG_CC_OPTIMIZE_FOR_SIZE=y
--CONFIG_EXPERT=y
--CONFIG_PERF_EVENTS=y
--# CONFIG_COMPAT_BRK is not set
--CONFIG_MACH_LOONGSON32=y
--CONFIG_LOONGSON1_LS1C=y
--# CONFIG_SECCOMP is not set
--# CONFIG_SUSPEND is not set
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--CONFIG_MODVERSIONS=y
--# CONFIG_BLK_DEV_BSG is not set
--# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
--CONFIG_NET=y
--CONFIG_PACKET=y
--CONFIG_UNIX=y
--CONFIG_INET=y
--CONFIG_IP_PNP=y
--CONFIG_IP_PNP_DHCP=y
--CONFIG_SYN_COOKIES=y
--# CONFIG_INET_DIAG is not set
--# CONFIG_IPV6 is not set
--# CONFIG_WIRELESS is not set
--CONFIG_DEVTMPFS=y
--CONFIG_DEVTMPFS_MOUNT=y
--# CONFIG_STANDALONE is not set
--CONFIG_MTD=y
--CONFIG_MTD_CMDLINE_PARTS=y
--CONFIG_MTD_BLOCK=y
--CONFIG_MTD_RAW_NAND=y
--CONFIG_MTD_UBI=y
--CONFIG_BLK_DEV_LOOP=y
--CONFIG_SCSI=m
--# CONFIG_SCSI_PROC_FS is not set
--CONFIG_BLK_DEV_SD=m
--# CONFIG_SCSI_LOWLEVEL is not set
--CONFIG_NETDEVICES=y
--# CONFIG_NET_VENDOR_BROADCOM is not set
--# CONFIG_NET_VENDOR_INTEL is not set
--# CONFIG_NET_VENDOR_MARVELL is not set
--# CONFIG_NET_VENDOR_MICREL is not set
--# CONFIG_NET_VENDOR_NATSEMI is not set
--# CONFIG_NET_VENDOR_SEEQ is not set
--# CONFIG_NET_VENDOR_SMSC is not set
--CONFIG_STMMAC_ETH=y
--# CONFIG_NET_VENDOR_WIZNET is not set
--# CONFIG_WLAN is not set
--CONFIG_INPUT_EVDEV=y
--# CONFIG_INPUT_KEYBOARD is not set
--# CONFIG_INPUT_MOUSE is not set
--# CONFIG_SERIO is not set
--CONFIG_VT_HW_CONSOLE_BINDING=y
--CONFIG_LEGACY_PTY_COUNT=8
--CONFIG_SERIAL_8250=y
--CONFIG_SERIAL_8250_CONSOLE=y
--# CONFIG_HW_RANDOM is not set
--CONFIG_GPIOLIB=y
--CONFIG_GPIO_LOONGSON1=y
--# CONFIG_HWMON is not set
--CONFIG_WATCHDOG=y
--CONFIG_WATCHDOG_NOWAYOUT=y
--CONFIG_WATCHDOG_SYSFS=y
--CONFIG_LOONGSON1_WDT=y
--# CONFIG_VGA_CONSOLE is not set
--CONFIG_HID_GENERIC=m
--CONFIG_USB_HID=m
--CONFIG_USB=y
--CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
--CONFIG_USB_EHCI_HCD=y
--# CONFIG_USB_EHCI_TT_NEWSCHED is not set
--CONFIG_USB_EHCI_HCD_PLATFORM=y
--CONFIG_USB_STORAGE=m
--CONFIG_USB_SERIAL=m
--CONFIG_USB_SERIAL_PL2303=m
--CONFIG_NEW_LEDS=y
--CONFIG_LEDS_CLASS=y
--CONFIG_LEDS_GPIO=y
--CONFIG_LEDS_TRIGGERS=y
--CONFIG_LEDS_TRIGGER_HEARTBEAT=y
--CONFIG_RTC_CLASS=y
--CONFIG_RTC_DRV_LOONGSON1=y
--# CONFIG_IOMMU_SUPPORT is not set
--CONFIG_EXT2_FS=y
--CONFIG_EXT2_FS_XATTR=y
--CONFIG_EXT2_FS_POSIX_ACL=y
--CONFIG_EXT2_FS_SECURITY=y
--CONFIG_EXT3_FS=y
--CONFIG_EXT3_FS_POSIX_ACL=y
--CONFIG_EXT3_FS_SECURITY=y
--# CONFIG_DNOTIFY is not set
--CONFIG_VFAT_FS=y
--CONFIG_PROC_KCORE=y
--CONFIG_TMPFS=y
--CONFIG_TMPFS_POSIX_ACL=y
--CONFIG_UBIFS_FS=y
--CONFIG_UBIFS_FS_ADVANCED_COMPR=y
--CONFIG_UBIFS_ATIME_SUPPORT=y
--CONFIG_NFS_FS=y
--CONFIG_ROOT_NFS=y
--CONFIG_NLS_CODEPAGE_437=m
--CONFIG_NLS_ISO8859_1=m
--# CONFIG_CRYPTO_ECHAINIV is not set
--# CONFIG_CRYPTO_HW is not set
--CONFIG_DYNAMIC_DEBUG=y
--CONFIG_DEBUG_FS=y
--CONFIG_MAGIC_SYSRQ=y
--# CONFIG_SCHED_DEBUG is not set
--# CONFIG_DEBUG_PREEMPT is not set
--# CONFIG_FTRACE is not set
--# CONFIG_EARLY_PRINTK is not set
+ - if the sysctl_sched_migration_cost limit isn't artificially limiting
+   actual scanning costs. Eg. very large domains might perhaps have
+   costs that are genuinely larger than that somewhat random number.
 
--- 
-2.43.0
+ - if despite the apparent failure to pull, we do already have something
+   to run (eg. wakeups).
 
-
+ - if the 3/2 backoff is perhaps too aggressive vs the 1% per second
+   decay.
 
