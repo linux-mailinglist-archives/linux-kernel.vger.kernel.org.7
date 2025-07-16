@@ -1,111 +1,129 @@
-Return-Path: <linux-kernel+bounces-733343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92509B0735F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:29:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FA0B07352
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 12:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623E5501086
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:29:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE76562B91
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F732F509D;
-	Wed, 16 Jul 2025 10:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E37B2F3643;
+	Wed, 16 Jul 2025 10:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYcQbXxG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbdRHDEN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF662F5093;
-	Wed, 16 Jul 2025 10:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81E62F0059;
+	Wed, 16 Jul 2025 10:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752661711; cv=none; b=oEuZMys7TeU0Q8dwWh/cxqdInK79uHaVvMBaambL6j/mSXnc7dZ1IYs8kkzMxdqpwa901Ie6n5vf/JuCquFleiufJiOBfJfcG4rGPIlb/DwP8vxcPsZVpfxZ3d0rZQcVz1Mdu11jUOvBmj4SrJFRFG/4EqthuUblTY+TdPfYSe8=
+	t=1752661698; cv=none; b=dgv9vVmxCaKTcCGAK14N/wZJALTN2qpvA9f/PnVflxI/+C1YvDJd+m9vns4ez82lUi4zP7s7DVNe0H1mluDEWRdAHOG7NMl39190/z0AwqLGDXcomAqvPecb+RqYXmqTwbVzGe7CNDgZ6+LeL7uPpAZ7IyXpJJusskWyyZ0MQCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752661711; c=relaxed/simple;
-	bh=ATxwF3oK0AHq0rXjzmSH/f3UnehAxyGxmt7OLGdPkmA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q9UYqrIzeb9viZqFoZqsQIBq4q68WHCsqhF3n0+CJY7udQ8UrxbHrt2xvdMYos508IyS9U1xxH7Gn7jU7oreNqbmpYvXQA5eV9cnN5JXJVKoVSWkCWuXG2+TbLS6DUYHi59ruSOwdVRwFmT5Z8nWdWVHdRU8yEjZOl7E0asQylM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYcQbXxG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20169C4CEF1;
-	Wed, 16 Jul 2025 10:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752661710;
-	bh=ATxwF3oK0AHq0rXjzmSH/f3UnehAxyGxmt7OLGdPkmA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mYcQbXxGtb1oAsBu7hrvRL8MiKu5qcMJm8rztJIBHtSKFwrcXckcdNnxLHFxq6d+q
-	 xULshS0b4cD/g4A6YwJLfM2shtVbpDWPEuSo3LGKJhHt4rpvNkzYuUs0LoS/rGSVTw
-	 x7kOWJo49ozFTNyVnv2Gooc+JHD8e1t3pU8OweKRkFwRdd0ODEmWuNACcgFG6Mbmaa
-	 nFk2zw7aMDeJw0k69MrQx6SSWOhpannQfJBu+IXxChr49Gh5JzztMkYzz+fw1myz7F
-	 JWZoMcr9nYQWbCN+tgNxhcicT0UKjOBV6Aao/BaH3UR6x69F3XMxPUWQZjnoJ10/EE
-	 oSKVbuGVTRn0A==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Wed, 16 Jul 2025 12:28:06 +0200
-Subject: [PATCH net-next 4/4] mptcp: fix typo in a comment
+	s=arc-20240116; t=1752661698; c=relaxed/simple;
+	bh=kiyCXcRdDBVQSFSC16x/RWFcYmB4yzwGHVLM9MVw7tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=flpO7tj/GlpwWJ5Emb5F00K7Mlpv0vSjkNDW9lbG953eqf21xeuhCywH0hvuzTBI/4k0Xj9gvS3Su4DemmIsnpkQrQg4ytVfpCkYg566zYY/yBma7uAX+/U29gQuyoBlJINa411iMUGLsBLt25YiS1OY4X/mzXoiFxDDocizrbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbdRHDEN; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752661697; x=1784197697;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kiyCXcRdDBVQSFSC16x/RWFcYmB4yzwGHVLM9MVw7tI=;
+  b=FbdRHDEN6gQHIACa91RkAAEdsi0mxv1P6JQ7k7MDKy5vDaZ5xPcDOo/a
+   GHarasytLfyoNSqaxvlca4IDFlYRh+smlwshucVMyXpu2PovC6wpV0vAu
+   1tQ23wHSuRrbYFcM/kudFZtDM+IRN07sz/xMCNxQFin8u9suSc8c3qcec
+   Ag2roZyack4pu5nox4xP/XQ2PmuMRVSJKUxsTJob+P/oNcwo2ksOGeZ7Z
+   tVvwzrIPn5SMr2mx0raxBDY4LlnRUaO29z52uxTba3RGZrRG9RoP9Xumz
+   UMXMhDNJvzF2V1Xo5OkWvmLDCOkGrbZ6XEIg3ufolej0IZGw/ItJIi9Rj
+   g==;
+X-CSE-ConnectionGUID: AjeauYYtSgy9gQ+Aa8FCUg==
+X-CSE-MsgGUID: i7aQl3ZtTAyWMg05Wuippw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54839804"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="54839804"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 03:28:16 -0700
+X-CSE-ConnectionGUID: zeAya05JTRGy3WKrpWQ1Vg==
+X-CSE-MsgGUID: FpRgiIpMQQ6CqpQgFS1LXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="162019151"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 03:28:14 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ubzMx-0000000FueQ-1thm;
+	Wed, 16 Jul 2025 13:28:11 +0300
+Date: Wed, 16 Jul 2025 13:28:10 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v1 1/1] serial: 8250_ce4100: Fix CONFIG_SERIAL_8250=n
+ build
+Message-ID: <aHd-urMzXlOJPDAm@smile.fi.intel.com>
+References: <20250716094433.1611477-1-andriy.shevchenko@linux.intel.com>
+ <a3240539-04b1-4141-95b8-fde193afa25d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250716-net-next-mptcp-tcp_maxseg-v1-4-548d3a5666f6@kernel.org>
-References: <20250716-net-next-mptcp-tcp_maxseg-v1-0-548d3a5666f6@kernel.org>
-In-Reply-To: <20250716-net-next-mptcp-tcp_maxseg-v1-0-548d3a5666f6@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
- David Ahern <dsahern@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- moyuanhao <moyuanhao3676@163.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1302; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=Ik5twdxPJJpwUw1wx5+zdFE+/xcyShWLAB0UWSDSQCY=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDLK6/Yr7A6LzDKVuiq8TLFL+QZT//dFC1uLZ1mem/uBc
- 1rMayeZjlIWBjEuBlkxRRbptsj8mc+reEu8/Cxg5rAygQxh4OIUgIksDWNkWLazomR2icXrXsut
- BbUbc544Oaksk+ZoqvOv8+Zd0RbTz/A/1XbPLu9f0SuezBGuOFBxzHHXIxn3iL+bfbMtsmbMKfB
- lBQA=
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a3240539-04b1-4141-95b8-fde193afa25d@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: moyuanhao <moyuanhao3676@163.com>
+On Wed, Jul 16, 2025 at 12:14:23PM +0200, Jiri Slaby wrote:
+> On 16. 07. 25, 11:44, Andy Shevchenko wrote:
+> > On i386, when
+> > 
+> >    CONFIG_X86_INTEL_CE=y
+> >    # CONFIG_SERIAL_8250 is not set
+> > 
+> > will try to compile the driver and use the stub simultaneously.
+> > This breaks the build. Fix it by making sure that the driver
+> > compiles only when CONFIG_SERIAL_8250 is also enabled.
 
-This patch fixes the follow spelling mistake in a comment:
+...
 
-  greter -> greater
+> > +ifneq ($(CONFIG_SERIAL_8250),)
+> 
+> Why not ifdef CONFIG_SERIAL_8250 then?
 
-Signed-off-by: moyuanhao <moyuanhao3676@163.com>
-Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
-Notes:
- - The same patch has already been sent to the netdev ML, but when
-   net-next was closed:
-   https://lore.kernel.org/20250530181004.261417-1-moyuanhao3676@163.com
----
- net/mptcp/protocol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+$ git grep -n '^ifn\?eq .*CONFIG_' | wc -l
+427
+$ git grep -n '^ifdef CONFIG_' | wc -l
+431
 
-diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-index 5f904fc5ac4c63e8b6c7c9aa79f17e8dcdf1a007..fe3135cd778a98d4f270d684c101af30d261ee71 100644
---- a/net/mptcp/protocol.c
-+++ b/net/mptcp/protocol.c
-@@ -1377,7 +1377,7 @@ struct sock *mptcp_subflow_get_send(struct mptcp_sock *msk)
- 	 * - estimate the faster flow linger time
- 	 * - use the above to estimate the amount of byte transferred
- 	 *   by the faster flow
--	 * - check that the amount of queued data is greter than the above,
-+	 * - check that the amount of queued data is greater than the above,
- 	 *   otherwise do not use the picked, slower, subflow
- 	 * We select the subflow with the shorter estimated time to flush
- 	 * the queued mem, which basically ensure the above. We just need
+Is there a preference in serial drivers?
+
+> Also, what happens if 8250=m and X86_INTEL_CE=y?
+
+So, in such a case if somebody wants to use UART, it will go crazy due to
+missed workaround applied. BUT, this is preexisted issue and not related
+(directly) to this fix. Perhaps we can combine both with
+
+ifeq ($(CONFIG_SERIAL_8250),y)
+
+and add two Fixes tags.
+
+> >   obj-$(CONFIG_X86_INTEL_CE)		+= 8250_ce4100.o
+> > +endif
 
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
