@@ -1,107 +1,154 @@
-Return-Path: <linux-kernel+bounces-733069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE25B06FCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:00:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322C5B06FC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 10:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D8C3ABF75
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:59:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B41357AE5F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 07:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9500228EA76;
-	Wed, 16 Jul 2025 07:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B1328ECD8;
+	Wed, 16 Jul 2025 08:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TbIJ5b9p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u+0xHGWs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D49RgNBN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37642877C8;
-	Wed, 16 Jul 2025 07:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712272248B5;
+	Wed, 16 Jul 2025 08:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752652793; cv=none; b=p/llFgAYoC5Jue2/nx/j60QQ+Pwx0JeKqmkZO9lGi4J0+7wlrF8eASQKzOkpSuzeWcIjyQhR2UP+UC7RExCDbFRUAzQX1GV4/vS4bHxq2oNhoHw8hwev9Vp2wrUPLnPnnWLLL97m4I6YocdNDDVikPnM4AYZXcl5vVoZ+25Qntg=
+	t=1752652818; cv=none; b=QPkgG1DlF2EaVe03zfEqmTTpq4SAxP5FdtW3u385shVXJOk7Ianrx03bQtqpzww9W2nOXQ0IiL0ZS+PiwNGu3Vozfeva0Gl4xixVn851vNSALqd6SvER2DrZkyNlJQUoD6FkqITwD38FAJThUZqDrtal0437KFjWPbPBw0v5AdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752652793; c=relaxed/simple;
-	bh=Ar0Xb/Uf8JcXVLRgVcSyG1l0VNAQj6K9qFOU9YD1KGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CEl03w/Usa6MVWf1P/irrXbXETpwCG73v317fPBIS2MDqElXhSfNMaSLM3EBr9bKZwlyMjUOgMwF1gzPM+57J2IWiKIBt6WYOTY8HbCrgz4Ur4LlqI4Kakeo3NwLT8QrEd4cuNJsABJOhZk1Dsz+JYJ9V07PdC360z8iQECXGUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TbIJ5b9p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u+0xHGWs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Jul 2025 09:59:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752652784;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NNqMoBx61d+HMyv4cP0TPSF1O81dNABhWxIpn3gpQyY=;
-	b=TbIJ5b9pDaeCsnZ8PUhEMT7Y3+Iga0EcCg09V0TNLdpWOGdr7x407Y8U6AE2pciN8pn+Tm
-	UjEEKtNC84cf9m5lSVTLU6ea55Lfe4lgUiJhaKCv5ac3KxPNxiaVV7TrgoXB1MxhUFSh3J
-	8f7yRDyP/3rVxtmLOy25GwjtfE4BW/14NziCxoqkpJXNQdpdQ9XLSb/e4bvwWhLhFBN2mU
-	+Xf8sm/fUJS1rNi0o846TLyPFhI+WlBUHqJeI+qzC9vIzYRSwhF9L9O4uzhvUnMu+izMLb
-	OV2CGcw+7YUUgSsxBdC9hz9/vJBOv+tBTnHidqNv34BWh3C/2gIg4MqviN9QOw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752652784;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NNqMoBx61d+HMyv4cP0TPSF1O81dNABhWxIpn3gpQyY=;
-	b=u+0xHGWsSbGWdBLjEvD4tgttGTvUnfDq9Xeehwcp0Rjrwkhc07ykuhUFysc6gbxcDZn4j9
-	dL+pqY6yoTQ6abDQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] pci/controller: Use dev_fwnode()
-Message-ID: <20250716075942.2aCLkdCs@linutronix.de>
-References: <20250611104348.192092-16-jirislaby@kernel.org>
- <20250715184917.GA2479996@bhelgaas>
+	s=arc-20240116; t=1752652818; c=relaxed/simple;
+	bh=0koS8Yh1ZLnXHxawKMVn2VSN1pxeO71n+2+XgnmHYqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nHafDHbyiH9AO5fYESN4O5NYBKLaQ2Tm39GREqiH1po2Mk4nmCilbbFgrSj+GTo8QNFkl0C8KaAA/5Wd66Tn5sodL44jBetSKiarevUa/fKUYpuJFfm1DFHYdjfP/Swg/ocODcpF09CVF9Wb5Yuy6TVaF9sbqSBK7MVyOgZ/ytM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D49RgNBN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F00A4C4CEF0;
+	Wed, 16 Jul 2025 08:00:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752652818;
+	bh=0koS8Yh1ZLnXHxawKMVn2VSN1pxeO71n+2+XgnmHYqs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D49RgNBN721ba7eK2SxqPg1VLqIOXzxpfCnTsjF2cpq5Qre774aDYQqj457NX0mfu
+	 SfXx+FruxPMrL4TchSNemAPt9e1W3YlzEbfrtNAGxo9bMJrVdbvZLNrd3HA0lyvk7M
+	 hJ/JRyZ7IvhCU15aL3r2QA74WCqjPb2XkQTr8EMPgUpsmxkGU03LKmb3/5ZG2Y27X3
+	 ASMrd6yZT+blM3I3Qsid7d2s7mXLBpGPTgc3R+yrdvv0AYT9/H9oO+IjIPTIyvw2WI
+	 tVRlQr4y925EzRfOnf4otJWhPtwY8lmAM0H/XcLDP1BYFubLVeXWag/Ak8AvxkTYWy
+	 vt0PwBcgukWnA==
+Date: Wed, 16 Jul 2025 09:00:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] iio: imu: inv_icm42600: Simplify pm_runtime setup
+Message-ID: <20250716090010.23ea03b6@jic23-huawei>
+In-Reply-To: <76fnxeuufv56fmfvq6odi5xz2yjtjxymz24t436zk7rtuyst4s@oihlvsoxhllp>
+References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
+	<20250709-icm42pmreg-v1-4-3d0e793c99b2@geanix.com>
+	<20250713152810.4483c786@jic23-huawei>
+	<ie3zr2mvuss2f7prksw6nuc3wonig5ju6y6hqq46upvkhovwpa@vtfc3tqwz3d5>
+	<76fnxeuufv56fmfvq6odi5xz2yjtjxymz24t436zk7rtuyst4s@oihlvsoxhllp>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715184917.GA2479996@bhelgaas>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 15, 2025 at 01:49:17PM -0500, Bjorn Helgaas wrote:
-> On Wed, Jun 11, 2025 at 12:43:44PM +0200, Jiri Slaby (SUSE) wrote:
-> > irq_domain_create_simple() takes fwnode as the first argument. It can be
-> > extracted from the struct device using dev_fwnode() helper instead of
-> > using of_node with of_fwnode_handle().
+On Mon, 14 Jul 2025 07:42:43 +0000
+Sean Nyekjaer <sean@geanix.com> wrote:
+
+> On Mon, Jul 14, 2025 at 07:24:57AM +0100, Sean Nyekjaer wrote:
+> > On Sun, Jul 13, 2025 at 03:28:10PM +0100, Jonathan Cameron wrote:  
+> > > On Wed, 09 Jul 2025 14:35:12 +0200
+> > > Sean Nyekjaer <sean@geanix.com> wrote:
+> > >   
+> > > > Remove unnecessary pm_runtime_get_noresume() and pm_runtime_put()
+> > > > calls during probe. These are not required when the device is marked
+> > > > active via pm_runtime_set_active() before enabling pm_runtime with
+> > > > pm_runtime_enable().
+> > > >
+> > > > Also remove the redundant pm_runtime_put_sync() call from the cleanup
+> > > > path, since the core is not incrementing the usage count beforehand.
+> > > >
+> > > > This simplifies the PM setup and avoids manipulating the usage counter
+> > > > unnecessarily.  
+> > > 
+> > > Could we switch directly to using devm_pm_runtime_enable() for this driver?
+> > > 
+> > > At first glance looks like this code is missing the disable of autosuspend
+> > > that should be there (which devm_pm_runtime_enable() will also handle).
+> > >   
 > > 
-> > So use the dev_fwnode() helper.
+> > I have tried to use devm_pm_runtime_enable() but on rmmod it warns
+> > "unbalanced disables for regulator"
 > > 
-> > Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: linux-pci@vger.kernel.org
-> > ---
-> >  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c | 5 ++---
-> >  drivers/pci/controller/pcie-mediatek-gen3.c          | 3 +--
+> > If I remove this:
+> > -	ret = devm_add_action_or_reset(dev, inv_icm42600_disable_vddio_reg, st);
+> > -	if (ret)
+> > -		return ret;
+> > 
+> > Everything seems okay again. I have checked with printk's that
+> > inv_icm42600_disable_vddio_reg() is called twice with
+> > devm_pm_runtime_enable() used.
+> > Does it make sense?
+> > 
+> > /Sean  
 > 
-> I think the pcie-mediatek-gen3.c part of this is no longer relevant
-> after Nam's series [1].
-
-fwnode is still needed after my patch. As part of
-struct irq_domain_info info = { ... }
-
-You could squash this one into my patch. I personally would leave it be.
-But fine to me either way.
-
-> This pcie-mediatek-gen3.c was the only thing on the
-> pci/controller/mediatek-gen3 branch, so I'm going to drop that for now.
+> with pm_runtime_enable():
+> root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm42600-i2c.ko
+> [ 3793.713077] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fallback to first interrupt
+> [ 3793.727728] inv-icm42600-i2c 1-0068: mounting matrix not found: using identity...
+> [ 3793.737660] inv-icm42600-i2c 1-0068: supply vdd not found, using dummy regulator
+> [ 3793.856891] inv-icm42600-i2c 1-0068: supply vddio not found, using dummy regulator
+> [ 3793.866872] inv_icm42600_enable_regulator_vddio() enable vddio
+> [ 3793.920739] inv_icm42600_runtime_suspend() disable vddio
+> root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
+> [ 3796.954850] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
+> [ 3796.954910] inv_icm42600_enable_regulator_vddio() enable vddio
+> [ 3796.985140] inv_icm42600_disable_vddio_reg() disable vddio
 > 
-> The pcie-mobiveil-host.c part is still queued on
-> pci/controller/mobiveil for v6.17.
-> 
-> [1] https://patch.msgid.link/bfbd2e375269071b69e1aa85e629ee4b7c99518f.1750858083.git.namcao@linutronix.de
+> with devm_pm_runtime_enable():
+> root@v4:/data/root# insmod /tmp/inv-icm42600.ko; insmod /tmp/inv-icm42600-i2c.ko
+> [ 3852.873887] inv-icm42600-i2c 1-0068: no INT1 interrupt defined, fallback to first interrupt
+> [ 3852.888715] inv-icm42600-i2c 1-0068: mounting matrix not found: using identity...
+> [ 3852.898514] inv-icm42600-i2c 1-0068: supply vdd not found, using dummy regulator
+> [ 3853.016890] inv-icm42600-i2c 1-0068: supply vddio not found, using dummy regulator
+> [ 3853.026860] inv_icm42600_enable_regulator_vddio() enable vddio
+> [ 3853.080835] inv_icm42600_runtime_suspend() disable vddio
+> root@v4:/data/root# rmmod inv_icm42600_i2c inv_icm42600
+> [ 3854.448461] inv_icm42600_runtime_resume() -> inv_icm42600_enable_regulator_vddio()
+> [ 3854.448540] inv_icm42600_enable_regulator_vddio() enable vddio
+> [ 3854.467061] inv_icm42600_runtime_suspend() disable vddio
 
-Best regards,
-Nam
+As below What is the call path for this final suspend?
+Is it coming from update_autosuspend()?
+
+> [ 3854.477170] inv_icm42600_disable_vddio_reg() disable vddio
+> [ 3854.483835] ------------[ cut here ]------------
+> [ 3854.483912] WARNING: CPU: 0 PID: 582 at drivers/regulator/core.c:3016 _regulator_disable+0x140/0x1a0
+> [ 3854.497853] unbalanced disables for regulator
+> 
+> Is the way from here to remove the devm_add_action_or_reset(dev,
+> inv_icm42600_disable_vddio_reg... ?
+
+That will make a mess if runtime PM is not built into
+the kernel which is why an PM state in remove should return to the state
+before it was enabled in the first place (i.e. on!).
+That final runtime suspend surprises me.
+
+> 
+> /Sean
+> 
+
 
