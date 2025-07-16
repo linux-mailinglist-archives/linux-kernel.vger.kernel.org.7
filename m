@@ -1,70 +1,216 @@
-Return-Path: <linux-kernel+bounces-734334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B638B0803F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:11:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4338FB08043
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2DC56634C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1C71C282A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 22:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BBB2EE5F2;
-	Wed, 16 Jul 2025 22:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54082EE60A;
+	Wed, 16 Jul 2025 22:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KD48eNbH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QdpoP4ho"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EDEEACE;
-	Wed, 16 Jul 2025 22:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4752EE5FB
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 22:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752703876; cv=none; b=Eiaa6jC5vz0/5XnYMAignQdwa2Fmz9fgz29GKPLVv1S5gsroAjFBOyCUQY3wCnz3vXngzsKomxJbdUi2ETttyl7B7oOay4yGDF2kO255f7Mj5icYeqiDj3mJWOqBaelrpfDybduXs2IvsSiWJf2JuyRe+fF/+xxhoB55hI/OmYo=
+	t=1752703911; cv=none; b=gpTEdnv2PxF4VYJDBjDhAzBjJYxoMjD/MFADT+/N/iwesakwuGKQtB0S5Hh0YtuWIp5XN4JRWSPA7ZuQiVJjBL2+Z0saegp+hriCK24KsVe24JwxxE8dehP5Z8CVeZBkaEhAB18W+RVFb5fwhxGP45MNM/w97UDhK2rkgeq/EmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752703876; c=relaxed/simple;
-	bh=3SDH+1+pSijYEYf7NFSfZ/Q8NeDVbaPqts/KRkGfBXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e3pAbuzfPDoKAIQRPCYvupBO5smv9XCXFGylOb1AX7JZqyHiN9gem2EsqzflAtEF0aAUt+AGxecsi6LI6s6SQzBy+R8D/gYMR2JXNJdGV8XHxueQOxCGyrSZzHQoo5pd5ryNKjkfM5OxQFpuYfBbZIIicz/h9y8aKnmokP8+Uog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KD48eNbH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E117BC4CEE7;
-	Wed, 16 Jul 2025 22:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752703876;
-	bh=3SDH+1+pSijYEYf7NFSfZ/Q8NeDVbaPqts/KRkGfBXk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KD48eNbHtItduaOjS4jwO/GrUphFrUvE5D4o6EY/YFmwp4S47g9Vl7RJ0bOUYKcZ+
-	 YnF8inhdu+Mz4A46NY+3Bvmo2Xslc3fw/swcv7HsUQEk0fWbl9555yinbqv9YgGZrb
-	 M3tx9p57V/p8SPfdHxZs1BKzw66yUtx3F8MrljMs7xXrmJSEqUN98S1k4oaNKs9sRb
-	 VQkuGQ7TwD6+fsBCAmglabEgyGsA7qwQa057xagtnqLUOUSgu2z0sV2dwiVJI00h36
-	 oSshTxiVoq0UWzcJ9CEVdsrA59hqZUgiEBfl01CJ8hB1lPdvhIaxgj8lQ5C1IxNM28
-	 1jCBP251uwZjQ==
-Date: Wed, 16 Jul 2025 15:11:15 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Zqiang <qiang.zhang@linux.dev>
-Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: usb: Remove duplicate assignments for
- net->pcpu_stat_type
-Message-ID: <20250716151115.0ef44776@kernel.org>
-In-Reply-To: <20250716001524.168110-2-qiang.zhang@linux.dev>
-References: <20250716001524.168110-1-qiang.zhang@linux.dev>
-	<20250716001524.168110-2-qiang.zhang@linux.dev>
+	s=arc-20240116; t=1752703911; c=relaxed/simple;
+	bh=Q84IssU5I5XN6Yo1Ohn+CZZASewRU7RVTbCnNA6xs44=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GlAq/X5oKhw/1yZqgma6IQTJsUt473AE9JsU1m9D6bGmGgWcBbSyEKTQCpaB/fgL/SpejoYO5Ni63f/SKgS6ZNOtYx3S14RHR+UYj/nkLrl1CZLJUJE+OjOqYiq7PKTJTQjixNOpRAuTur50Cn20JA9U8VbITGlw36jJHMrgKMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QdpoP4ho; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74b4d2f67d5so235961b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 15:11:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752703909; x=1753308709; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QbGln+ffY7Y90MI7q8gu1bng9ELAU4xtMdmaYq3UUR4=;
+        b=QdpoP4hoEmO5BFW6v5SH57WkNaU6gApIYon2TEueKPC5mE0vxDYHC3YUJK1+ZoBdoI
+         EAcMIB0qzcP4ykk7KxM/8zJdEm92EflaB9xk7fYqAyXkym7uYHkM851qkbVWI5SUTDht
+         henKu14fPyXszLfdQg9qCGA6IlUygOaIxnKsaQeFiMfoRvRiPasE77bwhK5btEVrhji7
+         IWo6qfId9hYIG1fZtjhpPSzVO7xFlcgRTm7qWXQ6FDunnsT9y0DRMHKbEh7z3wdDqHgH
+         tll9zbM4Ksb5dz7UqI0DGRaqD4VssmXZHB7oE9+YNfnfFYVZFZfpgYD4dh6r6lZRZdGm
+         QpKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752703909; x=1753308709;
+        h=cc:to:from:subject:message-id:user-agent:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QbGln+ffY7Y90MI7q8gu1bng9ELAU4xtMdmaYq3UUR4=;
+        b=CZKqr50oVTnJX18/L1gH3/fKRrb2TeplnUca/n85gnmFKagngBakVAPJcqsR6X/uy4
+         31QwsrYI6hzPkqIb1VZltPPDgl8VT4YsI05azIDjdym2W12+WgZA0N+WdYptAR2UgKo7
+         cxDz87qTy4AVXnFXI5EtGwY3sM0oxp4085Jhn5OnZOAOkt4xNM+K+qJmypDDuJjhAZpH
+         uQSEhANgJ4aG3SUlLTtO/9HMZdA59nnsvcb2EAVZ2E7wb9yIBW2FznJt3c+LeFr4RC6S
+         UKQVPSOBqgy4MIBJ8JulwCn9CWtJKEv9X6x+tpx/ZOf++0+gBirLFuifSfMBknRGT8lO
+         Qc9A==
+X-Gm-Message-State: AOJu0Yz8bZYTawgIPGsiVJpMvLNuVJu//TVGGkNr9Tij9uut3zG812mn
+	IpMsaea3fx1IYE+rScPwar5alZ17Q2r9VPb/RFWwKDObuxywbEreUYRauXDKrUfhRmz0LSSg6XU
+	7NhigBToYiw==
+X-Google-Smtp-Source: AGHT+IE4W3Y7BnmBMjylTlzwr3yn9ZQJLSQMx/KCC8HNBVskNFPesWOI3UYKKnXj/2g0YetXVi/bL9AR0ySj
+X-Received: from pfbjr14.prod.google.com ([2002:a05:6a00:914e:b0:746:247f:7384])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:b70f:b0:748:e150:ac5c
+ with SMTP id d2e1a72fcca58-756ea8b92dcmr7030056b3a.23.1752703908898; Wed, 16
+ Jul 2025 15:11:48 -0700 (PDT)
+Date: Wed, 16 Jul 2025 15:11:47 -0700
+In-Reply-To: <202507160729.468A057@keescook> (Kees Cook's message of "Wed, 16
+ Jul 2025 07:30:42 -0700")
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250714185321.2417234-1-ynaffit@google.com> <20250714185321.2417234-3-ynaffit@google.com>
+ <202507160729.468A057@keescook>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Message-ID: <dbx8cy9z6b18.fsf@ynaffit-andsys.c.googlers.com>
+Subject: Re: [PATCH v3 2/6] binder: Store lru freelist in binder_alloc
+From: Tiffany Yang <ynaffit@google.com>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Arve =?utf-8?B?SGrDuG5uZXY=?= =?utf-8?B?w6Vn?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On Wed, 16 Jul 2025 08:15:24 +0800 Zqiang wrote:
-> Signed-off-by: Zqiang <qiang.zhang@linux.dev>
+Kees Cook <kees@kernel.org> writes:
+>> -		/**
+>> -		 * Error message on a free page can be false positive
+>> -		 * if binder shrinker ran during binder_alloc_free_buf
+>> -		 * calls above.
+>> -		 */
+>>   	for (i = 0; i <= (end - 1) / PAGE_SIZE; i++) {
+>>   		if (list_empty(page_to_lru(alloc->pages[i]))) {
+>>   			pr_err_size_seq(sizes, seq);
 
-Your email address seems to suggest the latin spelling of your name
-should be Qiang Zhang. Please use that instead of Zqiang?
+> Ah, I see the comment is removed entirely here. Better to move this
+> hunk to patch 1, then.
+
+
+This comment is actually "true" until we allow a test-specific freelist
+in this change, but I've moved the "for" line back to where it was in
+the previous change. Thanks for noting this!
+
+>> @@ -162,8 +159,8 @@ static void binder_selftest_free_page(struct  
+>> binder_alloc *alloc)
+>>   	int i;
+>>   	unsigned long count;
+
+>> -	while ((count = list_lru_count(&binder_freelist))) {
+>> -		list_lru_walk(&binder_freelist, binder_alloc_free_page,
+>> +	while ((count = list_lru_count(&binder_selftest_freelist))) {
+>> +		list_lru_walk(&binder_selftest_freelist, binder_alloc_free_page,
+>>   			      NULL, count);
+>>   	}
+
+>> @@ -187,7 +184,7 @@ static void binder_selftest_alloc_free(struct  
+>> binder_alloc *alloc,
+
+>>   	/* Allocate from lru. */
+>>   	binder_selftest_alloc_buf(alloc, buffers, sizes, seq);
+>> -	if (list_lru_count(&binder_freelist))
+>> +	if (list_lru_count(&binder_selftest_freelist))
+>>   		pr_err("lru list should be empty but is not\n");
+
+>>   	binder_selftest_free_buf(alloc, buffers, sizes, seq, end);
+>> @@ -275,6 +272,20 @@ static void binder_selftest_alloc_offset(struct  
+>> binder_alloc *alloc,
+>>   	}
+>>   }
+
+>> +int binder_selftest_alloc_get_page_count(struct binder_alloc *alloc)
+>> +{
+>> +	struct page *page;
+>> +	int allocated = 0;
+>> +	int i;
+>> +
+>> +	for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
+>> +		page = alloc->pages[i];
+>> +		if (page)
+>> +			allocated++;
+>> +	}
+>> +	return allocated;
+>> +}
+>> +
+>>   /**
+>>    * binder_selftest_alloc() - Test alloc and free of buffer pages.
+>>    * @alloc: Pointer to alloc struct.
+>> @@ -286,6 +297,7 @@ static void binder_selftest_alloc_offset(struct  
+>> binder_alloc *alloc,
+>>    */
+>>   void binder_selftest_alloc(struct binder_alloc *alloc)
+>>   {
+>> +	struct list_lru *prev_freelist;
+>>   	size_t end_offset[BUFFER_NUM];
+
+>>   	if (!binder_selftest_run)
+>> @@ -293,14 +305,41 @@ void binder_selftest_alloc(struct binder_alloc  
+>> *alloc)
+>>   	mutex_lock(&binder_selftest_lock);
+>>   	if (!binder_selftest_run || !alloc->mapped)
+>>   		goto done;
+>> +
+>> +	prev_freelist = alloc->freelist;
+>> +
+>> +	/*
+>> +	 * It is not safe to modify this process's alloc->freelist if it has  
+>> any
+>> +	 * pages on a freelist. Since the test runs before any binder ioctls  
+>> can
+>> +	 * be dealt with, none of its pages should be allocated yet.
+>> +	 */
+>> +	if (binder_selftest_alloc_get_page_count(alloc)) {
+>> +		pr_err("process has existing alloc state\n");
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	if (list_lru_init(&binder_selftest_freelist)) {
+>> +		pr_err("failed to init test freelist\n");
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	alloc->freelist = &binder_selftest_freelist;
+>> +
+>>   	pr_info("STARTED\n");
+>>   	binder_selftest_alloc_offset(alloc, end_offset, 0);
+>> -	binder_selftest_run = false;
+>>   	if (binder_selftest_failures > 0)
+>>   		pr_info("%d tests FAILED\n", binder_selftest_failures);
+>>   	else
+>>   		pr_info("PASSED\n");
+
+>> +	if (list_lru_count(&binder_selftest_freelist))
+>> +		pr_err("expect test freelist to be empty\n");
+>> +
+>> +cleanup:
+>> +	/* Even if we didn't run the test, it's no longer thread-safe. */
+>> +	binder_selftest_run = false;
+>> +	alloc->freelist = prev_freelist;
+>> +	list_lru_destroy(&binder_selftest_freelist);
+>>   done:
+>>   	mutex_unlock(&binder_selftest_lock);
+>>   }
+>> --
+>> 2.50.0.727.gbf7dc18ff4-goog
+
+> Otherwise looks good.
+
 -- 
-pw-bot: cr
+Tiffany Y. Yang
 
