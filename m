@@ -1,162 +1,158 @@
-Return-Path: <linux-kernel+bounces-733616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67345B07704
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:30:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1440B0770A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 15:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7AE3AD344
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:30:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569C23A34B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 13:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BAE1D6188;
-	Wed, 16 Jul 2025 13:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4D01B983F;
+	Wed, 16 Jul 2025 13:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FjYsWdFN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="hPXCp2Nq"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876DD1C5F10;
-	Wed, 16 Jul 2025 13:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B08219AD70;
+	Wed, 16 Jul 2025 13:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752672588; cv=none; b=uYo/3OlXrfNNTBu6lZUCuUQHSiaAlicrNezi3P5J/yrbtYXK5Ptra6AX8l5zclzxWCx5sQyxQTrp/x3sfZgkggdh+Wd9o5xXNAiM0Bqlf3Y/uL1oS9FqkFlnHjvXd7DiQNXf2obJLZ9GKgOWJZ3rUNNFcp+lilj9je4EjSeiU+k=
+	t=1752672688; cv=none; b=Bi5lWD8do3pC5ZJ9tIU19VBNH6TmvWLPnWiAJ4rHAEfceleM5RKj2RvtpNjWYbUjxorQg3khpep1Lmf0MOq48LwoXZ7M20x3uCp8z4k+cjnay7PqP2CLBpHgrGQtI50F10k9EjCyT5Bvx9lwvdUHvKKdOaK/AxSgx46mqXjAWV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752672588; c=relaxed/simple;
-	bh=dLeLI6Z4FjKwIOWMA2g0zWgg/TP0SnyZNeM+LjQEqgI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iFnYVK4uT6aAgbXSqZDIQieKOMVWjL6lGjud6VcCjuKxDU3T7DyOP7403nh6Zn/IfiEuMsX9qGtmLZLB9bPAA8g3l5sGNpTY3fdMC0HCsNcUtlKyJt73xG15arHfqBzOQ+YEwhEj0zXVkX7xXhVODnj/El9NhnaYS1ZUOJTqso4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FjYsWdFN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56GD3Blo022730;
-	Wed, 16 Jul 2025 13:29:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GPIGQmV+hqdlsR9ccAm6wBh1uGhtNO9pveoOBdEfVX0=; b=FjYsWdFNftyWnLI/
-	NIlvph/5mFD1oM9vzGbY21YZLRDsPuhx4X5UUQkhj+TvSi+NPb7WbyDMRMS2aRQH
-	0J6BmhOCJAaLKaiEWfaS7KM3g2TN/4UJ3RK/ZvrXeQ3CtoLpBTu5gNxQIZDYTIfx
-	uXLkwSib5RJkgF2tgj2OYNpU/rIH1oCC/EaQuKJGRy3dYdluv8yk89TYIVf0s2ec
-	ESm/j9WJ+IeLMz0o5wdlO17SYbn1fXBYKDxVUtNpREcFbxXookKiN+ucJ8VnpxDF
-	HJ6MuSdwRxjClFDRpc+1hlik7Lzwz0jHHoaXRW+qrychdq4h8kq8RVUcHIKThEWX
-	71vRFQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wkrumsgs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 13:29:40 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56GDTe8M025616
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Jul 2025 13:29:40 GMT
-Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 16 Jul 2025 06:29:35 -0700
-From: Ling Xu <quic_lxu5@quicinc.com>
-To: <srini@kernel.org>, <amahesh@qti.qualcomm.com>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>
-CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Ling Xu
-	<quic_lxu5@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: [PATCH v9 5/5] misc: fastrpc: add support for gdsp remoteproc
-Date: Wed, 16 Jul 2025 18:58:36 +0530
-Message-ID: <20250716132836.1008119-6-quic_lxu5@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250716132836.1008119-1-quic_lxu5@quicinc.com>
-References: <20250716132836.1008119-1-quic_lxu5@quicinc.com>
+	s=arc-20240116; t=1752672688; c=relaxed/simple;
+	bh=LJtChCkuv4oDN5YJQpsL32M5XLdNqX3Bk3qR0YQsneU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OzMazfb4ZxNiv2OZilhzzMfyzSbICYQkM8hFZ0sshwXxexqxTBtrmnF+VX2eQ0Sz1HfniemUHSw604WiXbZ+KfKmNOp1puVNbrNdb5z4i+XzKucw+Lw5o3ZkqpB45UqLaqiwrtL0ixX4FMOPAW9U1e/V4/yLQDySUw3hmAhsYnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=hPXCp2Nq; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4195C403E1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1752672686; bh=JnNzVzkbLFwfRckqtOoq/iYPAifrTSt+rYFPQy8Mans=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hPXCp2Nq2uOh6H9W5cwxhsUoVSnGGABcvW+01Qrzqldre5NmDjZP50m+2XSPg54Yn
+	 c/zNH8cKJ2tY25j2Kyo08EZYwGUdnTNBC8Om9RqW6AvBBtBK2C12ur/SrY1z/bKmCK
+	 c5sxf2WfYInTsdJP1hrTC/BskvjnMenLXJ3y0d24be5UHXRRjZio/w6tj6gRkBFSZv
+	 hz4mjc93kGU8bdrFknVHkazQiGOz702M2pYguiCz13uKyPC05JnQU0G/+fDrYfYFw1
+	 29ARLxvtEYQkFoF03Kz0VAGgP1sxx2TAF6Ci52nHlB+G76Ju58ORfzb3SWi1oHv0It
+	 InQc+wvEBA8cw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 4195C403E1;
+	Wed, 16 Jul 2025 13:31:26 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the block tree with the jc_docs tree
+In-Reply-To: <20250716150234.52ec0d5f@canb.auug.org.au>
+References: <20250716150234.52ec0d5f@canb.auug.org.au>
+Date: Wed, 16 Jul 2025 07:31:25 -0600
+Message-ID: <87ecugdzyq.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dQ2NwE69ZyMhDYoM30JNggZGXtjiIEjm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE2MDEyMSBTYWx0ZWRfX808VgscqiziV
- EGrkfBpCXPBnNkFRhVSMBQLLsmxz3+FTMsx10Te2c3C9L7M8osjyj8YifwE1HOAHuPo3jeU+uKe
- fBMdbshPnlLKLxOMZu2JkWoGKLrTm0ZlRuLQuig3LNzNw0gCLACC/qP5UEvH613XvIXmlMR7a6z
- 7QeHITwpaxa2r6iEhmHSwmzv2d+6a1kcmVqFd6pjib/8lD1b8s2Kggi4iYsgjo4NwNNylpFdvGZ
- WYVIRajxs34u90DO7WacFB2w7S4SHqTotzPMmQxpJFBVK8icf0c1Kg5qdglzJ/3zYj7gYktLfgM
- WZZL5pfdM63dQ06muHiqyl+Us4y+QBOs/1vabfMy+dPTGIhlPPlc5Y5IZlskKYedpbCNczuNisB
- mbRzv72uLdLk+J4WiWAtTsiRnEr8FMgPrjMixqhFUd5jbZVqPQ4fg1hTbcDM/3xIb4gx4sOr
-X-Authority-Analysis: v=2.4 cv=WqUrMcfv c=1 sm=1 tr=0 ts=6877a944 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
- a=VHSkhjcgKWVwXbDC_XQA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: dQ2NwE69ZyMhDYoM30JNggZGXtjiIEjm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-16_02,2025-07-16_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- adultscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507160121
 
-Some platforms (like sa8775p) feature one or more GPDSPs (General
-Purpose DSPs). Similar to other kinds of Hexagon DSPs, they provide
-a FastRPC implementation, allowing code execution in both signed and
-unsigned protection domains. Extend the checks to allow domain names
-starting with "gdsp" (possibly followed by an index).
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
----
- drivers/misc/fastrpc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> Hi all,
+>
+> Today's linux-next merge of the block tree got a conflict in:
+>
+>   Documentation/userspace-api/ioctl/ioctl-number.rst
+>
+> between commit:
+>
+>   15afd5def819 ("Documentation: ioctl-number: Extend "Include File" column width")
+>
+> from the jc_docs tree and commit:
+>
+>   1cea5180f2f8 ("block: remove pktcdvd driver")
+>
+> from the block tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 85b6eb16b616..d05969de406e 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -27,6 +27,7 @@
- #define MDSP_DOMAIN_ID (1)
- #define SDSP_DOMAIN_ID (2)
- #define CDSP_DOMAIN_ID (3)
-+#define GDSP_DOMAIN_ID (4)
- #define FASTRPC_MAX_SESSIONS	14
- #define FASTRPC_MAX_VMIDS	16
- #define FASTRPC_ALIGN		128
-@@ -2249,6 +2250,8 @@ static int fastrpc_get_domain_id(const char *domain)
- 		return MDSP_DOMAIN_ID;
- 	else if (!strncmp(domain, "sdsp", 4))
- 		return SDSP_DOMAIN_ID;
-+	else if (!strncmp(domain, "gdsp", 4))
-+		return GDSP_DOMAIN_ID;
- 
- 	return -EINVAL;
- }
-@@ -2323,13 +2326,14 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
- 	case ADSP_DOMAIN_ID:
- 	case MDSP_DOMAIN_ID:
- 	case SDSP_DOMAIN_ID:
--		/* Unsigned PD offloading is only supported on CDSP */
-+		/* Unsigned PD offloading is only supported on CDSP and GDSP */
- 		data->unsigned_support = false;
- 		err = fastrpc_device_register(rdev, data, secure_dsp, domain);
- 		if (err)
- 			goto err_free_data;
- 		break;
- 	case CDSP_DOMAIN_ID:
-+	case GDSP_DOMAIN_ID:
- 		data->unsigned_support = true;
- 		/* Create both device nodes so that we can allow both Signed and Unsigned PD */
- 		err = fastrpc_device_register(rdev, data, true, domain);
--- 
-2.34.1
+That seems like an awful lot of fallout given that the block side, in
+its entirety, just removes a single line.  I guess the resolution is
+correct - thanks - but I don't quite understand why the conflict is so
+widespread.
 
+jon
+
+> diff --cc Documentation/userspace-api/ioctl/ioctl-number.rst
+> index 677456c31228,4f1532a251d2..000000000000
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@@ -223,32 -219,31 +223,31 @@@ Code  Seq#    Include Fil
+>                fs/xfs/linux-2.6/xfs_ioctl32.h,
+>                include/linux/falloc.h,
+>                linux/fs.h,
+>  -'X'   all    fs/ocfs2/ocfs_fs.h                                      conflict!
+>  +'X'   all    fs/ocfs2/ocfs_fs.h                                        conflict!
+> - 'X'   01     linux/pktcdvd.h                                           conflict!
+>   'Z'   14-15  drivers/message/fusion/mptctl.h
+>  -'['   00-3F  linux/usb/tmc.h                                         USB Test and Measurement Devices
+>  -                                                                     <mailto:gregkh@linuxfoundation.org>
+>  -'a'   all    linux/atm*.h, linux/sonet.h                             ATM on linux
+>  -                                                                     <http://lrcwww.epfl.ch/>
+>  -'a'   00-0F  drivers/crypto/qat/qat_common/adf_cfg_common.h          conflict! qat driver
+>  -'b'   00-FF                                                          conflict! bit3 vme host bridge
+>  -                                                                     <mailto:natalia@nikhefk.nikhef.nl>
+>  -'b'   00-0F  linux/dma-buf.h                                         conflict!
+>  -'c'   00-7F  linux/comstats.h                                        conflict!
+>  -'c'   00-7F  linux/coda.h                                            conflict!
+>  -'c'   00-1F  linux/chio.h                                            conflict!
+>  -'c'   80-9F  arch/s390/include/asm/chsc.h                            conflict!
+>  +'['   00-3F  linux/usb/tmc.h                                           USB Test and Measurement Devices
+>  +                                                                       <mailto:gregkh@linuxfoundation.org>
+>  +'a'   all    linux/atm*.h, linux/sonet.h                               ATM on linux
+>  +                                                                       <http://lrcwww.epfl.ch/>
+>  +'a'   00-0F  drivers/crypto/qat/qat_common/adf_cfg_common.h            conflict! qat driver
+>  +'b'   00-FF                                                            conflict! bit3 vme host bridge
+>  +                                                                       <mailto:natalia@nikhefk.nikhef.nl>
+>  +'b'   00-0F  linux/dma-buf.h                                           conflict!
+>  +'c'   00-7F  linux/comstats.h                                          conflict!
+>  +'c'   00-7F  linux/coda.h                                              conflict!
+>  +'c'   00-1F  linux/chio.h                                              conflict!
+>  +'c'   80-9F  arch/s390/include/asm/chsc.h                              conflict!
+>   'c'   A0-AF  arch/x86/include/asm/msr.h conflict!
+>  -'d'   00-FF  linux/char/drm/drm.h                                    conflict!
+>  -'d'   02-40  pcmcia/ds.h                                             conflict!
+>  +'d'   00-FF  linux/char/drm/drm.h                                      conflict!
+>  +'d'   02-40  pcmcia/ds.h                                               conflict!
+>   'd'   F0-FF  linux/digi1.h
+>  -'e'   all    linux/digi1.h                                           conflict!
+>  -'f'   00-1F  linux/ext2_fs.h                                         conflict!
+>  -'f'   00-1F  linux/ext3_fs.h                                         conflict!
+>  -'f'   00-0F  fs/jfs/jfs_dinode.h                                     conflict!
+>  -'f'   00-0F  fs/ext4/ext4.h                                          conflict!
+>  -'f'   00-0F  linux/fs.h                                              conflict!
+>  -'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                     conflict!
+>  +'e'   all    linux/digi1.h                                             conflict!
+>  +'f'   00-1F  linux/ext2_fs.h                                           conflict!
+>  +'f'   00-1F  linux/ext3_fs.h                                           conflict!
+>  +'f'   00-0F  fs/jfs/jfs_dinode.h                                       conflict!
+>  +'f'   00-0F  fs/ext4/ext4.h                                            conflict!
+>  +'f'   00-0F  linux/fs.h                                                conflict!
+>  +'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                       conflict!
+>   'f'   13-27  linux/fscrypt.h
+>   'f'   81-8F  linux/fsverity.h
+>   'g'   00-0F  linux/usb/gadgetfs.h
 
