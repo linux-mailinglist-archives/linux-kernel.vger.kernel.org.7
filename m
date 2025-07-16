@@ -1,130 +1,201 @@
-Return-Path: <linux-kernel+bounces-733210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-733211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38999B0718F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:24:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F02B07195
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 11:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09EA6501801
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:23:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 581C37A2D46
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Jul 2025 09:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE842F19B5;
-	Wed, 16 Jul 2025 09:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061B22F0021;
+	Wed, 16 Jul 2025 09:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A96Y+yss"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d5//JEXq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA3D22127C;
-	Wed, 16 Jul 2025 09:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8FE157493;
+	Wed, 16 Jul 2025 09:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752657825; cv=none; b=HXJU/oEzu/m49cIqfy+vWZFBNYiB+myUZ8NUCq6v1kluzR35s07RyxR+Odk50Mnl/UpL9jU1RPpE0Olk7jWBFWZCXyeypwGeN5JkixERNNR5t6hy6afHtqSBKY0UpoibqMkJGU5HwHYhQGcvGVOzpFGyKnzeJhzMihYAtKzbxAA=
+	t=1752657950; cv=none; b=O8QpVd0YyNzeq1sWNDYCtD6y8/Z6TiwVcJCYT14vdp94EkyVYDvH7g3iIgbQUjGFEfqJhG4Btj3u30g/tMgrrP7matcBGifuO1LlSqqgcawmE9mbq2ucQquUQ6kvIOdGtv0cEJef19zJKbdKjMPBtNKbI+q2/Fz1NQqKTmZX5Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752657825; c=relaxed/simple;
-	bh=8bb59Y7qB/JB1/x9ope6S0w9QIQuBIWcCUed5RbRWdI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=F+AbB0KTxx52ej3W9tQ1DhfkWLUcyWgeqn0T8V3egeWRpUC4cm6xdY/wj3VLtypEkwNJ7LI/49eox7xa0u7b+upjJ8ZfS6QjOb/TrEQGKOhjsVDTogQYZJrHCM4IZkkUaRLCSqyNQp60NMudAdxp/NEVYrAAwInwsaIYOBIC4MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A96Y+yss; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-88173565536so670427241.0;
-        Wed, 16 Jul 2025 02:23:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752657823; x=1753262623; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8bb59Y7qB/JB1/x9ope6S0w9QIQuBIWcCUed5RbRWdI=;
-        b=A96Y+yssh8lylf7PdrmBqHZjYOVs4Dzi4mP2PoULJhHSrR/idSvoWQzUbhfGyHUVyM
-         sclrtRX6vLXO2JkJKXQFrUnFS1pe27l81XdIlJNzw1eqdSPA3kr60HY2fQNqyMLuGLt5
-         t29S1ubBNHdHkxskjnQB+ugq+iaXWADBZA7AZyHrgJSKv6YEFzQeUak8f8T0FFka0RBw
-         +Tq/du7/paCXLSKPOrg2yualGaFPZzkXUFfcj2QNkjsS2sh1p+atL7AY+KeTDi/0WyTT
-         JuEU5pJIlpwFIt8Jo4fo8eHUGXnjLZzMbNxNkZlVZ6gNOcHmDwrhzlvDcGH3EuPeFLZA
-         kmyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752657823; x=1753262623;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8bb59Y7qB/JB1/x9ope6S0w9QIQuBIWcCUed5RbRWdI=;
-        b=vT8kAMRpbFV8ANN/abv6d0MirtwDUzOt3wAVmpK3eSYdADopD42dFrzAXyI1k5OO1O
-         S7af9otiVK86ZmU3oaISwB4807pv27wVqbuvBbTHrCJjq1B039w1zVJosJFnYMxtGn2m
-         NuWQ/7AxIOwEyfW9NNmEUbubB6Zbog7h9VxKZGGKYVqPBV3p/jeVWCyu0d8eY8LJAD14
-         QzrIXeVf1jVyKyTQuLvt7vuIJFztORCmrbyIS/D3rkxfo/9HoEzb0yJggbb8PIa3dtkJ
-         zdhzhKPfJlKScLSw5qPuuRp4ZI/OM0GaAUpAF0NRNcQdMoGksM34p2e5PykgPpz7IgUS
-         qcmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3D060rOp26/EgkyOateZcRXz2OK6liJm+zo93PvFnNcXUzBa4Ikpxmk7Yy9bOoJY3z+5xb5cI@vger.kernel.org, AJvYcCUbNYjWMIlw7ywSG0p7kpJV5waU13+WcIkPwLJ2mVjpbuP2BuNcJmWyGeIw5o8Suu5KnGc3Vgueeu5vVoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHmLbyLz87yvlMUwOOtyS7WE6HrG5Yw75avHHXxXGURcDFF3CS
-	upppr8rcQe4NPf0aQ3Nvamn6FubjEvS/+VfrcwPM8xLz5SGDwFUf/4fwWB0DlUeo8efitN0dLO0
-	GU2c9/KagTxVx/ybtpY8cRAUH7EuVR9z3qXExSbyiEA==
-X-Gm-Gg: ASbGncv4+rDtgvmdeojtFWu5CQV/ouzJ/7RIwBUwviqlYbBb3dVEEx61gaW6DN/4HQD
-	yDBXOW5quBVhaSlJqYoj92BMmCGmucfnkEYZAzzhp5Qdg+YJejd3YqSvhNQ+QBkPpbdJEHHElrm
-	ls1CAKOeQeYSS0R8+OeuiapH4jSzu9PH+ayIALurqsJyeKSZZo66dtwiJ9ecFoncxx0f6ZhrLXr
-	hb3w7U=
-X-Google-Smtp-Source: AGHT+IHbhfnfusQK9pbbtL026/fcLsRE78Jlhv++1FuiMatxhLTQJ+73q9kklmr2eP6jxQDehdPv2C7LAS1LRoealqE=
-X-Received: by 2002:a05:6102:3e11:b0:4e7:866c:5cd9 with SMTP id
- ada2fe7eead31-4f890152c29mr1304099137.11.1752657823234; Wed, 16 Jul 2025
- 02:23:43 -0700 (PDT)
+	s=arc-20240116; t=1752657950; c=relaxed/simple;
+	bh=jqP3XKj0UG3jxjSdrLTwsmuhVKrBduNxvkcDJoejd90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AlPexhaMkjTudLSH7BfgoFkKXJ1tZRhJiHB8EMEd7WFSQ/0QeZ2JVun6U9aJwvMACcc9muVrCCsCxOi1JkhBJXt14xTtDD3tc5jCy6noRvt/cPgg3KNQvmo8JIBiDADOH/L9B23sUFez1fsAolsRvXRvNFVZX5GlZd5r2nuPlCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d5//JEXq; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752657949; x=1784193949;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=jqP3XKj0UG3jxjSdrLTwsmuhVKrBduNxvkcDJoejd90=;
+  b=d5//JEXqElMnCcjhT+OxLZK3nrdsBAptetse4W5rN+ZCdoKvKEM79NKU
+   aD+4hE9NoX+DTDzUDdMBPZ2nupAgkFYk+8UaspWX2yPaQQy7KAqyvGG8G
+   d+CXic631hrlauZS1stkyQZr2W4dNh81widJxwuDgfMLGTZx7s15wEaFK
+   VcSbKg9fKoVlH6xFTeXpzfWq/NtxIXpueTJfupI6xOm17zBMclzdIR8AE
+   KEDmc1L/HXPzN7nTRSF0/Sp3wMA0CX2JYG2EzG8UvkysJuXXv186ZJE5J
+   gS5IdOwsGWlbxo1uJxOTGfLe1QaQhxtgnlXzPodUpY71tTB9de4722TMH
+   Q==;
+X-CSE-ConnectionGUID: UDSlbLNET+yUt+ZIJaFnsg==
+X-CSE-MsgGUID: q73LvfZ5RZe01Kq9ILbuMg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="55041973"
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="55041973"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 02:25:49 -0700
+X-CSE-ConnectionGUID: T3Nue4BRQTulDUlZw9iz7w==
+X-CSE-MsgGUID: cN0v4DW4TvC1i77p+ldAnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,315,1744095600"; 
+   d="scan'208";a="194602593"
+Received: from wdu1-mobl.ccr.corp.intel.com (HELO [10.238.0.228]) ([10.238.0.228])
+  by orviesa001.jf.intel.com with ESMTP; 16 Jul 2025 02:25:45 -0700
+Message-ID: <31f27919-926f-4cbd-81fa-5a52c453feca@intel.com>
+Date: Wed, 16 Jul 2025 17:25:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xianying Wang <wangxianying546@gmail.com>
-Date: Wed, 16 Jul 2025 17:23:29 +0800
-X-Gm-Features: Ac12FXyNFIaCK2pDYZ0jchMpDYF8x-Rd4WuhffoKeJLrRhYKDwWu0ZHWBZNeFqg
-Message-ID: <CAOU40uCe07E+jSONsnFXWfdPHPQjcvEoFX-QdJ2eAw2DqXZ=sg@mail.gmail.com>
-Subject: [BUG] INFO: rcu detected stall in unix_stream_connect
-To: kuniyu@google.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] x86/paravirt: add backoff mechanism to
+ virt_spin_lock
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: Tianyou Li <tianyou.li@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>
+References: <20250703022332.254500-1-wangyang.guo@intel.com>
+Content-Language: en-US
+From: "Guo, Wangyang" <wangyang.guo@intel.com>
+In-Reply-To: <20250703022332.254500-1-wangyang.guo@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Any comments or suggestions to this patch? Is there any further updates 
+or changes needed?
 
-I discovered a kernel panic using the Syzkaller framework, described
-as INFO: rcu detected stall. This issue was reproduced on kernel
-version 6.16.0-rc5.
+BR
+Wangyang
 
-From the dmesg log, RCU detects a stall on CPU 0. The NMI backtrace,
-which shows what the CPU was actually doing, reveals it was stuck in a
-tight loop within the timer interrupt handler. The CPU appears to be
-spinning in functions like lapic_next_deadline
-(arch/x86/kernel/apic/apic.c:429) while processing a timer softirq in
-run_timer_softirq (kernel/time/timer.c:2403).
+On 7/3/2025 10:23 AM, Wangyang Guo wrote:
+> When multiple threads waiting for lock at the same time, once lock owner
+> releases the lock, waiters will see lock available and all try to lock,
+> which may cause an expensive CAS storm.
+> 
+> Binary exponential backoff is introduced. As try-lock attempt increases,
+> there is more likely that a larger number threads compete for the same
+> lock, so increase wait time in exponential.
+> 
+> The optimization can improves SpecCPU2017 502.gcc_r benchmark by ~4% for
+> 288 cores VM on Intel Xeon 6 E-cores platform.
+> 
+> For micro benchmark, the patch can have significant performance gain
+> in high contention case. Slight regression is found in some of mid-
+> conetented cases because the last waiter might take longer to check
+> unlocked. No changes to low contented scenario as expected.
+> 
+> Micro Bench: https://github.com/guowangy/kernel-lock-bench
+> Test Platform: Xeon 8380L
+> First Row: critical section length
+> First Col: CPU core number
+> Values: backoff vs linux-6.15, throughput based, higher is better
+> 
+> non-critical-length: 1
+>         0     1     2     4     8    16    32    64   128
+> 1   1.01  1.00  1.00  1.00  1.01  1.01  1.01  1.01  1.00
+> 2   1.02  1.01  1.02  0.97  1.02  1.05  1.01  1.00  1.01
+> 4   1.15  1.20  1.14  1.11  1.34  1.26  0.99  0.93  0.98
+> 8   1.59  1.71  1.18  1.80  1.95  1.45  1.05  0.99  1.17
+> 16  1.04  1.37  1.08  1.31  1.85  1.50  1.24  0.99  1.24
+> 32  1.24  1.36  1.23  1.40  1.50  1.86  1.45  1.18  1.48
+> 64  1.12  1.24  1.11  1.31  1.34  1.37  2.01  1.60  1.43
+> 
+> non-critical-length: 32
+>         0     1     2     4     8    16    32    64   128
+> 1   1.00  1.00  1.00  1.00  1.00  0.99  1.00  1.00  1.01
+> 2   1.00  1.00  1.00  1.00  1.00  1.00  1.00  0.99  1.00
+> 4   1.12  1.25  1.09  1.07  1.12  1.16  1.13  1.16  1.09
+> 8   1.02  1.16  1.03  1.02  1.04  1.07  1.04  0.99  0.98
+> 16  0.97  0.95  0.84  0.96  0.99  0.98  0.98  1.01  1.03
+> 32  1.05  1.03  0.87  1.05  1.25  1.16  1.25  1.30  1.27
+> 64  1.83  1.10  1.07  1.02  1.19  1.18  1.21  1.14  1.13
+> 
+> non-critical-length: 128
+>         0     1     2     4     8    16    32    64   128
+> 1   1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+> 2   0.99  1.02  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+> 4   0.98  0.99  1.00  1.00  0.99  1.04  0.99  0.99  1.02
+> 8   1.08  1.08  1.08  1.07  1.15  1.12  1.03  0.94  1.00
+> 16  1.00  1.00  1.00  1.01  1.01  1.01  1.36  1.06  1.02
+> 32  1.07  1.08  1.07  1.07  1.09  1.10  1.22  1.36  1.25
+> 64  1.03  1.04  1.04  1.06  1.13  1.18  0.82  1.02  1.14
+> 
+> Reviewed-by: Tianyou Li <tianyou.li@intel.com>
+> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Wangyang Guo <wangyang.guo@intel.com>
+> ---
+>   arch/x86/include/asm/qspinlock.h | 28 +++++++++++++++++++++++++---
+>   1 file changed, 25 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
+> index 68da67df304d..ac6e1bbd9ba4 100644
+> --- a/arch/x86/include/asm/qspinlock.h
+> +++ b/arch/x86/include/asm/qspinlock.h
+> @@ -87,7 +87,7 @@ DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
+>   #define virt_spin_lock virt_spin_lock
+>   static inline bool virt_spin_lock(struct qspinlock *lock)
+>   {
+> -	int val;
+> +	int val, locked;
+>   
+>   	if (!static_branch_likely(&virt_spin_lock_key))
+>   		return false;
+> @@ -98,11 +98,33 @@ static inline bool virt_spin_lock(struct qspinlock *lock)
+>   	 * horrible lock 'holder' preemption issues.
+>   	 */
+>   
+> +#define MAX_BACKOFF 64
+> +	int backoff = 1;
+> +
+>    __retry:
+>   	val = atomic_read(&lock->val);
+> +	locked = val;
+> +
+> +	if (locked || !atomic_try_cmpxchg(&lock->val, &val, _Q_LOCKED_VAL)) {
+> +		int spin_count = backoff;
+> +
+> +		while (spin_count--)
+> +			cpu_relax();
+> +
+> +		/*
+> +		 * Here not locked means lock tried, but fails.
+> +		 *
+> +		 * When multiple threads waiting for lock at the same time,
+> +		 * once lock owner releases the lock, waiters will see lock available
+> +		 * and all try to lock, which may cause an expensive CAS storm.
+> +		 *
+> +		 * Binary exponential backoff is introduced. As try-lock attempt
+> +		 * increases, there is more likely that a larger number threads
+> +		 * compete for the same lock, so increase wait time in exponential.
+> +		 */
+> +		if (!locked)
+> +			backoff = (backoff < MAX_BACKOFF) ? backoff << 1 : backoff;
+>   
+> -	if (val || !atomic_try_cmpxchg(&lock->val, &val, _Q_LOCKED_VAL)) {
+> -		cpu_relax();
+>   		goto __retry;
+>   	}
+>   
 
-Meanwhile, the task that was running on CPU 0 before it got stuck in
-the interrupt is blocked in the unix_stream_connect function
-(net/unix/af_unix.c:1683). The syzkaller reproducer appears to create
-a deadlock scenario by having a listening UNIX socket attempt to
-connect to its own endpoint.
-
-I suspect this is a complex race condition or deadlock within the
-kernel's core timer subsystem. The stress and unusual blocking state
-induced by the UNIX socket operations, combined with concurrent POSIX
-timer usage, likely exposes a latent bug in the hrtimer or tick
-management. This causes the CPU to spin with interrupts disabled,
-which in turn triggers the RCU stall.
-
-This can be reproduced on:
-
-HEAD commit:
-
-d7b8f8e20813f0179d8ef519541a3527e7661d3a
-
-report: https://pastebin.com/raw/N3GD5hL7
-
-console output : https://pastebin.com/raw/RCZfTKCb
-
-kernel config : https://pastebin.com/raw/xAVw5DnH
-
-C reproducer :https://pastebin.com/raw/Z1B1ray5
-
-Let me know if you need more details or testing.
-
-Best regards,
-
-Xianying
 
