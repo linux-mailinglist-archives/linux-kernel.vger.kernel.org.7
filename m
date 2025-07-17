@@ -1,303 +1,153 @@
-Return-Path: <linux-kernel+bounces-735136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0FBB08B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:57:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A342B08B49
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4E537BBEB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1CBA41718
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F412129B799;
-	Thu, 17 Jul 2025 10:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5DB2BE7D0;
+	Thu, 17 Jul 2025 10:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="afqILlfA"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IQfYvIMm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2459299955;
-	Thu, 17 Jul 2025 10:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454C62BE049;
+	Thu, 17 Jul 2025 10:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752749373; cv=none; b=j23YMIhYJgqIHa4OZ0yhnz32u1i9K7CX7cYerGXUwHq9HUUq6VeO7dgj2lbvcg75ARznwE3UNDDGi46g5bLtIh3uAqIaMe1qcrV7rNNDEi3dimmFogJM7UYHRIFyqybunXqqK2BlYBFiHejWUUOM6rVOj1EHZpUn58ZLAn52x20=
+	t=1752749430; cv=none; b=BPzOeq42c5/AgNNnpjSRpgGdiqgDvmERoS9InhOpBq1bzJZdhOvvaft0SDFFH2wEIO4lfU7NFfYoQWz1d7SnXPjKKdXU258os9nm5g6ij1khzu6V6q+NxBTkjNd8bnXu0UIK2+8YuOFGL617T0kaeGwHwnD1ktoocQum+Iv8qWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752749373; c=relaxed/simple;
-	bh=lSP0/9GbrNfw0NFb6DWBwXGSVoqPXgSk/vHOEKnsPg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EshIOyAhAdx2J2EbpSnfWy9zduGW2hTrKvs3+SxvywH1BeI2eCvot0LvDlwu3zQnAi8fN1Y2MbNNl2Q4TnjqC/vKiU7AgaZeqWAlAvFS+0gYU4kakFaRUrCqgfOYj7MVcEg9F3gv/A1Isrl+AoOohixVQrHvuZzcP9NmfdwIgHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=afqILlfA; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752749368;
-	bh=lSP0/9GbrNfw0NFb6DWBwXGSVoqPXgSk/vHOEKnsPg0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=afqILlfAdc29dXdjkvF4I3YSbufR0yN5zVs7ZWdCQnSNZrXwIiIA4WW9e1PQ/k43p
-	 Df1AEB2qgK1CcIC2XuMPGOq9i8MF1PgD9lXMQFMyfHMy2qs2lYKYLkDmM6v0Us/shN
-	 DeZgcw8OSfYG3OVsnu4GAfPh22EEkfQwIerr8K2enqKMerzEu+rty9auXYe9uCeihA
-	 xDeE/B9ljTejzYjPTj+lWQyrWh+2TTo1hlFb/5Ahd9q6yRn0Z8nVafoUvgo1a4iuez
-	 mm2tuRwf/QUSDWqydPf4JT/ZMW8F76gshZk4c96BmE7M0kUvnAbtKZ8fWuWGawmgNh
-	 khghTJQCBNxeg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EE95F17E0C37;
-	Thu, 17 Jul 2025 12:49:27 +0200 (CEST)
-Message-ID: <327287aa-98c8-4745-adb9-2c36e8d5d825@collabora.com>
-Date: Thu, 17 Jul 2025 12:49:27 +0200
+	s=arc-20240116; t=1752749430; c=relaxed/simple;
+	bh=RnOYNCVbIcR1/NQHJ0LkvmKFRZrbUei/gDK1cnLHFC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d4yElsL6ceb/jUQvAXpLQBiDAmeJu1C+J5IS2bK9WngrJ165vDZ3NXSgGVpmI+5NmBzO0BqnKr5Of4W44NOUQUTiUvFt4thkA9YbZGU1GZzOYlGJOlMm46IsLyV3CiDSIYkGsZKrkeRG42OCiAEIh0YUoM+3ZGf48iu9HhVSLEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IQfYvIMm; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752749429; x=1784285429;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RnOYNCVbIcR1/NQHJ0LkvmKFRZrbUei/gDK1cnLHFC4=;
+  b=IQfYvIMm+hNP7xIUp7t6Fc/+868ZwvjxX1hjr6QK5bLoLn1ng5j2yP1l
+   9KWiEJ+k9LRjdO0stPHMA253ZelgbJ2aBgdnFZ4vdFAgMnPv4fBmJv+2Y
+   BGkYGp4D9rsKVLeoENDC9E/FTtjK+3MOwEv9V3vEBi0Vj+4Dnzi4sRysU
+   u3yAX6+LTaqZMZF6cegPuLzgWg9ilRhTPsz/OIZLhlOucmvxBuMZXh1Sd
+   FSEc7xoo05UQQC2ZYGIq4DpRNOmGKaQXg+/8mpyctFKsPXTf+8xakTO94
+   Rx/5Tge+lyZ0gOarsmGZgIHXYsEoQV9iQnux/lv06a73D3QArywl7e9sN
+   w==;
+X-CSE-ConnectionGUID: /P+uiFb+RaCzkcR6QwzNYg==
+X-CSE-MsgGUID: lkWeexP1TKGHBClfOXdtew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="66469903"
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="66469903"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 03:50:28 -0700
+X-CSE-ConnectionGUID: gcageXL1STip2wz8LQf76w==
+X-CSE-MsgGUID: xMI0ELb7RQiRrcITnDokKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="161790908"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 17 Jul 2025 03:50:23 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ucMBx-000DXj-0V;
+	Thu, 17 Jul 2025 10:50:21 +0000
+Date: Thu, 17 Jul 2025 18:49:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, mchehab@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux@armlinux.org.uk, ardb@kernel.org,
+	ebiggers@kernel.org, geert+renesas@glider.be,
+	claudiu.beznea@tuxon.dev, bparrot@ti.com, andre.draszik@linaro.org,
+	kuninori.morimoto.gx@renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	heikki.krogerus@linux.intel.com, kory.maincent@bootlin.com,
+	florian.fainelli@broadcom.com, lumag@kernel.org,
+	dale@farnsworth.org, sbellary@baylibre.com,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	dagriego@biglakesoftware.com, u-kumar1@ti.com,
+	y-abhilashchandra@ti.com
+Subject: Re: [PATCH V2 4/4] media: ti-vpe: Add the VIP driver
+Message-ID: <202507171820.SxYjRSbE-lkp@intel.com>
+References: <20250716111912.235157-5-y-abhilashchandra@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] clk: mediatek: Add MT6789 clock controllers
-To: Arseniy Velikanov <me@adomerle.pw>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20250715222221.29406-1-me@adomerle.pw>
- <20250715222221.29406-2-me@adomerle.pw>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250715222221.29406-2-me@adomerle.pw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716111912.235157-5-y-abhilashchandra@ti.com>
 
-Il 16/07/25 00:22, Arseniy Velikanov ha scritto:
-> Add support for MT6789 clock controllers, which includes apmixed, afe,
-> camsys, imgsys, infracfg, mcusys, mdpsys, mfgcfg, mmsys, topckgen,
-> vdec, venc.
-> 
-> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
+Hi Yemike,
 
-Hi Arseniy,
-Thanks for all this work!
+kernel test robot noticed the following build warnings:
 
-The submission looks generally fine, and I'm happy that you've ported those drivers
-to the common probe, however, there are a few (relatively small) things to fixup.
+[auto build test WARNING on linuxtv-media-pending/master]
+[also build test WARNING on sailus-media-tree/master next-20250716]
+[cannot apply to robh/for-next linus/master sailus-media-tree/streams v6.16-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Please check below.
+url:    https://github.com/intel-lab-lkp/linux/commits/Yemike-Abhilash-Chandra/MAINTAINERS-Update-maintainers-of-TI-VPE-and-CAL/20250716-192326
+base:   https://git.linuxtv.org/media-ci/media-pending.git master
+patch link:    https://lore.kernel.org/r/20250716111912.235157-5-y-abhilashchandra%40ti.com
+patch subject: [PATCH V2 4/4] media: ti-vpe: Add the VIP driver
+config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20250717/202507171820.SxYjRSbE-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507171820.SxYjRSbE-lkp@intel.com/reproduce)
 
-> ---
->   drivers/clk/mediatek/Kconfig                  |  68 ++
->   drivers/clk/mediatek/Makefile                 |  11 +
->   drivers/clk/mediatek/clk-mt6789-apmixed.c     | 147 +++
->   drivers/clk/mediatek/clk-mt6789-audiosys.c    | 100 +++
->   drivers/clk/mediatek/clk-mt6789-cam.c         | 131 +++
->   drivers/clk/mediatek/clk-mt6789-img.c         | 100 +++
->   .../clk/mediatek/clk-mt6789-imp_iic_wrap.c    |  90 ++
->   drivers/clk/mediatek/clk-mt6789-infra_ao.c    | 228 +++++
->   drivers/clk/mediatek/clk-mt6789-mcu.c         |  68 ++
->   drivers/clk/mediatek/clk-mt6789-mdp.c         |  81 ++
->   drivers/clk/mediatek/clk-mt6789-mfgcfg.c      |  61 ++
->   drivers/clk/mediatek/clk-mt6789-mm.c          |  85 ++
->   drivers/clk/mediatek/clk-mt6789-topckgen.c    | 846 ++++++++++++++++++
->   drivers/clk/mediatek/clk-mt6789-vdec.c        | 119 +++
->   drivers/clk/mediatek/clk-mt6789-venc.c        |  65 ++
->   15 files changed, 2200 insertions(+)
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-apmixed.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-audiosys.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-cam.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-img.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-imp_iic_wrap.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-infra_ao.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-mcu.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-mdp.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-mfgcfg.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-mm.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-topckgen.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-vdec.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6789-venc.c
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507171820.SxYjRSbE-lkp@intel.com/
 
-..snip..
+All warnings (new ones prefixed by >>):
 
-> diff --git a/drivers/clk/mediatek/clk-mt6789-topckgen.c b/drivers/clk/mediatek/clk-mt6789-topckgen.c
-> new file mode 100644
-> index 000000000000..bd986e861eb4
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6789-topckgen.c
-> @@ -0,0 +1,846 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022 MediaTek Inc.
-> + * Copyright (c) 2025 Arseniy Velikanov <me@adomerle.pw>
-> + */
-
-..snip..
+   drivers/media/platform/ti/vpe/vip.c: In function 'populate_desc_list':
+>> drivers/media/platform/ti/vpe/vip.c:828:22: warning: variable 'list_length' set but not used [-Wunused-but-set-variable]
+     828 |         unsigned int list_length;
+         |                      ^~~~~~~~~~~
+   drivers/media/platform/ti/vpe/vip.c: In function 'vip_create_streams':
+>> drivers/media/platform/ti/vpe/vip.c:3382:43: warning: variable 'bus' set but not used [-Wunused-but-set-variable]
+    3382 |         struct v4l2_mbus_config_parallel *bus;
+         |                                           ^~~
+   drivers/media/platform/ti/vpe/vip.c: In function 'vip_probe':
+>> drivers/media/platform/ti/vpe/vip.c:3677:25: warning: variable 'pinctrl' set but not used [-Wunused-but-set-variable]
+    3677 |         struct pinctrl *pinctrl;
+         |                         ^~~~~~~
 
 
- > +static const struct mtk_fixed_factor top_divs[] = {
- > +	FACTOR(CLK_TOP_MFGPLL, "mfgpll_ck", "mfgpll", 1, 1),
+vim +/list_length +828 drivers/media/platform/ti/vpe/vip.c
 
-..snip..
+   823	
+   824	static void populate_desc_list(struct vip_stream *stream)
+   825	{
+   826		struct vip_port *port = stream->port;
+   827		struct vip_dev *dev = port->dev;
+ > 828		unsigned int list_length;
+   829	
+   830		stream->desc_next = stream->desc_list.buf.addr;
+   831		add_stream_dtds(stream);
+   832	
+   833		list_length = stream->desc_next - stream->desc_list.buf.addr;
+   834		vpdma_map_desc_buf(dev->shared->vpdma, &stream->desc_list.buf);
+   835	}
+   836	
 
- > +	FACTOR(CLK_TOP_F26M, "f26m_ck", "clk26m", 1, 1),
- > +	FACTOR(CLK_TOP_AXI, "axi_ck", "axi_sel", 1, 1),
- > +	FACTOR(CLK_TOP_DISP, "disp_ck", "disp_sel", 1, 1),
-
-Please, remove all instances of FACTOR(.... 1, 1) and use the right parent directly
-for the other clocks.
-
-The factor(1,1) means clock_rate * 1 / 1 == clock_rate.
-
-I'm not sure why MediaTek likes to declare these - they are doing that in newer
-SoCs as well, but that's not for upstream: it does not make any sense to have those
-clocks in the driver, as those are effectively just name wrappers and nothing else.
-
-The only thing those do is increasing the footprint for, well, no good reason...!
-
-There's a pattern that you want to check: all of the "_ck" clocks are suspect! :-)
-
- > +	FACTOR(CLK_TOP_MDP, "mdp_ck", "mdp_sel", 1, 1),
- > +	FACTOR(CLK_TOP_IMG1, "img1_ck", "img1_sel", 1, 1),
- > +	FACTOR(CLK_TOP_IPE, "ipe_ck", "ipe_sel", 1, 1),
- > +	FACTOR(CLK_TOP_CAM, "cam_ck", "cam_sel", 1, 1),
- > +	FACTOR(CLK_TOP_MFG_REF, "mfg_ref_ck", "mfg_ref_sel", 1, 1),
- > +	FACTOR(CLK_TOP_MFG_PLL, "mfg_pll_ck", "mfg_pll_sel", 1, 1),
-
-..snip..
-
-> +
-> +static const char * const dvfsrc_parents[] = {
-> +	"tck_26m_mx9_ck",
-> +	"osc_d10"
-> +};
-> +
-> +static const char * const aes_msdcfde_parents[] = {
-> +	"tck_26m_mx9_ck",
-> +	"mainpll_d4_d2",
-> +	"mainpll_d6",
-> +	"mainpll_d4_d4",
-> +	"univpll_d4_d2",
-> +	"univpll_d6"
-> +};
-> +
-> +static const char * const mcupm_parents[] = {
-> +	"tck_26m_mx9_ck",
-> +	"mainpll_d6_d4",
-> +	"mainpll_d6_d2"
-> +};
-> +
-> +static const char * const dsi_occ_parents[] = {
-> +	"tck_26m_mx9_ck",
-> +	"mainpll_d6_d2",
-> +	"univpll_d5_d2",
-> +	"univpll_d4_d2"
-> +};
-> +
-
-Look at those parents, you're redefining the very same identical array 10 times
-in a row!
-
-Please, avoid this kind of duplication: delete all the duplicated arrays and
-just have one called, for example, "apll_i2s_mck_parents", then assign that
-to all of the relevant clocks.
-
-Same goes for camtg and others :-)
-
-> +static const char * const apll_i2s0_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-> +
-> +static const char * const apll_i2s1_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-> +
-> +static const char * const apll_i2s2_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-> +
-> +static const char * const apll_i2s3_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-> +
-> +static const char * const apll_i2s4_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-> +
-> +static const char * const apll_i2s5_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-> +
-> +static const char * const apll_i2s6_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-> +
-> +static const char * const apll_i2s7_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-> +
-> +static const char * const apll_i2s8_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-> +
-> +static const char * const apll_i2s9_mck_parents[] = {
-> +	"aud_1_sel",
-> +	"aud_2_sel"
-> +};
-
-..snip..
-
-> +module_platform_driver(clk_mt6789_topckgen_drv);
-> +
-> +MODULE_DESCRIPTION("MediaTek MT6789 top clock generators driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/clk/mediatek/clk-mt6789-vdec.c b/drivers/clk/mediatek/clk-mt6789-vdec.c
-> new file mode 100644
-> index 000000000000..81d6e720b6cd
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6789-vdec.c
-> @@ -0,0 +1,119 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022 MediaTek Inc.
-> + * Copyright (c) 2025 Arseniy Velikanov <me@adomerle.pw>
-> + */
-> +
-
-..snip..
-
-> +
-> +static const struct mtk_clk_desc vde2_desc = {
-> +	.clks = vde2_clks,
-> +	.num_clks = ARRAY_SIZE(vde2_clks),
-> +};
-> +
-> +static const struct of_device_id of_match_clk_mt6789_vdec[] = {
-
-Can you please compress all of those?
-
-static const struct of_device_id of_match_clk_mt6789_vdec[] ={
-	{ .compatible = "mediatek,mt6789-vdecsys", .data = &vde2_desc },
-	{ /* sentinel */ }
-};
-
-
-Note that the same comments do apply to other clock drivers that you're introducing
-but I'm only writing once - please apply the comments in the others and wherever
-they fit.
-
-Cheers!
-Angelo
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
