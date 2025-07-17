@@ -1,87 +1,69 @@
-Return-Path: <linux-kernel+bounces-734965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F364B088E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:07:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F411B088DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C20A62E3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:05:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ED5F17ADEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A15528B41D;
-	Thu, 17 Jul 2025 09:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P2Te30JX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D8C28C022;
+	Thu, 17 Jul 2025 09:04:09 +0000 (UTC)
+Received: from bregans-1.gladserv.net (bregans-1.gladserv.net [185.128.211.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A02B28A725;
-	Thu, 17 Jul 2025 09:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D504428A725;
+	Thu, 17 Jul 2025 09:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.211.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752743043; cv=none; b=KfZ7hxz413KGU49kpWqeTVZEo+N0sQDxO3qxcoK+Cq7B/w3ACjKy+H6tal4OhQER4vqOhtzdRe4aRlcCIdK3KsseTSwmGk1D1zMSFr1YPenlcgI1+3k4HR/KMF2tNGU2zqKvEpvvmiBxvP31qI9R3nbqxSoqwrucbtR+1Oow0Nc=
+	t=1752743049; cv=none; b=fPSlHO6wz4ZhjBwC84gsIBY61+lY9YEBe/o1IJ+EZT+eWtcixpYINQTZDPEZe0RXXYRw6vObTWtYqtExjl2/n3DfwHglejrv+KopblZOc1yjq2QHyYvthZeTdwdzazQmKpGZkGupat/DfcXyA0K1ua/NAkkLZLSflCuVkAIXZVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752743043; c=relaxed/simple;
-	bh=NyON7OC2PRQh07m09nCQOtZyy93Z5ZfhzcqYNoME75M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sguTmr2exCTrvrXyPSFh9yarahsF5Inlq2dIxIsA8ZqmSSepNGTdoxdF9WUSs10QHqlAzt45f4Ti7Rbho6uKHyMr1VnB6KxtTmWA4rTBWxJMlFXKDbGxzkm7VpGQ2dpNgOjskigf0wYMYKPE33EzpjopFAvrkIvXbdGhkReui4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P2Te30JX; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752743042; x=1784279042;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NyON7OC2PRQh07m09nCQOtZyy93Z5ZfhzcqYNoME75M=;
-  b=P2Te30JX/7aRc9bI/lojG9YydIXb9IgAKHZtVwaOmuSKx5oV1974W/CF
-   ffrLb++PfqD1I6oWzfiQ6K36TwJf5r9RozROYm+JPdeVSoA70g7f12gun
-   vPiN6n3CY3xQQmtZgwMx5hYDh8YUzMj66SK5xz7fEWabkzGbC7vIpe0P0
-   LP5bV7xUL6bCt7Us4agFNkxYrtNJTSzIm/4XCY3E8+O+G8PfVszpCMRCj
-   U0wF/IvgZGz9i18BcUlgrTPDLYCdEDn2ciXpzTyHIipQcp9bVVIOc8+ba
-   b7O9/vvIZpgfX/keZW+2wN/jeyHGIkpHNlGFAok2oBLgzFZYRmMIIjx7P
-   A==;
-X-CSE-ConnectionGUID: n3V2kCX3R5mw6vFeNUHESg==
-X-CSE-MsgGUID: XhEKC4A8QeCLUYhvUJJrrA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="77546783"
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="77546783"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 02:04:02 -0700
-X-CSE-ConnectionGUID: R3Bc9ouCTd2R+astFhxulw==
-X-CSE-MsgGUID: fN+6liQFT/yUwDL1oIAbBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="161774005"
-Received: from spr.sh.intel.com ([10.112.229.196])
-  by fmviesa003.fm.intel.com with ESMTP; 17 Jul 2025 02:03:57 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>
-Cc: kvm@vger.kernel.org,
+	s=arc-20240116; t=1752743049; c=relaxed/simple;
+	bh=13BjuG7BfdJkyvV3ryAY94i4fWrWvzauQEq5igKyfLA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZFxjyG6RE20Y9+pKyOautOqu7voUurCik7//bKV1Tuy4acRuAOR632Ii1sY2OPFwhRUp97AM2r6crU+v2PKklB7LMrs1TT3tAR1baCHV/wjhJeOqcX9G2+uVukBfEqtGZj8+T8jI0PQWYl1W14Lp9HwGngZ/4dNINF0fQClnqjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.211.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
+Received: from [2a0c:e303:0:7000:443b:adff:fe61:e05d] (port=41748 helo=auntie.gladserv.com)
+	by bregans-1.gladserv.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(envelope-from <bacs@librecast.net>)
+	id 1ucKWw-007pOE-2W;
+	Thu, 17 Jul 2025 09:03:54 +0000
+From: Brett A C Sheffield <bacs@librecast.net>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	brauner@kernel.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jack@suse.cz,
+	jannh@google.com,
+	jonathanh@nvidia.com,
 	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Yi Lai <yi1.lai@intel.com>
-Subject: [PATCH 3/3] perf/x86/intel: Add ICL_FIXED_0_ADAPTIVE bit into INTEL_FIXED_BITS_MASK
-Date: Thu, 17 Jul 2025 17:03:02 +0800
-Message-Id: <20250717090302.11316-3-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250717090302.11316-1-dapeng1.mi@linux.intel.com>
-References: <20250717090302.11316-1-dapeng1.mi@linux.intel.com>
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	Brett A C Sheffield <bacs@librecast.net>
+Subject: Re: [PATCH 6.6 000/111] 6.6.99-rc2 review
+Date: Thu, 17 Jul 2025 09:03:19 +0000
+Message-ID: <20250717090318.22708-2-bacs@librecast.net>
+X-Mailer: git-send-email 2.49.1
+In-Reply-To: <20250715163542.059429276@linuxfoundation.org>
+References: <20250715163542.059429276@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,86 +72,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ICL_FIXED_0_ADAPTIVE is missed to be added into INTEL_FIXED_BITS_MASK,
-add it and opportunistically refine fixed counter enabling code.
+# Librecast Test Results
 
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Tested-by: Yi Lai <yi1.lai@intel.com>
----
- arch/x86/events/intel/core.c      | 10 +++-------
- arch/x86/include/asm/perf_event.h |  6 +++++-
- arch/x86/kvm/pmu.h                |  2 +-
- 3 files changed, 9 insertions(+), 9 deletions(-)
+010/010 [ OK ] libmld
+119/120 [FAIL] liblibrecast
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 1ee4480089aa..b79efae717f7 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2845,8 +2845,8 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
- {
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	struct hw_perf_event *hwc = &event->hw;
--	u64 mask, bits = 0;
- 	int idx = hwc->idx;
-+	u64 bits = 0;
- 
- 	if (is_topdown_idx(idx)) {
- 		struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-@@ -2885,14 +2885,10 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
- 
- 	idx -= INTEL_PMC_IDX_FIXED;
- 	bits = intel_fixed_bits_by_idx(idx, bits);
--	mask = intel_fixed_bits_by_idx(idx, INTEL_FIXED_BITS_MASK);
--
--	if (x86_pmu.intel_cap.pebs_baseline && event->attr.precise_ip) {
-+	if (x86_pmu.intel_cap.pebs_baseline && event->attr.precise_ip)
- 		bits |= intel_fixed_bits_by_idx(idx, ICL_FIXED_0_ADAPTIVE);
--		mask |= intel_fixed_bits_by_idx(idx, ICL_FIXED_0_ADAPTIVE);
--	}
- 
--	cpuc->fixed_ctrl_val &= ~mask;
-+	cpuc->fixed_ctrl_val &= ~intel_fixed_bits_by_idx(idx, INTEL_FIXED_BITS_MASK);
- 	cpuc->fixed_ctrl_val |= bits;
- }
- 
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index f8247ac276c4..49a4d442f3fc 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -35,7 +35,6 @@
- #define ARCH_PERFMON_EVENTSEL_EQ			(1ULL << 36)
- #define ARCH_PERFMON_EVENTSEL_UMASK2			(0xFFULL << 40)
- 
--#define INTEL_FIXED_BITS_MASK				0xFULL
- #define INTEL_FIXED_BITS_STRIDE			4
- #define INTEL_FIXED_0_KERNEL				(1ULL << 0)
- #define INTEL_FIXED_0_USER				(1ULL << 1)
-@@ -48,6 +47,11 @@
- #define ICL_EVENTSEL_ADAPTIVE				(1ULL << 34)
- #define ICL_FIXED_0_ADAPTIVE				(1ULL << 32)
- 
-+#define INTEL_FIXED_BITS_MASK					\
-+	(INTEL_FIXED_0_KERNEL | INTEL_FIXED_0_USER |		\
-+	 INTEL_FIXED_0_ANYTHREAD | INTEL_FIXED_0_ENABLE_PMI |	\
-+	 ICL_FIXED_0_ADAPTIVE)
-+
- #define intel_fixed_bits_by_idx(_idx, _bits)			\
- 	((_bits) << ((_idx) * INTEL_FIXED_BITS_STRIDE))
- 
-diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-index ad89d0bd6005..103604c4b33b 100644
---- a/arch/x86/kvm/pmu.h
-+++ b/arch/x86/kvm/pmu.h
-@@ -13,7 +13,7 @@
- #define MSR_IA32_MISC_ENABLE_PMU_RO_MASK (MSR_IA32_MISC_ENABLE_PEBS_UNAVAIL |	\
- 					  MSR_IA32_MISC_ENABLE_BTS_UNAVAIL)
- 
--/* retrieve the 4 bits for EN and PMI out of IA32_FIXED_CTR_CTRL */
-+/* retrieve a fixed counter bits out of IA32_FIXED_CTR_CTRL */
- #define fixed_ctrl_field(ctrl_reg, idx) \
- 	(((ctrl_reg) >> ((idx) * INTEL_FIXED_BITS_STRIDE)) & INTEL_FIXED_BITS_MASK)
- 
--- 
-2.34.1
+CPU/kernel: Linux auntie 6.6.99-rc2-gefb1c34bdf5c #17 SMP PREEMPT_DYNAMIC Thu Jul 17 08:51:06 -00 2025 x86_64 AMD Ryzen 9 9950X 16-Core Processor AuthenticAMD GNU/Linux
 
+There is one failing test with the 6.6 series kernels that I started digging into yesterday, but as this fails on *all* 6.6 kernels right back to 6.6.0 this isn't a regression in this RC so there is no reason to delay 6.6.99 for this. Works fine in 6.5.0 and in more recent kernels > 6.8. Will report this separately when I have more information.
+
+Tested-by: Brett A C Sheffield <bacs@librecast.net>
 
