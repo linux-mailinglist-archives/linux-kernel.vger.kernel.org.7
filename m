@@ -1,106 +1,163 @@
-Return-Path: <linux-kernel+bounces-734645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C5DB08453
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7464B08455
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1615EA41925
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 983D23A285D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ED61FFC6D;
-	Thu, 17 Jul 2025 05:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66401FFC41;
+	Thu, 17 Jul 2025 05:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="X0B1oaLs"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="KPRJ2h0d"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657314689;
-	Thu, 17 Jul 2025 05:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD3B2AD16;
+	Thu, 17 Jul 2025 05:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752730669; cv=none; b=dx9FS3QALM96iWcjb/uA5jnW+ecQov4nH/gvFtdR4rnZULIgrU2ZWIMffzTsuWTkMY5tU1KxPyjEy/CWqszLjpwraMfloMzmjFDhxo+5cEDtsuwZXAbgl68Bfdnt9MgLCkAxr6YB6HSqSqUi2KGMuqwT0Hw7pxbQf/5tEOPGlcg=
+	t=1752730671; cv=none; b=cxNDLcD2fgh0D/FQF4qeqcnl+ruGZHVmmzsg36c7XyFBOJozVOJZcJ5pZQtL26ZeazW6VhPt0IBqY3inJ/SY7fPuYNcrKqFzKK6GNRunSVl005zw35gNKjeEt2La81zCDoN1LluT46PYlcFtIpYXqvPsqtI7lgje8pvCr0XNsdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752730669; c=relaxed/simple;
-	bh=Y02Yq8A50KbSstuEwaGHDrZeOGkOhhujbMG0MWUfSmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dvusJoxWSyhxdP2vON274j93TL+GWyINH6pjSX8vOcrJ0lsL4VL7fOHfjk06NjdheElKSgwy3IAMo2D+U0jsj6fwC1Y5bI0f4+yLlgDVC4sTG3lpugKox3YCKRPFhSvihh4fFvg8ReEXsTqF/WQgirnN0Dz/ZGYBRGv5Dr2XDVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=X0B1oaLs; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752730533;
-	bh=WMWW7mmLlUo41cQzp0qfs2H388c0LiKcPKeAkVcGtYQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=X0B1oaLshnYx4gmEoC7GxA5cZoPgGs7evsmo9kNNVj/Cjj/hj0lfQ1cfafYr6ohls
-	 BJKO53+5/pXEw8XaVhFheptLmb1Gg4xZRA4IFXGTfhCXSapoXh2JtOajEQQR+MSduv
-	 j6+5BH2IGHLwlwaDU+j9n4WdZIMbOiNUo6kBaqu2rQ8f8kKmMTJ7E0P8Iu0urDGjMG
-	 tzuwk9r1XbfCvFN5+iyZJc5TAvdb4/wSozZ4K5w1BvoT9GXlJCodshX5+sZjLEznYa
-	 hFTYpCUXoIHidqQLsOaVAF86CIgMWQlPhHRWn5zt+HBRukbM9oFbfp63iNenJvNtmI
-	 SHc4bH+JRU25Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bjM8P14QGz4x7W;
-	Thu, 17 Jul 2025 15:35:32 +1000 (AEST)
-Date: Thu, 17 Jul 2025 15:37:33 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>
-Cc: PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the char-misc tree
-Message-ID: <20250717153733.068c3fc3@canb.auug.org.au>
+	s=arc-20240116; t=1752730671; c=relaxed/simple;
+	bh=3r70ETmS7qEotHNsSCUihe0OJebvz7GjYPpeM9H9tvY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FEHK49reiPVZtvSeU92UqOrzEWMjdP2CGTAYshBFNiVc1qwN6GQDJv9Li2pggAbF8SmyopqtYEl5UXEAeem7oUZwIS9SV+W+G/acHJKHCKtyGjHApZZ85q5nspeWZIXcnAWv7RturFOc6SIYgdQ5i2qRzdAjWKoayovsDN1zJwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=KPRJ2h0d; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1752730660;
+	bh=3r70ETmS7qEotHNsSCUihe0OJebvz7GjYPpeM9H9tvY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=KPRJ2h0d7w4TCaXJ/sxtIAjD5aXUGUBVp9kksarL5hjPdcZeso4R8sSoBeMXjbT1e
+	 NqWtZFQlkPl65EJbeIvVQJrSCDe4eZYbW+pPDhJHXcEzKXVSAyQm+NHkcvazA4tZS9
+	 qyygjEmAuSLzx25H4PUKI36kQPAoot5sXVphVD8kT9oVwEAdQFumN62LIe4cm2ASXS
+	 XOiQZ5+ZvUuLohYJgKVXNg29TeFAVeuCFAC9GU4FqymszjIbbs5m2Xe9+UIUVr7AGz
+	 uDTuZ9QXjhtB/dgbodHbR0q6EPya+t5J832sky5+9uxaq/BbYVNuMjQ8UrV/AMU/qr
+	 85FbMbjn758mg==
+Received: from [192.168.72.164] (210-10-213-150.per.static-ipl.aapt.com.au [210.10.213.150])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8D85167B49;
+	Thu, 17 Jul 2025 13:37:39 +0800 (AWST)
+Message-ID: <7e8f741b24b1426ae71171dff253921315668bf1.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] net: mctp: Add MCTP PCIe VDM transport driver
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: YH Chung <yh_chung@aspeedtech.com>, "matt@codeconstruct.com.au"
+ <matt@codeconstruct.com.au>, "andrew+netdev@lunn.ch"
+ <andrew+netdev@lunn.ch>,  "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,  "kuba@kernel.org"
+ <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, 
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, BMC-SW
+ <BMC-SW@aspeedtech.com>
+Cc: Khang D Nguyen <khangng@amperemail.onmicrosoft.com>
+Date: Thu, 17 Jul 2025 13:37:39 +0800
+In-Reply-To: <SEZPR06MB5763AD0FC90DD6AF334555DA9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+References: <20250714062544.2612693-1-yh_chung@aspeedtech.com>
+	 <a01f2ed55c69fc22dac9c8e5c2e84b557346aa4d.camel@codeconstruct.com.au>
+	 <SEZPR06MB57635C8B59C4B0C6053BC1C99054A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+	 <27c18b26e7de5e184245e610b456a497e717365d.camel@codeconstruct.com.au>
+	 <SEZPR06MB5763AD0FC90DD6AF334555DA9051A@SEZPR06MB5763.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0yA+q2mtECuF9mq2nl4bW.Y";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/0yA+q2mtECuF9mq2nl4bW.Y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi YH,
 
-Hi all,
+> > Is that one driver (for both 2600 and 2700) or two?
+> >=20
+> It's written in one file to reuse common functions, but the behavior
+> is slightly different depending on the hardware.
 
-The following commit is also in the powerpc tree as a different commit
-(but the same patch):
+OK, but it's still the one driver (one struct platform_driver handling
+multiple of_device_id matches), and there's only one instance where
+you're interacting with the mctp_pcie_vdm API. So that would be a single
+user of the proposed abstraction.
 
-  01c6d1df98cb ("misc: ocxl: Replace scnprintf() with sysfs_emit() in sysfs=
- show functions")
+> > I'm still not convinced you need an abstraction layer specifically for =
+VDM
+> > transports, especially as you're forcing a specific driver model with t=
+he deferral
+> > of TX to a separate thread.
+> >=20
+> We followed the same implementation pattern as mctp-i2c and mctp-i3c,
+> both of which also abstract the hardware layer via the existing
+> i2c/i3c device interface and use a kernel thread for TX data.=20
 
-This is commit
+You're combing two concepts there: the use of a workqueue for transmit,
+and the use of a driver abstraction layer between the hardware and the
+MCTP netdev.
 
-  e82fff08327e ("misc: ocxl: Replace scnprintf() with sysfs_emit() in sysfs=
- show functions")
+Some existing MCTP transport drivers have the deferred TX via workqueue,
+but none have an abstraction layer like you are proposing here.
 
-in the powerpc tree.
+In the case of I2C and I3C, we cannot transmit directly from the
+->ndo_start_xmit() op, because i2c/i3c operations are done in a
+sleepable context. Hence the requirement for the defer for those.
 
---=20
+However, I would be surprised if transmitting via your platform PCIe VDM
+interface would require blocking operations. From what I can see, it
+can all be atomic for your driver. As you say:
+
+> That said, I believe it's reasonable to remove the kernel thread and
+> instead send the packet directly downward after we remove the route
+> table part.
+>
+> Could you kindly help to share your thoughts on which approach might
+> be preferable?
+
+The direct approach would definitely be preferable, if possible.
+
+Now, given:
+
+ 1) you don't need the routing table
+ 2) you probably don't need a workqueue
+ 3) there is only one driver using the proposed abstraction
+
+- then it sounds like you don't need an abstraction layer at all. Just
+implement your hardware driver to use the netdev operations directly, as
+a self-contained drivers/net/mctp/mctp-pcie-aspeed.c.
+
+> Would you recommend submitting both drivers together in the same patch
+> series for review, or is it preferable to keep them separate?=20
+
+I would recommend removing the abstraction altogether.
+
+If, for some reason, we do end up needing it, I would prefer they they
+be submitted together. This allows us to review against an actual
+use-case.
+
+> > OK, so we'd include the routing type in the lladdr data then.
+> >=20
+> Could you share if there's any preliminary prototype or idea for the
+> format of the lladdr that core plans to implement, particularly
+> regarding how the route type should be encoded or parsed?
+
+Excellent question! I suspect we would want a four-byte representation,
+being:
+
+ [0]: routing type (bits 0:2, others reserved)
+ [1]: segment (or 0 for non-flit mode)
+ [2]: bus
+ [3]: device / function
+
+which assumes there is some value in combining formats between flit- and
+non-flit modes. I am happy to adjust if there are better ideas.
+
+Khang: any inputs from your side there?
+
 Cheers,
-Stephen Rothwell
 
---Sig_/0yA+q2mtECuF9mq2nl4bW.Y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh4jB0ACgkQAVBC80lX
-0Gwwrwf9FEYtPFKJurgxZ300g6dsUNdEGRP+WqU8+g8CgBCY6mf4PzsgwQ9CcWOe
-AX+8bCc+KKx4n+gu7KpbsT1EOQtBgbImugEUm6lUyHOWHxTVMuYwUQYHNVj9+HFR
-LVQYOiIHADDYvQCplzxOjO+mz1CPxoBuGgju5THvXBVfJx5isd6e40823PjwSm71
-zEhgyXdKwDP0GV695G0VpsPxy1PWbBzO4CeIHiphCW6o/RShmAMiJKOU3h+koZaJ
-mK4QC8QYCYH3rXlgdm8AKznrHaz+qd/f0A2s2SetZykKI9xBg2KYWs02ODqAQPaJ
-RT6SlczW9GJEWEZqdapn9eRSnNzIzg==
-=VXmE
------END PGP SIGNATURE-----
-
---Sig_/0yA+q2mtECuF9mq2nl4bW.Y--
+Jeremy
 
