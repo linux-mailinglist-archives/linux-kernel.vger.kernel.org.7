@@ -1,154 +1,169 @@
-Return-Path: <linux-kernel+bounces-735907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA24B09518
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6724EB0951C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF661177A00
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97EDD174535
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3862FE332;
-	Thu, 17 Jul 2025 19:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80522FE321;
+	Thu, 17 Jul 2025 19:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e9aIsDJ+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iZI7wLv5"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220542FC3D0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979D02FC3D0
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752781222; cv=none; b=iLAJyKTucvFUEgr2SqL6q2O0xH90X2lrosi5DTaROqzO52KedmAEADPNGknuPELLkFN7gkjO34gAe24hDsY/ff7vraGI92gAbrHE613lblqjtno7uIzU716U/1lDebgb3jtl9zTQHwr9z9pWAJ6RzNa17NgYHsg+OPEAWenJ+Bc=
+	t=1752781233; cv=none; b=kk3+M2VScwWsL8BdXGkiQRWBMb+7M0zOaQrFnGRlA8dNSSGuwYK1iMMEL4NrasMl8z12Oi8Hsv2b1ehLTGErknWW+RgoUsMnpIiif5VBflYA4rP6OKKZtBRkFvL3kCP5DeboU2qe/BgFbWEwAg8b1zLxnbJbtjSu5ajQCkwiJ5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752781222; c=relaxed/simple;
-	bh=AliCz80P40/+u4uyNacd4d5aJesJDRNV1iyzNivQibw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=krrP2XwCAhL0Ys5Y5r7p7S2q0ZeG/5wT7lvJQUge6kh3U6uYWiaN2An2xkEQeiYpBprBSn5+2EqMzXcoF6zy7SlPM3jx8HzaTIDoRYJ8R4Y/c32r5eskzkmSXlmkcOE54WXdgc2bmi7NsJ+u690SHzi3oRLh4U6bpIK3uyhjUjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e9aIsDJ+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752781220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z/2+uUVHwQq1KQQUsEuaD+AV1NGVtRzgW4E0uexw5t0=;
-	b=e9aIsDJ+GVy0eiydU7zQ0tF9O7oZerX+TGTQHuycjDVJYI4POMrzpfliKZuzRVVMBdb8k6
-	L15Q+innQBW1xaVLy9KS5C9+FvzOtUnxKUx/srJi+ShKQ8NjEuWo45p2R5fQH++1o+1Rej
-	WWNjqVmdrMh5zCVpZOk3fZD1uDcTgvk=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-642-dLeunbOkMiyil7ISVqTZWw-1; Thu, 17 Jul 2025 15:40:17 -0400
-X-MC-Unique: dLeunbOkMiyil7ISVqTZWw-1
-X-Mimecast-MFC-AGG-ID: dLeunbOkMiyil7ISVqTZWw_1752781217
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3df57df1eb3so1949285ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:40:17 -0700 (PDT)
+	s=arc-20240116; t=1752781233; c=relaxed/simple;
+	bh=J5T522Xe3jwCY3eAP8SMXr/V7enkbaM2npbeBlIkiMc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kPPk/P4pT7b+S2B+N1gxcxp9pQ4TSO9U806Xmd/nb5B350TtYfNhUI0X+UBWWsYJDKDkhjnz4Yaf9nxPsiuAwYIhkJzGsglAttKYyT2wdOermnGBUQLEXSffSvmjB92oy6bxXMHsFYZQvHNFzhXwcQH5wFTmbblQSArSHxaAwTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iZI7wLv5; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-740774348f6so1351800b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752781231; x=1753386031; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EabJr18a3SZdXkqRpkIMgBHho+rbTVnRfJqLTg0l/2k=;
+        b=iZI7wLv5s3zEzFg3rI1f8o+PPq7IWmE+iE0JLWfUksOJUpHOfYUiwj2RlZqjQpkrRF
+         Cd2P279rMV2jZKnk7MhL4svPmOkk+EtIlgbL+xMEVnVyEtripKQJmpUTwFMOdOEHi+HD
+         ikvMY65laYP5Z1fCNW7S0LxgvK534TBmr0yZOrKrU1oVmM3Pv79bc2SrjTNLjG/ZQSeC
+         GWx59nSGT6JSgGiVYbifVsX8wxZmqCXVMiwZw/r1/9G3redOxxMxcfVFN0jbWMop6Zfl
+         jMFSUYo4vkoW9ApTW2mrpTeCX89Qd3dopLnjVH8KBoKM7z2jSgPnZdKIP3iUgw/gABHC
+         lb/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752781217; x=1753386017;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z/2+uUVHwQq1KQQUsEuaD+AV1NGVtRzgW4E0uexw5t0=;
-        b=tac6jAfs1FkzdsC3j6ssxYR0SU75EYYmW/p3qdVLIdFBW/R3owmXL+j3RZyEyZuFEj
-         UIOjNRM+DabnXYqqn9u9AnvJ0utxtShanhpJG1kwp/31L+PJh3++CPT/iehHcNhDqxDg
-         rbgYW6DgbINqhETkyjj37FmuqaaJyzImOqPagLMunBtwURcSMynAd4NTC7AcpTx4r2Y2
-         7/JHEl2h83+tYO3qc458nkdWi0XtQuzuUnELvjoj4vEEcYlXgZ2KQMb+LdyxwmmVSI6N
-         FxXds08p4vGatUJNdU5aKdTh/3BHSmIWYlkQ+8vokdkczi7Nx3Ps3yfHJlf37LnjtnbA
-         EJNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOjxzsSA7QEh5ewjBAR4Sviamsr5wIqbXjZ++pVrN0PQlql94+VyeRic59QIBSF9ZxtbSXqxNYZlMPeyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0kyVlA7kQ/OhDhwl+OFRK94avwtr80A0DgPuHbCaCqiO6aSV4
-	sm/i5LljV3mNqeqmKlnNE8SjRhLUySq7YKtv7lZ6v1MIzpUqbUpUMb6MrFsb5eEIGq9lQpBz5ew
-	QCu3gnhI2CajWAzXtKfUmPkFV0EC+Mu6V4nyVdK892rp7Wz+lbC1fq7dEH2k+IT0yJw==
-X-Gm-Gg: ASbGncu1C9Qd9ukjQwI4XEuKPwBd4JnXrhbk+S2XqwOVOXFQSg9a4Sh5evnaAOLcCHq
-	wpIeBqA31CX+UKXpoPBUC1YTGXsC/mZWDYXHzhDv9YLuMr00mwv+mfZkwwYnhlpUKsp983QvZ7O
-	TenLfUVWkkW5MB8u4ITGxlUexrl+8mgucHcZ/9uAWn0qraRdv/Lzuus1/risVls46J5M6BXIqUf
-	7+wvAogxf1ZehDQWAZ7DxAHRAhosUZ+XRyQ//mTVgbUUjM+iIJ4l/z/DQWlGNgSUjrvsaGC24Pt
-	m2Pv9f3T+aDYT8Oeu0c9WimNm95zZCimO5zA320zMFw=
-X-Received: by 2002:a05:6e02:3113:b0:3dc:87c7:a5a5 with SMTP id e9e14a558f8ab-3e28245f8e8mr24904015ab.5.1752781216871;
-        Thu, 17 Jul 2025 12:40:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGV+0O7JW3kdwf9CMHiAKbvK9a8rLbbPPt/Na4CzthvG+duCf1EvXTna86WdjzvTwHw9uYkCw==
-X-Received: by 2002:a05:6e02:3113:b0:3dc:87c7:a5a5 with SMTP id e9e14a558f8ab-3e28245f8e8mr24903925ab.5.1752781216429;
-        Thu, 17 Jul 2025 12:40:16 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e2462299c0sm53651965ab.48.2025.07.17.12.40.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 12:40:15 -0700 (PDT)
-Date: Thu, 17 Jul 2025 13:40:14 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal
- <nikhil.agarwal@amd.com>, Pieter Jansen van Vuuren
- <pieter.jansen-van-vuuren@amd.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
- stable@vger.kernel.org
-Subject: Re: [PATCH] vfio: cdx: Fix missing GENERIC_MSI_IRQ on compile test
-Message-ID: <20250717134014.16b97da5.alex.williamson@redhat.com>
-In-Reply-To: <20250717091053.129175-2-krzysztof.kozlowski@linaro.org>
-References: <20250717091053.129175-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        d=1e100.net; s=20230601; t=1752781231; x=1753386031;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EabJr18a3SZdXkqRpkIMgBHho+rbTVnRfJqLTg0l/2k=;
+        b=QmTcmKUWcsL3bTjpNxZ1EXmxuqxApRa/aRImkGjkk2XlYUBqAzsloy5VlIPv9dAAiv
+         2xU2hUNXzhPs4e4t5XSQL/abcTzELtRD2ir6oA1R4zVoMqPBwC6OyygNwSH4ZctgQTkH
+         TO1r7eU7ePiEjC3sd2jNXMZrmsi8jOZuHeuyO4EfHyjaqmfUe+GheQp7M+eYyQpUJH7t
+         Fr79lIRyGOe02BsTHHHurgQs9OcjI4YjPvGdSidOSyNEFcvqnXeG5jgfhn6uT7N9WHrd
+         VTuBbyneJ+//GxY5krsnIu2eNuQ307eBlZafxqpNqLyYMScfOJhMpwGIb+tAYu+Xra2F
+         Y1MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVljP50D2OayKgiqkQ/mdQ95BGwbDlWzcru8HukVRsFqkZSzaHFoc1012fuZv/ObeZ1XxfP7ixmym2XdHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdB0F73OeV8Th7F2YyU2aEzTtkDVd3ApEm9NLYgjEXFLUioWXy
+	bLK1gd744wnVGYEUJiNRB6T2nwPyuh+/u69eXg51CRGR+EiEpPpcVH8nO2MgdivLUy6eeP1on5r
+	sK8efWFbY4mow1HciwZj05Y0/aw==
+X-Google-Smtp-Source: AGHT+IET9IaKD5CuoVhly7YexMTdSilD1ZfKaS6gelsVj0NBUm48zNtNHHWQ7BYJMEXFZUmxjmmo3qvk/nU3bh+Ptg==
+X-Received: from pfbjw38.prod.google.com ([2002:a05:6a00:92a6:b0:748:ec4d:30ec])
+ (user=salomondush job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:6a22:b0:225:7617:66ff with SMTP id adf61e73a8af0-2391c962646mr266495637.20.1752781230976;
+ Thu, 17 Jul 2025 12:40:30 -0700 (PDT)
+Date: Thu, 17 Jul 2025 19:40:25 +0000
+In-Reply-To: <30f8ea8d-79c4-4e5c-b354-51ad8146a61c@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <30f8ea8d-79c4-4e5c-b354-51ad8146a61c@acm.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250717194025.3218107-1-salomondush@google.com>
+Subject: [PATCH v2] scsi: mpi3mr: Emit uevent on controller diagnostic fault
+From: Salomon Dushimirimana <salomondush@google.com>
+To: bvanassche@acm.org
+Cc: James.Bottomley@HansenPartnership.com, kashyap.desai@broadcom.com, 
+	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	martin.petersen@oracle.com, mpi3mr-linuxdrv.pdl@broadcom.com, 
+	salomondush@google.com, sathya.prakash@broadcom.com, 
+	sreekanth.reddy@broadcom.com, sumit.saxena@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 17 Jul 2025 11:10:54 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Introduces a uevent mechanism to notify userspace when the controller
+undergoes a reset due to a diagnostic fault. A new function,
+mpi3mr_fault_event_emit(), is added and called from the reset path. This
+function filters for a diagnostic fault type
+(MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT) and generates a uevent
+containing details about the event:
 
-> VFIO_CDX driver uses msi_domain_alloc_irqs() which is provided by
-> non-user-visible GENERIC_MSI_IRQ, thus it should select that option
-> directly.
->=20
-> VFIO_CDX depends on CDX_BUS, which also will select GENERIC_MSI_IRQ
-> (separate fix), nevertheless driver should poll what is being used there
-> instead of relying on bus Kconfig.
+- DRIVER: mpi3mr in this case
+- HBA_NUM: scsi host id
+- EVENT_TYPE: indicates fatal error
+- RESET_TYPE: type of reset that has occurred
+- RESET_REASON: specific reason for the reset
 
-This seems like a recipe for an explosion of Kconfig noise.  If the bus
-fundamentally depends on a config option, as proposed in the separate
-fix, I don't see that a driver dependent on that bus needs to duplicate
-the config selections.  IMO this is sufficiently fixed updating
-drivers/cdx/{Kconfig,Makefile}.  Thanks,
+This will allow userspace tools to subscribe to these events and take
+appropriate action.
 
-Alex
-=20
-> Without the fix on CDX_BUS compile test fails:
->=20
->   drivers/vfio/cdx/intr.c: In function =E2=80=98vfio_cdx_msi_enable=E2=80=
-=99:
->   drivers/vfio/cdx/intr.c:41:15: error: implicit declaration of function =
-=E2=80=98msi_domain_alloc_irqs=E2=80=99;
->     did you mean =E2=80=98irq_domain_alloc_irqs=E2=80=99? [-Wimplicit-fun=
-ction-declaration]
->=20
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Closes: https://lore.kernel.org/r/4a6fd102-f8e0-42f3-b789-6e3340897032@in=
-fradead.org/
-> Fixes: 848e447e000c ("vfio/cdx: add interrupt support")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/vfio/cdx/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/vfio/cdx/Kconfig b/drivers/vfio/cdx/Kconfig
-> index e6de0a0caa32..90cf3dee5dba 100644
-> --- a/drivers/vfio/cdx/Kconfig
-> +++ b/drivers/vfio/cdx/Kconfig
-> @@ -9,6 +9,7 @@ config VFIO_CDX
->  	tristate "VFIO support for CDX bus devices"
->  	depends on CDX_BUS
->  	select EVENTFD
-> +	select GENERIC_MSI_IRQ
->  	help
->  	  Driver to enable VFIO support for the devices on CDX bus.
->  	  This is required to make use of CDX devices present in
+Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
+---
+Changes in v2:
+- Addressed feedback from Bart regarding use of __free(kfree) and more
+
+ drivers/scsi/mpi3mr/mpi3mr_fw.c | 37 +++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+
+diff --git a/drivers/scsi/mpi3mr/mpi3mr_fw.c b/drivers/scsi/mpi3mr/mpi3mr_fw.c
+index 1d7901a8f0e40..a050c4535ad82 100644
+--- a/drivers/scsi/mpi3mr/mpi3mr_fw.c
++++ b/drivers/scsi/mpi3mr/mpi3mr_fw.c
+@@ -1623,6 +1623,42 @@ static inline void mpi3mr_set_diagsave(struct mpi3mr_ioc *mrioc)
+ 	writel(ioc_config, &mrioc->sysif_regs->ioc_configuration);
+ }
+ 
++/**
++ * mpi3mr_fault_uevent_emit - Emit uevent for a controller diagnostic fault
++ * @mrioc: Pointer to the mpi3mr_ioc structure for the controller instance
++ * @reset_type: The type of reset that has occurred
++ * @reset_reason: The specific reason code for the reset
++ *
++ * This function is invoked when the controller undergoes a reset. It specifically
++ * filters for MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT and ignores other
++ * reset types, such as soft resets.
++ */
++static void mpi3mr_fault_uevent_emit(struct mpi3mr_ioc *mrioc, u16 reset_type,
++	u16 reset_reason)
++{
++	struct kobj_uevent_env *env __free(kfree);
++
++	if (reset_type != MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT)
++		return;
++
++	env = kzalloc(sizeof(*env), GFP_KERNEL);
++	if (!env)
++		return;
++
++	if (add_uevent_var(env, "DRIVER=%s", mrioc->driver_name))
++		return;
++	if (add_uevent_var(env, "HBA_NUM=%u", mrioc->id))
++		return;
++	if (add_uevent_var(env, "EVENT_TYPE=FATAL_ERROR"))
++		return;
++	if (add_uevent_var(env, "RESET_TYPE=%s", mpi3mr_reset_type_name(reset_type)))
++		return;
++	if (add_uevent_var(env, "RESET_REASON=%s", mpi3mr_reset_rc_name(reset_reason)))
++		return;
++
++	kobject_uevent_env(&mrioc->shost->shost_gendev.kobj, KOBJ_CHANGE, env->envp);
++}
++
+ /**
+  * mpi3mr_issue_reset - Issue reset to the controller
+  * @mrioc: Adapter reference
+@@ -1741,6 +1777,7 @@ static int mpi3mr_issue_reset(struct mpi3mr_ioc *mrioc, u16 reset_type,
+ 	    ioc_config);
+ 	if (retval)
+ 		mrioc->unrecoverable = 1;
++	mpi3mr_fault_uevent_emit(mrioc, reset_type, reset_reason);
+ 	return retval;
+ }
+ 
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
 
