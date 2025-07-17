@@ -1,354 +1,171 @@
-Return-Path: <linux-kernel+bounces-734935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F41AB08879
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:53:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5268B0887B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74292A6197A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93AAD4E1041
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CCF28642E;
-	Thu, 17 Jul 2025 08:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D702288514;
+	Thu, 17 Jul 2025 08:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xWHrAi2p"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hY02iqio"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815CE287253;
-	Thu, 17 Jul 2025 08:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECB3286D79;
+	Thu, 17 Jul 2025 08:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742374; cv=none; b=bVK6BrndGdY5bZJhaRpmqc5yKShZnK+yufZDgc5dJnh8XdswoYEIUzZYaRpCQLXvY83PrYybPt1yf65pUY4TQHhX+otUQWwnxI9ILjrtgFXDpBGCvc56aLV3FXGX1nLg6Y5/8dJ7OQy9dsVzG3M4zCAZRFNFhTXV2Rn4gPsBMD4=
+	t=1752742384; cv=none; b=fHvSJpOfchnGhXP7FQEvRhSCaS2BGELHdgb/v28lxNdhHLFItt9v2Zu9XeT1dOGjPNzFEjJQu3y28Si0+NLYpy2q+/vW8C7wijH62C82pUMKNCbTtN1tCRkg6t5NlO8xTx+WP1OLxpl3ZozrbIXMyy3GBIwKH3avBn8IBTD21uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752742374; c=relaxed/simple;
-	bh=ytAsy/vavJPcE7Vcm9shahUUbwVlqhcR3CZxTdfJH6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ReB9jF/vakuCoYPPjBuo41eXIUn3Wv4aA3MdeksqrvEaN41tfX9VC7Uabm7mfIf4g6tjrkgZkv3Q0B5SzdoRkDVTPGr8O/5mYR3NKGkhjUi0vzDPEqTYrOCJVrgDRFi0Ajf7gKHBSWyjcBVFfvUmreBkHBa0AzCLJHUr8pYNzuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xWHrAi2p; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752742362; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=izEHRbUDFXVD/qrVi0rkduqZr+AH5if+rSaP/Tz+aXs=;
-	b=xWHrAi2pt/8dyichi2lcqMO91azBlRGT0kxxC+KCNS1F6J+8TXvgr2BfGmHUjAxjkvnT/vDE7Tc8u7wc5uPm+UsNLRjynQSUGrnN1FMfVAvknqOvKsUmlwGhVhEBE9kIRR/QuZL+DCIJIViggdehMXiCzm12HANFUk7rHdzb5vQ=
-Received: from 30.246.162.71(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wj7R5AM_1752742357 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 17 Jul 2025 16:52:39 +0800
-Message-ID: <e932c232-bf54-4acb-b49d-e72bbb98c1ea@linux.alibaba.com>
-Date: Thu, 17 Jul 2025 16:52:37 +0800
+	s=arc-20240116; t=1752742384; c=relaxed/simple;
+	bh=K7b6cDJtKe9/SFLCuJhtV0axV7uqnrn26I6lrJ+H1Q8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JnY6YlLoehvrjym4HZ58pUFlzCTeFBcidoY0cmU/kgfpGgD3Abfa2dkNry/QtIWNkBZ1Zik2SseMmDs9WxXYKQmx0aB5U3QSGGI/cE7OfKI3TMZSAo35I2M7ztLCGQWe3NAjj6WAMd4HJSKYQg0BtBoeeHK6tXlZDtYvlt+hNvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hY02iqio; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78ABBC4CEE3;
+	Thu, 17 Jul 2025 08:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752742383;
+	bh=K7b6cDJtKe9/SFLCuJhtV0axV7uqnrn26I6lrJ+H1Q8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hY02iqioT/0iVgWjoLFg/TT9thzAhTtuNUuvrXS8YvXIQutUWNru5/AP6kVvkBKXy
+	 wrjTeoxXkcYF4xriTRyX8H2FypLI6HcV/tQJParOyYkGqO+pTxZ9g/IZ+ad7WSZnX/
+	 3UXHFPWCT+fge50n/wD2MnrWdVQKKZ2x/p8TBRuBUrM/7MvuqCBbC++I9VXAt2WvJv
+	 CkbBLHdELFpxsrw1yXXWm1PQ1cZrsg4okD3eUxq/XPdotr2WAX5kIH3XTwafm8wKjy
+	 HrqGqOFfWLE/aKAyTkP+vU9xfNoPJyDjXV3RMk4XWfBjrZkYDB1g98kkWPUVeLTVNY
+	 4NWOIyuPNbT2Q==
+From: Kees Cook <kees@kernel.org>
+To: Bill Wendling <morbo@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Justin Stitt <justinstitt@google.com>,
+	llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] Compiler Attributes: Add __kcfi_salt
+Date: Thu, 17 Jul 2025 01:53:00 -0700
+Message-Id: <20250717085300.work.146-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 0/2] ACPI: APEI: fix potential hardlockup due to
- infinite SEA excepction loop
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: catalin.marinas@arm.com, sudeep.holla@arm.com, guohanjun@huawei.com,
- lpieralisi@kernel.org, linux-acpi@vger.kernel.org, yazen.ghannam@amd.com,
- mark.rutland@arm.com, mingo@redhat.com, robin.murphy@arm.com,
- Jonathan.Cameron@huawei.com, bp@alien8.de,
- linux-arm-kernel@lists.infradead.org, wangkefeng.wang@huawei.com,
- tanxiaofei@huawei.com, mawupeng1@huawei.com, tony.luck@intel.com,
- linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
- tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org,
- jarkko@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, linux-edac@vger.kernel.org, x86@kernel.org,
- justin.he@arm.com, ardb@kernel.org, ying.huang@linux.alibaba.com,
- ashish.kalra@amd.com, baolin.wang@linux.alibaba.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20250714114212.31660-1-xueshuai@linux.alibaba.com>
- <CAJZ5v0gmuBwCXovP7WvmUss7midrJdPXNDCbhTV0tCWMb_V2ZQ@mail.gmail.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <CAJZ5v0gmuBwCXovP7WvmUss7midrJdPXNDCbhTV0tCWMb_V2ZQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3458; i=kees@kernel.org; h=from:subject:message-id; bh=K7b6cDJtKe9/SFLCuJhtV0axV7uqnrn26I6lrJ+H1Q8=; b=owGbwMvMwCVmps19z/KJym7G02pJDBkVO9/IWDm5yT9ffU8mtbLBu/Oenp+8wX2jjCj1OSune V1MjdrbUcrCIMbFICumyBJk5x7n4vG2Pdx9riLMHFYmkCEMXJwCMBHfdkaG+9/E1h07pTS/0in4 c1PAbb2UiofuT1aJ/793mMeD/+aTIkaGs7q79qzgWb2x5uWzsx4hZp/1O6p/+K17LX9XXM1s8t4 uXgA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
+Add support for Clang's coming "kcfi_salt" attribute, which is designed
+to allow for KCFI prototype hashes to be separated[1]. For example,
+normally two "void func(void)" functions would have the same KCFI hash,
+but if they wanted their indirect calls to be distinguishable by KCFI,
+one could add __kcfi_salt("foo").
 
+To test the result, add a corresponding LKDTM test, CFI_FORWARD_SALT.
 
-在 2025/7/17 03:09, Rafael J. Wysocki 写道:
-> On Mon, Jul 14, 2025 at 1:42 PM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
->>
->> Dear maintainer:
->>
->> I am writing to respectfully request your review and consideration for merging
->> this patch series, which addresses potential hardlockup due to infinite
->> SEA excepction loop ( see bellow for details).
->>
->> As noted by @Catalin,
->>
->>> James Morse is listed as reviewer of the ACPI APEI code but he's busy
->>> with resctrl/MPAM. Adding Lorenzo, Sudeep and Hanjun as arm64 ACPI
->>> maintainers, hopefully they can help.
->>
->> This patch series has undergone extensive review through 19 iterations Received
->> 13 'Reviewed-by' tags from various reviewers. Notably includes review approval
->> from arm64 ACPI maintainer Hanjun Guo.
->>
->> The patches have been thoroughly tested and refined based on community feedback.
->> I believe they are ready for integration into the mainline kernel.
->>
->> I would greatly appreciate your time in reviewing these changes and
->> providing your ack if you find them acceptable for merging.
->>
->> Thank you for your continued support and maintenance of the kernel.
->>
->> changes since last v18:
->> - add reviewed-by tag for patch 1-2 from Hanjun
->>
->> no code changes since last v18:
->> - drop a mm/hwpoison patch which is merged into mainline
->>
->> changes singce v17:
->> - rebase to Linux 6.13-rc7 with no functional changes
->> - add reviewed-by tag for patch 1-3 from Jane Chu
->> - add reviewed-by tag for patch 3 from Yazen
->>
->> changes singce v16:
->> - add reviewed-by tag for patch 1 and patch 2 from Yazen
->> - rewrite warning message for force kill (per Yazen)
->> - warn with dev_err in ghes (per Jarkko)
->> - add return value -ENXIO in memory_failure comments  (per Yazen)
->> - Link: https://lore.kernel.org/lkml/20241104015430.98599-1-xueshuai@linux.alibaba.com/
->>
->> changes singce v15:
->> - add HW_ERR and GHES_PFX prefix per Yazen
->>
->> changes since v14:
->> - add reviewed-by tags from Jarkko and Jonathan
->> - remove local variable and use twcb->pfn
->>
->> changes since v13:
->> - add reviewed-by tag from Jarkko
->> - rename task_work to ghes_task_work (per Jarkko)
->>
->> changes since v12:
->> - tweak error message for force kill (per Jarkko)
->> - fix comments style (per Jarkko)
->> - fix commit log typo (per Jarko)
->>
->> changes since v11:
->> - rebase to Linux 6.11-rc6
->> - fix grammer and typo in commit log (per Borislav)
->> - remove `sync_` perfix of `sync_task_work`  (per Borislav)
->> - comments flags and description of `task_work`  (per Borislav)
->>
->> changes since v10:
->> - rebase to v6.8-rc2
->>
->> changes since v9:
->> - split patch 2 to address exactly one issue in one patch (per Borislav)
->> - rewrite commit log according to template (per Borislav)
->> - pickup reviewed-by tag of patch 1 from James Morse
->> - alloc and free twcb through gen_pool_{alloc, free) (Per James)
->> - rewrite cover letter
->>
->> changes since v8:
->> - remove the bug fix tag of patch 2 (per Jarkko Sakkinen)
->> - remove the declaration of memory_failure_queue_kick (per Naoya Horiguchi)
->> - rewrite the return value comments of memory_failure (per Naoya Horiguchi)
->>
->> changes since v7:
->> - rebase to Linux v6.6-rc2 (no code changed)
->> - rewritten the cover letter to explain the motivation of this patchset
->>
->> changes since v6:
->> - add more explicty error message suggested by Xiaofei
->> - pick up reviewed-by tag from Xiaofei
->> - pick up internal reviewed-by tag from Baolin
->>
->> changes since v5 by addressing comments from Kefeng:
->> - document return value of memory_failure()
->> - drop redundant comments in call site of memory_failure()
->> - make ghes_do_proc void and handle abnormal case within it
->> - pick up reviewed-by tag from Kefeng Wang
->>
->> changes since v4 by addressing comments from Xiaofei:
->> - do a force kill only for abnormal sync errors
->>
->> changes since v3 by addressing comments from Xiaofei:
->> - do a force kill for abnormal memory failure error such as invalid PA,
->> unexpected severity, OOM, etc
->> - pcik up tested-by tag from Ma Wupeng
->>
->> changes since v2 by addressing comments from Naoya:
->> - rename mce_task_work to sync_task_work
->> - drop ACPI_HEST_NOTIFY_MCE case in is_hest_sync_notify()
->> - add steps to reproduce this problem in cover letter
->>
->> changes since v1:
->> - synchronous events by notify type
->> - Link: https://lore.kernel.org/lkml/20221206153354.92394-3-xueshuai@linux.alibaba.com/
->>
->> ## Cover Letter
->>
->> There are two major types of uncorrected recoverable (UCR) errors :
->>
->> - Synchronous error: The error is detected and raised at the point of the
->>    consumption in the execution flow, e.g. when a CPU tries to access
->>    a poisoned cache line. The CPU will take a synchronous error exception
->>    such as Synchronous External Abort (SEA) on Arm64 and Machine Check
->>    Exception (MCE) on X86. OS requires to take action (for example, offline
->>    failure page/kill failure thread) to recover this uncorrectable error.
->>
->> - Asynchronous error: The error is detected out of processor execution
->>    context, e.g. when an error is detected by a background scrubber. Some data
->>    in the memory are corrupted. But the data have not been consumed. OS is
->>    optional to take action to recover this uncorrectable error.
->>
->> Currently, both synchronous and asynchronous error use
->> memory_failure_queue() to schedule memory_failure() exectute in kworker
->> context. As a result, when a user-space process is accessing a poisoned
->> data, a data abort is taken and the memory_failure() is executed in the
->> kworker context:
->>
->>    - will send wrong si_code by SIGBUS signal in early_kill mode, and
->>    - can not kill the user-space in some cases resulting a synchronous
->>      error infinite loop
->>
->> Issue 1: send wrong si_code in early_kill mode
->>
->> Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
->> MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
->> could be used to determine whether a synchronous exception occurs on
->> ARM64 platform.  When a synchronous exception is detected, the kernel is
->> expected to terminate the current process which has accessed poisoned
->> page. This is done by sending a SIGBUS signal with an error code
->> BUS_MCEERR_AR, indicating an action-required machine check error on
->> read.
->>
->> However, when kill_proc() is called to terminate the processes who have
->> the poisoned page mapped, it sends the incorrect SIGBUS error code
->> BUS_MCEERR_AO because the context in which it operates is not the one
->> where the error was triggered.
->>
->> To reproduce this problem:
->>
->>    # STEP1: enable early kill mode
->>    #sysctl -w vm.memory_failure_early_kill=1
->>    vm.memory_failure_early_kill = 1
->>
->>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
->>    #einj_mem_uc single
->>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
->>    injecting ...
->>    triggering ...
->>    signal 7 code 5 addr 0xffffb0d75000
->>    page not present
->>    Test passed
->>
->> The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
->> error and it is not fact.
->>
->> To fix it, queue memory_failure() as a task_work so that it runs in
->> the context of the process that is actually consuming the poisoned data.
->>
->> After this patch set:
->>
->>    # STEP1: enable early kill mode
->>    #sysctl -w vm.memory_failure_early_kill=1
->>    vm.memory_failure_early_kill = 1
->>
->>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
->>    #einj_mem_uc single
->>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
->>    injecting ...
->>    triggering ...
->>    signal 7 code 4 addr 0xffffb0d75000
->>    page not present
->>    Test passed
->>
->> The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
->> error as we expected.
->>
->> Issue 2: a synchronous error infinite loop due to memory_failure() failed
->>
->> If a user-space process, e.g. devmem, a poisoned page which has been set
->> HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
->> current processs with error info. Because the memory_failure() is
->> executed in the kworker contex, it will just do nothing but return
->> EFAULT. So, devmem will access the posioned page and trigger an
->> excepction again, resulting in a synchronous error infinite loop. Such
->> loop may cause platform firmware to exceed some threshold and reboot
->> when Linux could have recovered from this error.
->>
->> To reproduce this problem:
->>
->>    # STEP 1: inject an UCE error, and kernel will set HWPosion flag for related page
->>    #einj_mem_uc single
->>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
->>    injecting ...
->>    triggering ...
->>    signal 7 code 4 addr 0xffffb0d75000
->>    page not present
->>    Test passed
->>
->>    # STEP 2: access the same page and it will trigger a synchronous error infinite loop
->>    devmem 0x4092d55b400
->>
->> To fix it, if memory_failure() failed, perform a force kill to current process.
->>
->> Issue 3: a synchronous error infinite loop due to no memory_failure() queued
->>
->> No memory_failure() work is queued unless all bellow preconditions check passed:
->>
->> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_memory_failure()
->> - `if (flags == -1)` in ghes_handle_memory_failure()
->> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_failure()
->> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghes_do_memory_failure()
->>
->> If the preconditions are not passed, the user-space process will trigger SEA again.
->> This loop can potentially exceed the platform firmware threshold or even
->> trigger a kernel hard lockup, leading to a system reboot.
->>
->> To fix it, if no memory_failure() queued, perform a force kill to current process.
->>
->> And the the memory errors triggered in kernel-mode[5], also relies on this
->> patchset to kill the failure thread.
->>
->> Lv Ying and XiuQi from Huawei also proposed to address similar problem[2][4].
->> Acknowledge to discussion with them.
->>
->> [1] Add ARMv8 RAS virtualization support in QEMU https://patchew.org/QEMU/20200512030609.19593-1-gengdongjiu@huawei.com/
->> [2] https://lore.kernel.org/lkml/20221205115111.131568-3-lvying6@huawei.com/
->> [3] https://lkml.kernel.org/r/20220914064935.7851-1-xueshuai@linux.alibaba.com
->> [4] https://lore.kernel.org/lkml/20221209095407.383211-1-lvying6@huawei.com/
->> [5] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20240528085915.1955987-1-tongtiangen@huawei.com/
->>
->> Shuai Xue (2):
->>    ACPI: APEI: send SIGBUS to current task if synchronous memory error
->>      not recovered
->>    ACPI: APEI: handle synchronous exceptions in task work
->>
->>   drivers/acpi/apei/ghes.c | 88 +++++++++++++++++++++++++---------------
->>   include/acpi/ghes.h      |  3 --
->>   include/linux/mm.h       |  1 -
->>   mm/memory-failure.c      | 13 ------
->>   4 files changed, 55 insertions(+), 50 deletions(-)
->>
->> --
-> 
-> Both patches applied as 6.17 material with some minor edits in the changelogs.
-> 
-> Thanks!
+Link: https://github.com/KSPP/linux/issues/365 [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Bill Wendling <morbo@google.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: <llvm@lists.linux.dev>
+---
+ include/linux/compiler_attributes.h | 11 +++++++++++
+ drivers/misc/lkdtm/cfi.c            | 27 +++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-Hi, Rafael,
+diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+index c16d4199bf92..eb3769b6a580 100644
+--- a/include/linux/compiler_attributes.h
++++ b/include/linux/compiler_attributes.h
+@@ -164,6 +164,17 @@
+  */
+ #define __gnu_inline                    __attribute__((__gnu_inline__))
+ 
++/*
++ * Optional: not supported by gcc
++ *
++ * clang: https://clang.llvm.org/docs/AttributeReference.html#kcfi-salt
++ */
++#if __has_attribute(__kcfi_salt__)
++# define __kcfi_salt(STR)		__attribute__((__kcfi_salt__(STR)))
++#else
++# define __kcfi_salt(STR)
++#endif
++
+ /*
+  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-malloc-function-attribute
+  * clang: https://clang.llvm.org/docs/AttributeReference.html#malloc
+diff --git a/drivers/misc/lkdtm/cfi.c b/drivers/misc/lkdtm/cfi.c
+index 6a33889d0902..11de35d6b4e5 100644
+--- a/drivers/misc/lkdtm/cfi.c
++++ b/drivers/misc/lkdtm/cfi.c
+@@ -21,6 +21,13 @@ static noinline int lkdtm_increment_int(int *counter)
+ 	return *counter;
+ }
+ 
++/* Function matching prototype of lkdtm_increment_int but separate salt. */
++static noinline __kcfi_salt("separate prototype hash")
++void lkdtm_increment_void_again(int *counter)
++{
++	(*counter)++;
++}
++
+ /* Don't allow the compiler to inline the calls. */
+ static noinline void lkdtm_indirect_call(void (*func)(int *))
+ {
+@@ -46,6 +53,25 @@ static void lkdtm_CFI_FORWARD_PROTO(void)
+ 	pr_expected_config(CONFIG_CFI_CLANG);
+ }
+ 
++/*
++ * This tries to call an indirect function with a mismatched hash salt.
++ */
++static void lkdtm_CFI_FORWARD_SALT(void)
++{
++	/*
++	 * Matches lkdtm_increment_void()'s and lkdtm_increment_void_again()'s
++	 * prototypes, but they have different hash salts.
++	 */
++	pr_info("Calling matched prototype ...\n");
++	lkdtm_indirect_call(lkdtm_increment_void);
++
++	pr_info("Calling mismatched hash salt ...\n");
++	lkdtm_indirect_call(lkdtm_increment_void_again);
++
++	pr_err("FAIL: survived mismatched salt function call!\n");
++	pr_expected_config(CONFIG_CFI_CLANG);
++}
++
+ /*
+  * This can stay local to LKDTM, as there should not be a production reason
+  * to disable PAC && SCS.
+@@ -193,6 +219,7 @@ static void lkdtm_CFI_BACKWARD(void)
+ 
+ static struct crashtype crashtypes[] = {
+ 	CRASHTYPE(CFI_FORWARD_PROTO),
++	CRASHTYPE(CFI_FORWARD_SALT),
+ 	CRASHTYPE(CFI_BACKWARD),
+ };
+ 
+-- 
+2.34.1
 
-After nearly three years and 19 revisions, this patch series has finally
-been merged. I am deeply grateful to all 13 reviewers for their
-professional feedback and valuable suggestions throughout the process.
-
-Rafael, thank you as well for your approval. I'm also pleased to see new
-reviewers joining the APEI area.
-
-Best regards,
-Shuai
 
