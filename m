@@ -1,96 +1,146 @@
-Return-Path: <linux-kernel+bounces-735134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B086AB08B3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:54:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E230EB08B3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08F54A413C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:53:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9856F58827A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406032DD5EB;
-	Thu, 17 Jul 2025 10:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73633288C12;
+	Thu, 17 Jul 2025 10:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFv82nLd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlapYzOI"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985582DCF73;
-	Thu, 17 Jul 2025 10:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770C4299955
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752749192; cv=none; b=jhoMb6xpvRDiFYs+3+ci7UZYLofpxwYTYNel0Y14baqGh++xfno6TPq9ljYw1TpOSMPsNs2TVsY9HFPMjaazMoUZXbLfFr+BBn+bLEE2rvNTdAiC+Act1FVGYhKwPSY2w8LRxFcbJExTWoQbXfej5bjpubj1g70bJmiRQGoZDn8=
+	t=1752749305; cv=none; b=FNF/rG4Vh+n5LFBaFjbhiA8I4uWsKoQmjCe7uB8+KJCh3Gg3LJRZfaODcpMH2DOvCZijthgymAyR3QXbEG/fTkG0uB+FhS0tIxYlVYvMYc4/RbhDd8gUgAzDxa5uUewHLw5RbiKdJXPmZJ4RP2R1g1rNNfRwDuBKoZkWaYtgaXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752749192; c=relaxed/simple;
-	bh=0qgMdt/0EtzMZfFqcKJGGFv4x+9cNMvWf5W808j3enc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WXJqYi3UG6sqNGHw0EoO2LWPiYu2BCSsKzVODSJK0CSBpg/j2V4JQaeeE3OMlKjhuBStuqqgMoBkBoKBahxyi23H6/EK9NmmLU8H7E+RAaDhkAir8M1CpHOdi9cx74jReLbAzZ/xskENtnEEI0oE1PibebuvNvZ9D2lHVII5Mtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFv82nLd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A968C4CEED;
-	Thu, 17 Jul 2025 10:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752749192;
-	bh=0qgMdt/0EtzMZfFqcKJGGFv4x+9cNMvWf5W808j3enc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SFv82nLdSEfLmuwrqHSkDWdQe2axVz877mdrMR1KigU7QY3lIVBPN/5mdqIfHaLqH
-	 3ilBMk4VRGEBqjTfOBp8t1ywLpC0msDeH3AKVKhbDPx2vlg5Kw+tZY0JiO/N4EVTj4
-	 7VkQ2OQfb0BacFJmehrD46qDqYjXrdc8kIt70BF7XO0vp04YayoHNIM1N5tbO85zUo
-	 y93bOsm4zMvEuj5eN+CRpLwWFrWFettiK02Sk9hL7Hi9vg1t6KmEiUXWbeR+ZC8kwr
-	 ldbdgu+0lIAAqNcR/to+L3qAL1UX9KtgphquVjQYwic/JHtbUX8KjCPaeWqCKohDi+
-	 kBjzM6YrGNx8g==
-From: Will Deacon <will@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Robert Moore <robert.moore@intel.com>,
-	Breno Leitao <leitao@debian.org>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-acpi@vger.kernel.org,
+	s=arc-20240116; t=1752749305; c=relaxed/simple;
+	bh=PPPNenxX4zSMrSeaiRSD+nf5weghwUgRDun06mgDAtE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MEzkphKdDNKfKnNiTztIenvdDy2J2u6EYsKeAfvc7X7MDWyGLoQi2Z/Y/dInGU5/rU/u7zfQOHyLKj1T6WeH7XRYobEafNHeDpheO20qd8EL3oKfLPnrImdspgV0puYLaid+VPmFLx4un38MQryt9yCCv+U9Lgp7CogSNrxqj3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlapYzOI; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23636167afeso6886315ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752749304; x=1753354104; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AUE32TVCgc5BYcjuwrG1irrIPdzwr0WmEW1sHJImq9I=;
+        b=VlapYzOIBlXPHXPPsjdMG5VuOq6uny5BX0c7BqOKWH8pbJDPp7EAl+QaoCb+ZoOfyz
+         IqAPfPVbHYDDYecc+PgUBf85fKpdfguF5aloEDRuER3c0fpHXxQEF1IP7JtrEhqRjfy2
+         /X61fXGUVJIo7z0Jq3f1Wb11VRYnmZZN4kSBinCstTGCe8ek6jP41vjMvIkXZLEgFxgA
+         liX2u7J3yo0WjiS4KHgrkL/Wl8E4JyEMzIOBQ9Pp4LqU12Ah4BEmegoa/xrsV1pnOpqI
+         XMDiCQyl9ceka5CoALUooX8Jrkidag23wia9Apvu3rp/PU2ENASuin3YklxCOSRwaj7U
+         LWFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752749304; x=1753354104;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AUE32TVCgc5BYcjuwrG1irrIPdzwr0WmEW1sHJImq9I=;
+        b=Zdl3WXS4k60fnNRxqHI4D3VE/+pHqaeEXKOF8PeaHAW8v8TjdxFcHI01rYrOC9ipzW
+         OtDaVNy4QVscK2ljxczANzv/nczSldeJCpEDHme9pM7TmDkavu2I2td8JxrbUUbc3ZXW
+         fLj5UAEz196+yEnVqeseNQOqrSnt2Js7VbOritv0eq+N9mzTMzYNfVx9e4TPIS5/FMMq
+         N43z1k/6KQU7tGJsklVIZ1pvUp0qQKZPQX/R/dwURJgiKtD4uEevbooPfhbQZY5OQatA
+         lOLOXKiClZaDBNzKpegBDxxT8JDwr2awnoOmwkL84RAm/CVZv1DKmss5wquYRpYhI6ah
+         H61A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGwhc0jI2cZdSbC2ioHfe0kg88pFsr8crZRmSu7R9DrmnhoCEURYs0RHtaeABPWJ+JrnXYoQLGOJb6VbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXW8/7kYKuP9w+davN0e6KfohSVJ5jRTfqIeRnZJjg6XxV5PVt
+	SElyNrM2Bga2c4X1rk/AkwF/cD4IVZ7xxK4fnxRV8ZwOPaKUAW8RhOtb
+X-Gm-Gg: ASbGncuDrJX0DIxTYjSv9VCeWNpy5cBAvCi2J44Eq7Y27c/3E6WaFkNEsU9Wq7ZmrRa
+	lmZN0Lqvq9JmSqUKkg5KXcERlzDUMl2geTgQsAvq0S7EXNYMo2weB1OyhIv1XIH81qZ6zdO76/7
+	YszQfs33wpUL0QQrtQD+DN6mpYOx//BRKXRTEK07ZkVCKcSFZH+YYiUZdFTw7JMR1sxFrVuT23V
+	OUUkxSNeGqXy+kSUOEHFSHOHlT1DiJt+vTRQnvmGnUk4BPDzWr4Dl6s/TBtE+/tCm7aUctaMXJr
+	mrsNl/lJuTGOGCrFSycBPU5PhCNC65TysVY8Oj9tXMLa467Ce/+iNLgLSJ0uC3aX3XvlpXbx1CZ
+	cty4aDurIcCIeOog78lVWzz3PKw8dbx5P3iNtMpHiPjqALWYkY3quc/o=
+X-Google-Smtp-Source: AGHT+IFXkzu6bujwc4QN/UjjPM8p8IRosZxnbRCNkugOMi80VBKl6GeB/WVnNve6YlNR8wyj/rJaYw==
+X-Received: by 2002:a17:903:1b66:b0:23d:dcf5:4806 with SMTP id d9443c01a7336-23e257660b1mr94520325ad.39.1752749303384;
+        Thu, 17 Jul 2025 03:48:23 -0700 (PDT)
+Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4323cd5sm140066605ad.126.2025.07.17.03.48.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 03:48:22 -0700 (PDT)
+From: wang lian <lianux.mm@gmail.com>
+To: akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com,
+	brauner@kernel.org,
+	broonie@kernel.org,
+	david@redhat.com,
+	gkwang@linx-info.com,
+	jannh@google.com,
+	lianux.mm@gmail.com,
 	linux-kernel@vger.kernel.org,
-	acpica-devel@lists.linux.dev,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2] arm64: Mark kernel as tainted on SAE and SError panic
-Date: Thu, 17 Jul 2025 11:46:18 +0100
-Message-Id: <175274683701.735514.4319542940682343455.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250716-vmcore_hw_error-v2-1-f187f7d62aba@debian.org>
-References: <20250716-vmcore_hw_error-v2-1-f187f7d62aba@debian.org>
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	ludovico.zy.wu@gmail.com,
+	p1ucky0923@gmail.com,
+	ryncsn@gmail.com,
+	shuah@kernel.org,
+	sj@kernel.org,
+	vbabka@suse.cz,
+	zijing.zhang@proton.me,
+	ziy@nvidia.com
+Subject: Re: [PATCH] selftests/mm: reuse FORCE_READ to replace "asm volatile("" : "+r" (XXX));"
+Date: Thu, 17 Jul 2025 18:48:11 +0800
+Message-ID: <20250717104811.3773-1-lianux.mm@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
+References: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 16 Jul 2025 02:42:01 -0700, Breno Leitao wrote:
-> Set TAINT_MACHINE_CHECK when SError or Synchronous External Abort (SEA)
-> interrupts trigger a panic to flag potential hardware faults. This
-> tainting mechanism aids in debugging and enables correlation of
-> hardware-related crashes in large-scale deployments.
-> 
-> This change aligns with similar patches[1] that mark machine check
-> events when the system crashes due to hardware errors.
-> 
-> [...]
+> On Wed, 16 Jul 2025 20:31:26 +0800 wang lian <lianux.mm@gmail.com> wrote:
 
-Applied to arm64 (for-next/misc), thanks!
+> > Several mm selftests use the `asm volatile("" : "+r" (variable));`
+> > construct to force a read of a variable, preventing the compiler from
+> > optimizing away the memory access. This idiom is cryptic and duplicated
+> > across multiple test files.
+> >
+> > Following a suggestion from David[1], this patch refactors this
+> > common pattern into a FORCE_READ() macro
+> > 
+> >  tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
+> >  tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
+> >  tools/testing/selftests/mm/migration.c        | 13 ++++----
+> >  tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
+> >  .../selftests/mm/split_huge_page_test.c       |  4 +--
+> >  5 files changed, 24 insertions(+), 32 deletions(-)
 
-[1/1] arm64: Mark kernel as tainted on SAE and SError panic
-      https://git.kernel.org/arm64/c/d7ce7e3a8464
+> The patch forgot to move the FORCE_READ definition into a header?
 
-Cheers,
--- 
-Will
+Hi Andrew,
+You are absolutely right. My apologies for the inconvenience.
+This patch was sent standalone based on a suggestion from David during 
+the discussion of a previous, larger patch series. In that original series, 
+I had already moved the FORCE_READ() macro definition into vm_util.h.
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+You can find the original patch series and discussion at this link:
+https://lore.kernel.org/lkml/20250714130009.14581-1-lianux.mm@gmail.com/
+It should also be in your mailing list archive.
+
+To make this easier to review and apply, I can send a new, small patch series 
+that first introduces the FORCE_READ() macro in vm_util.h and then applies this refactoring. 
+Please let me know if you'd prefer that.
+Sorry again for the confusion.
+
+
+Best regards,
+wang lian
 
