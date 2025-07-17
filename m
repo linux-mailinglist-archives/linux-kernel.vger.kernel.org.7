@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-735458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AB1B08F94
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:36:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF59B08F9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16FE116526C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AF21884E2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D792ED87A;
-	Thu, 17 Jul 2025 14:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790BA2F7CEA;
+	Thu, 17 Jul 2025 14:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RDacqTM1"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejwqsEJe"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3062F5C5E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 14:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC4F1F130B;
+	Thu, 17 Jul 2025 14:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752762972; cv=none; b=oKGyZxBKo4hatOarM1SwGQeomB7i0kMtpoN33+tCZhWvg4vxsuc19mqe9SA3ZwKM3YCxxcZ4R1ARCFAkYgV8rfeyjlMMZnPLL8Vc/rlXiL8kKZUkxDRFixJb+aCKEYiMD60EHZVmLsApaB+Vr3NvBBhh3RKWjNbRqH8L/VXhqV8=
+	t=1752763019; cv=none; b=gtEato7UZR7ZR5jmm0PWCCxfS4zpf6TbHRDilkGZxLrzv17horv6EjkBuDGehK4EOVWygRqFgWImpFLlc1og7Poh/Egu3KHhKgYdu1l1octAsWXKETCaZbQXWyiuDVoMUqIL9L7ZcGa1zHk9a1oOqdvu0hWefvYY9BojO1Ipmt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752762972; c=relaxed/simple;
-	bh=ny1BxpwJ+gAFLsYDwALEIo5Wv2OZBJ0SHB8Cu6cHY60=;
+	s=arc-20240116; t=1752763019; c=relaxed/simple;
+	bh=c74Ddmny7d/Q8zvuy5tPE+SiwFDSCPErUhju3WXd6sw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZGuJgKZ6Zqy8Z6JOLtwhyUkYXtfy+iiwIJsUu2uuXKhnJ6u5PGLSPHKHM0c8CsY61vJVx4B2PXGO0DtkPapSDmRMZoZcaCD9wzrm+cbdFsCLXBkbiRFXg28tsB1PJOjDaGLWtug/WTw5SVLtcavetzv3hlS5NDUve0r0K/VrM8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RDacqTM1; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5561d41fc96so1219956e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:36:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=Tg/z8xHAljR/TGZrO4FGyytsZIy5xx9gjk+5G2LbKscC6c+yeHQpLeeZw8k84Vm/2j3XH1+87hsoCsQ7PbivpJU2kbA7dsMcbSVtGshZQtLdwBAioZlj9QaIXplXFGe1zWZesgeazihe5xaNcmeJMQAlsJhNeu445eZyLD0qXHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ejwqsEJe; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-88131f0badcso1174641241.2;
+        Thu, 17 Jul 2025 07:36:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752762969; x=1753367769; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752763016; x=1753367816; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ny1BxpwJ+gAFLsYDwALEIo5Wv2OZBJ0SHB8Cu6cHY60=;
-        b=RDacqTM156otUAtjNJ6NoWDczXDxYnMU+CJ/w7Q+kpxdQLhHey+klzTxyabRC+WUEz
-         h7t2UhBJhjtIsBeLzTCw08DOXTmm01nyULxJFmBrl84oRLx7ZGh44NmlxiUsYhv6Orn9
-         Otgwkmm5J0Y3rTNgBpEXkjMlxrwjH6TV5W1hTahmZfs6U8kESbxTMbWvnlmBaY9d8pPz
-         vS6TC5KS7qd6+fjxThpW5Uvs7J3ngNKrnCW7ubeck/uySKE6H0mXKOrHbCjW49HOYFXG
-         V+ilQFXKoRBpvj5r2jmE7kuZs2tGJNygSaTc02Zt4aZS0qKtEjWeaNjH95L7o4ZpFVe7
-         mj6Q==
+        bh=c74Ddmny7d/Q8zvuy5tPE+SiwFDSCPErUhju3WXd6sw=;
+        b=ejwqsEJepUlLEds02509lx/fnmzWLijBqGknOT/N03z9Beto+Q4VC+4P7nGUeG3gPB
+         pUZ6vw0n0RYzfQuPwGhQBAljv3I887qgOC+UxV+aD38k+6sU+Ry0fwg+B88qCIs+CYFl
+         d9rYJN/Mo3zH0hgKf1zKfJq+E2rey9AY/8KVKlqPpcThOBwP2/tc0MDYrGvPE8TBrSs1
+         9jcfvbUfCG2AO/1uE4jFjv52eJBNpLLLgsPBjsGv+KKH7UvI+faNEUcYQHNoW/kKWYSf
+         2Wv56495ZSa5El4zl5V+HoMGsaPf+ZYr/dNHGzqoJMkh4tAQwAEMyeXJhQNvAEsWCTGa
+         jhSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752762969; x=1753367769;
+        d=1e100.net; s=20230601; t=1752763016; x=1753367816;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ny1BxpwJ+gAFLsYDwALEIo5Wv2OZBJ0SHB8Cu6cHY60=;
-        b=FlUk83jEcCDsjMHjg2OISwKCbL1MVl/pvnnIJf4moqhtLJjMTKnBVnEEGmQLPRgQAx
-         lkYTKi3bLu4e5RbvPHmmyzAN2B6TV5oq/TTtFE+o8t/hlS6yASd3G7+o0OHId4/0NCDD
-         +0BQwBTttZLtLqmbpFZSEDBiHPoigYC1JLyTfnvcmSSWnqGS9iNHGja6asxtl3/ZxAT5
-         Vd0Yl0M+aRHEytFRPKfu9BFKShq81h0JOCz2GtxRKUSi3P1+PewQcxLfluRxJsgYoZhu
-         zz/I9+SK+3lnjbu47zve0Sh2L/SS9TARoUyTnB4+4RAQrYR/wOZfJlFStVzCyhpMgkl4
-         m6Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcfd9lFN1/WfF19JUsfsVnKDlzzdKYSqQCtL3/nXBoGWnMj2dRx1+Q1Shxm0HmMzaPWOQ0M8Uat6Tfa68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGQwFZ8yeWoY4nnKLW92PyfEuGjtxfscgp8q7xJLX0JYuCEIZm
-	qDWXuQAsWqPnGk77y/gACnzjzgLezyWaJ9Cb2VI1TGQafFwA0uhWlFpE8I52B9DaqcA57ge/+IT
-	L30hIlUozbHR38DIMYxvfaEZPfiCo97kv1lwZOFkACQ==
-X-Gm-Gg: ASbGnctR8DJ9o+hBbAks0eWJbhIr8vnCTru+q7QW52AyWCM0AE3P8zhlr/LJX9hvAhI
-	+9eVMEu9OpUbiDgupAXZG2Llju7D8MzSRF9qooQn7zu98M3Jbcphleh/1EZF7uvgNyTn+5u5WST
-	ZlzwZ82B8K3b90GAonY0sZDuwheolBKZlvC+uoQKZaZUqw/3mX7w07nW8CdM5LHfai5DP2y86m8
-	jcSaDFIq7ULLWb9w9rZczDZ4NiqT3372D50DX4=
-X-Google-Smtp-Source: AGHT+IGjl+IjWtSow0sNLT+eDGz2anPMKy3xAT4nehVSKgzWbZzJ9LXLTECN4HkXrMGqD1WGIZl2+8KPUCZyseARbVg=
-X-Received: by 2002:a05:6512:b98:b0:553:a60d:68a3 with SMTP id
- 2adb3069b0e04-55a23f0b81bmr1812465e87.2.1752762968763; Thu, 17 Jul 2025
- 07:36:08 -0700 (PDT)
+        bh=c74Ddmny7d/Q8zvuy5tPE+SiwFDSCPErUhju3WXd6sw=;
+        b=ANbSm+1TkLhWL2KZhdw2FV2wxgHXVqs+CINBBoq2qQyKfXw4fo8seDTc7JL1PnVER3
+         m27iN+i2Ts4j2YBSl/XR0+ufJGDR/Mry4oMhR5lT+AK/cUtWP9wclldcsuHcdWb4O+aW
+         oWz+ttVDeFSouuyywLUbwAJ8656ia2tgzvCX1zzUOIGvmnoLs6wMCFRs79EcwUrG6I2W
+         D4LWSO6UCWZgXzZ+lctKe+izovW/iiZjGgxiNo9caTQoeQzhPlSykRcExUXYr50cECP8
+         r/o+275P7WHI0bf6awLKShTugptu0JwvPpg2X9JDZ1GQwpj1dQVJXKzHujx1C9m9oguR
+         +HRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHi6K8FMEJHqnN0XSwtfo1ucF6r8ymMOVA1AtiE8tB5jkBjYDlQBNO/T5f6/cf473U/OxyvrykTHWnk2/wvpLDyRM=@vger.kernel.org, AJvYcCXcb6/7Ru0NSYmbBt+37fL0UMiIG+ceVco+kBDPE1LSTOCAPNh6AGMCn5/Pt0giVB4bHMfSeNaA30MZu15U@vger.kernel.org, AJvYcCXgeQLtDybfoThfFWilQ9bEUE/NgFv1tYaB9J+Z0/uWBdwrZRWBahsoBqtdx/srNnz6VGQEZA7K8Q70@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbbApzX5+WOlDO14Mi1yTt2KVWUqogJdD+vg21/29ZUt2pYF/E
+	yF/mwl568QihZoULxie/S4EmaaeAjL8L/TWbcU1kuFEZkxJYLLjpIDkfLazq+oxtBFo0tlSG+gY
+	3uJ+hkksrX/+5BzQjJp/lISIwXrSuOUQs5g==
+X-Gm-Gg: ASbGncs/suVOHm849G47mwwCtMMRUh8rKoiXvBMU2XpfoHSdI4I/3rkUegD+x0rTSAA
+	XrkyOyVlFJjBao7NikkpqwtxWV+AlXLke1E/OtMi+RhKJeYc6NFtgRFef+ZxwFbSbe9KCYbpXrt
+	MGUxJ7eLG3ksu1FOq7i7T+H5ccBUlAhsOtYLjbvN47v49jeDi2fp9XbfaqaAccUKGiGlaDL1UAK
+	HVj94w=
+X-Google-Smtp-Source: AGHT+IE+7QebVg1PJtUQ7/XpmUZhm93OR2xRVQqcKd7qe0C2zFAgyOsdS17jNEBh29q2EIdokNw6rguoyrsgyl09dQA=
+X-Received: by 2002:a05:6102:5488:b0:4e9:c7c8:5e24 with SMTP id
+ ada2fe7eead31-4f95f5a8c9dmr3267535137.25.1752763015982; Thu, 17 Jul 2025
+ 07:36:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717-fix-rpmhpd-abi-v1-0-4c82e25e3280@oss.qualcomm.com> <20250717-fix-rpmhpd-abi-v1-1-4c82e25e3280@oss.qualcomm.com>
-In-Reply-To: <20250717-fix-rpmhpd-abi-v1-1-4c82e25e3280@oss.qualcomm.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 17 Jul 2025 16:35:57 +0200
-X-Gm-Features: Ac12FXw22vD-hbFh-u0btfg0jHk5nii8D4KA4wahfweHWkbcoH7xxCz4FWUk7vY
-Message-ID: <CAMRc=Mff5Yczwq=LTPNYkFAxh6D-Zt6Za9y3eLkVXfhoKdxkKg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] arm64: dts: qcom: sa8775p: fix RPMh power domain indices
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Ling Xu <quic_lxu5@quicinc.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
+ <20240617-starqltechn_integration_upstream-v5-3-ea1109029ba5@gmail.com>
+ <7bec6fc2-6643-4ddf-9475-8ead4b312912@gmail.com> <CABTCjFBTY4NV2yKyRO31MacGFAnJ4T-viDLrXkPs9z66VU6nyQ@mail.gmail.com>
+ <3e640051-35e5-4eb8-aa00-cb57abcbb919@gmail.com>
+In-Reply-To: <3e640051-35e5-4eb8-aa00-cb57abcbb919@gmail.com>
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Thu, 17 Jul 2025 17:36:45 +0300
+X-Gm-Features: Ac12FXwMrvVkakhGq3qs6mfiMZAI1z6JsdyemGhwqGHXQaO4OUXLMjB5dLYy7MQ
+Message-ID: <CABTCjFDQoQcrkYwBhaH0bzdxHd6OsGh1J+iFqme5R3HfLdeq3g@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] regulator: add s2dos05 regulator support
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 2:51=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
+=D1=87=D1=82, 17 =D0=B8=D1=8E=D0=BB. 2025=E2=80=AF=D0=B3. =D0=B2 14:33, Iva=
+ylo Ivanov <ivo.ivanov.ivanov1@gmail.com>:
 >
-> On SA8775P power domains device doesn't use unufied (RPMHPD_foo) ABI,
-> but it uses SoC-specific indices (SA8775P_foo). Consequently, all DSP on
-> that platform are referencing random PDs instead of the expected ones.
+> On 7/17/25 11:12, Dzmitry Sankouski wrote:
+> > =D1=87=D1=82, 17 =D0=B8=D1=8E=D0=BB. 2025=E2=80=AF=D0=B3. =D0=B2 10:28,=
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>:
+> >> On 9/26/24 12:47, Dzmitry Sankouski wrote:
+> >>> S2DOS05 has 1 buck and 4 LDO regulators, used for powering
+> >>> panel/touchscreen.
+> >>>
+> >>> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> >> When is this going to get merged? This patch brings the regulators
+> >> functionality of the pmic, so not having it merged is odd. This PMIC i=
+s
+> >> used on other devices too, like the Galaxy S22.
+> >>
+> >> It seems like this has been hanging for almost an year at this point.
+> >> If the author won't, will somebody resend it?
+> >
+> > It's already merged, see
+> > https://lore.kernel.org/all/20240617-starqltechn_integration_upstream-v=
+5-2-ea1109029ba5@gmail.com/
 >
-> Correct indices used for that platform.
+> I don't see patch 3/3 being merged anywhere, nor is it in my linux-next c=
+lone
+> from today. Do you _not_ need it anymore?
 >
-> Fixes: df54dcb34ff2 ("arm64: dts: qcom: sa8775p: add ADSP, CDSP and GPDSP=
- nodes")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Indeed, that commit is not present, that's strange. I'll reset that patch l=
+ater.
+
+--=20
+
+Best regards,
+Dzmitry
 
