@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-735680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED51B09284
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:01:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27243B09288
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1EA5A204B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:00:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 725D7A62E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DBC2FD89C;
-	Thu, 17 Jul 2025 16:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2ED22FE324;
+	Thu, 17 Jul 2025 17:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpyk+pPf"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUOpay/h"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169A82FCFFE;
-	Thu, 17 Jul 2025 16:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC05028B408;
+	Thu, 17 Jul 2025 17:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752771566; cv=none; b=UvaMYxXzckGy8K1OVEwDSqbQQBxbMO0uXsrNn6x9iO1inEiKtnWwh2M/P9P4EcKdYh27LP0AX3n1cox4SWU6LcwCu8eI9qQzG5FYtZU62X4L7d/OxYLeegPNXd3+Lv57I1Lmf2W/AxMvPB2XviWPsTd1nG096wQmy/oHa8cls8A=
+	t=1752771604; cv=none; b=nyKhX91j73cUaFKMJQ5dfdwqNrxnKCCaTc4dZt2Oi+Ps3dZNsV98pxmcMhwxfz3BdKWSCB7AVT3DTO1wkmd8SvW8BimWyxFVUrK1VrjyC0Jne6c294Qu2FpVtsTFVDkVvGDHBy77nUF629bwoS7kWQsTDyAE44PqOFknJIIiNm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752771566; c=relaxed/simple;
-	bh=If1xPwlarJra+6OM7a2NpAh+OP713cfx9A4bU8aU6Cc=;
+	s=arc-20240116; t=1752771604; c=relaxed/simple;
+	bh=ewb+FIZz4kwCsl1j25xta8JzmAG2AEj7KxN2meRe0Kk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WQucWfdNbsaejXxV7TlQTWZxbQoGWk9QaHkT70Yi6bQjAnABTArZPDW99HylMBlVpNL7Il9dILzbJqwnkU8qpnR4ZBSlfTPrkjlxcANHKP+HZJ/p4POcLZKl0jkix4F+3sITW/PdkMuM9q+xCv4kms49ZZiKS09ficExKn+9mPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpyk+pPf; arc=none smtp.client-ip=209.85.219.180
+	 To:Cc:Content-Type; b=V2P+96JOsx3lhno2LyHoSF6Z+pnbdkz6z4e2YUwlxmWJMG4kDUB3j1H8JvKOjas0VvJAPnenU7hBWn8i6Tvlf8mAroMjlm+qoTFhSX6VSKAG7SbNk3MmNLsPjMv6g96ygZ/xf8fB2Rcul875xQE2q3QByqk3VAZDFF2Xtd8xjLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MUOpay/h; arc=none smtp.client-ip=209.85.160.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8bcfaaaacaso1156710276.1;
-        Thu, 17 Jul 2025 09:59:24 -0700 (PDT)
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2eb6c422828so1655448fac.1;
+        Thu, 17 Jul 2025 10:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752771564; x=1753376364; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752771602; x=1753376402; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u/zwFbYAKcArN372lmLzuTd5flHgKC3aB7a6CtpyhgY=;
-        b=fpyk+pPfAipGwudUEnXdj8XgXF0+d67VNhqdQzl8uHuc4IhGLPP1aOfkTRKo8m5I/M
-         IgzajZ+DrESmZINkV6iBsBVxjpxT3uybjHK2TO6ksQ7lSvBrZtCRtlUlE9fHn+pvfpt6
-         cU+gw4Gh113c9J9g7fASPLpQrnJR1u0EbH5H1XQhOqEQmYJ5R3tH281Y8s+oZQ9oG2I5
-         GhbcIvcpogpp/CjhRLjBclvPmgdBQw0tuN4vwYJ0djeSbqeI3/sn89PGYY6cKbNbQgWE
-         AnypU2aPJEZugnw550r4Q4Kf1YB+1bstc+BX7wjZcOVnsuzvtos+QF58IW7i+EKWBHKr
-         OyRQ==
+        bh=ewb+FIZz4kwCsl1j25xta8JzmAG2AEj7KxN2meRe0Kk=;
+        b=MUOpay/hLI8tNkyyjRdBC7YU0QuPaWaQ/ZxHwjUXYFsGWOxVJh9s3znPyigmiFkOCI
+         NhUgyQIjoOlP2QD7jMUTfnhdFo3QE0GbbqhXHbhPamX0D8NZeNy+bxQF9LS0tBVv4y98
+         V+tJ7cE6Nbg7lLUajR2YUe07Z32fqXHmBGNsFjMOH/f34yd3xMrSJnkBoAehrkvjALp8
+         Va4wH9PBfGrqWhufUlpydZ4b4GhDppFnOPJowd3onVxwKS1cCoPY0tHDvEZI+XR75WfI
+         dhBHmYZxVY8OsPa0BIqV/7bINgknyVLG3yOTggD7m8Ep96zV2YjI46DObOaFL3n1BywI
+         XJJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752771564; x=1753376364;
+        d=1e100.net; s=20230601; t=1752771602; x=1753376402;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=u/zwFbYAKcArN372lmLzuTd5flHgKC3aB7a6CtpyhgY=;
-        b=By6CSk2DF3IVWdrkkA96714V58dGU2h/gS6CoOI5H/cPCcIB3bmgH/7edtJY47FQf8
-         Cx+SNBc53IY5dgMEgrjbXwTxgpdIeLNI7wmUH48hI+NrTPFvf9y7xU0xVNLYyKbpODGM
-         QFEi2BWuZoQ97TEgtZ3Fi1V32sqlvCQLoTu9P0hhd37kLNj2NDSAeZ/rlhtJeFwsv+8n
-         /92+/BebR3A+A7qZkctXS6SkrRnaB084DzULcCLL7dIBsLdxegEAfG1W3a21B7K7A6Mz
-         Owd9O/gTyTYNgIP9DpAkJnxOetLqSWB8egTgBFA2VkXcoc0nBp2HGXV5DiPnpfwXP5lY
-         vasw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxdxW18Wz9rACsGn+POhhY8+Es6TQD16KbWShMkDswvM+r/vMKb63xwlr0wicx6E2OTalg3ZNaiM2YjL9m@vger.kernel.org, AJvYcCXozHLdOlA/eKLT0qCvhBvdvnCbt4WQwTjKc/11WtE9jqJqfOwPAdr+FqWDrG4wifna5ymKEq9evySk@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywadt24A2F+1LO1HhnO8pUVN2c5P1JaGCvK7qF/tD+V0vancWui
-	rIS6/xuAKadc1ibayd8jCdW3KRw6ZwkgwrqJVlccxgiJUIxp+2fJ0K/JmzQ8fm+HYDukqSvIElh
-	uNEfIbtVBYRUxR7Ws5sPZHRKD/+ry16M=
-X-Gm-Gg: ASbGncse8c178NTCobnj+ozVMo1xc7K2eAvr2J43UfUZTq38i2kiF6oL1C+fUbuBszL
-	QF5OBDzhTu5fsRxSJQh03BIbp95VaWH4gl+6Y3W4kqC4AlCcNItKNxJpj9h8+LjV9UINY6UJrWP
-	ulU5Ou034nK7lT4DmkeMAlOmco4ZBNdSQHXhNKfNTaJMgYcl5ADSHHyvHKqDcj8j1hGKHF0MC0U
-	p7kprtZuvfv1EsRNIiVeMlQQ0tdtOHUNiokumuyArE2zIReQyk=
-X-Google-Smtp-Source: AGHT+IGOLRT7dSbLqr1m4qPtVmh++Ue6u0sY/ivKvKuVaXedWB1iHHAt5QU0mf6SGdBtoWyjpsCDhwubHItgX3V3b5A=
-X-Received: by 2002:a05:6902:1147:b0:e8d:718f:cffa with SMTP id
- 3f1490d57ef6-e8d718fd4d2mr2645469276.6.1752771563936; Thu, 17 Jul 2025
- 09:59:23 -0700 (PDT)
+        bh=ewb+FIZz4kwCsl1j25xta8JzmAG2AEj7KxN2meRe0Kk=;
+        b=jhcGJFFfDAdxXBEvGtja3zgJlL9Ro2xofn04JUTUjV3QomdXhnJnYufGKnBNuV8II1
+         xqXh/tXDMVke7Qmwe55pku4pWi4EjHbxLeUlpl++YtWSFry26wtHtrYUl4uewqgLvmUG
+         yPidrilavSVBM6+yGwIzQOQbu3SAUbafTo6RGzkO8foRykSNEWAqlqGNu8IcK7drJvPP
+         prDlXdAbfRwzaUqc3vFPp4GN4GjOLZe8mtfg9sXqIXAdQDdmTGFBLIwZythr8WGcnOfx
+         OiKdJA871vP+XxS1QHJIgbo7W2rIib+7nfPzmsXhzIvjAqVFN6pvZG6GkyKjNV8DZxaA
+         1Wiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGOD9o0bb63UF/UzpDwI1kPbdeeS2isNG+MBwQWDiIbYMwmi7JVURX/6LGSmmh5qFJ0iU=@vger.kernel.org, AJvYcCUkB/MVSeQbgxHu0kgoFTUfMqZKkY0r2mD7Kh2myto5QR0kq+/yoYxskttjuMCHJDTGkF+U0c7RiS25+No8@vger.kernel.org
+X-Gm-Message-State: AOJu0YymMMFI4otlQmWwwbrGqt/5eQPiYrxLKMa19jkkwSVvePBZdp3l
+	u2pMzHX3ioVcKDMrcx3Cp2bvDNhrFLOLhuhJDMCx+2pzPgVViHfCj6P1bGSzKDTCRW8qWUyic9C
+	2nFUnjNBExFM/uw7M3DuCBQ6z/md3OCE=
+X-Gm-Gg: ASbGncvbBjGZuCKhHrLpF9+JxP/lrPW9VKHU3AyY7sdoBtPGSttLTVJwMe43WWkSIjw
+	R4LuBa1NtmJ73a7qf7tzWR6Pl4+SIOfUDgV940IxGuSWptnSMb5My2hCpoXDhtSPHZJlC7tdpd3
+	Mc3fna+HWQdN+9BRL3L7Vl3D2BgPhNhKGhMNChvcwaDO21rvYS/7zlg+ePiQWUfYYJyV0jKg/Yv
+	653IdwS
+X-Google-Smtp-Source: AGHT+IHYBhYyFCO7kIhIJXgTO3z867nKb992R6AyR0gE9NGM9WDzDbHkdUMO0+XjlDg9KIzr1gOchlwer9OVKvMXqJU=
+X-Received: by 2002:a05:6871:e281:b0:2d5:2dfd:e11c with SMTP id
+ 586e51a60fabf-2ffcc181093mr2710454fac.7.1752771601492; Thu, 17 Jul 2025
+ 10:00:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAF3JpA7a0ExYEJ8_c7v7evKsV83s+_p7qUoH9uiYZLPxT_Md6g@mail.gmail.com>
- <20250717145911.GB112967@mit.edu>
-In-Reply-To: <20250717145911.GB112967@mit.edu>
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Date: Thu, 17 Jul 2025 09:59:13 -0700
-X-Gm-Features: Ac12FXzKQgdJ4Meqkxbx9lkBFJwxLXj6l8EsX4wACgQvgjYGOQxzCEQPsuvRwr0
-Message-ID: <CAF3JpA6RwyzQMdG4y3P_8jkaS8qUFPerE5MJ8Xecs+VkbPEmpg@mail.gmail.com>
-Subject: Re: [PATCH] ext4: do not BUG when INLINE_DATA_FL lacks system.data xattr
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: syzbot+544248a761451c0df72f@syzkaller.appspotmail.com, 
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250717115936.7025-1-suchitkarunakaran@gmail.com> <f6c4944d-c6c2-4a7e-8dd3-791d0c29022b@linux.dev>
+In-Reply-To: <f6c4944d-c6c2-4a7e-8dd3-791d0c29022b@linux.dev>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Thu, 17 Jul 2025 22:29:50 +0530
+X-Gm-Features: Ac12FXyTF7cN_d1c5mELIt20EHp_Qy3GriUYaqZEKLzGqZAStvwqLcaBbeQocBw
+Message-ID: <CAO9wTFjEJOfF7krFuV=DkZFzRU3FpRXtnq93UaX8=_Y=wnwbHw@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: Replace strcpy() with memcpy() in bpf_object__new()
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 17 Jul 2025 at 22:19, Yonghong Song <yonghong.song@linux.dev> wrote:
 >
-> Thanks ofor the patch!  However, instead of doing an xattr lookup in
-> ext4_prepare_inline_data(), we can more simply and more efficiently
-> just not BUG in ext4_update_inline_data, like this:
-
-Thanks for the response and for taking the time to address the issue.
-
-Just to clarify the intent behind the earlier patch [1]: it was meant to
-catch the missing system.data xattr early in ext4_prepare_inline_data(),
-before branching into paths that assume the xattr is present.
-
-> @@ -354,6 +354,12 @@ static int ext4_update_inline_data(handle_t *handle, struct inode *inode,
->         if (error)
->                 goto out;
 >
-> +       if (is.s.not_found) {
-> +               EXT4_ERROR_INODE(inode, "missing inline data xattr");
-> +               error = -EFSCORRUPTED;
-> +               goto out;
-> +       }
-> +
->         BUG_ON(is.s.not_found);
+>
+> On 7/17/25 4:59 AM, Suchit Karunakaran wrote:
+> > Replace the unsafe strcpy() call with memcpy() when copying the path
+> > into the bpf_object structure. Since the memory is pre-allocated to
+> > exactly strlen(path) + 1 bytes and the length is already known, memcpy()
+> > is safer than strcpy().
+>
+> I don't understand in this particular context why strcpy()
+> is less safer than memcpy(). Both of them will achieve the
+> exactly same goal.
+>
 
-The current patch addresses ext4_update_inline_data() directly, but the
-same condition also leads to a BUG_ON in ext4_create_inline_data() [2],
-which the earlier approach intended to prevent as well.
-
-Later, a third instance was found in ext4_inline_data_truncate() [3],
-which also contains a similar BUG_ON and might need the same kind of
-check.
-
-Reducing duplicated checks across these sites would be beneficial, though
-fixing each case directly also looks reasonable and straightforward.
-
-[1] https://lore.kernel.org/all/20250710175837.29822-2-moonhee.lee.ca@gmail.com/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/inline.c?h=v6.16-rc6#n306
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/inline.c?h=v6.16-rc6#n1906
+Sorry, I meant that strcpy() is generally considered unsafe because it
+doesn't perform bounds checking. Its use is deprecated and
+discouraged, as noted in Documentation/process/deprecated.rst. I made
+this change with that in mind, although I'm not entirely certain
+whether it's actually unsafe in this specific context.
 
