@@ -1,308 +1,146 @@
-Return-Path: <linux-kernel+bounces-735949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0053B095B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:30:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F3BB095BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 22:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23D9F1C27355
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:30:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B8E1C27FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 20:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BA622616C;
-	Thu, 17 Jul 2025 20:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499B422259A;
+	Thu, 17 Jul 2025 20:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+i09C/R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F/SLgeZb"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1CD2253E4;
-	Thu, 17 Jul 2025 20:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA00317AE11
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752784193; cv=none; b=AbEXOZMScrrLZMliIZM7yajKeTT1hC4CPLn8aGlsS8jBRBazEUwbaTg0CBNCUzeCXKuQ8Mg/Mn0kZxQdVx2Cmx8rs6cW0fLRj5jzDvAvR2A1NjzjYldtRzNKfM6jhh59OHy+cFXoGhB00uOHRjtwe7NEtThobYpDS807S1ff44s=
+	t=1752784227; cv=none; b=DB5Q736kT8JEaWCBYH1xyEi/qUtUAuq7HKEWVNrxQrvfZ42mzTUXKCKJK7Fmsm87iCweaPgTeMa8nxwCiKlQufqcFibOD5eV9hteItqFKWdMeuGss2jdvFoGDFcdcCUt/YzyBmf6PaLUx+CCiG7hueiqh/G8TUGQ9TwLkDF4ohY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752784193; c=relaxed/simple;
-	bh=q8eKevXXi+UQ1OwFBOXGgOAL2sn/edb+P2x0UDs5fKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c8to3We2VtsNpuTWHJB4yplQvl9xbxUwR9Nvl7LZ9/sA51l5dauHuCmqLGgPEOKf6buXVmhyry2t+KRA3M3rGu0sh8PbImvp0zvLM8m2RWFGu5DR39YW5mJzNDht+PkDv2jFbd1eDOYoBOYu/QTw76ZeKFEHNMgpxY1xBS314uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+i09C/R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E24BC4CEE3;
-	Thu, 17 Jul 2025 20:29:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752784192;
-	bh=q8eKevXXi+UQ1OwFBOXGgOAL2sn/edb+P2x0UDs5fKY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d+i09C/R+8o4J/2j6CW0+DVpc4NDnNYt9863nRnffuBeGEbkm0Nwgci/v2axWWwP7
-	 SJfAy/K4l24Jn6St9TtdI8/oceR54KczEnj4PnFLJCy4sDmthCrmEqUL/0sIs0EYUu
-	 At6Q8YR40GX+fiJ8Qb+AR4mw9bKqZXhiUl9KaalHsplkEd/cmkt2Ep7OIfsGBbUPrp
-	 WZn5yoGN7Qf/4QZj8OcCg3EKwThrmkeYDOyWxbUMa5Accj2YDD1V/DdJXzo26e79Sr
-	 +0HjXM2J6vGd+MHb4j8Zpc0v1Ye0CZ+LEkKcPgYGbQkKAZQlDkqX+epPYYpdIV5DEl
-	 1HZ08FQCQSWsA==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Peilin Ye <yepeilin@google.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	lkmm@lists.linux.dev
-Subject: [PATCH RESEND bpf-next 1/1] powerpc64/bpf: Add jit support for load_acquire and store_release
-Date: Thu, 17 Jul 2025 20:29:17 +0000
-Message-ID: <20250717202935.29018-2-puranjay@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250717202935.29018-1-puranjay@kernel.org>
-References: <20250717202935.29018-1-puranjay@kernel.org>
+	s=arc-20240116; t=1752784227; c=relaxed/simple;
+	bh=yXaZJh1s97QoYyV0dVGHOmfFM5k9la8f3WzB5GWF94k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a5RvpIAVwKiRO0Bz/7bkiUj0eXQzVG2kOtiDQywp/W9gc4K7KQ2H5bR8KRZvVshNmVlg3XCX47eOexeteO3RAN6rjxBe9e2EtwZmkXdFGbohOyPvOjf2J0vKRoh63YvL388BNpcn0d6dAN263zci435e8zflyUubS5PE+RZgoHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F/SLgeZb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HJAGGN022220
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:30:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CApBvgecuTLwhooPFQ9wWb7BYDsOgt6qyTee0GMRDwY=; b=F/SLgeZb6J3acNlw
+	fg3DMnKLtiYoPw1xQN1Dj2lUccY73AoQCaRtkjHlgN1g54GjeQp4O2FH1NbdM9JE
+	T0pT5l8Qm4j7P1qFBbLAu+h3Hwlt5JsOaClIESX0V6FpwFmwGOdpeZZrYY737Ess
+	UoLyNo8kAFVoikcl4Dt4qXKDRa0VY38UfHqggQ7Tq452aXCstjGyGKdY8MCADWAM
+	vsSPswkPqdagEDbVQTXYkD86IkGo9s/9DBiNWLFjepYIwdwcBj7sE2eziYNYNERr
+	SJLrs4IwZPrvatGqz02XKyrekimQ+IQwm51O50gkw+tHId+JTESk0yNIXY2Oz/44
+	t/cbeg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wqsy92dj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 20:30:25 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab7a01c38cso3005931cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:30:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752784224; x=1753389024;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CApBvgecuTLwhooPFQ9wWb7BYDsOgt6qyTee0GMRDwY=;
+        b=YGiLq8CoV7f3XUXCV035HZG2r4cQa13y9iCq+okS8mcuvleU7QyJy4zB0NKLE2fmRd
+         9Zp6W0b8xMp4KXF4YARR/sQU9RG8WtiezzFAQJa78m4gCoFi/GOB+R04Khv/i483Zu5+
+         Xts703EpSd01P9nTuWF0fmiq9fageNYlCWWFvRft1cV4VGcWo3Wt5+5d5OJazc1QlwcR
+         3E/N4q4lm5ded+PcUFge7szymdjagZafAjVXr4aRlSRAUPHGFfvSd3MyGXzsFihpUDqe
+         HZG07eNaKfNuTeaKx5ujcQIqeZeZTqjNNuqBuRbYc0/Z3cwk0KZ++CZ45yAGjML6sID5
+         dvvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMQlJT/g3x36N3zYsEbi7hmg/BpaV+HNzz3FEqHvWweA/4wDimeiyra9PSP3y6+CDOtdI1DvoY7sIj5Wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1gdfyuTBIlirN8N5eB9m2dNBYaLHa511YLevjzNk98b/RlC3b
+	enxLYYvkHdKZQboG+JaQgClBDUr1ZCeOkUueSPxu3gh9yrlHf+p8jeUG8TQ+60oPXMTqKeLrcQJ
+	5rOW1Pnp8/abOul5NG46z3TG+vNrUI+2k/SDnbu6v+wczAC0Sss4xBNttLZ0xC83b3UA=
+X-Gm-Gg: ASbGnctBY0De/hFk5xah6PPMYTmKJLWUHeU2OTRw/B/fGL38QRDw20nIWk6f3+iZx3I
+	6D8/KDNTbIVk3O7/w5Q2gHeclBvVow8Te733N1E27CUJR3aLfqBFBs7ujNOf+jCkpMmBhLPW0Zd
+	GJWSI8JfCD1CRn1l+ftItgS3A0p36BVVIQGU/52vWYSLZmv0mnEV2iJML9WPrQ2mhBePEu8VaRf
+	QCyyyjBgydQJsDqybGRZP8rXHKkg9GEqJvbkF++6XdHKtY1rDCtubpbOqP5ebGmni4/IQ21tmxn
+	xT5ht1jJETWoN1kfgfdY3P/2pSbevoWmrCAqDXxdJuSOviMYE0fgwEHaXvPE7dDiHqIjobZMH3s
+	g0VppwE/Hl7vxndsjzO3d
+X-Received: by 2002:a05:620a:2b49:b0:7e3:3419:90d with SMTP id af79cd13be357-7e342adfc02mr464596985a.7.1752784223651;
+        Thu, 17 Jul 2025 13:30:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFh7efxMPiaABCqMznB8bM0sGwzfCMhBakRHFLmRQQii5O7L2SQZ/AT4w5DU1nWhvzljOpuBg==
+X-Received: by 2002:a05:620a:2b49:b0:7e3:3419:90d with SMTP id af79cd13be357-7e342adfc02mr464595485a.7.1752784223247;
+        Thu, 17 Jul 2025 13:30:23 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8294013sm1420624566b.118.2025.07.17.13.30.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 13:30:12 -0700 (PDT)
+Message-ID: <5e3dcc7b-c929-4f2c-86d7-dd57b08eb939@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 22:30:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: sm8250-xiaomi-pipa: Drop unused
+ bq27z561
+To: Arseniy Velikanov <me@adomerle.pw>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Luka Panio <lukapanio@gmail.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <ffc3b329-6d46-41f3-9780-05369d29f9c3@adomerle.pw>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <ffc3b329-6d46-41f3-9780-05369d29f9c3@adomerle.pw>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDE4MSBTYWx0ZWRfX+YdD4OJ4lHzJ
+ bFJjJnJ3M38TR6AObTOuCpIko0YH0DNTOVN88T32jPKNKl6Phy/XcONZ7nyXG317D1Hn0HyrgbJ
+ 7eKNiOF+cl8Te/M4QqzvPV0jRNu1LsiT3hK8oyKlQh6CAOjG1hCHiG1bszMZH98Dm08GqXOBDlf
+ Tdfcy3YF/F6JyttSJ8IkOP1Z1VdPva8PhS3G+zWFD8li+KXDyjSqQp2HoswiiBdTTBPGFYN4sgc
+ ZPWGjdG+bTBsjrKi606/EQ5iNHBBf7JFWbjYJZ3bYPPTBjo6nW6v5YaDMxiCiQryR8SHzf9zlMn
+ gy9CX8AgKKVbZPaGfuvI7u4nBiKEGyJCC0yfpozCyedNQHEKwL0updlz22+yNRMBM+m6Md/uLz+
+ 487QixX1mtz9/sZ8HSjzFZBFQwOWqAsrvXUZvJWw7HrXSwOAsm7wGeqX+AxkP8eQ6umUdn6g
+X-Proofpoint-GUID: Rg4qrcWX0tPosZ_wkNDDcYbTi_U65sPR
+X-Proofpoint-ORIG-GUID: Rg4qrcWX0tPosZ_wkNDDcYbTi_U65sPR
+X-Authority-Analysis: v=2.4 cv=McZsu4/f c=1 sm=1 tr=0 ts=68795d61 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=NEAV23lmAAAA:8 a=Fl1iwlySYO9TATX8aXYA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_03,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170181
 
-Add JIT support for the load_acquire and store_release instructions. The
-implementation is similar to the kernel where:
+On 7/16/25 8:18 PM, Arseniy Velikanov wrote:
+> On 16.07.2025 20:00, Konrad Dybcio wrote:
+>> Since it's actually onboard, it would be fair to assume it's there
+>> for a reason.. Does it also report nonsense when running a
+>> downstream build?
+> Well, as I said before (looks like i sent reply wrongly), it's disabled
+> in the vendor's kernel config:
+> https://github.com/MiCode/Xiaomi_Kernel_OpenSource/blob/pipa-t-oss/arch/arm64/configs/vendor/pipa_user_defconfig#L413
+> 
+> Also, pmic fuel gauge, which works with the WIP driver in our
+> close-to-mainline fork reports mixed information for a dual-cell
+> battery, instead of each cell individually, and I think
+> this is a more right way.
 
-        load_acquire  => plain load -> lwsync
-        store_release => lwsync -> plain store
+OK this is a more convincing answer, thanks for confirming
 
-To test the correctness of the implementation, following selftests were
-run:
-
-  [fedora@linux-kernel bpf]$ sudo ./test_progs -a \
-  verifier_load_acquire,verifier_store_release,atomics
-  #11/1    atomics/add:OK
-  #11/2    atomics/sub:OK
-  #11/3    atomics/and:OK
-  #11/4    atomics/or:OK
-  #11/5    atomics/xor:OK
-  #11/6    atomics/cmpxchg:OK
-  #11/7    atomics/xchg:OK
-  #11      atomics:OK
-  #519/1   verifier_load_acquire/load-acquire, 8-bit:OK
-  #519/2   verifier_load_acquire/load-acquire, 8-bit @unpriv:OK
-  #519/3   verifier_load_acquire/load-acquire, 16-bit:OK
-  #519/4   verifier_load_acquire/load-acquire, 16-bit @unpriv:OK
-  #519/5   verifier_load_acquire/load-acquire, 32-bit:OK
-  #519/6   verifier_load_acquire/load-acquire, 32-bit @unpriv:OK
-  #519/7   verifier_load_acquire/load-acquire, 64-bit:OK
-  #519/8   verifier_load_acquire/load-acquire, 64-bit @unpriv:OK
-  #519/9   verifier_load_acquire/load-acquire with uninitialized
-  src_reg:OK
-  #519/10  verifier_load_acquire/load-acquire with uninitialized src_reg
-  @unpriv:OK
-  #519/11  verifier_load_acquire/load-acquire with non-pointer src_reg:OK
-  #519/12  verifier_load_acquire/load-acquire with non-pointer src_reg
-  @unpriv:OK
-  #519/13  verifier_load_acquire/misaligned load-acquire:OK
-  #519/14  verifier_load_acquire/misaligned load-acquire @unpriv:OK
-  #519/15  verifier_load_acquire/load-acquire from ctx pointer:OK
-  #519/16  verifier_load_acquire/load-acquire from ctx pointer @unpriv:OK
-  #519/17  verifier_load_acquire/load-acquire with invalid register R15:OK
-  #519/18  verifier_load_acquire/load-acquire with invalid register R15
-  @unpriv:OK
-  #519/19  verifier_load_acquire/load-acquire from pkt pointer:OK
-  #519/20  verifier_load_acquire/load-acquire from flow_keys pointer:OK
-  #519/21  verifier_load_acquire/load-acquire from sock pointer:OK
-  #519     verifier_load_acquire:OK
-  #556/1   verifier_store_release/store-release, 8-bit:OK
-  #556/2   verifier_store_release/store-release, 8-bit @unpriv:OK
-  #556/3   verifier_store_release/store-release, 16-bit:OK
-  #556/4   verifier_store_release/store-release, 16-bit @unpriv:OK
-  #556/5   verifier_store_release/store-release, 32-bit:OK
-  #556/6   verifier_store_release/store-release, 32-bit @unpriv:OK
-  #556/7   verifier_store_release/store-release, 64-bit:OK
-  #556/8   verifier_store_release/store-release, 64-bit @unpriv:OK
-  #556/9   verifier_store_release/store-release with uninitialized
-  src_reg:OK
-  #556/10  verifier_store_release/store-release with uninitialized src_reg
-  @unpriv:OK
-  #556/11  verifier_store_release/store-release with uninitialized
-  dst_reg:OK
-  #556/12  verifier_store_release/store-release with uninitialized dst_reg
-  @unpriv:OK
-  #556/13  verifier_store_release/store-release with non-pointer
-  dst_reg:OK
-  #556/14  verifier_store_release/store-release with non-pointer dst_reg
-  @unpriv:OK
-  #556/15  verifier_store_release/misaligned store-release:OK
-  #556/16  verifier_store_release/misaligned store-release @unpriv:OK
-  #556/17  verifier_store_release/store-release to ctx pointer:OK
-  #556/18  verifier_store_release/store-release to ctx pointer @unpriv:OK
-  #556/19  verifier_store_release/store-release, leak pointer to stack:OK
-  #556/20  verifier_store_release/store-release, leak pointer to stack
-  @unpriv:OK
-  #556/21  verifier_store_release/store-release, leak pointer to map:OK
-  #556/22  verifier_store_release/store-release, leak pointer to map
-  @unpriv:OK
-  #556/23  verifier_store_release/store-release with invalid register
-  R15:OK
-  #556/24  verifier_store_release/store-release with invalid register R15
-  @unpriv:OK
-  #556/25  verifier_store_release/store-release to pkt pointer:OK
-  #556/26  verifier_store_release/store-release to flow_keys pointer:OK
-  #556/27  verifier_store_release/store-release to sock pointer:OK
-  #556     verifier_store_release:OK
-  Summary: 3/55 PASSED, 0 SKIPPED, 0 FAILED
-
-Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
----
- arch/powerpc/include/asm/ppc-opcode.h        |  1 +
- arch/powerpc/net/bpf_jit_comp64.c            | 82 ++++++++++++++++++++
- tools/testing/selftests/bpf/progs/bpf_misc.h |  3 +-
- 3 files changed, 85 insertions(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/include/asm/ppc-opcode.h b/arch/powerpc/include/asm/ppc-opcode.h
-index 4312bcb913a42..8053b24afc395 100644
---- a/arch/powerpc/include/asm/ppc-opcode.h
-+++ b/arch/powerpc/include/asm/ppc-opcode.h
-@@ -425,6 +425,7 @@
- #define PPC_RAW_SC()			(0x44000002)
- #define PPC_RAW_SYNC()			(0x7c0004ac)
- #define PPC_RAW_ISYNC()			(0x4c00012c)
-+#define PPC_RAW_LWSYNC()		(0x7c2004ac)
- 
- /*
-  * Define what the VSX XX1 form instructions will look like, then add
-diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-index a25a6ffe7d7cc..025524378443e 100644
---- a/arch/powerpc/net/bpf_jit_comp64.c
-+++ b/arch/powerpc/net/bpf_jit_comp64.c
-@@ -409,6 +409,71 @@ asm (
- "		blr				;"
- );
- 
-+static int emit_atomic_ld_st(const struct bpf_insn insn, struct codegen_context *ctx, u32 *image)
-+{
-+	u32 code = insn.code;
-+	u32 dst_reg = bpf_to_ppc(insn.dst_reg);
-+	u32 src_reg = bpf_to_ppc(insn.src_reg);
-+	u32 size = BPF_SIZE(code);
-+	u32 tmp1_reg = bpf_to_ppc(TMP_REG_1);
-+	u32 tmp2_reg = bpf_to_ppc(TMP_REG_2);
-+	s16 off = insn.off;
-+	s32 imm = insn.imm;
-+
-+	switch (imm) {
-+	case BPF_LOAD_ACQ:
-+		switch (size) {
-+		case BPF_B:
-+			EMIT(PPC_RAW_LBZ(dst_reg, src_reg, off));
-+			break;
-+		case BPF_H:
-+			EMIT(PPC_RAW_LHZ(dst_reg, src_reg, off));
-+			break;
-+		case BPF_W:
-+			EMIT(PPC_RAW_LWZ(dst_reg, src_reg, off));
-+			break;
-+		case BPF_DW:
-+			if (off % 4) {
-+				EMIT(PPC_RAW_LI(tmp1_reg, off));
-+				EMIT(PPC_RAW_LDX(dst_reg, src_reg, tmp1_reg));
-+			} else {
-+				EMIT(PPC_RAW_LD(dst_reg, src_reg, off));
-+			}
-+			break;
-+		}
-+		EMIT(PPC_RAW_LWSYNC());
-+		break;
-+	case BPF_STORE_REL:
-+		EMIT(PPC_RAW_LWSYNC());
-+		switch (size) {
-+		case BPF_B:
-+			EMIT(PPC_RAW_STB(src_reg, dst_reg, off));
-+			break;
-+		case BPF_H:
-+			EMIT(PPC_RAW_STH(src_reg, dst_reg, off));
-+			break;
-+		case BPF_W:
-+			EMIT(PPC_RAW_STW(src_reg, dst_reg, off));
-+			break;
-+		case BPF_DW:
-+			if (off % 4) {
-+				EMIT(PPC_RAW_LI(tmp2_reg, off));
-+				EMIT(PPC_RAW_STDX(src_reg, dst_reg, tmp2_reg));
-+			} else {
-+				EMIT(PPC_RAW_STD(src_reg, dst_reg, off));
-+			}
-+			break;
-+		}
-+		break;
-+	default:
-+		pr_err_ratelimited("unexpected atomic load/store op code %02x\n",
-+				   imm);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- /* Assemble the body code between the prologue & epilogue */
- int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct codegen_context *ctx,
- 		       u32 *addrs, int pass, bool extra_pass)
-@@ -898,8 +963,25 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
- 		/*
- 		 * BPF_STX ATOMIC (atomic ops)
- 		 */
-+		case BPF_STX | BPF_ATOMIC | BPF_B:
-+		case BPF_STX | BPF_ATOMIC | BPF_H:
- 		case BPF_STX | BPF_ATOMIC | BPF_W:
- 		case BPF_STX | BPF_ATOMIC | BPF_DW:
-+			if (bpf_atomic_is_load_store(&insn[i])) {
-+				ret = emit_atomic_ld_st(insn[i], ctx, image);
-+				if (ret)
-+					return ret;
-+
-+				if (size != BPF_DW && insn_is_zext(&insn[i + 1]))
-+					addrs[++i] = ctx->idx * 4;
-+				break;
-+			} else if (size == BPF_B || size == BPF_H) {
-+				pr_err_ratelimited(
-+					"eBPF filter atomic op code %02x (@%d) unsupported\n",
-+					code, i);
-+				return -EOPNOTSUPP;
-+			}
-+
- 			save_reg = tmp2_reg;
- 			ret_reg = src_reg;
- 
-diff --git a/tools/testing/selftests/bpf/progs/bpf_misc.h b/tools/testing/selftests/bpf/progs/bpf_misc.h
-index 530752ddde8e4..c1cfd297aabf1 100644
---- a/tools/testing/selftests/bpf/progs/bpf_misc.h
-+++ b/tools/testing/selftests/bpf/progs/bpf_misc.h
-@@ -229,7 +229,8 @@
- 
- #if __clang_major__ >= 18 && defined(ENABLE_ATOMICS_TESTS) &&		\
- 	(defined(__TARGET_ARCH_arm64) || defined(__TARGET_ARCH_x86) ||	\
--	 (defined(__TARGET_ARCH_riscv) && __riscv_xlen == 64))
-+	 (defined(__TARGET_ARCH_riscv) && __riscv_xlen == 64)) || \
-+	  (defined(__TARGET_ARCH_powerpc))
- #define CAN_USE_LOAD_ACQ_STORE_REL
- #endif
- 
--- 
-2.47.1
-
+Konrad
 
