@@ -1,154 +1,137 @@
-Return-Path: <linux-kernel+bounces-735275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42A0B08D1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2371DB08D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD3A568042
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:37:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99FE04A1E39
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975322C15BA;
-	Thu, 17 Jul 2025 12:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC8B2BF010;
+	Thu, 17 Jul 2025 12:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NA6MKTWF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEAYLjaE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D710C2C17B4;
-	Thu, 17 Jul 2025 12:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAED32BDC0E;
+	Thu, 17 Jul 2025 12:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752755834; cv=none; b=WKYu5aX7hXEoVy8Wv+FCnbGfFUehI/v1r9j1CuWLALaBoVwxHjx5IuYn39LeZ6t2B//KprKrDAItwhdQOGIv0cxpqt4xL79OceURFqTZK7GlfpsQePR2KXAnzVao3FZkvy046gJD4sXoLvQDpQbUtOjVaA8ulLf/J0nUBzSuRxo=
+	t=1752755901; cv=none; b=feY6fOgPtTsyQBiu9Nc3u2Fvfk6GLn3zeb3U5cXwFreYzaAeuf3Lke7AUWzaAITg8qiC04i22JDWBj6E58WDETT9kGciXxGUi3oOF18Tw7KZnYPpORHXo0Z3rhOHdhnd1LDdfhqc6O+bJMaA3jsWP5vQwoGT03H3UTob01vOweU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752755834; c=relaxed/simple;
-	bh=q6OlBUDuVsfygeY0tYb2ASXQcxuOHlFVK01o86c9Ah0=;
+	s=arc-20240116; t=1752755901; c=relaxed/simple;
+	bh=LPwayIMS3ZhlEmO2Jrd9H9wbN9BAgZSee8cnCpTCIY8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dHAiG7uo1ij9QfcXdhK80uSU3pHZgvvk7jEjQleYyQID5h7NgLGyP+Od3o4JwSzcm69l7EnJenHU2HUlESuPAQrZkBE7U5T6wHvcp0ZXt2eu+NWndpD1qQZJq/HW/fLXwQF4TeGzmL/Ex9k498xy61BdQZqSHNAtyZJPi4foTg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NA6MKTWF; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752755832; x=1784291832;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=q6OlBUDuVsfygeY0tYb2ASXQcxuOHlFVK01o86c9Ah0=;
-  b=NA6MKTWFzeCGMNHCEIeAumkAWvDbHfn6JxrHGUQsUZltOvak280TKJPA
-   L70+k08cV4WUf5UXenuWBEQMBx/TqU+qHIWEaB1xQwauP//p/si+zOqsC
-   rpsXRC0RtoEpmtO57ctKqXtMfTZkNRvk3aHsTJMoWiPX7v+AIxM7ePKiT
-   eKIg1k534iAMb/ye7pZkymneeMdGkUuwBIsIQxYy81eYmQ2XYhsZ/AekI
-   vy0SGabSlZDVzTNsp0RLr2Xl31HHD+oEjRY7I79gbUS6M1s13SNLR6dOM
-   rFLnu5c8cacgY2hf1qT4t/VyVgZXYRcjwEiqR6YuiQkq5FNLvyF4QKHUc
-   Q==;
-X-CSE-ConnectionGUID: hBtETDJUQTmpoGjaZOog7Q==
-X-CSE-MsgGUID: hesVyZiXSr2s1irgbzC+pA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="65287731"
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="65287731"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 05:37:11 -0700
-X-CSE-ConnectionGUID: b/g5b8dvT4a/3YrLCEJvBQ==
-X-CSE-MsgGUID: mgLCb2elRau0EXs++y+oVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="162074429"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 05:37:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ucNrB-0000000GEkT-1bFt;
-	Thu, 17 Jul 2025 15:37:01 +0300
-Date: Thu, 17 Jul 2025 15:37:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Hans de Goede <hansg@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/2] media: i2c: add ov2735 image sensor driver
-Message-ID: <aHjubei5Aex9n-HI@smile.fi.intel.com>
-References: <20250716134426.8348-1-hardevsinh.palaniya@siliconsignals.io>
- <20250716134426.8348-3-hardevsinh.palaniya@siliconsignals.io>
- <aHe7NFJz6aCUqZXL@smile.fi.intel.com>
- <PN3P287MB351951A3DBA4FA85404DA410FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jC5iCpMMp/t93WSPXOnHxXaFWkXjf/sadiAAuuvoAXa1WjJOFu3cLCUhHz/CNwmYQFcDhmcNa2rf2/OqwWoCQgs8o9n+tNOPWpLm8zEUptDtcn0XeimlojbzqFW5Ock3N+ChzAYh8+YarEzzCb6mJ2kNTTKPYIl6+8w9cEWHnsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEAYLjaE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78B07C4CEE3;
+	Thu, 17 Jul 2025 12:38:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752755900;
+	bh=LPwayIMS3ZhlEmO2Jrd9H9wbN9BAgZSee8cnCpTCIY8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VEAYLjaEhgLewWG2t7FYvrEXz7i9TGePJFqqwxk4OF3Nv+6mzaZSVE1QcWY4Qk2iB
+	 IbyxguNn6hRtLt3WNEjDFuKUkTKqTZeTNCRIvdiZNmYaMaIyg/2/5a4PLBezHClk6E
+	 6NsGtG8l3Rr96uWo8END0Z0gj9MD3cKsgylNP2hbNBR2mdNnQuzu5qGhYl7UxJx2DW
+	 JnO9nA+S7Y+LAeog39ffid6m0K7Sp4/yKlLR0mWFS/mkp8Mu3CHXVEHdA+00FvH210
+	 r/E4aqYUsisGOzK9rh5uXtB8TjGAgvpE2x/z6YKm8FLMpCbswxYjhurkXNvan9ldPU
+	 /5BFZ6rNq6ACA==
+Date: Thu, 17 Jul 2025 13:38:15 +0100
+From: Simon Horman <horms@kernel.org>
+To: Hariprasad Kelam <hkelam@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+	davem@davemloft.net, sgoutham@marvell.com, gakula@marvell.com,
+	jerinj@marvell.com, lcherian@marvell.com, sbhatta@marvell.com,
+	naveenm@marvell.com, edumazet@google.com, pabeni@redhat.com,
+	andrew+netdev@lunn.ch, bbhushan2@marvell.com
+Subject: Re: [net-next 4/4] Octeontx2-af: Debugfs support for firmware data
+Message-ID: <20250717123815.GE27043@horms.kernel.org>
+References: <20250716164158.1537269-1-hkelam@marvell.com>
+ <20250716164158.1537269-5-hkelam@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3P287MB351951A3DBA4FA85404DA410FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250716164158.1537269-5-hkelam@marvell.com>
 
-On Thu, Jul 17, 2025 at 07:26:49AM +0000, Hardevsinh Palaniya wrote:
-> > On Wed, Jul 16, 2025 at 07:14:17PM +0530, Hardevsinh Palaniya wrote:
+On Wed, Jul 16, 2025 at 10:11:58PM +0530, Hariprasad Kelam wrote:
+> MAC address, Link modes (supported and advertised) and eeprom data
+> for the Netdev interface are read from the shared firmware data.
+> This patch adds debugfs support for the same.
+> 
+> Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+> ---
+>  .../net/ethernet/marvell/octeontx2/af/mbox.h  |   7 +-
+>  .../marvell/octeontx2/af/rvu_debugfs.c        | 148 ++++++++++++++++++
+>  2 files changed, 154 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+> index 0bc0dc79868b..933073cd2280 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+> @@ -664,7 +664,12 @@ struct cgx_lmac_fwdata_s {
+>  	/* Only applicable if SFP/QSFP slot is present */
+>  	struct sfp_eeprom_s sfp_eeprom;
+>  	struct phy_s phy;
+> -#define LMAC_FWDATA_RESERVED_MEM 1021
+> +	u32 lmac_type;
+> +	u32 portm_idx;
+> +	u64 mgmt_port:1;
+> +	u64 advertised_an:1;
+> +	u64 port;
+> +#define LMAC_FWDATA_RESERVED_MEM 1018
+>  	u64 reserved[LMAC_FWDATA_RESERVED_MEM];
+>  };
+>  
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+> index 0c20642f81b9..900bd1ae240d 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+> @@ -867,6 +867,65 @@ static int rvu_dbg_rvu_pf_cgx_map_display(struct seq_file *filp, void *unused)
+>  
+>  RVU_DEBUG_SEQ_FOPS(rvu_pf_cgx_map, rvu_pf_cgx_map_display, NULL);
+>  
+> +static int rvu_dbg_rvu_fwdata_display(struct seq_file *s, void *unused)
+> +{
+> +	struct rvu *rvu = s->private;
+> +	struct rvu_fwdata *fwdata;
+> +	u8 mac[ETH_ALEN];
+> +	int count = 0, i;
+> +
+> +	if (!rvu->fwdata)
+> +		return -EAGAIN;
+> +
+> +	fwdata = rvu->fwdata;
+> +	seq_puts(s, "\nRVU Firmware Data:\n");
+> +	seq_puts(s, "\n\t\tPTP INFORMATION\n");
+> +	seq_puts(s, "\t\t===============\n");
+> +	seq_printf(s, "\t\texternal clockrate \t :%x\n", fwdata->ptp_ext_clk_rate);
+
+Please line wrap to 80 columns wide or less.
+Likewise elsewhere in this patch.
+
+> +	seq_printf(s, "\t\texternal timestamp \t :%x\n", fwdata->ptp_ext_tstamp);
+> +	seq_puts(s, "\n");
+> +
+> +	seq_puts(s, "\n\t\tSDP CHANNEL INFORMATION\n");
+> +	seq_puts(s, "\t\t=======================\n");
+> +	seq_printf(s, "\t\tValid \t\t\t :%x\n", fwdata->channel_data.valid);
+> +	seq_printf(s, "\t\tNode ID \t\t :%x\n", fwdata->channel_data.info.node_id);
+> +	seq_printf(s, "\t\tNumner of VFs  \t\t :%x\n", fwdata->channel_data.info.max_vfs);
+> +	seq_printf(s, "\t\tNumber of PF-Rings \t :%x\n", fwdata->channel_data.info.num_pf_rings);
+> +	seq_printf(s, "\t\tPF SRN \t\t\t :%x\n", fwdata->channel_data.info.pf_srn);
+> +	seq_puts(s, "\n");
 
 ...
 
-> > > +static int ov2735_page_access(struct ov2735 *ov2735,
-> > > +                           u32 reg, void *val, int *err, bool is_read)
-> > > +{
-> > > +     u8 page = (reg >> CCI_REG_PRIVATE_SHIFT) & 0xff;
-> > > +     u32 addr = reg & ~CCI_REG_PRIVATE_MASK;
-> > > +     int ret = 0;
-> > > +
-> > > +     if (err && *err)
-> > > +             return *err;
-> > > +
-> > > +     mutex_lock(&ov2735->page_lock);
-> > > +
-> > > +     /* Perform page access before read/write */
-> > > +     if (ov2735->current_page != page) {
-> > > +             ret = cci_write(ov2735->cci, OV2735_REG_PAGE_SELECT, page, &ret);
-> > > +             if (ret)
-> > > +                     goto err_mutex_unlock;
-> > > +             ov2735->current_page = page;
-> > > +     }
-> > > +
-> > > +     if (is_read)
-> > > +             ret = cci_read(ov2735->cci, addr, (u64 *)val, err);
-> > > +     else
-> > > +             ret = cci_write(ov2735->cci, addr, *(u64 *)val, err);
-> > > +
-> > > +err_mutex_unlock:
-> > 
-> > > +     if (ret && err)
-> > 
-> > Why do you need to check for ret != 0?
-> 
-> To prevents overwriting *err with 0 on successful operations, which could 
-> obscure previous errors. 
-
-Can you elaborate a bit how the *err is not 0 at this point
-(assuming err != NULL)?
-
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+pw-bot: changes-requested
 
