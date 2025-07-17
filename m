@@ -1,119 +1,136 @@
-Return-Path: <linux-kernel+bounces-735162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EDDB08BA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:22:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9B1B08BAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 099D53BBC87
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:21:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897FE1AA2B14
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1699329B228;
-	Thu, 17 Jul 2025 11:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC5529A9FE;
+	Thu, 17 Jul 2025 11:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKPTalwU"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DItPwpO7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C0B29AAEF;
-	Thu, 17 Jul 2025 11:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BED145B27;
+	Thu, 17 Jul 2025 11:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752751302; cv=none; b=JhtLwQZKoNBxuy4LFk3PjKu5icaEF4dR+BN3CupxkLPhSDSp3CF5+GSHY2vgw0FbhTpehPeYPCOgOeoPorHVtxtRmSoXGiBC2CMHDlm5vo9oVke3HSBC9hVz/iDrCLHivDAc9dB3zAwQ9CgEbWmJMi6AemcqDYc2id7oYwbmmJE=
+	t=1752751432; cv=none; b=n0HbUpzjGRnFNVWowYe715o9QpOpAPc4urhY+0pz/Nk0BoAbClovfQ40q1FmrWZNwWXWp/53e/h+VwMi9OR9tdCiCqUIsFHiZCfxac5UIK9NvzGQLuVXRIhckZzs1kvyl8oEBgFcCi/4GOL/BBKNCy9tIzuKZxAbWZ17mlvH8uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752751302; c=relaxed/simple;
-	bh=uNNznCHaRYPa6z9ckg/J1qp4DmjrTdqGCQFEu2dpFEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KizQsyoXhjSy2AINLLus+qkxufGTJjsQWGOo6N1Ycba7tKzc5kGqa9sww6uPFUvbjcBGCfLeNPa0OdPk+jNzVMBT5pzj+TS61N2B1FEPcA4HHfvC5t9YGlXDGrqg6N+yjkwk46Voh+iSpyhzIiq+m+Rac3y+kaehNffGf6DLmAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKPTalwU; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45629703011so6162995e9.0;
-        Thu, 17 Jul 2025 04:21:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752751299; x=1753356099; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6eoKHYqrCMjRD+TGXC5ab0tIcocXYRaE5P3oQBVLSeQ=;
-        b=MKPTalwUwaWUxVaBK2u+d6rvG9QnfBP72FAYiydZa0167O2AUJHnOh2nBOtJvFkbMM
-         DfYd0IBP7da3vVDs/mjaeL+P2tWnoI2/CfUy9gertdlLv5R82FFRBmFXcOOzWVkAgxUg
-         G5UZJkJ3va7Dx3jTxWfQnE1ikhG/KI596VXe5AAm4y6foRLgY1LH4NxwI+VT1LcKhpE7
-         V61+0eY/0gQJuZTYLpK6xw55su69GSDfcsSjapGz5EGlkE3uU3u06J3Nsw+UNZoXzmDq
-         yjJ/PH5f/r1dRi9ZAiVTM0efJ+1reB37c8W6SKABctU1fKvILGjzsscoX6O90HE/olA6
-         7WlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752751299; x=1753356099;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6eoKHYqrCMjRD+TGXC5ab0tIcocXYRaE5P3oQBVLSeQ=;
-        b=xPfIhbudJzSXGNNccXKdSPslxMsCTpWuXnqvY4fVurgmYtrKLaMhYC74yDqMKDKhQJ
-         FddjpOVQPlwqAMLhek4kYJlVCHSI6aEEi3gUb9anCNfdIuBgN+k7tLSdWhXRaN/AteLY
-         RSA5jZ3CdhQ9WThqiTgJmCDSQS3h6y4HI4ptqZ9qLBRUzxYfouFF/KHu3jMqhGB+3h92
-         c4GUSOL5n3Xk/CAEFrmsy+5Iwiuy6fvur8PrhlQD/tPQr4Z+hJI4I+m5t7WFuGHBlfJD
-         73MZGUerLMvNhLt4BH+EJbxdcOwhtrIty7hcDO4+ocYz8jt6lDTCXWw2D3I9E3bfELh3
-         5F+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWPvcOIkFLY9sNnn/GFDLpAT4VMzr3NiNuAY0TDW31XI+zawBIlxH4j0e5VNGvRGFtMCYYcbuSGh86c4A==@vger.kernel.org, AJvYcCXDrjq14egQGo2JjQISvGWj/rNr4Xa9qlLSsrCz8KfboqfntC644hSnmSma/+Cn8WbHTPmjTDEw7HCpb+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQhIBQgi9v53Qv506xsN+oIFA/+P85RKYU3lI50KsVGD2eFXQb
-	zHoef1CWxwKLeejE5fdpiB9rC1WWwFBMdRysud9kigJbLBF7wOfn7wEf
-X-Gm-Gg: ASbGncsnxdZQvQc2aJXXcTqQrhDOkdyAuSGPd6I/sFmWOErCabpbYVdDlMpi6uJkg3/
-	QEpnz4MkV7XYjrPGTaZjuPUMYYTg19cliBVArClfPjOskIL87kbJcVKH4hNzj61fmKWMG8nHoQV
-	+Do724ZkJcxCMI6DNCqHnZCsgNJA2+OMqpoflitBN21yXfFUJSbNDqniek7g4kotQozPMin7LH3
-	7u5p9YfUxEcVLSBrpro7uD+G2clqKXann3gZwQvIfAuXy+S/QVcb6AW5mSeEM7FzG0c+lR0sozS
-	3DxMV55ApNREkjv8PiGLdvJ6vqj0afxK9M2Ras8a9HcgvlT8OX31fGcAKbp+BRL+66M96txH2Cq
-	5Kev7SQvk63GbQ4jYk2GN
-X-Google-Smtp-Source: AGHT+IE6/9C532kVHj8pqjuvwRwAQMgHAT+7XlkS/1Ij8Hzgv32arrvQu6O8oEwkhIDBGucY9Cwngg==
-X-Received: by 2002:a05:600c:1d03:b0:442:f4a3:b5f2 with SMTP id 5b1f17b1804b1-4562f7c7596mr48583775e9.6.1752751298778;
-        Thu, 17 Jul 2025 04:21:38 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4562e886286sm48874615e9.26.2025.07.17.04.21.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 04:21:38 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] RDMA/mlx5: remove redundant check on err on return expression
-Date: Thu, 17 Jul 2025 12:21:08 +0100
-Message-ID: <20250717112108.4036171-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1752751432; c=relaxed/simple;
+	bh=sMRASinYsOiNvWFXLXcubyFSBK1Ekxj1Q+zyVQYPMJM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mQAKcacg6ey6UoaqAmF4FDp0qiQOKk0dOoRJjUx12P8rcWFZZom88PrZlXI/5BBOqc6+b1tgyy/Qs+Z+KM3COONpJ0jevJHDeYfHHw6/q62v996E0GXKzMDtn9Iia9wemvYYSf/0OKwWBJ5t2l+4r8qU6wsO6muZSLdtOYpKjog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DItPwpO7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EC55C4CEE3;
+	Thu, 17 Jul 2025 11:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752751431;
+	bh=sMRASinYsOiNvWFXLXcubyFSBK1Ekxj1Q+zyVQYPMJM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DItPwpO7Ed32EaErdvLXJckDZE5bfmgBrU+5kBE2u5ZBRFV7LjEt8kgNzBRTA5SEA
+	 gF7TXOOgR7RwoZ2ED3tKOu2mbH0nA2kjZoAe1KWXWAmNMfNNiO3GKbseWkoqik2G8B
+	 1M9bW8KGiJSV2Fz9ztgWQVmPs4jcmghYRnDib/tDi88PROdhVY5Fq/u0PPhftR1PXv
+	 i5BEHMYXm/b1iI/fB3UAenkSTgVInI1Qrgn5pvA7vlVIZUwNAMmqAr6nQxdvvIpKUO
+	 Zqq0+LgYyAITsoxVMbbZ61cTOXSDWmMhXYOQkBO2Q9YKWwrK1AXmNC4xAAJ3R2/LcU
+	 A038cK3ZX7s3g==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1ucMiL-0000000AyjN-1MNf;
+	Thu, 17 Jul 2025 13:23:49 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Akira Yokosawa <akiyks@gmail.com>
+Subject: [PATCH] sphinx: kernel_abi: fix performance regression with O=<dir>
+Date: Thu, 17 Jul 2025 13:23:24 +0200
+Message-ID: <20250717112345.2616617-1-mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Currently all paths that set err and then check it for an error
-perform immediate returns, hence err always zero at the end of
-the function _mlx5r_umr_zap_mkey.  The return expression
-err ? err : nblocks has a redundant check on the err since err
-is always zero, so just return nblocks instead.
+The logic there which adds a dependency note to Sphinx cache
+is not taking into account that the build dir may not be
+the source dir. This causes a performance regression:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+$ time make O=/tmp/foo SPHINXDIRS=admin-guide htmldocs
+
+	[OUTDATED]
+	Added: set()
+	Changed: {'abi-obsolete', 'abi-removed', 'abi-stable-files', 'abi-obsolete-files', 'abi-stable', 'abi', 'abi-removed-files', 'abi-testing-files', 'abi-testing', 'gpio/index', 'gpio/obsolete'}
+	Removed: set()
+	All docs count: 385
+	Found docs count: 385
+
+	real    0m11,324s
+	user    0m15,783s
+	sys     0m1,164s
+
+To get the root cause of the problem (ABI files reported as changed),
+I used this changeset:
+
+	diff --git a/Documentation/conf.py b/Documentation/conf.py
+	index e8766e689c1b..ab486623bd8b 100644
+	--- a/Documentation/conf.py
+	+++ b/Documentation/conf.py
+	@@ -571,3 +571,17 @@ def setup(app):
+	     """Patterns need to be updated at init time on older Sphinx versions"""
+
+	     app.connect('config-inited', update_patterns)
+	+    app.connect('env-get-outdated', on_outdated)
+	+
+	+def on_outdated(app, env, added, changed, removed):
+	+    """Proper outdated handler with type conversion"""
+	+    print("\n[OUTDATED]")
+	+    print(f"Added: {added}")
+	+    print(f"Changed: {changed}")
+	+    print(f"Removed: {removed}")
+	+    print(f"All docs count: {len(env.all_docs)}")
+	+    print(f"Found docs count: {len(env.found_docs)}")
+	+
+	+    # Just return what we have
+	+    return added | changed | removed
+	+
+
+Reported-by: Akira Yokosawa <akiyks@gmail.com>
+Closes: https://lore.kernel.org/linux-doc/c174f7c5-ec21-4eae-b1c3-f643cca90d9d@gmail.com/
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/infiniband/hw/mlx5/umr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/sphinx/kernel_abi.py | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/umr.c b/drivers/infiniband/hw/mlx5/umr.c
-index b097d8839cad..fa5c4ea685b9 100644
---- a/drivers/infiniband/hw/mlx5/umr.c
-+++ b/drivers/infiniband/hw/mlx5/umr.c
-@@ -1050,7 +1050,7 @@ static int _mlx5r_umr_zap_mkey(struct mlx5_ib_mr *mr,
- 		}
- 	}
+diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
+index db6f0380de94..4c4375201b9e 100644
+--- a/Documentation/sphinx/kernel_abi.py
++++ b/Documentation/sphinx/kernel_abi.py
+@@ -146,8 +146,10 @@ class KernelCmd(Directive):
+                 n += 1
  
--	return err ? err : nblocks;
-+	return nblocks;
- }
+             if f != old_f:
+-                # Add the file to Sphinx build dependencies
+-                env.note_dependency(os.path.abspath(f))
++                # Add the file to Sphinx build dependencies if the file exists
++                fname = os.path.join(srctree, f)
++                if os.path.isfile(fname):
++                    env.note_dependency(fname)
  
- /**
+                 old_f = f
+ 
 -- 
-2.50.0
+2.50.1
 
 
