@@ -1,307 +1,194 @@
-Return-Path: <linux-kernel+bounces-735171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23D3B08BBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:29:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B54CB08BCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A7E53AB6BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581E0188E372
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 11:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5151829ACCB;
-	Thu, 17 Jul 2025 11:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lLMOqasw"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D8F29AB10;
+	Thu, 17 Jul 2025 11:34:48 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31E428935C;
-	Thu, 17 Jul 2025 11:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3E3299A9C;
+	Thu, 17 Jul 2025 11:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752751743; cv=none; b=jS9nE24oHWs3NO3yxgwXdflXL8PCFqBRMLtUwxe2i1O1ivl0RVZhGieN2QQqNU+lrgnElNt/auPsTx3SL1s+3C9HAG6ZM9y+c23IcYDcVJewNHQTQCS0iIf5yb/tdngksoKX6+Es/xwGZeWr3SrIrDlcp9dbahMzDnkO+VMO4cc=
+	t=1752752088; cv=none; b=UnHfl7ifeIShNhzzREQHZkDC8VOgJ5vlkj9JCoUDg9J1jbkMb1ettWeul0GrJ68M30G67L7wDz//vzpKKffPX/O/6k/SDoO2w+3OHh8qzMTwTJMarAQusajw/umG0PFVfhwRPCkOUm0YGXgGF0ifZ7ORoPDm84IdpzvP/+waxTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752751743; c=relaxed/simple;
-	bh=kzGkY7JKL+oPheWyIxkry6TqelxZeSbXNtwbYiwWVqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eYutSzU73NUNx3wDHoiW+gH0QUSxDS6/YIao8xokHNrEGZu88EM9inQA7k4548RlGSwawhpIR5Us+9uwTw/sI2rhyQCsGsEiWFLkd+Mq47S78bTJCEa2IS6h4ST9CT61kcLJduoOKnu2gmdhppT/MRUfe9m03DXtGc2jOgmZByM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lLMOqasw; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H9HNVG027865;
-	Thu, 17 Jul 2025 11:28:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=MsiVpe
-	WOpoqOr99vGViu11zWrWDu+pDv0+cXEOGDnDA=; b=lLMOqaswnb/V6aJdecA8Y7
-	jwEAbfPK2wToS7/HnWfBtD5XklyH+rjlOLGD4ZLvQUqQ0xKNArtPchzhhbq9BAJP
-	MilY6Ii1q85bSQoI1+CDega1SA7Knn0IEPZMggBccSPhOB4vbe+bWPfr76M2nb7d
-	6hTyoOYWp1IPeEeIf1xfUCLR6EXmLQkBV5R68zCsfxSeh+HFKFVrGiAMJJ46P1Iq
-	DekgAWjLLYiOlXE84Fyc6kPS7XFbljvbyv8VIhjLff/9wvhJoNyvxNnf2XzdZmoV
-	5a0EMHd8QGQ7wVB2ktlSVxCH9xgJ4YpPIigvz5brRrCWVnmxr7mdIOIBMXJFm7bw
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47vamu5v9p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 11:28:31 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56H819rt031903;
-	Thu, 17 Jul 2025 11:28:30 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47v21uc4fk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 11:28:29 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56HBSQcK52691366
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Jul 2025 11:28:26 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1735020043;
-	Thu, 17 Jul 2025 11:28:26 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A7C8120040;
-	Thu, 17 Jul 2025 11:28:25 +0000 (GMT)
-Received: from [9.152.222.105] (unknown [9.152.222.105])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 17 Jul 2025 11:28:25 +0000 (GMT)
-Message-ID: <6285a2b1-eb9b-4315-b960-cfaa99513ac1@linux.ibm.com>
-Date: Thu, 17 Jul 2025 13:28:25 +0200
+	s=arc-20240116; t=1752752088; c=relaxed/simple;
+	bh=q87xu0qKl0pgZ4FVa9gRqe6S1D5ezSfSkXLD0Hzt0j0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kwI1SxLO2gT3ylEBtXTir8bNCB8GyByVHvwDKIdHcQep3w7qrmgdLO4wj/+UdsQH9Yf8/mO57TGX16w8A46MFbhsRB8pVRbzpxTi/9vBSWg+kujWiNLebcwvfwbn6ZULOFWV/l/hsyI4Wh+0uUD+ehVbYRBfz15n4KBQoQv7Idk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bjW6p44wTzKHbqt;
+	Thu, 17 Jul 2025 19:34:42 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2ABBD1A2403;
+	Thu, 17 Jul 2025 19:34:41 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDnYhPK33ho1P1DAg--.41809S4;
+	Thu, 17 Jul 2025 19:34:36 +0800 (CST)
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+To: sfrench@samba.org,
+	kuniyu@google.com
+Cc: linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	chengzhihao1@huawei.com,
+	wangzhaolong1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] smb: client: fix netns refcount leak after net_passive changes
+Date: Thu, 17 Jul 2025 19:28:32 +0800
+Message-Id: <20250717112832.1658564-1-wangzhaolong@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 08/16] unwind_user: Enable archs that save RA/FP in
- other registers
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org,
-        Steven Rostedt <rostedt@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Masami Hiramatsu
- <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-9-jremus@linux.ibm.com>
- <oasyyga72yuiad7y2nzh7wcd7t7wmxnsbo2kuvsn5xsnuypewd@ukxxgdjbvegz>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <oasyyga72yuiad7y2nzh7wcd7t7wmxnsbo2kuvsn5xsnuypewd@ukxxgdjbvegz>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 9f1MEs6w3D4ZFzesLbcAi0V8sz3Q2bTy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA5OSBTYWx0ZWRfX39WTLE7dfTTI SZ93ysZqnVGO+28E4EPb93MAEDLhb0WhtUYgJ97KhWM3eIRzhMvSF7RrG2GRXB3s9+5Kbj6O4E1 Z0M2Z3WIYxk/9DEWaxkT6C8xCT2S0Pg1ehLXR/7ND3XE3YAC0+Isj2ozfBs65K3fUGWITW3heDU
- s3abHg17zlWeNBYsds7reMCubFFbt7kYpxkCOCI5IHR3T9HrTjd9jpFeyUnMu2pf4Xy7mtV4gps eG30geSbXNpCCiRrtcLg2cIq0WyosTqML+wX3P4uKDj0R2rLRIc6QTS4bpm2eYI03RZoo0Ls/23 nB2amcPpD4yOB5bAqtwADY0/hPRhlnqTI39dYfM3gksaQRQ69CpS7BOpRX5cSyLOvabhFIVrAHP
- CDPAnsQ7UqVCsDO2L/kkqHDUVN9y54y6DKThR1eNWubagUAOVtkk1lAeMLh+c3z3/S7i4MX2
-X-Proofpoint-ORIG-GUID: 9f1MEs6w3D4ZFzesLbcAi0V8sz3Q2bTy
-X-Authority-Analysis: v=2.4 cv=dNSmmPZb c=1 sm=1 tr=0 ts=6878de5f cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=o1T9f-mJ__uqyuaix_cA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 bulkscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- clxscore=1015 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507170099
+X-CM-TRANSID:gCh0CgDnYhPK33ho1P1DAg--.41809S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr48Ww4rXrWxXF4DtFykuFg_yoWrtFy5pr
+	4rKF9rCr48Xr18Zan5JF45Ca48Zr4fZ3W3G3s3Ww18Za98GFy7tanFvr4jgFW2krWkW34I
+	gF4qgFWjvayqv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-On 17.07.2025 04:01, Josh Poimboeuf wrote:
-> On Thu, Jul 10, 2025 at 06:35:14PM +0200, Jens Remus wrote:
->> +#ifndef unwind_user_get_reg
->> +
->> +/**
->> + * generic_unwind_user_get_reg - Get register value.
->> + * @val: Register value.
->> + * @regnum: DWARF register number to obtain the value from.
->> + *
->> + * Returns zero if successful. Otherwise -EINVAL.
->> + */
->> +static inline int generic_unwind_user_get_reg(unsigned long *val, int regnum)
->> +{
->> +	return -EINVAL;
->> +}
->> +
->> +#define unwind_user_get_reg generic_unwind_user_get_reg
->> +
->> +#endif /* !unwind_user_get_reg */
-> 
-> I believe the traditional way to do this is to give the function the
-> same name as the define:
-> 
-> #ifndef unwind_user_get_reg
-> static inline int unwind_user_get_reg(unsigned long *val, int regnum)
-> {
-> 	return -EINVAL;
-> }
-> #define unwind_user_get_reg unwind_user_get_reg
-> #endif
+After commit 5c70eb5c593d ("net: better track kernel sockets lifetime"),
+kernel sockets now use net_passive reference counting. However, commit
+95d2b9f693ff ("Revert "smb: client: fix TCP timers deadlock after rmmod"")
+restored the manual socket refcount manipulation without adapting to this
+new mechanism, causing a memory leak.
 
-Thanks!  I will use use suggestion.
+The issue manifests as multiple memory leaks when mounting/unmounting CIFS
+in network namespaces:
 
->> +/**
->> + * generic_sframe_set_frame_reginfo - Populate info to unwind FP/RA register
->> + * from SFrame offset.
->> + * @reginfo: Unwind info for FP/RA register.
->> + * @offset: SFrame offset value.
->> + *
->> + * A non-zero offset value denotes a stack offset from CFA and indicates
->> + * that the register is saved on the stack. A zero offset value indicates
->> + * that the register is not saved.
->> + */
->> +static inline void generic_sframe_set_frame_reginfo(
->> +	struct unwind_user_reginfo *reginfo,
->> +	s32 offset)
->> +{
->> +	if (offset) {
->> +		reginfo->loc = UNWIND_USER_LOC_STACK;
->> +		reginfo->frame_off = offset;
->> +	} else {
->> +		reginfo->loc = UNWIND_USER_LOC_NONE;
->> +	}
->> +}
-> 
-> This just inits the reginfo struct, can we call it sframe_init_reginfo()?
-> 
-> Also the function comment seems completely superfluous as the function
-> is completely obvious.
-> 
-> Also the signature should match kernel style, something like:
-> 
-> static inline void
-> sframe_init_reginfo(struct unwind_user_reginfo *reginfo, s32 offset)
+unreferenced object 0xffff9951419f6b00 (size 256):
+  comm "ip", pid 447, jiffies 4294692389 (age 14.730s)
+  hex dump (first 32 bytes):
+    1b 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 80 77 c2 44 51 99 ff ff  .........w.DQ...
+  backtrace:
+    __kmem_cache_alloc_node+0x30e/0x3d0
+    __kmalloc+0x52/0x120
+    net_alloc_generic+0x1d/0x30
+    copy_net_ns+0x86/0x200
+    create_new_namespaces+0x117/0x300
+    unshare_nsproxy_namespaces+0x60/0xa0
+    ksys_unshare+0x148/0x360
+    __x64_sys_unshare+0x12/0x20
+    do_syscall_64+0x59/0x110
+    entry_SYSCALL_64_after_hwframe+0x78/0xe2
+...
+unreferenced object 0xffff9951442e7500 (size 32):
+  comm "mount.cifs", pid 475, jiffies 4294693782 (age 13.343s)
+  hex dump (first 32 bytes):
+    40 c5 38 46 51 99 ff ff 18 01 96 42 51 99 ff ff  @.8FQ......BQ...
+    01 00 00 00 6f 00 c5 07 6f 00 d8 07 00 00 00 00  ....o...o.......
+  backtrace:
+    __kmem_cache_alloc_node+0x30e/0x3d0
+    kmalloc_trace+0x2a/0x90
+    ref_tracker_alloc+0x8e/0x1d0
+    sk_alloc+0x18c/0x1c0
+    inet_create+0xf1/0x370
+    __sock_create+0xd7/0x1e0
+    generic_ip_connect+0x1d4/0x5a0 [cifs]
+    cifs_get_tcp_session+0x5d0/0x8a0 [cifs]
+    cifs_mount_get_session+0x47/0x1b0 [cifs]
+    dfs_mount_share+0xfa/0xa10 [cifs]
+    cifs_mount+0x68/0x2b0 [cifs]
+    cifs_smb3_do_mount+0x10b/0x760 [cifs]
+    smb3_get_tree+0x112/0x2e0 [cifs]
+    vfs_get_tree+0x29/0xf0
+    path_mount+0x2d4/0xa00
+    __se_sys_mount+0x165/0x1d0
 
-Ditto.
+Root cause:
+When creating kernel sockets, sk_alloc() calls net_passive_inc() for
+sockets with sk_net_refcnt=0. The CIFS code manually converts kernel
+sockets to user sockets by setting sk_net_refcnt=1, but doesn't call
+the corresponding net_passive_dec(). This creates an imbalance in the
+net_passive counter, which prevents the network namespace from being
+destroyed when its last user reference is dropped. As a result, the
+entire namespace and all its associated resources remain allocated.
 
->> @@ -98,26 +98,57 @@ static int unwind_user_next(struct unwind_user_state *state)
->>  
->>  
->>  	/* Get the Return Address (RA) */
->> -	if (frame->ra_off) {
->> +	switch (frame->ra.loc) {
->> +	case UNWIND_USER_LOC_NONE:
->> +		if (!IS_ENABLED(CONFIG_HAVE_USER_RA_REG) || !topmost)
->> +			goto done;
->> +		ra = user_return_address(task_pt_regs(current));
->> +		break;
->> +	case UNWIND_USER_LOC_STACK:
->> +		if (!frame->ra.frame_off)
->> +			goto done;
->>  		/* Make sure that the address is word aligned */
->>  		shift = sizeof(long) == 4 || compat_fp_state(state) ? 2 : 3;
->> -		if ((cfa + frame->ra_off) & ((1 << shift) - 1))
->> +		if ((cfa + frame->ra.frame_off) & ((1 << shift) - 1))
->>  			goto done;
->> -		if (unwind_get_user_long(ra, cfa + frame->ra_off, state))
->> +		if (unwind_get_user_long(ra, cfa + frame->ra.frame_off, state))
->>  			goto done;
->> -	} else {
->> -		if (!IS_ENABLED(CONFIG_HAVE_USER_RA_REG) || !topmost)
->> +		break;
->> +	case UNWIND_USER_LOC_REG:
->> +		if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_LOC_REG) || !topmost)
->>  			goto done;
->> -		ra = user_return_address(task_pt_regs(current));
->> +		if (unwind_user_get_reg(&ra, frame->ra.regnum))
->> +			goto done;
->> +		break;
->> +	default:
->> +		WARN_ON_ONCE(1);
->> +		goto done;
-> 
-> The default case will never happen, can we make it a BUG()?
+Timeline of patches leading to this issue:
+- commit ef7134c7fc48 ("smb: client: Fix use-after-free of network
+  namespace.") in v6.12 fixed the original netns UAF by manually
+  managing socket refcounts
+- commit e9f2517a3e18 ("smb: client: fix TCP timers deadlock after
+  rmmod") in v6.13 attempted to use kernel sockets but introduced
+  TCP timer issues
+- commit 5c70eb5c593d ("net: better track kernel sockets lifetime")
+  in v6.14-rc5 introduced the net_passive mechanism with
+  sk_net_refcnt_upgrade() for proper socket conversion
+- commit 95d2b9f693ff ("Revert "smb: client: fix TCP timers deadlock
+  after rmmod"") in v6.15-rc3 reverted to manual refcount management
+  without adapting to the new net_passive changes
 
-Whatever Steve and you agree on.  I am new to Kernel development.
+Fix this by using sk_net_refcnt_upgrade() which properly handles the
+net_passive counter when converting kernel sockets to user sockets.
 
->>  	}
->>  
->>  	/* Get the Frame Pointer (FP) */
->> -	if (frame->fp_off && unwind_get_user_long(fp, cfa + frame->fp_off, state))
->> +	switch (frame->fp.loc) {
->> +	case UNWIND_USER_LOC_NONE:
->> +		break;
-> 
-> The UNWIND_USER_LOC_NONE behavior is different here compared to above.
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=220343 [1]
+Fixes: 95d2b9f693ff ("Revert "smb: client: fix TCP timers deadlock after rmmod"")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+---
+ fs/smb/client/connect.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-See my comments below.
-
-> Do we also need UNWIND_USER_LOC_PT_REGS?
-
-Sorry, I cannot follow.  Do you suggest to rename UNWIND_USER_LOC_REG to
-UNWIND_USER_LOC_PT_REGS?
-
->> +	case UNWIND_USER_LOC_STACK:
->> +		if (!frame->fp.frame_off)
->> +			goto done;
->> +		if (unwind_get_user_long(fp, cfa + frame->fp.frame_off, state))
->> +			goto done;
->> +		break;
->> +	case UNWIND_USER_LOC_REG:
->> +		if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_LOC_REG) || !topmost)
->> +			goto done;
-> 
-> The topmost checking is *really* getting cumbersome, I do hope we can
-> get rid of that.
-
-Restoring from arbitrary registers is only valid in the topmost frame,
-as their values (i.e. task_pt_regs(current)) are only available there.
-For other frames only SP, FP, and RA register values are available.
-
-I think this test makes sense.  Is this test really that expensive?
-
->> +		if (unwind_user_get_reg(&fp, frame->fp.regnum))
->> +			goto done;
->> +		break;
->> +	default:
->> +		WARN_ON_ONCE(1);
->>  		goto done;
->> +	}
-> 
-> BUG(1) here as well.
-
-Same as for other WARN_ON_ONCE() vs. BUG().
-
->>  	state->ip = ra;
->>  	state->sp = sp;
->> -	if (frame->fp_off)
->> +	if (frame->fp.loc != UNWIND_USER_LOC_NONE)
->>  		state->fp = fp;
-> 
-> Instead of the extra conditional here, can fp be initialized to zero?
-> Either at the top of the function or in the RA switch statement?
-
-No.  But fp could be initialized to state->fp, so that when it is not
-saved and thus not restored it keeps it previous value.
-
-Regards,
-Jens
+diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+index 205f547ca49e..5eec8957f2a9 100644
+--- a/fs/smb/client/connect.c
++++ b/fs/smb/client/connect.c
+@@ -3360,22 +3360,19 @@ generic_ip_connect(struct TCP_Server_Info *server)
+ 		socket = server->ssocket;
+ 	} else {
+ 		struct net *net = cifs_net_ns(server);
+ 		struct sock *sk;
+ 
+-		rc = __sock_create(net, sfamily, SOCK_STREAM,
+-				   IPPROTO_TCP, &server->ssocket, 1);
++		rc = sock_create_kern(net, sfamily, SOCK_STREAM,
++				      IPPROTO_TCP, &server->ssocket);
+ 		if (rc < 0) {
+ 			cifs_server_dbg(VFS, "Error %d creating socket\n", rc);
+ 			return rc;
+ 		}
+ 
+ 		sk = server->ssocket->sk;
+-		__netns_tracker_free(net, &sk->ns_tracker, false);
+-		sk->sk_net_refcnt = 1;
+-		get_net_track(net, &sk->ns_tracker, GFP_KERNEL);
+-		sock_inuse_add(net, 1);
++		sk_net_refcnt_upgrade(sk);
+ 
+ 		/* BB other socket options to set KEEPALIVE, NODELAY? */
+ 		cifs_dbg(FYI, "Socket created\n");
+ 		socket = server->ssocket;
+ 		socket->sk->sk_allocation = GFP_NOFS;
 -- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+2.39.2
 
 
