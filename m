@@ -1,140 +1,114 @@
-Return-Path: <linux-kernel+bounces-734551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4044EB08309
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:42:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C32FB0830D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85ADD4A292A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:42:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D20254A6A85
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0861DF738;
-	Thu, 17 Jul 2025 02:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YJ7vt248"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5918D1E5207;
+	Thu, 17 Jul 2025 02:42:15 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772011DB127
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA881D5AB7;
+	Thu, 17 Jul 2025 02:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752720125; cv=none; b=rxtkorRp7bPSB7HYF/Piq4JI+Huha7UO6nkHPw5xc1CLflJCIUGSBzUirtFU37YFZvWyLn1L/D1EdJF58ZB8ziazkvIw7H7tNkutHlt7A3dXh1NvaMoAeyS8pVq4j7pNcNmNbdo5O3UXHibN9Ko4M/fYF46Lhf9Z9ecHmEe/iRI=
+	t=1752720135; cv=none; b=teKEXOBOsCwVJI2G9d7QPA1Q/wGC4lFnuu+5fKu4uu3qv9SYitwJvuE7UmSZFe9Sz9yFBoYNUK9CK/+RdelEaaTzvmc3wmwe2wdxCPhGqNS53O3Zo7SLnx4OrDWZfm9GcSY8U3K6oEB2ObVpwi2qNlIeNOjx+UqJ0kU1Ky04DUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752720125; c=relaxed/simple;
-	bh=WIpCLItC2ezfA0UV9Dlo9EYwXZqp5BLSvGaPx6T5xOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ojj2rhxgD/D0cmFRMJ0bKwePTCymULyYVIfsCp3m9aDZZJ15ZnqGQlDd5Q1XllrKtX+PrFLPMpQGuBZ28/XJpyvaZXASWZ+7BbNCdQ0gnzdOefNnRauxG/mFa2z9tBrMygPEdLjzuzsRQmhKN9f1Xnzj8iA/t3vtdc3BR9WR8vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YJ7vt248; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752720123; x=1784256123;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WIpCLItC2ezfA0UV9Dlo9EYwXZqp5BLSvGaPx6T5xOE=;
-  b=YJ7vt248IcAb9IGO/dC5ZgUk1vKPJwp74SDqMLtL2yWwFl6Kve+p2t0A
-   6+mN0pdmS+hBxy1T2zoiFjcqdsCXoP8hzgrJsGFUkeczGrVsiskwlRNks
-   Mxinidge/CYazsUUeaQjRjdtMC6hDTz62DFFRbRjlEtFK1mqdhWzN1rky
-   9PhgO9r2+DksAXdg6yfv6SHMusahyAjUyreDRfZYP2ZvRTMgCtxXj6mXx
-   whPQN+dZ+xbUvuH22VsFAt7zzs7ktWgiDH6TqIAIB1l0RwE2osX25IwO9
-   fdwUMn59EqM9+l06OggGAiqvnDyMn4Qxjea2lYw//Gr7OoJT2wFOxq7Rv
-   g==;
-X-CSE-ConnectionGUID: d71eBNOWRxGBbgiDnIgciw==
-X-CSE-MsgGUID: DxgeTjWrTGOR+7I2cJ0Hsg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="55131651"
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="55131651"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 19:41:55 -0700
-X-CSE-ConnectionGUID: sPRbPZyyTUK4BL9DzAqfRg==
-X-CSE-MsgGUID: vAzme0n+QtizLgyIyw6dmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="163300039"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 19:41:54 -0700
-Message-ID: <8aedbbcc-9f4c-4700-acb7-43ec4f540135@linux.intel.com>
-Date: Thu, 17 Jul 2025 10:40:01 +0800
+	s=arc-20240116; t=1752720135; c=relaxed/simple;
+	bh=s+t/uu9h2gvGqffSfaH4EUk1H5BqMIGobLIMcwtt6Oo=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=pFNQtUXxyExQq+kn741rnKp1qd310bPyp8de1WJuxHKDND0D/BzGGvgk3JNGr8v6hQbTi+hQlkW5oS0Q2Ax0RYhCbaGcWfRU3gMQC0qfeGrs6UyxZX9PHTpt/W96mPO7SJfjwBNPsQaDQ7THgeX3THJ0UY5+4jCjqgIEDf5Vi+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bjHJJ75ljz6Fy5m;
+	Thu, 17 Jul 2025 10:42:08 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 56H2fwwc004125;
+	Thu, 17 Jul 2025 10:41:58 +0800 (+08)
+	(envelope-from jiang.peng9@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid31;
+	Thu, 17 Jul 2025 10:41:59 +0800 (CST)
+Date: Thu, 17 Jul 2025 10:41:59 +0800 (CST)
+X-Zmail-TransId: 2af9687862f7ffffffffa49-5bc46
+X-Mailer: Zmail v1.0
+Message-ID: <202507171041593886W7pGra5n2hPMaT1j17NV@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] iommu/vt-d: Optimize iotlb_sync_map for
- non-caching/non-RWBF modes
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250714045028.958850-1-baolu.lu@linux.intel.com>
- <20250714045028.958850-3-baolu.lu@linux.intel.com>
- <20250716141218.GA2166806@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250716141218.GA2166806@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+From: <jiang.peng9@zte.com.cn>
+To: <mst@redhat.com>
+Cc: <jasowang@redhat.com>, <xuanzhuo@linux.alibaba.com>, <eperezma@redhat.com>,
+        <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+        <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHYzXSB2aXJ0aW86IFVwZGF0ZSBrZXJuZWxkb2MgaW4gZHJpdmVycy92aXJ0aW8vdmlydGlvX2RtYV9idWYuYw==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 56H2fwwc004125
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: jiang.peng9@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Thu, 17 Jul 2025 10:42:09 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68786300.000/4bjHJJ75ljz6Fy5m
 
-On 7/16/25 22:12, Jason Gunthorpe wrote:
-> On Mon, Jul 14, 2025 at 12:50:19PM +0800, Lu Baolu wrote:
->> @@ -1833,6 +1845,8 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
->>   	if (ret)
->>   		goto out_block_translation;
->>   
->> +	domain->iotlb_sync_map |= domain_need_iotlb_sync_map(domain, iommu);
-> 
-> This has no locking and is in the wrong order anyhow :(
-> 
-> Any change to how invalidation works has to be done before attaching
-> the HW so that the required invalidations are already happening before
-> the HW can walk the page table.
-> 
-> And you need to serialize somehow with concurrent map/unmap as iommufd
-> doesn't prevent userspace from racing attach with map/unmap.
+From: Peng Jiang <jiang.peng9@zte.com.cn>
 
-domain->iotlb_sync_map does not change the driver's behavior. It simply
-indicates that there's no need to waste time calling
-cache_tag_flush_range_np(), as it's just a no-op.
+Fix kernel-doc descriptions in virtio_dma_buf.c to fix W=1 warnings:
 
-> 
-> The cache_tag_assign_domain() looks similarly wrong too, it needs to
-> start invalidating the cache tag of the new domain, then change the
-> context then stop invalidating the cache tag of the old
-> domain. Otherwise there are invalidation races.
-> 
-> Finally, if the HW needs RWBF then this also needs to do the buffer
-> flush in this thread before installing the context to prevent a race.
-> 
-> Overall this dynamic behavior may just be a bad idea, and perhaps you
-> can live with domains having the domain->iotlb_sync_map as a static
-> property set once during paging domain allocation.
-> 
-> If the iommu requires iotlb_sync_map but the domain does not have it
-> then the attach is rejected. This reduces domain sharing
-> possibilities, but maybe that is just fine??
+drivers/virtio/virtio_dma_buf.c:41 function parameter 'dma_buf' not described in 'virtio_dma_buf_attach'
+drivers/virtio/virtio_dma_buf.c:41 function parameter 'attach' not described in 'virtio_dma_buf_attach'
 
-I previously discussed this with Kevin, and we agreed on a phase-by-
-phase approach. As I mentioned, domain->iotlb_sync_map is merely a hint
-for the driver, preventing it from looping through all cache tags to
-determine if any cache invalidation work needs to be performed. We
-already know it's predetermined that no work needs to be done.
+Signed-off-by: Peng Jiang <jiang.peng9@zte.com.cn>
+---
+ drivers/virtio/virtio_dma_buf.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-RWBF is only required on some early implementations where memory
-coherence was not yet implemented by the VT-d engine. It should be
-difficult to find such systems in modern environments. Thus,
-iotlb_sync_map is primarily relevant for nested translation that
-utilizes S2 shadowing page tables. This, too, is a legacy feature, as
-Intel has supported hardware-assisted nested translation for years.
+diff --git a/drivers/virtio/virtio_dma_buf.c b/drivers/virtio/virtio_dma_buf.c
+index 3fe1d03b0645..986cc73c503f 100644
+--- a/drivers/virtio/virtio_dma_buf.c
++++ b/drivers/virtio/virtio_dma_buf.c
+@@ -16,6 +16,8 @@
+  * This wraps dma_buf_export() to allow virtio drivers to create a dma-buf
+  * for an virtio exported object that can be queried by other virtio drivers
+  * for the object's UUID.
++ *
++ * Returns: dma-buf pointer on success, ERR_PTR on failure.
+  */
+ struct dma_buf *virtio_dma_buf_export
+        (const struct dma_buf_export_info *exp_info)
+@@ -36,6 +38,14 @@ EXPORT_SYMBOL(virtio_dma_buf_export);
 
-Making iotlb_sync_map static is a feature, not an optimization. We are
-still evaluating the value of this, as it's only truly helpful if there
-are real use cases.
-
-Thanks,
-baolu
+ /**
+  * virtio_dma_buf_attach - mandatory attach callback for virtio dma-bufs
++ * @dma_buf: DMA buffer being attached to a device
++ * @attach: Attachment metadata for the device-dma_buf association
++ *
++ * Allows virtio devices to perform device-specific setup when a DMA buffer
++ * is attached to a device. This is part of the DMA-BUF sharing mechanism
++ * that enables virtio devices to interoperate with other subsystems.
++ *
++ * Returns: 0 on success, negative on failure.
+  */
+ int virtio_dma_buf_attach(struct dma_buf *dma_buf,
+                          struct dma_buf_attachment *attach)
+-- 
+2.25.1
 
