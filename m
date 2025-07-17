@@ -1,309 +1,808 @@
-Return-Path: <linux-kernel+bounces-734881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA69CB08799
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:08:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679A0B08786
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93ECAA41C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB901A60350
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA302877D3;
-	Thu, 17 Jul 2025 08:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHlLiuna"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CF52797AF;
+	Thu, 17 Jul 2025 08:06:51 +0000 (UTC)
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD7D283FD0;
-	Thu, 17 Jul 2025 08:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB1F25B31B;
+	Thu, 17 Jul 2025 08:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752739626; cv=none; b=nPDAZRqr86VzDfQxSqN14tIWoLabM2uGFf5ZLJ3FqLlUnEDiI+Z/F4z9ryt+l5XKXpq2i9DOL1Vqcau5Ci3Wchcd6EIk9JjNnsiiRHNCPWT3SYt7eUVf7w0fF3BlaLZX5aYoZbJqNJhwXUUvtABAavxAL/PPxZxlzMv43nzFUlk=
+	t=1752739610; cv=none; b=XGmnxnLFtA7Q9qvQMf42EjPC/Lnk58DOgvfZcy9PUOffO3dHRNDx6/p7U88J9H9sFdYhKIvgr6Cx77QiHLlOoS+qzim02KaIPRimKcTW7YaJCegHORtZ5hgKy3HxZ3J3cfwOqqArBIkuLvOy+G22kMNuVDjAjk12RP9e5aNHtH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752739626; c=relaxed/simple;
-	bh=ZsOkEZYPY0gtanPD4WMippjc1iuCC2bav9qM42yAVlI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DUCBG4IS8W34t46Gd/sTiK6ris0ag9cCz8IronJpI4925g/sn0ZG/5EKNjbM1lO95V9ZpK888iJItoTw6kx5EHX5FJwpx2jkLTGF7joQAlib1+I2PJui7U59k1EEPWcHI9BPDrJRqwtBK6oDEw9nLKAnEhoI0QsgWuHGel758sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHlLiuna; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-311e46d38ddso721821a91.0;
-        Thu, 17 Jul 2025 01:07:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752739624; x=1753344424; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RQ5k0Sh34AV2qjni7q2kIoyiqnIs55/ytzaUy228vQg=;
-        b=lHlLiunaBbuEiChagUsPdSiKTyTaltJszh3OQu63XkTtlsmPX29ia7hSZ9IIqADdWO
-         eQq/A81EfvSqCeG7OpJ8DIrRkWXKv7QI/pc2HsMT2FycG/PzFbq0MhC58XnmW0Ydim3A
-         wWwSrEqy5nUx+Li19/rVVcsJJu2W0P79a2vMDdbuwFi8PQFdIrKowX+ZZWedFmoJJRP7
-         lgq/GI3UvfMMvZ1+2Q2Dbg3bJMV+iCincgtz3vL8pDXfMgfTj8cN7XUOf0Itunp4hfHn
-         l80UMn9zfmBmHa9CSdq5AA/+aJ4dzL9MXK4IFVQFj69K/d06Wq9YJYR+IFzQffkIVCOB
-         oD+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752739624; x=1753344424;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RQ5k0Sh34AV2qjni7q2kIoyiqnIs55/ytzaUy228vQg=;
-        b=aeNASJzJQWzASIdwuNeiHd/5N+rffw/62RqKkeaFdgikG2zPVSsF4wCQ1gcZ0HEwhx
-         eD9BS/0bga4/Lrw+jcfRnCzxuRkZE9J1JEipQcwtKzcg8wCQyLkSizCPkcv/okG4xUFk
-         WtVKV+suh3wi2Akq86Sy2ZE2H7IB7dZDHBfE0od9cuzRIWOWj4izNQ0fFWEzAPFuY9nq
-         OHGI3yTxzbu3PDC2C7dabM2SkCoz7XZRTaiZVux9RfTA82sexd7wTyldMfw3noDl6Stx
-         2HZS/a0E5Bm6RI37foZnrD0u5NkOWGmaAhlNdrcqjVle0+yoZQMSgnL8hZRhMhCwPvmk
-         olDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVW79vs1OpGwvU/lrkEnFNoHn5tkS0W8M/QeFdsAHmTfHuEMwicVh4LG2vas2MCOBnDg4KN@vger.kernel.org, AJvYcCVvuAHv9SeTeas8EG6IpZtEOZ3Ury2KZ+vlU1NIVfzmA5/enAzXZ76SVcodLDpZo510uqw=@vger.kernel.org, AJvYcCWxwjxgmC5yyVHjVrdFAJNSMZfcB4kp43PkOSJ3IlpEYFbNzUSo29aaInnuLmrNs2r77efjYlG701A36g==@vger.kernel.org, AJvYcCXtmb9hvvyx3SQmUFtoZf0iE3plLfymR+vz3imtxVO9hwlHbJzImEygtEVQjTSEXQxd6pNywLIz4vNS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJQ3fjF2zNedhZEpIIbjJB0e+FB0SK7lU6MWs+BhGuQPstFzfw
-	xvc6pWVqNk0Dyd6WNVVUPYJ0WcHK4DyJ9xgUfBP61yAcgEd8SWYmnWzD
-X-Gm-Gg: ASbGncuZBT4L6VAZuYxaIlAgWFzojKHPAJ+fJ5VvNmWwEElrkMCjqDU1Jpi1yR64sEV
-	UtxatmaSQbnKrS75aA6hB/6T6/R2xQuM3XGijcqQBmO8bL1bidaYFWoFWyZrQh5FLczuV93NNTD
-	u6V/s7/TgcS5hm16yp4WBiV1/CNE7bnhLDz+Uhz+j0uW7WaoBhmbbZdFFQbirYsDJel+wKeIU6e
-	0CtRkHvevTKMjXXezaKjKI18UMasx+a8zsJ1TrpdJeAEYd5iImGmMvPfUUvgQPQJ2NtXrlibjBP
-	2+2724dqxclxch826zgDpgdFoCNXplCl8SKazz8CMS2pMceZFKSMdt9x9l2JdGWwp//eN3cTt8p
-	sB4VOLZhjw3qhqEsDnm4xvw==
-X-Google-Smtp-Source: AGHT+IGaAhkFViVCjDcH95NuJwq0Qavg1/VlyXQ+tThNvNSVE8B/KuvPv3o4kh4iIMQ44HF1sdaAmw==
-X-Received: by 2002:a17:90a:d88c:b0:313:1c7b:fc62 with SMTP id 98e67ed59e1d1-31c9e7637cemr8210224a91.22.1752739623955;
-        Thu, 17 Jul 2025 01:07:03 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f287bcasm2783269a91.32.2025.07.17.01.06.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 01:07:00 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 4488D401640F; Thu, 17 Jul 2025 15:06:53 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux RCU <rcu@vger.kernel.org>,
-	Linux CPU Architectures Development <linux-arch@vger.kernel.org>,
-	Linux LKMM <lkmm@lists.linux.dev>,
-	Linux KVM <kvm@vger.kernel.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Xavier <xavier_qy@163.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Maarten Lankhorst <dev@lankhorst.se>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 4/4] Documentation: atomic_bitops, atomic_t, memory-barriers: Link to newly-converted docs
-Date: Thu, 17 Jul 2025 15:06:17 +0700
-Message-ID: <20250717080617.35577-5-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250717080617.35577-1-bagasdotme@gmail.com>
-References: <20250717080617.35577-1-bagasdotme@gmail.com>
+	s=arc-20240116; t=1752739610; c=relaxed/simple;
+	bh=Pn7GbbLsJOeTxUAj2jj/v7sy3VhMibnU181ZsxAFPjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FQvpl4W4SLAVM/HhZDuRJqYpl17wVG9BPx5nFhlSSt80iAKycfVYcG7o56vhSvBEbmmXxGT3dHK4+r7bM4n9o9wjCsp9SRXvynKMwBwHQDILiIua8szg3mqsvoZ6yfU4GLP096qCC/Q2N3ZWG6q4oZgXdq/nqqFzcYeO/l3gWJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1E4424326B;
+	Thu, 17 Jul 2025 08:06:37 +0000 (UTC)
+Message-ID: <0743e973-6480-49a7-91ae-66bbc493bd11@ghiti.fr>
+Date: Thu, 17 Jul 2025 10:06:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8544; i=bagasdotme@gmail.com; h=from:subject; bh=ZsOkEZYPY0gtanPD4WMippjc1iuCC2bav9qM42yAVlI=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkVa5NdvztPO5nkZOf8dvGxfoMJEX6ThOUb1896FCIzj 2fNLhuxjlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEzkzwNGhiU5kzIu+bnKfY7I 4zFdcnhVWqbS0mNyi6SnXJ/4SOf/x0ZGhjc3snT4lfhSzKTfH2DkMBO4fE9s4odJyT1h8xjnF3P 3sAMA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] selftests: riscv: add misaligned access testing
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Shuah Khan <shuah@kernel.org>,
+ Andreas Schwab <schwab@suse.de>
+References: <20250711131925.112485-1-cleger@rivosinc.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250711131925.112485-1-cleger@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitddtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepkeekffdtuefhudegfffghfeuudeutddtkeekffeukeefvdejhfelieegheeiieejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdptghomhhmohhnrdhssgdpfhhpuhdrshgsnecukfhppedukeehrddvudefrdduheegrdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudekhedrvddufedrudehgedrudehuddphhgvlhhopegluddtrddugedrtddrudefngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeekpdhrtghpthhtoheptghlvghgvghrsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnf
+ hhrrgguvggrugdrohhrghdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehstghhfigrsgesshhushgvrdguvg
+X-GND-Sasl: alex@ghiti.fr
 
-Now that both atomic bitops, atomic types, and memory barriers docs have
-been converted, cross-reference them.
+Hi Clément,
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/RCU/rcu_dereference.rst         |  2 +-
- Documentation/core-api/atomic_bitops.rst      |  6 ++++--
- Documentation/core-api/circular-buffers.rst   |  4 ++--
- Documentation/core-api/memory-barriers.rst    | 16 +++++++++-------
- Documentation/core-api/refcount-vs-atomic.rst |  5 +++--
- Documentation/driver-api/device-io.rst        |  4 ++--
- Documentation/locking/spinlocks.rst           |  5 ++---
- Documentation/virt/kvm/vcpu-requests.rst      |  4 ++--
- 8 files changed, 25 insertions(+), 21 deletions(-)
+On 7/11/25 15:19, Clément Léger wrote:
+> This selftest tests all the currently emulated instructions (except for
+> the RV32 compressed ones which are left as a future exercise for a RV32
+> user). For the FPU instructions, all the FPU registers are tested.
+>
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+>
+> ---
+>
+> This commits needs [1] for the test to be passed or it will fail due to
+> missing sign extension.
+>
+> Note: This test can be executed using an SBI that support FWFT or that
+> delegates misaligned traps by default. If using QEMU, you will need
+> the patches mentioned at [2] so that misaligned accesses will generate
+> a trap.
+>
+> Note: This commit was part of a series [3] that was partially merged.
+>
+> Note: the remaining checkpatch errors are not applicable to this tests
+> which is a userspace one and does not use the kernel headers. Macros
+> with complex values can not be enclosed in do while loop since they are
+> generating functions.
+>
+> Link: https://lore.kernel.org/linux-riscv/mvmikk0goil.fsf@suse.de/ [1]
+> Link: https://lore.kernel.org/all/20241211211933.198792-1-fkonrad@amd.com/ [2]
+> Link: https://lore.kernel.org/linux-riscv/20250422162324.956065-1-cleger@rivosinc.com/ [3]
+>
+> V5:
+>   - Sign extend LWU return value
+>   - Added sign extensions tests
+>   - Tests multiples values for GP load/store
+>
+> V4:
+>   - Fixed a typo in test name s/load/store
+>
+> V3:
+>   - Fixed a segfault and a sign extension error found when compiling with
+>    -O<x>, x != 0 (Alex)
+>   - Use inline assembly to generate the sigbus and avoid GCC
+>     optimizations
+>
+> V2:
+>   - Fix commit description
+>   - Fix a few errors reported by checkpatch.pl
+> ---
+>   tools/testing/selftests/riscv/Makefile        |   2 +-
+>   .../selftests/riscv/misaligned/.gitignore     |   1 +
+>   .../selftests/riscv/misaligned/Makefile       |  12 +
+>   .../selftests/riscv/misaligned/common.S       |  33 ++
+>   .../testing/selftests/riscv/misaligned/fpu.S  | 180 +++++++++++
+>   tools/testing/selftests/riscv/misaligned/gp.S | 113 +++++++
+>   .../selftests/riscv/misaligned/misaligned.c   | 288 ++++++++++++++++++
+>   7 files changed, 628 insertions(+), 1 deletion(-)
+>   create mode 100644 tools/testing/selftests/riscv/misaligned/.gitignore
+>   create mode 100644 tools/testing/selftests/riscv/misaligned/Makefile
+>   create mode 100644 tools/testing/selftests/riscv/misaligned/common.S
+>   create mode 100644 tools/testing/selftests/riscv/misaligned/fpu.S
+>   create mode 100644 tools/testing/selftests/riscv/misaligned/gp.S
+>   create mode 100644 tools/testing/selftests/riscv/misaligned/misaligned.c
+>
+> diff --git a/tools/testing/selftests/riscv/Makefile b/tools/testing/selftests/riscv/Makefile
+> index 099b8c1f46f8..95a98ceeb3b3 100644
+> --- a/tools/testing/selftests/riscv/Makefile
+> +++ b/tools/testing/selftests/riscv/Makefile
+> @@ -5,7 +5,7 @@
+>   ARCH ?= $(shell uname -m 2>/dev/null || echo not)
+>   
+>   ifneq (,$(filter $(ARCH),riscv))
+> -RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector
+> +RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector misaligned
+>   else
+>   RISCV_SUBTARGETS :=
+>   endif
+> diff --git a/tools/testing/selftests/riscv/misaligned/.gitignore b/tools/testing/selftests/riscv/misaligned/.gitignore
+> new file mode 100644
+> index 000000000000..5eff15a1f981
+> --- /dev/null
+> +++ b/tools/testing/selftests/riscv/misaligned/.gitignore
+> @@ -0,0 +1 @@
+> +misaligned
+> diff --git a/tools/testing/selftests/riscv/misaligned/Makefile b/tools/testing/selftests/riscv/misaligned/Makefile
+> new file mode 100644
+> index 000000000000..1aa40110c50d
+> --- /dev/null
+> +++ b/tools/testing/selftests/riscv/misaligned/Makefile
+> @@ -0,0 +1,12 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (C) 2021 ARM Limited
+> +# Originally tools/testing/arm64/abi/Makefile
+> +
+> +CFLAGS += -I$(top_srcdir)/tools/include
+> +
+> +TEST_GEN_PROGS := misaligned
+> +
+> +include ../../lib.mk
+> +
+> +$(OUTPUT)/misaligned: misaligned.c fpu.S gp.S
+> +	$(CC) -g3 -static -o$@ -march=rv64imafdc $(CFLAGS) $(LDFLAGS) $^
+> diff --git a/tools/testing/selftests/riscv/misaligned/common.S b/tools/testing/selftests/riscv/misaligned/common.S
+> new file mode 100644
+> index 000000000000..8fa00035bd5d
+> --- /dev/null
+> +++ b/tools/testing/selftests/riscv/misaligned/common.S
+> @@ -0,0 +1,33 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2025 Rivos Inc.
+> + *
+> + * Authors:
+> + *     Clément Léger <cleger@rivosinc.com>
+> + */
+> +
+> +.macro lb_sb temp, offset, src, dst
+> +	lb \temp, \offset(\src)
+> +	sb \temp, \offset(\dst)
+> +.endm
+> +
+> +.macro copy_long_to temp, src, dst
+> +	lb_sb \temp, 0, \src, \dst,
+> +	lb_sb \temp, 1, \src, \dst,
+> +	lb_sb \temp, 2, \src, \dst,
+> +	lb_sb \temp, 3, \src, \dst,
+> +	lb_sb \temp, 4, \src, \dst,
+> +	lb_sb \temp, 5, \src, \dst,
+> +	lb_sb \temp, 6, \src, \dst,
+> +	lb_sb \temp, 7, \src, \dst,
+> +.endm
+> +
+> +.macro sp_stack_prologue offset
+> +	addi sp, sp, -8
+> +	sub sp, sp, \offset
+> +.endm
+> +
+> +.macro sp_stack_epilogue offset
+> +	add sp, sp, \offset
+> +	addi sp, sp, 8
+> +.endm
+> diff --git a/tools/testing/selftests/riscv/misaligned/fpu.S b/tools/testing/selftests/riscv/misaligned/fpu.S
+> new file mode 100644
+> index 000000000000..a7ad4430a424
+> --- /dev/null
+> +++ b/tools/testing/selftests/riscv/misaligned/fpu.S
+> @@ -0,0 +1,180 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2025 Rivos Inc.
+> + *
+> + * Authors:
+> + *     Clément Léger <cleger@rivosinc.com>
+> + */
+> +
+> +#include "common.S"
+> +
+> +#define CASE_ALIGN		4
+> +
+> +.macro fpu_load_inst fpreg, inst, precision, load_reg
+> +.align CASE_ALIGN
+> +	\inst \fpreg, 0(\load_reg)
+> +	fmv.\precision fa0, \fpreg
+> +	j 2f
+> +.endm
+> +
+> +#define flw(__fpreg) fpu_load_inst __fpreg, flw, s, a4
+> +#define fld(__fpreg) fpu_load_inst __fpreg, fld, d, a4
+> +#define c_flw(__fpreg) fpu_load_inst __fpreg, c.flw, s, a4
+> +#define c_fld(__fpreg) fpu_load_inst __fpreg, c.fld, d, a4
+> +#define c_fldsp(__fpreg) fpu_load_inst __fpreg, c.fldsp, d, sp
+> +
+> +.macro fpu_store_inst fpreg, inst, precision, store_reg
+> +.align CASE_ALIGN
+> +	fmv.\precision \fpreg, fa0
+> +	\inst \fpreg, 0(\store_reg)
+> +	j 2f
+> +.endm
+> +
+> +#define fsw(__fpreg) fpu_store_inst __fpreg, fsw, s, a4
+> +#define fsd(__fpreg) fpu_store_inst __fpreg, fsd, d, a4
+> +#define c_fsw(__fpreg) fpu_store_inst __fpreg, c.fsw, s, a4
+> +#define c_fsd(__fpreg) fpu_store_inst __fpreg, c.fsd, d, a4
+> +#define c_fsdsp(__fpreg) fpu_store_inst __fpreg, c.fsdsp, d, sp
+> +
+> +.macro fp_test_prologue
+> +	move a4, a1
+> +	/*
+> +	 * Compute jump offset to store the correct FP register since we don't
+> +	 * have indirect FP register access (or at least we don't use this
+> +	 * extension so that works on all archs)
+> +	 */
+> +	sll t0, a0, CASE_ALIGN
+> +	la t2, 1f
+> +	add t0, t0, t2
+> +	jr t0
+> +.align	CASE_ALIGN
+> +1:
+> +.endm
+> +
+> +.macro fp_test_prologue_compressed
+> +	/* FP registers for compressed instructions starts from 8 to 16 */
+> +	addi a0, a0, -8
+> +	fp_test_prologue
+> +.endm
+> +
+> +#define fp_test_body_compressed(__inst_func) \
+> +	__inst_func(f8); \
+> +	__inst_func(f9); \
+> +	__inst_func(f10); \
+> +	__inst_func(f11); \
+> +	__inst_func(f12); \
+> +	__inst_func(f13); \
+> +	__inst_func(f14); \
+> +	__inst_func(f15); \
+> +2:
+> +
+> +#define fp_test_body(__inst_func) \
+> +	__inst_func(f0); \
+> +	__inst_func(f1); \
+> +	__inst_func(f2); \
+> +	__inst_func(f3); \
+> +	__inst_func(f4); \
+> +	__inst_func(f5); \
+> +	__inst_func(f6); \
+> +	__inst_func(f7); \
+> +	__inst_func(f8); \
+> +	__inst_func(f9); \
+> +	__inst_func(f10); \
+> +	__inst_func(f11); \
+> +	__inst_func(f12); \
+> +	__inst_func(f13); \
+> +	__inst_func(f14); \
+> +	__inst_func(f15); \
+> +	__inst_func(f16); \
+> +	__inst_func(f17); \
+> +	__inst_func(f18); \
+> +	__inst_func(f19); \
+> +	__inst_func(f20); \
+> +	__inst_func(f21); \
+> +	__inst_func(f22); \
+> +	__inst_func(f23); \
+> +	__inst_func(f24); \
+> +	__inst_func(f25); \
+> +	__inst_func(f26); \
+> +	__inst_func(f27); \
+> +	__inst_func(f28); \
+> +	__inst_func(f29); \
+> +	__inst_func(f30); \
+> +	__inst_func(f31); \
+> +2:
+> +.text
+> +
+> +#define __gen_test_inst(__inst, __suffix) \
+> +.global test_ ## __inst; \
+> +test_ ## __inst:; \
+> +	fp_test_prologue ## __suffix; \
+> +	fp_test_body ## __suffix(__inst); \
+> +	ret
+> +
+> +#define gen_test_inst_compressed(__inst) \
+> +	.option arch,+c; \
+> +	__gen_test_inst(c_ ## __inst, _compressed)
+> +
+> +#define gen_test_inst(__inst) \
+> +	.balign 16; \
+> +	.option push; \
+> +	.option arch,-c; \
+> +	__gen_test_inst(__inst, ); \
+> +	.option pop
+> +
+> +.macro fp_test_prologue_load_compressed_sp
+> +	copy_long_to t0, a1, sp
+> +.endm
+> +
+> +.macro fp_test_epilogue_load_compressed_sp
+> +.endm
+> +
+> +.macro fp_test_prologue_store_compressed_sp
+> +.endm
+> +
+> +.macro fp_test_epilogue_store_compressed_sp
+> +	copy_long_to t0, sp, a1
+> +.endm
+> +
+> +#define gen_inst_compressed_sp(__inst, __type) \
+> +	.global test_c_ ## __inst ## sp; \
+> +	test_c_ ## __inst ## sp:; \
+> +		sp_stack_prologue a2; \
+> +		fp_test_prologue_## __type ## _compressed_sp; \
+> +		fp_test_prologue_compressed; \
+> +		fp_test_body_compressed(c_ ## __inst ## sp); \
+> +		fp_test_epilogue_## __type ## _compressed_sp; \
+> +		sp_stack_epilogue a2; \
+> +		ret
+> +
+> +#define gen_test_load_compressed_sp(__inst) gen_inst_compressed_sp(__inst, load)
+> +#define gen_test_store_compressed_sp(__inst) gen_inst_compressed_sp(__inst, store)
+> +
+> +/*
+> + * float_fsw_reg - Set a FP register from a register containing the value
+> + * a0 = FP register index to be set
+> + * a1 = addr where to store register value
+> + * a2 = address offset
+> + * a3 = value to be store
+> + */
+> +gen_test_inst(fsw)
+> +
+> +/*
+> + * float_flw_reg - Get a FP register value and return it
+> + * a0 = FP register index to be retrieved
+> + * a1 = addr to load register from
+> + * a2 = address offset
+> + */
+> +gen_test_inst(flw)
+> +
+> +gen_test_inst(fsd)
+> +#ifdef __riscv_compressed
+> +gen_test_inst_compressed(fsd)
+> +gen_test_store_compressed_sp(fsd)
+> +#endif
+> +
+> +gen_test_inst(fld)
+> +#ifdef __riscv_compressed
+> +gen_test_inst_compressed(fld)
+> +gen_test_load_compressed_sp(fld)
+> +#endif
+> diff --git a/tools/testing/selftests/riscv/misaligned/gp.S b/tools/testing/selftests/riscv/misaligned/gp.S
+> new file mode 100644
+> index 000000000000..5abec5ccc828
+> --- /dev/null
+> +++ b/tools/testing/selftests/riscv/misaligned/gp.S
+> @@ -0,0 +1,113 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2025 Rivos Inc.
+> + *
+> + * Authors:
+> + *     Clément Léger <cleger@rivosinc.com>
+> + */
+> +
+> +#include "common.S"
+> +
+> +.text
+> +
+> +.macro __gen_test_inst inst, src_reg
+> +	\inst a2, 0(\src_reg)
+> +	move a0, a2
+> +.endm
+> +
+> +.macro gen_func_header func_name, rvc
+> +	.option arch,\rvc
+> +	.global test_\func_name
+> +	test_\func_name:
+> +.endm
+> +
+> +.macro gen_test_inst inst
+> +	.option push
+> +	gen_func_header \inst, -c
+> +	__gen_test_inst \inst, a0
+> +	.option pop
+> +	ret
+> +.endm
+> +
+> +.macro gen_test_lwu
+> +	.option push
+> +	gen_func_header lwu, -c
+> +	__gen_test_inst lwu, a0
+> +	.option pop
+> +	# RISC-V ABI states that C expect a sign extended 32 bits integer
+> +	sext.w a0, a0
+> +	ret
+> +.endm
+> +
+> +.macro __gen_test_inst_c name, src_reg
+> +	.option push
+> +	gen_func_header c_\name, +c
+> +	 __gen_test_inst c.\name, \src_reg
+> +	.option pop
+> +	ret
+> +.endm
+> +
+> +.macro gen_test_inst_c name
+> + 	__gen_test_inst_c \name, a0
+> +.endm
+> +
+> +
+> +.macro gen_test_inst_c_ldsp
+> +	.option push
+> +	gen_func_header c_ldsp, +c
+> +	sp_stack_prologue a1
+> +	copy_long_to t0, a0, sp
+> +	c.ldsp a0, 0(sp)
+> +	sp_stack_epilogue a1
+> +	.option pop
+> +	ret
+> +.endm
+> +
+> +.macro lb_sp_sb_a0 reg, offset
+> +	lb_sb \reg, \offset, sp, a0
+> +.endm
+> +
+> +.macro gen_test_inst_c_sdsp
+> +	.option push
+> +	gen_func_header c_sdsp, +c
+> +	/* Misalign stack pointer */
+> +	sp_stack_prologue a1
+> +	/* Misalign access */
+> +	c.sdsp a2, 0(sp)
+> +	copy_long_to t0, sp, a0
+> +	sp_stack_epilogue a1
+> +	.option pop
+> +	ret
+> +.endm
+> +
+> +
+> + /*
+> + * a0 = addr to load from
+> + * a1 = address offset
+> + * a2 = value to be loaded
+> + */
+> +gen_test_inst lh
+> +gen_test_inst lhu
+> +gen_test_inst lw
+> +gen_test_lwu
+> +gen_test_inst ld
+> +#ifdef __riscv_compressed
+> +gen_test_inst_c lw
+> +gen_test_inst_c ld
+> +gen_test_inst_c_ldsp
+> +#endif
+> +
+> +/*
+> + * a0 = addr where to store value
+> + * a1 = address offset
+> + * a2 = value to be stored
+> + */
+> +gen_test_inst sh
+> +gen_test_inst sw
+> +gen_test_inst sd
+> +#ifdef __riscv_compressed
+> +gen_test_inst_c sw
+> +gen_test_inst_c sd
+> +gen_test_inst_c_sdsp
+> +#endif
+> +
+> diff --git a/tools/testing/selftests/riscv/misaligned/misaligned.c b/tools/testing/selftests/riscv/misaligned/misaligned.c
+> new file mode 100644
+> index 000000000000..57ddcbdc947c
+> --- /dev/null
+> +++ b/tools/testing/selftests/riscv/misaligned/misaligned.c
+> @@ -0,0 +1,288 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 Rivos Inc.
+> + *
+> + * Authors:
+> + *     Clément Léger <cleger@rivosinc.com>
+> + */
+> +#include <signal.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <linux/ptrace.h>
+> +#include "../../kselftest_harness.h"
+> +
+> +#include <stdlib.h>
+> +#include <stdio.h>
+> +#include <stdint.h>
+> +#include <float.h>
+> +#include <errno.h>
+> +#include <math.h>
+> +#include <string.h>
+> +#include <signal.h>
+> +#include <stdbool.h>
+> +#include <unistd.h>
+> +#include <inttypes.h>
+> +#include <ucontext.h>
+> +
+> +#include <sys/prctl.h>
+> +
+> +#define stringify(s) __stringify(s)
+> +#define __stringify(s) #s
+> +
+> +#define U8_MAX		((u8)~0U)
+> +#define S8_MAX		((s8)(U8_MAX >> 1))
+> +#define S8_MIN		((s8)(-S8_MAX - 1))
+> +#define U16_MAX		((u16)~0U)
+> +#define S16_MAX		((s16)(U16_MAX >> 1))
+> +#define S16_MIN		((s16)(-S16_MAX - 1))
+> +#define U32_MAX		((u32)~0U)
+> +#define U32_MIN		((u32)0)
+> +#define S32_MAX		((s32)(U32_MAX >> 1))
+> +#define S32_MIN		((s32)(-S32_MAX - 1))
+> +#define U64_MAX		((u64)~0ULL)
+> +#define S64_MAX		((s64)(U64_MAX >> 1))
+> +#define S64_MIN		((s64)(-S64_MAX - 1))
+> +
+> +#define int16_TEST_VALUES	{S16_MIN, S16_MIN/2, -1, 1, S16_MAX/2, S16_MAX}
+> +#define int32_TEST_VALUES	{S32_MIN, S32_MIN/2, -1, 1, S32_MAX/2, S32_MAX}
+> +#define int64_TEST_VALUES	{S64_MIN, S64_MIN/2, -1, 1, S64_MAX/2, S64_MAX}
+> +#define uint16_TEST_VALUES	{0, U16_MAX/2, U16_MAX}
+> +#define uint32_TEST_VALUES	{0, U32_MAX/2, U32_MAX}
+> +
+> +#define float_TEST_VALUES	{FLT_MIN, FLT_MIN/2, FLT_MAX/2, FLT_MAX}
+> +#define double_TEST_VALUES	{DBL_MIN, DBL_MIN/2, DBL_MAX/2, DBL_MAX}
+> +
+> +static bool float_equal(float a, float b)
+> +{
+> +	float scaled_epsilon;
+> +	float difference = fabsf(a - b);
+> +
+> +	// Scale to the largest value.
+> +	a = fabsf(a);
+> +	b = fabsf(b);
+> +	if (a > b)
+> +		scaled_epsilon = FLT_EPSILON * a;
+> +	else
+> +		scaled_epsilon = FLT_EPSILON * b;
+> +
+> +	return difference <= scaled_epsilon;
+> +}
+> +
+> +static bool double_equal(double a, double b)
+> +{
+> +	double scaled_epsilon;
+> +	double difference = fabsl(a - b);
+> +
+> +	// Scale to the largest value.
+> +	a = fabs(a);
+> +	b = fabs(b);
+> +	if (a > b)
+> +		scaled_epsilon = DBL_EPSILON * a;
+> +	else
+> +		scaled_epsilon = DBL_EPSILON * b;
+> +
+> +	return difference <= scaled_epsilon;
+> +}
+> +
+> +#define fpu_load_proto(__inst, __type) \
+> +extern __type test_ ## __inst(unsigned long fp_reg, void *addr, unsigned long offset, __type value)
+> +
+> +fpu_load_proto(flw, float);
+> +fpu_load_proto(fld, double);
+> +fpu_load_proto(c_flw, float);
+> +fpu_load_proto(c_fld, double);
+> +fpu_load_proto(c_fldsp, double);
+> +
+> +#define fpu_store_proto(__inst, __type) \
+> +extern void test_ ## __inst(unsigned long fp_reg, void *addr, unsigned long offset, __type value)
+> +
+> +fpu_store_proto(fsw, float);
+> +fpu_store_proto(fsd, double);
+> +fpu_store_proto(c_fsw, float);
+> +fpu_store_proto(c_fsd, double);
+> +fpu_store_proto(c_fsdsp, double);
+> +
+> +#define gp_load_proto(__inst, __type) \
+> +extern __type test_ ## __inst(void *addr, unsigned long offset, __type value)
+> +
+> +gp_load_proto(lh, int16_t);
+> +gp_load_proto(lhu, uint16_t);
+> +gp_load_proto(lw, int32_t);
+> +gp_load_proto(lwu, uint32_t);
+> +gp_load_proto(ld, int64_t);
+> +gp_load_proto(c_lw, int32_t);
+> +gp_load_proto(c_ld, int64_t);
+> +gp_load_proto(c_ldsp, int64_t);
+> +
+> +#define gp_store_proto(__inst, __type) \
+> +extern void test_ ## __inst(void *addr, unsigned long offset, __type value)
+> +
+> +gp_store_proto(sh, int16_t);
+> +gp_store_proto(sw, int32_t);
+> +gp_store_proto(sd, int64_t);
+> +gp_store_proto(c_sw, int32_t);
+> +gp_store_proto(c_sd, int64_t);
+> +gp_store_proto(c_sdsp, int64_t);
+> +
+> +#define TEST_GP_LOAD(__inst, __type_size, __type)					\
+> +TEST(gp_load_ ## __inst)								\
+> +{											\
+> +	int offset, ret, val_i;								\
+> +	uint8_t buf[16] __attribute__((aligned(16)));					\
+> +	__type ## __type_size ## _t test_val[] = __type ## __type_size ## _TEST_VALUES;	\
+> +											\
+> +	ret = prctl(PR_SET_UNALIGN, PR_UNALIGN_NOPRINT);				\
+> +	ASSERT_EQ(ret, 0);								\
+> +											\
+> +	for (offset = 1; offset < (__type_size) / 8; offset++) {			\
+> +		for (val_i = 0; val_i < ARRAY_SIZE(test_val); val_i++) {		\
+> +			__type ## __type_size ## _t ref_val = test_val[val_i];		\
+> +			__type ## __type_size ## _t *ptr =				\
+> +					(__type ## __type_size ## _t *)(buf + offset);	\
+> +			memcpy(ptr, &ref_val, sizeof(ref_val));				\
+> +			__type ## __type_size ## _t val =				\
+> +						test_ ## __inst(ptr, offset, ref_val);	\
+> +			EXPECT_EQ(ref_val, val);					\
+> +		}									\
+> +	}										\
+> +}
+> +
+> +TEST_GP_LOAD(lh, 16, int)
+> +TEST_GP_LOAD(lhu, 16, uint)
+> +TEST_GP_LOAD(lw, 32, int)
+> +TEST_GP_LOAD(lwu, 32, uint)
+> +TEST_GP_LOAD(ld, 64, int)
+> +#ifdef __riscv_compressed
+> +TEST_GP_LOAD(c_lw, 32, int)
+> +TEST_GP_LOAD(c_ld, 64, int)
+> +TEST_GP_LOAD(c_ldsp, 64, int)
+> +#endif
+> +
+> +#define TEST_GP_STORE(__inst, __type_size, __type)				\
+> +TEST(gp_store_ ## __inst)							\
+> +{										\
+> +	int offset, ret, val_i;							\
+> +	uint8_t buf[16] __attribute__((aligned(16)));				\
+> +	__type ## __type_size ## _t test_val[] =				\
+> +					__type ## __type_size ## _TEST_VALUES;	\
+> +										\
+> +	ret = prctl(PR_SET_UNALIGN, PR_UNALIGN_NOPRINT);			\
+> +	ASSERT_EQ(ret, 0);							\
+> +										\
+> +	for (val_i = 0; val_i < ARRAY_SIZE(test_val); val_i++) {		\
+> +		__type ## __type_size ## _t ref_val = test_val[val_i];		\
+> +		for (offset = 1; offset < (__type_size) / 8; offset++) {	\
+> +			__type ## __type_size ## _t val = ref_val;		\
+> +			__type ## __type_size ## _t *ptr =			\
+> +				 (__type ## __type_size ## _t *)(buf + offset); \
+> +			memset(ptr, 0, sizeof(val));				\
+> +			test_ ## __inst(ptr, offset, val);			\
+> +			memcpy(&val, ptr, sizeof(val));				\
+> +			EXPECT_EQ(ref_val, val);				\
+> +		}								\
+> +	}									\
+> +}
+> +
+> +TEST_GP_STORE(sh, 16, int)
+> +TEST_GP_STORE(sw, 32, int)
+> +TEST_GP_STORE(sd, 64, int)
+> +#ifdef __riscv_compressed
+> +TEST_GP_STORE(c_sw, 32, int)
+> +TEST_GP_STORE(c_sd, 64, int)
+> +TEST_GP_STORE(c_sdsp, 64, int)
+> +#endif
+> +
+> +#define __TEST_FPU_LOAD(__type, __inst, __reg_start, __reg_end)					\
+> +TEST(fpu_load_ ## __inst)									\
+> +{												\
+> +	int ret, offset, fp_reg, val_i;								\
+> +	uint8_t buf[16] __attribute__((aligned(16)));						\
+> +	__type test_val[] = __type ## _TEST_VALUES;						\
+> +												\
+> +	ret = prctl(PR_SET_UNALIGN, PR_UNALIGN_NOPRINT);					\
+> +	ASSERT_EQ(ret, 0);									\
+> +												\
+> +	for (fp_reg = __reg_start; fp_reg < __reg_end; fp_reg++) {				\
+> +		for (offset = 1; offset < 4; offset++) {					\
+> +			for (val_i = 0; val_i < ARRAY_SIZE(test_val); val_i++) {		\
+> +				__type val, ref_val = test_val[val_i];				\
+> +				void *load_addr = (buf + offset);				\
+> +												\
+> +				memcpy(load_addr, &ref_val, sizeof(ref_val));			\
+> +				val = test_ ## __inst(fp_reg, load_addr, offset, ref_val);	\
+> +				EXPECT_TRUE(__type ##_equal(val, ref_val));			\
+> +			}									\
+> +		}										\
+> +	}											\
+> +}
+> +
+> +#define TEST_FPU_LOAD(__type, __inst) \
+> +	__TEST_FPU_LOAD(__type, __inst, 0, 32)
+> +#define TEST_FPU_LOAD_COMPRESSED(__type, __inst) \
+> +	__TEST_FPU_LOAD(__type, __inst, 8, 16)
+> +
+> +TEST_FPU_LOAD(float, flw)
+> +TEST_FPU_LOAD(double, fld)
+> +#ifdef __riscv_compressed
+> +TEST_FPU_LOAD_COMPRESSED(double, c_fld)
+> +TEST_FPU_LOAD_COMPRESSED(double, c_fldsp)
+> +#endif
+> +
+> +#define __TEST_FPU_STORE(__type, __inst, __reg_start, __reg_end)			\
+> +TEST(fpu_store_ ## __inst)								\
+> +{											\
+> +	int ret, offset, fp_reg, val_i;							\
+> +	uint8_t buf[16] __attribute__((aligned(16)));					\
+> +	__type test_val[] = __type ## _TEST_VALUES;					\
+> +											\
+> +	ret = prctl(PR_SET_UNALIGN, PR_UNALIGN_NOPRINT);				\
+> +	ASSERT_EQ(ret, 0);								\
+> +											\
+> +	for (fp_reg = __reg_start; fp_reg < __reg_end; fp_reg++) {			\
+> +		for (offset = 1; offset < 4; offset++) {				\
+> +			for (val_i = 0; val_i < ARRAY_SIZE(test_val); val_i++) {	\
+> +				__type val, ref_val = test_val[val_i];			\
+> +											\
+> +				void *store_addr = (buf + offset);			\
+> +											\
+> +				test_ ## __inst(fp_reg, store_addr, offset, ref_val);	\
+> +				memcpy(&val, store_addr, sizeof(val));			\
+> +				EXPECT_TRUE(__type ## _equal(val, ref_val));		\
+> +			}								\
+> +		}									\
+> +	}										\
+> +}
+> +#define TEST_FPU_STORE(__type, __inst) \
+> +	__TEST_FPU_STORE(__type, __inst, 0, 32)
+> +#define TEST_FPU_STORE_COMPRESSED(__type, __inst) \
+> +	__TEST_FPU_STORE(__type, __inst, 8, 16)
+> +
+> +TEST_FPU_STORE(float, fsw)
+> +TEST_FPU_STORE(double, fsd)
+> +#ifdef __riscv_compressed
+> +TEST_FPU_STORE_COMPRESSED(double, c_fsd)
+> +TEST_FPU_STORE_COMPRESSED(double, c_fsdsp)
+> +#endif
+> +
+> +TEST_SIGNAL(gen_sigbus, SIGBUS)
+> +{
+> +	uint32_t val = 0xDEADBEEF;
+> +	uint8_t buf[16] __attribute__((aligned(16)));
+> +	int ret;
+> +
+> +	ret = prctl(PR_SET_UNALIGN, PR_UNALIGN_SIGBUS);
+> +	ASSERT_EQ(ret, 0);
+> +
+> +	asm volatile("sw %0, 1(%1)" : : "r"(val), "r"(buf) : "memory");
+> +}
+> +
+> +int main(int argc, char **argv)
+> +{
+> +	int ret, val;
+> +
+> +	ret = prctl(PR_GET_UNALIGN, &val);
+> +	if (ret == -1 && errno == EINVAL)
+> +		ksft_exit_skip("SKIP GET_UNALIGN_CTL not supported\n");
+> +
+> +	exit(test_harness_run(argc, argv));
+> +}
 
-diff --git a/Documentation/RCU/rcu_dereference.rst b/Documentation/RCU/rcu_dereference.rst
-index 2524dcdadde2b8..dca197d689d78f 100644
---- a/Documentation/RCU/rcu_dereference.rst
-+++ b/Documentation/RCU/rcu_dereference.rst
-@@ -192,7 +192,7 @@ readers working properly:
- 		so that a control dependency preserves the needed ordering.
- 		That said, it is easy to get control dependencies wrong.
- 		Please see the "CONTROL DEPENDENCIES" section of
--		Documentation/memory-barriers.txt for more details.
-+		Documentation/core-api/memory-barriers.rst for more details.
- 
- 	-	The pointers are not equal *and* the compiler does
- 		not have enough information to deduce the value of the
-diff --git a/Documentation/core-api/atomic_bitops.rst b/Documentation/core-api/atomic_bitops.rst
-index b93c388fd9bdc4..7f58c31a37a938 100644
---- a/Documentation/core-api/atomic_bitops.rst
-+++ b/Documentation/core-api/atomic_bitops.rst
-@@ -41,7 +41,8 @@ Semantics
- * Non-atomic ops:
- 
-   In particular __clear_bit_unlock() suffers the same issue as atomic_set(),
--  which is why the generic version maps to clear_bit_unlock(), see atomic_t.txt.
-+  which is why the generic version maps to clear_bit_unlock(), see
-+  Documentation/core-api/atomic_t.rst.
- 
- 
- * RMW ops:
-@@ -64,5 +65,6 @@ clear_bit_unlock() which has RELEASE semantics and test_bit_acquire which has
- ACQUIRE semantics.
- 
- Since a platform only has a single means of achieving atomic operations
--the same barriers as for atomic_t are used, see atomic_t.txt.
-+the same barriers as for atomic_t are used, see
-+Documentation/core-api/atomic_t.rst.
- 
-diff --git a/Documentation/core-api/circular-buffers.rst b/Documentation/core-api/circular-buffers.rst
-index 50966f66e39829..3dc18a9f7dcf8a 100644
---- a/Documentation/core-api/circular-buffers.rst
-+++ b/Documentation/core-api/circular-buffers.rst
-@@ -233,5 +233,5 @@ against previous accesses.
- Further reading
- ===============
- 
--See also Documentation/memory-barriers.txt for a description of Linux's memory
--barrier facilities.
-+See also Documentation/core-api/memory-barriers.rst for a description of
-+Linux's memory barrier facilities.
-diff --git a/Documentation/core-api/memory-barriers.rst b/Documentation/core-api/memory-barriers.rst
-index da8e682dc58d86..afb9bee0b80c4b 100644
---- a/Documentation/core-api/memory-barriers.rst
-+++ b/Documentation/core-api/memory-barriers.rst
-@@ -481,11 +481,12 @@ And a couple of implicit varieties:
-      This means that ACQUIRE acts as a minimal "acquire" operation and
-      RELEASE acts as a minimal "release" operation.
- 
--A subset of the atomic operations described in atomic_t.txt have ACQUIRE and
--RELEASE variants in addition to fully-ordered and relaxed (no barrier
--semantics) definitions.  For compound atomics performing both a load and a
--store, ACQUIRE semantics apply only to the load and RELEASE semantics apply
--only to the store portion of the operation.
-+A subset of the atomic operations described in
-+Documentation/core-api/atomic_t.rst have ACQUIRE and RELEASE variants in
-+addition to fully-ordered and relaxed (no barrier semantics) definitions.
-+For compound atomics performing both a load and a store, ACQUIRE semantics
-+apply only to the load and RELEASE semantics apply only to the store portion
-+of the operation.
- 
- Memory barriers are only required where there's a possibility of interaction
- between two CPUs or between a CPU and a device.  If it can be guaranteed that
-@@ -1972,7 +1973,8 @@ There are some more advanced barrier functions:
-    This makes sure that the death mark on the object is perceived to be set
-    *before* the reference counter is decremented.
- 
--   See Documentation/atomic_{t,bitops}.txt for more information.
-+   See Documentation/core-api/atomic_t.rst and
-+   Documentation/core-api/atomic_bitops.rst for more information.
- 
- 
-  * dma_wmb();
-@@ -2549,7 +2551,7 @@ operations are noted specially as some of them imply full memory barriers and
- some don't, but they're very heavily relied on as a group throughout the
- kernel.
- 
--See Documentation/atomic_t.txt for more information.
-+See Documentation/core-api/atomic_t.rst for more information.
- 
- 
- Accessing Devices
-diff --git a/Documentation/core-api/refcount-vs-atomic.rst b/Documentation/core-api/refcount-vs-atomic.rst
-index 94e628c1eb4975..28f5d6f80d19d0 100644
---- a/Documentation/core-api/refcount-vs-atomic.rst
-+++ b/Documentation/core-api/refcount-vs-atomic.rst
-@@ -19,7 +19,8 @@ these memory ordering guarantees.
- The terms used through this document try to follow the formal LKMM defined in
- tools/memory-model/Documentation/explanation.txt.
- 
--memory-barriers.txt and atomic_t.txt provide more background to the
-+Documentation/core-api/memory-barriers.rst and
-+Documentation/core-api/atomic_t.rst provide more background to the
- memory ordering in general and for atomic operations specifically.
- 
- Relevant types of memory ordering
-@@ -28,7 +29,7 @@ Relevant types of memory ordering
- .. note:: The following section only covers some of the memory
-    ordering types that are relevant for the atomics and reference
-    counters and used through this document. For a much broader picture
--   please consult memory-barriers.txt document.
-+   please consult Documentation/core-api/memory-barriers.rst.
- 
- In the absence of any memory ordering guarantees (i.e. fully unordered)
- atomics & refcounters only provide atomicity and
-diff --git a/Documentation/driver-api/device-io.rst b/Documentation/driver-api/device-io.rst
-index 5c7e8194bef92b..9e27f64ce7b8b1 100644
---- a/Documentation/driver-api/device-io.rst
-+++ b/Documentation/driver-api/device-io.rst
-@@ -186,8 +186,8 @@ writeq_relaxed(), writel_relaxed(), writew_relaxed(), writeb_relaxed()
-   comment that explains why the usage in a specific location is safe without
-   the extra barriers.
- 
--  See memory-barriers.txt for a more detailed discussion on the precise ordering
--  guarantees of the non-relaxed and relaxed versions.
-+  See Documentation/core-api/memory-barriers.rst for a more detailed discussion
-+  on the precise ordering guarantees of the non-relaxed and relaxed versions.
- 
- ioread64(), ioread32(), ioread16(), ioread8(),
- iowrite64(), iowrite32(), iowrite16(), iowrite8()
-diff --git a/Documentation/locking/spinlocks.rst b/Documentation/locking/spinlocks.rst
-index bec96f7a9f2d7a..8cb1bf557a30e9 100644
---- a/Documentation/locking/spinlocks.rst
-+++ b/Documentation/locking/spinlocks.rst
-@@ -21,9 +21,8 @@ there is only one thread-of-control within the region(s) protected by that
- lock. This works well even under UP also, so the code does _not_ need to
- worry about UP vs SMP issues: the spinlocks work correctly under both.
- 
--   NOTE! Implications of spin_locks for memory are further described in:
--
--     Documentation/memory-barriers.txt
-+   NOTE! Implications of spin_locks for memory are further described in
-+   Documentation/core-api/memory-barriers.rst.
- 
-        (5) ACQUIRE operations.
- 
-diff --git a/Documentation/virt/kvm/vcpu-requests.rst b/Documentation/virt/kvm/vcpu-requests.rst
-index 06718b9bc95977..0dd1308dc5252a 100644
---- a/Documentation/virt/kvm/vcpu-requests.rst
-+++ b/Documentation/virt/kvm/vcpu-requests.rst
-@@ -289,6 +289,6 @@ architectures a function where requests may be checked if necessary.
- References
- ==========
- 
--.. [atomic-ops] Documentation/atomic_bitops.txt and Documentation/atomic_t.txt
--.. [memory-barriers] Documentation/memory-barriers.txt
-+.. [atomic-ops] Documentation/core-api/atomic_bitops.rst and Documentation/core-api/atomic_t.rst
-+.. [memory-barriers] Documentation/core-api/memory-barriers.rst
- .. [lwn-mb] https://lwn.net/Articles/573436/
--- 
-An old man doll... just what I always wanted! - Clara
+
+Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
 
 
