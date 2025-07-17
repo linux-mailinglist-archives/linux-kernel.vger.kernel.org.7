@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-734627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74E9B0841C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:37:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D6AB08421
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 211FD7BA986
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D63173BE245
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC2420468E;
-	Thu, 17 Jul 2025 04:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C613201266;
+	Thu, 17 Jul 2025 04:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C0A49RFq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZ8N7/0Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB20201266;
-	Thu, 17 Jul 2025 04:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A789E17A309;
+	Thu, 17 Jul 2025 04:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752726928; cv=none; b=m+gUyOLr0U8G0O9Kx3jD6r4qdX0dc3f54svBIIFuBAHCDVRuDxD6Dd+ueWetnL/w6oDAzlCpv2o3jMKsxmbFR4prqhpRAAbUppkAHf/pEXH9bXtoXsmScmrdMzzadF9ShQ0KccTzzL1JdMzUtHpKH9KFUYDPOJfWdV2dds0OZT4=
+	t=1752727428; cv=none; b=gRJVnVrqBkTMFn00KTxJnB466DLsM+Z0yAUonZR9iMn1usXpGetVn2EnuBLdlduKNrUizoJVEspmCtvfJ26q/z2RsxDmdYuQJtvJtj8UawBQn7lKqNVBmpD/hb033BVkm/g6L4YpLm9NWpIra1IhN3GD9SWaMGREwcupkDV7XRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752726928; c=relaxed/simple;
-	bh=z9mn+EO35VMqhGecIxe0cnRbyrV0b0hdlIaV5NLXzKY=;
+	s=arc-20240116; t=1752727428; c=relaxed/simple;
+	bh=6lVvVHz/c5X9krXweCRNUBaPhyNHQY6SALOUx6VGQ9A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vFfuf6BoUP0/aRqsPVxN7IjZ6/bNXeNkWVSZxlQSom38oEk4s4f3pQYu0KK4zak+HY4mErAu9nCAy4I8uQZ5PQtvN5pNff0ipIUJqkkZ+dT6gsfWUSigfwxe7+uRNXZzRWma0ryZUwkUNpLNt6dUI5h24m76ggiX3GN3Nh37UzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C0A49RFq; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752726928; x=1784262928;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z9mn+EO35VMqhGecIxe0cnRbyrV0b0hdlIaV5NLXzKY=;
-  b=C0A49RFqi0H8Tz90Q7EWWZRP0s5OVkW/TVNgQZlWrb0ShvAakirIWsKI
-   PlCz7hSuC7++s/GN+OyoGmzyROq36QTabbA5fLr64bHTcUwmEWljbqPlS
-   Xt0fOmH4ZqpeND13l4Zrv3Oh/goCRlHnZiVHRP+S4BOAxD5ZDHJC17UdW
-   aDGBiJi+a0RQLpT5tEd1EYSnttwSqKDAKPQUhEp41YZVjeGgarnIu6mDH
-   i0uMPWAko7/oAWJXGOkoxGHDlK4IMzjFtp5YkjToS4sq4Le1isC4oxMee
-   x4TeRdQUF6fvPbPYvED3JlWObaOF+45mF14HLtndRkyUiZBHoowL5/mf8
-   g==;
-X-CSE-ConnectionGUID: trAvtDiKQeuIdE6PuQ658A==
-X-CSE-MsgGUID: NMebOJAOQwa27ScoDTkqXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58657222"
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="58657222"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 21:35:27 -0700
-X-CSE-ConnectionGUID: AsDHbvE/QSGrEoaYscOpgw==
-X-CSE-MsgGUID: m1yrFukvSRiTewrPJzUkug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="158392715"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 16 Jul 2025 21:35:23 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ucGL2-000D9R-2n;
-	Thu, 17 Jul 2025 04:35:20 +0000
-Date: Thu, 17 Jul 2025 12:35:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: carlos.bilbao@kernel.org, jv@jvosburgh.net, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	sforshee@kernel.org, bilbao@vt.edu,
-	Carlos Bilbao <carlos.bilbao@kernel.org>
-Subject: Re: [PATCH] bonding: Switch periodic LACPDU state machine from
- counter to jiffies
-Message-ID: <202507171204.xrYX6hPj-lkp@intel.com>
-References: <20250715205733.50911-1-carlos.bilbao@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B26lza6V+BuhGVKi8brBWq+M9GoN0NWA9iFj0JiiC2//jEXS5cVMVL25G5Wxwkzb22I39+FrdFXyILMUUosfJyC4PLek7SHUFTS1P5ibPbHaKCtlDGIqcaveXzkocurvsbDr2kMQiC4ag/PkN7Zw0n58tE/UPAB3+w/jNMeh7qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZ8N7/0Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098CAC4CEE3;
+	Thu, 17 Jul 2025 04:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752727428;
+	bh=6lVvVHz/c5X9krXweCRNUBaPhyNHQY6SALOUx6VGQ9A=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=iZ8N7/0YgvIEj/vvRSbQQETKGqVXhSZpCk/nzcT97njNqO2ZqHujfIUkk1QSlbj5Z
+	 kEp71si3ohw3ylbNgl5JxzlTnlHnCbJt8rGzXiHUsHEUrexfut5Y8HK6f81FU9vuvk
+	 qwvf5Cy5Q2W9IdMvlLnVotEHD1HfzWB+TZUXEpiEwN/jK3QfKGq35jrnG6bf3CStfI
+	 upm8KbS1ZTTjXCWnvAXymIdZX61AnzS63vmEEeItBqCZb0PljRaqSaeLPYqzDbpie3
+	 kFyAaJMJGbJPao+CYMQ8HxDdV8NEosGkqIHgZIQUgcyEOVGR4N71whAW6M0D21dXXK
+	 0quFZO5u91niA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id A8B84CE09C2; Wed, 16 Jul 2025 21:43:47 -0700 (PDT)
+Date: Wed, 16 Jul 2025 21:43:47 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v14 09/12] unwind deferred: Use SRCU
+ unwind_deferred_task_work()
+Message-ID: <47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250717004910.297898999@kernel.org>
+ <20250717004957.918908732@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,121 +77,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250715205733.50911-1-carlos.bilbao@kernel.org>
+In-Reply-To: <20250717004957.918908732@kernel.org>
 
-Hi,
+On Wed, Jul 16, 2025 at 08:49:19PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Instead of using the callback_mutex to protect the link list of callbacks
+> in unwind_deferred_task_work(), use SRCU instead. This gets called every
+> time a task exits that has to record a stack trace that was requested.
+> This can happen for many tasks on several CPUs at the same time. A mutex
+> is a bottleneck and can cause a bit of contention and slow down performance.
+> 
+> As the callbacks themselves are allowed to sleep, regular RCU cannot be
+> used to protect the list. Instead use SRCU, as that still allows the
+> callbacks to sleep and the list can be read without needing to hold the
+> callback_mutex.
+> 
+> Link: https://lore.kernel.org/all/ca9bd83a-6c80-4ee0-a83c-224b9d60b755@efficios.com/
+> 
+> Also added a new guard (srcu_lite) written by Peter Zilstra
+> 
+> Link: https://lore.kernel.org/all/20250715102912.GQ1613200@noisy.programming.kicks-ass.net/
+> 
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+> Changes since v13: https://lore.kernel.org/20250708012359.172959778@kernel.org
+> 
+> - Have the locking of the link list walk use guard(srcu_lite)
+>   (Peter Zijlstra)
+> 
+> - Fixed up due to the new atomic_long logic.
+> 
+>  include/linux/srcu.h     |  4 ++++
+>  kernel/unwind/deferred.c | 27 +++++++++++++++++++++------
+>  2 files changed, 25 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> index 900b0d5c05f5..879054b8bf87 100644
+> --- a/include/linux/srcu.h
+> +++ b/include/linux/srcu.h
+> @@ -524,4 +524,8 @@ DEFINE_LOCK_GUARD_1(srcu, struct srcu_struct,
+>  		    srcu_read_unlock(_T->lock, _T->idx),
+>  		    int idx)
+>  
+> +DEFINE_LOCK_GUARD_1(srcu_lite, struct srcu_struct,
 
-kernel test robot noticed the following build warnings:
+You need srcu_fast because srcu_lite is being removed.  They are quite
+similar, but srcu_fast is faster and is NMI-safe.  (This last might or
+might not matter here.)
 
-[auto build test WARNING on net-next/main]
-[also build test WARNING on net/main linus/master v6.16-rc6 next-20250716]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+See https://lore.kernel.org/all/20250716225418.3014815-3-paulmck@kernel.org/
+for a srcu_fast_notrace, so something like this:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/carlos-bilbao-kernel-org/bonding-Switch-periodic-LACPDU-state-machine-from-counter-to-jiffies/20250716-045912
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250715205733.50911-1-carlos.bilbao%40kernel.org
-patch subject: [PATCH] bonding: Switch periodic LACPDU state machine from counter to jiffies
-config: i386-randconfig-017-20250717 (https://download.01.org/0day-ci/archive/20250717/202507171204.xrYX6hPj-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507171204.xrYX6hPj-lkp@intel.com/reproduce)
+DEFINE_LOCK_GUARD_1(srcu_fast, struct srcu_struct,
+		    _T->scp = srcu_read_lock_fast(_T->lock),
+		    srcu_read_unlock_fast(_T->lock, _T->scp),
+		    struct srcu_ctr __percpu *scp)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507171204.xrYX6hPj-lkp@intel.com/
+Other than that, it looks plausible.
 
-All warnings (new ones prefixed by >>):
+							Thanx, Paul
 
->> drivers/net/bonding/bond_3ad.c:1484:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
-    1484 |                 default:
-         |                 ^
-   drivers/net/bonding/bond_3ad.c:1484:3: note: insert 'break;' to avoid fall-through
-    1484 |                 default:
-         |                 ^
-         |                 break; 
-   1 warning generated.
-
-
-vim +1484 drivers/net/bonding/bond_3ad.c
-
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1416  
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1417  /**
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1418   * ad_periodic_machine - handle a port's periodic state machine
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1419   * @port: the port we're looking at
-3a755cd8b7c601 Hangbin Liu         2021-08-02  1420   * @bond_params: bond parameters we will use
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1421   *
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1422   * Turn ntt flag on priodically to perform periodic transmission of lacpdu's.
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1423   */
-bbef56d861f103 Colin Ian King      2021-09-07  1424  static void ad_periodic_machine(struct port *port, struct bond_params *bond_params)
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1425  {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1426  	periodic_states_t last_state;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1427  
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1428  	/* keep current state machine state to compare later if it was changed */
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1429  	last_state = port->sm_periodic_state;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1430  
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1431  	/* check if port was reinitialized */
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1432  	if (((port->sm_vars & AD_PORT_BEGIN) || !(port->sm_vars & AD_PORT_LACP_ENABLED) || !port->is_enabled) ||
-3a755cd8b7c601 Hangbin Liu         2021-08-02  1433  	    (!(port->actor_oper_port_state & LACP_STATE_LACP_ACTIVITY) && !(port->partner_oper.port_state & LACP_STATE_LACP_ACTIVITY)) ||
-bbef56d861f103 Colin Ian King      2021-09-07  1434  	    !bond_params->lacp_active) {
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1435  		port->sm_periodic_state = AD_NO_PERIODIC;
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1436  	} else if (port->sm_periodic_state == AD_NO_PERIODIC)
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1437  		port->sm_periodic_state = AD_FAST_PERIODIC;
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1438  	/* check if periodic state machine expired */
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1439  	else if (time_after_eq(jiffies, port->sm_periodic_next_jiffies)) {
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1440  		/* if expired then do tx */
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1441  		port->sm_periodic_state = AD_PERIODIC_TX;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1442  	} else {
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1443  		/* If not expired, check if there is some new timeout
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1444  		 * parameter from the partner state
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1445  		 */
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1446  		switch (port->sm_periodic_state) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1447  		case AD_FAST_PERIODIC:
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1448  			if (!(port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1449  				port->sm_periodic_state = AD_SLOW_PERIODIC;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1450  			break;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1451  		case AD_SLOW_PERIODIC:
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1452  			if ((port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1453  				port->sm_periodic_state = AD_PERIODIC_TX;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1454  			break;
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1455  		default:
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1456  			break;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1457  		}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1458  	}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1459  
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1460  	/* check if the state machine was changed */
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1461  	if (port->sm_periodic_state != last_state) {
-17720981964ac5 Jarod Wilson        2019-06-07  1462  		slave_dbg(port->slave->bond->dev, port->slave->dev,
-17720981964ac5 Jarod Wilson        2019-06-07  1463  			  "Periodic Machine: Port=%d, Last State=%d, Curr State=%d\n",
-a4aee5c808fc5b Joe Perches         2009-12-13  1464  			  port->actor_port_number, last_state,
-a4aee5c808fc5b Joe Perches         2009-12-13  1465  			  port->sm_periodic_state);
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1466  
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1467  		switch (port->sm_periodic_state) {
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1468  		case AD_PERIODIC_TX:
-d238d458a70ad1 Holger Eitzenberger 2008-12-26  1469  			port->ntt = true;
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1470  			if (!(port->partner_oper.port_state &
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1471  						LACP_STATE_LACP_TIMEOUT))
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1472  				port->sm_periodic_state = AD_SLOW_PERIODIC;
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1473  			else
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1474  				port->sm_periodic_state = AD_FAST_PERIODIC;
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1475  		fallthrough;
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1476  		case AD_SLOW_PERIODIC:
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1477  		case AD_FAST_PERIODIC:
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1478  			if (port->sm_periodic_state == AD_SLOW_PERIODIC)
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1479  				port->sm_periodic_next_jiffies = jiffies
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1480  					+ HZ * AD_SLOW_PERIODIC_TIME;
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1481  			else /* AD_FAST_PERIODIC */
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1482  				port->sm_periodic_next_jiffies = jiffies
-a117d493f00ee2 Carlos Bilbao       2025-07-15  1483  					+ HZ * AD_FAST_PERIODIC_TIME;
-3bf2d28a2d7112 Veaceslav Falico    2014-01-08 @1484  		default:
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1485  			break;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1486  		}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1487  	}
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1488  }
-^1da177e4c3f41 Linus Torvalds      2005-04-16  1489  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +		    _T->idx = srcu_read_lock_lite(_T->lock),
+> +		    srcu_read_unlock_lite(_T->lock, _T->idx),
+> +		    int idx)
+>  #endif
+> diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
+> index 2311b725d691..353f7af610bf 100644
+> --- a/kernel/unwind/deferred.c
+> +++ b/kernel/unwind/deferred.c
+> @@ -41,7 +41,7 @@ static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
+>  #define UNWIND_MAX_ENTRIES					\
+>  	((SZ_4K - sizeof(struct unwind_cache)) / sizeof(long))
+>  
+> -/* Guards adding to and reading the list of callbacks */
+> +/* Guards adding to or removing from the list of callbacks */
+>  static DEFINE_MUTEX(callback_mutex);
+>  static LIST_HEAD(callbacks);
+>  
+> @@ -49,6 +49,7 @@ static LIST_HEAD(callbacks);
+>  
+>  /* Zero'd bits are available for assigning callback users */
+>  static unsigned long unwind_mask = RESERVED_BITS;
+> +DEFINE_STATIC_SRCU(unwind_srcu);
+>  
+>  static inline bool unwind_pending(struct unwind_task_info *info)
+>  {
+> @@ -174,8 +175,9 @@ static void unwind_deferred_task_work(struct callback_head *head)
+>  
+>  	cookie = info->id.id;
+>  
+> -	guard(mutex)(&callback_mutex);
+> -	list_for_each_entry(work, &callbacks, list) {
+> +	guard(srcu_lite)(&unwind_srcu);
+> +	list_for_each_entry_srcu(work, &callbacks, list,
+> +				 srcu_read_lock_held(&unwind_srcu)) {
+>  		if (test_bit(work->bit, &bits)) {
+>  			work->func(work, &trace, cookie);
+>  			if (info->cache)
+> @@ -213,7 +215,7 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+>  {
+>  	struct unwind_task_info *info = &current->unwind_info;
+>  	unsigned long old, bits;
+> -	unsigned long bit = BIT(work->bit);
+> +	unsigned long bit;
+>  	int ret;
+>  
+>  	*cookie = 0;
+> @@ -230,6 +232,14 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+>  	if (WARN_ON_ONCE(!CAN_USE_IN_NMI && in_nmi()))
+>  		return -EINVAL;
+>  
+> +	/* Do not allow cancelled works to request again */
+> +	bit = READ_ONCE(work->bit);
+> +	if (WARN_ON_ONCE(bit < 0))
+> +		return -EINVAL;
+> +
+> +	/* Only need the mask now */
+> +	bit = BIT(bit);
+> +
+>  	guard(irqsave)();
+>  
+>  	*cookie = get_cookie(info);
+> @@ -281,10 +291,15 @@ void unwind_deferred_cancel(struct unwind_work *work)
+>  		return;
+>  
+>  	guard(mutex)(&callback_mutex);
+> -	list_del(&work->list);
+> +	list_del_rcu(&work->list);
+> +
+> +	/* Do not allow any more requests and prevent callbacks */
+> +	work->bit = -1;
+>  
+>  	__clear_bit(bit, &unwind_mask);
+>  
+> +	synchronize_srcu(&unwind_srcu);
+> +
+>  	guard(rcu)();
+>  	/* Clear this bit from all threads */
+>  	for_each_process_thread(g, t) {
+> @@ -307,7 +322,7 @@ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func)
+>  	work->bit = ffz(unwind_mask);
+>  	__set_bit(work->bit, &unwind_mask);
+>  
+> -	list_add(&work->list, &callbacks);
+> +	list_add_rcu(&work->list, &callbacks);
+>  	work->func = func;
+>  	return 0;
+>  }
+> -- 
+> 2.47.2
+> 
+> 
 
