@@ -1,100 +1,122 @@
-Return-Path: <linux-kernel+bounces-735643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CDCEB09202
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2B0B09204
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C5FE567E4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:38:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C4E91C44DED
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B40D2FA643;
-	Thu, 17 Jul 2025 16:38:47 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A524A2FA643;
+	Thu, 17 Jul 2025 16:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPY+TatH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A413D145348;
-	Thu, 17 Jul 2025 16:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EA629B8DD;
+	Thu, 17 Jul 2025 16:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752770327; cv=none; b=ahisBP7GdpDfBbd8kcR6J5f3DAk4ezqcyGavO3E5dvWokNWnuQ+QSnfgAbDA3Qu2neFlvNSKDBI9jKtRlfrYdL5A52agnnzrW3I5fpF/GDN84As57ZlkjA2nhK9HtwT5G8zGfF/XUIUOpW7WC7i1EFyNczV7TayZ6AmwnoIgYzA=
+	t=1752770358; cv=none; b=m/lLOedD7KwRl9XdZ23sV58Bsb/89jMPKO1RezuRLpdg1pBDiuLrTpT+2jSatggkvxw3vUT5nHLdIL9W0mJOP3pX1ybLaOREhcsjfrNrCUUf1+YAcqyhtSPE2VbaAfMKpNeCP4DEGxbRS+pMCzfz7s+xN0Pvxo3Pj1aZ05JYhUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752770327; c=relaxed/simple;
-	bh=/lWi3pXaJ3llT/utRyZVcTX6L5mZifX69h5Q13eMmJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d0AFOx7rsyeTD0JyEgaoIjYSJtJxJSpU2a1Abq5GrnEfEvjXG/FXqqIsLiRkyJsyeVeMLJ11eQ59dbYl4pDXkEIo3n7583qW8uJUxpLbEaoz8cL7dBh00jvZRLhTbuoaCXtB8WuW4z5Sw3KiK3vQZIOFxFPG5n8mXJK2MJSPoO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 86DFB1A017A;
-	Thu, 17 Jul 2025 16:38:41 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 74CAE32;
-	Thu, 17 Jul 2025 16:38:36 +0000 (UTC)
-Date: Thu, 17 Jul 2025 12:38:35 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
- Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
- <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v14 09/12] unwind deferred: Use SRCU
- unwind_deferred_task_work()
-Message-ID: <20250717123835.21c8aa89@batman.local.home>
-In-Reply-To: <a9bdf195-e9b2-4cd0-88ba-b6f68b3b72b3@paulmck-laptop>
-References: <20250717004910.297898999@kernel.org>
-	<20250717004957.918908732@kernel.org>
-	<47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
-	<20250717082526.7173106a@gandalf.local.home>
-	<41c204c0-eabc-4f4f-93f4-2568e2f962a9@paulmck-laptop>
-	<20250717121010.4246366a@batman.local.home>
-	<a9bdf195-e9b2-4cd0-88ba-b6f68b3b72b3@paulmck-laptop>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752770358; c=relaxed/simple;
+	bh=DUuaQ5fBKnMeGewxsxqW1NmtpbgDaSIp9zGPMWqqa3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qrRL5y82nMVYKLrGb65JX32pkWKgCl3u91EDObtmEfKq6m0KH26Uki/DwgdyYgANh27fhcgu+hIGoxIcKUQn+NosKxsMolFfwVltmahbFJC98Yd9U059wQuJwj3fbpE4TQ/0Bqp2W/niIupx6NgPM53cgRljZ/ZIQ6rHd84J1t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPY+TatH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 728E1C4CEE3;
+	Thu, 17 Jul 2025 16:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752770357;
+	bh=DUuaQ5fBKnMeGewxsxqW1NmtpbgDaSIp9zGPMWqqa3Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kPY+TatHmQ+T9YDfwv/7mJ/0aor2fYIRcXUOWaXzMfKT1O3gg/yyleXmsK1fOv2SS
+	 Ce+Mpq10TVdPvhF8qyUSeGWDWNvMLuyxJuUeCH9Q0+9UePewq/gQKva6bymwMCVqPJ
+	 EPtIrNBIeEL20JNkU8BAvZVKe9wFWJrUhMkrDrtdttbNILVzx+2r8HUq7Lr/IfVoDe
+	 kfPjMDwyKXiASOcYar9+j2aFYuB4s0XHOw0U+hW1J9EdpBD/9mp6FSAKCLC9pq1plG
+	 hx12wTb5DWvbKO1BLglbC/qjbdBF6GDytUf2e/7Wz6vHWePlfDGuHsfHIQNBBoanlm
+	 2PtGGa/Blc53w==
+Date: Thu, 17 Jul 2025 09:39:16 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Marcelo Moreira <marcelomoreira1905@gmail.com>
+Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] xfs: Replace strncpy with strscpy
+Message-ID: <20250717163916.GR2672049@frogsfrogsfrogs>
+References: <20250716182220.203631-1-marcelomoreira1905@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 74CAE32
-X-Stat-Signature: xay1j81jcwor5ab8f19ohqmfyxetzg5p
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+dwEPDopII2FDU0xpnvkJQH8Cc23zvuzs=
-X-HE-Tag: 1752770316-666472
-X-HE-Meta: U2FsdGVkX19l5YJ+we3bRDbWCryF5sp2t3YoXG0e5O1vVjxoXf4mqiiSkhzgpVLZDmdboRShCD/D/VyDiG57trD6Jp6HNNoJM856H4WPxuif7BgZyD/wMACwGw+4KUg7qeeIq3TVxQg2hQNEAbjbDLtoeMBM2WPU5GgXATtYBl+mTqaGqhkO17DOlxS5+9JOyDc065n+WbMh7SmDplrlFWl9s20KM8MXT5ZeP6US6vo8zYSMBzuskVQ4TNIJb0F+eFiHtzZB0BBgQDI7BKISqFPM9z3DPDqIwN8SfG6g1+g578MFpDbYOjO0OOmP4OXa3sMIf67/vWq1HwPKj6fUHhbroXJAtUAi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716182220.203631-1-marcelomoreira1905@gmail.com>
 
-On Thu, 17 Jul 2025 09:27:34 -0700
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
-
-> > Two, I'm still grasping at the concept of srcu_fast (and srcu_lite for
-> > that matter), where I rather be slow and safe than optimize and be
-> > unsafe. The code where this is used may be faulting in user space
-> > memory, so it doesn't need the micro-optimizations now.  
+On Wed, Jul 16, 2025 at 03:20:37PM -0300, Marcelo Moreira wrote:
+> The `strncpy` function is deprecated for NUL-terminated strings as
+> explained in the "strncpy() on NUL-terminated strings" section of
+> Documentation/process/deprecated.rst.
 > 
-> Straight-up SRCU and guard(srcu), then?  Both are already in mainline.
+> In `xrep_symlink_salvage_inline()`, the `target_buf` (which is `sc->buf`)
+> is intended to hold a NUL-terminated symlink path. The original code
+> used `strncpy(target_buf, ifp->if_data, nr)`, where `nr` is the maximum
+> number of bytes to copy. This approach is problematic because `strncpy()`
+> does not guarantee NUL-termination if the source string is truncated
+> exactly at `nr` bytes, which can lead to out-of-bounds read issues
+> if the buffer is later treated as a NUL-terminated string.
+> Evidence from `fs/xfs/scrub/symlink.c` (e.g., `strnlen(sc->buf,
+> XFS_SYMLINK_MAXLEN)`) confirms that `sc->buf` is indeed expected to be
+> NUL-terminated. Furthermore, `sc->buf` is allocated with
+> `kvzalloc(XFS_SYMLINK_MAXLEN + 1, ...)`, explicitly reserving space for
+> the NUL terminator.
 > 
-> Or are those read-side smp_mb() calls a no-go for this code?
+> `strscpy()` is the proper replacement because it guarantees NUL-termination
+> of the destination buffer, correctly handles the copy limit, and aligns
+> with current kernel string-copying best practices.
+> Other recommended functions like `strscpy_pad()`, `memcpy()`, or
+> `memcpy_and_pad()` were not used because:
+> - `strscpy_pad()` would unnecessarily zero-pad the entire buffer beyond the
+>   NUL terminator, which is not required as the function returns `nr` bytes.
+> - `memcpy()` and `memcpy_and_pad()` do not guarantee NUL-termination, which
+>   is critical given `target_buf` is used as a NUL-terminated string.
+> 
+> This change improves code safety and clarity by using a safer function for
+> string copying.
 
-As I stated, the read-side is likely going to be faulting in user space
-memory. I don't think one or two smp_mb() will really make much of a
-difference ;-)
+Did you find an actual bug in online fsck, or is this just
+s/strncpy/strscpy/ ?  If the code already works correctly, please leave
+it alone.  Unless you want to take on all the online fsck and fuzz
+testing to make sure the changes don't break anything.
 
-It's not urgent. If it can be switched to srcu_fast, we can do it later.
+--D
 
-Thanks,
-
--- Steve
+> Signed-off-by: Marcelo Moreira <marcelomoreira1905@gmail.com>
+> ---
+>  fs/xfs/scrub/symlink_repair.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/scrub/symlink_repair.c b/fs/xfs/scrub/symlink_repair.c
+> index 953ce7be78dc..ce21c7f0ef54 100644
+> --- a/fs/xfs/scrub/symlink_repair.c
+> +++ b/fs/xfs/scrub/symlink_repair.c
+> @@ -185,7 +185,7 @@ xrep_symlink_salvage_inline(
+>  		return 0;
+>  
+>  	nr = min(XFS_SYMLINK_MAXLEN, xfs_inode_data_fork_size(ip));
+> -	strncpy(target_buf, ifp->if_data, nr);
+> +	strscpy(target_buf, ifp->if_data, XFS_SYMLINK_MAXLEN + 1);
+>  	return nr;
+>  }
+>  
+> -- 
+> 2.50.0
+> 
+> 
 
