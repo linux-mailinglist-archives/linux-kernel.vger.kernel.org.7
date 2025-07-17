@@ -1,130 +1,185 @@
-Return-Path: <linux-kernel+bounces-735766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24733B0938E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:46:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A939B09393
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273C7169ACB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8AE7A419D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95222FE32A;
-	Thu, 17 Jul 2025 17:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385222FE363;
+	Thu, 17 Jul 2025 17:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="BVUwV39I"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S7eMBl4Y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184881BC9E2;
-	Thu, 17 Jul 2025 17:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF0F4503B;
+	Thu, 17 Jul 2025 17:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752774360; cv=none; b=kLSXV5ESgqOFvtd1EtKJr++f6V2k6L8+A63RrGV50FZDOjD7K0IpYOZTxMp1s8mBncEEQe0Gjyxevo471P5YlPv52cDvu9o/Kh0XBFZtPiuK55iwkkLNyez3E5Qt7cpd4n5opiQcXOlhxNTc91q/HhW0HNhMn/BCuOmPKRib+Gc=
+	t=1752774551; cv=none; b=pdrwVjqazf6B2xDWgmRDg1VVEWxkFBSObGLxV/KfKsIUoTIYjx8j+ynaj0lT97NXOljG7alIsKPH2pnH23+NHzpcY/lfUI1elLl3lECZBq/jmKh8C5BZtUTNUZfd9WLvWykVuOtbPvd3M+1Zd5UiZoYnJHX2QABHHbkr3RkHMYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752774360; c=relaxed/simple;
-	bh=jSg9M9xq3ydADWKsrSUaLkgM7GusH07ANZzgpTiTznw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=G8ItsPTubD9psit0Bs1iBlXHmvtMhayITHiFXpCv3BjRh3DNjjXT67stt0kadiJkxleSb7f0XAc6fsKKoB+smx6TvIXczqyWCK1Y316Jy0Zmyb/n9rUciFileE4qzO5auPXbF+Sj97Ptzrj3Z4h15EvIy3dZtYB/zFMZTTIeOG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=BVUwV39I; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56HHjFXv9294376, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1752774315; bh=YJ+zT5/MB62bjNXoBMwmCBRMXQ3+FNMGUJo9CZpwvqI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=BVUwV39I5SJV4QhxXelrZhk+9YIh9Et3Qb2DEEoVbcz11hcBFqs3ywTi3ik6LiK+T
-	 UT4bEOq0w1gYWMZy0A6fy4XM9m/Y4UR+oyv83+h4vjUMltGw9rEM5joycE8pt3qbRE
-	 6glPdmagMCAOFWeLY7PtlzF6oSSX2sVkta3JgepVND2+WO59eCsNt/Nf7BtpgQ7a9X
-	 4fkVAyH6WnkjEUu0OSYG6KfIScS48LxxDOr3gwmjq3P8T6sYamkoOk/1k+V8l72IOy
-	 C4k5yGc9UzmUTHMuex9Ve44o4zbb4K3THyvl0Xm1Pi4Xf+JMKFBYUBJf/+IrXEnRon
-	 uhQDjiOY6dwpQ==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56HHjFXv9294376
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Jul 2025 01:45:15 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Jul 2025 01:45:15 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 18 Jul 2025 01:45:13 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
- RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
- 15.01.2507.035; Fri, 18 Jul 2025 01:45:13 +0800
-From: Hau <hau@realtek.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        nic_swsd
-	<nic_swsd@realtek.com>,
-        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com"
-	<edumazet@google.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
-Thread-Topic: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
-Thread-Index: AQHb8hYZ3m83qQJc5k6oVaa3M0JZALQvxoaAgAH73gD//33vgIAFX8dQ
-Date: Thu, 17 Jul 2025 17:45:13 +0000
-Message-ID: <c8bf99d9c3fc49958bad7f66863f72c2@realtek.com>
-References: <20250711034412.17937-1-hau@realtek.com>
- <9291f271-eafe-4f65-aa08-3c6cb4236f64@lunn.ch>
- <50df9352e81e4688b917072949b2ee4c@realtek.com>
- <e571d596-da26-4596-bf90-b858b5a2f5b4@lunn.ch>
-In-Reply-To: <e571d596-da26-4596-bf90-b858b5a2f5b4@lunn.ch>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1752774551; c=relaxed/simple;
+	bh=y4wWrmyfw7DwHelGL4OSKv0kZIIHrb2UwV+U2MepAqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LRMHObzCmNut5qV2V3ygm70pkVgbmDTUKvo/KSMdGH496UY5CKzCwNKyiguml8Eu9f+JK3RTPR51pZbhwNA0glTdziYnRMTpGvNn6hB9Im4f3cfjnB1U6TBbd4h2a/TgqNqQD9FtxYikb+I8fQYWybS/70/5gpp5k7EFatoznIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S7eMBl4Y; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752774550; x=1784310550;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=y4wWrmyfw7DwHelGL4OSKv0kZIIHrb2UwV+U2MepAqw=;
+  b=S7eMBl4YJ2uDDbhSppcsV+seJ0vCTru3uX1g2udMCgqYoYHkGy9D5KNM
+   /PZDCrKjBV2YUlF2TnOeez/8tR7LNcQtQI5z3ZFPNYmQBurUE/TKAu4+D
+   8t8R/ZaJeMZSPhGK0Itxga+0DncAOtZ8yPpwrXfC4ejwjl8J+GezM/uLW
+   cd+ChdwZzAGnnxm3GlpokZJzP0QPjRgLQYfyvuIQQZ1DTmZn/8ciIlyd6
+   f6YiOVn/w94klRLxPAAEcCY4PPTFkOesXtmf02XVPtk68W5R1TAc5sG2H
+   ykWB3do5skH2HNbaL2dkLrPyeoFUJlFbc2EVlrCh6BTXJhch6ZHBgtMyE
+   w==;
+X-CSE-ConnectionGUID: i5DTlQk1T4qVRIw2iLd8KA==
+X-CSE-MsgGUID: vBEUL+P8S8ydnhzSzkUsuA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="58874440"
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="58874440"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:49:09 -0700
+X-CSE-ConnectionGUID: nlXwjKWYQOu2Z1cU7NJLgQ==
+X-CSE-MsgGUID: WY3ru5eRQyynmRsRRlftJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="158427334"
+Received: from mjruhl-desk.amr.corp.intel.com (HELO localhost) ([10.124.221.12])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:49:08 -0700
+Date: Thu, 17 Jul 2025 10:49:07 -0700
+From: David Box <david.e.box@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: mani@kernel.org, bhelgaas@google.com, vicamo.yang@canonical.com, 
+	kenny@panix.com, ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, 
+	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/2] PCI/ASPM: Allow controller-defined default link state
+Message-ID: <six3j62wzjgby3lpu6lixzudm7ktqhbz7or5mdfe5k4vgwt4gs@poy42cz7dox3>
+References: <20250717004034.2998443-1-david.e.box@linux.intel.com>
+ <4xcwba3d4slmz5gfuwypavxqreobnigzyu4vib6powtbibytyp@mmqcns27vlyr>
+ <CAJZ5v0h+v5pUP39vTWpNNK2D8=X2UdjUTtZ7yQHCQ2k=r2kkMg@mail.gmail.com>
+ <tbj67d2j4bzf3em5nw73w354lqji3baurajbseyouls53odjxq@4edjrxtdaeum>
+ <CAJZ5v0htsq80MT53HQ+=yJZjjjtaKc7Ccmvps6j9Z5phjT0d4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0htsq80MT53HQ+=yJZjjjtaKc7Ccmvps6j9Z5phjT0d4w@mail.gmail.com>
 
-> On Mon, Jul 14, 2025 at 03:28:37PM +0000, Hau wrote:
+On Thu, Jul 17, 2025 at 05:37:01PM +0200, Rafael J. Wysocki wrote:
+> On Thu, Jul 17, 2025 at 4:13 PM David Box <david.e.box@linux.intel.com> wrote:
+> >
+> > Hi Mani, Rafael,
+> >
+> > On Thu, Jul 17, 2025 at 12:03:32PM +0200, Rafael J. Wysocki wrote:
+> > > On Thu, Jul 17, 2025 at 8:55 AM Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > > >
+> > > > On Wed, Jul 16, 2025 at 05:40:24PM GMT, David E. Box wrote:
+> > > > > Hi all,
+> > > > >
+> > > > > This RFC series addresses a limitation in the PCIe ASPM subsystem where
+> > > > > devices on synthetic PCIe hierarchies, such as those created by Intel’s
+> > > > > Volume Management Device (VMD), do not receive default ASPM settings
+> > > > > because they are not visible to firmware. As a result, ASPM remains
+> > > > > disabled on these devices unless explicitly enabled later by the driver,
+> > > > > contrary to platform power-saving expectations.
+> > > > >
+> > > > > Problem with Current Behavior
+> > > > >
+> > > > > Today, ASPM default policy is set in pcie_aspm_cap_init() based on values
+> > > > > provided by BIOS. For devices under VMD, BIOS has no visibility into the
+> > > > > hierarchy, and therefore no ASPM defaults are applied. The VMD driver can
+> > > > > attempt to walk the bus hierarchy and enable ASPM post-init using runtime
+> > > > > mechanisms, but this fails when aspm_disabled is set because the kernel
+> > > > > intentionally blocks runtime ASPM changes under ACPI’s FADT_NO_ASPM flag.
+> > > > > However, this flag does not apply to VMD, which controls its domain
+> > > > > independently of firmware.
+> > > > >
+> > > > > Goal
+> > > > >
+> > > > > The ideal solution is to allow VMD or any controller driver managing a
+> > > > > synthetic hierarchy to provide a default ASPM link state at the same time
+> > > > > it's set for BIOS, in pcie_aspm_cap_init().
+> > > > >
+> > > >
+> > > > I like the idea and would like to use it to address the similar limitation on
+> > > > Qcom SoCs where the BIOS doesn't configure ASPM settings for any devices and
+> > > > sometimes there is no BIOS at all (typical for SoCs used in embedded usecases).
+> > > > So I was using pci_walk_bus() in the controller driver to enable ASPM for all
+> > > > devices, but that obviously has issues with hotplugged devices.
+> > > >
+> > > > > Solution
+> > > > >
+> > > > > 1. A new bus flag, PCI_BUS_FLAGS_ASPM_DEFAULT_OVERRIDE, based on Rafael's
+> > > > > suggestion, to signal that the driver intends to override the default ASPM
+> > > > > setting. 2. A new field, aspm_bus_link_state, in 'struct pci_bus' to supply
+> > > > > the desired default link state using the existing PCIE_LINK_STATE_XXX
+> > > > > bitmask.
+> > > > >
+> > > >
+> > > > Why would you need to make it the 'bus' specific flag? It is clear that the
+> > > > controller driver is providing the default ASPM setting. So pcie_aspm_cap_init()
+> > > > should be able to use the value provided by it for all busses.
+> > > >
+> > > > Like:
+> > > >
+> > > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > > > index 2ad1852ac9b2..830496e556af 100644
+> > > > --- a/drivers/pci/pcie/aspm.c
+> > > > +++ b/drivers/pci/pcie/aspm.c
+> > > > @@ -791,6 +791,7 @@ static void aspm_l1ss_init(struct pcie_link_state *link)
+> > > >  static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+> > > >  {
+> > > >         struct pci_dev *child = link->downstream, *parent = link->pdev;
+> > > > +       struct pci_host_bridge *host = pci_find_host_bridge(parent->bus);
+> >
+> > I see. This is better. I'll make this change.
+> >
+> > > >         u32 parent_lnkcap, child_lnkcap;
+> > > >         u16 parent_lnkctl, child_lnkctl;
+> > > >         struct pci_bus *linkbus = parent->subordinate;
+> > > > @@ -866,8 +867,8 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+> > > >         }
+> > > >
+> > > >         /* Save default state */
+> > > > -       if (parent->bus->bus_flags & PCI_BUS_FLAGS_NO_ASPM_DEFAULT)
+> > > > -               link->aspm_default = parent->bus->aspm_bus_link_state;
+> > > > +       if (host && host->aspm_bus_link_state)
+> > > > +               link->aspm_default = host->aspm_bus_link_state;
+> > > >         else
+> > > >                 link->aspm_default = link->aspm_enabled;
+> > > >
+> > > > This avoids the usage of the bus flag (which your series is not at all making
+> > > > use of) and allows setting the 'host_bridge::aspm_bus_link_state' easily by the
+> > > > controller drivers.
 > > >
-> > > Can you give us a few more details. What is on the other end of the
-> SERDES?
-> > > An SGMII PHY? An SFP cage? An Ethernet switch chip?
-> > >
-> > > A quick search suggests it is used with an SFP cage. How is the I2C
-> > > bus connected? What about GPIOs? Does the RTL8116af itself have
-> > > GPIOs and an I2C bus?
-> > >
->=20
-> > RTL8116af 's SERDES will connect to a SFP cage. It has GPIO and a I2C
-> > bus. But driver did not use it to access SFP cage.  Driver depends on
-> > mac io 0x6c (LinkStatus) to check link status.
->=20
-> You cannot correctly use an SFP cage without using the I2C bus and the
-> GPIOs. e.g. A copper SFP module likely needs SGMII, where as a fibre
-> module needs 1000BaseX. You need to reprogram the PCS depending on
-> what the SFP EEPROM says.
->=20
-> The kernel has all the code needed to coordinate this, phylink. All you n=
-eed
-> to do is write a standard Linux I2C bus driver, a standard Linux GPIO dri=
-ver,
-> and turn your PCS into a Linux PCS. You can then instantiate an SFP devic=
-e.
-> The txgbe driver does this, you can probably copy the code from there.
->=20
-> Have you licensed these parts? The txgbe hardware uses synopsys I2C and
-> PCS. So all that was needed was a wrapper around the existing drivers.
->=20
-Thanks for your advice. I will check this internally to see if we can do th=
-is on device.
+> > > This is very similar to what I have just suggested and I like this one.
+> >
+> > I considered this. But 0 could technically mean that the controller wants
+> > ASPM to be disabled. The VMD driver doesn't need to do this though and if
+> > others don't currently need this then I can drop the flag.
+> 
+> Until anyone wants 0 to mean something different from "figure out the
+> default settings for me", I would not use the flag.
+> 
 
-Thanks.
+Okay. Thanks for the review. I'll send the next out as a regular patch
+after testing.
+
+David
 
