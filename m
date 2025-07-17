@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-734804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34060B08686
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:25:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95533B08685
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC3DCA44EEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:24:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F241A64255
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BB321E098;
-	Thu, 17 Jul 2025 07:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4D32206BE;
+	Thu, 17 Jul 2025 07:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uwwaw/is"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TkAZihGx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BB521E08B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638F621E091
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 07:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752737010; cv=none; b=BL47pX4G/OzwOmPyoIG4aJt1vlrK35h6kcx5j27fSK7kKabUrXxgB24dNKdR9zEZjF9glrAPIjUSPU2p2OzW7/NXSOyxaZUYGgEutW0hUtFtNjbpVbnuLhhgWk0Nxc71XdQuFAblPkHEvS7qZrTkATqyASSLGzBbXm30rsDnv0I=
+	t=1752737024; cv=none; b=VkAmk6J6mtsJn8mTRkJje10vfSZ9O3TW1nIzK9td+aC+b0mvnhriNEIOe8PTh4QOoQvKVV51eBxQK7yg93Mpigt4dnb5Y3Yl0HDyL6HLqGJGEsktWIMfKwL+lLvHfHDwDXjTbCEddm4XKbV5sYRqLo6TUCUEs61B57VKH0U8AhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752737010; c=relaxed/simple;
-	bh=FKIBHb7WsiCcqxyCiXSuimCxqY3BRuP7EWyNXI3p7XA=;
+	s=arc-20240116; t=1752737024; c=relaxed/simple;
+	bh=izJ7p1OU0lCyCKa4cgyAx8Vf4UaU956Ivc4z6abcz2A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C2me9GMvF5dqIPXrfqAKDlJ9roF4XfbLmnGhUPwMwPo7wxsTKQsF3bjVhanJKiMdv3N/BPy1uFCOGRFzuUG64W1AzerX84y3m+qsfQWMToWD/C+hKJDGc4e6wkhmmddJmBYpEWu5aG0e026AyX1JxJ9ijJNUYajScHsblloy2JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uwwaw/is; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=B0+t9z8EQIb4SKYnFgbqJiT236Zt7mHNEIAd25p3aL53NNnOFbZOjFyhRH8Di5dbZODqHUIGq9T5Huof8RHNOaYPS9bIilqI6L3OrohjHq2B3RRQ1+Hkm/oumTXxi7id+aQz516ySY6e4LOjHDjB/MYWS6RYlj9Y0mytxiTe3b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TkAZihGx; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752737007;
+	s=mimecast20190719; t=1752737021;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Kc1S4HRN10CMKK/JwiubHJK1ene59WEJkUCJ4n6yCBE=;
-	b=Uwwaw/ise3e/7l8ovasxRBvvjwkh2pl/+tXUuW45bkfUJtm+y/crkOOumQiDEEGwvhISRn
-	gCrrFjt0L2MVqvJpEyUMAJ+f3LW2vyHSL354B37hcMA2GM7Q0X1dwthN/Dqi1UfxTGgHMg
-	t/lDjCCH3//kxmKfpwpQSg2MCREk1p0=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Xka/ZuoT5H83UsFhmNwZ/doTSozyLFCxoHnEvCahLTQ=;
+	b=TkAZihGxMNPFvkhynSbnz0oymNpx4EJMvEOofcaU9/j/cq6yj5/n6oscG8ShmEPrYcJs2O
+	5z0WIV7i2AZ+ETXxvRbwBFH6xTgfVG/ZXa7yKSMchctmpTv4BEsym8Jmgh26vAIzp2Dr06
+	6JPary6fPKMEZ6RssnyTD0RQ+1fE67Y=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-352-MiXpmwUvO8KkBdHrVXYT9A-1; Thu, 17 Jul 2025 03:23:26 -0400
-X-MC-Unique: MiXpmwUvO8KkBdHrVXYT9A-1
-X-Mimecast-MFC-AGG-ID: MiXpmwUvO8KkBdHrVXYT9A_1752737005
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-718409595cbso10625677b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:23:25 -0700 (PDT)
+ us-mta-571-HTfz1ESNP2m5lNAsjBbg7Q-1; Thu, 17 Jul 2025 03:23:40 -0400
+X-MC-Unique: HTfz1ESNP2m5lNAsjBbg7Q-1
+X-Mimecast-MFC-AGG-ID: HTfz1ESNP2m5lNAsjBbg7Q_1752737019
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-7140227e02fso8093947b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:23:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752737005; x=1753341805;
+        d=1e100.net; s=20230601; t=1752737019; x=1753341819;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Kc1S4HRN10CMKK/JwiubHJK1ene59WEJkUCJ4n6yCBE=;
-        b=MLqXo2cgIfozHkwXAJOtbu4zmSjtO+YAaXAzWn66v2liqVNNcp2EHLgOkGemGRHvwZ
-         eWJdyCUABhQws9/V6JYJbdToVPGXqD+sEeTjlxDhpLhxPippJ4acCKcApmwbYAR8FJI1
-         7tosr6T/v669z08TP0kIwtgNxPToEG+aNbSWRdiwP1JeofHuZKBdXN0hJGK8VFjZmMPi
-         7g8BmtlgU45TzorM0aKScpZLnhj8Upr52kh+LJz689yiYV4CpdhGfLvb+j73RgFIM4GC
-         wE3ixHe9JEgF/cP/jsdn3dTL6InU7yqMdltjMc9Vh99fI85m+7OmaZRV95csihNiosc8
-         4npg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJvfQn/GwB7+urX64I7sDGfG7Jl/c91lw/3z3F9kgnpl0wbI5nMuxBbYPrn/k8nkRfzoAboffvIthXqbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVXlkhI47Ud7MINc7Zro2Sp2MSkqbckgeV4HlbzbjJTdWVgEj7
-	P0J3qVYkOJkkovGW1m4z0mDkI/BiSzytm1FDlrlVCKFPldMwk3Q0WrgFbF5vL5zgZcr9+AAuzTo
-	12O3GypZEc4z01qyfjbl2nADJBy6i4gRLzOOIcdeDfjsBxm5TapS3aqQnte2ZPPLW1V8VgyV9nO
-	mzykjaxRhD9jkW+yYN0VduWxrrd7rN4j9NmHGMtfnh
-X-Gm-Gg: ASbGncvIedaU0aDVHd9TFkX/JI203JQk/Zyf7I9M1INLB8gzHd90c81T1MYN9q0gUN2
-	HS7JTc0GGCbQ3DXC5AKzC+Oa0NJviMAwO8CCHkgaa04temo6NbCVfzQy+Q5BQOkoYcZsnbnLnr9
-	WlJUxOmtOL00qUHHzLZX3P1c8=
-X-Received: by 2002:a05:690c:688e:b0:70b:6651:b3e2 with SMTP id 00721157ae682-71834f3630bmr86143347b3.6.1752737005212;
-        Thu, 17 Jul 2025 00:23:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFrnspdqqX7aF+30GpKsaj5N3vowL7QVfLxGl9seZtaQy9Qba+TSioCVG5Kge/qXEG9ECo0HmCjXxEtp9vaAjM=
-X-Received: by 2002:a05:690c:688e:b0:70b:6651:b3e2 with SMTP id
- 00721157ae682-71834f3630bmr86142767b3.6.1752737004540; Thu, 17 Jul 2025
- 00:23:24 -0700 (PDT)
+        bh=Xka/ZuoT5H83UsFhmNwZ/doTSozyLFCxoHnEvCahLTQ=;
+        b=E61B2jLogvwnKxS9QArCyhhfx+nf3n6Yd4KnQrXfsJZ5oxaTiCWgzKdNT3WjPfHf41
+         +jtPMDQC7gni1lXkSOzMKfLLf213cRf8GGfbnR65xMXfAcBMnz9pQr8LJEWRtTf7FQxE
+         f6Z+GXYhsHvApzo6rntN5j5AzVLeiDu6PmsmIzHMF6dELloUnJVzzZpFOicYGW+vYEam
+         uJ1FFBS/ydwvTlvMirpnJBnxmSjYT6rlD0fxHoqx2FONEAeQsU6VKK8D5LPGkx7e5+Qu
+         /WXWNt+t/Mk81AYAqh7RBIXtEIZQ5jnj3fYEDzvXXw5IcKSett1YTlHYVlVY9uQyC8WT
+         J+GA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQUmfxRAogaqjpJMqkJwZ3vI7+dS4JM2IjpYW/bWW/IMVoi22NbyOWwvcq1lZodPk8oqACFh6NP4/Dhwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbX3KSn7CqggJknUy1P14lZXD46IQP11YhH4gO12f660S4tPb9
+	/i1hFDwxzRRC4/kz4KVTbnAeyQ7eLmx49wJpBUmoDCFhku7b/m0nkQMwvQEWY8P5P843+q4gJLT
+	DZNL6Ci5toV43Dw7Pxrxa0PIbemtxeS9gU/Av3P8TKgy/ZlbzXUGFtBg6aSYvTX86h+VDY8hY7o
+	P/rCyIanPE2+c4bNcnM7nl5WXClcaYTJSBZeCNZCwq
+X-Gm-Gg: ASbGncv0Jy7Fnz9RhXsjFkCWzz2mPbEgbMInufRz6AMKWxBej6KmdlyaMBE79lFXu0H
+	D3ifSTIrcBF9VzjJD4xR/iD2pVkU+SqL1ywrQD+sZMs6g66zt97By001VQ8TTEj6clwa/svEJnP
+	7dyELdcWDHQ45ZsxCgubhPbQ8=
+X-Received: by 2002:a05:690c:1c:b0:714:13:357a with SMTP id 00721157ae682-7183733e754mr75568637b3.20.1752737019372;
+        Thu, 17 Jul 2025 00:23:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG062fQmQMTtzQaORYO8BQfLpIhFpvKSjhTVlHbWcaYDeY88CgnYk46dQY+VDz9L5BhRQfpAlIpXIV3Coe2VM0=
+X-Received: by 2002:a05:690c:1c:b0:714:13:357a with SMTP id
+ 00721157ae682-7183733e754mr75568367b3.20.1752737018858; Thu, 17 Jul 2025
+ 00:23:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,12 +81,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250714003207.113275-1-npache@redhat.com> <20250714003207.113275-6-npache@redhat.com>
- <d2f622f6-3ef2-4227-b672-2fbd3a7dc931@redhat.com>
-In-Reply-To: <d2f622f6-3ef2-4227-b672-2fbd3a7dc931@redhat.com>
+ <5ff595db-3720-4ce3-8d92-5f08d0625c75@redhat.com>
+In-Reply-To: <5ff595db-3720-4ce3-8d92-5f08d0625c75@redhat.com>
 From: Nico Pache <npache@redhat.com>
-Date: Thu, 17 Jul 2025 01:22:58 -0600
-X-Gm-Features: Ac12FXyE2i46MbTFKcgd5mrUuWOmp87pUm27jhY9X8v9F0TQ52kTkKs7hjcEIPs
-Message-ID: <CAA1CXcBuJfUs_dhzo1CM2B-nDpptAwi+bFGXPn7oxAinmRUggA@mail.gmail.com>
+Date: Thu, 17 Jul 2025 01:23:12 -0600
+X-Gm-Features: Ac12FXxSdZgIpFjqwS2OfbfxZpFjuP_7yWTzmxJmAa7_DtUsx7oTR3r9FbXes2k
+Message-ID: <CAA1CXcBsCagKHJndYTKr=NyNCDxvJ=wf_wo0AubFoUe=r+Rdyw@mail.gmail.com>
 Subject: Re: [PATCH v9 05/14] khugepaged: generalize __collapse_huge_page_*
  for mTHP support
 To: David Hildenbrand <david@redhat.com>
@@ -107,7 +107,7 @@ Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 16, 2025 at 7:53=E2=80=AFAM David Hildenbrand <david@redhat.com=
+On Wed, Jul 16, 2025 at 8:03=E2=80=AFAM David Hildenbrand <david@redhat.com=
 > wrote:
 >
 > On 14.07.25 02:31, Nico Pache wrote:
@@ -142,10 +142,6 @@ st)
 > > +                                     struct list_head *compound_pageli=
 st,
 > > +                                     u8 order)
->
-> u8 ... (applies to all instances)
-Fixed all instances of this (other than those that need to stay)
->
 > >   {
 > >       struct page *page =3D NULL;
 > >       struct folio *folio =3D NULL;
@@ -155,10 +151,6 @@ enced =3D 0;
 > >       bool writable =3D false;
 > > +     int scaled_none =3D khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER =
 - order);
->
-> "scaled_max_ptes_none" maybe?
-done!
->
 > >
 > > -     for (_pte =3D pte; _pte < pte + HPAGE_PMD_NR;
 > > +     for (_pte =3D pte; _pte < pte + (1 << order);
@@ -186,10 +178,6 @@ rea_struct *vma,
 > > +                     if (order !=3D HPAGE_PMD_ORDER || (cc->is_khugepa=
 ged &&
 > > +                         shared > khugepaged_max_ptes_shared)) {
->
-> Please add a comment why we do something different with PMD. As
-> commenting below, does this deserve a TODO?
->
 > >                               result =3D SCAN_EXCEED_SHARED_PTE;
 > >                               count_vm_event(THP_SCAN_EXCEED_SHARED_PTE=
 );
@@ -298,58 +286,21 @@ _struct *mm,
 > >                       continue;
 > >
 > > +             /* Dont swapin for mTHP collapse */
->
-> Should we turn this into a TODO, because it's something to figure out
-> regarding the scaling etc?
-Good idea, I changed both of these into TODOs
->
 > > +             if (order !=3D HPAGE_PMD_ORDER) {
 > > +                     count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_=
 SWAP);
-> > +                     pte_unmap(pte);
-> > +                     mmap_read_unlock(mm);
-> > +                     result =3D SCAN_EXCEED_SWAP_PTE;
-> > +                     goto out;
-> > +             }
-> > +
-> >               vmf.pte =3D pte;
-> >               vmf.ptl =3D ptl;
-> >               ret =3D do_swap_page(&vmf);
-> > @@ -1149,7 +1162,7 @@ static int collapse_huge_page(struct mm_struct *m=
-m, unsigned long address,
-> >                * that case.  Continuing to collapse causes inconsistenc=
-y.
-> >                */
-> >               result =3D __collapse_huge_page_swapin(mm, vma, address, =
-pmd,
-> > -                                                  referenced);
->  > +                            referenced, HPAGE_PMD_ORDER);
 >
-> Indent messed up. Feel free to exceed 80 chars if it aids readability.
-Fixed!
+> Doesn't compile. This is introduced way later in this series.
+Whoops I stupidly applied this fixup to the wrong commit.
 >
-> >               if (result !=3D SCAN_SUCCEED)
-> >                       goto out_nolock;
-> >       }
-> > @@ -1197,7 +1210,7 @@ static int collapse_huge_page(struct mm_struct *m=
-m, unsigned long address,
-> >       pte =3D pte_offset_map_lock(mm, &_pmd, address, &pte_ptl);
-> >       if (pte) {
-> >               result =3D __collapse_huge_page_isolate(vma, address, pte=
-, cc,
-> > -                                                   &compound_pagelist)=
-;
-> > +                                     &compound_pagelist, HPAGE_PMD_ORD=
-ER);
+> Using something like
 >
-> Dito.
-Fixed!
+> git rebase -i mm/mm-unstable --exec "make -j16"
+Ah I remember you showing me this in the past! Need to start using it
+more-- Thank you.
+
 >
->
-> Apart from that, nothing jumped at me
->
-> Acked-by: David Hildenbrand <david@redhat.com>
-Thanks for the ack! I fixed the compile issue you noted too.
+> You can efficiently make sure that individual patches compile cleanly.
 >
 > --
 > Cheers,
