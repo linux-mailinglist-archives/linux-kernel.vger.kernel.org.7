@@ -1,88 +1,111 @@
-Return-Path: <linux-kernel+bounces-734695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75963B084E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3C3B08500
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65FF43A72A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:30:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B92A60031
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8AD20C00C;
-	Thu, 17 Jul 2025 06:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C202C216E24;
+	Thu, 17 Jul 2025 06:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtPYixMB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="zwpw7zys"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F67533E7;
-	Thu, 17 Jul 2025 06:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC8479C0;
+	Thu, 17 Jul 2025 06:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752733834; cv=none; b=ff25gkwOWf/57fHlAdOMQ77fNMkGNGNPdRjcZmLijNYNyKSdtdnvyw4/wzDG7InDmdDHsM5bIsTxXd5oTEwpM5woY//aHARIdyTb0Y/IR2BJLt9fEBtTmEDs3mZRNO3v00xab8ictuEjs6Z7OxFtvTEsfUyzmnOhs3k8hxr7iBY=
+	t=1752734022; cv=none; b=DN9br/G/2Ongmve2VnjgN4h1cwHsdRZ++GzNPvSaDh3nTocMJNhHBUk57PrXUDSZRMleQUdrVDq+n4wPLameIlXIQ0iLFHAIFM/bJH3c30VmaB7I0vEFfXujtUZV7HKRns7b6K11466R4C/Sxf+nhEr0BxBQe1XZ7jJ3MFvf7jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752733834; c=relaxed/simple;
-	bh=/UOgIfX8s+HDhK/lguWYj+CNqGgLHRwUREX7P9Hf9/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ma54StOqxOoSed8/6F9QGi9ETKEBJpRQsdn99i0qp9mYTLpUaC/xW7pnq9JwPtLNaMvKMg0qP/m6zP+ZjZlkDhHDodO7TvvIPW4nT6cvwUXypE9X94QhW8T2450eAYRqK5zNKUtVgwjvYa7oRHnd3Me1Rc6IsruD9+pkTiu4dqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtPYixMB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25B42C4CEE3;
-	Thu, 17 Jul 2025 06:30:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752733833;
-	bh=/UOgIfX8s+HDhK/lguWYj+CNqGgLHRwUREX7P9Hf9/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OtPYixMBD232cAbI8y/08GV7LxxSItQjkc2nGCrPbWZDbQGVgAEa3AjYKHr9a3N/B
-	 NQCNvAcABgeqlbc95MK0C4rBIb0edyQ5u/pFVjYe1/cHgteBrqBpz7DD6iJVqQrlcW
-	 ljRV6MNCe2OKnZLvypq2ue3zeBIKd6cdyc3AqSw6aWvhVquicQuhcDOeO/0V5gNLof
-	 WE8KLWt2thQUU863zMdB8j+GHOEFOJ/tyhOWunD0/5dwraRq3ZaREmj5il2GyQ6Xyc
-	 duvxohgVw9p2FZ78HzrQDHQBgEAWVLp3CNO2W0sF5YpntLzoQXFaEvnaiXwveq2sJe
-	 ntfisS1qDvS6Q==
-Date: Thu, 17 Jul 2025 08:30:31 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: sakari.ailus@linux.intel.com, andriy.shevchenko@linux.intel.com, 
-	laurent.pinchart@ideasonboard.com, krzk+dt@kernel.org, 
-	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	=?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>, Ricardo Ribalda <ribalda@chromium.org>, 
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Matthias Fend <matthias.fend@emfend.at>, 
-	Sylvain Petinot <sylvain.petinot@foss.st.com>, Jingjing Xiong <jingjing.xiong@intel.com>, 
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Dongcheng Yan <dongcheng.yan@intel.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Hans de Goede <hansg@kernel.org>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: Add ov2735 sensor
-Message-ID: <20250717-hulking-earthworm-of-atheism-68a02c@kuoka>
-References: <20250716134426.8348-1-hardevsinh.palaniya@siliconsignals.io>
- <20250716134426.8348-2-hardevsinh.palaniya@siliconsignals.io>
+	s=arc-20240116; t=1752734022; c=relaxed/simple;
+	bh=GOIe9sjlet2UCg9ci5sw6sqnb0MVMHIplEF/bD68i08=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ABoheojw+poOzcsELiWkhNkb/raF9gdl749MdOVnvMGf1nQUBg2Z9PtTT6os3HkEclNZbF/MHdYhxIgqzM7VDlFP3sbsHSs5taMgOfLFumol/+mQ6/zqZqdOk/A4vK6OVRgr4RvGGOFNRoYu9HmMWCSr2QNpy5PoEemZke3MWvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=zwpw7zys; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H3JZgc002491;
+	Thu, 17 Jul 2025 08:33:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=9+83B+YVA2IQexnB34FIHC
+	dUO9DtPuBnRUPeGm8YfyI=; b=zwpw7zysfZNtRoySikCC+q234YX5RB8Bc8BzOF
+	cDtWT+fQfA6T7aEMcOYsHie0mGFDvC0iM1PnRYzbDJz8VmPFGg/EiKdo8e/mp2bZ
+	cHvBfFD3aDp/3cZYcs92yl/WIA/jPd7Y2xHOTAJlk7s6ruhI7djq2pszUgTkxJY0
+	HbGVr9pHp5ACw82ZsuUgbNQZGE/B+bdndLLupIUGgMBisYqFn9DXvWjPoh90kn5L
+	2gbaODDtV+2B7JYH/xvuUt9KlbWmwngjhpBg/tJRo6uYRHSIWeYaK4JgAVa7jE3u
+	Wi/lgjE8r6ZI/vVh8CdCGqiPlQpi/YCHGvpFdKOcJ03c6sGw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47v2np3eca-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 08:33:21 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A6D564004C;
+	Thu, 17 Jul 2025 08:32:00 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DC0C978C56E;
+	Thu, 17 Jul 2025 08:31:10 +0200 (CEST)
+Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 17 Jul
+ 2025 08:31:10 +0200
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>,
+        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <linus.walleij@linaro.org>
+CC: <linux-pci@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+Subject: [RESEND PATCH 0/2] Add pinctrl_pm_select_init_state helper function
+Date: Thu, 17 Jul 2025 08:30:40 +0200
+Message-ID: <20250717063042.2236524-1-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250716134426.8348-2-hardevsinh.palaniya@siliconsignals.io>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
 
-On Wed, Jul 16, 2025 at 07:14:16PM +0530, Hardevsinh Palaniya wrote:
-> +        properties:
-> +          data-lanes:
-> +            items:
-> +              - const: 1
-> +              - const: 2
-> +          link-frequencies: true
+We have the helper functions pinctrl_pm_select_default_state and
+pinctrl_pm_select_sleep_state.
+This patch adds the missing pinctrl_pm_select_init_state function.
 
-Drop
+The STM32MP2 needs to set the pinctrl to an initial state during
+pm_resume, just like in probe. To achieve this, the function
+pinctrl_pm_select_init_state is added.
 
-I don't understand why this appeared. I don't think anyone asked for it?
+This allows a driver to balance pinctrl_pm_select_sleep_state()
+with pinctrl_pm_select_default_state() and
+pinctrl_pm_select_init_state() in pm_runtime_suspend and pm_runtime_resume.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Christian Bruel (2):
+  pinctrl: Add pinctrl_pm_select_init_state helper function
+  PCI: stm32: use pinctrl_pm_select_init_state() in
+    stm32_pcie_resume_noirq()
 
-Best regards,
-Krzysztof
+ drivers/pci/controller/dwc/pcie-stm32.c | 10 +++++++---
+ drivers/pinctrl/core.c                  | 13 +++++++++++++
+ include/linux/pinctrl/consumer.h        | 10 ++++++++++
+ 3 files changed, 30 insertions(+), 3 deletions(-)
+
+
+base-commit: 5a972a01e24b278f7302a834c6eaee5bdac12843
+-- 
+2.34.1
 
 
