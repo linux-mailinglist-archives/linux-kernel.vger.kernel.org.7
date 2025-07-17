@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-734886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E651CB087B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:12:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0687AB087BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7572A1AA20A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:12:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3B53B2400
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F79B279DCB;
-	Thu, 17 Jul 2025 08:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD33F27A103;
+	Thu, 17 Jul 2025 08:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsoR6qYx"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2421FBEB0;
-	Thu, 17 Jul 2025 08:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TvgTb5T2"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D9713B58A;
+	Thu, 17 Jul 2025 08:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752739952; cv=none; b=nI0aEIsDB34sK/yxr2vr0dwVfJA+G/mfNPhs+2CaBua3xUC2ITtbfhsDqbxeDFC2Z/h9wfIX4qq5/LXOmcwNGhEUf6wIpJIegDdUt1P9lnk5EKFqoM2pzaNsP89FTzEJU8kkGoPDBy+kyVDiBCNmSXWBolm5gz3zZgnD19/XmA8=
+	t=1752740100; cv=none; b=Ly2INW/sOkTDHEA3wf1SJcT7P9HLEFvD48GAa1pYkEWjECaR7yF+iuP8SrWM/Riw7MaBE7Rlyrpmn+0pD3SuBOEvDiriyhWAw9I+TWEoY0LMgeFelnrwivGVaj6yLTt7FVaIirU6qbpgMsZCpqLjmjtD0tKbGEuuZWdw7jXOHtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752739952; c=relaxed/simple;
-	bh=6dzmgsXZ4ihctdNNGrst7LKfmkrzDE3GFRksTdLmYNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XuasBPbshXUNZPHVsJQtqASytGtq50V7eJrzdzFNh5QB6WhbrOpNuV22ytcu6noT3RW9b+Ee8+L5Nqos3Y9uq9L9Z0xSYqP2ptmyOujg1gYdSFth14W3uQDhZ1a4wNY9fbySSuzGDgFCbdw+ihJt5yUc8N23eREKlGfMcN++t9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsoR6qYx; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-528ce9731dbso268308e0c.0;
-        Thu, 17 Jul 2025 01:12:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752739950; x=1753344750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6dzmgsXZ4ihctdNNGrst7LKfmkrzDE3GFRksTdLmYNM=;
-        b=YsoR6qYx1K/tfz+HZKVbBZZ2WY3nFLo38ZJqBYdX8owPNd3iIx+2zeeFyHN/79NvTt
-         3uUfwm+FC0kQlYUb2W0nFMNupIG/eJdIdk+5mIm3oHHHeA6DH3Wf3g24UfW/FqoBbcsF
-         AgpFK9onCaRrvcARefXhHVtUT34u+ysiBVHg0xm2BIHKdj3Ntv+77iDCF6y8pCYQUm/E
-         Q3nDBPPEOtfNBLrgRfDpUW/NZXowk0r7pYuQ5jvyQsZphxyH+Qime76rhxcWlZ+jZVJc
-         uWZkONMPhIO74IfzjwMm/IynoAJr19Wfgd/wt9G5rjLwF53ijPjewEwQe/DYT3QZTu8w
-         lF5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752739950; x=1753344750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6dzmgsXZ4ihctdNNGrst7LKfmkrzDE3GFRksTdLmYNM=;
-        b=hAgWHz1HoQEJwmjnoDuk7nYC1d5rDsnHdpGDDgPunT8wXT3ybCrcuPWvdO3RYLHr+G
-         f8OdhnQ+HX6i9zjKLwxsowX72UgeVRMbaPM6nkrK6dt1T3D7QADyeohlreWczfnTsxYC
-         dAUnHVwX7VBkmW2hCKg7lH7Gwr5LflGTndu2OekiEfEBLg/0CXEl4/ErLNMNzy3HLTc6
-         mHlJb04idyLjwU/P7KllWia2r9qQP06o49GgZek3AwYwWrzvf2plyA2xsJOqvVlbg4LG
-         qWBoW+z7e6AduuHBvvtLGppV4q6ZFZRbZOSpF0GTvI07JryqvnA0Lco0FNowMyyrw9Me
-         mOPw==
-X-Forwarded-Encrypted: i=1; AJvYcCURwIAlYjMThOQmHm5nTGjHQcW3pmKO0N5cmjC19/5XGSynjfd9VJu0aMXGymExtByge2MpwJGyyA7JU8avr2Y6AAM=@vger.kernel.org, AJvYcCW0qUsQL/mlg1icDx7Rvh5hTvju366hDNO71a9VoorkNOjn+yDgSVbd7HPduU3gG27GOVyf9gzBnBqafQlY@vger.kernel.org, AJvYcCXx5pgjLRsSgHuN0mrWtgWoEcoEx2ERG1+y4uRQbVF2YcD3k/RG7QNNbLe4psWnncmRTdDlYGRZDmaD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/WxUmoMbP7Kgzc/FFSmSd3aoTiJmaiTEKuWm1cj9YYsBKeTN6
-	bxLWTHf2cUcYl5G5Iq5zQckRvWoYjYAS2R/pklaAi7oi2Wa/9DGfr0jo7bc8JfMXrPlpvjW3Wjk
-	dqyCTxTWnS6FVufyUHsvqV75OvfwXCL8=
-X-Gm-Gg: ASbGncsYLEnPUgHE0worfWa6a1clEKiTvSGxJ4dDAJz7D0UBqXr6jsYSnnR1uC4iitR
-	Kh7zMn0gKtTNbn8//nOQV1YukxK5z/wj6HwzYeCv+JF8GMTMOEmk+x0bgAVGzrbfhmBsNF/vCwp
-	QKEgkqlkoAa6LqpeWu+TmjXAkpPZlDHp25Cx0KgOZFRDlUuPBBXnrAAG7dHM6M6LRFR11rJvmQi
-	yWN1EI=
-X-Google-Smtp-Source: AGHT+IE4+/jyzpcJbm9kLqh319e9w2ifyYgMXgvBj1eovRPq3sGlFkHS6iaGjCao2H1GdMVdydNDXEbwn9tkBnQeCAk=
-X-Received: by 2002:a05:6122:3703:b0:537:ee0:7ccd with SMTP id
- 71dfb90a1353d-5373fc17f24mr3472385e0c.5.1752739950040; Thu, 17 Jul 2025
- 01:12:30 -0700 (PDT)
+	s=arc-20240116; t=1752740100; c=relaxed/simple;
+	bh=uiMRUzhgcmKn2y2ImzVb3qCJgjq0lXgmyfLyccOwAUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T+opGRk/w6Fq2zOMA1iaJzhJm2A3noRRBpNekhy2c06LSn/eIbv5w3FO/OwohzujxosFXyhjpLB0JjsTkRbGlDIYd668rfRP8fh3RYKHqnI834MD/3uOyBNVoOjHhIIk9Dt3rhZypXm/FBXsZ/ddpQbSz38vCtjP/Ka+NB1ypRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TvgTb5T2; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=PM
+	uQNuZHynTbdVNIIMfLYsoElWxgT4IgmjP+PUnkAhE=; b=TvgTb5T26kOQQME21A
+	rSt6O9iaTj5y0O98gp0B8BCR09PO2g5iG5DoWNqqyWGNf4uFFaC0W5u4mUM3xXow
+	HJ9/XRYo8bxTfL9mKBh+P06smcWimkZKt9zgWgRCuR/3C/5+GqzGZH6LTY1MsgSu
+	yrg28+uPBPWYBDEcdekX5iGhE=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wCHFbq9sHhoLS7XFQ--.22249S2;
+	Thu, 17 Jul 2025 16:13:55 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: dmitry.baryshkov@oss.qualcomm.com,
+	heiko@sntech.de
+Cc: conor+dt@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	hjc@rock-chips.com,
+	mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	andrzej.hajda@intel.com,
+	jernej.skrabec@gmail.com,
+	jonas@kwiboo.se,
+	Laurent.pinchart@ideasonboard.com,
+	maarten.lankhorst@linux.intel.com,
+	rfoss@kernel.org,
+	simona@ffwll.ch,
+	tzimmermann@suse.de,
+	knaerzche@gmail.com,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v6 0/2] Convert inno hdmi to drm bridge
+Date: Thu, 17 Jul 2025 16:13:35 +0800
+Message-ID: <20250717081344.1355613-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
- <20240617-starqltechn_integration_upstream-v5-3-ea1109029ba5@gmail.com> <7bec6fc2-6643-4ddf-9475-8ead4b312912@gmail.com>
-In-Reply-To: <7bec6fc2-6643-4ddf-9475-8ead4b312912@gmail.com>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Thu, 17 Jul 2025 11:12:19 +0300
-X-Gm-Features: Ac12FXyILLppn4fNJXMt6JbXlTuHpIozeuClAX6gTrcucQbkwaV2GmN42jvBHx8
-Message-ID: <CABTCjFBTY4NV2yKyRO31MacGFAnJ4T-viDLrXkPs9z66VU6nyQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] regulator: add s2dos05 regulator support
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHFbq9sHhoLS7XFQ--.22249S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CF4fZw1rGr45tr45KF4Durg_yoW8Ar43pa
+	17Cry5CF47CF42grs7CF4fAr1Syan8Jw4S9ry7X34SvFW29F1UArna9F4Fqr9rZr47CF42
+	yrZ7Ja47KFy7ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jv_M3UUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMxyNXmh4rblpeQAAso
 
-=D1=87=D1=82, 17 =D0=B8=D1=8E=D0=BB. 2025=E2=80=AF=D0=B3. =D0=B2 10:28, Iva=
-ylo Ivanov <ivo.ivanov.ivanov1@gmail.com>:
->
-> On 9/26/24 12:47, Dzmitry Sankouski wrote:
-> > S2DOS05 has 1 buck and 4 LDO regulators, used for powering
-> > panel/touchscreen.
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
->
-> When is this going to get merged? This patch brings the regulators
-> functionality of the pmic, so not having it merged is odd. This PMIC is
-> used on other devices too, like the Galaxy S22.
->
-> It seems like this has been hanging for almost an year at this point.
-> If the author won't, will somebody resend it?
+From: Andy Yan <andy.yan@rock-chips.com>
 
 
-It's already merged, see
-https://lore.kernel.org/all/20240617-starqltechn_integration_upstream-v5-2-=
-ea1109029ba5@gmail.com/
+Convert it to drm bridge driver, it will be convenient for us to
+migrate the connector part to the display driver later.
 
---=20
+Patches that have already been merged in drm-misc-next are dropped.
 
-Best regards,
-Dzmitry
+
+Changes in v6:
+- Rebase on latest drm-misc-next
+- Link to V5: https://lore.kernel.org/linux-rockchip/20250512124615.2848731-1-andyshrk@163.com/
+
+Changes in v5:
+- Split cleanup code to seperate patch
+- Switch to devm_drm_bridge_alloc() API
+- Link to V4: https://lore.kernel.org/linux-rockchip/20250422070455.432666-1-andyshrk@163.com/
+- First included in this version
+
+Changes in v4:
+- Do not store colorimetry within inno_hdmi struct
+- Link to V3: https://lore.kernel.org/linux-rockchip/20250402123150.238234-1-andyshrk@163.com/
+
+Changes in v3:
+- First included in v3
+- Link to V2: https://lore.kernel.org/dri-devel/20250325132944.171111-1-andyshrk@163.com/
+
+Andy Yan (2):
+  drm/rockchip: inno-hdmi: Convert to drm bridge
+  MAINTAINERS: Add entry for Innosilicon hdmi bridge library
+
+ MAINTAINERS                                   |   8 +
+ drivers/gpu/drm/bridge/Kconfig                |   7 +
+ drivers/gpu/drm/bridge/Makefile               |   1 +
+ .../inno_hdmi.c => bridge/inno-hdmi.c}        | 502 +++++-------------
+ drivers/gpu/drm/rockchip/Kconfig              |   1 +
+ drivers/gpu/drm/rockchip/Makefile             |   2 +-
+ drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c | 188 +++++++
+ include/drm/bridge/inno_hdmi.h                |  33 ++
+ 8 files changed, 374 insertions(+), 368 deletions(-)
+ rename drivers/gpu/drm/{rockchip/inno_hdmi.c => bridge/inno-hdmi.c} (69%)
+ create mode 100644 drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
+ create mode 100644 include/drm/bridge/inno_hdmi.h
+
+-- 
+2.43.0
+
 
