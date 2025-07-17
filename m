@@ -1,123 +1,128 @@
-Return-Path: <linux-kernel+bounces-735715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798C0B092F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07750B092FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B226161626
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:13:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC5D177D76
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753F02FD5A3;
-	Thu, 17 Jul 2025 17:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D5E2F8C58;
+	Thu, 17 Jul 2025 17:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XIPR8KZM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+6UfiwC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC891F872D;
-	Thu, 17 Jul 2025 17:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D402FCE3F;
+	Thu, 17 Jul 2025 17:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752772381; cv=none; b=FmS1CP1hqxM7l8HwVVWyz51TtHl6CuHwDWyu+xQUqfwrjCd2F/1sAkdPcbKYDCh4zDof/8gA4GoG5JKYk8kvoREfrHeg+AfZXmhVEeg5/2RfKCoimQDSGtXb5EhfpFzApyRrnRSC/5OTSHIudnIeXyIjULeB87RWjWO3my1gMko=
+	t=1752772476; cv=none; b=j4c05+iPGvxRLTxNcbbeTFQKd4PNsBj4h4ge29oyY9mziuki0Hsqj224rZ2hq8cSnKWBLkyJZIXdgJu3Gj6BAlCjFnfSYm3mn4Q00ddVeZMLoFWeXP9oAY1xRG/KzB8kfiLNh3A4svPdclJO80TbgRQ8C3hhVRf3AGouUVyvu+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752772381; c=relaxed/simple;
-	bh=OxG2YOuNYMP3MxSu26iUtrRXoqkBJp+pMg5zixby/ro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ghJb/3S5K6ar0hsrcfabOV/nq3BKPcJuTmUM4PoI4vKAM6fgLWHZweHCDBZ60o71W2a/n2AJyzfG2ny+RP+StdaDhyaLcTtnFHvj2jUQlOcM6KdnvlOFGOh2DzUjC0wByKE3/0OzsSQf5PsitBZFZ2nKMf45OoLRpPJNdUsyLXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XIPR8KZM; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752772380; x=1784308380;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OxG2YOuNYMP3MxSu26iUtrRXoqkBJp+pMg5zixby/ro=;
-  b=XIPR8KZMt0R52cYnxmwyK6L8csUCe2h8dMsPNhaxbYzrwWxOmFuIAHiX
-   n2LMuRYjvbaBxOAhPQTmNIwQq81SipqOpL88nEu99NXGUMH9P0ueMbrlp
-   mjmJR22su+L9sW36qw666+uusTdxW+0krrlzpEW/FdTKXGW4bQEksoLyG
-   4Q771xKWQsn5OwUuUoGus/lUuD3dG5FH+xY5Sq+j60a9Oz006N8YHhmPu
-   uB3q/OHKVtrkvfFrnhLhTYcdfv8XfTpKWILWaOQQH5qOabKj2inde2jM+
-   I8kj0vU2g9GrVeC+FhkA+kJeJYFzaJ/nU5bX7jrcCxTFCVmlBO+AI2GRH
-   A==;
-X-CSE-ConnectionGUID: 4vXR2QuOQpaAxTsSeFPqMg==
-X-CSE-MsgGUID: sgRmGW00RBemWN8+ysi+kQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="58728945"
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="58728945"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:12:59 -0700
-X-CSE-ConnectionGUID: xQUytA59TzGeeWVwchZ3Zw==
-X-CSE-MsgGUID: sy17FTAsQsSWpJSCU1GSQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
-   d="scan'208";a="163488653"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.111.249]) ([10.125.111.249])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:12:59 -0700
-Message-ID: <f288f2b5-78ac-4852-8919-bad7d8e9f6c8@intel.com>
-Date: Thu, 17 Jul 2025 10:12:58 -0700
+	s=arc-20240116; t=1752772476; c=relaxed/simple;
+	bh=gPsTFWPofyzeCDanP9i0nnmFrp0vvZOOv01/QAIVnao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vBsQjjExc5LPR5RJrrsNBz4BAIkbbHjsxQy6bgoJMw2eozmjvyNCCwdt/hTNrwWPbHwVWLxByBxrnZDBLpT9dZ0m1AuDF6r0twB3Jn8k8/rydx2zrQ5PRyJ2E4Ni8qOclpPsjGEs3p8mCsYAatzwQPe1nV/aY1HZgqs/+z4lM5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+6UfiwC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D05C4CEE3;
+	Thu, 17 Jul 2025 17:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752772475;
+	bh=gPsTFWPofyzeCDanP9i0nnmFrp0vvZOOv01/QAIVnao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D+6UfiwC32xr7W6UjsheTcLNcXAGHbCwp3l6+lTzM6Zww1FfYdYL7uY+sQhjcc1L9
+	 NRIIa9El+BxeFOgq7Yjljb8qEl87g48UFkBI4KrRtEa8Kg1WCrXZTF6hy2eSyVjP1d
+	 pt4aAn9UQp56a+3TGJDW/xHpLyP3dz4GxCXGp6o5GBr++iTNPXIemJZUngl3YK4uh2
+	 kso6S5XKOkrRvzOXq883vxyGVatzXKydybNQUyf3I/D7uS0ZxksTIzRH88LA9aJskF
+	 UqV3cuNTigZ3PGozy7vK38GoEufTd+MIAbbvL5OkQvqjlCVViGpSITztU47c41x/Kh
+	 tY2+30GyG2WDw==
+Date: Thu, 17 Jul 2025 22:44:26 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Akhil Vinod <quic_akhvin@quicinc.com>
+Cc: Sumit Kumar <quic_sumk@quicinc.com>, Alex Elder <elder@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com, quic_skananth@quicinc.com, 
+	quic_vbadigan@quicinc.com, Sumit Kumar <sumk@qti.qualcomm.com>, stable@vger.kernel.org, 
+	Akhil Vinod <akhvin@qti.qualcomm.com>
+Subject: Re: [PATCH] bus: mhi: ep: Fix chained transfer handling in read path
+Message-ID: <5ij32zdni7pei3xfpxsq6fvaghb3pdfs2fznickutqjysip3k4@kldf7h6e3qc4>
+References: <20250709-chained_transfer-v1-1-2326a4605c9c@quicinc.com>
+ <5aqtqicbtlkrqbiw2ba7kkgwrmsuqx2kjukh2tavfihm5hq5ry@gdeqegayfh77>
+ <7c833565-0e7b-4004-b691-37bd07ce6abe@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cleanup: Fix documentation build error for ACQUIRE
- updates
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
- linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
- "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>
-References: <20250717173354.34375751@canb.auug.org.au>
- <20250717163036.1275791-1-dan.j.williams@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250717163036.1275791-1-dan.j.williams@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7c833565-0e7b-4004-b691-37bd07ce6abe@quicinc.com>
 
-
-
-On 7/17/25 9:30 AM, Dan Williams wrote:
-> Stephen reports:
+On Thu, Jul 17, 2025 at 10:18:54PM GMT, Akhil Vinod wrote:
 > 
-> Documentation/core-api/cleanup:7: include/linux/cleanup.h:73: ERROR: Unexpected indentation. [docutils]
-> Documentation/core-api/cleanup:7: include/linux/cleanup.h:74: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+> On 7/16/2025 12:10 PM, Manivannan Sadhasivam wrote:
+> > On Wed, Jul 09, 2025 at 04:03:17PM GMT, Sumit Kumar wrote:
+> > > From: Sumit Kumar <sumk@qti.qualcomm.com>
+> > > 
+> > > The current implementation of mhi_ep_read_channel, in case of chained
+> > > transactions, assumes the End of Transfer(EOT) bit is received with the
+> > > doorbell. As a result, it may incorrectly advance mhi_chan->rd_offset
+> > > beyond wr_offset during host-to-device transfers when EOT has not yet
+> > > arrived. This can lead to access of unmapped host memory, causing
+> > > IOMMU faults and processing of stale TREs.
+> > > 
+> > > This change modifies the loop condition to ensure rd_offset remains behind
+> > > wr_offset, allowing the function to process only valid TREs up to the
+> > > current write pointer. This prevents premature reads and ensures safe
+> > > traversal of chained TREs.
+> > > 
+> > > Fixes: 5301258899773 ("bus: mhi: ep: Add support for reading from the host")
+> > > Cc: stable@vger.kernel.org
+> > > Co-developed-by: Akhil Vinod <akhvin@qti.qualcomm.com>
+> > > Signed-off-by: Akhil Vinod <akhvin@qti.qualcomm.com>
+> > > Signed-off-by: Sumit Kumar <sumk@qti.qualcomm.com>
+> > > ---
+> > >   drivers/bus/mhi/ep/main.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
+> > > index b3eafcf2a2c50d95e3efd3afb27038ecf55552a5..2e134f44952d1070c62c24aeca9effc7fd325860 100644
+> > > --- a/drivers/bus/mhi/ep/main.c
+> > > +++ b/drivers/bus/mhi/ep/main.c
+> > > @@ -468,7 +468,7 @@ static int mhi_ep_read_channel(struct mhi_ep_cntrl *mhi_cntrl,
+> > >   			mhi_chan->rd_offset = (mhi_chan->rd_offset + 1) % ring->ring_size;
+> > >   		}
+> > > -	} while (buf_left && !tr_done);
+> > > +	} while (buf_left && !tr_done && mhi_chan->rd_offset != ring->wr_offset);
+> > You should use mhi_ep_queue_is_empty() for checking the available elements to
+> > process. And with this check in place, the existing check in
+> > mhi_ep_process_ch_ring() becomes redundant.
+> > 
+> > - Mani
 > 
-> Which points out that the ACQUIRE() example in cleanup.h missed the "::"
-> suffix to mark the following text as a code-block.
+> Yes, agreed that the check can be replaced with the mhi_ep_queue_is_empty, but the existing
+> check in mhi_ep_process_ch_ring() is still necessary because there can be a case where
+> there are multiple chained transactions in the ring.
 > 
-> Fixes: 857d18f23ab1 ("cleanup: Introduce ACQUIRE() and ACQUIRE_ERR() for conditional locks")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: http://lore.kernel.org/20250717173354.34375751@canb.auug.org.au
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Example: The ring at the time mhi_ep_read_channel is executing may look like:
+> chained | chained |  EOT#1 | chained | chained | EOT#2
+> If we remove the check from mhi_ep_process_ch_ring, we bail out of the first transaction itself
+> and the remaining packets won't be processed. mhi_ep_read_channel in its current form is designed
+> for a single MHI packet only.
+> 
 
-Applied to cxl/next
-d07b0029a1734062a14466100165994bef2839cf
+Then you should ignore the EOT flag by removing '!tr_done' check and just check
+for buf_left and mhi_ep_process_ch_ring(). Having the same check in caller and
+callee doesn't make sense.
 
-> ---
->  include/linux/cleanup.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-> index 4eb83dd71cfe..0fb796db4811 100644
-> --- a/include/linux/cleanup.h
-> +++ b/include/linux/cleanup.h
-> @@ -64,8 +64,7 @@
->   * the remainder of "func()".
->   *
->   * The ACQUIRE() macro can be used in all places that guard() can be
-> - * used and additionally support conditional locks
-> - *
-> + * used and additionally support conditional locks::
->   *
->   *	DEFINE_GUARD_COND(pci_dev, _try, pci_dev_trylock(_T))
->   *	...
-> 
-> base-commit: 857d18f23ab17284d1b6de6f61f4e74958596376
+- Mani
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
