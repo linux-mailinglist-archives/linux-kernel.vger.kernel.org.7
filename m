@@ -1,519 +1,161 @@
-Return-Path: <linux-kernel+bounces-735240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB8AB08CAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:18:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD97B08CB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55E73BE9F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:17:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACAC2164E32
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4919C2BD595;
-	Thu, 17 Jul 2025 12:18:01 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A812BCF6A;
+	Thu, 17 Jul 2025 12:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="M9WmBD88"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2C413AF2
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08121A288;
+	Thu, 17 Jul 2025 12:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752754680; cv=none; b=G6woi9nOcZdLZsY66hYMJBpd/lc+S7pecDweg5CieMxiy6r3UyEsnxy4kiQyLqV7OSIEbkzGlh57hV/e6yAycKo/7Qk+eUn7iT7LIvwPxOJ/yI/rVnUoixNEijjZvV93ceyknaq1az3WBRq6HR3Ahwopv7BJC/eJbXO/aNvMifo=
+	t=1752754762; cv=none; b=h8zuHd+HAxstz8/Hzbvlj5qz351VnIfNNdzzdXdYant+dbeuwQ4V6wzabDY6EXb977ZOcG/r8IyiMMYhbz2mTxzSO/R2ZrEXcZ27YrzaBOggQL5TwTErqePs28GvoEkZ8R6H/98Y7AwGu5EfC/Rox8/wMyDQ2XvAO/Csea9sLr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752754680; c=relaxed/simple;
-	bh=6t93q1Fl97kmI4kM9cHMx47IcH5Qbc56nk0PD3mZnDA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GOTGgJqcbImOUsaIWe/iYi0lluD0oHGbRsTM1GhkA6CHd1Gd38Gp9C7oS9fHIwem3hYrLtnxgSiITteu9mI+quZNhP3DNqBBmOePfbFxFXsVCKZB0uUMJlQBDDxypsZhpolkhsfOfs3hySAxEwm1L9oObs0QjNkT/uuNXfEicd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bjX5p25XCz27hcP;
-	Thu, 17 Jul 2025 20:18:54 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1F0131400D4;
-	Thu, 17 Jul 2025 20:17:55 +0800 (CST)
-Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 17 Jul 2025 20:17:54 +0800
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 17 Jul 2025 20:17:54 +0800
-From: Yicong Yang <yangyicong@huawei.com>
-To: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <hejunhao3@huawei.com>, <jonathan.cameron@huawei.com>,
-	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
-	<yangyicong@hisilicon.com>, <wangyushan12@huawei.com>
-Subject: [PATCH v5 2/2] drivers/perf: hisi: Add support for HiSilicon MN PMU driver
-Date: Thu, 17 Jul 2025 20:17:27 +0800
-Message-ID: <20250717121727.61057-3-yangyicong@huawei.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20250717121727.61057-1-yangyicong@huawei.com>
-References: <20250717121727.61057-1-yangyicong@huawei.com>
+	s=arc-20240116; t=1752754762; c=relaxed/simple;
+	bh=p+jQ8lpHJFpy+DZRWg5Ni/tDS46YYqVmyiSWIJkFqbY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=evA1Lgh8j3XKNzox+0leCNtw7oAEqSs0gyiT6ooLt20Y8OPSY1c5S1j1u7T3RnRjw8g6US67yiKezrGVVLiv7fGbZvI6VXoTLPsR7XJMGjoX8WKdlq/VN49ZICAASwKjcxHmbQFpwci0utNXgsU9HwTayroLyAGypmfryCQ9ut8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=M9WmBD88; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1752754737; x=1753359537; i=markus.elfring@web.de;
+	bh=a9frde+TCHsKKJJekqPE+TXCVkRomw5gr4tBN4H9t1w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=M9WmBD88KOV+FGJEEL3REnVKRQJHORo2WC4sfFCXfuqXwrm2+Ht0WEFR1SeiTYL4
+	 Ci3W/nsD9mjvuDLbp69ltuiNQcqfjn3Wcy53rnTtrOqc2ZUappiGn3PEppeOgIuSE
+	 pycydGixZxpwgOYYGTALaapO/QH8NZkVTJYSpXvWKTPrJ3LOuzhhC5fcY3JP6Fh4Z
+	 0RmooGQ5CtiaF9nvB0i4jx6z38GsmJlgL9d1fcrDsS29OrhbVw+3OMBIt+Fgd2gR2
+	 uG/BwOvP0fCcaDnHKEf6xTcFKJVLeBkNbkiS3YOlxNbR+o+ZBTYyleZOLUhdIYW06
+	 UWMPqaaPb92NdQ095g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.185]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JAm-1uaicN0apW-00Bk5J; Thu, 17
+ Jul 2025 14:18:57 +0200
+Message-ID: <21104b21-c24f-4b1f-bd6e-072597927e81@web.de>
+Date: Thu, 17 Jul 2025 14:18:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemq200018.china.huawei.com (7.202.195.108)
+User-Agent: Mozilla Thunderbird
+To: Himanshu Mittal <h-mittal1@ti.com>, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
+ Meghana Malladi <m-malladi@ti.com>, Paolo Abeni <pabeni@redhat.com>,
+ prajith@ti.com, Pratheesh Gangadhar <pratheesh@ti.com>,
+ Simon Horman <horms@kernel.org>, Sriramakrishnan <srk@ti.com>,
+ Roger Quadros <rogerq@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20250710131250.1294278-1-h-mittal1@ti.com>
+Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix buffer allocation for
+ ICSSG
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250710131250.1294278-1-h-mittal1@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HdKKwwCkdS0uUcMCsjU4EauINBHqY1JcQjAzy+hip0DXyMEwYBL
+ lMsp2/fjKpABmTfH6R3tS7aHb6m3nWDlr7rzI1L2swy8rjAduUkp/4rGXsp8EXvzuxLt4ps
+ 6P2t6Y2+41K9T0RRArCiudKZ/8cr8uof7vGNX1IHi4zZedu3Mxa67swgmgmJ4B/hUqkEuZ4
+ Nl9y9bzDKG3SKYOdtSszA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Ylv/pdWbBjo=;2DUCA7MBwYkvSDJGexulglLoII6
+ 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
+ ggTBo=
 
-From: Junhao He <hejunhao3@huawei.com>
+=E2=80=A6
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+> @@ -288,8 +288,12 @@ static int prueth_fw_offload_buffer_setup(struct pr=
+ueth_emac *emac)
+>  	int i;
+> =20
+>  	addr =3D lower_32_bits(prueth->msmcram.pa);
+> -	if (slice)
+> -		addr +=3D PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
+> +	if (slice) {
+> +		if (prueth->pdata.banked_ms_ram)
+> +			addr +=3D MSMC_RAM_BANK_SIZE;
+> +		else
+> +			addr +=3D PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE;
+> +	}
+=E2=80=A6
 
-MN (Miscellaneous Node) is a hybrid node in ARM CHI. It broadcasts the
-following two types of requests: DVM operations and PCIe configuration.
-MN PMU devices exist on both SCCL and SICL, so we named the MN pmu
-driver after SCL (Super cluster) ID.
-The MN PMU driver using the HiSilicon uncore PMU framework. And only
-the event parameter is supported.
+How do you think about to use the following code variant?
 
-Signed-off-by: Junhao He <hejunhao3@huawei.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
----
- drivers/perf/hisilicon/Makefile             |   2 +-
- drivers/perf/hisilicon/hisi_uncore_mn_pmu.c | 411 ++++++++++++++++++++
- 2 files changed, 412 insertions(+), 1 deletion(-)
- create mode 100644 drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
+	if (slice)
+		addr +=3D ( prueth->pdata.banked_ms_ram
+			? MSMC_RAM_BANK_SIZE
+			: PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE);
 
-diff --git a/drivers/perf/hisilicon/Makefile b/drivers/perf/hisilicon/Makefile
-index dcec8f39719d..186be3d02238 100644
---- a/drivers/perf/hisilicon/Makefile
-+++ b/drivers/perf/hisilicon/Makefile
-@@ -2,7 +2,7 @@
- obj-$(CONFIG_HISI_PMU) += hisi_uncore_pmu.o hisi_uncore_l3c_pmu.o \
- 			  hisi_uncore_hha_pmu.o hisi_uncore_ddrc_pmu.o hisi_uncore_sllc_pmu.o \
- 			  hisi_uncore_pa_pmu.o hisi_uncore_cpa_pmu.o hisi_uncore_uc_pmu.o \
--			  hisi_uncore_noc_pmu.o
-+			  hisi_uncore_noc_pmu.o hisi_uncore_mn_pmu.o
- 
- obj-$(CONFIG_HISI_PCIE_PMU) += hisi_pcie_pmu.o
- obj-$(CONFIG_HNS3_PMU) += hns3_pmu.o
-diff --git a/drivers/perf/hisilicon/hisi_uncore_mn_pmu.c b/drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
-new file mode 100644
-index 000000000000..4df4eebe243e
---- /dev/null
-+++ b/drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
-@@ -0,0 +1,411 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * HiSilicon SoC MN uncore Hardware event counters support
-+ *
-+ * Copyright (c) 2025 HiSilicon Technologies Co., Ltd.
-+ */
-+#include <linux/cpuhotplug.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/irq.h>
-+#include <linux/list.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/property.h>
-+
-+#include "hisi_uncore_pmu.h"
-+
-+/* Dynamic CPU hotplug state used by MN PMU */
-+static enum cpuhp_state hisi_mn_pmu_online;
-+
-+/* MN register definition */
-+#define HISI_MN_DYNAMIC_CTRL_REG	0x400
-+#define   HISI_MN_DYNAMIC_CTRL_EN	BIT(0)
-+#define HISI_MN_PERF_CTRL_REG		0x408
-+#define   HISI_MN_PERF_CTRL_EN		BIT(6)
-+#define HISI_MN_INT_MASK_REG		0x800
-+#define HISI_MN_INT_STATUS_REG		0x808
-+#define HISI_MN_INT_CLEAR_REG		0x80C
-+#define HISI_MN_EVENT_CTRL_REG		0x1C00
-+#define HISI_MN_VERSION_REG		0x1C04
-+#define HISI_MN_EVTYPE0_REG		0x1d00
-+#define   HISI_MN_EVTYPE_MASK		GENMASK(7, 0)
-+#define HISI_MN_CNTR0_REG		0x1e00
-+#define HISI_MN_EVTYPE_REGn(evtype0, n)	((evtype0) + (n) * 4)
-+#define HISI_MN_CNTR_REGn(cntr0, n)	((cntr0) + (n) * 8)
-+
-+#define HISI_MN_NR_COUNTERS		4
-+#define HISI_MN_TIMEOUT_US		500U
-+
-+struct hisi_mn_pmu_regs {
-+	u32 version;
-+	u32 dyn_ctrl;
-+	u32 perf_ctrl;
-+	u32 int_mask;
-+	u32 int_clear;
-+	u32 int_status;
-+	u32 event_ctrl;
-+	u32 event_type0;
-+	u32 event_cntr0;
-+};
-+
-+/*
-+ * Each event request takes a certain amount of time to complete. If
-+ * we counting the latency related event, we need to wait for the all
-+ * requests complete. Otherwise, the value of counter is slightly larger.
-+ */
-+static void hisi_mn_pmu_counter_flush(struct hisi_pmu *mn_pmu)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+	int ret;
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + reg_info->dyn_ctrl);
-+	val |= HISI_MN_DYNAMIC_CTRL_EN;
-+	writel(val, mn_pmu->base + reg_info->dyn_ctrl);
-+
-+	ret = readl_poll_timeout_atomic(mn_pmu->base + reg_info->dyn_ctrl,
-+					val, !(val & HISI_MN_DYNAMIC_CTRL_EN),
-+					1, HISI_MN_TIMEOUT_US);
-+	if (ret)
-+		dev_warn(mn_pmu->dev, "Counter flush timeout\n");
-+}
-+
-+static u64 hisi_mn_pmu_read_counter(struct hisi_pmu *mn_pmu,
-+				    struct hw_perf_event *hwc)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+
-+	return readq(mn_pmu->base + HISI_MN_CNTR_REGn(reg_info->event_cntr0, hwc->idx));
-+}
-+
-+static void hisi_mn_pmu_write_counter(struct hisi_pmu *mn_pmu,
-+				      struct hw_perf_event *hwc, u64 val)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+
-+	writeq(val, mn_pmu->base + HISI_MN_CNTR_REGn(reg_info->event_cntr0, hwc->idx));
-+}
-+
-+static void hisi_mn_pmu_write_evtype(struct hisi_pmu *mn_pmu, int idx, u32 type)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+	u32 val;
-+
-+	/*
-+	 * Select the appropriate event select register.
-+	 * There are 2 32-bit event select registers for the
-+	 * 8 hardware counters, each event code is 8-bit wide.
-+	 */
-+	val = readl(mn_pmu->base + HISI_MN_EVTYPE_REGn(reg_info->event_type0, idx / 4));
-+	val &= ~(HISI_MN_EVTYPE_MASK << HISI_PMU_EVTYPE_SHIFT(idx));
-+	val |= (type << HISI_PMU_EVTYPE_SHIFT(idx));
-+	writel(val, mn_pmu->base + HISI_MN_EVTYPE_REGn(reg_info->event_type0, idx / 4));
-+}
-+
-+static void hisi_mn_pmu_start_counters(struct hisi_pmu *mn_pmu)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + reg_info->perf_ctrl);
-+	val |= HISI_MN_PERF_CTRL_EN;
-+	writel(val, mn_pmu->base + reg_info->perf_ctrl);
-+}
-+
-+static void hisi_mn_pmu_stop_counters(struct hisi_pmu *mn_pmu)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + reg_info->perf_ctrl);
-+	val &= ~HISI_MN_PERF_CTRL_EN;
-+	writel(val, mn_pmu->base + reg_info->perf_ctrl);
-+
-+	hisi_mn_pmu_counter_flush(mn_pmu);
-+}
-+
-+static void hisi_mn_pmu_enable_counter(struct hisi_pmu *mn_pmu,
-+				       struct hw_perf_event *hwc)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + reg_info->event_ctrl);
-+	val |= BIT(hwc->idx);
-+	writel(val, mn_pmu->base + reg_info->event_ctrl);
-+}
-+
-+static void hisi_mn_pmu_disable_counter(struct hisi_pmu *mn_pmu,
-+					struct hw_perf_event *hwc)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + reg_info->event_ctrl);
-+	val &= ~BIT(hwc->idx);
-+	writel(val, mn_pmu->base + reg_info->event_ctrl);
-+}
-+
-+static void hisi_mn_pmu_enable_counter_int(struct hisi_pmu *mn_pmu,
-+					   struct hw_perf_event *hwc)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + reg_info->int_mask);
-+	val &= ~BIT(hwc->idx);
-+	writel(val, mn_pmu->base + reg_info->int_mask);
-+}
-+
-+static void hisi_mn_pmu_disable_counter_int(struct hisi_pmu *mn_pmu,
-+					    struct hw_perf_event *hwc)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + reg_info->int_mask);
-+	val |= BIT(hwc->idx);
-+	writel(val, mn_pmu->base + reg_info->int_mask);
-+}
-+
-+static u32 hisi_mn_pmu_get_int_status(struct hisi_pmu *mn_pmu)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+
-+	return readl(mn_pmu->base + reg_info->int_status);
-+}
-+
-+static void hisi_mn_pmu_clear_int_status(struct hisi_pmu *mn_pmu, int idx)
-+{
-+	struct hisi_mn_pmu_regs *reg_info = mn_pmu->dev_info->private;
-+
-+	writel(BIT(idx), mn_pmu->base + reg_info->int_clear);
-+}
-+
-+static struct attribute *hisi_mn_pmu_format_attr[] = {
-+	HISI_PMU_FORMAT_ATTR(event, "config:0-7"),
-+	NULL
-+};
-+
-+static const struct attribute_group hisi_mn_pmu_format_group = {
-+	.name = "format",
-+	.attrs = hisi_mn_pmu_format_attr,
-+};
-+
-+static struct attribute *hisi_mn_pmu_events_attr[] = {
-+	HISI_PMU_EVENT_ATTR(req_eobarrier_num,		0x00),
-+	HISI_PMU_EVENT_ATTR(req_ecbarrier_num,		0x01),
-+	HISI_PMU_EVENT_ATTR(req_dvmop_num,		0x02),
-+	HISI_PMU_EVENT_ATTR(req_dvmsync_num,		0x03),
-+	HISI_PMU_EVENT_ATTR(req_retry_num,		0x04),
-+	HISI_PMU_EVENT_ATTR(req_writenosnp_num,		0x05),
-+	HISI_PMU_EVENT_ATTR(req_readnosnp_num,		0x06),
-+	HISI_PMU_EVENT_ATTR(snp_dvm_num,		0x07),
-+	HISI_PMU_EVENT_ATTR(snp_dvmsync_num,		0x08),
-+	HISI_PMU_EVENT_ATTR(l3t_req_dvm_num,		0x09),
-+	HISI_PMU_EVENT_ATTR(l3t_req_dvmsync_num,	0x0A),
-+	HISI_PMU_EVENT_ATTR(mn_req_dvm_num,		0x0B),
-+	HISI_PMU_EVENT_ATTR(mn_req_dvmsync_num,		0x0C),
-+	HISI_PMU_EVENT_ATTR(pa_req_dvm_num,		0x0D),
-+	HISI_PMU_EVENT_ATTR(pa_req_dvmsync_num,		0x0E),
-+	HISI_PMU_EVENT_ATTR(snp_dvm_latency,		0x80),
-+	HISI_PMU_EVENT_ATTR(snp_dvmsync_latency,	0x81),
-+	HISI_PMU_EVENT_ATTR(l3t_req_dvm_latency,	0x82),
-+	HISI_PMU_EVENT_ATTR(l3t_req_dvmsync_latency,	0x83),
-+	HISI_PMU_EVENT_ATTR(mn_req_dvm_latency,		0x84),
-+	HISI_PMU_EVENT_ATTR(mn_req_dvmsync_latency,	0x85),
-+	HISI_PMU_EVENT_ATTR(pa_req_dvm_latency,		0x86),
-+	HISI_PMU_EVENT_ATTR(pa_req_dvmsync_latency,	0x87),
-+	NULL
-+};
-+
-+static const struct attribute_group hisi_mn_pmu_events_group = {
-+	.name = "events",
-+	.attrs = hisi_mn_pmu_events_attr,
-+};
-+
-+static const struct attribute_group *hisi_mn_pmu_attr_groups[] = {
-+	&hisi_mn_pmu_format_group,
-+	&hisi_mn_pmu_events_group,
-+	&hisi_pmu_cpumask_attr_group,
-+	&hisi_pmu_identifier_group,
-+	NULL
-+};
-+
-+static const struct hisi_uncore_ops hisi_uncore_mn_ops = {
-+	.write_evtype		= hisi_mn_pmu_write_evtype,
-+	.get_event_idx		= hisi_uncore_pmu_get_event_idx,
-+	.start_counters		= hisi_mn_pmu_start_counters,
-+	.stop_counters		= hisi_mn_pmu_stop_counters,
-+	.enable_counter		= hisi_mn_pmu_enable_counter,
-+	.disable_counter	= hisi_mn_pmu_disable_counter,
-+	.enable_counter_int	= hisi_mn_pmu_enable_counter_int,
-+	.disable_counter_int	= hisi_mn_pmu_disable_counter_int,
-+	.write_counter		= hisi_mn_pmu_write_counter,
-+	.read_counter		= hisi_mn_pmu_read_counter,
-+	.get_int_status		= hisi_mn_pmu_get_int_status,
-+	.clear_int_status	= hisi_mn_pmu_clear_int_status,
-+};
-+
-+static int hisi_mn_pmu_dev_init(struct platform_device *pdev,
-+				struct hisi_pmu *mn_pmu)
-+{
-+	struct hisi_mn_pmu_regs *reg_info;
-+	int ret;
-+
-+	hisi_uncore_pmu_init_topology(mn_pmu, &pdev->dev);
-+
-+	if (mn_pmu->topo.scl_id < 0)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "Failed to read MN scl id\n");
-+
-+	if (mn_pmu->topo.index_id < 0)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "Failed to read MN index id\n");
-+
-+	mn_pmu->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(mn_pmu->base))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(mn_pmu->base),
-+				     "Failed to ioremap resource\n");
-+
-+	ret = hisi_uncore_pmu_init_irq(mn_pmu, pdev);
-+	if (ret)
-+		return ret;
-+
-+	mn_pmu->dev_info = device_get_match_data(&pdev->dev);
-+	if (!mn_pmu->dev_info)
-+		return -ENODEV;
-+
-+	mn_pmu->pmu_events.attr_groups = mn_pmu->dev_info->attr_groups;
-+	mn_pmu->counter_bits = mn_pmu->dev_info->counter_bits;
-+	mn_pmu->check_event = mn_pmu->dev_info->check_event;
-+	mn_pmu->num_counters = HISI_MN_NR_COUNTERS;
-+	mn_pmu->ops = &hisi_uncore_mn_ops;
-+	mn_pmu->dev = &pdev->dev;
-+	mn_pmu->on_cpu = -1;
-+
-+	reg_info = mn_pmu->dev_info->private;
-+	mn_pmu->identifier = readl(mn_pmu->base + reg_info->version);
-+
-+	return 0;
-+}
-+
-+static void hisi_mn_pmu_remove_cpuhp(void *hotplug_node)
-+{
-+	cpuhp_state_remove_instance_nocalls(hisi_mn_pmu_online, hotplug_node);
-+}
-+
-+static void hisi_mn_pmu_unregister(void *pmu)
-+{
-+	perf_pmu_unregister(pmu);
-+}
-+
-+static int hisi_mn_pmu_probe(struct platform_device *pdev)
-+{
-+	struct hisi_pmu *mn_pmu;
-+	char *name;
-+	int ret;
-+
-+	mn_pmu = devm_kzalloc(&pdev->dev, sizeof(*mn_pmu), GFP_KERNEL);
-+	if (!mn_pmu)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, mn_pmu);
-+
-+	ret = hisi_mn_pmu_dev_init(pdev, mn_pmu);
-+	if (ret)
-+		return ret;
-+
-+	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "hisi_scl%d_mn%d",
-+				mn_pmu->topo.scl_id, mn_pmu->topo.index_id);
-+	if (!name)
-+		return -ENOMEM;
-+
-+	ret = cpuhp_state_add_instance(hisi_mn_pmu_online, &mn_pmu->node);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to register cpu hotplug\n");
-+
-+	ret = devm_add_action_or_reset(&pdev->dev, hisi_mn_pmu_remove_cpuhp, &mn_pmu->node);
-+	if (ret)
-+		return ret;
-+
-+	hisi_pmu_init(mn_pmu, THIS_MODULE);
-+
-+	ret = perf_pmu_register(&mn_pmu->pmu, name, -1);
-+	if (ret)
-+		return dev_err_probe(mn_pmu->dev, ret, "Failed to register MN PMU\n");
-+
-+	return devm_add_action_or_reset(&pdev->dev, hisi_mn_pmu_unregister, &mn_pmu->pmu);
-+}
-+
-+static struct hisi_mn_pmu_regs hisi_mn_v1_pmu_regs = {
-+	.version = HISI_MN_VERSION_REG,
-+	.dyn_ctrl = HISI_MN_DYNAMIC_CTRL_REG,
-+	.perf_ctrl = HISI_MN_PERF_CTRL_REG,
-+	.int_mask = HISI_MN_INT_MASK_REG,
-+	.int_clear = HISI_MN_INT_CLEAR_REG,
-+	.int_status = HISI_MN_INT_STATUS_REG,
-+	.event_ctrl = HISI_MN_EVENT_CTRL_REG,
-+	.event_type0 = HISI_MN_EVTYPE0_REG,
-+	.event_cntr0 = HISI_MN_CNTR0_REG,
-+};
-+
-+static const struct hisi_pmu_dev_info hisi_mn_v1 = {
-+	.attr_groups = hisi_mn_pmu_attr_groups,
-+	.counter_bits = 48,
-+	.check_event = HISI_MN_EVTYPE_MASK,
-+	.private = &hisi_mn_v1_pmu_regs,
-+};
-+
-+static const struct acpi_device_id hisi_mn_pmu_acpi_match[] = {
-+	{ "HISI0222", (kernel_ulong_t) &hisi_mn_v1 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, hisi_mn_pmu_acpi_match);
-+
-+static struct platform_driver hisi_mn_pmu_driver = {
-+	.driver = {
-+		.name = "hisi_mn_pmu",
-+		.acpi_match_table = hisi_mn_pmu_acpi_match,
-+		/*
-+		 * We have not worked out a safe bind/unbind process,
-+		 * Forcefully unbinding during sampling will lead to a
-+		 * kernel panic, so this is not supported yet.
-+		 */
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = hisi_mn_pmu_probe,
-+};
-+
-+static int __init hisi_mn_pmu_module_init(void)
-+{
-+	int ret;
-+
-+	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN, "perf/hisi/mn:online",
-+				      hisi_uncore_pmu_online_cpu,
-+				      hisi_uncore_pmu_offline_cpu);
-+	if (ret < 0) {
-+		pr_err("hisi_mn_pmu: Failed to setup MN PMU hotplug: %d\n", ret);
-+		return ret;
-+	}
-+	hisi_mn_pmu_online = ret;
-+
-+	ret = platform_driver_register(&hisi_mn_pmu_driver);
-+	if (ret)
-+		cpuhp_remove_multi_state(hisi_mn_pmu_online);
-+
-+	return ret;
-+}
-+module_init(hisi_mn_pmu_module_init);
-+
-+static void __exit hisi_mn_pmu_module_exit(void)
-+{
-+	platform_driver_unregister(&hisi_mn_pmu_driver);
-+	cpuhp_remove_multi_state(hisi_mn_pmu_online);
-+}
-+module_exit(hisi_mn_pmu_module_exit);
-+
-+MODULE_IMPORT_NS("HISI_PMU");
-+MODULE_DESCRIPTION("HiSilicon SoC MN uncore PMU driver");
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Junhao He <hejunhao3@huawei.com>");
--- 
-2.24.0
-
+Regards,
+Markus
 
