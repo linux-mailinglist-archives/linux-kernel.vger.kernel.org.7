@@ -1,98 +1,207 @@
-Return-Path: <linux-kernel+bounces-734423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E16B08169
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:30:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6202B0816E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A371C27216
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:30:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B714E474C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C9F7262E;
-	Thu, 17 Jul 2025 00:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ar/zduBn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F481509A0;
+	Thu, 17 Jul 2025 00:37:40 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E119460;
-	Thu, 17 Jul 2025 00:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BA41CD2C;
+	Thu, 17 Jul 2025 00:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752712191; cv=none; b=J3K+fv0n3mjTWDD7J8gwXlpItR2xaTG2brKgLJPmmXV+6VyLu47n3GCWsS71uXTnwLqlQnUy37rAnJ9j5y8Bba3oyhIs5Yafkf2RfLK2GiFOiH5UpkXKxDvkyQA2ZuRFxdlIxM1o3TF07kpy0IWN+UHnNzpCQ06HZDz944vwT+0=
+	t=1752712660; cv=none; b=HSP8jVDBwyCQfx6YTo06fOUC/szwCvvOM+9JYveihKHdBx5NBqFPBj9oL9P4xBKJHCSm+NX0GAmqLXZvoq9Eh0c/cJDyP4BXxiVG06BpViUCPet2kXL98X/J4hYqtG1632YL1ZCGY0p/Q4q5AADw8iiYkeF4ei0CduEfiCOww3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752712191; c=relaxed/simple;
-	bh=gL7Z1M0HVgjTlVZJDpBe179+As3uy4yzCurXcAfgnLk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=POJzkBpkx4uZtML+sv3geixVzSCcm/2CPXWO3SwndVm+NkRUvpMHbBJd+3c0UxI1yHY3y2PDrjkZxIwPfZR8+2ekKvq61F3BSGoY+DFwQtdoIZLi0mJ1BjrV77MuiXPznUtVE4ePJlLQSPyi5E4GxpCRI8bgH16fi4GDFCJBMUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ar/zduBn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 859E4C4CEE7;
-	Thu, 17 Jul 2025 00:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752712190;
-	bh=gL7Z1M0HVgjTlVZJDpBe179+As3uy4yzCurXcAfgnLk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Ar/zduBnFZKEUGQAiOS/78L4Wwm/b9XE3n0wqJ0GF535hiYgTcDtIvhW2HA69rLz7
-	 D1yawRI/tAt3tB2TjkqAYGocT3+K4ToXf0u215bSmREIkdl8QWVV3wYb49MFpN0TDH
-	 B84tPKrQRnRO89MTwP7sRteaHBZAeKX+q4JyZJVH/smNc506KWV2IvC48WSIMFmBlh
-	 PkXAia1IV7jB6YwoNcgWKrqnssAE8yHOmNuUX7n89yMf3GvrV2wPqLnKIOvARk+A9k
-	 U2f4dzPZ67XvDfHqzM21gMqd4MgAVomiwNhwPZ10koHBLaK/XEuqh7zvx7NwGlT+3W
-	 IuieD1wdZJQqg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB147383BA38;
-	Thu, 17 Jul 2025 00:30:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752712660; c=relaxed/simple;
+	bh=J/TqCT0FKVsv8HqvbHkFpVKKpVXXUEP6U0RxNVgqKWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NmbkpRo6lsKia0BkIBVHuYw26pK/rQ63zxurbrdgpECeoBGdMfwFGI2VDuSGYubEELPsTv4Jd4dYL/FO1ukcx1cNdqyKOtHYBgiWJBYzo+dCPeRFKn9SGn4/wH1hmK0KiZTHkiRFkGnxsk6eWM6IItmUZ28S199Vvkoahgxs1Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 36ad82f862a611f0b29709d653e92f7d-20250717
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:2a127a1d-334f-4182-84a8-be12336b1c03,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:dd1951e424efaf6d169bc2402947691a,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 36ad82f862a611f0b29709d653e92f7d-20250717
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 646174271; Thu, 17 Jul 2025 08:37:26 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id C5984E008FA3;
+	Thu, 17 Jul 2025 08:37:26 +0800 (CST)
+X-ns-mid: postfix-687845C6-3333099
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id C3598E008FA2;
+	Thu, 17 Jul 2025 08:37:25 +0800 (CST)
+Message-ID: <65a378b2-887b-43f3-85d8-b689b4c92817@kylinos.cn>
+Date: Thu, 17 Jul 2025 08:37:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v7 0/3] selftest: net: Add selftest for netpoll
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175271221077.1374954.5388109861761060959.git-patchwork-notify@kernel.org>
-Date: Thu, 17 Jul 2025 00:30:10 +0000
-References: <20250714-netpoll_test-v7-0-c0220cfaa63e@debian.org>
-In-Reply-To: <20250714-netpoll_test-v7-0-c0220cfaa63e@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, horms@kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, willemdebruijn.kernel@gmail.com,
- bpf@vger.kernel.org, kernel-team@meta.com, willemb@google.com
-
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 14 Jul 2025 02:56:47 -0700 you wrote:
-> I am submitting a new selftest for the netpoll subsystem specifically
-> targeting the case where the RX is polling in the TX path, which is
-> a case that we don't have any test in the tree today. This is done when
-> netpoll_poll_dev() called, and this test creates a scenario when that is
-> probably.
-> 
-> The test does the following:
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v7,1/3] selftests: drv-net: add helper/wrapper for bpftrace
-    https://git.kernel.org/netdev/net-next/c/3c561c547c39
-  - [net-next,v7,2/3] selftests: drv-net: Strip '@' prefix from bpftrace map keys
-    https://git.kernel.org/netdev/net-next/c/fd2aadcefbac
-  - [net-next,v7,3/3] selftests: net: add netpoll basic functionality test
-    https://git.kernel.org/netdev/net-next/c/b3019343e4bd
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] PM: suspend: clean up redundant
+ filesystems_freeze/thaw handling
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250712030824.81474-1-zhangzihuan@kylinos.cn>
+ <9d35035d-c63e-4d11-a403-54c50e8b35c1@kylinos.cn>
+ <CAJZ5v0g22fMDc21yV2svePf_4BWZRrcy+b3-efpbfAGLpa2=Lw@mail.gmail.com>
+ <76a87abf-8fc9-445b-83d5-0daa33746014@kylinos.cn>
+ <CAJZ5v0jKwHZUpsYLzUkcL4=FDnewXoTeJo5e+ccyHw2bZ+ghTg@mail.gmail.com>
+ <79468a7f-061f-479a-9357-e48c69cadbb8@kylinos.cn>
+ <CAJZ5v0j4biD2Jd5isUGFmwAva1RJsPDCHNpb1VEjM5vTBrk-jQ@mail.gmail.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <CAJZ5v0j4biD2Jd5isUGFmwAva1RJsPDCHNpb1VEjM5vTBrk-jQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
 
+=E5=9C=A8 2025/7/16 20:23, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> On Wed, Jul 16, 2025 at 4:04=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylin=
+os.cn> wrote:
+>>
+>> =E5=9C=A8 2025/7/15 20:48, Rafael J. Wysocki =E5=86=99=E9=81=93:
+>>> On Tue, Jul 15, 2025 at 8:12=E2=80=AFAM Zihuan Zhang <zhangzihuan@kyl=
+inos.cn> wrote:
+>>>> Hi Rafael,
+>>>>
+>>>> =E5=9C=A8 2025/7/15 01:57, Rafael J. Wysocki =E5=86=99=E9=81=93:
+>>>>> Hi,
+>>>>>
+>>>>> On Mon, Jul 14, 2025 at 10:44=E2=80=AFAM Zihuan Zhang <zhangzihuan@=
+kylinos.cn> wrote:
+>>>>>> Hi Rafael,
+>>>>>>
+>>>>>> Just a gentle ping on this patch.
+>>>>> I've lost track of it for some reason, sorry.
+>>>>>
+>>>>>> I realized I forgot to mention an important motivation in the chan=
+gelog:
+>>>>>> calling filesystems_freeze() twice (from both suspend_prepare() an=
+d
+>>>>>> enter_state()) lead to a black screen and make the system unable t=
+o resume..
+>>>>>>
+>>>>>> This patch avoids the duplicate call and resolves that issue.
+>>>>> Now applied as a fix for 6.16-rc7, thank you!
+>>>> Thanks for the reply!
+>>>>
+>>>> Just a quick follow-up question =E2=80=94 we noticed that even when =
+the =E2=80=9Cfreeze
+>>>> filesystems=E2=80=9D feature is not enabled, the current code still =
+calls
+>>>> filesystems_thaw().
+>>>>
+>>>> Do you think it would make sense to guard this with a static key (or
+>>>> another mechanism) to avoid unnecessary overhead?
+>>> Possibly, if this overhead is significant, but is it?
+>> We've done some testing using ftrace to measure the overhead of
+>> filesystems_thaw(). When freeze_filesystems is not enabled, the overhe=
+ad
+>> is typically around 15=E2=80=9340 microseconds.
+> So this is the time that can be saved by adding a
+> filesystem_freeze_enabled check before calling filesystems_thaw()
+> IIUC.
+>
+> I'd say don't bother.
+>
+
+Understood, thanks!
+
+
+>> However, when freeze is enabled, we observed that filesystems_thaw() c=
+an
+>> take over 3 seconds to complete (e.g., 3,450,644 us in one test case).
+>>
+>> freeze_filesystems  not enabled:
+>>
+>> # tracer: function_graph
+>> #
+>> # CPU  DURATION                  FUNCTION CALLS
+>> # |     |   |                     |   |   |   |
+>>     4) + 15.740 us   |  filesystems_thaw();
+>>    11) + 16.894 us   |  filesystems_thaw();
+>>    10) + 17.805 us   |  filesystems_thaw();
+>>     8) + 37.762 us   |  filesystems_thaw();
+>>    ------------------------------------------
+>>    11) systemd-54512  =3D> systemd-66433
+>>    ------------------------------------------
+>>
+>>    11) + 15.167 us   |  filesystems_thaw();
+>>     6) + 16.760 us   |  filesystems_thaw();
+>>     7) + 14.870 us   |  filesystems_thaw();
+>>     3) + 16.171 us   |  filesystems_thaw();
+>>     1) + 16.461 us   |  filesystems_thaw();
+>>    ------------------------------------------
+>>     3) systemd-71984  =3D> systemd-73036
+>>    ------------------------------------------
+>>
+>>     3) + 28.314 us   |  filesystems_thaw();
+>>
+>> freeze_filesystems  enabled:
+>>
+>>    10)               |  filesystems_thaw() {
+>>     2) $ 3450644 us  |  } /* filesystems_thaw */
+>>    ------------------------------------------
+>>     1) systemd-72561  =3D> systemd-99210
+>>    ------------------------------------------
+>>
+>>     1)               |  filesystems_thaw() {
+>>    ------------------------------------------
+>>     7) systemd-71501  =3D> systemd-99210
+>>    ------------------------------------------
+>>
+>>     7) $ 3429306 us  |  } /* filesystems_thaw */
+>>    ------------------------------------------
+>>     7) systemd-99210  =3D> systemd-100028
+>>    ------------------------------------------
+>>
+>>     7)               |  filesystems_thaw() {
+>>    ------------------------------------------
+>>     4) systemd-53278  =3D> systemd-100028
+>>    ------------------------------------------
+>>
+>>     4) $ 3270122 us  |  } /* filesystems_thaw */
+>>    ------------------------------------------
+>>     7) systemd-100028 =3D> systemd-100720
+>>    ------------------------------------------
+>>
+>>     7) $ 3446496 us  |  filesystems_thaw();
+>>    ------------------------------------------
+>>     7) systemd-100720 =3D> systemd-112075
+>>    ------------------------------------------
+>>
+>>     7)               |  filesystems_thaw() {
+>>    ------------------------------------------
+>>    11) systemd-66433  =3D> systemd-112075
+>>    ------------------------------------------
+>>
+>>    11) $ 3454117 us  |  } /* filesystems_thaw */
+>>
+>>
+>>
 
