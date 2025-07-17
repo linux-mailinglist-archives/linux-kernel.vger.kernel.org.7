@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-735627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9703B091B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:27:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05A6B091E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915143B3E62
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D04131C44CC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2B82FCE32;
-	Thu, 17 Jul 2025 16:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE9830115C;
+	Thu, 17 Jul 2025 16:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a48SC85F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eJaW5FYN"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121062FCE12;
-	Thu, 17 Jul 2025 16:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA70B2FBFE9
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 16:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769656; cv=none; b=rj+dIc6D8OQloIAuno1VE9WKfwhQwL7FWfmNFfSAP/tF3KM81Kxh5rR73FDQZ3SbuMShkiEvacABP2zTm1OTk7Sl+Cdgt3OP5NaH1EywRErI8OWRLjSyspiFWGG56q6OF8PmSDk6Yz0qGN1lqaWXYJxAXsdGRhre6jtjDHdlBEA=
+	t=1752769678; cv=none; b=LecTplbxGJXOGCh2dwdotchTCFfPwagnDVOiy/b9omguqZj7tdWUzZcgMaGFgzgTopvyc95lpGUJzk6KswFAjo13EM1bmPO/B8vyg4zK1eGWkCXt+VnDqZWaorgFWTidb5iPMVqbNqWpqGXZzaT4FGoPYy444cjZge3wOafaLWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769656; c=relaxed/simple;
-	bh=T6IDN6DNaQO447cutHK+OtFjUXY+Qu5JPigU282jM1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VuryVaMU+Afk2YtmCj1cgipF9vINjFckfO07w5Oqby0lpjwmWKPSdBdcuhkIOCehxxJ/Vh9ijmRVunFzGjtrZyBzuC6o5+oXNDB6nL3wrq2NwA7VoXY9GfvVVpcltADjd5lWVCQ4BZ+L4J4biAQnYGaHMwh6s8pVdxtDbfwJ1Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a48SC85F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 561A8C4CEF0;
-	Thu, 17 Jul 2025 16:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752769655;
-	bh=T6IDN6DNaQO447cutHK+OtFjUXY+Qu5JPigU282jM1s=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=a48SC85FDMY07QgHo+q3jYkPuas5/szTj/achK2TFqdIYUOk8ZIyP1DCknSlhBznK
-	 BmhGrTP17YC4dqchFuTIb5r/gsE3SyYl90+gCDVk0zzXeW5g4Ou4HCgo2U5rwLa89q
-	 uj8U+SvRQHtzBuL1L2LXoanfYwNURPntUI0BjCtZP8z8I0C6g/AzBFtCwvqWVj2HEk
-	 WXZZPO0ABVVhgxLQSXFWHPVUYIndL0moMJJElgTNyPomfSmtCFdmn8VvdLpHdblh05
-	 K/W5mOpS3+QdQ9XPoJOTumGOLZkmyow2vFIbArVicnOAy81hjR3cV/BqAnEwoxorRb
-	 hNcEWuXYjSq/Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id CDF26CE09F5; Thu, 17 Jul 2025 09:27:34 -0700 (PDT)
-Date: Thu, 17 Jul 2025 09:27:34 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-	Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v14 09/12] unwind deferred: Use SRCU
- unwind_deferred_task_work()
-Message-ID: <a9bdf195-e9b2-4cd0-88ba-b6f68b3b72b3@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250717004910.297898999@kernel.org>
- <20250717004957.918908732@kernel.org>
- <47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
- <20250717082526.7173106a@gandalf.local.home>
- <41c204c0-eabc-4f4f-93f4-2568e2f962a9@paulmck-laptop>
- <20250717121010.4246366a@batman.local.home>
+	s=arc-20240116; t=1752769678; c=relaxed/simple;
+	bh=YLu4Qo0NgwDqCYSE9LkUP789zJ9Z1MNQWKn0CtVFQhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l1Ez809sa6DyrWrmQ8SD+jNQSpDjZZXu8LIqRqZdwpt88sgmv1LjEpfbtdxHT/OgAE5DFBJksAzVFSkScki6eK8Bm//01z0KHTCk9h71dof5Mn8DezY6G3mUh6jP0WBz1/5CPPfbAmS4XZpQF7QdhpGscYWrzd5jvSERumZCXsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eJaW5FYN; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <03e04d98-e5eb-41c0-8407-23cccd578dbe@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752769673;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4Ay4UsrwBiPcaslZNYrakqAaTaS1CuBXla7xAvqK4iw=;
+	b=eJaW5FYN3JIqaJZB1WK5+nmumKzxiIdylG3v2/byRwszJdN7xY/ErtD/wKGWIDxY/r0CyE
+	eA0uTx59AjxDvKL5jzF7aI4+g82sbb19mGdMvZ9tY80nyztEB9+ROft0/sFIfvW0x7RkAV
+	TDgELQ4sup+IAwpp036PgvB8G8CbbSo=
+Date: Thu, 17 Jul 2025 12:27:44 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717121010.4246366a@batman.local.home>
+Subject: Re: [PATCH net v2 1/4] auxiliary: Support hexadecimal ids
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
+ Saravana Kannan <saravanak@google.com>, Leon Romanovsky <leon@kernel.org>,
+ linux-kernel@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
+ linux-arm-kernel@lists.infradead.org, Ira Weiny <ira.weiny@intel.com>
+References: <20250716000110.2267189-1-sean.anderson@linux.dev>
+ <20250716000110.2267189-2-sean.anderson@linux.dev>
+ <2025071637-doubling-subject-25de@gregkh>
+ <719ff2ee-67e3-4df1-9cec-2d9587c681be@linux.dev>
+ <2025071747-icing-issuing-b62a@gregkh>
+ <5d8205e1-b384-446b-822a-b5737ea7bd6c@linux.dev>
+ <2025071736-viscous-entertain-ff6c@gregkh>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <2025071736-viscous-entertain-ff6c@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jul 17, 2025 at 12:10:10PM -0400, Steven Rostedt wrote:
-> On Thu, 17 Jul 2025 08:48:40 -0700
-> "Paul E. McKenney" <paulmck@kernel.org> wrote:
+On 7/17/25 12:21, Greg Kroah-Hartman wrote:
+> On Thu, Jul 17, 2025 at 12:04:15PM -0400, Sean Anderson wrote:
+>> On 7/17/25 11:59, Greg Kroah-Hartman wrote:
+>> > On Thu, Jul 17, 2025 at 11:49:37AM -0400, Sean Anderson wrote:
+>> >> On 7/16/25 01:09, Greg Kroah-Hartman wrote:
+>> >> > On Tue, Jul 15, 2025 at 08:01:07PM -0400, Sean Anderson wrote:
+>> >> >> Support creating auxiliary devices with the id included as part of the
+>> >> >> name. This allows for hexadecimal ids, which may be more appropriate for
+>> >> >> auxiliary devices created as children of memory-mapped devices. If an
+>> >> >> auxiliary device's id is set to AUXILIARY_DEVID_NONE, the name must
+>> >> >> be of the form "name.id".
+>> >> >> 
+>> >> >> With this patch, dmesg logs from an auxiliary device might look something
+>> >> >> like
+>> >> >> 
+>> >> >> [    4.781268] xilinx_axienet 80200000.ethernet: autodetected 64-bit DMA range
+>> >> >> [   21.889563] xilinx_emac.mac xilinx_emac.mac.80200000 net4: renamed from eth0
+>> >> >> [   32.296965] xilinx_emac.mac xilinx_emac.mac.80200000 net4: PHY [axienet-80200000:05] driver [RTL8211F Gigabit Ethernet] (irq=70)
+>> >> >> [   32.313456] xilinx_emac.mac xilinx_emac.mac.80200000 net4: configuring for inband/sgmii link mode
+>> >> >> [   65.095419] xilinx_emac.mac xilinx_emac.mac.80200000 net4: Link is Up - 1Gbps/Full - flow control rx/tx
+>> >> >> 
+>> >> >> this is especially useful when compared to what might happen if there is
+>> >> >> an error before userspace has the chance to assign a name to the netdev:
+>> >> >> 
+>> >> >> [    4.947215] xilinx_emac.mac xilinx_emac.mac.1 (unnamed net_device) (uninitialized): incorrect link mode  for in-band status
+>> >> >> 
+>> >> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> >> >> ---
+>> >> >> 
+>> >> >> Changes in v2:
+>> >> >> - Add example log output to commit message
+>> >> > 
+>> >> > I rejected v1, why is this being sent again?
+>> >> 
+>> >> You asked for explanation, I provided it. I specifically pointed out why
+>> >> I wanted to do things this way. But I got no response. So here in v2.
+>> > 
+>> > Again, I said, "do not do that, this is not how ids work in the driver
+>> > model", and you tried to show lots of reasons why you wanted to do it
+>> > this way despite me saying so.
+>> > 
+>> > So again, no, sorry, this isn't ok.  Don't attempt to encode information
+>> > in a device id like you are trying to do here, that's not what a device
+>> > id is for at all.  I need to go dig up my old patch that made all device
+>> > ids random numbers just to see what foolish assumptions busses and
+>> > userspace tools are making....
+>> 
+>> But it *is* how ids work in platform devices.
 > 
-> > So if there is some reason that you absolutely cannot immediately convert
-> > to SRCU-fast, let's please discuss.
+> No one should ever use platform devices/bus as an excuse to do anything,
+> it's "wrong" in so many ways, but needs to be because of special
+> reasons.  No other bus should work like that, sorry.
 > 
-> There's two reasons I wouldn't add it immediately.
+>> And because my auxiliary
+>> devices are created by a platform device, it is guaranteed that the
+>> platform device id is unique and that it will also be unique for
+>> auxiliary devices. So there is no assumption here about the uniqueness
+>> of any given id.
 > 
-> One, is the guard(srcu_fast) isn't in mainline yet. I would either need
-> to open code it, or play the tricks of basing code off your tree.
+> Then perhaps use the faux device api instead?
 
-Fair point!  But guard(srcu_fast) isn't in my tree, either, just
-guard(srcu_fast_nopreempt).  So why not add guard(srcu_fast) in your
-tree, and we can ack it.  Yes, that means we will have a merge conflict
-at some point, but it will be a trivial one.
+There's *another* pseudo bus? OK the reason why is that faux was added
+four months ago and there is nothing under Documentation for it. So I
+had no idea it existed. I will have a look, but perhaps you should write
+up some documentation about why someone might want to use a "faux" bus
+over the auxiliary bus or MFD.
 
-> Two, I'm still grasping at the concept of srcu_fast (and srcu_lite for
-> that matter), where I rather be slow and safe than optimize and be
-> unsafe. The code where this is used may be faulting in user space
-> memory, so it doesn't need the micro-optimizations now.
-
-Straight-up SRCU and guard(srcu), then?  Both are already in mainline.
-
-Or are those read-side smp_mb() calls a no-go for this code?
-
-							Thanx, Paul
+--Sean
 
