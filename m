@@ -1,119 +1,144 @@
-Return-Path: <linux-kernel+bounces-734859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E654B08745
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6FA2B0877D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA79F4E3C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D45A43D81
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D712267386;
-	Thu, 17 Jul 2025 07:44:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B76D277CA0;
+	Thu, 17 Jul 2025 08:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JakZ+thl"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EEB2652A4;
-	Thu, 17 Jul 2025 07:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2059F21A436
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752738275; cv=none; b=QnciFdzLPC/CfTJmNb9P45RT/fa8oIe+NMTQkboBwGRVA9W6NpzMMBiahT7tKGvuMP3G15kPCRQ0aVGvX/NpURBOuwXOuTGl5V+60YoVUpJsK1retUYOJRy7P49KrfG7aOGPzL4OMKgGXEM5TXOeyRInKTUuE118r97Sc/DFO8w=
+	t=1752739390; cv=none; b=Cpq8JP/SmE1pHqUyTXHF7jqfXj9enEI1OpokWjKSACigimw+wxNE8mx3qYkgTMrmsffUrnQyiTZc0XeCg0um8Td1hIv9FWsfhQAPDu50rfxBQq5bV/k/RnOJW33D/huD0kfOZMfMYrtam+T7YoMrU4Q+FKhSSxeh2Lnf75zDaH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752738275; c=relaxed/simple;
-	bh=FJLPW+xkiOM0Q/3rwnBQCTizQkRpW2AF55c+O40YFD0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hTaE9bvijFaBBMdr1OAkoqr4Zvsg63PGS9/8hLrnKKEsYHeuDNHcQQZ3ODtZDHengBRTs85D3NZqAjImXTXAXW9AHBZOgX6oG1s3/lekZIb/x/321ejwSEy1y5A/hOLQXQpBS9Ta381VoQ8otG50dm0nBvp54ieq6QOnmvmMk/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bjPzm6693z6L5H4;
-	Thu, 17 Jul 2025 15:43:16 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id 41D99140257;
-	Thu, 17 Jul 2025 15:44:30 +0800 (CST)
-Received: from china (10.220.118.114) by frapeml500005.china.huawei.com
- (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Jul
- 2025 09:44:16 +0200
-From: Gur Stavi <gur.stavi@huawei.com>
-To: <kuba@kernel.org>
-CC: <andrew+netdev@lunn.ch>, <christophe.jaillet@wanadoo.fr>,
-	<corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
-	<fuguiming@h-partners.com>, <gongfan1@huawei.com>, <guoxin09@huawei.com>,
-	<gur.stavi@huawei.com>, <helgaas@kernel.org>, <horms@kernel.org>,
-	<jdamato@fastly.com>, <lee@trager.us>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <luosifu@huawei.com>,
-	<meny.yossefi@huawei.com>, <mpe@ellerman.id.au>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>,
-	<shenchenyang1@hisilicon.com>, <shijing34@huawei.com>, <sumang@marvell.com>,
-	<vadim.fedorenko@linux.dev>, <wulike1@huawei.com>, <zhoushuai28@huawei.com>,
-	<zhuyikai1@h-partners.com>
-Subject: Re: [PATCH net-next v09 1/8] hinic3: Async Event Queue interfaces
-Date: Thu, 17 Jul 2025 11:02:29 +0300
-Message-ID: <20250717080229.1054761-1-gur.stavi@huawei.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250716183208.26b87aa8@kernel.org>
-References: <20250716183208.26b87aa8@kernel.org>
+	s=arc-20240116; t=1752739390; c=relaxed/simple;
+	bh=UvqTp2Zne68B8LzixST7+FuqQVUNyNbaJiuvHRRCg6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XfUT2S1CJCPQSP+Mu2UooJGhJLXolXxiG/6YVm5YjcFQ/A4wstHpjaU/Ii0e0wWARVdLzUBheefzx8r6Z88hFAUnkrY2hT9iz2IrYx4Hvvu/bxCy5TxVWrVfm99U7OfqW4CdVj3sKnYVL28L60HY3lJRE3gdI4jeRB1amqs+lMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JakZ+thl; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fafd3cc8f9so10916826d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:03:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752739388; x=1753344188; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UvqTp2Zne68B8LzixST7+FuqQVUNyNbaJiuvHRRCg6w=;
+        b=JakZ+thl4WFOEf23k4eyxrDSVrTcjfwI4rNjmgMsZgYPlni4APQ6BVelusv1oDGOx6
+         X4NEaKxhAs+ZKamnQv0HcA8Hna26Ot5I5bW/M4YpuntbYYd9KgtD6YqbEHRmtboLaBIj
+         CR4s35MbCa8FMzWQANUtnuPWx8tx1kJRHdLErP61oa0EBHXnQcel85zePUw5kN2HDrc7
+         SPq8TO77w86w4257/47Mt0pGj7k3xdXv+UqSS2MkmktZdUUvCokrLOGlG0ip5IyTOujI
+         VBzWDHRsXQaKmrFw42AO1W4Q2RzOO/uM7qb7ZixhWejTEZjPdSVPSYLB5QylpUU+5w/4
+         ajOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752739388; x=1753344188;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UvqTp2Zne68B8LzixST7+FuqQVUNyNbaJiuvHRRCg6w=;
+        b=P8NYKjx9K+me2ikafrfj9xnJhxyQfa6M4a7HdsQctfiNfMyFuKzPDNnBXUCRv8/7o3
+         Plrh/Muy4rpqcWx4e9as0LdEhg6miowCBj/4V9RhxpgY3SHNMk++vTkDCN0utSpnMJdO
+         wOo1K+tTprAGCWXsMBm/6ROFcugZyv0hV2TOwke+pKCzzUBRrGJLJFWcoHfhL28THVJE
+         1mMOKC4vrQOh9CAWdB5N5MfVsvk38V2MBjISdnFTLZDV+j9psrgd76SPexk//0EoAzYQ
+         8XLZ48aC13IdTALRGe+m0s1DHB95H8d2/R3jTMWbWplAbO2eUWqspRQI5ULZif1uRSwX
+         tz0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVYGslHVeRrEir93bo8f7n1KNsK+lE7vqndM6ooXBKqoEEr+ncZGcRNJxECIRQ0jpad3KZFNGGDTIm05hk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTjlaG9c3dU553osVsJE2IbjadAg6vdL1nhQdGk+MhMU3rjO5S
+	Dyj4QGkfintSfeuWCyDGhoqO+yoAe3cWNLGu3OfHISLQl/y3FlPuD8coPDeYPOAaSPp81kdx8F0
+	Nkg+TWXbP4RDS1N23O6bdX256R16aQ+lhE0vYL3gM
+X-Gm-Gg: ASbGncstQm8+Fr4GH/sbIFwn+pZQjyBLxi35r1qsNg19GqAav6fhJF6CV+8FZHStpCB
+	S6Q2/BakcV8Po3LNH+VLU3Gd/ksA3LxxAGESF6ym+BUgNyn6J8aDMleH0quTMkxg1yKmeCulTLB
+	OaGJw7V5DbgaMxNmFMGrxB4t2JEyPHxkJFNsFs+U+BUKY3stYq/vKDT2At53dOr1tt+6u6T9+nK
+	ZlVSEK56Nq6y3HPS2mLYl9cT6Q3QajfsgmRNQ==
+X-Google-Smtp-Source: AGHT+IGhEmW+51RpWERFLvt+dUAQEioadtTE9UYDule4uqLjt9tBB5yKwNCvK29gmiFBj4QoIaBP+Xpji8FKv47NtPk=
+X-Received: by 2002:ad4:5d43:0:b0:704:e0a9:f815 with SMTP id
+ 6a1803df08f44-704f6aed334mr84550186d6.10.1752739387636; Thu, 17 Jul 2025
+ 01:03:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- frapeml500005.china.huawei.com (7.182.85.13)
+References: <20250717024834.689096-1-sohambagchi@outlook.com> <CANpmjNOu2bqqevOcPGmZR1Dp69KFY9-TW3i2i_37BCTcE5rYSg@mail.gmail.com>
+In-Reply-To: <CANpmjNOu2bqqevOcPGmZR1Dp69KFY9-TW3i2i_37BCTcE5rYSg@mail.gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Thu, 17 Jul 2025 10:02:30 +0200
+X-Gm-Features: Ac12FXyzyEXffumt-s4OhbkbAxba49Fj3GMtu0oU4c_K0t_UFxZZ3n-qtDrjZ9U
+Message-ID: <CAG_fn=VXnaMitRFpxP0Fjy=vWF+rjRfZ0TRsziwKzEVrArXt7g@mail.gmail.com>
+Subject: Re: [PATCH] smp_wmb() in kcov_move_area() after memcpy()
+To: Marco Elver <elver@google.com>
+Cc: Soham Bagchi <sohambagchi@outlook.com>, dvyukov@google.com, andreyknvl@gmail.com, 
+	akpm@linux-foundation.org, tglx@linutronix.de, arnd@arndb.de, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 15 Jul 2025 08:28:36 +0800 Fan Gong wrote:
-> +/* Data provided to/by cmdq is arranged in structs with little endian fields but
-> + * every dword (32bits) should be swapped since HW swaps it again when it
-> + * copies it from/to host memory. This is a mandatory swap regardless of the
-> + * CPU endianness.
-
-> This comment makes no sense, FWIW. The device writes a byte steam
-> to host memory. For what you're saying to make sense the device would
-> have to intentionally switch the endian based on the host CPU.
-> And if it could do that why wouldn't it do it in the opposite
-> direction, avoiding the swap ? :/
+On Thu, Jul 17, 2025 at 9:16=E2=80=AFAM Marco Elver <elver@google.com> wrot=
+e:
 >
-> I suppose the device is always writing in be32 words, and you should
-> be converting from be32.
+> [+Cc glider@google.com]
 >
+> On Thu, 17 Jul 2025 at 04:48, Soham Bagchi <sohambagchi@outlook.com> wrot=
+e:
+>
+> Patch title should be something like "kcov: use write barrier after
+> memcpy() in kcov_move_area()".
+>
+> > KCOV Remote uses two separate memory buffers, one private to the kernel
+> > space (kcov_remote_areas) and the second one shared between user and
+> > kernel space (kcov->area). After every pair of kcov_remote_start() and
+> > kcov_remote_stop(), the coverage data collected in the
+> > kcov_remote_areas is copied to kcov->area so the user can read the
+> > collected coverage data. This memcpy() is located in kcov_move_area().
+> >
+> > The load/store pattern on the kernel-side [1] is:
+> >
+> > ```
+> > /* dst_area =3D=3D=3D kcov->area, dst_area[0] is where the count is sto=
+red */
+> > dst_len =3D READ_ONCE(*(unsigned long *)dst_area);
+> > ...
+> > memcpy(dst_entries, src_entries, ...);
+> > ...
+> > WRITE_ONCE(*(unsigned long *)dst_area, dst_len + entries_moved);
+> > ```
+> >
+> > And for the user [2]:
+> >
+> > ```
+> > /* cover is equivalent to kcov->area */
+> > n =3D __atomic_load_n(&cover[0], __ATOMIC_RELAXED);
 
-Lets assume the following is a simplified PACKED cmdq struct:
+We shouldn't probably suggest the users to use relaxed loads either.
 
-struct some_cmdq {
-	__le16 a;
-	__le32 b;
-	__le16 c;
-};
-
-Lets denote x0 as lsb of field x. x3 as msb of 32 bits field.
-
-Byte stream in CPU memory is:
-a0, a1, b0, b1, b2, b3, c0, c1
-
-The HW expects the following byte stream:
-b1, b0, a1, a0, c1, c0, b3 ,b2
-
-A native struct would be:
-
-struct some_cmdq {
-	__be16 b_lo;
-	__be16 a;
-	__be16 c;
-	__be16 b_hi;
-}
-
-It does not make sense from code readability perspective.
-While this is a simplified example, there are similar problems in real cmdq
-structs.
-Also group of fields that makes sense (based on their names) for being
-logically near each other become separated in "native" big endian arrangements.
-
-This is a case where driver need to compensate for bad HW decisions.
+> > ```
+> >
+> > Without a write-memory barrier, the atomic load for the user can
+> > potentially read fresh values of the count stored at cover[0],
+> > but continue to read stale coverage data from the buffer itself.
+> > Hence, we recommend adding a write-memory barrier between the
+> > memcpy() and the WRITE_ONCE() in kcov_move_area().
+> >
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tr=
+ee/kernel/kcov.c?h=3Dmaster#n978
+> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tr=
+ee/Documentation/dev-tools/kcov.rst#n364
+> >
+> > Signed-off-by: Soham Bagchi <sohambagchi@outlook.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
