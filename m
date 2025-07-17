@@ -1,176 +1,131 @@
-Return-Path: <linux-kernel+bounces-735574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC47B0911E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:58:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F856B0912C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63682A454B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:58:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 140AA17EA04
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3A42FBFE5;
-	Thu, 17 Jul 2025 15:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6541C2FF46F;
+	Thu, 17 Jul 2025 15:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MjlDAhTk"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+WVgK1Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C7B2FE320;
-	Thu, 17 Jul 2025 15:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23362FE374;
+	Thu, 17 Jul 2025 15:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752767760; cv=none; b=POt1Jmel8TQN2T4I0yucikBnUNz+kIbUQgKx8etoVIVx57W4dz/vAXmr4ZvRdiFdYNsVJ7FrvUpYt4C/0ndtR+atNlmjgYl6ASEWk1rStZYnDV82nUsbWfJNEpDJtGDynp8Idfq3n6RaI+Sj8xMqMbYqM3K1M/hAO+cjl+tR4ZI=
+	t=1752767762; cv=none; b=TmyKCF/6wjmlQxjA+ys5Ih7DbGCGPyykCwKnRqlTfYdTr5CL5Sjf88s3Pr78LyvEn3lIh0sRKBeTXO6oN4fLKciCz6VvFiRDQumWxuq3julFe8ECUbWgX7+6YNnEAz0ZXDt8ER/74z5LXAQPKXOfEK67yScXr0MvH0wPyDmRE1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752767760; c=relaxed/simple;
-	bh=31AqHo3GIvu3IzySTWWesuZK0J2sD7GkvCbF0fO1rZY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FFrfDBUeFMM1Ny1aTfuHMthfz9NwGvEoowC74FYmKwwWFYZzlLT6/GahvFlHpX4F2umOcC5g4a82JjWiIsS4d3kebur/mPrNIvDjc7+6u/DRafQAp+vMvtltmCxr5waMVyXVTY0/+KT/E5Nj59gZdEmADWpPlV02tXYFWLBeYVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MjlDAhTk; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752767757;
-	bh=31AqHo3GIvu3IzySTWWesuZK0J2sD7GkvCbF0fO1rZY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MjlDAhTkQaYS7v9/hj5wXQWjOj7tBYWdWGw9lwWqc3ActlAfxw2JoRt2BdZf4GaHP
-	 7OX3BN+HvbOfubAcBhT1JMLg0x39rtpBda1O8MVqkV6ZoADLErHOEQgACDo7My3gR+
-	 HBH/GX3qf3Yc+XIBdBaKMYq83NpX/0zvHHfkhJK2CAnJ/c5jdgBwQN556PoUObOCge
-	 T2ut7xSmtwRzgbOr4VYQfrech7aU762XStbMeI6vudKqpyrjfDOwiNAzYyISp+nw+T
-	 S9b5YkBaJ/RhBd4PtU+Y+cKV6Hy+5+1I2CSBfx7GNc5rpjssR16Bs+ew0gY8qdZf8L
-	 iOkaVr1cWoB9Q==
-Received: from [192.168.0.2] (unknown [IPv6:2804:14d:72b4:82f6:67c:16ff:fe57:b5a3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dwlsalmeida)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 105A417E1541;
-	Thu, 17 Jul 2025 17:55:54 +0200 (CEST)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Thu, 17 Jul 2025 12:55:24 -0300
-Subject: [PATCH v15 3/3] rust: platform: add resource accessors
+	s=arc-20240116; t=1752767762; c=relaxed/simple;
+	bh=haPR3gFkU31ZIdETf/9gMJWywdFLOCeSJukaQQMsCzo=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=S3heDF/9x/ghtupstSXky2sNwC7sIC85FaXVRCHky3CXrWkLNFtLz9TmhgE+z1I1jDb+zkfr1RXFED2L2wGGQ7at2fKLReMRyTuzdH7ZgKIjbkiH8GrUOqu7LfFHKlUqBZk7PWKJPy50jf5UkKDbkhQzHM+73M/Nhz6luutSi5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g+WVgK1Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F500C4CEE3;
+	Thu, 17 Jul 2025 15:56:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752767762;
+	bh=haPR3gFkU31ZIdETf/9gMJWywdFLOCeSJukaQQMsCzo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=g+WVgK1Zo0qJ1xmmgVWIuv579y7wMkl5XJGHt3dx/FqI69J0yr8eEAw65qPBLNfmk
+	 xe4EVdTUm1Rd03i9l5EBXouLHsMt220T7jiiyu/SK0TP2F6fX2PQHoz3A7YjJsWbQm
+	 XyrysiH8URbJrW7M6vwGoLyUjOSzBhkrPuZi7lbUzc01jJkR38Y3ImaSdZ5ZIh76Yu
+	 giXl3mw3wcJ6pIWi577GMer/R8QtlCL3UdtSKS2cBxuFnjGJzHFqle/sQ7h7mJfSkT
+	 Nt1T6ZCgvOWFRxCZ1n74D0Yv89V7ShYZfy7Bjcp0P/c4Xo4eANyPkG6Y0bGu78jSO2
+	 yXrf9SoumGn7g==
+Date: Thu, 17 Jul 2025 10:56:01 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250717-topics-tyr-platform_iomem-v15-3-beca780b77e3@collabora.com>
-References: <20250717-topics-tyr-platform_iomem-v15-0-beca780b77e3@collabora.com>
-In-Reply-To: <20250717-topics-tyr-platform_iomem-v15-0-beca780b77e3@collabora.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>
+To: Violet <violet@atl.tools>
+In-Reply-To: <20250716231710.99983-1-violet@atl.tools>
+References: <20250716231710.99983-1-violet@atl.tools>
+Message-Id: <175276729714.3490929.8274727016823655876.robh@kernel.org>
+Subject: Re: [PATCH v6 0/2] arm64: dts: qcom: add initial support for
+ Samsung Galaxy S22
 
-The previous patches have added the abstractions for Resources and the
-ability to map them and therefore read and write the underlying memory .
 
-The only thing missing to make this accessible for platform devices is
-to provide accessors that return instances of IoRequest<'a>. These
-ensure that the resource are valid only for the lifetime of the platform
-device, and that the platform device is in the Bound state.
+On Wed, 16 Jul 2025 23:17:08 +0000, Violet wrote:
+> Changes in v6:
+> - Remove debug features (bootargs, etc) that slipped in the v5 DTS
+> - Format and organize nodes correctly based on existing DTS,
+>  move "status = "okay";" to the bottom always
+> - Solve "ddr_device_type" and "qcom,rmtfs-mem" warnings, the rest are
+>  from existing SoC .dtsi
+> - Disable buttons, ufs and other features for later revision
+> 
+> Signed-off-by: Violet <violet@atl.tools>
+> 
+> Violet (2):
+>   dt-bindings: arm: qcom: document r0q board binding
+>   arm64: dts: qcom: add initial support for Samsung Galaxy S22
+> 
+>  .../devicetree/bindings/arm/qcom.yaml         |   1 +
+>  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>  .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 145 ++++++++++++++++++
+>  3 files changed, 147 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+> 
+> --
+> 2.50.1
+> 
+> 
+> 
 
-Therefore, add these accessors. Also make it possible to retrieve
-resources from platform devices in Rust using either a name or an index.
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
- rust/kernel/platform.rs | 60 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 59 insertions(+), 1 deletion(-)
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 86f9d73c64b38ffe067be329a77b2fc04564c7fe..57f9964bb736cf5749ec3954def03c0d02873642 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -5,8 +5,11 @@
- //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
- 
- use crate::{
--    acpi, bindings, container_of, device, driver,
-+    acpi, bindings, container_of,
-+    device::{self, Bound},
-+    driver,
-     error::{to_result, Result},
-+    io::{mem::IoRequest, Resource},
-     of,
-     prelude::*,
-     str::CStr,
-@@ -211,6 +214,61 @@ impl<Ctx: device::DeviceContext> Device<Ctx> {
-     fn as_raw(&self) -> *mut bindings::platform_device {
-         self.0.get()
-     }
-+
-+    /// Returns the resource at `index`, if any.
-+    pub fn resource_by_index(&self, index: u32) -> Option<&Resource> {
-+        // SAFETY: `self.as_raw()` returns a valid pointer to a `struct platform_device`.
-+        let resource = unsafe {
-+            bindings::platform_get_resource(self.as_raw(), bindings::IORESOURCE_MEM, index)
-+        };
-+
-+        if resource.is_null() {
-+            return None;
-+        }
-+
-+        // SAFETY: `resource` is a valid pointer to a `struct resource` as
-+        // returned by `platform_get_resource`.
-+        Some(unsafe { Resource::from_raw(resource) })
-+    }
-+
-+    /// Returns the resource with a given `name`, if any.
-+    pub fn resource_by_name(&self, name: &CStr) -> Option<&Resource> {
-+        // SAFETY: `self.as_raw()` returns a valid pointer to a `struct
-+        // platform_device` and `name` points to a valid C string.
-+        let resource = unsafe {
-+            bindings::platform_get_resource_byname(
-+                self.as_raw(),
-+                bindings::IORESOURCE_MEM,
-+                name.as_char_ptr(),
-+            )
-+        };
-+
-+        if resource.is_null() {
-+            return None;
-+        }
-+
-+        // SAFETY: `resource` is a valid pointer to a `struct resource` as
-+        // returned by `platform_get_resource`.
-+        Some(unsafe { Resource::from_raw(resource) })
-+    }
-+}
-+
-+impl Device<Bound> {
-+    /// Returns an `IoRequest` for the resource at `index`, if any.
-+    pub fn io_request_by_index(&self, index: u32) -> Option<IoRequest<'_>> {
-+        // SAFETY: `resource` is a valid resource for `&self` during the
-+        // lifetime of the `IoRequest`.
-+        self.resource_by_index(index)
-+            .map(|resource| unsafe { IoRequest::new(self.as_ref(), resource) })
-+    }
-+
-+    /// Returns an `IoRequest` for the resource with a given `name`, if any.
-+    pub fn io_request_by_name(&self, name: &CStr) -> Option<IoRequest<'_>> {
-+        // SAFETY: `resource` is a valid resource for `&self` during the
-+        // lifetime of the `IoRequest`.
-+        self.resource_by_name(name)
-+            .map(|resource| unsafe { IoRequest::new(self.as_ref(), resource) })
-+    }
- }
- 
- // SAFETY: `Device` is a transparent wrapper of a type that doesn't depend on `Device`'s generic
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
--- 
-2.50.0
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: failed to guess base
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250716231710.99983-1-violet@atl.tools:
+
+arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@aaf0000 (qcom,sm8450-videocc): power-domains: [[98, 6]] is too short
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
+arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@aaf0000 (qcom,sm8450-videocc): required-opps: [[55]] is too short
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
+arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@aaf0000 (qcom,sm8450-videocc): Unevaluated properties are not allowed ('power-domains', 'required-opps' were unexpected)
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
+arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@ade0000 (qcom,sm8450-camcc): power-domains: [[98, 6]] is too short
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
+arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@ade0000 (qcom,sm8450-camcc): required-opps: [[55]] is too short
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
+
+
+
+
 
 
