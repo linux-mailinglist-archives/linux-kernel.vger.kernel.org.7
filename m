@@ -1,74 +1,88 @@
-Return-Path: <linux-kernel+bounces-734629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D6AB08421
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:43:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3441B08424
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D63173BE245
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:43:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC5316A3D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C613201266;
-	Thu, 17 Jul 2025 04:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC5E2046B3;
+	Thu, 17 Jul 2025 04:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZ8N7/0Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zOBCP8RO"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A789E17A309;
-	Thu, 17 Jul 2025 04:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2098B1FF601
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 04:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752727428; cv=none; b=gRJVnVrqBkTMFn00KTxJnB466DLsM+Z0yAUonZR9iMn1usXpGetVn2EnuBLdlduKNrUizoJVEspmCtvfJ26q/z2RsxDmdYuQJtvJtj8UawBQn7lKqNVBmpD/hb033BVkm/g6L4YpLm9NWpIra1IhN3GD9SWaMGREwcupkDV7XRI=
+	t=1752727504; cv=none; b=RIDJgumTk6uAqLs6brQ/sB6sffmJGyhN+2lblH7C8w4VRqZLzM0owH80cSTEJ3ZJnYnkmAh3TE1NABOrKNp9llKSEzmseP15187UGIUUKLyxS1qyYoRbpU2zsUHhRAeBRpD3VaKFNyaYcNCOVZAPJ5JPOgV6niABBrT4fJnMG44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752727428; c=relaxed/simple;
-	bh=6lVvVHz/c5X9krXweCRNUBaPhyNHQY6SALOUx6VGQ9A=;
+	s=arc-20240116; t=1752727504; c=relaxed/simple;
+	bh=xYY88o1HZHO/K9meJ92FwNw3WDacmrol27HB7s9lxng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B26lza6V+BuhGVKi8brBWq+M9GoN0NWA9iFj0JiiC2//jEXS5cVMVL25G5Wxwkzb22I39+FrdFXyILMUUosfJyC4PLek7SHUFTS1P5ibPbHaKCtlDGIqcaveXzkocurvsbDr2kMQiC4ag/PkN7Zw0n58tE/UPAB3+w/jNMeh7qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZ8N7/0Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098CAC4CEE3;
-	Thu, 17 Jul 2025 04:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752727428;
-	bh=6lVvVHz/c5X9krXweCRNUBaPhyNHQY6SALOUx6VGQ9A=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=iZ8N7/0YgvIEj/vvRSbQQETKGqVXhSZpCk/nzcT97njNqO2ZqHujfIUkk1QSlbj5Z
-	 kEp71si3ohw3ylbNgl5JxzlTnlHnCbJt8rGzXiHUsHEUrexfut5Y8HK6f81FU9vuvk
-	 qwvf5Cy5Q2W9IdMvlLnVotEHD1HfzWB+TZUXEpiEwN/jK3QfKGq35jrnG6bf3CStfI
-	 upm8KbS1ZTTjXCWnvAXymIdZX61AnzS63vmEEeItBqCZb0PljRaqSaeLPYqzDbpie3
-	 kFyAaJMJGbJPao+CYMQ8HxDdV8NEosGkqIHgZIQUgcyEOVGR4N71whAW6M0D21dXXK
-	 0quFZO5u91niA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A8B84CE09C2; Wed, 16 Jul 2025 21:43:47 -0700 (PDT)
-Date: Wed, 16 Jul 2025 21:43:47 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-	Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v14 09/12] unwind deferred: Use SRCU
- unwind_deferred_task_work()
-Message-ID: <47c3b0df-9f11-4e14-97e2-0f3ba3b09855@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250717004910.297898999@kernel.org>
- <20250717004957.918908732@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DLmbQyEqtmTyBM31WfrYusubx0RPCtv5TSpp/OUDUj+B015KJztsqMaAA+mzzcmCsiEJS9J8bWwcGo5bPwvMmsOJ7viWIrpb7y0ud/c6t2gyReV5ChrVcQlKSAhunFkkEhwNwdBvTq/T+xCjVIiEhUazt7q0cZdNO06fvC8Nbvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zOBCP8RO; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-73e65d29fe9so274486a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 21:45:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752727501; x=1753332301; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8BxFpUzbTga+mXNbGQF0qc8Yea8aD1D/kK9ilcak6H4=;
+        b=zOBCP8ROTjU6dQtTHbwJI5I1zdAblQe3B2f966EtAokEGXWS6sbp/YA5ZO95dLsnc3
+         KdmuyUR4gqBHLNqmh3WG5qM8fWuVhbOzo1dGAw8hMpRLyQSDTqfxq0GIA2ILsNKGP15X
+         P+/JTYp3TecDJ/U4+JImEJ4xHQ/8MIKesG4gjdm2ApvLBKx6K/2E88my3c3vSwr2bUNo
+         vlc1A5c4GKUGP6YihIzCxgeRfa0EbQIDB8go+q9DU+Ni8hg2Zx2G9/TpVkz46J1/7eTy
+         eociT01XXpe7sqGyMFmvx76BroR1lFCB6cFUW7xEz9moB4ijMnNB79sLIC/HHxyS2eJN
+         9org==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752727501; x=1753332301;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8BxFpUzbTga+mXNbGQF0qc8Yea8aD1D/kK9ilcak6H4=;
+        b=beBYjEDKtRI0/RfokFAB3MXUBaPjWkbaZGkhRxp663YQXzfUIPvqN9J/jIcnGZa2qe
+         KT/fky1kmhCKqugY/U+YIvVVELLxgoi5tw/Q1WkBvVXlhLDEUAzf7oDzlA2sB/Zov5wZ
+         JJdpmkXnRvz05h5QuotYYaB8hOOg+SDlTbu2eZpe8YGgKvtEriQH+L5M9G5kECRrJqi3
+         0K8dKycuNC+CBwmVAT6JCDMM0oX9yHBEfCICaiz/ROr+9HoOhQO1oGSAwjLly5YAwST+
+         4/te0ooZSSoNAGNKlGQwplmnpnZF4iWw2E4/FED3RwhZVTcwMyXdLFd1M74huPynp13D
+         mA5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWkQH03cv12mZZHclPfoZ0NPdTCTAER36hUwpFTZFcj9y4fyKufZBjeP4a6IhoZ9A38cq019EZ0cUtn7Ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvBk3iUv0W94WdJypcNEFflBSyh/WX9U2o+xbZ1UHFllmUjeDk
+	wJSbiI5bVuQd9RBEUeJgVEEg27XVjTZ5DICisDrEPI7Nk/Zuw270awEyDAEThaf0lnQ=
+X-Gm-Gg: ASbGncvWm/mimB3jAQiAfS/+hsoEd/PUex/JcL/ZMUQDPbalXUyNCA03vy5KAA52Nhj
+	MdCW9BmBltA+LmqGzcCWON+WxBcVrynpBA4rHUgWKLmW+X9bUFV4+x/TAzMJ16w4WAKykgJDKpV
+	9fl/n942E1D1FwqZ87B8u/PdajxqqJAMkoxFx1+Gq4PXfYX4aZYmub4vnYcJYHcr1kSVKfSgr4W
+	nVgAiGRkL6jJVPThkueMFH2T5WkZgLrujkBqGN3uu0XXM6Ohzh47oxztTkrqnyMldSW6fmxVeDR
+	sbLGPgc9DZm9v2wWoXgD5V2FBrLjIRqRqJHaJ6DT4tZEi0BypuV1p8sVWHFGym9ALK47Uus/maw
+	pRIr7BaQtfyqwYVbHuZ6DHFLkqWlV
+X-Google-Smtp-Source: AGHT+IE+DpDEa75xpbSgyLwwke9OcELJPLIznBHV4EgtqVLoSi+kaH/6b3ycchLcJ6wlacIG2Wojvw==
+X-Received: by 2002:a05:6830:71a4:b0:72b:98d9:6b1c with SMTP id 46e09a7af769-73e66604fbcmr4375731a34.21.1752727501133;
+        Wed, 16 Jul 2025 21:45:01 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:2c38:70d4:43e:b901])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e776b0dc9sm202888a34.26.2025.07.16.21.45.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 21:45:00 -0700 (PDT)
+Date: Thu, 17 Jul 2025 07:44:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+Cc: hansg@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com,
+	andy@kernel.org, gregkh@linuxfoundation.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH v2] staging: media: atomisp: add missing mutex lock in
+ atomisp_s_fmt_cap
+Message-ID: <06f61db2-da3d-4de0-8ce5-04e135add870@suswa.mountain>
+References: <20250717013003.20936-1-abdelrahmanfekry375@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,158 +91,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250717004957.918908732@kernel.org>
+In-Reply-To: <20250717013003.20936-1-abdelrahmanfekry375@gmail.com>
 
-On Wed, Jul 16, 2025 at 08:49:19PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Instead of using the callback_mutex to protect the link list of callbacks
-> in unwind_deferred_task_work(), use SRCU instead. This gets called every
-> time a task exits that has to record a stack trace that was requested.
-> This can happen for many tasks on several CPUs at the same time. A mutex
-> is a bottleneck and can cause a bit of contention and slow down performance.
-> 
-> As the callbacks themselves are allowed to sleep, regular RCU cannot be
-> used to protect the list. Instead use SRCU, as that still allows the
-> callbacks to sleep and the list can be read without needing to hold the
-> callback_mutex.
-> 
-> Link: https://lore.kernel.org/all/ca9bd83a-6c80-4ee0-a83c-224b9d60b755@efficios.com/
-> 
-> Also added a new guard (srcu_lite) written by Peter Zilstra
-> 
-> Link: https://lore.kernel.org/all/20250715102912.GQ1613200@noisy.programming.kicks-ass.net/
-> 
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-> Changes since v13: https://lore.kernel.org/20250708012359.172959778@kernel.org
-> 
-> - Have the locking of the link list walk use guard(srcu_lite)
->   (Peter Zijlstra)
-> 
-> - Fixed up due to the new atomic_long logic.
-> 
->  include/linux/srcu.h     |  4 ++++
->  kernel/unwind/deferred.c | 27 +++++++++++++++++++++------
->  2 files changed, 25 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> index 900b0d5c05f5..879054b8bf87 100644
-> --- a/include/linux/srcu.h
-> +++ b/include/linux/srcu.h
-> @@ -524,4 +524,8 @@ DEFINE_LOCK_GUARD_1(srcu, struct srcu_struct,
->  		    srcu_read_unlock(_T->lock, _T->idx),
->  		    int idx)
+On Thu, Jul 17, 2025 at 04:30:03AM +0300, Abdelrahman Fekry wrote:
+> diff --git a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
+> index bb8b2f2213b0..d3b8e480065e 100644
+> --- a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
+> +++ b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
+> @@ -9,6 +9,7 @@
 >  
-> +DEFINE_LOCK_GUARD_1(srcu_lite, struct srcu_struct,
-
-You need srcu_fast because srcu_lite is being removed.  They are quite
-similar, but srcu_fast is faster and is NMI-safe.  (This last might or
-might not matter here.)
-
-See https://lore.kernel.org/all/20250716225418.3014815-3-paulmck@kernel.org/
-for a srcu_fast_notrace, so something like this:
-
-DEFINE_LOCK_GUARD_1(srcu_fast, struct srcu_struct,
-		    _T->scp = srcu_read_lock_fast(_T->lock),
-		    srcu_read_unlock_fast(_T->lock, _T->scp),
-		    struct srcu_ctr __percpu *scp)
-
-Other than that, it looks plausible.
-
-							Thanx, Paul
-
-> +		    _T->idx = srcu_read_lock_lite(_T->lock),
-> +		    srcu_read_unlock_lite(_T->lock, _T->idx),
-> +		    int idx)
->  #endif
-> diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
-> index 2311b725d691..353f7af610bf 100644
-> --- a/kernel/unwind/deferred.c
-> +++ b/kernel/unwind/deferred.c
-> @@ -41,7 +41,7 @@ static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
->  #define UNWIND_MAX_ENTRIES					\
->  	((SZ_4K - sizeof(struct unwind_cache)) / sizeof(long))
+>  #include <linux/delay.h>
+>  #include <linux/pci.h>
+> +#include <linux/cleanup.h>
 >  
-> -/* Guards adding to and reading the list of callbacks */
-> +/* Guards adding to or removing from the list of callbacks */
->  static DEFINE_MUTEX(callback_mutex);
->  static LIST_HEAD(callbacks);
->  
-> @@ -49,6 +49,7 @@ static LIST_HEAD(callbacks);
->  
->  /* Zero'd bits are available for assigning callback users */
->  static unsigned long unwind_mask = RESERVED_BITS;
-> +DEFINE_STATIC_SRCU(unwind_srcu);
->  
->  static inline bool unwind_pending(struct unwind_task_info *info)
+>  #include <media/v4l2-ioctl.h>
+>  #include <media/v4l2-event.h>
+> @@ -416,8 +417,15 @@ static int atomisp_s_fmt_cap(struct file *file, void *fh,
+>  			     struct v4l2_format *f)
 >  {
-> @@ -174,8 +175,9 @@ static void unwind_deferred_task_work(struct callback_head *head)
->  
->  	cookie = info->id.id;
->  
-> -	guard(mutex)(&callback_mutex);
-> -	list_for_each_entry(work, &callbacks, list) {
-> +	guard(srcu_lite)(&unwind_srcu);
-> +	list_for_each_entry_srcu(work, &callbacks, list,
-> +				 srcu_read_lock_held(&unwind_srcu)) {
->  		if (test_bit(work->bit, &bits)) {
->  			work->func(work, &trace, cookie);
->  			if (info->cache)
-> @@ -213,7 +215,7 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
->  {
->  	struct unwind_task_info *info = &current->unwind_info;
->  	unsigned long old, bits;
-> -	unsigned long bit = BIT(work->bit);
-> +	unsigned long bit;
->  	int ret;
->  
->  	*cookie = 0;
-> @@ -230,6 +232,14 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
->  	if (WARN_ON_ONCE(!CAN_USE_IN_NMI && in_nmi()))
->  		return -EINVAL;
->  
-> +	/* Do not allow cancelled works to request again */
-> +	bit = READ_ONCE(work->bit);
-> +	if (WARN_ON_ONCE(bit < 0))
-> +		return -EINVAL;
+>  	struct video_device *vdev = video_devdata(file);
+> +	struct atomisp_device *isp = video_get_drvdata(vdev);
 > +
-> +	/* Only need the mask now */
-> +	bit = BIT(bit);
-> +
->  	guard(irqsave)();
+
+Delete this blank line.
+
+> +	int ret;
 >  
->  	*cookie = get_cookie(info);
-> @@ -281,10 +291,15 @@ void unwind_deferred_cancel(struct unwind_work *work)
->  		return;
->  
->  	guard(mutex)(&callback_mutex);
-> -	list_del(&work->list);
-> +	list_del_rcu(&work->list);
-> +
-> +	/* Do not allow any more requests and prevent callbacks */
-> +	work->bit = -1;
->  
->  	__clear_bit(bit, &unwind_mask);
->  
-> +	synchronize_srcu(&unwind_srcu);
-> +
->  	guard(rcu)();
->  	/* Clear this bit from all threads */
->  	for_each_process_thread(g, t) {
-> @@ -307,7 +322,7 @@ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func)
->  	work->bit = ffz(unwind_mask);
->  	__set_bit(work->bit, &unwind_mask);
->  
-> -	list_add(&work->list, &callbacks);
-> +	list_add_rcu(&work->list, &callbacks);
->  	work->func = func;
->  	return 0;
+> -	return atomisp_set_fmt(vdev, f);
+> +	scoped_guard(mutex, &isp->mutex)
+> +	{
+This open curly brace should have gone on the line before:
+
+	scoped_guard(mutex, &isp->mutex) {
+
+But actually just use:
+
+	guard(mutex)(&isp->mutex);
+
+It will hold the lock until the end of the function.
+
+regards,
+dan carpenter
+
+
+> +		ret = atomisp_set_fmt(vdev, f);
+> +	}
+> +	return ret;
 >  }
-> -- 
-> 2.47.2
-> 
-> 
+
 
