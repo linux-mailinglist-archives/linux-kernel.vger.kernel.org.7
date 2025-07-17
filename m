@@ -1,103 +1,176 @@
-Return-Path: <linux-kernel+bounces-734525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54841B082BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:11:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2498CB082C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 826894A7B5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D2C04A7AE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF981D5CF2;
-	Thu, 17 Jul 2025 02:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526981DF759;
+	Thu, 17 Jul 2025 02:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X1iEtJcq"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="C8qSUifp"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA85383;
-	Thu, 17 Jul 2025 02:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10691B983F
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752718256; cv=none; b=P9Dq7Yy6VhckQM8/VM4aFDwNENygGDcEc6hdfqgLCMeJz5HDcgFQgDVa+LTmwZPW1HVrdc+1K0pqcsEME7RjMA9U0dl+Xkovuj2+86cxBXTb6ssaXoyAeL4UWuCCUYCyENp895UixLFJg3TMnWn4hKKgJGAbEQdxc3i8QwYy8Zc=
+	t=1752718324; cv=none; b=TZiYKjMBy8NNhlbQOaTonozaUFp4X/HpB/mD9Egjm9lLbixRd/Ylym2sfERAMUhYG3cOzSJOZkKJserUFMbsdzCh0ySdSeRPvT1RraoxIdUCWR3goIW4yxqkBJYiMafLOXMphekTMOgBVbBT62YW/AxL8kqgIYTV61vIFQxGdxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752718256; c=relaxed/simple;
-	bh=E3P04Zk97V1KVNAa6A19+AuiHhE4WdUG6JK/+ixB8JU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OycDUrBpInIXCHj9jm9EJ3z/2YNkLVwe/ai5D03JdixK/LwM7VHvlSw1oHi3Gajm20Lc8j8s5y9fI2Ob9Fv3hG6z3/J0UFtmK/nHdh5frqGJ9oWIlLH4BBL3mqqlve5q72G0nKQLCobbuwPAK4L4/huNi6g+JLj8WuMbs8f/E5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X1iEtJcq; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=GBcZdsaYhycHmmpGcko2jxY5iOjLzHLcpfJfli6A5+I=; b=X1iEtJcq8pTGZ7jmZEb11JZLDx
-	VlLa3qlqLeuqkD4H0GhyTzrcwZj8kWOl/+KH2Te15HE0OEJOvN4uvA9WutTv2C9JLn9wt/pt/lGLr
-	+umGHe+RuUydIpO1l45PW/MomPb4ZMxFBgoKLTrUCllTz9KIGGeg/52mKG1D7uPHHZMS+Vx325/s+
-	+hQrsxHpRqKtOS3KnS23hP5XknqRwLDemP1k23dNHrKQpHZPeBr4YW6SdVVxSNdqaxm69nJscLwZK
-	EEhGrRxhCB8u0h9ultkqEjBCv0RkoXkgaOr3fcrLFNwwkJWFgpyDhhhHlAp9dB7gTTuPqUYF8w86w
-	59EE+GwQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ucE5E-000000092fy-3nkv;
-	Thu, 17 Jul 2025 02:10:52 +0000
-Message-ID: <c8fdeee9-6421-4943-9c79-f3a48441488a@infradead.org>
-Date: Wed, 16 Jul 2025 19:10:52 -0700
+	s=arc-20240116; t=1752718324; c=relaxed/simple;
+	bh=b+dsztBU/r5KZ5oBd4fLVEt5uMjqjDnr7oo/Ji9YG2A=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Subject:
+	 References:In-Reply-To; b=JjU3636Gf4TwvHZHx6WuHqf0cvFOPdFPWJU7SqVMIiboIgBTJIabe4x7GQoOQnCg2iNUvW+BeVodWJsJbVf3m8Ro1do79uxGvpvzosJPmH3bJ9kh/MVhHN0CdmiWcYdCKmQeN4N0HOFR30MWnt/eo3daqpghJVkjzbZ+OJDhf3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=C8qSUifp; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e34493ecb4so50014885a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 19:12:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1752718321; x=1753323121; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8Ut1Oz5cd4mrEHQ1G48QmwzT5AxIKSMflR+AU1YWamE=;
+        b=C8qSUifpcGHb8plW4ItZQ65sjSTRw6E0bS9xEcmiI55WSN9lZuD0o23ohTIG8/v0/4
+         9CYW16W0n4fkYyIRiK1xpfTkyVLYizEnaZWz85UAO+AtZHj7RYb+XjS+Wp3g/6KdNll7
+         yAEHAqALOLTZbLGmv2Ec6ssSgR4XOElfRiulEN+zV15fnmpk2UAgJ9yljLaXlb5/d7f0
+         Ia8PrpzWLQtJDBObVFj2G41aMqMCLzxH1jbtTpV0jzwelcq0O0HCi3FHOQ5kgh92mTBC
+         l3P0VL6R20eG/0U7bv6pmyrLdAcLvS0p1rxahakCfLoUD53gXhKfSWL6s9vdaNobydId
+         taXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752718321; x=1753323121;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8Ut1Oz5cd4mrEHQ1G48QmwzT5AxIKSMflR+AU1YWamE=;
+        b=RvC7kqFM/6qK/rA0Tajzs8fNwf7GixVAp8ehYN1810HSUEKyIFEzI1lmyxK6RO2zci
+         ja7Oai7IIB4FVKKKzdX5oDWrbc2vaxGpz+3N73+R6rTMK/reIISV7qlvNXP47PtpsaEa
+         ZleWbemEndBVf9SzpR75qV9DjDyJgt0ZzZ6OkAmFhgopFMtgEQQq1FHoNg0VxlcsdK0I
+         UCznQzdqISIyMH/pHz/SXsCWEv6iREoKvYP2dA8xJhMBXIWKoX3IewWC811fI4dN705O
+         ifbruo4uagrv0ECz7KDezaxeOIMeK9wZi8WWSpKrAiNRLtVYrTHvXs4roanDjaAvZ9SB
+         nk0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWOvt0oGAjodfoYpmyUS/V4RK+s48IoB/+Gf0JXP8QRzwpceR3hehHmBltCUGBN/NrDGmwNZfdp/R6qaZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyenhnEEpk38drVI/Ow5gxQ2seqQvXCB+d2JIdAYu9dTXqQ/iYP
+	J+EpP1f1XaqNA7oYexXJbNK/cmhLE6FiRwIKlBZ5s2YlGBRQEmaVqCqXlpS5WNW3QA==
+X-Gm-Gg: ASbGncvlxXXWAyDU0DgZmuWpidKpMEkMS4KoiYu8G5JMqr1MBKX025ABBPPNvIPo/nw
+	tywmF8r29I4eAmfJFSssdlHJ8XWMqlFIUBuhqVcJGjZQY2nc4XnlvT44uduFAJPmnArHLYdnUeN
+	YjHogf0/7h0OI1+kdVbV/llFAcOCtfQhCXir6svNXxqg+BkuBzs9qEd5CFx8mLgCeQE+T+DxTku
+	40XT1nRgb75yt+LyHnPuSTL7MjMpAKSLKD9GWpfbJcLuDTpWmdeaxbbglHBG0NoducNgpIpgj7G
+	JsePcSoalOuuArlTobUIG8NLD7seO6jU/8x1O0JDxf0GOOwGNqDaaj7FNc551Nml9VQZViy1FVx
+	c8Cv6+0hvl2wlNwfOISR1f5sYNZB4DEtrsPcu0AVsasKuN4XfIPfOJrc5wxZarIhSMAc=
+X-Google-Smtp-Source: AGHT+IFuGKGX5Ead/7aQlWXcVtLRDlQcD2Ir2V+fQdBijZ0wUN1PmbDTqZlpVsgTNU2+Tbf1nb3Oew==
+X-Received: by 2002:a05:620a:31a0:b0:7df:dea8:6384 with SMTP id af79cd13be357-7e34362a36cmr806543485a.47.1752718320727;
+        Wed, 16 Jul 2025 19:12:00 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7e342f14ca0sm178636785a.111.2025.07.16.19.12.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 19:12:00 -0700 (PDT)
+Date: Wed, 16 Jul 2025 22:11:59 -0400
+Message-ID: <941986e9f4f295f247e5982002e16fe9@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/amd: Wrap debugfs ABI testing symbols snippets in
- literal code blocks
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux IOMMU <iommu@lists.linux.dev>
-Cc: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
- Will Deacon <will@kernel.org>, Vasant Hegde <vasant.hegde@amd.com>,
- Ashish Kalra <Ashish.Kalra@amd.com>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
- <joro@8bytes.org>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Robin Murphy <robin.murphy@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20250717010331.8941-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250717010331.8941-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250716_2146/pstg-lib:20250716_1156/pstg-pwork:20250716_2146
+From: Paul Moore <paul@paul-moore.com>
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
+References: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
 
-
-
-On 7/16/25 6:03 PM, Bagas Sanjaya wrote:
-> Commit 39215bb3b0d929 ("iommu/amd: Add documentation for AMD IOMMU
-> debugfs support") documents debugfs ABI symbols for AMD IOMMU, but
-> forgets to wrap examples snippets and their output in literal code
-> blocks, hence Sphinx reports indentation warnings:
+On Jul 15, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
 > 
-> Documentation/ABI/testing/debugfs-amd-iommu:31: ERROR: Unexpected indentation. [docutils]
-> Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-> Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+> This patch introduces LSM blob support for BPF maps, programs, and
+> tokens to enable LSM stacking and multiplexing of LSM modules that
+> govern BPF objects. Additionally, the existing BPF hooks used by
+> SELinux have been updated to utilize the new blob infrastructure,
+> removing the assumption of exclusive ownership of the security
+> pointer.
 > 
-> Wrap them to fix the warnings.
-> 
-> Fixes: 39215bb3b0d9 ("iommu/amd: Add documentation for AMD IOMMU debugfs support")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/linux-next/20250716204207.73869849@canb.auug.org.au/
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 > ---
->  Documentation/ABI/testing/debugfs-amd-iommu | 125 +++++++++++---------
->  1 file changed, 71 insertions(+), 54 deletions(-)
+>  include/linux/lsm_hooks.h         |   3 +
+>  security/security.c               | 120 +++++++++++++++++++++++++++++-
+>  security/selinux/hooks.c          |  56 +++-----------
+>  security/selinux/include/objsec.h |  17 +++++
+>  4 files changed, 147 insertions(+), 49 deletions(-)
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+...
 
-Thanks.
+> @@ -835,6 +841,72 @@ static int lsm_bdev_alloc(struct block_device *bdev)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * lsm_bpf_map_alloc - allocate a composite bpf_map blob
+> + * @map: the bpf_map that needs a blob
+> + *
+> + * Allocate the bpf_map blob for all the modules
+> + *
+> + * Returns 0, or -ENOMEM if memory can't be allocated.
+> + */
+> +static int lsm_bpf_map_alloc(struct bpf_map *map)
+> +{
+> +	if (blob_sizes.lbs_bpf_map == 0) {
+> +		map->security = NULL;
+> +		return 0;
+> +	}
+> +
+> +	map->security = kzalloc(blob_sizes.lbs_bpf_map, GFP_KERNEL);
+> +	if (!map->security)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
 
--- 
-~Randy
+Casey suggested considering kmem_cache for the different BPF objects,
+but my gut feeling is that none ofthe BPF objects are going to be
+allocated with either enough frequency, or enough quantity, where a
+simple kzalloc() wouldn't be sufficient, at least for now.  Thoughts
+on this Blaise?
+
+Assuming we stick with kazlloc() based allocation, please look at using
+the lsm_blob_alloc() helper function as Song mentioned  As I'm writing
+this I'm realizing there are a few allocatiors that aren't using the
+helper, I need to fix those up ...
+
+It's worth mentioning that the allocation scheme is an internal LSM
+implementation detail, something we can change at any time with a small
+patch, so I wouldn't stress too much about "Getting it Right" at this
+point in time.
+
+> @@ -5763,7 +5862,12 @@ int security_bpf_token_capable(const struct bpf_token *token, int cap)
+>   */
+>  void security_bpf_map_free(struct bpf_map *map)
+>  {
+> +	if (!map->security)
+> +		return;
+> +
+
+We don't currently check if map->security is NULL in the current hook,
+or the SELinux callback (it's not a common pattern for the LSM blobs),
+did you run into a problem where the blob pointer was NULL?
+
+The same comment applies to all three blob types.
+
+>  	call_void_hook(bpf_map_free, map);
+> +	kfree(map->security);
+> +	map->security = NULL;
+>  }
+>  
+>  /**
+
+--
+paul-moore.com
 
