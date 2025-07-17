@@ -1,89 +1,78 @@
-Return-Path: <linux-kernel+bounces-734413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE17B0814A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC1DB0814B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB4767B0502
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:07:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A29293AFA6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDAA4A33;
-	Thu, 17 Jul 2025 00:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF746FB9;
+	Thu, 17 Jul 2025 00:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zck+6Lfs"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5In3aeS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77C5645
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F62186A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 00:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752710903; cv=none; b=NOdDmpqO2G7LiWIQDSiY2reKWxEeTx/8KdxLer5NGjAfkVp8RZRatJ6k45TqJnIF446IRHpor0zuQ6qukZZi+zyT4erh4n0h/b8o1AKjZ4c1ZxA0JUv6daC5lHApwesRSOv2gaqtduL2kOtkC/5LlgMldVxO7aoChlWHG9LdaVY=
+	t=1752711103; cv=none; b=SVKAyd/fPrSMpQDqDKS13me9g9wmkKuQzxe9pFFpymJ7JIXkIc/GZKDn7I9yp+aihpehZoM/qKweQ9WwjAToTpCRdgnaeDj+uHBH0Y6VK1McYNaDKprlzVwDiDGIozA8wY94j7jMUzE6b+0wsOkQoPy8XjC6zTY4CqxDAesKtu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752710903; c=relaxed/simple;
-	bh=Bz7Xi+Wcr9K3bvtOTxASEu6BO2bSEKPT1a8EJltOxbM=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=JCXb6aMXMxO9x/9iIuelnuGX8KxwWEkiDhtHA9D42WKdfSF8/yMNSLy9jA6m7//u7TfzCHV8lEiosgMfMwyDxiZXUjWpn0jvwM8nVYHMU9YWTrSUlvpHqJYz40w5Qtqv3zTInTZDgrVoYatH/tNEK/jIb4YZ0508z8SYK/R6dmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zck+6Lfs; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1752711103; c=relaxed/simple;
+	bh=ePzGOJbi2895B9dwQzOtXMOzvPTbPt6pYEstuVGwkUs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=r2unQdY3GxX1YhFiIWFIkh07uLro2o9cJqiUfgGN86e0o/cdkBju9Tl498kUK98Ldsmax614KWV6KKWTHgyMAIOb2KyX2kR12taLWPpHGKGSfsLFkJO7JChCzfM3AkahHV/2c+LJ5jlGnBuoV+OVDg5miNqxeK2cYA/SCOMjZQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5In3aeS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CEBAC4CEE7;
+	Thu, 17 Jul 2025 00:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752711103;
+	bh=ePzGOJbi2895B9dwQzOtXMOzvPTbPt6pYEstuVGwkUs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=N5In3aeS32gKuLAi/Ao4DnJ+lrttYiuN4spN6zzeP4yWIFLYs8HydJMzgP4EK1hO8
+	 HbNF1W5SrmqPaOHQ9vlf246PWowGHWolKHiWqHVqeSZY+PY5Q5SR+K6pvNGhkKsV87
+	 m8mB56Owi4/ZiPBHZCVlxvc9pZjTVGKDGRpIJWWH0xhFKIvgg++mHqmny2hR8GHua3
+	 nd4VaoYu5tV5dpG9w6GB/WCSZI/tdKpVHL/2eaitzvnbqeeY6Ww3IAyuBL0mSI9iAm
+	 +svT9yTqiTFEQ95cbIi4F0ZL4Gy+CBGiWOPIKUeJ9ozTz3TS6Ijy4OFsEUAWjdrms8
+	 xOMMkzKlwAndA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7141E383BA38;
+	Thu, 17 Jul 2025 00:12:04 +0000 (UTC)
+Subject: Re: [GIT PULL] HID fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <gui63ajjn3vv6yvtvo6xcnejeylzltozxgudy537jbp537lrdu@k2qqwl7cgxcz>
+References: <gui63ajjn3vv6yvtvo6xcnejeylzltozxgudy537jbp537lrdu@k2qqwl7cgxcz>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <gui63ajjn3vv6yvtvo6xcnejeylzltozxgudy537jbp537lrdu@k2qqwl7cgxcz>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025071501
+X-PR-Tracked-Commit-Id: 3a1d22bd85381c4e358fc3340e776c3a3223a1d0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e003ef2cb1de41edda508ea1fdb21974f9f18dfb
+Message-Id: <175271112300.1371664.14444647039215869935.pr-tracker-bot@kernel.org>
+Date: Thu, 17 Jul 2025 00:12:03 +0000
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752710889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bz7Xi+Wcr9K3bvtOTxASEu6BO2bSEKPT1a8EJltOxbM=;
-	b=Zck+6LfsoBnkfsJIaqJcBZAbm18KKb0xxieVpBl8nRk2bj6FkfmP5uIxjhoOoxlAAt9hCf
-	/fBVzv4JmTiJHEuSIpLh7AFg+fpf3sWpDc6dA6VboQKuzxGdeioZIVko8ZWPlK7g6hityQ
-	8dDJHRavFzTltczM9rjdN6HsTnXF+w4=
-Date: Thu, 17 Jul 2025 00:08:05 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: qiang.zhang@linux.dev
-Message-ID: <8a0a4d3149930b4dd98ba9577577417bae2d7a7e@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH] net: usb: Remove duplicate assignments for
- net->pcpu_stat_type
-To: "Jakub Kicinski" <kuba@kernel.org>
-Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250716151115.0ef44776@kernel.org>
-References: <20250716001524.168110-1-qiang.zhang@linux.dev>
- <20250716001524.168110-2-qiang.zhang@linux.dev>
- <20250716151115.0ef44776@kernel.org>
-X-Migadu-Flow: FLOW_OUT
 
->=20
->=20On Wed, 16 Jul 2025 08:15:24 +0800 Zqiang wrote:
->=20
->=20>=20
->=20> Signed-off-by: Zqiang <qiang.zhang@linux.dev>
-> >=20
->=20
-> Your email address seems to suggest the latin spelling of your name
->=20
->=20should be Qiang Zhang. Please use that instead of Zqiang?
+The pull request you sent on Tue, 15 Jul 2025 17:25:14 +0200:
 
-Thanks for replay, Zqiang has always been the name
-I use in my life and in the community.
+> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025071501
 
-Thanks
-Zqiang
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e003ef2cb1de41edda508ea1fdb21974f9f18dfb
 
->=20
->=20--=20
->=20
-> pw-bot: cr
->
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
