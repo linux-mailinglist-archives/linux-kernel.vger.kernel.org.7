@@ -1,1205 +1,152 @@
-Return-Path: <linux-kernel+bounces-734777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F52B08640
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C620B08643
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 09:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8533D1668B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:10:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D0361663EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1379221CC61;
-	Thu, 17 Jul 2025 07:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="fc8KeGF6"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B8219EA5;
-	Thu, 17 Jul 2025 07:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCFA21ADA3;
+	Thu, 17 Jul 2025 07:11:29 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C90063CF;
+	Thu, 17 Jul 2025 07:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752736214; cv=none; b=GDe22/JJl0J7RHPLBvepITdoTIbiehrYoy4dvZpGqzAMQvhQwwDRnGwQn85oiYQNNRIuwRzP6qCnYckS3Ppy3lqSfV3gHS10cPqctDfDp81io4WZNeRllPFEzGpNbE+P9Lfp3IZXlhgmM4DUfLuYwIurPi6TbDkm3HeVSPv7U1k=
+	t=1752736288; cv=none; b=Zokw/ilvZztp9+JZ2zlDp03XgdHA4cATA9dfNi/UuzNKKyKwWpK9/bmUj9hURyeEYH1WXDMpNEnYStHrddf6450tn+ub34OI/ICcOFy6oE1xPqndq+/0AS3pw13SGH9CN06amgc+kori8QgEw0eQNWOtGmlYCOpNoKCVExClirk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752736214; c=relaxed/simple;
-	bh=XtAHmIowSZ3MAd/c82ISur88GmoDNr6aNqJWWJUJUdI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=ujBF8SJ+/mYQpd0gSuWjAe7vK9UwsskC1P/MklYHmaMPKwPDdIJg4o1ytvMg768nO+NiGhrd3dKUnoEMZYIYcoVnHg6EHO1cGQpriY6/p2HTF4LuCesFPr4NB1BLh8XVmrg/TG6DcWv3ZDxC9byhUDffR8e/nceEdBq8tqRoHWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=fc8KeGF6; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56H4nT8b007066;
-	Thu, 17 Jul 2025 03:09:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=zc4N1
-	ke1mw978D6pygK26VVXzj+iJpwrNK9iQTKzKTI=; b=fc8KeGF6qiHyIeBoyfJmD
-	Oxfv/8SE+41PWk2lDpQ846swdJ8bViwyZASmgCTS0YM+7M0jYVfDRgW4AvjROInU
-	uzqzKIwbTUDbHh7Atyc8bWUILTh+h9u+UTxgO7yLvkknmFmdmcKIqm1eUjWwHlbJ
-	b8xWBARftaDgQ0jrGOJ3/sfsHbgnsQ0ETFAEPrTWkl3CvonPmbHn3A6YZ1UydmuN
-	VSNV3neRDQ+Qm6LvTJx1/1erGOHGvtcz8B9iERZvYCaiVGUdD2r1/h3p8ZwXmHk0
-	gwAzl7k+P52YQRVHcVDiM8Oo+gR5pnqvSJ6jjlFY+7xF0fXDJ5MojmSD1k29mYgc
-	Q==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 47x799e498-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Jul 2025 03:09:54 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 56H79rSn046682
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 17 Jul 2025 03:09:53 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 17 Jul
- 2025 03:09:53 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Thu, 17 Jul 2025 03:09:53 -0400
-Received: from HYB-DlYm71t3hSl.ad.analog.com (HYB-DlYm71t3hSl.ad.analog.com [10.44.3.72])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 56H79bDP005035;
-	Thu, 17 Jul 2025 03:09:49 -0400
-From: Jorge Marques <jorge.marques@analog.com>
-Date: Thu, 17 Jul 2025 09:09:21 +0200
-Subject: [PATCH v6 2/2] i3c: master: Add driver for Analog Devices I3C
- Controller IP
+	s=arc-20240116; t=1752736288; c=relaxed/simple;
+	bh=7XQIo3LKI1d7UUOQlsb60PIK1n0FqfafGKjrvD7Z4aI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J87wmTJELPDOT3En8m/VtM53KZosstWQmRfRyMyfqj+s/tROGngWf12Vdaurf7+txruSiyloNcBUSbtSjHUDBNlebSSIIFdjQJm7mdoYJTO+8sclrQKy65YBFZg+3t3TyKd//LfVcaDEIK2YbRnK5VzLdoyRYdfo/kgF2I6N0s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: BNvTaLC4Tx6PpeL8WjTezg==
+X-CSE-MsgGUID: x5A995XIQmuBkuP51PqC9w==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 17 Jul 2025 16:11:18 +0900
+Received: from localhost.localdomain (unknown [10.226.93.49])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 937E2414FC18;
+	Thu, 17 Jul 2025 16:11:13 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.au@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH net-next v2] net: stmmac: dwmac-renesas-gbeth: Add PM suspend/resume callbacks
+Date: Thu, 17 Jul 2025 08:11:06 +0100
+Message-ID: <20250717071109.8213-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250717-adi-i3c-master-v6-2-6c687ed71bed@analog.com>
-References: <20250717-adi-i3c-master-v6-0-6c687ed71bed@analog.com>
-In-Reply-To: <20250717-adi-i3c-master-v6-0-6c687ed71bed@analog.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Frank Li
-	<Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-i3c@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <gastmaier@gmail.com>,
-        Jorge Marques
-	<jorge.marques@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752736178; l=31169;
- i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
- bh=XtAHmIowSZ3MAd/c82ISur88GmoDNr6aNqJWWJUJUdI=;
- b=YQgT8EVlxtYvELSti8ODIMJhs4Sa4N5ofmEz61uSm0UJryQEAbWURZ9EPR5s7S/crdDydTvmv
- +LQXWXZYdHHDmTNV303G3MGWkEUXhsvrywVaip8Ue6FUPd89NyOeux1
-X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
- pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDA2MSBTYWx0ZWRfX+2JETP7axw6s
- aF/5SI5k6IDF6qiicvwEQCrFYl/fR5hoE1++irYz6mJM7r1KF5YKkJ2+jxQoi96PSOP0a+nFFZJ
- 2Q8JUj7ATFbgqk0XKkH2xxTt02HrcMJtVaWKA/Y2Zcd1wfdeP7Qr3tpK3yrCqoY3r18FudxoKq2
- lLdwNfjxGOdOVyUA7mhedpHjw7FXMSu9cIke2oS+3UhEidKzjjm5tPrkzGW9T/RGdmI8Jm+7xW3
- AKTwDByg0QpiKsv2zmRynOm1uEFDZFR1Ml12XNxKVZT2Eq5rN3pmllb5vPfjtyVigq24VkBSZ+A
- eGQp9OrYefH0SPdowit+KmFyPXzElIpaHa3QU82uNx2VtF/4n1qsb0OFCtD/b/wffFJhjTngZgT
- ufuVdx8fKnQAFFaEUgTLZLL9oiUpBP6HWEEe5J0fYIL08XN22RjCugOspciLi8qlrz4YppCO
-X-Authority-Analysis: v=2.4 cv=N6MpF39B c=1 sm=1 tr=0 ts=6878a1c2 cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=gAnH3GRIAAAA:8 a=Br2UW1UjAAAA:8
- a=uYelplDOSPtZD9UNFWIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=WmXOPjafLNExVIMTj843:22
-X-Proofpoint-ORIG-GUID: nJQhVOe3QHrE2pngPOO7sM_dL3KBosgk
-X-Proofpoint-GUID: nJQhVOe3QHrE2pngPOO7sM_dL3KBosgk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-17_01,2025-07-16_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxscore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0
- phishscore=0 adultscore=0 spamscore=0 malwarescore=0 suspectscore=0
- priorityscore=1501 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507170061
 
-Add support for Analog Devices I3C Controller IP, an AXI-interfaced IP
-core that supports I3C and I2C devices, multiple speed-grades and
-I3C IBIs.
+Add PM suspend/resume callbacks for RZ/G3E SMARC EVK.
 
-Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+The PM deep entry is executed by pressing the SLEEP button and exit from
+entry is by pressing the power button.
+
+Logs:
+root@smarc-rzg3e:~# PM: suspend entry (deep)
+Filesystems sync: 0.115 seconds
+Freezing user space processes
+Freezing user space processes completed (elapsed 0.002 seconds)
+OOM killer disabled.
+Freezing remaining freezable tasks
+Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+printk: Suspending console(s) (use no_console_suspend to debug)
+NOTICE:  BL2: v2.10.5(release):2.10.5/rz_soc_dev-162-g7148ba838
+NOTICE:  BL2: Built : 14:23:58, Jul  5 2025
+NOTICE:  BL2: SYS_LSI_MODE: 0x13e06
+NOTICE:  BL2: SYS_LSI_DEVID: 0x8679447
+NOTICE:  BL2: SYS_LSI_PRR: 0x0
+NOTICE:  BL2: Booting BL31
+renesas-gbeth 15c30000.ethernet end0: Link is Down
+Disabling non-boot CPUs ...
+psci: CPU3 killed (polled 0 ms)
+psci: CPU2 killed (polled 0 ms)
+psci: CPU1 killed (polled 0 ms)
+Enabling non-boot CPUs ...
+Detected VIPT I-cache on CPU1
+GICv3: CPU1: found redistributor 100 region 0:0x0000000014960000
+CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+CPU1 is up
+Detected VIPT I-cache on CPU2
+GICv3: CPU2: found redistributor 200 region 0:0x0000000014980000
+CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
+CPU2 is up
+Detected VIPT I-cache on CPU3
+GICv3: CPU3: found redistributor 300 region 0:0x00000000149a0000
+CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
+CPU3 is up
+dwmac4: Master AXI performs fixed burst length
+15c30000.ethernet end0: No Safety Features support found
+15c30000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+15c30000.ethernet end0: configuring for phy/rgmii-id link mode
+dwmac4: Master AXI performs fixed burst length
+15c40000.ethernet end1: No Safety Features support found
+15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+15c40000.ethernet end1: configuring for phy/rgmii-id link mode
+OOM killer enabled.
+Restarting tasks: Starting
+Restarting tasks: Done
+random: crng reseeded on system resumption
+PM: suspend exit
+
+15c30000.ethernet end0: Link is Up - 1Gbps/Full - flow control rx/tx
+root@smarc-rzg3e:~# ifconfig end0 192.168.10.7 up
+root@smarc-rzg3e:~# ping 192.168.10.1
+PING 192.168.10.1 (192.168.10.1) 56(84) bytes of data.
+64 bytes from 192.168.10.1: icmp_seq=1 ttl=64 time=2.05 ms
+64 bytes from 192.168.10.1: icmp_seq=2 ttl=64 time=0.928 ms
+
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- MAINTAINERS                         |    1 +
- drivers/i3c/master/Kconfig          |   11 +
- drivers/i3c/master/Makefile         |    1 +
- drivers/i3c/master/adi-i3c-master.c | 1019 +++++++++++++++++++++++++++++++++++
- 4 files changed, 1032 insertions(+)
+v1->v2:
+ * Collected tags.
+Note:
+This patch is tested with out-of tree patch for save/restore
+ethernet OEN registers in the pinctrl block.
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1f212529276f4ab28f4b7d16b4105a8cf9ff5e2e..f527a1276358cc03b7c3461c2aa1aedfb0e9fbbf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11456,6 +11456,7 @@ I3C DRIVER FOR ANALOG DEVICES I3C CONTROLLER IP
- M:	Jorge Marques <jorge.marques@analog.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-+F:	drivers/i3c/master/adi-i3c-master.c
- 
- I3C DRIVER FOR CADENCE I3C MASTER IP
- M:	Przemysław Gaj <pgaj@cadence.com>
-diff --git a/drivers/i3c/master/Kconfig b/drivers/i3c/master/Kconfig
-index 7b30db3253af9d5c6aee6544c060e491bfbeb643..e0153362de9b6fe4eb11841fdc7e0b17a858e4f8 100644
---- a/drivers/i3c/master/Kconfig
-+++ b/drivers/i3c/master/Kconfig
-@@ -1,4 +1,15 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+config ADI_I3C_MASTER
-+	tristate "Analog Devices I3C master driver"
-+	depends on HAS_IOMEM
-+	help
-+	  Support for Analog Devices I3C Controller IP, an AXI-interfaced IP
-+	  core that supports I3C and I2C devices, multiple speed-grades and I3C
-+	  IBIs.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called adi-i3c-master.
-+
- config CDNS_I3C_MASTER
- 	tristate "Cadence I3C master driver"
- 	depends on HAS_IOMEM
-diff --git a/drivers/i3c/master/Makefile b/drivers/i3c/master/Makefile
-index 3e97960160bc85e5eaf2966ec0c3fae458c2711e..6cc4f4b73e7bdc206b68c750390f9c3cc2ccb199 100644
---- a/drivers/i3c/master/Makefile
-+++ b/drivers/i3c/master/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_ADI_I3C_MASTER)		+= adi-i3c-master.o
- obj-$(CONFIG_CDNS_I3C_MASTER)		+= i3c-master-cdns.o
- obj-$(CONFIG_DW_I3C_MASTER)		+= dw-i3c-master.o
- obj-$(CONFIG_AST2600_I3C_MASTER)	+= ast2600-i3c-master.o
-diff --git a/drivers/i3c/master/adi-i3c-master.c b/drivers/i3c/master/adi-i3c-master.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..162f9eed39aa5ef6f656239dcd8bfc5fe6281264
---- /dev/null
-+++ b/drivers/i3c/master/adi-i3c-master.c
-@@ -0,0 +1,1019 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * I3C Controller driver
-+ * Copyright 2025 Analog Devices Inc.
-+ * Author: Jorge Marques <jorge.marques@analog.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/fpga/adi-axi-common.h>
-+#include <linux/i3c/master.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include "../internals.h"
-+
-+#define ADI_MAX_DEVS			16
-+#define ADI_HAS_MDB_FROM_BCR(x)		(FIELD_GET(BIT(2), (x)))
-+
-+#define REG_ENABLE			0x040
-+
-+#define REG_PID_L			0x054
-+#define REG_PID_H			0x058
-+#define REG_DCR_BCR_DA			0x05c
-+#define   REG_DCR_BCR_DA_GET_DA(x)	FIELD_GET(GENMASK(22, 16), (x))
-+#define   REG_DCR_BCR_DA_GET_BCR(x)	FIELD_GET(GENMASK(15, 8), (x))
-+#define   REG_DCR_BCR_DA_GET_DCR(x)	FIELD_GET(GENMASK(7, 0), (x))
-+
-+#define REG_IRQ_MASK			0x080
-+#define REG_IRQ_PENDING			0x084
-+#define   REG_IRQ_PENDING_DAA		BIT(7)
-+#define   REG_IRQ_PENDING_IBI		BIT(6)
-+#define   REG_IRQ_PENDING_CMDR		BIT(5)
-+
-+#define REG_CMD_FIFO			0x0d4
-+#define   REG_CMD_FIFO_0_IS_CCC		BIT(22)
-+#define   REG_CMD_FIFO_0_BCAST		BIT(21)
-+#define   REG_CMD_FIFO_0_SR		BIT(20)
-+#define   REG_CMD_FIFO_0_LEN(l)		FIELD_PREP(GENMASK(19, 8), (l))
-+#define   REG_CMD_FIFO_0_DEV_ADDR(a)	FIELD_PREP(GENMASK(7, 1), (a))
-+#define   REG_CMD_FIFO_0_RNW		BIT(0)
-+#define   REG_CMD_FIFO_1_CCC(id)	FIELD_PREP(GENMASK(7, 0), (id))
-+
-+#define REG_CMD_FIFO_ROOM		0x0c0
-+#define REG_CMDR_FIFO			0x0d8
-+#define   REG_CMDR_FIFO_UDA_ERROR	8
-+#define   REG_CMDR_FIFO_NACK_RESP	6
-+#define   REG_CMDR_FIFO_CE2_ERROR	4
-+#define   REG_CMDR_FIFO_CE0_ERROR	1
-+#define   REG_CMDR_FIFO_NO_ERROR	0
-+#define   REG_CMDR_FIFO_ERROR(x)	FIELD_GET(GENMASK(23, 20), (x))
-+#define   REG_CMDR_FIFO_XFER_BYTES(x)	FIELD_GET(GENMASK(19, 8), (x))
-+
-+#define REG_SDO_FIFO			0x0dc
-+#define REG_SDO_FIFO_ROOM		0x0c8
-+#define REG_SDI_FIFO			0x0e0
-+#define REG_IBI_FIFO			0x0e4
-+#define REG_FIFO_STATUS			0x0e8
-+#define   REG_FIFO_STATUS_CMDR_EMPTY	BIT(0)
-+#define   REG_FIFO_STATUS_IBI_EMPTY	BIT(1)
-+
-+#define REG_OPS				0x100
-+#define   REG_OPS_PP_SG_MASK		GENMASK(6, 5)
-+#define   REG_OPS_SET_SG(x)		FIELD_PREP(REG_OPS_PP_SG_MASK, (x))
-+
-+#define REG_IBI_CONFIG			0x140
-+#define   REG_IBI_CONFIG_ENABLE		BIT(0)
-+#define   REG_IBI_CONFIG_LISTEN		BIT(1)
-+
-+#define REG_DEV_CHAR			0x180
-+#define   REG_DEV_CHAR_IS_I2C		BIT(0)
-+#define   REG_DEV_CHAR_IS_ATTACHED	BIT(1)
-+#define   REG_DEV_CHAR_BCR_IBI(x)	FIELD_PREP(GENMASK(3, 2), (x))
-+#define   REG_DEV_CHAR_WEN		BIT(8)
-+#define   REG_DEV_CHAR_ADDR(x)		FIELD_PREP(GENMASK(15, 9), (x))
-+
-+enum speed_grade {PP_SG_UNSET, PP_SG_1MHZ, PP_SG_3MHZ, PP_SG_6MHZ, PP_SG_12MHZ};
-+
-+struct adi_i3c_cmd {
-+	u32 cmd0;
-+	u32 cmd1;
-+	u32 tx_len;
-+	const void *tx_buf;
-+	u32 rx_len;
-+	void *rx_buf;
-+	u32 error;
-+};
-+
-+struct adi_i3c_xfer {
-+	struct list_head node;
-+	struct completion comp;
-+	int ret;
-+	unsigned int ncmds;
-+	unsigned int ncmds_comp;
-+	struct adi_i3c_cmd cmds[] __counted_by(ncmds);
-+};
-+
-+struct adi_i3c_master {
-+	struct i3c_master_controller base;
-+	u32 free_rr_slots;
-+	struct {
-+		unsigned int num_slots;
-+		struct i3c_dev_desc **slots;
-+		spinlock_t lock; /* Protect IBI slot access */
-+	} ibi;
-+	struct {
-+		struct list_head list;
-+		struct adi_i3c_xfer *cur;
-+		spinlock_t lock; /* Protect transfer */
-+	} xferqueue;
-+	void __iomem *regs;
-+	struct clk *clk;
-+	unsigned long i3c_scl_lim;
-+	struct {
-+		u8 addrs[ADI_MAX_DEVS];
-+		u8 index;
-+	} daa;
-+};
-+
-+static inline struct adi_i3c_master *to_adi_i3c_master(struct i3c_master_controller *master)
-+{
-+	return container_of(master, struct adi_i3c_master, base);
-+}
-+
-+static void adi_i3c_master_wr_to_tx_fifo(struct adi_i3c_master *master,
-+					 const u8 *buf, unsigned int nbytes)
-+{
-+	unsigned int n, m;
-+
-+	n = readl(master->regs + REG_SDO_FIFO_ROOM);
-+	m = min(n, nbytes);
-+	i3c_writel_fifo(master->regs + REG_SDO_FIFO, buf, nbytes);
-+}
-+
-+static void adi_i3c_master_rd_from_rx_fifo(struct adi_i3c_master *master,
-+					   u8 *buf, unsigned int nbytes)
-+{
-+	i3c_readl_fifo(master->regs + REG_SDI_FIFO, buf, nbytes);
-+}
-+
-+static bool adi_i3c_master_supports_ccc_cmd(struct i3c_master_controller *m,
-+					    const struct i3c_ccc_cmd *cmd)
-+{
-+	if (cmd->ndests > 1)
-+		return false;
-+
-+	switch (cmd->id) {
-+	case I3C_CCC_ENEC(true):
-+	case I3C_CCC_ENEC(false):
-+	case I3C_CCC_DISEC(true):
-+	case I3C_CCC_DISEC(false):
-+	case I3C_CCC_RSTDAA(true):
-+	case I3C_CCC_RSTDAA(false):
-+	case I3C_CCC_ENTDAA:
-+	case I3C_CCC_SETDASA:
-+	case I3C_CCC_SETNEWDA:
-+	case I3C_CCC_GETMWL:
-+	case I3C_CCC_GETMRL:
-+	case I3C_CCC_GETPID:
-+	case I3C_CCC_GETBCR:
-+	case I3C_CCC_GETDCR:
-+	case I3C_CCC_GETSTATUS:
-+	case I3C_CCC_GETHDRCAP:
-+		return true;
-+	default:
-+		break;
-+	}
-+
-+	return false;
-+}
-+
-+static int adi_i3c_master_disable(struct adi_i3c_master *master)
-+{
-+	writel(0, master->regs + REG_IBI_CONFIG);
-+
-+	return 0;
-+}
-+
-+static struct adi_i3c_xfer *adi_i3c_master_alloc_xfer(struct adi_i3c_master *master,
-+						      unsigned int ncmds)
-+{
-+	struct adi_i3c_xfer *xfer;
-+
-+	xfer = kzalloc(struct_size(xfer, cmds, ncmds), GFP_KERNEL);
-+	if (!xfer)
-+		return NULL;
-+
-+	INIT_LIST_HEAD(&xfer->node);
-+	xfer->ncmds = ncmds;
-+	xfer->ret = -ETIMEDOUT;
-+
-+	return xfer;
-+}
-+
-+static void adi_i3c_master_start_xfer_locked(struct adi_i3c_master *master)
-+{
-+	struct adi_i3c_xfer *xfer = master->xferqueue.cur;
-+	unsigned int i, n, m;
-+
-+	if (!xfer)
-+		return;
-+
-+	for (i = 0; i < xfer->ncmds; i++) {
-+		struct adi_i3c_cmd *cmd = &xfer->cmds[i];
-+
-+		if (!(cmd->cmd0 & REG_CMD_FIFO_0_RNW))
-+			adi_i3c_master_wr_to_tx_fifo(master, cmd->tx_buf, cmd->tx_len);
-+	}
-+
-+	n = readl(master->regs + REG_CMD_FIFO_ROOM);
-+	for (i = 0; i < xfer->ncmds; i++) {
-+		struct adi_i3c_cmd *cmd = &xfer->cmds[i];
-+
-+		m = cmd->cmd0 & REG_CMD_FIFO_0_IS_CCC ? 2 : 1;
-+		if (m > n)
-+			break;
-+		writel(cmd->cmd0, master->regs + REG_CMD_FIFO);
-+		if (cmd->cmd0 & REG_CMD_FIFO_0_IS_CCC)
-+			writel(cmd->cmd1, master->regs + REG_CMD_FIFO);
-+		n -= m;
-+	}
-+}
-+
-+static void adi_i3c_master_end_xfer_locked(struct adi_i3c_master *master,
-+					   u32 pending)
-+{
-+	struct adi_i3c_xfer *xfer = master->xferqueue.cur;
-+	int i, ret = 0;
-+
-+	if (!xfer)
-+		return;
-+
-+	while (!(readl(master->regs + REG_FIFO_STATUS) & REG_FIFO_STATUS_CMDR_EMPTY)) {
-+		struct adi_i3c_cmd *cmd;
-+		u32 cmdr, rx_len;
-+
-+		cmdr = readl(master->regs + REG_CMDR_FIFO);
-+
-+		cmd = &xfer->cmds[xfer->ncmds_comp++];
-+		if (cmd->cmd0 & REG_CMD_FIFO_0_RNW) {
-+			rx_len = min_t(u32, REG_CMDR_FIFO_XFER_BYTES(cmdr), cmd->rx_len);
-+			adi_i3c_master_rd_from_rx_fifo(master, cmd->rx_buf, rx_len);
-+		}
-+		cmd->error = REG_CMDR_FIFO_ERROR(cmdr);
-+	}
-+
-+	for (i = 0; i < xfer->ncmds_comp; i++) {
-+		switch (xfer->cmds[i].error) {
-+		case REG_CMDR_FIFO_NO_ERROR:
-+			break;
-+
-+		case REG_CMDR_FIFO_CE0_ERROR:
-+		case REG_CMDR_FIFO_CE2_ERROR:
-+		case REG_CMDR_FIFO_NACK_RESP:
-+		case REG_CMDR_FIFO_UDA_ERROR:
-+			ret = -EIO;
-+			break;
-+
-+		default:
-+			ret = -EINVAL;
-+			break;
-+		}
-+	}
-+
-+	xfer->ret = ret;
-+
-+	if (xfer->ncmds_comp != xfer->ncmds)
-+		return;
-+
-+	complete(&xfer->comp);
-+
-+	xfer = list_first_entry_or_null(&master->xferqueue.list,
-+					struct adi_i3c_xfer, node);
-+	if (xfer)
-+		list_del_init(&xfer->node);
-+
-+	master->xferqueue.cur = xfer;
-+	adi_i3c_master_start_xfer_locked(master);
-+}
-+
-+static void adi_i3c_master_queue_xfer(struct adi_i3c_master *master,
-+				      struct adi_i3c_xfer *xfer)
-+{
-+	init_completion(&xfer->comp);
-+	guard(spinlock_irqsave)(&master->xferqueue.lock);
-+	if (master->xferqueue.cur) {
-+		list_add_tail(&xfer->node, &master->xferqueue.list);
-+	} else {
-+		master->xferqueue.cur = xfer;
-+		adi_i3c_master_start_xfer_locked(master);
-+	}
-+}
-+
-+static void adi_i3c_master_unqueue_xfer(struct adi_i3c_master *master,
-+					struct adi_i3c_xfer *xfer)
-+{
-+	guard(spinlock_irqsave)(&master->xferqueue.lock);
-+	if (master->xferqueue.cur == xfer)
-+		master->xferqueue.cur = NULL;
-+	else
-+		list_del_init(&xfer->node);
-+
-+	writel(0x01, master->regs + REG_ENABLE);
-+	writel(0x00, master->regs + REG_ENABLE);
-+	writel(REG_IRQ_PENDING_CMDR, master->regs + REG_IRQ_MASK);
-+}
-+
-+static enum i3c_error_code adi_i3c_cmd_get_err(struct adi_i3c_cmd *cmd)
-+{
-+	switch (cmd->error) {
-+	case REG_CMDR_FIFO_CE0_ERROR:
-+		return I3C_ERROR_M0;
-+
-+	case REG_CMDR_FIFO_CE2_ERROR:
-+	case REG_CMDR_FIFO_NACK_RESP:
-+		return I3C_ERROR_M2;
-+
-+	default:
-+		break;
-+	}
-+
-+	return I3C_ERROR_UNKNOWN;
-+}
-+
-+static int adi_i3c_master_send_ccc_cmd(struct i3c_master_controller *m,
-+				       struct i3c_ccc_cmd *cmd)
-+{
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct adi_i3c_xfer *xfer __free(kfree) = NULL;
-+	struct adi_i3c_cmd *ccmd;
-+
-+	xfer = adi_i3c_master_alloc_xfer(master, 1);
-+	if (!xfer)
-+		return -ENOMEM;
-+
-+	ccmd = xfer->cmds;
-+	ccmd->cmd1 = REG_CMD_FIFO_1_CCC(cmd->id);
-+	ccmd->cmd0 = REG_CMD_FIFO_0_IS_CCC |
-+		     REG_CMD_FIFO_0_LEN(cmd->dests[0].payload.len);
-+
-+	if (cmd->id & I3C_CCC_DIRECT)
-+		ccmd->cmd0 |= REG_CMD_FIFO_0_DEV_ADDR(cmd->dests[0].addr);
-+
-+	if (cmd->rnw) {
-+		ccmd->cmd0 |= REG_CMD_FIFO_0_RNW;
-+		ccmd->rx_buf = cmd->dests[0].payload.data;
-+		ccmd->rx_len = cmd->dests[0].payload.len;
-+	} else {
-+		ccmd->tx_buf = cmd->dests[0].payload.data;
-+		ccmd->tx_len = cmd->dests[0].payload.len;
-+	}
-+
-+	adi_i3c_master_queue_xfer(master, xfer);
-+	if (!wait_for_completion_timeout(&xfer->comp, msecs_to_jiffies(1000)))
-+		adi_i3c_master_unqueue_xfer(master, xfer);
-+
-+	cmd->err = adi_i3c_cmd_get_err(&xfer->cmds[0]);
-+
-+	return 0;
-+}
-+
-+static int adi_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
-+				     struct i3c_priv_xfer *xfers,
-+				     int nxfers)
-+{
-+	struct i3c_master_controller *m = i3c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct adi_i3c_xfer *xfer __free(kfree) = NULL;
-+	int i, ret;
-+
-+	if (!nxfers)
-+		return 0;
-+
-+	xfer = adi_i3c_master_alloc_xfer(master, nxfers);
-+	if (!xfer)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < nxfers; i++) {
-+		struct adi_i3c_cmd *ccmd = &xfer->cmds[i];
-+
-+		ccmd->cmd0 = REG_CMD_FIFO_0_DEV_ADDR(dev->info.dyn_addr);
-+
-+		if (xfers[i].rnw) {
-+			ccmd->cmd0 |= REG_CMD_FIFO_0_RNW;
-+			ccmd->rx_buf = xfers[i].data.in;
-+			ccmd->rx_len = xfers[i].len;
-+		} else {
-+			ccmd->tx_buf = xfers[i].data.out;
-+			ccmd->tx_len = xfers[i].len;
-+		}
-+
-+		ccmd->cmd0 |= REG_CMD_FIFO_0_LEN(xfers[i].len);
-+
-+		if (i < nxfers - 1)
-+			ccmd->cmd0 |= REG_CMD_FIFO_0_SR;
-+
-+		if (!i)
-+			ccmd->cmd0 |= REG_CMD_FIFO_0_BCAST;
-+	}
-+
-+	adi_i3c_master_queue_xfer(master, xfer);
-+	if (!wait_for_completion_timeout(&xfer->comp,
-+					 msecs_to_jiffies(1000)))
-+		adi_i3c_master_unqueue_xfer(master, xfer);
-+
-+	ret = xfer->ret;
-+
-+	for (i = 0; i < nxfers; i++)
-+		xfers[i].err = adi_i3c_cmd_get_err(&xfer->cmds[i]);
-+
-+	return ret;
-+}
-+
-+struct adi_i3c_i2c_dev_data {
-+	struct i3c_generic_ibi_pool *ibi_pool;
-+	u16 id;
-+	s16 ibi;
-+};
-+
-+static int adi_i3c_master_get_rr_slot(struct adi_i3c_master *master,
-+				      u8 dyn_addr)
-+{
-+	if (!master->free_rr_slots)
-+		return -ENOSPC;
-+
-+	return ffs(master->free_rr_slots) - 1;
-+}
-+
-+static int adi_i3c_master_reattach_i3c_dev(struct i3c_dev_desc *dev, u8 dyn_addr)
-+{
-+	struct i3c_master_controller *m = i3c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	u8 addr;
-+
-+	addr = dev->info.dyn_addr ? dev->info.dyn_addr : dev->info.static_addr;
-+
-+	writel(REG_DEV_CHAR_ADDR(dyn_addr), master->regs + REG_DEV_CHAR);
-+	writel((readl(master->regs + REG_DEV_CHAR) &
-+		~REG_DEV_CHAR_IS_ATTACHED) | REG_DEV_CHAR_WEN,
-+	       master->regs + REG_DEV_CHAR);
-+
-+	writel(REG_DEV_CHAR_ADDR(addr), master->regs + REG_DEV_CHAR);
-+	writel(readl(master->regs + REG_DEV_CHAR) |
-+	       REG_DEV_CHAR_IS_ATTACHED | REG_DEV_CHAR_WEN,
-+	       master->regs + REG_DEV_CHAR);
-+
-+	return 0;
-+}
-+
-+static int adi_i3c_master_attach_i3c_dev(struct i3c_dev_desc *dev)
-+{
-+	struct i3c_master_controller *m = i3c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct adi_i3c_i2c_dev_data *data;
-+	int slot;
-+	u8 addr;
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	slot = adi_i3c_master_get_rr_slot(master, dev->info.dyn_addr);
-+	if (slot < 0) {
-+		kfree(data);
-+		return slot;
-+	}
-+
-+	data->id = slot;
-+	i3c_dev_set_master_data(dev, data);
-+	master->free_rr_slots &= ~BIT(slot);
-+
-+	addr = dev->info.dyn_addr ? dev->info.dyn_addr : dev->info.static_addr;
-+
-+	writel(REG_DEV_CHAR_ADDR(addr), master->regs + REG_DEV_CHAR);
-+	writel(readl(master->regs + REG_DEV_CHAR) |
-+	       REG_DEV_CHAR_IS_ATTACHED | REG_DEV_CHAR_WEN,
-+	       master->regs + REG_DEV_CHAR);
-+
-+	return 0;
-+}
-+
-+static void adi_i3c_master_sync_dev_char(struct i3c_master_controller *m)
-+{
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct i3c_dev_desc *i3cdev;
-+	u32 bcr_ibi;
-+	u8 addr;
-+
-+	i3c_bus_for_each_i3cdev(&m->bus, i3cdev) {
-+		addr = i3cdev->info.dyn_addr ?
-+		       i3cdev->info.dyn_addr : i3cdev->info.static_addr;
-+		writel(REG_DEV_CHAR_ADDR(addr), master->regs + REG_DEV_CHAR);
-+		bcr_ibi = FIELD_GET(I3C_BCR_IBI_PAYLOAD | I3C_BCR_IBI_REQ_CAP, (i3cdev->info.bcr));
-+		writel(readl(master->regs + REG_DEV_CHAR) |
-+		       REG_DEV_CHAR_BCR_IBI(bcr_ibi) | REG_DEV_CHAR_WEN,
-+		       master->regs + REG_DEV_CHAR);
-+	}
-+}
-+
-+static void adi_i3c_master_detach_i3c_dev(struct i3c_dev_desc *dev)
-+{
-+	struct i3c_master_controller *m = i3c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct adi_i3c_i2c_dev_data *data = i3c_dev_get_master_data(dev);
-+	u8 addr;
-+
-+	addr = dev->info.dyn_addr ? dev->info.dyn_addr : dev->info.static_addr;
-+
-+	writel(REG_DEV_CHAR_ADDR(addr), master->regs + REG_DEV_CHAR);
-+	writel((readl(master->regs + REG_DEV_CHAR) &
-+		~REG_DEV_CHAR_IS_ATTACHED) | REG_DEV_CHAR_WEN,
-+	       master->regs + REG_DEV_CHAR);
-+
-+	i3c_dev_set_master_data(dev, NULL);
-+	master->free_rr_slots |= BIT(data->id);
-+	kfree(data);
-+}
-+
-+static int adi_i3c_master_attach_i2c_dev(struct i2c_dev_desc *dev)
-+{
-+	struct i3c_master_controller *m = i2c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct adi_i3c_i2c_dev_data *data;
-+	int slot;
-+
-+	slot = adi_i3c_master_get_rr_slot(master, 0);
-+	if (slot < 0)
-+		return slot;
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->id = slot;
-+	master->free_rr_slots &= ~BIT(slot);
-+	i2c_dev_set_master_data(dev, data);
-+
-+	writel(REG_DEV_CHAR_ADDR(dev->addr) |
-+	       REG_DEV_CHAR_IS_I2C | REG_DEV_CHAR_IS_ATTACHED | REG_DEV_CHAR_WEN,
-+	       master->regs + REG_DEV_CHAR);
-+
-+	return 0;
-+}
-+
-+static void adi_i3c_master_detach_i2c_dev(struct i2c_dev_desc *dev)
-+{
-+	struct i3c_master_controller *m = i2c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct adi_i3c_i2c_dev_data *data = i2c_dev_get_master_data(dev);
-+
-+	writel(REG_DEV_CHAR_ADDR(dev->addr) |
-+	       REG_DEV_CHAR_IS_I2C | REG_DEV_CHAR_WEN,
-+	       master->regs + REG_DEV_CHAR);
-+
-+	i2c_dev_set_master_data(dev, NULL);
-+	master->free_rr_slots |= BIT(data->id);
-+	kfree(data);
-+}
-+
-+static void adi_i3c_master_bus_cleanup(struct i3c_master_controller *m)
-+{
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+
-+	adi_i3c_master_disable(master);
-+}
-+
-+static void adi_i3c_master_upd_i3c_scl_lim(struct adi_i3c_master *master)
-+{
-+	struct i3c_master_controller *m = &master->base;
-+	struct i3c_bus *bus = i3c_master_get_bus(m);
-+	u8 i3c_scl_lim = 0;
-+	struct i3c_dev_desc *dev;
-+	u8 pp_sg;
-+
-+	i3c_bus_for_each_i3cdev(bus, dev) {
-+		u8 max_fscl;
-+
-+		max_fscl = max(I3C_CCC_MAX_SDR_FSCL(dev->info.max_read_ds),
-+			       I3C_CCC_MAX_SDR_FSCL(dev->info.max_write_ds));
-+
-+		switch (max_fscl) {
-+		case I3C_SDR1_FSCL_8MHZ:
-+			max_fscl = PP_SG_6MHZ;
-+			break;
-+		case I3C_SDR2_FSCL_6MHZ:
-+			max_fscl = PP_SG_3MHZ;
-+			break;
-+		case I3C_SDR3_FSCL_4MHZ:
-+			max_fscl = PP_SG_3MHZ;
-+			break;
-+		case I3C_SDR4_FSCL_2MHZ:
-+			max_fscl = PP_SG_1MHZ;
-+			break;
-+		case I3C_SDR0_FSCL_MAX:
-+		default:
-+			max_fscl = PP_SG_12MHZ;
-+			break;
-+		}
-+
-+		if (max_fscl &&
-+		    (i3c_scl_lim > max_fscl || !i3c_scl_lim))
-+			i3c_scl_lim = max_fscl;
-+	}
-+
-+	if (!i3c_scl_lim)
-+		return;
-+
-+	master->i3c_scl_lim = i3c_scl_lim - 1;
-+
-+	pp_sg = readl(master->regs + REG_OPS) & ~REG_OPS_PP_SG_MASK;
-+	pp_sg |= REG_OPS_SET_SG(master->i3c_scl_lim);
-+
-+	writel(pp_sg, master->regs + REG_OPS);
-+}
-+
-+static void adi_i3c_master_get_features(struct adi_i3c_master *master,
-+					unsigned int slot,
-+					struct i3c_device_info *info)
-+{
-+	u32 buf;
-+
-+	/* Dynamic address and PID are for identification only */
-+	memset(info, 0, sizeof(*info));
-+	buf = readl(master->regs + REG_DCR_BCR_DA);
-+	info->dyn_addr = REG_DCR_BCR_DA_GET_DA(buf);
-+	info->dcr = REG_DCR_BCR_DA_GET_DCR(buf);
-+	info->bcr = REG_DCR_BCR_DA_GET_BCR(buf);
-+	info->pid = readl(master->regs + REG_PID_L);
-+	info->pid |= (u64)readl(master->regs + REG_PID_H) << 32;
-+}
-+
-+static int adi_i3c_master_do_daa(struct i3c_master_controller *m)
-+{
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	int ret, addr = 0;
-+	u32 irq_mask;
-+
-+	for (u8 i = 0; i < ADI_MAX_DEVS; i++) {
-+		addr = i3c_master_get_free_addr(m, addr);
-+		if (addr < 0)
-+			return addr;
-+		master->daa.addrs[i] = addr;
-+	}
-+
-+	irq_mask = readl(master->regs + REG_IRQ_MASK);
-+	writel(irq_mask | REG_IRQ_PENDING_DAA,
-+	       master->regs + REG_IRQ_MASK);
-+
-+	master->daa.index = 0;
-+	ret = i3c_master_entdaa_locked(&master->base);
-+
-+	writel(irq_mask, master->regs + REG_IRQ_MASK);
-+
-+	/* DAA always finishes with CE2_ERROR or NACK_RESP */
-+	if (ret && ret != I3C_ERROR_M2)
-+		return ret;
-+
-+	/* Add I3C devices discovered */
-+	for (u8 i = 0; i < master->daa.index; i++)
-+		i3c_master_add_i3c_dev_locked(m, master->daa.addrs[i]);
-+	/* Sync retrieved devs info with the IP */
-+	adi_i3c_master_sync_dev_char(m);
-+
-+	i3c_master_defslvs_locked(&master->base);
-+
-+	adi_i3c_master_upd_i3c_scl_lim(master);
-+
-+	return 0;
-+}
-+
-+static int adi_i3c_master_bus_init(struct i3c_master_controller *m)
-+{
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct i3c_device_info info = { };
-+	int ret;
-+
-+	ret = i3c_master_get_free_addr(m, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	adi_i3c_master_get_features(master, 0, &info);
-+	ret = i3c_master_set_info(&master->base, &info);
-+	if (ret)
-+		return ret;
-+
-+	writel(REG_IBI_CONFIG_LISTEN,
-+	       master->regs + REG_IBI_CONFIG);
-+
-+	return 0;
-+}
-+
-+static void adi_i3c_master_handle_ibi(struct adi_i3c_master *master,
-+				      u32 raw)
-+{
-+	struct adi_i3c_i2c_dev_data *data;
-+	struct i3c_ibi_slot *slot;
-+	struct i3c_dev_desc *dev;
-+	u8 da, id, mdb, len;
-+	u8 *buf;
-+
-+	da = FIELD_GET(GENMASK(23, 17), raw);
-+	mdb = FIELD_GET(GENMASK(15, 8), raw);
-+	for (id = 0; id < master->ibi.num_slots; id++) {
-+		if (master->ibi.slots[id] &&
-+		    master->ibi.slots[id]->info.dyn_addr == da)
-+			break;
-+	}
-+
-+	if (id == master->ibi.num_slots)
-+		return;
-+
-+	dev = master->ibi.slots[id];
-+	len = ADI_HAS_MDB_FROM_BCR(dev->info.bcr);
-+	data = i3c_dev_get_master_data(dev);
-+
-+	guard(spinlock)(&master->ibi.lock);
-+	slot = i3c_generic_ibi_get_free_slot(data->ibi_pool);
-+	if (!slot)
-+		return;
-+
-+	slot->len = len;
-+	buf = slot->data;
-+	buf[0] = mdb;
-+	i3c_master_queue_ibi(dev, slot);
-+}
-+
-+static void adi_i3c_master_demux_ibis(struct adi_i3c_master *master)
-+{
-+	while (!(readl(master->regs + REG_FIFO_STATUS) & REG_FIFO_STATUS_IBI_EMPTY)) {
-+		u32 raw = readl(master->regs + REG_IBI_FIFO);
-+
-+		adi_i3c_master_handle_ibi(master, raw);
-+	}
-+}
-+
-+static void adi_i3c_master_handle_da_req(struct adi_i3c_master *master)
-+{
-+	u8 payload0[8];
-+	u32 addr;
-+
-+	adi_i3c_master_rd_from_rx_fifo(master, payload0, 6);
-+	addr = master->daa.addrs[master->daa.index++];
-+	addr = (addr << 1) | (parity8(addr) ? 0 : 1);
-+
-+	writel(addr, master->regs + REG_SDO_FIFO);
-+}
-+
-+static irqreturn_t adi_i3c_master_irq(int irq, void *data)
-+{
-+	struct adi_i3c_master *master = data;
-+	u32 pending;
-+
-+	pending = readl(master->regs + REG_IRQ_PENDING);
-+	writel(pending, master->regs + REG_IRQ_PENDING);
-+	if (pending & REG_IRQ_PENDING_CMDR) {
-+		scoped_guard(spinlock_irqsave, &master->xferqueue.lock) {
-+			adi_i3c_master_end_xfer_locked(master, pending);
-+		}
-+	}
-+	if (pending & REG_IRQ_PENDING_IBI)
-+		adi_i3c_master_demux_ibis(master);
-+	if (pending & REG_IRQ_PENDING_DAA)
-+		adi_i3c_master_handle_da_req(master);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int adi_i3c_master_i2c_xfers(struct i2c_dev_desc *dev,
-+				    struct i2c_msg *xfers,
-+				    int nxfers)
-+{
-+	struct i3c_master_controller *m = i2c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct adi_i3c_xfer *xfer __free(kfree) = NULL;
-+	int i;
-+
-+	if (!nxfers)
-+		return 0;
-+	for (i = 0; i < nxfers; i++) {
-+		if (xfers[i].flags & I2C_M_TEN)
-+			return -EOPNOTSUPP;
-+	}
-+	xfer = adi_i3c_master_alloc_xfer(master, nxfers);
-+	if (!xfer)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < nxfers; i++) {
-+		struct adi_i3c_cmd *ccmd = &xfer->cmds[i];
-+
-+		ccmd->cmd0 = REG_CMD_FIFO_0_DEV_ADDR(xfers[i].addr);
-+
-+		if (xfers[i].flags & I2C_M_RD) {
-+			ccmd->cmd0 |= REG_CMD_FIFO_0_RNW;
-+			ccmd->rx_buf = xfers[i].buf;
-+			ccmd->rx_len = xfers[i].len;
-+		} else {
-+			ccmd->tx_buf = xfers[i].buf;
-+			ccmd->tx_len = xfers[i].len;
-+		}
-+
-+		ccmd->cmd0 |= REG_CMD_FIFO_0_LEN(xfers[i].len);
-+	}
-+
-+	adi_i3c_master_queue_xfer(master, xfer);
-+	if (!wait_for_completion_timeout(&xfer->comp,
-+					 m->i2c.timeout))
-+		adi_i3c_master_unqueue_xfer(master, xfer);
-+
-+	return xfer->ret;
-+}
-+
-+static int adi_i3c_master_disable_ibi(struct i3c_dev_desc *dev)
-+{
-+	struct i3c_master_controller *m = i3c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct i3c_dev_desc *i3cdev;
-+	u32 enabled = 0;
-+	int ret;
-+
-+	ret = i3c_master_disec_locked(m, dev->info.dyn_addr,
-+				      I3C_CCC_EVENT_SIR);
-+
-+	i3c_bus_for_each_i3cdev(&m->bus, i3cdev) {
-+		if (dev != i3cdev && i3cdev->ibi)
-+			enabled |= i3cdev->ibi->enabled;
-+	}
-+	if (!enabled) {
-+		writel(REG_IBI_CONFIG_LISTEN,
-+		       master->regs + REG_IBI_CONFIG);
-+		writel(readl(master->regs + REG_IRQ_MASK) & ~REG_IRQ_PENDING_IBI,
-+		       master->regs + REG_IRQ_MASK);
-+	}
-+
-+	return ret;
-+}
-+
-+static int adi_i3c_master_enable_ibi(struct i3c_dev_desc *dev)
-+{
-+	struct i3c_master_controller *m = i3c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+
-+	writel(REG_IBI_CONFIG_LISTEN | REG_IBI_CONFIG_ENABLE,
-+	       master->regs + REG_IBI_CONFIG);
-+
-+	writel(readl(master->regs + REG_IRQ_MASK) | REG_IRQ_PENDING_IBI,
-+	       master->regs + REG_IRQ_MASK);
-+
-+	return i3c_master_enec_locked(m, dev->info.dyn_addr,
-+				      I3C_CCC_EVENT_SIR);
-+}
-+
-+static int adi_i3c_master_request_ibi(struct i3c_dev_desc *dev,
-+				      const struct i3c_ibi_setup *req)
-+{
-+	struct i3c_master_controller *m = i3c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct adi_i3c_i2c_dev_data *data;
-+	unsigned int i;
-+
-+	data = i3c_dev_get_master_data(dev);
-+	data->ibi_pool = i3c_generic_ibi_alloc_pool(dev, req);
-+	if (IS_ERR(data->ibi_pool))
-+		return PTR_ERR(data->ibi_pool);
-+
-+	scoped_guard(spinlock_irqsave, &master->ibi.lock) {
-+		for (i = 0; i < master->ibi.num_slots; i++) {
-+			if (!master->ibi.slots[i]) {
-+				data->ibi = i;
-+				master->ibi.slots[i] = dev;
-+				break;
-+			}
-+		}
-+	}
-+
-+	if (i < master->ibi.num_slots)
-+		return 0;
-+
-+	i3c_generic_ibi_free_pool(data->ibi_pool);
-+	data->ibi_pool = NULL;
-+
-+	return -ENOSPC;
-+}
-+
-+static void adi_i3c_master_free_ibi(struct i3c_dev_desc *dev)
-+{
-+	struct i3c_master_controller *m = i3c_dev_get_master(dev);
-+	struct adi_i3c_master *master = to_adi_i3c_master(m);
-+	struct adi_i3c_i2c_dev_data *data = i3c_dev_get_master_data(dev);
-+
-+	scoped_guard(spinlock_irqsave, &master->ibi.lock) {
-+		master->ibi.slots[data->ibi] = NULL;
-+	}
-+
-+	i3c_generic_ibi_free_pool(data->ibi_pool);
-+}
-+
-+static void adi_i3c_master_recycle_ibi_slot(struct i3c_dev_desc *dev,
-+					    struct i3c_ibi_slot *slot)
-+{
-+	struct adi_i3c_i2c_dev_data *data = i3c_dev_get_master_data(dev);
-+
-+	i3c_generic_ibi_recycle_slot(data->ibi_pool, slot);
-+}
-+
-+static const struct i3c_master_controller_ops adi_i3c_master_ops = {
-+	.bus_init = adi_i3c_master_bus_init,
-+	.bus_cleanup = adi_i3c_master_bus_cleanup,
-+	.attach_i3c_dev = adi_i3c_master_attach_i3c_dev,
-+	.reattach_i3c_dev = adi_i3c_master_reattach_i3c_dev,
-+	.detach_i3c_dev = adi_i3c_master_detach_i3c_dev,
-+	.attach_i2c_dev = adi_i3c_master_attach_i2c_dev,
-+	.detach_i2c_dev = adi_i3c_master_detach_i2c_dev,
-+	.do_daa = adi_i3c_master_do_daa,
-+	.supports_ccc_cmd = adi_i3c_master_supports_ccc_cmd,
-+	.send_ccc_cmd = adi_i3c_master_send_ccc_cmd,
-+	.priv_xfers = adi_i3c_master_priv_xfers,
-+	.i2c_xfers = adi_i3c_master_i2c_xfers,
-+	.request_ibi = adi_i3c_master_request_ibi,
-+	.enable_ibi = adi_i3c_master_enable_ibi,
-+	.disable_ibi = adi_i3c_master_disable_ibi,
-+	.free_ibi = adi_i3c_master_free_ibi,
-+	.recycle_ibi_slot = adi_i3c_master_recycle_ibi_slot,
-+};
-+
-+static const struct of_device_id adi_i3c_master_of_match[] = {
-+	{ .compatible = "adi,i3c-master-v1" },
-+	{}
-+};
-+
-+static int adi_i3c_master_probe(struct platform_device *pdev)
-+{
-+	struct adi_i3c_master *master;
-+	struct clk_bulk_data *clk;
-+	unsigned int version;
-+	int ret, irq;
-+
-+	master = devm_kzalloc(&pdev->dev, sizeof(*master), GFP_KERNEL);
-+	if (!master)
-+		return -ENOMEM;
-+
-+	master->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(master->regs))
-+		return PTR_ERR(master->regs);
-+
-+	ret = devm_clk_bulk_get_all_enabled(&pdev->dev, &clk);
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "Failed to get clocks\n");
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	version = readl(master->regs + ADI_AXI_REG_VERSION);
-+	if (ADI_AXI_PCORE_VER_MAJOR(version) != 1)
-+		dev_err_probe(&pdev->dev, -ENODEV, "Unsupported peripheral version %u.%u.%u\n",
-+			      ADI_AXI_PCORE_VER_MAJOR(version),
-+			      ADI_AXI_PCORE_VER_MINOR(version),
-+			      ADI_AXI_PCORE_VER_PATCH(version));
-+
-+	writel(0x00, master->regs + REG_ENABLE);
-+	writel(0x00, master->regs + REG_IRQ_MASK);
-+
-+	ret = devm_request_irq(&pdev->dev, irq, adi_i3c_master_irq, 0,
-+			       dev_name(&pdev->dev), master);
-+	if (ret)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, master);
-+
-+	master->free_rr_slots = GENMASK(ADI_MAX_DEVS, 1);
-+
-+	writel(REG_IRQ_PENDING_CMDR, master->regs + REG_IRQ_MASK);
-+
-+	spin_lock_init(&master->ibi.lock);
-+	master->ibi.num_slots = 15;
-+	master->ibi.slots = devm_kcalloc(&pdev->dev, master->ibi.num_slots,
-+					 sizeof(*master->ibi.slots),
-+					 GFP_KERNEL);
-+	if (!master->ibi.slots)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&master->xferqueue.lock);
-+	INIT_LIST_HEAD(&master->xferqueue.list);
-+
-+	return i3c_master_register(&master->base, &pdev->dev,
-+				   &adi_i3c_master_ops, false);
-+}
-+
-+static void adi_i3c_master_remove(struct platform_device *pdev)
-+{
-+	struct adi_i3c_master *master = platform_get_drvdata(pdev);
-+
-+	writel(0xff, master->regs + REG_IRQ_PENDING);
-+	writel(0x00, master->regs + REG_IRQ_MASK);
-+	writel(0x01, master->regs + REG_ENABLE);
-+
-+	i3c_master_unregister(&master->base);
-+}
-+
-+static struct platform_driver adi_i3c_master = {
-+	.probe = adi_i3c_master_probe,
-+	.remove = adi_i3c_master_remove,
-+	.driver = {
-+		.name = "adi-i3c-master",
-+		.of_match_table = adi_i3c_master_of_match,
-+	},
-+};
-+module_platform_driver(adi_i3c_master);
-+
-+MODULE_AUTHOR("Jorge Marques <jorge.marques@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices I3C master driver");
-+MODULE_LICENSE("GPL");
-
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+index 9a774046455b..df4ca897a60c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+@@ -136,6 +136,7 @@ static struct platform_driver renesas_gbeth_driver = {
+ 	.probe  = renesas_gbeth_probe,
+ 	.driver = {
+ 		.name		= "renesas-gbeth",
++		.pm		= &stmmac_pltfr_pm_ops,
+ 		.of_match_table	= renesas_gbeth_match,
+ 	},
+ };
 -- 
-2.49.0
+2.43.0
 
 
