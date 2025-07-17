@@ -1,69 +1,97 @@
-Return-Path: <linux-kernel+bounces-734691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590AAB084D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1534DB084D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53B934A5442
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:23:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 585A717D1F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BDD2163B2;
-	Thu, 17 Jul 2025 06:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB292215F48;
+	Thu, 17 Jul 2025 06:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvL6y+Aw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB78A2147E6;
-	Thu, 17 Jul 2025 06:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3573B19D09C;
+	Thu, 17 Jul 2025 06:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752733423; cv=none; b=ksWKIqP7qDIsR6bus9M3g2bTZYj2rr3NzXiUj4HzxExdfNhf6osH+ZUmx6Wt9S41IPYQrzW5gaysxpRw3DY+/IQaW5HoYOLlGN4XjllzyG2kIHsNUhLgw25kx1Fe0tBsfkZSNex5iW8O8a/CPkHs1vsdR2/zuOonV+SPYykoFRw=
+	t=1752733437; cv=none; b=u+srtToLaYAkaBgTfjyuFAx/1+WqlVRIEYZVLEpBdbMnfyUtZr7mMpz4cgs6yETemlj6I23dTI+a+QtNR98uue3c8TwATdO8SZNnFksYdOTocMU4HBuyZDlUo1z+yEWNDotialGK+v/XCrHYYKcQxa3Msj6mUFj8pKBG4sj5eRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752733423; c=relaxed/simple;
-	bh=yibcBDh2HavI8c3LCPjyI4o1JTWK9DiSzETRYuw5KZs=;
+	s=arc-20240116; t=1752733437; c=relaxed/simple;
+	bh=grCqqOhvrUeiogwwXn1hgC2+UR2PNKwWKTQf5JysCHQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0hz70V6AdZilTe8UzW18t84+VR5mR7qtGMAb4t/T3B87hnS5BF8wK2qDstbXMKRV1uC2skfus7H/0LtGiJGWbDOHZWWzVudGAN7oPm18xOOsQseMZeBow2Lm0HoBbvRH25J8mW5UxH/uVTwPWbPaFK/xSGjlBIikjHtjipUQo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB145C4CEED;
-	Thu, 17 Jul 2025 06:23:42 +0000 (UTC)
-Date: Thu, 17 Jul 2025 08:23:40 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: interconnect: qcom,msm8998-bwmon:
- Allow 'nonposted-mmio'
-Message-ID: <20250717-lumpy-auspicious-pillbug-aa7d77@kuoka>
-References: <20250716-8750_cpubwmon-v4-0-12212098e90f@oss.qualcomm.com>
- <20250716-8750_cpubwmon-v4-1-12212098e90f@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/uU5ZVsHzrT+ma430T9KDrxvqhGEgxrreCrAE4iiO+LDb+1sskKztNMdw8eQ+2UWhGSY4XLxZqtX4V/E5fZMEKhVN6D4aSgu1lyt2U5nDJW4ekjDNS7PzGvJ5hxHTmPkVbHijX+ht90BnikO9w1AdtCFpAt0X/S4B6oZ4hYvRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvL6y+Aw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B466BC4CEE3;
+	Thu, 17 Jul 2025 06:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752733436;
+	bh=grCqqOhvrUeiogwwXn1hgC2+UR2PNKwWKTQf5JysCHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OvL6y+AwE70BcSEKYDbamLABzepC1/VOf94wmaIIwzg+54NZsU5s805mYUHt5+qjP
+	 AhVzcvjfopmhh6biXMWf1agj3s1/aznjxnPwIViG/GyS8Hhf5qgg1jGppszDmefFBp
+	 5ZyvGF8Mb3bjVy9MKcOtpW4hN6qjRAYaZBTDo8IrOW7QN+AyCywGTe3k2lv6WvvBew
+	 UoZV9XXTMR5BVrw5hYd8LbKcYCjFIMvAqkM+YEsAe0G0mXVzQXIMfFoC1e4FF8ARCz
+	 MwM5X2erYpFRgbsvw54xmJHKTebVdUzFpeArnvdFo9ZroFWZcHvh2bHxyW6qq1q3iW
+	 tAO54/U6NLGCw==
+Date: Wed, 16 Jul 2025 23:23:56 -0700
+From: Kees Cook <kees@kernel.org>
+To: Tiffany Yang <ynaffit@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Subject: Re: [PATCH v4 2/6] binder: Store lru freelist in binder_alloc
+Message-ID: <202507162323.8A11B97@keescook>
+References: <20250717011011.3365074-1-ynaffit@google.com>
+ <20250717011011.3365074-3-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250716-8750_cpubwmon-v4-1-12212098e90f@oss.qualcomm.com>
+In-Reply-To: <20250717011011.3365074-3-ynaffit@google.com>
 
-On Wed, Jul 16, 2025 at 02:25:46PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Wed, Jul 16, 2025 at 06:10:05PM -0700, Tiffany Yang wrote:
+> Store a pointer to the free pages list that the binder allocator should
+> use for a process inside of struct binder_alloc. This change allows
+> binder allocator code to be tested and debugged deterministically while
+> a system is using binder; i.e., without interfering with other binder
+> processes and independently of the shrinker. This is necessary to
+> convert the current binder_alloc_selftest into a kunit test that does
+> not rely on hijacking an existing binder_proc to run.
 > 
-> One of the BWMON instances on SM8750 requires that its MMIO space is
-> mapped specifically with the nE memory attribute.
+> A binder process's binder_alloc->freelist should not be changed after
+> it is initialized. A sole exception is the process that runs the
+> existing binder_alloc selftest. Its freelist can be temporarily replaced
+> for the duration of the test because it runs as a single thread before
+> any pages can be added to the global binder freelist, and the test frees
+> every page it allocates before dropping the binder_selftest_lock. This
+> exception allows the existing selftest to be used to check for
+> regressions, but it will be dropped when the binder_alloc tests are
+> converted to kunit in a subsequent patch in this series.
 > 
-> Allow the nonposted-mmio property which instructs the OS to do so.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Acked-by: Carlos Llamas <cmllamas@google.com>
+> Signed-off-by: Tiffany Yang <ynaffit@google.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-Best regards,
-Krzysztof
-
+-- 
+Kees Cook
 
