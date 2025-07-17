@@ -1,71 +1,109 @@
-Return-Path: <linux-kernel+bounces-734508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F8AB08293
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:44:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A814B08298
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C7A54A4ED9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:44:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2B217AE3D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818F11DB127;
-	Thu, 17 Jul 2025 01:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0781411EB;
+	Thu, 17 Jul 2025 01:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mGobXmh4"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="LKrfkFwP"
+Received: from smtp153-171.sina.com.cn (smtp153-171.sina.com.cn [61.135.153.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD352219EB
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FFFFBF0
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752716654; cv=none; b=YmpuSdIdTiKwQID/v5faYNev7niQYAuq+W+kKzmqJHzR+y2oL7a0Srbwkmaro8N4ajLyCPt++gZ5E4iGZojVwqibglKKdgfXrd9P27P9bI6qMPTQEM+3jWPdGKrFOCxVkn/kCGKQ0Cu3zooR7tcDeMbBeTDS4NFKvQkxpiL/qgM=
+	t=1752716813; cv=none; b=HpKlbVyu8B39urK7/Dl5YtTO19IW7oKUDuWgP0IZbnwhG3tiyC9cuvZpEU98LqRTNp4LWiGtvgiJv6sY2QHtWr5KyvdCsTyUbvxL8yh4tOEpR9DmVmDUqE769QGmiYjViqpeRqnCtavSDJ/ZqRcsAp3P2/AHI0244i8aOxfLeo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752716654; c=relaxed/simple;
-	bh=bXS7gweYb3FFFMLkEJkzFZ6xxQTF0VYbLxl1zfE9Dg0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZdmLxBw/6j8H2b5HI/+YaLoMwEoX/EP4UO1LMNITfAywRLLBij7mbnS08uPyPQ6DoFDVb7C2XaGE9J2drpr0yvYyksLQdQNM57g9rFDMkqlYxbXChEx+LFXk2tuHuHl0WglgTKlJOOFz/aiD+ZkemoZ6lAlaTvNRiJDZd3B0nA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mGobXmh4; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752716648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bXS7gweYb3FFFMLkEJkzFZ6xxQTF0VYbLxl1zfE9Dg0=;
-	b=mGobXmh44qd2Ck991YD+PSKQjjg7ZFdGplYzv2/TIpoeWX3GATWwDXHeKpOfE4yC5hTOEK
-	TW/sr3veW/SMsmqaZje78uAXIT//nv3/TC0k0k7GCU49RGrmLEknjdU8A8tJ+hwB/JczR7
-	kDzeyN94UCx0cPPvJzHgX2FnQtO2vkU=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: akpm@linux-foundation.org,  mhocko@kernel.org,  hannes@cmpxchg.org,
-  shakeel.butt@linux.dev,  yosryahmed@google.com,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] mm/vmscan: respect psi_memstall region in node reclaim
-In-Reply-To: <20250623185851.830632-2-dave@stgolabs.net> (Davidlohr Bueso's
-	message of "Mon, 23 Jun 2025 11:58:48 -0700")
-References: <20250623185851.830632-1-dave@stgolabs.net>
-	<20250623185851.830632-2-dave@stgolabs.net>
-Date: Wed, 16 Jul 2025 18:44:01 -0700
-Message-ID: <87v7nrsiam.fsf@linux.dev>
+	s=arc-20240116; t=1752716813; c=relaxed/simple;
+	bh=rZuZEi8ru9DFYqryd7WMqO74U03DQMjX49DdzRPFTSw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XTgH+e6hVclqfcb8xgIubsRLSD56icjx660CcnZvVHD62elhk/NJg4ZH4NSpt23hIf8nXIL4quzk3eaAg+oBKmrgKx/0XjL0AmX6zWrLRjd5zpLWmhlUndrD+sz0PFgok3eAx6p2DDMupyIfIu/cS8yN9L46rJmabG0E6QZW78Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=LKrfkFwP; arc=none smtp.client-ip=61.135.153.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752716803;
+	bh=56+NgUcqvRAKd7G491K/UhHeBO36pKLvh4OxxjLDzNE=;
+	h=From:Subject:Date:Message-ID;
+	b=LKrfkFwPci8wAK1jiiTJrMT89EA5CwSfHsTb1pssMssya/YBxnvoSXxv5LZNoPqNx
+	 3eqGmijE+dHo9amW1AsBhJV+se7VtLiVDht6XaNZLJTb8LTLwh9IUeX6YmS8wVn0Jt
+	 at6IYLiwEvshBz8ZU2IvCzi6vy0x7bmqCACpR9ZQ=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 687855F700004B3B; Thu, 17 Jul 2025 09:46:33 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1450606291993
+X-SMAIL-UIID: 83C944FE99224B9798F339031E6DB7FC-20250717-094633-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+ebfd0e44b5c11034e1eb@syzkaller.appspotmail.com>
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	syzkaller-bugs@googlegroups.com,
+	vbabka@suse.cz
+Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in mas_next_slot (2)
+Date: Thu, 17 Jul 2025 09:46:21 +0800
+Message-ID: <20250717014623.2253-1-hdanton@sina.com>
+In-Reply-To: <6877e797.a00a0220.3af5df.0012.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Davidlohr Bueso <dave@stgolabs.net> writes:
+> Date: Wed, 16 Jul 2025 10:55:35 -0700
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    0be23810e32e Add linux-next specific files for 20250714
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11a9a7d4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=adc3ea2bfe31343b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ebfd0e44b5c11034e1eb
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d0658c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15dd858c580000
 
-> ... rather benign but keep proper ending order.
->
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+Test Lorenzo's patch
 
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+#syz test
+
+--- x/mm/mremap.c
++++ y/mm/mremap.c
+@@ -1112,6 +1112,7 @@ static void unmap_source_vma(struct vma_
+ 
+ 	err = do_vmi_munmap(&vmi, mm, addr, len, vrm->uf_unmap, /* unlock= */false);
+ 	vrm->vma = NULL; /* Invalidated. */
++	vrm->vmi_needs_reset = true;
+ 	if (err) {
+ 		/* OOM: unable to split vma, just get accounts right */
+ 		vm_acct_memory(len >> PAGE_SHIFT);
+@@ -1367,6 +1368,7 @@ static unsigned long mremap_to(struct vm
+ 		err = do_munmap(mm, vrm->new_addr, vrm->new_len,
+ 				vrm->uf_unmap_early);
+ 		vrm->vma = NULL; /* Invalidated. */
++		vrm->vmi_needs_reset = true;
+ 		if (err)
+ 			return err;
+ 
+--
 
