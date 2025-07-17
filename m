@@ -1,80 +1,189 @@
-Return-Path: <linux-kernel+bounces-735684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA8FB09289
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:02:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1925DB0928C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 745D81C47158
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7712A5A45EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C162FE32E;
-	Thu, 17 Jul 2025 17:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D532FCFF2;
+	Thu, 17 Jul 2025 17:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X9ovGZ4M"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tmu0i4aY"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681702FE314;
-	Thu, 17 Jul 2025 17:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A2C2FD592;
+	Thu, 17 Jul 2025 17:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752771658; cv=none; b=kI4A1OSTsqXKarrBdSAtC89PXs/ldrJRjHH3MU25i+dhNwa4OMyl5X2pAyoGeoU3X4LsHfKl0JSGmov6ZOOIYc+bu7INMiugR7OzGO8cevy4iItxBlM3Yc0A4wdeEfeTaqp/nYEzQ4z2AIJMn2SJZJGuntpSENHFVTXKDDu59Uo=
+	t=1752771653; cv=none; b=EdJlgNB7bgDO9cn9J7IDOjzdgdI8BTK/Wc9/llpBTNQjEz3sq4e+4S36ItdITETq+ifoHvJ49RPhYVDmPynnpzL2wj1jd3FF8q6QTcKU1W3oNPrtfFXvCuVIQRSmqVhshxjNizKipxFnUuFiucvF6Debd95kkKnhO6brRO57taM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752771658; c=relaxed/simple;
-	bh=4ZcjHRstOuEAO8PSBD5ogAY/bV7qinmgxezVi25T0vM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADhM8w6cBLSYp8qu08C/wn2RfGshTet/mhAw8DyERyo+odu1sM3AMXUO7wGkHE1VEmt/cGmG54P4+3HvGJoH8XRQDOtNPsFqL+6qmJyXtdnJ9GppqA+a8nL+0ElD19ncjI+PKDaH3nwSrbGoPsoEEEIIKVoaL/kEE26YAiDywcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X9ovGZ4M; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QNkoBmSrQhOotHhcZ/pt+jefZGvWgsF4nd+f/EvmSvE=; b=X9ovGZ4MkcBJYK9anYVaqgUArl
-	eHIcgGHatBzFf+0yHuuSLDmyz/6GWwj0ykwmdE8NCSE9rFIE/5bjNYYu1kndxizmpJJMojBTjMUL/
-	h8mPXrNzHj/M6PmeDpAGvCjXj+LGiRfpwJOiF8PELJ68pW0Wc/TyJgDdxwZO2J3h52Kk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ucRy8-001uYl-NC; Thu, 17 Jul 2025 19:00:28 +0200
-Date: Thu, 17 Jul 2025 19:00:28 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Willie Thai <wthai@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Deepak Kodihalli <dkodihalli@nvidia.com>,
-	Ed Tanous <etanous@nvidia.com>, Leo Huang <leohu@nvidia.com>
-Subject: Re: [PATCH v3 4/4] ARM: dts: aspeed: nvidia: gb200nvl: Enable MAC0
- for BMC network
-Message-ID: <e0d61de2-00e7-457c-bed9-21f0d7b5488a@lunn.ch>
-References: <20250717-update-gb200nvl-dts-for-new-hardware-v3-0-f28145c55c98@nvidia.com>
- <20250717-update-gb200nvl-dts-for-new-hardware-v3-4-f28145c55c98@nvidia.com>
+	s=arc-20240116; t=1752771653; c=relaxed/simple;
+	bh=liaFGidYVLjXLMjJq2TgiaFPgWZ7yuecTZN6udCP75E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uVZRoXuAdueP62evZd8rYbaRtgF+F94VTJ3rLmm75BamiVL90rHrCN01rKBwXG65aJZrk1HvdPwXesCygwb0apLEQlyxgOO+gDq5PJFZQoG0CV2D3WRkBRmZ7jjAr7qPD9aGTVX86xWEjDspHNER7SXFtqsi7/EcaXMRHCtL/c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tmu0i4aY; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-74b27c1481bso871509b3a.2;
+        Thu, 17 Jul 2025 10:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752771652; x=1753376452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DOniWzPOxX9jgReodjZJuovKYF0NJcq9l0SRTKIVr/w=;
+        b=Tmu0i4aYPfVxpHxy2TBK+CJr8ONIUrlHzfZyRbMhOv/cA/PBNXcYgHkmwBcNJpyUZz
+         TSPCzG1EFFwGGSYrWtYQPGx7wdF37qI7HdRKJbgs4HBBFYOPLY+qKHhj3IgLVpoOFk34
+         widOQMSZq++Taa48kjA/zwWU3HfN2uiEVgbUCc37jx9szzXf+KELpLv23786BzCAuOOn
+         /vIH6M0ioRV6xe7NDd0TZCz9tHeMGdTqS89gKV+2PSPYvQvgdr7doXzJulpgxd9wt+7k
+         y0VFxKSz48dyTjVuZ6D0pgLmpDGpzowYMlEyCdwf3M47+YSiDoffz+9Xjn5cAmQcUHvD
+         rW2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752771652; x=1753376452;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DOniWzPOxX9jgReodjZJuovKYF0NJcq9l0SRTKIVr/w=;
+        b=R9jbFFLo/4G/uLSUu4M0j4uPUq63l6jINkNdHzJkivrOkgaWGLlH33FkmPwExU250u
+         GSnsnCaCu0cUoB8dXux60hpWrK518un3zB/YqsYUoUD7c2eCCyhR/sWj8QVGuLHJ2IP8
+         Qrilb+DCAVNI5mFA/8jhU3uDJCDyC9BDcg+NorBnTC4Ob4UYRyOq4020kyhqUrEAPoF2
+         cbAWiw1NaC/uivfraX8SfXaUac8eL2SvAFWdBxfiqgEzrslli2rDtvvyKrzwKXEXHmCt
+         wk2U64NBrnU4ZizyKuxe66hxI1bmjq4QQSSCcpYgUG4lG3id6U2rYiGzUEM6qOXH+FC3
+         V+8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVaB4xGoUffRVsAEy3OufO3gm5YUj7rWdeg1izGFj2edOxqVQ3w/qCJQqb9oOE0iBEpJTOS/UApqC9Ba4Mr@vger.kernel.org, AJvYcCVhEddboVZpASb4IjJ+LKJ4FiNBVmp4GidtnRuNTcc9p/6KvtESXQfPk6Kbg+pNNSW43CyYFkkagF15@vger.kernel.org, AJvYcCXUBYW4Jrd69p3tEcBz/ZJDmblTXUyXjx6vNjKi8dzHJbZ4IeFaSvtLwNARIoBU1YCx/xJ9kLWrc3eInhoKIik8hQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeSkN3d7llenDBElgZsZoiGjOf+o7PYcOTX9WRJEu+nRPjBCN2
+	4+biofZG4E8DN2/PeQv4Uwp53XDrE5IJhN5OF/fJmb2uWIOuq6A0nZ+i
+X-Gm-Gg: ASbGnctJiGXqdbR8pTbdZURxhtqvD90dTlAAD55Bcvqas589SOpL6O53imB+lL3WKP8
+	+WWN59NJe7RHBo+OrJruvygXNfvQlegGbZK3CAZTT9YqQqcgeuqCip37bGh8TjVK3d/gQ5xRON1
+	q7PhO4j/sRu/gj97mNhl1iypCaBmwTmecKHf4cVZteutuK052iyTTN4nRvvAEZbrOR298vz3PEG
+	Z5CuTLIvIu//PJ8juHF2ZOM8qq49pUkPhfBiI3UEM6FsdrShQQGXsktQXEAK92QzUgqethl4Nvg
+	VQ51/rRrK8nwb6vNekESSEimD45ZWCVJXwlZmKeBztEmyt8b/3gtkFFhH/LBMtC9y/l1vM4pivV
+	tSK4SfOK0uK5unWcZh4aLgc5Fy0AzbE4OnJ23WlrFiEu0T6BO4HXS
+X-Google-Smtp-Source: AGHT+IGyNwD+GplSMpIC4979Lc0tZ79C1WbX1oV52D7ggC14zrY8YjV3rk07eXSBZ3Eq+1KJC2sDsA==
+X-Received: by 2002:a05:6a00:3e0a:b0:742:aecc:c46b with SMTP id d2e1a72fcca58-756e99fc423mr10406870b3a.15.1752771651493;
+        Thu, 17 Jul 2025 10:00:51 -0700 (PDT)
+Received: from [192.168.0.113] (061092221177.ctinets.com. [61.92.221.177])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd59f1sm15902818b3a.3.2025.07.17.10.00.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 10:00:50 -0700 (PDT)
+Message-ID: <705f1dfb-7e1b-4930-a1a9-c763299a4305@gmail.com>
+Date: Fri, 18 Jul 2025 01:00:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717-update-gb200nvl-dts-for-new-hardware-v3-4-f28145c55c98@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v7 00/21] drivers/perf: apple_m1: Add Apple A7-A11,
+ T2 SoC support
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Sven Peter <sven@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+ asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250616-apple-cpmu-v7-0-df2778a44d5c@gmail.com>
+ <aHUeUMmn_19EayL1@willie-the-truck>
+ <be327242-ad55-476a-bed4-44c33c263962@gmail.com>
+ <aHkRJdAuvhS2mNQj@J2N7QTR9R3>
+Content-Language: en-MW
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <aHkRJdAuvhS2mNQj@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 17, 2025 at 09:52:13AM +0000, Willie Thai wrote:
-> Upstream-Status: Inappropriate Bad devices
+
+
+On 17/7/2025 23:05, Mark Rutland wrote:
+> On Mon, Jul 14, 2025 at 11:59:36PM +0800, Nick Chan wrote:
+>>
+>> Will Deacon 於 2025/7/14 夜晚11:12 寫道:
+>>> On Mon, Jun 16, 2025 at 09:31:49AM +0800, Nick Chan wrote:
+>>>> This series adds support for the CPU PMU in the older Apple A7-A11, T2
+>>>> SoCs. These PMUs may have a different event layout, less counters, or
+>>>> deliver their interrupts via IRQ instead of a FIQ. Since some of those
+>>>> older SoCs support 32-bit EL0, counting for 32-bit EL0 also need to
+>>>> be enabled by the driver where applicable.
+>>>>
+>>>> Patch 1 adds the DT bindings.
+>>>> Patch 2-7 prepares the driver to allow adding support for those
+>>>> older SoCs.
+>>> Modulo my nits, the patches look alright to this point...
+>>>
+>>>> Patch 8-12 adds support for the older SoCs.
+>>> ... but I'm not sure if anybody actually cares about these older SoCs
+>>> and, even if they do, what the state of the rest of Linux is on those
+>>> parts. I recall horror stories about the OS being quietly migrated
+>>> between CPUs with incompatible features, at which point I think we have
+>>> to question whether we actually care about supporting this hardware.
+>> The "horror" story you mentioned is about Apple A10/A10X/T2, which
+>> has a big little switcher integrated into the cpufreq block, so when the
+>> cpufreq driver switch between states in the same way as on other
+>> SoCs, on these SoCs that would silently cause a CPU migration. There
+>> is only one incompatible feature that I am aware of which is 32-bit EL0
+>> support.
 > 
-> Signed-off-by: Deepak Kodihalli <dkodihalli@nvidia.com>
-> Signed-off-by: Ed Tanous <etanous@nvidia.com>
-> Signed-off-by: Willie Thai <wthai@nvidia.com>
+> Surely the MIDR/REVIDR/AIDR also change?
+They do not change. ID_AA64PFR0_EL1 also does not change (fixed 0x12).
+What *does* change however is MPIDR. (P-cores has bit 16 set while
+E-cores do not)
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> 
+> In general, silent migration isn't acceptable for the kernel, even if
+> you largely happen to get away with that today. It is not acceptable for
+> architectural feature support to change dynamically.
+> 
+>> However, since the CPUs in these SoCs does not support
+>> 4K pages anyways in practice this is not an issue for as long as
+>> CONFIG_EXPERT is disabled.
+> 
+> Do these parts have EL2?
+No.
 
-    Andrew
+> 
+>>> On the other hand, if it all works swimmingly and it's just the PMU
+>>> driver that needs updating, then I could get on board with it.
+>>
+>> As mentioned above, it does all work fine when CONFIG_EXPERT is not
+>> enabled, and if it is enabled, then 32-bit process may crash with illegal
+>> instruction but everything else will still works fine.
+> 
+> I don't think that's quite true, unless these parts are also violating
+> the architecture.
+> 
+> If the CPU doesn't implement AArch32, then an ERET to AArch32 is
+> illegal. The way illegal exception returns are handled means that this
+> will result in a (fatal) illegal execution state exception being taken
+> from the exception return code in the kernel, not an UNDEF being taken
+> from userspace that would result in a SIGILL.
+Speaking from experience, when testing with the userspace cpufreq governor,
+trying to run AArch32 code on the ecores really does result in illegal
+instruction for that process while everything else remains fine.
+
+Referencing ID_AA64PFR0_EL1, the E-cores does claim to support
+AArch32 EL0, even though they could not execute it for real.
+
+> 
+> I do not think that we should pretend to support hardware with silent
+> microarchitectural migration. So at the very least, we do not care about
+> A10/A10X/T2.
+As explained above, what actually happens on the hardware is different
+from what you believed, so please do reconsider.
+
+> 
+> Mark.
+
+Nick Chan
+
 
