@@ -1,151 +1,144 @@
-Return-Path: <linux-kernel+bounces-735382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876E5B08E87
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CFBEB08E8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ECF73ABD6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 259E23BB527
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60352F5C4B;
-	Thu, 17 Jul 2025 13:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D8A2F49E3;
+	Thu, 17 Jul 2025 13:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkcpRQaK"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VhxaB/k1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9411621ABA4
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C96021ABA4
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752760312; cv=none; b=aCHXj06jIzntrCuX0S8oKl/bY2Ue3GZdMtwDyLCXrJfeXabf4xehEb0DNoXXsRAbfxK6e45+YlQHginH2qLJSw87vHpwXZaLYlD/8KVVLxejnHfALELDIvU0xdmMczdGO9adIMqpKgXXnF3UTPteaDCTKMuz493e8Tec/fBj/wc=
+	t=1752760354; cv=none; b=J2HQ25H9cYnezOglVcHxJOojZGCYoj2V30vyCkEJSl3F5OM17CWlOZMit7aq6JiouCSycZRD7alkRbKFyYehPMhDZYPJJPfZ+raXHq3o5p8WlGX6U/7qznJmgike0U72SpSt6LOpREMYgWkDWifLoeq8gYTlqjv/OdRPPz0oUro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752760312; c=relaxed/simple;
-	bh=DO85ijBf3l0LG8jIgGNjtR/j3ap1WuRJvPU/3POmsRo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=IunlFQqKRoM3vsSD7DVuABsaPNA5B02PyV4hsrzd8Vcek7M+KmXbH9g8Lb52P2ekC+u538mIzgARPx0kIPx8dIpOxnyra7y5BP26rO+rz9QsEERMark2i8L9FApY/uxwxLtkkuNJX7kYwZIHuZP7PDcX1qiJsK/86mQ6U2nOcBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkcpRQaK; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32b5931037eso7260251fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:51:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752760308; x=1753365108; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ivIZdf/crFeNX995hheITSjMZ5wf3Dr1e9eaPnavoUw=;
-        b=YkcpRQaKJjHwcAGt4iy7nSpewNoFtwfu4FpZ1t5TrJxZ7dtyqDH6Hh4Y1i/qvxUxou
-         tWCHRKmykMxDpkCP6CSOx//fwcLppOkmcWlrEye/4g08J5Vc3rNd2rytsJ2Ex4a9aI31
-         0o5/UNZHFhQ0rE8PYsel8bkAJ/eynG5LRiU6PreGC9EF8d9WClNFvDz3T18Y/ww9CDh+
-         jokd3sodo6YfAhq6MJMJ5LPT8GM50I+2fkMCLl0GuUSQcOtX/sl6Trg0K+JutCrrQPen
-         xPqoTzuLvV0In5TZ2RL0bMuvjFSCrUd+HBk0sVSE5VI6LpvlX6/ZxGf1UuQpAN3tnupB
-         qKjQ==
+	s=arc-20240116; t=1752760354; c=relaxed/simple;
+	bh=FOknZPaa0ET0wOU5En/aokMYWIKU8p4UDlNpWqYvkSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F6p9QaFgObp+BVI5XOWpLpZL9j3ISyDsd9DoxgKQ94eH/nFBTqXYX6/xdQeB+W7KSVt59HdNw1xmfdcyxUiUKmBgE+NCOETfMnXukiPlcOl8onoanivt5J9+c0rcgf8NPFrN0zOiyyvSYTz94uEFCufihgytoap0zt44n8twBK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VhxaB/k1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752760352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hGvAbY32RFgpjRdN6+3XL6T/YF5F5zsdWuL3mzQK87Y=;
+	b=VhxaB/k1tkzsvJ4im3oxGdWOFzDtVcwd+T0I7PD/MimspYFT6y+RMgTolT0rbYJhlVqxip
+	+9dqLz7iouxzCBILBHqOT7lhOAQhyyXQtqIxDulCwKpCHbrGYoYfNT13i5l/0VeCEKhptY
+	S6ah3ur24HZXA5E9Z8nJ9PUuLICBFTw=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-627-nGXFueaMM42UCxdGTE9ATQ-1; Thu, 17 Jul 2025 09:52:31 -0400
+X-MC-Unique: nGXFueaMM42UCxdGTE9ATQ-1
+X-Mimecast-MFC-AGG-ID: nGXFueaMM42UCxdGTE9ATQ_1752760349
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso779531f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:52:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752760308; x=1753365108;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1752760349; x=1753365149;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ivIZdf/crFeNX995hheITSjMZ5wf3Dr1e9eaPnavoUw=;
-        b=esYcyCWqkv+l7hqRsdT/iX/Kt41ZhywPOkFuECxOJOtYmTVeu6SX2wYxdIvqJ3740o
-         ZZ+bU2xkIAwpFHZJcp4BAFw3GzUd8zN71a4aQ42Rw2kYYxNei73/cKdBgPG0PSW2mVeY
-         roAXvL3BK+OW8LciSfxR3bkl1xkfNU7HDsRdZ1uDWCq88Rj6tPhun2OLfv6jNT5FkQ8E
-         /EGvkdjYf1ndJbMSnD59c0wqfvJU3sNC7IcjCXhIpPRyXiI1Hcs9EkSIRp3FZm8k5KwC
-         vyaJGEtVSXPM396B0EjztUyE9zUZpuIxKVZVnJfm0hHBjQ4DL3yhkEXy5DX3iYdlUAa/
-         q5hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl4tZc7QhRBD4oyzb/SOkYgoTFfk78POOBlBXH6vaCgP31mhgxuQhLU25qjaUa4SJAQc7gfTaS+CqW42w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySVFGrPDCND1Dl7lBVaGbADrzneIgAOF+yGQy5T+jrp25wFIR7
-	4kDRpzzut03vSoSYP7QGnM5UBse2fM9zZDmpTe5ucNfRC2KBaNMzR6ip
-X-Gm-Gg: ASbGncunjHV4dQwHq9nx3DXHvMtGcL+PhbgyeKrNJZist7KoseYEYvJmZfF519s8pLR
-	3NaxuPbYTizDLJ2Y7EYXsiVoOvnQNP5l6saQz79YeKWB38Oo3XBDUa23mf3VuieFmMFB1QpXTGE
-	z7MA5BQbIpxgpNSEbxgB4KIQA0GH8X0virUD9hb8kNEX0v52wvQ3RWGON8gU9PrjOHoICYhUvom
-	oOBmD4V6iFKpcMLzP2+lNXaYqib310/WZVtwiJ2N0t0JOzU0WWAjM8C0GIwFq+mVKfb49JhV6e3
-	mGKavbZcjWO4HHr0k0ckH+lqi/CNmd6E+Y1nMq8qNmFJHwNVt/ko4OPBHSNNz80iIukebnwyHW9
-	92tBwf4hZcyXNfk6SBEkLeS5V+P0CYkuh1RRcnRHRdbhnRwY4deeNbSJanw==
-X-Google-Smtp-Source: AGHT+IHVEJFgeNixBZTanuB6ZWr0QH+FMiKXCO72FKkgbsWC3FCLFSs3a27JmolNAUWbZI+Rvg9Nbw==
-X-Received: by 2002:a05:651c:41cc:b0:32c:a006:29d5 with SMTP id 38308e7fff4ca-3308e36bde2mr23738881fa.9.1752760308125;
-        Thu, 17 Jul 2025 06:51:48 -0700 (PDT)
-Received: from [192.168.1.89] (c-85-228-54-30.bbcust.telenor.se. [85.228.54.30])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fa29134e3sm24419841fa.11.2025.07.17.06.51.47
+        bh=hGvAbY32RFgpjRdN6+3XL6T/YF5F5zsdWuL3mzQK87Y=;
+        b=TCSnRosVO9Q9XeXF84op/Q5W7tm5ymU2ioG3MHmii1Z8MK2OyT4l7o9NSaVS5yA5YI
+         dBmqACnwRdA7jY9/2X8gBjgxD63zTTHc6TMuXMVEgQNCFsKFE955fUN8rdzJdp3pqe8E
+         UrCDj6KQ5u0vaquqCZmkNQb0KwP+ev3AzAmJef1JL1HwP4xFta8o+nkAQPd60SNgMXc1
+         TBbV/dvzXU8SqstvIY0UqFcJlA4PaG8FOWJ7ODziSvpFTsYJXHdmNVWLYfFKgDd2jIFn
+         OTcryPbEz9mEKmxoEIFczpUaMrENKvEBQi4NAJRSQVMEDaOH7RC4TOYQHwo0sqEbjQF7
+         YmsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNH2SRUhP95HCLPXBM0PWd0hyuEEce4TTip7CJ9nX3CjQNnvMaiptGi1TVvdmUdwnUmjuEeFcxNYGFWpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHfoVSaz8qMryI4Yle+A4S8EQQt6324JtGK7P66pQeY0TNbY46
+	axoRXSkQsNWCH04Bl75l2UeMAYisMCj5vvDJJqa+AlMN+YMXu48qFzfJ4DXrv+pYEdPE/D+8wD6
+	J2nFEQhi3s5zVHMWfTHcJr7g7DQrLJDreN6PrhOzLRDFpJckShzSucm83YZC4n217qg==
+X-Gm-Gg: ASbGncuKQn4sc3UNEqb2K13Tjsk1d+IuahuD29lG4TYextNjQ3lFLG1VdneYiNeji14
+	ec9/87KPQVIaREtEXYHwsavj61D5oVXiQ8snXjE8w238sCMxW2A8yakxVQEbBALSiIYYrXTraEo
+	MCuJ1EMpACVRDYMt/Ox/HqFmQDVots2vkxeD9qEs0AqH1pap8KZYbnwvF/0/03XKeuIx+C7aDjq
+	eMzL2/Dx6vU9M2z1TChUs/PhYnSbRMKDqRg+el8cXU5L/GLQQ4HVRzbt8cICVovEeEEta6yDAEp
+	3wufV5nMGSXyMt7gYiJS9fcNUFCau74UPiCUEMyYjLmmqWs2VD9GQTC4ZZZPZ3KVt1ujksM0kZO
+	Ti/pO85NR9Sc=
+X-Received: by 2002:a05:6000:2006:b0:3b3:9c94:eff8 with SMTP id ffacd0b85a97d-3b60e51c895mr5115038f8f.27.1752760348628;
+        Thu, 17 Jul 2025 06:52:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFe2UZsHx0A1qd64C0wPihrY+x7o7vx2ATqKIuSJI84BF2RqSh+4TT6WPjrhFeuw06hYTdARg==
+X-Received: by 2002:a05:6000:2006:b0:3b3:9c94:eff8 with SMTP id ffacd0b85a97d-3b60e51c895mr5115019f8f.27.1752760348124;
+        Thu, 17 Jul 2025 06:52:28 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d4b5sm21113467f8f.53.2025.07.17.06.52.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 06:51:47 -0700 (PDT)
-Message-ID: <aed95641-4c95-5fbb-f359-885a3e2144f7@outbound.gmail.com>
-Date: Thu, 17 Jul 2025 15:51:28 +0200
+        Thu, 17 Jul 2025 06:52:27 -0700 (PDT)
+Message-ID: <bea4ea64-f7ec-4508-a75f-7b69d04f743a@redhat.com>
+Date: Thu, 17 Jul 2025 15:52:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-From: Eli Billauer <eli.billauer@gmail.com>
-Subject: Re: [PATCH] char: xillybus: Replace deprecated MSI API
-To: Salah Triki <salah.triki@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-References: <aHf_88zgSElheIZ-@pc>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next V2 0/3] in order support for vhost-net
+To: Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, eperezma@redhat.com,
+ kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jonah.palmer@oracle.com
+References: <20250714084755.11921-1-jasowang@redhat.com>
+ <20250716170406.637e01f5@kernel.org>
+ <CACGkMEvj0W98Jc=AB-g8G0J0u5pGAM4mBVCrp3uPLCkc6CK7Ng@mail.gmail.com>
+ <20250717015341-mutt-send-email-mst@kernel.org>
+ <CACGkMEvX==TSK=0gH5WaFecMY1E+o7mbQ6EqJF+iaBx6DyMiJg@mail.gmail.com>
 Content-Language: en-US
-In-Reply-To: <aHf_88zgSElheIZ-@pc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <CACGkMEvX==TSK=0gH5WaFecMY1E+o7mbQ6EqJF+iaBx6DyMiJg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
-
-Thanks for your patch.
-
-I can see that you've chosen PCI_IRQ_ALL_TYPES as the selector of IRQ 
-types. As far as I understand, this changes the behavior of the driver, 
-allowing interrupt types that it shouldn't...?
-
-Another thing: I have to admit that I missed the need for a call to 
-pci_disable_msi() when the device shuts down (which is what 
-pci_free_irq_vectors() effectively does). Thanks for bringing that to my 
-attention.
-
-However, as this is needed, it must be assured that this call is made in 
-any case that the device's initialization fails. This driver is using 
-the managed device API, so I suppose the correct way is to add an devm 
-action for pci_free_irq_vectors(). It appears to me that just adding it 
-to the remove method won't be sufficient.
-
-Regards,
-    Eli
-
-On 16/07/2025 21:39, Salah Triki wrote:
-> Replace deprecated pci_enable_msi() with pci_alloc_irq_vectors(). And
-> add pci_free_irq_vectors() to free the allocated vectors before removing
-> the device.
+On 7/17/25 8:01 AM, Jason Wang wrote:
+> On Thu, Jul 17, 2025 at 1:55 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+>> On Thu, Jul 17, 2025 at 10:03:00AM +0800, Jason Wang wrote:
+>>> On Thu, Jul 17, 2025 at 8:04 AM Jakub Kicinski <kuba@kernel.org> wrote:
+>>>>
+>>>> On Mon, 14 Jul 2025 16:47:52 +0800 Jason Wang wrote:
+>>>>> This series implements VIRTIO_F_IN_ORDER support for vhost-net. This
+>>>>> feature is designed to improve the performance of the virtio ring by
+>>>>> optimizing descriptor processing.
+>>>>>
+>>>>> Benchmarks show a notable improvement. Please see patch 3 for details.
+>>>>
+>>>> You tagged these as net-next but just to be clear -- these don't apply
+>>>> for us in the current form.
+>>>>
+>>>
+>>> Will rebase and send a new version.
+>>>
+>>> Thanks
+>>
+>> Indeed these look as if they are for my tree (so I put them in
+>> linux-next, without noticing the tag).
 > 
-> Signed-off-by: Salah Triki <salah.triki@gmail.com>
-> ---
->   drivers/char/xillybus/xillybus_pcie.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
+> I think that's also fine.
 > 
-> diff --git a/drivers/char/xillybus/xillybus_pcie.c b/drivers/char/xillybus/xillybus_pcie.c
-> index 9858711e3e79..fc7bffbd36ed 100644
-> --- a/drivers/char/xillybus/xillybus_pcie.c
-> +++ b/drivers/char/xillybus/xillybus_pcie.c
-> @@ -76,7 +76,8 @@ static int xilly_probe(struct pci_dev *pdev,
->   	pci_set_master(pdev);
->   
->   	/* Set up a single MSI interrupt */
-> -	if (pci_enable_msi(pdev)) {
-> +	rc = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
-> +	if (rc < 0) {
->   		dev_err(endpoint->dev,
->   			"Failed to enable MSI interrupts. Aborting.\n");
->   		return -ENODEV;
-> @@ -112,6 +113,8 @@ static void xilly_remove(struct pci_dev *pdev)
->   {
->   	struct xilly_endpoint *endpoint = pci_get_drvdata(pdev);
->   
-> +	pci_free_irq_vectors(pdev);
-> +
->   	xillybus_endpoint_remove(endpoint);
->   }
->   
+> Do you prefer all vhost/vhost-net patches to go via your tree in the future?
+> 
+> (Note that the reason for the conflict is because net-next gets UDP
+> GSO feature merged).
+
+FTR, I thought that such patches should have been pulled into the vhost
+tree, too. Did I miss something?
+
+Thanks,
+
+Paolo
 
 
