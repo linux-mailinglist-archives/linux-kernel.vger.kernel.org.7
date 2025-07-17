@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-735476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048A5B08FD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 468AFB08FDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498F6566C02
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:50:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD00B58439D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6DD2F85E1;
-	Thu, 17 Jul 2025 14:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D090A2F8C35;
+	Thu, 17 Jul 2025 14:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSwqYNaw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dg1L8+LL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60052F85D1;
-	Thu, 17 Jul 2025 14:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D652F85F7;
+	Thu, 17 Jul 2025 14:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752763805; cv=none; b=sfxFaiivmd8onSvviDfrJD1pWootifIF+fiJysOeX/iqr6hO6vkHLeLQ9/PlvgZYDyZctn6oNn3hHuLVD/3OWgwE/M9bqCiM8xKd0IBagmIimeeyKj6vnuCouDFfgdNvdVkbT6cTEdAuFL3GQZbl3yNxksS2vjMv9pn3OnLe/ss=
+	t=1752763807; cv=none; b=X/KeHxYE2j6uiYPlJZIam72N0YkSu1aJA2bEJfWDaKA7gVGAYvwhJh5kZgabdzl+vY+LIR1ylluDGlJjn0LV0rx5zLEV5mIWtHKMlUUns10r59DOfHrXD54LUVeLn2I34JWx+0i/lTzTNmy4GVWNRgg6Y45GKIMqYQOxkmSLOrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752763805; c=relaxed/simple;
-	bh=QAnmNUKgNLHn47abrSUtVM/9GiS0L3CE1Q3Lkr1ccbU=;
+	s=arc-20240116; t=1752763807; c=relaxed/simple;
+	bh=rq4OFP/a5VgeuDso392nppt16rzmrs1rVBaM2n7Zkg8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NMo/3+uIFFBxwRs/lflmNTPVSj7veysRHnY6+X3qy5MtIqXzDuPkb6c3q5HYN2/tadNgHM6HZ2RulaCfIq4/PP1swy7u/LNdRSbgA/7APAYgHvC8RoXgD8jjrJvni0hu9qRzbV6W14M+Io4626NDPbfcnDdb9ibnN4gFOQAEVg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSwqYNaw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30DF3C4CEE3;
-	Thu, 17 Jul 2025 14:50:05 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=AIOoDiLG4juvFgIwhmhPaQrElmy+mY+nKTZQZZCLWNoKx8gb/NoZl/anIiVqihR4BkB3uxfCcKYbA3wIml684Zml6g+KGY66lx71fNoggzuB/ixfco258Pp29UPaSKG5IR3rVZKMxZVFYRNIa+eQfB6rGdqXKU2KURhiGqdtHhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dg1L8+LL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A346FC4CEEB;
+	Thu, 17 Jul 2025 14:50:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752763805;
-	bh=QAnmNUKgNLHn47abrSUtVM/9GiS0L3CE1Q3Lkr1ccbU=;
+	s=k20201202; t=1752763806;
+	bh=rq4OFP/a5VgeuDso392nppt16rzmrs1rVBaM2n7Zkg8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qSwqYNaw3d3y8jPGC4zq3hZdPf6JHroqx/MKRBREtJ1mKQHL0CmrI6S4V8c59Cw0M
-	 uIamhxnrLHZzUAIRYBsU9J/zVQejMNQjuS8LOiWxbw200yrXWjL6rwgKmSFzRQ2P8J
-	 yEoDolxZV9Iyy4zlytHPASDe4dXVo/BVRKav1ShafdpUdx+VX19myakPq+chpKjbAE
-	 e0gaoKPAYjXgaiDfg89kuem1qpqxQMV4raQTbxUYjSdxk3tvPTbBOllPnbi+tjIV+A
-	 hu6b8Isd+rS2DcdEU+7X5ZZAHMGc59jwGWMsn4Ub/3ry5sGpEHNsaxHeyr7/SbIXtB
-	 qGDqXryJ8W1pQ==
+	b=dg1L8+LL8arZtFTD1fDBzT4e6I3VYHrUPeegvq+qkeKOOOZlrAB0aIuX8BgYm7VrG
+	 EepqUK3gG/meXNJ6Ly5usFhdQWhKDE1IlVoRKqUIJfXg62UZsSxvpDBe1bUG8oRnKG
+	 r2ziaYMATrNtdDsDbBxhKpZ3tUmxAVj4AQC58Bex9Or/6hRvRurBavidnIw86oLHuC
+	 nrQQRaAAs3SZ72ocbsOXiena5z19fWGsrGz1/K9h9OqjY2EeyzCB2cz4DOkm675zxq
+	 JL6KwB0fZU9KYh/Nm+QHgeC8ez8xunKlKD5U7SULqeD2rMW3sPKPE33fAC5RvCTjlB
+	 onbR5qsYctL0Q==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C5C383BF47;
-	Thu, 17 Jul 2025 14:50:26 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE31383BF47;
+	Thu, 17 Jul 2025 14:50:27 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 net] net: bridge: Do not offload IGMP/MLD messages
+Subject: Re: [PATCH net] net/mlx5: Update the list of the PCI supported
+ devices
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175276382500.1959085.4099760417199249498.git-patchwork-notify@kernel.org>
-Date: Thu, 17 Jul 2025 14:50:25 +0000
-References: <20250716153551.1830255-1-Joseph.Huang@garmin.com>
-In-Reply-To: <20250716153551.1830255-1-Joseph.Huang@garmin.com>
-To: Joseph Huang <Joseph.Huang@garmin.com>
-Cc: netdev@vger.kernel.org, joseph.huang.2024@gmail.com, razor@blackwall.org,
- idosch@nvidia.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, vladimir.oltean@nxp.com,
- f.fainelli@gmail.com, tobias@waldekranz.com, bridge@lists.linux.dev,
- linux-kernel@vger.kernel.org
+ <175276382650.1959085.11642486429320492224.git-patchwork-notify@kernel.org>
+Date: Thu, 17 Jul 2025 14:50:26 +0000
+References: <1752650969-148501-1-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1752650969-148501-1-git-send-email-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, saeedm@nvidia.com,
+ leon@kernel.org, mbloch@nvidia.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, maorg@nvidia.com
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 16 Jul 2025 11:35:50 -0400 you wrote:
-> Do not offload IGMP/MLD messages as it could lead to IGMP/MLD Reports
-> being unintentionally flooded to Hosts. Instead, let the bridge decide
-> where to send these IGMP/MLD messages.
+On Wed, 16 Jul 2025 10:29:29 +0300 you wrote:
+> From: Maor Gottlieb <maorg@nvidia.com>
 > 
-> Consider the case where the local host is sending out reports in response
-> to a remote querier like the following:
+> Add the upcoming ConnectX-10 device ID to the table of supported
+> PCI device IDs.
+> 
+> Fixes: 7472d157cb80 ("net/mlx5: Update the list of the PCI supported devices")
+> Signed-off-by: Maor Gottlieb <maorg@nvidia.com>
+> Reviewed-by: Mark Bloch <mbloch@nvidia.com>
+> Reviewed-by: Eran Ben Elisha <eranbe@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [v3,net] net: bridge: Do not offload IGMP/MLD messages
-    https://git.kernel.org/netdev/net/c/683dc24da8bf
+  - [net] net/mlx5: Update the list of the PCI supported devices
+    https://git.kernel.org/netdev/net/c/ad4f6df4f384
 
 You are awesome, thank you!
 -- 
