@@ -1,220 +1,202 @@
-Return-Path: <linux-kernel+bounces-734626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFD3B08415
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:36:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74E9B0841C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F5818868B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:36:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 211FD7BA986
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67959201269;
-	Thu, 17 Jul 2025 04:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC2420468E;
+	Thu, 17 Jul 2025 04:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RD5NY8E7"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C0A49RFq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2D31ADFFB;
-	Thu, 17 Jul 2025 04:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB20201266;
+	Thu, 17 Jul 2025 04:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752726781; cv=none; b=FHWj+CDCFKxsuXxwILmXYERKHoJrhH9ZmXR/MGbLQK53aQqDPq52oEN6dG/tTWU4EwCTag0zDgKH83UVXsMgQkhm7DE1p1AyhQppQlif1BZjqMFe4rbBj7hD8k1nVMOpl2NSDYp5Gp5LsxCwiJG4YLFLuHI+dUPFJ5tF+GCrudY=
+	t=1752726928; cv=none; b=m+gUyOLr0U8G0O9Kx3jD6r4qdX0dc3f54svBIIFuBAHCDVRuDxD6Dd+ueWetnL/w6oDAzlCpv2o3jMKsxmbFR4prqhpRAAbUppkAHf/pEXH9bXtoXsmScmrdMzzadF9ShQ0KccTzzL1JdMzUtHpKH9KFUYDPOJfWdV2dds0OZT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752726781; c=relaxed/simple;
-	bh=xIe+GaLbQH9j9IBxovCTUSVk2jO2RsMWCxhDV1lJuC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=PQdrnw2Ujl1paIvtQB8J5GOnwU2324nm6wPqkqo9dC+60WpijZIeNwymv4OU6Q69Vm9V6aAGJoSMwAkAr1ApfkdizMT6HR51e4qLSybTTUWQJqf/zbSGq0bOgcWSNsc5f3KqGCcLkt8JGt27sDIY6WwAFpe0Hl2qF6CVh6r/LQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RD5NY8E7; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23e210ebd5dso11984195ad.1;
-        Wed, 16 Jul 2025 21:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752726779; x=1753331579; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+EaMkLgPPS+jHiBOiWAtmCkdRdrXcYkx+yZAl85pTAo=;
-        b=RD5NY8E7wqKqvnpV9WkiBYnkTsALv0jKMKswmtu+fp5HXDTasnFrAgNut8L9t5pCpd
-         PvFKeCoVnDSUcd1zPFneFYU5uJiUuV0HbdVrjFLgJJNWWGCiO8biHoQDDKWRLOzFuxz2
-         U9PgHZZfYQ68VO4kyp/ECVun8ZzhJV0myQq41C4Ts+JMeG3YgmCS+wdgdKURq3VJPmq6
-         6Cl88QMknfPUsaGgU5xaZJuBfM1F/74yrpr564q0K/V/KPMcbn8F0JMXzGIyBz+kvqxd
-         SiWzqziu98Q5Ix9H547+DFtcr9r4OIfnu+IqUPazTGsY5ISJJ39rjZEmqQuy9Y4Jc1tG
-         S65w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752726779; x=1753331579;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+EaMkLgPPS+jHiBOiWAtmCkdRdrXcYkx+yZAl85pTAo=;
-        b=R3M6LSjzWRyLNWeM6IFUPzqaTlpXtS1A0aTskrs3GuqYu4FBiyT/xqKWwXRheSm36i
-         lfazBGV0v/wFpnkzGdLj6zw8CNYllncKzNDy7x8qaN3dPOssYaFbC/C80cHihlaSMI5o
-         /cWOooLi9124bQlcQ3d0G/yh2SJ4u5w0i1H4LcYmhUitm7pWKGwkkASViCziAo/MvI7s
-         /UqpWL1Jjpom8P2rZGYGqj5Bt5V/lkV8gnVs8gu7Qc+UYM70v4lzuYOQCmFWqBvHMgAq
-         pKXsz768e5v9fPODHjbDV/uyrjVO95pEn9+VGVIF4yd61T+FIyuCRD41wiST5j3xEUmi
-         vFyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn4sAETXVg4VLhDq7gX5l/5nWfpahTCEaWjGX6efPAlCShcgqiAMqfovoHarmBhCrpAbPz7bn9wQpN3v0pwyc=@vger.kernel.org, AJvYcCXSJEmLXeCWd0GYgOWahYjW67DWZFC7BEKjaAXIGYKEujoZuxjKXZ0Iq79EACaPNpt00VeEVSlkL05elb/X@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSWzz0cDhRW720zwZKDXpIbHzwL4I3wrev7YhEEcT3hz4lF3Wq
-	u1bZlVTLhY5im8byQBFNUWYEllmeeeJh+V0MDVV1657i2cm7BeHhITtK
-X-Gm-Gg: ASbGncvW0tB/XVRQLL1v/WVYLBhab1flRXv1j8jRVW2SmTMpVrRJdGCzDISj72SZl1B
-	aC9jA5oyYpMS2Izij/QQPTCNEiNk31+hYsOsRgjT1R2nDXOhOglGYQYeO8YpqZj44PDSMaqsUU9
-	3ewVeA7UKjHi1+jYpQfjm0ej0+Rd/KMjSvSwCJApeZLe4fhIS3Y/M7ZsOaKYRMtkLIb0vLfqoq/
-	oUoGQuXYy6ylqjcScnKQvfGtGQpXbx2d6K0hAnexgpmhyMnMzUvjmDHsuiaagJJu7Ox5mj3Fp1t
-	mYdAUMKso7tThYSJMWqAMqeww09s9hhSEgIOiB6U6F6wQ6dbUIPbn5Eima0JhRP9rxiHRT8fvIu
-	aAgPZJ0jlwUiISAZEKsCqTM7QTEoLmEnp20ynOzdbeL3OjshQ
-X-Google-Smtp-Source: AGHT+IGc4xAAIxg8OMZwMvBJ6uZwLd5MzTB/bWLEbrJYMwjkm3T0wmOtz4phve5rLtVTGx85h5EmUg==
-X-Received: by 2002:a17:903:186:b0:215:6c5f:d142 with SMTP id d9443c01a7336-23e2f744c24mr25770545ad.20.1752726779302;
-        Wed, 16 Jul 2025 21:32:59 -0700 (PDT)
-Received: from ipravd-Nitro-AN515-55 ([2601:646:a000:5fc0:9da2:46a5:b508:3b9b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de433e4acsm134040105ad.183.2025.07.16.21.32.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 21:32:58 -0700 (PDT)
-Date: Thu, 17 Jul 2025 00:32:56 -0400
-From: Ivan Pravdin <ipravdin.official@gmail.com>
-To: syzbot+ac3c79181f6aecc5120c@syzkaller.appspotmail.com
-Cc: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: vmalloc-out-of-bounds Read in
- hci_devcd_dump
-Message-ID: <gkct6i53onzjuzugsor6pnrhjfef7trwhgbjrgfie25xirebhp@dpqxvkguqdnf>
+	s=arc-20240116; t=1752726928; c=relaxed/simple;
+	bh=z9mn+EO35VMqhGecIxe0cnRbyrV0b0hdlIaV5NLXzKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vFfuf6BoUP0/aRqsPVxN7IjZ6/bNXeNkWVSZxlQSom38oEk4s4f3pQYu0KK4zak+HY4mErAu9nCAy4I8uQZ5PQtvN5pNff0ipIUJqkkZ+dT6gsfWUSigfwxe7+uRNXZzRWma0ryZUwkUNpLNt6dUI5h24m76ggiX3GN3Nh37UzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C0A49RFq; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752726928; x=1784262928;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z9mn+EO35VMqhGecIxe0cnRbyrV0b0hdlIaV5NLXzKY=;
+  b=C0A49RFqi0H8Tz90Q7EWWZRP0s5OVkW/TVNgQZlWrb0ShvAakirIWsKI
+   PlCz7hSuC7++s/GN+OyoGmzyROq36QTabbA5fLr64bHTcUwmEWljbqPlS
+   Xt0fOmH4ZqpeND13l4Zrv3Oh/goCRlHnZiVHRP+S4BOAxD5ZDHJC17UdW
+   aDGBiJi+a0RQLpT5tEd1EYSnttwSqKDAKPQUhEp41YZVjeGgarnIu6mDH
+   i0uMPWAko7/oAWJXGOkoxGHDlK4IMzjFtp5YkjToS4sq4Le1isC4oxMee
+   x4TeRdQUF6fvPbPYvED3JlWObaOF+45mF14HLtndRkyUiZBHoowL5/mf8
+   g==;
+X-CSE-ConnectionGUID: trAvtDiKQeuIdE6PuQ658A==
+X-CSE-MsgGUID: NMebOJAOQwa27ScoDTkqXA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58657222"
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="58657222"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 21:35:27 -0700
+X-CSE-ConnectionGUID: AsDHbvE/QSGrEoaYscOpgw==
+X-CSE-MsgGUID: m1yrFukvSRiTewrPJzUkug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="158392715"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 16 Jul 2025 21:35:23 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ucGL2-000D9R-2n;
+	Thu, 17 Jul 2025 04:35:20 +0000
+Date: Thu, 17 Jul 2025 12:35:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: carlos.bilbao@kernel.org, jv@jvosburgh.net, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	sforshee@kernel.org, bilbao@vt.edu,
+	Carlos Bilbao <carlos.bilbao@kernel.org>
+Subject: Re: [PATCH] bonding: Switch periodic LACPDU state machine from
+ counter to jiffies
+Message-ID: <202507171204.xrYX6hPj-lkp@intel.com>
+References: <20250715205733.50911-1-carlos.bilbao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="k2yjmnwji4apawbb"
-Content-Disposition: inline
-In-Reply-To: <67ee633c.050a0220.9040b.0187.GAE@google.com>
-
-
---k2yjmnwji4apawbb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250715205733.50911-1-carlos.bilbao@kernel.org>
 
-#syz test
+Hi,
 
-	Ivan Pravdin
+kernel test robot noticed the following build warnings:
 
---k2yjmnwji4apawbb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=diff
+[auto build test WARNING on net-next/main]
+[also build test WARNING on net/main linus/master v6.16-rc6 next-20250716]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/bluetooth/hci_vhci.c b/drivers/bluetooth/hci_vhci.c
-index f7d8c3c00655..2fef08254d78 100644
---- a/drivers/bluetooth/hci_vhci.c
-+++ b/drivers/bluetooth/hci_vhci.c
-@@ -380,6 +380,28 @@ static const struct file_operations force_devcoredump_fops = {
- 	.write		= force_devcd_write,
- };
- 
-+static void vhci_debugfs_init(struct vhci_data *data)
-+{
-+	struct hci_dev *hdev = data->hdev;
-+
-+	debugfs_create_file("force_suspend", 0644, hdev->debugfs, data,
-+			    &force_suspend_fops);
-+
-+	debugfs_create_file("force_wakeup", 0644, hdev->debugfs, data,
-+			    &force_wakeup_fops);
-+
-+	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
-+		debugfs_create_file("msft_opcode", 0644, hdev->debugfs, data,
-+				    &msft_opcode_fops);
-+
-+	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
-+		debugfs_create_file("aosp_capable", 0644, hdev->debugfs, data,
-+				    &aosp_capable_fops);
-+
-+	debugfs_create_file("force_devcoredump", 0644, hdev->debugfs, data,
-+			    &force_devcoredump_fops);
-+}
-+
- static int __vhci_create_device(struct vhci_data *data, __u8 opcode)
- {
- 	struct hci_dev *hdev;
-@@ -434,22 +456,8 @@ static int __vhci_create_device(struct vhci_data *data, __u8 opcode)
- 		return -EBUSY;
- 	}
- 
--	debugfs_create_file("force_suspend", 0644, hdev->debugfs, data,
--			    &force_suspend_fops);
--
--	debugfs_create_file("force_wakeup", 0644, hdev->debugfs, data,
--			    &force_wakeup_fops);
--
--	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
--		debugfs_create_file("msft_opcode", 0644, hdev->debugfs, data,
--				    &msft_opcode_fops);
--
--	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
--		debugfs_create_file("aosp_capable", 0644, hdev->debugfs, data,
--				    &aosp_capable_fops);
--
--	debugfs_create_file("force_devcoredump", 0644, hdev->debugfs, data,
--			    &force_devcoredump_fops);
-+	if (!IS_ERR_OR_NULL(hdev->debugfs))
-+		vhci_debugfs_init(data);
- 
- 	hci_skb_pkt_type(skb) = HCI_VENDOR_PKT;
- 
-@@ -651,6 +659,21 @@ static int vhci_open(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
-+static void vhci_debugfs_remove(struct hci_dev *hdev)
-+{
-+	debugfs_lookup_and_remove("force_suspend", hdev->debugfs);
-+
-+	debugfs_lookup_and_remove("force_wakeup", hdev->debugfs);
-+
-+	if (IS_ENABLED(CONFIG_BT_MSFTEXT))
-+		debugfs_lookup_and_remove("msft_opcode", hdev->debugfs);
-+
-+	if (IS_ENABLED(CONFIG_BT_AOSPEXT))
-+		debugfs_lookup_and_remove("aosp_capable", hdev->debugfs);
-+
-+	debugfs_lookup_and_remove("force_devcoredump", hdev->debugfs);
-+}
-+
- static int vhci_release(struct inode *inode, struct file *file)
- {
- 	struct vhci_data *data = file->private_data;
-@@ -662,6 +685,8 @@ static int vhci_release(struct inode *inode, struct file *file)
- 	hdev = data->hdev;
- 
- 	if (hdev) {
-+		if (!IS_ERR_OR_NULL(hdev->debugfs))
-+			vhci_debugfs_remove(hdev);
- 		hci_unregister_dev(hdev);
- 		hci_free_dev(hdev);
- 	}
-diff --git a/net/bluetooth/coredump.c b/net/bluetooth/coredump.c
-index 819eacb38762..720cb79adf96 100644
---- a/net/bluetooth/coredump.c
-+++ b/net/bluetooth/coredump.c
-@@ -249,15 +249,15 @@ static void hci_devcd_dump(struct hci_dev *hdev)
- 
- 	size = hdev->dump.tail - hdev->dump.head;
- 
--	/* Emit a devcoredump with the available data */
--	dev_coredumpv(&hdev->dev, hdev->dump.head, size, GFP_KERNEL);
--
- 	/* Send a copy to monitor as a diagnostic packet */
- 	skb = bt_skb_alloc(size, GFP_ATOMIC);
- 	if (skb) {
- 		skb_put_data(skb, hdev->dump.head, size);
- 		hci_recv_diag(hdev, skb);
- 	}
-+
-+	/* Emit a devcoredump with the available data */
-+	dev_coredumpv(&hdev->dev, hdev->dump.head, size, GFP_KERNEL);
- }
- 
- static void hci_devcd_handle_pkt_complete(struct hci_dev *hdev,
+url:    https://github.com/intel-lab-lkp/linux/commits/carlos-bilbao-kernel-org/bonding-Switch-periodic-LACPDU-state-machine-from-counter-to-jiffies/20250716-045912
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250715205733.50911-1-carlos.bilbao%40kernel.org
+patch subject: [PATCH] bonding: Switch periodic LACPDU state machine from counter to jiffies
+config: i386-randconfig-017-20250717 (https://download.01.org/0day-ci/archive/20250717/202507171204.xrYX6hPj-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507171204.xrYX6hPj-lkp@intel.com/reproduce)
 
---k2yjmnwji4apawbb--
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507171204.xrYX6hPj-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/bonding/bond_3ad.c:1484:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+    1484 |                 default:
+         |                 ^
+   drivers/net/bonding/bond_3ad.c:1484:3: note: insert 'break;' to avoid fall-through
+    1484 |                 default:
+         |                 ^
+         |                 break; 
+   1 warning generated.
+
+
+vim +1484 drivers/net/bonding/bond_3ad.c
+
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1416  
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1417  /**
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1418   * ad_periodic_machine - handle a port's periodic state machine
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1419   * @port: the port we're looking at
+3a755cd8b7c601 Hangbin Liu         2021-08-02  1420   * @bond_params: bond parameters we will use
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1421   *
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1422   * Turn ntt flag on priodically to perform periodic transmission of lacpdu's.
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1423   */
+bbef56d861f103 Colin Ian King      2021-09-07  1424  static void ad_periodic_machine(struct port *port, struct bond_params *bond_params)
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1425  {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1426  	periodic_states_t last_state;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1427  
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1428  	/* keep current state machine state to compare later if it was changed */
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1429  	last_state = port->sm_periodic_state;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1430  
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1431  	/* check if port was reinitialized */
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1432  	if (((port->sm_vars & AD_PORT_BEGIN) || !(port->sm_vars & AD_PORT_LACP_ENABLED) || !port->is_enabled) ||
+3a755cd8b7c601 Hangbin Liu         2021-08-02  1433  	    (!(port->actor_oper_port_state & LACP_STATE_LACP_ACTIVITY) && !(port->partner_oper.port_state & LACP_STATE_LACP_ACTIVITY)) ||
+bbef56d861f103 Colin Ian King      2021-09-07  1434  	    !bond_params->lacp_active) {
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1435  		port->sm_periodic_state = AD_NO_PERIODIC;
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1436  	} else if (port->sm_periodic_state == AD_NO_PERIODIC)
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1437  		port->sm_periodic_state = AD_FAST_PERIODIC;
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1438  	/* check if periodic state machine expired */
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1439  	else if (time_after_eq(jiffies, port->sm_periodic_next_jiffies)) {
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1440  		/* if expired then do tx */
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1441  		port->sm_periodic_state = AD_PERIODIC_TX;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1442  	} else {
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1443  		/* If not expired, check if there is some new timeout
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1444  		 * parameter from the partner state
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1445  		 */
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1446  		switch (port->sm_periodic_state) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1447  		case AD_FAST_PERIODIC:
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1448  			if (!(port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1449  				port->sm_periodic_state = AD_SLOW_PERIODIC;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1450  			break;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1451  		case AD_SLOW_PERIODIC:
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1452  			if ((port->partner_oper.port_state & LACP_STATE_LACP_TIMEOUT))
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1453  				port->sm_periodic_state = AD_PERIODIC_TX;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1454  			break;
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1455  		default:
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1456  			break;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1457  		}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1458  	}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1459  
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08  1460  	/* check if the state machine was changed */
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1461  	if (port->sm_periodic_state != last_state) {
+17720981964ac5 Jarod Wilson        2019-06-07  1462  		slave_dbg(port->slave->bond->dev, port->slave->dev,
+17720981964ac5 Jarod Wilson        2019-06-07  1463  			  "Periodic Machine: Port=%d, Last State=%d, Curr State=%d\n",
+a4aee5c808fc5b Joe Perches         2009-12-13  1464  			  port->actor_port_number, last_state,
+a4aee5c808fc5b Joe Perches         2009-12-13  1465  			  port->sm_periodic_state);
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1466  
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1467  		switch (port->sm_periodic_state) {
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1468  		case AD_PERIODIC_TX:
+d238d458a70ad1 Holger Eitzenberger 2008-12-26  1469  			port->ntt = true;
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1470  			if (!(port->partner_oper.port_state &
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1471  						LACP_STATE_LACP_TIMEOUT))
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1472  				port->sm_periodic_state = AD_SLOW_PERIODIC;
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1473  			else
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1474  				port->sm_periodic_state = AD_FAST_PERIODIC;
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1475  		fallthrough;
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1476  		case AD_SLOW_PERIODIC:
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1477  		case AD_FAST_PERIODIC:
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1478  			if (port->sm_periodic_state == AD_SLOW_PERIODIC)
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1479  				port->sm_periodic_next_jiffies = jiffies
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1480  					+ HZ * AD_SLOW_PERIODIC_TIME;
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1481  			else /* AD_FAST_PERIODIC */
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1482  				port->sm_periodic_next_jiffies = jiffies
+a117d493f00ee2 Carlos Bilbao       2025-07-15  1483  					+ HZ * AD_FAST_PERIODIC_TIME;
+3bf2d28a2d7112 Veaceslav Falico    2014-01-08 @1484  		default:
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1485  			break;
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1486  		}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1487  	}
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1488  }
+^1da177e4c3f41 Linus Torvalds      2005-04-16  1489  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
