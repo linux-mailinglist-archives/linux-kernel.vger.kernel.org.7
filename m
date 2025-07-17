@@ -1,92 +1,172 @@
-Return-Path: <linux-kernel+bounces-734892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DE1B087C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:19:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349ADB087CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 020357AD6B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:18:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175323BC409
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E155C27A931;
-	Thu, 17 Jul 2025 08:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A477427CB04;
+	Thu, 17 Jul 2025 08:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvVMXJHL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fMBo4lRl"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495B435957;
-	Thu, 17 Jul 2025 08:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8966B263F5E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752740386; cv=none; b=jPi0Caws34RXQY3yb+F/w0UrTfwZ5bTlTtqR04FGwCvLx1gUZPcQvNiLz2HFVPaQc2Ost2B32eNbgb3Zc8QXeNf88nDtgL9eMvaqML4/V4eTTpJCdIpEmU4tmXY4HpQO3LdZ7pu+0nmdOI4YCXi1oWQUxPSIrTe1YIf+GarL/R4=
+	t=1752740443; cv=none; b=a0hlNcyLh9stFgfR2oGf0gJ4ogSddSlWeVr5WzCIIojK30otzgTOnwwHDTnUjkFsKyO4txaP9rc11yXHler2pseSBQv0oF4/he3/HfLmtwK96cfcXzXOC64IV1nNcwreGO8zIZfPgGOYeYZbNOOm4TwUvkwW2uFrjEDbWqUWRBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752740386; c=relaxed/simple;
-	bh=Md5WNw8ujg/pxCAl4moKw+t7jhdSwpRRG1PB6BznJMU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dnrMtkbZYkmD4madjBEfMChHxG+MIw17sDfgqxvyTPLCzMvQSsCcqqSl8aQUZFn7digp5xcvljdZ3+DFyNhIry+YbajImDDWnkWgc/mFokdludhNMDPyZBZONKzzUJVPVAkzWN0tTVc4BL7kj4E0uYb+XIT0R8EXZJxBhPoUByw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvVMXJHL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 154B7C4CEE3;
-	Thu, 17 Jul 2025 08:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752740386;
-	bh=Md5WNw8ujg/pxCAl4moKw+t7jhdSwpRRG1PB6BznJMU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DvVMXJHLkXKGVj6QV7IONQPsfCfZM9+GJoQrf0J3rYLKYB0MEQLXm+PaFsXutWzR3
-	 QYy9ZZaqCsopG02lEyaFMye8SuTD4E75lwegyh4yz0hcaYyqEOLEhD5Ay2/Zqdn52B
-	 rYaG7jnKOSZ//bg1nR4KyRgN5xUBVwNFwLivqRudU5iElxKlHvxDZntp1Pcxex4PfN
-	 xNR7gGFBmLWVDvzCg+mupYaFjZc/NnREs7XOGLKrCO5xyLZVBPEK/Rcn599CPlzixe
-	 Q76fb07iUzE1jRgQVsyke89wnokH7P3NmNG/p1ujY+AW5h/MtWbo/ZVTRWdlVbSImO
-	 2MvQ8hk5tkqAg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F65383BA38;
-	Thu, 17 Jul 2025 08:20:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752740443; c=relaxed/simple;
+	bh=xtE1BEijImzQ1+EyvVeZicpa6Rbr5rJKyFTiSZFDxbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gS7vXiZDFPH0KaiNkddxH1XGIUfoOpvDhSUnkYfroyiZYrcPOHCzzG9iCH/iyEPg2rgqT//tdMD4m//Uf9b8l8ZfGJTElvE0U9Uz5mggiqf2MFOh3lp/usxXlizzsWHFzeKwoTYxZG6m0osyEN2rm8/+Z1X6VLom6NWMAdo7VDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fMBo4lRl; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a588da60dfso383162f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 01:20:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752740439; x=1753345239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aSn1ikrBu2w6g+uJ3D3dKbejXUUZcJbs+RYM3hSQgKE=;
+        b=fMBo4lRlik3YTDpGC0ZNZi1dUcV6KuzHYcUaP5Y7MX/h9BBidYEmwgbfMGliMxAb1Q
+         CwCDDSjAfK4u00O1p7z85GlixLlycO9IzqWSssRhImoXTODsRd/8LQbjR+wqVe1EqFZi
+         ysUETCMLQ6wXfaUG61bIMDXlnhx2cpKKKdcptpsBIJL7273bKhlO4EL2kWUyO7GBfaNq
+         6ljFM3RU9UyyEniuO5iBBQJrDHnCHn76keNvcIqRQNzqDgjfTtJZ6NrTEu36DOUiKfwb
+         Yv4wHRcosjZUUv4khCj89FbCXu0fP9ws2oYPdHjAmDYhgjk6iu5/RnZEHVeQgOEasreE
+         LWMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752740439; x=1753345239;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aSn1ikrBu2w6g+uJ3D3dKbejXUUZcJbs+RYM3hSQgKE=;
+        b=fyInZrmcEszB4NbxubGpPG/PwqtrsJCNQvKi7OLQzNx9Nl9gZurD82CgLoX5FZy1OU
+         OSacPEtdHvExT6cIEeekXoUGEWLPTCJTS5vAMJT+yv7ox6QA905h8L9QtIiCWg9b0Oo3
+         Ks8yKVwZ139lFywX+FxRyONNWvnPapIFQjrZOEWMKdvzevTX1FG2Y2DOmlEoe20abM4M
+         HheQ8qDcXakmCd5CQbtsgVefA2tzls3S9TqRxbcQccYhRnMWqeQd0CloNDIsZcgDOgiS
+         CXZIeHGLmEhsyKWBmzzruQbNOq86/8a7x+qfIPpsS/sdTZZWh0zLMI0bjMkqXTPyoCNm
+         ae5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWh2LykCe95H+S1fpbIfh53fujh0k9Pbl5gvnLqOdkB9Lk2KsXgOXZj2yqyK3KA7j2PcaJvLLwOEloRd4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVNh4BQdc+W/TmWYl8iQc93OGyMpYKOawEzT58K1LqQP8TRuIx
+	iPSO0YFHwQxRDTFYHw2EQurlwEY4yXS20SJVYhWkyCMCkEObAQX9BbIGJfX5cdVbUGs=
+X-Gm-Gg: ASbGnctOJl6l/9gmOkafQOe6Hc5ur8V651DLA/xZhfJyj3JoZVSe48BxedcT5y0Hf4i
+	OUbrd/qcBMOLSDK6eUhggEW3D0SeT670yyt0uo5kMx2HNIKyck/DK8Q4M6vnjbi7f79Sg/0PyCa
+	lxn8Ov15l6Ri0pysoevxmYaXTcYA4sHd7Sn9OtZVKdC6UJOgVynUstNlhhk8CBIGmGiQeHtaAyV
+	jS8qCBikiX/z26UbzUGuvLhvylfNQSXdxiEO6BbyFSQMc9iaEsjVXEOfeeRKtLMXfeK2G76ODi8
+	UCS14E2QEVioHYi2qKEMwy+f4fRDrnFEJOLK57t5EhkOVBJkLazMKbaKZqJYHjpJEXPoAAdQFkP
+	2+fC4UvnQkP4gd9C+JXnx99+tqdAUKNM3W4MAKbzvX+yc26VnERE53nhhwMXxEM6PKipYAKjC4R
+	k2
+X-Google-Smtp-Source: AGHT+IFrAHuwDARLY/8Ay2Ov5spI2j+L1Q0PXdz00Ci8rMXPWEOFk1gUDBGwxIvEnn/1FaCq6ZYz8w==
+X-Received: by 2002:a5d:6f0e:0:b0:3a6:d92d:9f7c with SMTP id ffacd0b85a97d-3b60e4c5212mr5057459f8f.9.1752740438729;
+        Thu, 17 Jul 2025 01:20:38 -0700 (PDT)
+Received: from ?IPV6:2a0d:e487:37e:ce58:94c8:a752:de4:96bb? ([2a0d:e487:37e:ce58:94c8:a752:de4:96bb])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b5e8e14e82sm20214519f8f.71.2025.07.17.01.20.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 01:20:37 -0700 (PDT)
+Message-ID: <14c91ee4-3a09-4ec9-966f-0d563d7c8966@linaro.org>
+Date: Thu, 17 Jul 2025 10:20:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/7] RK3576 thermal sensor support, including OTP trim
+ adjustments
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Alexey Charkov <alchark@gmail.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Ye Zhang <ye.zhang@rock-chips.com>
+References: <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
+ <aHgHxR1_Gzu8Dwbm@mai.linaro.org> <4178173.5fSG56mABF@diego>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <4178173.5fSG56mABF@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: fix segmentation after TCP/UDP fraglist GRO
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175274040626.1485472.15419586586867820749.git-patchwork-notify@kernel.org>
-Date: Thu, 17 Jul 2025 08:20:06 +0000
-References: <20250705150622.10699-1-nbd@nbd.name>
-In-Reply-To: <20250705150622.10699-1-nbd@nbd.name>
-To: Felix Fietkau <nbd@nbd.name>
-Cc: netdev@vger.kernel.org, edumazet@google.com, ncardwell@google.com,
- kuniyu@google.com, davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, willemb@google.com,
- richardbgobert@gmail.com, linux-kernel@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Sat,  5 Jul 2025 17:06:21 +0200 you wrote:
-> Since "net: gro: use cb instead of skb->network_header", the skb network
-> header is no longer set in the GRO path.
-> This breaks fraglist segmentation, which relies on ip_hdr()/tcp_hdr()
-> to check for address/port changes.
-> Fix this regression by selectively setting the network header for merged
-> segment skbs.
+On 7/17/25 09:21, Heiko Stübner wrote:
+> Hi Daniel,
 > 
-> [...]
+> Am Mittwoch, 16. Juli 2025, 22:12:53 Mitteleuropäische Sommerzeit schrieb Daniel Lezcano:
+>> On Tue, Jun 10, 2025 at 02:32:36PM +0200, Nicolas Frattaroli wrote:
+>>> This series adds support for the RK3576's thermal sensor.
+>>>
+>>> The sensor has six channels, providing measurements for the package
+>>> temperature, the temperature of the big cores, the temperature of the
+>>> little cores, and the GPU, NPU and DDR controller.
+>>>
+>>> In addition to adding support for the sensor itself, the series also
+>>> adds support for reading thermal trim values out of the device tree.
+>>> Most of this functionality is not specific to this SoC, but needed to be
+>>> implemented to make the sensors a little more accurate in order to
+>>> investigate whether the TRM swapped GPU and DDR or downstream swapped
+>>> GPU and DDR in terms of channel IDs, as downstream disagrees with what's
+>>> in the TRM, and the difference is so small and hard to pin down with
+>>> testing that the constant offset between the two sensors was a little
+>>> annoying for me to deal with.
+>>>
+>>> I ended up going with the channel assignment the TRM lists, as I see the
+>>> DDR sensor get a larger deviation from baseline temperatures during memory
+>>> stress tests (stress-ng --memrate 8 --memrate-flush) than what the TRM
+>>> claims is the GPU sensor but downstream claims is the DDR sensor. Input
+>>> from Rockchip engineers on whether the TRM is right or wrong welcome.
+>>>
+>>> The trim functionality is only used by RK3576 at the moment. Code to
+>>> handle other SoCs can rely on the shared otp reading and perhaps even
+>>> the IP revision specific function, but may need its own IP revision
+>>> specific functions added as well. Absent trim functionality in other
+>>> SoCs should not interfere with the modified common code paths.
+>>>
+>>> Patch 1 is a cleanup patch for the rockchip thermal driver, where a
+>>> function was confusingly named.
+>>>
+>>> Patch 2 adds the RK3576 compatible to the bindings.
+>>>
+>>> Patch 3 adds support for this SoC's thermal chip to the driver. It is a
+>>> port of the downstream commit adding support for this.
+>>>
+>>> Patch 4 adds some documentation for imminent additional functionality to
+>>> the binding, namely the trim value stuff.
+>>>
+>>> Patch 5 adds support for reading these OTP values in the
+>>> rockchip_thermal driver, and makes use of them. The code is mostly new
+>>> upstream code written by me, using downstream code as reference.
+>>
+>> Replaced previously applied version V5 with this V6 patches 1-5
+> 
+> are these commits available somewhere?
+> 
+> Because git.kernel.org reports that
+>    https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
+> has not seen activity in a while?
+> 
 
-Here is the summary with links:
-  - [net] net: fix segmentation after TCP/UDP fraglist GRO
-    https://git.kernel.org/netdev/net/c/9f735b6f8a77
+I just pushed the bleeding-edge branch
 
-You are awesome, thank you!
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
