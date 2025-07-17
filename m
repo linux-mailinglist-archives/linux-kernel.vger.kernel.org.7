@@ -1,262 +1,244 @@
-Return-Path: <linux-kernel+bounces-735769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEB3B0939D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:51:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FC3B0939B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74EA158713E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ADBDA457A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837262FEE14;
-	Thu, 17 Jul 2025 17:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC442FD598;
+	Thu, 17 Jul 2025 17:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FJfC3E6s"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H81ma6zx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1FB2FE383;
-	Thu, 17 Jul 2025 17:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752774688; cv=none; b=uI7OCyAKDGUOt0Gmf/2pw5awmflHLFoTVuJQnWxzqsQKrVTKRn4W5Un5hzYbnf/QRuE2QSxQfSyFfytH2skr+GIOuZtX0Uh+vTYrMCjMSHHGIjHlVQR4aKGtBoJ3pEzRzMaL9C6ThUriLzdIucLpsHtaG7/iLe8q+Pest30tduw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752774688; c=relaxed/simple;
-	bh=7gqdu9FRzLbWwVYcJ1xgji2kq0oWwr4gM+5MAVL14+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U5mgNjyjZ4YlrRIuem3rJugalZ3NExZ9fUcG9RE7xzkQBAAsyXpGnFp0qF3tOFPGG0zR2Z60wW8M+h9LB43LUqZIv4Dp+0MxH5EfjqUHBOzuglUDHbxyDyGC0y3CbM0iNONCOUn99SCjBtXwhn8bzhMeAkkQ9sFGQ1gr7xWgJj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FJfC3E6s; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56HHp6UQ063119;
-	Thu, 17 Jul 2025 12:51:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752774666;
-	bh=JlYC+23jy0kiGaogzz7XRNceSyu876I7Z5My7gH79ig=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FJfC3E6sk6iJDG+kR3lsMTlFsjvO72vldw+zpi9S1Qj9bsuehnk3kHJ9qjuV0HiCT
-	 NC1y7xQzBZYz5dBZatvnShADDDH11r28UDV/yim9w8pwc7JQar3gXsQXFqso3VgFK/
-	 wIH78uPKYpQWht8K9xRbNTEoLF9hS6DO7f0UUfrk=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56HHp6Gf397301
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 17 Jul 2025 12:51:06 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 17
- Jul 2025 12:51:06 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 17 Jul 2025 12:51:05 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56HHp64m2244017;
-	Thu, 17 Jul 2025 12:51:06 -0500
-Message-ID: <4826def7-5dcb-4453-ab3b-0d14880dab93@ti.com>
-Date: Thu, 17 Jul 2025 12:51:05 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E792FBFE9
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 17:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752774684; cv=fail; b=mJWMcSMhIdQ8Mj9MaRAIPXvR/Rw9/NEOCMR5Tg/+ixZ0ehsaQeYbSEDdmWiX/z1CoTot4bEXBg/BW+SG/ZtG79BCCrkPyKBKP0iUsphtVDwj9VKcdCsVTtU0vUwPvaLKd8LEjk/xF1YBmpD0x3pH7asEYw1R/4Du+v90H629ndM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752774684; c=relaxed/simple;
+	bh=2qIGO7+vVNZJHxvpyafYm0Ws6ZKIpIUXv9tlaqgmgsw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ek8cGIIUR+lJekPWu5/PiAxQXIaWxJXduyU8IDBwZwlazHZ1x3rFQG++7qo+rEw1SDkysKd1JEQarvlnRK2me+XnzVAU6dTLMYIo5JL/+kPMvv8LmB20aOzZETgINUAgSvSCTJVV4FxLAoB4nYujOlX8H5RdMLBVnxlzkTRDWnU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H81ma6zx; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752774682; x=1784310682;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=2qIGO7+vVNZJHxvpyafYm0Ws6ZKIpIUXv9tlaqgmgsw=;
+  b=H81ma6zxGCR95Ud00svSbHeypKNeSeOV4H6DVEv8C/V1HeFE7nx/9wNd
+   IlZy9ZLDa8HHxs/Wa5aGWWcTHFnEo7Dsy28EQpCtdqkXh3aHTOy9/vfyl
+   GQ92OoL4tMQGK81yn2Jl8CFcAfhL25L1Mqb7+0/ClxuwEiQOxV48POvdy
+   mlON+RaWbY+9//OlZyfE0WgaUJDYs3LN5xpU0ZlDfAYVc91J2F22n6Inf
+   jrHp/1zpnUUw+13neXyvt8Vf87nkoHFHabhU4E3wW0n726xOwcLJiqtj0
+   BEY5e/7W9O3Z95G6taAlfGlL/L75nXv8uMw8SHRXIKsAFUZYGUV4KlZE+
+   w==;
+X-CSE-ConnectionGUID: A1hj/FeeSwmBEc0YOnUdPQ==
+X-CSE-MsgGUID: g2pe92pzQWCO73EmAuGp4w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="55149469"
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="55149469"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:51:21 -0700
+X-CSE-ConnectionGUID: H0BkFYFTStGT2EX/IjKXCg==
+X-CSE-MsgGUID: Vgn1T+BBQl+Mg5gk5f3Uiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="188839560"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:51:21 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 17 Jul 2025 10:51:20 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Thu, 17 Jul 2025 10:51:20 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.40)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 17 Jul 2025 10:51:19 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GS0Ln210VRO9QoRNcT2ika7CVT2ybI8f45LeyZt5i37qgNx2q1iC1kwLxP1XMXItUHoN5/Mn1ab57oSRqIV2Z/UEFUzBSkjdP2/Xj89ECMfXhebZmKuSeuniskyUUdHB9W2XjJPH04wN0/VwGsqE141QFuQKzYGdOaN0xglXb2Wmyh6cA+BBdnzKuziXuExyWVgyxTegc3Qh7/6O1xD7CYIMqbBh3aBUVl+8kp67aOsaxI0/UFHeW03sXs9mal5wkRm7ciinBBqpg3KGQKLDhEveqWVYFPB1a1qYeFPfaFBqMhkmbXrRq5xw6zclJSEhtPZXK02xxbdzEmFJ17Jf7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OYCVqF5PjNSmtwlkNVfG2y8U0BbDOvN6s4btQw+Ecjk=;
+ b=LBG3TVJ3QJaW0uvI11v2v9CwbZRqAa8EMN4BujPwzNkbhm8OE0vM8zfivOBW47dOFwNMBhwwK36b1CM5HwD92CFQRQtd4WQV2kLKhPva5oG33wsiio4kqiOYi5ZTvCRE2ExTu+VV8F3+va+z7G7CNTAwnDv810eB4JzfH8rK9y7T+sWi3ecJ2XsgFw1ieZmAvqotlyjd6cIcizdETw2RD0PkfYSH3IKwa0qmN63y9sxffXyUr5ooteGz/qWMBgJ8mmPY21jc8HUMV+5i4/FXHtRra66ICVjeBcHdnrs/7uiZ5M4aP7Fp8U3jk+PNs4PdjifwxFlOjJ81D5oXXv74dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SN7PR11MB7113.namprd11.prod.outlook.com (2603:10b6:806:298::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Thu, 17 Jul
+ 2025 17:51:16 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8922.037; Thu, 17 Jul 2025
+ 17:51:16 +0000
+Message-ID: <9dcf8b1a-225d-49a1-ae91-887ddf125431@intel.com>
+Date: Thu, 17 Jul 2025 10:51:14 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 01/31] x86,fs/resctrl: Consolidate monitor event
+ descriptions
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20250711235341.113933-1-tony.luck@intel.com>
+ <20250711235341.113933-2-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250711235341.113933-2-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0272.namprd03.prod.outlook.com
+ (2603:10b6:303:b5::7) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] watchdog: rti_wdt: Add reaction control
-To: Andrew Davis <afd@ti.com>, Guenter Roeck <linux@roeck-us.net>
-CC: Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250707180002.3918865-1-jm@ti.com>
- <20250707180002.3918865-3-jm@ti.com>
- <cc37e797-d3e5-444d-8016-c437a0534001@roeck-us.net>
- <d96541bc-644d-4c90-b9f7-1e4afd16aeb6@ti.com>
- <953f78a8-3928-479d-8700-dfe1cea15454@roeck-us.net>
- <299c363a-23c7-4522-b58c-100f49c4eece@ti.com>
- <7d2bb793-14d0-45d8-b8bd-b770cdb4ca70@roeck-us.net>
- <fc095373-1171-4718-b492-8a74d03f99ba@ti.com>
- <92be34eb-2408-4273-9e37-bec0b0d68f10@ti.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <92be34eb-2408-4273-9e37-bec0b0d68f10@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SN7PR11MB7113:EE_
+X-MS-Office365-Filtering-Correlation-Id: e68ce005-a1a1-404f-443c-08ddc55a8706
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?cUcxZWE0SG9NNWJ4aDZGWTB1V0dudGhHTERMSy9wc0VCZWdGNGtSQ1VlWVlu?=
+ =?utf-8?B?QnFIemRHbW8ydm5QV0VSZnBrYW1rbjJYWHpLcmVCbzZmWG5EZTZldHRoQ1dp?=
+ =?utf-8?B?RVpEcU5lR0pMYXdXQWxYS2V6dHQwc0kyY2k4RXNaay9FUU1aYVE5U1ZVQURC?=
+ =?utf-8?B?T3lWZkV6dlJXQzBUVkFNWTJScEw1bUluY2Ztcm92bmgyb1oyTW9IQWtjL2RW?=
+ =?utf-8?B?Y1FvZDN4ZTdEcmtKbFB2YUc5cUM5UlFEcElXbTYvQ2h1WG56TnYvVVYwZmls?=
+ =?utf-8?B?Z0NGQThEUHdHdlBhclR4bWkrcEJNWU9kTmVWSVZ1eWZLWWZXdjkzRWdpcU9z?=
+ =?utf-8?B?bGtKeS9jNEFab2I5blhhRkJBZjNzRXF1RnIzTlNjK2VXMUZxdXczNHNVUmNq?=
+ =?utf-8?B?b2poSlRwR2liTXEvOHN4VlFSTTBmQzdQTXpRK2YwbXBjMFM0OVNHbzRRZUow?=
+ =?utf-8?B?QVFrUDlRK1h4Uk0yMjNveC8vdnN0bVVkcDBtMmJSNjhGL1Q3RGMwMy9zdk5S?=
+ =?utf-8?B?U2ZSSGVZdFZRTG81UFZXUzBCVE5Ed09XMmdmY2JEN3ZTTy9EeGhjQjZWR3Aw?=
+ =?utf-8?B?WWxPd1FZcHZwUWl4ek1QL0trSTBhQUtVK2pWM00zb0hqdXNTVkpKRlZKMkkv?=
+ =?utf-8?B?RWtZU1I2TmpyQXJQRG55WnlISFNtTk5sd1ZwUnRtZEVQRkdnL0U4V0wxN1lT?=
+ =?utf-8?B?eHQ5dUVuV2xSUDFNZkg2blFVMG9rSmZkUkhrbXRFK1B5cmlKQlFiSWpVNnI4?=
+ =?utf-8?B?WktlOG9nYVdYWXBiTGYvcmJueWpRekQ1NG9jUnVuQ1V3VVlDd1JKT01QNExQ?=
+ =?utf-8?B?aXZPdjV1VGpYbk9JaXhlZmJYdUpvM1ZnSjNyQlErcUthSGNaanVmYmx1bzR6?=
+ =?utf-8?B?UUhoV1k0bElsOStpaDhia244ZDVDTDNPdmMzY1ZlVUpNM1NIejlFZ0xxcWpF?=
+ =?utf-8?B?VFcvQTN4RW1WQ0hsUk4reThrb09WSzZsc1BkdDhUYTFDRStMK2tMYjhyN0Vj?=
+ =?utf-8?B?S3g4ZFNWZGMyT1o2amFqR1BqMEhIU1dSWTkwWVhqSkhTNk4yRWloVXFyNDVk?=
+ =?utf-8?B?NzJGWXZwekhVdE5NZ1lwVlVxTmErb0RDajRsalVzYjdsQWp2TmlWTncyZDZ3?=
+ =?utf-8?B?bHQ1bXlMS1FHTHRLNVVzS0lnYkhDOUd2N29mZ2MwaHN2WFFUU3BmK2dGNnVL?=
+ =?utf-8?B?RHlKTHBzLzZqeFBKQW1YOVRnUlRYZ2NxT2FoL2VEYmtKSTBWRUMwT240RHJ5?=
+ =?utf-8?B?cUJhVldEdUtFalQ5MGpaUVJiVjJGZnV5YkVMYUhIUWpGRFVaOGpCNks4V3Yy?=
+ =?utf-8?B?YWFkZDhGZ2pxTzFTOVdlekc1dFRYNDRqWWhQNG4zVWZiK25XN2hiZFNkQkZq?=
+ =?utf-8?B?dzlFRmljRFZkMmFBdVQzdG0wcVBqNnVpVVdiTFQ3TTRZMmlKR1VJQ2hNZGI3?=
+ =?utf-8?B?YncyNnkvaEJDamk1Ny80YVlreld3SWJEUHBWLzdtbjZ1cGxRVzkzUTV1S3Rk?=
+ =?utf-8?B?d0V0QjRnb0xRbjVqV25YaHBzWHBwM1QyeEpCY1UzM0Q4bzVPQVNhTUpwdDJT?=
+ =?utf-8?B?TVBMRjhZeTZCTG1mUWVKQU50WVdLa0xtWkxUcjdaQmtGS0VRbm5melFTUHdT?=
+ =?utf-8?B?Z2xFUlM2Q0hKRDNHMk5VSXFFcWx0TVdXR0xCMFFMMDYrS3hkejBoWXZHcE1J?=
+ =?utf-8?B?UHJ0dUhoV2xqTi9zUEZndmxaaHZZZzJUb2FqZnI1TC9IN1lJdkd6KzJ5c3M2?=
+ =?utf-8?B?NnR6ejVYVm5sbllqU3RGbjgrQlZWb0I1TEg1dloxZXBzYWJjL0tva1k1eDhR?=
+ =?utf-8?B?N256K1kwdVJackc4VWthRTFmVnFkU1IwdVJ5cWdZbU1DM3VVdk1FelpvbFFr?=
+ =?utf-8?B?V3Nuajhjci9sY0Q5NktLbndEbkk1ZGFiN3lDK2c0RFVKZVQvVk03OWxML3pI?=
+ =?utf-8?B?THowK0JCcWx5eEd3K01UQWttNTNHd2dBR1l5b3RxNUxUMGNvMmhvSEhJU0Y1?=
+ =?utf-8?B?bkRiakpYV29BPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QlkrV1M4alVGM2ZjMmpPOHdacnZhbG5hSEFhSWVKbW5QRE5sRjB4a3V3MzRK?=
+ =?utf-8?B?S0tqWUZFMnB3MFFsVFB2a3ladmxMbHcvR1AxbHovNWRqV1A1c2czWlQ0WXJG?=
+ =?utf-8?B?NkhhOTQxanlHWXp0MHIxZTNsRVJpUU9RTmRWRE5rWldzRlMvanEyTEhhdE1R?=
+ =?utf-8?B?aExBZEl0TnlZeGRPaU9DVDdNVUFiaUc3ZURqbERxZmIybEcrSE5RMlBXWnE2?=
+ =?utf-8?B?Wk5lekV1QjRETnlYNGZRS0ErU0VtQXlJYlV1aVBSa0ZwU1VKQjR0Z2ZOSm0z?=
+ =?utf-8?B?ZDRZUTBNWFZqQkxlYjBVa1MxU0pCbWdDMmRFdkZ5U2o0QnEyb2RNLytmc3Zs?=
+ =?utf-8?B?ZS9SdEtEdFBZS2dsdGx1MnFBZmxZNm15V2xhMGdSSDROdjNrVDJmWkVaekRt?=
+ =?utf-8?B?eVNpT0VZbTVuaGc5cVlJSHRxcFU2VDlyZ2dMREUwYnhoZ3BNa2Y2Q2F1TmVR?=
+ =?utf-8?B?aXQyMUdPMFQ4ZjVUTzVvWDJUZEE2Y20rNXdva1JFVlRGSXlmeEpTRENCZUZZ?=
+ =?utf-8?B?bEUvY3NQOEluQ21kT3FIZ2t5SFBkOHFMOXJxV21CT1F3cG9IWS9KVlpuaWIv?=
+ =?utf-8?B?eDBVMWxBM0pFWWpsODNvWmZzVDQ1Unc3My9Eb3l2eWlDM1pkYm1BQm1IQlE0?=
+ =?utf-8?B?R0pERVJ6cUU1UDhoOXZMN2dlUWFBYUQvQUdiSEhQelUybnlFRnFkcU5xTVQv?=
+ =?utf-8?B?QVNwU01zem8yZjNQUXlMU3hYNFhTTlVDUHY5dTNKK3FSWjdramR0WTU5UHE1?=
+ =?utf-8?B?Mzg3RDhFNlFxNmwyZ3R2RXB6SVdDellFZnc3NjBtd0czOGMrUUQ5eS9hR2li?=
+ =?utf-8?B?RHNRSy9GekJpQjNYeVFoZ0R1WThqdFBrYXJQSXBmRXhSaGVULy94UEpSWkZY?=
+ =?utf-8?B?S2RSZlhNUG5DSUt3YWZucVBzYVVPSWx5bGtpdWhIVG1LZWhVcDZua1lzaVFB?=
+ =?utf-8?B?NnhIZGFEQXNRSmMyVndwS2p4VlBzYmc2bnBwZTZ6UDl4VWpFZm5kbHF0S21M?=
+ =?utf-8?B?YU4reVA3S1NJODhwQjlRZVk3QWRwbnkycVhoc0pXdjNKbkRzMThCUk1SckFT?=
+ =?utf-8?B?RDFZSS9mZUpmcTRya2diUDQ2RVZBOCtUQXlGNmc0K0FMdVRZTkJTK2xNMDFX?=
+ =?utf-8?B?SjAyME9SbWJJOTVmaERlQWZtelRpSWFRTFczcVhQbmVrTFE3TE8rcE84ckd4?=
+ =?utf-8?B?RHU4ajZXck9EemNnd21QOFBhS1U1NEYwaEJKZHFHSk82R1RnclZxQjZYSWJF?=
+ =?utf-8?B?cHdCSDNsRDIvcUhqZ0dVV0FGdTVmTFRXZHVMaUhCM3BQMWRYQWRJa3lxcmJS?=
+ =?utf-8?B?cjRHT1Z3c3IwQURHWHcydDBtcW1rSmRFaVVNQ2RYTHZCVE05anc2NmRYRUtU?=
+ =?utf-8?B?eU5vaTdMODYvLzhJZGdCNFZ1ZXhpV1JIL2NIbUNPN3g3MzhKVlpmbm0xTGhN?=
+ =?utf-8?B?U3lZQmhwS0hTZEJHOFNIVGY1ME5yUzg0RDZxVW5oWUkvV1czU0xBcDkrV1ZH?=
+ =?utf-8?B?QlFzMlc2aWMzbXd3KzhFNkdSNUdTSEJrQVE0aGlEUFRxcHB0YjJoMktUZERD?=
+ =?utf-8?B?em1la0U1Y2Y1UHNjUTJMWUFOQXR1ZUtNQ1gvVWNPZG5QTDNNbXpQV1p6UmhW?=
+ =?utf-8?B?aGQ3ZzIrRGNuTFB6TlZzRzNkWnovTEluTUd6K3QzcVZzbGZHRWRQWVdaQ2xT?=
+ =?utf-8?B?bXJ4QWd0bEVYWEZPdUdWUzBNSHY1bUl3SngrdmtCa1hqSFdIQTFhR3JXQW50?=
+ =?utf-8?B?aVE5SWFXeloxQ0tmcVZmT3pXU0FnbkRsdGVUTGM0dkJCVFFycFlQSWRvMXhW?=
+ =?utf-8?B?bmw0MHo1UlpvSk5VcnRBUzVKMVRkejNVMUVQWC90NzRDcHNsMjdhNmFnNmpG?=
+ =?utf-8?B?bWF2QUVwSStBZ014VnFvRjZYYUVYd0NUTi9QT0hDWlI1QWk1dno4MWh2THp3?=
+ =?utf-8?B?VzM5ekhtWUhNaENwYkxUOXpMSmIrRGJjWlppaDNnUnlBQjNBNVIvblpzaWM1?=
+ =?utf-8?B?TFd3YkdmV1RtSTg1ZXdFcDRUbmFoTUptd3l0REJ4bDlsTzViZzBMUW8rUWxl?=
+ =?utf-8?B?SEpsSkFsdFg3VWJzbXhXeUt6ejB3T1p5RW1PaEhLc2NlNTJPaFFjaTE2c2pn?=
+ =?utf-8?B?MHNmc2NUQTR3VkJoa0FVbjMyb3pxL2ZrTDhXZUhlbC9uWWVmVVlwQnlteG1Q?=
+ =?utf-8?B?bGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e68ce005-a1a1-404f-443c-08ddc55a8706
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 17:51:16.2458
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pz/EIveDyN5UfEycitpiNjIVuk6yO1LDGZw8+/+vr3C4gCOsGgspyQKvREK4LrrhqmnAW7bi7AKfqvo2gIcdLNNBSRjePanB4x7f3QQjcJQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7113
+X-OriginatorOrg: intel.com
 
-Hi Andrew,
+Hi Tony,
 
-On 7/17/25 11:44 AM, Andrew Davis wrote:
-> On 7/17/25 10:24 AM, Judith Mendez wrote:
->> Hi Guenter,
->>
->> On 7/16/25 1:50 PM, Guenter Roeck wrote:
->>> On 7/10/25 07:08, Judith Mendez wrote:
->>>> Hi Guenter, Andrew,
->>>>
->>>> On 7/7/25 5:55 PM, Guenter Roeck wrote:
->>>>> On Mon, Jul 07, 2025 at 04:49:31PM -0500, Andrew Davis wrote:
->>>>>> On 7/7/25 3:58 PM, Guenter Roeck wrote:
->>>>>>> On Mon, Jul 07, 2025 at 01:00:02PM -0500, Judith Mendez wrote:
->>>>>>>> This allows to configure reaction between NMI and reset for WWD.
->>>>>>>>
->>>>>>>> On K3 SoC's other than AM62L SoC [0], watchdog reset output is 
->>>>>>>> routed
->>>>>>>> to the ESM module which can subsequently route the signal to safety
->>>>>>>> master or SoC reset. On AM62L, the watchdog reset output is routed
->>>>>>>> to the SoC HW reset block. So, add a new compatible for AM62l to 
->>>>>>>> add
->>>>>>>> SoC data and configure reaction to reset instead of NMI.
->>>>>>>>
->>>>>>>> [0] https://www.ti.com/product/AM62L
->>>>>>>> Signed-off-by: Judith Mendez <jm@ti.com>
->>>>>>>> ---
->>>>>>>>    drivers/watchdog/rti_wdt.c | 32 ++++++++++++++++++++++++++++----
->>>>>>>>    1 file changed, 28 insertions(+), 4 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/watchdog/rti_wdt.c 
->>>>>>>> b/drivers/watchdog/rti_wdt.c
->>>>>>>> index d1f9ce4100a8..c9ee443c70af 100644
->>>>>>>> --- a/drivers/watchdog/rti_wdt.c
->>>>>>>> +++ b/drivers/watchdog/rti_wdt.c
->>>>>>>> @@ -35,7 +35,8 @@
->>>>>>>>    #define RTIWWDRXCTRL    0xa4
->>>>>>>>    #define RTIWWDSIZECTRL    0xa8
->>>>>>>> -#define RTIWWDRX_NMI    0xa
->>>>>>>> +#define RTIWWDRXN_RST    0x5
->>>>>>>> +#define RTIWWDRXN_NMI    0xa
->>>>>>>>    #define RTIWWDSIZE_50P        0x50
->>>>>>>>    #define RTIWWDSIZE_25P        0x500
->>>>>>>> @@ -63,22 +64,29 @@
->>>>>>>>    static int heartbeat;
->>>>>>>> +struct rti_wdt_data {
->>>>>>>> +    bool reset;
->>>>>>>> +};
->>>>>>>> +
->>>>>>>>    /*
->>>>>>>>     * struct to hold data for each WDT device
->>>>>>>>     * @base - base io address of WD device
->>>>>>>>     * @freq - source clock frequency of WDT
->>>>>>>>     * @wdd  - hold watchdog device as is in WDT core
->>>>>>>> + * @data - hold configuration data
->>>>>>>>     */
->>>>>>>>    struct rti_wdt_device {
->>>>>>>>        void __iomem        *base;
->>>>>>>>        unsigned long        freq;
->>>>>>>>        struct watchdog_device    wdd;
->>>>>>>> +    const struct rti_wdt_data *data;
->>>>>>>>    };
->>>>>>>>    static int rti_wdt_start(struct watchdog_device *wdd)
->>>>>>>>    {
->>>>>>>>        u32 timer_margin;
->>>>>>>>        struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
->>>>>>>> +    u8 reaction;
->>>>>>>>        int ret;
->>>>>>>>        ret = pm_runtime_resume_and_get(wdd->parent);
->>>>>>>> @@ -101,8 +109,13 @@ static int rti_wdt_start(struct 
->>>>>>>> watchdog_device *wdd)
->>>>>>>>         */
->>>>>>>>        wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + 
->>>>>>>> MAX_HW_ERROR;
->>>>>>>> -    /* Generate NMI when wdt expires */
->>>>>>>> -    writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
->>>>>>>> +    /* Reset device if wdt serviced outside of window or 
->>>>>>>> generate NMI if available */
->>>>>>>
->>>>>>> Shouldn't that be "or generate NMI if _not_ available" ?
->>>>>>>
->>>>>>
->>>>>> For almost all the K3 devices, the WDT has two selectable outputs, 
->>>>>> one resets
->>>>>> the device directly, the other is this "NMI" which is wired to an 
->>>>>> ESM module
->>>>>> which can take other actions (but usually it just also resets the 
->>>>>> device).
->>>>>> For AM62L that second NMI output is not wired (no ESM module), so 
->>>>>> our only
->>>>>> choice is to set the WDT to direct reset mode.
->>>>>>
->>>>>> The wording is a little strange, but the "or generate NMI if 
->>>>>> available" meaning
->>>>>> if NMI is available, then do that. Reset being the fallback when 
->>>>>> _not_ available.
->>>>>>
->>>>>> Maybe this would work better:
->>>>>>
->>>>>> /* If WDT is serviced outside of window, generate NMI if 
->>>>>> available, or reset device */
->>>>>>
->>>>>
->>>>> The problem is that the code doesn't match the comment. The code 
->>>>> checks the
->>>>> "reset" flag and requests a reset if available. If doesn't check an 
->>>>> "nmi"
->>>>> flag.
->>>>>
->>>>> If the preference is NMI, as your comment suggests, the flag should 
->>>>> be named
->>>>> "nmi" and be set if NMI is available. That would align the code and 
->>>>> the
->>>>> comment. Right now both code and comment are misleading, since the 
->>>>> presence
->>>>> of a reset flag (and setting it to false) suggests that a direct 
->>>>> reset is
->>>>> not available, and that reset is preferred if available. A reset is 
->>>>> the
->>>>> normally expected behavior for a watchdog, so the fact that this is 
->>>>> _not_
->>>>> the case for this watchdog should be made more visible.
->>>>
->>>>
->>>> How about:
->>>>
->>>>
->>>> /* If WWDT serviced outside of window, generate NMI or reset the device
->>>> if NMI not available */
->>>>
->>>> if (wdt->data->reset)
->>>>      reaction = RTIWWDRXN_RST;
->>>> else
->>>>      reaction = RTIWWDRXN_NMI;
->>>>
->>>
->>> As I have said before, the problem is the "reset" flag. Its name 
->>> suggests that
->>> it means "reset is available". That is not what it actually means. It 
->>> means
->>> "NMI is not available". So I suggested to rename it to "nmi" or maybe 
->>> "no_nmi".
->>> Please educate me - why is that such a problem to name the flag to 
->>> match its
->>> meaning ?
->>
->> wdt->data->reset makes more sense because it shows there is a
->> physical line routed to the MAIN RESET HW LOGIC:
->>
->>  >> if (wdt->data->reset)
->>  >>      reaction = RTIWWDRXN_RST;
->>  >> else
->>  >>      reaction = RTIWWDRXN_NMI;
->>
->> If there is a direct reset line to MAIN RESET HW logic, then the
->> reaction should be reset, if there is no reset line, then generate
->> and NMI to ESM.
->>
+On 7/11/25 4:53 PM, Tony Luck wrote:
+> There are currently only three monitor events, all associated with
+> the RDT_RESOURCE_L3 resource. Growing support for additional events
+> will be easier with some restructuring to have a single point in
+> file system code where all attributes of all events are defined.
 > 
-> There is a reset line on all K3 devices, if you did it this way then
-> all devices would have wdt->data->reset set to true and you wouldn't
-> need this logic at all. The thing that changes is if NMI/ESM is
-> available or not, so as Guenter suggests the flag should be called
-> "nmi" or similar and you switch on that.
+> Place all event descriptions into an array mon_event_all[]. Doing
+> this has the beneficial side effect of removing the need for
+> rdt_resource::evt_list.
+> 
+> Add resctrl_event_id::QOS_FIRST_EVENT for a lower bound on range
+> checks for event ids and as the starting index to scan mon_event_all[].
+> 
+> Drop the code that builds evt_list and change the two places where
+> the list is scanned to scan mon_event_all[] instead using a new
+> helper macro for_each_mon_event().
+> 
+> Architecture code now informs file system code which events are
+> available with resctrl_enable_mon_event().
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+> ---
 
-Looking at the integration spec, I do not see a direct reset line for
-any device besides am62l, could you confirm that what I am reading
-is correct please?
+Thank you.
 
-  ~ Judith
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
+Reinette
 
