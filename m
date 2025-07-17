@@ -1,299 +1,303 @@
-Return-Path: <linux-kernel+bounces-734450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A7AB081FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:02:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DD7B08200
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69EF1C41061
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:03:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B0FA7A2126
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9DD13DDAE;
-	Thu, 17 Jul 2025 01:02:44 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C5A14A62B;
+	Thu, 17 Jul 2025 01:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AlAflna8"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3AE28E7;
-	Thu, 17 Jul 2025 01:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4019928E7;
+	Thu, 17 Jul 2025 01:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752714163; cv=none; b=t8nFavvblB8Hor+0f/KBF+kUHlESxKpokpkGXSXDverZXpIUpZd7T7JzRHga9gJcZoQoM/sRRm5dhbcG7xF0sk4TLd8K3zOqoubQfEkwKzXvohQ3pTUVOv/8zu+8u1yIFM8bGVS2gLHnVdbWDjVJrdl5nxADk1KAgihAGasHVcs=
+	t=1752714231; cv=none; b=gZ8eeY+TvHGJoJr69fwijbhjktjdMdcolNclD5b73DgbZ9cxLIY7H8IPaBV5JLLRuL2LMm7JNzOr4b1bUum59C6fHNyEJVcCBtYAaCu6REl2xVDAYvxygcXlDNMrNLi/h40DEQy6HGvH6QKG0jDNE7TmqjESYhydaZzJ5fWZqFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752714163; c=relaxed/simple;
-	bh=sJSiva4PddwBfMrwPmzSlfDqTFsy8rGG5TDmnFbMTuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZifCUDrOk7P+Cpxyel49fx6rB1YC5VF7+jNuV8n24DBcmVe2HZyDYQzP6fmvq5HxX7XiCSyFNNe4JHawstOocjkFMpHbz6moroA5Sq+o+hjK0KDe0cw10D4+wHjardEPEgfPyyvRTHTY4ymM9xJM57/etlZYqkLv50yZyzyVm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b96c6fb262a911f0b29709d653e92f7d-20250717
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:25a5aa73-3931-4967-b5cc-1afc07364d3c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:caa636b440508cb56c703d406c2f988f,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b96c6fb262a911f0b29709d653e92f7d-20250717
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 685857645; Thu, 17 Jul 2025 09:02:34 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 9B23EE008FA3;
-	Thu, 17 Jul 2025 09:02:34 +0800 (CST)
-X-ns-mid: postfix-68784BAA-51963666
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id BA957E008FA2;
-	Thu, 17 Jul 2025 09:02:32 +0800 (CST)
-Message-ID: <a664f801-7faf-4a9f-b4b8-365afe0c6f5d@kylinos.cn>
-Date: Thu, 17 Jul 2025 09:02:32 +0800
+	s=arc-20240116; t=1752714231; c=relaxed/simple;
+	bh=r7KBEe/U1rHOla01d//g2fAxzBm5HnT8XVj9/Cuyqu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ITU0RmXZ4E8FDj8xoDKm+US4SHf+aI8bXPyBnVSlyaDNHLdZgFJYJgg9iOYMtBdBEw0McCwi6xvYCRiOGl+NjwRmwBJ621uOKbqxbF0u7pG4eSGieRMABy55orLP50ad0jlyQJw4a/gdIFMvMbh7CM9GUxCf92areWPaZP4YW5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AlAflna8; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-455ecacfc32so1493875e9.3;
+        Wed, 16 Jul 2025 18:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752714227; x=1753319027; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sscvi53gVDM4UOp6lMcVQ4uaKrceVNglNU+jEsJsRcY=;
+        b=AlAflna8anXBKT8lyhW8NZvStjTKwNNM+O0ZoRqufOk3VKIXScYI0o5agB+PQ17Vpl
+         kdQlzI8HLdm3qztpBuGAcObf2dtOiiPlB2D5OpSrCFT3426Y6Q3p8kCLzvKKxsUuj4xa
+         A/aaa9moKFS2aYW+yvg4K1aozD6Pc9nZfxLFQ4xm+AuE772e2STfScCKwBfvWAa8gxcj
+         otaBoASL36GsFpuYNw9Cf8W6jvLGq4gj8qRvLEXTlbgvgJddRy94zJCwgAoD5N7J4A//
+         K5WXGFRP2+M01vZ56cWyYWa1B6UcvrgMu3eOIX+6O5QTgQlRxQDp3uTn+MLa9BkymjTX
+         82JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752714227; x=1753319027;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sscvi53gVDM4UOp6lMcVQ4uaKrceVNglNU+jEsJsRcY=;
+        b=RKHUy0xstSsTzYdeU3hvHCnw/K6PiBv/r6pWr7jDUvYopntnJhbk91fdmC3Co4d5dD
+         b22UdrFQORFarpsS8GTLv09kaqW+K9VdI7qxviB+3v7wirf4IFvmHJKRpiPkQdmbYNs5
+         uQmmEqmssHaFiJu2WfqFfNaR8WX6RpQp7Q1KUFDX/jhNnBwe9pYWXa6735Ib+Xe96rDL
+         NmebwRb2SF9OIs74fGaLo9DvLHqiGi43Xl+TOsnaDaAP17ciH0GtNpw84dC4w4ZNBcHy
+         Xk0fGmmB7OyXorlgyJOA4YXkoopzI7JupsSR/GALDk4KKJqAffnfsJmrBBySEuqcHLnV
+         TXpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFydB4JideFUpb4iYu1Ivlnpnih3eb8ixj8fugDqM1eQXOXktrGuDAIht9v+xcI8ufifQ6hQLTZos=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP1ctIaseRITBuHfNH1mOdfxrhD17UDlp+KKAiB3v+WSctbENQ
+	x5nnmI3xXQHzjhJGhB0ultAMPtctxxMg2Jkb9HC9zNg6/rjZiSSAJThv
+X-Gm-Gg: ASbGncvgGWXTDEXtmBPGS340RSuMzahNBm/UL7of2hcefckD2yu7350u+E2GmUFd+Iq
+	48WGw/4Ex4l9qtyfW/R7jUwkt/FoPQ3CKtQ8sDCUVogxP5aHhz+lLs347OFDGRq5oKuO9qeNRY1
+	VSt596LzHrbTYGoirCA20LxQdua4hVX2kQWQfJ/jg8iGBlsERpgXt7JdS6Hq5yitU767XsiC3X7
+	/CTC720tAdaoF88Ya+96Zsb5sys/pUU+HHElbh0WsMOIrINOy3qfgZRMm1mK3Pcsqpd15jUj6DK
+	gB/MiiOAIrSkenVJDq900jMDha8RayNlCq+LoHu68GM+A02xUUs3JlpbGY2Qr8UCaQtqTCTPn68
+	lWapXwOwlu7IeYiRpFHTEWw==
+X-Google-Smtp-Source: AGHT+IFOgLZETh8Ec/9h9BgSa32GB4DdT5xGpUYmcL3HY81MNy2vA3E521MJaU8PzthhUPDX8qDx+A==
+X-Received: by 2002:a05:6000:400e:b0:3a4:f7ae:77e8 with SMTP id ffacd0b85a97d-3b60dd6a91cmr4297940f8f.15.1752714227303;
+        Wed, 16 Jul 2025 18:03:47 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e269a0sm19070592f8f.86.2025.07.16.18.03.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 18:03:46 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 85079420A818; Thu, 17 Jul 2025 08:03:41 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux IOMMU <iommu@lists.linux.dev>
+Cc: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Ashish Kalra <Ashish.Kalra@amd.com>,
+	=?UTF-8?q?J=C3=B6rg=20R=C3=B6del?= <joro@8bytes.org>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] iommu/amd: Wrap debugfs ABI testing symbols snippets in literal code blocks
+Date: Thu, 17 Jul 2025 08:03:31 +0700
+Message-ID: <20250717010331.8941-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/1] PM / Freezer: Skip zombie/dead processes to reduce
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
- len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250716062639.1528066-1-zhangzihuan@kylinos.cn>
- <CAJZ5v0goQ0DcsWAqn__E7CG=YcNAzdxo9bb-21q50V2H5CJ+xA@mail.gmail.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <CAJZ5v0goQ0DcsWAqn__E7CG=YcNAzdxo9bb-21q50V2H5CJ+xA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6987; i=bagasdotme@gmail.com; h=from:subject; bh=r7KBEe/U1rHOla01d//g2fAxzBm5HnT8XVj9/Cuyqu8=; b=kA0DAAoW9rmJSVVRTqMByyZiAGh4SciiGSIRre2rNT1nmAv1l5NSQWz9aASgtyY9q/mCAYTqt 4h1BAAWCgAdFiEEkmEOgsu6MhTQh61B9rmJSVVRTqMFAmh4ScgACgkQ9rmJSVVRTqMe+wD/c3ep 8NeeT5p0fbdqd1ZGfdaNFgpyFwSvxjGWhSwueuwA/iinJIJLLzIwBLecFt/9F+PdVvVNsjn+7Vm BUFMVxCgL
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-HI=C2=A0Rafael,
+Commit 39215bb3b0d929 ("iommu/amd: Add documentation for AMD IOMMU
+debugfs support") documents debugfs ABI symbols for AMD IOMMU, but
+forgets to wrap examples snippets and their output in literal code
+blocks, hence Sphinx reports indentation warnings:
 
-=E5=9C=A8 2025/7/16 20:26, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> Hi,
->
-> On Wed, Jul 16, 2025 at 8:26=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylin=
-os.cn> wrote:
->> Hi all,
->>
->> This patch series improves the performance of the process freezer by
->> skipping zombie tasks during freezing.
->>
->> In the suspend and hibernation paths, the freezer traverses all tasks
->> and attempts to freeze them. However, zombie tasks (EXIT_ZOMBIE with
->> PF_EXITING) are already dead =E2=80=94 they are not schedulable and ca=
-nnot enter
->> the refrigerator. Attempting to freeze such tasks is redundant and
->> unnecessarily increases freezing time.
->>
->> In particular, on systems under fork storm conditions (e.g., many
->> short-lived processes quickly becoming zombies), the number of zombie =
-tasks
->> can spike into the thousands or more. We observed that this causes the
->> freezer loop to waste significant time processing tasks that are guara=
-nteed
->> to not need freezing.
-> I think that the discussion with Peter regarding this has not been conc=
-luded.
->
-> I thought that there was an alternative patch proposed during that
-> discussion.  If I'm not mistaken about this, what happened to that
-> patch?
->
-> Thanks!
->
+Documentation/ABI/testing/debugfs-amd-iommu:31: ERROR: Unexpected indentation. [docutils]
+Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+Documentation/ABI/testing/debugfs-amd-iommu:31: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
 
-Currently, the general consensus from the discussion is that skipping=20
-zombie or dead tasks can help reduce locking overhead during freezing.=20
-The remaining question is how best to implement that.
+Wrap them to fix the warnings.
 
-Peter suggested skipping all tasks with PF_NOFREEZE, which would make=20
-the logic more general and cover all cases. However, as Oleg pointed=20
-out, the current implementation based on PF_NOFREEZE might be problematic=
-.
+Fixes: 39215bb3b0d9 ("iommu/amd: Add documentation for AMD IOMMU debugfs support")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/linux-next/20250716204207.73869849@canb.auug.org.au/
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/ABI/testing/debugfs-amd-iommu | 125 +++++++++++---------
+ 1 file changed, 71 insertions(+), 54 deletions(-)
 
-My current thought is that exit_state already reliably covers all=20
-exiting user processes, and it=E2=80=99s a good fit for skipping user-spa=
-ce=20
-tasks. For the kernel side, we may safely skip a few kernel threads like=20
-kthreadd that set PF_NOFREEZE and never change it =E2=80=94 we can consid=
-er=20
-refining this further in the future.
+diff --git a/Documentation/ABI/testing/debugfs-amd-iommu b/Documentation/ABI/testing/debugfs-amd-iommu
+index c14b1620aec171..5621a66aa6936a 100644
+--- a/Documentation/ABI/testing/debugfs-amd-iommu
++++ b/Documentation/ABI/testing/debugfs-amd-iommu
+@@ -6,12 +6,14 @@ Description:
+ 		MMIO register offset for iommu<x>, and the file outputs the corresponding
+ 		MMIO register value of iommu<x>
+ 
+-		Example:
+-		$ echo "0x18" > /sys/kernel/debug/iommu/amd/iommu00/mmio
+-		$ cat /sys/kernel/debug/iommu/amd/iommu00/mmio
++		Example::
+ 
+-		Output:
+-		Offset:0x18 Value:0x000c22000003f48d
++		  $ echo "0x18" > /sys/kernel/debug/iommu/amd/iommu00/mmio
++		  $ cat /sys/kernel/debug/iommu/amd/iommu00/mmio
++
++		Output::
++
++		  Offset:0x18 Value:0x000c22000003f48d
+ 
+ What:		/sys/kernel/debug/iommu/amd/iommu<x>/capability
+ Date:		January 2025
+@@ -21,12 +23,14 @@ Description:
+ 		capability register offset for iommu<x>, and the file outputs the
+ 		corresponding capability register value of iommu<x>.
+ 
+-		Example:
+-		$ echo "0x10" > /sys/kernel/debug/iommu/amd/iommu00/capability
+-		$ cat /sys/kernel/debug/iommu/amd/iommu00/capability
++		Example::
+ 
+-		Output:
+-		Offset:0x10 Value:0x00203040
++		  $ echo "0x10" > /sys/kernel/debug/iommu/amd/iommu00/capability
++		  $ cat /sys/kernel/debug/iommu/amd/iommu00/capability
++
++		Output::
++
++		  Offset:0x10 Value:0x00203040
+ 
+ What:		/sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
+ Date:		January 2025
+@@ -35,24 +39,26 @@ Description:
+ 		This file is a read-only output file containing iommu<x> command
+ 		buffer entries.
+ 
+-		Examples:
+-		$ cat /sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
++		Examples::
+ 
+-		Output:
+-		CMD Buffer Head Offset:339 Tail Offset:339
+-		  0: 00835001 10000001 00003c00 00000000
+-		  1: 00000000 30000005 fffff003 7fffffff
+-		  2: 00835001 10000001 00003c01 00000000
+-		  3: 00000000 30000005 fffff003 7fffffff
+-		  4: 00835001 10000001 00003c02 00000000
+-		  5: 00000000 30000005 fffff003 7fffffff
+-		  6: 00835001 10000001 00003c03 00000000
+-		  7: 00000000 30000005 fffff003 7fffffff
+-		  8: 00835001 10000001 00003c04 00000000
+-		  9: 00000000 30000005 fffff003 7fffffff
+-		 10: 00835001 10000001 00003c05 00000000
+-		 11: 00000000 30000005 fffff003 7fffffff
+-		[...]
++		  $ cat /sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
++
++		Output::
++
++		  CMD Buffer Head Offset:339 Tail Offset:339
++		    0: 00835001 10000001 00003c00 00000000
++		    1: 00000000 30000005 fffff003 7fffffff
++		    2: 00835001 10000001 00003c01 00000000
++		    3: 00000000 30000005 fffff003 7fffffff
++		    4: 00835001 10000001 00003c02 00000000
++		    5: 00000000 30000005 fffff003 7fffffff
++		    6: 00835001 10000001 00003c03 00000000
++		    7: 00000000 30000005 fffff003 7fffffff
++		    8: 00835001 10000001 00003c04 00000000
++		    9: 00000000 30000005 fffff003 7fffffff
++		   10: 00835001 10000001 00003c05 00000000
++		   11: 00000000 30000005 fffff003 7fffffff
++		  [...]
+ 
+ What:		/sys/kernel/debug/iommu/amd/devid
+ Date:		January 2025
+@@ -63,19 +69,26 @@ Description:
+ 		interrupt remapping table and device table.
+ 
+ 		Example:
+-		1.
+-		$ echo 0000:01:00.0 > /sys/kernel/debug/iommu/amd/devid
+-		$ cat /sys/kernel/debug/iommu/amd/devid
+ 
+-		Output:
+-		0000:01:00.0
++		1.
++		  ::
++
++		    $ echo 0000:01:00.0 > /sys/kernel/debug/iommu/amd/devid
++		    $ cat /sys/kernel/debug/iommu/amd/devid
++
++		  Output::
++
++		    0000:01:00.0
+ 
+ 		2.
+-		$ echo 01:00.0 > /sys/kernel/debug/iommu/amd/devid
+-		$ cat /sys/kernel/debug/iommu/amd/devid
++		  ::
+ 
+-		Output:
+-		0000:01:00.0
++		    $ echo 01:00.0 > /sys/kernel/debug/iommu/amd/devid
++		    $ cat /sys/kernel/debug/iommu/amd/devid
++
++		  Output::
++
++		    0000:01:00.0
+ 
+ What:		/sys/kernel/debug/iommu/amd/devtbl
+ Date:		January 2025
+@@ -84,12 +97,14 @@ Description:
+ 		This file is a read-only output file containing the device table entry
+ 		for the device ID provided in /sys/kernel/debug/iommu/amd/devid.
+ 
+-		Example:
+-		$ cat /sys/kernel/debug/iommu/amd/devtbl
++		Example::
+ 
+-		Output:
+-		DeviceId             QWORD[3]         QWORD[2]         QWORD[1]         QWORD[0] iommu
+-		0000:01:00.0 0000000000000000 20000001373b8013 0000000000000038 6000000114d7b603 iommu3
++		  $ cat /sys/kernel/debug/iommu/amd/devtbl
++
++		Output::
++
++		  DeviceId             QWORD[3]         QWORD[2]         QWORD[1]         QWORD[0] iommu
++		  0000:01:00.0 0000000000000000 20000001373b8013 0000000000000038 6000000114d7b603 iommu3
+ 
+ What:		/sys/kernel/debug/iommu/amd/irqtbl
+ Date:		January 2025
+@@ -98,17 +113,19 @@ Description:
+ 		This file is a read-only output file containing valid IRT table entries
+ 		for the device ID provided in /sys/kernel/debug/iommu/amd/devid.
+ 
+-		Example:
+-		$ cat /sys/kernel/debug/iommu/amd/irqtbl
++		Example::
+ 
+-		Output:
+-		DeviceId 0000:01:00.0
+-		IRT[0000] 0000000000000020 0000000000000241
+-		IRT[0001] 0000000000000020 0000000000000841
+-		IRT[0002] 0000000000000020 0000000000002041
+-		IRT[0003] 0000000000000020 0000000000008041
+-		IRT[0004] 0000000000000020 0000000000020041
+-		IRT[0005] 0000000000000020 0000000000080041
+-		IRT[0006] 0000000000000020 0000000000200041
+-		IRT[0007] 0000000000000020 0000000000800041
+-		[...]
++		  $ cat /sys/kernel/debug/iommu/amd/irqtbl
++
++		Output::
++
++		  DeviceId 0000:01:00.0
++		  IRT[0000] 0000000000000020 0000000000000241
++		  IRT[0001] 0000000000000020 0000000000000841
++		  IRT[0002] 0000000000000020 0000000000002041
++		  IRT[0003] 0000000000000020 0000000000008041
++		  IRT[0004] 0000000000000020 0000000000020041
++		  IRT[0005] 0000000000000020 0000000000080041
++		  IRT[0006] 0000000000000020 0000000000200041
++		  IRT[0007] 0000000000000020 0000000000800041
++		  [...]
 
+base-commit: 4ba382d42e2dd8294311fd4ee1ad446c8e5585aa
+-- 
+An old man doll... just what I always wanted! - Clara
 
->> Testing and Results
->>
->> Platform:
->> - Architecture: x86_64
->> - CPU: ZHAOXIN KaiXian KX-7000
->> - RAM: 16 GB
->> - Kernel: v6.6.93
->>
->> result without the patch:
->> dmesg | grep elap
->> [  219.608992] Freezing user space processes completed (elapsed 0.010 =
-seconds)
->> [  219.617355] Freezing remaining freezable tasks completed (elapsed 0=
-.008 seconds)
->> [  228.029119] Freezing user space processes completed (elapsed 0.013 =
-seconds)
->> [  228.040672] Freezing remaining freezable tasks completed (elapsed 0=
-.011 seconds)
->> [  236.879065] Freezing user space processes completed (elapsed 0.020 =
-seconds)
->> [  236.897976] Freezing remaining freezable tasks completed (elapsed 0=
-.018 seconds)
->> [  246.276679] Freezing user space processes completed (elapsed 0.026 =
-seconds)
->> [  246.298636] Freezing remaining freezable tasks completed (elapsed 0=
-.021 seconds)
->> [  256.221504] Freezing user space processes completed (elapsed 0.030 =
-seconds)
->> [  256.248955] Freezing remaining freezable tasks completed (elapsed 0=
-.027 seconds)
->> [  266.674987] Freezing user space processes completed (elapsed 0.040 =
-seconds)
->> [  266.709811] Freezing remaining freezable tasks completed (elapsed 0=
-.034 seconds)
->> [  277.701679] Freezing user space processes completed (elapsed 0.046 =
-seconds)
->> [  277.742048] Freezing remaining freezable tasks completed (elapsed 0=
-.040 seconds)
->> [  289.246611] Freezing user space processes completed (elapsed 0.046 =
-seconds)
->> [  289.290753] Freezing remaining freezable tasks completed (elapsed 0=
-.044 seconds)
->> [  301.516854] Freezing user space processes completed (elapsed 0.041 =
-seconds)
->> [  301.576287] Freezing remaining freezable tasks completed (elapsed 0=
-.059 seconds)
->> [  314.422499] Freezing user space processes completed (elapsed 0.043 =
-seconds)
->> [  314.465804] Freezing remaining freezable tasks completed (elapsed 0=
-.043 seconds)
->>
->> result with the patch:
->> dmesg | grep elap
->> [   54.161674] Freezing user space processes completed (elapsed 0.007 =
-seconds)
->> [   54.171536] Freezing remaining freezable tasks completed (elapsed 0=
-.009 seconds)
->> [   62.556462] Freezing user space processes completed (elapsed 0.006 =
-seconds)
->> [   62.566496] Freezing remaining freezable tasks completed (elapsed 0=
-.010 seconds)
->> [   71.395421] Freezing user space processes completed (elapsed 0.009 =
-seconds)
->> [   71.402820] Freezing remaining freezable tasks completed (elapsed 0=
-.007 seconds)
->> [   80.785463] Freezing user space processes completed (elapsed 0.010 =
-seconds)
->> [   80.793914] Freezing remaining freezable tasks completed (elapsed 0=
-.008 seconds)
->> [   90.962659] Freezing user space processes completed (elapsed 0.012 =
-seconds)
->> [   90.973519] Freezing remaining freezable tasks completed (elapsed 0=
-.010 seconds)
->> [  101.435638] Freezing user space processes completed (elapsed 0.013 =
-seconds)
->> [  101.449023] Freezing remaining freezable tasks completed (elapsed 0=
-.013 seconds)
->> [  112.669786] Freezing user space processes completed (elapsed 0.015 =
-seconds)
->> [  112.683540] Freezing remaining freezable tasks completed (elapsed 0=
-.013 seconds)
->> [  124.585681] Freezing user space processes completed (elapsed 0.017 =
-seconds)
->> [  124.599553] Freezing remaining freezable tasks completed (elapsed 0=
-.013 seconds)
->> [  136.826635] Freezing user space processes completed (elapsed 0.016 =
-seconds)
->> [  136.841840] Freezing remaining freezable tasks completed (elapsed 0=
-.015 seconds)
->> [  149.686575] Freezing user space processes completed (elapsed 0.016 =
-seconds)
->> [  149.701549] Freezing remaining freezable tasks completed (elapsed 0=
-.014 seconds)
->>
->> Here is the user-space fork storm simulator used for testing:
->>
->> ```c
->> // create_zombie.c
->>
->> void usage(const char *prog) {
->>      fprintf(stderr, "Usage: %s <number_of_zombies>\n", prog);
->>      exit(EXIT_FAILURE);
->> }
->>
->> int main(int argc, char *argv[]) {
->>      if (argc !=3D 2) {
->>          usage(argv[0]);
->>      }
->>
->>      long num_zombies =3D strtol(argv[1], NULL, 10);
->>      if (num_zombies <=3D 0 || num_zombies > 1000000) {
->>          fprintf(stderr, "Invalid number of zombies: %ld\n", num_zombi=
-es);
->>          exit(EXIT_FAILURE);
->>      }
->>
->>      printf("Creating %ld zombie processes...\n", num_zombies);
->>
->>      for (long i =3D 0; i < num_zombies; i++) {
->>          pid_t pid =3D fork();
->>          if (pid < 0) {
->>              perror("fork failed");
->>              exit(EXIT_FAILURE);
->>          } else if (pid =3D=3D 0) {
->>              // Child exits immediately
->>              exit(0);
->>          }
->>          // Parent does NOT wait, leaving zombie
->>      }
->>
->>      printf("All child processes created. Sleeping for 60 seconds...\n=
-");
->>      sleep(60);
->>
->>      printf("Parent exiting, zombies will be reaped by init.\n");
->>      return 0;
->> }
->> ```
->>
->> And we used a shell loop to suspend repeatedly:
->>
->> ```bash
->> LOOPS=3D10
->>
->> echo none > /sys/power/pm_test
->> echo 5 > /sys/module/suspend/parameters/pm_test_delay
->> for ((i=3D1; i<=3DLOOPS; i++)); do
->> echo "=3D=3D=3D=3D=3D Test round $i/$LOOPS =3D=3D=3D=3D=3D"
->> ./create_zombie $((i * 3000)) &
->> sleep 5
->> echo mem > /sys/power/state
->>
->> pkill create_zombie
->> echo "Round $i complete. Waiting 5s..."
->> sleep 5
->>
->> done
->> echo "=3D=3D=3D=3D All $LOOPS rounds complete =3D=3D=3D=3D"
->> ```
->>
->> Zihuan Zhang (1):
->>    PM / Freezer: Skip zombie/dead processes to reduce freeze latency
->>
->>   kernel/power/process.c | 2 +-
->>   1 file changed, 9 insertion(+), 1 deletion(-)
->>
->> --
->> 2.25.1
->>
 
