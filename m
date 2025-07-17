@@ -1,167 +1,124 @@
-Return-Path: <linux-kernel+bounces-735629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99332B091E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:31:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0863DB091E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7176B4A1180
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25CFD1C46A4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04C42FCE0F;
-	Thu, 17 Jul 2025 16:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3D32FCE29;
+	Thu, 17 Jul 2025 16:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EB/yJJZw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMJlWvv2"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2412FBFE9;
-	Thu, 17 Jul 2025 16:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211F92FCE05;
+	Thu, 17 Jul 2025 16:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769745; cv=none; b=vBzkwW1+k6SfIiPhyv434Dob5wQ9ac0HjELSFCzDBUxHw1vJzNAeVK1FDJ0/Z8Q7cBuPnIx4OuifksZ3D0c8RFNHhnzSCcyLURW4fn76Z+BxOpU61b9NE/egTiaHq0rdEtP+mm2ErhqGJqfx4cChemm03Mcbk+4attnKr84zCHM=
+	t=1752769793; cv=none; b=eFhr9KXLnvNaswpq8KwTYGvZX+Lh/6xqYBnLRN7FP8ED0YqMuPxHpAqr8QWG9bQRgjlljUteJgjX2WHlCFugseTgQyEf0R6ylcz2mQuj6sKgdaud04eRRpL/Q96IO/JbNWufzTlqlUb47vSA3xtBRKaYDtrcG7rVJ3xiBgJliJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769745; c=relaxed/simple;
-	bh=aZF1ATdJMr1PS2dVQ/dXpHcgfoJwBOuwhpzYqVEDeUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=umUSQdHOGofJHYtWYblQeFp1fPEzwMCV0nPIrmQ8yEm2zWnsjGfhxLgsTy3uQKJHG5nSeCPSyu/SXUMIft0gfMVnf8DazPBAC+oC0//ItS0CXlgaduF0hjTCgGH+rcrNVMydQ4pgTG6lR9FWeCPY97yUObQa4vde1LlwBbALXA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EB/yJJZw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1AFC4CEE3;
-	Thu, 17 Jul 2025 16:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752769744;
-	bh=aZF1ATdJMr1PS2dVQ/dXpHcgfoJwBOuwhpzYqVEDeUM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EB/yJJZwqhIqCgtStaaxbPgeBRQD37uzZp7GLCrsDl8s7ls7XmitVZEHCqgaoEkXy
-	 saLqu4WZbTv9px/HdgbpWCbuL/F6+i6I7WRaPkL/rIK549r7Eik2+8GGHQrj2AjE2F
-	 Y+x/hWjMVRZGdcL9USOZoI1CpIK9jYYmImGgvbdeNKQERYSKa98VRyHZXHvMn5ZMKV
-	 5XLOklLRHV5tj0ze3eMxw66KX9E9Fk0O1nwG2qhzfWw93LglxoQXOTRcJxB9F+z/zb
-	 YtYIwbk5SiAWoi7bi4KjkIZPd7OR+3WH2nXCXD/c9SlEQzLX9iRmwOk4rBRZliM+v7
-	 B8MtHr3gpusrw==
-Message-ID: <8a4d8f82-dd9b-41bb-b883-231a78cdc1e1@kernel.org>
-Date: Thu, 17 Jul 2025 11:29:03 -0500
+	s=arc-20240116; t=1752769793; c=relaxed/simple;
+	bh=APhv1ohooqunwbt1ilpE0uWE0XDIAzeQB7Zkt/Wf6RA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=B6VNbOU/Az03CU/g7ut/SRfVqjw4s3TcwdepbZhrE0wrDvLUfhjvrw4bzPzkAydhB5+phFUpHUz8I0HnwREBbcHamB0+BVn7zXUeJglvHo6BRfNg5opsShNgpcfGFFCParYuRzNEUCt1A1UP9Shbr8SKPXnmkAVP6FG5uxlUwdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMJlWvv2; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-611f48c6e30so570618eaf.0;
+        Thu, 17 Jul 2025 09:29:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752769791; x=1753374591; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Ua9f7sAcXdU92kQoep+0V7OjMGT5TY4UeJF4Gmds1o=;
+        b=kMJlWvv2btEp3SgfooktxVLSnam90nLPx0WiPrO4ONa3fOQOC9X3QeCiQPqKHX/eh0
+         ftCSwe7u/O5SstdFdRTHklHaaz5xgGBRHIFU0Sq2tb5JiRea/9Phq38xtyo2BQ34NsIm
+         GZz7E32DuZicTTPS3zZGQypvxjHdKVCKmLGrpYx1hI0nsCYAnD7LFXCIMgN5tNVSGbWg
+         hyqBqGXY9dMzXzUxVdDd+L2+7VeBz5y868BLV6ZE6yUpRVFXgZVFh3sDi84wFjUB2QE7
+         2g2mgStvKBKFscm6YiTHITTzjtM5saEzcuR1MSjFe8eL8qvJsP0ppHZcAybFw7ciI5IB
+         LrqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752769791; x=1753374591;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4Ua9f7sAcXdU92kQoep+0V7OjMGT5TY4UeJF4Gmds1o=;
+        b=JwPyFLP7n8YFfGPU2RMe8y/0Q9kYoCXQtoPnQOqJwt0LwSytBh/fagtRJ1sEyWbT5j
+         pB/noO6Nuwu/KlF+iNgnsz/j4wLonTaSrFjoIbK6eUXRRMCxZz/Q8a2D0+2V1hLB7W38
+         R94168NmCNhboB6LjxknAydtBDSCwKEmO8AsilM3OdJyz8xA+FvgVXcjxzzjJgMHDMbf
+         VJT9BJ2s+qTDoljZM5+9PfH8NlsTVdOoe/Nojr5JXIrtzLKKcIu55Ybq6iC1SS2SbDZV
+         tC0HOJ0leVISddXN10FJbwjB7b/sQYlaFoC/eAYZygZ/jma/I7opOEFe/jkfvxc9o/iC
+         4SiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4W43RR+m6D0N/etgY0IBjQTsOLfXHq8vWVJnBmip5xSwXKpD+reGZZRok8UY7kgYJLR4R0mWZq8NWbb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEfmg39G6CMWkDczkqLnjI/D5kL1j+W1c0fACGmxaHbPz/5q7o
+	7/PqBTfLfum+/X6V2wdvL5nhtob/8KafvN4zivPB5L6mOhuLTSOvyC+JOG6PyZOY
+X-Gm-Gg: ASbGnctOTpMP80b40wp3W+760dBIcy840CJl/w5fFrqzdURXo5jFg53a0qhK3wO1Elq
+	Bk4+qSX+RqPkpmpQBRvXf7Tb/hmIiKrcEGSzk9HKkCkhBPMwHEpJB3didHhxgatHG4nGG+RZX+z
+	6fMd0wUirz6TuphDHupHrk978kivxXsjtofTt/ZOE7ZYd770nIqp+4HPBoJMFzzCbXOP9nXLNhT
+	WD8Cx+3xJeUCKGY0Nq3vczvQqYsmE/p937qmngLhHWbc6USixo3ke8DQROeN6UmWRLFGIoQ573q
+	3cbIpGRYDCrTKwWXXfwYdQk030JvYZjJ4tEIfVTXg1FZqm4i2ezgDW1prQIr4WATAd2Ufe3giAg
+	nZLBNAGq2LOwUv0Pm1b0xcja6ctkTBm0usrjNq6C1N4w/lBdTw0ld
+X-Google-Smtp-Source: AGHT+IG6usb5+O6R8me7aVnWKbhvkdAP83e12EMhLiK/66uff/hRzZY/MEYTTNwywqlNiwHTFybaiQ==
+X-Received: by 2002:a05:6820:518c:b0:615:83d3:7269 with SMTP id 006d021491bc7-615ada1031amr1530004eaf.8.1752769790899;
+        Thu, 17 Jul 2025 09:29:50 -0700 (PDT)
+Received: from localhost.localdomain ([181.161.11.224])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-613d9f122edsm2870462eaf.27.2025.07.17.09.29.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 09:29:50 -0700 (PDT)
+From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: Add patch-validator to dev-tools
+Date: Thu, 17 Jul 2025 12:29:48 -0400
+Message-Id: <20250717162948.23078-1-ignacio.pena87@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <87wmjy92r6.fsf@trenco.lwn.net>
+References: <87wmjy92r6.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] PCI/sysfs: Expose PCIe device serial number
-To: Matthew Wood <thepacketgeek@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250717162240.512045-1-thepacketgeek@gmail.com>
- <20250717162240.512045-2-thepacketgeek@gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250717162240.512045-2-thepacketgeek@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/17/25 11:22 AM, Matthew Wood wrote:
-> Add a single sysfs read-only interface for reading PCIe device serial
-> numbers from userspace in a programmatic way. This device attribute
-> uses the same hexadecimal 1-byte dashed formatting as lspci serial number
-> capability output. If a device doesn't support the serial number
-> capability, the device_serial_number sysfs attribute will not be visible.
+On Thu, Jul 17, 2025 at 09:38:00AM -0600, Jonathan Corbet wrote:
+> Interesting ... overall, we don't generally have detailed documentation
+> for out-of-tree utilities, though there isn't necessarily any reason why
+> we couldn't.  But I'm curious as to why you haven't submitted the tool
+> itself?
 
-You didn't update the commit message here for 'serial_number'.
+That's a great question! I kept it external for a few reasons:
 
-> 
-> Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
+First, I'm still pretty new to kernel development and wanted the freedom
+to iterate quickly as I learn what checks are actually useful. Being 
+external means I can push updates immediately when someone points out
+a new common mistake (like Greg just did with the date check!).
 
-With the commit and below comment fixed you can add this to your next spin.
+Second, I wrote everything in bash for simplicity, which probably isn't
+the best fit for the kernel's scripts/ directory. Plus, as Greg mentioned
+in his reply, many of these checks really belong in checkpatch.pl rather
+than a separate tool.
 
-Reviewed-by: Mario Limonciello <superm1@kernel.org>
+So my plan now is to work on patches for checkpatch.pl to add the most
+useful checks there (where they belong), while keeping the workflow 
+helpers as an external toolkit.
 
-> ---
->   Documentation/ABI/testing/sysfs-bus-pci |  9 +++++++++
->   drivers/pci/pci-sysfs.c                 | 26 ++++++++++++++++++++++---
->   2 files changed, 32 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-> index 69f952fffec7..4da41471cc6b 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-pci
-> +++ b/Documentation/ABI/testing/sysfs-bus-pci
-> @@ -612,3 +612,12 @@ Description:
->   
->   		  # ls doe_features
->   		  0001:01        0001:02        doe_discovery
-> +
-> +What:		/sys/bus/pci/devices/.../serial_number
-> +Date:		July 2025
-IIRC this should be the date that this is first introduced into the 
-kernel.  So if this is 6.17 material it should be October 2025 and if 
-it's 6.18 material it should be December 2025.
+Given this direction, would you prefer I withdraw this documentation 
+patch? I'm happy either way - just thought it might help other newcomers
+in the meantime, but I totally understand if you'd rather wait until
+the checks are properly integrated into checkpatch.pl.
 
-It's getting close to the merge window so I'm not sure right now which 
-Bjorn would prefer.
+Thanks for reviewing this!
 
-I would say make it October 2025 and if it slips it just gets updated 
-for the next spin.
-
-> +Contact:	Matthew Wood <thepacketgeek@gmail.com>
-> +Description:
-> +		This is visible only for PCIe devices that support the serial
-> +		number extended capability. The file is read only and due to
-> +		the possible sensitivity of accessible serial numbers, admin
-> +		only.
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 268c69daa4d5..bc0e0add15d1 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct device *dev,
->   }
->   static DEVICE_ATTR_RO(current_link_width);
->   
-> +static ssize_t serial_number_show(struct device *dev,
-> +				       struct device_attribute *attr, char *buf)
-> +{
-> +	struct pci_dev *pci_dev = to_pci_dev(dev);
-> +	u64 dsn;
-> +
-> +	dsn = pci_get_dsn(pci_dev);
-> +	if (!dsn)
-> +		return -EIO;
-> +
-> +	return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%02llx\n",
-> +		dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >> 32) & 0xff,
-> +		(dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff, dsn & 0xff);
-> +}
-> +static DEVICE_ATTR_ADMIN_RO(serial_number);
-> +
->   static ssize_t secondary_bus_number_show(struct device *dev,
->   					 struct device_attribute *attr,
->   					 char *buf)
-> @@ -660,6 +676,7 @@ static struct attribute *pcie_dev_attrs[] = {
->   	&dev_attr_current_link_width.attr,
->   	&dev_attr_max_link_width.attr,
->   	&dev_attr_max_link_speed.attr,
-> +	&dev_attr_serial_number.attr,
->   	NULL,
->   };
->   
-> @@ -1749,10 +1766,13 @@ static umode_t pcie_dev_attrs_are_visible(struct kobject *kobj,
->   	struct device *dev = kobj_to_dev(kobj);
->   	struct pci_dev *pdev = to_pci_dev(dev);
->   
-> -	if (pci_is_pcie(pdev))
-> -		return a->mode;
-> +	if (!pci_is_pcie(pdev))
-> +		return 0;
->   
-> -	return 0;
-> +	if (a == &dev_attr_serial_number.attr && !pci_get_dsn(pdev))
-> +		return 0;
-> +
-> +	return a->mode;
->   }
->   
->   static const struct attribute_group pci_dev_group = {
-
+Thanks,
+Ignacio
 
