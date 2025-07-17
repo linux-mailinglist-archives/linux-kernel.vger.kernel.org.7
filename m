@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-734553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E045BB0830F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:45:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F7EB08312
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 04:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34E0C7A5972
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:44:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5BB4A7B51
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA9A19F12D;
-	Thu, 17 Jul 2025 02:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A171D63D3;
+	Thu, 17 Jul 2025 02:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UbPzsB4k"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fyOyJrtE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722841B3923
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 02:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E35DDAB;
+	Thu, 17 Jul 2025 02:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752720319; cv=none; b=czv+qRa5lrNocdZdtqSYJZgMvYBkzpAdiGX7y9scrxka/0SQngVv5sduw2e38lMb91N/MZfkRSg2/8vtWhTiwYlUss1FU8SeLhLfR1RHUM+jYdKp8E32V8ror7HxoC7C50J6Qw//WnwHUz/nV9uOjoWRRN+XjGYhe4on9dZhGnw=
+	t=1752720362; cv=none; b=MJBFpRxOH+0XTup70QQRZcPHSEWPgv8xZs21sajXExKwC9Owhwv22BHhAMZQ4Me8fVO7TeMTiMxX7BVQEHOYN8+wVSmEf3n17au1OwF7QzhOMpnANTvYg669MVmUU9lbcqviV7yKR60DbM+d3lrh6Q4MZSMY+XuwMrEL1RgtoNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752720319; c=relaxed/simple;
-	bh=8vnsFQI38H05BDP0pNT1K2EEN6/wHpG+tvQ8xAP0/CI=;
+	s=arc-20240116; t=1752720362; c=relaxed/simple;
+	bh=BB0wtY+2Fl6PBYzke5TpgUfTLuSYSHc4BrZfxz9+gtU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XrMq/XOGFX/Rimtp9MeObnFIdzPEl5FW/V2UtIpoG172CQ8t0edomaxcOwm7JxYLMnP3fneu9TagGV7wdJ9HVHSYOgTm//8VJyeI4k3a5i/6eCPc4YEs65g//VfYO1LnMASevR4uAem0xVT5fVjbpNYAtlJkJsfdHjNUE72TjTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UbPzsB4k; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752720312; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=F9d/4K1zkZPJB2kB2UUc/hygJIY+cwOrg7BW+ay7QlY=;
-	b=UbPzsB4k1zbGfF8w509GKgk8pLkUwMKzqHNYsESZRBk9sZGfSV2UE/BArL6S6brg4rm61VWTMI+gI6UzwbrfH4dnNXPhbqcb1AWk/F6lqgenDIwa/fWTY0Pbz6hEIbfnMrwHvUc8Sb8fTkZpLg6LCuXVeOSGldvfJleiyGoVmO8=
-Received: from 30.221.131.143(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wj6Uh3P_1752720311 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 17 Jul 2025 10:45:12 +0800
-Message-ID: <c46f71ae-f04c-4aa6-99fb-cf8f8e751589@linux.alibaba.com>
-Date: Thu, 17 Jul 2025 10:45:11 +0800
+	 In-Reply-To:Content-Type; b=u6Up8FzcvJzRONcw+tVpszF0ZAIFhMUnrYCWGY2yYEsNQp17ngGqZC41D9s4R0vFRDLlecvxphuV/++z34bOH2VKaTDrCRvjVLp9zTm09gG/DbLzTFtkBXH4FPXbZz2Y3k6OQY3H1RlLbg2YpCe0wiC27mSqag9j7/IWriJiR4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fyOyJrtE; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752720361; x=1784256361;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BB0wtY+2Fl6PBYzke5TpgUfTLuSYSHc4BrZfxz9+gtU=;
+  b=fyOyJrtEQr2w6hrknz1E19GgAJqxbkLoI9Bt/mJxQTODKONNdfzV+EjO
+   iJGL6rzn1P6P0lbzv/lJBLVWW0xkYaOJJOm34KpEeezIfzqFHU1K88IiN
+   Dxw/od1qTaYtTwh0YKXyyJ881DG/0xua8ut9sDRU6mr+EwoBhf3ucmZom
+   nomiOml9C2JWcgVjOnY993cFTvxxQaYkBd24bg54xwCECmysX1FJ8jAI4
+   4oHQrlKNxY9GYY3iTPoRKZ+Rxw64YEl3X5BY95rtVmwI7aCGp2yKP8s6b
+   aPN2V8z6y8Tc0KDTtEFdtgQNukvhlfgCOnrjGaXVfQaxKWhZV1IXgV578
+   Q==;
+X-CSE-ConnectionGUID: j4OzByQ4ReeLLvxPxp0f6g==
+X-CSE-MsgGUID: 8UZ9YMxATKmlbHbPNmENmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="72550003"
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="72550003"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 19:46:00 -0700
+X-CSE-ConnectionGUID: gYy8mbBHTeWU7+saMzP5Lg==
+X-CSE-MsgGUID: rxPAxCcFTY6XkR7QxbYSgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
+   d="scan'208";a="157743433"
+Received: from unknown (HELO [10.238.3.238]) ([10.238.3.238])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 19:45:58 -0700
+Message-ID: <f0281c2f-4ddf-4a0c-81a2-b6de51a4fe82@linux.intel.com>
+Date: Thu, 17 Jul 2025 10:45:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,62 +66,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] erofs: fix build error with
- CONFIG_EROFS_FS_ZIP_ACCEL=y
-To: Bo Liu <liubo03@inspur.com>, xiang@kernel.org, chao@kernel.org
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20250717015848.4804-1-liubo03@inspur.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250717015848.4804-1-liubo03@inspur.com>
+Subject: Re: [PATCH] KVM: TDX: Don't report base TDVMCALLs
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250717022010.677645-1-xiaoyao.li@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250717022010.677645-1-xiaoyao.li@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2025/7/17 09:58, Bo Liu wrote:
-> fix build err:
->   ld.lld: error: undefined symbol: crypto_req_done
->     referenced by decompressor_crypto.c
->         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
->     referenced by decompressor_crypto.c
->         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
-> 
->   ld.lld: error: undefined symbol: crypto_acomp_decompress
->     referenced by decompressor_crypto.c
->         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
-> 
->   ld.lld: error: undefined symbol: crypto_alloc_acomp
->     referenced by decompressor_crypto.c
->         fs/erofs/decompressor_crypto.o:(z_erofs_crypto_enable_engine) in archive vmlinux.a
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202507161032.QholMPtn-lkp@intel.com/
-> Fixes: b4a29efc5146 ("erofs: support DEFLATE decompression by using Intel QAT")
-> Signed-off-by: Bo Liu <liubo03@inspur.com>
-> 
-> v1: https://lore.kernel.org/linux-erofs/7a1dbee70a604583bae5a29f690f4231@inspur.com/T/#t
-> 
-> change since v1:
-> - add Fixes commits
+On 7/17/2025 10:20 AM, Xiaoyao Li wrote:
+> Remove TDVMCALLINFO_GET_QUOTE from user_tdvmcallinfo_1_r11 reported to
+> userspace to align with the direction of the GHCI spec.
+>
+> Recently, concern was raised about a gap in the GHCI spec that left
+> ambiguity in how to expose to the guest that only a subset of GHCI
+> TDVMCalls were supported. During the back and forth on the spec details[0],
+> <GetQuote> was moved from an individually enumerable TDVMCall, to one that
+> is part of the 'base spec', meaning it doesn't have a specific bit in the
+
+'GHCI base API' is more appropriate instead of 'base spec'
+
+> <GetTDVMCallInfo> return values. Although the spec[1] is still in draft
+> form, the GetQoute part has been agreed by the major TDX VMMs.
+GetQoute  ->  <GetQuote>
+
+typo and use <> to align with others.
+
+>
+> Unfortunately the commits that were upstreamed still treat <GetQuote> as
+> individually enumerable. They set bit 0 in the user_tdvmcallinfo_1_r11
+> which is reported to userspace to tell supported optional TDVMCalls,
+> intending to say that <GetQuote> is supported.
+>
+> So stop reporting <GetQute> in user_tdvmcallinfo_1_r11 to align with
+
+GetQute -> GetQuote
+
+> the direction of the spec, and allow some future TDVMCall to use that bit.
+>
+> [0] https://lore.kernel.org/all/aEmuKII8FGU4eQZz@google.com/
+> [1] https://cdrdv2.intel.com/v1/dl/getContent/858626
+>
+> Fixes: 28224ef02b56 ("KVM: TDX: Report supported optional TDVMCALLs in TDX capabilities")
+> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+
+Nits: typos and wording suggested above.
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
 > ---
->   fs/erofs/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-> index 6beeb7063871..60510a041bf1 100644
-> --- a/fs/erofs/Kconfig
-> +++ b/fs/erofs/Kconfig
-> @@ -147,6 +147,7 @@ config EROFS_FS_ZIP_ZSTD
->   config EROFS_FS_ZIP_ACCEL
->   	bool "EROFS hardware decompression support"
->   	depends on EROFS_FS_ZIP
-> +	select CRYPTO
+>   arch/x86/kvm/vmx/tdx.c | 2 --
+>   1 file changed, 2 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index f31ccdeb905b..ea1261ca805f 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -173,7 +173,6 @@ static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char i
+>   	tdx_clear_unsupported_cpuid(entry);
+>   }
+>   
+> -#define TDVMCALLINFO_GET_QUOTE				BIT(0)
+>   #define TDVMCALLINFO_SETUP_EVENT_NOTIFY_INTERRUPT	BIT(1)
+>   
+>   static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
+> @@ -192,7 +191,6 @@ static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
+>   	caps->cpuid.nent = td_conf->num_cpuid_config;
+>   
+>   	caps->user_tdvmcallinfo_1_r11 =
+> -		TDVMCALLINFO_GET_QUOTE |
+>   		TDVMCALLINFO_SETUP_EVENT_NOTIFY_INTERRUPT;
+>   
+>   	for (i = 0; i < td_conf->num_cpuid_config; i++)
 
-After testing, I think we should rely on
-CRYPTO_ACOMP or CRYPTO_ACOMP2 instead.
-
-Otherwise it will still fails.
-
-Thanks,
-Gao Xiang
 
