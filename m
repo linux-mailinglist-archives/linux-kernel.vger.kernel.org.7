@@ -1,143 +1,146 @@
-Return-Path: <linux-kernel+bounces-734739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C1DB08596
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C03B0859A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22B1D582F4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:56:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F64581590
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2151121D5B5;
-	Thu, 17 Jul 2025 06:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6083F218AAB;
+	Thu, 17 Jul 2025 06:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPbFzUnL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGPR5+GT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D71C21B9DA;
-	Thu, 17 Jul 2025 06:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9461D7E5B;
+	Thu, 17 Jul 2025 06:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752735330; cv=none; b=a1iOpc/uWY8eJP3syIQMu1lPHnDxlla39WynJwQH3Y0q7JSEhtKoAmTwWU590TxHBmn28vNG1hZUiy60Nqd91pVtKMjUG21yvTfDzO0qOrxhjWrvkL9BvMY+svKcJLua9hy8WHkrAm3Ba//34GeFCQzkFLQq/S/lu5DMteUOZKc=
+	t=1752735424; cv=none; b=SG4mNOIqIsL4WqNXVIAD/2+vzRZ3AksW2nzAtukzXQf2kxpHYWR7+6mP6UFNTvXvL6+BIIUg7dY1pM8YRh4ty5QKEQm7Un8ffy19NXVUk8Q0zlH+wKTLh2aFx1BEcok4hfpXf49RHCqRfMSOj+Z0cZo8LFdVcLeE58UFl4b77JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752735330; c=relaxed/simple;
-	bh=IhxxHydjIe6EFEU4lYJoRQW2Yd7Xi9kUlDBeEWu4WIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZLAKfNDX2NRAgyv9iCv3YB9kyThVnhVBq8F9CMLU/Thz4UFS5LW4pSk8tLDCb9EtO+BOpcBKAaivWxvUe22pO+6IkSfvFQlEFBvmXkss/Dz/WXm8CAg99mVlLMC8psN+CBHKh7J4lxI/e6Lfu64Wib6Uooot701TId/jTCArvL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPbFzUnL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17374C4CEEB;
-	Thu, 17 Jul 2025 06:55:25 +0000 (UTC)
+	s=arc-20240116; t=1752735424; c=relaxed/simple;
+	bh=7UNIxyfgxpuJvviww/9S/FSs6awv1lrEbpiKGrlQfIo=;
+	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
+	 In-Reply-To; b=XfvyUvTeB+6RDj+LyZxq28EjRatpIdZ49QrjQBdik1iDFMKSAMuTGICQsSLZ1KxklH/0z3+8ldc/yYLSD+5MMpAhD839JU4l/f4zGIknBTDf1oTIJ2hbKwWR27TnkpJKyIgN6gSsDl26PqPxIdTbtYKP3VGoYVtJUfZEFIhGPT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGPR5+GT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB41BC4CEE3;
+	Thu, 17 Jul 2025 06:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752735329;
-	bh=IhxxHydjIe6EFEU4lYJoRQW2Yd7Xi9kUlDBeEWu4WIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mPbFzUnLR2i5DE9Aglw+TF50CYhn3g0/toaxuOkIwWnfG3s6p7FQufUOkDCdQEO5F
-	 +r7AkJ8FC0jgeVUm0afxMPdXtQP7kE9FtlcCvO/pQ8uKJwS1ktR2gPVUkOXGnRd/5e
-	 6jW6N3eKPf7EbvYDjyHoL+KrzC2XQejSYwqgYTLsnISWnPRp/ornKjrL/QB26PwtQM
-	 byWeHQDJ2RRl3DRdj+005ql7Ifhw92DhpcYUDaEPmgPosj46IvYAbs/zRqoVkP+mzE
-	 dMYURQ7ACnS0bxeeez9YrJpMAVUGHRNp3C9t63HZZy3Hm/pOOpnyMImI0b4NSy0NS+
-	 b2t1KDvYgYmUw==
-Date: Thu, 17 Jul 2025 12:25:20 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: "David E. Box" <david.e.box@linux.intel.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, vicamo.yang@canonical.com, 
-	kenny@panix.com, ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, 
-	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/2] PCI/ASPM: Allow controller-defined default link state
-Message-ID: <4xcwba3d4slmz5gfuwypavxqreobnigzyu4vib6powtbibytyp@mmqcns27vlyr>
-References: <20250717004034.2998443-1-david.e.box@linux.intel.com>
+	s=k20201202; t=1752735424;
+	bh=7UNIxyfgxpuJvviww/9S/FSs6awv1lrEbpiKGrlQfIo=;
+	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
+	b=LGPR5+GTb/BQ6QwL6rq/umhI9EbasKfBVpAbuqgSa36ENcO3R2YGSTF07mI1KUTPW
+	 puvKRTk/9ApIeaBeabcbSR34Tfc088hplI1iseH+UlCujENqKajzeY784YeyXtVfRS
+	 FCh1ru2LAnQ4RVO51IxZSPSbYaSOI+JSdl8eJ+lMB8CDmLjlUW62eKIZyKIxtRGgR+
+	 2nqNQ7cu2g8tCHQZmxJv3h60D/y2bbkm9qz3DqXpy7IFqVqTnaQI7lIeCDASfy25U6
+	 BJm1n/WYGeS1aIgb6KJamwa5Dc0PW88eXb7sViBtdRQJolYLg+PVQ24Ysq5G0NbpXZ
+	 lw+XTDM4ayzYw==
+Content-Type: multipart/signed;
+ boundary=b95479761a3121fe8ae2e0878dabae26aaef421d356b40d4b638e9ad269c;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Thu, 17 Jul 2025 08:56:59 +0200
+Message-Id: <DBE4UO2RGAYX.17V1DAF8MQYJM@kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Andrew Davis" <afd@ti.com>, "Frank Binns" <frank.binns@imgtec.com>,
+ "Matt Coster" <matt.coster@imgtec.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Nishanth Menon" <nm@ti.com>, "Vignesh
+ Raghavendra" <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: gpu: img: Add AM62P SoC specific
+ compatible
+Cc: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+X-Mailer: aerc 0.16.0
+References: <20250716134717.4085567-1-mwalle@kernel.org>
+ <20250716134717.4085567-2-mwalle@kernel.org>
+ <d76c0299-a19d-4524-b026-79874fee10ee@ti.com>
+In-Reply-To: <d76c0299-a19d-4524-b026-79874fee10ee@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250717004034.2998443-1-david.e.box@linux.intel.com>
 
-On Wed, Jul 16, 2025 at 05:40:24PM GMT, David E. Box wrote:
-> Hi all,
-> 
-> This RFC series addresses a limitation in the PCIe ASPM subsystem where
-> devices on synthetic PCIe hierarchies, such as those created by Intel’s
-> Volume Management Device (VMD), do not receive default ASPM settings
-> because they are not visible to firmware. As a result, ASPM remains
-> disabled on these devices unless explicitly enabled later by the driver,
-> contrary to platform power-saving expectations.
-> 
-> Problem with Current Behavior
-> 
-> Today, ASPM default policy is set in pcie_aspm_cap_init() based on values
-> provided by BIOS. For devices under VMD, BIOS has no visibility into the
-> hierarchy, and therefore no ASPM defaults are applied. The VMD driver can
-> attempt to walk the bus hierarchy and enable ASPM post-init using runtime
-> mechanisms, but this fails when aspm_disabled is set because the kernel
-> intentionally blocks runtime ASPM changes under ACPI’s FADT_NO_ASPM flag.
-> However, this flag does not apply to VMD, which controls its domain
-> independently of firmware.
-> 
-> Goal
-> 
-> The ideal solution is to allow VMD or any controller driver managing a
-> synthetic hierarchy to provide a default ASPM link state at the same time
-> it's set for BIOS, in pcie_aspm_cap_init().
-> 
+--b95479761a3121fe8ae2e0878dabae26aaef421d356b40d4b638e9ad269c
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-I like the idea and would like to use it to address the similar limitation on
-Qcom SoCs where the BIOS doesn't configure ASPM settings for any devices and
-sometimes there is no BIOS at all (typical for SoCs used in embedded usecases).
-So I was using pci_walk_bus() in the controller driver to enable ASPM for all
-devices, but that obviously has issues with hotplugged devices.
+Hi Andrew,
 
-> Solution
-> 
-> 1. A new bus flag, PCI_BUS_FLAGS_ASPM_DEFAULT_OVERRIDE, based on Rafael's
-> suggestion, to signal that the driver intends to override the default ASPM
-> setting. 2. A new field, aspm_bus_link_state, in 'struct pci_bus' to supply
-> the desired default link state using the existing PCIE_LINK_STATE_XXX
-> bitmask.
-> 
+On Wed Jul 16, 2025 at 6:17 PM CEST, Andrew Davis wrote:
+> On 7/16/25 8:47 AM, Michael Walle wrote:
+> > The AM62P and the J722S features the same BXS-4 GPU as the J721S2. Add =
+a
+> > new SoC specific compatible.
+> >=20
+>
+> If the GPU is the same, and the integration is the same, do you really ne=
+ed
+> a new compatible?
 
-Why would you need to make it the 'bus' specific flag? It is clear that the
-controller driver is providing the default ASPM setting. So pcie_aspm_cap_init()
-should be able to use the value provided by it for all busses.
+AFAIK it's good practise to have one to have a base for future SoC
+specific quirks. For example, there are differences how that IP was
+integrated, i.e. the am62p doesn't have DMA coherency (for this
+peripheral), the clock is dedicated and there might be more.
 
-Like:
+>
+> > Signed-off-by: Michael Walle <mwalle@kernel.org>
+> > ---
+> >   Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 1 +
+> >   1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.ya=
+ml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> > index 4450e2e73b3c..bad3e412a168 100644
+> > --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> > +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> > @@ -23,6 +23,7 @@ properties:
+> >             - const: img,img-rogue
+> >         - items:
+> >             - enum:
+> > +              - ti,am62p-gpu
+>
+> There is a check below based on SoC compat:
+>
+> >  - if:
+> >      properties:
+> >        compatible:
+> >          contains:
+> >            enum:
+> >              - ti,am62-gpu
+> >              - ti,j721s2-gpu
+> >    then:
+> >      properties:
+> >        clocks:
+> >          maxItems: 1
+>
+> If you do add a new SoC specific compatible does this check need updating=
+?
 
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index 2ad1852ac9b2..830496e556af 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -791,6 +791,7 @@ static void aspm_l1ss_init(struct pcie_link_state *link)
- static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
- {
-        struct pci_dev *child = link->downstream, *parent = link->pdev;
-+       struct pci_host_bridge *host = pci_find_host_bridge(parent->bus);
-        u32 parent_lnkcap, child_lnkcap;
-        u16 parent_lnkctl, child_lnkctl;
-        struct pci_bus *linkbus = parent->subordinate;
-@@ -866,8 +867,8 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
-        }
+Thanks! Yes probably.
 
-        /* Save default state */
--       if (parent->bus->bus_flags & PCI_BUS_FLAGS_NO_ASPM_DEFAULT)
--               link->aspm_default = parent->bus->aspm_bus_link_state;
-+       if (host && host->aspm_bus_link_state)
-+               link->aspm_default = host->aspm_bus_link_state;
-        else
-                link->aspm_default = link->aspm_enabled;
+-michael
 
-This avoids the usage of the bus flag (which your series is not at all making
-use of) and allows setting the 'host_bridge::aspm_bus_link_state' easily by the
-controller drivers.
+--b95479761a3121fe8ae2e0878dabae26aaef421d356b40d4b638e9ad269c
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- Mani
+-----BEGIN PGP SIGNATURE-----
 
--- 
-மணிவண்ணன் சதாசிவம்
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaHievBIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/i5owGAm2rEvW9RmbxVokhD0dJUoLHn70z6itL9
+b5tCySRPREmz+X0GKE03SJhXp9kaOms3AYDO/Zxy0UXbuWjjBW92jHZ9S/6Wo2dM
+tpjaLZDW7YArWfJEju57j2GH/KEnPp9KQ3E=
+=VcfS
+-----END PGP SIGNATURE-----
+
+--b95479761a3121fe8ae2e0878dabae26aaef421d356b40d4b638e9ad269c--
 
