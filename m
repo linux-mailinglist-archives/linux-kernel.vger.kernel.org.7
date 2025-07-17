@@ -1,235 +1,168 @@
-Return-Path: <linux-kernel+bounces-735669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF12EB0925C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:58:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57FF4B0922E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CA04E65B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:57:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5118F5A1482
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1864F264623;
-	Thu, 17 Jul 2025 16:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CDD2FD59D;
+	Thu, 17 Jul 2025 16:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BCQ369Ic"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2076.outbound.protection.outlook.com [40.107.94.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HESFgrYk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DDE2FCFFE;
-	Thu, 17 Jul 2025 16:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752771423; cv=fail; b=B7RbqYv8bT7Z3irDS8BRQkkvHYWa3szjxTvacGQ5tLs+c2b1WClwDdWW4UneOobB/hWdFGkK9PwHFdKUJyl8w6lcCU31/32AFtdaKZPEx4CB2IbS5ZuxLa6wUahdGr/h7UnDHIu6avJeU3r+kJTB98c5eKmzeffX0Ggy+Gx9oSI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752771423; c=relaxed/simple;
-	bh=TcauzZKFoW5SZ0rxFAx/+mge3sn95HX2dbPppFhePr0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m14QwV0bB80DQTShzuGd7tVxfnvvN0RVQGizrWxs/pLdqH7zLkML/OHZeOcZc/O8W6M7GtiDB6KdbZfvSSiJ3BDLrtQYbKILDyfkq96pQZgoTURMrLvTGDV1c5trl/Xe8uMD3yXpOe+YV8uJr7Dvl7/v56supDmxreUKeHfqOO8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BCQ369Ic; arc=fail smtp.client-ip=40.107.94.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jLsyr62lLOBiTFqSlamXxtvTZAVdFTZ70j3Yr0n3r3j9HugE9Zjs1QUKahay7+RwjITQngYmhYDXwIO2cABy3i6Jl06v9VUj38wHzVR9SUk+Yx+to0tMBky9Gwb48P73YCiNOHRFdo13811RNOYgENQohAlMuiSjh2l3MtswDsqv6IRhgF7RQMkEBLhT3nnKIYqXJp6A8HUZswycBC+8lB8JvmX9jNiXwr4k4IvlMMucz2t8DFYxNyLeusgbvG0/1QzA8fGK5yKooa5wYyFXA3l+E8gj8bVyfLTwjQ+cngoHvMPZCQvFKO95JmH9apxoFFy3XKch2etXnVKV6wKXKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0GAcveHOCjuRhirAGXqS08nPqh5sMbrHTXwUhjqqPAw=;
- b=a0rYiePrs+eF4gAamloI70uqwsUu0BZJlVYl3Wxb9Oe0jgYEmsMRKuGksAj1qcxL+JBCKCgw3udvM2NIyJXULcRCmaRR5rAx6A3mSBtCgHuWHuqmaZ0LKnAia7eGjcrbIo+rL6YA/dasANVaN6uSYnw369u2C1EVuReltHDvFMCtPc6LZEZADwQuG0cMCX859iHQfvad7eR4ASwV22kRBa9k8uvILHxM7WNOon2v6wss3EWsNGNsa5nJxjT205BctLjarbuwvYzgk8FLfxSR7Q/CIJT4/mMCUrNToYbnN/XpbfRL551ZzrQqVz2AYF2WiYA3mhrF7Jv6BMyFbj+vNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0GAcveHOCjuRhirAGXqS08nPqh5sMbrHTXwUhjqqPAw=;
- b=BCQ369IcYJUHbkBXxA3MBoMZMbAXzXBlmKFWzyjT7CHDTpwKd2Ea5cBHdfrun1HBa0McRYV6Hywf3u/DF+aXQ2OWMcRRzdgxV7/tQJo5r12v58PaESgBpYb1azkgKkTqfrav/uEZ4f1BuMSNq2LvcJ0RJwGQZzk8U/yrYgfXOPc=
-Received: from SA9PR13CA0060.namprd13.prod.outlook.com (2603:10b6:806:22::35)
- by SN7PR12MB8101.namprd12.prod.outlook.com (2603:10b6:806:321::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Thu, 17 Jul
- 2025 16:56:56 +0000
-Received: from SA2PEPF00003AE5.namprd02.prod.outlook.com
- (2603:10b6:806:22:cafe::9e) by SA9PR13CA0060.outlook.office365.com
- (2603:10b6:806:22::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.12 via Frontend Transport; Thu,
- 17 Jul 2025 16:56:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003AE5.mail.protection.outlook.com (10.167.248.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8943.21 via Frontend Transport; Thu, 17 Jul 2025 16:56:56 +0000
-Received: from titanite-d354host.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 17 Jul 2025 11:56:55 -0500
-From: Avadhut Naik <avadhut.naik@amd.com>
-To: <linux-edac@vger.kernel.org>
-CC: <bp@alien8.de>, <yazen.ghannam@amd.com>, <john.allen@amd.com>,
-	<linux-kernel@vger.kernel.org>, <avadhut.naik@amd.com>
-Subject: [PATCH 2/2] EDAC/amd64: Incorporate DRAM Address in EDAC message
-Date: Thu, 17 Jul 2025 16:48:43 +0000
-Message-ID: <20250717165622.1162091-3-avadhut.naik@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250717165622.1162091-1-avadhut.naik@amd.com>
-References: <20250717165622.1162091-1-avadhut.naik@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059C72BCF75;
+	Thu, 17 Jul 2025 16:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752770950; cv=none; b=dj4OvNhh4G8I6k2Vv7SlSLFdV+z3DzNhPmZfCRWo0U+kVmExywmhVSuFiVKq6RqlkvL3fMwJJBBmRMcj75EMxCVImL950UhOtAh3soUEW+c5qrCO2I80s1uJ9EErLbXhV4lar1gFf0Y4TQkCW2NCD+G5rgdIhE+KCDmIdbbIaTo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752770950; c=relaxed/simple;
+	bh=G+81jnB2n+52pQH8N0arE+zlRSHXLPxg43X+u8Imltc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P7JVR1wgfdFI/OIitfWTxJD2Lu1PQTPFJ7wTzMUTbn+ubah3I79Vq2FUPnQKoufQjV+aOjgD27x3wpswE8fepMoWy97rom67TuWLbIUmEnEmNOXgk+n9a86hXjhhlZQN/YOG4KlT0iS8qRzx7YyTFC/dq3I0ycFIQJx0Q1XQL2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HESFgrYk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HC3bXX008498;
+	Thu, 17 Jul 2025 16:49:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5DRlh3V7K77Jb7SrH7bBVIXhRB79rkamE4stYnCWsiU=; b=HESFgrYkTGdVeE5/
+	Sl2RfQ6nzLgJD048f0mKWI0I5R9a9dWD/8lrGE9RiBWGIBRzP2m1k0hR8G2vLCQ/
+	ZYz2roX11PVbxwLEDr+jR6NwhfAz6tPWWoJdPwcZJS+ZNox7Vb97s04ENQ66nhLX
+	Bqu1yvcGP/rrp6ZmCsSjhIA4flAmb/f0xhI9I2rRhKg5kWCm8oRwMqbAY0zkKBFu
+	9h4jL07CmPNRalaN8GuXXvnA0VQ0BJIj3hGiTsa1EV1vwTVwEEC7J7vYNhQhu4ed
+	RXYauH0ZUhb16UyIEo4fr9sEKTd+Bmjm8GF4VNE5THxpiiAMTmpnZYOY0x5Vcbqz
+	gMyndA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufxb8ghk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 16:49:04 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56HGn3Pc012911
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Jul 2025 16:49:03 GMT
+Received: from [10.216.52.220] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 17 Jul
+ 2025 09:48:58 -0700
+Message-ID: <7c833565-0e7b-4004-b691-37bd07ce6abe@quicinc.com>
+Date: Thu, 17 Jul 2025 22:18:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bus: mhi: ep: Fix chained transfer handling in read path
+To: Manivannan Sadhasivam <mani@kernel.org>,
+        Sumit Kumar
+	<quic_sumk@quicinc.com>
+CC: Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_krichai@quicinc.com>,
+        <quic_skananth@quicinc.com>, <quic_vbadigan@quicinc.com>,
+        Sumit Kumar <sumk@qti.qualcomm.com>, <stable@vger.kernel.org>,
+        Akhil Vinod <akhvin@qti.qualcomm.com>
+References: <20250709-chained_transfer-v1-1-2326a4605c9c@quicinc.com>
+ <5aqtqicbtlkrqbiw2ba7kkgwrmsuqx2kjukh2tavfihm5hq5ry@gdeqegayfh77>
+Content-Language: en-US
+From: Akhil Vinod <quic_akhvin@quicinc.com>
+In-Reply-To: <5aqtqicbtlkrqbiw2ba7kkgwrmsuqx2kjukh2tavfihm5hq5ry@gdeqegayfh77>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE5:EE_|SN7PR12MB8101:EE_
-X-MS-Office365-Filtering-Correlation-Id: de46ce48-23b3-42a7-a23d-08ddc552f060
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5/iKRLZbIpWp5BToUbWHof7vJPv2EFnGeoXoMWwL62stBMv9IIBmLt2vZlgG?=
- =?us-ascii?Q?UKXL22Fngtk3LDH/mC0stWb1XuCF2Xg7fNCGinj/ldMwlhEiRECh3WJ39Sq2?=
- =?us-ascii?Q?nljNmg81QA4w6x4ONXLroWngSjAT3PzGlkWML7TRkCz23hNtiCutpzGBq2Pf?=
- =?us-ascii?Q?hBPrZ5tf75gcmxDaw2O9x3IZiF1EKuLJZxgYm9GlwPYknb2Wc8CoKFxfcmYd?=
- =?us-ascii?Q?CP8OWSrzepMAh/58Mx+KpbCHb/hb8wvA4DHqEt8UOmqjt4Pv/iC7IUSiKdJt?=
- =?us-ascii?Q?3eSHPh/Zsa07QNh1P3NpfVTGfMPlTbykLcdzkSDxs505Ekn68QdjLoPY6lCm?=
- =?us-ascii?Q?7CpvtzV4TOYYHsfgjBe+VDkclkbCL0jsYzTI7uXn1F1fZiOUu8r1iZANcAcc?=
- =?us-ascii?Q?n5TDqHMj89VTuhTsaPJBtTSw4JsFp975Hp53royVg87afD2DwclqMv0ArIJY?=
- =?us-ascii?Q?XHb8QmnR/VPBA9+h8FFrxQNSC96hDAEh1WzfVTKP5cUTaJSGnR4tHqrIHxfH?=
- =?us-ascii?Q?UA7my8jUPlK4icrB/1C1jFGrhvvdq20EUbbMk45MjBsaLYOkoxBhZZwWv+kE?=
- =?us-ascii?Q?HCvXenl16KcdBUV+pC+io0saibltcRBBYIRbfoMc9z7xWfBTTo72aPCx51Z2?=
- =?us-ascii?Q?EyQ31/GPvxKEEVyFTwSTEBJUpJLXfYY5QQEiN1DY24HU8q2Ytxggb4Tlt1th?=
- =?us-ascii?Q?NmI2HN40ZMSWJ+OadY4exlSrl4zBi478eTUORJgJc8VbV9unHc/a4mqxelax?=
- =?us-ascii?Q?HGM6HVb661mjklhmRg2LbQBXUoLCBTo/X04hzgeO12zCZpTRhpOiQJU6D4n2?=
- =?us-ascii?Q?MCAP1pxJZqXJ9X3VtmMaRkWrJ3lUF5hXnRztQHnahby+de6Wh0+oGNcBD35I?=
- =?us-ascii?Q?51BGu+Ujlov8ALEtSDF5WB+CUNf1cDWOJhm9VcpoyPfRtV7gZ77wZFkdSmOR?=
- =?us-ascii?Q?CMq8KVayDdI0ksPaVwAMKQ2P1S3fLGGyra9LOCjeUV+RiTyyluWBem1rf15c?=
- =?us-ascii?Q?EbU++0ErrKTq4UceYBEYyxlnRtq/DyCQg2PCJOeA+nIiE/THifFT0ZAS/CWA?=
- =?us-ascii?Q?Vc59yLj0DdQsBCzyTjzV1lhklEMZvHRCYmEJlyBKLdStEU2lN4MH281JE0GH?=
- =?us-ascii?Q?xcv85hdzlJxUt9LxWibeNwvGDbgNAHIN9EEVAsplstbiwfenfI7d39rqmP/z?=
- =?us-ascii?Q?zclMCacSVeqm2iIyJlneXkVBIIKHD4eAC2PwpqDuqCs25/X6W6k+B9WBe27v?=
- =?us-ascii?Q?X0ydHxr8lUkPrE6jWPr1gPYfgO9+PahVsp5ZDbcJiSuXdrkWj4WwzXrbXeQg?=
- =?us-ascii?Q?7n9alcKZkD90+zv9NyYTJctO7Ve2tU13YILYGZ6Bk01BwtnnNkuzgkq6pCgs?=
- =?us-ascii?Q?kockhy7VhDS3dVnQfnClbgjlRVF6jh/iMieyqqaFHD157nnMA2/oQwLCncEn?=
- =?us-ascii?Q?AaSh2vGoCV/mMctx0T6342U6v+gvyy1ZEoafBFfA6fnGhwmL1F+kAL/M2Xno?=
- =?us-ascii?Q?9fleqn7uZzzOyAm0nV7o4uqiKDRK4f1R2gKz?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 16:56:56.6675
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: de46ce48-23b3-42a7-a23d-08ddc552f060
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AE5.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8101
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: P0JFgXsPYGiT6mtH670UUCDd6tSn2TGf
+X-Proofpoint-ORIG-GUID: P0JFgXsPYGiT6mtH670UUCDd6tSn2TGf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDE0NyBTYWx0ZWRfXwkL/WjtJAAQk
+ C2sKbP0nTFsinfYSm7m6fp0IkeeCxovyqhBbU9MvyN9UwFN4uxaFFDKTtHGf0EesSsed+p175as
+ CaEdgkQ8ycqpNKbR3YVWorL8PJhQ5O1ipVbKLkOuk7huetfUDBGZUnFFOUWRmP2OrdENK0qdEXC
+ dm5t9U16uT18ZRYdNH/ruVr8TWbaaYxnJyxtbLZZFCngTqBj1p8JrwEBBTRbyTr73fs9LVrcvyu
+ wrAi+N7T+rW4i5TU0W4fsX/m6O+Dya7RHi8U6QdNDINaAxjRvOiu6Xcv3knHNtooBiqnfQJvKCg
+ 0gkneBwBNPTSpWg85uylD3UcsChQoyQFXZ2bKB88s9n2daL1XCpaVcDFRiZTjGdkw5SYdq58W/D
+ lTAztHPsmKfO/T3apeljobZLd7ETiXrkTo2U2nJq3Oy9dKq83PnGLg4KphIOIk1yoBBzuGCy
+X-Authority-Analysis: v=2.4 cv=Xc2JzJ55 c=1 sm=1 tr=0 ts=68792980 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8
+ a=VwQbUJbxAAAA:8 a=y20B5S6K_hySBQgFZUYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_02,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=776
+ phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170147
 
-Currently, the amd64_edac module only provides UMC normalized and system
-physical address when a DRAM ECC error occurs. DRAM Address on which the
-error has occurred is not provided since the support required to translate
-the normalized address into DRAM address has not yet been implemented.
 
-This support however, has now been implemented through an earlier patch
-(RAS/AMD/ATL: Translate UMC normalized address to DRAM address using PRM)
-and DRAM address, which provides additional debugging information relating
-to the error received, can now be logged by the module.
+On 7/16/2025 12:10 PM, Manivannan Sadhasivam wrote:
+> On Wed, Jul 09, 2025 at 04:03:17PM GMT, Sumit Kumar wrote:
+>> From: Sumit Kumar <sumk@qti.qualcomm.com>
+>>
+>> The current implementation of mhi_ep_read_channel, in case of chained
+>> transactions, assumes the End of Transfer(EOT) bit is received with the
+>> doorbell. As a result, it may incorrectly advance mhi_chan->rd_offset
+>> beyond wr_offset during host-to-device transfers when EOT has not yet
+>> arrived. This can lead to access of unmapped host memory, causing
+>> IOMMU faults and processing of stale TREs.
+>>
+>> This change modifies the loop condition to ensure rd_offset remains behind
+>> wr_offset, allowing the function to process only valid TREs up to the
+>> current write pointer. This prevents premature reads and ensures safe
+>> traversal of chained TREs.
+>>
+>> Fixes: 5301258899773 ("bus: mhi: ep: Add support for reading from the host")
+>> Cc: stable@vger.kernel.org
+>> Co-developed-by: Akhil Vinod <akhvin@qti.qualcomm.com>
+>> Signed-off-by: Akhil Vinod <akhvin@qti.qualcomm.com>
+>> Signed-off-by: Sumit Kumar <sumk@qti.qualcomm.com>
+>> ---
+>>   drivers/bus/mhi/ep/main.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
+>> index b3eafcf2a2c50d95e3efd3afb27038ecf55552a5..2e134f44952d1070c62c24aeca9effc7fd325860 100644
+>> --- a/drivers/bus/mhi/ep/main.c
+>> +++ b/drivers/bus/mhi/ep/main.c
+>> @@ -468,7 +468,7 @@ static int mhi_ep_read_channel(struct mhi_ep_cntrl *mhi_cntrl,
+>>   
+>>   			mhi_chan->rd_offset = (mhi_chan->rd_offset + 1) % ring->ring_size;
+>>   		}
+>> -	} while (buf_left && !tr_done);
+>> +	} while (buf_left && !tr_done && mhi_chan->rd_offset != ring->wr_offset);
+> You should use mhi_ep_queue_is_empty() for checking the available elements to
+> process. And with this check in place, the existing check in
+> mhi_ep_process_ch_ring() becomes redundant.
+>
+> - Mani
 
-Add the required support to log DRAM address on which the error has been
-received in dmesg and through the RAS tracepoint.
+Yes, agreed that the check can be replaced with the mhi_ep_queue_is_empty, but the existing
+check in mhi_ep_process_ch_ring() is still necessary because there can be a case where
+there are multiple chained transactions in the ring.
 
-Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
----
- drivers/edac/amd64_edac.c | 23 +++++++++++++++++++++++
- drivers/edac/amd64_edac.h |  1 +
- 2 files changed, 24 insertions(+)
+Example: The ring at the time mhi_ep_read_channel is executing may look like:
+chained | chained |  EOT#1 | chained | chained | EOT#2
+  
+If we remove the check from mhi_ep_process_ch_ring, we bail out of the first transaction itself
+and the remaining packets won't be processed. mhi_ep_read_channel in its current form is designed
+for a single MHI packet only.
 
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index 07f1e9dc1ca7..36b46cd81bb2 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -2724,6 +2724,22 @@ static void __log_ecc_error(struct mem_ctl_info *mci, struct err_info *err,
- 	switch (err->err_code) {
- 	case DECODE_OK:
- 		string = "";
-+		if (err->dram_addr) {
-+			char s[100];
-+
-+			memset(s, 0, 100);
-+			sprintf(s, "Cs: 0x%x Bank Grp: 0x%x Bank Addr: 0x%x"
-+					   " Row: 0x%x Column: 0x%x"
-+					   " RankMul: 0x%x SubChannel: 0x%x",
-+					   err->dram_addr->chip_select,
-+					   err->dram_addr->bank_group,
-+					   err->dram_addr->bank_addr,
-+					   err->dram_addr->row_addr,
-+					   err->dram_addr->col_addr,
-+					   err->dram_addr->rank_mul,
-+					   err->dram_addr->sub_ch);
-+			string = s;
-+		}
- 		break;
- 	case ERR_NODE:
- 		string = "Failed to map error addr to a node";
-@@ -2808,11 +2824,13 @@ static void umc_get_err_info(struct mce *m, struct err_info *err)
- static void decode_umc_error(int node_id, struct mce *m)
- {
- 	u8 ecc_type = (m->status >> 45) & 0x3;
-+	struct dram_addr dram_addr;
- 	struct mem_ctl_info *mci;
- 	unsigned long sys_addr;
- 	struct amd64_pvt *pvt;
- 	struct atl_err a_err;
- 	struct err_info err;
-+	int ret;
- 
- 	node_id = fixup_node_id(node_id, m);
- 
-@@ -2822,6 +2840,7 @@ static void decode_umc_error(int node_id, struct mce *m)
- 
- 	pvt = mci->pvt_info;
- 
-+	memset(&dram_addr, 0, sizeof(dram_addr));
- 	memset(&err, 0, sizeof(err));
- 
- 	if (m->status & MCI_STATUS_DEFERRED)
-@@ -2853,6 +2872,10 @@ static void decode_umc_error(int node_id, struct mce *m)
- 		goto log_error;
- 	}
- 
-+	ret = amd_convert_umc_mca_addr_to_dram_addr(&a_err, &dram_addr);
-+	if (!ret)
-+		err.dram_addr = &dram_addr;
-+
- 	error_address_to_page_and_offset(sys_addr, &err);
- 
- log_error:
-diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-index 17228d07de4c..88b0b8425ab3 100644
---- a/drivers/edac/amd64_edac.h
-+++ b/drivers/edac/amd64_edac.h
-@@ -399,6 +399,7 @@ struct err_info {
- 	u16 syndrome;
- 	u32 page;
- 	u32 offset;
-+	struct dram_addr *dram_addr;
- };
- 
- static inline u32 get_umc_base(u8 channel)
--- 
-2.43.0
+- Akhil
 
 
