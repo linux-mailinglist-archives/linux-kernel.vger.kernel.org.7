@@ -1,171 +1,117 @@
-Return-Path: <linux-kernel+bounces-734936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5268B0887B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:54:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86A28B08886
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93AAD4E1041
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1B721884A3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D702288514;
-	Thu, 17 Jul 2025 08:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC2528750E;
+	Thu, 17 Jul 2025 08:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hY02iqio"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qhwsfa/V"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECB3286D79;
-	Thu, 17 Jul 2025 08:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0750286D7F;
+	Thu, 17 Jul 2025 08:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752742384; cv=none; b=fHvSJpOfchnGhXP7FQEvRhSCaS2BGELHdgb/v28lxNdhHLFItt9v2Zu9XeT1dOGjPNzFEjJQu3y28Si0+NLYpy2q+/vW8C7wijH62C82pUMKNCbTtN1tCRkg6t5NlO8xTx+WP1OLxpl3ZozrbIXMyy3GBIwKH3avBn8IBTD21uU=
+	t=1752742444; cv=none; b=fhY6OkpZsKnlLmq2F46Faqj3/GJuEdu7/PuzPFsMMyYTCqqishZuzpRX/PApQsOyI5iwS/IE71I+E/bmhLTiSZk956PiAcs95ISE6AqmWgn0E1AtEkpQqQ5VR7T/FNvqWUr7qEWct7xHYfircHs3CH9VhgbBkCD+F3Frww+U6Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752742384; c=relaxed/simple;
-	bh=K7b6cDJtKe9/SFLCuJhtV0axV7uqnrn26I6lrJ+H1Q8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JnY6YlLoehvrjym4HZ58pUFlzCTeFBcidoY0cmU/kgfpGgD3Abfa2dkNry/QtIWNkBZ1Zik2SseMmDs9WxXYKQmx0aB5U3QSGGI/cE7OfKI3TMZSAo35I2M7ztLCGQWe3NAjj6WAMd4HJSKYQg0BtBoeeHK6tXlZDtYvlt+hNvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hY02iqio; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78ABBC4CEE3;
-	Thu, 17 Jul 2025 08:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752742383;
-	bh=K7b6cDJtKe9/SFLCuJhtV0axV7uqnrn26I6lrJ+H1Q8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hY02iqioT/0iVgWjoLFg/TT9thzAhTtuNUuvrXS8YvXIQutUWNru5/AP6kVvkBKXy
-	 wrjTeoxXkcYF4xriTRyX8H2FypLI6HcV/tQJParOyYkGqO+pTxZ9g/IZ+ad7WSZnX/
-	 3UXHFPWCT+fge50n/wD2MnrWdVQKKZ2x/p8TBRuBUrM/7MvuqCBbC++I9VXAt2WvJv
-	 CkbBLHdELFpxsrw1yXXWm1PQ1cZrsg4okD3eUxq/XPdotr2WAX5kIH3XTwafm8wKjy
-	 HrqGqOFfWLE/aKAyTkP+vU9xfNoPJyDjXV3RMk4XWfBjrZkYDB1g98kkWPUVeLTVNY
-	 4NWOIyuPNbT2Q==
-From: Kees Cook <kees@kernel.org>
-To: Bill Wendling <morbo@google.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Justin Stitt <justinstitt@google.com>,
-	llvm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] Compiler Attributes: Add __kcfi_salt
-Date: Thu, 17 Jul 2025 01:53:00 -0700
-Message-Id: <20250717085300.work.146-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752742444; c=relaxed/simple;
+	bh=ikS7eZGcyckpPcCBZR25oVV9mLaq7LJ2mNH1ZNn1IYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hufDc3kW0qJFbbl8PWERm2bJDdMhSFO4vLZREsn314rEfnh0OAvCJVD7sounOvGI9no0w9JQmItlfr1pLrmeAjTHD8Sgq4QDjJGTIDEzZDK0taSr/DTpLedY4mjIuqyRpfSWILnjU2RiLKf5B6mfMQ/sI23j8dEOJDzAu4QCr00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qhwsfa/V; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752742441; x=1784278441;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ikS7eZGcyckpPcCBZR25oVV9mLaq7LJ2mNH1ZNn1IYI=;
+  b=Qhwsfa/VdxcZ4dEn9B52CSZBb+GJQmjQ2PY1HqtaWv82O3XjkHi/oPQ4
+   WdlJicb0443bhC9IW3Oy+12Ckl5I4o6dqDRMyPlbgstNNhxWB2lvqAFfm
+   2VwuSsJQDh8qzEVlQQ/uvVx5vieN60rl1GmixCP0qeWkHnut8r5PXtYS0
+   L4EG3EV+A+sM0CUnOQapakwdlbyevVINLJmRa7xS9eVhr9AV7bEp/QM3i
+   3t1rgncEdJp88Or+3vLBnggaFUEYGMDuB8TYs7xivr7AWnJ90ddCpBtS2
+   stUS/E6ZrdeGSJJFr3uaDq2DWG+Hcoc4RrU8TkqoQ4MqeZiyn03eU3PXk
+   Q==;
+X-CSE-ConnectionGUID: 3+bxPew5SJi+KrMDEiufmQ==
+X-CSE-MsgGUID: P5yhT7VDT/GKKexWUoLTtA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="77545620"
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="77545620"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 01:54:01 -0700
+X-CSE-ConnectionGUID: d1C2phvQR4ieMhMwvadKsg==
+X-CSE-MsgGUID: kyaY/dfGQBaFgpqj3zXccA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
+   d="scan'208";a="158438320"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 17 Jul 2025 01:53:58 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ucKNH-000DPb-32;
+	Thu, 17 Jul 2025 08:53:55 +0000
+Date: Thu, 17 Jul 2025 16:53:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Richard Leitner <richard.leitner@linux.dev>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	Richard Leitner <richard.leitner@linux.dev>
+Subject: Re: [PATCH v6 10/11] media: i2c: ov9282: implement try_ctrl for
+ strobe_duration
+Message-ID: <202507171651.LXHLvA4w-lkp@intel.com>
+References: <20250716-ov9282-flash-strobe-v6-10-934f12aeff33@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3458; i=kees@kernel.org; h=from:subject:message-id; bh=K7b6cDJtKe9/SFLCuJhtV0axV7uqnrn26I6lrJ+H1Q8=; b=owGbwMvMwCVmps19z/KJym7G02pJDBkVO9/IWDm5yT9ffU8mtbLBu/Oenp+8wX2jjCj1OSune V1MjdrbUcrCIMbFICumyBJk5x7n4vG2Pdx9riLMHFYmkCEMXJwCMBHfdkaG+9/E1h07pTS/0in4 c1PAbb2UiofuT1aJ/793mMeD/+aTIkaGs7q79qzgWb2x5uWzsx4hZp/1O6p/+K17LX9XXM1s8t4 uXgA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716-ov9282-flash-strobe-v6-10-934f12aeff33@linux.dev>
 
-Add support for Clang's coming "kcfi_salt" attribute, which is designed
-to allow for KCFI prototype hashes to be separated[1]. For example,
-normally two "void func(void)" functions would have the same KCFI hash,
-but if they wanted their indirect calls to be distinguishable by KCFI,
-one could add __kcfi_salt("foo").
+Hi Richard,
 
-To test the result, add a corresponding LKDTM test, CFI_FORWARD_SALT.
+kernel test robot noticed the following build errors:
 
-Link: https://github.com/KSPP/linux/issues/365 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Bill Wendling <morbo@google.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
-Cc: Justin Stitt <justinstitt@google.com>
-Cc: <llvm@lists.linux.dev>
----
- include/linux/compiler_attributes.h | 11 +++++++++++
- drivers/misc/lkdtm/cfi.c            | 27 +++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
+[auto build test ERROR on d9946fe286439c2aeaa7953b8c316efe5b83d515]
 
-diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
-index c16d4199bf92..eb3769b6a580 100644
---- a/include/linux/compiler_attributes.h
-+++ b/include/linux/compiler_attributes.h
-@@ -164,6 +164,17 @@
-  */
- #define __gnu_inline                    __attribute__((__gnu_inline__))
- 
-+/*
-+ * Optional: not supported by gcc
-+ *
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#kcfi-salt
-+ */
-+#if __has_attribute(__kcfi_salt__)
-+# define __kcfi_salt(STR)		__attribute__((__kcfi_salt__(STR)))
-+#else
-+# define __kcfi_salt(STR)
-+#endif
-+
- /*
-  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-malloc-function-attribute
-  * clang: https://clang.llvm.org/docs/AttributeReference.html#malloc
-diff --git a/drivers/misc/lkdtm/cfi.c b/drivers/misc/lkdtm/cfi.c
-index 6a33889d0902..11de35d6b4e5 100644
---- a/drivers/misc/lkdtm/cfi.c
-+++ b/drivers/misc/lkdtm/cfi.c
-@@ -21,6 +21,13 @@ static noinline int lkdtm_increment_int(int *counter)
- 	return *counter;
- }
- 
-+/* Function matching prototype of lkdtm_increment_int but separate salt. */
-+static noinline __kcfi_salt("separate prototype hash")
-+void lkdtm_increment_void_again(int *counter)
-+{
-+	(*counter)++;
-+}
-+
- /* Don't allow the compiler to inline the calls. */
- static noinline void lkdtm_indirect_call(void (*func)(int *))
- {
-@@ -46,6 +53,25 @@ static void lkdtm_CFI_FORWARD_PROTO(void)
- 	pr_expected_config(CONFIG_CFI_CLANG);
- }
- 
-+/*
-+ * This tries to call an indirect function with a mismatched hash salt.
-+ */
-+static void lkdtm_CFI_FORWARD_SALT(void)
-+{
-+	/*
-+	 * Matches lkdtm_increment_void()'s and lkdtm_increment_void_again()'s
-+	 * prototypes, but they have different hash salts.
-+	 */
-+	pr_info("Calling matched prototype ...\n");
-+	lkdtm_indirect_call(lkdtm_increment_void);
-+
-+	pr_info("Calling mismatched hash salt ...\n");
-+	lkdtm_indirect_call(lkdtm_increment_void_again);
-+
-+	pr_err("FAIL: survived mismatched salt function call!\n");
-+	pr_expected_config(CONFIG_CFI_CLANG);
-+}
-+
- /*
-  * This can stay local to LKDTM, as there should not be a production reason
-  * to disable PAC && SCS.
-@@ -193,6 +219,7 @@ static void lkdtm_CFI_BACKWARD(void)
- 
- static struct crashtype crashtypes[] = {
- 	CRASHTYPE(CFI_FORWARD_PROTO),
-+	CRASHTYPE(CFI_FORWARD_SALT),
- 	CRASHTYPE(CFI_BACKWARD),
- };
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Leitner/media-v4l-ctrls-add-a-control-for-flash-strobe-duration/20250716-171003
+base:   d9946fe286439c2aeaa7953b8c316efe5b83d515
+patch link:    https://lore.kernel.org/r/20250716-ov9282-flash-strobe-v6-10-934f12aeff33%40linux.dev
+patch subject: [PATCH v6 10/11] media: i2c: ov9282: implement try_ctrl for strobe_duration
+config: i386-randconfig-014-20250717 (https://download.01.org/0day-ci/archive/20250717/202507171651.LXHLvA4w-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507171651.LXHLvA4w-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507171651.LXHLvA4w-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+ERROR: modpost: "__udivdi3" [drivers/media/i2c/ov9282.ko] undefined!
+>> ERROR: modpost: "__divdi3" [drivers/media/i2c/ov9282.ko] undefined!
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
