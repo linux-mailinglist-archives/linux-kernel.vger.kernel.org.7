@@ -1,1382 +1,399 @@
-Return-Path: <linux-kernel+bounces-735287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2DDB08D49
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:45:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F8EB08D56
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D02EC188CDDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E4B3B950D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E926F2D3219;
-	Thu, 17 Jul 2025 12:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E05F2D3219;
+	Thu, 17 Jul 2025 12:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="FG4l71Nt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="COw0tLOU"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cmno7Dh0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA0311712;
-	Thu, 17 Jul 2025 12:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7027C28982B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752756283; cv=none; b=BA2bUDlotf193Wnd0sdYYpiVpKHDhiImZhuN6P0vUzKVTuy2izRhfZQ5y94TNT6wJlbnuAHyyA1gtgBS0pZXx4aCBMPNpruwXwMbY2CxcK2k9kxNpP+XIWN3zKXfVJEbjo2NPkSEdzxf14QwUjyfva1LGQVlCbRCdNwpNywurxw=
+	t=1752756468; cv=none; b=M35ae1Sprqi1CyKvQPh69Be7WSG2NZfSDGseSsdxan453gkBeaiOs+IE2OG5X+MpgNDJCXGk0jCmnuUAZrLS2BHRkpPHMx2VgiMaosVG6k24ePrF0nkSS+8na6tzCCa8njF4qpfDWwaOqA3db8L6VDjPjDwlNfF/+XbfBhNBd4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752756283; c=relaxed/simple;
-	bh=zL+o645/o1tSGi/gaWRx9SPG0Ilyj5aXCctp68YpBRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jmrhukcFkmJHUoiw++KjPOsl8oKqsndy0UlfbT55Z87UpBK9lHqdE/5wTN8RzKDhE/68y2GfnpVcU9KuG/hAkqnpRbiumLkHqXUQXbtMrtvCwCA+wDj3DEfd/JQSJb6M6jwzPtB4nIBMLoEocvGwTEvyFwzYyvaro+05fz/NCIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=FG4l71Nt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=COw0tLOU; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B11937A01B8;
-	Thu, 17 Jul 2025 08:44:38 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Thu, 17 Jul 2025 08:44:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752756278;
-	 x=1752842678; bh=5UKAWlAwypsDeqtkE5VdF7OKKr05IAVSB+CBcZtkJkc=; b=
-	FG4l71NtPd35z6CbToOYGJDT7FwXLM/FAKq3xsqkR/yGsO5D7jVA7wPmQLqkMRYJ
-	4oIqNux/dpEvUqalmS8nKMyMOe+U1f5Lx2epgFStT/9+6xb+k+EnTDwXlOrRuVPw
-	Mb9nhrMuDYmE8FC6H1xcEDW40RuUyzJ87EEGJqddXLiLuTTnOl7QNcOCU+EeoV0O
-	XUt/pqwCRI9xQizFLNkZpwfzUUFp6VVlxahC6qej5vIvM+w2+TbHT5Z+6Mo0tY+C
-	VS9RXrSGtWx5yxFIqHMby+ZdgD+o5darr80D3ThICgfN7Yh/sD1APJcD9F5OkWDJ
-	Y2eVr3ZEmfTu1cd8xButAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752756278; x=
-	1752842678; bh=5UKAWlAwypsDeqtkE5VdF7OKKr05IAVSB+CBcZtkJkc=; b=C
-	Ow0tLOULGcbcmmedAc8SRFifFcLDKaurwz28Y2KOYS4mHrqQKPOn+MFQpRd/aDcq
-	el2aVzpspfc/kFhqpAqrMP+yVTg76Qt43eW4lgUlPzLy/UB4HAhq+0sJlQ9QzMso
-	6EpHAo/wabYR6nuPBDZjOlPSTUSAL2tHye7nj0fMGT741ITnO9W2/fipVuwfaVcC
-	ZtjDVPxLohysxlacEOtqbltZlM5Xvk42tY+jDeEVozJ//1YE17MuIwqZgWur9iTE
-	uLp2PoQgcR6cu+f/4GHCtupjHGoiREJivb1aqRv4fGMlWITSMYDj1qmV2f1EC3Dy
-	OhIPPGYxF3diD7Br6DimQ==
-X-ME-Sender: <xms:NvB4aOJ27KIYHzuO57YDtja6KLA9fu8lz8MTLz0pIw4C7_UwCOVmlQ>
-    <xme:NvB4aCFpGq_FT2Tr_Sl2MmNmgHo3da3XjVo5Gs8frx-cne8j4-ZYl8kcuXgVT6vIL
-    S04AckQqj-Ui4YoDhM>
-X-ME-Received: <xmr:NvB4aE0FAJQ30Uw7AV6wMGUdy8ZKT2OgVSvYAC4_vCHyDzAAGLYK6tvEFEW4HP8ym6fY0uTToQ1O8WW0niz0nS31xm5lSG0fXA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeitdeiudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhlrghs
-    ucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrth
-    gvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedtvddvhfdtkeeghfeffeehteeh
-    keekgeefjeduieduueelgedtheekkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgr
-    thgvtghhrdhsvgdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopeguvghmohhnshhinhhguhhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    tghoshhmihhnrdhtrghnihhslhgrvhesrghnrghlohhgrdgtohhmpdhrtghpthhtohepth
-    homhhirdhvrghlkhgvihhnvghnodhrvghnvghsrghssehiuggvrghsohhnsghorghrugdr
-    tghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhulhhivghnrdhmrghs
-    shhothestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehsrghkrghrihdrrghilh
-    husheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehlrghurhgvnhhtrdhp
-    ihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepghhrvg
-    hgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:NvB4aJxIZ9SkkdaO4T2gTMo8jcmDD09yjNO1D4k52Jw_tOC3fzG3VQ>
-    <xmx:NvB4aDjFxX9ZEOoEBAZnF6xLEkDdYrlBl92QnMYbIVtLv6uXeJiIvw>
-    <xmx:NvB4aIzkLRPsI5vH5kZwS43D3vyCJeUA6I1_HL5tjBwvKr3mgFc_4g>
-    <xmx:NvB4aBw3j8mzIV_CEhmyHT42SyynM6TeAjaWdxgRRmkIXFLfUjeA0Q>
-    <xmx:NvB4aM2euAj32CBHCnmwDwjsmnC_CJNvWg5kjaMm6LStvftEtk4BMXWx>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 17 Jul 2025 08:44:37 -0400 (EDT)
-Date: Thu, 17 Jul 2025 14:44:36 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Julien Massot <julien.massot@collabora.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v6 19/24] media: i2c: maxim-serdes: add MAX96724 driver
-Message-ID: <20250717124436.GB169517@ragnatech.se>
-References: <20250716193111.942217-1-demonsingur@gmail.com>
- <20250716193111.942217-20-demonsingur@gmail.com>
+	s=arc-20240116; t=1752756468; c=relaxed/simple;
+	bh=FDOpIm3JXs32+N3twwxHsuwm2o2bXbMkn/E0Mx2MyIo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hkP/+Gr7q5rgaQC75SFi+U8VLRrs0kMupHMNr1Uzr9SaxubPhnbV1oTNcgWTXqqSCPVzGP/9zSzP0lRXolIXgbFj9oXTMQVhjGcQojdmag+nhBl/FEE1ZFSH9Q7NRyu9PCnCmvLOb1WyooBHMgLS0lvFO2gBgds05zarJxJrRpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cmno7Dh0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HCdPI0028066
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:47:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=LeXeukrpee7b7RMH1xIU9a
+	m+NXGPwNaWHrc/G6jR6aE=; b=cmno7Dh01q1F6as0M7g3kh2DAMeuvzKoJV4LwJ
+	Ggy0/n/5TjfNWW12ttWn0vfQ2HPEUX1Zk5c8oG9PCAQXYcfUzUm9YF8K1M9DmYR2
+	WwP5iwapNNUqMBolK1oqhTBG7aSW9MsbIk02kNXeAISHB/xcMGqMutr/U+2FJhms
+	j3BiCgYo7PUZvkQSu3E69hv0T6rUECEDXwrDuMnyWW4GivEliEzJxzNioqvg01B+
+	hsm++TJgjt0khK7zGhgdBJO2Jx+kiYGNlvtK1saHLwbzdoqqV14qrnqyL7Y7X/K4
+	MHI46ZPDlx3FADxzArTyI2xUblpEISgj8PARtjvPfPv+5p2w==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wnh5ywcr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:47:45 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3122368d82bso1373987a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:47:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752756464; x=1753361264;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LeXeukrpee7b7RMH1xIU9am+NXGPwNaWHrc/G6jR6aE=;
+        b=U8Xd7FinzHXgBydvt4IdVjhJ4ZxBY7jMWgo/eW93vTVwHUBFppHkOMXw7GOjHEeiHx
+         qdqMpURt61iqQloHVQd4VJDl+u0sGNkE4QMY9kXV7+L6+5JYpo6mllaUua3OIsGLAJQi
+         zV6xMcm7fNikrQjgLwCmUMe2O0oDm3ewZlyx2elY5kp5POqcsnjGbE5rPoeCvR1m2REj
+         fzeAmCnnQRLn5aZkB71cAEwaR0fB2IZfL9qExlMNXjia97wdxDMxrs8XsXzxwEr4QT1+
+         f3g0v3lbKqcYkMO13ZUOEeIaaLkX6AcBsN3j0hYNu5psbKAC1co4Nrugcy9hQCeydg19
+         vVRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjERsPBrGQcB6KPpKOqdNj/tPY0nvRY9N5GksHHZZ2gXEKkokYyXOZl1wZSiU8/SSVRN6xKWdvOga2Upg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/3/vhF0XSSdZ4wfjvd4YAS4jPR620nnMRiz1CBws25908MFf9
+	HZofhGESXkloRlVOldSRKpSSQxZJTsga2STQL8SzQKzC0Y4zhdZCZDQueGmtqKfKTArU6EMgQkE
+	Iheg9ebwCCEmricq0gHXhK5zDIl41CFd8Yobono1bQNyR9FawLb9PkvSub5gdNAokIqM=
+X-Gm-Gg: ASbGnctriTLQ192Z0A8SHE9SbvLDF4oUyKHVgSw+Dj0aIjIf6SAIaSp2MYlyguIIl6a
+	k+bOdHnDJe+yYRieqcJhXMum14P19cfnRiiF5otkUALe5HjZPUVIV0uc6nHKR5R5sW77DS48YE/
+	QIdr1ew1es+slU+hO37GLdbW+tgXnHvhy6JHtyLnVxXP/YiwCfe74+dKmcJeO5FRJO4zEGM12c9
+	ItVCJW7jX4BCMneTZtN4KE+Xk8sBgfn7H4+/VpGhhzz54S06hLtYqNGf9I9mt7+mLmyNG9tSuv7
+	w5m4madzRkOMzxWxSKKCEh19CZ0sfDQlm0RTQ6SofJsvJEp/Ae0RA0wqriCVwMpJ7YZPx1u3es7
+	s
+X-Received: by 2002:a17:90b:5485:b0:311:b0ec:135b with SMTP id 98e67ed59e1d1-31c9f47c799mr9338579a91.24.1752756464339;
+        Thu, 17 Jul 2025 05:47:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1wjM33GNzk4EjXIuBxBox9zlV6x0yfPGvWiojEJ5RcfRJcqMok+3UnTg5LXDIQ6jplXko8A==
+X-Received: by 2002:a17:90b:5485:b0:311:b0ec:135b with SMTP id 98e67ed59e1d1-31c9f47c799mr9338513a91.24.1752756463814;
+        Thu, 17 Jul 2025 05:47:43 -0700 (PDT)
+Received: from hu-spratap-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31caf828a0esm1505283a91.42.2025.07.17.05.47.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 05:47:43 -0700 (PDT)
+From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+Subject: [PATCH v11 0/8] Implement vendor resets for PSCI SYSTEM_RESET2
+Date: Thu, 17 Jul 2025 18:16:46 +0530
+Message-Id: <20250717-arm-psci-system_reset2-vendor-reboots-v11-0-df3e2b2183c3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250716193111.942217-20-demonsingur@gmail.com>
+X-B4-Tracking: v=1; b=H4sIALbweGgC/52NQQ6CMBREr2K69pNSilRX3sMQA+1HmgjF/kokh
+ LtbiDs3xs0kM8m8NzNCb5HYaTczj6Ml6/pY0nS/Y7qt+huCNXFggoucF/wIle9gIG2BJgrYXT0
+ SBgEj9sZ58Fg7FwjkQSvOpawa3bDIGjw29rWJLmXsraXg/LR5x5Sv80eR8h8V8QYcsChkVqgsM
+ 1KfHVHyeFZ37bouibGa/6LWwmS1UqJGlX9Ty2VZ3lMM8Rc6AQAA
+X-Change-ID: 20250709-arm-psci-system_reset2-vendor-reboots-46c80044afcf
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andre Draszik <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Elliot Berman <elliot.berman@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752756455; l=10856;
+ i=shivendra.pratap@oss.qualcomm.com; s=20250710; h=from:subject:message-id;
+ bh=FDOpIm3JXs32+N3twwxHsuwm2o2bXbMkn/E0Mx2MyIo=;
+ b=4WgSjy8wsL29L/NLUmave9PdcgpmmX/vkKgVK68TaF9RzVd/pcei/CkuEsdO9ODllKtS8mSOb
+ v+zxWjx01lqDptfebGBU2+P6xZFi3pFqTPeCHoXYkHTxBH0nHPt2nVJ
+X-Developer-Key: i=shivendra.pratap@oss.qualcomm.com; a=ed25519;
+ pk=CpsuL7yZ8NReDPhGgq6Xn/SRoa59mAvzWOW0QZoo4gw=
+X-Authority-Analysis: v=2.4 cv=dKimmPZb c=1 sm=1 tr=0 ts=6878f0f1 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=6CcJ-q_IyJskFRMnly8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: x2Yd0iVZ_4BAZ8WaruOFgm3guaGwYiau
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDExMiBTYWx0ZWRfXx/c6bWJ+kH4V
+ XoSfdLrYz5qmxi1URp+VI8oy4InQHCjSIZJ7IIl6Hy/GWt11w3nmd1KMlq5uN6f68JiHGSzVM6e
+ 2zcV7bPlq/xUiEfIZ1g2sygQZfSACTRI4+/pfjzU/YoX7H87nzA2CT14SvqtMXtGoMHIKAqlyLW
+ 0mNDCm/jgRZHXX8eGHgH6W4ziQMVmqi16reslLb8d1G9GIGrxfPQ6nXXJ5Ok3saeLV3+FQYq2DP
+ zFhulsXkDDBJeH1fxQhWKwU5a48OwnsZ9HXCFLZp6/eYryrzzPp7HQA4UPk3qz+leQqrCSIqfhk
+ suzYlyP0z9/9rGB/IiUnrA9+BwkbKrH11xZmh9kUgb9A77QZmoaRKAlbUgiIgCsiEYv3lxG04CP
+ TfBn3r9R7h5m4aYtimtuRVUkEelnhe+TPHrZYid+jHBKVrgs0fTpUqI0K+Xe6GhXEErBb96/
+X-Proofpoint-ORIG-GUID: x2Yd0iVZ_4BAZ8WaruOFgm3guaGwYiau
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-17_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507170112
 
-Hi Cosmin,
+The PSCI SYSTEM_RESET2 call allows vendor firmware to define
+additional reset types which could be mapped to the reboot
+argument.
 
-Thanks for this work!
+User-space should be able to reboot a device into different
+operational boot-states supported by underlying bootloader and
+firmware. Generally, some HW registers need to be written, based
+on which the bootloader and firmware decide the next boot state
+of device, after the reset. For example, a requirement on
+Qualcomm platforms may state that reboot with "bootloader"
+command, should reboot the device into bootloader flashing mode
+and reboot with “edl” command, should reboot the device into an
+Emergency flashing mode.  Setting up such reboots on Qualcomm
+devices can be inconsistent across SoC platforms and may require
+setting different HW registers, where some of these registers may
+not be accessible to HLOS. These knobs evolve over product
+generations and require more drivers.  PSCI defines a
+vendor-specific reset in SYSTEM_RESET2 spec, which enables the
+firmware to take care of underlying setting for any such
+supported vendor-specific reboot. Qualcomm firmwares are
+beginning to support and expose PSCI SYSTEM_RESET2
+vendor-specific reset types to simplify driver requirements from
+Linux. With such support added in the firmware, we now need a
+Linux interface which can make use of the firmware calls for PSCI
+vendor-specific resets. This will align such reboot requirement
+across platforms and vendors.
 
-On 2025-07-16 22:31:04 +0300, Cosmin Tanislav wrote:
-> Add a new MAX96724 driver that also supports MAX96712, MAX96724F
-> and MAX96724R.
-> 
-> Integrate it with the common deserializer framework, while keeping
-> compatibility with existing usecases, avoiding code duplication, and
-> also enabling more features across all chips.
-> 
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+The current psci driver supports two types of resets –
+SYSTEM_RESET2 Arch warm-reset and SYSTEM_RESET cold-reset. The
+patchset introduces the PSCI SYSTEM_RESET2 vendor-specific reset
+into the reset path of the psci driver and aligns it to work with
+reboot system call - LINUX_REBOOT_CMD_RESTART2, when used along
+with a supported string-based command in “*arg”.
 
-I have tested this on R-Car V3U that uses MAX96712 in D-PHY mode, V4H
-that uses MAX96712 in C-PHY mode and V4M that uses MAX96724 in D-PHY
-mode. And all my test-cases using the TPG (both patterns) pass just as
-before with the driver in staging!
+The patchset uses reboot-mode based commands, to define the
+supported vendor reset-types commands in psci device tree node
+and registers these commands with the reboot-mode framework.
 
-For the TPG usage to replace the driver in staging,
+The PSCI vendor-specific reset takes two arguments, being,
+reset_type and cookie as defined by the spec. To accommodate this
+requirement, enhance the reboot-mode framework to support two
+32-bit arguments by switching to 64-bit magic values.
 
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Along this line, the patchset also extends the reboot-mode
+framework to add a non-device-based registration function, which
+will allow drivers to register using device tree node, while
+keeping backward compatibility for existing users of reboot-mode.
+This will enable psci driver to register for reboot-mode and
+implement a write function, which will save the magic and then
+use it in psci reset path to make a vendor-specific reset call
+into the firmware. In addition, the patchset will expose a sysfs
+entry interface within reboot-mode which can be used by userspace
+to view the supported reboot-mode commands.
 
-Compared to my testing on v5 all dependencies for the R-Car VIN pipeline 
-to use the new drivers have now been merged in media/next. I still 
-needed to enable the Streams API is an experimental feature, but that is 
-expected of course.
+The list of vendor-specific reset commands remains open due to
+divergent requirements across vendors, but this can be
+streamlined and standardized through dedicated device tree
+bindings.
 
-> ---
->  drivers/media/i2c/maxim-serdes/Kconfig    |   11 +
->  drivers/media/i2c/maxim-serdes/Makefile   |    1 +
->  drivers/media/i2c/maxim-serdes/max96724.c | 1183 +++++++++++++++++++++
->  3 files changed, 1195 insertions(+)
->  create mode 100644 drivers/media/i2c/maxim-serdes/max96724.c
-> 
-> diff --git a/drivers/media/i2c/maxim-serdes/Kconfig b/drivers/media/i2c/maxim-serdes/Kconfig
-> index 648cb891eefef..2acd96cdbfa44 100644
-> --- a/drivers/media/i2c/maxim-serdes/Kconfig
-> +++ b/drivers/media/i2c/maxim-serdes/Kconfig
-> @@ -30,3 +30,14 @@ config VIDEO_MAX96717
->  
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called max96717.
-> +
-> +config VIDEO_MAX96724
-> +	tristate "Maxim MAX96724 Quad Deserializer support"
-> +	select VIDEO_MAXIM_SERDES
-> +	help
-> +	  This driver supports the Maxim MAX96712, MAX96724, MAX96724F,
-> +	  MAX96724R Quad Deserializers, which convert from four GMSL2
-> +	  links to up to four MIPI D-PHY or C-PHY outputs.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called max96724.
-> diff --git a/drivers/media/i2c/maxim-serdes/Makefile b/drivers/media/i2c/maxim-serdes/Makefile
-> index 04abda6a5437a..b6d5aebfaee13 100644
-> --- a/drivers/media/i2c/maxim-serdes/Makefile
-> +++ b/drivers/media/i2c/maxim-serdes/Makefile
-> @@ -2,3 +2,4 @@
->  max-serdes-objs := max_serdes.o max_ser.o max_des.o
->  obj-$(CONFIG_VIDEO_MAXIM_SERDES) += max-serdes.o
->  obj-$(CONFIG_VIDEO_MAX96717) += max96717.o
-> +obj-$(CONFIG_VIDEO_MAX96724) += max96724.o
-> diff --git a/drivers/media/i2c/maxim-serdes/max96724.c b/drivers/media/i2c/maxim-serdes/max96724.c
-> new file mode 100644
-> index 0000000000000..3bc2080b4dc5f
-> --- /dev/null
-> +++ b/drivers/media/i2c/maxim-serdes/max96724.c
-> @@ -0,0 +1,1183 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Maxim MAX96724 Quad GMSL2 Deserializer Driver
-> + *
-> + * Copyright (C) 2025 Analog Devices Inc.
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of_graph.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "max_des.h"
-> +
-> +#define MAX96724_REG0				0x0
-> +
-> +#define MAX96724_REG6				0x6
-> +#define MAX96724_REG6_LINK_EN			GENMASK(3, 0)
-> +
-> +#define MAX96724_DEBUG_EXTRA			0x9
-> +#define MAX96724_DEBUG_EXTRA_PCLK_SRC		GENMASK(1, 0)
-> +#define MAX96724_DEBUG_EXTRA_PCLK_SRC_25MHZ	0b00
-> +#define MAX96724_DEBUG_EXTRA_PCLK_SRC_75MHZ	0b01
-> +#define MAX96724_DEBUG_EXTRA_PCLK_SRC_USE_PIPE	0b10
-> +
-> +#define MAX96724_REG26(x)			(0x10 + (x) / 2)
-> +#define MAX96724_REG26_RX_RATE_PHY(x)		(GENMASK(1, 0) << (4 * ((x) % 2)))
-> +#define MAX96724_REG26_RX_RATE_3GBPS		0b01
-> +#define MAX96724_REG26_RX_RATE_6GBPS		0b10
-> +
-> +#define MAX96724_PWR1				0x13
-> +#define MAX96724_PWR1_RESET_ALL			BIT(6)
-> +
-> +#define MAX96724_CTRL1				0x18
-> +#define MAX96724_CTRL1_RESET_ONESHOT		GENMASK(3, 0)
-> +
-> +#define MAX96724_VIDEO_PIPE_SEL(p)		(0xf0 + (p) / 2)
-> +#define MAX96724_VIDEO_PIPE_SEL_STREAM(p)	(GENMASK(1, 0) << (4 * ((p) % 2)))
-> +#define MAX96724_VIDEO_PIPE_SEL_LINK(p)		(GENMASK(3, 2) << (4 * ((p) % 2)))
-> +
-> +#define MAX96724_VIDEO_PIPE_EN			0xf4
-> +#define MAX96724_VIDEO_PIPE_EN_MASK(p)		BIT(p)
-> +#define MAX96724_VIDEO_PIPE_EN_STREAM_SEL_ALL	BIT(4)
-> +
-> +#define MAX96724_VPRBS(p)			(0x1dc + (p) * 0x20)
-> +#define MAX96724_VPRBS_VIDEO_LOCK		BIT(0)
-> +#define MAX96724_VPRBS_PATGEN_CLK_SRC		BIT(7)
-> +#define MAX96724_VPRBS_PATGEN_CLK_SRC_150MHZ	0b0
-> +#define MAX96724_VPRBS_PATGEN_CLK_SRC_375MHZ	0b1
-> +
-> +#define MAX96724_BACKTOP12			0x40b
-> +#define MAX96724_BACKTOP12_CSI_OUT_EN		BIT(1)
-> +
-> +#define MAX96724_BACKTOP21(p)			(0x414 + (p) / 4 * 0x20)
-> +#define MAX96724_BACKTOP21_BPP8DBL(p)		BIT(4 + (p) % 4)
-> +
-> +#define MAX96724_BACKTOP22(x)			(0x415 + (x) * 0x3)
-> +#define MAX96724_BACKTOP22_PHY_CSI_TX_DPLL	GENMASK(4, 0)
-> +#define MAX96724_BACKTOP22_PHY_CSI_TX_DPLL_EN	BIT(5)
-> +
-> +#define MAX96724_BACKTOP24(p)			(0x417 + (p) / 4 * 0x20)
-> +#define MAX96724_BACKTOP24_BPP8DBL_MODE(p)	BIT(4 + (p) % 4)
-> +
-> +#define MAX96724_BACKTOP30(p)			(0x41d + (p) / 4 * 0x20)
-> +#define MAX96724_BACKTOP30_BPP10DBL3		BIT(4)
-> +#define MAX96724_BACKTOP30_BPP10DBL3_MODE	BIT(5)
-> +
-> +#define MAX96724_BACKTOP31(p)			(0x41e + (p) / 4 * 0x20)
-> +#define MAX96724_BACKTOP31_BPP10DBL2		BIT(6)
-> +#define MAX96724_BACKTOP31_BPP10DBL2_MODE	BIT(7)
-> +
-> +#define MAX96724_BACKTOP32(p)			(0x41f + (p) / 4 * 0x20)
-> +#define MAX96724_BACKTOP32_BPP12(p)		BIT(p)
-> +#define MAX96724_BACKTOP32_BPP10DBL0		BIT(4)
-> +#define MAX96724_BACKTOP32_BPP10DBL0_MODE	BIT(5)
-> +#define MAX96724_BACKTOP32_BPP10DBL1		BIT(6)
-> +#define MAX96724_BACKTOP32_BPP10DBL1_MODE	BIT(7)
-> +
-> +#define MAX96724_MIPI_PHY0			0x8a0
-> +#define MAX96724_MIPI_PHY0_PHY_CONFIG		GENMASK(4, 0)
-> +#define MAX96724_MIPI_PHY0_PHY_4X2		BIT(0)
-> +#define MAX96724_MIPI_PHY0_PHY_2X4		BIT(2)
-> +#define MAX96724_MIPI_PHY0_PHY_1X4A_2X2		BIT(3)
-> +#define MAX96724_MIPI_PHY0_PHY_1X4B_2X2		BIT(4)
-> +#define MAX96724_MIPI_PHY0_FORCE_CSI_OUT_EN	BIT(7)
-> +
-> +#define MAX96724_MIPI_PHY2			0x8a2
-> +#define MAX96724_MIPI_PHY2_PHY_STDB_N_4(x)	(GENMASK(5, 4) << ((x) / 2 * 2))
-> +#define MAX96724_MIPI_PHY2_PHY_STDB_N_2(x)	(BIT(4 + (x)))
-> +
-> +#define MAX96724_MIPI_PHY3(x)			(0x8a3 + (x) / 2)
-> +#define MAX96724_MIPI_PHY3_PHY_LANE_MAP_4	GENMASK(7, 0)
-> +#define MAX96724_MIPI_PHY3_PHY_LANE_MAP_2(x)	(GENMASK(3, 0) << (4 * ((x) % 2)))
-> +
-> +#define MAX96724_MIPI_PHY5(x)			(0x8a5 + (x) / 2)
-> +#define MAX96724_MIPI_PHY5_PHY_POL_MAP_4_0_1	GENMASK(1, 0)
-> +#define MAX96724_MIPI_PHY5_PHY_POL_MAP_4_2_3	GENMASK(4, 3)
-> +#define MAX96724_MIPI_PHY5_PHY_POL_MAP_4_CLK	BIT(5)
-> +#define MAX96724_MIPI_PHY5_PHY_POL_MAP_2(x)	(GENMASK(1, 0) << (3 * ((x) % 2)))
-> +#define MAX96724_MIPI_PHY5_PHY_POL_MAP_2_CLK(x)	BIT(2 + 3 * ((x) % 2))
-> +
-> +#define MAX96724_MIPI_PHY13			0x8ad
-> +#define MAX96724_MIPI_PHY13_T_T3_PREBEGIN	GENMASK(5, 0)
-> +#define MAX96724_MIPI_PHY13_T_T3_PREBEGIN_64X7	FIELD_PREP(MAX96724_MIPI_PHY13_T_T3_PREBEGIN, 63)
-> +
-> +#define MAX96724_MIPI_PHY14			0x8ae
-> +#define MAX96724_MIPI_PHY14_T_T3_PREP		GENMASK(1, 0)
-> +#define MAX96724_MIPI_PHY14_T_T3_PREP_55NS	FIELD_PREP(MAX96724_MIPI_PHY14_T_T3_PREP, 0b01)
-> +#define MAX96724_MIPI_PHY14_T_T3_POST		GENMASK(6, 2)
-> +#define MAX96724_MIPI_PHY14_T_T3_POST_32X7	FIELD_PREP(MAX96724_MIPI_PHY14_T_T3_POST, 31)
-> +
-> +#define MAX96724_MIPI_CTRL_SEL			0x8ca
-> +#define MAX96724_MIPI_CTRL_SEL_MASK(p)		(GENMASK(1, 0) << ((p) * 2))
-> +
-> +#define MAX96724_MIPI_PHY25(x)			(0x8d0 + (x) / 2)
-> +#define MAX96724_MIPI_PHY25_CSI2_TX_PKT_CNT(x)	(GENMASK(3, 0) << (4 * ((x) % 2)))
-> +
-> +#define MAX96724_MIPI_PHY27(x)			(0x8d2 + (x) / 2)
-> +#define MAX96724_MIPI_PHY27_PHY_PKT_CNT(x)	(GENMASK(3, 0) << (4 * ((x) % 2)))
-> +
-> +#define MAX96724_MIPI_TX3(x)			(0x903 + (x) * 0x40)
-> +#define MAX96724_MIPI_TX3_DESKEW_INIT_8X32K	FIELD_PREP(GENMASK(2, 0), 0b001)
-> +#define MAX96724_MIPI_TX3_DESKEW_INIT_AUTO	BIT(7)
-> +
-> +#define MAX96724_MIPI_TX4(x)			(0x904 + (x) * 0x40)
-> +#define MAX96724_MIPI_TX4_DESKEW_PER_2K		FIELD_PREP(GENMASK(2, 0), 0b001)
-> +#define MAX96724_MIPI_TX4_DESKEW_PER_AUTO	BIT(7)
-> +
-> +#define MAX96724_MIPI_TX10(x)			(0x90a + (x) * 0x40)
-> +#define MAX96724_MIPI_TX10_CSI2_CPHY_EN		BIT(5)
-> +#define MAX96724_MIPI_TX10_CSI2_LANE_CNT	GENMASK(7, 6)
-> +
-> +#define MAX96724_MIPI_TX11(p)			(0x90b + (p) * 0x40)
-> +#define MAX96724_MIPI_TX12(p)			(0x90c + (p) * 0x40)
-> +
-> +#define MAX96724_MIPI_TX13(p, x)		(0x90d + (p) * 0x40 + (x) * 0x2)
-> +#define MAX96724_MIPI_TX13_MAP_SRC_DT		GENMASK(5, 0)
-> +#define MAX96724_MIPI_TX13_MAP_SRC_VC		GENMASK(7, 6)
-> +
-> +#define MAX96724_MIPI_TX14(p, x)		(0x90e + (p) * 0x40 + (x) * 0x2)
-> +#define MAX96724_MIPI_TX14_MAP_DST_DT		GENMASK(5, 0)
-> +#define MAX96724_MIPI_TX14_MAP_DST_VC		GENMASK(7, 6)
-> +
-> +#define MAX96724_MIPI_TX45(p, x)		(0x92d + (p) * 0x40 + (x) / 4)
-> +#define MAX96724_MIPI_TX45_MAP_DPHY_DEST(x)	(GENMASK(1, 0) << (2 * ((x) % 4)))
-> +
-> +#define MAX96724_MIPI_TX51(x)			(0x933 + (x) * 0x40)
-> +#define MAX96724_MIPI_TX51_ALT_MEM_MAP_12	BIT(0)
-> +#define MAX96724_MIPI_TX51_ALT_MEM_MAP_8	BIT(1)
-> +#define MAX96724_MIPI_TX51_ALT_MEM_MAP_10	BIT(2)
-> +#define MAX96724_MIPI_TX51_ALT2_MEM_MAP_8	BIT(4)
-> +
-> +#define MAX96724_MIPI_TX54(x)			(0x936 + (x) * 0x40)
-> +#define MAX96724_MIPI_TX54_TUN_EN		BIT(0)
-> +
-> +#define MAX96724_MIPI_TX57(x)			(0x939 + (x) * 0x40)
-> +#define MAX96724_MIPI_TX57_TUN_DEST		GENMASK(5, 4)
-> +#define MAX96724_MIPI_TX57_DIS_AUTO_TUN_DET	BIT(6)
-> +#define MAX96724_DET(p)				BIT(p)
-> +
-> +#define MAX96724_PATGEN_0			0x1050
-> +#define MAX96724_PATGEN_0_VTG_MODE		GENMASK(1, 0)
-> +#define MAX96724_PATGEN_0_VTG_MODE_FREE_RUNNING	0b11
-> +#define MAX96724_PATGEN_0_DE_INV		BIT(2)
-> +#define MAX96724_PATGEN_0_HS_INV		BIT(3)
-> +#define MAX96724_PATGEN_0_VS_INV		BIT(4)
-> +#define MAX96724_PATGEN_0_GEN_DE		BIT(5)
-> +#define MAX96724_PATGEN_0_GEN_HS		BIT(6)
-> +#define MAX96724_PATGEN_0_GEN_VS		BIT(7)
-> +
-> +#define MAX96724_PATGEN_1			0x1051
-> +#define MAX96724_PATGEN_1_PATGEN_MODE		GENMASK(5, 4)
-> +#define MAX96724_PATGEN_1_PATGEN_MODE_DISABLED	0b00
-> +#define MAX96724_PATGEN_1_PATGEN_MODE_CHECKER	0b01
-> +#define MAX96724_PATGEN_1_PATGEN_MODE_GRADIENT	0b10
-> +
-> +#define MAX96724_VS_DLY_2			0x1052
-> +#define MAX96724_VS_HIGH_2			0x1055
-> +#define MAX96724_VS_LOW_2			0x1058
-> +#define MAX96724_V2H_2				0x105b
-> +#define MAX96724_HS_HIGH_1			0x105e
-> +#define MAX96724_HS_LOW_1			0x1060
-> +#define MAX96724_HS_CNT_1			0x1062
-> +#define MAX96724_V2D_2				0x1064
-> +#define MAX96724_DE_HIGH_1			0x1067
-> +#define MAX96724_DE_LOW_1			0x1069
-> +#define MAX96724_DE_CNT_1			0x106b
-> +#define MAX96724_GRAD_INCR			0x106d
-> +#define MAX96724_CHKR_COLOR_A_L			0x106e
-> +#define MAX96724_CHKR_COLOR_B_L			0x1071
-> +#define MAX96724_CHKR_RPT_A			0x1074
-> +#define MAX96724_CHKR_RPT_B			0x1075
-> +#define MAX96724_CHKR_ALT			0x1076
-> +
-> +#define MAX96724_DE_DET				0x11f0
-> +#define MAX96724_HS_DET				0x11f1
-> +#define MAX96724_VS_DET				0x11f2
-> +#define MAX96724_HS_POL				0x11f3
-> +#define MAX96724_VS_POL				0x11f4
-> +#define MAX96724_DET(p)				BIT(p)
-> +
-> +#define MAX96724_DPLL_0(x)			(0x1c00 + (x) * 0x100)
-> +#define MAX96724_DPLL_0_CONFIG_SOFT_RST_N	BIT(0)
-> +
-> +#define MAX96724_PHY1_ALT_CLOCK			5
-> +
-> +static const struct regmap_config max96724_i2c_regmap = {
-> +	.reg_bits = 16,
-> +	.val_bits = 8,
-> +	.max_register = 0x1f00,
-> +};
-> +
-> +struct max96724_priv {
-> +	struct max_des des;
-> +	const struct max96724_chip_info *info;
-> +
-> +	struct device *dev;
-> +	struct i2c_client *client;
-> +	struct regmap *regmap;
-> +
-> +	struct gpio_desc *gpiod_enable;
-> +};
-> +
-> +struct max96724_chip_info {
-> +	unsigned int versions;
-> +	unsigned int modes;
-> +	bool supports_pipe_stream_autoselect;
-> +	unsigned int num_pipes;
-> +
-> +	int (*set_pipe_phy)(struct max_des *des, struct max_des_pipe *pipe,
-> +			    struct max_des_phy *phy);
-> +	int (*set_pipe_tunnel_phy)(struct max_des *des, struct max_des_pipe *pipe,
-> +				   struct max_des_phy *phy);
-> +	int (*set_pipe_tunnel_enable)(struct max_des *des, struct max_des_pipe *pipe,
-> +				      bool enable);
-> +};
-> +
-> +#define des_to_priv(_des) \
-> +	container_of(_des, struct max96724_priv, des)
-> +
-> +static int max96724_wait_for_device(struct max96724_priv *priv)
-> +{
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	for (i = 0; i < 10; i++) {
-> +		unsigned int val;
-> +
-> +		ret = regmap_read(priv->regmap, MAX96724_REG0, &val);
-> +		if (!ret && val)
-> +			return 0;
-> +
-> +		msleep(100);
-> +
-> +		dev_err(priv->dev, "Retry %u waiting for deserializer: %d\n", i, ret);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int max96724_reset(struct max96724_priv *priv)
-> +{
-> +	int ret;
-> +
-> +	ret = max96724_wait_for_device(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(priv->regmap, MAX96724_PWR1,
-> +				 MAX96724_PWR1_RESET_ALL,
-> +				 FIELD_PREP(MAX96724_PWR1_RESET_ALL, 1));
-> +	if (ret)
-> +		return ret;
-> +
-> +	fsleep(10000);
-> +
-> +	return max96724_wait_for_device(priv);
-> +}
-> +
-> +static int __maybe_unused max96724_reg_read(struct max_des *des, unsigned int reg,
-> +					    unsigned int *val)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +
-> +	return regmap_read(priv->regmap, reg, val);
-> +}
-> +
-> +static int __maybe_unused max96724_reg_write(struct max_des *des, unsigned int reg,
-> +					     unsigned int val)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +
-> +	return regmap_write(priv->regmap, reg, val);
-> +}
-> +
-> +static unsigned int max96724_phy_id(struct max_des *des, struct max_des_phy *phy)
-> +{
-> +	unsigned int num_hw_data_lanes = max_des_phy_hw_data_lanes(des, phy);
-> +
-> +	/* PHY 1 is the master PHY when combining PHY 0 and PHY 1. */
-> +	if (phy->index == 0 && num_hw_data_lanes == 4)
-> +		return 1;
-> +
-> +	if (phy->index == 1 && !des->phys[1].enabled)
-> +		return 0;
-> +
-> +	return phy->index;
-> +}
-> +
-> +static int max96724_log_pipe_status(struct max_des *des,
-> +				    struct max_des_pipe *pipe)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = pipe->index;
-> +	unsigned int val, mask;
-> +	int ret;
-> +
-> +	ret = regmap_read(priv->regmap, MAX96724_VPRBS(index), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info(priv->dev, "\tvideo_lock: %u\n",
-> +		 !!(val & MAX96724_VPRBS_VIDEO_LOCK));
-> +
-> +	mask = MAX96724_DET(index);
-> +
-> +	ret = regmap_read(priv->regmap, MAX96724_DE_DET, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info(priv->dev, "\tde_det: %u\n", !!(val & mask));
-> +
-> +	ret = regmap_read(priv->regmap, MAX96724_HS_DET, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info(priv->dev, "\ths_det: %u\n", !!(val & mask));
-> +
-> +	ret = regmap_read(priv->regmap, MAX96724_VS_DET, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info(priv->dev, "\tvs_det: %u\n", !!(val & mask));
-> +
-> +	ret = regmap_read(priv->regmap, MAX96724_HS_POL, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info(priv->dev, "\ths_pol: %u\n", !!(val & mask));
-> +
-> +	ret = regmap_read(priv->regmap, MAX96724_VS_POL, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info(priv->dev, "\tvs_pol: %u\n", !!(val & mask));
-> +
-> +	return 0;
-> +}
-> +
-> +static int max96724_log_phy_status(struct max_des *des,
-> +				   struct max_des_phy *phy)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = max96724_phy_id(des, phy);
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	ret = regmap_read(priv->regmap, MAX96724_MIPI_PHY25(index), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info(priv->dev, "\tcsi2_pkt_cnt: %lu\n",
-> +		 field_get(MAX96724_MIPI_PHY25_CSI2_TX_PKT_CNT(index), val));
-> +
-> +	ret = regmap_read(priv->regmap, MAX96724_MIPI_PHY27(index), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info(priv->dev, "\tphy_pkt_cnt: %lu\n",
-> +		 field_get(MAX96724_MIPI_PHY27_PHY_PKT_CNT(index), val));
-> +
-> +	return 0;
-> +}
-> +
-> +static int max96724_set_enable(struct max_des *des, bool enable)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +
-> +	return regmap_assign_bits(priv->regmap, MAX96724_BACKTOP12,
-> +				  MAX96724_BACKTOP12_CSI_OUT_EN, enable);
-> +}
-> +
-> +static const unsigned int max96724_phys_configs_reg_val[] = {
-> +	MAX96724_MIPI_PHY0_PHY_1X4A_2X2,
-> +	MAX96724_MIPI_PHY0_PHY_2X4,
-> +
-> +	MAX96724_MIPI_PHY0_PHY_4X2,
-> +	MAX96724_MIPI_PHY0_PHY_1X4A_2X2,
-> +	MAX96724_MIPI_PHY0_PHY_1X4B_2X2,
-> +	MAX96724_MIPI_PHY0_PHY_2X4,
-> +};
-> +
-> +static const struct max_serdes_phys_config max96724_phys_configs[] = {
-> +	/*
-> +	 * PHY 1 can be in 4-lane mode (combining lanes of PHY 0 and PHY 1)
-> +	 * but only use the data lanes of PHY0, while continuing to use the
-> +	 * clock lane of PHY 1.
-> +	 * Specifying clock-lanes as 5 turns on alternate clocking mode.
-> +	 */
-> +	{ { 2, 0, 2, 2 }, { MAX96724_PHY1_ALT_CLOCK, 0, 0, 0 } },
-> +	{ { 2, 0, 4, 0 }, { MAX96724_PHY1_ALT_CLOCK, 0, 0, 0 } },
-> +
-> +	/*
-> +	 * When combining PHY 0 and PHY 1 to make them function in 4-lane mode,
-> +	 * PHY 1 is the master PHY, but we use PHY 0 here to maintain
-> +	 * compatibility.
-> +	 */
-> +	{ { 2, 2, 2, 2 } },
-> +	{ { 4, 0, 2, 2 } },
-> +	{ { 2, 2, 4, 0 } },
-> +	{ { 4, 0, 4, 0 } },
-> +};
-> +
-> +static int max96724_init_tpg(struct max_des *des)
-> +{
-> +	const struct reg_sequence regs[] = {
-> +		{ MAX96724_GRAD_INCR, MAX_SERDES_GRAD_INCR },
-> +		REG_SEQUENCE_3_LE(MAX96724_CHKR_COLOR_A_L,
-> +				  MAX_SERDES_CHECKER_COLOR_A),
-> +		REG_SEQUENCE_3_LE(MAX96724_CHKR_COLOR_B_L,
-> +				  MAX_SERDES_CHECKER_COLOR_B),
-> +		{ MAX96724_CHKR_RPT_A, MAX_SERDES_CHECKER_SIZE },
-> +		{ MAX96724_CHKR_RPT_B, MAX_SERDES_CHECKER_SIZE },
-> +		{ MAX96724_CHKR_ALT, MAX_SERDES_CHECKER_SIZE },
-> +	};
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +
-> +	return regmap_multi_reg_write(priv->regmap, regs, ARRAY_SIZE(regs));
-> +}
-> +
-> +static int max96724_init(struct max_des *des)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	if (priv->info->set_pipe_tunnel_enable) {
-> +		for (i = 0; i < des->ops->num_pipes; i++) {
-> +			ret = regmap_set_bits(priv->regmap, MAX96724_MIPI_TX57(i),
-> +					      MAX96724_MIPI_TX57_DIS_AUTO_TUN_DET);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	}
-> +
-> +	if (priv->info->supports_pipe_stream_autoselect) {
-> +		/* Enable stream autoselect. */
-> +		ret = regmap_set_bits(priv->regmap, MAX96724_VIDEO_PIPE_EN,
-> +				      MAX96724_VIDEO_PIPE_EN_STREAM_SEL_ALL);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	/* Set PHY mode. */
-> +	ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_PHY0,
-> +				 MAX96724_MIPI_PHY0_PHY_CONFIG,
-> +				 max96724_phys_configs_reg_val[des->phys_config]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return max96724_init_tpg(des);
-> +}
-> +
-> +static int max96724_init_phy(struct max_des *des, struct max_des_phy *phy)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	bool is_cphy = phy->bus_type == V4L2_MBUS_CSI2_CPHY;
-> +	unsigned int num_data_lanes = phy->mipi.num_data_lanes;
-> +	unsigned int dpll_freq = phy->link_frequency * 2;
-> +	unsigned int num_hw_data_lanes;
-> +	unsigned int index;
-> +	unsigned int used_data_lanes = 0;
-> +	unsigned int val, mask;
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	index = max96724_phy_id(des, phy);
-> +	num_hw_data_lanes = max_des_phy_hw_data_lanes(des, phy);
-> +
-> +	ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_TX10(index),
-> +				 MAX96724_MIPI_TX10_CSI2_LANE_CNT,
-> +				 FIELD_PREP(MAX96724_MIPI_TX10_CSI2_LANE_CNT,
-> +					    num_data_lanes - 1));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX10(index),
-> +				 MAX96724_MIPI_TX10_CSI2_CPHY_EN, is_cphy);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Configure lane mapping. */
-> +	val = 0;
-> +	for (i = 0; i < num_hw_data_lanes ; i++) {
-> +		unsigned int map;
-> +
-> +		if (i < num_data_lanes)
-> +			map = phy->mipi.data_lanes[i] - 1;
-> +		else
-> +			map = ffz(used_data_lanes);
-> +
-> +		val |= map << (i * 2);
-> +		used_data_lanes |= BIT(map);
-> +	}
-> +
-> +	if (num_hw_data_lanes == 4)
-> +		mask = MAX96724_MIPI_PHY3_PHY_LANE_MAP_4;
-> +	else
-> +		mask = MAX96724_MIPI_PHY3_PHY_LANE_MAP_2(index);
-> +
-> +	ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_PHY3(index),
-> +				 mask, field_prep(mask, val));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Configure lane polarity. */
-> +	for (i = 0, val = 0; i < num_data_lanes; i++)
-> +		if (phy->mipi.lane_polarities[i + 1])
-> +			val |= BIT(i);
-> +
-> +	if (num_hw_data_lanes == 4) {
-> +		ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_PHY5(index),
-> +					 MAX96724_MIPI_PHY5_PHY_POL_MAP_4_0_1 |
-> +					 MAX96724_MIPI_PHY5_PHY_POL_MAP_4_2_3,
-> +					 FIELD_PREP(MAX96724_MIPI_PHY5_PHY_POL_MAP_4_0_1,
-> +						    val) |
-> +					 FIELD_PREP(MAX96724_MIPI_PHY5_PHY_POL_MAP_4_2_3,
-> +						    val >> 2));
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_PHY5(index),
-> +					 MAX96724_MIPI_PHY5_PHY_POL_MAP_4_CLK,
-> +					 phy->mipi.lane_polarities[0]);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_PHY5(index),
-> +					 MAX96724_MIPI_PHY5_PHY_POL_MAP_2(index),
-> +					 field_prep(MAX96724_MIPI_PHY5_PHY_POL_MAP_2(index), val));
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_PHY5(index),
-> +					 MAX96724_MIPI_PHY5_PHY_POL_MAP_2_CLK(index),
-> +					 phy->mipi.lane_polarities[0]);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (!is_cphy && dpll_freq > 1500000000ull) {
-> +		/* Enable initial deskew with 2 x 32k UI. */
-> +		ret = regmap_write(priv->regmap, MAX96724_MIPI_TX3(index),
-> +				   MAX96724_MIPI_TX3_DESKEW_INIT_AUTO |
-> +				   MAX96724_MIPI_TX3_DESKEW_INIT_8X32K);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/* Enable periodic deskew with 2 x 1k UI.. */
-> +		ret = regmap_write(priv->regmap, MAX96724_MIPI_TX4(index),
-> +				   MAX96724_MIPI_TX4_DESKEW_PER_AUTO |
-> +				   MAX96724_MIPI_TX4_DESKEW_PER_2K);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		/* Disable initial deskew. */
-> +		ret = regmap_write(priv->regmap, MAX96724_MIPI_TX3(index), 0x0);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/* Disable periodic deskew. */
-> +		ret = regmap_write(priv->regmap, MAX96724_MIPI_TX4(index), 0x0);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (is_cphy) {
-> +		/* Configure C-PHY timings. */
-> +		ret = regmap_write(priv->regmap, MAX96724_MIPI_PHY13,
-> +				   MAX96724_MIPI_PHY13_T_T3_PREBEGIN_64X7);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_write(priv->regmap, MAX96724_MIPI_PHY14,
-> +				   MAX96724_MIPI_PHY14_T_T3_PREP_55NS |
-> +				   MAX96724_MIPI_PHY14_T_T3_POST_32X7);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	/* Put DPLL block into reset. */
-> +	ret = regmap_clear_bits(priv->regmap, MAX96724_DPLL_0(index),
-> +				MAX96724_DPLL_0_CONFIG_SOFT_RST_N);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set DPLL frequency. */
-> +	ret = regmap_update_bits(priv->regmap, MAX96724_BACKTOP22(index),
-> +				 MAX96724_BACKTOP22_PHY_CSI_TX_DPLL,
-> +				 FIELD_PREP(MAX96724_BACKTOP22_PHY_CSI_TX_DPLL,
-> +					    div_u64(dpll_freq, 100000000)));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enable DPLL frequency. */
-> +	ret = regmap_set_bits(priv->regmap, MAX96724_BACKTOP22(index),
-> +			      MAX96724_BACKTOP22_PHY_CSI_TX_DPLL_EN);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Pull DPLL block out of reset. */
-> +	return regmap_set_bits(priv->regmap, MAX96724_DPLL_0(index),
-> +			       MAX96724_DPLL_0_CONFIG_SOFT_RST_N);
-> +}
-> +
-> +static int max96724_set_phy_mode(struct max_des *des, struct max_des_phy *phy,
-> +				 struct max_des_phy_mode *mode)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = max96724_phy_id(des, phy);
-> +	int ret;
-> +
-> +	/* Set alternate memory map modes. */
-> +	ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX51(index),
-> +				 MAX96724_MIPI_TX51_ALT_MEM_MAP_12,
-> +				 mode->alt_mem_map12);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX51(index),
-> +				 MAX96724_MIPI_TX51_ALT_MEM_MAP_8,
-> +				 mode->alt_mem_map8);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX51(index),
-> +				 MAX96724_MIPI_TX51_ALT_MEM_MAP_10,
-> +				 mode->alt_mem_map10);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX51(index),
-> +				  MAX96724_MIPI_TX51_ALT2_MEM_MAP_8,
-> +				  mode->alt2_mem_map8);
-> +}
-> +
-> +static int max96724_set_phy_enable(struct max_des *des, struct max_des_phy *phy,
-> +				   bool enable)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = max96724_phy_id(des, phy);
-> +	unsigned int num_hw_data_lanes;
-> +	unsigned int mask;
-> +
-> +	num_hw_data_lanes = max_des_phy_hw_data_lanes(des, phy);
-> +
-> +	if (num_hw_data_lanes == 4)
-> +		/* PHY 1 -> bits [1:0] */
-> +		/* PHY 2 -> bits [3:2] */
-> +		mask = MAX96724_MIPI_PHY2_PHY_STDB_N_4(index);
-> +	else
-> +		mask = MAX96724_MIPI_PHY2_PHY_STDB_N_2(index);
-> +
-> +	return regmap_assign_bits(priv->regmap, MAX96724_MIPI_PHY2, mask, enable);
-> +}
-> +
-> +static int max96724_set_pipe_remap(struct max_des *des,
-> +				   struct max_des_pipe *pipe,
-> +				   unsigned int i,
-> +				   struct max_des_remap *remap)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	struct max_des_phy *phy = &des->phys[remap->phy];
-> +	unsigned int phy_id = max96724_phy_id(des, phy);
-> +	unsigned int index = pipe->index;
-> +	int ret;
-> +
-> +	/* Set source Data Type and Virtual Channel. */
-> +	/* TODO: implement extended Virtual Channel. */
-> +	ret = regmap_write(priv->regmap, MAX96724_MIPI_TX13(index, i),
-> +			   FIELD_PREP(MAX96724_MIPI_TX13_MAP_SRC_DT,
-> +				      remap->from_dt) |
-> +			   FIELD_PREP(MAX96724_MIPI_TX13_MAP_SRC_VC,
-> +				      remap->from_vc));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set destination Data Type and Virtual Channel. */
-> +	/* TODO: implement extended Virtual Channel. */
-> +	ret = regmap_write(priv->regmap, MAX96724_MIPI_TX14(index, i),
-> +			   FIELD_PREP(MAX96724_MIPI_TX14_MAP_DST_DT,
-> +				      remap->to_dt) |
-> +			   FIELD_PREP(MAX96724_MIPI_TX14_MAP_DST_VC,
-> +				      remap->to_vc));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set destination PHY. */
-> +	return regmap_update_bits(priv->regmap, MAX96724_MIPI_TX45(index, i),
-> +				  MAX96724_MIPI_TX45_MAP_DPHY_DEST(i),
-> +				  field_prep(MAX96724_MIPI_TX45_MAP_DPHY_DEST(i),
-> +					     phy_id));
-> +}
-> +
-> +static int max96724_set_pipe_remaps_enable(struct max_des *des,
-> +					   struct max_des_pipe *pipe,
-> +					   unsigned int mask)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = pipe->index;
-> +	int ret;
-> +
-> +	ret = regmap_write(priv->regmap, MAX96724_MIPI_TX11(index), mask);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(priv->regmap, MAX96724_MIPI_TX12(index), mask >> 8);
-> +}
-> +
-> +static int max96724_set_pipe_tunnel_phy(struct max_des *des,
-> +					struct max_des_pipe *pipe,
-> +					struct max_des_phy *phy)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int phy_index = max96724_phy_id(des, phy);
-> +
-> +	return regmap_update_bits(priv->regmap, MAX96724_MIPI_TX57(pipe->index),
-> +				  MAX96724_MIPI_TX57_TUN_DEST,
-> +				  FIELD_PREP(MAX96724_MIPI_TX57_TUN_DEST,
-> +					     phy_index));
-> +}
-> +
-> +static int max96724_set_pipe_phy(struct max_des *des, struct max_des_pipe *pipe,
-> +				 struct max_des_phy *phy)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int phy_index = max96724_phy_id(des, phy);
-> +
-> +	return regmap_update_bits(priv->regmap, MAX96724_MIPI_CTRL_SEL,
-> +				  MAX96724_MIPI_CTRL_SEL_MASK(pipe->index),
-> +				  field_prep(MAX96724_MIPI_CTRL_SEL_MASK(pipe->index),
-> +					     phy_index));
-> +}
-> +
-> +static int max96724_set_pipe_enable(struct max_des *des, struct max_des_pipe *pipe,
-> +				    bool enable)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = pipe->index;
-> +
-> +	return regmap_assign_bits(priv->regmap, MAX96724_VIDEO_PIPE_EN,
-> +				  MAX96724_VIDEO_PIPE_EN_MASK(index), enable);
-> +}
-> +
-> +static int max96724_set_pipe_stream_id(struct max_des *des, struct max_des_pipe *pipe,
-> +				       unsigned int stream_id)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = pipe->index;
-> +
-> +	return regmap_update_bits(priv->regmap, MAX96724_VIDEO_PIPE_SEL(index),
-> +				  MAX96724_VIDEO_PIPE_SEL_STREAM(index),
-> +				  field_prep(MAX96724_VIDEO_PIPE_SEL_STREAM(index),
-> +					     stream_id));
-> +}
-> +
-> +static int max96724_set_pipe_link(struct max_des *des, struct max_des_pipe *pipe,
-> +				  struct max_des_link *link)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = pipe->index;
-> +
-> +	return regmap_update_bits(priv->regmap, MAX96724_VIDEO_PIPE_SEL(index),
-> +				  MAX96724_VIDEO_PIPE_SEL_LINK(index),
-> +				  field_prep(MAX96724_VIDEO_PIPE_SEL_LINK(index),
-> +					     link->index));
-> +}
-> +
-> +static int max96724_set_pipe_mode(struct max_des *des,
-> +				  struct max_des_pipe *pipe,
-> +				  struct max_des_pipe_mode *mode)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = pipe->index;
-> +	unsigned int reg, mask, mode_mask;
-> +	int ret;
-> +
-> +	/* Set 8bit double mode. */
-> +	ret = regmap_assign_bits(priv->regmap, MAX96724_BACKTOP21(index),
-> +				 MAX96724_BACKTOP21_BPP8DBL(index), mode->dbl8);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_assign_bits(priv->regmap, MAX96724_BACKTOP24(index),
-> +				 MAX96724_BACKTOP24_BPP8DBL_MODE(index),
-> +				 mode->dbl8mode);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set 10bit double mode. */
-> +	if (index % 4 == 3) {
-> +		reg = MAX96724_BACKTOP30(index);
-> +		mask = MAX96724_BACKTOP30_BPP10DBL3;
-> +		mode_mask = MAX96724_BACKTOP30_BPP10DBL3_MODE;
-> +	} else if (index % 4 == 2) {
-> +		reg = MAX96724_BACKTOP31(index);
-> +		mask = MAX96724_BACKTOP31_BPP10DBL2;
-> +		mode_mask = MAX96724_BACKTOP31_BPP10DBL2_MODE;
-> +	} else if (index % 4 == 1) {
-> +		reg = MAX96724_BACKTOP32(index);
-> +		mask = MAX96724_BACKTOP32_BPP10DBL1;
-> +		mode_mask = MAX96724_BACKTOP32_BPP10DBL1_MODE;
-> +	} else {
-> +		reg = MAX96724_BACKTOP32(index);
-> +		mask = MAX96724_BACKTOP32_BPP10DBL0;
-> +		mode_mask = MAX96724_BACKTOP32_BPP10DBL0_MODE;
-> +	}
-> +
-> +	ret = regmap_assign_bits(priv->regmap, reg, mask, mode->dbl10);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_assign_bits(priv->regmap, reg, mode_mask, mode->dbl10mode);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set 12bit double mode. */
-> +	return regmap_assign_bits(priv->regmap, MAX96724_BACKTOP32(index),
-> +				  MAX96724_BACKTOP32_BPP12(index), mode->dbl12);
-> +}
-> +
-> +static int max96724_set_pipe_tunnel_enable(struct max_des *des,
-> +					   struct max_des_pipe *pipe, bool enable)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +
-> +	return regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX54(pipe->index),
-> +				  MAX96724_MIPI_TX54_TUN_EN, enable);
-> +}
-> +
-> +static int max96724_select_links(struct max_des *des, unsigned int mask)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	int ret;
-> +
-> +	ret = regmap_update_bits(priv->regmap, MAX96724_REG6, MAX96724_REG6_LINK_EN,
-> +				 field_prep(MAX96724_REG6_LINK_EN, mask));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_set_bits(priv->regmap, MAX96724_CTRL1,
-> +			      MAX96724_CTRL1_RESET_ONESHOT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msleep(60);
-> +
-> +	return 0;
-> +}
-> +
-> +static int max96724_set_link_version(struct max_des *des,
-> +				     struct max_des_link *link,
-> +				     enum max_serdes_gmsl_version version)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	unsigned int index = link->index;
-> +	unsigned int val;
-> +
-> +	if (version == MAX_SERDES_GMSL_2_6GBPS)
-> +		val = MAX96724_REG26_RX_RATE_6GBPS;
-> +	else
-> +		val = MAX96724_REG26_RX_RATE_3GBPS;
-> +
-> +	return regmap_update_bits(priv->regmap, MAX96724_REG26(index),
-> +				  MAX96724_REG26_RX_RATE_PHY(index),
-> +				  field_prep(MAX96724_REG26_RX_RATE_PHY(index), val));
-> +}
-> +
-> +static int max96724_set_tpg_timings(struct max96724_priv *priv,
-> +				    const struct max_serdes_tpg_timings *tm)
-> +{
-> +	const struct reg_sequence regs[] = {
-> +		REG_SEQUENCE_3(MAX96724_VS_DLY_2, tm->vs_dly),
-> +		REG_SEQUENCE_3(MAX96724_VS_HIGH_2, tm->vs_high),
-> +		REG_SEQUENCE_3(MAX96724_VS_LOW_2, tm->vs_low),
-> +		REG_SEQUENCE_3(MAX96724_V2H_2, tm->v2h),
-> +		REG_SEQUENCE_2(MAX96724_HS_HIGH_1, tm->hs_high),
-> +		REG_SEQUENCE_2(MAX96724_HS_LOW_1, tm->hs_low),
-> +		REG_SEQUENCE_2(MAX96724_HS_CNT_1, tm->hs_cnt),
-> +		REG_SEQUENCE_3(MAX96724_V2D_2, tm->v2d),
-> +		REG_SEQUENCE_2(MAX96724_DE_HIGH_1, tm->de_high),
-> +		REG_SEQUENCE_2(MAX96724_DE_LOW_1, tm->de_low),
-> +		REG_SEQUENCE_2(MAX96724_DE_CNT_1, tm->de_cnt),
-> +	};
-> +	int ret;
-> +
-> +	ret = regmap_multi_reg_write(priv->regmap, regs, ARRAY_SIZE(regs));
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(priv->regmap, MAX96724_PATGEN_0,
-> +			    FIELD_PREP(MAX96724_PATGEN_0_VTG_MODE,
-> +				       MAX96724_PATGEN_0_VTG_MODE_FREE_RUNNING) |
-> +			    FIELD_PREP(MAX96724_PATGEN_0_DE_INV, tm->de_inv) |
-> +			    FIELD_PREP(MAX96724_PATGEN_0_HS_INV, tm->hs_inv) |
-> +			    FIELD_PREP(MAX96724_PATGEN_0_VS_INV, tm->vs_inv) |
-> +			    FIELD_PREP(MAX96724_PATGEN_0_GEN_DE, tm->gen_de) |
-> +			    FIELD_PREP(MAX96724_PATGEN_0_GEN_HS, tm->gen_hs) |
-> +			    FIELD_PREP(MAX96724_PATGEN_0_GEN_VS, tm->gen_vs));
-> +}
-> +
-> +static int max96724_set_tpg_clk(struct max96724_priv *priv, u32 clock)
-> +{
-> +	bool patgen_clk_src = 0;
-> +	u8 pclk_src;
-> +	int ret;
-> +
-> +	switch (clock) {
-> +	case 25000000:
-> +		pclk_src = MAX96724_DEBUG_EXTRA_PCLK_SRC_25MHZ;
-> +		break;
-> +	case 75000000:
-> +		pclk_src = MAX96724_DEBUG_EXTRA_PCLK_SRC_75MHZ;
-> +		break;
-> +	case 150000000:
-> +		pclk_src = MAX96724_DEBUG_EXTRA_PCLK_SRC_USE_PIPE;
-> +		patgen_clk_src = MAX96724_VPRBS_PATGEN_CLK_SRC_150MHZ;
-> +		break;
-> +	case 375000000:
-> +		pclk_src = MAX96724_DEBUG_EXTRA_PCLK_SRC_USE_PIPE;
-> +		patgen_clk_src = MAX96724_VPRBS_PATGEN_CLK_SRC_375MHZ;
-> +		break;
-> +	case 0:
-> +		return 0;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	/*
-> +	 * TPG data is always injected on link 0, which is always routed to
-> +	 * pipe 0.
-> +	 */
-> +	ret = regmap_update_bits(priv->regmap, MAX96724_VPRBS(0),
-> +				 MAX96724_VPRBS_PATGEN_CLK_SRC,
-> +				 FIELD_PREP(MAX96724_VPRBS_PATGEN_CLK_SRC,
-> +					    patgen_clk_src));
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_update_bits(priv->regmap, MAX96724_DEBUG_EXTRA,
-> +				  MAX96724_DEBUG_EXTRA_PCLK_SRC,
-> +				  FIELD_PREP(MAX96724_DEBUG_EXTRA_PCLK_SRC,
-> +					     pclk_src));
-> +}
-> +
-> +static int max96724_set_tpg_mode(struct max96724_priv *priv, bool enable)
-> +{
-> +	unsigned int patgen_mode;
-> +
-> +	switch (priv->des.tpg_pattern) {
-> +	case MAX_SERDES_TPG_PATTERN_GRADIENT:
-> +		patgen_mode = MAX96724_PATGEN_1_PATGEN_MODE_GRADIENT;
-> +		break;
-> +	case MAX_SERDES_TPG_PATTERN_CHECKERBOARD:
-> +		patgen_mode = MAX96724_PATGEN_1_PATGEN_MODE_CHECKER;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return regmap_update_bits(priv->regmap, MAX96724_PATGEN_1,
-> +				  MAX96724_PATGEN_1_PATGEN_MODE,
-> +				  FIELD_PREP(MAX96724_PATGEN_1_PATGEN_MODE,
-> +					     enable ? patgen_mode
-> +						    : MAX96724_PATGEN_1_PATGEN_MODE_DISABLED));
-> +}
-> +
-> +static int max96724_set_tpg(struct max_des *des,
-> +			    const struct max_serdes_tpg_entry *entry)
-> +{
-> +	struct max96724_priv *priv = des_to_priv(des);
-> +	struct max_serdes_tpg_timings timings = { 0 };
-> +	int ret;
-> +
-> +	ret = max_serdes_get_tpg_timings(entry, &timings);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = max96724_set_tpg_timings(priv, &timings);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = max96724_set_tpg_clk(priv, timings.clock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = max96724_set_tpg_mode(priv, entry);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_assign_bits(priv->regmap, MAX96724_MIPI_PHY0,
-> +				  MAX96724_MIPI_PHY0_FORCE_CSI_OUT_EN, !!entry);
-> +}
-> +
-> +static const struct max_serdes_tpg_entry max96724_tpg_entries[] = {
-> +	MAX_TPG_ENTRY_640X480P60_RGB888,
-> +	MAX_TPG_ENTRY_1920X1080P30_RGB888,
-> +	MAX_TPG_ENTRY_1920X1080P60_RGB888,
-> +};
-> +
-> +static const struct max_des_ops max96724_ops = {
-> +	.num_phys = 4,
-> +	.num_links = 4,
-> +	.num_remaps_per_pipe = 16,
-> +	.phys_configs = {
-> +		.num_configs = ARRAY_SIZE(max96724_phys_configs),
-> +		.configs = max96724_phys_configs,
-> +	},
-> +	.tpg_entries = {
-> +		.num_entries = ARRAY_SIZE(max96724_tpg_entries),
-> +		.entries = max96724_tpg_entries,
-> +	},
-> +	.tpg_mode = MAX_SERDES_GMSL_PIXEL_MODE,
-> +	.tpg_patterns = BIT(MAX_SERDES_TPG_PATTERN_CHECKERBOARD) |
-> +			BIT(MAX_SERDES_TPG_PATTERN_GRADIENT),
-> +	.use_atr = true,
-> +#ifdef CONFIG_VIDEO_ADV_DEBUG
-> +	.reg_read = max96724_reg_read,
-> +	.reg_write = max96724_reg_write,
-> +#endif
-> +	.log_pipe_status = max96724_log_pipe_status,
-> +	.log_phy_status = max96724_log_phy_status,
-> +	.set_enable = max96724_set_enable,
-> +	.init = max96724_init,
-> +	.init_phy = max96724_init_phy,
-> +	.set_phy_mode = max96724_set_phy_mode,
-> +	.set_phy_enable = max96724_set_phy_enable,
-> +	.set_pipe_stream_id = max96724_set_pipe_stream_id,
-> +	.set_pipe_link = max96724_set_pipe_link,
-> +	.set_pipe_enable = max96724_set_pipe_enable,
-> +	.set_pipe_remap = max96724_set_pipe_remap,
-> +	.set_pipe_remaps_enable = max96724_set_pipe_remaps_enable,
-> +	.set_pipe_mode = max96724_set_pipe_mode,
-> +	.set_tpg = max96724_set_tpg,
-> +	.select_links = max96724_select_links,
-> +	.set_link_version = max96724_set_link_version,
-> +};
-> +
-> +static const struct max96724_chip_info max96724_info = {
-> +	.versions = BIT(MAX_SERDES_GMSL_2_3GBPS) |
-> +		    BIT(MAX_SERDES_GMSL_2_6GBPS),
-> +	.modes = BIT(MAX_SERDES_GMSL_PIXEL_MODE) |
-> +		 BIT(MAX_SERDES_GMSL_TUNNEL_MODE),
-> +	.set_pipe_tunnel_enable = max96724_set_pipe_tunnel_enable,
-> +	.set_pipe_phy = max96724_set_pipe_phy,
-> +	.set_pipe_tunnel_phy = max96724_set_pipe_tunnel_phy,
-> +	.supports_pipe_stream_autoselect = true,
-> +	.num_pipes = 4,
-> +};
-> +
-> +static const struct max96724_chip_info max96724f_info = {
-> +	.versions = BIT(MAX_SERDES_GMSL_2_3GBPS),
-> +	.modes = BIT(MAX_SERDES_GMSL_PIXEL_MODE) |
-> +		 BIT(MAX_SERDES_GMSL_TUNNEL_MODE),
-> +	.set_pipe_tunnel_enable = max96724_set_pipe_tunnel_enable,
-> +	.set_pipe_phy = max96724_set_pipe_phy,
-> +	.set_pipe_tunnel_phy = max96724_set_pipe_tunnel_phy,
-> +	.supports_pipe_stream_autoselect = true,
-> +	.num_pipes = 4,
-> +};
-> +
-> +static const struct max96724_chip_info max96712_info = {
-> +	.versions = BIT(MAX_SERDES_GMSL_2_3GBPS) |
-> +		    BIT(MAX_SERDES_GMSL_2_6GBPS),
-> +	.modes = BIT(MAX_SERDES_GMSL_PIXEL_MODE),
-> +	.num_pipes = 8,
-> +};
-> +
-> +static int max96724_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct max96724_priv *priv;
-> +	struct max_des_ops *ops;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	ops = devm_kzalloc(dev, sizeof(*ops), GFP_KERNEL);
-> +	if (!ops)
-> +		return -ENOMEM;
-> +
-> +	priv->info = device_get_match_data(dev);
-> +	if (!priv->info) {
-> +		dev_err(dev, "Failed to get match data\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	priv->dev = dev;
-> +	priv->client = client;
-> +	i2c_set_clientdata(client, priv);
-> +
-> +	priv->regmap = devm_regmap_init_i2c(client, &max96724_i2c_regmap);
-> +	if (IS_ERR(priv->regmap))
-> +		return PTR_ERR(priv->regmap);
-> +
-> +	priv->gpiod_enable = devm_gpiod_get_optional(&client->dev, "enable",
-> +						     GPIOD_OUT_LOW);
-> +	if (IS_ERR(priv->gpiod_enable))
-> +		return PTR_ERR(priv->gpiod_enable);
-> +
-> +	if (priv->gpiod_enable) {
-> +		/* PWDN must be held for 1us for reset */
-> +		udelay(1);
-> +
-> +		gpiod_set_value_cansleep(priv->gpiod_enable, 1);
-> +
-> +		/* Maximum power-up time (tLOCK) 4ms */
-> +		usleep_range(4000, 5000);
-> +	}
-> +
-> +	*ops = max96724_ops;
-> +	ops->versions = priv->info->versions;
-> +	ops->modes = priv->info->modes;
-> +	ops->num_pipes = priv->info->num_pipes;
-> +	ops->set_pipe_tunnel_enable = priv->info->set_pipe_tunnel_enable;
-> +	ops->set_pipe_phy = priv->info->set_pipe_phy;
-> +	ops->set_pipe_tunnel_phy = priv->info->set_pipe_tunnel_phy;
-> +	priv->des.ops = ops;
-> +
-> +	ret = max96724_reset(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return max_des_probe(client, &priv->des);
-> +}
-> +
-> +static void max96724_remove(struct i2c_client *client)
-> +{
-> +	struct max96724_priv *priv = i2c_get_clientdata(client);
-> +
-> +	max_des_remove(&priv->des);
-> +
-> +	gpiod_set_value_cansleep(priv->gpiod_enable, 0);
-> +}
-> +
-> +static const struct of_device_id max96724_of_table[] = {
-> +	{ .compatible = "maxim,max96712", .data = &max96712_info },
-> +	{ .compatible = "maxim,max96724", .data = &max96724_info },
-> +	{ .compatible = "maxim,max96724f", .data = &max96724f_info },
-> +	{ .compatible = "maxim,max96724r", .data = &max96724f_info },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, max96724_of_table);
-> +
-> +static struct i2c_driver max96724_i2c_driver = {
-> +	.driver	= {
-> +		.name = "max96724",
-> +		.of_match_table	= max96724_of_table,
-> +	},
-> +	.probe = max96724_probe,
-> +	.remove = max96724_remove,
-> +};
-> +
-> +module_i2c_driver(max96724_i2c_driver);
-> +
-> +MODULE_IMPORT_NS("MAX_SERDES");
-> +MODULE_DESCRIPTION("Maxim MAX96724 Quad GMSL2 Deserializer Driver");
-> +MODULE_AUTHOR("Cosmin Tanislav <cosmin.tanislav@analog.com>");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.50.1
-> 
+Currently three drivers register with reboot-mode framework -
+syscon-reboot-mode, nvmem-reboot-mode and qcom-pon. Consolidated
+list of commands currently added across various vendor DTs:
+ mode-loader
+ mode-normal
+ mode-bootloader
+ mode-charge
+ mode-fastboot
+ mode-reboot-ab-update
+ mode-recovery
+ mode-rescue
+ mode-shutdown-thermal
+ mode-shutdown-thermal-battery
 
+Detailed list of commands being used by syscon-reboot-mode:
+    arm64/boot/dts/exynos/exynosautov9.dtsi:
+	mode-bootloader = <EXYNOSAUTOV9_BOOT_BOOTLOADER>;
+	mode-fastboot = <EXYNOSAUTOV9_BOOT_FASTBOOT>;
+	mode-recovery = <EXYNOSAUTOV9_BOOT_RECOVERY>;
+
+    arm64/boot/dts/exynos/google/gs101.dtsi:
+    	mode-bootloader = <0xfc>;
+    	mode-charge = <0x0a>;
+    	mode-fastboot = <0xfa>;
+    	mode-reboot-ab-update = <0x52>;
+    	mode-recovery = <0xff>;
+    	mode-rescue = <0xf9>;
+    	mode-shutdown-thermal = <0x51>;
+    	mode-shutdown-thermal-battery = <0x51>;
+
+    arm64/boot/dts/hisilicon/hi3660-hikey960.dts:
+    	mode-normal = <0x77665501>;
+    	mode-bootloader = <0x77665500>;
+    	mode-recovery = <0x77665502>;
+
+    arm64/boot/dts/hisilicon/hi6220-hikey.dts:
+    	mode-normal = <0x77665501>;
+    	mode-bootloader = <0x77665500>;
+    	mode-recovery = <0x77665502>;
+
+    arm64/boot/dts/rockchip/px30.dtsi:
+    	mode-bootloader = <BOOT_BL_DOWNLOAD>;
+    	mode-fastboot = <BOOT_FASTBOOT>;
+    	mode-loader = <BOOT_BL_DOWNLOAD>;
+    	mode-normal = <BOOT_NORMAL>;
+    	mode-recovery = <BOOT_RECOVERY>;
+
+    arm64/boot/dts/rockchip/rk3308.dtsi:
+    	mode-bootloader = <BOOT_BL_DOWNLOAD>;
+    	mode-loader = <BOOT_BL_DOWNLOAD>;
+    	mode-normal = <BOOT_NORMAL>;
+    	mode-recovery = <BOOT_RECOVERY>;
+    	mode-fastboot = <BOOT_FASTBOOT>;
+
+    arm64/boot/dts/rockchip/rk3566-lckfb-tspi.dts:
+    	mode-normal = <BOOT_NORMAL>;
+    	mode-loader = <BOOT_BL_DOWNLOAD>;
+			mode-recovery = <BOOT_RECOVERY>;
+			mode-bootloader = <BOOT_FASTBOOT>;
+
+Detailed list of commands being used by nvmem-reboot-mode:
+    arm64/boot/dts/qcom/pmXXXX.dtsi:(multiple qcom DTs)
+			mode-recovery = <0x01>;
+			mode-bootloader = <0x02>;
+
+Previous discussions around SYSTEM_RESET2:
+- https://lore.kernel.org/lkml/20230724223057.1208122-2-quic_eberman@quicinc.com/T/
+- https://lore.kernel.org/all/4a679542-b48d-7e11-f33a-63535a5c68cb@quicinc.com/
+
+Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+
+Changes in v11:
+- Remove reference of cookie in reboot-mode – Arnd/Rob
+- Introduce 64-bit magic in reboot-mode to accommodate two 32-bit
+  arguments – Arnd
+- Change reset-type to reboot-mode in psci device tree binding – Arnd
+	- binding no more mandates two arguments as in v10.
+	- dt changes done to support this binding.
+- Remove obvious comments in psci reset path – Konrad
+- Merge sysfs and ABI doc into single patch.
+- Fix compilation issue on X86 configs.
+- Fix warnings for pr_fmt.
+- Link to v10: https://lore.kernel.org/all/569f154d-c714-1714-b898-83a42a38771c@oss.qualcomm.com/
+
+Changes in V10:
+- Change in reset-type binding to make cookie as a mandatory
+  argument.
+- Change reboot-mode binding to support additional argument
+  "cookie".
+ From Lorenzo:
+- Use reboot-mode framework for implementing vendor-resets.
+- Modify reboot-mode framework to support two arguments
+  (magic and cookie).
+- Expose sysfs for supported reboot-modes commands.
+- List out all existing reboot-mode commands and their users.
+   - Added this to cover letter.
+ From Dmitry:
+- Modify reboot-mode to support non-device based registration.
+- Modify reboot-mode to create a class and device to expose
+  sysfs interface.
+- Link to v9: https://lore.kernel.org/all/20250303-arm-psci-system_reset2-vendor-reboots-v9-0-b2cf4a20feda@oss.qualcomm.com/
+
+Changes in v9:
+- Don't fallback to architecturally defined resets from Lorenzo.
+- Link to v8: https://lore.kernel.org/r/20241107-arm-psci-system_reset2-vendor-reboots-v8-0-e8715fa65cb5@quicinc.com
+
+Changes in v8:
+- Code style nits from Stephen
+- Add rb3gen2
+- Link to v7: https://lore.kernel.org/r/20241028-arm-psci-system_reset2-vendor-reboots-v7-0-a4c40b0ebc54@quicinc.com
+
+Changes in v7:
+- Code style nits from Stephen
+- Dropped unnecessary hunk from the sa8775p-ride patch
+- Link to v6: https://lore.kernel.org/r/20241018-arm-psci-system_reset2-vendor-reboots-v6-0-50cbe88b0a24@quicinc.com
+
+Changes in v6:
+- Rebase to v6.11 and fix trivial conflicts in qcm6490-idp
+- Add sa8775p-ride support (same as qcm6490-idp)
+- Link to v5: https://lore.kernel.org/r/20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com
+
+Changes in v5:
+- Drop the nested "items" in prep for future dtschema tools
+- Link to v4: https://lore.kernel.org/r/20240611-arm-psci-system_reset2-vendor-reboots-v4-0-98f55aa74ae8@quicinc.com
+
+Changes in v4:
+- Change mode- properties from uint32-matrix to uint32-array
+- Restructure the reset-types node so only the restriction is in the
+  if/then schemas and not the entire definition
+- Link to v3: https://lore.kernel.org/r/20240515-arm-psci-system_reset2-vendor-reboots-v3-0-16dd4f9c0ab4@quicinc.com
+
+Changes in v3:
+- Limit outer number of items to 1 for mode-* properties
+- Move the reboot-mode for psci under a subnode "reset-types"
+- Fix the DT node in qcm6490-idp so it doesn't overwrite the one from
+  sc7820.dtsi
+- Link to v2: https://lore.kernel.org/r/20240414-arm-psci-system_reset2-vendor-reboots-v2-0-da9a055a648f@quicinc.com
+
+Changes in v2:
+- Fixes to schema as suggested by Rob and Krzysztof
+- Add qcm6490 idp as first Qualcomm device to support
+- Link to v1: https://lore.kernel.org/r/20231117-arm-psci-system_reset2-vendor-reboots-v1-0-03c4612153e2@quicinc.com
+
+Changes in v1:
+- Reference reboot-mode bindings as suggeted by Rob.
+- Link to RFC: https://lore.kernel.org/r/20231030-arm-psci-system_reset2-vendor-reboots-v1-0-dcdd63352ad1@quicinc.com
+
+---
+Elliot Berman (4):
+      dt-bindings: arm: Document reboot mode magic
+      arm64: dts: qcom: qcm6490-idp: Add PSCI SYSTEM_RESET2 types
+      arm64: dts: qcom: qcs6490-rb3gen2: Add PSCI SYSTEM_RESET2 types
+      arm64: dts: qcom: sa8775p-ride: Add PSCI SYSTEM_RESET2 types
+
+Shivendra Pratap (4):
+      power: reset: reboot-mode: Add device tree node-based registration
+      power: reset: reboot-mode: Add support for 64 bit magic
+      firmware: psci: Implement vendor-specific resets as reboot-mode
+      power: reset: reboot-mode: Expose sysfs for registered reboot_modes
+
+ .../testing/sysfs-class-reboot-mode-reboot_modes   |  38 ++++++
+ Documentation/devicetree/bindings/arm/psci.yaml    |  43 +++++++
+ arch/arm64/boot/dts/qcom/qcm6490-idp.dts           |   7 +
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       |   7 +
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi         |   7 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              |   2 +-
+ arch/arm64/boot/dts/qcom/sc7280.dtsi               |   2 +-
+ drivers/firmware/psci/Kconfig                      |   1 +
+ drivers/firmware/psci/psci.c                       |  53 +++++++-
+ drivers/power/reset/nvmem-reboot-mode.c            |   5 +-
+ drivers/power/reset/qcom-pon.c                     |   5 +-
+ drivers/power/reset/reboot-mode.c                  | 142 ++++++++++++++++-----
+ drivers/power/reset/syscon-reboot-mode.c           |   5 +-
+ include/linux/reboot-mode.h                        |   7 +-
+ 14 files changed, 281 insertions(+), 43 deletions(-)
+---
+base-commit: 024e09e444bd2b06aee9d1f3fe7b313c7a2df1bb
+change-id: 20250709-arm-psci-system_reset2-vendor-reboots-46c80044afcf
+
+Best regards,
 -- 
-Kind Regards,
-Niklas Söderlund
+Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+
 
