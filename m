@@ -1,365 +1,320 @@
-Return-Path: <linux-kernel+bounces-734430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B34B08193
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:43:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB1B7B081DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 02:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855EE1C28764
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:43:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9D387B0701
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 00:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0029145B27;
-	Thu, 17 Jul 2025 00:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1E61CAA6D;
+	Thu, 17 Jul 2025 00:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OR14Cmbo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUulNxb5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14D8273FE;
-	Thu, 17 Jul 2025 00:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3A3381BA;
+	Thu, 17 Jul 2025 00:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752712976; cv=none; b=lwdayvY1Et6GiFJy5vdRyh0V0v+C8gwschBUr/iN0FKg0/XgrUJ7jQStm32LLJOieQC5wFTtEUa610JN3UwGnuKYL5rgDc/Z5msjk67sof5Rc77g9H806rxG7CNbwV6n1zeaCqOKXyII6sNbfgZnc22qDN+kbdQg2BSgtC3yF8o=
+	t=1752713377; cv=none; b=QURJniVXE0J0NUMd0f6zlc1cEnGO5FF4hJCimwzzRSme+ImOxl7wsX0aPAOW6qzUbp+EMOf1SJQRFUbTdPnElMka/C6cPkdVFHIirJbsw+G18UDyUbRd19BAuYDIsWoMa7gF03wg++mAD4Rp5fuGAa3fxiUgjFkI+pezes+HNtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752712976; c=relaxed/simple;
-	bh=a1a2m+qTgsqOTVd7tUMA7nLBD9q1KSnyxnULxLgpT04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r/sLzXFIBRoBF+y7J8sxxyTt9nSnS4nHwl9ItK8nSO7AXqjZTzpntMFqNP95bH4eU/aYLqIrKfxpv8cogXDu08/pD4tvmt4FRPQ2CZAf05qS5Y5BfDyTIwHcCouE4Hq6kswKxhQrv0UdSWtZi/U5G2k9Wc/gIze5oM1BsFxJ+b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OR14Cmbo; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752712974; x=1784248974;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=a1a2m+qTgsqOTVd7tUMA7nLBD9q1KSnyxnULxLgpT04=;
-  b=OR14Cmboo/StSDO6u7XNa10GxKG/p1BgVbHgbxnS3hjDRvtwyTum0O9W
-   F84dWHP4bIACKyVeOE+KVJ7sIEFDQggmTHVMDbST59YFbwn/4+GBfKLZK
-   75eRuwY1qMnvObdkkQLS5b5UZACfEyagc/PeJXwVTpU7Rb5iR/7AA557d
-   DqHYFZPUitnVptTHazw84+KriJGOFYw+K4q9TNCUqMUp6Pg3UIIqJ++G2
-   L6bEnIn+0n2k+w9mYb3N+i2d1ixxlc9GHwbM0j23Gwy/qtLuigKTxLI7j
-   S4G+NdDjW/TH0LgupKqVlCm+/t2veccT9DtPY1iYMuQDrABMI/YPOpSic
-   g==;
-X-CSE-ConnectionGUID: aJFgo7nYQtmaQ4gKCnw6Sw==
-X-CSE-MsgGUID: 4QUXR7PiTH+Xs//HxNRzxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="55123475"
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="55123475"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 17:42:54 -0700
-X-CSE-ConnectionGUID: rQa7ZAQtRDqTc7/WqMZ6rw==
-X-CSE-MsgGUID: D3FN+HCrT4uUEFuqsRHt9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,317,1744095600"; 
-   d="scan'208";a="188597232"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.111.193]) ([10.125.111.193])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 17:42:52 -0700
-Message-ID: <622fa915-4e3e-43fd-a6f5-9a2d8bad7925@intel.com>
-Date: Wed, 16 Jul 2025 17:42:51 -0700
+	s=arc-20240116; t=1752713377; c=relaxed/simple;
+	bh=C2b/kOYVqI3Ik9wJG1cCvS1xgXw2Z2eD/k8cW3enH9g=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=s+hKEioOufLZtvLCAhzlM+7EGD2SiToNDbc/V7jBBUkz1VR15UjzXVdTp6Wi2fX+rO5nGFwmV02sStYZH6D/nZtfS3QHbUEu0tstpEZSW/3NUxiRLCc4AfGN3wtJBx+mrvBS0Yr3LsaGA3BwoeYcI83HWJntNmCcXOeYPxZHJ/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUulNxb5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79573C4CEE7;
+	Thu, 17 Jul 2025 00:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752713376;
+	bh=C2b/kOYVqI3Ik9wJG1cCvS1xgXw2Z2eD/k8cW3enH9g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QUulNxb5NneF/IgLhr+ouNzzLeRNF54YSS2iwU2rss1/a4W2dqa259a/nVfNMGfVi
+	 009APxLMKAQgEp7/WPTq5CceeW5g/R2f0o/O/V1xhZi0+P9iN8kF78y3r9luoeYyt6
+	 yC6pDy9kFrY7+8AWxXM/8f0bry8aSZVTcfAXdoFnJa/f8kB0amBm2Kk5aM4l6twr6r
+	 Wz9rJcnDKU4IvpvVIoA54uggCG0ouZdXt4AdUVTl23szDH2QrKqSkuc3A2DWdNyvv6
+	 98tLDkyk88VjTMHWz1xUnWK22WpEAmuZYxUuSGKvLhb8FzeCxhHDXlFuBGNcvgx7Qd
+	 nLVRv6POc9bvw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1ucCou-000000067RU-2IXy;
+	Wed, 16 Jul 2025 20:49:56 -0400
+Message-ID: <20250717004910.297898999@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 16 Jul 2025 20:49:10 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>
+Subject: [PATCH v14 00/12] unwind_user: x86: Deferred unwinding infrastructure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/7] cxl/region: Introduce SOFT RESERVED resource
- removal on region teardown
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Ying Huang <huang.ying.caritas@gmail.com>,
- Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
- Benjamin Cheatham <benjamin.cheatham@amd.com>,
- PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
- Zhijian Li <lizhijian@fujitsu.com>
-References: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250715180407.47426-5-Smita.KoralahalliChannabasappa@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250715180407.47426-5-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+
+This is the first patch series of a set that will make it possible to be able
+to use SFrames[1] in the Linux kernel. A quick recap of the motivation for
+doing this.
+
+Currently the only way to get a user space stack trace from a stack
+walk (and not just copying large amount of user stack into the kernel
+ring buffer) is to use frame pointers. This has a few issues. The biggest
+one is that compiling frame pointers into every application and library
+has been shown to cause performance overhead.
+
+Another issue is that the format of the frames may not always be consistent
+between different compilers and some architectures (s390) has no defined
+format to do a reliable stack walk. The only way to perform user space
+profiling on these architectures is to copy the user stack into the kernel
+buffer.
+
+SFrames is now supported in gcc binutils and soon will also be supported
+by LLVM. SFrames acts more like ORC, and lives in the ELF executable
+file as its own section. Like ORC it has two tables where the first table
+is sorted by instruction pointers (IP) and using the current IP and finding
+it's entry in the first table, it will take you to the second table which
+will tell you where the return address of the current function is located
+and then you can use that address to look it up in the first table to find
+the return address of that function, and so on. This performs a user
+space stack walk.
+
+Now because the SFrame section lives in the ELF file it needs to be faulted
+into memory when it is used. This means that walking the user space stack
+requires being in a faultable context. As profilers like perf request a stack
+trace in interrupt or NMI context, it cannot do the walking when it is
+requested. Instead it must be deferred until it is safe to fault in user
+space. One place this is known to be safe is when the task is about to return
+back to user space.
+
+Josh originally wrote the PoC of this code and his last version he posted
+was back in January:
+
+   https://lore.kernel.org/all/cover.1737511963.git.jpoimboe@kernel.org/
+
+That series contained everything from adding a new faultable user space
+stack walking code, deferring the stack walk, implementing sframes,
+fixing up x86 (VDSO), and even added both the kernel and user space side
+of perf to make it work. But Josh also ran out of time to work on it and
+I picked it up. As there's several parts to this series, I also broke
+it out. Especially since there's parts of his series that do not depend
+on each other.
+
+This series contains only the core infrastructure that all the rest needs.
+Of the 12 patches, only 2 are x86 specific. The rest is simply the unwinding
+code that s390 can build against. I moved the 2 x86 specific to the end
+of the series too.
+
+Since multiple tracers (like perf, ftrace, bpf, etc) can attach to the
+deferred unwinder and each of these tracers can attach to some or all
+of the tasks to trace, there is a many to many relationship. This relationship
+needs to be made in interrupt or NMI context so it can not rely on any
+allocation. To handle this, a bitmask is used. There's a global bitmask of
+size long which will allocate a single bit when a tracer registers for
+deferred stack traces. The task struct will also have a bitmask where a
+request comes in from one of the tracers to have a deferred stack trace, it
+will set the corresponding bit for that tracer it its mask. As two of the bits
+are used internally, this means at most 30 on 32 bit systems or 62 on 64 bit
+systems of tracers may be registered at a given time.  This should not be an
+issue as only one perf application, or ftrace instance should request a bit.
+BPF should also use only one bit and handle any multiplexing for its users.
+
+When the first request is made for a deferred stack trace from a task, it will
+generate a unique cookie. This cookie will be used as the identifier for the
+user space stack trace. As the user space stack trace does not change while the
+task is in the kernel, requests that come in after the first request and before
+the task goes back to user space will get the same cookie.  If there's dropped
+events, and the events dropped miss a task entering user space and coming back
+to the kernel, the new stack trace taken when it goes back to user space should
+not be used with the events before the drop happened.
+
+When a tracer makes a request, it gets this cookie, and the tasks bitmask
+sets the bit for the requesting tracer. A task work is used to have the task
+do the callbacks before it goes back to user space. When it does, it will scan
+its bitmask and call all the callbacks for the tracers that have their
+representing bit set. The callback will receive the user space stack trace as
+well as the cookie that was used. It's up to the tracer to use the cookie
+or not to map the user space stack trace taken back to the events where
+it was requested.
+
+That's the basic idea. Obviously there's more to it than the above
+explanation, but each patch explains what it is doing, and it is broken up
+step by step.
+
+I run two SFrame meetings once a month (one in Asia friendly timezone and
+the other in Europe friendly). We have developers from Google, Oracle, Red Hat,
+IBM, EfficiOS, Meta, Microsoft, and more that attend. (If anyone is interested
+in attending let me know). I have been running this since December of 2024.
+Last year in GNU Cauldron, a few of us got together to discuss the design
+and such. We are pretty confident that the current design is sound. We have
+working code on top of this and have been testing it.
+
+Since the s390 folks want to start working on this (they have patches to
+sframes already from working on the prototypes), I would like this series
+to be a separate branch based on top of v6.16-rc2. Then all the subsystems
+that want to work on top of this can as there's no real dependency between
+them.
+
+I have more patches on top of this series that add perf support, ftrace
+support, sframe support and the x86 fix ups (for VDSO). But each of those
+patch series can be worked on independently, but they all depend on this
+series (although the x86 specific patches at the end isn't necessarily
+needed, at least for other architectures).
+
+Please review, and if you are happy with them, lets get them in a branch
+that we all can use. I'm happy to take it in my tree if I can get acks on the
+x86 code. Or it can be in the tip tree as a separate branch on top of 6.16-rc4
+and I'll just base my work on top of that. Doesn't matter either way.
+
+[1] https://sourceware.org/binutils/wiki/sframe
+
+The code for this series is located here:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+unwind/core
+
+Head SHA1: f14e91fa8019acefb146869eb465966a88ef6f3b
+
+Changes since v13: https://lore.kernel.org/linux-trace-kernel/20250708012239.268642741@kernel.org/
+
+
+- Folded patch 1 ("unwind_user: Add user space unwinding API) into patch 2
+  ("unwind_user: Add frame pointer support") as there was no real reason
+  to separate the two.
+
+- Only check alignment of cfa instead of cfa + frame->ra_off, that way
+  both ra_off and fp_off should also be aligned.
+
+- Incorporated some of Mathieu's changes from:
+  https://lore.kernel.org/all/20250710164301.3094-2-mathieu.desnoyers@efficios.com/
+
+- Updated the get_cookie() to be more like what Peter Zijlstra proposed:
+  https://lore.kernel.org/all/20250715102912.GQ1613200@noisy.programming.kicks-ass.net/
+
+- Added comment to explain struct unwind_task id.
+ 
+- Tweaked KernelDoc of unwind_deferred_request()
+
+- Removed update to convert pending over to local_t as the standalone
+  pending field as it goes away in later patches.
+
+- Added WARN_ON_ONCE when unwind_deferred_request() is called from NMI
+  context when an architecture doesn't support it. (Peter Zijlstra).
+
+- Always do the try_cmpxchg() in unwind_deferred_request() instead of
+  having a special case for !CAN_USE_IN_NMI as that logic is replaced in
+  later patches.
+
+- Fold ("unwind: Clear unwind_mask on exit back to user space") into
+  ("unwind deferred: Use bitmask to determine which callbacks to call").
+
+- Move unwind_mask field to the beginning of unwind_task_info for better
+  alignment.
+
+- Have unwind_deferred_request() return 1 for both pending and already
+  executed. Basically it now returns 0 - queued and callback will be
+  called; 1 - it is already pending or has already executed; -1 - an error
+  happened. (Peter Zijlstra)
+
+- Use atomic_long_fetch_andnot() instead of a try_cmpxchg() loop on
+  info->unwind_mask when clearing pending bit. (Peter Zijlstra)
+
+- Added atomic_long_fetch_or() to update the pending bit and new requests.
+  (Peter Zilstra)
+
+- Added a RESERVED_BITS to assign unwind_mask and make sure that no work
+  being cancelled would clear one of those bits.
+
+- The UNWIND_USED and UNWIND_PENDING are now enums.
+
+- Have the locking of the link list walk use guard(srcu_lite)
+  (Peter Zijlstra)
+ 
+- Fixed up due to the new atomic_long logic.
+
+- Added new patch to prevent a callback being called twice because of
+  another tracer requesting a callback after other callbacks have been
+  called. By using atomic_long_fetch_or() to set the work bit and PENDING
+  bit, it leaves other work bits set in the task's unwind_mask that have
+  already had their callabcks called. Added a new unwind_completed mask in
+  the cache that is used to keep track of what callbacks have been called
+  and will not call them againg until the task has left the kernel.
+
+- Removed handling of compat code and instead added a patch that lets the
+  architecture not do the deferred stacktrace if the task can not support it.
+  Specifically, x86 will not do the deferred stacktrace if the task is
+  running in 32 bit mode. sframes doesn't currently support 32 bit x86
+  anyway, and will likely never support it.
 
 
 
-On 7/15/25 11:04 AM, Smita Koralahalli wrote:
-> Reworked from a patch by Alison Schofield <alison.schofield@intel.com>
-> 
-> Previously, when CXL regions were created through autodiscovery and their
-> resources overlapped with SOFT RESERVED ranges, the soft reserved resource
-> remained in place after region teardown. This left the HPA range
-> unavailable for reuse even after the region was destroyed.
-> 
-> Enhance the logic to reliably remove SOFT RESERVED resources associated
-> with a region, regardless of alignment or hierarchy in the iomem tree.
-> 
-> Link: https://lore.kernel.org/linux-cxl/29312c0765224ae76862d59a17748c8188fb95f1.1692638817.git.alison.schofield@intel.com/
-> Co-developed-by: Alison Schofield <alison.schofield@intel.com>
-> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-> Co-developed-by: Terry Bowman <terry.bowman@amd.com>
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> ---
->  drivers/cxl/acpi.c        |   2 +
->  drivers/cxl/core/region.c | 124 ++++++++++++++++++++++++++++++++++++++
->  drivers/cxl/cxl.h         |   2 +
->  include/linux/ioport.h    |   1 +
->  kernel/resource.c         |  34 +++++++++++
->  5 files changed, 163 insertions(+)
-> 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index 3a27289e669b..9eb8a9587dee 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -829,6 +829,8 @@ static void cxl_softreserv_mem_work_fn(struct work_struct *work)
->  		pr_debug("Timeout waiting for cxl_mem probing");
->  
->  	wait_for_device_probe();
-> +
-> +	cxl_region_softreserv_update();
->  }
->  static DECLARE_WORK(cxl_sr_work, cxl_softreserv_mem_work_fn);
->  
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 6e5e1460068d..95951a1f1cab 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3486,6 +3486,130 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_add_to_region, "CXL");
->  
-> +static int add_soft_reserved(resource_size_t start, resource_size_t len,
-> +			     unsigned long flags)
-> +{
-> +	struct resource *res = kzalloc(sizeof(*res), GFP_KERNEL);
-> +	int rc;
-> +
-> +	if (!res)
-> +		return -ENOMEM;
-> +
-> +	*res = DEFINE_RES_NAMED_DESC(start, len, "Soft Reserved",
-> +				     flags | IORESOURCE_MEM,
-> +				     IORES_DESC_SOFT_RESERVED);
-> +
-> +	rc = insert_resource(&iomem_resource, res);
-> +	if (rc) {
-> +		kfree(res);
-> +		return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void remove_soft_reserved(struct cxl_region *cxlr, struct resource *soft,
-> +				 resource_size_t start, resource_size_t end)
-> +{
-> +	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
-> +	resource_size_t new_start, new_end;
-> +	int rc;
-> +
-> +	guard(mutex)(&cxlrd->range_lock);
-> +
-> +	if (soft->start == start && soft->end == end) {
-> +		/*
-> +		 * Exact alignment at both start and end. The entire region is
-> +		 * removed below.
-> +		 */
-> +
-> +	} else if (soft->start == start || soft->end == end) {
-> +		/* Aligns at either resource start or end */
-> +		if (soft->start == start) {
-> +			new_start = end + 1;
-> +			new_end = soft->end;
-> +		} else {
-> +			new_start = soft->start;
-> +			new_end = start - 1;
-> +		}
-> +
-> +		/*
-> +		 * Reuse original flags as the trimmed portion retains the same
-> +		 * memory type and access characteristics.
-> +		 */
-> +		rc = add_soft_reserved(new_start, new_end - new_start + 1,
-> +				       soft->flags);
-> +		if (rc)
-> +			dev_warn(&cxlr->dev,
-> +				 "cannot add new soft reserved resource at %pa\n",
-> +				 &new_start);
-> +
-> +	} else {
-> +		/* No alignment - Split into two new soft reserved regions */
-> +		new_start = soft->start;
-> +		new_end = soft->end;
-> +
-> +		rc = add_soft_reserved(new_start, start - new_start,
-> +				       soft->flags);
-> +		if (rc)
-> +			dev_warn(&cxlr->dev,
-> +				 "cannot add new soft reserved resource at %pa\n",
-> +				 &new_start);
-> +
-> +		rc = add_soft_reserved(end + 1, new_end - end, soft->flags);
-> +		if (rc)
-> +			dev_warn(&cxlr->dev,
-> +				 "cannot add new soft reserved resource at %pa + 1\n",
-> +				 &end);
-> +	}
-> +
-> +	rc = remove_resource(soft);
-> +	if (rc)
-> +		dev_warn(&cxlr->dev, "cannot remove soft reserved resource %pr\n",
-> +			 soft);
-> +}
-> +
-> +static int __cxl_region_softreserv_update(struct resource *soft,
-> +					  void *_cxlr)
-> +{
-> +	struct cxl_region *cxlr = _cxlr;
-> +	struct resource *res = cxlr->params.res;
-> +
-> +	/* Skip non-intersecting soft-reserved regions */
-> +	if (soft->end < res->start || soft->start > res->end)
-> +		return 0;
-> +
-> +	soft = normalize_resource(soft);
-> +	if (!soft)
-> +		return -EINVAL;
-> +
-> +	remove_soft_reserved(cxlr, soft, res->start, res->end);
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_region_softreserv_update_cb(struct device *dev, void *data)
-> +{
-> +	struct cxl_region *cxlr;
-> +
-> +	if (!is_cxl_region(dev))
-> +		return 0;
-> +
-> +	cxlr = to_cxl_region(dev);
-> +
-> +	walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED, IORESOURCE_MEM, 0, -1,
-> +			    cxlr, __cxl_region_softreserv_update);
+Josh Poimboeuf (4):
+      unwind_user: Add user space unwinding API with frame pointer support
+      unwind_user/deferred: Add unwind cache
+      unwind_user/deferred: Add deferred unwinding interface
+      unwind_user/x86: Enable frame pointer unwinding on x86
 
-No checking return value of walk_iomem_res_desc()?
+Steven Rostedt (8):
+      unwind_user/deferred: Add unwind_user_faultable()
+      unwind_user/deferred: Make unwind deferral requests NMI-safe
+      unwind deferred: Use bitmask to determine which callbacks to call
+      unwind deferred: Add unwind_completed mask to stop spurious callbacks
+      unwind: Add USED bit to only have one conditional on way back to user space
+      unwind deferred: Use SRCU unwind_deferred_task_work()
+      unwind: Finish up unwind when a task exits
+      unwind deferred/x86: Do not defer stack tracing for compat tasks
 
-> +
-> +	return 0;
-> +}
-> +
-> +void cxl_region_softreserv_update(void)
-> +{
-> +	bus_for_each_dev(&cxl_bus_type, NULL, NULL,
-> +			 cxl_region_softreserv_update_cb);
-
-No checking return value of bus_for_each_dev()? Is it ok to ignore all errors?
-
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_region_softreserv_update, "CXL");
-> +
->  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa)
->  {
->  	struct cxl_region_ref *iter;
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 3117136f0208..9f173467e497 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -862,6 +862,7 @@ struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
->  int cxl_add_to_region(struct cxl_endpoint_decoder *cxled);
->  struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
->  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
-> +void cxl_region_softreserv_update(void);
->  #else
->  static inline bool is_cxl_pmem_region(struct device *dev)
->  {
-> @@ -884,6 +885,7 @@ static inline u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint,
->  {
->  	return 0;
->  }
-> +static inline void cxl_region_softreserv_update(void) { }
->  #endif
->  
->  void cxl_endpoint_parse_cdat(struct cxl_port *port);
-> diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-> index e8b2d6aa4013..8693e095d32b 100644
-> --- a/include/linux/ioport.h
-> +++ b/include/linux/ioport.h
-> @@ -233,6 +233,7 @@ struct resource_constraint {
->  extern struct resource ioport_resource;
->  extern struct resource iomem_resource;
->  
-> +extern struct resource *normalize_resource(struct resource *res);
->  extern struct resource *request_resource_conflict(struct resource *root, struct resource *new);
->  extern int request_resource(struct resource *root, struct resource *new);
->  extern int release_resource(struct resource *new);
-> diff --git a/kernel/resource.c b/kernel/resource.c
-> index 8d3e6ed0bdc1..3d8dc2a59cb2 100644
-> --- a/kernel/resource.c
-> +++ b/kernel/resource.c
-> @@ -50,6 +50,40 @@ EXPORT_SYMBOL(iomem_resource);
->  
->  static DEFINE_RWLOCK(resource_lock);
->  
-> +/*
-> + * normalize_resource
-> + *
-> + * The walk_iomem_res_desc() returns a copy of a resource, not a reference
-> + * to the actual resource in the iomem_resource tree. As a result,
-> + * __release_resource() which relies on pointer equality will fail.
-> + *
-> + * This helper walks the children of the resource's parent to find and
-> + * return the original resource pointer that matches the given resource's
-> + * start and end addresses.
-> + *
-> + * Return: Pointer to the matching original resource in iomem_resource, or
-> + *         NULL if not found or invalid input.
-> + */
-> +struct resource *normalize_resource(struct resource *res)
-> +{
-> +	if (!res || !res->parent)
-> +		return NULL;
-> +
-> +	read_lock(&resource_lock);
-
-May as well go with below for consistency:
-guard(read_lock)(&resource_lock);
-
-DJ
-
-> +	for (struct resource *res_iter = res->parent->child; res_iter != NULL;
-> +	     res_iter = res_iter->sibling) {
-> +		if ((res_iter->start == res->start) &&
-> +		    (res_iter->end == res->end)) {
-> +			read_unlock(&resource_lock);
-> +			return res_iter;
-> +		}
-> +	}
-> +
-> +	read_unlock(&resource_lock);
-> +	return NULL;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(normalize_resource, "CXL");
-> +
->  /*
->   * Return the next node of @p in pre-order tree traversal.  If
->   * @skip_children is true, skip the descendant nodes of @p in
-
+----
+ MAINTAINERS                           |   8 +
+ arch/Kconfig                          |   7 +
+ arch/x86/Kconfig                      |   1 +
+ arch/x86/include/asm/unwind_user.h    |  22 ++
+ include/asm-generic/Kbuild            |   1 +
+ include/asm-generic/unwind_user.h     |   5 +
+ include/linux/entry-common.h          |   2 +
+ include/linux/sched.h                 |   5 +
+ include/linux/srcu.h                  |   4 +
+ include/linux/unwind_deferred.h       |  86 ++++++++
+ include/linux/unwind_deferred_types.h |  39 ++++
+ include/linux/unwind_user.h           |  14 ++
+ include/linux/unwind_user_types.h     |  44 ++++
+ kernel/Makefile                       |   1 +
+ kernel/exit.c                         |   2 +
+ kernel/fork.c                         |   4 +
+ kernel/unwind/Makefile                |   1 +
+ kernel/unwind/deferred.c              | 365 ++++++++++++++++++++++++++++++++++
+ kernel/unwind/user.c                  | 128 ++++++++++++
+ 19 files changed, 739 insertions(+)
+ create mode 100644 arch/x86/include/asm/unwind_user.h
+ create mode 100644 include/asm-generic/unwind_user.h
+ create mode 100644 include/linux/unwind_deferred.h
+ create mode 100644 include/linux/unwind_deferred_types.h
+ create mode 100644 include/linux/unwind_user.h
+ create mode 100644 include/linux/unwind_user_types.h
+ create mode 100644 kernel/unwind/Makefile
+ create mode 100644 kernel/unwind/deferred.c
+ create mode 100644 kernel/unwind/user.c
 
