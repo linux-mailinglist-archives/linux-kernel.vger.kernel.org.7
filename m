@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-735911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217ABB09525
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:45:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4225B09528
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 21:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D9E5A182A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9481C4733A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B93212B0A;
-	Thu, 17 Jul 2025 19:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37664212B0A;
+	Thu, 17 Jul 2025 19:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWz40BNV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qUZnas5/"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7881799F;
-	Thu, 17 Jul 2025 19:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E181A3177
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 19:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752781532; cv=none; b=nUS10SFQY5KN0sQxT0rtNYQBSi/fczrWHzBNjq6FuYivqPKtwQkGMM6wNfuCBqys5csjWsYT+1avW1rn3riJJ2xhe7uLEz1BJ4/IVvuoT40nHuMu2dvVjN2cXvOYxeM2FZ3NfiU3E/96uf1x0sWhEM7J98ukYZHvpAC5iteTo78=
+	t=1752781667; cv=none; b=Nu3X6wqe+flMg8yOPIvpOwv9mPUS6ETqhAAiL42MgtTK9WPYvuhP2HM/sHJi1tlElIoqOCKNW3I1kHk4/9Sge5pgKmAM1vLYYgW3RSMQAjzVaQ9y5O4z+LNoiwOPInfgJfxKvipqV/nSIcRR9vBsbXKlSW+CNGAA1qv5qGBb8Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752781532; c=relaxed/simple;
-	bh=N2BisUfdTV1268goLzXHdBIJr+OPvUfSeFednAFAYYY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=eIPnEOg16k0impGe290NF0c0+Sgljo//xFZ/zDgSvXgYjWBw8zu7Bo2r0VntB7EBvWOg1D3/sjQmDx/ti6kamlV7N66yMHDmmhVvxZbDcB2Mtco8PmzFQlM3221kFedy9uFhlPpGcgF1eaTi/uqEgMD3/MjhNvSniMywd+Rdskw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWz40BNV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB38C4CEE3;
-	Thu, 17 Jul 2025 19:45:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752781531;
-	bh=N2BisUfdTV1268goLzXHdBIJr+OPvUfSeFednAFAYYY=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=sWz40BNVuRx9LM1hNdjBIPpZL1908nl08MOxa5pbgC2FdijtwLIo7xV/Pr0A1z949
-	 L79Oz+I2I5b3OvMjQ/hLXdl0Hrw6Uy+zVW0smISUYeJ/tsCsu7xtYvFjt3HMNVH3v8
-	 f3iw61NLBhJElpMqTzm+Nyb78W3qLDQUHH52OIbKwVj6D1RnP5DDVlbR21U3sTPCRY
-	 EyfZoP9F998sGyZ4YMwgpNivXCZToKQ1EL4PFnjSWiR26nJY81n09ESSD9NrFMaQf8
-	 YZhd3m01k6r8wqrvUKOO6hFg4N5CHHiwDSAF+5UQYmZXDsrjEUAybJBvKEOmCOY4dL
-	 pR5sTZNPLMBWg==
+	s=arc-20240116; t=1752781667; c=relaxed/simple;
+	bh=8EU5RZkOr9w246jZgEa5ZMLg/xdhvInjQOdF2qT6S2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OWDKhK8z11RAtrNDSnurBjdYPCKLzSXymoQU6a6XTk7sny4hRV1SZmzTCI590tAUt/NangARiJGG/gDn+daP2rCV2z/nPI3ON/pWfcp7kKInTmA0m/P4Gm8BdHXCExB8Mk2c5qky2npR34TPfaJAjk/p+9g5f9jr/vY7Iw8QYFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qUZnas5/; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 17 Jul 2025 12:47:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752781662;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LTcOOeh9jbiQH0ZRsc0tYHUQUX5dHK6KVzy+NE67bU8=;
+	b=qUZnas5/mlZVVjUq09//K0yKxN2SRkikK55pb6rmgTkA8J814VUvfVWKVjuvTLD9QY3PDA
+	ruzGslTxL3bfzg+V8wuHU/KpCywwXa7XcG9+74q/fBWrqKESJ8aXUWYzZ2+gBU9zhldWPa
+	+kJz/7OCXmayHIIq9onEBU0tYSdMwKk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Hao Jia <jiahao.kernel@gmail.com>
+Cc: akpm@linux-foundation.org, yuzhao@google.com, yuanchu@google.com, 
+	mhocko@kernel.org, lorenzo.stoakes@oracle.com, kinseyho@google.com, 
+	hannes@cmpxchg.org, gthelen@google.com, david@redhat.com, axelrasmussen@google.com, 
+	zhengqi.arch@bytedance.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Hao Jia <jiahao1@lixiang.com>
+Subject: Re: [PATCH] mm/mglru: Update MG-LRU proactive reclaim statistics
+ only to memcg
+Message-ID: <z3n3dfpgrctgf3mlkqydmos2svh353v3qzd22n4g3iygji6rsr@4l4zgkrl5w35>
+References: <20250717082845.34673-1-jiahao.kernel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 17 Jul 2025 21:45:26 +0200
-Message-Id: <DBEL719XP5CO.FKBDQ4QRZST0@kernel.org>
-Subject: Re: [PATCH v15 2/3] rust: io: mem: add a generic iomem abstraction
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250717-topics-tyr-platform_iomem-v15-0-beca780b77e3@collabora.com> <20250717-topics-tyr-platform_iomem-v15-2-beca780b77e3@collabora.com>
-In-Reply-To: <20250717-topics-tyr-platform_iomem-v15-2-beca780b77e3@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717082845.34673-1-jiahao.kernel@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu Jul 17, 2025 at 5:55 PM CEST, Daniel Almeida wrote:
-> +impl<const SIZE: usize> IoMem<SIZE> {
-> +    fn ioremap(resource: &Resource) -> Result<Self> {
-> +        // Note: It looks like there aren't any 32-bit architectures tha=
-t define
-> +        // ioremap_np. This means that sometimes this conversion will fa=
-il. If
-> +        // we performed a lossy cast, i.e., using `as`, then `bindings::=
-ioremap`
-> +        // would return NULL anyway.
+Hi Hao,
 
-Why would ioremap() return NULL if you perform a lossy cast?
+On Thu, Jul 17, 2025 at 04:28:45PM +0800, Hao Jia wrote:
+> From: Hao Jia <jiahao1@lixiang.com>
+> 
+> Users can use /sys/kernel/debug/lru_gen to trigger proactive memory reclaim
+> of a specified memcg.
 
-Anyways, I find it a bit difficult to decode the actual problem from the ab=
-ove
-description.
+Are you using this interface for proactively reclaiming a specific
+memcg? I see run_cmd() using mem_cgroup_from_id() to get memcg from a
+given id but I don't think we expose ids from mem_cgroup_ids to the
+userspace. Usually we use cgroup_id which is just an inode number for
+the cgroup folder. I wonder if the current users of this interface are
+providing memcg id.
 
-I feel it would be better to just explain that some ioremap() implementatio=
-ns
-use types that depend on the CPU word width rather than the bus address wid=
-th.
+> Currently, statistics such as pgrefill, pgscan and
+> pgsteal will be updated to the /proc/vmstat system memory statistics.
+> 
+> This will confuse some system memory pressure monitoring tools, making
+> it difficult to determine whether pgscan and pgsteal are caused by
+> system-level pressure or by proactive memory reclaim of some specific
+> memory cgroup.
+> 
+> Therefore, make this interface behave similarly to memory.reclaim.
+> Update proactive memory reclaim statistics only to its memory cgroup.
+> 
+> Signed-off-by: Hao Jia <jiahao1@lixiang.com>
 
-If you agree, no need to resend though, we can change it when applying the
-series.
+The patch looks fine though.
 
-> +        // TODO: Properly address this in the C code to avoid this `try_=
-into`.
-> +        let size =3D resource.size().try_into()?;
-> +        if size =3D=3D 0 {
-> +            return Err(EINVAL);
-> +        }
+> ---
+>  mm/vmscan.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index f8dfd2864bbf..bc92ec338065 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -5545,6 +5545,7 @@ static int run_cmd(char cmd, int memcg_id, int nid, unsigned long seq,
+>  	if (memcg_id != mem_cgroup_id(memcg))
+>  		goto done;
+>  
+> +	sc->target_mem_cgroup = memcg;
+>  	lruvec = get_lruvec(memcg, nid);
+>  
+>  	if (swappiness < MIN_SWAPPINESS)
+> @@ -5581,6 +5582,7 @@ static ssize_t lru_gen_seq_write(struct file *file, const char __user *src,
+>  		.may_swap = true,
+>  		.reclaim_idx = MAX_NR_ZONES - 1,
+>  		.gfp_mask = GFP_KERNEL,
+> +		.proactive = true,
+>  	};
+>  
+>  	buf = kvmalloc(len + 1, GFP_KERNEL);
+> -- 
+> 2.34.1
+> 
 
