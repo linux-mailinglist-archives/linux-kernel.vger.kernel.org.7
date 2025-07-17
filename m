@@ -1,56 +1,54 @@
-Return-Path: <linux-kernel+bounces-735609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1530BB09188
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:18:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E41DB0918B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 18:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332BE3B2F7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:17:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D147188A7BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 16:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FDB2FA654;
-	Thu, 17 Jul 2025 16:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9D12FA64B;
+	Thu, 17 Jul 2025 16:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVUNLfi+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jtvW4g+B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CF71F9F73;
-	Thu, 17 Jul 2025 16:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24882F85C5;
+	Thu, 17 Jul 2025 16:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752769069; cv=none; b=KEXHQ4Zf6gNSFXrz0HJ9Q5vpkUZWd3ZnlF5v0NMzuPw3pHHizo69D14UF/CpNPacKU/2O//6ttKU4hmZ8vk8Ufnfdp3DzP6xdTUXIlmft3gVLReOBTE6gCOmff8b59pQnWsZbRuwFCqK5iuZaHW+0M8oaE7hNFczDZOuQWkTwEI=
+	t=1752769094; cv=none; b=tXgUU7lZCzz6/NpB9qr7/YhrdX2bugNBvtLDCx6yEcFUuO7fVhW/3LZxh+pi9cbx45kARcxoQKE5ps9Lm7qcJxub2NEf7xgKGIPuOUjA8m29BlUSjBKnFRRUO6HUIPm7UeEQOs9KbSW17cEvpjT0PYb5pY80c4b+CmZcYT7vtk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752769069; c=relaxed/simple;
-	bh=5/0GW3qMX+v5dZmKkYORWMeOrUeiQ5jFCrlbFwBqtGE=;
+	s=arc-20240116; t=1752769094; c=relaxed/simple;
+	bh=qgF2PhCCu2jrCR6ppj6iEwCr5hXPYuPLJcbCsGAlPik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gZQRZ1ggKrEgU+/0v1qOoT/bCPtOMtt35zMNDUtsLcyBjfkjpMHWZLk6YnKRTzcI+hpW0QoCxPaX/tVEpfzKyeE9q1cYd0wUwCXYIPsVTT9vlEE7lVfJ0c2bwU0ld0xmybjXJ6Fp7NJYkpla9k/hC4czlQ3n01VAKlTm06uHhvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVUNLfi+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E4D9C4CEFE;
-	Thu, 17 Jul 2025 16:17:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752769068;
-	bh=5/0GW3qMX+v5dZmKkYORWMeOrUeiQ5jFCrlbFwBqtGE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=SF5CSShU2rCNmvWeN6HYmZ+IaTIncT4W3iBcZXhM3aYb38IHPnX15YdFGDwQePOOfvnV4tFBSrQAM3IoKRqWC+lJ+CnlDUcA3ibD2umyNieLSY9zqazW8Ja92KcoYncuKFPjs+xe9GKBF3ZsZPo5cp1pjyioRKsM39vVn29rXu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jtvW4g+B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD8CCC4CEE3;
+	Thu, 17 Jul 2025 16:18:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752769094;
+	bh=qgF2PhCCu2jrCR6ppj6iEwCr5hXPYuPLJcbCsGAlPik=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jVUNLfi+h7dB7+1AiQYuppDpjh0UTMdbI9jg/omd0tsvQ3l0vDeutV8zxnXC9zk24
-	 UyDZ+ErX+0zKRY6q8auC4f+SMyIONhnlEWxQWRL/5aBg5HvWLWFV6b7T6+g+ZXuq/e
-	 fehuWMQaMa0HjLNDQBzLZSQ2Wap+RudbqctRCdkkXKEInNOHSgTIaFh0tLW7JcDb0y
-	 G4t4VrMRcv2OjdTlyZrqiwoKjenw5UufkthtgHsbbVeJM2f2aLXxE/dviY8CTuecy7
-	 VITnK18mRvfxw644GgKxx9g/IASeZ6XXu5mdzKr04K/FWcWNMtGY4eVRY68gQcGg+x
-	 i2Dp6GSQaiijg==
-Date: Thu, 17 Jul 2025 09:17:47 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-	tytso@mit.edu, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 04/13] ltp/fsx.c: Add atomic writes support to fsx
-Message-ID: <20250717161747.GG2672039@frogsfrogsfrogs>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <5bbd19e1615ca2a485b3b430c92f0260ee576f5e.1752329098.git.ojaswin@linux.ibm.com>
+	b=jtvW4g+B8zNptsFPV/+lOe0Vik3l15/yWbobnPH5pkJd7MIpfwUydpK377VIr1iFj
+	 +HXflmN+GTlzbW2yVX752etUI4Y9VgMK0605P2X8IlAbWHYEruaGRuxaZjDKLkywh6
+	 b3vhTPXVZC8KivQVqGDDeqsvsxlhMNblmY+d5rho=
+Date: Thu, 17 Jul 2025 18:18:11 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Valentina Manea <valentina.manea.m@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
+	"Brian G. Merrell" <bgmerrell@novell.com>, kernel@collabora.com,
+	Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/9] usb: vhci-hcd: Consistently use __func__
+Message-ID: <2025071755-vitalize-nineteen-f843@gregkh>
+References: <20250717-vhci-hcd-suspend-fix-v1-0-2b000cd05952@collabora.com>
+ <20250717-vhci-hcd-suspend-fix-v1-8-2b000cd05952@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,260 +57,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5bbd19e1615ca2a485b3b430c92f0260ee576f5e.1752329098.git.ojaswin@linux.ibm.com>
+In-Reply-To: <20250717-vhci-hcd-suspend-fix-v1-8-2b000cd05952@collabora.com>
 
-On Sat, Jul 12, 2025 at 07:42:46PM +0530, Ojaswin Mujoo wrote:
-> Implement atomic write support to help fuzz atomic writes
-> with fsx.
+On Thu, Jul 17, 2025 at 06:54:57PM +0300, Cristian Ciocaltea wrote:
+> Replace all explicit function names in string literals with __func__ and
+> silent several checkpatch complaints similar to the following one:
 > 
-> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>   WARNING: Prefer using '"%s...", __func__' to using 'vhci_start', this function's name, in a string
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 > ---
->  ltp/fsx.c | 109 +++++++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 104 insertions(+), 5 deletions(-)
+>  drivers/usb/usbip/vhci_hcd.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/ltp/fsx.c b/ltp/fsx.c
-> index 163b9453..ea39ca29 100644
-> --- a/ltp/fsx.c
-> +++ b/ltp/fsx.c
-> @@ -40,6 +40,7 @@
->  #include <liburing.h>
->  #endif
->  #include <sys/syscall.h>
-> +#include "statx.h"
+> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+> index 841902482fb15d1d86525f23492e4966f35630a0..95034440c84f931bdf47552b499e0fdc6f726e59 100644
+> --- a/drivers/usb/usbip/vhci_hcd.c
+> +++ b/drivers/usb/usbip/vhci_hcd.c
+> @@ -160,7 +160,7 @@ void rh_port_connect(struct vhci_device *vdev, enum usb_device_speed speed)
+>  	u32		status;
+>  	unsigned long	flags;
 >  
->  #ifndef MAP_FILE
->  # define MAP_FILE 0
-> @@ -49,6 +50,10 @@
->  #define RWF_DONTCACHE	0x80
->  #endif
+> -	usbip_dbg_vhci_rh("rh_port_connect %d\n", rhport);
+> +	usbip_dbg_vhci_rh("%s %d\n", __func__, rhport);
+
+So now you have __func__ twice in the log (hint, pr_debug() provides you
+the function name.)
+
+For "trace" debugging lines like this, just remove them, ftrace is
+better to use instead.
+
+
 >  
-> +#ifndef RWF_ATOMIC
-> +#define RWF_ATOMIC	0x40
-> +#endif
-> +
->  #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
+>  	spin_lock_irqsave(&vhci->lock, flags);
 >  
->  /* Operation flags (bitmask) */
-> @@ -110,6 +115,7 @@ enum {
->  	OP_READ_DONTCACHE,
->  	OP_WRITE,
->  	OP_WRITE_DONTCACHE,
-> +	OP_WRITE_ATOMIC,
->  	OP_MAPREAD,
->  	OP_MAPWRITE,
->  	OP_MAX_LITE,
-> @@ -200,6 +206,11 @@ int	uring = 0;
->  int	mark_nr = 0;
->  int	dontcache_io = 1;
->  int	hugepages = 0;                  /* -h flag */
-> +int	do_atomic_writes = 1;		/* -a flag disables */
-> +
-> +/* User for atomic writes */
-> +int awu_min = 0;
-> +int awu_max = 0;
+> @@ -194,7 +194,7 @@ static void rh_port_disconnect(struct vhci_device *vdev)
+>  	u32		status;
+>  	unsigned long	flags;
 >  
->  /* Stores info needed to periodically collapse hugepages */
->  struct hugepages_collapse_info {
-> @@ -288,6 +299,7 @@ static const char *op_names[] = {
->  	[OP_READ_DONTCACHE] = "read_dontcache",
->  	[OP_WRITE] = "write",
->  	[OP_WRITE_DONTCACHE] = "write_dontcache",
-> +	[OP_WRITE_ATOMIC] = "write_atomic",
->  	[OP_MAPREAD] = "mapread",
->  	[OP_MAPWRITE] = "mapwrite",
->  	[OP_TRUNCATE] = "truncate",
-> @@ -422,6 +434,7 @@ logdump(void)
->  				prt("\t***RRRR***");
->  			break;
->  		case OP_WRITE_DONTCACHE:
-> +		case OP_WRITE_ATOMIC:
->  		case OP_WRITE:
->  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
->  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
-> @@ -1073,6 +1086,25 @@ update_file_size(unsigned offset, unsigned size)
->  	file_size = offset + size;
+> -	usbip_dbg_vhci_rh("rh_port_disconnect %d\n", rhport);
+> +	usbip_dbg_vhci_rh("%s %d\n", __func__, rhport);
+
+Can be removed.
+
+>  
+>  	spin_lock_irqsave(&vhci->lock, flags);
+>  
+> @@ -1172,7 +1172,7 @@ static int vhci_start(struct usb_hcd *hcd)
+>  	int id, rhport;
+>  	int err;
+>  
+> -	usbip_dbg_vhci_hc("enter vhci_start\n");
+> +	usbip_dbg_vhci_hc("enter %s\n", __func__);
+
+Also removed.
+
+>  
+>  	if (usb_hcd_is_primary_hcd(hcd))
+>  		spin_lock_init(&vhci_hcd->vhci->lock);
+> @@ -1299,7 +1299,7 @@ static int vhci_alloc_streams(struct usb_hcd *hcd, struct usb_device *udev,
+>  			      struct usb_host_endpoint **eps, unsigned int num_eps,
+>  			      unsigned int num_streams, gfp_t mem_flags)
+>  {
+> -	dev_dbg(&hcd->self.root_hub->dev, "vhci_alloc_streams not implemented\n");
+> +	dev_dbg(&hcd->self.root_hub->dev, "%s not implemented\n", __func__);
+
+Just drop __func__ as it's now duplicated.
+
+>  	return 0;
 >  }
 >  
-> +static int is_power_of_2(unsigned n) {
-> +	return ((n & (n - 1)) == 0);
-> +}
-> +
-> +/*
-> + * Round down n to nearest power of 2.
-> + * If n is already a power of 2, return n;
-> + */
-> +static int rounddown_pow_of_2(int n) {
-> +	int i = 0;
-> +
-> +	if (is_power_of_2(n))
-> +		return n;
-> +
-> +	for (; (1 << i) < n; i++);
-> +
-> +	return 1 << (i - 1);
-> +}
-> +
->  void
->  dowrite(unsigned offset, unsigned size, int flags)
+> @@ -1308,7 +1308,7 @@ static int vhci_free_streams(struct usb_hcd *hcd, struct usb_device *udev,
+>  			     struct usb_host_endpoint **eps, unsigned int num_eps,
+>  	gfp_t mem_flags)
 >  {
-> @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
->  	offset -= offset % writebdy;
->  	if (o_direct)
->  		size -= size % writebdy;
-> +	if (flags & RWF_ATOMIC) {
-> +		/* atomic write len must be inbetween awu_min and awu_max */
-> +		if (size < awu_min)
-> +			size = awu_min;
-> +		if (size > awu_max)
-> +			size = awu_max;
-> +
-> +		/* atomic writes need power-of-2 sizes */
-> +		size = rounddown_pow_of_2(size);
-> +
-> +		/* atomic writes need naturally aligned offsets */
-> +		offset -= offset % size;
+> -	dev_dbg(&hcd->self.root_hub->dev, "vhci_free_streams not implemented\n");
+> +	dev_dbg(&hcd->self.root_hub->dev, "%s not implemented\n", __func__);
 
-I don't think you should be modifying offset/size here.  Normally for
-fsx we do all the rounding of the file range in the switch statement
-after the "calculate appropriate op to run" comment statement.
+Same here.
 
---D
+thanks,
 
-> +
-> +		/* Skip the write if we are crossing max filesize */
-> +		if ((offset + size) > maxfilelen) {
-> +			if (!quiet && testcalls > simulatedopcount)
-> +				prt("skipping atomic write past maxfilelen\n");
-> +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> +			return;
-> +		}
-> +	}
->  	if (size == 0) {
->  		if (!quiet && testcalls > simulatedopcount && !o_direct)
->  			prt("skipping zero size write\n");
-> @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
->  		return;
->  	}
->  
-> -	log4(OP_WRITE, offset, size, FL_NONE);
-> +	if (flags & RWF_ATOMIC)
-> +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
-> +	else
-> +		log4(OP_WRITE, offset, size, FL_NONE);
->  
->  	gendata(original_buf, good_buf, offset, size);
->  	if (offset + size > file_size) {
-> @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
->  		       (monitorstart == -1 ||
->  			(offset + size > monitorstart &&
->  			(monitorend == -1 || offset <= monitorend))))))
-> -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
-> -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
-> +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
-> +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
-> +		    (flags & RWF_ATOMIC) != 0);
->  	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
->  	if (iret != size) {
->  		if (iret == -1)
-> @@ -1785,6 +1842,30 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
->  }
->  #endif
->  
-> +int test_atomic_writes(void) {
-> +	int ret;
-> +	struct statx stx;
-> +
-> +	ret = xfstests_statx(AT_FDCWD, fname, 0, STATX_WRITE_ATOMIC, &stx);
-> +	if (ret < 0) {
-> +		fprintf(stderr, "main: Statx failed with %d."
-> +			" Failed to determine atomic write limits, "
-> +			" disabling!\n", ret);
-> +		return 0;
-> +	}
-> +
-> +	if (stx.stx_attributes & STATX_ATTR_WRITE_ATOMIC &&
-> +	    stx.stx_atomic_write_unit_min > 0) {
-> +		awu_min = stx.stx_atomic_write_unit_min;
-> +		awu_max = stx.stx_atomic_write_unit_max;
-> +		return 1;
-> +	}
-> +
-> +	fprintf(stderr, "main: IO Stack does not support "
-> +			"atomic writes, disabling!\n");
-> +	return 0;
-> +}
-> +
->  #ifdef HAVE_COPY_FILE_RANGE
->  int
->  test_copy_range(void)
-> @@ -2356,6 +2437,12 @@ have_op:
->  			goto out;
->  		}
->  		break;
-> +	case OP_WRITE_ATOMIC:
-> +		if (!do_atomic_writes) {
-> +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> +			goto out;
-> +		}
-> +		break;
->  	}
->  
->  	switch (op) {
-> @@ -2385,6 +2472,11 @@ have_op:
->  			dowrite(offset, size, 0);
->  		break;
->  
-> +	case OP_WRITE_ATOMIC:
-> +		TRIM_OFF_LEN(offset, size, maxfilelen);
-> +		dowrite(offset, size, RWF_ATOMIC);
-> +		break;
-> +
->  	case OP_MAPREAD:
->  		TRIM_OFF_LEN(offset, size, file_size);
->  		domapread(offset, size);
-> @@ -2511,13 +2603,14 @@ void
->  usage(void)
->  {
->  	fprintf(stdout, "usage: %s",
-> -		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
-> +		"fsx [-adfhknqxyzBEFHIJKLORWXZ0]\n\
->  	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
->  	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
->  	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
->  	   [-A|-U] [-D startingop] [-N numops] [-P dirpath] [-S seed]\n\
->  	   [--replay-ops=opsfile] [--record-ops[=opsfile]] [--duration=seconds]\n\
->  	   ... fname\n\
-> +	-a: disable atomic writes\n\
->  	-b opnum: beginning operation number (default 1)\n\
->  	-c P: 1 in P chance of file close+open at each op (default infinity)\n\
->  	-d: debug output for all operations\n\
-> @@ -3059,9 +3152,13 @@ main(int argc, char **argv)
->  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
->  
->  	while ((ch = getopt_long(argc, argv,
-> -				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> +				 "0ab:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
->  				 longopts, NULL)) != EOF)
->  		switch (ch) {
-> +		case 'a':
-> +			prt("main(): Atomic writes disabled\n");
-> +			do_atomic_writes = 0;
-> +			break;
->  		case 'b':
->  			simulatedopcount = getnum(optarg, &endp);
->  			if (!quiet)
-> @@ -3475,6 +3572,8 @@ main(int argc, char **argv)
->  		exchange_range_calls = test_exchange_range();
->  	if (dontcache_io)
->  		dontcache_io = test_dontcache_io();
-> +	if (do_atomic_writes)
-> +		do_atomic_writes = test_atomic_writes();
->  
->  	while (keep_running())
->  		if (!test())
-> -- 
-> 2.49.0
-> 
-> 
+greg k-h
 
