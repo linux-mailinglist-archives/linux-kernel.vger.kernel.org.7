@@ -1,161 +1,145 @@
-Return-Path: <linux-kernel+bounces-735242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD97B08CB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:19:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35CEAB08CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 14:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACAC2164E32
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:19:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A41A1631C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A812BCF6A;
-	Thu, 17 Jul 2025 12:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580D427B4FA;
+	Thu, 17 Jul 2025 12:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="M9WmBD88"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HbrbVzTo"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08121A288;
-	Thu, 17 Jul 2025 12:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B86929ACF3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 12:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752754762; cv=none; b=h8zuHd+HAxstz8/Hzbvlj5qz351VnIfNNdzzdXdYant+dbeuwQ4V6wzabDY6EXb977ZOcG/r8IyiMMYhbz2mTxzSO/R2ZrEXcZ27YrzaBOggQL5TwTErqePs28GvoEkZ8R6H/98Y7AwGu5EfC/Rox8/wMyDQ2XvAO/Csea9sLr4=
+	t=1752754801; cv=none; b=FGYItBbOyPD/zIAJqjtOg7jK7tPUqh1bdgELIpjESCAWQbE+UM883T6BB5ViZRS09J0YdOujaZu8HUNdttLG2mSa7pzDK0P02jVHaUPOb0RPttD4uJnIXXTTatoRF2v1c4WgEE8wRpwYlVaQvrAMHSLnByNT8UBwrNJf/LyUBO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752754762; c=relaxed/simple;
-	bh=p+jQ8lpHJFpy+DZRWg5Ni/tDS46YYqVmyiSWIJkFqbY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=evA1Lgh8j3XKNzox+0leCNtw7oAEqSs0gyiT6ooLt20Y8OPSY1c5S1j1u7T3RnRjw8g6US67yiKezrGVVLiv7fGbZvI6VXoTLPsR7XJMGjoX8WKdlq/VN49ZICAASwKjcxHmbQFpwci0utNXgsU9HwTayroLyAGypmfryCQ9ut8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=M9WmBD88; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1752754737; x=1753359537; i=markus.elfring@web.de;
-	bh=a9frde+TCHsKKJJekqPE+TXCVkRomw5gr4tBN4H9t1w=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=M9WmBD88KOV+FGJEEL3REnVKRQJHORo2WC4sfFCXfuqXwrm2+Ht0WEFR1SeiTYL4
-	 Ci3W/nsD9mjvuDLbp69ltuiNQcqfjn3Wcy53rnTtrOqc2ZUappiGn3PEppeOgIuSE
-	 pycydGixZxpwgOYYGTALaapO/QH8NZkVTJYSpXvWKTPrJ3LOuzhhC5fcY3JP6Fh4Z
-	 0RmooGQ5CtiaF9nvB0i4jx6z38GsmJlgL9d1fcrDsS29OrhbVw+3OMBIt+Fgd2gR2
-	 uG/BwOvP0fCcaDnHKEf6xTcFKJVLeBkNbkiS3YOlxNbR+o+ZBTYyleZOLUhdIYW06
-	 UWMPqaaPb92NdQ095g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.185]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JAm-1uaicN0apW-00Bk5J; Thu, 17
- Jul 2025 14:18:57 +0200
-Message-ID: <21104b21-c24f-4b1f-bd6e-072597927e81@web.de>
-Date: Thu, 17 Jul 2025 14:18:53 +0200
+	s=arc-20240116; t=1752754801; c=relaxed/simple;
+	bh=9BstoysraPcNdXHc1n0mia/3lc0Re5lG7hJE8+pelyk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=llFcXlSh9OqZLE0xK8oDg6e19Uw0qRFQhFMvdNIXYzAg7krSV71frpOnXT7E2IZM9LCaOuXxblyhnNdA8VFoy3EtGUntLD8Ohmbskvpjdgn6y9jhK78YAIPi6Rks6ORAcyXcNXNiQCgtJIk7n076biQqNz/KnznW8v/j5E0Purw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HbrbVzTo; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-40a4de1753fso554235b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:19:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1752754799; x=1753359599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/4/2GlFbqg9HLiAULIFmkWsYiTvbSro9cghjbjmQBg=;
+        b=HbrbVzToAmyaAKLqriCpirFkAhW86rX5D9S6irC1xCmkWyVJJnDu5GEKi8nG3J6EO6
+         UBPjpPWIZNhklZVgLI6pVdoO+3y3de8Qhi/OFrtc3xVVNFAX9Fo3GdrjAAqM/KxPQzK/
+         qANvAcF90Rbk/1cjiEEJywVd2haeLn/8xaBFm5no1jCLA+zcDpYcGz3xpfFIY41Z803U
+         5kEcDVpUldCibmnggSIJJEkfvmsdFQI+X9BHqIafDIS9Eru/mFbXllHjclll2Mns6TUZ
+         un9PwlUWbh4/YzDCclyn4V9WhIQFmPaZR/2KxmLnKoMpa91C6K44kRCy+/VL4y/Np6iP
+         SmoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752754799; x=1753359599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K/4/2GlFbqg9HLiAULIFmkWsYiTvbSro9cghjbjmQBg=;
+        b=qbMdgy+WADQNFh0I6kFfq3FKHBn0ovvkZHqhPQCgZ4/OrAjCdmKA1nYcd+QGkqHWWt
+         cD4zhEWRbPTot11ZGM4G88KpDXHgB9vqzZBUpPde70RHNcxz45kv4BIzEUn9hi8rqiFR
+         uH3j5CO/kuFS6q9Vxpaw0kL/A0z96a81dPJ/qegf6ycoOdq2NDYj0HMjV1ImFav6ag6H
+         pPtFQOiG7S/fEeAHiO54WEAncGlBHPPf4jVXNy0Qjd5ypVyqqBWloEWgrA3UvxkpFzDK
+         93EV1/TxO8r932oLEHA7PkPCIUJygtLEGHpUbsWuAeYDo+tnyMczsQtY0P9l8apD6egy
+         5peg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgdp2XDSIM5taJHnZ5llDrhtOSLydg0+9LozafS01cjyuQC6xer0RLPYhFnfcdUrjhFA7Sya8/sQohOhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJgDs5ZdPnDYolWniUI9t5qFOdbux953LwV08dBk3RVLhNPb/Z
+	aWCVYbzuUCAEwqjc1MNr+w7PDtTH6/yQcZvK1+aVMS1o+q1cQVUe//C00HMH/GuEmVgTtxcqaWe
+	Z8tMZz4SaRdSBoLn0KvhK1bJfCPf5T5U/Q2ozc+pvLw==
+X-Gm-Gg: ASbGncv+kdQpJRWu5M5393UvR2B+3RQJPgxeLkKRpRttqmPJVMIW2UXMSbbBIHY70s4
+	vDq70KjcgIuv0NspfDrSLTwPu0eVIdiG7t5aCKGwy//dCQz0ZtdcNlh8wauqzePSotehBvncQqu
+	wP48L42vJlqPZgA+TYPh4IgGf/Fkz8rA+8XqhNaHLN4TYCiViGRxmTOjrfgFRVksyLqBb2R27Ta
+	bl19ZSaHH55Mp1yyjd08phF7fdN6wI=
+X-Google-Smtp-Source: AGHT+IFuE6XD5lTWOXSNH1CM5vjssmv3cQEWKz8QIIOs4ZSd6cXO1A9SSlaFR0OA4UQ7x1Dn9lJKAZEfBfctdkacNn8=
+X-Received: by 2002:a05:6808:4f5f:b0:3fe:aebe:dde7 with SMTP id
+ 5614622812f47-41e2dcc2f2emr2171185b6e.2.1752754799043; Thu, 17 Jul 2025
+ 05:19:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Himanshu Mittal <h-mittal1@ti.com>, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
- Meghana Malladi <m-malladi@ti.com>, Paolo Abeni <pabeni@redhat.com>,
- prajith@ti.com, Pratheesh Gangadhar <pratheesh@ti.com>,
- Simon Horman <horms@kernel.org>, Sriramakrishnan <srk@ti.com>,
- Roger Quadros <rogerq@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20250710131250.1294278-1-h-mittal1@ti.com>
-Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix buffer allocation for
- ICSSG
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250710131250.1294278-1-h-mittal1@ti.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20250610092135.28738-1-cuiyunhui@bytedance.com>
+ <20250610092135.28738-2-cuiyunhui@bytedance.com> <84bjqik6ch.fsf@jogness.linutronix.de>
+In-Reply-To: <84bjqik6ch.fsf@jogness.linutronix.de>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Thu, 17 Jul 2025 20:19:48 +0800
+X-Gm-Features: Ac12FXzX-8_oUrVkjPDnBHqZHa66JwCymGHzpPdOgfG20sVHt6vV7FE1XJLHuEU
+Message-ID: <CAEEQ3wnBJUjArdfs+vgrsfoQaVJPKD3uwD8hwgg963fUBaNGrA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v9 1/4] serial: 8250: fix panic due to PSLVERR
+To: John Ogness <john.ogness@linutronix.de>
+Cc: arnd@arndb.de, andriy.shevchenko@linux.intel.com, 
+	benjamin.larsson@genexis.eu, gregkh@linuxfoundation.org, 
+	heikki.krogerus@linux.intel.com, ilpo.jarvinen@linux.intel.com, 
+	jirislaby@kernel.org, jkeeping@inmusicbrands.com, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	markus.mayer@linaro.org, matt.porter@linaro.org, namcao@linutronix.de, 
+	paulmck@kernel.org, pmladek@suse.com, schnelle@linux.ibm.com, 
+	sunilvl@ventanamicro.com, tim.kryger@linaro.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HdKKwwCkdS0uUcMCsjU4EauINBHqY1JcQjAzy+hip0DXyMEwYBL
- lMsp2/fjKpABmTfH6R3tS7aHb6m3nWDlr7rzI1L2swy8rjAduUkp/4rGXsp8EXvzuxLt4ps
- 6P2t6Y2+41K9T0RRArCiudKZ/8cr8uof7vGNX1IHi4zZedu3Mxa67swgmgmJ4B/hUqkEuZ4
- Nl9y9bzDKG3SKYOdtSszA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Ylv/pdWbBjo=;2DUCA7MBwYkvSDJGexulglLoII6
- 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
- ggTBo=
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-> @@ -288,8 +288,12 @@ static int prueth_fw_offload_buffer_setup(struct pr=
-ueth_emac *emac)
->  	int i;
-> =20
->  	addr =3D lower_32_bits(prueth->msmcram.pa);
-> -	if (slice)
-> -		addr +=3D PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
-> +	if (slice) {
-> +		if (prueth->pdata.banked_ms_ram)
-> +			addr +=3D MSMC_RAM_BANK_SIZE;
-> +		else
-> +			addr +=3D PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE;
-> +	}
-=E2=80=A6
+Hi John,
 
-How do you think about to use the following code variant?
+On Fri, Jun 20, 2025 at 7:20=E2=80=AFPM John Ogness <john.ogness@linutronix=
+.de> wrote:
+>
+> On 2025-06-10, Yunhui Cui <cuiyunhui@bytedance.com> wrote:
+> > When the PSLVERR_RESP_EN parameter is set to 1, the device generates
+> > an error response if an attempt is made to read an empty RBR (Receive
+> > Buffer Register) while the FIFO is enabled.
+> >
+> > In serial8250_do_startup(), calling serial_port_out(port, UART_LCR,
+> > UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
+> > dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latter
+> > function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
+> > Execution proceeds to the serial_port_in(port, UART_RX).
+> > This satisfies the PSLVERR trigger condition.
+> >
+> > When another CPU (e.g., using printk()) is accessing the UART (UART
+> > is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) =3D=
+=3D
+> > (lcr & ~UART_LCR_SPAR) in dw8250_check_lcr(), causing it to enter
+> > dw8250_force_idle().
+> >
+> > Put serial_port_out(port, UART_LCR, UART_LCR_WLEN8) under the port->loc=
+k
+> > to fix this issue.
+> >
+> > Panic backtrace:
+> > [    0.442336] Oops - unknown exception [#1]
+> > [    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
+> > [    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
+> > ...
+> > [    0.442416] console_on_rootfs+0x26/0x70
+> >
+> > Fixes: c49436b657d0 ("serial: 8250_dw: Improve unwritable LCR workaroun=
+d")
+> > Link: https://lore.kernel.org/all/84cydt5peu.fsf@jogness.linutronix.de/=
+T/
+> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > Cc: stable@vger.kernel.org
+>
+> Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
-	if (slice)
-		addr +=3D ( prueth->pdata.banked_ms_ram
-			? MSMC_RAM_BANK_SIZE
-			: PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE);
+In this patchset, patch[4] has been dropped, and patch[2] may still
+need discussion. Could you please pick patch[1] and patch[3] first?
 
-Regards,
-Markus
+Thanks,
+Yunhui
 
