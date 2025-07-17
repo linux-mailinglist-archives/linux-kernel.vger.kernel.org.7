@@ -1,146 +1,303 @@
-Return-Path: <linux-kernel+bounces-735135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E230EB08B3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:54:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0FBB08B59
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 12:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9856F58827A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:54:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4E537BBEB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73633288C12;
-	Thu, 17 Jul 2025 10:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F412129B799;
+	Thu, 17 Jul 2025 10:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlapYzOI"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="afqILlfA"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770C4299955
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 10:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2459299955;
+	Thu, 17 Jul 2025 10:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752749305; cv=none; b=FNF/rG4Vh+n5LFBaFjbhiA8I4uWsKoQmjCe7uB8+KJCh3Gg3LJRZfaODcpMH2DOvCZijthgymAyR3QXbEG/fTkG0uB+FhS0tIxYlVYvMYc4/RbhDd8gUgAzDxa5uUewHLw5RbiKdJXPmZJ4RP2R1g1rNNfRwDuBKoZkWaYtgaXE=
+	t=1752749373; cv=none; b=j23YMIhYJgqIHa4OZ0yhnz32u1i9K7CX7cYerGXUwHq9HUUq6VeO7dgj2lbvcg75ARznwE3UNDDGi46g5bLtIh3uAqIaMe1qcrV7rNNDEi3dimmFogJM7UYHRIFyqybunXqqK2BlYBFiHejWUUOM6rVOj1EHZpUn58ZLAn52x20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752749305; c=relaxed/simple;
-	bh=PPPNenxX4zSMrSeaiRSD+nf5weghwUgRDun06mgDAtE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MEzkphKdDNKfKnNiTztIenvdDy2J2u6EYsKeAfvc7X7MDWyGLoQi2Z/Y/dInGU5/rU/u7zfQOHyLKj1T6WeH7XRYobEafNHeDpheO20qd8EL3oKfLPnrImdspgV0puYLaid+VPmFLx4un38MQryt9yCCv+U9Lgp7CogSNrxqj3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlapYzOI; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23636167afeso6886315ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 03:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752749304; x=1753354104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AUE32TVCgc5BYcjuwrG1irrIPdzwr0WmEW1sHJImq9I=;
-        b=VlapYzOIBlXPHXPPsjdMG5VuOq6uny5BX0c7BqOKWH8pbJDPp7EAl+QaoCb+ZoOfyz
-         IqAPfPVbHYDDYecc+PgUBf85fKpdfguF5aloEDRuER3c0fpHXxQEF1IP7JtrEhqRjfy2
-         /X61fXGUVJIo7z0Jq3f1Wb11VRYnmZZN4kSBinCstTGCe8ek6jP41vjMvIkXZLEgFxgA
-         liX2u7J3yo0WjiS4KHgrkL/Wl8E4JyEMzIOBQ9Pp4LqU12Ah4BEmegoa/xrsV1pnOpqI
-         XMDiCQyl9ceka5CoALUooX8Jrkidag23wia9Apvu3rp/PU2ENASuin3YklxCOSRwaj7U
-         LWFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752749304; x=1753354104;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AUE32TVCgc5BYcjuwrG1irrIPdzwr0WmEW1sHJImq9I=;
-        b=Zdl3WXS4k60fnNRxqHI4D3VE/+pHqaeEXKOF8PeaHAW8v8TjdxFcHI01rYrOC9ipzW
-         OtDaVNy4QVscK2ljxczANzv/nczSldeJCpEDHme9pM7TmDkavu2I2td8JxrbUUbc3ZXW
-         fLj5UAEz196+yEnVqeseNQOqrSnt2Js7VbOritv0eq+N9mzTMzYNfVx9e4TPIS5/FMMq
-         N43z1k/6KQU7tGJsklVIZ1pvUp0qQKZPQX/R/dwURJgiKtD4uEevbooPfhbQZY5OQatA
-         lOLOXKiClZaDBNzKpegBDxxT8JDwr2awnoOmwkL84RAm/CVZv1DKmss5wquYRpYhI6ah
-         H61A==
-X-Forwarded-Encrypted: i=1; AJvYcCUGwhc0jI2cZdSbC2ioHfe0kg88pFsr8crZRmSu7R9DrmnhoCEURYs0RHtaeABPWJ+JrnXYoQLGOJb6VbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXW8/7kYKuP9w+davN0e6KfohSVJ5jRTfqIeRnZJjg6XxV5PVt
-	SElyNrM2Bga2c4X1rk/AkwF/cD4IVZ7xxK4fnxRV8ZwOPaKUAW8RhOtb
-X-Gm-Gg: ASbGncuDrJX0DIxTYjSv9VCeWNpy5cBAvCi2J44Eq7Y27c/3E6WaFkNEsU9Wq7ZmrRa
-	lmZN0Lqvq9JmSqUKkg5KXcERlzDUMl2geTgQsAvq0S7EXNYMo2weB1OyhIv1XIH81qZ6zdO76/7
-	YszQfs33wpUL0QQrtQD+DN6mpYOx//BRKXRTEK07ZkVCKcSFZH+YYiUZdFTw7JMR1sxFrVuT23V
-	OUUkxSNeGqXy+kSUOEHFSHOHlT1DiJt+vTRQnvmGnUk4BPDzWr4Dl6s/TBtE+/tCm7aUctaMXJr
-	mrsNl/lJuTGOGCrFSycBPU5PhCNC65TysVY8Oj9tXMLa467Ce/+iNLgLSJ0uC3aX3XvlpXbx1CZ
-	cty4aDurIcCIeOog78lVWzz3PKw8dbx5P3iNtMpHiPjqALWYkY3quc/o=
-X-Google-Smtp-Source: AGHT+IFXkzu6bujwc4QN/UjjPM8p8IRosZxnbRCNkugOMi80VBKl6GeB/WVnNve6YlNR8wyj/rJaYw==
-X-Received: by 2002:a17:903:1b66:b0:23d:dcf5:4806 with SMTP id d9443c01a7336-23e257660b1mr94520325ad.39.1752749303384;
-        Thu, 17 Jul 2025 03:48:23 -0700 (PDT)
-Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4323cd5sm140066605ad.126.2025.07.17.03.48.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 03:48:22 -0700 (PDT)
-From: wang lian <lianux.mm@gmail.com>
-To: akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com,
-	brauner@kernel.org,
-	broonie@kernel.org,
-	david@redhat.com,
-	gkwang@linx-info.com,
-	jannh@google.com,
-	lianux.mm@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	ludovico.zy.wu@gmail.com,
-	p1ucky0923@gmail.com,
-	ryncsn@gmail.com,
-	shuah@kernel.org,
-	sj@kernel.org,
-	vbabka@suse.cz,
-	zijing.zhang@proton.me,
-	ziy@nvidia.com
-Subject: Re: [PATCH] selftests/mm: reuse FORCE_READ to replace "asm volatile("" : "+r" (XXX));"
-Date: Thu, 17 Jul 2025 18:48:11 +0800
-Message-ID: <20250717104811.3773-1-lianux.mm@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
-References: <20250716151543.998b121a58064011e9ce68cb@linux-foundation.org>
+	s=arc-20240116; t=1752749373; c=relaxed/simple;
+	bh=lSP0/9GbrNfw0NFb6DWBwXGSVoqPXgSk/vHOEKnsPg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EshIOyAhAdx2J2EbpSnfWy9zduGW2hTrKvs3+SxvywH1BeI2eCvot0LvDlwu3zQnAi8fN1Y2MbNNl2Q4TnjqC/vKiU7AgaZeqWAlAvFS+0gYU4kakFaRUrCqgfOYj7MVcEg9F3gv/A1Isrl+AoOohixVQrHvuZzcP9NmfdwIgHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=afqILlfA; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752749368;
+	bh=lSP0/9GbrNfw0NFb6DWBwXGSVoqPXgSk/vHOEKnsPg0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=afqILlfAdc29dXdjkvF4I3YSbufR0yN5zVs7ZWdCQnSNZrXwIiIA4WW9e1PQ/k43p
+	 Df1AEB2qgK1CcIC2XuMPGOq9i8MF1PgD9lXMQFMyfHMy2qs2lYKYLkDmM6v0Us/shN
+	 DeZgcw8OSfYG3OVsnu4GAfPh22EEkfQwIerr8K2enqKMerzEu+rty9auXYe9uCeihA
+	 xDeE/B9ljTejzYjPTj+lWQyrWh+2TTo1hlFb/5Ahd9q6yRn0Z8nVafoUvgo1a4iuez
+	 mm2tuRwf/QUSDWqydPf4JT/ZMW8F76gshZk4c96BmE7M0kUvnAbtKZ8fWuWGawmgNh
+	 khghTJQCBNxeg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EE95F17E0C37;
+	Thu, 17 Jul 2025 12:49:27 +0200 (CEST)
+Message-ID: <327287aa-98c8-4745-adb9-2c36e8d5d825@collabora.com>
+Date: Thu, 17 Jul 2025 12:49:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] clk: mediatek: Add MT6789 clock controllers
+To: Arseniy Velikanov <me@adomerle.pw>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20250715222221.29406-1-me@adomerle.pw>
+ <20250715222221.29406-2-me@adomerle.pw>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250715222221.29406-2-me@adomerle.pw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> On Wed, 16 Jul 2025 20:31:26 +0800 wang lian <lianux.mm@gmail.com> wrote:
+Il 16/07/25 00:22, Arseniy Velikanov ha scritto:
+> Add support for MT6789 clock controllers, which includes apmixed, afe,
+> camsys, imgsys, infracfg, mcusys, mdpsys, mfgcfg, mmsys, topckgen,
+> vdec, venc.
+> 
+> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
 
-> > Several mm selftests use the `asm volatile("" : "+r" (variable));`
-> > construct to force a read of a variable, preventing the compiler from
-> > optimizing away the memory access. This idiom is cryptic and duplicated
-> > across multiple test files.
-> >
-> > Following a suggestion from David[1], this patch refactors this
-> > common pattern into a FORCE_READ() macro
-> > 
-> >  tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
-> >  tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
-> >  tools/testing/selftests/mm/migration.c        | 13 ++++----
-> >  tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
-> >  .../selftests/mm/split_huge_page_test.c       |  4 +--
-> >  5 files changed, 24 insertions(+), 32 deletions(-)
+Hi Arseniy,
+Thanks for all this work!
 
-> The patch forgot to move the FORCE_READ definition into a header?
+The submission looks generally fine, and I'm happy that you've ported those drivers
+to the common probe, however, there are a few (relatively small) things to fixup.
 
-Hi Andrew,
-You are absolutely right. My apologies for the inconvenience.
-This patch was sent standalone based on a suggestion from David during 
-the discussion of a previous, larger patch series. In that original series, 
-I had already moved the FORCE_READ() macro definition into vm_util.h.
+Please check below.
 
-You can find the original patch series and discussion at this link:
-https://lore.kernel.org/lkml/20250714130009.14581-1-lianux.mm@gmail.com/
-It should also be in your mailing list archive.
+> ---
+>   drivers/clk/mediatek/Kconfig                  |  68 ++
+>   drivers/clk/mediatek/Makefile                 |  11 +
+>   drivers/clk/mediatek/clk-mt6789-apmixed.c     | 147 +++
+>   drivers/clk/mediatek/clk-mt6789-audiosys.c    | 100 +++
+>   drivers/clk/mediatek/clk-mt6789-cam.c         | 131 +++
+>   drivers/clk/mediatek/clk-mt6789-img.c         | 100 +++
+>   .../clk/mediatek/clk-mt6789-imp_iic_wrap.c    |  90 ++
+>   drivers/clk/mediatek/clk-mt6789-infra_ao.c    | 228 +++++
+>   drivers/clk/mediatek/clk-mt6789-mcu.c         |  68 ++
+>   drivers/clk/mediatek/clk-mt6789-mdp.c         |  81 ++
+>   drivers/clk/mediatek/clk-mt6789-mfgcfg.c      |  61 ++
+>   drivers/clk/mediatek/clk-mt6789-mm.c          |  85 ++
+>   drivers/clk/mediatek/clk-mt6789-topckgen.c    | 846 ++++++++++++++++++
+>   drivers/clk/mediatek/clk-mt6789-vdec.c        | 119 +++
+>   drivers/clk/mediatek/clk-mt6789-venc.c        |  65 ++
+>   15 files changed, 2200 insertions(+)
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-apmixed.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-audiosys.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-cam.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-img.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-imp_iic_wrap.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-infra_ao.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-mcu.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-mdp.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-mfgcfg.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-mm.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-topckgen.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-vdec.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6789-venc.c
+> 
 
-To make this easier to review and apply, I can send a new, small patch series 
-that first introduces the FORCE_READ() macro in vm_util.h and then applies this refactoring. 
-Please let me know if you'd prefer that.
-Sorry again for the confusion.
+..snip..
+
+> diff --git a/drivers/clk/mediatek/clk-mt6789-topckgen.c b/drivers/clk/mediatek/clk-mt6789-topckgen.c
+> new file mode 100644
+> index 000000000000..bd986e861eb4
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt6789-topckgen.c
+> @@ -0,0 +1,846 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2022 MediaTek Inc.
+> + * Copyright (c) 2025 Arseniy Velikanov <me@adomerle.pw>
+> + */
+
+..snip..
 
 
-Best regards,
-wang lian
+ > +static const struct mtk_fixed_factor top_divs[] = {
+ > +	FACTOR(CLK_TOP_MFGPLL, "mfgpll_ck", "mfgpll", 1, 1),
+
+..snip..
+
+ > +	FACTOR(CLK_TOP_F26M, "f26m_ck", "clk26m", 1, 1),
+ > +	FACTOR(CLK_TOP_AXI, "axi_ck", "axi_sel", 1, 1),
+ > +	FACTOR(CLK_TOP_DISP, "disp_ck", "disp_sel", 1, 1),
+
+Please, remove all instances of FACTOR(.... 1, 1) and use the right parent directly
+for the other clocks.
+
+The factor(1,1) means clock_rate * 1 / 1 == clock_rate.
+
+I'm not sure why MediaTek likes to declare these - they are doing that in newer
+SoCs as well, but that's not for upstream: it does not make any sense to have those
+clocks in the driver, as those are effectively just name wrappers and nothing else.
+
+The only thing those do is increasing the footprint for, well, no good reason...!
+
+There's a pattern that you want to check: all of the "_ck" clocks are suspect! :-)
+
+ > +	FACTOR(CLK_TOP_MDP, "mdp_ck", "mdp_sel", 1, 1),
+ > +	FACTOR(CLK_TOP_IMG1, "img1_ck", "img1_sel", 1, 1),
+ > +	FACTOR(CLK_TOP_IPE, "ipe_ck", "ipe_sel", 1, 1),
+ > +	FACTOR(CLK_TOP_CAM, "cam_ck", "cam_sel", 1, 1),
+ > +	FACTOR(CLK_TOP_MFG_REF, "mfg_ref_ck", "mfg_ref_sel", 1, 1),
+ > +	FACTOR(CLK_TOP_MFG_PLL, "mfg_pll_ck", "mfg_pll_sel", 1, 1),
+
+..snip..
+
+> +
+> +static const char * const dvfsrc_parents[] = {
+> +	"tck_26m_mx9_ck",
+> +	"osc_d10"
+> +};
+> +
+> +static const char * const aes_msdcfde_parents[] = {
+> +	"tck_26m_mx9_ck",
+> +	"mainpll_d4_d2",
+> +	"mainpll_d6",
+> +	"mainpll_d4_d4",
+> +	"univpll_d4_d2",
+> +	"univpll_d6"
+> +};
+> +
+> +static const char * const mcupm_parents[] = {
+> +	"tck_26m_mx9_ck",
+> +	"mainpll_d6_d4",
+> +	"mainpll_d6_d2"
+> +};
+> +
+> +static const char * const dsi_occ_parents[] = {
+> +	"tck_26m_mx9_ck",
+> +	"mainpll_d6_d2",
+> +	"univpll_d5_d2",
+> +	"univpll_d4_d2"
+> +};
+> +
+
+Look at those parents, you're redefining the very same identical array 10 times
+in a row!
+
+Please, avoid this kind of duplication: delete all the duplicated arrays and
+just have one called, for example, "apll_i2s_mck_parents", then assign that
+to all of the relevant clocks.
+
+Same goes for camtg and others :-)
+
+> +static const char * const apll_i2s0_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+> +
+> +static const char * const apll_i2s1_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+> +
+> +static const char * const apll_i2s2_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+> +
+> +static const char * const apll_i2s3_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+> +
+> +static const char * const apll_i2s4_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+> +
+> +static const char * const apll_i2s5_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+> +
+> +static const char * const apll_i2s6_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+> +
+> +static const char * const apll_i2s7_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+> +
+> +static const char * const apll_i2s8_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+> +
+> +static const char * const apll_i2s9_mck_parents[] = {
+> +	"aud_1_sel",
+> +	"aud_2_sel"
+> +};
+
+..snip..
+
+> +module_platform_driver(clk_mt6789_topckgen_drv);
+> +
+> +MODULE_DESCRIPTION("MediaTek MT6789 top clock generators driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/clk/mediatek/clk-mt6789-vdec.c b/drivers/clk/mediatek/clk-mt6789-vdec.c
+> new file mode 100644
+> index 000000000000..81d6e720b6cd
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt6789-vdec.c
+> @@ -0,0 +1,119 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2022 MediaTek Inc.
+> + * Copyright (c) 2025 Arseniy Velikanov <me@adomerle.pw>
+> + */
+> +
+
+..snip..
+
+> +
+> +static const struct mtk_clk_desc vde2_desc = {
+> +	.clks = vde2_clks,
+> +	.num_clks = ARRAY_SIZE(vde2_clks),
+> +};
+> +
+> +static const struct of_device_id of_match_clk_mt6789_vdec[] = {
+
+Can you please compress all of those?
+
+static const struct of_device_id of_match_clk_mt6789_vdec[] ={
+	{ .compatible = "mediatek,mt6789-vdecsys", .data = &vde2_desc },
+	{ /* sentinel */ }
+};
+
+
+Note that the same comments do apply to other clock drivers that you're introducing
+but I'm only writing once - please apply the comments in the others and wherever
+they fit.
+
+Cheers!
+Angelo
 
