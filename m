@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-735760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64654B09378
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:41:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E8AB09385
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 19:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36B05A2928
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:41:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D628A480AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE962FE314;
-	Thu, 17 Jul 2025 17:39:58 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0570E2FEE28;
+	Thu, 17 Jul 2025 17:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a4QdZOkS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077A82FE321;
-	Thu, 17 Jul 2025 17:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F2D2FEE09;
+	Thu, 17 Jul 2025 17:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752773997; cv=none; b=ojdthpQMWlZV9TUYiH1GbTn/uNCu8nO+bC4HxyqrhpLwBJ2oDtQb4Qkq5Dr8Duc772YyaA5Ej+Cq/XuZ4ToM6oKG0Aupx0MnxKVx8W0tXlDAkACt11fozffe1PmHcyQa2TnhwA5s0aQ+bzMMyt8LutXdpR5U9pfqbdg3z/22lU4=
+	t=1752774202; cv=none; b=WmEoOYsdW1ZBreSa+jAx608uQeVU4AzaioCmxFNrr7CnHoWjGBXX6NbTGCqPgp2zxKavUkKn/GSzKBiHMkA9Gei/XXaNMHrrqqoRbOMivivETDSPruEsFZZoVqTI9cI7d+fJOhBswkTjRcgTYL8AnAYJBl5aQ4EpWHBUTAOmRis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752773997; c=relaxed/simple;
-	bh=qkhhPed3/lpu6pQkUFh0Et55Y3tu/w9wjUEBEqiMqKk=;
+	s=arc-20240116; t=1752774202; c=relaxed/simple;
+	bh=CJiMS990dGVpX818rZi5HfVEMHg4R/B441K8j05I2uk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHuYYso1/CpnnrMg6p4Es1g1pBB6FGjxzgdpt9y1j4Alhvas/TDJZR2PQFtHE24plpsmgqeJLtB5LLdY8wykzMvUEjjgoKf/AeYzGtu6RQzSyxadP3He2dq5SPWq/nXU5P9dktsB8iMZ+8tDL9ahMWtNh/Z672H+eeQhqGm38Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aec46b50f33so234346166b.3;
-        Thu, 17 Jul 2025 10:39:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752773994; x=1753378794;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N75hUCUnHzHAOQnR1X5WDi46d6HHqLedahkb72BGIp4=;
-        b=b9xccUamY3BYoh2Ck54Q8/bkNItCp30s/k6ExRSnNKSQSIjeZrxxH6SlYH9MT65NgR
-         5hffBV0haCfudFGpnlsscOkQmTJtI2aKQKTHCx9gVZi1lOV6G32qfTvHekhPJ55PI8I4
-         XzTzifmUZjpWv12NTWT5eEeURNJpN5PQFheex1buxTnxroHU0SjHzYJSjbpfdIV+6H4+
-         HTxUlMMUsMTjH/k6N3yLMvi44UPDhxYGiNXdXPP0Kmr3xm19DaE61EydyTQSGrjEkhDX
-         LqW/JczH0Hw4Z8bIL3PPsQ8vNvKTs1CFUSa4i4ad50duUXzA2qslrFiAmPCmdDtnVHM7
-         sGkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQdOUK7/C5223gKKZL88LCyuQtskz/Tg1yn1WU1yPG5UXXysMA7DZP6xn5AyfbuH4LNvPJx7UHWn0o6Dqu@vger.kernel.org, AJvYcCXBY3PkQNRyZXJhTwuBP93004bjs3h1ER+Um+1iHpLJ1hoQp0Eux/24ygJVOc+ncnweiaYMtGb0dlth@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx40yup/bRSfAZ2j5b6AuoFVH119Gk3VgZp8oZnHstFg5+yrf8x
-	xJal2VyTRDPeDgGcESnNg/eAVm29ngOfKYTD4m/GQRUv7d5+90MB4IjA
-X-Gm-Gg: ASbGnct32cPRUC4HNyMpe3u0M0QFz6JxQ9PHyHAk7cR3vvSmjo9mccDak5/+URK4h4Z
-	3nI1OH2TpOHApWXk+nkO8MRWiRcpI1wb3FcWjK2ILMpQ0MLLZCDk8A61faVxPOH8Hgu14H1bTDL
-	EpYRHf8bmDVoerCRD0kswDVsVuCJfeICgysRsnumv8enOFeNMt9278fR1jsfiAI7YB2mta/UTLR
-	O2D0PzYYYE5dR1eS8tb/BRqSH7ytcVjzFZj4YComzOKDCMP2eKcLxShuxwpOyc1o8J8a6++UYov
-	JZFQNBGkcQkrvfLnMcpPexhhfSfyxpl+Gt79GNE374/6jpz3ydvpK+szjav/EZoA3qL3VenzS/E
-	Midz4LhkhvscpuA==
-X-Google-Smtp-Source: AGHT+IFzyhLjmPmu4cDWktpxpzqDvcGCAjasZsDpOpRd6cqtZ393AWPrIrHoAbTP5fUy+pRG6xJk/g==
-X-Received: by 2002:a17:906:d28c:b0:ae3:ab68:4d7a with SMTP id a640c23a62f3a-ae9cde2e5f3mr674693866b.25.1752773994024;
-        Thu, 17 Jul 2025 10:39:54 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:74::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee4860sm1381138466b.47.2025.07.17.10.39.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 10:39:53 -0700 (PDT)
-Date: Thu, 17 Jul 2025 10:39:51 -0700
-From: Breno Leitao <leitao@debian.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, 
-	"Graf, Alexander" <graf@amazon.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, 
-	Peter Gonda <pgonda@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, 
-	"Moore, Robert" <robert.moore@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>, 
-	"kernel-team@meta.com" <kernel-team@meta.com>
-Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
-Message-ID: <p2jxuwlierrzbgsdjdmiw5336mhj5s57vg77zkekix6fkjqbqi@sa6opsvnxv6d>
-References: <20250715103125.GFaHYt_TnFQW6ti0ST@fat_crate.local>
- <vs5x5qvw2veurxdljmdiumqpseze2myx6quw3rmt7li7d3dbin@duoky4z44zzz>
- <20250715125327.GGaHZPRz9QLNNO-7q8@fat_crate.local>
- <68b6961c-4443-48a8-a7f7-ed94f3352d7d@linux.alibaba.com>
- <p2iytcdfvgm74zif6ihd7gs4kuaeza4b4p52cr5ya4upabiome@kr3yy7fjznwe>
- <b4c39a87-c5a4-4525-b598-61fc28a8dc36@linux.alibaba.com>
- <ckn7d3e3xynnup4bbombn7z7xxvld3a7xmqpg4pzp57qebywfc@t2yrn3zqmnje>
- <58f3242a-e52a-46a9-9a99-3887eeaa1285@linux.alibaba.com>
- <4fbreveuibi7q5nc2v4t3fpaxrgpwfd4f5c3ubfhssidqesax4@n7q4wrdpbfjv>
- <SJ1PR11MB60838F74FA06ED06C5D29FEDFC51A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AVO4qxpvnYuoGrz/zSyGahvPSixMdFYWCTPtEI/rlWqHbwLnLLln9obTa9aMnNHs70NGNZh/mBDOMpWKbc+e/ns1vgbJiLi6Qqg85jK/bsQFQ7Keaadi1fBmfFHCyK+vJrVtzzOPY/16ZTJNjrjArtfoI+I7ocLUBhuBeDK1fcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a4QdZOkS; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752774201; x=1784310201;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CJiMS990dGVpX818rZi5HfVEMHg4R/B441K8j05I2uk=;
+  b=a4QdZOkS+r5MId+JfAukTz8vm2KwtPgHMVPHvUqCQKepmeq5tqmGgsIi
+   H97e8uiauc2FRn5P5GBaa5/fqOtg9plg+1AofIN+wZWxmfspo/DDc9dPH
+   ar+JwW4MSFh7j6Pv5X7+qVA3AJKsY6/rZjNAfuwz2gGUNAnuZgNe2eeTa
+   rhadbFDYTzB9skrJKWOiO5e0OaNhG1Udbmpbj7bYtS0qJjA8siapKpSOQ
+   93p88lEj6/BdevZ7GAO1uHwvhn0QddCok7ikkiJNVoCHz4jc7bfYCHB+N
+   MJRkrYoHn1DjmE99W3dtWIDJmclo3mXH8WJgMdDN+bXNbp2yN4zgIbMmb
+   w==;
+X-CSE-ConnectionGUID: oQNDc6WfShyZOeqdb8cHeA==
+X-CSE-MsgGUID: 0nLAgdLYS/6R6aFu2N4Gww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11495"; a="57676277"
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="57676277"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 10:43:19 -0700
+X-CSE-ConnectionGUID: /ir0co3QQLuVbQ5KkAzEKg==
+X-CSE-MsgGUID: kG+rBdFJQlKxmeQa6nHgEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,319,1744095600"; 
+   d="scan'208";a="162391839"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 17 Jul 2025 10:43:12 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ucSdR-000DtP-2v;
+	Thu, 17 Jul 2025 17:43:09 +0000
+Date: Fri, 18 Jul 2025 01:42:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+	netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com, almasrymina@google.com,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
+	akpm@linux-foundation.org, andrew+netdev@lunn.ch,
+	asml.silence@gmail.com, toke@redhat.com, david@redhat.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
+	bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com,
+	shenwei.wang@nxp.com, xiaoning.wang@nxp.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org
+Subject: Re: [Intel-wired-lan] [PATCH net-next v11 12/12] libeth: xdp: access
+ ->pp through netmem_desc instead of page
+Message-ID: <202507180111.jygqJHzk-lkp@intel.com>
+References: <20250717070052.6358-13-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,18 +88,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB60838F74FA06ED06C5D29FEDFC51A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+In-Reply-To: <20250717070052.6358-13-byungchul@sk.com>
 
-On Thu, Jul 17, 2025 at 05:19:48PM +0000, Luck, Tony wrote:
-> >> Personally, I think this approach would be more helpful. Additionally, I
-> >> suggest not mixing CEs (Correctable Errors) and UEs (Uncorrectable
-> >> Errors) together. This is especially important for memory errors, as CEs
-> >> occur much more frequently than UEs, but their impact is much smaller.
-> 
-> Total agreement on keeping corrected memory errors out of this special
-> handling. They happen all the time in a large fleet, and are not significant
-> unless the same address repeats.
+Hi Byungchul,
 
-Are these EDAC errors? Shouldn't we track CE errors in
-edac_device_handle_ce_count()?
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on c65d34296b2252897e37835d6007bbd01b255742]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Byungchul-Park/netmem-introduce-struct-netmem_desc-mirroring-struct-page/20250717-150253
+base:   c65d34296b2252897e37835d6007bbd01b255742
+patch link:    https://lore.kernel.org/r/20250717070052.6358-13-byungchul%40sk.com
+patch subject: [Intel-wired-lan] [PATCH net-next v11 12/12] libeth: xdp: access ->pp through netmem_desc instead of page
+config: arm-randconfig-r072-20250717 (https://download.01.org/0day-ci/archive/20250718/202507180111.jygqJHzk-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250718/202507180111.jygqJHzk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507180111.jygqJHzk-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/timer.h:5,
+                    from include/linux/netdevice.h:24,
+                    from include/trace/events/xdp.h:8,
+                    from include/linux/bpf_trace.h:5,
+                    from include/net/libeth/xdp.h:7,
+                    from drivers/net/ethernet/intel/libeth/tx.c:6:
+   include/net/libeth/xdp.h: In function 'libeth_xdp_prepare_buff':
+>> include/net/libeth/xdp.h:1295:23: warning: passing argument 1 of 'page_pool_page_is_pp' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+        pp_page_to_nmdesc(page)->pp->p.offset, len, true);
+                          ^~~~
+   include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON_INVALID'
+    #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
+                                                                  ^
+   include/net/netmem.h:301:2: note: in expansion of macro 'DEBUG_NET_WARN_ON_ONCE'
+     DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));  \
+     ^~~~~~~~~~~~~~~~~~~~~~
+   include/net/libeth/xdp.h:1295:5: note: in expansion of macro 'pp_page_to_nmdesc'
+        pp_page_to_nmdesc(page)->pp->p.offset, len, true);
+        ^~~~~~~~~~~~~~~~~
+   In file included from arch/arm/include/asm/cacheflush.h:10,
+                    from include/linux/cacheflush.h:5,
+                    from include/linux/highmem.h:8,
+                    from include/linux/bvec.h:10,
+                    from include/linux/skbuff.h:17,
+                    from include/net/net_namespace.h:43,
+                    from include/linux/netdevice.h:38,
+                    from include/trace/events/xdp.h:8,
+                    from include/linux/bpf_trace.h:5,
+                    from include/net/libeth/xdp.h:7,
+                    from drivers/net/ethernet/intel/libeth/tx.c:6:
+   include/linux/mm.h:4176:54: note: expected 'struct page *' but argument is of type 'const struct page *'
+    static inline bool page_pool_page_is_pp(struct page *page)
+                                            ~~~~~~~~~~~~~^~~~
+
+
+vim +1295 include/net/libeth/xdp.h
+
+  1263	
+  1264	bool libeth_xdp_buff_add_frag(struct libeth_xdp_buff *xdp,
+  1265				      const struct libeth_fqe *fqe,
+  1266				      u32 len);
+  1267	
+  1268	/**
+  1269	 * libeth_xdp_prepare_buff - fill &libeth_xdp_buff with head FQE data
+  1270	 * @xdp: XDP buffer to attach the head to
+  1271	 * @fqe: FQE containing the head buffer
+  1272	 * @len: buffer len passed from HW
+  1273	 *
+  1274	 * Internal, use libeth_xdp_process_buff() instead. Initializes XDP buffer
+  1275	 * head with the Rx buffer data: data pointer, length, headroom, and
+  1276	 * truesize/tailroom. Zeroes the flags.
+  1277	 * Uses faster single u64 write instead of per-field access.
+  1278	 */
+  1279	static inline void libeth_xdp_prepare_buff(struct libeth_xdp_buff *xdp,
+  1280						   const struct libeth_fqe *fqe,
+  1281						   u32 len)
+  1282	{
+  1283		const struct page *page = __netmem_to_page(fqe->netmem);
+  1284	
+  1285	#ifdef __LIBETH_WORD_ACCESS
+  1286		static_assert(offsetofend(typeof(xdp->base), flags) -
+  1287			      offsetof(typeof(xdp->base), frame_sz) ==
+  1288			      sizeof(u64));
+  1289	
+  1290		*(u64 *)&xdp->base.frame_sz = fqe->truesize;
+  1291	#else
+  1292		xdp_init_buff(&xdp->base, fqe->truesize, xdp->base.rxq);
+  1293	#endif
+  1294		xdp_prepare_buff(&xdp->base, page_address(page) + fqe->offset,
+> 1295				 pp_page_to_nmdesc(page)->pp->p.offset, len, true);
+  1296	}
+  1297	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
