@@ -1,147 +1,215 @@
-Return-Path: <linux-kernel+bounces-734669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57D3B0849F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:09:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E51AB084A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D283C3AEC1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:09:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53774A192D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 06:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A422A207A20;
-	Thu, 17 Jul 2025 06:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0FC20468E;
+	Thu, 17 Jul 2025 06:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c8mupa7H"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="BVz9XR6G"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3426E204598;
-	Thu, 17 Jul 2025 06:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3659D1FCD1F
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 06:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752732580; cv=none; b=hLZyAGvSEmOaGefOnghoYkQzmxnKuPniCgen7mjT/+DytHnXBGzE0HkeFR/HKYXDGuTGoVFx4ts8mtJTFe/StJZdLiX6++uZXFfCLG4Dkf8sK2wmCSZjwNsdNWabofHz9Nxts31T3e/KIDshmEiN5T3mcG6wC7WX2QFS0iBgg34=
+	t=1752732672; cv=none; b=awJBKn6t8+aPrsWXP1SbKk+FVTxcPPmZYW31DJttXU6fdRDa7j8tJQsOX5qnI61+HsPUPQJSJyHDg26GxEGVHEy0eQksPT5zmZWyt9z51QGLL9ncT9c8JnQBSsfWy790xBCDm18ZIHSZPNk81WcFDMxCUxmpi3jbF9++U4puQI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752732580; c=relaxed/simple;
-	bh=06sfEwPwapl7HSwBzGHEiTcJjFqV4RXxkshBTqEhmwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5PYGFpoCXmlLR8D90WKoYG6tn4b9dYcnDpAcmGCHU+mcAkz24BGwxM/IvVmbeu4/Kie2J6y7W/8m+ml1BwSUT9g9Zof68Wx4HEDBSA5qj81d73hoiEneuoS3gR5Tca4oh5iM9s0fY8jPT+1fH0XHPvjPO5fe4HfSPb37Yvmm0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c8mupa7H; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752732578; x=1784268578;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=06sfEwPwapl7HSwBzGHEiTcJjFqV4RXxkshBTqEhmwM=;
-  b=c8mupa7H9PuA6RfQyftp5tLXPiHVZzBK4jKfOUcvOS7xcHkC3g1qPdXk
-   ANeMzGm6U65aW0EldONUrTYS8B/c3O935WTVkMbNJfwDRikiOZv1ugRcl
-   881GU3+uRFHojr9CJj1KaaZU3B0NOABsFX7+l6M54WkeQX0e0tRw6zSGp
-   fYH6Xd2oz8eKOAe5jRFJeJRHD23TGMOFyD/KPk71neCvW4uysiAP0fv/q
-   GpEiKKp8mss/9qUauvFeXp3MJOA+3oUvoKyN4xtZJNY5AlXfTR2iQZoC4
-   yqHG692sRJf+PCfUnFIIQLe46RXLCkYqWOmUBrQ44lYNeTsKWqru3IcF6
-   g==;
-X-CSE-ConnectionGUID: BSQNHMTGQkyhLFa0cN64Xw==
-X-CSE-MsgGUID: glWSZqdeTtWPaHJRhXXBzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54711586"
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="54711586"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 23:09:37 -0700
-X-CSE-ConnectionGUID: 8o1ZTcU5T068tA/m6Rj96Q==
-X-CSE-MsgGUID: GNfgJmtrTmaUQvJelTDqJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="163340836"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 16 Jul 2025 23:09:35 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ucHoB-000DCr-26;
-	Thu, 17 Jul 2025 06:09:31 +0000
-Date: Thu, 17 Jul 2025 14:08:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yassine Ouaissa via B4 Relay <devnull+yassine.ouaissa.allegrodvt.com@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michal Simek <monstr@monstr.eu>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Yassine OUAISSA <yassine.ouaissa@allegrodvt.com>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] media: allegro-dvt: Add Gen 3 IP stateful decoder
- driver
-Message-ID: <202507171313.1yaQJ9Tl-lkp@intel.com>
-References: <20250716-allegro_dvt_al300_dec_driver-v4-4-f87c01c9f7b5@allegrodvt.com>
+	s=arc-20240116; t=1752732672; c=relaxed/simple;
+	bh=r/ELqY9p9UrCGq6No1E+wq/GOusuftqIaLK1wJc+CGA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RtT6fTSZlWq58XFKwS95eykxK/UN6WvL+p+7iaKbQlGpJBKvP0BtsbypheXk1e6erJLBca96MmrrOdVgblWXlE/kAPVxn2Jn3S26YcJsaEs2h0Ww5Y3CeUK3wTbnA7zBufJ16s0YbYbHiMXEsAgqRnKKBoY892uYsfzjahQjh0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=BVz9XR6G; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-8731c3473c3so19049139f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jul 2025 23:11:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1752732670; x=1753337470; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZFXDSElKOOqp2lhmXXGsXGr9VDCoQ/FfrBr7vY0pwQs=;
+        b=BVz9XR6GVUjZQhiGSk3iw/1L80E3WcyEf91W+lPBVE3gpMIUP9OzNMAxdPNCTFhYIt
+         hKIO2mwmyP97lQLWuqCbHy1jeXLn+zXEUVmhXJ7ZkBPnhgLUYK5ksiKgTDe2PjzXFrPq
+         5N99sAn663QkZtJumhdyqrMOZjeQPdwK86oyJ/QGKMMJKvpdlkclMXyJ3M6p5X8buSrS
+         zPgOCfUm3Kotcqoz2ojdH23D/ja67b/gFIJrNN6S8eJpGb6dYIS28GdbRWKxHVS1NkR8
+         8fcM/EfczS9MQ65WWtaVVDiUa4blR8bLApSWVCUwgeP7+zb8HrFVwVjzIS1XhLDYD3yP
+         XdRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752732670; x=1753337470;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZFXDSElKOOqp2lhmXXGsXGr9VDCoQ/FfrBr7vY0pwQs=;
+        b=T7HSMdmTpFPb7byluZpVi9KKPLfkni8B3qS7liUz5EQvISq+VyuiFY3YUMUb7Z0PMY
+         GjXDvI3LRjXl5r3R9VYucjn11J8NhDKaNgC+iGdZalK3MaE1vIzyq2iRDbsZrWlclzXz
+         RuC7QSNPqj006x3C6sEpBWKM8yE1N25LN0zbGAxyQZ7ScuTpqy2aJ4oRQbAUUlTyE/x3
+         qCbcns9gQI2FPA99HbbISFqI5tfrUSPqfgjWA/iT9c+DO5nffUn2dVmwWsuAlRh6x+gZ
+         tFrPlE9SeOGjiDRXkS3+8K2nqJbwJf5LvCUuxwZutxXg3hFJvUeyjnDo6nfW+wWziCXI
+         9HFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzVK254UQpJ/qnXF4d+44edzr6XjbV/wTAFYZFs/wKBsBOabW95gSrydIQaO+S1Q57KC8E7jPeFn77y7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yykd2KmQC7UnZAxf5OmQU6poIC8YrHQlc5XB2XV2ECuPk8DYZpn
+	Jz4GBuojMM4lKSBAEhnOZXiYDU4CTqAPtMe7wR46hgdkZMYcAdaiEcvi1amHAPxbd1dMFuTfuRd
+	al5nqT/vUtTHGbHmukfJqZz77sR3M9fx05+TelMuSuM6XvHr58UTD
+X-Gm-Gg: ASbGncuVhUSomljKzuTyaVr0vRlZPZCR5NCV1N/yxl5beGLZWvyhtBYsllTsz7E/xtW
+	CGX/FZC5+CL3JzBVCf/FaE3SHvuNRtxeEwGCKr/wC+Vw0OuqKU84qoba/v6F6H0O85y5Bccarzv
+	6do6+D1PGdUgaBytBLrmKYfWgPMfD4ekatK48ymEYRLankooZ96CRs2vylUVyKqP9gPQOVW0tYn
+	8fPpQ==
+X-Google-Smtp-Source: AGHT+IF01QfJyQMefqtK6K31hKuroqHVJNbfRoBUWtdmJCmhcOeVgxFHACALHAoTtmmMAVZj3g7jLJEfDcjT3Imbm5Y=
+X-Received: by 2002:a05:6602:164a:b0:879:c4a1:1020 with SMTP id
+ ca18e2360f4ac-879c4a1138amr581946839f.9.1752732670109; Wed, 16 Jul 2025
+ 23:11:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716-allegro_dvt_al300_dec_driver-v4-4-f87c01c9f7b5@allegrodvt.com>
+References: <cover.1749810735.git.zhouquan@iscas.ac.cn> <20e116efb1f7aff211dd8e3cf8990c5521ed5f34.1749810735.git.zhouquan@iscas.ac.cn>
+In-Reply-To: <20e116efb1f7aff211dd8e3cf8990c5521ed5f34.1749810735.git.zhouquan@iscas.ac.cn>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 17 Jul 2025 11:40:58 +0530
+X-Gm-Features: Ac12FXzV5Y-LW3CLzhO1n-a_ZnyRISIIMhwEfUeHXAPilMPIemTKisuILYRl6qQ
+Message-ID: <CAAhSdy3yjCXHucCzQzXg2BUJM7aYrb2Fd0taJQw=AEnvfnsNAA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] RISC-V: KVM: Enable ring-based dirty memory tracking
+To: zhouquan@iscas.ac.cn
+Cc: ajones@ventanamicro.com, atishp@atishpatra.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yassine,
+On Fri, Jun 13, 2025 at 5:08=E2=80=AFPM <zhouquan@iscas.ac.cn> wrote:
+>
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+>
+> Enable ring-based dirty memory tracking on riscv:
+>
+> - Enable CONFIG_HAVE_KVM_DIRTY_RING_ACQ_REL as riscv is weakly
+>   ordered.
+> - Set KVM_DIRTY_LOG_PAGE_OFFSET for the ring buffer's physical page
+>   offset.
+> - Add a check to kvm_vcpu_kvm_riscv_check_vcpu_requests for checking
+>   whether the dirty ring is soft full.
+>
+> To handle vCPU requests that cause exits to userspace, modified the
+> `kvm_riscv_check_vcpu_requests` to return a value (currently only
+> returns 0 or 1).
+>
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
 
-kernel test robot noticed the following build warnings:
+LGTM.
 
-[auto build test WARNING on 155a3c003e555a7300d156a5252c004c392ec6b0]
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yassine-Ouaissa-via-B4-Relay/media-allegro-dvt-Move-the-current-driver-to-a-subdirectory/20250716-225824
-base:   155a3c003e555a7300d156a5252c004c392ec6b0
-patch link:    https://lore.kernel.org/r/20250716-allegro_dvt_al300_dec_driver-v4-4-f87c01c9f7b5%40allegrodvt.com
-patch subject: [PATCH v4 4/4] media: allegro-dvt: Add Gen 3 IP stateful decoder driver
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250717/202507171313.1yaQJ9Tl-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507171313.1yaQJ9Tl-lkp@intel.com/reproduce)
+Queued this patch for Linux-6.17
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507171313.1yaQJ9Tl-lkp@intel.com/
+Thanks,
+Anup
 
-All warnings (new ones prefixed by >>):
-
-   drivers/media/platform/allegro-dvt/al300/al_codec_util.c: In function 'al_codec_cmd_cleanup':
-   drivers/media/platform/allegro-dvt/al300/al_codec_util.c:149:9: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
-     149 |         kfree(cmd->reply);
-         |         ^~~~~
-   drivers/media/platform/allegro-dvt/al300/al_codec_util.c: In function 'al_codec_cmd_create':
-   drivers/media/platform/allegro-dvt/al300/al_codec_util.c:165:15: error: implicit declaration of function 'kmalloc'; did you mean 'mm_alloc'? [-Werror=implicit-function-declaration]
-     165 |         cmd = kmalloc(sizeof(*cmd), GFP_KERNEL);
-         |               ^~~~~~~
-         |               mm_alloc
->> drivers/media/platform/allegro-dvt/al300/al_codec_util.c:165:13: warning: assignment to 'struct al_codec_cmd *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     165 |         cmd = kmalloc(sizeof(*cmd), GFP_KERNEL);
-         |             ^
->> drivers/media/platform/allegro-dvt/al300/al_codec_util.c:169:20: warning: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     169 |         cmd->reply = kmalloc(reply_size, GFP_KERNEL);
-         |                    ^
-   cc1: some warnings being treated as errors
-
-
-vim +165 drivers/media/platform/allegro-dvt/al300/al_codec_util.c
-
-   160	
-   161	struct al_codec_cmd *al_codec_cmd_create(int reply_size)
-   162	{
-   163		struct al_codec_cmd *cmd;
-   164	
- > 165		cmd = kmalloc(sizeof(*cmd), GFP_KERNEL);
-   166		if (!cmd)
-   167			return NULL;
-   168	
- > 169		cmd->reply = kmalloc(reply_size, GFP_KERNEL);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>  Documentation/virt/kvm/api.rst    |  2 +-
+>  arch/riscv/include/uapi/asm/kvm.h |  1 +
+>  arch/riscv/kvm/Kconfig            |  1 +
+>  arch/riscv/kvm/vcpu.c             | 18 ++++++++++++++++--
+>  4 files changed, 19 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.=
+rst
+> index 1bd2d42e6424..5de0fbfe2fc0 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -8316,7 +8316,7 @@ core crystal clock frequency, if a non-zero CPUID 0=
+x15 is exposed to the guest.
+>  7.36 KVM_CAP_DIRTY_LOG_RING/KVM_CAP_DIRTY_LOG_RING_ACQ_REL
+>  ----------------------------------------------------------
+>
+> -:Architectures: x86, arm64
+> +:Architectures: x86, arm64, riscv
+>  :Type: vm
+>  :Parameters: args[0] - size of the dirty log ring
+>
+> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/=
+asm/kvm.h
+> index 5f59fd226cc5..ef27d4289da1 100644
+> --- a/arch/riscv/include/uapi/asm/kvm.h
+> +++ b/arch/riscv/include/uapi/asm/kvm.h
+> @@ -18,6 +18,7 @@
+>  #define __KVM_HAVE_IRQ_LINE
+>
+>  #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
+> +#define KVM_DIRTY_LOG_PAGE_OFFSET 64
+>
+>  #define KVM_INTERRUPT_SET      -1U
+>  #define KVM_INTERRUPT_UNSET    -2U
+> diff --git a/arch/riscv/kvm/Kconfig b/arch/riscv/kvm/Kconfig
+> index 704c2899197e..5a62091b0809 100644
+> --- a/arch/riscv/kvm/Kconfig
+> +++ b/arch/riscv/kvm/Kconfig
+> @@ -25,6 +25,7 @@ config KVM
+>         select HAVE_KVM_MSI
+>         select HAVE_KVM_VCPU_ASYNC_IOCTL
+>         select HAVE_KVM_READONLY_MEM
+> +       select HAVE_KVM_DIRTY_RING_ACQ_REL
+>         select KVM_COMMON
+>         select KVM_GENERIC_DIRTYLOG_READ_PROTECT
+>         select KVM_GENERIC_HARDWARE_ENABLING
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index e0a01af426ff..0502125efb30 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -690,7 +690,14 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>         }
+>  }
+>
+> -static void kvm_riscv_check_vcpu_requests(struct kvm_vcpu *vcpu)
+> +/**
+> + * check_vcpu_requests - check and handle pending vCPU requests
+> + * @vcpu:      the VCPU pointer
+> + *
+> + * Return: 1 if we should enter the guest
+> + *         0 if we should exit to userspace
+> + */
+> +static int kvm_riscv_check_vcpu_requests(struct kvm_vcpu *vcpu)
+>  {
+>         struct rcuwait *wait =3D kvm_arch_vcpu_get_wait(vcpu);
+>
+> @@ -735,7 +742,12 @@ static void kvm_riscv_check_vcpu_requests(struct kvm=
+_vcpu *vcpu)
+>
+>                 if (kvm_check_request(KVM_REQ_STEAL_UPDATE, vcpu))
+>                         kvm_riscv_vcpu_record_steal_time(vcpu);
+> +
+> +               if (kvm_dirty_ring_check_request(vcpu))
+> +                       return 0;
+>         }
+> +
+> +       return 1;
+>  }
+>
+>  static void kvm_riscv_update_hvip(struct kvm_vcpu *vcpu)
+> @@ -917,7 +929,9 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
+>
+>                 kvm_riscv_gstage_vmid_update(vcpu);
+>
+> -               kvm_riscv_check_vcpu_requests(vcpu);
+> +               ret =3D kvm_riscv_check_vcpu_requests(vcpu);
+> +               if (ret <=3D 0)
+> +                       continue;
+>
+>                 preempt_disable();
+>
+> --
+> 2.34.1
+>
 
