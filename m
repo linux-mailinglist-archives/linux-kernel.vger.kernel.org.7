@@ -1,98 +1,106 @@
-Return-Path: <linux-kernel+bounces-734644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E230B08450
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:37:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C5DB08453
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 07:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2F474A65BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:37:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1615EA41925
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 05:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106E81F4CAE;
-	Thu, 17 Jul 2025 05:37:39 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ED61FFC6D;
+	Thu, 17 Jul 2025 05:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="X0B1oaLs"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08D04689
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 05:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657314689;
+	Thu, 17 Jul 2025 05:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752730658; cv=none; b=hVyByzeN+ZY3Lz+On9zDQ84OV3uI2OuBy2rAg2nbwSwKzEiBTpz2ZTeJdmBOpdxgk0YQ0xgdKfZ75R4abhGufsp51oDbLbnktHGnip3Y60M53YI6RhLtLRK/Iv4ZrrAg6It0TLJaSLmaqBGRHsPilJjLE0cfmrpQtefv81uVB88=
+	t=1752730669; cv=none; b=dx9FS3QALM96iWcjb/uA5jnW+ecQov4nH/gvFtdR4rnZULIgrU2ZWIMffzTsuWTkMY5tU1KxPyjEy/CWqszLjpwraMfloMzmjFDhxo+5cEDtsuwZXAbgl68Bfdnt9MgLCkAxr6YB6HSqSqUi2KGMuqwT0Hw7pxbQf/5tEOPGlcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752730658; c=relaxed/simple;
-	bh=Ae06XuF0alQhLm6yfozbYB2lJ8OzHR9NCiMojrUoy0o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BYN0xUIDE17OaK+fyfbfOn1/jgD1RXNtHOs9FZfgVpz4Rh2/WSe1rp/OwyYQ94ha+x0F6fYmNtnMSCuQ39xAGtwi13T7rNkgt9CPddGGXNNrPywKE3hB1JrO2eci1HzeKDC2N4dxxbQSmcUYnH5palltN4Lg30qoHwxI/jT/rh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201622.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202507171337302780;
-        Thu, 17 Jul 2025 13:37:30 +0800
-Received: from localhost.localdomain (10.94.9.142) by
- jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Thu, 17 Jul 2025 13:37:29 +0800
-From: Bo Liu <liubo03@inspur.com>
-To: <xiang@kernel.org>, <chao@kernel.org>
-CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
-	<liubo03@inspur.com>
-Subject: [PATCH v3] erofs: fix build error with CONFIG_EROFS_FS_ZIP_ACCEL=y
-Date: Thu, 17 Jul 2025 01:37:24 -0400
-Message-ID: <20250717053724.65995-1-liubo03@inspur.com>
-X-Mailer: git-send-email 2.18.2
+	s=arc-20240116; t=1752730669; c=relaxed/simple;
+	bh=Y02Yq8A50KbSstuEwaGHDrZeOGkOhhujbMG0MWUfSmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dvusJoxWSyhxdP2vON274j93TL+GWyINH6pjSX8vOcrJ0lsL4VL7fOHfjk06NjdheElKSgwy3IAMo2D+U0jsj6fwC1Y5bI0f4+yLlgDVC4sTG3lpugKox3YCKRPFhSvihh4fFvg8ReEXsTqF/WQgirnN0Dz/ZGYBRGv5Dr2XDVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=X0B1oaLs; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752730533;
+	bh=WMWW7mmLlUo41cQzp0qfs2H388c0LiKcPKeAkVcGtYQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=X0B1oaLshnYx4gmEoC7GxA5cZoPgGs7evsmo9kNNVj/Cjj/hj0lfQ1cfafYr6ohls
+	 BJKO53+5/pXEw8XaVhFheptLmb1Gg4xZRA4IFXGTfhCXSapoXh2JtOajEQQR+MSduv
+	 j6+5BH2IGHLwlwaDU+j9n4WdZIMbOiNUo6kBaqu2rQ8f8kKmMTJ7E0P8Iu0urDGjMG
+	 tzuwk9r1XbfCvFN5+iyZJc5TAvdb4/wSozZ4K5w1BvoT9GXlJCodshX5+sZjLEznYa
+	 hFTYpCUXoIHidqQLsOaVAF86CIgMWQlPhHRWn5zt+HBRukbM9oFbfp63iNenJvNtmI
+	 SHc4bH+JRU25Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bjM8P14QGz4x7W;
+	Thu, 17 Jul 2025 15:35:32 +1000 (AEST)
+Date: Thu, 17 Jul 2025 15:37:33 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the char-misc tree
+Message-ID: <20250717153733.068c3fc3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
- jtjnmail201622.home.langchao.com (10.100.2.22)
-tUid: 2025717133730dbeb9e6738e4a486ccb1d56d950e6f6f
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: multipart/signed; boundary="Sig_/0yA+q2mtECuF9mq2nl4bW.Y";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-fix build err:
- ld.lld: error: undefined symbol: crypto_req_done
-   referenced by decompressor_crypto.c
-       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
-   referenced by decompressor_crypto.c
-       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
+--Sig_/0yA+q2mtECuF9mq2nl4bW.Y
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
- ld.lld: error: undefined symbol: crypto_acomp_decompress
-   referenced by decompressor_crypto.c
-       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_decompress) in archive vmlinux.a
+Hi all,
 
- ld.lld: error: undefined symbol: crypto_alloc_acomp
-   referenced by decompressor_crypto.c
-       fs/erofs/decompressor_crypto.o:(z_erofs_crypto_enable_engine) in archive vmlinux.a
+The following commit is also in the powerpc tree as a different commit
+(but the same patch):
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202507161032.QholMPtn-lkp@intel.com/
-Fixes: b4a29efc5146 ("erofs: support DEFLATE decompression by using Intel QAT")
-Signed-off-by: Bo Liu <liubo03@inspur.com>
----
- fs/erofs/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+  01c6d1df98cb ("misc: ocxl: Replace scnprintf() with sysfs_emit() in sysfs=
+ show functions")
 
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index 6beeb7063871..4dfec0834733 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -147,6 +147,7 @@ config EROFS_FS_ZIP_ZSTD
- config EROFS_FS_ZIP_ACCEL
- 	bool "EROFS hardware decompression support"
- 	depends on EROFS_FS_ZIP
-+	select CRYPTO_ACOMP2
- 	help
- 	  Saying Y here includes hardware accelerator support for reading
- 	  EROFS file systems containing compressed data.  It gives better
--- 
-2.31.1
+This is commit
 
+  e82fff08327e ("misc: ocxl: Replace scnprintf() with sysfs_emit() in sysfs=
+ show functions")
+
+in the powerpc tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0yA+q2mtECuF9mq2nl4bW.Y
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh4jB0ACgkQAVBC80lX
+0Gwwrwf9FEYtPFKJurgxZ300g6dsUNdEGRP+WqU8+g8CgBCY6mf4PzsgwQ9CcWOe
+AX+8bCc+KKx4n+gu7KpbsT1EOQtBgbImugEUm6lUyHOWHxTVMuYwUQYHNVj9+HFR
+LVQYOiIHADDYvQCplzxOjO+mz1CPxoBuGgju5THvXBVfJx5isd6e40823PjwSm71
+zEhgyXdKwDP0GV695G0VpsPxy1PWbBzO4CeIHiphCW6o/RShmAMiJKOU3h+koZaJ
+mK4QC8QYCYH3rXlgdm8AKznrHaz+qd/f0A2s2SetZykKI9xBg2KYWs02ODqAQPaJ
+RT6SlczW9GJEWEZqdapn9eRSnNzIzg==
+=VXmE
+-----END PGP SIGNATURE-----
+
+--Sig_/0yA+q2mtECuF9mq2nl4bW.Y--
 
