@@ -1,57 +1,71 @@
-Return-Path: <linux-kernel+bounces-735497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF4DB09026
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55837B09073
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D29F43B133F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:05:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3942E4A2A2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AAD2F85E9;
-	Thu, 17 Jul 2025 15:05:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F5513790B;
-	Thu, 17 Jul 2025 15:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D62D2F6FA3;
+	Thu, 17 Jul 2025 15:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="TfKu8wJF"
+Received: from dilbert.mork.no (dilbert.mork.no [65.108.154.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169151E379B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.108.154.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752764719; cv=none; b=CfnmF/BgeaZoJ3mUIGo99OKfK8P+3UTisv40SrsTTEi4P6V5/ivS62GC6SHIMAvM0hAm4ke3ZcRKRyuHyLZBw9EtNYACtGt6pauuB8KgtGiAWsSpbr6GPdhuxxuRvY8cbLxyofG+SEa2I545F0R+dmIxtbyjs/wM/aWDrSpaWZQ=
+	t=1752765615; cv=none; b=nLBaDOsIGzifBhdv6HQ6zlaDgMIEjQp776LFxyyitcc6rKU4qVq9xThrtEUJO3iZ2XMGrwqz78w6gOwsOOiZvch3OeP1x/heaA6zoDoH8UPh9RC2Fr+kk0PFn6I4yy4e/ZMlahPC9ueZ8ag1TWCk1B7xmLrWTFRUhuBWT9fyxZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752764719; c=relaxed/simple;
-	bh=uoLRd01WGj9blBLb7RINWtE7jWKrNCOt2K+pkM8WXHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNrqYDw4XvNi/QUwnAyuNurpk2A67LS3Juj6UoFDcBK7LLOM2YhO/K59R9rZMFkeO09ToeIXrGZx4pzV1d358XCVBujO90Zp49j7BUA3QmCTZ9RMXs/nkE5Gs8PEZW5LSjs4WjqTrczx5Orwe/dG4A0zpBb6F74GRBBGrcYrXJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D20241596;
-	Thu, 17 Jul 2025 08:05:09 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B73C3F694;
-	Thu, 17 Jul 2025 08:05:14 -0700 (PDT)
-Date: Thu, 17 Jul 2025 16:05:09 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Sven Peter <sven@kernel.org>,
-	Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
-	asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH RESEND v7 00/21] drivers/perf: apple_m1: Add Apple
- A7-A11, T2 SoC support
-Message-ID: <aHkRJdAuvhS2mNQj@J2N7QTR9R3>
-References: <20250616-apple-cpmu-v7-0-df2778a44d5c@gmail.com>
- <aHUeUMmn_19EayL1@willie-the-truck>
- <be327242-ad55-476a-bed4-44c33c263962@gmail.com>
+	s=arc-20240116; t=1752765615; c=relaxed/simple;
+	bh=VA2VrYGpzR6/Gr87H1VpRzA+G+Ez+KWr8dRVaugIclU=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=o+dp9FR/jwvZAuxtYuMXn+dvRtPp8kQen9hbpIZCxUf9EaeQ4hNRhQyRVwLS9snjqq9AuinmgcnBvpI6qexgQJqTbvF1UZhv9In0WUzLD/KFifXtIiDQMCAL5ObbrqMUGzs42ye0FmhpHzSlyP8T2xRQ/VjoGuBE88sLxl2v4UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mork.no; spf=pass smtp.mailfrom=miraculix.mork.no; dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b=TfKu8wJF; arc=none smtp.client-ip=65.108.154.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mork.no
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraculix.mork.no
+Authentication-Results: dilbert.mork.no;
+	dkim=pass (1024-bit key; secure) header.d=mork.no header.i=@mork.no header.a=rsa-sha256 header.s=b header.b=TfKu8wJF;
+	dkim-atps=neutral
+Received: from canardo.dyn.mork.no ([IPv6:2a01:799:10de:2e00:0:0:0:1])
+	(authenticated bits=0)
+	by dilbert.mork.no (8.18.1/8.18.1) with ESMTPSA id 56HF5aas2112221
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Thu, 17 Jul 2025 16:05:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
+	t=1752764736; bh=ehZpqP5YHCP+VHpc5tZWhn+s8qy7IFUMlhw82i0/OxY=;
+	h=From:To:Cc:Subject:References:Date:Message-ID:From;
+	b=TfKu8wJFSu3LAGCQo4Qp76fsjx+d2HWKct4PZRy/E/yD/x1Zp07ZEfylXDmsw3IN/
+	 mRdxTIkEbpfI0ckUnemyflo7j4j1QHd7/aIdBVrHJ0g5M3zNxbebQtYnbQg+8xa63O
+	 3gzLIEqrQCJLRrmh9ZJAJVvlfPRbrbVTEm84Zm6g=
+Received: from miraculix.mork.no ([IPv6:2a01:799:10de:2e0a:149a:2079:3a3a:3457])
+	(authenticated bits=0)
+	by canardo.dyn.mork.no (8.18.1/8.18.1) with ESMTPSA id 56HF5aLa3859790
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Thu, 17 Jul 2025 17:05:36 +0200
+Received: (nullmailer pid 2792224 invoked by uid 1000);
+	Thu, 17 Jul 2025 15:05:35 -0000
+From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: markus.stockhausen@gmx.de, peterz@infradead.org,
+        'Chris Packham' <Chris.Packham@alliedtelesis.co.nz>, mingo@redhat.com,
+        vincent.guittot@linaro.org, anna-maria@linutronix.de,
+        frederic@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: task_non_contending() for fair_server leads to timer retries
+Organization: m
+References: <085d01dbf596$44286880$cc793980$@gmx.de>
+	<aHi8yk8wlVJBFzSR@jlelli-thinkpadt14gen4.remote.csb>
+Date: Thu, 17 Jul 2025 17:05:35 +0200
+In-Reply-To: <aHi8yk8wlVJBFzSR@jlelli-thinkpadt14gen4.remote.csb> (Juri
+	Lelli's message of "Thu, 17 Jul 2025 11:05:14 +0200")
+Message-ID: <87ldomkgcg.fsf@miraculix.mork.no>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,69 +73,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <be327242-ad55-476a-bed4-44c33c263962@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 1.0.7 at canardo.mork.no
+X-Virus-Status: Clean
 
-On Mon, Jul 14, 2025 at 11:59:36PM +0800, Nick Chan wrote:
-> 
-> Will Deacon 於 2025/7/14 夜晚11:12 寫道:
-> > On Mon, Jun 16, 2025 at 09:31:49AM +0800, Nick Chan wrote:
-> >> This series adds support for the CPU PMU in the older Apple A7-A11, T2
-> >> SoCs. These PMUs may have a different event layout, less counters, or
-> >> deliver their interrupts via IRQ instead of a FIQ. Since some of those
-> >> older SoCs support 32-bit EL0, counting for 32-bit EL0 also need to
-> >> be enabled by the driver where applicable.
-> >>
-> >> Patch 1 adds the DT bindings.
-> >> Patch 2-7 prepares the driver to allow adding support for those
-> >> older SoCs.
-> > Modulo my nits, the patches look alright to this point...
-> >
-> >> Patch 8-12 adds support for the older SoCs.
-> > ... but I'm not sure if anybody actually cares about these older SoCs
-> > and, even if they do, what the state of the rest of Linux is on those
-> > parts. I recall horror stories about the OS being quietly migrated
-> > between CPUs with incompatible features, at which point I think we have
-> > to question whether we actually care about supporting this hardware.
-> The "horror" story you mentioned is about Apple A10/A10X/T2, which
-> has a big little switcher integrated into the cpufreq block, so when the
-> cpufreq driver switch between states in the same way as on other
-> SoCs, on these SoCs that would silently cause a CPU migration. There
-> is only one incompatible feature that I am aware of which is 32-bit EL0
-> support.
+Juri Lelli <juri.lelli@redhat.com> writes:
+> On 15/07/25 16:39, markus.stockhausen@gmx.de wrote:
+>> Hi Peter,
+>>=20
+>> I'm currently investigating issues with the timer-rtl-otto driver in=20
+>> 6.12 longterm on the Realtek MIPS switch platform (Chris is working
+>> hard to upstream this). While doing so I observed that timer retries=20
+>> continually increase (~6/second) according to /proc/timer_list. The=20
+>> system is otherwise totally idle. 6.6 longterm does not show that issue.
+>> I'm unsure if this is related but documentation reads like "that's bad".=
+=20
+>>=20
+>> To be sure about this one I nailed it down to the fair server.
+>
+> Apologies for interjecting before Peter had a chance to reply, but I had
+> a first look and I wonder if this recent patch from Peter (on
+> tip/sched/core atm) can already help with the issue, as it should
+> reduce the number of dl-server dequeues:
+>
+> cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
+>
+> Can you please check what you see with it?
 
-Surely the MIDR/REVIDR/AIDR also change?
+Spot on.  Thanks
+=20
+I tested cccb45d7c4295 ("sched/deadline: Less agressive dl_server
+handling") on top of the 6.12 longterm we're running and the retries
+rate is back to "normal".
 
-In general, silent migration isn't acceptable for the kernel, even if
-you largely happen to get away with that today. It is not acceptable for
-architectural feature support to change dynamically.
 
-> However, since the CPUs in these SoCs does not support
-> 4K pages anyways in practice this is not an issue for as long as
-> CONFIG_EXPERT is disabled.
-
-Do these parts have EL2?
-
-> > On the other hand, if it all works swimmingly and it's just the PMU
-> > driver that needs updating, then I could get on board with it.
-> 
-> As mentioned above, it does all work fine when CONFIG_EXPERT is not
-> enabled, and if it is enabled, then 32-bit process may crash with illegal
-> instruction but everything else will still works fine.
-
-I don't think that's quite true, unless these parts are also violating
-the architecture.
-
-If the CPU doesn't implement AArch32, then an ERET to AArch32 is
-illegal. The way illegal exception returns are handled means that this
-will result in a (fatal) illegal execution state exception being taken
-from the exception return code in the kernel, not an UNDEF being taken
-from userspace that would result in a SIGILL.
-
-I do not think that we should pretend to support hardware with silent
-microarchitectural migration. So at the very least, we do not care about
-A10/A10X/T2.
-
-Mark.
+Bj=C3=B8rn
 
