@@ -1,201 +1,210 @@
-Return-Path: <linux-kernel+bounces-734906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCADBB087FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:34:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 847D6B08801
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 10:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6ED16B2E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:34:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B9621A60676
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 08:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39280283144;
-	Thu, 17 Jul 2025 08:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RgwbKFlQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BFD28314B;
+	Thu, 17 Jul 2025 08:35:41 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7711EF0B9;
-	Thu, 17 Jul 2025 08:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C907423B0
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752741239; cv=none; b=S5pl5FDyaVnHFq2KHbkzAWtVQkZqRE6MGK4snC2bo4V2GW728hDP+FwQ+dHr11If+YWpZWTvEUbmzQB5hmKskClID7GQ2JH+NQ7yVgjhjPzqfOEEkhw5loJBuEpQGS9aSZTodnDTlV0SuAMnHYXoeLjc4pvhD7krenSURFGso/Y=
+	t=1752741341; cv=none; b=R2FotgyIMirhvZHxpulVtXiiUY+CBCHJx8nSjkB5XIzKr6SGBxBB1CGVxytMa3HxstyM9YI51cPCLhhxpz6p4/e0xvbTdpdawoW/OhpZScvpD+rNi0EuqDIhuwLjwyx/fXcPuQ6OtyJ7ooyxzsqAGO9eSOoxXuD2y32VJ1s1gKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752741239; c=relaxed/simple;
-	bh=yLCrBOZm7Q9yTCeRS40yaLfmpTFicj1UCMT0A5NRQmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DtzmL+GArHalHPuKC3Np4dtRy5bksteW4EvS78K6CJzU6eNHPAfJ2mOpsk10WNRQxCMmNA66zQk9RLHVYT2wtbScYPr9aUYRRh3DoJt8ypS44f846pmwll5WYEzavIqT0GG+1ThfnpxGkt+4ia4Rm3z+A+4QhN+/yGkdIf0yDbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RgwbKFlQ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752741238; x=1784277238;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yLCrBOZm7Q9yTCeRS40yaLfmpTFicj1UCMT0A5NRQmA=;
-  b=RgwbKFlQNwRkttxuUiiaEJhBj2pBvwQeByE0F/0E83RlQiNjBo9+S/lD
-   tzgINOFJyFpjhtWV8yZTs/VQUvmVZfJ6pSJ/dUhHz1FO3SsyfDazgFz29
-   FREuPVbGKU0wVT1S69WHcwEaSC+zueH/oYzgYPUAjL4C5XmgemlOMWc/n
-   xEC2sGc+pt/tMzvVLJqftWezO4nEkYHymnwtgNPbWDQNuoNsazUtka0JY
-   kG4F3W4U3YZd2QegDYdNqGkY/LXu3x1gYVjLHyZeDU7lIkpu9qeXC84lI
-   goZTkFbRTSCvmvHjCmcRUyaVQUfnUDgXbilP0oo9g0QGjF4NXBqBjqNgI
-   w==;
-X-CSE-ConnectionGUID: X0Zl2uv8SfmSCywEJoeWEw==
-X-CSE-MsgGUID: An/PyB/yTt+Uoz3vG/4LVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="66456965"
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="66456965"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2025 01:33:58 -0700
-X-CSE-ConnectionGUID: BZcksriHRYi9EJu3ijnb3A==
-X-CSE-MsgGUID: kJOhJ3oaRfqvVgtmVOxesg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; 
-   d="scan'208";a="163265703"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 17 Jul 2025 01:33:54 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ucK3s-000DNP-0o;
-	Thu, 17 Jul 2025 08:33:52 +0000
-Date: Thu, 17 Jul 2025 16:33:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 11/11] wifi: ath12k: fix endianness handling in QMI
- response
-Message-ID: <202507171640.30pUvpPv-lkp@intel.com>
-References: <20250716075100.1447352-12-alexander.wilhelm@westermo.com>
+	s=arc-20240116; t=1752741341; c=relaxed/simple;
+	bh=NDWl22rvNbGMEgXAcokGvPPz5akxJAEsqWjlJU/5ZjE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=VtOIvZer54d7yOLin8H9Ij3y9xfffyujHZdv7fxOfJ2IrpowV7m8C6s1fEfbJGXiapbypimoFe9YpB0hf+XSkcN2/i7lMJ+a7MGQQRoLFdieaMnbgg62PHcrgiXfUWXV1kjDhWLIB85HSnkjW+CM+Iv3mz13f9C1/+grcTjyVf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1ucK5P-0007V8-A6; Thu, 17 Jul 2025 10:35:27 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1ucK5O-008snU-0Z;
+	Thu, 17 Jul 2025 10:35:26 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1ucK5O-006txp-0L;
+	Thu, 17 Jul 2025 10:35:26 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next v3 1/1] net: selftests: add PHY-loopback test for bad TCP checksums
+Date: Thu, 17 Jul 2025 10:35:24 +0200
+Message-Id: <20250717083524.1645069-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716075100.1447352-12-alexander.wilhelm@westermo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Alexander,
+Detect NICs and drivers that either drop frames with a corrupted TCP
+checksum or, worse, pass them up as valid.  The test flips one bit in
+the checksum, transmits the packet in internal loopback, and fails when
+the driver reports CHECKSUM_UNNECESSARY.
 
-kernel test robot noticed the following build warnings:
+Discussed at:
+https://lore.kernel.org/all/20250625132117.1b3264e8@kernel.org/
 
-[auto build test WARNING on ath/ath-next]
-[also build test WARNING on linus/master v6.16-rc6 next-20250716]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Simon Horman <horms@kernel.org>
+---
+changes v3:
+- use csum16_sub()
+changes v2:
+- Replaced manual calculation of TCP checksum with standard kernel helper
+  skb_checksum_help().
+- add test documentation
+---
+ net/core/selftests.c | 67 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 65 insertions(+), 2 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Wilhelm/wifi-ath12k-fix-endianness-handling-in-QMI-host-capability-request/20250716-162058
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git ath-next
-patch link:    https://lore.kernel.org/r/20250716075100.1447352-12-alexander.wilhelm%40westermo.com
-patch subject: [PATCH 11/11] wifi: ath12k: fix endianness handling in QMI response
-config: mips-randconfig-r123-20250717 (https://download.01.org/0day-ci/archive/20250717/202507171640.30pUvpPv-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 8.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250717/202507171640.30pUvpPv-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507171640.30pUvpPv-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/soc/qcom/pdr_interface.c:612:22: sparse: sparse: restricted __le16 degrades to integer
-   drivers/soc/qcom/pdr_interface.c:613:22: sparse: sparse: restricted __le16 degrades to integer
-
-vim +612 drivers/soc/qcom/pdr_interface.c
-
-fbe639b44a8275 Sibi Sankar           2020-03-12  549  
-fbe639b44a8275 Sibi Sankar           2020-03-12  550  /**
-fbe639b44a8275 Sibi Sankar           2020-03-12  551   * pdr_restart_pd() - restart PD
-fbe639b44a8275 Sibi Sankar           2020-03-12  552   * @pdr:	PDR client handle
-fbe639b44a8275 Sibi Sankar           2020-03-12  553   * @pds:	PD service handle
-fbe639b44a8275 Sibi Sankar           2020-03-12  554   *
-fbe639b44a8275 Sibi Sankar           2020-03-12  555   * Restarts the PD tracked by the PDR client handle for a given service path.
-fbe639b44a8275 Sibi Sankar           2020-03-12  556   *
-fbe639b44a8275 Sibi Sankar           2020-03-12  557   * Return: 0 on success, negative errno on failure.
-fbe639b44a8275 Sibi Sankar           2020-03-12  558   */
-fbe639b44a8275 Sibi Sankar           2020-03-12  559  int pdr_restart_pd(struct pdr_handle *pdr, struct pdr_service *pds)
-fbe639b44a8275 Sibi Sankar           2020-03-12  560  {
-fbe639b44a8275 Sibi Sankar           2020-03-12  561  	struct servreg_restart_pd_resp resp;
-a161ffe4b87772 Tom Rix               2020-08-19  562  	struct servreg_restart_pd_req req = { 0 };
-fbe639b44a8275 Sibi Sankar           2020-03-12  563  	struct sockaddr_qrtr addr;
-fbe639b44a8275 Sibi Sankar           2020-03-12  564  	struct pdr_service *tmp;
-fbe639b44a8275 Sibi Sankar           2020-03-12  565  	struct qmi_txn txn;
-fbe639b44a8275 Sibi Sankar           2020-03-12  566  	int ret;
-fbe639b44a8275 Sibi Sankar           2020-03-12  567  
-fbe639b44a8275 Sibi Sankar           2020-03-12  568  	if (IS_ERR_OR_NULL(pdr) || IS_ERR_OR_NULL(pds))
-fbe639b44a8275 Sibi Sankar           2020-03-12  569  		return -EINVAL;
-fbe639b44a8275 Sibi Sankar           2020-03-12  570  
-fbe639b44a8275 Sibi Sankar           2020-03-12  571  	mutex_lock(&pdr->list_lock);
-fbe639b44a8275 Sibi Sankar           2020-03-12  572  	list_for_each_entry(tmp, &pdr->lookups, node) {
-fbe639b44a8275 Sibi Sankar           2020-03-12  573  		if (tmp != pds)
-fbe639b44a8275 Sibi Sankar           2020-03-12  574  			continue;
-fbe639b44a8275 Sibi Sankar           2020-03-12  575  
-fbe639b44a8275 Sibi Sankar           2020-03-12  576  		if (!pds->service_connected)
-fbe639b44a8275 Sibi Sankar           2020-03-12  577  			break;
-fbe639b44a8275 Sibi Sankar           2020-03-12  578  
-fbe639b44a8275 Sibi Sankar           2020-03-12  579  		/* Prepare req message */
-26bc7a6a0beed8 Len Baker             2021-08-08  580  		strscpy(req.service_path, pds->service_path, sizeof(req.service_path));
-fbe639b44a8275 Sibi Sankar           2020-03-12  581  		addr = pds->addr;
-fbe639b44a8275 Sibi Sankar           2020-03-12  582  		break;
-fbe639b44a8275 Sibi Sankar           2020-03-12  583  	}
-fbe639b44a8275 Sibi Sankar           2020-03-12  584  	mutex_unlock(&pdr->list_lock);
-fbe639b44a8275 Sibi Sankar           2020-03-12  585  
-fbe639b44a8275 Sibi Sankar           2020-03-12  586  	if (!req.service_path[0])
-fbe639b44a8275 Sibi Sankar           2020-03-12  587  		return -EINVAL;
-fbe639b44a8275 Sibi Sankar           2020-03-12  588  
-fbe639b44a8275 Sibi Sankar           2020-03-12  589  	ret = qmi_txn_init(&pdr->notifier_hdl, &txn,
-fbe639b44a8275 Sibi Sankar           2020-03-12  590  			   servreg_restart_pd_resp_ei,
-fbe639b44a8275 Sibi Sankar           2020-03-12  591  			   &resp);
-fbe639b44a8275 Sibi Sankar           2020-03-12  592  	if (ret < 0)
-fbe639b44a8275 Sibi Sankar           2020-03-12  593  		return ret;
-fbe639b44a8275 Sibi Sankar           2020-03-12  594  
-fbe639b44a8275 Sibi Sankar           2020-03-12  595  	ret = qmi_send_request(&pdr->notifier_hdl, &addr,
-fbe639b44a8275 Sibi Sankar           2020-03-12  596  			       &txn, SERVREG_RESTART_PD_REQ,
-fbe639b44a8275 Sibi Sankar           2020-03-12  597  			       SERVREG_RESTART_PD_REQ_MAX_LEN,
-fbe639b44a8275 Sibi Sankar           2020-03-12  598  			       servreg_restart_pd_req_ei, &req);
-fbe639b44a8275 Sibi Sankar           2020-03-12  599  	if (ret < 0) {
-fbe639b44a8275 Sibi Sankar           2020-03-12  600  		qmi_txn_cancel(&txn);
-fbe639b44a8275 Sibi Sankar           2020-03-12  601  		return ret;
-fbe639b44a8275 Sibi Sankar           2020-03-12  602  	}
-fbe639b44a8275 Sibi Sankar           2020-03-12  603  
-fbe639b44a8275 Sibi Sankar           2020-03-12  604  	ret = qmi_txn_wait(&txn, 5 * HZ);
-fbe639b44a8275 Sibi Sankar           2020-03-12  605  	if (ret < 0) {
-fbe639b44a8275 Sibi Sankar           2020-03-12  606  		pr_err("PDR: %s PD restart txn wait failed: %d\n",
-fbe639b44a8275 Sibi Sankar           2020-03-12  607  		       req.service_path, ret);
-fbe639b44a8275 Sibi Sankar           2020-03-12  608  		return ret;
-fbe639b44a8275 Sibi Sankar           2020-03-12  609  	}
-fbe639b44a8275 Sibi Sankar           2020-03-12  610  
-fbe639b44a8275 Sibi Sankar           2020-03-12  611  	/* Check response if PDR is disabled */
-fbe639b44a8275 Sibi Sankar           2020-03-12 @612  	if (resp.resp.result == QMI_RESULT_FAILURE_V01 &&
-fbe639b44a8275 Sibi Sankar           2020-03-12  613  	    resp.resp.error == QMI_ERR_DISABLED_V01) {
-fbe639b44a8275 Sibi Sankar           2020-03-12  614  		pr_err("PDR: %s PD restart is disabled: 0x%x\n",
-fbe639b44a8275 Sibi Sankar           2020-03-12  615  		       req.service_path, resp.resp.error);
-fbe639b44a8275 Sibi Sankar           2020-03-12  616  		return -EOPNOTSUPP;
-fbe639b44a8275 Sibi Sankar           2020-03-12  617  	}
-fbe639b44a8275 Sibi Sankar           2020-03-12  618  
-fbe639b44a8275 Sibi Sankar           2020-03-12  619  	/* Check the response for other error case*/
-fbe639b44a8275 Sibi Sankar           2020-03-12  620  	if (resp.resp.result != QMI_RESULT_SUCCESS_V01) {
-fbe639b44a8275 Sibi Sankar           2020-03-12  621  		pr_err("PDR: %s request for PD restart failed: 0x%x\n",
-fbe639b44a8275 Sibi Sankar           2020-03-12  622  		       req.service_path, resp.resp.error);
-fbe639b44a8275 Sibi Sankar           2020-03-12  623  		return -EREMOTEIO;
-fbe639b44a8275 Sibi Sankar           2020-03-12  624  	}
-fbe639b44a8275 Sibi Sankar           2020-03-12  625  
-fbe639b44a8275 Sibi Sankar           2020-03-12  626  	return 0;
-fbe639b44a8275 Sibi Sankar           2020-03-12  627  }
-9b09c0f289c5a8 Unnathi Chalicheemala 2023-09-22  628  EXPORT_SYMBOL_GPL(pdr_restart_pd);
-fbe639b44a8275 Sibi Sankar           2020-03-12  629  
-
+diff --git a/net/core/selftests.c b/net/core/selftests.c
+index 406faf8e5f3f..3d79133a91a6 100644
+--- a/net/core/selftests.c
++++ b/net/core/selftests.c
+@@ -27,6 +27,7 @@ struct net_packet_attrs {
+ 	int max_size;
+ 	u8 id;
+ 	u16 queue_mapping;
++	bool bad_csum;
+ };
+ 
+ struct net_test_priv {
+@@ -165,6 +166,20 @@ static struct sk_buff *net_test_get_skb(struct net_device *ndev,
+ 		thdr->check = ~tcp_v4_check(l4len, ihdr->saddr, ihdr->daddr, 0);
+ 		skb->csum_start = skb_transport_header(skb) - skb->head;
+ 		skb->csum_offset = offsetof(struct tcphdr, check);
++
++		if (attr->bad_csum) {
++			/* Force mangled checksum */
++			if (skb_checksum_help(skb)) {
++				kfree_skb(skb);
++				return NULL;
++			}
++
++			if (thdr->check != CSUM_MANGLED_0)
++				thdr->check = CSUM_MANGLED_0;
++			else
++				thdr->check = csum16_sub(thdr->check,
++							 cpu_to_be16(1));
++		}
+ 	} else {
+ 		udp4_hwcsum(skb, ihdr->saddr, ihdr->daddr);
+ 	}
+@@ -239,7 +254,11 @@ static int net_test_loopback_validate(struct sk_buff *skb,
+ 	if (tpriv->packet->id != shdr->id)
+ 		goto out;
+ 
+-	tpriv->ok = true;
++	if (tpriv->packet->bad_csum && skb->ip_summed == CHECKSUM_UNNECESSARY)
++		tpriv->ok = -EIO;
++	else
++		tpriv->ok = true;
++
+ 	complete(&tpriv->comp);
+ out:
+ 	kfree_skb(skb);
+@@ -285,7 +304,12 @@ static int __net_test_loopback(struct net_device *ndev,
+ 		attr->timeout = NET_LB_TIMEOUT;
+ 
+ 	wait_for_completion_timeout(&tpriv->comp, attr->timeout);
+-	ret = tpriv->ok ? 0 : -ETIMEDOUT;
++	if (tpriv->ok < 0)
++		ret = tpriv->ok;
++	else if (!tpriv->ok)
++		ret = -ETIMEDOUT;
++	else
++		ret = 0;
+ 
+ cleanup:
+ 	dev_remove_pack(&tpriv->pt);
+@@ -345,6 +369,42 @@ static int net_test_phy_loopback_tcp(struct net_device *ndev)
+ 	return __net_test_loopback(ndev, &attr);
+ }
+ 
++/**
++ * net_test_phy_loopback_tcp_bad_csum - PHY loopback test with a deliberately
++ *					corrupted TCP checksum
++ * @ndev: the network device to test
++ *
++ * Builds the same minimal Ethernet/IPv4/TCP frame as
++ * net_test_phy_loopback_tcp(), then flips the least-significant bit of the TCP
++ * checksum so the resulting value is provably invalid (neither 0 nor 0xFFFF).
++ * The frame is transmitted through the device’s internal PHY loopback path:
++ *
++ *   test code -> MAC driver -> MAC HW -> xMII -> PHY ->
++ *   internal PHY loopback -> xMII -> MAC HW -> MAC driver -> test code
++ *
++ * Result interpretation
++ * ---------------------
++ *  0            The frame is delivered to the stack and the driver reports
++ *               ip_summed as CHECKSUM_NONE or CHECKSUM_COMPLETE - both are
++ *               valid ways to indicate “bad checksum, let the stack verify.”
++ *  -ETIMEDOUT   The MAC/PHY silently dropped the frame; hardware checksum
++ *               verification filtered it out before the driver saw it.
++ *  -EIO         The driver returned the frame with ip_summed ==
++ *               CHECKSUM_UNNECESSARY, falsely claiming a valid checksum and
++ *               indicating a serious RX-path defect.
++ *
++ * Return: 0 on success or a negative error code on failure.
++ */
++static int net_test_phy_loopback_tcp_bad_csum(struct net_device *ndev)
++{
++	struct net_packet_attrs attr = { };
++
++	attr.dst = ndev->dev_addr;
++	attr.tcp = true;
++	attr.bad_csum = true;
++	return __net_test_loopback(ndev, &attr);
++}
++
+ static const struct net_test {
+ 	char name[ETH_GSTRING_LEN];
+ 	int (*fn)(struct net_device *ndev);
+@@ -368,6 +428,9 @@ static const struct net_test {
+ 	}, {
+ 		.name = "PHY internal loopback, TCP    ",
+ 		.fn = net_test_phy_loopback_tcp,
++	}, {
++		.name = "PHY loopback, bad TCP csum    ",
++		.fn = net_test_phy_loopback_tcp_bad_csum,
+ 	}, {
+ 		/* This test should be done after all PHY loopback test */
+ 		.name = "PHY internal loopback, disable",
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.5
+
 
