@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-735507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3F6B09043
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:12:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31519B0904B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 17:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A3518920B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:12:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276464A0D06
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303C32F8C5E;
-	Thu, 17 Jul 2025 15:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B0B2F85F2;
+	Thu, 17 Jul 2025 15:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M44gxxI6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G8AscNDs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E922F85F2
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF7918FC86
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752765114; cv=none; b=H0ey1lyl77A/4dtsNgzmuQ8aWRG62IVBigw35mDcK5UiSn6z155kbDOlLVV0iHfGpr3S8hQsRAaIgCDy/2t5MTzMYCbAeWeEfZMIdbVk5RGVvLzHbW18uog+0sp6MxKcBHo5k9jcDaGj1fjCX/E55rXuD3ZKQSt8EgifEPD4n/0=
+	t=1752765136; cv=none; b=RclW8zMLe9FI8QuHZxPFyYgR0Krw9equHyOoGyNCZXduhZaun1YehHLALKB+iX70csxGWoZu0oNKO6tlEc2f5ImVDrSJhFF+FHZrL19z5PqcdY0dkq10RfHZ6Hinu8xMyiZMymIbEMT0WoIJd98nT6dSOH4um9s/D0qNzIfw4a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752765114; c=relaxed/simple;
-	bh=F85tYXY6VV6nTjJyZOX8HjAMj77RP6ilys53ORMr8BU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p49qmyuJ5Gumvi5jaQSH5G+R+PkSIJE6eA0/VWlrr7UPwITTJSKnnvzeCmWrNFkOYgNW8CagIHqvviZWs1Nvk17VfocsyI6KII9Wf9Xt79nUAQtz0hOOfnKeqGQfvvWtqvPnK8kCUx36RaS3T0oLz9br9jjwYn9bFvolkl5vSAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M44gxxI6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752765111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=37glsxypXkn1C3d6CO3iVbC1wX6loiRVfTLNayBy9I8=;
-	b=M44gxxI6VbqI421m8kl88B8YWWQUBmCdDUN8Bu6iM8lxIuvfiDto52NHnWXqDxMr3/Eu/B
-	KjlQkTMMrU+e9YfazM2jEB0rGcyuceEIPiIZXOsUhyvsp9vjkD6j2j/Ylc+XN6k09N1bNi
-	lBdgjtv8qOAHowQf0g9bUcx4Pmcy8sQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-394-TM0MSdqnM6iYiPR9uEfsqw-1; Thu, 17 Jul 2025 11:11:49 -0400
-X-MC-Unique: TM0MSdqnM6iYiPR9uEfsqw-1
-X-Mimecast-MFC-AGG-ID: TM0MSdqnM6iYiPR9uEfsqw_1752765108
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45597cc95d5so5862725e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:11:49 -0700 (PDT)
+	s=arc-20240116; t=1752765136; c=relaxed/simple;
+	bh=wVby8hajvrOhcz8Tf/GkjQJio0K2seS+IRlprPJ/ui8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TY/z+72QP7PcCAw0zmF5S+bYgVw7h2SdXoUYpLV+YQlqKorOnDre3DKB/xQGxXpWN3IFNo5CIo/AfmQ0KpYxNl3QRpQzysDjmTYYgrLG+kY5Gqfw/EMrMazx82ZOR7GVNYltv9hykzAC9bu4t1/D93KqqcDN603wJM+ihlnkWRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G8AscNDs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HCoOIc007234
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:12:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=9pJTFEenY3rWVgqlsRhih+or7W0MW5NJ012
+	2DRYZs8s=; b=G8AscNDsDktygSubSOSuuClEkViZ1voMSYdMFDhtdunPUR0EhvL
+	v6b7c56Wiz2NOApId5/ok6ytPHNU392+vJ2g1mK9liSAvtsGTWHRrE9KL7DzDb2t
+	/y08LE+AWiaJ/4HgY6+EjIRlfoBOSoO32iT403u9egb807ythASsuylRFeX3XNRv
+	AmYy8llaKMTWLMnFEMsmwyxRyykTbtdARDkcmryxwZfYnevrkYkhzSZOiUWDsAb5
+	G9gCoi0VuZ+DFb5VSMi/I5cwvZlmN4POT9bdcIkuoubQhCyx+VV4J1EEhERhUojz
+	G+Okan//1h0laG764Evx4GavBX4xhqIwFEw==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47wfca9b86-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 15:12:08 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-748e6457567so1416541b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 08:12:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752765108; x=1753369908;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=37glsxypXkn1C3d6CO3iVbC1wX6loiRVfTLNayBy9I8=;
-        b=l2VpXW5aGpGVI4ILIQuwznF02NzVcA9mWQyvBlHYH7jAnCs3zpHD/QJGoPITF/9VJP
-         WUmnukiV3F/z9FOUzANw0p9DSaD4eEv/bWY48DbBsSXxvgYbVHa+fshxPZ428pjI6rGF
-         MHrz2l7Mo2E3hgvQPbXFTRo8YAdo455GenJq7wCkwHyXGSxd94YgD3O4TrGRD0d8CtVU
-         5NkfUHo8dRN2R1ZxYMo3SZGI1LkL+CnG0FOtzsRCpF6qxcyviAaqwBirmU/HS321yRZk
-         SJ+6qGqpVvNfear40/ZszYXlhw8oR6/qhzKvW8x79/61QQmACmcYfWR5uqHKOTcTcwct
-         5zaQ==
-X-Gm-Message-State: AOJu0Yys8O2D4CQIx6B1FqLBnDKL14VPN06xG5rEGDbJJvI1csuc/V0e
-	wMlArP1j+DQCEBt9AhW2PZ7Z+UyiDc3egt6/LAefqtD/xGrlyVsyvUtZ8JVlBbSNe7xbXJKbWeL
-	GoyudLd1Ao5S06FD3VJEP1k55Tm1hQX+RtbFYyP6SWCc+y5Z65UFxoXr9Z3WvmzFuEQ==
-X-Gm-Gg: ASbGncv7RvEnlxzYyjXapclKQS4MBRrux5+ivz1HQ0BHh1xhbEalDPx4DgOJEO6zFaQ
-	aLdA7++2EusJ8EXlRLvmT/NKD5zrwUHBcjLxq5y0RCb/NOHwvHot/OvrdYKgiC3QQ/ob9vCAUTD
-	JLH0++EMFB2Xyg/216Jq1bmHdOaijTvvq/0FiOyG4HKYKAfY/9BvwyPetjhQARUsOQU1UVV+cc3
-	dA9f9oFvFH9ZCSRaqGBSeuznWR52cbwXnSZqPS/lvv4QmZ3KifhxrGznIMOWtWO6US6m8yJ8Is7
-	DmcytaDzy+m5hanyv/D4Cb7xLLlA+M2x
-X-Received: by 2002:a05:600c:a088:b0:456:43d:118d with SMTP id 5b1f17b1804b1-4562e38afacmr77016785e9.17.1752765108166;
-        Thu, 17 Jul 2025 08:11:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFB07BVIwzcHvYAUkNSqmK1BkSLoQgRTplE4Zrs0SicJiAMmS6QZSUUkIaNPKwNmV0oVrmn1A==
-X-Received: by 2002:a05:600c:a088:b0:456:43d:118d with SMTP id 5b1f17b1804b1-4562e38afacmr77016505e9.17.1752765107748;
-        Thu, 17 Jul 2025 08:11:47 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:150d:fc00:de3:4725:47c6:6809])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1e1a5sm20649298f8f.74.2025.07.17.08.11.46
+        d=1e100.net; s=20230601; t=1752765127; x=1753369927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9pJTFEenY3rWVgqlsRhih+or7W0MW5NJ0122DRYZs8s=;
+        b=Es/y6OOLmjMC+EXmxMcW/RhXrdJotaglkOpn2Wm4xUgIQIaXwYIxx/b6jR8pG31dTb
+         iDa8dt0zGU0OJyGwKF9xWj5nr7ijPEFEurSidIPncVdI0aT+YUR+GvBbwbEJ3iJh1ULf
+         lFmXMpaFuZagPtg6xQwzLWrV9ANnfkUVyNZNCZ4G4pd1E1ULO/BJb5Bj2W+nyqtW/CRv
+         lT2kj9OWPst29RYSPHy1b/6mRRiyFqW9mLmz0xXPKN3dK8WkHhpCVmLhNdVkZY0Ry/Gz
+         a/WNVKWo9DXUjeir4alHwRLPwf8M9Pa4hQO/CbseRbbdNheArXwat7NwT5nX44oQzmyZ
+         Hpmg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8hlKMIWGDG0GZp11cuNdzrliqpbogpEKUK3860TFwoiV/n9p61BJDuSdgtEncD8+OnrE3bb37/8BtNkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3cfGmlqblfH6P46VdCxKZnBjT2+Dsg5MvC+q6rZIwfXcgRCSM
+	VkgSL1oYVse6D7albQbsS/W2TV/2jWTRUenoZc/atcIrqPuwrWJP6DCqSp6QvQgQT5y5CSa+zN3
+	7xW4BSVv5nW80Owyben0UdCQUCq2AKOxEOXMDTFYD88azYNj7gR0e1N7jif4kmCEcDA4=
+X-Gm-Gg: ASbGnctGGKpTUVwgfOYKJbSudE4HxgwslmSRCcpifwsncjnm+ZgfzuaNbpwrjBk5Xj+
+	F9AorRP3XLQxViJ7W+aE7/mi4uaN7cqkPiE98eU0JNs8Dvm4LvNFIh4jC588PRINA5PdITRrVmg
+	nHu1tQcs6uRo/jxTlA/tK2ZyEYFr/o0eWQCS8vQmg602d0uj0R1PYiJnaFn+cwvdp20h2n+zfkX
+	bzp5QA5Ki9AfZmIC4qNHN8n8y2XmEVnsOvQ5bvsUqh6KmC20WCfRhlzkpyzNNEOsGv6elhzVvR+
+	+zd/7GghcflEsvDUe9zSXXFgXVWk2TuHyFnwySJAejDg6W548F4=
+X-Received: by 2002:a05:6a21:329d:b0:234:21aa:b538 with SMTP id adf61e73a8af0-2390c744e99mr5905542637.1.1752765127001;
+        Thu, 17 Jul 2025 08:12:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTO8+Xo0qyZNjecPdyEQ1E7S+g3tlFLsy6r4ztKGL0EU33rzpzcW1a1wjSpktmiADaNdA2KQ==
+X-Received: by 2002:a05:6a21:329d:b0:234:21aa:b538 with SMTP id adf61e73a8af0-2390c744e99mr5905493637.1.1752765126508;
+        Thu, 17 Jul 2025 08:12:06 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd5d3esm16293073b3a.4.2025.07.17.08.12.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jul 2025 08:11:47 -0700 (PDT)
-Date: Thu, 17 Jul 2025 11:11:44 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev,
-	stefanha@redhat.com, alok.a.tiwari@oracle.com,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH RFC v5 1/5] pci: report surprise removal event
-Message-ID: <20250717091025-mutt-send-email-mst@kernel.org>
-References: <cover.1752094439.git.mst@redhat.com>
- <fba3d235e38c1c6fcef2a30ed083ad9e25b20fa3.1752094439.git.mst@redhat.com>
- <aHSfeNhpocI4nmQk@wunner.de>
+        Thu, 17 Jul 2025 08:12:06 -0700 (PDT)
+From: Rob Clark <robin.clark@oss.qualcomm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm: Drop unneeded NULL check
+Date: Thu, 17 Jul 2025 08:12:01 -0700
+Message-ID: <20250717151202.7987-1-robin.clark@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHSfeNhpocI4nmQk@wunner.de>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDEzMyBTYWx0ZWRfXwqyAPVoRLBUO
+ 1cK3e1f8RFR5ltDX5lVWnyhz8ApjLeX+HXvYX/bhWyUcMnaOmLCTyRVrKLPzhl/o1N7w/mWNHuJ
+ +aFgOAZtja7azDh8qH82LdJt9zuSHuVUOLEQ6JbOEubYy2FvGqDOd2WctHLFpS+GrH3WaPJYUQ6
+ EPsqACZ/DJxPrD84nuPKiigFv61TFy/z2pNSAZvN2YKJBDdAFF38hWZNz7F3E0J0nAdKd5dzyUT
+ ztcCcR+SL73+JiIQNTU2UfK+zznXpt1uVvc2K8l8HxYpnRhkoR9PkKb9ER2t5BJsRjfFk5G1/3l
+ 8D6LoRWJMYc3dXvlJ07sD1u9+cqlqVCl3/6tF8ultZFxVNb+mUOi4gmfJreKPBM8Kpoy4s3eIVz
+ qXaOXTWe4x47r0Arjtx/MaNRIs5B2vetANc8vFFW2Lt2PV2MdRMsSXjt0rzegvPD8DYaQjRR
+X-Proofpoint-GUID: QKbiQXP5P6_gCqRD5-zFIBT4r5ez3oDy
+X-Authority-Analysis: v=2.4 cv=SeX3duRu c=1 sm=1 tr=0 ts=687912c8 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10
+ a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=eWlSUfSnBrBg5eVjM6UA:9
+ a=2VI0MkxyNR6bbpdq8BZq:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: QKbiQXP5P6_gCqRD5-zFIBT4r5ez3oDy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-17_01,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507170133
 
-On Mon, Jul 14, 2025 at 08:11:04AM +0200, Lukas Wunner wrote:
-> On Wed, Jul 09, 2025 at 04:55:26PM -0400, Michael S. Tsirkin wrote:
-> > At the moment, in case of a surprise removal, the regular remove
-> > callback is invoked, exclusively.  This works well, because mostly, the
-> > cleanup would be the same.
-> > 
-> > However, there's a race: imagine device removal was initiated by a user
-> > action, such as driver unbind, and it in turn initiated some cleanup and
-> > is now waiting for an interrupt from the device. If the device is now
-> > surprise-removed, that never arrives and the remove callback hangs
-> > forever.
-> 
-> For PCI devices in a hotplug slot, user space can initiate "safe removal"
-> by writing "0" to the hotplug slot's "power" file in sysfs.
-> 
-> If the PCI device is yanked from the slot while safe removal is ongoing,
-> there is likewise no way for the driver to know that the device is
-> suddenly gone.  That's because pciehp_unconfigure_device() only calls
-> pci_dev_set_disconnected() in the surprise removal case, not for
-> safe removal.
-> 
-> The solution proposed here is thus not a complete one:  It may work
-> if user space initiated *driver* removal, but not if it initiated *safe*
-> removal of the entire device.  For virtio, that may be sufficient.
+This is always set in msm_gpu_init(), and can never be NULL.
 
-So just as an idea, something like this can work I guess?  I'm yet to
-test this - wrote this on the go - and also I'll need to implement for
-other hotplug drivers, I need it at least for ACPI additonally.
-WDYT?
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+---
+ drivers/gpu/drm/msm/msm_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
-diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-index bcc938d4420f..46468a1f0244 100644
---- a/drivers/pci/hotplug/pciehp_ctrl.c
-+++ b/drivers/pci/hotplug/pciehp_ctrl.c
-@@ -231,6 +231,15 @@ void pciehp_handle_disable_request(struct controller *ctrl)
- void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
- {
- 	int present, link_active;
-+	/*
-+	 * Always mark downstream devices disconnected on Presence Detect Change.
-+	 * Covers device yanked during safe removal.
-+	 */
-+	if (events & PCI_EXP_SLTSTA_PDC) {
-+		struct pci_bus *parent = ctrl->pcie->port->subordinate;
-+		if (parent)
-+			pci_walk_bus(parent, pci_dev_set_disconnected, NULL);
-+	}
+diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
+index 55c29f49b788..cefa50192391 100644
+--- a/drivers/gpu/drm/msm/msm_iommu.c
++++ b/drivers/gpu/drm/msm/msm_iommu.c
+@@ -768,7 +768,7 @@ struct msm_mmu *msm_iommu_gpu_new(struct device *dev, struct msm_gpu *gpu, unsig
+ 		return mmu;
  
- 	/*
- 	 * If the slot is on and presence or link has changed, turn it off.
+ 	iommu = to_msm_iommu(mmu);
+-	if (adreno_smmu && adreno_smmu->cookie) {
++	if (adreno_smmu->cookie) {
+ 		const struct io_pgtable_cfg *cfg =
+ 			adreno_smmu->get_ttbr1_cfg(adreno_smmu->cookie);
+ 		size_t tblsz = get_tblsz(cfg);
+-- 
+2.50.1
 
 
