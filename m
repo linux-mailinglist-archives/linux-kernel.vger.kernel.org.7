@@ -1,132 +1,160 @@
-Return-Path: <linux-kernel+bounces-734470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-734472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244C4B08233
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:16:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037ADB0823B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 03:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FC8581465
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09784A3ECB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 01:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0021DE3BB;
-	Thu, 17 Jul 2025 01:16:40 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350261DA10B;
+	Thu, 17 Jul 2025 01:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVbIPsGh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC0A70825;
-	Thu, 17 Jul 2025 01:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B58710A1F;
+	Thu, 17 Jul 2025 01:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752714999; cv=none; b=bh1FsGYrJnegWX5uNgAz/iSRcxnnxD8Rmmjhgax5SvG9t0Uj8r16b3+84Ifwz1ZYMIYF4vFdjdoBRoFH+EQuhbTukTK8iwsPfqEW6S0a6lTMhlk5rf3Jz3UFqKdDcOLhOeXRv5sDzPx2/qzhTvRNdh6Gd62U6kDhxBM007iVw7w=
+	t=1752715553; cv=none; b=VYwmMbGcSC5BcIkgjGxnNtrE28ASPxuGCB1nKoT7lyV9DoqpHIIpUqyXkQdHmQoWaUdcpd6jVOKn9gi8GrkAwHegpFt4VRpLKplN1Ig/Iydk5DCAj6bgjcKct9Ddm+a6Cn+WSHcRPruyZr8eog4UesTDH/xciNbXDIHXjCcv6EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752714999; c=relaxed/simple;
-	bh=6GTPF95YSeIO+89mmJsH1xpq74nNUfpyTzJbkwuBMS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bX7z14Edqe2nxSS5zeLqDW8NOACD8tnYvU81m+7/6PBtE8zP9AT29mz1v2bTnyAFTyTcjeKenZ3mxbb0SriSrGeduz1ha61DyhMEyt+9LssRF01ZhtjKLWZJ73Nc3ZS3EznM5nwIJTRq86PxyP/s3xCmnCoENoQiYfK8FMxmkJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: ab13c02662ab11f0b29709d653e92f7d-20250717
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:81c48115-d847-4f16-82a7-c73dc92b8043,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:d087ae556a6abc581ee5bed688074b27,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: ab13c02662ab11f0b29709d653e92f7d-20250717
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1967794073; Thu, 17 Jul 2025 09:16:29 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 7C2BBE008FA3;
-	Thu, 17 Jul 2025 09:16:29 +0800 (CST)
-X-ns-mid: postfix-68784EED-42262796
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id A9C51E008FA2;
-	Thu, 17 Jul 2025 09:16:28 +0800 (CST)
-Message-ID: <c6c7e8b5-430b-4616-b9e8-46500621bb84@kylinos.cn>
-Date: Thu, 17 Jul 2025 09:16:27 +0800
+	s=arc-20240116; t=1752715553; c=relaxed/simple;
+	bh=eJW4DqvpNT9WZHN3RA/qOqnzpM5aERTsDG8vrMculSo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uuWU51yhULpNM4dYMtYxA1ThQGlI1EopM6J8+m/Ccj6k9IVgu6H+iEZnpjQftXNU8gJXbQRfYywA075W/r+ARx4DBEoDKB0yBVijDlWBhd0FxeHiHxgKF1cSoSSML2UFAaviCMn1IcKYlmZZs5rQPjA+3cWzwqsSUN6RxX0F11Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVbIPsGh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37EACC4CEE7;
+	Thu, 17 Jul 2025 01:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752715553;
+	bh=eJW4DqvpNT9WZHN3RA/qOqnzpM5aERTsDG8vrMculSo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=RVbIPsGhNQVhy08SIkFMzDX9E2ZHDYGh89e3uIeEPpmPlh83AIxGQNQRQb5G0KL55
+	 mO0BZ5TQx07gVZg9HSW5YhW+dY2kCj1vT5frvFTbO3HBa/lWPGPdROFdhhK4N9v5kq
+	 B9OO0vX52zs9SBBtPN/AhJ0QV3f5HgNAIzrMgOQvDRj6M27mOzzDuznSzB/QdvydyV
+	 bRWY9Ko9VYTL2u2Cxv3YiI7OqDqF8gN/YLOJgMmGC/KXSaW63HfskGCC9MSHMeWjkd
+	 UJYaH1MqafFkrbArQzhNzQTdrjXRIPlSJxnvk+YJSFO0B2B+Bz71f9InJXcraWJ62i
+	 ykhdavSsQtRnw==
+Message-ID: <fe04c8823b6d17fc45430f4991322f400228ba1e.camel@kernel.org>
+Subject: Re: [PATCH net-next 2/4] tcp: add tcp_sock_set_maxseg
+From: Geliang Tang <geliang@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, mptcp@lists.linux.dev, 
+ Mat Martineau <martineau@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet	 <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni	 <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Neal Cardwell	 <ncardwell@google.com>, Kuniyuki
+ Iwashima <kuniyu@google.com>, David Ahern	 <dsahern@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 17 Jul 2025 09:25:45 +0800
+In-Reply-To: <20250716-net-next-mptcp-tcp_maxseg-v1-2-548d3a5666f6@kernel.org>
+References: 
+	<20250716-net-next-mptcp-tcp_maxseg-v1-0-548d3a5666f6@kernel.org>
+	 <20250716-net-next-mptcp-tcp_maxseg-v1-2-548d3a5666f6@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] PM / Freezer: Skip zombie/dead processes to reduce
- freeze latency
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "rafael J . wysocki" <rafael@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, len brown <len.brown@intel.com>,
- pavel machek <pavel@kernel.org>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250716062639.1528066-1-zhangzihuan@kylinos.cn>
- <20250716062639.1528066-2-zhangzihuan@kylinos.cn>
- <20250716163854.GE16401@redhat.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250716163854.GE16401@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Oleg,
+Hi Matt,
 
-=E5=9C=A8 2025/7/17 00:38, Oleg Nesterov =E5=86=99=E9=81=93:
-> On 07/16, Zihuan Zhang wrote:
->> @@ -51,7 +51,15 @@ static int try_to_freeze_tasks(bool user_only)
->>   		todo =3D 0;
->>   		read_lock(&tasklist_lock);
->>   		for_each_process_thread(g, p) {
->> -			if (p =3D=3D current || !freeze_task(p))
->> +			/*
->> +			 * Zombie and dead tasks are not running anymore and cannot enter
->> +			 * the __refrigerator(). Skipping them avoids unnecessary freeze a=
-ttempts.
->> +			 *
->> +			 * TODO: Consider using PF_NOFREEZE instead, which may provide
->> +			 * a more generic exclusion mechanism for other non-freezable task=
-s.
->> +			 * However, for now, exit_state is sufficient to skip user process=
-es.
-> I don't really understand the comment... The freeze_task() paths alread=
-y
-> consider PF_NOFREEZE, although we can check it earlier as Peter suggest=
-s.
+On Wed, 2025-07-16 at 12:28 +0200, Matthieu Baerts (NGI0) wrote:
+> From: Geliang Tang <tanggeliang@kylinos.cn>
+> 
+> Add a helper tcp_sock_set_maxseg() to directly set the TCP_MAXSEG
+> sockopt from kernel space.
+> 
+> This new helper will be used in the following patch from MPTCP.
+> 
+> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+> Acked-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> ---
+>  include/linux/tcp.h |  1 +
+>  net/ipv4/tcp.c      | 23 ++++++++++++++---------
+>  2 files changed, 15 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/tcp.h b/include/linux/tcp.h
+> index
+> 1a5737b3753d06165bc71e257a261bcd7a0085ce..57e478bfaef20369f5dba1cff54
+> 0e52c9302ebf4 100644
+> --- a/include/linux/tcp.h
+> +++ b/include/linux/tcp.h
+> @@ -621,6 +621,7 @@ void tcp_sock_set_nodelay(struct sock *sk);
+>  void tcp_sock_set_quickack(struct sock *sk, int val);
+>  int tcp_sock_set_syncnt(struct sock *sk, int val);
+>  int tcp_sock_set_user_timeout(struct sock *sk, int val);
+> +int tcp_sock_set_maxseg(struct sock *sk, int val);
+>  
+>  static inline bool dst_tcp_usec_ts(const struct dst_entry *dst)
+>  {
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index
+> 31149a0ac849192b46c67dd569efeeeb0a041a0b..c9cdc4e99c4f11a75471b8895b9
+> c52ad8da3a7ff 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -3751,6 +3751,19 @@ int tcp_set_window_clamp(struct sock *sk, int
+> val)
+>  	return 0;
+>  }
+>  
+> +int tcp_sock_set_maxseg(struct sock *sk, int val)
+> +{
+> +	/* Values greater than interface MTU won't take effect.
+> However
+> +	 * at the point when this call is done we typically don't
+> yet
+> +	 * know which interface is going to be used
+> +	 */
+> +	if (val && (val < TCP_MIN_MSS || val > MAX_TCP_WINDOW))
+> +		return -EINVAL;
+> +
+> +	tcp_sk(sk)->rx_opt.user_mss = val;
+> +	return 0;
+> +}
+> +
+>  /*
+>   *	Socket option code for TCP.
+>   */
+> @@ -3883,15 +3896,7 @@ int do_tcp_setsockopt(struct sock *sk, int
+> level, int optname,
+>  
+>  	switch (optname) {
+>  	case TCP_MAXSEG:
+> -		/* Values greater than interface MTU won't take
+> effect. However
+> -		 * at the point when this call is done we typically
+> don't yet
+> -		 * know which interface is going to be used
+> -		 */
+> -		if (val && (val < TCP_MIN_MSS || val >
+> MAX_TCP_WINDOW)) {
+> -			err = -EINVAL;
+> -			break;
+> -		}
+> -		tp->rx_opt.user_mss = val;
+> +		tcp_sock_set_maxseg(sk, val);
 
+Sorry, I forgot to set the return value here, it should be:
 
-You=E2=80=99re right =E2=80=94 freeze_task() already takes PF_NOFREEZE in=
-to account.
-Our intention here is to skip zombie and dead tasks earlier to avoid=20
-calling freeze_task() unnecessarily, especially when the number of such=20
-tasks is large.
+		err = tcp_sock_set_maxseg(sk, val);
 
-The comment is meant to highlight a possible future direction: while=20
-exit_state already allows us to skip all exiting user-space tasks=20
-safely, we may later extend the logic to skip certain kernel threads=20
-that set PF_NOFREEZE and never clear it (e.g., kthreadd), as suggested=20
-by Peter
+I'll send a squash-to patch to fix this.
 
+Thanks,
+-Geliang
 
->> +			 */
->> +			if (p =3D=3D current || p->exit_state || !freeze_task(p))
->>   				continue;
-> I leave this to you and Rafael, but this change doesn't look safe to me=
-.
-> What if the exiting task does some IO after exit_notify() ?
-
-
-Tasks that have passed exit_notify() and entered EXIT_ZOMBIE are no=20
-longer schedulable, so they cannot do I/O anymore. Skipping them during=20
-freezing should be safe
-
-
-> Oleg.
->
+>  		break;
+>  
+>  	case TCP_NODELAY:
 
