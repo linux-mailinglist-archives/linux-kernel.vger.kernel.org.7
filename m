@@ -1,132 +1,107 @@
-Return-Path: <linux-kernel+bounces-735371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-735372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C126B08E62
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:37:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B338FB08E65
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 15:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229711A66AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:38:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A281DA4242E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Jul 2025 13:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2338B2EBDC6;
-	Thu, 17 Jul 2025 13:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B052EBDD7;
+	Thu, 17 Jul 2025 13:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mrly2IrG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ga4bU9jB"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848FE2E5421
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Jul 2025 13:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCFD2EBB9C;
+	Thu, 17 Jul 2025 13:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752759456; cv=none; b=lzGFGtCTX3KgWX5VMs4pDsl9OdOz/YmbIOm+4UbdZXS4zrvhgdzJbrgD8IIH7pi2g2RNhhD7qz9LMO+hiqZKgY21VQfBTkbJ8POu0/m1vL+qb1ysiYRTVP/WYParORUS5thbmq7WyZuXhhSCVHGjfAIzl5XMjkB4eWaTmrcdQH0=
+	t=1752759514; cv=none; b=JagPgsculPW4oo4fLIqqabp/+b+M+V6Dq81CYRBnhXWXQZTxuXwSFaFOEW5jzXHLS+OG0UX6N6uWm6CvlmyY6g25kqUaXPZaoDafmoUHqG12oYzj2IzEgbObeoL15EaLjlDfB58CGbuY4rj3NGW5qOrOAUGDZvaKWbSyVM+Folo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752759456; c=relaxed/simple;
-	bh=6T8wTmK1c/bVMEmHRiqoAWj+wBZhCiIYy+DHw9DywLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FuEZIOMjKXyd2ZMztY2w5xkrThLGGv4ngQE3zoanpAEdujqnZ3wVGakGvLBtzh8Yq97f1zn9gedaBRx/y8ODYBdiR3Z7YHzRBAwu3pONPTRp55B3Gc0fDk5SStyZn3ZmxcONjXUAIwRgXqPy9fqwFx2TP1BH6aQriyUO6IySZSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mrly2IrG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13D2AC4CEE3;
-	Thu, 17 Jul 2025 13:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752759455;
-	bh=6T8wTmK1c/bVMEmHRiqoAWj+wBZhCiIYy+DHw9DywLU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mrly2IrGsVF07td0hpdpwDm5dfaMyj8qi5VpkuJIOVWyJsBDykEYH3FYVSni5s1lX
-	 C5aNEKToNSqkQhU6cJyndq9XXz394kSMwYpWBM7Q9zjLqt0U5+slJ2Mq191OieIilR
-	 WG/h8MiotXBEVEHxmyNuAjCWyj4aGZBUIY0WMmBWdI99iDE45tRAVK3Ely0k3wuLqz
-	 MpmeZUqk8YGFnB+bTfMecGzqqf5gTJfFkJY20+8nX0oEQpv17bYvayoEnflxc+QQ66
-	 SnQpQI0pbDMchTJJU5aeZYCUnS62WTvm1kqIB9ll0aWm/AYINwgAPoWFGewOFDU4rX
-	 BK8Zu4YNV8EHw==
-Date: Thu, 17 Jul 2025 16:37:29 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: mawupeng <mawupeng1@huawei.com>
-Cc: akpm@linux-foundation.org, ardb@kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: ignore nomap memory during mirror init
-Message-ID: <aHj8mfecDhJJZW1Y@kernel.org>
-References: <20250717085723.1875462-1-mawupeng1@huawei.com>
- <aHjQp9zPVPuPyP3B@kernel.org>
- <9688e968-e9af-4143-b550-16c02a0b4ceb@huawei.com>
+	s=arc-20240116; t=1752759514; c=relaxed/simple;
+	bh=VyJ+NsLDM7pT4kqmM2xgDPI5UrSq9184d49tqI37g3E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QpHkjMEYyiOj3K+kpGD0eEJ9qhENQpdfUqMBpJN0hfMtIslKGH5Bs1FU8JtDOVFcEdOhDru0VmxhokDw7JaU+Y2Khih1XXSAp62iw8ewQvX7AAqeSKnZjk416OZrHduMF8Ibkxumc9OOHZ+32FE7fqDAizzPWDn7vqegdFmYt8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ga4bU9jB; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31306794b30so169019a91.2;
+        Thu, 17 Jul 2025 06:38:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752759512; x=1753364312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+AkjrzWPxBpSHEuKgQ5YjwK48qZvCjPPIkc2sko6UqM=;
+        b=ga4bU9jBnaM2Jq9kjZhlgZjiPTZ3eJYnnYPjukB4oAdkHAMkdhb3AYioXkmnORf2TS
+         6VvEIU6p9VEFIekhMutfsXqa6LOre5UsyDlBfy2EzrvUxokB7C9M8d/5rcdMR51QoDpG
+         shKlGHyV1hJbsRvilKg/2eSFBPYK3yGvcw1I3QbwBb+XjeIMry1LjMdnUb84CdsBA2gX
+         D73vglXpoATgtK7nlsF+JG3XUzDrfzuXpriCgCco5NudV8OxBCIh490VIMzydier/67Q
+         MnSS+8XlQs5mkYllQmB8BwOcZs2qkib7ozRRFkpu7tpp3hdVQrzH5bO0BccBFh4tsPeL
+         m4jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752759512; x=1753364312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+AkjrzWPxBpSHEuKgQ5YjwK48qZvCjPPIkc2sko6UqM=;
+        b=mrZgVSyUiPoIlJbaIkDe/AG9mgTgVCByOC1W1MIjxT8syEmHQkut3bEi46DGRJgYo0
+         6x+V8DywPLcOCCkS2ulaw5z36CFt0mgzzTBWTZMh92+fHFDOgjH+Z+qjjtdtsCrEAHo1
+         KxX7rCdXh0ALvMQEOu2v9FLlTQpYrBpJKCHw0QqfGRLgACvr+iYHHzXGl4L52Nz+D/77
+         sHyrpj4NdsDkHnDGDt822NSezLweg4myJJVqPxrYiwHHvi9XKtFVx7CHlGJZ8nvtQiBX
+         4MNS8gw2v0Y14fadLtRsQveWQo7nVxPvHCqUeqIe+VACZyy+9BYhtXj2aOaUUz8PBRt6
+         iPaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUILu80QmKCFas4C24ixCsLwUBmmxTrH3G4HDaCD6Q8OYdTjnWbeK/lrRZNL6ncdia0FJ5/2fLXoXUHTF4=@vger.kernel.org, AJvYcCWsbwxgJwuWs2A2CBmOF71AmSmkRDoX+jr7j7cRiNtipurjCNsain9JQR+eZ0TtHNFA78OdjWbiryuiXIDxh7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIjtLR89CD58j92uyaSxOfFnARroIL9RDXP3dBpGHZKYiEa71M
+	uifu78sEw9ERCYe2p6iIDvTLHcBZuVgAiOgVWOdxR8YKqK1vhA11ao6uhgnB6NNWpWitPISdpof
+	8s14iaNOiWzS1horGrN+sdEJq/9LTaiA=
+X-Gm-Gg: ASbGnctgDkB1UNm/VMItyJ1aMEmfO+I1EjLXe7di0shktUoAc65G3hb9/FRQrbewJWo
+	3Oet/bwmUWXv0Ma0bEWooSOhHV/0JfoVTnSeBp9qv2HguKPfS+M9J2nOhu467Hb8I16yA9V4Kwb
+	uTSdhFlvAsh4SI7eoMZsb9VwBRIGhBsgH8gjepogzB7W2TD/dBE/nLhXlNRrzO54KH4/NLjpHO0
+	4yjA5gINjpuGPdw11M=
+X-Google-Smtp-Source: AGHT+IGEsaFtyUBV0IjuVA7MPyoMvjy1LlulgWESoeSjWkqBQ+KEr3dS7TNu0MNbKccxo3wsApk66kr6WAzpxVFMFM8=
+X-Received: by 2002:a17:90b:4f8f:b0:30a:80bc:ad4 with SMTP id
+ 98e67ed59e1d1-31c9e5fd68dmr3601644a91.0.1752759512264; Thu, 17 Jul 2025
+ 06:38:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9688e968-e9af-4143-b550-16c02a0b4ceb@huawei.com>
+References: <20250624-opaque-from-raw-v2-0-e4da40bdc59c@google.com> <20250624-opaque-from-raw-v2-2-e4da40bdc59c@google.com>
+In-Reply-To: <20250624-opaque-from-raw-v2-2-e4da40bdc59c@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 17 Jul 2025 15:38:19 +0200
+X-Gm-Features: Ac12FXz1hbZauBNzw9Btshfw3inaQsSA1Vx4_yL-0LcTTBRjd_Srl1BbiM_MOFU
+Message-ID: <CANiq72mMJRpiE0AKbP0MtvnnxP4fSnOHGhRn+GCm=D5VeLduLA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: types: rename Opaque::raw_get to cast_into
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, dri-devel@lists.freedesktop.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 07:06:52PM +0800, mawupeng wrote:
-> 
-> On 2025/7/17 18:29, Mike Rapoport wrote:
-> > On Thu, Jul 17, 2025 at 04:57:23PM +0800, Wupeng Ma wrote:
-> >> When memory mirroring is enabled, the BIOS may reserve memory regions
-> >> at the start of the physical address space without the MR flag. This will
-> >> lead to zone_movable_pfn to be updated to the start of these reserved
-> >> regions, resulting in subsequent mirrored memory being ignored.
-> >>
-> >> Here is the log with efi=debug enabled:
-> >>   efi:   0x084004000000-0x0842bf37ffff [Conventional|   |  |MR|...|WB|WT|WC|  ]
-> >>   efi:   0x0842bf380000-0x0842c21effff [Loader Code |   |  |MR|...|WB|WT|WC|  ]
-> >>   efi:   0x0842c21f0000-0x0847ffffffff [Conventional|   |  |MR|...|WB|WT|WC|  ]
-> >>   efi:   0x085000000000-0x085fffffffff [Conventional|   |  |  |...|WB|WT|WC|  ]
-> >> ...
-> >>   efi:   0x084000000000-0x084003ffffff [Reserved    |   |  |  |...|WB|WT|WC|  ]
-> >>
-> >> Since this kind of memory can not be used by kernel. ignore nomap memory to fix
-> >> this issue.
-> 
-> Since the first non-mirror pfn of this node is 0x084000000000, then zone_movable_pfn 
-> for this node will be updated to this. This will lead to Mirror Region 
->   - 0x084004000000-0x0842bf37ffff
->   - 0x0842bf380000-0x0842c21effff 
->   - 0x0842c21f0000-0x0847ffffffff
-> be seen as non-mirror memory since zone_movable_pfn will be the start_pfn of this node
-> in adjust_zone_range_for_zone_movable().
+On Tue, Jun 24, 2025 at 5:28=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> -                let cell_inner =3D ::core::cell::UnsafeCell::raw_get(sel=
+f_ptr);
+> +                let cell_inner =3D ::core::cell::UnsafeCell::cast_into(s=
+elf_ptr);
 
-What do you mean by "seen as non-mirror memory"?
+Bah, we also missed this one -- I will rebase / send a patch.
 
-What is the problem with having movable zone on that node start at
-0x084000000000?
-
-Can you post the kernel log up to "Memory: nK/mK available" line for more
-context?
- 
-> So igore nomap memory to fix this problem.
-> 
-> > 
-> > If the memory is nomap it won't be used by the kernel anyway.
-> > What's the actual issue you are trying to fix?
-> >  
-> >> Signed-off-by: Wupeng Ma <mawupeng1@huawei.com>
-> >> ---
-> >>  mm/mm_init.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> >> index f2944748f526..1c36518f0fe4 100644
-> >> --- a/mm/mm_init.c
-> >> +++ b/mm/mm_init.c
-> >> @@ -405,7 +405,7 @@ static void __init find_zone_movable_pfns_for_nodes(void)
-> >>  		}
-> >>  
-> >>  		for_each_mem_region(r) {
-> >> -			if (memblock_is_mirror(r))
-> >> +			if (memblock_is_mirror(r) || memblock_is_nomap(r))
-> >>  				continue;
-> >>  
-> >>  			nid = memblock_get_region_node(r);
-> >> -- 
-> >> 2.43.0
-> >>
-> > 
-> 
-
--- 
-Sincerely yours,
-Mike.
+Cheers,
+Miguel
 
